@@ -1,48 +1,21 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 2/9] remoteproc: core: Make the loaded resource table optional
-Date: Mon, 28 Mar 2016 20:36:58 -0700
-Message-Id: <1459222625-11440-3-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1459222625-11440-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1459222625-11440-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>, John Stultz <john.stultz@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Return-Path: <ohad@wizery.com>
+MIME-Version: 1.0
+In-Reply-To: <1458626612-62137-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1458626612-62137-1-git-send-email-bjorn.andersson@linaro.org>
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Date: Tue, 29 Mar 2016 15:37:25 +0300
+Message-ID: <CAK=WgbZ2UwecuqxHa1a-5K5rYjTJ8Dh69642+8oThATZ5_Y9oQ@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add mailing list for remote processor subsystems
+Content-Type: text/plain; charset=UTF-8
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+On Tue, Mar 22, 2016 at 8:03 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> Add the newly created linux-remoteproc mailing list for the three
+> subsystems related to remote processor management and communication.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Remote processors like the ones found in the Qualcomm SoCs does not have
-a resource table passed to them, so make it optional by only populating
-it if it does exist.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-
-Changes since v1:
-- None
-
- drivers/remoteproc/remoteproc_core.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3d7d58a109d8..c04a786dc051 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -856,12 +856,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	 * copy this information to device memory.
- 	 */
- 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
--	if (!loaded_table) {
--		ret = -EINVAL;
--		goto clean_up;
--	}
--
--	memcpy(loaded_table, rproc->cached_table, tablesz);
-+	if (loaded_table)
-+		memcpy(loaded_table, rproc->cached_table, tablesz);
- 
- 	/* power up the remote processor */
- 	ret = rproc->ops->start(rproc);
--- 
-2.5.0
+Acked-by: Ohad Ben-Cohen <ohad@wizery.com>
