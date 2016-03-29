@@ -1,137 +1,48 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 5/9] ARM: dts: qcom: msm8974: Introduce the wcnss remoteproc node
-Date: Mon, 28 Mar 2016 20:37:01 -0700
-Message-Id: <1459222625-11440-6-git-send-email-bjorn.andersson@linaro.org>
+Subject: [PATCH v2 2/9] remoteproc: core: Make the loaded resource table optional
+Date: Mon, 28 Mar 2016 20:36:58 -0700
+Message-Id: <1459222625-11440-3-git-send-email-bjorn.andersson@linaro.org>
 In-Reply-To: <1459222625-11440-1-git-send-email-bjorn.andersson@linaro.org>
 References: <1459222625-11440-1-git-send-email-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, John Stultz <john.stultz@linaro.org>, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>, John Stultz <john.stultz@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+
+Remote processors like the ones found in the Qualcomm SoCs does not have
+a resource table passed to them, so make it optional by only populating
+it if it does exist.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
 Changes since v1:
-- Added dts patches
+- None
 
- .../boot/dts/qcom-msm8974-sony-xperia-honami.dts   | 32 +++++++++++++++++++
- arch/arm/boot/dts/qcom-msm8974.dtsi                | 36 +++++++++++++++++++++-
- 2 files changed, 67 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts b/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts
-index a0398b69f4f2..74faa291d213 100644
---- a/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts
-@@ -311,6 +311,13 @@
- 		pinctrl-0 = <&blsp1_uart2_pin_a>;
- 	};
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3d7d58a109d8..c04a786dc051 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -856,12 +856,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	 * copy this information to device memory.
+ 	 */
+ 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+-	if (!loaded_table) {
+-		ret = -EINVAL;
+-		goto clean_up;
+-	}
+-
+-	memcpy(loaded_table, rproc->cached_table, tablesz);
++	if (loaded_table)
++		memcpy(loaded_table, rproc->cached_table, tablesz);
  
-+	wcnss-rproc@fb21b000 {
-+		status = "ok";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wcnss_pin_a>;
-+	};
-+
- 	pinctrl@fd510000 {
- 		blsp1_uart2_pin_a: blsp1-uart2-pin-active {
- 			rx {
-@@ -366,6 +373,31 @@
- 			};
- 		};
- 
-+		wcnss_pin_a: wcnss-pin-active {
-+			wlan {
-+				pins =  "gpio36", "gpio37", "gpio38", "gpio39", "gpio40";
-+				function = "wlan";
-+
-+				drive-strength = <6>;
-+				bias-pull-down;
-+			};
-+
-+			bt {
-+				pins = "gpio35", "gpio43", "gpio44";
-+				function = "bt";
-+
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
-+			fm {
-+				pins = "gpio41", "gpio42";
-+				function = "fm";
-+
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+		};
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index ef5330578431..5c0d1a46baeb 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -2,6 +2,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8974.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
- #include "skeleton.dtsi"
- 
- / {
-@@ -24,7 +25,7 @@
- 			no-map;
- 		};
- 
--		reserved@0d200000 {
-+		wcnss_region: wcnss@0d200000 {
- 			reg = <0x0d200000 0xa00000>;
- 			no-map;
- 		};
-@@ -430,6 +431,39 @@
- 			clock-names = "core";
- 		};
- 
-+		wcnss-rproc@fb21b000 {
-+			compatible = "qcom,pronto-v2-pil";
-+			reg = <0xfb21b000 0x3000>;
-+
-+			memory-region = <&wcnss_region>;
-+
-+			interrupts-extended = <&intc 0 149 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
-+
-+			vddpx-supply = <&pm8941_s3>;
-+
-+			qcom,state = <&wcnss_smp2p_out 0>;
-+			qcom,state-names = "stop";
-+
-+			status = "disabled";
-+
-+			iris {
-+				compatible = "qcom,wcn3680";
-+
-+				clocks = <&rpmcc RPM_CXO_A2>;
-+				clock-names = "xo";
-+
-+				vddxo-supply = <&pm8941_l6>;
-+				vddrfa-supply = <&pm8941_l11>;
-+				vddpa-supply = <&pm8941_l19>;
-+				vdddig-supply = <&pm8941_s3>;
-+			};
-+		};
-+
- 		msmgpio: pinctrl@fd510000 {
- 			compatible = "qcom,msm8974-pinctrl";
- 			reg = <0xfd510000 0x4000>;
+ 	/* power up the remote processor */
+ 	ret = rproc->ops->start(rproc);
 -- 
 2.5.0
