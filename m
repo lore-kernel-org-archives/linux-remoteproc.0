@@ -1,119 +1,91 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 22 Apr 2016 09:54:31 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 9/9] ARM: dts: qcom: apq8064: Introduce wcnss remoteproc
-Date: Mon, 28 Mar 2016 20:37:05 -0700
-Message-Id: <1459222625-11440-10-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1459222625-11440-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1459222625-11440-1-git-send-email-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, John Stultz <john.stultz@linaro.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2.1 1/9] dt-binding: remoteproc: Introduce Qualcomm
+ WCNSS loader binding
+Message-ID: <20160422165431.GC3202@tuxbot>
+References: <1459222625-11440-2-git-send-email-bjorn.andersson@linaro.org>
+ <1461259256-28529-1-git-send-email-bjorn.andersson@linaro.org>
+ <CAL_JsqLgehfMVXgDQdHaC6SJ7MU3oRKFn4ogLbtgp_31keX95g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqLgehfMVXgDQdHaC6SJ7MU3oRKFn4ogLbtgp_31keX95g@mail.gmail.com>
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Suman Anna <s-anna@ti.com>, John Stultz <john.stultz@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On Fri 22 Apr 09:22 PDT 2016, Rob Herring wrote:
 
-Changes since v1:
-- Added dts patches
+> On Thu, Apr 21, 2016 at 12:20 PM, Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> > From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> >
+> > The document defines the binding for a component that loads firmware for
+> > and boots the Qualcomm WCNSS core.
+> >
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >
+> > Rob,
+> >
+> > I got your Ack on v2, but I would like to make a small amendment before merging
+> > this.
+> >
+> >
+> > As we discussed related to the WiFi binding I should reference the mmio
+> > registers by a phandle to a DT node specifying the two necessary register
+> > blocks (ccu & dxe).
+> >
+> > These two register blocks are part of the riva/pronto (the two major versions)
+> > subsystem, that also contains the "pmu" register block, which is what I access
+> > here.
+> >
+> > Further more, the ccu block contains valuable information for debugging
+> > purposes that the implementation of this binding would find useful.
+> >
+> >
+> > I would therefor like to double this node (in the dts) as both the
+> > riva/pronto-pil and the target for the mmio phandle reference from the WiFi
+> > node.
+> >
+> > This works fine, but unless using reg-names for defining the order or the regs
+> > I get a messy ordering dependency between the two bindings. I do not know which
+> > of the other 7-8 register blocks we will add for debugging, but with the below
+> > change I can keep them in block order regardless of the order we implement them
+> > in.
+> 
+> You should know based on the compatible string what the number and
+> order of register ranges are. reg is not something we want evolving
+> over time.
+> 
 
- .../arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dts |  4 ++
- arch/arm/boot/dts/qcom-apq8064.dtsi                | 57 ++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
+At best I can make an educated guess based on some downstream debug code
+on what regs we do have. But I've already found two of the ranges being
+incorrect.
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dts b/arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dts
-index 06b3c76c3e41..276f529383e8 100644
---- a/arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dts
-+++ b/arch/arm/boot/dts/qcom-apq8064-sony-xperia-yuga.dts
-@@ -432,5 +432,9 @@
- 				pinctrl-0 = <&sdcc3_pin_a>, <&sdcc3_cd_pin_a>;
- 			};
- 		};
-+
-+		wcnss@3204000 {
-+			status = "okay";
-+		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-index ad7bc3c2aad1..2c213ce80acc 100644
---- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-@@ -20,6 +20,11 @@
- 			reg = <0x80000000 0x200000>;
- 			no-map;
- 		};
-+
-+		wcnss_mem: wcnss@8f000000 {
-+			reg = <0x8f000000 0x700000>;
-+			no-map;
-+		};
- 	};
- 
- 	cpus {
-@@ -231,6 +236,26 @@
- 
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&ps_hold>;
-+
-+			wcnss_pin_a: wcnss-pins-active {
-+				fm {
-+					pins = "gpio14", "gpio15";
-+					function = "riva_fm";
-+				};
-+
-+				bt {
-+					pins = "gpio16", "gpio17";
-+					function = "riva_bt";
-+				};
-+
-+				wlan {
-+					pins = "gpio64", "gpio65", "gpio66", "gpio67", "gpio68";
-+					function = "riva_wlan";
-+
-+					drive-strength = <6>;
-+					bias-pull-down;
-+				};
-+			};
- 		};
- 
- 		sfpb_wrapper_mutex: syscon@1200000 {
-@@ -916,6 +941,38 @@
- 			reset-names = "axi", "ahb", "por", "pci", "phy";
- 			status = "disabled";
- 		};
-+
-+		wcnss@3204000 {
-+			compatible = "qcom,riva-pil";
-+			reg = <0x03204000 0x100>;
-+
-+			interrupts-extended = <&intc 0 199 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcnss_smsm 6 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal";
-+
-+			memory-region = <&wcnss_mem>;
-+
-+			vddcx-supply = <&pm8921_s3>;
-+			vddmx-supply = <&pm8921_lvs7>;
-+			vddpx-supply = <&pm8921_s4>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&wcnss_pin_a>;
-+
-+			status = "disabled";
-+
-+			iris {
-+				compatible = "qcom,wcn3660";
-+
-+				clocks = <&rpmcc 2>;
-+				clock-names = "xo";
-+
-+				vddxo-supply = <&pm8921_l4>;
-+				vddrfa-supply = <&pm8921_s2>;
-+				vddpa-supply = <&pm8921_l10>;
-+				vdddig-supply = <&pm8921_lvs2>;
-+			};
-+		};
- 	};
- };
- #include "qcom-apq8064-pins.dtsi"
--- 
-2.5.0
+> > So, can I update the "reg" and add "reg-names" as below to the binding and
+> > depend on reg-names for the ordering of reg? Or should I speculatively add all
+> > ranges I know of to keep the order sane?
+> 
+> I'm okay with using this for convenience of the client not having to
+> care which compatible the block is, but the above should still be met.
+> 
+
+Okay, I will throw in the 3 I know for now, saying those are required.
+And then we add the debug regions as optionals after those, based on
+which ones we need. Hopefully I haven't missed any required regions...
+
+> Also, you could add a cell which is the index to the register range you need.
+> 
+
+I'm afraid I feel that is just reimplementing reg-names, for the sake of
+not using reg-names.
+
+
+Thanks for your answer, I'll spin the two bindings and send them about
+again.
+
+Regards,
+Bjorn
