@@ -1,10 +1,10 @@
 Return-Path: <>
 From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH v2 4/4] rpmsg: use module_rpmsg_driver in existing drivers and examples
-Date: Wed, 4 May 2016 17:01:39 -0500
-Message-ID: <1462399299-28159-4-git-send-email-afd@ti.com>
-In-Reply-To: <1462399299-28159-1-git-send-email-afd@ti.com>
-References: <1462399299-28159-1-git-send-email-afd@ti.com>
+Subject: [PATCH 4/4] rpmsg: use module_rpmsg_driver in existing drivers and examples
+Date: Wed, 4 May 2016 13:34:15 -0500
+Message-ID: <1462386855-17381-4-git-send-email-afd@ti.com>
+In-Reply-To: <1462386855-17381-1-git-send-email-afd@ti.com>
+References: <1462386855-17381-1-git-send-email-afd@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
@@ -16,15 +16,23 @@ module_rpmsg_driver helper macro.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- Documentation/rpmsg.txt             | 13 +------------
+ Documentation/rpmsg.txt             | 14 +-------------
  samples/rpmsg/rpmsg_client_sample.c | 13 +------------
- 2 files changed, 2 insertions(+), 24 deletions(-)
+ 2 files changed, 2 insertions(+), 25 deletions(-)
 
 diff --git a/Documentation/rpmsg.txt b/Documentation/rpmsg.txt
-index 1d88426..a95e36a 100644
+index 1d88426..b19700c 100644
 --- a/Documentation/rpmsg.txt
 +++ b/Documentation/rpmsg.txt
-@@ -254,18 +254,7 @@ static struct rpmsg_driver rpmsg_sample_client = {
+@@ -202,7 +202,6 @@ with the payload of the inbound message).
+      a pointer to a previously-registered rpmsg_driver struct.
+      Returns 0 on success, and an appropriate error value on failure.
+ 
+-
+ 3. Typical usage
+ 
+ The following is a simple rpmsg driver, that sends an "hello!" message
+@@ -254,18 +253,7 @@ static struct rpmsg_driver rpmsg_sample_client = {
  	.callback	= rpmsg_sample_cb,
  	.remove		= rpmsg_sample_remove,
  };
