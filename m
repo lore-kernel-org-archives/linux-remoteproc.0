@@ -1,85 +1,72 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 10/18] ASoC: sti: Update DT example to match the driver code
-Date: Wed, 25 May 2016 17:06:44 +0100
-Message-Id: <1464192412-16386-12-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com, broonie@kernel.org
+Return-Path: <>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH v2 4/4] rpmsg: use module_rpmsg_driver in existing drivers and examples
+Date: Wed, 4 May 2016 17:01:39 -0500
+Message-ID: <1462399299-28159-4-git-send-email-afd@ti.com>
+In-Reply-To: <1462399299-28159-1-git-send-email-afd@ti.com>
+References: <1462399299-28159-1-git-send-email-afd@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-uniperiph-id, version and mode are ST specific bindings and
-need the 'st,' prefix. Update the examples, as otherwise copying
-them yields a runtime error parsing the DT node.
+Existing drivers and examples are updated to use the
+module_rpmsg_driver helper macro.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Cc: arnaud.pouliquen@st.com
-Cc: broonie@kernel.org
+Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- .../devicetree/bindings/sound/st,sti-asoc-card.txt   | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ Documentation/rpmsg.txt             | 13 +------------
+ samples/rpmsg/rpmsg_client_sample.c | 13 +------------
+ 2 files changed, 2 insertions(+), 24 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/st,sti-asoc-card.txt b/Documentation/devicetree/bindings/sound/st,sti-asoc-card.txt
-index 028fa1c..fe1b72c 100644
---- a/Documentation/devicetree/bindings/sound/st,sti-asoc-card.txt
-+++ b/Documentation/devicetree/bindings/sound/st,sti-asoc-card.txt
-@@ -33,7 +33,7 @@ Required properties:
- 	"tx" for "st,sti-uni-player" compatibility
- 	"rx" for "st,sti-uni-reader" compatibility
+diff --git a/Documentation/rpmsg.txt b/Documentation/rpmsg.txt
+index 1d88426..a95e36a 100644
+--- a/Documentation/rpmsg.txt
++++ b/Documentation/rpmsg.txt
+@@ -254,18 +254,7 @@ static struct rpmsg_driver rpmsg_sample_client = {
+ 	.callback	= rpmsg_sample_cb,
+ 	.remove		= rpmsg_sample_remove,
+ };
+-
+-static int __init init(void)
+-{
+-	return register_rpmsg_driver(&rpmsg_sample_client);
+-}
+-module_init(init);
+-
+-static void __exit fini(void)
+-{
+-	unregister_rpmsg_driver(&rpmsg_sample_client);
+-}
+-module_exit(fini);
++module_rpmsg_driver(rpmsg_sample_client);
  
--  - version: IP version integrated in SOC.
-+  - st,version: IP version integrated in SOC.
+ Note: a similar sample which can be built and loaded can be found
+ in samples/rpmsg/.
+diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
+index 82ed288..d0e249c9 100644
+--- a/samples/rpmsg/rpmsg_client_sample.c
++++ b/samples/rpmsg/rpmsg_client_sample.c
+@@ -82,18 +82,7 @@ static struct rpmsg_driver rpmsg_sample_client = {
+ 	.callback	= rpmsg_sample_cb,
+ 	.remove		= rpmsg_sample_remove,
+ };
+-
+-static int __init rpmsg_client_sample_init(void)
+-{
+-	return register_rpmsg_driver(&rpmsg_sample_client);
+-}
+-module_init(rpmsg_client_sample_init);
+-
+-static void __exit rpmsg_client_sample_fini(void)
+-{
+-	unregister_rpmsg_driver(&rpmsg_sample_client);
+-}
+-module_exit(rpmsg_client_sample_fini);
++module_rpmsg_driver(rpmsg_sample_client);
  
-   - dai-name: DAI name that describes the IP.
- 
-@@ -41,9 +41,9 @@ Required properties ("st,sti-uni-player" compatibility only):
-   - clocks: CPU_DAI IP clock source, listed in the same order than the
- 	    CPU_DAI properties.
- 
--  - uniperiph-id: internal SOC IP instance ID.
-+  - st,uniperiph-id: internal SOC IP instance ID.
- 
--  - IP mode: IP working mode depending on associated codec.
-+  - st,mode: IP working mode depending on associated codec.
- 	"HDMI" connected to HDMI codec IP and IEC HDMI formats.
- 	"SPDIF"connected to SPDIF codec and support SPDIF formats.
- 	"PCM"  PCM standard mode for I2S or TDM bus.
-@@ -67,9 +67,9 @@ Example:
- 		dmas = <&fdma0 4 0 1>;
- 		dai-name = "Uni Player #1 (DAC)";
- 		dma-names = "tx";
--		uniperiph-id = <2>;
--		version = <5>;
--		mode = "PCM";
-+		st,uniperiph-id = <2>;
-+		st,version = <5>;
-+		st,mode = "PCM";
- 	};
- 
- 	sti_uni_player3: sti-uni-player@3 {
-@@ -83,9 +83,9 @@ Example:
- 		dmas = <&fdma0 7 0 1>;
- 		dma-names = "tx";
- 		dai-name = "Uni Player #1 (PIO)";
--		uniperiph-id = <3>;
--		version = <5>;
--		mode = "SPDIF";
-+		st,uniperiph-id = <3>;
-+		st,version = <5>;
-+		st,mode = "SPDIF";
- 	};
- 
- 	sti_uni_reader1: sti-uni-reader@1 {
-@@ -98,7 +98,7 @@ Example:
- 		dmas = <&fdma0 6 0 1>;
- 		dma-names = "rx";
- 		dai-name = "Uni Reader #1 (HDMI RX)";
--		version = <3>;
-+		st,version = <3>;
- 	};
- 
- 2) sti-sas-codec: internal audio codec IPs driver
+ MODULE_DESCRIPTION("Remote processor messaging sample client driver");
+ MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
+2.8.2
