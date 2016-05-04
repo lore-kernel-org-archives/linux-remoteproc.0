@@ -1,33 +1,50 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 0/5] remoteproc: A few important improvements
-Date: Thu,  5 May 2016 14:29:38 +0100
-Message-Id: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
+Return-Path: <>
+From: "Andrew F. Davis" <afd@ti.com>
+Subject: [PATCH v2 3/4] rpmsg: add helper macro module_rpmsg_driver
+Date: Wed, 4 May 2016 17:01:38 -0500
+Message-ID: <1462399299-28159-3-git-send-email-afd@ti.com>
+In-Reply-To: <1462399299-28159-1-git-send-email-afd@ti.com>
+References: <1462399299-28159-1-git-send-email-afd@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This set contains some extensions which allow greater interoperability
-with other heavily used subsystems/booting mechanisms already in the
-kernel.  This includes; Device Tree (OF) support, fix possible race
-between remoteproc and rpmsg/virtio, remotely (from a client) set the
-firmware name, introduction of a nice way to handle shared (between
-subsystems) memory and automatic carveout clipping.
+This patch introduces the module_rpmsg_driver macro which is a
+convenience macro for rpmsg driver modules similar to
+module_platform_driver. It is intended to be used by drivers which
+init/exit section does nothing but register/unregister the rpmsg driver.
+By using this macro it is possible to eliminate a few lines of
+boilerplate code per rpmsg driver.
 
-Lee Jones (5):
-  remoteproc: core: Task sync during rproc_fw_boot()
-  remoteproc: core: Add rproc OF look-up functions
-  remoteproc: core: Add ability to select a firmware from the client
-  remoteproc: core: Supply framework to request, declare and fetch
-    shared memory
-  remoteproc: core: Clip carveout if it's too big
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
+ include/linux/rpmsg.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
- drivers/remoteproc/remoteproc_core.c     | 371 ++++++++++++++++++++++++++++++-
- drivers/remoteproc/remoteproc_internal.h |   1 +
- drivers/remoteproc/remoteproc_virtio.c   |   2 +-
- include/linux/remoteproc.h               |  16 ++
- 4 files changed, 379 insertions(+), 11 deletions(-)
-
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 7ff5790..ada50ff 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -182,6 +182,18 @@ rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
+ 	__register_rpmsg_driver(drv, THIS_MODULE)
+ 
+ /**
++ * module_rpmsg_driver() - Helper macro for registering an rpmsg driver
++ * @__rpmsg_driver: rpmsg_driver struct
++ *
++ * Helper macro for rpmsg drivers which do not do anything special in module
++ * init/exit. This eliminates a lot of boilerplate.  Each module may only
++ * use this macro once, and calling it replaces module_init() and module_exit()
++ */
++#define module_rpmsg_driver(__rpmsg_driver) \
++	module_driver(__rpmsg_driver, register_rpmsg_driver, \
++			unregister_rpmsg_driver)
++
++/**
+  * rpmsg_send() - send a message across to the remote processor
+  * @rpdev: the rpmsg channel
+  * @data: payload of message
 -- 
-2.8.0
+2.8.2
