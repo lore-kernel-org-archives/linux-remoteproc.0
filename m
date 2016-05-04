@@ -1,154 +1,83 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 3/5] remoteproc: core: Add ability to select a firmware from the client
-Date: Thu,  5 May 2016 14:29:41 +0100
-Message-Id: <1462454983-13168-4-git-send-email-lee.jones@linaro.org>
-In-Reply-To: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
-References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Ludovic Barre <ludovic.barre@st.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 1/4] rpmsg: add THIS_MODULE to rpmsg_driver in rpmsg core
+References: <1462386855-17381-1-git-send-email-afd@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <572A45D2.30305@ti.com>
+Date: Wed, 4 May 2016 13:56:18 -0500
+MIME-Version: 1.0
+In-Reply-To: <1462386855-17381-1-git-send-email-afd@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: "Andrew F. Davis" <afd@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-ST Co-Processors can be loaded with different firmwares to execute
-specific tasks without the need for unloading the rproc module.
+On 05/04/2016 01:34 PM, Andrew F. Davis wrote:
+> Add register_rpmsg_driver helper macro that adds THIS_MODULE to
+> rpmsg_driver for the registering driver. We rename and modify
+> the existing register_rpmsg_driver to enable this.
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 
-This patch provides a function which can update the firmware name.
+With the multi-trace comment from patch 3 squashed here properly,
+Acked-by: Suman Anna <s-anna@ti.com>
 
-NB: This can only happen if the rproc is offline.
-
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 63 ++++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           | 13 ++++++++
- 2 files changed, 76 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 85e5fd8..03720c0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1004,6 +1004,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 
- 	/* Free the copy of the resource table */
- 	kfree(rproc->cached_table);
-+	rproc->cached_table = NULL;
- 
- 	return rproc_add_virtio_devices(rproc);
- }
-@@ -1329,6 +1330,66 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
- EXPORT_SYMBOL(rproc_get_by_phandle);
- 
- /**
-+ * rproc_set_fw_name() - change rproc fw name
-+ * @rproc: rproc handle
-+ * @firmware: name of firmware file to load
-+ *
-+ * set a new firmware name for rproc handle
-+ * firmware name can be updated only if the rproc is offline
-+ * if firmware name is NULL the fw name is set on default name
-+ *
-+ * this function can wait, if the old fw config virtio is not yet finish
-+ * (fw config request is asynchronous)
-+ *
-+ * Returns 0 on success and an appropriate error code otherwise.
-+ */
-+int rproc_set_fw_name(struct rproc *rproc, const char *firmware)
-+{
-+	struct rproc_vdev *rvdev, *rvtmp;
-+
-+	if (!rproc)
-+		return -EINVAL;
-+
-+	/* if rproc is just being registered, wait */
-+	wait_for_completion(&rproc->firmware_loading_complete);
-+
-+	mutex_lock(&rproc->lock);
-+
-+	if (rproc->state != RPROC_OFFLINE) {
-+		mutex_unlock(&rproc->lock);
-+		return -EBUSY;
-+	}
-+
-+	if (rproc->firmware && rproc->firmware != rproc->orig_firmware)
-+		kfree(rproc->firmware);
-+
-+	/* restore original fw name */
-+	if (!firmware) {
-+		rproc->firmware = rproc->orig_firmware;
-+	} else {
-+		rproc->firmware = kstrdup(firmware, GFP_KERNEL);
-+		if (!rproc->firmware)
-+			rproc->firmware = rproc->orig_firmware;
-+	}
-+
-+	dev_info(&rproc->dev, "%s, fw name updated with:%s\n",
-+		 rproc->name, rproc->firmware);
-+
-+	mutex_unlock(&rproc->lock);
-+
-+	/* clean up remote vdev entries */
-+	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
-+		rproc_remove_virtio_dev(rvdev);
-+
-+	/* Free the copy of the resource table */
-+	kfree(rproc->cached_table);
-+	rproc->cached_table = NULL;
-+
-+	return rproc_add_virtio_devices(rproc);
-+}
-+EXPORT_SYMBOL(rproc_set_fw_name);
-+
-+/**
-  * rproc_add() - register a remote processor
-  * @rproc: the remote processor handle to register
-  *
-@@ -1467,6 +1528,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	}
- 
- 	rproc->firmware = p;
-+	rproc->orig_firmware = p;
- 	rproc->name = name;
- 	rproc->ops = ops;
- 	rproc->priv = &rproc[1];
-@@ -1554,6 +1616,7 @@ int rproc_del(struct rproc *rproc)
- 
- 	/* Free the copy of the resource table */
- 	kfree(rproc->cached_table);
-+	rproc->cached_table = NULL;
- 
- 	/* the rproc is downref'ed as soon as it's removed from the klist */
- 	mutex_lock(&rproc_list_mutex);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 4c96e78..978e866 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -414,6 +414,7 @@ struct rproc {
- 	struct iommu_domain *domain;
- 	const char *name;
- 	const char *firmware;
-+	const char *orig_firmware;
- 	void *priv;
- 	const struct rproc_ops *ops;
- 	struct device dev;
-@@ -484,6 +485,18 @@ struct rproc_vdev {
- 	u32 rsc_offset;
- };
- 
-+struct rproc_subdev {
-+	struct device dev;
-+	struct rproc *rproc;
-+	struct resource *res;
-+};
-+
-+#define to_subdevice(d) container_of(d, struct rproc_subdev, dev)
-+struct rproc_subdev *rproc_subdev_add(struct rproc *rproc,
-+				      struct resource *res);
-+void rproc_subdev_del(struct rproc_subdev *subdev);
-+struct device *rproc_subdev_lookup(struct rproc *rproc, const char *name);
-+int rproc_set_fw_name(struct rproc *rproc, const char *firmware);
- struct rproc *rproc_get_by_phandle(phandle phandle);
- struct rproc *rproc_alloc(struct device *dev, const char *name,
- 				const struct rproc_ops *ops,
--- 
-2.8.0
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 8 +++++---
+>  include/linux/rpmsg.h            | 8 +++++++-
+>  2 files changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 1fcd27c..fe03b2a 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -436,17 +436,19 @@ static struct bus_type rpmsg_bus = {
+>  };
+>  
+>  /**
+> - * register_rpmsg_driver() - register an rpmsg driver with the rpmsg bus
+> + * __register_rpmsg_driver() - register an rpmsg driver with the rpmsg bus
+>   * @rpdrv: pointer to a struct rpmsg_driver
+> + * @owner: owning module/driver
+>   *
+>   * Returns 0 on success, and an appropriate error value on failure.
+>   */
+> -int register_rpmsg_driver(struct rpmsg_driver *rpdrv)
+> +int __register_rpmsg_driver(struct rpmsg_driver *rpdrv, struct module *owner)
+>  {
+>  	rpdrv->drv.bus = &rpmsg_bus;
+> +	rpdrv->drv.owner = owner;
+>  	return driver_register(&rpdrv->drv);
+>  }
+> -EXPORT_SYMBOL(register_rpmsg_driver);
+> +EXPORT_SYMBOL(__register_rpmsg_driver);
+>  
+>  /**
+>   * unregister_rpmsg_driver() - unregister an rpmsg driver from the rpmsg bus
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index 82a6739..78e45ce 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -169,7 +169,7 @@ struct rpmsg_driver {
+>  
+>  int register_rpmsg_device(struct rpmsg_channel *dev);
+>  void unregister_rpmsg_device(struct rpmsg_channel *dev);
+> -int register_rpmsg_driver(struct rpmsg_driver *drv);
+> +int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
+>  void unregister_rpmsg_driver(struct rpmsg_driver *drv);
+>  void rpmsg_destroy_ept(struct rpmsg_endpoint *);
+>  struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
+> @@ -177,6 +177,12 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
+>  int
+>  rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
+>  
+> +/*
+> + * use a macro to avoid include chaining to get THIS_MODULE
+> + */
+> +#define register_rpmsg_driver(drv) \
+> +	__register_rpmsg_driver(drv, THIS_MODULE)
+> +
+>  /**
+>   * rpmsg_send() - send a message across to the remote processor
+>   * @rpdev: the rpmsg channel
+> 
