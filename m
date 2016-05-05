@@ -1,48 +1,33 @@
-Return-Path: <>
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH v2 2/4] rpmsg: drop owner assignment from rpmsg_drivers
-Date: Wed, 4 May 2016 17:01:37 -0500
-Message-ID: <1462399299-28159-2-git-send-email-afd@ti.com>
-In-Reply-To: <1462399299-28159-1-git-send-email-afd@ti.com>
-References: <1462399299-28159-1-git-send-email-afd@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 0/5] remoteproc: A few important improvements
+Date: Thu,  5 May 2016 14:29:38 +0100
+Message-Id: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-An rpmsg_driver does not need to set an owner, it will be populated by
-the driver core.
+This set contains some extensions which allow greater interoperability
+with other heavily used subsystems/booting mechanisms already in the
+kernel.  This includes; Device Tree (OF) support, fix possible race
+between remoteproc and rpmsg/virtio, remotely (from a client) set the
+firmware name, introduction of a nice way to handle shared (between
+subsystems) memory and automatic carveout clipping.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- Documentation/rpmsg.txt             | 1 -
- samples/rpmsg/rpmsg_client_sample.c | 1 -
- 2 files changed, 2 deletions(-)
+Lee Jones (5):
+  remoteproc: core: Task sync during rproc_fw_boot()
+  remoteproc: core: Add rproc OF look-up functions
+  remoteproc: core: Add ability to select a firmware from the client
+  remoteproc: core: Supply framework to request, declare and fetch
+    shared memory
+  remoteproc: core: Clip carveout if it's too big
 
-diff --git a/Documentation/rpmsg.txt b/Documentation/rpmsg.txt
-index f7edc3a..1d88426 100644
---- a/Documentation/rpmsg.txt
-+++ b/Documentation/rpmsg.txt
-@@ -249,7 +249,6 @@ MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_sample_id_table);
- 
- static struct rpmsg_driver rpmsg_sample_client = {
- 	.drv.name	= KBUILD_MODNAME,
--	.drv.owner	= THIS_MODULE,
- 	.id_table	= rpmsg_driver_sample_id_table,
- 	.probe		= rpmsg_sample_probe,
- 	.callback	= rpmsg_sample_cb,
-diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
-index 59b1344..82ed288 100644
---- a/samples/rpmsg/rpmsg_client_sample.c
-+++ b/samples/rpmsg/rpmsg_client_sample.c
-@@ -77,7 +77,6 @@ MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_sample_id_table);
- 
- static struct rpmsg_driver rpmsg_sample_client = {
- 	.drv.name	= KBUILD_MODNAME,
--	.drv.owner	= THIS_MODULE,
- 	.id_table	= rpmsg_driver_sample_id_table,
- 	.probe		= rpmsg_sample_probe,
- 	.callback	= rpmsg_sample_cb,
+ drivers/remoteproc/remoteproc_core.c     | 371 ++++++++++++++++++++++++++++++-
+ drivers/remoteproc/remoteproc_internal.h |   1 +
+ drivers/remoteproc/remoteproc_virtio.c   |   2 +-
+ include/linux/remoteproc.h               |  16 ++
+ 4 files changed, 379 insertions(+), 11 deletions(-)
+
 -- 
-2.8.2
+2.8.0
