@@ -1,34 +1,31 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 6 May 2016 11:18:10 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] rpmsg: Make rpmsg sample selectable
-Date: Fri,  6 May 2016 11:06:12 -0700
-Message-Id: <1462557972-32699-1-git-send-email-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Suman Anna <s-anna@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] rpmsg: add THIS_MODULE to rpmsg_driver in rpmsg
+ core
+Message-ID: <20160506181810.GC1256@tuxbot>
+References: <1462399299-28159-1-git-send-email-afd@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1462399299-28159-1-git-send-email-afd@ti.com>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-rpmsg is not user selectable so the rpmsg sample should not depend on
-it, as this limits the possibility of compiling the sample client
-without any other clients.
+On Wed 04 May 15:01 PDT 2016, Andrew F. Davis wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- samples/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Add register_rpmsg_driver helper macro that adds THIS_MODULE to
+> rpmsg_driver for the registering driver. We rename and modify
+> the existing register_rpmsg_driver to enable this.
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Acked-by: Suman Anna <s-anna@ti.com>
+> ---
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index d54f28c6dc5e..61a251e579ed 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -57,7 +57,8 @@ config SAMPLE_KDB
- 
- config SAMPLE_RPMSG_CLIENT
- 	tristate "Build rpmsg client sample -- loadable modules only"
--	depends on RPMSG && m
-+	select RPMSG
-+	depends on m
- 	help
- 	  Build an rpmsg client sample driver, which demonstrates how
- 	  to communicate with an AMP-configured remote processor over
--- 
-2.5.0
+Thanks Andrew, the patches looks good now.
+
+I picked all four patches.
+
+Regards,
+Bjorn
