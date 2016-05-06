@@ -1,49 +1,33 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 10 May 2016 15:16:58 +0100
-From: Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 6 May 2016 11:48:42 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH 2/5] remoteproc: core: Add rproc OF look-up functions
-Message-ID: <20160510141658.GP19473@dell>
+Message-ID: <20160506184842.GE1256@tuxbot>
 References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
  <1462454983-13168-3-git-send-email-lee.jones@linaro.org>
- <20160506184842.GE1256@tuxbot>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160506184842.GE1256@tuxbot>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
+In-Reply-To: <1462454983-13168-3-git-send-email-lee.jones@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, 06 May 2016, Bjorn Andersson wrote:
+On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
 
-> On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
+> - of_rproc_byindex(): look-up and obtain a reference to a rproc
+>   		      using the DT phandle "rprocs" and a index.
 > 
-> > - of_rproc_byindex(): look-up and obtain a reference to a rproc
-> >   		      using the DT phandle "rprocs" and a index.
-> > 
-> > - of_rproc_byname():  lookup and obtain a reference to a rproc
-> >   		      using the DT phandle "rprocs" and "rproc-names".
-> > 
-> > Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > ---
+> - of_rproc_byname():  lookup and obtain a reference to a rproc
+>   		      using the DT phandle "rprocs" and "rproc-names".
 > 
-> I like the idea of having these helpers, but we already have
-> rproc_get_by_phandle() so these helpers should be built upon that rather
-> than adding the additional list.
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
 
-Since this is a framework consideration, don't you think it would be
-better to standardise the phandle name?  This is common practice when
-coding at a subsystem level.  Some in use examples include; "clocks",
-"power-domains", "mboxes", "dmas", "phys", "resets", "gpios", etc.
+I like the idea of having these helpers, but we already have
+rproc_get_by_phandle() so these helpers should be built upon that rather
+than adding the additional list.
 
-Considering the aforementioned examples, I figured "rprocs" would be
-suitable.
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards,
+Bjorn
