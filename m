@@ -1,41 +1,35 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 15/18] ARM: STi: DT: STiH407: Add sti-sasg-codec dt node
-Date: Wed, 25 May 2016 17:06:49 +0100
-Message-Id: <1464192412-16386-17-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 6 May 2016 11:44:06 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/5] remoteproc: core: Task sync during rproc_fw_boot()
+Message-ID: <20160506184406.GD1256@tuxbot>
+References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
+ <1462454983-13168-2-git-send-email-lee.jones@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1462454983-13168-2-git-send-email-lee.jones@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the dt node for the internal audio
-codec IP.
+On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407-family.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> By default, rproc_fw_boot() needs to wait for rproc to be configured,
+> but a race may occur when using rpmsg/virtio.  In this case, it can
+> be called locally in a safe manor.
+> 
+> This patch represents two usecases:
+> 
+>  - External call (via exported rproc_boot()), which waits
+>  - Internal call can use 'nowait' version of rproc_boot()
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index b423836..60f95b6 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -746,5 +746,14 @@
- 				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
- 				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
- 		};
-+
-+		sti_sasg_codec: sti-sasg-codec {
-+			compatible = "st,stih407-sas-codec";
-+			#sound-dai-cells = <1>;
-+			status = "okay";
-+			st,syscfg = <&syscfg_core>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_spdif_out >;
-+		};
- 	};
- };
--- 
-1.9.1
+Looks good
+
+Applied to rproc-next.
+
+Regards,
+Bjorn
