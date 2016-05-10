@@ -1,42 +1,65 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 03/18] MAINTAINERS: Add st xp70 rproc driver to STi section.
-Date: Wed, 25 May 2016 17:06:37 +0100
-Message-Id: <1464192412-16386-5-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 10 May 2016 14:02:50 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 3/5] remoteproc: core: Add ability to select a firmware
+ from the client
+Message-ID: <20160510130250.GM19473@dell>
+References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
+ <1462454983-13168-4-git-send-email-lee.jones@linaro.org>
+ <20160506185914.GF1256@tuxbot>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160506185914.GF1256@tuxbot>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the xp70 rproc driver to the STi section
-of the MAINTAINERS file.
+On Fri, 06 May 2016, Bjorn Andersson wrote:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+> On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
+> 
+> > ST Co-Processors can be loaded with different firmwares to execute
+> > specific tasks without the need for unloading the rproc module.
+> > 
+> 
+> I'm very much interested in ideas related to this and who "owns" the
+> life cycle of remoteprocs, do you have any code I can take a look at
+> that's using this interface?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 61a323a..de99aec 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1647,6 +1647,7 @@ F:	drivers/phy/phy-miphy365x.c
- F:	drivers/phy/phy-stih407-usb.c
- F:	drivers/phy/phy-stih41x-usb.c
- F:	drivers/pinctrl/pinctrl-st.c
-+F:	drivers/remoteproc/st_xp70_rproc.c
- F:	drivers/reset/sti/
- F:	drivers/rtc/rtc-st-lpc.c
- F:	drivers/tty/serial/st-asc.c
-@@ -1655,6 +1656,7 @@ F:	drivers/usb/host/ehci-st.c
- F:	drivers/usb/host/ohci-st.c
- F:	drivers/watchdog/st_lpc_wdt.c
- F:	drivers/ata/ahci_st.c
-+F:	include/linux/remoteproc/st_xp70_rproc.h
- 
- ARM/STM32 ARCHITECTURE
- M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+I was part of a conversation on the list which should explain some of
+your queries [0].  The conclusion was, that only the client can know
+what which firmware it is compatible with.  This information can not
+realistically either live in DT (or any other platform data) or within
+RemoteProc.  I hope that link answers your questions.
+
+[0] http://www.spinics.net/lists/devicetree-spec/msg00144.html
+
+> > This patch provides a function which can update the firmware name.
+> > 
+> > NB: This can only happen if the rproc is offline.
+> 
+> How is this working in the case when the remoteproc provides vdevs that
+> is holding references towards the rproc?
+> 
+> Do you unload rpmsg et al before doing this?
+
+RemoteProc needs to be offline for the firmware name to be set, this
+includes links to RPMsg, so yes, they would have to be unloaded.
+
+> > Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 63 ++++++++++++++++++++++++++++++++++++
+> >  include/linux/remoteproc.h           | 13 ++++++++
+> >  2 files changed, 76 insertions(+)
+
+Happy with the remainder of your comments -- will fix.
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
