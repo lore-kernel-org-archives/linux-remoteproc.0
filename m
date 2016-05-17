@@ -1,84 +1,43 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 07/18] ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
-Date: Wed, 25 May 2016 17:06:41 +0100
-Message-Id: <1464192412-16386-9-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 16 May 2016 17:23:22 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] rpmsg updates for v4.7
+Message-ID: <20160517002322.GL1256@tuxbot>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These nodes are required to get the fdma driver working
-on STiH407 based silicon.
+The following changes since commit 9735a22799b9214d17d3c231fe377fc852f042e9:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407-family.dtsi | 52 +++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+  Linux 4.6-rc2 (2016-04-03 09:09:40 -0500)
 
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index 81f8121..b423836 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -694,5 +694,57 @@
- 			clocks          = <&clk_sysin>;
- 			status		= "okay";
- 		};
-+
-+		/* fdma audio */
-+		fdma0: dma-controller@8e20000 {
-+			compatible = "st,stih407-fdma-mpe31-11", "st,xp70-rproc";
-+			reg = <0x8e20000 0x8000>,
-+			      <0x8e30000 0x3000>,
-+			      <0x8e37000 0x1000>,
-+			      <0x8e38000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+		};
-+
-+		/* fdma app */
-+		fdma1: dma-controller@8e40000 {
-+			compatible = "st,stih407-fdma-mpe31-12", "st,xp70-rproc";
-+			reg = <0x8e40000 0x8000>,
-+			      <0x8e50000 0x3000>,
-+			      <0x8e57000 0x1000>,
-+			      <0x8e58000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+		};
-+
-+		/* fdma free running */
-+		fdma2: dma-controller@8e60000 {
-+			compatible = "st,stih407-fdma-mpe31-13", "st,xp70-rproc";
-+			reg = <0x8e60000 0x8000>,
-+			      <0x8e70000 0x3000>,
-+			      <0x8e77000 0x1000>,
-+			      <0x8e78000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+		};
- 	};
- };
--- 
-1.9.1
+are available in the git repository at:
+
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.7
+
+for you to fetch changes up to b4f78259d593858feb85e02c195cf374f932feef:
+
+  rpmsg: use module_rpmsg_driver in existing drivers and examples (2016-05-06 11:09:01 -0700)
+
+----------------------------------------------------------------
+rpmsg updates for v4.7
+
+Refactor rpmsg module registration to follow other subsystems; by
+introduction of module_rpmsg_driver and hiding of THIS_MODULE from
+clients.
+
+----------------------------------------------------------------
+Andrew F. Davis (4):
+      rpmsg: add THIS_MODULE to rpmsg_driver in rpmsg core
+      rpmsg: drop owner assignment from rpmsg_drivers
+      rpmsg: add helper macro module_rpmsg_driver
+      rpmsg: use module_rpmsg_driver in existing drivers and examples
+
+ Documentation/rpmsg.txt             | 14 +-------------
+ drivers/rpmsg/virtio_rpmsg_bus.c    |  8 +++++---
+ include/linux/rpmsg.h               | 18 +++++++++++++++++-
+ samples/rpmsg/rpmsg_client_sample.c | 14 +-------------
+ 4 files changed, 24 insertions(+), 30 deletions(-)
