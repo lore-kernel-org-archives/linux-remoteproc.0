@@ -1,30 +1,42 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 23 May 2016 08:33:58 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 41/54] MAINTAINERS: Add file patterns for remoteproc
- device tree bindings
-Message-ID: <20160523153358.GS1256@tuxbot>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 41/54] MAINTAINERS: Add file patterns for remoteproc device tree bindings
+Date: Sun, 22 May 2016 11:06:18 +0200
+Message-Id: <1463907991-7916-42-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
 References: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
- <1463907991-7916-42-git-send-email-geert@linux-m68k.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1463907991-7916-42-git-send-email-geert@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Sun 22 May 02:06 PDT 2016, Geert Uytterhoeven wrote:
+Submitters of device tree binding documentation may forget to CC
+the subsystem maintainer if this is missing.
 
-> Submitters of device tree binding documentation may forget to CC
-> the subsystem maintainer if this is missing.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
+---
+Please apply this patch directly if you want to be involved in device
+tree binding documentation for your subsystem.
+---
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks Geert, applied.
-
-Regards,
-Bjorn
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d419cdbe35cbacab..327e1d5a501340ac 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9613,8 +9613,9 @@ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
+ L:	linux-remoteproc@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/remoteproc.git
+ S:	Maintained
+-F:	drivers/remoteproc/
++F:	Documentation/devicetree/bindings/remoteproc/
+ F:	Documentation/remoteproc.txt
++F:	drivers/remoteproc/
+ F:	include/linux/remoteproc.h
+ 
+ REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+-- 
+1.9.1
