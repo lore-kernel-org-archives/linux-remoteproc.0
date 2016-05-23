@@ -1,56 +1,30 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 12/18] ARM: DT: STiH407: Add i2s_out pinctrl configuration
-Date: Wed, 25 May 2016 17:06:46 +0100
-Message-Id: <1464192412-16386-14-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 23 May 2016 08:33:58 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 41/54] MAINTAINERS: Add file patterns for remoteproc
+ device tree bindings
+Message-ID: <20160523153358.GS1256@tuxbot>
+References: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
+ <1463907991-7916-42-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1463907991-7916-42-git-send-email-geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the pinctrl config for the i2s_out pins
-used by the uniperif player IP.
+On Sun 22 May 02:06 PDT 2016, Geert Uytterhoeven wrote:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> Submitters of device tree binding documentation may forget to CC
+> the subsystem maintainer if this is missing.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: linux-remoteproc@vger.kernel.org
 
-diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-index a538ae5..0fb5c8a 100644
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -1067,6 +1067,29 @@
- 				};
- 			};
- 
-+			i2s_out {
-+				pinctrl_i2s_8ch_out: i2s_8ch_out{
-+					st,pins {
-+						mclk = <&pio33 5 ALT1 OUT>;
-+						lrclk = <&pio33 7 ALT1 OUT>;
-+						sclk = <&pio33 6 ALT1 OUT>;
-+						data0 = <&pio33 4 ALT1 OUT>;
-+						data1 = <&pio34 0 ALT1 OUT>;
-+						data2 = <&pio34 1 ALT1 OUT>;
-+						data3 = <&pio34 2 ALT1 OUT>;
-+					};
-+				};
-+
-+				pinctrl_i2s_2ch_out: i2s_2ch_out{
-+					st,pins {
-+						mclk = <&pio33 5 ALT1 OUT>;
-+						lrclk = <&pio33 7 ALT1 OUT>;
-+						sclk = <&pio33 6 ALT1 OUT>;
-+						data0 = <&pio33 4 ALT1 OUT>;
-+					};
-+				};
-+			};
-+
- 			serial3 {
- 				pinctrl_serial3: serial3-0 {
- 					st,pins {
--- 
-1.9.1
+Thanks Geert, applied.
+
+Regards,
+Bjorn
