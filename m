@@ -1,121 +1,35 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 1/5] remoteproc: core: Task sync during rproc_fw_boot()
-Date: Thu,  5 May 2016 14:29:39 +0100
-Message-Id: <1462454983-13168-2-git-send-email-lee.jones@linaro.org>
-In-Reply-To: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
-References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Fabrice Gasnier <fabrice.gasnier@st.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v4 02/18] ARM: multi_v7_defconfig: enable st xp70 rproc driver.
+Date: Wed, 25 May 2016 17:06:36 +0100
+Message-Id: <1464192412-16386-4-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-By default, rproc_fw_boot() needs to wait for rproc to be configured,
-but a race may occur when using rpmsg/virtio.  In this case, it can
-be called locally in a safe manor.
+This is used by other device drivers whose IP is based
+around the xp70 slim core (such as fdma) to load and
+boot the firmware in the slimcore.
 
-This patch represents two usecases:
-
- - External call (via exported rproc_boot()), which waits
- - Internal call can use 'nowait' version of rproc_boot()
-
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c     | 29 +++++++++++++++++++++++++++--
- drivers/remoteproc/remoteproc_internal.h |  1 +
- drivers/remoteproc/remoteproc_virtio.c   |  2 +-
- 3 files changed, 29 insertions(+), 3 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ee44df5..7db2818 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1033,8 +1033,9 @@ static void rproc_crash_handler_work(struct work_struct *work)
- }
- 
- /**
-- * rproc_boot() - boot a remote processor
-+ * __rproc_boot() - boot a remote processor
-  * @rproc: handle of a remote processor
-+ * @wait: wait for rproc registration completion
-  *
-  * Boot a remote processor (i.e. load its firmware, power it on, ...).
-  *
-@@ -1043,7 +1044,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
-  *
-  * Returns 0 on success, and an appropriate error value otherwise.
-  */
--int rproc_boot(struct rproc *rproc)
-+static int __rproc_boot(struct rproc *rproc, bool wait)
- {
- 	const struct firmware *firmware_p;
- 	struct device *dev;
-@@ -1091,6 +1092,10 @@ int rproc_boot(struct rproc *rproc)
- 		goto downref_rproc;
- 	}
- 
-+	/* if rproc virtio is not yet configured, wait */
-+	if (wait)
-+		wait_for_completion(&rproc->firmware_loading_complete);
-+
- 	ret = rproc_fw_boot(rproc, firmware_p);
- 
- 	release_firmware(firmware_p);
-@@ -1104,9 +1109,29 @@ unlock_mutex:
- 	mutex_unlock(&rproc->lock);
- 	return ret;
- }
-+
-+/**
-+ * rproc_boot() - boot a remote processor
-+ * @rproc: handle of a remote processor
-+ */
-+int rproc_boot(struct rproc *rproc)
-+{
-+	return __rproc_boot(rproc, true);
-+}
- EXPORT_SYMBOL(rproc_boot);
- 
- /**
-+ * rproc_boot_nowait() - boot a remote processor
-+ * @rproc: handle of a remote processor
-+ *
-+ * Same as rproc_boot() but don't wait for rproc registration completion
-+ */
-+int rproc_boot_nowait(struct rproc *rproc)
-+{
-+	return __rproc_boot(rproc, false);
-+}
-+
-+/**
-  * rproc_shutdown() - power off the remote processor
-  * @rproc: the remote processor
-  *
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 8041b95..57e1de5 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -48,6 +48,7 @@ struct rproc_fw_ops {
- /* from remoteproc_core.c */
- void rproc_release(struct kref *kref);
- irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-+int rproc_boot_nowait(struct rproc *rproc);
- 
- /* from remoteproc_virtio.c */
- int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index ff30684..106d9e4 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -175,7 +175,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 	}
- 
- 	/* now that the vqs are all set, boot the remote processor */
--	ret = rproc_boot(rproc);
-+	ret = rproc_boot_nowait(rproc);
- 	if (ret) {
- 		dev_err(&rproc->dev, "rproc_boot() failed %d\n", ret);
- 		goto error;
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 2823490..d319d8f 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -503,6 +503,7 @@ CONFIG_REGULATOR_TPS6586X=y
+ CONFIG_REGULATOR_TPS65910=y
+ CONFIG_REGULATOR_TWL4030=y
+ CONFIG_REGULATOR_VEXPRESS=y
++CONFIG_ST_XP70_REMOTEPROC=m
+ CONFIG_MEDIA_SUPPORT=m
+ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_CONTROLLER=y
 -- 
-2.8.0
+1.9.1
