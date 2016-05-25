@@ -1,43 +1,41 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 16 May 2016 17:23:22 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] rpmsg updates for v4.7
-Message-ID: <20160517002322.GL1256@tuxbot>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v4 14/18] ARM: DT: STiH407: Add spdif_out pinctrl config
+Date: Wed, 25 May 2016 17:06:48 +0100
+Message-Id: <1464192412-16386-16-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 9735a22799b9214d17d3c231fe377fc852f042e9:
+This patch adds the pinctrl config for the spidf out
+pins used by the sasg codec IP.
 
-  Linux 4.6-rc2 (2016-04-03 09:09:40 -0500)
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ arch/arm/boot/dts/stih407-pinctrl.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-are available in the git repository at:
-
-  git://github.com/andersson/remoteproc tags/rpmsg-v4.7
-
-for you to fetch changes up to b4f78259d593858feb85e02c195cf374f932feef:
-
-  rpmsg: use module_rpmsg_driver in existing drivers and examples (2016-05-06 11:09:01 -0700)
-
-----------------------------------------------------------------
-rpmsg updates for v4.7
-
-Refactor rpmsg module registration to follow other subsystems; by
-introduction of module_rpmsg_driver and hiding of THIS_MODULE from
-clients.
-
-----------------------------------------------------------------
-Andrew F. Davis (4):
-      rpmsg: add THIS_MODULE to rpmsg_driver in rpmsg core
-      rpmsg: drop owner assignment from rpmsg_drivers
-      rpmsg: add helper macro module_rpmsg_driver
-      rpmsg: use module_rpmsg_driver in existing drivers and examples
-
- Documentation/rpmsg.txt             | 14 +-------------
- drivers/rpmsg/virtio_rpmsg_bus.c    |  8 +++++---
- include/linux/rpmsg.h               | 18 +++++++++++++++++-
- samples/rpmsg/rpmsg_client_sample.c | 14 +-------------
- 4 files changed, 24 insertions(+), 30 deletions(-)
+diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+index 537db7e..598dbab 100644
+--- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+@@ -1114,6 +1114,14 @@
+ 				};
+ 			};
+ 
++			spdif_out {
++				pinctrl_spdif_out: spdif_out{
++					st,pins {
++						spdif_out = <&pio34 7 ALT1 OUT>;
++					};
++				};
++			};
++
+ 			serial3 {
+ 				pinctrl_serial3: serial3-0 {
+ 					st,pins {
+-- 
+1.9.1
