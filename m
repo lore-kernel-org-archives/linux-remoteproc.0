@@ -1,58 +1,82 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 17/18] ARM: STi: DT: STiH407: Add uniperif reader dt nodes
-Date: Wed, 25 May 2016 17:06:51 +0100
-Message-Id: <1464192412-16386-19-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v4 07/18] ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
+Date: Wed, 25 May 2016 17:06:41 +0100
+Message-Id: <1464192412-16386-9-git-send-email-peter.griffin@linaro.org>
 In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
 References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
 Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the DT node for the uniperif reader
-IP block found on STiH407 family silicon.
+These nodes are required to get the fdma driver working
+on STiH407 based silicon.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- arch/arm/boot/dts/stih407-family.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm/boot/dts/stih407-family.dtsi | 52 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
 diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index 7ca149b..fb6363e1 100644
+index 81f8121..b423836 100644
 --- a/arch/arm/boot/dts/stih407-family.dtsi
 +++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -831,5 +831,33 @@
- 			st,version = <5>;
- 			st,mode = "SPDIF";
+@@ -694,5 +694,57 @@
+ 			clocks          = <&clk_sysin>;
+ 			status		= "okay";
  		};
 +
-+		sti_uni_reader0: sti-uni-reader@0 {
-+			compatible = "st,sti-uni-reader";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			reg = <0x8D83000 0x158>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 5 0 1>;
-+			dma-names = "rx";
-+			dai-name = "Uni Reader #0 (PCM IN)";
-+			st,version = <3>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_i2s_8ch_in>;
++		/* fdma audio */
++		fdma0: dma-controller@8e20000 {
++			compatible = "st,stih407-fdma-mpe31-11", "st,xp70-rproc";
++			reg = <0x8e20000 0x8000>,
++			      <0x8e30000 0x3000>,
++			      <0x8e37000 0x1000>,
++			      <0x8e38000 0x8000>;
++			reg-names = "slimcore", "dmem", "peripherals", "imem";
++			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++				 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
++			dma-channels = <16>;
++			#dma-cells = <3>;
 +		};
 +
-+		sti_uni_reader1: sti-uni-reader@1 {
-+			compatible = "st,sti-uni-reader";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			reg = <0x8D84000 0x158>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 6 0 1>;
-+			dma-names = "rx";
-+			dai-name = "Uni Reader #1 (HDMI RX)";
-+			st,version = <3>;
++		/* fdma app */
++		fdma1: dma-controller@8e40000 {
++			compatible = "st,stih407-fdma-mpe31-12", "st,xp70-rproc";
++			reg = <0x8e40000 0x8000>,
++			      <0x8e50000 0x3000>,
++			      <0x8e57000 0x1000>,
++			      <0x8e58000 0x8000>;
++			reg-names = "slimcore", "dmem", "peripherals", "imem";
++			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
++				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
++				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
++
++			interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>;
++			dma-channels = <16>;
++			#dma-cells = <3>;
++		};
++
++		/* fdma free running */
++		fdma2: dma-controller@8e60000 {
++			compatible = "st,stih407-fdma-mpe31-13", "st,xp70-rproc";
++			reg = <0x8e60000 0x8000>,
++			      <0x8e70000 0x3000>,
++			      <0x8e77000 0x1000>,
++			      <0x8e78000 0x8000>;
++			reg-names = "slimcore", "dmem", "peripherals", "imem";
++			interrupts = <GIC_SPI 9 IRQ_TYPE_NONE>;
++			dma-channels = <16>;
++			#dma-cells = <3>;
++			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++				<&clk_s_c0_flexgen CLK_EXT2F_A9>,
++				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
++				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
 +		};
  	};
  };
