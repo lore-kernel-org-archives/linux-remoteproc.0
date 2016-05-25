@@ -1,58 +1,61 @@
-Return-Path: <>
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH 3/4] rpmsg: add helper macro module_rpmsg_driver
-Date: Wed, 4 May 2016 13:34:14 -0500
-Message-ID: <1462386855-17381-3-git-send-email-afd@ti.com>
-In-Reply-To: <1462386855-17381-1-git-send-email-afd@ti.com>
-References: <1462386855-17381-1-git-send-email-afd@ti.com>
+Return-Path: <d-gerlach@ti.com>
+From: Dave Gerlach <d-gerlach@ti.com>
+Subject: [PATCH] remoteproc: Fix potential race condition in rproc_add
+Date: Wed, 25 May 2016 15:41:28 -0500
+Message-ID: <9fb3ac21209aaa791882a5121f4c48153f0335b4.1464206136.git.d-gerlach@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+To: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>, Dave Gerlach <d-gerlach@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch introduces the module_rpmsg_driver macro which is a
-convenience macro for rpmsg driver modules similar to
-module_platform_driver. It is intended to be used by drivers which
-init/exit section does nothing but register/unregister the rpmsg driver.
-By using this macro it is possible to eliminate a few lines of
-boilerplate code per rpmsg driver.
+rproc_add adds the newly created remoteproc to a list for use by
+rproc_get_by_phandle and then does some additional processing to finish
+adding the remoteproc. This leaves a small window of time in which the
+rproc is available in the list but not yet fully initialized, so if
+another driver comes along and gets a handle to the rproc, it will be
+invalid. Rearrange the code in rproc_add to make sure the rproc is added
+to the list only after it has been successfuly initialized.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Fixes: fec47d863587 ("remoteproc: introduce rproc_get_by_phandle API")
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
 ---
- include/linux/rpmsg.h | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 78e45ce..ada50ff 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -177,13 +177,23 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
- int
- rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index db3958b3f094..fe0539ed9cb5 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1264,11 +1264,6 @@ int rproc_add(struct rproc *rproc)
+ 	if (ret < 0)
+ 		return ret;
  
--/*
-- * use a macro to avoid include chaining to get THIS_MODULE
-- */
-+/* use a macro to avoid include chaining to get THIS_MODULE */
- #define register_rpmsg_driver(drv) \
- 	__register_rpmsg_driver(drv, THIS_MODULE)
+-	/* expose to rproc_get_by_phandle users */
+-	mutex_lock(&rproc_list_mutex);
+-	list_add(&rproc->node, &rproc_list);
+-	mutex_unlock(&rproc_list_mutex);
+-
+ 	dev_info(dev, "%s is available\n", rproc->name);
  
- /**
-+ * module_rpmsg_driver() - Helper macro for registering an rpmsg driver
-+ * @__rpmsg_driver: rpmsg_driver struct
-+ *
-+ * Helper macro for rpmsg drivers which do not do anything special in module
-+ * init/exit. This eliminates a lot of boilerplate.  Each module may only
-+ * use this macro once, and calling it replaces module_init() and module_exit()
-+ */
-+#define module_rpmsg_driver(__rpmsg_driver) \
-+	module_driver(__rpmsg_driver, register_rpmsg_driver, \
-+			unregister_rpmsg_driver)
+ 	dev_info(dev, "Note: remoteproc is still under development and considered experimental.\n");
+@@ -1276,8 +1271,16 @@ int rproc_add(struct rproc *rproc)
+ 
+ 	/* create debugfs entries */
+ 	rproc_create_debug_dir(rproc);
++	ret = rproc_add_virtio_devices(rproc);
++	if (ret < 0)
++		return ret;
+ 
+-	return rproc_add_virtio_devices(rproc);
++	/* expose to rproc_get_by_phandle users */
++	mutex_lock(&rproc_list_mutex);
++	list_add(&rproc->node, &rproc_list);
++	mutex_unlock(&rproc_list_mutex);
 +
-+/**
-  * rpmsg_send() - send a message across to the remote processor
-  * @rpdev: the rpmsg channel
-  * @data: payload of message
++	return 0;
+ }
+ EXPORT_SYMBOL(rproc_add);
+ 
 -- 
-2.8.2
+2.8.3
