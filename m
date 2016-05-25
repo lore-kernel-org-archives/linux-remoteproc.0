@@ -1,74 +1,42 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH v2 4/9] remoteproc: Introduce Qualcomm WCNSS firmware
- loader
-References: <1459222625-11440-1-git-send-email-bjorn.andersson@linaro.org>
- <1459222625-11440-5-git-send-email-bjorn.andersson@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <574588E2.60506@linaro.org>
-Date: Wed, 25 May 2016 14:13:38 +0300
-MIME-Version: 1.0
-In-Reply-To: <1459222625-11440-5-git-send-email-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Suman Anna <s-anna@ti.com>, John Stultz <john.stultz@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v4 03/18] MAINTAINERS: Add st xp70 rproc driver to STi section.
+Date: Wed, 25 May 2016 17:06:37 +0100
+Message-Id: <1464192412-16386-5-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 03/29/2016 06:37 AM, Bjorn Andersson wrote:
-> From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> 
-> This introduces the peripheral image loader, for loading WCNSS firmware
-> and boot the core on e.g. MSM8974. The firmware is verified and booted
-> with the help of the Peripheral Authentication System (PAS) in
-> TrustZone.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Changes since v1:
-> - Split iris definition into separate driver/dt-node
-> - Move constants from DT to code
-> - Make stop-state and some of interrupts optional to properly work on 8064
-> - Cleaned up and made mdt loader support relocation, which is needed on 8016.
-> 
->  drivers/remoteproc/Kconfig           |  12 +
->  drivers/remoteproc/Makefile          |   2 +
->  drivers/remoteproc/qcom_mdt_loader.c | 172 +++++++++++
->  drivers/remoteproc/qcom_mdt_loader.h |   7 +
->  drivers/remoteproc/qcom_wcnss.c      | 579 +++++++++++++++++++++++++++++++++++
->  drivers/remoteproc/qcom_wcnss.h      |  22 ++
->  drivers/remoteproc/qcom_wcnss_iris.c | 185 +++++++++++
->  7 files changed, 979 insertions(+)
->  create mode 100644 drivers/remoteproc/qcom_mdt_loader.c
->  create mode 100644 drivers/remoteproc/qcom_mdt_loader.h
->  create mode 100644 drivers/remoteproc/qcom_wcnss.c
->  create mode 100644 drivers/remoteproc/qcom_wcnss.h
->  create mode 100644 drivers/remoteproc/qcom_wcnss_iris.c
-> 
+This patch adds the xp70 rproc driver to the STi section
+of the MAINTAINERS file.
 
-<cut>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +
-> +static int wcnss_remove(struct platform_device *pdev)
-> +{
-> +	struct qcom_wcnss *wcnss = platform_get_drvdata(pdev);
-> +
-> +	of_platform_depopulate(&pdev->dev);
-> +
-> +	qcom_smem_state_put(wcnss->state);
-> +	rproc_put(wcnss->rproc);
-
-might be need to call rproc_del() too ?
-
-> +
-> +	return 0;
-> +}
-> +
-
-<cut>
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 61a323a..de99aec 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1647,6 +1647,7 @@ F:	drivers/phy/phy-miphy365x.c
+ F:	drivers/phy/phy-stih407-usb.c
+ F:	drivers/phy/phy-stih41x-usb.c
+ F:	drivers/pinctrl/pinctrl-st.c
++F:	drivers/remoteproc/st_xp70_rproc.c
+ F:	drivers/reset/sti/
+ F:	drivers/rtc/rtc-st-lpc.c
+ F:	drivers/tty/serial/st-asc.c
+@@ -1655,6 +1656,7 @@ F:	drivers/usb/host/ehci-st.c
+ F:	drivers/usb/host/ohci-st.c
+ F:	drivers/watchdog/st_lpc_wdt.c
+ F:	drivers/ata/ahci_st.c
++F:	include/linux/remoteproc/st_xp70_rproc.h
+ 
+ ARM/STM32 ARCHITECTURE
+ M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
 -- 
-regards,
-Stan
+1.9.1
