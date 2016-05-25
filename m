@@ -1,75 +1,56 @@
-Return-Path: <>
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH v2 1/4] rpmsg: add THIS_MODULE to rpmsg_driver in rpmsg core
-Date: Wed, 4 May 2016 17:01:36 -0500
-Message-ID: <1462399299-28159-1-git-send-email-afd@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v4 12/18] ARM: DT: STiH407: Add i2s_out pinctrl configuration
+Date: Wed, 25 May 2016 17:06:46 +0100
+Message-Id: <1464192412-16386-14-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add register_rpmsg_driver helper macro that adds THIS_MODULE to
-rpmsg_driver for the registering driver. We rename and modify
-the existing register_rpmsg_driver to enable this.
+This patch adds the pinctrl config for the i2s_out pins
+used by the uniperif player IP.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 8 +++++---
- include/linux/rpmsg.h            | 6 +++++-
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/stih407-pinctrl.dtsi | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1fcd27c..fe03b2a 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -436,17 +436,19 @@ static struct bus_type rpmsg_bus = {
- };
+diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+index a538ae5..0fb5c8a 100644
+--- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+@@ -1067,6 +1067,29 @@
+ 				};
+ 			};
  
- /**
-- * register_rpmsg_driver() - register an rpmsg driver with the rpmsg bus
-+ * __register_rpmsg_driver() - register an rpmsg driver with the rpmsg bus
-  * @rpdrv: pointer to a struct rpmsg_driver
-+ * @owner: owning module/driver
-  *
-  * Returns 0 on success, and an appropriate error value on failure.
-  */
--int register_rpmsg_driver(struct rpmsg_driver *rpdrv)
-+int __register_rpmsg_driver(struct rpmsg_driver *rpdrv, struct module *owner)
- {
- 	rpdrv->drv.bus = &rpmsg_bus;
-+	rpdrv->drv.owner = owner;
- 	return driver_register(&rpdrv->drv);
- }
--EXPORT_SYMBOL(register_rpmsg_driver);
-+EXPORT_SYMBOL(__register_rpmsg_driver);
- 
- /**
-  * unregister_rpmsg_driver() - unregister an rpmsg driver from the rpmsg bus
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 82a6739..7ff5790 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -169,7 +169,7 @@ struct rpmsg_driver {
- 
- int register_rpmsg_device(struct rpmsg_channel *dev);
- void unregister_rpmsg_device(struct rpmsg_channel *dev);
--int register_rpmsg_driver(struct rpmsg_driver *drv);
-+int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
- void unregister_rpmsg_driver(struct rpmsg_driver *drv);
- void rpmsg_destroy_ept(struct rpmsg_endpoint *);
- struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
-@@ -177,6 +177,10 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
- int
- rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
- 
-+/* use a macro to avoid include chaining to get THIS_MODULE */
-+#define register_rpmsg_driver(drv) \
-+	__register_rpmsg_driver(drv, THIS_MODULE)
++			i2s_out {
++				pinctrl_i2s_8ch_out: i2s_8ch_out{
++					st,pins {
++						mclk = <&pio33 5 ALT1 OUT>;
++						lrclk = <&pio33 7 ALT1 OUT>;
++						sclk = <&pio33 6 ALT1 OUT>;
++						data0 = <&pio33 4 ALT1 OUT>;
++						data1 = <&pio34 0 ALT1 OUT>;
++						data2 = <&pio34 1 ALT1 OUT>;
++						data3 = <&pio34 2 ALT1 OUT>;
++					};
++				};
 +
- /**
-  * rpmsg_send() - send a message across to the remote processor
-  * @rpdev: the rpmsg channel
++				pinctrl_i2s_2ch_out: i2s_2ch_out{
++					st,pins {
++						mclk = <&pio33 5 ALT1 OUT>;
++						lrclk = <&pio33 7 ALT1 OUT>;
++						sclk = <&pio33 6 ALT1 OUT>;
++						data0 = <&pio33 4 ALT1 OUT>;
++					};
++				};
++			};
++
+ 			serial3 {
+ 				pinctrl_serial3: serial3-0 {
+ 					st,pins {
 -- 
-2.8.2
+1.9.1
