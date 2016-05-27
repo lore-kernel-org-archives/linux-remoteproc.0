@@ -1,117 +1,97 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
+Date: Fri, 27 May 2016 17:13:29 +0100
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 04/18] dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding documentation
-Date: Wed, 25 May 2016 17:06:38 +0100
-Message-Id: <1464192412-16386-6-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+Subject: Re: [PATCH v4 01/18] remoteproc: st_xp70_rproc: add a xp70 slimcore
+ rproc driver
+Message-ID: <20160527161329.GA29319@griffinp-ThinkPad-X1-Carbon-2nd>
 References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
+ <1464192412-16386-3-git-send-email-peter.griffin@linaro.org>
+ <57484867.6030608@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57484867.6030608@st.com>
+To: Patrice Chotard <patrice.chotard@st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the DT binding documentation for the FDMA constroller
-found on STi based chipsets from STMicroelectronics.
+Hi Patrice,
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+On Fri, 27 May 2016, Patrice Chotard wrote:
+<snip>
+
+> >+struct rproc *xp70_rproc_alloc(struct platform_device *pdev, char *fw_name);
+> >+void xp70_rproc_put(struct st_xp70_rproc *xp70_rproc);
+> >+
+> >+#endif
+> 
+> Hi Peter
+> 
+> Applying this series on top of v4.6 kernel leads to the following
+> compilation error due to patch 01/18 :
+> 
+> drivers/remoteproc/st_xp70_rproc.c: In function 'xp70_rproc_alloc':
+> drivers/remoteproc/st_xp70_rproc.c:291:2: error: implicit
+> declaration of function 'rproc_get_elf_ops'
+> [-Werror=implicit-function-declaration]
+>   elf_ops = rproc_get_elf_ops();
+>   ^
+>   LD [M]  drivers/remoteproc/remoteproc.o
+
+Whoops. Looks like I forgot to include the first patch of the series. Doh! I will
+include it when I send v5.
+
+The missing patch looks like this. Bjorn do you have any issues with adding this
+interface?
+
+regards,
+
+Peter.
+
+
+
+>From 4664bb628cb5c99a43976a0b74ae1ee6cb05a68e Mon Sep 17 00:00:00 2001
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Wed, 25 May 2016 09:54:02 +0100
+Subject: [PATCH 01/19] remoteproc: add a rproc_get_elf_ops interface
+
+This allows us to re-use some of the generic fw_ops such
+as rproc_elf_sanity_check() and rproc_elf_load_segments() whilst
+overriding some of the others with our own implementation.
+
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- Documentation/devicetree/bindings/dma/st_fdma.txt | 87 +++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
+ drivers/remoteproc/remoteproc_elf_loader.c | 6 ++++++
+ include/linux/remoteproc.h                 | 2 ++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/st_fdma.txt b/Documentation/devicetree/bindings/dma/st_fdma.txt
-new file mode 100644
-index 0000000..8fd60a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/st_fdma.txt
-@@ -0,0 +1,87 @@
-+* STMicroelectronics Flexible Direct Memory Access Device Tree bindings
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index ce283a5..a3e06df 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -335,3 +335,9 @@ const struct rproc_fw_ops rproc_elf_fw_ops = {
+ 	.sanity_check = rproc_elf_sanity_check,
+ 	.get_boot_addr = rproc_elf_get_boot_addr
+ };
 +
-+The FDMA is a general-purpose direct memory access controller capable of
-+supporting 16 independent DMA channels. It accepts up to 32 DMA requests.
-+The FDMA is based on a Slim processor which requires a firmware.
++const struct rproc_fw_ops *rproc_get_elf_ops(void)
++{
++	return &rproc_elf_fw_ops;
++}
++EXPORT_SYMBOL_GPL(rproc_get_elf_ops);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 9c4e138..b0b06c8 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -495,6 +495,8 @@ int rproc_boot(struct rproc *rproc);
+ void rproc_shutdown(struct rproc *rproc);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ 
++const struct rproc_fw_ops *rproc_get_elf_ops(void);
 +
-+* FDMA Controller
-+
-+Required properties:
-+- compatible	: Should be one of
-+		 - st,stih407-fdma-mpe31-11, "st,xp70-rproc";
-+		 - st,stih407-fdma-mpe31-12, "st,xp70-rproc";
-+		 - st,stih407-fdma-mpe31-13, "st,xp70-rproc";
-+- reg		: Should contain an entry for each name in reg-names
-+- reg-names	: Must contain "slimcore", "dmem", "peripherals", "imem" entries
-+- interrupts	: Should contain one interrupt shared by all channels
-+- dma-channels	: Number of channels supported by the controller
-+- #dma-cells	: Must be <3>. See DMA client section below
-+- clocks	: Must contain an entry for each clock
-+See: Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+
-+Example:
-+
-+	fdma0: dma-controller@8e20000 {
-+		compatible = "st,stih407-fdma-mpe31-11", "st,xp70-rproc";
-+		reg = <0x8e20000 0x8000>,
-+		      <0x8e30000 0x3000>,
-+		      <0x8e37000 0x1000>,
-+		      <0x8e38000 0x8000>;
-+		reg-names = "slimcore", "dmem", "peripherals", "imem";
-+		clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+		interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
-+		dma-channels = <16>;
-+		#dma-cells = <3>;
-+	};
-+
-+* DMA client
-+
-+Required properties:
-+- dmas: Comma separated list of dma channel requests
-+- dma-names: Names of the aforementioned requested channels
-+
-+Each dmas request consists of 4 cells:
-+1. A phandle pointing to the FDMA controller
-+2. The request line number
-+3. A 32bit mask specifying (see include/linux/platform_data/dma-st-fdma.h)
-+ -bit 2-0: Holdoff value, dreq will be masked for
-+	0x0: 0-0.5us
-+	0x1: 0.5-1us
-+	0x2: 1-1.5us
-+ -bit 17: data swap
-+	0x0: disabled
-+	0x1: enabled
-+ -bit 21: Increment Address
-+	0x0: no address increment between transfers
-+	0x1: increment address between transfers
-+ -bit 22: 2 STBus Initiator Coprocessor interface
-+	0x0: high priority port
-+	0x1: low priority port
-+4. transfers type
-+ 0 free running
-+ 1 paced
-+
-+Example:
-+
-+	sti_uni_player2: sti-uni-player@2 {
-+		compatible = "st,sti-uni-player";
-+		status = "disabled";
-+		#sound-dai-cells = <0>;
-+		st,syscfg = <&syscfg_core>;
-+		clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
-+		assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
-+		assigned-clock-parents = <&clk_s_d0_quadfs 2>;
-+		assigned-clock-rates = <50000000>;
-+		reg = <0x8D82000 0x158>;
-+		interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
-+		dmas = <&fdma0 4 0 1>;
-+		dai-name = "Uni Player #1 (DAC)";
-+		dma-names = "tx";
-+		st,uniperiph-id = <2>;
-+		st,version = <5>;
-+		st,mode = "PCM";
-+	};
+ static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+ {
+ 	return container_of(vdev, struct rproc_vdev, vdev);
 -- 
 1.9.1
