@@ -1,41 +1,29 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 14/18] ARM: DT: STiH407: Add spdif_out pinctrl config
-Date: Wed, 25 May 2016 17:06:48 +0100
-Message-Id: <1464192412-16386-16-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 27 May 2016 10:44:57 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 04/18] dmaengine: st_fdma: Add STMicroelectronics FDMA
+ DT binding documentation
+Message-ID: <20160527154457.GA20370@rob-hp-laptop>
 References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+ <1464192412-16386-6-git-send-email-peter.griffin@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1464192412-16386-6-git-send-email-peter.griffin@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, dmaengine@vger.kernel.org, lee.jones@linaro.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the pinctrl config for the spidf out
-pins used by the sasg codec IP.
+On Wed, May 25, 2016 at 05:06:38PM +0100, Peter Griffin wrote:
+> This patch adds the DT binding documentation for the FDMA constroller
+> found on STi based chipsets from STMicroelectronics.
+> 
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/dma/st_fdma.txt | 87 +++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-index 537db7e..598dbab 100644
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -1114,6 +1114,14 @@
- 				};
- 			};
- 
-+			spdif_out {
-+				pinctrl_spdif_out: spdif_out{
-+					st,pins {
-+						spdif_out = <&pio34 7 ALT1 OUT>;
-+					};
-+				};
-+			};
-+
- 			serial3 {
- 				pinctrl_serial3: serial3-0 {
- 					st,pins {
--- 
-1.9.1
+Acked-by: Rob Herring <robh@kernel.org>
