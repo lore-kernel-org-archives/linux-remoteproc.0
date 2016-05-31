@@ -1,34 +1,128 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v4 09/18] ARM: multi_v7_defconfig: Enable STi FDMA driver
-Date: Wed, 25 May 2016 17:06:43 +0100
-Message-Id: <1464192412-16386-11-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v4 16/18] ARM: STi: DT: STiH407: Add uniperif player dt
+ nodes
 References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+ <1464192412-16386-18-git-send-email-peter.griffin@linaro.org>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <574D5608.3080800@st.com>
+Date: Tue, 31 May 2016 11:14:48 +0200
+MIME-Version: 1.0
+In-Reply-To: <1464192412-16386-18-git-send-email-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This DMA controller is found on all STi chipsets.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index d319d8f..5eee45b 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -728,6 +728,7 @@ CONFIG_DMA_OMAP=y
- CONFIG_QCOM_BAM_DMA=y
- CONFIG_XILINX_VDMA=y
- CONFIG_DMA_SUN6I=y
-+CONFIG_ST_FDMA=m
- CONFIG_STAGING=y
- CONFIG_SENSORS_ISL29018=y
- CONFIG_SENSORS_ISL29028=y
--- 
-1.9.1
+On 05/25/2016 06:06 PM, Peter Griffin wrote:
+> This patch adds the DT nodes for the uniperif player
+> IP blocks found on STiH407 family silicon.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-family.dtsi | 76 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> index 60f95b6..7ca149b 100644
+> --- a/arch/arm/boot/dts/stih407-family.dtsi
+> +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> @@ -755,5 +755,81 @@
+>  			pinctrl-names = "default";
+>  			pinctrl-0 = <&pinctrl_spdif_out >;
+>  		};
+> +
+> +		sti_uni_player0: sti-uni-player@0 {
+> +			compatible = "st,sti-uni-player";
+> +			status = "disabled";
+> +			#sound-dai-cells = <0>;
+> +			st,syscfg = <&syscfg_core>;
+> +			clocks = <&clk_s_d0_flexgen CLK_PCM_0>;
+> +			assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_0>;
+> +			assigned-clock-parents = <&clk_s_d0_quadfs 0>;
+This does not work properly. You need to declare parent like this:
+assigned-clocks = <&clk_s_d0_quadfs 0>, <&clk_s_d0_flexgen CLK_PCM_0>;
+assigned-clock-parents = <0>, <&clk_s_d0_quadfs 0>;
+
+> +			assigned-clock-rates = <50000000>;
+> +			reg = <0x8D80000 0x158>;
+> +			interrupts = <GIC_SPI 84 IRQ_TYPE_NONE>;
+> +			dmas = <&fdma0 2 0 1>;
+> +			dai-name = "Uni Player #0 (HDMI)";
+> +			dma-names = "tx";
+> +			st,uniperiph-id = <0>;
+> +			st,version = <5>;
+> +			st,mode = "HDMI";
+> +		};
+> +
+> +		sti_uni_player1: sti-uni-player@1 {
+> +			compatible = "st,sti-uni-player";
+> +			status = "disabled";
+> +			#sound-dai-cells = <0>;
+> +			st,syscfg = <&syscfg_core>;
+> +			clocks = <&clk_s_d0_flexgen CLK_PCM_1>;
+> +			assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_1>;
+> +			assigned-clock-parents = <&clk_s_d0_quadfs 1>;
+assigned-clocks = <&clk_s_d0_quadfs 1>, <&clk_s_d0_flexgen CLK_PCM_1>;
+assigned-clock-parents = <0>, <&clk_s_d0_quadfs 1>;
+
+> +			assigned-clock-rates = <50000000>;
+> +			reg = <0x8D81000 0x158>;
+> +			interrupts = <GIC_SPI 85 IRQ_TYPE_NONE>;
+> +			dmas = <&fdma0 3 0 1>;
+> +			dai-name = "Uni Player #1 (PIO)";
+> +			dma-names = "tx";
+> +			st,uniperiph-id = <1>;
+> +			st,version = <5>;
+> +			st,mode = "PCM";
+> +		};
+> +
+> +		sti_uni_player2: sti-uni-player@2 {
+> +			compatible = "st,sti-uni-player";
+> +			status = "disabled";
+> +			#sound-dai-cells = <0>;
+> +			st,syscfg = <&syscfg_core>;
+> +			clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
+> +			assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
+> +			assigned-clock-parents = <&clk_s_d0_quadfs 2>;
+assigned-clocks = <&clk_s_d0_quadfs 2>, <&clk_s_d0_flexgen CLK_PCM_2>;
+assigned-clock-parents = <0>, <&clk_s_d0_quadfs 2>;
+> +			assigned-clock-rates = <50000000>;
+> +			reg = <0x8D82000 0x158>;
+> +			interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
+> +			dmas = <&fdma0 4 0 1>;
+> +			dai-name = "Uni Player #1 (DAC)";
+> +			dma-names = "tx";
+> +			st,uniperiph-id = <2>;
+> +			st,version = <5>;
+> +			st,mode = "PCM";
+> +		};
+> +
+> +		sti_uni_player3: sti-uni-player@3 {
+> +			compatible = "st,sti-uni-player";
+> +			status = "disabled";
+> +			#sound-dai-cells = <0>;
+> +			st,syscfg = <&syscfg_core>;
+> +			clocks = <&clk_s_d0_flexgen CLK_SPDIFF>;
+> +			assigned-clocks = <&clk_s_d0_flexgen CLK_SPDIFF>;
+> +			assigned-clock-parents = <&clk_s_d0_quadfs 3>;
+> +			assigned-clock-rates = <50000000>;
+assigned-clocks = <&clk_s_d0_quadfs 3>, <&clk_s_d0_flexgen CLK_SPDIFF>;
+assigned-clock-parents = <0>, <&clk_s_d0_quadfs 3>;
+
+Regards,
+Arnaud
+> +			reg = <0x8D85000 0x158>;
+> +			interrupts = <GIC_SPI 89 IRQ_TYPE_NONE>;
+> +			dmas = <&fdma0 7 0 1>;
+> +			dma-names = "tx";
+> +			dai-name = "Uni Player #1 (PIO)";
+> +			st,uniperiph-id = <3>;
+> +			st,version = <5>;
+> +			st,mode = "SPDIF";
+> +		};
+>  	};
+>  };
+> 
