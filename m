@@ -1,48 +1,67 @@
-Return-Path: <>
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH 2/4] rpmsg: drop owner assignment from spi_drivers
-Date: Wed, 4 May 2016 13:34:13 -0500
-Message-ID: <1462386855-17381-2-git-send-email-afd@ti.com>
-In-Reply-To: <1462386855-17381-1-git-send-email-afd@ti.com>
-References: <1462386855-17381-1-git-send-email-afd@ti.com>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v4 17/18] ARM: STi: DT: STiH407: Add uniperif reader dt
+ nodes
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+ <1464192412-16386-19-git-send-email-peter.griffin@linaro.org>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <574D56CE.5020802@st.com>
+Date: Tue, 31 May 2016 11:18:06 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+In-Reply-To: <1464192412-16386-19-git-send-email-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-An rpmsg_driver does not need to set an owner, it will be populated by
-the driver core.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
- Documentation/rpmsg.txt             | 1 -
- samples/rpmsg/rpmsg_client_sample.c | 1 -
- 2 files changed, 2 deletions(-)
 
-diff --git a/Documentation/rpmsg.txt b/Documentation/rpmsg.txt
-index f7edc3a..1d88426 100644
---- a/Documentation/rpmsg.txt
-+++ b/Documentation/rpmsg.txt
-@@ -249,7 +249,6 @@ MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_sample_id_table);
- 
- static struct rpmsg_driver rpmsg_sample_client = {
- 	.drv.name	= KBUILD_MODNAME,
--	.drv.owner	= THIS_MODULE,
- 	.id_table	= rpmsg_driver_sample_id_table,
- 	.probe		= rpmsg_sample_probe,
- 	.callback	= rpmsg_sample_cb,
-diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
-index 59b1344..82ed288 100644
---- a/samples/rpmsg/rpmsg_client_sample.c
-+++ b/samples/rpmsg/rpmsg_client_sample.c
-@@ -77,7 +77,6 @@ MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_sample_id_table);
- 
- static struct rpmsg_driver rpmsg_sample_client = {
- 	.drv.name	= KBUILD_MODNAME,
--	.drv.owner	= THIS_MODULE,
- 	.id_table	= rpmsg_driver_sample_id_table,
- 	.probe		= rpmsg_sample_probe,
- 	.callback	= rpmsg_sample_cb,
--- 
-2.8.2
+On 05/25/2016 06:06 PM, Peter Griffin wrote:
+> This patch adds the DT node for the uniperif reader
+> IP block found on STiH407 family silicon.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-family.dtsi | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> index 7ca149b..fb6363e1 100644
+> --- a/arch/arm/boot/dts/stih407-family.dtsi
+> +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> @@ -831,5 +831,33 @@
+>  			st,version = <5>;
+>  			st,mode = "SPDIF";
+>  		};
+> +
+> +		sti_uni_reader0: sti-uni-reader@0 {
+> +			compatible = "st,sti-uni-reader";
+> +			status = "disabled";
+> +			#sound-dai-cells = <0>;
+> +			st,syscfg = <&syscfg_core>;
+> +			reg = <0x8D83000 0x158>;
+> +			interrupts = <GIC_SPI 87 IRQ_TYPE_NONE>;
+> +			dmas = <&fdma0 5 0 1>;
+> +			dma-names = "rx";
+> +			dai-name = "Uni Reader #0 (PCM IN)";
+> +			st,version = <3>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&pinctrl_i2s_8ch_in>;
+suppress pinctrl declaration
+> +		};
+> +
+> +		sti_uni_reader1: sti-uni-reader@1 {
+> +			compatible = "st,sti-uni-reader";
+> +			status = "disabled";
+> +			#sound-dai-cells = <0>;
+> +			st,syscfg = <&syscfg_core>;
+> +			reg = <0x8D84000 0x158>;
+> +			interrupts = <GIC_SPI 88 IRQ_TYPE_NONE>;
+> +			dmas = <&fdma0 6 0 1>;
+> +			dma-names = "rx";
+> +			dai-name = "Uni Reader #1 (HDMI RX)";
+> +			st,version = <3>;
+> +		};
+>  	};
+>  };
+> 
