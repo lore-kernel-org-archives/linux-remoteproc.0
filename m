@@ -1,45 +1,84 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 16 May 2016 17:24:24 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] remoteproc updates for v4.7
-Message-ID: <20160517002424.GM1256@tuxbot>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v4 18/18] ARM: DT: STi: stihxxx-b2120: Add DT nodes for
+ STi audio card
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+ <1464192412-16386-20-git-send-email-peter.griffin@linaro.org>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <574D6473.7050902@st.com>
+Date: Tue, 31 May 2016 12:16:19 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
+In-Reply-To: <1464192412-16386-20-git-send-email-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 9735a22799b9214d17d3c231fe377fc852f042e9:
 
-  Linux 4.6-rc2 (2016-04-03 09:09:40 -0500)
 
-are available in the git repository at:
+On 05/25/2016 06:06 PM, Peter Griffin wrote:
+> This patch enables the uniperif players 2 & 3 for b2120 boards
+> and also adds the "simple-audio-card" device node to interconnect
+> the SoC sound device and the codec.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stihxxx-b2120.dtsi | 40 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stihxxx-b2120.dtsi b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+> index 722c63f..5297f21 100644
+> --- a/arch/arm/boot/dts/stihxxx-b2120.dtsi
+> +++ b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+> @@ -131,5 +131,45 @@
+>  				dvb-card	= <STV0367_TDA18212_NIMA_1>;
+>  			};
+>  		};
+> +
+> +		sti_uni_player2: sti-uni-player@2 {
+> +			status = "okay";
+> +		};
+> +
+> +		sti_uni_player3: sti-uni-player@3 {
+> +			status = "okay";
+> +		};
+enable sti-sasg-codec with spdif pinctrl
+> +
+> +		sound {
+> +			compatible = "simple-audio-card";
+> +			simple-audio-card,name = "sti audio card";
+> +			status = "okay";
+> +
+> +			simple-audio-card,dai-link@0 {
+> +				/* DAC */
+> +				format = "i2s";
+> +				dai-tdm-slot-width = <32>;
+clean dai-tdm-slot-width, not used.
 
-  git://github.com/andersson/remoteproc tags/rproc-v4.7
-
-for you to fetch changes up to b3d39032d7b33029373fbce6459aff6ac316e130:
-
-  remoteproc: Add additional crash reasons (2016-05-12 15:50:19 -0700)
-
-----------------------------------------------------------------
-remoteproc updates for v4.7
-
-Introduces a synchronization point between the async firmware loading
-and clients requesting the remote processor to boot, as well as support
-for remote processors that are not interested in the resource table
-information.
-
-----------------------------------------------------------------
-Bjorn Andersson (2):
-      remoteproc: core: Make the loaded resource table optional
-      remoteproc: Add additional crash reasons
-
-Lee Jones (1):
-      remoteproc: core: Task sync during rproc_fw_boot()
-
- drivers/remoteproc/remoteproc_core.c     | 39 +++++++++++++++++++++++++-------
- drivers/remoteproc/remoteproc_internal.h |  1 +
- drivers/remoteproc/remoteproc_virtio.c   |  2 +-
- include/linux/remoteproc.h               |  4 ++++
- 4 files changed, 37 insertions(+), 9 deletions(-)
+Regards,
+Arnaud
+> +				mclk-fs = <256>;
+> +				cpu {
+> +					sound-dai = <&sti_uni_player2>;
+> +				};
+> +
+> +				codec {
+> +					sound-dai = <&sti_sasg_codec 1>;
+> +				};
+> +			};
+> +			simple-audio-card,dai-link@1 {
+> +				/* SPDIF */
+> +				format = "left_j";
+> +				mclk-fs = <128>;
+> +				cpu {
+> +					sound-dai = <&sti_uni_player3>;
+> +				};
+> +
+> +				codec {
+> +					sound-dai = <&sti_sasg_codec 0>;
+> +				};
+> +			};
+> +		};
+>  	};
+>  };
+> 
