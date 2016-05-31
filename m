@@ -1,42 +1,53 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 41/54] MAINTAINERS: Add file patterns for remoteproc device tree bindings
-Date: Sun, 22 May 2016 11:06:18 +0200
-Message-Id: <1463907991-7916-42-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
-References: <1463907991-7916-1-git-send-email-geert@linux-m68k.org>
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v4 15/18] ARM: STi: DT: STiH407: Add sti-sasg-codec dt
+ node
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+ <1464192412-16386-17-git-send-email-peter.griffin@linaro.org>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <574D53E7.40008@st.com>
+Date: Tue, 31 May 2016 11:05:43 +0200
+MIME-Version: 1.0
+In-Reply-To: <1464192412-16386-17-git-send-email-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de
+Cc: lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Submitters of device tree binding documentation may forget to CC
-the subsystem maintainer if this is missing.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
----
-Please apply this patch directly if you want to be involved in device
-tree binding documentation for your subsystem.
----
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d419cdbe35cbacab..327e1d5a501340ac 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9613,8 +9613,9 @@ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
- L:	linux-remoteproc@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/remoteproc.git
- S:	Maintained
--F:	drivers/remoteproc/
-+F:	Documentation/devicetree/bindings/remoteproc/
- F:	Documentation/remoteproc.txt
-+F:	drivers/remoteproc/
- F:	include/linux/remoteproc.h
- 
- REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
--- 
-1.9.1
+On 05/25/2016 06:06 PM, Peter Griffin wrote:
+> This patch adds the dt node for the internal audio
+> codec IP.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-family.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> index b423836..60f95b6 100644
+> --- a/arch/arm/boot/dts/stih407-family.dtsi
+> +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> @@ -746,5 +746,14 @@
+>  				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
+>  				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
+>  		};
+> +
+> +		sti_sasg_codec: sti-sasg-codec {
+> +			compatible = "st,stih407-sas-codec";
+> +			#sound-dai-cells = <1>;
+> +			status = "okay";
+Should be set to disable in family and enabled it depending on boards
+(stihxxx-b2120.dtsi)
+> +			st,syscfg = <&syscfg_core>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&pinctrl_spdif_out >;
+Declare pinctrl use in stihxxx-b2120.dtsi, should be set only if SPDIF used.
+
+Regards
+Arnaud
+> +		};
+>  	};
+>  };
+> 
