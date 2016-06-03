@@ -1,39 +1,62 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
+Date: Fri, 3 Jun 2016 14:00:46 +0100
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v5 11/18] ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
-Date: Tue,  7 Jun 2016 17:19:05 +0100
-Message-Id: <1465316352-20691-12-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
-References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, broonie@kernel.org
+Subject: Re: [PATCH v4 15/18] ARM: STi: DT: STiH407: Add sti-sasg-codec dt
+ node
+Message-ID: <20160603130046.GE9912@griffinp-ThinkPad-X1-Carbon-2nd>
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+ <1464192412-16386-17-git-send-email-peter.griffin@linaro.org>
+ <574D53E7.40008@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <574D53E7.40008@st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch enables the STi ALSA drivers found on STi platforms
-as well as the simple-card driver which is a dependency to have
-working sound.
+Hi Arnaud,
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Cc: arnaud.pouliquen@st.com
-Cc: broonie@kernel.org
----
- arch/arm/configs/multi_v7_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks for reviewing.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 1c34e17..529b923 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -607,6 +607,9 @@ CONFIG_SND_SOC_AK4642=m
- CONFIG_SND_SOC_SGTL5000=m
- CONFIG_SND_SOC_SPDIF=m
- CONFIG_SND_SOC_WM8978=m
-+CONFIG_SND_SOC_STI=m
-+CONFIG_SND_SOC_STI_SAS=m
-+CONFIG_SND_SIMPLE_CARD=m
- CONFIG_USB=y
- CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_XHCI_MVEBU=y
--- 
-1.9.1
+On Tue, 31 May 2016, Arnaud Pouliquen wrote:
+> 
+> 
+> On 05/25/2016 06:06 PM, Peter Griffin wrote:
+> > This patch adds the dt node for the internal audio
+> > codec IP.
+> > 
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  arch/arm/boot/dts/stih407-family.dtsi | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> > index b423836..60f95b6 100644
+> > --- a/arch/arm/boot/dts/stih407-family.dtsi
+> > +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> > @@ -746,5 +746,14 @@
+> >  				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
+> >  				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
+> >  		};
+> > +
+> > +		sti_sasg_codec: sti-sasg-codec {
+> > +			compatible = "st,stih407-sas-codec";
+> > +			#sound-dai-cells = <1>;
+> > +			status = "okay";
+> Should be set to disable in family and enabled it depending on boards
+> (stihxxx-b2120.dtsi)
+
+Will fix in v5
+
+> > +			st,syscfg = <&syscfg_core>;
+> > +			pinctrl-names = "default";
+> > +			pinctrl-0 = <&pinctrl_spdif_out >;
+> Declare pinctrl use in stihxxx-b2120.dtsi, should be set only if SPDIF used.
+
+Will fix in v5
+
+regards,
+
+Peter.
