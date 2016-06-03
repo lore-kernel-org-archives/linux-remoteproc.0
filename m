@@ -1,93 +1,41 @@
-Return-Path: <loic.pallardy@st.com>
-Subject: Re: [STLinux Kernel] [PATCH 5/5] remoteproc: core: Clip carveout if
- it's too big
-References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
- <1462454983-13168-6-git-send-email-lee.jones@linaro.org>
- <20160510192129.GL1256@tuxbot>
-From: loic pallardy <loic.pallardy@st.com>
-Message-ID: <57645524.1030200@st.com>
-Date: Fri, 17 Jun 2016 21:53:08 +0200
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+Date: Fri, 3 Jun 2016 14:05:12 +0100
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH v4 10/18] ASoC: sti: Update DT example to match the
+ driver code
+Message-ID: <20160603130512.GF9912@griffinp-ThinkPad-X1-Carbon-2nd>
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+ <1464192412-16386-12-git-send-email-peter.griffin@linaro.org>
+ <20160527171403.GN16172@sirena.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20160510192129.GL1256@tuxbot>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Lee Jones <lee.jones@linaro.org>
-Cc: ohad@wizery.com, kernel@stlinux.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160527171403.GN16172@sirena.org.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Hi Mark,
 
-Hi,
+On Fri, 27 May 2016, Mark Brown wrote:
 
-On 05/10/2016 09:21 PM, Bjorn Andersson wrote:
-> On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
->
->> Carveout size is primarily extracted from the firmware binary.  However,
->> DT can over-ride this by providing a different (smaller) size.  We're
->> adding protection here to ensure the we only allocate the smaller of the
->> two provided sizes in order to decrease the risk of clashes.
->>
->
-> Is this really the right thing to do?
->
-> The firmware is bundled with a resource table stating a certain size of
-> this the carveout and this would "silently" give it less space. On some
-> systems an IOMMU will save us (killing the firmware) but on others I
-> fear the firmware might just access memory outside its expected buffer.
+> On Wed, May 25, 2016 at 05:06:44PM +0100, Peter Griffin wrote:
+> > uniperiph-id, version and mode are ST specific bindings and
+> > need the 'st,' prefix. Update the examples, as otherwise copying
+> > them yields a runtime error parsing the DT node.
+> 
+> You've not copied me on the rest of the series so I've no idea what's
+> going on with dependencies.  When sending a patch series it is important
+> to ensure that all the various maintainers understand what the
+> relationship between the patches as the expecation is that there will be
+> interdependencies.  Either copy everyone on the whole series or at least
+> copy them on the cover letter and explain what's going on.  If there are
+> no strong interdependencies then it's generally simplest to just send
+> the patches separately to avoid any possible confusion.
 
-Agree with Bjorn, not it is not possible to silently clip carveout 
-memory.Firmware resource table should contain exact coprocessor needs. 
-If resources are not available, firmware loading must failed with 
-explicit message.
+Ok will bare this in mind for v5 series.
 
 Regards,
-Loic
 
->
->> Signed-off-by: Lee Jones <lee.jones@linaro.org>
->> ---
->>   drivers/remoteproc/remoteproc_core.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> [..]
->> @@ -600,6 +601,14 @@ static int rproc_handle_carveout(struct rproc *rproc,
->>   		return -ENOMEM;
->>
->>   	dma_dev = rproc_subdev_lookup(rproc, "carveout");
->> +	sub = dev_get_drvdata(dma_dev);
->> +
->> +	if (rsc->len > resource_size(sub->res)) {
->> +		dev_warn(dev, "carveout too big (0x%x): clipping to 0x%x\n",
->> +			 rsc->len, resource_size(sub->res));
->> +		rsc->len = resource_size(sub->res);
->> +	}
->
-> I would rather expect this to say:
->
-> if (resource_size(sub->res) < rsc->len) {
-> 	dev_err(dev, "defined carveout to small for firmware\n");
-> 	return -EINVAL;
-> }
->
-> Unless we trust the remote firmware to dynamically follow what we put in
-> the resource table. (And how does it tell us if that limit isn't
-> enough?)
->
->> +
->>   	va = dma_alloc_coherent(dma_dev, rsc->len, &dma, GFP_KERNEL);
->>   	if (!va) {
->>   		dev_err(dev->parent, "dma_alloc_coherent err: %d\n", rsc->len);
->
->
-> Apart from this concern I'm still need to review the subdev patch; here
-> related the part that there's only room for one carveout with only one
-> size.
->
-> Regards,
-> Bjorn
->
-> _______________________________________________
-> Kernel mailing list
-> Kernel@stlinux.com
-> http://www.stlinux.com/mailman/listinfo/kernel
->
+Peter.
