@@ -1,47 +1,62 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Mon, 6 Jun 2016 10:06:19 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v4 05/18] dmaengine: st_fdma: Add STMicroelectronics FDMA
- driver header file
-Message-ID: <20160606043618.GV16910@localhost>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+Date: Fri, 3 Jun 2016 13:50:23 +0100
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH v4 17/18] ARM: STi: DT: STiH407: Add uniperif reader dt
+ nodes
+Message-ID: <20160603125023.GC9912@griffinp-ThinkPad-X1-Carbon-2nd>
 References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
- <1464192412-16386-7-git-send-email-peter.griffin@linaro.org>
+ <1464192412-16386-19-git-send-email-peter.griffin@linaro.org>
+ <574D56CE.5020802@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1464192412-16386-7-git-send-email-peter.griffin@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
+In-Reply-To: <574D56CE.5020802@st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, May 25, 2016 at 05:06:39PM +0100, Peter Griffin wrote:
+Hi Arnaud,
 
-> +/*
-> + * request control bits
-> + */
-> +#define REQ_CTRL_NUM_OPS_MASK		GENMASK(31, 24)
-> +#define REQ_CTRL_NUM_OPS(n)		(REQ_CTRL_NUM_OPS_MASK & ((n) << 24))
-> +#define REQ_CTRL_INITIATOR_MASK		BIT(22)
-> +#define	REQ_CTRL_INIT0			(0x0 << 22)
-> +#define	REQ_CTRL_INIT1			(0x1 << 22)
+On Tue, 31 May 2016, Arnaud Pouliquen wrote:
 
-pls keep spaces or tabs, not both :(
+> 
+> 
+> On 05/25/2016 06:06 PM, Peter Griffin wrote:
+> > This patch adds the DT node for the uniperif reader
+> > IP block found on STiH407 family silicon.
+> > 
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  arch/arm/boot/dts/stih407-family.dtsi | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> > index 7ca149b..fb6363e1 100644
+> > --- a/arch/arm/boot/dts/stih407-family.dtsi
+> > +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> > @@ -831,5 +831,33 @@
+> >  			st,version = <5>;
+> >  			st,mode = "SPDIF";
+> >  		};
+> > +
+> > +		sti_uni_reader0: sti-uni-reader@0 {
+> > +			compatible = "st,sti-uni-reader";
+> > +			status = "disabled";
+> > +			#sound-dai-cells = <0>;
+> > +			st,syscfg = <&syscfg_core>;
+> > +			reg = <0x8D83000 0x158>;
+> > +			interrupts = <GIC_SPI 87 IRQ_TYPE_NONE>;
+> > +			dmas = <&fdma0 5 0 1>;
+> > +			dma-names = "rx";
+> > +			dai-name = "Uni Reader #0 (PCM IN)";
+> > +			st,version = <3>;
+> > +			pinctrl-names = "default";
+> > +			pinctrl-0 = <&pinctrl_i2s_8ch_in>;
+> suppress pinctrl declaration
 
-> +#define REQ_CTRL_INC_ADDR_ON		BIT(21)
-> +#define REQ_CTRL_DATA_SWAP_ON		BIT(17)
-> +#define REQ_CTRL_WNR			BIT(14)
-> +#define REQ_CTRL_OPCODE_MASK		GENMASK(7, 4)
-> +#define REQ_CTRL_OPCODE_LD_ST1		(0x0 << 4)
-> +#define REQ_CTRL_OPCODE_LD_ST2		(0x1 << 4)
-> +#define REQ_CTRL_OPCODE_LD_ST4		(0x2 << 4)
-> +#define REQ_CTRL_OPCODE_LD_ST8		(0x3 << 4)
-> +#define REQ_CTRL_OPCODE_LD_ST16		(0x4 << 4)
-> +#define REQ_CTRL_OPCODE_LD_ST32		(0x5 << 4)
-> +#define REQ_CTRL_OPCODE_LD_ST64		(0x6 << 4)
-> +#define REQ_CTRL_HOLDOFF_MASK		GENMASK(2, 0)
-> +#define REQ_CTRL_HOLDOFF(n)		((n) & REQ_CTRL_HOLDOFF_MASK)
+Will fix in v5
 
-Everything here is FDMA_ so why not these as well
+regards,
 
--- 
-~Vinod
+Peter.
