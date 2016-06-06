@@ -1,59 +1,41 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
+Date: Mon, 6 Jun 2016 16:09:01 +0100
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v5 17/18] ARM: STi: DT: STiH407: Add uniperif reader dt nodes
-Date: Tue,  7 Jun 2016 17:19:11 +0100
-Message-Id: <1465316352-20691-18-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
-References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 00/18]  Add support for FDMA DMA controller and xp70
+ rproc found on STi chipsets
+Message-ID: <20160606150901.GH9912@griffinp-ThinkPad-X1-Carbon-2nd>
+References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+ <20160606050148.GX16910@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160606050148.GX16910@localhost>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the DT node for the uniperif reader
-IP block found on STiH407 family silicon.
+Hi Vinod,
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407-family.dtsi | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+On Mon, 06 Jun 2016, Vinod Koul wrote:
 
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index 850b180..a7e6fc3 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -957,5 +957,31 @@
- 			st,version = <5>;
- 			st,mode = "SPDIF";
- 		};
-+
-+		sti_uni_reader0: sti-uni-reader@0 {
-+			compatible = "st,sti-uni-reader";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			reg = <0x8D83000 0x158>;
-+			interrupts = <GIC_SPI 87 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 5 0 1>;
-+			dma-names = "rx";
-+			dai-name = "Uni Reader #0 (PCM IN)";
-+			st,version = <3>;
-+		};
-+
-+		sti_uni_reader1: sti-uni-reader@1 {
-+			compatible = "st,sti-uni-reader";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			reg = <0x8D84000 0x158>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 6 0 1>;
-+			dma-names = "rx";
-+			dai-name = "Uni Reader #1 (HDMI RX)";
-+			st,version = <3>;
-+		};
- 	};
- };
--- 
-1.9.1
+> On Wed, May 25, 2016 at 05:06:33PM +0100, Peter Griffin wrote:
+> > 
+> > Peter Griffin (18):
+> >   dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding
+> >     documentation
+> >   dmaengine: st_fdma:  Add STMicroelectronics FDMA driver header file
+> >   dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support
+> >   dmaengine: st_fdma: Add xp70 firmware loading mechanism.
+> >   dmaengine: st_fdma: Add fdma suspend and resume callbacks.
+> 
+> I do not see the latter two patches in this series. Something is missed here
+> from cover to actual patches which is bit bizarre as one tends to generate
+> patches and cover together
+
+Sorry I accidentally sent two cover letters as part of this series. The v4
+one is here https://lkml.org/lkml/2016/5/25/451.
+
+regards,
+
+Peter.
