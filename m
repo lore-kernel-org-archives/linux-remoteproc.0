@@ -1,41 +1,61 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-Date: Mon, 6 Jun 2016 16:09:01 +0100
-From: Peter Griffin <peter.griffin@linaro.org>
+Return-Path: <vinod.koul@intel.com>
+Date: Mon, 6 Jun 2016 10:31:48 +0530
+From: Vinod Koul <vinod.koul@intel.com>
 Subject: Re: [PATCH 00/18]  Add support for FDMA DMA controller and xp70
  rproc found on STi chipsets
-Message-ID: <20160606150901.GH9912@griffinp-ThinkPad-X1-Carbon-2nd>
+Message-ID: <20160606050148.GX16910@localhost>
 References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
- <20160606050148.GX16910@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20160606050148.GX16910@localhost>
-To: Vinod Koul <vinod.koul@intel.com>
+In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Vinod,
-
-On Mon, 06 Jun 2016, Vinod Koul wrote:
-
-> On Wed, May 25, 2016 at 05:06:33PM +0100, Peter Griffin wrote:
-> > 
-> > Peter Griffin (18):
-> >   dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding
-> >     documentation
-> >   dmaengine: st_fdma:  Add STMicroelectronics FDMA driver header file
-> >   dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support
-> >   dmaengine: st_fdma: Add xp70 firmware loading mechanism.
-> >   dmaengine: st_fdma: Add fdma suspend and resume callbacks.
+On Wed, May 25, 2016 at 05:06:33PM +0100, Peter Griffin wrote:
 > 
-> I do not see the latter two patches in this series. Something is missed here
-> from cover to actual patches which is bit bizarre as one tends to generate
-> patches and cover together
+> Peter Griffin (18):
+>   dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding
+>     documentation
+>   dmaengine: st_fdma:  Add STMicroelectronics FDMA driver header file
+>   dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support
+>   dmaengine: st_fdma: Add xp70 firmware loading mechanism.
+>   dmaengine: st_fdma: Add fdma suspend and resume callbacks.
 
-Sorry I accidentally sent two cover letters as part of this series. The v4
-one is here https://lkml.org/lkml/2016/5/25/451.
+I do not see the latter two patches in this series. Something is missed here
+from cover to actual patches which is bit bizarre as one tends to generate
+patches and cover together
 
-regards,
+>   ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
+>   MAINTAINERS: Add FDMA driver files to STi section.
+>   ARM: multi_v7_defconfig: Enable STi FDMA driver
+>   ASoC: sti: Update DT example to match the driver code
+>   ASoC: sti: Update example to include assigned-clocks and mclk-fs
+>   ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
+>   ARM: DT: STiH407: Add i2s_out pinctrl configuration
+>   ARM: DT: STiH407: Add i2s_in pinctrl configuration
+>   ARM: DT: STiH407: Add spdif_out pinctrl config
+>   ARM: STi: DT: STiH407: Add sti-sasg-codec dt node
+>   ARM: STi: DT: STiH407: Add uniperif player dt nodes
+>   ARM: STi: DT: STiH407: Add uniperif reader dt nodes
+>   ARM: DT: STi: stihxxx-b2120: Add DT nodes for STi audio card
+> 
+>  Documentation/devicetree/bindings/dma/st_fdma.txt  |   87 ++
+>  .../devicetree/bindings/sound/st,sti-asoc-card.txt |   22 +-
+>  MAINTAINERS                                        |    1 +
+>  arch/arm/boot/dts/stih407-family.dtsi              |  164 +++
+>  arch/arm/boot/dts/stih407-pinctrl.dtsi             |   55 +
+>  arch/arm/boot/dts/stihxxx-b2120.dtsi               |   40 +
+>  arch/arm/configs/multi_v7_defconfig                |    4 +
+>  drivers/dma/Kconfig                                |   12 +
+>  drivers/dma/Makefile                               |    1 +
+>  drivers/dma/st_fdma.c                              | 1203 ++++++++++++++++++++
+>  drivers/dma/st_fdma.h                              |  281 +++++
+>  11 files changed, 1863 insertions(+), 7 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
+>  create mode 100644 drivers/dma/st_fdma.c
+>  create mode 100644 drivers/dma/st_fdma.h
 
-Peter.
+-- 
+~Vinod
