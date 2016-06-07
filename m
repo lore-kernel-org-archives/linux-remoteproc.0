@@ -1,76 +1,109 @@
-Return-Path: <>
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: [PATCH 1/4] rpmsg: add THIS_MODULE to rpmsg_driver in rpmsg core
-Date: Wed, 4 May 2016 13:34:12 -0500
-Message-ID: <1462386855-17381-1-git-send-email-afd@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Suman Anna <s-anna@ti.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v5 16/18] ARM: STi: DT: STiH407: Add uniperif player dt nodes
+Date: Tue,  7 Jun 2016 17:19:10 +0100
+Message-Id: <1465316352-20691-17-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add register_rpmsg_driver helper macro that adds THIS_MODULE to
-rpmsg_driver for the registering driver. We rename and modify
-the existing register_rpmsg_driver to enable this.
+This patch adds the DT nodes for the uniperif player
+IP blocks found on STiH407 family silicon.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 8 +++++---
- include/linux/rpmsg.h            | 8 +++++++-
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/stih407-family.dtsi | 76 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1fcd27c..fe03b2a 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -436,17 +436,19 @@ static struct bus_type rpmsg_bus = {
- };
- 
- /**
-- * register_rpmsg_driver() - register an rpmsg driver with the rpmsg bus
-+ * __register_rpmsg_driver() - register an rpmsg driver with the rpmsg bus
-  * @rpdrv: pointer to a struct rpmsg_driver
-+ * @owner: owning module/driver
-  *
-  * Returns 0 on success, and an appropriate error value on failure.
-  */
--int register_rpmsg_driver(struct rpmsg_driver *rpdrv)
-+int __register_rpmsg_driver(struct rpmsg_driver *rpdrv, struct module *owner)
- {
- 	rpdrv->drv.bus = &rpmsg_bus;
-+	rpdrv->drv.owner = owner;
- 	return driver_register(&rpdrv->drv);
- }
--EXPORT_SYMBOL(register_rpmsg_driver);
-+EXPORT_SYMBOL(__register_rpmsg_driver);
- 
- /**
-  * unregister_rpmsg_driver() - unregister an rpmsg driver from the rpmsg bus
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 82a6739..78e45ce 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -169,7 +169,7 @@ struct rpmsg_driver {
- 
- int register_rpmsg_device(struct rpmsg_channel *dev);
- void unregister_rpmsg_device(struct rpmsg_channel *dev);
--int register_rpmsg_driver(struct rpmsg_driver *drv);
-+int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
- void unregister_rpmsg_driver(struct rpmsg_driver *drv);
- void rpmsg_destroy_ept(struct rpmsg_endpoint *);
- struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
-@@ -177,6 +177,12 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
- int
- rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
- 
-+/*
-+ * use a macro to avoid include chaining to get THIS_MODULE
-+ */
-+#define register_rpmsg_driver(drv) \
-+	__register_rpmsg_driver(drv, THIS_MODULE)
+diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+index 3d74bc2..850b180 100644
+--- a/arch/arm/boot/dts/stih407-family.dtsi
++++ b/arch/arm/boot/dts/stih407-family.dtsi
+@@ -881,5 +881,81 @@
+ 			status = "disabled";
+ 			st,syscfg = <&syscfg_core>;
+ 		};
 +
- /**
-  * rpmsg_send() - send a message across to the remote processor
-  * @rpdev: the rpmsg channel
++		sti_uni_player0: sti-uni-player@0 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_PCM_0>;
++			assigned-clocks = <&clk_s_d0_quadfs 0>, <&clk_s_d0_flexgen CLK_PCM_0>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 0>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D80000 0x158>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 2 0 1>;
++			dai-name = "Uni Player #0 (HDMI)";
++			dma-names = "tx";
++			st,uniperiph-id = <0>;
++			st,version = <5>;
++			st,mode = "HDMI";
++		};
++
++		sti_uni_player1: sti-uni-player@1 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_PCM_1>;
++			assigned-clocks = <&clk_s_d0_quadfs 1>, <&clk_s_d0_flexgen CLK_PCM_1>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 1>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D81000 0x158>;
++			interrupts = <GIC_SPI 85 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 3 0 1>;
++			dai-name = "Uni Player #1 (PIO)";
++			dma-names = "tx";
++			st,uniperiph-id = <1>;
++			st,version = <5>;
++			st,mode = "PCM";
++		};
++
++		sti_uni_player2: sti-uni-player@2 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++			assigned-clocks = <&clk_s_d0_quadfs 2>, <&clk_s_d0_flexgen CLK_PCM_2>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 2>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D82000 0x158>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 4 0 1>;
++			dai-name = "Uni Player #1 (DAC)";
++			dma-names = "tx";
++			st,uniperiph-id = <2>;
++			st,version = <5>;
++			st,mode = "PCM";
++		};
++
++		sti_uni_player3: sti-uni-player@3 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_SPDIFF>;
++			assigned-clocks = <&clk_s_d0_quadfs 3>, <&clk_s_d0_flexgen CLK_SPDIFF>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 3>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D85000 0x158>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 7 0 1>;
++			dma-names = "tx";
++			dai-name = "Uni Player #1 (PIO)";
++			st,uniperiph-id = <3>;
++			st,version = <5>;
++			st,mode = "SPDIF";
++		};
+ 	};
+ };
 -- 
-2.8.2
+1.9.1
