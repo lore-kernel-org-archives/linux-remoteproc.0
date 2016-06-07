@@ -1,34 +1,118 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v5 09/18] ARM: multi_v7_defconfig: Enable STi FDMA driver
-Date: Tue,  7 Jun 2016 17:19:03 +0100
-Message-Id: <1465316352-20691-10-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v5 04/18] dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding documentation
+Date: Tue,  7 Jun 2016 17:18:58 +0100
+Message-Id: <1465316352-20691-5-git-send-email-peter.griffin@linaro.org>
 In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
 References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This DMA controller is found on all STi chipsets.
+This patch adds the DT binding documentation for the FDMA constroller
+found on STi based chipsets from STMicroelectronics.
 
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/dma/st_fdma.txt | 87 +++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index f30489e..1c34e17 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -746,6 +746,7 @@ CONFIG_DMA_OMAP=y
- CONFIG_QCOM_BAM_DMA=y
- CONFIG_XILINX_VDMA=y
- CONFIG_DMA_SUN6I=y
-+CONFIG_ST_FDMA=m
- CONFIG_STAGING=y
- CONFIG_SENSORS_ISL29018=y
- CONFIG_SENSORS_ISL29028=y
+diff --git a/Documentation/devicetree/bindings/dma/st_fdma.txt b/Documentation/devicetree/bindings/dma/st_fdma.txt
+new file mode 100644
+index 0000000..495d853
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/st_fdma.txt
+@@ -0,0 +1,87 @@
++* STMicroelectronics Flexible Direct Memory Access Device Tree bindings
++
++The FDMA is a general-purpose direct memory access controller capable of
++supporting 16 independent DMA channels. It accepts up to 32 DMA requests.
++The FDMA is based on a Slim processor which requires a firmware.
++
++* FDMA Controller
++
++Required properties:
++- compatible	: Should be one of
++		 - st,stih407-fdma-mpe31-11, "st,slim-rproc";
++		 - st,stih407-fdma-mpe31-12, "st,slim-rproc";
++		 - st,stih407-fdma-mpe31-13, "st,slim-rproc";
++- reg		: Should contain an entry for each name in reg-names
++- reg-names	: Must contain "slimcore", "dmem", "peripherals", "imem" entries
++- interrupts	: Should contain one interrupt shared by all channels
++- dma-channels	: Number of channels supported by the controller
++- #dma-cells	: Must be <3>. See DMA client section below
++- clocks	: Must contain an entry for each clock
++See: Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++
++Example:
++
++	fdma0: dma-controller@8e20000 {
++		compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
++		reg = <0x8e20000 0x8000>,
++		      <0x8e30000 0x3000>,
++		      <0x8e37000 0x1000>,
++		      <0x8e38000 0x8000>;
++		reg-names = "slimcore", "dmem", "peripherals", "imem";
++		clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
++		interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
++		dma-channels = <16>;
++		#dma-cells = <3>;
++	};
++
++* DMA client
++
++Required properties:
++- dmas: Comma separated list of dma channel requests
++- dma-names: Names of the aforementioned requested channels
++
++Each dmas request consists of 4 cells:
++1. A phandle pointing to the FDMA controller
++2. The request line number
++3. A 32bit mask specifying (see include/linux/platform_data/dma-st-fdma.h)
++ -bit 2-0: Holdoff value, dreq will be masked for
++	0x0: 0-0.5us
++	0x1: 0.5-1us
++	0x2: 1-1.5us
++ -bit 17: data swap
++	0x0: disabled
++	0x1: enabled
++ -bit 21: Increment Address
++	0x0: no address increment between transfers
++	0x1: increment address between transfers
++ -bit 22: 2 STBus Initiator Coprocessor interface
++	0x0: high priority port
++	0x1: low priority port
++4. transfers type
++ 0 free running
++ 1 paced
++
++Example:
++
++	sti_uni_player2: sti-uni-player@2 {
++		compatible = "st,sti-uni-player";
++		status = "disabled";
++		#sound-dai-cells = <0>;
++		st,syscfg = <&syscfg_core>;
++		clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++		assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++		assigned-clock-parents = <&clk_s_d0_quadfs 2>;
++		assigned-clock-rates = <50000000>;
++		reg = <0x8D82000 0x158>;
++		interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
++		dmas = <&fdma0 4 0 1>;
++		dai-name = "Uni Player #1 (DAC)";
++		dma-names = "tx";
++		st,uniperiph-id = <2>;
++		st,version = <5>;
++		st,mode = "PCM";
++	};
 -- 
 1.9.1
