@@ -1,75 +1,79 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:37302 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750994AbcFCMkD (ORCPT
-	<rfc822;linux-remoteproc@vger.kernel.org>);
-	Fri, 3 Jun 2016 08:40:03 -0400
-Received: by mail-wm0-f51.google.com with SMTP id z87so106792085wmh.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jun 2016 05:40:03 -0700 (PDT)
-Date: Fri, 3 Jun 2016 13:39:58 +0100
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH v4 11/18] ARM: multi_v7_defconfig: Enable STi and
- simple-card drivers.
-Message-ID: <20160603123958.GA9912@griffinp-ThinkPad-X1-Carbon-2nd>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
- <1464192412-16386-13-git-send-email-peter.griffin@linaro.org>
- <574D5178.5030200@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <574D5178.5030200@st.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, broonie@kernel.org
+Subject: [PATCH v5 18/18] ARM: DT: STi: stihxxx-b2120: Add DT nodes for STi audio card
+Date: Tue,  7 Jun 2016 17:19:12 +0100
+Message-Id: <1465316352-20691-19-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Arnaud,
+This patch enables the uniperif players 2 & 3 for b2120 boards
+and also adds the "simple-audio-card" device node to interconnect
+the SoC sound device and the codec.
 
-On Tue, 31 May 2016, Arnaud Pouliquen wrote:
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ arch/arm/boot/dts/stihxxx-b2120.dtsi | 45 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-> Hi Peter,
-> 
-> On 05/25/2016 06:06 PM, Peter Griffin wrote:
-> > This patch enables the STi ALSA drivers found on STi platforms
-> > as well as the simple-card driver which is a dependency to have
-> > working sound.
-> > 
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > Cc: arnaud.pouliquen@st.com
-> > Cc: broonie@kernel.org
-> > ---
-> >  arch/arm/configs/multi_v7_defconfig | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> > index 5eee45b..0ced665 100644
-> > --- a/arch/arm/configs/multi_v7_defconfig
-> > +++ b/arch/arm/configs/multi_v7_defconfig
-> > @@ -589,6 +589,9 @@ CONFIG_SND_SOC_AK4642=m
-> >  CONFIG_SND_SOC_SGTL5000=m
-> >  CONFIG_SND_SOC_SPDIF=m
-> >  CONFIG_SND_SOC_WM8978=m
-> > +CONFIG_SND_SOC_STI=m
-> > +CONFIG_SND_SOC_STI_SAS=m
-> > +CONFIG_SND_SIMPLE_CARD=m
-> Simple card config seems enabled by default, at least on 4.7 rc1.
-
-I don't think it is currently, I get the following when greping v4.7-rc1 tag
-
-git grep CONFIG_SND_SIMPLE_CARD
-arch/arm/configs/exynos_defconfig:CONFIG_SND_SIMPLE_CARD=y
-arch/arm/configs/imx_v6_v7_defconfig:CONFIG_SND_SIMPLE_CARD=y
-arch/arm/configs/multi_v5_defconfig:CONFIG_SND_SIMPLE_CARD=y
-arch/arm/configs/mvebu_v5_defconfig:CONFIG_SND_SIMPLE_CARD=y
-arch/arm/configs/mvebu_v7_defconfig:CONFIG_SND_SIMPLE_CARD=y
-arch/arm/configs/omap2plus_defconfig:CONFIG_SND_SIMPLE_CARD=m
-arch/arm/configs/pxa_defconfig:CONFIG_SND_SIMPLE_CARD=m
-arch/xtensa/configs/audio_kc705_defconfig:CONFIG_SND_SIMPLE_CARD=y
-sound/soc/generic/Makefile:obj-$(CONFIG_SND_SIMPLE_CARD)        +=
-snd-soc-simple-card.o
-
-Although maybe it should be built-in rather than a module, like multi_v5_defconfig.
-
-regards,
-
-Peter
+diff --git a/arch/arm/boot/dts/stihxxx-b2120.dtsi b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+index 722c63f..1f64bb6 100644
+--- a/arch/arm/boot/dts/stihxxx-b2120.dtsi
++++ b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+@@ -131,5 +131,50 @@
+ 				dvb-card	= <STV0367_TDA18212_NIMA_1>;
+ 			};
+ 		};
++
++		sti_uni_player2: sti-uni-player@2 {
++			status = "okay";
++		};
++
++		sti_uni_player3: sti-uni-player@3 {
++			status = "okay";
++		};
++
++		sti_sasg_codec: sti-sasg-codec {
++			status = "okay";
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_spdif_out>;
++		};
++
++		sound {
++			compatible = "simple-audio-card";
++			simple-audio-card,name = "sti audio card";
++			status = "okay";
++
++			simple-audio-card,dai-link@0 {
++				/* DAC */
++				format = "i2s";
++				mclk-fs = <256>;
++				cpu {
++					sound-dai = <&sti_uni_player2>;
++				};
++
++				codec {
++					sound-dai = <&sti_sasg_codec 1>;
++				};
++			};
++			simple-audio-card,dai-link@1 {
++				/* SPDIF */
++				format = "left_j";
++				mclk-fs = <128>;
++				cpu {
++					sound-dai = <&sti_uni_player3>;
++				};
++
++				codec {
++					sound-dai = <&sti_sasg_codec 0>;
++				};
++			};
++		};
+ 	};
+ };
+-- 
+1.9.1
