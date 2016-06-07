@@ -1,107 +1,82 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v5 16/18] ARM: STi: DT: STiH407: Add uniperif player dt nodes
-Date: Tue,  7 Jun 2016 17:19:10 +0100
-Message-Id: <1465316352-20691-17-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v5 07/18] ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
+Date: Tue,  7 Jun 2016 17:19:01 +0100
+Message-Id: <1465316352-20691-8-git-send-email-peter.griffin@linaro.org>
 In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
 References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
 Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the DT nodes for the uniperif player
-IP blocks found on STiH407 family silicon.
+These nodes are required to get the fdma driver working
+on STiH407 based silicon.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- arch/arm/boot/dts/stih407-family.dtsi | 76 +++++++++++++++++++++++++++++++++++
- 1 file changed, 76 insertions(+)
+ arch/arm/boot/dts/stih407-family.dtsi | 52 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
 diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index 3d74bc2..850b180 100644
+index c47c664..017d670 100644
 --- a/arch/arm/boot/dts/stih407-family.dtsi
 +++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -881,5 +881,81 @@
- 			status = "disabled";
- 			st,syscfg = <&syscfg_core>;
+@@ -822,5 +822,57 @@
+ 			clock-frequency	= <600000000>;
+ 			st,syscfg	= <&syscfg_core 0x224>;
  		};
 +
-+		sti_uni_player0: sti-uni-player@0 {
-+			compatible = "st,sti-uni-player";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			clocks = <&clk_s_d0_flexgen CLK_PCM_0>;
-+			assigned-clocks = <&clk_s_d0_quadfs 0>, <&clk_s_d0_flexgen CLK_PCM_0>;
-+			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 0>;
-+			assigned-clock-rates = <50000000>;
-+			reg = <0x8D80000 0x158>;
-+			interrupts = <GIC_SPI 84 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 2 0 1>;
-+			dai-name = "Uni Player #0 (HDMI)";
-+			dma-names = "tx";
-+			st,uniperiph-id = <0>;
-+			st,version = <5>;
-+			st,mode = "HDMI";
++		/* fdma audio */
++		fdma0: dma-controller@8e20000 {
++			compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
++			reg = <0x8e20000 0x8000>,
++			      <0x8e30000 0x3000>,
++			      <0x8e37000 0x1000>,
++			      <0x8e38000 0x8000>;
++			reg-names = "slimcore", "dmem", "peripherals", "imem";
++			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++				 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
++			dma-channels = <16>;
++			#dma-cells = <3>;
 +		};
 +
-+		sti_uni_player1: sti-uni-player@1 {
-+			compatible = "st,sti-uni-player";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			clocks = <&clk_s_d0_flexgen CLK_PCM_1>;
-+			assigned-clocks = <&clk_s_d0_quadfs 1>, <&clk_s_d0_flexgen CLK_PCM_1>;
-+			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 1>;
-+			assigned-clock-rates = <50000000>;
-+			reg = <0x8D81000 0x158>;
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 3 0 1>;
-+			dai-name = "Uni Player #1 (PIO)";
-+			dma-names = "tx";
-+			st,uniperiph-id = <1>;
-+			st,version = <5>;
-+			st,mode = "PCM";
++		/* fdma app */
++		fdma1: dma-controller@8e40000 {
++			compatible = "st,stih407-fdma-mpe31-12", "st,slim-rproc";
++			reg = <0x8e40000 0x8000>,
++			      <0x8e50000 0x3000>,
++			      <0x8e57000 0x1000>,
++			      <0x8e58000 0x8000>;
++			reg-names = "slimcore", "dmem", "peripherals", "imem";
++			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
++				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
++				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
++
++			interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>;
++			dma-channels = <16>;
++			#dma-cells = <3>;
 +		};
 +
-+		sti_uni_player2: sti-uni-player@2 {
-+			compatible = "st,sti-uni-player";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
-+			assigned-clocks = <&clk_s_d0_quadfs 2>, <&clk_s_d0_flexgen CLK_PCM_2>;
-+			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 2>;
-+			assigned-clock-rates = <50000000>;
-+			reg = <0x8D82000 0x158>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 4 0 1>;
-+			dai-name = "Uni Player #1 (DAC)";
-+			dma-names = "tx";
-+			st,uniperiph-id = <2>;
-+			st,version = <5>;
-+			st,mode = "PCM";
-+		};
-+
-+		sti_uni_player3: sti-uni-player@3 {
-+			compatible = "st,sti-uni-player";
-+			status = "disabled";
-+			#sound-dai-cells = <0>;
-+			st,syscfg = <&syscfg_core>;
-+			clocks = <&clk_s_d0_flexgen CLK_SPDIFF>;
-+			assigned-clocks = <&clk_s_d0_quadfs 3>, <&clk_s_d0_flexgen CLK_SPDIFF>;
-+			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 3>;
-+			assigned-clock-rates = <50000000>;
-+			reg = <0x8D85000 0x158>;
-+			interrupts = <GIC_SPI 89 IRQ_TYPE_NONE>;
-+			dmas = <&fdma0 7 0 1>;
-+			dma-names = "tx";
-+			dai-name = "Uni Player #1 (PIO)";
-+			st,uniperiph-id = <3>;
-+			st,version = <5>;
-+			st,mode = "SPDIF";
++		/* fdma free running */
++		fdma2: dma-controller@8e60000 {
++			compatible = "st,stih407-fdma-mpe31-13", "st,slim-rproc";
++			reg = <0x8e60000 0x8000>,
++			      <0x8e70000 0x3000>,
++			      <0x8e77000 0x1000>,
++			      <0x8e78000 0x8000>;
++			reg-names = "slimcore", "dmem", "peripherals", "imem";
++			interrupts = <GIC_SPI 9 IRQ_TYPE_NONE>;
++			dma-channels = <16>;
++			#dma-cells = <3>;
++			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++				<&clk_s_c0_flexgen CLK_EXT2F_A9>,
++				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
++				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
 +		};
  	};
  };
