@@ -1,79 +1,39 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v5 18/18] ARM: DT: STi: stihxxx-b2120: Add DT nodes for STi audio card
-Date: Tue,  7 Jun 2016 17:19:12 +0100
-Message-Id: <1465316352-20691-19-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 7 Jun 2016 12:56:17 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 01/18] remoteproc: make rsc table support optional
+Message-ID: <20160607195617.GI1256@tuxbot>
 References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+ <1465316352-20691-2-git-send-email-peter.griffin@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1465316352-20691-2-git-send-email-peter.griffin@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, arnaud.pouliquen@st.com, arnd@arndb.de, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch enables the uniperif players 2 & 3 for b2120 boards
-and also adds the "simple-audio-card" device node to interconnect
-the SoC sound device and the codec.
+On Tue 07 Jun 09:18 PDT 2016, Peter Griffin wrote:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stihxxx-b2120.dtsi | 45 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+> Some firmware and rproc drivers such as slim core don't have a
+> resource table. To avoid having to fudge an empty table
+> in the rproc driver this patch introduces a new has_rsctable
+> flag. rproc drivers which don't require a rsc table can set
+> this flag to false, and it avoids doing the initial async
+> firmware load in rproc_add_virtio_devices() to parse the
+> rsc table during rproc_add(), and also optimises rproc_fw_boot()
+> code path to avoid unnecessary rsc table processing of an
+> empty table.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-diff --git a/arch/arm/boot/dts/stihxxx-b2120.dtsi b/arch/arm/boot/dts/stihxxx-b2120.dtsi
-index 722c63f..1f64bb6 100644
---- a/arch/arm/boot/dts/stihxxx-b2120.dtsi
-+++ b/arch/arm/boot/dts/stihxxx-b2120.dtsi
-@@ -131,5 +131,50 @@
- 				dvb-card	= <STV0367_TDA18212_NIMA_1>;
- 			};
- 		};
-+
-+		sti_uni_player2: sti-uni-player@2 {
-+			status = "okay";
-+		};
-+
-+		sti_uni_player3: sti-uni-player@3 {
-+			status = "okay";
-+		};
-+
-+		sti_sasg_codec: sti-sasg-codec {
-+			status = "okay";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&pinctrl_spdif_out>;
-+		};
-+
-+		sound {
-+			compatible = "simple-audio-card";
-+			simple-audio-card,name = "sti audio card";
-+			status = "okay";
-+
-+			simple-audio-card,dai-link@0 {
-+				/* DAC */
-+				format = "i2s";
-+				mclk-fs = <256>;
-+				cpu {
-+					sound-dai = <&sti_uni_player2>;
-+				};
-+
-+				codec {
-+					sound-dai = <&sti_sasg_codec 1>;
-+				};
-+			};
-+			simple-audio-card,dai-link@1 {
-+				/* SPDIF */
-+				format = "left_j";
-+				mclk-fs = <128>;
-+				cpu {
-+					sound-dai = <&sti_uni_player3>;
-+				};
-+
-+				codec {
-+					sound-dai = <&sti_sasg_codec 0>;
-+				};
-+			};
-+		};
- 	};
- };
--- 
-1.9.1
+Hi Peter,
+
+Thanks for the patch. I do however dislike the amount of conditionals
+already in these code paths, so I'm not in favour of adding more.
+
+Please revert back to providing a dummy table from your driver and let's
+handle this topic separate of this series.
+
+Regards,
+Bjorn
