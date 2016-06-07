@@ -1,61 +1,42 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Mon, 6 Jun 2016 10:31:48 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 00/18]  Add support for FDMA DMA controller and xp70
- rproc found on STi chipsets
-Message-ID: <20160606050148.GX16910@localhost>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v5 03/18] MAINTAINERS: Add st slim core rproc driver to STi section.
+Date: Tue,  7 Jun 2016 17:18:57 +0100
+Message-Id: <1465316352-20691-4-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, May 25, 2016 at 05:06:33PM +0100, Peter Griffin wrote:
-> 
-> Peter Griffin (18):
->   dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding
->     documentation
->   dmaengine: st_fdma:  Add STMicroelectronics FDMA driver header file
->   dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support
->   dmaengine: st_fdma: Add xp70 firmware loading mechanism.
->   dmaengine: st_fdma: Add fdma suspend and resume callbacks.
+This patch adds the slim core rproc driver to the STi section
+of the MAINTAINERS file.
 
-I do not see the latter two patches in this series. Something is missed here
-from cover to actual patches which is bit bizarre as one tends to generate
-patches and cover together
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
->   ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
->   MAINTAINERS: Add FDMA driver files to STi section.
->   ARM: multi_v7_defconfig: Enable STi FDMA driver
->   ASoC: sti: Update DT example to match the driver code
->   ASoC: sti: Update example to include assigned-clocks and mclk-fs
->   ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
->   ARM: DT: STiH407: Add i2s_out pinctrl configuration
->   ARM: DT: STiH407: Add i2s_in pinctrl configuration
->   ARM: DT: STiH407: Add spdif_out pinctrl config
->   ARM: STi: DT: STiH407: Add sti-sasg-codec dt node
->   ARM: STi: DT: STiH407: Add uniperif player dt nodes
->   ARM: STi: DT: STiH407: Add uniperif reader dt nodes
->   ARM: DT: STi: stihxxx-b2120: Add DT nodes for STi audio card
-> 
->  Documentation/devicetree/bindings/dma/st_fdma.txt  |   87 ++
->  .../devicetree/bindings/sound/st,sti-asoc-card.txt |   22 +-
->  MAINTAINERS                                        |    1 +
->  arch/arm/boot/dts/stih407-family.dtsi              |  164 +++
->  arch/arm/boot/dts/stih407-pinctrl.dtsi             |   55 +
->  arch/arm/boot/dts/stihxxx-b2120.dtsi               |   40 +
->  arch/arm/configs/multi_v7_defconfig                |    4 +
->  drivers/dma/Kconfig                                |   12 +
->  drivers/dma/Makefile                               |    1 +
->  drivers/dma/st_fdma.c                              | 1203 ++++++++++++++++++++
->  drivers/dma/st_fdma.h                              |  281 +++++
->  11 files changed, 1863 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
->  create mode 100644 drivers/dma/st_fdma.c
->  create mode 100644 drivers/dma/st_fdma.h
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ed42cb6..8f16983 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1712,6 +1712,7 @@ F:	drivers/phy/phy-stih407-usb.c
+ F:	drivers/phy/phy-stih41x-usb.c
+ F:	drivers/pinctrl/pinctrl-st.c
+ F:	drivers/remoteproc/st_remoteproc.c
++F:	drivers/remoteproc/st_slim_rproc.c
+ F:	drivers/reset/sti/
+ F:	drivers/rtc/rtc-st-lpc.c
+ F:	drivers/tty/serial/st-asc.c
+@@ -1720,6 +1721,7 @@ F:	drivers/usb/host/ehci-st.c
+ F:	drivers/usb/host/ohci-st.c
+ F:	drivers/watchdog/st_lpc_wdt.c
+ F:	drivers/ata/ahci_st.c
++F:	include/linux/remoteproc/st_slim_rproc.h
+ 
+ ARM/STM32 ARCHITECTURE
+ M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
 -- 
-~Vinod
+1.9.1
