@@ -1,167 +1,34 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/2] dt-binding: remoteproc: Introduce Hexagon loader binding
-Date: Thu,  9 Jun 2016 22:53:00 -0700
-Message-Id: <1465537980-13347-2-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1465537980-13347-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1465537980-13347-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v5 09/18] ARM: multi_v7_defconfig: Enable STi FDMA driver
+Date: Tue,  7 Jun 2016 17:19:03 +0100
+Message-Id: <1465316352-20691-10-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+References: <1465316352-20691-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, patrice.chotard@st.com, srinivas.kandagatla@gmail.com, vinod.koul@intel.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com, arnd@arndb.de
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This document defines the binding for a component that loads firmware
-and control the life cycle of a self-authenticating Qualcomm Hexagon
-core.
+This DMA controller is found on all STi chipsets.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 138 +++++++++++++++++++++
- 1 file changed, 138 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-new file mode 100644
-index 000000000000..066ddb8d4d2a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -0,0 +1,138 @@
-+Qualcomm Hexagon Peripheral Image Loader
-+
-+This document defines the binding for a component that loads and boots firmware
-+on the Qualcomm Hexagon core.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+		    "qcom,q6v5-pil"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must specify the base address and size of the qdsp6 and
-+		    rmb register blocks
-+
-+- reg-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "q6dsp" and "rmb"
-+
-+- interrupts-extended:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must list the watchdog, fatal IRQs ready, handover and
-+		    stop-ack IRQs
-+
-+- interrupt-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
-+
-+- clocks:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the iface, bus and mem clocks to be held on
-+		    behalf of the booting of the Hexagon core
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "iface", "bus", "mem"
-+
-+- resets:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the reset-controller for the modem sub-system
-+
-+- reset-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "mss_restart"
-+
-+- cx-supply:
-+- mss-supply:
-+- mx-supply:
-+- pll-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the regulators to be held on behalf of the
-+		    booting of the Hexagon core
-+
-+- qcom,smem-states:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the smem state for requesting the Hexagon to
-+		    shut down
-+
-+- qcom,smem-state-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "stop"
-+
-+- qcom,halt-regs:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: a phandle reference to a syscon representing TCSR followed
-+		    by the three offsets within syscon for q6, modem and nc
-+		    halt registers.
-+
-+= SUBNODES:
-+The Hexagon node must contain two subnodes, named "mba" and "mpss" representing
-+the memory regions used by the Hexagon firmware. Each sub-node must contain:
-+
-+- memory-region:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the reserved-memory for the region
-+
-+= EXAMPLE
-+The following example describes the resources needed to boot control the
-+Hexagon, as it is found on MSM8974 boards.
-+
-+	modem-rproc@fc880000 {
-+		compatible = "qcom,q6v5-pil";
-+		reg = <0xfc880000 0x100>,
-+		      <0xfc820000 0x020>;
-+		reg-names = "qdsp6_base", "rmb_base";
-+
-+		interrupts-extended = <&intc 0 24 1>,
-+				      <&modem_smp2p_in 0 0>,
-+				      <&modem_smp2p_in 1 0>,
-+				      <&modem_smp2p_in 2 0>,
-+				      <&modem_smp2p_in 3 0>;
-+		interrupt-names = "wdog",
-+				  "fatal",
-+				  "ready",
-+				  "handover",
-+				  "stop-ack";
-+
-+		clocks = <&gcc GCC_MSS_Q6_BIMC_AXI_CLK>,
-+			 <&gcc GCC_MSS_CFG_AHB_CLK>,
-+			 <&gcc GCC_BOOT_ROM_AHB_CLK>;
-+		clock-names = "iface", "bus", "mem";
-+
-+		qcom,halt-regs = <&tcsr_mutex_block 0x1180 0x1200 0x1280>;
-+
-+		resets = <&gcc GCC_MSS_RESTART>;
-+		reset-names = "mss_restart";
-+
-+		cx-supply = <&pm8841_s2>;
-+		mss-supply = <&pm8841_s3>;
-+		mx-supply = <&pm8841_s1>;
-+		pll-supply = <&pm8941_l12>;
-+
-+		qcom,smem-states = <&modem_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		mba {
-+			memory-region = <&mba_region>;
-+		};
-+
-+		mpss {
-+			memory-region = <&mpss_region>;
-+		};
-+	};
-+
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index f30489e..1c34e17 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -746,6 +746,7 @@ CONFIG_DMA_OMAP=y
+ CONFIG_QCOM_BAM_DMA=y
+ CONFIG_XILINX_VDMA=y
+ CONFIG_DMA_SUN6I=y
++CONFIG_ST_FDMA=m
+ CONFIG_STAGING=y
+ CONFIG_SENSORS_ISL29018=y
+ CONFIG_SENSORS_ISL29028=y
 -- 
-2.5.0
+1.9.1
