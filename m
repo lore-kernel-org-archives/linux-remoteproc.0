@@ -1,10 +1,10 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 1/2] remoteproc: qcom: Driver for the self-authenticating Hexagon v5
-Date: Mon, 20 Jun 2016 14:28:41 -0700
-Message-Id: <1466458122-12180-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Subject: [PATCH 1/2] remoteproc: qcom: Driver for the self-authenticating Hexagon v5
+Date: Thu,  9 Jun 2016 22:52:59 -0700
+Message-Id: <1465537980-13347-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
@@ -15,24 +15,12 @@ use that to load the mdt and subsequent bXX files.
 Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-
-Changes since v2:
-- Balancing the rom_clk calls
-- Moved reset wait to the reset function
-- Various cleanups per Srinivas review
-- MODULE_DESCRIPTION and MODULE_LICENSE
-
-Changes since v1:
-- Corrected boot address in relocation case
-- Using rproc_da_to_va() to clean up mdt loader api
-- Dynamically allocating scratch space for mdt verification
-
  drivers/remoteproc/Kconfig           |  12 +
  drivers/remoteproc/Makefile          |   2 +
- drivers/remoteproc/qcom_mdt_loader.c | 179 +++++++
- drivers/remoteproc/qcom_mdt_loader.h |  13 +
- drivers/remoteproc/qcom_q6v5_pil.c   | 916 +++++++++++++++++++++++++++++++++++
- 5 files changed, 1122 insertions(+)
+ drivers/remoteproc/qcom_mdt_loader.c | 181 ++++++++
+ drivers/remoteproc/qcom_mdt_loader.h |  19 +
+ drivers/remoteproc/qcom_q6v5_pil.c   | 866 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 1080 insertions(+)
  create mode 100644 drivers/remoteproc/qcom_mdt_loader.c
  create mode 100644 drivers/remoteproc/qcom_mdt_loader.h
  create mode 100644 drivers/remoteproc/qcom_q6v5_pil.c
@@ -73,10 +61,10 @@ index 279cb2edc880..92d3758bd15c 100644
  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
 diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/remoteproc/qcom_mdt_loader.c
 new file mode 100644
-index 000000000000..114e8e4cef67
+index 000000000000..be0b11b3d5bf
 --- /dev/null
 +++ b/drivers/remoteproc/qcom_mdt_loader.c
-@@ -0,0 +1,179 @@
+@@ -0,0 +1,181 @@
 +/*
 + * Qualcomm Peripheral Image Loader
 + *
@@ -98,6 +86,7 @@ index 000000000000..114e8e4cef67
 +#include <linux/firmware.h>
 +#include <linux/kernel.h>
 +#include <linux/module.h>
++#include <linux/qcom_scm.h>
 +#include <linux/remoteproc.h>
 +#include <linux/slab.h>
 +
@@ -123,17 +112,7 @@ index 000000000000..114e8e4cef67
 +}
 +EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
 +
-+/**
-+ * qcom_mdt_parse() - extract useful parameters from the mdt header
-+ * @fw:		firmware handle
-+ * @fw_addr:	optional reference for base of the firmware's memory region
-+ * @fw_size:	optional reference for size of the firmware's memory region
-+ * @fw_relocate: optional reference for flagging if the firmware is relocatable
-+ *
-+ * Returns 0 on success, negative errno otherwise.
-+ */
-+int qcom_mdt_parse(const struct firmware *fw, phys_addr_t *fw_addr,
-+		   size_t *fw_size, bool *fw_relocate)
++int qcom_mdt_parse(const struct firmware *fw, phys_addr_t *fw_addr, size_t *fw_size, bool *fw_relocate)
 +{
 +	const struct elf32_phdr *phdrs;
 +	const struct elf32_phdr *phdr;
@@ -165,7 +144,7 @@ index 000000000000..114e8e4cef67
 +			min_addr = phdr->p_paddr;
 +
 +		if (phdr->p_paddr + phdr->p_memsz > max_addr)
-+			max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
++			max_addr = round_up(phdr->p_paddr + phdr->p_memsz, SZ_4K);
 +	}
 +
 +	if (fw_addr)
@@ -182,20 +161,28 @@ index 000000000000..114e8e4cef67
 +/**
 + * qcom_mdt_load() - load the firmware which header is defined in fw
 + * @rproc:	rproc handle
++ * @pas_id:	PAS identifier to load this firmware into
 + * @fw:		frimware object for the header
-+ * @firmware:	filename of the firmware, for building .bXX names
++ * @mem_phys:  physical address of reserved memory region for the firmware
++ * @mem_region:	pointer to a mapping of the reserved memory region
++ * @mem_size:	size of the reserved memory region
 + *
 + * Returns 0 on success, negative errno otherwise.
 + */
 +int qcom_mdt_load(struct rproc *rproc,
 +		  const struct firmware *fw,
-+		  const char *firmware)
++		  const char *firmware,
++		  phys_addr_t mem_phys,
++		  void *mem_region,
++		  size_t mem_size)
 +{
 +	const struct elf32_phdr *phdrs;
 +	const struct elf32_phdr *phdr;
 +	const struct elf32_hdr *ehdr;
-+	size_t fw_name_len;
++	unsigned fw_name_len;
++	phys_addr_t fw_base;
 +	char *fw_name;
++	bool relocate;
 +	void *ptr;
 +	int ret;
 +	int i;
@@ -211,6 +198,13 @@ index 000000000000..114e8e4cef67
 +	if (!fw_name)
 +		return -ENOMEM;
 +
++	ret = qcom_mdt_parse(fw, &fw_base, NULL, &relocate);
++	if (ret)
++		return ret;
++
++	if (!relocate)
++		fw_base = mem_phys;
++
 +	for (i = 0; i < ehdr->e_phnum; i++) {
 +		phdr = &phdrs[i];
 +
@@ -223,8 +217,8 @@ index 000000000000..114e8e4cef67
 +		if (!phdr->p_memsz)
 +			continue;
 +
-+		ptr = rproc_da_to_va(rproc, phdr->p_paddr, phdr->p_memsz);
-+		if (!ptr) {
++		ptr = mem_region + phdr->p_paddr - fw_base;
++		if (ptr < mem_region || ptr + phdr->p_memsz > mem_region + mem_size) {
 +			dev_err(&rproc->dev, "segment outside memory range\n");
 +			ret = -EINVAL;
 +			break;
@@ -234,8 +228,7 @@ index 000000000000..114e8e4cef67
 +			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
 +			ret = request_firmware(&fw, fw_name, &rproc->dev);
 +			if (ret) {
-+				dev_err(&rproc->dev, "failed to load %s\n",
-+					fw_name);
++				dev_err(&rproc->dev, "failed to load %s\n", fw_name);
 +				break;
 +			}
 +
@@ -253,15 +246,12 @@ index 000000000000..114e8e4cef67
 +	return ret;
 +}
 +EXPORT_SYMBOL_GPL(qcom_mdt_load);
-+
-+MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
-+MODULE_LICENSE("GPL v2");
 diff --git a/drivers/remoteproc/qcom_mdt_loader.h b/drivers/remoteproc/qcom_mdt_loader.h
 new file mode 100644
-index 000000000000..c5d7122755b6
+index 000000000000..7331928b2856
 --- /dev/null
 +++ b/drivers/remoteproc/qcom_mdt_loader.h
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,19 @@
 +#ifndef __QCOM_MDT_LOADER_H__
 +#define __QCOM_MDT_LOADER_H__
 +
@@ -269,18 +259,24 @@ index 000000000000..c5d7122755b6
 +#define QCOM_MDT_TYPE_HASH	(2 << 24)
 +#define QCOM_MDT_RELOCATABLE	BIT(27)
 +
-+struct resource_table * qcom_mdt_find_rsc_table(struct rproc *rproc, const struct firmware *fw, int *tablesz);
-+int qcom_mdt_load(struct rproc *rproc, const struct firmware *fw, const char *fw_name);
++struct resource_table * qcom_mdt_find_rsc_table(struct rproc *rproc,
++						const struct firmware *fw,
++						int *tablesz);
 +
-+int qcom_mdt_parse(const struct firmware *fw, phys_addr_t *fw_addr, size_t *fw_size, bool *fw_relocate);
++int qcom_mdt_load(struct rproc *rproc, const struct firmware *fw,
++		  const char *fw_name, phys_addr_t mem_phys,
++		  void *mem_region, size_t mem_size);
++
++int qcom_mdt_parse(const struct firmware *fw, phys_addr_t *fw_addr,
++		   size_t *fw_size, bool *fw_relocate);
 +
 +#endif
 diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
 new file mode 100644
-index 000000000000..fb4c56cc6dfc
+index 000000000000..ec6290415264
 --- /dev/null
 +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -0,0 +1,916 @@
+@@ -0,0 +1,866 @@
 +/*
 + * Qualcomm Peripheral Image Loader
 + *
@@ -300,7 +296,6 @@ index 000000000000..fb4c56cc6dfc
 +
 +#include <linux/clk.h>
 +#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
 +#include <linux/interrupt.h>
 +#include <linux/kernel.h>
 +#include <linux/mfd/syscon.h>
@@ -408,7 +403,6 @@ index 000000000000..fb4c56cc6dfc
 +	size_t mba_size;
 +
 +	phys_addr_t mpss_phys;
-+	phys_addr_t mpss_reloc;
 +	void *mpss_region;
 +	size_t mpss_size;
 +};
@@ -445,31 +439,28 @@ index 000000000000..fb4c56cc6dfc
 +
 +static int q6v5_regulator_enable(struct q6v5 *qproc)
 +{
-+	struct regulator *mss = qproc->supply[Q6V5_SUPPLY_MSS].consumer;
-+	struct regulator *mx = qproc->supply[Q6V5_SUPPLY_MX].consumer;
 +	int ret;
 +
 +	/* TODO: Q6V5_SUPPLY_CX is supposed to be set to super-turbo here */
-+
-+	ret = regulator_set_voltage(mx, 1050000, INT_MAX);
++	ret = regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_MX].consumer,
++				    1050000, INT_MAX);
 +	if (ret)
 +		return ret;
 +
-+	regulator_set_voltage(mss, 1000000, 1150000);
++	ret = regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_MSS].consumer,
++				    1000000, 1150000);
++	if (ret)
++		return ret;
 +
 +	return regulator_bulk_enable(ARRAY_SIZE(qproc->supply), qproc->supply);
 +}
 +
 +static void q6v5_regulator_disable(struct q6v5 *qproc)
 +{
-+	struct regulator *mss = qproc->supply[Q6V5_SUPPLY_MSS].consumer;
-+	struct regulator *mx = qproc->supply[Q6V5_SUPPLY_MX].consumer;
-+
-+	/* TODO: Q6V5_SUPPLY_CX corner votes should be released */
-+
 +	regulator_bulk_disable(ARRAY_SIZE(qproc->supply), qproc->supply);
-+	regulator_set_voltage(mx, 0, INT_MAX);
-+	regulator_set_voltage(mss, 0, 1150000);
++	regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_CX].consumer, 0, INT_MAX);
++	regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_MX].consumer, 0, INT_MAX);
++	regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_MSS].consumer, 0, 1150000);
 +}
 +
 +static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
@@ -532,10 +523,9 @@ index 000000000000..fb4c56cc6dfc
 +	return val;
 +}
 +
-+static int q6v5proc_reset(struct q6v5 *qproc)
++static void q6v5proc_reset(struct q6v5 *qproc)
 +{
 +	u32 val;
-+	int ret;
 +
 +	/* Assert resets, stop core */
 +	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
@@ -546,6 +536,7 @@ index 000000000000..fb4c56cc6dfc
 +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
 +	val |= QDSS_BHS_ON | QDSS_LDO_BYP;
 +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	mb();
 +	udelay(1);
 +
 +	/*
@@ -581,19 +572,6 @@ index 000000000000..fb4c56cc6dfc
 +	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
 +	val &= ~Q6SS_STOP_CORE;
 +	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+
-+	/* Wait for PBL status */
-+	ret = q6v5_rmb_pbl_wait(qproc, 1000);
-+	if (ret == -ETIMEDOUT) {
-+		dev_err(qproc->dev, "PBL boot timed out\n");
-+	} else if (ret != RMB_PBL_SUCCESS) {
-+		dev_err(qproc->dev, "PBL returned unexpected status %d\n", ret);
-+		ret = -EINVAL;
-+	} else {
-+		ret = 0;
-+	}
-+
-+	return ret;
 +}
 +
 +static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
@@ -632,30 +610,19 @@ index 000000000000..fb4c56cc6dfc
 +
 +static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
 +{
-+	DEFINE_DMA_ATTRS(attrs);
-+	dma_addr_t phys;
-+	void *ptr;
 +	int ret;
 +
-+	dma_set_attr(DMA_ATTR_FORCE_CONTIGUOUS, &attrs);
-+	ptr = dma_alloc_attrs(qproc->dev, fw->size, &phys, GFP_KERNEL, &attrs);
-+	if (!ptr) {
-+		dev_err(qproc->dev, "failed to allocate mdt buffer\n");
-+		return -ENOMEM;
-+	}
++	/* Use mpss memory as scratch buffer for the mdt validation */
++	memcpy(qproc->mpss_region, fw->data, fw->size);
 +
-+	memcpy(ptr, fw->data, fw->size);
-+
-+	writel(phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
++	writel(qproc->mpss_phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
 +	writel(RMB_CMD_META_DATA_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
 +
 +	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
 +	if (ret == -ETIMEDOUT)
-+		dev_err(qproc->dev, "MPSS header authentication timed out\n");
++		dev_err(qproc->dev, "MBA header authentication timed out\n");
 +	else if (ret < 0)
-+		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
-+
-+	dma_free_attrs(qproc->dev, fw->size, ptr, phys, &attrs);
++		dev_err(qproc->dev, "MBA returned error %d for MDT header\n", ret);
 +
 +	return ret < 0 ? ret : 0;
 +}
@@ -665,24 +632,9 @@ index 000000000000..fb4c56cc6dfc
 +	const struct elf32_phdr *phdrs;
 +	const struct elf32_phdr *phdr;
 +	struct elf32_hdr *ehdr;
-+	phys_addr_t boot_addr;
-+	phys_addr_t fw_addr;
-+	bool relocate;
 +	size_t size;
 +	u32 val;
-+	int ret;
 +	int i;
-+
-+	ret = qcom_mdt_parse(fw, &fw_addr, NULL, &relocate);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to parse mdt header\n");
-+		return ret;
-+	}
-+
-+	if (relocate)
-+		boot_addr = qproc->mpss_phys;
-+	else
-+		boot_addr = fw_addr;
 +
 +	ehdr = (struct elf32_hdr *)fw->data;
 +	phdrs = (struct elf32_phdr *)(ehdr + 1);
@@ -700,7 +652,7 @@ index 000000000000..fb4c56cc6dfc
 +
 +		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
 +		if (!size) {
-+			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
++			writel(phdr->p_paddr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
 +			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
 +		}
 +
@@ -715,8 +667,6 @@ index 000000000000..fb4c56cc6dfc
 +static int q6v5_mpss_load(struct q6v5 *qproc)
 +{
 +	const struct firmware *fw;
-+	phys_addr_t fw_addr;
-+	bool relocate;
 +	int ret;
 +
 +	ret = request_firmware(&fw, MPSS_FIRMWARE_NAME, qproc->dev);
@@ -725,15 +675,6 @@ index 000000000000..fb4c56cc6dfc
 +		return ret;
 +	}
 +
-+	ret = qcom_mdt_parse(fw, &fw_addr, NULL, &relocate);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to parse mdt header\n");
-+		goto release_firmware;
-+	}
-+
-+	if (relocate)
-+		qproc->mpss_reloc = fw_addr;
-+
 +	/* Initialize the RMB validator */
 +	writel(0, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
 +
@@ -741,7 +682,9 @@ index 000000000000..fb4c56cc6dfc
 +	if (ret)
 +		goto release_firmware;
 +
-+	ret = qcom_mdt_load(qproc->rproc, fw, MPSS_FIRMWARE_NAME);
++	ret = qcom_mdt_load(qproc->rproc, fw, MPSS_FIRMWARE_NAME,
++			    qproc->mpss_phys, qproc->mpss_region,
++			    qproc->mpss_size);
 +	if (ret)
 +		goto release_firmware;
 +
@@ -751,9 +694,9 @@ index 000000000000..fb4c56cc6dfc
 +
 +	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
 +	if (ret == -ETIMEDOUT)
-+		dev_err(qproc->dev, "MPSS authentication timed out\n");
++		dev_err(qproc->dev, "MBA authentication timed out\n");
 +	else if (ret < 0)
-+		dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
++		dev_err(qproc->dev, "MBA returned error %d\n", ret);
 +
 +release_firmware:
 +	release_firmware(fw);
@@ -792,16 +735,23 @@ index 000000000000..fb4c56cc6dfc
 +
 +	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
 +
-+	ret = q6v5proc_reset(qproc);
-+	if (ret)
++	q6v5proc_reset(qproc);
++
++	ret = q6v5_rmb_pbl_wait(qproc, 1000);
++	if (ret == -ETIMEDOUT) {
++		dev_err(qproc->dev, "PBL boot timed out\n");
 +		goto halt_axi_ports;
++	} else if (ret != RMB_PBL_SUCCESS) {
++		dev_err(qproc->dev, "PBL returned unexpected status %d\n", ret);
++		ret = -EINVAL;
++		goto halt_axi_ports;
++	}
 +
 +	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
 +	if (ret == -ETIMEDOUT) {
 +		dev_err(qproc->dev, "MBA boot timed out\n");
 +		goto halt_axi_ports;
-+	} else if (ret != RMB_MBA_XPU_UNLOCKED &&
-+		   ret != RMB_MBA_XPU_UNLOCKED_SCRIBBLED) {
++	} else if (ret != RMB_MBA_XPU_UNLOCKED && ret != RMB_MBA_XPU_UNLOCKED_SCRIBBLED) {
 +		dev_err(qproc->dev, "MBA returned unexpected status %d\n", ret);
 +		ret = -EINVAL;
 +		goto halt_axi_ports;
@@ -823,7 +773,7 @@ index 000000000000..fb4c56cc6dfc
 +
 +	qproc->running = true;
 +
-+	/* TODO: All done, release the handover resources */
++	/* All done, release the handover resources */
 +
 +	return 0;
 +
@@ -831,8 +781,6 @@ index 000000000000..fb4c56cc6dfc
 +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
 +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
 +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-+
-+	clk_disable_unprepare(qproc->rom_clk);
 +disable_axi_clk:
 +	clk_disable_unprepare(qproc->axi_clk);
 +disable_ahb_clk:
@@ -867,7 +815,6 @@ index 000000000000..fb4c56cc6dfc
 +	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
 +
 +	reset_control_assert(qproc->mss_restart);
-+	clk_disable_unprepare(qproc->rom_clk);
 +	clk_disable_unprepare(qproc->axi_clk);
 +	clk_disable_unprepare(qproc->ahb_clk);
 +	q6v5_regulator_disable(qproc);
@@ -875,22 +822,9 @@ index 000000000000..fb4c56cc6dfc
 +	return 0;
 +}
 +
-+static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct q6v5 *qproc = rproc->priv;
-+	int offset;
-+
-+	offset = da - qproc->mpss_reloc;
-+	if (offset < 0 || offset + len > qproc->mpss_size)
-+		return NULL;
-+
-+	return qproc->mpss_region + offset;
-+}
-+
 +static const struct rproc_ops q6v5_ops = {
 +	.start = q6v5_start,
 +	.stop = q6v5_stop,
-+	.da_to_va = q6v5_da_to_va,
 +};
 +
 +static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
@@ -957,7 +891,7 @@ index 000000000000..fb4c56cc6dfc
 +
 +static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
 +{
-+	struct of_phandle_args args;
++	struct device_node *halt_np;
 +	struct resource *res;
 +	int ret;
 +
@@ -975,21 +909,36 @@ index 000000000000..fb4c56cc6dfc
 +		return PTR_ERR(qproc->rmb_base);
 +	}
 +
-+	ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-+					       "qcom,halt-regs", 3, 0, &args);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
-+		return -EINVAL;
++	halt_np = of_parse_phandle(pdev->dev.of_node, "qcom,halt-regs", 0);
++	if (!halt_np) {
++		dev_err(&pdev->dev, "no qcom,halt-regs node\n");
++		return -ENODEV;
 +	}
 +
-+	qproc->halt_map = syscon_node_to_regmap(args.np);
-+	of_node_put(args.np);
++	qproc->halt_map = syscon_node_to_regmap(halt_np);
 +	if (IS_ERR(qproc->halt_map))
 +		return PTR_ERR(qproc->halt_map);
 +
-+	qproc->halt_q6 = args.args[0];
-+	qproc->halt_modem = args.args[1];
-+	qproc->halt_nc = args.args[2];
++	ret = of_property_read_u32_index(pdev->dev.of_node, "qcom,halt-regs",
++					 1, &qproc->halt_q6);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "no q6 halt offset\n");
++		return -EINVAL;
++	}
++
++	ret = of_property_read_u32_index(pdev->dev.of_node, "qcom,halt-regs",
++					 2, &qproc->halt_modem);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "no modem halt offset\n");
++		return -EINVAL;
++	}
++
++	ret = of_property_read_u32_index(pdev->dev.of_node, "qcom,halt-regs",
++					 3, &qproc->halt_nc);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "no nc halt offset\n");
++		return -EINVAL;
++	}
 +
 +	return 0;
 +}
@@ -1047,7 +996,6 @@ index 000000000000..fb4c56cc6dfc
 +					"q6v5", qproc);
 +	if (ret)
 +		dev_err(&pdev->dev, "request %s IRQ failed\n", name);
-+
 +	return ret;
 +}
 +
@@ -1083,7 +1031,7 @@ index 000000000000..fb4c56cc6dfc
 +		return ret;
 +	}
 +
-+	qproc->mpss_phys = qproc->mpss_reloc = r.start;
++	qproc->mpss_phys = r.start;
 +	qproc->mpss_size = resource_size(&r);
 +	qproc->mpss_region = devm_ioremap_wc(qproc->dev, qproc->mpss_phys, qproc->mpss_size);
 +	if (!qproc->mpss_region) {
@@ -1193,9 +1141,7 @@ index 000000000000..fb4c56cc6dfc
 +		.of_match_table = q6v5_of_match,
 +	},
 +};
-+module_platform_driver(q6v5_driver);
 +
-+MODULE_DESCRIPTION("Peripheral Image Loader for Hexagon");
-+MODULE_LICENSE("GPL v2");
++module_platform_driver(q6v5_driver);
 -- 
 2.5.0
