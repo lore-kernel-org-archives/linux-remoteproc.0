@@ -1,83 +1,32 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 15 Jun 2016 15:06:29 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 4/5] remoteproc: core: Supply framework to request,
- declare and fetch shared memory
-Message-ID: <20160615220629.GW1256@tuxbot>
-References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
- <1462454983-13168-5-git-send-email-lee.jones@linaro.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 10 Jun 2016 13:03:01 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-binding: remoteproc: Introduce Hexagon loader
+ binding
+Message-ID: <20160610180301.GA31816@rob-hp-laptop>
+References: <1465537980-13347-1-git-send-email-bjorn.andersson@linaro.org>
+ <1465537980-13347-2-git-send-email-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1462454983-13168-5-git-send-email-lee.jones@linaro.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+In-Reply-To: <1465537980-13347-2-git-send-email-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Pawel Moll <pawel.moll@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
-
-> Normally used for management of; carveout, devmem and trace memory.
+On Thu, Jun 09, 2016 at 10:53:00PM -0700, Bjorn Andersson wrote:
+> This document defines the binding for a component that loads firmware
+> and control the life cycle of a self-authenticating Qualcomm Hexagon
+> core.
 > 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 174 +++++++++++++++++++++++++++++++++--
->  1 file changed, 167 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-[..]
-> @@ -222,7 +223,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
-[..]
-> -	va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
-> +	dma_dev = rproc_subdev_lookup(rproc, "vring");
-> +	va = dma_alloc_coherent(dma_dev, size, &dma, GFP_KERNEL);
-[..]
-> @@ -594,7 +599,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
-[..]
-> -	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
-> +	dma_dev = rproc_subdev_lookup(rproc, "carveout");
-> +	va = dma_alloc_coherent(dma_dev, rsc->len, &dma, GFP_KERNEL);
-[..]
-> +static int rproc_subdev_match(struct device *dev, void *data)
-> +{
-> +	char *sub_name;
-> +
-> +	if (!dev_name(dev))
-> +		return 0;
-> +
-> +	sub_name = strpbrk(dev_name(dev), "#");
-> +	if (!sub_name)
-> +		return 0;
-> +
-> +	return !strcmp(++sub_name, (char *)data);
-> +}
-> +
-[..]
-> +struct rproc_subdev *rproc_subdev_add(struct rproc *rproc, struct resource *res)
-> +{
-[..]
-> +	dev_set_name(&sub->dev, "%s#%s", dev_name(sub->dev.parent), res->name);
-> +	dev_set_drvdata(&sub->dev, sub);
-> +
-> +	ret = device_register(&sub->dev);
-[..]
-> +}
-> +EXPORT_SYMBOL(rproc_subdev_add);
+>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 138 +++++++++++++++++++++
+>  1 file changed, 138 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
 
-I worked up a prototype that allows remoteproc drivers to
-programmatically specify carveout resources, which then are matched and
-merged with entires from the resource table. I've given these
-programmatically allocated carveouts a device so that the associated
-allocation comes out of the specified region - or the rproc region if no
-match is found.
+I hope we're getting near the end of complex QCom bindings. This one 
+seems pretty straight forward though.
 
-
-This solves my use case of carving out memory from two disjoint memory
-regions for one of my remoteprocs, but differs from your approach in
-that you specify one large carveout (and vrings) region and any
-carveouts (or vrings) will chip away from this.
-
-Would this approach work for you, or do you depend on having 1:N
-relationship between your memory region and your resources?
-
-Regards,
-Bjorn
+Acked-by: Rob Herring <robh@kernel.org>
