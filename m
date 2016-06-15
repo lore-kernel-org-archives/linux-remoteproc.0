@@ -1,77 +1,83 @@
-Return-Path: <loic.pallardy@st.com>
-Subject: Re: [STLinux Kernel] [PATCH 4/5] remoteproc: core: Supply framework
- to request, declare and fetch shared memory
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 15 Jun 2016 15:06:29 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 4/5] remoteproc: core: Supply framework to request,
+ declare and fetch shared memory
+Message-ID: <20160615220629.GW1256@tuxbot>
 References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
  <1462454983-13168-5-git-send-email-lee.jones@linaro.org>
- <20160615220629.GW1256@tuxbot>
-From: loic pallardy <loic.pallardy@st.com>
-Message-ID: <5768EDD3.3050203@st.com>
-Date: Tue, 21 Jun 2016 09:33:39 +0200
 MIME-Version: 1.0
-In-Reply-To: <20160615220629.GW1256@tuxbot>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Lee Jones <lee.jones@linaro.org>
-Cc: ohad@wizery.com, kernel@stlinux.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1462454983-13168-5-git-send-email-lee.jones@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
 
-
-On 06/16/2016 12:06 AM, Bjorn Andersson wrote:
-> On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
->
->> Normally used for management of; carveout, devmem and trace memory.
->>
->> Signed-off-by: Lee Jones <lee.jones@linaro.org>
->> ---
->>   drivers/remoteproc/remoteproc_core.c | 174 +++++++++++++++++++++++++++++++++--
->>   1 file changed, 167 insertions(+), 7 deletions(-)
->>
+> Normally used for management of; carveout, devmem and trace memory.
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 174 +++++++++++++++++++++++++++++++++--
+>  1 file changed, 167 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
 [..]
->> +}
->> +EXPORT_SYMBOL(rproc_subdev_add);
->
-Hi Bjorn,
+> @@ -222,7 +223,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+[..]
+> -	va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
+> +	dma_dev = rproc_subdev_lookup(rproc, "vring");
+> +	va = dma_alloc_coherent(dma_dev, size, &dma, GFP_KERNEL);
+[..]
+> @@ -594,7 +599,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
+[..]
+> -	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+> +	dma_dev = rproc_subdev_lookup(rproc, "carveout");
+> +	va = dma_alloc_coherent(dma_dev, rsc->len, &dma, GFP_KERNEL);
+[..]
+> +static int rproc_subdev_match(struct device *dev, void *data)
+> +{
+> +	char *sub_name;
+> +
+> +	if (!dev_name(dev))
+> +		return 0;
+> +
+> +	sub_name = strpbrk(dev_name(dev), "#");
+> +	if (!sub_name)
+> +		return 0;
+> +
+> +	return !strcmp(++sub_name, (char *)data);
+> +}
+> +
+[..]
+> +struct rproc_subdev *rproc_subdev_add(struct rproc *rproc, struct resource *res)
+> +{
+[..]
+> +	dev_set_name(&sub->dev, "%s#%s", dev_name(sub->dev.parent), res->name);
+> +	dev_set_drvdata(&sub->dev, sub);
+> +
+> +	ret = device_register(&sub->dev);
+[..]
+> +}
+> +EXPORT_SYMBOL(rproc_subdev_add);
 
-> I worked up a prototype that allows remoteproc drivers to
-> programmatically specify carveout resources, which then are matched and
-> merged with entires from the resource table. I've given these
-> programmatically allocated carveouts a device so that the associated
-> allocation comes out of the specified region - or the rproc region if no
-> match is found.
->
-No sure to catch your exact use case, but let me try to explain what we 
-have today.
-There are different rproc in ST. Some request a large chunk of memory 
-for code and data, some have several dedicated memories like IRAM and DRAM.
-In that case carevout memories are defined as subdev (like vrings).
-Association is done thanks to carevout name in firmware resource table 
-(in rproc_handle_carveout).
+I worked up a prototype that allows remoteproc drivers to
+programmatically specify carveout resources, which then are matched and
+merged with entires from the resource table. I've given these
+programmatically allocated carveouts a device so that the associated
+allocation comes out of the specified region - or the rproc region if no
+match is found.
 
-Moreover, as our coprocessors have no iommu, we add some check on 
-allocated buffer to verify it fit with resource table declaration (pa).
-This allows to guarantee complete alignment between resources needed by 
-firmware and ones allocated by Linux kernel.
->
-> This solves my use case of carving out memory from two disjoint memory
-> regions for one of my remoteprocs, but differs from your approach in
-> that you specify one large carveout (and vrings) region and any
-> carveouts (or vrings) will chip away from this.
->
-> Would this approach work for you, or do you depend on having 1:N
-> relationship between your memory region and your resources?
->
 
-Is this approach covering your needs?
+This solves my use case of carving out memory from two disjoint memory
+regions for one of my remoteprocs, but differs from your approach in
+that you specify one large carveout (and vrings) region and any
+carveouts (or vrings) will chip away from this.
+
+Would this approach work for you, or do you depend on having 1:N
+relationship between your memory region and your resources?
 
 Regards,
-Loic
-
-> Regards,
-> Bjorn
->
-> _______________________________________________
-> Kernel mailing list
-> Kernel@stlinux.com
-> http://www.stlinux.com/mailman/listinfo/kernel
->
+Bjorn
