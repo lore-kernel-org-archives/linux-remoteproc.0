@@ -1,10 +1,10 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 2/2] dt-binding: remoteproc: Introduce Hexagon loader binding
-Date: Mon, 20 Jun 2016 14:28:42 -0700
-Message-Id: <1466458122-12180-2-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1466458122-12180-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1466458122-12180-1-git-send-email-bjorn.andersson@linaro.org>
+Subject: [PATCH v2 2/2] dt-binding: remoteproc: Introduce Hexagon loader binding
+Date: Fri, 17 Jun 2016 10:17:19 -0700
+Message-Id: <1466183839-5968-2-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1466183839-5968-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1466183839-5968-1-git-send-email-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -16,9 +16,6 @@ core.
 Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-
-Changes since v2:
-- None
 
 Changes since v1:
 - Corrected reg-names in the example
