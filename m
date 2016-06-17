@@ -1,134 +1,93 @@
-Return-Path: <vinod.koul@intel.com>
-Date: Mon, 6 Jun 2016 10:24:28 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v4 06/18] dmaengine: st_fdma: Add STMicroelectronics FDMA
- engine driver support
-Message-ID: <20160606045428.GW16910@localhost>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
- <1464192412-16386-8-git-send-email-peter.griffin@linaro.org>
+Return-Path: <loic.pallardy@st.com>
+Subject: Re: [STLinux Kernel] [PATCH 5/5] remoteproc: core: Clip carveout if
+ it's too big
+References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
+ <1462454983-13168-6-git-send-email-lee.jones@linaro.org>
+ <20160510192129.GL1256@tuxbot>
+From: loic pallardy <loic.pallardy@st.com>
+Message-ID: <57645524.1030200@st.com>
+Date: Fri, 17 Jun 2016 21:53:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1464192412-16386-8-git-send-email-peter.griffin@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
+In-Reply-To: <20160510192129.GL1256@tuxbot>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Lee Jones <lee.jones@linaro.org>
+Cc: ohad@wizery.com, kernel@stlinux.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, May 25, 2016 at 05:06:40PM +0100, Peter Griffin wrote:
 
-> @@ -527,6 +527,18 @@ config ZX_DMA
->  	help
->  	  Support the DMA engine for ZTE ZX296702 platform devices.
->  
-> +config ST_FDMA
-> +	tristate "ST FDMA dmaengine support"
-> +	depends on ARCH_STI || COMPILE_TEST
-> +        depends on ST_XP70_REMOTEPROC
-> +	select DMA_ENGINE
-> +	select DMA_VIRTUAL_CHANNELS
-> +	help
-> +	  Enable support for ST FDMA controller.
-> +	  It supports 16 independent DMA channels, accepts up to 32 DMA requests
-> +
-> +	  Say Y here if you have such a chipset.
-> +	  If unsure, say N.
+Hi,
 
-Alphabetical order in Kconfig and makefile please...
+On 05/10/2016 09:21 PM, Bjorn Andersson wrote:
+> On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
+>
+>> Carveout size is primarily extracted from the firmware binary.  However,
+>> DT can over-ride this by providing a different (smaller) size.  We're
+>> adding protection here to ensure the we only allocate the smaller of the
+>> two provided sizes in order to decrease the risk of clashes.
+>>
+>
+> Is this really the right thing to do?
+>
+> The firmware is bundled with a resource table stating a certain size of
+> this the carveout and this would "silently" give it less space. On some
+> systems an IOMMU will save us (killing the firmware) but on others I
+> fear the firmware might just access memory outside its expected buffer.
 
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_dma.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/clk.h>
-> +#include <linux/dmaengine.h>
-> +#include <linux/dmapool.h>
-> +#include <linux/firmware.h>
-> +#include <linux/elf.h>
-> +#include <linux/atomic.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/io.h>
+Agree with Bjorn, not it is not possible to silently clip carveout 
+memory.Firmware resource table should contain exact coprocessor needs. 
+If resources are not available, firmware loading must failed with 
+explicit message.
 
-that seems to be quite a lot of headers, am sure some of them are not
-required..
+Regards,
+Loic
 
-
-> +static int st_fdma_dreq_get(struct st_fdma_chan *fchan)
-> +{
-> +	struct st_fdma_dev *fdev = fchan->fdev;
-> +	u32 req_line_cfg = fchan->cfg.req_line;
-> +	u32 dreq_line;
-> +	int try = 0;
-> +
-> +	/*
-> +	 * dreq_mask is shared for n channels of fdma, so all accesses must be
-> +	 * atomic. if the dreq_mask it change between ffz ant set_bit,
-
-s/ant/and
-
-> +	switch (ch_sta) {
-> +	case FDMA_CH_CMD_STA_PAUSED:
-> +		fchan->status = DMA_PAUSED;
-> +		break;
-
-empty line here please
-
-> +static void st_fdma_free_chan_res(struct dma_chan *chan)
-> +{
-> +	struct st_fdma_chan *fchan = to_st_fdma_chan(chan);
-> +	unsigned long flags;
-> +
-> +	LIST_HEAD(head);
-> +
-> +	dev_dbg(fchan->fdev->dev, "%s: freeing chan:%d\n",
-> +		__func__, fchan->vchan.chan.chan_id);
-> +
-> +	if (fchan->cfg.type != ST_FDMA_TYPE_FREE_RUN)
-> +		st_fdma_dreq_put(fchan);
-> +
-> +	spin_lock_irqsave(&fchan->vchan.lock, flags);
-> +	fchan->fdesc = NULL;
-> +	vchan_get_all_descriptors(&fchan->vchan, &head);
-
-and what are you doing with all these descriptors?
-
-> +	spin_unlock_irqrestore(&fchan->vchan.lock, flags);
-> +
-> +	dma_pool_destroy(fchan->node_pool);
-> +	fchan->node_pool = NULL;
-> +	memset(&fchan->cfg, 0, sizeof(struct st_fdma_cfg));
-> +
-> +	rproc_shutdown(fchan->fdev->rproc);
-> +}
-
-> +static enum dma_status st_fdma_tx_status(struct dma_chan *chan,
-> +					 dma_cookie_t cookie,
-> +					 struct dma_tx_state *txstate)
-> +{
-> +	struct st_fdma_chan *fchan = to_st_fdma_chan(chan);
-> +	struct virt_dma_desc *vd;
-> +	enum dma_status ret;
-> +	unsigned long flags;
-> +
-> +	ret = dma_cookie_status(chan, cookie, txstate);
-> +	if (ret == DMA_COMPLETE)
-
-check for txtstate here, that can be NULL and in that case no need to
-calculate residue
-
-> +
-> +	dma_cap_set(DMA_SLAVE, fdev->dma_device.cap_mask);
-
-why slave, you only support cyclic
-
-> +	dma_cap_set(DMA_CYCLIC, fdev->dma_device.cap_mask);
-> +	dma_cap_set(DMA_MEMCPY, fdev->dma_device.cap_mask);
-
-
-helps to print the 'ret' too
-
--- 
-~Vinod
+>
+>> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>> ---
+>>   drivers/remoteproc/remoteproc_core.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> [..]
+>> @@ -600,6 +601,14 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>>   		return -ENOMEM;
+>>
+>>   	dma_dev = rproc_subdev_lookup(rproc, "carveout");
+>> +	sub = dev_get_drvdata(dma_dev);
+>> +
+>> +	if (rsc->len > resource_size(sub->res)) {
+>> +		dev_warn(dev, "carveout too big (0x%x): clipping to 0x%x\n",
+>> +			 rsc->len, resource_size(sub->res));
+>> +		rsc->len = resource_size(sub->res);
+>> +	}
+>
+> I would rather expect this to say:
+>
+> if (resource_size(sub->res) < rsc->len) {
+> 	dev_err(dev, "defined carveout to small for firmware\n");
+> 	return -EINVAL;
+> }
+>
+> Unless we trust the remote firmware to dynamically follow what we put in
+> the resource table. (And how does it tell us if that limit isn't
+> enough?)
+>
+>> +
+>>   	va = dma_alloc_coherent(dma_dev, rsc->len, &dma, GFP_KERNEL);
+>>   	if (!va) {
+>>   		dev_err(dev->parent, "dma_alloc_coherent err: %d\n", rsc->len);
+>
+>
+> Apart from this concern I'm still need to review the subdev patch; here
+> related the part that there's only room for one carveout with only one
+> size.
+>
+> Regards,
+> Bjorn
+>
+> _______________________________________________
+> Kernel mailing list
+> Kernel@stlinux.com
+> http://www.stlinux.com/mailman/listinfo/kernel
+>
