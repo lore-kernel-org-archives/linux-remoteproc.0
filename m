@@ -1,62 +1,45 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-Date: Fri, 3 Jun 2016 14:00:46 +0100
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH v4 15/18] ARM: STi: DT: STiH407: Add sti-sasg-codec dt
- node
-Message-ID: <20160603130046.GE9912@griffinp-ThinkPad-X1-Carbon-2nd>
-References: <1464192412-16386-1-git-send-email-peter.griffin@linaro.org>
- <1464192412-16386-17-git-send-email-peter.griffin@linaro.org>
- <574D53E7.40008@st.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:17027 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752066AbcF2OmW (ORCPT
+	<rfc822;linux-remoteproc@vger.kernel.org>);
+	Wed, 29 Jun 2016 10:42:22 -0400
+Date: Wed, 29 Jun 2016 17:40:55 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] remoteproc: qcom: remove some bogus error handling
+Message-ID: <20160629144055.GB22818@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <574D53E7.40008@st.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnd@arndb.de, lee.jones@linaro.org, devicetree@vger.kernel.org, dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Cc: linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Arnaud,
+"val" can't be negative because it's unsigned and also readl() doesn't
+return negative error codes.
 
-Thanks for reviewing.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-On Tue, 31 May 2016, Arnaud Pouliquen wrote:
-> 
-> 
-> On 05/25/2016 06:06 PM, Peter Griffin wrote:
-> > This patch adds the dt node for the internal audio
-> > codec IP.
-> > 
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > ---
-> >  arch/arm/boot/dts/stih407-family.dtsi | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-> > index b423836..60f95b6 100644
-> > --- a/arch/arm/boot/dts/stih407-family.dtsi
-> > +++ b/arch/arm/boot/dts/stih407-family.dtsi
-> > @@ -746,5 +746,14 @@
-> >  				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
-> >  				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
-> >  		};
-> > +
-> > +		sti_sasg_codec: sti-sasg-codec {
-> > +			compatible = "st,stih407-sas-codec";
-> > +			#sound-dai-cells = <1>;
-> > +			status = "okay";
-> Should be set to disable in family and enabled it depending on boards
-> (stihxxx-b2120.dtsi)
-
-Will fix in v5
-
-> > +			st,syscfg = <&syscfg_core>;
-> > +			pinctrl-names = "default";
-> > +			pinctrl-0 = <&pinctrl_spdif_out >;
-> Declare pinctrl use in stihxxx-b2120.dtsi, should be set only if SPDIF used.
-
-Will fix in v5
-
-regards,
-
-Peter.
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index fb4c56c..8abc369 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -386,7 +386,6 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+ 	phys_addr_t fw_addr;
+ 	bool relocate;
+ 	size_t size;
+-	u32 val;
+ 	int ret;
+ 	int i;
+ 
+@@ -425,8 +424,7 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+ 		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+ 	}
+ 
+-	val = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+-	return val < 0 ? val : 0;
++	return readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+ }
+ 
+ static int q6v5_mpss_load(struct q6v5 *qproc)
