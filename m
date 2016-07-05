@@ -1,169 +1,60 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 1/2] remoteproc: core: Add rproc OF look-up functions
-Date: Tue, 19 Jul 2016 16:49:04 +0100
-Message-Id: <20160719154905.23344-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, ssantosh@kernel.org, linux-remoteproc@vger.kernel.org, ludovic.barre@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 5 Jul 2016 16:43:15 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [patch] remoteproc: qcom: remove some bogus error handling
+Message-ID: <20160705234315.GP1190@tuxbot>
+References: <20160629144055.GB22818@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160629144055.GB22818@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-- of_rproc_by_index(): look-up and obtain a reference to a rproc
-                       using the DT phandle "rprocs" and a index.
+On Wed 29 Jun 07:40 PDT 2016, Dan Carpenter wrote:
 
-- of_rproc_by_name():  lookup and obtain a reference to a rproc
-                       using the DT phandle "rprocs" and "rproc-names".
+> "val" can't be negative because it's unsigned and also readl() doesn't
+> return negative error codes.
+> 
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 78 +++++++++++++++++++++++++++++++++++-
- include/linux/remoteproc.h           | 25 +++++++++++-
- 2 files changed, 101 insertions(+), 2 deletions(-)
+Thanks for catching this. Unfortunately a successful validation will
+result in status becoming 4 and I check if the return value is non-zero
+(rather than negative) in q6v5_mpss_load().
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index db3958b..6a0d158 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -41,6 +41,8 @@
- #include <linux/virtio_ids.h>
- #include <linux/virtio_ring.h>
- #include <asm/byteorder.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
- 
- #include "remoteproc_internal.h"
- 
-@@ -1191,6 +1193,81 @@ out:
- }
- EXPORT_SYMBOL(rproc_shutdown);
- 
-+#ifdef CONFIG_OF
-+/**
-+ * of_get_rproc_by_index() - lookup and obtain a reference to an rproc
-+ * @np: node to search for rproc phandle
-+ * @index: index into the phandle list
-+ *
-+ * This function increments the remote processor's refcount, so always
-+ * use rproc_put() to decrement it back once rproc isn't needed anymore.
-+ *
-+ * Returns a pointer to the rproc struct on success or an appropriate error
-+ * code otherwise.
-+ */
-+struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
-+{
-+	struct rproc *rproc = NULL, *r;
-+	struct device_node *rproc_np;
-+
-+	if (index < 0) {
-+		pr_err("Invalid index: %d\n", index);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	rproc_np = of_parse_phandle(np, "rprocs", index);
-+	if (!rproc_np) {
-+		/* Unfortunately we have to support this, at least for now */
-+		rproc_np = of_parse_phandle(np, "ti,rprocs", index);
-+		if (!rproc_np) {
-+			pr_err("Failed to obtain phandle\n");
-+			return ERR_PTR(-ENODEV);
-+		}
-+	}
-+
-+	mutex_lock(&rproc_list_mutex);
-+	list_for_each_entry(r, &rproc_list, node) {
-+		if (r->dev.parent && r->dev.parent->of_node == rproc_np) {
-+			get_device(&r->dev);
-+			rproc = r;
-+			break;
-+		}
-+	}
-+	mutex_unlock(&rproc_list_mutex);
-+
-+	of_node_put(rproc_np);
-+
-+	if (!rproc)
-+		pr_err("Could not find rproc, deferring\n");
-+
-+	return rproc ?: ERR_PTR(-EPROBE_DEFER);
-+}
-+EXPORT_SYMBOL(of_get_rproc_by_index);
-+
-+/**
-+ * of_get_rproc_by_name() - lookup and obtain a reference to an rproc
-+ * @np: node to search for rproc
-+ * @name: name of the remoteproc from device's point of view
-+ *
-+ * This function increments the remote processor's refcount, so always
-+ * use rproc_put() to decrement it back once rproc isn't needed anymore.
-+ *
-+ * Returns a pointer to the rproc struct on success or an appropriate error
-+ * code otherwise.
-+ */
-+struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
-+{
-+	int index;
-+
-+	if (unlikely(!name))
-+		return ERR_PTR(-EINVAL);
-+
-+	index = of_property_match_string(np, "rproc-names", name);
-+
-+	return of_get_rproc_by_index(np, index);
-+}
-+EXPORT_SYMBOL(of_get_rproc_by_name);
-+
- /**
-  * rproc_get_by_phandle() - find a remote processor by phandle
-  * @phandle: phandle to the rproc
-@@ -1203,7 +1280,6 @@ EXPORT_SYMBOL(rproc_shutdown);
-  *
-  * Returns the rproc handle on success, and NULL on failure.
-  */
--#ifdef CONFIG_OF
- struct rproc *rproc_get_by_phandle(phandle phandle)
- {
- 	struct rproc *rproc = NULL, *r;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 1c457a8..f130938 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -487,7 +487,6 @@ struct rproc_vdev {
- 	u32 rsc_offset;
- };
- 
--struct rproc *rproc_get_by_phandle(phandle phandle);
- struct rproc *rproc_alloc(struct device *dev, const char *name,
- 				const struct rproc_ops *ops,
- 				const char *firmware, int len);
-@@ -511,4 +510,28 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- 	return rvdev->rproc;
- }
- 
-+#ifdef CONFIG_OF
-+extern struct rproc *of_get_rproc_by_index(struct device_node *np,
-+					   int index);
-+extern struct rproc *of_get_rproc_by_name(struct device_node *np,
-+					  const char *name);
-+extern struct rproc *rproc_get_by_phandle(phandle phandle);
-+#else
-+static inline
-+struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
-+{
-+	return NULL;
-+}
-+static inline
-+struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
-+{
-+	return NULL;
-+}
-+static inline
-+struct rproc *rproc_get_by_phandle(phandle phandle)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_OF */
-+
- #endif /* REMOTEPROC_H */
--- 
-2.9.0
+However, the next step in the process is to do a timed wait for the
+status to turn 4 or negative, so we should treat that snippet (check for
+MBA_AUTH_COMPLETE) as part of the validation and move it in here from
+q6v5_mpss_load().
+
+Regards,
+Bjorn
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+> index fb4c56c..8abc369 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+> @@ -386,7 +386,6 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+>  	phys_addr_t fw_addr;
+>  	bool relocate;
+>  	size_t size;
+> -	u32 val;
+>  	int ret;
+>  	int i;
+>  
+> @@ -425,8 +424,7 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+>  		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>  	}
+>  
+> -	val = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+> -	return val < 0 ? val : 0;
+> +	return readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+>  }
+>  
+>  static int q6v5_mpss_load(struct q6v5 *qproc)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
