@@ -1,144 +1,74 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 2/2] remoteproc: core: Rework obtaining a rproc from a DT phandle
-Date: Tue, 19 Jul 2016 16:49:05 +0100
-Message-Id: <20160719154905.23344-2-lee.jones@linaro.org>
-In-Reply-To: <20160719154905.23344-1-lee.jones@linaro.org>
-References: <20160719154905.23344-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, ssantosh@kernel.org, linux-remoteproc@vger.kernel.org, ludovic.barre@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 13 Jul 2016 09:51:31 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v6 44/46] remoteproc: qcom: Use unsigned long for
+ dma_attrs
+Message-ID: <20160713165131.GK23833@tuxbot>
+References: <1468399300-5399-35-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-36-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-37-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-38-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-39-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-40-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-41-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-42-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-43-git-send-email-k.kozlowski@samsung.com>
+ <1468399300-5399-44-git-send-email-k.kozlowski@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1468399300-5399-44-git-send-email-k.kozlowski@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, hch@infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In this patch we;
- - Use a subsystem generic phandle to obtain an rproc
-   - We have to support TI's bespoke version for the time being
- - Convert wkup_m3_ipc driver to new API
- - Rename the call to be more like other, similar OF calls
- - Move feature-not-enabled inline stub to the headers
- - Strip out duplicate code by calling into of_get_rproc_by_index()
+On Wed 13 Jul 01:41 PDT 2016, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 41 ++++++++----------------------------
- drivers/soc/ti/wkup_m3_ipc.c         | 14 +++---------
- include/linux/remoteproc.h           |  4 ++--
- 3 files changed, 14 insertions(+), 45 deletions(-)
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 6a0d158..aea29a75c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1269,47 +1269,24 @@ struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
- EXPORT_SYMBOL(of_get_rproc_by_name);
- 
- /**
-- * rproc_get_by_phandle() - find a remote processor by phandle
-- * @phandle: phandle to the rproc
-+ * of_get_rproc_by_phandle() - lookup and obtain a reference to an rproc
-+ * @np: node to search for rproc
-  *
-- * Finds an rproc handle using the remote processor's phandle, and then
-- * return a handle to the rproc.
-+ * Finds an rproc handle using the default remote processor's phandle,
-+ * and then returns a handle to the rproc.
-  *
-  * This function increments the remote processor's refcount, so always
-  * use rproc_put() to decrement it back once rproc isn't needed anymore.
-  *
-- * Returns the rproc handle on success, and NULL on failure.
-+ * Returns a pointer to the rproc struct on success or an appropriate error
-+ * code otherwise.
-  */
--struct rproc *rproc_get_by_phandle(phandle phandle)
--{
--	struct rproc *rproc = NULL, *r;
--	struct device_node *np;
--
--	np = of_find_node_by_phandle(phandle);
--	if (!np)
--		return NULL;
--
--	mutex_lock(&rproc_list_mutex);
--	list_for_each_entry(r, &rproc_list, node) {
--		if (r->dev.parent && r->dev.parent->of_node == np) {
--			rproc = r;
--			get_device(&rproc->dev);
--			break;
--		}
--	}
--	mutex_unlock(&rproc_list_mutex);
--
--	of_node_put(np);
--
--	return rproc;
--}
--#else
--struct rproc *rproc_get_by_phandle(phandle phandle)
-+struct rproc *of_get_rproc_by_phandle(struct device_node *np)
- {
--	return NULL;
-+	return of_get_rproc_by_index(np, 0);
- }
-+EXPORT_SYMBOL(of_get_rproc_by_phandle);
- #endif
--EXPORT_SYMBOL(rproc_get_by_phandle);
- 
- /**
-  * rproc_add() - register a remote processor
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 8823cc8..15481f3 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -385,7 +385,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	int irq, ret;
--	phandle rproc_phandle;
- 	struct rproc *m3_rproc;
- 	struct resource *res;
- 	struct task_struct *task;
-@@ -430,16 +429,9 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- 		return PTR_ERR(m3_ipc->mbox);
- 	}
- 
--	if (of_property_read_u32(dev->of_node, "ti,rproc", &rproc_phandle)) {
--		dev_err(&pdev->dev, "could not get rproc phandle\n");
--		ret = -ENODEV;
--		goto err_free_mbox;
--	}
--
--	m3_rproc = rproc_get_by_phandle(rproc_phandle);
--	if (!m3_rproc) {
--		dev_err(&pdev->dev, "could not get rproc handle\n");
--		ret = -EPROBE_DEFER;
-+	m3_rproc = of_get_rproc_by_phandle(dev->of_node);
-+	if (IS_ERR(m3_rproc)) {
-+		ret = PTR_ERR(m3_rproc);
- 		goto err_free_mbox;
- 	}
- 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index f130938..3608d20 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -515,7 +515,7 @@ extern struct rproc *of_get_rproc_by_index(struct device_node *np,
- 					   int index);
- extern struct rproc *of_get_rproc_by_name(struct device_node *np,
- 					  const char *name);
--extern struct rproc *rproc_get_by_phandle(phandle phandle);
-+extern struct rproc *of_get_rproc_by_phandle(struct device_node *np);
- #else
- static inline
- struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
-@@ -528,7 +528,7 @@ struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
- 	return NULL;
- }
- static inline
--struct rproc *rproc_get_by_phandle(phandle phandle)
-+struct rproc *of_get_rproc_by_phandle(struct device_node *np)
- {
- 	return NULL;
- }
--- 
-2.9.0
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+> 
+> Changes since v5:
+> New patch.
+> ---
+>  drivers/remoteproc/qcom_q6v5_pil.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+> index fb4c56cc6dfc..4913ec6f9d00 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+> @@ -349,13 +349,12 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
+>  
+>  static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+>  {
+> -	DEFINE_DMA_ATTRS(attrs);
+> +	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+>  	dma_addr_t phys;
+>  	void *ptr;
+>  	int ret;
+>  
+> -	dma_set_attr(DMA_ATTR_FORCE_CONTIGUOUS, &attrs);
+> -	ptr = dma_alloc_attrs(qproc->dev, fw->size, &phys, GFP_KERNEL, &attrs);
+> +	ptr = dma_alloc_attrs(qproc->dev, fw->size, &phys, GFP_KERNEL, dma_attrs);
+>  	if (!ptr) {
+>  		dev_err(qproc->dev, "failed to allocate mdt buffer\n");
+>  		return -ENOMEM;
+> @@ -372,7 +371,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+>  	else if (ret < 0)
+>  		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
+>  
+> -	dma_free_attrs(qproc->dev, fw->size, ptr, phys, &attrs);
+> +	dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
+>  
+>  	return ret < 0 ? ret : 0;
+>  }
+> -- 
+> 1.9.1
+> 
