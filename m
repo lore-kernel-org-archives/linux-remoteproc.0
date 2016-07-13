@@ -1,60 +1,65 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 27 Jul 2016 12:11:35 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] remoteproc updates for v4.8
-Message-ID: <20160727191135.GM13516@tuxbot>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
+Subject: [PATCH] remoteproc: qcom: hexagon: Clean up mpss validation
+Date: Tue, 12 Jul 2016 17:15:45 -0700
+Message-Id: <1468368945-9482-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit af8c34ce6ae32addda3788d54a7e340cad22516b:
+As reported by Dan the unsigned "val" can't be negative. But instead
+correcting the check for early errors here followed by a wait for the
+validation result to show the error or success we can consolidate these
+two parts of the validation process into the validation function.
 
-  Linux 4.7-rc2 (2016-06-05 14:31:26 -0700)
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/qcom_q6v5_pil.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-are available in the git repository at:
-
-  git://github.com/andersson/remoteproc tags/rproc-v4.8
-
-for you to fetch changes up to 72beb49070463147e29d4aea6aca9ec5684138e9:
-
-  remoteproc: qcom: hexagon: Clean up mpss validation (2016-07-14 20:11:36 -0700)
-
-----------------------------------------------------------------
-remoteproc updates for v4.8
-
-Introduce remoteproc driver for controlling the modem/DSP Hexagon CPU
-found in a multitude of Qualcomm platform. Also cleans up a race
-condition/potential leak during registration of remoteprocs and includes
-devicetree bindings in the MAINTAINERS entry.
-
-----------------------------------------------------------------
-Bjorn Andersson (3):
-      dt-binding: remoteproc: Introduce Hexagon loader binding
-      remoteproc: qcom: Driver for the self-authenticating Hexagon v5
-      remoteproc: qcom: hexagon: Clean up mpss validation
-
-Dave Gerlach (1):
-      remoteproc: Fix potential race condition in rproc_add
-
-Geert Uytterhoeven (1):
-      MAINTAINERS: Add file patterns for remoteproc device tree bindings
-
-Wei Yongjun (1):
-      remoteproc: qcom: remove redundant dev_err call in q6v5_init_mem()
-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 137 ++++
- MAINTAINERS                                        |   3 +-
- drivers/remoteproc/Kconfig                         |  14 +
- drivers/remoteproc/Makefile                        |   2 +
- drivers/remoteproc/qcom_mdt_loader.c               | 179 ++++
- drivers/remoteproc/qcom_mdt_loader.h               |  13 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 908 +++++++++++++++++++++
- drivers/remoteproc/remoteproc_core.c               |  15 +-
- 8 files changed, 1264 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
- create mode 100644 drivers/remoteproc/qcom_mdt_loader.c
- create mode 100644 drivers/remoteproc/qcom_mdt_loader.h
- create mode 100644 drivers/remoteproc/qcom_q6v5_pil.c
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 63406ee689d9..b8fba4dc2447 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -386,7 +386,6 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+ 	phys_addr_t fw_addr;
+ 	bool relocate;
+ 	size_t size;
+-	u32 val;
+ 	int ret;
+ 	int i;
+ 
+@@ -425,8 +424,13 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+ 		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+ 	}
+ 
+-	val = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
+-	return val < 0 ? val : 0;
++	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
++	if (ret == -ETIMEDOUT)
++		dev_err(qproc->dev, "MPSS authentication timed out\n");
++	else if (ret < 0)
++		dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
++
++	return ret < 0 ? ret : 0;
+ }
+ 
+ static int q6v5_mpss_load(struct q6v5 *qproc)
+@@ -463,14 +467,6 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 		goto release_firmware;
+ 
+ 	ret = q6v5_mpss_validate(qproc, fw);
+-	if (ret)
+-		goto release_firmware;
+-
+-	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+-	if (ret == -ETIMEDOUT)
+-		dev_err(qproc->dev, "MPSS authentication timed out\n");
+-	else if (ret < 0)
+-		dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
+ 
+ release_firmware:
+ 	release_firmware(fw);
+-- 
+2.5.0
