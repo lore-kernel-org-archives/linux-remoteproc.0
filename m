@@ -1,60 +1,77 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Tue, 5 Jul 2016 16:43:15 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [patch] remoteproc: qcom: remove some bogus error handling
-Message-ID: <20160705234315.GP1190@tuxbot>
-References: <20160629144055.GB22818@mwanda>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 14 Jul 2016 07:53:08 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/5] remoteproc: core: Add rproc OF look-up functions
+Message-ID: <20160714065308.GA10504@dell>
+References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
+ <1462454983-13168-3-git-send-email-lee.jones@linaro.org>
+ <20160713191134.GL23833@tuxbot>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20160629144055.GB22818@mwanda>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@sonymobile.com>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160713191134.GL23833@tuxbot>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 29 Jun 07:40 PDT 2016, Dan Carpenter wrote:
+On Wed, 13 Jul 2016, Bjorn Andersson wrote:
 
-> "val" can't be negative because it's unsigned and also readl() doesn't
-> return negative error codes.
+> On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
 > 
-
-Thanks for catching this. Unfortunately a successful validation will
-result in status becoming 4 and I check if the return value is non-zero
-(rather than negative) in q6v5_mpss_load().
-
-However, the next step in the process is to do a timed wait for the
-status to turn 4 or negative, so we should treat that snippet (check for
-MBA_AUTH_COMPLETE) as part of the validation and move it in here from
-q6v5_mpss_load().
-
-Regards,
-Bjorn
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Lee,
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index fb4c56c..8abc369 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -386,7 +386,6 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
->  	phys_addr_t fw_addr;
->  	bool relocate;
->  	size_t size;
-> -	u32 val;
->  	int ret;
->  	int i;
->  
-> @@ -425,8 +424,7 @@ static int q6v5_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
->  		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
->  	}
->  
-> -	val = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
-> -	return val < 0 ? val : 0;
-> +	return readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
->  }
->  
->  static int q6v5_mpss_load(struct q6v5 *qproc)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I ran into this topic again while looking into some unrelated things.
+> 
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > +struct rproc *of_rproc_byindex(struct device_node *np, int index)
+> > +{
+> > +	struct rproc *rproc;
+> > +	struct device_node *rproc_node;
+> > +	struct platform_device *pdev;
+> > +	struct klist_iter i;
+> > +
+> > +	if (index < 0)
+> > +		return ERR_PTR(-EINVAL);
+> > +
+> > +	rproc_node = of_parse_phandle(np, "rprocs", index);
+> > +	if (!rproc_node)
+> 
+> As I stated before I would like for you to use the existing rproc_list,
+> as done in rproc_get_by_phandle() today.
+> 
+> But as you resend this patch, could you please make this check fallback
+> to also checking for "ti,rproc", then simply drop the existing
+> rproc_get_by_phandle() and change the call to
+> of_rproc_byindex(dev->of_node, 0) in wkup_m3_ipc.c?
+> 
+> That way we're backwards compatible with the TI wakeup M3, without
+> having to maintain the then non-standard generic rproc phandle resolver.
+
+I started working on this yesterday.  Should be with you soon.
+
+> > +		return ERR_PTR(-ENODEV);
+> > +
+> > +	pdev = of_find_device_by_node(rproc_node);
+> > +	if (!pdev)
+> > +		return ERR_PTR(-ENODEV);
+> > +
+> > +	klist_iter_init(&rprocs, &i);
+> > +	while ((rproc = next_rproc(&i)) != NULL)
+> > +		if (rproc->dev.parent == &pdev->dev)
+> > +			break;
+> > +	klist_iter_exit(&i);
+> > +
+> > +	return rproc;
+> > +}
+> > +EXPORT_SYMBOL(of_rproc_byindex);
+> 
+> Regards,
+> Bjorn
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
