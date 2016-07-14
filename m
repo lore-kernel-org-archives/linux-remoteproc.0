@@ -1,95 +1,47 @@
-Return-Path: <k.kozlowski@samsung.com>
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v6 44/46] remoteproc: qcom: Use unsigned long for dma_attrs
-Date: Wed, 13 Jul 2016 10:41:35 +0200
-Message-id: <1468399300-5399-44-git-send-email-k.kozlowski@samsung.com>
-In-reply-to: <1468399300-5399-43-git-send-email-k.kozlowski@samsung.com>
-References: <1468399167-28083-1-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-1-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-2-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-3-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-4-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-5-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-6-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-7-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-8-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-9-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-10-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-11-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-12-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-13-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-14-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-15-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-16-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-17-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-18-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-19-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-20-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-21-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-22-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-23-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-24-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-25-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-26-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-27-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-28-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-29-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-30-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-31-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-32-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-33-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-34-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-35-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-36-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-37-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-38-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-39-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-40-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-41-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-42-git-send-email-k.kozlowski@samsung.com>
- <1468399300-5399-43-git-send-email-k.kozlowski@samsung.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, hch@infradead.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Return-Path: <weiyj_lk@163.com>
+From: Wei Yongjun <weiyj_lk@163.com>
+Subject: [PATCH -next] remoteproc: qcom: remove redundant dev_err call in q6v5_init_mem()
+Date: Thu, 14 Jul 2016 12:57:44 +0000
+Message-Id: <1468501064-17683-1-git-send-email-weiyj_lk@163.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
----
+There is a error message within devm_ioremap_resource
+already, so remove the dev_err call to avoid redundant
+error message.
 
-Changes since v5:
-New patch.
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index fb4c56cc6dfc..4913ec6f9d00 100644
+index 4913ec6..790ec6f 100644
 --- a/drivers/remoteproc/qcom_q6v5_pil.c
 +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -349,13 +349,12 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
+@@ -679,17 +679,13 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
  
- static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- {
--	DEFINE_DMA_ATTRS(attrs);
-+	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
- 	dma_addr_t phys;
- 	void *ptr;
- 	int ret;
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qdsp6");
+ 	qproc->reg_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(qproc->reg_base)) {
+-		dev_err(qproc->dev, "failed to get qdsp6_base\n");
++	if (IS_ERR(qproc->reg_base))
+ 		return PTR_ERR(qproc->reg_base);
+-	}
  
--	dma_set_attr(DMA_ATTR_FORCE_CONTIGUOUS, &attrs);
--	ptr = dma_alloc_attrs(qproc->dev, fw->size, &phys, GFP_KERNEL, &attrs);
-+	ptr = dma_alloc_attrs(qproc->dev, fw->size, &phys, GFP_KERNEL, dma_attrs);
- 	if (!ptr) {
- 		dev_err(qproc->dev, "failed to allocate mdt buffer\n");
- 		return -ENOMEM;
-@@ -372,7 +371,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- 	else if (ret < 0)
- 		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rmb");
+ 	qproc->rmb_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(qproc->rmb_base)) {
+-		dev_err(qproc->dev, "failed to get rmb_base\n");
++	if (IS_ERR(qproc->rmb_base))
+ 		return PTR_ERR(qproc->rmb_base);
+-	}
  
--	dma_free_attrs(qproc->dev, fw->size, ptr, phys, &attrs);
-+	dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
- 
- 	return ret < 0 ? ret : 0;
- }
--- 
-1.9.1
+ 	ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
+ 					       "qcom,halt-regs", 3, 0, &args);
