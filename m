@@ -1,40 +1,32 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 27 Jul 2016 12:12:28 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] hwspinlock updates for v4.8
-Message-ID: <20160727191228.GN13516@tuxbot>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: Fix randomly placed semi-colon
+Date: Wed, 20 Jul 2016 10:29:35 +0100
+Message-Id: <20160720092935.5902-1-lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit af8c34ce6ae32addda3788d54a7e340cad22516b:
+It should never have been there in the first place.
 
-  Linux 4.7-rc2 (2016-06-05 14:31:26 -0700)
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-are available in the git repository at:
-
-  git://github.com/andersson/remoteproc tags/hwlock-v4.8
-
-for you to fetch changes up to 2dbd85859fca74d3d3a9f05f399c53a89f7ed2bd:
-
-  MAINTAINERS: Update hwspinlock paths (2016-07-12 16:42:39 -0700)
-
-----------------------------------------------------------------
-hwspinlock updates for v4.8
-
-Add missing of_node_put() in the Qualcomm driver and update MAINTAINERS to make
-sure all hwspinlock related files have a maintainer listed.
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      MAINTAINERS: Update hwspinlock paths
-
-Peter Chen (1):
-      hwspinlock: qcom_hwspinlock: add missing of_node_put after calling of_parse_phandle
-
- MAINTAINERS                          | 3 ++-
- drivers/hwspinlock/qcom_hwspinlock.c | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index fe03b2a..9823178 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -865,7 +865,7 @@ static void rpmsg_recv_done(struct virtqueue *rvq)
+ 		msgs_received++;
+ 
+ 		msg = virtqueue_get_buf(rvq, &len);
+-	};
++	}
+ 
+ 	dev_dbg(dev, "Received %u messages\n", msgs_received);
+ 
+-- 
+2.9.0
