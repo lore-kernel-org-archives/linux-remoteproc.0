@@ -1,47 +1,60 @@
-Return-Path: <weiyj_lk@163.com>
-From: Wei Yongjun <weiyj_lk@163.com>
-Subject: [PATCH -next] remoteproc: qcom: remove redundant dev_err call in q6v5_init_mem()
-Date: Thu, 14 Jul 2016 12:57:44 +0000
-Message-Id: <1468501064-17683-1-git-send-email-weiyj_lk@163.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 27 Jul 2016 12:11:35 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] remoteproc updates for v4.8
+Message-ID: <20160727191135.GM13516@tuxbot>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+The following changes since commit af8c34ce6ae32addda3788d54a7e340cad22516b:
 
-There is a error message within devm_ioremap_resource
-already, so remove the dev_err call to avoid redundant
-error message.
+  Linux 4.7-rc2 (2016-06-05 14:31:26 -0700)
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+are available in the git repository at:
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 4913ec6..790ec6f 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -679,17 +679,13 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qdsp6");
- 	qproc->reg_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(qproc->reg_base)) {
--		dev_err(qproc->dev, "failed to get qdsp6_base\n");
-+	if (IS_ERR(qproc->reg_base))
- 		return PTR_ERR(qproc->reg_base);
--	}
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rmb");
- 	qproc->rmb_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(qproc->rmb_base)) {
--		dev_err(qproc->dev, "failed to get rmb_base\n");
-+	if (IS_ERR(qproc->rmb_base))
- 		return PTR_ERR(qproc->rmb_base);
--	}
- 
- 	ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
- 					       "qcom,halt-regs", 3, 0, &args);
+  git://github.com/andersson/remoteproc tags/rproc-v4.8
+
+for you to fetch changes up to 72beb49070463147e29d4aea6aca9ec5684138e9:
+
+  remoteproc: qcom: hexagon: Clean up mpss validation (2016-07-14 20:11:36 -0700)
+
+----------------------------------------------------------------
+remoteproc updates for v4.8
+
+Introduce remoteproc driver for controlling the modem/DSP Hexagon CPU
+found in a multitude of Qualcomm platform. Also cleans up a race
+condition/potential leak during registration of remoteprocs and includes
+devicetree bindings in the MAINTAINERS entry.
+
+----------------------------------------------------------------
+Bjorn Andersson (3):
+      dt-binding: remoteproc: Introduce Hexagon loader binding
+      remoteproc: qcom: Driver for the self-authenticating Hexagon v5
+      remoteproc: qcom: hexagon: Clean up mpss validation
+
+Dave Gerlach (1):
+      remoteproc: Fix potential race condition in rproc_add
+
+Geert Uytterhoeven (1):
+      MAINTAINERS: Add file patterns for remoteproc device tree bindings
+
+Wei Yongjun (1):
+      remoteproc: qcom: remove redundant dev_err call in q6v5_init_mem()
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 137 ++++
+ MAINTAINERS                                        |   3 +-
+ drivers/remoteproc/Kconfig                         |  14 +
+ drivers/remoteproc/Makefile                        |   2 +
+ drivers/remoteproc/qcom_mdt_loader.c               | 179 ++++
+ drivers/remoteproc/qcom_mdt_loader.h               |  13 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 908 +++++++++++++++++++++
+ drivers/remoteproc/remoteproc_core.c               |  15 +-
+ 8 files changed, 1264 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+ create mode 100644 drivers/remoteproc/qcom_mdt_loader.c
+ create mode 100644 drivers/remoteproc/qcom_mdt_loader.h
+ create mode 100644 drivers/remoteproc/qcom_q6v5_pil.c
