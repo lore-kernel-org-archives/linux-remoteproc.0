@@ -1,64 +1,37 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Jul 2016 12:11:34 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/5] remoteproc: core: Add rproc OF look-up functions
-Message-ID: <20160713191134.GL23833@tuxbot>
-References: <1462454983-13168-1-git-send-email-lee.jones@linaro.org>
- <1462454983-13168-3-git-send-email-lee.jones@linaro.org>
+Return-Path: <weiyj.lk@gmail.com>
+Return-Path: <weiyj.lk@gmail.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH] remoteproc: qcom: hexagon: Fix error return code in q6v5_probe()
+Date: Fri, 29 Jul 2016 15:56:52 +0000
+Message-Id: <1469807812-32765-1-git-send-email-weiyj.lk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1462454983-13168-3-git-send-email-lee.jones@linaro.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, maxime.coquelin@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Wei Yongjun <weiyj.lk@gmail.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 05 May 06:29 PDT 2016, Lee Jones wrote:
+Fix to return a negative error code from the state get failed error
+handling case instead of 0, as done elsewhere in this function.
 
-Lee,
+Signed-off-by: Wei Yongjun <weiyj.lk@gmail.com>
+---
+ drivers/remoteproc/qcom_q6v5_pil.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-I ran into this topic again while looking into some unrelated things.
-
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> +struct rproc *of_rproc_byindex(struct device_node *np, int index)
-> +{
-> +	struct rproc *rproc;
-> +	struct device_node *rproc_node;
-> +	struct platform_device *pdev;
-> +	struct klist_iter i;
-> +
-> +	if (index < 0)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	rproc_node = of_parse_phandle(np, "rprocs", index);
-> +	if (!rproc_node)
-
-As I stated before I would like for you to use the existing rproc_list,
-as done in rproc_get_by_phandle() today.
-
-But as you resend this patch, could you please make this check fallback
-to also checking for "ti,rproc", then simply drop the existing
-rproc_get_by_phandle() and change the call to
-of_rproc_byindex(dev->of_node, 0) in wkup_m3_ipc.c?
-
-That way we're backwards compatible with the TI wakeup M3, without
-having to maintain the then non-standard generic rproc phandle resolver.
-
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	pdev = of_find_device_by_node(rproc_node);
-> +	if (!pdev)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	klist_iter_init(&rprocs, &i);
-> +	while ((rproc = next_rproc(&i)) != NULL)
-> +		if (rproc->dev.parent == &pdev->dev)
-> +			break;
-> +	klist_iter_exit(&i);
-> +
-> +	return rproc;
-> +}
-> +EXPORT_SYMBOL(of_rproc_byindex);
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 2479188..0ad536d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -864,8 +864,10 @@ static int q6v5_probe(struct platform_device *pdev)
+ 		goto free_rproc;
+ 
+ 	qproc->state = qcom_smem_state_get(&pdev->dev, "stop", &qproc->stop_bit);
+-	if (IS_ERR(qproc->state))
++	if (IS_ERR(qproc->state)) {
++		ret = PTR_ERR(qproc->state);
+ 		goto free_rproc;
++	}
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret)
