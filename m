@@ -1,169 +1,39 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 1/2] dt-binding: remoteproc: Introduce Qualcomm WCNSS loader binding
-Date: Fri, 12 Aug 2016 18:18:58 -0700
-Message-Id: <1471051139-23411-1-git-send-email-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v7 09/16] ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
+Date: Mon,  1 Aug 2016 18:10:46 +0100
+Message-Id: <1470071453-10730-10-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com, broonie@kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+This patch enables the STi ALSA drivers found on STi platforms
+as well as the simple-card driver which is a dependency to have
+working sound.
 
-The document defines the binding for a component that loads firmware for
-and boots the Qualcomm WCNSS core.
-
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Cc: arnaud.pouliquen@st.com
+Cc: broonie@kernel.org
 ---
+ arch/arm/configs/multi_v7_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes since v3:
-- None
-
-Changes since v2:
-- None
-
- .../bindings/remoteproc/qcom,wcnss-pil.txt         | 132 +++++++++++++++++++++
- 1 file changed, 132 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-new file mode 100644
-index 000000000000..0d2361ebe3d7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-@@ -0,0 +1,132 @@
-+Qualcomm WCNSS Peripheral Image Loader
-+
-+This document defines the binding for a component that loads and boots firmware
-+on the Qualcomm WCNSS core.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+		    "qcom,riva-pil",
-+		    "qcom,pronto-v1-pil",
-+		    "qcom,pronto-v2-pil"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must specify the base address and size of the CCU, DXE and
-+		    PMU register blocks
-+
-+- reg-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "ccu", "dxe", "pmu"
-+
-+- interrupts-extended:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must list the watchdog and fatal IRQs and may specify the
-+		    ready, handover and stop-ack IRQs
-+
-+- interrupt-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: should be "wdog", "fatal", optionally followed by "ready",
-+		    "handover", "stop-ack"
-+
-+- vddmx-supply:
-+- vddcx-supply:
-+- vddpx-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the regulators to be held on behalf of the
-+		    booting of the WCNSS core
-+
-+- qcom,smem-states:
-+	Usage: optional
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the SMEM state used to indicate to WCNSS that
-+		    it should shut down
-+
-+- qcom,smem-state-names:
-+	Usage: optional
-+	Value type: <stringlist>
-+	Definition: should be "stop"
-+
-+- memory-region:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to reserved-memory node for the remote processor
-+		    see ../reserved-memory/reserved-memory.txt
-+
-+= SUBNODES
-+A single subnode of the WCNSS PIL describes the attached rf module and its
-+resource dependencies.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+		    "qcom,wcn3620",
-+		    "qcom,wcn3660",
-+		    "qcom,wcn3680"
-+
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: should specify the xo clock and optionally the rf clock
-+
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: should be "xo", optionally followed by "rf"
-+
-+- vddxo-supply:
-+- vddrfa-supply:
-+- vddpa-supply:
-+- vdddig-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the regulators to be held on behalf of the
-+		    booting of the WCNSS core
-+
-+= EXAMPLE
-+The following example describes the resources needed to boot control the WCNSS,
-+with attached WCN3680, as it is commonly found on MSM8974 boards.
-+
-+pronto@fb204000 {
-+	compatible = "qcom,pronto-v2-pil";
-+	reg = <0xfb204000 0x2000>, <0xfb202000 0x1000>, <0xfb21b000 0x3000>;
-+	reg-names = "ccu", "dxe", "pmu";
-+
-+	interrupts-extended = <&intc 0 149 1>,
-+			      <&wcnss_smp2p_slave 0 0>,
-+			      <&wcnss_smp2p_slave 1 0>,
-+			      <&wcnss_smp2p_slave 2 0>,
-+			      <&wcnss_smp2p_slave 3 0>;
-+	interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
-+
-+	vddmx-supply = <&pm8841_s1>;
-+	vddcx-supply = <&pm8841_s2>;
-+	vddpx-supply = <&pm8941_s3>;
-+
-+	qcom,smem-states = <&wcnss_smp2p_out 0>;
-+	qcom,smem-state-names = "stop";
-+
-+	memory-region = <&wcnss_region>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&wcnss_pin_a>;
-+
-+	iris {
-+		compatible = "qcom,wcn3680";
-+
-+		clocks = <&rpmcc RPM_CXO_CLK_SRC>, <&rpmcc RPM_CXO_A2>;
-+		clock-names = "xo", "rf";
-+
-+		vddxo-supply = <&pm8941_l6>;
-+		vddrfa-supply = <&pm8941_l11>;
-+		vddpa-supply = <&pm8941_l19>;
-+		vdddig-supply = <&pm8941_s3>;
-+	};
-+};
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 541c914..9cf9141 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -608,6 +608,9 @@ CONFIG_SND_SOC_AK4642=m
+ CONFIG_SND_SOC_SGTL5000=m
+ CONFIG_SND_SOC_SPDIF=m
+ CONFIG_SND_SOC_WM8978=m
++CONFIG_SND_SOC_STI=m
++CONFIG_SND_SOC_STI_SAS=m
++CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_USB=y
+ CONFIG_USB_XHCI_HCD=y
+ CONFIG_USB_XHCI_MVEBU=y
 -- 
-2.5.0
+1.9.1
