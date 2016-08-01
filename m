@@ -1,93 +1,71 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 6/9] remoteproc: core: Add function to append a new resource table entry
-Date: Thu,  4 Aug 2016 10:21:50 +0100
-Message-Id: <20160804092153.23032-7-lee.jones@linaro.org>
-In-Reply-To: <20160804092153.23032-1-lee.jones@linaro.org>
-References: <20160804092153.23032-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 2/4] remoteproc: Calculate max_notifyid during load
+Date: Mon,  1 Aug 2016 11:58:01 -0700
+Message-Id: <1470077883-7419-2-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1470077883-7419-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1470077883-7419-1-git-send-email-bjorn.andersson@linaro.org>
+To: linux-remoteproc@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A new function now exists to pull in and amend and existing resource
-table entry.  But what if we wish to provide a new resource?  This
-function provides functionality to append a brand new resource entry
-onto the resource table.  All complexity related to shuffling parts
-of the table around, providing new offsets and incriminating number
-of entries in the resource table's top-level header is taken care of
-here.
+The calculation of max_notifyid must only be done before we call start()
+on the remoteproc drivers, so move the calculation to be part of the
+loading steps.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 55 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3318ebd..111350e 100644
+index 7e7f24fcac69..084ebffdfc47 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -980,6 +980,61 @@ static int rproc_update_resource_table_entry(struct rproc *rproc,
- 	return !updated;
- }
+@@ -697,17 +697,13 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
+ 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
+ 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
+ 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
+-	[RSC_VDEV] = NULL, /* VDEVs were handled upon registrarion */
++	[RSC_VDEV] = (rproc_handle_resource_t)rproc_count_vrings,
+ };
  
-+static struct resource_table*
-+rproc_add_resource_table_entry(struct rproc *rproc,
-+			       struct rproc_request_resource *request,
-+			       struct resource_table *old_table, int *tablesz)
-+{
-+	struct resource_table *table;
-+	struct fw_rsc_hdr h;
-+	void *new_rsc_loc;
-+	void *fw_header_loc;
-+	void *start_of_rscs;
-+	int new_rsc_offset;
-+	int size = *tablesz;
-+	int i;
+ static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
+ 	[RSC_VDEV] = (rproc_handle_resource_t)rproc_handle_vdev,
+ };
+ 
+-static rproc_handle_resource_t rproc_count_vrings_handler[RSC_LAST] = {
+-	[RSC_VDEV] = (rproc_handle_resource_t)rproc_count_vrings,
+-};
+-
+ /* handle firmware resource entries before booting the remote processor */
+ static int rproc_handle_resources(struct rproc *rproc, int len,
+ 				  rproc_handle_resource_t handlers[RSC_LAST])
+@@ -836,6 +832,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
+ 	}
+ 
++	/* reset max_notifyid */
++	rproc->max_notifyid = -1;
 +
-+	h.type = request->type;
-+
-+	new_rsc_offset = size;
-+
-+	/*
-+	 * Allocate another contiguous chunk of memory, large enough to
-+	 * contain the new, expanded resource table.
-+	 *
-+	 * The +4 is for the extra offset[] element in the top level header
-+	 */
-+	size += sizeof(struct fw_rsc_hdr) + request->size + 4;
-+	table = devm_kmemdup(&rproc->dev, old_table, size, GFP_KERNEL);
-+	if (!table)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Shunt table by 4 Bytes to account for the extra offset[] element */
-+	start_of_rscs = (void *)table + table->offset[0];
-+	memmove(start_of_rscs + 4,
-+		start_of_rscs, new_rsc_offset - table->offset[0]);
-+	new_rsc_offset += 4;
-+
-+	/* Update existing resource entry's offsets */
-+	for (i = 0; i < table->num; i++)
-+		table->offset[i] += 4;
-+
-+	/* Update the top level 'resource table' header */
-+	table->offset[table->num] = new_rsc_offset;
-+	table->num++;
-+
-+	/* Copy new firmware header into table */
-+	fw_header_loc = (void *)table + new_rsc_offset;
-+	memcpy(fw_header_loc, &h, sizeof(h));
-+
-+	/* Copy new resource entry into table */
-+	new_rsc_loc = (void *)fw_header_loc + sizeof(h);
-+	memcpy(new_rsc_loc, request->resource, request->size);
-+
-+	*tablesz = size;
-+	return table;
-+}
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
+ 	/* handle fw resources which are required to boot rproc */
+ 	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
+ 	if (ret) {
+@@ -923,13 +922,6 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+ 
+ 	rproc->table_ptr = rproc->cached_table;
+ 
+-	/* count the number of notify-ids */
+-	rproc->max_notifyid = -1;
+-	ret = rproc_handle_resources(rproc, tablesz,
+-				     rproc_count_vrings_handler);
+-	if (ret)
+-		goto out;
+-
+ 	/* look for virtio devices and register them */
+ 	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
+ 
 -- 
-2.9.0
+2.5.0
