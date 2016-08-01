@@ -1,42 +1,35 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v7 12/16] ARM: DT: STiH407: Add spdif_out pinctrl config
-Date: Mon,  1 Aug 2016 18:10:49 +0100
-Message-Id: <1470071453-10730-13-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v7 07/16] MAINTAINERS: Add FDMA driver files to STi section.
+Date: Mon,  1 Aug 2016 18:10:44 +0100
+Message-Id: <1470071453-10730-8-git-send-email-peter.griffin@linaro.org>
 In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
 References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the pinctrl config for the spidf out
-pins used by the sasg codec IP.
+This patch adds the FDMA driver files to the STi
+section of the maintainers file.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-index 537db7e..598dbab 100644
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -1114,6 +1114,14 @@
- 				};
- 			};
- 
-+			spdif_out {
-+				pinctrl_spdif_out: spdif_out{
-+					st,pins {
-+						spdif_out = <&pio34 7 ALT1 OUT>;
-+					};
-+				};
-+			};
-+
- 			serial3 {
- 				pinctrl_serial3: serial3-0 {
- 					st,pins {
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0b35e8b..dbdba21 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1705,6 +1705,7 @@ F:	drivers/char/hw_random/st-rng.c
+ F:	drivers/clocksource/arm_global_timer.c
+ F:	drivers/clocksource/clksrc_st_lpc.c
+ F:	drivers/cpufreq/sti-cpufreq.c
++F:	drivers/dma/st_fdma*
+ F:	drivers/i2c/busses/i2c-st.c
+ F:	drivers/media/rc/st_rc.c
+ F:	drivers/media/platform/sti/c8sectpfe/
 -- 
 1.9.1
