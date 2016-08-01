@@ -1,87 +1,59 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 13/14] rpmsg: Allow callback to return errors
-Date: Mon, 15 Aug 2016 17:17:19 -0700
-Message-Id: <1471306640-29917-14-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v7 15/16] ARM: STi: DT: STiH407: Add uniperif reader dt nodes
+Date: Mon,  1 Aug 2016 18:10:52 +0100
+Message-Id: <1470071453-10730-16-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Some rpmsg backends support holding on to and redelivering messages upon
-failed handling of them, so provide a way for the callback to report and
-error and allow the backends to handle this.
+This patch adds the DT node for the uniperif reader
+IP block found on STiH407 family silicon.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++----
- include/linux/rpmsg.h            |  4 ++--
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/stih407-family.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index d39e381bc596..9d681d68f7f3 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -785,8 +785,8 @@ static void rpmsg_xmit_done(struct virtqueue *svq)
- }
- 
- /* invoked when a name service announcement arrives */
--static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
--			void *priv, u32 src)
-+static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
-+		       void *priv, u32 src)
- {
- 	struct rpmsg_ns_msg *msg = data;
- 	struct rpmsg_device *newch;
-@@ -802,7 +802,7 @@ static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 
- 	if (len != sizeof(*msg)) {
- 		dev_err(dev, "malformed ns msg (%d)\n", len);
--		return;
-+		return -EINVAL;
- 	}
- 
- 	/*
-@@ -813,7 +813,7 @@ static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 	 */
- 	if (rpdev) {
- 		dev_err(dev, "anomaly: ns ept has an rpdev handle\n");
--		return;
-+		return -EINVAL;
- 	}
- 
- 	/* don't trust the remote processor for null terminating the name */
-@@ -836,6 +836,8 @@ static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 		if (!newch)
- 			dev_err(dev, "rpmsg_create_channel failed\n");
- 	}
+diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+index d263c96..bdddf2c 100644
+--- a/arch/arm/boot/dts/stih407-family.dtsi
++++ b/arch/arm/boot/dts/stih407-family.dtsi
+@@ -956,5 +956,31 @@
+ 			st,version = <5>;
+ 			st,mode = "SPDIF";
+ 		};
 +
-+	return 0;
- }
- 
- static int rpmsg_probe(struct virtio_device *vdev)
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index bdd1a2285733..19213e660a9b 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -46,7 +46,7 @@
- struct rpmsg_device;
- struct rpmsg_endpoint;
- 
--typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-+typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
- 
- /**
-  * struct rpmsg_channel_info - internal channel info representation
-@@ -123,7 +123,7 @@ struct rpmsg_driver {
- 	const struct rpmsg_device_id *id_table;
- 	int (*probe)(struct rpmsg_device *dev);
- 	void (*remove)(struct rpmsg_device *dev);
--	void (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-+	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
++		sti_uni_reader0: sti-uni-reader@0 {
++			compatible = "st,sti-uni-reader";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			reg = <0x8D83000 0x158>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 5 0 1>;
++			dma-names = "rx";
++			dai-name = "Uni Reader #0 (PCM IN)";
++			st,version = <3>;
++		};
++
++		sti_uni_reader1: sti-uni-reader@1 {
++			compatible = "st,sti-uni-reader";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			reg = <0x8D84000 0x158>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 6 0 1>;
++			dma-names = "rx";
++			dai-name = "Uni Reader #1 (HDMI RX)";
++			st,version = <3>;
++		};
+ 	};
  };
- 
- int register_rpmsg_device(struct rpmsg_device *dev);
 -- 
-2.5.0
+1.9.1
