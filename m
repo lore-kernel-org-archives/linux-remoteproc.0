@@ -1,71 +1,57 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/4] remoteproc: Calculate max_notifyid during load
-Date: Mon,  1 Aug 2016 11:58:01 -0700
-Message-Id: <1470077883-7419-2-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1470077883-7419-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1470077883-7419-1-git-send-email-bjorn.andersson@linaro.org>
-To: linux-remoteproc@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v7 10/16] ARM: DT: STiH407: Add i2s_out pinctrl configuration
+Date: Mon,  1 Aug 2016 18:10:47 +0100
+Message-Id: <1470071453-10730-11-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The calculation of max_notifyid must only be done before we call start()
-on the remoteproc drivers, so move the calculation to be part of the
-loading steps.
+This patch adds the pinctrl config for the i2s_out pins
+used by the uniperif player IP.
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/stih407-pinctrl.dtsi | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 7e7f24fcac69..084ebffdfc47 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -697,17 +697,13 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
- 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
- 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
--	[RSC_VDEV] = NULL, /* VDEVs were handled upon registrarion */
-+	[RSC_VDEV] = (rproc_handle_resource_t)rproc_count_vrings,
- };
+diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+index a538ae5..0fb5c8a 100644
+--- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+@@ -1067,6 +1067,29 @@
+ 				};
+ 			};
  
- static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
- 	[RSC_VDEV] = (rproc_handle_resource_t)rproc_handle_vdev,
- };
- 
--static rproc_handle_resource_t rproc_count_vrings_handler[RSC_LAST] = {
--	[RSC_VDEV] = (rproc_handle_resource_t)rproc_count_vrings,
--};
--
- /* handle firmware resource entries before booting the remote processor */
- static int rproc_handle_resources(struct rproc *rproc, int len,
- 				  rproc_handle_resource_t handlers[RSC_LAST])
-@@ -836,6 +832,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 	}
- 
-+	/* reset max_notifyid */
-+	rproc->max_notifyid = -1;
++			i2s_out {
++				pinctrl_i2s_8ch_out: i2s_8ch_out{
++					st,pins {
++						mclk = <&pio33 5 ALT1 OUT>;
++						lrclk = <&pio33 7 ALT1 OUT>;
++						sclk = <&pio33 6 ALT1 OUT>;
++						data0 = <&pio33 4 ALT1 OUT>;
++						data1 = <&pio34 0 ALT1 OUT>;
++						data2 = <&pio34 1 ALT1 OUT>;
++						data3 = <&pio34 2 ALT1 OUT>;
++					};
++				};
 +
- 	/* handle fw resources which are required to boot rproc */
- 	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
- 	if (ret) {
-@@ -923,13 +922,6 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 
- 	rproc->table_ptr = rproc->cached_table;
- 
--	/* count the number of notify-ids */
--	rproc->max_notifyid = -1;
--	ret = rproc_handle_resources(rproc, tablesz,
--				     rproc_count_vrings_handler);
--	if (ret)
--		goto out;
--
- 	/* look for virtio devices and register them */
- 	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
- 
++				pinctrl_i2s_2ch_out: i2s_2ch_out{
++					st,pins {
++						mclk = <&pio33 5 ALT1 OUT>;
++						lrclk = <&pio33 7 ALT1 OUT>;
++						sclk = <&pio33 6 ALT1 OUT>;
++						data0 = <&pio33 4 ALT1 OUT>;
++					};
++				};
++			};
++
+ 			serial3 {
+ 				pinctrl_serial3: serial3-0 {
+ 					st,pins {
 -- 
-2.5.0
+1.9.1
