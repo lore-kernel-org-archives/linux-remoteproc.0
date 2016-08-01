@@ -1,51 +1,109 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 01/14] rpmsg: Enable matching devices with drivers based on DT
-Date: Mon, 15 Aug 2016 17:17:07 -0700
-Message-Id: <1471306640-29917-2-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v7 14/16] ARM: STi: DT: STiH407: Add uniperif player dt nodes
+Date: Mon,  1 Aug 2016 18:10:51 +0100
+Message-Id: <1470071453-10730-15-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make it possible to match rpmsg devices based on device tree node, in
-addition to the id table. In some of these cases the rpmsg driver would
-not have a id_table, so make this optional.
+This patch adds the DT nodes for the uniperif player
+IP blocks found on STiH407 family silicon.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/stih407-family.dtsi | 76 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 4a4374cc6a59..495fa0a282d3 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -33,6 +33,7 @@
- #include <linux/wait.h>
- #include <linux/rpmsg.h>
- #include <linux/mutex.h>
-+#include <linux/of_device.h>
- 
- /**
-  * struct virtproc_info - virtual remote processor state
-@@ -175,11 +176,12 @@ static int rpmsg_dev_match(struct device *dev, struct device_driver *drv)
- 	const struct rpmsg_device_id *ids = rpdrv->id_table;
- 	unsigned int i;
- 
--	for (i = 0; ids[i].name[0]; i++)
--		if (rpmsg_id_match(rpdev, &ids[i]))
--			return 1;
-+	if (ids)
-+		for (i = 0; ids[i].name[0]; i++)
-+			if (rpmsg_id_match(rpdev, &ids[i]))
-+				return 1;
- 
--	return 0;
-+	return of_driver_match_device(dev, drv);
- }
- 
- static int rpmsg_uevent(struct device *dev, struct kobj_uevent_env *env)
+diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+index d1258d5..d263c96 100644
+--- a/arch/arm/boot/dts/stih407-family.dtsi
++++ b/arch/arm/boot/dts/stih407-family.dtsi
+@@ -880,5 +880,81 @@
+ 			status = "disabled";
+ 			st,syscfg = <&syscfg_core>;
+ 		};
++
++		sti_uni_player0: sti-uni-player@0 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_PCM_0>;
++			assigned-clocks = <&clk_s_d0_quadfs 0>, <&clk_s_d0_flexgen CLK_PCM_0>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 0>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D80000 0x158>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 2 0 1>;
++			dai-name = "Uni Player #0 (HDMI)";
++			dma-names = "tx";
++			st,uniperiph-id = <0>;
++			st,version = <5>;
++			st,mode = "HDMI";
++		};
++
++		sti_uni_player1: sti-uni-player@1 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_PCM_1>;
++			assigned-clocks = <&clk_s_d0_quadfs 1>, <&clk_s_d0_flexgen CLK_PCM_1>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 1>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D81000 0x158>;
++			interrupts = <GIC_SPI 85 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 3 0 1>;
++			dai-name = "Uni Player #1 (PIO)";
++			dma-names = "tx";
++			st,uniperiph-id = <1>;
++			st,version = <5>;
++			st,mode = "PCM";
++		};
++
++		sti_uni_player2: sti-uni-player@2 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++			assigned-clocks = <&clk_s_d0_quadfs 2>, <&clk_s_d0_flexgen CLK_PCM_2>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 2>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D82000 0x158>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 4 0 1>;
++			dai-name = "Uni Player #1 (DAC)";
++			dma-names = "tx";
++			st,uniperiph-id = <2>;
++			st,version = <5>;
++			st,mode = "PCM";
++		};
++
++		sti_uni_player3: sti-uni-player@3 {
++			compatible = "st,sti-uni-player";
++			status = "disabled";
++			#sound-dai-cells = <0>;
++			st,syscfg = <&syscfg_core>;
++			clocks = <&clk_s_d0_flexgen CLK_SPDIFF>;
++			assigned-clocks = <&clk_s_d0_quadfs 3>, <&clk_s_d0_flexgen CLK_SPDIFF>;
++			assigned-clock-parents = <0>, <&clk_s_d0_quadfs 3>;
++			assigned-clock-rates = <50000000>;
++			reg = <0x8D85000 0x158>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_NONE>;
++			dmas = <&fdma0 7 0 1>;
++			dma-names = "tx";
++			dai-name = "Uni Player #1 (PIO)";
++			st,uniperiph-id = <3>;
++			st,version = <5>;
++			st,mode = "SPDIF";
++		};
+ 	};
+ };
 -- 
-2.5.0
+1.9.1
