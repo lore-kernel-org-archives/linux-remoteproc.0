@@ -1,54 +1,42 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 1/9] remoteproc: core: Ensure error message is clear
-Date: Thu,  4 Aug 2016 10:21:45 +0100
-Message-Id: <20160804092153.23032-2-lee.jones@linaro.org>
-In-Reply-To: <20160804092153.23032-1-lee.jones@linaro.org>
-References: <20160804092153.23032-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v7 02/16] MAINTAINERS: Add st slim core rproc driver to STi section.
+Date: Mon,  1 Aug 2016 18:10:39 +0100
+Message-Id: <1470071453-10730-3-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Before this patch, the dma_alloc_coherent() failure path printed out:
+This patch adds the slim core rproc driver to the STi section
+of the MAINTAINERS file.
 
-  "dma_alloc_coherent err: 16760832"
-
-... alluding to the Linux error code being 16760832, but seeing as
-Linux error codes are all negative, this looks like a signed/unsigned
-issue.  In fact, the message is trying to print the length of the
-requested memory region.  Let's clear that up.
-
-While we're at it, let's standardise the way 'len' is printed.  In
-all other locations 'len' is in hex prefixed by a '0x' for clarity.
-
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index aea29a75c..3566dc9 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -581,7 +581,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 		return -EINVAL;
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8c20323..0b35e8b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1715,6 +1715,7 @@ F:	drivers/phy/phy-stih407-usb.c
+ F:	drivers/phy/phy-stih41x-usb.c
+ F:	drivers/pinctrl/pinctrl-st.c
+ F:	drivers/remoteproc/st_remoteproc.c
++F:	drivers/remoteproc/st_slim_rproc.c
+ F:	drivers/reset/sti/
+ F:	drivers/rtc/rtc-st-lpc.c
+ F:	drivers/tty/serial/st-asc.c
+@@ -1723,6 +1724,7 @@ F:	drivers/usb/host/ehci-st.c
+ F:	drivers/usb/host/ohci-st.c
+ F:	drivers/watchdog/st_lpc_wdt.c
+ F:	drivers/ata/ahci_st.c
++F:	include/linux/remoteproc/st_slim_rproc.h
  
--	dev_dbg(dev, "carveout rsc: da %x, pa %x, len %x, flags %x\n",
-+	dev_dbg(dev, "carveout rsc: da %x, pa %x, len 0x%x, flags %x\n",
- 			rsc->da, rsc->pa, rsc->len, rsc->flags);
- 
- 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
-@@ -590,7 +590,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 
- 	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
- 	if (!va) {
--		dev_err(dev->parent, "dma_alloc_coherent err: %d\n", rsc->len);
-+		dev_err(dev->parent,
-+			"failed to allocate dma memory: len 0x%x\n", rsc->len);
- 		ret = -ENOMEM;
- 		goto free_carv;
- 	}
+ ARM/STM32 ARCHITECTURE
+ M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
 -- 
-2.9.0
+1.9.1
