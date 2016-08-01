@@ -1,118 +1,118 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 3/4] remoteproc: Move vdev handling to boot/shutdown
-Date: Mon,  1 Aug 2016 11:58:02 -0700
-Message-Id: <1470077883-7419-3-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1470077883-7419-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1470077883-7419-1-git-send-email-bjorn.andersson@linaro.org>
-To: linux-remoteproc@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v7 03/16] dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding documentation
+Date: Mon,  1 Aug 2016 18:10:40 +0100
+Message-Id: <1470071453-10730-4-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The newly introduced "always-on" flag allows us to stop giving the vdevs
-special treatment. The ordering of resource allocation and life cycle of
-the remote processor is kept intact.
+This patch adds the DT binding documentation for the FDMA constroller
+found on STi based chipsets from STMicroelectronics.
 
-This allows us to mark a remote processor with vdevs to not boot unless
-explicitly requested to do so by a client driver.
-
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 34 ++++++++++++++--------------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
+ Documentation/devicetree/bindings/dma/st_fdma.txt | 87 +++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 084ebffdfc47..9d64409f3839 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -753,6 +753,7 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
- static void rproc_resource_cleanup(struct rproc *rproc)
- {
- 	struct rproc_mem_entry *entry, *tmp;
-+	struct rproc_vdev *rvdev, *rvtmp;
- 	struct device *dev = &rproc->dev;
- 
- 	/* clean up debugfs trace entries */
-@@ -785,6 +786,10 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		list_del(&entry->node);
- 		kfree(entry);
- 	}
+diff --git a/Documentation/devicetree/bindings/dma/st_fdma.txt b/Documentation/devicetree/bindings/dma/st_fdma.txt
+new file mode 100644
+index 0000000..495d853
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/st_fdma.txt
+@@ -0,0 +1,87 @@
++* STMicroelectronics Flexible Direct Memory Access Device Tree bindings
 +
-+	/* clean up remote vdev entries */
-+	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
-+		rproc_remove_virtio_dev(rvdev);
- }
- 
- /*
-@@ -835,6 +840,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
- 
-+	/* look for virtio devices and register them */
-+	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
-+	if (ret) {
-+		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
-+		goto clean_up;
-+	}
++The FDMA is a general-purpose direct memory access controller capable of
++supporting 16 independent DMA channels. It accepts up to 32 DMA requests.
++The FDMA is based on a Slim processor which requires a firmware.
 +
- 	/* handle fw resources which are required to boot rproc */
- 	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
- 	if (ret) {
-@@ -898,7 +910,7 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- {
- 	struct rproc *rproc = context;
- 	struct resource_table *table;
--	int ret, tablesz;
-+	int tablesz;
- 
- 	if (rproc_fw_sanity_check(rproc, fw) < 0)
- 		goto out;
-@@ -922,9 +934,6 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 
- 	rproc->table_ptr = rproc->cached_table;
- 
--	/* look for virtio devices and register them */
--	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
--
- 	/* if rproc is marked always-on, request it to boot */
- 	if (rproc->always_on)
- 		rproc_boot_nowait(rproc);
-@@ -973,9 +982,6 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
-  */
- int rproc_trigger_recovery(struct rproc *rproc)
- {
--	struct rproc_vdev *rvdev, *rvtmp;
--	int ret;
--
- 	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
- 
- 	init_completion(&rproc->crash_comp);
-@@ -984,23 +990,11 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	/* TODO: make sure this works with rproc->power > 1 */
- 	rproc_shutdown(rproc);
- 
--	/* clean up remote vdev entries */
--	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
--		rproc_remove_virtio_dev(rvdev);
--
- 	/* wait until there is no more rproc users */
- 	wait_for_completion(&rproc->crash_comp);
- 
--	/* Free the copy of the resource table */
--	kfree(rproc->cached_table);
--
--	ret = rproc_add_virtio_devices(rproc);
--	if (ret)
--		return ret;
--
- 	/*
--	 * boot the remote processor up again, waiting for the async fw load to
--	 * finish
-+	 * boot the remote processor up again
- 	 */
- 	rproc_boot(rproc);
- 
++* FDMA Controller
++
++Required properties:
++- compatible	: Should be one of
++		 - st,stih407-fdma-mpe31-11, "st,slim-rproc";
++		 - st,stih407-fdma-mpe31-12, "st,slim-rproc";
++		 - st,stih407-fdma-mpe31-13, "st,slim-rproc";
++- reg		: Should contain an entry for each name in reg-names
++- reg-names	: Must contain "slimcore", "dmem", "peripherals", "imem" entries
++- interrupts	: Should contain one interrupt shared by all channels
++- dma-channels	: Number of channels supported by the controller
++- #dma-cells	: Must be <3>. See DMA client section below
++- clocks	: Must contain an entry for each clock
++See: Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++
++Example:
++
++	fdma0: dma-controller@8e20000 {
++		compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
++		reg = <0x8e20000 0x8000>,
++		      <0x8e30000 0x3000>,
++		      <0x8e37000 0x1000>,
++		      <0x8e38000 0x8000>;
++		reg-names = "slimcore", "dmem", "peripherals", "imem";
++		clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
++		interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
++		dma-channels = <16>;
++		#dma-cells = <3>;
++	};
++
++* DMA client
++
++Required properties:
++- dmas: Comma separated list of dma channel requests
++- dma-names: Names of the aforementioned requested channels
++
++Each dmas request consists of 4 cells:
++1. A phandle pointing to the FDMA controller
++2. The request line number
++3. A 32bit mask specifying (see include/linux/platform_data/dma-st-fdma.h)
++ -bit 2-0: Holdoff value, dreq will be masked for
++	0x0: 0-0.5us
++	0x1: 0.5-1us
++	0x2: 1-1.5us
++ -bit 17: data swap
++	0x0: disabled
++	0x1: enabled
++ -bit 21: Increment Address
++	0x0: no address increment between transfers
++	0x1: increment address between transfers
++ -bit 22: 2 STBus Initiator Coprocessor interface
++	0x0: high priority port
++	0x1: low priority port
++4. transfers type
++ 0 free running
++ 1 paced
++
++Example:
++
++	sti_uni_player2: sti-uni-player@2 {
++		compatible = "st,sti-uni-player";
++		status = "disabled";
++		#sound-dai-cells = <0>;
++		st,syscfg = <&syscfg_core>;
++		clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++		assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++		assigned-clock-parents = <&clk_s_d0_quadfs 2>;
++		assigned-clock-rates = <50000000>;
++		reg = <0x8D82000 0x158>;
++		interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
++		dmas = <&fdma0 4 0 1>;
++		dai-name = "Uni Player #1 (DAC)";
++		dma-names = "tx";
++		st,uniperiph-id = <2>;
++		st,version = <5>;
++		st,mode = "PCM";
++	};
 -- 
-2.5.0
+1.9.1
