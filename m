@@ -1,58 +1,138 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v7 11/16] ARM: DT: STiH407: Add i2s_in pinctrl configuration
-Date: Mon,  1 Aug 2016 18:10:48 +0100
-Message-Id: <1470071453-10730-12-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
-References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 9 Aug 2016 13:46:31 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 7/9] remoteproc: core: Add function to over-ride current
+ resource table
+Message-ID: <20160809124631.GB5243@dell>
+References: <20160804092153.23032-1-lee.jones@linaro.org>
+ <20160804092153.23032-8-lee.jones@linaro.org>
+ <57A88D65.3060104@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <57A88D65.3060104@st.com>
+To: loic pallardy <loic.pallardy@st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the pinctrl config for the i2s_in pins
-used by the uniperif reader IP.
+On Mon, 08 Aug 2016, loic pallardy wrote:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> Hi Lee
+> 
+> On 08/04/2016 11:21 AM, Lee Jones wrote:
+> > Most of the new resource table handling function are now in place, so
+> > it's time to put it all together.  Once new resource table information
+> > has been requested, the structures will be held in a holding pen until
+> > boot-time.  During boot-time rproc_apply_resource_overrides() will be
+> > invoked which in turn will pull the new information out of the holding
+> > pen and edit the table accordingly.
+> > 
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > ---
+> >   drivers/remoteproc/remoteproc_core.c | 65 ++++++++++++++++++++++++++++++++++++
+> >   1 file changed, 65 insertions(+)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index 111350e..6b4e29a 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -1035,6 +1035,65 @@ rproc_add_resource_table_entry(struct rproc *rproc,
+> >   	return table;
+> >   }
+> > 
+> > +static struct resource_table*
+> > +rproc_apply_resource_overrides(struct rproc *rproc,
+> > +			       struct resource_table **orig_table,
+> > +			       int *tablesz)
+> > +{
+> > +	struct rproc_request_resource *resource;
+> > +	struct resource_table *table = *orig_table;
+> > +	int size = *tablesz;
+> > +
+> > +	if (!table && size != 0) {
+> > +		dev_err(&rproc->dev, "No table present but table size is set\n");
+> > +		return ERR_PTR(-EINVAL);
+> > +	}
+> > +
+> > +	mutex_lock(&rproc->lock);
+> > +
+> > +	rproc_dump_resource_table(rproc, table, size);
+> It will be good to find a way to not dump resource table if debug is not
+> activated. For the same reason as you mentioned in your patch 8, resource
+> table parsing will waste CPUS cycles.
 
-diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-index 0fb5c8a..537db7e 100644
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -1090,6 +1090,30 @@
- 				};
- 			};
- 
-+			i2s_in {
-+				pinctrl_i2s_8ch_in: i2s_8ch_in{
-+					st,pins {
-+						mclk = <&pio32 5 ALT1 IN>;
-+						lrclk = <&pio32 7 ALT1 IN>;
-+						sclk = <&pio32 6 ALT1 IN>;
-+						data0 = <&pio32 4 ALT1 IN>;
-+						data1 = <&pio33 0 ALT1 IN>;
-+						data2 = <&pio33 1 ALT1 IN>;
-+						data3 = <&pio33 2 ALT1 IN>;
-+						data4 = <&pio33 3 ALT1 IN>;
-+					};
-+				};
-+
-+				pinctrl_i2s_2ch_in: i2s_2ch_in{
-+					st,pins {
-+						mclk = <&pio32 5 ALT1 IN>;
-+						lrclk = <&pio32 7 ALT1 IN>;
-+						sclk = <&pio32 6 ALT1 IN>;
-+						data0 = <&pio32 4 ALT1 IN>;
-+					};
-+				};
-+			};
-+
- 			serial3 {
- 				pinctrl_serial3: serial3-0 {
- 					st,pins {
++1
+
+I've been meaning to fix this, thanks.
+
+> > +
+> > +	if (!table) {
+> > +		size = sizeof(*table);
+> > +		table = devm_kzalloc(&rproc->dev, size, GFP_KERNEL);
+> > +		if (!table) {
+> > +			table = ERR_PTR(-ENOMEM);
+> > +			goto out;
+> > +		}
+> > +		table->ver = 1;
+> > +	}
+> > +
+> > +	list_for_each_entry(resource, &rproc->override_resources, node) {
+> > +		int updated = 0;
+> > +
+> > +		/* If we already have a table, update it with the new values. */
+> > +		updated = rproc_update_resource_table_entry(rproc, resource,
+> > +							    table, size);
+> > +		if (updated < 0) {
+> > +			table = ERR_PTR(updated);
+> > +			goto out;
+> > +		}
+> > +		if (updated)
+> > +			continue;
+> > +
+> > +		/* Didn't find matching resource entry -- creating a new one. */
+> > +		table = rproc_add_resource_table_entry(rproc, resource,
+> > +						       table, &size);
+> > +		if (IS_ERR(table))
+> > +			goto out;
+> > +
+> > +		*orig_table = table;
+> > +	}
+> > +
+> > +	rproc_dump_resource_table(rproc, table, size);
+> ditto
+
+Ditto
+
+> > +
+> > +	*tablesz = size;
+> > +
+> > + out:
+> > +	mutex_unlock(&rproc->lock);
+> > +	return table;
+> > +}
+> > +
+> >   /*
+> >    * take a firmware and boot a remote processor with it.
+> >    */
+> > @@ -1153,6 +1212,12 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+> >   	if (!table)
+> >   		goto out;
+> > 
+> > +	if (!list_empty(&rproc->override_resources)) {
+> > +		table = rproc_apply_resource_overrides(rproc, &table, &tablesz);
+> > +		if (IS_ERR(table))
+> > +			goto out;
+> > +	}
+> > +
+> >   	rproc->table_csum = crc32(0, table, tablesz);
+> > 
+> >   	/*
+> > 
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
