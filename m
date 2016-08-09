@@ -1,73 +1,66 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Tue, 9 Aug 2016 19:12:43 +0100
-From: Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 9 Aug 2016 10:28:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH 1/9] remoteproc: core: Ensure error message is clear
-Message-ID: <20160809181243.GC1581@dell>
+Message-ID: <20160809172825.GB26240@tuxbot>
 References: <20160804092153.23032-1-lee.jones@linaro.org>
  <20160804092153.23032-2-lee.jones@linaro.org>
- <20160809172825.GB26240@tuxbot>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160809172825.GB26240@tuxbot>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
+In-Reply-To: <20160804092153.23032-2-lee.jones@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, 09 Aug 2016, Bjorn Andersson wrote:
+On Thu 04 Aug 02:21 PDT 2016, Lee Jones wrote:
 
-> On Thu 04 Aug 02:21 PDT 2016, Lee Jones wrote:
+> Before this patch, the dma_alloc_coherent() failure path printed out:
 > 
-> > Before this patch, the dma_alloc_coherent() failure path printed out:
-> > 
-> >   "dma_alloc_coherent err: 16760832"
-> > 
-> > ... alluding to the Linux error code being 16760832, but seeing as
-> > Linux error codes are all negative, this looks like a signed/unsigned
-> > issue.  In fact, the message is trying to print the length of the
-> > requested memory region.  Let's clear that up.
-> > 
-> > While we're at it, let's standardise the way 'len' is printed.  In
-> > all other locations 'len' is in hex prefixed by a '0x' for clarity.
-> > 
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>   "dma_alloc_coherent err: 16760832"
 > 
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ... alluding to the Linux error code being 16760832, but seeing as
+> Linux error codes are all negative, this looks like a signed/unsigned
+> issue.  In fact, the message is trying to print the length of the
+> requested memory region.  Let's clear that up.
+> 
+> While we're at it, let's standardise the way 'len' is printed.  In
+> all other locations 'len' is in hex prefixed by a '0x' for clarity.
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-Again, this can just be applied.
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index aea29a75c..3566dc9 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -581,7 +581,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	dev_dbg(dev, "carveout rsc: da %x, pa %x, len %x, flags %x\n",
-> > +	dev_dbg(dev, "carveout rsc: da %x, pa %x, len 0x%x, flags %x\n",
-> >  			rsc->da, rsc->pa, rsc->len, rsc->flags);
-> >  
-> >  	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
-> > @@ -590,7 +590,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
-> >  
-> >  	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
-> >  	if (!va) {
-> > -		dev_err(dev->parent, "dma_alloc_coherent err: %d\n", rsc->len);
-> > +		dev_err(dev->parent,
-> > +			"failed to allocate dma memory: len 0x%x\n", rsc->len);
-> >  		ret = -ENOMEM;
-> >  		goto free_carv;
-> >  	}
+Regards,
+Bjorn
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index aea29a75c..3566dc9 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -581,7 +581,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  		return -EINVAL;
+>  	}
+>  
+> -	dev_dbg(dev, "carveout rsc: da %x, pa %x, len %x, flags %x\n",
+> +	dev_dbg(dev, "carveout rsc: da %x, pa %x, len 0x%x, flags %x\n",
+>  			rsc->da, rsc->pa, rsc->len, rsc->flags);
+>  
+>  	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
+> @@ -590,7 +590,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  
+>  	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+>  	if (!va) {
+> -		dev_err(dev->parent, "dma_alloc_coherent err: %d\n", rsc->len);
+> +		dev_err(dev->parent,
+> +			"failed to allocate dma memory: len 0x%x\n", rsc->len);
+>  		ret = -ENOMEM;
+>  		goto free_carv;
+>  	}
+> -- 
+> 2.9.0
+> 
