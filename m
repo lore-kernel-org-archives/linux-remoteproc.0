@@ -1,157 +1,78 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 9 Aug 2016 10:40:49 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 4/4] remoteproc: Move handling of cached table to boot/shutdown
-Date: Thu, 11 Aug 2016 14:52:53 -0700
-Message-Id: <1470952373-4823-4-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
-To: linux-remoteproc@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Subject: Re: [PATCH 8/9] remoteproc: core: Skip resource table integrity
+ checks if there are amendments
+Message-ID: <20160809174049.GE26240@tuxbot>
+References: <20160804092153.23032-1-lee.jones@linaro.org>
+ <20160804092153.23032-9-lee.jones@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160804092153.23032-9-lee.jones@linaro.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As we moved the vdev handling to the main boot/shutdown code path we can
-further simplify the resource table handling by moving the parsing spet
-to boot as well. The lifespan of the resource table is changed to live
-from rproc_boot() to rproc_shutdown().
+On Thu 04 Aug 02:21 PDT 2016, Lee Jones wrote:
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> There is little point wasting CPU cycles completing integrity checking
+> (i.e. ensuring nothing has changed) on the resource table if we *know*
+> that it will be changed (by us).  In this patch we skip resource table
+> integrity checks if a platform-specific remoteproc driver has requested
+> an amendment or an appended entry.
+> 
 
-Changes since v1:
-- None
+If we apply the auto-boot series first, I believe this dance goes away.
 
- drivers/remoteproc/remoteproc_core.c | 55 ++++++++++++------------------------
- include/linux/remoteproc.h           |  2 --
- 2 files changed, 18 insertions(+), 39 deletions(-)
+Regards,
+Bjorn
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e86200f978e2..36c019148f7e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -802,9 +802,6 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	struct resource_table *table, *loaded_table;
- 	int ret, tablesz;
- 
--	if (!rproc->table_ptr)
--		return -ENOMEM;
--
- 	ret = rproc_fw_sanity_check(rproc, fw);
- 	if (ret)
- 		return ret;
-@@ -831,11 +828,17 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 	}
- 
--	/* Verify that resource table in loaded fw is unchanged */
--	if (rproc->table_csum != crc32(0, table, tablesz)) {
--		dev_err(dev, "resource checksum failed, fw changed?\n");
-+	/*
-+	 * Create a copy of the resource table. When a virtio device starts
-+	 * and calls vring_new_virtqueue() the address of the allocated vring
-+	 * will be stored in the cached_table. Before the device is started,
-+	 * cached_table will be copied into devic memory.
-+	 */
-+	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
-+	if (!rproc->cached_table)
- 		goto clean_up;
--	}
-+
-+	rproc->table_ptr = rproc->cached_table;
- 
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
-@@ -893,6 +896,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	return 0;
- 
- clean_up:
-+	kfree(rproc->cached_table);
-+	rproc->cached_table = NULL;
-+	rproc->table_ptr = NULL;
-+
- 	rproc_resource_cleanup(rproc);
- 	rproc_disable_iommu(rproc);
- 	return ret;
-@@ -909,36 +916,11 @@ clean_up:
- static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- {
- 	struct rproc *rproc = context;
--	struct resource_table *table;
--	int tablesz;
--
--	if (rproc_fw_sanity_check(rproc, fw) < 0)
--		goto out;
--
--	/* look for the resource table */
--	table = rproc_find_rsc_table(rproc, fw,  &tablesz);
--	if (!table)
--		goto out;
--
--	rproc->table_csum = crc32(0, table, tablesz);
--
--	/*
--	 * Create a copy of the resource table. When a virtio device starts
--	 * and calls vring_new_virtqueue() the address of the allocated vring
--	 * will be stored in the cached_table. Before the device is started,
--	 * cached_table will be copied into devic memory.
--	 */
--	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
--	if (!rproc->cached_table)
--		goto out;
--
--	rproc->table_ptr = rproc->cached_table;
- 
- 	/* if rproc is marked always-on, request it to boot */
- 	if (rproc->auto_boot)
- 		rproc_boot_nowait(rproc);
- 
--out:
- 	release_firmware(fw);
- 	/* allow rproc_del() contexts, if any, to proceed */
- 	complete_all(&rproc->firmware_loading_complete);
-@@ -1178,8 +1160,10 @@ void rproc_shutdown(struct rproc *rproc)
- 
- 	rproc_disable_iommu(rproc);
- 
--	/* Give the next start a clean resource table */
--	rproc->table_ptr = rproc->cached_table;
-+	/* Free the copy of the resource table */
-+	kfree(rproc->cached_table);
-+	rproc->cached_table = NULL;
-+	rproc->table_ptr = NULL;
- 
- 	/* if in crash state, unlock crash handler */
- 	if (rproc->state == RPROC_CRASHED)
-@@ -1467,9 +1451,6 @@ int rproc_del(struct rproc *rproc)
- 	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
- 		rproc_remove_virtio_dev(rvdev);
- 
--	/* Free the copy of the resource table */
--	kfree(rproc->cached_table);
--
- 	/* the rproc is downref'ed as soon as it's removed from the klist */
- 	mutex_lock(&rproc_list_mutex);
- 	list_del(&rproc->node);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 76d936cabbf8..7cd0279bfe6a 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -409,7 +409,6 @@ enum rproc_crash_type {
-  * @max_notifyid: largest allocated notify id.
-  * @table_ptr: pointer to the resource table in effect
-  * @cached_table: copy of the resource table
-- * @table_csum: checksum of the resource table
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  */
- struct rproc {
-@@ -441,7 +440,6 @@ struct rproc {
- 	int max_notifyid;
- 	struct resource_table *table_ptr;
- 	struct resource_table *cached_table;
--	u32 table_csum;
- 	bool has_iommu;
- 	bool auto_boot;
- };
--- 
-2.5.0
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 6b4e29a..9a077e4 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1126,6 +1126,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
+>  	ret = -EINVAL;
+>  
+> +	/* If we've overridden the resource table, we know it's changed. */
+> +	if (!list_empty(&rproc->override_resources))
+> +		goto skip_table_check;
+> +
+>  	/* look for the resource table */
+>  	table = rproc_find_rsc_table(rproc, fw, &tablesz);
+>  	if (!table) {
+> @@ -1139,6 +1143,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  		goto clean_up;
+>  	}
+>  
+> + skip_table_check:
+> +
+>  	/* handle fw resources which are required to boot rproc */
+>  	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
+>  	if (ret) {
+> @@ -1216,10 +1222,15 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+>  		table = rproc_apply_resource_overrides(rproc, &table, &tablesz);
+>  		if (IS_ERR(table))
+>  			goto out;
+> +
+> +		/* No point checking table if we know it *has* changed */
+> +		goto skip_table_check;
+>  	}
+>  
+>  	rproc->table_csum = crc32(0, table, tablesz);
+>  
+> + skip_table_check:
+> +
+>  	/*
+>  	 * Create a copy of the resource table. When a virtio device starts
+>  	 * and calls vring_new_virtqueue() the address of the allocated vring
+> -- 
+> 2.9.0
+> 
