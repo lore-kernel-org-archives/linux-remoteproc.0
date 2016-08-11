@@ -1,82 +1,170 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH v2 1/4] remoteproc: Introduce auto-boot flag
-References: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
-Message-ID: <ba437b4f-dde3-8def-afe2-472430b750e6@ti.com>
-Date: Wed, 31 Aug 2016 13:27:51 -0500
-MIME-Version: 1.0
-In-Reply-To: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 1/4] remoteproc: Introduce auto-boot flag
+Date: Thu, 11 Aug 2016 14:52:50 -0700
+Message-Id: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
+To: linux-remoteproc@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+Introduce an "auto-boot" flag on rprocs to make it possible to flag
+remote processors without vdevs to automatically boot once the firmware
+is found.
 
-On 08/11/2016 04:52 PM, Bjorn Andersson wrote:
-> Introduce an "auto-boot" flag on rprocs to make it possible to flag
-> remote processors without vdevs to automatically boot once the firmware
-> is found.
-> 
-> Preserve previous behavior of the wkup_m3 processor being explicitly
-> booted by a consumer.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Loic Pallardy <loic.pallardy@st.com>
-> Cc: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Changes since v1:
-> - s/always_on/auto_boot/
-> - Fixed double increment of "power" in recover path
-> - Marked wkup_m3 to not auto_boot
-> 
+Preserve previous behavior of the wkup_m3 processor being explicitly
+booted by a consumer.
 
-I am seeing various issues with this series as I am testing this series
-more thoroughly with various TI remoteproc drivers and IPC stacks based
-on virtio devices. I use very simple firmware images that publishes the
-rpmsg-client-sample devices, so that I can use the kernel
-rpmsg_client_sample to test the communication.
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Loic Pallardy <loic.pallardy@st.com>
+Cc: Suman Anna <s-anna@ti.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-Here's a summary of the main issues:
+Changes since v1:
+- s/always_on/auto_boot/
+- Fixed double increment of "power" in recover path
+- Marked wkup_m3 to not auto_boot
 
-1. The rproc_boot holds a module reference count to the remoteproc
-platform driver so that it cannot be removed when a remote processor is
-booted. The previous architecture allowed virtio_rpmsg_bus or the
-platform remoteproc driver to be installed independent of each other
-with the boot actually getting triggered when the virtio_rpmsg_bus gets
-probed in find_vqs. The boot now happens when just the platform
-remoteproc driver is installed independent of virtio_rpmsg_bus and
-results in holding self-reference counts. This makes it impossible to
-remove the remoteproc platform module cleanly (we shouldn't be imposing
-force remove), which means we can't stop the remoteprocs properly.
+ drivers/remoteproc/remoteproc_core.c   | 28 +++++++++++++++++++++++++++-
+ drivers/remoteproc/remoteproc_virtio.c | 13 -------------
+ drivers/remoteproc/wkup_m3_rproc.c     |  2 ++
+ include/linux/remoteproc.h             |  1 +
+ 4 files changed, 30 insertions(+), 14 deletions(-)
 
-2. The reversal of boot between virtio_rpmsg_bus and remoteproc core
-also meant that the virtio devices and therefore the memory for vrings
-are allocated at the time virtio_rpmsg_bus is probed in find_vqs(). The
-remoteproc can be booted without the virtio_rpmsg_bus module installed.
-We do use the allocated dma addresses of the vrings in the published
-resource table, but now the remote processor is up even before these
-values are filled in. I had to actually move up the rproc_alloc_vring
-alongside rproc_parse_vring to have the communication up.
-
-3. The remoteproc platform driver cannot be removed previously when the
-corresponding virtio devices are probed/configured properly and all the
-communication flow w.r.t rpmsg channel publishing followed from the
-remoteproc boot. These channels are child devices of the parent virtio
-devices, and since the remoteproc boot/shutdown followed the virtio
-device probe/removal lifecycle, the rpmsg channels life-cycle followed
-that of the parent virtio device. My communication paths are now failing
-if I remove the virtio_rpmsg_bus and insmod it again as the vrings and
-vring buffers are configured again while the remoteproc is still
-running. Also, since the remoteproc is not rebooted, the previously
-published rpmsg channels are stale and they won't get recreated.
-
-In summary, the current patches worked nicely in a error recovery
-scenario but are not working properly with the various combinations of
-module insertion/removal process.
-
-regards
-Suman
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index fe0539ed9cb5..5ca98039e494 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -933,6 +933,10 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+ 	/* look for virtio devices and register them */
+ 	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
+ 
++	/* if rproc is marked always-on, request it to boot */
++	if (rproc->auto_boot)
++		rproc_boot_nowait(rproc);
++
+ out:
+ 	release_firmware(fw);
+ 	/* allow rproc_del() contexts, if any, to proceed */
+@@ -978,11 +982,16 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
+ int rproc_trigger_recovery(struct rproc *rproc)
+ {
+ 	struct rproc_vdev *rvdev, *rvtmp;
++	int ret;
+ 
+ 	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
+ 
+ 	init_completion(&rproc->crash_comp);
+ 
++	/* shut down the remote */
++	/* TODO: make sure this works with rproc->power > 1 */
++	rproc_shutdown(rproc);
++
+ 	/* clean up remote vdev entries */
+ 	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
+ 		rproc_remove_virtio_dev(rvdev);
+@@ -993,7 +1002,18 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	/* Free the copy of the resource table */
+ 	kfree(rproc->cached_table);
+ 
+-	return rproc_add_virtio_devices(rproc);
++	ret = rproc_add_virtio_devices(rproc);
++	if (ret)
++		return ret;
++
++	/*
++	 * boot the remote processor up again, if the async firmware loader
++	 * didn't do so already, waiting for the async fw load to finish
++	 */
++	if (!rproc->auto_boot)
++		rproc_boot(rproc);
++
++	return 0;
+ }
+ 
+ /**
+@@ -1374,6 +1394,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	rproc->name = name;
+ 	rproc->ops = ops;
+ 	rproc->priv = &rproc[1];
++	rproc->auto_boot = true;
+ 
+ 	device_initialize(&rproc->dev);
+ 	rproc->dev.parent = dev;
+@@ -1452,6 +1473,11 @@ int rproc_del(struct rproc *rproc)
+ 	/* if rproc is just being registered, wait */
+ 	wait_for_completion(&rproc->firmware_loading_complete);
+ 
++	/* if rproc is marked always-on, rproc_add() booted it */
++	/* TODO: make sure this works with rproc->power > 1 */
++	if (rproc->auto_boot)
++		rproc_shutdown(rproc);
++
+ 	/* clean up remote vdev entries */
+ 	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
+ 		rproc_remove_virtio_dev(rvdev);
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index cc91556313e1..574c90ce07f7 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -136,11 +136,6 @@ static void __rproc_virtio_del_vqs(struct virtio_device *vdev)
+ 
+ static void rproc_virtio_del_vqs(struct virtio_device *vdev)
+ {
+-	struct rproc *rproc = vdev_to_rproc(vdev);
+-
+-	/* power down the remote processor before deleting vqs */
+-	rproc_shutdown(rproc);
+-
+ 	__rproc_virtio_del_vqs(vdev);
+ }
+ 
+@@ -149,7 +144,6 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+ 		       vq_callback_t *callbacks[],
+ 		       const char * const names[])
+ {
+-	struct rproc *rproc = vdev_to_rproc(vdev);
+ 	int i, ret;
+ 
+ 	for (i = 0; i < nvqs; ++i) {
+@@ -160,13 +154,6 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+ 		}
+ 	}
+ 
+-	/* now that the vqs are all set, boot the remote processor */
+-	ret = rproc_boot_nowait(rproc);
+-	if (ret) {
+-		dev_err(&rproc->dev, "rproc_boot() failed %d\n", ret);
+-		goto error;
+-	}
+-
+ 	return 0;
+ 
+ error:
+diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+index 02d271d101b4..3811cb522af3 100644
+--- a/drivers/remoteproc/wkup_m3_rproc.c
++++ b/drivers/remoteproc/wkup_m3_rproc.c
+@@ -167,6 +167,8 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
++	rproc->auto_boot = false;
++
+ 	wkupm3 = rproc->priv;
+ 	wkupm3->rproc = rproc;
+ 	wkupm3->pdev = pdev;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 1c457a8dd5a6..76d936cabbf8 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -443,6 +443,7 @@ struct rproc {
+ 	struct resource_table *cached_table;
+ 	u32 table_csum;
+ 	bool has_iommu;
++	bool auto_boot;
+ };
+ 
+ /* we currently support only two vrings per rvdev */
+-- 
+2.5.0
