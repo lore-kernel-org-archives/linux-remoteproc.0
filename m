@@ -1,39 +1,157 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 08/13] remoteproc/omap: revise a minor error trace message
-Date: Fri, 12 Aug 2016 18:42:23 -0500
-Message-ID: <20160812234228.39731-9-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 4/4] remoteproc: Move handling of cached table to boot/shutdown
+Date: Thu, 11 Aug 2016 14:52:53 -0700
+Message-Id: <1470952373-4823-4-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
+To: linux-remoteproc@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The omap_mbox_msg_send() is the legacy API for sending a mailbox
-message. It has been replaced with the mbox_send_message() from
-the mailbox framework. Revise the failure trace to print a generic
-failure message instead of referencing the actual function name.
+As we moved the vdev handling to the main boot/shutdown code path we can
+further simplify the resource table handling by moving the parsing spet
+to boot as well. The lifespan of the resource table is changed to live
+from rproc_boot() to rproc_shutdown().
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/omap_remoteproc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index ddc1a12d75e0..01e234cb9157 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -96,7 +96,8 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
- 	/* send the index of the triggered virtqueue in the mailbox payload */
- 	ret = mbox_send_message(oproc->mbox, (void *)vqid);
- 	if (ret < 0)
--		dev_err(dev, "omap_mbox_msg_send failed: %d\n", ret);
-+		dev_err(dev, "failed to send mailbox message, status = %d\n",
-+			ret);
- }
+Changes since v1:
+- None
+
+ drivers/remoteproc/remoteproc_core.c | 55 ++++++++++++------------------------
+ include/linux/remoteproc.h           |  2 --
+ 2 files changed, 18 insertions(+), 39 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e86200f978e2..36c019148f7e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -802,9 +802,6 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	struct resource_table *table, *loaded_table;
+ 	int ret, tablesz;
  
- /*
+-	if (!rproc->table_ptr)
+-		return -ENOMEM;
+-
+ 	ret = rproc_fw_sanity_check(rproc, fw);
+ 	if (ret)
+ 		return ret;
+@@ -831,11 +828,17 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
+ 	}
+ 
+-	/* Verify that resource table in loaded fw is unchanged */
+-	if (rproc->table_csum != crc32(0, table, tablesz)) {
+-		dev_err(dev, "resource checksum failed, fw changed?\n");
++	/*
++	 * Create a copy of the resource table. When a virtio device starts
++	 * and calls vring_new_virtqueue() the address of the allocated vring
++	 * will be stored in the cached_table. Before the device is started,
++	 * cached_table will be copied into devic memory.
++	 */
++	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
++	if (!rproc->cached_table)
+ 		goto clean_up;
+-	}
++
++	rproc->table_ptr = rproc->cached_table;
+ 
+ 	/* reset max_notifyid */
+ 	rproc->max_notifyid = -1;
+@@ -893,6 +896,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	return 0;
+ 
+ clean_up:
++	kfree(rproc->cached_table);
++	rproc->cached_table = NULL;
++	rproc->table_ptr = NULL;
++
+ 	rproc_resource_cleanup(rproc);
+ 	rproc_disable_iommu(rproc);
+ 	return ret;
+@@ -909,36 +916,11 @@ clean_up:
+ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+ {
+ 	struct rproc *rproc = context;
+-	struct resource_table *table;
+-	int tablesz;
+-
+-	if (rproc_fw_sanity_check(rproc, fw) < 0)
+-		goto out;
+-
+-	/* look for the resource table */
+-	table = rproc_find_rsc_table(rproc, fw,  &tablesz);
+-	if (!table)
+-		goto out;
+-
+-	rproc->table_csum = crc32(0, table, tablesz);
+-
+-	/*
+-	 * Create a copy of the resource table. When a virtio device starts
+-	 * and calls vring_new_virtqueue() the address of the allocated vring
+-	 * will be stored in the cached_table. Before the device is started,
+-	 * cached_table will be copied into devic memory.
+-	 */
+-	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
+-	if (!rproc->cached_table)
+-		goto out;
+-
+-	rproc->table_ptr = rproc->cached_table;
+ 
+ 	/* if rproc is marked always-on, request it to boot */
+ 	if (rproc->auto_boot)
+ 		rproc_boot_nowait(rproc);
+ 
+-out:
+ 	release_firmware(fw);
+ 	/* allow rproc_del() contexts, if any, to proceed */
+ 	complete_all(&rproc->firmware_loading_complete);
+@@ -1178,8 +1160,10 @@ void rproc_shutdown(struct rproc *rproc)
+ 
+ 	rproc_disable_iommu(rproc);
+ 
+-	/* Give the next start a clean resource table */
+-	rproc->table_ptr = rproc->cached_table;
++	/* Free the copy of the resource table */
++	kfree(rproc->cached_table);
++	rproc->cached_table = NULL;
++	rproc->table_ptr = NULL;
+ 
+ 	/* if in crash state, unlock crash handler */
+ 	if (rproc->state == RPROC_CRASHED)
+@@ -1467,9 +1451,6 @@ int rproc_del(struct rproc *rproc)
+ 	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
+ 		rproc_remove_virtio_dev(rvdev);
+ 
+-	/* Free the copy of the resource table */
+-	kfree(rproc->cached_table);
+-
+ 	/* the rproc is downref'ed as soon as it's removed from the klist */
+ 	mutex_lock(&rproc_list_mutex);
+ 	list_del(&rproc->node);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 76d936cabbf8..7cd0279bfe6a 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -409,7 +409,6 @@ enum rproc_crash_type {
+  * @max_notifyid: largest allocated notify id.
+  * @table_ptr: pointer to the resource table in effect
+  * @cached_table: copy of the resource table
+- * @table_csum: checksum of the resource table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
+  */
+ struct rproc {
+@@ -441,7 +440,6 @@ struct rproc {
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
+ 	struct resource_table *cached_table;
+-	u32 table_csum;
+ 	bool has_iommu;
+ 	bool auto_boot;
+ };
 -- 
-2.9.0
+2.5.0
