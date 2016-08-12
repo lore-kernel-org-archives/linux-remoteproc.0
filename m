@@ -1,57 +1,75 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 00/14] Split rpmsg into a framework
-Date: Mon, 15 Aug 2016 17:17:06 -0700
-Message-Id: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 12/13] rpmsg: use dynamic_hex_dump for hex dump traces
+Date: Fri, 12 Aug 2016 18:42:27 -0500
+Message-ID: <20160812234228.39731-13-s-anna@ti.com>
+In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
+References: <20160812234228.39731-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This series splits the virtio rpmsg bus driver into a rpmsg bus and a virtio
-backend/wireformat.
+There are couple of print_hex_dump traces used in rpmsg code which
+prints the actual byte messages being transferred between host and
+the remote processors. These traces are quiet verbose and affects
+performance, if the appropriate trace level is enabled. These hex
+dumps are needed rather rarely, but are quite useful when debugging
+complex IPC corner cases. So, this patch switches these hex dump
+traces to use the dynamic_hex_dump() API.
 
+The hex dump traces are also enabled only when CONFIG_DYNAMIC_DEBUG
+is enabled. This switch allows flexibility of controlling these
+traces through dynamic debug, instead of removing them completely.
 
-As we discussed the Qualcomm SMD implementation a couple of years back people
-suggested that I should make it "a rpmsg thingie". With the introduction of the
-Qualcomm 8996 platform, we must support a variant of the communication
-mechanism that share many of the characteristics of SMD, but are different
-enough that it can't be done in a single implementation. As such there is
-enough benefit to do the necessary work and being able to make SMD a "rpmsg
-thingie".
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-On-top of this series I have patches to switch the current smd clients over to
-rpmsg (and by that drop the existing SMD implementation).
-
-All this allows me to implement the new backend and reuse all existing SMD
-drivers with the new mechanism.
-
-Bjorn Andersson (14):
-  rpmsg: Enable matching devices with drivers based on DT
-  rpmsg: Name rpmsg devices based on channel id
-  rpmsg: rpmsg_send() operations takes rpmsg_endpoint
-  rpmsg: Internalize rpmsg_send() implementations
-  rpmsg: Unify rpmsg device vs channel naming
-  rpmsg: Indirect all virtio related function calls
-  rpmsg: Split off generic tail of create_channel()
-  rpmsg: Split rpmsg core and virtio backend
-  rpmsg: Internalize rpmsg core ops
-  rpmsg: virtio: Internalize vrp pointer
-  rpmsg: Move virtio specifics from public header
-  rpmsg: Make rpmsg_create_ept() take channel_info struct
-  rpmsg: Allow callback to return errors
-  rpmsg: Introduce Qualcomm SMD backend
-
- drivers/rpmsg/Kconfig            |   14 +
- drivers/rpmsg/Makefile           |    4 +-
- drivers/rpmsg/qcom_smd.c         | 1448 ++++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/rpmsg_core.c       |  525 ++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   |   63 ++
- drivers/rpmsg/virtio_rpmsg_bus.c |  483 +++++--------
- include/linux/rpmsg.h            |  242 +------
- 7 files changed, 2268 insertions(+), 511 deletions(-)
- create mode 100644 drivers/rpmsg/qcom_smd.c
- create mode 100644 drivers/rpmsg/rpmsg_core.c
- create mode 100644 drivers/rpmsg/rpmsg_internal.h
-
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index e55d30d217ba..95ee6a9721d5 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -749,8 +749,10 @@ int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev, u32 src, u32 dst,
+ 
+ 	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
+ 		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+-	print_hex_dump(KERN_DEBUG, "rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
+-		       msg, sizeof(*msg) + msg->len, true);
++#if defined(CONFIG_DYNAMIC_DEBUG)
++	dynamic_hex_dump("rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
++			 msg, sizeof(*msg) + msg->len, true);
++#endif
+ 
+ 	sg_init_one(&sg, msg, sizeof(*msg) + len);
+ 
+@@ -785,8 +787,10 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 
+ 	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
+ 		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+-	print_hex_dump(KERN_DEBUG, "rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
+-		       msg, sizeof(*msg) + msg->len, true);
++#if defined(CONFIG_DYNAMIC_DEBUG)
++	dynamic_hex_dump("rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
++			 msg, sizeof(*msg) + msg->len, true);
++#endif
+ 
+ 	/*
+ 	 * We currently use fixed-sized buffers, so trivially sanitize
+@@ -897,8 +901,10 @@ static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
+ 	struct device *dev = &vrp->vdev->dev;
+ 	int ret;
+ 
+-	print_hex_dump(KERN_DEBUG, "NS announcement: ",
+-		       DUMP_PREFIX_NONE, 16, 1, data, len, true);
++#if defined(CONFIG_DYNAMIC_DEBUG)
++	dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16, 1,
++			 data, len, true);
++#endif
+ 
+ 	if (len != sizeof(*msg)) {
+ 		dev_err(dev, "malformed ns msg (%d)\n", len);
 -- 
-2.5.0
+2.9.0
