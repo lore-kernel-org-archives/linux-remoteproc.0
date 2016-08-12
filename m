@@ -1,48 +1,50 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 10 Aug 2016 10:52:13 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] remoteproc: qcom: hexagon: Fix error return code in
- q6v5_probe()
-Message-ID: <20160810175213.GQ26240@tuxbot>
-References: <1469807812-32765-1-git-send-email-weiyj.lk@gmail.com>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 02/13] remoteproc: fix couple of minor typos
+Date: Fri, 12 Aug 2016 18:42:17 -0500
+Message-ID: <20160812234228.39731-3-s-anna@ti.com>
+In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
+References: <20160812234228.39731-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1469807812-32765-1-git-send-email-weiyj.lk@gmail.com>
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 29 Jul 08:56 PDT 2016, Wei Yongjun wrote:
+Fix couple of minor mis-spelled words in all the remoteproc
+source files.
 
-> Fix to return a negative error code from the state get failed error
-> handling case instead of 0, as done elsewhere in this function.
-> 
-> Signed-off-by: Wei Yongjun <weiyj.lk@gmail.com>
-> ---
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 2 +-
+ drivers/remoteproc/remoteproc_core.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks.
-
-Regards,
-Bjorn
-
->  drivers/remoteproc/qcom_q6v5_pil.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index 2479188..0ad536d 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -864,8 +864,10 @@ static int q6v5_probe(struct platform_device *pdev)
->  		goto free_rproc;
->  
->  	qproc->state = qcom_smem_state_get(&pdev->dev, "stop", &qproc->stop_bit);
-> -	if (IS_ERR(qproc->state))
-> +	if (IS_ERR(qproc->state)) {
-> +		ret = PTR_ERR(qproc->state);
->  		goto free_rproc;
-> +	}
->  
->  	ret = rproc_add(rproc);
->  	if (ret)
-> 
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 009e56f67de2..12823d078e1e 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -147,7 +147,7 @@ static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
+ {
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 
+-	/* Interupt remote proc */
++	/* Interrupt remote proc */
+ 	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
+ }
+ 
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3a9982b8e8c2..e1644c992839 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -969,7 +969,7 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
+  * rproc_trigger_recovery() - recover a remoteproc
+  * @rproc: the remote processor
+  *
+- * The recovery is done by reseting all the virtio devices, that way all the
++ * The recovery is done by resetting all the virtio devices, that way all the
+  * rpmsg drivers will be reseted along with the remote processor making the
+  * remoteproc functional again.
+  *
+-- 
+2.9.0
