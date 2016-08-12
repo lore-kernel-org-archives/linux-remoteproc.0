@@ -1,84 +1,51 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v8 06/18] ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
-Date: Fri, 26 Aug 2016 15:56:41 +0100
-Message-Id: <1472223413-7254-7-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
+Return-Path: <clabbe.montjoie@gmail.com>
+Return-Path: <clabbe.montjoie@gmail.com>
+From: LABBE Corentin <clabbe.montjoie@gmail.com>
+Subject: [PATCH RFC 2/3] Documentation: dt: add the sun8i-hwspinlock bindings document
+Date: Fri, 12 Aug 2016 13:46:33 +0200
+Message-Id: <1471002394-1106-2-git-send-email-clabbe.montjoie@gmail.com>
+In-Reply-To: <1471002394-1106-1-git-send-email-clabbe.montjoie@gmail.com>
+References: <1471002394-1106-1-git-send-email-clabbe.montjoie@gmail.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com, LABBE Corentin <clabbe.montjoie@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These nodes are required to get the fdma driver working
-on STiH407 based silicon.
+This patch adds the DT bindings information for sun8i-hwspinlock module.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
 ---
- arch/arm/boot/dts/stih407-family.dtsi | 52 +++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ .../bindings/hwlock/sun8i-hwspinlock.txt           | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/sun8i-hwspinlock.txt
 
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index d294e82..45cab30 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -821,5 +821,57 @@
- 			clock-frequency	= <600000000>;
- 			st,syscfg	= <&syscfg_core 0x224>;
- 		};
+diff --git a/Documentation/devicetree/bindings/hwlock/sun8i-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/sun8i-hwspinlock.txt
+new file mode 100644
+index 0000000..38c1d7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwlock/sun8i-hwspinlock.txt
+@@ -0,0 +1,23 @@
++Sun8i HWspinlock Driver
++========================
 +
-+		/* fdma audio */
-+		fdma0: dma-controller@8e20000 {
-+			compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
-+			reg = <0x8e20000 0x8000>,
-+			      <0x8e30000 0x3000>,
-+			      <0x8e37000 0x1000>,
-+			      <0x8e38000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+		};
++Required properties:
++- compatible:		Should be "allwinner,sun8i-hwspinlock"
++- reg:			Contains the hwspinlock module register address space
++			(base address and length)
++- clocks:		A phandle to the reference clock for this device
++- clock-names:		should be "ahb"
++- resets:		A phandle to the reset control for this device
++- reset-names:		should be "ahb"
 +
-+		/* fdma app */
-+		fdma1: dma-controller@8e40000 {
-+			compatible = "st,stih407-fdma-mpe31-12", "st,slim-rproc";
-+			reg = <0x8e40000 0x8000>,
-+			      <0x8e50000 0x3000>,
-+			      <0x8e57000 0x1000>,
-+			      <0x8e58000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
++Example:
 +
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+		};
-+
-+		/* fdma free running */
-+		fdma2: dma-controller@8e60000 {
-+			compatible = "st,stih407-fdma-mpe31-13", "st,slim-rproc";
-+			reg = <0x8e60000 0x8000>,
-+			      <0x8e70000 0x3000>,
-+			      <0x8e77000 0x1000>,
-+			      <0x8e78000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+		};
- 	};
- };
++/* sun8i-h3 */
++hwspinlock: hwspinlock@1c18000 {
++	compatible = "allwinner,sun8i-hwspinlock";
++	reg = <0x01c18000 0x400>;
++	resets = <&ccu RST_BUS_SPINLOCK>;
++	reset-names = "ahb";
++	clocks = <&ccu CLK_BUS_SPINLOCK>;
++	clock-names = "ahb";
++};
 -- 
-1.9.1
+2.7.3
