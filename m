@@ -1,134 +1,83 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 01/19] remoteproc: core: New API to add new resources to the resource table
-Date: Wed, 31 Aug 2016 22:50:04 +0200
-Message-ID: <1472676622-32533-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:54314 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752630AbcHLXmg (ORCPT
+	<rfc822;linux-remoteproc@vger.kernel.org>);
+	Fri, 12 Aug 2016 19:42:36 -0400
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 13/13] samples/rpmsg: add support for multiple instances
+Date: Fri, 12 Aug 2016 18:42:28 -0500
+Message-ID: <20160812234228.39731-14-s-anna@ti.com>
+In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
+References: <20160812234228.39731-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lee Jones <lee.jones@linaro.org>
+The current rpmsg_client_sample is a very simple example and
+is not designed to handle multiple instances. Add support for
+multiple instances, so that the same number of pings are sent
+to each instance. The instances can be on one or multiple
+remote processors.
 
-In order to amend or add a new resource table entry we need a method
-for a platform-specific to submit them. rproc_request_resource() is a
-new public API which provides this functionality.
-
-It is to be called between rproc_alloc() and rproc_add().
-
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 40 ++++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           | 21 +++++++++++++++++++
- 2 files changed, 61 insertions(+)
+ samples/rpmsg/rpmsg_client_sample.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 18f4286..fb2d2a0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -791,6 +791,45 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		rproc_remove_virtio_dev(rvdev);
- }
+diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
+index d0e249c90668..7e17d1c0aaf2 100644
+--- a/samples/rpmsg/rpmsg_client_sample.c
++++ b/samples/rpmsg/rpmsg_client_sample.c
+@@ -24,19 +24,24 @@
+ #define MSG		"hello world!"
+ #define MSG_LIMIT	100
  
-+int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
-+{
-+	struct device *dev = &rproc->dev;
-+	struct rproc_request_resource *request;
-+	int size;
-+
-+	request = devm_kzalloc(dev, sizeof(*request), GFP_KERNEL);
-+	if (!request)
-+		return -ENOMEM;
-+
-+	switch (type) {
-+	case RSC_CARVEOUT:
-+		size = sizeof(struct fw_rsc_carveout);
-+		break;
-+	case RSC_DEVMEM:
-+		size = sizeof(struct fw_rsc_devmem);
-+		break;
-+	case RSC_TRACE:
-+		size = sizeof(struct fw_rsc_trace);
-+		break;
-+	default:
-+		dev_err(dev, "Unsupported resource type: %d\n", type);
-+		return -EINVAL;
-+	}
-+
-+	request->resource = devm_kzalloc(dev, size, GFP_KERNEL);
-+	if (!request->resource)
-+		return -ENOMEM;
-+
-+	memcpy(request->resource, resource, size);
-+	request->type = type;
-+	request->size = size;
-+
-+	list_add_tail(&request->node, &rproc->override_resources);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rproc_request_resource);
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
-@@ -1387,6 +1426,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	INIT_LIST_HEAD(&rproc->mappings);
- 	INIT_LIST_HEAD(&rproc->traces);
- 	INIT_LIST_HEAD(&rproc->rvdevs);
-+	INIT_LIST_HEAD(&rproc->override_resources);
- 
- 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
- 	init_completion(&rproc->crash_comp);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index d488f9e..d0c0793 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -323,6 +323,25 @@ struct rproc_mem_entry {
- 	struct list_head node;
- };
- 
-+/**
-+ * struct rproc_requested_resources - add a resource to the resource table
-+ *
-+ * @resource:	pointer to a 'struct fw_rsc_*' resource
-+ * @type:	'fw_resource_type' resource type
-+ * @size:	size of resource
-+ * @node:	list node
-+ *
-+ * Resources can be added by platform-specific rproc drivers calling
-+ * rproc_request_resource()
-+ *
-+ */
-+struct rproc_request_resource {
-+	void *resource;
-+	u32 type;
-+	u32 size;
-+	struct list_head node;
++struct instance_data {
++	int rx_count;
 +};
 +
- struct rproc;
+ static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
+ 						void *priv, u32 src)
+ {
+ 	int ret;
+-	static int rx_count;
++	struct instance_data *idata = dev_get_drvdata(&rpdev->dev);
  
- /**
-@@ -428,6 +447,7 @@ struct rproc {
- 	int num_traces;
- 	struct list_head carveouts;
- 	struct list_head mappings;
-+	struct list_head override_resources;
- 	struct completion firmware_loading_complete;
- 	u32 bootaddr;
- 	struct list_head rvdevs;
-@@ -486,6 +506,7 @@ struct rproc_vdev {
- 	u32 rsc_offset;
- };
+-	dev_info(&rpdev->dev, "incoming msg %d (src: 0x%x)\n", ++rx_count, src);
++	dev_info(&rpdev->dev, "incoming msg %d (src: 0x%x)\n",
++		 ++idata->rx_count, src);
  
-+int rproc_request_resource(struct rproc *rproc, u32 type, void *res);
- struct rproc *rproc_get_by_phandle(phandle phandle);
- struct rproc *rproc_alloc(struct device *dev, const char *name,
- 			  const struct rproc_ops *ops,
+ 	print_hex_dump(KERN_DEBUG, __func__, DUMP_PREFIX_NONE, 16, 1,
+ 		       data, len,  true);
+ 
+ 	/* samples should not live forever */
+-	if (rx_count >= MSG_LIMIT) {
++	if (idata->rx_count >= MSG_LIMIT) {
+ 		dev_info(&rpdev->dev, "goodbye!\n");
+ 		return;
+ 	}
+@@ -50,10 +55,17 @@ static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
+ static int rpmsg_sample_probe(struct rpmsg_channel *rpdev)
+ {
+ 	int ret;
++	struct instance_data *idata;
+ 
+ 	dev_info(&rpdev->dev, "new channel: 0x%x -> 0x%x!\n",
+ 					rpdev->src, rpdev->dst);
+ 
++	idata = devm_kzalloc(&rpdev->dev, sizeof(*idata), GFP_KERNEL);
++	if (!idata)
++		return -ENOMEM;
++
++	dev_set_drvdata(&rpdev->dev, idata);
++
+ 	/* send a message to our remote processor */
+ 	ret = rpmsg_send(rpdev, MSG, strlen(MSG));
+ 	if (ret) {
 -- 
-1.9.1
+2.9.0
+
