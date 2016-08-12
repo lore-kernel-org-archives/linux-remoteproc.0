@@ -1,514 +1,200 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v7 01/16] remoteproc: st_slim_rproc: add a slimcore rproc driver
-Date: Mon,  1 Aug 2016 18:10:38 +0100
-Message-Id: <1470071453-10730-2-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
-References: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 11/13] rpmsg: align code with open parenthesis
+Date: Fri, 12 Aug 2016 18:42:26 -0500
+Message-ID: <20160812234228.39731-12-s-anna@ti.com>
+In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
+References: <20160812234228.39731-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-slim core is used as a basis for many IPs in the STi
-chipsets such as fdma and demux. To avoid duplicating
-the elf loading code in each device driver a slim
-rproc driver has been created.
+This patch fixes most of the existing alignment checkpatch check
+warnings of the type "Alignment should match open parenthesis"
+in the virtio rpmsg bus code. A couple of them have been left as
+is to not exceed the 80-char limit.
 
-This driver is designed to be used by other device drivers
-such as fdma, or demux whose IP is based around a slim core.
-The device driver can call slim_rproc_alloc() to allocate
-a slim rproc and slim_rproc_put() when finished.
-
-This driver takes care of ioremapping the slim
-registers (dmem, imem, slimcore, peripherals), whose offsets
-and sizes can change between IP's. It also obtains and enables
-any clocks used by the device. This approach avoids having
-a double mapping of the registers as slim_rproc does not register
-its own platform device. It also maps well to device tree
-abstraction as it allows us to have one dt node for the whole
-device.
-
-All of the generic rproc elf loading code can be reused, and
-we provide start() stop() hooks to start and stop the slim
-core once the firmware has been loaded. This has been tested
-successfully with fdma driver.
-
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/Kconfig               |   7 +
- drivers/remoteproc/Makefile              |   1 +
- drivers/remoteproc/st_slim_rproc.c       | 376 +++++++++++++++++++++++++++++++
- include/linux/remoteproc/st_slim_rproc.h |  53 +++++
- 4 files changed, 437 insertions(+)
- create mode 100644 drivers/remoteproc/st_slim_rproc.c
- create mode 100644 include/linux/remoteproc/st_slim_rproc.h
+ drivers/rpmsg/virtio_rpmsg_bus.c | 40 +++++++++++++++++++---------------------
+ include/linux/rpmsg.h            |  6 +++---
+ 2 files changed, 22 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 72e97d7..e9f12d0 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -86,4 +86,11 @@ config ST_REMOTEPROC
- 	  processor framework.
- 	  This can be either built-in or a loadable module.
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 5d74ee4c00f1..e55d30d217ba 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -162,7 +162,7 @@ static struct device_attribute rpmsg_dev_attrs[] = {
  
-+config ST_SLIM_REMOTEPROC
-+	tristate "ST Slim remoteproc support"
-+	help
-+	  Say y here to support firmware loading on IP based around
-+	  the Slim core.
-+	  If unsure say N.
-+
- endmenu
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 279cb2e..37bb39a 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -12,3 +12,4 @@ obj-$(CONFIG_STE_MODEM_RPROC)	 	+= ste_modem_rproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
- obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
-+obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-new file mode 100644
-index 0000000..3b10d0c
---- /dev/null
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -0,0 +1,376 @@
-+/*
-+ * st_slim_rproc.c
-+ *
-+ * Copyright (C) 2016 STMicroelectronics
-+ * Author: Peter Griffin <peter.griffin@linaro.org>
-+ * License terms:  GNU General Public License (GPL), version 2
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+#include <linux/remoteproc/st_slim_rproc.h>
-+#include "remoteproc_internal.h"
-+
-+/* slimcore registers */
-+#define SLIM_ID_OFST		0x0
-+#define SLIM_VER_OFST		0x4
-+
-+#define SLIM_EN_OFST		0x8
-+#define SLIM_EN_RUN			BIT(0)
-+
-+#define SLIM_CLK_GATE_OFST	0xC
-+#define SLIM_CLK_GATE_DIS		BIT(0)
-+#define SLIM_CLK_GATE_RESET		BIT(2)
-+
-+#define SLIM_SLIM_PC_OFST	0x20
-+
-+/* dmem registers */
-+#define SLIM_REV_ID_OFST	0x0
-+#define SLIM_REV_ID_MIN_MASK		GENMASK(15, 8)
-+#define SLIM_REV_ID_MIN(id)		((id & SLIM_REV_ID_MIN_MASK) >> 8)
-+#define SLIM_REV_ID_MAJ_MASK		GENMASK(23, 16)
-+#define SLIM_REV_ID_MAJ(id)		((id & SLIM_REV_ID_MAJ_MASK) >> 16)
-+
-+
-+/* peripherals registers */
-+#define SLIM_STBUS_SYNC_OFST	0xF88
-+#define SLIM_STBUS_SYNC_DIS		BIT(0)
-+
-+#define SLIM_INT_SET_OFST	0xFD4
-+#define SLIM_INT_CLR_OFST	0xFD8
-+#define SLIM_INT_MASK_OFST	0xFDC
-+
-+#define SLIM_CMD_CLR_OFST	0xFC8
-+#define SLIM_CMD_MASK_OFST	0xFCC
-+
-+static const char *mem_names[SLIM_MEM_MAX] = {
-+	[SLIM_DMEM]	= "dmem",
-+	[SLIM_IMEM]	= "imem",
-+};
-+
-+static int slim_clk_get(struct st_slim_rproc *slim_rproc, struct device *dev)
-+{
-+	int clk, err;
-+
-+	for (clk = 0; clk < SLIM_MAX_CLK; clk++) {
-+		slim_rproc->clks[clk] = of_clk_get(dev->of_node, clk);
-+		if (IS_ERR(slim_rproc->clks[clk])) {
-+			err = PTR_ERR(slim_rproc->clks[clk]);
-+			if (err == -EPROBE_DEFER)
-+				goto err_put_clks;
-+			slim_rproc->clks[clk] = NULL;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+
-+err_put_clks:
-+	while (--clk >= 0)
-+		clk_put(slim_rproc->clks[clk]);
-+
-+	return err;
-+}
-+
-+static void slim_clk_disable(struct st_slim_rproc *slim_rproc)
-+{
-+	int clk;
-+
-+	for (clk = 0; clk < SLIM_MAX_CLK && slim_rproc->clks[clk]; clk++)
-+		clk_disable_unprepare(slim_rproc->clks[clk]);
-+}
-+
-+static int slim_clk_enable(struct st_slim_rproc *slim_rproc)
-+{
-+	int clk, ret;
-+
-+	for (clk = 0; clk < SLIM_MAX_CLK && slim_rproc->clks[clk]; clk++) {
-+		ret = clk_prepare_enable(slim_rproc->clks[clk]);
-+		if (ret)
-+			goto err_disable_clks;
-+	}
-+
-+	return 0;
-+
-+err_disable_clks:
-+	while (--clk >= 0)
-+		clk_disable_unprepare(slim_rproc->clks[clk]);
-+
-+	return ret;
-+}
-+
-+/**
-+ * Remoteproc slim specific device handlers
-+ */
-+static int slim_rproc_start(struct rproc *rproc)
-+{
-+	struct device *dev = &rproc->dev;
-+	struct st_slim_rproc *slim_rproc = rproc->priv;
-+	unsigned long hw_id, hw_ver, fw_rev;
-+	u32 val;
-+	int ret;
-+
-+	ret = slim_clk_enable(slim_rproc);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable clocks\n");
-+		goto err_clk;
-+	}
-+
-+	/* disable CPU pipeline clock & reset cpu pipeline */
-+	val = SLIM_CLK_GATE_DIS | SLIM_CLK_GATE_RESET;
-+	writel(val, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
-+
-+	/* disable SLIM core STBus sync */
-+	writel(SLIM_STBUS_SYNC_DIS, slim_rproc->peri + SLIM_STBUS_SYNC_OFST);
-+
-+	/* enable cpu pipeline clock */
-+	writel(!SLIM_CLK_GATE_DIS,
-+		slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
-+
-+	/* clear int & cmd mailbox */
-+	writel(~0U, slim_rproc->peri + SLIM_INT_CLR_OFST);
-+	writel(~0U, slim_rproc->peri + SLIM_CMD_CLR_OFST);
-+
-+	/* enable all channels cmd & int */
-+	writel(~0U, slim_rproc->peri + SLIM_INT_MASK_OFST);
-+	writel(~0U, slim_rproc->peri + SLIM_CMD_MASK_OFST);
-+
-+	/* enable cpu */
-+	writel(SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
-+
-+	hw_id = readl_relaxed(slim_rproc->slimcore + SLIM_ID_OFST);
-+	hw_ver = readl_relaxed(slim_rproc->slimcore + SLIM_VER_OFST);
-+
-+	fw_rev = readl(slim_rproc->mem[SLIM_DMEM].cpu_addr +
-+			SLIM_REV_ID_OFST);
-+
-+	dev_info(dev, "fw rev:%ld.%ld on SLIM %ld.%ld\n",
-+		 SLIM_REV_ID_MAJ(fw_rev), SLIM_REV_ID_MIN(fw_rev),
-+		 hw_id, hw_ver);
-+
-+err_clk:
-+	return ret;
-+}
-+
-+static int slim_rproc_stop(struct rproc *rproc)
-+{
-+	struct st_slim_rproc *slim_rproc = rproc->priv;
-+	u32 val;
-+
-+	/* mask all (cmd & int) channels */
-+	writel(0UL, slim_rproc->peri + SLIM_INT_MASK_OFST);
-+	writel(0UL, slim_rproc->peri + SLIM_CMD_MASK_OFST);
-+
-+	/* disable cpu pipeline clock */
-+	writel(SLIM_CLK_GATE_DIS
-+		, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
-+
-+	writel(!SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
-+
-+	val = readl(slim_rproc->slimcore + SLIM_EN_OFST);
-+	if (val & SLIM_EN_RUN)
-+		dev_warn(&rproc->dev, "Failed to disable SLIM");
-+
-+	slim_clk_disable(slim_rproc);
-+
-+	dev_dbg(&rproc->dev, "slim stopped\n");
-+
-+	return 0;
-+}
-+
-+static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct st_slim_rproc *slim_rproc = rproc->priv;
-+	void *va = NULL;
-+	int i;
-+
-+	for (i = 0; i < SLIM_MEM_MAX; i++) {
-+		if (da != slim_rproc->mem[i].bus_addr)
-+			continue;
-+		/* __force to make sparse happy with type conversion */
-+		va = (__force void *)slim_rproc->mem[i].cpu_addr;
-+		break;
-+	}
-+
-+	dev_dbg(&rproc->dev, "%s: da = 0x%llx len = 0x%x va = 0x%p\n",
-+		__func__, da, len, va);
-+
-+	return va;
-+}
-+
-+static struct rproc_ops slim_rproc_ops = {
-+	.start		= slim_rproc_start,
-+	.stop		= slim_rproc_stop,
-+	.da_to_va       = slim_rproc_da_to_va,
-+};
-+
-+/**
-+ * Firmware handler operations: sanity, boot address, load ...
-+ */
-+
-+static struct resource_table empty_rsc_tbl = {
-+	.ver = 1,
-+	.num = 0,
-+};
-+
-+static struct resource_table *slim_rproc_find_rsc_table(struct rproc *rproc,
-+					       const struct firmware *fw,
-+					       int *tablesz)
-+{
-+	if (!fw)
-+		return NULL;
-+
-+	*tablesz = sizeof(empty_rsc_tbl);
-+	return &empty_rsc_tbl;
-+}
-+
-+static struct resource_table *slim_rproc_find_loaded_rsc_table(struct rproc *rproc,
-+						      const struct firmware *fw)
-+{
-+	if (!fw)
-+		return NULL;
-+
-+	return &empty_rsc_tbl;
-+}
-+
-+static struct rproc_fw_ops slim_rproc_fw_ops = {
-+	.find_rsc_table = slim_rproc_find_rsc_table,
-+	.find_loaded_rsc_table = slim_rproc_find_loaded_rsc_table,
-+};
-+
-+
-+/**
-+ * slim_rproc_alloc() - allocate and initialise slim rproc
-+ * @pdev: Pointer to the platform_device struct
-+ * @fw_name: Name of firmware for rproc to use
-+ *
-+ * Function for allocating and initialising a slim rproc for use by
-+ * device drivers whose IP is based around the slim slim core. It
-+ * obtains and enables any clocks required by the slim core and also
-+ * ioremaps the various IO.
-+ *
-+ * Returns st_slim_rproc pointer or PTR_ERR() on error.
-+ */
-+
-+struct st_slim_rproc *slim_rproc_alloc(struct platform_device *pdev,
-+				char *fw_name)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct st_slim_rproc *slim_rproc;
-+	struct device_node *np = dev->of_node;
-+	struct rproc *rproc;
-+	struct resource *res;
-+	int err, i;
-+	const struct rproc_fw_ops *elf_ops;
-+
-+	if (WARN_ON(!np || !fw_name))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (!of_device_is_compatible(np, "st,slim-rproc"))
-+		return ERR_PTR(-EINVAL);
-+
-+	rproc = rproc_alloc(dev, np->name, &slim_rproc_ops,
-+			fw_name, sizeof(*slim_rproc));
-+	if (!rproc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rproc->has_iommu = false;
-+
-+	slim_rproc = rproc->priv;
-+	slim_rproc->rproc = rproc;
-+
-+	elf_ops = rproc->fw_ops;
-+	/* Use some generic elf ops */
-+	slim_rproc_fw_ops.load = elf_ops->load;
-+	slim_rproc_fw_ops.sanity_check = elf_ops->sanity_check;
-+
-+	rproc->fw_ops = &slim_rproc_fw_ops;
-+
-+	/* get imem and dmem */
-+	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
-+
-+		res = platform_get_resource_byname
-+			(pdev, IORESOURCE_MEM, mem_names[i]);
-+
-+		slim_rproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(slim_rproc->mem[i].cpu_addr)) {
-+			dev_err(&pdev->dev, "devm_ioremap_resource failed\n");
-+			err = PTR_ERR(slim_rproc->mem[i].cpu_addr);
-+			goto err;
-+		}
-+		slim_rproc->mem[i].bus_addr = res->start;
-+		slim_rproc->mem[i].size = resource_size(res);
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "slimcore");
-+
-+	slim_rproc->slimcore = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(slim_rproc->slimcore)) {
-+		dev_err(&pdev->dev,
-+			"devm_ioremap_resource failed for slimcore\n");
-+		err = PTR_ERR(slim_rproc->slimcore);
-+		goto err;
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "peripherals");
-+
-+	slim_rproc->peri = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(slim_rproc->peri)) {
-+		dev_err(&pdev->dev, "devm_ioremap_resource failed for peri\n");
-+		err = PTR_ERR(slim_rproc->peri);
-+		goto err;
-+	}
-+
-+	err = slim_clk_get(slim_rproc, dev);
-+	if (err)
-+		goto err;
-+
-+	/* Register as a remoteproc device */
-+	err = rproc_add(rproc);
-+	if (err) {
-+		dev_err(dev, "registration of slim remoteproc failed\n");
-+		goto err_clk;
-+	}
-+
-+	return slim_rproc;
-+
-+err_clk:
-+	for (i = 0; i < SLIM_MAX_CLK && slim_rproc->clks[i]; i++)
-+		clk_put(slim_rproc->clks[i]);
-+err:
-+	rproc_put(rproc);
-+	return ERR_PTR(err);
-+}
-+EXPORT_SYMBOL(slim_rproc_alloc);
-+
-+/**
-+  * slim_rproc_put() - put slim rproc resources
-+  * @slim_rproc: Pointer to the st_slim_rproc struct
-+  *
-+  * Function for calling respective _put() functions on
-+  * slim_rproc resources.
-+  *
-+  */
-+void slim_rproc_put(struct st_slim_rproc *slim_rproc)
-+{
-+	int clk;
-+
-+	if (!slim_rproc)
-+		return;
-+
-+	for (clk = 0; clk < SLIM_MAX_CLK && slim_rproc->clks[clk]; clk++)
-+		clk_put(slim_rproc->clks[clk]);
-+
-+	rproc_put(slim_rproc->rproc);
-+}
-+EXPORT_SYMBOL(slim_rproc_put);
-+
-+MODULE_AUTHOR("Peter Griffin");
-+MODULE_DESCRIPTION("STMicroelectronics SLIM rproc driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/remoteproc/st_slim_rproc.h b/include/linux/remoteproc/st_slim_rproc.h
-new file mode 100644
-index 0000000..c300b3e
---- /dev/null
-+++ b/include/linux/remoteproc/st_slim_rproc.h
-@@ -0,0 +1,53 @@
-+/*
-+ * st_slim_rproc.h
-+ *
-+ * Copyright (C) 2016 STMicroelectronics
-+ * Author: Peter Griffin <peter.griffin@linaro.org>
-+ * License terms:  GNU General Public License (GPL), version 2
-+ */
-+#ifndef _ST_SLIM_H
-+#define _ST_SLIM_H
-+
-+#define SLIM_MEM_MAX 2
-+#define SLIM_MAX_CLK 4
-+
-+enum {
-+	SLIM_DMEM,
-+	SLIM_IMEM,
-+};
-+
-+/**
-+ * struct slim_mem - slim internal memory structure
-+ * @cpu_addr: MPU virtual address of the memory region
-+ * @bus_addr: Bus address used to access the memory region
-+ * @size: Size of the memory region
-+ */
-+struct slim_mem {
-+	void __iomem *cpu_addr;
-+	phys_addr_t bus_addr;
-+	size_t size;
-+};
-+
-+/**
-+ * struct st_slim_rproc - SLIM slim core
-+ * @rproc: rproc handle
-+ * @mem: slim memory information
-+ * @slimcore: slim slimcore regs
-+ * @peri: slim peripheral regs
-+ * @clks: slim clocks
-+ */
-+struct st_slim_rproc {
-+	struct rproc *rproc;
-+	struct slim_mem mem[SLIM_MEM_MAX];
-+	void __iomem *slimcore;
-+	void __iomem *peri;
-+
-+	/* st_slim_rproc private */
-+	struct clk *clks[SLIM_MAX_CLK];
-+};
-+
-+struct st_slim_rproc *slim_rproc_alloc(struct platform_device *pdev,
-+					char *fw_name);
-+void slim_rproc_put(struct st_slim_rproc *slim_rproc);
-+
-+#endif
+ /* rpmsg devices and drivers are matched using the service name */
+ static inline int rpmsg_id_match(const struct rpmsg_channel *rpdev,
+-				  const struct rpmsg_device_id *id)
++				 const struct rpmsg_device_id *id)
+ {
+ 	return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+ }
+@@ -212,8 +212,9 @@ static void __ept_release(struct kref *kref)
+ 
+ /* for more info, see below documentation of rpmsg_create_ept() */
+ static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info *vrp,
+-		struct rpmsg_channel *rpdev, rpmsg_rx_cb_t cb,
+-		void *priv, u32 addr)
++						 struct rpmsg_channel *rpdev,
++						 rpmsg_rx_cb_t cb,
++						 void *priv, u32 addr)
+ {
+ 	int id_min, id_max, id;
+ 	struct rpmsg_endpoint *ept;
+@@ -300,7 +301,7 @@ free_ept:
+  * Returns a pointer to the endpoint on success, or NULL on error.
+  */
+ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *rpdev,
+-				rpmsg_rx_cb_t cb, void *priv, u32 addr)
++					rpmsg_rx_cb_t cb, void *priv, u32 addr)
+ {
+ 	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
+ }
+@@ -380,7 +381,7 @@ static int rpmsg_dev_probe(struct device *dev)
+ 
+ 	/* need to tell remote processor's name service about this channel ? */
+ 	if (rpdev->announce &&
+-			virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
++	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+ 		struct rpmsg_ns_msg nsm;
+ 
+ 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+@@ -405,7 +406,7 @@ static int rpmsg_dev_remove(struct device *dev)
+ 
+ 	/* tell remote processor's name service we're removing this channel */
+ 	if (rpdev->announce &&
+-			virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
++	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+ 		struct rpmsg_ns_msg nsm;
+ 
+ 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+@@ -550,7 +551,7 @@ static struct rpmsg_channel *rpmsg_create_channel(struct virtproc_info *vrp,
+  * and destroy it
+  */
+ static int rpmsg_destroy_channel(struct virtproc_info *vrp,
+-					struct rpmsg_channel_info *chinfo)
++				 struct rpmsg_channel_info *chinfo)
+ {
+ 	struct virtio_device *vdev = vrp->vdev;
+ 	struct device *dev;
+@@ -681,7 +682,7 @@ static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
+  * Returns 0 on success and an appropriate error value on failure.
+  */
+ int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev, u32 src, u32 dst,
+-					void *data, int len, bool wait)
++			      void *data, int len, bool wait)
+ {
+ 	struct virtproc_info *vrp = rpdev->vrp;
+ 	struct device *dev = &rpdev->dev;
+@@ -747,10 +748,9 @@ int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev, u32 src, u32 dst,
+ 	memcpy(msg->data, data, len);
+ 
+ 	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
+-					msg->src, msg->dst, msg->len,
+-					msg->flags, msg->reserved);
++		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+ 	print_hex_dump(KERN_DEBUG, "rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
+-					msg, sizeof(*msg) + msg->len, true);
++		       msg, sizeof(*msg) + msg->len, true);
+ 
+ 	sg_init_one(&sg, msg, sizeof(*msg) + len);
+ 
+@@ -784,17 +784,16 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 	int err;
+ 
+ 	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
+-					msg->src, msg->dst, msg->len,
+-					msg->flags, msg->reserved);
++		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
+ 	print_hex_dump(KERN_DEBUG, "rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
+-					msg, sizeof(*msg) + msg->len, true);
++		       msg, sizeof(*msg) + msg->len, true);
+ 
+ 	/*
+ 	 * We currently use fixed-sized buffers, so trivially sanitize
+ 	 * the reported payload length.
+ 	 */
+ 	if (len > RPMSG_BUF_SIZE ||
+-		msg->len > (len - sizeof(struct rpmsg_hdr))) {
++	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
+ 		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+ 		return -EINVAL;
+ 	}
+@@ -889,7 +888,7 @@ static void rpmsg_xmit_done(struct virtqueue *svq)
+ 
+ /* invoked when a name service announcement arrives */
+ static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
+-							void *priv, u32 src)
++			void *priv, u32 src)
+ {
+ 	struct rpmsg_ns_msg *msg = data;
+ 	struct rpmsg_channel *newch;
+@@ -899,8 +898,7 @@ static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
+ 	int ret;
+ 
+ 	print_hex_dump(KERN_DEBUG, "NS announcement: ",
+-			DUMP_PREFIX_NONE, 16, 1,
+-			data, len, true);
++		       DUMP_PREFIX_NONE, 16, 1, data, len, true);
+ 
+ 	if (len != sizeof(*msg)) {
+ 		dev_err(dev, "malformed ns msg (%d)\n", len);
+@@ -922,8 +920,8 @@ static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
+ 	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+ 
+ 	dev_info(dev, "%sing channel %s addr 0x%x\n",
+-			msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+-			msg->name, msg->addr);
++		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
++		 msg->name, msg->addr);
+ 
+ 	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+ 	chinfo.src = RPMSG_ADDR_ANY;
+@@ -1008,7 +1006,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
+ 
+ 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+-								GFP_KERNEL);
++					  GFP_KERNEL);
+ 		WARN_ON(err); /* sanity check; this can't really happen */
+ 	}
+ 
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index ada50ff36da0..565917cdb4d2 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -173,7 +173,7 @@ int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
+ void unregister_rpmsg_driver(struct rpmsg_driver *drv);
+ void rpmsg_destroy_ept(struct rpmsg_endpoint *);
+ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
+-				rpmsg_rx_cb_t cb, void *priv, u32 addr);
++					rpmsg_rx_cb_t cb, void *priv, u32 addr);
+ int
+ rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
+ 
+@@ -265,7 +265,7 @@ int rpmsg_sendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst)
+  */
+ static inline
+ int rpmsg_send_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
+-							void *data, int len)
++			  void *data, int len)
+ {
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+ }
+@@ -340,7 +340,7 @@ int rpmsg_trysendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst)
+  */
+ static inline
+ int rpmsg_trysend_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
+-							void *data, int len)
++			     void *data, int len)
+ {
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+ }
 -- 
-1.9.1
+2.9.0
