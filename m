@@ -1,79 +1,82 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 9/9] remoteproc: core: Support empty resource tables
-Date: Thu,  4 Aug 2016 10:21:53 +0100
-Message-Id: <20160804092153.23032-10-lee.jones@linaro.org>
-In-Reply-To: <20160804092153.23032-1-lee.jones@linaro.org>
-References: <20160804092153.23032-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 04/13] remoteproc: fix bare unsigned type usage
+Date: Fri, 12 Aug 2016 18:42:19 -0500
+Message-ID: <20160812234228.39731-5-s-anna@ti.com>
+In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
+References: <20160812234228.39731-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Currently, when a remote processor does not require resources, the
-platform-specific remoteproc driver has to create a fake resource
-table in order to by-pass the strict checking.  But there is no hard
-requirement for a remote processor so require or support shared
-resources.  This patch removes the strict checking and skips
-resource table related operations if one is not provided.
+While there is nothing wrong with defining an unsigned integer
+variable or argument using the bare unsigned type, it is better
+to use the checkpatch preferred 'unsigned int' type.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/remoteproc/remoteproc_virtio.c | 12 ++++++------
+ include/linux/remoteproc.h             |  2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 9a077e4..366e197 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1104,9 +1104,6 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	struct resource_table *table, *loaded_table;
- 	int ret, tablesz;
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index cc91556313e1..62cffe92e40d 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -69,7 +69,7 @@ irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int notifyid)
+ EXPORT_SYMBOL(rproc_vq_interrupt);
  
--	if (!rproc->table_ptr)
--		return -ENOMEM;
--
- 	ret = rproc_fw_sanity_check(rproc, fw);
- 	if (ret)
- 		return ret;
-@@ -1130,12 +1127,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	if (!list_empty(&rproc->override_resources))
- 		goto skip_table_check;
+ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
+-				    unsigned id,
++				    unsigned int id,
+ 				    void (*callback)(struct virtqueue *vq),
+ 				    const char *name)
+ {
+@@ -144,7 +144,7 @@ static void rproc_virtio_del_vqs(struct virtio_device *vdev)
+ 	__rproc_virtio_del_vqs(vdev);
+ }
  
--	/* look for the resource table */
-+	/* Resource tables aren't compulsory. */
- 	table = rproc_find_rsc_table(rproc, fw, &tablesz);
--	if (!table) {
--		dev_err(dev, "Failed to find resource table\n");
--		goto clean_up;
--	}
-+	if (!table)
-+		goto skip_resources;
+-static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
++static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
+ 		       struct virtqueue *vqs[],
+ 		       vq_callback_t *callbacks[],
+ 		       const char * const names[])
+@@ -239,8 +239,8 @@ static int rproc_virtio_finalize_features(struct virtio_device *vdev)
+ 	return 0;
+ }
  
- 	/* Verify that resource table in loaded fw is unchanged */
- 	if (rproc->table_csum != crc32(0, table, tablesz)) {
-@@ -1152,6 +1147,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 	}
+-static void rproc_virtio_get(struct virtio_device *vdev, unsigned offset,
+-							void *buf, unsigned len)
++static void rproc_virtio_get(struct virtio_device *vdev, unsigned int offset,
++			     void *buf, unsigned int len)
+ {
+ 	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
+ 	struct fw_rsc_vdev *rsc;
+@@ -257,8 +257,8 @@ static void rproc_virtio_get(struct virtio_device *vdev, unsigned offset,
+ 	memcpy(buf, cfg + offset, len);
+ }
  
-+ skip_resources:
-+
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
- 	if (ret) {
-@@ -1213,8 +1210,12 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 	if (rproc_fw_sanity_check(rproc, fw) < 0)
- 		goto out;
- 
--	/* look for the resource table */
- 	table = rproc_find_rsc_table(rproc, fw,  &tablesz);
-+	if (IS_ERR(table)) {
-+		dev_err(&rproc->dev, "Resource table expected, but failed\n");
-+		goto out;
-+	}
-+
- 	if (!table)
- 		goto out;
- 
+-static void rproc_virtio_set(struct virtio_device *vdev, unsigned offset,
+-		      const void *buf, unsigned len)
++static void rproc_virtio_set(struct virtio_device *vdev, unsigned int offset,
++			     const void *buf, unsigned int len)
+ {
+ 	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
+ 	struct fw_rsc_vdev *rsc;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 1c457a8dd5a6..f575f1ba42a1 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -435,7 +435,7 @@ struct rproc {
+ 	struct idr notifyids;
+ 	int index;
+ 	struct work_struct crash_handler;
+-	unsigned crash_cnt;
++	unsigned int crash_cnt;
+ 	struct completion crash_comp;
+ 	bool recovery_disabled;
+ 	int max_notifyid;
 -- 
 2.9.0
