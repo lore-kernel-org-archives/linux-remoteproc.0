@@ -1,337 +1,330 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 06/14] rpmsg: Indirect all virtio related function calls
-Date: Mon, 15 Aug 2016 17:17:12 -0700
-Message-Id: <1471306640-29917-7-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 05/13] remoteproc: align code with open parenthesis
+Date: Fri, 12 Aug 2016 18:42:20 -0500
+Message-ID: <20160812234228.39731-6-s-anna@ti.com>
+In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
+References: <20160812234228.39731-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Create indirections for functions in prepration for splitting the rpmsg
-core functionality from the virtio backend.
+This patch fixes the existing alignment checkpatch check
+warnings of the type "Alignment should match open parenthesis"
+in the remoteproc core source files.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 131 +++++++++++++++++++++++++++++++++++----
- include/linux/rpmsg.h            |  23 ++++++-
- 2 files changed, 139 insertions(+), 15 deletions(-)
+ drivers/remoteproc/remoteproc_core.c       | 27 +++++++++++++--------------
+ drivers/remoteproc/remoteproc_debugfs.c    | 20 ++++++++++----------
+ drivers/remoteproc/remoteproc_elf_loader.c |  6 +++---
+ drivers/remoteproc/remoteproc_internal.h   | 15 ++++++++-------
+ drivers/remoteproc/remoteproc_virtio.c     | 10 +++++-----
+ include/linux/remoteproc.h                 |  4 ++--
+ 6 files changed, 41 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index a9f8cc8d968b..1dc7a1149c51 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -119,6 +119,17 @@ struct rpmsg_channel_info {
- /* Address 53 is reserved for advertising remote services */
- #define RPMSG_NS_ADDR			(53)
- 
-+static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
-+static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
-+			       u32 dst);
-+static int virtio_rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
-+					u32 dst, void *data, int len);
-+static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
-+static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
-+				  int len, u32 dst);
-+static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
-+					   u32 dst, void *data, int len);
-+
- /* sysfs show configuration fields */
- #define rpmsg_show_attr(field, path, format_string)			\
- static ssize_t								\
-@@ -297,10 +308,17 @@ free_ept:
- struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
- 					rpmsg_rx_cb_t cb, void *priv, u32 addr)
- {
--	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
-+	return rpdev->create_ept(rpdev, cb, priv, addr);
- }
- EXPORT_SYMBOL(rpmsg_create_ept);
- 
-+static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev,
-+						      rpmsg_rx_cb_t cb,
-+						      void *priv, u32 addr)
-+{
-+	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
-+}
-+
- /**
-  * __rpmsg_destroy_ept() - destroy an existing rpmsg endpoint
-  * @vrp: virtproc which owns this ept
-@@ -336,10 +354,15 @@ __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 140b580477e3..fb92b8084a4e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -78,7 +78,7 @@ static const char *rproc_crash_to_string(enum rproc_crash_type type)
+  * will try to access an unmapped device address.
   */
- void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+ static int rproc_iommu_fault(struct iommu_domain *domain, struct device *dev,
+-		unsigned long iova, int flags, void *token)
++			     unsigned long iova, int flags, void *token)
  {
--	__rpmsg_destroy_ept(ept->rpdev->vrp, ept);
-+	ept->rpdev->destroy_ept(ept);
- }
- EXPORT_SYMBOL(rpmsg_destroy_ept);
+ 	struct rproc *rproc = token;
  
-+static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
-+{
-+	__rpmsg_destroy_ept(ept->rpdev->vrp, ept);
-+}
-+
- /*
-  * when an rpmsg driver is probed with a channel, we seamlessly create
-  * it an endpoint, binding its rx callback to a unique local rpmsg
-@@ -352,7 +375,6 @@ static int rpmsg_dev_probe(struct device *dev)
- {
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
--	struct virtproc_info *vrp = rpdev->vrp;
- 	struct rpmsg_endpoint *ept;
- 	int err;
+@@ -264,7 +264,7 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
+ 	struct rproc_vring *rvring = &rvdev->vring[i];
  
-@@ -373,6 +395,18 @@ static int rpmsg_dev_probe(struct device *dev)
- 		goto out;
+ 	dev_dbg(dev, "vdev rsc: vring%d: da %x, qsz %d, align %d\n",
+-				i, vring->da, vring->num, vring->align);
++		i, vring->da, vring->num, vring->align);
+ 
+ 	/* make sure reserved bytes are zeroes */
+ 	if (vring->reserved) {
+@@ -275,7 +275,7 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
+ 	/* verify queue size and vring alignment are sane */
+ 	if (!vring->num || !vring->align) {
+ 		dev_err(dev, "invalid qsz (%d) or alignment (%d)\n",
+-						vring->num, vring->align);
++			vring->num, vring->align);
+ 		return -EINVAL;
  	}
  
-+	if (rpdev->announce_create)
-+		err = rpdev->announce_create(rpdev);
-+out:
-+	return err;
-+}
-+
-+static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
-+{
-+	struct virtproc_info *vrp = rpdev->vrp;
-+	struct device *dev = &rpdev->dev;
-+	int err = 0;
-+
- 	/* need to tell remote processor's name service about this channel ? */
- 	if (rpdev->announce &&
- 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
-@@ -387,15 +421,13 @@ static int rpmsg_dev_probe(struct device *dev)
- 			dev_err(dev, "failed to announce service %d\n", err);
- 	}
- 
--out:
- 	return err;
- }
- 
--static int rpmsg_dev_remove(struct device *dev)
-+static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+@@ -330,7 +330,7 @@ void rproc_free_vring(struct rproc_vring *rvring)
+  * Returns 0 on success, or an appropriate error code otherwise
+  */
+ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+-							int offset, int avail)
++			     int offset, int avail)
  {
--	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
--	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
- 	struct virtproc_info *vrp = rpdev->vrp;
-+	struct device *dev = &rpdev->dev;
- 	int err = 0;
+ 	struct device *dev = &rproc->dev;
+ 	struct rproc_vdev *rvdev;
+@@ -407,7 +407,7 @@ free_rvdev:
+  * Returns 0 on success, or an appropriate error code otherwise
+  */
+ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+-							int offset, int avail)
++			      int offset, int avail)
+ {
+ 	struct rproc_mem_entry *trace;
+ 	struct device *dev = &rproc->dev;
+@@ -487,7 +487,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+  * are outside those ranges.
+  */
+ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
+-							int offset, int avail)
++			       int offset, int avail)
+ {
+ 	struct rproc_mem_entry *mapping;
+ 	struct device *dev = &rproc->dev;
+@@ -530,7 +530,7 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
+ 	list_add_tail(&mapping->node, &rproc->mappings);
  
- 	/* tell remote processor's name service we're removing this channel */
-@@ -412,6 +444,18 @@ static int rpmsg_dev_remove(struct device *dev)
- 			dev_err(dev, "failed to announce service %d\n", err);
- 	}
+ 	dev_dbg(dev, "mapped devmem pa 0x%x, da 0x%x, len 0x%x\n",
+-					rsc->pa, rsc->da, rsc->len);
++		rsc->pa, rsc->da, rsc->len);
  
-+	return err;
-+}
-+
-+static int rpmsg_dev_remove(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
-+	int err = 0;
-+
-+	if (rpdev->announce_destroy)
-+		err = rpdev->announce_destroy(rpdev);
-+
- 	rpdrv->remove(rpdev);
+ 	return 0;
  
- 	rpmsg_destroy_ept(rpdev->ept);
-@@ -485,6 +529,19 @@ static int rpmsg_device_match(struct device *dev, void *data)
- 	return 1;
+@@ -558,9 +558,8 @@ out:
+  * pressure is important; it may have a substantial impact on performance.
+  */
+ static int rproc_handle_carveout(struct rproc *rproc,
+-						struct fw_rsc_carveout *rsc,
+-						int offset, int avail)
+-
++				 struct fw_rsc_carveout *rsc,
++				 int offset, int avail)
+ {
+ 	struct rproc_mem_entry *carveout, *mapping;
+ 	struct device *dev = &rproc->dev;
+@@ -622,7 +621,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 		}
+ 
+ 		ret = iommu_map(rproc->domain, rsc->da, dma, rsc->len,
+-								rsc->flags);
++				rsc->flags);
+ 		if (ret) {
+ 			dev_err(dev, "iommu_map failed: %d\n", ret);
+ 			goto free_mapping;
+@@ -775,7 +774,7 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 		if (unmapped != entry->len) {
+ 			/* nothing much to do besides complaining */
+ 			dev_err(dev, "failed to unmap %u/%zu\n", entry->len,
+-								unmapped);
++				unmapped);
+ 		}
+ 
+ 		list_del(&entry->node);
+@@ -1338,8 +1337,8 @@ static struct device_type rproc_type = {
+  * yet. Instead, when you need to unroll rproc_alloc(), use rproc_put().
+  */
+ struct rproc *rproc_alloc(struct device *dev, const char *name,
+-				const struct rproc_ops *ops,
+-				const char *firmware, int len)
++			  const struct rproc_ops *ops,
++			  const char *firmware, int len)
+ {
+ 	struct rproc *rproc;
+ 	char *p, *template = "rproc-%s-fw";
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index 74a120b6e206..374797206c79 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -45,7 +45,7 @@ static struct dentry *rproc_dbg;
+  * as it provides very early tracing with little to no dependencies at all.
+  */
+ static ssize_t rproc_trace_read(struct file *filp, char __user *userbuf,
+-						size_t count, loff_t *ppos)
++				size_t count, loff_t *ppos)
+ {
+ 	struct rproc_mem_entry *trace = filp->private_data;
+ 	int len = strnlen(trace->va, trace->len);
+@@ -73,7 +73,7 @@ static const char * const rproc_state_string[] = {
+ 
+ /* expose the state of the remote processor via debugfs */
+ static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
+-						size_t count, loff_t *ppos)
++				size_t count, loff_t *ppos)
+ {
+ 	struct rproc *rproc = filp->private_data;
+ 	unsigned int state;
+@@ -83,7 +83,7 @@ static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
+ 	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
+ 
+ 	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
+-							rproc->state);
++		      rproc->state);
+ 
+ 	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
+ }
+@@ -130,7 +130,7 @@ static const struct file_operations rproc_state_ops = {
+ 
+ /* expose the name of the remote processor via debugfs */
+ static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
+-						size_t count, loff_t *ppos)
++			       size_t count, loff_t *ppos)
+ {
+ 	struct rproc *rproc = filp->private_data;
+ 	/* need room for the name, a newline and a terminating null */
+@@ -230,12 +230,12 @@ void rproc_remove_trace_file(struct dentry *tfile)
  }
  
-+static const struct rpmsg_device virtio_rpmsg_ops = {
-+	.create_ept = virtio_rpmsg_create_ept,
-+	.destroy_ept = virtio_rpmsg_destroy_ept,
-+	.send = virtio_rpmsg_send,
-+	.sendto = virtio_rpmsg_sendto,
-+	.send_offchannel = virtio_rpmsg_send_offchannel,
-+	.trysend = virtio_rpmsg_trysend,
-+	.trysendto = virtio_rpmsg_trysendto,
-+	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
-+	.announce_create = virtio_rpmsg_announce_create,
-+	.announce_destroy = virtio_rpmsg_announce_destroy,
-+};
-+
- /*
-  * create an rpmsg channel using its name and address info.
-  * this function will be used to create both static and dynamic
-@@ -511,6 +568,9 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 	if (!rpdev)
+ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+-					struct rproc_mem_entry *trace)
++				       struct rproc_mem_entry *trace)
+ {
+ 	struct dentry *tfile;
+ 
+-	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir,
+-						trace, &trace_rproc_ops);
++	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
++				    &trace_rproc_ops);
+ 	if (!tfile) {
+ 		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
  		return NULL;
+@@ -264,11 +264,11 @@ void rproc_create_debug_dir(struct rproc *rproc)
+ 		return;
  
-+	/* Assign callbacks for rpmsg_channel */
-+	*rpdev = virtio_rpmsg_ops;
-+
- 	rpdev->vrp = vrp;
- 	rpdev->src = chinfo->src;
- 	rpdev->dst = chinfo->dst;
-@@ -793,11 +853,17 @@ out:
- int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
- {
- 	struct rpmsg_device *rpdev = ept->rpdev;
-+
-+	return rpdev->send(ept, data, len);
-+}
-+
-+static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr, dst = rpdev->dst;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+ 	debugfs_create_file("name", 0400, rproc->dbg_dir,
+-					rproc, &rproc_name_ops);
++			    rproc, &rproc_name_ops);
+ 	debugfs_create_file("state", 0400, rproc->dbg_dir,
+-					rproc, &rproc_state_ops);
++			    rproc, &rproc_state_ops);
+ 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
+-					rproc, &rproc_recovery_ops);
++			    rproc, &rproc_recovery_ops);
  }
--EXPORT_SYMBOL(rpmsg_send);
  
- /**
-  * rpmsg_sendto() - send a message across to the remote processor, specify dst
-@@ -820,11 +886,19 @@ EXPORT_SYMBOL(rpmsg_send);
- int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+ void __init rproc_init_debugfs(void)
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index ce283a5b42a1..c523983a4aec 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -166,18 +166,18 @@ rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 			continue;
+ 
+ 		dev_dbg(dev, "phdr: type %d da 0x%x memsz 0x%x filesz 0x%x\n",
+-					phdr->p_type, da, memsz, filesz);
++			phdr->p_type, da, memsz, filesz);
+ 
+ 		if (filesz > memsz) {
+ 			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
+-							filesz, memsz);
++				filesz, memsz);
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+ 
+ 		if (offset + filesz > fw->size) {
+ 			dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
+-					offset + filesz, fw->size);
++				offset + filesz, fw->size);
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 57e1de59bec8..4cf93ca2816e 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -36,10 +36,10 @@ struct rproc;
+  */
+ struct rproc_fw_ops {
+ 	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
+-						const struct firmware *fw,
+-						int *tablesz);
+-	struct resource_table *(*find_loaded_rsc_table)(struct rproc *rproc,
+-						const struct firmware *fw);
++						 const struct firmware *fw,
++						 int *tablesz);
++	struct resource_table *(*find_loaded_rsc_table)(
++				struct rproc *rproc, const struct firmware *fw);
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+@@ -57,7 +57,7 @@ void rproc_remove_virtio_dev(struct rproc_vdev *rvdev);
+ /* from remoteproc_debugfs.c */
+ void rproc_remove_trace_file(struct dentry *tfile);
+ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+-					struct rproc_mem_entry *trace);
++				       struct rproc_mem_entry *trace);
+ void rproc_delete_debug_dir(struct rproc *rproc);
+ void rproc_create_debug_dir(struct rproc *rproc);
+ void rproc_init_debugfs(void);
+@@ -98,7 +98,8 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 
+ static inline
+ struct resource_table *rproc_find_rsc_table(struct rproc *rproc,
+-				const struct firmware *fw, int *tablesz)
++					    const struct firmware *fw,
++					    int *tablesz)
  {
- 	struct rpmsg_device *rpdev = ept->rpdev;
-+
-+	return rpdev->sendto(ept, data, len, dst);
-+}
-+EXPORT_SYMBOL(rpmsg_sendto);
-+
-+static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
-+			       u32 dst)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr;
+ 	if (rproc->fw_ops->find_rsc_table)
+ 		return rproc->fw_ops->find_rsc_table(rproc, fw, tablesz);
+@@ -108,7 +109,7 @@ struct resource_table *rproc_find_rsc_table(struct rproc *rproc,
  
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+ static inline
+ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+-						const struct firmware *fw)
++						   const struct firmware *fw)
+ {
+ 	if (rproc->fw_ops->find_loaded_rsc_table)
+ 		return rproc->fw_ops->find_loaded_rsc_table(rproc, fw);
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index 62cffe92e40d..93bf00d9c64e 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -101,14 +101,14 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
+ 	memset(addr, 0, size);
+ 
+ 	dev_dbg(dev, "vring%d: va %p qsz %d notifyid %d\n",
+-					id, addr, len, rvring->notifyid);
++		id, addr, len, rvring->notifyid);
+ 
+ 	/*
+ 	 * Create the new vq, and tell virtio we're not interested in
+ 	 * the 'weak' smp barriers, since we're talking with a real device.
+ 	 */
+ 	vq = vring_new_virtqueue(id, len, rvring->align, vdev, false, addr,
+-					rproc_virtio_notify, callback, name);
++				 rproc_virtio_notify, callback, name);
+ 	if (!vq) {
+ 		dev_err(dev, "vring_new_virtqueue %s failed\n", name);
+ 		rproc_free_vring(rvring);
+@@ -145,9 +145,9 @@ static void rproc_virtio_del_vqs(struct virtio_device *vdev)
  }
--EXPORT_SYMBOL(rpmsg_sendto);
  
- /**
-  * rpmsg_send_offchannel() - send a message using explicit src/dst addresses
-@@ -851,10 +925,18 @@ int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
+-		       struct virtqueue *vqs[],
+-		       vq_callback_t *callbacks[],
+-		       const char * const names[])
++				 struct virtqueue *vqs[],
++				 vq_callback_t *callbacks[],
++				 const char * const names[])
  {
- 	struct rpmsg_device *rpdev = ept->rpdev;
+ 	struct rproc *rproc = vdev_to_rproc(vdev);
+ 	int i, ret;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index f575f1ba42a1..8229523f70a5 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -489,8 +489,8 @@ struct rproc_vdev {
  
--	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
-+	return rpdev->send_offchannel(ept, src, dst, data, len);
- }
- EXPORT_SYMBOL(rpmsg_send_offchannel);
- 
-+static int virtio_rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
-+					u32 dst, void *data, int len)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+
-+	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
-+}
-+
- /**
-  * rpmsg_send() - send a message across to the remote processor
-  * @ept: the rpmsg endpoint
-@@ -875,11 +957,18 @@ EXPORT_SYMBOL(rpmsg_send_offchannel);
- int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- {
- 	struct rpmsg_device *rpdev = ept->rpdev;
-+
-+	return rpdev->trysend(ept, data, len);
-+}
-+EXPORT_SYMBOL(rpmsg_trysend);
-+
-+static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr, dst = rpdev->dst;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
--EXPORT_SYMBOL(rpmsg_trysend);
- 
- /**
-  * rpmsg_sendto() - send a message across to the remote processor, specify dst
-@@ -901,11 +990,19 @@ EXPORT_SYMBOL(rpmsg_trysend);
- int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- {
- 	struct rpmsg_device *rpdev = ept->rpdev;
-+
-+	return rpdev->trysendto(ept, data, len, dst);
-+}
-+EXPORT_SYMBOL(rpmsg_trysendto);
-+
-+static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
-+				  int len, u32 dst)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
--EXPORT_SYMBOL(rpmsg_trysendto);
- 
- /**
-  * rpmsg_send_offchannel() - send a message using explicit src/dst addresses
-@@ -931,10 +1028,18 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- {
- 	struct rpmsg_device *rpdev = ept->rpdev;
- 
--	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
-+	return rpdev->trysend_offchannel(ept, src, dst, data, len);
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
- 
-+static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
-+					   u32 dst, void *data, int len)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+
-+	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
-+}
-+
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
- {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 3e3d5b1c154a..0b290ae18e70 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -96,6 +96,10 @@ enum rpmsg_ns_flags {
- #define RPMSG_ADDR_ANY		0xFFFFFFFF
- 
- struct virtproc_info;
-+struct rpmsg_device;
-+struct rpmsg_endpoint;
-+
-+typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
- 
- /**
-  * rpmsg_device - device that belong to the rpmsg bus
-@@ -115,9 +119,24 @@ struct rpmsg_device {
- 	u32 dst;
- 	struct rpmsg_endpoint *ept;
- 	bool announce;
--};
- 
--typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-+	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
-+					    rpmsg_rx_cb_t cb, void *priv, u32 addr);
-+	void (*destroy_ept)(struct rpmsg_endpoint *ept);
-+
-+	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
-+	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
-+	int (*send_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-+				  void *data, int len);
-+
-+	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
-+	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
-+	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-+			     void *data, int len);
-+
-+	int (*announce_create)(struct rpmsg_device *ept);
-+	int (*announce_destroy)(struct rpmsg_device *ept);
-+};
- 
- /**
-  * struct rpmsg_endpoint - binds a local rpmsg address to its user
+ struct rproc *rproc_get_by_phandle(phandle phandle);
+ struct rproc *rproc_alloc(struct device *dev, const char *name,
+-				const struct rproc_ops *ops,
+-				const char *firmware, int len);
++			  const struct rproc_ops *ops,
++			  const char *firmware, int len);
+ void rproc_put(struct rproc *rproc);
+ int rproc_add(struct rproc *rproc);
+ int rproc_del(struct rproc *rproc);
 -- 
-2.5.0
+2.9.0
