@@ -1,330 +1,56 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 05/13] remoteproc: align code with open parenthesis
-Date: Fri, 12 Aug 2016 18:42:20 -0500
-Message-ID: <20160812234228.39731-6-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
+Return-Path: <hdegoede@redhat.com>
+Subject: Re: [linux-sunxi] [PATCH RFC 3/3] ARM: dts: sun8i: add hwspinlock
+ device to sun8i-h3
+References: <1471002394-1106-1-git-send-email-clabbe.montjoie@gmail.com>
+ <1471002394-1106-3-git-send-email-clabbe.montjoie@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <72a2d7ef-54c9-a2dd-c83a-bf994b3005ce@redhat.com>
+Date: Fri, 12 Aug 2016 13:49:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+In-Reply-To: <1471002394-1106-3-git-send-email-clabbe.montjoie@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: clabbe.montjoie@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch fixes the existing alignment checkpatch check
-warnings of the type "Alignment should match open parenthesis"
-in the remoteproc core source files.
+Hi,
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/remoteproc_core.c       | 27 +++++++++++++--------------
- drivers/remoteproc/remoteproc_debugfs.c    | 20 ++++++++++----------
- drivers/remoteproc/remoteproc_elf_loader.c |  6 +++---
- drivers/remoteproc/remoteproc_internal.h   | 15 ++++++++-------
- drivers/remoteproc/remoteproc_virtio.c     | 10 +++++-----
- include/linux/remoteproc.h                 |  4 ++--
- 6 files changed, 41 insertions(+), 41 deletions(-)
+On 12-08-16 13:46, LABBE Corentin wrote:
+> Add the hwspinlock device tree node for the device present on H3.
+>
+> Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+> ---
+>  arch/arm/boot/dts/sun8i-h3.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+> index 439e8ed..c801389 100644
+> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+> @@ -489,6 +489,16 @@
+>  			status = "disabled";
+>  		};
+>
+> +		hwspinlock: hwspinlock@1c18000 {
+> +			compatible = "allwinner,sun8i-hwspinlock";
+> +			reg = <0x01c18000 0x400>;
+> +			resets = <&ccu RST_BUS_SPINLOCK>;
+> +			reset-names = "ahb";
+> +			clocks = <&ccu CLK_BUS_SPINLOCK>;
+> +			clock-names = "ahb";
+> +			status = "disabled";
+> +		};
+> +
+>  		gic: interrupt-controller@01c81000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,cortex-a15-gic";
+>  			reg = <0x01c81000 0x1000>,
+>
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 140b580477e3..fb92b8084a4e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -78,7 +78,7 @@ static const char *rproc_crash_to_string(enum rproc_crash_type type)
-  * will try to access an unmapped device address.
-  */
- static int rproc_iommu_fault(struct iommu_domain *domain, struct device *dev,
--		unsigned long iova, int flags, void *token)
-+			     unsigned long iova, int flags, void *token)
- {
- 	struct rproc *rproc = token;
- 
-@@ -264,7 +264,7 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
- 	struct rproc_vring *rvring = &rvdev->vring[i];
- 
- 	dev_dbg(dev, "vdev rsc: vring%d: da %x, qsz %d, align %d\n",
--				i, vring->da, vring->num, vring->align);
-+		i, vring->da, vring->num, vring->align);
- 
- 	/* make sure reserved bytes are zeroes */
- 	if (vring->reserved) {
-@@ -275,7 +275,7 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
- 	/* verify queue size and vring alignment are sane */
- 	if (!vring->num || !vring->align) {
- 		dev_err(dev, "invalid qsz (%d) or alignment (%d)\n",
--						vring->num, vring->align);
-+			vring->num, vring->align);
- 		return -EINVAL;
- 	}
- 
-@@ -330,7 +330,7 @@ void rproc_free_vring(struct rproc_vring *rvring)
-  * Returns 0 on success, or an appropriate error code otherwise
-  */
- static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
--							int offset, int avail)
-+			     int offset, int avail)
- {
- 	struct device *dev = &rproc->dev;
- 	struct rproc_vdev *rvdev;
-@@ -407,7 +407,7 @@ free_rvdev:
-  * Returns 0 on success, or an appropriate error code otherwise
-  */
- static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
--							int offset, int avail)
-+			      int offset, int avail)
- {
- 	struct rproc_mem_entry *trace;
- 	struct device *dev = &rproc->dev;
-@@ -487,7 +487,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
-  * are outside those ranges.
-  */
- static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
--							int offset, int avail)
-+			       int offset, int avail)
- {
- 	struct rproc_mem_entry *mapping;
- 	struct device *dev = &rproc->dev;
-@@ -530,7 +530,7 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
- 	list_add_tail(&mapping->node, &rproc->mappings);
- 
- 	dev_dbg(dev, "mapped devmem pa 0x%x, da 0x%x, len 0x%x\n",
--					rsc->pa, rsc->da, rsc->len);
-+		rsc->pa, rsc->da, rsc->len);
- 
- 	return 0;
- 
-@@ -558,9 +558,8 @@ out:
-  * pressure is important; it may have a substantial impact on performance.
-  */
- static int rproc_handle_carveout(struct rproc *rproc,
--						struct fw_rsc_carveout *rsc,
--						int offset, int avail)
--
-+				 struct fw_rsc_carveout *rsc,
-+				 int offset, int avail)
- {
- 	struct rproc_mem_entry *carveout, *mapping;
- 	struct device *dev = &rproc->dev;
-@@ -622,7 +621,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 		}
- 
- 		ret = iommu_map(rproc->domain, rsc->da, dma, rsc->len,
--								rsc->flags);
-+				rsc->flags);
- 		if (ret) {
- 			dev_err(dev, "iommu_map failed: %d\n", ret);
- 			goto free_mapping;
-@@ -775,7 +774,7 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		if (unmapped != entry->len) {
- 			/* nothing much to do besides complaining */
- 			dev_err(dev, "failed to unmap %u/%zu\n", entry->len,
--								unmapped);
-+				unmapped);
- 		}
- 
- 		list_del(&entry->node);
-@@ -1338,8 +1337,8 @@ static struct device_type rproc_type = {
-  * yet. Instead, when you need to unroll rproc_alloc(), use rproc_put().
-  */
- struct rproc *rproc_alloc(struct device *dev, const char *name,
--				const struct rproc_ops *ops,
--				const char *firmware, int len)
-+			  const struct rproc_ops *ops,
-+			  const char *firmware, int len)
- {
- 	struct rproc *rproc;
- 	char *p, *template = "rproc-%s-fw";
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 74a120b6e206..374797206c79 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -45,7 +45,7 @@ static struct dentry *rproc_dbg;
-  * as it provides very early tracing with little to no dependencies at all.
-  */
- static ssize_t rproc_trace_read(struct file *filp, char __user *userbuf,
--						size_t count, loff_t *ppos)
-+				size_t count, loff_t *ppos)
- {
- 	struct rproc_mem_entry *trace = filp->private_data;
- 	int len = strnlen(trace->va, trace->len);
-@@ -73,7 +73,7 @@ static const char * const rproc_state_string[] = {
- 
- /* expose the state of the remote processor via debugfs */
- static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
--						size_t count, loff_t *ppos)
-+				size_t count, loff_t *ppos)
- {
- 	struct rproc *rproc = filp->private_data;
- 	unsigned int state;
-@@ -83,7 +83,7 @@ static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
- 	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
- 
- 	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
--							rproc->state);
-+		      rproc->state);
- 
- 	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
- }
-@@ -130,7 +130,7 @@ static const struct file_operations rproc_state_ops = {
- 
- /* expose the name of the remote processor via debugfs */
- static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
--						size_t count, loff_t *ppos)
-+			       size_t count, loff_t *ppos)
- {
- 	struct rproc *rproc = filp->private_data;
- 	/* need room for the name, a newline and a terminating null */
-@@ -230,12 +230,12 @@ void rproc_remove_trace_file(struct dentry *tfile)
- }
- 
- struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
--					struct rproc_mem_entry *trace)
-+				       struct rproc_mem_entry *trace)
- {
- 	struct dentry *tfile;
- 
--	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir,
--						trace, &trace_rproc_ops);
-+	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
-+				    &trace_rproc_ops);
- 	if (!tfile) {
- 		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
- 		return NULL;
-@@ -264,11 +264,11 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 		return;
- 
- 	debugfs_create_file("name", 0400, rproc->dbg_dir,
--					rproc, &rproc_name_ops);
-+			    rproc, &rproc_name_ops);
- 	debugfs_create_file("state", 0400, rproc->dbg_dir,
--					rproc, &rproc_state_ops);
-+			    rproc, &rproc_state_ops);
- 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
--					rproc, &rproc_recovery_ops);
-+			    rproc, &rproc_recovery_ops);
- }
- 
- void __init rproc_init_debugfs(void)
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index ce283a5b42a1..c523983a4aec 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -166,18 +166,18 @@ rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 			continue;
- 
- 		dev_dbg(dev, "phdr: type %d da 0x%x memsz 0x%x filesz 0x%x\n",
--					phdr->p_type, da, memsz, filesz);
-+			phdr->p_type, da, memsz, filesz);
- 
- 		if (filesz > memsz) {
- 			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
--							filesz, memsz);
-+				filesz, memsz);
- 			ret = -EINVAL;
- 			break;
- 		}
- 
- 		if (offset + filesz > fw->size) {
- 			dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
--					offset + filesz, fw->size);
-+				offset + filesz, fw->size);
- 			ret = -EINVAL;
- 			break;
- 		}
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 57e1de59bec8..4cf93ca2816e 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -36,10 +36,10 @@ struct rproc;
-  */
- struct rproc_fw_ops {
- 	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
--						const struct firmware *fw,
--						int *tablesz);
--	struct resource_table *(*find_loaded_rsc_table)(struct rproc *rproc,
--						const struct firmware *fw);
-+						 const struct firmware *fw,
-+						 int *tablesz);
-+	struct resource_table *(*find_loaded_rsc_table)(
-+				struct rproc *rproc, const struct firmware *fw);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-@@ -57,7 +57,7 @@ void rproc_remove_virtio_dev(struct rproc_vdev *rvdev);
- /* from remoteproc_debugfs.c */
- void rproc_remove_trace_file(struct dentry *tfile);
- struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
--					struct rproc_mem_entry *trace);
-+				       struct rproc_mem_entry *trace);
- void rproc_delete_debug_dir(struct rproc *rproc);
- void rproc_create_debug_dir(struct rproc *rproc);
- void rproc_init_debugfs(void);
-@@ -98,7 +98,8 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
- 
- static inline
- struct resource_table *rproc_find_rsc_table(struct rproc *rproc,
--				const struct firmware *fw, int *tablesz)
-+					    const struct firmware *fw,
-+					    int *tablesz)
- {
- 	if (rproc->fw_ops->find_rsc_table)
- 		return rproc->fw_ops->find_rsc_table(rproc, fw, tablesz);
-@@ -108,7 +109,7 @@ struct resource_table *rproc_find_rsc_table(struct rproc *rproc,
- 
- static inline
- struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
--						const struct firmware *fw)
-+						   const struct firmware *fw)
- {
- 	if (rproc->fw_ops->find_loaded_rsc_table)
- 		return rproc->fw_ops->find_loaded_rsc_table(rproc, fw);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 62cffe92e40d..93bf00d9c64e 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -101,14 +101,14 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
- 	memset(addr, 0, size);
- 
- 	dev_dbg(dev, "vring%d: va %p qsz %d notifyid %d\n",
--					id, addr, len, rvring->notifyid);
-+		id, addr, len, rvring->notifyid);
- 
- 	/*
- 	 * Create the new vq, and tell virtio we're not interested in
- 	 * the 'weak' smp barriers, since we're talking with a real device.
- 	 */
- 	vq = vring_new_virtqueue(id, len, rvring->align, vdev, false, addr,
--					rproc_virtio_notify, callback, name);
-+				 rproc_virtio_notify, callback, name);
- 	if (!vq) {
- 		dev_err(dev, "vring_new_virtqueue %s failed\n", name);
- 		rproc_free_vring(rvring);
-@@ -145,9 +145,9 @@ static void rproc_virtio_del_vqs(struct virtio_device *vdev)
- }
- 
- static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
--		       struct virtqueue *vqs[],
--		       vq_callback_t *callbacks[],
--		       const char * const names[])
-+				 struct virtqueue *vqs[],
-+				 vq_callback_t *callbacks[],
-+				 const char * const names[])
- {
- 	struct rproc *rproc = vdev_to_rproc(vdev);
- 	int i, ret;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index f575f1ba42a1..8229523f70a5 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -489,8 +489,8 @@ struct rproc_vdev {
- 
- struct rproc *rproc_get_by_phandle(phandle phandle);
- struct rproc *rproc_alloc(struct device *dev, const char *name,
--				const struct rproc_ops *ops,
--				const char *firmware, int len);
-+			  const struct rproc_ops *ops,
-+			  const char *firmware, int len);
- void rproc_put(struct rproc *rproc);
- int rproc_add(struct rproc *rproc);
- int rproc_del(struct rproc *rproc);
--- 
-2.9.0
+Why status=disabled? If this is a core part of the SoC, which Linux
+can use, then IMHO it should be always enabled, like e.g. we also
+always enable the timers.
+
+Regards,
+
+Habs
