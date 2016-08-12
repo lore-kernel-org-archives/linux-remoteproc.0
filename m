@@ -1,148 +1,46 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2 2/2] remoteproc: core: Rework obtaining a rproc from a DT phandle
-Date: Tue, 16 Aug 2016 15:38:24 +0100
-Message-Id: <20160816143824.4120-2-lee.jones@linaro.org>
-In-Reply-To: <20160816143824.4120-1-lee.jones@linaro.org>
-References: <20160816143824.4120-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, ssantosh@kernel.org, linux-remoteproc@vger.kernel.org, ludovic.barre@st.com, s-anna@ti.com, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 03/13] remoteproc: use variable names for sizeof() operator
+Date: Fri, 12 Aug 2016 18:42:18 -0500
+Message-ID: <20160812234228.39731-4-s-anna@ti.com>
+In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
+References: <20160812234228.39731-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In this patch we;
- - Use a subsystem generic phandle to obtain an rproc
-   - We have to support TI's bespoke version for the time being
- - Convert wkup_m3_ipc driver to new API
- - Rename the call to be more like other, similar OF calls
- - Move feature-not-enabled inline stub to the headers
- - Strip out duplicate code by calling into of_get_rproc_by_index()
+Fix the code formatting to use the kernel preferred style
+of using the actual variables to determize the size using
+the sizeof() operator.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
-
-v1 => v2:
- - Strip '_by_phandle' from function name
-
-drivers/remoteproc/remoteproc_core.c | 41 ++++++++----------------------------
- drivers/soc/ti/wkup_m3_ipc.c         | 14 +++---------
- include/linux/remoteproc.h           |  4 ++--
- 3 files changed, 14 insertions(+), 45 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index fe362fb..1c5d5d8 100644
+index e1644c992839..140b580477e3 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1269,47 +1269,24 @@ struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
- EXPORT_SYMBOL(of_get_rproc_by_name);
- 
- /**
-- * rproc_get_by_phandle() - find a remote processor by phandle
-- * @phandle: phandle to the rproc
-+ * of_get_rproc() - lookup and obtain a reference to an rproc
-+ * @np: node to search for rproc
-  *
-- * Finds an rproc handle using the remote processor's phandle, and then
-- * return a handle to the rproc.
-+ * Finds an rproc handle using the default remote processor's phandle,
-+ * and then returns a handle to the rproc.
-  *
-  * This function increments the remote processor's refcount, so always
-  * use rproc_put() to decrement it back once rproc isn't needed anymore.
-  *
-- * Returns the rproc handle on success, and NULL on failure.
-+ * Returns a pointer to the rproc struct on success or an appropriate error
-+ * code otherwise.
-  */
--struct rproc *rproc_get_by_phandle(phandle phandle)
--{
--	struct rproc *rproc = NULL, *r;
--	struct device_node *np;
--
--	np = of_find_node_by_phandle(phandle);
--	if (!np)
--		return NULL;
--
--	mutex_lock(&rproc_list_mutex);
--	list_for_each_entry(r, &rproc_list, node) {
--		if (r->dev.parent && r->dev.parent->of_node == np) {
--			rproc = r;
--			get_device(&rproc->dev);
--			break;
--		}
--	}
--	mutex_unlock(&rproc_list_mutex);
--
--	of_node_put(np);
--
--	return rproc;
--}
--#else
--struct rproc *rproc_get_by_phandle(phandle phandle)
-+struct rproc *of_get_rproc(struct device_node *np)
- {
--	return NULL;
-+	return of_get_rproc_by_index(np, 0);
- }
-+EXPORT_SYMBOL(of_get_rproc);
- #endif
--EXPORT_SYMBOL(rproc_get_by_phandle);
- 
- /**
-  * rproc_add() - register a remote processor
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 8823cc8..8518c16 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -385,7 +385,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	int irq, ret;
--	phandle rproc_phandle;
- 	struct rproc *m3_rproc;
- 	struct resource *res;
- 	struct task_struct *task;
-@@ -430,16 +429,9 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- 		return PTR_ERR(m3_ipc->mbox);
+@@ -358,7 +358,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 		return -EINVAL;
  	}
  
--	if (of_property_read_u32(dev->of_node, "ti,rproc", &rproc_phandle)) {
--		dev_err(&pdev->dev, "could not get rproc phandle\n");
--		ret = -ENODEV;
--		goto err_free_mbox;
--	}
--
--	m3_rproc = rproc_get_by_phandle(rproc_phandle);
--	if (!m3_rproc) {
--		dev_err(&pdev->dev, "could not get rproc handle\n");
--		ret = -EPROBE_DEFER;
-+	m3_rproc = of_get_rproc(dev->of_node);
-+	if (IS_ERR(m3_rproc)) {
-+		ret = PTR_ERR(m3_rproc);
- 		goto err_free_mbox;
- 	}
+-	rvdev = kzalloc(sizeof(struct rproc_vdev), GFP_KERNEL);
++	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
+ 	if (!rvdev)
+ 		return -ENOMEM;
  
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index f130938..0e1adc9 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -515,7 +515,7 @@ extern struct rproc *of_get_rproc_by_index(struct device_node *np,
- 					   int index);
- extern struct rproc *of_get_rproc_by_name(struct device_node *np,
- 					  const char *name);
--extern struct rproc *rproc_get_by_phandle(phandle phandle);
-+extern struct rproc *of_get_rproc(struct device_node *np);
- #else
- static inline
- struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
-@@ -528,7 +528,7 @@ struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
- 	return NULL;
- }
- static inline
--struct rproc *rproc_get_by_phandle(phandle phandle)
-+struct rproc *of_get_rproc(struct device_node *np)
- {
- 	return NULL;
- }
+@@ -1359,7 +1359,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 		 */
+ 		name_len = strlen(name) + strlen(template) - 2 + 1;
+ 
+-	rproc = kzalloc(sizeof(struct rproc) + len + name_len, GFP_KERNEL);
++	rproc = kzalloc(sizeof(*rproc) + len + name_len, GFP_KERNEL);
+ 	if (!rproc)
+ 		return NULL;
+ 
 -- 
 2.9.0
