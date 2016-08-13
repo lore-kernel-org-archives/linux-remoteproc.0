@@ -1,56 +1,169 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 00/13] various remoteproc/rpmsg trivial cleanups
-Date: Fri, 12 Aug 2016 18:42:15 -0500
-Message-ID: <20160812234228.39731-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v4 1/2] dt-binding: remoteproc: Introduce Qualcomm WCNSS loader binding
+Date: Fri, 12 Aug 2016 18:18:58 -0700
+Message-Id: <1471051139-23411-1-git-send-email-bjorn.andersson@linaro.org>
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-Following are a bunch of trivial cleanups in remoteproc core, rpmsg
-bus core and couple of cleanups in OMAP remoteproc driver. The patches
-are baselined on 4.8-rc1 + your rproc-next branch.
+The document defines the binding for a component that loads firmware for
+and boots the Qualcomm WCNSS core.
 
-The only non-cleanup patches are the last two patches - the first of
-which switches a hex_dump to a dynamic hex dump, and the second one is
-a fix to rpmsg client sample to scale for multiple instances when you
-have more than one remoteproc publishing the same rpmsg channel.
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-regards
-Suman
+Changes since v3:
+- None
 
-Suman Anna (13):
-  remoteproc: use proper format-specifier for printing dma_addr_t
-  remoteproc: fix couple of minor typos
-  remoteproc: use variable names for sizeof() operator
-  remoteproc: fix bare unsigned type usage
-  remoteproc: align code with open parenthesis
-  remoteproc: print hex numbers with a leading 0x format
-  remoteproc/omap: fix various code formatting issues
-  remoteproc/omap: revise a minor error trace message
-  rpmsg: remove pointless OOM prints
-  rpmsg: use proper format-specifier for printing dma_addr_t
-  rpmsg: align code with open parenthesis
-  rpmsg: use dynamic_hex_dump for hex dump traces
-  samples/rpmsg: add support for multiple instances
+Changes since v2:
+- None
 
- drivers/remoteproc/da8xx_remoteproc.c         |  2 +-
- drivers/remoteproc/omap_remoteproc.c          |  5 +-
- drivers/remoteproc/remoteproc_core.c          | 51 ++++++++++-----------
- drivers/remoteproc/remoteproc_debugfs.c       | 20 ++++----
- drivers/remoteproc/remoteproc_elf_loader.c    |  6 +--
- drivers/remoteproc/remoteproc_internal.h      | 15 +++---
- drivers/remoteproc/remoteproc_virtio.c        | 22 ++++-----
- drivers/rpmsg/virtio_rpmsg_bus.c              | 66 +++++++++++++--------------
- include/linux/platform_data/remoteproc-omap.h |  6 +--
- include/linux/remoteproc.h                    |  6 +--
- include/linux/rpmsg.h                         |  6 +--
- samples/rpmsg/rpmsg_client_sample.c           | 18 ++++++--
- 12 files changed, 118 insertions(+), 105 deletions(-)
+ .../bindings/remoteproc/qcom,wcnss-pil.txt         | 132 +++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
 
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
+new file mode 100644
+index 000000000000..0d2361ebe3d7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
+@@ -0,0 +1,132 @@
++Qualcomm WCNSS Peripheral Image Loader
++
++This document defines the binding for a component that loads and boots firmware
++on the Qualcomm WCNSS core.
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be one of:
++		    "qcom,riva-pil",
++		    "qcom,pronto-v1-pil",
++		    "qcom,pronto-v2-pil"
++
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: must specify the base address and size of the CCU, DXE and
++		    PMU register blocks
++
++- reg-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "ccu", "dxe", "pmu"
++
++- interrupts-extended:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: must list the watchdog and fatal IRQs and may specify the
++		    ready, handover and stop-ack IRQs
++
++- interrupt-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: should be "wdog", "fatal", optionally followed by "ready",
++		    "handover", "stop-ack"
++
++- vddmx-supply:
++- vddcx-supply:
++- vddpx-supply:
++	Usage: required
++	Value type: <phandle>
++	Definition: reference to the regulators to be held on behalf of the
++		    booting of the WCNSS core
++
++- qcom,smem-states:
++	Usage: optional
++	Value type: <prop-encoded-array>
++	Definition: reference to the SMEM state used to indicate to WCNSS that
++		    it should shut down
++
++- qcom,smem-state-names:
++	Usage: optional
++	Value type: <stringlist>
++	Definition: should be "stop"
++
++- memory-region:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to reserved-memory node for the remote processor
++		    see ../reserved-memory/reserved-memory.txt
++
++= SUBNODES
++A single subnode of the WCNSS PIL describes the attached rf module and its
++resource dependencies.
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be one of:
++		    "qcom,wcn3620",
++		    "qcom,wcn3660",
++		    "qcom,wcn3680"
++
++- clocks:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: should specify the xo clock and optionally the rf clock
++
++- clock-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: should be "xo", optionally followed by "rf"
++
++- vddxo-supply:
++- vddrfa-supply:
++- vddpa-supply:
++- vdddig-supply:
++	Usage: required
++	Value type: <phandle>
++	Definition: reference to the regulators to be held on behalf of the
++		    booting of the WCNSS core
++
++= EXAMPLE
++The following example describes the resources needed to boot control the WCNSS,
++with attached WCN3680, as it is commonly found on MSM8974 boards.
++
++pronto@fb204000 {
++	compatible = "qcom,pronto-v2-pil";
++	reg = <0xfb204000 0x2000>, <0xfb202000 0x1000>, <0xfb21b000 0x3000>;
++	reg-names = "ccu", "dxe", "pmu";
++
++	interrupts-extended = <&intc 0 149 1>,
++			      <&wcnss_smp2p_slave 0 0>,
++			      <&wcnss_smp2p_slave 1 0>,
++			      <&wcnss_smp2p_slave 2 0>,
++			      <&wcnss_smp2p_slave 3 0>;
++	interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
++
++	vddmx-supply = <&pm8841_s1>;
++	vddcx-supply = <&pm8841_s2>;
++	vddpx-supply = <&pm8941_s3>;
++
++	qcom,smem-states = <&wcnss_smp2p_out 0>;
++	qcom,smem-state-names = "stop";
++
++	memory-region = <&wcnss_region>;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&wcnss_pin_a>;
++
++	iris {
++		compatible = "qcom,wcn3680";
++
++		clocks = <&rpmcc RPM_CXO_CLK_SRC>, <&rpmcc RPM_CXO_A2>;
++		clock-names = "xo", "rf";
++
++		vddxo-supply = <&pm8941_l6>;
++		vddrfa-supply = <&pm8941_l11>;
++		vddpa-supply = <&pm8941_l19>;
++		vdddig-supply = <&pm8941_s3>;
++	};
++};
 -- 
-2.9.0
+2.5.0
