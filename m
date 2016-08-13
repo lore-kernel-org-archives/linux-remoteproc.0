@@ -1,182 +1,935 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v7 00/16] Add support for FDMA DMA controller and slim core rproc found on STi chipsets
-Date: Mon,  1 Aug 2016 18:10:37 +0100
-Message-Id: <1470071453-10730-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v4 2/2] remoteproc: qcom: Introduce WCNSS peripheral image loader
+Date: Fri, 12 Aug 2016 18:18:59 -0700
+Message-Id: <1471051139-23411-2-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1471051139-23411-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1471051139-23411-1-git-send-email-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Vinod, Bjorn, Patrice,
+From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
 
-This patchset adds support for the Flexible Direct Memory Access (FDMA) core
-found on STi chipsets from STMicroelectronics. The FDMA is a slim core CPU
-with a dedicated firmware. It is a general purpose DMA controller supporting
-16 independent channels and data can be moved from memory to memory or between
-memory and paced latency critical real time targets.
+This introduces the peripheral image loader, for loading WCNSS firmware
+and boot the core on e.g. MSM8974. The firmware is verified and booted
+with the help of the Peripheral Authentication System (PAS) in
+TrustZone.
 
-After some discussion with the DT maintainers I've removed the firmware
-name from DT, and now generate the name based on the compatible string.
-This is in keeping with how most other kernel drivers request firmware, and avoids
-a new DT firmware name or fdma id binding.
-
-I've also dropped the dma xbar support for the moment, as I believe it should be
-re-worked based on some of the xbar API's that TI recently added. As requested
-I've also split it into smaller patches to help with a faster review.
-
-V3 also included some updates to the ASoC st,sti-asoc-card.txt DT documentation
-to make the doc align with the driver code. These patches have already been applied
-and are now dropped from this series. Other changes included enabling the ASoC drivers
-in multi_v7 defconfig and adding DT patches for Patrices STi DT tree to enable ASoC
-on STiH407/10 based platforms using the fdma driver.
-
-v4 includes a new slim core rproc driver for loading the slim elf firmware. This
-enables us to use the generic rproc elf loading code. This has deliberately not
-been implemented as a platform_driver, to avoid having to have double mappings of
-I/O memory from two device drivers, and also to ensure that the DT node reflects
-the actual hardware rather than Linux subsystems. The slim core is the basis
-for various pieces of IP in STi chipsets and the intention is that other drivers
-(e.g. demux) can also be migrated over to using the slim rproc for their
-elf firmware loading and start/stop control.
-
-v5 includes various updates from Bjorn related to the slim rproc implementation.
-It also includes a patch to make rsc_table optional in remoteproc_core and various
-other cleanups and review feedback from Vinod to do with the actual fdma
-implementation. It also fixes a regression introduced in v4 when all drivers are
-built-in spotted by Aranud.
-
-v6 goes back to having a dummy rsc_table and fixes some kbuild warnings. However
-a change is still required in rproc core when all drivers are built-in as the initial
-async firmware resource table parsing can fail when built-in, which causes subsequent calls
-to rproc_boot() to also fail. V6 changes this behaviour to retry rproc_fw_config_virtio()
-from rproc_boot(), in cases where it previously failed, as at this point we know the
-irmwaref has been successfully obtained.
-
-v7 removes all remoteproc core changes required to get -EPROBE_DEFER working properly
-when firmware resides on a rootfs and compiling as built-in. The fdma driver now relies on
-the firmware being available in the initramfs when building fdma as built-in. This has
-been tested and works well. If remoteproc subsystem implements a new mechanism for
-firmware on late mounted root filesystems, we can migrate this driver over to use it
-at that point.
-
-regards,
-
-Peter.
-
-Changes since v6:
- - Fix recursive Kconfig warning (Patrice)
- - Fix various Intel zero day compiler warnings
- - Remove all changes related to late firmware load (now relies on initramfs) (Peter)
-
-Changes since v5:
- - Remove optional rsc table and go back to dummy resource table (Bjorn)
- - Retry rproc_fw_config_virtio() from rproc_boot() if previously failed (Peter)
- - Fixup some kbuild warnings
- - rebase on v4.7-rc5
- - Remove some patches which were merged via ASoC tree
-
-Changes since v4:
- - Make rsc table optional in remoteproc (Peter)
- - Various fixups to STi audio DT nodes (Arnaud)
- - Bulk rename of xp70 to slim (Peter)
- - Update my email to @linaro.org (Lee)
- - rebase on v4.7-rc2 (Peter)
- - Don't make ST_SLIM_REMOTEPROC user selectable (Bjorn)
- - -EPROBE_DEFER if rproc_boot fails when allocating DMA channel (Arnaud / Peter)
- - Drop some unnecessary headers (Vinod / Bjorn)
- - Change to writel now we have several mappings (Bjorn)
- - Remove io_res, rproc, and some unused structure fields / #define (Bjorn)
- - put clks in error path, also put clks before rproc_put() (Bjorn)
- - Make enum less generic (Bjorn)
- - Make slim_rproc_alloc() return a st_slim_rproc reference (Bjorn)
- - Alphabetical naming in Kconfig & Makefile (Vinod)
- - Add FDMA prefix to REQ_CTRL* (Vinod)
- - Print ret on some error paths (Vinod)
- - Add some acked-by (Peter)
+Tested-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
 Changes since v3:
- - Remove elf loading code from fdma driver (Vinod)
- - Remove fdma_ prefix for clock names (Arnd)
- - Make _xlate use dma_get_any_channel rather than request_channel (Arnd)
- - Make a common function for _prep_ routines (Vinod)
- - Make driver depend on COMPILE_TEST (Arnd)
- - Remove unnecessary st_fdma_filter_fn (Arnd)
- - Enable FDMA as a module (Arnd)
- - Drop fdma_ clock prefix (Arnd)
- - Fix description as well as example for st, prefix (Arnd)
- - Remove string concatenation from fdma register macros to ease grep'ability (Arnd)
- - Add a XP70 rproc driver for ELF firmware loading and start/stop control (Peter)
- - Add myself as a author of the driver (Peter)
+- Split iris driver, so it's possible to compile as module
+- Depend on QCOM_SMEM
+- Minor cleanup based on review comments
 
-Changes since v2:
- - Change to dma-controller (Arnd)
- - Remove platform data header file and simplifiy code (Arnd)
- - Remove FW_LOADER_USER_HELPER_FALLBACK and rework firmware loading to device config (Vinod)
- - Use SET_RUNTIME_PM_OPS helpers (Vinod)
- - Remove fdma-id dt prop and use compatibles to generate different fdma firmware names (Arnd / Lee)
- - Add sti-asoc-card DT nodes and pinmux config for uniperif player & reader (Peter)
- - Update sti-asoc-card DT binding documentation (Peter)
- - Enable STi audio drivers in multi_v7_defconfig (Peter)
+Changes since v2:                                                           
+- Aligning with changed done to mdt_loader in Hexagon series                                    
+- Minor cleanups based on comments                                                                
+- Added MODULE_DESCRIPTION and MODULE_LICENSE                                      
 
-Changes since v1:
- - split into smaller patches for easier / faster review (Vinod)
- - new fill_hw_mode() with common code (Vinod)
- - new config_reqctrl() called from *_prep() instead of device_config cb (Vinod)
- - fdma-xbar support removed (Peter)
- - rework firmware name mechanism so fwname isn't in DT (Peter / Lee)
- - st_fdma_seg_to_mem can be static (Paul)
- - EXPORT_SYMBOL st_fdma_filter_fn not required (Paul)
- - s/channel/channels (vinod)
- - better describe "Must be <3>" (vinod)
- - sizeof(*ehdr) (vinod)
- - print values on error debug (vinod)
- - empty line (Vinod)
- - Update to -EIO (Vinod)
- - Make st_fdma tristate (Paul)
- - Remove __exit tag from .remove (Maxime)
- - Update MAINTAINERS rule to fdma* (Lee)
- - Unit address should match reg property (Lee)
+ drivers/remoteproc/Kconfig           |  16 +
+ drivers/remoteproc/Makefile          |   2 +
+ drivers/remoteproc/qcom_wcnss.c      | 624 +++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_wcnss.h      |  22 ++
+ drivers/remoteproc/qcom_wcnss_iris.c | 188 +++++++++++
+ 5 files changed, 852 insertions(+)
+ create mode 100644 drivers/remoteproc/qcom_wcnss.c
+ create mode 100644 drivers/remoteproc/qcom_wcnss.h
+ create mode 100644 drivers/remoteproc/qcom_wcnss_iris.c
 
-Peter Griffin (16):
-  remoteproc: st_slim_rproc: add a slimcore rproc driver
-  MAINTAINERS: Add st slim core rproc driver to STi section.
-  dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding
-    documentation
-  dmaengine: st_fdma: Add STMicroelectronics FDMA driver header file
-  dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support
-  ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
-  MAINTAINERS: Add FDMA driver files to STi section.
-  ARM: multi_v7_defconfig: Enable STi FDMA driver
-  ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
-  ARM: DT: STiH407: Add i2s_out pinctrl configuration
-  ARM: DT: STiH407: Add i2s_in pinctrl configuration
-  ARM: DT: STiH407: Add spdif_out pinctrl config
-  ARM: STi: DT: STiH407: Add sti-sasg-codec dt node
-  ARM: STi: DT: STiH407: Add uniperif player dt nodes
-  ARM: STi: DT: STiH407: Add uniperif reader dt nodes
-  ARM: DT: STi: stihxxx-b2120: Add DT nodes for STi audio card
-
- Documentation/devicetree/bindings/dma/st_fdma.txt |  87 +++
- MAINTAINERS                                       |   3 +
- arch/arm/boot/dts/stih407-family.dtsi             | 161 ++++
- arch/arm/boot/dts/stih407-pinctrl.dtsi            |  55 ++
- arch/arm/boot/dts/stihxxx-b2120.dtsi              |  45 ++
- arch/arm/configs/multi_v7_defconfig               |   4 +
- drivers/dma/Kconfig                               |  15 +-
- drivers/dma/Makefile                              |   1 +
- drivers/dma/st_fdma.c                             | 880 ++++++++++++++++++++++
- drivers/dma/st_fdma.h                             | 244 ++++++
- drivers/remoteproc/Kconfig                        |   7 +
- drivers/remoteproc/Makefile                       |   1 +
- drivers/remoteproc/st_slim_rproc.c                | 376 +++++++++
- include/linux/remoteproc/st_slim_rproc.h          |  53 ++
- 14 files changed, 1931 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
- create mode 100644 drivers/dma/st_fdma.c
- create mode 100644 drivers/dma/st_fdma.h
- create mode 100644 drivers/remoteproc/st_slim_rproc.c
- create mode 100644 include/linux/remoteproc/st_slim_rproc.h
-
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 1a8bf76a925f..f76b3b1dca1a 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -91,6 +91,22 @@ config QCOM_Q6V5_PIL
+ 	  Say y here to support the Qualcomm Peripherial Image Loader for the
+ 	  Hexagon V5 based remote processors.
+ 
++config QCOM_WCNSS_IRIS
++	tristate
++	depends on OF && ARCH_QCOM
++
++config QCOM_WCNSS_PIL
++	tristate "Qualcomm WCNSS Peripheral Image Loader"
++	depends on OF && ARCH_QCOM
++	depends on QCOM_SMEM
++	select QCOM_MDT_LOADER
++	select QCOM_SCM
++	select QCOM_WCNSS_IRIS
++	select REMOTEPROC
++	help
++	  Say y here to support the Peripheral Image Loader for the Qualcomm
++	  Wireless Connectivity Subsystem.
++
+ config ST_REMOTEPROC
+ 	tristate "ST remoteproc support"
+ 	depends on ARCH_STI
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 92d3758bd15c..6dfb62ed643f 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -13,4 +13,6 @@ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
+ obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
++obj-$(CONFIG_QCOM_WCNSS_IRIS)		+= qcom_wcnss_iris.o
++obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss.o
+ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+new file mode 100644
+index 000000000000..14c458519f84
+--- /dev/null
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -0,0 +1,624 @@
++/*
++ * Qualcomm Wireless Connectivity Subsystem Peripheral Image Loader
++ *
++ * Copyright (C) 2016 Linaro Ltd
++ * Copyright (C) 2014 Sony Mobile Communications AB
++ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/firmware.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/qcom_scm.h>
++#include <linux/regulator/consumer.h>
++#include <linux/remoteproc.h>
++#include <linux/soc/qcom/smem.h>
++#include <linux/soc/qcom/smem_state.h>
++
++#include "qcom_mdt_loader.h"
++#include "remoteproc_internal.h"
++#include "qcom_wcnss.h"
++
++#define WCNSS_CRASH_REASON_SMEM		422
++#define WCNSS_FIRMWARE_NAME		"wcnss.mdt"
++#define WCNSS_PAS_ID			6
++
++#define WCNSS_SPARE_NVBIN_DLND		BIT(25)
++
++#define WCNSS_PMU_IRIS_XO_CFG		BIT(3)
++#define WCNSS_PMU_IRIS_XO_EN		BIT(4)
++#define WCNSS_PMU_GC_BUS_MUX_SEL_TOP	BIT(5)
++#define WCNSS_PMU_IRIS_XO_CFG_STS	BIT(6) /* 1: in progress, 0: done */
++
++#define WCNSS_PMU_IRIS_RESET		BIT(7)
++#define WCNSS_PMU_IRIS_RESET_STS	BIT(8) /* 1: in progress, 0: done */
++#define WCNSS_PMU_IRIS_XO_READ		BIT(9)
++#define WCNSS_PMU_IRIS_XO_READ_STS	BIT(10)
++
++#define WCNSS_PMU_XO_MODE_MASK		GENMASK(2, 1)
++#define WCNSS_PMU_XO_MODE_19p2		0
++#define WCNSS_PMU_XO_MODE_48		3
++
++struct wcnss_data {
++	size_t pmu_offset;
++	size_t spare_offset;
++
++	const struct wcnss_vreg_info *vregs;
++	size_t num_vregs;
++};
++
++struct qcom_wcnss {
++	struct device *dev;
++	struct rproc *rproc;
++
++	void __iomem *pmu_cfg;
++	void __iomem *spare_out;
++
++	bool use_48mhz_xo;
++
++	int wdog_irq;
++	int fatal_irq;
++	int ready_irq;
++	int handover_irq;
++	int stop_ack_irq;
++
++	struct qcom_smem_state *state;
++	unsigned stop_bit;
++
++	struct mutex iris_lock;
++	struct qcom_iris *iris;
++
++	struct regulator_bulk_data *vregs;
++	size_t num_vregs;
++
++	struct completion start_done;
++	struct completion stop_done;
++
++	phys_addr_t mem_phys;
++	phys_addr_t mem_reloc;
++	void *mem_region;
++	size_t mem_size;
++};
++
++static const struct wcnss_data riva_data = {
++	.pmu_offset = 0x28,
++	.spare_offset = 0xb4,
++
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddmx",  1050000, 1150000, 0 },
++		{ "vddcx",  1050000, 1150000, 0 },
++		{ "vddpx",  1800000, 1800000, 0 },
++	},
++	.num_vregs = 3,
++};
++
++static const struct wcnss_data pronto_v1_data = {
++	.pmu_offset = 0x1004,
++	.spare_offset = 0x1088,
++
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddmx", 950000, 1150000, 0 },
++		{ "vddcx", .super_turbo = true},
++		{ "vddpx", 1800000, 1800000, 0 },
++	},
++	.num_vregs = 3,
++};
++
++static const struct wcnss_data pronto_v2_data = {
++	.pmu_offset = 0x1004,
++	.spare_offset = 0x1088,
++
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddmx", 1287500, 1287500, 0 },
++		{ "vddcx", .super_turbo = true },
++		{ "vddpx", 1800000, 1800000, 0 },
++	},
++	.num_vregs = 3,
++};
++
++void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
++			    struct qcom_iris *iris,
++			    bool use_48mhz_xo)
++{
++	mutex_lock(&wcnss->iris_lock);
++
++	wcnss->iris = iris;
++	wcnss->use_48mhz_xo = use_48mhz_xo;
++
++	mutex_unlock(&wcnss->iris_lock);
++}
++EXPORT_SYMBOL_GPL(qcom_wcnss_assign_iris);
++
++static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
++{
++	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	phys_addr_t fw_addr;
++	size_t fw_size;
++	bool relocate;
++	int ret;
++
++	ret = qcom_scm_pas_init_image(WCNSS_PAS_ID, fw->data, fw->size);
++	if (ret) {
++		dev_err(&rproc->dev, "invalid firmware metadata\n");
++		return ret;
++	}
++
++	ret = qcom_mdt_parse(fw, &fw_addr, &fw_size, &relocate);
++	if (ret) {
++		dev_err(&rproc->dev, "failed to parse mdt header\n");
++		return ret;
++	}
++
++	if (relocate) {
++		wcnss->mem_reloc = fw_addr;
++
++		ret = qcom_scm_pas_mem_setup(WCNSS_PAS_ID, wcnss->mem_phys, fw_size);
++		if (ret) {
++			dev_err(&rproc->dev, "unable to setup memory for image\n");
++			return ret;
++		}
++	}
++
++	return qcom_mdt_load(rproc, fw, rproc->firmware);
++}
++
++static const struct rproc_fw_ops wcnss_fw_ops = {
++	.find_rsc_table = qcom_mdt_find_rsc_table,
++	.load = wcnss_load,
++};
++
++static void wcnss_indicate_nv_download(struct qcom_wcnss *wcnss)
++{
++	u32 val;
++
++	/* Indicate NV download capability */
++	val = readl(wcnss->spare_out);
++	val |= WCNSS_SPARE_NVBIN_DLND;
++	writel(val, wcnss->spare_out);
++}
++
++static void wcnss_configure_iris(struct qcom_wcnss *wcnss)
++{
++	u32 val;
++
++	/* Clear PMU cfg register */
++	writel(0, wcnss->pmu_cfg);
++
++	val = WCNSS_PMU_GC_BUS_MUX_SEL_TOP | WCNSS_PMU_IRIS_XO_EN;
++	writel(val, wcnss->pmu_cfg);
++
++	/* Clear XO_MODE */
++	val &= ~WCNSS_PMU_XO_MODE_MASK;
++	if (wcnss->use_48mhz_xo)
++		val |= WCNSS_PMU_XO_MODE_48 << 1;
++	else
++		val |= WCNSS_PMU_XO_MODE_19p2 << 1;
++	writel(val, wcnss->pmu_cfg);
++
++	/* Reset IRIS */
++	val |= WCNSS_PMU_IRIS_RESET;
++	writel(val, wcnss->pmu_cfg);
++
++	/* Wait for PMU.iris_reg_reset_sts */
++	while (readl(wcnss->pmu_cfg) & WCNSS_PMU_IRIS_RESET_STS)
++		cpu_relax();
++
++	/* Clear IRIS reset */
++	val &= ~WCNSS_PMU_IRIS_RESET;
++	writel(val, wcnss->pmu_cfg);
++
++	/* Start IRIS XO configuration */
++	val |= WCNSS_PMU_IRIS_XO_CFG;
++	writel(val, wcnss->pmu_cfg);
++
++	/* Wait for XO configuration to finish */
++	while (readl(wcnss->pmu_cfg) & WCNSS_PMU_IRIS_XO_CFG_STS)
++		cpu_relax();
++
++	/* Stop IRIS XO configuration */
++	val &= ~WCNSS_PMU_GC_BUS_MUX_SEL_TOP;
++	val &= ~WCNSS_PMU_IRIS_XO_CFG;
++	writel(val, wcnss->pmu_cfg);
++
++	/* Add some delay for XO to settle */
++	msleep(20);
++}
++
++static int wcnss_start(struct rproc *rproc)
++{
++	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	int ret;
++
++	mutex_lock(&wcnss->iris_lock);
++	if (!wcnss->iris) {
++		dev_err(wcnss->dev, "no iris registered\n");
++		ret = -EINVAL;
++		goto release_iris_lock;
++	}
++
++	ret = regulator_bulk_enable(wcnss->num_vregs, wcnss->vregs);
++	if (ret)
++		goto release_iris_lock;
++
++	ret = qcom_iris_enable(wcnss->iris);
++	if (ret)
++		goto disable_regulators;
++
++	wcnss_indicate_nv_download(wcnss);
++	wcnss_configure_iris(wcnss);
++
++	ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
++	if (ret) {
++		dev_err(wcnss->dev,
++			"failed to authenticate image and release reset\n");
++		goto disable_iris;
++	}
++
++	ret = wait_for_completion_timeout(&wcnss->start_done,
++					  msecs_to_jiffies(5000));
++	if (wcnss->ready_irq > 0 && ret == 0) {
++		/* We have a ready_irq, but it didn't fire in time. */
++		dev_err(wcnss->dev, "start timed out\n");
++		qcom_scm_pas_shutdown(WCNSS_PAS_ID);
++		ret = -ETIMEDOUT;
++		goto disable_iris;
++	}
++
++	ret = 0;
++
++disable_iris:
++	qcom_iris_disable(wcnss->iris);
++disable_regulators:
++	regulator_bulk_disable(wcnss->num_vregs, wcnss->vregs);
++release_iris_lock:
++	mutex_unlock(&wcnss->iris_lock);
++
++	return ret;
++}
++
++static int wcnss_stop(struct rproc *rproc)
++{
++	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	int ret;
++
++	if (wcnss->state) {
++		qcom_smem_state_update_bits(wcnss->state,
++					    BIT(wcnss->stop_bit),
++					    BIT(wcnss->stop_bit));
++
++		ret = wait_for_completion_timeout(&wcnss->stop_done,
++						  msecs_to_jiffies(5000));
++		if (ret == 0)
++			dev_err(wcnss->dev, "timed out on wait\n");
++
++		qcom_smem_state_update_bits(wcnss->state,
++					    BIT(wcnss->stop_bit),
++					    0);
++	}
++
++	ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
++	if (ret)
++		dev_err(wcnss->dev, "failed to shutdown: %d\n", ret);
++
++	return ret;
++}
++
++static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	int offset;
++
++	offset = da - wcnss->mem_reloc;
++	if (offset < 0 || offset + len > wcnss->mem_size)
++		return NULL;
++
++	return wcnss->mem_region + offset;
++}
++
++static const struct rproc_ops wcnss_ops = {
++	.start = wcnss_start,
++	.stop = wcnss_stop,
++	.da_to_va = wcnss_da_to_va,
++};
++
++static irqreturn_t wcnss_wdog_interrupt(int irq, void *dev)
++{
++	struct qcom_wcnss *wcnss = dev;
++
++	rproc_report_crash(wcnss->rproc, RPROC_WATCHDOG);
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t wcnss_fatal_interrupt(int irq, void *dev)
++{
++	struct qcom_wcnss *wcnss = dev;
++	size_t len;
++	char *msg;
++
++	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, WCNSS_CRASH_REASON_SMEM, &len);
++	if (!IS_ERR(msg) && len > 0 && msg[0])
++		dev_err(wcnss->dev, "fatal error received: %s\n", msg);
++
++	rproc_report_crash(wcnss->rproc, RPROC_FATAL_ERROR);
++
++	if (!IS_ERR(msg))
++		msg[0] = '\0';
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t wcnss_ready_interrupt(int irq, void *dev)
++{
++	struct qcom_wcnss *wcnss = dev;
++
++	complete(&wcnss->start_done);
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t wcnss_handover_interrupt(int irq, void *dev)
++{
++	/*
++	 * XXX: At this point we're supposed to release the resources that we
++	 * have been holding on behalf of the WCNSS. Unfortunately this
++	 * interrupt comes way before the other side seems to be done.
++	 *
++	 * So we're currently relying on the ready interrupt firing later then
++	 * this and we just disable the resources at the end of wcnss_start().
++	 */
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t wcnss_stop_ack_interrupt(int irq, void *dev)
++{
++	struct qcom_wcnss *wcnss = dev;
++
++	complete(&wcnss->stop_done);
++
++	return IRQ_HANDLED;
++}
++
++static int wcnss_init_regulators(struct qcom_wcnss *wcnss,
++				 const struct wcnss_vreg_info *info,
++				 int num_vregs)
++{
++	struct regulator_bulk_data *bulk;
++	int ret;
++	int i;
++
++	bulk = devm_kcalloc(wcnss->dev,
++			    num_vregs, sizeof(struct regulator_bulk_data),
++			    GFP_KERNEL);
++	if (!bulk)
++		return -ENOMEM;
++
++	for (i = 0; i < num_vregs; i++)
++		bulk[i].supply = info[i].name;
++
++	ret = devm_regulator_bulk_get(wcnss->dev, num_vregs, bulk);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < num_vregs; i++) {
++		if (info[i].max_voltage)
++			regulator_set_voltage(bulk[i].consumer,
++					      info[i].min_voltage,
++					      info[i].max_voltage);
++
++		if (info[i].load_uA)
++			regulator_set_load(bulk[i].consumer, info[i].load_uA);
++	}
++
++	wcnss->vregs = bulk;
++	wcnss->num_vregs = num_vregs;
++
++	return 0;
++}
++
++static int wcnss_request_irq(struct qcom_wcnss *wcnss,
++			     struct platform_device *pdev,
++			     const char *name,
++			     bool optional,
++			     irq_handler_t thread_fn)
++{
++	int ret;
++
++	ret = platform_get_irq_byname(pdev, name);
++	if (ret < 0 && optional) {
++		dev_dbg(&pdev->dev, "no %s IRQ defined, ignoring\n", name);
++		return 0;
++	} else if (ret < 0) {
++		dev_err(&pdev->dev, "no %s IRQ defined\n", name);
++		return ret;
++	}
++
++	ret = devm_request_threaded_irq(&pdev->dev, ret,
++					NULL, thread_fn,
++					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
++					"wcnss", wcnss);
++	if (ret)
++		dev_err(&pdev->dev, "request %s IRQ failed\n", name);
++
++	return ret;
++}
++
++static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
++{
++	struct device_node *node;
++	struct resource r;
++	int ret;
++
++	node = of_parse_phandle(wcnss->dev->of_node, "memory-region", 0);
++	if (!node) {
++		dev_err(wcnss->dev, "no memory-region specified\n");
++		return -EINVAL;
++	}
++
++	ret = of_address_to_resource(node, 0, &r);
++	if (ret)
++		return ret;
++
++	wcnss->mem_phys = wcnss->mem_reloc = r.start;
++	wcnss->mem_size = resource_size(&r);
++	wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
++	if (!wcnss->mem_region) {
++		dev_err(wcnss->dev, "unable to map memory region: %pa+%zx\n",
++			&r.start, wcnss->mem_size);
++		return -EBUSY;
++	}
++
++	return 0;
++}
++
++static int wcnss_probe(struct platform_device *pdev)
++{
++	const struct wcnss_data *data;
++	struct qcom_wcnss *wcnss;
++	struct resource *res;
++	struct rproc *rproc;
++	void __iomem *mmio;
++	int ret;
++
++	data = of_device_get_match_data(&pdev->dev);
++
++	if (!qcom_scm_is_available())
++		return -EPROBE_DEFER;
++
++	if (!qcom_scm_pas_supported(WCNSS_PAS_ID)) {
++		dev_err(&pdev->dev, "PAS is not available for WCNSS\n");
++		return -ENXIO;
++	}
++
++	rproc = rproc_alloc(&pdev->dev, pdev->name, &wcnss_ops,
++			    WCNSS_FIRMWARE_NAME, sizeof(*wcnss));
++	if (!rproc) {
++		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
++		return -ENOMEM;
++	}
++
++	rproc->fw_ops = &wcnss_fw_ops;
++
++	wcnss = (struct qcom_wcnss *)rproc->priv;
++	wcnss->dev = &pdev->dev;
++	wcnss->rproc = rproc;
++	platform_set_drvdata(pdev, wcnss);
++
++	init_completion(&wcnss->start_done);
++	init_completion(&wcnss->stop_done);
++
++	mutex_init(&wcnss->iris_lock);
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pmu");
++	mmio = devm_ioremap_resource(&pdev->dev, res);
++	if (!mmio) {
++		ret = -ENOMEM;
++		goto free_rproc;
++	};
++
++	ret = wcnss_alloc_memory_region(wcnss);
++	if (ret)
++		goto free_rproc;
++
++	wcnss->pmu_cfg = mmio + data->pmu_offset;
++	wcnss->spare_out = mmio + data->spare_offset;
++
++	ret = wcnss_init_regulators(wcnss, data->vregs, data->num_vregs);
++	if (ret)
++		goto free_rproc;
++
++	ret = wcnss_request_irq(wcnss, pdev, "wdog", false, wcnss_wdog_interrupt);
++	if (ret < 0)
++		goto free_rproc;
++	wcnss->wdog_irq = ret;
++
++	ret = wcnss_request_irq(wcnss, pdev, "fatal", false, wcnss_fatal_interrupt);
++	if (ret < 0)
++		goto free_rproc;
++	wcnss->fatal_irq = ret;
++
++	ret = wcnss_request_irq(wcnss, pdev, "ready", true, wcnss_ready_interrupt);
++	if (ret < 0)
++		goto free_rproc;
++	wcnss->ready_irq = ret;
++
++	ret = wcnss_request_irq(wcnss, pdev, "handover", true, wcnss_handover_interrupt);
++	if (ret < 0)
++		goto free_rproc;
++	wcnss->handover_irq = ret;
++
++	ret = wcnss_request_irq(wcnss, pdev, "stop-ack", true, wcnss_stop_ack_interrupt);
++	if (ret < 0)
++		goto free_rproc;
++	wcnss->stop_ack_irq = ret;
++
++	if (wcnss->stop_ack_irq) {
++		wcnss->state = qcom_smem_state_get(&pdev->dev, "stop",
++						   &wcnss->stop_bit);
++		if (IS_ERR(wcnss->state)) {
++			ret = PTR_ERR(wcnss->state);
++			goto free_rproc;
++		}
++	}
++
++	ret = rproc_add(rproc);
++	if (ret)
++		goto free_rproc;
++
++	return of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
++
++free_rproc:
++	rproc_put(rproc);
++
++	return ret;
++}
++
++static int wcnss_remove(struct platform_device *pdev)
++{
++	struct qcom_wcnss *wcnss = platform_get_drvdata(pdev);
++
++	of_platform_depopulate(&pdev->dev);
++
++	qcom_smem_state_put(wcnss->state);
++	rproc_del(wcnss->rproc);
++	rproc_put(wcnss->rproc);
++
++	return 0;
++}
++
++static const struct of_device_id wcnss_of_match[] = {
++	{ .compatible = "qcom,riva-pil", &riva_data },
++	{ .compatible = "qcom,pronto-v1-pil", &pronto_v1_data },
++	{ .compatible = "qcom,pronto-v2-pil", &pronto_v2_data },
++	{ },
++};
++
++static struct platform_driver wcnss_driver = {
++	.probe = wcnss_probe,
++	.remove = wcnss_remove,
++	.driver = {
++		.name = "qcom-wcnss-pil",
++		.of_match_table = wcnss_of_match,
++	},
++};
++
++module_platform_driver(wcnss_driver);
++MODULE_DESCRIPTION("Qualcomm Peripherial Image Loader for Wireless Subsystem");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/remoteproc/qcom_wcnss.h b/drivers/remoteproc/qcom_wcnss.h
+new file mode 100644
+index 000000000000..9dc4a9fe41e1
+--- /dev/null
++++ b/drivers/remoteproc/qcom_wcnss.h
+@@ -0,0 +1,22 @@
++#ifndef __QCOM_WNCSS_H__
++#define __QCOM_WNCSS_H__
++
++struct qcom_iris;
++struct qcom_wcnss;
++
++struct wcnss_vreg_info {
++	const char * const name;
++	int min_voltage;
++	int max_voltage;
++
++	int load_uA;
++
++	bool super_turbo;
++};
++
++int qcom_iris_enable(struct qcom_iris *iris);
++void qcom_iris_disable(struct qcom_iris *iris);
++
++void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss, struct qcom_iris *iris, bool use_48mhz_xo);
++
++#endif
+diff --git a/drivers/remoteproc/qcom_wcnss_iris.c b/drivers/remoteproc/qcom_wcnss_iris.c
+new file mode 100644
+index 000000000000..f0ca24a8dd0b
+--- /dev/null
++++ b/drivers/remoteproc/qcom_wcnss_iris.c
+@@ -0,0 +1,188 @@
++/*
++ * Qualcomm Wireless Connectivity Subsystem Iris driver
++ *
++ * Copyright (C) 2016 Linaro Ltd
++ * Copyright (C) 2014 Sony Mobile Communications AB
++ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
++
++#include "qcom_wcnss.h"
++
++struct qcom_iris {
++	struct device *dev;
++
++	struct clk *xo_clk;
++
++	struct regulator_bulk_data *vregs;
++	size_t num_vregs;
++};
++
++struct iris_data {
++	const struct wcnss_vreg_info *vregs;
++	size_t num_vregs;
++
++	bool use_48mhz_xo;
++};
++
++static const struct iris_data wcn3620_data = {
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddxo",  1800000, 1800000, 10000 },
++		{ "vddrfa", 1300000, 1300000, 100000 },
++		{ "vddpa",  3300000, 3300000, 515000 },
++		{ "vdddig", 1800000, 1800000, 10000 },
++	},
++	.num_vregs = 4,
++	.use_48mhz_xo = false,
++};
++
++static const struct iris_data wcn3660_data = {
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddxo",  1800000, 1800000, 10000 },
++		{ "vddrfa", 1300000, 1300000, 100000 },
++		{ "vddpa",  2900000, 3000000, 515000 },
++		{ "vdddig", 1200000, 1225000, 10000 },
++	},
++	.num_vregs = 4,
++	.use_48mhz_xo = true,
++};
++
++static const struct iris_data wcn3680_data = {
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddxo",  1800000, 1800000, 10000 },
++		{ "vddrfa", 1300000, 1300000, 100000 },
++		{ "vddpa",  3300000, 3300000, 515000 },
++		{ "vdddig", 1800000, 1800000, 10000 },
++	},
++	.num_vregs = 4,
++	.use_48mhz_xo = true,
++};
++
++int qcom_iris_enable(struct qcom_iris *iris)
++{
++	int ret;
++
++	ret = regulator_bulk_enable(iris->num_vregs, iris->vregs);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(iris->xo_clk);
++	if (ret) {
++		dev_err(iris->dev, "failed to enable xo clk\n");
++		goto disable_regulators;
++	}
++
++	return 0;
++
++disable_regulators:
++	regulator_bulk_disable(iris->num_vregs, iris->vregs);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(qcom_iris_enable);
++
++void qcom_iris_disable(struct qcom_iris *iris)
++{
++	clk_disable_unprepare(iris->xo_clk);
++	regulator_bulk_disable(iris->num_vregs, iris->vregs);
++}
++EXPORT_SYMBOL_GPL(qcom_iris_disable);
++
++static int qcom_iris_probe(struct platform_device *pdev)
++{
++	const struct iris_data *data;
++	struct qcom_wcnss *wcnss;
++	struct qcom_iris *iris;
++	int ret;
++	int i;
++
++	iris = devm_kzalloc(&pdev->dev, sizeof(struct qcom_iris), GFP_KERNEL);
++	if (!iris)
++		return -ENOMEM;
++
++	data = of_device_get_match_data(&pdev->dev);
++	wcnss = dev_get_drvdata(pdev->dev.parent);
++
++	iris->xo_clk = devm_clk_get(&pdev->dev, "xo");
++	if (IS_ERR(iris->xo_clk)) {
++		if (PTR_ERR(iris->xo_clk) != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "failed to acquire xo clk\n");
++		return PTR_ERR(iris->xo_clk);
++	}
++
++	iris->num_vregs = data->num_vregs;
++	iris->vregs = devm_kcalloc(&pdev->dev,
++				   iris->num_vregs,
++				   sizeof(struct regulator_bulk_data),
++				   GFP_KERNEL);
++	if (!iris->vregs)
++		return -ENOMEM;
++
++	for (i = 0; i < iris->num_vregs; i++)
++		iris->vregs[i].supply = data->vregs[i].name;
++
++	ret = devm_regulator_bulk_get(&pdev->dev, iris->num_vregs, iris->vregs);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to get regulators\n");
++		return ret;
++	}
++
++	for (i = 0; i < iris->num_vregs; i++) {
++		if (data->vregs[i].max_voltage)
++			regulator_set_voltage(iris->vregs[i].consumer,
++					      data->vregs[i].min_voltage,
++					      data->vregs[i].max_voltage);
++
++		if (data->vregs[i].load_uA)
++			regulator_set_load(iris->vregs[i].consumer,
++					   data->vregs[i].load_uA);
++	}
++
++	qcom_wcnss_assign_iris(wcnss, iris, data->use_48mhz_xo);
++
++	return 0;
++}
++
++static int qcom_iris_remove(struct platform_device *pdev)
++{
++	struct qcom_wcnss *wcnss = dev_get_drvdata(pdev->dev.parent);
++
++	qcom_wcnss_assign_iris(wcnss, NULL, false);
++
++	return 0;
++}
++
++static const struct of_device_id iris_of_match[] = {
++	{ .compatible = "qcom,wcn3620", .data = &wcn3620_data },
++	{ .compatible = "qcom,wcn3660", .data = &wcn3660_data },
++	{ .compatible = "qcom,wcn3680", .data = &wcn3680_data },
++	{}
++};
++
++static struct platform_driver wcnss_driver = {
++	.probe = qcom_iris_probe,
++	.remove = qcom_iris_remove,
++	.driver = {
++		.name = "qcom-iris",
++		.of_match_table = iris_of_match,
++	},
++};
++
++module_platform_driver(wcnss_driver);
++MODULE_DESCRIPTION("Qualcomm Wireless Subsystem Iris driver");
++MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
+2.5.0
