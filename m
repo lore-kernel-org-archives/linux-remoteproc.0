@@ -1,308 +1,103 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 05/14] rpmsg: Unify rpmsg device vs channel naming
-Date: Mon, 15 Aug 2016 17:17:11 -0700
-Message-Id: <1471306640-29917-6-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 15 Aug 2016 14:55:05 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/2] remoteproc: core: Add rproc OF look-up functions
+Message-ID: <20160815135505.GI25844@dell>
+References: <20160810204049.GV26240@tuxbot>
+ <f9641050-0a3f-11de-fa69-e587034e0527@ti.com>
+ <20160810211947.GW26240@tuxbot>
+ <b1a01567-7a5d-20de-a2b5-b673b9ce67ec@ti.com>
+ <20160811073122.GA1715@dell>
+ <05d4c9c1-79ea-bde3-e5e5-d26e6b07c916@ti.com>
+ <b1b2a510-e0cb-5d8f-9f44-48c9dd747d4d@ti.com>
+ <06f795ef-e71c-2cda-5306-5b75e0f15125@ti.com>
+ <20160812180751.GH26240@tuxbot>
+ <abae5c30-62ab-55c7-a144-cb8707832941@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <abae5c30-62ab-55c7-a144-cb8707832941@ti.com>
+To: Suman Anna <s-anna@ti.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Tony Lindgren <tony@atomide.com>, "ohad@wizery.com" <ohad@wizery.com>, "kernel@stlinux.com" <kernel@stlinux.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "patrice.chotard@st.com" <patrice.chotard@st.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ludovic.barre@st.com" <ludovic.barre@st.com>, "ssantosh@kernel.org" <ssantosh@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dave Gerlach <d-gerlach@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The rpmsg device representing struct is called rpmsg_channel and the
-variable name used throughout is rpdev, unify these as "rpmsg device" so
-that we can use the identifier "channel" for the internal object in the
-future.
+On Fri, 12 Aug 2016, Suman Anna wrote:
+> On 08/12/2016 01:07 PM, Bjorn Andersson wrote:
+> > On Fri 12 Aug 09:37 PDT 2016, Suman Anna wrote:
+> > 
+> >> Hi Bjorn,
+> >>
+> >>>> On 08/11/2016 02:31 AM, Lee Jones wrote:
+> >>>>> On Wed, 10 Aug 2016, Suman Anna wrote:
+> >>>>>
+> >>>>>> On 08/10/2016 04:19 PM, Bjorn Andersson wrote:
+> >>>>>>> On Wed 10 Aug 14:04 PDT 2016, Suman Anna wrote:
+> >>>>>>>
+> >>>>>>>> On 08/10/2016 03:40 PM, Bjorn Andersson wrote:
+> >>>>>>>>> On Wed 10 Aug 12:37 PDT 2016, Suman Anna wrote:
+> >>>>>>>>>
+> >>>>>>>>>> Hi Lee, Bjorn,
+> >>>>>>>>>>
+> >>>>>>>>>> On 08/10/2016 12:40 PM, Bjorn Andersson wrote:
+> >>>>>>>>>>> On Tue 19 Jul 08:49 PDT 2016, Lee Jones wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>>> - of_rproc_by_index(): look-up and obtain a reference to a rproc
+> >>>>>>>>>>>>                        using the DT phandle "rprocs" and a index.
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> - of_rproc_by_name():  lookup and obtain a reference to a rproc
+> >>>>>>>>>>>>                        using the DT phandle "rprocs" and "rproc-names".
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> >>>>>>>>>>>> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> >>>>>>>>>>>> ---
+> >>>>>>>>>>>
+> >>>>>>>>>>> I'm happy with this, so I whipped up a binding document describing our
+> >>>>>>>>>>> two new properties. Waiting for an opinion on that before I merge this.
+> >>
+> >> One last comment on this is the return code convention change on these
+> >> rproc_get APIs. I am fine in general with returning ERR_PTRs, but most
+> >> of the remoteproc code is using NULL checking for rproc. If you remember
+> >> the discussion back during the hwspinlock DT conversion [1], Ohad
+> >> preferred to return NULL, and that's why even the rproc_get_by_phandle
+> >> was returning NULL. We ought to make this consistent across the board if
+> >> we want to make this switch.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 54 ++++++++++++++++++++--------------------
- include/linux/rpmsg.h            | 18 ++++++++------
- 2 files changed, 37 insertions(+), 35 deletions(-)
+IMHO it's always better to use the appropriate Linux error code in the
+event of a failure and if it's available.  Returning NULL doesn't
+actually tell us anything about the failure.  This will also come in
+handy when we start playing around with resource tables.  For
+instance, NULL will insinuate "no table supplied", which is valid and
+execution should continue.  Where as a positive IS_ERR() insinuates
+that something went wrong and execution should be cut short and an
+error value returned to the caller.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index f8fb9e065821..a9f8cc8d968b 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -85,7 +85,7 @@ struct rpmsg_channel_info {
- 	u32 dst;
- };
- 
--#define to_rpmsg_channel(d) container_of(d, struct rpmsg_channel, dev)
-+#define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
- #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
- 
- /*
-@@ -125,7 +125,7 @@ static ssize_t								\
- field##_show(struct device *dev,					\
- 			struct device_attribute *attr, char *buf)	\
- {									\
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);		\
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
- 									\
- 	return sprintf(buf, format_string, rpdev->path);		\
- }
-@@ -139,7 +139,7 @@ rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
- static ssize_t modalias_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
- {
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 
- 	return sprintf(buf, RPMSG_DEVICE_MODALIAS_FMT "\n", rpdev->id.name);
- }
-@@ -154,7 +154,7 @@ static struct device_attribute rpmsg_dev_attrs[] = {
- };
- 
- /* rpmsg devices and drivers are matched using the service name */
--static inline int rpmsg_id_match(const struct rpmsg_channel *rpdev,
-+static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
- 				 const struct rpmsg_device_id *id)
- {
- 	return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
-@@ -163,7 +163,7 @@ static inline int rpmsg_id_match(const struct rpmsg_channel *rpdev,
- /* match rpmsg channel and rpmsg driver */
- static int rpmsg_dev_match(struct device *dev, struct device_driver *drv)
- {
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(drv);
- 	const struct rpmsg_device_id *ids = rpdrv->id_table;
- 	unsigned int i;
-@@ -178,7 +178,7 @@ static int rpmsg_dev_match(struct device *dev, struct device_driver *drv)
- 
- static int rpmsg_uevent(struct device *dev, struct kobj_uevent_env *env)
- {
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 
- 	return add_uevent_var(env, "MODALIAS=" RPMSG_DEVICE_MODALIAS_FMT,
- 					rpdev->id.name);
-@@ -206,7 +206,7 @@ static void __ept_release(struct kref *kref)
- 
- /* for more info, see below documentation of rpmsg_create_ept() */
- static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info *vrp,
--						 struct rpmsg_channel *rpdev,
-+						 struct rpmsg_device *rpdev,
- 						 rpmsg_rx_cb_t cb,
- 						 void *priv, u32 addr)
- {
-@@ -294,7 +294,7 @@ free_ept:
-  *
-  * Returns a pointer to the endpoint on success, or NULL on error.
-  */
--struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *rpdev,
-+struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
- 					rpmsg_rx_cb_t cb, void *priv, u32 addr)
- {
- 	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
-@@ -350,7 +350,7 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
-  */
- static int rpmsg_dev_probe(struct device *dev)
- {
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
- 	struct virtproc_info *vrp = rpdev->vrp;
- 	struct rpmsg_endpoint *ept;
-@@ -393,7 +393,7 @@ out:
- 
- static int rpmsg_dev_remove(struct device *dev)
- {
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
- 	struct virtproc_info *vrp = rpdev->vrp;
- 	int err = 0;
-@@ -457,7 +457,7 @@ EXPORT_SYMBOL(unregister_rpmsg_driver);
- 
- static void rpmsg_release_device(struct device *dev)
- {
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 
- 	kfree(rpdev);
- }
-@@ -467,10 +467,10 @@ static void rpmsg_release_device(struct device *dev)
-  * this is used to make sure we're not creating rpmsg devices for channels
-  * that already exist.
-  */
--static int rpmsg_channel_match(struct device *dev, void *data)
-+static int rpmsg_device_match(struct device *dev, void *data)
- {
- 	struct rpmsg_channel_info *chinfo = data;
--	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 
- 	if (chinfo->src != RPMSG_ADDR_ANY && chinfo->src != rpdev->src)
- 		return 0;
-@@ -490,15 +490,15 @@ static int rpmsg_channel_match(struct device *dev, void *data)
-  * this function will be used to create both static and dynamic
-  * channels.
-  */
--static struct rpmsg_channel *rpmsg_create_channel(struct virtproc_info *vrp,
--				struct rpmsg_channel_info *chinfo)
-+static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
-+						 struct rpmsg_channel_info *chinfo)
- {
--	struct rpmsg_channel *rpdev;
-+	struct rpmsg_device *rpdev;
- 	struct device *tmp, *dev = &vrp->vdev->dev;
- 	int ret;
- 
- 	/* make sure a similar channel doesn't already exist */
--	tmp = device_find_child(dev, chinfo, rpmsg_channel_match);
-+	tmp = device_find_child(dev, chinfo, rpmsg_device_match);
- 	if (tmp) {
- 		/* decrement the matched device's refcount back */
- 		put_device(tmp);
-@@ -550,7 +550,7 @@ static int rpmsg_destroy_channel(struct virtproc_info *vrp,
- 	struct virtio_device *vdev = vrp->vdev;
- 	struct device *dev;
- 
--	dev = device_find_child(&vdev->dev, chinfo, rpmsg_channel_match);
-+	dev = device_find_child(&vdev->dev, chinfo, rpmsg_device_match);
- 	if (!dev)
- 		return -EINVAL;
- 
-@@ -675,7 +675,7 @@ static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
-  *
-  * Returns 0 on success and an appropriate error value on failure.
-  */
--static int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev,
-+static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 				     u32 src, u32 dst,
- 				     void *data, int len, bool wait)
- {
-@@ -792,7 +792,7 @@ out:
-  */
- int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
- {
--	struct rpmsg_channel *rpdev = ept->rpdev;
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr, dst = rpdev->dst;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
-@@ -819,7 +819,7 @@ EXPORT_SYMBOL(rpmsg_send);
-  */
- int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- {
--	struct rpmsg_channel *rpdev = ept->rpdev;
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
-@@ -849,7 +849,7 @@ EXPORT_SYMBOL(rpmsg_sendto);
- int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			  void *data, int len)
- {
--	struct rpmsg_channel *rpdev = ept->rpdev;
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
- }
-@@ -874,7 +874,7 @@ EXPORT_SYMBOL(rpmsg_send_offchannel);
-  */
- int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- {
--	struct rpmsg_channel *rpdev = ept->rpdev;
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr, dst = rpdev->dst;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
-@@ -900,7 +900,7 @@ EXPORT_SYMBOL(rpmsg_trysend);
-  */
- int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- {
--	struct rpmsg_channel *rpdev = ept->rpdev;
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 	u32 src = ept->addr;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
-@@ -929,7 +929,7 @@ EXPORT_SYMBOL(rpmsg_trysendto);
- int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			     void *data, int len)
- {
--	struct rpmsg_channel *rpdev = ept->rpdev;
-+	struct rpmsg_device *rpdev = ept->rpdev;
- 
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
-@@ -1048,11 +1048,11 @@ static void rpmsg_xmit_done(struct virtqueue *svq)
- }
- 
- /* invoked when a name service announcement arrives */
--static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
-+static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 			void *priv, u32 src)
- {
- 	struct rpmsg_ns_msg *msg = data;
--	struct rpmsg_channel *newch;
-+	struct rpmsg_device *newch;
- 	struct rpmsg_channel_info chinfo;
- 	struct virtproc_info *vrp = priv;
- 	struct device *dev = &vrp->vdev->dev;
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 554dc352d7e0..3e3d5b1c154a 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -98,7 +98,7 @@ enum rpmsg_ns_flags {
- struct virtproc_info;
- 
- /**
-- * rpmsg_channel - devices that belong to the rpmsg bus are called channels
-+ * rpmsg_device - device that belong to the rpmsg bus
-  * @vrp: the remote processor this channel belongs to
-  * @dev: the device struct
-  * @id: device id (used to match between rpmsg drivers and devices)
-@@ -107,7 +107,7 @@ struct virtproc_info;
-  * @ept: the rpmsg endpoint of this channel
-  * @announce: if set, rpmsg will announce the creation/removal of this channel
-  */
--struct rpmsg_channel {
-+struct rpmsg_device {
- 	struct virtproc_info *vrp;
- 	struct device dev;
- 	struct rpmsg_device_id id;
-@@ -117,7 +117,7 @@ struct rpmsg_channel {
- 	bool announce;
- };
- 
--typedef void (*rpmsg_rx_cb_t)(struct rpmsg_channel *, void *, int, void *, u32);
-+typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
- 
- /**
-  * struct rpmsg_endpoint - binds a local rpmsg address to its user
-@@ -143,7 +143,7 @@ typedef void (*rpmsg_rx_cb_t)(struct rpmsg_channel *, void *, int, void *, u32);
-  * create additional endpoints by themselves (see rpmsg_create_ept()).
-  */
- struct rpmsg_endpoint {
--	struct rpmsg_channel *rpdev;
-+	struct rpmsg_device *rpdev;
- 	struct kref refcount;
- 	rpmsg_rx_cb_t cb;
- 	struct mutex cb_lock;
-@@ -162,15 +162,17 @@ struct rpmsg_endpoint {
- struct rpmsg_driver {
- 	struct device_driver drv;
- 	const struct rpmsg_device_id *id_table;
--	int (*probe)(struct rpmsg_channel *dev);
--	void (*remove)(struct rpmsg_channel *dev);
--	void (*callback)(struct rpmsg_channel *, void *, int, void *, u32);
-+	int (*probe)(struct rpmsg_device *dev);
-+	void (*remove)(struct rpmsg_device *dev);
-+	void (*callback)(struct rpmsg_device *, void *, int, void *, u32);
- };
- 
-+int register_rpmsg_device(struct rpmsg_device *dev);
-+void unregister_rpmsg_device(struct rpmsg_device *dev);
- int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
- void unregister_rpmsg_driver(struct rpmsg_driver *drv);
- void rpmsg_destroy_ept(struct rpmsg_endpoint *);
--struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
-+struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
- 					rpmsg_rx_cb_t cb, void *priv, u32 addr);
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
+> > I think it makes sense to return the actual error from these functions,
+> > if nothing else to keep it consistent with other frameworks.
+> > 
+> > The other case I see returning NULL is rproc_alloc(), which is think is
+> > analog to kmalloc(), so I think that's fine to keep.
+> > 
+> > Luckily wkup_m3 is the only consumer of this API in the kernel today, so
+> > we shouldn't have any issues wrt changing the return value here.
+> 
+> Yeah, not worried about the consumers, I am talking about the few
+> functions in remoteproc core code that do some checking like in
+> rproc_del(), __rproc_boot() or rproc_report_crash(). We would need to
+> modify these to use IS_ERR_OR_NULL instead of a NULL check atleast.
+
+I haven't looked at the code, but +1 in principle.
+
+> >> [1] http://marc.info/?t=138965891200008
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> 
+
 -- 
-2.5.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
