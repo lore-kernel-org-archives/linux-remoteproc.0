@@ -1,35 +1,173 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] MAINTAINERS: Update hwspinlock paths
-Date: Wed,  6 Jul 2016 20:48:13 -0700
-Message-Id: <1467863293-3951-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Chen <peter.chen@nxp.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v2 1/2] remoteproc: core: Add rproc OF look-up functions
+Date: Tue, 16 Aug 2016 15:38:23 +0100
+Message-Id: <20160816143824.4120-1-lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, ssantosh@kernel.org, linux-remoteproc@vger.kernel.org, ludovic.barre@st.com, s-anna@ti.com, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Include all files in drivers/hwspinlock and hwlock related dt bindings
-in the hw spinlock section of MAINTAINERS.
+- of_rproc_by_index(): look-up and obtain a reference to a rproc
+                       using the DT phandle "rprocs" and a index.
 
-Cc: Peter Chen <peter.chen@nxp.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+- of_rproc_by_name():  lookup and obtain a reference to a rproc
+                       using the DT phandle "rprocs" and "rproc-names".
+
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 ---
- MAINTAINERS | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 87b956d492c8..697f797f9e06 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5268,8 +5268,9 @@ M:	Bjorn Andersson <bjorn.andersson@linaro.org>
- L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/hwspinlock.git
-+F:	Documentation/devicetree/bindings/hwlock/
- F:	Documentation/hwspinlock.txt
--F:	drivers/hwspinlock/hwspinlock_*
-+F:	drivers/hwspinlock/
- F:	include/linux/hwspinlock.h
+v1 => v2:
+ - s/ti,rprocs/ti,rproc
+
+drivers/remoteproc/remoteproc_core.c | 78 +++++++++++++++++++++++++++++++++++-
+ include/linux/remoteproc.h           | 25 +++++++++++-
+ 2 files changed, 101 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index fe0539e..fe362fb 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -41,6 +41,8 @@
+ #include <linux/virtio_ids.h>
+ #include <linux/virtio_ring.h>
+ #include <asm/byteorder.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
  
- HARMONY SOUND DRIVER
+ #include "remoteproc_internal.h"
+ 
+@@ -1191,6 +1193,81 @@ out:
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
+ 
++#ifdef CONFIG_OF
++/**
++ * of_get_rproc_by_index() - lookup and obtain a reference to an rproc
++ * @np: node to search for rproc phandle
++ * @index: index into the phandle list
++ *
++ * This function increments the remote processor's refcount, so always
++ * use rproc_put() to decrement it back once rproc isn't needed anymore.
++ *
++ * Returns a pointer to the rproc struct on success or an appropriate error
++ * code otherwise.
++ */
++struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
++{
++	struct rproc *rproc = NULL, *r;
++	struct device_node *rproc_np;
++
++	if (index < 0) {
++		pr_err("Invalid index: %d\n", index);
++		return ERR_PTR(-EINVAL);
++	}
++
++	rproc_np = of_parse_phandle(np, "rprocs", index);
++	if (!rproc_np) {
++		/* Unfortunately we have to support this, at least for now */
++		rproc_np = of_parse_phandle(np, "ti,rproc", index);
++		if (!rproc_np) {
++			pr_err("Failed to obtain phandle\n");
++			return ERR_PTR(-ENODEV);
++		}
++	}
++
++	mutex_lock(&rproc_list_mutex);
++	list_for_each_entry(r, &rproc_list, node) {
++		if (r->dev.parent && r->dev.parent->of_node == rproc_np) {
++			get_device(&r->dev);
++			rproc = r;
++			break;
++		}
++	}
++	mutex_unlock(&rproc_list_mutex);
++
++	of_node_put(rproc_np);
++
++	if (!rproc)
++		pr_err("Could not find rproc, deferring\n");
++
++	return rproc ?: ERR_PTR(-EPROBE_DEFER);
++}
++EXPORT_SYMBOL(of_get_rproc_by_index);
++
++/**
++ * of_get_rproc_by_name() - lookup and obtain a reference to an rproc
++ * @np: node to search for rproc
++ * @name: name of the remoteproc from device's point of view
++ *
++ * This function increments the remote processor's refcount, so always
++ * use rproc_put() to decrement it back once rproc isn't needed anymore.
++ *
++ * Returns a pointer to the rproc struct on success or an appropriate error
++ * code otherwise.
++ */
++struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
++{
++	int index;
++
++	if (unlikely(!name))
++		return ERR_PTR(-EINVAL);
++
++	index = of_property_match_string(np, "rproc-names", name);
++
++	return of_get_rproc_by_index(np, index);
++}
++EXPORT_SYMBOL(of_get_rproc_by_name);
++
+ /**
+  * rproc_get_by_phandle() - find a remote processor by phandle
+  * @phandle: phandle to the rproc
+@@ -1203,7 +1280,6 @@ EXPORT_SYMBOL(rproc_shutdown);
+  *
+  * Returns the rproc handle on success, and NULL on failure.
+  */
+-#ifdef CONFIG_OF
+ struct rproc *rproc_get_by_phandle(phandle phandle)
+ {
+ 	struct rproc *rproc = NULL, *r;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 1c457a8..f130938 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -487,7 +487,6 @@ struct rproc_vdev {
+ 	u32 rsc_offset;
+ };
+ 
+-struct rproc *rproc_get_by_phandle(phandle phandle);
+ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 				const struct rproc_ops *ops,
+ 				const char *firmware, int len);
+@@ -511,4 +510,28 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+ 	return rvdev->rproc;
+ }
+ 
++#ifdef CONFIG_OF
++extern struct rproc *of_get_rproc_by_index(struct device_node *np,
++					   int index);
++extern struct rproc *of_get_rproc_by_name(struct device_node *np,
++					  const char *name);
++extern struct rproc *rproc_get_by_phandle(phandle phandle);
++#else
++static inline
++struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
++{
++	return NULL;
++}
++static inline
++struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
++{
++	return NULL;
++}
++static inline
++struct rproc *rproc_get_by_phandle(phandle phandle)
++{
++	return NULL;
++}
++#endif /* CONFIG_OF */
++
+ #endif /* REMOTEPROC_H */
 -- 
-2.5.0
+2.9.0
