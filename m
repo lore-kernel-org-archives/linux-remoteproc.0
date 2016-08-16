@@ -1,215 +1,87 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4/9] remoteproc: core: New API to add new resources to the resource table
-Date: Thu,  4 Aug 2016 10:21:48 +0100
-Message-Id: <20160804092153.23032-5-lee.jones@linaro.org>
-In-Reply-To: <20160804092153.23032-1-lee.jones@linaro.org>
-References: <20160804092153.23032-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 13/14] rpmsg: Allow callback to return errors
+Date: Mon, 15 Aug 2016 17:17:19 -0700
+Message-Id: <1471306640-29917-14-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In order to amend or add a new resource table entry we need a method
-for a platform-specific to submit them. rproc_request_resource() is a
-new public API which provides this functionality.
+Some rpmsg backends support holding on to and redelivering messages upon
+failed handling of them, so provide a way for the callback to report and
+error and allow the backends to handle this.
 
-It is to be called between rproc_alloc() and rproc_add().
-
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 125 +++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  21 ++++++
- 2 files changed, 146 insertions(+)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++----
+ include/linux/rpmsg.h            |  4 ++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4914482..0abfa2b 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -793,6 +793,130 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 	}
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index d39e381bc596..9d681d68f7f3 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -785,8 +785,8 @@ static void rpmsg_xmit_done(struct virtqueue *svq)
  }
  
-+static void rproc_dump_resource_table(struct rproc *rproc,
-+				      struct resource_table *table, int size)
-+{
-+	const char *types[] = {"carveout", "devmem", "trace", "vdev"};
-+	struct device *dev = &rproc->dev;
-+	struct fw_rsc_carveout *c;
-+	struct fw_rsc_devmem *d;
-+	struct fw_rsc_trace *t;
-+	struct fw_rsc_vdev *v;
-+	int i, j;
-+
-+	if (!table) {
-+		dev_dbg(dev, "No resource table found\n");
-+		return;
-+	}
-+
-+	dev_dbg(dev, "Resource Table: Version %d with %d entries [size: %x]\n",
-+		table->ver, table->num, size);
-+
-+	for (i = 0; i < table->num; i++) {
-+		int offset = table->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table + offset;
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+
-+		switch (hdr->type) {
-+		case RSC_CARVEOUT:
-+			c = rsc;
-+			dev_dbg(dev, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			dev_dbg(dev, "  Device Address 0x%x\n", c->da);
-+			dev_dbg(dev, "  Physical Address 0x%x\n", c->pa);
-+			dev_dbg(dev, "  Length 0x%x Bytes\n", c->len);
-+			dev_dbg(dev, "  Flags 0x%x\n", c->flags);
-+			dev_dbg(dev, "  Reserved (should be zero) [%d]\n", c->reserved);
-+			dev_dbg(dev, "  Name %s\n\n", c->name);
-+			break;
-+		case RSC_DEVMEM:
-+			d = rsc;
-+			dev_dbg(dev, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			dev_dbg(dev, "  Device Address 0x%x\n", d->da);
-+			dev_dbg(dev, "  Physical Address 0x%x\n", d->pa);
-+			dev_dbg(dev, "  Length 0x%x Bytes\n", d->len);
-+			dev_dbg(dev, "  Flags 0x%x\n", d->flags);
-+			dev_dbg(dev, "  Reserved (should be zero) [%d]\n", d->reserved);
-+			dev_dbg(dev, "  Name %s\n\n", d->name);
-+			break;
-+		case RSC_TRACE:
-+			t = rsc;
-+			dev_dbg(dev, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			dev_dbg(dev, "  Device Address 0x%x\n", t->da);
-+			dev_dbg(dev, "  Length 0x%x Bytes\n", t->len);
-+			dev_dbg(dev, "  Reserved (should be zero) [%d]\n", t->reserved);
-+			dev_dbg(dev, "  Name %s\n\n", t->name);
-+			break;
-+		case RSC_VDEV:
-+			v = rsc;
-+			dev_dbg(dev, "Entry %d is of type %s\n", i, types[hdr->type]);
-+
-+			dev_dbg(dev, "  ID %d\n", v->id);
-+			dev_dbg(dev, "  Notify ID %d\n", v->notifyid);
-+			dev_dbg(dev, "  Device features 0x%x\n", v->dfeatures);
-+			dev_dbg(dev, "  Guest features 0x%x\n", v->gfeatures);
-+			dev_dbg(dev, "  Config length 0x%x\n", v->config_len);
-+			dev_dbg(dev, "  Status 0x%x\n", v->status);
-+			dev_dbg(dev, "  Number of vrings %d\n", v->num_of_vrings);
-+			dev_dbg(dev, "  Reserved (should be zero) [%d][%d]\n\n",
-+				v->reserved[0], v->reserved[1]);
-+
-+			for (j = 0; j < v->num_of_vrings; j++) {
-+				dev_dbg(dev, "  Vring %d\n", j);
-+				dev_dbg(dev, "    Device Address 0x%x\n", v->vring[j].da);
-+				dev_dbg(dev, "    Alignment %d\n", v->vring[j].align);
-+				dev_dbg(dev, "    Number of buffers %d\n", v->vring[j].num);
-+				dev_dbg(dev, "    Notify ID %d\n", v->vring[j].notifyid);
-+				dev_dbg(dev, "    Reserved (should be zero) [%d]\n\n",
-+					v->vring[j].reserved);
-+			}
-+			break;
-+		default:
-+			dev_dbg(dev, "Invalid resource type found: %d [hdr: %p]\n",
-+				hdr->type, hdr);
-+			return;
-+		}
-+	}
-+}
-+
-+int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
-+{
-+	struct device *dev = &rproc->dev;
-+	struct rproc_request_resource *request;
-+	int size;
-+
-+	request = devm_kzalloc(dev, sizeof(*request), GFP_KERNEL);
-+	if (!request)
-+		return -ENOMEM;
-+
-+	switch (type) {
-+	case RSC_CARVEOUT:
-+		size = sizeof(struct fw_rsc_carveout);
-+		break;
-+	case RSC_DEVMEM:
-+		size = sizeof(struct fw_rsc_devmem);
-+		break;
-+	case RSC_TRACE:
-+		size = sizeof(struct fw_rsc_trace);
-+		break;
-+	default:
-+		dev_err(dev, "Unsupported resource type: %d\n", type);
+ /* invoked when a name service announcement arrives */
+-static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+-			void *priv, u32 src)
++static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
++		       void *priv, u32 src)
+ {
+ 	struct rpmsg_ns_msg *msg = data;
+ 	struct rpmsg_device *newch;
+@@ -802,7 +802,7 @@ static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 
+ 	if (len != sizeof(*msg)) {
+ 		dev_err(dev, "malformed ns msg (%d)\n", len);
+-		return;
 +		return -EINVAL;
-+	}
-+
-+	request->resource = devm_kzalloc(dev, size, GFP_KERNEL);
-+	if (!request->resource)
-+		return -ENOMEM;
-+
-+	memcpy(request->resource, resource, size);
-+	request->type = type;
-+	request->size = size;
-+
-+	list_add_tail(&request->node, &rproc->override_resources);
+ 	}
+ 
+ 	/*
+@@ -813,7 +813,7 @@ static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 	 */
+ 	if (rpdev) {
+ 		dev_err(dev, "anomaly: ns ept has an rpdev handle\n");
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	/* don't trust the remote processor for null terminating the name */
+@@ -836,6 +836,8 @@ static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 		if (!newch)
+ 			dev_err(dev, "rpmsg_create_channel failed\n");
+ 	}
 +
 +	return 0;
-+}
-+EXPORT_SYMBOL(rproc_request_resource);
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
-@@ -1452,6 +1576,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	INIT_LIST_HEAD(&rproc->mappings);
- 	INIT_LIST_HEAD(&rproc->traces);
- 	INIT_LIST_HEAD(&rproc->rvdevs);
-+	INIT_LIST_HEAD(&rproc->override_resources);
+ }
  
- 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
- 	init_completion(&rproc->crash_comp);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 3608d20..c620177 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -323,6 +323,25 @@ struct rproc_mem_entry {
- 	struct list_head node;
- };
+ static int rpmsg_probe(struct virtio_device *vdev)
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index bdd1a2285733..19213e660a9b 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -46,7 +46,7 @@
+ struct rpmsg_device;
+ struct rpmsg_endpoint;
  
-+/**
-+ * struct rproc_requested_resources - add a resource to the resource table
-+ *
-+ * @resource:	pointer to a 'struct fw_rsc_*' resource
-+ * @type:	'fw_resource_type' resource type
-+ * @size:	size of resource
-+ * @node:	list node
-+ *
-+ * Resources can be added by platform-specific rproc drivers calling
-+ * rproc_request_resource()
-+ *
-+ */
-+struct rproc_request_resource {
-+	void *resource;
-+	u32 type;
-+	u32 size;
-+	struct list_head node;
-+};
-+
- struct rproc;
+-typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
++typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
  
  /**
-@@ -429,6 +448,7 @@ struct rproc {
- 	int num_traces;
- 	struct list_head carveouts;
- 	struct list_head mappings;
-+	struct list_head override_resources;
- 	struct completion firmware_loading_complete;
- 	u32 bootaddr;
- 	struct list_head rvdevs;
-@@ -487,6 +507,7 @@ struct rproc_vdev {
- 	u32 rsc_offset;
+  * struct rpmsg_channel_info - internal channel info representation
+@@ -123,7 +123,7 @@ struct rpmsg_driver {
+ 	const struct rpmsg_device_id *id_table;
+ 	int (*probe)(struct rpmsg_device *dev);
+ 	void (*remove)(struct rpmsg_device *dev);
+-	void (*callback)(struct rpmsg_device *, void *, int, void *, u32);
++	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
  };
  
-+int rproc_request_resource(struct rproc *rproc, u32 type, void *res);
- struct rproc *rproc_alloc(struct device *dev, const char *name,
- 				const struct rproc_ops *ops,
- 				const char *firmware, int len);
+ int register_rpmsg_device(struct rpmsg_device *dev);
 -- 
-2.9.0
+2.5.0
