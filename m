@@ -1,97 +1,157 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 04/19] remoteproc: core: Add function to append a new resource table entry
-Date: Wed, 31 Aug 2016 22:50:07 +0200
-Message-ID: <1472676622-32533-5-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 10/14] rpmsg: virtio: Internalize vrp pointer
+Date: Mon, 15 Aug 2016 17:17:16 -0700
+Message-Id: <1471306640-29917-11-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lee Jones <lee.jones@linaro.org>
+Create a container struct virtio_rpmsg_channel around the rpmsg_channel
+to keep virtio backend information separate from the rpmsg and public
+API.
 
-A new function now exists to pull in and amend and existing resource
-table entry.  But what if we wish to provide a new resource?  This
-function provides functionality to append a brand new resource entry
-onto the resource table.  All complexity related to shuffling parts
-of the table around, providing new offsets and incriminating number
-of entries in the resource table's top-level header is taken care of
-here.
-
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 55 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 45 ++++++++++++++++++++++++++++++----------
+ include/linux/rpmsg.h            |  3 ---
+ 2 files changed, 34 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 330ad4f..c2887be 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -978,6 +978,61 @@ static int rproc_update_resource_table_entry(struct rproc *rproc,
- 	return !updated;
- }
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index d08facbcd30a..6ad4c657aaf4 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -75,6 +75,21 @@ struct virtproc_info {
+ 	struct rpmsg_endpoint *ns_ept;
+ };
  
-+static struct resource_table*
-+rproc_add_resource_table_entry(struct rproc *rproc,
-+			       struct rproc_request_resource *request,
-+			       struct resource_table *old_table, int *tablesz)
++/**
++ * @vrp: the remote processor this channel belongs to
++ */
++struct virtio_rpmsg_channel {
++	struct rpmsg_channel rpch;
++
++	struct virtproc_info *vrp;
++};
++
++static inline struct virtio_rpmsg_channel *to_virtio_rpmsg_channel(struct device *d)
 +{
-+	struct resource_table *table;
-+	struct fw_rsc_hdr h;
-+	void *new_rsc_loc;
-+	void *fw_header_loc;
-+	void *start_of_rscs;
-+	int new_rsc_offset;
-+	int size = *tablesz;
-+	int i;
-+
-+	h.type = request->type;
-+
-+	new_rsc_offset = size;
-+
-+	/*
-+	 * Allocate another contiguous chunk of memory, large enough to
-+	 * contain the new, expanded resource table.
-+	 *
-+	 * The +4 is for the extra offset[] element in the top level header
-+	 */
-+	size += sizeof(struct fw_rsc_hdr) + request->size + 4;
-+	table = devm_kmemdup(&rproc->dev, old_table, size, GFP_KERNEL);
-+	if (!table)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Shunt table by 4 Bytes to account for the extra offset[] element */
-+	start_of_rscs = (void *)table + table->offset[0];
-+	memmove(start_of_rscs + 4,
-+		start_of_rscs, new_rsc_offset - table->offset[0]);
-+	new_rsc_offset += 4;
-+
-+	/* Update existing resource entry's offsets */
-+	for (i = 0; i < table->num; i++)
-+		table->offset[i] += 4;
-+
-+	/* Update the top level 'resource table' header */
-+	table->offset[table->num] = new_rsc_offset;
-+	table->num++;
-+
-+	/* Copy new firmware header into table */
-+	fw_header_loc = (void *)table + new_rsc_offset;
-+	memcpy(fw_header_loc, &h, sizeof(h));
-+
-+	/* Copy new resource entry into table */
-+	new_rsc_loc = (void *)fw_header_loc + sizeof(h);
-+	memcpy(new_rsc_loc, request->resource, request->size);
-+
-+	*tablesz = size;
-+	return table;
++	struct rpmsg_channel *rpch = to_rpmsg_channel(d);
++	return container_of(rpch, struct virtio_rpmsg_channel, rpch);
 +}
 +
  /*
-  * take a firmware and boot a remote processor with it.
+  * We're allocating buffers of 512 bytes each for communications. The
+  * number of buffers will be computed from the number of buffers supported
+@@ -191,7 +206,8 @@ static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev
+ 						      rpmsg_rx_cb_t cb,
+ 						      void *priv, u32 addr)
+ {
+-	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(&rpdev->dev);
++	return __rpmsg_create_ept(vch->vrp, rpdev, cb, priv, addr);
+ }
+ 
+ /**
+@@ -222,12 +238,14 @@ __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
+ 
+ static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+ {
+-	__rpmsg_destroy_ept(ept->rpdev->vrp, ept);
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(&ept->rpdev->dev);
++	__rpmsg_destroy_ept(vch->vrp, ept);
+ }
+ 
+ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+ {
+-	struct virtproc_info *vrp = rpdev->vrp;
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(&rpdev->dev);
++	struct virtproc_info *vrp = vch->vrp;
+ 	struct device *dev = &rpdev->dev;
+ 	int err = 0;
+ 
+@@ -250,7 +268,8 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+ 
+ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+ {
+-	struct virtproc_info *vrp = rpdev->vrp;
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(&rpdev->dev);
++	struct virtproc_info *vrp = vch->vrp;
+ 	struct device *dev = &rpdev->dev;
+ 	int err = 0;
+ 
+@@ -292,7 +311,7 @@ static const struct rpmsg_channel virtio_rpmsg_ops = {
+ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+ 						 struct rpmsg_channel_info *chinfo)
+ {
+-	struct rpmsg_channel *rpch;
++	struct virtio_rpmsg_channel *vch;
+ 	struct rpmsg_device *rpdev;
+ 	struct device *tmp, *dev = &vrp->vdev->dev;
+ 	int ret;
+@@ -307,15 +326,18 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+ 		return NULL;
+ 	}
+ 
+-	rpch = kzalloc(sizeof(*rpch), GFP_KERNEL);
+-	if (!rpch)
++	vch = kzalloc(sizeof(*vch), GFP_KERNEL);
++	if (!vch)
+ 		return NULL;
+ 
++	/* Link the channel to our vrp */
++	vch->vrp = vrp;
++
+ 	/* Assign callbacks for rpmsg_channel */
+-	*rpch = virtio_rpmsg_ops;
++	vch->rpch = virtio_rpmsg_ops;
+ 
+-	rpdev = &rpch->rpdev;
+-	rpdev->vrp = vrp;
++	/* Assign public information to the rpmsg_device */
++	rpdev = &vch->rpch.rpdev;
+ 	rpdev->src = chinfo->src;
+ 	rpdev->dst = chinfo->dst;
+ 
+@@ -453,7 +475,8 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 				     u32 src, u32 dst,
+ 				     void *data, int len, bool wait)
+ {
+-	struct virtproc_info *vrp = rpdev->vrp;
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(&rpdev->dev);
++	struct virtproc_info *vrp = vch->vrp;
+ 	struct device *dev = &rpdev->dev;
+ 	struct scatterlist sg;
+ 	struct rpmsg_hdr *msg;
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 3d0ff950c0d6..a5679b9b6102 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -95,7 +95,6 @@ enum rpmsg_ns_flags {
+ 
+ #define RPMSG_ADDR_ANY		0xFFFFFFFF
+ 
+-struct virtproc_info;
+ struct rpmsg_device;
+ struct rpmsg_endpoint;
+ 
+@@ -103,7 +102,6 @@ typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+ 
+ /**
+  * rpmsg_device - device that belong to the rpmsg bus
+- * @vrp: the remote processor this channel belongs to
+  * @dev: the device struct
+  * @id: device id (used to match between rpmsg drivers and devices)
+  * @src: local address
+@@ -112,7 +110,6 @@ typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+  * @announce: if set, rpmsg will announce the creation/removal of this channel
   */
+ struct rpmsg_device {
+-	struct virtproc_info *vrp;
+ 	struct device dev;
+ 	struct rpmsg_device_id id;
+ 	u32 src;
 -- 
-1.9.1
+2.5.0
