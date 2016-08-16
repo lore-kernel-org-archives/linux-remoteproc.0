@@ -1,50 +1,148 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 02/13] remoteproc: fix couple of minor typos
-Date: Fri, 12 Aug 2016 18:42:17 -0500
-Message-ID: <20160812234228.39731-3-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 11/14] rpmsg: Move virtio specifics from public header
+Date: Mon, 15 Aug 2016 17:17:17 -0700
+Message-Id: <1471306640-29917-12-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fix couple of minor mis-spelled words in all the remoteproc
-source files.
+Move virtio rpmsg implementation details from the public header file to
+the virtio rpmsg implementation.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 2 +-
- drivers/remoteproc/remoteproc_core.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 52 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg.h            | 52 ----------------------------------------
+ 2 files changed, 52 insertions(+), 52 deletions(-)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 009e56f67de2..12823d078e1e 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -147,7 +147,7 @@ static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
- {
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 6ad4c657aaf4..a284b48285a1 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -75,6 +75,58 @@ struct virtproc_info {
+ 	struct rpmsg_endpoint *ns_ept;
+ };
  
--	/* Interupt remote proc */
-+	/* Interrupt remote proc */
- 	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
- }
++/* The feature bitmap for virtio rpmsg */
++#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
++
++/**
++ * struct rpmsg_hdr - common header for all rpmsg messages
++ * @src: source address
++ * @dst: destination address
++ * @reserved: reserved for future use
++ * @len: length of payload (in bytes)
++ * @flags: message flags
++ * @data: @len bytes of message payload data
++ *
++ * Every message sent(/received) on the rpmsg bus begins with this header.
++ */
++struct rpmsg_hdr {
++	u32 src;
++	u32 dst;
++	u32 reserved;
++	u16 len;
++	u16 flags;
++	u8 data[0];
++} __packed;
++
++/**
++ * struct rpmsg_ns_msg - dynamic name service announcement message
++ * @name: name of remote service that is published
++ * @addr: address of remote service that is published
++ * @flags: indicates whether service is created or destroyed
++ *
++ * This message is sent across to publish a new service, or announce
++ * about its removal. When we receive these messages, an appropriate
++ * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
++ * or ->remove() handler of the appropriate rpmsg driver will be invoked
++ * (if/as-soon-as one is registered).
++ */
++struct rpmsg_ns_msg {
++	char name[RPMSG_NAME_SIZE];
++	u32 addr;
++	u32 flags;
++} __packed;
++
++/**
++ * enum rpmsg_ns_flags - dynamic name service announcement flags
++ *
++ * @RPMSG_NS_CREATE: a new remote service was just created
++ * @RPMSG_NS_DESTROY: a known remote service was just destroyed
++ */
++enum rpmsg_ns_flags {
++	RPMSG_NS_CREATE		= 0,
++	RPMSG_NS_DESTROY	= 1,
++};
++
+ /**
+  * @vrp: the remote processor this channel belongs to
+  */
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index a5679b9b6102..db409a8e3178 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -41,58 +41,6 @@
+ #include <linux/kref.h>
+ #include <linux/mutex.h>
  
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3a9982b8e8c2..e1644c992839 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -969,7 +969,7 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
-  * rproc_trigger_recovery() - recover a remoteproc
-  * @rproc: the remote processor
-  *
-- * The recovery is done by reseting all the virtio devices, that way all the
-+ * The recovery is done by resetting all the virtio devices, that way all the
-  * rpmsg drivers will be reseted along with the remote processor making the
-  * remoteproc functional again.
-  *
+-/* The feature bitmap for virtio rpmsg */
+-#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+-
+-/**
+- * struct rpmsg_hdr - common header for all rpmsg messages
+- * @src: source address
+- * @dst: destination address
+- * @reserved: reserved for future use
+- * @len: length of payload (in bytes)
+- * @flags: message flags
+- * @data: @len bytes of message payload data
+- *
+- * Every message sent(/received) on the rpmsg bus begins with this header.
+- */
+-struct rpmsg_hdr {
+-	u32 src;
+-	u32 dst;
+-	u32 reserved;
+-	u16 len;
+-	u16 flags;
+-	u8 data[0];
+-} __packed;
+-
+-/**
+- * struct rpmsg_ns_msg - dynamic name service announcement message
+- * @name: name of remote service that is published
+- * @addr: address of remote service that is published
+- * @flags: indicates whether service is created or destroyed
+- *
+- * This message is sent across to publish a new service, or announce
+- * about its removal. When we receive these messages, an appropriate
+- * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+- * or ->remove() handler of the appropriate rpmsg driver will be invoked
+- * (if/as-soon-as one is registered).
+- */
+-struct rpmsg_ns_msg {
+-	char name[RPMSG_NAME_SIZE];
+-	u32 addr;
+-	u32 flags;
+-} __packed;
+-
+-/**
+- * enum rpmsg_ns_flags - dynamic name service announcement flags
+- *
+- * @RPMSG_NS_CREATE: a new remote service was just created
+- * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+- */
+-enum rpmsg_ns_flags {
+-	RPMSG_NS_CREATE		= 0,
+-	RPMSG_NS_DESTROY	= 1,
+-};
+-
+ #define RPMSG_ADDR_ANY		0xFFFFFFFF
+ 
+ struct rpmsg_device;
 -- 
-2.9.0
+2.5.0
