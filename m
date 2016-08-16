@@ -1,85 +1,143 @@
-Return-Path: <michele.rodolfi@t3lab.it>
-Return-Path: <michele.rodolfi@t3lab.it>
-Date: Fri, 26 Aug 2016 13:28:34 +0200
-From: Michele Rodolfi <michele.rodolfi@t3lab.it>
-Subject: [PATCH 0/2] Socket based IPC over RPMSG for user threads
-Message-ID: <cover.1472209108.git.michele.rodolfi@t3lab.it>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: matteo.sartori@t3lab.it, alessio.paccoia@t3lab.it, claudio.salati@t3lab.it, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 12/14] rpmsg: Make rpmsg_create_ept() take channel_info struct
+Date: Mon, 15 Aug 2016 17:17:18 -0700
+Message-Id: <1471306640-29917-13-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi all,
-This patch implements an IPC service using the remoteproc/rpmsg framework.
-The IPC is intended to be used between threads running on different processors.
-The IPC service is provided to user threads via socket APIs.
+Some rpmsg backends does only support point-to-point "links" represented
+by a name. By making rpmsg_create_ept() take a channel_info struct we
+allow for these backends to either be passed a source address, a
+destination address or a name identifier.
 
-As the rpmsg-ti socket implementation does, I registered the address
-familiy AF_RPMSG (and PF_RMPSG) to be used with this socket. The
-address format is "rproc_id:port_num", where rproc_id is the remote
-processor identifier statically defined in the DT, port_num is an
-integer acting as TCP/UDP port numbers (this is _not_ the rpmsg
-endpoint).
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/rpmsg_core.c       | 12 +++++++++---
+ drivers/rpmsg/rpmsg_internal.h   | 14 +-------------
+ drivers/rpmsg/virtio_rpmsg_bus.c |  5 +++--
+ include/linux/rpmsg.h            | 15 ++++++++++++++-
+ 4 files changed, 27 insertions(+), 19 deletions(-)
 
-All the IPC messages between master and a specific remote are
-transported using an unique rpmsg channel whose id is "rpmsg-proto".
-This socket system supports only one rpmsg channel of type
-"rpmsg-proto" per rproc.
-
-The rpmsg socket layer provides a transport protocol that allows
-message multiplexing/demultiplexing. Basically it adds a header to the
-message payload that contains source and destination port numbers
-(like UDP header).
-
-User threads can create and use a rpmsg socket by means of the usual
-socket APIs: bind, connect, sendto, recvfrom.
-
-Rpmsg socket type can be either SOCK_DGRAM or SOCK_SEQPACKET. The
-basic difference is that the former discards the new packets when the
-vring buffer is full, while the latter blocks the send on the source
-side until the receiver frees a vring slot.
-
-In order to provide the remoteprocs with static addresses I'm
-currently using aliases in the device tree. Alias format is "rproc%d"
-where %d is the alias ID, used as rproc address. However, I've noticed
-you added a rproc OF look-up function to obtain a rproc reference
-ginven an index. I think in theory that this index can be used as
-rproc address, but I have not seen any code using this function nor
-documentation explaining the "rprocs" phandle usage. Despite that I'd
-like to use the "rprocs" list instead of aliases, in order to maintain
-everything aligned, but I'm not actually sure this works as I have
-understood.
-For now I decided to use DT aliases as the TI code does.
-
-This patch wants to incentive a discussion about socket IPC over rpmsg, 
-that is _not_ the exposition of the rpmsg bus to userspace.
-
-Best regards,
-Michele
-
-Michele Rodolfi (2):
-  rpmsg: support for retreiving processor ID from a rpmsg_channel
-  net/rpmsg: add support for socket based IPC over rpmsg
-
- drivers/remoteproc/remoteproc_core.c   |  21 +
- drivers/remoteproc/remoteproc_virtio.c |  21 +
- drivers/rpmsg/virtio_rpmsg_bus.c       |  20 +
- include/linux/remoteproc.h             |   2 +
- include/linux/rpmsg.h                  |   1 +
- include/linux/socket.h                 |   5 +-
- include/uapi/linux/rpmsg_socket.h      |  48 ++
- net/Kconfig                            |   1 +
- net/Makefile                           |   1 +
- net/rpmsg/Kconfig                      |  10 +
- net/rpmsg/Makefile                     |   1 +
- net/rpmsg/rpmsg_proto.c                | 847 +++++++++++++++++++++++++++++++++
- 12 files changed, 976 insertions(+), 2 deletions(-)
- create mode 100644 include/uapi/linux/rpmsg_socket.h
- create mode 100644 net/rpmsg/Kconfig
- create mode 100644 net/rpmsg/Makefile
- create mode 100644 net/rpmsg/rpmsg_proto.c
-
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 6f7cc79f7229..54df4f77d72c 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -78,11 +78,12 @@
+  * Returns a pointer to the endpoint on success, or NULL on error.
+  */
+ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+-				rpmsg_rx_cb_t cb, void *priv, u32 addr)
++				rpmsg_rx_cb_t cb, void *priv,
++				struct rpmsg_channel_info chinfo)
+ {
+ 	struct rpmsg_channel *rpch = to_rpmsg_channel(&rpdev->dev);
+ 
+-	return rpch->create_ept(rpdev, cb, priv, addr);
++	return rpch->create_ept(rpdev, cb, priv, chinfo);
+ }
+ EXPORT_SYMBOL(rpmsg_create_ept);
+ 
+@@ -337,10 +338,15 @@ static int rpmsg_dev_probe(struct device *dev)
+ 	struct rpmsg_channel *rpch = to_rpmsg_channel(dev);
+ 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+ 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
++	struct rpmsg_channel_info chinfo = {};
+ 	struct rpmsg_endpoint *ept;
+ 	int err;
+ 
+-	ept = rpmsg_create_ept(rpdev, rpdrv->callback, NULL, rpdev->src);
++	strncpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
++	chinfo.src = rpdev->src;
++	chinfo.dst = RPMSG_ADDR_ANY;
++
++	ept = rpmsg_create_ept(rpdev, rpdrv->callback, NULL, chinfo);
+ 	if (!ept) {
+ 		dev_err(dev, "failed to create endpoint\n");
+ 		err = -ENOMEM;
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 54083bf54d14..1ac96d7ac363 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -23,24 +23,12 @@
+ #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
+ #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
+ 
+-/**
+- * struct rpmsg_channel_info - internal channel info representation
+- * @name: name of service
+- * @src: local address
+- * @dst: destination address
+- */
+-struct rpmsg_channel_info {
+-	char name[RPMSG_NAME_SIZE];
+-	u32 src;
+-	u32 dst;
+-};
+-
+ struct rpmsg_channel {
+ 	struct rpmsg_device rpdev;
+ 
+ 	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
+ 					     rpmsg_rx_cb_t cb, void *priv,
+-					     u32 addr);
++					     struct rpmsg_channel_info chinfo);
+ 	void (*destroy_ept)(struct rpmsg_endpoint *ept);
+ 
+ 	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index a284b48285a1..d39e381bc596 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -256,10 +256,11 @@ free_ept:
+ 
+ static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev,
+ 						      rpmsg_rx_cb_t cb,
+-						      void *priv, u32 addr)
++						      void *priv,
++						      struct rpmsg_channel_info chinfo)
+ {
+ 	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(&rpdev->dev);
+-	return __rpmsg_create_ept(vch->vrp, rpdev, cb, priv, addr);
++	return __rpmsg_create_ept(vch->vrp, rpdev, cb, priv, chinfo.src);
+ }
+ 
+ /**
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index db409a8e3178..bdd1a2285733 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -49,6 +49,18 @@ struct rpmsg_endpoint;
+ typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+ 
+ /**
++ * struct rpmsg_channel_info - internal channel info representation
++ * @name: name of service
++ * @src: local address
++ * @dst: destination address
++ */
++struct rpmsg_channel_info {
++	char name[RPMSG_NAME_SIZE];
++	u32 src;
++	u32 dst;
++};
++
++/**
+  * rpmsg_device - device that belong to the rpmsg bus
+  * @dev: the device struct
+  * @id: device id (used to match between rpmsg drivers and devices)
+@@ -120,7 +132,8 @@ int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
+ void unregister_rpmsg_driver(struct rpmsg_driver *drv);
+ void rpmsg_destroy_ept(struct rpmsg_endpoint *);
+ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+-					rpmsg_rx_cb_t cb, void *priv, u32 addr);
++					rpmsg_rx_cb_t cb, void *priv,
++					struct rpmsg_channel_info chinfo);
+ 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
+ #define register_rpmsg_driver(drv) \
 -- 
-2.7.4
+2.5.0
