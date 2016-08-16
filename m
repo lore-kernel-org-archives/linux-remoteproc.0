@@ -1,72 +1,94 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 3/4] ARM: dts: msm8974: Add ADSP smp2p and smd nodes
-Date: Mon, 22 Aug 2016 22:57:45 -0700
-Message-Id: <1471931866-3107-3-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 16 Aug 2016 15:52:12 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 3/2+1] remoteproc: core: Move of_get_rproc() helper to header
+Message-ID: <20160816145212.GA4254@dell>
+References: <20160816143824.4120-1-lee.jones@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160816143824.4120-1-lee.jones@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, ssantosh@kernel.org, linux-remoteproc@vger.kernel.org, ludovic.barre@st.com, s-anna@ti.com, loic.pallardy@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+remoteproc: core: Move of_get_rproc() helper to header
 
-Changes since v1:
-- Added this patch
+Since of_get_rproc() has been made a simple helper, we can move it
+to the remoteproc.h and make it a 'static inline'.
 
- arch/arm/boot/dts/qcom-msm8974.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Suggested-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index 561d4d136762..eac24cbe3c87 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -168,6 +168,31 @@
- 		hwlocks = <&tcsr_mutex 3>;
- 	};
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 1c5d5d8..6966fb2 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1267,25 +1267,6 @@ struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
+ 	return of_get_rproc_by_index(np, index);
+ }
+ EXPORT_SYMBOL(of_get_rproc_by_name);
+-
+-/**
+- * of_get_rproc() - lookup and obtain a reference to an rproc
+- * @np: node to search for rproc
+- *
+- * Finds an rproc handle using the default remote processor's phandle,
+- * and then returns a handle to the rproc.
+- *
+- * This function increments the remote processor's refcount, so always
+- * use rproc_put() to decrement it back once rproc isn't needed anymore.
+- *
+- * Returns a pointer to the rproc struct on success or an appropriate error
+- * code otherwise.
+- */
+-struct rproc *of_get_rproc(struct device_node *np)
+-{
+-	return of_get_rproc_by_index(np, 0);
+-}
+-EXPORT_SYMBOL(of_get_rproc);
+ #endif
  
-+	smp2p-adsp {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <443>, <429>;
+ /**
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 0e1adc9..ec1cffd 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -515,7 +515,6 @@ extern struct rproc *of_get_rproc_by_index(struct device_node *np,
+ 					   int index);
+ extern struct rproc *of_get_rproc_by_name(struct device_node *np,
+ 					  const char *name);
+-extern struct rproc *of_get_rproc(struct device_node *np);
+ #else
+ static inline
+ struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
+@@ -527,11 +526,24 @@ struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
+ {
+ 	return NULL;
+ }
+-static inline
+-struct rproc *of_get_rproc(struct device_node *np)
++#endif /* CONFIG_OF */
 +
-+		interrupt-parent = <&intc>;
-+		interrupts = <0 158 IRQ_TYPE_EDGE_RISING>;
-+
-+		qcom,ipc = <&apcs 8 10>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <2>;
-+
-+		adsp_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		adsp_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	smp2p-modem {
- 		compatible = "qcom,smp2p";
- 		qcom,smem = <435>, <428>;
-@@ -543,6 +568,13 @@
- 	smd {
- 		compatible = "qcom,smd";
++/**
++ * of_get_rproc() - lookup and obtain a reference to an rproc
++ * @np: node to search for rproc
++ *
++ * Finds an rproc handle using the default remote processor's phandle,
++ * and then returns a handle to the rproc.
++ *
++ * This function increments the remote processor's refcount, so always
++ * use rproc_put() to decrement it back once rproc isn't needed anymore.
++ *
++ * Returns a pointer to the rproc struct on success or an appropriate error
++ * code otherwise.
++ */
++static inline struct rproc *of_get_rproc(struct device_node *np)
+ {
+-	return NULL;
++	return of_get_rproc_by_index(np, 0);
+ }
+-#endif /* CONFIG_OF */
  
-+		adsp {
-+			interrupts = <0 156 IRQ_TYPE_EDGE_RISING>;
-+
-+			qcom,ipc = <&apcs 8 8>;
-+			qcom,smd-edge = <1>;
-+		};
-+
- 		modem {
- 			interrupts = <0 25 IRQ_TYPE_EDGE_RISING>;
- 
--- 
-2.5.0
+ #endif /* REMOTEPROC_H */
