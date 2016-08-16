@@ -1,83 +1,57 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:54314 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752630AbcHLXmg (ORCPT
-	<rfc822;linux-remoteproc@vger.kernel.org>);
-	Fri, 12 Aug 2016 19:42:36 -0400
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 13/13] samples/rpmsg: add support for multiple instances
-Date: Fri, 12 Aug 2016 18:42:28 -0500
-Message-ID: <20160812234228.39731-14-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 00/14] Split rpmsg into a framework
+Date: Mon, 15 Aug 2016 17:17:06 -0700
+Message-Id: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current rpmsg_client_sample is a very simple example and
-is not designed to handle multiple instances. Add support for
-multiple instances, so that the same number of pings are sent
-to each instance. The instances can be on one or multiple
-remote processors.
+This series splits the virtio rpmsg bus driver into a rpmsg bus and a virtio
+backend/wireformat.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- samples/rpmsg/rpmsg_client_sample.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
-index d0e249c90668..7e17d1c0aaf2 100644
---- a/samples/rpmsg/rpmsg_client_sample.c
-+++ b/samples/rpmsg/rpmsg_client_sample.c
-@@ -24,19 +24,24 @@
- #define MSG		"hello world!"
- #define MSG_LIMIT	100
- 
-+struct instance_data {
-+	int rx_count;
-+};
-+
- static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
- 						void *priv, u32 src)
- {
- 	int ret;
--	static int rx_count;
-+	struct instance_data *idata = dev_get_drvdata(&rpdev->dev);
- 
--	dev_info(&rpdev->dev, "incoming msg %d (src: 0x%x)\n", ++rx_count, src);
-+	dev_info(&rpdev->dev, "incoming msg %d (src: 0x%x)\n",
-+		 ++idata->rx_count, src);
- 
- 	print_hex_dump(KERN_DEBUG, __func__, DUMP_PREFIX_NONE, 16, 1,
- 		       data, len,  true);
- 
- 	/* samples should not live forever */
--	if (rx_count >= MSG_LIMIT) {
-+	if (idata->rx_count >= MSG_LIMIT) {
- 		dev_info(&rpdev->dev, "goodbye!\n");
- 		return;
- 	}
-@@ -50,10 +55,17 @@ static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
- static int rpmsg_sample_probe(struct rpmsg_channel *rpdev)
- {
- 	int ret;
-+	struct instance_data *idata;
- 
- 	dev_info(&rpdev->dev, "new channel: 0x%x -> 0x%x!\n",
- 					rpdev->src, rpdev->dst);
- 
-+	idata = devm_kzalloc(&rpdev->dev, sizeof(*idata), GFP_KERNEL);
-+	if (!idata)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(&rpdev->dev, idata);
-+
- 	/* send a message to our remote processor */
- 	ret = rpmsg_send(rpdev, MSG, strlen(MSG));
- 	if (ret) {
+As we discussed the Qualcomm SMD implementation a couple of years back people
+suggested that I should make it "a rpmsg thingie". With the introduction of the
+Qualcomm 8996 platform, we must support a variant of the communication
+mechanism that share many of the characteristics of SMD, but are different
+enough that it can't be done in a single implementation. As such there is
+enough benefit to do the necessary work and being able to make SMD a "rpmsg
+thingie".
+
+On-top of this series I have patches to switch the current smd clients over to
+rpmsg (and by that drop the existing SMD implementation).
+
+All this allows me to implement the new backend and reuse all existing SMD
+drivers with the new mechanism.
+
+Bjorn Andersson (14):
+  rpmsg: Enable matching devices with drivers based on DT
+  rpmsg: Name rpmsg devices based on channel id
+  rpmsg: rpmsg_send() operations takes rpmsg_endpoint
+  rpmsg: Internalize rpmsg_send() implementations
+  rpmsg: Unify rpmsg device vs channel naming
+  rpmsg: Indirect all virtio related function calls
+  rpmsg: Split off generic tail of create_channel()
+  rpmsg: Split rpmsg core and virtio backend
+  rpmsg: Internalize rpmsg core ops
+  rpmsg: virtio: Internalize vrp pointer
+  rpmsg: Move virtio specifics from public header
+  rpmsg: Make rpmsg_create_ept() take channel_info struct
+  rpmsg: Allow callback to return errors
+  rpmsg: Introduce Qualcomm SMD backend
+
+ drivers/rpmsg/Kconfig            |   14 +
+ drivers/rpmsg/Makefile           |    4 +-
+ drivers/rpmsg/qcom_smd.c         | 1448 ++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_core.c       |  525 ++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h   |   63 ++
+ drivers/rpmsg/virtio_rpmsg_bus.c |  483 +++++--------
+ include/linux/rpmsg.h            |  242 +------
+ 7 files changed, 2268 insertions(+), 511 deletions(-)
+ create mode 100644 drivers/rpmsg/qcom_smd.c
+ create mode 100644 drivers/rpmsg/rpmsg_core.c
+ create mode 100644 drivers/rpmsg/rpmsg_internal.h
+
 -- 
-2.9.0
-
+2.5.0
