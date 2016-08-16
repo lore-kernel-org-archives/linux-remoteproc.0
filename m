@@ -1,34 +1,51 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 3/9] remoteproc: core: Remove pointless OOM print
-Date: Thu,  4 Aug 2016 10:21:47 +0100
-Message-Id: <20160804092153.23032-4-lee.jones@linaro.org>
-In-Reply-To: <20160804092153.23032-1-lee.jones@linaro.org>
-References: <20160804092153.23032-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 02/14] rpmsg: Name rpmsg devices based on channel id
+Date: Mon, 15 Aug 2016 17:17:08 -0700
+Message-Id: <1471306640-29917-3-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These types of error prints are superfluous.  The system will
-pick up on OOM issues and let the user know.
+By basing rpmsg device names on channel id we end up with human readable
+device names in sysfs and debug logs.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 5654a81..4914482 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -619,7 +619,6 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	if (rproc->domain) {
- 		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
- 		if (!mapping) {
--			dev_err(dev, "kzalloc mapping failed\n");
- 			ret = -ENOMEM;
- 			goto dma_free;
- 		}
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 495fa0a282d3..c4bd89ea7681 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -136,14 +136,6 @@ rpmsg_show_attr(src, src, "0x%x\n");
+ rpmsg_show_attr(dst, dst, "0x%x\n");
+ rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+ 
+-/*
+- * Unique (and free running) index for rpmsg devices.
+- *
+- * Yeah, we're not recycling those numbers (yet?). will be easy
+- * to change if/when we want to.
+- */
+-static unsigned int rpmsg_dev_index;
+-
+ static ssize_t modalias_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+ {
+@@ -531,8 +523,8 @@ static struct rpmsg_channel *rpmsg_create_channel(struct virtproc_info *vrp,
+ 
+ 	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
+ 
+-	/* very simple device indexing plumbing which is enough for now */
+-	dev_set_name(&rpdev->dev, "rpmsg%d", rpmsg_dev_index++);
++	dev_set_name(&rpdev->dev, "%s:%s",
++		     dev_name(dev->parent), rpdev->id.name);
+ 
+ 	rpdev->dev.parent = &vrp->vdev->dev;
+ 	rpdev->dev.bus = &rpmsg_bus;
 -- 
-2.9.0
+2.5.0
