@@ -1,80 +1,54 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v8 17/18] drm/virtio: kconfig: Fix recursive dependency.
-Date: Fri, 26 Aug 2016 15:56:52 +0100
-Message-Id: <1472223413-7254-18-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 18 Aug 2016 12:44:43 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH RFC 1/3] hwspinlock: sun8i: add Allwinner sun8i HardWare
+ Spinlock
+Message-ID: <20160818194443.GX26240@tuxbot>
+References: <1471002394-1106-1-git-send-email-clabbe.montjoie@gmail.com>
+ <20160812190641.GI26240@tuxbot>
+ <0a17ceec-13f7-ddeb-69dd-2505154e8ccf@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a17ceec-13f7-ddeb-69dd-2505154e8ccf@gmail.com>
+To: Corentin LABBE <clabbe.montjoie@gmail.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-[..]
-drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpu/drm/Kconfig:42:	symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpu/drm/Kconfig:36:	symbol DRM_KMS_HELPER is selected by DRM_VIRTIO_GPU
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpu/drm/virtio/Kconfig:1:	symbol DRM_VIRTIO_GPU depends on VIRTIO
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/virtio/Kconfig:1:	symbol VIRTIO is selected by REMOTEPROC
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/remoteproc/Kconfig:4:	symbol REMOTEPROC is selected by ST_SLIM_REMOTEPROC
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/remoteproc/Kconfig:103:	symbol ST_SLIM_REMOTEPROC is selected by ST_FDMA
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/dma/Kconfig:440:	symbol ST_FDMA depends on DMADEVICES
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/dma/Kconfig:5:	symbol DMADEVICES is selected by SND_SOC_SH4_SIU
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-sound/soc/sh/Kconfig:29:	symbol SND_SOC_SH4_SIU is selected by SND_SIU_MIGOR
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-sound/soc/sh/Kconfig:64:	symbol SND_SIU_MIGOR depends on I2C
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/i2c/Kconfig:7:	symbol I2C is selected by FB_DDC
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/video/fbdev/Kconfig:63:	symbol FB_DDC is selected by FB_CYBER2000_DDC
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/video/fbdev/Kconfig:378:	symbol FB_CYBER2000_DDC depends on FB_CYBER2000
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/video/fbdev/Kconfig:366:	symbol FB_CYBER2000 depends on FB
+On Thu 18 Aug 12:38 PDT 2016, Corentin LABBE wrote:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/gpu/drm/virtio/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Hello
+> 
+> Thanks for your review, I will fix all your reports for next version.
+> 
+> On 12/08/2016 21:06, Bjorn Andersson wrote:
+> > On Fri 12 Aug 04:46 PDT 2016, LABBE Corentin wrote:
+> > 
+> >> Add hwspinlock support for the Allwinner Hardware Spinlock device
+> >> present on the A83T, H3 and A64 SoCs.
+> >>
+> >> This Hardware Spinlock device provides hardware assistance
+> >> for synchronization between the multiple processors in the system.
+> >>
+> > [..]
+> >> +		goto clk_fail;
+> >> +	}
+> >> +
+> >> +	dev_info(&pdev->dev, "Sun8i hwspinlock driver loaded with %d locks\n",
+> >> +		 priv->num_locks);
+> > 
+> > Please don't advertise the driver on success.
+> > 
+> 
+> I was doing that because datasheet specify only 32 slot, but later a register give a possibility of more slots.
+> Perhaps its better to advertise only for uncommon hardware (slot > 32) ?
+> 
 
-diff --git a/drivers/gpu/drm/virtio/Kconfig b/drivers/gpu/drm/virtio/Kconfig
-index e1afc3d..90357d9 100644
---- a/drivers/gpu/drm/virtio/Kconfig
-+++ b/drivers/gpu/drm/virtio/Kconfig
-@@ -1,6 +1,7 @@
- config DRM_VIRTIO_GPU
- 	tristate "Virtio GPU driver"
--	depends on DRM && VIRTIO
-+	depends on DRM
-+	select VIRTIO
-         select DRM_KMS_HELPER
-         select DRM_TTM
- 	help
--- 
-1.9.1
+I see, well that would be useful for developers to see, how about you
+just make it dev_dbg? That way one would be a command line addition [1]
+away from getting the information out.
+
+[1] dyndbg="module sun8i_hwspinlock +p"
+
+Regards,
+Bjorn
