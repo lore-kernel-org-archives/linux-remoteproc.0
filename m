@@ -1,65 +1,125 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 2/9] remoteproc: core: Trivial: Improve error checking, spelling and debug prints
-Date: Thu,  4 Aug 2016 10:21:46 +0100
-Message-Id: <20160804092153.23032-3-lee.jones@linaro.org>
-In-Reply-To: <20160804092153.23032-1-lee.jones@linaro.org>
-References: <20160804092153.23032-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 18 Aug 2016 11:13:52 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 06/14] rpmsg: Indirect all virtio related function calls
+Message-ID: <20160818181352.GV26240@tuxbot>
+References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+ <1471306640-29917-7-git-send-email-bjorn.andersson@linaro.org>
+ <D0C04901035AEF47BB4C8387F4AA41F53C5D85@SAFEX1NODE23.st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D0C04901035AEF47BB4C8387F4AA41F53C5D85@SAFEX1NODE23.st.com>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Trivial patch to clean up a couple of minor misgivings.
+On Thu 18 Aug 05:14 PDT 2016, Loic PALLARDY wrote:
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c
+[..]
+> >  struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+> >  					rpmsg_rx_cb_t cb, void *priv, u32
+> > addr)
+> >  {
+> > -	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
+> > +	return rpdev->create_ept(rpdev, cb, priv, addr);
+> Hi Bjorn,
+> 
+> It will be good to test if pointer is valid before calling function.
+> 
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3566dc9..5654a81 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -457,8 +457,8 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
- 
- 	rproc->num_traces++;
- 
--	dev_dbg(dev, "%s added: va %p, da 0x%x, len 0x%x\n", name, ptr,
--						rsc->da, rsc->len);
-+	dev_dbg(dev, "%s added: va %p, da 0x%x, len 0x%x\n",
-+		name, ptr, rsc->da, rsc->len);
- 
- 	return 0;
- }
-@@ -581,8 +581,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 		return -EINVAL;
- 	}
- 
--	dev_dbg(dev, "carveout rsc: da %x, pa %x, len 0x%x, flags %x\n",
--			rsc->da, rsc->pa, rsc->len, rsc->flags);
-+	dev_dbg(dev, "carveout rsc: name: %s, da %x, pa %x, len 0x%x, flags %x\n",
-+		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
- 
- 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
- 	if (!carveout)
-@@ -700,7 +700,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
- 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
- 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
--	[RSC_VDEV] = NULL, /* VDEVs were handled upon registrarion */
-+	[RSC_VDEV] = NULL, /* VDEVs were handled upon registration */
- };
- 
- static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
-@@ -918,7 +918,7 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 	 * Create a copy of the resource table. When a virtio device starts
- 	 * and calls vring_new_virtqueue() the address of the allocated vring
- 	 * will be stored in the cached_table. Before the device is started,
--	 * cached_table will be copied into devic memory.
-+	 * cached_table will be copied into device memory.
- 	 */
- 	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
- 	if (!rproc->cached_table)
--- 
-2.9.0
+Per the rpmsg_send() implementation, I can make it loud but friendlier
+by:
+
+if (WARN_ON(!rpdev))
+	return -EINVAL;
+
+[..]
+> > 
+> > +static const struct rpmsg_device virtio_rpmsg_ops = {
+> > +	.create_ept = virtio_rpmsg_create_ept,
+> > +	.destroy_ept = virtio_rpmsg_destroy_ept,
+> > +	.send = virtio_rpmsg_send,
+> > +	.sendto = virtio_rpmsg_sendto,
+> > +	.send_offchannel = virtio_rpmsg_send_offchannel,
+> > +	.trysend = virtio_rpmsg_trysend,
+> > +	.trysendto = virtio_rpmsg_trysendto,
+> > +	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
+> > +	.announce_create = virtio_rpmsg_announce_create,
+> > +	.announce_destroy = virtio_rpmsg_announce_destroy,
+> > +};
+> Why not creating a dedicated ops struct like other framework?
+> Here ops are mixed with other parameters.
+> 
+
+That's a good suggestion...
+
+> > +
+> >  /*
+> >   * create an rpmsg channel using its name and address info.
+> >   * this function will be used to create both static and dynamic
+> > @@ -511,6 +568,9 @@ static struct rpmsg_device
+> > *rpmsg_create_channel(struct virtproc_info *vrp,
+> >  	if (!rpdev)
+> >  		return NULL;
+> > 
+> > +	/* Assign callbacks for rpmsg_channel */
+> > +	*rpdev = virtio_rpmsg_ops;
+> It is not a simple affectation behind this operation, more a memcopy of the complete struct.
+> Not easy to read from my pov.
+
+...and would clean this up. I'll do that.
+
+> > +
+> >  	rpdev->vrp = vrp;
+> >  	rpdev->src = chinfo->src;
+> >  	rpdev->dst = chinfo->dst;
+> > @@ -793,11 +853,17 @@ out:
+> >  int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+> >  {
+> >  	struct rpmsg_device *rpdev = ept->rpdev;
+> > +
+> > +	return rpdev->send(ept, data, len);
+> Test pointer before using it
+
+Yeah, this would follow from the earlier patch.
+
+> 
+> > +}
+> > +
+[..]
+> > diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+[..]
+> > u32);
+> > +	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
+> > +					    rpmsg_rx_cb_t cb, void *priv, u32
+> > addr);
+> > +	void (*destroy_ept)(struct rpmsg_endpoint *ept);
+> > +
+> > +	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
+> > +	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32
+> > dst);
+> > +	int (*send_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> > +				  void *data, int len);
+> > +
+> > +	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
+> > +	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32
+> > dst);
+> > +	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32
+> > dst,
+> > +			     void *data, int len);
+> > +
+> > +	int (*announce_create)(struct rpmsg_device *ept);
+> > +	int (*announce_destroy)(struct rpmsg_device *ept);
+> > +};
+> It will be nice to document if ops are mandatory or optional.
+> 
+
+I'll break them out in a ops struct and throw in some kerneldoc in both
+cases.
+
+Thanks for the feedback!
+
+Regards,
+Bjorn
