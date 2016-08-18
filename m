@@ -1,75 +1,90 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 12/13] rpmsg: use dynamic_hex_dump for hex dump traces
-Date: Fri, 12 Aug 2016 18:42:27 -0500
-Message-ID: <20160812234228.39731-13-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 18 Aug 2016 11:09:40 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 08/14] rpmsg: Split rpmsg core and virtio backend
+Message-ID: <20160818180940.GU26240@tuxbot>
+References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
+ <1471306640-29917-9-git-send-email-bjorn.andersson@linaro.org>
+ <D0C04901035AEF47BB4C8387F4AA41F53C5D6F@SAFEX1NODE23.st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D0C04901035AEF47BB4C8387F4AA41F53C5D6F@SAFEX1NODE23.st.com>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sricharan R <sricharan@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There are couple of print_hex_dump traces used in rpmsg code which
-prints the actual byte messages being transferred between host and
-the remote processors. These traces are quiet verbose and affects
-performance, if the appropriate trace level is enabled. These hex
-dumps are needed rather rarely, but are quite useful when debugging
-complex IPC corner cases. So, this patch switches these hex dump
-traces to use the dynamic_hex_dump() API.
+On Thu 18 Aug 04:59 PDT 2016, Loic PALLARDY wrote:
 
-The hex dump traces are also enabled only when CONFIG_DYNAMIC_DEBUG
-is enabled. This switch allows flexibility of controlling these
-traces through dynamic debug, instead of removing them completely.
+> 
+> 
+> > -----Original Message-----
+> > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-remoteproc-
+> > owner@vger.kernel.org] On Behalf Of Bjorn Andersson
+> > Sent: Tuesday, August 16, 2016 2:17 AM
+> > To: Ohad Ben-Cohen <ohad@wizery.com>; Bjorn Andersson
+> > <bjorn.andersson@linaro.org>
+> > Cc: linux-remoteproc@vger.kernel.org; linux-arm-msm@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> > Sricharan R <sricharan@codeaurora.org>
+> > Subject: [PATCH 08/14] rpmsg: Split rpmsg core and virtio backend
+> > 
+> > Extract the generic rpmsg core functionality from the virtio rpmsg
+> > implementation, splitting the implementation in a rpmsg core and a
+> > virtio backend.
+> > 
+> > Based on initial work by Sricharan R <sricharan@codeaurora.org>
+> > 
+> > Cc: Sricharan R <sricharan@codeaurora.org>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  drivers/rpmsg/Kconfig            |   4 +
+> >  drivers/rpmsg/Makefile           |   3 +-
+> >  drivers/rpmsg/rpmsg_core.c       | 513
+> > +++++++++++++++++++++++++++++++++++++++
+> >  drivers/rpmsg/rpmsg_internal.h   |  45 ++++
+> >  drivers/rpmsg/virtio_rpmsg_bus.c | 477 +-----------------------------------
+> Hi Bjorn,
+> 
+> Could you please regenerate the patch with  option -M (of git
+> formatpatch) to detect file renames.  It will provide better
+> visibility of differences between virtio_rpmsg_bus.c and rpmsg_core.c.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+I believe this is with -M, but as I only extracted part of the file it
+did not detect it as a rename. I will see if I can figure something out
+for v2.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index e55d30d217ba..95ee6a9721d5 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -749,8 +749,10 @@ int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev, u32 src, u32 dst,
- 
- 	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
- 		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
--	print_hex_dump(KERN_DEBUG, "rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
--		       msg, sizeof(*msg) + msg->len, true);
-+#if defined(CONFIG_DYNAMIC_DEBUG)
-+	dynamic_hex_dump("rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
-+			 msg, sizeof(*msg) + msg->len, true);
-+#endif
- 
- 	sg_init_one(&sg, msg, sizeof(*msg) + len);
- 
-@@ -785,8 +787,10 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 
- 	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
- 		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
--	print_hex_dump(KERN_DEBUG, "rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
--		       msg, sizeof(*msg) + msg->len, true);
-+#if defined(CONFIG_DYNAMIC_DEBUG)
-+	dynamic_hex_dump("rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
-+			 msg, sizeof(*msg) + msg->len, true);
-+#endif
- 
- 	/*
- 	 * We currently use fixed-sized buffers, so trivially sanitize
-@@ -897,8 +901,10 @@ static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
- 	struct device *dev = &vrp->vdev->dev;
- 	int ret;
- 
--	print_hex_dump(KERN_DEBUG, "NS announcement: ",
--		       DUMP_PREFIX_NONE, 16, 1, data, len, true);
-+#if defined(CONFIG_DYNAMIC_DEBUG)
-+	dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16, 1,
-+			 data, len, true);
-+#endif
- 
- 	if (len != sizeof(*msg)) {
- 		dev_err(dev, "malformed ns msg (%d)\n", len);
--- 
-2.9.0
+Perhaps if I split the move in more than one commit it will be easier to
+follow; like take the device management in one chunk and the
+rpmsg_send() functions in one would reduce the size of the two patches
+quite a bit.
+
+> 
+> >  5 files changed, 569 insertions(+), 473 deletions(-)
+> >  create mode 100644 drivers/rpmsg/rpmsg_core.c
+> >  create mode 100644 drivers/rpmsg/rpmsg_internal.h
+> > 
+> > diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> > index 69a219387582..40614be88c97 100644
+> > --- a/drivers/rpmsg/Kconfig
+> > +++ b/drivers/rpmsg/Kconfig
+> > @@ -3,6 +3,10 @@ menu "Rpmsg drivers"
+> >  # RPMSG always gets selected by whoever wants it
+> >  config RPMSG
+> >  	tristate
+> > +
+> > +config RPMSG_VIRTIO
+> > +	tristate
+> > +	select RPMSG
+> >  	select VIRTIO
+> >  	select VIRTUALIZATION
+> > 
+> Remoteproc Kconfig should be changed too to select RPMSG_VIRTIO instead of RPMSG.
+> 
+
+You're right, forgot to include that. I still think this should be a
+user selectable option, rather than being tied to particular remoteproc
+drivers - but let's take that discussion separately.
+
+Thanks,
+Bjorn
