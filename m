@@ -1,186 +1,289 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 16/19] remoteproc: core: Clean-up resource table sanity checks
-Date: Wed, 31 Aug 2016 22:50:19 +0200
-Message-ID: <1472676622-32533-17-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH 4/4] remoteproc: qcom: add Venus video core firmware loader driver
+Date: Fri, 19 Aug 2016 18:53:20 +0300
+Message-Id: <1471622000-1906-5-git-send-email-stanimir.varbanov@linaro.org>
+In-Reply-To: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
+References: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Clark <robdclark@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As resource table has been verified after just loading,
-the different sanity checks done when accessing resources
-are no more needed.
+This driver will load and authenticate the Venus firmware and
+bringing it core out of reset. Those two functionalities are
+via secure monitor calls to trusted environment.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 47 ++++++------------------------------
- 1 file changed, 7 insertions(+), 40 deletions(-)
+ drivers/remoteproc/Kconfig          |  10 ++
+ drivers/remoteproc/Makefile         |   1 +
+ drivers/remoteproc/qcom_venus_pil.c | 226 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 237 insertions(+)
+ create mode 100644 drivers/remoteproc/qcom_venus_pil.c
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index b43553f..462cf79 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -50,7 +50,7 @@ static LIST_HEAD(rproc_list);
- typedef int (*rproc_handle_resources_t)(struct rproc *rproc,
- 				struct resource_table *table, int len);
- typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
--				 void *, int offset, int avail);
-+				 void *, int offset);
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index f76b3b1dca1a..90f66cfe054f 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -107,6 +107,16 @@ config QCOM_WCNSS_PIL
+ 	  Say y here to support the Peripheral Image Loader for the Qualcomm
+ 	  Wireless Connectivity Subsystem.
  
- /* Unique indices for remoteproc devices */
- static DEFINE_IDA(rproc_dev_index);
-@@ -306,7 +306,6 @@ void rproc_free_vring(struct rproc_vring *rvring)
-  * rproc_handle_vdev() - handle a vdev fw resource
-  * @rproc: the remote processor
-  * @rsc: the vring resource descriptor
-- * @avail: size of available data (for sanity checking the image)
-  *
-  * This resource entry requests the host to statically register a virtio
-  * device (vdev), and setup everything needed to support it. It contains
-@@ -330,19 +329,12 @@ void rproc_free_vring(struct rproc_vring *rvring)
-  * Returns 0 on success, or an appropriate error code otherwise
-  */
- static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
--			     int offset, int avail)
-+			     int offset)
- {
- 	struct device *dev = &rproc->dev;
- 	struct rproc_vdev *rvdev;
- 	int i, ret;
- 
--	/* make sure resource isn't truncated */
--	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
--			+ rsc->config_len > avail) {
--		dev_err(dev, "vdev rsc is truncated\n");
--		return -EINVAL;
--	}
--
- 	/* make sure reserved bytes are zeroes */
- 	if (rsc->reserved[0] || rsc->reserved[1]) {
- 		dev_err(dev, "vdev rsc has non zero reserved bytes\n");
-@@ -394,7 +386,6 @@ free_rvdev:
-  * rproc_handle_trace() - handle a shared trace buffer resource
-  * @rproc: the remote processor
-  * @rsc: the trace resource descriptor
-- * @avail: size of available data (for sanity checking the image)
-  *
-  * In case the remote processor dumps trace logs into memory,
-  * export it via debugfs.
-@@ -407,18 +398,13 @@ free_rvdev:
-  * Returns 0 on success, or an appropriate error code otherwise
-  */
- static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
--			      int offset, int avail)
-+			      int offset)
- {
- 	struct rproc_mem_entry *trace;
- 	struct device *dev = &rproc->dev;
- 	void *ptr;
- 	char name[15];
- 
--	if (sizeof(*rsc) > avail) {
--		dev_err(dev, "trace rsc is truncated\n");
--		return -EINVAL;
--	}
--
- 	/* make sure reserved bytes are zeroes */
- 	if (rsc->reserved) {
- 		dev_err(dev, "trace rsc has non zero reserved bytes\n");
-@@ -465,7 +451,6 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
-  * rproc_handle_devmem() - handle devmem resource entry
-  * @rproc: remote processor handle
-  * @rsc: the devmem resource entry
-- * @avail: size of available data (for sanity checking the image)
-  *
-  * Remote processors commonly need to access certain on-chip peripherals.
-  *
-@@ -487,7 +472,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
-  * are outside those ranges.
-  */
- static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
--			       int offset, int avail)
-+			       int offset)
- {
- 	struct rproc_mem_entry *mapping;
- 	struct device *dev = &rproc->dev;
-@@ -497,11 +482,6 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
- 	if (!rproc->domain)
- 		return -EINVAL;
- 
--	if (sizeof(*rsc) > avail) {
--		dev_err(dev, "devmem rsc is truncated\n");
--		return -EINVAL;
--	}
--
- 	/* make sure reserved bytes are zeroes */
- 	if (rsc->reserved) {
- 		dev_err(dev, "devmem rsc has non zero reserved bytes\n");
-@@ -543,7 +523,6 @@ out:
-  * rproc_handle_carveout() - handle phys contig memory allocation requests
-  * @rproc: rproc handle
-  * @rsc: the resource entry
-- * @avail: size of available data (for image validation)
-  *
-  * This function will handle firmware requests for allocation of physically
-  * contiguous memory regions.
-@@ -559,7 +538,7 @@ out:
-  */
- static int rproc_handle_carveout(struct rproc *rproc,
- 				 struct fw_rsc_carveout *rsc,
--				 int offset, int avail)
-+				 int offset)
- {
- 	struct rproc_mem_entry *carveout, *mapping;
- 	struct device *dev = &rproc->dev;
-@@ -567,11 +546,6 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	void *va;
- 	int ret;
- 
--	if (sizeof(*rsc) > avail) {
--		dev_err(dev, "carveout rsc is truncated\n");
--		return -EINVAL;
--	}
--
- 	/* make sure reserved bytes are zeroes */
- 	if (rsc->reserved) {
- 		dev_err(dev, "carveout rsc has non zero reserved bytes\n");
-@@ -680,7 +654,7 @@ free_carv:
- }
- 
- static int rproc_count_vrings(struct rproc *rproc, struct fw_rsc_vdev *rsc,
--			      int offset, int avail)
-+			      int offset)
- {
- 	/* Summarize the number of notification IDs */
- 	rproc->max_notifyid += rsc->num_of_vrings;
-@@ -714,15 +688,8 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
- 	for (i = 0; i < rproc->table_ptr->num; i++) {
- 		int offset = rproc->table_ptr->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
--		int avail = len - offset - sizeof(*hdr);
- 		void *rsc = (void *)hdr + sizeof(*hdr);
- 
--		/* make sure table isn't truncated */
--		if (avail < 0) {
--			dev_err(dev, "rsc table is truncated\n");
--			return -EINVAL;
--		}
--
- 		dev_dbg(dev, "rsc: type %d\n", hdr->type);
- 
- 		if (hdr->type >= RSC_LAST) {
-@@ -734,7 +701,7 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
- 		if (!handler)
- 			continue;
- 
--		ret = handler(rproc, rsc, offset + sizeof(*hdr), avail);
-+		ret = handler(rproc, rsc, offset + sizeof(*hdr));
- 		if (ret)
- 			break;
- 	}
++config QCOM_VENUS_PIL
++	tristate "Qualcomm Venus Peripheral Image Loader"
++	depends on OF && ARCH_QCOM
++	depends on QCOM_SCM
++	select QCOM_MDT_LOADER
++	select REMOTEPROC
++	help
++	  Say y here to support Qualcomm Peripherial Image Loader for the
++	  Venus remote processor.
++
+ config ST_REMOTEPROC
+ 	tristate "ST remoteproc support"
+ 	depends on ARCH_STI
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 6dfb62ed643f..852711b89844 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -15,4 +15,5 @@ obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
+ obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
+ obj-$(CONFIG_QCOM_WCNSS_IRIS)		+= qcom_wcnss_iris.o
+ obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss.o
++obj-$(CONFIG_QCOM_VENUS_PIL)            += qcom_venus_pil.o
+ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+diff --git a/drivers/remoteproc/qcom_venus_pil.c b/drivers/remoteproc/qcom_venus_pil.c
+new file mode 100644
+index 000000000000..891c7d9a96bf
+--- /dev/null
++++ b/drivers/remoteproc/qcom_venus_pil.c
+@@ -0,0 +1,226 @@
++/*
++ * Qualcomm Venus Peripheral Image Loader
++ *
++ * Copyright (C) 2016 Linaro Ltd
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/dma-mapping.h>
++#include <linux/firmware.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
++#include <linux/qcom_scm.h>
++#include <linux/remoteproc.h>
++
++#include "qcom_mdt_loader.h"
++#include "remoteproc_internal.h"
++
++#define VENUS_CRASH_REASON_SMEM		425
++#define VENUS_FIRMWARE_NAME		"venus.mdt"
++#define VENUS_PAS_ID			9
++#define VENUS_FW_MEM_SIZE		SZ_8M
++#define VENUS_PGTABLE_OFFSET		(6 * SZ_1M)
++
++struct qcom_venus {
++	struct device *dev;
++	struct rproc *rproc;
++	phys_addr_t fw_addr;
++	phys_addr_t mem_phys;
++	void *mem_va;
++	size_t mem_size;
++	size_t pgtable_sz;
++};
++
++static int venus_load(struct rproc *rproc, const struct firmware *fw)
++{
++	struct qcom_venus *venus = rproc->priv;
++	phys_addr_t pa;
++	size_t fw_size;
++	bool relocate;
++	int ret;
++
++	ret = qcom_scm_pas_init_image(VENUS_PAS_ID, fw->data, fw->size);
++	if (ret) {
++		dev_err(&rproc->dev, "invalid firmware metadata (%d)\n", ret);
++		return -EINVAL;
++	}
++
++	ret = qcom_mdt_parse(fw, &venus->fw_addr, &fw_size, &relocate);
++	if (ret) {
++		dev_err(&rproc->dev, "failed to parse mdt header (%d)\n", ret);
++		return ret;
++	}
++
++	if (fw_size + venus->pgtable_sz > venus->mem_size)
++		return -ENOMEM;
++
++	pa = relocate ? venus->mem_phys : venus->fw_addr;
++
++	ret = qcom_scm_pas_mem_setup(VENUS_PAS_ID, pa, fw_size);
++	if (ret) {
++		dev_err(&rproc->dev, "unable to setup memory (%d)\n", ret);
++		return -EINVAL;
++	}
++
++	return qcom_mdt_load(rproc, fw, VENUS_FIRMWARE_NAME);
++}
++
++static const struct rproc_fw_ops venus_fw_ops = {
++	.find_rsc_table = qcom_mdt_find_rsc_table,
++	.load = venus_load,
++};
++
++static int venus_start(struct rproc *rproc)
++{
++	struct qcom_venus *venus = rproc->priv;
++	int ret;
++
++	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
++	if (ret)
++		dev_err(venus->dev,
++			"authentication image and release reset failed (%d)\n",
++			ret);
++
++	return ret;
++}
++
++static int venus_stop(struct rproc *rproc)
++{
++	struct qcom_venus *venus = rproc->priv;
++	int ret;
++
++	ret = qcom_scm_pas_shutdown(VENUS_PAS_ID);
++	if (ret)
++		dev_err(venus->dev, "failed to shutdown: %d\n", ret);
++
++	return ret;
++}
++
++static void *venus_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct qcom_venus *venus = rproc->priv;
++	s64 offset;
++
++	offset = da - venus->fw_addr;
++
++	if (offset < 0 || offset + len > venus->mem_size)
++		return NULL;
++
++	return venus->mem_va + offset;
++}
++
++static const struct rproc_ops venus_ops = {
++	.start = venus_start,
++	.stop = venus_stop,
++	.da_to_va = venus_da_to_va,
++};
++
++static int venus_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct qcom_venus *venus;
++	struct rproc *rproc;
++	dma_addr_t pgaddr;
++	int ret;
++
++	if (!qcom_scm_is_available())
++		return -EPROBE_DEFER;
++
++	if (!qcom_scm_pas_supported(VENUS_PAS_ID)) {
++		dev_err(dev, "PAS is not available for venus\n");
++		return -ENXIO;
++	}
++
++	ret = of_reserved_mem_device_init(dev);
++	if (ret)
++		return ret;
++
++	rproc = rproc_alloc(dev, pdev->name, &venus_ops, VENUS_FIRMWARE_NAME,
++			    sizeof(*venus));
++	if (!rproc) {
++		dev_err(dev, "unable to allocate remoteproc\n");
++		ret = -ENOMEM;
++		goto release_mem;
++	}
++
++	rproc->fw_ops = &venus_fw_ops;
++	venus = rproc->priv;
++	venus->dev = dev;
++	venus->rproc = rproc;
++	venus->mem_size = VENUS_FW_MEM_SIZE;
++
++	platform_set_drvdata(pdev, venus);
++
++	venus->mem_va = dma_alloc_coherent(dev, venus->mem_size,
++					   &venus->mem_phys, GFP_KERNEL);
++	if (!venus->mem_va) {
++		ret = -ENOMEM;
++		goto free_rproc;
++	}
++
++	ret = qcom_scm_iommu_secure_ptbl_size(0, &venus->pgtable_sz);
++	if (ret)
++		goto free_mem;
++
++	pgaddr = venus->mem_phys + VENUS_PGTABLE_OFFSET;
++
++	ret = qcom_scm_iommu_secure_ptbl_init(pgaddr, venus->pgtable_sz, 0);
++	if (ret)
++		goto free_mem;
++
++	ret = rproc_add(rproc);
++	if (ret)
++		goto free_mem;
++
++	return 0;
++
++free_mem:
++	dma_free_coherent(dev, venus->mem_size, venus->mem_va, venus->mem_phys);
++free_rproc:
++	rproc_put(rproc);
++release_mem:
++	of_reserved_mem_device_release(dev);
++
++	return ret;
++}
++
++static int venus_remove(struct platform_device *pdev)
++{
++	struct qcom_venus *venus = platform_get_drvdata(pdev);
++	struct device *dev = venus->dev;
++
++	rproc_del(venus->rproc);
++	rproc_put(venus->rproc);
++	dma_free_coherent(dev, venus->mem_size, venus->mem_va, venus->mem_phys);
++	of_reserved_mem_device_release(dev);
++
++	return 0;
++}
++
++static const struct of_device_id venus_of_match[] = {
++	{ .compatible = "qcom,venus-pil" },
++	{ },
++};
++
++static struct platform_driver venus_driver = {
++	.probe = venus_probe,
++	.remove = venus_remove,
++	.driver = {
++		.name = "qcom-venus-pil",
++		.of_match_table = venus_of_match,
++	},
++};
++
++module_platform_driver(venus_driver);
++MODULE_DESCRIPTION("Peripheral Image Loader for Venus");
++MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
+2.7.4
