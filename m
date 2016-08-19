@@ -1,105 +1,46 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 5/9] remoteproc: core: Add function to amend an existing resource table entry
-Date: Thu,  4 Aug 2016 10:21:49 +0100
-Message-Id: <20160804092153.23032-6-lee.jones@linaro.org>
-In-Reply-To: <20160804092153.23032-1-lee.jones@linaro.org>
-References: <20160804092153.23032-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH 0/4] Venus remoteproc driver
+Date: Fri, 19 Aug 2016 18:53:16 +0300
+Message-Id: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Clark <robdclark@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Sometimes the firmware does not know best.
+Hi all,
 
-When a firmware is built, it can be loaded with a resource table, usually
-detailing shared; memory, virtual device, trace log information etc.
-However, some vendors require this hard-coded information to be amended
-with new/improved information obtained from Device Tree for instance.
+The first patch adds a call to qcom SCM driver which helps to change
+the Venus core state, in practice it is used for supend and resume
+the video core. Second patch add two SCM calls needed by Venus
+remoteproc driver in order to load and authenticate the firmware.
 
-Until now, no method exists which allows the resource table to be amended.
-The addition of this function changes that.  It is now possible to pull in
-a resource table and amend it before it is finally shared with the remote
-device.
+Next two patches add dt binding document and the Venus remoteproc
+driver itself.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 63 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+Comments are welcome.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0abfa2b..3318ebd 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -917,6 +917,69 @@ int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
- }
- EXPORT_SYMBOL(rproc_request_resource);
- 
-+static int rproc_update_resource_table_entry(struct rproc *rproc,
-+				struct rproc_request_resource *request,
-+				struct resource_table *table, int size)
-+{
-+	struct fw_rsc_carveout *tblc, *newc;
-+	struct fw_rsc_devmem *tbld, *newd;
-+	struct fw_rsc_trace *tblt, *newt;
-+	int updated = true;
-+	int i;
-+
-+	for (i = 0; i < table->num; i++) {
-+		int offset = table->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table + offset;
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+
-+		if (request->type != hdr->type)
-+			continue;
-+
-+		switch (hdr->type) {
-+		case RSC_CARVEOUT:
-+			tblc = rsc;
-+			newc = request->resource;
-+
-+			if (strncmp(newc->name, tblc->name,
-+				    sizeof(*tblc->name)))
-+				break;
-+
-+			memcpy(tblc, newc, request->size);
-+
-+			return updated;
-+		case RSC_DEVMEM:
-+			tbld = rsc;
-+			newd = request->resource;
-+
-+			if (strncmp(newd->name, tbld->name,
-+				    sizeof(*tbld->name)))
-+				break;
-+
-+			memcpy(tbld, newd, request->size);
-+
-+			return updated;
-+		case RSC_TRACE:
-+			tblt = rsc;
-+			newt = request->resource;
-+
-+			if (strncmp(newt->name, tblt->name,
-+				    sizeof(*tblt->name)))
-+				break;
-+
-+			memcpy(tblt, newt, request->size);
-+
-+			return updated;
-+		default:
-+			dev_err(&rproc->dev,
-+				"Unsupported resource type: %d\n",
-+				hdr->type);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return !updated;
-+}
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
+regards,
+Stan
+
+Stanimir Varbanov (4):
+  firmware: qcom: scm: add a video command for state setting
+  firmware: qcom: scm: add iommu scm calls for pg table
+  dt-binding: remoteproc: venus rproc dt binding document
+  remoteproc: qcom: add Venus video core firmware loader driver
+
+ .../devicetree/bindings/remoteproc/qcom,venus.txt  |  33 +++
+ drivers/firmware/qcom_scm-32.c                     |  18 ++
+ drivers/firmware/qcom_scm-64.c                     |  58 ++++++
+ drivers/firmware/qcom_scm.c                        |  28 +++
+ drivers/firmware/qcom_scm.h                        |  13 ++
+ drivers/remoteproc/Kconfig                         |  10 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/qcom_venus_pil.c                | 226 +++++++++++++++++++++
+ include/linux/qcom_scm.h                           |   5 +
+ 9 files changed, 392 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
+ create mode 100644 drivers/remoteproc/qcom_venus_pil.c
+
 -- 
-2.9.0
+2.7.4
