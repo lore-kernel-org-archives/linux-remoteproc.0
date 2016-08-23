@@ -1,117 +1,100 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 23 Aug 2016 13:31:21 -0500
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/4] dt-binding: remoteproc: Introduce ADSP loader
- binding
-Message-ID: <20160823183121.GA13010@rob-hp-laptop>
-References: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <andy.gross@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 1/4] dt-binding: remoteproc: Introduce ADSP loader binding
+Date: Mon, 22 Aug 2016 22:57:43 -0700
+Message-Id: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Andy Gross <andy.gross@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Aug 22, 2016 at 10:57:43PM -0700, Bjorn Andersson wrote:
-> This document defines the binding for a component that loads firmware
-> and control the life cycle of the Qualcomm ADSP core.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Changes since v1:
-> - Added platform names to compatibility
-> 
->  .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> new file mode 100644
-> index 000000000000..3820151ce3e9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> @@ -0,0 +1,70 @@
-> +Qualcomm ADSP Peripheral Image Loader
-> +
-> +This document defines the binding for a component that loads and boots firmware
-> +on the Qualcomm ADSP core.
+This document defines the binding for a component that loads firmware
+and control the life cycle of the Qualcomm ADSP core.
 
-ADSP is for Audio DSP? So there is another driver for the audio 
-functions? Why doesn't it do the firmware loading? I'm still confused 
-why this binding is separate? If you had one common interface (a rproc) 
-to load and boot various other blocks like ADSP and Venus, then this 
-would make sense. Or does every accel block have some separate control 
-uC associated with it?
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be one of:
-> +		    "qcom,msm8974-adsp-pil"
-> +		    "qcom,msm8996-adsp-pil"
-> +
-> +- interrupts-extended:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: must list the watchdog, fatal IRQs ready, handover and
-> +		    stop-ack IRQs
-> +
-> +- interrupt-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
-> +
-> +- cx-supply:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to the regulator to be held on behalf of the
-> +		    booting of the Hexagon core
-> +
-> +- memory-region:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to the reserved-memory for the ADSP
-> +
-> +- qcom,smem-states:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to the smem state for requesting the ADSP to
-> +		    shut down
-> +
-> +- qcom,smem-state-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "stop"
-> +
-> += EXAMPLE
-> +The following example describes the resources needed to boot control the
-> +ADSP, as it is found on MSM8974 boards.
-> +
-> +	adsp {
-> +		compatible = "qcom,adsp-pil";
-> +
-> +		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "wdog",
-> +				  "fatal",
-> +				  "ready",
-> +				  "handover",
-> +				  "stop-ack";
-> +
-> +		cx-supply = <&pm8841_s2>;
-> +
-> +		memory-region = <&adsp_region>;
-> +
-> +		qcom,smem-states = <&modem_smp2p_out 0>;
-> +		qcom,smem-state-names = "stop";
-> +	};
-> -- 
-> 2.5.0
-> 
+Changes since v1:
+- Added platform names to compatibility
+
+ .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 70 ++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+new file mode 100644
+index 000000000000..3820151ce3e9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+@@ -0,0 +1,70 @@
++Qualcomm ADSP Peripheral Image Loader
++
++This document defines the binding for a component that loads and boots firmware
++on the Qualcomm ADSP core.
++
++- compatible:
++	Usage: required
++	Value type: <string>
++	Definition: must be one of:
++		    "qcom,msm8974-adsp-pil"
++		    "qcom,msm8996-adsp-pil"
++
++- interrupts-extended:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: must list the watchdog, fatal IRQs ready, handover and
++		    stop-ack IRQs
++
++- interrupt-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
++
++- cx-supply:
++	Usage: required
++	Value type: <phandle>
++	Definition: reference to the regulator to be held on behalf of the
++		    booting of the Hexagon core
++
++- memory-region:
++	Usage: required
++	Value type: <phandle>
++	Definition: reference to the reserved-memory for the ADSP
++
++- qcom,smem-states:
++	Usage: required
++	Value type: <phandle>
++	Definition: reference to the smem state for requesting the ADSP to
++		    shut down
++
++- qcom,smem-state-names:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "stop"
++
++= EXAMPLE
++The following example describes the resources needed to boot control the
++ADSP, as it is found on MSM8974 boards.
++
++	adsp {
++		compatible = "qcom,adsp-pil";
++
++		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++		interrupt-names = "wdog",
++				  "fatal",
++				  "ready",
++				  "handover",
++				  "stop-ack";
++
++		cx-supply = <&pm8841_s2>;
++
++		memory-region = <&adsp_region>;
++
++		qcom,smem-states = <&modem_smp2p_out 0>;
++		qcom,smem-state-names = "stop";
++	};
+-- 
+2.5.0
