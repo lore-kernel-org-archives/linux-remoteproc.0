@@ -1,89 +1,117 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Tue, 23 Aug 2016 11:57:20 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 23 Aug 2016 13:31:21 -0500
+From: Rob Herring <robh@kernel.org>
 Subject: Re: [PATCH v2 1/4] dt-binding: remoteproc: Introduce ADSP loader
  binding
-Message-ID: <20160823185720.GD15161@tuxbot>
+Message-ID: <20160823183121.GA13010@rob-hp-laptop>
 References: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
- <20160823183121.GA13010@rob-hp-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20160823183121.GA13010@rob-hp-laptop>
-To: Rob Herring <robh@kernel.org>
+In-Reply-To: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <andy.gross@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue 23 Aug 11:31 PDT 2016, Rob Herring wrote:
-
-> On Mon, Aug 22, 2016 at 10:57:43PM -0700, Bjorn Andersson wrote:
-> > This document defines the binding for a component that loads firmware
-> > and control the life cycle of the Qualcomm ADSP core.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> > 
-> > Changes since v1:
-> > - Added platform names to compatibility
-> > 
-> >  .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 70 ++++++++++++++++++++++
-> >  1 file changed, 70 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> > new file mode 100644
-> > index 000000000000..3820151ce3e9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> > @@ -0,0 +1,70 @@
-> > +Qualcomm ADSP Peripheral Image Loader
-> > +
-> > +This document defines the binding for a component that loads and boots firmware
-> > +on the Qualcomm ADSP core.
+On Mon, Aug 22, 2016 at 10:57:43PM -0700, Bjorn Andersson wrote:
+> This document defines the binding for a component that loads firmware
+> and control the life cycle of the Qualcomm ADSP core.
 > 
-> ADSP is for Audio DSP? So there is another driver for the audio 
-> functions? Why doesn't it do the firmware loading? I'm still confused 
-> why this binding is separate? If you had one common interface (a rproc) 
-> to load and boot various other blocks like ADSP and Venus, then this 
-> would make sense. Or does every accel block have some separate control 
-> uC associated with it?
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
+> Changes since v1:
+> - Added platform names to compatibility
+> 
+>  .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 70 ++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> new file mode 100644
+> index 000000000000..3820151ce3e9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> @@ -0,0 +1,70 @@
+> +Qualcomm ADSP Peripheral Image Loader
+> +
+> +This document defines the binding for a component that loads and boots firmware
+> +on the Qualcomm ADSP core.
 
-The ADSP is a general purpose CPU [1] mainly running services related to
-audio handling - including controlling audio paths, driving the audio
-blocks, audio effects, audio codec decoding.
+ADSP is for Audio DSP? So there is another driver for the audio 
+functions? Why doesn't it do the firmware loading? I'm still confused 
+why this binding is separate? If you had one common interface (a rproc) 
+to load and boot various other blocks like ADSP and Venus, then this 
+would make sense. Or does every accel block have some separate control 
+uC associated with it?
 
-On some platforms it also sports services for sensor batch offloading
-(or whatever Google calls it) and video decoding for certain codecs.
-
-All these services show up in a semi-probable fashion on other buses;
-often on SMD, APR, QRTR.
-
-
-There are a few blocks that share mechanism with the remoteproc, that
-does not have a separate uC - with a destinct life cycle - I'm still
-investigating how to describe these, but most likely those cases will
-not show up in DT at all.
-
-On msm8916 you have the following additional uCs; RPM, Hexagon, Wireless
-and Venus; the RPM is always-on.
-
-On msm8960 we have the following uCs; RPM, Hexagon for audio, DSPS (ARM
-for sensor processing), two(?) Hexagons for modem, WCNSS (ARM core for
-wireless), Venus (seems to be another ARM core) and an optional ARM core
-for GPS if you don't have the modem Hexagons.
-
-So, we have between 4 and 8 extra uCs in these SoCs; most are controlled
-in a very similar fashion, but requires different resources and some
-tweaks to the steps of bringing them up, down and handling crashes.
-
-Downstream this is handled by having a "rproc" driver that's completely
-generic, DT provides lists of resources controlling each step and a
-callback mechanism is used to extend the rproc drivers with specific
-functionality - it took me months to figure out how to boot the WCNSS
-because the logic and resources are scattered throughout.
-
-[1] https://en.wikipedia.org/wiki/Qualcomm_Hexagon
-
-Regards,
-Bjorn
+> +
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must be one of:
+> +		    "qcom,msm8974-adsp-pil"
+> +		    "qcom,msm8996-adsp-pil"
+> +
+> +- interrupts-extended:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: must list the watchdog, fatal IRQs ready, handover and
+> +		    stop-ack IRQs
+> +
+> +- interrupt-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
+> +
+> +- cx-supply:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: reference to the regulator to be held on behalf of the
+> +		    booting of the Hexagon core
+> +
+> +- memory-region:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: reference to the reserved-memory for the ADSP
+> +
+> +- qcom,smem-states:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: reference to the smem state for requesting the ADSP to
+> +		    shut down
+> +
+> +- qcom,smem-state-names:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "stop"
+> +
+> += EXAMPLE
+> +The following example describes the resources needed to boot control the
+> +ADSP, as it is found on MSM8974 boards.
+> +
+> +	adsp {
+> +		compatible = "qcom,adsp-pil";
+> +
+> +		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
+> +				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +		interrupt-names = "wdog",
+> +				  "fatal",
+> +				  "ready",
+> +				  "handover",
+> +				  "stop-ack";
+> +
+> +		cx-supply = <&pm8841_s2>;
+> +
+> +		memory-region = <&adsp_region>;
+> +
+> +		qcom,smem-states = <&modem_smp2p_out 0>;
+> +		qcom,smem-state-names = "stop";
+> +	};
+> -- 
+> 2.5.0
+> 
