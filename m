@@ -1,118 +1,49 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v8 03/18] dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding documentation
-Date: Fri, 26 Aug 2016 15:56:38 +0100
-Message-Id: <1472223413-7254-4-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 22 Aug 2016 21:39:27 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH -next] remoteproc: qcom: wcnss: Fix return value check in
+ wcnss_probe()
+Message-ID: <20160823043927.GA15161@tuxbot>
+References: <1471790370-3127-1-git-send-email-weiyj.lk@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1471790370-3127-1-git-send-email-weiyj.lk@gmail.com>
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the DT binding documentation for the FDMA constroller
-found on STi based chipsets from STMicroelectronics.
+On Sun 21 Aug 07:39 PDT 2016, Wei Yongjun wrote:
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/dma/st_fdma.txt | 87 +++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+> and never returns NULL. The NULL test in the return value check should
+> be replaced with IS_ERR().
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-diff --git a/Documentation/devicetree/bindings/dma/st_fdma.txt b/Documentation/devicetree/bindings/dma/st_fdma.txt
-new file mode 100644
-index 0000000..495d853
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/st_fdma.txt
-@@ -0,0 +1,87 @@
-+* STMicroelectronics Flexible Direct Memory Access Device Tree bindings
-+
-+The FDMA is a general-purpose direct memory access controller capable of
-+supporting 16 independent DMA channels. It accepts up to 32 DMA requests.
-+The FDMA is based on a Slim processor which requires a firmware.
-+
-+* FDMA Controller
-+
-+Required properties:
-+- compatible	: Should be one of
-+		 - st,stih407-fdma-mpe31-11, "st,slim-rproc";
-+		 - st,stih407-fdma-mpe31-12, "st,slim-rproc";
-+		 - st,stih407-fdma-mpe31-13, "st,slim-rproc";
-+- reg		: Should contain an entry for each name in reg-names
-+- reg-names	: Must contain "slimcore", "dmem", "peripherals", "imem" entries
-+- interrupts	: Should contain one interrupt shared by all channels
-+- dma-channels	: Number of channels supported by the controller
-+- #dma-cells	: Must be <3>. See DMA client section below
-+- clocks	: Must contain an entry for each clock
-+See: Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+
-+Example:
-+
-+	fdma0: dma-controller@8e20000 {
-+		compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
-+		reg = <0x8e20000 0x8000>,
-+		      <0x8e30000 0x3000>,
-+		      <0x8e37000 0x1000>,
-+		      <0x8e38000 0x8000>;
-+		reg-names = "slimcore", "dmem", "peripherals", "imem";
-+		clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+		interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
-+		dma-channels = <16>;
-+		#dma-cells = <3>;
-+	};
-+
-+* DMA client
-+
-+Required properties:
-+- dmas: Comma separated list of dma channel requests
-+- dma-names: Names of the aforementioned requested channels
-+
-+Each dmas request consists of 4 cells:
-+1. A phandle pointing to the FDMA controller
-+2. The request line number
-+3. A 32bit mask specifying (see include/linux/platform_data/dma-st-fdma.h)
-+ -bit 2-0: Holdoff value, dreq will be masked for
-+	0x0: 0-0.5us
-+	0x1: 0.5-1us
-+	0x2: 1-1.5us
-+ -bit 17: data swap
-+	0x0: disabled
-+	0x1: enabled
-+ -bit 21: Increment Address
-+	0x0: no address increment between transfers
-+	0x1: increment address between transfers
-+ -bit 22: 2 STBus Initiator Coprocessor interface
-+	0x0: high priority port
-+	0x1: low priority port
-+4. transfers type
-+ 0 free running
-+ 1 paced
-+
-+Example:
-+
-+	sti_uni_player2: sti-uni-player@2 {
-+		compatible = "st,sti-uni-player";
-+		status = "disabled";
-+		#sound-dai-cells = <0>;
-+		st,syscfg = <&syscfg_core>;
-+		clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
-+		assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
-+		assigned-clock-parents = <&clk_s_d0_quadfs 2>;
-+		assigned-clock-rates = <50000000>;
-+		reg = <0x8D82000 0x158>;
-+		interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
-+		dmas = <&fdma0 4 0 1>;
-+		dai-name = "Uni Player #1 (DAC)";
-+		dma-names = "tx";
-+		st,uniperiph-id = <2>;
-+		st,version = <5>;
-+		st,mode = "PCM";
-+	};
--- 
-1.9.1
+Thanks Wei, applied to rproc-next.
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/qcom_wcnss.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index 14c4585..1917de7 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -528,8 +528,8 @@ static int wcnss_probe(struct platform_device *pdev)
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pmu");
+>  	mmio = devm_ioremap_resource(&pdev->dev, res);
+> -	if (!mmio) {
+> -		ret = -ENOMEM;
+> +	if (IS_ERR(mmio)) {
+> +		ret = PTR_ERR(mmio);
+>  		goto free_rproc;
+>  	};
+> 
