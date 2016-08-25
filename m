@@ -1,165 +1,101 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 18/19] remoteproc: core: Add function to create remoteproc local resource table
-Date: Wed, 31 Aug 2016 22:50:21 +0200
-Message-ID: <1472676622-32533-19-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <matteo.sartori@t3lab.it>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+In-Reply-To: <20160810200352.GS26240@tuxbot>
+References: <CAHvXT5pppxuWmZCrb9xSBWTx0kb3GcHT2YQJM6y8kHNB_QsAkg@mail.gmail.com>
+ <20160810200352.GS26240@tuxbot>
+From: Matteo Sartori <matteo.sartori@t3lab.it>
+Date: Thu, 25 Aug 2016 12:31:16 +0200
+Message-ID: <CAHvXT5oAdtNzX04EPJK6DAGXr9=zY2pqibnNLxKEkr_de=bkjw@mail.gmail.com>
+Subject: Re: rpmsg: exposing the bus to userspace
+Content-Type: text/plain; charset=UTF-8
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: takahiro.akashi@linaro.org, linux-remoteproc@vger.kernel.org, Alessio Paccoia <alessio.paccoia@t3lab.it>, Michele Rodolfi <michele.rodolfi@t3lab.it>, Claudio Salati <claudio.salati@t3lab.it>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rproc driver has now the capability to add resources dynamically
-thanks to rproc_request_resource API.
-Depending on associated action, resource request could impact
-firmware resource table or define new local resource.
+Hi Bjorn,
+apologies for the latency.
 
-In order to preserve current remoteproc resource handling
-mechanism, all local resources are gathered in a local resource
-table which won't be shared with firmware and proceed by
-remoteproc core as firmware one.
+On 2016-08-10 22:03 GMT+02:00, Bjorn Andersson wrote:
+> Going with the AF_RPMSG approach seems (at first) to map quite nicely
+> with the src/dst port model. It would e.g. allow us to use recvfrom() to
+> implement services for multiple clients.
+>
+> But the src/dst are only unique for each given virtproc, so we need to
+> make up a mechanism for selecting among a set of rpmsg instances if more
+> than one remote exists. Further more I believe that the AF_RPMSG concept
+> would have to be integrated into the core of rpmsg and we would have two
+> different concepts intermixed in the implementation; the in-kernel model
+> with life cycle management and the user-space variant - and we need to
+> figure out how to make these not step on each others toes.
 
-It is rproc driver responsibility to provide the right resource
-information using rproc_request_resource API.
+Can you please elaborate a little more on the intermixed implementations?
+For what I understand it is necessary to introduce the AF_RPSMG concept
+inside the rpmsg core because e.g. after a bind() syscall on a given port
+(local rpmsg address) it is important to create a new endpoint, and to register
+a new callback with.
+But, I don't see why there should be a user-space variant of the
+AF_RPMSG concept.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 80 +++++++++++++++++++++++++++++++++++-
- include/linux/remoteproc.h           |  1 +
- 2 files changed, 80 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index cbfbdf8..73b460a 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1270,6 +1270,65 @@ static int rproc_apply_resource_overrides(struct rproc *rproc,
- 	return ret;
- }
- 
-+static struct resource_table*
-+rproc_local_resource_create(struct rproc *rproc, int *tablesz)
-+{
-+	struct fw_rsc_hdr *hdr;
-+	struct fw_rsc_spare *spare_rsc;
-+	struct rproc_request_resource *resource;
-+	struct resource_table *table = NULL;
-+	int size = 0, ret;
-+
-+	/* compute total request size */
-+	list_for_each_entry(resource, &rproc->override_resources, node) {
-+		if (resource->action == RSC_ACT_LOCAL)
-+			size += resource->size + sizeof(hdr) + 4; /* entry offset */
-+	}
-+
-+	/* any extra resource ? */
-+	if (!size)
-+		goto out;
-+
-+	/* add table header and spare resource */
-+	size += sizeof(*table);
-+	size += sizeof(*hdr) + sizeof(*spare_rsc) + 4;
-+
-+	/* create new rsc tbl with only a spare resource */
-+	table = devm_kzalloc(&rproc->dev, size, GFP_KERNEL);
-+	if (!table) {
-+		table = ERR_PTR(-ENOMEM);
-+		goto out;
-+	}
-+	table->ver = 1;
-+	table->num = 1;
-+	table->offset[0] = sizeof(*table) + 4;
-+
-+	hdr = (void *)table + table->offset[0];
-+	hdr->type = RSC_SPARE;
-+
-+	spare_rsc = (void *)hdr + sizeof(*hdr);
-+	spare_rsc->len = size - table->offset[0] - sizeof(*hdr) - sizeof(*spare_rsc);
-+
-+	/* add new resource one by one */
-+	list_for_each_entry(resource, &rproc->override_resources, node) {
-+		if (resource->action == RSC_ACT_LOCAL) {
-+			/* Create a new enty */
-+			ret = __add_rsc_tbl_entry(rproc, resource,
-+					table, size);
-+			if (ret) {
-+				table = ERR_PTR(ret);
-+				goto out;
-+			}
-+		}
-+	}
-+
-+	*tablesz = size;
-+	rproc_dump_resource_table(rproc, table, *tablesz);
-+out:
-+	return table;
-+}
-+
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
-@@ -1278,7 +1337,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = &rproc->dev;
- 	const char *name = rproc->firmware;
- 	struct resource_table *table, *loaded_table;
--	int ret, tablesz;
-+	int ret, tablesz, local_tablesz;
- 
- 	ret = rproc_fw_sanity_check(rproc, fw);
- 	if (ret)
-@@ -1335,6 +1394,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 			goto clean_up;
- 		}
- 
-+		rproc->local_table = rproc_local_resource_create(rproc, &local_tablesz);
-+		if (IS_ERR(rproc->local_table)) {
-+			dev_err(dev, "Failed to create local resource table\n");
-+			goto clean_up;
-+		}
- 	}
- 
- 	/* reset max_notifyid */
-@@ -1348,6 +1412,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 	}
- 
-+	ret = rproc_handle_resources(rproc, rproc->local_table,
-+				     local_tablesz, rproc_vdev_handler);
-+	if (ret) {
-+		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
-+		goto clean_up;
-+	}
-+
- 	/* handle fw resources which are required to boot rproc */
- 	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
- 				     rproc_loading_handlers);
-@@ -1356,6 +1427,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 	}
- 
-+	ret = rproc_handle_resources(rproc, rproc->local_table,
-+				     local_tablesz, rproc_loading_handlers);
-+	if (ret) {
-+		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
-+		goto clean_up;
-+	}
-+
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
- 	if (ret) {
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 2b0f1d7..653e6f3 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -495,6 +495,7 @@ struct rproc {
- 	int max_notifyid;
- 	struct resource_table *table_ptr;
- 	struct resource_table *cached_table;
-+	struct resource_table *local_table;
- 	bool has_iommu;
- 	bool auto_boot;
- };
--- 
-1.9.1
+> So I'm preferring a model where we can have a rpmsg-client that can be
+> attached to an endpoint and expose this explicitly to userspace.
+
+Do you refer to the possibility that a userspace process can create
+and attach to a new endpoint?
+>From my experience, the only method supporting this kind of userspace-
+kernelspace interaction is that of sockets, where the bind() syscall semantic
+can be translated into the creation of new rpmsg endpoint which subsequent
+recvfrom()s can perform the desired behaviour on, that is receiving traffic
+from a given port while knowing the source address of each data unit.
+
+Do you have other userspace/kernelspace interaction models to be
+considered ? Maybe, I am not aware of other possibilities.
+
+
+> In the Qualcomm case mentioned above, you only have defined
+> point-to-point channels, so spawning a char device for each one is
+> rather natural. But the N:1 case (a generic service in the virtio rpmsg
+> case) requires a recvfrom()/sendto() like interface.
+
+I agree, the problem of using char devices is that they model only
+the situation where there is a rpmsg channel underneath, that is a
+communication link already installed between two ends.
+
+In my point of view the rpmsg channel abstraction matches quite well
+with char devices but there are problems with the particular mechanism
+rpmsg uses to match devices with drivers.
+For instance, the char driver I have tested these days spawns a
+new /dev/rpmsgX every time the rpmsg bus sees a channel id matching
+the one specified by the driver. If there are two rprocs that create a new
+channel with the same name (eg "rpmsg-char-dev-channel") and the driver
+matches such channel name, then two new char devices will be created,
+/dev/rpmsg0 and /dev/rpmsg1. How do I know which char device is the
+target I want to communcate with? There is no control over the minor
+number assignment and it depends on the order of probe() calls the rpmsg
+bus performs.
+
+The first solution that comes to my mind is to use the information
+that rpmsg and remoteproc subsystems expose to sysfs. This way
+a user space program can understand the correspondence
+between char devices and actual rpmsg channels and rprocs.
+For this solution the code from texas is already working, given the
+fact it is up to the userspace program to retrieve additional informations.
+
+Instead, if we desire more control inside the kernel we should consider
+a different creation strategy, such as a /dev/rpmsgXY scheme.
+The X standing for the rproc index and the Y standing for a particular
+digit representing different channels. For instance, if we have two remotes
+each with a single channel in the system we could name the char devices
+as /dev/rpmsg00 and /dev/rpmsg10.
+
+
+To sum up, I would say the char approach is more suitable for static
+configurations and is oriented to represent a rpmsg channel while the
+socket approach is more dynamic, given the fact it permits generic
+services to be deployed and it is a little bit detached from the rpmsg channel
+concept. In my opinion, we should consider both since socket can give
+more powerful communication paradigms while char devices represent a
+point-to-point link and are more straightforward to use.
+
+Best regards,
+Matteo
