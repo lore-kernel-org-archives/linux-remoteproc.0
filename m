@@ -1,145 +1,274 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 1/4] remoteproc: Introduce always-on flag
-Date: Mon,  1 Aug 2016 11:58:00 -0700
-Message-Id: <1470077883-7419-1-git-send-email-bjorn.andersson@linaro.org>
-To: linux-remoteproc@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v8 04/18] dmaengine: st_fdma: Add STMicroelectronics FDMA driver header file
+Date: Fri, 26 Aug 2016 15:56:39 +0100
+Message-Id: <1472223413-7254-5-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce an "always-on" flag on rprocs to make it possible to flag
-remote processors without vdevs to automatically boot once the firmware
-is found.
+This header file will also be used by the dma xbar driver in the
+future.
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c   | 27 ++++++++++++++++++++++++++-
- drivers/remoteproc/remoteproc_virtio.c | 13 -------------
- include/linux/remoteproc.h             |  1 +
- 3 files changed, 27 insertions(+), 14 deletions(-)
+ drivers/dma/st_fdma.h | 244 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 244 insertions(+)
+ create mode 100644 drivers/dma/st_fdma.h
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index fe0539ed9cb5..7e7f24fcac69 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -933,6 +933,10 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 	/* look for virtio devices and register them */
- 	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
- 
-+	/* if rproc is marked always-on, request it to boot */
-+	if (rproc->always_on)
-+		rproc_boot_nowait(rproc);
+diff --git a/drivers/dma/st_fdma.h b/drivers/dma/st_fdma.h
+new file mode 100644
+index 0000000..16fa6f5
+--- /dev/null
++++ b/drivers/dma/st_fdma.h
+@@ -0,0 +1,244 @@
++/*
++ * st_fdma.h
++ *
++ * Copyright (C) 2014 STMicroelectronics
++ * Author: Ludovic Barre <Ludovic.barre@st.com>
++ * License terms:  GNU General Public License (GPL), version 2
++ */
++#ifndef __DMA_ST_FDMA_H
++#define __DMA_ST_FDMA_H
 +
- out:
- 	release_firmware(fw);
- 	/* allow rproc_del() contexts, if any, to proceed */
-@@ -978,11 +982,16 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
- int rproc_trigger_recovery(struct rproc *rproc)
- {
- 	struct rproc_vdev *rvdev, *rvtmp;
-+	int ret;
- 
- 	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
- 
- 	init_completion(&rproc->crash_comp);
- 
-+	/* shut down the remote */
-+	/* TODO: make sure this works with rproc->power > 1 */
-+	rproc_shutdown(rproc);
++#include <linux/dmaengine.h>
++#include <linux/dmapool.h>
++#include <linux/io.h>
++#include <linux/remoteproc/st_slim_rproc.h>
++#include "virt-dma.h"
 +
- 	/* clean up remote vdev entries */
- 	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
- 		rproc_remove_virtio_dev(rvdev);
-@@ -993,7 +1002,17 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	/* Free the copy of the resource table */
- 	kfree(rproc->cached_table);
- 
--	return rproc_add_virtio_devices(rproc);
-+	ret = rproc_add_virtio_devices(rproc);
-+	if (ret)
-+		return ret;
++#define ST_FDMA_NR_DREQS 32
 +
-+	/*
-+	 * boot the remote processor up again, waiting for the async fw load to
-+	 * finish
-+	 */
-+	rproc_boot(rproc);
++#define FW_NAME_SIZE 30
 +
-+	return 0;
- }
- 
- /**
-@@ -1374,6 +1393,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->name = name;
- 	rproc->ops = ops;
- 	rproc->priv = &rproc[1];
-+	rproc->always_on = true;
- 
- 	device_initialize(&rproc->dev);
- 	rproc->dev.parent = dev;
-@@ -1452,6 +1472,11 @@ int rproc_del(struct rproc *rproc)
- 	/* if rproc is just being registered, wait */
- 	wait_for_completion(&rproc->firmware_loading_complete);
- 
-+	/* if rproc is marked always-on, rproc_add() booted it */
-+	/* TODO: make sure this works with rproc->power > 1 */
-+	if (rproc->always_on)
-+		rproc_shutdown(rproc);
++/**
++ * struct st_fdma_generic_node - Free running/paced generic node
++ *
++ * @length: Length in bytes of a line in a 2D mem to mem
++ * @sstride: Stride, in bytes, between source lines in a 2D data move
++ * @dstride: Stride, in bytes, between destination lines in a 2D data move
++ */
++struct st_fdma_generic_node {
++	u32 length;
++	u32 sstride;
++	u32 dstride;
++};
 +
- 	/* clean up remote vdev entries */
- 	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
- 		rproc_remove_virtio_dev(rvdev);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index cc91556313e1..574c90ce07f7 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -136,11 +136,6 @@ static void __rproc_virtio_del_vqs(struct virtio_device *vdev)
- 
- static void rproc_virtio_del_vqs(struct virtio_device *vdev)
- {
--	struct rproc *rproc = vdev_to_rproc(vdev);
--
--	/* power down the remote processor before deleting vqs */
--	rproc_shutdown(rproc);
--
- 	__rproc_virtio_del_vqs(vdev);
- }
- 
-@@ -149,7 +144,6 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 		       vq_callback_t *callbacks[],
- 		       const char * const names[])
- {
--	struct rproc *rproc = vdev_to_rproc(vdev);
- 	int i, ret;
- 
- 	for (i = 0; i < nvqs; ++i) {
-@@ -160,13 +154,6 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 		}
- 	}
- 
--	/* now that the vqs are all set, boot the remote processor */
--	ret = rproc_boot_nowait(rproc);
--	if (ret) {
--		dev_err(&rproc->dev, "rproc_boot() failed %d\n", ret);
--		goto error;
--	}
--
- 	return 0;
- 
- error:
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 1c457a8dd5a6..bd1cfcbb57b9 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -443,6 +443,7 @@ struct rproc {
- 	struct resource_table *cached_table;
- 	u32 table_csum;
- 	bool has_iommu;
-+	bool always_on;
- };
- 
- /* we currently support only two vrings per rvdev */
++/**
++ * struct st_fdma_hw_node - Node structure used by fdma hw
++ *
++ * @next: Pointer to next node
++ * @control: Transfer Control Parameters
++ * @nbytes: Number of Bytes to read
++ * @saddr: Source address
++ * @daddr: Destination address
++ *
++ * @generic: generic node for free running/paced transfert type
++ * 2 others transfert type are possible, but not yet implemented
++ *
++ * The NODE structures must be aligned to a 32 byte boundary
++ */
++struct st_fdma_hw_node {
++	u32 next;
++	u32 control;
++	u32 nbytes;
++	u32 saddr;
++	u32 daddr;
++	union {
++		struct st_fdma_generic_node generic;
++	};
++} __aligned(32);
++
++/*
++ * node control parameters
++ */
++#define FDMA_NODE_CTRL_REQ_MAP_MASK	GENMASK(4, 0)
++#define FDMA_NODE_CTRL_REQ_MAP_FREE_RUN	0x0
++#define FDMA_NODE_CTRL_REQ_MAP_DREQ(n)	((n)&FDMA_NODE_CTRL_REQ_MAP_MASK)
++#define FDMA_NODE_CTRL_REQ_MAP_EXT		FDMA_NODE_CTRL_REQ_MAP_MASK
++#define FDMA_NODE_CTRL_SRC_MASK		GENMASK(6, 5)
++#define FDMA_NODE_CTRL_SRC_STATIC	BIT(5)
++#define FDMA_NODE_CTRL_SRC_INCR		BIT(6)
++#define FDMA_NODE_CTRL_DST_MASK		GENMASK(8, 7)
++#define FDMA_NODE_CTRL_DST_STATIC	BIT(7)
++#define FDMA_NODE_CTRL_DST_INCR		BIT(8)
++#define FDMA_NODE_CTRL_SECURE		BIT(15)
++#define FDMA_NODE_CTRL_PAUSE_EON	BIT(30)
++#define FDMA_NODE_CTRL_INT_EON		BIT(31)
++
++/**
++ * struct st_fdma_sw_node - descriptor structure for link list
++ *
++ * @pdesc: Physical address of desc
++ * @node: link used for putting this into a channel queue
++ */
++struct st_fdma_sw_node {
++	dma_addr_t pdesc;
++	struct st_fdma_hw_node *desc;
++};
++
++#define NAME_SZ 10
++
++struct st_fdma_driverdata {
++	u32 id;
++	char name[NAME_SZ];
++};
++
++struct st_fdma_desc {
++	struct virt_dma_desc vdesc;
++	struct st_fdma_chan *fchan;
++	bool iscyclic;
++	unsigned int n_nodes;
++	struct st_fdma_sw_node node[];
++};
++
++enum st_fdma_type {
++	ST_FDMA_TYPE_FREE_RUN,
++	ST_FDMA_TYPE_PACED,
++};
++
++struct st_fdma_cfg {
++	struct device_node *of_node;
++	enum st_fdma_type type;
++	dma_addr_t dev_addr;
++	enum dma_transfer_direction dir;
++	int req_line; /* request line */
++	long req_ctrl; /* Request control */
++};
++
++struct st_fdma_chan {
++	struct st_fdma_dev *fdev;
++	struct dma_pool *node_pool;
++	struct dma_slave_config scfg;
++	struct st_fdma_cfg cfg;
++
++	int dreq_line;
++
++	struct virt_dma_chan vchan;
++	struct st_fdma_desc *fdesc;
++	enum dma_status	status;
++};
++
++struct st_fdma_dev {
++	struct device *dev;
++	const struct st_fdma_driverdata *drvdata;
++	struct dma_device dma_device;
++
++	struct st_slim_rproc *slim_rproc;
++
++	int irq;
++
++	struct st_fdma_chan *chans;
++
++	spinlock_t dreq_lock;
++	unsigned long dreq_mask;
++
++	u32 nr_channels;
++	char fw_name[FW_NAME_SIZE];
++};
++
++/* Peripheral Registers*/
++
++#define FDMA_CMD_STA_OFST	0xFC0
++#define FDMA_CMD_SET_OFST	0xFC4
++#define FDMA_CMD_CLR_OFST	0xFC8
++#define FDMA_CMD_MASK_OFST	0xFCC
++#define FDMA_CMD_START(ch)		(0x1 << (ch << 1))
++#define FDMA_CMD_PAUSE(ch)		(0x2 << (ch << 1))
++#define FDMA_CMD_FLUSH(ch)		(0x3 << (ch << 1))
++
++#define FDMA_INT_STA_OFST	0xFD0
++#define FDMA_INT_STA_CH			0x1
++#define FDMA_INT_STA_ERR		0x2
++
++#define FDMA_INT_SET_OFST	0xFD4
++#define FDMA_INT_CLR_OFST	0xFD8
++#define FDMA_INT_MASK_OFST	0xFDC
++
++#define fdma_read(fdev, name) \
++	readl((fdev)->slim_rproc->peri + name)
++
++#define fdma_write(fdev, val, name) \
++	writel((val), (fdev)->slim_rproc->peri + name)
++
++/* fchan interface (dmem) */
++#define FDMA_CH_CMD_OFST	0x200
++#define FDMA_CH_CMD_STA_MASK		GENMASK(1, 0)
++#define FDMA_CH_CMD_STA_IDLE		(0x0)
++#define FDMA_CH_CMD_STA_START		(0x1)
++#define FDMA_CH_CMD_STA_RUNNING		(0x2)
++#define FDMA_CH_CMD_STA_PAUSED		(0x3)
++#define FDMA_CH_CMD_ERR_MASK		GENMASK(4, 2)
++#define FDMA_CH_CMD_ERR_INT		(0x0 << 2)
++#define FDMA_CH_CMD_ERR_NAND		(0x1 << 2)
++#define FDMA_CH_CMD_ERR_MCHI		(0x2 << 2)
++#define FDMA_CH_CMD_DATA_MASK		GENMASK(31, 5)
++#define fchan_read(fchan, name) \
++	readl((fchan)->fdev->slim_rproc->mem[ST_SLIM_DMEM].cpu_addr \
++			+ (fchan)->vchan.chan.chan_id * 0x4 \
++			+ name)
++
++#define fchan_write(fchan, val, name) \
++	writel((val), (fchan)->fdev->slim_rproc->mem[ST_SLIM_DMEM].cpu_addr \
++			+ (fchan)->vchan.chan.chan_id * 0x4 \
++			+ name)
++
++/* req interface */
++#define FDMA_REQ_CTRL_OFST	0x240
++#define dreq_write(fchan, val, name) \
++	writel((val), (fchan)->fdev->slim_rproc->mem[ST_SLIM_DMEM].cpu_addr \
++			+ fchan->dreq_line * 0x04 \
++			+ name)
++/* node interface */
++#define FDMA_NODE_SZ 128
++#define FDMA_PTRN_OFST		0x800
++#define FDMA_CNTN_OFST		0x808
++#define FDMA_SADDRN_OFST	0x80c
++#define FDMA_DADDRN_OFST	0x810
++#define fnode_read(fchan, name) \
++	readl((fchan)->fdev->slim_rproc->mem[ST_SLIM_DMEM].cpu_addr \
++			+ (fchan)->vchan.chan.chan_id * FDMA_NODE_SZ \
++			+ name)
++
++#define fnode_write(fchan, val, name) \
++	writel((val), (fchan)->fdev->slim_rproc->mem[ST_SLIM_DMEM].cpu_addr \
++			+ (fchan)->vchan.chan.chan_id * FDMA_NODE_SZ \
++			+ name)
++
++/*
++ * request control bits
++ */
++#define FDMA_REQ_CTRL_NUM_OPS_MASK	GENMASK(31, 24)
++#define FDMA_REQ_CTRL_NUM_OPS(n)	(FDMA_REQ_CTRL_NUM_OPS_MASK & \
++					((n) << 24))
++#define FDMA_REQ_CTRL_INITIATOR_MASK	BIT(22)
++#define FDMA_REQ_CTRL_INIT0		(0x0 << 22)
++#define FDMA_REQ_CTRL_INIT1		(0x1 << 22)
++#define FDMA_REQ_CTRL_INC_ADDR_ON	BIT(21)
++#define FDMA_REQ_CTRL_DATA_SWAP_ON	BIT(17)
++#define FDMA_REQ_CTRL_WNR		BIT(14)
++#define FDMA_REQ_CTRL_OPCODE_MASK	GENMASK(7, 4)
++#define FDMA_REQ_CTRL_OPCODE_LD_ST1	(0x0 << 4)
++#define FDMA_REQ_CTRL_OPCODE_LD_ST2	(0x1 << 4)
++#define FDMA_REQ_CTRL_OPCODE_LD_ST4	(0x2 << 4)
++#define FDMA_REQ_CTRL_OPCODE_LD_ST8	(0x3 << 4)
++#define FDMA_REQ_CTRL_OPCODE_LD_ST16	(0x4 << 4)
++#define FDMA_REQ_CTRL_OPCODE_LD_ST32	(0x5 << 4)
++#define FDMA_REQ_CTRL_OPCODE_LD_ST64	(0x6 << 4)
++#define FDMA_REQ_CTRL_HOLDOFF_MASK	GENMASK(2, 0)
++#define FDMA_REQ_CTRL_HOLDOFF(n)	((n) & FDMA_REQ_CTRL_HOLDOFF_MASK)
++
++/* bits used by client to configure request control */
++#define FDMA_REQ_CTRL_CFG_MASK (FDMA_REQ_CTRL_HOLDOFF_MASK | \
++				FDMA_REQ_CTRL_DATA_SWAP_ON | \
++				FDMA_REQ_CTRL_INC_ADDR_ON | \
++				FDMA_REQ_CTRL_INITIATOR_MASK)
++
++#endif	/* __DMA_ST_FDMA_H */
 -- 
-2.5.0
+1.9.1
