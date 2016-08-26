@@ -1,65 +1,118 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 06/13] remoteproc: print hex numbers with a leading 0x format
-Date: Fri, 12 Aug 2016 18:42:21 -0500
-Message-ID: <20160812234228.39731-7-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v8 03/18] dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding documentation
+Date: Fri, 26 Aug 2016 15:56:38 +0100
+Message-Id: <1472223413-7254-4-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There are couple of debug statements that are printing hexadecimal
-numbers without the leading 0x. Fix these and use the standard 0x%x
-format specifier so that there is no confusion when looking at the
-traces.
+This patch adds the DT binding documentation for the FDMA constroller
+found on STi based chipsets from STMicroelectronics.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/dma/st_fdma.txt | 87 +++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index fb92b8084a4e..0f85f7eb476d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -236,7 +236,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	}
- 	notifyid = ret;
- 
--	dev_dbg(dev, "vring%d: va %p dma %pad size %x idr %d\n",
-+	dev_dbg(dev, "vring%d: va %p dma %pad size 0x%x idr %d\n",
- 		i, va, &dma, size, notifyid);
- 
- 	rvring->va = va;
-@@ -263,7 +263,7 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
- 	struct fw_rsc_vdev_vring *vring = &rsc->vring[i];
- 	struct rproc_vring *rvring = &rvdev->vring[i];
- 
--	dev_dbg(dev, "vdev rsc: vring%d: da %x, qsz %d, align %d\n",
-+	dev_dbg(dev, "vdev rsc: vring%d: da 0x%x, qsz %d, align %d\n",
- 		i, vring->da, vring->num, vring->align);
- 
- 	/* make sure reserved bytes are zeroes */
-@@ -349,7 +349,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 		return -EINVAL;
- 	}
- 
--	dev_dbg(dev, "vdev rsc: id %d, dfeatures %x, cfg len %d, %d vrings\n",
-+	dev_dbg(dev, "vdev rsc: id %d, dfeatures 0x%x, cfg len %d, %d vrings\n",
- 		rsc->id, rsc->dfeatures, rsc->config_len, rsc->num_of_vrings);
- 
- 	/* we currently support only two vrings per rvdev */
-@@ -578,7 +578,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 		return -EINVAL;
- 	}
- 
--	dev_dbg(dev, "carveout rsc: name: %s, da %x, pa %x, len 0x%x, flags %x\n",
-+	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
- 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
- 
- 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
+diff --git a/Documentation/devicetree/bindings/dma/st_fdma.txt b/Documentation/devicetree/bindings/dma/st_fdma.txt
+new file mode 100644
+index 0000000..495d853
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/st_fdma.txt
+@@ -0,0 +1,87 @@
++* STMicroelectronics Flexible Direct Memory Access Device Tree bindings
++
++The FDMA is a general-purpose direct memory access controller capable of
++supporting 16 independent DMA channels. It accepts up to 32 DMA requests.
++The FDMA is based on a Slim processor which requires a firmware.
++
++* FDMA Controller
++
++Required properties:
++- compatible	: Should be one of
++		 - st,stih407-fdma-mpe31-11, "st,slim-rproc";
++		 - st,stih407-fdma-mpe31-12, "st,slim-rproc";
++		 - st,stih407-fdma-mpe31-13, "st,slim-rproc";
++- reg		: Should contain an entry for each name in reg-names
++- reg-names	: Must contain "slimcore", "dmem", "peripherals", "imem" entries
++- interrupts	: Should contain one interrupt shared by all channels
++- dma-channels	: Number of channels supported by the controller
++- #dma-cells	: Must be <3>. See DMA client section below
++- clocks	: Must contain an entry for each clock
++See: Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++
++Example:
++
++	fdma0: dma-controller@8e20000 {
++		compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
++		reg = <0x8e20000 0x8000>,
++		      <0x8e30000 0x3000>,
++		      <0x8e37000 0x1000>,
++		      <0x8e38000 0x8000>;
++		reg-names = "slimcore", "dmem", "peripherals", "imem";
++		clocks = <&clk_s_c0_flexgen CLK_FDMA>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
++			 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
++		interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
++		dma-channels = <16>;
++		#dma-cells = <3>;
++	};
++
++* DMA client
++
++Required properties:
++- dmas: Comma separated list of dma channel requests
++- dma-names: Names of the aforementioned requested channels
++
++Each dmas request consists of 4 cells:
++1. A phandle pointing to the FDMA controller
++2. The request line number
++3. A 32bit mask specifying (see include/linux/platform_data/dma-st-fdma.h)
++ -bit 2-0: Holdoff value, dreq will be masked for
++	0x0: 0-0.5us
++	0x1: 0.5-1us
++	0x2: 1-1.5us
++ -bit 17: data swap
++	0x0: disabled
++	0x1: enabled
++ -bit 21: Increment Address
++	0x0: no address increment between transfers
++	0x1: increment address between transfers
++ -bit 22: 2 STBus Initiator Coprocessor interface
++	0x0: high priority port
++	0x1: low priority port
++4. transfers type
++ 0 free running
++ 1 paced
++
++Example:
++
++	sti_uni_player2: sti-uni-player@2 {
++		compatible = "st,sti-uni-player";
++		status = "disabled";
++		#sound-dai-cells = <0>;
++		st,syscfg = <&syscfg_core>;
++		clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++		assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
++		assigned-clock-parents = <&clk_s_d0_quadfs 2>;
++		assigned-clock-rates = <50000000>;
++		reg = <0x8D82000 0x158>;
++		interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
++		dmas = <&fdma0 4 0 1>;
++		dai-name = "Uni Player #1 (DAC)";
++		dma-names = "tx";
++		st,uniperiph-id = <2>;
++		st,version = <5>;
++		st,mode = "PCM";
++	};
 -- 
-2.9.0
+1.9.1
