@@ -1,46 +1,35 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 03/13] remoteproc: use variable names for sizeof() operator
-Date: Fri, 12 Aug 2016 18:42:18 -0500
-Message-ID: <20160812234228.39731-4-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 1/2] remoteproc: Modify FW_RSC_ADDR_ANY definition
+Date: Fri, 26 Aug 2016 22:19:54 +0200
+Message-ID: <1472242795-23970-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472242795-23970-1-git-send-email-loic.pallardy@st.com>
+References: <1472242795-23970-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fix the code formatting to use the kernel preferred style
-of using the actual variables to determize the size using
-the sizeof() operator.
+Replace 0xFFFFFFFFFFFFFFFF by -1 to fit any types in comparison operations.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/remoteproc.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e1644c992839..140b580477e3 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -358,7 +358,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 		return -EINVAL;
- 	}
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index d488f9e..80e1cba 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -118,7 +118,7 @@ enum fw_resource_type {
+ 	RSC_LAST	= 4,
+ };
  
--	rvdev = kzalloc(sizeof(struct rproc_vdev), GFP_KERNEL);
-+	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
- 	if (!rvdev)
- 		return -ENOMEM;
+-#define FW_RSC_ADDR_ANY (0xFFFFFFFFFFFFFFFF)
++#define FW_RSC_ADDR_ANY (-1)
  
-@@ -1359,7 +1359,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 		 */
- 		name_len = strlen(name) + strlen(template) - 2 + 1;
- 
--	rproc = kzalloc(sizeof(struct rproc) + len + name_len, GFP_KERNEL);
-+	rproc = kzalloc(sizeof(*rproc) + len + name_len, GFP_KERNEL);
- 	if (!rproc)
- 		return NULL;
- 
+ /**
+  * struct fw_rsc_carveout - physically contiguous memory request
 -- 
-2.9.0
+1.9.1
