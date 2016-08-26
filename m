@@ -1,85 +1,85 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:38593 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754590AbcH3Ohg (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 30 Aug 2016 10:37:36 -0400
-Received: by mail-wm0-f49.google.com with SMTP id o80so39603992wme.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 30 Aug 2016 07:37:35 -0700 (PDT)
-Received: from alexat ([213.209.216.186])
-        by smtp.gmail.com with ESMTPSA id lv9sm39847570wjb.22.2016.08.30.07.37.30
-        for <linux-remoteproc@vger.kernel.org>
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 30 Aug 2016 07:37:30 -0700 (PDT)
-Date: Tue, 30 Aug 2016 16:37:27 +0200
-From: Matteo Sartori <matteo.sartori@t3lab.it>
-Subject: [PATCH 0/1] rpmsg: char device for exposing channels to userspace
-Message-ID: <20160830143727.GA25622@alexat>
+Return-Path: <michele.rodolfi@t3lab.it>
+Return-Path: <michele.rodolfi@t3lab.it>
+Date: Fri, 26 Aug 2016 13:28:34 +0200
+From: Michele Rodolfi <michele.rodolfi@t3lab.it>
+Subject: [PATCH 0/2] Socket based IPC over RPMSG for user threads
+Message-ID: <cover.1472209108.git.michele.rodolfi@t3lab.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc@vger.kernel.org
+To: matteo.sartori@t3lab.it, alessio.paccoia@t3lab.it, claudio.salati@t3lab.it, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+Hi all,
+This patch implements an IPC service using the remoteproc/rpmsg framework.
+The IPC is intended to be used between threads running on different processors.
+The IPC service is provided to user threads via socket APIs.
 
-The canonical method for getting access to the rpmsg bus is to write a specific
-driver that manages memory and user-kernel communication as the given
-application requires.
-This patch instead proposes a simpler and general approach in which the rpmsg
-bus, specifically only matched channels, are exposed to userspace through char
-devices.
+As the rpmsg-ti socket implementation does, I registered the address
+familiy AF_RPMSG (and PF_RMPSG) to be used with this socket. The
+address format is "rproc_id:port_num", where rproc_id is the remote
+processor identifier statically defined in the DT, port_num is an
+integer acting as TCP/UDP port numbers (this is _not_ the rpmsg
+endpoint).
 
-As previously discussed, this approach has the problem of not supporting the 1:N
-communication type, where a single program can act like a server that receives
-requests from multiple users on a given port. Sockets with bind() and recvfrom()
-could better serve this scheme.
+All the IPC messages between master and a specific remote are
+transported using an unique rpmsg channel whose id is "rpmsg-proto".
+This socket system supports only one rpmsg channel of type
+"rpmsg-proto" per rproc.
 
-However, I propose a chardev strategy that matches quite well with the rpmsg
-channel concept. The driver registers itself on the bus with a specific channel
-name, "rpmsg-char-dev", and upon matches with discovered devices, allocates and
-creates new char devices that reflect newly created rpmsg channels.
-Given the fact the rpmsg channel concept belongs to 1:1 communication styles
-I would say this is a cheap and simple solution for exporting generic services
-to userspace.
+The rpmsg socket layer provides a transport protocol that allows
+message multiplexing/demultiplexing. Basically it adds a header to the
+message payload that contains source and destination port numbers
+(like UDP header).
 
-The code has been derived from OpemAMP repository
-  https://github.com/OpenAMP/open-amp
-at the location
-  obsolete/system/linux/kernelspace/rpmsg_user_dev_driver/rpmsg_user_dev_driver.c
+User threads can create and use a rpmsg socket by means of the usual
+socket APIs: bind, connect, sendto, recvfrom.
 
-A counterpoint is that we need an auxiliary buffer to store received rpmsg
-messages in. The rpmsg mechanism is asynchronous because a callback get called
-upon reception and so we need to copy the message to an intermediary location
-in order to free the underlying rpmsg buffer.
-An important point to stress is that the actual strategy drops the message if
-the kfifo is full.
-For the write() case I see a similar problem because there is again a copy from
-user to kernel memory prior to sending, a call copy_from_user(), but I believe
-this is easier to remove for increasing performances.
+Rpmsg socket type can be either SOCK_DGRAM or SOCK_SEQPACKET. The
+basic difference is that the former discards the new packets when the
+vring buffer is full, while the latter blocks the send on the source
+side until the receiver frees a vring slot.
 
-Another problem could be about naming: how do I know which is my destination if
-there are more than one matched channels? For example, the systems loads two
-remotes that both subscribe with the "rpmsg-char-dev" channel and I have to talk
-with one of them, specifically. Which is the right target, rpmsg0 or rpmsg1?
-I believe such information can be found under sysfs.
+In order to provide the remoteprocs with static addresses I'm
+currently using aliases in the device tree. Alias format is "rproc%d"
+where %d is the alias ID, used as rproc address. However, I've noticed
+you added a rproc OF look-up function to obtain a rproc reference
+ginven an index. I think in theory that this index can be used as
+rproc address, but I have not seen any code using this function nor
+documentation explaining the "rprocs" phandle usage. Despite that I'd
+like to use the "rprocs" list instead of aliases, in order to maintain
+everything aligned, but I'm not actually sure this works as I have
+understood.
+For now I decided to use DT aliases as the TI code does.
 
-The discussion is still going on, but I wanted to illustrate such ideas with a
-concrete patch proposal.
+This patch wants to incentive a discussion about socket IPC over rpmsg, 
+that is _not_ the exposition of the rpmsg bus to userspace.
 
 Best regards,
-Matteo
+Michele
 
-Matteo Sartori (1):
-  rpmsg: driver which exposes channels through char devices
+Michele Rodolfi (2):
+  rpmsg: support for retreiving processor ID from a rpmsg_channel
+  net/rpmsg: add support for socket based IPC over rpmsg
 
- drivers/rpmsg/Kconfig         |   7 +
- drivers/rpmsg/Makefile        |   1 +
- drivers/rpmsg/rpmsg_chardev.c | 335 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 343 insertions(+)
- create mode 100644 drivers/rpmsg/rpmsg_chardev.c
+ drivers/remoteproc/remoteproc_core.c   |  21 +
+ drivers/remoteproc/remoteproc_virtio.c |  21 +
+ drivers/rpmsg/virtio_rpmsg_bus.c       |  20 +
+ include/linux/remoteproc.h             |   2 +
+ include/linux/rpmsg.h                  |   1 +
+ include/linux/socket.h                 |   5 +-
+ include/uapi/linux/rpmsg_socket.h      |  48 ++
+ net/Kconfig                            |   1 +
+ net/Makefile                           |   1 +
+ net/rpmsg/Kconfig                      |  10 +
+ net/rpmsg/Makefile                     |   1 +
+ net/rpmsg/rpmsg_proto.c                | 847 +++++++++++++++++++++++++++++++++
+ 12 files changed, 976 insertions(+), 2 deletions(-)
+ create mode 100644 include/uapi/linux/rpmsg_socket.h
+ create mode 100644 net/rpmsg/Kconfig
+ create mode 100644 net/rpmsg/Makefile
+ create mode 100644 net/rpmsg/rpmsg_proto.c
 
 -- 
 2.7.4
-
