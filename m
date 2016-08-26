@@ -1,60 +1,34 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 4/4] ARM: dts: msm8974: Add ADSP PIL node
-Date: Mon, 22 Aug 2016 22:57:46 -0700
-Message-Id: <1471931866-3107-4-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v8 08/18] ARM: multi_v7_defconfig: Enable STi FDMA driver
+Date: Fri, 26 Aug 2016 15:56:43 +0100
+Message-Id: <1472223413-7254-9-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+This DMA controller is found on all STi chipsets.
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes since v1:
-- Added this patch
-
- arch/arm/boot/dts/qcom-msm8974.dtsi | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index eac24cbe3c87..4fa630cc7e4a 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -29,7 +29,7 @@
- 			no-map;
- 		};
- 
--		adsp@0dc00000 {
-+		adsp_region: adsp@0dc00000 {
- 			reg = <0x0dc00000 0x1900000>;
- 			no-map;
- 		};
-@@ -159,6 +159,24 @@
- 		clock-frequency = <19200000>;
- 	};
- 
-+	adsp-pil {
-+		compatible = "qcom,msm8974-adsp-pil";
-+
-+		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack";
-+
-+		cx-supply = <&pm8841_s2>;
-+
-+		memory-region = <&adsp_region>;
-+
-+		qcom,smem-states = <&adsp_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+	};
-+
- 	smem {
- 		compatible = "qcom,smem";
- 
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index ea23250..998578a 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -784,6 +784,7 @@ CONFIG_DMA_OMAP=y
+ CONFIG_QCOM_BAM_DMA=y
+ CONFIG_XILINX_VDMA=y
+ CONFIG_DMA_SUN6I=y
++CONFIG_ST_FDMA=m
+ CONFIG_STAGING=y
+ CONFIG_SENSORS_ISL29018=y
+ CONFIG_SENSORS_ISL29028=y
 -- 
-2.5.0
+1.9.1
