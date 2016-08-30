@@ -1,170 +1,105 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 30 Aug 2016 16:47:03 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 1/4] remoteproc: Introduce auto-boot flag
-Date: Thu, 11 Aug 2016 14:52:50 -0700
-Message-Id: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
-To: linux-remoteproc@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Subject: Re: [PATCH v2 1/4] dt-binding: remoteproc: Introduce ADSP loader
+ binding
+Message-ID: <20160830234703.GR15161@tuxbot>
+References: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
+ <20160823183121.GA13010@rob-hp-laptop>
+ <20160823185720.GD15161@tuxbot>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20160823185720.GD15161@tuxbot>
+To: Rob Herring <robh@kernel.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <andy.gross@linaro.org>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce an "auto-boot" flag on rprocs to make it possible to flag
-remote processors without vdevs to automatically boot once the firmware
-is found.
+On Tue 23 Aug 11:57 PDT 2016, Bjorn Andersson wrote:
 
-Preserve previous behavior of the wkup_m3 processor being explicitly
-booted by a consumer.
+> On Tue 23 Aug 11:31 PDT 2016, Rob Herring wrote:
+> 
+> > On Mon, Aug 22, 2016 at 10:57:43PM -0700, Bjorn Andersson wrote:
+> > > This document defines the binding for a component that loads firmware
+> > > and control the life cycle of the Qualcomm ADSP core.
+> > > 
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > ---
+> > > 
+> > > Changes since v1:
+> > > - Added platform names to compatibility
+> > > 
+> > >  .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 70 ++++++++++++++++++++++
+> > >  1 file changed, 70 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> > > new file mode 100644
+> > > index 000000000000..3820151ce3e9
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> > > @@ -0,0 +1,70 @@
+> > > +Qualcomm ADSP Peripheral Image Loader
+> > > +
+> > > +This document defines the binding for a component that loads and boots firmware
+> > > +on the Qualcomm ADSP core.
+> > 
+> > ADSP is for Audio DSP? So there is another driver for the audio 
+> > functions? Why doesn't it do the firmware loading? I'm still confused 
+> > why this binding is separate? If you had one common interface (a rproc) 
+> > to load and boot various other blocks like ADSP and Venus, then this 
+> > would make sense.
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Loic Pallardy <loic.pallardy@st.com>
-Cc: Suman Anna <s-anna@ti.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> > Or does every accel block have some separate control 
+> > uC associated with it?
 
-Changes since v1:
-- s/always_on/auto_boot/
-- Fixed double increment of "power" in recover path
-- Marked wkup_m3 to not auto_boot
+Sorry for the lengthy explanation below, in case you rather want a
+TL;DR:
 
- drivers/remoteproc/remoteproc_core.c   | 28 +++++++++++++++++++++++++++-
- drivers/remoteproc/remoteproc_virtio.c | 13 -------------
- drivers/remoteproc/wkup_m3_rproc.c     |  2 ++
- include/linux/remoteproc.h             |  1 +
- 4 files changed, 30 insertions(+), 14 deletions(-)
+This is not an accel block, it's a general purpose CPU exposing among
+other thing audio related services.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index fe0539ed9cb5..5ca98039e494 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -933,6 +933,10 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 	/* look for virtio devices and register them */
- 	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
- 
-+	/* if rproc is marked always-on, request it to boot */
-+	if (rproc->auto_boot)
-+		rproc_boot_nowait(rproc);
-+
- out:
- 	release_firmware(fw);
- 	/* allow rproc_del() contexts, if any, to proceed */
-@@ -978,11 +982,16 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
- int rproc_trigger_recovery(struct rproc *rproc)
- {
- 	struct rproc_vdev *rvdev, *rvtmp;
-+	int ret;
- 
- 	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
- 
- 	init_completion(&rproc->crash_comp);
- 
-+	/* shut down the remote */
-+	/* TODO: make sure this works with rproc->power > 1 */
-+	rproc_shutdown(rproc);
-+
- 	/* clean up remote vdev entries */
- 	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
- 		rproc_remove_virtio_dev(rvdev);
-@@ -993,7 +1002,18 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	/* Free the copy of the resource table */
- 	kfree(rproc->cached_table);
- 
--	return rproc_add_virtio_devices(rproc);
-+	ret = rproc_add_virtio_devices(rproc);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * boot the remote processor up again, if the async firmware loader
-+	 * didn't do so already, waiting for the async fw load to finish
-+	 */
-+	if (!rproc->auto_boot)
-+		rproc_boot(rproc);
-+
-+	return 0;
- }
- 
- /**
-@@ -1374,6 +1394,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->name = name;
- 	rproc->ops = ops;
- 	rproc->priv = &rproc[1];
-+	rproc->auto_boot = true;
- 
- 	device_initialize(&rproc->dev);
- 	rproc->dev.parent = dev;
-@@ -1452,6 +1473,11 @@ int rproc_del(struct rproc *rproc)
- 	/* if rproc is just being registered, wait */
- 	wait_for_completion(&rproc->firmware_loading_complete);
- 
-+	/* if rproc is marked always-on, rproc_add() booted it */
-+	/* TODO: make sure this works with rproc->power > 1 */
-+	if (rproc->auto_boot)
-+		rproc_shutdown(rproc);
-+
- 	/* clean up remote vdev entries */
- 	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
- 		rproc_remove_virtio_dev(rvdev);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index cc91556313e1..574c90ce07f7 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -136,11 +136,6 @@ static void __rproc_virtio_del_vqs(struct virtio_device *vdev)
- 
- static void rproc_virtio_del_vqs(struct virtio_device *vdev)
- {
--	struct rproc *rproc = vdev_to_rproc(vdev);
--
--	/* power down the remote processor before deleting vqs */
--	rproc_shutdown(rproc);
--
- 	__rproc_virtio_del_vqs(vdev);
- }
- 
-@@ -149,7 +144,6 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 		       vq_callback_t *callbacks[],
- 		       const char * const names[])
- {
--	struct rproc *rproc = vdev_to_rproc(vdev);
- 	int i, ret;
- 
- 	for (i = 0; i < nvqs; ++i) {
-@@ -160,13 +154,6 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 		}
- 	}
- 
--	/* now that the vqs are all set, boot the remote processor */
--	ret = rproc_boot_nowait(rproc);
--	if (ret) {
--		dev_err(&rproc->dev, "rproc_boot() failed %d\n", ret);
--		goto error;
--	}
--
- 	return 0;
- 
- error:
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 02d271d101b4..3811cb522af3 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -167,6 +167,8 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
-+	rproc->auto_boot = false;
-+
- 	wkupm3 = rproc->priv;
- 	wkupm3->rproc = rproc;
- 	wkupm3->pdev = pdev;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 1c457a8dd5a6..76d936cabbf8 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -443,6 +443,7 @@ struct rproc {
- 	struct resource_table *cached_table;
- 	u32 table_csum;
- 	bool has_iommu;
-+	bool auto_boot;
- };
- 
- /* we currently support only two vrings per rvdev */
--- 
-2.5.0
+> > 
+> 
+> The ADSP is a general purpose CPU [1] mainly running services related to
+> audio handling - including controlling audio paths, driving the audio
+> blocks, audio effects, audio codec decoding.
+> 
+> On some platforms it also sports services for sensor batch offloading
+> (or whatever Google calls it) and video decoding for certain codecs.
+> 
+> All these services show up in a semi-probable fashion on other buses;
+> often on SMD, APR, QRTR.
+> 
+> 
+> There are a few blocks that share mechanism with the remoteproc, that
+> does not have a separate uC - with a destinct life cycle - I'm still
+> investigating how to describe these, but most likely those cases will
+> not show up in DT at all.
+> 
+> On msm8916 you have the following additional uCs; RPM, Hexagon, Wireless
+> and Venus; the RPM is always-on.
+> 
+> On msm8960 we have the following uCs; RPM, Hexagon for audio, DSPS (ARM
+> for sensor processing), two(?) Hexagons for modem, WCNSS (ARM core for
+> wireless), Venus (seems to be another ARM core) and an optional ARM core
+> for GPS if you don't have the modem Hexagons.
+> 
+> So, we have between 4 and 8 extra uCs in these SoCs; most are controlled
+> in a very similar fashion, but requires different resources and some
+> tweaks to the steps of bringing them up, down and handling crashes.
+> 
+> Downstream this is handled by having a "rproc" driver that's completely
+> generic, DT provides lists of resources controlling each step and a
+> callback mechanism is used to extend the rproc drivers with specific
+> functionality - it took me months to figure out how to boot the WCNSS
+> because the logic and resources are scattered throughout.
+> 
+> [1] https://en.wikipedia.org/wiki/Qualcomm_Hexagon
+> 
+
+Rob, did this answer your questions, do you find this acceptable or do
+you have any suggestion to how I should model this?
+
+Regards,
+Bjorn
