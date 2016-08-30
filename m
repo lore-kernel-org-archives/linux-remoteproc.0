@@ -1,473 +1,85 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 1/2] remoteproc: Introduce Qualcomm ADSP PIL
-Date: Wed, 17 Aug 2016 10:27:33 -0700
-Message-Id: <1471454854-28302-1-git-send-email-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:38593 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754590AbcH3Ohg (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 30 Aug 2016 10:37:36 -0400
+Received: by mail-wm0-f49.google.com with SMTP id o80so39603992wme.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 30 Aug 2016 07:37:35 -0700 (PDT)
+Received: from alexat ([213.209.216.186])
+        by smtp.gmail.com with ESMTPSA id lv9sm39847570wjb.22.2016.08.30.07.37.30
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 30 Aug 2016 07:37:30 -0700 (PDT)
+Date: Tue, 30 Aug 2016 16:37:27 +0200
+From: Matteo Sartori <matteo.sartori@t3lab.it>
+Subject: [PATCH 0/1] rpmsg: char device for exposing channels to userspace
+Message-ID: <20160830143727.GA25622@alexat>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@sonymobile.com>
+Hi,
 
-The Qualcomm ADSP Peripheral Image Loader is used on a variety of
-different Qualcomm platforms for loading firmware into and controlling
-the Hexagon based ADSP.
+The canonical method for getting access to the rpmsg bus is to write a specific
+driver that manages memory and user-kernel communication as the given
+application requires.
+This patch instead proposes a simpler and general approach in which the rpmsg
+bus, specifically only matched channels, are exposed to userspace through char
+devices.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@sonymobile.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/Kconfig         |  11 +
- drivers/remoteproc/Makefile        |   1 +
- drivers/remoteproc/qcom_adsp_pil.c | 407 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 419 insertions(+)
- create mode 100644 drivers/remoteproc/qcom_adsp_pil.c
+As previously discussed, this approach has the problem of not supporting the 1:N
+communication type, where a single program can act like a server that receives
+requests from multiple users on a given port. Sockets with bind() and recvfrom()
+could better serve this scheme.
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 1a8bf76a925f..919741674686 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -77,6 +77,17 @@ config DA8XX_REMOTEPROC
- 	  It's safe to say n here if you're not interested in multimedia
- 	  offloading.
- 
-+config QCOM_ADSP_PIL
-+	tristate "Qualcomm ADSP Peripheral Image Loader"
-+	depends on OF && ARCH_QCOM
-+	depends on QCOM_SMEM
-+	select MFD_SYSCON
-+	select QCOM_MDT_LOADER
-+	select REMOTEPROC
-+	help
-+	  Say y here to support the TrustZone based Peripherial Image Loader
-+	  for the Qualcomm ADSP remote processors.
-+
- config QCOM_MDT_LOADER
- 	tristate
- 
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 92d3758bd15c..877a4c3b554d 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_STE_MODEM_RPROC)	 	+= ste_modem_rproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
-+obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
- obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
- obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-new file mode 100644
-index 000000000000..4fe212d69448
---- /dev/null
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -0,0 +1,407 @@
-+/*
-+ * Qualcomm ADSP Peripheral Image Loader
-+ *
-+ * Copyright (C) 2016 Linaro Ltd
-+ * Copyright (C) 2014 Sony Mobile Communications AB
-+ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/firmware.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/qcom_scm.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/remoteproc.h>
-+#include <linux/soc/qcom/smem.h>
-+#include <linux/soc/qcom/smem_state.h>
-+
-+#include "qcom_mdt_loader.h"
-+#include "remoteproc_internal.h"
-+
-+#define ADSP_CRASH_REASON_SMEM		423
-+#define ADSP_FIRMWARE_NAME		"adsp.mdt"
-+#define ADSP_PAS_ID			1
-+
-+struct qcom_adsp {
-+	struct device *dev;
-+	struct rproc *rproc;
-+
-+	int wdog_irq;
-+	int fatal_irq;
-+	int ready_irq;
-+	int handover_irq;
-+	int stop_ack_irq;
-+
-+	struct qcom_smem_state *state;
-+	unsigned stop_bit;
-+
-+	struct regulator *cx_supply;
-+
-+	struct completion start_done;
-+	struct completion stop_done;
-+
-+	phys_addr_t mem_phys;
-+	phys_addr_t mem_reloc;
-+	void *mem_region;
-+	size_t mem_size;
-+};
-+
-+static int adsp_load(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	phys_addr_t fw_addr;
-+	size_t fw_size;
-+	bool relocate;
-+	int ret;
-+
-+	ret = qcom_scm_pas_init_image(ADSP_PAS_ID, fw->data, fw->size);
-+	if (ret) {
-+		dev_err(&rproc->dev, "invalid firmware metadata\n");
-+		return ret;
-+	}
-+
-+	ret = qcom_mdt_parse(fw, &fw_addr, &fw_size, &relocate);
-+	if (ret) {
-+		dev_err(&rproc->dev, "failed to parse mdt header\n");
-+		return ret;
-+	}
-+
-+	if (relocate) {
-+		adsp->mem_reloc = fw_addr;
-+
-+		ret = qcom_scm_pas_mem_setup(ADSP_PAS_ID, adsp->mem_phys, fw_size);
-+		if (ret) {
-+			dev_err(&rproc->dev, "unable to setup memory for image\n");
-+			return ret;
-+		}
-+	}
-+
-+	return qcom_mdt_load(rproc, fw, rproc->firmware);
-+}
-+
-+static const struct rproc_fw_ops adsp_fw_ops = {
-+	.find_rsc_table = qcom_mdt_find_rsc_table,
-+	.load = adsp_load,
-+};
-+
-+static int adsp_start(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	int ret;
-+
-+	ret = regulator_enable(adsp->cx_supply);
-+	if (ret)
-+		return ret;
-+
-+	ret = qcom_scm_pas_auth_and_reset(ADSP_PAS_ID);
-+	if (ret) {
-+		dev_err(adsp->dev,
-+			"failed to authenticate image and release reset\n");
-+		goto disable_regulators;
-+	}
-+
-+	ret = wait_for_completion_timeout(&adsp->start_done,
-+					  msecs_to_jiffies(5000));
-+	if (adsp->ready_irq > 0 && ret == 0) {
-+		/* We have a ready_irq, but it didn't fire in time. */
-+		dev_err(adsp->dev, "start timed out\n");
-+		qcom_scm_pas_shutdown(ADSP_PAS_ID);
-+		ret = -ETIMEDOUT;
-+		goto disable_regulators;
-+	}
-+
-+	ret = 0;
-+
-+disable_regulators:
-+	regulator_disable(adsp->cx_supply);
-+
-+	return ret;
-+}
-+
-+static int adsp_stop(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	int ret;
-+
-+	if (adsp->state) {
-+		qcom_smem_state_update_bits(adsp->state,
-+					    BIT(adsp->stop_bit),
-+					    BIT(adsp->stop_bit));
-+
-+		ret = wait_for_completion_timeout(&adsp->stop_done,
-+						  msecs_to_jiffies(5000));
-+		if (ret == 0)
-+			dev_err(adsp->dev, "timed out on wait\n");
-+
-+		qcom_smem_state_update_bits(adsp->state,
-+					    BIT(adsp->stop_bit),
-+					    0);
-+	}
-+
-+	ret = qcom_scm_pas_shutdown(ADSP_PAS_ID);
-+	if (ret)
-+		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	int offset;
-+
-+	offset = da - adsp->mem_reloc;
-+	if (offset < 0 || offset + len > adsp->mem_size)
-+		return NULL;
-+
-+	return adsp->mem_region + offset;
-+}
-+
-+static const struct rproc_ops adsp_ops = {
-+	.start = adsp_start,
-+	.stop = adsp_stop,
-+	.da_to_va = adsp_da_to_va,
-+};
-+
-+static irqreturn_t adsp_wdog_interrupt(int irq, void *dev)
-+{
-+	struct qcom_adsp *adsp = dev;
-+
-+	rproc_report_crash(adsp->rproc, RPROC_WATCHDOG);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t adsp_fatal_interrupt(int irq, void *dev)
-+{
-+	struct qcom_adsp *adsp = dev;
-+	size_t len;
-+	char *msg;
-+
-+	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, ADSP_CRASH_REASON_SMEM, &len);
-+	if (!IS_ERR(msg) && len > 0 && msg[0])
-+		dev_err(adsp->dev, "fatal error received: %s\n", msg);
-+
-+	rproc_report_crash(adsp->rproc, RPROC_FATAL_ERROR);
-+
-+	if (!IS_ERR(msg))
-+		msg[0] = '\0';
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t adsp_ready_interrupt(int irq, void *dev)
-+{
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t adsp_handover_interrupt(int irq, void *dev)
-+{
-+	struct qcom_adsp *adsp = dev;
-+
-+	complete(&adsp->start_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t adsp_stop_ack_interrupt(int irq, void *dev)
-+{
-+	struct qcom_adsp *adsp = dev;
-+
-+	complete(&adsp->stop_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int adsp_init_regulator(struct qcom_adsp *adsp)
-+{
-+	adsp->cx_supply = devm_regulator_get(adsp->dev, "cx");
-+	if (IS_ERR(adsp->cx_supply))
-+		return PTR_ERR(adsp->cx_supply);
-+
-+	regulator_set_load(adsp->cx_supply, 100000);
-+
-+	return 0;
-+}
-+
-+static int adsp_request_irq(struct qcom_adsp *adsp,
-+			     struct platform_device *pdev,
-+			     const char *name,
-+			     bool optional,
-+			     irq_handler_t thread_fn)
-+{
-+	int ret;
-+
-+	ret = platform_get_irq_byname(pdev, name);
-+	if (ret < 0 && optional) {
-+		dev_dbg(&pdev->dev, "no %s IRQ defined, ignoring\n", name);
-+		return 0;
-+	} else if (ret < 0) {
-+		dev_err(&pdev->dev, "no %s IRQ defined\n", name);
-+		return ret;
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, ret,
-+					NULL, thread_fn,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"adsp", adsp);
-+	if (ret)
-+		dev_err(&pdev->dev, "request %s IRQ failed\n", name);
-+
-+	return ret;
-+}
-+
-+static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
-+{
-+	struct device_node *node;
-+	struct resource r;
-+	int ret;
-+
-+	node = of_parse_phandle(adsp->dev->of_node, "memory-region", 0);
-+	if (!node) {
-+		dev_err(adsp->dev, "no memory-region specified\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_address_to_resource(node, 0, &r);
-+	if (ret)
-+		return ret;
-+
-+	adsp->mem_phys = adsp->mem_reloc = r.start;
-+	adsp->mem_size = resource_size(&r);
-+	adsp->mem_region = devm_ioremap_wc(adsp->dev, adsp->mem_phys, adsp->mem_size);
-+	if (!adsp->mem_region) {
-+		dev_err(adsp->dev, "unable to map memory region: %pa+%zx\n",
-+			&r.start, adsp->mem_size);
-+		return -EBUSY;
-+	}
-+
-+	return 0;
-+}
-+
-+static int adsp_probe(struct platform_device *pdev)
-+{
-+	struct qcom_adsp *adsp;
-+	struct rproc *rproc;
-+	int ret;
-+
-+	if (!qcom_scm_is_available())
-+		return -EPROBE_DEFER;
-+
-+	if (!qcom_scm_pas_supported(ADSP_PAS_ID)) {
-+		dev_err(&pdev->dev, "PAS is not available for ADSP\n");
-+		return -ENXIO;
-+	}
-+
-+	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
-+			    ADSP_FIRMWARE_NAME, sizeof(*adsp));
-+	if (!rproc) {
-+		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
-+		return -ENOMEM;
-+	}
-+
-+	rproc->fw_ops = &adsp_fw_ops;
-+
-+	adsp = (struct qcom_adsp *)rproc->priv;
-+	adsp->dev = &pdev->dev;
-+	adsp->rproc = rproc;
-+	platform_set_drvdata(pdev, adsp);
-+
-+	init_completion(&adsp->start_done);
-+	init_completion(&adsp->stop_done);
-+
-+	ret = adsp_alloc_memory_region(adsp);
-+	if (ret)
-+		goto free_rproc;
-+
-+	ret = adsp_init_regulator(adsp);
-+	if (ret)
-+		goto free_rproc;
-+
-+	ret = adsp_request_irq(adsp, pdev, "wdog", false, adsp_wdog_interrupt);
-+	if (ret < 0)
-+		goto free_rproc;
-+	adsp->wdog_irq = ret;
-+
-+	ret = adsp_request_irq(adsp, pdev, "fatal", false, adsp_fatal_interrupt);
-+	if (ret < 0)
-+		goto free_rproc;
-+	adsp->fatal_irq = ret;
-+
-+	ret = adsp_request_irq(adsp, pdev, "ready", true, adsp_ready_interrupt);
-+	if (ret < 0)
-+		goto free_rproc;
-+	adsp->ready_irq = ret;
-+
-+	ret = adsp_request_irq(adsp, pdev, "handover", true, adsp_handover_interrupt);
-+	if (ret < 0)
-+		goto free_rproc;
-+	adsp->handover_irq = ret;
-+
-+	ret = adsp_request_irq(adsp, pdev, "stop-ack", true, adsp_stop_ack_interrupt);
-+	if (ret < 0)
-+		goto free_rproc;
-+	adsp->stop_ack_irq = ret;
-+
-+	if (adsp->stop_ack_irq) {
-+		adsp->state = qcom_smem_state_get(&pdev->dev, "stop",
-+						   &adsp->stop_bit);
-+		if (IS_ERR(adsp->state)) {
-+			ret = PTR_ERR(adsp->state);
-+			goto free_rproc;
-+		}
-+	}
-+
-+	ret = rproc_add(rproc);
-+	if (ret)
-+		goto free_rproc;
-+
-+	return 0;
-+
-+free_rproc:
-+	rproc_put(rproc);
-+
-+	return ret;
-+}
-+
-+static int adsp_remove(struct platform_device *pdev)
-+{
-+	struct qcom_adsp *adsp = platform_get_drvdata(pdev);
-+
-+	qcom_smem_state_put(adsp->state);
-+	rproc_del(adsp->rproc);
-+	rproc_put(adsp->rproc);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id adsp_of_match[] = {
-+	{ .compatible = "qcom,adsp-pil" },
-+	{ },
-+};
-+
-+static struct platform_driver adsp_driver = {
-+	.probe = adsp_probe,
-+	.remove = adsp_remove,
-+	.driver = {
-+		.name = "qcom-adsp-pil",
-+		.of_match_table = adsp_of_match,
-+	},
-+};
-+
-+module_platform_driver(adsp_driver);
-+MODULE_DESCRIPTION("Qualcomm ADSP Peripherial Image Loader");
-+MODULE_LICENSE("GPL v2");
+However, I propose a chardev strategy that matches quite well with the rpmsg
+channel concept. The driver registers itself on the bus with a specific channel
+name, "rpmsg-char-dev", and upon matches with discovered devices, allocates and
+creates new char devices that reflect newly created rpmsg channels.
+Given the fact the rpmsg channel concept belongs to 1:1 communication styles
+I would say this is a cheap and simple solution for exporting generic services
+to userspace.
+
+The code has been derived from OpemAMP repository
+  https://github.com/OpenAMP/open-amp
+at the location
+  obsolete/system/linux/kernelspace/rpmsg_user_dev_driver/rpmsg_user_dev_driver.c
+
+A counterpoint is that we need an auxiliary buffer to store received rpmsg
+messages in. The rpmsg mechanism is asynchronous because a callback get called
+upon reception and so we need to copy the message to an intermediary location
+in order to free the underlying rpmsg buffer.
+An important point to stress is that the actual strategy drops the message if
+the kfifo is full.
+For the write() case I see a similar problem because there is again a copy from
+user to kernel memory prior to sending, a call copy_from_user(), but I believe
+this is easier to remove for increasing performances.
+
+Another problem could be about naming: how do I know which is my destination if
+there are more than one matched channels? For example, the systems loads two
+remotes that both subscribe with the "rpmsg-char-dev" channel and I have to talk
+with one of them, specifically. Which is the right target, rpmsg0 or rpmsg1?
+I believe such information can be found under sysfs.
+
+The discussion is still going on, but I wanted to illustrate such ideas with a
+concrete patch proposal.
+
+Best regards,
+Matteo
+
+Matteo Sartori (1):
+  rpmsg: driver which exposes channels through char devices
+
+ drivers/rpmsg/Kconfig         |   7 +
+ drivers/rpmsg/Makefile        |   1 +
+ drivers/rpmsg/rpmsg_chardev.c | 335 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 343 insertions(+)
+ create mode 100644 drivers/rpmsg/rpmsg_chardev.c
+
 -- 
-2.5.0
+2.7.4
+
