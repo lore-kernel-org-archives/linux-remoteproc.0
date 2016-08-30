@@ -1,100 +1,71 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 1/4] dt-binding: remoteproc: Introduce ADSP loader binding
-Date: Mon, 22 Aug 2016 22:57:43 -0700
-Message-Id: <1471931866-3107-1-git-send-email-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Andy Gross <andy.gross@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 30 Aug 2016 11:24:13 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v8 10/18] ARM: DT: STiH407: Add i2s_out pinctrl
+ configuration
+Message-ID: <20160830102413.GU1661@dell>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+ <1472223413-7254-11-git-send-email-peter.griffin@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1472223413-7254-11-git-send-email-peter.griffin@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This document defines the binding for a component that loads firmware
-and control the life cycle of the Qualcomm ADSP core.
+On Fri, 26 Aug 2016, Peter Griffin wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> This patch adds the pinctrl config for the i2s_out pins
+> used by the uniperif player IP.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-pinctrl.dtsi | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 
-Changes since v1:
-- Added platform names to compatibility
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
- .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> index a538ae5..0fb5c8a 100644
+> --- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> @@ -1067,6 +1067,29 @@
+>  				};
+>  			};
+>  
+> +			i2s_out {
+> +				pinctrl_i2s_8ch_out: i2s_8ch_out{
+> +					st,pins {
+> +						mclk = <&pio33 5 ALT1 OUT>;
+> +						lrclk = <&pio33 7 ALT1 OUT>;
+> +						sclk = <&pio33 6 ALT1 OUT>;
+> +						data0 = <&pio33 4 ALT1 OUT>;
+> +						data1 = <&pio34 0 ALT1 OUT>;
+> +						data2 = <&pio34 1 ALT1 OUT>;
+> +						data3 = <&pio34 2 ALT1 OUT>;
+> +					};
+> +				};
+> +
+> +				pinctrl_i2s_2ch_out: i2s_2ch_out{
+> +					st,pins {
+> +						mclk = <&pio33 5 ALT1 OUT>;
+> +						lrclk = <&pio33 7 ALT1 OUT>;
+> +						sclk = <&pio33 6 ALT1 OUT>;
+> +						data0 = <&pio33 4 ALT1 OUT>;
+> +					};
+> +				};
+> +			};
+> +
+>  			serial3 {
+>  				pinctrl_serial3: serial3-0 {
+>  					st,pins {
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-new file mode 100644
-index 000000000000..3820151ce3e9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -0,0 +1,70 @@
-+Qualcomm ADSP Peripheral Image Loader
-+
-+This document defines the binding for a component that loads and boots firmware
-+on the Qualcomm ADSP core.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+		    "qcom,msm8974-adsp-pil"
-+		    "qcom,msm8996-adsp-pil"
-+
-+- interrupts-extended:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must list the watchdog, fatal IRQs ready, handover and
-+		    stop-ack IRQs
-+
-+- interrupt-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
-+
-+- cx-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the regulator to be held on behalf of the
-+		    booting of the Hexagon core
-+
-+- memory-region:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the reserved-memory for the ADSP
-+
-+- qcom,smem-states:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the smem state for requesting the ADSP to
-+		    shut down
-+
-+- qcom,smem-state-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "stop"
-+
-+= EXAMPLE
-+The following example describes the resources needed to boot control the
-+ADSP, as it is found on MSM8974 boards.
-+
-+	adsp {
-+		compatible = "qcom,adsp-pil";
-+
-+		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog",
-+				  "fatal",
-+				  "ready",
-+				  "handover",
-+				  "stop-ack";
-+
-+		cx-supply = <&pm8841_s2>;
-+
-+		memory-region = <&adsp_region>;
-+
-+		qcom,smem-states = <&modem_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+	};
 -- 
-2.5.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
