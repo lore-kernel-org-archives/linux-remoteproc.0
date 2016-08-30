@@ -1,127 +1,72 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH] soc: ti: wkup_m3_ipc: switch to using remoteproc OF infrastructure
-Date: Thu, 11 Aug 2016 19:35:29 -0500
-Message-ID: <20160812003529.519-1-s-anna@ti.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 30 Aug 2016 11:23:50 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v8 11/18] ARM: DT: STiH407: Add i2s_in pinctrl
+ configuration
+Message-ID: <20160830102350.GT1661@dell>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+ <1472223413-7254-12-git-send-email-peter.griffin@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Dave Gerlach <d-gerlach@ti.com>, Lee Jones <lee.jones@linaro.org>, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1472223413-7254-12-git-send-email-peter.griffin@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The remoteproc framework has been enhanced recently to provide new
-OF API to retrieve a remoteproc handle by client drivers through a
-standard 'rprocs' property in client nodes. The wkup_m3_ipc driver
-has been using a custom 'ti,rproc' property until now, switch this
-to use this new OF infrastructure. The wkup_m3_ipc driver has been
-fixed up to provide backward compatibility for older DTBs by
-replacing the older property with the standard newer property.
+On Fri, 26 Aug 2016, Peter Griffin wrote:
 
-The wkup_m3_ipc binding has also been updated accordingly.
+> This patch adds the pinctrl config for the i2s_in pins
+> used by the uniperif reader IP.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-pinctrl.dtsi | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
-This patch is based on the discussion [1] for introducing new standard
-OF API in remoteproc core series [2] and the exporting of couple of
-functions in OF base code [3].
+Acked-by: Lee Jones <lee.jones@linaro.org>
+  
+> diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> index 0fb5c8a..537db7e 100644
+> --- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> @@ -1090,6 +1090,30 @@
+>  				};
+>  			};
+>  
+> +			i2s_in {
+> +				pinctrl_i2s_8ch_in: i2s_8ch_in{
+> +					st,pins {
+> +						mclk = <&pio32 5 ALT1 IN>;
+> +						lrclk = <&pio32 7 ALT1 IN>;
+> +						sclk = <&pio32 6 ALT1 IN>;
+> +						data0 = <&pio32 4 ALT1 IN>;
+> +						data1 = <&pio33 0 ALT1 IN>;
+> +						data2 = <&pio33 1 ALT1 IN>;
+> +						data3 = <&pio33 2 ALT1 IN>;
+> +						data4 = <&pio33 3 ALT1 IN>;
+> +					};
+> +				};
+> +
+> +				pinctrl_i2s_2ch_in: i2s_2ch_in{
+> +					st,pins {
+> +						mclk = <&pio32 5 ALT1 IN>;
+> +						lrclk = <&pio32 7 ALT1 IN>;
+> +						sclk = <&pio32 6 ALT1 IN>;
+> +						data0 = <&pio32 4 ALT1 IN>;
+> +					};
+> +				};
+> +			};
+> +
+>  			serial3 {
+>  				pinctrl_serial3: serial3-0 {
+>  					st,pins {
 
-With this in place, the remoteproc core need not be looking for the
-TI specific property anymore. I will submit the DTS changes once this
-makes it to mainline.
-
-regards
-Suman
-
-[1] https://patchwork.kernel.org/patch/9237767/
-[2] http://marc.info/?l=linux-kernel&m=146894341701010&w=2
-[3] https://patchwork.kernel.org/patch/9276181/
-
- .../devicetree/bindings/soc/ti/wkup_m3_ipc.txt     |  9 ++++++--
- drivers/soc/ti/wkup_m3_ipc.c                       | 26 +++++++++++++++++++++-
- 2 files changed, 32 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt b/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt
-index 401550487ed6..2ea7dd91acff 100644
---- a/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt
-+++ b/Documentation/devicetree/bindings/soc/ti/wkup_m3_ipc.txt
-@@ -23,12 +23,17 @@ Required properties:
- 			with the Wakeup M3 processor
- - interrupts:		Contains the interrupt information for the wkup_m3
- 			interrupt that signals the MPU.
--- ti,rproc:		phandle to the wkup_m3 rproc node so the IPC driver
-+- rprocs:		phandle to the wkup_m3 rproc node so the IPC driver
- 			can boot it.
- - mboxes:		phandles used by IPC framework to get correct mbox
- 			channel for communication. Must point to appropriate
- 			mbox_wkupm3 child node.
- 
-+Deprecated properties:
-+----------------------
-+- ti,rproc:		This property has been replaced with the "rprocs"
-+			property.
-+
- Example:
- --------
- /* AM33xx */
-@@ -48,7 +53,7 @@ Example:
- 				compatible = "ti,am3352-wkup-m3-ipc";
- 				reg = <0x1324 0x24>;
- 				interrupts = <78>;
--				ti,rproc = <&wkup_m3>;
-+				rprocs = <&wkup_m3>;
- 				mboxes = <&mailbox &mbox_wkupm3>;
- 			};
- 
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 8823cc81ae45..86085f9bf6a8 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -1,7 +1,7 @@
- /*
-  * AMx3 Wkup M3 IPC driver
-  *
-- * Copyright (C) 2015 Texas Instruments, Inc.
-+ * Copyright (C) 2015-2016 Texas Instruments, Inc.
-  *
-  * Dave Gerlach <d-gerlach@ti.com>
-  *
-@@ -390,6 +390,8 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct task_struct *task;
- 	struct wkup_m3_ipc *m3_ipc;
-+	struct property *nprop, *oprop;
-+	const char nprop_name[] = "rprocs";
- 
- 	m3_ipc = devm_kzalloc(dev, sizeof(*m3_ipc), GFP_KERNEL);
- 	if (!m3_ipc)
-@@ -415,6 +417,28 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	/* provide compatibility for older DTBs using ti,rproc property */
-+	nprop = of_find_property(dev->of_node, "rprocs", NULL);
-+	if (!nprop) {
-+		oprop = of_find_property(dev->of_node, "ti,rproc", NULL);
-+		if (!oprop) {
-+			dev_err(&pdev->dev, "node is missing ti,rproc property\n");
-+			return -ENODEV;
-+		}
-+
-+		nprop = kzalloc(sizeof(*nprop) + sizeof(nprop_name),
-+				GFP_KERNEL);
-+		if (!nprop)
-+			return -ENOMEM;
-+
-+		nprop->name = (char *)nprop + sizeof(*nprop);
-+		snprintf(nprop->name, sizeof(nprop_name), nprop_name);
-+		nprop->value = oprop->value;
-+		nprop->length = oprop->length;
-+		of_update_property(dev->of_node, nprop);
-+		of_remove_property(dev->of_node, oprop);
-+	}
-+
- 	m3_ipc->mbox_client.dev = dev;
- 	m3_ipc->mbox_client.tx_done = NULL;
- 	m3_ipc->mbox_client.tx_prepare = NULL;
 -- 
-2.9.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
