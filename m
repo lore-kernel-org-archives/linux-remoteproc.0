@@ -1,82 +1,118 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Wed, 31 Aug 2016 12:28:19 +0100
-From: Lee Jones <lee.jones@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+Date: Tue, 30 Aug 2016 15:21:12 +0100
+From: Peter Griffin <peter.griffin@linaro.org>
 Subject: Re: [PATCH v8 15/18] ARM: STi: DT: STiH407: Add uniperif reader dt
  nodes
-Message-ID: <20160831112819.GJ27357@dell>
+Message-ID: <20160830142112.GA22514@griffinp-ThinkPad-X1-Carbon-2nd>
 References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
  <1472223413-7254-16-git-send-email-peter.griffin@linaro.org>
  <20160830100148.GO1661@dell>
- <20160830142112.GA22514@griffinp-ThinkPad-X1-Carbon-2nd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20160830142112.GA22514@griffinp-ThinkPad-X1-Carbon-2nd>
-To: Peter Griffin <peter.griffin@linaro.org>
+In-Reply-To: <20160830100148.GO1661@dell>
+To: Lee Jones <lee.jones@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, 30 Aug 2016, Peter Griffin wrote:
-> Thanks for reviewing and your very valuable feedback.
-> On Tue, 30 Aug 2016, Lee Jones wrote:
-> > On Fri, 26 Aug 2016, Peter Griffin wrote:
-> > 
-> > > This patch adds the DT node for the uniperif reader
-> > > IP block found on STiH407 family silicon.
-> > > 
-> > > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-> > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> > > ---
-> > >  arch/arm/boot/dts/stih407-family.dtsi | 26 ++++++++++++++++++++++++++
-> > >  1 file changed, 26 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-> > > index d263c96..bdddf2c 100644
-> > > --- a/arch/arm/boot/dts/stih407-family.dtsi
-> > > +++ b/arch/arm/boot/dts/stih407-family.dtsi
-> > > @@ -956,5 +956,31 @@
-> > >  			st,version = <5>;
-> > >  			st,mode = "SPDIF";
-> > >  		};
-> > > +
-> > > +		sti_uni_reader0: sti-uni-reader@0 {
-> > > +			compatible = "st,sti-uni-reader";
-> > > +			status = "disabled";
-> > 
-> > I find it's normally nicer to place the status of the node at the
-> > bottom, separated by a '\n'.
+Hi Lee,
+
+Thanks for reviewing and your very valuable feedback.
+
+On Tue, 30 Aug 2016, Lee Jones wrote:
+
+> On Fri, 26 Aug 2016, Peter Griffin wrote:
 > 
-> Ok I'll add a superflous '\n' in the next version.
-
-Everyone loves a smart arse!
-
-In this case I believe the '\n' to be a functional separator and not
-superfluous at all.
-
-> > > +			dai-name = "Uni Reader #0 (PCM IN)";
+> > This patch adds the DT node for the uniperif reader
+> > IP block found on STiH407 family silicon.
 > > 
-> > Oooo, not seen something like this before.
+> > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  arch/arm/boot/dts/stih407-family.dtsi | 26 ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
 > > 
-> > If it does not already have one, it would require a DT Ack.
+> > diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> > index d263c96..bdddf2c 100644
+> > --- a/arch/arm/boot/dts/stih407-family.dtsi
+> > +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> > @@ -956,5 +956,31 @@
+> >  			st,version = <5>;
+> >  			st,mode = "SPDIF";
+> >  		};
+> > +
+> > +		sti_uni_reader0: sti-uni-reader@0 {
+> > +			compatible = "st,sti-uni-reader";
+> > +			status = "disabled";
 > 
-> No idea, the driver got merged 1 year ago.
-> 
-> Arnaud did you get a DT ack when you merged this driver & binding?
-> > 
-> > > +			st,version = <3>;
-> > 
-> > This will likely need a DT Ack too.  We usually encode this sort of
-> > information in the compatible string.
-> 
-> See 05c1b4480e86a871b18030d6f3d532dc0ecdf38c
+> I find it's normally nicer to place the status of the node at the
+> bottom, separated by a '\n'.
 
-Well Rob's the boss.  We certainly never used to take 'device ID' or
-'version' attributes.  I guess something must have changed.
+Ok I'll add a superflous '\n' in the next version.
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>  There isn't a functional difference
+> admittedly, but it would be my preference, since it's not describing
+> the device per se.
+
+Will change to your preference in the next version.
+
+> 
+> > +			#sound-dai-cells = <0>;
+> > +			st,syscfg = <&syscfg_core>;
+> > +			reg = <0x8D83000 0x158>;
+> 
+> We usually use lower-case for the address.
+
+Will fix.
+
+> 
+> Since this has a 'reg' property, the '0' in the node name does not
+> look appropriate.
+
+Will fix.
+> 
+> > +			interrupts = <GIC_SPI 87 IRQ_TYPE_NONE>;
+> > +			dmas = <&fdma0 5 0 1>;
+> > +			dma-names = "rx";
+> > +			dai-name = "Uni Reader #0 (PCM IN)";
+> 
+> Oooo, not seen something like this before.
+> 
+> If it does not already have one, it would require a DT Ack.
+
+No idea, the driver got merged 1 year ago.
+
+Arnaud did you get a DT ack when you merged this driver & binding?
+> 
+> > +			st,version = <3>;
+> 
+> This will likely need a DT Ack too.  We usually encode this sort of
+> information in the compatible string.
+
+See 05c1b4480e86a871b18030d6f3d532dc0ecdf38c
+> 
+> > +		};
+> > +
+> > +		sti_uni_reader1: sti-uni-reader@1 {
+> > +			compatible = "st,sti-uni-reader";
+> > +			status = "disabled";
+> > +			#sound-dai-cells = <0>;
+> > +			st,syscfg = <&syscfg_core>;
+> > +			reg = <0x8D84000 0x158>;
+> > +			interrupts = <GIC_SPI 88 IRQ_TYPE_NONE>;
+> > +			dmas = <&fdma0 6 0 1>;
+> > +			dma-names = "rx";
+> > +			dai-name = "Uni Reader #1 (HDMI RX)";
+> > +			st,version = <3>;
+> > +		};
+> 
+> All as above.
+> 
+> >  	};
+> >  };
+> 
+
+Regards,
+
+Peter.
