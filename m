@@ -1,55 +1,93 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 09/13] rpmsg: remove pointless OOM prints
-Date: Fri, 12 Aug 2016 18:42:24 -0500
-Message-ID: <20160812234228.39731-10-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 30 Aug 2016 10:56:46 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v8 16/18] ARM: DT: STi: stihxxx-b2120: Add DT nodes for
+ STi audio card
+Message-ID: <20160830095646.GM1661@dell>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+ <1472223413-7254-17-git-send-email-peter.griffin@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1472223413-7254-17-git-send-email-peter.griffin@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These types of error prints are superfluous. The system will
-pick up on OOM issues and let the user know. While at this,
-fix the usage of using a structure instead of the actual
-variable in one of the allocations.
+On Fri, 26 Aug 2016, Peter Griffin wrote:
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+> This patch enables the uniperif players 2 & 3 for b2120 boards
+> and also adds the "simple-audio-card" device node to interconnect
+> the SoC sound device and the codec.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  arch/arm/boot/dts/stihxxx-b2120.dtsi | 45 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index fe03b2aef450..1dbe756a987d 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -220,10 +220,8 @@ static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info *vrp,
- 	struct device *dev = rpdev ? &rpdev->dev : &vrp->vdev->dev;
- 
- 	ept = kzalloc(sizeof(*ept), GFP_KERNEL);
--	if (!ept) {
--		dev_err(dev, "failed to kzalloc a new ept\n");
-+	if (!ept)
- 		return NULL;
--	}
- 
- 	kref_init(&ept->refcount);
- 	mutex_init(&ept->cb_lock);
-@@ -514,11 +512,9 @@ static struct rpmsg_channel *rpmsg_create_channel(struct virtproc_info *vrp,
- 		return NULL;
- 	}
- 
--	rpdev = kzalloc(sizeof(struct rpmsg_channel), GFP_KERNEL);
--	if (!rpdev) {
--		pr_err("kzalloc failed\n");
-+	rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
-+	if (!rpdev)
- 		return NULL;
--	}
- 
- 	rpdev->vrp = vrp;
- 	rpdev->src = chinfo->src;
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+> diff --git a/arch/arm/boot/dts/stihxxx-b2120.dtsi b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+> index 722c63f..1f64bb6 100644
+> --- a/arch/arm/boot/dts/stihxxx-b2120.dtsi
+> +++ b/arch/arm/boot/dts/stihxxx-b2120.dtsi
+> @@ -131,5 +131,50 @@
+>  				dvb-card	= <STV0367_TDA18212_NIMA_1>;
+>  			};
+>  		};
+> +
+> +		sti_uni_player2: sti-uni-player@2 {
+> +			status = "okay";
+> +		};
+> +
+> +		sti_uni_player3: sti-uni-player@3 {
+> +			status = "okay";
+> +		};
+> +
+> +		sti_sasg_codec: sti-sasg-codec {
+> +			status = "okay";
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&pinctrl_spdif_out>;
+> +		};
+> +
+> +		sound {
+> +			compatible = "simple-audio-card";
+> +			simple-audio-card,name = "sti audio card";
+> +			status = "okay";
+> +
+> +			simple-audio-card,dai-link@0 {
+> +				/* DAC */
+> +				format = "i2s";
+> +				mclk-fs = <256>;
+> +				cpu {
+> +					sound-dai = <&sti_uni_player2>;
+> +				};
+> +
+> +				codec {
+> +					sound-dai = <&sti_sasg_codec 1>;
+> +				};
+> +			};
+> +			simple-audio-card,dai-link@1 {
+> +				/* SPDIF */
+> +				format = "left_j";
+> +				mclk-fs = <128>;
+> +				cpu {
+> +					sound-dai = <&sti_uni_player3>;
+> +				};
+> +
+> +				codec {
+> +					sound-dai = <&sti_sasg_codec 0>;
+> +				};
+> +			};
+> +		};
+>  	};
+>  };
+
 -- 
-2.9.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
