@@ -1,74 +1,60 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 10 Aug 2016 10:15:46 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] remoteproc: core: Rework obtaining a rproc from a DT
- phandle
-Message-ID: <20160810171546.GN26240@tuxbot>
-References: <20160719154905.23344-1-lee.jones@linaro.org>
- <20160719154905.23344-2-lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 30 Aug 2016 10:57:24 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v8 18/18] drm/virtio: kconfig: Fixup white space.
+Message-ID: <20160830095724.GN1661@dell>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+ <1472223413-7254-19-git-send-email-peter.griffin@linaro.org>
+ <20160830095425.GK1661@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20160719154905.23344-2-lee.jones@linaro.org>
-To: ssantosh@kernel.org
-Cc: Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, linux-remoteproc@vger.kernel.org, ludovic.barre@st.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20160830095425.GK1661@dell>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue 19 Jul 08:49 PDT 2016, Lee Jones wrote:
+On Tue, 30 Aug 2016, Lee Jones wrote:
 
-> In this patch we;
->  - Use a subsystem generic phandle to obtain an rproc
->    - We have to support TI's bespoke version for the time being
->  - Convert wkup_m3_ipc driver to new API
->  - Rename the call to be more like other, similar OF calls
->  - Move feature-not-enabled inline stub to the headers
->  - Strip out duplicate code by calling into of_get_rproc_by_index()
+> On Fri, 26 Aug 2016, Peter Griffin wrote:
 > 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 41 ++++++++----------------------------
->  drivers/soc/ti/wkup_m3_ipc.c         | 14 +++---------
->  include/linux/remoteproc.h           |  4 ++--
->  3 files changed, 14 insertions(+), 45 deletions(-)
+> > Use tabs instead of spaces.
+> > 
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > ---
+> >  drivers/gpu/drm/virtio/Kconfig | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-[..]
-> diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-> index 8823cc8..15481f3 100644
-> --- a/drivers/soc/ti/wkup_m3_ipc.c
-> +++ b/drivers/soc/ti/wkup_m3_ipc.c
-> @@ -385,7 +385,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	int irq, ret;
-> -	phandle rproc_phandle;
->  	struct rproc *m3_rproc;
->  	struct resource *res;
->  	struct task_struct *task;
-> @@ -430,16 +429,9 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
->  		return PTR_ERR(m3_ipc->mbox);
->  	}
->  
-> -	if (of_property_read_u32(dev->of_node, "ti,rproc", &rproc_phandle)) {
-> -		dev_err(&pdev->dev, "could not get rproc phandle\n");
-> -		ret = -ENODEV;
-> -		goto err_free_mbox;
-> -	}
-> -
-> -	m3_rproc = rproc_get_by_phandle(rproc_phandle);
-> -	if (!m3_rproc) {
-> -		dev_err(&pdev->dev, "could not get rproc handle\n");
-> -		ret = -EPROBE_DEFER;
-> +	m3_rproc = of_get_rproc_by_phandle(dev->of_node);
-> +	if (IS_ERR(m3_rproc)) {
-> +		ret = PTR_ERR(m3_rproc);
->  		goto err_free_mbox;
->  	}
->  
+> For my own reference:
+>   Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Santosh, do you have any objections to me merging this?
+Whoops!  Please ignore the "For my own reference" part.  I used the
+wrong key-combo shortcut.
 
-of_get_rproc_by_phandle() will fall back and attempt to acquire the
-handle from ti,rproc if the generic "rprocs" property doesn't exist.
+> > diff --git a/drivers/gpu/drm/virtio/Kconfig b/drivers/gpu/drm/virtio/Kconfig
+> > index 90357d9..2d83932 100644
+> > --- a/drivers/gpu/drm/virtio/Kconfig
+> > +++ b/drivers/gpu/drm/virtio/Kconfig
+> > @@ -2,10 +2,10 @@ config DRM_VIRTIO_GPU
+> >  	tristate "Virtio GPU driver"
+> >  	depends on DRM
+> >  	select VIRTIO
+> > -        select DRM_KMS_HELPER
+> > -        select DRM_TTM
+> > +	select DRM_KMS_HELPER
+> > +	select DRM_TTM
+> >  	help
+> >  	   This is the virtual GPU driver for virtio.  It can be used with
+> > -           QEMU based VMMs (like KVM or Xen).
+> > +	   QEMU based VMMs (like KVM or Xen).
+> >  
+> >  	   If unsure say M.
+> 
 
-Regards,
-Bjorn
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
