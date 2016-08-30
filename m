@@ -1,124 +1,116 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 15/19] remoteproc: core: Add function to verify resource table consistency
-Date: Wed, 31 Aug 2016 22:50:18 +0200
-Message-ID: <1472676622-32533-16-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 30 Aug 2016 10:17:42 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 3/4] dt-binding: remoteproc: venus rproc dt binding
+ document
+Message-ID: <20160830171742.GN15161@tuxbot>
+References: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
+ <1471622000-1906-4-git-send-email-stanimir.varbanov@linaro.org>
+ <20160823173259.GA13327@rob-hp-laptop>
+ <fbf25a9e-348b-9047-37ef-1b96808dea31@mm-sol.com>
+ <20160825000521.GH15161@tuxbot>
+ <3429173a-d55a-51e1-0973-7e5bd31be297@linaro.org>
+ <20160826222345.GK15161@tuxbot>
+ <5afd7f2f-ec1b-d2ce-b833-81df010e24de@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5afd7f2f-ec1b-d2ce-b833-81df010e24de@linaro.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Rob Clark <robdclark@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As resource table could be parsed several times, at different times,
-to avoid sanity check duplication, let's introduce a new function
-to verify the complete integrity of one resource table.
+On Mon 29 Aug 04:48 PDT 2016, Stanimir Varbanov wrote:
 
-This new function is called before copying it in cache and
-accessing it.
+[..]
+> > Trying to wrap my head around how the iommu part works here. The
+> > downstream code seems to indicate that this is a "generic" secure iommu
+> > interface - used by venus, camera and kgsl; likely for dealing with DRM
+> > protected buffers.
+> 
+> The secure iommu interface is for content protected buffers. But these
+> secure iommu contexts aren't used by msm DRM nor Venus in mainline. In
+> Venus case I use non-secure iommu context for data buffers.
+> 
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 79 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+We must consider the case when DRM, VFE and Venus handles protected
+buffers.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 67b83d0..b43553f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -791,6 +791,78 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		rproc_remove_virtio_dev(rvdev);
- }
- 
-+static int rproc_rsc_tbl_sanity_check(struct rproc *rproc,
-+		struct resource_table *table_ptr, int len)
-+{
-+	struct device *dev = &rproc->dev;
-+	int i;
-+
-+	if (len < sizeof(*table_ptr))
-+		goto out;
-+
-+	for (i = 0; i < table_ptr->num; i++) {
-+		int offset = table_ptr->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
-+		int avail = len - offset - sizeof(*hdr);
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+		struct fw_rsc_vdev *v;
-+		struct fw_rsc_spare *s;
-+
-+		/* make sure table isn't truncated */
-+		if (avail < 0)
-+			goto out;
-+
-+		if (offset == FW_RSC_ADDR_ANY || offset == 0) {
-+			dev_err(dev, "Entry %d: bad offset value %x\n", i, offset);
-+			return -EINVAL;
-+		}
-+
-+		dev_dbg(dev, "rsc: type %d\n", hdr->type);
-+
-+		switch (hdr->type) {
-+		case RSC_CARVEOUT:
-+			avail -= sizeof(struct fw_rsc_carveout);
-+			break;
-+		case RSC_DEVMEM:
-+			avail -= sizeof(struct fw_rsc_devmem);
-+			break;
-+		case RSC_TRACE:
-+			avail -= sizeof(struct fw_rsc_trace);
-+			break;
-+		case RSC_VDEV:
-+			v = rsc;
-+			avail -= sizeof(struct fw_rsc_vdev);
-+			if (avail < 0)
-+				goto out;
-+
-+			avail -= v->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
-+				 + v->config_len;
-+			break;
-+		case RSC_SPARE:
-+			avail -= sizeof(struct fw_rsc_spare);
-+			if (avail < 0)
-+				goto out;
-+
-+			s = rsc;
-+			avail -= s->len;
-+			break;
-+		default:
-+			dev_err(&rproc->dev, "Unsupported resource type: %d\n",
-+				hdr->type);
-+			return -EINVAL;
-+		}
-+		if (avail < 0)
-+			goto out;
-+	}
-+
-+	return 0;
-+
-+out:
-+	dev_err(dev, "Invalid resource table format\n");
-+	dump_stack();
-+	return -EINVAL;
-+}
-+
- #if defined(DEBUG)
- static void rproc_dump_resource_table(struct rproc *rproc,
- 				      struct resource_table *table, int size)
-@@ -1267,6 +1339,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 	}
- 
-+	/*  verify resource table consistency */
-+	ret = rproc_rsc_tbl_sanity_check(rproc, table, tablesz);
-+	if (ret) {
-+		dev_err(dev, "Failed to get valid resource table,%d\n", ret);
-+		goto clean_up;
-+	}
-+
- 	/*
- 	 * Create a copy of the resource table. When a virtio device starts
- 	 * and calls vring_new_virtqueue() the address of the allocated vring
--- 
-1.9.1
+> > 
+> > As such the iommu tables are not part of the venus rproc; I believe they
+> > should either be tied into the msm-iommu driver or perhaps exposed as
+> > its own iommu(?).
+> 
+> The page tables are in msm-iommu driver.
+> 
+
+So, just to verify your answer, the msm-iommu driver will handle both
+protected and unprotected?
+
+> > 
+> > 
+> > But I presume from your inclusion that you've concluded that the venus
+> > firmware we have refuses to execute without these tables at least
+> > initialized, is this correct?
+> 
+> Yes, the SMC call for PAS memory-setup will fail if this page table is
+> not initialized.
+> 
+
+If the msm-iommu driver will handle the protected buffers (or if there
+will be a separate iommu driver for protected buffers) it should issue
+these calls, to not be dependant on the rproc-venus driver.
+
+With that I think we should make the rproc-venus driver depend on this
+being setup (even if this means creating a "dummy" driver for the
+protected iommu handling for now).
+
+> > 
+> >>>
+> >>>> The address is not really fixed, cause the firmware could support
+> >>>> relocation. In this example I just picked up the next free memory region
+> >>>> in memory-reserved from msm8916.dtsi.
+> >>>>
+> >>>
+> >>> In 8974 we do have a physical region where it's expected to be loaded.
+> >>>
+> >>> So in line with upcoming remoteproc work we should support referencing a
+> >>> reserved-memory node with either reg or size.
+> >>>
+> >>> In the case of spotting a "reg" we're currently better off using
+> >>> ioremap. We're looking at getting the remoteproc core to deal with this
+> >>> mess.
+> >>
+> >> You mean that remoteproc core will parse memory-region property?
+> >>
+> > 
+> > It has to, because it's a quite common scenario for remoteproc drivers
+> > to either get its backing memory from a static region or be restricted
+> > to part of system ram - properties that reserved-memory and
+> > memory-region captures already.
+> 
+> OK, I have no issues with that. My concern is the manual parsing of
+> 'memory-region' and 'reg' properties in remoteproc core.
+> 
+> So that idea is to have generic binding for rproc, that would be good.
+> 
+
+I do share your concerns here. But it's a recurring issue with
+remoteproc drivers.
+
+[..]
+> > But I presume we have the implementation issue of dma_alloc_coherent()
+> > failing in either case with the 5MB size. I think we need to look into
+> 
+> I'd be good to include Marek Szyprowski? At least he will know what
+> design restrictions there are.
+> 
+
+Please do. The more I look at this the more I think we must use the
+existing infrastructure for allocating "dma memory". Getting
+dma_alloc_coherent() supporting non-power-of-2 memory regions would
+allow us to use the existing infrastructure, for both fixed and
+dynamically placed memory carveouts in remoteproc.
+
+Regards,
+Bjorn
