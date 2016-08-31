@@ -1,200 +1,91 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 11/13] rpmsg: align code with open parenthesis
-Date: Fri, 12 Aug 2016 18:42:26 -0500
-Message-ID: <20160812234228.39731-12-s-anna@ti.com>
-In-Reply-To: <20160812234228.39731-1-s-anna@ti.com>
-References: <20160812234228.39731-1-s-anna@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 12/19] remoteproc: core: Add vdev support and force mode to resource amending function
+Date: Wed, 31 Aug 2016 22:50:15 +0200
+Message-ID: <1472676622-32533-13-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch fixes most of the existing alignment checkpatch check
-warnings of the type "Alignment should match open parenthesis"
-in the virtio rpmsg bus code. A couple of them have been left as
-is to not exceed the 80-char limit.
+This patch proposes diverse updates to rproc_update_resource_table_entry
+function:
+- rename rproc_update_resource_table_entry to __update_rsc_tbl_entry to
+  have shorter function name.
+- add RSC_VDEV support
+- add force mode resource even if resource already fixed on firmware side.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 40 +++++++++++++++++++---------------------
- include/linux/rpmsg.h            |  6 +++---
- 2 files changed, 22 insertions(+), 24 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 5d74ee4c00f1..e55d30d217ba 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -162,7 +162,7 @@ static struct device_attribute rpmsg_dev_attrs[] = {
- 
- /* rpmsg devices and drivers are matched using the service name */
- static inline int rpmsg_id_match(const struct rpmsg_channel *rpdev,
--				  const struct rpmsg_device_id *id)
-+				 const struct rpmsg_device_id *id)
- {
- 	return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 30e9c70..aff1a00 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1027,13 +1027,15 @@ static int __verify_rsc_tbl_entry(struct rproc *rproc,
+ 	return -EINVAL;
  }
-@@ -212,8 +212,9 @@ static void __ept_release(struct kref *kref)
  
- /* for more info, see below documentation of rpmsg_create_ept() */
- static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info *vrp,
--		struct rpmsg_channel *rpdev, rpmsg_rx_cb_t cb,
--		void *priv, u32 addr)
-+						 struct rpmsg_channel *rpdev,
-+						 rpmsg_rx_cb_t cb,
-+						 void *priv, u32 addr)
+-static int rproc_update_resource_table_entry(struct rproc *rproc,
++static int __update_rsc_tbl_entry(struct rproc *rproc,
+ 				struct rproc_request_resource *request,
+-				struct resource_table *table, int size)
++				struct resource_table *table, int size,
++				bool force)
  {
- 	int id_min, id_max, id;
- 	struct rpmsg_endpoint *ept;
-@@ -300,7 +301,7 @@ free_ept:
-  * Returns a pointer to the endpoint on success, or NULL on error.
-  */
- struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *rpdev,
--				rpmsg_rx_cb_t cb, void *priv, u32 addr)
-+					rpmsg_rx_cb_t cb, void *priv, u32 addr)
- {
- 	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
- }
-@@ -380,7 +381,7 @@ static int rpmsg_dev_probe(struct device *dev)
+ 	struct fw_rsc_carveout *tblc, *newc;
+ 	struct fw_rsc_devmem *tbld, *newd;
+ 	struct fw_rsc_trace *tblt, *newt;
++	struct fw_rsc_vdev *tblv, *newv;
+ 	int updated = true;
+ 	int i;
  
- 	/* need to tell remote processor's name service about this channel ? */
- 	if (rpdev->announce &&
--			virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
-+	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
- 		struct rpmsg_ns_msg nsm;
+@@ -1054,7 +1056,8 @@ static int rproc_update_resource_table_entry(struct rproc *rproc,
+ 				    sizeof(*tblc->name)))
+ 				break;
  
- 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
-@@ -405,7 +406,7 @@ static int rpmsg_dev_remove(struct device *dev)
+-			memcpy(tblc, newc, request->size);
++			if (tblc->pa == FW_RSC_ADDR_ANY || force)
++				memcpy(tblc, newc, request->size);
  
- 	/* tell remote processor's name service we're removing this channel */
- 	if (rpdev->announce &&
--			virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
-+	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
- 		struct rpmsg_ns_msg nsm;
+ 			return updated;
+ 		case RSC_DEVMEM:
+@@ -1079,6 +1082,20 @@ static int rproc_update_resource_table_entry(struct rproc *rproc,
+ 			memcpy(tblt, newt, request->size);
  
- 		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
-@@ -550,7 +551,7 @@ static struct rpmsg_channel *rpmsg_create_channel(struct virtproc_info *vrp,
-  * and destroy it
-  */
- static int rpmsg_destroy_channel(struct virtproc_info *vrp,
--					struct rpmsg_channel_info *chinfo)
-+				 struct rpmsg_channel_info *chinfo)
- {
- 	struct virtio_device *vdev = vrp->vdev;
- 	struct device *dev;
-@@ -681,7 +682,7 @@ static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
-  * Returns 0 on success and an appropriate error value on failure.
-  */
- int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev, u32 src, u32 dst,
--					void *data, int len, bool wait)
-+			      void *data, int len, bool wait)
- {
- 	struct virtproc_info *vrp = rpdev->vrp;
- 	struct device *dev = &rpdev->dev;
-@@ -747,10 +748,9 @@ int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev, u32 src, u32 dst,
- 	memcpy(msg->data, data, len);
+ 			return updated;
++		case RSC_VDEV:
++			tblv = rsc;
++			newv = request->resource;
++			if (newv->id != tblv->id)
++				break;
++
++			if (request->size > (sizeof(*tblv) +
++				    tblv->num_of_vrings * sizeof(struct fw_rsc_vdev_vring) +
++				    tblv->config_len))
++				return -ENOSPC;
++
++			memcpy(tblv, newv, request->size);
++
++			return updated;
+ 		default:
+ 			dev_err(&rproc->dev,
+ 				"Unsupported resource type: %d\n",
+@@ -1176,8 +1193,8 @@ rproc_apply_resource_overrides(struct rproc *rproc,
+ 		int updated = 0;
  
- 	dev_dbg(dev, "TX From 0x%x, To 0x%x, Len %d, Flags %d, Reserved %d\n",
--					msg->src, msg->dst, msg->len,
--					msg->flags, msg->reserved);
-+		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
- 	print_hex_dump(KERN_DEBUG, "rpmsg_virtio TX: ", DUMP_PREFIX_NONE, 16, 1,
--					msg, sizeof(*msg) + msg->len, true);
-+		       msg, sizeof(*msg) + msg->len, true);
- 
- 	sg_init_one(&sg, msg, sizeof(*msg) + len);
- 
-@@ -784,17 +784,16 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 	int err;
- 
- 	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
--					msg->src, msg->dst, msg->len,
--					msg->flags, msg->reserved);
-+		msg->src, msg->dst, msg->len, msg->flags, msg->reserved);
- 	print_hex_dump(KERN_DEBUG, "rpmsg_virtio RX: ", DUMP_PREFIX_NONE, 16, 1,
--					msg, sizeof(*msg) + msg->len, true);
-+		       msg, sizeof(*msg) + msg->len, true);
- 
- 	/*
- 	 * We currently use fixed-sized buffers, so trivially sanitize
- 	 * the reported payload length.
- 	 */
- 	if (len > RPMSG_BUF_SIZE ||
--		msg->len > (len - sizeof(struct rpmsg_hdr))) {
-+	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
- 		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
- 		return -EINVAL;
- 	}
-@@ -889,7 +888,7 @@ static void rpmsg_xmit_done(struct virtqueue *svq)
- 
- /* invoked when a name service announcement arrives */
- static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
--							void *priv, u32 src)
-+			void *priv, u32 src)
- {
- 	struct rpmsg_ns_msg *msg = data;
- 	struct rpmsg_channel *newch;
-@@ -899,8 +898,7 @@ static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
- 	int ret;
- 
- 	print_hex_dump(KERN_DEBUG, "NS announcement: ",
--			DUMP_PREFIX_NONE, 16, 1,
--			data, len, true);
-+		       DUMP_PREFIX_NONE, 16, 1, data, len, true);
- 
- 	if (len != sizeof(*msg)) {
- 		dev_err(dev, "malformed ns msg (%d)\n", len);
-@@ -922,8 +920,8 @@ static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
- 	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
- 
- 	dev_info(dev, "%sing channel %s addr 0x%x\n",
--			msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
--			msg->name, msg->addr);
-+		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
-+		 msg->name, msg->addr);
- 
- 	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
- 	chinfo.src = RPMSG_ADDR_ANY;
-@@ -1008,7 +1006,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
- 
- 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
--								GFP_KERNEL);
-+					  GFP_KERNEL);
- 		WARN_ON(err); /* sanity check; this can't really happen */
- 	}
- 
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index ada50ff36da0..565917cdb4d2 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -173,7 +173,7 @@ int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
- void unregister_rpmsg_driver(struct rpmsg_driver *drv);
- void rpmsg_destroy_ept(struct rpmsg_endpoint *);
- struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
--				rpmsg_rx_cb_t cb, void *priv, u32 addr);
-+					rpmsg_rx_cb_t cb, void *priv, u32 addr);
- int
- rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
- 
-@@ -265,7 +265,7 @@ int rpmsg_sendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst)
-  */
- static inline
- int rpmsg_send_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
--							void *data, int len)
-+			  void *data, int len)
- {
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
- }
-@@ -340,7 +340,7 @@ int rpmsg_trysendto(struct rpmsg_channel *rpdev, void *data, int len, u32 dst)
-  */
- static inline
- int rpmsg_trysend_offchannel(struct rpmsg_channel *rpdev, u32 src, u32 dst,
--							void *data, int len)
-+			     void *data, int len)
- {
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
+ 		/* If we already have a table, update it with the new values. */
+-		updated = rproc_update_resource_table_entry(rproc, resource,
+-							    table, size);
++		updated = __update_rsc_tbl_entry(rproc, resource, table, size,
++						 false);
+ 		if (updated < 0) {
+ 			table = ERR_PTR(updated);
+ 			goto out;
 -- 
-2.9.0
+1.9.1
