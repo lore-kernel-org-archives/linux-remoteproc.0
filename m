@@ -1,173 +1,91 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH v2 1/2] remoteproc: core: Add rproc OF look-up functions
-Date: Tue, 16 Aug 2016 15:38:23 +0100
-Message-Id: <20160816143824.4120-1-lee.jones@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, ssantosh@kernel.org, linux-remoteproc@vger.kernel.org, ludovic.barre@st.com, s-anna@ti.com, loic.pallardy@st.com, Lee Jones <lee.jones@linaro.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 10/19] remoteproc: core: Add function to verify an existing resource in rsc table
+Date: Wed, 31 Aug 2016 22:50:13 +0200
+Message-ID: <1472676622-32533-11-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-- of_rproc_by_index(): look-up and obtain a reference to a rproc
-                       using the DT phandle "rprocs" and a index.
+When a firmware is build, it can be loaded with a resource
+usually detailing shared; memory, virtual device, trace log
+information etc.
+However, some SoCs or platforms require some hard-coded information.
+Information may be fixed on both sides: firmware and rproc.
+Until now, no method exists which allows to compare resource table
+fixed resources and rproc driver configuration.
+This new function changes that performing comparison between resources.
+Only carveout resource supported for the moment.
 
-- of_rproc_by_name():  lookup and obtain a reference to a rproc
-                       using the DT phandle "rprocs" and "rproc-names".
+It is rproc driver responsibility to provide list of resources to
+verify during boot.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
-
-v1 => v2:
- - s/ti,rprocs/ti,rproc
-
-drivers/remoteproc/remoteproc_core.c | 78 +++++++++++++++++++++++++++++++++++-
- include/linux/remoteproc.h           | 25 +++++++++++-
- 2 files changed, 101 insertions(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 47 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index fe0539e..fe362fb 100644
+index 345bdfb..ffb56c0 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -41,6 +41,8 @@
- #include <linux/virtio_ids.h>
- #include <linux/virtio_ring.h>
- #include <asm/byteorder.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
- 
- #include "remoteproc_internal.h"
- 
-@@ -1191,6 +1193,81 @@ out:
+@@ -951,6 +951,53 @@ int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *reso
  }
- EXPORT_SYMBOL(rproc_shutdown);
+ EXPORT_SYMBOL(rproc_request_resource);
  
-+#ifdef CONFIG_OF
-+/**
-+ * of_get_rproc_by_index() - lookup and obtain a reference to an rproc
-+ * @np: node to search for rproc phandle
-+ * @index: index into the phandle list
-+ *
-+ * This function increments the remote processor's refcount, so always
-+ * use rproc_put() to decrement it back once rproc isn't needed anymore.
-+ *
-+ * Returns a pointer to the rproc struct on success or an appropriate error
-+ * code otherwise.
-+ */
-+struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
++static int __verify_rsc_tbl_entry(struct rproc *rproc,
++				struct rproc_request_resource *request,
++				struct resource_table *table, int size)
 +{
-+	struct rproc *rproc = NULL, *r;
-+	struct device_node *rproc_np;
++	struct fw_rsc_carveout *tblc, *newc;
++	int i;
 +
-+	if (index < 0) {
-+		pr_err("Invalid index: %d\n", index);
-+		return ERR_PTR(-EINVAL);
-+	}
++	for (i = 0; i < table->num; i++) {
++		int offset = table->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)table + offset;
++		void *rsc = (void *)hdr + sizeof(*hdr);
 +
-+	rproc_np = of_parse_phandle(np, "rprocs", index);
-+	if (!rproc_np) {
-+		/* Unfortunately we have to support this, at least for now */
-+		rproc_np = of_parse_phandle(np, "ti,rproc", index);
-+		if (!rproc_np) {
-+			pr_err("Failed to obtain phandle\n");
-+			return ERR_PTR(-ENODEV);
++		if (request->type != hdr->type)
++			continue;
++
++		switch (hdr->type) {
++		case RSC_CARVEOUT:
++			tblc = rsc;
++			newc = request->resource;
++
++			if (strncmp(newc->name, tblc->name,
++				    sizeof(*tblc->name)))
++				break;
++
++			/* verify firmware resource is part of rproc one */
++			if (tblc->pa != FW_RSC_ADDR_ANY) {
++				int pa_offset = tblc->pa - newc->pa;
++
++				/* is carevout too small ? */
++				if (pa_offset < 0)
++					return -EINVAL;
++
++				if (pa_offset + tblc->len > newc->len)
++					return -EINVAL;
++			}
++			return 0;
++		default:
++			dev_err(&rproc->dev,
++				"Unsupported resource type: %d\n",
++				hdr->type);
++			return -EINVAL;
 +		}
 +	}
 +
-+	mutex_lock(&rproc_list_mutex);
-+	list_for_each_entry(r, &rproc_list, node) {
-+		if (r->dev.parent && r->dev.parent->of_node == rproc_np) {
-+			get_device(&r->dev);
-+			rproc = r;
-+			break;
-+		}
-+	}
-+	mutex_unlock(&rproc_list_mutex);
-+
-+	of_node_put(rproc_np);
-+
-+	if (!rproc)
-+		pr_err("Could not find rproc, deferring\n");
-+
-+	return rproc ?: ERR_PTR(-EPROBE_DEFER);
++	return -EINVAL;
 +}
-+EXPORT_SYMBOL(of_get_rproc_by_index);
 +
-+/**
-+ * of_get_rproc_by_name() - lookup and obtain a reference to an rproc
-+ * @np: node to search for rproc
-+ * @name: name of the remoteproc from device's point of view
-+ *
-+ * This function increments the remote processor's refcount, so always
-+ * use rproc_put() to decrement it back once rproc isn't needed anymore.
-+ *
-+ * Returns a pointer to the rproc struct on success or an appropriate error
-+ * code otherwise.
-+ */
-+struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
-+{
-+	int index;
-+
-+	if (unlikely(!name))
-+		return ERR_PTR(-EINVAL);
-+
-+	index = of_property_match_string(np, "rproc-names", name);
-+
-+	return of_get_rproc_by_index(np, index);
-+}
-+EXPORT_SYMBOL(of_get_rproc_by_name);
-+
- /**
-  * rproc_get_by_phandle() - find a remote processor by phandle
-  * @phandle: phandle to the rproc
-@@ -1203,7 +1280,6 @@ EXPORT_SYMBOL(rproc_shutdown);
-  *
-  * Returns the rproc handle on success, and NULL on failure.
-  */
--#ifdef CONFIG_OF
- struct rproc *rproc_get_by_phandle(phandle phandle)
- {
- 	struct rproc *rproc = NULL, *r;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 1c457a8..f130938 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -487,7 +487,6 @@ struct rproc_vdev {
- 	u32 rsc_offset;
- };
- 
--struct rproc *rproc_get_by_phandle(phandle phandle);
- struct rproc *rproc_alloc(struct device *dev, const char *name,
- 				const struct rproc_ops *ops,
- 				const char *firmware, int len);
-@@ -511,4 +510,28 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- 	return rvdev->rproc;
- }
- 
-+#ifdef CONFIG_OF
-+extern struct rproc *of_get_rproc_by_index(struct device_node *np,
-+					   int index);
-+extern struct rproc *of_get_rproc_by_name(struct device_node *np,
-+					  const char *name);
-+extern struct rproc *rproc_get_by_phandle(phandle phandle);
-+#else
-+static inline
-+struct rproc *of_get_rproc_by_index(struct device_node *np, int index)
-+{
-+	return NULL;
-+}
-+static inline
-+struct rproc *of_get_rproc_by_name(struct device_node *np, const char *name)
-+{
-+	return NULL;
-+}
-+static inline
-+struct rproc *rproc_get_by_phandle(phandle phandle)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_OF */
-+
- #endif /* REMOTEPROC_H */
+ static int rproc_update_resource_table_entry(struct rproc *rproc,
+ 				struct rproc_request_resource *request,
+ 				struct resource_table *table, int size)
 -- 
-2.9.0
+1.9.1
