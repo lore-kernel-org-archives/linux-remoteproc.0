@@ -1,97 +1,165 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/2] dt-binding: remoteproc: Introduce ADSP loader binding
-Date: Wed, 17 Aug 2016 10:27:34 -0700
-Message-Id: <1471454854-28302-2-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471454854-28302-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471454854-28302-1-git-send-email-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 18/19] remoteproc: core: Add function to create remoteproc local resource table
+Date: Wed, 31 Aug 2016 22:50:21 +0200
+Message-ID: <1472676622-32533-19-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This document defines the binding for a component that loads firmware
-and control the life cycle of the Qualcomm ADSP core.
+Rproc driver has now the capability to add resources dynamically
+thanks to rproc_request_resource API.
+Depending on associated action, resource request could impact
+firmware resource table or define new local resource.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+In order to preserve current remoteproc resource handling
+mechanism, all local resources are gathered in a local resource
+table which won't be shared with firmware and proceed by
+remoteproc core as firmware one.
+
+It is rproc driver responsibility to provide the right resource
+information using rproc_request_resource API.
+
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 69 ++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+ drivers/remoteproc/remoteproc_core.c | 80 +++++++++++++++++++++++++++++++++++-
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 80 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-new file mode 100644
-index 000000000000..077d9b6b9cd0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -0,0 +1,69 @@
-+Qualcomm ADSP Peripheral Image Loader
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index cbfbdf8..73b460a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1270,6 +1270,65 @@ static int rproc_apply_resource_overrides(struct rproc *rproc,
+ 	return ret;
+ }
+ 
++static struct resource_table*
++rproc_local_resource_create(struct rproc *rproc, int *tablesz)
++{
++	struct fw_rsc_hdr *hdr;
++	struct fw_rsc_spare *spare_rsc;
++	struct rproc_request_resource *resource;
++	struct resource_table *table = NULL;
++	int size = 0, ret;
 +
-+This document defines the binding for a component that loads and boots firmware
-+on the Qualcomm ADSP core.
++	/* compute total request size */
++	list_for_each_entry(resource, &rproc->override_resources, node) {
++		if (resource->action == RSC_ACT_LOCAL)
++			size += resource->size + sizeof(hdr) + 4; /* entry offset */
++	}
 +
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+		    "qcom,adsp-pil"
++	/* any extra resource ? */
++	if (!size)
++		goto out;
 +
-+- interrupts-extended:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must list the watchdog, fatal IRQs ready, handover and
-+		    stop-ack IRQs
++	/* add table header and spare resource */
++	size += sizeof(*table);
++	size += sizeof(*hdr) + sizeof(*spare_rsc) + 4;
 +
-+- interrupt-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
++	/* create new rsc tbl with only a spare resource */
++	table = devm_kzalloc(&rproc->dev, size, GFP_KERNEL);
++	if (!table) {
++		table = ERR_PTR(-ENOMEM);
++		goto out;
++	}
++	table->ver = 1;
++	table->num = 1;
++	table->offset[0] = sizeof(*table) + 4;
 +
-+- cx-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the regulator to be held on behalf of the
-+		    booting of the Hexagon core
++	hdr = (void *)table + table->offset[0];
++	hdr->type = RSC_SPARE;
 +
-+- memory-region:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the reserved-memory for the ADSP
++	spare_rsc = (void *)hdr + sizeof(*hdr);
++	spare_rsc->len = size - table->offset[0] - sizeof(*hdr) - sizeof(*spare_rsc);
 +
-+- qcom,smem-states:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the smem state for requesting the ADSP to
-+		    shut down
++	/* add new resource one by one */
++	list_for_each_entry(resource, &rproc->override_resources, node) {
++		if (resource->action == RSC_ACT_LOCAL) {
++			/* Create a new enty */
++			ret = __add_rsc_tbl_entry(rproc, resource,
++					table, size);
++			if (ret) {
++				table = ERR_PTR(ret);
++				goto out;
++			}
++		}
++	}
 +
-+- qcom,smem-state-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "stop"
++	*tablesz = size;
++	rproc_dump_resource_table(rproc, table, *tablesz);
++out:
++	return table;
++}
 +
-+= EXAMPLE
-+The following example describes the resources needed to boot control the
-+ADSP, as it is found on MSM8974 boards.
 +
-+	adsp {
-+		compatible = "qcom,adsp-pil";
+ /*
+  * take a firmware and boot a remote processor with it.
+  */
+@@ -1278,7 +1337,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	struct device *dev = &rproc->dev;
+ 	const char *name = rproc->firmware;
+ 	struct resource_table *table, *loaded_table;
+-	int ret, tablesz;
++	int ret, tablesz, local_tablesz;
+ 
+ 	ret = rproc_fw_sanity_check(rproc, fw);
+ 	if (ret)
+@@ -1335,6 +1394,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 			goto clean_up;
+ 		}
+ 
++		rproc->local_table = rproc_local_resource_create(rproc, &local_tablesz);
++		if (IS_ERR(rproc->local_table)) {
++			dev_err(dev, "Failed to create local resource table\n");
++			goto clean_up;
++		}
+ 	}
+ 
+ 	/* reset max_notifyid */
+@@ -1348,6 +1412,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
+ 	}
+ 
++	ret = rproc_handle_resources(rproc, rproc->local_table,
++				     local_tablesz, rproc_vdev_handler);
++	if (ret) {
++		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
++		goto clean_up;
++	}
 +
-+		interrupts-extended = <&intc 0 162 1>,
-+				      <&adsp_smp2p_in 0 0>,
-+				      <&adsp_smp2p_in 1 0>,
-+				      <&adsp_smp2p_in 2 0>,
-+				      <&adsp_smp2p_in 3 0>;
-+		interrupt-names = "wdog",
-+				  "fatal",
-+				  "ready",
-+				  "handover",
-+				  "stop-ack";
+ 	/* handle fw resources which are required to boot rproc */
+ 	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
+ 				     rproc_loading_handlers);
+@@ -1356,6 +1427,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
+ 	}
+ 
++	ret = rproc_handle_resources(rproc, rproc->local_table,
++				     local_tablesz, rproc_loading_handlers);
++	if (ret) {
++		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
++		goto clean_up;
++	}
 +
-+		cx-supply = <&pm8841_s2>;
-+
-+		memory-region = <&adsp_region>;
-+
-+		qcom,smem-states = <&adsp_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+	};
+ 	/* load the ELF segments to memory */
+ 	ret = rproc_load_segments(rproc, fw);
+ 	if (ret) {
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 2b0f1d7..653e6f3 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -495,6 +495,7 @@ struct rproc {
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
+ 	struct resource_table *cached_table;
++	struct resource_table *local_table;
+ 	bool has_iommu;
+ 	bool auto_boot;
+ };
 -- 
-2.5.0
+1.9.1
