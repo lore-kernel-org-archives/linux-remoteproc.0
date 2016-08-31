@@ -1,70 +1,109 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 07/14] rpmsg: Split off generic tail of create_channel()
-Date: Mon, 15 Aug 2016 17:17:13 -0700
-Message-Id: <1471306640-29917-8-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 03/19] remoteproc: core: Add function to amend an existing resource table entry
+Date: Wed, 31 Aug 2016 22:50:06 +0200
+Message-ID: <1472676622-32533-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The tail of create_channel() is common among all rpmsg backends, so
-split it off from the virtio specific part to allow it to be extracted
-to the rpmsg core.
+From: Lee Jones <lee.jones@linaro.org>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Sometimes the firmware does not know best.
+
+When a firmware is built, it can be loaded with a resource table, usually
+detailing shared; memory, virtual device, trace log information etc.
+However, some vendors require this hard-coded information to be amended
+with new/improved information obtained from Device Tree for instance.
+
+Until now, no method exists which allows the resource table to be amended.
+The addition of this function changes that.  It is now possible to pull in
+a resource table and amend it before it is finally shared with the remote
+device.
+
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 63 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1dc7a1149c51..5cadb75a225d 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -129,6 +129,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static int rpmsg_register_device(struct rpmsg_device *rpdev);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 6c48c11..330ad4f 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -915,6 +915,69 @@ int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
+ }
+ EXPORT_SYMBOL(rproc_request_resource);
  
- /* sysfs show configuration fields */
- #define rpmsg_show_attr(field, path, format_string)			\
-@@ -583,10 +584,22 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 
- 	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
- 
-+	rpdev->dev.parent = &vrp->vdev->dev;
-+	ret = rpmsg_register_device(rpdev);
-+	if (ret)
-+		return NULL;
++static int rproc_update_resource_table_entry(struct rproc *rproc,
++				struct rproc_request_resource *request,
++				struct resource_table *table, int size)
++{
++	struct fw_rsc_carveout *tblc, *newc;
++	struct fw_rsc_devmem *tbld, *newd;
++	struct fw_rsc_trace *tblt, *newt;
++	int updated = true;
++	int i;
 +
-+	return rpdev;
++	for (i = 0; i < table->num; i++) {
++		int offset = table->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)table + offset;
++		void *rsc = (void *)hdr + sizeof(*hdr);
++
++		if (request->type != hdr->type)
++			continue;
++
++		switch (hdr->type) {
++		case RSC_CARVEOUT:
++			tblc = rsc;
++			newc = request->resource;
++
++			if (strncmp(newc->name, tblc->name,
++				    sizeof(*tblc->name)))
++				break;
++
++			memcpy(tblc, newc, request->size);
++
++			return updated;
++		case RSC_DEVMEM:
++			tbld = rsc;
++			newd = request->resource;
++
++			if (strncmp(newd->name, tbld->name,
++				    sizeof(*tbld->name)))
++				break;
++
++			memcpy(tbld, newd, request->size);
++
++			return updated;
++		case RSC_TRACE:
++			tblt = rsc;
++			newt = request->resource;
++
++			if (strncmp(newt->name, tblt->name,
++				    sizeof(*tblt->name)))
++				break;
++
++			memcpy(tblt, newt, request->size);
++
++			return updated;
++		default:
++			dev_err(&rproc->dev,
++				"Unsupported resource type: %d\n",
++				hdr->type);
++			return -EINVAL;
++		}
++	}
++
++	return !updated;
 +}
 +
-+static int rpmsg_register_device(struct rpmsg_device *rpdev)
-+{
-+	struct device *dev = &rpdev->dev;
-+	int ret;
-+
- 	dev_set_name(&rpdev->dev, "%s:%s",
- 		     dev_name(dev->parent), rpdev->id.name);
- 
--	rpdev->dev.parent = &vrp->vdev->dev;
- 	rpdev->dev.bus = &rpmsg_bus;
- 	rpdev->dev.release = rpmsg_release_device;
- 
-@@ -594,10 +607,9 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 	if (ret) {
- 		dev_err(dev, "device_register failed: %d\n", ret);
- 		put_device(&rpdev->dev);
--		return NULL;
- 	}
- 
--	return rpdev;
-+	return ret;
- }
- 
  /*
+  * take a firmware and boot a remote processor with it.
+  */
 -- 
-2.5.0
+1.9.1
