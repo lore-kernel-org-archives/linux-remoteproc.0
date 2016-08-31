@@ -1,289 +1,158 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 4/4] remoteproc: qcom: add Venus video core firmware loader driver
-Date: Fri, 19 Aug 2016 18:53:20 +0300
-Message-Id: <1471622000-1906-5-git-send-email-stanimir.varbanov@linaro.org>
-In-Reply-To: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
-References: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Clark <robdclark@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 14/19] remoteproc: core: Add resource request action support
+Date: Wed, 31 Aug 2016 22:50:17 +0200
+Message-ID: <1472676622-32533-15-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This driver will load and authenticate the Venus firmware and
-bringing it core out of reset. Those two functionalities are
-via secure monitor calls to trusted environment.
+Handle resource requests according to associated action.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/Kconfig          |  10 ++
- drivers/remoteproc/Makefile         |   1 +
- drivers/remoteproc/qcom_venus_pil.c | 226 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 237 insertions(+)
- create mode 100644 drivers/remoteproc/qcom_venus_pil.c
+ drivers/remoteproc/remoteproc_core.c | 96 ++++++++++++++++++++----------------
+ 1 file changed, 53 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index f76b3b1dca1a..90f66cfe054f 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -107,6 +107,16 @@ config QCOM_WCNSS_PIL
- 	  Say y here to support the Peripheral Image Loader for the Qualcomm
- 	  Wireless Connectivity Subsystem.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 25a429b..67b83d0 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1171,58 +1171,64 @@ static int __add_rsc_tbl_entry(struct rproc *rproc,
+ 	return 0;
+ }
  
-+config QCOM_VENUS_PIL
-+	tristate "Qualcomm Venus Peripheral Image Loader"
-+	depends on OF && ARCH_QCOM
-+	depends on QCOM_SCM
-+	select QCOM_MDT_LOADER
-+	select REMOTEPROC
-+	help
-+	  Say y here to support Qualcomm Peripherial Image Loader for the
-+	  Venus remote processor.
+-static struct resource_table*
+-rproc_apply_resource_overrides(struct rproc *rproc,
+-			       struct resource_table **orig_table,
+-			       int *tablesz)
++static int rproc_apply_resource_overrides(struct rproc *rproc,
++			       struct resource_table *table,
++			       int tablesz)
+ {
+ 	struct rproc_request_resource *resource;
+-	struct resource_table *table = *orig_table;
+-	int size = *tablesz;
++	int ret = 0, size = tablesz;
+ 
+ 	if (!table && size != 0) {
+ 		dev_err(&rproc->dev, "No table present but table size is set\n");
+-		return ERR_PTR(-EINVAL);
++		ret = -EINVAL;
++		goto out;
+ 	}
+ 
+-
+-	rproc_dump_resource_table(rproc, table, size);
+-
+-	if (!table) {
+-		size = sizeof(*table);
+-		table = devm_kzalloc(&rproc->dev, size, GFP_KERNEL);
+-		if (!table) {
+-			table = ERR_PTR(-ENOMEM);
+-			goto out;
+-		}
+-		table->ver = 1;
+-	}
++	rproc_dump_resource_table(rproc, table, tablesz);
+ 
+ 	list_for_each_entry(resource, &rproc->override_resources, node) {
+-		int updated = 0;
++		switch (resource->action) {
++		case RSC_ACT_VERIFY:
++			if (__verify_rsc_tbl_entry(rproc, resource, table, size)) {
++				ret = -EINVAL;
++				goto out;
++			}
++			break;
++		case RSC_ACT_UPDATE:
++			/* If we already have a table, update it with the new values. */
++			ret = __update_rsc_tbl_entry(rproc, resource, table, size, false);
++			if (ret < 0)
++				goto out;
++			break;
++		case RSC_ACT_FORCE_UPDATE:
++			/* If we already have a table, update it with the new values. */
++			ret = __update_rsc_tbl_entry(rproc, resource, table, size, true);
++			if (ret < 0)
++				goto out;
+ 
+-		/* If we already have a table, update it with the new values. */
+-		updated = __update_rsc_tbl_entry(rproc, resource, table, size,
+-						 false);
+-		if (updated < 0) {
+-			table = ERR_PTR(updated);
+-			goto out;
+-		}
+-		if (updated)
+-			continue;
++			if (ret)
++				break;
+ 
+-		/* Didn't find matching resource entry -- creating a new one. */
+-		updated = __add_rsc_tbl_entry(rproc, resource, table, size);
+-		if (updated)
++			/* Didn't find matching resource entry -- creating a new one. */
++			ret = __add_rsc_tbl_entry(rproc, resource, table, size);
++			if (ret)
++				goto out;
 +
- config ST_REMOTEPROC
- 	tristate "ST remoteproc support"
- 	depends on ARCH_STI
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 6dfb62ed643f..852711b89844 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -15,4 +15,5 @@ obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
- obj-$(CONFIG_QCOM_WCNSS_IRIS)		+= qcom_wcnss_iris.o
- obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss.o
-+obj-$(CONFIG_QCOM_VENUS_PIL)            += qcom_venus_pil.o
- obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
-diff --git a/drivers/remoteproc/qcom_venus_pil.c b/drivers/remoteproc/qcom_venus_pil.c
-new file mode 100644
-index 000000000000..891c7d9a96bf
---- /dev/null
-+++ b/drivers/remoteproc/qcom_venus_pil.c
-@@ -0,0 +1,226 @@
-+/*
-+ * Qualcomm Venus Peripheral Image Loader
-+ *
-+ * Copyright (C) 2016 Linaro Ltd
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/dma-mapping.h>
-+#include <linux/firmware.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
-+#include <linux/qcom_scm.h>
-+#include <linux/remoteproc.h>
-+
-+#include "qcom_mdt_loader.h"
-+#include "remoteproc_internal.h"
-+
-+#define VENUS_CRASH_REASON_SMEM		425
-+#define VENUS_FIRMWARE_NAME		"venus.mdt"
-+#define VENUS_PAS_ID			9
-+#define VENUS_FW_MEM_SIZE		SZ_8M
-+#define VENUS_PGTABLE_OFFSET		(6 * SZ_1M)
-+
-+struct qcom_venus {
-+	struct device *dev;
-+	struct rproc *rproc;
-+	phys_addr_t fw_addr;
-+	phys_addr_t mem_phys;
-+	void *mem_va;
-+	size_t mem_size;
-+	size_t pgtable_sz;
-+};
-+
-+static int venus_load(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct qcom_venus *venus = rproc->priv;
-+	phys_addr_t pa;
-+	size_t fw_size;
-+	bool relocate;
-+	int ret;
-+
-+	ret = qcom_scm_pas_init_image(VENUS_PAS_ID, fw->data, fw->size);
-+	if (ret) {
-+		dev_err(&rproc->dev, "invalid firmware metadata (%d)\n", ret);
-+		return -EINVAL;
-+	}
-+
-+	ret = qcom_mdt_parse(fw, &venus->fw_addr, &fw_size, &relocate);
-+	if (ret) {
-+		dev_err(&rproc->dev, "failed to parse mdt header (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	if (fw_size + venus->pgtable_sz > venus->mem_size)
-+		return -ENOMEM;
-+
-+	pa = relocate ? venus->mem_phys : venus->fw_addr;
-+
-+	ret = qcom_scm_pas_mem_setup(VENUS_PAS_ID, pa, fw_size);
-+	if (ret) {
-+		dev_err(&rproc->dev, "unable to setup memory (%d)\n", ret);
-+		return -EINVAL;
-+	}
-+
-+	return qcom_mdt_load(rproc, fw, VENUS_FIRMWARE_NAME);
-+}
-+
-+static const struct rproc_fw_ops venus_fw_ops = {
-+	.find_rsc_table = qcom_mdt_find_rsc_table,
-+	.load = venus_load,
-+};
-+
-+static int venus_start(struct rproc *rproc)
-+{
-+	struct qcom_venus *venus = rproc->priv;
-+	int ret;
-+
-+	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
-+	if (ret)
-+		dev_err(venus->dev,
-+			"authentication image and release reset failed (%d)\n",
-+			ret);
-+
++			break;
++		case RSC_ACT_LOCAL:
++			/* nothing to do */
++			break;
++		default:
++			dev_err(&rproc->dev, "Unsupported resource action: %d\n",
++				resource->action);
++			ret = -EINVAL;
+ 			goto out;
++		};
+ 	}
+ 
+-	rproc_dump_resource_table(rproc, table, size);
+-
+-	*tablesz = size;
+-
+  out:
+-	return table;
++	rproc_dump_resource_table(rproc, table, tablesz);
 +	return ret;
-+}
+ }
+ 
+ /*
+@@ -1261,12 +1267,6 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
+ 	}
+ 
+-	if (!list_empty(&rproc->override_resources)) {
+-		table = rproc_apply_resource_overrides(rproc, &table, &tablesz);
+-		if (IS_ERR(table))
+-			goto clean_up;
+-	}
+-
+ 	/*
+ 	 * Create a copy of the resource table. When a virtio device starts
+ 	 * and calls vring_new_virtqueue() the address of the allocated vring
+@@ -1281,6 +1281,16 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 
+ 	rproc->table_ptr = rproc->cached_table;
+ 
++	if (!list_empty(&rproc->override_resources)) {
++		ret = rproc_apply_resource_overrides(rproc, rproc->cached_table,
++						     tablesz);
++		if (ret) {
++			dev_err(dev, "Failed to apply overrides resources\n");
++			goto clean_up;
++		}
 +
-+static int venus_stop(struct rproc *rproc)
-+{
-+	struct qcom_venus *venus = rproc->priv;
-+	int ret;
-+
-+	ret = qcom_scm_pas_shutdown(VENUS_PAS_ID);
-+	if (ret)
-+		dev_err(venus->dev, "failed to shutdown: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void *venus_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct qcom_venus *venus = rproc->priv;
-+	s64 offset;
-+
-+	offset = da - venus->fw_addr;
-+
-+	if (offset < 0 || offset + len > venus->mem_size)
-+		return NULL;
-+
-+	return venus->mem_va + offset;
-+}
-+
-+static const struct rproc_ops venus_ops = {
-+	.start = venus_start,
-+	.stop = venus_stop,
-+	.da_to_va = venus_da_to_va,
-+};
-+
-+static int venus_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct qcom_venus *venus;
-+	struct rproc *rproc;
-+	dma_addr_t pgaddr;
-+	int ret;
-+
-+	if (!qcom_scm_is_available())
-+		return -EPROBE_DEFER;
-+
-+	if (!qcom_scm_pas_supported(VENUS_PAS_ID)) {
-+		dev_err(dev, "PAS is not available for venus\n");
-+		return -ENXIO;
 +	}
 +
-+	ret = of_reserved_mem_device_init(dev);
-+	if (ret)
-+		return ret;
-+
-+	rproc = rproc_alloc(dev, pdev->name, &venus_ops, VENUS_FIRMWARE_NAME,
-+			    sizeof(*venus));
-+	if (!rproc) {
-+		dev_err(dev, "unable to allocate remoteproc\n");
-+		ret = -ENOMEM;
-+		goto release_mem;
-+	}
-+
-+	rproc->fw_ops = &venus_fw_ops;
-+	venus = rproc->priv;
-+	venus->dev = dev;
-+	venus->rproc = rproc;
-+	venus->mem_size = VENUS_FW_MEM_SIZE;
-+
-+	platform_set_drvdata(pdev, venus);
-+
-+	venus->mem_va = dma_alloc_coherent(dev, venus->mem_size,
-+					   &venus->mem_phys, GFP_KERNEL);
-+	if (!venus->mem_va) {
-+		ret = -ENOMEM;
-+		goto free_rproc;
-+	}
-+
-+	ret = qcom_scm_iommu_secure_ptbl_size(0, &venus->pgtable_sz);
-+	if (ret)
-+		goto free_mem;
-+
-+	pgaddr = venus->mem_phys + VENUS_PGTABLE_OFFSET;
-+
-+	ret = qcom_scm_iommu_secure_ptbl_init(pgaddr, venus->pgtable_sz, 0);
-+	if (ret)
-+		goto free_mem;
-+
-+	ret = rproc_add(rproc);
-+	if (ret)
-+		goto free_mem;
-+
-+	return 0;
-+
-+free_mem:
-+	dma_free_coherent(dev, venus->mem_size, venus->mem_va, venus->mem_phys);
-+free_rproc:
-+	rproc_put(rproc);
-+release_mem:
-+	of_reserved_mem_device_release(dev);
-+
-+	return ret;
-+}
-+
-+static int venus_remove(struct platform_device *pdev)
-+{
-+	struct qcom_venus *venus = platform_get_drvdata(pdev);
-+	struct device *dev = venus->dev;
-+
-+	rproc_del(venus->rproc);
-+	rproc_put(venus->rproc);
-+	dma_free_coherent(dev, venus->mem_size, venus->mem_va, venus->mem_phys);
-+	of_reserved_mem_device_release(dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id venus_of_match[] = {
-+	{ .compatible = "qcom,venus-pil" },
-+	{ },
-+};
-+
-+static struct platform_driver venus_driver = {
-+	.probe = venus_probe,
-+	.remove = venus_remove,
-+	.driver = {
-+		.name = "qcom-venus-pil",
-+		.of_match_table = venus_of_match,
-+	},
-+};
-+
-+module_platform_driver(venus_driver);
-+MODULE_DESCRIPTION("Peripheral Image Loader for Venus");
-+MODULE_LICENSE("GPL v2");
+ 	/* reset max_notifyid */
+ 	rproc->max_notifyid = -1;
+ 
 -- 
-2.7.4
+1.9.1
