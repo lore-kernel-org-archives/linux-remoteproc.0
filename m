@@ -1,8 +1,8 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 09/19] remoteproc: core: Finalize dump resource table function
-Date: Wed, 31 Aug 2016 22:50:12 +0200
-Message-ID: <1472676622-32533-10-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 15/19] remoteproc: core: Add function to verify resource table consistency
+Date: Wed, 31 Aug 2016 22:50:18 +0200
+Message-ID: <1472676622-32533-16-git-send-email-loic.pallardy@st.com>
 In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
 References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
@@ -11,85 +11,114 @@ To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
 Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Diverse updates:
-- add cfg field display of vdev struct
-- add support of spare resource
-- put rproc_dump_resource_table under DEBUG compilation flag
+As resource table could be parsed several times, at different times,
+to avoid sanity check duplication, let's introduce a new function
+to verify the complete integrity of one resource table.
+
+This new function is called before copying it in cache and
+accessing it.
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 31 ++++++++++++++++++++++++++++---
- 1 file changed, 28 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 79 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index cd64fae..345bdfb 100644
+index 67b83d0..b43553f 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -791,15 +791,17 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+@@ -791,6 +791,78 @@ static void rproc_resource_cleanup(struct rproc *rproc)
  		rproc_remove_virtio_dev(rvdev);
  }
  
-+#if defined(DEBUG)
- static void rproc_dump_resource_table(struct rproc *rproc,
- 				      struct resource_table *table, int size)
- {
--	const char *types[] = {"carveout", "devmem", "trace", "vdev"};
-+	static const char *types[] = {"carveout", "devmem", "trace", "vdev", "spare"};
- 	struct device *dev = &rproc->dev;
- 	struct fw_rsc_carveout *c;
- 	struct fw_rsc_devmem *d;
- 	struct fw_rsc_trace *t;
- 	struct fw_rsc_vdev *v;
-+	struct fw_rsc_spare *s;
- 	int i, j;
- 
- 	if (!table) {
-@@ -814,6 +816,8 @@ static void rproc_dump_resource_table(struct rproc *rproc,
- 		int offset = table->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)table + offset;
- 		void *rsc = (void *)hdr + sizeof(*hdr);
-+		unsigned char *cfg;
-+		int len;
- 
- 		switch (hdr->type) {
- 		case RSC_CARVEOUT:
-@@ -867,14 +871,35 @@ static void rproc_dump_resource_table(struct rproc *rproc,
- 				dev_dbg(dev, "    Reserved (should be zero) [%d]\n\n",
- 					v->vring[j].reserved);
- 			}
++static int rproc_rsc_tbl_sanity_check(struct rproc *rproc,
++		struct resource_table *table_ptr, int len)
++{
++	struct device *dev = &rproc->dev;
++	int i;
 +
-+			dev_dbg(dev, "  Config table\n");
-+			cfg = (unsigned char *)(&v->vring[v->num_of_vrings]);
-+			len = 0;
-+			do {
-+				j = min(16, v->config_len - len);
-+				dev_dbg(dev, "    Config[%2d-%2d] = %*phC\n",
-+					len, len + j - 1, j, cfg + len);
-+				len += j;
-+			} while (len < v->config_len);
++	if (len < sizeof(*table_ptr))
++		goto out;
 +
++	for (i = 0; i < table_ptr->num; i++) {
++		int offset = table_ptr->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
++		int avail = len - offset - sizeof(*hdr);
++		void *rsc = (void *)hdr + sizeof(*hdr);
++		struct fw_rsc_vdev *v;
++		struct fw_rsc_spare *s;
++
++		/* make sure table isn't truncated */
++		if (avail < 0)
++			goto out;
++
++		if (offset == FW_RSC_ADDR_ANY || offset == 0) {
++			dev_err(dev, "Entry %d: bad offset value %x\n", i, offset);
++			return -EINVAL;
++		}
++
++		dev_dbg(dev, "rsc: type %d\n", hdr->type);
++
++		switch (hdr->type) {
++		case RSC_CARVEOUT:
++			avail -= sizeof(struct fw_rsc_carveout);
++			break;
++		case RSC_DEVMEM:
++			avail -= sizeof(struct fw_rsc_devmem);
++			break;
++		case RSC_TRACE:
++			avail -= sizeof(struct fw_rsc_trace);
++			break;
++		case RSC_VDEV:
++			v = rsc;
++			avail -= sizeof(struct fw_rsc_vdev);
++			if (avail < 0)
++				goto out;
++
++			avail -= v->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
++				 + v->config_len;
 +			break;
 +		case RSC_SPARE:
++			avail -= sizeof(struct fw_rsc_spare);
++			if (avail < 0)
++				goto out;
++
 +			s = rsc;
-+			dev_dbg(dev, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			dev_dbg(dev, "  Spare size: 0x%x bytes\n\n", s->len);
- 			break;
- 		default:
--			dev_dbg(dev, "Invalid resource type found: %d [hdr: %p]\n",
--				hdr->type, hdr);
-+			dev_dbg(dev, "Entry %d: Invalid resource type found: %d [hdr: %p]\n",
-+				i, hdr->type, hdr);
- 			return;
- 		}
++			avail -= s->len;
++			break;
++		default:
++			dev_err(&rproc->dev, "Unsupported resource type: %d\n",
++				hdr->type);
++			return -EINVAL;
++		}
++		if (avail < 0)
++			goto out;
++	}
++
++	return 0;
++
++out:
++	dev_err(dev, "Invalid resource table format\n");
++	dump_stack();
++	return -EINVAL;
++}
++
+ #if defined(DEBUG)
+ static void rproc_dump_resource_table(struct rproc *rproc,
+ 				      struct resource_table *table, int size)
+@@ -1267,6 +1339,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
  	}
- }
-+#else
-+static inline void rproc_dump_resource_table(struct rproc *rproc,
-+				      struct resource_table *table, int size)
-+{}
-+#endif
  
- int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *resource)
- {
++	/*  verify resource table consistency */
++	ret = rproc_rsc_tbl_sanity_check(rproc, table, tablesz);
++	if (ret) {
++		dev_err(dev, "Failed to get valid resource table,%d\n", ret);
++		goto clean_up;
++	}
++
+ 	/*
+ 	 * Create a copy of the resource table. When a virtio device starts
+ 	 * and calls vring_new_virtqueue() the address of the allocated vring
 -- 
 1.9.1
