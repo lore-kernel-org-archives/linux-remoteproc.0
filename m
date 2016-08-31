@@ -1,8 +1,8 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 17/19] remotecore: core: Add resource table pointer argument to rproc_handle_resource
-Date: Wed, 31 Aug 2016 22:50:20 +0200
-Message-ID: <1472676622-32533-18-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 09/19] remoteproc: core: Finalize dump resource table function
+Date: Wed, 31 Aug 2016 22:50:12 +0200
+Message-ID: <1472676622-32533-10-git-send-email-loic.pallardy@st.com>
 In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
 References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
@@ -11,60 +11,85 @@ To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
 Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In current version, rproc_handle_resource use rproc->table_ptr
-as default resource table, fixing table to handle.
-This patch adds resource table as function argument to have more
-flexibility and be able to handle resources from any table.
+Diverse updates:
+- add cfg field display of vdev struct
+- add support of spare resource
+- put rproc_dump_resource_table under DEBUG compilation flag
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 462cf79..cbfbdf8 100644
+index cd64fae..345bdfb 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -678,16 +678,16 @@ static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
- };
+@@ -791,15 +791,17 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 		rproc_remove_virtio_dev(rvdev);
+ }
  
- /* handle firmware resource entries before booting the remote processor */
--static int rproc_handle_resources(struct rproc *rproc, int len,
--				  rproc_handle_resource_t handlers[RSC_LAST])
-+static int rproc_handle_resources(struct rproc *rproc, struct resource_table *table_ptr,
-+				  int len, rproc_handle_resource_t handlers[RSC_LAST])
++#if defined(DEBUG)
+ static void rproc_dump_resource_table(struct rproc *rproc,
+ 				      struct resource_table *table, int size)
  {
+-	const char *types[] = {"carveout", "devmem", "trace", "vdev"};
++	static const char *types[] = {"carveout", "devmem", "trace", "vdev", "spare"};
  	struct device *dev = &rproc->dev;
- 	rproc_handle_resource_t handler;
- 	int ret = 0, i;
+ 	struct fw_rsc_carveout *c;
+ 	struct fw_rsc_devmem *d;
+ 	struct fw_rsc_trace *t;
+ 	struct fw_rsc_vdev *v;
++	struct fw_rsc_spare *s;
+ 	int i, j;
  
--	for (i = 0; i < rproc->table_ptr->num; i++) {
--		int offset = rproc->table_ptr->offset[i];
--		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
-+	for (i = 0; i < table_ptr->num; i++) {
-+		int offset = table_ptr->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
+ 	if (!table) {
+@@ -814,6 +816,8 @@ static void rproc_dump_resource_table(struct rproc *rproc,
+ 		int offset = table->offset[i];
+ 		struct fw_rsc_hdr *hdr = (void *)table + offset;
  		void *rsc = (void *)hdr + sizeof(*hdr);
++		unsigned char *cfg;
++		int len;
  
- 		dev_dbg(dev, "rsc: type %d\n", hdr->type);
-@@ -1341,14 +1341,16 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	rproc->max_notifyid = -1;
- 
- 	/* look for virtio devices and register them */
--	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
-+	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
-+				     rproc_vdev_handler);
- 	if (ret) {
- 		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
- 		goto clean_up;
+ 		switch (hdr->type) {
+ 		case RSC_CARVEOUT:
+@@ -867,14 +871,35 @@ static void rproc_dump_resource_table(struct rproc *rproc,
+ 				dev_dbg(dev, "    Reserved (should be zero) [%d]\n\n",
+ 					v->vring[j].reserved);
+ 			}
++
++			dev_dbg(dev, "  Config table\n");
++			cfg = (unsigned char *)(&v->vring[v->num_of_vrings]);
++			len = 0;
++			do {
++				j = min(16, v->config_len - len);
++				dev_dbg(dev, "    Config[%2d-%2d] = %*phC\n",
++					len, len + j - 1, j, cfg + len);
++				len += j;
++			} while (len < v->config_len);
++
++			break;
++		case RSC_SPARE:
++			s = rsc;
++			dev_dbg(dev, "Entry %d is of type %s\n", i, types[hdr->type]);
++			dev_dbg(dev, "  Spare size: 0x%x bytes\n\n", s->len);
+ 			break;
+ 		default:
+-			dev_dbg(dev, "Invalid resource type found: %d [hdr: %p]\n",
+-				hdr->type, hdr);
++			dev_dbg(dev, "Entry %d: Invalid resource type found: %d [hdr: %p]\n",
++				i, hdr->type, hdr);
+ 			return;
+ 		}
  	}
+ }
++#else
++static inline void rproc_dump_resource_table(struct rproc *rproc,
++				      struct resource_table *table, int size)
++{}
++#endif
  
- 	/* handle fw resources which are required to boot rproc */
--	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
-+	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
-+				     rproc_loading_handlers);
- 	if (ret) {
- 		dev_err(dev, "Failed to process resources: %d\n", ret);
- 		goto clean_up;
+ int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *resource)
+ {
 -- 
 1.9.1
