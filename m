@@ -1,148 +1,64 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 11/14] rpmsg: Move virtio specifics from public header
-Date: Mon, 15 Aug 2016 17:17:17 -0700
-Message-Id: <1471306640-29917-12-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1471306640-29917-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 00/19] remoteproc: Allow platform-specific drivers to request resources
+Date: Wed, 31 Aug 2016 22:50:03 +0200
+Message-ID: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Move virtio rpmsg implementation details from the public header file to
-the virtio rpmsg implementation.
+Once this patch-set has been applied; platform-specific remoteproc
+drivers will be able to amend existing resource table entries,
+provide new entries to be appended to an existing resource table
+(if one already exists), start a new resource table (if one does
+not already exist), and dump out resource table contents during
+development/debugging.  It will also be possible to start remote
+processors which do not require a resource table without being
+forced to provide a fake one.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 52 ++++++++++++++++++++++++++++++++++++++++
- include/linux/rpmsg.h            | 52 ----------------------------------------
- 2 files changed, 52 insertions(+), 52 deletions(-)
+We're also taking the liberty to provide some simple fix-ups.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 6ad4c657aaf4..a284b48285a1 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -75,6 +75,58 @@ struct virtproc_info {
- 	struct rpmsg_endpoint *ns_ept;
- };
- 
-+/* The feature bitmap for virtio rpmsg */
-+#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-+
-+/**
-+ * struct rpmsg_hdr - common header for all rpmsg messages
-+ * @src: source address
-+ * @dst: destination address
-+ * @reserved: reserved for future use
-+ * @len: length of payload (in bytes)
-+ * @flags: message flags
-+ * @data: @len bytes of message payload data
-+ *
-+ * Every message sent(/received) on the rpmsg bus begins with this header.
-+ */
-+struct rpmsg_hdr {
-+	u32 src;
-+	u32 dst;
-+	u32 reserved;
-+	u16 len;
-+	u16 flags;
-+	u8 data[0];
-+} __packed;
-+
-+/**
-+ * struct rpmsg_ns_msg - dynamic name service announcement message
-+ * @name: name of remote service that is published
-+ * @addr: address of remote service that is published
-+ * @flags: indicates whether service is created or destroyed
-+ *
-+ * This message is sent across to publish a new service, or announce
-+ * about its removal. When we receive these messages, an appropriate
-+ * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
-+ * or ->remove() handler of the appropriate rpmsg driver will be invoked
-+ * (if/as-soon-as one is registered).
-+ */
-+struct rpmsg_ns_msg {
-+	char name[RPMSG_NAME_SIZE];
-+	u32 addr;
-+	u32 flags;
-+} __packed;
-+
-+/**
-+ * enum rpmsg_ns_flags - dynamic name service announcement flags
-+ *
-+ * @RPMSG_NS_CREATE: a new remote service was just created
-+ * @RPMSG_NS_DESTROY: a known remote service was just destroyed
-+ */
-+enum rpmsg_ns_flags {
-+	RPMSG_NS_CREATE		= 0,
-+	RPMSG_NS_DESTROY	= 1,
-+};
-+
- /**
-  * @vrp: the remote processor this channel belongs to
-  */
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index a5679b9b6102..db409a8e3178 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -41,58 +41,6 @@
- #include <linux/kref.h>
- #include <linux/mutex.h>
- 
--/* The feature bitmap for virtio rpmsg */
--#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
--
--/**
-- * struct rpmsg_hdr - common header for all rpmsg messages
-- * @src: source address
-- * @dst: destination address
-- * @reserved: reserved for future use
-- * @len: length of payload (in bytes)
-- * @flags: message flags
-- * @data: @len bytes of message payload data
-- *
-- * Every message sent(/received) on the rpmsg bus begins with this header.
-- */
--struct rpmsg_hdr {
--	u32 src;
--	u32 dst;
--	u32 reserved;
--	u16 len;
--	u16 flags;
--	u8 data[0];
--} __packed;
--
--/**
-- * struct rpmsg_ns_msg - dynamic name service announcement message
-- * @name: name of remote service that is published
-- * @addr: address of remote service that is published
-- * @flags: indicates whether service is created or destroyed
-- *
-- * This message is sent across to publish a new service, or announce
-- * about its removal. When we receive these messages, an appropriate
-- * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
-- * or ->remove() handler of the appropriate rpmsg driver will be invoked
-- * (if/as-soon-as one is registered).
-- */
--struct rpmsg_ns_msg {
--	char name[RPMSG_NAME_SIZE];
--	u32 addr;
--	u32 flags;
--} __packed;
--
--/**
-- * enum rpmsg_ns_flags - dynamic name service announcement flags
-- *
-- * @RPMSG_NS_CREATE: a new remote service was just created
-- * @RPMSG_NS_DESTROY: a known remote service was just destroyed
-- */
--enum rpmsg_ns_flags {
--	RPMSG_NS_CREATE		= 0,
--	RPMSG_NS_DESTROY	= 1,
--};
--
- #define RPMSG_ADDR_ANY		0xFFFFFFFF
- 
- struct rpmsg_device;
+V2 is rebased on "auto-boot" series. It also includes following addons:
+- associate an action to the resource request. This allows platform-specific
+  driver to verify firmware resources, update or append resources in firmware
+  resource table or create a local resource table.
+- introduce spare resource to define room for resource table extension
+- centralize resource table sanity checks.
+
+Lee Jones (6):
+  remoteproc: core: New API to add new resources to the resource table
+  remoteproc: core: Add function to dump resource table
+  remoteproc: core: Add function to amend an existing resource table
+    entry
+  remoteproc: core: Add function to append a new resource table entry
+  remoteproc: core: Add function to over-ride current resource table
+  remoteproc: core: Support empty resource tables
+
+Loic Pallardy (13):
+  remoteproc: core: Add explicit message error if cached table failed
+  remoteproc: Add new resource type for resource table spare bytes
+  remoteproc: core: Associate action to resource request
+  remoteproc: core: Finalize dump resource table function
+  remoteproc: core: Add function to verify an existing resource in rsc
+    table
+  remoteproc: core: Add function to get resource table spare bytes
+    information
+  remoteproc: core: Add vdev support and force mode to resource amending
+    function
+  remoteproc: core: Append resource only if spare resource present
+  remoteproc: core: Add resource request action support
+  remoteproc: core: Add function to verify resource table consistency
+  remoteproc: core: Clean-up resource table sanity checks
+  remotecore: core: Add resource table pointer argument to
+    rproc_handle_resource
+  remoteproc: core: Add function to create remoteproc local resource
+    table
+
+ drivers/remoteproc/remoteproc_core.c | 683 ++++++++++++++++++++++++++++++++---
+ include/linux/remoteproc.h           |  59 ++-
+ 2 files changed, 691 insertions(+), 51 deletions(-)
+
 -- 
-2.5.0
+1.9.1
