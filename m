@@ -1,8 +1,8 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 19/19] remoteproc: core: Support empty resource tables
-Date: Wed, 31 Aug 2016 22:50:22 +0200
-Message-ID: <1472676622-32533-20-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 17/19] remotecore: core: Add resource table pointer argument to rproc_handle_resource
+Date: Wed, 31 Aug 2016 22:50:20 +0200
+Message-ID: <1472676622-32533-18-git-send-email-loic.pallardy@st.com>
 In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
 References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
@@ -11,62 +11,60 @@ To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
 Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lee Jones <lee.jones@linaro.org>
+In current version, rproc_handle_resource use rproc->table_ptr
+as default resource table, fixing table to handle.
+This patch adds resource table as function argument to have more
+flexibility and be able to handle resources from any table.
 
-Currently, when a remote processor does not require resources, the
-platform-specific remoteproc driver has to create a fake resource
-table in order to by-pass the strict checking.  But there is no hard
-requirement for a remote processor so require or support shared
-resources.  This patch removes the strict checking and skips
-resource table related operations if none is provided.
-
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 73b460a..235ca2a 100644
+index 462cf79..cbfbdf8 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -685,6 +685,9 @@ static int rproc_handle_resources(struct rproc *rproc, struct resource_table *ta
+@@ -678,16 +678,16 @@ static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
+ };
+ 
+ /* handle firmware resource entries before booting the remote processor */
+-static int rproc_handle_resources(struct rproc *rproc, int len,
+-				  rproc_handle_resource_t handlers[RSC_LAST])
++static int rproc_handle_resources(struct rproc *rproc, struct resource_table *table_ptr,
++				  int len, rproc_handle_resource_t handlers[RSC_LAST])
+ {
+ 	struct device *dev = &rproc->dev;
  	rproc_handle_resource_t handler;
  	int ret = 0, i;
  
-+	if (!table_ptr)
-+		return ret;
-+
- 	for (i = 0; i < table_ptr->num; i++) {
- 		int offset = table_ptr->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
-@@ -1337,7 +1340,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = &rproc->dev;
- 	const char *name = rproc->firmware;
- 	struct resource_table *table, *loaded_table;
--	int ret, tablesz, local_tablesz;
-+	int ret, tablesz = 0, local_tablesz;
+-	for (i = 0; i < rproc->table_ptr->num; i++) {
+-		int offset = rproc->table_ptr->offset[i];
+-		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
++	for (i = 0; i < table_ptr->num; i++) {
++		int offset = table_ptr->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
+ 		void *rsc = (void *)hdr + sizeof(*hdr);
  
- 	ret = rproc_fw_sanity_check(rproc, fw);
- 	if (ret)
-@@ -1361,8 +1364,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	/* look for the resource table */
- 	table = rproc_find_rsc_table(rproc, fw, &tablesz);
- 	if (!table) {
--		dev_err(dev, "Failed to find resource table\n");
--		goto clean_up;
-+		rproc->cached_table = table;
-+		goto skip_resources;
- 	}
+ 		dev_dbg(dev, "rsc: type %d\n", hdr->type);
+@@ -1341,14 +1341,16 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	rproc->max_notifyid = -1;
  
- 	/*  verify resource table consistency */
-@@ -1384,6 +1387,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	/* look for virtio devices and register them */
+-	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
++	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
++				     rproc_vdev_handler);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
  		goto clean_up;
  	}
  
-+skip_resources:
- 	rproc->table_ptr = rproc->cached_table;
- 
- 	if (!list_empty(&rproc->override_resources)) {
+ 	/* handle fw resources which are required to boot rproc */
+-	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
++	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
++				     rproc_loading_handlers);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to process resources: %d\n", ret);
+ 		goto clean_up;
 -- 
 1.9.1
