@@ -1,42 +1,39 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v8 02/18] MAINTAINERS: Add st slim core rproc driver to STi section.
-Date: Fri, 26 Aug 2016 15:56:37 +0100
-Message-Id: <1472223413-7254-3-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 06/19] remoteproc: core: Add explicit message error if cached table failed
+Date: Wed, 31 Aug 2016 22:50:09 +0200
+Message-ID: <1472676622-32533-7-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, Loic Pallardy <loic.pallardy@wanadoo.fr>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the slim core rproc driver to the STi section
-of the MAINTAINERS file.
+In rproc_fw_boot, add error message if kmemdump failed
+as done for other errors.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@wanadoo.fr>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0bbe4b1..5dd3b24 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1749,6 +1749,7 @@ F:	drivers/phy/phy-stih407-usb.c
- F:	drivers/phy/phy-stih41x-usb.c
- F:	drivers/pinctrl/pinctrl-st.c
- F:	drivers/remoteproc/st_remoteproc.c
-+F:	drivers/remoteproc/st_slim_rproc.c
- F:	drivers/reset/sti/
- F:	drivers/rtc/rtc-st-lpc.c
- F:	drivers/tty/serial/st-asc.c
-@@ -1757,6 +1758,7 @@ F:	drivers/usb/host/ehci-st.c
- F:	drivers/usb/host/ohci-st.c
- F:	drivers/watchdog/st_lpc_wdt.c
- F:	drivers/ata/ahci_st.c
-+F:	include/linux/remoteproc/st_slim_rproc.h
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 96bc8c644..3282a4e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1139,8 +1139,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	 * cached_table will be copied into device memory.
+ 	 */
+ 	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
+-	if (!rproc->cached_table)
++	if (!rproc->cached_table) {
++		dev_err(dev, "Failed to create cached table\n");
+ 		goto clean_up;
++	}
  
- ARM/STM32 ARCHITECTURE
- M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+ 	rproc->table_ptr = rproc->cached_table;
+ 
 -- 
 1.9.1
