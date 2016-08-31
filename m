@@ -1,46 +1,65 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 0/4] Venus remoteproc driver
-Date: Fri, 19 Aug 2016 18:53:16 +0300
-Message-Id: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Clark <robdclark@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 11/19] remoteproc: core: Add function to get resource table spare bytes information
+Date: Wed, 31 Aug 2016 22:50:14 +0200
+Message-ID: <1472676622-32533-12-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi all,
+Remoteproc needs to know if a resource table has spare resource
+allowing resoure table extension.
+This function parse resource table to detect spare resource.
+If any, it returns available spare bytes and index of spare resource.
 
-The first patch adds a call to qcom SCM driver which helps to change
-the Venus core state, in practice it is used for supend and resume
-the video core. Second patch add two SCM calls needed by Venus
-remoteproc driver in order to load and authenticate the firmware.
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Next two patches add dt binding document and the Venus remoteproc
-driver itself.
-
-Comments are welcome.
-
-regards,
-Stan
-
-Stanimir Varbanov (4):
-  firmware: qcom: scm: add a video command for state setting
-  firmware: qcom: scm: add iommu scm calls for pg table
-  dt-binding: remoteproc: venus rproc dt binding document
-  remoteproc: qcom: add Venus video core firmware loader driver
-
- .../devicetree/bindings/remoteproc/qcom,venus.txt  |  33 +++
- drivers/firmware/qcom_scm-32.c                     |  18 ++
- drivers/firmware/qcom_scm-64.c                     |  58 ++++++
- drivers/firmware/qcom_scm.c                        |  28 +++
- drivers/firmware/qcom_scm.h                        |  13 ++
- drivers/remoteproc/Kconfig                         |  10 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/qcom_venus_pil.c                | 226 +++++++++++++++++++++
- include/linux/qcom_scm.h                           |   5 +
- 9 files changed, 392 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
- create mode 100644 drivers/remoteproc/qcom_venus_pil.c
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ffb56c0..30e9c70 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -951,6 +951,35 @@ int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *reso
+ }
+ EXPORT_SYMBOL(rproc_request_resource);
+ 
++static int __get_rsc_tbl_spare_size(struct rproc *rproc,
++					  struct resource_table *table_ptr, int len,
++					  int *spare_index)
++{
++	struct device *dev = &rproc->dev;
++	int i;
++
++	for (i = 0; i < table_ptr->num; i++) {
++		int offset = table_ptr->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
++		struct fw_rsc_spare *spare = (void *)hdr + sizeof(*hdr);
++
++		dev_dbg(dev, "rsc: type %d\n", hdr->type);
++
++		if (hdr->type >= RSC_LAST) {
++			dev_warn(dev, "unsupported resource %d\n", hdr->type);
++			continue;
++		}
++
++		if (hdr->type != RSC_SPARE)
++			continue;
++
++		*spare_index = i;
++		return spare->len;
++	}
++
++	return 0;
++}
++
+ static int __verify_rsc_tbl_entry(struct rproc *rproc,
+ 				struct rproc_request_resource *request,
+ 				struct resource_table *table, int size)
 -- 
-2.7.4
+1.9.1
