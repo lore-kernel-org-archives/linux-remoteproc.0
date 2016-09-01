@@ -1,43 +1,124 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] rpmsg: smd: fix dependency on QCOM_SMD=n
-Date: Mon, 12 Sep 2016 11:58:56 +0200
-Message-Id: <20160912095903.897647-1-arnd@arndb.de>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 04/17] rpmsg: Make rpmsg_create_ept() take channel_info struct
+Date: Thu,  1 Sep 2016 15:27:56 -0700
+Message-Id: <1472768889-3906-5-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The ARM allmodconfig build broke with the addition of the SMD rpmsg
-driver that conflicts with the driver its replaces:
+As we introduce support for additional rpmsg backends, some of these
+only supports point-to-point "links" represented by a name. By making
+rpmsg_create_ept() take a channel_info struct we allow for these
+backends to either be passed a source address, a destination address or
+a name identifier.
 
-WARNING: drivers/soc/qcom/smd: 'qcom_smd_register_edge' exported twice. Previous export was in drivers/rpmsg/qcom_smd.ko
-WARNING: drivers/soc/qcom/smd: 'qcom_smd_unregister_edge' exported twice. Previous export was in drivers/rpmsg/qcom_smd.ko
-
-There is already a dependency that is meant to avoid the broken
-configuration, but that only prevents the case where at least
-one of the two are built-in, but not if both are modules.
-
-This changes the dependency to "=n", to ensure that the new driver
-can only be enabled if the other one is completely disabled.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index 9ba5a2e5c930..de31c5f14dd9 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -7,7 +7,7 @@ config RPMSG
- config RPMSG_QCOM_SMD
- 	tristate "Qualcomm Shared Memory Driver (SMD)"
- 	depends on QCOM_SMEM
--	depends on !QCOM_SMD
-+	depends on QCOM_SMD=n
- 	select RPMSG
- 	help
- 	  Say y here to enable support for the Qualcomm Shared Memory Driver
+Changes since v1:
+- None
+
+ drivers/rpmsg/virtio_rpmsg_bus.c | 26 ++++++++++----------------
+ include/linux/rpmsg.h            | 15 ++++++++++++++-
+ 2 files changed, 24 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 345036b485d7..7c7c6a8b21d9 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -73,18 +73,6 @@ struct virtproc_info {
+ 	struct rpmsg_endpoint *ns_ept;
+ };
+ 
+-/**
+- * struct rpmsg_channel_info - internal channel info representation
+- * @name: name of service
+- * @src: local address
+- * @dst: destination address
+- */
+-struct rpmsg_channel_info {
+-	char name[RPMSG_NAME_SIZE];
+-	u32 src;
+-	u32 dst;
+-};
+-
+ #define to_rpmsg_channel(d) container_of(d, struct rpmsg_channel, dev)
+ #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
+ 
+@@ -259,7 +247,7 @@ free_ept:
+  * @rpdev: rpmsg channel device
+  * @cb: rx callback handler
+  * @priv: private data for the driver's use
+- * @addr: local rpmsg address to bind with @cb
++ * @chinfo: channel_info with the local rpmsg address to bind with @cb
+  *
+  * Every rpmsg address in the system is bound to an rx callback (so when
+  * inbound messages arrive, they are dispatched by the rpmsg bus using the
+@@ -295,9 +283,10 @@ free_ept:
+  * Returns a pointer to the endpoint on success, or NULL on error.
+  */
+ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *rpdev,
+-					rpmsg_rx_cb_t cb, void *priv, u32 addr)
++					rpmsg_rx_cb_t cb, void *priv,
++					struct rpmsg_channel_info chinfo)
+ {
+-	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, addr);
++	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, chinfo.src);
+ }
+ EXPORT_SYMBOL(rpmsg_create_ept);
+ 
+@@ -353,10 +342,15 @@ static int rpmsg_dev_probe(struct device *dev)
+ 	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
+ 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
+ 	struct virtproc_info *vrp = rpdev->vrp;
++	struct rpmsg_channel_info chinfo = {};
+ 	struct rpmsg_endpoint *ept;
+ 	int err;
+ 
+-	ept = rpmsg_create_ept(rpdev, rpdrv->callback, NULL, rpdev->src);
++	strncpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
++	chinfo.src = rpdev->src;
++	chinfo.dst = RPMSG_ADDR_ANY;
++
++	ept = rpmsg_create_ept(rpdev, rpdrv->callback, NULL, chinfo);
+ 	if (!ept) {
+ 		dev_err(dev, "failed to create endpoint\n");
+ 		err = -ENOMEM;
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index a901a331a190..f278407fcf48 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -98,6 +98,18 @@ enum rpmsg_ns_flags {
+ struct virtproc_info;
+ 
+ /**
++ * struct rpmsg_channel_info - channel info representation
++ * @name: name of service
++ * @src: local address
++ * @dst: destination address
++ */
++struct rpmsg_channel_info {
++	char name[RPMSG_NAME_SIZE];
++	u32 src;
++	u32 dst;
++};
++
++/**
+  * rpmsg_channel - devices that belong to the rpmsg bus are called channels
+  * @vrp: the remote processor this channel belongs to
+  * @dev: the device struct
+@@ -171,7 +183,8 @@ int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
+ void unregister_rpmsg_driver(struct rpmsg_driver *drv);
+ void rpmsg_destroy_ept(struct rpmsg_endpoint *);
+ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
+-					rpmsg_rx_cb_t cb, void *priv, u32 addr);
++					rpmsg_rx_cb_t cb, void *priv,
++					struct rpmsg_channel_info chinfo);
+ int
+ rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
+ 
 -- 
-2.9.0
+2.5.0
