@@ -1,47 +1,34 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 1 Sep 2016 12:01:45 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: Remoteproc Virtio-Net Support
-Message-ID: <20160901190145.GU15161@tuxbot>
-References: <CAB4L-ggBETvyPShvBWsAW91TNAEHyzsDO2xcrgcCuo5nPRfCmw@mail.gmail.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from dd22202.kasserver.com ([85.13.141.248]:40678 "EHLO
+        dd22202.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754628AbcIAQXf (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 1 Sep 2016 12:23:35 -0400
+Received: from mail-qk0-f182.google.com (mail-qk0-f182.google.com [209.85.220.182])
+        by dd22202.kasserver.com (Postfix) with ESMTPSA id 4272AE0009C
+        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Sep 2016 18:16:30 +0200 (CEST)
+Received: by mail-qk0-f182.google.com with SMTP id t7so90325729qkh.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Sep 2016 09:16:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAB4L-ggBETvyPShvBWsAW91TNAEHyzsDO2xcrgcCuo5nPRfCmw@mail.gmail.com>
-To: Andreas Werner <hs@andy89.org>
-Cc: linux-remoteproc@vger.kernel.org
+From: Andreas Werner <hs@andy89.org>
+Date: Thu, 1 Sep 2016 18:16:28 +0200
+Message-ID: <CAB4L-ggBETvyPShvBWsAW91TNAEHyzsDO2xcrgcCuo5nPRfCmw@mail.gmail.com>
+Subject: Remoteproc Virtio-Net Support
+Content-Type: text/plain; charset=UTF-8
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 01 Sep 09:16 PDT 2016, Andreas Werner wrote:
+Hello Guys,
+We want develop a Time Sensitive Networking (TSN) Application on imx6sx.
+Base Idea: The Cortex - M4 do all TSN Network Comunikation and provide
+multiply virtual TSN Endpoint for the different Time Channels to Linux
+Kernel over VirtIO.
+I seen the current Mainline Version of Remoteproc dose support only
+one Vdev and 2 Vrings.
+We need multiply VirtIO Net devices with multiply vrings. Is there
+some patches for Remoteproc to support the VirtioNet Dev with multiply
+vdevs and vrings?
 
-> Hello Guys,
-> We want develop a Time Sensitive Networking (TSN) Application on imx6sx.
-> Base Idea: The Cortex - M4 do all TSN Network Comunikation and provide
-> multiply virtual TSN Endpoint for the different Time Channels to Linux
-> Kernel over VirtIO.
-
-That sounds cool, I like the idea of exposing this using virtio.
-
-> I seen the current Mainline Version of Remoteproc dose support only
-> one Vdev and 2 Vrings.
-
-I've looked at that restriction a few times and I believe this is an
-artificial limit, but I do not have the history behind it.
-
-> We need multiply VirtIO Net devices with multiply vrings. Is there
-> some patches for Remoteproc to support the VirtioNet Dev with multiply
-> vdevs and vrings?
-
-I have not seen any such patches, nor heard of people trying to use
-remoteproc like you suggest; but I like it!
-
-
-Please do write up a patch making the vring array of rproc_vdev
-dynamically sized (1) and drop the restriction check and we will review
-that.
-
-(1) Preferably using a zero-length array at the end of the rproc_vdev
-struct.
-
-Regards,
-Bjorn
+Best regards
+Andy Werner
