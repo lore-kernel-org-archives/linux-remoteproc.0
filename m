@@ -1,88 +1,152 @@
-Return-Path: <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH v8 15/18] ARM: STi: DT: STiH407: Add uniperif reader dt
- nodes
-References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
- <1472223413-7254-16-git-send-email-peter.griffin@linaro.org>
- <20160830100148.GO1661@dell>
- <20160830142112.GA22514@griffinp-ThinkPad-X1-Carbon-2nd>
- <20160831112819.GJ27357@dell>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Message-ID: <ae089830-b7c8-ee83-f697-6ff93f2646ed@st.com>
-Date: Mon, 5 Sep 2016 14:20:06 +0200
-MIME-Version: 1.0
-In-Reply-To: <20160831112819.GJ27357@dell>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Lee Jones <lee.jones@linaro.org>, Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 15/17] rpmsg: Move virtio specifics from public header
+Date: Thu,  1 Sep 2016 15:28:07 -0700
+Message-Id: <1472768889-3906-16-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello ptere, Lee,
+Move virtio rpmsg implementation details from the public header file to
+the virtio rpmsg implementation.
 
-Thanks for your remarks,
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-Regards
-Arnaud
-On 08/31/2016 01:28 PM, Lee Jones wrote:
-> On Tue, 30 Aug 2016, Peter Griffin wrote:
->> Thanks for reviewing and your very valuable feedback.
->> On Tue, 30 Aug 2016, Lee Jones wrote:
->>> On Fri, 26 Aug 2016, Peter Griffin wrote:
->>>
->>>> This patch adds the DT node for the uniperif reader
->>>> IP block found on STiH407 family silicon.
->>>>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
->>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->>>> ---
->>>>  arch/arm/boot/dts/stih407-family.dtsi | 26 ++++++++++++++++++++++++++
->>>>  1 file changed, 26 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
->>>> index d263c96..bdddf2c 100644
->>>> --- a/arch/arm/boot/dts/stih407-family.dtsi
->>>> +++ b/arch/arm/boot/dts/stih407-family.dtsi
->>>> @@ -956,5 +956,31 @@
->>>>  			st,version = <5>;
->>>>  			st,mode = "SPDIF";
->>>>  		};
->>>> +
->>>> +		sti_uni_reader0: sti-uni-reader@0 {
->>>> +			compatible = "st,sti-uni-reader";
->>>> +			status = "disabled";
->>>
->>> I find it's normally nicer to place the status of the node at the
->>> bottom, separated by a '\n'.
->>
->> Ok I'll add a superflous '\n' in the next version.
-> 
-> Everyone loves a smart arse!
-> 
-> In this case I believe the '\n' to be a functional separator and not
-> superfluous at all.
-> 
->>>> +			dai-name = "Uni Reader #0 (PCM IN)";
->>>
->>> Oooo, not seen something like this before.
->>>
->>> If it does not already have one, it would require a DT Ack.
->>
->> No idea, the driver got merged 1 year ago.
-This field could be suppressed and handled in source code, using
-st,uniperiph-id to retreive it.
->>
->> Arnaud did you get a DT ack when you merged this driver & binding? i if i remember well, i had  sent to Alsa mailing list only, I missed
-this obvious...
->>>
->>>> +			st,version = <3>;
->>>
->>> This will likely need a DT Ack too.  We usually encode this sort of
->>> information in the compatible string.
-yes, better to use compatibility
->>
->> See 05c1b4480e86a871b18030d6f3d532dc0ecdf38c
-> 
-> Well Rob's the boss.  We certainly never used to take 'device ID' or
-> 'version' attributes.  I guess something must have changed.
+Changes since v1:
+- None
 
-I will try to provide patches for code and bindings rework this week.
+ drivers/rpmsg/virtio_rpmsg_bus.c | 52 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg.h            | 52 ----------------------------------------
+ 2 files changed, 52 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index ac2241242188..671cb1803431 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -75,6 +75,58 @@ struct virtproc_info {
+ 	struct rpmsg_endpoint *ns_ept;
+ };
+ 
++/* The feature bitmap for virtio rpmsg */
++#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
++
++/**
++ * struct rpmsg_hdr - common header for all rpmsg messages
++ * @src: source address
++ * @dst: destination address
++ * @reserved: reserved for future use
++ * @len: length of payload (in bytes)
++ * @flags: message flags
++ * @data: @len bytes of message payload data
++ *
++ * Every message sent(/received) on the rpmsg bus begins with this header.
++ */
++struct rpmsg_hdr {
++	u32 src;
++	u32 dst;
++	u32 reserved;
++	u16 len;
++	u16 flags;
++	u8 data[0];
++} __packed;
++
++/**
++ * struct rpmsg_ns_msg - dynamic name service announcement message
++ * @name: name of remote service that is published
++ * @addr: address of remote service that is published
++ * @flags: indicates whether service is created or destroyed
++ *
++ * This message is sent across to publish a new service, or announce
++ * about its removal. When we receive these messages, an appropriate
++ * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
++ * or ->remove() handler of the appropriate rpmsg driver will be invoked
++ * (if/as-soon-as one is registered).
++ */
++struct rpmsg_ns_msg {
++	char name[RPMSG_NAME_SIZE];
++	u32 addr;
++	u32 flags;
++} __packed;
++
++/**
++ * enum rpmsg_ns_flags - dynamic name service announcement flags
++ *
++ * @RPMSG_NS_CREATE: a new remote service was just created
++ * @RPMSG_NS_DESTROY: a known remote service was just destroyed
++ */
++enum rpmsg_ns_flags {
++	RPMSG_NS_CREATE		= 0,
++	RPMSG_NS_DESTROY	= 1,
++};
++
+ /**
+  * @vrp: the remote processor this channel belongs to
+  */
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index b4b56b010f71..71b16d37503a 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -41,58 +41,6 @@
+ #include <linux/kref.h>
+ #include <linux/mutex.h>
+ 
+-/* The feature bitmap for virtio rpmsg */
+-#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+-
+-/**
+- * struct rpmsg_hdr - common header for all rpmsg messages
+- * @src: source address
+- * @dst: destination address
+- * @reserved: reserved for future use
+- * @len: length of payload (in bytes)
+- * @flags: message flags
+- * @data: @len bytes of message payload data
+- *
+- * Every message sent(/received) on the rpmsg bus begins with this header.
+- */
+-struct rpmsg_hdr {
+-	u32 src;
+-	u32 dst;
+-	u32 reserved;
+-	u16 len;
+-	u16 flags;
+-	u8 data[0];
+-} __packed;
+-
+-/**
+- * struct rpmsg_ns_msg - dynamic name service announcement message
+- * @name: name of remote service that is published
+- * @addr: address of remote service that is published
+- * @flags: indicates whether service is created or destroyed
+- *
+- * This message is sent across to publish a new service, or announce
+- * about its removal. When we receive these messages, an appropriate
+- * rpmsg channel (i.e device) is created/destroyed. In turn, the ->probe()
+- * or ->remove() handler of the appropriate rpmsg driver will be invoked
+- * (if/as-soon-as one is registered).
+- */
+-struct rpmsg_ns_msg {
+-	char name[RPMSG_NAME_SIZE];
+-	u32 addr;
+-	u32 flags;
+-} __packed;
+-
+-/**
+- * enum rpmsg_ns_flags - dynamic name service announcement flags
+- *
+- * @RPMSG_NS_CREATE: a new remote service was just created
+- * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+- */
+-enum rpmsg_ns_flags {
+-	RPMSG_NS_CREATE		= 0,
+-	RPMSG_NS_DESTROY	= 1,
+-};
+-
+ #define RPMSG_ADDR_ANY		0xFFFFFFFF
+ 
+ struct rpmsg_device;
+-- 
+2.5.0
