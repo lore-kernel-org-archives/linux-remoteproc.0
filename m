@@ -1,16 +1,16 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 02/17] rpmsg: Name rpmsg devices based on channel id
-Date: Thu,  1 Sep 2016 15:27:54 -0700
-Message-Id: <1472768889-3906-3-git-send-email-bjorn.andersson@linaro.org>
+Subject: [PATCH v2 13/17] rpmsg: Hide rpmsg indirection tables
+Date: Thu,  1 Sep 2016 15:28:05 -0700
+Message-Id: <1472768889-3906-14-git-send-email-bjorn.andersson@linaro.org>
 In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
 References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-By basing rpmsg device names on channel id we end up with human readable
-device names in sysfs and debug logs.
+Move the device and endpoint indirection tables to the rpmsg internal
+header file, to hide them from the public API.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
@@ -18,38 +18,148 @@ Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Changes since v1:
 - None
 
- drivers/rpmsg/virtio_rpmsg_bus.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/rpmsg/rpmsg_core.c     |  3 +++
+ drivers/rpmsg/rpmsg_internal.h | 47 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg.h          | 47 ------------------------------------------
+ 3 files changed, 50 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 495fa0a282d3..c4bd89ea7681 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -136,14 +136,6 @@ rpmsg_show_attr(src, src, "0x%x\n");
- rpmsg_show_attr(dst, dst, "0x%x\n");
- rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index e1d765a7372c..b6ea9ffa7381 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -20,7 +20,10 @@
+ #define pr_fmt(fmt) "%s: " fmt, __func__
  
--/*
-- * Unique (and free running) index for rpmsg devices.
+ #include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/rpmsg.h>
++#include <linux/of_device.h>
++#include <linux/slab.h>
+ 
+ #include "rpmsg_internal.h"
+ 
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 8ac98fd0bf1d..8075a20f919b 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -25,6 +25,53 @@
+ #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
+ #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
+ 
++/**
++ * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
++ * @create_ept:		create backend-specific endpoint, requried
++ * @announce_create:	announce presence of new channel, optional
++ * @announce_destroy:	announce destruction of channel, optional
++ *
++ * Indirection table for the operations that a rpmsg backend should implement.
++ * @announce_create and @announce_destroy are optional as the backend might
++ * advertise new channels implicitly by creating the endpoints.
++ */
++struct rpmsg_device_ops {
++	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
++					    rpmsg_rx_cb_t cb, void *priv,
++					    struct rpmsg_channel_info chinfo);
++
++	int (*announce_create)(struct rpmsg_device *ept);
++	int (*announce_destroy)(struct rpmsg_device *ept);
++};
++
++/**
++ * struct rpmsg_endpoint_ops - indirection table for rpmsg_endpoint operations
++ * @destroy_ept:	destroy the given endpoint, required
++ * @send:		see @rpmsg_send(), required
++ * @sendto:		see @rpmsg_sendto(), optional
++ * @send_offchannel:	see @rpmsg_send_offchannel(), optional
++ * @trysend:		see @rpmsg_trysend(), required
++ * @trysendto:		see @rpmsg_trysendto(), optional
++ * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
++ *
++ * Indirection table for the operations that a rpmsg backend should implement.
++ * In addition to @destroy_ept, the backend must at least implement @send and
++ * @trysend, while the variants sending data off-channel are optional.
++ */
++struct rpmsg_endpoint_ops {
++	void (*destroy_ept)(struct rpmsg_endpoint *ept);
++
++	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
++	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++	int (*send_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
++				  void *data, int len);
++
++	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
++	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
++			     void *data, int len);
++};
++
+ int rpmsg_register_device(struct rpmsg_device *rpdev);
+ int rpmsg_unregister_device(struct device *parent,
+ 			    struct rpmsg_channel_info *chinfo);
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 99efd598590e..4f9445f71f2f 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -138,25 +138,6 @@ struct rpmsg_device {
+ typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+ 
+ /**
+- * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
+- * @create_ept:		create backend-specific endpoint, requried
+- * @announce_create:	announce presence of new channel, optional
+- * @announce_destroy:	announce destruction of channel, optional
 - *
-- * Yeah, we're not recycling those numbers (yet?). will be easy
-- * to change if/when we want to.
+- * Indirection table for the operations that a rpmsg backend should implement.
+- * @announce_create and @announce_destroy are optional as the backend might
+- * advertise new channels implicitly by creating the endpoints.
 - */
--static unsigned int rpmsg_dev_index;
+-struct rpmsg_device_ops {
+-	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
+-					    rpmsg_rx_cb_t cb, void *priv,
+-					    struct rpmsg_channel_info chinfo);
 -
- static ssize_t modalias_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
- {
-@@ -531,8 +523,8 @@ static struct rpmsg_channel *rpmsg_create_channel(struct virtproc_info *vrp,
+-	int (*announce_create)(struct rpmsg_device *ept);
+-	int (*announce_destroy)(struct rpmsg_device *ept);
+-};
+-
+-/**
+  * struct rpmsg_endpoint - binds a local rpmsg address to its user
+  * @rpdev: rpmsg channel device
+  * @refcount: when this drops to zero, the ept is deallocated
+@@ -191,34 +172,6 @@ struct rpmsg_endpoint {
+ };
  
- 	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
- 
--	/* very simple device indexing plumbing which is enough for now */
--	dev_set_name(&rpdev->dev, "rpmsg%d", rpmsg_dev_index++);
-+	dev_set_name(&rpdev->dev, "%s:%s",
-+		     dev_name(dev->parent), rpdev->id.name);
- 
- 	rpdev->dev.parent = &vrp->vdev->dev;
- 	rpdev->dev.bus = &rpmsg_bus;
+ /**
+- * struct rpmsg_endpoint_ops - indirection table for rpmsg_endpoint operations
+- * @destroy_ept:	destroy the given endpoint, required
+- * @send:		see @rpmsg_send(), required
+- * @sendto:		see @rpmsg_sendto(), optional
+- * @send_offchannel:	see @rpmsg_send_offchannel(), optional
+- * @trysend:		see @rpmsg_trysend(), required
+- * @trysendto:		see @rpmsg_trysendto(), optional
+- * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+- *
+- * Indirection table for the operations that a rpmsg backend should implement.
+- * In addition to @destroy_ept, the backend must at least implement @send and
+- * @trysend, while the variants sending data off-channel are optional.
+- */
+-struct rpmsg_endpoint_ops {
+-	void (*destroy_ept)(struct rpmsg_endpoint *ept);
+-
+-	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
+-	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-	int (*send_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-				  void *data, int len);
+-
+-	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
+-	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			     void *data, int len);
+-};
+-
+-/**
+  * struct rpmsg_driver - rpmsg driver struct
+  * @drv: underlying device driver
+  * @id_table: rpmsg ids serviced by this driver
 -- 
 2.5.0
