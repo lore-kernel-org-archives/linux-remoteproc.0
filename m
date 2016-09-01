@@ -1,352 +1,348 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 4/6] MIPS: CPS: Add VP(E) stealing
-Date: Tue, 20 Sep 2016 09:47:27 +0100
-Message-ID: <1474361249-31064-5-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Lisa Parratt <Lisa.Parratt@imgtec.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Qais Yousef <qais.yousef@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, James Hogan <james.hogan@imgtec.com>, Paul Burton <paul.burton@imgtec.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 05/17] rpmsg: Clean up rpmsg device vs channel naming
+Date: Thu,  1 Sep 2016 15:27:57 -0700
+Message-Id: <1472768889-3906-6-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lisa Parratt <Lisa.Parratt@imgtec.com>
+The rpmsg device representing struct is called rpmsg_channel and the
+variable name used throughout is rpdev, with the communication happening
+on endpoints it's clearer to just call this a "device" in a public API.
 
-VP(E) stealing provides a mechanism for removing an offline Virtual
-Processor from the Linux kernel such that it is available to run bare
-metal code.
-Once the CPU has been offlined from Linux, the CPU can be given a task
-to run via mips_cps_steal_cpu_and_execute(). The CPU is removed from the
-cpu_present mask and is set up to execute from address entry_fn. Stack
-space is assigned via the tsk task_struct so that C initialisation code
-may be used.
-To return the CPU back to Linux control, mips_cps_halt_and_return_cpu
-will arrange to halt the CPU and return it to the cpu_present mask. It
-is then available to be brought online again via CPU hotplug.
-
-This mechanism is used by the MIPS remote processor driver to allow
-CPUs within the system to execute bare metal code, not under control of
-the kernel.
-
-Signed-off-by: Lisa Parratt <Lisa.Parratt@imgtec.com>
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
-Changes in v2: None
+Changes since v1:
+- None
 
- arch/mips/Kconfig               |   7 ++
- arch/mips/include/asm/smp-cps.h |   8 ++
- arch/mips/include/asm/smp.h     |   1 +
- arch/mips/kernel/smp-cps.c      | 162 ++++++++++++++++++++++++++++++++++++++--
- arch/mips/kernel/smp.c          |  12 +++
- 5 files changed, 183 insertions(+), 7 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c    | 42 ++++++++++++++++++-------------------
+ include/linux/rpmsg.h               | 32 +++++++++++++++-------------
+ samples/rpmsg/rpmsg_client_sample.c |  6 +++---
+ 3 files changed, 41 insertions(+), 39 deletions(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 26388562e300..2094cbcea0d4 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2341,6 +2341,13 @@ config MIPS_CPS
- 	  no external assistance. It is safe to enable this when hardware
- 	  support is unavailable.
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 7c7c6a8b21d9..1ac9fd871760 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -73,7 +73,7 @@ struct virtproc_info {
+ 	struct rpmsg_endpoint *ns_ept;
+ };
  
-+config MIPS_STEAL
-+	bool "VPE stealing"
-+	depends on HOTPLUG_CPU && MIPS_CPS
-+	help
-+	  Select this is you wish to be able to run bare metal code on offline
-+	  VPEs.
-+
- config MIPS_CPS_PM
- 	depends on MIPS_CPS
- 	select MIPS_CPC
-diff --git a/arch/mips/include/asm/smp-cps.h b/arch/mips/include/asm/smp-cps.h
-index 2ae1f61a4a95..4f6cd5b14185 100644
---- a/arch/mips/include/asm/smp-cps.h
-+++ b/arch/mips/include/asm/smp-cps.h
-@@ -34,6 +34,14 @@ extern void mips_cps_boot_vpes(struct core_boot_config *cfg, unsigned vpe);
- extern void mips_cps_pm_save(void);
- extern void mips_cps_pm_restore(void);
+-#define to_rpmsg_channel(d) container_of(d, struct rpmsg_channel, dev)
++#define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
+ #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
  
-+#ifdef CONFIG_MIPS_STEAL
-+
-+extern int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
-+					  struct task_struct *tsk);
-+extern int mips_cps_halt_and_return_cpu(unsigned int cpu);
-+
-+#endif /* CONFIG_MIPS_STEAL */
-+
- #ifdef CONFIG_MIPS_CPS
+ /*
+@@ -113,7 +113,7 @@ static ssize_t								\
+ field##_show(struct device *dev,					\
+ 			struct device_attribute *attr, char *buf)	\
+ {									\
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);		\
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
+ 									\
+ 	return sprintf(buf, format_string, rpdev->path);		\
+ }
+@@ -127,7 +127,7 @@ rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+ static ssize_t modalias_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+ {
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
  
- extern bool mips_cps_smp_in_use(void);
-diff --git a/arch/mips/include/asm/smp.h b/arch/mips/include/asm/smp.h
-index 060f23ff1817..3c62a1958af5 100644
---- a/arch/mips/include/asm/smp.h
-+++ b/arch/mips/include/asm/smp.h
-@@ -117,4 +117,5 @@ static inline void arch_send_call_function_ipi_mask(const struct cpumask *mask)
- extern void (*dump_ipi_function_ptr)(void *);
- void dump_send_ipi(void (*dump_ipi_callback)(void *));
- #endif
-+
- #endif /* __ASM_SMP_H */
-diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-index e9d9fc6c754c..bcb9b62816b1 100644
---- a/arch/mips/kernel/smp-cps.c
-+++ b/arch/mips/kernel/smp-cps.c
-@@ -8,6 +8,7 @@
-  * option) any later version.
+ 	return sprintf(buf, RPMSG_DEVICE_MODALIAS_FMT "\n", rpdev->id.name);
+ }
+@@ -142,7 +142,7 @@ static struct device_attribute rpmsg_dev_attrs[] = {
+ };
+ 
+ /* rpmsg devices and drivers are matched using the service name */
+-static inline int rpmsg_id_match(const struct rpmsg_channel *rpdev,
++static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
+ 				 const struct rpmsg_device_id *id)
+ {
+ 	return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+@@ -151,7 +151,7 @@ static inline int rpmsg_id_match(const struct rpmsg_channel *rpdev,
+ /* match rpmsg channel and rpmsg driver */
+ static int rpmsg_dev_match(struct device *dev, struct device_driver *drv)
+ {
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+ 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(drv);
+ 	const struct rpmsg_device_id *ids = rpdrv->id_table;
+ 	unsigned int i;
+@@ -166,7 +166,7 @@ static int rpmsg_dev_match(struct device *dev, struct device_driver *drv)
+ 
+ static int rpmsg_uevent(struct device *dev, struct kobj_uevent_env *env)
+ {
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+ 
+ 	return add_uevent_var(env, "MODALIAS=" RPMSG_DEVICE_MODALIAS_FMT,
+ 					rpdev->id.name);
+@@ -194,7 +194,7 @@ static void __ept_release(struct kref *kref)
+ 
+ /* for more info, see below documentation of rpmsg_create_ept() */
+ static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info *vrp,
+-						 struct rpmsg_channel *rpdev,
++						 struct rpmsg_device *rpdev,
+ 						 rpmsg_rx_cb_t cb,
+ 						 void *priv, u32 addr)
+ {
+@@ -282,7 +282,7 @@ free_ept:
+  *
+  * Returns a pointer to the endpoint on success, or NULL on error.
   */
- 
-+#include <linux/cpu.h>
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/irqchip/mips-gic.h>
-@@ -39,6 +40,31 @@ static int __init setup_nothreads(char *s)
- }
- early_param("nothreads", setup_nothreads);
- 
-+#ifdef CONFIG_MIPS_STEAL
-+struct cpumask cpu_stolen_mask;
-+
-+static inline bool cpu_stolen(int cpu)
-+{
-+	return cpumask_test_cpu(cpu, &cpu_stolen_mask);
-+}
-+
-+static inline void set_cpu_stolen(int cpu, bool state)
-+{
-+	if (state)
-+		cpumask_set_cpu(cpu, &cpu_stolen_mask);
-+	else
-+		cpumask_clear_cpu(cpu, &cpu_stolen_mask);
-+}
-+#else
-+static inline bool cpu_stolen(int cpu)
-+{
-+	return false;
-+}
-+
-+static inline void set_cpu_stolen(int cpu, bool state) { }
-+
-+#endif /* CONFIG_MIPS_STEAL */
-+
- static unsigned core_vpe_count(unsigned core)
+-struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *rpdev,
++struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+ 					rpmsg_rx_cb_t cb, void *priv,
+ 					struct rpmsg_channel_info chinfo)
  {
- 	unsigned cfg;
-@@ -109,6 +135,10 @@ static void __init cps_smp_setup(void)
- 		write_gcr_bev_base(core_entry);
- 	}
- 
-+#ifdef CONFIG_MIPS_STEAL
-+	cpumask_clear(&cpu_stolen_mask);
-+#endif /* CONFIG_MIPS_STEAL */
-+
- #ifdef CONFIG_MIPS_MT_FPAFF
- 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
- 	if (cpu_has_fpu)
-@@ -287,7 +317,7 @@ static void remote_vpe_boot(void *dummy)
- 	mips_cps_boot_vpes(core_cfg, cpu_vpe_id(&current_cpu_data));
- }
- 
--static void cps_boot_secondary(int cpu, struct task_struct *idle)
-+static void cps_start_secondary(int cpu, void *entry_fn, struct task_struct *tsk)
+@@ -339,7 +339,7 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
+  */
+ static int rpmsg_dev_probe(struct device *dev)
  {
- 	unsigned core = cpu_data[cpu].core;
- 	unsigned vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-@@ -297,9 +327,9 @@ static void cps_boot_secondary(int cpu, struct task_struct *idle)
- 	unsigned int remote;
- 	int err;
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+ 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
+ 	struct virtproc_info *vrp = rpdev->vrp;
+ 	struct rpmsg_channel_info chinfo = {};
+@@ -387,7 +387,7 @@ out:
  
--	vpe_cfg->pc = (unsigned long)&smp_bootstrap;
--	vpe_cfg->sp = __KSTK_TOS(idle);
--	vpe_cfg->gp = (unsigned long)task_thread_info(idle);
-+	vpe_cfg->pc = (unsigned long)entry_fn;
-+	vpe_cfg->sp = __KSTK_TOS(tsk);
-+	vpe_cfg->gp = (unsigned long)task_thread_info(tsk);
- 
- 	atomic_or(1 << cpu_vpe_id(&cpu_data[cpu]), &core_cfg->vpe_mask);
- 
-@@ -343,6 +373,11 @@ out:
- 	preempt_enable();
- }
- 
-+static void cps_boot_secondary(int cpu, struct task_struct *idle)
-+{
-+	cps_start_secondary(cpu, &smp_bootstrap, idle);
-+}
-+
- static void cps_init_secondary(void)
+ static int rpmsg_dev_remove(struct device *dev)
  {
- 	/* Disable MT - we only want to run 1 TC per VPE */
-@@ -394,6 +429,28 @@ static int cps_cpu_disable(void)
- 	if (!cps_pm_support_state(CPS_PM_POWER_GATED))
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+ 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
+ 	struct virtproc_info *vrp = rpdev->vrp;
+ 	int err = 0;
+@@ -451,7 +451,7 @@ EXPORT_SYMBOL(unregister_rpmsg_driver);
+ 
+ static void rpmsg_release_device(struct device *dev)
+ {
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+ 
+ 	kfree(rpdev);
+ }
+@@ -461,10 +461,10 @@ static void rpmsg_release_device(struct device *dev)
+  * this is used to make sure we're not creating rpmsg devices for channels
+  * that already exist.
+  */
+-static int rpmsg_channel_match(struct device *dev, void *data)
++static int rpmsg_device_match(struct device *dev, void *data)
+ {
+ 	struct rpmsg_channel_info *chinfo = data;
+-	struct rpmsg_channel *rpdev = to_rpmsg_channel(dev);
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+ 
+ 	if (chinfo->src != RPMSG_ADDR_ANY && chinfo->src != rpdev->src)
+ 		return 0;
+@@ -484,15 +484,15 @@ static int rpmsg_channel_match(struct device *dev, void *data)
+  * this function will be used to create both static and dynamic
+  * channels.
+  */
+-static struct rpmsg_channel *rpmsg_create_channel(struct virtproc_info *vrp,
+-				struct rpmsg_channel_info *chinfo)
++static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
++						 struct rpmsg_channel_info *chinfo)
+ {
+-	struct rpmsg_channel *rpdev;
++	struct rpmsg_device *rpdev;
+ 	struct device *tmp, *dev = &vrp->vdev->dev;
+ 	int ret;
+ 
+ 	/* make sure a similar channel doesn't already exist */
+-	tmp = device_find_child(dev, chinfo, rpmsg_channel_match);
++	tmp = device_find_child(dev, chinfo, rpmsg_device_match);
+ 	if (tmp) {
+ 		/* decrement the matched device's refcount back */
+ 		put_device(tmp);
+@@ -544,7 +544,7 @@ static int rpmsg_destroy_channel(struct virtproc_info *vrp,
+ 	struct virtio_device *vdev = vrp->vdev;
+ 	struct device *dev;
+ 
+-	dev = device_find_child(&vdev->dev, chinfo, rpmsg_channel_match);
++	dev = device_find_child(&vdev->dev, chinfo, rpmsg_device_match);
+ 	if (!dev)
  		return -EINVAL;
  
-+#ifdef CONFIG_MIPS_STEAL
-+	/*
-+	 * With the MT ASE only VPEs in the same core may read / write the
-+	 * control registers of other VPEs. Therefore to maintain control of
-+	 * any stolen VPEs at least one sibling VPE must be kept online.
-+	 */
-+	if (cpu_has_mipsmt) {
-+		int stolen, siblings = 0;
-+
-+		for_each_cpu((stolen), &cpu_stolen_mask)
-+			if (cpu_data[stolen].core == cpu_data[cpu].core)
-+				siblings++;
-+
-+		if (siblings == 1)
-+			/*
-+			 * When a VPE has been stolen, keep at least one of it's
-+			 * siblings around in order to control it.
-+			 */
-+			return -EBUSY;
-+	}
-+#endif /* CONFIG_MIPS_STEAL */
-+
- 	core_cfg = &mips_cps_core_bootcfg[current_cpu_data.core];
- 	atomic_sub(1 << cpu_vpe_id(&current_cpu_data), &core_cfg->vpe_mask);
- 	smp_mb__after_atomic();
-@@ -426,7 +483,7 @@ void play_dead(void)
- 		core = cpu_data[cpu].core;
- 
- 		/* Look for another online VPE within the core */
--		for_each_online_cpu(cpu_death_sibling) {
-+		for_each_possible_cpu(cpu_death_sibling) {
- 			if (cpu_data[cpu_death_sibling].core != core)
- 				continue;
- 
-@@ -434,8 +491,11 @@ void play_dead(void)
- 			 * There is an online VPE within the core. Just halt
- 			 * this TC and leave the core alone.
- 			 */
--			cpu_death = CPU_DEATH_HALT;
--			break;
-+			if (cpu_online(cpu_death_sibling) ||
-+			    cpu_stolen(cpu_death_sibling))
-+				cpu_death = CPU_DEATH_HALT;
-+			if (cpu_online(cpu_death_sibling))
-+				break;
- 		}
- 	}
- 
-@@ -466,6 +526,94 @@ void play_dead(void)
- 	panic("Failed to offline CPU %u", cpu);
+@@ -669,7 +669,7 @@ static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
+  *
+  * Returns 0 on success and an appropriate error value on failure.
+  */
+-int rpmsg_send_offchannel_raw(struct rpmsg_channel *rpdev, u32 src, u32 dst,
++int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev, u32 src, u32 dst,
+ 			      void *data, int len, bool wait)
+ {
+ 	struct virtproc_info *vrp = rpdev->vrp;
+@@ -879,11 +879,11 @@ static void rpmsg_xmit_done(struct virtqueue *svq)
  }
  
-+#ifdef CONFIG_MIPS_STEAL
-+
-+/* Find an online sibling CPU (another VPE in the same core) */
-+static inline int mips_cps_get_online_sibling(unsigned int cpu)
-+{
-+	int sibling;
-+
-+	for_each_online_cpu(sibling)
-+		if (cpu_data[sibling].core == cpu_data[cpu].core)
-+			return sibling;
-+
-+	return -1;
-+}
-+
-+int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
-+				   struct task_struct *tsk)
-+{
-+	int err = -EINVAL;
-+
-+	preempt_disable();
-+
-+	if (!cpu_present(cpu) || cpu_online(cpu) || cpu_stolen(cpu))
-+		goto out;
-+
-+	if (cpu_has_mipsmt && (mips_cps_get_online_sibling(cpu) < 0))
-+		pr_warn("CPU%d has no online siblings to control it\n", cpu);
-+	else {
-+		set_cpu_present(cpu, false);
-+		set_cpu_stolen(cpu, true);
-+
-+		cps_start_secondary(cpu, entry_fn, tsk);
-+		err = 0;
-+	}
-+out:
-+	preempt_enable();
-+	return err;
-+}
-+
-+static void mips_cps_halt_sibling(void *ptr_cpu)
-+{
-+	unsigned int cpu = (unsigned long)ptr_cpu;
-+	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-+	unsigned long flags;
-+	int vpflags;
-+
-+	local_irq_save(flags);
-+	vpflags = dvpe();
-+	settc(vpe_id);
-+	write_tc_c0_tchalt(TCHALT_H);
-+	evpe(vpflags);
-+	local_irq_restore(flags);
-+}
-+
-+int mips_cps_halt_and_return_cpu(unsigned int cpu)
-+{
-+	unsigned int core = cpu_data[cpu].core;
-+	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-+
-+	if (!cpu_stolen(cpu))
-+		return -EINVAL;
-+
-+	if (cpu_has_mipsmt && (core == cpu_data[smp_processor_id()].core))
-+		mips_cps_halt_sibling((void *)(unsigned long)cpu);
-+	else if (cpu_has_mipsmt) {
-+		int sibling = mips_cps_get_online_sibling(cpu);
-+
-+		if (sibling < 0) {
-+			pr_warn("CPU%d has no online siblings\n", cpu);
-+			return -EINVAL;
-+		}
-+
-+		if (smp_call_function_single(sibling, mips_cps_halt_sibling,
-+						(void *)(unsigned long)cpu, 1))
-+			panic("Failed to call sibling CPU\n");
-+
-+	} else if (cpu_has_vp) {
-+		mips_cm_lock_other(core, vpe_id);
-+		write_cpc_co_vp_stop(1 << vpe_id);
-+		mips_cm_unlock_other();
-+	}
-+
-+	set_cpu_stolen(cpu, false);
-+	set_cpu_present(cpu, true);
-+	return 0;
-+}
-+
-+#endif /* CONFIG_MIPS_STEAL */
-+
- static void wait_for_sibling_halt(void *ptr_cpu)
+ /* invoked when a name service announcement arrives */
+-static void rpmsg_ns_cb(struct rpmsg_channel *rpdev, void *data, int len,
++static void rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 			void *priv, u32 src)
  {
- 	unsigned cpu = (unsigned long)ptr_cpu;
-diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
-index afa06c2bb019..f3d01f556fe2 100644
---- a/arch/mips/kernel/smp.c
-+++ b/arch/mips/kernel/smp.c
-@@ -233,6 +233,18 @@ static void smp_ipi_init_one(unsigned int virq,
- 				    struct irqaction *action)
+ 	struct rpmsg_ns_msg *msg = data;
+-	struct rpmsg_channel *newch;
++	struct rpmsg_device *newch;
+ 	struct rpmsg_channel_info chinfo;
+ 	struct virtproc_info *vrp = priv;
+ 	struct device *dev = &vrp->vdev->dev;
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index f278407fcf48..35a0f39fd09b 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -110,7 +110,7 @@ struct rpmsg_channel_info {
+ };
+ 
+ /**
+- * rpmsg_channel - devices that belong to the rpmsg bus are called channels
++ * rpmsg_device - device that belong to the rpmsg bus
+  * @vrp: the remote processor this channel belongs to
+  * @dev: the device struct
+  * @id: device id (used to match between rpmsg drivers and devices)
+@@ -119,7 +119,7 @@ struct rpmsg_channel_info {
+  * @ept: the rpmsg endpoint of this channel
+  * @announce: if set, rpmsg will announce the creation/removal of this channel
+  */
+-struct rpmsg_channel {
++struct rpmsg_device {
+ 	struct virtproc_info *vrp;
+ 	struct device dev;
+ 	struct rpmsg_device_id id;
+@@ -129,7 +129,7 @@ struct rpmsg_channel {
+ 	bool announce;
+ };
+ 
+-typedef void (*rpmsg_rx_cb_t)(struct rpmsg_channel *, void *, int, void *, u32);
++typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+ 
+ /**
+  * struct rpmsg_endpoint - binds a local rpmsg address to its user
+@@ -155,7 +155,7 @@ typedef void (*rpmsg_rx_cb_t)(struct rpmsg_channel *, void *, int, void *, u32);
+  * create additional endpoints by themselves (see rpmsg_create_ept()).
+  */
+ struct rpmsg_endpoint {
+-	struct rpmsg_channel *rpdev;
++	struct rpmsg_device *rpdev;
+ 	struct kref refcount;
+ 	rpmsg_rx_cb_t cb;
+ 	struct mutex cb_lock;
+@@ -174,19 +174,21 @@ struct rpmsg_endpoint {
+ struct rpmsg_driver {
+ 	struct device_driver drv;
+ 	const struct rpmsg_device_id *id_table;
+-	int (*probe)(struct rpmsg_channel *dev);
+-	void (*remove)(struct rpmsg_channel *dev);
+-	void (*callback)(struct rpmsg_channel *, void *, int, void *, u32);
++	int (*probe)(struct rpmsg_device *dev);
++	void (*remove)(struct rpmsg_device *dev);
++	void (*callback)(struct rpmsg_device *, void *, int, void *, u32);
+ };
+ 
++int register_rpmsg_device(struct rpmsg_device *dev);
++void unregister_rpmsg_device(struct rpmsg_device *dev);
+ int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
+ void unregister_rpmsg_driver(struct rpmsg_driver *drv);
+ void rpmsg_destroy_ept(struct rpmsg_endpoint *);
+-struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_channel *,
++struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+ 					rpmsg_rx_cb_t cb, void *priv,
+ 					struct rpmsg_channel_info chinfo);
+ int
+-rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
++rpmsg_send_offchannel_raw(struct rpmsg_device *, u32, u32, void *, int, bool);
+ 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
+ #define register_rpmsg_driver(drv) \
+@@ -224,7 +226,7 @@ rpmsg_send_offchannel_raw(struct rpmsg_channel *, u32, u32, void *, int, bool);
+  */
+ static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+ {
+-	struct rpmsg_channel *rpdev = ept->rpdev;
++	struct rpmsg_device *rpdev = ept->rpdev;
+ 	u32 src = ept->addr, dst = rpdev->dst;
+ 
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+@@ -251,7 +253,7 @@ static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+ static inline
+ int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+ {
+-	struct rpmsg_channel *rpdev = ept->rpdev;
++	struct rpmsg_device *rpdev = ept->rpdev;
+ 	u32 src = ept->addr;
+ 
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+@@ -281,7 +283,7 @@ static inline
+ int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ 			  void *data, int len)
+ {
+-	struct rpmsg_channel *rpdev = ept->rpdev;
++	struct rpmsg_device *rpdev = ept->rpdev;
+ 
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+ }
+@@ -306,7 +308,7 @@ int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ static inline
+ int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ {
+-	struct rpmsg_channel *rpdev = ept->rpdev;
++	struct rpmsg_device *rpdev = ept->rpdev;
+ 	u32 src = ept->addr, dst = rpdev->dst;
+ 
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+@@ -332,7 +334,7 @@ int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ static inline
+ int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+ {
+-	struct rpmsg_channel *rpdev = ept->rpdev;
++	struct rpmsg_device *rpdev = ept->rpdev;
+ 	u32 src = ept->addr;
+ 
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+@@ -361,7 +363,7 @@ static inline
+ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ 			     void *data, int len)
+ {
+-	struct rpmsg_channel *rpdev = ept->rpdev;
++	struct rpmsg_device *rpdev = ept->rpdev;
+ 
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+ }
+diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
+index 37975eddd64e..4fcd7ee13fb9 100644
+--- a/samples/rpmsg/rpmsg_client_sample.c
++++ b/samples/rpmsg/rpmsg_client_sample.c
+@@ -28,7 +28,7 @@ struct instance_data {
+ 	int rx_count;
+ };
+ 
+-static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
++static void rpmsg_sample_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 						void *priv, u32 src)
  {
  	int ret;
-+#ifdef CONFIG_MIPS_STEAL
-+	struct irq_data *data;
-+	/*
-+	 * A bit of a hack to ensure that the ipi_offset is 0.
-+	 * This is to deal with removing / reallocating IPIs
-+	 * to subsets of the possible CPUs, where the IPI IRQ domain
-+	 * will set ipi_offset to the first cpu in the cpumask when the
-+	 * IPI is reallocated.
-+	 */
-+	data = irq_get_irq_data(virq);
-+	data->common->ipi_offset = 0;
-+#endif /* CONFIG_MIPS_STEAL */
+@@ -52,7 +52,7 @@ static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
+ 		dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", ret);
+ }
  
- 	irq_set_handler(virq, handle_percpu_irq);
- 	ret = setup_irq(virq, action);
+-static int rpmsg_sample_probe(struct rpmsg_channel *rpdev)
++static int rpmsg_sample_probe(struct rpmsg_device *rpdev)
+ {
+ 	int ret;
+ 	struct instance_data *idata;
+@@ -76,7 +76,7 @@ static int rpmsg_sample_probe(struct rpmsg_channel *rpdev)
+ 	return 0;
+ }
+ 
+-static void rpmsg_sample_remove(struct rpmsg_channel *rpdev)
++static void rpmsg_sample_remove(struct rpmsg_device *rpdev)
+ {
+ 	dev_info(&rpdev->dev, "rpmsg sample client driver is removed\n");
+ }
 -- 
-2.7.4
+2.5.0
