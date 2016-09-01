@@ -1,85 +1,211 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v9 06/19] ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
-Date: Mon,  5 Sep 2016 14:16:48 +0100
-Message-Id: <1473081421-16555-7-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 07/17] rpmsg: Move rpmsg_device API to new file
+Date: Thu,  1 Sep 2016 15:27:59 -0700
+Message-Id: <1472768889-3906-8-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These nodes are required to get the fdma driver working
-on STiH407 based silicon.
+Extract the now indirect rpmsg_create_ept() interface to a separate
+file and start building up a rpmsg core.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/arm/boot/dts/stih407-family.dtsi | 52 +++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
-index d294e82..45cab30 100644
---- a/arch/arm/boot/dts/stih407-family.dtsi
-+++ b/arch/arm/boot/dts/stih407-family.dtsi
-@@ -821,5 +821,57 @@
- 			clock-frequency	= <600000000>;
- 			st,syscfg	= <&syscfg_core 0x224>;
- 		};
+Changes since v1:
+- Extracted the big move into several smaller patches
+
+ drivers/remoteproc/Kconfig       |  4 +--
+ drivers/rpmsg/Kconfig            |  4 +++
+ drivers/rpmsg/Makefile           |  3 +-
+ drivers/rpmsg/rpmsg_core.c       | 71 ++++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/virtio_rpmsg_bus.c | 48 ---------------------------
+ 5 files changed, 79 insertions(+), 51 deletions(-)
+ create mode 100644 drivers/rpmsg/rpmsg_core.c
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 1a8bf76a925f..70ec8130622d 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -17,7 +17,7 @@ config OMAP_REMOTEPROC
+ 	select REMOTEPROC
+ 	select MAILBOX
+ 	select OMAP2PLUS_MBOX
+-	select RPMSG
++	select RPMSG_VIRTIO
+ 	help
+ 	  Say y here to support OMAP's remote processors (dual M3
+ 	  and DSP on OMAP4) via the remote processor framework.
+@@ -59,7 +59,7 @@ config DA8XX_REMOTEPROC
+ 	depends on ARCH_DAVINCI_DA8XX
+ 	select CMA if MMU
+ 	select REMOTEPROC
+-	select RPMSG
++	select RPMSG_VIRTIO
+ 	help
+ 	  Say y here to support DA8xx/OMAP-L13x remote processors via the
+ 	  remote processor framework.
+diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+index 69a219387582..40614be88c97 100644
+--- a/drivers/rpmsg/Kconfig
++++ b/drivers/rpmsg/Kconfig
+@@ -3,6 +3,10 @@ menu "Rpmsg drivers"
+ # RPMSG always gets selected by whoever wants it
+ config RPMSG
+ 	tristate
 +
-+		/* fdma audio */
-+		fdma0: dma-controller@8e20000 {
-+			compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
-+			reg = <0x8e20000 0x8000>,
-+			      <0x8e30000 0x3000>,
-+			      <0x8e37000 0x1000>,
-+			      <0x8e38000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+		};
++config RPMSG_VIRTIO
++	tristate
++	select RPMSG
+ 	select VIRTIO
+ 	select VIRTUALIZATION
+ 
+diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+index 7617fcb8259f..c48ea55ad380 100644
+--- a/drivers/rpmsg/Makefile
++++ b/drivers/rpmsg/Makefile
+@@ -1 +1,2 @@
+-obj-$(CONFIG_RPMSG)	+= virtio_rpmsg_bus.o
++obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
++obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+new file mode 100644
+index 000000000000..c511b5d64f89
+--- /dev/null
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -0,0 +1,71 @@
++/*
++ * remote processor messaging bus
++ *
++ * Copyright (C) 2011 Texas Instruments, Inc.
++ * Copyright (C) 2011 Google, Inc.
++ *
++ * Ohad Ben-Cohen <ohad@wizery.com>
++ * Brian Swetland <swetland@google.com>
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
-+		/* fdma app */
-+		fdma1: dma-controller@8e40000 {
-+			compatible = "st,stih407-fdma-mpe31-12", "st,slim-rproc";
-+			reg = <0x8e40000 0x8000>,
-+			      <0x8e50000 0x3000>,
-+			      <0x8e57000 0x1000>,
-+			      <0x8e58000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
++#define pr_fmt(fmt) "%s: " fmt, __func__
 +
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+		};
++#include <linux/kernel.h>
++#include <linux/rpmsg.h>
 +
-+		/* fdma free running */
-+		fdma2: dma-controller@8e60000 {
-+			compatible = "st,stih407-fdma-mpe31-13", "st,slim-rproc";
-+			reg = <0x8e60000 0x8000>,
-+			      <0x8e70000 0x3000>,
-+			      <0x8e77000 0x1000>,
-+			      <0x8e78000 0x8000>;
-+			reg-names = "slimcore", "dmem", "peripherals", "imem";
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_NONE>;
-+			dma-channels = <16>;
-+			#dma-cells = <3>;
-+			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
-+				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+		};
- 	};
- };
++/**
++ * rpmsg_create_ept() - create a new rpmsg_endpoint
++ * @rpdev: rpmsg channel device
++ * @cb: rx callback handler
++ * @priv: private data for the driver's use
++ * @chinfo: channel_info with the local rpmsg address to bind with @cb
++ *
++ * Every rpmsg address in the system is bound to an rx callback (so when
++ * inbound messages arrive, they are dispatched by the rpmsg bus using the
++ * appropriate callback handler) by means of an rpmsg_endpoint struct.
++ *
++ * This function allows drivers to create such an endpoint, and by that,
++ * bind a callback, and possibly some private data too, to an rpmsg address
++ * (either one that is known in advance, or one that will be dynamically
++ * assigned for them).
++ *
++ * Simple rpmsg drivers need not call rpmsg_create_ept, because an endpoint
++ * is already created for them when they are probed by the rpmsg bus
++ * (using the rx callback provided when they registered to the rpmsg bus).
++ *
++ * So things should just work for simple drivers: they already have an
++ * endpoint, their rx callback is bound to their rpmsg address, and when
++ * relevant inbound messages arrive (i.e. messages which their dst address
++ * equals to the src address of their rpmsg channel), the driver's handler
++ * is invoked to process it.
++ *
++ * That said, more complicated drivers might do need to allocate
++ * additional rpmsg addresses, and bind them to different rx callbacks.
++ * To accomplish that, those drivers need to call this function.
++ *
++ * Drivers should provide their @rpdev channel (so the new endpoint would belong
++ * to the same remote processor their channel belongs to), an rx callback
++ * function, an optional private data (which is provided back when the
++ * rx callback is invoked), and an address they want to bind with the
++ * callback. If @addr is RPMSG_ADDR_ANY, then rpmsg_create_ept will
++ * dynamically assign them an available rpmsg address (drivers should have
++ * a very good reason why not to always use RPMSG_ADDR_ANY here).
++ *
++ * Returns a pointer to the endpoint on success, or NULL on error.
++ */
++struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
++					rpmsg_rx_cb_t cb, void *priv,
++					struct rpmsg_channel_info chinfo)
++{
++	return rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
++}
++EXPORT_SYMBOL(rpmsg_create_ept);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 088203ed1df8..605e09c96d65 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -242,54 +242,6 @@ free_ept:
+ 	return NULL;
+ }
+ 
+-/**
+- * rpmsg_create_ept() - create a new rpmsg_endpoint
+- * @rpdev: rpmsg channel device
+- * @cb: rx callback handler
+- * @priv: private data for the driver's use
+- * @chinfo: channel_info with the local rpmsg address to bind with @cb
+- *
+- * Every rpmsg address in the system is bound to an rx callback (so when
+- * inbound messages arrive, they are dispatched by the rpmsg bus using the
+- * appropriate callback handler) by means of an rpmsg_endpoint struct.
+- *
+- * This function allows drivers to create such an endpoint, and by that,
+- * bind a callback, and possibly some private data too, to an rpmsg address
+- * (either one that is known in advance, or one that will be dynamically
+- * assigned for them).
+- *
+- * Simple rpmsg drivers need not call rpmsg_create_ept, because an endpoint
+- * is already created for them when they are probed by the rpmsg bus
+- * (using the rx callback provided when they registered to the rpmsg bus).
+- *
+- * So things should just work for simple drivers: they already have an
+- * endpoint, their rx callback is bound to their rpmsg address, and when
+- * relevant inbound messages arrive (i.e. messages which their dst address
+- * equals to the src address of their rpmsg channel), the driver's handler
+- * is invoked to process it.
+- *
+- * That said, more complicated drivers might do need to allocate
+- * additional rpmsg addresses, and bind them to different rx callbacks.
+- * To accomplish that, those drivers need to call this function.
+- *
+- * Drivers should provide their @rpdev channel (so the new endpoint would belong
+- * to the same remote processor their channel belongs to), an rx callback
+- * function, an optional private data (which is provided back when the
+- * rx callback is invoked), and an address they want to bind with the
+- * callback. If @addr is RPMSG_ADDR_ANY, then rpmsg_create_ept will
+- * dynamically assign them an available rpmsg address (drivers should have
+- * a very good reason why not to always use RPMSG_ADDR_ANY here).
+- *
+- * Returns a pointer to the endpoint on success, or NULL on error.
+- */
+-struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+-					rpmsg_rx_cb_t cb, void *priv,
+-					struct rpmsg_channel_info chinfo)
+-{
+-	return rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
+-}
+-EXPORT_SYMBOL(rpmsg_create_ept);
+-
+ static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev,
+ 						      rpmsg_rx_cb_t cb,
+ 						      void *priv,
 -- 
-1.9.1
+2.5.0
