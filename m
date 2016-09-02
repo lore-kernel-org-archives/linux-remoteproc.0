@@ -1,52 +1,93 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH] dt-binding: remoteproc: Document generic properties
-References: <1470850622-29816-1-git-send-email-bjorn.andersson@linaro.org>
- <20160812183448.GA32059@rob-hp-laptop> <20160812224223.GJ26240@tuxbot>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <46d4d351-336c-6d4f-b1b0-243cf3c5d68b@ti.com>
-Date: Fri, 2 Sep 2016 16:45:45 -0500
+Return-Path: <Matt.Redfearn@imgtec.com>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Subject: [PATCH 0/6] MIPS: Remote processor driver
+Date: Fri, 2 Sep 2016 10:59:49 +0100
+Message-ID: <1472810395-21381-1-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
-In-Reply-To: <20160812224223.GJ26240@tuxbot>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: Ralf Baechle <ralf@linux-mips.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mips@linux-mips.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Hugh Dickins <hughd@google.com>, Qais Yousef <qsyousef@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Huacai Chen <chenhc@lemote.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>, Lisa Parratt <Lisa.Parratt@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Qais Yousef <qais.yousef@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, Paul Burton <paul.burton@imgtec.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 08/12/2016 05:42 PM, Bjorn Andersson wrote:
-> On Fri 12 Aug 11:34 PDT 2016, Rob Herring wrote:
-> 
->> On Wed, Aug 10, 2016 at 10:37:02AM -0700, Bjorn Andersson wrote:
->>> This documents the generic properties "rprocs" and "rproc-names", used
->>> for consumer drivers to reference a remoteproc node.
->>
->> How do you intend to use this? I wonder if it would not be better to 
->> expose a remote proc with existing bindings for a particular purpose 
->> (e.g. clocks, resets, etc.) rather than a generic connection. The client 
->> side would have to have specific knowledge as to what functions the 
->> remote proc provides.
->>
-> 
-> The remoteproc node represents the mechanism and resources needed to
-> control the life cycle a co-processor, e.g. loading, booting, shutting
-> gown a video encoder/decoder.
-> 
-> The proposed reference allows a separate thingie to assert control of
-> the life cycle of that co-processor.
-> 
-> 
-> I acknowledge that in some cases there is a fine line between what is
-> the life cycle management and what is the actual functionality
-> implemented by that remote processor. But as the remoteproc mechanism is
-> reusable between various use cases I think it makes sense to not describe
-> them as one unit.
 
-What's the current state of this patch, not officially acked yet right?
+The MIPS remote processor driver allows non-Linux firmware to take
+control of and execute on one of the systems VPEs. The CPU must be
+offlined from Linux first. A sysfs interface is created which allows
+firmware to be loaded and changed at runtime. A full description is
+available at [1]. An example firmware that can be used with this driver
+is available at [2].
 
-While we are at this, can we agree upon an alias stem name as well, we
-can stick to "rproc". Otherwise, I can submit an incremental patch on
-top of this along with the code that adds an API to retrieve it for
-client users.
+This is useful to allow running bare metal code, or an RTOS, on one or
+more CPUs while allowing Linux to continue running on those remaining.
 
-regards
-Suman
+The remote processor framework allows for firmwares to provide any
+virtio device for communication between the firmware running on the
+remote VPE and Linux. For example [2] demonstrates a simple firmware
+which provides a virtual serial port. Any string sent to the port is
+case inverted and returned.
+
+This is conceptually similar to the VPE loader functionality, but is
+more standard as it fits into the remoteproc subsystem.
+
+The first patches in this series lay the groundwork for the driver
+before it is added. The last series deprecates the VPE loader.
+
+This functionality is supported on:
+- MIPS32r2 devices implementing the MIPS MT ASE for multithreading, such
+  as interAptiv.
+- MIPS32r6 devices implementing VPs, such as I6400.
+
+Limitations:
+- The remoteproc core supports only 32bit ELFs. Therefore it is only
+  possible to run 32bit firmware on the remote processor. Also, for
+  virtio communication, pointers are passed from the kernel to firmware.
+  There can be no mismatch in pointer sizes between the kernel and
+  firmware, so this limits the host kernel to 32bit as well.
+
+The functionality has been tested on the Ci40 board which has a 2 core 2
+thread interAptiv.
+
+This series is based on v4.8-rc4.
+
+Depends on some patches from James Hogan's recent "MIPS: General EVA fixes &
+cleanups" series:
+MIPS: traps: 64bit kernels should read CP0_EBase 64bit
+MIPS: traps: Convert ebase to KSeg0
+MIPS: traps: Ensure full EBase is written
+
+Without these patches, if firmware modifies ebase to allow handling
+exceptions / interrupts, then when the VPE is returned to Linux the
+kernel exception handlers won't be reinstated properly.
+
+[1] http://wiki.prplfoundation.org/w/images/d/df/MIPS_OS_Remote_Processor_Driver_Whitepaper_1.0.9.pdf
+[2] https://github.com/MIPS/mips-rproc-example
+
+
+
+Lisa Parratt (1):
+  MIPS: CPS: Add VP(E) stealing
+
+Matt Redfearn (5):
+  irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
+  MIPS: tlb-r4k: If there are wired entries, don't use TLBINVF
+  MIPS: smp.c: Introduce mechanism for freeing and allocating IPIs
+  remoteproc/MIPS: Add a remoteproc driver for MIPS
+  MIPS: Deprecate VPE Loader
+
+ Documentation/ABI/testing/sysfs-class-mips-rproc |  24 +
+ arch/mips/Kconfig                                |  12 +-
+ arch/mips/include/asm/smp-cps.h                  |   8 +
+ arch/mips/include/asm/smp.h                      |  15 +
+ arch/mips/kernel/smp-cps.c                       | 162 +++++-
+ arch/mips/kernel/smp.c                           |  73 ++-
+ arch/mips/mm/tlb-r4k.c                           |   7 +-
+ drivers/irqchip/irq-mips-gic.c                   | 185 ++++++-
+ drivers/remoteproc/Kconfig                       |  11 +
+ drivers/remoteproc/Makefile                      |   1 +
+ drivers/remoteproc/mips_remoteproc.c             | 651 +++++++++++++++++++++++
+ 11 files changed, 1124 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-mips-rproc
+ create mode 100644 drivers/remoteproc/mips_remoteproc.c
+
+-- 
+2.7.4
