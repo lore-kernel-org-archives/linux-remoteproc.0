@@ -1,189 +1,62 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 06/17] rpmsg: Introduce indirection table for rpmsg_device operations
-Date: Thu,  1 Sep 2016 15:27:58 -0700
-Message-Id: <1472768889-3906-7-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Mon, 5 Sep 2016 16:42:48 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v8 15/18] ARM: STi: DT: STiH407: Add uniperif reader dt
+ nodes
+Message-ID: <20160905154248.GU4921@dell>
+References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
+ <1472223413-7254-16-git-send-email-peter.griffin@linaro.org>
+ <20160830100148.GO1661@dell>
+ <20160830142112.GA22514@griffinp-ThinkPad-X1-Carbon-2nd>
+ <20160831112819.GJ27357@dell>
+ <ae089830-b7c8-ee83-f697-6ff93f2646ed@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ae089830-b7c8-ee83-f697-6ff93f2646ed@st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-To allow for multiple backend implementations add an indireection table
-for rpmsg_device related operations and move the virtio implementation
-behind this table.
+On Mon, 05 Sep 2016, Arnaud Pouliquen wrote:
+> >>>> +			dai-name = "Uni Reader #0 (PCM IN)";
+> >>>
+> >>> Oooo, not seen something like this before.
+> >>>
+> >>> If it does not already have one, it would require a DT Ack.
+> >>
+> >> No idea, the driver got merged 1 year ago.
+> This field could be suppressed and handled in source code, using
+> st,uniperiph-id to retreive it.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+That would be better.
 
-Per Loic's comment I did consider adding parameter validation to the exposed
-functions in this patch, but as the previous implementation did not gracefully
-handle bad input parameters I decided to defer this until after this series has
-been merged.
+> >> Arnaud did you get a DT ack when you merged this driver & binding? i if i remember well, i had  sent to Alsa mailing list only, I missed
+> this obvious...
 
-Changes since v1:
-- Split table in device vs endpoint
-- Moved ops pointer to the public structs to reduce code clutter
-- Kerneldoc for rpmsg_device_ops
+I'm surprised Mark didn't notice this.
 
- drivers/rpmsg/virtio_rpmsg_bus.c | 48 +++++++++++++++++++++++++++++++++++-----
- include/linux/rpmsg.h            | 23 +++++++++++++++++++
- 2 files changed, 65 insertions(+), 6 deletions(-)
+He's usually pretty good at picking stuff like that up.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1ac9fd871760..088203ed1df8 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -286,10 +286,18 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
- 					rpmsg_rx_cb_t cb, void *priv,
- 					struct rpmsg_channel_info chinfo)
- {
--	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, chinfo.src);
-+	return rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
- }
- EXPORT_SYMBOL(rpmsg_create_ept);
- 
-+static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev,
-+						      rpmsg_rx_cb_t cb,
-+						      void *priv,
-+						      struct rpmsg_channel_info chinfo)
-+{
-+	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, chinfo.src);
-+}
-+
- /**
-  * __rpmsg_destroy_ept() - destroy an existing rpmsg endpoint
-  * @vrp: virtproc which owns this ept
-@@ -341,7 +349,6 @@ static int rpmsg_dev_probe(struct device *dev)
- {
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
--	struct virtproc_info *vrp = rpdev->vrp;
- 	struct rpmsg_channel_info chinfo = {};
- 	struct rpmsg_endpoint *ept;
- 	int err;
-@@ -367,6 +374,18 @@ static int rpmsg_dev_probe(struct device *dev)
- 		goto out;
- 	}
- 
-+	if (rpdev->ops->announce_create)
-+		err = rpdev->ops->announce_create(rpdev);
-+out:
-+	return err;
-+}
-+
-+static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
-+{
-+	struct virtproc_info *vrp = rpdev->vrp;
-+	struct device *dev = &rpdev->dev;
-+	int err = 0;
-+
- 	/* need to tell remote processor's name service about this channel ? */
- 	if (rpdev->announce &&
- 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
-@@ -381,15 +400,13 @@ static int rpmsg_dev_probe(struct device *dev)
- 			dev_err(dev, "failed to announce service %d\n", err);
- 	}
- 
--out:
- 	return err;
- }
- 
--static int rpmsg_dev_remove(struct device *dev)
-+static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
- {
--	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
--	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
- 	struct virtproc_info *vrp = rpdev->vrp;
-+	struct device *dev = &rpdev->dev;
- 	int err = 0;
- 
- 	/* tell remote processor's name service we're removing this channel */
-@@ -406,6 +423,18 @@ static int rpmsg_dev_remove(struct device *dev)
- 			dev_err(dev, "failed to announce service %d\n", err);
- 	}
- 
-+	return err;
-+}
-+
-+static int rpmsg_dev_remove(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct rpmsg_driver *rpdrv = to_rpmsg_driver(rpdev->dev.driver);
-+	int err = 0;
-+
-+	if (rpdev->ops->announce_destroy)
-+		err = rpdev->ops->announce_destroy(rpdev);
-+
- 	rpdrv->remove(rpdev);
- 
- 	rpmsg_destroy_ept(rpdev->ept);
-@@ -479,6 +508,12 @@ static int rpmsg_device_match(struct device *dev, void *data)
- 	return 1;
- }
- 
-+static const struct rpmsg_device_ops virtio_rpmsg_ops = {
-+	.create_ept = virtio_rpmsg_create_ept,
-+	.announce_create = virtio_rpmsg_announce_create,
-+	.announce_destroy = virtio_rpmsg_announce_destroy,
-+};
-+
- /*
-  * create an rpmsg channel using its name and address info.
-  * this function will be used to create both static and dynamic
-@@ -508,6 +543,7 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 	rpdev->vrp = vrp;
- 	rpdev->src = chinfo->src;
- 	rpdev->dst = chinfo->dst;
-+	rpdev->ops = &virtio_rpmsg_ops;
- 
- 	/*
- 	 * rpmsg server channels has predefined local address (for now),
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 35a0f39fd09b..9fdcfc7c7837 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -96,6 +96,8 @@ enum rpmsg_ns_flags {
- #define RPMSG_ADDR_ANY		0xFFFFFFFF
- 
- struct virtproc_info;
-+struct rpmsg_endpoint;
-+struct rpmsg_device_ops;
- 
- /**
-  * struct rpmsg_channel_info - channel info representation
-@@ -127,11 +129,32 @@ struct rpmsg_device {
- 	u32 dst;
- 	struct rpmsg_endpoint *ept;
- 	bool announce;
-+
-+	const struct rpmsg_device_ops *ops;
- };
- 
- typedef void (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
- 
- /**
-+ * struct rpmsg_device_ops - indirection table for the rpmsg_device operations
-+ * @create_ept:		create backend-specific endpoint, requried
-+ * @announce_create:	announce presence of new channel, optional
-+ * @announce_destroy:	announce destruction of channel, optional
-+ *
-+ * Indirection table for the operations that a rpmsg backend should implement.
-+ * @announce_create and @announce_destroy are optional as the backend might
-+ * advertise new channels implicitly by creating the endpoints.
-+ */
-+struct rpmsg_device_ops {
-+	struct rpmsg_endpoint *(*create_ept)(struct rpmsg_device *rpdev,
-+					    rpmsg_rx_cb_t cb, void *priv,
-+					    struct rpmsg_channel_info chinfo);
-+
-+	int (*announce_create)(struct rpmsg_device *ept);
-+	int (*announce_destroy)(struct rpmsg_device *ept);
-+};
-+
-+/**
-  * struct rpmsg_endpoint - binds a local rpmsg address to its user
-  * @rpdev: rpmsg channel device
-  * @refcount: when this drops to zero, the ept is deallocated
+> >>>> +			st,version = <3>;
+> >>>
+> >>> This will likely need a DT Ack too.  We usually encode this sort of
+> >>> information in the compatible string.
+> yes, better to use compatibility
+> >>
+> >> See 05c1b4480e86a871b18030d6f3d532dc0ecdf38c
+> > 
+> > Well Rob's the boss.  We certainly never used to take 'device ID' or
+> > 'version' attributes.  I guess something must have changed.
+> 
+> I will try to provide patches for code and bindings rework this week.
+
+Wonderful.. Thanks Arnaud.
+
 -- 
-2.5.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
