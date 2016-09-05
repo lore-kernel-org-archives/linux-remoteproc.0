@@ -1,62 +1,88 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Mon, 5 Sep 2016 16:42:48 +0100
-From: Lee Jones <lee.jones@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
 Subject: Re: [PATCH v8 15/18] ARM: STi: DT: STiH407: Add uniperif reader dt
  nodes
-Message-ID: <20160905154248.GU4921@dell>
 References: <1472223413-7254-1-git-send-email-peter.griffin@linaro.org>
  <1472223413-7254-16-git-send-email-peter.griffin@linaro.org>
  <20160830100148.GO1661@dell>
  <20160830142112.GA22514@griffinp-ThinkPad-X1-Carbon-2nd>
  <20160831112819.GJ27357@dell>
- <ae089830-b7c8-ee83-f697-6ff93f2646ed@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <ae089830-b7c8-ee83-f697-6ff93f2646ed@st.com>
+Date: Mon, 5 Sep 2016 14:20:06 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20160831112819.GJ27357@dell>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae089830-b7c8-ee83-f697-6ff93f2646ed@st.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, 05 Sep 2016, Arnaud Pouliquen wrote:
-> >>>> +			dai-name = "Uni Reader #0 (PCM IN)";
-> >>>
-> >>> Oooo, not seen something like this before.
-> >>>
-> >>> If it does not already have one, it would require a DT Ack.
-> >>
-> >> No idea, the driver got merged 1 year ago.
-> This field could be suppressed and handled in source code, using
-> st,uniperiph-id to retreive it.
+Hello ptere, Lee,
 
-That would be better.
+Thanks for your remarks,
 
-> >> Arnaud did you get a DT ack when you merged this driver & binding? i if i remember well, i had  sent to Alsa mailing list only, I missed
-> this obvious...
-
-I'm surprised Mark didn't notice this.
-
-He's usually pretty good at picking stuff like that up.
-
-> >>>> +			st,version = <3>;
-> >>>
-> >>> This will likely need a DT Ack too.  We usually encode this sort of
-> >>> information in the compatible string.
-> yes, better to use compatibility
-> >>
-> >> See 05c1b4480e86a871b18030d6f3d532dc0ecdf38c
-> > 
-> > Well Rob's the boss.  We certainly never used to take 'device ID' or
-> > 'version' attributes.  I guess something must have changed.
+Regards
+Arnaud
+On 08/31/2016 01:28 PM, Lee Jones wrote:
+> On Tue, 30 Aug 2016, Peter Griffin wrote:
+>> Thanks for reviewing and your very valuable feedback.
+>> On Tue, 30 Aug 2016, Lee Jones wrote:
+>>> On Fri, 26 Aug 2016, Peter Griffin wrote:
+>>>
+>>>> This patch adds the DT node for the uniperif reader
+>>>> IP block found on STiH407 family silicon.
+>>>>
+>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>>>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+>>>> ---
+>>>>  arch/arm/boot/dts/stih407-family.dtsi | 26 ++++++++++++++++++++++++++
+>>>>  1 file changed, 26 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+>>>> index d263c96..bdddf2c 100644
+>>>> --- a/arch/arm/boot/dts/stih407-family.dtsi
+>>>> +++ b/arch/arm/boot/dts/stih407-family.dtsi
+>>>> @@ -956,5 +956,31 @@
+>>>>  			st,version = <5>;
+>>>>  			st,mode = "SPDIF";
+>>>>  		};
+>>>> +
+>>>> +		sti_uni_reader0: sti-uni-reader@0 {
+>>>> +			compatible = "st,sti-uni-reader";
+>>>> +			status = "disabled";
+>>>
+>>> I find it's normally nicer to place the status of the node at the
+>>> bottom, separated by a '\n'.
+>>
+>> Ok I'll add a superflous '\n' in the next version.
 > 
-> I will try to provide patches for code and bindings rework this week.
+> Everyone loves a smart arse!
+> 
+> In this case I believe the '\n' to be a functional separator and not
+> superfluous at all.
+> 
+>>>> +			dai-name = "Uni Reader #0 (PCM IN)";
+>>>
+>>> Oooo, not seen something like this before.
+>>>
+>>> If it does not already have one, it would require a DT Ack.
+>>
+>> No idea, the driver got merged 1 year ago.
+This field could be suppressed and handled in source code, using
+st,uniperiph-id to retreive it.
+>>
+>> Arnaud did you get a DT ack when you merged this driver & binding? i if i remember well, i had  sent to Alsa mailing list only, I missed
+this obvious...
+>>>
+>>>> +			st,version = <3>;
+>>>
+>>> This will likely need a DT Ack too.  We usually encode this sort of
+>>> information in the compatible string.
+yes, better to use compatibility
+>>
+>> See 05c1b4480e86a871b18030d6f3d532dc0ecdf38c
+> 
+> Well Rob's the boss.  We certainly never used to take 'device ID' or
+> 'version' attributes.  I guess something must have changed.
 
-Wonderful.. Thanks Arnaud.
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I will try to provide patches for code and bindings rework this week.
