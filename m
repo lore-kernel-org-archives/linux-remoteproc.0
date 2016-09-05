@@ -1,58 +1,40 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v9 10/19] ARM: DT: STiH407: Add i2s_out pinctrl configuration
-Date: Mon,  5 Sep 2016 14:16:52 +0100
-Message-Id: <1473081421-16555-11-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v9 18/19] drm/virtio: kconfig: Fixup white space.
+Date: Mon,  5 Sep 2016 14:17:00 +0100
+Message-Id: <1473081421-16555-19-git-send-email-peter.griffin@linaro.org>
 In-Reply-To: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
 References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the pinctrl config for the i2s_out pins
-used by the uniperif player IP.
+Use tabs instead of spaces.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- arch/arm/boot/dts/stih407-pinctrl.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/gpu/drm/virtio/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-index a538ae5..0fb5c8a 100644
---- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
-@@ -1067,6 +1067,29 @@
- 				};
- 			};
+diff --git a/drivers/gpu/drm/virtio/Kconfig b/drivers/gpu/drm/virtio/Kconfig
+index 90357d9..2d83932 100644
+--- a/drivers/gpu/drm/virtio/Kconfig
++++ b/drivers/gpu/drm/virtio/Kconfig
+@@ -2,10 +2,10 @@ config DRM_VIRTIO_GPU
+ 	tristate "Virtio GPU driver"
+ 	depends on DRM
+ 	select VIRTIO
+-        select DRM_KMS_HELPER
+-        select DRM_TTM
++	select DRM_KMS_HELPER
++	select DRM_TTM
+ 	help
+ 	   This is the virtual GPU driver for virtio.  It can be used with
+-           QEMU based VMMs (like KVM or Xen).
++	   QEMU based VMMs (like KVM or Xen).
  
-+			i2s_out {
-+				pinctrl_i2s_8ch_out: i2s_8ch_out{
-+					st,pins {
-+						mclk = <&pio33 5 ALT1 OUT>;
-+						lrclk = <&pio33 7 ALT1 OUT>;
-+						sclk = <&pio33 6 ALT1 OUT>;
-+						data0 = <&pio33 4 ALT1 OUT>;
-+						data1 = <&pio34 0 ALT1 OUT>;
-+						data2 = <&pio34 1 ALT1 OUT>;
-+						data3 = <&pio34 2 ALT1 OUT>;
-+					};
-+				};
-+
-+				pinctrl_i2s_2ch_out: i2s_2ch_out{
-+					st,pins {
-+						mclk = <&pio33 5 ALT1 OUT>;
-+						lrclk = <&pio33 7 ALT1 OUT>;
-+						sclk = <&pio33 6 ALT1 OUT>;
-+						data0 = <&pio33 4 ALT1 OUT>;
-+					};
-+				};
-+			};
-+
- 			serial3 {
- 				pinctrl_serial3: serial3-0 {
- 					st,pins {
+ 	   If unsure say M.
 -- 
 1.9.1
