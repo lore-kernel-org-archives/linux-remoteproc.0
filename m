@@ -1,49 +1,43 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 0/3] Remoteproc: Add predefined coprocessor memory mapping support
-Date: Tue, 6 Sep 2016 09:39:41 +0200
-Message-ID: <1473147584-13183-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v9 02/19] MAINTAINERS: Add st slim core rproc driver to STi section.
+Date: Mon,  5 Sep 2016 14:16:44 +0100
+Message-Id: <1473081421-16555-3-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
+References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi all,
+This patch adds the slim core rproc driver to the STi section
+of the MAINTAINERS file.
 
-Due to diverse constraints like SoC design, coprocessor characteristics,
-security context, etc, coprocessor memory mapping may be predefined/fixed at system
-level.
-In that case remoteproc should respect the different memory regions allocated
-to coprocessor in order to ensure proper operations.
-The following patches implement support of fixed memory region predefined in
-firmware resource table.
-During resource table handling, if resource physical address is defined, i.e
-different from 0x0 or 0xFFFFFFFF (-1), remoteproc enables memory region access
-using memremap function.
-If resource physical address is not defined, current behavior is preserved.
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Loic
-
-V2 introduces new specific-platform ops for memory allocation. This new ops is
-called before standard dma_alloc_coherent to let platform-specific driver
-handle specific use cases like internal SRAM or fixed memory mapping.
-Moreover to have the capability to fix vring location and have homogenous
-resource management, reserved vring resource field is transformed in physical
-address.
-To preserve compatibility with existing firmware for which reserved field is
-equal to 0, physical address set to 0 is interpreted as any like -1.
-
-Loic Pallardy (3):
-  remoteproc: Modify FW_RSC_ADDR_ANY definition
-  remoteproc: core: transform struct fw_rsc_vdev_vring reserved field in
-    pa
-  remoteproc: core: add rproc ops for memory allocation
-
- drivers/remoteproc/remoteproc_core.c | 73 +++++++++++++++++++++++++++---------
- include/linux/remoteproc.h           | 10 +++--
- 2 files changed, 63 insertions(+), 20 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0bbe4b1..5dd3b24 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1749,6 +1749,7 @@ F:	drivers/phy/phy-stih407-usb.c
+ F:	drivers/phy/phy-stih41x-usb.c
+ F:	drivers/pinctrl/pinctrl-st.c
+ F:	drivers/remoteproc/st_remoteproc.c
++F:	drivers/remoteproc/st_slim_rproc.c
+ F:	drivers/reset/sti/
+ F:	drivers/rtc/rtc-st-lpc.c
+ F:	drivers/tty/serial/st-asc.c
+@@ -1757,6 +1758,7 @@ F:	drivers/usb/host/ehci-st.c
+ F:	drivers/usb/host/ohci-st.c
+ F:	drivers/watchdog/st_lpc_wdt.c
+ F:	drivers/ata/ahci_st.c
++F:	include/linux/remoteproc/st_slim_rproc.h
+ 
+ ARM/STM32 ARCHITECTURE
+ M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
 -- 
 1.9.1
