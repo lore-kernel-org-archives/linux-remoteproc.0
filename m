@@ -1,159 +1,80 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 3/6] MIPS: smp.c: Introduce mechanism for freeing and allocating IPIs
-Date: Tue, 20 Sep 2016 09:47:26 +0100
-Message-ID: <1474361249-31064-4-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 6 Sep 2016 11:10:24 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 2/3] remoteproc: core: transform struct
+ fw_rsc_vdev_vring reserved field in pa
+Message-ID: <20160906181024.GD15161@tuxbot>
+References: <1473147584-13183-1-git-send-email-loic.pallardy@st.com>
+ <1473147584-13183-3-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Lisa Parratt <Lisa.Parratt@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Qais Yousef <qsyousef@gmail.com>, Paul Burton <paul.burton@imgtec.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1473147584-13183-3-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, lee.jones@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-For the MIPS remote processor implementation, we need additional IPIs to
-talk to the remote processor. Since MIPS GIC reserves exactly the right
-number of IPI IRQs required by Linux for the number of VPs in the
-system, this is not possible without releasing some recources.
+On Tue 06 Sep 00:39 PDT 2016, Loic Pallardy wrote:
 
-This commit introduces mips_smp_ipi_allocate() which allocates IPIs to a
-given cpumask. It is called as normal with the cpu_possible_mask at
-bootup to initialise IPIs to all CPUs. mips_smp_ipi_free() may then be
-used to free IPIs to a subset of those CPUs so that their hardware
-resources can be reused.
+> In current implementation, struct fw_rsc_vdev_vring which describes
+> vring resource in firmware resource table owns only device address,
+> because it assumes that host is responsible of vring allocation and
+> only device address is needed by coprocessor.
+> But if vrings need to be fixe in system memory map for any reasons
+> (security, SoC charactieristics...), physical address is needed exatly
+> identified the memory chunck by host.
+> 
+> For that let's transform reserved field of struct fw_rsc_vdev_vring
+> to pa (physical address).
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
+Applied, thanks
 
-Changes in v2: None
-
- arch/mips/include/asm/smp.h | 14 +++++++++++
- arch/mips/kernel/smp.c      | 61 +++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 67 insertions(+), 8 deletions(-)
-
-diff --git a/arch/mips/include/asm/smp.h b/arch/mips/include/asm/smp.h
-index 8bc6c70a4030..060f23ff1817 100644
---- a/arch/mips/include/asm/smp.h
-+++ b/arch/mips/include/asm/smp.h
-@@ -85,6 +85,20 @@ static inline void __cpu_die(unsigned int cpu)
- extern void play_dead(void);
- #endif
- 
-+/*
-+ * This function will set up the necessary IPIs for Linux to communicate
-+ * with the CPUs in mask.
-+ * Return 0 on success.
-+ */
-+int mips_smp_ipi_allocate(const struct cpumask *mask);
-+
-+/*
-+ * This function will free up IPIs allocated with mips_smp_ipi_allocate to the
-+ * CPUs in mask, which must be a subset of the IPIs that have been configured.
-+ * Return 0 on success.
-+ */
-+int mips_smp_ipi_free(const struct cpumask *mask);
-+
- static inline void arch_send_call_function_single_ipi(int cpu)
- {
- 	extern struct plat_smp_ops *mp_ops;	/* private */
-diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
-index f95f094f36e4..afa06c2bb019 100644
---- a/arch/mips/kernel/smp.c
-+++ b/arch/mips/kernel/smp.c
-@@ -229,7 +229,7 @@ static struct irqaction irq_call = {
- 	.name		= "IPI call"
- };
- 
--static __init void smp_ipi_init_one(unsigned int virq,
-+static void smp_ipi_init_one(unsigned int virq,
- 				    struct irqaction *action)
- {
- 	int ret;
-@@ -239,9 +239,11 @@ static __init void smp_ipi_init_one(unsigned int virq,
- 	BUG_ON(ret);
- }
- 
--static int __init mips_smp_ipi_init(void)
-+static unsigned int call_virq, sched_virq;
-+
-+int mips_smp_ipi_allocate(const struct cpumask *mask)
- {
--	unsigned int call_virq, sched_virq;
-+	int virq;
- 	struct irq_domain *ipidomain;
- 	struct device_node *node;
- 
-@@ -268,16 +270,20 @@ static int __init mips_smp_ipi_init(void)
- 	if (!ipidomain)
- 		return 0;
- 
--	call_virq = irq_reserve_ipi(ipidomain, cpu_possible_mask);
--	BUG_ON(!call_virq);
-+	virq = irq_reserve_ipi(ipidomain, mask);
-+	BUG_ON(!virq);
-+	if (!call_virq)
-+		call_virq = virq;
- 
--	sched_virq = irq_reserve_ipi(ipidomain, cpu_possible_mask);
--	BUG_ON(!sched_virq);
-+	virq = irq_reserve_ipi(ipidomain, mask);
-+	BUG_ON(!virq);
-+	if (!sched_virq)
-+		sched_virq = virq;
- 
- 	if (irq_domain_is_ipi_per_cpu(ipidomain)) {
- 		int cpu;
- 
--		for_each_cpu(cpu, cpu_possible_mask) {
-+		for_each_cpu(cpu, mask) {
- 			smp_ipi_init_one(call_virq + cpu, &irq_call);
- 			smp_ipi_init_one(sched_virq + cpu, &irq_resched);
- 		}
-@@ -286,6 +292,45 @@ static int __init mips_smp_ipi_init(void)
- 		smp_ipi_init_one(sched_virq, &irq_resched);
- 	}
- 
-+	return 0;
-+}
-+
-+int mips_smp_ipi_free(const struct cpumask *mask)
-+{
-+	struct irq_domain *ipidomain;
-+	struct device_node *node;
-+
-+	node = of_irq_find_parent(of_root);
-+	ipidomain = irq_find_matching_host(node, DOMAIN_BUS_IPI);
-+
-+	/*
-+	 * Some platforms have half DT setup. So if we found irq node but
-+	 * didn't find an ipidomain, try to search for one that is not in the
-+	 * DT.
-+	 */
-+	if (node && !ipidomain)
-+		ipidomain = irq_find_matching_host(NULL, DOMAIN_BUS_IPI);
-+
-+	BUG_ON(!ipidomain);
-+
-+	if (irq_domain_is_ipi_per_cpu(ipidomain)) {
-+		int cpu;
-+
-+		for_each_cpu(cpu, mask) {
-+			remove_irq(call_virq + cpu, &irq_call);
-+			remove_irq(sched_virq + cpu, &irq_resched);
-+		}
-+	}
-+	irq_destroy_ipi(call_virq, mask);
-+	irq_destroy_ipi(sched_virq, mask);
-+	return 0;
-+}
-+
-+
-+static int __init mips_smp_ipi_init(void)
-+{
-+	mips_smp_ipi_allocate(cpu_possible_mask);
-+
- 	call_desc = irq_to_desc(call_virq);
- 	sched_desc = irq_to_desc(sched_virq);
- 
--- 
-2.7.4
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 6 ------
+>  include/linux/remoteproc.h           | 4 ++--
+>  2 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 18f4286..0d3c191 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -266,12 +266,6 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
+>  	dev_dbg(dev, "vdev rsc: vring%d: da 0x%x, qsz %d, align %d\n",
+>  		i, vring->da, vring->num, vring->align);
+>  
+> -	/* make sure reserved bytes are zeroes */
+> -	if (vring->reserved) {
+> -		dev_err(dev, "vring rsc has non zero reserved bytes\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	/* verify queue size and vring alignment are sane */
+>  	if (!vring->num || !vring->align) {
+>  		dev_err(dev, "invalid qsz (%d) or alignment (%d)\n",
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 80e1cba..c321eab 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -241,7 +241,7 @@ struct fw_rsc_trace {
+>   * @notifyid is a unique rproc-wide notify index for this vring. This notify
+>   * index is used when kicking a remote processor, to let it know that this
+>   * vring is triggered.
+> - * @reserved: reserved (must be zero)
+> + * @pa: physical address
+>   *
+>   * This descriptor is not a resource entry by itself; it is part of the
+>   * vdev resource type (see below).
+> @@ -255,7 +255,7 @@ struct fw_rsc_vdev_vring {
+>  	u32 align;
+>  	u32 num;
+>  	u32 notifyid;
+> -	u32 reserved;
+> +	u32 pa;
+>  } __packed;
+>  
+>  /**
+> -- 
+> 1.9.1
+> 
