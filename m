@@ -1,50 +1,56 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 2/6] MIPS: tlb-r4k: If there are wired entries, don't use TLBINVF
-Date: Tue, 20 Sep 2016 09:47:25 +0100
-Message-ID: <1474361249-31064-3-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <loic.pallardy@st.com>
+Subject: Re: [PATCH v2 06/19] remoteproc: core: Add explicit message error if
+ cached table failed
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+ <1472676622-32533-7-git-send-email-loic.pallardy@st.com>
+ <20160901070953.GB4921@dell>
+From: loic pallardy <loic.pallardy@st.com>
+Message-ID: <aca7b04d-7229-0c85-f9d0-ca81e64feaf6@st.com>
+Date: Thu, 8 Sep 2016 11:40:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Hugh Dickins <hughd@google.com>, Huacai Chen <chenhc@lemote.com>, "David S. Miller" <davem@davemloft.net>, James Hogan <james.hogan@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Andrew Morton <akpm@linux-foundation.org>
+In-Reply-To: <20160901070953.GB4921@dell>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, Loic Pallardy <loic.pallardy@wanadoo.fr>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-When adding a wired entry to the TLB via add_wired_entry, the tlb is
-flushed with local_flush_tlb_all, which on CPUs with TLBINV results in
-the new wired entry being flushed again.
 
-Behavior of the TLBINV instruction applies to all applicable TLB entries
-and is unaffected by the setting of the Wired register. Therefore if
-the TLB has any wired entries, fall back to iterating over the entries
-rather than blasting them all using TLBINVF.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
+On 09/01/2016 09:09 AM, Lee Jones wrote:
+> On Wed, 31 Aug 2016, Loic Pallardy wrote:
+>
+>> In rproc_fw_boot, add error message if kmemdump failed
+>> as done for other errors.
+>>
+>> Signed-off-by: Loic Pallardy <loic.pallardy@wanadoo.fr>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 96bc8c644..3282a4e 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1139,8 +1139,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>>  	 * cached_table will be copied into device memory.
+>>  	 */
+>>  	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
+>> -	if (!rproc->cached_table)
+>> +	if (!rproc->cached_table) {
+>> +		dev_err(dev, "Failed to create cached table\n");
+>
+> This is an OOM error message, which are not allowed upstream.
+>
+> I believe if kmemdup() fails, the OOM handler will inform the user.
 
-Changes in v2: None
-
- arch/mips/mm/tlb-r4k.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/arch/mips/mm/tlb-r4k.c b/arch/mips/mm/tlb-r4k.c
-index e8b335c16295..4953c1a8cdfd 100644
---- a/arch/mips/mm/tlb-r4k.c
-+++ b/arch/mips/mm/tlb-r4k.c
-@@ -67,8 +67,11 @@ void local_flush_tlb_all(void)
- 
- 	entry = read_c0_wired();
- 
--	/* Blast 'em all away. */
--	if (cpu_has_tlbinv) {
-+	/*
-+	 * Blast 'em all away.
-+	 * If there are any wired entries, fall back to iterating
-+	 */
-+	if (cpu_has_tlbinv && !entry) {
- 		if (current_cpu_data.tlbsizevtlb) {
- 			write_c0_index(0);
- 			mtc0_tlbw_hazard();
--- 
-2.7.4
+Yes true, I'll drop this patch in v2
+Regards,
+Loic
+>
+>>  		goto clean_up;
+>> +	}
+>>
+>>  	rproc->table_ptr = rproc->cached_table;
+>>
+>
