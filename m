@@ -1,174 +1,66 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 10/17] rpmsg: Move helper for finding rpmsg devices to core
-Date: Thu,  1 Sep 2016 15:28:02 -0700
-Message-Id: <1472768889-3906-11-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 8 Sep 2016 12:00:40 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 13/19] remoteproc: core: Append resource only if spare
+ resource present
+Message-ID: <20160908110040.GP4921@dell>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+ <1472676622-32533-14-git-send-email-loic.pallardy@st.com>
+ <20160908093313.GM4921@dell>
+ <41548132-246a-f6d0-473d-e2ab72a86e15@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <41548132-246a-f6d0-473d-e2ab72a86e15@st.com>
+To: loic pallardy <loic.pallardy@st.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Extract and move the helper function for finding rpmsg child devices to
-the core.
+On Thu, 08 Sep 2016, loic pallardy wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> 
+> 
+> On 09/08/2016 11:33 AM, Lee Jones wrote:
+> > On Wed, 31 Aug 2016, Loic Pallardy wrote:
+> > 
+> > > This patch renames rproc_add_resource_table_entry in __add_rsc_tbl_entry
+> > > to have shorter function name and adds spare resource support.
+> > > To guarantee remoteproc won't overwrite firmware data when copying
+> > > back modified resource table, __add_rsc_tbl_entry verifies first that
+> > > resource table owns a spare resource and uses spare bytes to create
+> > > a new resource entry. Spare resource is updated according to changes.
+> > > 
+> > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 54 ++++++++++++++++++++----------------
+> > >  1 file changed, 30 insertions(+), 24 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > index aff1a00..25a429b 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -1107,39 +1107,34 @@ static int __update_rsc_tbl_entry(struct rproc *rproc,
+> > >  	return !updated;
+> > >  }
 
-Changes since v1:
-- Extracted this from the big move to rpmsg_core.c in v1
+[...]
 
- drivers/rpmsg/rpmsg_core.c       | 33 +++++++++++++++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   | 31 +++++++++++++++++++++++++++++++
- drivers/rpmsg/virtio_rpmsg_bus.c | 29 ++++-------------------------
- 3 files changed, 68 insertions(+), 25 deletions(-)
- create mode 100644 drivers/rpmsg/rpmsg_internal.h
+> > > +	spare.len = __get_rsc_tbl_spare_size(rproc, table, tablesz, &spare_index);
+> > > +	if (spare.len < (sizeof(h) + request->size + 4)) /* new offset entry */
+> > > +		return -EPERM;
+> > 
+> > What does this have to do with permissions?
+> Yes sure, I'll replaced by -EINVAL as resource too large compare to spare
+> area capability.
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 3bee8e03a387..81101775fed0 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -22,6 +22,8 @@
- #include <linux/kernel.h>
- #include <linux/rpmsg.h>
- 
-+#include "rpmsg_internal.h"
-+
- /**
-  * rpmsg_create_ept() - create a new rpmsg_endpoint
-  * @rpdev: rpmsg channel device
-@@ -229,3 +231,34 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 	return ept->ops->trysend_offchannel(ept, src, dst, data, len);
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
-+
-+/*
-+ * match an rpmsg channel with a channel info struct.
-+ * this is used to make sure we're not creating rpmsg devices for channels
-+ * that already exist.
-+ */
-+static int rpmsg_device_match(struct device *dev, void *data)
-+{
-+	struct rpmsg_channel_info *chinfo = data;
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+
-+	if (chinfo->src != RPMSG_ADDR_ANY && chinfo->src != rpdev->src)
-+		return 0;
-+
-+	if (chinfo->dst != RPMSG_ADDR_ANY && chinfo->dst != rpdev->dst)
-+		return 0;
-+
-+	if (strncmp(chinfo->name, rpdev->id.name, RPMSG_NAME_SIZE))
-+		return 0;
-+
-+	/* found a match ! */
-+	return 1;
-+}
-+
-+struct device *rpmsg_find_device(struct device *parent,
-+				 struct rpmsg_channel_info *chinfo)
-+{
-+	return device_find_child(parent, chinfo, rpmsg_device_match);
-+
-+}
-+EXPORT_SYMBOL(rpmsg_find_device);
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-new file mode 100644
-index 000000000000..205debf4ea65
---- /dev/null
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -0,0 +1,31 @@
-+/*
-+ * remote processor messaging bus internals
-+ *
-+ * Copyright (C) 2011 Texas Instruments, Inc.
-+ * Copyright (C) 2011 Google, Inc.
-+ *
-+ * Ohad Ben-Cohen <ohad@wizery.com>
-+ * Brian Swetland <swetland@google.com>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __RPMSG_INTERNAL_H__
-+#define __RPMSG_INTERNAL_H__
-+
-+#include <linux/rpmsg.h>
-+
-+#define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
-+#define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
-+
-+struct device *rpmsg_find_device(struct device *parent,
-+				 struct rpmsg_channel_info *chinfo);
-+
-+#endif
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 184663276e51..488fd93a290c 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -35,6 +35,8 @@
- #include <linux/mutex.h>
- #include <linux/of_device.h>
- 
-+#include "rpmsg_internal.h"
-+
- /**
-  * struct virtproc_info - virtual remote processor state
-  * @vdev:	the virtio device
-@@ -452,29 +454,6 @@ static void rpmsg_release_device(struct device *dev)
- 	kfree(rpdev);
- }
- 
--/*
-- * match an rpmsg channel with a channel info struct.
-- * this is used to make sure we're not creating rpmsg devices for channels
-- * that already exist.
-- */
--static int rpmsg_device_match(struct device *dev, void *data)
--{
--	struct rpmsg_channel_info *chinfo = data;
--	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
--
--	if (chinfo->src != RPMSG_ADDR_ANY && chinfo->src != rpdev->src)
--		return 0;
--
--	if (chinfo->dst != RPMSG_ADDR_ANY && chinfo->dst != rpdev->dst)
--		return 0;
--
--	if (strncmp(chinfo->name, rpdev->id.name, RPMSG_NAME_SIZE))
--		return 0;
--
--	/* found a match ! */
--	return 1;
--}
--
- static const struct rpmsg_device_ops virtio_rpmsg_ops = {
- 	.create_ept = virtio_rpmsg_create_ept,
- 	.announce_create = virtio_rpmsg_announce_create,
-@@ -494,7 +473,7 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 	int ret;
- 
- 	/* make sure a similar channel doesn't already exist */
--	tmp = device_find_child(dev, chinfo, rpmsg_device_match);
-+	tmp = rpmsg_find_device(dev, chinfo);
- 	if (tmp) {
- 		/* decrement the matched device's refcount back */
- 		put_device(tmp);
-@@ -547,7 +526,7 @@ static int rpmsg_destroy_channel(struct virtproc_info *vrp,
- 	struct virtio_device *vdev = vrp->vdev;
- 	struct device *dev;
- 
--	dev = device_find_child(&vdev->dev, chinfo, rpmsg_device_match);
-+	dev = rpmsg_find_device(&vdev->dev, chinfo);
- 	if (!dev)
- 		return -EINVAL;
- 
+Yes, or perhaps -ENOSPC?
+
+[...]
+
 -- 
-2.5.0
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
