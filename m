@@ -1,20 +1,22 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 15 Sep 2016 10:27:43 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 8 Sep 2016 15:06:10 +0100
+From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [PATCH v2 3/3] remoteproc: core: add rproc ops for memory
  allocation
-Message-ID: <20160915172743.GE21438@tuxbot>
+Message-ID: <20160908140610.GT4921@dell>
 References: <1473147584-13183-1-git-send-email-loic.pallardy@st.com>
  <1473147584-13183-4-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <1473147584-13183-4-git-send-email-loic.pallardy@st.com>
 To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, lee.jones@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue 06 Sep 00:39 PDT 2016, Loic Pallardy wrote:
+On Tue, 06 Sep 2016, Loic Pallardy wrote:
 
 > Remoteproc core is currently using dma_alloc_coherent for
 > carveout and vring allocation.
@@ -62,26 +64,179 @@ On Tue 06 Sep 00:39 PDT 2016, Loic Pallardy wrote:
 > +
 > +	if (rproc->ops->alloc)
 > +		va = rproc->ops->alloc(rproc, size, &dma);
+> +
+> +	if (!va && rsc->vring[i].pa == FW_RSC_ADDR_ANY)
+> +		va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
+> +
+>  	if (!va) {
+> -		dev_err(dev->parent, "dma_alloc_coherent failed\n");
+> +		dev_err(dev->parent, "Failed to get valid ving[%d] va\n", i);
 
-I believe this will be awkward for the remoteproc drivers to implement.
+Error messages isn't the place for abbreviations IMO.
 
-Imagine a driver that programmatically register some fixed positioned
-carveouts and ioremapped vring buffers, it would then need internal book
-keeping to figure out which type of allocation each call is related to.
+"Failed to allocate memory for ... XXX"
 
+>  		return -EINVAL;
+>  	}
+>  
+> @@ -231,7 +241,10 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+>  	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
+>  	if (ret < 0) {
+>  		dev_err(dev, "idr_alloc failed: %d\n", ret);
+> -		dma_free_coherent(dev->parent, size, va, dma);
+> +		if (rproc->ops->free)
+> +			ret = rproc->ops->free(rproc, size, va, dma);
+> +		if (!ret)
+> +			dma_free_coherent(dev->parent, size, va, dma);
 
-Rather then deferring the allocation until this point I think we should
-tie a rproc_mem_entry to each vring and once we reach
-rproc_alloc_vring() we simply use "va" and "dma" from that.
+Are you sure this is what you want to do?
 
-We would get this from rproc_parse_vring() checking to find an existing
-mem_entry matching the vring requirements (da, then pa) and falling back
-to allocating a new carveout mem_entry.
+Won't this free the memory twice?
 
+Looking at this *very* briefly, shouldn't this be something like:
 
-By then making the current "carveouts" list heterogeneous we would allow
-for arbitrary memory types to be used for backing vrings, as well as
-trace devices, code and data segments.
+else if (va)
+     dma_free_coherent(dev->parent, size, va, dma);
 
-Regards,
-Bjorn
+>  		return ret;
+>  	}
+>  	notifyid = ret;
+> @@ -249,8 +262,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+>  	 * set up the iommu. In this case the device address (da) will
+>  	 * hold the physical address and not the device address.
+>  	 */
+> -	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
+>  	rsc->vring[i].da = dma;
+> +	rsc->vring[i].pa = dma;
+>  	rsc->vring[i].notifyid = notifyid;
+>  	return 0;
+>  }
+> @@ -273,6 +286,15 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/*
+> +	 * pa field was previously reserved and fixed to 0
+> +	 * used FW_RSC_ADDR_ANY as default value if 0 detected
+> +	 * to keep backward compatibility and have vring allocated
+> +	 * by dma_alloc_coherent
+> +	 */
+> +	if (vring->pa == 0)
+> +		vring->pa = FW_RSC_ADDR_ANY;
+> +
+>  	rvring->len = vring->num;
+>  	rvring->align = vring->align;
+>  	rvring->rvdev = rvdev;
+> @@ -286,8 +308,15 @@ void rproc_free_vring(struct rproc_vring *rvring)
+>  	struct rproc *rproc = rvring->rvdev->rproc;
+>  	int idx = rvring->rvdev->vring - rvring;
+>  	struct fw_rsc_vdev *rsc;
+> +	int ret = 0;
+> +
+> +	if (rproc->ops->free)
+> +		ret = rproc->ops->free(rproc, size, rvring->va, rvring->dma);
+> +
+> +	if (!ret)
+> +		dma_free_coherent(rproc->dev.parent, size, rvring->va,
+> +				  rvring->dma);
+
+Same here.
+
+> -	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
+>  	idr_remove(&rproc->notifyids, rvring->notifyid);
+>  
+>  	/* reset resource entry info */
+> @@ -558,7 +587,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	struct rproc_mem_entry *carveout, *mapping;
+>  	struct device *dev = &rproc->dev;
+>  	dma_addr_t dma;
+> -	void *va;
+> +	void *va = NULL;
+>  	int ret;
+>  
+>  	if (sizeof(*rsc) > avail) {
+> @@ -579,7 +608,15 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	if (!carveout)
+>  		return -ENOMEM;
+>  
+> -	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+> +	dma = rsc->pa;
+> +	/* first try platform-specific allocator */
+
+Same comment throughout about comments.
+
+> +	if (rproc->ops->alloc)
+> +		va = rproc->ops->alloc(rproc, rsc->len, &dma);
+> +
+> +	/* use standad method only if region not fixed */
+> +	if (!va && rsc->pa == FW_RSC_ADDR_ANY)
+> +		va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+> +
+>  	if (!va) {
+>  		dev_err(dev->parent,
+>  			"failed to allocate dma memory: len 0x%x\n", rsc->len);
+> @@ -667,7 +704,10 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  free_mapping:
+>  	kfree(mapping);
+>  dma_free:
+> -	dma_free_coherent(dev->parent, rsc->len, va, dma);
+> +	if (rproc->ops->free)
+> +		ret = rproc->ops->free(rproc, rsc->len, va, dma);
+> +	if (!ret)
+> +		dma_free_coherent(dev->parent, rsc->len, va, dma);
+>  free_carv:
+>  	kfree(carveout);
+>  	return ret;
+> @@ -748,6 +788,7 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+>  	struct rproc_mem_entry *entry, *tmp;
+>  	struct rproc_vdev *rvdev, *rvtmp;
+>  	struct device *dev = &rproc->dev;
+> +	int ret = 0;
+>  
+>  	/* clean up debugfs trace entries */
+>  	list_for_each_entry_safe(entry, tmp, &rproc->traces, node) {
+> @@ -774,8 +815,12 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+>  
+>  	/* clean up carveout allocations */
+>  	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+> -		dma_free_coherent(dev->parent, entry->len, entry->va,
+> -				  entry->dma);
+> +		if (rproc->ops->free)
+> +			ret = rproc->ops->free(rproc, entry->len, entry->va,
+> +					       entry->dma);
+> +		if (!ret)
+> +			dma_free_coherent(dev->parent, entry->len, entry->va,
+> +					  entry->dma);
+
+And here I guess.
+
+>  		list_del(&entry->node);
+>  		kfree(entry);
+>  	}
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index c321eab..b2f8227 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -331,12 +331,16 @@ struct rproc;
+>   * @stop:	power off the device
+>   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+>   * @da_to_va:	optional platform hook to perform address translations
+> + * @alloc:	alloc requested memory chunck
+> + * @free:	release specified memory chunck
+>   */
+>  struct rproc_ops {
+>  	int (*start)(struct rproc *rproc);
+>  	int (*stop)(struct rproc *rproc);
+>  	void (*kick)(struct rproc *rproc, int vqid);
+>  	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
+> +	void * (*alloc)(struct rproc *rproc, int size, dma_addr_t *dma_handle);
+> +	int (*free)(struct rproc *rproc, size_t size, void *cpu_addr, dma_addr_t dma_handle);
+>  };
+>  
+>  /**
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
