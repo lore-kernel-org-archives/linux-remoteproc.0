@@ -1,35 +1,114 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v9 07/19] MAINTAINERS: Add FDMA driver files to STi section.
-Date: Mon,  5 Sep 2016 14:16:49 +0100
-Message-Id: <1473081421-16555-8-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Thu, 8 Sep 2016 12:03:57 +0100
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 08/19] remoteproc: core: Associate action to resource
+ request
+Message-ID: <20160908110357.GR4921@dell>
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+ <1472676622-32533-9-git-send-email-loic.pallardy@st.com>
+ <20160901072304.GC4921@dell>
+ <a271e6ac-d713-c637-a6c6-462aa726a576@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a271e6ac-d713-c637-a6c6-462aa726a576@st.com>
+To: loic pallardy <loic.pallardy@st.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the FDMA driver files to the STi
-section of the maintainers file.
+On Thu, 08 Sep 2016, loic pallardy wrote:
+> On 09/01/2016 09:23 AM, Lee Jones wrote:
+> > On Wed, 31 Aug 2016, Loic Pallardy wrote:
+> > 
+> > > With new rproc_request_resource API, rproc driver has now the
+> > > capability to provide resources to remoteproc in order to modify
+> > > firmware resource table.
+> > > But in some cases, other operations are needed like compatibility
+> > > check between resources defined at firmware level and those handled
+> > > by rproc driver, or remoteproc local resource management when firmware
+> > > has no resource table.
+> > > 
+> > > This patch associates action to each resource request to:
+> > > - verify a resource
+> > > - update/amend a resource in firmware resource table
+> > > - handle locally a resource
+> > > 
+> > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
+> > >  include/linux/remoteproc.h           | 26 +++++++++++++++++++++++++-
+> > >  2 files changed, 37 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > index 3282a4e..cd64fae 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -876,16 +876,20 @@ static void rproc_dump_resource_table(struct rproc *rproc,
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+[...]
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5dd3b24..d21a7b5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1739,6 +1739,7 @@ F:	drivers/char/hw_random/st-rng.c
- F:	drivers/clocksource/arm_global_timer.c
- F:	drivers/clocksource/clksrc_st_lpc.c
- F:	drivers/cpufreq/sti-cpufreq.c
-+F:	drivers/dma/st_fdma*
- F:	drivers/i2c/busses/i2c-st.c
- F:	drivers/media/rc/st_rc.c
- F:	drivers/media/platform/sti/c8sectpfe/
+> > >  /**
+> > > + * enum rproc_request_action - types of actions associated to a resource
+> > > + * request
+> > > + *
+> > > + * @RSC_ACT_CHECK:	  request to verify this resource with firmware one
+> > > + * @RSC_ACT_UPDATE:	  request to update firmware resource table with associated
+> > > + *			  resource if possible
+> > > + * @RSC_ACT_FORCE_UPDATE: force firmware resource table update with associated
+> > > + *		          resource
+> > > + * @RSC_ACT_LOCAL:        request to handle this resource localy but not to update
+> > > + *			  firmware resource table
+> > > + * @RSC_ACT_LAST:         just keep this one at the end
+> > > + */
+> > > +enum rproc_request_action {
+> > > +	RSC_ACT_VERIFY		= 0,
+> > > +	RSC_ACT_UPDATE		= 1,
+> > > +	RSC_ACT_FORCE_UPDATE	= 2,
+> > > +	RSC_ACT_LOCAL		= 3,
+> > 
+> > For reviewing purposes I suggest adding these entries as you start to
+> > support them.  Then we have the code and the suggested comment in one
+> > patch for easy comparison.
+> RSC_ACT_LAST need in this patch, that's why action enum defined here.
+
+Okay, good point.
+
+> > > +	RSC_ACT_LAST		= 4,
+> > > +};
+> > > +
+> > > +/**
+> > >   * struct rproc_requested_resources - add a resource to the resource table
+> > >   *
+> > >   * @resource:	pointer to a 'struct fw_rsc_*' resource
+> > >   * @type:	'fw_resource_type' resource type
+> > >   * @size:	size of resource
+> > > + * @action:	action associated the resource
+> > >   * @node:	list node
+> > >   *
+> > >   * Resources can be added by platform-specific rproc drivers calling
+> > > @@ -350,6 +373,7 @@ struct rproc_request_resource {
+> > >  	void *resource;
+> > >  	u32 type;
+> > >  	u32 size;
+> > > +	u32 action;
+> > >  	struct list_head node;
+> > >  };
+> > > 
+> > > @@ -517,7 +541,7 @@ struct rproc_vdev {
+> > >  	u32 rsc_offset;
+> > >  };
+> > > 
+> > > -int rproc_request_resource(struct rproc *rproc, u32 type, void *res);
+> > > +int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *res);
+> > >  struct rproc *rproc_get_by_phandle(phandle phandle);
+> > >  struct rproc *rproc_alloc(struct device *dev, const char *name,
+> > >  			  const struct rproc_ops *ops,
+> > 
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
