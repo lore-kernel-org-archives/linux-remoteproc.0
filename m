@@ -1,211 +1,116 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 07/17] rpmsg: Move rpmsg_device API to new file
-Date: Thu,  1 Sep 2016 15:27:59 -0700
-Message-Id: <1472768889-3906-8-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+Subject: Re: [PATCH v2 09/19] remoteproc: core: Finalize dump resource table
+ function
+References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
+ <1472676622-32533-10-git-send-email-loic.pallardy@st.com>
+ <20160908082630.GJ4921@dell>
+From: loic pallardy <loic.pallardy@st.com>
+Message-ID: <5ca9dfb4-b26f-07b3-cec7-c154dedc3139@st.com>
+Date: Thu, 8 Sep 2016 11:46:48 +0200
+MIME-Version: 1.0
+In-Reply-To: <20160908082630.GJ4921@dell>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Lee Jones <lee.jones@linaro.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Extract the now indirect rpmsg_create_ept() interface to a separate
-file and start building up a rpmsg core.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
 
-Changes since v1:
-- Extracted the big move into several smaller patches
-
- drivers/remoteproc/Kconfig       |  4 +--
- drivers/rpmsg/Kconfig            |  4 +++
- drivers/rpmsg/Makefile           |  3 +-
- drivers/rpmsg/rpmsg_core.c       | 71 ++++++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/virtio_rpmsg_bus.c | 48 ---------------------------
- 5 files changed, 79 insertions(+), 51 deletions(-)
- create mode 100644 drivers/rpmsg/rpmsg_core.c
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 1a8bf76a925f..70ec8130622d 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -17,7 +17,7 @@ config OMAP_REMOTEPROC
- 	select REMOTEPROC
- 	select MAILBOX
- 	select OMAP2PLUS_MBOX
--	select RPMSG
-+	select RPMSG_VIRTIO
- 	help
- 	  Say y here to support OMAP's remote processors (dual M3
- 	  and DSP on OMAP4) via the remote processor framework.
-@@ -59,7 +59,7 @@ config DA8XX_REMOTEPROC
- 	depends on ARCH_DAVINCI_DA8XX
- 	select CMA if MMU
- 	select REMOTEPROC
--	select RPMSG
-+	select RPMSG_VIRTIO
- 	help
- 	  Say y here to support DA8xx/OMAP-L13x remote processors via the
- 	  remote processor framework.
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index 69a219387582..40614be88c97 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -3,6 +3,10 @@ menu "Rpmsg drivers"
- # RPMSG always gets selected by whoever wants it
- config RPMSG
- 	tristate
-+
-+config RPMSG_VIRTIO
-+	tristate
-+	select RPMSG
- 	select VIRTIO
- 	select VIRTUALIZATION
- 
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 7617fcb8259f..c48ea55ad380 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -1 +1,2 @@
--obj-$(CONFIG_RPMSG)	+= virtio_rpmsg_bus.o
-+obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
-+obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-new file mode 100644
-index 000000000000..c511b5d64f89
---- /dev/null
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -0,0 +1,71 @@
-+/*
-+ * remote processor messaging bus
-+ *
-+ * Copyright (C) 2011 Texas Instruments, Inc.
-+ * Copyright (C) 2011 Google, Inc.
-+ *
-+ * Ohad Ben-Cohen <ohad@wizery.com>
-+ * Brian Swetland <swetland@google.com>
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#define pr_fmt(fmt) "%s: " fmt, __func__
-+
-+#include <linux/kernel.h>
-+#include <linux/rpmsg.h>
-+
-+/**
-+ * rpmsg_create_ept() - create a new rpmsg_endpoint
-+ * @rpdev: rpmsg channel device
-+ * @cb: rx callback handler
-+ * @priv: private data for the driver's use
-+ * @chinfo: channel_info with the local rpmsg address to bind with @cb
-+ *
-+ * Every rpmsg address in the system is bound to an rx callback (so when
-+ * inbound messages arrive, they are dispatched by the rpmsg bus using the
-+ * appropriate callback handler) by means of an rpmsg_endpoint struct.
-+ *
-+ * This function allows drivers to create such an endpoint, and by that,
-+ * bind a callback, and possibly some private data too, to an rpmsg address
-+ * (either one that is known in advance, or one that will be dynamically
-+ * assigned for them).
-+ *
-+ * Simple rpmsg drivers need not call rpmsg_create_ept, because an endpoint
-+ * is already created for them when they are probed by the rpmsg bus
-+ * (using the rx callback provided when they registered to the rpmsg bus).
-+ *
-+ * So things should just work for simple drivers: they already have an
-+ * endpoint, their rx callback is bound to their rpmsg address, and when
-+ * relevant inbound messages arrive (i.e. messages which their dst address
-+ * equals to the src address of their rpmsg channel), the driver's handler
-+ * is invoked to process it.
-+ *
-+ * That said, more complicated drivers might do need to allocate
-+ * additional rpmsg addresses, and bind them to different rx callbacks.
-+ * To accomplish that, those drivers need to call this function.
-+ *
-+ * Drivers should provide their @rpdev channel (so the new endpoint would belong
-+ * to the same remote processor their channel belongs to), an rx callback
-+ * function, an optional private data (which is provided back when the
-+ * rx callback is invoked), and an address they want to bind with the
-+ * callback. If @addr is RPMSG_ADDR_ANY, then rpmsg_create_ept will
-+ * dynamically assign them an available rpmsg address (drivers should have
-+ * a very good reason why not to always use RPMSG_ADDR_ANY here).
-+ *
-+ * Returns a pointer to the endpoint on success, or NULL on error.
-+ */
-+struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
-+					rpmsg_rx_cb_t cb, void *priv,
-+					struct rpmsg_channel_info chinfo)
-+{
-+	return rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
-+}
-+EXPORT_SYMBOL(rpmsg_create_ept);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 088203ed1df8..605e09c96d65 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -242,54 +242,6 @@ free_ept:
- 	return NULL;
- }
- 
--/**
-- * rpmsg_create_ept() - create a new rpmsg_endpoint
-- * @rpdev: rpmsg channel device
-- * @cb: rx callback handler
-- * @priv: private data for the driver's use
-- * @chinfo: channel_info with the local rpmsg address to bind with @cb
-- *
-- * Every rpmsg address in the system is bound to an rx callback (so when
-- * inbound messages arrive, they are dispatched by the rpmsg bus using the
-- * appropriate callback handler) by means of an rpmsg_endpoint struct.
-- *
-- * This function allows drivers to create such an endpoint, and by that,
-- * bind a callback, and possibly some private data too, to an rpmsg address
-- * (either one that is known in advance, or one that will be dynamically
-- * assigned for them).
-- *
-- * Simple rpmsg drivers need not call rpmsg_create_ept, because an endpoint
-- * is already created for them when they are probed by the rpmsg bus
-- * (using the rx callback provided when they registered to the rpmsg bus).
-- *
-- * So things should just work for simple drivers: they already have an
-- * endpoint, their rx callback is bound to their rpmsg address, and when
-- * relevant inbound messages arrive (i.e. messages which their dst address
-- * equals to the src address of their rpmsg channel), the driver's handler
-- * is invoked to process it.
-- *
-- * That said, more complicated drivers might do need to allocate
-- * additional rpmsg addresses, and bind them to different rx callbacks.
-- * To accomplish that, those drivers need to call this function.
-- *
-- * Drivers should provide their @rpdev channel (so the new endpoint would belong
-- * to the same remote processor their channel belongs to), an rx callback
-- * function, an optional private data (which is provided back when the
-- * rx callback is invoked), and an address they want to bind with the
-- * callback. If @addr is RPMSG_ADDR_ANY, then rpmsg_create_ept will
-- * dynamically assign them an available rpmsg address (drivers should have
-- * a very good reason why not to always use RPMSG_ADDR_ANY here).
-- *
-- * Returns a pointer to the endpoint on success, or NULL on error.
-- */
--struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
--					rpmsg_rx_cb_t cb, void *priv,
--					struct rpmsg_channel_info chinfo)
--{
--	return rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
--}
--EXPORT_SYMBOL(rpmsg_create_ept);
--
- static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev,
- 						      rpmsg_rx_cb_t cb,
- 						      void *priv,
--- 
-2.5.0
+On 09/08/2016 10:26 AM, Lee Jones wrote:
+> On Wed, 31 Aug 2016, Loic Pallardy wrote:
+>
+>> Diverse updates:
+>> - add cfg field display of vdev struct
+>> - add support of spare resource
+>> - put rproc_dump_resource_table under DEBUG compilation flag
+>>
+>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 31 ++++++++++++++++++++++++++++---
+>>  1 file changed, 28 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index cd64fae..345bdfb 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -791,15 +791,17 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+>>  		rproc_remove_virtio_dev(rvdev);
+>>  }
+>>
+>> +#if defined(DEBUG)
+>
+> Yuk!  I hate #iferey in *.c files if it can be helped.
+>
+> Instead, just use if (IS_ENABLED(CONFIG_DEBUG)) at the call-site and
+> let the compiler optimise it out.
+Indeed looks better. I'll update in V3
+>
+>>  static void rproc_dump_resource_table(struct rproc *rproc,
+>>  				      struct resource_table *table, int size)
+>>  {
+>> -	const char *types[] = {"carveout", "devmem", "trace", "vdev"};
+>> +	static const char *types[] = {"carveout", "devmem", "trace", "vdev", "spare"};
+>>  	struct device *dev = &rproc->dev;
+>>  	struct fw_rsc_carveout *c;
+>>  	struct fw_rsc_devmem *d;
+>>  	struct fw_rsc_trace *t;
+>>  	struct fw_rsc_vdev *v;
+>> +	struct fw_rsc_spare *s;
+>>  	int i, j;
+>>
+>>  	if (!table) {
+>> @@ -814,6 +816,8 @@ static void rproc_dump_resource_table(struct rproc *rproc,
+>>  		int offset = table->offset[i];
+>>  		struct fw_rsc_hdr *hdr = (void *)table + offset;
+>>  		void *rsc = (void *)hdr + sizeof(*hdr);
+>> +		unsigned char *cfg;
+>> +		int len;
+>>
+>>  		switch (hdr->type) {
+>>  		case RSC_CARVEOUT:
+>> @@ -867,14 +871,35 @@ static void rproc_dump_resource_table(struct rproc *rproc,
+>>  				dev_dbg(dev, "    Reserved (should be zero) [%d]\n\n",
+>>  					v->vring[j].reserved);
+>>  			}
+>> +
+>> +			dev_dbg(dev, "  Config table\n");
+>> +			cfg = (unsigned char *)(&v->vring[v->num_of_vrings]);
+>> +			len = 0;
+>> +			do {
+>> +				j = min(16, v->config_len - len);
+>> +				dev_dbg(dev, "    Config[%2d-%2d] = %*phC\n",
+>> +					len, len + j - 1, j, cfg + len);
+>> +				len += j;
+>> +			} while (len < v->config_len);
+>> +
+>> +			break;
+>> +		case RSC_SPARE:
+>> +			s = rsc;
+>> +			dev_dbg(dev, "Entry %d is of type %s\n", i, types[hdr->type]);
+>> +			dev_dbg(dev, "  Spare size: 0x%x bytes\n\n", s->len);
+>>  			break;
+>>  		default:
+>> -			dev_dbg(dev, "Invalid resource type found: %d [hdr: %p]\n",
+>> -				hdr->type, hdr);
+>> +			dev_dbg(dev, "Entry %d: Invalid resource type found: %d [hdr: %p]\n",
+>> +				i, hdr->type, hdr);
+>
+> You're doing a lot of stuff in the patch.  If I were maintainer, I'd
+> be asking you to separate the functionality into separate patches.
+No problem to split in smaller patches
+/Loic
+>
+>>  			return;
+>>  		}
+>>  	}
+>>  }
+>> +#else
+>> +static inline void rproc_dump_resource_table(struct rproc *rproc,
+>> +				      struct resource_table *table, int size)
+>> +{}
+>> +#endif
+>>
+>>  int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *resource)
+>>  {
+>
