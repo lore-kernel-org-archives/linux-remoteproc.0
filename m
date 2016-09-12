@@ -1,85 +1,53 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 8 Sep 2016 09:32:51 +0100
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 11/19] remoteproc: core: Add function to get resource
- table spare bytes information
-Message-ID: <20160908083251.GK4921@dell>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
- <1472676622-32533-12-git-send-email-loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 12 Sep 2016 07:06:32 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] rpmsg: smd: fix dependency on QCOM_SMD=n
+Message-ID: <20160912140632.GG405@tuxbot>
+References: <20160912095903.897647-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1472676622-32533-12-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+In-Reply-To: <20160912095903.897647-1-arnd@arndb.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, 31 Aug 2016, Loic Pallardy wrote:
+On Mon 12 Sep 02:58 PDT 2016, Arnd Bergmann wrote:
 
-> Remoteproc needs to know if a resource table has spare resource
-> allowing resoure table extension.
-> This function parse resource table to detect spare resource.
-> If any, it returns available spare bytes and index of spare resource.
+> The ARM allmodconfig build broke with the addition of the SMD rpmsg
+> driver that conflicts with the driver its replaces:
 > 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> WARNING: drivers/soc/qcom/smd: 'qcom_smd_register_edge' exported twice. Previous export was in drivers/rpmsg/qcom_smd.ko
+> WARNING: drivers/soc/qcom/smd: 'qcom_smd_unregister_edge' exported twice. Previous export was in drivers/rpmsg/qcom_smd.ko
+> 
+> There is already a dependency that is meant to avoid the broken
+> configuration, but that only prevents the case where at least
+> one of the two are built-in, but not if both are modules.
+> 
+> This changes the dependency to "=n", to ensure that the new driver
+> can only be enabled if the other one is completely disabled.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
 > ---
->  drivers/remoteproc/remoteproc_core.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+>  drivers/rpmsg/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index ffb56c0..30e9c70 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -951,6 +951,35 @@ int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *reso
->  }
->  EXPORT_SYMBOL(rproc_request_resource);
->  
-> +static int __get_rsc_tbl_spare_size(struct rproc *rproc,
+> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> index 9ba5a2e5c930..de31c5f14dd9 100644
+> --- a/drivers/rpmsg/Kconfig
+> +++ b/drivers/rpmsg/Kconfig
+> @@ -7,7 +7,7 @@ config RPMSG
+>  config RPMSG_QCOM_SMD
+>  	tristate "Qualcomm Shared Memory Driver (SMD)"
+>  	depends on QCOM_SMEM
+> -	depends on !QCOM_SMD
+> +	depends on QCOM_SMD=n
+>  	select RPMSG
+>  	help
+>  	  Say y here to enable support for the Qualcomm Shared Memory Driver
 
-size_t?
+Of course, time to study this grammar again...
 
-> +					  struct resource_table *table_ptr, int len,
-> +					  int *spare_index)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	int i;
-> +
-> +	for (i = 0; i < table_ptr->num; i++) {
-> +		int offset = table_ptr->offset[i];
-> +		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
-> +		struct fw_rsc_spare *spare = (void *)hdr + sizeof(*hdr);
-> +
-> +		dev_dbg(dev, "rsc: type %d\n", hdr->type);
-
-This doesn't need to be in upstream code.
-
-> +		if (hdr->type >= RSC_LAST) {
-> +			dev_warn(dev, "unsupported resource %d\n", hdr->type);
-> +			continue;
-> +		}
-
-If we're only interested in RSC_SPARE, I think we can omit this check.
-
-No need to police the resource table everywhere.
-
-> +		if (hdr->type != RSC_SPARE)
-> +			continue;
-> +
-> +		*spare_index = i;
-> +		return spare->len;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int __verify_rsc_tbl_entry(struct rproc *rproc,
->  				struct rproc_request_resource *request,
->  				struct resource_table *table, int size)
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks,
+Bjorn
