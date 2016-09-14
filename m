@@ -1,52 +1,54 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 6/6] MIPS: Deprecate VPE Loader
-Date: Tue, 20 Sep 2016 09:47:29 +0100
-Message-ID: <1474361249-31064-7-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v9 12/19] ARM: DT: STiH407: Add spdif_out pinctrl config
+References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
+ <1473081421-16555-13-git-send-email-peter.griffin@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <d05117cc-cccf-b39d-cd25-d9aa182e3f31@st.com>
+Date: Wed, 14 Sep 2016 14:00:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>
+In-Reply-To: <1473081421-16555-13-git-send-email-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The MIPS remote processor driver (CONFIG_MIPS_RPROC) provides a more
-standard mechanism for using one or more VPs as coprocessors running
-separate firmware.
+Hi Peter
 
-Here we deprecate this mechanism before it is removed.
+On 09/05/2016 03:16 PM, Peter Griffin wrote:
+> This patch adds the pinctrl config for the spidf out
+> pins used by the sasg codec IP.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-pinctrl.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stih407-pinctrl.dtsi b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> index 537db7e..598dbab 100644
+> --- a/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/stih407-pinctrl.dtsi
+> @@ -1114,6 +1114,14 @@
+>  				};
+>  			};
+>  
+> +			spdif_out {
+> +				pinctrl_spdif_out: spdif_out{
+> +					st,pins {
+> +						spdif_out = <&pio34 7 ALT1 OUT>;
+> +					};
+> +				};
+> +			};
+> +
+>  			serial3 {
+>  				pinctrl_serial3: serial3-0 {
+>  					st,pins {
+> 
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
 
-Changes in v2: None
 
- arch/mips/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Applied for STi next
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 2094cbcea0d4..071fc4585265 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2263,7 +2263,7 @@ comment "MIPS R2-to-R6 emulator is only available for UP kernels"
- 	depends on SMP && CPU_MIPSR6
- 
- config MIPS_VPE_LOADER
--	bool "VPE loader support."
-+	bool "VPE loader support. (DEPRECATED)"
- 	depends on SYS_SUPPORTS_MULTITHREADING && MODULES
- 	select CPU_MIPSR2_IRQ_VI
- 	select CPU_MIPSR2_IRQ_EI
-@@ -2272,6 +2272,9 @@ config MIPS_VPE_LOADER
- 	  Includes a loader for loading an elf relocatable object
- 	  onto another VPE and running it.
- 
-+	  Unless you have a specific need, you should use CONFIG_MIPS_RPROC
-+          instead of this.
-+
- config MIPS_VPE_LOADER_CMP
- 	bool
- 	default "y"
--- 
-2.7.4
+Thanks
