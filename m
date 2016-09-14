@@ -1,55 +1,51 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 1 Sep 2016 08:09:53 +0100
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 06/19] remoteproc: core: Add explicit message error if
- cached table failed
-Message-ID: <20160901070953.GB4921@dell>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
- <1472676622-32533-7-git-send-email-loic.pallardy@st.com>
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v9 13/19] ARM: STi: DT: STiH407: Add sti-sasg-codec dt
+ node
+References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
+ <1473081421-16555-14-git-send-email-peter.griffin@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <142f56d1-4353-a57c-2dce-59abc3ba4cea@st.com>
+Date: Wed, 14 Sep 2016 14:01:00 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1472676622-32533-7-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, Loic Pallardy <loic.pallardy@wanadoo.fr>
+In-Reply-To: <1473081421-16555-14-git-send-email-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, 31 Aug 2016, Loic Pallardy wrote:
+Hi Peter
 
-> In rproc_fw_boot, add error message if kmemdump failed
-> as done for other errors.
+On 09/05/2016 03:16 PM, Peter Griffin wrote:
+> This patch adds the dt node for the internal audio
+> codec IP.
 > 
-> Signed-off-by: Loic Pallardy <loic.pallardy@wanadoo.fr>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  arch/arm/boot/dts/stih407-family.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 96bc8c644..3282a4e 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1139,8 +1139,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	 * cached_table will be copied into device memory.
->  	 */
->  	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
-> -	if (!rproc->cached_table)
-> +	if (!rproc->cached_table) {
-> +		dev_err(dev, "Failed to create cached table\n");
+> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> index 45cab30..d1258d5 100644
+> --- a/arch/arm/boot/dts/stih407-family.dtsi
+> +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> @@ -873,5 +873,12 @@
+>  				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
+>  				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
+>  		};
+> +
+> +		sti_sasg_codec: sti-sasg-codec {
+> +			compatible = "st,stih407-sas-codec";
+> +			#sound-dai-cells = <1>;
+> +			status = "disabled";
+> +			st,syscfg = <&syscfg_core>;
+> +		};
+>  	};
+>  };
+> 
 
-This is an OOM error message, which are not allowed upstream.
 
-I believe if kmemdup() fails, the OOM handler will inform the user.
+Applied for STi next
 
->  		goto clean_up;
-> +	}
->  
->  	rproc->table_ptr = rproc->cached_table;
->  
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks
