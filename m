@@ -1,40 +1,94 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v9 09/19] ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
-Date: Mon,  5 Sep 2016 14:16:51 +0100
-Message-Id: <1473081421-16555-10-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v9 06/19] ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
 References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org, arnaud.pouliquen@st.com, broonie@kernel.org
+ <1473081421-16555-7-git-send-email-peter.griffin@linaro.org>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <4a816a43-607a-784a-935c-d83c9436f285@st.com>
+Date: Wed, 14 Sep 2016 13:59:39 +0200
+MIME-Version: 1.0
+In-Reply-To: <1473081421-16555-7-git-send-email-peter.griffin@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch enables the STi ALSA drivers found on STi platforms
-as well as the simple-card driver which is a dependency to have
-working sound.
+Hi Peter
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Cc: arnaud.pouliquen@st.com
-Cc: broonie@kernel.org
----
- arch/arm/configs/multi_v7_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+On 09/05/2016 03:16 PM, Peter Griffin wrote:
+> These nodes are required to get the fdma driver working
+> on STiH407 based silicon.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  arch/arm/boot/dts/stih407-family.dtsi | 52 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stih407-family.dtsi b/arch/arm/boot/dts/stih407-family.dtsi
+> index d294e82..45cab30 100644
+> --- a/arch/arm/boot/dts/stih407-family.dtsi
+> +++ b/arch/arm/boot/dts/stih407-family.dtsi
+> @@ -821,5 +821,57 @@
+>  			clock-frequency	= <600000000>;
+>  			st,syscfg	= <&syscfg_core 0x224>;
+>  		};
+> +
+> +		/* fdma audio */
+> +		fdma0: dma-controller@8e20000 {
+> +			compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
+> +			reg = <0x8e20000 0x8000>,
+> +			      <0x8e30000 0x3000>,
+> +			      <0x8e37000 0x1000>,
+> +			      <0x8e38000 0x8000>;
+> +			reg-names = "slimcore", "dmem", "peripherals", "imem";
+> +			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
+> +				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
+> +				 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
+> +				 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
+> +			interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
+> +			dma-channels = <16>;
+> +			#dma-cells = <3>;
+> +		};
+> +
+> +		/* fdma app */
+> +		fdma1: dma-controller@8e40000 {
+> +			compatible = "st,stih407-fdma-mpe31-12", "st,slim-rproc";
+> +			reg = <0x8e40000 0x8000>,
+> +			      <0x8e50000 0x3000>,
+> +			      <0x8e57000 0x1000>,
+> +			      <0x8e58000 0x8000>;
+> +			reg-names = "slimcore", "dmem", "peripherals", "imem";
+> +			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
+> +				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
+> +				<&clk_s_c0_flexgen CLK_TX_ICN_DMU>,
+> +				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
+> +
+> +			interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>;
+> +			dma-channels = <16>;
+> +			#dma-cells = <3>;
+> +		};
+> +
+> +		/* fdma free running */
+> +		fdma2: dma-controller@8e60000 {
+> +			compatible = "st,stih407-fdma-mpe31-13", "st,slim-rproc";
+> +			reg = <0x8e60000 0x8000>,
+> +			      <0x8e70000 0x3000>,
+> +			      <0x8e77000 0x1000>,
+> +			      <0x8e78000 0x8000>;
+> +			reg-names = "slimcore", "dmem", "peripherals", "imem";
+> +			interrupts = <GIC_SPI 9 IRQ_TYPE_NONE>;
+> +			dma-channels = <16>;
+> +			#dma-cells = <3>;
+> +			clocks = <&clk_s_c0_flexgen CLK_FDMA>,
+> +				<&clk_s_c0_flexgen CLK_EXT2F_A9>,
+> +				<&clk_s_c0_flexgen CLK_TX_ICN_DISP_0>,
+> +				<&clk_s_c0_flexgen CLK_EXT2F_A9>;
+> +		};
+>  	};
+>  };
+> 
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 998578a..51a38b1 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -644,6 +644,9 @@ CONFIG_SND_SOC_AK4642=m
- CONFIG_SND_SOC_SGTL5000=m
- CONFIG_SND_SOC_SPDIF=m
- CONFIG_SND_SOC_WM8978=m
-+CONFIG_SND_SOC_STI=m
-+CONFIG_SND_SOC_STI_SAS=m
-+CONFIG_SND_SIMPLE_CARD=m
- CONFIG_USB=y
- CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_XHCI_MVEBU=y
--- 
-1.9.1
+Applied for STi next
+
+Thanks
