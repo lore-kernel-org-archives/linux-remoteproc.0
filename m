@@ -1,157 +1,80 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 14/17] rpmsg: virtio: Hide vrp pointer from the public API
-Date: Thu,  1 Sep 2016 15:28:06 -0700
-Message-Id: <1472768889-3906-15-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1472768889-3906-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 3/4] dt-binding: remoteproc: venus rproc dt binding document
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Message-id: <cba4a4b9-a4e9-f314-d907-d39ae3861f5b@samsung.com>
+Date: Thu, 15 Sep 2016 10:46:42 +0200
+MIME-version: 1.0
+In-reply-to: <20160902201255.GZ15161@tuxbot>
+Content-type: text/plain; charset=utf-8; format=flowed
+Content-transfer-encoding: 7bit
+References: <1471622000-1906-4-git-send-email-stanimir.varbanov@linaro.org>
+ <20160823173259.GA13327@rob-hp-laptop>
+ <fbf25a9e-348b-9047-37ef-1b96808dea31@mm-sol.com>
+ <20160825000521.GH15161@tuxbot>
+ <3429173a-d55a-51e1-0973-7e5bd31be297@linaro.org>
+ <20160826222345.GK15161@tuxbot>
+ <5afd7f2f-ec1b-d2ce-b833-81df010e24de@linaro.org>
+ <20160830171742.GN15161@tuxbot>
+ <b7314a89-2215-4961-6e8a-be5ef536624a@linaro.org>
+ <e312d810-3096-d32c-d546-c07e0265808e@samsung.com>
+ <20160902201255.GZ15161@tuxbot>
+ <CGME20160915084644eucas1p1bd3f2078d4e1cb3acfa0ea87557bff4f@eucas1p1.samsung.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stanimir Varbanov <stanimir.varbanov@linaro.org>, Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Stephen Boyd <sboyd@codeaurora.org>, Mark Rutland <mark.rutland@arm.com>, Rob Clark <robdclark@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Create a container struct virtio_rpmsg_channel around the rpmsg_channel
-to keep virtio backend information separate from the rpmsg and public
-API. This makes the public structures independant of virtio.
+Hi Bjorn,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
 
-Changes since v1:
-- Reduced complexity from the move of ops to the public structs
+On 2016-09-02 22:12, Bjorn Andersson wrote:
+> On Fri 02 Sep 04:52 PDT 2016, Marek Szyprowski wrote:
+>
+>> On 2016-09-01 16:58, Stanimir Varbanov wrote:
+>> ...
+>>>>>> But I presume we have the implementation issue of dma_alloc_coherent()
+>>>>>> failing in either case with the 5MB size. I think we need to look into
+>>>>> I'd be good to include Marek Szyprowski? At least he will know what
+>>>>> design restrictions there are.
+>>>>>
+>>>> Please do. The more I look at this the more I think we must use the
+>>>> existing infrastructure for allocating "dma memory". Getting
+>>>> dma_alloc_coherent() supporting non-power-of-2 memory regions would
+>>> Just to be precise it should be dma_alloc_from_coherent().
+>>>
+>>> Marek, what is your opinion on that, can we make dma_alloc_from_coherent
+>>> able to allocate memory for sizes with bigger granularity.
+>>>
+>>> For your convenience here [1] is the mail thread.
+>> There should be no technical restrictions to add support for bigger
+>> granularity than power-of-2. dma_alloc_from_coherent uses standard
+>> bitmap based allocator, so it already support tracking allocations of
+>> arbitrary size.
+> I believe we should be able to change the parameter of
+> bitmap_{find_free,release,allocate}_region() to take a size rather than
+> an order.
+>
+> The mask used in __reg_op() is an unsigned long, that is stamped over
+> the region to be masked or cleared, so there are some clear restrictions
+> in what parameters we can pass there - without having to break this
+> operation up in steps.
+>
+> But if drive the offset by taking the next power-of-two of the size and
+> then align the number of bits to min(count, BITS_PER_LONG) we should
+> retain the performance characteristics and requirements of __reg_op().
+>
+>> However for the small allocations (smaller than 64KiB?, 512KiB?) it
+>> would make sense to keep nearest-power-of-2 round up to prevent memory
+>> fragmentation.
+> But in our case each bit matches a single page, so by making sure the
+> mask always fills the unsigned long in the larger cases we would end up
+> with having to align things to 128kb (or 256kb if unsigned long is 64
+> bit).
 
- drivers/rpmsg/virtio_rpmsg_bus.c | 43 ++++++++++++++++++++++++++++++++--------
- include/linux/rpmsg.h            |  3 ---
- 2 files changed, 35 insertions(+), 11 deletions(-)
+By preventing memory fragmentation I wanted to align small allocations (less
+than the mentioned 64KiB or 512KiB) to nearest-power-of-2 of their size just
+like it is done now.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 31cd526f690d..ac2241242188 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -75,6 +75,18 @@ struct virtproc_info {
- 	struct rpmsg_endpoint *ns_ept;
- };
- 
-+/**
-+ * @vrp: the remote processor this channel belongs to
-+ */
-+struct virtio_rpmsg_channel {
-+	struct rpmsg_device rpdev;
-+
-+	struct virtproc_info *vrp;
-+};
-+
-+#define to_virtio_rpmsg_channel(_rpdev) \
-+	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
-+
- /*
-  * We're allocating buffers of 512 bytes each for communications. The
-  * number of buffers will be computed from the number of buffers supported
-@@ -204,7 +216,9 @@ static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev
- 						      void *priv,
- 						      struct rpmsg_channel_info chinfo)
- {
--	return __rpmsg_create_ept(rpdev->vrp, rpdev, cb, priv, chinfo.src);
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+
-+	return __rpmsg_create_ept(vch->vrp, rpdev, cb, priv, chinfo.src);
- }
- 
- /**
-@@ -235,12 +249,15 @@ __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
- 
- static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
- {
--	__rpmsg_destroy_ept(ept->rpdev->vrp, ept);
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(ept->rpdev);
-+
-+	__rpmsg_destroy_ept(vch->vrp, ept);
- }
- 
- static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
- {
--	struct virtproc_info *vrp = rpdev->vrp;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+	struct virtproc_info *vrp = vch->vrp;
- 	struct device *dev = &rpdev->dev;
- 	int err = 0;
- 
-@@ -263,7 +280,8 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
- 
- static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
- {
--	struct virtproc_info *vrp = rpdev->vrp;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+	struct virtproc_info *vrp = vch->vrp;
- 	struct device *dev = &rpdev->dev;
- 	int err = 0;
- 
-@@ -298,6 +316,7 @@ static const struct rpmsg_device_ops virtio_rpmsg_ops = {
- static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 						 struct rpmsg_channel_info *chinfo)
- {
-+	struct virtio_rpmsg_channel *vch;
- 	struct rpmsg_device *rpdev;
- 	struct device *tmp, *dev = &vrp->vdev->dev;
- 	int ret;
-@@ -312,11 +331,18 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 		return NULL;
- 	}
- 
--	rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
--	if (!rpdev)
-+	vch = kzalloc(sizeof(*vch), GFP_KERNEL);
-+	if (!vch)
- 		return NULL;
- 
--	rpdev->vrp = vrp;
-+	/* Link the channel to our vrp */
-+	vch->vrp = vrp;
-+
-+	/* Assign callbacks for rpmsg_channel */
-+	vch->rpdev.ops = &virtio_rpmsg_ops;
-+
-+	/* Assign public information to the rpmsg_device */
-+	rpdev = &vch->rpdev;
- 	rpdev->src = chinfo->src;
- 	rpdev->dst = chinfo->dst;
- 	rpdev->ops = &virtio_rpmsg_ops;
-@@ -455,7 +481,8 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 				     u32 src, u32 dst,
- 				     void *data, int len, bool wait)
- {
--	struct virtproc_info *vrp = rpdev->vrp;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+	struct virtproc_info *vrp = vch->vrp;
- 	struct device *dev = &rpdev->dev;
- 	struct scatterlist sg;
- 	struct rpmsg_hdr *msg;
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 4f9445f71f2f..b4b56b010f71 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -95,7 +95,6 @@ enum rpmsg_ns_flags {
- 
- #define RPMSG_ADDR_ANY		0xFFFFFFFF
- 
--struct virtproc_info;
- struct rpmsg_device;
- struct rpmsg_endpoint;
- struct rpmsg_device_ops;
-@@ -115,7 +114,6 @@ struct rpmsg_channel_info {
- 
- /**
-  * rpmsg_device - device that belong to the rpmsg bus
-- * @vrp: the remote processor this channel belongs to
-  * @dev: the device struct
-  * @id: device id (used to match between rpmsg drivers and devices)
-  * @src: local address
-@@ -124,7 +122,6 @@ struct rpmsg_channel_info {
-  * @announce: if set, rpmsg will announce the creation/removal of this channel
-  */
- struct rpmsg_device {
--	struct virtproc_info *vrp;
- 	struct device dev;
- 	struct rpmsg_device_id id;
- 	u32 src;
+Best regards
 -- 
-2.5.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
