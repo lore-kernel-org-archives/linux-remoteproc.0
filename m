@@ -1,74 +1,29 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-Date: Tue, 20 Sep 2016 09:32:51 +0100
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH v9 17/19] drm/virtio: kconfig: Fix recursive dependency
- issue.
-Message-ID: <20160920083251.GB26093@griffinp-ThinkPad-X1-Carbon-2nd>
-References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
- <1473081421-16555-18-git-send-email-peter.griffin@linaro.org>
- <CACvgo52_g7anGBd9HTUyYsbp5QmQEk9LR3nNHgSTgjQ29G3ViA@mail.gmail.com>
+Return-Path: <emil.l.velikov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACvgo52_g7anGBd9HTUyYsbp5QmQEk9LR3nNHgSTgjQ29G3ViA@mail.gmail.com>
-To: Emil Velikov <emil.l.velikov@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+In-Reply-To: <1473081421-16555-18-git-send-email-peter.griffin@linaro.org>
+References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org> <1473081421-16555-18-git-send-email-peter.griffin@linaro.org>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Tue, 20 Sep 2016 00:18:48 +0100
+Message-ID: <CACvgo52_g7anGBd9HTUyYsbp5QmQEk9LR3nNHgSTgjQ29G3ViA@mail.gmail.com>
+Subject: Re: [PATCH v9 17/19] drm/virtio: kconfig: Fix recursive dependency issue.
+Content-Type: text/plain; charset=UTF-8
+To: Peter Griffin <peter.griffin@linaro.org>
 Cc: LAKML <linux-arm-kernel@lists.infradead.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, ohad@wizery.com, bjorn.andersson@linaro.org, devicetree <devicetree@vger.kernel.org>, linux-remoteproc@vger.kernel.org, ML dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>, dmaengine@vger.kernel.org, lee.jones@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Emil,
+On 5 September 2016 at 14:16, Peter Griffin <peter.griffin@linaro.org> wrote:
+> ST_SLIM_REMOTEPROC must select REMOTEPROC, which exposes the following
+> recursive dependency.
+>
+>From a humble skim through remoteproc, drm and a few other subsystems
+I think the above is wrong. All the drivers (outside of remoteproc),
+that I've seen, depend on the core component, they don't select it.
 
-On Tue, 20 Sep 2016, Emil Velikov wrote:
+Furthermore most places explicitly hide the drivers from the menu if
+the core component isn't enabled.
 
-> On 5 September 2016 at 14:16, Peter Griffin <peter.griffin@linaro.org> wrote:
-> > ST_SLIM_REMOTEPROC must select REMOTEPROC, which exposes the following
-> > recursive dependency.
+Is there something that requires such a different/unusual behaviour in
+remoteproc ?
 
-
-> >
-> From a humble skim through remoteproc, drm and a few other subsystems
-> I think the above is wrong. All the drivers (outside of remoteproc),
-> that I've seen, depend on the core component, they don't select it.
-
-I will let Bjorn comment on the remoteproc subsystem Kconfig design, and
-why it is like it is.
-
-For this particular SLIM_RPROC I have added it to Kconfig in keeping with all
-the other drivers in the remoteproc subsystem which has exposed this recursive
-dependency issue.
-
-For this particular kconfig symbol a quick grep reveals more drivers in
-the kernel using 'select', than 'depend on'
-
-git grep "select VIRTIO" | wc -l
-14
-
-git grep "depends on VIRTIO" | wc -l
-10
-
-
-> Furthermore most places explicitly hide the drivers from the menu if
-> the core component isn't enabled.
-
-Remoteproc subsystem takes a different approach, the core code is only enabled
-if a driver which relies on it is enabled. This IMHO makes sense, as
-remoteproc is not widely used (only a few particular ARM SoC's).
-
-It is true that for subsystems which rely on the core component being
-explicitly enabled, they often tend to hide drivers which depend on it
-from the menu unless it is. This also makes sense.
-
-> 
-> Is there something that requires such a different/unusual behaviour in
-> remoteproc ?
-> 
-
-I'm not sure it is that unusual...looking at config USB, it selects USB_COMMON in
-mfd subsystem, client drivers select MFD_CORE.
-
-I've added Arnd to this thread, as I've seen lots of Kconfig patches from him
-recently, maybe he has some thoughts on whether this is the correct fix or not?
-
-regards,
-
-Peter.
+Regards,
+Emil
