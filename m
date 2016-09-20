@@ -1,375 +1,384 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 1/6] irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
-Date: Tue, 20 Sep 2016 09:47:24 +0100
-Message-ID: <1474361249-31064-2-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 1/4] remoteproc: Introduce auto-boot flag
+References: <1470952373-4823-1-git-send-email-bjorn.andersson@linaro.org>
+ <ba437b4f-dde3-8def-afe2-472430b750e6@ti.com> <20160908222709.GA405@tuxbot>
+ <1cef21a3-2517-4995-06d4-bd5defa13662@ti.com> <20160919232441.GJ21438@tuxbot>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <18f5e8ce-1db3-574b-4a52-e7895b421f17@ti.com>
+Date: Tue, 20 Sep 2016 16:29:04 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>
+In-Reply-To: <20160919232441.GJ21438@tuxbot>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Dave Gerlach <d-gerlach@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The MIPS remote processor driver allows non-Linux firmware to take
-control of and execute on one of the systems VPEs. If that VPE is
-brought back under Linux, it is necessary to ensure that all GIC
-interrupts are routed and masked as Linux expects them, as the firmware
-can have done anything it likes with the GIC configuration (hopefully
-just for that VPEs local interrupt sources, but allow for shared
-external interrupts as well).
+Hi Bjorn,
 
-The configuration of shared and local CPU interrupts is maintained and
-updated every time a change is made. When a CPU is brought online, the
-saved configuration is restored.
+>>>>
+>>>> On 08/11/2016 04:52 PM, Bjorn Andersson wrote:
+>>>>> Introduce an "auto-boot" flag on rprocs to make it possible to flag
+>>>>> remote processors without vdevs to automatically boot once the firmware
+>>>>> is found.
+>>>>>
+>>>>> Preserve previous behavior of the wkup_m3 processor being explicitly
+>>>>> booted by a consumer.
+>>>>>
+>>>>> Cc: Lee Jones <lee.jones@linaro.org>
+>>>>> Cc: Loic Pallardy <loic.pallardy@st.com>
+>>>>> Cc: Suman Anna <s-anna@ti.com>
+>>>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>>> ---
+>>>>>
+>>>>> Changes since v1:
+>>>>> - s/always_on/auto_boot/
+>>>>> - Fixed double increment of "power" in recover path
+>>>>> - Marked wkup_m3 to not auto_boot
+>>>>>
+>>>>
+>>>> I am seeing various issues with this series as I am testing this series
+>>>> more thoroughly with various TI remoteproc drivers and IPC stacks based
+>>>> on virtio devices. I use very simple firmware images that publishes the
+>>>> rpmsg-client-sample devices, so that I can use the kernel
+>>>> rpmsg_client_sample to test the communication.
+>>>>
+>>>
+>>> Thanks for bringing these up!
+>>>
+>>>> Here's a summary of the main issues:
+>>>>
+>>>> 1. The rproc_boot holds a module reference count to the remoteproc
+>>>> platform driver so that it cannot be removed when a remote processor is
+>>>> booted. The previous architecture allowed virtio_rpmsg_bus or the
+>>>> platform remoteproc driver to be installed independent of each other
+>>>> with the boot actually getting triggered when the virtio_rpmsg_bus gets
+>>>> probed in find_vqs. The boot now happens when just the platform
+>>>> remoteproc driver is installed independent of virtio_rpmsg_bus and
+>>>> results in holding self-reference counts. This makes it impossible to
+>>>> remove the remoteproc platform module cleanly (we shouldn't be imposing
+>>>> force remove), which means we can't stop the remoteprocs properly.
+>>>>
+>>>
+>>> I've always found the dependency on rpmsg awkward and don't like this
+>>> behavior to depend on the firmware content, but rather on some sort of
+>>> system configuration.
+>>>
+>>> That said, I did not intend to break the ability of shutting down and
+>>> unloading the module.
+>>
+>> The remoteproc infrastructure always allowed the boot to be done by an
+>> external module
+> 
+> The only caller of rproc_boot() in the mainline kernel is the
+> wkup_m3_ipc, which spawns a thread and waits for the remoteproc-internal
+> completion that indicates when the firmware is available and then call
+> rproc_boot().
+>
+> I'm afraid I would much prefer the wkup_m3_rproc to just set auto-boot
+> and not work around the design like this.
+> 
+> 
+> That said, we still provide the support for this.
 
-These functions will also be useful for restoring GIC context after a
-suspend to RAM.
+It is quite a valid usecase, and we will have more usecases like this
+definitely showing up. This is exactly where I would need the
+rproc_set_firmware() API as the client user dictates the firmware to
+boot depending on the soft ip/functionality it wants from the remote
+processor.
 
-This patch depends on Paul Burton's recent patches:
-irqchip: mips-gic: Implement activate op for device domain
-irqchip: mips-gic: Cleanup chip & handler setup
+> 
+>> (with vdevs, it looks intrinsic because of the
+>> invocation in remoteproc_virtio.c, but the boot was really triggered
+>> during virtio_rpmsg probe)
+> 
+> Except for the fact that the first vdev does this as a direct result of
+> the call from rproc_fw_config_virtio().
 
-Without these patches, the context saving will restore an incorrect map
-to VPE value, since there is a route to not having the interrupt
-affinity set.
+Yeah, and I did have a downstream patch [1] to actually count the vdevs
+and perform the boot on the last vdev instead of first. That is always a
+limitation of the current upstream code, so let's not mix that with the
+current change in behavior. Anyway, with your current changes, the patch
+[1] becomes moot.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
+[1]
+http://git.omapzoom.org/?p=kernel/omap.git;a=commitdiff;h=bdce403858a5c5d2abccd81a91bbe0528b97bef6
 
-Changes in v2:
-Add dependence on additional patches to mips-gic in commit log
-Incorporate changes from Marc Zynger's review:
-- Remove CONTEXT_SAVING define.
-- Make saved local state a per-cpu variable
-- Make gic_save_* static functions when enabled, and do { } while(0)
-  otherwise
+> 
+> As stated above, the only other caller of rproc_boot() is the wkup_m3
+> driver and although it's not executing in the context of
+> rproc_fw_config_virtio() it's directly tied into its execution.
+> 
+>> and provided protection against removing the remoteproc driver removal
+>> when you had a consumer.  I tried the auto-boot when I was upstreaming
+>> the wkup_m3_rproc driver and it was rejected for exactly this reason.
+> 
+> One of the problems I have with the design chosen in the wkup_m3 case is
+> if you had to deal with crash recovery, how would you sync the
+> wkup_m3_ipc driver operations to the async recovery?
 
- drivers/irqchip/irq-mips-gic.c | 217 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 210 insertions(+), 7 deletions(-)
+The wkup_m3 is akin to the System Controller Processor stuff w.r.t PM,
+so first thing is we cannot afford to have this firmware crash in
+general. In anycase, the communication stuff is dealt by the wkup_m3_ipc
+driver itself as part of the PM suspend/resume cycle, so any error
+notification detection will be it's job and it will be responsible for
+managing the remoteproc life cycle appropriately.
 
-diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
-index 83f498393a7f..4aafe09849c1 100644
---- a/drivers/irqchip/irq-mips-gic.c
-+++ b/drivers/irqchip/irq-mips-gic.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/bitmap.h>
- #include <linux/clocksource.h>
-+#include <linux/cpu.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-@@ -56,6 +57,79 @@ static unsigned int timer_cpu_pin;
- static struct irq_chip gic_level_irq_controller, gic_edge_irq_controller;
- DECLARE_BITMAP(ipi_resrv, GIC_MAX_INTRS);
- 
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+struct gic_local_state_t {
-+	u8 mask;
-+};
-+
-+DEFINE_PER_CPU(struct gic_local_state_t, gic_local_state);
-+
-+static void gic_save_local_rmask(int vpe, int mask)
-+{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, vpe);
-+
-+	state->mask &= mask;
-+}
-+
-+static void gic_save_local_smask(int vpe, int mask)
-+{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, vpe);
-+
-+	state->mask |= mask;
-+}
-+
-+static struct {
-+	unsigned vpe:		8;
-+	unsigned pin:		4;
-+
-+	unsigned polarity:	1;
-+	unsigned trigger:	1;
-+	unsigned dual_edge:	1;
-+	unsigned mask:		1;
-+} gic_shared_state[GIC_MAX_INTRS];
-+
-+static void gic_save_shared_vpe(int intr, int vpe)
-+{
-+	gic_shared_state[intr].vpe = vpe;
-+}
-+
-+static void gic_save_shared_pin(int intr, int pin)
-+{
-+	gic_shared_state[intr].pin = pin;
-+}
-+
-+static void gic_save_shared_polarity(int intr, int polarity)
-+{
-+	gic_shared_state[intr].polarity = polarity;
-+}
-+
-+static void gic_save_shared_trigger(int intr, int trigger)
-+{
-+	gic_shared_state[intr].trigger = trigger;
-+}
-+
-+static void gic_save_shared_dual_edge(int intr, int dual_edge)
-+{
-+	gic_shared_state[intr].dual_edge = dual_edge;
-+}
-+
-+static void gic_save_shared_mask(int intr, int mask)
-+{
-+	gic_shared_state[intr].mask = mask;
-+}
-+
-+#else
-+#define gic_save_local_rmask(vpe, i)	do { } while (0)
-+#define gic_save_local_smask(vpe, i)	do { } while (0)
-+
-+#define gic_save_shared_vpe(i, v)	do { } while (0)
-+#define gic_save_shared_pin(i, p)	do { } while (0)
-+#define gic_save_shared_polarity(i, p)	do { } while (0)
-+#define gic_save_shared_trigger(i, t)	do { } while (0)
-+#define gic_save_shared_dual_edge(i, d)	do { } while (0)
-+#define gic_save_shared_mask(i, m)	do { } while (0)
-+#endif /* CONFIG_MIPS_REMOTEPROC */
-+
- static void __gic_irq_dispatch(void);
- 
- static inline u32 gic_read32(unsigned int reg)
-@@ -105,52 +179,94 @@ static inline void gic_update_bits(unsigned int reg, unsigned long mask,
- 	gic_write(reg, regval);
- }
- 
--static inline void gic_reset_mask(unsigned int intr)
-+static inline void gic_write_reset_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_RMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_mask(unsigned int intr)
-+static inline void gic_reset_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 0);
-+	gic_write_reset_mask(intr);
-+}
-+
-+static inline void gic_write_set_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_SMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+static inline void gic_set_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 1);
-+	gic_write_set_mask(intr);
-+}
-+
-+static inline void gic_write_polarity(unsigned int intr, unsigned int pol)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_POLARITY) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)pol << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+{
-+	gic_save_shared_polarity(intr, pol);
-+	gic_write_polarity(intr, pol);
-+}
-+
-+static inline void gic_write_trigger(unsigned int intr, unsigned int trig)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_TRIGGER) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)trig << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+{
-+	gic_save_shared_trigger(intr, trig);
-+	gic_write_trigger(intr, trig);
-+}
-+
-+static inline void gic_write_dual_edge(unsigned int intr, unsigned int dual)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_DUAL) + GIC_INTR_OFS(intr),
- 			1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)dual << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+{
-+	gic_save_shared_dual_edge(intr, dual);
-+	gic_write_dual_edge(intr, dual);
-+}
-+
-+static inline void gic_write_map_to_pin(unsigned int intr, unsigned int pin)
- {
- 	gic_write32(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_PIN_BASE) +
- 		    GIC_SH_MAP_TO_PIN(intr), GIC_MAP_TO_PIN_MSK | pin);
- }
- 
--static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+{
-+	gic_save_shared_pin(intr, pin);
-+	gic_write_map_to_pin(intr, pin);
-+}
-+
-+static inline void gic_write_map_to_vpe(unsigned int intr, unsigned int vpe)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_VPE_BASE) +
- 		  GIC_SH_MAP_TO_VPE_REG_OFF(intr, vpe),
- 		  GIC_SH_MAP_TO_VPE_REG_BIT(vpe));
- }
- 
-+static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+{
-+	gic_save_shared_vpe(intr, vpe);
-+	gic_write_map_to_vpe(intr, vpe);
-+}
-+
- #ifdef CONFIG_CLKSRC_MIPS_GIC
- cycle_t gic_read_count(void)
- {
-@@ -537,6 +653,7 @@ static void gic_mask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_rmask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_RMASK), 1 << intr);
- }
- 
-@@ -544,6 +661,7 @@ static void gic_unmask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_smask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_SMASK), 1 << intr);
- }
- 
-@@ -561,6 +679,7 @@ static void gic_mask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_rmask(mips_cm_vp_id(i), 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), 1 << intr);
-@@ -576,6 +695,7 @@ static void gic_unmask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_smask(mips_cm_vp_id(i), 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), 1 << intr);
-@@ -983,6 +1103,85 @@ static struct irq_domain_ops gic_ipi_domain_ops = {
- 	.match = gic_ipi_domain_match,
- };
- 
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+static void gic_restore_shared(void)
-+{
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&gic_lock, flags);
-+	for (i = 0; i < gic_shared_intrs; i++) {
-+		gic_write_polarity(i, gic_shared_state[i].polarity);
-+		gic_write_trigger(i, gic_shared_state[i].trigger);
-+		gic_write_dual_edge(i, gic_shared_state[i].dual_edge);
-+		gic_write_map_to_vpe(i, gic_shared_state[i].vpe);
-+		gic_write_map_to_pin(i, gic_shared_state[i].pin);
-+
-+		if (gic_shared_state[i].mask)
-+			gic_write_set_mask(i);
-+		else
-+			gic_write_reset_mask(i);
-+	}
-+	spin_unlock_irqrestore(&gic_lock, flags);
-+}
-+
-+static void gic_restore_local(unsigned int vpe)
-+{
-+	struct gic_local_state_t state;
-+	int hw, virq, intr, mask;
-+	unsigned long flags;
-+
-+	for (hw = 0; hw < GIC_NUM_LOCAL_INTRS; hw++) {
-+		intr = GIC_LOCAL_TO_HWIRQ(hw);
-+		virq = irq_linear_revmap(gic_irq_domain, intr);
-+		gic_local_irq_domain_map(gic_irq_domain, virq, hw);
-+	}
-+
-+	local_irq_save(flags);
-+	gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR), vpe);
-+
-+	/* Enable EIC mode if necessary */
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_CTL), cpu_has_veic);
-+
-+	/* Restore interrupt masks */
-+	state = per_cpu(gic_local_state, vpe);
-+	mask = state.mask;
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), ~mask);
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), mask);
-+
-+	local_irq_restore(flags);
-+}
-+
-+/*
-+ * The MIPS remote processor driver allows non-Linux firmware to take control
-+ * of and execute on one of the systems VPEs. If that VPE is brought back under
-+ * Linux, it is necessary to ensure that all GIC interrupts are routed and
-+ * masked as Linux expects them, as the firmware can have done anything it
-+ * likes with the GIC configuration (hopefully just for that VPEs local
-+ * interrupt sources, but allow for shared external interrupts as well).
-+ */
-+static int gic_cpu_notify(struct notifier_block *nfb, unsigned long action,
-+			       void *hcpu)
-+{
-+	unsigned int cpu = mips_cm_vp_id((unsigned long)hcpu);
-+
-+	switch (action) {
-+	case CPU_UP_PREPARE:
-+	case CPU_DOWN_FAILED:
-+		gic_restore_shared();
-+		gic_restore_local(cpu);
-+	default:
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static struct notifier_block gic_cpu_notifier __refdata = {
-+	.notifier_call = gic_cpu_notify
-+};
-+#endif /* CONFIG_MIPS_REMOTEPROC */
-+
- static void __init __gic_init(unsigned long gic_base_addr,
- 			      unsigned long gic_addrspace_size,
- 			      unsigned int cpu_vec, unsigned int irqbase,
-@@ -1082,6 +1281,10 @@ static void __init __gic_init(unsigned long gic_base_addr,
- 	}
- 
- 	gic_basic_init();
-+
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+	register_hotcpu_notifier(&gic_cpu_notifier);
-+#endif /* CONFIG_MIPS_REMOTEPROC */
- }
- 
- void __init gic_init(unsigned long gic_base_addr,
--- 
-2.7.4
+> Flipping this the other way around and accepting that the "function
+> device" follows the RPROC_RUNNING state of the rproc implicitly would
+> allow this.
+> 
+>>
+>>> Calling rmmod on your rproc module is a rather explicit operation, do
+>>> you know why there's a need to hold the module reference? Wouldn't it be
+>>> cleaner to just shutdown the remoteproc as the module is being removed -
+>>> which would include tearing down all children (rpmsg and others)
+>>
+>> Right, the introduction of the auto-boot ended up in a self-holding
+>> reference count which should be fixed to allow you to remove the module.
+>> The external module boot is still a valid usage (when auto_boot is
+>> false) though.
+> 
+> The way this is dealt with in other subsystems is that when a client
+> acquire a handle to something exposed by the implementation it will
+> reference the implementation.
+> 
+> With remoteproc I can acquire a reference to a remoteproc, then unload
+> the implementation and when the client calls rproc_boot() the core will
+> try to dereference dev->parent->driver->owner to try_module_get() it; if
+> we're lucky that will fail as the driver is gone, but I would assume we
+> would panic here instead, as driver is no longer a valid pointer.
+
+I am talking about the rproc_shutdown() case - removing the underlying
+implementation after the client has successfully booted the remoteproc
+device and using it.
+
+> 
+>>
+>>>
+>>> I expect to be able to compile rpmsg into my kernel and still be able to
+>>> unload my remoteproc module.
+>>>
+>>>> 2. The reversal of boot between virtio_rpmsg_bus and remoteproc core
+>>>> also meant that the virtio devices and therefore the memory for vrings
+>>>> are allocated at the time virtio_rpmsg_bus is probed in find_vqs(). The
+>>>> remoteproc can be booted without the virtio_rpmsg_bus module installed.
+>>>> We do use the allocated dma addresses of the vrings in the published
+>>>> resource table, but now the remote processor is up even before these
+>>>> values are filled in. I had to actually move up the rproc_alloc_vring
+>>>> alongside rproc_parse_vring to have the communication up.
+>>>>
+>>>
+>>> This also means that for a piece of firmware that exposes more than one
+>>> virtio device we would have the same race.
+>>
+>> Yes, if you had more virtio devices technically. The remoteproc
+>> infrastructure so far hadn't supported more than one vdev.
+> 
+> I don't see anything preventing you from putting more than one vdev in
+> your resource table. There will however be a race on getting the vrings
+> allocated before the firmware needs them.
+
+Right, moving the vring allocation from find_vqs into resource parsing
+time would fix that issue. My above downstream patch resolved this issue
+with existing architecture, but as I said we were using virtio devices
+of the same type.
+
+> 
+>> We did
+>> support that in our downstream kernel but that was for a non-SMP usage
+>> on a dual-core remoteproc subsystem and the virtio devices were still
+>> virtio_rpmsg devices, so it scaled for us when we removed the
+>> virtio_rpmsg_bus module as long as the reference counts were managed in
+>> rproc_boot and rproc_shutdown()
+>>
+> 
+> I think the shutdown case would work in either way, but the behavior of
+> rmmod rpmsg && insmod rpmsg still depends on other things.
+
+Right, the issues are with rmmod and insmod of virtio_rpmsg_bus.
+Previously, this ensured the shutdown of remoteproc, and upon insmod,
+the remoteproc is rebooted and rpmsg channels are republished (same flow
+in error recovery too).
+
+> 
+>>>
+>>> As you say it makes more sense to allocate the vrings as we set up the
+>>> other resources.
+>>>
+>>>> 3. The remoteproc platform driver cannot be removed previously when the
+>>>> corresponding virtio devices are probed/configured properly and all the
+>>>> communication flow w.r.t rpmsg channel publishing followed from the
+>>>> remoteproc boot. These channels are child devices of the parent virtio
+>>>> devices, and since the remoteproc boot/shutdown followed the virtio
+>>>> device probe/removal lifecycle, the rpmsg channels life-cycle followed
+>>>> that of the parent virtio device. My communication paths are now failing
+>>>> if I remove the virtio_rpmsg_bus and insmod it again as the vrings and
+>>>> vring buffers are configured again while the remoteproc is still
+>>>> running. Also, since the remoteproc is not rebooted, the previously
+>>>> published rpmsg channels are stale and they won't get recreated.
+>>>>
+>>>
+>>> So in essence this only worked because rmmod'ing the virtio_rpmsg_bus
+>>> would shut down the remoteproc(?) What if the firmware exposed a
+>>> VIRTIO_ID_NET and a VIRTIO_ID_RPMSG and you rmmod one of them?
+>>
+>> Yes, it's a problem if firmware exposed different virtio devices, but
+>> like I said above, it was not supported so far.
+> 
+> It's not prevented, the only reason I can find for it not working is
+> what I'm arguing about - that the resource handling will be racy.
+
+Right, this is definitely a scenario to conside, but this is separate
+(but similar) from the current problem I have mentioned.
+
+> 
+>> It is definitely
+>> something we should consider going forward.
+> 
+> We had a question related to supporting multiple VIRTIO_ID_NET devices
+> per remoteproc on LKML last week.
+> 
+>> Also, I would think the
+>> VIRTIO_ID_RPMSG usage is different from VIRTIO_ID_NET or VIRTIO_CONSOLE.
+>> The rpmsg usage does provide a bus infrastructure allowing the remote
+>> side to publish different rpmsg devices.
+>>
+> 
+> Maybe I'm missing something here, but if I put any other VIRTIO_ID in
+> the "id" member of fw_rsc_vdev the virtio core will probe that driver
+> and it will call the find_vqs callback and there's no limit on the
+> number of fw_rsc_vdev entries in the resource table.
+> 
+> So the use case of having a remoteproc firmware with 8 VIRTIO_ID_NET
+> entries should work just fine - except for only the first one being
+> initialized as the firmware boots (unless we finish this restructure).
+
+Yeah, this is racy whether with previous architecture or with the
+current changes. Moving the vring allocation as I suggested should fix
+this particular multiple vdev issue with the current changes.
+
+> 
+>>>
+>>>
+>>> The vrings are in use by the remote side, so allocating those with the
+>>> other remoteproc resources makes more sense, as above.
+>>>
+>>> But virtio_rpmsg_bus needs to detach all buffers from the rings before
+>>> going away, so we don't get any writes to those after releasing the dma
+>>> allocation.
+>>
+>> They do get detached alright from Linux-side but obviously you are now
+>> creating an additional synchronization to the remoteproc side that they
+>> cannot use these as you have freed up the memory.
+>>
+> 
+> Yeah, that's not acceptable, the backing memory must at least follow the
+> running state of the rproc, so that it is available once we boot the
+> core.
+> 
+>>>
+>>> We will be sending out RPMSG_NS_DESTROY for some of the channels, but as
+>>> far as I can tell from the rpmsg implementation there is no support in
+>>> the protocol for your use case of dropping one end of the rpmsg channels
+>>> without restarting the firmware and(/or?) vdevs.
+>>
+>> Right, this also causes new synchronization problems when you reprobe
+>> and the remoteproc side has to republish the channels.
+> 
+> From the code it seems like the other virtio devices would handle this.
+
+Do they implement a bus functionality like virtio_rpmsg?
+
+> 
+>> The existing
+>> remoteproc infrastructure was designed around this fact - rpmsg channels
+>> can come and go (if needed) from the remoteproc-side, and the flow is no
+>> different from regular boot vs error recovery, and since they are tied
+>> to their parent virtio_rpmsg device, removing the communication path
+>> ensured that.
+> 
+> There are two levels here, the first is the virtio level which in the
+> case of rpmsg seems to be required to follow the remoteproc
+> RPROC_RUNNING state; the other being rpmsg channels have nothing to do
+> with remoteproc, but can as you say come and go dynamically as either
+> side like.
+> 
+> But the only problem I can see is if the firmware does not re-announce
+> channels after we reset the virtio device.
+
+Correct, this is my exact problem, the announcement is done once at
+boot-time from our firmwares as they are publishing the services
+supported by each. We only have a single physical transport
+(virtio_rpmsg) between the host and the remote processor. And clients
+cannot avail of these services once you do a rmmod/insmod cycle.
+
+> 
+>>
+>>>
+>>>> In summary, the current patches worked nicely in a error recovery
+>>>> scenario but are not working properly with the various combinations of
+>>>> module insertion/removal process.
+>>>>
+>>>
+>>> Thanks for your feedback Suman. I think we should definitely fix #1 and
+>>> #2, but I'm uncertain to what extent #3 can be fixed.
+>>
+>> The only solution I can think of is to reverse the module dependency as
+>> well to follow the reversal of the boot dependency, so that
+>> virtio_rpmsg_bus cannot be removed if you have a remoteproc supporting
+>> virtio devices is booted and running once the virtio_rpmsg has probed.
+> 
+> Can you please help me understand why it's important to protect either
+> module from being unloaded?
+
+virtio_rpmsg_bus is quite simple, the firmwares publish their channels
+one time during the boot, and the removal of virtio_rpmsg_bus also
+removes these channels with them not getting republished now once you
+insmod the virtio_rpmsg_bus.
+
+I take it the other one you are talking about is the remoteproc platform
+driver, that one you need to allow the removal in the case of auto-boot,
+and restrict it in the case of a client booting it successfully.
+
+> 
+>> I
+>> don't see any reasons to introduce new synchronization issues and force
+>> the firmwares to change (having to republish channels) because of this
+>> boot triggering reversal.
+>>
+> 
+> The problem is not the boot triggering reversal - as there's no such
+> thing, the issue shows because I decoupled the rproc life cycle from one
+> of its child's.
+
+I don't quite agree, the boot flow did change with the current changes,
+and is also now affecting the logic in firmwares as well.
+
+> 
+>> I am concerned on the impact as 4.9 is going to an LTS, with most of the
+>> Si vendors using the LTS for their new software releases.
+>>
+> 
+> I'm sorry, but could you help me understand how rpmsg is used downstream
+> for this to be of concern, how is module unloading used beyond
+> development?
+
+This is part of robustness testing with various modules especially when
+they are built as modules. This definitely is a regression as
+communication won't be up now.
+
+> 
+> Per my own arguments I will provide some patches to correct the vring
+> buffer allocation and I'll look into the module locking.
+> 
+> PS. I really would like to see >0 users of this framework in mainline,
+> so we can reason about things on the basis of what's actually there!
+
+Yeah, we already have two remoteproc drivers and I have two more in the
+pipeline. And looks like a whole bunch of them from other SoC vendors
+are on their way too. Obviously, each has their own firmware designs/IPC
+architectectures and restrictions.
+
+regards
+Suman
