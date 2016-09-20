@@ -1,157 +1,74 @@
-Return-Path: <lee.jones@linaro.org>
-Return-Path: <lee.jones@linaro.org>
-Date: Thu, 1 Sep 2016 08:23:04 +0100
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 08/19] remoteproc: core: Associate action to resource
- request
-Message-ID: <20160901072304.GC4921@dell>
-References: <1472676622-32533-1-git-send-email-loic.pallardy@st.com>
- <1472676622-32533-9-git-send-email-loic.pallardy@st.com>
+Return-Path: <Matt.Redfearn@imgtec.com>
+Subject: Re: [PATCH v2 5/6] remoteproc/MIPS: Add a remoteproc driver for MIPS
+References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+ <1474361249-31064-6-git-send-email-matt.redfearn@imgtec.com>
+ <alpine.DEB.2.20.1609201141120.6905@nanos>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Message-ID: <95f3d60f-5d4d-aa6d-c94c-c21f717872d0@imgtec.com>
+Date: Tue, 20 Sep 2016 16:31:51 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1472676622-32533-9-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+In-Reply-To: <alpine.DEB.2.20.1609201141120.6905@nanos>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, 31 Aug 2016, Loic Pallardy wrote:
+Hi Thomas,
 
-> With new rproc_request_resource API, rproc driver has now the
-> capability to provide resources to remoteproc in order to modify
-> firmware resource table.
-> But in some cases, other operations are needed like compatibility
-> check between resources defined at firmware level and those handled
-> by rproc driver, or remoteproc local resource management when firmware
-> has no resource table.
-> 
-> This patch associates action to each resource request to:
-> - verify a resource
-> - update/amend a resource in firmware resource table
-> - handle locally a resource
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
->  include/linux/remoteproc.h           | 26 +++++++++++++++++++++++++-
->  2 files changed, 37 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 3282a4e..cd64fae 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -876,16 +876,20 @@ static void rproc_dump_resource_table(struct rproc *rproc,
->  	}
->  }
->  
-> -int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
-> +int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *resource)
->  {
->  	struct device *dev = &rproc->dev;
->  	struct rproc_request_resource *request;
-> +	struct fw_rsc_vdev *v;
->  	int size;
+
+On 20/09/16 10:47, Thomas Gleixner wrote:
+> On Tue, 20 Sep 2016, Matt Redfearn wrote:
+>> +/* Intercept CPU hotplug events for syfs purposes */
+>> +static int mips_rproc_callback(struct notifier_block *nfb, unsigned long action,
+>> +			       void *hcpu)
+>> +{
+> Please convert to cpu hotplug state machine.
+
+OK, I've done that for this and the MIPS GIC patch, using the dynamic 
+CPUHP_AP_ONLINE_DYN state - I hope that is ok.
+
 >
->  	request = devm_kzalloc(dev, sizeof(*request), GFP_KERNEL);
->  	if (!request)
->  		return -ENOMEM;
->  
-> +	if (action > RSC_ACT_LAST)
+>> +	unsigned int cpu = (unsigned long)hcpu;
+>> +
+>> +	switch (action) {
+>> +	case CPU_UP_PREPARE:
+>> +	case CPU_DOWN_FAILED:
+>> +		mips_rproc_device_unregister(cpu);
+>> +		break;
+>> +	case CPU_DOWN_PREPARE:
+>> +		mips_rproc_device_register(cpu);
+>> +		break;
+>> +	}
+> There is no reason why you need to setup the rproc device on
+> DOWN_PREPARE. It's sufficient to do that when the CPU is dead, so you can
+> use a symetric callback prep/dead.
 
-">=".  *_LAST is not a valid request.
+Sure, the new state machine makes this much nicer registering the 
+on/offline callbacks on one state.
 
-> +		return -EINVAL;
+>
+>> +	/* Dynamically create mips-rproc class devices based on hotplug data */
+>> +	get_online_cpus();
+>> +	for_each_possible_cpu(cpu)
+>> +		if (!cpu_online(cpu))
+>> +			mips_rproc_device_register(cpu);
+>> +	register_hotcpu_notifier(&mips_rproc_notifier);
+>> +	put_online_cpus();
+> Perhaps we should add support for "reverse" functionality to the state
+> machine core. I'll have a look later how hard that'd be.
 
-The switch() statement below should ha
+Yeah - I've had to work around the framework a little here since we 
+require the opposite sense to the callbacks - activate the driver when 
+the cpu is offlined and vice versa. In practice the only issue this gave 
+me was that by default the framework invokes the teardown callback when 
+the state is removed, so I used __cpuhp_remove_state() to avoid creating 
+a remote processor device as the driver is being removed.
 
->  	switch (type) {
->  	case RSC_CARVEOUT:
->  		size = sizeof(struct fw_rsc_carveout);
-> @@ -896,6 +900,12 @@ int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
->  	case RSC_TRACE:
->  		size = sizeof(struct fw_rsc_trace);
->  		break;
-> +	case RSC_VDEV:
-> +		v = resource;
-> +		size = sizeof(struct fw_rsc_vdev);
-> +		size += v->num_of_vrings * sizeof(struct fw_rsc_vdev_vring);
-> +		size += v->config_len;
-> +		break;
->  	default:
->  		dev_err(dev, "Unsupported resource type: %d\n", type);
->  		return -EINVAL;
-> @@ -908,6 +918,7 @@ int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
->  	memcpy(request->resource, resource, size);
->  	request->type = type;
->  	request->size = size;
-> +	request->action = action;
->  
->  	list_add_tail(&request->node, &rproc->override_resources);
->  
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 4e2f822..2b0f1d7 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -335,11 +335,34 @@ struct rproc_mem_entry {
->  };
->  
->  /**
-> + * enum rproc_request_action - types of actions associated to a resource
-> + * request
-> + *
-> + * @RSC_ACT_CHECK:	  request to verify this resource with firmware one
-> + * @RSC_ACT_UPDATE:	  request to update firmware resource table with associated
-> + *			  resource if possible
-> + * @RSC_ACT_FORCE_UPDATE: force firmware resource table update with associated
-> + *		          resource
-> + * @RSC_ACT_LOCAL:        request to handle this resource localy but not to update
-> + *			  firmware resource table
-> + * @RSC_ACT_LAST:         just keep this one at the end
-> + */
-> +enum rproc_request_action {
-> +	RSC_ACT_VERIFY		= 0,
-> +	RSC_ACT_UPDATE		= 1,
-> +	RSC_ACT_FORCE_UPDATE	= 2,
-> +	RSC_ACT_LOCAL		= 3,
+Thanks,
+Matt
 
-For reviewing purposes I suggest adding these entries as you start to
-support them.  Then we have the code and the suggested comment in one
-patch for easy comparison.
-
-> +	RSC_ACT_LAST		= 4,
-> +};
-> +
-> +/**
->   * struct rproc_requested_resources - add a resource to the resource table
->   *
->   * @resource:	pointer to a 'struct fw_rsc_*' resource
->   * @type:	'fw_resource_type' resource type
->   * @size:	size of resource
-> + * @action:	action associated the resource
->   * @node:	list node
->   *
->   * Resources can be added by platform-specific rproc drivers calling
-> @@ -350,6 +373,7 @@ struct rproc_request_resource {
->  	void *resource;
->  	u32 type;
->  	u32 size;
-> +	u32 action;
->  	struct list_head node;
->  };
->  
-> @@ -517,7 +541,7 @@ struct rproc_vdev {
->  	u32 rsc_offset;
->  };
->  
-> -int rproc_request_resource(struct rproc *rproc, u32 type, void *res);
-> +int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *res);
->  struct rproc *rproc_get_by_phandle(phandle phandle);
->  struct rproc *rproc_alloc(struct device *dev, const char *name,
->  			  const struct rproc_ops *ops,
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>
+> Thanks,
+>
+> 	tglx
