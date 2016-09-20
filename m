@@ -1,211 +1,352 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v9 00/19] Add support for FDMA DMA controller and slim core rproc found on STi chipsets
-Date: Mon,  5 Sep 2016 14:16:42 +0100
-Message-Id: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org
+Return-Path: <Matt.Redfearn@imgtec.com>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Subject: [PATCH v2 4/6] MIPS: CPS: Add VP(E) stealing
+Date: Tue, 20 Sep 2016 09:47:27 +0100
+Message-ID: <1474361249-31064-5-git-send-email-matt.redfearn@imgtec.com>
+In-Reply-To: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Lisa Parratt <Lisa.Parratt@imgtec.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Qais Yousef <qais.yousef@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, James Hogan <james.hogan@imgtec.com>, Paul Burton <paul.burton@imgtec.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Vinod, Bjorn, Patrice,
+From: Lisa Parratt <Lisa.Parratt@imgtec.com>
 
-This patchset adds support for the Flexible Direct Memory Access (FDMA) core
-found on STi chipsets from STMicroelectronics. The FDMA is a slim core CPU
-with a dedicated firmware. It is a general purpose DMA controller supporting
-16 independent channels and data can be moved from memory to memory or between
-memory and paced latency critical real time targets.
+VP(E) stealing provides a mechanism for removing an offline Virtual
+Processor from the Linux kernel such that it is available to run bare
+metal code.
+Once the CPU has been offlined from Linux, the CPU can be given a task
+to run via mips_cps_steal_cpu_and_execute(). The CPU is removed from the
+cpu_present mask and is set up to execute from address entry_fn. Stack
+space is assigned via the tsk task_struct so that C initialisation code
+may be used.
+To return the CPU back to Linux control, mips_cps_halt_and_return_cpu
+will arrange to halt the CPU and return it to the cpu_present mask. It
+is then available to be brought online again via CPU hotplug.
 
-After quite a few review rounds, I'm hoping this series can get taken for v4.9.
+This mechanism is used by the MIPS remote processor driver to allow
+CPUs within the system to execute bare metal code, not under control of
+the kernel.
 
-After some discussion with the DT maintainers I've removed the firmware
-name from DT, and now generate the name based on the compatible string.
+Signed-off-by: Lisa Parratt <Lisa.Parratt@imgtec.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+---
 
-I've also dropped the dma xbar support for the moment, as I believe it should be
-re-worked based on some of the xbar API's that TI recently added.
+Changes in v2: None
 
-V3 also included some updates to the ASoC st,sti-asoc-card.txt DT documentation
-to make the doc align with the driver code. These patches have already been applied
-and are now dropped from this series. Other changes included enabling the ASoC drivers
-in multi_v7 defconfig and adding DT patches for Patrices STi DT tree to enable ASoC
-on STiH407/10 based platforms using the fdma driver.
+ arch/mips/Kconfig               |   7 ++
+ arch/mips/include/asm/smp-cps.h |   8 ++
+ arch/mips/include/asm/smp.h     |   1 +
+ arch/mips/kernel/smp-cps.c      | 162 ++++++++++++++++++++++++++++++++++++++--
+ arch/mips/kernel/smp.c          |  12 +++
+ 5 files changed, 183 insertions(+), 7 deletions(-)
 
-v4 includes a new slim core rproc driver for loading the slim elf firmware. This
-enables us to use the generic rproc elf loading code. This has deliberately not
-been implemented as a platform_driver, to avoid having to have double mappings of
-I/O memory from two device drivers, and also to ensure that the DT node reflects
-the actual hardware rather than Linux subsystems. The slim core is the basis
-for various pieces of IP in STi chipsets and the intention is that other drivers
-(e.g. demux) can also be migrated over to using the slim rproc for their
-elf firmware loading and start/stop control.
-
-v5 includes various updates from Bjorn related to the slim rproc implementation.
-It also includes a patch to make rsc_table optional in remoteproc_core and various
-other cleanups and review feedback from Vinod to do with the actual fdma
-implementation. It also fixes a regression introduced in v4 when all drivers are
-built-in spotted by Aranud.
-
-v6 goes back to having a dummy rsc_table and fixes some kbuild warnings. However
-a change is still required in rproc core when all drivers are built-in as the initial
-async firmware resource table parsing can fail when built-in, which causes subsequent calls
-to rproc_boot() to also fail. V6 changes this behaviour to retry rproc_fw_config_virtio()
-from rproc_boot(), in cases where it previously failed, as at this point we know the
-irmwaref has been successfully obtained.
-
-v7 removes all remoteproc core changes required to get -EPROBE_DEFER working properly
-when firmware resides on a rootfs and compiling as built-in. The fdma driver now relies on
-the firmware being available in the initramfs when building fdma as built-in. This has
-been tested and works well. If remoteproc subsystem implements a new mechanism for
-firmware on late mounted root filesystems, we can migrate this driver over to use it
-at that point.
-
-v8 actions some review feedback from Bjorn to the slim rproc driver, and also includes
-a patch which fixes a recursive Kconfig error which is triggered when st_fdma selects
-slim_rproc driver. The series has also been rebased on v4.8-rc3.
-
-v9 actions some review feedback from Bjorn, Lee and Vinod. See below. Importantly a bug
-was found during testing now that the platform boots without clk_ignore_unused parameter
-whereby the clocks would not be enabled properly before firmware loading was attempted.
-
-regards,
-
-Peter.
-
-Changes since v8:
- - Add MODULE_ALIAS (Vinod)
- - devm_kzalloc to devm_kcalloc (Vinod)
- - quisce tasklet initialised by vchan_init() (Vinod)
- - Don't make SLIM rproc user selectable (Bjorn)
- - slim_rproc: Ensure clocks enabled before firmware load (Peter)
- - Various code style nits / commit message change (Lee)
- - Separate patch for '\n' kconfig removal (Vinod)
-
-Changes since v7:
- - Rebase on v4.8-rc3 (Peter)
- - Double check that len is <= mem[i].size (Bjorn)
- - Remove if (!fw) checks (Bjorn)
- - Omit reference from fw_ops struct (Bjorn)
- - Call rproc_del() before rproc_put() (Bjorn)
- - Fix some odd line breaks (Bjorn)
- - Rename SLIM_* and slim_* with st prefix (Bjorn)
-
-Changes since v6:
- - Fix recursive Kconfig warning (Patrice)
- - Fix various Intel zero day compiler warnings
- - Remove all changes related to late firmware load (now relies on initramfs) (Peter)
-
-Changes since v5:
- - Remove optional rsc table and go back to dummy resource table (Bjorn)
- - Retry rproc_fw_config_virtio() from rproc_boot() if previously failed (Peter)
- - Fixup some kbuild warnings
- - rebase on v4.7-rc5
- - Remove some patches which were merged via ASoC tree
-
-Changes since v4:
- - Make rsc table optional in remoteproc (Peter)
- - Various fixups to STi audio DT nodes (Arnaud)
- - Bulk rename of xp70 to slim (Peter)
- - Update my email to @linaro.org (Lee)
- - rebase on v4.7-rc2 (Peter)
- - Don't make ST_SLIM_REMOTEPROC user selectable (Bjorn)
- - -EPROBE_DEFER if rproc_boot fails when allocating DMA channel (Arnaud / Peter)
- - Drop some unnecessary headers (Vinod / Bjorn)
- - Change to writel now we have several mappings (Bjorn)
- - Remove io_res, rproc, and some unused structure fields / #define (Bjorn)
- - put clks in error path, also put clks before rproc_put() (Bjorn)
- - Make enum less generic (Bjorn)
- - Make slim_rproc_alloc() return a st_slim_rproc reference (Bjorn)
- - Alphabetical naming in Kconfig & Makefile (Vinod)
- - Add FDMA prefix to REQ_CTRL* (Vinod)
- - Print ret on some error paths (Vinod)
- - Add some acked-by (Peter)
-
-Changes since v3:
- - Remove elf loading code from fdma driver (Vinod)
- - Remove fdma_ prefix for clock names (Arnd)
- - Make _xlate use dma_get_any_channel rather than request_channel (Arnd)
- - Make a common function for _prep_ routines (Vinod)
- - Make driver depend on COMPILE_TEST (Arnd)
- - Remove unnecessary st_fdma_filter_fn (Arnd)
- - Enable FDMA as a module (Arnd)
- - Drop fdma_ clock prefix (Arnd)
- - Fix description as well as example for st, prefix (Arnd)
- - Remove string concatenation from fdma register macros to ease grep'ability (Arnd)
- - Add a XP70 rproc driver for ELF firmware loading and start/stop control (Peter)
- - Add myself as a author of the driver (Peter)
-
-Changes since v2:
- - Change to dma-controller (Arnd)
- - Remove platform data header file and simplifiy code (Arnd)
- - Remove FW_LOADER_USER_HELPER_FALLBACK and rework firmware loading to device config (Vinod)
- - Use SET_RUNTIME_PM_OPS helpers (Vinod)
- - Remove fdma-id dt prop and use compatibles to generate different fdma firmware names (Arnd / Lee)
- - Add sti-asoc-card DT nodes and pinmux config for uniperif player & reader (Peter)
- - Update sti-asoc-card DT binding documentation (Peter)
- - Enable STi audio drivers in multi_v7_defconfig (Peter)
-
-Changes since v1:
- - split into smaller patches for easier / faster review (Vinod)
- - new fill_hw_mode() with common code (Vinod)
- - new config_reqctrl() called from *_prep() instead of device_config cb (Vinod)
- - fdma-xbar support removed (Peter)
- - rework firmware name mechanism so fwname isn't in DT (Peter / Lee)
- - st_fdma_seg_to_mem can be static (Paul)
- - EXPORT_SYMBOL st_fdma_filter_fn not required (Paul)
- - s/channel/channels (vinod)
- - better describe "Must be <3>" (vinod)
- - sizeof(*ehdr) (vinod)
- - print values on error debug (vinod)
- - empty line (Vinod)
- - Update to -EIO (Vinod)
- - Make st_fdma tristate (Paul)
- - Remove __exit tag from .remove (Maxime)
- - Update MAINTAINERS rule to fdma* (Lee)
- - Unit address should match reg property (Lee)
-
-Peter Griffin (19):
-  remoteproc: st_slim_rproc: add a slimcore rproc driver
-  MAINTAINERS: Add st slim core rproc driver to STi section.
-  dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding
-    documentation
-  dmaengine: st_fdma: Add STMicroelectronics FDMA driver header file
-  dmaengine: st_fdma: Add STMicroelectronics FDMA engine driver support
-  ARM: STi: DT: STiH407: Add FDMA driver dt nodes.
-  MAINTAINERS: Add FDMA driver files to STi section.
-  ARM: multi_v7_defconfig: Enable STi FDMA driver
-  ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
-  ARM: DT: STiH407: Add i2s_out pinctrl configuration
-  ARM: DT: STiH407: Add i2s_in pinctrl configuration
-  ARM: DT: STiH407: Add spdif_out pinctrl config
-  ARM: STi: DT: STiH407: Add sti-sasg-codec dt node
-  ARM: STi: DT: STiH407: Add uniperif player dt nodes
-  ARM: STi: DT: STiH407: Add uniperif reader dt nodes
-  ARM: DT: STi: stihxxx-b2120: Add DT nodes for STi audio card
-  drm/virtio: kconfig: Fix recursive dependency issue.
-  drm/virtio: kconfig: Fixup white space.
-  dmaengine: kconfig: Remove superfluous '\n'
-
- Documentation/devicetree/bindings/dma/st_fdma.txt |  87 +++
- MAINTAINERS                                       |   3 +
- arch/arm/boot/dts/stih407-family.dtsi             | 167 ++++
- arch/arm/boot/dts/stih407-pinctrl.dtsi            |  55 ++
- arch/arm/boot/dts/stihxxx-b2120.dtsi              |  45 ++
- arch/arm/configs/multi_v7_defconfig               |   4 +
- drivers/dma/Kconfig                               |  14 +-
- drivers/dma/Makefile                              |   1 +
- drivers/dma/st_fdma.c                             | 899 ++++++++++++++++++++++
- drivers/dma/st_fdma.h                             | 249 ++++++
- drivers/gpu/drm/virtio/Kconfig                    |   9 +-
- drivers/remoteproc/Kconfig                        |   4 +
- drivers/remoteproc/Makefile                       |   1 +
- drivers/remoteproc/st_slim_rproc.c                | 364 +++++++++
- include/linux/remoteproc/st_slim_rproc.h          |  58 ++
- 15 files changed, 1955 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
- create mode 100644 drivers/dma/st_fdma.c
- create mode 100644 drivers/dma/st_fdma.h
- create mode 100644 drivers/remoteproc/st_slim_rproc.c
- create mode 100644 include/linux/remoteproc/st_slim_rproc.h
-
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 26388562e300..2094cbcea0d4 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2341,6 +2341,13 @@ config MIPS_CPS
+ 	  no external assistance. It is safe to enable this when hardware
+ 	  support is unavailable.
+ 
++config MIPS_STEAL
++	bool "VPE stealing"
++	depends on HOTPLUG_CPU && MIPS_CPS
++	help
++	  Select this is you wish to be able to run bare metal code on offline
++	  VPEs.
++
+ config MIPS_CPS_PM
+ 	depends on MIPS_CPS
+ 	select MIPS_CPC
+diff --git a/arch/mips/include/asm/smp-cps.h b/arch/mips/include/asm/smp-cps.h
+index 2ae1f61a4a95..4f6cd5b14185 100644
+--- a/arch/mips/include/asm/smp-cps.h
++++ b/arch/mips/include/asm/smp-cps.h
+@@ -34,6 +34,14 @@ extern void mips_cps_boot_vpes(struct core_boot_config *cfg, unsigned vpe);
+ extern void mips_cps_pm_save(void);
+ extern void mips_cps_pm_restore(void);
+ 
++#ifdef CONFIG_MIPS_STEAL
++
++extern int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
++					  struct task_struct *tsk);
++extern int mips_cps_halt_and_return_cpu(unsigned int cpu);
++
++#endif /* CONFIG_MIPS_STEAL */
++
+ #ifdef CONFIG_MIPS_CPS
+ 
+ extern bool mips_cps_smp_in_use(void);
+diff --git a/arch/mips/include/asm/smp.h b/arch/mips/include/asm/smp.h
+index 060f23ff1817..3c62a1958af5 100644
+--- a/arch/mips/include/asm/smp.h
++++ b/arch/mips/include/asm/smp.h
+@@ -117,4 +117,5 @@ static inline void arch_send_call_function_ipi_mask(const struct cpumask *mask)
+ extern void (*dump_ipi_function_ptr)(void *);
+ void dump_send_ipi(void (*dump_ipi_callback)(void *));
+ #endif
++
+ #endif /* __ASM_SMP_H */
+diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
+index e9d9fc6c754c..bcb9b62816b1 100644
+--- a/arch/mips/kernel/smp-cps.c
++++ b/arch/mips/kernel/smp-cps.c
+@@ -8,6 +8,7 @@
+  * option) any later version.
+  */
+ 
++#include <linux/cpu.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/irqchip/mips-gic.h>
+@@ -39,6 +40,31 @@ static int __init setup_nothreads(char *s)
+ }
+ early_param("nothreads", setup_nothreads);
+ 
++#ifdef CONFIG_MIPS_STEAL
++struct cpumask cpu_stolen_mask;
++
++static inline bool cpu_stolen(int cpu)
++{
++	return cpumask_test_cpu(cpu, &cpu_stolen_mask);
++}
++
++static inline void set_cpu_stolen(int cpu, bool state)
++{
++	if (state)
++		cpumask_set_cpu(cpu, &cpu_stolen_mask);
++	else
++		cpumask_clear_cpu(cpu, &cpu_stolen_mask);
++}
++#else
++static inline bool cpu_stolen(int cpu)
++{
++	return false;
++}
++
++static inline void set_cpu_stolen(int cpu, bool state) { }
++
++#endif /* CONFIG_MIPS_STEAL */
++
+ static unsigned core_vpe_count(unsigned core)
+ {
+ 	unsigned cfg;
+@@ -109,6 +135,10 @@ static void __init cps_smp_setup(void)
+ 		write_gcr_bev_base(core_entry);
+ 	}
+ 
++#ifdef CONFIG_MIPS_STEAL
++	cpumask_clear(&cpu_stolen_mask);
++#endif /* CONFIG_MIPS_STEAL */
++
+ #ifdef CONFIG_MIPS_MT_FPAFF
+ 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
+ 	if (cpu_has_fpu)
+@@ -287,7 +317,7 @@ static void remote_vpe_boot(void *dummy)
+ 	mips_cps_boot_vpes(core_cfg, cpu_vpe_id(&current_cpu_data));
+ }
+ 
+-static void cps_boot_secondary(int cpu, struct task_struct *idle)
++static void cps_start_secondary(int cpu, void *entry_fn, struct task_struct *tsk)
+ {
+ 	unsigned core = cpu_data[cpu].core;
+ 	unsigned vpe_id = cpu_vpe_id(&cpu_data[cpu]);
+@@ -297,9 +327,9 @@ static void cps_boot_secondary(int cpu, struct task_struct *idle)
+ 	unsigned int remote;
+ 	int err;
+ 
+-	vpe_cfg->pc = (unsigned long)&smp_bootstrap;
+-	vpe_cfg->sp = __KSTK_TOS(idle);
+-	vpe_cfg->gp = (unsigned long)task_thread_info(idle);
++	vpe_cfg->pc = (unsigned long)entry_fn;
++	vpe_cfg->sp = __KSTK_TOS(tsk);
++	vpe_cfg->gp = (unsigned long)task_thread_info(tsk);
+ 
+ 	atomic_or(1 << cpu_vpe_id(&cpu_data[cpu]), &core_cfg->vpe_mask);
+ 
+@@ -343,6 +373,11 @@ out:
+ 	preempt_enable();
+ }
+ 
++static void cps_boot_secondary(int cpu, struct task_struct *idle)
++{
++	cps_start_secondary(cpu, &smp_bootstrap, idle);
++}
++
+ static void cps_init_secondary(void)
+ {
+ 	/* Disable MT - we only want to run 1 TC per VPE */
+@@ -394,6 +429,28 @@ static int cps_cpu_disable(void)
+ 	if (!cps_pm_support_state(CPS_PM_POWER_GATED))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_MIPS_STEAL
++	/*
++	 * With the MT ASE only VPEs in the same core may read / write the
++	 * control registers of other VPEs. Therefore to maintain control of
++	 * any stolen VPEs at least one sibling VPE must be kept online.
++	 */
++	if (cpu_has_mipsmt) {
++		int stolen, siblings = 0;
++
++		for_each_cpu((stolen), &cpu_stolen_mask)
++			if (cpu_data[stolen].core == cpu_data[cpu].core)
++				siblings++;
++
++		if (siblings == 1)
++			/*
++			 * When a VPE has been stolen, keep at least one of it's
++			 * siblings around in order to control it.
++			 */
++			return -EBUSY;
++	}
++#endif /* CONFIG_MIPS_STEAL */
++
+ 	core_cfg = &mips_cps_core_bootcfg[current_cpu_data.core];
+ 	atomic_sub(1 << cpu_vpe_id(&current_cpu_data), &core_cfg->vpe_mask);
+ 	smp_mb__after_atomic();
+@@ -426,7 +483,7 @@ void play_dead(void)
+ 		core = cpu_data[cpu].core;
+ 
+ 		/* Look for another online VPE within the core */
+-		for_each_online_cpu(cpu_death_sibling) {
++		for_each_possible_cpu(cpu_death_sibling) {
+ 			if (cpu_data[cpu_death_sibling].core != core)
+ 				continue;
+ 
+@@ -434,8 +491,11 @@ void play_dead(void)
+ 			 * There is an online VPE within the core. Just halt
+ 			 * this TC and leave the core alone.
+ 			 */
+-			cpu_death = CPU_DEATH_HALT;
+-			break;
++			if (cpu_online(cpu_death_sibling) ||
++			    cpu_stolen(cpu_death_sibling))
++				cpu_death = CPU_DEATH_HALT;
++			if (cpu_online(cpu_death_sibling))
++				break;
+ 		}
+ 	}
+ 
+@@ -466,6 +526,94 @@ void play_dead(void)
+ 	panic("Failed to offline CPU %u", cpu);
+ }
+ 
++#ifdef CONFIG_MIPS_STEAL
++
++/* Find an online sibling CPU (another VPE in the same core) */
++static inline int mips_cps_get_online_sibling(unsigned int cpu)
++{
++	int sibling;
++
++	for_each_online_cpu(sibling)
++		if (cpu_data[sibling].core == cpu_data[cpu].core)
++			return sibling;
++
++	return -1;
++}
++
++int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
++				   struct task_struct *tsk)
++{
++	int err = -EINVAL;
++
++	preempt_disable();
++
++	if (!cpu_present(cpu) || cpu_online(cpu) || cpu_stolen(cpu))
++		goto out;
++
++	if (cpu_has_mipsmt && (mips_cps_get_online_sibling(cpu) < 0))
++		pr_warn("CPU%d has no online siblings to control it\n", cpu);
++	else {
++		set_cpu_present(cpu, false);
++		set_cpu_stolen(cpu, true);
++
++		cps_start_secondary(cpu, entry_fn, tsk);
++		err = 0;
++	}
++out:
++	preempt_enable();
++	return err;
++}
++
++static void mips_cps_halt_sibling(void *ptr_cpu)
++{
++	unsigned int cpu = (unsigned long)ptr_cpu;
++	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
++	unsigned long flags;
++	int vpflags;
++
++	local_irq_save(flags);
++	vpflags = dvpe();
++	settc(vpe_id);
++	write_tc_c0_tchalt(TCHALT_H);
++	evpe(vpflags);
++	local_irq_restore(flags);
++}
++
++int mips_cps_halt_and_return_cpu(unsigned int cpu)
++{
++	unsigned int core = cpu_data[cpu].core;
++	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
++
++	if (!cpu_stolen(cpu))
++		return -EINVAL;
++
++	if (cpu_has_mipsmt && (core == cpu_data[smp_processor_id()].core))
++		mips_cps_halt_sibling((void *)(unsigned long)cpu);
++	else if (cpu_has_mipsmt) {
++		int sibling = mips_cps_get_online_sibling(cpu);
++
++		if (sibling < 0) {
++			pr_warn("CPU%d has no online siblings\n", cpu);
++			return -EINVAL;
++		}
++
++		if (smp_call_function_single(sibling, mips_cps_halt_sibling,
++						(void *)(unsigned long)cpu, 1))
++			panic("Failed to call sibling CPU\n");
++
++	} else if (cpu_has_vp) {
++		mips_cm_lock_other(core, vpe_id);
++		write_cpc_co_vp_stop(1 << vpe_id);
++		mips_cm_unlock_other();
++	}
++
++	set_cpu_stolen(cpu, false);
++	set_cpu_present(cpu, true);
++	return 0;
++}
++
++#endif /* CONFIG_MIPS_STEAL */
++
+ static void wait_for_sibling_halt(void *ptr_cpu)
+ {
+ 	unsigned cpu = (unsigned long)ptr_cpu;
+diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+index afa06c2bb019..f3d01f556fe2 100644
+--- a/arch/mips/kernel/smp.c
++++ b/arch/mips/kernel/smp.c
+@@ -233,6 +233,18 @@ static void smp_ipi_init_one(unsigned int virq,
+ 				    struct irqaction *action)
+ {
+ 	int ret;
++#ifdef CONFIG_MIPS_STEAL
++	struct irq_data *data;
++	/*
++	 * A bit of a hack to ensure that the ipi_offset is 0.
++	 * This is to deal with removing / reallocating IPIs
++	 * to subsets of the possible CPUs, where the IPI IRQ domain
++	 * will set ipi_offset to the first cpu in the cpumask when the
++	 * IPI is reallocated.
++	 */
++	data = irq_get_irq_data(virq);
++	data->common->ipi_offset = 0;
++#endif /* CONFIG_MIPS_STEAL */
+ 
+ 	irq_set_handler(virq, handle_percpu_irq);
+ 	ret = setup_irq(virq, action);
 -- 
-1.9.1
+2.7.4
