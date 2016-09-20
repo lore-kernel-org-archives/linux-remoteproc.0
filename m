@@ -1,61 +1,46 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:36808 "EHLO
-	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753503AbcHEJxR (ORCPT
-	<rfc822;linux-remoteproc@vger.kernel.org>);
-	Fri, 5 Aug 2016 05:53:17 -0400
-Received: by mail-wm0-f52.google.com with SMTP id q128so24731735wma.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Aug 2016 02:53:17 -0700 (PDT)
-Date: Fri, 5 Aug 2016 11:53:15 +0200
-From: Matteo Sartori <matteo.sartori@t3lab.it>
-Subject: rpmsg: exposing the bus to userspace
-Message-ID: <20160805095315.GA7702@alexat>
+Return-Path: <Matt.Redfearn@imgtec.com>
+Subject: Re: [PATCH v2 6/6] MIPS: Deprecate VPE Loader
+References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+ <1474361249-31064-7-git-send-email-matt.redfearn@imgtec.com>
+ <20160920131934.GE14137@linux-mips.org>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Message-ID: <fc65f123-6e32-4637-ac16-458e08029944@imgtec.com>
+Date: Tue, 20 Sep 2016 14:53:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc@vger.kernel.org
-Cc: Alessio Paccoia <alessio.paccoia@t3lab.it>, Michele Rodolfi <michele.rodolfi@t3lab.it>, Claudio Salati <claudio.salati@t3lab.it>
+In-Reply-To: <20160920131934.GE14137@linux-mips.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>, linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+Hi Ralf,
 
-I have been working on remoteproc/rpmsg and FreeRTOS/OpenAMP for the
-latest three months and recently, with my colleagues, I have started
-reasoning about the best possible way to expose the kernel rpmsg bus
-to applications running in user space. The idea is to end up with a
-clean mechanism for the user-kernel communication, like sockets or
-char devices, in order to build AMP applications on top of it.
 
-In fact, we have been running experiments with some out-of-tree
-drivers implementing exactly such interfaces, namely a driver
-registering a new address family AF_RPMSG for the socket interface,
-from Texas Instruments, and a char device driver representing
-different rpmsg channels with /dev/rpmsgX special files, found inside
-OpenAMP obsolete directory.
+On 20/09/16 14:19, Ralf Baechle wrote:
+> On Tue, Sep 20, 2016 at 09:47:29AM +0100, Matt Redfearn wrote:
+>
+>> The MIPS remote processor driver (CONFIG_MIPS_RPROC) provides a more
+>> standard mechanism for using one or more VPs as coprocessors running
+>> separate firmware.
+>>
+>> Here we deprecate this mechanism before it is removed.
+> The world will be a better place once this is removed.
 
-I am quite new to kernel development and in particular to remoteproc
-subsystem, so I am asking the following questions because maybe I have
-missed some past developments and discussions about this topic. I
-apologize if this is the case.
+Indeed :-)
 
-- Have you ever considered the inclusion of these out-of-tree modules
-  in the mainline?
-- If so, have you planned some work on this, or what are the reasons
-  for not including these modules?
-- Is there already a preferred way for exposing the rpmsg bus for
-  generic services to userspace, or is more suitable the idea to have 
-  a different rpmsg driver, therefore a user-kernel communication strategy, 
-  for each different use case of the bus?
+>
+> I receive the occasional minor cleanup or robopatch (coccinelle or similar)
+> for the VPE loader but I have no indication this is actually being used
+> by anybody, so is thee any reason why not to delete it right away?
 
-Anyway, I would be very glad to contribute in the direction of an
-appropriate user-kernel interface for accessing the rpmsg bus, and at
-the moment I have a working test case for the socket driver as well as
-for the char driver. Given the fact I don't see the superiority of one
-approach compared to the other, I would like to propose and discuss
-with you both of them.
+I'd like to get the remote processor implementation in, then delete the 
+VPE loader in the next kernel revision, if that's ok with you. Once it 
+is removed, we should also be able to remove the CMP SMP implementation, 
+and other bits of infrastructure that'll no longer be needed.
 
-This was kind of an introductory email. I am preparing two patchsets.
+Thanks,
+Matt
 
-Best regards,
-Matteo
+>
+>    Ralf
