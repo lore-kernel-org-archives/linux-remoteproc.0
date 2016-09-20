@@ -1,99 +1,159 @@
 Return-Path: <Matt.Redfearn@imgtec.com>
 From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 0/6] MIPS: Remote processor driver
-Date: Tue, 20 Sep 2016 09:47:23 +0100
-Message-ID: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+Subject: [PATCH v2 3/6] MIPS: smp.c: Introduce mechanism for freeing and allocating IPIs
+Date: Tue, 20 Sep 2016 09:47:26 +0100
+Message-ID: <1474361249-31064-4-git-send-email-matt.redfearn@imgtec.com>
+In-Reply-To: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Hugh Dickins <hughd@google.com>, Qais Yousef <qsyousef@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Huacai Chen <chenhc@lemote.com>, Jason Cooper <jason@lakedaemon.net>, Lisa Parratt <Lisa.Parratt@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Andrew Morton <akpm@linux-foundation.org>, Qais Yousef <qais.yousef@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, "David S. Miller" <davem@davemloft.net>, Paul Burton <paul.burton@imgtec.com>
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Lisa Parratt <Lisa.Parratt@imgtec.com>, James Hogan <james.hogan@imgtec.com>, Qais Yousef <qsyousef@gmail.com>, Paul Burton <paul.burton@imgtec.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+For the MIPS remote processor implementation, we need additional IPIs to
+talk to the remote processor. Since MIPS GIC reserves exactly the right
+number of IPI IRQs required by Linux for the number of VPs in the
+system, this is not possible without releasing some recources.
 
-The MIPS remote processor driver allows non-Linux firmware to take
-control of and execute on one of the systems VPEs. The CPU must be
-offlined from Linux first. A sysfs interface is created which allows
-firmware to be loaded and changed at runtime. A full description is
-available at [1]. An example firmware that can be used with this driver
-is available at [2].
+This commit introduces mips_smp_ipi_allocate() which allocates IPIs to a
+given cpumask. It is called as normal with the cpu_possible_mask at
+bootup to initialise IPIs to all CPUs. mips_smp_ipi_free() may then be
+used to free IPIs to a subset of those CPUs so that their hardware
+resources can be reused.
 
-This is useful to allow running bare metal code, or an RTOS, on one or
-more CPUs while allowing Linux to continue running on those remaining.
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+---
 
-The remote processor framework allows for firmwares to provide any
-virtio device for communication between the firmware running on the
-remote VP and Linux. For example [1] demonstrates a simple firmware
-which provides a virtual serial port. Any string sent to the port is
-case inverted and returned.
+Changes in v2: None
 
-This is conceptually similar to the VPE loader functionality, but is
-more standard as it fits into the remoteproc subsystem.
+ arch/mips/include/asm/smp.h | 14 +++++++++++
+ arch/mips/kernel/smp.c      | 61 +++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 67 insertions(+), 8 deletions(-)
 
-The first patches in this series lay the groundwork for the driver
-before it is added. The last series deprecates the VPE loader.
-
-This functionality is supported on:
-- MIPS32r2 devices implementing the MIPS MT ASE for multithreading, such
-  as interAptiv.
-- MIPS32r6 devices implementing VPs, such as I6400.
-
-Limitations:
-- The remoteproc core supports only 32bit ELFs. Therefore it is only
-  possible to run 32bit firmware on the remote processor. Also, for
-  virtio communication, pointers are passed from the kernel to firmware.
-  There can be no mismatch in pointer sizes between the kernel and
-  firmware, so this limits the host kernel to 32bit as well.
-
-The functionality has been tested on the Ci40 board which has a 2 core 2
-thread interAptiv.
-
-This series is based on v4.8-rc6
-
-Depends on James Hogan's ebase series:
-MIPS: traps: 64bit kernels should read CP0_EBase 64bit
-MIPS: traps: Convert ebase to KSeg0
-MIPS: traps: Ensure full EBase is written
-
-Without these patches, if firmware modifies ebase to allow handling
-exceptions / interrupts, then when the VPE is returned to Linux the
-kernel exception handlers won't be reinstated properly.
-
-[1] http://wiki.prplfoundation.org/w/images/d/df/MIPS_OS_Remote_Processor_Driver_Whitepaper_1.0.9.pdf
-[2] https://github.com/MIPS/mips-rproc-example
-
-
-Changes in v2:
-Add dependence on additional patches to mips-gic in commit log
-Incorporate changes from Marc Zynger's review:
-- Remove CONTEXT_SAVING define.
-- Make saved local state a per-cpu variable
-- Make gic_save_* static functions when enabled, and do { } while(0)
-  otherwise
-
-Lisa Parratt (1):
-  MIPS: CPS: Add VP(E) stealing
-
-Matt Redfearn (5):
-  irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
-  MIPS: tlb-r4k: If there are wired entries, don't use TLBINVF
-  MIPS: smp.c: Introduce mechanism for freeing and allocating IPIs
-  remoteproc/MIPS: Add a remoteproc driver for MIPS
-  MIPS: Deprecate VPE Loader
-
- Documentation/ABI/testing/sysfs-class-mips-rproc |  24 +
- arch/mips/Kconfig                                |  12 +-
- arch/mips/include/asm/smp-cps.h                  |   8 +
- arch/mips/include/asm/smp.h                      |  15 +
- arch/mips/kernel/smp-cps.c                       | 162 +++++-
- arch/mips/kernel/smp.c                           |  73 ++-
- arch/mips/mm/tlb-r4k.c                           |   7 +-
- drivers/irqchip/irq-mips-gic.c                   | 217 +++++++-
- drivers/remoteproc/Kconfig                       |  11 +
- drivers/remoteproc/Makefile                      |   1 +
- drivers/remoteproc/mips_remoteproc.c             | 651 +++++++++++++++++++++++
- 11 files changed, 1156 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-mips-rproc
- create mode 100644 drivers/remoteproc/mips_remoteproc.c
-
+diff --git a/arch/mips/include/asm/smp.h b/arch/mips/include/asm/smp.h
+index 8bc6c70a4030..060f23ff1817 100644
+--- a/arch/mips/include/asm/smp.h
++++ b/arch/mips/include/asm/smp.h
+@@ -85,6 +85,20 @@ static inline void __cpu_die(unsigned int cpu)
+ extern void play_dead(void);
+ #endif
+ 
++/*
++ * This function will set up the necessary IPIs for Linux to communicate
++ * with the CPUs in mask.
++ * Return 0 on success.
++ */
++int mips_smp_ipi_allocate(const struct cpumask *mask);
++
++/*
++ * This function will free up IPIs allocated with mips_smp_ipi_allocate to the
++ * CPUs in mask, which must be a subset of the IPIs that have been configured.
++ * Return 0 on success.
++ */
++int mips_smp_ipi_free(const struct cpumask *mask);
++
+ static inline void arch_send_call_function_single_ipi(int cpu)
+ {
+ 	extern struct plat_smp_ops *mp_ops;	/* private */
+diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+index f95f094f36e4..afa06c2bb019 100644
+--- a/arch/mips/kernel/smp.c
++++ b/arch/mips/kernel/smp.c
+@@ -229,7 +229,7 @@ static struct irqaction irq_call = {
+ 	.name		= "IPI call"
+ };
+ 
+-static __init void smp_ipi_init_one(unsigned int virq,
++static void smp_ipi_init_one(unsigned int virq,
+ 				    struct irqaction *action)
+ {
+ 	int ret;
+@@ -239,9 +239,11 @@ static __init void smp_ipi_init_one(unsigned int virq,
+ 	BUG_ON(ret);
+ }
+ 
+-static int __init mips_smp_ipi_init(void)
++static unsigned int call_virq, sched_virq;
++
++int mips_smp_ipi_allocate(const struct cpumask *mask)
+ {
+-	unsigned int call_virq, sched_virq;
++	int virq;
+ 	struct irq_domain *ipidomain;
+ 	struct device_node *node;
+ 
+@@ -268,16 +270,20 @@ static int __init mips_smp_ipi_init(void)
+ 	if (!ipidomain)
+ 		return 0;
+ 
+-	call_virq = irq_reserve_ipi(ipidomain, cpu_possible_mask);
+-	BUG_ON(!call_virq);
++	virq = irq_reserve_ipi(ipidomain, mask);
++	BUG_ON(!virq);
++	if (!call_virq)
++		call_virq = virq;
+ 
+-	sched_virq = irq_reserve_ipi(ipidomain, cpu_possible_mask);
+-	BUG_ON(!sched_virq);
++	virq = irq_reserve_ipi(ipidomain, mask);
++	BUG_ON(!virq);
++	if (!sched_virq)
++		sched_virq = virq;
+ 
+ 	if (irq_domain_is_ipi_per_cpu(ipidomain)) {
+ 		int cpu;
+ 
+-		for_each_cpu(cpu, cpu_possible_mask) {
++		for_each_cpu(cpu, mask) {
+ 			smp_ipi_init_one(call_virq + cpu, &irq_call);
+ 			smp_ipi_init_one(sched_virq + cpu, &irq_resched);
+ 		}
+@@ -286,6 +292,45 @@ static int __init mips_smp_ipi_init(void)
+ 		smp_ipi_init_one(sched_virq, &irq_resched);
+ 	}
+ 
++	return 0;
++}
++
++int mips_smp_ipi_free(const struct cpumask *mask)
++{
++	struct irq_domain *ipidomain;
++	struct device_node *node;
++
++	node = of_irq_find_parent(of_root);
++	ipidomain = irq_find_matching_host(node, DOMAIN_BUS_IPI);
++
++	/*
++	 * Some platforms have half DT setup. So if we found irq node but
++	 * didn't find an ipidomain, try to search for one that is not in the
++	 * DT.
++	 */
++	if (node && !ipidomain)
++		ipidomain = irq_find_matching_host(NULL, DOMAIN_BUS_IPI);
++
++	BUG_ON(!ipidomain);
++
++	if (irq_domain_is_ipi_per_cpu(ipidomain)) {
++		int cpu;
++
++		for_each_cpu(cpu, mask) {
++			remove_irq(call_virq + cpu, &irq_call);
++			remove_irq(sched_virq + cpu, &irq_resched);
++		}
++	}
++	irq_destroy_ipi(call_virq, mask);
++	irq_destroy_ipi(sched_virq, mask);
++	return 0;
++}
++
++
++static int __init mips_smp_ipi_init(void)
++{
++	mips_smp_ipi_allocate(cpu_possible_mask);
++
+ 	call_desc = irq_to_desc(call_virq);
+ 	sched_desc = irq_to_desc(sched_virq);
+ 
 -- 
 2.7.4
