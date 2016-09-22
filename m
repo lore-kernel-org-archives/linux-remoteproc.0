@@ -1,43 +1,32 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v9 02/19] MAINTAINERS: Add st slim core rproc driver to STi section.
-Date: Mon,  5 Sep 2016 14:16:44 +0100
-Message-Id: <1473081421-16555-3-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, patrice.chotard@st.com, dan.j.williams@intel.com, airlied@linux.ie, kraxel@redhat.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, virtualization@lists.linux-foundation.org
+Return-Path: <ralf@linux-mips.org>
+Date: Thu, 22 Sep 2016 14:11:37 +0200
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH v2 2/6] MIPS: tlb-r4k: If there are wired entries, don't
+ use TLBINVF
+Message-ID: <20160922121136.GA12981@linux-mips.org>
+References: <1474361249-31064-1-git-send-email-matt.redfearn@imgtec.com>
+ <1474361249-31064-3-git-send-email-matt.redfearn@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1474361249-31064-3-git-send-email-matt.redfearn@imgtec.com>
+To: Matt Redfearn <matt.redfearn@imgtec.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>, linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>, Huacai Chen <chenhc@lemote.com>, "David S. Miller" <davem@davemloft.net>, James Hogan <james.hogan@imgtec.com>, Paul Burton <paul.burton@imgtec.com>, Andrew Morton <akpm@linux-foundation.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the slim core rproc driver to the STi section
-of the MAINTAINERS file.
+On Tue, Sep 20, 2016 at 09:47:25AM +0100, Matt Redfearn wrote:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+> When adding a wired entry to the TLB via add_wired_entry, the tlb is
+> flushed with local_flush_tlb_all, which on CPUs with TLBINV results in
+> the new wired entry being flushed again.
+> 
+> Behavior of the TLBINV instruction applies to all applicable TLB entries
+> and is unaffected by the setting of the Wired register. Therefore if
+> the TLB has any wired entries, fall back to iterating over the entries
+> rather than blasting them all using TLBINVF.
+> 
+> Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0bbe4b1..5dd3b24 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1749,6 +1749,7 @@ F:	drivers/phy/phy-stih407-usb.c
- F:	drivers/phy/phy-stih41x-usb.c
- F:	drivers/pinctrl/pinctrl-st.c
- F:	drivers/remoteproc/st_remoteproc.c
-+F:	drivers/remoteproc/st_slim_rproc.c
- F:	drivers/reset/sti/
- F:	drivers/rtc/rtc-st-lpc.c
- F:	drivers/tty/serial/st-asc.c
-@@ -1757,6 +1758,7 @@ F:	drivers/usb/host/ehci-st.c
- F:	drivers/usb/host/ohci-st.c
- F:	drivers/watchdog/st_lpc_wdt.c
- F:	drivers/ata/ahci_st.c
-+F:	include/linux/remoteproc/st_slim_rproc.h
- 
- ARM/STM32 ARCHITECTURE
- M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
--- 
-1.9.1
+Queued for 4.9..
+
+  Ralf
