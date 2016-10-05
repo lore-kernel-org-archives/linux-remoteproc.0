@@ -1,116 +1,84 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 5 Oct 2016 15:20:28 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 11/11] remoteproc: Merge table_ptr and cached_table pointers
-Date: Wed, 19 Oct 2016 19:40:12 -0700
-Message-Id: <1476931212-1806-12-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [GIT PULL] rpmsg updates for v4.9
+Message-ID: <20161005222028.GO7509@tuxbot>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As all vdev resources are allocated before we boot the remote processor
-we no longer need to support modifying the resource table while the
-remote is running.
+The following changes since commit 29b4817d4018df78086157ea3a55c1d9424a7cfc:
 
-This saves us from the table_ptr dance, but more importantly allow the
-remote processor to enable security lock down of the loaded table memory
-region.
+  Linux 4.8-rc1 (2016-08-07 18:18:00 -0700)
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 26 ++++++++++----------------
- include/linux/remoteproc.h           |  4 +---
- 2 files changed, 11 insertions(+), 19 deletions(-)
+are available in the git repository at:
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f31783d27196..46078c959a9c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -889,15 +889,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	/*
- 	 * Create a copy of the resource table. When a virtio device starts
- 	 * and calls vring_new_virtqueue() the address of the allocated vring
--	 * will be stored in the cached_table. Before the device is started,
--	 * cached_table will be copied into device memory.
-+	 * will be stored in the table_ptr. Before the device is started,
-+	 * table_ptr will be copied into device memory.
- 	 */
--	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
--	if (!rproc->cached_table)
-+	rproc->table_ptr = kmemdup(table, tablesz, GFP_KERNEL);
-+	if (!rproc->table_ptr)
- 		goto clean_up;
- 
--	rproc->table_ptr = rproc->cached_table;
--
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
- 
-@@ -916,18 +914,16 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	}
- 
- 	/*
--	 * The starting device has been given the rproc->cached_table as the
-+	 * The starting device has been given the rproc->table_ptr as the
- 	 * resource table. The address of the vring along with the other
--	 * allocated resources (carveouts etc) is stored in cached_table.
-+	 * allocated resources (carveouts etc) is stored in table_ptr.
- 	 * In order to pass this information to the remote device we must copy
- 	 * this information to device memory. We also update the table_ptr so
- 	 * that any subsequent changes will be applied to the loaded version.
- 	 */
- 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
--	if (loaded_table) {
--		memcpy(loaded_table, rproc->cached_table, tablesz);
--		rproc->table_ptr = loaded_table;
--	}
-+	if (loaded_table)
-+		memcpy(loaded_table, rproc->table_ptr, tablesz);
- 
- 	/* power up the remote processor */
- 	ret = rproc->ops->start(rproc);
-@@ -955,8 +951,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
- clean_up:
--	kfree(rproc->cached_table);
--	rproc->cached_table = NULL;
-+	kfree(rproc->table_ptr);
- 	rproc->table_ptr = NULL;
- 
- 	rproc_disable_iommu(rproc);
-@@ -1206,8 +1201,7 @@ void rproc_shutdown(struct rproc *rproc)
- 	rproc_disable_iommu(rproc);
- 
- 	/* Free the copy of the resource table */
--	kfree(rproc->cached_table);
--	rproc->cached_table = NULL;
-+	kfree(rproc->table_ptr);
- 	rproc->table_ptr = NULL;
- 
- 	/* if in crash state, unlock crash handler */
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index ff05b88730ad..51662ee7d032 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -408,8 +408,7 @@ enum rproc_crash_type {
-  * @crash_comp: completion used to sync crash handler and the rproc reload
-  * @recovery_disabled: flag that state if recovery was disabled
-  * @max_notifyid: largest allocated notify id.
-- * @table_ptr: pointer to the resource table in effect
-- * @cached_table: copy of the resource table
-+ * @table_ptr: our copy of the resource table
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  */
- struct rproc {
-@@ -441,7 +440,6 @@ struct rproc {
- 	bool recovery_disabled;
- 	int max_notifyid;
- 	struct resource_table *table_ptr;
--	struct resource_table *cached_table;
- 	bool has_iommu;
- 	bool auto_boot;
- };
--- 
-2.5.0
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.9
+
+for you to fetch changes up to 395317bbc200fbc164e65cc8ec31fa9d766aeaf1:
+
+  rpmsg: smd: fix dependency on QCOM_SMD=n (2016-09-12 07:05:13 -0700)
+
+----------------------------------------------------------------
+rpmsg updates for v4.9
+
+The bulk of these patches involve splitting the rpmsg implementation into a
+framework/API part and a virtio specific backend part. It then adds the
+Qualcomm Shared Memory Device (SMD) as an additional supported wire format.
+
+Also included is a set of code style cleanups that have been lingering for a
+while.
+
+----------------------------------------------------------------
+Andrew F. Davis (1):
+      rpmsg: remove unneeded conversions to bool
+
+Anna, Suman (5):
+      rpmsg: remove pointless OOM prints
+      rpmsg: use proper format-specifier for printing dma_addr_t
+      rpmsg: align code with open parenthesis
+      rpmsg: use dynamic_hex_dump for hex dump traces
+      samples/rpmsg: add support for multiple instances
+
+Arnd Bergmann (1):
+      rpmsg: smd: fix dependency on QCOM_SMD=n
+
+Bjorn Andersson (18):
+      rpmsg: Drop prototypes for non-existing functions
+      rpmsg: Enable matching devices with drivers based on DT
+      rpmsg: Name rpmsg devices based on channel id
+      rpmsg: rpmsg_send() operations takes rpmsg_endpoint
+      rpmsg: Make rpmsg_create_ept() take channel_info struct
+      rpmsg: Clean up rpmsg device vs channel naming
+      rpmsg: Introduce indirection table for rpmsg_device operations
+      rpmsg: Move rpmsg_device API to new file
+      rpmsg: Indirection table for rpmsg_endpoint operations
+      rpmsg: Move endpoint related interface to rpmsg core
+      rpmsg: Move helper for finding rpmsg devices to core
+      rpmsg: Split off generic tail of create_channel()
+      rpmsg: Split rpmsg core and virtio backend
+      rpmsg: Hide rpmsg indirection tables
+      rpmsg: virtio: Hide vrp pointer from the public API
+      rpmsg: Move virtio specifics from public header
+      rpmsg: Allow callback to return errors
+      rpmsg: Introduce Qualcomm SMD backend
+
+Lee Jones (1):
+      rpmsg: virtio_rpmsg_bus: Fix randomly placed semi-colon
+
+ drivers/remoteproc/Kconfig          |    4 +-
+ drivers/rpmsg/Kconfig               |   14 +
+ drivers/rpmsg/Makefile              |    4 +-
+ drivers/rpmsg/qcom_smd.c            | 1434 +++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_core.c          |  498 ++++++++++++
+ drivers/rpmsg/rpmsg_internal.h      |   82 ++
+ drivers/rpmsg/virtio_rpmsg_bus.c    |  541 ++++++-------
+ include/linux/rpmsg.h               |  248 +-----
+ samples/rpmsg/rpmsg_client_sample.c |   32 +-
+ 9 files changed, 2308 insertions(+), 549 deletions(-)
+ create mode 100644 drivers/rpmsg/qcom_smd.c
+ create mode 100644 drivers/rpmsg/rpmsg_core.c
+ create mode 100644 drivers/rpmsg/rpmsg_internal.h
