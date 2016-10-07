@@ -1,35 +1,109 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
+Date: Fri, 7 Oct 2016 18:44:41 +0100
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v10 07/11] MAINTAINERS: Add FDMA driver files to STi section.
-Date: Sat,  8 Oct 2016 13:52:29 +0100
-Message-Id: <1475931154-1021-8-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
-References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v9 17/19] drm/virtio: kconfig: Fix recursive dependency
+ issue.
+Message-ID: <20161007174441.GA27720@griffinp-ThinkPad-X1-Carbon-2nd>
+References: <1473081421-16555-1-git-send-email-peter.griffin@linaro.org>
+ <1473081421-16555-18-git-send-email-peter.griffin@linaro.org>
+ <CACvgo52_g7anGBd9HTUyYsbp5QmQEk9LR3nNHgSTgjQ29G3ViA@mail.gmail.com>
+ <20160920083251.GB26093@griffinp-ThinkPad-X1-Carbon-2nd>
+ <8760pqncee.fsf@intel.com>
+ <20161006093721.GA436@griffinp-ThinkPad-X1-Carbon-2nd>
+ <CACvgo50vU5_=KFUCAZDaQPepPdsbnF8KN1b+f6KJNuBW6qRdSg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACvgo50vU5_=KFUCAZDaQPepPdsbnF8KN1b+f6KJNuBW6qRdSg@mail.gmail.com>
+To: Emil Velikov <emil.l.velikov@gmail.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Ohad Ben-Cohen <ohad@wizery.com>, devicetree <devicetree@vger.kernel.org>, kernel@stlinux.com, vinod.koul@intel.com, Lee Jones <lee.jones@linaro.org>, linux-remoteproc@vger.kernel.org, patrice.chotard@st.com, ML dri-devel <dri-devel@lists.freedesktop.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, Gerd Hoffmann <kraxel@redhat.com>, dmaengine@vger.kernel.org, dan.j.williams@intel.com, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>, LAKML <linux-arm-kernel@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the FDMA driver files to the STi
-section of the maintainers file.
+Hi Emil,
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, 06 Oct 2016, Emil Velikov wrote:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9924036..f71a1d1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1749,6 +1749,7 @@ F:	drivers/char/hw_random/st-rng.c
- F:	drivers/clocksource/arm_global_timer.c
- F:	drivers/clocksource/clksrc_st_lpc.c
- F:	drivers/cpufreq/sti-cpufreq.c
-+F:	drivers/dma/st_fdma*
- F:	drivers/i2c/busses/i2c-st.c
- F:	drivers/media/rc/st_rc.c
- F:	drivers/media/platform/sti/c8sectpfe/
--- 
-1.9.1
+> On 6 October 2016 at 10:37, Peter Griffin <peter.griffin@linaro.org> wrote:
+> 
+> > In fact the help text for VIRTIO even states this option should be selected
+> > by any driver which implements virtio.
+> >
+> Almost but not quite. It says:
+> 
+> "This option is selected by any driver which implements the virtio _bus_"
+> 
+
+Ah I thought DRM_VIRTIO_GPU was implementing a virtio bus, bus it seems that it 
+uses pci. Which does raise the question of why it is depending on VIRTIO at all
+and not VIRTIO_PCI.
+
+> REMOTEPROC obviously does that while the ST SLIM driver does not. Thus
+> the latter should _not_ select, be that explicitly or implicitly via
+> REMOTEPROC, the symbol.
+
+Yep OK.
+
+> 
+> >>
+> >> People tend to abuse select because it's "convenient". If you depend,
+> >> but some of your dependencies aren't met, you're in for some digging
+> >> through Kconfig to find the missing deps. Just to make the option you
+> >> want visible in menuconfig. If you instead select something with
+> >> dependencies, it'll be right most of the time, and it's "convenient",
+> >> until it breaks. (And hey, it usually breaks for someone else with some
+> >> other config, so it's still convenient for you.)
+> >
+> > I'm sure they do but in this case it is actually the use of 'depends on'
+> > which has caused the breakage and inconvenience for somebody else and sadly this
+> > inconvienice is still on-going due to this patch not being applied or getting an
+> > acked-by from the appropriate maintainers.
+> >
+> Surely you're not saying that pre-existing driver following the
+> documentation, is 'causing breakage' for a new driver {ab,mis}using a
+> feature ?
+
+Your right I wasn't saying that :)
+
+My point was that this patch wasn't 'wrong' when referring to the Kconfig
+documentation Jani referenced as VIRTIO has no dependencies.
+
+Also I thought DRM_VIRTIO_GPU driver implemented a VIRTIO bus which re-enforced
+the view that it should be selecting VIRTIO. 
+
+> 
+> This reminds me an old saying: "If the shoe doesn’t fit, it doesn’t
+> mean there is anything wrong with your feet."
+
+If the shoe doesn't fit, chop off the leg :)
+
+> You seem to be suggesting the opposite ?
+> 
+> >>
+> >> Perhaps kconfig should complain about selecting visible symbols and
+> >> symbols with dependencies.
+> >
+> > That sounds like it would be a useful addition.
+> >
+> > Is it possible to get this patch applied or an acked-by to avoid further delay
+> > to the fdma series?
+> >
+> Please don't apply duct tape, especially where it's _not_ needed.
+> 
+> $ sed -i s/select REMOTEPROC/depends on REMOTEPROC/ drivers/remoteproc/Kconfig
+> 
+> ... will resolve things in the right place. The alternative will lead
+> to random issues in other subsystems.
+> 
+
+If Bjorn is OK with it, then it is fine with me.
+
+I will update remoteproc Kconfig setup in fdma v10, this will drop the
+requirement for this patch in drm subsystem.
+
+I can then send the whitespace cleanup patch separately to DRM ML.
+
+regards,
+
+Peter.
