@@ -1,39 +1,33 @@
-Return-Path: <weiyj.lk@gmail.com>
-Return-Path: <weiyj.lk@gmail.com>
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] remoteproc: st: Fix error return code in st_rproc_probe()
-Date: Mon, 17 Oct 2016 16:23:35 +0000
-Message-Id: <1476721415-20224-1-git-send-email-weiyj.lk@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-To: Patrice Chotard <patrice.chotard@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com, linux-remoteproc@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v10 09/11] ARM: multi_v7_defconfig: Enable st_remoteproc driver.
+Date: Sat,  8 Oct 2016 13:52:31 +0100
+Message-Id: <1475931154-1021-10-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+The st231 remote coprocessors are found on all STi chipsets.
 
-Fix to return a negative error code from the st_rproc_state() error
-handling case instead of 0, as done elsewhere in this function.
-
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/st_remoteproc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index ae8963f..da4e152 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -245,8 +245,10 @@ static int st_rproc_probe(struct platform_device *pdev)
- 		goto free_rproc;
- 
- 	enabled = st_rproc_state(pdev);
--	if (enabled < 0)
-+	if (enabled < 0) {
-+		ret = enabled;
- 		goto free_rproc;
-+	}
- 
- 	if (enabled) {
- 		atomic_inc(&rproc->power);
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index c94611c..33f7a8a 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -818,6 +818,7 @@ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_TEGRA_IOMMU_GART=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+ CONFIG_REMOTEPROC=m
++CONFIG_ST_REMOTEPROC=m
+ CONFIG_PM_DEVFREQ=y
+ CONFIG_ARM_TEGRA_DEVFREQ=m
+ CONFIG_MEMORY=y
+-- 
+1.9.1
