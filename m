@@ -1,148 +1,124 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 08/11] remoteproc: Decouple vdev resources and devices
-Date: Wed, 19 Oct 2016 19:40:09 -0700
-Message-Id: <1476931212-1806-9-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v10 03/11] remoteproc: Update Kconfig setup to 'depends on REMOTEPROC'
+Date: Sat,  8 Oct 2016 13:52:25 +0100
+Message-Id: <1475931154-1021-4-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Represent the virtio device part of the vdev resources as remoteproc
-subdevices to finalize the decoupling of the virtio resource and device
-handling.
+Make REMOTEPROC core a selectable kconfig option, and update
+remoteproc client drivers to 'depends on' the core. This avoids
+some nasty Kconfig recursive dependency issues. Also when using
+menuconfig client drivers will be hidden until the core has been
+enabled.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Documentation/kbuild/kconfig-language.txt:
+
+  Note:
+        select should be used with care. select will force
+        a symbol to a value without visiting the dependencies.
+        By abusing select you are able to select a symbol FOO even
+        if FOO depends on BAR that is not set.
+        In general use select only for non-visible symbols
+        (no prompts anywhere) and for symbols with no dependencies.
+        That will limit the usefulness but on the other hand avoid
+        the illegal configurations all over.
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 35 ++++++++++++++++++++---------------
- include/linux/remoteproc.h           |  5 +++++
- 2 files changed, 25 insertions(+), 15 deletions(-)
+ drivers/remoteproc/Kconfig | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 1d2f4b2dd05d..c242ca016496 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -296,6 +296,20 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	rsc->vring[idx].notifyid = -1;
- }
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index a7bedc6..decdcbe 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -1,20 +1,21 @@
+ menu "Remoteproc drivers"
  
-+static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
-+{
-+	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
+-# REMOTEPROC gets selected by whoever wants it
+ config REMOTEPROC
+-	tristate
++	tristate "Support for Remote Processor subsystem"
+ 	depends on HAS_DMA
+ 	select CRC32
+ 	select FW_LOADER
+ 	select VIRTIO
+ 	select VIRTUALIZATION
+ 
++if REMOTEPROC
 +
-+	return rproc_add_virtio_dev(rvdev, rvdev->id);
-+}
+ config OMAP_REMOTEPROC
+ 	tristate "OMAP remoteproc support"
+ 	depends on HAS_DMA
+ 	depends on ARCH_OMAP4 || SOC_OMAP5
+ 	depends on OMAP_IOMMU
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	select MAILBOX
+ 	select OMAP2PLUS_MBOX
+ 	select RPMSG
+@@ -34,7 +35,7 @@ config OMAP_REMOTEPROC
+ config STE_MODEM_RPROC
+ 	tristate "STE-Modem remoteproc support"
+ 	depends on HAS_DMA
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	default n
+ 	help
+ 	  Say y or m here to support STE-Modem shared memory driver.
+@@ -44,7 +45,7 @@ config STE_MODEM_RPROC
+ config WKUP_M3_RPROC
+ 	tristate "AMx3xx Wakeup M3 remoteproc support"
+ 	depends on SOC_AM33XX || SOC_AM43XX
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	help
+ 	  Say y here to support Wakeup M3 remote processor on TI AM33xx
+ 	  and AM43xx family of SoCs.
+@@ -57,8 +58,8 @@ config WKUP_M3_RPROC
+ config DA8XX_REMOTEPROC
+ 	tristate "DA8xx/OMAP-L13x remoteproc support"
+ 	depends on ARCH_DAVINCI_DA8XX
++	depends on REMOTEPROC
+ 	select CMA if MMU
+-	select REMOTEPROC
+ 	select RPMSG
+ 	help
+ 	  Say y here to support DA8xx/OMAP-L13x remote processors via the
+@@ -84,9 +85,9 @@ config QCOM_Q6V5_PIL
+ 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
+ 	depends on OF && ARCH_QCOM
+ 	depends on QCOM_SMEM
++	depends on REMOTEPROC
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
+-	select REMOTEPROC
+ 	help
+ 	  Say y here to support the Qualcomm Peripherial Image Loader for the
+ 	  Hexagon V5 based remote processors.
+@@ -94,7 +95,7 @@ config QCOM_Q6V5_PIL
+ config ST_REMOTEPROC
+ 	tristate "ST remoteproc support"
+ 	depends on ARCH_STI
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	help
+ 	  Say y here to support ST's adjunct processors via the remote
+ 	  processor framework.
+@@ -102,6 +103,8 @@ config ST_REMOTEPROC
+ 
+ config ST_SLIM_REMOTEPROC
+ 	tristate
+-	select REMOTEPROC
++	depends on REMOTEPROC
 +
-+static void rproc_vdev_do_remove(struct rproc_subdev *subdev)
-+{
-+	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
-+
-+	rproc_remove_virtio_dev(rvdev);
-+}
-+
- /**
-  * rproc_handle_vdev() - handle a vdev fw resource
-  * @rproc: the remote processor
-@@ -358,6 +372,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
++endif # REMOTEPROC
  
- 	kref_init(&rvdev->refcount);
- 
-+	rvdev->id = rsc->id;
- 	rvdev->rproc = rproc;
- 
- 	/* parse the vrings */
-@@ -382,18 +397,14 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	list_add_tail(&rvdev->node, &rproc->rvdevs);
- 
--	/* it is now safe to add the virtio device */
--	ret = rproc_add_virtio_dev(rvdev, rsc->id);
--	if (ret)
--		goto remove_rvdev;
-+	rproc_add_subdev(rproc, &rvdev->subdev,
-+			 rproc_vdev_do_probe, rproc_vdev_do_remove);
- 
- 	return 0;
- 
- unwind_vring_allocations:
- 	for (i--; i >= 0; i--)
- 		rproc_free_vring(&rvdev->vring[i]);
--remove_rvdev:
--	list_del(&rvdev->node);
- free_rvdev:
- 	kfree(rvdev);
- 	return ret;
-@@ -403,6 +414,7 @@ void rproc_vdev_release(struct kref *ref)
- {
- 	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
- 	struct rproc_vring *rvring;
-+	struct rproc *rproc = rvdev->rproc;
- 	int id;
- 
- 	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-@@ -413,6 +425,7 @@ void rproc_vdev_release(struct kref *ref)
- 		rproc_free_vring(rvring);
- 	}
- 
-+	rproc_remove_subdev(rproc, &rvdev->subdev);
- 	list_del(&rvdev->node);
- 	kfree(rvdev);
- }
-@@ -842,10 +855,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 	}
- 
- 	/* clean up remote vdev entries */
--	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node) {
--		rproc_remove_virtio_dev(rvdev);
-+	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
- 		kref_put(&rvdev->refcount, rproc_vdev_release);
--	}
- }
- 
- /*
-@@ -1505,8 +1516,6 @@ EXPORT_SYMBOL(rproc_put);
-  */
- int rproc_del(struct rproc *rproc)
- {
--	struct rproc_vdev *rvdev, *tmp;
--
- 	if (!rproc)
- 		return -EINVAL;
- 
-@@ -1518,10 +1527,6 @@ int rproc_del(struct rproc *rproc)
- 	if (rproc->auto_boot)
- 		rproc_shutdown(rproc);
- 
--	/* clean up remote vdev entries */
--	list_for_each_entry_safe(rvdev, tmp, &rproc->rvdevs, node)
--		rproc_remove_virtio_dev(rvdev);
--
- 	/* the rproc is downref'ed as soon as it's removed from the klist */
- 	mutex_lock(&rproc_list_mutex);
- 	list_del(&rproc->node);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index dbcd967dd2e7..ff05b88730ad 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -488,6 +488,8 @@ struct rproc_vring {
- /**
-  * struct rproc_vdev - remoteproc state for a supported virtio device
-  * @refcount: reference counter for the vdev and vring allocations
-+ * @subdev: handle for registering the vdev as a rproc subdevice
-+ * @id: virtio device id (as in virtio_ids.h)
-  * @node: list node
-  * @rproc: the rproc handle
-  * @vdev: the virio device
-@@ -497,6 +499,9 @@ struct rproc_vring {
- struct rproc_vdev {
- 	struct kref refcount;
- 
-+	struct rproc_subdev subdev;
-+
-+	unsigned int id;
- 	struct list_head node;
- 	struct rproc *rproc;
- 	struct virtio_device vdev;
+ endmenu
 -- 
-2.5.0
+1.9.1
