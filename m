@@ -1,38 +1,35 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 09/20] remoteproc: core: Unify rproc_dump_resource_table debug messages
-Date: Wed, 12 Oct 2016 18:00:27 +0200
-Message-ID: <1476288038-24909-10-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v10 07/11] MAINTAINERS: Add FDMA driver files to STi section.
+Date: Sat,  8 Oct 2016 13:52:29 +0100
+Message-Id: <1475931154-1021-8-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-For coherency with the rest of the function, mention the resource
-table entry when an invalid resource is detected.
+This patch adds the FDMA driver files to the STi
+section of the maintainers file.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ae8e934..7bc3cd4 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -876,8 +876,8 @@ static void rproc_dump_resource_table(struct rproc *rproc,
- 
- 			break;
- 		default:
--			dev_dbg(dev, "Invalid resource type found: %d [hdr: %p]\n",
--				hdr->type, hdr);
-+			dev_dbg(dev, "Entry %d: Invalid resource type found: %d [hdr: %p]\n",
-+				i, hdr->type, hdr);
- 			return;
- 		}
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9924036..f71a1d1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1749,6 +1749,7 @@ F:	drivers/char/hw_random/st-rng.c
+ F:	drivers/clocksource/arm_global_timer.c
+ F:	drivers/clocksource/clksrc_st_lpc.c
+ F:	drivers/cpufreq/sti-cpufreq.c
++F:	drivers/dma/st_fdma*
+ F:	drivers/i2c/busses/i2c-st.c
+ F:	drivers/media/rc/st_rc.c
+ F:	drivers/media/platform/sti/c8sectpfe/
 -- 
 1.9.1
