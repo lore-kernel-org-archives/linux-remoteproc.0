@@ -1,39 +1,53 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 11/20] remoteproc: core: Correction carveout name comparison in rproc_update_resource_table_entry
-Date: Wed, 12 Oct 2016 18:00:29 +0200
-Message-ID: <1476288038-24909-12-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 1/5] rpmsg: smd: Reduce restrictions when finding channel
+Date: Fri,  7 Oct 2016 21:23:11 -0700
+Message-Id: <1475900595-8375-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, Marek Novak <marek.novak@nxp.com>, Matteo Sartori <matteo.sartori@t3lab.it>, Michal Simek <monstr@monstr.eu>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As old and new carveout name length may be different and the two
-names may have a common part, name comparison must cover the complete
-name field.
-Limit strncmp to carveout name length, i.e. 32 Bytes.
+SMD channels are created by the remotes in "opening" state, but
+sometimes as we close and try to reopen them they linger in closing
+state.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Following the search for a matching channel the create_ept() will verify
+that the channel is in a suitable state, so we can lax the restrictions
+of the search function to work around above difference in behaviour.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/rpmsg/qcom_smd.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4a61dc1..96692c2 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -956,8 +956,7 @@ static int rproc_update_resource_table_entry(struct rproc *rproc,
- 			tblc = rsc;
- 			newc = request->resource;
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 06fef2b4c814..92efa74a0024 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -820,20 +820,13 @@ qcom_smd_find_channel(struct qcom_smd_edge *edge, const char *name)
+ 	struct qcom_smd_channel *channel;
+ 	struct qcom_smd_channel *ret = NULL;
+ 	unsigned long flags;
+-	unsigned state;
  
--			if (strncmp(newc->name, tblc->name,
--				    sizeof(*tblc->name)))
-+			if (strncmp(newc->name, tblc->name, 32))
- 				break;
+ 	spin_lock_irqsave(&edge->channels_lock, flags);
+ 	list_for_each_entry(channel, &edge->channels, list) {
+-		if (strcmp(channel->name, name))
+-			continue;
+-
+-		state = GET_RX_CHANNEL_INFO(channel, state);
+-		if (state != SMD_CHANNEL_OPENING &&
+-		    state != SMD_CHANNEL_OPENED)
+-			continue;
+-
+-		ret = channel;
+-		break;
++		if (!strcmp(channel->name, name)) {
++			ret = channel;
++			break;
++		}
+ 	}
+ 	spin_unlock_irqrestore(&edge->channels_lock, flags);
  
- 			memcpy(tblc, newc, request->size);
 -- 
-1.9.1
+2.5.0
