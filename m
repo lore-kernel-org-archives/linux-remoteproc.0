@@ -1,124 +1,34 @@
 Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v10 03/11] remoteproc: Update Kconfig setup to 'depends on REMOTEPROC'
-Date: Sat,  8 Oct 2016 13:52:25 +0100
-Message-Id: <1475931154-1021-4-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH v10 08/11] ARM: multi_v7_defconfig: Enable remoteproc core
+Date: Sat,  8 Oct 2016 13:52:30 +0100
+Message-Id: <1475931154-1021-9-git-send-email-peter.griffin@linaro.org>
 In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
 References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
 Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make REMOTEPROC core a selectable kconfig option, and update
-remoteproc client drivers to 'depends on' the core. This avoids
-some nasty Kconfig recursive dependency issues. Also when using
-menuconfig client drivers will be hidden until the core has been
-enabled.
-
-Documentation/kbuild/kconfig-language.txt:
-
-  Note:
-        select should be used with care. select will force
-        a symbol to a value without visiting the dependencies.
-        By abusing select you are able to select a symbol FOO even
-        if FOO depends on BAR that is not set.
-        In general use select only for non-visible symbols
-        (no prompts anywhere) and for symbols with no dependencies.
-        That will limit the usefulness but on the other hand avoid
-        the illegal configurations all over.
+Now that remoteproc core is selectable it needs to be enabled
+in the multi_v7 build.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/Kconfig | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index a7bedc6..decdcbe 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -1,20 +1,21 @@
- menu "Remoteproc drivers"
- 
--# REMOTEPROC gets selected by whoever wants it
- config REMOTEPROC
--	tristate
-+	tristate "Support for Remote Processor subsystem"
- 	depends on HAS_DMA
- 	select CRC32
- 	select FW_LOADER
- 	select VIRTIO
- 	select VIRTUALIZATION
- 
-+if REMOTEPROC
-+
- config OMAP_REMOTEPROC
- 	tristate "OMAP remoteproc support"
- 	depends on HAS_DMA
- 	depends on ARCH_OMAP4 || SOC_OMAP5
- 	depends on OMAP_IOMMU
--	select REMOTEPROC
-+	depends on REMOTEPROC
- 	select MAILBOX
- 	select OMAP2PLUS_MBOX
- 	select RPMSG
-@@ -34,7 +35,7 @@ config OMAP_REMOTEPROC
- config STE_MODEM_RPROC
- 	tristate "STE-Modem remoteproc support"
- 	depends on HAS_DMA
--	select REMOTEPROC
-+	depends on REMOTEPROC
- 	default n
- 	help
- 	  Say y or m here to support STE-Modem shared memory driver.
-@@ -44,7 +45,7 @@ config STE_MODEM_RPROC
- config WKUP_M3_RPROC
- 	tristate "AMx3xx Wakeup M3 remoteproc support"
- 	depends on SOC_AM33XX || SOC_AM43XX
--	select REMOTEPROC
-+	depends on REMOTEPROC
- 	help
- 	  Say y here to support Wakeup M3 remote processor on TI AM33xx
- 	  and AM43xx family of SoCs.
-@@ -57,8 +58,8 @@ config WKUP_M3_RPROC
- config DA8XX_REMOTEPROC
- 	tristate "DA8xx/OMAP-L13x remoteproc support"
- 	depends on ARCH_DAVINCI_DA8XX
-+	depends on REMOTEPROC
- 	select CMA if MMU
--	select REMOTEPROC
- 	select RPMSG
- 	help
- 	  Say y here to support DA8xx/OMAP-L13x remote processors via the
-@@ -84,9 +85,9 @@ config QCOM_Q6V5_PIL
- 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
-+	depends on REMOTEPROC
- 	select MFD_SYSCON
- 	select QCOM_MDT_LOADER
--	select REMOTEPROC
- 	help
- 	  Say y here to support the Qualcomm Peripherial Image Loader for the
- 	  Hexagon V5 based remote processors.
-@@ -94,7 +95,7 @@ config QCOM_Q6V5_PIL
- config ST_REMOTEPROC
- 	tristate "ST remoteproc support"
- 	depends on ARCH_STI
--	select REMOTEPROC
-+	depends on REMOTEPROC
- 	help
- 	  Say y here to support ST's adjunct processors via the remote
- 	  processor framework.
-@@ -102,6 +103,8 @@ config ST_REMOTEPROC
- 
- config ST_SLIM_REMOTEPROC
- 	tristate
--	select REMOTEPROC
-+	depends on REMOTEPROC
-+
-+endif # REMOTEPROC
- 
- endmenu
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 3ca4974..c94611c 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -817,6 +817,7 @@ CONFIG_HWSPINLOCK_QCOM=y
+ CONFIG_ROCKCHIP_IOMMU=y
+ CONFIG_TEGRA_IOMMU_GART=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
++CONFIG_REMOTEPROC=m
+ CONFIG_PM_DEVFREQ=y
+ CONFIG_ARM_TEGRA_DEVFREQ=m
+ CONFIG_MEMORY=y
 -- 
 1.9.1
