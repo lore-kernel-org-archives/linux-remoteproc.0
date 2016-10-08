@@ -2,11 +2,11 @@ Return-Path: <peter.griffin@linaro.org>
 Return-Path: <peter.griffin@linaro.org>
 From: Peter Griffin <peter.griffin@linaro.org>
 Subject: [PATCH v10 05/11] dmaengine: st_fdma: Add STMicroelectronics FDMA driver header file
-Date: Tue, 18 Oct 2016 10:39:10 +0100
-Message-Id: <1476783556-2501-6-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
-References: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com
+Date: Sat,  8 Oct 2016 13:52:27 +0100
+Message-Id: <1475931154-1021-6-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
 Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
