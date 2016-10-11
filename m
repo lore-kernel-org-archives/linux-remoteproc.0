@@ -1,35 +1,36 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v10 07/11] MAINTAINERS: Add FDMA driver files to STi section.
-Date: Tue, 18 Oct 2016 10:39:12 +0100
-Message-Id: <1476783556-2501-8-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
-References: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 11 Oct 2016 09:36:45 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 4/5] rpmsg: Driver for user space endpoint interface
+Message-ID: <20161011163644.GS7509@tuxbot>
+References: <1475900595-8375-1-git-send-email-bjorn.andersson@linaro.org>
+ <1475900595-8375-4-git-send-email-bjorn.andersson@linaro.org>
+ <1005047c-ef7c-ccd8-848c-4974f893c820@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1005047c-ef7c-ccd8-848c-4974f893c820@st.com>
+To: loic pallardy <loic.pallardy@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, Marek Novak <marek.novak@nxp.com>, Matteo Sartori <matteo.sartori@t3lab.it>, Michal Simek <monstr@monstr.eu>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the FDMA driver files to the STi
-section of the maintainers file.
+On Tue 11 Oct 00:46 PDT 2016, loic pallardy wrote:
+> On 10/08/2016 06:23 AM, Bjorn Andersson wrote:
+[..]
+> >diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+> >index ae9c9132cf76..5daf1209b77d 100644
+> >--- a/drivers/rpmsg/Makefile
+> >+++ b/drivers/rpmsg/Makefile
+> >@@ -1,3 +1,3 @@
+> >-obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+> >+obj-$(CONFIG_RPMSG)		+= rpmsg_core.o rpmsg_char.o
+> Hi Bjorn,
+> 
+> Could you please create a dedicated Kconfig entry for this new interface?
+> This should be an option like i2C_dev.
+> 
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+No problem, I'll do that.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 78b7f8b..e93762d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1774,6 +1774,7 @@ F:	drivers/char/hw_random/st-rng.c
- F:	drivers/clocksource/arm_global_timer.c
- F:	drivers/clocksource/clksrc_st_lpc.c
- F:	drivers/cpufreq/sti-cpufreq.c
-+F:	drivers/dma/st_fdma*
- F:	drivers/i2c/busses/i2c-st.c
- F:	drivers/media/rc/st_rc.c
- F:	drivers/media/platform/sti/c8sectpfe/
--- 
-1.9.1
+Regards,
+Bjorn
