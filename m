@@ -1,229 +1,369 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH 4/5] remoteproc: Add start and shutdown interface for q6v55
-Date: Mon, 24 Oct 2016 21:25:58 +0530
-Message-Id: <1477324559-24752-5-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
-References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, akdwived@codeaurora.org, kaushalk@codeaurora.org
+Return-Path: <Matt.Redfearn@imgtec.com>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Subject: [PATCH v3 1/4] irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
+Date: Tue, 11 Oct 2016 14:42:33 +0100
+Message-ID: <1476193356-1350-2-git-send-email-matt.redfearn@imgtec.com>
+In-Reply-To: <1476193356-1350-1-git-send-email-matt.redfearn@imgtec.com>
+References: <1476193356-1350-1-git-send-email-matt.redfearn@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Adding start and shutdown interface to invoke q6v55 remoteproc.
-Additionally maintaining boot count and protecting start and
-shutdown sequence with lock.
+The MIPS remote processor driver allows non-Linux firmware to take
+control of and execute on one of the systems VPEs. If that VPE is
+brought back under Linux, it is necessary to ensure that all GIC
+interrupts are routed and masked as Linux expects them, as the firmware
+can have done anything it likes with the GIC configuration (hopefully
+just for that VPEs local interrupt sources, but allow for shared
+external interrupts as well).
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+The configuration of shared and local CPU interrupts is maintained and
+updated every time a change is made. When a CPU is brought online, the
+saved configuration is restored.
+
+These functions will also be useful for restoring GIC context after a
+suspend to RAM.
+
+This patch depends on Paul Burton's recent patches:
+irqchip: mips-gic: Implement activate op for device domain
+irqchip: mips-gic: Cleanup chip & handler setup
+
+Without these patches, the context saving will restore an incorrect map
+to VPE value, since there is a route to not having the interrupt
+affinity set.
+
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 166 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 160 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 0fac8d8..dd19d41 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -789,9 +789,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	return ret < 0 ? ret : 0;
+Changes in v3:
+Update GIC context saving to use CPU hotplug state machine
+
+Changes in v2:
+Add dependence on additional patches to mips-gic in commit log
+Incorporate changes from Marc Zynger's review:
+- Remove CONTEXT_SAVING define.
+- Make saved local state a per-cpu variable
+- Make gic_save_* static functions when enabled, and do { } while(0)
+  otherwise
+
+ drivers/irqchip/irq-mips-gic.c | 208 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 201 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
+index 6185696405d5..7092399b68de 100644
+--- a/drivers/irqchip/irq-mips-gic.c
++++ b/drivers/irqchip/irq-mips-gic.c
+@@ -8,6 +8,7 @@
+  */
+ #include <linux/bitmap.h>
+ #include <linux/clocksource.h>
++#include <linux/cpu.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+@@ -56,6 +57,79 @@ static unsigned int timer_cpu_pin;
+ static struct irq_chip gic_level_irq_controller, gic_edge_irq_controller;
+ DECLARE_BITMAP(ipi_resrv, GIC_MAX_INTRS);
+ 
++#ifdef CONFIG_MIPS_REMOTEPROC
++struct gic_local_state_t {
++	u8 mask;
++};
++
++DEFINE_PER_CPU(struct gic_local_state_t, gic_local_state);
++
++static void gic_save_local_rmask(int vpe, int mask)
++{
++	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, vpe);
++
++	state->mask &= mask;
++}
++
++static void gic_save_local_smask(int vpe, int mask)
++{
++	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, vpe);
++
++	state->mask |= mask;
++}
++
++static struct {
++	unsigned vpe:		8;
++	unsigned pin:		4;
++
++	unsigned polarity:	1;
++	unsigned trigger:	1;
++	unsigned dual_edge:	1;
++	unsigned mask:		1;
++} gic_shared_state[GIC_MAX_INTRS];
++
++static void gic_save_shared_vpe(int intr, int vpe)
++{
++	gic_shared_state[intr].vpe = vpe;
++}
++
++static void gic_save_shared_pin(int intr, int pin)
++{
++	gic_shared_state[intr].pin = pin;
++}
++
++static void gic_save_shared_polarity(int intr, int polarity)
++{
++	gic_shared_state[intr].polarity = polarity;
++}
++
++static void gic_save_shared_trigger(int intr, int trigger)
++{
++	gic_shared_state[intr].trigger = trigger;
++}
++
++static void gic_save_shared_dual_edge(int intr, int dual_edge)
++{
++	gic_shared_state[intr].dual_edge = dual_edge;
++}
++
++static void gic_save_shared_mask(int intr, int mask)
++{
++	gic_shared_state[intr].mask = mask;
++}
++
++#else
++#define gic_save_local_rmask(vpe, i)	do { } while (0)
++#define gic_save_local_smask(vpe, i)	do { } while (0)
++
++#define gic_save_shared_vpe(i, v)	do { } while (0)
++#define gic_save_shared_pin(i, p)	do { } while (0)
++#define gic_save_shared_polarity(i, p)	do { } while (0)
++#define gic_save_shared_trigger(i, t)	do { } while (0)
++#define gic_save_shared_dual_edge(i, d)	do { } while (0)
++#define gic_save_shared_mask(i, m)	do { } while (0)
++#endif /* CONFIG_MIPS_REMOTEPROC */
++
+ static void __gic_irq_dispatch(void);
+ 
+ static inline u32 gic_read32(unsigned int reg)
+@@ -105,52 +179,94 @@ static inline void gic_update_bits(unsigned int reg, unsigned long mask,
+ 	gic_write(reg, regval);
  }
  
--static int q6v5_start(struct rproc *rproc)
-+static int q6v5_start(struct q6v5 *qproc)
+-static inline void gic_reset_mask(unsigned int intr)
++static inline void gic_write_reset_mask(unsigned int intr)
  {
--	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
- 	int ret;
- 
- 	ret = q6v5_regulator_enable(qproc);
-@@ -873,9 +872,75 @@ static int q6v5_start(struct rproc *rproc)
- 	return ret;
+ 	gic_write(GIC_REG(SHARED, GIC_SH_RMASK) + GIC_INTR_OFS(intr),
+ 		  1ul << GIC_INTR_BIT(intr));
  }
  
--static int q6v5_stop(struct rproc *rproc)
-+static int q6v55_start(struct q6v5 *qproc)
+-static inline void gic_set_mask(unsigned int intr)
++static inline void gic_reset_mask(unsigned int intr)
 +{
-+	int ret;
-+
-+	ret = q6v55_proxy_vote(qproc);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable supplies\n");
-+		return ret;
-+	}
-+
-+	ret = q6v55_clk_enable(qproc);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable clocks\n");
-+		goto err_clks;
-+	}
-+
-+	pil_mss_restart_reg(qproc, 0);
-+
-+	writel_relaxed(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
-+
-+	ret = q6v6proc_reset(qproc);
-+	if (ret)
-+		goto halt_axi_ports;
-+
-+	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
-+	if (ret == -ETIMEDOUT) {
-+		dev_err(qproc->dev, "MBA boot timed out\n");
-+		goto halt_axi_ports;
-+	} else if (ret != RMB_MBA_XPU_UNLOCKED &&
-+		   ret != RMB_MBA_XPU_UNLOCKED_SCRIBBLED) {
-+		dev_err(qproc->dev, "MBA returned unexpected status %d\n", ret);
-+		ret = -EINVAL;
-+		goto halt_axi_ports;
-+	}
-+
-+	dev_info(qproc->dev, "MBA booted, loading mpss\n");
-+
-+	ret = q6v5_mpss_load(qproc);
-+	if (ret)
-+		goto halt_axi_ports;
-+
-+	ret = wait_for_completion_timeout(&qproc->start_done,
-+					  msecs_to_jiffies(10000));
-+	if (ret == 0) {
-+		dev_err(qproc->dev, "start timed out\n");
-+		ret = -ETIMEDOUT;
-+		goto halt_axi_ports;
-+	}
-+
-+	qproc->running = true;
-+
-+	/* TODO: All done, release the handover resources */
-+
-+	return 0;
-+
-+halt_axi_ports:
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-+	q6v55_clk_disable(qproc);
-+err_clks:
-+	pil_mss_restart_reg(qproc, 1);
-+	q6v55_proxy_unvote(qproc);
-+
-+	return ret;
++	gic_save_shared_mask(intr, 0);
++	gic_write_reset_mask(intr);
 +}
 +
-+static int q6v5_stop(struct q6v5 *qproc)
++static inline void gic_write_set_mask(unsigned int intr)
  {
--	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
- 	int ret;
- 
- 	qproc->running = false;
-@@ -903,6 +968,93 @@ static int q6v5_stop(struct rproc *rproc)
- 	return 0;
+ 	gic_write(GIC_REG(SHARED, GIC_SH_SMASK) + GIC_INTR_OFS(intr),
+ 		  1ul << GIC_INTR_BIT(intr));
  }
  
-+static int q6v55_stop(struct q6v5 *qproc)
+-static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
++static inline void gic_set_mask(unsigned int intr)
 +{
-+	int ret;
-+	u64 val;
-+
-+	qcom_smem_state_update_bits(qproc->state,
-+				    BIT(qproc->stop_bit), BIT(qproc->stop_bit));
-+
-+	ret = wait_for_completion_timeout(&qproc->stop_done,
-+					  msecs_to_jiffies(5000));
-+	if (ret == 0)
-+		dev_err(qproc->dev, "timed out on wait\n");
-+
-+	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
-+
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-+
-+	/*
-+	* Assert QDSP6 I/O clamp, memory wordline clamp, and compiler
-+	* memory clamp as a software workaround to avoid high MX
-+	* current during LPASS/MSS restart.
-+	*/
-+
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= (Q6SS_CLAMP_IO | QDSP6v55_CLAMP_WL |
-+			QDSP6v55_CLAMP_QMC_MEM);
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	pil_mss_restart_reg(qproc, 1);
-+	if (qproc->running) {
-+		q6v55_clk_disable(qproc);
-+		q6v55_proxy_unvote(qproc);
-+		qproc->running = false;
-+	}
-+
-+	return 0;
++	gic_save_shared_mask(intr, 1);
++	gic_write_set_mask(intr);
 +}
 +
-+static int mss_boot(struct rproc *rproc)
-+{
-+	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	int ret;
-+
-+	mutex_lock(&qproc->q6_lock);
-+	if (!qproc->boot_count) {
-+		if (qproc->is_q6v55) {
-+			ret = q6v55_start(qproc);
-+			if (ret)
-+				goto err_start;
-+		} else {
-+			ret = q6v5_start(qproc);
-+			if (ret)
-+				goto err_start;
-+		}
-+	}
-+	qproc->boot_count++;
-+	mutex_unlock(&qproc->q6_lock);
-+	return 0;
-+
-+err_start:
-+	mutex_unlock(&qproc->q6_lock);
-+	if (qproc->is_q6v55)
-+		q6v55_stop(qproc);
-+	else
-+		q6v5_stop(qproc);
-+
-+	return ret;
-+}
-+
-+static int mss_stop(struct rproc *rproc)
-+{
-+	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	int ret;
-+
-+	mutex_lock(&qproc->q6_lock);
-+	if (!--qproc->boot_count) {
-+		if (qproc->is_q6v55)
-+			ret = q6v55_stop(qproc);
-+		else
-+			ret = q6v5_stop(qproc);
-+	}
-+	mutex_unlock(&qproc->q6_lock);
-+	return ret;
-+}
-+
- static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
++static inline void gic_write_polarity(unsigned int intr, unsigned int pol)
  {
- 	struct q6v5 *qproc = rproc->priv;
-@@ -916,8 +1068,8 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_POLARITY) +
+ 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
+ 			(unsigned long)pol << GIC_INTR_BIT(intr));
  }
  
- static const struct rproc_ops q6v5_ops = {
--	.start = q6v5_start,
--	.stop = q6v5_stop,
-+	.start = mss_boot,
-+	.stop = mss_stop,
- 	.da_to_va = q6v5_da_to_va,
+-static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
++static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
++{
++	gic_save_shared_polarity(intr, pol);
++	gic_write_polarity(intr, pol);
++}
++
++static inline void gic_write_trigger(unsigned int intr, unsigned int trig)
+ {
+ 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_TRIGGER) +
+ 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
+ 			(unsigned long)trig << GIC_INTR_BIT(intr));
+ }
+ 
+-static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
++static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
++{
++	gic_save_shared_trigger(intr, trig);
++	gic_write_trigger(intr, trig);
++}
++
++static inline void gic_write_dual_edge(unsigned int intr, unsigned int dual)
+ {
+ 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_DUAL) + GIC_INTR_OFS(intr),
+ 			1ul << GIC_INTR_BIT(intr),
+ 			(unsigned long)dual << GIC_INTR_BIT(intr));
+ }
+ 
+-static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
++static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
++{
++	gic_save_shared_dual_edge(intr, dual);
++	gic_write_dual_edge(intr, dual);
++}
++
++static inline void gic_write_map_to_pin(unsigned int intr, unsigned int pin)
+ {
+ 	gic_write32(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_PIN_BASE) +
+ 		    GIC_SH_MAP_TO_PIN(intr), GIC_MAP_TO_PIN_MSK | pin);
+ }
+ 
+-static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
++static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
++{
++	gic_save_shared_pin(intr, pin);
++	gic_write_map_to_pin(intr, pin);
++}
++
++static inline void gic_write_map_to_vpe(unsigned int intr, unsigned int vpe)
+ {
+ 	gic_write(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_VPE_BASE) +
+ 		  GIC_SH_MAP_TO_VPE_REG_OFF(intr, vpe),
+ 		  GIC_SH_MAP_TO_VPE_REG_BIT(vpe));
+ }
+ 
++static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
++{
++	gic_save_shared_vpe(intr, vpe);
++	gic_write_map_to_vpe(intr, vpe);
++}
++
+ #ifdef CONFIG_CLKSRC_MIPS_GIC
+ cycle_t gic_read_count(void)
+ {
+@@ -537,6 +653,7 @@ static void gic_mask_local_irq(struct irq_data *d)
+ {
+ 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
+ 
++	gic_save_local_rmask(smp_processor_id(), (1 << intr));
+ 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_RMASK), 1 << intr);
+ }
+ 
+@@ -544,6 +661,7 @@ static void gic_unmask_local_irq(struct irq_data *d)
+ {
+ 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
+ 
++	gic_save_local_smask(smp_processor_id(), (1 << intr));
+ 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_SMASK), 1 << intr);
+ }
+ 
+@@ -561,6 +679,7 @@ static void gic_mask_local_irq_all_vpes(struct irq_data *d)
+ 
+ 	spin_lock_irqsave(&gic_lock, flags);
+ 	for (i = 0; i < gic_vpes; i++) {
++		gic_save_local_rmask(mips_cm_vp_id(i), 1 << intr);
+ 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
+ 			  mips_cm_vp_id(i));
+ 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), 1 << intr);
+@@ -576,6 +695,7 @@ static void gic_unmask_local_irq_all_vpes(struct irq_data *d)
+ 
+ 	spin_lock_irqsave(&gic_lock, flags);
+ 	for (i = 0; i < gic_vpes; i++) {
++		gic_save_local_smask(mips_cm_vp_id(i), 1 << intr);
+ 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
+ 			  mips_cm_vp_id(i));
+ 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), 1 << intr);
+@@ -978,6 +1098,75 @@ static struct irq_domain_ops gic_ipi_domain_ops = {
+ 	.match = gic_ipi_domain_match,
  };
  
-@@ -972,6 +1124,8 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
- 	struct q6v5 *qproc = dev;
++#ifdef CONFIG_MIPS_REMOTEPROC
++static void gic_restore_shared(void)
++{
++	unsigned long flags;
++	int i;
++
++	spin_lock_irqsave(&gic_lock, flags);
++	for (i = 0; i < gic_shared_intrs; i++) {
++		gic_write_polarity(i, gic_shared_state[i].polarity);
++		gic_write_trigger(i, gic_shared_state[i].trigger);
++		gic_write_dual_edge(i, gic_shared_state[i].dual_edge);
++		gic_write_map_to_vpe(i, gic_shared_state[i].vpe);
++		gic_write_map_to_pin(i, gic_shared_state[i].pin);
++
++		if (gic_shared_state[i].mask)
++			gic_write_set_mask(i);
++		else
++			gic_write_reset_mask(i);
++	}
++	spin_unlock_irqrestore(&gic_lock, flags);
++}
++
++static void gic_restore_local(unsigned int vpe)
++{
++	struct gic_local_state_t state;
++	int hw, virq, intr, mask;
++	unsigned long flags;
++
++	for (hw = 0; hw < GIC_NUM_LOCAL_INTRS; hw++) {
++		intr = GIC_LOCAL_TO_HWIRQ(hw);
++		virq = irq_linear_revmap(gic_irq_domain, intr);
++		gic_local_irq_domain_map(gic_irq_domain, virq, hw);
++	}
++
++	local_irq_save(flags);
++	gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR), vpe);
++
++	/* Enable EIC mode if necessary */
++	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_CTL), cpu_has_veic);
++
++	/* Restore interrupt masks */
++	state = per_cpu(gic_local_state, vpe);
++	mask = state.mask;
++	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), ~mask);
++	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), mask);
++
++	local_irq_restore(flags);
++}
++
++/*
++ * The MIPS remote processor driver allows non-Linux firmware to take control
++ * of and execute on one of the systems VPEs. If that VPE is brought back under
++ * Linux, it is necessary to ensure that all GIC interrupts are routed and
++ * masked as Linux expects them, as the firmware can have done anything it
++ * likes with the GIC configuration (hopefully just for that VPEs local
++ * interrupt sources, but allow for shared external interrupts as well).
++ */
++static int gic_cpu_online(unsigned int cpu)
++{
++	unsigned int vpe = mips_cm_vp_id(cpu);
++
++	gic_restore_shared();
++	gic_restore_local(vpe);
++
++	return 0;
++}
++
++#endif /* CONFIG_MIPS_REMOTEPROC */
++
+ static void __init __gic_init(unsigned long gic_base_addr,
+ 			      unsigned long gic_addrspace_size,
+ 			      unsigned int cpu_vec, unsigned int irqbase,
+@@ -1077,6 +1266,11 @@ static void __init __gic_init(unsigned long gic_base_addr,
+ 	}
  
- 	complete(&qproc->start_done);
-+	if (qproc->is_q6v55)
-+		q6v55_proxy_unvote(qproc);
- 	return IRQ_HANDLED;
+ 	gic_basic_init();
++
++#ifdef CONFIG_MIPS_REMOTEPROC
++	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "MIPS:GIC(REMOTEPROC)",
++			  gic_cpu_online, NULL);
++#endif /* CONFIG_MIPS_REMOTEPROC */
  }
  
+ void __init gic_init(unsigned long gic_base_addr,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+2.7.4
