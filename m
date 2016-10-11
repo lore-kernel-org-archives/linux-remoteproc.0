@@ -1,8 +1,8 @@
 Return-Path: <Matt.Redfearn@imgtec.com>
 From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH 1/4] remoteproc: Use fixed length field for firmware name
-Date: Tue, 11 Oct 2016 14:39:42 +0100
-Message-ID: <1476193185-32107-2-git-send-email-matt.redfearn@imgtec.com>
+Subject: [PATCH 4/4] remoteproc: debugfs: Remove state entry which is duplicated is sysfs
+Date: Tue, 11 Oct 2016 14:39:45 +0100
+Message-ID: <1476193185-32107-5-git-send-email-matt.redfearn@imgtec.com>
 In-Reply-To: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
 References: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
@@ -11,142 +11,103 @@ To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.co
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Storage of the firmware name was inconsistent, either storing a pointer
-to a name stored with unknown ownership, or a variable length tacked
-onto the end of the struct proc allocated in rproc_alloc.
-
-In preparation for allowing the firmware of an already allocated struct
-rproc to be changed, the easiest way to allow reallocation of the name
-is to switch to a fixed length buffer held as part of the struct rproc.
-That way we can either copy the provided firmware name into it, or print
-into it based on a name template. A new function,
-rproc_set_firmware_name() is introduced for this purpose, and that logic
-removed from rproc_alloc().
+Since there is now an always available state file in sysfs with the same
+function as this one in debugfs, remove the redundant entry.
 
 Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
 ---
 
- drivers/remoteproc/remoteproc_core.c | 64 +++++++++++++++++++++++-------------
- include/linux/remoteproc.h           |  4 ++-
- 2 files changed, 45 insertions(+), 23 deletions(-)
+ drivers/remoteproc/remoteproc_debugfs.c | 71 ---------------------------------
+ 1 file changed, 71 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index fe0539ed9cb5..48cd9d5afb69 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1309,6 +1309,42 @@ static void rproc_type_release(struct device *dev)
- 	kfree(rproc);
- }
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index 74a120b6e206..7a3ca3059892 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -59,75 +59,6 @@ static const struct file_operations trace_rproc_ops = {
+ 	.llseek	= generic_file_llseek,
+ };
  
-+/**
-+ * rproc_set_firmware_name() - helper to create a valid firmare name
-+ * @rproc: remote processor
-+ * @firmware: name of firmware file, can be NULL
-+ *
-+ * If the caller didn't pass in a firmware name then construct a default name,
-+ * otherwise the provided name is copied into the firmware field of struct
-+ * rproc. If the name is too long to fit, -EINVAL is returned.
-+ *
-+ * Returns 0 on success and an appropriate error code otherwise.
-+ */
-+static int rproc_set_firmware_name(struct rproc *rproc, const char *firmware)
-+{
-+	char *cp, *template = "rproc-%s-fw";
-+	int name_len;
-+
-+	if (firmware) {
-+		name_len = strlen(firmware);
-+		cp = memchr(firmware, '\n', name_len);
-+		if (cp)
-+			name_len = cp - firmware;
-+
-+		if (name_len > RPROC_MAX_FIRMWARE_NAME_LEN)
-+			return -EINVAL;
-+
-+		strncpy(rproc->firmware, firmware, name_len);
-+		rproc->firmware[name_len] = '\0';
-+	} else {
-+		snprintf(rproc->firmware, RPROC_MAX_FIRMWARE_NAME_LEN,
-+			 template, rproc->name);
-+	}
-+
-+	dev_dbg(&rproc->dev, "Using firmware %s\n", rproc->firmware);
-+	return 0;
-+}
-+
- static struct device_type rproc_type = {
- 	.name		= "remoteproc",
- 	.release	= rproc_type_release,
-@@ -1342,35 +1378,14 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 				const char *firmware, int len)
- {
- 	struct rproc *rproc;
--	char *p, *template = "rproc-%s-fw";
--	int name_len = 0;
- 
- 	if (!dev || !name || !ops)
- 		return NULL;
- 
--	if (!firmware)
--		/*
--		 * Make room for default firmware name (minus %s plus '\0').
--		 * If the caller didn't pass in a firmware name then
--		 * construct a default name.  We're already glomming 'len'
--		 * bytes onto the end of the struct rproc allocation, so do
--		 * a few more for the default firmware name (but only if
--		 * the caller doesn't pass one).
--		 */
--		name_len = strlen(name) + strlen(template) - 2 + 1;
+-/*
+- * A state-to-string lookup table, for exposing a human readable state
+- * via debugfs. Always keep in sync with enum rproc_state
+- */
+-static const char * const rproc_state_string[] = {
+-	"offline",
+-	"suspended",
+-	"running",
+-	"crashed",
+-	"invalid",
+-};
 -
--	rproc = kzalloc(sizeof(struct rproc) + len + name_len, GFP_KERNEL);
-+	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
- 	if (!rproc)
- 		return NULL;
- 
--	if (!firmware) {
--		p = (char *)rproc + sizeof(struct rproc) + len;
--		snprintf(p, name_len, template, name);
+-/* expose the state of the remote processor via debugfs */
+-static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
+-						size_t count, loff_t *ppos)
+-{
+-	struct rproc *rproc = filp->private_data;
+-	unsigned int state;
+-	char buf[30];
+-	int i;
+-
+-	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
+-
+-	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
+-							rproc->state);
+-
+-	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
+-}
+-
+-static ssize_t rproc_state_write(struct file *filp, const char __user *userbuf,
+-				 size_t count, loff_t *ppos)
+-{
+-	struct rproc *rproc = filp->private_data;
+-	char buf[10];
+-	int ret;
+-
+-	if (count > sizeof(buf) || count <= 0)
+-		return -EINVAL;
+-
+-	ret = copy_from_user(buf, userbuf, count);
+-	if (ret)
+-		return -EFAULT;
+-
+-	if (buf[count - 1] == '\n')
+-		buf[count - 1] = '\0';
+-
+-	if (!strncmp(buf, "start", count)) {
+-		ret = rproc_boot(rproc);
+-		if (ret) {
+-			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+-			return ret;
+-		}
+-	} else if (!strncmp(buf, "stop", count)) {
+-		rproc_shutdown(rproc);
 -	} else {
--		p = (char *)firmware;
+-		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
+-		return -EINVAL;
 -	}
 -
--	rproc->firmware = p;
- 	rproc->name = name;
- 	rproc->ops = ops;
- 	rproc->priv = &rproc[1];
-@@ -1389,6 +1404,11 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+-	return count;
+-}
+-
+-static const struct file_operations rproc_state_ops = {
+-	.read = rproc_state_read,
+-	.write = rproc_state_write,
+-	.open = simple_open,
+-	.llseek	= generic_file_llseek,
+-};
+-
+ /* expose the name of the remote processor via debugfs */
+ static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
+ 						size_t count, loff_t *ppos)
+@@ -265,8 +196,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
  
- 	dev_set_name(&rproc->dev, "remoteproc%d", rproc->index);
- 
-+	if (rproc_set_firmware_name(rproc, firmware)) {
-+		put_device(&rproc->dev);
-+		return NULL;
-+	}
-+
- 	atomic_set(&rproc->power, 0);
- 
- 	/* Set ELF as the default fw_ops handler */
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 1c457a8dd5a6..7a6f9ad55011 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -42,6 +42,8 @@
- #include <linux/idr.h>
- #include <linux/of.h>
- 
-+#define RPROC_MAX_FIRMWARE_NAME_LEN 128
-+
- /**
-  * struct resource_table - firmware resource table header
-  * @ver: version number
-@@ -416,7 +418,7 @@ struct rproc {
- 	struct list_head node;
- 	struct iommu_domain *domain;
- 	const char *name;
--	const char *firmware;
-+	char firmware[RPROC_MAX_FIRMWARE_NAME_LEN];
- 	void *priv;
- 	const struct rproc_ops *ops;
- 	struct device dev;
+ 	debugfs_create_file("name", 0400, rproc->dbg_dir,
+ 					rproc, &rproc_name_ops);
+-	debugfs_create_file("state", 0400, rproc->dbg_dir,
+-					rproc, &rproc_state_ops);
+ 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
+ 					rproc, &rproc_recovery_ops);
+ }
 -- 
 2.7.4
