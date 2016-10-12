@@ -1,47 +1,70 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH 0/5] Self authenticating hexagon driver for q6v55
-Date: Mon, 24 Oct 2016 21:25:54 +0530
-Message-Id: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, akdwived@codeaurora.org, kaushalk@codeaurora.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 19/20] remotecore: core: Add resource table pointer argument to rproc_handle_resource
+Date: Wed, 12 Oct 2016 18:00:37 +0200
+Message-ID: <1476288038-24909-20-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patchset series modifies existing hexagon v5 driver to work with
-hexagon v55 module. hexagon v5 driver need modification because of 
-difference in resources as well as their handling wrt to v55. Resources
-required such as clock and regulator are different for v55 than v5,
-hence separate set of routines are implemented to initialize and enable 
-hexagon v55 resource list, these routines are invoked based on 
-differentiation through compatible string matches.
+In current version, rproc_handle_resource use rproc->table_ptr
+as default resource table, fixing table to handle.
+This patch adds resource table as function argument to have more
+flexibility and be able to handle resources from any table.
 
-These patches are compiled and tested with kernel tip for hexagon v5 boot
-functionality.
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Avaneesh Kumar Dwivedi (5):
-  remoteproc: Add q6v55 specific parameters and enable probing for q6v55
-	This patch modifies device private data structure to incorporate
-	aditional v55 device specific information, add certain parameters to 
-	be used with hexagon v55, add v55 specific compatible string to 
-	enable probe for hexagon v55 and add compatible string in dtbinding
-	of devicetree.
-  remoteproc: Adding q6v55 specific regulator, clk, reset interface.
-	This patch implement routines to initialize and enable regulator
-	and clock resources for hexagon v55, it also change reset register 
-	programming method from secure to non secure.
-  remoteproc: Adding reset sequence and halt seq changes for q6v55
-	This patch add hexagon v55 specific reset sequence.
-	This also remove IDLE check before asserting halt to qdsp axi ports.
-  remoteproc: Add start and shutdown interface for q6v55
-	This patch add start and shutdown interface of hexagon v55 and plug them
-	into new common routine which invoke v5 or v55 specific start or shutdown.
-  remoteproc: Modifying probe for initializing q6v55 specific resources
-	This patch identify qdsp version and based on that invoke individual
-	initialization routines.
-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   3 +-
- drivers/remoteproc/qcom_q6v5_pil.c                 | 616 ++++++++++++++++++++-
- 2 files changed, 595 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ee2dc8d..a6062e7 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -672,16 +672,16 @@ static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
+ };
+ 
+ /* handle firmware resource entries before booting the remote processor */
+-static int rproc_handle_resources(struct rproc *rproc, int len,
+-				  rproc_handle_resource_t handlers[RSC_LAST])
++static int rproc_handle_resources(struct rproc *rproc, struct resource_table *table_ptr,
++				  int len, rproc_handle_resource_t handlers[RSC_LAST])
+ {
+ 	struct device *dev = &rproc->dev;
+ 	rproc_handle_resource_t handler;
+ 	int ret = 0, i;
+ 
+-	for (i = 0; i < rproc->table_ptr->num; i++) {
+-		int offset = rproc->table_ptr->offset[i];
+-		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
++	for (i = 0; i < table_ptr->num; i++) {
++		int offset = table_ptr->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
+ 		void *rsc = (void *)hdr + sizeof(*hdr);
+ 
+ 		dev_dbg(dev, "rsc: type %d\n", hdr->type);
+@@ -1309,14 +1309,16 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	rproc->max_notifyid = -1;
+ 
+ 	/* look for virtio devices and register them */
+-	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
++	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
++				     rproc_vdev_handler);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
+ 		goto clean_up;
+ 	}
+ 
+ 	/* handle fw resources which are required to boot rproc */
+-	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
++	ret = rproc_handle_resources(rproc, rproc->cached_table, tablesz,
++				     rproc_loading_handlers);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to process resources: %d\n", ret);
+ 		goto clean_up_resources;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+1.9.1
