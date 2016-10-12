@@ -1,40 +1,186 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH 4/4] remoteproc: qcom: add Venus video core firmware
- loader driver
-References: <1471622000-1906-1-git-send-email-stanimir.varbanov@linaro.org>
- <1471622000-1906-5-git-send-email-stanimir.varbanov@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <06d7cfd2-571d-6f9a-f2c0-bfe66717a141@linaro.org>
-Date: Tue, 18 Oct 2016 19:23:53 +0300
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 18/20] remoteproc: core: Clean-up resource table sanity checks
+Date: Wed, 12 Oct 2016 18:00:36 +0200
+Message-ID: <1476288038-24909-19-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1471622000-1906-5-git-send-email-stanimir.varbanov@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Clark <robdclark@gmail.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+As resource table has been verified after just loading,
+the different sanity checks done when accessing resources
+are no more needed.
 
-I want to resubmit this remoteproc driver without secure page table scm
-call, do you have something to note/add before that?
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 47 ++++++------------------------------
+ 1 file changed, 7 insertions(+), 40 deletions(-)
 
-On 08/19/2016 06:53 PM, Stanimir Varbanov wrote:
-> This driver will load and authenticate the Venus firmware and
-> bringing it core out of reset. Those two functionalities are
-> via secure monitor calls to trusted environment.
-> 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/remoteproc/Kconfig          |  10 ++
->  drivers/remoteproc/Makefile         |   1 +
->  drivers/remoteproc/qcom_venus_pil.c | 226 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 237 insertions(+)
->  create mode 100644 drivers/remoteproc/qcom_venus_pil.c
-> 
-
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 849460e..ee2dc8d 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -50,7 +50,7 @@ static LIST_HEAD(rproc_list);
+ typedef int (*rproc_handle_resources_t)(struct rproc *rproc,
+ 				struct resource_table *table, int len);
+ typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
+-				 void *, int offset, int avail);
++				 void *, int offset);
+ 
+ /* Unique indices for remoteproc devices */
+ static DEFINE_IDA(rproc_dev_index);
+@@ -300,7 +300,6 @@ void rproc_free_vring(struct rproc_vring *rvring)
+  * rproc_handle_vdev() - handle a vdev fw resource
+  * @rproc: the remote processor
+  * @rsc: the vring resource descriptor
+- * @avail: size of available data (for sanity checking the image)
+  *
+  * This resource entry requests the host to statically register a virtio
+  * device (vdev), and setup everything needed to support it. It contains
+@@ -324,19 +323,12 @@ void rproc_free_vring(struct rproc_vring *rvring)
+  * Returns 0 on success, or an appropriate error code otherwise
+  */
+ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+-			     int offset, int avail)
++			     int offset)
+ {
+ 	struct device *dev = &rproc->dev;
+ 	struct rproc_vdev *rvdev;
+ 	int i, ret;
+ 
+-	/* make sure resource isn't truncated */
+-	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
+-			+ rsc->config_len > avail) {
+-		dev_err(dev, "vdev rsc is truncated\n");
+-		return -EINVAL;
+-	}
+-
+ 	/* make sure reserved bytes are zeroes */
+ 	if (rsc->reserved[0] || rsc->reserved[1]) {
+ 		dev_err(dev, "vdev rsc has non zero reserved bytes\n");
+@@ -388,7 +380,6 @@ free_rvdev:
+  * rproc_handle_trace() - handle a shared trace buffer resource
+  * @rproc: the remote processor
+  * @rsc: the trace resource descriptor
+- * @avail: size of available data (for sanity checking the image)
+  *
+  * In case the remote processor dumps trace logs into memory,
+  * export it via debugfs.
+@@ -401,18 +392,13 @@ free_rvdev:
+  * Returns 0 on success, or an appropriate error code otherwise
+  */
+ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+-			      int offset, int avail)
++			      int offset)
+ {
+ 	struct rproc_mem_entry *trace;
+ 	struct device *dev = &rproc->dev;
+ 	void *ptr;
+ 	char name[15];
+ 
+-	if (sizeof(*rsc) > avail) {
+-		dev_err(dev, "trace rsc is truncated\n");
+-		return -EINVAL;
+-	}
+-
+ 	/* make sure reserved bytes are zeroes */
+ 	if (rsc->reserved) {
+ 		dev_err(dev, "trace rsc has non zero reserved bytes\n");
+@@ -459,7 +445,6 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+  * rproc_handle_devmem() - handle devmem resource entry
+  * @rproc: remote processor handle
+  * @rsc: the devmem resource entry
+- * @avail: size of available data (for sanity checking the image)
+  *
+  * Remote processors commonly need to access certain on-chip peripherals.
+  *
+@@ -481,7 +466,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+  * are outside those ranges.
+  */
+ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
+-			       int offset, int avail)
++			       int offset)
+ {
+ 	struct rproc_mem_entry *mapping;
+ 	struct device *dev = &rproc->dev;
+@@ -491,11 +476,6 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
+ 	if (!rproc->domain)
+ 		return -EINVAL;
+ 
+-	if (sizeof(*rsc) > avail) {
+-		dev_err(dev, "devmem rsc is truncated\n");
+-		return -EINVAL;
+-	}
+-
+ 	/* make sure reserved bytes are zeroes */
+ 	if (rsc->reserved) {
+ 		dev_err(dev, "devmem rsc has non zero reserved bytes\n");
+@@ -537,7 +517,6 @@ out:
+  * rproc_handle_carveout() - handle phys contig memory allocation requests
+  * @rproc: rproc handle
+  * @rsc: the resource entry
+- * @avail: size of available data (for image validation)
+  *
+  * This function will handle firmware requests for allocation of physically
+  * contiguous memory regions.
+@@ -553,7 +532,7 @@ out:
+  */
+ static int rproc_handle_carveout(struct rproc *rproc,
+ 				 struct fw_rsc_carveout *rsc,
+-				 int offset, int avail)
++				 int offset)
+ {
+ 	struct rproc_mem_entry *carveout, *mapping;
+ 	struct device *dev = &rproc->dev;
+@@ -561,11 +540,6 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	void *va;
+ 	int ret;
+ 
+-	if (sizeof(*rsc) > avail) {
+-		dev_err(dev, "carveout rsc is truncated\n");
+-		return -EINVAL;
+-	}
+-
+ 	/* make sure reserved bytes are zeroes */
+ 	if (rsc->reserved) {
+ 		dev_err(dev, "carveout rsc has non zero reserved bytes\n");
+@@ -674,7 +648,7 @@ free_carv:
+ }
+ 
+ static int rproc_count_vrings(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+-			      int offset, int avail)
++			      int offset)
+ {
+ 	/* Summarize the number of notification IDs */
+ 	rproc->max_notifyid += rsc->num_of_vrings;
+@@ -708,15 +682,8 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
+ 	for (i = 0; i < rproc->table_ptr->num; i++) {
+ 		int offset = rproc->table_ptr->offset[i];
+ 		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
+-		int avail = len - offset - sizeof(*hdr);
+ 		void *rsc = (void *)hdr + sizeof(*hdr);
+ 
+-		/* make sure table isn't truncated */
+-		if (avail < 0) {
+-			dev_err(dev, "rsc table is truncated\n");
+-			return -EINVAL;
+-		}
+-
+ 		dev_dbg(dev, "rsc: type %d\n", hdr->type);
+ 
+ 		if (hdr->type >= RSC_LAST) {
+@@ -728,7 +695,7 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
+ 		if (!handler)
+ 			continue;
+ 
+-		ret = handler(rproc, rsc, offset + sizeof(*hdr), avail);
++		ret = handler(rproc, rsc, offset + sizeof(*hdr));
+ 		if (ret)
+ 			break;
+ 	}
 -- 
-regards,
-Stan
+1.9.1
