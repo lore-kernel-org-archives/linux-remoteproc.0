@@ -1,84 +1,89 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH 5/5] remoteproc: Modifying probe for initializing q6v55 specific resources
-Date: Mon, 24 Oct 2016 21:25:59 +0530
-Message-Id: <1477324559-24752-6-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
-References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, akdwived@codeaurora.org, kaushalk@codeaurora.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 12/20] remoteproc: core: Add function to verify an existing resource in rsc table
+Date: Wed, 12 Oct 2016 18:00:30 +0200
+Message-ID: <1476288038-24909-13-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Probe is being modified to save q6 version and invoke appropriate
-init functions to accommodate q6v55 remoteproc driver.
+When a firmware is build, it can be loaded with a resource
+usually detailing shared; memory, virtual device, trace log
+information etc.
+However, some SoCs or platforms require some hard-coded information.
+Information may be fixed on both sides: firmware and rproc.
+Until now, no method exists which allows to compare resource table
+fixed resources and rproc driver configuration.
+This new function changes that performing comparison between resources.
+Only carveout resource supported for the moment.
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+It is rproc driver responsibility to provide list of resources to
+verify during boot.
+
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 43 ++++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 9 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 45 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index dd19d41..c65c904 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -1370,6 +1370,9 @@ static int q6v5_probe(struct platform_device *pdev)
- 	init_completion(&qproc->start_done);
- 	init_completion(&qproc->stop_done);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 96692c2..4297ee7 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -933,6 +933,51 @@ int rproc_request_resource(struct rproc *rproc, u32 type, u32 action, void *reso
+ }
+ EXPORT_SYMBOL(rproc_request_resource);
  
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,q6v55-pil"))
-+		qproc->is_q6v55 = true;
++static int rproc_verify_resource_table_entry(struct rproc *rproc,
++				struct rproc_request_resource *request,
++				struct resource_table *table, int size)
++{
++	struct fw_rsc_carveout *tblc, *newc;
++	int i;
 +
- 	ret = q6v5_init_mem(qproc, pdev);
- 	if (ret)
- 		goto free_rproc;
-@@ -1378,17 +1381,39 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	ret = q6v5_init_clocks(qproc);
--	if (ret)
--		goto free_rproc;
-+	if (qproc->is_q6v55) {
-+		ret = q6v55_init_clocks(qproc);
-+		if (ret)
-+			goto free_rproc;
-+	} else {
-+		ret = q6v5_init_clocks(qproc);
-+		if (ret)
-+			goto free_rproc;
-+	}
- 
--	ret = q6v5_regulator_init(qproc);
--	if (ret)
--		goto free_rproc;
-+	if (qproc->is_q6v55) {
-+		ret = q6v55_init_reset(qproc, pdev);
-+		if (ret)
-+			goto free_rproc;
-+	} else {
-+		ret = q6v5_init_reset(qproc);
-+		if (ret)
-+			goto free_rproc;
-+	}
- 
--	ret = q6v5_init_reset(qproc);
--	if (ret)
--		goto free_rproc;
-+	if (qproc->is_q6v55) {
-+		ret = q6v55_regulator_init(qproc);
-+		if (ret)
-+			goto free_rproc;
-+	} else {
-+		ret = q6v5_regulator_init(qproc);
-+		if (ret)
-+			goto free_rproc;
++	for (i = 0; i < table->num; i++) {
++		int offset = table->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)table + offset;
++		void *rsc = (void *)hdr + sizeof(*hdr);
++
++		if (request->type != hdr->type)
++			continue;
++
++		switch (hdr->type) {
++		case RSC_CARVEOUT:
++			tblc = rsc;
++			newc = request->resource;
++
++			if (strncmp(newc->name, tblc->name, 32))
++				break;
++
++			/* Verify firmware resource is part of rproc one. */
++			if (tblc->pa != FW_RSC_ADDR_ANY) {
++				int pa_offset = tblc->pa - newc->pa;
++
++				if (pa_offset < 0)
++					return -EINVAL;
++
++				if (pa_offset + tblc->len > newc->len)
++					return -EINVAL;
++			}
++			return 0;
++		default:
++			dev_err(&rproc->dev,
++				"Unsupported resource type: %d\n",
++				hdr->type);
++			return -EINVAL;
++		}
 +	}
 +
-+	qproc->ahb_clk_vote = of_property_read_bool(pdev->dev.of_node,
-+			"qcom,ahb-clk-vote");
-+	mutex_init(&qproc->q6_lock);
- 
- 	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
- 	if (ret < 0)
++	return -EINVAL;
++}
++
+ static int rproc_update_resource_table_entry(struct rproc *rproc,
+ 				struct rproc_request_resource *request,
+ 				struct resource_table *table, int size)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+1.9.1
