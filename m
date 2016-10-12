@@ -1,123 +1,63 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] rpmsg: Handle invalid parameters in public API
-Date: Tue, 18 Oct 2016 17:23:44 -0700
-Message-Id: <1476836624-342-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 20/20] remoteproc: core: Support empty resource tables
+Date: Wed, 12 Oct 2016 18:00:38 +0200
+Message-ID: <1476288038-24909-21-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There are two cases of possible uninitialized pointer usage in the API,
-either the parameters themselves are invalid or we're trying to jump to
-functions not required to be implemented by all backends.
+From: Lee Jones <lee.jones@linaro.org>
 
-Suggested-by: Loic Pallardy <loic.pallardy@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Currently, when a remote processor does not require resources, the
+platform-specific remoteproc driver has to create a fake resource
+table in order to by-pass the strict checking.  But there is no hard
+requirement for a remote processor so require or support shared
+resources.  This patch removes the strict checking and skips
+resource table related operations if none is provided.
+
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/rpmsg/rpmsg_core.c | 39 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 7561941ba413..a79cb5a9e5f2 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -71,6 +71,9 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
- 					rpmsg_rx_cb_t cb, void *priv,
- 					struct rpmsg_channel_info chinfo)
- {
-+	if (WARN_ON(!rpdev))
-+		return ERR_PTR(-EINVAL);
-+
- 	return rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
- }
- EXPORT_SYMBOL(rpmsg_create_ept);
-@@ -80,11 +83,13 @@ EXPORT_SYMBOL(rpmsg_create_ept);
-  * @ept: endpoing to destroy
-  *
-  * Should be used by drivers to destroy an rpmsg endpoint previously
-- * created with rpmsg_create_ept().
-+ * created with rpmsg_create_ept(). As with other types of "free" NULL
-+ * is a valid parameter.
-  */
- void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
- {
--	ept->ops->destroy_ept(ept);
-+	if (ept)
-+		ept->ops->destroy_ept(ept);
- }
- EXPORT_SYMBOL(rpmsg_destroy_ept);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index a6062e7..f83109d 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -679,6 +679,9 @@ static int rproc_handle_resources(struct rproc *rproc, struct resource_table *ta
+ 	rproc_handle_resource_t handler;
+ 	int ret = 0, i;
  
-@@ -108,6 +113,11 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
-  */
- int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
- {
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->send)
-+		return -ENXIO;
++	if (!table_ptr)
++		return ret;
 +
- 	return ept->ops->send(ept, data, len);
- }
- EXPORT_SYMBOL(rpmsg_send);
-@@ -132,6 +142,11 @@ EXPORT_SYMBOL(rpmsg_send);
-  */
- int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- {
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->sendto)
-+		return -ENXIO;
-+
- 	return ept->ops->sendto(ept, data, len, dst);
- }
- EXPORT_SYMBOL(rpmsg_sendto);
-@@ -159,6 +174,11 @@ EXPORT_SYMBOL(rpmsg_sendto);
- int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			  void *data, int len)
- {
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->send_offchannel)
-+		return -ENXIO;
-+
- 	return ept->ops->send_offchannel(ept, src, dst, data, len);
- }
- EXPORT_SYMBOL(rpmsg_send_offchannel);
-@@ -182,6 +202,11 @@ EXPORT_SYMBOL(rpmsg_send_offchannel);
-  */
- int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- {
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->trysend)
-+		return -ENXIO;
-+
- 	return ept->ops->trysend(ept, data, len);
- }
- EXPORT_SYMBOL(rpmsg_trysend);
-@@ -205,6 +230,11 @@ EXPORT_SYMBOL(rpmsg_trysend);
-  */
- int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- {
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->trysendto)
-+		return -ENXIO;
-+
- 	return ept->ops->trysendto(ept, data, len, dst);
- }
- EXPORT_SYMBOL(rpmsg_trysendto);
-@@ -231,6 +261,11 @@ EXPORT_SYMBOL(rpmsg_trysendto);
- int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			     void *data, int len)
- {
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->trysend_offchannel)
-+		return -ENXIO;
-+
- 	return ept->ops->trysend_offchannel(ept, src, dst, data, len);
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+ 	for (i = 0; i < table_ptr->num; i++) {
+ 		int offset = table_ptr->offset[i];
+ 		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
+@@ -1272,8 +1275,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	/* look for the resource table */
+ 	table = rproc_find_rsc_table(rproc, fw, &tablesz);
+ 	if (!table) {
+-		dev_err(dev, "Failed to find resource table\n");
+-		goto clean_up;
++		rproc->cached_table = table;
++		goto skip_resources;
+ 	}
+ 
+ 	/*  Verify resource table consistency */
+@@ -1293,6 +1296,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	if (!rproc->cached_table)
+ 		goto clean_up;
+ 
++skip_resources:
+ 	rproc->table_ptr = rproc->cached_table;
+ 
+ 	if (!list_empty(&rproc->override_resources)) {
 -- 
-2.5.0
+1.9.1
