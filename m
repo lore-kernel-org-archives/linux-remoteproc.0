@@ -1,143 +1,147 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH 3/5] remoteproc: Adding reset sequence and halt seq changes for q6v55
-Date: Mon, 24 Oct 2016 21:25:57 +0530
-Message-Id: <1477324559-24752-4-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
-References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, akdwived@codeaurora.org, kaushalk@codeaurora.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 15/20] remoteproc: core: Append resource only if .resource_table section is large enough
+Date: Wed, 12 Oct 2016 18:00:33 +0200
+Message-ID: <1476288038-24909-16-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-q6v55 reset sequence is handled separately and removing idle check
-before asserting reset as it has been observed it return idle some
-time even without being in idle.
+To guarantee remoteproc won't overwrite firmware data when copying
+back modified resource table, rproc_add_resource_table_entry verifies
+first that .resource_table elf section is large enough to support new
+resource appending.
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 103 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 98 insertions(+), 5 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 81 +++++++++++++++++++++++++-----------
+ 1 file changed, 56 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index c7dca40..0fac8d8 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -536,6 +536,104 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	return ret;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3847fd4..f4a02f0 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1057,39 +1057,73 @@ static int rproc_update_resource_table_entry(struct rproc *rproc,
+ 	return !updated;
  }
  
-+static int q6v6proc_reset(struct q6v5 *qproc)
-+{
-+	int ret, i, count;
-+	u64 val;
+-static struct resource_table*
+-rproc_add_resource_table_entry(struct rproc *rproc,
++static int rproc_add_resource_table_entry(struct rproc *rproc,
+ 			       struct rproc_request_resource *request,
+-			       struct resource_table *old_table, int *tablesz)
++			       struct resource_table *table, int tablesz)
+ {
+-	struct resource_table *table;
+-	struct fw_rsc_hdr h;
++	struct fw_rsc_hdr *hdr, h;
+ 	void *new_rsc_loc;
+ 	void *fw_header_loc;
+ 	void *start_of_rscs;
+ 	int new_rsc_offset;
+-	int size = *tablesz;
+-	int i;
++	struct fw_rsc_vdev *v;
++	int i, spare_len = 0, size;
++	unsigned int min_offset, max_offset = 0;
 +
-+	/* Override the ACC value if required */
-+	writel_relaxed(QDSP6SS_ACC_OVERRIDE_VAL,
-+				qproc->reg_base + QDSP6SS_STRAP_ACC);
-+
-+	/* Assert resets, stop core */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_RESET_REG);
-+	val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+
-+	/* BHS require xo cbcr to be enabled */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
-+	val |= 0x1;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_XO_CBCR);
-+	for (count = HALT_CHECK_MAX_LOOPS; count > 0; count--) {
-+		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
-+		if (!(val & BIT(31)))
-+			break;
-+		udelay(1);
-+	}
-+
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
-+	if ((val & BIT(31)))
-+		dev_err(qproc->dev, "Failed to enable xo branch clock.\n");
-+
-+	/* Enable power block headswitch, and wait for it to stabilize */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= QDSP6v55_BHS_ON;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	udelay(1);
-+
-+	/* Put LDO in bypass mode */
-+	val |= QDSP6v55_LDO_BYP;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	/*
-+	 * Turn on memories. L2 banks should be done individually
-+	 * to minimize inrush current.
-+	 */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val &= ~QDSP6v55_CLAMP_QMC_MEM;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* Deassert memory peripheral sleep and L2 memory standby */
-+	val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* Turn on L1, L2, ETB and JU memories 1 at a time */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+	for (i = 19; i >= 0; i--) {
-+		val |= BIT(i);
-+		writel_relaxed(val, qproc->reg_base +
-+					QDSP6SS_MEM_PWR_CTL);
-+		/*
-+		 * Wait for 1us for both memory peripheral and
-+		 * data array to turn on.
-+		 */
-+		 mb();
-+		udelay(1);
-+	}
-+
-+	/* Remove word line clamp */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val &= ~QDSP6v55_CLAMP_WL;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* Remove IO clamp */
-+	val &= ~Q6SS_CLAMP_IO;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* Bring core out of reset */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_RESET_REG);
-+	val &= ~(Q6SS_CORE_ARES | Q6SS_STOP_CORE);
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+
-+	/* Turn on core clock */
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+	val |= Q6SS_CLK_ENABLE;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+
-+
-+	/* Wait for PBL status */
-+	ret = q6v5_rmb_pbl_wait(qproc, 1000);
-+	if (ret == -ETIMEDOUT) {
-+		dev_err(qproc->dev, "PBL boot timed out\n");
-+	} else if (ret != RMB_PBL_SUCCESS) {
-+		dev_err(qproc->dev, "PBL returned unexpected status %d\n", ret);
-+		ret = -EINVAL;
-+	} else {
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+
- static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
- 				   struct regmap *halt_map,
- 				   u32 offset)
-@@ -544,11 +642,6 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
- 	unsigned int val;
- 	int ret;
  
--	/* Check if we're already idle */
--	ret = regmap_read(halt_map, offset + AXI_IDLE_REG, &val);
--	if (!ret && val)
--		return;
+ 	h.type = request->type;
+ 
+-	new_rsc_offset = size;
++	/* Check available spare size to integrate new resource */
++	for (i = 0; i < table->num; i++)
++		max_offset = max(max_offset, table->offset[i]);
++
++	hdr = (void *)table + max_offset;
++
++	switch (hdr->type) {
++	case RSC_CARVEOUT:
++		size = sizeof(struct fw_rsc_carveout);
++		break;
++	case RSC_DEVMEM:
++		size = sizeof(struct fw_rsc_devmem);
++		break;
++	case RSC_TRACE:
++		size = sizeof(struct fw_rsc_trace);
++		break;
++	case RSC_VDEV:
++		v = (void *)hdr + sizeof(*hdr);
++		size = sizeof(*v);
++		size += v->num_of_vrings * sizeof(struct fw_rsc_vdev_vring);
++		size += v->config_len;
++		break;
++	default:
++		dev_err(&rproc->dev, "Unsupported resource type: %d\n",
++			hdr->type);
++		return -EINVAL;
++	}
++
++	new_rsc_offset = max_offset + size;
++	spare_len = tablesz - new_rsc_offset;
+ 
+ 	/*
+-	 * Allocate another contiguous chunk of memory, large enough to
+-	 * contain the new, expanded resource table.
+-	 *
+-	 * The +4 is for the extra offset[] element in the top level header
++	 * Available space must be greater or equal to :
++	 * new offset entry size (4Bytes)
++	 * + resource header size
++	 * + new resource size
+ 	 */
+-	size += sizeof(struct fw_rsc_hdr) + request->size + 4;
+-	table = devm_kmemdup(&rproc->dev, old_table, size, GFP_KERNEL);
+-	if (!table)
+-		return ERR_PTR(-ENOMEM);
++	if (spare_len < (4 + sizeof(h) + request->size))
++		return -ENOSPC;
++
++	/* Find the lowest resource table entry */
++	min_offset = table->offset[0];
++	for (i = 1; i < table->num; i++)
++		min_offset = min(min_offset, table->offset[i]);
++
+ 
+ 	/* Shunt table by 4 Bytes to account for the extra offset[] element */
+-	start_of_rscs = (void *)table + table->offset[0];
++	start_of_rscs = (void *)table + min_offset;
+ 	memmove(start_of_rscs + 4,
+-		start_of_rscs, new_rsc_offset - table->offset[0]);
++		start_of_rscs, new_rsc_offset - min_offset);
++
+ 	new_rsc_offset += 4;
+ 
+ 	/* Update existing resource entry's offsets */
+@@ -1108,8 +1142,7 @@ rproc_add_resource_table_entry(struct rproc *rproc,
+ 	new_rsc_loc = (void *)fw_header_loc + sizeof(h);
+ 	memcpy(new_rsc_loc, request->resource, request->size);
+ 
+-	*tablesz = size;
+-	return table;
++	return 0;
+ }
+ 
+ static struct resource_table*
+@@ -1154,12 +1187,10 @@ rproc_apply_resource_overrides(struct rproc *rproc,
+ 			continue;
+ 
+ 		/* Didn't find matching resource entry -- creating a new one. */
+-		table = rproc_add_resource_table_entry(rproc, resource,
+-						       table, &size);
+-		if (IS_ERR(table))
++		updated = rproc_add_resource_table_entry(rproc, resource,
++							 table, size);
++		if (updated)
+ 			goto out;
 -
- 	/* Assert halt request */
- 	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 1);
+-		*orig_table = table;
+ 	}
  
+ 	if (IS_ENABLED(DEBUG) || IS_ENABLED(CONFIG_DYNAMIC_DEBUG))
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+1.9.1
