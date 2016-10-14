@@ -1,134 +1,194 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 01/20] remoteproc: core: New API to add new resources to the resource table
-Date: Wed, 12 Oct 2016 18:00:19 +0200
-Message-ID: <1476288038-24909-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 13 Oct 2016 21:31:43 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/4] remoteproc: Use fixed length field for firmware name
+Message-ID: <20161014043143.GA8247@tuxbot>
+References: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
+ <1476193185-32107-2-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1476193185-32107-2-git-send-email-matt.redfearn@imgtec.com>
+To: Matt Redfearn <matt.redfearn@imgtec.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lee Jones <lee.jones@linaro.org>
+On Tue 11 Oct 06:39 PDT 2016, Matt Redfearn wrote:
 
-In order to amend or add a new resource table entry we need a method
-for a platform-specific to submit them. rproc_request_resource() is a
-new public API which provides this functionality.
+> Storage of the firmware name was inconsistent, either storing a pointer
+> to a name stored with unknown ownership, or a variable length tacked
+> onto the end of the struct proc allocated in rproc_alloc.
+> 
 
-It is to be called between rproc_alloc() and rproc_add().
+Instead of using a statically sized array for "firmware", just keep it
+a pointer to a local copy of the firmware name.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 40 ++++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           | 21 +++++++++++++++++++
- 2 files changed, 61 insertions(+)
+> In preparation for allowing the firmware of an already allocated struct
+> rproc to be changed, the easiest way to allow reallocation of the name
+> is to switch to a fixed length buffer held as part of the struct rproc.
+> That way we can either copy the provided firmware name into it, or print
+> into it based on a name template. A new function,
+> rproc_set_firmware_name() is introduced for this purpose, and that logic
+> removed from rproc_alloc().
+> 
+> Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+> ---
+> 
+>  drivers/remoteproc/remoteproc_core.c | 64 +++++++++++++++++++++++-------------
+>  include/linux/remoteproc.h           |  4 ++-
+>  2 files changed, 45 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index fe0539ed9cb5..48cd9d5afb69 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1309,6 +1309,42 @@ static void rproc_type_release(struct device *dev)
+>  	kfree(rproc);
+>  }
+>  
+> +/**
+> + * rproc_set_firmware_name() - helper to create a valid firmare name
+> + * @rproc: remote processor
+> + * @firmware: name of firmware file, can be NULL
+> + *
+> + * If the caller didn't pass in a firmware name then construct a default name,
+> + * otherwise the provided name is copied into the firmware field of struct
+> + * rproc. If the name is too long to fit, -EINVAL is returned.
+> + *
+> + * Returns 0 on success and an appropriate error code otherwise.
+> + */
+> +static int rproc_set_firmware_name(struct rproc *rproc, const char *firmware)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c6bfb349..67633ee 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -785,6 +785,45 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		rproc_remove_virtio_dev(rvdev);
- }
- 
-+int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
-+{
-+	struct device *dev = &rproc->dev;
-+	struct rproc_request_resource *request;
-+	int size;
-+
-+	request = devm_kzalloc(dev, sizeof(*request), GFP_KERNEL);
-+	if (!request)
-+		return -ENOMEM;
-+
-+	switch (type) {
-+	case RSC_CARVEOUT:
-+		size = sizeof(struct fw_rsc_carveout);
-+		break;
-+	case RSC_DEVMEM:
-+		size = sizeof(struct fw_rsc_devmem);
-+		break;
-+	case RSC_TRACE:
-+		size = sizeof(struct fw_rsc_trace);
-+		break;
-+	default:
-+		dev_err(dev, "Unsupported resource type: %d\n", type);
-+		return -EINVAL;
-+	}
-+
-+	request->resource = devm_kzalloc(dev, size, GFP_KERNEL);
-+	if (!request->resource)
-+		return -ENOMEM;
-+
-+	memcpy(request->resource, resource, size);
-+	request->type = type;
-+	request->size = size;
-+
-+	list_add_tail(&request->node, &rproc->override_resources);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rproc_request_resource);
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
-@@ -1370,6 +1409,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	INIT_LIST_HEAD(&rproc->mappings);
- 	INIT_LIST_HEAD(&rproc->traces);
- 	INIT_LIST_HEAD(&rproc->rvdevs);
-+	INIT_LIST_HEAD(&rproc->override_resources);
- 
- 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
- 	init_completion(&rproc->crash_comp);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 930023b..dd29776 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -323,6 +323,25 @@ struct rproc_mem_entry {
- 	struct list_head node;
- };
- 
-+/**
-+ * struct rproc_requested_resources - add a resource to the resource table
-+ *
-+ * @resource:	pointer to a 'struct fw_rsc_*' resource
-+ * @type:	'fw_resource_type' resource type
-+ * @size:	size of resource
-+ * @node:	list node
-+ *
-+ * Resources can be added by platform-specific rproc drivers calling
-+ * rproc_request_resource()
-+ *
-+ */
-+struct rproc_request_resource {
-+	void *resource;
-+	u32 type;
-+	u32 size;
-+	struct list_head node;
-+};
-+
- struct rproc;
- 
- /**
-@@ -428,6 +447,7 @@ struct rproc {
- 	int num_traces;
- 	struct list_head carveouts;
- 	struct list_head mappings;
-+	struct list_head override_resources;
- 	struct completion firmware_loading_complete;
- 	u32 bootaddr;
- 	struct list_head rvdevs;
-@@ -486,6 +506,7 @@ struct rproc_vdev {
- 	u32 rsc_offset;
- };
- 
-+int rproc_request_resource(struct rproc *rproc, u32 type, void *res);
- struct rproc *rproc_get_by_phandle(phandle phandle);
- struct rproc *rproc_alloc(struct device *dev, const char *name,
- 			  const struct rproc_ops *ops,
--- 
-1.9.1
+That would turn this function into something like:
+
+char *p, *template = "rproc-%s-fw";
+
+if (!firmware) {
+	name_len = strlen(name) + strlen(template) - 2 + 1;
+	p = kmalloc(name_len, GFP_KERNEL);
+	if (!p)
+		return -ENOMEM;
+
+	sprintf(p, template, firmware);
+} else {
+	p = kstrdup(firmware, GFP_KERNEL);
+	if (!p)
+		return -ENOMEM;
+}
+
+kfree(rproc->firmware);
+rproc->firmware = p;
+
+Like your version this leaves the firmware name unchanged in the case of
+an error.
+
+> +{
+> +	char *cp, *template = "rproc-%s-fw";
+> +	int name_len;
+> +
+> +	if (firmware) {
+> +		name_len = strlen(firmware);
+> +		cp = memchr(firmware, '\n', name_len);
+
+Let's just require the caller to pass us a valid name.
+
+> +		if (cp)
+> +			name_len = cp - firmware;
+> +
+> +		if (name_len > RPROC_MAX_FIRMWARE_NAME_LEN)
+> +			return -EINVAL;
+> +
+> +		strncpy(rproc->firmware, firmware, name_len);
+> +		rproc->firmware[name_len] = '\0';
+> +	} else {
+> +		snprintf(rproc->firmware, RPROC_MAX_FIRMWARE_NAME_LEN,
+> +			 template, rproc->name);
+> +	}
+> +
+> +	dev_dbg(&rproc->dev, "Using firmware %s\n", rproc->firmware);
+> +	return 0;
+> +}
+
+PS. Don't forget to free the string in rproc_type_release()
+
+Regards,
+Bjorn
+
+> +
+>  static struct device_type rproc_type = {
+>  	.name		= "remoteproc",
+>  	.release	= rproc_type_release,
+> @@ -1342,35 +1378,14 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  				const char *firmware, int len)
+>  {
+>  	struct rproc *rproc;
+> -	char *p, *template = "rproc-%s-fw";
+> -	int name_len = 0;
+>  
+>  	if (!dev || !name || !ops)
+>  		return NULL;
+>  
+> -	if (!firmware)
+> -		/*
+> -		 * Make room for default firmware name (minus %s plus '\0').
+> -		 * If the caller didn't pass in a firmware name then
+> -		 * construct a default name.  We're already glomming 'len'
+> -		 * bytes onto the end of the struct rproc allocation, so do
+> -		 * a few more for the default firmware name (but only if
+> -		 * the caller doesn't pass one).
+> -		 */
+> -		name_len = strlen(name) + strlen(template) - 2 + 1;
+> -
+> -	rproc = kzalloc(sizeof(struct rproc) + len + name_len, GFP_KERNEL);
+> +	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
+>  	if (!rproc)
+>  		return NULL;
+>  
+> -	if (!firmware) {
+> -		p = (char *)rproc + sizeof(struct rproc) + len;
+> -		snprintf(p, name_len, template, name);
+> -	} else {
+> -		p = (char *)firmware;
+> -	}
+> -
+> -	rproc->firmware = p;
+>  	rproc->name = name;
+>  	rproc->ops = ops;
+>  	rproc->priv = &rproc[1];
+> @@ -1389,6 +1404,11 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  
+>  	dev_set_name(&rproc->dev, "remoteproc%d", rproc->index);
+>  
+> +	if (rproc_set_firmware_name(rproc, firmware)) {
+> +		put_device(&rproc->dev);
+> +		return NULL;
+> +	}
+> +
+>  	atomic_set(&rproc->power, 0);
+>  
+>  	/* Set ELF as the default fw_ops handler */
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 1c457a8dd5a6..7a6f9ad55011 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -42,6 +42,8 @@
+>  #include <linux/idr.h>
+>  #include <linux/of.h>
+>  
+> +#define RPROC_MAX_FIRMWARE_NAME_LEN 128
+> +
+>  /**
+>   * struct resource_table - firmware resource table header
+>   * @ver: version number
+> @@ -416,7 +418,7 @@ struct rproc {
+>  	struct list_head node;
+>  	struct iommu_domain *domain;
+>  	const char *name;
+> -	const char *firmware;
+> +	char firmware[RPROC_MAX_FIRMWARE_NAME_LEN];
+>  	void *priv;
+>  	const struct rproc_ops *ops;
+>  	struct device dev;
+> -- 
+> 2.7.4
+> 
