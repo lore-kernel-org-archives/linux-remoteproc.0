@@ -1,76 +1,80 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 13 Oct 2016 22:14:17 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 04/11] dt-binding: remoteproc: wcnss: Allow describing smd edge
-Date: Wed, 19 Oct 2016 19:40:05 -0700
-Message-Id: <1476931212-1806-5-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/4] remoteproc: Add a sysfs interface for firmware and
+ state
+Message-ID: <20161014051417.GD8247@tuxbot>
+References: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
+ <1476193185-32107-4-git-send-email-matt.redfearn@imgtec.com>
+ <d206a09e-4db6-2199-2a5f-a81430c3adae@st.com>
+ <f070f6e0-275c-1937-2bde-adee0c1fd08e@imgtec.com>
+ <45167a9c-80ee-2af1-2ec5-db1eb1eef883@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45167a9c-80ee-2af1-2ec5-db1eb1eef883@st.com>
+To: loic pallardy <loic.pallardy@st.com>
+Cc: Matt Redfearn <matt.redfearn@imgtec.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Allow the associated smd edge to be described within the wcnss
-remoteproc node. This creates a bond between the remoteproc and the
-associated smd channels and devices, showing the interaction between the
-two parts and provides both a natural reference to the other.
+On Thu 13 Oct 07:39 PDT 2016, loic pallardy wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- .../bindings/remoteproc/qcom,wcnss-pil.txt         | 30 ++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+> 
+> 
+> On 10/13/2016 04:25 PM, Matt Redfearn wrote:
+> >Hi Loic,
+> >
+> >
+> >On 13/10/16 14:56, loic pallardy wrote:
+> >>
+> >>
+> >>On 10/11/2016 03:39 PM, Matt Redfearn wrote:
+[..]
+> >>>diff --git a/drivers/remoteproc/remoteproc_internal.h
+> >>>b/drivers/remoteproc/remoteproc_internal.h
+> >>>index 837faf2677a6..2beb86ddfacc 100644
+> >>>--- a/drivers/remoteproc/remoteproc_internal.h
+> >>>+++ b/drivers/remoteproc/remoteproc_internal.h
+> >>>@@ -64,6 +64,11 @@ void rproc_create_debug_dir(struct rproc *rproc);
+> >>> void rproc_init_debugfs(void);
+> >>> void rproc_exit_debugfs(void);
+> >>>
+> >>>+/* from remoteproc_sysfs.c */
+> >>>+extern struct class rproc_class;
+> >>struct class rproc_class should be static to remoteproc_sysfs.c file.
+> >>It will be better to create a new interface like rproc_register_sysfs
+> >>to associate rproc_class to rproc device.
+> >
+> >It would be nice if that were possible, but since the class has to
+> >associated with the devices created within remoteproc_core, as it stands
+> >we must have visibility of this symbol there, see above the change to
+> >drivers/remoteproc/remoteproc_core.c line 1455.
+> >The alternative would be a utility function in remoteproc_sysfs.c to
+> >associate the class with an rproc device, it depends what the preference
+> >would be.
+> 
+> Yes it will be my preference. remoteproc_sysfs.c file to provide a new
+> service like:
+> void rproc_register_sysfs(struct rproc *rproc) {
+> 	rproc->dev.class = &rproc_class;
+> }
+> 
+> and to call this function from rproc_alloc
+> 
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-index 0d2361ebe3d7..d420f84ddfb0 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-@@ -60,8 +60,8 @@ on the Qualcomm WCNSS core.
- 		    see ../reserved-memory/reserved-memory.txt
- 
- = SUBNODES
--A single subnode of the WCNSS PIL describes the attached rf module and its
--resource dependencies.
-+A required subnode of the WCNSS PIL is used to describe the attached rf module
-+and its resource dependencies. It is described by the following properties:
- 
- - compatible:
- 	Usage: required
-@@ -90,6 +90,11 @@ resource dependencies.
- 	Definition: reference to the regulators to be held on behalf of the
- 		    booting of the WCNSS core
- 
-+
-+The wcnss node can also have an subnode named "smd-edge" that describes the SMD
-+edge, channels and devices related to the WCNSS.
-+See ../soc/qcom/qcom,smd.txt for details on how to describe the SMD edge.
-+
- = EXAMPLE
- The following example describes the resources needed to boot control the WCNSS,
- with attached WCN3680, as it is commonly found on MSM8974 boards.
-@@ -129,4 +134,25 @@ pronto@fb204000 {
- 		vddpa-supply = <&pm8941_l19>;
- 		vdddig-supply = <&pm8941_s3>;
- 	};
-+
-+	smd-edge {
-+		interrupts = <0 142 1>;
-+
-+		qcom,ipc = <&apcs 8 17>;
-+		qcom,smd-edge = <6>;
-+		qcom,remote-pid = <4>;
-+
-+		label = "pronto";
-+
-+		wcnss {
-+			compatible = "qcom,wcnss";
-+			qcom,smd-channels = "WCNSS_CTRL";
-+
-+			qcom,mmio = <&pronto>;
-+
-+			bt {
-+				compatible = "qcom,wcnss-bt";
-+			};
-+		};
-+	};
- };
--- 
-2.5.0
+Compare:
+  rproc->dev.class = &rproc_class;
+to:
+  rproc_register_sysfs(rproc);
+
+The meaning of the prior is obvious, the latter require the jump to a
+different file to follow. And we would only be trading one global
+variable for a global function.
+
+A viable alternative would be to keep a local pointer to the class in
+core.c, that we assign during the call to rproc_init_sysfs().
+
+But I'm fine with the way it's written.
+
+Regards,
+Bjorn
