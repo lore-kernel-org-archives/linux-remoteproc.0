@@ -1,124 +1,126 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 13 Oct 2016 21:37:50 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 05/11] remoteproc: Assign kref to rproc_vdev
-Date: Wed, 19 Oct 2016 19:40:06 -0700
-Message-Id: <1476931212-1806-6-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] remoteproc: Introduce rproc_change_firmware
+Message-ID: <20161014043750.GB8247@tuxbot>
+References: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
+ <1476193185-32107-3-git-send-email-matt.redfearn@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1476193185-32107-3-git-send-email-matt.redfearn@imgtec.com>
+To: Matt Redfearn <matt.redfearn@imgtec.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-No functional change
+On Tue 11 Oct 06:39 PDT 2016, Matt Redfearn wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c     | 10 ++++++++++
- drivers/remoteproc/remoteproc_internal.h |  1 +
- drivers/remoteproc/remoteproc_virtio.c   | 10 ++++++----
- include/linux/remoteproc.h               |  3 +++
- 4 files changed, 20 insertions(+), 4 deletions(-)
+> It is often desirable to be able to change the running firmware on a
+> remote processor dynamically. This used to require a complete
+> destruction and readdition of the struct rproc, but now that the
+> firmware name is fixed length, it can be updated freely.
+> 
+> So long as the remote processor is in RPROC_OFFLINE state,
+> rproc_change_firmware() will free resources from the previous firmware
+> and request a new one be loaded.
+> 
+> Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+> ---
+> 
+>  drivers/remoteproc/remoteproc_core.c     | 62 ++++++++++++++++++++++++++++++++
+>  drivers/remoteproc/remoteproc_internal.h |  1 +
+>  2 files changed, 63 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 48cd9d5afb69..2152b484f314 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1345,6 +1345,68 @@ static int rproc_set_firmware_name(struct rproc *rproc, const char *firmware)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * rproc_change_firmware() - change the loaded firmware on a remote processor
+> + * @rproc: remote processor
+> + * @firmware: name of firmware file to load, can be NULL
+> + *
+> + * Attempts to change the firmware loaded for a remote processor. The processor
+> + * must be in RPROC_OFFLINE state.
+> + *
+> + * Any allocated resources for the exiting firmware are released, the new
+> + * firmware name is set and then any virtio devices probed.
+> + *
+> + * Returns 0 on success and an appropriate error code otherwise.
+> + *
+> + * Note: this function initiates an asynchronous firmware loading
+> + * context, which will look for virtio devices supported by the rproc's
+> + * firmware.
+> + *
+> + * If found, those virtio devices will be created and added, so as a result
+> + * of registering this remote processor, additional virtio drivers might be
+> + * probed.
+> + */
+> +int rproc_change_firmware(struct rproc *rproc, const char *firmware)
+> +{
+> +	struct device *dev = &rproc->dev;
+> +	struct rproc_vdev *rvdev, *rvtmp;
+> +	int ret;
+> +
+> +	ret = mutex_lock_interruptible(&rproc->lock);
+> +	if (ret) {
+> +		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (rproc->state != RPROC_OFFLINE) {
+> +		dev_err(dev, "can't change firmware while running\n");
+> +		ret = -EBUSY;
+> +		goto out;
+> +	}
+> +
+> +	/* Wait for any pending firmware load */
+> +	wait_for_completion(&rproc->firmware_loading_complete);
+> +
+> +	/* clean up all acquired resources */
+> +	rproc_resource_cleanup(rproc);
+> +
+> +	/* clean up remote vdev entries */
+> +	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
+> +		rproc_remove_virtio_dev(rvdev);
+> +
+> +	/* Free the copy of the resource table */
+> +	kfree(rproc->cached_table);
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4309996f4335..c978907498d0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -356,6 +356,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 	if (!rvdev)
- 		return -ENOMEM;
- 
-+	kref_init(&rvdev->refcount);
-+
- 	rvdev->rproc = rproc;
- 
- 	/* parse the vrings */
-@@ -384,6 +386,14 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 	return ret;
- }
- 
-+void rproc_vdev_release(struct kref *ref)
-+{
-+	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
-+
-+	list_del(&rvdev->node);
-+	kfree(rvdev);
-+}
-+
- /**
-  * rproc_handle_trace() - handle a shared trace buffer resource
-  * @rproc: the remote processor
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 4cf93ca2816e..fe5a570b6c2b 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -49,6 +49,7 @@ struct rproc_fw_ops {
- void rproc_release(struct kref *kref);
- irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
- int rproc_boot_nowait(struct rproc *rproc);
-+void rproc_vdev_release(struct kref *ref);
- 
- /* from remoteproc_virtio.c */
- int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 01870a16d6d2..0d1ad3ed149d 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -282,14 +282,13 @@ static const struct virtio_config_ops rproc_virtio_config_ops = {
-  * Never call this function directly; it will be called by the driver
-  * core when needed.
-  */
--static void rproc_vdev_release(struct device *dev)
-+static void rproc_virtio_dev_release(struct device *dev)
- {
- 	struct virtio_device *vdev = dev_to_virtio(dev);
- 	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
- 	struct rproc *rproc = vdev_to_rproc(vdev);
- 
--	list_del(&rvdev->node);
--	kfree(rvdev);
-+	kref_put(&rvdev->refcount, rproc_vdev_release);
- 
- 	put_device(&rproc->dev);
- }
-@@ -313,7 +312,7 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 	vdev->id.device	= id,
- 	vdev->config = &rproc_virtio_config_ops,
- 	vdev->dev.parent = dev;
--	vdev->dev.release = rproc_vdev_release;
-+	vdev->dev.release = rproc_virtio_dev_release;
- 
- 	/*
- 	 * We're indirectly making a non-temporary copy of the rproc pointer
-@@ -325,6 +324,9 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 	 */
- 	get_device(&rproc->dev);
- 
-+	/* Reference the vdev and vring allocations */
-+	kref_get(&rvdev->refcount);
-+
- 	ret = register_virtio_device(vdev);
- 	if (ret) {
- 		put_device(&rproc->dev);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index a05f4569a2a0..dbcd967dd2e7 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -487,6 +487,7 @@ struct rproc_vring {
- 
- /**
-  * struct rproc_vdev - remoteproc state for a supported virtio device
-+ * @refcount: reference counter for the vdev and vring allocations
-  * @node: list node
-  * @rproc: the rproc handle
-  * @vdev: the virio device
-@@ -494,6 +495,8 @@ struct rproc_vring {
-  * @rsc_offset: offset of the vdev's resource entry
-  */
- struct rproc_vdev {
-+	struct kref refcount;
-+
- 	struct list_head node;
- 	struct rproc *rproc;
- 	struct virtio_device vdev;
--- 
-2.5.0
+As of v4.9-rc1 these resources will not be allocated if state ==
+RPROC_OFFLINE, so you can reduce this to take the lock, check the state
+and set the firmware name.
+
+> +
+> +	ret = rproc_set_firmware_name(rproc, firmware);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = rproc_add_virtio_devices(rproc);
+> +out:
+> +	mutex_unlock(&rproc->lock);
+> +	return ret;
+> +}
+> +
+>  static struct device_type rproc_type = {
+>  	.name		= "remoteproc",
+>  	.release	= rproc_type_release,
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 57e1de59bec8..837faf2677a6 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -49,6 +49,7 @@ struct rproc_fw_ops {
+>  void rproc_release(struct kref *kref);
+>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
+>  int rproc_boot_nowait(struct rproc *rproc);
+> +int rproc_change_firmware(struct rproc *rproc, const char *firmware);
+>  
+>  /* from remoteproc_virtio.c */
+>  int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id);
+> -- 
+> 2.7.4
+> 
