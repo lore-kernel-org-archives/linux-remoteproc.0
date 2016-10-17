@@ -1,353 +1,77 @@
 Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v3 2/4] MIPS: CPS: Add VP(E) stealing
-Date: Tue, 11 Oct 2016 14:42:34 +0100
-Message-ID: <1476193356-1350-3-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1476193356-1350-1-git-send-email-matt.redfearn@imgtec.com>
+Subject: Re: [PATCH v3 4/4] MIPS: Deprecate VPE Loader
 References: <1476193356-1350-1-git-send-email-matt.redfearn@imgtec.com>
+ <1476193356-1350-5-git-send-email-matt.redfearn@imgtec.com>
+ <c4d01a54-7a68-c9ee-bc5c-ac01743f7269@hauke-m.de>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Message-ID: <18cd1cf2-761e-82f1-5225-26328f1aba7e@imgtec.com>
+Date: Mon, 17 Oct 2016 12:01:25 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Lisa Parratt <Lisa.Parratt@imgtec.com>, Matt Redfearn <matt.redfearn@imgtec.com>, "Qais Yousef  <qais.yousef@imgtec.com>, Masahiro Yamada" <yamada.masahiro@socionext.com>, James Hogan <james.hogan@imgtec.com>, Andrew Morton <akpm@linux-foundation.org>, Paul Burton <paul.burton@imgtec.com>
+In-Reply-To: <c4d01a54-7a68-c9ee-bc5c-ac01743f7269@hauke-m.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Hauke Mehrtens <hauke@hauke-m.de>, Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, olaf.wachendorf@intel.com, hauke.mehrtens@intel.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lisa Parratt <Lisa.Parratt@imgtec.com>
+Hi Hauke,
 
-VP(E) stealing provides a mechanism for removing an offline Virtual
-Processor from the Linux kernel such that it is available to run bare
-metal code.
-Once the CPU has been offlined from Linux, the CPU can be given a task
-to run via mips_cps_steal_cpu_and_execute(). The CPU is removed from the
-cpu_present mask and is set up to execute from address entry_fn. Stack
-space is assigned via the tsk task_struct so that C initialisation code
-may be used.
-To return the CPU back to Linux control, mips_cps_halt_and_return_cpu
-will arrange to halt the CPU and return it to the cpu_present mask. It
-is then available to be brought online again via CPU hotplug.
 
-This mechanism is used by the MIPS remote processor driver to allow
-CPUs within the system to execute bare metal code, not under control of
-the kernel.
+On 12/10/16 12:09, Hauke Mehrtens wrote:
+> This interface is currently used by the Intel / Lantiq voice Firmware.
+> This firmware is used by all Intel / Lantiq MIPS SoCs when they should
+> support analog voice.
+>
+> What is the proposed timeline for the removal of this interface?
 
-Signed-off-by: Lisa Parratt <Lisa.Parratt@imgtec.com>
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
+Ultimately I guess that's Ralf's call, but when I've discussed this with 
+him previously, he wasn't aware of any users of this feature. But if 
+there are indeed active users then that will slow down it's removal to 
+give them sufficient time to migrate or otherwise stop using it.
 
-Changes in v3: None
-Changes in v2: None
+Thanks,
+Matt
 
- arch/mips/Kconfig               |   7 ++
- arch/mips/include/asm/smp-cps.h |   8 ++
- arch/mips/include/asm/smp.h     |   1 +
- arch/mips/kernel/smp-cps.c      | 162 ++++++++++++++++++++++++++++++++++++++--
- arch/mips/kernel/smp.c          |  12 +++
- 5 files changed, 183 insertions(+), 7 deletions(-)
-
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 212ff92920d2..fd2468e71e63 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2342,6 +2342,13 @@ config MIPS_CPS
- 	  no external assistance. It is safe to enable this when hardware
- 	  support is unavailable.
- 
-+config MIPS_STEAL
-+	bool "VPE stealing"
-+	depends on HOTPLUG_CPU && MIPS_CPS
-+	help
-+	  Select this is you wish to be able to run bare metal code on offline
-+	  VPEs.
-+
- config MIPS_CPS_PM
- 	depends on MIPS_CPS
- 	select MIPS_CPC
-diff --git a/arch/mips/include/asm/smp-cps.h b/arch/mips/include/asm/smp-cps.h
-index 2ae1f61a4a95..4f6cd5b14185 100644
---- a/arch/mips/include/asm/smp-cps.h
-+++ b/arch/mips/include/asm/smp-cps.h
-@@ -34,6 +34,14 @@ extern void mips_cps_boot_vpes(struct core_boot_config *cfg, unsigned vpe);
- extern void mips_cps_pm_save(void);
- extern void mips_cps_pm_restore(void);
- 
-+#ifdef CONFIG_MIPS_STEAL
-+
-+extern int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
-+					  struct task_struct *tsk);
-+extern int mips_cps_halt_and_return_cpu(unsigned int cpu);
-+
-+#endif /* CONFIG_MIPS_STEAL */
-+
- #ifdef CONFIG_MIPS_CPS
- 
- extern bool mips_cps_smp_in_use(void);
-diff --git a/arch/mips/include/asm/smp.h b/arch/mips/include/asm/smp.h
-index 8bc6c70a4030..0ec332d6ce4e 100644
---- a/arch/mips/include/asm/smp.h
-+++ b/arch/mips/include/asm/smp.h
-@@ -103,4 +103,5 @@ static inline void arch_send_call_function_ipi_mask(const struct cpumask *mask)
- extern void (*dump_ipi_function_ptr)(void *);
- void dump_send_ipi(void (*dump_ipi_callback)(void *));
- #endif
-+
- #endif /* __ASM_SMP_H */
-diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-index 6183ad84cc73..9b7a7a5412c9 100644
---- a/arch/mips/kernel/smp-cps.c
-+++ b/arch/mips/kernel/smp-cps.c
-@@ -8,6 +8,7 @@
-  * option) any later version.
-  */
- 
-+#include <linux/cpu.h>
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/irqchip/mips-gic.h>
-@@ -39,6 +40,31 @@ static int __init setup_nothreads(char *s)
- }
- early_param("nothreads", setup_nothreads);
- 
-+#ifdef CONFIG_MIPS_STEAL
-+struct cpumask cpu_stolen_mask;
-+
-+static inline bool cpu_stolen(int cpu)
-+{
-+	return cpumask_test_cpu(cpu, &cpu_stolen_mask);
-+}
-+
-+static inline void set_cpu_stolen(int cpu, bool state)
-+{
-+	if (state)
-+		cpumask_set_cpu(cpu, &cpu_stolen_mask);
-+	else
-+		cpumask_clear_cpu(cpu, &cpu_stolen_mask);
-+}
-+#else
-+static inline bool cpu_stolen(int cpu)
-+{
-+	return false;
-+}
-+
-+static inline void set_cpu_stolen(int cpu, bool state) { }
-+
-+#endif /* CONFIG_MIPS_STEAL */
-+
- static unsigned core_vpe_count(unsigned core)
- {
- 	unsigned cfg;
-@@ -109,6 +135,10 @@ static void __init cps_smp_setup(void)
- 		write_gcr_bev_base(core_entry);
- 	}
- 
-+#ifdef CONFIG_MIPS_STEAL
-+	cpumask_clear(&cpu_stolen_mask);
-+#endif /* CONFIG_MIPS_STEAL */
-+
- #ifdef CONFIG_MIPS_MT_FPAFF
- 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
- 	if (cpu_has_fpu)
-@@ -287,7 +317,7 @@ static void remote_vpe_boot(void *dummy)
- 	mips_cps_boot_vpes(core_cfg, cpu_vpe_id(&current_cpu_data));
- }
- 
--static void cps_boot_secondary(int cpu, struct task_struct *idle)
-+static void cps_start_secondary(int cpu, void *entry_fn, struct task_struct *tsk)
- {
- 	unsigned core = cpu_data[cpu].core;
- 	unsigned vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-@@ -297,9 +327,9 @@ static void cps_boot_secondary(int cpu, struct task_struct *idle)
- 	unsigned int remote;
- 	int err;
- 
--	vpe_cfg->pc = (unsigned long)&smp_bootstrap;
--	vpe_cfg->sp = __KSTK_TOS(idle);
--	vpe_cfg->gp = (unsigned long)task_thread_info(idle);
-+	vpe_cfg->pc = (unsigned long)entry_fn;
-+	vpe_cfg->sp = __KSTK_TOS(tsk);
-+	vpe_cfg->gp = (unsigned long)task_thread_info(tsk);
- 
- 	atomic_or(1 << cpu_vpe_id(&cpu_data[cpu]), &core_cfg->vpe_mask);
- 
-@@ -343,6 +373,11 @@ out:
- 	preempt_enable();
- }
- 
-+static void cps_boot_secondary(int cpu, struct task_struct *idle)
-+{
-+	cps_start_secondary(cpu, &smp_bootstrap, idle);
-+}
-+
- static void cps_init_secondary(void)
- {
- 	/* Disable MT - we only want to run 1 TC per VPE */
-@@ -394,6 +429,28 @@ static int cps_cpu_disable(void)
- 	if (!cps_pm_support_state(CPS_PM_POWER_GATED))
- 		return -EINVAL;
- 
-+#ifdef CONFIG_MIPS_STEAL
-+	/*
-+	 * With the MT ASE only VPEs in the same core may read / write the
-+	 * control registers of other VPEs. Therefore to maintain control of
-+	 * any stolen VPEs at least one sibling VPE must be kept online.
-+	 */
-+	if (cpu_has_mipsmt) {
-+		int stolen, siblings = 0;
-+
-+		for_each_cpu((stolen), &cpu_stolen_mask)
-+			if (cpu_data[stolen].core == cpu_data[cpu].core)
-+				siblings++;
-+
-+		if (siblings == 1)
-+			/*
-+			 * When a VPE has been stolen, keep at least one of it's
-+			 * siblings around in order to control it.
-+			 */
-+			return -EBUSY;
-+	}
-+#endif /* CONFIG_MIPS_STEAL */
-+
- 	core_cfg = &mips_cps_core_bootcfg[current_cpu_data.core];
- 	atomic_sub(1 << cpu_vpe_id(&current_cpu_data), &core_cfg->vpe_mask);
- 	smp_mb__after_atomic();
-@@ -426,7 +483,7 @@ void play_dead(void)
- 		core = cpu_data[cpu].core;
- 
- 		/* Look for another online VPE within the core */
--		for_each_online_cpu(cpu_death_sibling) {
-+		for_each_possible_cpu(cpu_death_sibling) {
- 			if (cpu_data[cpu_death_sibling].core != core)
- 				continue;
- 
-@@ -434,8 +491,11 @@ void play_dead(void)
- 			 * There is an online VPE within the core. Just halt
- 			 * this TC and leave the core alone.
- 			 */
--			cpu_death = CPU_DEATH_HALT;
--			break;
-+			if (cpu_online(cpu_death_sibling) ||
-+			    cpu_stolen(cpu_death_sibling))
-+				cpu_death = CPU_DEATH_HALT;
-+			if (cpu_online(cpu_death_sibling))
-+				break;
- 		}
- 	}
- 
-@@ -466,6 +526,94 @@ void play_dead(void)
- 	panic("Failed to offline CPU %u", cpu);
- }
- 
-+#ifdef CONFIG_MIPS_STEAL
-+
-+/* Find an online sibling CPU (another VPE in the same core) */
-+static inline int mips_cps_get_online_sibling(unsigned int cpu)
-+{
-+	int sibling;
-+
-+	for_each_online_cpu(sibling)
-+		if (cpu_data[sibling].core == cpu_data[cpu].core)
-+			return sibling;
-+
-+	return -1;
-+}
-+
-+int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
-+				   struct task_struct *tsk)
-+{
-+	int err = -EINVAL;
-+
-+	preempt_disable();
-+
-+	if (!cpu_present(cpu) || cpu_online(cpu) || cpu_stolen(cpu))
-+		goto out;
-+
-+	if (cpu_has_mipsmt && (mips_cps_get_online_sibling(cpu) < 0))
-+		pr_warn("CPU%d has no online siblings to control it\n", cpu);
-+	else {
-+		set_cpu_present(cpu, false);
-+		set_cpu_stolen(cpu, true);
-+
-+		cps_start_secondary(cpu, entry_fn, tsk);
-+		err = 0;
-+	}
-+out:
-+	preempt_enable();
-+	return err;
-+}
-+
-+static void mips_cps_halt_sibling(void *ptr_cpu)
-+{
-+	unsigned int cpu = (unsigned long)ptr_cpu;
-+	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-+	unsigned long flags;
-+	int vpflags;
-+
-+	local_irq_save(flags);
-+	vpflags = dvpe();
-+	settc(vpe_id);
-+	write_tc_c0_tchalt(TCHALT_H);
-+	evpe(vpflags);
-+	local_irq_restore(flags);
-+}
-+
-+int mips_cps_halt_and_return_cpu(unsigned int cpu)
-+{
-+	unsigned int core = cpu_data[cpu].core;
-+	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-+
-+	if (!cpu_stolen(cpu))
-+		return -EINVAL;
-+
-+	if (cpu_has_mipsmt && (core == cpu_data[smp_processor_id()].core))
-+		mips_cps_halt_sibling((void *)(unsigned long)cpu);
-+	else if (cpu_has_mipsmt) {
-+		int sibling = mips_cps_get_online_sibling(cpu);
-+
-+		if (sibling < 0) {
-+			pr_warn("CPU%d has no online siblings\n", cpu);
-+			return -EINVAL;
-+		}
-+
-+		if (smp_call_function_single(sibling, mips_cps_halt_sibling,
-+						(void *)(unsigned long)cpu, 1))
-+			panic("Failed to call sibling CPU\n");
-+
-+	} else if (cpu_has_vp) {
-+		mips_cm_lock_other(core, vpe_id);
-+		write_cpc_co_vp_stop(1 << vpe_id);
-+		mips_cm_unlock_other();
-+	}
-+
-+	set_cpu_stolen(cpu, false);
-+	set_cpu_present(cpu, true);
-+	return 0;
-+}
-+
-+#endif /* CONFIG_MIPS_STEAL */
-+
- static void wait_for_sibling_halt(void *ptr_cpu)
- {
- 	unsigned cpu = (unsigned long)ptr_cpu;
-diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
-index b0baf48951fa..047322eaa0b0 100644
---- a/arch/mips/kernel/smp.c
-+++ b/arch/mips/kernel/smp.c
-@@ -233,6 +233,18 @@ static __init void smp_ipi_init_one(unsigned int virq,
- 				    struct irqaction *action)
- {
- 	int ret;
-+#ifdef CONFIG_MIPS_STEAL
-+	struct irq_data *data;
-+	/*
-+	 * A bit of a hack to ensure that the ipi_offset is 0.
-+	 * This is to deal with removing / reallocating IPIs
-+	 * to subsets of the possible CPUs, where the IPI IRQ domain
-+	 * will set ipi_offset to the first cpu in the cpumask when the
-+	 * IPI is reallocated.
-+	 */
-+	data = irq_get_irq_data(virq);
-+	data->common->ipi_offset = 0;
-+#endif /* CONFIG_MIPS_STEAL */
- 
- 	irq_set_handler(virq, handle_percpu_irq);
- 	ret = setup_irq(virq, action);
--- 
-2.7.4
+>
+> Hauke
+>
+> On 10/11/2016 03:42 PM, Matt Redfearn wrote:
+>> The MIPS remote processor driver (CONFIG_MIPS_RPROC) provides a more
+>> standard mechanism for using one or more VPs as coprocessors running
+>> separate firmware.
+>>
+>> Here we deprecate this mechanism before it is removed.
+>>
+>> Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+>> ---
+>>
+>> Changes in v3: None
+>> Changes in v2: None
+>>
+>>   arch/mips/Kconfig | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+>> index fd2468e71e63..3e767c373c7b 100644
+>> --- a/arch/mips/Kconfig
+>> +++ b/arch/mips/Kconfig
+>> @@ -2264,7 +2264,7 @@ comment "MIPS R2-to-R6 emulator is only available for UP kernels"
+>>   	depends on SMP && CPU_MIPSR6
+>>   
+>>   config MIPS_VPE_LOADER
+>> -	bool "VPE loader support."
+>> +	bool "VPE loader support (DEPRECATED)"
+>>   	depends on SYS_SUPPORTS_MULTITHREADING && MODULES
+>>   	select CPU_MIPSR2_IRQ_VI
+>>   	select CPU_MIPSR2_IRQ_EI
+>> @@ -2273,6 +2273,9 @@ config MIPS_VPE_LOADER
+>>   	  Includes a loader for loading an elf relocatable object
+>>   	  onto another VPE and running it.
+>>   
+>> +	  Unless you have a specific need, you should use CONFIG_MIPS_RPROC
+>> +          instead of this.
+>> +
+>>   config MIPS_VPE_LOADER_CMP
+>>   	bool
+>>   	default "y"
+>>
