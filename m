@@ -1,115 +1,55 @@
 Return-Path: <Matt.Redfearn@imgtec.com>
 From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 4/4] remoteproc: debugfs: Remove state entry which is duplicated is sysfs
-Date: Mon, 17 Oct 2016 16:49:01 +0100
-Message-ID: <1476719341-11651-5-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
+Subject: [PATCH v2 0/4] remoteproc: Add sysfs interface
+Date: Mon, 17 Oct 2016 16:48:57 +0100
+Message-ID: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Since there is now an always available state file in sysfs with the same
-function as this one in debugfs, remove the redundant entry.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
+It is often desireable to boot a remote processor with different
+firmware files, depending on the needs of the system at a particular
+time. This series adds a sysfs interface to the remoteproc core,
+exposing interfaces to manipulate the remote processor. One interface is
+the "state" file which performs the same function as the one in debugfs
+(which is removed later in the series). The other is a "firmware" file
+which allows retrieval of the name of the running firmware, and allows a
+new firmware to be loaded when written, as long as the remote processor
+is currently stopped.
 
-Changes in v2: None
+Some groundwork must be laid first, changing the storage mechanism of
+the firmware name such that it can be rewritten easily, then that is
+wired up to the new sysfs interface.
 
- drivers/remoteproc/remoteproc_debugfs.c | 71 ---------------------------------
- 1 file changed, 71 deletions(-)
+This series is based on v4.9-rc1
 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 374797206c79..1c122e230cec 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -59,75 +59,6 @@ static const struct file_operations trace_rproc_ops = {
- 	.llseek	= generic_file_llseek,
- };
- 
--/*
-- * A state-to-string lookup table, for exposing a human readable state
-- * via debugfs. Always keep in sync with enum rproc_state
-- */
--static const char * const rproc_state_string[] = {
--	"offline",
--	"suspended",
--	"running",
--	"crashed",
--	"invalid",
--};
--
--/* expose the state of the remote processor via debugfs */
--static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
--				size_t count, loff_t *ppos)
--{
--	struct rproc *rproc = filp->private_data;
--	unsigned int state;
--	char buf[30];
--	int i;
--
--	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
--
--	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
--		      rproc->state);
--
--	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
--}
--
--static ssize_t rproc_state_write(struct file *filp, const char __user *userbuf,
--				 size_t count, loff_t *ppos)
--{
--	struct rproc *rproc = filp->private_data;
--	char buf[10];
--	int ret;
--
--	if (count > sizeof(buf) || count <= 0)
--		return -EINVAL;
--
--	ret = copy_from_user(buf, userbuf, count);
--	if (ret)
--		return -EFAULT;
--
--	if (buf[count - 1] == '\n')
--		buf[count - 1] = '\0';
--
--	if (!strncmp(buf, "start", count)) {
--		ret = rproc_boot(rproc);
--		if (ret) {
--			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
--			return ret;
--		}
--	} else if (!strncmp(buf, "stop", count)) {
--		rproc_shutdown(rproc);
--	} else {
--		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
--		return -EINVAL;
--	}
--
--	return count;
--}
--
--static const struct file_operations rproc_state_ops = {
--	.read = rproc_state_read,
--	.write = rproc_state_write,
--	.open = simple_open,
--	.llseek	= generic_file_llseek,
--};
--
- /* expose the name of the remote processor via debugfs */
- static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
- 			       size_t count, loff_t *ppos)
-@@ -265,8 +196,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 
- 	debugfs_create_file("name", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_name_ops);
--	debugfs_create_file("state", 0400, rproc->dbg_dir,
--			    rproc, &rproc_state_ops);
- 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_recovery_ops);
- }
+
+Changes in v2:
+Use a kmalloc'd copy of the firmware name instead of having a fixed
+length array in struct rproc
+New patch to allow access to firmware loading from remoteproc_sysfs.c
+Have firmware_store perform the necessary steps inline.
+Use sysfs_streq when dealing with writes to sysfs files
+
+Matt Redfearn (4):
+  remoteproc: Keep local copy of firmware name
+  remoteproc: Make rproc_add_virtio_devices non-static
+  remoteproc: Add a sysfs interface for firmware and state
+  remoteproc: debugfs: Remove state entry which is duplicated is sysfs
+
+ Documentation/ABI/testing/sysfs-class-remoteproc |  50 ++++++++
+ drivers/remoteproc/Makefile                      |   1 +
+ drivers/remoteproc/remoteproc_core.c             |  36 +++---
+ drivers/remoteproc/remoteproc_debugfs.c          |  71 -----------
+ drivers/remoteproc/remoteproc_internal.h         |   6 +
+ drivers/remoteproc/remoteproc_sysfs.c            | 155 +++++++++++++++++++++++
+ include/linux/remoteproc.h                       |   2 +-
+ 7 files changed, 233 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-remoteproc
+ create mode 100644 drivers/remoteproc/remoteproc_sysfs.c
+
 -- 
 2.7.4
