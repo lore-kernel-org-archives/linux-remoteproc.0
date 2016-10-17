@@ -1,127 +1,115 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Tue, 18 Oct 2016 15:17:10 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 4/4] remoteproc: debugfs: Remove state entry which is
- duplicated is sysfs
-Message-ID: <20161018221710.GC19384@tuxbot>
+Return-Path: <Matt.Redfearn@imgtec.com>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Subject: [PATCH v2 4/4] remoteproc: debugfs: Remove state entry which is duplicated is sysfs
+Date: Mon, 17 Oct 2016 16:49:01 +0100
+Message-ID: <1476719341-11651-5-git-send-email-matt.redfearn@imgtec.com>
+In-Reply-To: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
 References: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
- <1476719341-11651-5-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1476719341-11651-5-git-send-email-matt.redfearn@imgtec.com>
-To: Matt Redfearn <matt.redfearn@imgtec.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 17 Oct 08:49 PDT 2016, Matt Redfearn wrote:
+Since there is now an always available state file in sysfs with the same
+function as this one in debugfs, remove the redundant entry.
 
-> Since there is now an always available state file in sysfs with the same
-> function as this one in debugfs, remove the redundant entry.
-> 
-> Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+---
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Changes in v2: None
 
-Regards,
-Bjorn
+ drivers/remoteproc/remoteproc_debugfs.c | 71 ---------------------------------
+ 1 file changed, 71 deletions(-)
 
-> ---
-> 
-> Changes in v2: None
-> 
->  drivers/remoteproc/remoteproc_debugfs.c | 71 ---------------------------------
->  1 file changed, 71 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index 374797206c79..1c122e230cec 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -59,75 +59,6 @@ static const struct file_operations trace_rproc_ops = {
->  	.llseek	= generic_file_llseek,
->  };
->  
-> -/*
-> - * A state-to-string lookup table, for exposing a human readable state
-> - * via debugfs. Always keep in sync with enum rproc_state
-> - */
-> -static const char * const rproc_state_string[] = {
-> -	"offline",
-> -	"suspended",
-> -	"running",
-> -	"crashed",
-> -	"invalid",
-> -};
-> -
-> -/* expose the state of the remote processor via debugfs */
-> -static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
-> -				size_t count, loff_t *ppos)
-> -{
-> -	struct rproc *rproc = filp->private_data;
-> -	unsigned int state;
-> -	char buf[30];
-> -	int i;
-> -
-> -	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
-> -
-> -	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
-> -		      rproc->state);
-> -
-> -	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
-> -}
-> -
-> -static ssize_t rproc_state_write(struct file *filp, const char __user *userbuf,
-> -				 size_t count, loff_t *ppos)
-> -{
-> -	struct rproc *rproc = filp->private_data;
-> -	char buf[10];
-> -	int ret;
-> -
-> -	if (count > sizeof(buf) || count <= 0)
-> -		return -EINVAL;
-> -
-> -	ret = copy_from_user(buf, userbuf, count);
-> -	if (ret)
-> -		return -EFAULT;
-> -
-> -	if (buf[count - 1] == '\n')
-> -		buf[count - 1] = '\0';
-> -
-> -	if (!strncmp(buf, "start", count)) {
-> -		ret = rproc_boot(rproc);
-> -		if (ret) {
-> -			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
-> -			return ret;
-> -		}
-> -	} else if (!strncmp(buf, "stop", count)) {
-> -		rproc_shutdown(rproc);
-> -	} else {
-> -		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
-> -		return -EINVAL;
-> -	}
-> -
-> -	return count;
-> -}
-> -
-> -static const struct file_operations rproc_state_ops = {
-> -	.read = rproc_state_read,
-> -	.write = rproc_state_write,
-> -	.open = simple_open,
-> -	.llseek	= generic_file_llseek,
-> -};
-> -
->  /* expose the name of the remote processor via debugfs */
->  static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
->  			       size_t count, loff_t *ppos)
-> @@ -265,8 +196,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
->  
->  	debugfs_create_file("name", 0400, rproc->dbg_dir,
->  			    rproc, &rproc_name_ops);
-> -	debugfs_create_file("state", 0400, rproc->dbg_dir,
-> -			    rproc, &rproc_state_ops);
->  	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
->  			    rproc, &rproc_recovery_ops);
->  }
-> -- 
-> 2.7.4
-> 
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index 374797206c79..1c122e230cec 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -59,75 +59,6 @@ static const struct file_operations trace_rproc_ops = {
+ 	.llseek	= generic_file_llseek,
+ };
+ 
+-/*
+- * A state-to-string lookup table, for exposing a human readable state
+- * via debugfs. Always keep in sync with enum rproc_state
+- */
+-static const char * const rproc_state_string[] = {
+-	"offline",
+-	"suspended",
+-	"running",
+-	"crashed",
+-	"invalid",
+-};
+-
+-/* expose the state of the remote processor via debugfs */
+-static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
+-				size_t count, loff_t *ppos)
+-{
+-	struct rproc *rproc = filp->private_data;
+-	unsigned int state;
+-	char buf[30];
+-	int i;
+-
+-	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
+-
+-	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
+-		      rproc->state);
+-
+-	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
+-}
+-
+-static ssize_t rproc_state_write(struct file *filp, const char __user *userbuf,
+-				 size_t count, loff_t *ppos)
+-{
+-	struct rproc *rproc = filp->private_data;
+-	char buf[10];
+-	int ret;
+-
+-	if (count > sizeof(buf) || count <= 0)
+-		return -EINVAL;
+-
+-	ret = copy_from_user(buf, userbuf, count);
+-	if (ret)
+-		return -EFAULT;
+-
+-	if (buf[count - 1] == '\n')
+-		buf[count - 1] = '\0';
+-
+-	if (!strncmp(buf, "start", count)) {
+-		ret = rproc_boot(rproc);
+-		if (ret) {
+-			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+-			return ret;
+-		}
+-	} else if (!strncmp(buf, "stop", count)) {
+-		rproc_shutdown(rproc);
+-	} else {
+-		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
+-		return -EINVAL;
+-	}
+-
+-	return count;
+-}
+-
+-static const struct file_operations rproc_state_ops = {
+-	.read = rproc_state_read,
+-	.write = rproc_state_write,
+-	.open = simple_open,
+-	.llseek	= generic_file_llseek,
+-};
+-
+ /* expose the name of the remote processor via debugfs */
+ static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
+ 			       size_t count, loff_t *ppos)
+@@ -265,8 +196,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
+ 
+ 	debugfs_create_file("name", 0400, rproc->dbg_dir,
+ 			    rproc, &rproc_name_ops);
+-	debugfs_create_file("state", 0400, rproc->dbg_dir,
+-			    rproc, &rproc_state_ops);
+ 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
+ 			    rproc, &rproc_recovery_ops);
+ }
+-- 
+2.7.4
