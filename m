@@ -1,40 +1,48 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v10 11/11] ARM: multi_v7_defconfig: Enable STi and simple-card drivers.
-Date: Sat,  8 Oct 2016 13:52:33 +0100
-Message-Id: <1475931154-1021-12-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
-References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, broonie@kernel.org
+Return-Path: <javier@osg.samsung.com>
+From: Javier Martinez Canillas <javier@osg.samsung.com>
+Subject: [PATCH 1/3] remoteproc: qcom: q6v5_pil: Fix module autoload
+Date: Tue, 18 Oct 2016 18:24:19 -0300
+Message-Id: <1476825861-7880-2-git-send-email-javier@osg.samsung.com>
+In-Reply-To: <1476825861-7880-1-git-send-email-javier@osg.samsung.com>
+References: <1476825861-7880-1-git-send-email-javier@osg.samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch enables the STi ALSA drivers found on STi platforms
-as well as the simple-card driver which is a dependency to have
-working sound.
+If the driver is built as a module, autoload won't work because the module
+alias information is not filled. So user-space can't match the registered
+device with the corresponding module.
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Cc: arnaud.pouliquen@st.com
-Cc: broonie@kernel.org
+Export the module alias information using the MODULE_DEVICE_TABLE() macro.
+
+Before this patch:
+
+$ modinfo drivers/remoteproc/qcom_q6v5_pil.ko | grep alias
+$
+
+After this patch:
+
+$ modinfo drivers/remoteproc/qcom_q6v5_pil.ko | grep alias
+alias:          of:N*T*Cqcom,q6v5-pilC*
+alias:          of:N*T*Cqcom,q6v5-pil
+
+Signed-off-by: Javier Martinez Canillas <javier@osg.samsung.com>
 ---
- arch/arm/configs/multi_v7_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 46f174e..5d92092 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -644,6 +644,9 @@ CONFIG_SND_SOC_AK4642=m
- CONFIG_SND_SOC_SGTL5000=m
- CONFIG_SND_SOC_SPDIF=m
- CONFIG_SND_SOC_WM8978=m
-+CONFIG_SND_SOC_STI=m
-+CONFIG_SND_SOC_STI_SAS=m
-+CONFIG_SND_SIMPLE_CARD=m
- CONFIG_USB=y
- CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_XHCI_MVEBU=y
+ drivers/remoteproc/qcom_q6v5_pil.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 2e0caaaa766a..b08989b48df7 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -894,6 +894,7 @@ static const struct of_device_id q6v5_of_match[] = {
+ 	{ .compatible = "qcom,q6v5-pil", },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, q6v5_of_match);
+ 
+ static struct platform_driver q6v5_driver = {
+ 	.probe = q6v5_probe,
 -- 
-1.9.1
+2.7.4
