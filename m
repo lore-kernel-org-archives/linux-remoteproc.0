@@ -1,118 +1,90 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v10 04/11] dmaengine: st_fdma: Add STMicroelectronics FDMA DT binding documentation
-Date: Sat,  8 Oct 2016 13:52:26 +0100
-Message-Id: <1475931154-1021-5-git-send-email-peter.griffin@linaro.org>
-In-Reply-To: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
-References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, bjorn.andersson@linaro.org, arnaud.pouliquen@st.com
-Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Ludovic Barre <ludovic.barre@st.com>
+Return-Path: <Matt.Redfearn@imgtec.com>
+Subject: Re: [PATCH v3 0/4] MIPS: Remote processor driver
+References: <1476193356-1350-1-git-send-email-matt.redfearn@imgtec.com>
+ <1a12d041-b49c-3412-c867-9bbe47d040fc@hauke-m.de>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Message-ID: <8eb30f99-c7b9-49e5-7354-c99fee6f437e@imgtec.com>
+Date: Tue, 18 Oct 2016 15:30:46 +0100
+MIME-Version: 1.0
+In-Reply-To: <1a12d041-b49c-3412-c867-9bbe47d040fc@hauke-m.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Hauke Mehrtens <hauke@hauke-m.de>, Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Qais Yousef <qais.yousef@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Jason Cooper <jason@lakedaemon.net>, James Hogan <james.hogan@imgtec.com>, Andrew Morton <akpm@linux-foundation.org>, Marc Zyngier <marc.zyngier@arm.com>, Paul Burton <paul.burton@imgtec.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the DT binding documentation for the FDMA constroller
-found on STi based chipsets from STMicroelectronics.
+Hi Hauke,
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/dma/st_fdma.txt | 87 +++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/st_fdma.txt
 
-diff --git a/Documentation/devicetree/bindings/dma/st_fdma.txt b/Documentation/devicetree/bindings/dma/st_fdma.txt
-new file mode 100644
-index 0000000..495d853
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/st_fdma.txt
-@@ -0,0 +1,87 @@
-+* STMicroelectronics Flexible Direct Memory Access Device Tree bindings
-+
-+The FDMA is a general-purpose direct memory access controller capable of
-+supporting 16 independent DMA channels. It accepts up to 32 DMA requests.
-+The FDMA is based on a Slim processor which requires a firmware.
-+
-+* FDMA Controller
-+
-+Required properties:
-+- compatible	: Should be one of
-+		 - st,stih407-fdma-mpe31-11, "st,slim-rproc";
-+		 - st,stih407-fdma-mpe31-12, "st,slim-rproc";
-+		 - st,stih407-fdma-mpe31-13, "st,slim-rproc";
-+- reg		: Should contain an entry for each name in reg-names
-+- reg-names	: Must contain "slimcore", "dmem", "peripherals", "imem" entries
-+- interrupts	: Should contain one interrupt shared by all channels
-+- dma-channels	: Number of channels supported by the controller
-+- #dma-cells	: Must be <3>. See DMA client section below
-+- clocks	: Must contain an entry for each clock
-+See: Documentation/devicetree/bindings/clock/clock-bindings.txt
-+
-+
-+Example:
-+
-+	fdma0: dma-controller@8e20000 {
-+		compatible = "st,stih407-fdma-mpe31-11", "st,slim-rproc";
-+		reg = <0x8e20000 0x8000>,
-+		      <0x8e30000 0x3000>,
-+		      <0x8e37000 0x1000>,
-+		      <0x8e38000 0x8000>;
-+		reg-names = "slimcore", "dmem", "peripherals", "imem";
-+		clocks = <&clk_s_c0_flexgen CLK_FDMA>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>,
-+			 <&clk_s_c0_flexgen CLK_EXT2F_A9>;
-+		interrupts = <GIC_SPI 5 IRQ_TYPE_NONE>;
-+		dma-channels = <16>;
-+		#dma-cells = <3>;
-+	};
-+
-+* DMA client
-+
-+Required properties:
-+- dmas: Comma separated list of dma channel requests
-+- dma-names: Names of the aforementioned requested channels
-+
-+Each dmas request consists of 4 cells:
-+1. A phandle pointing to the FDMA controller
-+2. The request line number
-+3. A 32bit mask specifying (see include/linux/platform_data/dma-st-fdma.h)
-+ -bit 2-0: Holdoff value, dreq will be masked for
-+	0x0: 0-0.5us
-+	0x1: 0.5-1us
-+	0x2: 1-1.5us
-+ -bit 17: data swap
-+	0x0: disabled
-+	0x1: enabled
-+ -bit 21: Increment Address
-+	0x0: no address increment between transfers
-+	0x1: increment address between transfers
-+ -bit 22: 2 STBus Initiator Coprocessor interface
-+	0x0: high priority port
-+	0x1: low priority port
-+4. transfers type
-+ 0 free running
-+ 1 paced
-+
-+Example:
-+
-+	sti_uni_player2: sti-uni-player@2 {
-+		compatible = "st,sti-uni-player";
-+		status = "disabled";
-+		#sound-dai-cells = <0>;
-+		st,syscfg = <&syscfg_core>;
-+		clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
-+		assigned-clocks = <&clk_s_d0_flexgen CLK_PCM_2>;
-+		assigned-clock-parents = <&clk_s_d0_quadfs 2>;
-+		assigned-clock-rates = <50000000>;
-+		reg = <0x8D82000 0x158>;
-+		interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
-+		dmas = <&fdma0 4 0 1>;
-+		dai-name = "Uni Player #1 (DAC)";
-+		dma-names = "tx";
-+		st,uniperiph-id = <2>;
-+		st,version = <5>;
-+		st,mode = "PCM";
-+	};
--- 
-1.9.1
+On 17/10/16 22:13, Hauke Mehrtens wrote:
+> On 10/11/2016 03:42 PM, Matt Redfearn wrote:
+>> The MIPS remote processor driver allows non-Linux firmware to take
+>> control of and execute on one of the systems VPEs. The CPU must be
+>> offlined from Linux first. A sysfs interface is created which allows
+>> firmware to be loaded and changed at runtime. A full description is
+>> available at [1]. An example firmware that can be used with this driver
+>> is available at [2].
+>>
+>> This is useful to allow running bare metal code, or an RTOS, on one or
+>> more CPUs while allowing Linux to continue running on those remaining.
+>>
+>> The remote processor framework allows for firmwares to provide any
+>> virtio device for communication between the firmware running on the
+>> remote VP and Linux. For example [1] demonstrates a simple firmware
+>> which provides a virtual serial port. Any string sent to the port is
+>> case inverted and returned.
+>>
+>> This is conceptually similar to the VPE loader functionality, but is
+>> more standard as it fits into the remoteproc subsystem.
+>>
+>> The first patches in this series lay the groundwork for the driver
+>> before it is added. The last series deprecates the VPE loader.
+>>
+>> This functionality is supported on:
+>> - MIPS32r2 devices implementing the MIPS MT ASE for multithreading, such
+>>    as interAptiv.
+>> - MIPS32r6 devices implementing VPs, such as I6400.
+>>
+>> Limitations:
+>> - The remoteproc core supports only 32bit ELFs. Therefore it is only
+>>    possible to run 32bit firmware on the remote processor. Also, for
+>>    virtio communication, pointers are passed from the kernel to firmware.
+>>    There can be no mismatch in pointer sizes between the kernel and
+>>    firmware, so this limits the host kernel to 32bit as well.
+>>
+>> The functionality has been tested on the Ci40 board which has a 2 core 2
+>> thread interAptiv.
+>>
+> Does this also work with big firmware binaries, like 2 MB firmware size?
+> It looks like dma_alloc_coherent() is used in rproc_handle_carveout() to
+> allocate the memory which will probably not work after full boot.
+
+In my testing, a 2Mb firmware carveout does work fine on a Creator Ci40 
+with 256Mb RAM. But like you say, using the DMA api will limit the size 
+of the firmware. In our driver's case, we end up setting up wired TLB 
+entries mapping the carveout into the offline CPUs virtual memory, so in 
+principle there is no reason (for our driver) that the memory has to be 
+contiguous since we could map smaller pages. But this is code in the 
+generic remoteproc framework so must work for other processors which 
+could not deal with that.
+
+>
+> Is it possible to configure the cache line in a way that it will not be
+> removed from the cache to avoid high latency loads from main memory?
+> This is only needed for small firmware binaries, but allows even shorter
+> reaction times and better real time behavior.
+
+The firmware running on the offline CPU has full access to the hardware 
+so could do whatever it likes with it's cache lines - it's not something 
+that the remote processor driver ought to do as a matter of course 
+though I don't think.
+
+>
+> In general I am in favor of having this as a standard Linux interface.
+
+Great :-)
+
+Thanks,
+Matt
+
+> Hauke
