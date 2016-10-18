@@ -1,66 +1,114 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 18 Oct 2016 15:03:59 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: Correct resource handling upon boot failure
-Date: Sun,  2 Oct 2016 17:41:29 -0700
-Message-Id: <1475455289-28375-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] remoteproc: Keep local copy of firmware name
+Message-ID: <20161018220359.GA19384@tuxbot>
+References: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
+ <1476719341-11651-2-git-send-email-matt.redfearn@imgtec.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1476719341-11651-2-git-send-email-matt.redfearn@imgtec.com>
+To: Matt Redfearn <matt.redfearn@imgtec.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The freeing of resources will attempt to clear values previously set in
-the cached resource table, so make sure to free the table after we have
-cleaned up the resources.
+On Mon 17 Oct 08:48 PDT 2016, Matt Redfearn wrote:
 
-Fixes: 988d204cdaf6 ("remoteproc: Move handling of cached table to boot/shutdown")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> Storage of the firmware name was inconsistent, either storing a pointer
+> to a name stored with unknown ownership, or a variable length tacked
+> onto the end of the struct proc allocated in rproc_alloc.
+> 
+> In preparation for allowing the firmware of an already allocated struct
+> rproc to be changed, instead always keep a locally maintained copy of
+> the firmware name.
+> 
+> Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 92a1037c1b2e..3da566b0d437 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -847,14 +847,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
- 	if (ret) {
- 		dev_err(dev, "Failed to process resources: %d\n", ret);
--		goto clean_up;
-+		goto clean_up_resources;
- 	}
- 
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
- 	if (ret) {
- 		dev_err(dev, "Failed to load program segments: %d\n", ret);
--		goto clean_up;
-+		goto clean_up_resources;
- 	}
- 
- 	/*
-@@ -875,7 +875,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	ret = rproc->ops->start(rproc);
- 	if (ret) {
- 		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
--		goto clean_up;
-+		goto clean_up_resources;
- 	}
- 
- 	rproc->state = RPROC_RUNNING;
-@@ -884,12 +884,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 
- 	return 0;
- 
-+clean_up_resources:
-+	rproc_resource_cleanup(rproc);
- clean_up:
- 	kfree(rproc->cached_table);
- 	rproc->cached_table = NULL;
- 	rproc->table_ptr = NULL;
- 
--	rproc_resource_cleanup(rproc);
- 	rproc_disable_iommu(rproc);
- 	return ret;
- }
--- 
-2.5.0
+Applied, thanks
+
+> ---
+> 
+> Changes in v2:
+> Use a kmalloc'd copy of the firmware name instead of having a fixed
+> length array in struct rproc
+> 
+>  drivers/remoteproc/remoteproc_core.c | 31 ++++++++++++++++---------------
+>  include/linux/remoteproc.h           |  2 +-
+>  2 files changed, 17 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index c6bfb3496684..ccc2a73e94dd 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1273,6 +1273,7 @@ static void rproc_type_release(struct device *dev)
+>  	if (rproc->index >= 0)
+>  		ida_simple_remove(&rproc_dev_index, rproc->index);
+>  
+> +	kfree(rproc->firmware);
+>  	kfree(rproc);
+>  }
+>  
+> @@ -1310,31 +1311,31 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  {
+>  	struct rproc *rproc;
+>  	char *p, *template = "rproc-%s-fw";
+> -	int name_len = 0;
+> +	int name_len;
+>  
+>  	if (!dev || !name || !ops)
+>  		return NULL;
+>  
+> -	if (!firmware)
+> +	if (!firmware) {
+>  		/*
+> -		 * Make room for default firmware name (minus %s plus '\0').
+>  		 * If the caller didn't pass in a firmware name then
+> -		 * construct a default name.  We're already glomming 'len'
+> -		 * bytes onto the end of the struct rproc allocation, so do
+> -		 * a few more for the default firmware name (but only if
+> -		 * the caller doesn't pass one).
+> +		 * construct a default name.
+>  		 */
+>  		name_len = strlen(name) + strlen(template) - 2 + 1;
+> -
+> -	rproc = kzalloc(sizeof(*rproc) + len + name_len, GFP_KERNEL);
+> -	if (!rproc)
+> -		return NULL;
+> -
+> -	if (!firmware) {
+> -		p = (char *)rproc + sizeof(struct rproc) + len;
+> +		p = kmalloc(name_len, GFP_KERNEL);
+> +		if (!p)
+> +			return NULL;
+>  		snprintf(p, name_len, template, name);
+>  	} else {
+> -		p = (char *)firmware;
+> +		p = kstrdup(firmware, GFP_KERNEL);
+> +		if (!p)
+> +			return NULL;
+> +	}
+> +
+> +	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
+> +	if (!rproc) {
+> +		kfree(p);
+> +		return NULL;
+>  	}
+>  
+>  	rproc->firmware = p;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 930023b7c825..940e4cf2ac48 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -415,7 +415,7 @@ struct rproc {
+>  	struct list_head node;
+>  	struct iommu_domain *domain;
+>  	const char *name;
+> -	const char *firmware;
+> +	char *firmware;
+>  	void *priv;
+>  	const struct rproc_ops *ops;
+>  	struct device dev;
+> -- 
+> 2.7.4
+> 
