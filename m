@@ -1,92 +1,42 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 03/11] remoteproc: wcnss: Bond SMD edge to remoteproc
-Date: Wed, 19 Oct 2016 19:40:04 -0700
-Message-Id: <1476931212-1806-4-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-arm-msm@vger.kernel.org
+Return-Path: <vinod.koul@intel.com>
+Date: Tue, 18 Oct 2016 20:13:06 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [RESEND PATCH v10 00/11] Add support for FDMA DMA controller and
+ slim core rproc found on STi chipsets
+Message-ID: <20161018144306.GX2467@localhost>
+References: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Allow the wcnss smd edge to be described as a child of the wcnss
-remoteproc node and make the edge life cycle follow the running state of
-the remoteproc.
+On Tue, Oct 18, 2016 at 10:39:05AM +0100, Peter Griffin wrote:
+> Hi Vinod and Bjorn,
+> 
+> This patchset adds support for the Flexible Direct Memory Access (FDMA) core
+> found on STi chipsets from STMicroelectronics. The FDMA is a slim core CPU
+> with a dedicated firmware. It is a general purpose DMA controller supporting
+> 16 independent channels and data can be moved from memory to memory or between
+> memory and paced latency critical real time targets.
+> 
+> [..]
+> 
+> V10 series updates remoteproc kconfig subsystem to use 'depends on' rather
+> than select for the remoteproc core. Remoteproc client drivers now need to
+> 'depends on' for the core part.
+> 
+> This avoids the Kconfig recursive dependency errors and reliance on the DRM
+> patch included with the v9 series. Patches are also included for enabling the
+> remoteproc core in the multi_v7 defconfig. All patches for DRM subsystem have
+> been removed.
+> 
+> Note there is no longer a depedency with the DRM_VIRTIO_GPU driver in this series,
+> only remoteproc and dmaengine subsystems.
 
-This bond is necessary to clean up the smd state when the remote
-processor is suddenly removed, and in some cases even when it shut down
-in a controlled fasion.
+That is a better approach and I have applied this now...
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/qcom_wcnss.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index f5cedeaafba1..0c47fa286794 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -30,6 +30,7 @@
- #include <linux/remoteproc.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
-+#include <linux/rpmsg/qcom_smd.h>
- 
- #include "qcom_mdt_loader.h"
- #include "remoteproc_internal.h"
-@@ -94,6 +95,10 @@ struct qcom_wcnss {
- 	phys_addr_t mem_reloc;
- 	void *mem_region;
- 	size_t mem_size;
-+
-+	struct device_node *smd_node;
-+	struct qcom_smd_edge *smd_edge;
-+	struct rproc_subdev smd_subdev;
- };
- 
- static const struct wcnss_data riva_data = {
-@@ -396,6 +401,23 @@ static irqreturn_t wcnss_stop_ack_interrupt(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
-+static int wcnss_smd_probe(struct rproc_subdev *subdev)
-+{
-+	struct qcom_wcnss *wcnss = container_of(subdev, struct qcom_wcnss, smd_subdev);
-+
-+	wcnss->smd_edge = qcom_smd_register_edge(wcnss->dev, wcnss->smd_node);
-+
-+	return IS_ERR(wcnss->smd_edge) ? PTR_ERR(wcnss->smd_edge) : 0;
-+}
-+
-+static void wcnss_smd_remove(struct rproc_subdev *subdev)
-+{
-+	struct qcom_wcnss *wcnss = container_of(subdev, struct qcom_wcnss, smd_subdev);
-+
-+	qcom_smd_unregister_edge(wcnss->smd_edge);
-+	wcnss->smd_edge = NULL;
-+}
-+
- static int wcnss_init_regulators(struct qcom_wcnss *wcnss,
- 				 const struct wcnss_vreg_info *info,
- 				 int num_vregs)
-@@ -578,6 +600,10 @@ static int wcnss_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	wcnss->smd_node = of_get_child_by_name(pdev->dev.of_node, "smd-edge");
-+	if (wcnss->smd_node)
-+		rproc_add_subdev(rproc, &wcnss->smd_subdev, wcnss_smd_probe, wcnss_smd_remove);
-+
- 	ret = rproc_add(rproc);
- 	if (ret)
- 		goto free_rproc;
-@@ -596,6 +622,7 @@ static int wcnss_remove(struct platform_device *pdev)
- 
- 	of_platform_depopulate(&pdev->dev);
- 
-+	of_node_put(wcnss->smd_node);
- 	qcom_smem_state_put(wcnss->state);
- 	rproc_del(wcnss->rproc);
- 	rproc_free(wcnss->rproc);
 -- 
-2.5.0
+~Vinod
