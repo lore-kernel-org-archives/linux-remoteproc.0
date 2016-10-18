@@ -1,30 +1,43 @@
-Return-Path: <javier@osg.samsung.com>
-From: Javier Martinez Canillas <javier@osg.samsung.com>
-Subject: [PATCH 0/3] remoteproc: Fix module autoload for qcom platform drivers
-Date: Tue, 18 Oct 2016 18:24:18 -0300
-Message-Id: <1476825861-7880-1-git-send-email-javier@osg.samsung.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier@osg.samsung.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v10 02/11] MAINTAINERS: Add st slim core rproc driver to STi section.
+Date: Tue, 18 Oct 2016 10:39:07 +0100
+Message-Id: <1476783556-2501-3-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
+References: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello,
+This patch adds the slim core rproc driver to the STi section
+of the MAINTAINERS file.
 
-I noticed that module autoload won't be working in some of the qcom
-remoteproc drivers. This patch series contains the fixes for these.
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Javier
-
-
-Javier Martinez Canillas (3):
-  remoteproc: qcom: q6v5_pil: Fix module autoload
-  remoteproc: qcom: wcnss: Fix module autoload
-  remoteproc: qcom: wcnss_iris: Fix module autoload
-
- drivers/remoteproc/qcom_q6v5_pil.c   | 1 +
- drivers/remoteproc/qcom_wcnss.c      | 1 +
- drivers/remoteproc/qcom_wcnss_iris.c | 1 +
- 3 files changed, 3 insertions(+)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1cd38a7..78b7f8b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1784,6 +1784,7 @@ F:	drivers/phy/phy-stih407-usb.c
+ F:	drivers/phy/phy-stih41x-usb.c
+ F:	drivers/pinctrl/pinctrl-st.c
+ F:	drivers/remoteproc/st_remoteproc.c
++F:	drivers/remoteproc/st_slim_rproc.c
+ F:	drivers/reset/sti/
+ F:	drivers/rtc/rtc-st-lpc.c
+ F:	drivers/tty/serial/st-asc.c
+@@ -1792,6 +1793,7 @@ F:	drivers/usb/host/ehci-st.c
+ F:	drivers/usb/host/ohci-st.c
+ F:	drivers/watchdog/st_lpc_wdt.c
+ F:	drivers/ata/ahci_st.c
++F:	include/linux/remoteproc/st_slim_rproc.h
+ 
+ ARM/STM32 ARCHITECTURE
+ M:	Maxime Coquelin <mcoquelin.stm32@gmail.com>
 -- 
-2.7.4
+1.9.1
