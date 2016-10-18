@@ -1,62 +1,122 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 09/11] remoteproc: Update max_notifyid as we allocate vrings
-Date: Wed, 19 Oct 2016 19:40:10 -0700
-Message-Id: <1476931212-1806-10-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <peter.griffin@linaro.org>
+Return-Path: <peter.griffin@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v10 03/11] remoteproc: Update Kconfig setup to 'depends on REMOTEPROC'
+Date: Tue, 18 Oct 2016 10:39:08 +0100
+Message-Id: <1476783556-2501-4-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
+References: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Vrings are now allocated as we parse the resource table, before we
-boot the rproc or register any virtio devices, so it's safe to bump
-max_notifyid as part of this process.
+Make REMOTEPROC core a selectable kconfig option, and update
+remoteproc client drivers to 'depends on' the core. This avoids
+some nasty Kconfig recursive dependency issues. Also when using
+menuconfig client drivers will be hidden until the core has been
+enabled.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Documentation/kbuild/kconfig-language.txt:
+
+  Note:
+        select should be used with care. select will force
+        a symbol to a value without visiting the dependencies.
+        By abusing select you are able to select a symbol FOO even
+        if FOO depends on BAR that is not set.
+        In general use select only for non-visible symbols
+        (no prompts anywhere) and for symbols with no dependencies.
+        That will limit the usefulness but on the other hand avoid
+        the illegal configurations all over.
+
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ drivers/remoteproc/Kconfig | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c242ca016496..57f12421fdd2 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -236,6 +236,10 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	}
- 	notifyid = ret;
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 9270c8e..14d5d2d 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -1,20 +1,21 @@
+ menu "Remoteproc drivers"
  
-+	/* Potentially bump max_notifyid */
-+	if (notifyid > rproc->max_notifyid)
-+		rproc->max_notifyid = notifyid;
+-# REMOTEPROC gets selected by whoever wants it
+ config REMOTEPROC
+-	tristate
++	tristate "Support for Remote Processor subsystem"
+ 	depends on HAS_DMA
+ 	select CRC32
+ 	select FW_LOADER
+ 	select VIRTIO
+ 	select VIRTUALIZATION
+ 
++if REMOTEPROC
 +
- 	dev_dbg(dev, "vring%d: va %p dma %pad size 0x%x idr %d\n",
- 		i, va, &dma, size, notifyid);
+ config OMAP_REMOTEPROC
+ 	tristate "OMAP remoteproc support"
+ 	depends on HAS_DMA
+ 	depends on ARCH_OMAP4 || SOC_OMAP5
+ 	depends on OMAP_IOMMU
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	select MAILBOX
+ 	select OMAP2PLUS_MBOX
+ 	select RPMSG_VIRTIO
+@@ -34,7 +35,7 @@ config OMAP_REMOTEPROC
+ config STE_MODEM_RPROC
+ 	tristate "STE-Modem remoteproc support"
+ 	depends on HAS_DMA
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	default n
+ 	help
+ 	  Say y or m here to support STE-Modem shared memory driver.
+@@ -44,7 +45,7 @@ config STE_MODEM_RPROC
+ config WKUP_M3_RPROC
+ 	tristate "AMx3xx Wakeup M3 remoteproc support"
+ 	depends on SOC_AM33XX || SOC_AM43XX
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	help
+ 	  Say y here to support Wakeup M3 remote processor on TI AM33xx
+ 	  and AM43xx family of SoCs.
+@@ -57,6 +58,7 @@ config WKUP_M3_RPROC
+ config DA8XX_REMOTEPROC
+ 	tristate "DA8xx/OMAP-L13x remoteproc support"
+ 	depends on ARCH_DAVINCI_DA8XX
++	depends on REMOTEPROC
+ 	select CMA if MMU
+ 	select RPMSG_VIRTIO
+ 	help
+@@ -83,9 +85,9 @@ config QCOM_Q6V5_PIL
+ 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
+ 	depends on OF && ARCH_QCOM
+ 	depends on QCOM_SMEM
++	depends on REMOTEPROC
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
+-	select REMOTEPROC
+ 	help
+ 	  Say y here to support the Qualcomm Peripherial Image Loader for the
+ 	  Hexagon V5 based remote processors.
+@@ -109,7 +111,7 @@ config QCOM_WCNSS_PIL
+ config ST_REMOTEPROC
+ 	tristate "ST remoteproc support"
+ 	depends on ARCH_STI
+-	select REMOTEPROC
++	depends on REMOTEPROC
+ 	help
+ 	  Say y here to support ST's adjunct processors via the remote
+ 	  processor framework.
+@@ -117,6 +119,8 @@ config ST_REMOTEPROC
  
-@@ -719,15 +723,6 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	return ret;
- }
+ config ST_SLIM_REMOTEPROC
+ 	tristate
+-	select REMOTEPROC
++	depends on REMOTEPROC
++
++endif # REMOTEPROC
  
--static int rproc_count_vrings(struct rproc *rproc, struct fw_rsc_vdev *rsc,
--			      int offset, int avail)
--{
--	/* Summarize the number of notification IDs */
--	rproc->max_notifyid += rsc->num_of_vrings;
--
--	return 0;
--}
--
- /*
-  * A lookup table for resource handlers. The indices are defined in
-  * enum fw_resource_type.
-@@ -736,7 +731,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
- 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
- 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
--	[RSC_VDEV] = (rproc_handle_resource_t)rproc_count_vrings,
-+	[RSC_VDEV] = NULL,
- };
- 
- static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
+ endmenu
 -- 
-2.5.0
+1.9.1
