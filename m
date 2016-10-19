@@ -1,286 +1,123 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH 3/4] remoteproc: Add a sysfs interface for firmware and state
-Date: Tue, 11 Oct 2016 14:39:44 +0100
-Message-ID: <1476193185-32107-4-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] rpmsg: Handle invalid parameters in public API
+Date: Tue, 18 Oct 2016 17:23:44 -0700
+Message-Id: <1476836624-342-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds a sysfs interface to rproc allowing the firmware name
-and processor state to be changed dynamically.
+There are two cases of possible uninitialized pointer usage in the API,
+either the parameters themselves are invalid or we're trying to jump to
+functions not required to be implemented by all backends.
 
-State was previously available in debugfs, and is replicated here. The
-firmware file allows retrieval of the running firmware name, and a new
-one to be specified at run time, so long as the remote processor has
-been stopped.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
-
+Suggested-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+ drivers/rpmsg/rpmsg_core.c | 39 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
- Documentation/ABI/testing/sysfs-class-remoteproc |  50 +++++++++
- drivers/remoteproc/Makefile                      |   1 +
- drivers/remoteproc/remoteproc_core.c             |   3 +
- drivers/remoteproc/remoteproc_internal.h         |   5 +
- drivers/remoteproc/remoteproc_sysfs.c            | 132 +++++++++++++++++++++++
- 5 files changed, 191 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-remoteproc
- create mode 100644 drivers/remoteproc/remoteproc_sysfs.c
-
-diff --git a/Documentation/ABI/testing/sysfs-class-remoteproc b/Documentation/ABI/testing/sysfs-class-remoteproc
-new file mode 100644
-index 000000000000..d188afebc8ba
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-remoteproc
-@@ -0,0 +1,50 @@
-+What:		/sys/class/remoteproc/.../firmware
-+Date:		October 2016
-+Contact:	Matt Redfearn <matt.redfearn@imgtec.com>
-+Description:	Remote processor firmware
-+
-+		Reports the name of the firmware currently loaded to the
-+		remote processor.
-+
-+		To change the running firmware, ensure the remote processor is
-+		stopped (using /sys/class/remoteproc/.../state) and write a new filename.
-+
-+What:		/sys/class/remoteproc/.../state
-+Date:		October 2016
-+Contact:	Matt Redfearn <matt.redfearn@imgtec.com>
-+Description:	Remote processor state
-+
-+		Reports the state of the remote processor, which will be one of:
-+
-+		"offline"
-+		"suspended"
-+		"running"
-+		"crashed"
-+		"invalid"
-+
-+		"offline" means the remote processor is powered off.
-+
-+		"suspended" means that the remote processor is suspended and
-+		must be woken to receive messages.
-+
-+		"running" is the normal state of an available remote processor
-+
-+		"crashed" indicates that a problem/crash has been detected on
-+		the remote processor.
-+
-+		"invalid" is returned if the remote processor is in an
-+		unknown state.
-+
-+		Writing this file controls the state of the remote processor.
-+		The following states can be written:
-+
-+		"start"
-+		"stop"
-+
-+		Writing "start" will attempt to start the processor running the
-+		firmware indicated by, or written to,
-+		/sys/class/remoteproc/.../firmware. The remote processor should
-+		transition to "running" state.
-+
-+		Writing "stop" will attempt to halt the remote processor and
-+		return it to the "offline" state.
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 92d3758bd15c..666258bd80aa 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -5,6 +5,7 @@
- obj-$(CONFIG_REMOTEPROC)		+= remoteproc.o
- remoteproc-y				:= remoteproc_core.o
- remoteproc-y				+= remoteproc_debugfs.o
-+remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
- remoteproc-y				+= remoteproc_elf_loader.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 2152b484f314..642c5b58fec5 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1455,6 +1455,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	device_initialize(&rproc->dev);
- 	rproc->dev.parent = dev;
- 	rproc->dev.type = &rproc_type;
-+	rproc->dev.class = &rproc_class;
- 
- 	/* Assign a unique device index and name */
- 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
-@@ -1580,6 +1581,7 @@ EXPORT_SYMBOL(rproc_report_crash);
- 
- static int __init remoteproc_init(void)
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 7561941ba413..a79cb5a9e5f2 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -71,6 +71,9 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+ 					rpmsg_rx_cb_t cb, void *priv,
+ 					struct rpmsg_channel_info chinfo)
  {
-+	rproc_init_sysfs();
- 	rproc_init_debugfs();
- 
- 	return 0;
-@@ -1591,6 +1593,7 @@ static void __exit remoteproc_exit(void)
- 	ida_destroy(&rproc_dev_index);
- 
- 	rproc_exit_debugfs();
-+	rproc_exit_sysfs();
++	if (WARN_ON(!rpdev))
++		return ERR_PTR(-EINVAL);
++
+ 	return rpdev->ops->create_ept(rpdev, cb, priv, chinfo);
  }
- module_exit(remoteproc_exit);
+ EXPORT_SYMBOL(rpmsg_create_ept);
+@@ -80,11 +83,13 @@ EXPORT_SYMBOL(rpmsg_create_ept);
+  * @ept: endpoing to destroy
+  *
+  * Should be used by drivers to destroy an rpmsg endpoint previously
+- * created with rpmsg_create_ept().
++ * created with rpmsg_create_ept(). As with other types of "free" NULL
++ * is a valid parameter.
+  */
+ void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+ {
+-	ept->ops->destroy_ept(ept);
++	if (ept)
++		ept->ops->destroy_ept(ept);
+ }
+ EXPORT_SYMBOL(rpmsg_destroy_ept);
  
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 837faf2677a6..2beb86ddfacc 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -64,6 +64,11 @@ void rproc_create_debug_dir(struct rproc *rproc);
- void rproc_init_debugfs(void);
- void rproc_exit_debugfs(void);
- 
-+/* from remoteproc_sysfs.c */
-+extern struct class rproc_class;
-+int rproc_init_sysfs(void);
-+void rproc_exit_sysfs(void);
+@@ -108,6 +113,11 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
+  */
+ int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+ {
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->send)
++		return -ENXIO;
 +
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
- 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-new file mode 100644
-index 000000000000..892599863ca6
---- /dev/null
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -0,0 +1,132 @@
-+/*
-+ * Remote Processor Framework
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+ 	return ept->ops->send(ept, data, len);
+ }
+ EXPORT_SYMBOL(rpmsg_send);
+@@ -132,6 +142,11 @@ EXPORT_SYMBOL(rpmsg_send);
+  */
+ int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+ {
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->sendto)
++		return -ENXIO;
 +
-+#include <linux/remoteproc.h>
+ 	return ept->ops->sendto(ept, data, len, dst);
+ }
+ EXPORT_SYMBOL(rpmsg_sendto);
+@@ -159,6 +174,11 @@ EXPORT_SYMBOL(rpmsg_sendto);
+ int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ 			  void *data, int len)
+ {
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->send_offchannel)
++		return -ENXIO;
 +
-+#include "remoteproc_internal.h"
+ 	return ept->ops->send_offchannel(ept, src, dst, data, len);
+ }
+ EXPORT_SYMBOL(rpmsg_send_offchannel);
+@@ -182,6 +202,11 @@ EXPORT_SYMBOL(rpmsg_send_offchannel);
+  */
+ int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ {
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->trysend)
++		return -ENXIO;
 +
-+#define to_rproc(d) container_of(d, struct rproc, dev)
+ 	return ept->ops->trysend(ept, data, len);
+ }
+ EXPORT_SYMBOL(rpmsg_trysend);
+@@ -205,6 +230,11 @@ EXPORT_SYMBOL(rpmsg_trysend);
+  */
+ int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
+ {
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->trysendto)
++		return -ENXIO;
 +
-+/* Expose the loaded / running firmware name via sysfs */
-+static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
-+{
-+	struct rproc *rproc = to_rproc(dev);
+ 	return ept->ops->trysendto(ept, data, len, dst);
+ }
+ EXPORT_SYMBOL(rpmsg_trysendto);
+@@ -231,6 +261,11 @@ EXPORT_SYMBOL(rpmsg_trysendto);
+ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ 			     void *data, int len)
+ {
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->trysend_offchannel)
++		return -ENXIO;
 +
-+	if (rproc->firmware)
-+		return sprintf(buf, "%s\n", rproc->firmware);
-+	else
-+		return sprintf(buf, "unknown");
-+}
-+
-+/* Change firmware name via sysfs */
-+static ssize_t firmware_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct rproc *rproc = to_rproc(dev);
-+	int err;
-+
-+	err = rproc_change_firmware(rproc, buf);
-+	return err ? err : count;
-+}
-+static DEVICE_ATTR_RW(firmware);
-+
-+
-+/*
-+ * A state-to-string lookup table, for exposing a human readable state
-+ * via sysfs. Always keep in sync with enum rproc_state
-+ */
-+static const char * const rproc_state_string[] = {
-+	"offline",
-+	"suspended",
-+	"running",
-+	"crashed",
-+	"invalid",
-+};
-+
-+/* Expose the state of the remote processor via sysfs */
-+static ssize_t state_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
-+{
-+	struct rproc *rproc = to_rproc(dev);
-+	unsigned int state;
-+
-+	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
-+	return scnprintf(buf, 30, "%.28s (%d)\n",
-+			 rproc_state_string[state], rproc->state);
-+}
-+
-+/* Change remote processor state via sysfs */
-+static ssize_t state_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct rproc *rproc = to_rproc(dev);
-+	int ret = 0;
-+	int len = count;
-+
-+	if (buf[len - 1] == '\n')
-+		len--;
-+
-+	if (!strncmp(buf, "start", len)) {
-+		if (rproc->state == RPROC_RUNNING)
-+			return -EBUSY;
-+
-+		ret = rproc_boot(rproc);
-+		if (ret)
-+			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
-+	} else if (!strncmp(buf, "stop", len)) {
-+		rproc_shutdown(rproc);
-+	} else {
-+		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
-+		ret = -EINVAL;
-+	}
-+	return ret ? ret : count;
-+}
-+static DEVICE_ATTR_RW(state);
-+
-+static const struct attribute *rproc_attrs[] = {
-+	&dev_attr_firmware.attr,
-+	&dev_attr_state.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group rproc_devgroup = {
-+	.attrs = rproc_attrs
-+};
-+
-+static const struct attribute_group *rproc_devgroups[] = {
-+	&rproc_devgroup,
-+	NULL
-+};
-+
-+struct class rproc_class = {
-+	.name		= "remoteproc",
-+	.dev_groups	= rproc_devgroups,
-+};
-+
-+int __init rproc_init_sysfs(void)
-+{
-+	/* create remoteproc device class for sysfs */
-+	int err = class_register(&rproc_class);
-+
-+	if (err)
-+		pr_err("remoteproc: unable to register class\n");
-+	return err;
-+}
-+
-+void __exit rproc_exit_sysfs(void)
-+{
-+	class_unregister(&rproc_class);
-+}
+ 	return ept->ops->trysend_offchannel(ept, src, dst, data, len);
+ }
+ EXPORT_SYMBOL(rpmsg_trysend_offchannel);
 -- 
-2.7.4
+2.5.0
