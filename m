@@ -1,116 +1,193 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH 2/4] remoteproc: Introduce rproc_change_firmware
-Date: Tue, 11 Oct 2016 14:39:43 +0100
-Message-ID: <1476193185-32107-3-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1476193185-32107-1-git-send-email-matt.redfearn@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 01/11] remoteproc: Introduce subdevices
+Date: Wed, 19 Oct 2016 19:40:02 -0700
+Message-Id: <1476931212-1806-2-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-It is often desirable to be able to change the running firmware on a
-remote processor dynamically. This used to require a complete
-destruction and readdition of the struct rproc, but now that the
-firmware name is fixed length, it can be updated freely.
+A subdevice is an abstract entity that can be used to tie actions to the
+booting and shutting down of a remote processor. The subdevice object is
+expected to be embedded in concrete implementations, allowing for a
+variety of use cases to be implemented.
 
-So long as the remote processor is in RPROC_OFFLINE state,
-rproc_change_firmware() will free resources from the previous firmware
-and request a new one be loaded.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-
- drivers/remoteproc/remoteproc_core.c     | 62 ++++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_internal.h |  1 +
- 2 files changed, 63 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 72 ++++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           | 22 +++++++++++
+ 2 files changed, 94 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 48cd9d5afb69..2152b484f314 100644
+index c6bfb3496684..4309996f4335 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1345,6 +1345,68 @@ static int rproc_set_firmware_name(struct rproc *rproc, const char *firmware)
- 	return 0;
+@@ -736,6 +736,34 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
+ 	return ret;
  }
  
-+/**
-+ * rproc_change_firmware() - change the loaded firmware on a remote processor
-+ * @rproc: remote processor
-+ * @firmware: name of firmware file to load, can be NULL
-+ *
-+ * Attempts to change the firmware loaded for a remote processor. The processor
-+ * must be in RPROC_OFFLINE state.
-+ *
-+ * Any allocated resources for the exiting firmware are released, the new
-+ * firmware name is set and then any virtio devices probed.
-+ *
-+ * Returns 0 on success and an appropriate error code otherwise.
-+ *
-+ * Note: this function initiates an asynchronous firmware loading
-+ * context, which will look for virtio devices supported by the rproc's
-+ * firmware.
-+ *
-+ * If found, those virtio devices will be created and added, so as a result
-+ * of registering this remote processor, additional virtio drivers might be
-+ * probed.
-+ */
-+int rproc_change_firmware(struct rproc *rproc, const char *firmware)
++static int rproc_probe_subdevices(struct rproc *rproc)
 +{
-+	struct device *dev = &rproc->dev;
-+	struct rproc_vdev *rvdev, *rvtmp;
++	struct rproc_subdev *subdev;
 +	int ret;
 +
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret) {
-+		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-+		return -EINVAL;
++	list_for_each_entry(subdev, &rproc->subdevs, node) {
++		ret = subdev->probe(subdev);
++		if (ret)
++			goto unroll_registration;
 +	}
 +
-+	if (rproc->state != RPROC_OFFLINE) {
-+		dev_err(dev, "can't change firmware while running\n");
-+		ret = -EBUSY;
-+		goto out;
-+	}
++	return 0;
 +
-+	/* Wait for any pending firmware load */
-+	wait_for_completion(&rproc->firmware_loading_complete);
++unroll_registration:
++	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
++		subdev->remove(subdev);
 +
-+	/* clean up all acquired resources */
-+	rproc_resource_cleanup(rproc);
-+
-+	/* clean up remote vdev entries */
-+	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
-+		rproc_remove_virtio_dev(rvdev);
-+
-+	/* Free the copy of the resource table */
-+	kfree(rproc->cached_table);
-+
-+	ret = rproc_set_firmware_name(rproc, firmware);
-+	if (ret)
-+		goto out;
-+
-+	ret = rproc_add_virtio_devices(rproc);
-+out:
-+	mutex_unlock(&rproc->lock);
 +	return ret;
 +}
 +
- static struct device_type rproc_type = {
- 	.name		= "remoteproc",
- 	.release	= rproc_type_release,
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 57e1de59bec8..837faf2677a6 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -49,6 +49,7 @@ struct rproc_fw_ops {
- void rproc_release(struct kref *kref);
- irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
- int rproc_boot_nowait(struct rproc *rproc);
-+int rproc_change_firmware(struct rproc *rproc, const char *firmware);
++static void rproc_remove_subdevices(struct rproc *rproc)
++{
++	struct rproc_subdev *subdev;
++
++	list_for_each_entry(subdev, &rproc->subdevs, node)
++		subdev->remove(subdev);
++}
++
+ /**
+  * rproc_resource_cleanup() - clean up and free all acquired resources
+  * @rproc: rproc handle
+@@ -878,12 +906,22 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up_resources;
+ 	}
  
- /* from remoteproc_virtio.c */
- int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id);
++	/* probe any subdevices for the remote processor */
++	ret = rproc_probe_subdevices(rproc);
++	if (ret) {
++		dev_err(dev, "failed to probe subdevices for %s: %d\n",
++			rproc->name, ret);
++		goto stop_rproc;
++	}
++
+ 	rproc->state = RPROC_RUNNING;
+ 
+ 	dev_info(dev, "remote processor %s is now up\n", rproc->name);
+ 
+ 	return 0;
+ 
++stop_rproc:
++	rproc->ops->stop(rproc);
+ clean_up_resources:
+ 	rproc_resource_cleanup(rproc);
+ clean_up:
+@@ -1121,6 +1159,9 @@ void rproc_shutdown(struct rproc *rproc)
+ 	if (!atomic_dec_and_test(&rproc->power))
+ 		goto out;
+ 
++	/* remove any subdevices for the remote processor */
++	rproc_remove_subdevices(rproc);
++
+ 	/* power off the remote processor */
+ 	ret = rproc->ops->stop(rproc);
+ 	if (ret) {
+@@ -1370,6 +1411,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->mappings);
+ 	INIT_LIST_HEAD(&rproc->traces);
+ 	INIT_LIST_HEAD(&rproc->rvdevs);
++	INIT_LIST_HEAD(&rproc->subdevs);
+ 
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+ 	init_completion(&rproc->crash_comp);
+@@ -1457,6 +1499,36 @@ int rproc_del(struct rproc *rproc)
+ EXPORT_SYMBOL(rproc_del);
+ 
+ /**
++ * rproc_add_subdev() - add a subdevice to a remoteproc
++ * @rproc: rproc handle to add the subdevice to
++ * @subdev: subdev handle to register
++ * @probe: function to call when the rproc boots
++ * @remove: function to call when the rproc shuts down
++ */
++void rproc_add_subdev(struct rproc *rproc,
++		      struct rproc_subdev *subdev,
++		      int (*probe)(struct rproc_subdev *subdev),
++		      void (*remove)(struct rproc_subdev *subdev))
++{
++	subdev->probe = probe;
++	subdev->remove = remove;
++
++	list_add_tail(&subdev->node, &rproc->subdevs);
++}
++EXPORT_SYMBOL(rproc_add_subdev);
++
++/**
++ * rproc_remove_subdev() - remove a subdevice from a remoteproc
++ * @rproc: rproc handle to remove the subdevice from
++ * @subdev: subdev handle, previously registered with rproc_add_subdev()
++ */
++void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev)
++{
++	list_del(&subdev->node);
++}
++EXPORT_SYMBOL(rproc_remove_subdev);
++
++/**
+  * rproc_report_crash() - rproc crash reporter function
+  * @rproc: remote processor
+  * @type: crash type
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 930023b7c825..a05f4569a2a0 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -400,6 +400,7 @@ enum rproc_crash_type {
+  * @firmware_loading_complete: marks e/o asynchronous firmware loading
+  * @bootaddr: address of first instruction to boot rproc with (optional)
+  * @rvdevs: list of remote virtio devices
++ * @subdevs: list of subdevices, to following the running state
+  * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+  * @index: index of this rproc device
+  * @crash_handler: workqueue for handling a crash
+@@ -431,6 +432,7 @@ struct rproc {
+ 	struct completion firmware_loading_complete;
+ 	u32 bootaddr;
+ 	struct list_head rvdevs;
++	struct list_head subdevs;
+ 	struct idr notifyids;
+ 	int index;
+ 	struct work_struct crash_handler;
+@@ -444,6 +446,19 @@ struct rproc {
+ 	bool auto_boot;
+ };
+ 
++/**
++ * struct rproc_subdev - subdevice tied to a remoteproc
++ * @node: list node related to the rproc subdevs list
++ * @probe: probe function, called as the rproc is started
++ * @remove: remove function, called as the rproc is stopped
++ */
++struct rproc_subdev {
++	struct list_head node;
++
++	int (*probe)(struct rproc_subdev *subdev);
++	void (*remove)(struct rproc_subdev *subdev);
++};
++
+ /* we currently support only two vrings per rvdev */
+ 
+ #define RVDEV_NUM_VRINGS 2
+@@ -511,4 +526,11 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+ 	return rvdev->rproc;
+ }
+ 
++void rproc_add_subdev(struct rproc *rproc,
++		      struct rproc_subdev *subdev,
++		      int (*probe)(struct rproc_subdev *subdev),
++		      void (*remove)(struct rproc_subdev *subdev));
++
++void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
++
+ #endif /* REMOTEPROC_H */
 -- 
-2.7.4
+2.5.0
