@@ -1,313 +1,75 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 3/4] remoteproc: Add a sysfs interface for firmware and state
-Date: Mon, 17 Oct 2016 16:49:00 +0100
-Message-ID: <1476719341-11651-4-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 02/11] rpmsg: smd: Expose edge registration functions
+Date: Wed, 19 Oct 2016 19:40:03 -0700
+Message-Id: <1476931212-1806-3-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds a sysfs interface to rproc allowing the firmware name
-and processor state to be changed dynamically.
+The edge registration functions is to be used from a remoteproc driver
+to register and unregister an edge as the remote processor comes and
+goes.
 
-State was previously available in debugfs, and is replicated here. The
-firmware file allows retrieval of the running firmware name, and a new
-one to be specified at run time, so long as the remote processor has
-been stopped.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
-
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+ drivers/rpmsg/qcom_smd.c       |  1 +
+ include/linux/rpmsg/qcom_smd.h | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 include/linux/rpmsg/qcom_smd.h
 
-Changes in v2:
-Have firmware_store perform the necessary steps inline.
-Use sysfs_streq when dealing with writes to sysfs files
-
- Documentation/ABI/testing/sysfs-class-remoteproc |  50 ++++++++
- drivers/remoteproc/Makefile                      |   1 +
- drivers/remoteproc/remoteproc_core.c             |   3 +
- drivers/remoteproc/remoteproc_internal.h         |   5 +
- drivers/remoteproc/remoteproc_sysfs.c            | 155 +++++++++++++++++++++++
- 5 files changed, 214 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-remoteproc
- create mode 100644 drivers/remoteproc/remoteproc_sysfs.c
-
-diff --git a/Documentation/ABI/testing/sysfs-class-remoteproc b/Documentation/ABI/testing/sysfs-class-remoteproc
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 952338a6296a..aded7352f089 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -25,6 +25,7 @@
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/wait.h>
+ #include <linux/rpmsg.h>
++#include <linux/rpmsg/qcom_smd.h>
+ 
+ #include "rpmsg_internal.h"
+ 
+diff --git a/include/linux/rpmsg/qcom_smd.h b/include/linux/rpmsg/qcom_smd.h
 new file mode 100644
-index 000000000000..d188afebc8ba
+index 000000000000..7c12637a500e
 --- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-remoteproc
-@@ -0,0 +1,50 @@
-+What:		/sys/class/remoteproc/.../firmware
-+Date:		October 2016
-+Contact:	Matt Redfearn <matt.redfearn@imgtec.com>
-+Description:	Remote processor firmware
++++ b/include/linux/rpmsg/qcom_smd.h
+@@ -0,0 +1,33 @@
 +
-+		Reports the name of the firmware currently loaded to the
-+		remote processor.
++#ifndef _LINUX_RPMSG_QCOM_SMD_H
++#define _LINUX_RPMSG_QCOM_SMD_H
 +
-+		To change the running firmware, ensure the remote processor is
-+		stopped (using /sys/class/remoteproc/.../state) and write a new filename.
++#include <linux/device.h>
 +
-+What:		/sys/class/remoteproc/.../state
-+Date:		October 2016
-+Contact:	Matt Redfearn <matt.redfearn@imgtec.com>
-+Description:	Remote processor state
++struct qcom_smd_edge;
 +
-+		Reports the state of the remote processor, which will be one of:
++#if IS_ENABLED(CONFIG_RPMSG_QCOM_SMD)
 +
-+		"offline"
-+		"suspended"
-+		"running"
-+		"crashed"
-+		"invalid"
++struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
++					     struct device_node *node);
++int qcom_smd_unregister_edge(struct qcom_smd_edge *edge);
 +
-+		"offline" means the remote processor is powered off.
++#else
 +
-+		"suspended" means that the remote processor is suspended and
-+		must be woken to receive messages.
-+
-+		"running" is the normal state of an available remote processor
-+
-+		"crashed" indicates that a problem/crash has been detected on
-+		the remote processor.
-+
-+		"invalid" is returned if the remote processor is in an
-+		unknown state.
-+
-+		Writing this file controls the state of the remote processor.
-+		The following states can be written:
-+
-+		"start"
-+		"stop"
-+
-+		Writing "start" will attempt to start the processor running the
-+		firmware indicated by, or written to,
-+		/sys/class/remoteproc/.../firmware. The remote processor should
-+		transition to "running" state.
-+
-+		Writing "stop" will attempt to halt the remote processor and
-+		return it to the "offline" state.
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 6dfb62ed643f..6da9b12f9798 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -5,6 +5,7 @@
- obj-$(CONFIG_REMOTEPROC)		+= remoteproc.o
- remoteproc-y				:= remoteproc_core.o
- remoteproc-y				+= remoteproc_debugfs.o
-+remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
- remoteproc-y				+= remoteproc_elf_loader.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index d86b4be956a9..e302036d29e7 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1347,6 +1347,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	device_initialize(&rproc->dev);
- 	rproc->dev.parent = dev;
- 	rproc->dev.type = &rproc_type;
-+	rproc->dev.class = &rproc_class;
- 
- 	/* Assign a unique device index and name */
- 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
-@@ -1485,6 +1486,7 @@ EXPORT_SYMBOL(rproc_report_crash);
- 
- static int __init remoteproc_init(void)
- {
-+	rproc_init_sysfs();
- 	rproc_init_debugfs();
- 
- 	return 0;
-@@ -1496,6 +1498,7 @@ static void __exit remoteproc_exit(void)
- 	ida_destroy(&rproc_dev_index);
- 
- 	rproc_exit_debugfs();
-+	rproc_exit_sysfs();
- }
- module_exit(remoteproc_exit);
- 
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 82345930ecbd..fce736251a7f 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -64,6 +64,11 @@ void rproc_create_debug_dir(struct rproc *rproc);
- void rproc_init_debugfs(void);
- void rproc_exit_debugfs(void);
- 
-+/* from remoteproc_sysfs.c */
-+extern struct class rproc_class;
-+int rproc_init_sysfs(void);
-+void rproc_exit_sysfs(void);
-+
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
- 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-new file mode 100644
-index 000000000000..afa9ca040a7e
---- /dev/null
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -0,0 +1,155 @@
-+/*
-+ * Remote Processor Framework
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#include <linux/remoteproc.h>
-+
-+#include "remoteproc_internal.h"
-+
-+#define to_rproc(d) container_of(d, struct rproc, dev)
-+
-+/* Expose the loaded / running firmware name via sysfs */
-+static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
++static inline struct qcom_smd_edge *
++qcom_smd_register_edge(struct device *parent,
++		       struct device_node *node)
 +{
-+	struct rproc *rproc = to_rproc(dev);
-+
-+	return sprintf(buf, "%s\n", rproc->firmware);
++	return ERR_PTR(-ENXIO);
 +}
 +
-+/* Change firmware name via sysfs */
-+static ssize_t firmware_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t count)
++static inline int qcom_smd_unregister_edge(struct qcom_smd_edge *edge)
 +{
-+	struct rproc *rproc = to_rproc(dev);
-+	char *p;
-+	int err, len = count;
-+
-+	err = mutex_lock_interruptible(&rproc->lock);
-+	if (err) {
-+		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
-+		return -EINVAL;
-+	}
-+
-+	if (rproc->state != RPROC_OFFLINE) {
-+		dev_err(dev, "can't change firmware while running\n");
-+		err = -EBUSY;
-+		goto out;
-+	}
-+
-+	p = memchr(buf, '\n', count);
-+	if (p)
-+		len = p - buf;
-+
-+	p = kstrndup(buf, len, GFP_KERNEL);
-+	if (!p) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	kfree(rproc->firmware);
-+	rproc->firmware = p;
-+
-+	err = rproc_add_virtio_devices(rproc);
-+out:
-+	mutex_unlock(&rproc->lock);
-+
-+	return err ? err : count;
-+}
-+static DEVICE_ATTR_RW(firmware);
-+
-+/*
-+ * A state-to-string lookup table, for exposing a human readable state
-+ * via sysfs. Always keep in sync with enum rproc_state
-+ */
-+static const char * const rproc_state_string[] = {
-+	"offline",
-+	"suspended",
-+	"running",
-+	"crashed",
-+	"invalid",
-+};
-+
-+/* Expose the state of the remote processor via sysfs */
-+static ssize_t state_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
-+{
-+	struct rproc *rproc = to_rproc(dev);
-+	unsigned int state;
-+
-+	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
-+	return sprintf(buf, "%s\n", rproc_state_string[state]);
++	/* This shouldn't be possible */
++	WARN_ON(1);
++	return -ENXIO;
 +}
 +
-+/* Change remote processor state via sysfs */
-+static ssize_t state_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct rproc *rproc = to_rproc(dev);
-+	int ret = 0;
++#endif
 +
-+	if (sysfs_streq(buf, "start")) {
-+		if (rproc->state == RPROC_RUNNING)
-+			return -EBUSY;
-+
-+		ret = rproc_boot(rproc);
-+		if (ret)
-+			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
-+	} else if (sysfs_streq(buf, "stop")) {
-+		if (rproc->state != RPROC_RUNNING)
-+			return -EINVAL;
-+
-+		rproc_shutdown(rproc);
-+	} else {
-+		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
-+		ret = -EINVAL;
-+	}
-+	return ret ? ret : count;
-+}
-+static DEVICE_ATTR_RW(state);
-+
-+static struct attribute *rproc_attrs[] = {
-+	&dev_attr_firmware.attr,
-+	&dev_attr_state.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group rproc_devgroup = {
-+	.attrs = rproc_attrs
-+};
-+
-+static const struct attribute_group *rproc_devgroups[] = {
-+	&rproc_devgroup,
-+	NULL
-+};
-+
-+struct class rproc_class = {
-+	.name		= "remoteproc",
-+	.dev_groups	= rproc_devgroups,
-+};
-+
-+int __init rproc_init_sysfs(void)
-+{
-+	/* create remoteproc device class for sysfs */
-+	int err = class_register(&rproc_class);
-+
-+	if (err)
-+		pr_err("remoteproc: unable to register class\n");
-+	return err;
-+}
-+
-+void __exit rproc_exit_sysfs(void)
-+{
-+	class_unregister(&rproc_class);
-+}
++#endif
 -- 
-2.7.4
+2.5.0
