@@ -1,193 +1,92 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 01/11] remoteproc: Introduce subdevices
-Date: Wed, 19 Oct 2016 19:40:02 -0700
-Message-Id: <1476931212-1806-2-git-send-email-bjorn.andersson@linaro.org>
+Subject: [PATCH 03/11] remoteproc: wcnss: Bond SMD edge to remoteproc
+Date: Wed, 19 Oct 2016 19:40:04 -0700
+Message-Id: <1476931212-1806-4-git-send-email-bjorn.andersson@linaro.org>
 In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
 References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A subdevice is an abstract entity that can be used to tie actions to the
-booting and shutting down of a remote processor. The subdevice object is
-expected to be embedded in concrete implementations, allowing for a
-variety of use cases to be implemented.
+Allow the wcnss smd edge to be described as a child of the wcnss
+remoteproc node and make the edge life cycle follow the running state of
+the remoteproc.
+
+This bond is necessary to clean up the smd state when the remote
+processor is suddenly removed, and in some cases even when it shut down
+in a controlled fasion.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 72 ++++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           | 22 +++++++++++
- 2 files changed, 94 insertions(+)
+ drivers/remoteproc/qcom_wcnss.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c6bfb3496684..4309996f4335 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -736,6 +736,34 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
- 	return ret;
- }
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index f5cedeaafba1..0c47fa286794 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -30,6 +30,7 @@
+ #include <linux/remoteproc.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
++#include <linux/rpmsg/qcom_smd.h>
  
-+static int rproc_probe_subdevices(struct rproc *rproc)
-+{
-+	struct rproc_subdev *subdev;
-+	int ret;
+ #include "qcom_mdt_loader.h"
+ #include "remoteproc_internal.h"
+@@ -94,6 +95,10 @@ struct qcom_wcnss {
+ 	phys_addr_t mem_reloc;
+ 	void *mem_region;
+ 	size_t mem_size;
 +
-+	list_for_each_entry(subdev, &rproc->subdevs, node) {
-+		ret = subdev->probe(subdev);
-+		if (ret)
-+			goto unroll_registration;
-+	}
-+
-+	return 0;
-+
-+unroll_registration:
-+	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
-+		subdev->remove(subdev);
-+
-+	return ret;
-+}
-+
-+static void rproc_remove_subdevices(struct rproc *rproc)
-+{
-+	struct rproc_subdev *subdev;
-+
-+	list_for_each_entry(subdev, &rproc->subdevs, node)
-+		subdev->remove(subdev);
-+}
-+
- /**
-  * rproc_resource_cleanup() - clean up and free all acquired resources
-  * @rproc: rproc handle
-@@ -878,12 +906,22 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
- 	}
- 
-+	/* probe any subdevices for the remote processor */
-+	ret = rproc_probe_subdevices(rproc);
-+	if (ret) {
-+		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-+			rproc->name, ret);
-+		goto stop_rproc;
-+	}
-+
- 	rproc->state = RPROC_RUNNING;
- 
- 	dev_info(dev, "remote processor %s is now up\n", rproc->name);
- 
- 	return 0;
- 
-+stop_rproc:
-+	rproc->ops->stop(rproc);
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
- clean_up:
-@@ -1121,6 +1159,9 @@ void rproc_shutdown(struct rproc *rproc)
- 	if (!atomic_dec_and_test(&rproc->power))
- 		goto out;
- 
-+	/* remove any subdevices for the remote processor */
-+	rproc_remove_subdevices(rproc);
-+
- 	/* power off the remote processor */
- 	ret = rproc->ops->stop(rproc);
- 	if (ret) {
-@@ -1370,6 +1411,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	INIT_LIST_HEAD(&rproc->mappings);
- 	INIT_LIST_HEAD(&rproc->traces);
- 	INIT_LIST_HEAD(&rproc->rvdevs);
-+	INIT_LIST_HEAD(&rproc->subdevs);
- 
- 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
- 	init_completion(&rproc->crash_comp);
-@@ -1457,6 +1499,36 @@ int rproc_del(struct rproc *rproc)
- EXPORT_SYMBOL(rproc_del);
- 
- /**
-+ * rproc_add_subdev() - add a subdevice to a remoteproc
-+ * @rproc: rproc handle to add the subdevice to
-+ * @subdev: subdev handle to register
-+ * @probe: function to call when the rproc boots
-+ * @remove: function to call when the rproc shuts down
-+ */
-+void rproc_add_subdev(struct rproc *rproc,
-+		      struct rproc_subdev *subdev,
-+		      int (*probe)(struct rproc_subdev *subdev),
-+		      void (*remove)(struct rproc_subdev *subdev))
-+{
-+	subdev->probe = probe;
-+	subdev->remove = remove;
-+
-+	list_add_tail(&subdev->node, &rproc->subdevs);
-+}
-+EXPORT_SYMBOL(rproc_add_subdev);
-+
-+/**
-+ * rproc_remove_subdev() - remove a subdevice from a remoteproc
-+ * @rproc: rproc handle to remove the subdevice from
-+ * @subdev: subdev handle, previously registered with rproc_add_subdev()
-+ */
-+void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev)
-+{
-+	list_del(&subdev->node);
-+}
-+EXPORT_SYMBOL(rproc_remove_subdev);
-+
-+/**
-  * rproc_report_crash() - rproc crash reporter function
-  * @rproc: remote processor
-  * @type: crash type
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 930023b7c825..a05f4569a2a0 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -400,6 +400,7 @@ enum rproc_crash_type {
-  * @firmware_loading_complete: marks e/o asynchronous firmware loading
-  * @bootaddr: address of first instruction to boot rproc with (optional)
-  * @rvdevs: list of remote virtio devices
-+ * @subdevs: list of subdevices, to following the running state
-  * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
-  * @index: index of this rproc device
-  * @crash_handler: workqueue for handling a crash
-@@ -431,6 +432,7 @@ struct rproc {
- 	struct completion firmware_loading_complete;
- 	u32 bootaddr;
- 	struct list_head rvdevs;
-+	struct list_head subdevs;
- 	struct idr notifyids;
- 	int index;
- 	struct work_struct crash_handler;
-@@ -444,6 +446,19 @@ struct rproc {
- 	bool auto_boot;
++	struct device_node *smd_node;
++	struct qcom_smd_edge *smd_edge;
++	struct rproc_subdev smd_subdev;
  };
  
-+/**
-+ * struct rproc_subdev - subdevice tied to a remoteproc
-+ * @node: list node related to the rproc subdevs list
-+ * @probe: probe function, called as the rproc is started
-+ * @remove: remove function, called as the rproc is stopped
-+ */
-+struct rproc_subdev {
-+	struct list_head node;
-+
-+	int (*probe)(struct rproc_subdev *subdev);
-+	void (*remove)(struct rproc_subdev *subdev);
-+};
-+
- /* we currently support only two vrings per rvdev */
- 
- #define RVDEV_NUM_VRINGS 2
-@@ -511,4 +526,11 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- 	return rvdev->rproc;
+ static const struct wcnss_data riva_data = {
+@@ -396,6 +401,23 @@ static irqreturn_t wcnss_stop_ack_interrupt(int irq, void *dev)
+ 	return IRQ_HANDLED;
  }
  
-+void rproc_add_subdev(struct rproc *rproc,
-+		      struct rproc_subdev *subdev,
-+		      int (*probe)(struct rproc_subdev *subdev),
-+		      void (*remove)(struct rproc_subdev *subdev));
++static int wcnss_smd_probe(struct rproc_subdev *subdev)
++{
++	struct qcom_wcnss *wcnss = container_of(subdev, struct qcom_wcnss, smd_subdev);
 +
-+void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
++	wcnss->smd_edge = qcom_smd_register_edge(wcnss->dev, wcnss->smd_node);
 +
- #endif /* REMOTEPROC_H */
++	return IS_ERR(wcnss->smd_edge) ? PTR_ERR(wcnss->smd_edge) : 0;
++}
++
++static void wcnss_smd_remove(struct rproc_subdev *subdev)
++{
++	struct qcom_wcnss *wcnss = container_of(subdev, struct qcom_wcnss, smd_subdev);
++
++	qcom_smd_unregister_edge(wcnss->smd_edge);
++	wcnss->smd_edge = NULL;
++}
++
+ static int wcnss_init_regulators(struct qcom_wcnss *wcnss,
+ 				 const struct wcnss_vreg_info *info,
+ 				 int num_vregs)
+@@ -578,6 +600,10 @@ static int wcnss_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	wcnss->smd_node = of_get_child_by_name(pdev->dev.of_node, "smd-edge");
++	if (wcnss->smd_node)
++		rproc_add_subdev(rproc, &wcnss->smd_subdev, wcnss_smd_probe, wcnss_smd_remove);
++
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+ 		goto free_rproc;
+@@ -596,6 +622,7 @@ static int wcnss_remove(struct platform_device *pdev)
+ 
+ 	of_platform_depopulate(&pdev->dev);
+ 
++	of_node_put(wcnss->smd_node);
+ 	qcom_smem_state_put(wcnss->state);
+ 	rproc_del(wcnss->rproc);
+ 	rproc_free(wcnss->rproc);
 -- 
 2.5.0
