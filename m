@@ -1,116 +1,50 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v3 2/2] remoteproc: debugfs: Remove state entry which is duplicated is sysfs
-Date: Wed, 19 Oct 2016 13:05:48 +0100
-Message-ID: <1476878748-32097-3-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1476878748-32097-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1476878748-32097-1-git-send-email-matt.redfearn@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 10/11] remoteproc: Remove custom vdev handler list
+Date: Wed, 19 Oct 2016 19:40:11 -0700
+Message-Id: <1476931212-1806-11-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Since there is now an always available state file in sysfs with the same
-function as this one in debugfs, remove the redundant entry.
+The vdev handler is now just another resource allocator, so handle all
+resource types in a single pass.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+ drivers/remoteproc/remoteproc_core.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-Changes in v3: None
-Changes in v2: None
-
- drivers/remoteproc/remoteproc_debugfs.c | 71 ---------------------------------
- 1 file changed, 71 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 374797206c79..1c122e230cec 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -59,75 +59,6 @@ static const struct file_operations trace_rproc_ops = {
- 	.llseek	= generic_file_llseek,
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 57f12421fdd2..f31783d27196 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -731,10 +731,6 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
+ 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
+ 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
+ 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
+-	[RSC_VDEV] = NULL,
+-};
+-
+-static rproc_handle_resource_t rproc_vdev_handler[RSC_LAST] = {
+ 	[RSC_VDEV] = (rproc_handle_resource_t)rproc_handle_vdev,
  };
  
--/*
-- * A state-to-string lookup table, for exposing a human readable state
-- * via debugfs. Always keep in sync with enum rproc_state
-- */
--static const char * const rproc_state_string[] = {
--	"offline",
--	"suspended",
--	"running",
--	"crashed",
--	"invalid",
--};
--
--/* expose the state of the remote processor via debugfs */
--static ssize_t rproc_state_read(struct file *filp, char __user *userbuf,
--				size_t count, loff_t *ppos)
--{
--	struct rproc *rproc = filp->private_data;
--	unsigned int state;
--	char buf[30];
--	int i;
--
--	state = rproc->state > RPROC_LAST ? RPROC_LAST : rproc->state;
--
--	i = scnprintf(buf, 30, "%.28s (%d)\n", rproc_state_string[state],
--		      rproc->state);
--
--	return simple_read_from_buffer(userbuf, count, ppos, buf, i);
--}
--
--static ssize_t rproc_state_write(struct file *filp, const char __user *userbuf,
--				 size_t count, loff_t *ppos)
--{
--	struct rproc *rproc = filp->private_data;
--	char buf[10];
--	int ret;
--
--	if (count > sizeof(buf) || count <= 0)
--		return -EINVAL;
--
--	ret = copy_from_user(buf, userbuf, count);
--	if (ret)
--		return -EFAULT;
--
--	if (buf[count - 1] == '\n')
--		buf[count - 1] = '\0';
--
--	if (!strncmp(buf, "start", count)) {
--		ret = rproc_boot(rproc);
--		if (ret) {
--			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
--			return ret;
--		}
--	} else if (!strncmp(buf, "stop", count)) {
--		rproc_shutdown(rproc);
--	} else {
--		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
--		return -EINVAL;
+@@ -905,13 +901,6 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	/* reset max_notifyid */
+ 	rproc->max_notifyid = -1;
+ 
+-	/* look for virtio devices and register them */
+-	ret = rproc_handle_resources(rproc, tablesz, rproc_vdev_handler);
+-	if (ret) {
+-		dev_err(dev, "Failed to handle vdev resources: %d\n", ret);
+-		goto clean_up;
 -	}
 -
--	return count;
--}
--
--static const struct file_operations rproc_state_ops = {
--	.read = rproc_state_read,
--	.write = rproc_state_write,
--	.open = simple_open,
--	.llseek	= generic_file_llseek,
--};
--
- /* expose the name of the remote processor via debugfs */
- static ssize_t rproc_name_read(struct file *filp, char __user *userbuf,
- 			       size_t count, loff_t *ppos)
-@@ -265,8 +196,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 
- 	debugfs_create_file("name", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_name_ops);
--	debugfs_create_file("state", 0400, rproc->dbg_dir,
--			    rproc, &rproc_state_ops);
- 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_recovery_ops);
- }
+ 	/* handle fw resources which are required to boot rproc */
+ 	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
+ 	if (ret) {
 -- 
-2.7.4
+2.5.0
