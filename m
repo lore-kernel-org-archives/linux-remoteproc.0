@@ -1,106 +1,116 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v2 1/4] remoteproc: Keep local copy of firmware name
-Date: Mon, 17 Oct 2016 16:48:58 +0100
-Message-ID: <1476719341-11651-2-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1476719341-11651-1-git-send-email-matt.redfearn@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Matt
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 11/11] remoteproc: Merge table_ptr and cached_table pointers
+Date: Wed, 19 Oct 2016 19:40:12 -0700
+Message-Id: <1476931212-1806-12-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1476931212-1806-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Storage of the firmware name was inconsistent, either storing a pointer
-to a name stored with unknown ownership, or a variable length tacked
-onto the end of the struct proc allocated in rproc_alloc.
+As all vdev resources are allocated before we boot the remote processor
+we no longer need to support modifying the resource table while the
+remote is running.
 
-In preparation for allowing the firmware of an already allocated struct
-rproc to be changed, instead always keep a locally maintained copy of
-the firmware name.
+This saves us from the table_ptr dance, but more importantly allow the
+remote processor to enable security lock down of the loaded table memory
+region.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-
-Changes in v2:
-Use a kmalloc'd copy of the firmware name instead of having a fixed
-length array in struct rproc
-
- drivers/remoteproc/remoteproc_core.c | 31 ++++++++++++++++---------------
- include/linux/remoteproc.h           |  2 +-
- 2 files changed, 17 insertions(+), 16 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 26 ++++++++++----------------
+ include/linux/remoteproc.h           |  4 +---
+ 2 files changed, 11 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c6bfb3496684..ccc2a73e94dd 100644
+index f31783d27196..46078c959a9c 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1273,6 +1273,7 @@ static void rproc_type_release(struct device *dev)
- 	if (rproc->index >= 0)
- 		ida_simple_remove(&rproc_dev_index, rproc->index);
+@@ -889,15 +889,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 	/*
+ 	 * Create a copy of the resource table. When a virtio device starts
+ 	 * and calls vring_new_virtqueue() the address of the allocated vring
+-	 * will be stored in the cached_table. Before the device is started,
+-	 * cached_table will be copied into device memory.
++	 * will be stored in the table_ptr. Before the device is started,
++	 * table_ptr will be copied into device memory.
+ 	 */
+-	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
+-	if (!rproc->cached_table)
++	rproc->table_ptr = kmemdup(table, tablesz, GFP_KERNEL);
++	if (!rproc->table_ptr)
+ 		goto clean_up;
  
-+	kfree(rproc->firmware);
- 	kfree(rproc);
- }
- 
-@@ -1310,31 +1311,31 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- {
- 	struct rproc *rproc;
- 	char *p, *template = "rproc-%s-fw";
--	int name_len = 0;
-+	int name_len;
- 
- 	if (!dev || !name || !ops)
- 		return NULL;
- 
--	if (!firmware)
-+	if (!firmware) {
- 		/*
--		 * Make room for default firmware name (minus %s plus '\0').
- 		 * If the caller didn't pass in a firmware name then
--		 * construct a default name.  We're already glomming 'len'
--		 * bytes onto the end of the struct rproc allocation, so do
--		 * a few more for the default firmware name (but only if
--		 * the caller doesn't pass one).
-+		 * construct a default name.
- 		 */
- 		name_len = strlen(name) + strlen(template) - 2 + 1;
+-	rproc->table_ptr = rproc->cached_table;
 -
--	rproc = kzalloc(sizeof(*rproc) + len + name_len, GFP_KERNEL);
--	if (!rproc)
--		return NULL;
--
--	if (!firmware) {
--		p = (char *)rproc + sizeof(struct rproc) + len;
-+		p = kmalloc(name_len, GFP_KERNEL);
-+		if (!p)
-+			return NULL;
- 		snprintf(p, name_len, template, name);
- 	} else {
--		p = (char *)firmware;
-+		p = kstrdup(firmware, GFP_KERNEL);
-+		if (!p)
-+			return NULL;
-+	}
-+
-+	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
-+	if (!rproc) {
-+		kfree(p);
-+		return NULL;
+ 	/* reset max_notifyid */
+ 	rproc->max_notifyid = -1;
+ 
+@@ -916,18 +914,16 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
  	}
  
- 	rproc->firmware = p;
+ 	/*
+-	 * The starting device has been given the rproc->cached_table as the
++	 * The starting device has been given the rproc->table_ptr as the
+ 	 * resource table. The address of the vring along with the other
+-	 * allocated resources (carveouts etc) is stored in cached_table.
++	 * allocated resources (carveouts etc) is stored in table_ptr.
+ 	 * In order to pass this information to the remote device we must copy
+ 	 * this information to device memory. We also update the table_ptr so
+ 	 * that any subsequent changes will be applied to the loaded version.
+ 	 */
+ 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+-	if (loaded_table) {
+-		memcpy(loaded_table, rproc->cached_table, tablesz);
+-		rproc->table_ptr = loaded_table;
+-	}
++	if (loaded_table)
++		memcpy(loaded_table, rproc->table_ptr, tablesz);
+ 
+ 	/* power up the remote processor */
+ 	ret = rproc->ops->start(rproc);
+@@ -955,8 +951,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ clean_up_resources:
+ 	rproc_resource_cleanup(rproc);
+ clean_up:
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
++	kfree(rproc->table_ptr);
+ 	rproc->table_ptr = NULL;
+ 
+ 	rproc_disable_iommu(rproc);
+@@ -1206,8 +1201,7 @@ void rproc_shutdown(struct rproc *rproc)
+ 	rproc_disable_iommu(rproc);
+ 
+ 	/* Free the copy of the resource table */
+-	kfree(rproc->cached_table);
+-	rproc->cached_table = NULL;
++	kfree(rproc->table_ptr);
+ 	rproc->table_ptr = NULL;
+ 
+ 	/* if in crash state, unlock crash handler */
 diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 930023b7c825..940e4cf2ac48 100644
+index ff05b88730ad..51662ee7d032 100644
 --- a/include/linux/remoteproc.h
 +++ b/include/linux/remoteproc.h
-@@ -415,7 +415,7 @@ struct rproc {
- 	struct list_head node;
- 	struct iommu_domain *domain;
- 	const char *name;
--	const char *firmware;
-+	char *firmware;
- 	void *priv;
- 	const struct rproc_ops *ops;
- 	struct device dev;
+@@ -408,8 +408,7 @@ enum rproc_crash_type {
+  * @crash_comp: completion used to sync crash handler and the rproc reload
+  * @recovery_disabled: flag that state if recovery was disabled
+  * @max_notifyid: largest allocated notify id.
+- * @table_ptr: pointer to the resource table in effect
+- * @cached_table: copy of the resource table
++ * @table_ptr: our copy of the resource table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
+  */
+ struct rproc {
+@@ -441,7 +440,6 @@ struct rproc {
+ 	bool recovery_disabled;
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
+-	struct resource_table *cached_table;
+ 	bool has_iommu;
+ 	bool auto_boot;
+ };
 -- 
-2.7.4
+2.5.0
