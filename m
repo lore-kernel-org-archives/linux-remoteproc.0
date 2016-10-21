@@ -1,53 +1,59 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 08/20] remoteproc: core: Complete VDEV support in rproc_dump_resource_table function
-Date: Wed, 12 Oct 2016 18:00:26 +0200
-Message-ID: <1476288038-24909-9-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <spjoshi@codeaurora.org>
+Subject: Re: [PATCH] remoteproc: Add support for xo clock
+References: <1476989724-7464-1-git-send-email-spjoshi@codeaurora.org>
+ <20161020235401.GG26139@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Message-ID: <24769e8c-d935-6386-5204-fe50dc1fe8ea@codeaurora.org>
+Date: Fri, 21 Oct 2016 16:15:35 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+In-Reply-To: <20161020235401.GG26139@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add dump of cfg field of vdev struct.
+On 10/20/2016 04:54 PM, Stephen Boyd wrote:
+> On 10/20, Sarangdhar Joshi wrote:
+>> Add xo clock support required for Qualcomm ADSP
+>> Peripheral Image Loader.
+>
+> Yes but why is xo needed?
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+It is required to boot up the ADSP processor. The remoteproc driver 
+keeps the xo clock enabled until the driver receives an "handover" 
+interrupt in order to allow remote processor to vote for xo clock with rpm.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ce62546..ae8e934 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -808,6 +808,8 @@ static void rproc_dump_resource_table(struct rproc *rproc,
- 		int offset = table->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)table + offset;
- 		void *rsc = (void *)hdr + sizeof(*hdr);
-+		unsigned char *cfg;
-+		int len;
- 
- 		switch (hdr->type) {
- 		case RSC_CARVEOUT:
-@@ -861,6 +863,17 @@ static void rproc_dump_resource_table(struct rproc *rproc,
- 				dev_dbg(dev, "    Physical Address 0x%x\n\n",
- 					v->vring[j].pa);
- 			}
-+
-+			dev_dbg(dev, "  Config table\n");
-+			cfg = (unsigned char *)(&v->vring[v->num_of_vrings]);
-+			len = 0;
-+			do {
-+				j = min(16, (int)(v->config_len - len));
-+				dev_dbg(dev, "    Config[%2d-%2d] = %*phC\n",
-+					len, len + j - 1, j, cfg + len);
-+				len += j;
-+			} while (len < v->config_len);
-+
- 			break;
- 		default:
- 			dev_dbg(dev, "Invalid resource type found: %d [hdr: %p]\n",
+I will update the commit text.
+
+>
+>> @@ -223,6 +232,17 @@ static irqreturn_t adsp_stop_ack_interrupt(int irq, void *dev)
+>>  	return IRQ_HANDLED;
+>>  }
+>>
+>> +static int adsp_init_clock(struct qcom_adsp *adsp)
+>> +{
+>> +	adsp->xo = devm_clk_get(adsp->dev, "xo");
+>> +	if (IS_ERR(adsp->xo)) {
+>> +		dev_err(adsp->dev, "failed to get xo clock");
+>
+> What if it's a probe defer error? Probably best to just be
+> silent/debug level, or we need a specific test for EPROBE_DEFER
+> and then silence in that case.
+
+Sure, I will add a check for EPROBE_DEFER. Prefer driver to return
+meaningful error message in case of failure.
+
+>
+>> +		return PTR_ERR(adsp->xo);
+>> +	}
+>
+
+Thanks for reviewing the patch.
+
+Regards,
+Sarang
+
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
