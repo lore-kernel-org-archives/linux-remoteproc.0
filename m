@@ -1,98 +1,172 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH] remoteproc: Add support for xo clock
-Date: Thu, 20 Oct 2016 11:55:24 -0700
-Message-Id: <1476989724-7464-1-git-send-email-spjoshi@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] rpmsg: Provide function stubs for API
+Date: Fri, 21 Oct 2016 10:25:37 -0700
+Message-Id: <1477070737-5843-1-git-send-email-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add xo clock support required for Qualcomm ADSP
-Peripheral Image Loader.
+Provide function stubs for the rpmsg API to allow clients to be compile
+tested without having CONFIG_RPMSG enabled.
 
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+ include/linux/rpmsg.h | 123 ++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 113 insertions(+), 10 deletions(-)
 
-This patch depends on https://lkml.org/lkml/2016/8/23/50
-
- drivers/remoteproc/qcom_adsp_pil.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 9141633..a1f2f32 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -15,6 +15,7 @@
-  * GNU General Public License for more details.
-  */
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 7ad6c205f110..18f9e1ae4b7e 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -37,6 +37,7 @@
  
-+#include <linux/clk.h>
- #include <linux/firmware.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
-@@ -48,6 +49,8 @@ struct qcom_adsp {
- 	struct qcom_smem_state *state;
- 	unsigned stop_bit;
+ #include <linux/types.h>
+ #include <linux/device.h>
++#include <linux/err.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/kref.h>
+ #include <linux/mutex.h>
+@@ -134,6 +135,8 @@ struct rpmsg_driver {
+ 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
+ };
  
-+	struct clk *xo;
++#if IS_ENABLED(CONFIG_RPMSG)
 +
- 	struct regulator *cx_supply;
+ int register_rpmsg_device(struct rpmsg_device *dev);
+ void unregister_rpmsg_device(struct rpmsg_device *dev);
+ int __register_rpmsg_driver(struct rpmsg_driver *drv, struct module *owner);
+@@ -143,6 +146,116 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+ 					rpmsg_rx_cb_t cb, void *priv,
+ 					struct rpmsg_channel_info chinfo);
  
- 	struct completion start_done;
-@@ -102,10 +105,14 @@ static int adsp_start(struct rproc *rproc)
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
- 	int ret;
- 
--	ret = regulator_enable(adsp->cx_supply);
-+	ret = clk_prepare_enable(adsp->xo);
- 	if (ret)
- 		return ret;
- 
-+	ret = regulator_enable(adsp->cx_supply);
-+	if (ret)
-+		goto disable_clocks;
++int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
++int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
++			  void *data, int len);
 +
- 	ret = qcom_scm_pas_auth_and_reset(ADSP_PAS_ID);
- 	if (ret) {
- 		dev_err(adsp->dev,
-@@ -126,6 +133,8 @@ static int adsp_start(struct rproc *rproc)
- 
- disable_regulators:
- 	regulator_disable(adsp->cx_supply);
-+disable_clocks:
-+	clk_disable_unprepare(adsp->xo);
- 
- 	return ret;
- }
-@@ -223,6 +232,17 @@ static irqreturn_t adsp_stop_ack_interrupt(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
-+static int adsp_init_clock(struct qcom_adsp *adsp)
++int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
++int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
++			     void *data, int len);
++
++#else
++
++static inline int register_rpmsg_device(struct rpmsg_device *dev)
 +{
-+	adsp->xo = devm_clk_get(adsp->dev, "xo");
-+	if (IS_ERR(adsp->xo)) {
-+		dev_err(adsp->dev, "failed to get xo clock");
-+		return PTR_ERR(adsp->xo);
-+	}
-+
-+	return 0;
++	return -ENXIO;
 +}
 +
- static int adsp_init_regulator(struct qcom_adsp *adsp)
- {
- 	adsp->cx_supply = devm_regulator_get(adsp->dev, "cx");
-@@ -320,6 +340,10 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
-+	ret = adsp_init_clock(adsp);
-+	if (ret)
-+		goto free_rproc;
++static inline void unregister_rpmsg_device(struct rpmsg_device *dev)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++}
 +
- 	ret = adsp_init_regulator(adsp);
- 	if (ret)
- 		goto free_rproc;
++static inline int __register_rpmsg_driver(struct rpmsg_driver *drv,
++					  struct module *owner)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
++static inline void unregister_rpmsg_driver(struct rpmsg_driver *drv)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++}
++
++static inline void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++}
++
++static inline struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
++						      rpmsg_rx_cb_t cb,
++						      void *priv,
++						      struct rpmsg_channel_info chinfo)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return ERR_PTR(-ENXIO);
++}
++
++static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
++static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
++			       u32 dst)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++
++}
++
++static inline int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src,
++					u32 dst, void *data, int len)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
++static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
++static inline int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
++				  int len, u32 dst)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
++static inline int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
++					   u32 dst, void *data, int len)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
++#endif /* IS_ENABLED(CONFIG_RPMSG) */
++
+ /* use a macro to avoid include chaining to get THIS_MODULE */
+ #define register_rpmsg_driver(drv) \
+ 	__register_rpmsg_driver(drv, THIS_MODULE)
+@@ -159,14 +272,4 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+ 	module_driver(__rpmsg_driver, register_rpmsg_driver, \
+ 			unregister_rpmsg_driver)
+ 
+-int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+-int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-int rpmsg_send_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			  void *data, int len);
+-
+-int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+-int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
+-int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+-			     void *data, int len);
+-
+ #endif /* _LINUX_RPMSG_H */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.5.0
