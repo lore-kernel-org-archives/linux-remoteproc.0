@@ -1,115 +1,167 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 17/20] remoteproc: core: Add function to verify resource table consistency
-Date: Wed, 12 Oct 2016 18:00:35 +0200
-Message-ID: <1476288038-24909-18-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 25 Oct 2016 11:47:08 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/5] remoteproc: Add q6v55 specific parameters and enable
+ probing for q6v55
+Message-ID: <20161025184708.GM7509@tuxbot>
+References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
+ <1477324559-24752-2-git-send-email-akdwived@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1477324559-24752-2-git-send-email-akdwived@codeaurora.org>
+To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, kaushalk@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As resource table could be parsed several times, at different times,
-to avoid sanity check duplication, let's introduce a new function
-to verify the complete integrity of one resource table.
+On Mon 24 Oct 08:55 PDT 2016, Avaneesh Kumar Dwivedi wrote:
 
-This new function is called before copying it in cache and
-accessing it.
+> Adding required definition of parameters along with new structure
+> fields specific to q6v55 and enabling probe for q6v55 mss remote-
+> proc driver.
+> 
+> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  3 +-
+>  drivers/remoteproc/qcom_q6v5_pil.c                 | 33 ++++++++++++++++++++--
+>  2 files changed, 32 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> index 57cb49e..0986f8b 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> @@ -7,7 +7,8 @@ on the Qualcomm Hexagon core.
+>  	Usage: required
+>  	Value type: <string>
+>  	Definition: must be one of:
+> -		    "qcom,q6v5-pil"
+> +		    "qcom,q6v5-pil",
+> +			"qcom,q6v55-pil"
+>  
+>  - reg:
+>  	Usage: required
+> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+> index 2e0caaa..8df95a0 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+> @@ -30,13 +30,14 @@
+>  #include <linux/reset.h>
+>  #include <linux/soc/qcom/smem.h>
+>  #include <linux/soc/qcom/smem_state.h>
+> +#include <linux/mutex.h>
+>  
+>  #include "remoteproc_internal.h"
+>  #include "qcom_mdt_loader.h"
+>  
+>  #include <linux/qcom_scm.h>
+>  
+> -#define MBA_FIRMWARE_NAME		"mba.b00"
+> +#define MBA_FIRMWARE_NAME		"mba.mbn"
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 70 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+On 8974 we must load the mba.b00, on 8916 and 8996 we must load mba.mbn.
+But looking at downstream we seem to have:
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 559a63b..849460e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -785,6 +785,69 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		rproc_remove_virtio_dev(rvdev);
- }
- 
-+static int rproc_resource_table_sanity_check(struct rproc *rproc,
-+		struct resource_table *table_ptr, int len)
-+{
-+	struct device *dev = &rproc->dev;
-+	int i;
-+
-+	if (len < sizeof(*table_ptr))
-+		goto out;
-+
-+	for (i = 0; i < table_ptr->num; i++) {
-+		int offset = table_ptr->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table_ptr + offset;
-+		int avail = len - offset - sizeof(*hdr);
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+		struct fw_rsc_vdev *v;
-+
-+		/* Make sure table isn't truncated */
-+		if (avail < 0)
-+			goto out;
-+
-+		if (offset == FW_RSC_ADDR_ANY || offset == 0) {
-+			dev_err(dev, "Entry %d: bad offset value %x\n", i, offset);
-+			return -EINVAL;
-+		}
-+
-+		dev_dbg(dev, "rsc: type %d\n", hdr->type);
-+
-+		switch (hdr->type) {
-+		case RSC_CARVEOUT:
-+			avail -= sizeof(struct fw_rsc_carveout);
-+			break;
-+		case RSC_DEVMEM:
-+			avail -= sizeof(struct fw_rsc_devmem);
-+			break;
-+		case RSC_TRACE:
-+			avail -= sizeof(struct fw_rsc_trace);
-+			break;
-+		case RSC_VDEV:
-+			v = rsc;
-+			avail -= sizeof(struct fw_rsc_vdev);
-+			if (avail < 0)
-+				goto out;
-+
-+			avail -= v->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
-+				 + v->config_len;
-+			break;
-+		default:
-+			dev_err(&rproc->dev, "Unsupported resource type: %d\n",
-+				hdr->type);
-+			return -EINVAL;
-+		}
-+		if (avail < 0)
-+			goto out;
-+	}
-+
-+	return 0;
-+
-+out:
-+	dev_err(dev, "Invalid resource table format\n");
-+	dump_stack();
-+	return -EINVAL;
-+}
-+
- static void rproc_dump_resource_table(struct rproc *rproc,
- 				      struct resource_table *table, int size)
- {
-@@ -1246,6 +1309,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 	}
- 
-+	/*  Verify resource table consistency */
-+	ret = rproc_resource_table_sanity_check(rproc, table, tablesz);
-+	if (ret) {
-+		dev_err(dev, "Failed to get valid resource table,%d\n", ret);
-+		goto clean_up;
-+	}
-+
- 	/*
- 	 * Create a copy of the resource table. When a virtio device starts
- 	 * and calls vring_new_virtqueue() the address of the allocated vring
--- 
-1.9.1
+8974: q6v5 -> mba.b00
+8916: q6v56 -> mba.mbn
+8996: q6v55 -> mba.mbn
+
+So we should be able to pick this based on compatible then.
+
+>  #define MPSS_FIRMWARE_NAME		"modem.mdt"
+>  
+>  #define MPSS_CRASH_REASON_SMEM		421
+> @@ -65,6 +66,8 @@
+>  #define QDSP6SS_RESET_REG		0x014
+>  #define QDSP6SS_GFMUX_CTL_REG		0x020
+>  #define QDSP6SS_PWR_CTL_REG		0x030
+> +#define QDSP6SS_MEM_PWR_CTL		0x0B0
+> +#define QDSP6SS_STRAP_ACC		0x110
+>  
+>  /* AXI Halt Register Offsets */
+>  #define AXI_HALTREQ_REG			0x0
+> @@ -93,13 +96,24 @@
+>  #define QDSS_BHS_ON			BIT(21)
+>  #define QDSS_LDO_BYP			BIT(22)
+>  
+> +/* QDSP6v55 parameters */
+> +#define QDSP6v55_LDO_BYP                BIT(25)
+> +#define QDSP6v55_BHS_ON                 BIT(24)
+> +#define QDSP6v55_CLAMP_WL               BIT(21)
+> +#define QDSP6v55_CLAMP_QMC_MEM          BIT(22)
+> +
+> +#define HALT_CHECK_MAX_LOOPS            (200)
+> +#define QDSP6SS_XO_CBCR                 (0x0038)
+> +
+> +#define QDSP6SS_ACC_OVERRIDE_VAL	0x20
+> +
+>  struct q6v5 {
+>  	struct device *dev;
+>  	struct rproc *rproc;
+>  
+>  	void __iomem *reg_base;
+>  	void __iomem *rmb_base;
+> -
+> +	void __iomem *restart_reg;
+
+The restart_reg is a register in the gcc, on 8974 this is exposed as a
+reset by gcc. Please add the GCC_MSS_RESTART to the list of resets in
+gcc-msm8996 rather than remapping and poking the register directly from
+this driver.
+
+>  	struct regmap *halt_map;
+>  	u32 halt_q6;
+>  	u32 halt_modem;
+> @@ -115,6 +129,13 @@ struct q6v5 {
+>  	struct clk *ahb_clk;
+>  	struct clk *axi_clk;
+>  	struct clk *rom_clk;
+> +	struct clk *gpll0_mss_clk;
+> +	struct clk *snoc_axi_clk;
+> +	struct clk *mnoc_axi_clk;
+> +
+> +	struct clk *xo;
+> +	struct clk *pnoc_clk;
+> +	struct clk *qdss_clk;
+
+Please introduce these changes as they are needed by the implementation,
+rather than in a separate patch. It makes it much much easier to review.
+
+>  
+>  	struct completion start_done;
+>  	struct completion stop_done;
+> @@ -128,13 +149,18 @@ struct q6v5 {
+>  	phys_addr_t mpss_reloc;
+>  	void *mpss_region;
+>  	size_t mpss_size;
+> +	struct mutex q6_lock;
+> +	u32 boot_count;
+> +	bool unvote_flag;
+> +	bool is_q6v55;
+> +	bool ahb_clk_vote;
+
+Dito
+
+>  };
+>  
+>  enum {
+>  	Q6V5_SUPPLY_CX,
+>  	Q6V5_SUPPLY_MX,
+> -	Q6V5_SUPPLY_MSS,
+>  	Q6V5_SUPPLY_PLL,
+> +	Q6V5_SUPPLY_MSS,
+>  };
+>  
+>  static int q6v5_regulator_init(struct q6v5 *qproc)
+> @@ -892,6 +918,7 @@ static int q6v5_remove(struct platform_device *pdev)
+>  
+>  static const struct of_device_id q6v5_of_match[] = {
+>  	{ .compatible = "qcom,q6v5-pil", },
+> +	{ .compatible = "qcom,q6v55-pil", },
+
+Just out of curiosity, is the version 55 or 5.5?
+
+>  	{ },
+>  };
+
+Regards,
+Bjorn
