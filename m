@@ -1,131 +1,45 @@
-Return-Path: <spjoshi@codeaurora.org>
+Return-Path: <sboyd@codeaurora.org>
 Subject: Re: [PATCH v2 1/1] remoteproc: Add support for xo clock
 References: <1477429046-26855-1-git-send-email-spjoshi@codeaurora.org>
  <20161101000555.GK25787@tuxbot>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Message-ID: <8284ee04-1e59-fd20-a215-7d0e22026cdc@codeaurora.org>
-Date: Wed, 2 Nov 2016 11:58:36 -0700
+ <564faf01-f4d7-4bdb-ee48-76a893d3d4c0@codeaurora.org>
+ <CAOCOHw4QYtvjcOUsYBGvs60OtN6Ug_a030xtsQSnYpxOTTUNzw@mail.gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Message-ID: <38cfee53-8699-b3c1-22e0-cb5355ce9387@codeaurora.org>
+Date: Tue, 1 Nov 2016 10:52:00 -0700
 MIME-Version: 1.0
-In-Reply-To: <20161101000555.GK25787@tuxbot>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAOCOHw4QYtvjcOUsYBGvs60OtN6Ug_a030xtsQSnYpxOTTUNzw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 10/31/2016 05:05 PM, Bjorn Andersson wrote:
-> On Tue 25 Oct 13:57 PDT 2016, Sarangdhar Joshi wrote:
+On 11/01/2016 10:46 AM, Bjorn Andersson wrote:
+> On Tue, Nov 1, 2016 at 10:41 AM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+>> On 10/31/2016 05:05 PM, Bjorn Andersson wrote:
+>>> On Tue 25 Oct 13:57 PDT 2016, Sarangdhar Joshi wrote:
+>>>
+>>>> Add xo clock support required to boot up Qualcomm ADSP processor.
+>>>> The ADSP remoteproc driver keeps xo clock enabled until the
+>>>> driver receives "handover" irq, in order to allow ADSP processor
+>>>> to vote for xo clock with rpm.
+>>> Looks good, thanks.
+>>>
+>>> We have to add the clock to the DT binding and run that by Rob again,
+>>> before merging the driver and this patch.
+>>>
+>> Maybe we should make the xo clock required. We always have a clock for
+>> it somewhere, either RPM controlled or as a fixed rate clock so it
+>> should work just as well.
+>>
+> As far as I can see it is required, after Sarangdhar's patch - so this
+> is what I meant we need to add to the DT binding before merging that.
+> And as you say, we can always make it reference "xo_board" for now.
 >
->> Add xo clock support required to boot up Qualcomm ADSP processor.
->> The ADSP remoteproc driver keeps xo clock enabled until the
->> driver receives "handover" irq, in order to allow ADSP processor
->> to vote for xo clock with rpm.
->
-> Looks good, thanks.
->
-> We have to add the clock to the DT binding and run that by Rob again,
-> before merging the driver and this patch.
->
-> Regards,
-> Bjorn
 
-Sure, will add it to the DT bindings. Thanks for reviewing.
-
-Regards,
-Sarang
-
->
->>
->> Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
->> ---
->>  drivers/remoteproc/qcom_adsp_pil.c | 30 +++++++++++++++++++++++++++++-
->>  1 file changed, 29 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
->> index 9141633..5bb25d1 100644
->> --- a/drivers/remoteproc/qcom_adsp_pil.c
->> +++ b/drivers/remoteproc/qcom_adsp_pil.c
->> @@ -15,6 +15,7 @@
->>   * GNU General Public License for more details.
->>   */
->>
->> +#include <linux/clk.h>
->>  #include <linux/firmware.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/kernel.h>
->> @@ -48,6 +49,8 @@ struct qcom_adsp {
->>  	struct qcom_smem_state *state;
->>  	unsigned stop_bit;
->>
->> +	struct clk *xo;
->> +
->>  	struct regulator *cx_supply;
->>
->>  	struct completion start_done;
->> @@ -102,10 +105,14 @@ static int adsp_start(struct rproc *rproc)
->>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
->>  	int ret;
->>
->> -	ret = regulator_enable(adsp->cx_supply);
->> +	ret = clk_prepare_enable(adsp->xo);
->>  	if (ret)
->>  		return ret;
->>
->> +	ret = regulator_enable(adsp->cx_supply);
->> +	if (ret)
->> +		goto disable_clocks;
->> +
->>  	ret = qcom_scm_pas_auth_and_reset(ADSP_PAS_ID);
->>  	if (ret) {
->>  		dev_err(adsp->dev,
->> @@ -126,6 +133,8 @@ static int adsp_start(struct rproc *rproc)
->>
->>  disable_regulators:
->>  	regulator_disable(adsp->cx_supply);
->> +disable_clocks:
->> +	clk_disable_unprepare(adsp->xo);
->>
->>  	return ret;
->>  }
->> @@ -223,6 +232,21 @@ static irqreturn_t adsp_stop_ack_interrupt(int irq, void *dev)
->>  	return IRQ_HANDLED;
->>  }
->>
->> +static int adsp_init_clock(struct qcom_adsp *adsp)
->> +{
->> +	int ret;
->> +
->> +	adsp->xo = devm_clk_get(adsp->dev, "xo");
->> +	if (IS_ERR(adsp->xo)) {
->> +		ret = PTR_ERR(adsp->xo);
->> +		if (ret != -EPROBE_DEFER)
->> +			dev_err(adsp->dev, "failed to get xo clock");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  static int adsp_init_regulator(struct qcom_adsp *adsp)
->>  {
->>  	adsp->cx_supply = devm_regulator_get(adsp->dev, "cx");
->> @@ -320,6 +344,10 @@ static int adsp_probe(struct platform_device *pdev)
->>  	if (ret)
->>  		goto free_rproc;
->>
->> +	ret = adsp_init_clock(adsp);
->> +	if (ret)
->> +		goto free_rproc;
->> +
->>  	ret = adsp_init_regulator(adsp);
->>  	if (ret)
->>  		goto free_rproc;
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
-
+Ah good then. Brain must have misread the patch.
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
