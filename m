@@ -1,45 +1,74 @@
-Return-Path: <maitysanchayan@gmail.com>
-Return-Path: <maitysanchayan@gmail.com>
-Date: Thu, 6 Oct 2016 13:00:23 +0530
-From: maitysanchayan@gmail.com
-Subject: Query on vring allocation in internal SRAM with remoteproc
-Message-ID: <20161006073023.GA1560@Sanchayan-Arch.localdomain>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 31 Oct 2016 17:31:35 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 0/2] remoteproc: Add sysfs interface
+Message-ID: <20161101003135.GL25787@tuxbot>
+References: <1476878748-32097-1-git-send-email-matt.redfearn@imgtec.com>
+ <9607ab24-e9f3-515b-b143-e2c7ca19c0eb@imgtec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-To: bjorn.andersson@linaro.org
-Cc: sanchayan.maity@toradex.com, stefan.agner@toradex.com, linux-remoteproc@vger.kernel.org
+In-Reply-To: <9607ab24-e9f3-515b-b143-e2c7ca19c0eb@imgtec.com>
+To: Matt Redfearn <matt.redfearn@imgtec.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello,
+On Thu 27 Oct 07:10 PDT 2016, Matt Redfearn wrote:
 
-I have been working on use of remoteproc and rmpsg for bootup and communication
-between A5 and M4 core on NXP Vybrid[1]. Currently we are using a hacked up rpmsg[2]
-implementation for Vybrid based on NXP's implementation in downstream kernel for iMX7.
-We also use remoteproc but currently only for booting the M4 core and would like to
-completely leverage remoteproc for booting and rpmsg communication instead of hacked
-up way, so we can also upstream this.
+> 
+> On 19/10/16 13:05, Matt Redfearn wrote:
+> >It is often desireable to boot a remote processor with different
+> >firmware files, depending on the needs of the system at a particular
+> >time. This series adds a sysfs interface to the remoteproc core,
+> >exposing interfaces to manipulate the remote processor. One interface is
+> >the "state" file which performs the same function as the one in debugfs
+> >(which is removed later in the series). The other is a "firmware" file
+> >which allows retrieval of the name of the running firmware, and allows a
+> >new firmware to be loaded when written, as long as the remote processor
+> >is currently stopped.
+> >
+> >Some groundwork must be laid first, changing the storage mechanism of
+> >the firmware name such that it can be rewritten easily, then that is
+> >wired up to the new sysfs interface.
+> >
+> >This series is based on v4.9-rc1
+> >
+> >
+> >Changes in v3:
+> >Drop call to rproc_add_virtio_devices from sysfs firmware_store
+> >Use strcspn to find firmware name length
+> >Explicit indexes for state strings
+> >
+> >Changes in v2:
+> >Have firmware_store perform the necessary steps inline.
+> >Use sysfs_streq when dealing with writes to sysfs files
+> >
+> >Matt Redfearn (2):
+> >   remoteproc: Add a sysfs interface for firmware and state
+> >   remoteproc: debugfs: Remove state entry which is duplicated is sysfs
+> >
+> >  Documentation/ABI/testing/sysfs-class-remoteproc |  50 ++++++++
+> >  drivers/remoteproc/Makefile                      |   1 +
+> >  drivers/remoteproc/remoteproc_core.c             |   3 +
+> >  drivers/remoteproc/remoteproc_debugfs.c          |  71 -----------
+> >  drivers/remoteproc/remoteproc_internal.h         |   5 +
+> >  drivers/remoteproc/remoteproc_sysfs.c            | 151 +++++++++++++++++++++++
+> >  6 files changed, 210 insertions(+), 71 deletions(-)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-class-remoteproc
+> >  create mode 100644 drivers/remoteproc/remoteproc_sysfs.c
+> >
+> 
+> Hi Bjorn,
+> 
+> Is this version of the patchset ok? Any feedback welcome :-)
+> 
 
-For Vybrid, currently the internal On-chip RAM is being used for the vrings. Initially
-I tried with remoteproc, but Linux remoteproc allocates vrings in it's memory space
-with a call to dma_alloc_coherent. This does not work for Vybrid's case as even using
-RSC_VDEV, rproc_handle_vdev dynamically allocates using DMA API and completely ignores
-requested hardcoded addresses. On M4 side, we use FreeRTOS and openamp which has
-support for rpmsg and remoteproc.
+Hi Matt,
 
-The comment with rproc_handle_vdev mentions to use RSC_DEVMEM to map the required da
-to physical address. Reading the comments along with fw_rsc_devmem and above, I am
-not clear on what the firmware resource table should be. If I want the known internal
-OCRAM addresses to be used, shall I specify da and pa same in firmware resource table
-while using RSC_DEVMEM? Am not exactly clear on how the vrings will be allocated and
-handled in this case. It seems to have calls to iommu while we have no iommu.
+I was hoping for some comments or verification from others, so I
+conveniently did let it hang out in my TODO list.
 
-There seems to have been patches for exactly this usecase of internal memories [3]
-using ioremap_nocache, but that seems to have never made it through?
+I think the new interface looks good and have merged the two patches!
 
-Thanks & Regards,
-Sanchayan.
-
-[1]. http://www.nxp.com/products/microcontrollers-and-processors/arm-processors/vfxxx-controller/f-series/arm-cortex-a5-plus-cortex-m4-mpus-1.5-mb-sram-lcd-security-ethernet-l2-switch:VF6xx
-[2]. https://lkml.org/lkml/2016/1/6/182
-[3]. http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/270534.html
+Regards,
+Bjorn
