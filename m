@@ -1,62 +1,80 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 1/1] remoteproc: core: probe subdevices before booting coprocessor
-Date: Fri, 25 Nov 2016 18:49:10 +0100
-Message-ID: <1480096150-5795-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <Matt.Redfearn@imgtec.com>
+Subject: Re: [PATCH v3 0/2] remoteproc: Add sysfs interface
+References: <1476878748-32097-1-git-send-email-matt.redfearn@imgtec.com>
+ <9607ab24-e9f3-515b-b143-e2c7ca19c0eb@imgtec.com>
+ <20161101003135.GL25787@tuxbot>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Message-ID: <bbd51198-5fd2-e007-a788-3cb0b94e525b@imgtec.com>
+Date: Tue, 1 Nov 2016 09:25:09 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+In-Reply-To: <20161101003135.GL25787@tuxbot>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-With subdevice support introduction, coprocessor boot sequence has
-changed. Related coprocessor subdevices are now starting after firmware
-and resource table loading and coprocessor boot.
 
-But some subdevices can resources to allocate before coprocessor start,
-like rpmsg buffers allocation for example.
 
-This patch probes subdevices just before loading resource table,
-to keep backward compatibility with existing firmwares.
+On 01/11/16 00:31, Bjorn Andersson wrote:
+> On Thu 27 Oct 07:10 PDT 2016, Matt Redfearn wrote:
+>
+>> On 19/10/16 13:05, Matt Redfearn wrote:
+>>> It is often desireable to boot a remote processor with different
+>>> firmware files, depending on the needs of the system at a particular
+>>> time. This series adds a sysfs interface to the remoteproc core,
+>>> exposing interfaces to manipulate the remote processor. One interface is
+>>> the "state" file which performs the same function as the one in debugfs
+>>> (which is removed later in the series). The other is a "firmware" file
+>>> which allows retrieval of the name of the running firmware, and allows a
+>>> new firmware to be loaded when written, as long as the remote processor
+>>> is currently stopped.
+>>>
+>>> Some groundwork must be laid first, changing the storage mechanism of
+>>> the firmware name such that it can be rewritten easily, then that is
+>>> wired up to the new sysfs interface.
+>>>
+>>> This series is based on v4.9-rc1
+>>>
+>>>
+>>> Changes in v3:
+>>> Drop call to rproc_add_virtio_devices from sysfs firmware_store
+>>> Use strcspn to find firmware name length
+>>> Explicit indexes for state strings
+>>>
+>>> Changes in v2:
+>>> Have firmware_store perform the necessary steps inline.
+>>> Use sysfs_streq when dealing with writes to sysfs files
+>>>
+>>> Matt Redfearn (2):
+>>>    remoteproc: Add a sysfs interface for firmware and state
+>>>    remoteproc: debugfs: Remove state entry which is duplicated is sysfs
+>>>
+>>>   Documentation/ABI/testing/sysfs-class-remoteproc |  50 ++++++++
+>>>   drivers/remoteproc/Makefile                      |   1 +
+>>>   drivers/remoteproc/remoteproc_core.c             |   3 +
+>>>   drivers/remoteproc/remoteproc_debugfs.c          |  71 -----------
+>>>   drivers/remoteproc/remoteproc_internal.h         |   5 +
+>>>   drivers/remoteproc/remoteproc_sysfs.c            | 151 +++++++++++++++++++++++
+>>>   6 files changed, 210 insertions(+), 71 deletions(-)
+>>>   create mode 100644 Documentation/ABI/testing/sysfs-class-remoteproc
+>>>   create mode 100644 drivers/remoteproc/remoteproc_sysfs.c
+>>>
+>> Hi Bjorn,
+>>
+>> Is this version of the patchset ok? Any feedback welcome :-)
+>>
+> Hi Matt,
+>
+> I was hoping for some comments or verification from others, so I
+> conveniently did let it hang out in my TODO list.
+>
+> I think the new interface looks good and have merged the two patches!
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Great, thanks! :-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f0f6ec1..15e9331 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -913,6 +913,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
- 	}
- 
-+	/* probe any subdevices for the remote processor */
-+	ret = rproc_probe_subdevices(rproc);
-+	if (ret) {
-+		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-+			rproc->name, ret);
-+		goto clean_up_resources;
-+	}
-+
- 	/*
- 	 * The starting device has been given the rproc->table_ptr as the
- 	 * resource table. The address of the vring along with the other
-@@ -932,14 +940,6 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
- 	}
- 
--	/* probe any subdevices for the remote processor */
--	ret = rproc_probe_subdevices(rproc);
--	if (ret) {
--		dev_err(dev, "failed to probe subdevices for %s: %d\n",
--			rproc->name, ret);
--		goto stop_rproc;
--	}
--
- 	rproc->state = RPROC_RUNNING;
- 
- 	dev_info(dev, "remote processor %s is now up\n", rproc->name);
--- 
-1.9.1
+Matt
+
+>
+> Regards,
+> Bjorn
