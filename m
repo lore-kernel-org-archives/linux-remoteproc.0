@@ -1,161 +1,131 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: qcom_wcnss: Fix circular module dependency
-Date: Thu,  3 Nov 2016 19:37:25 -0700
-Message-Id: <1478227045-1768-1-git-send-email-bjorn.andersson@linaro.org>
+Return-Path: <spjoshi@codeaurora.org>
+Subject: Re: [PATCH v2 1/1] remoteproc: Add support for xo clock
+References: <1477429046-26855-1-git-send-email-spjoshi@codeaurora.org>
+ <20161101000555.GK25787@tuxbot>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Message-ID: <8284ee04-1e59-fd20-a215-7d0e22026cdc@codeaurora.org>
+Date: Wed, 2 Nov 2016 11:58:36 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+In-Reply-To: <20161101000555.GK25787@tuxbot>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The tie between the main WCNSS driver and the IRIS driver causes a
-circular dependency between the two modules. Neither part makes sense to
-have on their own so lets merge them into one module.
+On 10/31/2016 05:05 PM, Bjorn Andersson wrote:
+> On Tue 25 Oct 13:57 PDT 2016, Sarangdhar Joshi wrote:
+>
+>> Add xo clock support required to boot up Qualcomm ADSP processor.
+>> The ADSP remoteproc driver keeps xo clock enabled until the
+>> driver receives "handover" irq, in order to allow ADSP processor
+>> to vote for xo clock with rpm.
+>
+> Looks good, thanks.
+>
+> We have to add the clock to the DT binding and run that by Rob again,
+> before merging the driver and this patch.
+>
+> Regards,
+> Bjorn
 
-For the sake of picking up the clock and regulator resources described
-in the iris of_node we need an associated struct device. But, to keep
-the size of the patch down we continue to represent the IRIS part as its
-own platform_driver, within the same module, rather than setting up a
-dummy device.
+Sure, will add it to the DT bindings. Thanks for reviewing.
 
-Reported-by: Andreas Färber <afaerber@suse.de>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/Kconfig           |  5 -----
- drivers/remoteproc/Makefile          |  5 +++--
- drivers/remoteproc/qcom_wcnss.c      | 25 +++++++++++++++++++++++--
- drivers/remoteproc/qcom_wcnss.h      |  2 ++
- drivers/remoteproc/qcom_wcnss_iris.c |  8 +-------
- 5 files changed, 29 insertions(+), 16 deletions(-)
+Regards,
+Sarang
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index f396bfef5d42..5fcbefcb8636 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -91,17 +91,12 @@ config QCOM_Q6V5_PIL
- 	  Say y here to support the Qualcomm Peripherial Image Loader for the
- 	  Hexagon V5 based remote processors.
- 
--config QCOM_WCNSS_IRIS
--	tristate
--	depends on OF && ARCH_QCOM
--
- config QCOM_WCNSS_PIL
- 	tristate "Qualcomm WCNSS Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
- 	select QCOM_MDT_LOADER
- 	select QCOM_SCM
--	select QCOM_WCNSS_IRIS
- 	select REMOTEPROC
- 	help
- 	  Say y here to support the Peripheral Image Loader for the Qualcomm
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 6dfb62ed643f..034b6f3563a7 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
- obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
--obj-$(CONFIG_QCOM_WCNSS_IRIS)		+= qcom_wcnss_iris.o
--obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss.o
-+obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
-+qcom_wcnss_pil-y			+= qcom_wcnss.o
-+qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
- obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index f5cedeaafba1..323b629474a6 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -143,7 +143,6 @@ void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
- 
- 	mutex_unlock(&wcnss->iris_lock);
- }
--EXPORT_SYMBOL_GPL(qcom_wcnss_assign_iris);
- 
- static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
- {
-@@ -619,6 +618,28 @@ static struct platform_driver wcnss_driver = {
- 	},
- };
- 
--module_platform_driver(wcnss_driver);
-+static int __init wcnss_init(void)
-+{
-+	int ret;
-+
-+	ret = platform_driver_register(&wcnss_driver);
-+	if (ret)
-+		return ret;
-+
-+	ret = platform_driver_register(&qcom_iris_driver);
-+	if (ret)
-+		platform_driver_unregister(&wcnss_driver);
-+
-+	return ret;
-+}
-+module_init(wcnss_init);
-+
-+static void __exit wcnss_exit(void)
-+{
-+	platform_driver_unregister(&qcom_iris_driver);
-+	platform_driver_unregister(&wcnss_driver);
-+}
-+module_exit(wcnss_exit);
-+
- MODULE_DESCRIPTION("Qualcomm Peripherial Image Loader for Wireless Subsystem");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/remoteproc/qcom_wcnss.h b/drivers/remoteproc/qcom_wcnss.h
-index 9dc4a9fe41e1..25fb7f62a457 100644
---- a/drivers/remoteproc/qcom_wcnss.h
-+++ b/drivers/remoteproc/qcom_wcnss.h
-@@ -4,6 +4,8 @@
- struct qcom_iris;
- struct qcom_wcnss;
- 
-+extern struct platform_driver qcom_iris_driver;
-+
- struct wcnss_vreg_info {
- 	const char * const name;
- 	int min_voltage;
-diff --git a/drivers/remoteproc/qcom_wcnss_iris.c b/drivers/remoteproc/qcom_wcnss_iris.c
-index f0ca24a8dd0b..05d6e175411a 100644
---- a/drivers/remoteproc/qcom_wcnss_iris.c
-+++ b/drivers/remoteproc/qcom_wcnss_iris.c
-@@ -94,14 +94,12 @@ int qcom_iris_enable(struct qcom_iris *iris)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(qcom_iris_enable);
- 
- void qcom_iris_disable(struct qcom_iris *iris)
- {
- 	clk_disable_unprepare(iris->xo_clk);
- 	regulator_bulk_disable(iris->num_vregs, iris->vregs);
- }
--EXPORT_SYMBOL_GPL(qcom_iris_disable);
- 
- static int qcom_iris_probe(struct platform_device *pdev)
- {
-@@ -174,7 +172,7 @@ static const struct of_device_id iris_of_match[] = {
- 	{}
- };
- 
--static struct platform_driver wcnss_driver = {
-+struct platform_driver qcom_iris_driver = {
- 	.probe = qcom_iris_probe,
- 	.remove = qcom_iris_remove,
- 	.driver = {
-@@ -182,7 +180,3 @@ static struct platform_driver wcnss_driver = {
- 		.of_match_table = iris_of_match,
- 	},
- };
--
--module_platform_driver(wcnss_driver);
--MODULE_DESCRIPTION("Qualcomm Wireless Subsystem Iris driver");
--MODULE_LICENSE("GPL v2");
+>
+>>
+>> Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_adsp_pil.c | 30 +++++++++++++++++++++++++++++-
+>>  1 file changed, 29 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+>> index 9141633..5bb25d1 100644
+>> --- a/drivers/remoteproc/qcom_adsp_pil.c
+>> +++ b/drivers/remoteproc/qcom_adsp_pil.c
+>> @@ -15,6 +15,7 @@
+>>   * GNU General Public License for more details.
+>>   */
+>>
+>> +#include <linux/clk.h>
+>>  #include <linux/firmware.h>
+>>  #include <linux/interrupt.h>
+>>  #include <linux/kernel.h>
+>> @@ -48,6 +49,8 @@ struct qcom_adsp {
+>>  	struct qcom_smem_state *state;
+>>  	unsigned stop_bit;
+>>
+>> +	struct clk *xo;
+>> +
+>>  	struct regulator *cx_supply;
+>>
+>>  	struct completion start_done;
+>> @@ -102,10 +105,14 @@ static int adsp_start(struct rproc *rproc)
+>>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>>  	int ret;
+>>
+>> -	ret = regulator_enable(adsp->cx_supply);
+>> +	ret = clk_prepare_enable(adsp->xo);
+>>  	if (ret)
+>>  		return ret;
+>>
+>> +	ret = regulator_enable(adsp->cx_supply);
+>> +	if (ret)
+>> +		goto disable_clocks;
+>> +
+>>  	ret = qcom_scm_pas_auth_and_reset(ADSP_PAS_ID);
+>>  	if (ret) {
+>>  		dev_err(adsp->dev,
+>> @@ -126,6 +133,8 @@ static int adsp_start(struct rproc *rproc)
+>>
+>>  disable_regulators:
+>>  	regulator_disable(adsp->cx_supply);
+>> +disable_clocks:
+>> +	clk_disable_unprepare(adsp->xo);
+>>
+>>  	return ret;
+>>  }
+>> @@ -223,6 +232,21 @@ static irqreturn_t adsp_stop_ack_interrupt(int irq, void *dev)
+>>  	return IRQ_HANDLED;
+>>  }
+>>
+>> +static int adsp_init_clock(struct qcom_adsp *adsp)
+>> +{
+>> +	int ret;
+>> +
+>> +	adsp->xo = devm_clk_get(adsp->dev, "xo");
+>> +	if (IS_ERR(adsp->xo)) {
+>> +		ret = PTR_ERR(adsp->xo);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(adsp->dev, "failed to get xo clock");
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int adsp_init_regulator(struct qcom_adsp *adsp)
+>>  {
+>>  	adsp->cx_supply = devm_regulator_get(adsp->dev, "cx");
+>> @@ -320,6 +344,10 @@ static int adsp_probe(struct platform_device *pdev)
+>>  	if (ret)
+>>  		goto free_rproc;
+>>
+>> +	ret = adsp_init_clock(adsp);
+>> +	if (ret)
+>> +		goto free_rproc;
+>> +
+>>  	ret = adsp_init_regulator(adsp);
+>>  	if (ret)
+>>  		goto free_rproc;
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+
+
 -- 
-2.5.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
