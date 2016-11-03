@@ -1,38 +1,53 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 0/3] Venus remoteproc driver
-Date: Mon,  7 Nov 2016 19:30:50 +0200
-Message-Id: <1478539853-23218-1-git-send-email-stanimir.varbanov@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v4 4/4] MIPS: Deprecate VPE Loader
+References: <1478103063-17653-1-git-send-email-matt.redfearn@imgtec.com>
+ <1478103063-17653-5-git-send-email-matt.redfearn@imgtec.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <540026e5-a839-b4db-ec8c-bd5d03d9faca@cogentembedded.com>
+Date: Thu, 3 Nov 2016 13:12:28 +0300
+MIME-Version: 1.0
+In-Reply-To: <1478103063-17653-5-git-send-email-matt.redfearn@imgtec.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Matt Redfearn <matt.redfearn@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+Hello.
 
-here is v2 of the Venus remoteproc driver, the changes are:
-	- removed page table size and page table init SCM calls.
+On 11/2/2016 7:11 PM, Matt Redfearn wrote:
 
-regards,
-Stan
+> The MIPS remote processor driver (CONFIG_MIPS_REMOTEPROC) provides a
+> more standard mechanism for using one or more VPs as coprocessors
+> running separate firmware.
+>
+> Here we deprecate this mechanism before it is removed.
+>
+> Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+> ---
+>
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
+>
+>  arch/mips/Kconfig | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 6faf7c96ee15..d5b5a25a49e8 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+[...]
+> @@ -2307,6 +2307,9 @@ config MIPS_VPE_LOADER
+>  	  Includes a loader for loading an elf relocatable object
+>  	  onto another VPE and running it.
+>
+> +	  Unless you have a specific need, you should use CONFIG_MIPS_REMOTEPROC
+> +          instead of this.
 
-Stanimir Varbanov (3):
-  firmware: qcom: scm: add a video command for state setting
-  dt-binding: remoteproc: venus rproc dt binding document
-  remoteproc: qcom: add Venus video core firmware loader driver
+    Please indent using a leading tab (like above). There's too many spaces too...
 
- .../devicetree/bindings/remoteproc/qcom,venus.txt  |  33 ++++
- drivers/firmware/qcom_scm-32.c                     |  18 ++
- drivers/firmware/qcom_scm-64.c                     |  16 ++
- drivers/firmware/qcom_scm.c                        |  16 ++
- drivers/firmware/qcom_scm.h                        |   2 +
- drivers/remoteproc/Kconfig                         |  12 ++
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/qcom_venus_pil.c                | 213 +++++++++++++++++++++
- include/linux/qcom_scm.h                           |   2 +
- 9 files changed, 313 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
- create mode 100644 drivers/remoteproc/qcom_venus_pil.c
+[...]
 
--- 
-2.7.4
+MBR, Sergei
