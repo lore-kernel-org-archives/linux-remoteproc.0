@@ -1,61 +1,35 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 2/3] dt-binding: remoteproc: venus rproc dt binding document
-Date: Mon,  7 Nov 2016 19:30:52 +0200
-Message-Id: <1478539853-23218-3-git-send-email-stanimir.varbanov@linaro.org>
-In-Reply-To: <1478539853-23218-1-git-send-email-stanimir.varbanov@linaro.org>
-References: <1478539853-23218-1-git-send-email-stanimir.varbanov@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:32176 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753153AbcKCNPO (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 3 Nov 2016 09:15:14 -0400
+From: "Koul, Vinod" <vinod.koul@intel.com>
+Subject: Re: [PATCH] dmaengine: st_fdma: Update st_fdma to 'depends on
+ REMOTEPROC'.
+Date: Thu, 3 Nov 2016 13:15:09 +0000
+Message-ID: <1478178908.6505.28.camel@intel.com>
+References: <1477039465-31121-1-git-send-email-peter.griffin@linaro.org>
+In-Reply-To: <1477039465-31121-1-git-send-email-peter.griffin@linaro.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <16DC56BA99DEA947BD6907CA45B10C6B@intel.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Williams, Dan J" <dan.j.williams@intel.com>, "kernel@stlinux.com" <kernel@stlinux.com>, "arnd@arndb.de" <arnd@arndb.de>, "peter.griffin@linaro.org" <peter.griffin@linaro.org>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "lee.jones@linaro.org" <lee.jones@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add devicetree binding document for Venus remote processor.
+On Fri, 2016-10-21 at 09:44 +-0100, Peter Griffin wrote:
++AD4- During randconfig builds you can get the following warning
++AD4- +ACI-warning: (ST+AF8-FDMA) selects ST+AF8-SLIM+AF8-REMOTEPROC which has unmet direct
++AD4- +AKA-dependencies (REMOTEPROC)+ACI-
++AD4- 
++AD4- randconfig builds should always build without any warnings so
++AD4- update fdma to depend on REMOTEPROC so this can not happen.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- .../devicetree/bindings/remoteproc/qcom,venus.txt  | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
+Applied, thanks
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,venus.txt b/Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
-new file mode 100644
-index 000000000000..06a2db60fa38
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
-@@ -0,0 +1,33 @@
-+Qualcomm Venus Peripheral Image Loader
-+
-+This document defines the binding for a component that loads and boots firmware
-+on the Qualcomm Venus remote processor core.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must contain "qcom,venus-pil"
-+
-+- memory-region:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: a phandle to a node describing reserved memory
-+
-+* An example
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		venus_mem: venus@89900000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x0 0x89900000 0x0 0x800000>;
-+			alignment = <0x1000>;
-+			no-map;
-+		};
-+	};
-+
-+	rproc_venus@0 {
-+		compatible = "qcom,venus-pil";
-+		memory-region = <&venus_mem>;
-+	};
 -- 
-2.7.4
++AH4-Vinod
