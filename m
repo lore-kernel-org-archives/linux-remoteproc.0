@@ -1,371 +1,413 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v4 1/4] irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
-Date: Wed, 2 Nov 2016 16:11:00 +0000
-Message-ID: <1478103063-17653-2-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1478103063-17653-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1478103063-17653-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <akdwived@codeaurora.org>
+Subject: Re: [PATCH 2/5] remoteproc: Adding q6v55 specific regulator, clk,
+ reset interface.
+References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
+ <1477324559-24752-3-git-send-email-akdwived@codeaurora.org>
+ <20161025190512.GN7509@tuxbot>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Message-ID: <d1de6791-1326-933b-7be1-fd76bc203271@codeaurora.org>
+Date: Fri, 4 Nov 2016 19:11:20 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>
+In-Reply-To: <20161025190512.GN7509@tuxbot>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, kaushalk@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The MIPS remote processor driver allows non-Linux firmware to take
-control of and execute on one of the systems VPEs. If that VPE is
-brought back under Linux, it is necessary to ensure that all GIC
-interrupts are routed and masked as Linux expects them, as the firmware
-can have done anything it likes with the GIC configuration (hopefully
-just for that VPEs local interrupt sources, but allow for shared
-external interrupts as well).
 
-The configuration of shared and local CPU interrupts is maintained and
-updated every time a change is made. When a CPU is brought online, the
-saved configuration is restored.
 
-These functions will also be useful for restoring GIC context after a
-suspend to RAM.
+On 10/26/2016 12:35 AM, Bjorn Andersson wrote:
+> On Mon 24 Oct 08:55 PDT 2016, Avaneesh Kumar Dwivedi wrote:
+>
+>> q6v55 use different regulator and clock resource than q6v5, hence
+>> using separate resource handling for same.
+>> Also reset register
+>> programming in q6v55 is non secure so resource controller init-
+>> ilization is not required for q6v55.
+> The reset comes from GCC, so please use the fact that gcc already is a
+> reset-controller.
+Already in patch 1/5 have explained reason of not using the GCC to reset 
+pasting same here again
 
-This patch depends on Paul Burton's recent patches:
-irqchip: mips-gic: Implement activate op for device domain
-irqchip: mips-gic: Cleanup chip & handler setup
+Infact i had done it the way suggested before i sent out initial
+patchset, but then when i discussed with internal clock team, they said 
+they will
+not support MSS RESET to be done via GCC because
 
-Without these patches, the context saving will restore an incorrect map
-to VPE value, since there is a route to not having the interrupt
-affinity set.
+"MSS_RESET is not a block reset, GCC reset controller is used only when 
+we need a BCR to be reset,
+and which has a special purpose. MSS RESET doesn't fall under block 
+resets, it is not a clock and
+cannot be associated with clock."
 
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
-
-Changes in v4:
-Fix inconistency of Linux CPU number and VP ID
-
-Changes in v3:
-Update GIC context saving to use CPU hotplug state machine
-
-Changes in v2:
-Add dependence on additional patches to mips-gic in commit log
-Incorporate changes from Marc Zynger's review:
-- Remove CONTEXT_SAVING define.
-- Make saved local state a per-cpu variable
-- Make gic_save_* static functions when enabled, and do { } while(0)
-  otherwise
-
- drivers/irqchip/irq-mips-gic.c | 207 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 200 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
-index c0178a122940..2ba051c6be33 100644
---- a/drivers/irqchip/irq-mips-gic.c
-+++ b/drivers/irqchip/irq-mips-gic.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/bitmap.h>
- #include <linux/clocksource.h>
-+#include <linux/cpu.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-@@ -56,6 +57,79 @@ static unsigned int timer_cpu_pin;
- static struct irq_chip gic_level_irq_controller, gic_edge_irq_controller;
- DECLARE_BITMAP(ipi_resrv, GIC_MAX_INTRS);
- 
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+struct gic_local_state_t {
-+	u8 mask;
-+};
-+
-+DEFINE_PER_CPU(struct gic_local_state_t, gic_local_state);
-+
-+static void gic_save_local_rmask(int cpu, int mask)
-+{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
-+
-+	state->mask &= mask;
-+}
-+
-+static void gic_save_local_smask(int cpu, int mask)
-+{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
-+
-+	state->mask |= mask;
-+}
-+
-+static struct {
-+	unsigned vpe:		8;
-+	unsigned pin:		4;
-+
-+	unsigned polarity:	1;
-+	unsigned trigger:	1;
-+	unsigned dual_edge:	1;
-+	unsigned mask:		1;
-+} gic_shared_state[GIC_MAX_INTRS];
-+
-+static void gic_save_shared_vpe(int intr, int vpe)
-+{
-+	gic_shared_state[intr].vpe = vpe;
-+}
-+
-+static void gic_save_shared_pin(int intr, int pin)
-+{
-+	gic_shared_state[intr].pin = pin;
-+}
-+
-+static void gic_save_shared_polarity(int intr, int polarity)
-+{
-+	gic_shared_state[intr].polarity = polarity;
-+}
-+
-+static void gic_save_shared_trigger(int intr, int trigger)
-+{
-+	gic_shared_state[intr].trigger = trigger;
-+}
-+
-+static void gic_save_shared_dual_edge(int intr, int dual_edge)
-+{
-+	gic_shared_state[intr].dual_edge = dual_edge;
-+}
-+
-+static void gic_save_shared_mask(int intr, int mask)
-+{
-+	gic_shared_state[intr].mask = mask;
-+}
-+
-+#else
-+#define gic_save_local_rmask(cpu, i)	do { } while (0)
-+#define gic_save_local_smask(cpu, i)	do { } while (0)
-+
-+#define gic_save_shared_vpe(i, v)	do { } while (0)
-+#define gic_save_shared_pin(i, p)	do { } while (0)
-+#define gic_save_shared_polarity(i, p)	do { } while (0)
-+#define gic_save_shared_trigger(i, t)	do { } while (0)
-+#define gic_save_shared_dual_edge(i, d)	do { } while (0)
-+#define gic_save_shared_mask(i, m)	do { } while (0)
-+#endif /* CONFIG_MIPS_REMOTEPROC */
-+
- static void __gic_irq_dispatch(void);
- 
- static inline u32 gic_read32(unsigned int reg)
-@@ -105,52 +179,94 @@ static inline void gic_update_bits(unsigned int reg, unsigned long mask,
- 	gic_write(reg, regval);
- }
- 
--static inline void gic_reset_mask(unsigned int intr)
-+static inline void gic_write_reset_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_RMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_mask(unsigned int intr)
-+static inline void gic_reset_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 0);
-+	gic_write_reset_mask(intr);
-+}
-+
-+static inline void gic_write_set_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_SMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+static inline void gic_set_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 1);
-+	gic_write_set_mask(intr);
-+}
-+
-+static inline void gic_write_polarity(unsigned int intr, unsigned int pol)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_POLARITY) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)pol << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+{
-+	gic_save_shared_polarity(intr, pol);
-+	gic_write_polarity(intr, pol);
-+}
-+
-+static inline void gic_write_trigger(unsigned int intr, unsigned int trig)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_TRIGGER) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)trig << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+{
-+	gic_save_shared_trigger(intr, trig);
-+	gic_write_trigger(intr, trig);
-+}
-+
-+static inline void gic_write_dual_edge(unsigned int intr, unsigned int dual)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_DUAL) + GIC_INTR_OFS(intr),
- 			1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)dual << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+{
-+	gic_save_shared_dual_edge(intr, dual);
-+	gic_write_dual_edge(intr, dual);
-+}
-+
-+static inline void gic_write_map_to_pin(unsigned int intr, unsigned int pin)
- {
- 	gic_write32(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_PIN_BASE) +
- 		    GIC_SH_MAP_TO_PIN(intr), GIC_MAP_TO_PIN_MSK | pin);
- }
- 
--static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+{
-+	gic_save_shared_pin(intr, pin);
-+	gic_write_map_to_pin(intr, pin);
-+}
-+
-+static inline void gic_write_map_to_vpe(unsigned int intr, unsigned int vpe)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_VPE_BASE) +
- 		  GIC_SH_MAP_TO_VPE_REG_OFF(intr, vpe),
- 		  GIC_SH_MAP_TO_VPE_REG_BIT(vpe));
- }
- 
-+static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+{
-+	gic_save_shared_vpe(intr, vpe);
-+	gic_write_map_to_vpe(intr, vpe);
-+}
-+
- #ifdef CONFIG_CLKSRC_MIPS_GIC
- cycle_t gic_read_count(void)
- {
-@@ -527,6 +643,7 @@ static void gic_mask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_rmask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_RMASK), 1 << intr);
- }
- 
-@@ -534,6 +651,7 @@ static void gic_unmask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_smask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_SMASK), 1 << intr);
- }
- 
-@@ -551,6 +669,7 @@ static void gic_mask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_rmask(i, 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), 1 << intr);
-@@ -566,6 +685,7 @@ static void gic_unmask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_smask(i, 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), 1 << intr);
-@@ -968,6 +1088,74 @@ static struct irq_domain_ops gic_ipi_domain_ops = {
- 	.match = gic_ipi_domain_match,
- };
- 
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+static void gic_restore_shared(void)
-+{
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&gic_lock, flags);
-+	for (i = 0; i < gic_shared_intrs; i++) {
-+		gic_write_polarity(i, gic_shared_state[i].polarity);
-+		gic_write_trigger(i, gic_shared_state[i].trigger);
-+		gic_write_dual_edge(i, gic_shared_state[i].dual_edge);
-+		gic_write_map_to_vpe(i, gic_shared_state[i].vpe);
-+		gic_write_map_to_pin(i, gic_shared_state[i].pin);
-+
-+		if (gic_shared_state[i].mask)
-+			gic_write_set_mask(i);
-+		else
-+			gic_write_reset_mask(i);
-+	}
-+	spin_unlock_irqrestore(&gic_lock, flags);
-+}
-+
-+static void gic_restore_local(unsigned int cpu)
-+{
-+	struct gic_local_state_t state;
-+	int hw, virq, intr, mask;
-+	unsigned long flags;
-+
-+	for (hw = 0; hw < GIC_NUM_LOCAL_INTRS; hw++) {
-+		intr = GIC_LOCAL_TO_HWIRQ(hw);
-+		virq = irq_linear_revmap(gic_irq_domain, intr);
-+		gic_local_irq_domain_map(gic_irq_domain, virq, hw);
-+	}
-+
-+	local_irq_save(flags);
-+	gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
-+		  mips_cm_vp_id(cpu));
-+
-+	/* Enable EIC mode if necessary */
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_CTL), cpu_has_veic);
-+
-+	/* Restore interrupt masks */
-+	state = per_cpu(gic_local_state, cpu);
-+	mask = state.mask;
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), ~mask);
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), mask);
-+
-+	local_irq_restore(flags);
-+}
-+
-+/*
-+ * The MIPS remote processor driver allows non-Linux firmware to take control
-+ * of and execute on one of the systems VPEs. If that VPE is brought back under
-+ * Linux, it is necessary to ensure that all GIC interrupts are routed and
-+ * masked as Linux expects them, as the firmware can have done anything it
-+ * likes with the GIC configuration (hopefully just for that VPEs local
-+ * interrupt sources, but allow for shared external interrupts as well).
-+ */
-+static int gic_cpu_online(unsigned int cpu)
-+{
-+	gic_restore_shared();
-+	gic_restore_local(cpu);
-+
-+	return 0;
-+}
-+
-+#endif /* CONFIG_MIPS_REMOTEPROC */
-+
- static void __init __gic_init(unsigned long gic_base_addr,
- 			      unsigned long gic_addrspace_size,
- 			      unsigned int cpu_vec, unsigned int irqbase,
-@@ -1067,6 +1255,11 @@ static void __init __gic_init(unsigned long gic_base_addr,
- 	}
- 
- 	gic_basic_init();
-+
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "MIPS:GIC(REMOTEPROC)",
-+			  gic_cpu_online, NULL);
-+#endif /* CONFIG_MIPS_REMOTEPROC */
- }
- 
- void __init gic_init(unsigned long gic_base_addr,
--- 
-2.7.4
+Downstream also MSS RESET is programmed through ioremap
+>
+>> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 271 +++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 271 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index 8df95a0..c7dca40 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -215,6 +215,203 @@ static void q6v5_regulator_disable(struct q6v5 *qproc)
+>>   	regulator_set_voltage(mss, 0, 1150000);
+>>   }
+>>   
+>> +static int q6v55_regulator_init(struct q6v5 *qproc)
+>> +{
+>> +	int ret;
+>> +
+>> +	qproc->supply[Q6V5_SUPPLY_CX].supply = "vdd_cx";
+>> +	qproc->supply[Q6V5_SUPPLY_MX].supply = "vdd_mx";
+>> +	qproc->supply[Q6V5_SUPPLY_PLL].supply = "vdd_pll";
+>> +
+>> +	ret = devm_regulator_bulk_get(qproc->dev,
+>> +			(ARRAY_SIZE(qproc->supply) - 1), qproc->supply);
+>> +	if (ret < 0) {
+>> +		dev_err(qproc->dev, "failed to get supplies\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +
+>> +	return 0;
+>> +}
+> This is very very similar to the existing q6v5_regulator_init, please
+> figure out a way to make the mss supply optional here instead of
+> creating a new function.
+OK, Have implemented common init and enable function for clock and 
+regulator in patchset v2
+>
+>> +
+>> +static int q6v55_clk_enable(struct q6v5 *qproc)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = clk_prepare_enable(qproc->ahb_clk);
+>> +	if (ret)
+>> +		goto out;
+>> +
+>> +	ret = clk_prepare_enable(qproc->axi_clk);
+>> +	if (ret)
+>> +		goto err_axi_clk;
+>> +
+>> +	ret = clk_prepare_enable(qproc->rom_clk);
+>> +	if (ret)
+>> +		goto err_rom_clk;
+>> +
+>> +	ret = clk_prepare_enable(qproc->gpll0_mss_clk);
+>> +	if (ret)
+>> +		goto err_gpll0_mss_clk;
+>> +
+>> +	ret = clk_prepare_enable(qproc->snoc_axi_clk);
+>> +	if (ret)
+>> +		goto err_snoc_axi_clk;
+>> +
+>> +	ret = clk_prepare_enable(qproc->mnoc_axi_clk);
+>> +	if (ret)
+>> +		goto err_mnoc_axi_clk;
+> I believe it would be better to turn the clocks into an array, like the
+> regulators, so that we can loop over them rather than listing them
+> explicitly.
+OK , Have used clock array to initialize and enable clocks for q6 in 
+patchset v2
+>
+>> +
+>> +	return 0;
+>> +err_mnoc_axi_clk:
+>> +	clk_disable_unprepare(qproc->snoc_axi_clk);
+>> +err_snoc_axi_clk:
+>> +	clk_disable_unprepare(qproc->gpll0_mss_clk);
+>> +err_gpll0_mss_clk:
+>> +	clk_disable_unprepare(qproc->rom_clk);
+>> +err_rom_clk:
+>> +	clk_disable_unprepare(qproc->axi_clk);
+>> +err_axi_clk:
+>> +	clk_disable_unprepare(qproc->ahb_clk);
+>> +out:
+>> +	dev_err(qproc->dev, "Clk Vote Failed\n");
+> I believe the clock framework will complain if above fails, so no need
+> to add another print here.
+OK, Have removed print also
+>
+>> +	return ret;
+>> +}
+>> +
+>> +static void q6v55_clk_disable(struct q6v5 *qproc)
+>> +{
+>> +
+>> +	clk_disable_unprepare(qproc->mnoc_axi_clk);
+>> +	clk_disable_unprepare(qproc->snoc_axi_clk);
+>> +	clk_disable_unprepare(qproc->gpll0_mss_clk);
+>> +	clk_disable_unprepare(qproc->rom_clk);
+>> +	clk_disable_unprepare(qproc->axi_clk);
+>> +	if (!qproc->ahb_clk_vote)
+> Why do you check ahb_clk_vote in the disable case but not in the enable
+> case?
+>
+> Also, please move all ahb_clk_vote handling into the same patch.
+OK, Infact check was not required for v56 applicable to 8996, so have 
+removed them.
+>
+>> +		clk_disable_unprepare(qproc->ahb_clk);
+>> +}
+>> +
+>> +static int q6v55_proxy_vote(struct q6v5 *qproc)
+>> +{
+>> +	struct regulator *mx = qproc->supply[Q6V5_SUPPLY_MX].consumer;
+>> +	struct regulator *cx = qproc->supply[Q6V5_SUPPLY_CX].consumer;
+>> +	struct regulator *vdd_pll = qproc->supply[Q6V5_SUPPLY_PLL].consumer;
+>> +	int ret;
+>> +
+>> +	ret = regulator_set_voltage(mx, INT_MAX, INT_MAX);
+> I'm not convinced that we should vote MAX as minimum voltage here, is it
+> not 1.05V as in the q6v5?
+OK
+>
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "Failed to set voltage for vreg_mx\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regulator_enable(mx);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "Failed to enable vreg_mx\n");
+>> +		goto err_mx_enable;
+>> +	}
+>> +
+>> +	ret = regulator_set_voltage(cx, INT_MAX, INT_MAX);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "Failed to request vdd_cx voltage.\n");
+>> +		goto err_cx_voltage;
+>> +	}
+>> +
+>> +	ret = regulator_set_load(cx, 100000);
+>> +	if (ret < 0) {
+>> +		dev_err(qproc->dev, "Failed to set vdd_cx mode.\n");
+>> +		goto err_cx_set_load;
+>> +	}
+>> +
+>> +	ret = regulator_enable(cx);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "Failed to vote for vdd_cx\n");
+>> +		goto err_cx_enable;
+>> +	}
+>> +
+>> +	ret = regulator_set_voltage(vdd_pll, 1800000, 1800000);
+> PLL is fed from a fixed voltage regulator of 1.8V, so we do not need to
+> request a voltage (per Mark Brown's request).
+OK.
+>
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "Failed to set voltage for  vdd_pll\n");
+>> +		goto err_vreg_pll_set_vol;
+>> +	}
+>> +
+>> +	ret = regulator_set_load(vdd_pll, 10000);
+>> +	if (ret < 0) {
+>> +		dev_err(qproc->dev, "Failed to set vdd_pll mode.\n");
+>> +		goto err_vreg_pll_load;
+>> +	}
+>> +
+>> +	ret = regulator_enable(vdd_pll);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "Failed to vote for vdd_pll\n");
+>> +		goto err_vreg_pll_enable;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(qproc->xo);
+>> +	if (ret)
+>> +		goto err_xo_vote;
+>> +
+>> +	ret = clk_prepare_enable(qproc->pnoc_clk);
+>> +	if (ret)
+>> +		goto err_pnoc_vote;
+>> +
+>> +	ret = clk_prepare_enable(qproc->qdss_clk);
+>> +	if (ret)
+>> +		goto err_qdss_vote;
+>> +	qproc->unvote_flag = false;
+>> +	return 0;
+>> +
+>> +err_qdss_vote:
+>> +	clk_disable_unprepare(qproc->pnoc_clk);
+>> +err_pnoc_vote:
+>> +	clk_disable_unprepare(qproc->xo);
+>> +err_xo_vote:
+>> +	regulator_disable(vdd_pll);
+>> +err_vreg_pll_enable:
+>> +	regulator_set_load(vdd_pll, 0);
+>> +err_vreg_pll_load:
+>> +	regulator_set_voltage(vdd_pll, 0, INT_MAX);
+>> +err_vreg_pll_set_vol:
+>> +	regulator_disable(cx);
+>> +err_cx_enable:
+>> +	regulator_set_load(cx, 0);
+>> +err_cx_set_load:
+>> +	regulator_set_voltage(cx, 0, INT_MAX);
+>> +err_cx_voltage:
+>> +	regulator_disable(mx);
+>> +err_mx_enable:
+>> +	regulator_set_voltage(mx, 0, INT_MAX);
+>> +
+>> +	return ret;
+>> +}
+> As with the init function, this is very similar to the q6v5 case, so I
+> don't think we need to have separate functions for it.
+>
+> A side note on this is that clk_prepare_enable(NULL) is valid, so if you
+> distinguish between the two cases during initialisation and put all
+> clocks in an array you could just call clk_prepare_enable() on all of
+> them, which will skip the ones that isn't initialised.
+>
+>> +
+>> +static void q6v55_proxy_unvote(struct q6v5 *qproc)
+>> +{
+>> +	if (!qproc->unvote_flag) {
+> I don't think the "unvote_flag" is good design and don't see how you
+> would end up unvoting multiple times based on my original design.
+>
+> But again, the answer is probably in some other patch - i.e. please
+> group your patches so I can see each step in its entirety.
+code is reorganized yet i am using unvote flag but in transparent way.
+i am setting unvote flag during enable and making it false during disable.
+so that we unvote only if we have voted earlier.
+>
+>> +		regulator_disable(qproc->supply[Q6V5_SUPPLY_PLL].consumer);
+>> +		regulator_set_load(qproc->supply[Q6V5_SUPPLY_PLL].consumer, 0);
+>> +		regulator_disable(qproc->supply[Q6V5_SUPPLY_CX].consumer);
+>> +		regulator_set_load(qproc->supply[Q6V5_SUPPLY_CX].consumer, 0);
+>> +		regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_CX].consumer,
+>> +			0, INT_MAX);
+>> +
+>> +		clk_disable_unprepare(qproc->qdss_clk);
+>> +		clk_disable_unprepare(qproc->pnoc_clk);
+>> +		clk_disable_unprepare(qproc->xo);
+>> +
+>> +		regulator_disable(qproc->supply[Q6V5_SUPPLY_MX].consumer);
+>> +		regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_MX].consumer,
+>> +			0, INT_MAX);
+>> +	}
+>> +	qproc->unvote_flag = true;
+>> +}
+>> +
+>> +static void pil_mss_restart_reg(struct q6v5 *qproc, u32 mss_restart)
+>> +{
+>> +	if (qproc->restart_reg) {
+>> +		writel_relaxed(mss_restart, qproc->restart_reg);
+>> +		udelay(2);
+>> +	}
+>> +}
+> Drop this
+can not drop due to reason explained already that i can not use GCC for 
+MSS reset.
+>
+>> +
+>>   static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+>>   {
+>>   	struct q6v5 *qproc = rproc->priv;
+>> @@ -751,6 +948,65 @@ static int q6v5_init_clocks(struct q6v5 *qproc)
+>>   	return 0;
+>>   }
+>>   
+>> +static int q6v55_init_clocks(struct q6v5 *qproc)
+>> +{
+>> +	qproc->ahb_clk = devm_clk_get(qproc->dev, "iface");
+>> +	if (IS_ERR(qproc->ahb_clk)) {
+>> +		dev_err(qproc->dev, "failed to get iface clock\n");
+>> +		return PTR_ERR(qproc->ahb_clk);
+>> +	}
+>> +
+>> +	qproc->axi_clk = devm_clk_get(qproc->dev, "bus");
+>> +	if (IS_ERR(qproc->axi_clk)) {
+>> +		dev_err(qproc->dev, "failed to get bus clock\n");
+>> +		return PTR_ERR(qproc->axi_clk);
+>> +	}
+>> +
+>> +	qproc->rom_clk = devm_clk_get(qproc->dev, "mem");
+>> +	if (IS_ERR(qproc->rom_clk)) {
+>> +		dev_err(qproc->dev, "failed to get mem clock\n");
+>> +		return PTR_ERR(qproc->rom_clk);
+>> +	}
+> These three are the same as q6v5...
+>
+>> +
+>> +	qproc->snoc_axi_clk = devm_clk_get(qproc->dev, "snoc_axi_clk");
+>> +	if (IS_ERR(qproc->snoc_axi_clk)) {
+>> +		dev_err(qproc->dev, "failed to get snoc_axi_clk\n");
+>> +		return PTR_ERR(qproc->snoc_axi_clk);
+>> +	}
+>> +
+>> +	qproc->mnoc_axi_clk = devm_clk_get(qproc->dev, "mnoc_axi_clk");
+>> +	if (IS_ERR(qproc->mnoc_axi_clk)) {
+>> +		dev_err(qproc->dev, "failed to get mnoc_axi_clk clock\n");
+>> +		return PTR_ERR(qproc->mnoc_axi_clk);
+>> +	}
+>> +
+>> +	qproc->gpll0_mss_clk = devm_clk_get(qproc->dev, "gpll0_mss_clk");
+>> +	if (IS_ERR(qproc->gpll0_mss_clk)) {
+>> +		dev_err(qproc->dev, "failed to get gpll0_mss_clk clock\n");
+>> +		return PTR_ERR(qproc->gpll0_mss_clk);
+>> +	}
+>> +
+>> +	qproc->xo = devm_clk_get(qproc->dev, "xo");
+>> +	if (IS_ERR(qproc->xo)) {
+>> +		dev_err(qproc->dev, "failed to get xo\n");
+>> +		return PTR_ERR(qproc->xo);
+>> +	}
+> And q6v5 will need "xo" as well, I missed this one.
+OK.
+>
+>> +
+>> +	qproc->pnoc_clk = devm_clk_get(qproc->dev, "pnoc");
+>> +	if (IS_ERR(qproc->pnoc_clk)) {
+>> +		dev_err(qproc->dev, "failed to get pnoc_clk clock\n");
+>> +		return PTR_ERR(qproc->pnoc_clk);
+>> +	}
+>> +
+>> +	qproc->qdss_clk = devm_clk_get(qproc->dev, "qdss");
+>> +	if (IS_ERR(qproc->qdss_clk)) {
+>> +		dev_err(qproc->dev, "failed to get qdss_clk clock\n");
+>> +		return PTR_ERR(qproc->qdss_clk);
+>> +	}
+>> +
+> I would rather see that we have a single init_clocks function that based
+> on compatible will get the appropriate clocks.
+OK.
+>
+>> +	return 0;
+>> +}
+>> +
+>>   static int q6v5_init_reset(struct q6v5 *qproc)
+>>   {
+>>   	qproc->mss_restart = devm_reset_control_get(qproc->dev, NULL);
+>> @@ -762,6 +1018,21 @@ static int q6v5_init_reset(struct q6v5 *qproc)
+>>   	return 0;
+>>   }
+>>   
+>> +static int q6v55_init_reset(struct q6v5 *qproc, struct platform_device *pdev)
+>> +{
+>> +	struct resource *res;
+>> +
+>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "restart_reg");
+>> +	qproc->restart_reg = devm_ioremap(qproc->dev, res->start,
+>> +							resource_size(res));
+>> +	if (IS_ERR(qproc->restart_reg)) {
+>> +		dev_err(qproc->dev, "failed to get restart_reg\n");
+>> +		return PTR_ERR(qproc->restart_reg);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+> Drop this
+Can not drop as can not use GCC for MSS_RESET due to reason explained above.
+>
+>> +
+>>   static int q6v5_request_irq(struct q6v5 *qproc,
+>>   			     struct platform_device *pdev,
+>>   			     const char *name,
+>> -- 
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+>>
