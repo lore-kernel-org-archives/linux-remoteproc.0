@@ -1,255 +1,161 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v3 3/3] remoteproc: qcom: Adding q6v56 reset sequence.
-Date: Mon,  7 Nov 2016 18:07:20 +0530
-Message-Id: <1478522240-11036-4-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1478522240-11036-1-git-send-email-akdwived@codeaurora.org>
-References: <1478522240-11036-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] remoteproc: qcom_wcnss: Fix circular module dependency
+Date: Thu,  3 Nov 2016 19:37:25 -0700
+Message-Id: <1478227045-1768-1-git-send-email-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Adding additional reset sequence steps required specific
-to q6v56 based on version check, along with some trivial
-changes in name of local functions.
+The tie between the main WCNSS driver and the IRIS driver causes a
+circular dependency between the two modules. Neither part makes sense to
+have on their own so lets merge them into one module.
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+For the sake of picking up the clock and regulator resources described
+in the iris of_node we need an associated struct device. But, to keep
+the size of the patch down we continue to represent the IRIS part as its
+own platform_driver, within the same module, rather than setting up a
+dummy device.
+
+Reported-by: Andreas Färber <afaerber@suse.de>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 132 +++++++++++++++++++++++++++----------
- 1 file changed, 98 insertions(+), 34 deletions(-)
+ drivers/remoteproc/Kconfig           |  5 -----
+ drivers/remoteproc/Makefile          |  5 +++--
+ drivers/remoteproc/qcom_wcnss.c      | 25 +++++++++++++++++++++++--
+ drivers/remoteproc/qcom_wcnss.h      |  2 ++
+ drivers/remoteproc/qcom_wcnss_iris.c |  8 +-------
+ 5 files changed, 29 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 1fc505b..68eda4f 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -66,6 +66,8 @@
- #define QDSP6SS_RESET_REG		0x014
- #define QDSP6SS_GFMUX_CTL_REG		0x020
- #define QDSP6SS_PWR_CTL_REG		0x030
-+#define QDSP6SS_MEM_PWR_CTL		0x0B0
-+#define QDSP6SS_STRAP_ACC		0x110
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index f396bfef5d42..5fcbefcb8636 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -91,17 +91,12 @@ config QCOM_Q6V5_PIL
+ 	  Say y here to support the Qualcomm Peripherial Image Loader for the
+ 	  Hexagon V5 based remote processors.
  
- /* AXI Halt Register Offsets */
- #define AXI_HALTREQ_REG			0x0
-@@ -94,8 +96,14 @@
- #define QDSS_BHS_ON			BIT(21)
- #define QDSS_LDO_BYP			BIT(22)
+-config QCOM_WCNSS_IRIS
+-	tristate
+-	depends on OF && ARCH_QCOM
+-
+ config QCOM_WCNSS_PIL
+ 	tristate "Qualcomm WCNSS Peripheral Image Loader"
+ 	depends on OF && ARCH_QCOM
+ 	depends on QCOM_SMEM
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_SCM
+-	select QCOM_WCNSS_IRIS
+ 	select REMOTEPROC
+ 	help
+ 	  Say y here to support the Peripheral Image Loader for the Qualcomm
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 6dfb62ed643f..034b6f3563a7 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
+ obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
+-obj-$(CONFIG_QCOM_WCNSS_IRIS)		+= qcom_wcnss_iris.o
+-obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss.o
++obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
++qcom_wcnss_pil-y			+= qcom_wcnss.o
++qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
+ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index f5cedeaafba1..323b629474a6 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -143,7 +143,6 @@ void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
  
-+/* QDSP6v56 parameters */
-+#define QDSP6v56_LDO_BYP                BIT(25)
-+#define QDSP6v56_BHS_ON                 BIT(24)
- #define QDSP6v56_CLAMP_WL               BIT(21)
- #define QDSP6v56_CLAMP_QMC_MEM          BIT(22)
-+#define HALT_CHECK_MAX_LOOPS            (200)
-+#define QDSP6SS_XO_CBCR                 (0x0038)
-+#define QDSP6SS_ACC_OVERRIDE_VAL	0x20
- struct q6_rproc_res {
- 	char **proxy_clks;
- 	int proxy_clk_cnt;
-@@ -389,7 +397,8 @@ static void pil_mss_restart_reg(struct q6v5 *qproc, u32 mss_restart)
- 		udelay(2);
- 	}
+ 	mutex_unlock(&wcnss->iris_lock);
  }
--static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
-+
-+static int q6_load(struct rproc *rproc, const struct firmware *fw)
+-EXPORT_SYMBOL_GPL(qcom_wcnss_assign_iris);
+ 
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
  {
- 	struct q6v5 *qproc = rproc->priv;
- 
-@@ -400,10 +409,10 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- 
- static const struct rproc_fw_ops q6_fw_ops = {
- 	.find_rsc_table = qcom_mdt_find_rsc_table,
--	.load = q6v5_load,
-+	.load = q6_load,
+@@ -619,6 +618,28 @@ static struct platform_driver wcnss_driver = {
+ 	},
  };
  
--static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
-+static int q6_rmb_pbl_wait(struct q6v5 *qproc, int ms)
- {
- 	unsigned long timeout;
- 	s32 val;
-@@ -423,7 +432,7 @@ static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
- 	return val;
+-module_platform_driver(wcnss_driver);
++static int __init wcnss_init(void)
++{
++	int ret;
++
++	ret = platform_driver_register(&wcnss_driver);
++	if (ret)
++		return ret;
++
++	ret = platform_driver_register(&qcom_iris_driver);
++	if (ret)
++		platform_driver_unregister(&wcnss_driver);
++
++	return ret;
++}
++module_init(wcnss_init);
++
++static void __exit wcnss_exit(void)
++{
++	platform_driver_unregister(&qcom_iris_driver);
++	platform_driver_unregister(&wcnss_driver);
++}
++module_exit(wcnss_exit);
++
+ MODULE_DESCRIPTION("Qualcomm Peripherial Image Loader for Wireless Subsystem");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/remoteproc/qcom_wcnss.h b/drivers/remoteproc/qcom_wcnss.h
+index 9dc4a9fe41e1..25fb7f62a457 100644
+--- a/drivers/remoteproc/qcom_wcnss.h
++++ b/drivers/remoteproc/qcom_wcnss.h
+@@ -4,6 +4,8 @@
+ struct qcom_iris;
+ struct qcom_wcnss;
+ 
++extern struct platform_driver qcom_iris_driver;
++
+ struct wcnss_vreg_info {
+ 	const char * const name;
+ 	int min_voltage;
+diff --git a/drivers/remoteproc/qcom_wcnss_iris.c b/drivers/remoteproc/qcom_wcnss_iris.c
+index f0ca24a8dd0b..05d6e175411a 100644
+--- a/drivers/remoteproc/qcom_wcnss_iris.c
++++ b/drivers/remoteproc/qcom_wcnss_iris.c
+@@ -94,14 +94,12 @@ int qcom_iris_enable(struct qcom_iris *iris)
+ 
+ 	return ret;
  }
+-EXPORT_SYMBOL_GPL(qcom_iris_enable);
  
--static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
-+static int q6_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+ void qcom_iris_disable(struct qcom_iris *iris)
  {
- 
- 	unsigned long timeout;
-@@ -449,40 +458,95 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
- 	return val;
+ 	clk_disable_unprepare(iris->xo_clk);
+ 	regulator_bulk_disable(iris->num_vregs, iris->vregs);
  }
+-EXPORT_SYMBOL_GPL(qcom_iris_disable);
  
--static int q6v5proc_reset(struct q6v5 *qproc)
-+static int q6proc_reset(struct q6v5 *qproc)
+ static int qcom_iris_probe(struct platform_device *pdev)
  {
--	u32 val;
--	int ret;
-+	int ret, i, count;
-+	u64 val;
-+
-+	/* Override the ACC value if required */
-+	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56"))
-+		writel_relaxed(QDSP6SS_ACC_OVERRIDE_VAL,
-+				qproc->reg_base + QDSP6SS_STRAP_ACC);
+@@ -174,7 +172,7 @@ static const struct of_device_id iris_of_match[] = {
+ 	{}
+ };
  
- 	/* Assert resets, stop core */
--	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_RESET_REG);
- 	val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
--	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
-+	/* BHS require xo cbcr to be enabled */
-+	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56")) {
-+		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
-+		val |= 0x1;
-+		writel_relaxed(val, qproc->reg_base + QDSP6SS_XO_CBCR);
-+		for (count = HALT_CHECK_MAX_LOOPS; count > 0; count--) {
-+			val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
-+			if (!(val & BIT(31)))
-+				break;
-+			udelay(1);
-+		}
-+
-+		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
-+		if ((val & BIT(31)))
-+			dev_err(qproc->dev, "Failed to enable xo branch clock.\n");
-+	}
- 	/* Enable power block headswitch, and wait for it to stabilize */
--	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= QDSS_BHS_ON | QDSS_LDO_BYP;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= QDSP6v56_BHS_ON;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 	udelay(1);
- 
--	/*
--	 * Turn on memories. L2 banks should be done individually
--	 * to minimize inrush current.
--	 */
--	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
--		Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_L2DATA_SLP_NRET_N_2;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_L2DATA_SLP_NRET_N_1;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_L2DATA_SLP_NRET_N_0;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	/* Put LDO in bypass mode */
-+	val |= QDSP6v56_LDO_BYP;
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56")) {
-+		/*
-+		 * Deassert QDSP6 compiler memory clamp
-+		 */
-+		val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val &= ~QDSP6v56_CLAMP_QMC_MEM;
-+		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+		/* Deassert memory peripheral sleep and L2 memory standby */
-+		val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
-+		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
-+		/* Turn on L1, L2, ETB and JU memories 1 at a time */
-+		val = readl_relaxed(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+		for (i = 19; i >= 0; i--) {
-+			val |= BIT(i);
-+			writel_relaxed(val, qproc->reg_base +
-+						QDSP6SS_MEM_PWR_CTL);
-+			/*
-+			 * Wait for 1us for both memory peripheral and
-+			 * data array to turn on.
-+			 */
-+			 mb();
-+			udelay(1);
-+		}
-+		/* Remove word line clamp */
-+		val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val &= ~QDSP6v56_CLAMP_WL;
-+		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	} else {
-+		/*
-+		 * Turn on memories. L2 banks should be done individually
-+		 * to minimize inrush current.
-+		 */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
-+			Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_L2DATA_SLP_NRET_N_2;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_L2DATA_SLP_NRET_N_1;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_L2DATA_SLP_NRET_N_0;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	}
- 	/* Remove IO clamp */
- 	val &= ~Q6SS_CLAMP_IO;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
- 	/* Bring core out of reset */
- 	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-@@ -490,9 +554,9 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
- 	/* Turn on core clock */
--	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+	val = readl_relaxed(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
- 	val |= Q6SS_CLK_ENABLE;
--	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+	writel_relaxed(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
- 
- 	/* Start core execution */
- 	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-@@ -500,7 +564,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
- 	/* Wait for PBL status */
--	ret = q6v5_rmb_pbl_wait(qproc, 1000);
-+	ret = q6_rmb_pbl_wait(qproc, 1000);
- 	if (ret == -ETIMEDOUT) {
- 		dev_err(qproc->dev, "PBL boot timed out\n");
- 	} else if (ret != RMB_PBL_SUCCESS) {
-@@ -560,7 +624,7 @@ static int q6_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- 	writel(phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
- 	writel(RMB_CMD_META_DATA_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
- 
--	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
-+	ret = q6_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "MPSS header authentication timed out\n");
- 	else if (ret < 0)
-@@ -618,7 +682,7 @@ static int q6_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
- 		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
- 	}
- 
--	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
-+	ret = q6_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "MPSS authentication timed out\n");
- 	else if (ret < 0)
-@@ -704,11 +768,11 @@ static int q6_start(struct rproc *rproc)
- 
- 	writel_relaxed(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
- 
--	ret = q6v5proc_reset(qproc);
-+	ret = q6proc_reset(qproc);
- 	if (ret)
- 		goto halt_axi_ports;
- 
--	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
-+	ret = q6_rmb_mba_wait(qproc, 0, 5000);
- 	if (ret == -ETIMEDOUT) {
- 		dev_err(qproc->dev, "MBA boot timed out\n");
- 		goto halt_axi_ports;
+-static struct platform_driver wcnss_driver = {
++struct platform_driver qcom_iris_driver = {
+ 	.probe = qcom_iris_probe,
+ 	.remove = qcom_iris_remove,
+ 	.driver = {
+@@ -182,7 +180,3 @@ static struct platform_driver wcnss_driver = {
+ 		.of_match_table = iris_of_match,
+ 	},
+ };
+-
+-module_platform_driver(wcnss_driver);
+-MODULE_DESCRIPTION("Qualcomm Wireless Subsystem Iris driver");
+-MODULE_LICENSE("GPL v2");
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.5.0
