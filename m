@@ -1,69 +1,125 @@
 Return-Path: <akdwived@codeaurora.org>
+Subject: Re: [PATCH 5/5] remoteproc: Modifying probe for initializing q6v55
+ specific resources
+References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
+ <1477324559-24752-6-git-send-email-akdwived@codeaurora.org>
+ <20161025193554.GQ7509@tuxbot>
 From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v3 0/3] reproc: qcom: Add support to  hexagon q6v56 in qcom hexagon rproc driver
-Date: Mon,  7 Nov 2016 18:07:17 +0530
-Message-Id: <1478522240-11036-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Message-ID: <35a6fef2-8340-b438-ec0f-4b410953ac96@codeaurora.org>
+Date: Fri, 4 Nov 2016 19:17:31 +0530
+MIME-Version: 1.0
+In-Reply-To: <20161025193554.GQ7509@tuxbot>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, kaushalk@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This is patchset v3 having modifications to address kbuild root error from patchset v2 and to
-address patchset v1 comments. Major changes w.r.t. patchset v1 are as below.
-	1- Separate functions for resource handling and start stop
-	have been done away with.
-	
-	2- A private structure is defined which is being initialized
-	with hexagon version specific data and being passed to probe
-	via device structure. This in turn is passed as argument to various
-	resource handling routines so that same code can do resource 
-	manipulation without code change when new hexagon version need to be 
-	supported.
-	
-	3- Some existing function name have been changed to reflect version
-	independent driver.
-	
-	4- Comments regarding use of appropriate hexagon version have been
-	addressed
-	
-	5- Comments regarding dividing all changes in logically complete
-	patchset have been addressed to best possible way
-	
-	6- Comments regarding clock initialization in an array and not setting
-	volatage for vdd pll before enabling the reg. have been addressed
-	
-	7- XO clk node have been added even for q6v5
-	
-	8- Wrapper functions to maintain boot count have been removed 
-	as per comment received in last patchset.
-	
-	9- Unvoting of clocks and regulators have been moved in q6_start function
-	as per comment on last patchset.
 
-There were certain comments which could not be addressed 
-	1- To program MSS_RESET via GCC reset controller
-	Infact i had done it the way suggested before i sent out initial
-	patchset, but then when i discussed with internal clock team, they said they will
-	not support MSS RESET to be done via GCC because
-	
-	"MSS_RESET is not a block reset, GCC reset controller is used only when we need a BCR to be reset, 
-	and which has a special purpose. MSS RESET doesn't fall under block resets, it is not a clock and 
-	cannot be associated with clock."
-	
-This patchset is verified on top of kernel 4.9.rc4.
-below is console o/p
-[    3.304426]  remoteproc1: powering up 2080000.qcom,mss
-[    3.304435]  remoteproc1: Booting fw image mba.mbn, size 213888
-[    4.518946]  remoteproc1: remote processor 2080000.qcom,mss is now up
 
-Avaneesh Kumar Dwivedi (3):
-  remoteproc: qcom: Embed private data structure for hexagon dsp.
-  remoteproc: qcom: Hexagon resource handling
-  remoteproc: qcom: Adding q6v56 reset sequence.
-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 747 ++++++++++++++++-----
- 2 files changed, 566 insertions(+), 182 deletions(-)
-
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+On 10/26/2016 1:05 AM, Bjorn Andersson wrote:
+> On Mon 24 Oct 08:55 PDT 2016, Avaneesh Kumar Dwivedi wrote:
+>
+>> Probe is being modified to save q6 version and invoke appropriate
+>> init functions to accommodate q6v55 remoteproc driver.
+>>
+>> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 43 ++++++++++++++++++++++++++++++--------
+>>   1 file changed, 34 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index dd19d41..c65c904 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -1370,6 +1370,9 @@ static int q6v5_probe(struct platform_device *pdev)
+>>   	init_completion(&qproc->start_done);
+>>   	init_completion(&qproc->stop_done);
+>>   
+>> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,q6v55-pil"))
+>> +		qproc->is_q6v55 = true;
+>> +
+> With the changes I've suggested in the other patches I would recommend
+> that you describe the differences as a set of "features" in a struct
+> that you put as .data in the match table and then use
+> of_device_get_match_data() to acquire the matching data struct.
+OK, have tried on suggested line in patchset v2 to be send out soon.
+>
+>>   	ret = q6v5_init_mem(qproc, pdev);
+>>   	if (ret)
+>>   		goto free_rproc;
+>> @@ -1378,17 +1381,39 @@ static int q6v5_probe(struct platform_device *pdev)
+>>   	if (ret)
+>>   		goto free_rproc;
+>>   
+>> -	ret = q6v5_init_clocks(qproc);
+>> -	if (ret)
+>> -		goto free_rproc;
+>> +	if (qproc->is_q6v55) {
+>> +		ret = q6v55_init_clocks(qproc);
+>> +		if (ret)
+>> +			goto free_rproc;
+>> +	} else {
+>> +		ret = q6v5_init_clocks(qproc);
+>> +		if (ret)
+>> +			goto free_rproc;
+>> +	}
+> Based on the fact that I don't think this is a q6v55, but rather a q6v6,
+> we will now end up with:
+>
+> if (is_q6v55) {
+> } else if (is_q6v6) {
+> } else if (is_q6v5) {
+> } else {
+> 	fail
+> };
+>
+> And this function will turn into an (even worse) mess.
+>
+>
+> I would suggest that you instead define each resource as a flag and
+> provide a struct with these flags as .data with the compatible. Then
+> pass that to the clock and regulator init and based on the flags they
+> can acquire the individual resources. That way adding a new version is a
+> matter of listing which resources that needs to grab.
+>
+> And in that struct you can also have a function pointer to an
+> appropriate reset function, completely removing the need for checking
+> which version we have after initialization.
+Agreed
+>
+>>   
+>> -	ret = q6v5_regulator_init(qproc);
+>> -	if (ret)
+>> -		goto free_rproc;
+>> +	if (qproc->is_q6v55) {
+>> +		ret = q6v55_init_reset(qproc, pdev);
+>> +		if (ret)
+>> +			goto free_rproc;
+>> +	} else {
+>> +		ret = q6v5_init_reset(qproc);
+>> +		if (ret)
+>> +			goto free_rproc;
+>> +	}
+>>   
+>> -	ret = q6v5_init_reset(qproc);
+>> -	if (ret)
+>> -		goto free_rproc;
+>> +	if (qproc->is_q6v55) {
+>> +		ret = q6v55_regulator_init(qproc);
+>> +		if (ret)
+>> +			goto free_rproc;
+>> +	} else {
+>> +		ret = q6v5_regulator_init(qproc);
+>> +		if (ret)
+>> +			goto free_rproc;
+>> +	}
+>> +
+>> +	qproc->ahb_clk_vote = of_property_read_bool(pdev->dev.of_node,
+>> +			"qcom,ahb-clk-vote");
+>> +	mutex_init(&qproc->q6_lock);
+>>   
+>>   	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
+>>   	if (ret < 0)
+> Regards,
+> Bjorn
