@@ -1,168 +1,266 @@
 Return-Path: <akdwived@codeaurora.org>
-Subject: Re: [PATCH 3/5] remoteproc: Adding reset sequence and halt seq
- changes for q6v55
-References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
- <1477324559-24752-4-git-send-email-akdwived@codeaurora.org>
- <20161025191526.GO7509@tuxbot>
 From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Message-ID: <d90c8d54-a402-1ba4-2314-81dfb6f60de3@codeaurora.org>
-Date: Fri, 4 Nov 2016 19:12:40 +0530
-MIME-Version: 1.0
-In-Reply-To: <20161025191526.GO7509@tuxbot>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, kaushalk@codeaurora.org
+Subject: [PATCH v2 3/3] remoteproc: qcom: Adding q6v56 reset sequence in existing reset sequence
+Date: Fri,  4 Nov 2016 19:30:56 +0530
+Message-Id: <1478268057-11847-4-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1478268057-11847-1-git-send-email-akdwived@codeaurora.org>
+References: <1478268057-11847-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Adding additional steps required specific to q6v56 based on version check
+along with some trivial changes in name of local functions.
 
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_pil.c | 137 ++++++++++++++++++++++++++-----------
+ 1 file changed, 98 insertions(+), 39 deletions(-)
 
-On 10/26/2016 12:45 AM, Bjorn Andersson wrote:
-> On Mon 24 Oct 08:55 PDT 2016, Avaneesh Kumar Dwivedi wrote:
->
->> q6v55 reset sequence is handled separately and removing idle check
->> before asserting reset as it has been observed it return idle some
->> time even without being in idle.
->>
->> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
->> ---
->>   drivers/remoteproc/qcom_q6v5_pil.c | 103 +++++++++++++++++++++++++++++++++++--
->>   1 file changed, 98 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
->> index c7dca40..0fac8d8 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pil.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
->> @@ -536,6 +536,104 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->>   	return ret;
->>   }
->>   
->> +static int q6v6proc_reset(struct q6v5 *qproc)
-> Which version is this? 5.5, 55 or 6?
->
-> It's perfectly fine to introduce q6v55-functions and use those, but if
-> the version is 6 then the compatible should reflect that at least.
-OK.
->
->> +{
->> +	int ret, i, count;
->> +	u64 val;
->> +
->> +	/* Override the ACC value if required */
->> +	writel_relaxed(QDSP6SS_ACC_OVERRIDE_VAL,
->> +				qproc->reg_base + QDSP6SS_STRAP_ACC);
->> +
->> +	/* Assert resets, stop core */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_RESET_REG);
->> +	val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_RESET_REG);
->> +
->> +	/* BHS require xo cbcr to be enabled */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
->> +	val |= 0x1;
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_XO_CBCR);
->> +	for (count = HALT_CHECK_MAX_LOOPS; count > 0; count--) {
->> +		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
->> +		if (!(val & BIT(31)))
->> +			break;
->> +		udelay(1);
->> +	}
->> +
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
->> +	if ((val & BIT(31)))
->> +		dev_err(qproc->dev, "Failed to enable xo branch clock.\n");
->> +
->> +	/* Enable power block headswitch, and wait for it to stabilize */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +	val |= QDSP6v55_BHS_ON;
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +	udelay(1);
->> +
->> +	/* Put LDO in bypass mode */
->> +	val |= QDSP6v55_LDO_BYP;
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +	/*
->> +	 * Turn on memories. L2 banks should be done individually
->> +	 * to minimize inrush current.
->> +	 */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +	val &= ~QDSP6v55_CLAMP_QMC_MEM;
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +
->> +	/* Deassert memory peripheral sleep and L2 memory standby */
->> +	val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +
->> +	/* Turn on L1, L2, ETB and JU memories 1 at a time */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
->> +	for (i = 19; i >= 0; i--) {
->> +		val |= BIT(i);
->> +		writel_relaxed(val, qproc->reg_base +
->> +					QDSP6SS_MEM_PWR_CTL);
->> +		/*
->> +		 * Wait for 1us for both memory peripheral and
->> +		 * data array to turn on.
->> +		 */
->> +		 mb();
->> +		udelay(1);
->> +	}
->> +
->> +	/* Remove word line clamp */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +	val &= ~QDSP6v55_CLAMP_WL;
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +
->> +	/* Remove IO clamp */
->> +	val &= ~Q6SS_CLAMP_IO;
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->> +
->> +	/* Bring core out of reset */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_RESET_REG);
->> +	val &= ~(Q6SS_CORE_ARES | Q6SS_STOP_CORE);
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_RESET_REG);
->> +
->> +	/* Turn on core clock */
->> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
->> +	val |= Q6SS_CLK_ENABLE;
->> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
->> +
->> +
->> +	/* Wait for PBL status */
->> +	ret = q6v5_rmb_pbl_wait(qproc, 1000);
->> +	if (ret == -ETIMEDOUT) {
->> +		dev_err(qproc->dev, "PBL boot timed out\n");
->> +	} else if (ret != RMB_PBL_SUCCESS) {
->> +		dev_err(qproc->dev, "PBL returned unexpected status %d\n", ret);
->> +		ret = -EINVAL;
->> +	} else {
->> +		ret = 0;
->> +	}
->> +
->> +	return ret;
->> +}
-> Most of this function is exactly the same as q6v5proc_reset(), do we
-> need two copies or can we make the differences conditional based on
-> compatible?
-OK. in reorganized code have merged them in one
->
->> +
->>   static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
->>   				   struct regmap *halt_map,
->>   				   u32 offset)
->> @@ -544,11 +642,6 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
->>   	unsigned int val;
->>   	int ret;
->>   
->> -	/* Check if we're already idle */
->> -	ret = regmap_read(halt_map, offset + AXI_IDLE_REG, &val);
->> -	if (!ret && val)
->> -		return;
->> -
-> I presume this check isn't needed on the other versions either?
-YES, i believe so. have removed that
->
->>   	/* Assert halt request */
->>   	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 1);
->>   
-> Regards,
-> Bjorn
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 9db1d4b..aed85ec 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -66,6 +66,8 @@
+ #define QDSP6SS_RESET_REG		0x014
+ #define QDSP6SS_GFMUX_CTL_REG		0x020
+ #define QDSP6SS_PWR_CTL_REG		0x030
++#define QDSP6SS_MEM_PWR_CTL		0x0B0
++#define QDSP6SS_STRAP_ACC		0x110
+ 
+ /* AXI Halt Register Offsets */
+ #define AXI_HALTREQ_REG			0x0
+@@ -94,8 +96,14 @@
+ #define QDSS_BHS_ON			BIT(21)
+ #define QDSS_LDO_BYP			BIT(22)
+ 
++/* QDSP6v56 parameters */
++#define QDSP6v56_LDO_BYP                BIT(25)
++#define QDSP6v56_BHS_ON                 BIT(24)
+ #define QDSP6v56_CLAMP_WL               BIT(21)
+ #define QDSP6v56_CLAMP_QMC_MEM          BIT(22)
++#define HALT_CHECK_MAX_LOOPS            (200)
++#define QDSP6SS_XO_CBCR                 (0x0038)
++#define QDSP6SS_ACC_OVERRIDE_VAL	0x20
+ struct q6_rproc_res {
+ 	char **proxy_clks;
+ 	int proxy_clk_cnt;
+@@ -389,7 +397,8 @@ static void pil_mss_restart_reg(struct q6v5 *qproc, u32 mss_restart)
+ 		udelay(2);
+ 	}
+ }
+-static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
++
++static int q6_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct q6v5 *qproc = rproc->priv;
+ 	memcpy(qproc->mba_region, fw->data, fw->size);
+@@ -398,10 +407,10 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+ 
+ static const struct rproc_fw_ops q6_fw_ops = {
+ 	.find_rsc_table = qcom_mdt_find_rsc_table,
+-	.load = q6v5_load,
++	.load = q6_load,
+ };
+ 
+-static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
++static int q6_rmb_pbl_wait(struct q6v5 *qproc, int ms)
+ {
+ 	unsigned long timeout;
+ 	s32 val;
+@@ -421,7 +430,7 @@ static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
+ 	return val;
+ }
+ 
+-static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
++static int q6_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+ {
+ 
+ 	unsigned long timeout;
+@@ -447,40 +456,95 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+ 	return val;
+ }
+ 
+-static int q6v5proc_reset(struct q6v5 *qproc)
++static int q6proc_reset(struct q6v5 *qproc)
+ {
+-	u32 val;
+-	int ret;
++	int ret, i, count;
++	u64 val;
++
++	/* Override the ACC value if required */
++	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56"))
++		writel_relaxed(QDSP6SS_ACC_OVERRIDE_VAL,
++				qproc->reg_base + QDSP6SS_STRAP_ACC);
+ 
+ 	/* Assert resets, stop core */
+-	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
++	val = readl_relaxed(qproc->reg_base + QDSP6SS_RESET_REG);
+ 	val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
+-	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
++	writel_relaxed(val, qproc->reg_base + QDSP6SS_RESET_REG);
+ 
++	/* BHS require xo cbcr to be enabled */
++	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56")) {
++		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
++		val |= 0x1;
++		writel_relaxed(val, qproc->reg_base + QDSP6SS_XO_CBCR);
++		for (count = HALT_CHECK_MAX_LOOPS; count > 0; count--) {
++			val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
++			if (!(val & BIT(31)))
++				break;
++			udelay(1);
++		}
++
++		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
++		if ((val & BIT(31)))
++			dev_err(qproc->dev, "Failed to enable xo branch clock.\n");
++	}
+ 	/* Enable power block headswitch, and wait for it to stabilize */
+-	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+-	val |= QDSS_BHS_ON | QDSS_LDO_BYP;
+-	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	val |= QDSP6v56_BHS_ON;
++	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+ 	udelay(1);
+ 
+-	/*
+-	 * Turn on memories. L2 banks should be done individually
+-	 * to minimize inrush current.
+-	 */
+-	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+-	val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
+-		Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
+-	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+-	val |= Q6SS_L2DATA_SLP_NRET_N_2;
+-	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+-	val |= Q6SS_L2DATA_SLP_NRET_N_1;
+-	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+-	val |= Q6SS_L2DATA_SLP_NRET_N_0;
+-	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	/* Put LDO in bypass mode */
++	val |= QDSP6v56_LDO_BYP;
++	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+ 
++	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56")) {
++		/*
++		 * Deassert QDSP6 compiler memory clamp
++		 */
++		val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++		val &= ~QDSP6v56_CLAMP_QMC_MEM;
++		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++		/* Deassert memory peripheral sleep and L2 memory standby */
++		val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
++		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++		/* Turn on L1, L2, ETB and JU memories 1 at a time */
++		val = readl_relaxed(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
++		for (i = 19; i >= 0; i--) {
++			val |= BIT(i);
++			writel_relaxed(val, qproc->reg_base +
++						QDSP6SS_MEM_PWR_CTL);
++			/*
++			 * Wait for 1us for both memory peripheral and
++			 * data array to turn on.
++			 */
++			 mb();
++			udelay(1);
++		}
++		/* Remove word line clamp */
++		val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++		val &= ~QDSP6v56_CLAMP_WL;
++		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	} else {
++		/*
++		 * Turn on memories. L2 banks should be done individually
++		 * to minimize inrush current.
++		 */
++		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++		val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
++			Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
++		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++		val |= Q6SS_L2DATA_SLP_NRET_N_2;
++		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++		val |= Q6SS_L2DATA_SLP_NRET_N_1;
++		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++		val |= Q6SS_L2DATA_SLP_NRET_N_0;
++		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	}
+ 	/* Remove IO clamp */
+ 	val &= ~Q6SS_CLAMP_IO;
+-	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+ 
+ 	/* Bring core out of reset */
+ 	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+@@ -488,9 +552,9 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+ 
+ 	/* Turn on core clock */
+-	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
++	val = readl_relaxed(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+ 	val |= Q6SS_CLK_ENABLE;
+-	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
++	writel_relaxed(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+ 
+ 	/* Start core execution */
+ 	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+@@ -498,7 +562,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+ 
+ 	/* Wait for PBL status */
+-	ret = q6v5_rmb_pbl_wait(qproc, 1000);
++	ret = q6_rmb_pbl_wait(qproc, 1000);
+ 	if (ret == -ETIMEDOUT) {
+ 		dev_err(qproc->dev, "PBL boot timed out\n");
+ 	} else if (ret != RMB_PBL_SUCCESS) {
+@@ -519,11 +583,6 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
+ 	unsigned int val;
+ 	int ret;
+ 
+-	/* Check if we're already idle */
+-	ret = regmap_read(halt_map, offset + AXI_IDLE_REG, &val);
+-	if (!ret && val)
+-		return;
+-
+ 	/* Assert halt request */
+ 	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 1);
+ 
+@@ -563,7 +622,7 @@ static int q6_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+ 	writel(phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
+ 	writel(RMB_CMD_META_DATA_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+ 
+-	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
++	ret = q6_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(qproc->dev, "MPSS header authentication timed out\n");
+ 	else if (ret < 0)
+@@ -621,7 +680,7 @@ static int q6_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+ 		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+ 	}
+ 
+-	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
++	ret = q6_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(qproc->dev, "MPSS authentication timed out\n");
+ 	else if (ret < 0)
+@@ -707,11 +766,11 @@ static int q6_start(struct rproc *rproc)
+ 
+ 	writel_relaxed(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
+ 
+-	ret = q6v5proc_reset(qproc);
++	ret = q6proc_reset(qproc);
+ 	if (ret)
+ 		goto halt_axi_ports;
+ 
+-	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
++	ret = q6_rmb_mba_wait(qproc, 0, 5000);
+ 	if (ret == -ETIMEDOUT) {
+ 		dev_err(qproc->dev, "MBA boot timed out\n");
+ 		goto halt_axi_ports;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
