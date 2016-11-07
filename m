@@ -1,80 +1,38 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-Subject: Re: [PATCH v3 0/2] remoteproc: Add sysfs interface
-References: <1476878748-32097-1-git-send-email-matt.redfearn@imgtec.com>
- <9607ab24-e9f3-515b-b143-e2c7ca19c0eb@imgtec.com>
- <20161101003135.GL25787@tuxbot>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Message-ID: <bbd51198-5fd2-e007-a788-3cb0b94e525b@imgtec.com>
-Date: Tue, 1 Nov 2016 09:25:09 +0000
-MIME-Version: 1.0
-In-Reply-To: <20161101003135.GL25787@tuxbot>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 0/3] Venus remoteproc driver
+Date: Mon,  7 Nov 2016 19:30:50 +0200
+Message-Id: <1478539853-23218-1-git-send-email-stanimir.varbanov@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Hi,
 
+here is v2 of the Venus remoteproc driver, the changes are:
+	- removed page table size and page table init SCM calls.
 
-On 01/11/16 00:31, Bjorn Andersson wrote:
-> On Thu 27 Oct 07:10 PDT 2016, Matt Redfearn wrote:
->
->> On 19/10/16 13:05, Matt Redfearn wrote:
->>> It is often desireable to boot a remote processor with different
->>> firmware files, depending on the needs of the system at a particular
->>> time. This series adds a sysfs interface to the remoteproc core,
->>> exposing interfaces to manipulate the remote processor. One interface is
->>> the "state" file which performs the same function as the one in debugfs
->>> (which is removed later in the series). The other is a "firmware" file
->>> which allows retrieval of the name of the running firmware, and allows a
->>> new firmware to be loaded when written, as long as the remote processor
->>> is currently stopped.
->>>
->>> Some groundwork must be laid first, changing the storage mechanism of
->>> the firmware name such that it can be rewritten easily, then that is
->>> wired up to the new sysfs interface.
->>>
->>> This series is based on v4.9-rc1
->>>
->>>
->>> Changes in v3:
->>> Drop call to rproc_add_virtio_devices from sysfs firmware_store
->>> Use strcspn to find firmware name length
->>> Explicit indexes for state strings
->>>
->>> Changes in v2:
->>> Have firmware_store perform the necessary steps inline.
->>> Use sysfs_streq when dealing with writes to sysfs files
->>>
->>> Matt Redfearn (2):
->>>    remoteproc: Add a sysfs interface for firmware and state
->>>    remoteproc: debugfs: Remove state entry which is duplicated is sysfs
->>>
->>>   Documentation/ABI/testing/sysfs-class-remoteproc |  50 ++++++++
->>>   drivers/remoteproc/Makefile                      |   1 +
->>>   drivers/remoteproc/remoteproc_core.c             |   3 +
->>>   drivers/remoteproc/remoteproc_debugfs.c          |  71 -----------
->>>   drivers/remoteproc/remoteproc_internal.h         |   5 +
->>>   drivers/remoteproc/remoteproc_sysfs.c            | 151 +++++++++++++++++++++++
->>>   6 files changed, 210 insertions(+), 71 deletions(-)
->>>   create mode 100644 Documentation/ABI/testing/sysfs-class-remoteproc
->>>   create mode 100644 drivers/remoteproc/remoteproc_sysfs.c
->>>
->> Hi Bjorn,
->>
->> Is this version of the patchset ok? Any feedback welcome :-)
->>
-> Hi Matt,
->
-> I was hoping for some comments or verification from others, so I
-> conveniently did let it hang out in my TODO list.
->
-> I think the new interface looks good and have merged the two patches!
+regards,
+Stan
 
-Great, thanks! :-)
+Stanimir Varbanov (3):
+  firmware: qcom: scm: add a video command for state setting
+  dt-binding: remoteproc: venus rproc dt binding document
+  remoteproc: qcom: add Venus video core firmware loader driver
 
-Matt
+ .../devicetree/bindings/remoteproc/qcom,venus.txt  |  33 ++++
+ drivers/firmware/qcom_scm-32.c                     |  18 ++
+ drivers/firmware/qcom_scm-64.c                     |  16 ++
+ drivers/firmware/qcom_scm.c                        |  16 ++
+ drivers/firmware/qcom_scm.h                        |   2 +
+ drivers/remoteproc/Kconfig                         |  12 ++
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/qcom_venus_pil.c                | 213 +++++++++++++++++++++
+ include/linux/qcom_scm.h                           |   2 +
+ 9 files changed, 313 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
+ create mode 100644 drivers/remoteproc/qcom_venus_pil.c
 
->
-> Regards,
-> Bjorn
+-- 
+2.7.4
