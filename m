@@ -1,127 +1,61 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v2 1/3] firmware: qcom: scm: add a video command for state setting
-Date: Mon,  7 Nov 2016 19:30:51 +0200
-Message-Id: <1478539853-23218-2-git-send-email-stanimir.varbanov@linaro.org>
-In-Reply-To: <1478539853-23218-1-git-send-email-stanimir.varbanov@linaro.org>
-References: <1478539853-23218-1-git-send-email-stanimir.varbanov@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Return-Path: <vinod.koul@intel.com>
+Date: Mon, 14 Nov 2016 10:42:16 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v10 03/11] remoteproc: Update Kconfig setup to 'depends
+ on REMOTEPROC'
+Message-ID: <20161114051215.GV3000@localhost>
+References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
+ <1475931154-1021-4-git-send-email-peter.griffin@linaro.org>
+ <20161103212439.GS25787@tuxbot>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161103212439.GS25787@tuxbot>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, arnaud.pouliquen@st.com, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This scm call is used to change the video core state, more
-specifically it is used to suspend and resume the core.
+On Thu, Nov 03, 2016 at 02:24:39PM -0700, Bjorn Andersson wrote:
+> On Sat 08 Oct 05:52 PDT 2016, Peter Griffin wrote:
+> 
+> > Make REMOTEPROC core a selectable kconfig option, and update
+> > remoteproc client drivers to 'depends on' the core. This avoids
+> > some nasty Kconfig recursive dependency issues. Also when using
+> > menuconfig client drivers will be hidden until the core has been
+> > enabled.
+> > 
+> > Documentation/kbuild/kconfig-language.txt:
+> > 
+> >   Note:
+> >         select should be used with care. select will force
+> >         a symbol to a value without visiting the dependencies.
+> >         By abusing select you are able to select a symbol FOO even
+> >         if FOO depends on BAR that is not set.
+> >         In general use select only for non-visible symbols
+> >         (no prompts anywhere) and for symbols with no dependencies.
+> >         That will limit the usefulness but on the other hand avoid
+> >         the illegal configurations all over.
+> > 
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> 
+> Sorry, I missed this patch in the set - but spotted it in linux-next.
+> 
+> I still don't like the change, but remoteproc has dependencies so I
+> guess I have to pick it until we fix that.
+> 
+> It's however not okay to take this patch through the DMA tree, as it
+> effectively stops me from introducing any changes in the rproc tree.
+> Further more, it's not based on v4.9, so it currently introduces another
+> Kconfig dependency problem - that I can't fix in my tree without
+> conflicting with Vinod's.
+> 
+> 
+> So, Vinod, can you please drop this patch from your tree? I'll pick it
+> up for now.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/firmware/qcom_scm-32.c | 18 ++++++++++++++++++
- drivers/firmware/qcom_scm-64.c | 16 ++++++++++++++++
- drivers/firmware/qcom_scm.c    | 16 ++++++++++++++++
- drivers/firmware/qcom_scm.h    |  2 ++
- include/linux/qcom_scm.h       |  2 ++
- 5 files changed, 54 insertions(+)
+Sorry for the delay, b/w KS/LPC and travel, was slow on email.
 
-diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
-index c6aeedbdcbb0..82c1d8d0d36b 100644
---- a/drivers/firmware/qcom_scm-32.c
-+++ b/drivers/firmware/qcom_scm-32.c
-@@ -560,3 +560,21 @@ int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
- 
- 	return ret ? : le32_to_cpu(out);
- }
-+
-+int __qcom_scm_video_set_state(struct device *dev, u32 state, u32 spare)
-+{
-+	struct {
-+		__le32 state;
-+		__le32 spare;
-+	} req;
-+	__le32 scm_ret = 0;
-+	int ret;
-+
-+	req.state = cpu_to_le32(state);
-+	req.spare = cpu_to_le32(spare);
-+
-+	ret = qcom_scm_call(dev, QCOM_SCM_SVC_BOOT, QCOM_SCM_VIDEO_SET_STATE,
-+			    &req, sizeof(req), &scm_ret, sizeof(scm_ret));
-+
-+	return ret ? : le32_to_cpu(scm_ret);
-+}
-diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
-index 4a0f5ead4fb5..68484ea2aa51 100644
---- a/drivers/firmware/qcom_scm-64.c
-+++ b/drivers/firmware/qcom_scm-64.c
-@@ -358,3 +358,19 @@ int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
- 
- 	return ret ? : res.a1;
- }
-+
-+int __qcom_scm_video_set_state(struct device *dev, u32 state, u32 spare)
-+{
-+	struct qcom_scm_desc desc = {0};
-+	struct arm_smccc_res res;
-+	int ret;
-+
-+	desc.args[0] = state;
-+	desc.args[1] = spare;
-+	desc.arginfo = QCOM_SCM_ARGS(2);
-+
-+	ret = qcom_scm_call(dev, QCOM_SCM_SVC_BOOT, QCOM_SCM_VIDEO_SET_STATE,
-+			    &desc, &res);
-+
-+	return ret ? : res.a1;
-+}
-diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-index d95c70227c05..7e364691a87c 100644
---- a/drivers/firmware/qcom_scm.c
-+++ b/drivers/firmware/qcom_scm.c
-@@ -320,6 +320,22 @@ bool qcom_scm_is_available(void)
- }
- EXPORT_SYMBOL(qcom_scm_is_available);
- 
-+int qcom_scm_video_set_state(u32 state, u32 spare)
-+{
-+	int ret;
-+
-+	ret = qcom_scm_clk_enable();
-+	if (ret)
-+		return ret;
-+
-+	ret = __qcom_scm_video_set_state(__scm->dev, state, spare);
-+
-+	qcom_scm_clk_disable();
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(qcom_scm_video_set_state);
-+
- static int qcom_scm_probe(struct platform_device *pdev)
- {
- 	struct qcom_scm *scm;
-diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
-index 3584b00fe7e6..4830559b2639 100644
---- a/drivers/firmware/qcom_scm.h
-+++ b/drivers/firmware/qcom_scm.h
-@@ -15,6 +15,8 @@
- #define QCOM_SCM_SVC_BOOT		0x1
- #define QCOM_SCM_BOOT_ADDR		0x1
- #define QCOM_SCM_BOOT_ADDR_MC		0x11
-+#define QCOM_SCM_VIDEO_SET_STATE	0xa
-+extern int __qcom_scm_video_set_state(struct device *dev, u32 state, u32 spare);
- 
- #define QCOM_SCM_FLAG_HLOS		0x01
- #define QCOM_SCM_FLAG_COLDBOOT_MC	0x02
-diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
-index cc32ab852fbc..2ece81a6b078 100644
---- a/include/linux/qcom_scm.h
-+++ b/include/linux/qcom_scm.h
-@@ -46,4 +46,6 @@ extern void qcom_scm_cpu_power_down(u32 flags);
- 
- extern u32 qcom_scm_get_version(void);
- 
-+extern int qcom_scm_video_set_state(u32 state, u32 spare);
-+
- #endif
+I have dropped this one now..
+
 -- 
-2.7.4
+~Vinod
