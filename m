@@ -1,150 +1,68 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 3 Nov 2016 14:24:39 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v10 03/11] remoteproc: Update Kconfig setup to 'depends
- on REMOTEPROC'
-Message-ID: <20161103212439.GS25787@tuxbot>
-References: <1475931154-1021-1-git-send-email-peter.griffin@linaro.org>
- <1475931154-1021-4-git-send-email-peter.griffin@linaro.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 14 Nov 2016 10:58:33 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 2/3] dt-binding: remoteproc: venus rproc dt binding
+ document
+Message-ID: <20161114165833.gfgonrxkal7rnwh6@rob-hp-laptop>
+References: <1478539853-23218-1-git-send-email-stanimir.varbanov@linaro.org>
+ <1478539853-23218-3-git-send-email-stanimir.varbanov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1475931154-1021-4-git-send-email-peter.griffin@linaro.org>
-To: vinod.koul@intel.com, Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, dan.j.williams@intel.com, patrice.chotard@st.com, ohad@wizery.com, arnaud.pouliquen@st.com, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+In-Reply-To: <1478539853-23218-3-git-send-email-stanimir.varbanov@linaro.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Sat 08 Oct 05:52 PDT 2016, Peter Griffin wrote:
-
-> Make REMOTEPROC core a selectable kconfig option, and update
-> remoteproc client drivers to 'depends on' the core. This avoids
-> some nasty Kconfig recursive dependency issues. Also when using
-> menuconfig client drivers will be hidden until the core has been
-> enabled.
+On Mon, Nov 07, 2016 at 07:30:52PM +0200, Stanimir Varbanov wrote:
+> Add devicetree binding document for Venus remote processor.
 > 
-> Documentation/kbuild/kconfig-language.txt:
-> 
->   Note:
->         select should be used with care. select will force
->         a symbol to a value without visiting the dependencies.
->         By abusing select you are able to select a symbol FOO even
->         if FOO depends on BAR that is not set.
->         In general use select only for non-visible symbols
->         (no prompts anywhere) and for symbols with no dependencies.
->         That will limit the usefulness but on the other hand avoid
->         the illegal configurations all over.
-> 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-
-Sorry, I missed this patch in the set - but spotted it in linux-next.
-
-I still don't like the change, but remoteproc has dependencies so I
-guess I have to pick it until we fix that.
-
-It's however not okay to take this patch through the DMA tree, as it
-effectively stops me from introducing any changes in the rproc tree.
-Further more, it's not based on v4.9, so it currently introduces another
-Kconfig dependency problem - that I can't fix in my tree without
-conflicting with Vinod's.
-
-
-So, Vinod, can you please drop this patch from your tree? I'll pick it
-up for now.
-
-Regards,
-Bjorn
-
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 > ---
->  drivers/remoteproc/Kconfig | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
+>  .../devicetree/bindings/remoteproc/qcom,venus.txt  | 33 ++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
 > 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index a7bedc6..decdcbe 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -1,20 +1,21 @@
->  menu "Remoteproc drivers"
->  
-> -# REMOTEPROC gets selected by whoever wants it
->  config REMOTEPROC
-> -	tristate
-> +	tristate "Support for Remote Processor subsystem"
->  	depends on HAS_DMA
->  	select CRC32
->  	select FW_LOADER
->  	select VIRTIO
->  	select VIRTUALIZATION
->  
-> +if REMOTEPROC
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,venus.txt b/Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
+> new file mode 100644
+> index 000000000000..06a2db60fa38
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,venus.txt
+> @@ -0,0 +1,33 @@
+> +Qualcomm Venus Peripheral Image Loader
 > +
->  config OMAP_REMOTEPROC
->  	tristate "OMAP remoteproc support"
->  	depends on HAS_DMA
->  	depends on ARCH_OMAP4 || SOC_OMAP5
->  	depends on OMAP_IOMMU
-> -	select REMOTEPROC
-> +	depends on REMOTEPROC
->  	select MAILBOX
->  	select OMAP2PLUS_MBOX
->  	select RPMSG
-> @@ -34,7 +35,7 @@ config OMAP_REMOTEPROC
->  config STE_MODEM_RPROC
->  	tristate "STE-Modem remoteproc support"
->  	depends on HAS_DMA
-> -	select REMOTEPROC
-> +	depends on REMOTEPROC
->  	default n
->  	help
->  	  Say y or m here to support STE-Modem shared memory driver.
-> @@ -44,7 +45,7 @@ config STE_MODEM_RPROC
->  config WKUP_M3_RPROC
->  	tristate "AMx3xx Wakeup M3 remoteproc support"
->  	depends on SOC_AM33XX || SOC_AM43XX
-> -	select REMOTEPROC
-> +	depends on REMOTEPROC
->  	help
->  	  Say y here to support Wakeup M3 remote processor on TI AM33xx
->  	  and AM43xx family of SoCs.
-> @@ -57,8 +58,8 @@ config WKUP_M3_RPROC
->  config DA8XX_REMOTEPROC
->  	tristate "DA8xx/OMAP-L13x remoteproc support"
->  	depends on ARCH_DAVINCI_DA8XX
-> +	depends on REMOTEPROC
->  	select CMA if MMU
-> -	select REMOTEPROC
->  	select RPMSG
->  	help
->  	  Say y here to support DA8xx/OMAP-L13x remote processors via the
-> @@ -84,9 +85,9 @@ config QCOM_Q6V5_PIL
->  	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
->  	depends on OF && ARCH_QCOM
->  	depends on QCOM_SMEM
-> +	depends on REMOTEPROC
->  	select MFD_SYSCON
->  	select QCOM_MDT_LOADER
-> -	select REMOTEPROC
->  	help
->  	  Say y here to support the Qualcomm Peripherial Image Loader for the
->  	  Hexagon V5 based remote processors.
-> @@ -94,7 +95,7 @@ config QCOM_Q6V5_PIL
->  config ST_REMOTEPROC
->  	tristate "ST remoteproc support"
->  	depends on ARCH_STI
-> -	select REMOTEPROC
-> +	depends on REMOTEPROC
->  	help
->  	  Say y here to support ST's adjunct processors via the remote
->  	  processor framework.
-> @@ -102,6 +103,8 @@ config ST_REMOTEPROC
->  
->  config ST_SLIM_REMOTEPROC
->  	tristate
-> -	select REMOTEPROC
-> +	depends on REMOTEPROC
+> +This document defines the binding for a component that loads and boots firmware
+> +on the Qualcomm Venus remote processor core.
 > +
-> +endif # REMOTEPROC
->  
->  endmenu
-> -- 
-> 1.9.1
-> 
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must contain "qcom,venus-pil"
+> +
+> +- memory-region:
+> +	Usage: required
+> +	Value type: <phandle>
+> +	Definition: a phandle to a node describing reserved memory
+> +
+> +* An example
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		venus_mem: venus@89900000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x0 0x89900000 0x0 0x800000>;
+> +			alignment = <0x1000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	rproc_venus@0 {
+
+s/_/-/
+
+With that,
+
+Acked-by: Rob Herring <robh@kernel.org>
