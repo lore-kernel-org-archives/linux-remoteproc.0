@@ -1,413 +1,281 @@
 Return-Path: <akdwived@codeaurora.org>
-Subject: Re: [PATCH 2/5] remoteproc: Adding q6v55 specific regulator, clk,
- reset interface.
-References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
- <1477324559-24752-3-git-send-email-akdwived@codeaurora.org>
- <20161025190512.GN7509@tuxbot>
+Subject: Re: [PATCH v3 3/3] remoteproc: qcom: Adding q6v56 reset sequence.
+References: <1478522240-11036-1-git-send-email-akdwived@codeaurora.org>
+ <1478522240-11036-4-git-send-email-akdwived@codeaurora.org>
+ <20161108065515.GK25787@tuxbot>
 From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Message-ID: <d1de6791-1326-933b-7be1-fd76bc203271@codeaurora.org>
-Date: Fri, 4 Nov 2016 19:11:20 +0530
+Message-ID: <2f0e1e1f-4d72-43af-35cd-a26ed5e8b986@codeaurora.org>
+Date: Wed, 16 Nov 2016 20:48:11 +0530
 MIME-Version: 1.0
-In-Reply-To: <20161025190512.GN7509@tuxbot>
+In-Reply-To: <20161108065515.GK25787@tuxbot>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, kaushalk@codeaurora.org
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 
 
-On 10/26/2016 12:35 AM, Bjorn Andersson wrote:
-> On Mon 24 Oct 08:55 PDT 2016, Avaneesh Kumar Dwivedi wrote:
+On 11/8/2016 12:25 PM, Bjorn Andersson wrote:
+> On Mon 07 Nov 04:37 PST 2016, Avaneesh Kumar Dwivedi wrote:
 >
->> q6v55 use different regulator and clock resource than q6v5, hence
->> using separate resource handling for same.
->> Also reset register
->> programming in q6v55 is non secure so resource controller init-
->> ilization is not required for q6v55.
-> The reset comes from GCC, so please use the fact that gcc already is a
-> reset-controller.
-Already in patch 1/5 have explained reason of not using the GCC to reset 
-pasting same here again
+>> Adding additional reset sequence steps required specific
+>> to q6v56 based on version check, along with some trivial
+>> changes in name of local functions.
+>>
+> Please don't change readl/writel to their relaxed version in the same
+> commit as you do functional changes. And please don't change function
+> names here either.
+>
+> Both makes the review really hard and the actual changes non-obvious.
 
-Infact i had done it the way suggested before i sent out initial
-patchset, but then when i discussed with internal clock team, they said 
-they will
-not support MSS RESET to be done via GCC because
-
-"MSS_RESET is not a block reset, GCC reset controller is used only when 
-we need a BCR to be reset,
-and which has a special purpose. MSS RESET doesn't fall under block 
-resets, it is not a clock and
-cannot be associated with clock."
-
-Downstream also MSS RESET is programmed through ioremap
+Ok, corrected.
+>
+> Regards,
+> Bjorn
 >
 >> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 >> ---
->>   drivers/remoteproc/qcom_q6v5_pil.c | 271 +++++++++++++++++++++++++++++++++++++
->>   1 file changed, 271 insertions(+)
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 132 +++++++++++++++++++++++++++----------
+>>   1 file changed, 98 insertions(+), 34 deletions(-)
 >>
 >> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
->> index 8df95a0..c7dca40 100644
+>> index 1fc505b..68eda4f 100644
 >> --- a/drivers/remoteproc/qcom_q6v5_pil.c
 >> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
->> @@ -215,6 +215,203 @@ static void q6v5_regulator_disable(struct q6v5 *qproc)
->>   	regulator_set_voltage(mss, 0, 1150000);
->>   }
+>> @@ -66,6 +66,8 @@
+>>   #define QDSP6SS_RESET_REG		0x014
+>>   #define QDSP6SS_GFMUX_CTL_REG		0x020
+>>   #define QDSP6SS_PWR_CTL_REG		0x030
+>> +#define QDSP6SS_MEM_PWR_CTL		0x0B0
+>> +#define QDSP6SS_STRAP_ACC		0x110
 >>   
->> +static int q6v55_regulator_init(struct q6v5 *qproc)
->> +{
->> +	int ret;
+>>   /* AXI Halt Register Offsets */
+>>   #define AXI_HALTREQ_REG			0x0
+>> @@ -94,8 +96,14 @@
+>>   #define QDSS_BHS_ON			BIT(21)
+>>   #define QDSS_LDO_BYP			BIT(22)
+>>   
+>> +/* QDSP6v56 parameters */
+>> +#define QDSP6v56_LDO_BYP                BIT(25)
+>> +#define QDSP6v56_BHS_ON                 BIT(24)
+>>   #define QDSP6v56_CLAMP_WL               BIT(21)
+>>   #define QDSP6v56_CLAMP_QMC_MEM          BIT(22)
+>> +#define HALT_CHECK_MAX_LOOPS            (200)
+>> +#define QDSP6SS_XO_CBCR                 (0x0038)
+>> +#define QDSP6SS_ACC_OVERRIDE_VAL	0x20
+>>   struct q6_rproc_res {
+>>   	char **proxy_clks;
+>>   	int proxy_clk_cnt;
+>> @@ -389,7 +397,8 @@ static void pil_mss_restart_reg(struct q6v5 *qproc, u32 mss_restart)
+>>   		udelay(2);
+>>   	}
+>>   }
+>> -static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
 >> +
->> +	qproc->supply[Q6V5_SUPPLY_CX].supply = "vdd_cx";
->> +	qproc->supply[Q6V5_SUPPLY_MX].supply = "vdd_mx";
->> +	qproc->supply[Q6V5_SUPPLY_PLL].supply = "vdd_pll";
->> +
->> +	ret = devm_regulator_bulk_get(qproc->dev,
->> +			(ARRAY_SIZE(qproc->supply) - 1), qproc->supply);
->> +	if (ret < 0) {
->> +		dev_err(qproc->dev, "failed to get supplies\n");
->> +		return ret;
->> +	}
->> +
->> +
->> +	return 0;
->> +}
-> This is very very similar to the existing q6v5_regulator_init, please
-> figure out a way to make the mss supply optional here instead of
-> creating a new function.
-OK, Have implemented common init and enable function for clock and 
-regulator in patchset v2
->
->> +
->> +static int q6v55_clk_enable(struct q6v5 *qproc)
->> +{
->> +	int ret;
->> +
->> +	ret = clk_prepare_enable(qproc->ahb_clk);
->> +	if (ret)
->> +		goto out;
->> +
->> +	ret = clk_prepare_enable(qproc->axi_clk);
->> +	if (ret)
->> +		goto err_axi_clk;
->> +
->> +	ret = clk_prepare_enable(qproc->rom_clk);
->> +	if (ret)
->> +		goto err_rom_clk;
->> +
->> +	ret = clk_prepare_enable(qproc->gpll0_mss_clk);
->> +	if (ret)
->> +		goto err_gpll0_mss_clk;
->> +
->> +	ret = clk_prepare_enable(qproc->snoc_axi_clk);
->> +	if (ret)
->> +		goto err_snoc_axi_clk;
->> +
->> +	ret = clk_prepare_enable(qproc->mnoc_axi_clk);
->> +	if (ret)
->> +		goto err_mnoc_axi_clk;
-> I believe it would be better to turn the clocks into an array, like the
-> regulators, so that we can loop over them rather than listing them
-> explicitly.
-OK , Have used clock array to initialize and enable clocks for q6 in 
-patchset v2
->
->> +
->> +	return 0;
->> +err_mnoc_axi_clk:
->> +	clk_disable_unprepare(qproc->snoc_axi_clk);
->> +err_snoc_axi_clk:
->> +	clk_disable_unprepare(qproc->gpll0_mss_clk);
->> +err_gpll0_mss_clk:
->> +	clk_disable_unprepare(qproc->rom_clk);
->> +err_rom_clk:
->> +	clk_disable_unprepare(qproc->axi_clk);
->> +err_axi_clk:
->> +	clk_disable_unprepare(qproc->ahb_clk);
->> +out:
->> +	dev_err(qproc->dev, "Clk Vote Failed\n");
-> I believe the clock framework will complain if above fails, so no need
-> to add another print here.
-OK, Have removed print also
->
->> +	return ret;
->> +}
->> +
->> +static void q6v55_clk_disable(struct q6v5 *qproc)
->> +{
->> +
->> +	clk_disable_unprepare(qproc->mnoc_axi_clk);
->> +	clk_disable_unprepare(qproc->snoc_axi_clk);
->> +	clk_disable_unprepare(qproc->gpll0_mss_clk);
->> +	clk_disable_unprepare(qproc->rom_clk);
->> +	clk_disable_unprepare(qproc->axi_clk);
->> +	if (!qproc->ahb_clk_vote)
-> Why do you check ahb_clk_vote in the disable case but not in the enable
-> case?
->
-> Also, please move all ahb_clk_vote handling into the same patch.
-OK, Infact check was not required for v56 applicable to 8996, so have 
-removed them.
->
->> +		clk_disable_unprepare(qproc->ahb_clk);
->> +}
->> +
->> +static int q6v55_proxy_vote(struct q6v5 *qproc)
->> +{
->> +	struct regulator *mx = qproc->supply[Q6V5_SUPPLY_MX].consumer;
->> +	struct regulator *cx = qproc->supply[Q6V5_SUPPLY_CX].consumer;
->> +	struct regulator *vdd_pll = qproc->supply[Q6V5_SUPPLY_PLL].consumer;
->> +	int ret;
->> +
->> +	ret = regulator_set_voltage(mx, INT_MAX, INT_MAX);
-> I'm not convinced that we should vote MAX as minimum voltage here, is it
-> not 1.05V as in the q6v5?
-OK
->
->> +	if (ret) {
->> +		dev_err(qproc->dev, "Failed to set voltage for vreg_mx\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = regulator_enable(mx);
->> +	if (ret) {
->> +		dev_err(qproc->dev, "Failed to enable vreg_mx\n");
->> +		goto err_mx_enable;
->> +	}
->> +
->> +	ret = regulator_set_voltage(cx, INT_MAX, INT_MAX);
->> +	if (ret) {
->> +		dev_err(qproc->dev, "Failed to request vdd_cx voltage.\n");
->> +		goto err_cx_voltage;
->> +	}
->> +
->> +	ret = regulator_set_load(cx, 100000);
->> +	if (ret < 0) {
->> +		dev_err(qproc->dev, "Failed to set vdd_cx mode.\n");
->> +		goto err_cx_set_load;
->> +	}
->> +
->> +	ret = regulator_enable(cx);
->> +	if (ret) {
->> +		dev_err(qproc->dev, "Failed to vote for vdd_cx\n");
->> +		goto err_cx_enable;
->> +	}
->> +
->> +	ret = regulator_set_voltage(vdd_pll, 1800000, 1800000);
-> PLL is fed from a fixed voltage regulator of 1.8V, so we do not need to
-> request a voltage (per Mark Brown's request).
-OK.
->
->> +	if (ret) {
->> +		dev_err(qproc->dev, "Failed to set voltage for  vdd_pll\n");
->> +		goto err_vreg_pll_set_vol;
->> +	}
->> +
->> +	ret = regulator_set_load(vdd_pll, 10000);
->> +	if (ret < 0) {
->> +		dev_err(qproc->dev, "Failed to set vdd_pll mode.\n");
->> +		goto err_vreg_pll_load;
->> +	}
->> +
->> +	ret = regulator_enable(vdd_pll);
->> +	if (ret) {
->> +		dev_err(qproc->dev, "Failed to vote for vdd_pll\n");
->> +		goto err_vreg_pll_enable;
->> +	}
->> +
->> +	ret = clk_prepare_enable(qproc->xo);
->> +	if (ret)
->> +		goto err_xo_vote;
->> +
->> +	ret = clk_prepare_enable(qproc->pnoc_clk);
->> +	if (ret)
->> +		goto err_pnoc_vote;
->> +
->> +	ret = clk_prepare_enable(qproc->qdss_clk);
->> +	if (ret)
->> +		goto err_qdss_vote;
->> +	qproc->unvote_flag = false;
->> +	return 0;
->> +
->> +err_qdss_vote:
->> +	clk_disable_unprepare(qproc->pnoc_clk);
->> +err_pnoc_vote:
->> +	clk_disable_unprepare(qproc->xo);
->> +err_xo_vote:
->> +	regulator_disable(vdd_pll);
->> +err_vreg_pll_enable:
->> +	regulator_set_load(vdd_pll, 0);
->> +err_vreg_pll_load:
->> +	regulator_set_voltage(vdd_pll, 0, INT_MAX);
->> +err_vreg_pll_set_vol:
->> +	regulator_disable(cx);
->> +err_cx_enable:
->> +	regulator_set_load(cx, 0);
->> +err_cx_set_load:
->> +	regulator_set_voltage(cx, 0, INT_MAX);
->> +err_cx_voltage:
->> +	regulator_disable(mx);
->> +err_mx_enable:
->> +	regulator_set_voltage(mx, 0, INT_MAX);
->> +
->> +	return ret;
->> +}
-> As with the init function, this is very similar to the q6v5 case, so I
-> don't think we need to have separate functions for it.
->
-> A side note on this is that clk_prepare_enable(NULL) is valid, so if you
-> distinguish between the two cases during initialisation and put all
-> clocks in an array you could just call clk_prepare_enable() on all of
-> them, which will skip the ones that isn't initialised.
->
->> +
->> +static void q6v55_proxy_unvote(struct q6v5 *qproc)
->> +{
->> +	if (!qproc->unvote_flag) {
-> I don't think the "unvote_flag" is good design and don't see how you
-> would end up unvoting multiple times based on my original design.
->
-> But again, the answer is probably in some other patch - i.e. please
-> group your patches so I can see each step in its entirety.
-code is reorganized yet i am using unvote flag but in transparent way.
-i am setting unvote flag during enable and making it false during disable.
-so that we unvote only if we have voted earlier.
->
->> +		regulator_disable(qproc->supply[Q6V5_SUPPLY_PLL].consumer);
->> +		regulator_set_load(qproc->supply[Q6V5_SUPPLY_PLL].consumer, 0);
->> +		regulator_disable(qproc->supply[Q6V5_SUPPLY_CX].consumer);
->> +		regulator_set_load(qproc->supply[Q6V5_SUPPLY_CX].consumer, 0);
->> +		regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_CX].consumer,
->> +			0, INT_MAX);
->> +
->> +		clk_disable_unprepare(qproc->qdss_clk);
->> +		clk_disable_unprepare(qproc->pnoc_clk);
->> +		clk_disable_unprepare(qproc->xo);
->> +
->> +		regulator_disable(qproc->supply[Q6V5_SUPPLY_MX].consumer);
->> +		regulator_set_voltage(qproc->supply[Q6V5_SUPPLY_MX].consumer,
->> +			0, INT_MAX);
->> +	}
->> +	qproc->unvote_flag = true;
->> +}
->> +
->> +static void pil_mss_restart_reg(struct q6v5 *qproc, u32 mss_restart)
->> +{
->> +	if (qproc->restart_reg) {
->> +		writel_relaxed(mss_restart, qproc->restart_reg);
->> +		udelay(2);
->> +	}
->> +}
-> Drop this
-can not drop due to reason explained already that i can not use GCC for 
-MSS reset.
->
->> +
->>   static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+>> +static int q6_load(struct rproc *rproc, const struct firmware *fw)
 >>   {
 >>   	struct q6v5 *qproc = rproc->priv;
->> @@ -751,6 +948,65 @@ static int q6v5_init_clocks(struct q6v5 *qproc)
->>   	return 0;
->>   }
 >>   
->> +static int q6v55_init_clocks(struct q6v5 *qproc)
->> +{
->> +	qproc->ahb_clk = devm_clk_get(qproc->dev, "iface");
->> +	if (IS_ERR(qproc->ahb_clk)) {
->> +		dev_err(qproc->dev, "failed to get iface clock\n");
->> +		return PTR_ERR(qproc->ahb_clk);
->> +	}
->> +
->> +	qproc->axi_clk = devm_clk_get(qproc->dev, "bus");
->> +	if (IS_ERR(qproc->axi_clk)) {
->> +		dev_err(qproc->dev, "failed to get bus clock\n");
->> +		return PTR_ERR(qproc->axi_clk);
->> +	}
->> +
->> +	qproc->rom_clk = devm_clk_get(qproc->dev, "mem");
->> +	if (IS_ERR(qproc->rom_clk)) {
->> +		dev_err(qproc->dev, "failed to get mem clock\n");
->> +		return PTR_ERR(qproc->rom_clk);
->> +	}
-> These three are the same as q6v5...
->
->> +
->> +	qproc->snoc_axi_clk = devm_clk_get(qproc->dev, "snoc_axi_clk");
->> +	if (IS_ERR(qproc->snoc_axi_clk)) {
->> +		dev_err(qproc->dev, "failed to get snoc_axi_clk\n");
->> +		return PTR_ERR(qproc->snoc_axi_clk);
->> +	}
->> +
->> +	qproc->mnoc_axi_clk = devm_clk_get(qproc->dev, "mnoc_axi_clk");
->> +	if (IS_ERR(qproc->mnoc_axi_clk)) {
->> +		dev_err(qproc->dev, "failed to get mnoc_axi_clk clock\n");
->> +		return PTR_ERR(qproc->mnoc_axi_clk);
->> +	}
->> +
->> +	qproc->gpll0_mss_clk = devm_clk_get(qproc->dev, "gpll0_mss_clk");
->> +	if (IS_ERR(qproc->gpll0_mss_clk)) {
->> +		dev_err(qproc->dev, "failed to get gpll0_mss_clk clock\n");
->> +		return PTR_ERR(qproc->gpll0_mss_clk);
->> +	}
->> +
->> +	qproc->xo = devm_clk_get(qproc->dev, "xo");
->> +	if (IS_ERR(qproc->xo)) {
->> +		dev_err(qproc->dev, "failed to get xo\n");
->> +		return PTR_ERR(qproc->xo);
->> +	}
-> And q6v5 will need "xo" as well, I missed this one.
-OK.
->
->> +
->> +	qproc->pnoc_clk = devm_clk_get(qproc->dev, "pnoc");
->> +	if (IS_ERR(qproc->pnoc_clk)) {
->> +		dev_err(qproc->dev, "failed to get pnoc_clk clock\n");
->> +		return PTR_ERR(qproc->pnoc_clk);
->> +	}
->> +
->> +	qproc->qdss_clk = devm_clk_get(qproc->dev, "qdss");
->> +	if (IS_ERR(qproc->qdss_clk)) {
->> +		dev_err(qproc->dev, "failed to get qdss_clk clock\n");
->> +		return PTR_ERR(qproc->qdss_clk);
->> +	}
->> +
-> I would rather see that we have a single init_clocks function that based
-> on compatible will get the appropriate clocks.
-OK.
->
->> +	return 0;
->> +}
->> +
->>   static int q6v5_init_reset(struct q6v5 *qproc)
+>> @@ -400,10 +409,10 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+>>   
+>>   static const struct rproc_fw_ops q6_fw_ops = {
+>>   	.find_rsc_table = qcom_mdt_find_rsc_table,
+>> -	.load = q6v5_load,
+>> +	.load = q6_load,
+>>   };
+>>   
+>> -static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
+>> +static int q6_rmb_pbl_wait(struct q6v5 *qproc, int ms)
 >>   {
->>   	qproc->mss_restart = devm_reset_control_get(qproc->dev, NULL);
->> @@ -762,6 +1018,21 @@ static int q6v5_init_reset(struct q6v5 *qproc)
->>   	return 0;
+>>   	unsigned long timeout;
+>>   	s32 val;
+>> @@ -423,7 +432,7 @@ static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
+>>   	return val;
 >>   }
 >>   
->> +static int q6v55_init_reset(struct q6v5 *qproc, struct platform_device *pdev)
->> +{
->> +	struct resource *res;
+>> -static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+>> +static int q6_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+>>   {
+>>   
+>>   	unsigned long timeout;
+>> @@ -449,40 +458,95 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+>>   	return val;
+>>   }
+>>   
+>> -static int q6v5proc_reset(struct q6v5 *qproc)
+>> +static int q6proc_reset(struct q6v5 *qproc)
+>>   {
+>> -	u32 val;
+>> -	int ret;
+>> +	int ret, i, count;
+>> +	u64 val;
 >> +
->> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "restart_reg");
->> +	qproc->restart_reg = devm_ioremap(qproc->dev, res->start,
->> +							resource_size(res));
->> +	if (IS_ERR(qproc->restart_reg)) {
->> +		dev_err(qproc->dev, "failed to get restart_reg\n");
->> +		return PTR_ERR(qproc->restart_reg);
+>> +	/* Override the ACC value if required */
+>> +	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56"))
+>> +		writel_relaxed(QDSP6SS_ACC_OVERRIDE_VAL,
+>> +				qproc->reg_base + QDSP6SS_STRAP_ACC);
+>>   
+>>   	/* Assert resets, stop core */
+>> -	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_RESET_REG);
+>>   	val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
+>> -	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>>   
+>> +	/* BHS require xo cbcr to be enabled */
+>> +	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56")) {
+>> +		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
+>> +		val |= 0x1;
+>> +		writel_relaxed(val, qproc->reg_base + QDSP6SS_XO_CBCR);
+>> +		for (count = HALT_CHECK_MAX_LOOPS; count > 0; count--) {
+>> +			val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
+>> +			if (!(val & BIT(31)))
+>> +				break;
+>> +			udelay(1);
+>> +		}
+>> +
+>> +		val = readl_relaxed(qproc->reg_base + QDSP6SS_XO_CBCR);
+>> +		if ((val & BIT(31)))
+>> +			dev_err(qproc->dev, "Failed to enable xo branch clock.\n");
 >> +	}
+>>   	/* Enable power block headswitch, and wait for it to stabilize */
+>> -	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= QDSS_BHS_ON | QDSS_LDO_BYP;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val |= QDSP6v56_BHS_ON;
+>> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>>   	udelay(1);
+>>   
+>> -	/*
+>> -	 * Turn on memories. L2 banks should be done individually
+>> -	 * to minimize inrush current.
+>> -	 */
+>> -	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
+>> -		Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_L2DATA_SLP_NRET_N_2;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_L2DATA_SLP_NRET_N_1;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_L2DATA_SLP_NRET_N_0;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	/* Put LDO in bypass mode */
+>> +	val |= QDSP6v56_LDO_BYP;
+>> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
 >> +
->> +	return 0;
->> +}
-> Drop this
-Can not drop as can not use GCC for MSS_RESET due to reason explained above.
->
+>> +	if (!strcmp(qproc->q6_rproc_res->q6_version, "v56")) {
+>> +		/*
+>> +		 * Deassert QDSP6 compiler memory clamp
+>> +		 */
+>> +		val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val &= ~QDSP6v56_CLAMP_QMC_MEM;
+>> +		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
 >> +
->>   static int q6v5_request_irq(struct q6v5 *qproc,
->>   			     struct platform_device *pdev,
->>   			     const char *name,
+>> +		/* Deassert memory peripheral sleep and L2 memory standby */
+>> +		val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
+>> +		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>>   
+>> +		/* Turn on L1, L2, ETB and JU memories 1 at a time */
+>> +		val = readl_relaxed(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+>> +		for (i = 19; i >= 0; i--) {
+>> +			val |= BIT(i);
+>> +			writel_relaxed(val, qproc->reg_base +
+>> +						QDSP6SS_MEM_PWR_CTL);
+>> +			/*
+>> +			 * Wait for 1us for both memory peripheral and
+>> +			 * data array to turn on.
+>> +			 */
+>> +			 mb();
+>> +			udelay(1);
+>> +		}
+>> +		/* Remove word line clamp */
+>> +		val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val &= ~QDSP6v56_CLAMP_WL;
+>> +		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	} else {
+>> +		/*
+>> +		 * Turn on memories. L2 banks should be done individually
+>> +		 * to minimize inrush current.
+>> +		 */
+>> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
+>> +			Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_L2DATA_SLP_NRET_N_2;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_L2DATA_SLP_NRET_N_1;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_L2DATA_SLP_NRET_N_0;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	}
+>>   	/* Remove IO clamp */
+>>   	val &= ~Q6SS_CLAMP_IO;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>>   
+>>   	/* Bring core out of reset */
+>>   	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> @@ -490,9 +554,9 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>>   	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>>   
+>>   	/* Turn on core clock */
+>> -	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+>> +	val = readl_relaxed(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+>>   	val |= Q6SS_CLK_ENABLE;
+>> -	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+>> +	writel_relaxed(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
+>>   
+>>   	/* Start core execution */
+>>   	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> @@ -500,7 +564,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>>   	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>>   
+>>   	/* Wait for PBL status */
+>> -	ret = q6v5_rmb_pbl_wait(qproc, 1000);
+>> +	ret = q6_rmb_pbl_wait(qproc, 1000);
+>>   	if (ret == -ETIMEDOUT) {
+>>   		dev_err(qproc->dev, "PBL boot timed out\n");
+>>   	} else if (ret != RMB_PBL_SUCCESS) {
+>> @@ -560,7 +624,7 @@ static int q6_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+>>   	writel(phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
+>>   	writel(RMB_CMD_META_DATA_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+>>   
+>> -	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
+>> +	ret = q6_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
+>>   	if (ret == -ETIMEDOUT)
+>>   		dev_err(qproc->dev, "MPSS header authentication timed out\n");
+>>   	else if (ret < 0)
+>> @@ -618,7 +682,7 @@ static int q6_mpss_validate(struct q6v5 *qproc, const struct firmware *fw)
+>>   		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>>   	}
+>>   
+>> -	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+>> +	ret = q6_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+>>   	if (ret == -ETIMEDOUT)
+>>   		dev_err(qproc->dev, "MPSS authentication timed out\n");
+>>   	else if (ret < 0)
+>> @@ -704,11 +768,11 @@ static int q6_start(struct rproc *rproc)
+>>   
+>>   	writel_relaxed(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
+>>   
+>> -	ret = q6v5proc_reset(qproc);
+>> +	ret = q6proc_reset(qproc);
+>>   	if (ret)
+>>   		goto halt_axi_ports;
+>>   
+>> -	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
+>> +	ret = q6_rmb_mba_wait(qproc, 0, 5000);
+>>   	if (ret == -ETIMEDOUT) {
+>>   		dev_err(qproc->dev, "MBA boot timed out\n");
+>>   		goto halt_axi_ports;
 >> -- 
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project.
 >>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
