@@ -1,69 +1,63 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 18 Nov 2016 08:40:53 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <vinod.koul@intel.com>
+Date: Thu, 17 Nov 2016 15:22:52 +0530
+From: Vinod Koul <vinod.koul@intel.com>
 Subject: Re: [PATCH v10 01/11] remoteproc: st_slim_rproc: add a slimcore
  rproc driver
-Message-ID: <20161118164053.GA2769@tuxbot>
+Message-ID: <20161117095252.GC2698@localhost>
 References: <1476783556-2501-1-git-send-email-peter.griffin@linaro.org>
  <1476783556-2501-2-git-send-email-peter.griffin@linaro.org>
  <20161103213703.GA15449@tuxbot>
  <20161107135735.GA27280@griffinp-ThinkPad-X1-Carbon-2nd>
  <20161114051854.GW3000@localhost>
  <20161117063646.GE28340@tuxbot>
- <20161117095252.GC2698@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20161117095252.GC2698@localhost>
-To: Vinod Koul <vinod.koul@intel.com>
+In-Reply-To: <20161117063646.GE28340@tuxbot>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, ohad@wizery.com, patrice.chotard@st.com, lee.jones@linaro.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 17 Nov 01:52 PST 2016, Vinod Koul wrote:
-
-> On Wed, Nov 16, 2016 at 10:36:46PM -0800, Bjorn Andersson wrote:
-> > On Sun 13 Nov 21:18 PST 2016, Vinod Koul wrote:
-> > 
-> > > On Mon, Nov 07, 2016 at 01:57:35PM +0000, Peter Griffin wrote:
-> > > > > 
-> > > > > As you now make changes to the entire remoteproc Kconfig file, rather
-> > > > > than simply add a Kconfig symbol we can't bring this in via Vinod's tree
-> > > > > without providing Linus with a messy merge conflict.
-> > > > > 
-> > > > > So the remoteproc parts now has to go through my tree.
+On Wed, Nov 16, 2016 at 10:36:46PM -0800, Bjorn Andersson wrote:
+> On Sun 13 Nov 21:18 PST 2016, Vinod Koul wrote:
+> 
+> > On Mon, Nov 07, 2016 at 01:57:35PM +0000, Peter Griffin wrote:
 > > > > 
-> > > > OK, I think the best approach is for Vinod to create an immutable
-> > > > branch with the entire fdma series on, and then both of you merge that branch into
-> > > > your respective trees.
+> > > > As you now make changes to the entire remoteproc Kconfig file, rather
+> > > > than simply add a Kconfig symbol we can't bring this in via Vinod's tree
+> > > > without providing Linus with a messy merge conflict.
+> > > > 
+> > > > So the remoteproc parts now has to go through my tree.
 > > > 
-> > > my topic/st_fdma is immutable branch. You cna merge it, if you need a signed
-> > > tag, please do let me know
-> > > 
+> > > OK, I think the best approach is for Vinod to create an immutable
+> > > branch with the entire fdma series on, and then both of you merge that branch into
+> > > your respective trees.
 > > 
-> > Hi Vinod,
+> > my topic/st_fdma is immutable branch. You cna merge it, if you need a signed
+> > tag, please do let me know
 > > 
-> > It looks like you reverted the wrong Kconfig fix, the one I objected to
-> > was the change in drivers/remoteproc, not the one in drivers/dma.
-> > 
-> > The ST_FMDA depends on functions exposed by REMOTEPROC and
-> > ST_SLIM_REMOTEPROC, the latter in turn depends on REMOTEPROC, which you
-> > guys made user selectable - and as such should not be selected - but I
-> > think we should move forward and get everything merged and then we can
-> > go back and figure out how this should be addressed (or left alone?).
-> > 
-> > I have merged "topic/st_fdma" into rproc-next, so that I can fix up the
-> > now broken drivers/remoteproc/Kconfig.
-> > 
-> > We do however both need to revert the revert or there will be link
-> > errors if you build the dma driver with remoteproc=n. If you do this I
-> > can merge the topic once more and we'll keep the set of changes in sync.
 > 
-> Oops my bad, thanks for letting me know. I have reverted this now and
-> pushing out. Please do let me know if this was fine
+> Hi Vinod,
 > 
+> It looks like you reverted the wrong Kconfig fix, the one I objected to
+> was the change in drivers/remoteproc, not the one in drivers/dma.
+> 
+> The ST_FMDA depends on functions exposed by REMOTEPROC and
+> ST_SLIM_REMOTEPROC, the latter in turn depends on REMOTEPROC, which you
+> guys made user selectable - and as such should not be selected - but I
+> think we should move forward and get everything merged and then we can
+> go back and figure out how this should be addressed (or left alone?).
+> 
+> I have merged "topic/st_fdma" into rproc-next, so that I can fix up the
+> now broken drivers/remoteproc/Kconfig.
+> 
+> We do however both need to revert the revert or there will be link
+> errors if you build the dma driver with remoteproc=n. If you do this I
+> can merge the topic once more and we'll keep the set of changes in sync.
 
-Thanks for the update Vinod, I've merged in your updated branch into
-mine, so now we should be good.
+Oops my bad, thanks for letting me know. I have reverted this now and
+pushing out. Please do let me know if this was fine
 
-Regards,
-Bjorn
+Thanks
+-- 
+~Vinod
