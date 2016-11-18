@@ -1,125 +1,53 @@
-Return-Path: <akdwived@codeaurora.org>
-Subject: Re: [PATCH 5/5] remoteproc: Modifying probe for initializing q6v55
- specific resources
-References: <1477324559-24752-1-git-send-email-akdwived@codeaurora.org>
- <1477324559-24752-6-git-send-email-akdwived@codeaurora.org>
- <20161025193554.GQ7509@tuxbot>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Message-ID: <35a6fef2-8340-b438-ec0f-4b410953ac96@codeaurora.org>
-Date: Fri, 4 Nov 2016 19:17:31 +0530
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 18 Nov 2016 09:05:49 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: wcnss-pil: add QCOM_SMD dependency
+Message-ID: <20161118170549.GB2769@tuxbot>
+References: <20161118161528.775709-1-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <20161025193554.GQ7509@tuxbot>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, kaushalk@codeaurora.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20161118161528.775709-1-arnd@arndb.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Vinod Koul <vinod.koul@intel.com>, Peter Griffin <peter.griffin@linaro.org>, Lee Jones <lee.jones@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+On Fri 18 Nov 08:15 PST 2016, Arnd Bergmann wrote:
 
+> When qcom_smd is a loadable module and adsp-pil is built-in,
+> we get a link error:
+> 
+> drivers/remoteproc/qcom_wcnss_pil.o: In function `wcnss_smd_remove':
+> qcom_wcnss_iris.c:(.text.wcnss_smd_remove+0x10): undefined reference to `qcom_smd_unregister_edge'
+> drivers/remoteproc/qcom_wcnss_pil.o: In function `wcnss_smd_probe':
+> qcom_wcnss_iris.c:(.text.wcnss_smd_probe+0x12): undefined reference to `qcom_smd_register_edge'
+> 
+> This adds a Kconfig dependency to avoid this. We can still allow
+> build-testing with SMD disabled.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On 10/26/2016 1:05 AM, Bjorn Andersson wrote:
-> On Mon 24 Oct 08:55 PDT 2016, Avaneesh Kumar Dwivedi wrote:
->
->> Probe is being modified to save q6 version and invoke appropriate
->> init functions to accommodate q6v55 remoteproc driver.
->>
->> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
->> ---
->>   drivers/remoteproc/qcom_q6v5_pil.c | 43 ++++++++++++++++++++++++++++++--------
->>   1 file changed, 34 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
->> index dd19d41..c65c904 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pil.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
->> @@ -1370,6 +1370,9 @@ static int q6v5_probe(struct platform_device *pdev)
->>   	init_completion(&qproc->start_done);
->>   	init_completion(&qproc->stop_done);
->>   
->> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,q6v55-pil"))
->> +		qproc->is_q6v55 = true;
->> +
-> With the changes I've suggested in the other patches I would recommend
-> that you describe the differences as a set of "features" in a struct
-> that you put as .data in the match table and then use
-> of_device_get_match_data() to acquire the matching data struct.
-OK, have tried on suggested line in patchset v2 to be send out soon.
->
->>   	ret = q6v5_init_mem(qproc, pdev);
->>   	if (ret)
->>   		goto free_rproc;
->> @@ -1378,17 +1381,39 @@ static int q6v5_probe(struct platform_device *pdev)
->>   	if (ret)
->>   		goto free_rproc;
->>   
->> -	ret = q6v5_init_clocks(qproc);
->> -	if (ret)
->> -		goto free_rproc;
->> +	if (qproc->is_q6v55) {
->> +		ret = q6v55_init_clocks(qproc);
->> +		if (ret)
->> +			goto free_rproc;
->> +	} else {
->> +		ret = q6v5_init_clocks(qproc);
->> +		if (ret)
->> +			goto free_rproc;
->> +	}
-> Based on the fact that I don't think this is a q6v55, but rather a q6v6,
-> we will now end up with:
->
-> if (is_q6v55) {
-> } else if (is_q6v6) {
-> } else if (is_q6v5) {
-> } else {
-> 	fail
-> };
->
-> And this function will turn into an (even worse) mess.
->
->
-> I would suggest that you instead define each resource as a flag and
-> provide a struct with these flags as .data with the compatible. Then
-> pass that to the clock and regulator init and based on the flags they
-> can acquire the individual resources. That way adding a new version is a
-> matter of listing which resources that needs to grab.
->
-> And in that struct you can also have a function pointer to an
-> appropriate reset function, completely removing the need for checking
-> which version we have after initialization.
-Agreed
->
->>   
->> -	ret = q6v5_regulator_init(qproc);
->> -	if (ret)
->> -		goto free_rproc;
->> +	if (qproc->is_q6v55) {
->> +		ret = q6v55_init_reset(qproc, pdev);
->> +		if (ret)
->> +			goto free_rproc;
->> +	} else {
->> +		ret = q6v5_init_reset(qproc);
->> +		if (ret)
->> +			goto free_rproc;
->> +	}
->>   
->> -	ret = q6v5_init_reset(qproc);
->> -	if (ret)
->> -		goto free_rproc;
->> +	if (qproc->is_q6v55) {
->> +		ret = q6v55_regulator_init(qproc);
->> +		if (ret)
->> +			goto free_rproc;
->> +	} else {
->> +		ret = q6v5_regulator_init(qproc);
->> +		if (ret)
->> +			goto free_rproc;
->> +	}
->> +
->> +	qproc->ahb_clk_vote = of_property_read_bool(pdev->dev.of_node,
->> +			"qcom,ahb-clk-vote");
->> +	mutex_init(&qproc->q6_lock);
->>   
->>   	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
->>   	if (ret < 0)
-> Regards,
-> Bjorn
+Applied
+
+Thanks,
+Bjorn
+
+> ---
+>  drivers/remoteproc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 5a0019ce7555..677b3fede83d 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -106,6 +106,7 @@ config QCOM_Q6V5_PIL
+>  config QCOM_WCNSS_PIL
+>  	tristate "Qualcomm WCNSS Peripheral Image Loader"
+>  	depends on OF && ARCH_QCOM
+> +	depends on QCOM_SMD || (COMPILE_TEST && QCOM_SMD = n)
+>  	depends on QCOM_SMEM
+>  	depends on REMOTEPROC
+>  	select QCOM_MDT_LOADER
+> -- 
+> 2.9.0
+> 
