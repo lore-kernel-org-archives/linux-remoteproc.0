@@ -1,35 +1,64 @@
-Return-Path: <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 1/1] remoteproc: Add support for xo clock
-References: <1477429046-26855-1-git-send-email-spjoshi@codeaurora.org>
- <20161101000555.GK25787@tuxbot>
-From: Stephen Boyd <sboyd@codeaurora.org>
-Message-ID: <564faf01-f4d7-4bdb-ee48-76a893d3d4c0@codeaurora.org>
-Date: Tue, 1 Nov 2016 10:41:58 -0700
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 18 Nov 2016 10:40:30 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/3] remoteproc: qcom: Encapsulate pvt data structure
+ for q6v56 hexagon.
+Message-ID: <20161118184030.GJ28340@tuxbot>
+References: <1478268057-11847-1-git-send-email-akdwived@codeaurora.org>
+ <1478268057-11847-2-git-send-email-akdwived@codeaurora.org>
+ <20161110203013.fphvzd4df3zvjdfi@rob-hp-laptop>
+ <a29bce91-1300-0728-51dd-7d009d9e056b@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20161101000555.GK25787@tuxbot>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Sarangdhar Joshi <spjoshi@codeaurora.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Trilok Soni <tsoni@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a29bce91-1300-0728-51dd-7d009d9e056b@codeaurora.org>
+To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 10/31/2016 05:05 PM, Bjorn Andersson wrote:
-> On Tue 25 Oct 13:57 PDT 2016, Sarangdhar Joshi wrote:
->
->> Add xo clock support required to boot up Qualcomm ADSP processor.
->> The ADSP remoteproc driver keeps xo clock enabled until the
->> driver receives "handover" irq, in order to allow ADSP processor
->> to vote for xo clock with rpm.
-> Looks good, thanks.
->
-> We have to add the clock to the DT binding and run that by Rob again,
-> before merging the driver and this patch.
->
+On Wed 16 Nov 06:02 PST 2016, Avaneesh Kumar Dwivedi wrote:
 
-Maybe we should make the xo clock required. We always have a clock for
-it somewhere, either RPM controlled or as a fixed rate clock so it
-should work just as well.
+> 
+> 
+> On 11/11/2016 2:00 AM, Rob Herring wrote:
+> >On Fri, Nov 04, 2016 at 07:30:54PM +0530, Avaneesh Kumar Dwivedi wrote:
+> >>Encapsulate resources specific to each version of hexagon chip to
+> >>device node to avoid conditional check for manipulation of those
+> >>resources in driver code.
+> >>
+> >>Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+> >>---
+> >>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
+> >>  drivers/remoteproc/qcom_q6v5_pil.c                 | 137 ++++++++++++++++++---
+> >>  2 files changed, 120 insertions(+), 18 deletions(-)
+> >>
+> >>diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> >>index 57cb49e..cbc165c 100644
+> >>--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> >>+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> >>@@ -8,6 +8,7 @@ on the Qualcomm Hexagon core.
+> >>  	Value type: <string>
+> >>  	Definition: must be one of:
+> >>  		    "qcom,q6v5-pil"
+> >>+		"qcom,q6v56-pil"
+> >Perhaps some explanation in the commit message about what these magic
+> >numbers mean?
+> 
+>     "v56" represent class of hexagon chip, which again is differentiated
+> based on version number. Two
+>     different MSM SOC may use same class of hexagon chip. example is as
+> below.
+> 
+>     msm8974  q6v5 version  5.0.0
+>     msm8916  q6v5 version  5.1.1
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+But looking at the Qualcomm tree I think I got 8916 wrong, it seems that
+it should be "q6v56" and your patches indicates that the 8996 has a
+q6v55 - which doesn't make sense to me and in some places there's
+comments indicating it's version 6.
+
+I asked you about this but I can't find an answer in any of your
+replies.
+
+Regards,
+Bjorn
