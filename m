@@ -1,343 +1,206 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v4 2/4] MIPS: CPS: Add VP(E) stealing
-Date: Wed, 2 Nov 2016 16:11:01 +0000
-Message-ID: <1478103063-17653-3-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1478103063-17653-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1478103063-17653-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <akdwived@codeaurora.org>
+Subject: Re: [PATCH v3 1/3] remoteproc: qcom: Embed private data structure for
+ hexagon dsp.
+References: <1478522240-11036-1-git-send-email-akdwived@codeaurora.org>
+ <1478522240-11036-2-git-send-email-akdwived@codeaurora.org>
+ <20161108070805.GL25787@tuxbot>
+ <c5f03abe-866d-9624-eb69-166c39810b8f@codeaurora.org>
+ <20161118185708.GK28340@tuxbot>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Message-ID: <525c1d99-a8a1-70cc-0cb7-914a118f13be@codeaurora.org>
+Date: Tue, 22 Nov 2016 00:46:56 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Lisa Parratt <Lisa.Parratt@imgtec.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, James Hogan <james.hogan@imgtec.com>, Qais Yousef <qsyousef@gmail.com>, Paul Burton <paul.burton@imgtec.com>
+In-Reply-To: <20161118185708.GK28340@tuxbot>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lisa Parratt <Lisa.Parratt@imgtec.com>
 
-VP(E) stealing provides a mechanism for removing an offline Virtual
-Processor from the Linux kernel such that it is available to run bare
-metal code.
-Once the CPU has been offlined from Linux, the CPU can be given a task
-to run via mips_cps_steal_cpu_and_execute(). The CPU is removed from the
-cpu_present mask and is set up to execute from address entry_fn. Stack
-space is assigned via the tsk task_struct so that C initialisation code
-may be used.
-To return the CPU back to Linux control, mips_cps_halt_and_return_cpu
-will arrange to halt the CPU and return it to the cpu_present mask. It
-is then available to be brought online again via CPU hotplug.
 
-This mechanism is used by the MIPS remote processor driver to allow
-CPUs within the system to execute bare metal code, not under control of
-the kernel.
+On 11/19/2016 12:27 AM, Bjorn Andersson wrote:
+> On Wed 16 Nov 06:41 PST 2016, Avaneesh Kumar Dwivedi wrote:
+>
+>> i have been a little delayed for posting replies to patch comments,
+>> hopefully onward it should be quick and fast.
+>>
+> I would greatly appreciate if you allow for a discussion before posting
+> new revisions of the patchset. I will respond to your comments here and
+> ignore v4 for now.
 
-Signed-off-by: Lisa Parratt <Lisa.Parratt@imgtec.com>
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
----
+Ok, i will resend v4 patches with modification after consensus.
+>
+>> On 11/8/2016 12:38 PM, Bjorn Andersson wrote:
+>>> On Mon 07 Nov 04:37 PST 2016, Avaneesh Kumar Dwivedi wrote:
+> [..]
+>>>> +char *active_8x96_clk_str[] = {"iface", "bus", "mem", "gpll0_mss_clk",
+>>>> +		"snoc_axi_clk", "mnoc_axi_clk"};
+>>> All these needs to be static, but I would prefer if you just put the
+>>> values directly into the resource structs below.
+>> If i have to initialize directly into resource struct, i need to declare
+>> individual elements as array of fixed size
+>> but number of resource lets say  number of proxy regulator not being same
+>> for different q6 chips, made me to
+>> work with double pointer which can be assigned with address of an array of
+>> string pointer as per need when new version need to be supported.
+>>
+> Using a termination sentinel to indicate end of lists is quite common in
+> the kernel, so you can do this:
+>
+> 	.active_clks = (char*[]){
+> 		"iface",
+> 		"bus",
+> 		...,
+> 		NULL
+> 	},
+OK
+>
+>> Though i have made above elements as static in next patch.
+>>>> +
+>>>> +static const struct q6_rproc_res msm_8996_res = {
+>>>> +	.proxy_clks = proxy_8x96_clk_str,
+>>>> +	.proxy_clk_cnt = 3,
+>>> It's common practice to use a NULL terminator in the definition list
+>>> rather than keeping separate count of the number of items.
+>>>
+>>> While acquiring the resources you would have to "calculate" the number
+>>> and store it in the q6v5 struct, but this would make turn this struct
+>>> into something only used during probe() - which is nice.
+>> Yes, have modified as per suggestion.
+>>>> +	.active_clks = active_8x96_clk_str,
+>>>> +	.active_clk_cnt = 6,
+>>>> +	.proxy_regs = proxy_8x96_reg_str,
+>>>> +	.active_regs = NULL,
+>>>> +	.proxy_reg_action = (int **)proxy_8x96_reg_action,
+>>>> +	.proxy_reg_load = (int *)proxy_8x96_reg_load,
+>>>> +	.active_reg_action = NULL,
+>>>> +	.active_reg_load = NULL,
+>>>> +	.proxy_reg_voltage = (int *)proxy_8x96_reg_min_voltage,
+>>>> +	.active_reg_voltage = NULL,
+>>>> +	.proxy_reg_cnt = 3,
+>>>> +	.active_reg_cnt = 0,
+>>>> +	.q6_reset_init = q6v56_init_reset,
+>>>> +	.q6_version = "v56",
+>>> q6_version would be better to have as a enum.
+>> have removed this entry.
+>> each class of q6 lets say "v56" have again many version of hexagon with
+>> minor differences wrt each other.
+> Okay, I'm fine with us sticking to classes, but I would like for them to
+> make sense - and be listed as an enum instead of a string, to simplify
+> the code.
+OK, i will use one compatible string for each msm platform with enum 
+denoting the class and version of hexagon chip.  something like
 
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+.compatible = "qcom,q6v56-1-5-pil", for msm 8996?
+and version will carry a unique enum value based on compatible.
 
- arch/mips/Kconfig               |   7 ++
- arch/mips/include/asm/smp-cps.h |   8 ++
- arch/mips/kernel/smp-cps.c      | 162 ++++++++++++++++++++++++++++++++++++++--
- arch/mips/kernel/smp.c          |  12 +++
- 4 files changed, 182 insertions(+), 7 deletions(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index b3c5bde43d34..6faf7c96ee15 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2376,6 +2376,13 @@ config MIPS_CPS
- 	  no external assistance. It is safe to enable this when hardware
- 	  support is unavailable.
- 
-+config MIPS_CPU_STEAL
-+	bool "VPE stealing"
-+	depends on HOTPLUG_CPU && MIPS_CPS
-+	help
-+	  Select this is you wish to be able to run bare metal code on offline
-+	  VPEs.
-+
- config MIPS_CPS_PM
- 	depends on MIPS_CPS
- 	select MIPS_CPC
-diff --git a/arch/mips/include/asm/smp-cps.h b/arch/mips/include/asm/smp-cps.h
-index 2ae1f61a4a95..5cab043d7e6f 100644
---- a/arch/mips/include/asm/smp-cps.h
-+++ b/arch/mips/include/asm/smp-cps.h
-@@ -34,6 +34,14 @@ extern void mips_cps_boot_vpes(struct core_boot_config *cfg, unsigned vpe);
- extern void mips_cps_pm_save(void);
- extern void mips_cps_pm_restore(void);
- 
-+#ifdef CONFIG_MIPS_CPU_STEAL
-+
-+extern int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
-+					  struct task_struct *tsk);
-+extern int mips_cps_halt_and_return_cpu(unsigned int cpu);
-+
-+#endif /* CONFIG_MIPS_CPU_STEAL */
-+
- #ifdef CONFIG_MIPS_CPS
- 
- extern bool mips_cps_smp_in_use(void);
-diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-index 6183ad84cc73..e2002ba59cac 100644
---- a/arch/mips/kernel/smp-cps.c
-+++ b/arch/mips/kernel/smp-cps.c
-@@ -8,6 +8,7 @@
-  * option) any later version.
-  */
- 
-+#include <linux/cpu.h>
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/irqchip/mips-gic.h>
-@@ -39,6 +40,31 @@ static int __init setup_nothreads(char *s)
- }
- early_param("nothreads", setup_nothreads);
- 
-+#ifdef CONFIG_MIPS_CPU_STEAL
-+struct cpumask cpu_stolen_mask;
-+
-+static inline bool cpu_stolen(int cpu)
-+{
-+	return cpumask_test_cpu(cpu, &cpu_stolen_mask);
-+}
-+
-+static inline void set_cpu_stolen(int cpu, bool state)
-+{
-+	if (state)
-+		cpumask_set_cpu(cpu, &cpu_stolen_mask);
-+	else
-+		cpumask_clear_cpu(cpu, &cpu_stolen_mask);
-+}
-+#else
-+static inline bool cpu_stolen(int cpu)
-+{
-+	return false;
-+}
-+
-+static inline void set_cpu_stolen(int cpu, bool state) { }
-+
-+#endif /* CONFIG_MIPS_CPU_STEAL */
-+
- static unsigned core_vpe_count(unsigned core)
- {
- 	unsigned cfg;
-@@ -109,6 +135,10 @@ static void __init cps_smp_setup(void)
- 		write_gcr_bev_base(core_entry);
- 	}
- 
-+#ifdef CONFIG_MIPS_CPU_STEAL
-+	cpumask_clear(&cpu_stolen_mask);
-+#endif /* CONFIG_MIPS_CPU_STEAL */
-+
- #ifdef CONFIG_MIPS_MT_FPAFF
- 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
- 	if (cpu_has_fpu)
-@@ -287,7 +317,7 @@ static void remote_vpe_boot(void *dummy)
- 	mips_cps_boot_vpes(core_cfg, cpu_vpe_id(&current_cpu_data));
- }
- 
--static void cps_boot_secondary(int cpu, struct task_struct *idle)
-+static void cps_start_secondary(int cpu, void *entry_fn, struct task_struct *tsk)
- {
- 	unsigned core = cpu_data[cpu].core;
- 	unsigned vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-@@ -297,9 +327,9 @@ static void cps_boot_secondary(int cpu, struct task_struct *idle)
- 	unsigned int remote;
- 	int err;
- 
--	vpe_cfg->pc = (unsigned long)&smp_bootstrap;
--	vpe_cfg->sp = __KSTK_TOS(idle);
--	vpe_cfg->gp = (unsigned long)task_thread_info(idle);
-+	vpe_cfg->pc = (unsigned long)entry_fn;
-+	vpe_cfg->sp = __KSTK_TOS(tsk);
-+	vpe_cfg->gp = (unsigned long)task_thread_info(tsk);
- 
- 	atomic_or(1 << cpu_vpe_id(&cpu_data[cpu]), &core_cfg->vpe_mask);
- 
-@@ -343,6 +373,11 @@ static void cps_boot_secondary(int cpu, struct task_struct *idle)
- 	preempt_enable();
- }
- 
-+static void cps_boot_secondary(int cpu, struct task_struct *idle)
-+{
-+	cps_start_secondary(cpu, &smp_bootstrap, idle);
-+}
-+
- static void cps_init_secondary(void)
- {
- 	/* Disable MT - we only want to run 1 TC per VPE */
-@@ -394,6 +429,28 @@ static int cps_cpu_disable(void)
- 	if (!cps_pm_support_state(CPS_PM_POWER_GATED))
- 		return -EINVAL;
- 
-+#ifdef CONFIG_MIPS_CPU_STEAL
-+	/*
-+	 * With the MT ASE only VPEs in the same core may read / write the
-+	 * control registers of other VPEs. Therefore to maintain control of
-+	 * any stolen VPEs at least one sibling VPE must be kept online.
-+	 */
-+	if (cpu_has_mipsmt) {
-+		int stolen, siblings = 0;
-+
-+		for_each_cpu((stolen), &cpu_stolen_mask)
-+			if (cpu_data[stolen].core == cpu_data[cpu].core)
-+				siblings++;
-+
-+		if (siblings == 1)
-+			/*
-+			 * When a VPE has been stolen, keep at least one of it's
-+			 * siblings around in order to control it.
-+			 */
-+			return -EBUSY;
-+	}
-+#endif /* CONFIG_MIPS_CPU_STEAL */
-+
- 	core_cfg = &mips_cps_core_bootcfg[current_cpu_data.core];
- 	atomic_sub(1 << cpu_vpe_id(&current_cpu_data), &core_cfg->vpe_mask);
- 	smp_mb__after_atomic();
-@@ -426,7 +483,7 @@ void play_dead(void)
- 		core = cpu_data[cpu].core;
- 
- 		/* Look for another online VPE within the core */
--		for_each_online_cpu(cpu_death_sibling) {
-+		for_each_possible_cpu(cpu_death_sibling) {
- 			if (cpu_data[cpu_death_sibling].core != core)
- 				continue;
- 
-@@ -434,8 +491,11 @@ void play_dead(void)
- 			 * There is an online VPE within the core. Just halt
- 			 * this TC and leave the core alone.
- 			 */
--			cpu_death = CPU_DEATH_HALT;
--			break;
-+			if (cpu_online(cpu_death_sibling) ||
-+			    cpu_stolen(cpu_death_sibling))
-+				cpu_death = CPU_DEATH_HALT;
-+			if (cpu_online(cpu_death_sibling))
-+				break;
- 		}
- 	}
- 
-@@ -466,6 +526,94 @@ void play_dead(void)
- 	panic("Failed to offline CPU %u", cpu);
- }
- 
-+#ifdef CONFIG_MIPS_CPU_STEAL
-+
-+/* Find an online sibling CPU (another VPE in the same core) */
-+static inline int mips_cps_get_online_sibling(unsigned int cpu)
-+{
-+	int sibling;
-+
-+	for_each_online_cpu(sibling)
-+		if (cpu_data[sibling].core == cpu_data[cpu].core)
-+			return sibling;
-+
-+	return -1;
-+}
-+
-+int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
-+				   struct task_struct *tsk)
-+{
-+	int err = -EINVAL;
-+
-+	preempt_disable();
-+
-+	if (!cpu_present(cpu) || cpu_online(cpu) || cpu_stolen(cpu))
-+		goto out;
-+
-+	if (cpu_has_mipsmt && (mips_cps_get_online_sibling(cpu) < 0))
-+		pr_warn("CPU%d has no online siblings to control it\n", cpu);
-+	else {
-+		set_cpu_present(cpu, false);
-+		set_cpu_stolen(cpu, true);
-+
-+		cps_start_secondary(cpu, entry_fn, tsk);
-+		err = 0;
-+	}
-+out:
-+	preempt_enable();
-+	return err;
-+}
-+
-+static void mips_cps_halt_sibling(void *ptr_cpu)
-+{
-+	unsigned int cpu = (unsigned long)ptr_cpu;
-+	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-+	unsigned long flags;
-+	int vpflags;
-+
-+	local_irq_save(flags);
-+	vpflags = dvpe();
-+	settc(vpe_id);
-+	write_tc_c0_tchalt(TCHALT_H);
-+	evpe(vpflags);
-+	local_irq_restore(flags);
-+}
-+
-+int mips_cps_halt_and_return_cpu(unsigned int cpu)
-+{
-+	unsigned int core = cpu_data[cpu].core;
-+	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
-+
-+	if (!cpu_stolen(cpu))
-+		return -EINVAL;
-+
-+	if (cpu_has_mipsmt && (core == cpu_data[smp_processor_id()].core))
-+		mips_cps_halt_sibling((void *)(unsigned long)cpu);
-+	else if (cpu_has_mipsmt) {
-+		int sibling = mips_cps_get_online_sibling(cpu);
-+
-+		if (sibling < 0) {
-+			pr_warn("CPU%d has no online siblings\n", cpu);
-+			return -EINVAL;
-+		}
-+
-+		if (smp_call_function_single(sibling, mips_cps_halt_sibling,
-+						(void *)(unsigned long)cpu, 1))
-+			panic("Failed to call sibling CPU\n");
-+
-+	} else if (cpu_has_vp) {
-+		mips_cm_lock_other(core, vpe_id);
-+		write_cpc_co_vp_stop(1 << vpe_id);
-+		mips_cm_unlock_other();
-+	}
-+
-+	set_cpu_stolen(cpu, false);
-+	set_cpu_present(cpu, true);
-+	return 0;
-+}
-+
-+#endif /* CONFIG_MIPS_CPU_STEAL */
-+
- static void wait_for_sibling_halt(void *ptr_cpu)
- {
- 	unsigned cpu = (unsigned long)ptr_cpu;
-diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
-index 7ebb1918e2ac..eaa3cc8c7d76 100644
---- a/arch/mips/kernel/smp.c
-+++ b/arch/mips/kernel/smp.c
-@@ -235,6 +235,18 @@ static void smp_ipi_init_one(unsigned int virq,
- 				    struct irqaction *action)
- {
- 	int ret;
-+#ifdef CONFIG_MIPS_CPU_STEAL
-+	struct irq_data *data;
-+	/*
-+	 * A bit of a hack to ensure that the ipi_offset is 0.
-+	 * This is to deal with removing / reallocating IPIs
-+	 * to subsets of the possible CPUs, where the IPI IRQ domain
-+	 * will set ipi_offset to the first cpu in the cpumask when the
-+	 * IPI is reallocated.
-+	 */
-+	data = irq_get_irq_data(virq);
-+	data->common->ipi_offset = 0;
-+#endif /* CONFIG_MIPS_CPU_STEAL */
- 
- 	irq_set_handler(virq, handle_percpu_irq);
- 	ret = setup_irq(virq, action);
--- 
-2.7.4
+>
+>> for example msm8996 use "v56" 1.5.0 while MSM8952 uses 1.8.0, reset sequence
+> In msm-3.18 8996 is listed to be v55.
+The version and class that i am referring are strictly as per HPG.
+for 8996,  hexagon core for MSS is "v56" with version 1.5.0
+>
+>> and some other operation differ wrt to this version in terms of order of
+>> register programming. so i have introduced one variable in q6v5 struct per
+>> q6 chip supported, if this is defined then we can check and carry out
+>> version specific instruction.
+>> will this be OK?
+>>
+> Generally in the Linux kernel it's frowned upon to carry the version
+> information and then do conditional operation on this.
+OK
+>
+> It's preferred to carry explicit flags through the implementation, e.g.
+> carrying "mba.mbn" vs "mba.b00" rather than switching based on "version"
+> at the point of use of this data.
+If i have one enum for each version (which will require one compatible 
+for each platform) then i can easily pass firmware binary name to probe.
+> But I'm not sure if the other differences has reasonable names, e.g. how
+> to we denote the differences in reset sequence?
+  i have one option that should initialize one function pointer for each 
+compatible to perform reset sequence, but this way there will be huge 
+duplicity of code as more than 50% code in reset sequence remain same, 
+else based on check something like below i can perform certain unique 
+register operations for a particular hexagon core.
+
+if (drvdata->hexagon_flag & 0x2)
+     do this
+else
+     do that
+
+where hexagon_flag will be initialized with enum based on compatible.??
+>
+>>>> +	.q6_mba_image = "mba.mbn",
+>>>> +};
+>>>> +
+>>>> +char *proxy_8x16_reg_str[] = {"mx", "cx", "pll"};
+>>>> +char *active_8x16_reg_str[] = {"mss"};
+>>>> +int  proxy_8x16_reg_action[4][2] = { {0, 1}, {1, 0}, {1, 0} };
+>>>> +int  active_8x16_reg_action[1][2] = { {1, 1} };
+>>>> +int  proxy_8x16_reg_load[] = {100000, 0, 100000, 100000};
+>>>> +int  active_8x16_reg_load[] = {100000};
+>>>> +int  proxy_8x16_reg_min_voltage[] = {1050000, 0, 0};
+>>>> +int  active_8x16_reg_min_voltage[] = {1000000};
+>>>> +char *proxy_8x16_clk_str[] = {"xo"};
+>>>> +char *active_8x16_clk_str[] = {"iface", "bus", "mem"};
+>>>> +
+>>>> +static const struct q6_rproc_res msm_8916_res = {
+>>>> +	.proxy_clks = proxy_8x16_clk_str,
+>>>> +	.proxy_clk_cnt = 1,
+>>>> +	.active_clks = active_8x16_clk_str,
+>>>> +	.active_clk_cnt = 3,
+>>>> +	.proxy_regs = proxy_8x16_reg_str,
+>>>> +	.active_regs = active_8x16_reg_str,
+>>>> +	.proxy_reg_action = (int **)proxy_8x16_reg_action,
+>>>> +	.proxy_reg_load = (int *)proxy_8x16_reg_load,
+>>>> +	.active_reg_action = (int **)active_8x16_reg_action,
+>>>> +	.active_reg_load = (int *)active_8x16_reg_load,
+>>>> +	.proxy_reg_voltage = (int *)proxy_8x16_reg_min_voltage,
+>>>> +	.active_reg_voltage = active_8x16_reg_min_voltage,
+>>>> +	.proxy_reg_cnt = 3,
+>>>> +	.active_reg_cnt = 1,
+>>>> +	.q6_reset_init = q6v5_init_reset,
+>>>> +	.q6_version = "v5",
+>>>> +	.q6_mba_image = "mba.b00",
+>>> q6v55 (msm8916) also uses mba.mbn, while q6v5 (msm8974) uses mba.b00.
+>> Again this is a case where compatible string can not help, we should have
+>> single compatible string i.e. "q6v5" for msm8916 and msm8974 since both are
+>> from same class of q6 chip with different version.
+>> so if we cant initialize mdt name based on compatible string alone.
+> msm-3.4, msm-3.10 and msm-3.18 states that they are not the same and as
+> such I don't think we have a problem.
+>
+> The more I look at this, the more convinced I am that we got 8916 wrong,
+> i.e. we specified the wrong class and it just happens to work.
+>
+>>>> +};
+>>>> +
+>>>> +static const struct of_device_id q6_of_match[] = {
+>>>> +	{ .compatible = "qcom,q6v5-pil", .data = &msm_8916_res},
+>>> As I was looking in the CAF tree, I believe the correct version for 8916
+>>> is 5.5 and v5 was used in 8974.
+>>>
+>>> But I presume these versions are not strictly tied to certain platforms,
+>>> so please name the resource structs based on the q6v5 version, rather
+>>> than platforms.
+>> Yes, resource are tied to compatible and version of q6.
+>> have used compatible to initialize major resources but using DT specified
+>> version string for minor deviations where needed.
+>> Should this be fine?
+>> as far as version on 8916 and 8974 are concern they are as below.
+>>
+>> msm8974 q6v5 core version  5.0.0
+>> msm8916 q6v5 core version  5.1.1
+> If there are differences within a class then that just forces us to use
+> the version number. There's very little overhead in carrying one
+> compatible per platform, if that's what we need.
+
+Yes i will use one compatible per msm platform.
+>
+>>>> +	{ .compatible = "qcom,q6v56-pil", .data = &msm_8996_res},
+>>>>   	{ },
+>>>>   };
+> Regards,
+> Bjorn
