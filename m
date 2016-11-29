@@ -1,50 +1,81 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 1/3] remoteproc: qcom: mdt_loader: add include for sizes
-Date: Tue, 22 Nov 2016 19:02:17 +0200
-Message-Id: <1479834137-30069-1-git-send-email-stanimir.varbanov@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 29 Nov 2016 09:20:51 +0000
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/1] remoteproc: core: probe subdevices before booting
+ coprocessor
+Message-ID: <20161129092051.GE2683@dell>
+References: <1480096150-5795-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, linux-remoteproc@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+In-Reply-To: <1480096150-5795-1-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add linux/sizes.h to prevent build failure on non ARM architectures
-as:
+On Fri, 25 Nov 2016, Loic Pallardy wrote:
 
-CC [M]  drivers/remoteproc/qcom_mdt_loader.o
-In file included from include/linux/cache.h:4:0,
-                 from include/linux/printk.h:8,
-                 from include/linux/kernel.h:13,
-                 from include/asm-generic/bug.h:13,
-                 from arch/x86/include/asm/bug.h:35,
-                 from include/linux/bug.h:4,
-                 from include/linux/thread_info.h:11,
-                 from arch/x86/include/asm/elf.h:7,
-                 from include/linux/elf.h:4,
-                 from drivers/remoteproc/qcom_mdt_loader.c:18:
-drivers/remoteproc/qcom_mdt_loader.c: In function ‘qcom_mdt_parse’:
-drivers/remoteproc/qcom_mdt_loader.c:90:52: error: ‘SZ_4K’ undeclared
-(first use in this function)
+> With subdevice support introduction, coprocessor boot sequence has
+> changed. Related coprocessor subdevices are now starting after firmware
+> and resource table loading and coprocessor boot.
+> 
+> But some subdevices can resources to allocate before coprocessor start,
+> like rpmsg buffers allocation for example.
+> 
+> This patch probes subdevices just before loading resource table,
+> to keep backward compatibility with existing firmwares.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
----
- drivers/remoteproc/qcom_mdt_loader.c | 1 +
- 1 file changed, 1 insertion(+)
+Isn't this a fix?
 
-diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/remoteproc/qcom_mdt_loader.c
-index 114e8e4cef67..2ff18cd6c096 100644
---- a/drivers/remoteproc/qcom_mdt_loader.c
-+++ b/drivers/remoteproc/qcom_mdt_loader.c
-@@ -20,6 +20,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/remoteproc.h>
-+#include <linux/sizes.h>
- #include <linux/slab.h>
- 
- #include "remoteproc_internal.h"
+If so, please use Fixes: tag.  This will ensure Bjorn looks at it
+quickly and that it's applied to his -next branch.
+
+We really do not want v4.9 to be an unusable kernel version for us.
+
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index f0f6ec1..15e9331 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -913,6 +913,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  		goto clean_up_resources;
+>  	}
+>  
+> +	/* probe any subdevices for the remote processor */
+> +	ret = rproc_probe_subdevices(rproc);
+> +	if (ret) {
+> +		dev_err(dev, "failed to probe subdevices for %s: %d\n",
+> +			rproc->name, ret);
+> +		goto clean_up_resources;
+> +	}
+> +
+>  	/*
+>  	 * The starting device has been given the rproc->table_ptr as the
+>  	 * resource table. The address of the vring along with the other
+> @@ -932,14 +940,6 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  		goto clean_up_resources;
+>  	}
+>  
+> -	/* probe any subdevices for the remote processor */
+> -	ret = rproc_probe_subdevices(rproc);
+> -	if (ret) {
+> -		dev_err(dev, "failed to probe subdevices for %s: %d\n",
+> -			rproc->name, ret);
+> -		goto stop_rproc;
+> -	}
+> -
+>  	rproc->state = RPROC_RUNNING;
+>  
+>  	dev_info(dev, "remote processor %s is now up\n", rproc->name);
+
 -- 
-2.7.4
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
