@@ -1,109 +1,59 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 03/20] remoteproc: core: Add function to amend an existing resource table entry
-Date: Wed, 12 Oct 2016 18:00:21 +0200
-Message-ID: <1476288038-24909-4-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
-References: <1476288038-24909-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <lee.jones@linaro.org>
+Return-Path: <lee.jones@linaro.org>
+Date: Tue, 29 Nov 2016 09:20:30 +0000
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: fix channel creation
+Message-ID: <20161129092030.GD2683@dell>
+References: <1480096493-7142-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1480096493-7142-1-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Lee Jones <lee.jones@linaro.org>
+On Fri, 25 Nov 2016, Loic Pallardy wrote:
 
-Sometimes the firmware does not know best.
+> Since virtio backend creation, it is no more possible for a firmware to
+> register twice a service (on different endpoints). rpmsg_register_device
+> function is failing when calling device_add for the second time as second
+> device has the same name as first one already register.
+> It is because name is based only on service name.
+> 
+> This patch adds destination endpoint to service name to create an
+> unique device name.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-When a firmware is built, it can be loaded with a resource table, usually
-detailing shared; memory, virtual device, trace log information etc.
-However, some vendors require this hard-coded information to be amended
-with new/improved information obtained from Device Tree for instance.
+Isn't this a fix?
 
-Until now, no method exists which allows the resource table to be amended.
-The addition of this function changes that.  It is now possible to pull in
-a resource table and amend it before it is finally shared with the remote
-device.
+If so, please use Fixes: tag.  This will ensure Bjorn looks at it
+quickly and that it's applied to his -next branch.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 63 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+We really do not want v4.9 to be an unusable kernel version for us.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3c8395b..c3830b4 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -909,6 +909,69 @@ int rproc_request_resource(struct rproc *rproc, u32 type, void *resource)
- }
- EXPORT_SYMBOL(rproc_request_resource);
- 
-+static int rproc_update_resource_table_entry(struct rproc *rproc,
-+				struct rproc_request_resource *request,
-+				struct resource_table *table, int size)
-+{
-+	struct fw_rsc_carveout *tblc, *newc;
-+	struct fw_rsc_devmem *tbld, *newd;
-+	struct fw_rsc_trace *tblt, *newt;
-+	int updated = true;
-+	int i;
-+
-+	for (i = 0; i < table->num; i++) {
-+		int offset = table->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table + offset;
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+
-+		if (request->type != hdr->type)
-+			continue;
-+
-+		switch (hdr->type) {
-+		case RSC_CARVEOUT:
-+			tblc = rsc;
-+			newc = request->resource;
-+
-+			if (strncmp(newc->name, tblc->name,
-+				    sizeof(*tblc->name)))
-+				break;
-+
-+			memcpy(tblc, newc, request->size);
-+
-+			return updated;
-+		case RSC_DEVMEM:
-+			tbld = rsc;
-+			newd = request->resource;
-+
-+			if (strncmp(newd->name, tbld->name,
-+				    sizeof(*tbld->name)))
-+				break;
-+
-+			memcpy(tbld, newd, request->size);
-+
-+			return updated;
-+		case RSC_TRACE:
-+			tblt = rsc;
-+			newt = request->resource;
-+
-+			if (strncmp(newt->name, tblt->name,
-+				    sizeof(*tblt->name)))
-+				break;
-+
-+			memcpy(tblt, newt, request->size);
-+
-+			return updated;
-+		default:
-+			dev_err(&rproc->dev,
-+				"Unsupported resource type: %d\n",
-+				hdr->type);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return !updated;
-+}
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 3090b0d..dce880f 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -405,7 +405,8 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+>  	 */
+>  	rpdev->announce = rpdev->src != RPMSG_ADDR_ANY;
+>  
+> -	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
+> +	snprintf(rpdev->id.name, RPMSG_NAME_SIZE, "%s-%d", chinfo->name,
+> +		 chinfo->dst);
+>  
+>  	rpdev->dev.parent = &vrp->vdev->dev;
+>  	ret = rpmsg_register_device(rpdev);
+
 -- 
-1.9.1
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
