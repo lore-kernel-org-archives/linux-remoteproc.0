@@ -1,53 +1,67 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] rpmsg: qcom_smd: Add support for "label" property
-Date: Thu,  1 Dec 2016 17:06:14 -0800
-Message-Id: <1480640774-20278-1-git-send-email-bjorn.andersson@linaro.org>
+Subject: [PATCH v2 4/4] rpmsg: smd: Register rpmsg user space interface for edges
+Date: Fri,  2 Dec 2016 14:03:37 -0800
+Message-Id: <1480716217-23303-4-git-send-email-bjorn.andersson@linaro.org>
+In-Reply-To: <1480716217-23303-1-git-send-email-bjorn.andersson@linaro.org>
+References: <1480716217-23303-1-git-send-email-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for the "label" property, used to give the edge a name other
-than the one of the DT node. This allows the implementor to provide
-consistently named edges when using the rpmsg character device.
+Create and register a rpmsg device for use with the rpmsg user space
+interface, allowing user space to access SMD channels.
+
+Also provide the "rpmsg_name" device attribute to expose the edge name
+in sysfs, allowing the user to write udev rules for specific rpmsg
+devices and their children.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/qcom_smd.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+
+Changes since v1:
+- Moved rpmsg_name attribute to different patch
+
+ drivers/rpmsg/qcom_smd.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 5549cd7fc2ef..7552ef0e82ba 100644
+index 52c4ec570464..7552ef0e82ba 100644
 --- a/drivers/rpmsg/qcom_smd.c
 +++ b/drivers/rpmsg/qcom_smd.c
-@@ -117,6 +117,8 @@ static const struct {
- struct qcom_smd_edge {
- 	struct device dev;
+@@ -1002,6 +1002,20 @@ static int qcom_smd_create_device(struct qcom_smd_channel *channel)
+ 	return rpmsg_register_device(rpdev);
+ }
  
-+	const char *name;
++static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
++{
++	struct qcom_smd_device *qsdev;
 +
- 	struct device_node *of_node;
- 	unsigned edge_id;
- 	unsigned remote_pid;
-@@ -1278,6 +1280,10 @@ static int qcom_smd_parse_edge(struct device *dev,
- 		return -EINVAL;
++	qsdev = kzalloc(sizeof(*qsdev), GFP_KERNEL);
++	if (!qsdev)
++		return -ENOMEM;
++
++	qsdev->edge = edge;
++	qsdev->rpdev.ops = &qcom_smd_device_ops;
++	qsdev->rpdev.dev.parent = &edge->dev;
++	return rpmsg_chrdev_register_device(&qsdev->rpdev);
++}
++
+ /*
+  * Allocate the qcom_smd_channel object for a newly found smd channel,
+  * retrieving and validating the smem items involved.
+@@ -1357,6 +1371,12 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+ 		goto unregister_dev;
  	}
  
-+	ret = of_property_read_string(node, "label", &edge->name);
-+	if (ret < 0)
-+		edge->name = node->name;
++	ret = qcom_smd_create_chrdev(edge);
++	if (ret) {
++		dev_err(&edge->dev, "failed to register chrdev for edge\n");
++		goto unregister_dev;
++	}
 +
- 	irq = irq_of_parse_and_map(node, 0);
- 	if (irq < 0) {
- 		dev_err(dev, "required smd interrupt missing\n");
-@@ -1320,7 +1326,7 @@ static ssize_t rpmsg_name_show(struct device *dev,
- {
- 	struct qcom_smd_edge *edge = to_smd_edge(dev);
+ 	schedule_work(&edge->scan_work);
  
--	return sprintf(buf, "%s\n", edge->of_node->name);
-+	return sprintf(buf, "%s\n", edge->name);
- }
- static DEVICE_ATTR_RO(rpmsg_name);
- 
+ 	return edge;
 -- 
 2.5.0
