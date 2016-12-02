@@ -1,37 +1,58 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 2 Dec 2016 13:56:39 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: Remove "experimental" warning
-Date: Fri,  2 Dec 2016 20:43:50 -0800
-Message-Id: <1480740230-25065-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: remoteproc/ste: Hide config option by default
+Message-ID: <20161202215639.GE9322@tuxbot>
+References: <20161201094955.4c4eefe3@endymion>
+ <CACRpkdbVYE3ya+GfQ0+4V4XfdQF548ZOfsEcggDCrAdX-VB4RQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbVYE3ya+GfQ0+4V4XfdQF548ZOfsEcggDCrAdX-VB4RQ@mail.gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jean Delvare <jdelvare@suse.de>, linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Warning users that remoteproc and it's binary format are under
-development doesn't serve much of a purpose. Different drivers support
-different image formats and the resource table has a version field that
-would need to be bumped when incompatible changes are introduced.
+On Fri 02 Dec 02:08 PST 2016, Linus Walleij wrote:
 
-So lets drop this warning to clean up the kernel log.
+> On Thu, Dec 1, 2016 at 9:49 AM, Jean Delvare <jdelvare@suse.de> wrote:
+> 
+> > Back in July 2014 I asked around what was the intended target
+> > platform for the STE Modem remoteproc driver, so that I could add the
+> > proper hardware dependency to its config option. The answer I got was
+> > that there was no known publicly available hardware needing it and it
+> > was unlikely that there ever would.
+> >
+> > Still there were objections to deleting the driver, which I do not
+> > really understand, but I do respect. But as there is no point in
+> > presenting the config option by default, let's hide it unless
+> > build-testing.
+> >
+> > Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> > Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>
+> > Cc: Suman Anna <s-anna@ti.com>
+> > ---
+> > As suggested by Linus Walleij over 2 years ago, sorry for not
+> > following up back then:
+> >   https://lkml.org/lkml/2014/7/25/218
+> >
+> > The driver could also be moved to staging/.
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Also for moving it to staging, if you want. Or deleting it.
+> 
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 3 ---
- 1 file changed, 3 deletions(-)
+If there's no known present or future users of this code I would prefer
+that we just drop it - it will stay with us in the git history if
+someone wants it back.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f0f6ec1ab12b..fc2ebff7d332 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1298,9 +1298,6 @@ int rproc_add(struct rproc *rproc)
- 
- 	dev_info(dev, "%s is available\n", rproc->name);
- 
--	dev_info(dev, "Note: remoteproc is still under development and considered experimental.\n");
--	dev_info(dev, "THE BINARY FORMAT IS NOT YET FINALIZED, and backward compatibility isn't yet guaranteed.\n");
--
- 	/* create debugfs entries */
- 	rproc_create_debug_dir(rproc);
- 	ret = rproc_add_virtio_devices(rproc);
--- 
-2.5.0
+
+I do not want to see it moved to staging, I still need to maintain it
+when the internal remoteproc APIs changes.
+
+Regards,
+Bjorn
