@@ -1,133 +1,37 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v1 5/6] rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level driver
-Date: Wed, 7 Dec 2016 21:35:40 +0100
-Message-ID: <1481142941-15616-6-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
-References: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] remoteproc: Remove "experimental" warning
+Date: Fri,  2 Dec 2016 20:43:50 -0800
+Message-Id: <1480740230-25065-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Low level platform specific driver has the knowledge of the different
-communication link constraints like fixed or secured memory region to
-use for buffer allocation.
+Warning users that remoteproc and it's binary format are under
+development doesn't serve much of a purpose. Different drivers support
+different image formats and the resource table has a version field that
+would need to be bumped when incompatible changes are introduced.
 
-If virtual address is defined in virtio_rpmsg_cfg structure, a dedicated
-memory pool buffer fitting platform requirements is available.
-Rpmsg virtio layer should rely on it if its size is compliant with link
-characteristics.
+So lets drop this warning to clean up the kernel log.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 54 ++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1a97af8..b12fe2a 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -57,6 +57,7 @@
-  * @sendq:	wait queue of sending contexts waiting for a tx buffers
-  * @sleepers:	number of senders that are waiting for a tx buffer
-  * @ns_ept:	the bus's name service endpoint
-+ * @ext_buffer: buffer allocated by low level driver
-  *
-  * This structure stores the rpmsg state of a given virtio remote processor
-  * device (there might be several virtio proc devices for each physical
-@@ -76,6 +77,7 @@ struct virtproc_info {
- 	wait_queue_head_t sendq;
- 	atomic_t sleepers;
- 	struct rpmsg_endpoint *ns_ept;
-+	bool ext_buffer;
- };
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f0f6ec1ab12b..fc2ebff7d332 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1298,9 +1298,6 @@ int rproc_add(struct rproc *rproc)
  
- /* The feature bitmap for virtio rpmsg */
-@@ -904,6 +906,17 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
- 			ret = -ENOMEM;
- 			goto out;
- 		}
-+
-+		/* Level platform specific buffer driver ? */
-+		if (virtio_cfg.va != -1) {
-+			vrp->ext_buffer = true;
-+			/* half of the buffers is dedicated for RX */
-+			vrp->rbufs = (void *)(uintptr_t)virtio_cfg.va;
-+
-+			/* and half is dedicated for TX */
-+			vrp->sbufs = (void *)(uintptr_t) virtio_cfg.va + total_buf_space / 2;
-+		}
-+
- 		return !ret;
- 	}
- out:
-@@ -960,24 +973,27 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	if (err < 0)
- 		goto free_vrp;
+ 	dev_info(dev, "%s is available\n", rproc->name);
  
--	total_buf_space = vrp->num_bufs * vrp->buf_size;
-+	/* Allocate buffer if none provided by low level platform driver */
-+	if (!vrp->ext_buffer) {
-+		total_buf_space = vrp->num_bufs * vrp->buf_size;
- 
--	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
--				     total_buf_space, &vrp->bufs_dma,
--				     GFP_KERNEL);
--	if (!bufs_va) {
--		err = -ENOMEM;
--		goto vqs_del;
--	}
-+		bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
-+				total_buf_space, &vrp->bufs_dma,
-+				GFP_KERNEL);
-+		if (!bufs_va) {
-+			err = -ENOMEM;
-+			goto vqs_del;
-+		}
- 
--	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
--		bufs_va, &vrp->bufs_dma);
-+		dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
-+				bufs_va, &vrp->bufs_dma);
- 
--	/* half of the buffers is dedicated for RX */
--	vrp->rbufs = bufs_va;
-+		/* half of the buffers is dedicated for RX */
-+		vrp->rbufs = bufs_va;
- 
--	/* and half is dedicated for TX */
--	vrp->sbufs = bufs_va + total_buf_space / 2;
-+		/* and half is dedicated for TX */
-+		vrp->sbufs = bufs_va + total_buf_space / 2;
-+	}
- 
- 	/* set up the receive buffers */
- 	for (i = 0; i < vrp->num_bufs / 2; i++) {
-@@ -1028,8 +1044,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	return 0;
- 
- free_coherent:
--	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
--			  bufs_va, vrp->bufs_dma);
-+	if (!vrp->ext_buffer)
-+		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
-+				  bufs_va, vrp->bufs_dma);
- vqs_del:
- 	vdev->config->del_vqs(vrp->vdev);
- free_vrp:
-@@ -1063,8 +1080,9 @@ static void rpmsg_remove(struct virtio_device *vdev)
- 
- 	vdev->config->del_vqs(vrp->vdev);
- 
--	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
--			  vrp->rbufs, vrp->bufs_dma);
-+	if (!vrp->ext_buffer)
-+		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
-+				  vrp->rbufs, vrp->bufs_dma);
- 
- 	kfree(vrp);
- }
+-	dev_info(dev, "Note: remoteproc is still under development and considered experimental.\n");
+-	dev_info(dev, "THE BINARY FORMAT IS NOT YET FINALIZED, and backward compatibility isn't yet guaranteed.\n");
+-
+ 	/* create debugfs entries */
+ 	rproc_create_debug_dir(rproc);
+ 	ret = rproc_add_virtio_devices(rproc);
 -- 
-1.9.1
+2.5.0
