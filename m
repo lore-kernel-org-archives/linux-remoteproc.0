@@ -1,72 +1,63 @@
-Return-Path: <pavel@ucw.cz>
-Date: Mon, 19 Dec 2016 10:22:50 +0100
-From: Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH] remoteproc: add some kind of help
-Message-ID: <20161219092250.GA13640@amd>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:33048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751443AbcLFPke (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 6 Dec 2016 10:40:34 -0500
+Date: Tue, 6 Dec 2016 17:40:28 +0200
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 00/10] virtio: sparse fixes
+Message-ID: <1481038106-24899-1-git-send-email-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
-Content-Disposition: inline
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@osdl.org>
-List-ID: <linux-remoteproc@vger.kernel.org>
-
-
---LQksG6bCIzRHxTLp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Jason Wang <jasowang@redhat.com>, linux-crypto@vger.kernel.org, virtualization@lists.linux-foundation.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, kvm@vger.kernel.org, linux-scsi@vger.kernel.org, v9fs-developer@lists.sourceforge.net, Michal Marek <mmarek@suse.com>, linux-kbuild@vger.kernel.org
+List-ID: <linux-remoteproc@vger.kernel.org>
 
+I run latest sparse from git on virtio drivers
+(turns out the version I had was rather outdated).
+This patchset fixes a couple of bugs this uncovered,
+and adds some annotations to make it sparse-clean.
+In particular, endian-ness is often tricky,
+so this patchset enabled endian-ness checks for sparse
+builds.
 
-Top level config option without any kind of help... is kind of
-strange. Remote processors could also mean some kind of distributed
-computing...
+Michael S. Tsirkin (10):
+  virtio_console: drop unused config fields
+  drm/virtio: fix endianness in primary_plane_update
+  drm/virtio: fix lock context imbalance
+  drm/virtio: annotate virtio_gpu_queue_ctrl_buffer_locked
+  vhost: make interval tree static inline
+  vhost: add missing __user annotations
+  vsock/virtio: add a missing __le annotation
+  vsock/virtio: mark an internal function static
+  vsock/virtio: fix src/dst cid format
+  virtio: enable endian checks for sparse builds
 
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
+ drivers/char/virtio_console.c           | 14 +++++++-------
+ drivers/gpu/drm/virtio/virtgpu_plane.c  |  4 ++--
+ drivers/gpu/drm/virtio/virtgpu_vq.c     |  6 +++++-
+ drivers/vhost/vhost.c                   | 12 ++++++------
+ net/vmw_vsock/virtio_transport.c        |  2 +-
+ net/vmw_vsock/virtio_transport_common.c | 16 ++++++++--------
+ drivers/block/Makefile                  |  1 +
+ drivers/char/Makefile                   |  1 +
+ drivers/char/hw_random/Makefile         |  2 ++
+ drivers/gpu/drm/virtio/Makefile         |  1 +
+ drivers/net/Makefile                    |  3 +++
+ drivers/net/caif/Makefile               |  1 +
+ drivers/rpmsg/Makefile                  |  1 +
+ drivers/s390/virtio/Makefile            |  2 ++
+ drivers/scsi/Makefile                   |  1 +
+ drivers/vhost/Makefile                  |  1 +
+ drivers/virtio/Makefile                 |  3 +++
+ net/9p/Makefile                         |  1 +
+ net/packet/Makefile                     |  1 +
+ net/vmw_vsock/Makefile                  |  2 ++
+ 20 files changed, 50 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 8f9cf0b..a5e8880 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -7,6 +7,9 @@ config REMOTEPROC
- 	select FW_LOADER
- 	select VIRTIO
- 	select VIRTUALIZATION
-+	help
-+	  Support for remote processors (such as DSP coprocessors). These
-+	  are mainly used on embedded systems.
-=20
- if REMOTEPROC
-=20
-@@ -25,11 +28,11 @@ config OMAP_REMOTEPROC
-=20
- 	  Currently only supported on OMAP4.
-=20
--	  Usually you want to say y here, in order to enable multimedia
-+	  Usually you want to say Y here, in order to enable multimedia
- 	  use-cases to run on your platform (multimedia codecs are
- 	  offloaded to remote DSP processors using this framework).
-=20
--	  It's safe to say n here if you're not interested in multimedia
-+	  It's safe to say N here if you're not interested in multimedia
- 	  offloading or just want a bare minimum kernel.
-=20
- config WKUP_M3_RPROC
+-- 
+MST
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlhXpuoACgkQMOfwapXb+vIliACeOw6vDVEYg2rzCoD/Kitrq2t1
-kmYAoIxiiX3Bf6HJ7yZ45C7+e8p5fPRA
-=RrRW
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
