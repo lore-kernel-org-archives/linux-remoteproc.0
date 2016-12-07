@@ -1,116 +1,53 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 1/4] rpmsg: Introduce "poll" to endpoint ops
-Date: Fri,  2 Dec 2016 14:03:34 -0800
-Message-Id: <1480716217-23303-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v1 0/6] rtio_rpmsg: make rpmsg channel configurable
+Date: Wed, 7 Dec 2016 21:35:35 +0100
+Message-ID: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This allows rpmsg backends to implement polling of the outgoing buffer,
-which provides poll support to user space when using the rpmsg character
-device.
+This goal of this series is to offer more flexibility for virtio_rpmsg
+communication link configuration.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+It should be possible to tune rpmsg buffer size per Rpmsg link, to provide
+selected configuration to coprocessor, to take into account coprocessor
+specificities like memory region.
 
-Changes since v1:
-- New patch
+This series introduces an optional virtio rpmsg configuration structure, which
+will be managed as an extension of struct fw_rsc_vdev present in coprocessor firmware
+resource table.
+Structure access is possible thanks to virtio get and set API.
+This structure contains the different information to tune the link between the
+host and the coprocessor.
 
- drivers/rpmsg/rpmsg_core.c     | 20 ++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h |  3 +++
- include/linux/rpmsg.h          | 13 +++++++++++++
- 3 files changed, 36 insertions(+)
+Patch "rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
+kernel address" has the same goal as Wendy's RFC [1]. I don't have tested
+Wendy's series with level driver buffer allocation.
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index a79cb5a9e5f2..5ec8a06c24fa 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -240,6 +240,26 @@ int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
- EXPORT_SYMBOL(rpmsg_trysendto);
- 
- /**
-+ * rpmsg_poll() - poll the endpoint's send buffers
-+ * @ept:	the rpmsg endpoint
-+ * @filp:	file for poll_wait()
-+ * @wait:	poll_table for poll_wait()
-+ *
-+ * Returns mask representing the current state of the endpoint's send buffers
-+ */
-+unsigned int rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-+			poll_table *wait)
-+{
-+	if (WARN_ON(!ept))
-+		return 0;
-+	if (!ept->ops->poll)
-+		return 0;
-+
-+	return ept->ops->poll(ept, filp, wait);
-+}
-+EXPORT_SYMBOL(rpmsg_poll);
-+
-+/**
-  * rpmsg_send_offchannel() - send a message using explicit src/dst addresses
-  * @ept: the rpmsg endpoint
-  * @src: source address
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 8075a20f919b..6176f2457b6b 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -21,6 +21,7 @@
- #define __RPMSG_INTERNAL_H__
- 
- #include <linux/rpmsg.h>
-+#include <linux/poll.h>
- 
- #define to_rpmsg_device(d) container_of(d, struct rpmsg_device, dev)
- #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
-@@ -70,6 +71,8 @@ struct rpmsg_endpoint_ops {
- 	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
- 	int (*trysend_offchannel)(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			     void *data, int len);
-+	unsigned int (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
-+			     poll_table *wait);
- };
- 
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 18f9e1ae4b7e..10d6ae8bbb7d 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -41,6 +41,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/kref.h>
- #include <linux/mutex.h>
-+#include <linux/poll.h>
- 
- #define RPMSG_ADDR_ANY		0xFFFFFFFF
- 
-@@ -156,6 +157,9 @@ int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
- int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- 			     void *data, int len);
- 
-+unsigned int rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-+			poll_table *wait);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -254,6 +258,15 @@ static inline int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	return -ENXIO;
- }
- 
-+static inline unsigned int rpmsg_poll(struct rpmsg_endpoint *ept,
-+				      struct file *filp, poll_table *wait)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return 0;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
+Last patch "rpmsg: virtio_rpmsg: set buffer configuration to virtio" has a
+dependency with remoteproc subdevice boot sequence as coprocessor resource
+table must be updated before coprocessor start. See [2]
+
+[1] http://www.spinics.net/lists/linux-remoteproc/msg00852.html
+[2] http://www.spinics.net/lists/linux-remoteproc/msg00826.html
+
+Loic Pallardy (6):
+  rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
+  rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
+    kernel address
+  include: virtio_rpmsg: add virtio rpmsg configuration structure
+  rpmsg: virtio_rpmsg: get buffer configuration from virtio
+  rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level
+    driver
+  rpmsg: virtio_rpmsg: set buffer configuration to virtio
+
+ drivers/rpmsg/virtio_rpmsg_bus.c   | 176 ++++++++++++++++++++++++++++++-------
+ include/linux/rpmsg/virtio_rpmsg.h |  32 +++++++
+ 2 files changed, 177 insertions(+), 31 deletions(-)
+ create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
+
 -- 
-2.5.0
+1.9.1
