@@ -1,35 +1,117 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 0/2] Virtio ring works with DMA coherent memory
-Date: Tue, 6 Dec 2016 10:08:47 -0800
-Message-ID: <1481047729-518-1-git-send-email-jliang@xilinx.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v1 2/3] remoteproc: st: add da to va support
+Date: Wed, 7 Dec 2016 21:33:45 +0100
+Message-ID: <1481142826-15528-3-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
+References: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, mst@redhat.com, jasowang@redhat.com, virtualization@lists.linux-foundation.org
-Cc: Wendy Liang <jliang@xilinx.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-RPMsg uses dma_alloc_coherent() to allocate memory to shared with the remote.
-In this case, as there is no pages setup in the dma_alloc_coherent(),
-we cannot get the physical address back from the virtual address, and thus,
-we can set the sg_dma_addr to store the DMA address and mark it already DMA
-mapped.
+ST remoteproc driver needs to provide information about
+carveout memory region to allow remoteproc core to load
+firmware and access trace buffer.
 
-When virtio vring sees the sg_dma_addr is ready set, do not call dma_map_page().
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/st_remoteproc.c | 42 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 36 insertions(+), 6 deletions(-)
 
-The issue was once discussed here:
-http://virtualization.linux-foundation.narkive.com/CfVP32Vy/rfc-0-4-rpmsg-fix-init-of-dma-able-virtqueues
-
-Edgar E. Iglesias (1):
-  rpmsg: DMA map sgs passed to virtio
-
-Wendy Liang (1):
-  virtio_ring: Do not call dma_map_page if sg is already mapped.
-
- drivers/rpmsg/virtio_rpmsg_bus.c | 22 +++++++++++++++++++---
- drivers/virtio/virtio_ring.c     |  6 ++++++
- 2 files changed, 25 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index 113caf2..51199a8 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -21,6 +21,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/remoteproc.h>
+@@ -52,6 +53,10 @@ struct st_rproc {
+ 	struct regmap		*boot_base;
+ 	u32			boot_offset;
+ 	struct mbox_chan	*mbox_chan[ST_RPROC_MAX_VRING][MBOX_MAX];
++	phys_addr_t mem_phys;
++	phys_addr_t mem_reloc;
++	void *mem_region;
++	size_t mem_size;
+ };
+ 
+ static void st_rproc_mbox_callback(struct device *dev, u32 msg)
+@@ -156,10 +161,23 @@ static int st_rproc_stop(struct rproc *rproc)
+ 	return sw_err ?: pwr_err;
+ }
+ 
++static void *st_proc_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct st_rproc *ddata = rproc->priv;
++	int offset;
++
++	offset = da - ddata->mem_reloc;
++	if (offset < 0 || offset + len > ddata->mem_size)
++		return NULL;
++
++	return ddata->mem_region + offset;
++}
++
+ static struct rproc_ops st_rproc_ops = {
+ 	.kick		= st_rproc_kick,
+ 	.start		= st_rproc_start,
+ 	.stop		= st_rproc_stop,
++	.da_to_va	= st_proc_da_to_va,
+ };
+ 
+ /*
+@@ -207,7 +225,8 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
+ 	struct st_rproc *ddata = rproc->priv;
+-	struct device_node *np = dev->of_node;
++	struct device_node *np = dev->of_node, *node;
++	struct resource res;
+ 	int err;
+ 
+ 	if (ddata->config->sw_reset) {
+@@ -251,10 +270,23 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	err = of_reserved_mem_device_init(dev);
+-	if (err) {
+-		dev_err(dev, "Failed to obtain shared memory\n");
++	node = of_parse_phandle(np, "memory-region", 0);
++	if (!node) {
++		dev_err(dev, "No memory-region specified\n");
++		return -EINVAL;
++	}
++
++	err = of_address_to_resource(node, 0, &res);
++	if (err)
+ 		return err;
++
++	ddata->mem_phys = ddata->mem_reloc = res.start;
++	ddata->mem_size = resource_size(&res);
++	ddata->mem_region = devm_ioremap_wc(dev, ddata->mem_phys, ddata->mem_size);
++	if (!ddata->mem_region) {
++		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
++			&res.start, ddata->mem_size);
++		return -EBUSY;
+ 	}
+ 
+ 	err = clk_prepare(ddata->clk);
+@@ -391,8 +423,6 @@ static int st_rproc_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(ddata->clk);
+ 
+-	of_reserved_mem_device_release(&pdev->dev);
+-
+ 	mbox_free_channel(ddata->mbox_chan[0][MBOX_RX]);
+ 	mbox_free_channel(ddata->mbox_chan[1][MBOX_RX]);
+ 	mbox_free_channel(ddata->mbox_chan[0][MBOX_TX]);
 -- 
 1.9.1
