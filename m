@@ -1,86 +1,55 @@
 Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v1 2/6] rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid kernel address
-Date: Wed, 7 Dec 2016 21:35:37 +0100
-Message-ID: <1481142941-15616-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
-References: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
+Subject: Re: [PATCH] remoteproc/ste: Delete unused driver
+References: <20161205141021.2d9ada51@endymion>
+ <CACRpkdac2iFXt+Ffd315SzWrzpz5z4bX9c6_pufs52-5i7wj4Q@mail.gmail.com>
+ <02ceca2a-0247-460b-a6e6-a0bac358829d@ti.com>
+From: loic pallardy <loic.pallardy@st.com>
+Message-ID: <2dd09aec-2742-a406-0608-a626c6b47ddb@st.com>
+Date: Wed, 7 Dec 2016 21:40:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com, Ludovic Barre <ludovic.barre@st.com>
+In-Reply-To: <02ceca2a-0247-460b-a6e6-a0bac358829d@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Suman Anna <s-anna@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Jean Delvare <jdelvare@suse.de>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Dmitry Tarnyagin <dt@jetro.no>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-To specify memory for remoteproc, we declare (dma_declare_coherent_memory())
-an area which is ioremap'ed to the vmalloc area.  However, this address is
-not a kernel address so virt_addr_valid(buf) fails.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1f6dfc6..0810d1f 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -195,6 +195,29 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- };
- 
- /**
-+ * rpmsg_sg_init - initialize scatterlist according to cpu address location
-+ * @sg: scatterlist to fill
-+ * @cpu_addr: virtual address of the buffer
-+ * @len: buffer length
-+ *
-+ * An internal function filling scatterlist according to virtual address
-+ * location (in vmalloc or in kernel).
-+ */
-+static void
-+rpmsg_sg_init(struct scatterlist *sg, void *cpu_addr, unsigned int len)
-+{
-+	if (is_vmalloc_addr(cpu_addr)) {
-+		sg_init_table(sg, 1);
-+		sg_set_page(sg, vmalloc_to_page(cpu_addr), len,
-+			    offset_in_page(cpu_addr));
-+	} else {
-+		WARN_ON(!virt_addr_valid(cpu_addr));
-+		sg_init_one(sg, cpu_addr, len);
-+	}
-+}
-+
-+
-+/**
-  * __ept_release() - deallocate an rpmsg endpoint
-  * @kref: the ept's reference count
-  *
-@@ -606,7 +629,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 			 msg, sizeof(*msg) + msg->len, true);
- #endif
- 
--	sg_init_one(&sg, msg, sizeof(*msg) + len);
-+	rpmsg_sg_init(&sg, msg, sizeof(*msg) + len);
- 
- 	mutex_lock(&vrp->tx_lock);
- 
-@@ -731,7 +754,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 		dev_warn(dev, "msg received with no recipient\n");
- 
- 	/* publish the real size of the buffer */
--	sg_init_one(&sg, msg, vrp->buf_size);
-+	rpmsg_sg_init(&sg, msg, vrp->buf_size);
- 
- 	/* add the buffer back to the remote processor's virtqueue */
- 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-@@ -913,7 +936,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 		struct scatterlist sg;
- 		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
- 
--		sg_init_one(&sg, cpu_addr, vrp->buf_size);
-+		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
- 
- 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
- 					  GFP_KERNEL);
--- 
-1.9.1
+On 12/07/2016 06:14 PM, Suman Anna wrote:
+> On 12/07/2016 04:49 AM, Linus Walleij wrote:
+>> On Mon, Dec 5, 2016 at 2:10 PM, Jean Delvare <jdelvare@suse.de> wrote:
+>>
+>>> Back in July 2014 I asked around what was the intended target
+>>> platform for the STE Modem remoteproc driver, so that I could add the
+>>> proper hardware dependency to its config option. The answer I got was
+>>> that there was no known publicly available hardware needing it and it
+>>> was unlikely that there ever would.
+>>>
+>>> So I think it's time to delete this driver to lower the maintenance
+>>> burden.
+>>>
+>>> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+>>> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> Cc: Suman Anna <s-anna@ti.com>
+>>
+>> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> I put Dmitry in CC, last chance to protest :)
+>
+> + Lee and Loic as well, would be nice to get an Ack from either one of them.
+
+I confirm, no public hardware available.
+Thanks for the clean up.
+
+Acked-by: Loic Pallardy <loic.pallardy@st.com>
+
+
+regards,
+Loic
+>
+> regards
+> Suman
+>
