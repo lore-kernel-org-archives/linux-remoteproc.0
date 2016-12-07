@@ -1,40 +1,76 @@
-Return-Path: <daniel.wagner@bmw-carit.de>
-Subject: Re: [PATCH] firwmare: Correct handling of fw_state_wait() return
- value
-References: <1481072505-2732-1-git-send-email-bjorn.andersson@linaro.org>
-From: Daniel Wagner <daniel.wagner@bmw-carit.de>
-Message-ID: <dcb7e5b0-fc88-2719-8b96-af8b84b7778a@bmw-carit.de>
-Date: Thu, 8 Dec 2016 15:47:22 +0100
-MIME-Version: 1.0
-In-Reply-To: <1481072505-2732-1-git-send-email-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-Path: daniel.wagner@bmw-carit.de
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ming Lei <ming.lei@canonical.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] firwmare: Correct handling of fw_state_wait() return value
+Date: Tue,  6 Dec 2016 17:01:45 -0800
+Message-Id: <1481072505-2732-1-git-send-email-bjorn.andersson@linaro.org>
+To: Ming Lei <ming.lei@canonical.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 12/07/2016 02:01 AM, Bjorn Andersson wrote:
-> When request_firmware() finds an already open firmware object it will
-> wait for that object to become fully loaded and then check the status.
-> As __fw_state_wait_common() succeeds the timeout value returned will be
-> truncated in _request_firmware_prepare() and interpreted as -EPERM.
->
-> Prior to "firmware: do not use fw_lock for fw_state protection" the code
-> did test if we where in the "done" state before sleeping, causing this
-> particular code path to succeed, in some cases.
->
-> As the callers are interested in the result of the wait and not the
-> remaining timeout the return value of __fw_state_wait_common() is
-> changed to signal "done" or "error", which simplifies the logic in
-> _request_firmware_load() as well.
+When request_firmware() finds an already open firmware object it will
+wait for that object to become fully loaded and then check the status.
+As __fw_state_wait_common() succeeds the timeout value returned will be
+truncated in _request_firmware_prepare() and interpreted as -EPERM.
 
-Oops, sorry about that one. With your fix the code starts to make sense.
+Prior to "firmware: do not use fw_lock for fw_state protection" the code
+did test if we where in the "done" state before sleeping, causing this
+particular code path to succeed, in some cases.
 
-> Fixes: 5b029624948d ("firmware: do not use fw_lock for fw_state protection")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+As the callers are interested in the result of the wait and not the
+remaining timeout the return value of __fw_state_wait_common() is
+changed to signal "done" or "error", which simplifies the logic in
+_request_firmware_load() as well.
 
-Reviewed-by: Daniel Wagner <daniel.wagner@bmw-carit.de>
+Fixes: 5b029624948d ("firmware: do not use fw_lock for fw_state protection")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-Thanks,
-Daniel
+The regression was introduced in next-20161201
+
+ drivers/base/firmware_class.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/base/firmware_class.c b/drivers/base/firmware_class.c
+index eb95cf7c3b28..4497d263209f 100644
+--- a/drivers/base/firmware_class.c
++++ b/drivers/base/firmware_class.c
+@@ -127,7 +127,7 @@ static inline bool __fw_state_is_done(enum fw_status status)
+ 	return status == FW_STATUS_DONE || status == FW_STATUS_ABORTED;
+ }
+ 
+-static long __fw_state_wait_common(struct fw_state *fw_st, long timeout)
++static int __fw_state_wait_common(struct fw_state *fw_st, long timeout)
+ {
+ 	long ret;
+ 
+@@ -136,8 +136,10 @@ static long __fw_state_wait_common(struct fw_state *fw_st, long timeout)
+ 				timeout);
+ 	if (ret != 0 && fw_st->status == FW_STATUS_ABORTED)
+ 		return -ENOENT;
++	if (!ret)
++		return -ETIMEDOUT;
+ 
+-	return ret;
++	return ret < 0 ? ret : 0;
+ }
+ 
+ static void __fw_state_set(struct fw_state *fw_st,
+@@ -1017,14 +1019,11 @@ static int _request_firmware_load(struct firmware_priv *fw_priv,
+ 		timeout = MAX_JIFFY_OFFSET;
+ 	}
+ 
+-	timeout = fw_state_wait_timeout(&buf->fw_st, timeout);
+-	if (timeout == -ERESTARTSYS || !timeout) {
+-		retval = timeout;
++	retval = fw_state_wait_timeout(&buf->fw_st, timeout);
++	if (retval < 0) {
+ 		mutex_lock(&fw_lock);
+ 		fw_load_abort(fw_priv);
+ 		mutex_unlock(&fw_lock);
+-	} else if (timeout > 0) {
+-		retval = 0;
+ 	}
+ 
+ 	if (fw_state_is_aborted(&buf->fw_st))
+-- 
+2.5.0
