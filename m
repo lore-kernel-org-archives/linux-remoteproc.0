@@ -1,96 +1,69 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: Drop wait in __rproc_boot()
-Date: Tue,  6 Dec 2016 17:04:45 -0800
-Message-Id: <1481072685-2888-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sarangdhar Joshi <spjoshi@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Wed, 7 Dec 2016 14:09:33 +0000
+From: Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: [PATCH 10/10] virtio: enable endian checks for sparse builds
+Message-ID: <20161207140933.GF32099@stefanha-x1.localdomain>
+References: <1481038106-24899-1-git-send-email-mst@redhat.com>
+ <1481038106-24899-11-git-send-email-mst@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GLp9dJVi+aaipsRk"
+Content-Disposition: inline
+In-Reply-To: <1481038106-24899-11-git-send-email-mst@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>, linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matt Mackall <mpm@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, Ohad Ben-Cohen <ohad@wizery.com>, Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, Jens Axboe <axboe@fb.com>, Neil Armstrong <narmstrong@baylibre.com>, Asias He <asias@redhat.com>, linux-crypto@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, kvm@vger.kernel.org, linux-scsi@vger.kernel.org, v9fs-developer@lists.sourceforge.net
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In the event that rproc_boot() is called before the firmware loaded
-completion has been flagged it will wait with the mutex held,
-obstructing the request_firmware_nowait() callback from completing the
-wait.
 
-As rproc_fw_config_virtio() has been reduced to only triggering
-auto-boot there is no longer a reason for waiting in rproc_boot(), so
-drop this.
+--GLp9dJVi+aaipsRk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On Tue, Dec 06, 2016 at 05:41:05PM +0200, Michael S. Tsirkin wrote:
+> __CHECK_ENDIAN__ isn't on by default presumably because
+> it triggers too many sparse warnings for correct code.
+> But virtio is now clean of these warnings, and
+> we want to keep it this way - enable this for
+> sparse builds.
+>=20
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>=20
+> It seems that there should be a better way to do it,
+> but this works too.
+>=20
+>  drivers/block/Makefile          | 1 +
+>  drivers/char/Makefile           | 1 +
+>  drivers/char/hw_random/Makefile | 2 ++
+>  drivers/gpu/drm/virtio/Makefile | 1 +
+>  drivers/net/Makefile            | 3 +++
+>  drivers/net/caif/Makefile       | 1 +
+>  drivers/rpmsg/Makefile          | 1 +
+>  drivers/s390/virtio/Makefile    | 2 ++
+>  drivers/scsi/Makefile           | 1 +
+>  drivers/vhost/Makefile          | 1 +
+>  drivers/virtio/Makefile         | 3 +++
+>  net/9p/Makefile                 | 1 +
+>  net/packet/Makefile             | 1 +
+>  net/vmw_vsock/Makefile          | 2 ++
+>  14 files changed, 21 insertions(+)
 
-A separate patch should be written that drops firmware_loading_complete, but
-this requires handling the case where rproc_del() is called before
-request_firmware_nowait() finishes.
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
- drivers/remoteproc/remoteproc_core.c | 22 +++-------------------
- 1 file changed, 3 insertions(+), 19 deletions(-)
+--GLp9dJVi+aaipsRk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f0f6ec1ab12b..953ee29bcab3 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -972,7 +972,7 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 
- 	/* if rproc is marked always-on, request it to boot */
- 	if (rproc->auto_boot)
--		rproc_boot_nowait(rproc);
-+		rproc_boot(rproc);
- 
- 	release_firmware(fw);
- 	/* allow rproc_del() contexts, if any, to proceed */
-@@ -1070,7 +1070,6 @@ static void rproc_crash_handler_work(struct work_struct *work)
- /**
-  * __rproc_boot() - boot a remote processor
-  * @rproc: handle of a remote processor
-- * @wait: wait for rproc registration completion
-  *
-  * Boot a remote processor (i.e. load its firmware, power it on, ...).
-  *
-@@ -1079,7 +1078,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
-  *
-  * Returns 0 on success, and an appropriate error value otherwise.
-  */
--static int __rproc_boot(struct rproc *rproc, bool wait)
-+static int __rproc_boot(struct rproc *rproc)
- {
- 	const struct firmware *firmware_p;
- 	struct device *dev;
-@@ -1113,10 +1112,6 @@ static int __rproc_boot(struct rproc *rproc, bool wait)
- 		goto downref_rproc;
- 	}
- 
--	/* if rproc virtio is not yet configured, wait */
--	if (wait)
--		wait_for_completion(&rproc->firmware_loading_complete);
--
- 	ret = rproc_fw_boot(rproc, firmware_p);
- 
- 	release_firmware(firmware_p);
-@@ -1135,22 +1130,11 @@ static int __rproc_boot(struct rproc *rproc, bool wait)
-  */
- int rproc_boot(struct rproc *rproc)
- {
--	return __rproc_boot(rproc, true);
-+	return __rproc_boot(rproc);
- }
- EXPORT_SYMBOL(rproc_boot);
- 
- /**
-- * rproc_boot_nowait() - boot a remote processor
-- * @rproc: handle of a remote processor
-- *
-- * Same as rproc_boot() but don't wait for rproc registration completion
-- */
--int rproc_boot_nowait(struct rproc *rproc)
--{
--	return __rproc_boot(rproc, false);
--}
--
--/**
-  * rproc_shutdown() - power off the remote processor
-  * @rproc: the remote processor
-  *
--- 
-2.5.0
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJYSBgdAAoJEJykq7OBq3PIErIIALcfuXKP5HgamgpQoZkN0Uc0
+2n2uVTdzArmnFB44EWnkmW+iYjCl3HfmHgtoWPwsUKoY/RDBuL8x9wNSrOfDzSMf
+ymjii6GPxe3fJ4xlvzAmueh0F4wfFeKl+jrO7jm3B1vIhJh6NzEgQZJgGxmpNYvE
+X0o9IKPe5pr+x3ZAec1LMzsv9CvtJObwO3bVgAtQQlA7hlvewrbZkxgmKAojibGG
+Mdv+oNGtpp8ePXN9c0EdhLFbPF3MY9YHf0DbirN5CXp7KP1GH9FgWaOKx0n0v8IB
+3KqF7wUADa/eIWrIW1FaSy9DeGfihiwwrWaEcg/c0LoweS6OLwGhCJTXfp45GJk=
+=SL7g
+-----END PGP SIGNATURE-----
+
+--GLp9dJVi+aaipsRk--
