@@ -1,85 +1,133 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 2/2] rpmsg: DMA map sgs passed to virtio
-Date: Tue, 6 Dec 2016 10:08:49 -0800
-Message-ID: <1481047729-518-3-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1481047729-518-1-git-send-email-jliang@xilinx.com>
-References: <1481047729-518-1-git-send-email-jliang@xilinx.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v1 5/6] rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level driver
+Date: Wed, 7 Dec 2016 21:35:40 +0100
+Message-ID: <1481142941-15616-6-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
+References: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, mst@redhat.com, jasowang@redhat.com, virtualization@lists.linux-foundation.org
-Cc: "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>, Wendy Liang <jliang@xilinx.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>
+Low level platform specific driver has the knowledge of the different
+communication link constraints like fixed or secured memory region to
+use for buffer allocation.
 
-As rpmsg uses dma_alloc_coherent() to allocate memory to shared
-with the remote. Virtio ring requires the shared buffers to be
-passed as sg struct. As the memory has already been mapped,
-and we cannot convert the virtual address got from dma_alloc_coherent()
-back to the physical address. We set the sg_dma_addr to store the
-DMA address before we pass it to virtio.
+If virtual address is defined in virtio_rpmsg_cfg structure, a dedicated
+memory pool buffer fitting platform requirements is available.
+Rpmsg virtio layer should rely on it if its size is compliant with link
+characteristics.
 
-Signed-off-by: Edgar E. Iglesias <edgar.iglesias@xilinx.com>
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 54 ++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 3090b0d..af76187 100644
+index 1a97af8..b12fe2a 100644
 --- a/drivers/rpmsg/virtio_rpmsg_bus.c
 +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -192,6 +192,22 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
+@@ -57,6 +57,7 @@
+  * @sendq:	wait queue of sending contexts waiting for a tx buffers
+  * @sleepers:	number of senders that are waiting for a tx buffer
+  * @ns_ept:	the bus's name service endpoint
++ * @ext_buffer: buffer allocated by low level driver
+  *
+  * This structure stores the rpmsg state of a given virtio remote processor
+  * device (there might be several virtio proc devices for each physical
+@@ -76,6 +77,7 @@ struct virtproc_info {
+ 	wait_queue_head_t sendq;
+ 	atomic_t sleepers;
+ 	struct rpmsg_endpoint *ns_ept;
++	bool ext_buffer;
  };
  
-+static inline dma_addr_t msg_dma_address(struct virtproc_info *vrp, void *msg)
-+{
-+	unsigned long offset = msg - vrp->rbufs;
+ /* The feature bitmap for virtio rpmsg */
+@@ -904,6 +906,17 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
 +
-+	return vrp->bufs_dma + offset;
-+}
++		/* Level platform specific buffer driver ? */
++		if (virtio_cfg.va != -1) {
++			vrp->ext_buffer = true;
++			/* half of the buffers is dedicated for RX */
++			vrp->rbufs = (void *)(uintptr_t)virtio_cfg.va;
 +
-+static inline void rpmsg_msg_sg_init(struct virtproc_info *vrp,
-+				     struct scatterlist *sg,
-+				     void *msg, unsigned int len)
-+{
-+	sg_init_table(sg, 1);
-+	sg_dma_address(sg) = msg_dma_address(vrp, msg);
-+	sg_dma_len(sg) = len;
-+}
++			/* and half is dedicated for TX */
++			vrp->sbufs = (void *)(uintptr_t) virtio_cfg.va + total_buf_space / 2;
++		}
 +
- /**
-  * __ept_release() - deallocate an rpmsg endpoint
-  * @kref: the ept's reference count
-@@ -604,7 +620,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 			 msg, sizeof(*msg) + msg->len, true);
- #endif
+ 		return !ret;
+ 	}
+ out:
+@@ -960,24 +973,27 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	if (err < 0)
+ 		goto free_vrp;
  
--	sg_init_one(&sg, msg, sizeof(*msg) + len);
-+	rpmsg_msg_sg_init(vrp, &sg, msg, sizeof(*msg) + len);
+-	total_buf_space = vrp->num_bufs * vrp->buf_size;
++	/* Allocate buffer if none provided by low level platform driver */
++	if (!vrp->ext_buffer) {
++		total_buf_space = vrp->num_bufs * vrp->buf_size;
  
- 	mutex_lock(&vrp->tx_lock);
+-	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
+-				     total_buf_space, &vrp->bufs_dma,
+-				     GFP_KERNEL);
+-	if (!bufs_va) {
+-		err = -ENOMEM;
+-		goto vqs_del;
+-	}
++		bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
++				total_buf_space, &vrp->bufs_dma,
++				GFP_KERNEL);
++		if (!bufs_va) {
++			err = -ENOMEM;
++			goto vqs_del;
++		}
  
-@@ -729,7 +745,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 		dev_warn(dev, "msg received with no recipient\n");
+-	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
+-		bufs_va, &vrp->bufs_dma);
++		dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
++				bufs_va, &vrp->bufs_dma);
  
- 	/* publish the real size of the buffer */
--	sg_init_one(&sg, msg, RPMSG_BUF_SIZE);
-+	rpmsg_msg_sg_init(vrp, &sg, msg, RPMSG_BUF_SIZE);
+-	/* half of the buffers is dedicated for RX */
+-	vrp->rbufs = bufs_va;
++		/* half of the buffers is dedicated for RX */
++		vrp->rbufs = bufs_va;
  
- 	/* add the buffer back to the remote processor's virtqueue */
- 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-@@ -911,7 +927,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 		struct scatterlist sg;
- 		void *cpu_addr = vrp->rbufs + i * RPMSG_BUF_SIZE;
+-	/* and half is dedicated for TX */
+-	vrp->sbufs = bufs_va + total_buf_space / 2;
++		/* and half is dedicated for TX */
++		vrp->sbufs = bufs_va + total_buf_space / 2;
++	}
  
--		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
-+		rpmsg_msg_sg_init(vrp, &sg, cpu_addr, RPMSG_BUF_SIZE);
+ 	/* set up the receive buffers */
+ 	for (i = 0; i < vrp->num_bufs / 2; i++) {
+@@ -1028,8 +1044,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	return 0;
  
- 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
- 					  GFP_KERNEL);
+ free_coherent:
+-	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+-			  bufs_va, vrp->bufs_dma);
++	if (!vrp->ext_buffer)
++		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
++				  bufs_va, vrp->bufs_dma);
+ vqs_del:
+ 	vdev->config->del_vqs(vrp->vdev);
+ free_vrp:
+@@ -1063,8 +1080,9 @@ static void rpmsg_remove(struct virtio_device *vdev)
+ 
+ 	vdev->config->del_vqs(vrp->vdev);
+ 
+-	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+-			  vrp->rbufs, vrp->bufs_dma);
++	if (!vrp->ext_buffer)
++		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
++				  vrp->rbufs, vrp->bufs_dma);
+ 
+ 	kfree(vrp);
+ }
 -- 
 1.9.1
