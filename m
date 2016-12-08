@@ -1,72 +1,85 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 1/1] remoteproc: core: probe subdevices before booting coprocessor
-Date: Wed, 7 Dec 2016 21:49:28 +0100
-Message-ID: <1481143768-16377-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <jliang@xilinx.com>
+Return-Path: wendy.liang@xilinx.com
+From: Wendy Liang <wendy.liang@xilinx.com>
+Subject: [PATCH 2/2] rpmsg: DMA map sgs passed to virtio
+Date: Wed, 7 Dec 2016 22:59:13 -0800
+Message-ID: <1481180353-11139-3-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1481180353-11139-1-git-send-email-jliang@xilinx.com>
+References: <1481180353-11139-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+To: jasowang@redhat.com, mst@redhat.com, virtualization@lists.linux-foundation.org, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org
+Cc: "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-With subdevice support introduction, coprocessor boot sequence has
-changed. Related coprocessor subdevices are now starting after firmware
-and resource table loading and coprocessor boot.
+From: "Edgar E. Iglesias" <edgar.iglesias@xilinx.com>
 
-But some subdevices can resources to allocate before coprocessor start,
-like rpmsg buffers allocation for example.
+As rpmsg uses dma_alloc_coherent() to allocate memory to shared
+with the remote. Virtio ring requires the shared buffers to be
+passed as sg struct. As the memory has already been mapped,
+and we cannot convert the virtual address got from dma_alloc_coherent()
+back to the physical address. We set the sg_dma_addr to store the
+DMA address before we pass it to virtio.
 
-This patch probes subdevices just before loading resource table,
-to keep backward compatibility with existing firmwares.
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Edgar E. Iglesias <edgar.iglesias@xilinx.com>
+Signed-off-by: Wendy Liang <jliang@xilinx.com>
 ---
-v2: remove unused stop_rproc label
+ drivers/rpmsg/virtio_rpmsg_bus.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
- drivers/remoteproc/remoteproc_core.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f0f6ec1..61f06a7 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -913,6 +913,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
- 	}
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 3090b0d..af76187 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -192,6 +192,22 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
+ };
  
-+	/* probe any subdevices for the remote processor */
-+	ret = rproc_probe_subdevices(rproc);
-+	if (ret) {
-+		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-+			rproc->name, ret);
-+		goto clean_up_resources;
-+	}
++static inline dma_addr_t msg_dma_address(struct virtproc_info *vrp, void *msg)
++{
++	unsigned long offset = msg - vrp->rbufs;
 +
- 	/*
- 	 * The starting device has been given the rproc->table_ptr as the
- 	 * resource table. The address of the vring along with the other
-@@ -932,22 +940,12 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
- 	}
++	return vrp->bufs_dma + offset;
++}
++
++static inline void rpmsg_msg_sg_init(struct virtproc_info *vrp,
++				     struct scatterlist *sg,
++				     void *msg, unsigned int len)
++{
++	sg_init_table(sg, 1);
++	sg_dma_address(sg) = msg_dma_address(vrp, msg);
++	sg_dma_len(sg) = len;
++}
++
+ /**
+  * __ept_release() - deallocate an rpmsg endpoint
+  * @kref: the ept's reference count
+@@ -604,7 +620,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 			 msg, sizeof(*msg) + msg->len, true);
+ #endif
  
--	/* probe any subdevices for the remote processor */
--	ret = rproc_probe_subdevices(rproc);
--	if (ret) {
--		dev_err(dev, "failed to probe subdevices for %s: %d\n",
--			rproc->name, ret);
--		goto stop_rproc;
--	}
--
- 	rproc->state = RPROC_RUNNING;
+-	sg_init_one(&sg, msg, sizeof(*msg) + len);
++	rpmsg_msg_sg_init(vrp, &sg, msg, sizeof(*msg) + len);
  
- 	dev_info(dev, "remote processor %s is now up\n", rproc->name);
+ 	mutex_lock(&vrp->tx_lock);
  
- 	return 0;
+@@ -729,7 +745,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 		dev_warn(dev, "msg received with no recipient\n");
  
--stop_rproc:
--	rproc->ops->stop(rproc);
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
- clean_up:
+ 	/* publish the real size of the buffer */
+-	sg_init_one(&sg, msg, RPMSG_BUF_SIZE);
++	rpmsg_msg_sg_init(vrp, &sg, msg, RPMSG_BUF_SIZE);
+ 
+ 	/* add the buffer back to the remote processor's virtqueue */
+ 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+@@ -911,7 +927,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 		struct scatterlist sg;
+ 		void *cpu_addr = vrp->rbufs + i * RPMSG_BUF_SIZE;
+ 
+-		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
++		rpmsg_msg_sg_init(vrp, &sg, cpu_addr, RPMSG_BUF_SIZE);
+ 
+ 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+ 					  GFP_KERNEL);
 -- 
 1.9.1
