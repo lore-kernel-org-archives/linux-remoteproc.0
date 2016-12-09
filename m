@@ -1,92 +1,41 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH] remoteproc: Remove firmware_loading_complete
-Date: Tue, 13 Dec 2016 15:23:47 -0800
-Message-Id: <1481671427-30818-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] remoteproc: qcom_adsp_pil: select qcom_scm
+Date: Fri, 09 Dec 2016 21:42:55 +0100
+Message-ID: <3141429.Gm13CfGpJK@wuerfel>
+In-Reply-To: <20161209192310.GY30492@tuxbot>
+References: <20161209114730.3780719-1-arnd@arndb.de> <20161209192310.GY30492@tuxbot>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-rproc_del() waits on firmware_loading_complete in order to
-make sure rproc_add() completed successfully before calling
-rproc_shutdown().  However since rproc_add() will always be
-called before rproc_del(), we do not need to wait on
-firmware_loading_complete. Drop this completion variable
-altogether.
+On Friday, December 9, 2016 11:23:10 AM CET Bjorn Andersson wrote:
+> On Fri 09 Dec 03:47 PST 2016, Arnd Bergmann wrote:
+> 
+> > The adsp-pil driver relies on SCM and causes a build error without it:
+> > 
+> > ERROR: "qcom_scm_pas_supported" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> > ERROR: "qcom_scm_is_available" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> > ERROR: "qcom_scm_pas_auth_and_reset" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> > ERROR: "qcom_scm_pas_shutdown" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> > ERROR: "qcom_scm_pas_mem_setup" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> > ERROR: "qcom_scm_pas_init_image" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> > 
+> > This adds a 'select', as SCM is a silent Kconfig symbol that gets
+> > enabled implicitly by all its users.
+> > 
+> 
+> Thanks, sorry for giving you the opportunity for finding all these odd
+> combinations.
+> 
+> Are you aware of any projects aiming to catch these through e.g.
+> dependency analysis rather than random build testing (and my now growing
+> manual checklist)?
 
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
----
+I think there is one project that tries to identify impossible constraints
+in Kconfig, but that would not have caught cases like this one.
 
-This patch depends on e9b4f9efff5021 ("remoteproc: Drop wait in __rproc_boot()")
-
- drivers/remoteproc/remoteproc_core.c | 12 +-----------
- include/linux/remoteproc.h           |  2 --
- 2 files changed, 1 insertion(+), 13 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 953ee29..862fa4e 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -975,17 +975,12 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 		rproc_boot(rproc);
- 
- 	release_firmware(fw);
--	/* allow rproc_del() contexts, if any, to proceed */
--	complete_all(&rproc->firmware_loading_complete);
- }
- 
- static int rproc_add_virtio_devices(struct rproc *rproc)
- {
- 	int ret;
- 
--	/* rproc_del() calls must wait until async loader completes */
--	init_completion(&rproc->firmware_loading_complete);
--
- 	/*
- 	 * We must retrieve early virtio configuration info from
- 	 * the firmware (e.g. whether to register a virtio device,
-@@ -997,10 +992,8 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
- 	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
- 				      rproc->firmware, &rproc->dev, GFP_KERNEL,
- 				      rproc, rproc_fw_config_virtio);
--	if (ret < 0) {
-+	if (ret < 0)
- 		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
--		complete_all(&rproc->firmware_loading_complete);
--	}
- 
- 	return ret;
- }
-@@ -1483,9 +1476,6 @@ int rproc_del(struct rproc *rproc)
- 	if (!rproc)
- 		return -EINVAL;
- 
--	/* if rproc is just being registered, wait */
--	wait_for_completion(&rproc->firmware_loading_complete);
--
- 	/* if rproc is marked always-on, rproc_add() booted it */
- 	/* TODO: make sure this works with rproc->power > 1 */
- 	if (rproc->auto_boot)
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e2f3a32..19d84a0 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -397,7 +397,6 @@ enum rproc_crash_type {
-  * @num_traces: number of trace buffers
-  * @carveouts: list of physically contiguous memory allocations
-  * @mappings: list of iommu mappings we initiated, needed on shutdown
-- * @firmware_loading_complete: marks e/o asynchronous firmware loading
-  * @bootaddr: address of first instruction to boot rproc with (optional)
-  * @rvdevs: list of remote virtio devices
-  * @subdevs: list of subdevices, to following the running state
-@@ -428,7 +427,6 @@ struct rproc {
- 	int num_traces;
- 	struct list_head carveouts;
- 	struct list_head mappings;
--	struct completion firmware_loading_complete;
- 	u32 bootaddr;
- 	struct list_head rvdevs;
- 	struct list_head subdevs;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+	Arnd
