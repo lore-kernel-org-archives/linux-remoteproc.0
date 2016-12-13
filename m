@@ -1,52 +1,45 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [PATCH 1/2] virtio_ring: Do not call dma_map_page if sg is already mapped.
-Date: Wed, 7 Dec 2016 22:59:12 -0800
-Message-ID: <1481180353-11139-2-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1481180353-11139-1-git-send-email-jliang@xilinx.com>
-References: <1481180353-11139-1-git-send-email-jliang@xilinx.com>
+Date: Mon, 12 Dec 2016 16:17:50 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] rpmsg updates for v4.10
+Message-ID: <20161213001750.GC3439@tuxbot>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: jasowang@redhat.com, mst@redhat.com, virtualization@lists.linux-foundation.org, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org
-Cc: Wendy Liang <jliang@xilinx.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-If sg is already dma mapped, do not call dma_map_page() in
-vring_map_one_sg().
+The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
-In case of rpmsg, rpmsg uses dma_alloc_coherent() to allocate
-memory to share with the remote. There is no pages setup
-in dma_alloc_coherent().
+  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 
-In this case, we cannot convert the virtual address back to the
-physical address. In this case, we can setup the sg_dma_addr to
-store the DMA address, and also mark the sg is already mapped.
+are available in the git repository at:
 
-In the vring, we can detect if the address is already mapped
-by checking the sg_dma_addr. If yes, do not call dma_map_page().
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.10
 
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
----
- drivers/virtio/virtio_ring.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+for you to fetch changes up to 5c8a934349ee61027a48e3e6c0bba2b7d3dd09d1:
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 489bfc6..9793e1f 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -180,6 +180,12 @@ static dma_addr_t vring_map_one_sg(const struct vring_virtqueue *vq,
- 	if (!vring_use_dma_api(vq->vq.vdev))
- 		return (dma_addr_t)sg_phys(sg);
- 
-+	/* If the sg is already mapped, return the DMA address */
-+	if (sg_dma_address(sg)) {
-+		sg->length = sg_dma_len(sg);
-+		return sg_dma_address(sg);
-+	}
-+
- 	/*
- 	 * We can't use dma_map_sg, because we don't use scatterlists in
- 	 * the way it expects (we don't guarantee that the scatterlist
--- 
-1.9.1
+  dt-binding: soc: qcom: smd: Add label property (2016-12-08 10:55:47 -0800)
+
+----------------------------------------------------------------
+rpmsg updates for v4.10
+
+Argument validation in public functions, function stubs for COMPILE_TEST-ing
+clients, preparation for exposing rpmsg endponts to user space and minor
+Qualcomm SMD fixes.
+
+----------------------------------------------------------------
+Bjorn Andersson (7):
+      rpmsg: smd: Reduce restrictions when finding channel
+      rpmsg: Introduce a driver override mechanism
+      rpmsg: Support drivers without primary endpoint
+      rpmsg: Handle invalid parameters in public API
+      rpmsg: Provide function stubs for API
+      rpmsg: qcom_smd: Correct return value for O_NONBLOCK
+      dt-binding: soc: qcom: smd: Add label property
+
+ .../devicetree/bindings/soc/qcom/qcom,smd.txt      |   7 ++
+ drivers/rpmsg/qcom_smd.c                           |  17 +--
+ drivers/rpmsg/rpmsg_core.c                         |  74 +++++++++---
+ include/linux/rpmsg.h                              | 125 +++++++++++++++++++--
+ 4 files changed, 185 insertions(+), 38 deletions(-)
