@@ -1,45 +1,45 @@
-Date: Mon, 12 Dec 2016 16:17:50 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] rpmsg updates for v4.10
-Message-ID: <20161213001750.GC3439@tuxbot>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 1/1] remoteproc: fix vdev reference management
+Date: Wed, 14 Dec 2016 16:11:00 +0100
+Message-ID: <1481728260-21771-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: lee.jones@linaro.org, loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+Commit 2b45cef5868a ("remoteproc: Further extend the vdev life cycle")
+extends kref support for vdev management.
+It introduces a regression when following sequence is executed:
+rproc_boot --> rproc_shutdown --> rproc_boot
+Second rproc_boot call crashes on register_virtio_device as device
+is already existing.
+Issue is previous vdev is never released when rproc is stop because
+associated refcount is too high.
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
+kref_get introduces is not needed as kref_init already initializes
+krefcount to 1 because it considers associated variable as used.
+This introduces a misalignment between kref_get and kref_put calls.
 
-are available in the git repository at:
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-  git://github.com/andersson/remoteproc tags/rpmsg-v4.10
-
-for you to fetch changes up to 5c8a934349ee61027a48e3e6c0bba2b7d3dd09d1:
-
-  dt-binding: soc: qcom: smd: Add label property (2016-12-08 10:55:47 -0800)
-
-----------------------------------------------------------------
-rpmsg updates for v4.10
-
-Argument validation in public functions, function stubs for COMPILE_TEST-ing
-clients, preparation for exposing rpmsg endponts to user space and minor
-Qualcomm SMD fixes.
-
-----------------------------------------------------------------
-Bjorn Andersson (7):
-      rpmsg: smd: Reduce restrictions when finding channel
-      rpmsg: Introduce a driver override mechanism
-      rpmsg: Support drivers without primary endpoint
-      rpmsg: Handle invalid parameters in public API
-      rpmsg: Provide function stubs for API
-      rpmsg: qcom_smd: Correct return value for O_NONBLOCK
-      dt-binding: soc: qcom: smd: Add label property
-
- .../devicetree/bindings/soc/qcom/qcom,smd.txt      |   7 ++
- drivers/rpmsg/qcom_smd.c                           |  17 +--
- drivers/rpmsg/rpmsg_core.c                         |  74 +++++++++---
- include/linux/rpmsg.h                              | 125 +++++++++++++++++++--
- 4 files changed, 185 insertions(+), 38 deletions(-)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 9a507e7..feb24c4 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -396,9 +396,6 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 			goto unwind_vring_allocations;
+ 	}
+ 
+-	/* track the rvdevs list reference */
+-	kref_get(&rvdev->refcount);
+-
+ 	list_add_tail(&rvdev->node, &rproc->rvdevs);
+ 
+ 	rproc_add_subdev(rproc, &rvdev->subdev,
+-- 
+1.9.1
