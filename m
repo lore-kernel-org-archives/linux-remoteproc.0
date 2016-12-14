@@ -1,47 +1,80 @@
 Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 1/1] rpmsg: virtio_rpmsg_bus: fix channel creation
-Date: Thu, 15 Dec 2016 15:49:56 +0100
-Message-ID: <1481813396-1529-1-git-send-email-loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v1 3/6] include: virtio_rpmsg: add virtio rpmsg
+ configuration structure
+Date: Wed, 14 Dec 2016 11:24:19 +0000
+Message-ID: <2c642ba7b9be4cb69a17075f0004306d@SFHDAG6NODE1.st.com>
+References: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
+ <1481142941-15616-4-git-send-email-loic.pallardy@st.com>
+ <CAA07jV9+Tq_WO=ER05qY0uM+8v+dChBGZXn+j_vtc1vR7yHt9g@mail.gmail.com>
+In-Reply-To: <CAA07jV9+Tq_WO=ER05qY0uM+8v+dChBGZXn+j_vtc1vR7yHt9g@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com
+To: Wendy Liang <sunnyliangjy@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "Patrice CHOTARD  <patrice.chotard@st.com>, linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Since commit 4dffed5b3ac796b ("rpmsg: Name rpmsg devices based on
-channel id"), it is no more possible for a firmware to register twice
-a service (on different endpoints). rpmsg_register_device function
-is failing when calling device_add for the second time as second
-device has the same name as first one already register.
-It is because name is based only on service name and so is not more
-unique. Previously name was unique thanks to the use of rpmsg_dev_index.
-
-This patch adds destination and source endpoint numbers device name to
-create an unique identifier.
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
-v2: Update commit header with commit ID generating regression
-Fix rpmsg_core instead of virtio_rpmsg
-
- drivers/rpmsg/rpmsg_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index a79cb5a..18c73e0 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -453,8 +453,8 @@ int rpmsg_register_device(struct rpmsg_device *rpdev)
- 	struct device *dev = &rpdev->dev;
- 	int ret;
- 
--	dev_set_name(&rpdev->dev, "%s:%s",
--		     dev_name(dev->parent), rpdev->id.name);
-+	dev_set_name(&rpdev->dev, "%s.%d.%d.%s", dev_name(dev->parent),
-+		     rpdev->src, rpdev->dst, rpdev->id.name);
- 
- 	rpdev->dev.bus = &rpmsg_bus;
- 	rpdev->dev.release = rpmsg_release_device;
--- 
-1.9.1
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV2VuZHkgTGlhbmcgW21h
+aWx0bzpzdW5ueWxpYW5nanlAZ21haWwuY29tXQ0KPiBTZW50OiBUaHVyc2RheSwgRGVjZW1iZXIg
+MDgsIDIwMTYgMTE6MDAgUE0NCj4gVG86IExvaWMgUEFMTEFSRFkgPGxvaWMucGFsbGFyZHlAc3Qu
+Y29tPg0KPiBDYzogQmpvcm4gQW5kZXJzc29uIDxiam9ybi5hbmRlcnNzb25AbGluYXJvLm9yZz47
+IE9oYWQgQmVuLUNvaGVuDQo+IDxvaGFkQHdpemVyeS5jb20+OyBsZWUuam9uZXNAbGluYXJvLm9y
+ZzsgUGF0cmljZSBDSE9UQVJEDQo+IDxwYXRyaWNlLmNob3RhcmRAc3QuY29tPjsgbGludXgtcmVt
+b3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGtlcm5lbEBzdGxpbnV4LmNvbQ0KPiBTdWJqZWN0
+OiBSZTogW1BBVENIIHYxIDMvNl0gaW5jbHVkZTogdmlydGlvX3JwbXNnOiBhZGQgdmlydGlvIHJw
+bXNnDQo+IGNvbmZpZ3VyYXRpb24gc3RydWN0dXJlDQo+IA0KPiBISSBMb2ljLA0KPiANCkhpIFdl
+bmR5LA0KDQo+IEFzIHRoaXMgaW50cm9kdWNlIGEgbmV3IHZpcnRpbyBjb25maWcuIEhvdyBhYm91
+dCB0byBhZGQgYSBuZXcgaGVhZGVyIGZpbGUgZm9yDQo+IHZpcnRpb19ycG1zZyBpbiB0aGUgaW5j
+bHVkZS91YXBpL2xpbnV4IGRpcmVjdG9yeSBqdXN0IGxpa2Ugb3RoZXIgdmlydGlvIGRldmljZQ0K
+PiBkcml2ZXIsIHN1Y2ggYXMgdmlydGlvX2Jsaz8NCg0KSSBwdXQgdGhpcyBuZXcgZmlsZSBpbiBp
+bmNsdWRlL2xpbnV4L3JwbXNnIGRpcmVjdG9yeSBmb3IgdHdvIHJlYXNvbnMgKGZyb20gbXkgcG92
+KToNCi0gYmVjYXVzZSB0aGVyZSBpcyBubyBBUEkvc3RydWN0IHNoYXJlZCB3aXRoIHVzZXIgc3Bh
+Y2UgKG9ubHkgYSBzdHJ1Y3Qgc2hhcmVkIGJldHdlZW4gZHJpdmVycykNCi0gYmVjYXVzZSB2aXJ0
+aW9fcnBtc2cuYyBkcml2ZXIgaXMgaW4gZHJpdmVycy9ycG1zZyBkaXJlY3RvcnkgYW5kIG5vdCBp
+biB2aXJ0aW8gdHJlZS4gR29hbCB3YXMgdG8gYmUgY29oZXJlbnQgd2l0aCBjIGZpbGUuDQoNCkJq
+b3JuLCB3aGF0J3MgeW91ciB2aWV3IG9uIHRoaXMgcG9pbnQ/DQoNClJlZ2FyZHMsDQpMb2ljDQo+
+IA0KPiBUaGFua3MsDQo+IFdlbmR5DQo+IA0KPiBPbiBXZWQsIERlYyA3LCAyMDE2IGF0IDEyOjM1
+IFBNLCBMb2ljIFBhbGxhcmR5IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4gd3JvdGU6DQo+ID4gUnBt
+c2cgY2hhbm5lbCBjb25maWd1cmF0aW9uIHNob3VsZCBiZSBpZGVudGljYWwgb24gaG9zdCBhbmQN
+Cj4gPiBjb3Byb2Nlc3NvciBzaWRlLg0KPiA+IFRoaXMgcGF0Y2ggcHJvcG9zZXMgYSBuZXcgc3Ry
+dWN0dXJlIG5hbWVkIHN0cnVjdCB2aXJ0aW9fcnBtc2dfY2ZnIHRvDQo+ID4gZ2F0aGVyIGFsbCBj
+b25maWd1cmF0aW9uIGluZm9ybWF0aW9uIHRvIGNoYXJhY3Rlcml6ZSB0aGUgY29tbXVuaWNhdGlv
+bg0KPiA+IGxpbmsgYW5kLg0KPiA+IFRoaXMgc3RydWN0dXJlIHdpbGwgYmUgZXhjaGFuZ2VkIHdp
+dGggY29wcm9jZXNzb3IgdmlhIHRoZSByZXNvdXJjZQ0KPiA+IHRhYmxlLCBleHBhbmRpbmcgc3Ry
+dWN0IGZ3X3JzY192ZGV2LiBJdCB3aWxsIGd1YXJhbnRlZSB0aGF0IGhvc3QgYW5kDQo+ID4gY29w
+cm9jZXNzb3Igd2lsbCBzaGFyZSB0aGUgc2FtZSBpbmZvcm1hdGlvbi4NCj4gPiB2aXJ0aW9fcnBt
+c2cgd2lsbCBhY2Nlc3MgaXQgdGhhbmtzIHRvIHZpcnRpbyBnZXQgYW5kIHNldCBmZWF0dXJlcy4N
+Cj4gPiBQcmVzZW5jZSBvZiBzdHJ1Y3QgdmlydGlvX3JwbXNnX2NmZyBpcyBvcHRpb25hbC4NCj4g
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IExvaWMgUGFsbGFyZHkgPGxvaWMucGFsbGFyZHlAc3QuY29t
+Pg0KPiA+IC0tLQ0KPiA+ICBpbmNsdWRlL2xpbnV4L3JwbXNnL3ZpcnRpb19ycG1zZy5oIHwgMzIN
+Cj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdl
+ZCwgMzIgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9saW51
+eC9ycG1zZy92aXJ0aW9fcnBtc2cuaA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGlu
+dXgvcnBtc2cvdmlydGlvX3JwbXNnLmgNCj4gPiBiL2luY2x1ZGUvbGludXgvcnBtc2cvdmlydGlv
+X3JwbXNnLmgNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAuLjVm
+M2YwZDANCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvaW5jbHVkZS9saW51eC9ycG1zZy92
+aXJ0aW9fcnBtc2cuaA0KPiA+IEBAIC0wLDAgKzEsMzIgQEANCj4gPiArDQo+ID4gKyNpZm5kZWYg
+X0xJTlVYX1ZJUlRJT19SUE1TR19IDQo+ID4gKyNkZWZpbmUgX0xJTlVYX1ZJUlRJT19SUE1TR19I
+DQo+ID4gKw0KPiA+ICsvKiBPZmZzZXQgaW4gc3RydWN0IGZ3X3JzY192ZGV2ICovDQo+ID4gKyNk
+ZWZpbmUgUlBNU0dfQ09ORklHX09GRlNFVCAgICAwDQo+ID4gKw0KPiA+ICsvKioNCj4gPiArICog
+c3RydWN0IHZpcnRpb19ycG1zZ19jZmcgLSBvcHRpb25hbCBjb25maWd1cmF0aW9uIGZpZWxkIGZv
+ciB2aXJ0aW8NCj4gPiArcnBtc2cNCj4gPiArICogcHJvdmlkZWQgYXQgcHJvYmUgdGltZSBieSB2
+aXJ0aW8gKGdldC9zZXQpDQo+ID4gKyAqIEBpZDogdmlydGlvIGNmZyBpZCAoYXMgaW4gdmlydGlv
+X2lkcy5oKQ0KPiA+ICsgKiBAdmVyc2lvbjogdmlydGlvX3JwbXNnX2NmZyBzdHJ1Y3R1cmUgdmVy
+c2lvbiBudW1iZXINCj4gPiArICogQHZhOiB2aXJ0dWFsIGFkZHJlc3MgKHVzZWQgd2hlbiBidWZm
+ZXIgYWxsb2NhdGVkIGJ5IGxvdyBsZXZlbA0KPiA+ICtkcml2ZXIpDQo+ID4gKyAqIEBkYTogZGV2
+aWNlIGFkZHJlc3MNCj4gPiArICogQHBhOiBwaHlzaWNhbCBhZGRyZXNzDQo+ID4gKyAqIEBsZW46
+IGxlbmd0aCAoaW4gYnl0ZXMpDQo+ID4gKyAqIEBidWZfc2l6ZTogc2l6ZSBvZiBycG1zZyBidWZm
+ZXIgc2l6ZSAoZGVmaW5lZCBieSBmaXJtd2FyZSBlbHNlIGRlZmF1bHQNCj4gdmFsdWUNCj4gPiAr
+ICogICAgICAgICAgIHVzZWQpDQo+ID4gKyAqIEByZXNlcnZlZDogcmVzZXJ2ZWQgKG11c3QgYmUg
+emVybykgICovIHN0cnVjdCB2aXJ0aW9fcnBtc2dfY2ZnIHsNCj4gPiArICAgICAgIHUzMiBpZDsN
+Cj4gPiArICAgICAgIHUzMiB2ZXJzaW9uOw0KPiA+ICsgICAgICAgdTY0IHZhOw0KPiA+ICsgICAg
+ICAgdTMyIGRhOw0KPiA+ICsgICAgICAgdTMyIHBhOw0KPiA+ICsgICAgICAgdTMyIGxlbjsNCj4g
+PiArICAgICAgIHUzMiBidWZfc2l6ZTsNCj4gPiArICAgICAgIHUzMiByZXNlcnZlZDsNCj4gPiAr
+fSBfX3BhY2tlZDsNCj4gPiArDQo+ID4gKyNlbmRpZg0KPiA+IC0tDQo+ID4gMS45LjENCj4gPg0K
+PiA+IC0tDQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
+InVuc3Vic2NyaWJlDQo+ID4gbGludXgtcmVtb3RlcHJvYyIgaW4gdGhlIGJvZHkgb2YgYSBtZXNz
+YWdlIHRvDQo+ID4gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZyBNb3JlIG1ham9yZG9tbyBpbmZv
+IGF0DQo+ID4gaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sDQo=
