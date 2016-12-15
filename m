@@ -1,12 +1,12 @@
 Return-Path: <akdwived@codeaurora.org>
 From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 Subject: [PATCH v5 2/7] remoteproc: qcom: Add and initialize proxy and active clocks.
-Date: Thu, 15 Dec 2016 17:51:25 +0530
-Message-Id: <1481804490-8583-3-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
-References: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
+Date: Thu, 15 Dec 2016 17:35:41 +0530
+Message-Id: <1481803546-31592-3-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1481803546-31592-1-git-send-email-akdwived@codeaurora.org>
+References: <1481803546-31592-1-git-send-email-akdwived@codeaurora.org>
 To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 Certain regulators and clocks need voting by rproc on behalf of hexagon
