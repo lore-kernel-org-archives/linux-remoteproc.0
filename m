@@ -1,115 +1,108 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH] drivers: remoteproc: constify rproc_ops structures
-Date: Sat, 17 Dec 2016 16:59:36 +0530
-Message-Id: <1481974176-19912-1-git-send-email-bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v5 1/7] remoteproc: qcom: Add private resource struct and new compatible.
+Date: Thu, 15 Dec 2016 17:51:24 +0530
+Message-Id: <1481804490-8583-2-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
+References: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Declare rproc_ops structures as const as they are only passed as an
-argument to the function rproc_alloc. This argument is of type const, so
-rproc_ops structures having this property can be declared const too.
-Done using Coccinelle:
+Make provison for private resource specific to each compatible,
+so a private resource struct is introduced which will house clock,
+regulator etc. related info corresponding to each compatible to use
+later to initialize hardware. Also add new compatible in documentation.
 
-@r1 disable optional_qualifier @
-identifier i;
-position p;
-@@
-static struct rproc_ops i@p = {...};
-
-@ok1@
-identifier r1.i;
-position p;
-@@
-rproc_alloc(...,&i@p,...)
-
-@bad@
-position p!={r1.p,ok1.p};
-identifier r1.i;
-@@
-i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r1.i;
-@@
-+const
-struct rproc_ops i;
-
-File sizes before:
-   text	   data	    bss	    dec	    hex	filename
-   1258	    416	      0	   1674	    68a remoteproc/omap_remoteproc.o
-   2402	    240	      0	   2642	    a52 remoteproc/st_remoteproc.o
-   2064	    272	      0	   2336	    920 remoteproc/st_slim_rproc.o
-   2160	    240	      0	   2400	    960 remoteproc/wkup_m3_rproc.o
-
-File sizes after:
-   text	   data	    bss	    dec	    hex	filename
-   1297	    368	      0	   1665	    681 remoteproc/omap_remoteproc.o
-   2434	    192	      0	   2626	    a42 remoteproc/st_remoteproc.o
-   2112	    240	      0	   2352	    930 remoteproc/st_slim_rproc.o
-   2200	    192	      0	   2392	    958 remoteproc/wkup_m3_rproc.o
-
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 ---
- drivers/remoteproc/omap_remoteproc.c | 2 +-
- drivers/remoteproc/st_remoteproc.c   | 2 +-
- drivers/remoteproc/st_slim_rproc.c   | 2 +-
- drivers/remoteproc/wkup_m3_rproc.c   | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  4 +++-
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 24 +++++++++++++++++++---
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index fa63bf2..a96ce90 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -177,7 +177,7 @@ static int omap_rproc_stop(struct rproc *rproc)
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 57cb49e..674ebc6 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -7,7 +7,9 @@ on the Qualcomm Hexagon core.
+ 	Usage: required
+ 	Value type: <string>
+ 	Definition: must be one of:
+-		    "qcom,q6v5-pil"
++		"qcom,q6v5-pil"
++		"qcom,msm8916-mss-pil"
++		"qcom,msm8974-mss-pil"
+ 
+ - reg:
+ 	Usage: required
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 2e0caaa..d875448 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -30,13 +30,13 @@
+ #include <linux/reset.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/soc/qcom/smem_state.h>
++#include <linux/of_device.h>
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_mdt_loader.h"
+ 
+ #include <linux/qcom_scm.h>
+ 
+-#define MBA_FIRMWARE_NAME		"mba.b00"
+ #define MPSS_FIRMWARE_NAME		"modem.mdt"
+ 
+ #define MPSS_CRASH_REASON_SMEM		421
+@@ -93,6 +93,10 @@
+ #define QDSS_BHS_ON			BIT(21)
+ #define QDSS_LDO_BYP			BIT(22)
+ 
++struct rproc_hexagon_res {
++	const char *hexagon_mba_image;
++};
++
+ struct q6v5 {
+ 	struct device *dev;
+ 	struct rproc *rproc;
+@@ -805,12 +809,17 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+ 
+ static int q6v5_probe(struct platform_device *pdev)
+ {
++	const struct rproc_hexagon_res *desc;
+ 	struct q6v5 *qproc;
+ 	struct rproc *rproc;
+ 	int ret;
+ 
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
+-			    MBA_FIRMWARE_NAME, sizeof(*qproc));
++			    desc->hexagon_mba_image, sizeof(*qproc));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+ 		return -ENOMEM;
+@@ -890,8 +899,17 @@ static int q6v5_remove(struct platform_device *pdev)
  	return 0;
  }
  
--static struct rproc_ops omap_rproc_ops = {
-+static const struct rproc_ops omap_rproc_ops = {
- 	.start		= omap_rproc_start,
- 	.stop		= omap_rproc_stop,
- 	.kick		= omap_rproc_kick,
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index da4e152..f21787b 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -107,7 +107,7 @@ static int st_rproc_stop(struct rproc *rproc)
- 	return sw_err ?: pwr_err;
- }
- 
--static struct rproc_ops st_rproc_ops = {
-+static const struct rproc_ops st_rproc_ops = {
- 	.start		= st_rproc_start,
- 	.stop		= st_rproc_stop,
++static const struct rproc_hexagon_res msm8916_mss = {
++	.hexagon_mba_image = "mba.mbn",
++};
++
++static const struct rproc_hexagon_res msm8974_mss = {
++	.hexagon_mba_image = "mba.b00",
++};
+ static const struct of_device_id q6v5_of_match[] = {
+-	{ .compatible = "qcom,q6v5-pil", },
++	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
++	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
++	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+ 	{ },
  };
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index 507716c..6cfd862 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -200,7 +200,7 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return va;
- }
  
--static struct rproc_ops slim_rproc_ops = {
-+static const struct rproc_ops slim_rproc_ops = {
- 	.start		= slim_rproc_start,
- 	.stop		= slim_rproc_stop,
- 	.da_to_va       = slim_rproc_da_to_va,
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 18175d0..1ada0e5 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -111,7 +111,7 @@ static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return va;
- }
- 
--static struct rproc_ops wkup_m3_rproc_ops = {
-+static const struct rproc_ops wkup_m3_rproc_ops = {
- 	.start		= wkup_m3_rproc_start,
- 	.stop		= wkup_m3_rproc_stop,
- 	.da_to_va	= wkup_m3_rproc_da_to_va,
 -- 
-1.9.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
