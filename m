@@ -1,12 +1,12 @@
 Return-Path: <akdwived@codeaurora.org>
 From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 Subject: [PATCH v5 6/7] remoteproc: qcom: Implement Hexagon core specific changes.
-Date: Thu, 15 Dec 2016 17:51:29 +0530
-Message-Id: <1481804490-8583-7-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
-References: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
+Date: Thu, 15 Dec 2016 17:35:45 +0530
+Message-Id: <1481803546-31592-7-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1481803546-31592-1-git-send-email-akdwived@codeaurora.org>
+References: <1481803546-31592-1-git-send-email-akdwived@codeaurora.org>
 To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 This change introduces appropriate additional steps in reset sequence and
@@ -15,8 +15,8 @@ stop routine corresponding to hexagon v56 1.5.0 on mss for msm8996.
 Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 ---
  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 179 ++++++++++++++++++---
- 2 files changed, 155 insertions(+), 25 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 180 ++++++++++++++++++---
+ 2 files changed, 156 insertions(+), 25 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
 index 674ebc6..06f51a6 100644
@@ -31,7 +31,7 @@ index 674ebc6..06f51a6 100644
  - reg:
  	Usage: required
 diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 1018b8f..fb04461 100644
+index 1018b8f..4ef80ca 100644
 --- a/drivers/remoteproc/qcom_q6v5_pil.c
 +++ b/drivers/remoteproc/qcom_q6v5_pil.c
 @@ -31,6 +31,7 @@
@@ -128,12 +128,12 @@ index 1018b8f..fb04461 100644
 +		/* Override the ACC value if required */
 +		writel(QDSP6SS_ACC_OVERRIDE_VAL,
 +			qproc->reg_base + QDSP6SS_STRAP_ACC);
-+
+ 
 +		/* Assert resets, stop core */
 +		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
 +		val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
 +		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
++
 +		/* BHS require xo cbcr to be enabled */
 +		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
 +		val |= 0x1;
@@ -247,7 +247,15 @@ index 1018b8f..fb04461 100644
  	reset_control_assert(qproc->mss_restart);
  	q6v5_clk_disable(qproc->dev, qproc->active_clks,
  				qproc->active_clk_count);
-@@ -987,6 +1088,7 @@ static int q6v5_probe(struct platform_device *pdev)
+@@ -920,6 +1021,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	const struct rproc_hexagon_res *desc;
+ 	struct q6v5 *qproc;
+ 	struct rproc *rproc;
++	const struct rproc_hexagon_res *desc;
+ 	int ret;
+ 
+ 	desc = of_device_get_match_data(&pdev->dev);
+@@ -987,6 +1089,7 @@ static int q6v5_probe(struct platform_device *pdev)
  	if (ret)
  		goto free_rproc;
  
@@ -255,7 +263,7 @@ index 1018b8f..fb04461 100644
  	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
  	if (ret < 0)
  		goto free_rproc;
-@@ -1031,6 +1133,29 @@ static int q6v5_remove(struct platform_device *pdev)
+@@ -1031,6 +1134,29 @@ static int q6v5_remove(struct platform_device *pdev)
  	return 0;
  }
  
@@ -285,7 +293,7 @@ index 1018b8f..fb04461 100644
  static const struct rproc_hexagon_res msm8916_mss = {
  	.hexagon_mba_image = "mba.mbn",
  	.proxy_supply = (struct qcom_mss_reg_res[]) {
-@@ -1058,6 +1183,7 @@ static int q6v5_remove(struct platform_device *pdev)
+@@ -1058,6 +1184,7 @@ static int q6v5_remove(struct platform_device *pdev)
  	},
  	.proxy_clk_string = (char*[]){"xo", NULL},
  	.active_clk_string = (char*[]){"iface", "bus", "mem", NULL},
@@ -293,7 +301,7 @@ index 1018b8f..fb04461 100644
  };
  
  static const struct rproc_hexagon_res msm8974_mss = {
-@@ -1087,11 +1213,14 @@ static int q6v5_remove(struct platform_device *pdev)
+@@ -1087,11 +1214,14 @@ static int q6v5_remove(struct platform_device *pdev)
  	},
  	.proxy_clk_string = (char*[]){"xo", NULL},
  	.active_clk_string = (char*[]){"iface", "bus", "mem", NULL},
