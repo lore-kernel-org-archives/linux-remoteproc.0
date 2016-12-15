@@ -1,10 +1,10 @@
 Return-Path: <akdwived@codeaurora.org>
 From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 Subject: [PATCH v5 0/7] remoteproc: qcom: Add support of mss rproc for msm8996.
-Date: Thu, 15 Dec 2016 17:51:23 +0530
-Message-Id: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
+Date: Thu, 15 Dec 2016 17:35:39 +0530
+Message-Id: <1481803546-31592-1-git-send-email-akdwived@codeaurora.org>
 To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 This is patchset v5 having modifications as per comment on patchset v4.
@@ -27,9 +27,9 @@ Avaneesh Kumar Dwivedi (7):
 
  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   5 +-
  drivers/clk/qcom/gcc-msm8996.c                     |   1 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 561 ++++++++++++++++-----
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 562 ++++++++++++++++-----
  include/dt-bindings/clock/qcom,gcc-msm8996.h       |   1 +
- 4 files changed, 451 insertions(+), 117 deletions(-)
+ 4 files changed, 452 insertions(+), 117 deletions(-)
 
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
