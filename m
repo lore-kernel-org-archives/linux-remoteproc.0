@@ -1,22 +1,18 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-Date: Fri, 16 Dec 2016 10:39:16 +0000
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [STLinux Kernel] [PATCH v2 1/1] rpmsg: virtio_rpmsg_bus: fix
- channel creation
-Message-ID: <20161216103916.GA13385@griffinp-ThinkPad-X1-Carbon-2nd>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 15 Dec 2016 21:09:12 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/1] rpmsg: virtio_rpmsg_bus: fix channel creation
+Message-ID: <20161216050912.GS3439@tuxbot>
 References: <1481813396-1529-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1481813396-1529-1-git-send-email-loic.pallardy@st.com>
 To: Loic Pallardy <loic.pallardy@st.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Cc: ohad@wizery.com, lee.jones@linaro.org, linux-remoteproc@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Loic,
-
-On Thu, 15 Dec 2016, Loic Pallardy wrote:
+On Thu 15 Dec 06:49 PST 2016, Loic Pallardy wrote:
 
 > Since commit 4dffed5b3ac796b ("rpmsg: Name rpmsg devices based on
 > channel id"), it is no more possible for a firmware to register twice
@@ -30,12 +26,34 @@ On Thu, 15 Dec 2016, Loic Pallardy wrote:
 > create an unique identifier.
 > 
 > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+
+Looks good, thanks.
+
+Regards,
+Bjorn
+
 > ---
 > v2: Update commit header with commit ID generating regression
 > Fix rpmsg_core instead of virtio_rpmsg
-
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
-
-regards,
-
-Peter.
+> 
+>  drivers/rpmsg/rpmsg_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index a79cb5a..18c73e0 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -453,8 +453,8 @@ int rpmsg_register_device(struct rpmsg_device *rpdev)
+>  	struct device *dev = &rpdev->dev;
+>  	int ret;
+>  
+> -	dev_set_name(&rpdev->dev, "%s:%s",
+> -		     dev_name(dev->parent), rpdev->id.name);
+> +	dev_set_name(&rpdev->dev, "%s.%d.%d.%s", dev_name(dev->parent),
+> +		     rpdev->src, rpdev->dst, rpdev->id.name);
+>  
+>  	rpdev->dev.bus = &rpmsg_bus;
+>  	rpdev->dev.release = rpmsg_release_device;
+> -- 
+> 1.9.1
+> 
