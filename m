@@ -1,69 +1,113 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 16 Dec 2016 11:28:39 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <loic.pallardy@st.com>
 Subject: Re: [PATCH 2/2] remoteproc: Remove firmware_loading_complete
-Message-ID: <20161216192839.GT3439@tuxbot>
 References: <1481846632-4778-1-git-send-email-spjoshi@codeaurora.org>
  <1481846632-4778-2-git-send-email-spjoshi@codeaurora.org>
- <948b5b23-9440-00ef-7cf9-eca62ea93165@st.com>
+From: loic pallardy <loic.pallardy@st.com>
+Message-ID: <948b5b23-9440-00ef-7cf9-eca62ea93165@st.com>
+Date: Fri, 16 Dec 2016 09:26:52 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <948b5b23-9440-00ef-7cf9-eca62ea93165@st.com>
-To: loic pallardy <loic.pallardy@st.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Santosh Shilimkar <ssantosh@kernel.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+In-Reply-To: <1481846632-4778-2-git-send-email-spjoshi@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Sarangdhar Joshi <spjoshi@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 16 Dec 00:26 PST 2016, loic pallardy wrote:
 
-> 
-> 
-> On 12/16/2016 01:03 AM, Sarangdhar Joshi wrote:
-> >rproc_del() waits on firmware_loading_complete in order to
-> >make sure rproc_add() completed successfully before calling
-> >rproc_shutdown().  However since rproc_add() will always be
-> >called before rproc_del(), we do not need to wait on
-> >firmware_loading_complete. Drop this completion variable
-> >altogether.
-> >
-> Hi,
-> 
-> firmware_loading_complete is used to synchronize all operations on rproc
-> with parallel work launched by request_firmware_nowait.
 
-We had a deadlock scenario in this code, where a call to rproc_boot()
-would grab the rproc mutex and the request_firmware_nowait() callback
-would wait on this lock before it would signal the completion that the
-rproc_boot() was waiting for.
+On 12/16/2016 01:03 AM, Sarangdhar Joshi wrote:
+> rproc_del() waits on firmware_loading_complete in order to
+> make sure rproc_add() completed successfully before calling
+> rproc_shutdown().  However since rproc_add() will always be
+> called before rproc_del(), we do not need to wait on
+> firmware_loading_complete. Drop this completion variable
+> altogether.
+>
+Hi,
 
-As the request_firmware_nowait() doesn't do anything other than handle
-auto_boot and signal the completion - and there is an internal sleep
-mechanism for handling concurrent request_firmware calls - I posted a
-patch and dropped the rproc_boot() wait thing.
+firmware_loading_complete is used to synchronize all operations on rproc 
+with parallel work launched by request_firmware_nowait.
+rproc_add could be done and firmware loading still pending. In that case 
+rproc_del mustn't be called before end of the procedure.
 
-> rproc_add could be done and firmware loading still pending. In that case
-> rproc_del mustn't be called before end of the procedure.
-
-You're right.
-
-We might have an outstanding request_firmware_nowait() when we hit
-rproc_del() and we might free the underlaying rproc context.
-
-Holding a reference over the request_firmware_nowait() would solve this,
-but would cause issues if we get a rproc_add() from the same driver
-(e.g. after module unload/load) before the firmware timer has fired -
-and released the resources.
-
-This issue could be remedied by moving the rproc_delete_debug_dir() to
-rproc_del() and aim for not having any objects exposed outside the
-remoteproc core once rproc_del() returns.
-
-> 
-> If you decide to remove this synchronization you need either to modify rproc
-> boot sequence or to replace it by something else.
-> 
-
-I agree.
+If you decide to remove this synchronization you need either to modify 
+rproc boot sequence or to replace it by something else.
 
 Regards,
-Bjorn
+Loic
+
+> Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+> ---
+>
+> Sending this patch again since I had missed usage of
+> firmware_loading_complete in drivers/soc/ti/wkup_m3_ipc.c
+>
+>  drivers/remoteproc/remoteproc_core.c | 12 +-----------
+>  include/linux/remoteproc.h           |  2 --
+>  2 files changed, 1 insertion(+), 13 deletions(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 953ee29..862fa4e 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -975,17 +975,12 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+>  		rproc_boot(rproc);
+>
+>  	release_firmware(fw);
+> -	/* allow rproc_del() contexts, if any, to proceed */
+> -	complete_all(&rproc->firmware_loading_complete);
+>  }
+>
+>  static int rproc_add_virtio_devices(struct rproc *rproc)
+>  {
+>  	int ret;
+>
+> -	/* rproc_del() calls must wait until async loader completes */
+> -	init_completion(&rproc->firmware_loading_complete);
+> -
+>  	/*
+>  	 * We must retrieve early virtio configuration info from
+>  	 * the firmware (e.g. whether to register a virtio device,
+> @@ -997,10 +992,8 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
+>  	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
+>  				      rproc->firmware, &rproc->dev, GFP_KERNEL,
+>  				      rproc, rproc_fw_config_virtio);
+> -	if (ret < 0) {
+> +	if (ret < 0)
+>  		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
+> -		complete_all(&rproc->firmware_loading_complete);
+> -	}
+>
+>  	return ret;
+>  }
+> @@ -1483,9 +1476,6 @@ int rproc_del(struct rproc *rproc)
+>  	if (!rproc)
+>  		return -EINVAL;
+>
+> -	/* if rproc is just being registered, wait */
+> -	wait_for_completion(&rproc->firmware_loading_complete);
+> -
+>  	/* if rproc is marked always-on, rproc_add() booted it */
+>  	/* TODO: make sure this works with rproc->power > 1 */
+>  	if (rproc->auto_boot)
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e2f3a32..19d84a0 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -397,7 +397,6 @@ enum rproc_crash_type {
+>   * @num_traces: number of trace buffers
+>   * @carveouts: list of physically contiguous memory allocations
+>   * @mappings: list of iommu mappings we initiated, needed on shutdown
+> - * @firmware_loading_complete: marks e/o asynchronous firmware loading
+>   * @bootaddr: address of first instruction to boot rproc with (optional)
+>   * @rvdevs: list of remote virtio devices
+>   * @subdevs: list of subdevices, to following the running state
+> @@ -428,7 +427,6 @@ struct rproc {
+>  	int num_traces;
+>  	struct list_head carveouts;
+>  	struct list_head mappings;
+> -	struct completion firmware_loading_complete;
+>  	u32 bootaddr;
+>  	struct list_head rvdevs;
+>  	struct list_head subdevs;
+>
