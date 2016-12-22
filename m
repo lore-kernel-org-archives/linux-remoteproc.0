@@ -1,19 +1,17 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 30 Dec 2016 04:06:55 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH] drivers: remoteproc: constify rproc_ops structures
-Message-ID: <20161230120655.GB9118@builder>
 References: <1481974176-19912-1-git-send-email-bhumirks@gmail.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <aebde134-f737-0873-a6fb-a0d1b043e7a5@ti.com>
+Date: Thu, 22 Dec 2016 15:22:01 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1481974176-19912-1-git-send-email-bhumirks@gmail.com>
-To: Bhumika Goyal <bhumirks@gmail.com>
-Cc: julia.lawall@lip6.fr, ohad@wizery.com, patrice.chotard@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Bhumika Goyal <bhumirks@gmail.com>, julia.lawall@lip6.fr, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Sat 17 Dec 03:29 PST 2016, Bhumika Goyal wrote:
-
+On 12/17/2016 05:29 AM, Bhumika Goyal wrote:
 > Declare rproc_ops structures as const as they are only passed as an
 > argument to the function rproc_alloc. This argument is of type const, so
 > rproc_ops structures having this property can be declared const too.
@@ -59,14 +57,69 @@ On Sat 17 Dec 03:29 PST 2016, Bhumika Goyal wrote:
 > 
 > Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
 
-Thanks Bhumika, this looks good.
+Thanks for the cleanup. The da8xx_remoteproc.c file could also use the
+same fix.
 
-But as Suman already asked. Is there any reason why da8xx_remoteproc.c
-did not get updated? It looks like the same change would apply there.
+regards
+Suman
 
-
-Unless I'm missing something, please update the patch and I'll be happy
-to apply it.
-
-Regards,
-Bjorn
+> ---
+>  drivers/remoteproc/omap_remoteproc.c | 2 +-
+>  drivers/remoteproc/st_remoteproc.c   | 2 +-
+>  drivers/remoteproc/st_slim_rproc.c   | 2 +-
+>  drivers/remoteproc/wkup_m3_rproc.c   | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+> index fa63bf2..a96ce90 100644
+> --- a/drivers/remoteproc/omap_remoteproc.c
+> +++ b/drivers/remoteproc/omap_remoteproc.c
+> @@ -177,7 +177,7 @@ static int omap_rproc_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static struct rproc_ops omap_rproc_ops = {
+> +static const struct rproc_ops omap_rproc_ops = {
+>  	.start		= omap_rproc_start,
+>  	.stop		= omap_rproc_stop,
+>  	.kick		= omap_rproc_kick,
+> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+> index da4e152..f21787b 100644
+> --- a/drivers/remoteproc/st_remoteproc.c
+> +++ b/drivers/remoteproc/st_remoteproc.c
+> @@ -107,7 +107,7 @@ static int st_rproc_stop(struct rproc *rproc)
+>  	return sw_err ?: pwr_err;
+>  }
+>  
+> -static struct rproc_ops st_rproc_ops = {
+> +static const struct rproc_ops st_rproc_ops = {
+>  	.start		= st_rproc_start,
+>  	.stop		= st_rproc_stop,
+>  };
+> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+> index 507716c..6cfd862 100644
+> --- a/drivers/remoteproc/st_slim_rproc.c
+> +++ b/drivers/remoteproc/st_slim_rproc.c
+> @@ -200,7 +200,7 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  	return va;
+>  }
+>  
+> -static struct rproc_ops slim_rproc_ops = {
+> +static const struct rproc_ops slim_rproc_ops = {
+>  	.start		= slim_rproc_start,
+>  	.stop		= slim_rproc_stop,
+>  	.da_to_va       = slim_rproc_da_to_va,
+> diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+> index 18175d0..1ada0e5 100644
+> --- a/drivers/remoteproc/wkup_m3_rproc.c
+> +++ b/drivers/remoteproc/wkup_m3_rproc.c
+> @@ -111,7 +111,7 @@ static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  	return va;
+>  }
+>  
+> -static struct rproc_ops wkup_m3_rproc_ops = {
+> +static const struct rproc_ops wkup_m3_rproc_ops = {
+>  	.start		= wkup_m3_rproc_start,
+>  	.stop		= wkup_m3_rproc_stop,
+>  	.da_to_va	= wkup_m3_rproc_da_to_va,
+> 
