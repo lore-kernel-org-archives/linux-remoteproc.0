@@ -1,67 +1,79 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 4/4] rpmsg: smd: Register rpmsg user space interface for edges
-Date: Fri,  2 Dec 2016 14:03:37 -0800
-Message-Id: <1480716217-23303-4-git-send-email-bjorn.andersson@linaro.org>
-In-Reply-To: <1480716217-23303-1-git-send-email-bjorn.andersson@linaro.org>
-References: <1480716217-23303-1-git-send-email-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 1/2] soc: ti: Use remoteproc auto_boot feature
+References: <1481846632-4778-1-git-send-email-spjoshi@codeaurora.org>
+ <1f5b2631-f744-a5c1-55c1-82eb27d5cbd7@ti.com>
+ <9092e066-b2ad-ee42-de5f-d66b84a10cfd@codeaurora.org>
+ <1f847af8-6bde-4645-aea4-7e9b02306e39@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <6a5a9c8a-cca7-0740-4879-dd6c01e60548@ti.com>
+Date: Fri, 23 Dec 2016 17:57:57 -0600
+MIME-Version: 1.0
+In-Reply-To: <1f847af8-6bde-4645-aea4-7e9b02306e39@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Sarangdhar Joshi <spjoshi@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Create and register a rpmsg device for use with the rpmsg user space
-interface, allowing user space to access SMD channels.
+On 12/23/2016 11:05 AM, Suman Anna wrote:
+> Hi Sarang,
+> 
+>>>
+>>> On 12/15/2016 06:03 PM, Sarangdhar Joshi wrote:
+>>>> The function wkup_m3_rproc_boot_thread waits for asynchronous
+>>>> firmware loading to complete successfully before calling
+>>>> rproc_boot(). The same can be achieved by just setting
+>>>> rproc->auto_boot flag. Change this. As a result this change
+>>>> removes wkup_m3_rproc_boot_thread and moves m3_ipc->sync_complete
+>>>> initialization to the wkup_m3_ipc_probe().
+>>>>
+>>>> Other than the current usage, the firmware_loading_complete is
+>>>> only used in rproc_del() where it's no longer needed.  This
+>>>> change is in preparation for removing firmware_loading_complete
+>>>> completely.
+>>>
+>>> Based on the comments so far, I am assuming that you are dropping this
+>>> series.
+>>
+>> No, may not be dropping this. Will try to handle it differently in
+>> rproc_del() (probably by making use of some state flag).
+>>>
+>>> In any case, this series did break our PM stack. We definitely don't
+>>> want to auto-boot the wkup_m3_rproc device, that responsibility will
+>>> need to stay with the wkup_m3_ipc driver.
+>>
+>> Which scenario did it break? Booting up rproc device before
+>> wkup_m3_ipc_probe() causes issues?
+> 
+> Yes, our state machine requires the wkup_m3_ipc driver to control the
+> boot of the wkup_m3 remoteproc. The wkup_m3 is not a typical remoteproc,
+> it is our PM master and is responsible for putting the host processor
+> into suspend and waking it up in system suspend/cpuidle paths.
+> The remoteproc infrastructure is only used for load/boot, but the Linux
+> PM state machine and communication is all controlled by the wkup_m3_ipc
+> driver.
+> 
+>>
+>> Nevertheless, I think Bjorn's suggestion of just dropping the call to
+>> wait_for_completion() and keeping kthread looks good, also because of
+>> the fact that rproc_boot() anyways calls request_firmware() and no
+>> longer needed to wait on asynchronous loading of firmware.
+> 
+> Yeah, I will have to test this, but looking at current code, this should
+> mostly be ok because of the remoteproc core changes w.r.t resource table
+> parsing.
 
-Also provide the "rpmsg_name" device attribute to expose the edge name
-in sysfs, allowing the user to write udev rules for specific rpmsg
-devices and their children.
+Tested with just the wait_for_completion() removed and it works fine. I
+can send a patch for the same if you prefer me to send it.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+regards
+Suman
 
-Changes since v1:
-- Moved rpmsg_name attribute to different patch
-
- drivers/rpmsg/qcom_smd.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 52c4ec570464..7552ef0e82ba 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1002,6 +1002,20 @@ static int qcom_smd_create_device(struct qcom_smd_channel *channel)
- 	return rpmsg_register_device(rpdev);
- }
- 
-+static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
-+{
-+	struct qcom_smd_device *qsdev;
-+
-+	qsdev = kzalloc(sizeof(*qsdev), GFP_KERNEL);
-+	if (!qsdev)
-+		return -ENOMEM;
-+
-+	qsdev->edge = edge;
-+	qsdev->rpdev.ops = &qcom_smd_device_ops;
-+	qsdev->rpdev.dev.parent = &edge->dev;
-+	return rpmsg_chrdev_register_device(&qsdev->rpdev);
-+}
-+
- /*
-  * Allocate the qcom_smd_channel object for a newly found smd channel,
-  * retrieving and validating the smem items involved.
-@@ -1357,6 +1371,12 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
- 		goto unregister_dev;
- 	}
- 
-+	ret = qcom_smd_create_chrdev(edge);
-+	if (ret) {
-+		dev_err(&edge->dev, "failed to register chrdev for edge\n");
-+		goto unregister_dev;
-+	}
-+
- 	schedule_work(&edge->scan_work);
- 
- 	return edge;
--- 
-2.5.0
+> 
+> regards
+> Suman
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
