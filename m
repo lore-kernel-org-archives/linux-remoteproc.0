@@ -1,47 +1,28 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v1 3/3] remoteproc: core: don't allocate carveout if pa or da are defined
-Date: Wed, 7 Dec 2016 21:33:46 +0100
-Message-ID: <1481142826-15528-4-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
-References: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 22 Dec 2016 16:15:04 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 4/7] remoteproc: qcom: Modify regulator enable and
+ disable interface.
+Message-ID: <20161223001504.GC10519@minitux>
+References: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
+ <1481804490-8583-5-git-send-email-akdwived@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1481804490-8583-5-git-send-email-akdwived@codeaurora.org>
+To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remoteproc doesn't check if firmware requests fixed
-addresses for carveout regions.
-Current assumption is that platform specific driver is in
-charge of coprocessor specific memory region allocation and
-remoteproc core doesn't have to handle them.
-If a da or a pa is specified in firmware resource table, remoteproc
-core doesn't have to perform any allocation.
-Access to carveout will be done thanks to rproc_da_to_pa function,
-which will provide virtual address on carveout region allocated
-by platform specific driver.
+On Thu 15 Dec 04:21 PST 2016, Avaneesh Kumar Dwivedi wrote:
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> Regulator enable/disable routine will get additional input parameter
+> of regulator info and count, It will read regulator info and will do
+> appropriate voltage and load configuration before turning them up/down.
+> 
+> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f0f6ec1..022f9a6 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -625,6 +625,11 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
- 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
- 
-+	if (rsc->pa != FW_RSC_ADDR_ANY || rsc->da != FW_RSC_ADDR_ANY) {
-+		dev_dbg(dev, "carveout already allocated by low level driver\n");
-+		return 0;
-+	}
-+
- 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
- 	if (!carveout)
- 		return -ENOMEM;
--- 
-1.9.1
+Looks good, please squash into patch 3.
+
+Regards,
+Bjorn
