@@ -1,135 +1,268 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH 1/2] soc: ti: Use remoteproc auto_boot feature
-Date: Thu, 15 Dec 2016 16:03:51 -0800
-Message-Id: <1481846632-4778-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>
+Return-Path: <akdwived@codeaurora.org>
+Subject: Re: [PATCH v5 6/7] remoteproc: qcom: Implement Hexagon core specific
+ changes.
+References: <1481804490-8583-1-git-send-email-akdwived@codeaurora.org>
+ <1481804490-8583-7-git-send-email-akdwived@codeaurora.org>
+ <20161223010427.GE10519@minitux>
+From: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Message-ID: <ab7d2653-97cb-75ca-72e2-39a742ce4e53@codeaurora.org>
+Date: Fri, 30 Dec 2016 15:48:00 +0530
+MIME-Version: 1.0
+In-Reply-To: <20161223010427.GE10519@minitux>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The function wkup_m3_rproc_boot_thread waits for asynchronous
-firmware loading to complete successfully before calling
-rproc_boot(). The same can be achieved by just setting
-rproc->auto_boot flag. Change this. As a result this change
-removes wkup_m3_rproc_boot_thread and moves m3_ipc->sync_complete
-initialization to the wkup_m3_ipc_probe().
 
-Other than the current usage, the firmware_loading_complete is
-only used in rproc_del() where it's no longer needed.  This
-change is in preparation for removing firmware_loading_complete
-completely.
 
-CC: Dave Gerlach <d-gerlach@ti.com>
-CC: Suman Anna <s-anna@ti.com>
-CC: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
----
+On 12/23/2016 6:34 AM, Bjorn Andersson wrote:
+> On Thu 15 Dec 04:21 PST 2016, Avaneesh Kumar Dwivedi wrote:
+>
+>> +/* QDSP6v56 parameters */
+>> +#define QDSP6v56_LDO_BYP                BIT(25)
+>> +#define QDSP6v56_BHS_ON                 BIT(24)
+>> +#define QDSP6v56_CLAMP_WL               BIT(21)
+>> +#define QDSP6v56_CLAMP_QMC_MEM          BIT(22)
+>> +#define HALT_CHECK_MAX_LOOPS            200
+>> +#define QDSP6SS_XO_CBCR                 0x0038
+> Indent these with tabs, like the others.
+Ok.
+>
+>> +#define QDSP6SS_ACC_OVERRIDE_VAL	0x20
+>> +
+>>   struct reg_info {
+>>   	struct regulator *reg;
+>>   	int uV;
+>> @@ -111,6 +123,7 @@ struct rproc_hexagon_res {
+>>   	struct qcom_mss_reg_res active_supply[2];
+>>   	char **proxy_clk_string;
+>>   	char **active_clk_string;
+>> +	int hexagon_ver;
+>>   };
+>>   
+>>   struct q6v5 {
+>> @@ -152,8 +165,14 @@ struct q6v5 {
+>>   	phys_addr_t mpss_reloc;
+>>   	void *mpss_region;
+>>   	size_t mpss_size;
+>> +	int hexagon_ver;
+> Please name this "version" instead, there's little confusion to what it
+> is.
+OK.
+>>   };
+>>   
+>> +enum {
+>> +	MSS_MSM8916, /*hexagon on msm8916*/
+>> +	MSS_MSM8974, /*hexagon on msm8974*/
+>> +	MSS_MSM8996, /*hexagon on msm8996*/
+> You can skip the comments now.
+OK.
+>
+>> +};
+>>   
+>>   static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+>>   				const struct qcom_mss_reg_res *reg_res)
+>> @@ -341,35 +360,107 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
+>>   
+>>   static int q6v5proc_reset(struct q6v5 *qproc)
+>>   {
+>> -	u32 val;
+>> +	u64 val;
+>>   	int ret;
+>> +	int i;
+>>   
+>> -	/* Assert resets, stop core */
+>> -	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> -	val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
+>> -	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>>   
+>> -	/* Enable power block headswitch, and wait for it to stabilize */
+>> -	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= QDSS_BHS_ON | QDSS_LDO_BYP;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	udelay(1);
+>> -
+>> -	/*
+>> -	 * Turn on memories. L2 banks should be done individually
+>> -	 * to minimize inrush current.
+>> -	 */
+>> -	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
+>> -		Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_L2DATA_SLP_NRET_N_2;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_L2DATA_SLP_NRET_N_1;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> -	val |= Q6SS_L2DATA_SLP_NRET_N_0;
+>> -	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	if (qproc->hexagon_ver == 0x2) {
+> == MSS_MSM8996
+OK.
+>> +		/* Override the ACC value if required */
+>> +		writel(QDSP6SS_ACC_OVERRIDE_VAL,
+>> +			qproc->reg_base + QDSP6SS_STRAP_ACC);
+>> +
+>> +		/* Assert resets, stop core */
+>> +		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> +		val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
+>> +		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>>   
+>> +		/* BHS require xo cbcr to be enabled */
+>> +		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
+>> +		val |= 0x1;
+>> +		writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
+> Please add a comment here, describing what we're waiting for (rather
+> than just "a magical bit 31")
+In off condition bit 31 (CLKOFF) bit is set as 1, when we write 0x1 to 
+this register and clock is turned on it become 0x0.
+will add appropriate comment.
+>
+>> +		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
+>> +				val, !(val & BIT(31)), 1, HALT_CHECK_MAX_LOOPS);
+>> +		if (ret) {
+>> +			dev_err(qproc->dev,
+>> +				"xo cbcr enabling timed out (rc:%d)\n", ret);
+>> +			return ret;
+>> +		}
+>> +		if ((val & BIT(31))) {
+> If bit 31 is set when the readl_poll_timeout() hits the timeout the
+> condition will evaluate to false and "ret" will be -ETIMEDOUT. So I
+> don't think this can happen.
+Sure this is not required. Will remove it
+>> +			dev_err(qproc->dev,
+>> +				"Failed to enable xo branch clock.\n");
+>> +			return -EINVAL;
+>> +		}
+>> +		/*
+>> +		 * Enable power block headswitch,
+>> +		 * and wait for it to stabilize
+> This comment fits within 80 characters, so no need to line wrap it.
+OK, i had wrapped it because i was getting warning on running 
+checkpatch.pl, if fit in one line without warning will turn it into one 
+line comment.
+>> +		 */
+>> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= QDSP6v56_BHS_ON;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		udelay(1);
+> Please insert a single empty line here, to create some separation
+> between the "steps".
+OK.
+>
+>> +		/* Put LDO in bypass mode */
+>> +		val |= QDSP6v56_LDO_BYP;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		/*
+>> +		 * Deassert QDSP6 compiler memory clamp
+>> +		 */
+>> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val &= ~QDSP6v56_CLAMP_QMC_MEM;
+>> +		writel_relaxed(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> Please drop the _relaxed
+Sorry for repeated comments on this. Will do it for sure.
+>
+>> +
+>> +		/* Deassert memory peripheral sleep and L2 memory standby */
+>> +		val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +		/* Turn on L1, L2, ETB and JU memories 1 at a time */
+>> +		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+>> +		for (i = 19; i >= 0; i--) {
+>> +			val |= BIT(i);
+>> +			writel(val, qproc->reg_base +
+>> +						QDSP6SS_MEM_PWR_CTL);
+>> +			/*
+>> +			 * Wait for 1us for both memory peripheral and
+>> +			 * data array to turn on.
+>> +			 */
+> /* Read back value to ensure the write is done */
+>
+> And move the 1us comment below the read.
+Sure.
+>
+>> +			 val |= readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+> Please correct the indentation of this line.
+OK.
+>
+>> +			udelay(1);
+>> +		}
+>> +		/* Remove word line clamp */
+>> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val &= ~QDSP6v56_CLAMP_WL;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	} else {
+>> +		/* Assert resets, stop core */
+>> +		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> +		val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
+>> +		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>> +		/*
+>> +		 * Enable power block headswitch,
+>> +		 * and wait for it to stabilize
+>> +		 */
+>> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= QDSS_BHS_ON | QDSS_LDO_BYP;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		udelay(1);
+>> +
+>> +		/*
+>> +		 * Turn on memories. L2 banks should be done individually
+>> +		 * to minimize inrush current.
+>> +		 */
+>> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
+>> +			Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_L2DATA_SLP_NRET_N_2;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_L2DATA_SLP_NRET_N_1;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +		val |= Q6SS_L2DATA_SLP_NRET_N_0;
+>> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	}
+>>   	/* Remove IO clamp */
+>>   	val &= ~Q6SS_CLAMP_IO;
+>>   	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> @@ -664,6 +755,7 @@ static int q6v5_stop(struct rproc *rproc)
+>>   {
+>>   	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+>>   	int ret;
+>> +	int val;
+>>   
+>>   	qproc->running = false;
+>>   
+>> @@ -681,6 +773,15 @@ static int q6v5_stop(struct rproc *rproc)
+>>   	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+>>   	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
+>>   
+>> +	if (qproc->hexagon_ver == 0x2) {
+> == MSS_MSM8996
+OK
+>> +		/*
+>> +		 * To avoid high MX current during LPASS/MSS restart.
+>> +		 */
+>> +		val = readl_relaxed(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> Please no _relaxed()
+OK
+>
+>> +		val |= Q6SS_CLAMP_IO | QDSP6v56_CLAMP_WL |
+>> +			QDSP6v56_CLAMP_QMC_MEM;
+>> +		writel_relaxed(val,	qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> Dito
+OK
+>
+>> +	}
+>>   	reset_control_assert(qproc->mss_restart);
+>>   	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+>>   				qproc->active_clk_count);
+> Regards,
+> Bjorn
 
-Hi Suman,
-
-Unfortunately, I don't have a TI device and couldn't test this
-change. Is it possible for you to test this change on TI device?
-
-Thanks in advance.
-
-Regards,
-Sarang
-
- drivers/remoteproc/wkup_m3_rproc.c |  2 +-
- drivers/soc/ti/wkup_m3_ipc.c       | 35 ++---------------------------------
- 2 files changed, 3 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 18175d0..79ea022 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -167,7 +167,7 @@ static int wkup_m3_rproc_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
--	rproc->auto_boot = false;
-+	rproc->auto_boot = true;
- 
- 	wkupm3 = rproc->priv;
- 	wkupm3->rproc = rproc;
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 8823cc8..31090d70 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -17,7 +17,6 @@
- 
- #include <linux/err.h>
- #include <linux/kernel.h>
--#include <linux/kthread.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/module.h>
-@@ -365,22 +364,6 @@ void wkup_m3_ipc_put(struct wkup_m3_ipc *m3_ipc)
- }
- EXPORT_SYMBOL_GPL(wkup_m3_ipc_put);
- 
--static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
--{
--	struct device *dev = m3_ipc->dev;
--	int ret;
--
--	wait_for_completion(&m3_ipc->rproc->firmware_loading_complete);
--
--	init_completion(&m3_ipc->sync_complete);
--
--	ret = rproc_boot(m3_ipc->rproc);
--	if (ret)
--		dev_err(dev, "rproc_boot failed\n");
--
--	do_exit(0);
--}
--
- static int wkup_m3_ipc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -388,7 +371,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- 	phandle rproc_phandle;
- 	struct rproc *m3_rproc;
- 	struct resource *res;
--	struct task_struct *task;
- 	struct wkup_m3_ipc *m3_ipc;
- 
- 	m3_ipc = devm_kzalloc(dev, sizeof(*m3_ipc), GFP_KERNEL);
-@@ -402,6 +384,8 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- 		return PTR_ERR(m3_ipc->ipc_mem_base);
- 	}
- 
-+	init_completion(&m3_ipc->sync_complete);
-+
- 	irq = platform_get_irq(pdev, 0);
- 	if (!irq) {
- 		dev_err(&pdev->dev, "no irq resource\n");
-@@ -449,25 +433,10 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
- 
- 	m3_ipc->ops = &ipc_ops;
- 
--	/*
--	 * Wait for firmware loading completion in a thread so we
--	 * can boot the wkup_m3 as soon as it's ready without holding
--	 * up kernel boot
--	 */
--	task = kthread_run((void *)wkup_m3_rproc_boot_thread, m3_ipc,
--			   "wkup_m3_rproc_loader");
--
--	if (IS_ERR(task)) {
--		dev_err(dev, "can't create rproc_boot thread\n");
--		goto err_put_rproc;
--	}
--
- 	m3_ipc_state = m3_ipc;
- 
- 	return 0;
- 
--err_put_rproc:
--	rproc_put(m3_rproc);
- err_free_mbox:
- 	mbox_free_channel(m3_ipc->mbox);
- 	return ret;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
