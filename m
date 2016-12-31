@@ -1,117 +1,101 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v1 2/3] remoteproc: st: add da to va support
-Date: Wed, 7 Dec 2016 21:33:45 +0100
-Message-ID: <1481142826-15528-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
-References: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 31 Dec 2016 09:54:16 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] drivers: remoteproc: constify rproc_ops structures
+Message-ID: <20161231175416.GA21596@minitux>
+References: <1481974176-19912-1-git-send-email-bhumirks@gmail.com>
+ <20161230120655.GB9118@builder>
+ <CAOH+1jH=Y+1Nxe2L4d6OaC95dc-ORsuqsOYSNP5_8NYJVz-A4Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOH+1jH=Y+1Nxe2L4d6OaC95dc-ORsuqsOYSNP5_8NYJVz-A4Q@mail.gmail.com>
+To: Bhumika Goyal <bhumirks@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Ohad Ben-Cohen <ohad@wizery.com>, patrice.chotard@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-ST remoteproc driver needs to provide information about
-carveout memory region to allow remoteproc core to load
-firmware and access trace buffer.
+On Sat 31 Dec 02:43 PST 2016, Bhumika Goyal wrote:
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/st_remoteproc.c | 42 ++++++++++++++++++++++++++++++++------
- 1 file changed, 36 insertions(+), 6 deletions(-)
+> On Fri, Dec 30, 2016 at 5:36 PM, Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> > On Sat 17 Dec 03:29 PST 2016, Bhumika Goyal wrote:
+> >
+> >> Declare rproc_ops structures as const as they are only passed as an
+> >> argument to the function rproc_alloc. This argument is of type const, so
+> >> rproc_ops structures having this property can be declared const too.
+> >> Done using Coccinelle:
+> >>
+> >> @r1 disable optional_qualifier @
+> >> identifier i;
+> >> position p;
+> >> @@
+> >> static struct rproc_ops i@p = {...};
+> >>
+> >> @ok1@
+> >> identifier r1.i;
+> >> position p;
+> >> @@
+> >> rproc_alloc(...,&i@p,...)
+> >>
+> >> @bad@
+> >> position p!={r1.p,ok1.p};
+> >> identifier r1.i;
+> >> @@
+> >> i@p
+> >>
+> >> @depends on !bad disable optional_qualifier@
+> >> identifier r1.i;
+> >> @@
+> >> +const
+> >> struct rproc_ops i;
+> >>
+> >> File sizes before:
+> >>    text          data     bss     dec     hex filename
+> >>    1258           416       0    1674     68a remoteproc/omap_remoteproc.o
+> >>    2402           240       0    2642     a52 remoteproc/st_remoteproc.o
+> >>    2064           272       0    2336     920 remoteproc/st_slim_rproc.o
+> >>    2160           240       0    2400     960 remoteproc/wkup_m3_rproc.o
+> >>
+> >> File sizes after:
+> >>    text          data     bss     dec     hex filename
+> >>    1297           368       0    1665     681 remoteproc/omap_remoteproc.o
+> >>    2434           192       0    2626     a42 remoteproc/st_remoteproc.o
+> >>    2112           240       0    2352     930 remoteproc/st_slim_rproc.o
+> >>    2200           192       0    2392     958 remoteproc/wkup_m3_rproc.o
+> >>
+> >> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> >
+> > Thanks Bhumika, this looks good.
+> >
+> > But as Suman already asked. Is there any reason why da8xx_remoteproc.c
+> > did not get updated? It looks like the same change would apply there.
+> >
+> >
+> 
+> The reason I did not sent a patch for that driver is because the .o
+> file is not obtained. This is output I get when I try to compile the
+> da8xx_remoteproc.o file.
+> 
+> drivers/remoteproc/da8xx_remoteproc.c:22:72: fatal error:
+> mach/clock.h: No such file or directory
+>  #include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+>                                                                         ^
+> compilation terminated.
+> make[1]: *** [drivers/remoteproc/da8xx_remoteproc.o] Error 1
+> make: *** [drivers/remoteproc/da8xx_remoteproc.o] Error 2
+> 
+> I also tried running the commands  make.cross ARCH=arm allyesconfig;
+> make.cross ARCH=arm drivers/remoteproc/da8xx_remoteproc.o but still
+> the error remains the same.
+> 
+> Could you please suggest me what to do in this case?
+> 
 
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index 113caf2..51199a8 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-@@ -52,6 +53,10 @@ struct st_rproc {
- 	struct regmap		*boot_base;
- 	u32			boot_offset;
- 	struct mbox_chan	*mbox_chan[ST_RPROC_MAX_VRING][MBOX_MAX];
-+	phys_addr_t mem_phys;
-+	phys_addr_t mem_reloc;
-+	void *mem_region;
-+	size_t mem_size;
- };
- 
- static void st_rproc_mbox_callback(struct device *dev, u32 msg)
-@@ -156,10 +161,23 @@ static int st_rproc_stop(struct rproc *rproc)
- 	return sw_err ?: pwr_err;
- }
- 
-+static void *st_proc_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct st_rproc *ddata = rproc->priv;
-+	int offset;
-+
-+	offset = da - ddata->mem_reloc;
-+	if (offset < 0 || offset + len > ddata->mem_size)
-+		return NULL;
-+
-+	return ddata->mem_region + offset;
-+}
-+
- static struct rproc_ops st_rproc_ops = {
- 	.kick		= st_rproc_kick,
- 	.start		= st_rproc_start,
- 	.stop		= st_rproc_stop,
-+	.da_to_va	= st_proc_da_to_va,
- };
- 
- /*
-@@ -207,7 +225,8 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct rproc *rproc = platform_get_drvdata(pdev);
- 	struct st_rproc *ddata = rproc->priv;
--	struct device_node *np = dev->of_node;
-+	struct device_node *np = dev->of_node, *node;
-+	struct resource res;
- 	int err;
- 
- 	if (ddata->config->sw_reset) {
-@@ -251,10 +270,23 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	err = of_reserved_mem_device_init(dev);
--	if (err) {
--		dev_err(dev, "Failed to obtain shared memory\n");
-+	node = of_parse_phandle(np, "memory-region", 0);
-+	if (!node) {
-+		dev_err(dev, "No memory-region specified\n");
-+		return -EINVAL;
-+	}
-+
-+	err = of_address_to_resource(node, 0, &res);
-+	if (err)
- 		return err;
-+
-+	ddata->mem_phys = ddata->mem_reloc = res.start;
-+	ddata->mem_size = resource_size(&res);
-+	ddata->mem_region = devm_ioremap_wc(dev, ddata->mem_phys, ddata->mem_size);
-+	if (!ddata->mem_region) {
-+		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-+			&res.start, ddata->mem_size);
-+		return -EBUSY;
- 	}
- 
- 	err = clk_prepare(ddata->clk);
-@@ -391,8 +423,6 @@ static int st_rproc_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(ddata->clk);
- 
--	of_reserved_mem_device_release(&pdev->dev);
--
- 	mbox_free_channel(ddata->mbox_chan[0][MBOX_RX]);
- 	mbox_free_channel(ddata->mbox_chan[1][MBOX_RX]);
- 	mbox_free_channel(ddata->mbox_chan[0][MBOX_TX]);
--- 
-1.9.1
+By using davinci_all_defconfig and then selecting
+CONFIG_DA8XX_REMOTEPROC I managed to compile it, not sure what differs.
+
+If you can't get it working please include the da8xx_remoteproc change
+as well and just note that you didn't manage to test it.
+
+Regards,
+Bjorn
