@@ -1,139 +1,109 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v5 2/7] remoteproc: qcom: Add and initialize proxy and active clocks.
-Date: Thu, 15 Dec 2016 17:35:41 +0530
-Message-Id: <1481803546-31592-3-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1481803546-31592-1-git-send-email-akdwived@codeaurora.org>
-References: <1481803546-31592-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <bhumirks@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20161231175416.GA21596@minitux>
+References: <1481974176-19912-1-git-send-email-bhumirks@gmail.com>
+ <20161230120655.GB9118@builder> <CAOH+1jH=Y+1Nxe2L4d6OaC95dc-ORsuqsOYSNP5_8NYJVz-A4Q@mail.gmail.com>
+ <20161231175416.GA21596@minitux>
+From: Bhumika Goyal <bhumirks@gmail.com>
+Date: Sun, 1 Jan 2017 11:53:37 +0530
+Message-ID: <CAOH+1jE5dPjUZPcTndOS8uqcqjJbAik-ew3L1Q3+X87PoHQtHg@mail.gmail.com>
+Subject: Re: [PATCH] drivers: remoteproc: constify rproc_ops structures
+Content-Type: text/plain; charset=UTF-8
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Ohad Ben-Cohen <ohad@wizery.com>, patrice.chotard@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Certain regulators and clocks need voting by rproc on behalf of hexagon
-only during restart operation but certain clocks and voltage need to be
-voted till hexagon is up, these regulators and clocks are identified as
-proxy and active resource respectively, whose handle is being obtained
-by supplying proxy and active clock name string.
+On Sat, Dec 31, 2016 at 11:24 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Sat 31 Dec 02:43 PST 2016, Bhumika Goyal wrote:
+>
+>> On Fri, Dec 30, 2016 at 5:36 PM, Bjorn Andersson
+>> <bjorn.andersson@linaro.org> wrote:
+>> > On Sat 17 Dec 03:29 PST 2016, Bhumika Goyal wrote:
+>> >
+>> >> Declare rproc_ops structures as const as they are only passed as an
+>> >> argument to the function rproc_alloc. This argument is of type const, so
+>> >> rproc_ops structures having this property can be declared const too.
+>> >> Done using Coccinelle:
+>> >>
+>> >> @r1 disable optional_qualifier @
+>> >> identifier i;
+>> >> position p;
+>> >> @@
+>> >> static struct rproc_ops i@p = {...};
+>> >>
+>> >> @ok1@
+>> >> identifier r1.i;
+>> >> position p;
+>> >> @@
+>> >> rproc_alloc(...,&i@p,...)
+>> >>
+>> >> @bad@
+>> >> position p!={r1.p,ok1.p};
+>> >> identifier r1.i;
+>> >> @@
+>> >> i@p
+>> >>
+>> >> @depends on !bad disable optional_qualifier@
+>> >> identifier r1.i;
+>> >> @@
+>> >> +const
+>> >> struct rproc_ops i;
+>> >>
+>> >> File sizes before:
+>> >>    text          data     bss     dec     hex filename
+>> >>    1258           416       0    1674     68a remoteproc/omap_remoteproc.o
+>> >>    2402           240       0    2642     a52 remoteproc/st_remoteproc.o
+>> >>    2064           272       0    2336     920 remoteproc/st_slim_rproc.o
+>> >>    2160           240       0    2400     960 remoteproc/wkup_m3_rproc.o
+>> >>
+>> >> File sizes after:
+>> >>    text          data     bss     dec     hex filename
+>> >>    1297           368       0    1665     681 remoteproc/omap_remoteproc.o
+>> >>    2434           192       0    2626     a42 remoteproc/st_remoteproc.o
+>> >>    2112           240       0    2352     930 remoteproc/st_slim_rproc.o
+>> >>    2200           192       0    2392     958 remoteproc/wkup_m3_rproc.o
+>> >>
+>> >> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+>> >
+>> > Thanks Bhumika, this looks good.
+>> >
+>> > But as Suman already asked. Is there any reason why da8xx_remoteproc.c
+>> > did not get updated? It looks like the same change would apply there.
+>> >
+>> >
+>>
+>> The reason I did not sent a patch for that driver is because the .o
+>> file is not obtained. This is output I get when I try to compile the
+>> da8xx_remoteproc.o file.
+>>
+>> drivers/remoteproc/da8xx_remoteproc.c:22:72: fatal error:
+>> mach/clock.h: No such file or directory
+>>  #include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+>>                                                                         ^
+>> compilation terminated.
+>> make[1]: *** [drivers/remoteproc/da8xx_remoteproc.o] Error 1
+>> make: *** [drivers/remoteproc/da8xx_remoteproc.o] Error 2
+>>
+>> I also tried running the commands  make.cross ARCH=arm allyesconfig;
+>> make.cross ARCH=arm drivers/remoteproc/da8xx_remoteproc.o but still
+>> the error remains the same.
+>>
+>> Could you please suggest me what to do in this case?
+>>
+>
+> By using davinci_all_defconfig and then selecting
+> CONFIG_DA8XX_REMOTEPROC I managed to compile it, not sure what differs.
+>
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 65 +++++++++++++++++++++++++++-----------
- 1 file changed, 47 insertions(+), 18 deletions(-)
+Yes, it compiled. Thanks for the input. Now I will include this driver
+as well and send a v2.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index d875448..8c8b239 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -95,6 +95,8 @@
- 
- struct rproc_hexagon_res {
- 	const char *hexagon_mba_image;
-+	char **proxy_clk_string;
-+	char **active_clk_string;
- };
- 
- struct q6v5 {
-@@ -114,6 +116,11 @@ struct q6v5 {
- 	struct qcom_smem_state *state;
- 	unsigned stop_bit;
- 
-+	struct clk *active_clks[8];
-+	struct clk *proxy_clks[4];
-+	int active_clk_count;
-+	int proxy_clk_count;
-+
- 	struct regulator_bulk_data supply[4];
- 
- 	struct clk *ahb_clk;
-@@ -706,27 +713,33 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
- 	return 0;
- }
- 
--static int q6v5_init_clocks(struct q6v5 *qproc)
-+static int q6v5_init_clocks(struct device *dev, struct clk **clks,
-+		char **clk_str)
- {
--	qproc->ahb_clk = devm_clk_get(qproc->dev, "iface");
--	if (IS_ERR(qproc->ahb_clk)) {
--		dev_err(qproc->dev, "failed to get iface clock\n");
--		return PTR_ERR(qproc->ahb_clk);
--	}
-+	int count = 0;
-+	int i;
- 
--	qproc->axi_clk = devm_clk_get(qproc->dev, "bus");
--	if (IS_ERR(qproc->axi_clk)) {
--		dev_err(qproc->dev, "failed to get bus clock\n");
--		return PTR_ERR(qproc->axi_clk);
--	}
-+	if (!clk_str)
-+		return 0;
-+
-+	while (clk_str[count])
-+		count++;
-+
-+	for (i = 0; i < count; i++) {
-+		clks[i] = devm_clk_get(dev, clk_str[i]);
-+		if (IS_ERR(clks[i])) {
-+
-+			int rc = PTR_ERR(clks[i]);
-+
-+			if (rc != -EPROBE_DEFER)
-+				dev_err(dev, "Failed to get %s clock\n",
-+					clk_str[i]);
-+			return rc;
-+		}
- 
--	qproc->rom_clk = devm_clk_get(qproc->dev, "mem");
--	if (IS_ERR(qproc->rom_clk)) {
--		dev_err(qproc->dev, "failed to get mem clock\n");
--		return PTR_ERR(qproc->rom_clk);
- 	}
- 
--	return 0;
-+	return count;
- }
- 
- static int q6v5_init_reset(struct q6v5 *qproc)
-@@ -843,9 +856,21 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	ret = q6v5_init_clocks(qproc);
--	if (ret)
-+	ret = q6v5_init_clocks(&pdev->dev, qproc->proxy_clks,
-+					desc->proxy_clk_string);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to setup proxy clocks.\n");
-+		goto free_rproc;
-+	}
-+	qproc->proxy_clk_count = ret;
-+
-+	ret = q6v5_init_clocks(&pdev->dev, qproc->active_clks,
-+					desc->active_clk_string);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to setup active clocks.\n");
- 		goto free_rproc;
-+	}
-+	qproc->active_clk_count = ret;
- 
- 	ret = q6v5_regulator_init(qproc);
- 	if (ret)
-@@ -901,10 +926,14 @@ static int q6v5_remove(struct platform_device *pdev)
- 
- static const struct rproc_hexagon_res msm8916_mss = {
- 	.hexagon_mba_image = "mba.mbn",
-+	.proxy_clk_string = (char*[]){"xo", NULL},
-+	.active_clk_string = (char*[]){"iface", "bus", "mem", NULL},
- };
- 
- static const struct rproc_hexagon_res msm8974_mss = {
- 	.hexagon_mba_image = "mba.b00",
-+	.proxy_clk_string = (char*[]){"xo", NULL},
-+	.active_clk_string = (char*[]){"iface", "bus", "mem", NULL},
- };
- static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Thanks,
+Bhumika
+
+> If you can't get it working please include the da8xx_remoteproc change
+> as well and just note that you didn't manage to test it.
+>
+> Regards,
+> Bjorn
