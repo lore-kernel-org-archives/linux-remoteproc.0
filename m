@@ -1,59 +1,44 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v2] soc: ti: Drop wait from wkup_m3_rproc_boot_thread
-References: <1483486889-3662-1-git-send-email-spjoshi@codeaurora.org>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <482666d0-7915-ead2-c514-2651a4967a43@ti.com>
-Date: Thu, 5 Jan 2017 15:08:28 -0600
-MIME-Version: 1.0
-In-Reply-To: <1483486889-3662-1-git-send-email-spjoshi@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-To: Sarangdhar Joshi <spjoshi@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>
+Return-Path: <spjoshi@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Subject: [PATCH v2] soc: ti: Drop wait from wkup_m3_rproc_boot_thread
+Date: Tue,  3 Jan 2017 15:41:29 -0800
+Message-Id: <1483486889-3662-1-git-send-email-spjoshi@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 01/03/2017 05:41 PM, Sarangdhar Joshi wrote:
-> The function wkup_m3_rproc_boot_thread waits for
-> asynchronous firmware loading to parse the resource table
-> before calling rproc_boot(). However, as the resource table
-> parsing has been moved to rproc_boot(), there's no need to
-> wait for the asynchronous firmware loading completion.
-> So, drop this.
-> 
-> CC: Dave Gerlach <d-gerlach@ti.com>
-> CC: Suman Anna <s-anna@ti.com>
-> CC: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+The function wkup_m3_rproc_boot_thread waits for
+asynchronous firmware loading to parse the resource table
+before calling rproc_boot(). However, as the resource table
+parsing has been moved to rproc_boot(), there's no need to
+wait for the asynchronous firmware loading completion.
+So, drop this.
 
-+ Tony and Santosh, not sure who is picking up the wkup_m3 related patches.
+CC: Dave Gerlach <d-gerlach@ti.com>
+CC: Suman Anna <s-anna@ti.com>
+CC: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+---
 
-Only one minor nit, I would prefer the patch subject to start with
-soc: ti: wkup_m3_ipc: ....
+This patch seems to be doing an independent clean up now. Hence
+removing it from the series.
 
-Tested-by: Suman Anna <s-anna@ti.com>
+ drivers/soc/ti/wkup_m3_ipc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-regards
-Suman
-
-> ---
-> 
-> This patch seems to be doing an independent clean up now. Hence
-> removing it from the series.
-> 
->  drivers/soc/ti/wkup_m3_ipc.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-> index 8823cc8..8bfa44b 100644
-> --- a/drivers/soc/ti/wkup_m3_ipc.c
-> +++ b/drivers/soc/ti/wkup_m3_ipc.c
-> @@ -370,8 +370,6 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
->  	struct device *dev = m3_ipc->dev;
->  	int ret;
->  
-> -	wait_for_completion(&m3_ipc->rproc->firmware_loading_complete);
-> -
->  	init_completion(&m3_ipc->sync_complete);
->  
->  	ret = rproc_boot(m3_ipc->rproc);
-> 
+diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
+index 8823cc8..8bfa44b 100644
+--- a/drivers/soc/ti/wkup_m3_ipc.c
++++ b/drivers/soc/ti/wkup_m3_ipc.c
+@@ -370,8 +370,6 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
+ 	struct device *dev = m3_ipc->dev;
+ 	int ret;
+ 
+-	wait_for_completion(&m3_ipc->rproc->firmware_loading_complete);
+-
+ 	init_completion(&m3_ipc->sync_complete);
+ 
+ 	ret = rproc_boot(m3_ipc->rproc);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
