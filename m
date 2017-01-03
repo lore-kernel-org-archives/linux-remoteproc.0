@@ -1,283 +1,103 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [RFC ADD HYPERVISOR CALL SUPPORT 2/2] remoteproc: qcom: Add mss rproc support for msm8996.
-Date: Mon,  9 Jan 2017 20:40:09 +0530
-Message-Id: <1483974609-25522-3-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1483974609-25522-1-git-send-email-akdwived@codeaurora.org>
-References: <1483974609-25522-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <spjoshi@codeaurora.org>
+Subject: Re: [PATCH 1/2] soc: ti: Use remoteproc auto_boot feature
+References: <1481846632-4778-1-git-send-email-spjoshi@codeaurora.org>
+ <1f5b2631-f744-a5c1-55c1-82eb27d5cbd7@ti.com>
+ <9092e066-b2ad-ee42-de5f-d66b84a10cfd@codeaurora.org>
+ <1f847af8-6bde-4645-aea4-7e9b02306e39@ti.com>
+ <6a5a9c8a-cca7-0740-4879-dd6c01e60548@ti.com>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Message-ID: <1003ab4a-b481-4f60-097a-2ce607fa2961@codeaurora.org>
+Date: Tue, 3 Jan 2017 15:52:14 -0800
+MIME-Version: 1.0
+In-Reply-To: <6a5a9c8a-cca7-0740-4879-dd6c01e60548@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Suman Anna <s-anna@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch add msm8996 specific code piece to
-take mss out of reset.
+On 12/23/2016 03:57 PM, Suman Anna wrote:
+> On 12/23/2016 11:05 AM, Suman Anna wrote:
+>> Hi Sarang,
+>>
+>>>>
+>>>> On 12/15/2016 06:03 PM, Sarangdhar Joshi wrote:
+>>>>> The function wkup_m3_rproc_boot_thread waits for asynchronous
+>>>>> firmware loading to complete successfully before calling
+>>>>> rproc_boot(). The same can be achieved by just setting
+>>>>> rproc->auto_boot flag. Change this. As a result this change
+>>>>> removes wkup_m3_rproc_boot_thread and moves m3_ipc->sync_complete
+>>>>> initialization to the wkup_m3_ipc_probe().
+>>>>>
+>>>>> Other than the current usage, the firmware_loading_complete is
+>>>>> only used in rproc_del() where it's no longer needed.  This
+>>>>> change is in preparation for removing firmware_loading_complete
+>>>>> completely.
+>>>>
+>>>> Based on the comments so far, I am assuming that you are dropping this
+>>>> series.
+>>>
+>>> No, may not be dropping this. Will try to handle it differently in
+>>> rproc_del() (probably by making use of some state flag).
+>>>>
+>>>> In any case, this series did break our PM stack. We definitely don't
+>>>> want to auto-boot the wkup_m3_rproc device, that responsibility will
+>>>> need to stay with the wkup_m3_ipc driver.
+>>>
+>>> Which scenario did it break? Booting up rproc device before
+>>> wkup_m3_ipc_probe() causes issues?
+>>
+>> Yes, our state machine requires the wkup_m3_ipc driver to control the
+>> boot of the wkup_m3 remoteproc. The wkup_m3 is not a typical remoteproc,
+>> it is our PM master and is responsible for putting the host processor
+>> into suspend and waking it up in system suspend/cpuidle paths.
+>> The remoteproc infrastructure is only used for load/boot, but the Linux
+>> PM state machine and communication is all controlled by the wkup_m3_ipc
+>> driver.
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
----
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   2 +-
- drivers/remoteproc/qcom_q6v5_pil.c                 | 179 ++++++++++++++++++---
- 2 files changed, 155 insertions(+), 26 deletions(-)
+Thanks for explaining. I was missing the fact that the resource table 
+parsing during asynchronous call and the one in rproc_boot() are 
+different.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 674ebc6..7217647 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -10,7 +10,7 @@ on the Qualcomm Hexagon core.
- 		"qcom,q6v5-pil"
- 		"qcom,msm8916-mss-pil"
- 		"qcom,msm8974-mss-pil"
--
-+		"qcom,msm8996-mss-pil"
- - reg:
- 	Usage: required
- 	Value type: <prop-encoded-array>
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index cbf833c..c512c1d 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -31,6 +31,7 @@
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- #include <linux/of_device.h>
-+#include <linux/iopoll.h>
- #include <soc/qcom/secure_buffer.h>
- 
- #include "remoteproc_internal.h"
-@@ -66,6 +67,8 @@
- #define QDSP6SS_RESET_REG		0x014
- #define QDSP6SS_GFMUX_CTL_REG		0x020
- #define QDSP6SS_PWR_CTL_REG		0x030
-+#define QDSP6SS_MEM_PWR_CTL		0x0B0
-+#define QDSP6SS_STRAP_ACC		0x110
- 
- /* AXI Halt Register Offsets */
- #define AXI_HALTREQ_REG			0x0
-@@ -94,6 +97,15 @@
- #define QDSS_BHS_ON			BIT(21)
- #define QDSS_LDO_BYP			BIT(22)
- 
-+/* QDSP6v56 parameters */
-+#define QDSP6v56_LDO_BYP                BIT(25)
-+#define QDSP6v56_BHS_ON                 BIT(24)
-+#define QDSP6v56_CLAMP_WL               BIT(21)
-+#define QDSP6v56_CLAMP_QMC_MEM          BIT(22)
-+#define HALT_CHECK_MAX_LOOPS		200
-+#define QDSP6SS_XO_CBCR			0x0038
-+#define QDSP6SS_ACC_OVERRIDE_VAL	0x20
-+
- struct reg_info {
- 	struct regulator *reg;
- 	int uV;
-@@ -385,35 +397,99 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
- 
- static int q6v5proc_reset(struct q6v5 *qproc)
- {
--	u32 val;
-+	u64 val;
- 	int ret;
-+	int i;
- 
--	/* Assert resets, stop core */
--	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
--	val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
--	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
--	/* Enable power block headswitch, and wait for it to stabilize */
--	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= QDSS_BHS_ON | QDSS_LDO_BYP;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	udelay(1);
--
--	/*
--	 * Turn on memories. L2 banks should be done individually
--	 * to minimize inrush current.
--	 */
--	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
--		Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_L2DATA_SLP_NRET_N_2;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_L2DATA_SLP_NRET_N_1;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	val |= Q6SS_L2DATA_SLP_NRET_N_0;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	if (qproc->version == MSS_MSM8996) {
-+		/* Override the ACC value if required */
-+		writel(QDSP6SS_ACC_OVERRIDE_VAL,
-+			qproc->reg_base + QDSP6SS_STRAP_ACC);
-+
-+		/* Assert resets, stop core */
-+		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-+		val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
-+		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+
-+		/* BHS require xo cbcr to be enabled */
-+		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
-+		val |= 0x1;
-+		writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
- 
-+		/* Read CLKOFF bit to go low indicating CLK is enabled */
-+		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
-+				val, !(val & BIT(31)), 1, HALT_CHECK_MAX_LOOPS);
-+		if (ret) {
-+			dev_err(qproc->dev,
-+				"xo cbcr enabling timed out (rc:%d)\n", ret);
-+			return ret;
-+		}
-+		/* Enable power block headswitch and wait for it to stabilize */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= QDSP6v56_BHS_ON;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		udelay(1);
-+
-+		/* Put LDO in bypass mode */
-+		val |= QDSP6v56_LDO_BYP;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+		/* Deassert QDSP6 compiler memory clamp */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val &= ~QDSP6v56_CLAMP_QMC_MEM;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+		/* Deassert memory peripheral sleep and L2 memory standby */
-+		val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+		/* Turn on L1, L2, ETB and JU memories 1 at a time */
-+		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+		for (i = 19; i >= 0; i--) {
-+			val |= BIT(i);
-+			writel(val, qproc->reg_base +
-+						QDSP6SS_MEM_PWR_CTL);
-+			/*
-+			 * Read back value to ensure the write is done then
-+			 * wait for 1us for both memory peripheral and data
-+			 * array to turn on.
-+			 */
-+			val |= readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+			udelay(1);
-+		}
-+		/* Remove word line clamp */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val &= ~QDSP6v56_CLAMP_WL;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	} else {
-+		/* Assert resets, stop core */
-+		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-+		val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
-+		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+
-+		/* Enable power block headswitch and wait for it to stabilize */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= QDSS_BHS_ON | QDSS_LDO_BYP;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		udelay(1);
-+		/*
-+		 * Turn on memories. L2 banks should be done individually
-+		 * to minimize inrush current.
-+		 */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_SLP_RET_N | Q6SS_L2TAG_SLP_NRET_N |
-+			Q6SS_ETB_SLP_NRET_N | Q6SS_L2DATA_STBY_N;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_L2DATA_SLP_NRET_N_2;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_L2DATA_SLP_NRET_N_1;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_L2DATA_SLP_NRET_N_0;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	}
- 	/* Remove IO clamp */
- 	val &= ~Q6SS_CLAMP_IO;
- 	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-@@ -739,6 +815,7 @@ static int q6v5_stop(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
- 	int ret;
-+	int val;
- 
- 	qproc->running = false;
- 
-@@ -756,6 +833,15 @@ static int q6v5_stop(struct rproc *rproc)
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
- 
-+	if (qproc->version == MSS_MSM8996) {
-+		/*
-+		 * To avoid high MX current during LPASS/MSS restart.
-+		 */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_CLAMP_IO | QDSP6v56_CLAMP_WL |
-+			QDSP6v56_CLAMP_QMC_MEM;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	}
- 	reset_control_assert(qproc->mss_restart);
- 	q6v5_clk_disable(qproc->dev, qproc->active_clks,
- 				qproc->active_clk_count);
-@@ -1103,6 +1189,47 @@ static int q6v5_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct rproc_hexagon_res msm8996_mss = {
-+	.hexagon_mba_image = "mba.mbn",
-+	.proxy_supply = (struct qcom_mss_reg_res[]) {
-+		{
-+			.supply = "vdd_mx",
-+			.uV = 6,
-+		},
-+		{
-+			.supply = "vdd_cx",
-+			.uV = 7,
-+			.uA = 100000,
-+		},
-+		{
-+			.supply = "vdd_pll",
-+			.uV = 1800000,
-+			.uA = 100000,
-+		},
-+		{}
-+	},
-+	.active_supply = (struct qcom_mss_reg_res[]) {
-+			{},
-+			{}
-+	},
-+	.proxy_clk_names = (char*[]){
-+			"xo",
-+			"pnoc",
-+			"qdss",
-+			NULL
-+	},
-+	.active_clk_names = (char*[]){
-+			"iface",
-+			"bus",
-+			"mem",
-+			"gpll0_mss_clk",
-+			"snoc_axi_clk",
-+			"mnoc_axi_clk",
-+			NULL
-+	},
-+	.version = MSS_MSM8996,
-+};
-+
- static const struct rproc_hexagon_res msm8916_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_supply = (struct qcom_mss_reg_res[]) {
-@@ -1178,10 +1305,12 @@ static int q6v5_remove(struct platform_device *pdev)
- 	},
- 	.version = MSS_MSM8974,
- };
-+
- static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
- 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
- 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
-+	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_of_match);
+>>
+>>>
+>>> Nevertheless, I think Bjorn's suggestion of just dropping the call to
+>>> wait_for_completion() and keeping kthread looks good, also because of
+>>> the fact that rproc_boot() anyways calls request_firmware() and no
+>>> longer needed to wait on asynchronous loading of firmware.
+>>
+>> Yeah, I will have to test this, but looking at current code, this should
+>> mostly be ok because of the remoteproc core changes w.r.t resource table
+>> parsing.
+>
+> Tested with just the wait_for_completion() removed and it works fine. I
+> can send a patch for the same if you prefer me to send it.
+
+Thanks for testing it. I have sent the patch.
+
+Regards,
+Sarang
+
+>
+> regards
+> Suman
+>
+>>
+>> regards
+>> Suman
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
+
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
