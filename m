@@ -1,21 +1,18 @@
-Return-Path: <peter.griffin@linaro.org>
-Return-Path: <peter.griffin@linaro.org>
-Date: Fri, 6 Jan 2017 16:32:59 +0000
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [STLinux Kernel] [PATCH v1 0/3] remoteproc: st: add virtio_rpmsg
- support
-Message-ID: <20170106163259.GA4438@griffinp-ThinkPad-X1-Carbon-2nd>
+Return-Path: <patrice.chotard@st.com>
+Subject: Re: [PATCH v1 0/3] remoteproc: st: add virtio_rpmsg support
 References: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
+From: Patrice Chotard <patrice.chotard@st.com>
+Message-ID: <a7c1e23b-b77b-533f-75ee-10ee96e885c9@st.com>
+Date: Wed, 4 Jan 2017 08:40:05 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1481142826-15528-1-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, kernel@stlinux.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, 07 Dec 2016, Loic Pallardy wrote:
-
+On 12/07/2016 09:33 PM, Loic Pallardy wrote:
 > Goal of this series is:
 > - to add vring based communication link (virtio_rpmsg)
 > - to add rproc_da_to_va translation function to allow firmware loading in
@@ -25,7 +22,17 @@ On Wed, 07 Dec 2016, Loic Pallardy wrote:
 >   remoteproc: st: add virtio communication support
 >   remoteproc: st: add da to va support
 >   remoteproc: core: don't allocate carveout if pa or da are defined
+> 
+>  drivers/remoteproc/Kconfig           |   3 +
+>  drivers/remoteproc/remoteproc_core.c |   5 ++
+>  drivers/remoteproc/st_remoteproc.c   | 161 +++++++++++++++++++++++++++++++++--
+>  3 files changed, 163 insertions(+), 6 deletions(-)
+> 
 
-For the series: -
+Hi Loic
 
-Acked-by: Peter Griffin <peter.griffin@linaro.org>
+For the entire series
+
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
+
+Patrice
