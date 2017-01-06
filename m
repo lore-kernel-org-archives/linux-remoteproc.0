@@ -1,47 +1,117 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH v3] soc: ti: wkup_m3_ipc: Drop wait from wkup_m3_rproc_boot_thread
-Date: Thu,  5 Jan 2017 14:00:15 -0800
-Message-Id: <1483653615-24378-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 2/3] remoteproc: st: add da to va support
+Date: Fri, 6 Jan 2017 18:16:12 +0100
+Message-ID: <1483722973-21531-3-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1483722973-21531-1-git-send-email-loic.pallardy@st.com>
+References: <1483722973-21531-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The function wkup_m3_rproc_boot_thread waits for asynchronous
-firmware loading to parse the resource table before calling
-rproc_boot(). However, as the resource table parsing has been
-moved to rproc_boot(), there's no need to wait for the
-asynchronous firmware loading completion.  So, drop this.
+ST remoteproc driver needs to provide information about
+carveout memory region to allow remoteproc core to load
+firmware and access trace buffer.
 
-CC: Dave Gerlach <d-gerlach@ti.com>
-CC: Bjorn Andersson <bjorn.andersson@linaro.org>
-Tested-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
+ drivers/remoteproc/st_remoteproc.c | 42 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 36 insertions(+), 6 deletions(-)
 
-This patch seems to be doing an independent clean up now. Hence
-removing it from the series.
-
-Changes from v2:
-
-* Updated the subject line as per Suman's comment
-
- drivers/soc/ti/wkup_m3_ipc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 8823cc8..8bfa44b 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -370,8 +370,6 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
- 	struct device *dev = m3_ipc->dev;
- 	int ret;
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index 2d99111..b6eb716 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -21,6 +21,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/remoteproc.h>
+@@ -51,6 +52,10 @@ struct st_rproc {
+ 	struct mbox_chan	*mbox_chan[ST_RPROC_MAX_VRING][MBOX_MAX];
+ 	struct mbox_client mbox_client_vq0;
+ 	struct mbox_client mbox_client_vq1;
++	phys_addr_t mem_phys;
++	phys_addr_t mem_reloc;
++	void *mem_region;
++	size_t mem_size;
+ };
  
--	wait_for_completion(&m3_ipc->rproc->firmware_loading_complete);
+ static void st_rproc_mbox_callback(struct device *dev, u32 msg)
+@@ -155,10 +160,23 @@ static int st_rproc_stop(struct rproc *rproc)
+ 	return sw_err ?: pwr_err;
+ }
+ 
++static void *st_proc_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct st_rproc *ddata = rproc->priv;
++	int offset;
++
++	offset = da - ddata->mem_reloc;
++	if (offset < 0 || offset + len > ddata->mem_size)
++		return NULL;
++
++	return ddata->mem_region + offset;
++}
++
+ static struct rproc_ops st_rproc_ops = {
+ 	.kick		= st_rproc_kick,
+ 	.start		= st_rproc_start,
+ 	.stop		= st_rproc_stop,
++	.da_to_va	= st_proc_da_to_va,
+ };
+ 
+ /*
+@@ -206,7 +224,8 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
+ 	struct st_rproc *ddata = rproc->priv;
+-	struct device_node *np = dev->of_node;
++	struct device_node *np = dev->of_node, *node;
++	struct resource res;
+ 	int err;
+ 
+ 	if (ddata->config->sw_reset) {
+@@ -250,10 +269,23 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	err = of_reserved_mem_device_init(dev);
+-	if (err) {
+-		dev_err(dev, "Failed to obtain shared memory\n");
++	node = of_parse_phandle(np, "memory-region", 0);
++	if (!node) {
++		dev_err(dev, "No memory-region specified\n");
++		return -EINVAL;
++	}
++
++	err = of_address_to_resource(node, 0, &res);
++	if (err)
+ 		return err;
++
++	ddata->mem_phys = ddata->mem_reloc = res.start;
++	ddata->mem_size = resource_size(&res);
++	ddata->mem_region = devm_ioremap_wc(dev, ddata->mem_phys, ddata->mem_size);
++	if (!ddata->mem_region) {
++		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
++			&res.start, ddata->mem_size);
++		return -EBUSY;
+ 	}
+ 
+ 	err = clk_prepare(ddata->clk);
+@@ -390,8 +422,6 @@ static int st_rproc_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(ddata->clk);
+ 
+-	of_reserved_mem_device_release(&pdev->dev);
 -
- 	init_completion(&m3_ipc->sync_complete);
- 
- 	ret = rproc_boot(m3_ipc->rproc);
+ 	mbox_free_channel(ddata->mbox_chan[0][MBOX_RX]);
+ 	mbox_free_channel(ddata->mbox_chan[1][MBOX_RX]);
+ 	mbox_free_channel(ddata->mbox_chan[0][MBOX_TX]);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
