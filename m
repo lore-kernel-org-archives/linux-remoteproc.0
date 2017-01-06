@@ -1,41 +1,47 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] rpmsg: qcom: smd: Return positively when not enabled
-Date: Mon, 30 Jan 2017 09:00:07 -0800
-Message-Id: <20170130170007.4578-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 3/3] remoteproc: core: don't allocate carveout if pa or da are defined
+Date: Fri, 6 Jan 2017 18:16:13 +0100
+Message-ID: <1483722973-21531-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1483722973-21531-1-git-send-email-loic.pallardy@st.com>
+References: <1483722973-21531-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remoteproc treats the error codes returned from the stubbed SMD API as
-errors, but the fact that SMD is not enabled should not affect
-remoteproc's ability to start the remote processors.
+Remoteproc doesn't check if firmware requests fixed
+addresses for carveout regions.
+Current assumption is that platform specific driver is in
+charge of coprocessor specific memory region allocation and
+remoteproc core doesn't have to handle them.
+If a da or a pa is specified in firmware resource table, remoteproc
+core doesn't have to perform any allocation.
+Access to carveout will be done thanks to rproc_da_to_pa function,
+which will provide virtual address on carveout region allocated
+by platform specific driver.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- include/linux/rpmsg/qcom_smd.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/rpmsg/qcom_smd.h b/include/linux/rpmsg/qcom_smd.h
-index e674b2e3074b..8ec8b6439b25 100644
---- a/include/linux/rpmsg/qcom_smd.h
-+++ b/include/linux/rpmsg/qcom_smd.h
-@@ -18,14 +18,12 @@ static inline struct qcom_smd_edge *
- qcom_smd_register_edge(struct device *parent,
- 		       struct device_node *node)
- {
--	return ERR_PTR(-ENXIO);
-+	return NULL;
- }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 9a507e7..4af80cb 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -625,6 +625,11 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+ 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
  
- static inline int qcom_smd_unregister_edge(struct qcom_smd_edge *edge)
- {
--	/* This shouldn't be possible */
--	WARN_ON(1);
--	return -ENXIO;
-+	return 0;
- }
- 
- #endif
++	if (rsc->pa != FW_RSC_ADDR_ANY || rsc->da != FW_RSC_ADDR_ANY) {
++		dev_dbg(dev, "carveout already allocated by low level driver\n");
++		return 0;
++	}
++
+ 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
+ 	if (!carveout)
+ 		return -ENOMEM;
 -- 
-2.11.0
+1.9.1
