@@ -1,139 +1,70 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH v2] drivers: remoteproc: constify rproc_ops structures
-Date: Sun,  1 Jan 2017 16:13:37 +0530
-Message-Id: <1483267417-7850-1-git-send-email-bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, ohad@wizery.com, bjorn.andersson@linaro.org, patrice.chotard@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 4/4] rpmsg: smd: Register rpmsg user space interface for edges
+Date: Wed, 11 Jan 2017 06:35:13 -0800
+Message-Id: <20170111143513.32251-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20170111143513.32251-1-bjorn.andersson@linaro.org>
+References: <20170111143513.32251-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Declare rproc_ops structures as const as they are only passed as an
-argument to the function rproc_alloc. This argument is of type const, so
-rproc_ops structures having this property can be declared const too.
-Done using Coccinelle:
+Create and register a rpmsg device for use with the rpmsg user space
+interface, allowing user space to access SMD channels.
 
-@r1 disable optional_qualifier @
-identifier i;
-position p;
-@@
-static struct rproc_ops i@p = {...};
+Also provide the "rpmsg_name" device attribute to expose the edge name
+in sysfs, allowing the user to write udev rules for specific rpmsg
+devices and their children.
 
-@ok1@
-identifier r1.i;
-position p;
-@@
-rproc_alloc(...,&i@p,...)
-
-@bad@
-position p!={r1.p,ok1.p};
-identifier r1.i;
-@@
-i@p
-
-@depends on !bad disable optional_qualifier@
-identifier r1.i;
-@@
-+const
-struct rproc_ops i;
-
-File size details:
-
-Size of the file remoteproc/da8xx_remoteproc.o remains the same before and
-after applying the changes.
-
-   text	   data	    bss	    dec	    hex	filename
-   1312	    100	      4	   1416	    588 remoteproc/da8xx_remoteproc.o
-   1312	    100	      4	   1416	    588 remoteproc/da8xx_remoteproc.o
-
-    970	    240	      0	   1210	    4ba remoteproc/omap_remoteproc.o
-   1002	    192	      0	   1194	    4aa remoteproc/omap_remoteproc.o
-
-   1901	    240	      0	   2141	    85d remoteproc/st_remoteproc.o
-   1933	    192	      0	   2125	    84d remoteproc/st_remoteproc.o
-
-   1288	     96	      0	   1384	    568 remoteproc/st_slim_rproc.o
-   1320	     64	      0	   1384	    568 remoteproc/st_slim_rproc.o
-
-   2121	    240	      0	   2361	    939 remoteproc/wkup_m3_rproc.o
-   2161	    192	      0	   2353	    931 remoteproc/wkup_m3_rproc.o
-
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-Changes in v2:
- * Apply the changes to the file da8xx_remoteproc.c as well.
 
- drivers/remoteproc/da8xx_remoteproc.c | 2 +-
- drivers/remoteproc/omap_remoteproc.c  | 2 +-
- drivers/remoteproc/st_remoteproc.c    | 2 +-
- drivers/remoteproc/st_slim_rproc.c    | 2 +-
- drivers/remoteproc/wkup_m3_rproc.c    | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+Changes since v2:
+- None
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 1afac8f..3814de2 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -151,7 +151,7 @@ static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
- 	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
+Changes since v1:
+- Moved rpmsg_name attribute to different patch
+
+ drivers/rpmsg/qcom_smd.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 9e2af6a18aa2..beaef5dd973e 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1002,6 +1002,20 @@ static int qcom_smd_create_device(struct qcom_smd_channel *channel)
+ 	return rpmsg_register_device(rpdev);
  }
  
--static struct rproc_ops da8xx_rproc_ops = {
-+static const struct rproc_ops da8xx_rproc_ops = {
- 	.start = da8xx_rproc_start,
- 	.stop = da8xx_rproc_stop,
- 	.kick = da8xx_rproc_kick,
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index fa63bf2..a96ce90 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -177,7 +177,7 @@ static int omap_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
++static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
++{
++	struct qcom_smd_device *qsdev;
++
++	qsdev = kzalloc(sizeof(*qsdev), GFP_KERNEL);
++	if (!qsdev)
++		return -ENOMEM;
++
++	qsdev->edge = edge;
++	qsdev->rpdev.ops = &qcom_smd_device_ops;
++	qsdev->rpdev.dev.parent = &edge->dev;
++	return rpmsg_chrdev_register_device(&qsdev->rpdev);
++}
++
+ /*
+  * Allocate the qcom_smd_channel object for a newly found smd channel,
+  * retrieving and validating the smem items involved.
+@@ -1357,6 +1371,12 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+ 		goto unregister_dev;
+ 	}
  
--static struct rproc_ops omap_rproc_ops = {
-+static const struct rproc_ops omap_rproc_ops = {
- 	.start		= omap_rproc_start,
- 	.stop		= omap_rproc_stop,
- 	.kick		= omap_rproc_kick,
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index da4e152..f21787b 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -107,7 +107,7 @@ static int st_rproc_stop(struct rproc *rproc)
- 	return sw_err ?: pwr_err;
- }
++	ret = qcom_smd_create_chrdev(edge);
++	if (ret) {
++		dev_err(&edge->dev, "failed to register chrdev for edge\n");
++		goto unregister_dev;
++	}
++
+ 	schedule_work(&edge->scan_work);
  
--static struct rproc_ops st_rproc_ops = {
-+static const struct rproc_ops st_rproc_ops = {
- 	.start		= st_rproc_start,
- 	.stop		= st_rproc_stop,
- };
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index 507716c..6cfd862 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -200,7 +200,7 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return va;
- }
- 
--static struct rproc_ops slim_rproc_ops = {
-+static const struct rproc_ops slim_rproc_ops = {
- 	.start		= slim_rproc_start,
- 	.stop		= slim_rproc_stop,
- 	.da_to_va       = slim_rproc_da_to_va,
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 18175d0..1ada0e5 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -111,7 +111,7 @@ static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return va;
- }
- 
--static struct rproc_ops wkup_m3_rproc_ops = {
-+static const struct rproc_ops wkup_m3_rproc_ops = {
- 	.start		= wkup_m3_rproc_start,
- 	.stop		= wkup_m3_rproc_stop,
- 	.da_to_va	= wkup_m3_rproc_da_to_va,
+ 	return edge;
 -- 
-1.9.1
+2.11.0
