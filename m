@@ -1,68 +1,62 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH v2 1/2] remoteproc: Add RPROC_DELETED state
-Date: Mon, 23 Jan 2017 17:53:18 -0800
-Message-Id: <1485222799-20769-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 2/4] rpmsg: qcom_smd: Implement endpoint "poll"
+Date: Wed, 11 Jan 2017 06:35:11 -0800
+Message-Id: <20170111143513.32251-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20170111143513.32251-1-bjorn.andersson@linaro.org>
+References: <20170111143513.32251-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add new state RPROC_DELETED to handle synchronization
-between rproc_del() and other operations on rproc. This
-state represents the rproc device that has been "deleted".
+Add support for polling the status of the write buffer so that user
+space can use rpmsg character devices in non-blocking mode.
 
-CC: Loic Pallardy <loic.pallardy@st.com>
-CC: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
-The current patch series is a v2 version of original patch listed at
-https://lkml.org/lkml/2016/12/16/534
+Changes since v2:
+- None
 
-Changes from v1:
+Changes since v1:
+- New patch
 
-* Add new RPROC_DELETED state
-* Use the new state RPROC_DELETED to handle race between rproc_del()
-  and rproc_boot()
+ drivers/rpmsg/qcom_smd.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
- drivers/remoteproc/remoteproc_sysfs.c | 1 +
- include/linux/remoteproc.h            | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index bc5b0e0..47be411 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -73,6 +73,7 @@ static ssize_t firmware_store(struct device *dev,
- 	[RPROC_SUSPENDED]	= "suspended",
- 	[RPROC_RUNNING]		= "running",
- 	[RPROC_CRASHED]		= "crashed",
-+	[RPROC_DELETED]		= "deleted",
- 	[RPROC_LAST]		= "invalid",
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 3dd73edaa525..9e2af6a18aa2 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -919,6 +919,21 @@ static int qcom_smd_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return __qcom_smd_send(qsept->qsch, data, len, false);
+ }
+ 
++static unsigned int qcom_smd_poll(struct rpmsg_endpoint *ept,
++				  struct file *filp, poll_table *wait)
++{
++	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
++	struct qcom_smd_channel *channel = qsept->qsch;
++	unsigned int mask = 0;
++
++	poll_wait(filp, &channel->fblockread_event, wait);
++
++	if (qcom_smd_get_tx_avail(channel) > 20)
++		mask |= POLLOUT | POLLWRNORM;
++
++	return mask;
++}
++
+ /*
+  * Finds the device_node for the smd child interested in this channel.
+  */
+@@ -951,6 +966,7 @@ static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
+ 	.destroy_ept = qcom_smd_destroy_ept,
+ 	.send = qcom_smd_send,
+ 	.trysend = qcom_smd_trysend,
++	.poll = qcom_smd_poll,
  };
  
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e2f3a32..25a8c37 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -346,6 +346,7 @@ struct rproc_ops {
-  *			a message.
-  * @RPROC_RUNNING:	device is up and running
-  * @RPROC_CRASHED:	device has crashed; need to start recovery
-+ * @RPROC_DELETED:	device is deleted
-  * @RPROC_LAST:		just keep this one at the end
-  *
-  * Please note that the values of these states are used as indices
-@@ -359,7 +360,8 @@ enum rproc_state {
- 	RPROC_SUSPENDED	= 1,
- 	RPROC_RUNNING	= 2,
- 	RPROC_CRASHED	= 3,
--	RPROC_LAST	= 4,
-+	RPROC_DELETED	= 4,
-+	RPROC_LAST	= 5,
- };
- 
- /**
+ /*
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
