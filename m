@@ -1,55 +1,36 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [RFC PATCH v2 3/3] arm64: dts: msm8996: Add SLPI SMP2P dt node.
-Date: Fri, 20 Jan 2017 21:40:36 +0530
-Message-Id: <1484928636-27351-4-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1484928636-27351-1-git-send-email-akdwived@codeaurora.org>
-References: <1484928636-27351-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 11 Jan 2017 06:07:08 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] rpmsg fixes for v4.10
+Message-ID: <20170111140708.GA31260@builder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add smp2p support to communicate with slpi processor.
+The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 9d1d7ad..c60472b 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -541,5 +541,29 @@
- 			#interrupt-cells = <2>;
- 		};
- 	};
-+
-+	smp2p-slpi {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <481>, <430>;
-+
-+		interrupts = <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>;
-+
-+		qcom,ipc = <&apcs 16 26>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <3>;
-+
-+		slpi_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+
-+		slpi_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,state-cells = <1>;
-+		};
-+	};
-+
- };
- #include "msm8996-pins.dtsi"
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+are available in the git repository at:
+
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.10-fixes
+
+for you to fetch changes up to 63447646ac657fde00bb658ce21a3431940ae0ad:
+
+  rpmsg: virtio_rpmsg_bus: fix channel creation (2016-12-30 03:12:11 -0800)
+
+----------------------------------------------------------------
+rpmsg fixes for v4.10
+
+This fixes a regression introduced in v4.10-rc1 that prohibits multiple
+channels with the same name but different endpoint addresses to be used.
+
+----------------------------------------------------------------
+Loic Pallardy (1):
+      rpmsg: virtio_rpmsg_bus: fix channel creation
+
+ drivers/rpmsg/rpmsg_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
