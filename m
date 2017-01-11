@@ -1,81 +1,33 @@
-Return-Path: <patrice.chotard@st.com>
-Subject: Re: [PATCH v2 1/1] remoteproc: core: probe subdevices before booting
- coprocessor
-References: <1481143768-16377-1-git-send-email-loic.pallardy@st.com>
-From: Patrice Chotard <patrice.chotard@st.com>
-Message-ID: <721e66d1-7a0e-477e-532a-4f7daf295f23@st.com>
-Date: Wed, 4 Jan 2017 08:40:36 +0100
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 11 Jan 2017 14:08:36 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/1] rpmsg: virtio_rpmsg_bus: fix channel creation
+Message-ID: <20170111220836.GD10531@minitux>
+References: <1481813396-1529-1-git-send-email-loic.pallardy@st.com>
+ <20161216050912.GS3439@tuxbot>
+ <a5c97c71-a78f-25a7-c2ee-cfb236825997@ti.com>
+ <20161230195624.GF10531@minitux>
+ <20170109234556.GY10531@minitux>
+ <c663f50d02ee4bfca4f458b8de57516b@SFHDAG7NODE2.st.com>
 MIME-Version: 1.0
-In-Reply-To: <1481143768-16377-1-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c663f50d02ee4bfca4f458b8de57516b@SFHDAG7NODE2.st.com>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: Suman Anna <s-anna@ti.com>, "ohad@wizery.com" <ohad@wizery.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>, Patrice CHOTARD <patrice.chotard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 12/07/2016 09:49 PM, Loic Pallardy wrote:
-> With subdevice support introduction, coprocessor boot sequence has
-> changed. Related coprocessor subdevices are now starting after firmware
-> and resource table loading and coprocessor boot.
+On Tue 10 Jan 00:18 PST 2017, Loic PALLARDY wrote:
+> > From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
+[..]
+> > Loic, did you have a chance to give this a test run? I would appreciate your
+> > feedback before I send this off to Linus.
+> Hi Bjorn,
 > 
-> But some subdevices can resources to allocate before coprocessor start,
-> like rpmsg buffers allocation for example.
-> 
-> This patch probes subdevices just before loading resource table,
-> to keep backward compatibility with existing firmwares.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
-> v2: remove unused stop_rproc label
-> 
->  drivers/remoteproc/remoteproc_core.c | 18 ++++++++----------
->  1 file changed, 8 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f0f6ec1..61f06a7 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -913,6 +913,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  		goto clean_up_resources;
->  	}
->  
-> +	/* probe any subdevices for the remote processor */
-> +	ret = rproc_probe_subdevices(rproc);
-> +	if (ret) {
-> +		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-> +			rproc->name, ret);
-> +		goto clean_up_resources;
-> +	}
-> +
->  	/*
->  	 * The starting device has been given the rproc->table_ptr as the
->  	 * resource table. The address of the vring along with the other
-> @@ -932,22 +940,12 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  		goto clean_up_resources;
->  	}
->  
-> -	/* probe any subdevices for the remote processor */
-> -	ret = rproc_probe_subdevices(rproc);
-> -	if (ret) {
-> -		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-> -			rproc->name, ret);
-> -		goto stop_rproc;
-> -	}
-> -
->  	rproc->state = RPROC_RUNNING;
->  
->  	dev_info(dev, "remote processor %s is now up\n", rproc->name);
->  
->  	return 0;
->  
-> -stop_rproc:
-> -	rproc->ops->stop(rproc);
->  clean_up_resources:
->  	rproc_resource_cleanup(rproc);
->  clean_up:
-> 
-Hi Loic
+> Sorry for my late answer.
+> Tested on my side. Works fine on ST platform.
 
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
+Thanks Loic!
 
-Patrice
+Regards,
+Bjorn
