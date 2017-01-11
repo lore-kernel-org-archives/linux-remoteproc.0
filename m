@@ -1,710 +1,372 @@
 Return-Path: <Matt.Redfearn@imgtec.com>
 From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v5 3/4] remoteproc/MIPS: Add a remoteproc driver for MIPS
-Date: Wed, 11 Jan 2017 15:34:11 +0000
-Message-ID: <1484148852-29783-4-git-send-email-matt.redfearn@imgtec.com>
+Subject: [PATCH v5 1/4] irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
+Date: Wed, 11 Jan 2017 15:34:09 +0000
+Message-ID: <1484148852-29783-2-git-send-email-matt.redfearn@imgtec.com>
 In-Reply-To: <1484148852-29783-1-git-send-email-matt.redfearn@imgtec.com>
 References: <1484148852-29783-1-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This driver allows a MIPS processor offlined from Linux to be used as a
-remote processor. Firmware may be loaded via the sysfs interface and
-changed at runtime, allowing the processor to handle real-time tasks or
-perform coprocessing while remaining processors are available to Linux.
+The MIPS remote processor driver allows non-Linux firmware to take
+control of and execute on one of the systems VPEs. If that VPE is
+brought back under Linux, it is necessary to ensure that all GIC
+interrupts are routed and masked as Linux expects them, as the firmware
+can have done anything it likes with the GIC configuration (hopefully
+just for that VPEs local interrupt sources, but allow for shared
+external interrupts as well).
 
-Coprocessor firmware must abide by the remoteproc standard, i.e.
-implement the resource table containing memory layouts and virtio device
-descriptions, and additionally abide by the MIPS UHI coprocessor boot
-protocol in the startup code.
+The configuration of shared and local CPU interrupts is maintained and
+updated every time a change is made. When a CPU is brought online, the
+saved configuration is restored.
 
-Signed-off-by: Lisa Parratt <lisa.parratt@imgtec.com>
+These functions will also be useful for restoring GIC context after a
+suspend to RAM.
+
+This patch depends on Paul Burton's recent patches:
+irqchip: mips-gic: Implement activate op for device domain
+irqchip: mips-gic: Cleanup chip & handler setup
+
+Without these patches, the context saving will restore an incorrect map
+to VPE value, since there is a route to not having the interrupt
+affinity set.
+
 Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
-
 ---
 
-Changes in v5:
-Depend on !64bit since this driver only works with 32bit kernels
-Set mproc->tsk state to TASK_DEAD before freeing it to avoid warning
-Flush icache of each carveout so that icache sees latest data written
-
+Changes in v5: None
 Changes in v4:
-Have a single mips-rproc device to be parent to each CPU's rproc device.
-Support per-device coherence introduced in v4.9
-Add a sysfs interface to control the mask of cpus available to rproc
+Fix inconistency of Linux CPU number and VP ID
 
 Changes in v3:
-Update MIPS remoteproc driver to use CPU hotplug state machine
-Remove sysfs interface from MIPS rproc driver, now provided by the core.
-Drop patches that Ralf has already merged to mips-next
+Update GIC context saving to use CPU hotplug state machine
 
-Changes in v2: None
+Changes in v2:
+Add dependence on additional patches to mips-gic in commit log
+Incorporate changes from Marc Zynger's review:
+- Remove CONTEXT_SAVING define.
+- Make saved local state a per-cpu variable
+- Make gic_save_* static functions when enabled, and do { } while(0)
+  otherwise
 
- Documentation/ABI/testing/sysfs-devices-mips-rproc |  13 +
- drivers/remoteproc/Kconfig                         |  11 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/mips_remoteproc.c               | 596 +++++++++++++++++++++
- 4 files changed, 621 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-devices-mips-rproc
- create mode 100644 drivers/remoteproc/mips_remoteproc.c
+ drivers/irqchip/irq-mips-gic.c | 207 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 200 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-mips-rproc b/Documentation/ABI/testing/sysfs-devices-mips-rproc
-new file mode 100644
-index 000000000000..b06f6671807a
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-devices-mips-rproc
-@@ -0,0 +1,13 @@
-+What:		/sys/devices/mips-rproc/cpus
-+Date:		October 2016
-+Contact:	Matt Redfearn <matt.redfearn@imgtec.com>
-+Description:
-+		CPU topology file describing which CPUs may be used by the
-+		MIPS remote processor driver when offline from Linux.
-+
-+		This can be read to observe the current setting, or written to
-+		change the allowed CPUs.
-+
-+		The format is compatible with cpulist_parse()
-+		[see <linux/cpumask.h>], for example to enable the MIPS remote
-+		processor driver on CPUs 1,2 & 3, write "1-3" into this file.
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 8f9cf0bc571c..3be2202f639d 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -68,6 +68,17 @@ config DA8XX_REMOTEPROC
- 	  It's safe to say n here if you're not interested in multimedia
- 	  offloading.
- 
-+config MIPS_REMOTEPROC
-+	tristate "MIPS remoteproc support"
-+	depends on MIPS_CPS && HAS_DMA && !64BIT
-+	depends on REMOTEPROC
-+	select CMA
-+	select MIPS_CPU_STEAL
-+	help
-+	  Say y here to support using offline cores/VPEs as remote processors
-+	  via the remote processor framework.
-+	  If unsure say N.
-+
- config QCOM_ADSP_PIL
- 	tristate "Qualcomm ADSP Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 0938ea3c41ba..580ee8907da9 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_elf_loader.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
-+obj-$(CONFIG_MIPS_REMOTEPROC)		+= mips_remoteproc.o
- obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
- obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
-diff --git a/drivers/remoteproc/mips_remoteproc.c b/drivers/remoteproc/mips_remoteproc.c
-new file mode 100644
-index 000000000000..9a2a7bbddc0a
---- /dev/null
-+++ b/drivers/remoteproc/mips_remoteproc.c
-@@ -0,0 +1,596 @@
-+/*
-+ * MIPS Remote Processor driver
-+ *
-+ * Copyright (C) 2016 Imagination Technologies
-+ * Lisa Parratt <lisa.parratt@imgtec.com>
-+ * Matt Redfearn <matt.redfearn@imgtec.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
+diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
+index c01c09e9916d..dafd61be3c80 100644
+--- a/drivers/irqchip/irq-mips-gic.c
++++ b/drivers/irqchip/irq-mips-gic.c
+@@ -8,6 +8,7 @@
+  */
+ #include <linux/bitmap.h>
+ #include <linux/clocksource.h>
 +#include <linux/cpu.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+
-+#include <asm/cacheflush.h>
-+#include <asm/smp-cps.h>
-+#include <asm/tlbflush.h>
-+#include <asm/tlbmisc.h>
-+
-+#include "remoteproc_internal.h"
-+
-+struct mips_rproc {
-+	char			name[16];
-+	struct rproc		*rproc;
-+	struct task_struct	*tsk;
-+	unsigned int		cpu;
-+	int			ipi_linux;
-+	int			ipi_remote;
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+@@ -56,6 +57,79 @@ static unsigned int timer_cpu_pin;
+ static struct irq_chip gic_level_irq_controller, gic_edge_irq_controller;
+ DECLARE_BITMAP(ipi_resrv, GIC_MAX_INTRS);
+ 
++#ifdef CONFIG_MIPS_REMOTEPROC
++struct gic_local_state_t {
++	u8 mask;
 +};
 +
-+/* Parent device for MIPS remoteproc */
-+static struct device mips_rproc_dev;
++DEFINE_PER_CPU(struct gic_local_state_t, gic_local_state);
 +
-+/* Array of allocated MIPS remote processor instances */
-+static struct mips_rproc *mips_rprocs[NR_CPUS];
-+
-+/* Bitmap used to identify which CPUs are available to rproc */
-+static cpumask_var_t mips_rproc_cpumask;
-+
-+/* Dynamic CPU hotplug state associated with this driver */
-+static int cpuhp_state;
-+
-+/* Add wired entry to map a device address to physical memory */
-+static void mips_map_page(unsigned long da, unsigned long pa, int c,
-+			  unsigned long pagesize)
++static void gic_save_local_rmask(int cpu, int mask)
 +{
-+	unsigned long pa2 = pa + (pagesize / 2);
-+	unsigned long entryhi, entrylo0, entrylo1;
-+	unsigned long pagemask = pagesize - 0x2000;
++	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
 +
-+	pa = (pa >> 6) & (ULONG_MAX << MIPS_ENTRYLO_PFN_SHIFT);
-+	pa2 = (pa2 >> 6) & (ULONG_MAX << MIPS_ENTRYLO_PFN_SHIFT);
-+	entryhi = da & 0xfffffe000;
-+	entrylo0 = (c << ENTRYLO_C_SHIFT) | ENTRYLO_D | ENTRYLO_V | pa;
-+	entrylo1 = (c << ENTRYLO_C_SHIFT) | ENTRYLO_D | ENTRYLO_V | pa2;
-+
-+	pr_debug("Create wired entry %d, CCA %d\n", read_c0_wired(), c);
-+	pr_debug(" EntryHi: 0x%016lx\n", entryhi);
-+	pr_debug(" EntryLo0: 0x%016lx\n", entrylo0);
-+	pr_debug(" EntryLo1: 0x%016lx\n", entrylo1);
-+	pr_debug(" Pagemask: 0x%016lx\n", pagemask);
-+	pr_debug("\n");
-+
-+	add_wired_entry(entrylo0, entrylo1, entryhi, pagemask);
++	state->mask &= mask;
 +}
 +
-+/* Compute the largest page mask a physical address can be mapped with */
-+static unsigned long mips_rproc_largest_pm(unsigned long pa,
-+					   unsigned long maxmask)
++static void gic_save_local_smask(int cpu, int mask)
 +{
-+	unsigned long mask;
-+	/* Find address bits limiting alignment */
-+	unsigned long shift = ffs(pa);
++	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
 +
-+	/* Obey MIPS restrictions on page sizes */
-+	if (pa) {
-+		if (shift & 1)
-+			shift -= 2;
++	state->mask |= mask;
++}
++
++static struct {
++	unsigned vpe:		8;
++	unsigned pin:		4;
++
++	unsigned polarity:	1;
++	unsigned trigger:	1;
++	unsigned dual_edge:	1;
++	unsigned mask:		1;
++} gic_shared_state[GIC_MAX_INTRS];
++
++static void gic_save_shared_vpe(int intr, int vpe)
++{
++	gic_shared_state[intr].vpe = vpe;
++}
++
++static void gic_save_shared_pin(int intr, int pin)
++{
++	gic_shared_state[intr].pin = pin;
++}
++
++static void gic_save_shared_polarity(int intr, int polarity)
++{
++	gic_shared_state[intr].polarity = polarity;
++}
++
++static void gic_save_shared_trigger(int intr, int trigger)
++{
++	gic_shared_state[intr].trigger = trigger;
++}
++
++static void gic_save_shared_dual_edge(int intr, int dual_edge)
++{
++	gic_shared_state[intr].dual_edge = dual_edge;
++}
++
++static void gic_save_shared_mask(int intr, int mask)
++{
++	gic_shared_state[intr].mask = mask;
++}
++
++#else
++#define gic_save_local_rmask(cpu, i)	do { } while (0)
++#define gic_save_local_smask(cpu, i)	do { } while (0)
++
++#define gic_save_shared_vpe(i, v)	do { } while (0)
++#define gic_save_shared_pin(i, p)	do { } while (0)
++#define gic_save_shared_polarity(i, p)	do { } while (0)
++#define gic_save_shared_trigger(i, t)	do { } while (0)
++#define gic_save_shared_dual_edge(i, d)	do { } while (0)
++#define gic_save_shared_mask(i, m)	do { } while (0)
++#endif /* CONFIG_MIPS_REMOTEPROC */
++
+ static void __gic_irq_dispatch(void);
+ 
+ static inline u32 gic_read32(unsigned int reg)
+@@ -105,52 +179,94 @@ static inline void gic_update_bits(unsigned int reg, unsigned long mask,
+ 	gic_write(reg, regval);
+ }
+ 
+-static inline void gic_reset_mask(unsigned int intr)
++static inline void gic_write_reset_mask(unsigned int intr)
+ {
+ 	gic_write(GIC_REG(SHARED, GIC_SH_RMASK) + GIC_INTR_OFS(intr),
+ 		  1ul << GIC_INTR_BIT(intr));
+ }
+ 
+-static inline void gic_set_mask(unsigned int intr)
++static inline void gic_reset_mask(unsigned int intr)
++{
++	gic_save_shared_mask(intr, 0);
++	gic_write_reset_mask(intr);
++}
++
++static inline void gic_write_set_mask(unsigned int intr)
+ {
+ 	gic_write(GIC_REG(SHARED, GIC_SH_SMASK) + GIC_INTR_OFS(intr),
+ 		  1ul << GIC_INTR_BIT(intr));
+ }
+ 
+-static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
++static inline void gic_set_mask(unsigned int intr)
++{
++	gic_save_shared_mask(intr, 1);
++	gic_write_set_mask(intr);
++}
++
++static inline void gic_write_polarity(unsigned int intr, unsigned int pol)
+ {
+ 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_POLARITY) +
+ 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
+ 			(unsigned long)pol << GIC_INTR_BIT(intr));
+ }
+ 
+-static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
++static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
++{
++	gic_save_shared_polarity(intr, pol);
++	gic_write_polarity(intr, pol);
++}
++
++static inline void gic_write_trigger(unsigned int intr, unsigned int trig)
+ {
+ 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_TRIGGER) +
+ 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
+ 			(unsigned long)trig << GIC_INTR_BIT(intr));
+ }
+ 
+-static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
++static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
++{
++	gic_save_shared_trigger(intr, trig);
++	gic_write_trigger(intr, trig);
++}
++
++static inline void gic_write_dual_edge(unsigned int intr, unsigned int dual)
+ {
+ 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_DUAL) + GIC_INTR_OFS(intr),
+ 			1ul << GIC_INTR_BIT(intr),
+ 			(unsigned long)dual << GIC_INTR_BIT(intr));
+ }
+ 
+-static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
++static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
++{
++	gic_save_shared_dual_edge(intr, dual);
++	gic_write_dual_edge(intr, dual);
++}
++
++static inline void gic_write_map_to_pin(unsigned int intr, unsigned int pin)
+ {
+ 	gic_write32(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_PIN_BASE) +
+ 		    GIC_SH_MAP_TO_PIN(intr), GIC_MAP_TO_PIN_MSK | pin);
+ }
+ 
+-static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
++static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
++{
++	gic_save_shared_pin(intr, pin);
++	gic_write_map_to_pin(intr, pin);
++}
++
++static inline void gic_write_map_to_vpe(unsigned int intr, unsigned int vpe)
+ {
+ 	gic_write(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_VPE_BASE) +
+ 		  GIC_SH_MAP_TO_VPE_REG_OFF(intr, vpe),
+ 		  GIC_SH_MAP_TO_VPE_REG_BIT(vpe));
+ }
+ 
++static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
++{
++	gic_save_shared_vpe(intr, vpe);
++	gic_write_map_to_vpe(intr, vpe);
++}
++
+ #ifdef CONFIG_CLKSRC_MIPS_GIC
+ u64 gic_read_count(void)
+ {
+@@ -527,6 +643,7 @@ static void gic_mask_local_irq(struct irq_data *d)
+ {
+ 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
+ 
++	gic_save_local_rmask(smp_processor_id(), (1 << intr));
+ 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_RMASK), 1 << intr);
+ }
+ 
+@@ -534,6 +651,7 @@ static void gic_unmask_local_irq(struct irq_data *d)
+ {
+ 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
+ 
++	gic_save_local_smask(smp_processor_id(), (1 << intr));
+ 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_SMASK), 1 << intr);
+ }
+ 
+@@ -551,6 +669,7 @@ static void gic_mask_local_irq_all_vpes(struct irq_data *d)
+ 
+ 	spin_lock_irqsave(&gic_lock, flags);
+ 	for (i = 0; i < gic_vpes; i++) {
++		gic_save_local_rmask(i, 1 << intr);
+ 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
+ 			  mips_cm_vp_id(i));
+ 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), 1 << intr);
+@@ -566,6 +685,7 @@ static void gic_unmask_local_irq_all_vpes(struct irq_data *d)
+ 
+ 	spin_lock_irqsave(&gic_lock, flags);
+ 	for (i = 0; i < gic_vpes; i++) {
++		gic_save_local_smask(i, 1 << intr);
+ 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
+ 			  mips_cm_vp_id(i));
+ 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), 1 << intr);
+@@ -968,6 +1088,74 @@ static struct irq_domain_ops gic_ipi_domain_ops = {
+ 	.match = gic_ipi_domain_match,
+ };
+ 
++#ifdef CONFIG_MIPS_REMOTEPROC
++static void gic_restore_shared(void)
++{
++	unsigned long flags;
++	int i;
++
++	spin_lock_irqsave(&gic_lock, flags);
++	for (i = 0; i < gic_shared_intrs; i++) {
++		gic_write_polarity(i, gic_shared_state[i].polarity);
++		gic_write_trigger(i, gic_shared_state[i].trigger);
++		gic_write_dual_edge(i, gic_shared_state[i].dual_edge);
++		gic_write_map_to_vpe(i, gic_shared_state[i].vpe);
++		gic_write_map_to_pin(i, gic_shared_state[i].pin);
++
++		if (gic_shared_state[i].mask)
++			gic_write_set_mask(i);
 +		else
-+			shift--;
++			gic_write_reset_mask(i);
 +	}
-+	mask = ULONG_MAX << shift;
-+	return maxmask & ~mask;
++	spin_unlock_irqrestore(&gic_lock, flags);
 +}
 +
-+/* Compute the page mask one step larger than a given page mask */
-+static unsigned long mips_rproc_next_pm(unsigned long pm, unsigned long maxmask)
++static void gic_restore_local(unsigned int cpu)
 +{
-+#define PM_SHIFT 13
-+	return ((pm << 2) | (0x3 << PM_SHIFT)) & maxmask;
++	struct gic_local_state_t state;
++	int hw, virq, intr, mask;
++	unsigned long flags;
++
++	for (hw = 0; hw < GIC_NUM_LOCAL_INTRS; hw++) {
++		intr = GIC_LOCAL_TO_HWIRQ(hw);
++		virq = irq_linear_revmap(gic_irq_domain, intr);
++		gic_local_irq_domain_map(gic_irq_domain, virq, hw);
++	}
++
++	local_irq_save(flags);
++	gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
++		  mips_cm_vp_id(cpu));
++
++	/* Enable EIC mode if necessary */
++	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_CTL), cpu_has_veic);
++
++	/* Restore interrupt masks */
++	state = per_cpu(gic_local_state, cpu);
++	mask = state.mask;
++	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), ~mask);
++	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), mask);
++
++	local_irq_restore(flags);
 +}
 +
 +/*
-+ * Add mappings to the TLB such that memory allocated by the kernel for a
-+ * firmware component appears at the right virtual address
++ * The MIPS remote processor driver allows non-Linux firmware to take control
++ * of and execute on one of the systems VPEs. If that VPE is brought back under
++ * Linux, it is necessary to ensure that all GIC interrupts are routed and
++ * masked as Linux expects them, as the firmware can have done anything it
++ * likes with the GIC configuration (hopefully just for that VPEs local
++ * interrupt sources, but allow for shared external interrupts as well).
 + */
-+static inline void mips_rproc_map(unsigned long da, unsigned long pa, int c,
-+				  unsigned long size, unsigned long maxmask)
++static int gic_cpu_online(unsigned int cpu)
 +{
-+	/* minimum mappable size is 2 * 4k pages */
-+	const unsigned long min_map_sz = 0x2000;
-+	unsigned long bigmask, nextmask;
-+	unsigned long distance, target;
-+	unsigned long page2_size; /* Size of the 2 buddy pages */
-+
-+	do {
-+		/* Compute the current largest page mask */
-+		bigmask = mips_rproc_largest_pm(pa, maxmask);
-+		/* Compute the next largest pagesize */
-+		nextmask = mips_rproc_next_pm(bigmask, maxmask);
-+		/*
-+		 * Compute the distance from our current physical address to
-+		 * the next page boundary.
-+		 */
-+		distance = (nextmask + min_map_sz) - (pa & nextmask);
-+		/*
-+		 * Decide between searching to get to the next highest page
-+		 * boundary or finishing.
-+		 */
-+		target = distance < size ? distance : size;
-+		while (target) {
-+			/* Find the largest supported page size that will fit */
-+			for (page2_size = maxmask + min_map_sz;
-+			    (page2_size > min_map_sz) && (page2_size > target);
-+			     page2_size /= 4) {
-+			}
-+			/* Emit it */
-+			mips_map_page(da, pa, c, page2_size);
-+			/* Move to next step */
-+			size -= page2_size;
-+			da += page2_size;
-+			pa += page2_size;
-+			target -= page2_size;
-+		}
-+	} while (size);
-+}
-+
-+static int mips_rproc_carveouts(struct rproc *rproc, int max_pagemask)
-+{
-+	struct rproc_mem_entry *carveout;
-+
-+	list_for_each_entry(carveout, &rproc->carveouts, node) {
-+		int c = CONF_CM_CACHABLE_COW;
-+
-+		dev_dbg(&rproc->dev,
-+			"carveout mapping da 0x%x -> %pad length 0x%x, CCA %d",
-+			carveout->da, &carveout->dma, carveout->len, c);
-+
-+		mips_rproc_map(carveout->da, carveout->dma, c,
-+				carveout->len, max_pagemask);
-+		flush_icache_range((unsigned long)carveout->va,
-+				   (unsigned long)carveout->va + carveout->len);
-+	}
-+	return 0;
-+}
-+
-+static int mips_rproc_vdevs(struct rproc *rproc, int max_pagemask)
-+{
-+	struct rproc_vdev *rvdev;
-+
-+	list_for_each_entry(rvdev, &rproc->rvdevs, node) {
-+		int i, size;
-+
-+		for (i = 0; i < ARRAY_SIZE(rvdev->vring); i++) {
-+			struct rproc_vring *vring = &rvdev->vring[i];
-+			unsigned long pa = vring->dma;
-+			int c;
-+
-+			if (plat_device_is_coherent(&mips_rproc_dev)) {
-+				/*
-+				 * The DMA API will allocate cacheable buffers
-+				 * for shared resources, so the firmware should
-+				 * also access those buffers cached
-+				 */
-+				c = (_page_cachable_default >> _CACHE_SHIFT);
-+			} else {
-+				/*
-+				 * Otherwise, shared buffers should be accessed
-+				 * uncached
-+				 */
-+				c = CONF_CM_UNCACHED;
-+			}
-+
-+			/* actual size of vring (in bytes) */
-+			size = PAGE_ALIGN(vring_size(vring->len, vring->align));
-+
-+			dev_dbg(&rproc->dev,
-+				"vring mapping da %pad -> %pad length 0x%x, CCA %d",
-+				&vring->dma, &vring->dma, size, c);
-+
-+			mips_rproc_map(pa, pa, c, size, max_pagemask);
-+		}
-+	}
-+	return 0;
-+}
-+
-+static void mips_rproc_cpu_entry(void)
-+{
-+	struct mips_rproc *mproc = mips_rprocs[smp_processor_id()];
-+	struct rproc *rproc = mproc->rproc;
-+	int ipi_to_remote = ipi_get_hwirq(mproc->ipi_remote, mproc->cpu);
-+	int ipi_from_remote = ipi_get_hwirq(mproc->ipi_linux, 0);
-+	unsigned long old_pagemask, max_pagemask;
-+	void (*fw_entry)(int, int ipi_to_remote, int ipi_from_remote, int);
-+
-+	dev_info(&rproc->dev, "%s booting firmware %s\n",
-+		 rproc->name, rproc->firmware);
-+
-+	/* Get the maximum pagemask supported on this CPU */
-+	old_pagemask = read_c0_pagemask();
-+	write_c0_pagemask(~0);
-+	back_to_back_c0_hazard();
-+	max_pagemask = read_c0_pagemask();
-+	write_c0_pagemask(old_pagemask);
-+	back_to_back_c0_hazard();
-+
-+	/* Start with no wired entries */
-+	write_c0_wired(0);
-+
-+	/* Flush all previous TLB entries */
-+	local_flush_tlb_all();
-+
-+	/* Set ASID 0 */
-+	write_c0_entryhi(0);
-+
-+	/* Map firmware resources into virtual memory */
-+	mips_rproc_carveouts(rproc, max_pagemask);
-+	mips_rproc_vdevs(rproc, max_pagemask);
-+
-+	dev_dbg(&rproc->dev, "IPI to remote: %d\n", ipi_to_remote);
-+	dev_dbg(&rproc->dev, "IPI from remote: %d\n", ipi_from_remote);
-+
-+	/* Hand off the CPU to the firmware */
-+	dev_dbg(&rproc->dev, "Jumping to firmware at 0x%x\n", rproc->bootaddr);
-+
-+	/* Jump into the firmware, obeying the firmware protocol. */
-+	fw_entry = (void *)rproc->bootaddr;
-+	fw_entry(-3, ipi_to_remote, ipi_from_remote, 0);
-+}
-+
-+static irqreturn_t mips_rproc_ipi_handler(int irq, void *dev_id)
-+{
-+	/* Synthetic interrupts shouldn't need acking */
-+	return IRQ_WAKE_THREAD;
-+}
-+
-+static irqreturn_t mips_rproc_vq_int(int irq, void *p)
-+{
-+	struct rproc *rproc = (struct rproc *)p;
-+	void *entry;
-+	int id;
-+
-+	/* We don't have a mailbox, so iterate over all vqs and kick them. */
-+	idr_for_each_entry(&rproc->notifyids, entry, id)
-+		rproc_vq_interrupt(rproc, id);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/* Helper function to find the IPI domain */
-+static struct irq_domain *ipi_domain(void)
-+{
-+	struct device_node *node = of_irq_find_parent(of_root);
-+	struct irq_domain *ipidomain;
-+
-+	ipidomain = irq_find_matching_host(node, DOMAIN_BUS_IPI);
-+	/*
-+	 * Some platforms have half DT setup. So if we found irq node but
-+	 * didn't find an ipidomain, try to search for one that is not in the
-+	 * DT.
-+	 */
-+	if (node && !ipidomain)
-+		ipidomain = irq_find_matching_host(NULL, DOMAIN_BUS_IPI);
-+
-+	return ipidomain;
-+}
-+
-+int mips_rproc_op_start(struct rproc *rproc)
-+{
-+	struct mips_rproc *mproc = rproc->priv;
-+	int err;
-+	int cpu = mproc->cpu;
-+
-+	/* Create task for the CPU to use before handing off to firmware */
-+	mproc->tsk = fork_idle(cpu);
-+	if (IS_ERR(mproc->tsk)) {
-+		dev_err(&rproc->dev, "fork_idle() failed for CPU%d\n", cpu);
-+		return -ENOMEM;
-+	}
-+
-+	/* We won't be needing the Linux IPIs anymore */
-+	if (mips_smp_ipi_free(get_cpu_mask(cpu))) {
-+		dev_err(&rproc->dev, "Failed to reserve incoming kick\n");
-+		goto exit_free_tsk;
-+	}
-+
-+	/*
-+	 * Direct IPIs from the remote processor to CPU0 since that can't be
-+	 * offlined while the remote CPU is running.
-+	 */
-+	mproc->ipi_linux = irq_reserve_ipi(ipi_domain(), get_cpu_mask(0));
-+	if (!mproc->ipi_linux) {
-+		dev_err(&rproc->dev, "Failed to reserve incoming kick\n");
-+		goto exit_restore_ipi;
-+	}
-+
-+	mproc->ipi_remote = irq_reserve_ipi(ipi_domain(), get_cpu_mask(cpu));
-+	if (!mproc->ipi_remote) {
-+		dev_err(&rproc->dev, "Failed to reserve outgoing kick\n");
-+		goto exit_destroy_ipi_linux;
-+	}
-+
-+	/* register incoming ipi */
-+	err = request_threaded_irq(mproc->ipi_linux, mips_rproc_ipi_handler,
-+				   mips_rproc_vq_int, 0,
-+				   "mips-rproc IPI in", rproc);
-+	if (err) {
-+		dev_err(&rproc->dev, "Failed to register incoming kick: %d\n",
-+			err);
-+		goto exit_destroy_ipi_remote;
-+	}
-+
-+	if (mips_cps_steal_cpu_and_execute(cpu, &mips_rproc_cpu_entry,
-+						mproc->tsk)) {
-+		dev_err(&rproc->dev, "Failed to steal CPU%d for remote\n", cpu);
-+		goto exit_free_irq;
-+	}
-+
-+	return 0;
-+
-+exit_free_irq:
-+	free_irq(mproc->ipi_linux, rproc);
-+exit_destroy_ipi_remote:
-+	irq_destroy_ipi(mproc->ipi_remote, get_cpu_mask(cpu));
-+exit_destroy_ipi_linux:
-+	irq_destroy_ipi(mproc->ipi_linux, get_cpu_mask(0));
-+exit_restore_ipi:
-+	/* Set up the Linux IPIs again */
-+	mips_smp_ipi_allocate(get_cpu_mask(cpu));
-+exit_free_tsk:
-+	free_task(mproc->tsk);
-+
-+	return -EINVAL;
-+}
-+
-+int mips_rproc_op_stop(struct rproc *rproc)
-+{
-+	struct mips_rproc *mproc = rproc->priv;
-+
-+	free_irq(mproc->ipi_linux, rproc);
-+
-+	irq_destroy_ipi(mproc->ipi_linux, get_cpu_mask(0));
-+	irq_destroy_ipi(mproc->ipi_remote, get_cpu_mask(mproc->cpu));
-+
-+	/* Set up the Linux IPIs again */
-+	mips_smp_ipi_allocate(get_cpu_mask(mproc->cpu));
-+
-+	set_task_state(mproc->tsk, TASK_DEAD);
-+	free_task(mproc->tsk);
-+
-+	return mips_cps_halt_and_return_cpu(mproc->cpu);
-+}
-+
-+void mips_rproc_op_kick(struct rproc *rproc, int vqid)
-+{
-+	struct mips_rproc *mproc = rproc->priv;
-+
-+	if (rproc->state == RPROC_RUNNING)
-+		ipi_send_single(mproc->ipi_remote, mproc->cpu);
-+}
-+
-+static const struct rproc_ops mips_rproc_proc_ops = {
-+	.start	= mips_rproc_op_start,
-+	.stop	= mips_rproc_op_stop,
-+	.kick	= mips_rproc_op_kick,
-+};
-+
-+/* Create an rproc instance in response to CPU down */
-+static int mips_rproc_device_register(unsigned int cpu)
-+{
-+	char *template = "mips-cpu%u";
-+	struct rproc *rproc;
-+	struct mips_rproc *mproc;
-+	int err;
-+
-+	if (!cpumask_test_cpu(cpu, mips_rproc_cpumask))
-+		/* The CPU is not in the mask, so don't register rproc on it */
-+		return 0;
-+
-+	pr_debug("Allocating MIPS rproc for cpu%d\n", cpu);
-+
-+	if (mips_rprocs[cpu]) {
-+		dev_err(&mips_rproc_dev, "CPU%d in use\n", cpu);
-+		return 0;
-+	}
-+
-+	mproc = kzalloc(sizeof(struct mips_rproc), GFP_KERNEL);
-+	if (!mproc) {
-+		err = -ENOMEM;
-+		goto exit;
-+	}
-+
-+	snprintf(mproc->name, sizeof(mproc->name), template, cpu);
-+	mproc->cpu = cpu;
-+
-+	rproc = rproc_alloc(&mips_rproc_dev, mproc->name,
-+			    &mips_rproc_proc_ops, NULL,
-+			    sizeof(struct mips_rproc *));
-+	if (!rproc) {
-+		dev_err(&mips_rproc_dev, "Error allocating rproc\n");
-+		err = -ENOMEM;
-+		goto exit_free_mproc;
-+	}
-+
-+	mproc->rproc = rproc;
-+	rproc->priv = (void *)mproc;
-+
-+	err = rproc_add(rproc);
-+	if (err) {
-+		dev_err(&mips_rproc_dev, "Failed to add rproc: %d\n", err);
-+		goto exit_free_rproc;
-+	}
-+
-+	mips_rprocs[cpu] = mproc;
-+	return 0;
-+
-+exit_free_rproc:
-+	rproc_free(rproc);
-+exit_free_mproc:
-+	kfree(mproc);
-+exit:
-+	return err;
-+}
-+
-+/* Destroy rproc instance in response to CPU up */
-+static int mips_rproc_device_unregister(unsigned int cpu)
-+{
-+	struct mips_rproc *mproc = mips_rprocs[cpu];
-+
-+	if (!mproc)
-+		/* No rproc instance has been created for this CPU */
-+		return 0;
-+
-+	pr_debug("Deallocating MIPS rproc for cpu%d\n", cpu);
-+
-+	rproc_del(mproc->rproc);
-+	rproc_put(mproc->rproc);
-+	kfree(mproc);
-+
-+	mips_rprocs[cpu] = NULL;
-+	return 0;
-+}
-+
-+/* Show MIPS CPUs available to rproc */
-+static ssize_t cpus_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
-+{
-+	return cpumap_print_to_pagebuf(true, buf, mips_rproc_cpumask);
-+}
-+
-+/* Allow MIPS CPUs to be made available to rproc */
-+static ssize_t cpus_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	static cpumask_var_t new_mask;
-+	int err, cpu;
-+
-+	err = cpulist_parse(buf, new_mask);
-+	if (err)
-+		return err;
-+
-+	/* Prevent CPU hotplug on/offlining CPUs while we do this */
-+	get_online_cpus();
-+
-+	for_each_possible_cpu(cpu) {
-+		if (cpumask_test_cpu(cpu, mips_rproc_cpumask) &&
-+		    !cpumask_test_cpu(cpu, new_mask)) {
-+			/* CPU no longer allowed. Release any instance on it */
-+			cpumask_clear_cpu(cpu, mips_rproc_cpumask);
-+			mips_rproc_device_unregister(cpu);
-+
-+		} else if (!cpumask_test_cpu(cpu, mips_rproc_cpumask) &&
-+			   cpumask_test_cpu(cpu, new_mask)) {
-+			/* If the CPU isn't online, start an instance */
-+			cpumask_set_cpu(cpu, mips_rproc_cpumask);
-+			if (!cpu_online(cpu))
-+				mips_rproc_device_register(cpu);
-+		}
-+	}
-+	put_online_cpus();
-+	return count;
-+}
-+static DEVICE_ATTR_RW(cpus);
-+
-+static struct attribute *mips_rproc_attrs[] = {
-+	&dev_attr_cpus.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group mips_rproc_devgroup = {
-+	.attrs = mips_rproc_attrs
-+};
-+
-+static const struct attribute_group *mips_rproc_devgroups[] = {
-+	&mips_rproc_devgroup,
-+	NULL
-+};
-+static struct device_type mips_rproc_type = {
-+	.groups = mips_rproc_devgroups,
-+};
-+
-+static struct platform_driver mips_rproc_driver = {
-+	.driver = {
-+		.name = "mips-rproc",
-+	},
-+};
-+
-+static int __init mips_rproc_init(void)
-+{
-+	int err;
-+
-+	if ((!cpu_has_mipsmt) && (!cpu_has_vp)) {
-+		pr_debug("MIPS rproc not supported on this cpu\n");
-+		return -EIO;
-+	}
-+
-+	mips_rproc_dev.driver = &mips_rproc_driver.driver;
-+	mips_rproc_dev.type = &mips_rproc_type;
-+	dev_set_name(&mips_rproc_dev, "mips-rproc");
-+
-+	/* Set device to have coherent DMA ops */
-+	arch_setup_dma_ops(&mips_rproc_dev, 0, 0, NULL, 1);
-+
-+	err = device_register(&mips_rproc_dev);
-+	if (err) {
-+		dev_err(&mips_rproc_dev, "Error adding MIPS rproc: %d\n", err);
-+		return err;
-+	}
-+
-+	/*
-+	 * Register with the cpu hotplug state machine.
-+	 * This driver requires opposite sense to "normal" drivers, since the
-+	 * driver is activated for offline CPUs via the teardown callback and
-+	 * deactivated via the online callback.
-+	 */
-+	err = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "MIPS:REMOTEPROC",
-+				mips_rproc_device_unregister,
-+				mips_rproc_device_register);
-+	if (err < 0) {
-+		device_unregister(&mips_rproc_dev);
-+		return err;
-+	}
-+
-+	cpuhp_state = err;
++	gic_restore_shared();
++	gic_restore_local(cpu);
 +
 +	return 0;
 +}
 +
-+static void __exit mips_rproc_exit(void)
-+{
-+	int cpu;
++#endif /* CONFIG_MIPS_REMOTEPROC */
 +
-+	if (cpuhp_state) {
-+		/*
-+		 * Unregister with the cpu hotplug state machine, but don't call
-+		 * the teardown callback, since that would try to start the
-+		 * remote processor device.
-+		 */
-+		__cpuhp_remove_state(cpuhp_state, false);
-+		cpuhp_state = 0;
-+	}
+ static void __init __gic_init(unsigned long gic_base_addr,
+ 			      unsigned long gic_addrspace_size,
+ 			      unsigned int cpu_vec, unsigned int irqbase,
+@@ -1067,6 +1255,11 @@ static void __init __gic_init(unsigned long gic_base_addr,
+ 	}
+ 
+ 	gic_basic_init();
 +
-+	get_online_cpus();
-+	/* Unregister devices created for any offline CPUs */
-+	for_each_possible_cpu(cpu)
-+		mips_rproc_device_unregister(cpu);
-+	put_online_cpus();
-+}
-+
-+late_initcall(mips_rproc_init);
-+module_exit(mips_rproc_exit);
-+
-+module_platform_driver(mips_rproc_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MIPS Remote Processor control driver");
++#ifdef CONFIG_MIPS_REMOTEPROC
++	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "MIPS:GIC(REMOTEPROC)",
++			  gic_cpu_online, NULL);
++#endif /* CONFIG_MIPS_REMOTEPROC */
+ }
+ 
+ void __init gic_init(unsigned long gic_base_addr,
 -- 
 2.7.4
