@@ -1,62 +1,46 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 11 Jan 2017 06:07:52 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 2/4] rpmsg: qcom_smd: Implement endpoint "poll"
-Date: Wed, 11 Jan 2017 06:35:11 -0800
-Message-Id: <20170111143513.32251-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20170111143513.32251-1-bjorn.andersson@linaro.org>
-References: <20170111143513.32251-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [GIT PULL] remoteproc fixes for v4.10
+Message-ID: <20170111140752.GB31260@builder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for polling the status of the write buffer so that user
-space can use rpmsg character devices in non-blocking mode.
+The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
 
-Changes since v2:
-- None
+are available in the git repository at:
 
-Changes since v1:
-- New patch
+  git://github.com/andersson/remoteproc tags/rproc-v4.10-fixes
 
- drivers/rpmsg/qcom_smd.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+for you to fetch changes up to a0c10687ec9506b5e14fe3dd47832a77f2f2500c:
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 3dd73edaa525..9e2af6a18aa2 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -919,6 +919,21 @@ static int qcom_smd_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- 	return __qcom_smd_send(qsept->qsch, data, len, false);
- }
- 
-+static unsigned int qcom_smd_poll(struct rpmsg_endpoint *ept,
-+				  struct file *filp, poll_table *wait)
-+{
-+	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-+	struct qcom_smd_channel *channel = qsept->qsch;
-+	unsigned int mask = 0;
-+
-+	poll_wait(filp, &channel->fblockread_event, wait);
-+
-+	if (qcom_smd_get_tx_avail(channel) > 20)
-+		mask |= POLLOUT | POLLWRNORM;
-+
-+	return mask;
-+}
-+
- /*
-  * Finds the device_node for the smd child interested in this channel.
-  */
-@@ -951,6 +966,7 @@ static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
- 	.destroy_ept = qcom_smd_destroy_ept,
- 	.send = qcom_smd_send,
- 	.trysend = qcom_smd_trysend,
-+	.poll = qcom_smd_poll,
- };
- 
- /*
--- 
-2.11.0
+  Revert "remoteproc: Merge table_ptr and cached_table pointers" (2016-12-30 03:26:31 -0800)
+
+----------------------------------------------------------------
+remoteproc fixes for v4.10
+
+This fixes two regressions that has been reported to be introduced in
+v4.10-rc1.
+
+* The first fix corrects an incorrect usage of the kref api.
+
+* The second reverts the change to make the resource table read-only. As the
+  space each vdev resource is used as virtio device config space it must be
+  shared with the remote.
+
+----------------------------------------------------------------
+Bjorn Andersson (1):
+      Revert "remoteproc: Merge table_ptr and cached_table pointers"
+
+Loic Pallardy (1):
+      remoteproc: fix vdev reference management
+
+ drivers/remoteproc/remoteproc_core.c | 29 ++++++++++++++++-------------
+ include/linux/remoteproc.h           |  4 +++-
+ 2 files changed, 19 insertions(+), 14 deletions(-)
