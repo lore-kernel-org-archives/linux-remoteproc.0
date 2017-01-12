@@ -1,44 +1,36 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH v2] soc: ti: Drop wait from wkup_m3_rproc_boot_thread
-Date: Tue,  3 Jan 2017 15:41:29 -0800
-Message-Id: <1483486889-3662-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [RFC 0/3] remoteproc: Introducing Qualcomm SLPI rproc driver
+Date: Thu, 12 Jan 2017 19:23:34 +0530
+Message-Id: <1484229217-23364-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The function wkup_m3_rproc_boot_thread waits for
-asynchronous firmware loading to parse the resource table
-before calling rproc_boot(). However, as the resource table
-parsing has been moved to rproc_boot(), there's no need to
-wait for the asynchronous firmware loading completion.
-So, drop this.
+SLPI is low pass sensor controller subsystem.
+This patch has:
+	1- slpi rproc driver source file.
+	2- DT-Binding documentation
+	3- slpi smp2p DT node 
 
-CC: Dave Gerlach <d-gerlach@ti.com>
-CC: Suman Anna <s-anna@ti.com>
-CC: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
----
+This patch is tested on MSM8996 MTP platform with modification in regulator code.
 
-This patch seems to be doing an independent clean up now. Hence
-removing it from the series.
+Avaneesh Kumar Dwivedi (3):
+  remoteproc: qcom: Introduce Qualcomm low pass sensor peripheral
+    loader.
+  dt-binding: remoteproc: Introduce DT binding for Qualcomm slpi
+    subsystem.
+  arm64: dts: msm8996: Add SMP2P node for Qualcomm SLPI rproc driver.
 
- drivers/soc/ti/wkup_m3_ipc.c | 2 --
- 1 file changed, 2 deletions(-)
+ .../devicetree/bindings/remoteproc/qcom,slpi.txt   |  88 ++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              |  24 ++
+ drivers/remoteproc/Kconfig                         |  12 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/qcom_slpi_pil.c                 | 445 +++++++++++++++++++++
+ 5 files changed, 570 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,slpi.txt
+ create mode 100644 drivers/remoteproc/qcom_slpi_pil.c
 
-diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-index 8823cc8..8bfa44b 100644
---- a/drivers/soc/ti/wkup_m3_ipc.c
-+++ b/drivers/soc/ti/wkup_m3_ipc.c
-@@ -370,8 +370,6 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
- 	struct device *dev = m3_ipc->dev;
- 	int ret;
- 
--	wait_for_completion(&m3_ipc->rproc->firmware_loading_complete);
--
- 	init_completion(&m3_ipc->sync_complete);
- 
- 	ret = rproc_boot(m3_ipc->rproc);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
