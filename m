@@ -1,106 +1,127 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 3/3] remoteproc: qcom: Use common SMD edge handler
-Date: Mon, 30 Jan 2017 09:26:23 -0800
-Message-Id: <20170130172623.4894-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20170130172623.4894-1-bjorn.andersson@linaro.org>
-References: <20170130172623.4894-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v1 6/6] rpmsg: virtio_rpmsg: set buffer configuration to
+ virtio
+References: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
+ <1481142941-15616-7-git-send-email-loic.pallardy@st.com>
+ <948c0469-ff6c-6516-93ab-fa9f5e95edb7@ti.com>
+ <00e117183e8848839bc75530c159942d@SFHDAG7NODE2.st.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <27f4d8d3-8a3e-2e85-e4be-988e6abb35d5@ti.com>
+Date: Mon, 16 Jan 2017 09:59:06 -0600
+MIME-Version: 1.0
+In-Reply-To: <00e117183e8848839bc75530c159942d@SFHDAG7NODE2.st.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, Patrice CHOTARD <patrice.chotard@st.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Call the common SMD edge handler to instantiate subdevices to bring
-associated SMD edges up and down as the remoteproc is started and
-stopped.
+On 01/14/2017 01:36 PM, Loic PALLARDY wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Suman Anna [mailto:s-anna@ti.com]
+>> Sent: Saturday, January 14, 2017 3:41 AM
+>> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.org;
+>> ohad@wizery.com; lee.jones@linaro.org; Patrice CHOTARD
+>> <patrice.chotard@st.com>
+>> Cc: linux-remoteproc@vger.kernel.org; kernel@stlinux.com
+>> Subject: Re: [PATCH v1 6/6] rpmsg: virtio_rpmsg: set buffer configuration to
+>> virtio
+>>
+>> On 12/07/2016 02:35 PM, Loic Pallardy wrote:
+>>> Rpmsg is allocating buffer one dedicated communication link with some
+>>> specificity like number of buffers, size of one buffer...
+>>> These characteristics should be shared with remote coprocessor to
+>>> guarantee communication link coherency.
+>>>
+>>> Proposal is to update rpmsg configuration fields in coprocessor
+>>> firmware resource table if it exists.
+>>>
+>>> This is possible thanks to virtio set interface which allows to update
+>>> cfg fields of struct fw_rsc_vdev.
+>>>
+>>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+>>> ---
+>>>  drivers/rpmsg/virtio_rpmsg_bus.c | 25 +++++++++++++++++++++++++
+>>>  1 file changed, 25 insertions(+)
+>>>
+>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> index b12fe2a..5527b65 100644
+>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> @@ -924,6 +924,23 @@ static int virtio_rpmsg_get_config(struct
+>>> virtio_device *vdev)
+>>>
+>>>  }
+>>>
+>>> +static void virtio_rpmsg_set_config(struct virtio_device *vdev) {
+>>> +	struct virtio_rpmsg_cfg virtio_cfg;
+>>> +	struct virtproc_info *vrp = vdev->priv;
+>>> +
+>>> +	/* fill virtio_cfg struct */
+>>> +	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
+>>> +	virtio_cfg.id = VIRTIO_ID_RPMSG;
+>>> +	virtio_cfg.da = vrp->bufs_dma;
+>>
+>> Hmm, I would expect this to fail if the device was behind an IOMMU.
+> I think so. I think I did the same vring. I need to check.
+> Perhaps better to set virtio_cfg.da to ANY_ADDRESS (-1) and add a comment about adding IOMMU support.
+> What do you think?
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/Kconfig         | 2 ++
- drivers/remoteproc/qcom_adsp_pil.c | 6 ++++++
- drivers/remoteproc/qcom_q6v5_pil.c | 6 ++++++
- 3 files changed, 14 insertions(+)
+Yeah, that is a better interim change.
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 14e57b3e86dc..2c61bd3f73c5 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -76,6 +76,7 @@ config QCOM_ADSP_PIL
- 	depends on OF && ARCH_QCOM
- 	depends on REMOTEPROC
- 	depends on QCOM_SMEM
-+	depends on QCOM_SMD || (COMPILE_TEST && QCOM_SMD=n)
- 	select MFD_SYSCON
- 	select QCOM_MDT_LOADER
- 	select QCOM_RPROC_COMMON
-@@ -95,6 +96,7 @@ config QCOM_Q6V5_PIL
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
- 	depends on REMOTEPROC
-+	depends on QCOM_SMD || (COMPILE_TEST && QCOM_SMD=n)
- 	select MFD_SYSCON
- 	select QCOM_MDT_LOADER
- 	select QCOM_RPROC_COMMON
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 284546fedb4d..f941a56b233f 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -61,6 +61,8 @@ struct qcom_adsp {
- 	phys_addr_t mem_reloc;
- 	void *mem_region;
- 	size_t mem_size;
-+
-+	struct qcom_rproc_subdev smd_subdev;
- };
- 
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
-@@ -385,6 +387,8 @@ static int adsp_probe(struct platform_device *pdev)
- 		goto free_rproc;
- 	}
- 
-+	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
-+
- 	ret = rproc_add(rproc);
- 	if (ret)
- 		goto free_rproc;
-@@ -403,6 +407,8 @@ static int adsp_remove(struct platform_device *pdev)
- 
- 	qcom_smem_state_put(adsp->state);
- 	rproc_del(adsp->rproc);
-+
-+	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
- 	rproc_free(adsp->rproc);
- 
- 	return 0;
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index cb2073242506..0f197fa103e0 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -153,6 +153,8 @@ struct q6v5 {
- 	phys_addr_t mpss_reloc;
- 	void *mpss_region;
- 	size_t mpss_size;
-+
-+	struct qcom_rproc_subdev smd_subdev;
- };
- 
- static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-@@ -998,6 +1000,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 		goto free_rproc;
- 	}
- 
-+	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
-+
- 	ret = rproc_add(rproc);
- 	if (ret)
- 		goto free_rproc;
-@@ -1015,6 +1019,8 @@ static int q6v5_remove(struct platform_device *pdev)
- 	struct q6v5 *qproc = platform_get_drvdata(pdev);
- 
- 	rproc_del(qproc->rproc);
-+
-+	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
- 	rproc_free(qproc->rproc);
- 
- 	return 0;
--- 
-2.11.0
+regards
+Suman
+
+> 
+> Regards,
+> Loic
+>>
+>> regards
+>> Suman
+>>
+>>> +	virtio_cfg.pa =	vrp->bufs_dma;
+>>> +	virtio_cfg.len = vrp->num_bufs * vrp->buf_size;
+>>> +	virtio_cfg.buf_size = vrp->buf_size;
+>>> +
+>>> +	vdev->config->set(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
+>>> +			  sizeof(virtio_cfg));
+>>> +}
+>>> +
+>>>  static int rpmsg_probe(struct virtio_device *vdev)  {
+>>>  	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
+>> @@
+>>> -934,6 +951,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>>>  	int err = 0, i;
+>>>  	size_t total_buf_space;
+>>>  	bool notify;
+>>> +	bool has_cfg = false;
+>>>
+>>>  	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
+>>>  	if (!vrp)
+>>> @@ -973,6 +991,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>>>  	if (err < 0)
+>>>  		goto free_vrp;
+>>>
+>>> +	if (err)
+>>> +		has_cfg = true;
+>>> +
+>>>  	/* Allocate buffer if none provided by low level platform driver */
+>>>  	if (!vrp->ext_buffer) {
+>>>  		total_buf_space = vrp->num_bufs * vrp->buf_size; @@ -
+>> 993,6 +1014,10
+>>> @@ static int rpmsg_probe(struct virtio_device *vdev)
+>>>
+>>>  		/* and half is dedicated for TX */
+>>>  		vrp->sbufs = bufs_va + total_buf_space / 2;
+>>> +
+>>> +		/* Notify configuration to coprocessor */
+>>> +		if (has_cfg)
+>>> +			virtio_rpmsg_set_config(vdev);
+>>>  	}
+>>>
+>>>  	/* set up the receive buffers */
+>>>
+> 
