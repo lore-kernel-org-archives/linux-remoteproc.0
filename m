@@ -1,97 +1,104 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v1 6/6] rpmsg: virtio_rpmsg: set buffer configuration to
- virtio
-References: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
- <1481142941-15616-7-git-send-email-loic.pallardy@st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <948c0469-ff6c-6516-93ab-fa9f5e95edb7@ti.com>
-Date: Fri, 13 Jan 2017 20:41:20 -0600
-MIME-Version: 1.0
-In-Reply-To: <1481142941-15616-7-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
-Cc: linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [RFC PATCH v2 2/3] remoteproc: qcom: Add slpi boot support in adsp rproc driver.
+Date: Fri, 20 Jan 2017 21:40:35 +0530
+Message-Id: <1484928636-27351-3-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1484928636-27351-1-git-send-email-akdwived@codeaurora.org>
+References: <1484928636-27351-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 12/07/2016 02:35 PM, Loic Pallardy wrote:
-> Rpmsg is allocating buffer one dedicated communication link
-> with some specificity like number of buffers, size of one buffer...
-> These characteristics should be shared with remote coprocessor to
-> guarantee communication link coherency.
-> 
-> Proposal is to update rpmsg configuration fields in coprocessor firmware
-> resource table if it exists.
-> 
-> This is possible thanks to virtio set interface which allows to update
-> cfg fields of struct fw_rsc_vdev.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index b12fe2a..5527b65 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -924,6 +924,23 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
->  
->  }
->  
-> +static void virtio_rpmsg_set_config(struct virtio_device *vdev)
-> +{
-> +	struct virtio_rpmsg_cfg virtio_cfg;
-> +	struct virtproc_info *vrp = vdev->priv;
-> +
-> +	/* fill virtio_cfg struct */
-> +	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
-> +	virtio_cfg.id = VIRTIO_ID_RPMSG;
-> +	virtio_cfg.da = vrp->bufs_dma;
+This patch add support to boot slpi processor in existing adsp rproc
+driver. Resource differentitation is done based on compatible string.
 
-Hmm, I would expect this to fail if the device was behind an IOMMU.
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+---
+ .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 29 ++++++++++++++++++++++
+ drivers/remoteproc/qcom_adsp_pil.c                 | 23 +++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
-regards
-Suman
-
-> +	virtio_cfg.pa =	vrp->bufs_dma;
-> +	virtio_cfg.len = vrp->num_bufs * vrp->buf_size;
-> +	virtio_cfg.buf_size = vrp->buf_size;
-> +
-> +	vdev->config->set(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
-> +			  sizeof(virtio_cfg));
-> +}
-> +
->  static int rpmsg_probe(struct virtio_device *vdev)
->  {
->  	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
-> @@ -934,6 +951,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	int err = 0, i;
->  	size_t total_buf_space;
->  	bool notify;
-> +	bool has_cfg = false;
->  
->  	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
->  	if (!vrp)
-> @@ -973,6 +991,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	if (err < 0)
->  		goto free_vrp;
->  
-> +	if (err)
-> +		has_cfg = true;
-> +
->  	/* Allocate buffer if none provided by low level platform driver */
->  	if (!vrp->ext_buffer) {
->  		total_buf_space = vrp->num_bufs * vrp->buf_size;
-> @@ -993,6 +1014,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  		/* and half is dedicated for TX */
->  		vrp->sbufs = bufs_va + total_buf_space / 2;
-> +
-> +		/* Notify configuration to coprocessor */
-> +		if (has_cfg)
-> +			virtio_rpmsg_set_config(vdev);
->  	}
->  
->  	/* set up the receive buffers */
-> 
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+index b85885a..274bc8d 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+@@ -9,6 +9,7 @@ on the Qualcomm ADSP Hexagon core.
+ 	Definition: must be one of:
+ 		    "qcom,msm8974-adsp-pil"
+ 		    "qcom,msm8996-adsp-pil"
++			"qcom,msm8996-slpi-pil"
+ 
+ - interrupts-extended:
+ 	Usage: required
+@@ -96,3 +97,31 @@ ADSP, as it is found on MSM8974 boards.
+ 			qcom,smd-edge = <1>;
+ 		};
+ 	};
++
++The following example describes the resources needed to boot control the
++SLPI, as it is found on MSM8996 boards.
++
++	slpi {
++		compatible = "qcom,msm8996-slpi-pil";
++		interrupts-extended = <&intc 0 390 IRQ_TYPE_EDGE_RISING>,
++				<&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				<&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				<&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				<&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++		interrupt-names = "wdog",
++				"fatal",
++				"ready",
++				"handover",
++				"stop-ack";
++
++		clocks = <&rpmcc MSM8996_RPM_SMD_XO_CLK_SRC>,
++			<&rpmcc MSM8996_RPM_SMD_AGGR2_NOC_CLK>;
++		clock-names = "xo",
++			"aggre2";
++		vdd_cx-supply = <&pm8994_l26_corner>;
++		vdd_px-supply = <&pm8994_lvs2>;
++		memory-region = <&slpi_region>;
++		qcom,smem-states = <&slpi_smp2p_out 0>;
++		qcom,smem-state-names = "stop";
++        };
++
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index ab2632b..47b2a29 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -564,9 +564,32 @@ static int adsp_remove(struct platform_device *pdev)
+ 			NULL
+ 		},
+ };
++
++static const struct generic_rproc_res slpi_resource_init = {
++		.crash_reason_smem = 424,
++		.firmware_name = "slpi.mdt",
++		.fw_pas_id = 12,
++		.reg_res = (struct regulator_res[]) {
++			{
++				.supply = "vdd_cx",
++				.uV = 5,
++			},
++			{
++				.supply = "vdd_px",
++			},
++			{}
++		},
++		.clocks_name = (char*[]){
++			"xo",
++			"aggre2",
++			NULL
++		},
++};
++
+ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+ 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &adsp_resource_init},
++	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, adsp_of_match);
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
