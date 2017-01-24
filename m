@@ -1,56 +1,131 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/5] remoteproc: qcom: mdt_loader: Don't overwrite firmware object
-Date: Mon, 30 Jan 2017 08:55:44 -0800
-Message-Id: <20170130165547.4344-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20170130165547.4344-1-bjorn.andersson@linaro.org>
-References: <20170130165547.4344-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.com>, stable@vger.kernel.org
+Return-Path: <spjoshi@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Subject: [PATCH v2 2/2] remoteproc: Drop firmware_loading_complete
+Date: Mon, 23 Jan 2017 17:53:19 -0800
+Message-Id: <1485222799-20769-2-git-send-email-spjoshi@codeaurora.org>
+In-Reply-To: <1485222799-20769-1-git-send-email-spjoshi@codeaurora.org>
+References: <1485222799-20769-1-git-send-email-spjoshi@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The "fw" firmware object is passed from the remoteproc core and should
-not be overwritten, as that results in leaked buffers and a double free
-of the the last firmware object.
+firmware_loading_complete is used to synchronize operations
+on rproc while asynchronous firmware loading is in progress.
+However, rproc_boot() no longer waits on
+firmware_loading_complete. Hence drop this completion
+variable altogether and handle the race between rproc_del()
+and rproc_boot() using new state RPROC_DELETED.
 
-Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating Hexagon v5")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+The request_firmware_nowait() will hold the reference to
+rproc device by using a get_device()/put_device(), so the
+rproc struct will remain valid even when we return from
+rproc_del() before the asynchronous call to
+rproc_fw_config_virtio() completes.
+
+CC: Loic Pallardy <loic.pallardy@st.com>
+CC: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
 ---
- drivers/remoteproc/qcom_mdt_loader.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/remoteproc/qcom_mdt_loader.c
-index 2ff18cd6c096..2393398f63ea 100644
---- a/drivers/remoteproc/qcom_mdt_loader.c
-+++ b/drivers/remoteproc/qcom_mdt_loader.c
-@@ -116,6 +116,7 @@ int qcom_mdt_load(struct rproc *rproc,
- 	const struct elf32_phdr *phdrs;
- 	const struct elf32_phdr *phdr;
- 	const struct elf32_hdr *ehdr;
-+	const struct firmware *seg_fw;
- 	size_t fw_name_len;
- 	char *fw_name;
- 	void *ptr;
-@@ -154,16 +155,16 @@ int qcom_mdt_load(struct rproc *rproc,
+The current patch series is a v2 version of original patch listed at
+https://lkml.org/lkml/2016/12/16/534
+
+Changes from v1:
+
+* Add new RPROC_DELETED state
+* Use the new state RPROC_DELETED to handle race between rproc_del()
+  and rproc_boot()
+
+ drivers/remoteproc/remoteproc_core.c | 22 +++++++++++-----------
+ include/linux/remoteproc.h           |  2 --
+ 2 files changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 78200a7..f58e634 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -975,17 +975,12 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+ 		rproc_boot(rproc);
  
- 		if (phdr->p_filesz) {
- 			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
--			ret = request_firmware(&fw, fw_name, &rproc->dev);
-+			ret = request_firmware(&seg_fw, fw_name, &rproc->dev);
- 			if (ret) {
- 				dev_err(&rproc->dev, "failed to load %s\n",
- 					fw_name);
- 				break;
- 			}
+ 	release_firmware(fw);
+-	/* allow rproc_del() contexts, if any, to proceed */
+-	complete_all(&rproc->firmware_loading_complete);
+ }
  
--			memcpy(ptr, fw->data, fw->size);
-+			memcpy(ptr, seg_fw->data, seg_fw->size);
+ static int rproc_add_virtio_devices(struct rproc *rproc)
+ {
+ 	int ret;
  
--			release_firmware(fw);
-+			release_firmware(seg_fw);
- 		}
+-	/* rproc_del() calls must wait until async loader completes */
+-	init_completion(&rproc->firmware_loading_complete);
+-
+ 	/*
+ 	 * We must retrieve early virtio configuration info from
+ 	 * the firmware (e.g. whether to register a virtio device,
+@@ -997,10 +992,8 @@ static int rproc_add_virtio_devices(struct rproc *rproc)
+ 	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
+ 				      rproc->firmware, &rproc->dev, GFP_KERNEL,
+ 				      rproc, rproc_fw_config_virtio);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
+-		complete_all(&rproc->firmware_loading_complete);
+-	}
  
- 		if (phdr->p_memsz > phdr->p_filesz)
+ 	return ret;
+ }
+@@ -1097,6 +1090,12 @@ static int __rproc_boot(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
++	if (rproc->state == RPROC_DELETED) {
++		ret = -ENODEV;
++		dev_err(dev, "can't boot deleted rproc %s\n", rproc->name);
++		goto unlock_mutex;
++	}
++
+ 	/* skip the boot process if rproc is already powered up */
+ 	if (atomic_inc_return(&rproc->power) > 1) {
+ 		ret = 0;
+@@ -1481,14 +1480,15 @@ int rproc_del(struct rproc *rproc)
+ 	if (!rproc)
+ 		return -EINVAL;
+ 
+-	/* if rproc is just being registered, wait */
+-	wait_for_completion(&rproc->firmware_loading_complete);
+-
+ 	/* if rproc is marked always-on, rproc_add() booted it */
+ 	/* TODO: make sure this works with rproc->power > 1 */
+ 	if (rproc->auto_boot)
+ 		rproc_shutdown(rproc);
+ 
++	mutex_lock(&rproc->lock);
++	rproc->state = RPROC_DELETED;
++	mutex_unlock(&rproc->lock);
++
+ 	rproc_delete_debug_dir(rproc);
+ 
+ 	/* the rproc is downref'ed as soon as it's removed from the klist */
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 25a8c37..26328c4 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -399,7 +399,6 @@ enum rproc_crash_type {
+  * @num_traces: number of trace buffers
+  * @carveouts: list of physically contiguous memory allocations
+  * @mappings: list of iommu mappings we initiated, needed on shutdown
+- * @firmware_loading_complete: marks e/o asynchronous firmware loading
+  * @bootaddr: address of first instruction to boot rproc with (optional)
+  * @rvdevs: list of remote virtio devices
+  * @subdevs: list of subdevices, to following the running state
+@@ -430,7 +429,6 @@ struct rproc {
+ 	int num_traces;
+ 	struct list_head carveouts;
+ 	struct list_head mappings;
+-	struct completion firmware_loading_complete;
+ 	u32 bootaddr;
+ 	struct list_head rvdevs;
+ 	struct list_head subdevs;
 -- 
-2.11.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
