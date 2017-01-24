@@ -1,135 +1,80 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v1 1/6] rpmsg: virtio_rpmsg: set rpmsg_buf_size
- customizable
-References: <1481142941-15616-1-git-send-email-loic.pallardy@st.com>
- <1481142941-15616-2-git-send-email-loic.pallardy@st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <1bcd718a-1f5b-68ea-fc00-2bae276babd7@ti.com>
-Date: Fri, 13 Jan 2017 19:39:52 -0600
-MIME-Version: 1.0
-In-Reply-To: <1481142941-15616-2-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org, patrice.chotard@st.com
-Cc: linux-remoteproc@vger.kernel.org, kernel@stlinux.com
+Return-Path: <spjoshi@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Subject: [PATCH 2/2] remoteproc: Modify the function names
+Date: Tue, 24 Jan 2017 15:13:01 -0800
+Message-Id: <1485299581-30476-2-git-send-email-spjoshi@codeaurora.org>
+In-Reply-To: <1485299581-30476-1-git-send-email-spjoshi@codeaurora.org>
+References: <1485299581-30476-1-git-send-email-spjoshi@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 12/07/2016 02:35 PM, Loic Pallardy wrote:
-> Rpmsg buffer size is currently fixed to 512 bytes.
-> This patch introduces a new capability in struct virtproc_info
-> to tune shared buffer size between host and coprocessor
-> according to the needs.
+The functions rproc_add_virtio_devices() and
+rproc_fw_config_virtio() are reduced to trigger auto-boot
+only. Modify these function names and related comments to
+reflect their current state.
 
-This patch breaks rpmsg functionality w.r.t bisectability. The new
-buf_size variable is not initialized (is 0) in this patch while you
-replace the RPMSG_BUF_SIZE with vrp->buf_size in most call sites. You
-introduce the initialization in Patch 4, that should be moved up. The
-ops to override can stay in Patch 4.
+This patch does not add any functional change.
 
-regards
-Suman
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 3090b0d..1f6dfc6 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -45,6 +45,7 @@
->   * @rbufs:	kernel address of rx buffers
->   * @sbufs:	kernel address of tx buffers
->   * @num_bufs:	total number of buffers for rx and tx
-> + * @buf_size:   size of one rx or tx buffer
->   * @last_sbuf:	index of last tx buffer used
->   * @bufs_dma:	dma base addr of the buffers
->   * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
-> @@ -65,6 +66,7 @@ struct virtproc_info {
->  	struct virtqueue *rvq, *svq;
->  	void *rbufs, *sbufs;
->  	unsigned int num_bufs;
-> +	unsigned int buf_size;
->  	int last_sbuf;
->  	dma_addr_t bufs_dma;
->  	struct mutex tx_lock;
-> @@ -158,7 +160,7 @@ struct virtio_rpmsg_channel {
->   * processor.
->   */
->  #define MAX_RPMSG_NUM_BUFS	(512)
-> -#define RPMSG_BUF_SIZE		(512)
-> +#define MAX_RPMSG_BUF_SIZE	(512)
->  
->  /*
->   * Local addresses are dynamically allocated on-demand.
-> @@ -429,7 +431,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
->  	 * (half of our buffers are used for sending messages)
->  	 */
->  	if (vrp->last_sbuf < vrp->num_bufs / 2)
-> -		ret = vrp->sbufs + RPMSG_BUF_SIZE * vrp->last_sbuf++;
-> +		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
->  	/* or recycle a used one */
->  	else
->  		ret = virtqueue_get_buf(vrp->svq, &len);
-> @@ -555,7 +557,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->  	 * messaging), or to improve the buffer allocator, to support
->  	 * variable-length buffer sizes.
->  	 */
-> -	if (len > RPMSG_BUF_SIZE - sizeof(struct rpmsg_hdr)) {
-> +	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
->  		dev_err(dev, "message is too big (%d)\n", len);
->  		return -EMSGSIZE;
->  	}
-> @@ -696,8 +698,8 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  	 * We currently use fixed-sized buffers, so trivially sanitize
->  	 * the reported payload length.
->  	 */
-> -	if (len > RPMSG_BUF_SIZE ||
-> -	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
-> +	if (len > vrp->buf_size ||
-> +		msg->len > (len - sizeof(struct rpmsg_hdr))) {
->  		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
->  		return -EINVAL;
->  	}
-> @@ -729,7 +731,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  		dev_warn(dev, "msg received with no recipient\n");
->  
->  	/* publish the real size of the buffer */
-> -	sg_init_one(&sg, msg, RPMSG_BUF_SIZE);
-> +	sg_init_one(&sg, msg, vrp->buf_size);
->  
->  	/* add the buffer back to the remote processor's virtqueue */
->  	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-> @@ -886,7 +888,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	else
->  		vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
->  
-> -	total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
-> +	total_buf_space = vrp->num_bufs * vrp->buf_size;
->  
->  	/* allocate coherent memory for the buffers */
->  	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
-> @@ -909,9 +911,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	/* set up the receive buffers */
->  	for (i = 0; i < vrp->num_bufs / 2; i++) {
->  		struct scatterlist sg;
-> -		void *cpu_addr = vrp->rbufs + i * RPMSG_BUF_SIZE;
-> +		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
->  
-> -		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
-> +		sg_init_one(&sg, cpu_addr, vrp->buf_size);
->  
->  		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
->  					  GFP_KERNEL);
-> @@ -976,7 +978,7 @@ static int rpmsg_remove_device(struct device *dev, void *data)
->  static void rpmsg_remove(struct virtio_device *vdev)
->  {
->  	struct virtproc_info *vrp = vdev->priv;
-> -	size_t total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
-> +	size_t total_buf_space = vrp->num_bufs * vrp->buf_size;
->  	int ret;
->  
->  	vdev->config->reset(vdev);
-> 
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 16242b0..c6b1d4a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -959,14 +959,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ }
+ 
+ /*
+- * take a firmware and look for virtio devices to register.
++ * take a firmware and boot it up.
+  *
+  * Note: this function is called asynchronously upon registration of the
+  * remote processor (so we must wait until it completes before we try
+  * to unregister the device. one other option is just to use kref here,
+  * that might be cleaner).
+  */
+-static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
++static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
+ {
+ 	struct rproc *rproc = context;
+ 
+@@ -975,21 +975,17 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+ 	release_firmware(fw);
+ }
+ 
+-static int rproc_add_virtio_devices(struct rproc *rproc)
++static int rproc_trigger_auto_boot(struct rproc *rproc)
+ {
+ 	int ret;
+ 
+ 	/*
+-	 * We must retrieve early virtio configuration info from
+-	 * the firmware (e.g. whether to register a virtio device,
+-	 * what virtio features does it support, ...).
+-	 *
+ 	 * We're initiating an asynchronous firmware loading, so we can
+ 	 * be built-in kernel code, without hanging the boot process.
+ 	 */
+ 	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
+ 				      rproc->firmware, &rproc->dev, GFP_KERNEL,
+-				      rproc, rproc_fw_config_virtio);
++				      rproc, rproc_auto_boot_callback);
+ 	if (ret < 0)
+ 		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
+ 
+@@ -1287,7 +1283,7 @@ int rproc_add(struct rproc *rproc)
+ 
+ 	/* if rproc is marked always-on, request it to boot */
+ 	if (rproc->auto_boot) {
+-		ret = rproc_add_virtio_devices(rproc);
++		ret = rproc_trigger_auto_boot(rproc);
+ 		if (ret < 0)
+ 			return ret;
+ 	}
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
