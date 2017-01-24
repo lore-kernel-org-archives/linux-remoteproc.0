@@ -1,39 +1,60 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] rpmsg: char: add CONFIG_NET dependency
-Date: Thu, 19 Jan 2017 15:54:55 +0100
-Message-Id: <20170119145503.556971-1-arnd@arndb.de>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <spjoshi@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Subject: [RFC][PATCH 1/2] remoteproc: Reduce asynchronous request_firmware to auto-boot only
+Date: Tue, 24 Jan 2017 15:13:00 -0800
+Message-Id: <1485299581-30476-1-git-send-email-spjoshi@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Without CONFIG_NET, we get a build failure for the new driver:
+The rproc_add_virtio_devices() requests firmware asynchronously and
+triggers boot if the auto_boot flag is set. However, this
+asynchronous call seems to be redundant for non auto-boot scenario
+since the rproc_boot() would call request_firmware() anyways. Move
+the auto_boot check to rproc_add() so that a redundant call to
+_request_firmware can be avoided for non auto-boot case.
 
-ERROR: "skb_queue_tail" [drivers/rpmsg/rpmsg_char.ko] undefined!
-ERROR: "skb_put" [drivers/rpmsg/rpmsg_char.ko] undefined!
-ERROR: "__alloc_skb" [drivers/rpmsg/rpmsg_char.ko] undefined!
-ERROR: "kfree_skb" [drivers/rpmsg/rpmsg_char.ko] undefined!
-ERROR: "skb_dequeue" [drivers/rpmsg/rpmsg_char.ko] undefined!
-
-This adds a dependency so we don't try to build the broken configuration.
-
-Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
 ---
- drivers/rpmsg/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index fa0d582efb3d..f12ac0b28263 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -7,6 +7,7 @@ config RPMSG
- config RPMSG_CHAR
- 	tristate "RPMSG device interface"
- 	depends on RPMSG
-+	depends on NET
- 	help
- 	  Say Y here to export rpmsg endpoints as device files, usually found
- 	  in /dev. They make it possible for user-space programs to send and
+I'm requesting RFC on this patch since I'm not aware of any scenario
+where we might need asynchronous firmware loading for non auto-boot case.
+
+ drivers/remoteproc/remoteproc_core.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f58e634..16242b0 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -970,9 +970,7 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+ {
+ 	struct rproc *rproc = context;
+ 
+-	/* if rproc is marked always-on, request it to boot */
+-	if (rproc->auto_boot)
+-		rproc_boot(rproc);
++	rproc_boot(rproc);
+ 
+ 	release_firmware(fw);
+ }
+@@ -1286,9 +1284,13 @@ int rproc_add(struct rproc *rproc)
+ 
+ 	/* create debugfs entries */
+ 	rproc_create_debug_dir(rproc);
+-	ret = rproc_add_virtio_devices(rproc);
+-	if (ret < 0)
+-		return ret;
++
++	/* if rproc is marked always-on, request it to boot */
++	if (rproc->auto_boot) {
++		ret = rproc_add_virtio_devices(rproc);
++		if (ret < 0)
++			return ret;
++	}
+ 
+ 	/* expose to rproc_get_by_phandle users */
+ 	mutex_lock(&rproc_list_mutex);
 -- 
-2.9.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
