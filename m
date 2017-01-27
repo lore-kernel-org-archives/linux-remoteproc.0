@@ -1,372 +1,274 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v5 1/4] irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
-Date: Wed, 11 Jan 2017 15:34:09 +0000
-Message-ID: <1484148852-29783-2-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1484148852-29783-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1484148852-29783-1-git-send-email-matt.redfearn@imgtec.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>
+Return-Path: <stanimir.varbanov@linaro.org>
+Return-Path: <stanimir.varbanov@linaro.org>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v3 2/2] remoteproc: qcom: add Venus video core firmware loader driver
+Date: Fri, 27 Jan 2017 17:32:57 +0200
+Message-Id: <1485531177-3543-3-git-send-email-stanimir.varbanov@linaro.org>
+In-Reply-To: <1485531177-3543-1-git-send-email-stanimir.varbanov@linaro.org>
+References: <1485531177-3543-1-git-send-email-stanimir.varbanov@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, Stanimir Varbanov <stanimir.varbanov@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The MIPS remote processor driver allows non-Linux firmware to take
-control of and execute on one of the systems VPEs. If that VPE is
-brought back under Linux, it is necessary to ensure that all GIC
-interrupts are routed and masked as Linux expects them, as the firmware
-can have done anything it likes with the GIC configuration (hopefully
-just for that VPEs local interrupt sources, but allow for shared
-external interrupts as well).
+This driver will load and authenticate the Venus firmware and
+bringing it core out of reset. Those two functionalities are
+via secure monitor calls to trusted environment.
 
-The configuration of shared and local CPU interrupts is maintained and
-updated every time a change is made. When a CPU is brought online, the
-saved configuration is restored.
-
-These functions will also be useful for restoring GIC context after a
-suspend to RAM.
-
-This patch depends on Paul Burton's recent patches:
-irqchip: mips-gic: Implement activate op for device domain
-irqchip: mips-gic: Cleanup chip & handler setup
-
-Without these patches, the context saving will restore an incorrect map
-to VPE value, since there is a route to not having the interrupt
-affinity set.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
+ drivers/remoteproc/Kconfig          |  12 +++
+ drivers/remoteproc/Makefile         |   1 +
+ drivers/remoteproc/qcom_venus_pil.c | 208 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 221 insertions(+)
+ create mode 100644 drivers/remoteproc/qcom_venus_pil.c
 
-Changes in v5: None
-Changes in v4:
-Fix inconistency of Linux CPU number and VP ID
-
-Changes in v3:
-Update GIC context saving to use CPU hotplug state machine
-
-Changes in v2:
-Add dependence on additional patches to mips-gic in commit log
-Incorporate changes from Marc Zynger's review:
-- Remove CONTEXT_SAVING define.
-- Make saved local state a per-cpu variable
-- Make gic_save_* static functions when enabled, and do { } while(0)
-  otherwise
-
- drivers/irqchip/irq-mips-gic.c | 207 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 200 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
-index c01c09e9916d..dafd61be3c80 100644
---- a/drivers/irqchip/irq-mips-gic.c
-+++ b/drivers/irqchip/irq-mips-gic.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/bitmap.h>
- #include <linux/clocksource.h>
-+#include <linux/cpu.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-@@ -56,6 +57,79 @@ static unsigned int timer_cpu_pin;
- static struct irq_chip gic_level_irq_controller, gic_edge_irq_controller;
- DECLARE_BITMAP(ipi_resrv, GIC_MAX_INTRS);
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index a5e888043f1f..08ee26db9d2b 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -110,6 +110,18 @@ config QCOM_WCNSS_PIL
+ 	  Say y here to support the Peripheral Image Loader for the Qualcomm
+ 	  Wireless Connectivity Subsystem.
  
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+struct gic_local_state_t {
-+	u8 mask;
++config QCOM_VENUS_PIL
++	tristate "Qualcomm Venus Peripheral Image Loader"
++	depends on OF && ARCH_QCOM
++	depends on QCOM_SCM
++	select QCOM_MDT_LOADER
++	select REMOTEPROC
++	help
++	  Say y here to support Qualcomm Peripherial Image Loader for the
++	  Venus remote processor. The Venus remote processor is a
++	  micro-controller plus dedicated hardware for video acceleration
++	  of video decoding and encoding operations.
++
+ config ST_REMOTEPROC
+ 	tristate "ST remoteproc support"
+ 	depends on ARCH_STI
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 0938ea3c41ba..9bb292e4bac4 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -17,5 +17,6 @@ obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
+ obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
+ qcom_wcnss_pil-y			+= qcom_wcnss.o
+ qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
++obj-$(CONFIG_QCOM_VENUS_PIL)		+= qcom_venus_pil.o
+ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+ obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+diff --git a/drivers/remoteproc/qcom_venus_pil.c b/drivers/remoteproc/qcom_venus_pil.c
+new file mode 100644
+index 000000000000..3057bc67cf72
+--- /dev/null
++++ b/drivers/remoteproc/qcom_venus_pil.c
+@@ -0,0 +1,208 @@
++/*
++ * Qualcomm Venus Peripheral Image Loader
++ *
++ * Copyright (C) 2017 Linaro Ltd
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/dma-mapping.h>
++#include <linux/firmware.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
++#include <linux/qcom_scm.h>
++#include <linux/remoteproc.h>
++
++#include "qcom_mdt_loader.h"
++#include "remoteproc_internal.h"
++
++#define VENUS_FIRMWARE_NAME		"venus.mdt"
++#define VENUS_PAS_ID			9
++#define VENUS_FW_MEM_SIZE		SZ_8M
++
++struct qcom_venus {
++	struct device *dev;
++	struct rproc *rproc;
++	phys_addr_t fw_addr;
++	phys_addr_t mem_phys;
++	void *mem_va;
++	size_t mem_size;
 +};
 +
-+DEFINE_PER_CPU(struct gic_local_state_t, gic_local_state);
-+
-+static void gic_save_local_rmask(int cpu, int mask)
++static int venus_load(struct rproc *rproc, const struct firmware *fw)
 +{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
++	struct qcom_venus *venus = rproc->priv;
++	phys_addr_t pa;
++	size_t fw_size;
++	bool relocate;
++	int ret;
 +
-+	state->mask &= mask;
-+}
-+
-+static void gic_save_local_smask(int cpu, int mask)
-+{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
-+
-+	state->mask |= mask;
-+}
-+
-+static struct {
-+	unsigned vpe:		8;
-+	unsigned pin:		4;
-+
-+	unsigned polarity:	1;
-+	unsigned trigger:	1;
-+	unsigned dual_edge:	1;
-+	unsigned mask:		1;
-+} gic_shared_state[GIC_MAX_INTRS];
-+
-+static void gic_save_shared_vpe(int intr, int vpe)
-+{
-+	gic_shared_state[intr].vpe = vpe;
-+}
-+
-+static void gic_save_shared_pin(int intr, int pin)
-+{
-+	gic_shared_state[intr].pin = pin;
-+}
-+
-+static void gic_save_shared_polarity(int intr, int polarity)
-+{
-+	gic_shared_state[intr].polarity = polarity;
-+}
-+
-+static void gic_save_shared_trigger(int intr, int trigger)
-+{
-+	gic_shared_state[intr].trigger = trigger;
-+}
-+
-+static void gic_save_shared_dual_edge(int intr, int dual_edge)
-+{
-+	gic_shared_state[intr].dual_edge = dual_edge;
-+}
-+
-+static void gic_save_shared_mask(int intr, int mask)
-+{
-+	gic_shared_state[intr].mask = mask;
-+}
-+
-+#else
-+#define gic_save_local_rmask(cpu, i)	do { } while (0)
-+#define gic_save_local_smask(cpu, i)	do { } while (0)
-+
-+#define gic_save_shared_vpe(i, v)	do { } while (0)
-+#define gic_save_shared_pin(i, p)	do { } while (0)
-+#define gic_save_shared_polarity(i, p)	do { } while (0)
-+#define gic_save_shared_trigger(i, t)	do { } while (0)
-+#define gic_save_shared_dual_edge(i, d)	do { } while (0)
-+#define gic_save_shared_mask(i, m)	do { } while (0)
-+#endif /* CONFIG_MIPS_REMOTEPROC */
-+
- static void __gic_irq_dispatch(void);
- 
- static inline u32 gic_read32(unsigned int reg)
-@@ -105,52 +179,94 @@ static inline void gic_update_bits(unsigned int reg, unsigned long mask,
- 	gic_write(reg, regval);
- }
- 
--static inline void gic_reset_mask(unsigned int intr)
-+static inline void gic_write_reset_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_RMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_mask(unsigned int intr)
-+static inline void gic_reset_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 0);
-+	gic_write_reset_mask(intr);
-+}
-+
-+static inline void gic_write_set_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_SMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+static inline void gic_set_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 1);
-+	gic_write_set_mask(intr);
-+}
-+
-+static inline void gic_write_polarity(unsigned int intr, unsigned int pol)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_POLARITY) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)pol << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+{
-+	gic_save_shared_polarity(intr, pol);
-+	gic_write_polarity(intr, pol);
-+}
-+
-+static inline void gic_write_trigger(unsigned int intr, unsigned int trig)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_TRIGGER) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)trig << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+{
-+	gic_save_shared_trigger(intr, trig);
-+	gic_write_trigger(intr, trig);
-+}
-+
-+static inline void gic_write_dual_edge(unsigned int intr, unsigned int dual)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_DUAL) + GIC_INTR_OFS(intr),
- 			1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)dual << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+{
-+	gic_save_shared_dual_edge(intr, dual);
-+	gic_write_dual_edge(intr, dual);
-+}
-+
-+static inline void gic_write_map_to_pin(unsigned int intr, unsigned int pin)
- {
- 	gic_write32(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_PIN_BASE) +
- 		    GIC_SH_MAP_TO_PIN(intr), GIC_MAP_TO_PIN_MSK | pin);
- }
- 
--static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+{
-+	gic_save_shared_pin(intr, pin);
-+	gic_write_map_to_pin(intr, pin);
-+}
-+
-+static inline void gic_write_map_to_vpe(unsigned int intr, unsigned int vpe)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_VPE_BASE) +
- 		  GIC_SH_MAP_TO_VPE_REG_OFF(intr, vpe),
- 		  GIC_SH_MAP_TO_VPE_REG_BIT(vpe));
- }
- 
-+static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+{
-+	gic_save_shared_vpe(intr, vpe);
-+	gic_write_map_to_vpe(intr, vpe);
-+}
-+
- #ifdef CONFIG_CLKSRC_MIPS_GIC
- u64 gic_read_count(void)
- {
-@@ -527,6 +643,7 @@ static void gic_mask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_rmask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_RMASK), 1 << intr);
- }
- 
-@@ -534,6 +651,7 @@ static void gic_unmask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_smask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_SMASK), 1 << intr);
- }
- 
-@@ -551,6 +669,7 @@ static void gic_mask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_rmask(i, 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), 1 << intr);
-@@ -566,6 +685,7 @@ static void gic_unmask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_smask(i, 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), 1 << intr);
-@@ -968,6 +1088,74 @@ static struct irq_domain_ops gic_ipi_domain_ops = {
- 	.match = gic_ipi_domain_match,
- };
- 
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+static void gic_restore_shared(void)
-+{
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&gic_lock, flags);
-+	for (i = 0; i < gic_shared_intrs; i++) {
-+		gic_write_polarity(i, gic_shared_state[i].polarity);
-+		gic_write_trigger(i, gic_shared_state[i].trigger);
-+		gic_write_dual_edge(i, gic_shared_state[i].dual_edge);
-+		gic_write_map_to_vpe(i, gic_shared_state[i].vpe);
-+		gic_write_map_to_pin(i, gic_shared_state[i].pin);
-+
-+		if (gic_shared_state[i].mask)
-+			gic_write_set_mask(i);
-+		else
-+			gic_write_reset_mask(i);
-+	}
-+	spin_unlock_irqrestore(&gic_lock, flags);
-+}
-+
-+static void gic_restore_local(unsigned int cpu)
-+{
-+	struct gic_local_state_t state;
-+	int hw, virq, intr, mask;
-+	unsigned long flags;
-+
-+	for (hw = 0; hw < GIC_NUM_LOCAL_INTRS; hw++) {
-+		intr = GIC_LOCAL_TO_HWIRQ(hw);
-+		virq = irq_linear_revmap(gic_irq_domain, intr);
-+		gic_local_irq_domain_map(gic_irq_domain, virq, hw);
++	ret = qcom_scm_pas_init_image(VENUS_PAS_ID, fw->data, fw->size);
++	if (ret) {
++		dev_err(&rproc->dev, "invalid firmware metadata (%d)\n", ret);
++		return -EINVAL;
 +	}
 +
-+	local_irq_save(flags);
-+	gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
-+		  mips_cm_vp_id(cpu));
++	ret = qcom_mdt_parse(fw, &venus->fw_addr, &fw_size, &relocate);
++	if (ret) {
++		dev_err(&rproc->dev, "failed to parse mdt header (%d)\n", ret);
++		return ret;
++	}
 +
-+	/* Enable EIC mode if necessary */
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_CTL), cpu_has_veic);
++	if (fw_size > venus->mem_size)
++		return -ENOMEM;
 +
-+	/* Restore interrupt masks */
-+	state = per_cpu(gic_local_state, cpu);
-+	mask = state.mask;
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), ~mask);
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), mask);
++	pa = relocate ? venus->mem_phys : venus->fw_addr;
 +
-+	local_irq_restore(flags);
++	ret = qcom_scm_pas_mem_setup(VENUS_PAS_ID, pa, fw_size);
++	if (ret) {
++		dev_err(&rproc->dev, "unable to setup memory (%d)\n", ret);
++		return -EINVAL;
++	}
++
++	return qcom_mdt_load(rproc, fw, VENUS_FIRMWARE_NAME);
 +}
 +
-+/*
-+ * The MIPS remote processor driver allows non-Linux firmware to take control
-+ * of and execute on one of the systems VPEs. If that VPE is brought back under
-+ * Linux, it is necessary to ensure that all GIC interrupts are routed and
-+ * masked as Linux expects them, as the firmware can have done anything it
-+ * likes with the GIC configuration (hopefully just for that VPEs local
-+ * interrupt sources, but allow for shared external interrupts as well).
-+ */
-+static int gic_cpu_online(unsigned int cpu)
++static const struct rproc_fw_ops venus_fw_ops = {
++	.find_rsc_table = qcom_mdt_find_rsc_table,
++	.load = venus_load,
++};
++
++static int venus_start(struct rproc *rproc)
 +{
-+	gic_restore_shared();
-+	gic_restore_local(cpu);
++	struct qcom_venus *venus = rproc->priv;
++	int ret;
++
++	ret = qcom_scm_pas_auth_and_reset(VENUS_PAS_ID);
++	if (ret)
++		dev_err(venus->dev,
++			"authentication image and release reset failed (%d)\n",
++			ret);
++
++	return ret;
++}
++
++static int venus_stop(struct rproc *rproc)
++{
++	struct qcom_venus *venus = rproc->priv;
++	int ret;
++
++	ret = qcom_scm_pas_shutdown(VENUS_PAS_ID);
++	if (ret)
++		dev_err(venus->dev, "failed to shutdown: %d\n", ret);
++
++	return ret;
++}
++
++static void *venus_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct qcom_venus *venus = rproc->priv;
++	s64 offset;
++
++	offset = da - venus->fw_addr;
++
++	if (offset < 0 || offset + len > venus->mem_size)
++		return NULL;
++
++	return venus->mem_va + offset;
++}
++
++static const struct rproc_ops venus_ops = {
++	.start = venus_start,
++	.stop = venus_stop,
++	.da_to_va = venus_da_to_va,
++};
++
++static int venus_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct qcom_venus *venus;
++	struct rproc *rproc;
++	int ret;
++
++	if (!qcom_scm_is_available())
++		return -EPROBE_DEFER;
++
++	ret = of_reserved_mem_device_init(dev);
++	if (ret)
++		return ret;
++
++	rproc = rproc_alloc(dev, pdev->name, &venus_ops, VENUS_FIRMWARE_NAME,
++			    sizeof(*venus));
++	if (!rproc) {
++		dev_err(dev, "unable to allocate remoteproc\n");
++		ret = -ENOMEM;
++		goto release_mem;
++	}
++
++	rproc->auto_boot = false;
++	rproc->fw_ops = &venus_fw_ops;
++	venus = rproc->priv;
++	venus->dev = dev;
++	venus->rproc = rproc;
++	venus->mem_size = VENUS_FW_MEM_SIZE;
++
++	platform_set_drvdata(pdev, venus);
++
++	venus->mem_va = dma_alloc_coherent(dev, venus->mem_size,
++					   &venus->mem_phys, GFP_KERNEL);
++	if (!venus->mem_va) {
++		ret = -ENOMEM;
++		goto free_rproc;
++	}
++
++	ret = rproc_add(rproc);
++	if (ret)
++		goto free_mem;
++
++	return 0;
++
++free_mem:
++	dma_free_coherent(dev, venus->mem_size, venus->mem_va, venus->mem_phys);
++free_rproc:
++	rproc_put(rproc);
++release_mem:
++	of_reserved_mem_device_release(dev);
++
++	return ret;
++}
++
++static int venus_remove(struct platform_device *pdev)
++{
++	struct qcom_venus *venus = platform_get_drvdata(pdev);
++	struct device *dev = venus->dev;
++
++	rproc_del(venus->rproc);
++	dma_free_coherent(dev, venus->mem_size, venus->mem_va, venus->mem_phys);
++	of_reserved_mem_device_release(dev);
 +
 +	return 0;
 +}
 +
-+#endif /* CONFIG_MIPS_REMOTEPROC */
++static const struct of_device_id venus_of_match[] = {
++	{ .compatible = "qcom,venus-pil" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, venus_of_match);
 +
- static void __init __gic_init(unsigned long gic_base_addr,
- 			      unsigned long gic_addrspace_size,
- 			      unsigned int cpu_vec, unsigned int irqbase,
-@@ -1067,6 +1255,11 @@ static void __init __gic_init(unsigned long gic_base_addr,
- 	}
- 
- 	gic_basic_init();
++static struct platform_driver venus_driver = {
++	.probe = venus_probe,
++	.remove = venus_remove,
++	.driver = {
++		.name = "qcom-venus-pil",
++		.of_match_table = venus_of_match,
++	},
++};
 +
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "MIPS:GIC(REMOTEPROC)",
-+			  gic_cpu_online, NULL);
-+#endif /* CONFIG_MIPS_REMOTEPROC */
- }
- 
- void __init gic_init(unsigned long gic_base_addr,
++module_platform_driver(venus_driver);
++MODULE_DESCRIPTION("Peripheral Image Loader for Venus");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
