@@ -1,80 +1,41 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH 2/2] remoteproc: Modify the function names
-Date: Tue, 24 Jan 2017 15:13:01 -0800
-Message-Id: <1485299581-30476-2-git-send-email-spjoshi@codeaurora.org>
-In-Reply-To: <1485299581-30476-1-git-send-email-spjoshi@codeaurora.org>
-References: <1485299581-30476-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] rpmsg: qcom: smd: Return positively when not enabled
+Date: Mon, 30 Jan 2017 09:00:07 -0800
+Message-Id: <20170130170007.4578-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The functions rproc_add_virtio_devices() and
-rproc_fw_config_virtio() are reduced to trigger auto-boot
-only. Modify these function names and related comments to
-reflect their current state.
+Remoteproc treats the error codes returned from the stubbed SMD API as
+errors, but the fact that SMD is not enabled should not affect
+remoteproc's ability to start the remote processors.
 
-This patch does not add any functional change.
-
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ include/linux/rpmsg/qcom_smd.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 16242b0..c6b1d4a 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -959,14 +959,14 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+diff --git a/include/linux/rpmsg/qcom_smd.h b/include/linux/rpmsg/qcom_smd.h
+index e674b2e3074b..8ec8b6439b25 100644
+--- a/include/linux/rpmsg/qcom_smd.h
++++ b/include/linux/rpmsg/qcom_smd.h
+@@ -18,14 +18,12 @@ static inline struct qcom_smd_edge *
+ qcom_smd_register_edge(struct device *parent,
+ 		       struct device_node *node)
+ {
+-	return ERR_PTR(-ENXIO);
++	return NULL;
  }
  
- /*
-- * take a firmware and look for virtio devices to register.
-+ * take a firmware and boot it up.
-  *
-  * Note: this function is called asynchronously upon registration of the
-  * remote processor (so we must wait until it completes before we try
-  * to unregister the device. one other option is just to use kref here,
-  * that might be cleaner).
-  */
--static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
-+static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
+ static inline int qcom_smd_unregister_edge(struct qcom_smd_edge *edge)
  {
- 	struct rproc *rproc = context;
- 
-@@ -975,21 +975,17 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
- 	release_firmware(fw);
+-	/* This shouldn't be possible */
+-	WARN_ON(1);
+-	return -ENXIO;
++	return 0;
  }
  
--static int rproc_add_virtio_devices(struct rproc *rproc)
-+static int rproc_trigger_auto_boot(struct rproc *rproc)
- {
- 	int ret;
- 
- 	/*
--	 * We must retrieve early virtio configuration info from
--	 * the firmware (e.g. whether to register a virtio device,
--	 * what virtio features does it support, ...).
--	 *
- 	 * We're initiating an asynchronous firmware loading, so we can
- 	 * be built-in kernel code, without hanging the boot process.
- 	 */
- 	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_HOTPLUG,
- 				      rproc->firmware, &rproc->dev, GFP_KERNEL,
--				      rproc, rproc_fw_config_virtio);
-+				      rproc, rproc_auto_boot_callback);
- 	if (ret < 0)
- 		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
- 
-@@ -1287,7 +1283,7 @@ int rproc_add(struct rproc *rproc)
- 
- 	/* if rproc is marked always-on, request it to boot */
- 	if (rproc->auto_boot) {
--		ret = rproc_add_virtio_devices(rproc);
-+		ret = rproc_trigger_auto_boot(rproc);
- 		if (ret < 0)
- 			return ret;
- 	}
+ #endif
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.11.0
