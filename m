@@ -1,55 +1,56 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [RFC 3/3] arm64: dts: msm8996: Add SMP2P node for Qualcomm SLPI rproc driver.
-Date: Thu, 12 Jan 2017 19:23:37 +0530
-Message-Id: <1484229217-23364-4-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1484229217-23364-1-git-send-email-akdwived@codeaurora.org>
-References: <1484229217-23364-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, spjoshi@codeaurora.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 2/5] remoteproc: qcom: mdt_loader: Don't overwrite firmware object
+Date: Mon, 30 Jan 2017 08:55:44 -0800
+Message-Id: <20170130165547.4344-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20170130165547.4344-1-bjorn.andersson@linaro.org>
+References: <20170130165547.4344-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.com>, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add SMP2P DT nodes required for Qualcomm SLPI Peripheral Image Loader.
+The "fw" firmware object is passed from the remoteproc core and should
+not be overwritten, as that results in leaked buffers and a double free
+of the the last firmware object.
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating Hexagon v5")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/remoteproc/qcom_mdt_loader.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 9d1d7ad..2457b20 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -541,5 +541,29 @@
- 			#interrupt-cells = <2>;
- 		};
- 	};
-+
-+	smp2p-slpi {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <481>, <430>;
-+
-+		interrupts = <0 178 1>;
-+
-+		qcom,ipc = <&apcs 4 8>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <3>;
-+
-+		slpi_smp2p_in: slave-kernel {
-+				qcom,entry-name = "slave-kernel";
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+			};
-+
-+		slpi_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,state-cells = <1>;
-+		};
-+	};
-+
- };
- #include "msm8996-pins.dtsi"
+diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/remoteproc/qcom_mdt_loader.c
+index 2ff18cd6c096..2393398f63ea 100644
+--- a/drivers/remoteproc/qcom_mdt_loader.c
++++ b/drivers/remoteproc/qcom_mdt_loader.c
+@@ -116,6 +116,7 @@ int qcom_mdt_load(struct rproc *rproc,
+ 	const struct elf32_phdr *phdrs;
+ 	const struct elf32_phdr *phdr;
+ 	const struct elf32_hdr *ehdr;
++	const struct firmware *seg_fw;
+ 	size_t fw_name_len;
+ 	char *fw_name;
+ 	void *ptr;
+@@ -154,16 +155,16 @@ int qcom_mdt_load(struct rproc *rproc,
+ 
+ 		if (phdr->p_filesz) {
+ 			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
+-			ret = request_firmware(&fw, fw_name, &rproc->dev);
++			ret = request_firmware(&seg_fw, fw_name, &rproc->dev);
+ 			if (ret) {
+ 				dev_err(&rproc->dev, "failed to load %s\n",
+ 					fw_name);
+ 				break;
+ 			}
+ 
+-			memcpy(ptr, fw->data, fw->size);
++			memcpy(ptr, seg_fw->data, seg_fw->size);
+ 
+-			release_firmware(fw);
++			release_firmware(seg_fw);
+ 		}
+ 
+ 		if (phdr->p_memsz > phdr->p_filesz)
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.11.0
