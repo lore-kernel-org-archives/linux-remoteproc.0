@@ -1,96 +1,49 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 6/6] rpmsg: virtio_rpmsg: set buffer configuration to virtio
-Date: Tue, 31 Jan 2017 13:51:37 +0100
-Message-ID: <1485867097-6960-7-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
-References: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] remoteproc: qcom: q6v5: Remove mss supply from 8916
+Date: Mon, 30 Jan 2017 08:47:06 -0800
+Message-Id: <20170130164706.4155-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rpmsg is allocating buffer one dedicated communication link
-with some specificity like number of buffers, size of one buffer...
-These characteristics should be shared with remote coprocessor to
-guarantee communication link coherency.
+The Q6V5 in MSM8916 doesn't have a mss supply, so remove this and update
+the code to support cases without proxy or active supplies.
 
-Proposal is to update rpmsg configuration fields in coprocessor firmware
-resource table if it exists.
-
-This is possible thanks to virtio set interface which allows to update
-cfg fields of struct fw_rsc_vdev.
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Cc: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-Changes since V1:
-- Set virtio_cfg.da to -1 (any address) by default
-- Add comment about IOMMU support
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pil.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 7c89210..90d4531 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -923,6 +923,27 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
- 	return ret;
- }
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 9a5149573298..79a8a371a2fb 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -160,6 +160,9 @@ static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+ 	int rc;
+ 	int i;
  
-+static void virtio_rpmsg_set_config(struct virtio_device *vdev)
-+{
-+	struct virtio_rpmsg_cfg virtio_cfg;
-+	struct virtproc_info *vrp = vdev->priv;
++	if (!reg_res)
++		return 0;
 +
-+	/* fill virtio_cfg struct */
-+	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
-+	virtio_cfg.id = VIRTIO_ID_RPMSG;
-+	/*
-+	 * IOMMU not managed at the time being, set device address to (-1)
-+	 * meaning any address value.
-+	 */
-+	virtio_cfg.da = -1;
-+	virtio_cfg.pa =	vrp->bufs_dma;
-+	virtio_cfg.len = vrp->num_bufs * vrp->buf_size;
-+	virtio_cfg.buf_size = vrp->buf_size;
-+
-+	vdev->config->set(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
-+			  sizeof(virtio_cfg));
-+}
-+
- static int rpmsg_probe(struct virtio_device *vdev)
- {
- 	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
-@@ -933,6 +954,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	int err = 0, i;
- 	size_t total_buf_space;
- 	bool notify;
-+	bool has_cfg = false;
- 
- 	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
- 	if (!vrp)
-@@ -972,6 +994,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	if (err < 0)
- 		goto free_vrp;
- 
-+	if (err)
-+		has_cfg = true;
-+
- 	/* Allocate buffer if none provided by low level platform driver */
- 	if (!vrp->ext_buffer) {
- 		total_buf_space = vrp->num_bufs * vrp->buf_size;
-@@ -993,6 +1018,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 
- 		/* and half is dedicated for TX */
- 		vrp->sbufs = bufs_va + total_buf_space / 2;
-+
-+		/* Notify configuration to coprocessor */
-+		if (has_cfg)
-+			virtio_rpmsg_set_config(vdev);
- 	}
- 
- 	/* set up the receive buffers */
+ 	for (i = 0; reg_res[i].supply; i++) {
+ 		regs[i].reg = devm_regulator_get(dev, reg_res[i].supply);
+ 		if (IS_ERR(regs[i].reg)) {
+@@ -1036,14 +1039,6 @@ static const struct rproc_hexagon_res msm8916_mss = {
+ 		},
+ 		{}
+ 	},
+-	.active_supply = (struct qcom_mss_reg_res[]) {
+-		{
+-			.supply = "mss",
+-			.uV = 1050000,
+-			.uA = 100000,
+-		},
+-		{}
+-	},
+ 	.proxy_clk_names = (char*[]){
+ 		"xo",
+ 		NULL
 -- 
-1.9.1
+2.11.0
