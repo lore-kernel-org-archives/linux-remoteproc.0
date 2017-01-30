@@ -1,184 +1,225 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 5/5] soc/qcom: Move qcom_mdt_loader from remoteproc
-Date: Mon, 30 Jan 2017 08:55:47 -0800
-Message-Id: <20170130165547.4344-5-bjorn.andersson@linaro.org>
-In-Reply-To: <20170130165547.4344-1-bjorn.andersson@linaro.org>
-References: <20170130165547.4344-1-bjorn.andersson@linaro.org>
+Subject: [PATCH 1/3] remoteproc: qcom-common: Extract non-mdt related helper
+Date: Mon, 30 Jan 2017 09:26:21 -0800
+Message-Id: <20170130172623.4894-1-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.com>, Georgi Djakov <georgi.djakov@linaro.org>, Jordan Crouse <jcrouse@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-With the remoteproc parts cleaned out of the MDT loader we can move it
-to drivers/soc/qcom.
+In preparation for moving the mdt loader out of remoteproc let's move
+the somewhat unrelated resource table dummy helper to a Qualcomm
+"common" file.
 
-Cc: Andy Gross <andy.gross@linaro.com>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-
-For testing purposes a temporary branch containing these patches can be found
-here:
-
-https://github.com/andersson/kernel/commits/linux-next/rproc-q6v5
-
- drivers/remoteproc/Kconfig                                            | 3 ---
- drivers/remoteproc/Makefile                                           | 1 -
- drivers/remoteproc/qcom_adsp_pil.c                                    | 2 +-
- drivers/remoteproc/qcom_q6v5_pil.c                                    | 2 +-
- drivers/remoteproc/qcom_wcnss.c                                       | 2 +-
- drivers/soc/qcom/Kconfig                                              | 4 ++++
- drivers/soc/qcom/Makefile                                             | 1 +
- drivers/{remoteproc/qcom_mdt_loader.c => soc/qcom/mdt_loader.c}       | 4 +---
- .../qcom_mdt_loader.h => include/linux/soc/qcom/mdt_loader.h          | 4 ++++
- 9 files changed, 13 insertions(+), 10 deletions(-)
- rename drivers/{remoteproc/qcom_mdt_loader.c => soc/qcom/mdt_loader.c} (98%)
- rename drivers/remoteproc/qcom_mdt_loader.h => include/linux/soc/qcom/mdt_loader.h (87%)
+ drivers/remoteproc/Kconfig           |  6 +++++
+ drivers/remoteproc/Makefile          |  1 +
+ drivers/remoteproc/qcom_adsp_pil.c   |  1 +
+ drivers/remoteproc/qcom_common.c     | 46 ++++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_common.h     | 11 +++++++++
+ drivers/remoteproc/qcom_mdt_loader.c | 19 ---------------
+ drivers/remoteproc/qcom_mdt_loader.h |  1 -
+ drivers/remoteproc/qcom_q6v5_pil.c   |  1 +
+ drivers/remoteproc/qcom_wcnss.c      |  1 +
+ 9 files changed, 67 insertions(+), 20 deletions(-)
+ create mode 100644 drivers/remoteproc/qcom_common.c
+ create mode 100644 drivers/remoteproc/qcom_common.h
 
 diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 71ea703190c6..555dba04b5ae 100644
+index a5e888043f1f..14e57b3e86dc 100644
 --- a/drivers/remoteproc/Kconfig
 +++ b/drivers/remoteproc/Kconfig
-@@ -87,9 +87,6 @@ config QCOM_ADSP_PIL
- config QCOM_RPROC_COMMON
+@@ -78,11 +78,15 @@ config QCOM_ADSP_PIL
+ 	depends on QCOM_SMEM
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
++	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+ 	  Say y here to support the TrustZone based Peripherial Image Loader
+ 	  for the Qualcomm ADSP remote processors.
+ 
++config QCOM_RPROC_COMMON
++	tristate
++
+ config QCOM_MDT_LOADER
  	tristate
  
--config QCOM_MDT_LOADER
--	tristate
--
- config QCOM_Q6V5_PIL
- 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
- 	depends on OF && ARCH_QCOM
+@@ -93,6 +97,7 @@ config QCOM_Q6V5_PIL
+ 	depends on REMOTEPROC
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
++	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+ 	  Say y here to support the Qualcomm Peripherial Image Loader for the
+@@ -105,6 +110,7 @@ config QCOM_WCNSS_PIL
+ 	depends on QCOM_SMEM
+ 	depends on REMOTEPROC
+ 	select QCOM_MDT_LOADER
++	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+ 	  Say y here to support the Peripheral Image Loader for the Qualcomm
 diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index d4f9525a226d..ffc5e430df27 100644
+index 0938ea3c41ba..d4f9525a226d 100644
 --- a/drivers/remoteproc/Makefile
 +++ b/drivers/remoteproc/Makefile
-@@ -12,7 +12,6 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+@@ -13,6 +13,7 @@ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
  obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
  obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
--obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
- obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
+ obj-$(CONFIG_QCOM_MDT_LOADER)		+= qcom_mdt_loader.o
++obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
  obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
  obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
+ qcom_wcnss_pil-y			+= qcom_wcnss.o
 diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index e2151b017616..ce98818d3526 100644
+index 43a4ed2f346c..284546fedb4d 100644
 --- a/drivers/remoteproc/qcom_adsp_pil.c
 +++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -26,11 +26,11 @@
- #include <linux/qcom_scm.h>
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
-+#include <linux/soc/qcom/mdt_loader.h>
+@@ -29,6 +29,7 @@
  #include <linux/soc/qcom/smem.h>
  #include <linux/soc/qcom/smem_state.h>
  
- #include "qcom_common.h"
--#include "qcom_mdt_loader.h"
++#include "qcom_common.h"
+ #include "qcom_mdt_loader.h"
  #include "remoteproc_internal.h"
  
- #define ADSP_CRASH_REASON_SMEM		423
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index d37f7d206b10..a19e7ae5009c 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -29,12 +29,12 @@
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
-+#include <linux/soc/qcom/mdt_loader.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- 
- #include "remoteproc_internal.h"
- #include "qcom_common.h"
--#include "qcom_mdt_loader.h"
- 
- #include <linux/qcom_scm.h>
- 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index fbb25ea4ae8a..781211c144c6 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -28,12 +28,12 @@
- #include <linux/qcom_scm.h>
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
-+#include <linux/soc/qcom/mdt_loader.h>
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- #include <linux/rpmsg/qcom_smd.h>
- 
- #include "qcom_common.h"
--#include "qcom_mdt_loader.h"
- #include "remoteproc_internal.h"
- #include "qcom_wcnss.h"
- 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 461b387d03cc..78b1bb7bcf20 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -10,6 +10,10 @@ config QCOM_GSBI
-           functions for connecting the underlying serial UART, SPI, and I2C
-           devices to the output pins.
- 
-+config QCOM_MDT_LOADER
-+	tristate
-+	select QCOM_SCM
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+new file mode 100644
+index 000000000000..bd400336e209
+--- /dev/null
++++ b/drivers/remoteproc/qcom_common.c
+@@ -0,0 +1,46 @@
++/*
++ * Qualcomm Peripheral Image Loader helpers
++ *
++ * Copyright (C) 2016 Linaro Ltd
++ * Copyright (C) 2015 Sony Mobile Communications Inc
++ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
- config QCOM_PM
- 	bool "Qualcomm Power Management"
- 	depends on ARCH_QCOM && !ARM64
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index fdd664edf0bd..1f30260b06b8 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,4 +1,5 @@
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
-+obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
- obj-$(CONFIG_QCOM_PM)	+=	spm.o
- obj-$(CONFIG_QCOM_SMD) +=	smd.o
- obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
-diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-similarity index 98%
-rename from drivers/remoteproc/qcom_mdt_loader.c
-rename to drivers/soc/qcom/mdt_loader.c
-index b36a47bef056..15cb6e089c42 100644
++#include <linux/firmware.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/remoteproc.h>
++
++#include "remoteproc_internal.h"
++#include "qcom_common.h"
++
++/**
++ * qcom_mdt_find_rsc_table() - provide dummy resource table for remoteproc
++ * @rproc:	remoteproc handle
++ * @fw:		firmware header
++ * @tablesz:	outgoing size of the table
++ *
++ * Returns a dummy table.
++ */
++struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
++					       const struct firmware *fw,
++					       int *tablesz)
++{
++	static struct resource_table table = { .ver = 1, };
++
++	*tablesz = sizeof(table);
++	return &table;
++}
++EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
++
++MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+new file mode 100644
+index 000000000000..caecf27c4ffa
+--- /dev/null
++++ b/drivers/remoteproc/qcom_common.h
+@@ -0,0 +1,11 @@
++#ifndef __RPROC_QCOM_COMMON_H__
++#define __RPROC_QCOM_COMMON_H__
++
++struct resource_table;
++struct rproc;
++
++struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
++					       const struct firmware *fw,
++					       int *tablesz);
++
++#endif
+diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/remoteproc/qcom_mdt_loader.c
+index 2ff18cd6c096..897e14512123 100644
 --- a/drivers/remoteproc/qcom_mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -23,9 +23,7 @@
- #include <linux/remoteproc.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
++++ b/drivers/remoteproc/qcom_mdt_loader.c
+@@ -27,25 +27,6 @@
+ #include "qcom_mdt_loader.h"
+ 
+ /**
+- * qcom_mdt_find_rsc_table() - provide dummy resource table for remoteproc
+- * @rproc:	remoteproc handle
+- * @fw:		firmware header
+- * @tablesz:	outgoing size of the table
+- *
+- * Returns a dummy table.
+- */
+-struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+-					       const struct firmware *fw,
+-					       int *tablesz)
+-{
+-	static struct resource_table table = { .ver = 1, };
 -
--#include "remoteproc_internal.h"
--#include "qcom_mdt_loader.h"
-+#include <linux/soc/qcom/mdt_loader.h>
- 
- static bool mdt_phdr_valid(const struct elf32_phdr *phdr)
- {
-diff --git a/drivers/remoteproc/qcom_mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-similarity index 87%
-rename from drivers/remoteproc/qcom_mdt_loader.h
-rename to include/linux/soc/qcom/mdt_loader.h
-index ca9a91709810..f423001db3a9 100644
+-	*tablesz = sizeof(table);
+-	return &table;
+-}
+-EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
+-
+-/**
+  * qcom_mdt_parse() - extract useful parameters from the mdt header
+  * @fw:		firmware handle
+  * @fw_addr:	optional reference for base of the firmware's memory region
+diff --git a/drivers/remoteproc/qcom_mdt_loader.h b/drivers/remoteproc/qcom_mdt_loader.h
+index c5d7122755b6..e513548e52ec 100644
 --- a/drivers/remoteproc/qcom_mdt_loader.h
-+++ b/include/linux/soc/qcom/mdt_loader.h
-@@ -1,10 +1,14 @@
- #ifndef __QCOM_MDT_LOADER_H__
- #define __QCOM_MDT_LOADER_H__
- 
-+#include <linux/types.h>
-+
- #define QCOM_MDT_TYPE_MASK	(7 << 24)
++++ b/drivers/remoteproc/qcom_mdt_loader.h
+@@ -5,7 +5,6 @@
  #define QCOM_MDT_TYPE_HASH	(2 << 24)
  #define QCOM_MDT_RELOCATABLE	BIT(27)
  
-+struct device;
-+struct firmware;
+-struct resource_table * qcom_mdt_find_rsc_table(struct rproc *rproc, const struct firmware *fw, int *tablesz);
+ int qcom_mdt_load(struct rproc *rproc, const struct firmware *fw, const char *fw_name);
  
- ssize_t qcom_mdt_get_size(const struct firmware *fw);
- int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ int qcom_mdt_parse(const struct firmware *fw, phys_addr_t *fw_addr, size_t *fw_size, bool *fw_relocate);
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 9a5149573298..cb2073242506 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -33,6 +33,7 @@
+ #include <linux/soc/qcom/smem_state.h>
+ 
+ #include "remoteproc_internal.h"
++#include "qcom_common.h"
+ #include "qcom_mdt_loader.h"
+ 
+ #include <linux/qcom_scm.h>
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index ebd61f5d18bb..f158f8243b04 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -32,6 +32,7 @@
+ #include <linux/soc/qcom/smem_state.h>
+ #include <linux/rpmsg/qcom_smd.h>
+ 
++#include "qcom_common.h"
+ #include "qcom_mdt_loader.h"
+ #include "remoteproc_internal.h"
+ #include "qcom_wcnss.h"
 -- 
 2.11.0
