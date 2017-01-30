@@ -1,10 +1,12 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 1/3] remoteproc: qcom-common: Extract non-mdt related helper
-Date: Mon, 30 Jan 2017 09:26:21 -0800
-Message-Id: <20170130172623.4894-1-bjorn.andersson@linaro.org>
+Subject: [PATCH 4/5] remoteproc: qcom-common: Extract non-mdt related helper
+Date: Mon, 30 Jan 2017 08:55:46 -0800
+Message-Id: <20170130165547.4344-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20170130165547.4344-1-bjorn.andersson@linaro.org>
+References: <20170130165547.4344-1-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 In preparation for moving the mdt loader out of remoteproc let's move
@@ -27,7 +29,7 @@ Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
  create mode 100644 drivers/remoteproc/qcom_common.h
 
 diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index a5e888043f1f..14e57b3e86dc 100644
+index 454fd9a4dd96..71ea703190c6 100644
 --- a/drivers/remoteproc/Kconfig
 +++ b/drivers/remoteproc/Kconfig
 @@ -78,11 +78,15 @@ config QCOM_ADSP_PIL
@@ -46,15 +48,15 @@ index a5e888043f1f..14e57b3e86dc 100644
  config QCOM_MDT_LOADER
  	tristate
  
-@@ -93,6 +97,7 @@ config QCOM_Q6V5_PIL
+@@ -92,6 +96,7 @@ config QCOM_Q6V5_PIL
+ 	depends on QCOM_SMEM
  	depends on REMOTEPROC
  	select MFD_SYSCON
- 	select QCOM_MDT_LOADER
 +	select QCOM_RPROC_COMMON
  	select QCOM_SCM
  	help
  	  Say y here to support the Qualcomm Peripherial Image Loader for the
-@@ -105,6 +110,7 @@ config QCOM_WCNSS_PIL
+@@ -104,6 +109,7 @@ config QCOM_WCNSS_PIL
  	depends on QCOM_SMEM
  	depends on REMOTEPROC
  	select QCOM_MDT_LOADER
@@ -75,7 +77,7 @@ index 0938ea3c41ba..d4f9525a226d 100644
  obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
  qcom_wcnss_pil-y			+= qcom_wcnss.o
 diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 43a4ed2f346c..284546fedb4d 100644
+index e300b8c7e5aa..e2151b017616 100644
 --- a/drivers/remoteproc/qcom_adsp_pil.c
 +++ b/drivers/remoteproc/qcom_adsp_pil.c
 @@ -29,6 +29,7 @@
@@ -156,13 +158,14 @@ index 000000000000..caecf27c4ffa
 +
 +#endif
 diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/remoteproc/qcom_mdt_loader.c
-index 2ff18cd6c096..897e14512123 100644
+index f239f6fddbb7..b36a47bef056 100644
 --- a/drivers/remoteproc/qcom_mdt_loader.c
 +++ b/drivers/remoteproc/qcom_mdt_loader.c
 @@ -27,25 +27,6 @@
+ #include "remoteproc_internal.h"
  #include "qcom_mdt_loader.h"
  
- /**
+-/**
 - * qcom_mdt_find_rsc_table() - provide dummy resource table for remoteproc
 - * @rproc:	remoteproc handle
 - * @fw:		firmware header
@@ -181,12 +184,11 @@ index 2ff18cd6c096..897e14512123 100644
 -}
 -EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
 -
--/**
-  * qcom_mdt_parse() - extract useful parameters from the mdt header
-  * @fw:		firmware handle
-  * @fw_addr:	optional reference for base of the firmware's memory region
+ static bool mdt_phdr_valid(const struct elf32_phdr *phdr)
+ {
+ 	if (phdr->p_type != PT_LOAD)
 diff --git a/drivers/remoteproc/qcom_mdt_loader.h b/drivers/remoteproc/qcom_mdt_loader.h
-index c5d7122755b6..e513548e52ec 100644
+index 261088c8da18..ca9a91709810 100644
 --- a/drivers/remoteproc/qcom_mdt_loader.h
 +++ b/drivers/remoteproc/qcom_mdt_loader.h
 @@ -5,7 +5,6 @@
@@ -194,11 +196,11 @@ index c5d7122755b6..e513548e52ec 100644
  #define QCOM_MDT_RELOCATABLE	BIT(27)
  
 -struct resource_table * qcom_mdt_find_rsc_table(struct rproc *rproc, const struct firmware *fw, int *tablesz);
- int qcom_mdt_load(struct rproc *rproc, const struct firmware *fw, const char *fw_name);
  
- int qcom_mdt_parse(const struct firmware *fw, phys_addr_t *fw_addr, size_t *fw_size, bool *fw_relocate);
+ ssize_t qcom_mdt_get_size(const struct firmware *fw);
+ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
 diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 9a5149573298..cb2073242506 100644
+index 1afadab4edfd..d37f7d206b10 100644
 --- a/drivers/remoteproc/qcom_q6v5_pil.c
 +++ b/drivers/remoteproc/qcom_q6v5_pil.c
 @@ -33,6 +33,7 @@
@@ -210,7 +212,7 @@ index 9a5149573298..cb2073242506 100644
  
  #include <linux/qcom_scm.h>
 diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index ebd61f5d18bb..f158f8243b04 100644
+index aa97a61e6a69..fbb25ea4ae8a 100644
 --- a/drivers/remoteproc/qcom_wcnss.c
 +++ b/drivers/remoteproc/qcom_wcnss.c
 @@ -32,6 +32,7 @@
