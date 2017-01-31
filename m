@@ -1,43 +1,72 @@
-Return-Path: <weiyj.lk@gmail.com>
-Return-Path: <weiyj.lk@gmail.com>
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH -next] rpmsg: char: Fix missing unlock on error in rpmsg_eptdev_read()
-Date: Mon, 23 Jan 2017 14:09:51 +0000
-Message-Id: <20170123140951.2204-1-weiyj.lk@gmail.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 3/6] include: virtio_rpmsg: add virtio rpmsg configuration structure
+Date: Tue, 31 Jan 2017 13:51:34 +0100
+Message-ID: <1485867097-6960-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
+References: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Wei Yongjun <weiyongjun1@huawei.com>, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+Rpmsg channel configuration should be identical on host and
+coprocessor side.
+This patch proposes a new structure named struct virtio_rpmsg_cfg
+to gather all configuration information to characterize the
+communication link and.
+This structure will be exchanged with coprocessor via the resource
+table, expanding struct fw_rsc_vdev. It will guarantee that host
+and coprocessor will share the same information.
+virtio_rpmsg will access it thanks to virtio get and set features.
+Presence of struct virtio_rpmsg_cfg is optional.
 
-Add the missing unlock before return from function rpmsg_eptdev_read()
-in the error handling case.
-
-Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/rpmsg/rpmsg_char.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+No change since V1
+---
+ include/linux/rpmsg/virtio_rpmsg.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index a78b6b7..93252dc 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -209,11 +209,12 @@ static ssize_t rpmsg_eptdev_read(struct file *filp, char __user *buf,
- 	}
- 
- 	skb = skb_dequeue(&eptdev->queue);
--	if (!skb)
--		return -EFAULT;
- 
- 	spin_unlock_irqrestore(&eptdev->queue_lock, flags);
- 
-+	if (!skb)
-+		return -EFAULT;
+diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
+new file mode 100644
+index 0000000..5f3f0d0
+--- /dev/null
++++ b/include/linux/rpmsg/virtio_rpmsg.h
+@@ -0,0 +1,32 @@
 +
- 	use = min_t(size_t, len, skb->len);
- 	if (copy_to_user(buf, skb->data, use))
- 		use = -EFAULT;
++#ifndef _LINUX_VIRTIO_RPMSG_H
++#define _LINUX_VIRTIO_RPMSG_H
++
++/* Offset in struct fw_rsc_vdev */
++#define RPMSG_CONFIG_OFFSET	0
++
++/**
++ * struct virtio_rpmsg_cfg - optional configuration field for virtio rpmsg
++ * provided at probe time by virtio (get/set)
++ * @id: virtio cfg id (as in virtio_ids.h)
++ * @version: virtio_rpmsg_cfg structure version number
++ * @va: virtual address (used when buffer allocated by low level driver)
++ * @da: device address
++ * @pa: physical address
++ * @len: length (in bytes)
++ * @buf_size: size of rpmsg buffer size (defined by firmware else default value
++ *	      used)
++ * @reserved: reserved (must be zero)
++ */
++struct virtio_rpmsg_cfg {
++	u32 id;
++	u32 version;
++	u64 va;
++	u32 da;
++	u32 pa;
++	u32 len;
++	u32 buf_size;
++	u32 reserved;
++} __packed;
++
++#endif
+-- 
+1.9.1
