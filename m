@@ -1,103 +1,126 @@
-Return-Path: <spjoshi@codeaurora.org>
-Subject: Re: [PATCH 1/2] soc: ti: Use remoteproc auto_boot feature
-References: <1481846632-4778-1-git-send-email-spjoshi@codeaurora.org>
- <1f5b2631-f744-a5c1-55c1-82eb27d5cbd7@ti.com>
- <9092e066-b2ad-ee42-de5f-d66b84a10cfd@codeaurora.org>
- <1f847af8-6bde-4645-aea4-7e9b02306e39@ti.com>
- <6a5a9c8a-cca7-0740-4879-dd6c01e60548@ti.com>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Message-ID: <1003ab4a-b481-4f60-097a-2ce607fa2961@codeaurora.org>
-Date: Tue, 3 Jan 2017 15:52:14 -0800
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 1/6] rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
+Date: Tue, 31 Jan 2017 13:51:32 +0100
+Message-ID: <1485867097-6960-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
+References: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-In-Reply-To: <6a5a9c8a-cca7-0740-4879-dd6c01e60548@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-To: Suman Anna <s-anna@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>, Dave Gerlach <d-gerlach@ti.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 12/23/2016 03:57 PM, Suman Anna wrote:
-> On 12/23/2016 11:05 AM, Suman Anna wrote:
->> Hi Sarang,
->>
->>>>
->>>> On 12/15/2016 06:03 PM, Sarangdhar Joshi wrote:
->>>>> The function wkup_m3_rproc_boot_thread waits for asynchronous
->>>>> firmware loading to complete successfully before calling
->>>>> rproc_boot(). The same can be achieved by just setting
->>>>> rproc->auto_boot flag. Change this. As a result this change
->>>>> removes wkup_m3_rproc_boot_thread and moves m3_ipc->sync_complete
->>>>> initialization to the wkup_m3_ipc_probe().
->>>>>
->>>>> Other than the current usage, the firmware_loading_complete is
->>>>> only used in rproc_del() where it's no longer needed.  This
->>>>> change is in preparation for removing firmware_loading_complete
->>>>> completely.
->>>>
->>>> Based on the comments so far, I am assuming that you are dropping this
->>>> series.
->>>
->>> No, may not be dropping this. Will try to handle it differently in
->>> rproc_del() (probably by making use of some state flag).
->>>>
->>>> In any case, this series did break our PM stack. We definitely don't
->>>> want to auto-boot the wkup_m3_rproc device, that responsibility will
->>>> need to stay with the wkup_m3_ipc driver.
->>>
->>> Which scenario did it break? Booting up rproc device before
->>> wkup_m3_ipc_probe() causes issues?
->>
->> Yes, our state machine requires the wkup_m3_ipc driver to control the
->> boot of the wkup_m3 remoteproc. The wkup_m3 is not a typical remoteproc,
->> it is our PM master and is responsible for putting the host processor
->> into suspend and waking it up in system suspend/cpuidle paths.
->> The remoteproc infrastructure is only used for load/boot, but the Linux
->> PM state machine and communication is all controlled by the wkup_m3_ipc
->> driver.
+Rpmsg buffer size is currently fixed to 512 bytes.
+This patch introduces a new capability in struct virtproc_info
+to tune shared buffer size between host and coprocessor
+according to the needs.
 
-Thanks for explaining. I was missing the fact that the resource table 
-parsing during asynchronous call and the one in rproc_boot() are 
-different.
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+Changes since V1:
+- Initialize vrp->num_bufs before use.
+- Alignment with open parenthesis.
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
->>
->>>
->>> Nevertheless, I think Bjorn's suggestion of just dropping the call to
->>> wait_for_completion() and keeping kthread looks good, also because of
->>> the fact that rproc_boot() anyways calls request_firmware() and no
->>> longer needed to wait on asynchronous loading of firmware.
->>
->> Yeah, I will have to test this, but looking at current code, this should
->> mostly be ok because of the remoteproc core changes w.r.t resource table
->> parsing.
->
-> Tested with just the wait_for_completion() removed and it works fine. I
-> can send a patch for the same if you prefer me to send it.
-
-Thanks for testing it. I have sent the patch.
-
-Regards,
-Sarang
-
->
-> regards
-> Suman
->
->>
->> regards
->> Suman
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
-
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 3090b0d..d387589 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -45,6 +45,7 @@
+  * @rbufs:	kernel address of rx buffers
+  * @sbufs:	kernel address of tx buffers
+  * @num_bufs:	total number of buffers for rx and tx
++ * @buf_size:   size of one rx or tx buffer
+  * @last_sbuf:	index of last tx buffer used
+  * @bufs_dma:	dma base addr of the buffers
+  * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
+@@ -65,6 +66,7 @@ struct virtproc_info {
+ 	struct virtqueue *rvq, *svq;
+ 	void *rbufs, *sbufs;
+ 	unsigned int num_bufs;
++	unsigned int buf_size;
+ 	int last_sbuf;
+ 	dma_addr_t bufs_dma;
+ 	struct mutex tx_lock;
+@@ -158,7 +160,7 @@ struct virtio_rpmsg_channel {
+  * processor.
+  */
+ #define MAX_RPMSG_NUM_BUFS	(512)
+-#define RPMSG_BUF_SIZE		(512)
++#define MAX_RPMSG_BUF_SIZE	(512)
+ 
+ /*
+  * Local addresses are dynamically allocated on-demand.
+@@ -429,7 +431,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+ 	 * (half of our buffers are used for sending messages)
+ 	 */
+ 	if (vrp->last_sbuf < vrp->num_bufs / 2)
+-		ret = vrp->sbufs + RPMSG_BUF_SIZE * vrp->last_sbuf++;
++		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+ 	/* or recycle a used one */
+ 	else
+ 		ret = virtqueue_get_buf(vrp->svq, &len);
+@@ -555,7 +557,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 	 * messaging), or to improve the buffer allocator, to support
+ 	 * variable-length buffer sizes.
+ 	 */
+-	if (len > RPMSG_BUF_SIZE - sizeof(struct rpmsg_hdr)) {
++	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+ 		dev_err(dev, "message is too big (%d)\n", len);
+ 		return -EMSGSIZE;
+ 	}
+@@ -696,7 +698,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 	 * We currently use fixed-sized buffers, so trivially sanitize
+ 	 * the reported payload length.
+ 	 */
+-	if (len > RPMSG_BUF_SIZE ||
++	if (len > vrp->buf_size ||
+ 	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
+ 		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+ 		return -EINVAL;
+@@ -729,7 +731,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 		dev_warn(dev, "msg received with no recipient\n");
+ 
+ 	/* publish the real size of the buffer */
+-	sg_init_one(&sg, msg, RPMSG_BUF_SIZE);
++	sg_init_one(&sg, msg, vrp->buf_size);
+ 
+ 	/* add the buffer back to the remote processor's virtqueue */
+ 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+@@ -886,7 +888,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	else
+ 		vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
+ 
+-	total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
++	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
++
++	total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 
+ 	/* allocate coherent memory for the buffers */
+ 	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
+@@ -909,9 +913,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	/* set up the receive buffers */
+ 	for (i = 0; i < vrp->num_bufs / 2; i++) {
+ 		struct scatterlist sg;
+-		void *cpu_addr = vrp->rbufs + i * RPMSG_BUF_SIZE;
++		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+ 
+-		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
++		sg_init_one(&sg, cpu_addr, vrp->buf_size);
+ 
+ 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+ 					  GFP_KERNEL);
+@@ -976,7 +980,7 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+ static void rpmsg_remove(struct virtio_device *vdev)
+ {
+ 	struct virtproc_info *vrp = vdev->priv;
+-	size_t total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
++	size_t total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 	int ret;
+ 
+ 	vdev->config->reset(vdev);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
