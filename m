@@ -1,117 +1,96 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 2/3] remoteproc: st: add da to va support
-Date: Fri, 6 Jan 2017 18:16:12 +0100
-Message-ID: <1483722973-21531-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1483722973-21531-1-git-send-email-loic.pallardy@st.com>
-References: <1483722973-21531-1-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 6/6] rpmsg: virtio_rpmsg: set buffer configuration to virtio
+Date: Tue, 31 Jan 2017 13:51:37 +0100
+Message-ID: <1485867097-6960-7-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
+References: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-ST remoteproc driver needs to provide information about
-carveout memory region to allow remoteproc core to load
-firmware and access trace buffer.
+Rpmsg is allocating buffer one dedicated communication link
+with some specificity like number of buffers, size of one buffer...
+These characteristics should be shared with remote coprocessor to
+guarantee communication link coherency.
+
+Proposal is to update rpmsg configuration fields in coprocessor firmware
+resource table if it exists.
+
+This is possible thanks to virtio set interface which allows to update
+cfg fields of struct fw_rsc_vdev.
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/st_remoteproc.c | 42 ++++++++++++++++++++++++++++++++------
- 1 file changed, 36 insertions(+), 6 deletions(-)
+Changes since V1:
+- Set virtio_cfg.da to -1 (any address) by default
+- Add comment about IOMMU support
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index 2d99111..b6eb716 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-@@ -51,6 +52,10 @@ struct st_rproc {
- 	struct mbox_chan	*mbox_chan[ST_RPROC_MAX_VRING][MBOX_MAX];
- 	struct mbox_client mbox_client_vq0;
- 	struct mbox_client mbox_client_vq1;
-+	phys_addr_t mem_phys;
-+	phys_addr_t mem_reloc;
-+	void *mem_region;
-+	size_t mem_size;
- };
- 
- static void st_rproc_mbox_callback(struct device *dev, u32 msg)
-@@ -155,10 +160,23 @@ static int st_rproc_stop(struct rproc *rproc)
- 	return sw_err ?: pwr_err;
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 7c89210..90d4531 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -923,6 +923,27 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
+ 	return ret;
  }
  
-+static void *st_proc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void virtio_rpmsg_set_config(struct virtio_device *vdev)
 +{
-+	struct st_rproc *ddata = rproc->priv;
-+	int offset;
++	struct virtio_rpmsg_cfg virtio_cfg;
++	struct virtproc_info *vrp = vdev->priv;
 +
-+	offset = da - ddata->mem_reloc;
-+	if (offset < 0 || offset + len > ddata->mem_size)
-+		return NULL;
++	/* fill virtio_cfg struct */
++	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
++	virtio_cfg.id = VIRTIO_ID_RPMSG;
++	/*
++	 * IOMMU not managed at the time being, set device address to (-1)
++	 * meaning any address value.
++	 */
++	virtio_cfg.da = -1;
++	virtio_cfg.pa =	vrp->bufs_dma;
++	virtio_cfg.len = vrp->num_bufs * vrp->buf_size;
++	virtio_cfg.buf_size = vrp->buf_size;
 +
-+	return ddata->mem_region + offset;
++	vdev->config->set(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
++			  sizeof(virtio_cfg));
 +}
 +
- static struct rproc_ops st_rproc_ops = {
- 	.kick		= st_rproc_kick,
- 	.start		= st_rproc_start,
- 	.stop		= st_rproc_stop,
-+	.da_to_va	= st_proc_da_to_va,
- };
+ static int rpmsg_probe(struct virtio_device *vdev)
+ {
+ 	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
+@@ -933,6 +954,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	int err = 0, i;
+ 	size_t total_buf_space;
+ 	bool notify;
++	bool has_cfg = false;
  
- /*
-@@ -206,7 +224,8 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct rproc *rproc = platform_get_drvdata(pdev);
- 	struct st_rproc *ddata = rproc->priv;
--	struct device_node *np = dev->of_node;
-+	struct device_node *np = dev->of_node, *node;
-+	struct resource res;
- 	int err;
+ 	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
+ 	if (!vrp)
+@@ -972,6 +994,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	if (err < 0)
+ 		goto free_vrp;
  
- 	if (ddata->config->sw_reset) {
-@@ -250,10 +269,23 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	err = of_reserved_mem_device_init(dev);
--	if (err) {
--		dev_err(dev, "Failed to obtain shared memory\n");
-+	node = of_parse_phandle(np, "memory-region", 0);
-+	if (!node) {
-+		dev_err(dev, "No memory-region specified\n");
-+		return -EINVAL;
-+	}
-+
-+	err = of_address_to_resource(node, 0, &res);
 +	if (err)
- 		return err;
++		has_cfg = true;
 +
-+	ddata->mem_phys = ddata->mem_reloc = res.start;
-+	ddata->mem_size = resource_size(&res);
-+	ddata->mem_region = devm_ioremap_wc(dev, ddata->mem_phys, ddata->mem_size);
-+	if (!ddata->mem_region) {
-+		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-+			&res.start, ddata->mem_size);
-+		return -EBUSY;
+ 	/* Allocate buffer if none provided by low level platform driver */
+ 	if (!vrp->ext_buffer) {
+ 		total_buf_space = vrp->num_bufs * vrp->buf_size;
+@@ -993,6 +1018,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ 		/* and half is dedicated for TX */
+ 		vrp->sbufs = bufs_va + total_buf_space / 2;
++
++		/* Notify configuration to coprocessor */
++		if (has_cfg)
++			virtio_rpmsg_set_config(vdev);
  	}
  
- 	err = clk_prepare(ddata->clk);
-@@ -390,8 +422,6 @@ static int st_rproc_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(ddata->clk);
- 
--	of_reserved_mem_device_release(&pdev->dev);
--
- 	mbox_free_channel(ddata->mbox_chan[0][MBOX_RX]);
- 	mbox_free_channel(ddata->mbox_chan[1][MBOX_RX]);
- 	mbox_free_channel(ddata->mbox_chan[0][MBOX_TX]);
+ 	/* set up the receive buffers */
 -- 
 1.9.1
