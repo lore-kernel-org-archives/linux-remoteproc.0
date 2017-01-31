@@ -1,46 +1,49 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 11 Jan 2017 06:07:52 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] remoteproc fixes for v4.10
-Message-ID: <20170111140752.GB31260@builder>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 4/4] remoteproc: core: don't allocate carveout if pa or da are defined
+Date: Tue, 31 Jan 2017 13:35:56 +0100
+Message-ID: <1485866156-6364-5-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485866156-6364-1-git-send-email-loic.pallardy@st.com>
+References: <1485866156-6364-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 7ce7d89f48834cefece7804d38fc5d85382edf77:
+Remoteproc doesn't check if firmware requests fixed
+addresses for carveout regions.
+Current assumption is that platform specific driver is in
+charge of coprocessor specific memory region allocation and
+remoteproc core doesn't have to handle them.
+If a da or a pa is specified in firmware resource table, remoteproc
+core doesn't have to perform any allocation.
+Access to carveout will be done thanks to rproc_da_to_pa function,
+which will provide virtual address on carveout region allocated
+by platform specific driver.
 
-  Linux 4.10-rc1 (2016-12-25 16:13:08 -0800)
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+No change since V1
 
-are available in the git repository at:
+ drivers/remoteproc/remoteproc_core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-  git://github.com/andersson/remoteproc tags/rproc-v4.10-fixes
-
-for you to fetch changes up to a0c10687ec9506b5e14fe3dd47832a77f2f2500c:
-
-  Revert "remoteproc: Merge table_ptr and cached_table pointers" (2016-12-30 03:26:31 -0800)
-
-----------------------------------------------------------------
-remoteproc fixes for v4.10
-
-This fixes two regressions that has been reported to be introduced in
-v4.10-rc1.
-
-* The first fix corrects an incorrect usage of the kref api.
-
-* The second reverts the change to make the resource table read-only. As the
-  space each vdev resource is used as virtio device config space it must be
-  shared with the remote.
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      Revert "remoteproc: Merge table_ptr and cached_table pointers"
-
-Loic Pallardy (1):
-      remoteproc: fix vdev reference management
-
- drivers/remoteproc/remoteproc_core.c | 29 ++++++++++++++++-------------
- include/linux/remoteproc.h           |  4 +++-
- 2 files changed, 19 insertions(+), 14 deletions(-)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 90b05c7..dd63ceed 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -622,6 +622,11 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+ 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
+ 
++	if (rsc->pa != FW_RSC_ADDR_ANY || rsc->da != FW_RSC_ADDR_ANY) {
++		dev_dbg(dev, "carveout already allocated by low level driver\n");
++		return 0;
++	}
++
+ 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
+ 	if (!carveout)
+ 		return -ENOMEM;
+-- 
+1.9.1
