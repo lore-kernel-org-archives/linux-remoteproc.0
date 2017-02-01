@@ -1,178 +1,128 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 27 Feb 2017 14:48:00 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 3/3] remoteproc: qcom: Add msm8996 specific changes in
- mss rproc driver.
-Message-ID: <20170227224800.GE25384@codeaurora.org>
-References: <1485773044-31489-1-git-send-email-akdwived@codeaurora.org>
- <1485773044-31489-4-git-send-email-akdwived@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 1/6] rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
+Date: Wed, 1 Feb 2017 16:07:07 +0100
+Message-ID: <1485961632-21980-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
+References: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1485773044-31489-4-git-send-email-akdwived@codeaurora.org>
-To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 01/30, Avaneesh Kumar Dwivedi wrote:
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index 35eee68..9c12a36 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -485,35 +497,99 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
->  
->  static int q6v5proc_reset(struct q6v5 *qproc)
->  {
-> -	u32 val;
-> +	u64 val;
+Rpmsg buffer size is currently fixed to 512 bytes.
+This patch introduces a new capability in struct virtproc_info
+to tune shared buffer size between host and coprocessor
+according to the needs.
 
-Why u64? There isn't any readq/writeq usage here.
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+Changes since V1:
+- Initialize vrp->num_bufs before use.
+- Alignment with open parenthesis.
 
->  	int ret;
-> +	int i;
->  
-[...]
-> +	if (qproc->version == MSS_MSM8996) {
-> +		/* Override the ACC value if required */
-> +		writel(QDSP6SS_ACC_OVERRIDE_VAL,
-> +			qproc->reg_base + QDSP6SS_STRAP_ACC);
-> +
-> +		/* Assert resets, stop core */
-> +		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-> +		val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
+No change since v2.
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-Useless parenthesis.
-
-> +		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-> +
-> +		/* BHS require xo cbcr to be enabled */
-> +		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
-> +		val |= 0x1;
-> +		writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
->  
-> +		/* Read CLKOFF bit to go low indicating CLK is enabled */
-> +		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
-> +				val, !(val & BIT(31)), 1, HALT_CHECK_MAX_LOOPS);
-> +		if (ret) {
-> +			dev_err(qproc->dev,
-> +				"xo cbcr enabling timed out (rc:%d)\n", ret);
-> +			return ret;
-> +		}
-> +		/* Enable power block headswitch and wait for it to stabilize */
-> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		val |= QDSP6v56_BHS_ON;
-> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		udelay(1);
-> +
-> +		/* Put LDO in bypass mode */
-> +		val |= QDSP6v56_LDO_BYP;
-> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +		/* Deassert QDSP6 compiler memory clamp */
-> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		val &= ~QDSP6v56_CLAMP_QMC_MEM;
-> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +		/* Deassert memory peripheral sleep and L2 memory standby */
-> +		val |= (Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N);
-
-Useless parenthesis.
-
-> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +
-> +		/* Turn on L1, L2, ETB and JU memories 1 at a time */
-> +		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-> +		for (i = 19; i >= 0; i--) {
-> +			val |= BIT(i);
-> +			writel(val, qproc->reg_base +
-> +						QDSP6SS_MEM_PWR_CTL);
-> +			/*
-> +			 * Read back value to ensure the write is done then
-> +			 * wait for 1us for both memory peripheral and data
-> +			 * array to turn on.
-> +			 */
-> +			val |= readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-> +			udelay(1);
-> +		}
-> +		/* Remove word line clamp */
-> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		val &= ~QDSP6v56_CLAMP_WL;
-> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +	} else {
-> +		/* Assert resets, stop core */
-> +		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-> +		val |= (Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE);
-
-Useless parenthesis.
-
-> +		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-> +
-> +		/* Enable power block headswitch and wait for it to stabilize */
-> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		val |= QDSS_BHS_ON | QDSS_LDO_BYP;
-> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		udelay(1);
-> @@ -849,6 +925,7 @@ static int q6v5_stop(struct rproc *rproc)
->  {
->  	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
->  	int ret;
-> +	int val;
-
-u32 instead of int?
-
->  
->  	qproc->running = false;
->  
-> @@ -866,6 +943,15 @@ static int q6v5_stop(struct rproc *rproc)
->  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
->  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
->  
-> +	if (qproc->version == MSS_MSM8996) {
-> +		/*
-> +		 * To avoid high MX current during LPASS/MSS restart.
-> +		 */
-
-Three lines could be one line comment instead. 
-
-> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +		val |= Q6SS_CLAMP_IO | QDSP6v56_CLAMP_WL |
-> +			QDSP6v56_CLAMP_QMC_MEM;
-> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> +	}
->  	reset_control_assert(qproc->mss_restart);
->  	q6v5_clk_disable(qproc->dev, qproc->active_clks,
->  				qproc->active_clk_count);
-> @@ -1213,6 +1299,47 @@ static int q6v5_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static const struct rproc_hexagon_res msm8996_mss = {
-> +	.hexagon_mba_image = "mba.mbn",
-> +	.proxy_supply = (struct qcom_mss_reg_res[]) {
-> +		{
-> +			.supply = "vdd_mx",
-> +			.uV = 6,
-> +		},
-> +		{
-> +			.supply = "vdd_cx",
-> +			.uV = 7,
-> +			.uA = 100000,
-> +		},
-
-vdd cx and vdd mx are corners. The plan is to _not_ use the
-regulator framework for those, so treating them like supplies is
-incorrect here.
-
-> +		{
-> +			.supply = "vdd_pll",
-> +			.uV = 1800000,
-> +			.uA = 100000,
-> +		},
-> +		{}
-> +	},
-
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 3090b0d..d387589 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -45,6 +45,7 @@
+  * @rbufs:	kernel address of rx buffers
+  * @sbufs:	kernel address of tx buffers
+  * @num_bufs:	total number of buffers for rx and tx
++ * @buf_size:   size of one rx or tx buffer
+  * @last_sbuf:	index of last tx buffer used
+  * @bufs_dma:	dma base addr of the buffers
+  * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
+@@ -65,6 +66,7 @@ struct virtproc_info {
+ 	struct virtqueue *rvq, *svq;
+ 	void *rbufs, *sbufs;
+ 	unsigned int num_bufs;
++	unsigned int buf_size;
+ 	int last_sbuf;
+ 	dma_addr_t bufs_dma;
+ 	struct mutex tx_lock;
+@@ -158,7 +160,7 @@ struct virtio_rpmsg_channel {
+  * processor.
+  */
+ #define MAX_RPMSG_NUM_BUFS	(512)
+-#define RPMSG_BUF_SIZE		(512)
++#define MAX_RPMSG_BUF_SIZE	(512)
+ 
+ /*
+  * Local addresses are dynamically allocated on-demand.
+@@ -429,7 +431,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+ 	 * (half of our buffers are used for sending messages)
+ 	 */
+ 	if (vrp->last_sbuf < vrp->num_bufs / 2)
+-		ret = vrp->sbufs + RPMSG_BUF_SIZE * vrp->last_sbuf++;
++		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+ 	/* or recycle a used one */
+ 	else
+ 		ret = virtqueue_get_buf(vrp->svq, &len);
+@@ -555,7 +557,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 	 * messaging), or to improve the buffer allocator, to support
+ 	 * variable-length buffer sizes.
+ 	 */
+-	if (len > RPMSG_BUF_SIZE - sizeof(struct rpmsg_hdr)) {
++	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+ 		dev_err(dev, "message is too big (%d)\n", len);
+ 		return -EMSGSIZE;
+ 	}
+@@ -696,7 +698,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 	 * We currently use fixed-sized buffers, so trivially sanitize
+ 	 * the reported payload length.
+ 	 */
+-	if (len > RPMSG_BUF_SIZE ||
++	if (len > vrp->buf_size ||
+ 	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
+ 		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+ 		return -EINVAL;
+@@ -729,7 +731,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 		dev_warn(dev, "msg received with no recipient\n");
+ 
+ 	/* publish the real size of the buffer */
+-	sg_init_one(&sg, msg, RPMSG_BUF_SIZE);
++	sg_init_one(&sg, msg, vrp->buf_size);
+ 
+ 	/* add the buffer back to the remote processor's virtqueue */
+ 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+@@ -886,7 +888,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	else
+ 		vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
+ 
+-	total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
++	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
++
++	total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 
+ 	/* allocate coherent memory for the buffers */
+ 	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
+@@ -909,9 +913,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	/* set up the receive buffers */
+ 	for (i = 0; i < vrp->num_bufs / 2; i++) {
+ 		struct scatterlist sg;
+-		void *cpu_addr = vrp->rbufs + i * RPMSG_BUF_SIZE;
++		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+ 
+-		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
++		sg_init_one(&sg, cpu_addr, vrp->buf_size);
+ 
+ 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+ 					  GFP_KERNEL);
+@@ -976,7 +980,7 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+ static void rpmsg_remove(struct virtio_device *vdev)
+ {
+ 	struct virtproc_info *vrp = vdev->priv;
+-	size_t total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
++	size_t total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 	int ret;
+ 
+ 	vdev->config->reset(vdev);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
