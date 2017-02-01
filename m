@@ -1,81 +1,99 @@
-Return-Path: <hugues.fruchet@st.com>
-From: Hugues FRUCHET <hugues.fruchet@st.com>
-Subject: Re: [PATCH v2 0/6] virtio_rpmsg: make rpmsg channel configurable
-Date: Wed, 8 Feb 2017 10:21:24 +0000
-Message-ID: <3c4a43c2-92ac-88e2-6e50-395b51c33c54@st.com>
-References: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <758EA36ED014004CAA22D23A49684C37@st.com>
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 6/6] rpmsg: virtio_rpmsg: set buffer configuration to virtio
+Date: Wed, 1 Feb 2017 16:07:12 +0100
+Message-ID: <1485961632-21980-7-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
+References: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>, Patrice CHOTARD <patrice.chotard@st.com>, "peter.griffin@linaro.org" <peter.griffin@linaro.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Acked-and-tested-by: Hugues Fruchet <hugues.fruchet@st.com>
+Rpmsg is allocating buffer one dedicated communication link
+with some specificity like number of buffers, size of one buffer...
+These characteristics should be shared with remote coprocessor to
+guarantee communication link coherency.
 
-Tested on B2260 ST Platform with st-delta video decoder V4L2 kernel=20
-driver=20
-(http://www.mail-archive.com/linux-media@vger.kernel.org/msg107644.html).
+Proposal is to update rpmsg configuration fields in coprocessor firmware
+resource table if it exists.
 
+This is possible thanks to virtio set interface which allows to update
+cfg fields of struct fw_rsc_vdev.
 
-On 01/31/2017 01:51 PM, Loic Pallardy wrote:
-> This goal of this series is to offer more flexibility for virtio_rpmsg
-> communication link configuration.
->
-> It should be possible to tune rpmsg buffer size per Rpmsg link, to provid=
-e
-> selected configuration to coprocessor, to take into account coprocessor
-> specificities like memory region.
->
-> This series introduces an optional virtio rpmsg configuration structure, =
-which
-> will be managed as an extension of struct fw_rsc_vdev present in coproces=
-sor firmware
-> resource table.
-> Structure access is possible thanks to virtio get and set API.
-> This structure contains the different information to tune the link betwee=
-n the
-> host and the coprocessor.
->
-> Patch "rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
-> kernel address" has the same goal as Wendy's RFC [1]. I don't have tested
-> Wendy's series with level driver buffer allocation.
->
-> Last patch "rpmsg: virtio_rpmsg: set buffer configuration to virtio" has =
-a
-> dependency with remoteproc subdevice boot sequence as coprocessor resourc=
-e
-> table must be updated before coprocessor start. See [2]
->
-> [1] http://www.spinics.net/lists/linux-remoteproc/msg00852.html
-> [2] http://www.spinics.net/lists/linux-remoteproc/msg00826.html
->
-> ---
-> Changes from v1:
-> - No more dependency with [2]. Coprocessor firmware should wait for first=
- kick
-> indicating virtio rpmsg link ready before accessing resource table inform=
-ation.
-> - Correct issues reported by Suman
-> - Fix warnings found by checkpatch with --strict option
->
->
-> Loic Pallardy (6):
->   rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
->   rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
->     kernel address
->   include: virtio_rpmsg: add virtio rpmsg configuration structure
->   rpmsg: virtio_rpmsg: get buffer configuration from virtio
->   rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level
->     driver
->   rpmsg: virtio_rpmsg: set buffer configuration to virtio
->
->  drivers/rpmsg/virtio_rpmsg_bus.c   | 176 +++++++++++++++++++++++++++++++=
-------
->  include/linux/rpmsg/virtio_rpmsg.h |  32 +++++++
->  2 files changed, 179 insertions(+), 29 deletions(-)
->  create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
->=
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+Changes since V1:
+- Set virtio_cfg.da to -1 (any address) by default
+- Add comment about IOMMU support
+
+No change since v2.
+
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index b347e34..d9af556 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -923,6 +923,27 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
+ 	return ret;
+ }
+ 
++static void virtio_rpmsg_set_config(struct virtio_device *vdev)
++{
++	struct virtio_rpmsg_cfg virtio_cfg;
++	struct virtproc_info *vrp = vdev->priv;
++
++	/* fill virtio_cfg struct */
++	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
++	virtio_cfg.id = VIRTIO_ID_RPMSG;
++	/*
++	 * IOMMU not managed at the time being, set device address to (-1)
++	 * meaning any address value.
++	 */
++	virtio_cfg.da = -1;
++	virtio_cfg.pa =	vrp->bufs_dma;
++	virtio_cfg.len = vrp->num_bufs * vrp->buf_size;
++	virtio_cfg.buf_size = vrp->buf_size;
++
++	vdev->config->set(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
++			  sizeof(virtio_cfg));
++}
++
+ static int rpmsg_probe(struct virtio_device *vdev)
+ {
+ 	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
+@@ -933,6 +954,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	int err = 0, i;
+ 	size_t total_buf_space = 0;
+ 	bool notify;
++	bool has_cfg = false;
+ 
+ 	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
+ 	if (!vrp)
+@@ -972,6 +994,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	if (err < 0)
+ 		goto free_vrp;
+ 
++	if (err)
++		has_cfg = true;
++
+ 	/* Allocate buffer if none provided by low level platform driver */
+ 	if (!vrp->ext_buffer) {
+ 		total_buf_space = vrp->num_bufs * vrp->buf_size;
+@@ -993,6 +1018,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ 		/* and half is dedicated for TX */
+ 		vrp->sbufs = bufs_va + total_buf_space / 2;
++
++		/* Notify configuration to coprocessor */
++		if (has_cfg)
++			virtio_rpmsg_set_config(vdev);
+ 	}
+ 
+ 	/* set up the receive buffers */
+-- 
+1.9.1
