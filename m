@@ -1,50 +1,161 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] remoteproc: qcom: fix initializers for qcom_mss_reg_res array
-Date: Wed,  1 Feb 2017 17:56:28 +0100
-Message-Id: <20170201165723.2615554-1-arnd@arndb.de>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Wei Yongjun <weiyj.lk@gmail.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 5/6] rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level driver
+Date: Wed, 1 Feb 2017 16:07:11 +0100
+Message-ID: <1485961632-21980-6-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
+References: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The recently added initialization is rather unusual because it uses a constructor for
-a variable-length array to assign a constant structure to a member that uses a fixed-length
-array. This confuses clang and breaks the build.
+Low level platform specific driver has the knowledge of the different
+communication link constraints like fixed or secured memory region to
+use for buffer allocation.
 
-drivers/remoteproc/qcom_q6v5_pil.c:1024:18: error: incompatible pointer types initializing 'const char *' with an expression of type
-:%s      'struct qcom_mss_reg_res [4]' [-Werror,-Wincompatible-pointer-types]
-        .proxy_supply = (struct qcom_mss_reg_res[]) {
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/remoteproc/qcom_q6v5_pil.c:1024:18: warning: suggest braces around initialization of subobject [-Wmissing-braces]
-        .proxy_supply = (struct qcom_mss_reg_res[]) {
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If virtual address is defined in virtio_rpmsg_cfg structure, a dedicated
+memory pool buffer fitting platform requirements is available.
+Rpmsg virtio layer should rely on it if its size is compliant with link
+characteristics.
 
-We can either turn this constructor into a regular initializer by removing
-the 'struct qcom_mss_reg_res[])', or we can make the array variable length.
-
-The latter approach is used for the arrays of strings in the same structure,
-so let's use that here too.
-
-Fixes: 19f902b53b47 ("remoteproc: qcom: Initialize and enable proxy and active regulators.")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since V1:
+- Alignment with open parenthesis.
+- Add vrp->bufs_dma intialization in virtio_rpmsg_get_config function
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 9a5149573298..8d60ad2a2851 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -107,8 +107,8 @@ struct qcom_mss_reg_res {
- 
- struct rproc_hexagon_res {
- 	const char *hexagon_mba_image;
--	struct qcom_mss_reg_res proxy_supply[4];
--	struct qcom_mss_reg_res active_supply[2];
-+	struct qcom_mss_reg_res *proxy_supply;
-+	struct qcom_mss_reg_res *active_supply;
- 	char **proxy_clk_names;
- 	char **active_clk_names;
+Changes since V2:
+- Fix warnings reported by kbuild test robot
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 59 ++++++++++++++++++++++++++--------------
+ 1 file changed, 39 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 080ee07..b347e34 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -57,6 +57,7 @@
+  * @sendq:	wait queue of sending contexts waiting for a tx buffers
+  * @sleepers:	number of senders that are waiting for a tx buffer
+  * @ns_ept:	the bus's name service endpoint
++ * @ext_buffer: buffer allocated by low level driver
+  *
+  * This structure stores the rpmsg state of a given virtio remote processor
+  * device (there might be several virtio proc devices for each physical
+@@ -76,6 +77,7 @@ struct virtproc_info {
+ 	wait_queue_head_t sendq;
+ 	atomic_t sleepers;
+ 	struct rpmsg_endpoint *ns_ept;
++	bool ext_buffer;
  };
+ 
+ /* The feature bitmap for virtio rpmsg */
+@@ -893,6 +895,7 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
++		vrp->bufs_dma = virtio_cfg.pa;
+ 
+ 		/* Check rpmsg buffer length */
+ 		total_buf_space = vrp->num_bufs * vrp->buf_size;
+@@ -903,6 +906,17 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
++
++		/* Level platform specific buffer driver ? */
++		if (virtio_cfg.va != -1) {
++			vrp->ext_buffer = true;
++			/* half of the buffers is dedicated for RX */
++			vrp->rbufs = (void *)(uintptr_t)virtio_cfg.va;
++
++			/* and half is dedicated for TX */
++			vrp->sbufs = (void *)(uintptr_t)virtio_cfg.va + total_buf_space / 2;
++		}
++
+ 		return !ret;
+ 	}
+ out:
+@@ -915,9 +929,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	static const char * const names[] = { "input", "output" };
+ 	struct virtqueue *vqs[2];
+ 	struct virtproc_info *vrp;
+-	void *bufs_va;
++	void *bufs_va = NULL;
+ 	int err = 0, i;
+-	size_t total_buf_space;
++	size_t total_buf_space = 0;
+ 	bool notify;
+ 
+ 	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
+@@ -958,25 +972,28 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	if (err < 0)
+ 		goto free_vrp;
+ 
+-	total_buf_space = vrp->num_bufs * vrp->buf_size;
++	/* Allocate buffer if none provided by low level platform driver */
++	if (!vrp->ext_buffer) {
++		total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 
+ 	/* allocate coherent memory for the buffers */
+-	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
+-				     total_buf_space, &vrp->bufs_dma,
+-				     GFP_KERNEL);
+-	if (!bufs_va) {
+-		err = -ENOMEM;
+-		goto vqs_del;
+-	}
++		bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
++					     total_buf_space, &vrp->bufs_dma,
++					     GFP_KERNEL);
++		if (!bufs_va) {
++			err = -ENOMEM;
++			goto vqs_del;
++		}
+ 
+-	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
+-		bufs_va, &vrp->bufs_dma);
++		dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
++			bufs_va, &vrp->bufs_dma);
+ 
+-	/* half of the buffers is dedicated for RX */
+-	vrp->rbufs = bufs_va;
++		/* half of the buffers is dedicated for RX */
++		vrp->rbufs = bufs_va;
+ 
+-	/* and half is dedicated for TX */
+-	vrp->sbufs = bufs_va + total_buf_space / 2;
++		/* and half is dedicated for TX */
++		vrp->sbufs = bufs_va + total_buf_space / 2;
++	}
+ 
+ 	/* set up the receive buffers */
+ 	for (i = 0; i < vrp->num_bufs / 2; i++) {
+@@ -1027,8 +1044,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	return 0;
+ 
+ free_coherent:
+-	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+-			  bufs_va, vrp->bufs_dma);
++	if (!vrp->ext_buffer)
++		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
++				  bufs_va, vrp->bufs_dma);
+ vqs_del:
+ 	vdev->config->del_vqs(vrp->vdev);
+ free_vrp:
+@@ -1062,8 +1080,9 @@ static void rpmsg_remove(struct virtio_device *vdev)
+ 
+ 	vdev->config->del_vqs(vrp->vdev);
+ 
+-	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+-			  vrp->rbufs, vrp->bufs_dma);
++	if (!vrp->ext_buffer)
++		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
++				  vrp->rbufs, vrp->bufs_dma);
+ 
+ 	kfree(vrp);
+ }
 -- 
-2.9.0
+1.9.1
