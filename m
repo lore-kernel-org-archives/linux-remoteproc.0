@@ -1,8 +1,8 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 5/6] rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level driver
-Date: Wed, 1 Feb 2017 16:07:11 +0100
-Message-ID: <1485961632-21980-6-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v3 4/6] rpmsg: virtio_rpmsg: get buffer configuration from virtio
+Date: Wed, 1 Feb 2017 16:07:10 +0100
+Message-ID: <1485961632-21980-5-git-send-email-loic.pallardy@st.com>
 In-Reply-To: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
 References: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
@@ -11,151 +11,117 @@ To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
 Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Low level platform specific driver has the knowledge of the different
-communication link constraints like fixed or secured memory region to
-use for buffer allocation.
+Some coprocessors have memory mapping constraints which require
+predefined buffer location or specific buffer size different from
+default definition.
+Coprocessor resources are defined in associated firmware resource table.
+Remoteproc offers access to firmware resource table via virtio get
+interface.
 
-If virtual address is defined in virtio_rpmsg_cfg structure, a dedicated
-memory pool buffer fitting platform requirements is available.
-Rpmsg virtio layer should rely on it if its size is compliant with link
-characteristics.
+This patch modifies rpmsg_probe sequence to:
+- retrieve rpmsg buffer configuration (if any)
+- verify and apply configuration
+- allocate buffer according to requested configuration
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
 Changes since V1:
-- Alignment with open parenthesis.
-- Add vrp->bufs_dma intialization in virtio_rpmsg_get_config function
+- Move Rpmsg buffer physical address initialization in patch 5 "rpmsg: virtio_rpmsg:
+don't allocate buffer if provided by low level driver"
+- Remove extra lines
 
-Changes since V2:
-- Fix warnings reported by kbuild test robot
+No change since v2.
+
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 59 ++++++++++++++++++++++++++--------------
- 1 file changed, 39 insertions(+), 20 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 48 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 080ee07..b347e34 100644
+index c8d0d6d..080ee07 100644
 --- a/drivers/rpmsg/virtio_rpmsg_bus.c
 +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -57,6 +57,7 @@
-  * @sendq:	wait queue of sending contexts waiting for a tx buffers
-  * @sleepers:	number of senders that are waiting for a tx buffer
-  * @ns_ept:	the bus's name service endpoint
-+ * @ext_buffer: buffer allocated by low level driver
-  *
-  * This structure stores the rpmsg state of a given virtio remote processor
-  * device (there might be several virtio proc devices for each physical
-@@ -76,6 +77,7 @@ struct virtproc_info {
- 	wait_queue_head_t sendq;
- 	atomic_t sleepers;
- 	struct rpmsg_endpoint *ns_ept;
-+	bool ext_buffer;
- };
+@@ -32,6 +32,7 @@
+ #include <linux/sched.h>
+ #include <linux/wait.h>
+ #include <linux/rpmsg.h>
++#include <linux/rpmsg/virtio_rpmsg.h>
+ #include <linux/mutex.h>
+ #include <linux/of_device.h>
  
- /* The feature bitmap for virtio rpmsg */
-@@ -893,6 +895,7 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+		vrp->bufs_dma = virtio_cfg.pa;
+@@ -870,6 +871,44 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 	return 0;
+ }
  
- 		/* Check rpmsg buffer length */
- 		total_buf_space = vrp->num_bufs * vrp->buf_size;
-@@ -903,6 +906,17 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
- 			ret = -ENOMEM;
- 			goto out;
- 		}
++static int virtio_rpmsg_get_config(struct virtio_device *vdev)
++{
++	struct virtio_rpmsg_cfg virtio_cfg;
++	struct virtproc_info *vrp = vdev->priv;
++	size_t total_buf_space;
++	int ret = 0;
 +
-+		/* Level platform specific buffer driver ? */
-+		if (virtio_cfg.va != -1) {
-+			vrp->ext_buffer = true;
-+			/* half of the buffers is dedicated for RX */
-+			vrp->rbufs = (void *)(uintptr_t)virtio_cfg.va;
++	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
++	vdev->config->get(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
++			  sizeof(virtio_cfg));
 +
-+			/* and half is dedicated for TX */
-+			vrp->sbufs = (void *)(uintptr_t)virtio_cfg.va + total_buf_space / 2;
++	if (virtio_cfg.id == VIRTIO_ID_RPMSG && virtio_cfg.version == 1 &&
++	    virtio_cfg.reserved == 0) {
++		if (virtio_cfg.buf_size <= MAX_RPMSG_BUF_SIZE) {
++			vrp->buf_size = virtio_cfg.buf_size;
++		} else {
++			WARN_ON(1);
++			dev_warn(&vdev->dev, "Requested RPMsg buffer size too big: %d\n",
++				 vrp->buf_size);
++			ret = -EINVAL;
++			goto out;
 +		}
 +
- 		return !ret;
- 	}
- out:
-@@ -915,9 +929,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	static const char * const names[] = { "input", "output" };
- 	struct virtqueue *vqs[2];
- 	struct virtproc_info *vrp;
--	void *bufs_va;
-+	void *bufs_va = NULL;
- 	int err = 0, i;
--	size_t total_buf_space;
-+	size_t total_buf_space = 0;
- 	bool notify;
- 
- 	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
-@@ -958,25 +972,28 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	if (err < 0)
- 		goto free_vrp;
- 
--	total_buf_space = vrp->num_bufs * vrp->buf_size;
-+	/* Allocate buffer if none provided by low level platform driver */
-+	if (!vrp->ext_buffer) {
++		/* Check rpmsg buffer length */
 +		total_buf_space = vrp->num_bufs * vrp->buf_size;
++		if ((virtio_cfg.len != -1) &&
++		    (total_buf_space > virtio_cfg.len)) {
++			dev_warn(&vdev->dev, "Not enough memory for buffers: %d\n",
++				 total_buf_space);
++			ret = -ENOMEM;
++			goto out;
++		}
++		return !ret;
++	}
++out:
++	return ret;
++}
++
+ static int rpmsg_probe(struct virtio_device *vdev)
+ {
+ 	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
+@@ -900,6 +939,8 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	vrp->rvq = vqs[0];
+ 	vrp->svq = vqs[1];
+ 
++	vdev->priv = vrp;
++
+ 	/* we expect symmetric tx/rx vrings */
+ 	WARN_ON(virtqueue_get_vring_size(vrp->rvq) !=
+ 		virtqueue_get_vring_size(vrp->svq));
+@@ -912,6 +953,11 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ 	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+ 
++	/* Try to get rpmsg configuration if any */
++	err = virtio_rpmsg_get_config(vdev);
++	if (err < 0)
++		goto free_vrp;
++
+ 	total_buf_space = vrp->num_bufs * vrp->buf_size;
  
  	/* allocate coherent memory for the buffers */
--	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
--				     total_buf_space, &vrp->bufs_dma,
--				     GFP_KERNEL);
--	if (!bufs_va) {
--		err = -ENOMEM;
--		goto vqs_del;
--	}
-+		bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
-+					     total_buf_space, &vrp->bufs_dma,
-+					     GFP_KERNEL);
-+		if (!bufs_va) {
-+			err = -ENOMEM;
-+			goto vqs_del;
-+		}
+@@ -947,8 +993,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	/* suppress "tx-complete" interrupts */
+ 	virtqueue_disable_cb(vrp->svq);
  
--	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
--		bufs_va, &vrp->bufs_dma);
-+		dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
-+			bufs_va, &vrp->bufs_dma);
- 
--	/* half of the buffers is dedicated for RX */
--	vrp->rbufs = bufs_va;
-+		/* half of the buffers is dedicated for RX */
-+		vrp->rbufs = bufs_va;
- 
--	/* and half is dedicated for TX */
--	vrp->sbufs = bufs_va + total_buf_space / 2;
-+		/* and half is dedicated for TX */
-+		vrp->sbufs = bufs_va + total_buf_space / 2;
-+	}
- 
- 	/* set up the receive buffers */
- 	for (i = 0; i < vrp->num_bufs / 2; i++) {
-@@ -1027,8 +1044,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	return 0;
- 
- free_coherent:
--	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
--			  bufs_va, vrp->bufs_dma);
-+	if (!vrp->ext_buffer)
-+		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
-+				  bufs_va, vrp->bufs_dma);
- vqs_del:
- 	vdev->config->del_vqs(vrp->vdev);
- free_vrp:
-@@ -1062,8 +1080,9 @@ static void rpmsg_remove(struct virtio_device *vdev)
- 
- 	vdev->config->del_vqs(vrp->vdev);
- 
--	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
--			  vrp->rbufs, vrp->bufs_dma);
-+	if (!vrp->ext_buffer)
-+		dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
-+				  vrp->rbufs, vrp->bufs_dma);
- 
- 	kfree(vrp);
- }
+-	vdev->priv = vrp;
+-
+ 	/* if supported by the remote processor, enable the name service */
+ 	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_NS)) {
+ 		/* a dedicated endpoint handles the name service msgs */
 -- 
 1.9.1
