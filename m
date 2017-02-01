@@ -1,37 +1,44 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH] remoteproc: Drop qcom_scm_pas_supported() from adsp_probe()
-Date: Thu,  2 Feb 2017 16:04:37 -0800
-Message-Id: <1486080277-17055-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <andy.gross@linaro.org>
+Return-Path: <andy.gross@linaro.org>
+Date: Wed, 1 Feb 2017 17:24:24 -0600
+From: Andy Gross <andy.gross@linaro.org>
+Subject: Re: [PATCH 5/5] soc/qcom: Move qcom_mdt_loader from remoteproc
+Message-ID: <20170201232424.GA30135@hector.attlocal.net>
+References: <20170130165547.4344-1-bjorn.andersson@linaro.org>
+ <20170130165547.4344-5-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170130165547.4344-5-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.com>, Georgi Djakov <georgi.djakov@linaro.org>, Jordan Crouse <jcrouse@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SCM call to check whether Peripheral Authentication Service (PAS)
-is supported returns false for ADSP. Drop this call from the driver
-so that the probe() function succeeds for ADSP PIL device.
+On Mon, Jan 30, 2017 at 08:55:47AM -0800, Bjorn Andersson wrote:
+> With the remoteproc parts cleaned out of the MDT loader we can move it
+> to drivers/soc/qcom.
 
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
----
- drivers/remoteproc/qcom_adsp_pil.c | 5 -----
- 1 file changed, 5 deletions(-)
+<snip>
 
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 43a4ed2..94cd4b8 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -318,11 +318,6 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (!qcom_scm_is_available())
- 		return -EPROBE_DEFER;
- 
--	if (!qcom_scm_pas_supported(ADSP_PAS_ID)) {
--		dev_err(&pdev->dev, "PAS is not available for ADSP\n");
--		return -ENXIO;
--	}
--
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
- 			    ADSP_FIRMWARE_NAME, sizeof(*adsp));
- 	if (!rproc) {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 461b387d03cc..78b1bb7bcf20 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -10,6 +10,10 @@ config QCOM_GSBI
+>            functions for connecting the underlying serial UART, SPI, and I2C
+>            devices to the output pins.
+>  
+> +config QCOM_MDT_LOADER
+> +	tristate
+> +	select QCOM_SCM
+
+Do we need a help description here?
+
+> +
+>  config QCOM_PM
+>  	bool "Qualcomm Power Management"
+>  	depends on ARCH_QCOM && !ARM64
+
+Add the description on the next set and add my ack as well.
+
+Acked-by: Andy Gross <andy.gross@linaro.org>
