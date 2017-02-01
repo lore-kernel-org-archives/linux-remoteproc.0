@@ -1,183 +1,63 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH 1/2] remoteproc: Introduce rproc_{start,stop}() functions
-Date: Mon,  6 Feb 2017 19:24:07 -0800
-Message-Id: <1486437848-2625-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 0/6] virtio_rpmsg: make rpmsg channel configurable
+Date: Wed, 1 Feb 2017 16:07:06 +0100
+Message-ID: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In the context of recovering from crash,
-rproc_trigger_recovery() does rproc_shutdown() followed
-by rproc_boot(). The remoteproc resources are cleaned up
-in rproc_shutdown() and immediately reallocated in
-rproc_boot() which is an unnecessary overhead.
+This goal of this series is to offer more flexibility for virtio_rpmsg
+communication link configuration.
 
-Furthermore, we want the memory regions to be accessible
-after stopping the remote processor, to be able to extract
-the memory content for a coredump.
+It should be possible to tune rpmsg buffer size per Rpmsg link, to provide
+selected configuration to coprocessor, to take into account coprocessor
+specificities like memory region.
 
-The current patch factors out the code in rproc_boot() and
-rproc_shutdown() path and introduces rproc_{start,stop}()
-in order to avoid resource allocation overhead.
+This series introduces an optional virtio rpmsg configuration structure, which
+will be managed as an extension of struct fw_rsc_vdev present in coprocessor firmware
+resource table.
+Structure access is possible thanks to virtio get and set API.
+This structure contains the different information to tune the link between the
+host and the coprocessor.
 
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Patch "rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
+kernel address" has the same goal as Wendy's RFC [1]. I don't have tested
+Wendy's series with level driver buffer allocation.
+
+Last patch "rpmsg: virtio_rpmsg: set buffer configuration to virtio" has a
+dependency with remoteproc subdevice boot sequence as coprocessor resource
+table must be updated before coprocessor start. See [2]
+
+[1] http://www.spinics.net/lists/linux-remoteproc/msg00852.html
+[2] http://www.spinics.net/lists/linux-remoteproc/msg00826.html
+
 ---
- drivers/remoteproc/remoteproc_core.c | 118 ++++++++++++++++++++++++++++++++---
- 1 file changed, 110 insertions(+), 8 deletions(-)
+Changes from v1:
+- No more dependency with [2]. Coprocessor firmware should wait for first kick
+indicating virtio rpmsg link ready before accessing resource table information.
+- Correct issues reported by Suman
+- Fix warnings found by checkpatch with --strict option
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 9fd9ca5..169abb3 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -851,6 +851,61 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		kref_put(&rvdev->refcount, rproc_vdev_release);
- }
- 
-+static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct device *dev = &rproc->dev;
-+	struct resource_table *table, *loaded_table;
-+	int ret, tablesz;
-+
-+	/* look for the resource table */
-+	table = rproc_find_rsc_table(rproc, fw, &tablesz);
-+	if (!table) {
-+		dev_err(dev, "Resouce table look up failed \n");
-+		return -EINVAL;
-+	}
-+
-+	/* load the ELF segments to memory */
-+	ret = rproc_load_segments(rproc, fw);
-+	if (ret) {
-+		dev_err(dev, "Failed to load program segments: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * The starting device has been given the rproc->table_ptr as the
-+	 * resource table. The address of the vring along with the other
-+	 * allocated resources (carveouts etc) is stored in table_ptr.
-+	 * In order to pass this information to the remote device we must copy
-+	 * this information to device memory. We also update the table_ptr so
-+	 * that any subsequent changes will be applied to the loaded version.
-+	 */
-+	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-+	if (loaded_table)
-+		memcpy(loaded_table, rproc->table_ptr, tablesz);
-+
-+	/* power up the remote processor */
-+	ret = rproc->ops->start(rproc);
-+	if (ret) {
-+		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
-+		return ret;
-+	}
-+
-+	/* probe any subdevices for the remote processor */
-+	ret = rproc_probe_subdevices(rproc);
-+	if (ret) {
-+		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-+			rproc->name, ret);
-+		rproc->ops->stop(rproc);
-+		return ret;
-+	}
-+
-+	rproc->state = RPROC_RUNNING;
-+
-+	dev_info(dev, "remote processor %s is now up\n", rproc->name);
-+
-+	return 0;
-+}
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
-@@ -993,6 +1048,32 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
- 	return ret;
- }
- 
-+static int rproc_stop(struct rproc *rproc)
-+{
-+	struct device *dev = &rproc->dev;
-+	int ret;
-+
-+	/* remove any subdevices for the remote processor */
-+	rproc_remove_subdevices(rproc);
-+
-+	/* power off the remote processor */
-+	ret = rproc->ops->stop(rproc);
-+	if (ret) {
-+		dev_err(dev, "can't stop rproc: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* if in crash state, unlock crash handler */
-+	if (rproc->state == RPROC_CRASHED)
-+		complete_all(&rproc->crash_comp);
-+
-+	rproc->state = RPROC_OFFLINE;
-+
-+	dev_info(dev, "stopped remote processor %s\n", rproc->name);
-+
-+	return 0;
-+}
-+
- /**
-  * rproc_trigger_recovery() - recover a remoteproc
-  * @rproc: the remote processor
-@@ -1005,23 +1086,44 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
-  */
- int rproc_trigger_recovery(struct rproc *rproc)
- {
-+	const struct firmware *firmware_p;
-+	struct device *dev;
-+	int ret;
-+
- 	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
- 
- 	init_completion(&rproc->crash_comp);
- 
--	/* shut down the remote */
--	/* TODO: make sure this works with rproc->power > 1 */
--	rproc_shutdown(rproc);
-+	dev = &rproc->dev;
-+
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = rproc_stop(rproc);
-+	if (ret)
-+		goto unlock_mutex;
- 
- 	/* wait until there is no more rproc users */
- 	wait_for_completion(&rproc->crash_comp);
- 
--	/*
--	 * boot the remote processor up again
--	 */
--	rproc_boot(rproc);
-+	/* load firmware */
-+	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+	if (ret < 0) {
-+		dev_err(dev, "request_firmware failed: %d\n", ret);
-+		goto unlock_mutex;
-+	}
- 
--	return 0;
-+	/* boot the remote processor up again */
-+	ret = rproc_start(rproc, firmware_p);
-+	if (ret)
-+		goto unlock_mutex;
-+
-+	release_firmware(firmware_p);
-+
-+unlock_mutex:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
- }
- 
- /**
+Changes from v2:
+- Fix warnings reported by kbuild test robot
+
+Loic Pallardy (6):
+  rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
+  rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
+    kernel address
+  include: virtio_rpmsg: add virtio rpmsg configuration structure
+  rpmsg: virtio_rpmsg: get buffer configuration from virtio
+  rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level
+    driver
+  rpmsg: virtio_rpmsg: set buffer configuration to virtio
+
+ drivers/rpmsg/virtio_rpmsg_bus.c   | 180 ++++++++++++++++++++++++++++++-------
+ include/linux/rpmsg/virtio_rpmsg.h |  32 +++++++
+ 2 files changed, 181 insertions(+), 31 deletions(-)
+ create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
