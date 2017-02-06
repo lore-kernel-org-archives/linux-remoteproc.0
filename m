@@ -1,55 +1,52 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 2/2] remoteproc: core: don't allocate carveout if pa is defined
-Date: Wed, 15 Feb 2017 21:18:49 +0100
-Message-ID: <1487189929-24196-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1487189929-24196-1-git-send-email-loic.pallardy@st.com>
-References: <1487189929-24196-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 6 Feb 2017 12:46:04 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: Drop qcom_scm_pas_supported() from
+ adsp_probe()
+Message-ID: <20170206204604.GG31134@builder>
+References: <1486080277-17055-1-git-send-email-spjoshi@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1486080277-17055-1-git-send-email-spjoshi@codeaurora.org>
+To: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <andy.gross@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remoteproc doesn't check if firmware requests fixed
-addresses for carveout regions.
-Current assumption is that platform specific driver is in
-charge of coprocessor specific memory region allocation and
-remoteproc core doesn't have to handle them.
-If a pa is specified in firmware resource table, remoteproc
-core doesn't have to perform any allocation.
-Access to carveout will be done thanks to rproc_da_to_pa function,
-which will provide virtual address on carveout region allocated
-by platform specific driver.
+On Thu 02 Feb 16:04 PST 2017, Sarangdhar Joshi wrote:
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-Acked-by: Hugues Fruchet <hugues.fruchet@st.com>
-Tested-by: Hugues Fruchet <hugues.fruchet@st.com>
----
-Changes from V3:
-- Fix Bjorn's remark: Don't check if da is already specified in resource table.
-  Because this doesn't mean buffer has been allocated, but that a specific da
-  is requested for IOMMU configuration.
-- Rebase on rproc-next branch
----
- drivers/remoteproc/remoteproc_core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> SCM call to check whether Peripheral Authentication Service (PAS)
+> is supported returns false for ADSP. Drop this call from the driver
+> so that the probe() function succeeds for ADSP PIL device.
+> 
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3dabb20..74ad2d0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -622,6 +622,11 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
- 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
- 
-+	if (rsc->pa != FW_RSC_ADDR_ANY) {
-+		dev_dbg(dev, "carveout already allocated by low level driver\n");
-+		return 0;
-+	}
-+
- 	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
- 	if (!carveout)
- 		return -ENOMEM;
--- 
-1.9.1
+Applied, thanks
+
+Regards,
+Bjorn
+
+> Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+> ---
+>  drivers/remoteproc/qcom_adsp_pil.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+> index 43a4ed2..94cd4b8 100644
+> --- a/drivers/remoteproc/qcom_adsp_pil.c
+> +++ b/drivers/remoteproc/qcom_adsp_pil.c
+> @@ -318,11 +318,6 @@ static int adsp_probe(struct platform_device *pdev)
+>  	if (!qcom_scm_is_available())
+>  		return -EPROBE_DEFER;
+>  
+> -	if (!qcom_scm_pas_supported(ADSP_PAS_ID)) {
+> -		dev_err(&pdev->dev, "PAS is not available for ADSP\n");
+> -		return -ENXIO;
+> -	}
+> -
+>  	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
+>  			    ADSP_FIRMWARE_NAME, sizeof(*adsp));
+>  	if (!rproc) {
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
