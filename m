@@ -1,54 +1,183 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: qcom: mdt_loader: Use signed type for offset
-Date: Wed, 15 Feb 2017 14:00:41 -0800
-Message-Id: <20170215220041.3077-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Return-Path: <spjoshi@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Subject: [PATCH 1/2] remoteproc: Introduce rproc_{start,stop}() functions
+Date: Mon,  6 Feb 2017 19:24:07 -0800
+Message-Id: <1486437848-2625-1-git-send-email-spjoshi@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In the transition from using rproc_da_to_va(), the type of the load
-offset became unsigned. This causes the subsequent check to let negative
-values less than p_memsz + mem_size through and we write outside of the
-buffer.
+In the context of recovering from crash,
+rproc_trigger_recovery() does rproc_shutdown() followed
+by rproc_boot(). The remoteproc resources are cleaned up
+in rproc_shutdown() and immediately reallocated in
+rproc_boot() which is an unnecessary overhead.
 
-Change the type back to a signed value to catch this.
+Furthermore, we want the memory regions to be accessible
+after stopping the remote processor, to be able to extract
+the memory content for a coredump.
 
-Fixes: 7f0dd07a9b29 ("remoteproc: qcom: mdt_loader: Refactor MDT loader")
-Fixes: e7fd25226295 ("remoteproc: qcom: q6v5: Decouple driver from MDT loader")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reported-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+The current patch factors out the code in rproc_boot() and
+rproc_shutdown() path and introduces rproc_{start,stop}()
+in order to avoid resource allocation overhead.
+
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 2 +-
- drivers/soc/qcom/mdt_loader.c      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 118 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 110 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 26446eb08bd8..8fd697a3cf8f 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -502,7 +502,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	phys_addr_t max_addr = 0;
- 	bool relocate = false;
- 	char seg_name[10];
--	size_t offset;
-+	ssize_t offset;
- 	size_t size;
- 	void *ptr;
- 	int ret;
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 98b2373c3a97..bd63df0d14e0 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -98,7 +98,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	phys_addr_t min_addr = (phys_addr_t)ULLONG_MAX;
- 	phys_addr_t max_addr = 0;
- 	size_t fw_name_len;
--	size_t offset;
-+	ssize_t offset;
- 	char *fw_name;
- 	bool relocate = false;
- 	void *ptr;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 9fd9ca5..169abb3 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -851,6 +851,61 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 		kref_put(&rvdev->refcount, rproc_vdev_release);
+ }
+ 
++static int rproc_start(struct rproc *rproc, const struct firmware *fw)
++{
++	struct device *dev = &rproc->dev;
++	struct resource_table *table, *loaded_table;
++	int ret, tablesz;
++
++	/* look for the resource table */
++	table = rproc_find_rsc_table(rproc, fw, &tablesz);
++	if (!table) {
++		dev_err(dev, "Resouce table look up failed \n");
++		return -EINVAL;
++	}
++
++	/* load the ELF segments to memory */
++	ret = rproc_load_segments(rproc, fw);
++	if (ret) {
++		dev_err(dev, "Failed to load program segments: %d\n", ret);
++		return ret;
++	}
++
++	/*
++	 * The starting device has been given the rproc->table_ptr as the
++	 * resource table. The address of the vring along with the other
++	 * allocated resources (carveouts etc) is stored in table_ptr.
++	 * In order to pass this information to the remote device we must copy
++	 * this information to device memory. We also update the table_ptr so
++	 * that any subsequent changes will be applied to the loaded version.
++	 */
++	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
++	if (loaded_table)
++		memcpy(loaded_table, rproc->table_ptr, tablesz);
++
++	/* power up the remote processor */
++	ret = rproc->ops->start(rproc);
++	if (ret) {
++		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
++		return ret;
++	}
++
++	/* probe any subdevices for the remote processor */
++	ret = rproc_probe_subdevices(rproc);
++	if (ret) {
++		dev_err(dev, "failed to probe subdevices for %s: %d\n",
++			rproc->name, ret);
++		rproc->ops->stop(rproc);
++		return ret;
++	}
++
++	rproc->state = RPROC_RUNNING;
++
++	dev_info(dev, "remote processor %s is now up\n", rproc->name);
++
++	return 0;
++}
++
+ /*
+  * take a firmware and boot a remote processor with it.
+  */
+@@ -993,6 +1048,32 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
+ 	return ret;
+ }
+ 
++static int rproc_stop(struct rproc *rproc)
++{
++	struct device *dev = &rproc->dev;
++	int ret;
++
++	/* remove any subdevices for the remote processor */
++	rproc_remove_subdevices(rproc);
++
++	/* power off the remote processor */
++	ret = rproc->ops->stop(rproc);
++	if (ret) {
++		dev_err(dev, "can't stop rproc: %d\n", ret);
++		return ret;
++	}
++
++	/* if in crash state, unlock crash handler */
++	if (rproc->state == RPROC_CRASHED)
++		complete_all(&rproc->crash_comp);
++
++	rproc->state = RPROC_OFFLINE;
++
++	dev_info(dev, "stopped remote processor %s\n", rproc->name);
++
++	return 0;
++}
++
+ /**
+  * rproc_trigger_recovery() - recover a remoteproc
+  * @rproc: the remote processor
+@@ -1005,23 +1086,44 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
+  */
+ int rproc_trigger_recovery(struct rproc *rproc)
+ {
++	const struct firmware *firmware_p;
++	struct device *dev;
++	int ret;
++
+ 	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
+ 
+ 	init_completion(&rproc->crash_comp);
+ 
+-	/* shut down the remote */
+-	/* TODO: make sure this works with rproc->power > 1 */
+-	rproc_shutdown(rproc);
++	dev = &rproc->dev;
++
++	ret = mutex_lock_interruptible(&rproc->lock);
++	if (ret)
++		return ret;
++
++	ret = rproc_stop(rproc);
++	if (ret)
++		goto unlock_mutex;
+ 
+ 	/* wait until there is no more rproc users */
+ 	wait_for_completion(&rproc->crash_comp);
+ 
+-	/*
+-	 * boot the remote processor up again
+-	 */
+-	rproc_boot(rproc);
++	/* load firmware */
++	ret = request_firmware(&firmware_p, rproc->firmware, dev);
++	if (ret < 0) {
++		dev_err(dev, "request_firmware failed: %d\n", ret);
++		goto unlock_mutex;
++	}
+ 
+-	return 0;
++	/* boot the remote processor up again */
++	ret = rproc_start(rproc, firmware_p);
++	if (ret)
++		goto unlock_mutex;
++
++	release_firmware(firmware_p);
++
++unlock_mutex:
++	mutex_unlock(&rproc->lock);
++	return ret;
+ }
+ 
+ /**
 -- 
-2.11.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
