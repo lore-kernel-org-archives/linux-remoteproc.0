@@ -1,81 +1,94 @@
-Return-Path: <hugues.fruchet@st.com>
-From: Hugues FRUCHET <hugues.fruchet@st.com>
-Subject: Re: [v3,3/4] remoteproc: st: add da to va support
-Date: Wed, 8 Feb 2017 09:00:35 +0000
-Message-ID: <a39432b7-8194-f4d5-31a3-ba3abe742cbc@st.com>
-References: <1485866156-6364-4-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1485866156-6364-4-git-send-email-loic.pallardy@st.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <23D1207C328BC6459E2C115A28F7FC0A@st.com>
-Content-Transfer-Encoding: base64
+Return-Path: <spjoshi@codeaurora.org>
+Subject: Re: [RFC][PATCH 1/2] remoteproc: Reduce asynchronous request_firmware
+ to auto-boot only
+References: <1485299581-30476-1-git-send-email-spjoshi@codeaurora.org>
+ <20170206210837.GH31134@builder>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Message-ID: <3513076d-0292-93ce-efac-e2f6b8491f0f@codeaurora.org>
+Date: Tue, 7 Feb 2017 10:55:38 -0800
 MIME-Version: 1.0
-To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>, Patrice CHOTARD <patrice.chotard@st.com>, "peter.griffin@linaro.org" <peter.griffin@linaro.org>
+In-Reply-To: <20170206210837.GH31134@builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Santosh Shilimkar <ssantosh@kernel.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>, Suman Anna <s-anna@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-T24gMDEvMzEvMjAxNyAwMTozNSBQTSwgTG9pYyBQQUxMQVJEWSB3cm90ZToNCj4gU1QgcmVtb3Rl
-cHJvYyBkcml2ZXIgbmVlZHMgdG8gcHJvdmlkZSBpbmZvcm1hdGlvbiBhYm91dA0KPiBjYXJ2ZW91
-dCBtZW1vcnkgcmVnaW9uIHRvIGFsbG93IHJlbW90ZXByb2MgY29yZSB0byBsb2FkDQo+IGZpcm13
-YXJlIGFuZCBhY2Nlc3MgdHJhY2UgYnVmZmVyLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBMb2ljIFBh
-bGxhcmR5IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCg0KQWNrZWQtYW5kLXRlc3RlZC1ieTogSHVn
-dWVzIEZydWNoZXQgPGh1Z3Vlcy5mcnVjaGV0QHN0LmNvbT4NCg0KVGVzdGVkIG9uIEIyMjYwIFNU
-IFBsYXRmb3JtIHdpdGggc3QtZGVsdGEgdmlkZW8gZGVjb2RlciBWNEwyIGtlcm5lbCANCmRyaXZl
-ciANCihodHRwOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGludXgtbWVkaWFAdmdlci5rZXJuZWwu
-b3JnL21zZzEwNzY0NC5odG1sKS4NCg0KPiAtLS0NCj4gQ2hhbmdlcyBzaW5jZSBWMjoNCj4gLSBm
-aXggY2hlY2twYXRjaCAtLXN0cmljdCB3YXJuaW5nDQo+IC0tLQ0KPiAgZHJpdmVycy9yZW1vdGVw
-cm9jL3N0X3JlbW90ZXByb2MuYyB8IDQzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMzcgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMo
-LSkNCj4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9zdF9yZW1vdGVwcm9jLmMg
-Yi9kcml2ZXJzL3JlbW90ZXByb2Mvc3RfcmVtb3RlcHJvYy5jDQo+IGluZGV4IGYxZTkzMzkuLjgw
-ZjgxMTggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9zdF9yZW1vdGVwcm9jLmMN
-Cj4gKysrIGIvZHJpdmVycy9yZW1vdGVwcm9jL3N0X3JlbW90ZXByb2MuYw0KPiBAQCAtMjEsNiAr
-MjEsNyBAQA0KPiAgI2luY2x1ZGUgPGxpbnV4L29mLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvb2Zf
-ZGV2aWNlLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvb2ZfcmVzZXJ2ZWRfbWVtLmg+DQo+ICsjaW5j
-bHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2Rl
-dmljZS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3JlZ21hcC5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4
-L3JlbW90ZXByb2MuaD4NCj4gQEAgLTUzLDYgKzU0LDEwIEBAIHN0cnVjdCBzdF9ycHJvYyB7DQo+
-ICAJc3RydWN0IG1ib3hfY2hhbgkqbWJveF9jaGFuW1NUX1JQUk9DX01BWF9WUklORyAqIE1CT1hf
-TUFYXTsNCj4gIAlzdHJ1Y3QgbWJveF9jbGllbnQgbWJveF9jbGllbnRfdnEwOw0KPiAgCXN0cnVj
-dCBtYm94X2NsaWVudCBtYm94X2NsaWVudF92cTE7DQo+ICsJcGh5c19hZGRyX3QgbWVtX3BoeXM7
-DQo+ICsJcGh5c19hZGRyX3QgbWVtX3JlbG9jOw0KPiArCXZvaWQgKm1lbV9yZWdpb247DQo+ICsJ
-c2l6ZV90IG1lbV9zaXplOw0KPiAgfTsNCj4NCj4gIHN0YXRpYyB2b2lkIHN0X3Jwcm9jX21ib3hf
-Y2FsbGJhY2soc3RydWN0IGRldmljZSAqZGV2LCB1MzIgbXNnKQ0KPiBAQCAtMTU3LDEwICsxNjIs
-MjMgQEAgc3RhdGljIGludCBzdF9ycHJvY19zdG9wKHN0cnVjdCBycHJvYyAqcnByb2MpDQo+ICAJ
-cmV0dXJuIHN3X2VyciA/OiBwd3JfZXJyOw0KPiAgfQ0KPg0KPiArc3RhdGljIHZvaWQgKnN0X3By
-b2NfZGFfdG9fdmEoc3RydWN0IHJwcm9jICpycHJvYywgdTY0IGRhLCBpbnQgbGVuKQ0KPiArew0K
-PiArCXN0cnVjdCBzdF9ycHJvYyAqZGRhdGEgPSBycHJvYy0+cHJpdjsNCj4gKwlpbnQgb2Zmc2V0
-Ow0KPiArDQo+ICsJb2Zmc2V0ID0gZGEgLSBkZGF0YS0+bWVtX3JlbG9jOw0KPiArCWlmIChvZmZz
-ZXQgPCAwIHx8IG9mZnNldCArIGxlbiA+IGRkYXRhLT5tZW1fc2l6ZSkNCj4gKwkJcmV0dXJuIE5V
-TEw7DQo+ICsNCj4gKwlyZXR1cm4gZGRhdGEtPm1lbV9yZWdpb24gKyBvZmZzZXQ7DQo+ICt9DQo+
-ICsNCj4gIHN0YXRpYyBzdHJ1Y3QgcnByb2Nfb3BzIHN0X3Jwcm9jX29wcyA9IHsNCj4gIAkua2lj
-awkJPSBzdF9ycHJvY19raWNrLA0KPiAgCS5zdGFydAkJPSBzdF9ycHJvY19zdGFydCwNCj4gIAku
-c3RvcAkJPSBzdF9ycHJvY19zdG9wLA0KPiArCS5kYV90b192YQk9IHN0X3Byb2NfZGFfdG9fdmEs
-DQo+ICB9Ow0KPg0KPiAgLyoNCj4gQEAgLTIwOCw3ICsyMjYsOCBAQCBzdGF0aWMgaW50IHN0X3Jw
-cm9jX3BhcnNlX2R0KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJc3RydWN0IGRl
-dmljZSAqZGV2ID0gJnBkZXYtPmRldjsNCj4gIAlzdHJ1Y3QgcnByb2MgKnJwcm9jID0gcGxhdGZv
-cm1fZ2V0X2RydmRhdGEocGRldik7DQo+ICAJc3RydWN0IHN0X3Jwcm9jICpkZGF0YSA9IHJwcm9j
-LT5wcml2Ow0KPiAtCXN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBkZXYtPm9mX25vZGU7DQo+ICsJ
-c3RydWN0IGRldmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9kZSwgKm5vZGU7DQo+ICsJc3RydWN0
-IHJlc291cmNlIHJlczsNCj4gIAlpbnQgZXJyOw0KPg0KPiAgCWlmIChkZGF0YS0+Y29uZmlnLT5z
-d19yZXNldCkgew0KPiBAQCAtMjUyLDEwICsyNzEsMjQgQEAgc3RhdGljIGludCBzdF9ycHJvY19w
-YXJzZV9kdChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgCQlyZXR1cm4gLUVJTlZB
-TDsNCj4gIAl9DQo+DQo+IC0JZXJyID0gb2ZfcmVzZXJ2ZWRfbWVtX2RldmljZV9pbml0KGRldik7
-DQo+IC0JaWYgKGVycikgew0KPiAtCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBvYnRhaW4gc2hh
-cmVkIG1lbW9yeVxuIik7DQo+ICsJbm9kZSA9IG9mX3BhcnNlX3BoYW5kbGUobnAsICJtZW1vcnkt
-cmVnaW9uIiwgMCk7DQo+ICsJaWYgKCFub2RlKSB7DQo+ICsJCWRldl9lcnIoZGV2LCAiTm8gbWVt
-b3J5LXJlZ2lvbiBzcGVjaWZpZWRcbiIpOw0KPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gKwl9DQo+
-ICsNCj4gKwllcnIgPSBvZl9hZGRyZXNzX3RvX3Jlc291cmNlKG5vZGUsIDAsICZyZXMpOw0KPiAr
-CWlmIChlcnIpDQo+ICAJCXJldHVybiBlcnI7DQo+ICsNCj4gKwlkZGF0YS0+bWVtX3BoeXMgPSBy
-ZXMuc3RhcnQ7DQo+ICsJZGRhdGEtPm1lbV9yZWxvYyA9IHJlcy5zdGFydDsNCj4gKwlkZGF0YS0+
-bWVtX3NpemUgPSByZXNvdXJjZV9zaXplKCZyZXMpOw0KPiArCWRkYXRhLT5tZW1fcmVnaW9uID0g
-ZGV2bV9pb3JlbWFwX3djKGRldiwgZGRhdGEtPm1lbV9waHlzLCBkZGF0YS0+bWVtX3NpemUpOw0K
-PiArCWlmICghZGRhdGEtPm1lbV9yZWdpb24pIHsNCj4gKwkJZGV2X2VycihkZXYsICJVbmFibGUg
-dG8gbWFwIG1lbW9yeSByZWdpb246ICVwYSslenhcbiIsDQo+ICsJCQkmcmVzLnN0YXJ0LCBkZGF0
-YS0+bWVtX3NpemUpOw0KPiArCQlyZXR1cm4gLUVCVVNZOw0KPiAgCX0NCj4NCj4gIAllcnIgPSBj
-bGtfcHJlcGFyZShkZGF0YS0+Y2xrKTsNCj4gQEAgLTM4NSw4ICs0MTgsNiBAQCBzdGF0aWMgaW50
-IHN0X3Jwcm9jX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPg0KPiAgCWNs
-a19kaXNhYmxlX3VucHJlcGFyZShkZGF0YS0+Y2xrKTsNCj4NCj4gLQlvZl9yZXNlcnZlZF9tZW1f
-ZGV2aWNlX3JlbGVhc2UoJnBkZXYtPmRldik7DQo+IC0NCj4gIAlmb3IgKGkgPSAwOyBpIDwgU1Rf
-UlBST0NfTUFYX1ZSSU5HICogTUJPWF9NQVg7IGkrKykNCj4gIAkJbWJveF9mcmVlX2NoYW5uZWwo
-ZGRhdGEtPm1ib3hfY2hhbltpXSk7DQo+DQo+
+Hi Bjorn,
+
+On 02/06/2017 01:08 PM, Bjorn Andersson wrote:
+> On Tue 24 Jan 15:13 PST 2017, Sarangdhar Joshi wrote:
+>
+>> The rproc_add_virtio_devices() requests firmware asynchronously and
+>> triggers boot if the auto_boot flag is set. However, this
+>> asynchronous call seems to be redundant for non auto-boot scenario
+>> since the rproc_boot() would call request_firmware() anyways. Move
+>> the auto_boot check to rproc_add() so that a redundant call to
+>> _request_firmware can be avoided for non auto-boot case.
+>>
+>> Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+>
+> Looks good, applied both patches.
+
+Thanks for the review and applying these(and couple others) patches.
+
+Regards,
+Sarang
+>
+> Regards,
+> Bjorn
+>
+>> ---
+>>
+>> I'm requesting RFC on this patch since I'm not aware of any scenario
+>> where we might need asynchronous firmware loading for non auto-boot case.
+>>
+>>  drivers/remoteproc/remoteproc_core.c | 14 ++++++++------
+>>  1 file changed, 8 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index f58e634..16242b0 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -970,9 +970,7 @@ static void rproc_fw_config_virtio(const struct firmware *fw, void *context)
+>>  {
+>>  	struct rproc *rproc = context;
+>>
+>> -	/* if rproc is marked always-on, request it to boot */
+>> -	if (rproc->auto_boot)
+>> -		rproc_boot(rproc);
+>> +	rproc_boot(rproc);
+>>
+>>  	release_firmware(fw);
+>>  }
+>> @@ -1286,9 +1284,13 @@ int rproc_add(struct rproc *rproc)
+>>
+>>  	/* create debugfs entries */
+>>  	rproc_create_debug_dir(rproc);
+>> -	ret = rproc_add_virtio_devices(rproc);
+>> -	if (ret < 0)
+>> -		return ret;
+>> +
+>> +	/* if rproc is marked always-on, request it to boot */
+>> +	if (rproc->auto_boot) {
+>> +		ret = rproc_add_virtio_devices(rproc);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +	}
+>>
+>>  	/* expose to rproc_get_by_phandle users */
+>>  	mutex_lock(&rproc_list_mutex);
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
