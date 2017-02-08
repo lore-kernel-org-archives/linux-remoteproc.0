@@ -1,77 +1,81 @@
-Return-Path: <stanimir.varbanov@linaro.org>
-Return-Path: <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH 3/5] remoteproc: qcom: mdt_loader: Refactor MDT loader
-References: <20170130165547.4344-1-bjorn.andersson@linaro.org>
- <20170130165547.4344-3-bjorn.andersson@linaro.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <f4f469ae-f4ac-fd74-4085-4092d0902a2e@linaro.org>
-Date: Thu, 2 Feb 2017 17:21:11 +0200
+Return-Path: <hugues.fruchet@st.com>
+From: Hugues FRUCHET <hugues.fruchet@st.com>
+Subject: Re: [PATCH v2 0/6] virtio_rpmsg: make rpmsg channel configurable
+Date: Wed, 8 Feb 2017 10:21:24 +0000
+Message-ID: <3c4a43c2-92ac-88e2-6e50-395b51c33c54@st.com>
+References: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1485867097-6960-1-git-send-email-loic.pallardy@st.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <758EA36ED014004CAA22D23A49684C37@st.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20170130165547.4344-3-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Andy Gross <andy.gross@linaro.com>
+To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>, Patrice CHOTARD <patrice.chotard@st.com>, "peter.griffin@linaro.org" <peter.griffin@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+Acked-and-tested-by: Hugues Fruchet <hugues.fruchet@st.com>
 
-Thanks for the patch!
+Tested on B2260 ST Platform with st-delta video decoder V4L2 kernel=20
+driver=20
+(http://www.mail-archive.com/linux-media@vger.kernel.org/msg107644.html).
 
-On 01/30/2017 06:55 PM, Bjorn Andersson wrote:
-> Pushing the SCM calls into the MDT loader reduces duplication in the
-> callers and allows for non-remoteproc clients to use the helper for
-> parsing and loading MDT files.
-> 
-> Cc: Andy Gross <andy.gross@linaro.com>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+On 01/31/2017 01:51 PM, Loic Pallardy wrote:
+> This goal of this series is to offer more flexibility for virtio_rpmsg
+> communication link configuration.
+>
+> It should be possible to tune rpmsg buffer size per Rpmsg link, to provid=
+e
+> selected configuration to coprocessor, to take into account coprocessor
+> specificities like memory region.
+>
+> This series introduces an optional virtio rpmsg configuration structure, =
+which
+> will be managed as an extension of struct fw_rsc_vdev present in coproces=
+sor firmware
+> resource table.
+> Structure access is possible thanks to virtio get and set API.
+> This structure contains the different information to tune the link betwee=
+n the
+> host and the coprocessor.
+>
+> Patch "rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
+> kernel address" has the same goal as Wendy's RFC [1]. I don't have tested
+> Wendy's series with level driver buffer allocation.
+>
+> Last patch "rpmsg: virtio_rpmsg: set buffer configuration to virtio" has =
+a
+> dependency with remoteproc subdevice boot sequence as coprocessor resourc=
+e
+> table must be updated before coprocessor start. See [2]
+>
+> [1] http://www.spinics.net/lists/linux-remoteproc/msg00852.html
+> [2] http://www.spinics.net/lists/linux-remoteproc/msg00826.html
+>
 > ---
->  drivers/remoteproc/qcom_adsp_pil.c   |  29 +-------
->  drivers/remoteproc/qcom_mdt_loader.c | 134 +++++++++++++++++++++++------------
->  drivers/remoteproc/qcom_mdt_loader.h |   6 +-
->  drivers/remoteproc/qcom_q6v5_pil.c   |   4 +-
->  drivers/remoteproc/qcom_wcnss.c      |  29 +-------
->  5 files changed, 100 insertions(+), 102 deletions(-)
-> 
-
-<snip>
-
-> diff --git a/drivers/remoteproc/qcom_mdt_loader.c b/drivers/remoteproc/qcom_mdt_loader.c
-> index 2393398f63ea..f239f6fddbb7 100644
-> --- a/drivers/remoteproc/qcom_mdt_loader.c
-> +++ b/drivers/remoteproc/qcom_mdt_loader.c
-> @@ -19,6 +19,7 @@
->  #include <linux/firmware.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/qcom_scm.h>
->  #include <linux/remoteproc.h>
-
-Please delete remoteproc.h it is not needed anymore.
-
->  #include <linux/sizes.h>
->  #include <linux/slab.h>
-> @@ -45,24 +46,33 @@ struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
->  }
->  EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
->  
-> +static bool mdt_phdr_valid(const struct elf32_phdr *phdr)
-> +{
-> +	if (phdr->p_type != PT_LOAD)
-> +		return false;
-> +
-> +	if ((phdr->p_flags & QCOM_MDT_TYPE_MASK) == QCOM_MDT_TYPE_HASH)
-> +		return false;
-> +
-> +	if (!phdr->p_memsz)
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-
-<snip>
-
--- 
-regards,
-Stan
+> Changes from v1:
+> - No more dependency with [2]. Coprocessor firmware should wait for first=
+ kick
+> indicating virtio rpmsg link ready before accessing resource table inform=
+ation.
+> - Correct issues reported by Suman
+> - Fix warnings found by checkpatch with --strict option
+>
+>
+> Loic Pallardy (6):
+>   rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
+>   rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
+>     kernel address
+>   include: virtio_rpmsg: add virtio rpmsg configuration structure
+>   rpmsg: virtio_rpmsg: get buffer configuration from virtio
+>   rpmsg: virtio_rpmsg: don't allocate buffer if provided by low level
+>     driver
+>   rpmsg: virtio_rpmsg: set buffer configuration to virtio
+>
+>  drivers/rpmsg/virtio_rpmsg_bus.c   | 176 +++++++++++++++++++++++++++++++=
+------
+>  include/linux/rpmsg/virtio_rpmsg.h |  32 +++++++
+>  2 files changed, 179 insertions(+), 29 deletions(-)
+>  create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
+>=
