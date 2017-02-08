@@ -1,51 +1,48 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 8 Feb 2017 17:55:04 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 4/4] remoteproc: core: don't allocate carveout if pa
- or da are defined
-Message-ID: <20170209015504.GM27837@minitux>
-References: <1485866156-6364-1-git-send-email-loic.pallardy@st.com>
- <1485866156-6364-5-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Return-Path: <hugues.fruchet@st.com>
+From: Hugues FRUCHET <hugues.fruchet@st.com>
+Subject: Re: [v3, 4/4] remoteproc: core: don't allocate carveout if pa or da
+ are defined
+Date: Wed, 8 Feb 2017 09:00:53 +0000
+Message-ID: <2412fafd-6544-1d62-a8c6-5162d2d8cfb4@st.com>
+References: <1485866156-6364-5-git-send-email-loic.pallardy@st.com>
 In-Reply-To: <1485866156-6364-5-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, lee.jones@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0830F387FBFDB143BD176F4FD5ADD0B8@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kernel@stlinux.com" <kernel@stlinux.com>, Patrice CHOTARD <patrice.chotard@st.com>, "peter.griffin@linaro.org" <peter.griffin@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue 31 Jan 04:35 PST 2017, Loic Pallardy wrote:
-
-> Remoteproc doesn't check if firmware requests fixed
-> addresses for carveout regions.
-> Current assumption is that platform specific driver is in
-> charge of coprocessor specific memory region allocation and
-> remoteproc core doesn't have to handle them.
-> If a da or a pa is specified in firmware resource table, remoteproc
-> core doesn't have to perform any allocation.
-> Access to carveout will be done thanks to rproc_da_to_pa function,
-> which will provide virtual address on carveout region allocated
-> by platform specific driver.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
-> No change since V1
-> 
->  drivers/remoteproc/remoteproc_core.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 90b05c7..dd63ceed 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -622,6 +622,11 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
->  		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
->  
-> +	if (rsc->pa != FW_RSC_ADDR_ANY || rsc->da != FW_RSC_ADDR_ANY) {
-
-For devices with an IOMMU it's valid to specify "da" and have the
-allocated region mapped there. So this is not correct.
-
-Regards,
-Bjorn
+DQoNCk9uIDAxLzMxLzIwMTcgMDE6MzUgUE0sIExvaWMgUEFMTEFSRFkgd3JvdGU6DQo+IFJlbW90
+ZXByb2MgZG9lc24ndCBjaGVjayBpZiBmaXJtd2FyZSByZXF1ZXN0cyBmaXhlZA0KPiBhZGRyZXNz
+ZXMgZm9yIGNhcnZlb3V0IHJlZ2lvbnMuDQo+IEN1cnJlbnQgYXNzdW1wdGlvbiBpcyB0aGF0IHBs
+YXRmb3JtIHNwZWNpZmljIGRyaXZlciBpcyBpbg0KPiBjaGFyZ2Ugb2YgY29wcm9jZXNzb3Igc3Bl
+Y2lmaWMgbWVtb3J5IHJlZ2lvbiBhbGxvY2F0aW9uIGFuZA0KPiByZW1vdGVwcm9jIGNvcmUgZG9l
+c24ndCBoYXZlIHRvIGhhbmRsZSB0aGVtLg0KPiBJZiBhIGRhIG9yIGEgcGEgaXMgc3BlY2lmaWVk
+IGluIGZpcm13YXJlIHJlc291cmNlIHRhYmxlLCByZW1vdGVwcm9jDQo+IGNvcmUgZG9lc24ndCBo
+YXZlIHRvIHBlcmZvcm0gYW55IGFsbG9jYXRpb24uDQo+IEFjY2VzcyB0byBjYXJ2ZW91dCB3aWxs
+IGJlIGRvbmUgdGhhbmtzIHRvIHJwcm9jX2RhX3RvX3BhIGZ1bmN0aW9uLA0KPiB3aGljaCB3aWxs
+IHByb3ZpZGUgdmlydHVhbCBhZGRyZXNzIG9uIGNhcnZlb3V0IHJlZ2lvbiBhbGxvY2F0ZWQNCj4g
+YnkgcGxhdGZvcm0gc3BlY2lmaWMgZHJpdmVyLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBMb2ljIFBh
+bGxhcmR5IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCg0KQWNrZWQtYW5kLXRlc3RlZC1ieTogSHVn
+dWVzIEZydWNoZXQgPGh1Z3Vlcy5mcnVjaGV0QHN0LmNvbT4NCg0KVGVzdGVkIG9uIEIyMjYwIFNU
+IFBsYXRmb3JtIHdpdGggc3QtZGVsdGEgdmlkZW8gZGVjb2RlciBWNEwyIGtlcm5lbCANCmRyaXZl
+ciANCihodHRwOi8vd3d3Lm1haWwtYXJjaGl2ZS5jb20vbGludXgtbWVkaWFAdmdlci5rZXJuZWwu
+b3JnL21zZzEwNzY0NC5odG1sKS4NCg0KPiAtLS0NCj4gTm8gY2hhbmdlIHNpbmNlIFYxDQo+DQo+
+ICBkcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMgfCA1ICsrKysrDQo+ICAxIGZp
+bGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Jl
+bW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMgYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJv
+Y19jb3JlLmMNCj4gaW5kZXggOTBiMDVjNy4uZGQ2M2NlZWQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiArKysgYi9kcml2ZXJzL3JlbW90ZXBy
+b2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gQEAgLTYyMiw2ICs2MjIsMTEgQEAgc3RhdGljIGludCBy
+cHJvY19oYW5kbGVfY2FydmVvdXQoc3RydWN0IHJwcm9jICpycHJvYywNCj4gIAlkZXZfZGJnKGRl
+diwgImNhcnZlb3V0IHJzYzogbmFtZTogJXMsIGRhIDB4JXgsIHBhIDB4JXgsIGxlbiAweCV4LCBm
+bGFncyAweCV4XG4iLA0KPiAgCQlyc2MtPm5hbWUsIHJzYy0+ZGEsIHJzYy0+cGEsIHJzYy0+bGVu
+LCByc2MtPmZsYWdzKTsNCj4NCj4gKwlpZiAocnNjLT5wYSAhPSBGV19SU0NfQUREUl9BTlkgfHwg
+cnNjLT5kYSAhPSBGV19SU0NfQUREUl9BTlkpIHsNCj4gKwkJZGV2X2RiZyhkZXYsICJjYXJ2ZW91
+dCBhbHJlYWR5IGFsbG9jYXRlZCBieSBsb3cgbGV2ZWwgZHJpdmVyXG4iKTsNCj4gKwkJcmV0dXJu
+IDA7DQo+ICsJfQ0KPiArDQo+ICAJY2FydmVvdXQgPSBremFsbG9jKHNpemVvZigqY2FydmVvdXQp
+LCBHRlBfS0VSTkVMKTsNCj4gIAlpZiAoIWNhcnZlb3V0KQ0KPiAgCQlyZXR1cm4gLUVOT01FTTsN
+Cj4NCj4=
