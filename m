@@ -1,27 +1,39 @@
-Return-Path: <arndbergmann@gmail.com>
+Return-Path: <dan.carpenter@oracle.com>
+Date: Tue, 14 Feb 2017 10:28:33 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [bug report] rpmsg: Handle invalid parameters in public API
+Message-ID: <20170213193610.GE4162@mwanda>
+References: <20170211084030.GA18105@mwanda>
+ <20170213165808.GP27837@minitux>
 MIME-Version: 1.0
-Sender: arndbergmann@gmail.com
-In-Reply-To: <58af4aa2.8a12620a.c3a2b.698b@mx.google.com>
-References: <58af4aa2.8a12620a.c3a2b.698b@mx.google.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 23 Feb 2017 22:01:11 +0100
-Message-ID: <CAK8P3a0TB4SdixX+Gk__uZRqSwpO-v-JwKOR747uhCi=EjtqVA@mail.gmail.com>
-Subject: Re: mainline build: 9 warnings 1 failures (mainline/v4.10-7345-g5bcbe22)
-Content-Type: text/plain; charset=UTF-8
-To: Olof's autobuilder <build@lixom.net>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
-Cc: Olof Johansson <olof@lixom.net>, kernel-build-reports@lists.linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170213165808.GP27837@minitux>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu, Feb 23, 2017 at 9:48 PM, Olof's autobuilder <build@lixom.net> wrote:
+On Mon, Feb 13, 2017 at 08:58:09AM -0800, Bjorn Andersson wrote:
+> >     70  struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+> >     71                                          rpmsg_rx_cb_t cb, void *priv,
+> >     72                                          struct rpmsg_channel_info chinfo)
+> >     73  {
+> >     74          if (WARN_ON(!rpdev))
+> >     75                  return ERR_PTR(-EINVAL);
+> > 
+> > The callers aren't expecting error pointers.  I could filter out this
+> > one because Smatch knows it's impossible for that caller because rpdev
+> > isn't NULL, but I feel like this should really return NULL.
+> > 
+> 
+> I think it would make sense to report an ERR_PTR() from
+> rpmsg_create_ept(), but that's not what's currently expected.
+> 
 
-> Errors:
->
->         arm.allmodconfig:
-> /work/build/batch/drivers/soc/ti/wkup_m3_ipc.c:373:36: error: 'struct rproc' has no member named 'firmware_loading_complete'
+It sounds like you're trying to argue or persuade me but that's like
+arguing with a fruit fly.  Complete waste of time.  I have invested
+zero thought into this and had literally already forgotten sending this
+email.  Just do whatever you think is best.  ;)
 
-This apparently just broke after Linus pulled the remoteproc git tree. I had not
-seen this failure in linux-next yet. Maybe a dependency that wasn't
-handled right,
-or a broken last-minute patch?
-
-    Arnd
+regards,
+dan carpenter
