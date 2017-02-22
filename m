@@ -1,66 +1,112 @@
-Return-Path: <sboyd@codeaurora.org>
-Date: Mon, 27 Feb 2017 14:55:58 -0800
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 1/3] soc: qcom: Add scm call to protect modem mem in
- qcom scm driver.
-Message-ID: <20170227225558.GF25384@codeaurora.org>
-References: <1485773044-31489-1-git-send-email-akdwived@codeaurora.org>
- <1485773044-31489-2-git-send-email-akdwived@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 22 Feb 2017 03:53:56 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] remoteproc updates for v4.11
+Message-ID: <20170222115356.GA22823@builder>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1485773044-31489-2-git-send-email-akdwived@codeaurora.org>
-To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Sarangdhar Joshi <spjoshi@codeaurora.org>, Loic Pallardy <loic.pallardy@st.com>, Arnd Bergmann <arnd@arndb.de>, Bhumika Goyal <bhumirks@gmail.com>, Pavel Machek <pavel@ucw.cz>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 01/30, Avaneesh Kumar Dwivedi wrote:
-> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-> index 893f953ea..f476803 100644
-> --- a/drivers/firmware/qcom_scm.c
-> +++ b/drivers/firmware/qcom_scm.c
-> @@ -292,6 +292,20 @@ int qcom_scm_pas_shutdown(u32 peripheral)
->  }
->  EXPORT_SYMBOL(qcom_scm_pas_shutdown);
->  
-> +/**
-> + * qcom_scm_assign_mem() - Apply new access permission of DDR
-> + * region passed via descriptor and does second stage
-> + * translation of intermediate physical address.
-> + * @desc: descriptor to send to hypervisor
-> + *
-> + * Return 0 on success.
-> + */
-> +int qcom_scm_assign_mem(void *desc)
+The following changes since commit 49def1853334396f948dcb4cedb9347abb318df5:
 
-Please don't pass a void pointer here. Driver authors shouldn't
-need to know about qcom_scm_desc. This should be an API that the
-driver can use without knowing intimate firmware details.
+  Linux 4.10-rc4 (2017-01-15 16:21:59 -0800)
 
-> +{
-> +	return __qcom_scm_assign_mem(__scm->dev, desc);
-> +}
-> +EXPORT_SYMBOL(qcom_scm_assign_mem);
-> +
->  static int qcom_scm_pas_reset_assert(struct reset_controller_dev *rcdev,
->  				     unsigned long idx)
->  {
-> diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
-> index 3584b00..d88fd4b 100644
-> --- a/drivers/firmware/qcom_scm.h
-> +++ b/drivers/firmware/qcom_scm.h
-> @@ -47,6 +47,8 @@ extern int __qcom_scm_hdcp_req(struct device *dev,
->  #define QCOM_SCM_PAS_SHUTDOWN_CMD	0x6
->  #define QCOM_SCM_PAS_IS_SUPPORTED_CMD	0x7
->  #define QCOM_SCM_PAS_MSS_RESET		0xa
-> +#define QCOM_SCM_SVC_MP				0xc
-> +#define QCOM_MEM_PROT_ASSIGN_ID		0x16
+are available in the git repository at:
 
-Presumably these should go near the newly introduced functions
-like how the rest of this file is organized.
+  git://github.com/andersson/remoteproc tags/rproc-v4.11
 
->  extern bool __qcom_scm_pas_supported(struct device *dev, u32 peripheral);
+for you to fetch changes up to 01625cc5e65f420dbea57f7de6b9552a0f807a84:
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+  remoteproc: qcom: mdt_loader: Use signed type for offset (2017-02-22 02:07:13 -0800)
+
+----------------------------------------------------------------
+remoteproc updates for v4.11
+
+This introduces support for booting the dedicated sensor core in the
+Qualcomm MSM8996, updates the Qualcomm ADSP and Hexagon drivers to
+utilize SMD subdevice helpers for properly handle shutdowns and restarts
+of the remoteproc, add virtio support to the ST remoteproc and refactor
+the Qualcomm Hexagon driver to handle variations between platforms.
+
+The support code for parsing, loading and authenticating Qualcomm
+firmware files (MDT) is refactored and move to drivers/soc/qcom, to
+allow for non-remoteproc drivers to utilize this.
+
+Finally it brings some cleanups to the remoteproc core.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      remoteproc: qcom: fix initializers for qcom_mss_reg_res array
+
+Avaneesh Kumar Dwivedi (6):
+      remoteproc: qcom: Compatible string based private resource initialization.
+      remoteproc: qcom: Initialize and enable proxy and active clocks.
+      remoteproc: qcom: Initialize and enable proxy and active regulators.
+      remoteproc: qcom: Compatible string based resource initialization.
+      remoteproc: qcom: Add additional agree2_clk and px regulator resource.
+      remoteproc: qcom: Add SLPI rproc support to load and boot slpi proc.
+
+Bhumika Goyal (1):
+      drivers: remoteproc: constify rproc_ops structures
+
+Bjorn Andersson (10):
+      remoteproc: qcom: q6v5: Remove mss supply from 8916
+      remoteproc: qcom: q6v5: Decouple driver from MDT loader
+      remoteproc: qcom: Extract non-mdt related helper
+      remoteproc: qcom: mdt_loader: Don't overwrite firmware object
+      remoteproc: qcom: mdt_loader: Refactor MDT loader
+      remoteproc: Move qcom_mdt_loader into drivers/soc/qcom
+      remoteproc: qcom: wcnss: Make SMD handling common
+      remoteproc: qcom: Use common SMD edge handler
+      MAINTAINERS: Add missing rpmsg include path
+      remoteproc: qcom: mdt_loader: Use signed type for offset
+
+Loic Pallardy (2):
+      remoteproc: st: correct probe error management
+      remoteproc: st: add virtio communication support
+
+Pavel Machek (1):
+      remoteproc: add some kind of help
+
+Sarangdhar Joshi (6):
+      remoteproc: Move rproc_delete_debug_dir() to rproc_del()
+      remoteproc: Add RPROC_DELETED state
+      remoteproc: Drop firmware_loading_complete
+      remoteproc: Drop qcom_scm_pas_supported() from adsp_probe()
+      remoteproc: Reduce asynchronous request_firmware to auto-boot only
+      remoteproc: Modify the function names
+
+ .../devicetree/bindings/remoteproc/qcom,adsp.txt   |  41 +-
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   4 +-
+ MAINTAINERS                                        |   1 +
+ drivers/remoteproc/Kconfig                         |  18 +-
+ drivers/remoteproc/Makefile                        |   2 +-
+ drivers/remoteproc/da8xx_remoteproc.c              |   2 +-
+ drivers/remoteproc/omap_remoteproc.c               |   2 +-
+ drivers/remoteproc/qcom_adsp_pil.c                 | 134 ++++--
+ drivers/remoteproc/qcom_common.c                   |  96 ++++
+ drivers/remoteproc/qcom_common.h                   |  22 +
+ drivers/remoteproc/qcom_mdt_loader.c               | 180 -------
+ drivers/remoteproc/qcom_mdt_loader.h               |  13 -
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 531 +++++++++++++++------
+ drivers/remoteproc/qcom_wcnss.c                    |  60 +--
+ drivers/remoteproc/remoteproc_core.c               |  52 +-
+ drivers/remoteproc/remoteproc_sysfs.c              |   1 +
+ drivers/remoteproc/st_remoteproc.c                 | 119 ++++-
+ drivers/remoteproc/st_slim_rproc.c                 |   2 +-
+ drivers/remoteproc/wkup_m3_rproc.c                 |   2 +-
+ drivers/soc/qcom/Kconfig                           |   4 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/mdt_loader.c                      | 204 ++++++++
+ include/linux/remoteproc.h                         |   6 +-
+ include/linux/soc/qcom/mdt_loader.h                |  18 +
+ 24 files changed, 1029 insertions(+), 486 deletions(-)
+ create mode 100644 drivers/remoteproc/qcom_common.c
+ create mode 100644 drivers/remoteproc/qcom_common.h
+ delete mode 100644 drivers/remoteproc/qcom_mdt_loader.c
+ delete mode 100644 drivers/remoteproc/qcom_mdt_loader.h
+ create mode 100644 drivers/soc/qcom/mdt_loader.c
+ create mode 100644 include/linux/soc/qcom/mdt_loader.h
