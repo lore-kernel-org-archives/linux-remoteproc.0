@@ -1,51 +1,42 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 16/19] remoteproc: virtio: use rproc_virtio_notify() to notify vdev changes
-Date: Fri, 24 Mar 2017 12:22:32 -0700
-Message-ID: <1490383355-23176-17-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
-References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v3 0/2] Enable mss rproc support on msm8996
+Date: Wed,  8 Mar 2017 23:33:20 +0530
+Message-Id: <1488996202-1546-1-git-send-email-akdwived@codeaurora.org>
 To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Wendy Liang  <wendy.liang@xilinx.com>, Wendy Liang <jliang@xilinx.com>, Michal Simek" <michal.simek@xilinx.com>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Wendy Liang <wendy.liang@xilinx.com>
+This Patch series fix the comment received on v2 patchset.
+Major changes w.r.t. patchset v2 is as below.
+	1- move majority of hypervisor call related changes into scm driver
+	   which were earlier in q6v5 rproc driver, which was not compatible 
+	   to existing design.
+	2- remove voting for proxy supplies till the time corner voting is supported.
+	   Though testing of mss rproc driver is possible as cx and mx supplies are 
+	   in always power on domain.
+	3- Fix some other Minor comments.
 
-Use rproc_virtio_notify() to notify vdev config changes.
+This patchseries is based on Bjorns remoteproc git repository at:
 
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
- drivers/remoteproc/remoteproc_virtio.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+  git://github.com/andersson/remoteproc tags/rproc-v4.11
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index cc421f3..d43e15b 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -29,6 +29,20 @@
- 
- #include "remoteproc_internal.h"
- 
-+/* kick the remote processor, and let it know the virtio dev has update */
-+static bool rproc_virtio_notify(struct rproc_vdev *rvdev)
-+{
-+	struct rproc *rproc;
-+	struct fw_rsc_vdev *rsc;
-+
-+	if (!rvdev)
-+		return false;
-+	rproc = rvdev->rproc;
-+	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
-+	rproc->ops->kick(rproc, rsc->notifyid);
-+	return true;
-+}
-+
- /* kick the remote processor, and let it know which virtqueue to poke at */
- static bool rproc_vq_notify(struct virtqueue *vq)
- {
+or to say this patchset is based on top of commit id 01625cc5e65f420dbea57f7de6b9552a0f807a84
+in Bjorn's git repo.
+
+Avaneesh Kumar Dwivedi (2):
+  soc: qcom: Add support of scm call for mss rproc to share access of
+    ddr
+  remoteproc: qcom: Enable mss rproc support on msm8996
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
+ drivers/firmware/qcom_scm-64.c                     |  25 ++
+ drivers/firmware/qcom_scm.c                        |  93 +++++++
+ drivers/firmware/qcom_scm.h                        |   3 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 290 +++++++++++++++++++--
+ include/linux/qcom_scm.h                           |  14 +
+ 6 files changed, 400 insertions(+), 26 deletions(-)
+
 -- 
-1.9.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
