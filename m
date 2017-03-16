@@ -1,93 +1,83 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 2/5] rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid kernel address
-Date: Tue, 28 Mar 2017 13:49:44 +0200
-Message-ID: <1490701787-15205-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
-References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, Ludovic Barre <ludovic.barre@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] rpmsg: Release rpmsg devices in backends
+Date: Wed, 15 Mar 2017 22:18:35 -0700
+Message-Id: <20170316051835.10008-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-To specify memory for remoteproc, we declare (dma_declare_coherent_memory())
-an area which is ioremap'ed to the vmalloc area.  However, this address is
-not a kernel address so virt_addr_valid(buf) fails.
+The rpmsg devices are allocated in the backends and as such must be
+freed there as well.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
-Tested-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-Changes since V1:
-- Remove extra line.
+ drivers/rpmsg/qcom_smd.c         | 11 +++++++++++
+ drivers/rpmsg/virtio_rpmsg_bus.c |  9 +++++++++
+ 2 files changed, 20 insertions(+)
 
-No change since v2.
-
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 3f44a03..1c7cde9 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -195,6 +195,28 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index beaef5dd973e..a0a39a8821a3 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -969,6 +969,14 @@ static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
+ 	.poll = qcom_smd_poll,
  };
  
- /**
-+ * rpmsg_sg_init - initialize scatterlist according to cpu address location
-+ * @sg: scatterlist to fill
-+ * @cpu_addr: virtual address of the buffer
-+ * @len: buffer length
-+ *
-+ * An internal function filling scatterlist according to virtual address
-+ * location (in vmalloc or in kernel).
-+ */
-+static void
-+rpmsg_sg_init(struct scatterlist *sg, void *cpu_addr, unsigned int len)
++static void qcom_smd_release_device(struct device *dev)
 +{
-+	if (is_vmalloc_addr(cpu_addr)) {
-+		sg_init_table(sg, 1);
-+		sg_set_page(sg, vmalloc_to_page(cpu_addr), len,
-+			    offset_in_page(cpu_addr));
-+	} else {
-+		WARN_ON(!virt_addr_valid(cpu_addr));
-+		sg_init_one(sg, cpu_addr, len);
-+	}
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
++	struct qcom_smd_device *qsdev = to_smd_device(rpdev);
++
++	kfree(qsdev);
 +}
 +
-+/**
-  * __ept_release() - deallocate an rpmsg endpoint
-  * @kref: the ept's reference count
-  *
-@@ -606,7 +628,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
- 			 msg, sizeof(*msg) + msg->len, true);
- #endif
+ /*
+  * Create a smd client device for channel that is being opened.
+  */
+@@ -998,6 +1006,7 @@ static int qcom_smd_create_device(struct qcom_smd_channel *channel)
  
--	sg_init_one(&sg, msg, sizeof(*msg) + len);
-+	rpmsg_sg_init(&sg, msg, sizeof(*msg) + len);
+ 	rpdev->dev.of_node = qcom_smd_match_channel(edge->of_node, channel->name);
+ 	rpdev->dev.parent = &edge->dev;
++	rpdev->dev.release = qcom_smd_release_device;
  
- 	mutex_lock(&vrp->tx_lock);
+ 	return rpmsg_register_device(rpdev);
+ }
+@@ -1013,6 +1022,8 @@ static int qcom_smd_create_chrdev(struct qcom_smd_edge *edge)
+ 	qsdev->edge = edge;
+ 	qsdev->rpdev.ops = &qcom_smd_device_ops;
+ 	qsdev->rpdev.dev.parent = &edge->dev;
++	qsdev->rpdev.dev.release = qcom_smd_release_device;
++
+ 	return rpmsg_chrdev_register_device(&qsdev->rpdev);
+ }
  
-@@ -731,7 +753,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 		dev_warn(dev, "msg received with no recipient\n");
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 5e66e081027e..7f8c5cc1c118 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -360,6 +360,14 @@ static const struct rpmsg_device_ops virtio_rpmsg_ops = {
+ 	.announce_destroy = virtio_rpmsg_announce_destroy,
+ };
  
- 	/* publish the real size of the buffer */
--	sg_init_one(&sg, msg, vrp->buf_size);
-+	rpmsg_sg_init(&sg, msg, vrp->buf_size);
++static void virtio_rpmsg_release_device(struct device *dev)
++{
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
++
++	kfree(vch);
++}
++
+ /*
+  * create an rpmsg channel using its name and address info.
+  * this function will be used to create both static and dynamic
+@@ -408,6 +416,7 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+ 	strncpy(rpdev->id.name, chinfo->name, RPMSG_NAME_SIZE);
  
- 	/* add the buffer back to the remote processor's virtqueue */
- 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-@@ -915,7 +937,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 		struct scatterlist sg;
- 		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
- 
--		sg_init_one(&sg, cpu_addr, vrp->buf_size);
-+		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
- 
- 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
- 					  GFP_KERNEL);
+ 	rpdev->dev.parent = &vrp->vdev->dev;
++	rpdev->dev.release = virtio_rpmsg_release_device;
+ 	ret = rpmsg_register_device(rpdev);
+ 	if (ret)
+ 		return NULL;
 -- 
-1.9.1
+2.12.0
