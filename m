@@ -1,127 +1,100 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 4/5] rpmsg: virtio_rpmsg: get buffer configuration from virtio
-Date: Tue, 28 Mar 2017 13:49:46 +0200
-Message-ID: <1490701787-15205-5-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
-References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 1/2] soc: qcom: Add device tree binding for GLINK RPM
+Date: Wed, 15 Mar 2017 22:26:38 -0700
+Message-Id: <20170316052639.11391-1-bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Some coprocessors have memory mapping constraints which require
-predefined buffer location or specific buffer size different from
-default definition.
-Coprocessor resources are defined in associated firmware resource table.
-Remoteproc offers access to firmware resource table via virtio get
-interface.
+Add device tree binding documentation for the Qualcomm GLINK RPM, used
+for communication with the Resource Power Management subsystem in
+various Qualcomm SoCs.
 
-This patch modifies rpmsg_probe sequence to:
-- retrieve rpmsg buffer configuration (if any)
-- verify and apply configuration
-- allocate buffer according to requested configuration
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-Changes since V1:
-- Move Rpmsg buffer physical address initialization in patch 5 "rpmsg: virtio_rpmsg:
-don't allocate buffer if provided by low level driver"
-- Remove extra lines
+ .../devicetree/bindings/soc/qcom/qcom,glink.txt    | 73 ++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
 
-No change since v2.
-
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 48 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 46 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 1c7cde9..69285c1 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -32,6 +32,7 @@
- #include <linux/sched.h>
- #include <linux/wait.h>
- #include <linux/rpmsg.h>
-+#include <linux/rpmsg/virtio_rpmsg.h>
- #include <linux/mutex.h>
- #include <linux/of_device.h>
- 
-@@ -870,6 +871,44 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
- 	return 0;
- }
- 
-+static int virtio_rpmsg_get_config(struct virtio_device *vdev)
-+{
-+	struct virtio_rpmsg_cfg virtio_cfg;
-+	struct virtproc_info *vrp = vdev->priv;
-+	size_t total_buf_space;
-+	int ret = 0;
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+new file mode 100644
+index 000000000000..da92c4f787f3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+@@ -0,0 +1,73 @@
++Qualcomm RPM GLINK binding
 +
-+	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
-+	vdev->config->get(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
-+			  sizeof(virtio_cfg));
++This binding describes the Qualcomm RPM GLINK, a fifo based mechanism for
++communication with the Resource Power Management system on various Qualcomm
++platforms.
 +
-+	if (virtio_cfg.id == VIRTIO_ID_RPMSG && virtio_cfg.version == 1 &&
-+	    virtio_cfg.reserved == 0) {
-+		if (virtio_cfg.buf_size <= MAX_RPMSG_BUF_SIZE) {
-+			vrp->buf_size = virtio_cfg.buf_size;
-+		} else {
-+			WARN_ON(1);
-+			dev_warn(&vdev->dev, "Requested RPMsg buffer size too big: %d\n",
-+				 vrp->buf_size);
-+			ret = -EINVAL;
-+			goto out;
-+		}
++- compatible:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "qcom,glink-rpm"
 +
-+		/* Check rpmsg buffer length */
-+		total_buf_space = vrp->num_bufs * vrp->buf_size;
-+		if ((virtio_cfg.len != -1) &&
-+		    (total_buf_space > virtio_cfg.len)) {
-+			dev_warn(&vdev->dev, "Not enough memory for buffers: %d\n",
-+				 total_buf_space);
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		return !ret;
-+	}
-+out:
-+	return ret;
-+}
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: should specify the IRQ used by the remote processor to
++		    signal this processor about communication related events
 +
- static int rpmsg_probe(struct virtio_device *vdev)
- {
- 	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
-@@ -900,6 +939,8 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	vrp->rvq = vqs[0];
- 	vrp->svq = vqs[1];
- 
-+	vdev->priv = vrp;
++- qcom,rpm-msg-ram:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: handle to RPM message memory resource
 +
- 	/* we expect symmetric tx/rx vrings */
- 	WARN_ON(virtqueue_get_vring_size(vrp->rvq) !=
- 		virtqueue_get_vring_size(vrp->svq));
-@@ -912,6 +953,11 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 
- 	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
- 
-+	/* Try to get rpmsg configuration if any */
-+	err = virtio_rpmsg_get_config(vdev);
-+	if (err < 0)
-+		goto free_vrp;
++- qcom,ipc:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: three entries specifying the outgoing ipc bit used for
++		    signaling the remote processor:
++		    - phandle to a syscon node representing the apcs registers
++		    - u32 representing offset to the register within the syscon
++		    - u32 representing the ipc bit within the register
 +
- 	total_buf_space = vrp->num_bufs * vrp->buf_size;
- 
- 	/* allocate coherent memory for the buffers */
-@@ -947,8 +993,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	/* suppress "tx-complete" interrupts */
- 	virtqueue_disable_cb(vrp->svq);
- 
--	vdev->priv = vrp;
--
- 	/* if supported by the remote processor, enable the name service */
- 	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_NS)) {
- 		/* a dedicated endpoint handles the name service msgs */
++= GLINK DEVICES
++Each subnode of the GLINK node represent function tied to a virtual
++communication channel. The name of the nodes are not important. The properties
++of these nodes are defined by the individual bindings for the specific function
++- but must contain the following property:
++
++- qcom,glink-channels:
++	Usage: required
++	Value type: <stringlist>
++	Definition: a list of channels tied to this function, used for matching
++		    the function to a set of virtual channels
++
++= EXAMPLE
++The following example represents the GLINK RPM node on a MSM8996 device, with
++the function for the "rpm_request" channel defined, which is used for
++regualtors and root clocks.
++
++	apcs: syscon@f9011000 {
++		compatible = "syscon";
++		reg = <0xf9011000 0x1000>;
++	};
++
++	rpm_msg_ram: memory@68000 {
++		compatible = "qcom,rpm-msg-ram";
++		reg = <0x68000 0x6000>;
++	};
++
++        rpm-glink {
++		compatible = "qcom,glink-rpm";
++
++		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++
++		qcom,rpm-msg-ram = <&rpm_msg_ram>;
++		qcom,ipc = <&apcs 0x10 0>;
++
++		rpm-requests {
++			compatible = "qcom,rpm-msm8996";
++			qcom,glink-channels = "rpm_requests";
++
++			...
++		};
++	};
 -- 
-1.9.1
+2.12.0
