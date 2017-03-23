@@ -1,193 +1,345 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 06/19] remoteproc: elf loader: Add get checksum firmware implementation
-Date: Fri, 24 Mar 2017 12:22:22 -0700
-Message-ID: <1490383355-23176-7-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
-References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
+Return-Path: <Matt.Redfearn@imgtec.com>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
+Subject: [PATCH v6 2/4] MIPS: CPS: Add VP(E) stealing
+Date: Thu, 23 Mar 2017 16:37:15 +0000
+Message-ID: <1490287037-31885-3-git-send-email-matt.redfearn@imgtec.com>
+In-Reply-To: <1490287037-31885-1-git-send-email-matt.redfearn@imgtec.com>
+References: <1490287037-31885-1-git-send-email-matt.redfearn@imgtec.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Wendy Liang  <wendy.liang@xilinx.com>, Wendy Liang <jliang@xilinx.com>, Michal Simek" <michal.simek@xilinx.com>
+To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Lisa Parratt <Lisa.Parratt@imgtec.com>, Matt Redfearn <matt.redfearn@imgtec.com>, Marcin Nowakowski <marcin.nowakowski@imgtec.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, James Hogan <james.hogan@imgtec.com>, Ingo Molnar <mingo@kernel.org>, Qais Yousef <qsyousef@gmail.com>, Paul Burton <paul.burton@imgtec.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Wendy Liang <wendy.liang@xilinx.com>
+From: Lisa Parratt <Lisa.Parratt@imgtec.com>
 
-Add get_chksum() implementation to calculate the checksum of
-the loadable sections of the firmware.
+VP(E) stealing provides a mechanism for removing an offline Virtual
+Processor from the Linux kernel such that it is available to run bare
+metal code.
+Once the CPU has been offlined from Linux, the CPU can be given a task
+to run via mips_cps_steal_cpu_and_execute(). The CPU is removed from the
+cpu_present mask and is set up to execute from address entry_fn. Stack
+space is assigned via the tsk task_struct so that C initialisation code
+may be used.
+To return the CPU back to Linux control, mips_cps_halt_and_return_cpu
+will arrange to halt the CPU and return it to the cpu_present mask. It
+is then available to be brought online again via CPU hotplug.
 
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+This mechanism is used by the MIPS remote processor driver to allow
+CPUs within the system to execute bare metal code, not under control of
+the kernel.
+
+Signed-off-by: Lisa Parratt <Lisa.Parratt@imgtec.com>
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
 ---
- drivers/remoteproc/Kconfig                 |   1 +
- drivers/remoteproc/remoteproc_elf_loader.c | 109 +++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_internal.h   |   3 +
- 3 files changed, 113 insertions(+)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 65f86bc..d832f3b 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -7,6 +7,7 @@ config REMOTEPROC
- 	select FW_LOADER
- 	select VIRTIO
- 	select VIRTUALIZATION
-+	select CRYPTO
- 	help
- 	  Support for remote processors (such as DSP coprocessors). These
- 	  are mainly used on embedded systems.
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index c523983..f508083 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -29,6 +29,7 @@
- #include <linux/firmware.h>
- #include <linux/remoteproc.h>
- #include <linux/elf.h>
-+#include <crypto/hash.h>
+Changes in v6: None
+Changes in v5: None
+Changes in v4: None
+Changes in v3: None
+Changes in v2: None
+
+ arch/mips/Kconfig               |   7 ++
+ arch/mips/include/asm/smp-cps.h |   8 ++
+ arch/mips/kernel/smp-cps.c      | 162 ++++++++++++++++++++++++++++++++++++++--
+ arch/mips/kernel/smp.c          |  12 +++
+ 4 files changed, 182 insertions(+), 7 deletions(-)
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index a008a9f03072..6cdc23da8761 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -2381,6 +2381,13 @@ config MIPS_CPS
+ 	  no external assistance. It is safe to enable this when hardware
+ 	  support is unavailable.
  
- #include "remoteproc_internal.h"
++config MIPS_CPU_STEAL
++	bool "VPE stealing"
++	depends on HOTPLUG_CPU && MIPS_CPS
++	help
++	  Select this is you wish to be able to run bare metal code on offline
++	  VPEs.
++
+ config MIPS_CPS_PM
+ 	depends on MIPS_CPS
+ 	select MIPS_CPC
+diff --git a/arch/mips/include/asm/smp-cps.h b/arch/mips/include/asm/smp-cps.h
+index 2ae1f61a4a95..5cab043d7e6f 100644
+--- a/arch/mips/include/asm/smp-cps.h
++++ b/arch/mips/include/asm/smp-cps.h
+@@ -34,6 +34,14 @@ extern void mips_cps_boot_vpes(struct core_boot_config *cfg, unsigned vpe);
+ extern void mips_cps_pm_save(void);
+ extern void mips_cps_pm_restore(void);
  
-@@ -328,10 +329,118 @@ u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
- 	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
++#ifdef CONFIG_MIPS_CPU_STEAL
++
++extern int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
++					  struct task_struct *tsk);
++extern int mips_cps_halt_and_return_cpu(unsigned int cpu);
++
++#endif /* CONFIG_MIPS_CPU_STEAL */
++
+ #ifdef CONFIG_MIPS_CPS
+ 
+ extern bool mips_cps_smp_in_use(void);
+diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
+index 6d45f05538c8..3a1e08a0c327 100644
+--- a/arch/mips/kernel/smp-cps.c
++++ b/arch/mips/kernel/smp-cps.c
+@@ -8,6 +8,7 @@
+  * option) any later version.
+  */
+ 
++#include <linux/cpu.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/irqchip/mips-gic.h>
+@@ -40,6 +41,31 @@ static int __init setup_nothreads(char *s)
  }
+ early_param("nothreads", setup_nothreads);
  
-+/**
-+ * rproc_elf_get_chksum() - calcuate checksum of the loadable section
-+ * @rproc: the rproc handle
-+ * @fw: the ELF firmware image
-+ * @algo: name of the checksum algorithm
-+ * @chksum: checksum
-+ * @output_size: size of the checksum
-+ *
-+ * This function calculate the checksum of the loadable secitons
-+ * of the specified firmware.
-+ *
-+ * Returns 0 for success, negative value for failure.
-+ */
-+static int
-+rproc_elf_get_chksum(struct rproc *rproc, const struct firmware *fw,
-+		char *algo, u8 *chksum, int output_size)
++#ifdef CONFIG_MIPS_CPU_STEAL
++struct cpumask cpu_stolen_mask;
++
++static inline bool cpu_stolen(int cpu)
 +{
-+	int ret, i;
-+	struct device *dev = &rproc->dev;
-+	struct crypto_shash *tfm;
-+	struct shash_desc *desc;
-+	int algo_len = 0;
-+	struct elf32_hdr *ehdr;
-+	struct elf32_phdr *phdr;
-+	const u8 *elf_data = fw->data;
-+
-+	memset(chksum, 0, output_size);
-+	/* If no algo is specified, default it to "sha256" */
-+	if (!strlen(algo))
-+		sprintf(algo, "sha256");
-+	ret = crypto_has_alg(algo, 0, 0);
-+	if (!ret) {
-+		dev_err(dev, "failed to find crypto algo: %s.\n", algo);
-+		return -EINVAL;
-+	}
-+	dev_dbg(dev, "firmware checksum algo: %s.\n", algo);
-+	tfm =  crypto_alloc_shash(algo, 0, 0);
-+	if (!tfm) {
-+		dev_err(dev, "failed to allocate shash.\n");
-+		return -ENOMEM;
-+	}
-+	algo_len = crypto_shash_digestsize(tfm);
-+	if (algo_len > output_size) {
-+		dev_err(dev,
-+			"algo digest size %d is larger expected %d.\n",
-+			algo_len, output_size);
-+		return -EINVAL;
-+	}
-+	desc = kzalloc(sizeof(*desc) + algo_len, GFP_KERNEL);
-+	if (!desc)
-+		return -ENOMEM;
-+	desc->tfm = tfm;
-+	ret = crypto_shash_init(desc);
-+	if (ret) {
-+		dev_err(dev, "failed crypto %s initialization.\n", algo);
-+		return ret;
-+	}
-+
-+	ehdr = (struct elf32_hdr *)elf_data;
-+	phdr = (struct elf32_phdr *)(elf_data + ehdr->e_phoff);
-+
-+	/* go through the available ELF segments */
-+	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
-+		u32 memsz = phdr->p_memsz;
-+		u32 filesz = phdr->p_filesz;
-+		u32 offset = phdr->p_offset;
-+
-+		if (phdr->p_type != PT_LOAD)
-+			continue;
-+
-+		if (filesz > memsz) {
-+			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
-+				filesz, memsz);
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		if (offset + filesz > fw->size) {
-+			dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
-+				offset + filesz, fw->size);
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		/* put the segment where the remote processor expects it */
-+		if (phdr->p_filesz) {
-+			ret = crypto_shash_update(desc,
-+				elf_data + offset, filesz);
-+			if (ret) {
-+				dev_err(dev,
-+				"Failed to update fw crypto digest state at offset 0x%x, size 0x%x.\n",
-+				offset, filesz);
-+				return ret;
-+			}
-+		}
-+
-+	}
-+	ret = crypto_shash_final(desc, chksum);
-+	crypto_free_shash(tfm);
-+	kfree(desc);
-+	if (ret) {
-+		dev_err(dev, "failed to finalize checksum of firmware.\n");
-+		return ret;
-+	}
-+	return ret;
++	return cpumask_test_cpu(cpu, &cpu_stolen_mask);
 +}
 +
- const struct rproc_fw_ops rproc_elf_fw_ops = {
- 	.load = rproc_elf_load_segments,
- 	.find_rsc_table = rproc_elf_find_rsc_table,
- 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
- 	.sanity_check = rproc_elf_sanity_check,
-+	.get_chksum = rproc_elf_get_chksum,
- 	.get_boot_addr = rproc_elf_get_boot_addr
- };
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 1e9e5b3..f03e07a 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -33,6 +33,7 @@
-  *			expects to find it
-  * @sanity_check:	sanity check the fw image
-  * @get_boot_addr:	get boot address to entry point specified in firmware
-+ * @get_chksum:		get checksum of the loadable sections of the firmware
-  */
- struct rproc_fw_ops {
- 	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
-@@ -43,6 +44,8 @@ struct rproc_fw_ops {
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-+	int (*get_chksum)(struct rproc *rproc, const struct firmware *fw,
-+			char *algo, u8 *chksum, int output_size);
- };
++static inline void set_cpu_stolen(int cpu, bool state)
++{
++	if (state)
++		cpumask_set_cpu(cpu, &cpu_stolen_mask);
++	else
++		cpumask_clear_cpu(cpu, &cpu_stolen_mask);
++}
++#else
++static inline bool cpu_stolen(int cpu)
++{
++	return false;
++}
++
++static inline void set_cpu_stolen(int cpu, bool state) { }
++
++#endif /* CONFIG_MIPS_CPU_STEAL */
++
+ static unsigned core_vpe_count(unsigned core)
+ {
+ 	unsigned cfg;
+@@ -110,6 +136,10 @@ static void __init cps_smp_setup(void)
+ 		write_gcr_bev_base(core_entry);
+ 	}
  
- /* from remoteproc_core.c */
++#ifdef CONFIG_MIPS_CPU_STEAL
++	cpumask_clear(&cpu_stolen_mask);
++#endif /* CONFIG_MIPS_CPU_STEAL */
++
+ #ifdef CONFIG_MIPS_MT_FPAFF
+ 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
+ 	if (cpu_has_fpu)
+@@ -288,7 +318,7 @@ static void remote_vpe_boot(void *dummy)
+ 	mips_cps_boot_vpes(core_cfg, cpu_vpe_id(&current_cpu_data));
+ }
+ 
+-static void cps_boot_secondary(int cpu, struct task_struct *idle)
++static void cps_start_secondary(int cpu, void *entry_fn, struct task_struct *tsk)
+ {
+ 	unsigned core = cpu_data[cpu].core;
+ 	unsigned vpe_id = cpu_vpe_id(&cpu_data[cpu]);
+@@ -298,9 +328,9 @@ static void cps_boot_secondary(int cpu, struct task_struct *idle)
+ 	unsigned int remote;
+ 	int err;
+ 
+-	vpe_cfg->pc = (unsigned long)&smp_bootstrap;
+-	vpe_cfg->sp = __KSTK_TOS(idle);
+-	vpe_cfg->gp = (unsigned long)task_thread_info(idle);
++	vpe_cfg->pc = (unsigned long)entry_fn;
++	vpe_cfg->sp = __KSTK_TOS(tsk);
++	vpe_cfg->gp = (unsigned long)task_thread_info(tsk);
+ 
+ 	atomic_or(1 << cpu_vpe_id(&cpu_data[cpu]), &core_cfg->vpe_mask);
+ 
+@@ -348,6 +378,11 @@ static void cps_boot_secondary(int cpu, struct task_struct *idle)
+ 	preempt_enable();
+ }
+ 
++static void cps_boot_secondary(int cpu, struct task_struct *idle)
++{
++	cps_start_secondary(cpu, &smp_bootstrap, idle);
++}
++
+ static void cps_init_secondary(void)
+ {
+ 	/* Disable MT - we only want to run 1 TC per VPE */
+@@ -399,6 +434,28 @@ static int cps_cpu_disable(void)
+ 	if (!cps_pm_support_state(CPS_PM_POWER_GATED))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_MIPS_CPU_STEAL
++	/*
++	 * With the MT ASE only VPEs in the same core may read / write the
++	 * control registers of other VPEs. Therefore to maintain control of
++	 * any stolen VPEs at least one sibling VPE must be kept online.
++	 */
++	if (cpu_has_mipsmt) {
++		int stolen, siblings = 0;
++
++		for_each_cpu((stolen), &cpu_stolen_mask)
++			if (cpu_data[stolen].core == cpu_data[cpu].core)
++				siblings++;
++
++		if (siblings == 1)
++			/*
++			 * When a VPE has been stolen, keep at least one of it's
++			 * siblings around in order to control it.
++			 */
++			return -EBUSY;
++	}
++#endif /* CONFIG_MIPS_CPU_STEAL */
++
+ 	core_cfg = &mips_cps_core_bootcfg[current_cpu_data.core];
+ 	atomic_sub(1 << cpu_vpe_id(&current_cpu_data), &core_cfg->vpe_mask);
+ 	smp_mb__after_atomic();
+@@ -430,7 +487,7 @@ void play_dead(void)
+ 		core = cpu_data[cpu].core;
+ 
+ 		/* Look for another online VPE within the core */
+-		for_each_online_cpu(cpu_death_sibling) {
++		for_each_possible_cpu(cpu_death_sibling) {
+ 			if (cpu_data[cpu_death_sibling].core != core)
+ 				continue;
+ 
+@@ -438,8 +495,11 @@ void play_dead(void)
+ 			 * There is an online VPE within the core. Just halt
+ 			 * this TC and leave the core alone.
+ 			 */
+-			cpu_death = CPU_DEATH_HALT;
+-			break;
++			if (cpu_online(cpu_death_sibling) ||
++			    cpu_stolen(cpu_death_sibling))
++				cpu_death = CPU_DEATH_HALT;
++			if (cpu_online(cpu_death_sibling))
++				break;
+ 		}
+ 	}
+ 
+@@ -470,6 +530,94 @@ void play_dead(void)
+ 	panic("Failed to offline CPU %u", cpu);
+ }
+ 
++#ifdef CONFIG_MIPS_CPU_STEAL
++
++/* Find an online sibling CPU (another VPE in the same core) */
++static inline int mips_cps_get_online_sibling(unsigned int cpu)
++{
++	int sibling;
++
++	for_each_online_cpu(sibling)
++		if (cpu_data[sibling].core == cpu_data[cpu].core)
++			return sibling;
++
++	return -1;
++}
++
++int mips_cps_steal_cpu_and_execute(unsigned int cpu, void *entry_fn,
++				   struct task_struct *tsk)
++{
++	int err = -EINVAL;
++
++	preempt_disable();
++
++	if (!cpu_present(cpu) || cpu_online(cpu) || cpu_stolen(cpu))
++		goto out;
++
++	if (cpu_has_mipsmt && (mips_cps_get_online_sibling(cpu) < 0))
++		pr_warn("CPU%d has no online siblings to control it\n", cpu);
++	else {
++		set_cpu_present(cpu, false);
++		set_cpu_stolen(cpu, true);
++
++		cps_start_secondary(cpu, entry_fn, tsk);
++		err = 0;
++	}
++out:
++	preempt_enable();
++	return err;
++}
++
++static void mips_cps_halt_sibling(void *ptr_cpu)
++{
++	unsigned int cpu = (unsigned long)ptr_cpu;
++	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
++	unsigned long flags;
++	int vpflags;
++
++	local_irq_save(flags);
++	vpflags = dvpe();
++	settc(vpe_id);
++	write_tc_c0_tchalt(TCHALT_H);
++	evpe(vpflags);
++	local_irq_restore(flags);
++}
++
++int mips_cps_halt_and_return_cpu(unsigned int cpu)
++{
++	unsigned int core = cpu_data[cpu].core;
++	unsigned int vpe_id = cpu_vpe_id(&cpu_data[cpu]);
++
++	if (!cpu_stolen(cpu))
++		return -EINVAL;
++
++	if (cpu_has_mipsmt && (core == cpu_data[smp_processor_id()].core))
++		mips_cps_halt_sibling((void *)(unsigned long)cpu);
++	else if (cpu_has_mipsmt) {
++		int sibling = mips_cps_get_online_sibling(cpu);
++
++		if (sibling < 0) {
++			pr_warn("CPU%d has no online siblings\n", cpu);
++			return -EINVAL;
++		}
++
++		if (smp_call_function_single(sibling, mips_cps_halt_sibling,
++						(void *)(unsigned long)cpu, 1))
++			panic("Failed to call sibling CPU\n");
++
++	} else if (cpu_has_vp) {
++		mips_cm_lock_other(core, vpe_id);
++		write_cpc_co_vp_stop(1 << vpe_id);
++		mips_cm_unlock_other();
++	}
++
++	set_cpu_stolen(cpu, false);
++	set_cpu_present(cpu, true);
++	return 0;
++}
++
++#endif /* CONFIG_MIPS_CPU_STEAL */
++
+ static void wait_for_sibling_halt(void *ptr_cpu)
+ {
+ 	unsigned cpu = (unsigned long)ptr_cpu;
+diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+index 6e71130549ea..ae1ffc3e33eb 100644
+--- a/arch/mips/kernel/smp.c
++++ b/arch/mips/kernel/smp.c
+@@ -235,6 +235,18 @@ static void smp_ipi_init_one(unsigned int virq,
+ 				    struct irqaction *action)
+ {
+ 	int ret;
++#ifdef CONFIG_MIPS_CPU_STEAL
++	struct irq_data *data;
++	/*
++	 * A bit of a hack to ensure that the ipi_offset is 0.
++	 * This is to deal with removing / reallocating IPIs
++	 * to subsets of the possible CPUs, where the IPI IRQ domain
++	 * will set ipi_offset to the first cpu in the cpumask when the
++	 * IPI is reallocated.
++	 */
++	data = irq_get_irq_data(virq);
++	data->common->ipi_offset = 0;
++#endif /* CONFIG_MIPS_CPU_STEAL */
+ 
+ 	irq_set_handler(virq, handle_percpu_irq);
+ 	ret = setup_irq(virq, action);
 -- 
-1.9.1
+2.7.4
