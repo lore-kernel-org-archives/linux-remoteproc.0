@@ -1,9 +1,9 @@
 Return-Path: <jliang@xilinx.com>
 Return-Path: wendy.liang@xilinx.com
 From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 14/19] remoteproc virtio: handle rproc vdev notification
-Date: Fri, 24 Mar 2017 12:22:30 -0700
-Message-ID: <1490383355-23176-15-git-send-email-jliang@xilinx.com>
+Subject: [RFC LINUX PATCH 13/19] remoteproc: add config_wait_complete to rproc_vdev
+Date: Fri, 24 Mar 2017 12:22:29 -0700
+Message-ID: <1490383355-23176-14-git-send-email-jliang@xilinx.com>
 In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
@@ -14,39 +14,50 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Wendy Liang <wendy.liang@xilinx.com>
 
-If there is a vdev notification from the remote, rproc virtio
-will mark the config_wait_complete to wake up any client who
-is waiting for the remote to respond.
+Add config_wait_complete to rproc_vdev.
+This attribute is used for vdev config operation to
+wait for the remote to respond. When there is a
+notification comes from the remote, it can wake up
+the waiting client by marking this attribute.
 
 Signed-off-by: Wendy Liang <jliang@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/remoteproc/remoteproc_virtio.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_virtio.c | 1 +
+ include/linux/remoteproc.h             | 2 ++
+ 2 files changed, 3 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index c6f7ca4..577344e 100644
+index e45e17b..c6f7ca4 100644
 --- a/drivers/remoteproc/remoteproc_virtio.c
 +++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -58,6 +58,7 @@ irqreturn_t rproc_virtio_interrupt(struct rproc *rproc, int notifyid)
- {
- 	struct rproc_id_rsc *rsc;
- 	struct rproc_vring *rvring;
-+	struct rproc_vdev *rvdev;
+@@ -340,6 +340,7 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+ 	vdev->dev.parent = dev;
+ 	vdev->dev.release = rproc_virtio_dev_release;
  
- 	dev_dbg(&rproc->dev, "virtio index %d is interrupted\n", notifyid);
++	init_completion(&rvdev->config_wait_complete);
+ 	/*
+ 	 * We're indirectly making a non-temporary copy of the rproc pointer
+ 	 * here, because drivers probed with this vdev will indirectly
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 303210b..4ce7579 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -534,6 +534,7 @@ struct rproc_vring {
+  * @vdev: the virio device
+  * @vring: the vrings for this vdev
+  * @rsc_offset: offset of the vdev's resource entry
++ * @config_wait_complete: mark asynchronous vdev config wait complete
+  */
+ struct rproc_vdev {
+ 	struct kref refcount;
+@@ -546,6 +547,7 @@ struct rproc_vdev {
+ 	struct virtio_device vdev;
+ 	struct rproc_vring vring[RVDEV_NUM_VRINGS];
+ 	u32 rsc_offset;
++	struct completion config_wait_complete;
+ };
  
-@@ -71,8 +72,9 @@ irqreturn_t rproc_virtio_interrupt(struct rproc *rproc, int notifyid)
- 			return IRQ_NONE;
- 		return vring_interrupt(0, rvring->vq);
- 	} else if (rsc->rsc_type == RPROC_IDR_VDEV) {
--		dev_info(&rproc->dev, "vdev intr is not supported yet.\n");
--		return IRQ_NONE;
-+		rvdev = rsc->rsc_ptr;
-+		complete_all(&rvdev->config_wait_complete);
-+		return IRQ_HANDLED;
- 	}
- 
- 	dev_err(&rproc->dev, "Unknown rsc type: 0x%x\n", rsc->rsc_type);
+ struct rproc *rproc_get_by_phandle(phandle phandle);
 -- 
 1.9.1
