@@ -1,9 +1,9 @@
 Return-Path: <jliang@xilinx.com>
 Return-Path: wendy.liang@xilinx.com
 From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 04/19] remoteproc: sysfs: Add running independent state
-Date: Fri, 24 Mar 2017 12:22:20 -0700
-Message-ID: <1490383355-23176-5-git-send-email-jliang@xilinx.com>
+Subject: [RFC LINUX PATCH 08/19] remoteproc: add a function to set fw checksum rsc
+Date: Fri, 24 Mar 2017 12:22:24 -0700
+Message-ID: <1490383355-23176-9-git-send-email-jliang@xilinx.com>
 In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
@@ -14,45 +14,80 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Wendy Liang <wendy.liang@xilinx.com>
 
-Show running independent state to indicate the remote
-runs and it is not started by the remoteproc driver.
+Add a function to set the firmware checksum resource.
+The function will call the firmware loader to calculate
+the firmware checksum and set it to the resource table.
 
 Signed-off-by: Wendy Liang <jliang@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/remoteproc/remoteproc_sysfs.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 54 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 47be411..616057d 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -74,6 +74,7 @@ static ssize_t firmware_store(struct device *dev,
- 	[RPROC_RUNNING]		= "running",
- 	[RPROC_CRASHED]		= "crashed",
- 	[RPROC_DELETED]		= "deleted",
-+	[RPROC_RUNNING_INDEPENDENT] = "running_independent",
- 	[RPROC_LAST]		= "invalid",
- };
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f13f56d..447c28b 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -897,6 +897,60 @@ static bool rproc_is_running(struct rproc *rproc)
+ 	return (rproc->state == RPROC_RUNNING) ? true : false;
+ }
  
-@@ -97,14 +98,16 @@ static ssize_t state_store(struct device *dev,
- 	int ret = 0;
- 
- 	if (sysfs_streq(buf, "start")) {
--		if (rproc->state == RPROC_RUNNING)
-+		if (rproc->state == RPROC_RUNNING ||
-+			rproc->state == RPROC_RUNNING_INDEPENDENT)
- 			return -EBUSY;
- 
- 		ret = rproc_boot(rproc);
- 		if (ret)
- 			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
- 	} else if (sysfs_streq(buf, "stop")) {
--		if (rproc->state != RPROC_RUNNING)
-+		if (rproc->state != RPROC_RUNNING &&
-+			rproc->state != RPROC_RUNNING_INDEPENDENT)
- 			return -EINVAL;
- 
- 		rproc_shutdown(rproc);
++/**
++ * rproc_handle_fw_chksum() - handle firmware checksum resource
++ * @rproc: rproc handle
++ * @fw: firmware
++ * @offset: returns fw_chksum resource offset.
++ *
++ * This function will handle request to set the firmware checksum.
++ */
++static
++struct fw_rsc_fw_chksum *rproc_handle_fw_chksum(struct rproc *rproc,
++				const struct firmware *fw, int *offset)
++{
++	struct fw_rsc_fw_chksum *rsc = NULL;
++	int i, tablesz;
++	struct device *dev = &rproc->dev;
++	struct resource_table *table;
++
++	/* look for the resource table */
++	table = rproc_find_rsc_table(rproc, fw, &tablesz);
++	if (!table) {
++		dev_err(dev, "Failed to find resource table\n");
++		return NULL;
++	}
++
++	for (i = 0; i < rproc->table_ptr->num; i++) {
++		int ret = 0;
++		int tmpoffset = rproc->table_ptr->offset[i];
++		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + tmpoffset;
++		int avail = tablesz - tmpoffset - sizeof(*hdr);
++
++		if (hdr->type != RSC_FW_CHKSUM)
++			continue;
++
++		rsc = (struct fw_rsc_fw_chksum *)((void *)hdr + sizeof(*hdr));
++		if (sizeof(*rsc) > avail) {
++			dev_err(dev, "firmware checksum rsc is truncated\n");
++			return NULL;
++		}
++		if (rproc->fw_ops->get_chksum) {
++			ret = rproc->fw_ops->get_chksum(rproc, fw,
++				rsc->algo, rsc->chksum, sizeof(rsc->chksum));
++			if (ret) {
++				dev_err(dev,
++					"failed to get firmware chksum.\n");
++				return NULL;
++			}
++		}
++		*offset = tmpoffset + sizeof(*hdr);
++		return rsc;
++	}
++
++	return NULL;
++}
++
+ /*
+  * check if the remote needs start.
+  */
 -- 
 1.9.1
