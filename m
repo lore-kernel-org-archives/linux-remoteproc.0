@@ -1,75 +1,52 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 0/5] virtio_rpmsg: make rpmsg channel configurable
-Date: Tue, 28 Mar 2017 13:49:42 +0200
-Message-ID: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <jliang@xilinx.com>
+Return-Path: wendy.liang@xilinx.com
+From: Wendy Liang <wendy.liang@xilinx.com>
+Subject: [RFC LINUX PATCH 14/19] remoteproc virtio: handle rproc vdev notification
+Date: Fri, 24 Mar 2017 12:22:30 -0700
+Message-ID: <1490383355-23176-15-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
+References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Wendy Liang  <wendy.liang@xilinx.com>, Wendy Liang <jliang@xilinx.com>, Michal Simek" <michal.simek@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This goal of this series is to offer more flexibility for virtio_rpmsg
-communication link configuration.
+From: Wendy Liang <wendy.liang@xilinx.com>
 
-It should be possible to tune rpmsg buffer size per Rpmsg link, to provide
-selected configuration to coprocessor, to take into account coprocessor
-specificities like memory region.
+If there is a vdev notification from the remote, rproc virtio
+will mark the config_wait_complete to wake up any client who
+is waiting for the remote to respond.
 
-This series introduces an optional virtio rpmsg configuration structure, which
-will be managed as an extension of struct fw_rsc_vdev present in coprocessor firmware
-resource table.
-Structure access is possible thanks to virtio get and set API.
-This structure contains the different information to tune the link between the
-host and the coprocessor.
-
-Patch "rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
-kernel address" has the same goal as Wendy's RFC [1]. I don't have tested
-Wendy's series with level driver buffer allocation.
-
-Last patch "rpmsg: virtio_rpmsg: set buffer configuration to virtio" has a
-dependency with remoteproc subdevice boot sequence as coprocessor resource
-table must be updated before coprocessor start. See [2]
-
-[1] http://www.spinics.net/lists/linux-remoteproc/msg00852.html
-[2] http://www.spinics.net/lists/linux-remoteproc/msg00826.html
-
+Signed-off-by: Wendy Liang <jliang@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
-Changes from v1:
-- No more dependency with [2]. Coprocessor firmware should wait for first kick
-indicating virtio rpmsg link ready before accessing resource table information.
-- Correct issues reported by Suman
-- Fix warnings found by checkpatch with --strict option
+ drivers/remoteproc/remoteproc_virtio.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Changes from v2:
-- Fix warnings reported by kbuild test robot
-
-Changes from v3:
-After discussions with Bjorn, virtual address sharing between low level driver
-and virtio_rpmsg could be replaced by associated a dedicated memory region to
-vdev and changing virtio_rpmsg allocation from dev->parent->parent to
-dev->parent, i.e. vdev and not rproc device.
-The advantage of the solution is that there will be only few changes in
-virtio_rpmsg layer and it will be common with virtio_console driver.
-These will be part of a dedicated patch series.
-So v4 drops previous patch 5 "rpmsg: virtio_rpmsg: don't allocate buffer if
-provided by low level driver" dealing with buffer previously allocated and va
-fields from struct virtio_rpmsg_cfg.
-In addition, patch series has been rebased on kernel 4.11-rc4.
-
-
-Loic Pallardy (5):
-  rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
-  rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
-    kernel address
-  include: virtio_rpmsg: add virtio rpmsg configuration structure
-  rpmsg: virtio_rpmsg: get buffer configuration from virtio
-  rpmsg: virtio_rpmsg: set buffer configuration to virtio
-
- drivers/rpmsg/virtio_rpmsg_bus.c   | 123 +++++++++++++++++++++++++++++++++----
- include/linux/rpmsg/virtio_rpmsg.h |  30 +++++++++
- 2 files changed, 141 insertions(+), 12 deletions(-)
- create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
-
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index c6f7ca4..577344e 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -58,6 +58,7 @@ irqreturn_t rproc_virtio_interrupt(struct rproc *rproc, int notifyid)
+ {
+ 	struct rproc_id_rsc *rsc;
+ 	struct rproc_vring *rvring;
++	struct rproc_vdev *rvdev;
+ 
+ 	dev_dbg(&rproc->dev, "virtio index %d is interrupted\n", notifyid);
+ 
+@@ -71,8 +72,9 @@ irqreturn_t rproc_virtio_interrupt(struct rproc *rproc, int notifyid)
+ 			return IRQ_NONE;
+ 		return vring_interrupt(0, rvring->vq);
+ 	} else if (rsc->rsc_type == RPROC_IDR_VDEV) {
+-		dev_info(&rproc->dev, "vdev intr is not supported yet.\n");
+-		return IRQ_NONE;
++		rvdev = rsc->rsc_ptr;
++		complete_all(&rvdev->config_wait_complete);
++		return IRQ_HANDLED;
+ 	}
+ 
+ 	dev_err(&rproc->dev, "Unknown rsc type: 0x%x\n", rsc->rsc_type);
 -- 
 1.9.1
