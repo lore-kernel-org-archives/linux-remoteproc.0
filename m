@@ -1,99 +1,102 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 5/5] rpmsg: virtio_rpmsg: set buffer configuration to virtio
-Date: Tue, 28 Mar 2017 13:49:47 +0200
-Message-ID: <1490701787-15205-6-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
-References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <jliang@xilinx.com>
+Return-Path: wendy.liang@xilinx.com
+From: Wendy Liang <wendy.liang@xilinx.com>
+Subject: [RFC LINUX PATCH 11/19] remoteproc: Add rproc_idr_alloc/remove wrapper
+Date: Fri, 24 Mar 2017 12:22:27 -0700
+Message-ID: <1490383355-23176-12-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
+References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Wendy Liang  <wendy.liang@xilinx.com>, Wendy Liang <jliang@xilinx.com>, Michal Simek" <michal.simek@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rpmsg is allocating buffer one dedicated communication link
-with some specificity like number of buffers, size of one buffer...
-These characteristics should be shared with remote coprocessor to
-guarantee communication link coherency.
+From: Wendy Liang <wendy.liang@xilinx.com>
 
-Proposal is to update rpmsg configuration fields in coprocessor firmware
-resource table if it exists.
+Add rproc_idr_alloc()/rproc_idr_remove() wrapper for
+id allocation/removal.
 
-This is possible thanks to virtio set interface which allows to update
-cfg fields of struct fw_rsc_vdev.
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Wendy Liang <jliang@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
-Changes since V1:
-- Set virtio_cfg.da to -1 (any address) by default
-- Add comment about IOMMU support
+ drivers/remoteproc/remoteproc_core.c     | 46 ++++++++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h |  6 +++++
+ 2 files changed, 52 insertions(+)
 
-No change since v2.
-
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 69285c1..3e41322 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -909,6 +909,27 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
- 	return ret;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e4fb289..d711345 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -140,6 +140,52 @@ static void rproc_disable_iommu(struct rproc *rproc)
  }
  
-+static void virtio_rpmsg_set_config(struct virtio_device *vdev)
+ /**
++ * rproc_idr_alloc() - allocate id with idr_alloc()
++ * @rproc: handle of a remote processor
++ * @ptr: pointer to the resource to allocate id for
++ * @rsc_type: type of the resource for which to allocate id
++ * @start: start id
++ * @end: end id
++ *
++ * This function returns an ID from idr_alloc() or negative number
++ * if it fails.
++ */
++int rproc_idr_alloc(struct rproc *rproc, void *ptr, unsigned int rsc_type,
++		    int start, int end)
 +{
-+	struct virtio_rpmsg_cfg virtio_cfg;
-+	struct virtproc_info *vrp = vdev->priv;
++	struct rproc_id_rsc *rsc;
++	int ret;
 +
-+	/* fill virtio_cfg struct */
-+	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
-+	virtio_cfg.id = VIRTIO_ID_RPMSG;
-+	/*
-+	 * IOMMU not managed at the time being, set device address to (-1)
-+	 * meaning any address value.
-+	 */
-+	virtio_cfg.da = -1;
-+	virtio_cfg.pa =	vrp->bufs_dma;
-+	virtio_cfg.len = vrp->num_bufs * vrp->buf_size;
-+	virtio_cfg.buf_size = vrp->buf_size;
++	rsc = kzalloc(sizeof(*rsc), GFP_KERNEL);
++	if (!rsc)
++		return -ENOMEM;
 +
-+	vdev->config->set(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
-+			  sizeof(virtio_cfg));
++	rsc->rsc_ptr = ptr;
++	rsc->rsc_type = rsc_type;
++
++	ret = idr_alloc(&rproc->notifyids, rsc, start, end, GFP_KERNEL);
++	if (ret < 0)
++		kfree(rsc);
++	return ret;
 +}
 +
- static int rpmsg_probe(struct virtio_device *vdev)
- {
- 	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
-@@ -919,6 +940,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	int err = 0, i;
- 	size_t total_buf_space;
- 	bool notify;
-+	bool has_cfg = false;
- 
- 	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
- 	if (!vrp)
-@@ -958,6 +980,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	if (err < 0)
- 		goto free_vrp;
- 
-+	if (err)
-+		has_cfg = true;
++/**
++ * rproc_idr_remove() - remove id with idr_remove()
++ * @rproc: handle of a remote processor
++ * @id: id to remove
++ */
++void rproc_idr_remove(struct rproc *rproc, int id)
++{
++	struct rproc_id_rsc *rsc;
 +
- 	total_buf_space = vrp->num_bufs * vrp->buf_size;
- 
- 	/* allocate coherent memory for the buffers */
-@@ -978,6 +1003,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	/* and half is dedicated for TX */
- 	vrp->sbufs = bufs_va + total_buf_space / 2;
- 
-+	/* Notify configuration to coprocessor */
-+	if (has_cfg)
-+		virtio_rpmsg_set_config(vdev);
++	rsc = idr_find(&rproc->notifyids, id);
++	if (!rsc)
++		return;
++	idr_remove(&rproc->notifyids, id);
++	kfree(rsc);
++}
 +
- 	/* set up the receive buffers */
- 	for (i = 0; i < vrp->num_bufs / 2; i++) {
- 		struct scatterlist sg;
++/**
+  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
+  * @rproc: handle of a remote processor
+  * @da: remoteproc device address to translate
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 7e25621..865bd1c 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -94,6 +94,12 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+ int rproc_init_sysfs(void);
+ void rproc_exit_sysfs(void);
+ 
++/* rproc idr_alloc wrapper */
++int rproc_idr_alloc(struct rproc *rproc, void *ptr, unsigned int rsc_type,
++		    int start, int end);
++/* rproc idr_remove wrapper */
++void rproc_idr_remove(struct rproc *rproc, int id);
++
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
 -- 
 1.9.1
