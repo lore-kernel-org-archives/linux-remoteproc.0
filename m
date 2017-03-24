@@ -1,9 +1,9 @@
 Return-Path: <jliang@xilinx.com>
 Return-Path: wendy.liang@xilinx.com
 From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 17/19] remoteproc: virtio: kick in reset virtio
-Date: Fri, 24 Mar 2017 12:22:33 -0700
-Message-ID: <1490383355-23176-18-git-send-email-jliang@xilinx.com>
+Subject: [RFC LINUX PATCH 09/19] remoteproc: check firmware checksum in rproc_is_running_fw()
+Date: Fri, 24 Mar 2017 12:22:25 -0700
+Message-ID: <1490383355-23176-10-git-send-email-jliang@xilinx.com>
 In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
@@ -14,42 +14,60 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Wendy Liang <wendy.liang@xilinx.com>
 
-Kick the remote in virtio reset.
-In order to be backward compatible, only set the vdev
-status to NEEDS_RESET and kick the remote if the remote is
-RUNNING_INDEPENDENT, that is only if the remote is already
-running.
+In rproc_is_running_fw() function, set the firmware checksum in resource
+in the resource table and compared it with the one in the loaded resource
+table.
+
+If the firmware checksum in the loaded resource table matches the one
+calculated with the firmware, the remote is running with the expected
+firmware.
 
 Signed-off-by: Wendy Liang <jliang@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/remoteproc/remoteproc_virtio.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index d43e15b..bf3be6f1 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -231,8 +231,19 @@ static void rproc_virtio_reset(struct virtio_device *vdev)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 447c28b..e4fb289 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -956,10 +956,33 @@ struct fw_rsc_fw_chksum *rproc_handle_fw_chksum(struct rproc *rproc,
+  */
+ static bool rproc_is_running_fw(struct rproc *rproc, const struct firmware *fw)
+ {
+-	(void)rproc;
+-	(void) fw;
++	struct resource_table *loaded_table;
++	struct fw_rsc_fw_chksum *rsc, *loaded_rsc;
++	int rsc_fw_chksum_offset;
  
- 	rsc = (void *)rvdev->rproc->table_ptr + rvdev->rsc_offset;
- 
--	rsc->status = 0;
- 	dev_dbg(&vdev->dev, "reset !\n");
-+	if (rvdev->rproc->state == RPROC_RUNNING_INDEPENDENT) {
-+		rsc->status = VIRTIO_CONFIG_S_NEEDS_RESET;
-+		virtio_mb(false);
-+		rproc_virtio_notify(rvdev);
-+		while (rsc->status) {
-+			if (!wait_for_completion_timeout(
-+				&rvdev->config_wait_complete, HZ))
-+				break;
-+		}
-+	} else {
-+		rsc->status = 0;
-+	}
+-	return false;
++	rsc = rproc_handle_fw_chksum(rproc, fw, &rsc_fw_chksum_offset);
++	if (!rsc)
++		return false;
++
++	if (!rproc_is_running(rproc))
++		return false;
++
++	/* look for the loaded resource table */
++	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
++	if (!loaded_table)
++		return false;
++
++	loaded_rsc = (void *)loaded_table + rsc_fw_chksum_offset;
++	if (!loaded_rsc->algo || !loaded_rsc->chksum)
++		return false;
++
++	if (strncmp(rsc->algo, loaded_rsc->algo, strlen(rsc->algo)))
++		return false;
++
++	if (memcmp(rsc->chksum, loaded_rsc->chksum, sizeof(rsc->chksum)))
++		return false;
++
++	return true;
  }
  
- /* provide the vdev features as retrieved from the firmware */
+ /*
 -- 
 1.9.1
