@@ -1,11 +1,11 @@
 Return-Path: <jliang@xilinx.com>
 Return-Path: wendy.liang@xilinx.com
 From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 3/3] remoteproc: Release DMA declare mem when cleanup rsc
-Date: Fri, 24 Mar 2017 12:22:16 -0700
-Message-ID: <1490383336-23117-4-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1490383336-23117-1-git-send-email-jliang@xilinx.com>
-References: <1490383336-23117-1-git-send-email-jliang@xilinx.com>
+Subject: [RFC LINUX PATCH 03/19] remoteproc: Add a running independent state
+Date: Fri, 24 Mar 2017 12:22:19 -0700
+Message-ID: <1490383355-23176-4-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
+References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org
@@ -14,28 +14,29 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Wendy Liang <wendy.liang@xilinx.com>
 
-Release the declared DMA memory in the end of resource
-cleanup.
+Add a new RPROC_RUNNING_INDEPENDENT state to indicate
+the remote already runs and it is started by the remoteproc
+driver.
 
 Signed-off-by: Wendy Liang <jliang@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/remoteproc.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0ffd9dc..9d32737 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -882,6 +882,9 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 	/* clean up remote vdev entries */
- 	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
- 		kref_put(&rvdev->refcount, rproc_vdev_release);
-+
-+	/* Release declared DMA memory */
-+	dma_release_declared_memory(dev->parent);
- }
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 5eec892..b740b93 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -384,7 +384,8 @@ enum rproc_state {
+ 	RPROC_RUNNING	= 2,
+ 	RPROC_CRASHED	= 3,
+ 	RPROC_DELETED	= 4,
+-	RPROC_LAST	= 5,
++	RPROC_RUNNING_INDEPENDENT = 5,
++	RPROC_LAST	= 6,
+ };
  
- /*
+ /**
 -- 
 1.9.1
