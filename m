@@ -1,367 +1,193 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v6 1/4] irqchip: mips-gic: Add context saving for MIPS_REMOTEPROC
-Date: Thu, 23 Mar 2017 16:37:14 +0000
-Message-ID: <1490287037-31885-2-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1490287037-31885-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1490287037-31885-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <jliang@xilinx.com>
+Return-Path: wendy.liang@xilinx.com
+From: Wendy Liang <wendy.liang@xilinx.com>
+Subject: [RFC LINUX PATCH 06/19] remoteproc: elf loader: Add get checksum firmware implementation
+Date: Fri, 24 Mar 2017 12:22:22 -0700
+Message-ID: <1490383355-23176-7-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
+References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>, Marc Zyngier <marc.zyngier@arm.com>, Jason Cooper <jason@lakedaemon.net>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Wendy Liang  <wendy.liang@xilinx.com>, Wendy Liang <jliang@xilinx.com>, Michal Simek" <michal.simek@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The MIPS remote processor driver allows non-Linux firmware to take
-control of and execute on one of the systems VPEs. If that VPE is
-brought back under Linux, it is necessary to ensure that all GIC
-interrupts are routed and masked as Linux expects them, as the firmware
-can have done anything it likes with the GIC configuration (hopefully
-just for that VPEs local interrupt sources, but allow for shared
-external interrupts as well).
+From: Wendy Liang <wendy.liang@xilinx.com>
 
-The configuration of shared and local CPU interrupts is maintained and
-updated every time a change is made. When a CPU is brought online, the
-saved configuration is restored.
+Add get_chksum() implementation to calculate the checksum of
+the loadable sections of the firmware.
 
-These functions will also be useful for restoring GIC context after a
-suspend to RAM.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Wendy Liang <jliang@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
+ drivers/remoteproc/Kconfig                 |   1 +
+ drivers/remoteproc/remoteproc_elf_loader.c | 109 +++++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h   |   3 +
+ 3 files changed, 113 insertions(+)
 
-Changes in v6:
-Rebase on Linux 4.11-rc3
-
-Changes in v5: None
-Changes in v4:
-Fix inconsistency of Linux CPU number and VP ID
-
-Changes in v3:
-Update GIC context saving to use CPU hotplug state machine
-
-Changes in v2:
-Add dependence on additional patches to mips-gic in commit log
-Incorporate changes from Marc Zynger's review:
-- Remove CONTEXT_SAVING define.
-- Make saved local state a per-cpu variable
-- Make gic_save_* static functions when enabled, and do { } while(0)
-  otherwise
-
- drivers/irqchip/irq-mips-gic.c | 207 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 200 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
-index 11d12bccc4e7..15c0feb8a52f 100644
---- a/drivers/irqchip/irq-mips-gic.c
-+++ b/drivers/irqchip/irq-mips-gic.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/bitmap.h>
- #include <linux/clocksource.h>
-+#include <linux/cpu.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-@@ -56,6 +57,79 @@ static unsigned int timer_cpu_pin;
- static struct irq_chip gic_level_irq_controller, gic_edge_irq_controller;
- DECLARE_BITMAP(ipi_resrv, GIC_MAX_INTRS);
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 65f86bc..d832f3b 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -7,6 +7,7 @@ config REMOTEPROC
+ 	select FW_LOADER
+ 	select VIRTIO
+ 	select VIRTUALIZATION
++	select CRYPTO
+ 	help
+ 	  Support for remote processors (such as DSP coprocessors). These
+ 	  are mainly used on embedded systems.
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index c523983..f508083 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -29,6 +29,7 @@
+ #include <linux/firmware.h>
+ #include <linux/remoteproc.h>
+ #include <linux/elf.h>
++#include <crypto/hash.h>
  
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+struct gic_local_state_t {
-+	u8 mask;
-+};
-+
-+DEFINE_PER_CPU(struct gic_local_state_t, gic_local_state);
-+
-+static void gic_save_local_rmask(int cpu, int mask)
-+{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
-+
-+	state->mask &= mask;
-+}
-+
-+static void gic_save_local_smask(int cpu, int mask)
-+{
-+	struct gic_local_state_t *state = per_cpu_ptr(&gic_local_state, cpu);
-+
-+	state->mask |= mask;
-+}
-+
-+static struct {
-+	unsigned vpe:		8;
-+	unsigned pin:		4;
-+
-+	unsigned polarity:	1;
-+	unsigned trigger:	1;
-+	unsigned dual_edge:	1;
-+	unsigned mask:		1;
-+} gic_shared_state[GIC_MAX_INTRS];
-+
-+static void gic_save_shared_vpe(int intr, int vpe)
-+{
-+	gic_shared_state[intr].vpe = vpe;
-+}
-+
-+static void gic_save_shared_pin(int intr, int pin)
-+{
-+	gic_shared_state[intr].pin = pin;
-+}
-+
-+static void gic_save_shared_polarity(int intr, int polarity)
-+{
-+	gic_shared_state[intr].polarity = polarity;
-+}
-+
-+static void gic_save_shared_trigger(int intr, int trigger)
-+{
-+	gic_shared_state[intr].trigger = trigger;
-+}
-+
-+static void gic_save_shared_dual_edge(int intr, int dual_edge)
-+{
-+	gic_shared_state[intr].dual_edge = dual_edge;
-+}
-+
-+static void gic_save_shared_mask(int intr, int mask)
-+{
-+	gic_shared_state[intr].mask = mask;
-+}
-+
-+#else
-+#define gic_save_local_rmask(cpu, i)	do { } while (0)
-+#define gic_save_local_smask(cpu, i)	do { } while (0)
-+
-+#define gic_save_shared_vpe(i, v)	do { } while (0)
-+#define gic_save_shared_pin(i, p)	do { } while (0)
-+#define gic_save_shared_polarity(i, p)	do { } while (0)
-+#define gic_save_shared_trigger(i, t)	do { } while (0)
-+#define gic_save_shared_dual_edge(i, d)	do { } while (0)
-+#define gic_save_shared_mask(i, m)	do { } while (0)
-+#endif /* CONFIG_MIPS_REMOTEPROC */
-+
- static void __gic_irq_dispatch(void);
+ #include "remoteproc_internal.h"
  
- static inline u32 gic_read32(unsigned int reg)
-@@ -105,52 +179,94 @@ static inline void gic_update_bits(unsigned int reg, unsigned long mask,
- 	gic_write(reg, regval);
+@@ -328,10 +329,118 @@ u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+ 	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
  }
  
--static inline void gic_reset_mask(unsigned int intr)
-+static inline void gic_write_reset_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_RMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_mask(unsigned int intr)
-+static inline void gic_reset_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 0);
-+	gic_write_reset_mask(intr);
-+}
-+
-+static inline void gic_write_set_mask(unsigned int intr)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_SMASK) + GIC_INTR_OFS(intr),
- 		  1ul << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+static inline void gic_set_mask(unsigned int intr)
-+{
-+	gic_save_shared_mask(intr, 1);
-+	gic_write_set_mask(intr);
-+}
-+
-+static inline void gic_write_polarity(unsigned int intr, unsigned int pol)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_POLARITY) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)pol << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+static inline void gic_set_polarity(unsigned int intr, unsigned int pol)
-+{
-+	gic_save_shared_polarity(intr, pol);
-+	gic_write_polarity(intr, pol);
-+}
-+
-+static inline void gic_write_trigger(unsigned int intr, unsigned int trig)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_TRIGGER) +
- 			GIC_INTR_OFS(intr), 1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)trig << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+static inline void gic_set_trigger(unsigned int intr, unsigned int trig)
-+{
-+	gic_save_shared_trigger(intr, trig);
-+	gic_write_trigger(intr, trig);
-+}
-+
-+static inline void gic_write_dual_edge(unsigned int intr, unsigned int dual)
- {
- 	gic_update_bits(GIC_REG(SHARED, GIC_SH_SET_DUAL) + GIC_INTR_OFS(intr),
- 			1ul << GIC_INTR_BIT(intr),
- 			(unsigned long)dual << GIC_INTR_BIT(intr));
- }
- 
--static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+static inline void gic_set_dual_edge(unsigned int intr, unsigned int dual)
-+{
-+	gic_save_shared_dual_edge(intr, dual);
-+	gic_write_dual_edge(intr, dual);
-+}
-+
-+static inline void gic_write_map_to_pin(unsigned int intr, unsigned int pin)
- {
- 	gic_write32(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_PIN_BASE) +
- 		    GIC_SH_MAP_TO_PIN(intr), GIC_MAP_TO_PIN_MSK | pin);
- }
- 
--static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+static inline void gic_map_to_pin(unsigned int intr, unsigned int pin)
-+{
-+	gic_save_shared_pin(intr, pin);
-+	gic_write_map_to_pin(intr, pin);
-+}
-+
-+static inline void gic_write_map_to_vpe(unsigned int intr, unsigned int vpe)
- {
- 	gic_write(GIC_REG(SHARED, GIC_SH_INTR_MAP_TO_VPE_BASE) +
- 		  GIC_SH_MAP_TO_VPE_REG_OFF(intr, vpe),
- 		  GIC_SH_MAP_TO_VPE_REG_BIT(vpe));
- }
- 
-+static inline void gic_map_to_vpe(unsigned int intr, unsigned int vpe)
-+{
-+	gic_save_shared_vpe(intr, vpe);
-+	gic_write_map_to_vpe(intr, vpe);
-+}
-+
- #ifdef CONFIG_CLKSRC_MIPS_GIC
- u64 gic_read_count(void)
- {
-@@ -527,6 +643,7 @@ static void gic_mask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_rmask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_RMASK), 1 << intr);
- }
- 
-@@ -534,6 +651,7 @@ static void gic_unmask_local_irq(struct irq_data *d)
- {
- 	int intr = GIC_HWIRQ_TO_LOCAL(d->hwirq);
- 
-+	gic_save_local_smask(smp_processor_id(), (1 << intr));
- 	gic_write32(GIC_REG(VPE_LOCAL, GIC_VPE_SMASK), 1 << intr);
- }
- 
-@@ -551,6 +669,7 @@ static void gic_mask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_rmask(i, 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), 1 << intr);
-@@ -566,6 +685,7 @@ static void gic_unmask_local_irq_all_vpes(struct irq_data *d)
- 
- 	spin_lock_irqsave(&gic_lock, flags);
- 	for (i = 0; i < gic_vpes; i++) {
-+		gic_save_local_smask(i, 1 << intr);
- 		gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
- 			  mips_cm_vp_id(i));
- 		gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), 1 << intr);
-@@ -996,6 +1116,74 @@ static void __init gic_map_interrupts(struct device_node *node)
- 	gic_map_single_int(node, GIC_LOCAL_INT_FDC);
- }
- 
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+static void gic_restore_shared(void)
-+{
-+	unsigned long flags;
-+	int i;
-+
-+	spin_lock_irqsave(&gic_lock, flags);
-+	for (i = 0; i < gic_shared_intrs; i++) {
-+		gic_write_polarity(i, gic_shared_state[i].polarity);
-+		gic_write_trigger(i, gic_shared_state[i].trigger);
-+		gic_write_dual_edge(i, gic_shared_state[i].dual_edge);
-+		gic_write_map_to_vpe(i, gic_shared_state[i].vpe);
-+		gic_write_map_to_pin(i, gic_shared_state[i].pin);
-+
-+		if (gic_shared_state[i].mask)
-+			gic_write_set_mask(i);
-+		else
-+			gic_write_reset_mask(i);
-+	}
-+	spin_unlock_irqrestore(&gic_lock, flags);
-+}
-+
-+static void gic_restore_local(unsigned int cpu)
-+{
-+	struct gic_local_state_t state;
-+	int hw, virq, intr, mask;
-+	unsigned long flags;
-+
-+	for (hw = 0; hw < GIC_NUM_LOCAL_INTRS; hw++) {
-+		intr = GIC_LOCAL_TO_HWIRQ(hw);
-+		virq = irq_linear_revmap(gic_irq_domain, intr);
-+		gic_local_irq_domain_map(gic_irq_domain, virq, hw);
-+	}
-+
-+	local_irq_save(flags);
-+	gic_write(GIC_REG(VPE_LOCAL, GIC_VPE_OTHER_ADDR),
-+		  mips_cm_vp_id(cpu));
-+
-+	/* Enable EIC mode if necessary */
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_CTL), cpu_has_veic);
-+
-+	/* Restore interrupt masks */
-+	state = per_cpu(gic_local_state, cpu);
-+	mask = state.mask;
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_RMASK), ~mask);
-+	gic_write32(GIC_REG(VPE_OTHER, GIC_VPE_SMASK), mask);
-+
-+	local_irq_restore(flags);
-+}
-+
-+/*
-+ * The MIPS remote processor driver allows non-Linux firmware to take control
-+ * of and execute on one of the systems VPEs. If that VPE is brought back under
-+ * Linux, it is necessary to ensure that all GIC interrupts are routed and
-+ * masked as Linux expects them, as the firmware can have done anything it
-+ * likes with the GIC configuration (hopefully just for that VPEs local
-+ * interrupt sources, but allow for shared external interrupts as well).
++/**
++ * rproc_elf_get_chksum() - calcuate checksum of the loadable section
++ * @rproc: the rproc handle
++ * @fw: the ELF firmware image
++ * @algo: name of the checksum algorithm
++ * @chksum: checksum
++ * @output_size: size of the checksum
++ *
++ * This function calculate the checksum of the loadable secitons
++ * of the specified firmware.
++ *
++ * Returns 0 for success, negative value for failure.
 + */
-+static int gic_cpu_online(unsigned int cpu)
++static int
++rproc_elf_get_chksum(struct rproc *rproc, const struct firmware *fw,
++		char *algo, u8 *chksum, int output_size)
 +{
-+	gic_restore_shared();
-+	gic_restore_local(cpu);
++	int ret, i;
++	struct device *dev = &rproc->dev;
++	struct crypto_shash *tfm;
++	struct shash_desc *desc;
++	int algo_len = 0;
++	struct elf32_hdr *ehdr;
++	struct elf32_phdr *phdr;
++	const u8 *elf_data = fw->data;
 +
-+	return 0;
++	memset(chksum, 0, output_size);
++	/* If no algo is specified, default it to "sha256" */
++	if (!strlen(algo))
++		sprintf(algo, "sha256");
++	ret = crypto_has_alg(algo, 0, 0);
++	if (!ret) {
++		dev_err(dev, "failed to find crypto algo: %s.\n", algo);
++		return -EINVAL;
++	}
++	dev_dbg(dev, "firmware checksum algo: %s.\n", algo);
++	tfm =  crypto_alloc_shash(algo, 0, 0);
++	if (!tfm) {
++		dev_err(dev, "failed to allocate shash.\n");
++		return -ENOMEM;
++	}
++	algo_len = crypto_shash_digestsize(tfm);
++	if (algo_len > output_size) {
++		dev_err(dev,
++			"algo digest size %d is larger expected %d.\n",
++			algo_len, output_size);
++		return -EINVAL;
++	}
++	desc = kzalloc(sizeof(*desc) + algo_len, GFP_KERNEL);
++	if (!desc)
++		return -ENOMEM;
++	desc->tfm = tfm;
++	ret = crypto_shash_init(desc);
++	if (ret) {
++		dev_err(dev, "failed crypto %s initialization.\n", algo);
++		return ret;
++	}
++
++	ehdr = (struct elf32_hdr *)elf_data;
++	phdr = (struct elf32_phdr *)(elf_data + ehdr->e_phoff);
++
++	/* go through the available ELF segments */
++	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
++		u32 memsz = phdr->p_memsz;
++		u32 filesz = phdr->p_filesz;
++		u32 offset = phdr->p_offset;
++
++		if (phdr->p_type != PT_LOAD)
++			continue;
++
++		if (filesz > memsz) {
++			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
++				filesz, memsz);
++			ret = -EINVAL;
++			break;
++		}
++
++		if (offset + filesz > fw->size) {
++			dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
++				offset + filesz, fw->size);
++			ret = -EINVAL;
++			break;
++		}
++
++		/* put the segment where the remote processor expects it */
++		if (phdr->p_filesz) {
++			ret = crypto_shash_update(desc,
++				elf_data + offset, filesz);
++			if (ret) {
++				dev_err(dev,
++				"Failed to update fw crypto digest state at offset 0x%x, size 0x%x.\n",
++				offset, filesz);
++				return ret;
++			}
++		}
++
++	}
++	ret = crypto_shash_final(desc, chksum);
++	crypto_free_shash(tfm);
++	kfree(desc);
++	if (ret) {
++		dev_err(dev, "failed to finalize checksum of firmware.\n");
++		return ret;
++	}
++	return ret;
 +}
 +
-+#endif /* CONFIG_MIPS_REMOTEPROC */
-+
- static void __init __gic_init(unsigned long gic_base_addr,
- 			      unsigned long gic_addrspace_size,
- 			      unsigned int cpu_vec, unsigned int irqbase,
-@@ -1096,6 +1284,11 @@ static void __init __gic_init(unsigned long gic_base_addr,
+ const struct rproc_fw_ops rproc_elf_fw_ops = {
+ 	.load = rproc_elf_load_segments,
+ 	.find_rsc_table = rproc_elf_find_rsc_table,
+ 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+ 	.sanity_check = rproc_elf_sanity_check,
++	.get_chksum = rproc_elf_get_chksum,
+ 	.get_boot_addr = rproc_elf_get_boot_addr
+ };
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 1e9e5b3..f03e07a 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -33,6 +33,7 @@
+  *			expects to find it
+  * @sanity_check:	sanity check the fw image
+  * @get_boot_addr:	get boot address to entry point specified in firmware
++ * @get_chksum:		get checksum of the loadable sections of the firmware
+  */
+ struct rproc_fw_ops {
+ 	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
+@@ -43,6 +44,8 @@ struct rproc_fw_ops {
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
++	int (*get_chksum)(struct rproc *rproc, const struct firmware *fw,
++			char *algo, u8 *chksum, int output_size);
+ };
  
- 	gic_basic_init();
- 	gic_map_interrupts(node);
-+
-+#ifdef CONFIG_MIPS_REMOTEPROC
-+	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "MIPS:GIC(REMOTEPROC)",
-+			  gic_cpu_online, NULL);
-+#endif /* CONFIG_MIPS_REMOTEPROC */
- }
- 
- void __init gic_init(unsigned long gic_base_addr,
+ /* from remoteproc_core.c */
 -- 
-2.7.4
+1.9.1
