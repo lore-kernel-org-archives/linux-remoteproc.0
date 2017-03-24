@@ -1,11 +1,11 @@
 Return-Path: <jliang@xilinx.com>
 Return-Path: wendy.liang@xilinx.com
 From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 18/19] remoteproc: shutdown: set state to OFFLINE after stopping remote
-Date: Fri, 24 Mar 2017 12:22:34 -0700
-Message-ID: <1490383355-23176-19-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
-References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
+Subject: [RFC LINUX PATCH 3/3] remoteproc: Release DMA declare mem when cleanup rsc
+Date: Fri, 24 Mar 2017 12:22:16 -0700
+Message-ID: <1490383336-23117-4-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1490383336-23117-1-git-send-email-jliang@xilinx.com>
+References: <1490383336-23117-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org
@@ -14,51 +14,28 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Wendy Liang <wendy.liang@xilinx.com>
 
-Set rproc state to OFFLINE right after it stops the remote.
-Some remoteproc virtio operations depends on rproc state. And thus,
-we should set the rproc state to OFFLINE right after it stops
-the remote.
+Release the declared DMA memory in the end of resource
+cleanup.
 
 Signed-off-by: Wendy Liang <jliang@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ffd1de2..62c0356 100644
+index 0ffd9dc..9d32737 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1369,6 +1369,7 @@ void rproc_shutdown(struct rproc *rproc)
- {
- 	struct device *dev = &rproc->dev;
- 	int ret;
-+	int pre_rproc_state;
- 
- 	ret = mutex_lock_interruptible(&rproc->lock);
- 	if (ret) {
-@@ -1391,6 +1392,9 @@ void rproc_shutdown(struct rproc *rproc)
- 		goto out;
- 	}
- 
-+	pre_rproc_state = rproc->state;
-+	rproc->state = RPROC_OFFLINE;
+@@ -882,6 +882,9 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 	/* clean up remote vdev entries */
+ 	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
+ 		kref_put(&rvdev->refcount, rproc_vdev_release);
 +
- 	/* clean up all acquired resources */
- 	rproc_resource_cleanup(rproc);
++	/* Release declared DMA memory */
++	dma_release_declared_memory(dev->parent);
+ }
  
-@@ -1402,11 +1406,9 @@ void rproc_shutdown(struct rproc *rproc)
- 	rproc->table_ptr = NULL;
- 
- 	/* if in crash state, unlock crash handler */
--	if (rproc->state == RPROC_CRASHED)
-+	if (pre_rproc_state == RPROC_CRASHED)
- 		complete_all(&rproc->crash_comp);
- 
--	rproc->state = RPROC_OFFLINE;
--
- 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
- 
- out:
+ /*
 -- 
 1.9.1
