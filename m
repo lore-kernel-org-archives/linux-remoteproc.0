@@ -1,9 +1,9 @@
 Return-Path: <jliang@xilinx.com>
 Return-Path: wendy.liang@xilinx.com
 From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 02/19] remtoeproc: Add an operation to check if remote is running
-Date: Fri, 24 Mar 2017 12:22:18 -0700
-Message-ID: <1490383355-23176-3-git-send-email-jliang@xilinx.com>
+Subject: [RFC LINUX PATCH 04/19] remoteproc: sysfs: Add running independent state
+Date: Fri, 24 Mar 2017 12:22:20 -0700
+Message-ID: <1490383355-23176-5-git-send-email-jliang@xilinx.com>
 In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
@@ -14,34 +14,45 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Wendy Liang <wendy.liang@xilinx.com>
 
-Add a remoteproc driver operation to check if the remote is running.
+Show running independent state to indicate the remote
+runs and it is not started by the remoteproc driver.
 
 Signed-off-by: Wendy Liang <jliang@xilinx.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/remoteproc/remoteproc_sysfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 9d32737..dfa2aad 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -888,6 +888,16 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- }
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 47be411..616057d 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -74,6 +74,7 @@ static ssize_t firmware_store(struct device *dev,
+ 	[RPROC_RUNNING]		= "running",
+ 	[RPROC_CRASHED]		= "crashed",
+ 	[RPROC_DELETED]		= "deleted",
++	[RPROC_RUNNING_INDEPENDENT] = "running_independent",
+ 	[RPROC_LAST]		= "invalid",
+ };
  
- /*
-+ * check if the remote is running
-+ */
-+static bool rproc_is_running(struct rproc *rproc)
-+{
-+	if (rproc->ops->is_running)
-+		return rproc->ops->is_running(rproc);
-+	return (rproc->state == RPROC_RUNNING) ? true : false;
-+}
-+
-+/*
-  * take a firmware and boot a remote processor with it.
-  */
- static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+@@ -97,14 +98,16 @@ static ssize_t state_store(struct device *dev,
+ 	int ret = 0;
+ 
+ 	if (sysfs_streq(buf, "start")) {
+-		if (rproc->state == RPROC_RUNNING)
++		if (rproc->state == RPROC_RUNNING ||
++			rproc->state == RPROC_RUNNING_INDEPENDENT)
+ 			return -EBUSY;
+ 
+ 		ret = rproc_boot(rproc);
+ 		if (ret)
+ 			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+ 	} else if (sysfs_streq(buf, "stop")) {
+-		if (rproc->state != RPROC_RUNNING)
++		if (rproc->state != RPROC_RUNNING &&
++			rproc->state != RPROC_RUNNING_INDEPENDENT)
+ 			return -EINVAL;
+ 
+ 		rproc_shutdown(rproc);
 -- 
 1.9.1
