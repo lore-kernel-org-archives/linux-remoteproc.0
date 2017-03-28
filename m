@@ -1,99 +1,93 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 6/6] rpmsg: virtio_rpmsg: set buffer configuration to virtio
-Date: Wed, 1 Feb 2017 16:07:12 +0100
-Message-ID: <1485961632-21980-7-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
-References: <1485961632-21980-1-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v4 2/5] rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid kernel address
+Date: Tue, 28 Mar 2017 13:49:44 +0200
+Message-ID: <1490701787-15205-3-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
+References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, Ludovic Barre <ludovic.barre@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rpmsg is allocating buffer one dedicated communication link
-with some specificity like number of buffers, size of one buffer...
-These characteristics should be shared with remote coprocessor to
-guarantee communication link coherency.
+To specify memory for remoteproc, we declare (dma_declare_coherent_memory())
+an area which is ioremap'ed to the vmalloc area.  However, this address is
+not a kernel address so virt_addr_valid(buf) fails.
 
-Proposal is to update rpmsg configuration fields in coprocessor firmware
-resource table if it exists.
-
-This is possible thanks to virtio set interface which allows to update
-cfg fields of struct fw_rsc_vdev.
-
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
+Tested-by: Suman Anna <s-anna@ti.com>
 ---
 Changes since V1:
-- Set virtio_cfg.da to -1 (any address) by default
-- Add comment about IOMMU support
+- Remove extra line.
 
 No change since v2.
 
 ---
- drivers/rpmsg/virtio_rpmsg_bus.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 28 +++++++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index b347e34..d9af556 100644
+index 3f44a03..1c7cde9 100644
 --- a/drivers/rpmsg/virtio_rpmsg_bus.c
 +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -923,6 +923,27 @@ static int virtio_rpmsg_get_config(struct virtio_device *vdev)
- 	return ret;
- }
+@@ -195,6 +195,28 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ };
  
-+static void virtio_rpmsg_set_config(struct virtio_device *vdev)
+ /**
++ * rpmsg_sg_init - initialize scatterlist according to cpu address location
++ * @sg: scatterlist to fill
++ * @cpu_addr: virtual address of the buffer
++ * @len: buffer length
++ *
++ * An internal function filling scatterlist according to virtual address
++ * location (in vmalloc or in kernel).
++ */
++static void
++rpmsg_sg_init(struct scatterlist *sg, void *cpu_addr, unsigned int len)
 +{
-+	struct virtio_rpmsg_cfg virtio_cfg;
-+	struct virtproc_info *vrp = vdev->priv;
-+
-+	/* fill virtio_cfg struct */
-+	memset(&virtio_cfg, 0, sizeof(virtio_cfg));
-+	virtio_cfg.id = VIRTIO_ID_RPMSG;
-+	/*
-+	 * IOMMU not managed at the time being, set device address to (-1)
-+	 * meaning any address value.
-+	 */
-+	virtio_cfg.da = -1;
-+	virtio_cfg.pa =	vrp->bufs_dma;
-+	virtio_cfg.len = vrp->num_bufs * vrp->buf_size;
-+	virtio_cfg.buf_size = vrp->buf_size;
-+
-+	vdev->config->set(vdev, RPMSG_CONFIG_OFFSET, &virtio_cfg,
-+			  sizeof(virtio_cfg));
++	if (is_vmalloc_addr(cpu_addr)) {
++		sg_init_table(sg, 1);
++		sg_set_page(sg, vmalloc_to_page(cpu_addr), len,
++			    offset_in_page(cpu_addr));
++	} else {
++		WARN_ON(!virt_addr_valid(cpu_addr));
++		sg_init_one(sg, cpu_addr, len);
++	}
 +}
 +
- static int rpmsg_probe(struct virtio_device *vdev)
- {
- 	vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
-@@ -933,6 +954,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	int err = 0, i;
- 	size_t total_buf_space = 0;
- 	bool notify;
-+	bool has_cfg = false;
++/**
+  * __ept_release() - deallocate an rpmsg endpoint
+  * @kref: the ept's reference count
+  *
+@@ -606,7 +628,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 			 msg, sizeof(*msg) + msg->len, true);
+ #endif
  
- 	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
- 	if (!vrp)
-@@ -972,6 +994,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 	if (err < 0)
- 		goto free_vrp;
+-	sg_init_one(&sg, msg, sizeof(*msg) + len);
++	rpmsg_sg_init(&sg, msg, sizeof(*msg) + len);
  
-+	if (err)
-+		has_cfg = true;
-+
- 	/* Allocate buffer if none provided by low level platform driver */
- 	if (!vrp->ext_buffer) {
- 		total_buf_space = vrp->num_bufs * vrp->buf_size;
-@@ -993,6 +1018,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	mutex_lock(&vrp->tx_lock);
  
- 		/* and half is dedicated for TX */
- 		vrp->sbufs = bufs_va + total_buf_space / 2;
-+
-+		/* Notify configuration to coprocessor */
-+		if (has_cfg)
-+			virtio_rpmsg_set_config(vdev);
- 	}
+@@ -731,7 +753,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 		dev_warn(dev, "msg received with no recipient\n");
  
- 	/* set up the receive buffers */
+ 	/* publish the real size of the buffer */
+-	sg_init_one(&sg, msg, vrp->buf_size);
++	rpmsg_sg_init(&sg, msg, vrp->buf_size);
+ 
+ 	/* add the buffer back to the remote processor's virtqueue */
+ 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+@@ -915,7 +937,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 		struct scatterlist sg;
+ 		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+ 
+-		sg_init_one(&sg, cpu_addr, vrp->buf_size);
++		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+ 
+ 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+ 					  GFP_KERNEL);
 -- 
 1.9.1
