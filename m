@@ -1,73 +1,72 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [RFC LINUX PATCH 09/19] remoteproc: check firmware checksum in rproc_is_running_fw()
-Date: Fri, 24 Mar 2017 12:22:25 -0700
-Message-ID: <1490383355-23176-10-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
-References: <1490383355-23176-1-git-send-email-jliang@xilinx.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 3/5] include: virtio_rpmsg: add virtio rpmsg configuration structure
+Date: Tue, 28 Mar 2017 13:49:45 +0200
+Message-ID: <1490701787-15205-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
+References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Wendy Liang  <wendy.liang@xilinx.com>, Wendy Liang <jliang@xilinx.com>, Michal Simek" <michal.simek@xilinx.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Wendy Liang <wendy.liang@xilinx.com>
+Rpmsg channel configuration should be identical on host and
+coprocessor side.
+This patch proposes a new structure named struct virtio_rpmsg_cfg
+to gather all configuration information to characterize the
+communication link and.
+This structure will be exchanged with coprocessor via the resource
+table, expanding struct fw_rsc_vdev. It will guarantee that host
+and coprocessor will share the same information.
+virtio_rpmsg will access it thanks to virtio get and set features.
+Presence of struct virtio_rpmsg_cfg is optional.
 
-In rproc_is_running_fw() function, set the firmware checksum in resource
-in the resource table and compared it with the one in the loaded resource
-table.
-
-If the firmware checksum in the loaded resource table matches the one
-calculated with the firmware, the remote is running with the expected
-firmware.
-
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+Changes since V3:
+- remove va field from struct virtio_rpmsg_cfg
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 447c28b..e4fb289 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -956,10 +956,33 @@ struct fw_rsc_fw_chksum *rproc_handle_fw_chksum(struct rproc *rproc,
-  */
- static bool rproc_is_running_fw(struct rproc *rproc, const struct firmware *fw)
- {
--	(void)rproc;
--	(void) fw;
-+	struct resource_table *loaded_table;
-+	struct fw_rsc_fw_chksum *rsc, *loaded_rsc;
-+	int rsc_fw_chksum_offset;
- 
--	return false;
-+	rsc = rproc_handle_fw_chksum(rproc, fw, &rsc_fw_chksum_offset);
-+	if (!rsc)
-+		return false;
+---
+ include/linux/rpmsg/virtio_rpmsg.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
+
+diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
+new file mode 100644
+index 0000000..2d31636
+--- /dev/null
++++ b/include/linux/rpmsg/virtio_rpmsg.h
+@@ -0,0 +1,30 @@
 +
-+	if (!rproc_is_running(rproc))
-+		return false;
++#ifndef _LINUX_VIRTIO_RPMSG_H
++#define _LINUX_VIRTIO_RPMSG_H
 +
-+	/* look for the loaded resource table */
-+	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-+	if (!loaded_table)
-+		return false;
++/* Offset in struct fw_rsc_vdev */
++#define RPMSG_CONFIG_OFFSET	0
 +
-+	loaded_rsc = (void *)loaded_table + rsc_fw_chksum_offset;
-+	if (!loaded_rsc->algo || !loaded_rsc->chksum)
-+		return false;
++/**
++ * struct virtio_rpmsg_cfg - optional configuration field for virtio rpmsg
++ * provided at probe time by virtio (get/set)
++ * @id: virtio cfg id (as in virtio_ids.h)
++ * @version: virtio_rpmsg_cfg structure version number
++ * @da: device address
++ * @pa: physical address
++ * @len: length (in bytes)
++ * @buf_size: size of rpmsg buffer size (defined by firmware else default value
++ *	      used)
++ * @reserved: reserved (must be zero)
++ */
++struct virtio_rpmsg_cfg {
++	u32 id;
++	u32 version;
++	u32 da;
++	u32 pa;
++	u32 len;
++	u32 buf_size;
++	u32 reserved;
++} __packed;
 +
-+	if (strncmp(rsc->algo, loaded_rsc->algo, strlen(rsc->algo)))
-+		return false;
-+
-+	if (memcmp(rsc->chksum, loaded_rsc->chksum, sizeof(rsc->chksum)))
-+		return false;
-+
-+	return true;
- }
- 
- /*
++#endif
 -- 
 1.9.1
