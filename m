@@ -1,56 +1,128 @@
-Return-Path: <Matt.Redfearn@imgtec.com>
-From: Matt Redfearn <matt.redfearn@imgtec.com>
-Subject: [PATCH v6 4/4] MIPS: Deprecate VPE Loader
-Date: Thu, 23 Mar 2017 16:37:17 +0000
-Message-ID: <1490287037-31885-5-git-send-email-matt.redfearn@imgtec.com>
-In-Reply-To: <1490287037-31885-1-git-send-email-matt.redfearn@imgtec.com>
-References: <1490287037-31885-1-git-send-email-matt.redfearn@imgtec.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 1/5] rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
+Date: Tue, 28 Mar 2017 13:49:43 +0200
+Message-ID: <1490701787-15205-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
+References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Ralf Baechle <ralf@linux-mips.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mips@linux-mips.org, linux-remoteproc@vger.kernel.org, lisa.parratt@imgtec.com, linux-kernel@vger.kernel.org, Matt Redfearn <matt.redfearn@imgtec.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: loic.pallardy@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The MIPS remote processor driver (CONFIG_MIPS_REMOTEPROC) provides a
-more standard mechanism for using one or more VPs as coprocessors
-running separate firmware.
+Rpmsg buffer size is currently fixed to 512 bytes.
+This patch introduces a new capability in struct virtproc_info
+to tune shared buffer size between host and coprocessor
+according to the needs.
 
-Here we deprecate this mechanism before it is removed.
-
-Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
+Changes since V1:
+- Initialize vrp->num_bufs before use.
+- Alignment with open parenthesis.
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+No change since v2.
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
- arch/mips/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 6cdc23da8761..dbec6893c6e7 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -2303,7 +2303,7 @@ config MIPSR2_TO_R6_EMULATOR
- 	  final kernel image.
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 5e66e08..3f44a03 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -45,6 +45,7 @@
+  * @rbufs:	kernel address of rx buffers
+  * @sbufs:	kernel address of tx buffers
+  * @num_bufs:	total number of buffers for rx and tx
++ * @buf_size:   size of one rx or tx buffer
+  * @last_sbuf:	index of last tx buffer used
+  * @bufs_dma:	dma base addr of the buffers
+  * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
+@@ -65,6 +66,7 @@ struct virtproc_info {
+ 	struct virtqueue *rvq, *svq;
+ 	void *rbufs, *sbufs;
+ 	unsigned int num_bufs;
++	unsigned int buf_size;
+ 	int last_sbuf;
+ 	dma_addr_t bufs_dma;
+ 	struct mutex tx_lock;
+@@ -158,7 +160,7 @@ struct virtio_rpmsg_channel {
+  * processor.
+  */
+ #define MAX_RPMSG_NUM_BUFS	(512)
+-#define RPMSG_BUF_SIZE		(512)
++#define MAX_RPMSG_BUF_SIZE	(512)
  
- config MIPS_VPE_LOADER
--	bool "VPE loader support."
-+	bool "VPE loader support (DEPRECATED)"
- 	depends on SYS_SUPPORTS_MULTITHREADING && MODULES
- 	select CPU_MIPSR2_IRQ_VI
- 	select CPU_MIPSR2_IRQ_EI
-@@ -2312,6 +2312,9 @@ config MIPS_VPE_LOADER
- 	  Includes a loader for loading an elf relocatable object
- 	  onto another VPE and running it.
+ /*
+  * Local addresses are dynamically allocated on-demand.
+@@ -429,7 +431,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+ 	 * (half of our buffers are used for sending messages)
+ 	 */
+ 	if (vrp->last_sbuf < vrp->num_bufs / 2)
+-		ret = vrp->sbufs + RPMSG_BUF_SIZE * vrp->last_sbuf++;
++		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+ 	/* or recycle a used one */
+ 	else
+ 		ret = virtqueue_get_buf(vrp->svq, &len);
+@@ -555,7 +557,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 	 * messaging), or to improve the buffer allocator, to support
+ 	 * variable-length buffer sizes.
+ 	 */
+-	if (len > RPMSG_BUF_SIZE - sizeof(struct rpmsg_hdr)) {
++	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+ 		dev_err(dev, "message is too big (%d)\n", len);
+ 		return -EMSGSIZE;
+ 	}
+@@ -696,7 +698,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 	 * We currently use fixed-sized buffers, so trivially sanitize
+ 	 * the reported payload length.
+ 	 */
+-	if (len > RPMSG_BUF_SIZE ||
++	if (len > vrp->buf_size ||
+ 	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
+ 		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+ 		return -EINVAL;
+@@ -729,7 +731,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 		dev_warn(dev, "msg received with no recipient\n");
  
-+	  Unless you have a specific need, you should use CONFIG_MIPS_REMOTEPROC
-+          instead of this.
+ 	/* publish the real size of the buffer */
+-	sg_init_one(&sg, msg, RPMSG_BUF_SIZE);
++	sg_init_one(&sg, msg, vrp->buf_size);
+ 
+ 	/* add the buffer back to the remote processor's virtqueue */
+ 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+@@ -886,7 +888,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	else
+ 		vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
+ 
+-	total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
++	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
 +
- config MIPS_VPE_LOADER_CMP
- 	bool
- 	default "y"
++	total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 
+ 	/* allocate coherent memory for the buffers */
+ 	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
+@@ -909,9 +913,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	/* set up the receive buffers */
+ 	for (i = 0; i < vrp->num_bufs / 2; i++) {
+ 		struct scatterlist sg;
+-		void *cpu_addr = vrp->rbufs + i * RPMSG_BUF_SIZE;
++		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+ 
+-		sg_init_one(&sg, cpu_addr, RPMSG_BUF_SIZE);
++		sg_init_one(&sg, cpu_addr, vrp->buf_size);
+ 
+ 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+ 					  GFP_KERNEL);
+@@ -976,7 +980,7 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+ static void rpmsg_remove(struct virtio_device *vdev)
+ {
+ 	struct virtproc_info *vrp = vdev->priv;
+-	size_t total_buf_space = vrp->num_bufs * RPMSG_BUF_SIZE;
++	size_t total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 	int ret;
+ 
+ 	vdev->config->reset(vdev);
 -- 
-2.7.4
+1.9.1
