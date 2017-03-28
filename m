@@ -1,86 +1,72 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Jiaying Liang <wendy.liang@xilinx.com>
-Subject: RE: [RFC LINUX PATCH 0/3] Allow remote to specify shared memory
-Date: Wed, 29 Mar 2017 16:41:13 +0000
-Message-ID: <DC2968D6352D1841BA729D8C06CC9DBB99067788@XSJ-PSEXMBX01.xlnx.xilinx.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [RFC LINUX PATCH 0/3] Allow remote to specify shared memory
 References: <1490383336-23117-1-git-send-email-jliang@xilinx.com>
  <df420852-6b5a-a2fc-4c4c-8556b9985e29@ti.com>
  <CAA07jV-Neu5r2-CFFsnuN9pT_g9kV=zSSbzhbxCFODHe4v9b=g@mail.gmail.com>
- <3aaedbd9-168f-9dd0-62de-3e4209ee09a8@ti.com>
-In-Reply-To: <3aaedbd9-168f-9dd0-62de-3e4209ee09a8@ti.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <3aaedbd9-168f-9dd0-62de-3e4209ee09a8@ti.com>
+Date: Tue, 28 Mar 2017 18:24:09 -0500
 MIME-Version: 1.0
-To: Suman Anna <s-anna@ti.com>, Wendy Liang <sunnyliangjy@gmail.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAA07jV-Neu5r2-CFFsnuN9pT_g9kV=zSSbzhbxCFODHe4v9b=g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Wendy Liang <sunnyliangjy@gmail.com>
+Cc: Wendy Liang <wendy.liang@xilinx.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgU3VtYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4g
-QW5uYSBbbWFpbHRvOnMtYW5uYUB0aS5jb21dDQo+IFNlbnQ6IFR1ZXNkYXksIE1hcmNoIDI4LCAy
-MDE3IDQ6MjQgUE0NCj4gVG86IFdlbmR5IExpYW5nDQo+IENjOiBKaWF5aW5nIExpYW5nOyBCam9y
-biBBbmRlcnNzb247IGxpbnV4LXJlbW90ZXByb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4g
-a2VybmVsQHZnZXIua2VybmVsLm9yZzsgSmlheWluZyBMaWFuZw0KPiBTdWJqZWN0OiBSZTogW1JG
-QyBMSU5VWCBQQVRDSCAwLzNdIEFsbG93IHJlbW90ZSB0byBzcGVjaWZ5IHNoYXJlZCBtZW1vcnkN
-Cj4NCj4gSGkgV2VuZHksDQo+DQo+IE9uIDAzLzI4LzIwMTcgMDE6NTIgUE0sIFdlbmR5IExpYW5n
-IHdyb3RlOg0KPiA+IFRoYW5rcyBTdW1hbiBmb3IgeW91ciBjb21tZW50cy4NCj4gPg0KPiA+IE9u
-IE1vbiwgTWFyIDI3LCAyMDE3IGF0IDg6NTQgQU0sIFN1bWFuIEFubmEgPHMtYW5uYUB0aS5jb20+
-IHdyb3RlOg0KPiA+PiBIaSBXZW5keSwNCj4gPj4NCj4gPj4gT24gMDMvMjQvMjAxNyAwMjoyMiBQ
-TSwgV2VuZHkgTGlhbmcgd3JvdGU6DQo+ID4+PiBUaGlzIHBhdGNoIGVuYWJsZXMgdGhlIHJlbW90
-ZXByb2MgdG8gc3BlY2lmeSB0aGUgc2hhcmVkIG1lbW9yeS4NCj4gPj4+IFJlbW90ZXByb2MgZGVj
-bGFyZWQgdGhpcyBtZW1vcnkgYXMgRE1BIG1lbW9yeS4NCj4gPj4+IEl0IGNhbiBiZSB1c2VkIGZv
-ciB2aXJ0aW8sIG9yIHNoYXJlZCBidWZmZXJzLg0KPiA+Pg0KPiA+PiBZb3Ugc2hvdWxkIGJlIGFi
-bGUgdG8gYWNoaWV2ZSB0aGlzIHdpdGhvdXQgYW55IHJlbW90ZXByb2MgY29yZSBjaGFuZ2VzLg0K
-PiA+PiBZb3UgY2FuIGRvIHRoaXMgYnkgZGVmaW5pbmcgYSByZXNlcnZlZC1tZW1vcnkgbm9kZSBp
-biB5b3VyIERUUyBmaWxlDQo+ID4+IChjYW4gYmUgYSBDTUEgcG9vbCBvciBhIERNQSBwb29sKSwg
-YXNzaWduaW5nIHRoZSBub2RlIHVzaW5nDQo+ID4+IG1lbW9yeS1yZWdpb24gaW4geW91ciByZW1v
-dGVwcm9jIERUIG5vZGUgYW5kIHVzaW5nIHRoZSBmdW5jdGlvbiwNCj4gPj4gb2ZfcmVzZXJ2ZWRf
-bWVtX2RldmljZV9pbml0KCkgaW4geW91ciByZW1vdGVwcm9jIGRyaXZlci4NCj4gPg0KPiA+IFRo
-ZSBpZGVhIHRvIGludHJvZHVjZSB0aGUgcnByb2NfbWVtIGlzIHRvIGxldCB0aGUgcmVtb3RlIHRv
-IHNwZWNpZnkNCj4gPiB0aGUgc2hhcmVkIG1lbW9yeS4NCj4gPiBJIGFtIHRyeWluZyB0byBzZWUg
-aWYgdGhlcmUgaXMgYSB3YXkgdG8gc3BlY2lmeSB0aGlzIHNvZnR3YXJlDQo+ID4gYXR0cmlidXRl
-IHdpdGhvdXQgdG91Y2hpbmcgdGhlIGRldmljZSB0cmVlIGFzIGl0IGRvZXNuJ3QgbG9vayBsaWtl
-IGl0IGlzDQo+IGhhcmR3YXJlIHJlbGF0ZWQuDQo+ID4gQW5kIHRyeSB0byBzZWUgaWYgdGhlcmUg
-aXMgYSB3YXkgdGhhdCB3aGVuIEkgY2hhbmdlIHRoZSBmaXJtd2FyZSwgaQ0KPiA+IGRvbid0IG5l
-ZWQgdG8gY2hhbmdlIHRoZSBkZXZpY2UgdHJlZS4NCj4NCj4gU28gaXMgdGhpcyBzaGFyZWQgbWVt
-b3J5IGdvaW5nIHRvIGJlIGFjY2Vzc2VkIHRocm91Z2ggYW4gTU1VIGJ5IHRoZQ0KPiByZW1vdGUg
-cHJvY2Vzc29yPyBJZiBub3QsIGRvbid0IHlvdSBuZWVkIGEgc3BlY2lmaWMgY2FydmVvdXQsIHdo
-aWNoIHdvdWxkDQo+IHRoZW4gaW4gdHVybiBtZWFuIGJvb3QtdGltZSBtZW1vcnkgcmVzZXJ2YXRp
-b24/DQpbV2VuZHldIFRoaXMgbWVtb3J5IGlzIG5vdCBhY2Nlc3NlZCB0aHJvdWdoIE1NVSBieSBy
-ZW1vdGUuDQpIZXJlIGlzIHRoZSB1c2VjYXNlLCB0aGUgbnVtYmVyIG9mIHJlbW90ZXMgY2FuIGJl
-IGNoYW5nZWQgYXQgcnVuIHRpbWUsDQpBbHNvIHRoZSBmaXJtd2FyZSBydW5uaW5nIG9uIHRoZSBy
-ZW1vdGVzIGNhbiBiZSBjaGFuZ2VkLiBBbmQgdGhlIHJlbW90ZSB3aWxsDQpOZWVkIHRvIG1lbW9y
-eSBtYXAgdGhvc2UgbWVtb3J5IGJlZm9yZSBpdCBjYW4gdXNlIGl0Lg0KDQpGcm9tIHdoYXQgeW91
-IGhhdmUgc3VnZ2VzdGVkLCB3ZSByZXNlcnZlZCBtZW1vcnkgZnJvbSB0aGUgZGV2aWNlIG5vZGUs
-IGFuZCB0aGVuIHJlbW90ZXByb2MgZHJpdmVyIGxpbmtlZCB0byB0aGF0IHJlc2VydmVkIG1lbW9y
-eSB3aXRoICJtZW1vcnktcmVnaW9uIiwgSSBzdXBwb3NlIGRpZmZlcmVudCByZW1vdGVwcm9jIGRy
-aXZlcnMgY2FuIHNoYXJlIG9uZSAibWVtb3J5LXJlZ2lvbiIuIEhvd2V2ZXIsIG5vdyB0aGUgcXVl
-c3Rpb24gaXMgaG93IHRoZSByZW1vdGUga25vd3MgdGhlIHNoYXJlZCBtZW1vcnkuDQpMZXQgc2F5
-IEkgdXNlIHJwbXNnIGZvciB0aGUgY29tbXVuaWNhdGlvbiBiZXR3ZWVuIHRoZSB0d28uIEJ1dCBo
-b3cgY2FuIHJlbW90ZSBrbm93cyBhYm91dCB0aGUgc2hhcmVkIGJ1ZmZlcnMgYmVmb3JlIGl0IGNh
-biB1c2VkIGl0Lg0KDQpJICBzYXcgTG9pYyBoYXMgYSBwYXRjaCB0byBhZGQgdmlydGlvIGNvbmZp
-ZyB0byBzcGVjaWZ5IHRoaXMgYnVmZmVyLCBob3dldmVyLCBpdCBpcyBub3QgaW4gdGhlIGxhdGVz
-dCBsaW51eCBrZXJuZWwgbWFzdGVyLiBBbmQgdGh1cywgdHJ5aW5nIHRvIHNlZSBpZiB0aGVyZSBp
-cyBhbm90aGVyIHdheSB0byBzb2x2ZSB0aGlzIGlzc3VlLiBVc2UgZXhpc3RpbmcgY2FydmVvdXQg
-dG8gc3BlY2lmeSB0aGlzIG1lbW9yeT8NCg0KVGhhbmtzLA0KV2VuZHkNCg0KPg0KPiByZWdhcmRz
-DQo+IFN1bWFuDQo+DQo+ID4NCj4gPiBUaGFua3MsDQo+ID4gV2VuZHkNCj4gPg0KPiA+Pg0KPiA+
-PiByZWdhcmRzDQo+ID4+IFN1bWFuDQo+ID4+DQo+ID4+Pg0KPiA+Pj4gV2VuZHkgTGlhbmcgKDMp
-Og0KPiA+Pj4gICByZW1vdGVwcm9jOiBhZGQgcnByb2MgbWVtIHJlc291cmNlIGVudHJ5DQo+ID4+
-PiAgIHJlbW90ZXByb2M6IGFkZCBycHJvY19tZW0gcmVzb3VyY2UgZW50cnkgaGFuZGxlcg0KPiA+
-Pj4gICByZW1vdGVwcm9jOiBSZWxlYXNlIERNQSBkZWNsYXJlIG1lbSB3aGVuIGNsZWFudXAgcnNj
-DQo+ID4+Pg0KPiA+Pj4gIGRyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyB8IDQw
-DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+Pj4gIGluY2x1ZGUv
-bGludXgvcmVtb3RlcHJvYy5oICAgICAgICAgICB8IDIzICsrKysrKysrKysrKysrKysrKysrLQ0K
-PiA+Pj4gIDIgZmlsZXMgY2hhbmdlZCwgNjIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0K
-PiA+Pj4NCj4gPj4NCj4gPj4gLS0NCj4gPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6
-IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlDQo+ID4+IGxpbnV4LXJlbW90ZXByb2MiIGluIHRo
-ZSBib2R5IG9mIGEgbWVzc2FnZSB0bw0KPiA+PiBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnIE1v
-cmUgbWFqb3Jkb21vIGluZm8gYXQNCj4gaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8t
-aW5mby5odG1sDQoNCg0KDQpUaGlzIGVtYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgYXJlIGludGVu
-ZGVkIGZvciB0aGUgc29sZSB1c2Ugb2YgdGhlIG5hbWVkIHJlY2lwaWVudChzKSBhbmQgY29udGFp
-bihzKSBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gdGhhdCBtYXkgYmUgcHJvcHJpZXRhcnksIHBy
-aXZpbGVnZWQgb3IgY29weXJpZ2h0ZWQgdW5kZXIgYXBwbGljYWJsZSBsYXcuIElmIHlvdSBhcmUg
-bm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIGRvIG5vdCByZWFkLCBjb3B5LCBvciBmb3J3YXJk
-IHRoaXMgZW1haWwgbWVzc2FnZSBvciBhbnkgYXR0YWNobWVudHMuIERlbGV0ZSB0aGlzIGVtYWls
-IG1lc3NhZ2UgYW5kIGFueSBhdHRhY2htZW50cyBpbW1lZGlhdGVseS4NCg0K
+Hi Wendy,
+
+On 03/28/2017 01:52 PM, Wendy Liang wrote:
+> Thanks Suman for your comments.
+> 
+> On Mon, Mar 27, 2017 at 8:54 AM, Suman Anna <s-anna@ti.com> wrote:
+>> Hi Wendy,
+>>
+>> On 03/24/2017 02:22 PM, Wendy Liang wrote:
+>>> This patch enables the remoteproc to specify the shared memory.
+>>> Remoteproc declared this memory as DMA memory.
+>>> It can be used for virtio, or shared buffers.
+>>
+>> You should be able to achieve this without any remoteproc core changes.
+>> You can do this by defining a reserved-memory node in your DTS file (can
+>> be a CMA pool or a DMA pool), assigning the node using memory-region in
+>> your remoteproc DT node and using the function,
+>> of_reserved_mem_device_init() in your remoteproc driver.
+> 
+> The idea to introduce the rproc_mem is to let the remote to specify
+> the shared memory.
+> I am trying to see if there is a way to specify this software attribute without
+> touching the device tree as it doesn't look like it is hardware related.
+> And try to see if there is a way that when I change the firmware, i
+> don't need to change the device tree.
+
+So is this shared memory going to be accessed through an MMU by the
+remote processor? If not, don't you need a specific carveout, which
+would then in turn mean boot-time memory reservation?
+
+regards
+Suman
+
+> 
+> Thanks,
+> Wendy
+> 
+>>
+>> regards
+>> Suman
+>>
+>>>
+>>> Wendy Liang (3):
+>>>   remoteproc: add rproc mem resource entry
+>>>   remoteproc: add rproc_mem resource entry handler
+>>>   remoteproc: Release DMA declare mem when cleanup rsc
+>>>
+>>>  drivers/remoteproc/remoteproc_core.c | 40 ++++++++++++++++++++++++++++++++++++
+>>>  include/linux/remoteproc.h           | 23 ++++++++++++++++++++-
+>>>  2 files changed, 62 insertions(+), 1 deletion(-)
+>>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
