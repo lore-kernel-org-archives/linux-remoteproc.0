@@ -1,32 +1,81 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-lf0-f53.google.com ([209.85.215.53]:36680 "EHLO
-        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbdDJJAv (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 10 Apr 2017 05:00:51 -0400
-Received: by mail-lf0-f53.google.com with SMTP id s141so31426920lfe.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Apr 2017 02:00:51 -0700 (PDT)
-MIME-Version: 1.0
-From: Michele Rodolfi <michele.rodolfi@t3lab.it>
-Date: Mon, 10 Apr 2017 11:00:49 +0200
-Message-ID: <CAHXzriF1iW8gBaLfdSjUmmRYduNr35feEXVyBuas9+byQO8CUg@mail.gmail.com>
-Subject: Shared memory between remote processors
-Content-Type: text/plain; charset=UTF-8
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc@vger.kernel.org
+Return-Path: <vincent.legoll@gmail.com>
+Return-Path: <vincent.legoll@gmail.com>
+From: Vincent Legoll <vincent.legoll@gmail.com>
+Subject: [PATCH] Make HWSPINLOCK a menuconfig to ease disabling
+Date: Tue, 11 Apr 2017 16:21:02 +0200
+Message-Id: <20170411142102.25838-2-vincent.legoll@gmail.com>
+In-Reply-To: <20170411142102.25838-1-vincent.legoll@gmail.com>
+References: <20170411142102.25838-1-vincent.legoll@gmail.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc: Vincent Legoll <vincent.legoll@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi all,
-I'm trying to set up a shared memory region for image transfers
-between processors.
-Since the rpmsg buffer isn't large enough to contain a whole image, I
-would like to put the image into a shared memory buffer then send the
-physical address of this buffer to the remote processor using rpmsg.
-I'm trying to understand how to do so with the functionalities
-provided by remoteproc. Has anyone done this before?
-The remoteproc driver supports the request for allocation of a
-physically contiguous memory region via resource table. Could this be
-a solution?
+So that there's no need to get into the submenu to disable all related config
+entries.
 
-Thanks
-Michele
+Signed-off-by: Vincent Legoll <vincent.legoll@gmail.com>
+---
+ drivers/hwspinlock/Kconfig | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+index 73a4016..cc26b04 100644
+--- a/drivers/hwspinlock/Kconfig
++++ b/drivers/hwspinlock/Kconfig
+@@ -2,16 +2,13 @@
+ # Generic HWSPINLOCK framework
+ #
+ 
+-# HWSPINLOCK always gets selected by whoever wants it.
+-config HWSPINLOCK
+-	tristate
+-
+-menu "Hardware Spinlock drivers"
++menuconfig HWSPINLOCK
++	tristate "Hardware Spinlock drivers"
+ 
+ config HWSPINLOCK_OMAP
+ 	tristate "OMAP Hardware Spinlock device"
++	depends on HWSPINLOCK
+ 	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX
+-	select HWSPINLOCK
+ 	help
+ 	  Say y here to support the OMAP Hardware Spinlock device (firstly
+ 	  introduced in OMAP4).
+@@ -20,8 +17,8 @@ config HWSPINLOCK_OMAP
+ 
+ config HWSPINLOCK_QCOM
+ 	tristate "Qualcomm Hardware Spinlock device"
++	depends on HWSPINLOCK
+ 	depends on ARCH_QCOM
+-	select HWSPINLOCK
+ 	select MFD_SYSCON
+ 	help
+ 	  Say y here to support the Qualcomm Hardware Mutex functionality, which
+@@ -32,8 +29,8 @@ config HWSPINLOCK_QCOM
+ 
+ config HWSPINLOCK_SIRF
+ 	tristate "SIRF Hardware Spinlock device"
++	depends on HWSPINLOCK
+ 	depends on ARCH_SIRF
+-	select HWSPINLOCK
+ 	help
+ 	  Say y here to support the SIRF Hardware Spinlock device, which
+ 	  provides a synchronisation mechanism for the various processors
+@@ -44,13 +41,11 @@ config HWSPINLOCK_SIRF
+ 
+ config HSEM_U8500
+ 	tristate "STE Hardware Semaphore functionality"
++	depends on HWSPINLOCK
+ 	depends on ARCH_U8500
+-	select HWSPINLOCK
+ 	help
+ 	  Say y here to support the STE Hardware Semaphore functionality, which
+ 	  provides a synchronisation mechanism for the various processor on the
+ 	  SoC.
+ 
+ 	  If unsure, say N.
+-
+-endmenu
+-- 
+2.9.3
