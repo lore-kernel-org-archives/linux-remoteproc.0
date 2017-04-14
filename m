@@ -3,22 +3,41 @@ Subject: Re: [PATCH v3 1/2] soc: qcom: Add support of scm call for mss rproc
  to share access of ddr
 References: <1488996202-1546-1-git-send-email-akdwived@codeaurora.org>
  <1488996202-1546-2-git-send-email-akdwived@codeaurora.org>
- <20170405234448.GO7065@codeaurora.org>
+ <20170406044349.GA15143@minitux>
 From: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
-Message-ID: <a8123857-e4e8-e365-f982-65bd7b65fa02@codeaurora.org>
-Date: Fri, 14 Apr 2017 19:31:31 +0530
+Message-ID: <6043c6f6-be31-8655-8660-884ff62994c4@codeaurora.org>
+Date: Fri, 14 Apr 2017 19:24:38 +0530
 MIME-Version: 1.0
-In-Reply-To: <20170405234448.GO7065@codeaurora.org>
+In-Reply-To: <20170406044349.GA15143@minitux>
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Hi Bjorn/Boyd,
+
+thanks for comments and suggestion, beg apology for delayed reply as i 
+got busy with internal issues.
+
+please see inline response.
 
 
-On 4/6/2017 5:14 AM, Stephen Boyd wrote:
-> On 03/08, Avaneesh Kumar Dwivedi wrote:
+On 4/6/2017 10:13 AM, Bjorn Andersson wrote:
+> On Wed 08 Mar 10:03 PST 2017, Avaneesh Kumar Dwivedi wrote:
+>
+>> This patch add scm call support to make hypervisor call to enable access
+>> of fw regions in ddr to mss subsystem on arm-v8 arch soc's.
+>>
+>> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+>> ---
+>>   drivers/firmware/qcom_scm-64.c     |  25 +++++++
+>>   drivers/firmware/qcom_scm.c        |  93 ++++++++++++++++++++++++++
+>>   drivers/firmware/qcom_scm.h        |   3 +
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 129 ++++++++++++++++++++++++++++++++++++-
+>>   include/linux/qcom_scm.h           |  14 ++++
+>>   5 files changed, 262 insertions(+), 2 deletions(-)
+>>
 >> diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
 >> index 4a0f5ea..187fc00 100644
 >> --- a/drivers/firmware/qcom_scm-64.c
@@ -29,10 +48,13 @@ On 4/6/2017 5:14 AM, Stephen Boyd wrote:
 >>   }
 >> +
 >> +int __qcom_scm_assign_mem(struct device *dev, struct vmid_detail vmid)
-> Why are we passing a structure copy?
-I did not use struct pointer cause i am not modifying any of the passed 
-value, do you think i should use struct pointer than pass by value?
-
+> Rather than packing these parameters up in a struct I think it's cleaner
+> to just pass them directly.
+passing so many parameters directly is not seen good practice specially 
+when number of parameters to pass are many.
+that is why i used struct copy, i did not use reference of struct since 
+values passed were not going to be modified.
+but will surely look if i can work with direct passing of params.
 >
 >> +{
 >> +	int ret;
@@ -45,11 +67,6 @@ value, do you think i should use struct pointer than pass by value?
 >> +	desc.args[3] = vmid.size_from;
 >> +	desc.args[4] = vmid.to_phy;
 >> +	desc.args[5] = vmid.size_to;
-> These should all cause sparse warnings because of incorrect
-> assignments. Given that these are all registers, I'm not sure why
-> the vmid_detail structure has __le32 in it.
-will fix.
->
 >> +	desc.args[6] = 0;
 >> +
 >> +	desc.arginfo = QCOM_SCM_ARGS(7, QCOM_SCM_RO, QCOM_SCM_VAL,
@@ -61,6 +78,9 @@ will fix.
 >> +				&desc, &res);
 >> +
 >> +	return ret ? : res.a1;
+> If I understand the downstream code we only care about "ret" here; being
+> zero on success or negative on error.
+sure, will check.
 >> +}
 >> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
 >> index 893f953ea..f137f34 100644
@@ -74,14 +94,14 @@ will fix.
 >> +	__le32 vm;
 >> +	__le32 perm;
 >> +	__le32 *ctx;
-> Drop the pointer? Just treat it like another number? Pointer is
-> really odd because it doesn't really make any sense what the
-> address of the pointer would be.
-Downstream this is pointer though unused, that is why kept same will 
-check and change.
+> Please be explicit about the fact that this is 64 bit.
+sorry i am not sure why they need to be 64 bit variable?
 >
 >> +	__le32 ctx_size;
 >> +};
+> This should be __packed
+Ok.
+>
 >> +
 >> +struct fw_region_info {
 >> +	__le64 addr;
@@ -100,21 +120,47 @@ check and change.
 >> + * new owners of memory region for fw and metadata etc, Which is
 >> + * further passed to hypervisor, which does translate intermediate
 >> + * physical address used by subsystems.
-> Maybe this can be the long description, but the short description
-> should be shorter.
-OK :(
->
 >> + * @vmid: structure with pointers and size detail of old and new
 >> + * owners vmid detail.
 >> + * Return 0 on success.
-> There's a standard syntax for return too. Look at kernel doc
-> howto please.
-OK.
->
 >> + */
 >> +int qcom_scm_assign_mem(struct vmid_detail vmid)
-> Please no structure copy.
-should struct pointer be OK, or direct argument passing?
+> After a long discussion with Stephen I now think that I understand
+> what's actually going on here.
+>
+> So this function will request TZ to remove all permissions for the
+> memory region in the tables specified in "from" and then for each vmid
+> in "to" it will set up the specified "permission".
+>
+> So the "to" and "permissions" are actually a tuple, rather than
+> independent lists of values. So I think this should be exposed in the
+> prototype, as a list of <vmid, permission> entries.
+>
+> To make the function prototype more convenient I think you should turn
+> "from" into a bitmap (e.g. BIT(VMID_HLOS) | BIT(VMID_MSS_MSA)).
+i am not able to fully comprehend advantage of turning "from" into bitmap.
+moreover when i read your below suggestion, which suggest to use "struct 
+qcom_scm_mem_perm" as below then i get further confused what i will do 
+with bitmap?
+>
+> If you then make the function, on success, return "to" as a bitmap the
+> caller can simply store that in a state variable and pass it as "from"
+> in the next call.
+>
+> So you would have:
+>
+>    struct qcom_scm_mem_perm new_perms[] = {
+>    	{ VMID_HLOS, PERM_READ },	
+>    	{ VMID_MSS_MSA, PREM_READ | PERM_WRITE },
+>    };
+>    
+>    current_perms = qcom_scm_assign_mem(ptr, size, current_perms, new_perms, 2);
+This looks OK, will try to incorporate this idea.
+>
+>
+> And I believe something like "curr_perm" and "new_perm" are even better
+> names than "from" and "to"
+ok.
 >
 >> +{
 >> +	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
@@ -123,9 +169,6 @@ should struct pointer be OK, or direct argument passing?
 >> +	__le64 fw_phy;
 >> +	__le32 *from;
 >> +	int ret = -ENOMEM;
-> Not sure why we assign it. It gets overwritten with the first use.
-Yes will correct.
->
 >> +	int i;
 >> +
 >> +	from = dma_alloc_attrs(__scm->dev, vmid.size_from,
@@ -144,44 +187,59 @@ Yes will correct.
 >> +	}
 >> +	fw_info = dma_alloc_attrs(__scm->dev, sizeof(*fw_info),
 >> +					&fw_phy, GFP_KERNEL, dma_attrs);
-> Can we consolidate this into one allocation with the appropriate
-> size and then offset the different structures in it?
-OK.
 >> +	if (!fw_info) {
 >> +		dev_err(__scm->dev,
 >> +			"failed to allocate buffer to pass firmware detail\n");
 >> +		goto free_dest_buff;
 >> +	}
+> You should be able to allocate these in one chunk and you should be able
+> to just use dma_alloc_coherent().
+OK.
+>
 >> +
 >> +	/* copy detail of original owner of ddr region */
 >> +	/* in physically contigious buffer */
 >> +	memcpy(from, vmid.from, vmid.size_from);
+> With "from" as a bitmap see hweight_long() to figure out the size of
+> "from".
+
+hweight_long() returns number of bits set in bitmap? is this correct understanding?
+
+>
 >> +
 >> +	/* fill details of new owners of ddr region*/
 >> +	/* in physically contigious buffer */
 >> +	for (i = 0; i < (vmid.size_to / sizeof(__le32)); i++) {
+> Better pass "number of entries in 'to'" and use standard types (such as
+> int or unsigned int) for "to" and "permission" until this point.
+OK.
+>
 >> +		to[i].vm = vmid.to[i];
 >> +		to[i].perm = vmid.permission[i];
-> Here you want the cpu_to_le32() stuff. Please run sparse.
-OK, last time i tried running sparse but seems some environment problem, 
-it did not gave any warning.
->
 >> +		to[i].ctx = NULL;
 >> +		to[i].ctx_size = 0;
 >> +	}
 >> +
 >> +	/* copy detail of firmware region whose mapping need to be done */
 >> +	/* in physically contigious buffer */
-> /*
->   * Multi-line comments are like so.
->   */
-Will change.
->
 >> +	fw_info->addr = vmid.fw_phy;
 >> +	fw_info->size = vmid.size_fw;
+> fw_info is a confusing name for "a list of memory regions".
+ok will try to use appropriate name.
+>
+> And you need a cpu_to_le32() somewhere, better keep the in-kernel API
+> pass standard types (such as phys_addr_t) and then convert to the
+> "hardware specific" type here.
+ok.
+>
 >> +
 >> +	/* reuse fw_phy and size_fw members to fill address and size of */
 >> +	/* fw_info buffer */
+> Please don't try to be "clever" and reuse things when writing
+> kernel-code, non-obvious reuse of variables or struct members often end
+> up causing someone else to introduce bugs in your code later.
+ok.
+>
 >> +	vmid.fw_phy = fw_phy;
 >> +	vmid.size_to = sizeof(*to) * (vmid.size_to / sizeof(__le32));
 >> +	vmid.size_fw = sizeof(*fw_info);
@@ -189,9 +247,6 @@ Will change.
 >> +	if (!ret)
 >> +		goto free_fw_buff;
 >> +	return ret;
-> We don't free dma on failure?
-Did not get, isnt i am freeing all dma allocs on failure?
->
 >> +free_fw_buff:
 >> +	dma_free_attrs(__scm->dev, sizeof(*fw_info), fw_info,
 >> +		fw_phy, dma_attrs);
@@ -217,9 +272,6 @@ Did not get, isnt i am freeing all dma allocs on failure?
 >>   extern int  __qcom_scm_pas_shutdown(struct device *dev, u32 peripheral);
 >>   extern int  __qcom_scm_pas_mss_reset(struct device *dev, bool reset);
 >> +#define QCOM_SCM_SVC_MP	0xc
-> This is already defined upstream?
-Will check, but i thought its not there.
->
 >> +#define QCOM_MEM_PROT_ASSIGN_ID	0x16
 >> +extern int  __qcom_scm_assign_mem(struct device *dev, struct vmid_detail vmid);
 >>   
@@ -229,14 +281,306 @@ Will check, but i thought its not there.
 >> index 8fd697a..62ad976 100644
 >> --- a/drivers/remoteproc/qcom_q6v5_pil.c
 >> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+> Please split the patch in a scm-patch and a q6v5 patch.
+ok.
+>
+>> @@ -110,6 +110,7 @@ struct rproc_hexagon_res {
+>>   	struct qcom_mss_reg_res *active_supply;
+>>   	char **proxy_clk_names;
+>>   	char **active_clk_names;
+>> +	int version;
+> This will result in multi-line conditionals checking if we should do
+> memory protection for platform x, y, z or not. Add a "bool
+> need_mem_protect;" instead.
+ok.
+>
+>>   };
+>>   
+>>   struct q6v5 {
+>> @@ -153,8 +154,28 @@ struct q6v5 {
+>>   	size_t mpss_size;
+>>   
+>>   	struct qcom_rproc_subdev smd_subdev;
+>> +	int version;
+>>   };
+>>   
+>> +enum {
+>> +	MSS_MSM8916,
+>> +	MSS_MSM8974,
+>> +	MSS_MSM8996,
+>> +};
+>> +
+>> +enum {
+>> +	ASSIGN_ACCESS_MSA,
+>> +	REMOVE_ACCESS_MSA,
+>> +	ASSIGN_SHARED_ACCESS_MSA,
+>> +	REMOVE_SHARED_ACCESS_MSA,
+>> +};
+>> +
+>> +#define VMID_HLOS	0x3
+>> +#define VMID_MSS_MSA	0xF
+>> +#define PERM_READ	0x4
+>> +#define PERM_WRITE	0x2
+>> +#define PERM_EXEC	0x1
+>> +#define PERM_RW	(PERM_READ | PERM_WRITE)
+> These belongs in the SCM API instead. (Prefix them appropriately)
+Do you mean something like SCM_VMID_HLOS?
+>
+>>   static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+>>   			       const struct qcom_mss_reg_res *reg_res)
+>>   {
 >> @@ -288,6 +309,54 @@ static struct resource_table *q6v5_find_rsc_table(struct rproc *rproc,
 >>   	return &table;
 >>   }
 >>   
 >> +int hyp_mem_access(int id, phys_addr_t addr, size_t size)
-> static?
-Yes, will correct.
+> I much prefer the downstream split and naming of this function, rather
+> than using a switch to implement 4 different functions in one please
+> split it up.
+so you mean i need to have seprate function for each "int id"? in switch 
+case?
+just for sake of minimum code churn i tried to work with single function.
+
 >
+>> +{
+>> +	struct vmid_detail vmid;
+>> +	int ret;
+>> +
+> Pass the struct q6v5 here and return successfully here if we're not
+> supposed to do memory protection. It does clean up the calling code.
+OK.
+>
+>> +	switch (id) {
+>> +	case ASSIGN_ACCESS_MSA:
+>> +		vmid.from = (int[]) { VMID_HLOS };
+>> +		vmid.to = (int[]) { VMID_MSS_MSA };
+>> +		vmid.permission = (int[]) { PERM_READ | PERM_WRITE };
+>> +		vmid.size_from = vmid.size_to = 1 * sizeof(__le32);
+>> +		break;
+>> +	case REMOVE_ACCESS_MSA:
+>> +		vmid.from = (int[]) { VMID_MSS_MSA };
+>> +		vmid.to = (int[]) { VMID_HLOS };
+>> +		vmid.permission =
+>> +			(int[]) { PERM_READ | PERM_WRITE | PERM_EXEC };
+>> +		vmid.size_from = vmid.size_to = 1 * sizeof(__le32);
+>> +		break;
+>> +	case ASSIGN_SHARED_ACCESS_MSA:
+>> +		vmid.from = (int[]) { VMID_HLOS };
+>> +		vmid.to = (int[]) { VMID_HLOS, VMID_MSS_MSA };
+>> +		vmid.permission = (int[]) { PERM_RW, PERM_RW };
+>> +		vmid.size_from = 1 * sizeof(__le32);
+>> +		vmid.size_to = 2 * sizeof(__le32);
+>> +		break;
+>> +	case REMOVE_SHARED_ACCESS_MSA:
+>> +		vmid.from = (int[]) { VMID_HLOS, VMID_MSS_MSA };
+>> +		vmid.to = (int[]) { VMID_HLOS };
+>> +		vmid.permission =
+>> +			(int[]) { PERM_READ | PERM_WRITE | PERM_EXEC };
+>> +		vmid.size_from = 2 * sizeof(__le32);
+>> +		vmid.size_to = 1 * sizeof(__le32);
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	vmid.fw_phy = addr;
+>> +	vmid.size_fw = size;
+>> +	ret = qcom_scm_assign_mem(vmid);
+>> +	if (ret)
+>> +		pr_err("%s: Failed to assign memory protection, ret = %d\n",
+>> +			__func__, ret);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>   static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+>>   {
+>>   	struct q6v5 *qproc = rproc->priv;
+>> @@ -461,6 +530,15 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+>>   
+>>   	memcpy(ptr, fw->data, fw->size);
+>>   
+>> +	/* Hypervisor mapping to access metadata by modem */
+>> +	ret = qproc->version == MSS_MSM8996 ?
+> To prove the point above, imagine just in the next year when this
+I agree.
+> becomes:
+>
+> ret = (qproc->version == MSS_MSM8996 ||
+>         qproc->version == MSS_MSM8998 ||
+>         qproc->version == MSS_NEXT_THING) ?
+>         hyp_mem_access(ASSIGN_ACCESS_MSA, phys, ALIGN(fw->size, SZ_4K)) :
+>         0;
+>
+> Or in 5 years...
+>
+>> +			hyp_mem_access(ASSIGN_ACCESS_MSA, phys,
+>> +			ALIGN(fw->size, SZ_4K)) : 0;
+>> +	if (ret) {
+>> +		dev_err(qproc->dev,
+>> +			"Failed to assign metadata memory, ret - %d\n", ret);
+> Rather than having this print after each call to hyp_mem_access() move
+> the message into that function.
+Ok.
+>
+>> +		return -ENOMEM;
+> And don't forget to clean up the allocation before returning.
+Ok.
+>
+>> +	}
+>>   	writel(phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
+>>   	writel(RMB_CMD_META_DATA_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+>>   
+>> @@ -470,6 +548,13 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+>>   	else if (ret < 0)
+>>   		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
+>>   
+>> +	/* Metadata authentication done, remove modem access */
+>> +	ret = qproc->version == MSS_MSM8996 ?
+>> +			hyp_mem_access(REMOVE_ACCESS_MSA, phys,
+>> +			ALIGN(fw->size, SZ_4K)) : 0;
+> You use ALIGN(fw->size, SZ_4K) numerous times in this function, use a
+> variable and make the allocation take this as well to make it explicit
+> that we're dealing with the same memory chunk size all over.
+OK.
+>
+>> +	if (ret)
+>> +		dev_err(qproc->dev,
+>> +			"Failed to reclaim metadata memory, ret - %d\n", ret);
+>>   	dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
+>>   
+>>   	return ret < 0 ? ret : 0;
+>> @@ -578,6 +663,16 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>   		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>>   		if (!size) {
+>>   			boot_addr = relocate ? qproc->mpss_phys : min_addr;
+>> +			/* Hypervisor mapping of modem fw */
+>> +			ret = qproc->version == MSS_MSM8996 ?
+>> +					hyp_mem_access(ASSIGN_SHARED_ACCESS_MSA,
+>> +					boot_addr, qproc->mpss_size) : 0;
+> The mpss is loaded somewhere in qproc->mpss_region, potentially at some
+> offset (which would be reflected in boot_addr).
+>
+> But if boot_addr > qproc->mpss_region the region to hand out is no
+> longer mpss_size large, it's "mpss_size - (boot_addr - mpss_phys)", so
+> you might give the mpss permission to trash the memory after the
+> mpss_region.
+>
+> Better hand out qproc->mpss_phys of size qproc->mpss_size.
+OK.
+>
+>
+> And as far as I can tell the downstream driver load the segments and
+> then make the MSS sole owner of the memory region. Do note that it's
+> perfectly fine to refactor code to make things better fit a natural and
+> easy to follow flow of ownership here!
+Not very clear what to do?
+>
+>> +			if (ret) {
+>> +				dev_err(qproc->dev,
+>> +					"Failed to assign fw memory access, ret - %d\n",
+>> +					ret);
+>> +				return -ENOMEM;
+>> +			}
+>>   			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+>>   			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+>>   		}
+>> @@ -636,6 +731,14 @@ static int q6v5_start(struct rproc *rproc)
+>>   		goto assert_reset;
+>>   	}
+>>   
+>> +	ret = qproc->version == MSS_MSM8996 ?
+>> +			hyp_mem_access(ASSIGN_ACCESS_MSA, qproc->mba_phys,
+>> +			qproc->mba_size) : 0;
+>> +	if (ret) {
+>> +		dev_err(qproc->dev,
+>> +			"Failed to assign mba memory access, ret - %d\n", ret);
+>> +		goto assert_reset;
+>> +	}
+>>   	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
+>>   
+>>   	ret = q6v5proc_reset(qproc);
+>> @@ -657,16 +760,22 @@ static int q6v5_start(struct rproc *rproc)
+>>   
+>>   	ret = q6v5_mpss_load(qproc);
+>>   	if (ret)
+>> -		goto halt_axi_ports;
+>> +		goto reclaim_mem;
+>>   
+>>   	ret = wait_for_completion_timeout(&qproc->start_done,
+>>   					  msecs_to_jiffies(5000));
+>>   	if (ret == 0) {
+>>   		dev_err(qproc->dev, "start timed out\n");
+>>   		ret = -ETIMEDOUT;
+>> -		goto halt_axi_ports;
+>> +		goto reclaim_mem;
+>>   	}
+>>   
+>> +	ret = qproc->version == MSS_MSM8996 ?
+>> +			hyp_mem_access(REMOVE_ACCESS_MSA, qproc->mba_phys,
+>> +			qproc->mba_size) : 0;
+>> +	if (ret)
+>> +		dev_err(qproc->dev,
+>> +			"Failed to reclaim mba memory, ret - %d\n", ret);
+>>   	qproc->running = true;
+>>   
+>>   	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> @@ -676,7 +785,20 @@ static int q6v5_start(struct rproc *rproc)
+>>   
+> On success q6v5_start() will leave Linus as sole owner of mba_phys and
+> mpss_phys (or boot_addr) will have shared ownership. rproc_stop() should
+> make sure to reclaim the sole ownership of mpss_phys again, so that
+> subsequent calls to rproc_start() will find the memory protection in an
+> appropriate state.
+Sure!
+>
+>>   	return 0;
+>>   
+>> +reclaim_mem:
+>> +	ret = qproc->version == MSS_MSM8996 ?
+>> +			hyp_mem_access(REMOVE_SHARED_ACCESS_MSA,
+>> +			qproc->mpss_phys, qproc->mpss_size) : 0;
+>> +	if (ret)
+>> +		dev_err(qproc->dev,
+>> +			"Failed to reclaim fw memory, ret - %d\n", ret);
+>>   halt_axi_ports:
+>> +	ret = qproc->version == MSS_MSM8996 ?
+>> +			hyp_mem_access(REMOVE_ACCESS_MSA, qproc->mba_phys,
+>> +			qproc->mba_size) : 0;
+>> +	if (ret)
+>> +		dev_err(qproc->dev,
+>> +			"Failed to reclaim mba memory, ret - %d\n", ret);
+> Isn't it possible that the remote processor is still executing the MBA
+> firmware up until we halt the axi ports and assert the reset? We don't
+> want to remove permission until we know the CPU is stopped and it wont
+> fault on us.
+Will check.
+>
+>>   	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
+>>   	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+>>   	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
+>> @@ -1015,6 +1137,7 @@ static int q6v5_probe(struct platform_device *pdev)
+>>   	if (ret)
+>>   		goto free_rproc;
+>>   
+>> +	qproc->version = desc->version;
+>>   	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
+>>   	if (ret < 0)
+>>   		goto free_rproc;
+>> @@ -1090,6 +1213,7 @@ static int q6v5_remove(struct platform_device *pdev)
+>>   		"mem",
+>>   		NULL
+>>   	},
+>> +	.version = MSS_MSM8916,
+>>   };
+>>   
+>>   static const struct rproc_hexagon_res msm8974_mss = {
+>> @@ -1127,6 +1251,7 @@ static int q6v5_remove(struct platform_device *pdev)
+>>   		"mem",
+>>   		NULL
+>>   	},
+>> +	.version = MSS_MSM8974,
+>>   };
 >>   
 >>   static const struct of_device_id q6v5_of_match[] = {
 >> diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
@@ -248,6 +592,14 @@ Yes, will correct.
 >>   };
 >>   
 >> +struct vmid_detail {
+> Whenever you add structs to a public API, make sure to add some
+> kerneldoc.
+Will check if where is it appropriate to provide documentation.
+>
+> And as this is a kernel-API I would like to see standard kernel-types
+> for things.
+OK.
+>
 >> +	__le32 *from;
 >> +	__le32 *to;
 >> +	__le32 *permission;
@@ -257,13 +609,11 @@ Yes, will correct.
 >> +	__le64 fw_phy;
 >> +	__le64 from_phy;
 >> +	__le64 to_phy;
-> should the *_phy be phys_addr_t types?
->
-> Leave these all as u32/u64. Perhaps also move size_from/size_to
-> next to the arrays they're for. Also add some documentation so we
-> know what they're all about.
-OK.
->
+>> +
+>> +};
+>> +
+> Regards,
+> Bjorn
 
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
