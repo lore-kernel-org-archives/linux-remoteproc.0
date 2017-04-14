@@ -1,44 +1,77 @@
-Return-Path: <dan.j.williams@intel.com>
-Subject: [PATCH 1/3] printk: provide generic dynamic_hex_dump fallback
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Fri, 28 Apr 2017 14:28:59 -0700
-Message-ID: <149341493902.35578.4854765976357149724.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <149341493336.35578.13631055553267152302.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <149341493336.35578.13631055553267152302.stgit@dwillia2-desk3.amr.corp.intel.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 14 Apr 2017 10:59:24 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 1/2] soc: qcom: Add support of scm call for mss rproc
+ to share access of ddr
+Message-ID: <20170414175924.GS70446@Bjorns-MacBook-Pro-2.local>
+References: <1488996202-1546-1-git-send-email-akdwived@codeaurora.org>
+ <1488996202-1546-2-git-send-email-akdwived@codeaurora.org>
+ <20170405234448.GO7065@codeaurora.org>
+ <a8123857-e4e8-e365-f982-65bd7b65fa02@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-To: linux-nvdimm@lists.01.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-acpi@vger.kernel.org, Jason Baron <jbaron@akamai.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8123857-e4e8-e365-f982-65bd7b65fa02@codeaurora.org>
+To: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The lack of a silent fallback for this routine has caused the nfit
-driver and the virtio_rpmsg_bus to develop local workarounds. Define a
-nop version of dynamic_hex_dump() in the CONFIG_DYNAMIC_DEBUG=n case so
-we can clean up those local workarounds.
+On Fri 14 Apr 07:01 PDT 2017, Dwivedi, Avaneesh Kumar (avani) wrote:
+> On 4/6/2017 5:14 AM, Stephen Boyd wrote:
+> > On 03/08, Avaneesh Kumar Dwivedi wrote:
+[..]
+> > > diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+> > > index 893f953ea..f137f34 100644
+> > > --- a/drivers/firmware/qcom_scm.c
+> > > +++ b/drivers/firmware/qcom_scm.c
+> > > @@ -42,6 +42,18 @@ struct qcom_scm {
+> > >   static struct qcom_scm *__scm;
+> > > +struct dest_vm_and_perm_info {
+> > > +	__le32 vm;
+> > > +	__le32 perm;
+> > > +	__le32 *ctx;
+> > Drop the pointer? Just treat it like another number? Pointer is
+> > really odd because it doesn't really make any sense what the
+> > address of the pointer would be.
+> Downstream this is pointer though unused, that is why kept same will check
+> and change.
 
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/dynamic_debug.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+The problem is that the size of a pointer depends on which platform
+you're on. Spelling out __le32 here is then just deceiving.
 
-diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index 546d68057e3b..c26302e1e387 100644
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@ -180,6 +180,12 @@ static inline int ddebug_dyndbg_module_param_cb(char *param, char *val,
- 	do { if (0) printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__); } while (0)
- #define dynamic_dev_dbg(dev, fmt, ...)					\
- 	do { if (0) dev_printk(KERN_DEBUG, dev, fmt, ##__VA_ARGS__); } while (0)
-+
-+static inline void dynamic_hex_dump(const char *prefix_str, int prefix_type,
-+		int rowsize, int groupsize, const void *buf, size_t len,
-+		bool ascii)
-+{
-+}
- #endif
- 
- #endif
+> > 
+> > > +	__le32 ctx_size;
+> > > +};
+[..]
+> > > +int qcom_scm_assign_mem(struct vmid_detail vmid)
+[..]
+> > > +	ret = __qcom_scm_assign_mem(__scm->dev, vmid);
+> > > +	if (!ret)
+> > > +		goto free_fw_buff;
+> > > +	return ret;
+> > We don't free dma on failure?
+> Did not get, isnt i am freeing all dma allocs on failure?
+
+In the event that __qcom_scm_assign_mem() returns non-zero your not
+jumping to free_fw_buff and just returning "ret" without freeing
+the memory.
+
+[..]
+> > > diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
+> > > index 3584b00..4665a11 100644
+> > > --- a/drivers/firmware/qcom_scm.h
+> > > +++ b/drivers/firmware/qcom_scm.h
+> > > @@ -55,6 +55,9 @@ extern int  __qcom_scm_pas_mem_setup(struct device *dev, u32 peripheral,
+> > >   extern int  __qcom_scm_pas_auth_and_reset(struct device *dev, u32 peripheral);
+> > >   extern int  __qcom_scm_pas_shutdown(struct device *dev, u32 peripheral);
+> > >   extern int  __qcom_scm_pas_mss_reset(struct device *dev, bool reset);
+> > > +#define QCOM_SCM_SVC_MP	0xc
+> > This is already defined upstream?
+> Will check, but i thought its not there.
+
+We use the qcom_scm-api to abstract these facts, so this is an internal
+constant - as such it goes in drivers/firmware/qcom_scm.h - and it's
+already defined.
+
+Regards,
+Bjorn
