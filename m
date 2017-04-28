@@ -1,26 +1,44 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sat, 1 Apr 2017 09:13:44 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/6] virtio: wrap find_vqs
-Message-ID: <20170401161344.GR20094@minitux>
-References: <1490820507-8005-1-git-send-email-mst@redhat.com>
- <1490820507-8005-2-git-send-email-mst@redhat.com>
+Return-Path: <dan.j.williams@intel.com>
+Subject: [PATCH 1/3] printk: provide generic dynamic_hex_dump fallback
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Fri, 28 Apr 2017 14:28:59 -0700
+Message-ID: <149341493902.35578.4854765976357149724.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <149341493336.35578.13631055553267152302.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <149341493336.35578.13631055553267152302.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1490820507-8005-2-git-send-email-mst@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>, Jason Wang <jasowang@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Amit Shah <amit@kernel.org>, Gonglei <arei.gonglei@huawei.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>, Ohad Ben-Cohen <ohad@wizery.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux-foundation.org, linux-crypto@vger.kernel.org, dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-scsi@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: linux-nvdimm@lists.01.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-acpi@vger.kernel.org, Jason Baron <jbaron@akamai.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 29 Mar 13:48 PDT 2017, Michael S. Tsirkin wrote:
+The lack of a silent fallback for this routine has caused the nfit
+driver and the virtio_rpmsg_bus to develop local workarounds. Define a
+nop version of dynamic_hex_dump() in the CONFIG_DYNAMIC_DEBUG=n case so
+we can clean up those local workarounds.
 
-> We are going to add more parameters to find_vqs, let's wrap the call so
-> we don't need to tweak all drivers every time.
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: Jason Baron <jbaron@akamai.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/dynamic_debug.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index 546d68057e3b..c26302e1e387 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -180,6 +180,12 @@ static inline int ddebug_dyndbg_module_param_cb(char *param, char *val,
+ 	do { if (0) printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__); } while (0)
+ #define dynamic_dev_dbg(dev, fmt, ...)					\
+ 	do { if (0) dev_printk(KERN_DEBUG, dev, fmt, ##__VA_ARGS__); } while (0)
++
++static inline void dynamic_hex_dump(const char *prefix_str, int prefix_type,
++		int rowsize, int groupsize, const void *buf, size_t len,
++		bool ascii)
++{
++}
+ #endif
+ 
+ #endif
