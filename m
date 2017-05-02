@@ -1,46 +1,187 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Tue, 2 May 2017 17:02:05 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/2] remoteproc: Introduce rproc_{start,stop}() functions
-Message-ID: <20170503000205.GZ15143@minitux>
-References: <1493758742-26148-1-git-send-email-spjoshi@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1493758742-26148-1-git-send-email-spjoshi@codeaurora.org>
-To: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <spjoshi@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Subject: [PATCH 1/2] remoteproc: Introduce rproc_{start,stop}() functions
+Date: Tue,  2 May 2017 13:59:01 -0700
+Message-Id: <1493758742-26148-1-git-send-email-spjoshi@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue 02 May 13:59 PDT 2017, Sarangdhar Joshi wrote:
+In the context of recovering from crash,
+rproc_trigger_recovery() does rproc_shutdown() followed
+by rproc_boot(). The remoteproc resources are cleaned up
+in rproc_shutdown() and immediately reallocated in
+rproc_boot() which is an unnecessary overhead.
 
-> In the context of recovering from crash,
-> rproc_trigger_recovery() does rproc_shutdown() followed
-> by rproc_boot(). The remoteproc resources are cleaned up
-> in rproc_shutdown() and immediately reallocated in
-> rproc_boot() which is an unnecessary overhead.
-> 
-> Furthermore, we want the memory regions to be accessible
-> after stopping the remote processor, to be able to extract
-> the memory content for a coredump.
-> 
-> The current patch factors out the code in rproc_boot() and
+Furthermore, we want the memory regions to be accessible
+after stopping the remote processor, to be able to extract
+the memory content for a coredump.
 
-"This patch factors..."
+The current patch factors out the code in rproc_boot() and
+rproc_shutdown() path and introduces rproc_{start,stop}()
+in order to avoid resource allocation overhead.
 
-> rproc_shutdown() path and introduces rproc_{start,stop}()
-> in order to avoid resource allocation overhead.
-> 
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+---
 
-I think the result of the two patches looks good.
+I had forgot to send the second patch (2/2) in this series earlier.
+Hence resending both patches as a series.
 
-But I would prefer if you splice them differently. If I read the patches
-correctly you should be able to introduce rproc_start()/stop() and move
-rproc_boot()/shutdown() over to use these in one patch and then in a
-second patch modify the behavior of the recovery.
+ drivers/remoteproc/remoteproc_core.c | 118 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 110 insertions(+), 8 deletions(-)
 
-That way if one bisects any issues to either one we know if it was the
-refactoring or the modification of the recovery behavior.
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 9fd9ca5..169abb3 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -851,6 +851,61 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 		kref_put(&rvdev->refcount, rproc_vdev_release);
+ }
+ 
++static int rproc_start(struct rproc *rproc, const struct firmware *fw)
++{
++	struct device *dev = &rproc->dev;
++	struct resource_table *table, *loaded_table;
++	int ret, tablesz;
++
++	/* look for the resource table */
++	table = rproc_find_rsc_table(rproc, fw, &tablesz);
++	if (!table) {
++		dev_err(dev, "Resouce table look up failed\n");
++		return -EINVAL;
++	}
++
++	/* load the ELF segments to memory */
++	ret = rproc_load_segments(rproc, fw);
++	if (ret) {
++		dev_err(dev, "Failed to load program segments: %d\n", ret);
++		return ret;
++	}
++
++	/*
++	 * The starting device has been given the rproc->table_ptr as the
++	 * resource table. The address of the vring along with the other
++	 * allocated resources (carveouts etc) is stored in table_ptr.
++	 * In order to pass this information to the remote device we must copy
++	 * this information to device memory. We also update the table_ptr so
++	 * that any subsequent changes will be applied to the loaded version.
++	 */
++	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
++	if (loaded_table)
++		memcpy(loaded_table, rproc->table_ptr, tablesz);
++
++	/* power up the remote processor */
++	ret = rproc->ops->start(rproc);
++	if (ret) {
++		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
++		return ret;
++	}
++
++	/* probe any subdevices for the remote processor */
++	ret = rproc_probe_subdevices(rproc);
++	if (ret) {
++		dev_err(dev, "failed to probe subdevices for %s: %d\n",
++			rproc->name, ret);
++		rproc->ops->stop(rproc);
++		return ret;
++	}
++
++	rproc->state = RPROC_RUNNING;
++
++	dev_info(dev, "remote processor %s is now up\n", rproc->name);
++
++	return 0;
++}
++
+ /*
+  * take a firmware and boot a remote processor with it.
+  */
+@@ -993,6 +1048,32 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
+ 	return ret;
+ }
+ 
++static int rproc_stop(struct rproc *rproc)
++{
++	struct device *dev = &rproc->dev;
++	int ret;
++
++	/* remove any subdevices for the remote processor */
++	rproc_remove_subdevices(rproc);
++
++	/* power off the remote processor */
++	ret = rproc->ops->stop(rproc);
++	if (ret) {
++		dev_err(dev, "can't stop rproc: %d\n", ret);
++		return ret;
++	}
++
++	/* if in crash state, unlock crash handler */
++	if (rproc->state == RPROC_CRASHED)
++		complete_all(&rproc->crash_comp);
++
++	rproc->state = RPROC_OFFLINE;
++
++	dev_info(dev, "stopped remote processor %s\n", rproc->name);
++
++	return 0;
++}
++
+ /**
+  * rproc_trigger_recovery() - recover a remoteproc
+  * @rproc: the remote processor
+@@ -1005,23 +1086,44 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
+  */
+ int rproc_trigger_recovery(struct rproc *rproc)
+ {
++	const struct firmware *firmware_p;
++	struct device *dev;
++	int ret;
++
+ 	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
+ 
+ 	init_completion(&rproc->crash_comp);
+ 
+-	/* shut down the remote */
+-	/* TODO: make sure this works with rproc->power > 1 */
+-	rproc_shutdown(rproc);
++	dev = &rproc->dev;
++
++	ret = mutex_lock_interruptible(&rproc->lock);
++	if (ret)
++		return ret;
++
++	ret = rproc_stop(rproc);
++	if (ret)
++		goto unlock_mutex;
+ 
+ 	/* wait until there is no more rproc users */
+ 	wait_for_completion(&rproc->crash_comp);
+ 
+-	/*
+-	 * boot the remote processor up again
+-	 */
+-	rproc_boot(rproc);
++	/* load firmware */
++	ret = request_firmware(&firmware_p, rproc->firmware, dev);
++	if (ret < 0) {
++		dev_err(dev, "request_firmware failed: %d\n", ret);
++		goto unlock_mutex;
++	}
+ 
+-	return 0;
++	/* boot the remote processor up again */
++	ret = rproc_start(rproc, firmware_p);
++	if (ret)
++		goto unlock_mutex;
++
++	release_firmware(firmware_p);
++
++unlock_mutex:
++	mutex_unlock(&rproc->lock);
++	return ret;
+ }
+ 
+ /**
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
