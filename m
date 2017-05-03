@@ -1,109 +1,58 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 3/4] soc: qcom: Add device tree binding for GLINK RPM
-Date: Tue,  2 May 2017 22:29:28 -0700
-Message-Id: <20170503052929.17422-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20170503052929.17422-1-bjorn.andersson@linaro.org>
-References: <20170503052929.17422-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+Subject: Re: [PATCH v4 0/2] remoteproc: st: add virtio_rpmsg support
+References: <1487189929-24196-1-git-send-email-loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Message-ID: <40a7f950-980a-2bc5-8a0b-2b457c00d07d@st.com>
+Date: Wed, 3 May 2017 17:29:45 +0200
+MIME-Version: 1.0
+In-Reply-To: <1487189929-24196-1-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, patrice.chotard@st.com, hugues.fruchet@st.com, peter.griffin@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add device tree binding documentation for the Qualcomm GLINK RPM, used
-for communication with the Resource Power Management subsystem in
-various Qualcomm SoCs.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
 
-Changes since v2:
-- Replace qcom,ipc syscon with a "doorbell"
+On 02/15/2017 09:18 PM, Loic Pallardy wrote:
+> Goal of this series is:
+> - to add vring based communication link (virtio_rpmsg)
+> - to add rproc_da_to_va translation function to allow firmware loading in
+>   pre-reserved carveout memory region
+>
+> V2:
+> Only changes in patch 1 to:
+> - fix typos
+> - fix mailbox allocation per coprocessor
+>
+> V3:
+> - Integrate Bjorn's comments about mailbox support simplification
+> - Add missing Signed-of-by
+> - Move st_rproc_probe error management correction in a dedicated patch
+> - Fix warnings reported by checkpatch --strict
+>
+> V4:
+> - Rebase on maintainer rproc-next branch on which patches 1 & 2 are present
+> - Remove check on device address (da) from patch 4
+> - Add Acked-by and Tested-by
+>
+Hi Bjorn,
 
-Changes since v1:
-- None
+As discussed during Linaro connect, could you review/accept these 2 
+patches providing da to pa translation mechanism for firmware loading?
+I agree a central solution will better, but today all drivers are based 
+on this mechanism.
+Could we move on this solution to complete remoteproc support for B2260 
+96board?
 
- .../devicetree/bindings/soc/qcom/qcom,glink.txt    | 73 ++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+Regards,
+Loic
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-new file mode 100644
-index 000000000000..4c8983f0dcb0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-@@ -0,0 +1,73 @@
-+Qualcomm RPM GLINK binding
-+
-+This binding describes the Qualcomm RPM GLINK, a fifo based mechanism for
-+communication with the Resource Power Management system on various Qualcomm
-+platforms.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,glink-rpm"
-+
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: should specify the IRQ used by the remote processor to
-+		    signal this processor about communication related events
-+
-+- qcom,rpm-msg-ram:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: handle to RPM message memory resource
-+
-+- doorbells:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the "rpm_hlos" doorbell in APCS, as described
-+		    in doorbell.txt
-+
-+= GLINK DEVICES
-+Each subnode of the GLINK node represent function tied to a virtual
-+communication channel. The name of the nodes are not important. The properties
-+of these nodes are defined by the individual bindings for the specific function
-+- but must contain the following property:
-+
-+- qcom,glink-channels:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: a list of channels tied to this function, used for matching
-+		    the function to a set of virtual channels
-+
-+= EXAMPLE
-+The following example represents the GLINK RPM node on a MSM8996 device, with
-+the function for the "rpm_request" channel defined, which is used for
-+regualtors and root clocks.
-+
-+	apcs_glb: apcs-glb@9820000 {
-+		compatible = "qcom,msm8996-apcs-hmss-global";
-+		reg = <0x9820000 0x1000>;
-+
-+		#doorbell-cells = <1>;
-+	};
-+
-+	rpm_msg_ram: memory@68000 {
-+		compatible = "qcom,rpm-msg-ram";
-+		reg = <0x68000 0x6000>;
-+	};
-+
-+        rpm-glink {
-+		compatible = "qcom,glink-rpm";
-+
-+		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-+
-+		qcom,rpm-msg-ram = <&rpm_msg_ram>;
-+
-+		doorbells = <&apcs_glb 0>;
-+
-+		rpm-requests {
-+			compatible = "qcom,rpm-msm8996";
-+			qcom,glink-channels = "rpm_requests";
-+
-+			...
-+		};
-+	};
--- 
-2.12.0
+> Loic Pallardy (2):
+>   remoteproc: st: add da to va support
+>   remoteproc: core: don't allocate carveout if pa is defined
+>
+>  drivers/remoteproc/remoteproc_core.c |  5 +++++
+>  drivers/remoteproc/st_remoteproc.c   | 43 +++++++++++++++++++++++++++++++-----
+>  2 files changed, 42 insertions(+), 6 deletions(-)
+>
