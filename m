@@ -1,126 +1,64 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/4] remoteproc/davinci: add support to parse internal memories
-Date: Fri, 26 May 2017 15:21:38 -0500
-Message-ID: <20170526202140.10472-3-s-anna@ti.com>
-In-Reply-To: <20170526202140.10472-1-s-anna@ti.com>
-References: <20170526202140.10472-1-s-anna@ti.com>
+Return-Path: <spjoshi@codeaurora.org>
+Subject: Re: [PATCH 1/2] remoteproc: Introduce rproc_{start,stop}() functions
+References: <1493758742-26148-1-git-send-email-spjoshi@codeaurora.org>
+ <20170503000205.GZ15143@minitux>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Message-ID: <c3cce8b1-7c46-7a6f-0cde-d38400b4ea0b@codeaurora.org>
+Date: Tue, 2 May 2017 19:06:42 -0700
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+In-Reply-To: <20170503000205.GZ15143@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The DSP subsystem on OMAP-L13x SoCs has various internal RAM
-memories that can accessed from the ARM side. These memories
-can be configured to be used as either RAM or Cache.
+On 05/02/2017 05:02 PM, Bjorn Andersson wrote:
+> On Tue 02 May 13:59 PDT 2017, Sarangdhar Joshi wrote:
+>
+>> In the context of recovering from crash,
+>> rproc_trigger_recovery() does rproc_shutdown() followed
+>> by rproc_boot(). The remoteproc resources are cleaned up
+>> in rproc_shutdown() and immediately reallocated in
+>> rproc_boot() which is an unnecessary overhead.
+>>
+>> Furthermore, we want the memory regions to be accessible
+>> after stopping the remote processor, to be able to extract
+>> the memory content for a coredump.
+>>
+>> The current patch factors out the code in rproc_boot() and
+>
+> "This patch factors..."
+>
+>> rproc_shutdown() path and introduces rproc_{start,stop}()
+>> in order to avoid resource allocation overhead.
+>>
+>
+> I think the result of the two patches looks good.
+>
+> But I would prefer if you splice them differently. If I read the patches
+> correctly you should be able to introduce rproc_start()/stop() and move
+> rproc_boot()/shutdown() over to use these in one patch and then in a
+> second patch modify the behavior of the recovery.
+>
+> That way if one bisects any issues to either one we know if it was the
+> refactoring or the modification of the recovery behavior.
 
-The Davinci remoteproc driver has been enhanced to parse and
-store the kernel mappings for these internal RAM memories.
-These mappings can then be used to support direct loading of
-text/data into these memories from the remoteproc driver.
+Yes, got your point. I will split it into two separate patches.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 62 +++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+Regards,
+Sarang
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 0919176b52c1..5250cc494775 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -38,9 +38,27 @@ MODULE_PARM_DESC(da8xx_fw_name,
- #define SYSCFG_CHIPSIG3 BIT(3)
- #define SYSCFG_CHIPSIG4 BIT(4)
- 
-+#define DA8XX_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
-+
-+/**
-+ * struct da8xx_rproc_mem - internal memory structure
-+ * @cpu_addr: MPU virtual address of the memory region
-+ * @bus_addr: Bus address used to access the memory region
-+ * @dev_addr: Device address of the memory region from DSP view
-+ * @size: Size of the memory region
-+ */
-+struct da8xx_rproc_mem {
-+	void __iomem *cpu_addr;
-+	phys_addr_t bus_addr;
-+	u32 dev_addr;
-+	size_t size;
-+};
-+
- /**
-  * struct da8xx_rproc - da8xx remote processor instance state
-  * @rproc: rproc handle
-+ * @mem: internal memory regions data
-+ * @num_mems: number of internal memory regions
-  * @dsp_clk: placeholder for platform's DSP clk
-  * @ack_fxn: chip-specific ack function for ack'ing irq
-  * @irq_data: ack_fxn function parameter
-@@ -50,6 +68,8 @@ MODULE_PARM_DESC(da8xx_fw_name,
-  */
- struct da8xx_rproc {
- 	struct rproc *rproc;
-+	struct da8xx_rproc_mem *mem;
-+	int num_mems;
- 	struct clk *dsp_clk;
- 	void (*ack_fxn)(struct irq_data *data);
- 	struct irq_data *irq_data;
-@@ -169,6 +189,44 @@ static const struct rproc_ops da8xx_rproc_ops = {
- 	.kick = da8xx_rproc_kick,
- };
- 
-+static int da8xx_rproc_get_internal_memories(struct platform_device *pdev,
-+					     struct da8xx_rproc *drproc)
-+{
-+	static const char * const mem_names[] = {"l2sram", "l1pram", "l1dram"};
-+	int num_mems = ARRAY_SIZE(mem_names);
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	int i;
-+
-+	drproc->mem = devm_kcalloc(dev, num_mems, sizeof(*drproc->mem),
-+				   GFP_KERNEL);
-+	if (!drproc->mem)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_mems; i++) {
-+		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						   mem_names[i]);
-+		drproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(drproc->mem[i].cpu_addr)) {
-+			dev_err(dev, "failed to parse and map %s memory\n",
-+				mem_names[i]);
-+			return PTR_ERR(drproc->mem[i].cpu_addr);
-+		}
-+		drproc->mem[i].bus_addr = res->start;
-+		drproc->mem[i].dev_addr =
-+				res->start & DA8XX_RPROC_LOCAL_ADDRESS_MASK;
-+		drproc->mem[i].size = resource_size(res);
-+
-+		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
-+			mem_names[i], &drproc->mem[i].bus_addr,
-+			drproc->mem[i].size, drproc->mem[i].cpu_addr,
-+			drproc->mem[i].dev_addr);
-+	}
-+	drproc->num_mems = num_mems;
-+
-+	return 0;
-+}
-+
- static int da8xx_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -224,6 +282,10 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	drproc->dsp_clk = dsp_clk;
- 	rproc->has_iommu = false;
- 
-+	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
-+	if (ret)
-+		goto free_rproc;
-+
- 	platform_set_drvdata(pdev, rproc);
- 
- 	/*
+>
+> Regards,
+> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+
+
 -- 
-2.12.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
