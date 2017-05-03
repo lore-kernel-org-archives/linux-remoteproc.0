@@ -1,121 +1,109 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH 2/2] remoteproc: Rearrange code to avoid duplication
-Date: Tue,  2 May 2017 13:59:02 -0700
-Message-Id: <1493758742-26148-2-git-send-email-spjoshi@codeaurora.org>
-In-Reply-To: <1493758742-26148-1-git-send-email-spjoshi@codeaurora.org>
-References: <1493758742-26148-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 3/4] soc: qcom: Add device tree binding for GLINK RPM
+Date: Tue,  2 May 2017 22:29:28 -0700
+Message-Id: <20170503052929.17422-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20170503052929.17422-1-bjorn.andersson@linaro.org>
+References: <20170503052929.17422-1-bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Lot of code from rproc_fw_boot() and rproc_shutdown() has been
-duplicated in rproc_start() and rproc_stop() respectively.
-Refactor the code, so that rproc_start() and rproc_stop() can
-be called from boot up and shutdown path directly, instead of
-having the unnecessary duplication of code.
+Add device tree binding documentation for the Qualcomm GLINK RPM, used
+for communication with the Resource Power Management subsystem in
+various Qualcomm SoCs.
 
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 58 +++---------------------------------
- 1 file changed, 4 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 169abb3..a5b72b1 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -913,7 +913,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct device *dev = &rproc->dev;
- 	const char *name = rproc->firmware;
--	struct resource_table *table, *loaded_table;
-+	struct resource_table *table;
- 	int ret, tablesz;
- 
- 	ret = rproc_fw_sanity_check(rproc, fw);
-@@ -962,48 +962,12 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
- 	}
- 
--	/* load the ELF segments to memory */
--	ret = rproc_load_segments(rproc, fw);
--	if (ret) {
--		dev_err(dev, "Failed to load program segments: %d\n", ret);
--		goto clean_up_resources;
--	}
--
--	/*
--	 * The starting device has been given the rproc->table_ptr as the
--	 * resource table. The address of the vring along with the other
--	 * allocated resources (carveouts etc) is stored in table_ptr.
--	 * In order to pass this information to the remote device we must copy
--	 * this information to device memory. We also update the table_ptr so
--	 * that any subsequent changes will be applied to the loaded version.
--	 */
--	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
--	if (loaded_table)
--		memcpy(loaded_table, rproc->table_ptr, tablesz);
--
--	/* power up the remote processor */
--	ret = rproc->ops->start(rproc);
--	if (ret) {
--		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
-+	ret = rproc_start(rproc, fw);
-+	if (ret)
- 		goto clean_up_resources;
--	}
--
--	/* probe any subdevices for the remote processor */
--	ret = rproc_probe_subdevices(rproc);
--	if (ret) {
--		dev_err(dev, "failed to probe subdevices for %s: %d\n",
--			rproc->name, ret);
--		goto stop_rproc;
--	}
--
--	rproc->state = RPROC_RUNNING;
--
--	dev_info(dev, "remote processor %s is now up\n", rproc->name);
- 
- 	return 0;
- 
--stop_rproc:
--	rproc->ops->stop(rproc);
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
- clean_up:
-@@ -1265,14 +1229,9 @@ void rproc_shutdown(struct rproc *rproc)
- 	if (!atomic_dec_and_test(&rproc->power))
- 		goto out;
- 
--	/* remove any subdevices for the remote processor */
--	rproc_remove_subdevices(rproc);
--
--	/* power off the remote processor */
--	ret = rproc->ops->stop(rproc);
-+	ret = rproc_stop(rproc);
- 	if (ret) {
- 		atomic_inc(&rproc->power);
--		dev_err(dev, "can't stop rproc: %d\n", ret);
- 		goto out;
- 	}
- 
-@@ -1284,15 +1243,6 @@ void rproc_shutdown(struct rproc *rproc)
- 	/* Free the copy of the resource table */
- 	kfree(rproc->table_ptr);
- 	rproc->table_ptr = NULL;
--
--	/* if in crash state, unlock crash handler */
--	if (rproc->state == RPROC_CRASHED)
--		complete_all(&rproc->crash_comp);
--
--	rproc->state = RPROC_OFFLINE;
--
--	dev_info(dev, "stopped remote processor %s\n", rproc->name);
--
- out:
- 	mutex_unlock(&rproc->lock);
- }
+Changes since v2:
+- Replace qcom,ipc syscon with a "doorbell"
+
+Changes since v1:
+- None
+
+ .../devicetree/bindings/soc/qcom/qcom,glink.txt    | 73 ++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+new file mode 100644
+index 000000000000..4c8983f0dcb0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+@@ -0,0 +1,73 @@
++Qualcomm RPM GLINK binding
++
++This binding describes the Qualcomm RPM GLINK, a fifo based mechanism for
++communication with the Resource Power Management system on various Qualcomm
++platforms.
++
++- compatible:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "qcom,glink-rpm"
++
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: should specify the IRQ used by the remote processor to
++		    signal this processor about communication related events
++
++- qcom,rpm-msg-ram:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: handle to RPM message memory resource
++
++- doorbells:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: reference to the "rpm_hlos" doorbell in APCS, as described
++		    in doorbell.txt
++
++= GLINK DEVICES
++Each subnode of the GLINK node represent function tied to a virtual
++communication channel. The name of the nodes are not important. The properties
++of these nodes are defined by the individual bindings for the specific function
++- but must contain the following property:
++
++- qcom,glink-channels:
++	Usage: required
++	Value type: <stringlist>
++	Definition: a list of channels tied to this function, used for matching
++		    the function to a set of virtual channels
++
++= EXAMPLE
++The following example represents the GLINK RPM node on a MSM8996 device, with
++the function for the "rpm_request" channel defined, which is used for
++regualtors and root clocks.
++
++	apcs_glb: apcs-glb@9820000 {
++		compatible = "qcom,msm8996-apcs-hmss-global";
++		reg = <0x9820000 0x1000>;
++
++		#doorbell-cells = <1>;
++	};
++
++	rpm_msg_ram: memory@68000 {
++		compatible = "qcom,rpm-msg-ram";
++		reg = <0x68000 0x6000>;
++	};
++
++        rpm-glink {
++		compatible = "qcom,glink-rpm";
++
++		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++
++		qcom,rpm-msg-ram = <&rpm_msg_ram>;
++
++		doorbells = <&apcs_glb 0>;
++
++		rpm-requests {
++			compatible = "qcom,rpm-msm8996";
++			qcom,glink-channels = "rpm_requests";
++
++			...
++		};
++	};
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.0
