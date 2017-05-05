@@ -1,46 +1,30 @@
-Return-Path: <jassisinghbrar@gmail.com>
+Return-Path: <sudeep.holla@arm.com>
+Subject: Re: [PATCH v4 1/5] mailbox: Make startup and shutdown ops optional
+References: <20170504200539.27027-1-bjorn.andersson@linaro.org>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Message-ID: <566237d9-5b13-b51b-8cde-5d1890c2e217@arm.com>
+Date: Fri, 5 May 2017 10:35:34 +0100
 MIME-Version: 1.0
 In-Reply-To: <20170504200539.27027-1-bjorn.andersson@linaro.org>
-References: <20170504200539.27027-1-bjorn.andersson@linaro.org>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Fri, 5 May 2017 16:03:31 +0530
-Message-ID: <CABb+yY12=OksvgMeo+fT+R8m=_Lv+39EQwW0VGsnKuHRBM-5uw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] mailbox: Make startup and shutdown ops optional
-Content-Type: text/plain; charset=UTF-8
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Devicetree List <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.orgSudeepHollasudeep.holla@arm.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, May 5, 2017 at 1:35 AM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+
+
+On 04/05/17 21:05, Bjorn Andersson wrote:
 > Some mailbox hardware doesn't have to perform any additional operations
 > on startup of shutdown, so make these optional.
->
-Thanks, makes sense.
+> 
 
-> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> index 4671f8a12872..c88de953394a 100644
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
-> @@ -137,6 +137,20 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
->         return HRTIMER_NORESTART;
->  }
->
-> +static int mbox_startup(struct mbox_chan *chan)
-> +{
-> +       if (chan->mbox->ops->startup)
-> +               return chan->mbox->ops->startup(chan);
-> +
-> +       return 0;
-> +}
-> +
-> +static void mbox_shutdown(struct mbox_chan *chan)
-> +{
-> +       if (chan->mbox->ops->shutdown)
-> +               chan->mbox->ops->shutdown(chan);
-> +}
-> +
-These functions are going to be called from exactly one place. So
-maybe we simply do the check before startup/shutdown calls?
+Quite handy. I can you this to get rid of empty shutdown that I added in[1]
 
-thanks.
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+
+-- 
+Regards,
+Sudeep
+
+[1] https://lkml.org/lkml/2017/5/2/315
