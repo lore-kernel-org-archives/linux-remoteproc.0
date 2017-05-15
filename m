@@ -1,83 +1,83 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH v3 2/2] remoteproc: Modify recovery path to use rproc_{start,stop}()
-Date: Fri, 26 May 2017 16:51:01 -0700
-Message-Id: <1495842661-8926-2-git-send-email-spjoshi@codeaurora.org>
-In-Reply-To: <1495842661-8926-1-git-send-email-spjoshi@codeaurora.org>
-References: <1495842661-8926-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v4 2/4] remoteproc: qcom: refactor mss fw image loading sequence
+Date: Mon, 15 May 2017 22:55:42 +0530
+Message-Id: <1494869144-4174-3-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1494869144-4174-1-git-send-email-akdwived@codeaurora.org>
+References: <1494869144-4174-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Replace rproc_shutdown() by rproc_stop() and rproc_boot() by
-rproc_start() in the recovery path, in order to avoid remoteproc
-resources re-allocation overhead and to assist with extracting the
-coredumps after stopping the remote processor.
+This patch refactor code to first load all firmware blobs
+and then update modem proc to authenticate and boot fw.
+Also make a trivial change in a error log.
 
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 ---
+ drivers/remoteproc/qcom_q6v5_pil.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-Changes from v2:
-
-* Rebase on top of v4.12-rc1
-
- drivers/remoteproc/remoteproc_core.c | 35 ++++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c8cb54b..369ba0f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1051,23 +1051,40 @@ static int rproc_stop(struct rproc *rproc)
-  */
- int rproc_trigger_recovery(struct rproc *rproc)
- {
--	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
-+	const struct firmware *firmware_p;
-+	struct device *dev = &rproc->dev;
-+	int ret;
-+
-+	dev_err(dev, "recovering %s\n", rproc->name);
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 8fd697a..2626954 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -466,9 +466,10 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
  
- 	init_completion(&rproc->crash_comp);
+ 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
+ 	if (ret == -ETIMEDOUT)
+-		dev_err(qproc->dev, "MPSS header authentication timed out\n");
++		dev_err(qproc->dev, "metadata authentication timed out\n");
+ 	else if (ret < 0)
+-		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
++		dev_err(qproc->dev,
++			"metadata authentication failed: %d\n", ret);
  
--	/* shut down the remote */
--	/* TODO: make sure this works with rproc->power > 1 */
--	rproc_shutdown(rproc);
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = rproc_stop(rproc);
-+	if (ret)
-+		goto unlock_mutex;
+ 	dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
  
- 	/* wait until there is no more rproc users */
- 	wait_for_completion(&rproc->crash_comp);
+@@ -503,7 +504,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	bool relocate = false;
+ 	char seg_name[10];
+ 	ssize_t offset;
+-	size_t size;
++	size_t size = 0;
+ 	void *ptr;
+ 	int ret;
+ 	int i;
+@@ -541,7 +542,9 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	}
  
--	/*
--	 * boot the remote processor up again
--	 */
--	rproc_boot(rproc);
-+	/* load firmware */
-+	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+	if (ret < 0) {
-+		dev_err(dev, "request_firmware failed: %d\n", ret);
-+		goto unlock_mutex;
-+	}
+ 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+-
++	/* Load firmware completely before letting mss to start
++	 * authentication and then boot firmware
++	 */
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+ 		phdr = &phdrs[i];
  
--	return 0;
-+	/* boot the remote processor up again */
-+	ret = rproc_start(rproc, firmware_p);
-+
-+	release_firmware(firmware_p);
-+
-+unlock_mutex:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
- }
+@@ -574,17 +577,13 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
+-
+-		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+-		if (!size) {
+-			boot_addr = relocate ? qproc->mpss_phys : min_addr;
+-			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+-			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+-		}
+-
+ 		size += phdr->p_memsz;
+-		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+ 	}
++	/* Transfer ownership of modem region with modem fw */
++	boot_addr = relocate ? qproc->mpss_phys : min_addr;
++	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
++	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
++	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
  
- /**
+ 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+ 	if (ret == -ETIMEDOUT)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
