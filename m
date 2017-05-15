@@ -1,63 +1,33 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 3/4] remoteproc/davinci: fix unbalanced reset between start and stop ops
-Date: Thu, 18 May 2017 17:09:01 -0500
-Message-ID: <20170518220902.2846-4-s-anna@ti.com>
-In-Reply-To: <20170518220902.2846-1-s-anna@ti.com>
-References: <20170518220902.2846-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v4 0/4] Add new SCM call for stage two mem translation and enable mss rproc on msm8996
+Date: Mon, 15 May 2017 22:55:40 +0530
+Message-Id: <1494869144-4174-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The davinci remoteproc driver is currently de-asserting the reset in
-its rproc .start() ops, but is not asserting the reset in its .stop()
-ops. This leaves the remote processor to not boot properly when using
-the sysfs 'state' variable between multiple start and stop operations.
-On the other hand, a reset is being asserted unconditionally in the
-driver remove function to alleviate some of these issues.
+This patch does following
+	1- Adds new scm call which helps in stage two translation of a memory region
+	   so that multi proc mem access sharing can be achieved on armv8 and later.
+	2- Enable mss remoteproc on msm8996
 
-Move this reset assertion logic into the .stop() ops implementation
-to fix the sysfs state-machine and the unbalanced reset. The logic
-from remove is still effective since .stop() ops will be invoked
-during the remove due to the enabled 'auto-boot' support. The probe
-already has support for asserting the reset in case the DSP is not
-in reset for some reason.
+This patchset is based on tip of linux-next.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+Avaneesh Kumar Dwivedi (4):
+  firmware: scm: Add support for shared access of a memory
+  remoteproc: qcom: refactor mss fw image loading sequence
+  remoteproc: qcom: Add new secure monitor call for access
+  remoteproc: qcom: Add support for mss boot on msm8996
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index fcd3cecb4967..99539cec1329 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -137,6 +137,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- {
- 	struct da8xx_rproc *drproc = rproc->priv;
- 
-+	davinci_clk_reset_assert(drproc->dsp_clk);
- 	clk_disable(drproc->dsp_clk);
- 
- 	return 0;
-@@ -256,16 +257,6 @@ static int da8xx_rproc_remove(struct platform_device *pdev)
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 
- 	/*
--	 * It's important to place the DSP in reset before going away,
--	 * since a subsequent insmod of this module may enable the DSP's
--	 * clock before its program/boot-address has been loaded and
--	 * before this module's probe has had a chance to reset the DSP.
--	 * Without the reset, the DSP can lockup permanently when it
--	 * begins executing garbage.
--	 */
--	davinci_clk_reset_assert(drproc->dsp_clk);
--
--	/*
- 	 * The devm subsystem might end up releasing things before
- 	 * freeing the irq, thus allowing an interrupt to sneak in while
- 	 * the device is being removed.  This should prevent that.
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   4 +-
+ drivers/firmware/qcom_scm-64.c                     |  27 ++
+ drivers/firmware/qcom_scm.c                        |  75 ++++++
+ drivers/firmware/qcom_scm.h                        |   4 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 280 ++++++++++++++++++---
+ include/linux/qcom_scm.h                           |  14 ++
+ 6 files changed, 364 insertions(+), 40 deletions(-)
+
 -- 
-2.12.0
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
