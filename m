@@ -1,33 +1,99 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v4 0/4] Add new SCM call for stage two mem translation and enable mss rproc on msm8996
-Date: Mon, 15 May 2017 22:55:40 +0530
-Message-Id: <1494869144-4174-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 2/4] remoteproc/davinci: simplify the reset function
+Date: Thu, 18 May 2017 17:09:00 -0500
+Message-ID: <20170518220902.2846-3-s-anna@ti.com>
+In-Reply-To: <20170518220902.2846-1-s-anna@ti.com>
+References: <20170518220902.2846-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch does following
-	1- Adds new scm call which helps in stage two translation of a memory region
-	   so that multi proc mem access sharing can be achieved on armv8 and later.
-	2- Enable mss remoteproc on msm8996
+The reset_assert() function is used to make sure the DSP remote
+processor is in a reset state regardless of its previous state.
+The driver relies on davinci_clk_reset_{assert,deassert}()
+functions for reset management which take in a clock parameter.
+The assert_reset() performs a clk_get()/clk_put() cycle to
+acquire the clock handle to use with this function. This is
+totally unnecessary and the code can be simplified to use
+the clock acquired during probe and directly use the reset
+functions, so simplify this logic.
 
-This patchset is based on tip of linux-next.
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 23 +++--------------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-Avaneesh Kumar Dwivedi (4):
-  firmware: scm: Add support for shared access of a memory
-  remoteproc: qcom: refactor mss fw image loading sequence
-  remoteproc: qcom: Add new secure monitor call for access
-  remoteproc: qcom: Add support for mss boot on msm8996
-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   4 +-
- drivers/firmware/qcom_scm-64.c                     |  27 ++
- drivers/firmware/qcom_scm.c                        |  75 ++++++
- drivers/firmware/qcom_scm.h                        |   4 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 280 ++++++++++++++++++---
- include/linux/qcom_scm.h                           |  14 ++
- 6 files changed, 364 insertions(+), 40 deletions(-)
-
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 3814de28599c..fcd3cecb4967 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -157,22 +157,6 @@ static const struct rproc_ops da8xx_rproc_ops = {
+ 	.kick = da8xx_rproc_kick,
+ };
+ 
+-static int reset_assert(struct device *dev)
+-{
+-	struct clk *dsp_clk;
+-
+-	dsp_clk = clk_get(dev, NULL);
+-	if (IS_ERR(dsp_clk)) {
+-		dev_err(dev, "clk_get error: %ld\n", PTR_ERR(dsp_clk));
+-		return PTR_ERR(dsp_clk);
+-	}
+-
+-	davinci_clk_reset_assert(dsp_clk);
+-	clk_put(dsp_clk);
+-
+-	return 0;
+-}
+-
+ static int da8xx_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -223,6 +207,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 
+ 	drproc = rproc->priv;
+ 	drproc->rproc = rproc;
++	drproc->dsp_clk = dsp_clk;
+ 	rproc->has_iommu = false;
+ 
+ 	platform_set_drvdata(pdev, rproc);
+@@ -241,7 +226,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+ 	 * held in reset at the time it is called.
+ 	 */
+-	ret = reset_assert(dev);
++	ret = davinci_clk_reset_assert(drproc->dsp_clk);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+@@ -250,7 +235,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	drproc->ack_fxn = irq_data->chip->irq_ack;
+ 	drproc->irq_data = irq_data;
+ 	drproc->irq = irq;
+-	drproc->dsp_clk = dsp_clk;
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret) {
+@@ -268,7 +252,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 
+ static int da8xx_rproc_remove(struct platform_device *pdev)
+ {
+-	struct device *dev = &pdev->dev;
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 
+@@ -280,7 +263,7 @@ static int da8xx_rproc_remove(struct platform_device *pdev)
+ 	 * Without the reset, the DSP can lockup permanently when it
+ 	 * begins executing garbage.
+ 	 */
+-	reset_assert(dev);
++	davinci_clk_reset_assert(drproc->dsp_clk);
+ 
+ 	/*
+ 	 * The devm subsystem might end up releasing things before
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.12.0
