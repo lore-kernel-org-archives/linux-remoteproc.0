@@ -1,95 +1,38 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:8369 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S968689AbdD1VfC (ORCPT <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 28 Apr 2017 17:35:02 -0400
-Subject: [PATCH 3/3] acpi, nfit: kill ACPI_NFIT_DEBUG,
- switch to dynamic_hex_dump()
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Fri, 28 Apr 2017 14:29:09 -0700
-Message-ID: <149341494933.35578.4269653029034926839.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <149341493336.35578.13631055553267152302.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <149341493336.35578.13631055553267152302.stgit@dwillia2-desk3.amr.corp.intel.com>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/4] Davinci remoteproc cleanups/fixes
+Date: Thu, 18 May 2017 17:08:58 -0500
+Message-ID: <20170518220902.2846-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-nvdimm@lists.01.org
-Cc: linux-acpi@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Inevitably when one actually needs to debug a DSM issue it's on a
-distribution kernel that has CONFIG_ACPI_NFIT_DEBUG=n. The config symbol
-is only there to avoid the compile error due to the missing fallback for
-print_hex_dump_debug in the CONFIG_DYNAMIC_DEBUG=n case. Now that the
-compile error is fixed the nfit driver can call dynamic_hex_dump()
-directly, and enable debug of unmodified distro kernels.
+Hi Bjorn,
 
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/acpi/nfit/Kconfig |   12 ------------
- drivers/acpi/nfit/core.c  |   21 ++++++++-------------
- 2 files changed, 8 insertions(+), 25 deletions(-)
+The following series includes various fixes and cleanups for the TI's
+Davinci DSP remoteproc driver. Patches are based on 4.12-rc1. Following
+is the patch summary:
 
-diff --git a/drivers/acpi/nfit/Kconfig b/drivers/acpi/nfit/Kconfig
-index dd0d53c52552..6d3351452ea2 100644
---- a/drivers/acpi/nfit/Kconfig
-+++ b/drivers/acpi/nfit/Kconfig
-@@ -12,15 +12,3 @@ config ACPI_NFIT
- 
- 	  To compile this driver as a module, choose M here:
- 	  the module will be called nfit.
--
--config ACPI_NFIT_DEBUG
--	bool "NFIT DSM debug"
--	depends on ACPI_NFIT
--	depends on DYNAMIC_DEBUG
--	default n
--	help
--	  Enabling this option causes the nfit driver to dump the
--	  input and output buffers of _DSM operations on the ACPI0012
--	  device and its children.  This can be very verbose, so leave
--	  it disabled unless you are debugging a hardware / firmware
--	  issue.
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 261eea1d2906..ca391a2cbe63 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -268,14 +268,11 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 		in_buf.buffer.length = call_pkg->nd_size_in;
- 	}
- 
--	if (IS_ENABLED(CONFIG_ACPI_NFIT_DEBUG)) {
--		dev_dbg(dev, "%s:%s cmd: %d: func: %d input length: %d\n",
--				__func__, dimm_name, cmd, func,
--				in_buf.buffer.length);
--		print_hex_dump_debug("nvdimm in  ", DUMP_PREFIX_OFFSET, 4, 4,
-+	dev_dbg(dev, "%s:%s cmd: %d: func: %d input length: %d\n",
-+			__func__, dimm_name, cmd, func, in_buf.buffer.length);
-+	dynamic_hex_dump("nvdimm in  ", DUMP_PREFIX_OFFSET, 4, 4,
- 			in_buf.buffer.pointer,
- 			min_t(u32, 256, in_buf.buffer.length), true);
--	}
- 
- 	out_obj = acpi_evaluate_dsm(handle, uuid, 1, func, &in_obj);
- 	if (!out_obj) {
-@@ -307,13 +304,11 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 		goto out;
- 	}
- 
--	if (IS_ENABLED(CONFIG_ACPI_NFIT_DEBUG)) {
--		dev_dbg(dev, "%s:%s cmd: %s output length: %d\n", __func__,
--				dimm_name, cmd_name, out_obj->buffer.length);
--		print_hex_dump_debug(cmd_name, DUMP_PREFIX_OFFSET, 4,
--				4, out_obj->buffer.pointer, min_t(u32, 128,
--					out_obj->buffer.length), true);
--	}
-+	dev_dbg(dev, "%s:%s cmd: %s output length: %d\n", __func__, dimm_name,
-+			cmd_name, out_obj->buffer.length);
-+	dynamic_hex_dump(cmd_name, DUMP_PREFIX_OFFSET, 4, 4,
-+			out_obj->buffer.pointer,
-+			min_t(u32, 128, out_obj->buffer.length), true);
- 
- 	for (i = 0, offset = 0; i < desc->out_num; i++) {
- 		u32 out_size = nd_cmd_out_size(nvdimm, cmd, desc, i, buf,
+ - Patch1 updates/fixes the build dependency on DMA_CMA which is not
+   selected by default in the davinci_defconfig.
+ - Patch 3 fixes a DSP boot/functionality issue with repeated 'start'
+   and 'stop' commands using the sysfs 'state' variable.
+ - Patch 2 and 4 are cleanups/code simplifications.
 
+regards
+Suman
+
+Suman Anna (4):
+  remoteproc/davinci: Update Kconfig to depend on DMA_CMA
+  remoteproc/davinci: simplify the reset function
+  remoteproc/davinci: fix unbalanced reset between start and stop ops
+  remoteproc/davinci: streamline the interrupt management
+
+ drivers/remoteproc/Kconfig            |  2 +-
+ drivers/remoteproc/da8xx_remoteproc.c | 60 ++++++++---------------------------
+ 2 files changed, 15 insertions(+), 47 deletions(-)
+
+-- 
+2.12.0
