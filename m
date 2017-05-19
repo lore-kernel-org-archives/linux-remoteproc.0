@@ -1,86 +1,93 @@
-Return-Path: <loic.pallardy@st.com>
-Subject: Re: [PATCH v4 0/5] virtio_rpmsg: make rpmsg channel configurable
-References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Message-ID: <e599dcbd-a218-660d-39cc-9dd777f80d51@st.com>
-Date: Wed, 3 May 2017 17:34:09 +0200
-MIME-Version: 1.0
-In-Reply-To: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, patrice.chotard@st.com, hugues.fruchet@st.com
+Return-Path: <mchehab@smtp.s-opensource.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 00/29] Standardize doc formats - part 3
+Date: Thu, 18 May 2017 22:25:44 -0300
+Message-Id: <cover.1495157082.git.mchehab@s-opensource.com>
+Sender: Mauro Carvalho Chehab <mchehab@smtp.s-opensource.com>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille Pitchen <cyrille.pitchen@atmel.com>, linux-mtd@lists.infradead.org, Alessandro Zummo <a.zummo@towertech.it>, dri-devel@lists.freedesktop.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Alex Williamson <alex.williamson@redhat.com>, linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, kvm@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, kpreempt-tech@lists.sourceforge.net, Darren Hart <dvhart@infradead.org>, rtc-linux@googlegroups.com, linux-gpio@vger.kernel.org, Martin Mares <mj@ucw.cz>, Robert Love <rml@tech9.net>, Kirti Wankhede <kwankhede@nvidia.com>, Gustavo Padovan <gustavo@padovan.org>, Peter Zijlstra <peterz@infradead.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, linux-wireless@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Johannes Berg <johannes@sipsolutions.net>, linux-video@atrey.karlin.mff.cuni.cz, Sumit Semwal <sumit.semwal@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Each document under Documentation/*.txt has its own format.
+Some follow markup notations, some don't even have a title!
 
+In order to try to get some order on it, change the document
+style to the standard we're adopting after the adoption of
+ReStructured Text.
 
-On 03/28/2017 01:49 PM, Loic Pallardy wrote:
-> This goal of this series is to offer more flexibility for virtio_rpmsg
-> communication link configuration.
->
-> It should be possible to tune rpmsg buffer size per Rpmsg link, to provide
-> selected configuration to coprocessor, to take into account coprocessor
-> specificities like memory region.
->
-> This series introduces an optional virtio rpmsg configuration structure, which
-> will be managed as an extension of struct fw_rsc_vdev present in coprocessor firmware
-> resource table.
-> Structure access is possible thanks to virtio get and set API.
-> This structure contains the different information to tune the link between the
-> host and the coprocessor.
->
-> Patch "rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
-> kernel address" has the same goal as Wendy's RFC [1]. I don't have tested
-> Wendy's series with level driver buffer allocation.
->
-> Last patch "rpmsg: virtio_rpmsg: set buffer configuration to virtio" has a
-> dependency with remoteproc subdevice boot sequence as coprocessor resource
-> table must be updated before coprocessor start. See [2]
->
-> [1] http://www.spinics.net/lists/linux-remoteproc/msg00852.html
-> [2] http://www.spinics.net/lists/linux-remoteproc/msg00826.html
->
-> ---
-> Changes from v1:
-> - No more dependency with [2]. Coprocessor firmware should wait for first kick
-> indicating virtio rpmsg link ready before accessing resource table information.
-> - Correct issues reported by Suman
-> - Fix warnings found by checkpatch with --strict option
->
-> Changes from v2:
-> - Fix warnings reported by kbuild test robot
->
-> Changes from v3:
-> After discussions with Bjorn, virtual address sharing between low level driver
-> and virtio_rpmsg could be replaced by associated a dedicated memory region to
-> vdev and changing virtio_rpmsg allocation from dev->parent->parent to
-> dev->parent, i.e. vdev and not rproc device.
-> The advantage of the solution is that there will be only few changes in
-> virtio_rpmsg layer and it will be common with virtio_console driver.
-> These will be part of a dedicated patch series.
-> So v4 drops previous patch 5 "rpmsg: virtio_rpmsg: don't allocate buffer if
-> provided by low level driver" dealing with buffer previously allocated and va
-> fields from struct virtio_rpmsg_cfg.
-> In addition, patch series has been rebased on kernel 4.11-rc4.
->
-Hi Bjorn,
+The documents touched on this series now build fine with
+Sphinx, if renamed to *.rst extension.
 
-Any time to review this series?
+The main goal with this is to teach people by example about
+what format is expected on newer documents. It also helps
+to add those files to Kernel books.
 
-Regards,
-Loic
+In order to make things more palatable, I'm spliting the
+conversion into three parts.
 
->
-> Loic Pallardy (5):
->   rpmsg: virtio_rpmsg: set rpmsg_buf_size customizable
->   rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when addr is not a valid
->     kernel address
->   include: virtio_rpmsg: add virtio rpmsg configuration structure
->   rpmsg: virtio_rpmsg: get buffer configuration from virtio
->   rpmsg: virtio_rpmsg: set buffer configuration to virtio
->
->  drivers/rpmsg/virtio_rpmsg_bus.c   | 123 +++++++++++++++++++++++++++++++++----
->  include/linux/rpmsg/virtio_rpmsg.h |  30 +++++++++
->  2 files changed, 141 insertions(+), 12 deletions(-)
->  create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
->
+This is	part 3.
+
+Mauro Carvalho Chehab (29):
+  pinctrl.txt: standardize document format
+  pnp.txt: standardize document format
+  preempt-locking.txt: standardize document format
+  printk-formats.txt: standardize document format
+  pwm.txt: standardize document format
+  rbtree.txt: standardize document format
+  remoteproc.txt: standardize document format
+  rfkill.txt: standardize document format
+  robust-futex-ABI.txt: standardize document format
+  robust-futexes.txt: standardize document format
+  rpmsg.txt: standardize document format
+  rtc.txt: standardize document format
+  SAK.txt: standardize document format
+  sgi-ioc4.txt: standardize document format
+  siphash.txt: standardize document format
+  SM501.txt: standardize document format
+  smsc_ece1099.txt: standardize document format
+  static-keys.txt: standardize document format
+  svga.txt: standardize document format
+  sync_file.txt: standardize document format
+  this_cpu_ops.txt: standardize document format
+  unaligned-memory-access.txt: standardize document format
+  vfio-mediated-device.txt: standardize document format
+  vfio.txt: standardize document format
+  video-output.txt: standardize document format
+  xillybus.txt: standardize document format
+  xz.txt: standardize document format
+  zorro.txt: standardize document format
+  dell_rbu.txt: standardize document format
+
+ Documentation/SAK.txt                     |   65 +-
+ Documentation/SM501.txt                   |    9 +-
+ Documentation/dell_rbu.txt                |   81 ++-
+ Documentation/pinctrl.txt                 | 1104 +++++++++++++++--------------
+ Documentation/pnp.txt                     |  343 +++++----
+ Documentation/preempt-locking.txt         |   40 +-
+ Documentation/printk-formats.txt          |  416 ++++++-----
+ Documentation/pwm.txt                     |   46 +-
+ Documentation/rbtree.txt                  |   88 +--
+ Documentation/remoteproc.txt              |  320 +++++----
+ Documentation/rfkill.txt                  |   47 +-
+ Documentation/robust-futex-ABI.txt        |   14 +-
+ Documentation/robust-futexes.txt          |   12 +-
+ Documentation/rpmsg.txt                   |  340 +++++----
+ Documentation/rtc.txt                     |   44 +-
+ Documentation/sgi-ioc4.txt                |    4 +
+ Documentation/siphash.txt                 |  186 ++---
+ Documentation/smsc_ece1099.txt            |    4 +
+ Documentation/static-keys.txt             |  199 +++---
+ Documentation/svga.txt                    |  146 ++--
+ Documentation/sync_file.txt               |   23 +-
+ Documentation/this_cpu_ops.txt            |   49 +-
+ Documentation/unaligned-memory-access.txt |   57 +-
+ Documentation/vfio-mediated-device.txt    |  252 +++----
+ Documentation/vfio.txt                    |  261 +++----
+ Documentation/video-output.txt            |   54 +-
+ Documentation/xillybus.txt                |   29 +-
+ Documentation/xz.txt                      |  182 ++---
+ Documentation/zorro.txt                   |   59 +-
+ 29 files changed, 2437 insertions(+), 2037 deletions(-)
+
+-- 
+2.9.4
