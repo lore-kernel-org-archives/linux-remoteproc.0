@@ -1,137 +1,127 @@
-Return-Path: <akdwived@codeaurora.org>
+Return-Path: <sricharan@codeaurora.org>
 Subject: Re: [RESEND: PATCH v4 2/4] remoteproc: qcom: refactor mss fw image
  loading sequence
 References: <1494957722-13264-1-git-send-email-akdwived@codeaurora.org>
  <1494957722-13264-3-git-send-email-akdwived@codeaurora.org>
  <22b47349-9fe1-6d2d-d973-95bae7d5e5fb@codeaurora.org>
  <f80a71a3-843f-277b-8bd6-d7dd07fdaebc@codeaurora.org>
- <454a78d7-99e0-eddc-72c9-97c2aeba4015@codeaurora.org>
-From: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
-Message-ID: <fa6eaf74-89c9-55ab-24f6-aba68d7e60c6@codeaurora.org>
-Date: Mon, 22 May 2017 18:56:03 +0530
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <454a78d7-99e0-eddc-72c9-97c2aeba4015@codeaurora.org>
+Date: Mon, 22 May 2017 16:07:41 +0530
 MIME-Version: 1.0
-In-Reply-To: <454a78d7-99e0-eddc-72c9-97c2aeba4015@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <f80a71a3-843f-277b-8bd6-d7dd07fdaebc@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-To: Sricharan R <sricharan@codeaurora.org>, bjorn.andersson@linaro.org
+Content-Transfer-Encoding: 7bit
+To: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>, bjorn.andersson@linaro.org
 Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Hi,
 
-
-On 5/22/2017 4:07 PM, Sricharan R wrote:
-> Hi,
->
-> On 5/22/2017 3:03 PM, Dwivedi, Avaneesh Kumar (avani) wrote:
+On 5/22/2017 3:03 PM, Dwivedi, Avaneesh Kumar (avani) wrote:
+> 
+> 
+> On 5/20/2017 8:25 AM, Sricharan R wrote:
+>> Hi Bjorn/Avaneesh,
 >>
->> On 5/20/2017 8:25 AM, Sricharan R wrote:
->>> Hi Bjorn/Avaneesh,
+>> On 5/16/2017 11:32 PM, Avaneesh Kumar Dwivedi wrote:
+>>> This patch refactor code to first load all firmware blobs
+>>> and then update modem proc to authenticate and boot fw.
+>>> Also make a trivial change in a error log.
 >>>
->>> On 5/16/2017 11:32 PM, Avaneesh Kumar Dwivedi wrote:
->>>> This patch refactor code to first load all firmware blobs
->>>> and then update modem proc to authenticate and boot fw.
->>>> Also make a trivial change in a error log.
->>>>
->>>> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
->>>> ---
->>>>    drivers/remoteproc/qcom_q6v5_pil.c | 25 ++++++++++++-------------
->>>>    1 file changed, 12 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
->>>> index 8fd697a..2626954 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
->>>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
->>>> @@ -466,9 +466,10 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
->>>>          ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
->>>>        if (ret == -ETIMEDOUT)
->>>> -        dev_err(qproc->dev, "MPSS header authentication timed out\n");
->>>> +        dev_err(qproc->dev, "metadata authentication timed out\n");
->>>>        else if (ret < 0)
->>>> -        dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
->>>> +        dev_err(qproc->dev,
->>>> +            "metadata authentication failed: %d\n", ret);
->>>>          dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
->>>>    @@ -503,7 +504,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->>>>        bool relocate = false;
->>>>        char seg_name[10];
->>>>        ssize_t offset;
->>>> -    size_t size;
->>>> +    size_t size = 0;
->>>>        void *ptr;
->>>>        int ret;
->>>>        int i;
->>>> @@ -541,7 +542,9 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->>>>        }
->>>>          mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
->>>> -
->>>> +    /* Load firmware completely before letting mss to start
->>>> +     * authentication and then boot firmware
->>>> +     */
->>>>        for (i = 0; i < ehdr->e_phnum; i++) {
->>>>            phdr = &phdrs[i];
->>>>    @@ -574,17 +577,13 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->>>>                memset(ptr + phdr->p_filesz, 0,
->>>>                       phdr->p_memsz - phdr->p_filesz);
->>>>            }
->>>> -
->>>> -        size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
->>>> -        if (!size) {
->>>> -            boot_addr = relocate ? qproc->mpss_phys : min_addr;
->>>> -            writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
->>>> -            writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
->>>> -        }
->>>> -
->>>>            size += phdr->p_memsz;
->>>> -        writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
->>>>        }
->>> So while moving this down, can we use qcom_mdt_load instead for the mpss
->>> image loading part above ?
->> qcom_mdt_load() can not be used to load segments for mpss, as MPSS blobs are self authenticated.
->> while qcom_mdt_load() is used in cases where authentication of loaded blobs is done by trustzone.
->> for that qcom_mdt_load() does extra steps to send pas_id to trustzone and mem_setup() etc.
-> Right, so my intention of asking this was if the code which does the calculation and
-> loads the segments in qcom_mdt_load can somehow be abstracted out, so that future
-> self authenticating rproc (even mpss in this case) can use them to load mdt ?
-As i understand, you want to replace the piece of code which does parse 
-mdt and load individual firmware blobs in a separate routine.
-So that it can be called by any one without again doing parsing and 
-loading for self authentication.?
-Till now only MPSS does rely on self authentication, all other 
-subsystems use qcom_mdt_load().
-I think this is reason why the qcom_mdt_load() equivalent routine has 
-not been used.
-Bjorn may further add in this.
->
->>>> +    /* Transfer ownership of modem region with modem fw */
->>>> +    boot_addr = relocate ? qproc->mpss_phys : min_addr;
->>>> +    writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
->>>> +    writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
->>>> +    writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
->>> For ipq8074 [1], wcnss core has an Q6V5 version of the ip for which the
->>> initialization/boot sequence is pretty much the same as that has been added
->>> for msm8996 in this series. So wanted to understand if its better to
->>> use this remoteproc itself by keeping the Q6 and mpss parts separately (or)
->>> add a new remoteproc ?
->> Bjorn can better answer this query, but i believe this remoteproc can be extended to load
->> mpss part by adding private initialization for the IP.
-> ya, the mpss part can be separated out, so that this can be a Q6 + MPSS (or) Q6 + WCNSS
-> remoteproc. Was asking this to get the right way for adding the Q6 + WCNSS remoteproc,
-> as the Q6 part is same what you have added for msm8996.
-Again, i believe yes but leave Bjorn to make final comment.
->
-> Regards,
->   Sricharan
->
->>> [1] https://patchwork.kernel.org/patch/9711725/
+>>> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+>>> ---
+>>>   drivers/remoteproc/qcom_q6v5_pil.c | 25 ++++++++++++-------------
+>>>   1 file changed, 12 insertions(+), 13 deletions(-)
 >>>
->>> Regards,
->>>    Sricharan
+>>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+>>> index 8fd697a..2626954 100644
+>>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>>> @@ -466,9 +466,10 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+>>>         ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_META_DATA_AUTH_SUCCESS, 1000);
+>>>       if (ret == -ETIMEDOUT)
+>>> -        dev_err(qproc->dev, "MPSS header authentication timed out\n");
+>>> +        dev_err(qproc->dev, "metadata authentication timed out\n");
+>>>       else if (ret < 0)
+>>> -        dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
+>>> +        dev_err(qproc->dev,
+>>> +            "metadata authentication failed: %d\n", ret);
+>>>         dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
+>>>   @@ -503,7 +504,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>>       bool relocate = false;
+>>>       char seg_name[10];
+>>>       ssize_t offset;
+>>> -    size_t size;
+>>> +    size_t size = 0;
+>>>       void *ptr;
+>>>       int ret;
+>>>       int i;
+>>> @@ -541,7 +542,9 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>>       }
+>>>         mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+>>> -
+>>> +    /* Load firmware completely before letting mss to start
+>>> +     * authentication and then boot firmware
+>>> +     */
+>>>       for (i = 0; i < ehdr->e_phnum; i++) {
+>>>           phdr = &phdrs[i];
+>>>   @@ -574,17 +577,13 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>>               memset(ptr + phdr->p_filesz, 0,
+>>>                      phdr->p_memsz - phdr->p_filesz);
+>>>           }
+>>> -
+>>> -        size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>>> -        if (!size) {
+>>> -            boot_addr = relocate ? qproc->mpss_phys : min_addr;
+>>> -            writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+>>> -            writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+>>> -        }
+>>> -
+>>>           size += phdr->p_memsz;
+>>> -        writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>>>       }
+>> So while moving this down, can we use qcom_mdt_load instead for the mpss
+>> image loading part above ?
+> qcom_mdt_load() can not be used to load segments for mpss, as MPSS blobs are self authenticated.
+> while qcom_mdt_load() is used in cases where authentication of loaded blobs is done by trustzone.
+> for that qcom_mdt_load() does extra steps to send pas_id to trustzone and mem_setup() etc.
+
+Right, so my intention of asking this was if the code which does the calculation and
+loads the segments in qcom_mdt_load can somehow be abstracted out, so that future
+self authenticating rproc (even mpss in this case) can use them to load mdt ?
+
+>>> +    /* Transfer ownership of modem region with modem fw */
+>>> +    boot_addr = relocate ? qproc->mpss_phys : min_addr;
+>>> +    writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+>>> +    writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+>>> +    writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>> For ipq8074 [1], wcnss core has an Q6V5 version of the ip for which the
+>> initialization/boot sequence is pretty much the same as that has been added
+>> for msm8996 in this series. So wanted to understand if its better to
+>> use this remoteproc itself by keeping the Q6 and mpss parts separately (or)
+>> add a new remoteproc ?
+> Bjorn can better answer this query, but i believe this remoteproc can be extended to load
+> mpss part by adding private initialization for the IP.
+
+ya, the mpss part can be separated out, so that this can be a Q6 + MPSS (or) Q6 + WCNSS
+remoteproc. Was asking this to get the right way for adding the Q6 + WCNSS remoteproc,
+as the Q6 part is same what you have added for msm8996.
+
+Regards,
+ Sricharan
+
+>>
+>> [1] https://patchwork.kernel.org/patch/9711725/
+>>
+>> Regards,
+>>   Sricharan
+>>
+>>>         ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+>>>       if (ret == -ETIMEDOUT)
 >>>
->>>>          ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
->>>>        if (ret == -ETIMEDOUT)
->>>>
+> 
 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
