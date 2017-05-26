@@ -1,84 +1,38 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH v2 2/2] remoteproc: Modify recovery path to use rproc_{start,stop}()
-Date: Thu, 25 May 2017 17:40:00 -0700
-Message-Id: <1495759200-5575-2-git-send-email-spjoshi@codeaurora.org>
-In-Reply-To: <1495759200-5575-1-git-send-email-spjoshi@codeaurora.org>
-References: <1495759200-5575-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 26 May 2017 12:19:51 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [RESEND: PATCH v4 1/4] firmware: scm: Add new SCM call for
+ switching memory ownership
+Message-ID: <20170526191951.GK12920@tuxbook>
+References: <1494957722-13264-1-git-send-email-akdwived@codeaurora.org>
+ <1494957722-13264-2-git-send-email-akdwived@codeaurora.org>
+ <20170526060341.GG12920@tuxbook>
+ <2206f468-769b-c743-29e9-6fe0a13086d2@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2206f468-769b-c743-29e9-6fe0a13086d2@codeaurora.org>
+To: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Replace rproc_shutdown() by rproc_stop() and rproc_boot() by
-rproc_start() in the recovery path, in order to avoid remoteproc
-resources re-allocation overhead and to assist with extracting the
-coredumps after stopping the remote processor.
+On Fri 26 May 06:01 PDT 2017, Dwivedi, Avaneesh Kumar (avani) wrote:
+> On 5/26/2017 11:33 AM, Bjorn Andersson wrote:
+> > On Tue 16 May 11:01 PDT 2017, Avaneesh Kumar Dwivedi wrote:
+[..]
+> > > diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+[..]
+> > > +#define QCOM_SCM_VMID_HLOS       0x3
+> > > +#define QCOM_SCM_VMID_MSS_MSA    0xF
+> > > +#define QCOM_SCM_PERM_READ       0x4
+> > > +#define QCOM_SCM_PERM_WRITE      0x2
+> > > +#define QCOM_SCM_PERM_EXEC       0x1
+> > > +#define QCOM_SCM_PERM_RW (QCOM_SCM_PERM_READ | QCOM_SCM_PERM_WRITE)
+> > Add QCOM_SCM_PERM_RWX, as this looks fairly common as well.
+> You mean change name as QCOM_SCM_PERM_RWX instead of QCOM_SCM_PERM_RW ? OK.
 
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
----
+Provide both RW and RWX, as already in the first client of this API
+you're using both.
 
-Changes from v1:
-
-* Separate modification in recovery path
-* Call release_firmware() when rproc_start() fails
-
- drivers/remoteproc/remoteproc_core.c | 35 ++++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index aeb7bdd..9830a1d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1050,23 +1050,40 @@ static int rproc_stop(struct rproc *rproc)
-  */
- int rproc_trigger_recovery(struct rproc *rproc)
- {
--	dev_err(&rproc->dev, "recovering %s\n", rproc->name);
-+	const struct firmware *firmware_p;
-+	struct device *dev = &rproc->dev;
-+	int ret;
-+
-+	dev_err(dev, "recovering %s\n", rproc->name);
- 
- 	init_completion(&rproc->crash_comp);
- 
--	/* shut down the remote */
--	/* TODO: make sure this works with rproc->power > 1 */
--	rproc_shutdown(rproc);
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = rproc_stop(rproc);
-+	if (ret)
-+		goto unlock_mutex;
- 
- 	/* wait until there is no more rproc users */
- 	wait_for_completion(&rproc->crash_comp);
- 
--	/*
--	 * boot the remote processor up again
--	 */
--	rproc_boot(rproc);
-+	/* load firmware */
-+	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+	if (ret < 0) {
-+		dev_err(dev, "request_firmware failed: %d\n", ret);
-+		goto unlock_mutex;
-+	}
- 
--	return 0;
-+	/* boot the remote processor up again */
-+	ret = rproc_start(rproc, firmware_p);
-+
-+	release_firmware(firmware_p);
-+
-+unlock_mutex:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
- }
- 
- /**
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Bjorn
