@@ -1,228 +1,101 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH v3 1/2] remoteproc: Introduce rproc_{start,stop}() functions
-Date: Fri, 26 May 2017 16:51:00 -0700
-Message-Id: <1495842661-8926-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 4/4] remoteproc/davinci: Add device tree support for OMAP-L138 DSP
+Date: Fri, 26 May 2017 15:21:40 -0500
+Message-ID: <20170526202140.10472-5-s-anna@ti.com>
+In-Reply-To: <20170526202140.10472-1-s-anna@ti.com>
+References: <20170526202140.10472-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In the context of recovering from crash, rproc_trigger_recovery() does
-rproc_shutdown() followed by rproc_boot(). The remoteproc resources are
-cleaned up in rproc_shutdown() and immediately reallocated in
-rproc_boot() which is an unnecessary overhead. Furthermore, we want the
-memory regions to be accessible after stopping the remote processor, to
-be able to extract the memory content for a coredump.
+The Davinci remoteproc driver currently supports the DSP remoteproc
+device created in legacy-style on OMAP-L13x SoCs. The driver has been
+enhanced to support the DSP remoteproc device created through Device
+Tree now. The current DT support handles the C674x DSP processor
+subsystem on OMAP-L138 SoCs.
 
-This patch factors out the code in rproc_boot() and rproc_shutdown()
-path and introduces rproc_{start,stop}() in order to avoid resource
-allocation overhead.
-
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
+ drivers/remoteproc/da8xx_remoteproc.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
-Changes from v2:
-
-* Rebase on top of v4.12-rc1
-
- drivers/remoteproc/remoteproc_core.c | 143 +++++++++++++++++++++--------------
- 1 file changed, 87 insertions(+), 56 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3dabb20..c8cb54b 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -847,6 +847,63 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 		kref_put(&rvdev->refcount, rproc_vdev_release);
- }
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 5250cc494775..02a4920d1af2 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -16,6 +16,7 @@
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
  
-+static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct resource_table *table, *loaded_table;
-+	struct device *dev = &rproc->dev;
-+	int ret, tablesz;
-+
-+	/* look for the resource table */
-+	table = rproc_find_rsc_table(rproc, fw, &tablesz);
-+	if (!table) {
-+		dev_err(dev, "Resouce table look up failed\n");
-+		return -EINVAL;
-+	}
-+
-+	/* load the ELF segments to memory */
-+	ret = rproc_load_segments(rproc, fw);
-+	if (ret) {
-+		dev_err(dev, "Failed to load program segments: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/*
-+	 * The starting device has been given the rproc->cached_table as the
-+	 * resource table. The address of the vring along with the other
-+	 * allocated resources (carveouts etc) is stored in cached_table.
-+	 * In order to pass this information to the remote device we must copy
-+	 * this information to device memory. We also update the table_ptr so
-+	 * that any subsequent changes will be applied to the loaded version.
-+	 */
-+	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
-+	if (loaded_table) {
-+		memcpy(loaded_table, rproc->cached_table, tablesz);
-+		rproc->table_ptr = loaded_table;
-+	}
-+
-+	/* power up the remote processor */
-+	ret = rproc->ops->start(rproc);
-+	if (ret) {
-+		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
-+		return ret;
-+	}
-+
-+	/* probe any subdevices for the remote processor */
-+	ret = rproc_probe_subdevices(rproc);
-+	if (ret) {
-+		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-+			rproc->name, ret);
-+		rproc->ops->stop(rproc);
-+		return ret;
-+	}
-+
-+	rproc->state = RPROC_RUNNING;
-+
-+	dev_info(dev, "remote processor %s is now up\n", rproc->name);
-+
-+	return 0;
-+}
-+
- /*
-  * take a firmware and boot a remote processor with it.
-  */
-@@ -854,7 +911,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct device *dev = &rproc->dev;
- 	const char *name = rproc->firmware;
--	struct resource_table *table, *loaded_table;
-+	struct resource_table *table;
- 	int ret, tablesz;
- 
- 	ret = rproc_fw_sanity_check(rproc, fw);
-@@ -905,50 +962,12 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up_resources;
+@@ -272,10 +273,21 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsp_clk);
  	}
  
--	/* load the ELF segments to memory */
--	ret = rproc_load_segments(rproc, fw);
--	if (ret) {
--		dev_err(dev, "Failed to load program segments: %d\n", ret);
--		goto clean_up_resources;
--	}
--
--	/*
--	 * The starting device has been given the rproc->cached_table as the
--	 * resource table. The address of the vring along with the other
--	 * allocated resources (carveouts etc) is stored in cached_table.
--	 * In order to pass this information to the remote device we must copy
--	 * this information to device memory. We also update the table_ptr so
--	 * that any subsequent changes will be applied to the loaded version.
--	 */
--	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
--	if (loaded_table) {
--		memcpy(loaded_table, rproc->cached_table, tablesz);
--		rproc->table_ptr = loaded_table;
--	}
--
--	/* power up the remote processor */
--	ret = rproc->ops->start(rproc);
--	if (ret) {
--		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
-+	ret = rproc_start(rproc, fw);
-+	if (ret)
- 		goto clean_up_resources;
--	}
--
--	/* probe any subdevices for the remote processor */
--	ret = rproc_probe_subdevices(rproc);
--	if (ret) {
--		dev_err(dev, "failed to probe subdevices for %s: %d\n",
--			rproc->name, ret);
--		goto stop_rproc;
--	}
--
--	rproc->state = RPROC_RUNNING;
--
--	dev_info(dev, "remote processor %s is now up\n", rproc->name);
++	if (dev->of_node) {
++		ret = of_reserved_mem_device_init(dev);
++		if (ret) {
++			dev_err(dev, "device does not have specific CMA pool: %d\n",
++				ret);
++			return ret;
++		}
++	}
++
+ 	rproc = rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
+ 		sizeof(*drproc));
+-	if (!rproc)
+-		return -ENOMEM;
++	if (!rproc) {
++		ret = -ENOMEM;
++		goto free_mem;
++	}
  
- 	return 0;
+ 	drproc = rproc->priv;
+ 	drproc->rproc = rproc;
+@@ -313,25 +325,37 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
  
--stop_rproc:
--	rproc->ops->stop(rproc);
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
- clean_up:
-@@ -994,6 +1013,32 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
+ free_rproc:
+ 	rproc_free(rproc);
+-
++free_mem:
++	if (dev->of_node)
++		of_reserved_mem_device_release(dev);
  	return ret;
  }
  
-+static int rproc_stop(struct rproc *rproc)
-+{
-+	struct device *dev = &rproc->dev;
-+	int ret;
-+
-+	/* remove any subdevices for the remote processor */
-+	rproc_remove_subdevices(rproc);
-+
-+	/* power off the remote processor */
-+	ret = rproc->ops->stop(rproc);
-+	if (ret) {
-+		dev_err(dev, "can't stop rproc: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* if in crash state, unlock crash handler */
-+	if (rproc->state == RPROC_CRASHED)
-+		complete_all(&rproc->crash_comp);
-+
-+	rproc->state = RPROC_OFFLINE;
-+
-+	dev_info(dev, "stopped remote processor %s\n", rproc->name);
-+
-+	return 0;
-+}
-+
- /**
-  * rproc_trigger_recovery() - recover a remoteproc
-  * @rproc: the remote processor
-@@ -1163,14 +1208,9 @@ void rproc_shutdown(struct rproc *rproc)
- 	if (!atomic_dec_and_test(&rproc->power))
- 		goto out;
+ static int da8xx_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
  
--	/* remove any subdevices for the remote processor */
--	rproc_remove_subdevices(rproc);
--
--	/* power off the remote processor */
--	ret = rproc->ops->stop(rproc);
-+	ret = rproc_stop(rproc);
- 	if (ret) {
- 		atomic_inc(&rproc->power);
--		dev_err(dev, "can't stop rproc: %d\n", ret);
- 		goto out;
- 	}
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
++	if (dev->of_node)
++		of_reserved_mem_device_release(dev);
  
-@@ -1183,15 +1223,6 @@ void rproc_shutdown(struct rproc *rproc)
- 	kfree(rproc->cached_table);
- 	rproc->cached_table = NULL;
- 	rproc->table_ptr = NULL;
--
--	/* if in crash state, unlock crash handler */
--	if (rproc->state == RPROC_CRASHED)
--		complete_all(&rproc->crash_comp);
--
--	rproc->state = RPROC_OFFLINE;
--
--	dev_info(dev, "stopped remote processor %s\n", rproc->name);
--
- out:
- 	mutex_unlock(&rproc->lock);
+ 	return 0;
  }
+ 
++static const struct of_device_id davinci_rproc_of_match[] = {
++	{ .compatible = "ti,da850-dsp", },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, davinci_rproc_of_match);
++
+ static struct platform_driver da8xx_rproc_driver = {
+ 	.probe = da8xx_rproc_probe,
+ 	.remove = da8xx_rproc_remove,
+ 	.driver = {
+ 		.name = "davinci-rproc",
++		.of_match_table = davinci_rproc_of_match,
+ 	},
+ };
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.12.0
