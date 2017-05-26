@@ -1,51 +1,83 @@
-Return-Path: <Orson.Zhai@spreadtrum.com>
-From: Baolin Wang <baolin.wang@spreadtrum.com>
-Subject: [PATCH] DT: hwspinlock: Add binding documentation for Spreadtrum hwspinlock
-Date: Thu, 18 May 2017 10:49:19 +0800
-Message-ID: <fe3d04f400460673ee88324c414544ff3e15990e.1495075341.git.baolin.wang@spreadtrum.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 26 May 2017 12:17:47 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [RESEND: PATCH v4 3/4] remoteproc: qcom: Make secure world call
+ for mem ownership switch
+Message-ID: <20170526191747.GJ12920@tuxbook>
+References: <1494957722-13264-1-git-send-email-akdwived@codeaurora.org>
+ <1494957722-13264-4-git-send-email-akdwived@codeaurora.org>
+ <20170526021651.GF12920@tuxbook>
+ <a061dff7-fc09-9d03-3d8b-d72a1e84e049@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, broonie@kernel.org, baolin.wang@linaro.org, baolin.wang@spreadtrum.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a061dff7-fc09-9d03-3d8b-d72a1e84e049@codeaurora.org>
+To: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the binding documentation for Spreadtrum hardware spinlock
-device.
+On Fri 26 May 06:19 PDT 2017, Dwivedi, Avaneesh Kumar (avani) wrote:
 
-Signed-off-by: Baolin Wang <baolin.wang@spreadtrum.com>
----
- .../devicetree/bindings/hwlock/sprd-hwspinlock.txt |   23 ++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
+> 
+> 
+> On 5/26/2017 7:46 AM, Bjorn Andersson wrote:
+> > On Tue 16 May 11:02 PDT 2017, Avaneesh Kumar Dwivedi wrote:
+> > > @@ -471,6 +517,11 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+> > >   		dev_err(qproc->dev,
+> > >   			"metadata authentication failed: %d\n", ret);
+> > > +	/* Metadata authentication done, remove modem access */
+> > > +	ret = q6v5_assign_mem_to_linux(qproc, phys, fw->size);
+> > > +	if (ret)
+> > > +		dev_err(qproc->dev,
+> > > +			"Failed to reclaim metadata memory, ret - %d\n", ret);
+> > If this assignment fails (for any reason) we can't return the memory to
+> > the free pool in Linux, because at some point in the future these pages
+> > will be allocated to someone else resulting in a memory access violation
+> > scenario that will be just terrible to debug.
+> > 
+> > I do however not have a better idea at the moment than just leaking the
+> > memory.
+> Then shall we BUG_ON here itself?
 
-diff --git a/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
-new file mode 100644
-index 0000000..581db9d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/sprd-hwspinlock.txt
-@@ -0,0 +1,23 @@
-+SPRD Hardware Spinlock Device Binding
-+-------------------------------------
-+
-+Required properties :
-+- compatible : should be "sprd,hwspinlock-r3p0".
-+- reg : the register address of hwspinlock.
-+- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
-+	hwlock, so the number of cells should be <1> here.
-+- clock-names : Must contain "enable".
-+- clocks : Must contain a phandle entry for the clock in clock-names, see the
-+	common clock bindings.
-+
-+Please look at the generic hwlock binding for usage information for consumers,
-+"Documentation/devicetree/bindings/hwlock/hwlock.txt"
-+
-+Example of hwlock provider:
-+	hwspinlock@40500000 {
-+		compatible  = "sprd,hwspinlock-r3p0";
-+		reg = <0 0x40500000 0 0x1000>;
-+		#hwlock-cells = <1>;
-+		clock-names = "enable";
-+		clocks = <&clk_aon_apb_gates0 22>;
-+	};
--- 
-1.7.9.5
+Here we have the chance to "handle" the problem (by leaking the memory),
+so it's not a catastrophic error. But perhaps better to replace the
+dev_err() with a WARN(ret, "failed to reclaim memory\n"); that way this
+issue will stand out in the log.
+
+[..]
+> > > @@ -656,16 +719,21 @@ static int q6v5_start(struct rproc *rproc)
+[..]
+> > >   	}
+> > > +	ret = q6v5_assign_mem_to_linux(qproc,
+> > > +		qproc->mba_phys, qproc->mba_size);
+> > > +	if (ret)
+> > > +		dev_err(qproc->dev,
+> > > +			"Failed to reclaim mba memory, ret - %d\n", ret);
+> > I think it's okay for symmetrical purposes to keep the memory assigned
+> > to the remote until we call stop().
+> Actually MBA image is transferred into internal memory of q6 and does not
+> run from DDR
+> that is why it is OK to release it here. let me know if you dont want to do
+> that.
+
+Leave it here, but please add a comment above this snippet saying
+something like:
+
+/*
+ * The MBA is transferred to internal memory of the Q6 and no longer
+ * need access.
+ */
+
+[..]
+> > > +	assign_mem_result =
+> > > +		q6v5_assign_mem_to_linux(qproc,
+> > > +		qproc->mba_phys, qproc->mba_size);
+> > Shouldn't we move them even further down?
+> There does not seem any restriction w.r.t. keeping it here.
+> Do you think any side effect ?
+
+No, I'm fine with this if you say that the MPSS is no longer executing
+anything at this point.
+
+Thanks,
+Bjorn
