@@ -1,99 +1,53 @@
 Return-Path: <s-anna@ti.com>
 From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/4] remoteproc/davinci: simplify the reset function
-Date: Thu, 18 May 2017 17:09:00 -0500
-Message-ID: <20170518220902.2846-3-s-anna@ti.com>
-In-Reply-To: <20170518220902.2846-1-s-anna@ti.com>
-References: <20170518220902.2846-1-s-anna@ti.com>
+Subject: [PATCH 0/3] Add Keystone2 Remoteproc driver
+Date: Fri, 26 May 2017 11:53:14 -0500
+Message-ID: <20170526165317.23164-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The reset_assert() function is used to make sure the DSP remote
-processor is in a reset state regardless of its previous state.
-The driver relies on davinci_clk_reset_{assert,deassert}()
-functions for reset management which take in a clock parameter.
-The assert_reset() performs a clk_get()/clk_put() cycle to
-acquire the clock handle to use with this function. This is
-totally unnecessary and the code can be simplified to use
-the clock acquired during probe and directly use the reset
-functions, so simplify this logic.
+Hi,
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 23 +++--------------------
- 1 file changed, 3 insertions(+), 20 deletions(-)
+This series adds the DT binding and the driver for loading and booting
+the DSP devices present on various Keystone2 SoC families. The current
+series supports the 66AK2H/K, 66AK2L and 66AK2E SoC families. Support
+for the remaining 66AK2G SoC family will be added later as it is
+awaiting the dependent clock and reset drivers to be merged into
+mainline.
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 3814de28599c..fcd3cecb4967 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -157,22 +157,6 @@ static const struct rproc_ops da8xx_rproc_ops = {
- 	.kick = da8xx_rproc_kick,
- };
- 
--static int reset_assert(struct device *dev)
--{
--	struct clk *dsp_clk;
--
--	dsp_clk = clk_get(dev, NULL);
--	if (IS_ERR(dsp_clk)) {
--		dev_err(dev, "clk_get error: %ld\n", PTR_ERR(dsp_clk));
--		return PTR_ERR(dsp_clk);
--	}
--
--	davinci_clk_reset_assert(dsp_clk);
--	clk_put(dsp_clk);
--
--	return 0;
--}
--
- static int da8xx_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -223,6 +207,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 
- 	drproc = rproc->priv;
- 	drproc->rproc = rproc;
-+	drproc->dsp_clk = dsp_clk;
- 	rproc->has_iommu = false;
- 
- 	platform_set_drvdata(pdev, rproc);
-@@ -241,7 +226,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
- 	 * held in reset at the time it is called.
- 	 */
--	ret = reset_assert(dev);
-+	ret = davinci_clk_reset_assert(drproc->dsp_clk);
- 	if (ret)
- 		goto free_rproc;
- 
-@@ -250,7 +235,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	drproc->ack_fxn = irq_data->chip->irq_ack;
- 	drproc->irq_data = irq_data;
- 	drproc->irq = irq;
--	drproc->dsp_clk = dsp_clk;
- 
- 	ret = rproc_add(rproc);
- 	if (ret) {
-@@ -268,7 +252,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 
- static int da8xx_rproc_remove(struct platform_device *pdev)
- {
--	struct device *dev = &pdev->dev;
- 	struct rproc *rproc = platform_get_drvdata(pdev);
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 
-@@ -280,7 +263,7 @@ static int da8xx_rproc_remove(struct platform_device *pdev)
- 	 * Without the reset, the DSP can lockup permanently when it
- 	 * begins executing garbage.
- 	 */
--	reset_assert(dev);
-+	davinci_clk_reset_assert(drproc->dsp_clk);
- 
- 	/*
- 	 * The devm subsystem might end up releasing things before
+Supported features include basic load/boot using DSP internal memory
+regions and error recovery. IPC based on the virtio-rpmsg transport
+with vrings in external DDR memory and interrupts supported through
+MMRs.
+
+The DTS nodes will be posted separately once the binding is accepted.
+The virtio-rpmsg based IPC stack would require some support in the
+virtio_rpmsg driver (first 2 patches from Loic's "virtio_rpmsg: make
+rpmsg channel configurable" series [1] to begin with) if using CMA
+pools from HighMem area.
+
+regards
+Suman
+
+[1] https://lkml.org/lkml/2017/3/28/349
+
+Andrew F. Davis (1):
+  remoteproc/keystone: ensure the DSPs are in reset in probe
+
+Suman Anna (2):
+  Documentation: DT: add Keystone DSP remoteproc binding
+  remoteproc/keystone: add a remoteproc driver for Keystone 2 DSPs
+
+ .../bindings/remoteproc/ti,keystone-rproc.txt      | 132 ++++++
+ drivers/remoteproc/Kconfig                         |  13 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/keystone_remoteproc.c           | 525 +++++++++++++++++++++
+ 4 files changed, 671 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+ create mode 100644 drivers/remoteproc/keystone_remoteproc.c
+
 -- 
 2.12.0
