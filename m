@@ -1,53 +1,56 @@
 Return-Path: <s-anna@ti.com>
 From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 0/3] Add Keystone2 Remoteproc driver
-Date: Fri, 26 May 2017 11:53:14 -0500
-Message-ID: <20170526165317.23164-1-s-anna@ti.com>
+Subject: [PATCH 0/4] Add DT support for davinci remoteproc driver
+Date: Fri, 26 May 2017 15:21:36 -0500
+Message-ID: <20170526202140.10472-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 Hi,
 
-This series adds the DT binding and the driver for loading and booting
-the DSP devices present on various Keystone2 SoC families. The current
-series supports the 66AK2H/K, 66AK2L and 66AK2E SoC families. Support
-for the remaining 66AK2G SoC family will be added later as it is
-awaiting the dependent clock and reset drivers to be merged into
-mainline.
+The following series adds the device tree support to the Davinci
+remoteproc driver. The TI Davinci family has boards booting both
+in legacy mode and DT mode, so both modes are still supported by
+this driver. Patches are baselined on 4.12-rc1 + the "Davinci
+remoteproc cleanups/fixes" series [1].
 
-Supported features include basic load/boot using DSP internal memory
-regions and error recovery. IPC based on the virtio-rpmsg transport
-with vrings in external DDR memory and interrupts supported through
-MMRs.
+Following is the patch summary:
+ - Patch 1 uses resource names for retrieving resources to be
+   independent of the resource order, and prepare the driver
+   for DT.
+ - Patch 2 parses the internal memory regions, to be able to
+   support loading into DSP internal memory regions.
+ - Patch 3 adds the binding
+ - Patch 4 adds the DT adaptation to the existing driver.
 
-The DTS nodes will be posted separately once the binding is accepted.
-The virtio-rpmsg based IPC stack would require some support in the
-virtio_rpmsg driver (first 2 patches from Loic's "virtio_rpmsg: make
-rpmsg channel configurable" series [1] to begin with) if using CMA
-pools from HighMem area.
+The first 2 patches are dependent on the resource name additions
+(no direct build dependencies) to the davinci-rproc devices added
+in series [2] for maintaining functional parity for legacy-mode
+devices. This series is already accepted and being staged to be
+merged for v4.13. DTS nodes for the OMAP-L138 LCDK board will be
+added for a subsequent merge window once these patches are picked
+up.
 
 regards
 Suman
 
-[1] https://lkml.org/lkml/2017/3/28/349
+[1] http://marc.info/?l=linux-arm-kernel&m=149514538506046&w=2
+[2] http://marc.info/?l=linux-kernel&m=149497287512869&w=2
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/nsekhar/linux-davinci.git/?h=v4.13/soc
 
-Andrew F. Davis (1):
-  remoteproc/keystone: ensure the DSPs are in reset in probe
+Suman Anna (4):
+  remoteproc/davinci: Switch to platform_get_resource_byname()
+  remoteproc/davinci: add support to parse internal memories
+  Documentation: dt: Add bindings for Davinci DSP processors
+  remoteproc/davinci: Add device tree support for OMAP-L138 DSP
 
-Suman Anna (2):
-  Documentation: DT: add Keystone DSP remoteproc binding
-  remoteproc/keystone: add a remoteproc driver for Keystone 2 DSPs
-
- .../bindings/remoteproc/ti,keystone-rproc.txt      | 132 ++++++
- drivers/remoteproc/Kconfig                         |  13 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/keystone_remoteproc.c           | 525 +++++++++++++++++++++
- 4 files changed, 671 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
- create mode 100644 drivers/remoteproc/keystone_remoteproc.c
+ .../bindings/remoteproc/ti,davinci-rproc.txt       | 92 ++++++++++++++++++++
+ drivers/remoteproc/da8xx_remoteproc.c              | 98 ++++++++++++++++++++--
+ 2 files changed, 185 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
 
 -- 
 2.12.0
