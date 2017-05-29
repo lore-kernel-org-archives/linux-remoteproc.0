@@ -1,24 +1,36 @@
-Date: Tue, 30 May 2017 20:58:08 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] remoteproc: fix spelling mistake: "Resouce" -> "Resource"
-Message-ID: <20170531035808.GA7849@builder>
-References: <20170529062352.5744-1-colin.king@canonical.com>
+Return-Path: <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] remoteproc: fix spelling mistake: "Resouce" -> "Resource"
+Date: Mon, 29 May 2017 07:23:52 +0100
+Message-Id: <20170529062352.5744-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170529062352.5744-1-colin.king@canonical.com>
-To: Colin King <colin.king@canonical.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Sun 28 May 23:23 PDT 2017, Colin King wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in dev_err message
-> 
+Trivial fix to spelling mistake in dev_err message
 
-Thanks Colin,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 369ba0f8429c..564061dcc019 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -856,7 +856,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	/* look for the resource table */
+ 	table = rproc_find_rsc_table(rproc, fw, &tablesz);
+ 	if (!table) {
+-		dev_err(dev, "Resouce table look up failed\n");
++		dev_err(dev, "Resource table look up failed\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.11.0
