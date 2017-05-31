@@ -1,42 +1,171 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [RESEND: PATCH v4 0/4] Add memory ownership switch support and enable mss rproc on msm8996
-Date: Tue, 16 May 2017 23:31:58 +0530
-Message-Id: <1494957722-13264-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 3/4] Documentation: dt: Add bindings for Davinci DSP
+ processors
+References: <20170526202140.10472-1-s-anna@ti.com>
+ <20170526202140.10472-4-s-anna@ti.com>
+ <20170531192211.xszanmzvj34ohblk@rob-hp-laptop>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <993f3035-cf3a-40bf-44af-24e5f98d76bf@ti.com>
+Date: Wed, 31 May 2017 14:53:32 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170531192211.xszanmzvj34ohblk@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch does following
-	1- Adds new scm call which helps in stage two translation of a memory region
-	   so that memory ownership sharing and switching can be achieved on armv8 and later.
-	2- Enable mss remoteproc on msm8996
+Hi Rob,
 
-Major changes since last patch:
-	1- Refactored SCM API
-	2- Changed SCM API Signature 
-	3- Added cpu_to_le32() as and where required
-	4- Elaborated documentation of new API added
-	5- Refactored MSS rproc code which make the scm api call
-	6- Refactored mss rproc code to first load all segments and then transfer ownership of
-	   memory region to MSS for authentication and boot etc.
-	7- Other Minor changes
-	8- kbuild robot gave error so added dummy definition of __qcom_scm_assign_mem() in qcom_scm-32.c as well
-Avaneesh Kumar Dwivedi (4):
-  firmware: scm: Add new SCM call for switching memory ownership
-  remoteproc: qcom: refactor mss fw image loading sequence
-  remoteproc: qcom: Make secure world call for mem ownership switch
-  remoteproc: qcom: Add support for mss boot on msm8996
+On 05/31/2017 02:22 PM, Rob Herring wrote:
+> On Fri, May 26, 2017 at 03:21:39PM -0500, Suman Anna wrote:
+>> Add the device tree bindings document for the DSP processor
+>> subsystem devices on TI Davinci DA8xx/OMAP-L13x SoCs.
+> 
+> "dt-bindings: remoteproc:  ..." for the subject.
 
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   4 +-
- drivers/firmware/qcom_scm-32.c                     |   6 +
- drivers/firmware/qcom_scm-64.c                     |  27 ++
- drivers/firmware/qcom_scm.c                        |  75 ++++++
- drivers/firmware/qcom_scm.h                        |   4 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 280 ++++++++++++++++++---
- include/linux/qcom_scm.h                           |  14 ++
- 7 files changed, 370 insertions(+), 40 deletions(-)
+Ok, will fix this on v2
 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+> 
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  .../bindings/remoteproc/ti,davinci-rproc.txt       | 92 ++++++++++++++++++++++
+>>  1 file changed, 92 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+>> new file mode 100644
+>> index 000000000000..e53572e22002
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+>> @@ -0,0 +1,92 @@
+>> +TI Davinci DSP devices
+>> +=======================
+>> +
+>> +Binding status: Unstable - Subject to changes for DT clocks and resets
+> 
+> Sorry, understandable if you didn't have documentation, but you work for 
+> TI, figure out what the clocks and resets are.
+
+Well, what I meant here is that the clocks and resets do not have a DT
+representation yet on these SoCs. And when they do have a DT
+representation, I would need to add the additional _required_ clocks and
+resets properties, hence the marking.
+
+> 
+>> +
+>> +The TI Davinci family of SoCs usually contains a TI DSP Core sub-system that
+>> +is used to offload some of the processor-intensive tasks or algorithms, for
+>> +achieving various system level goals.
+>> +
+>> +The processor cores in the sub-system usually contain additional sub-modules
+>> +like L1 and/or L2 caches/SRAMs, an Interrupt Controller, an external memory
+>> +controller, a dedicated local power/sleep controller etc. The DSP processor
+>> +core used in Davinci SoCs is usually a C674x DSP CPU.
+> 
+> I'm wondering if your compatible string is specific enough with this 
+> statement.
+
+We always have integration aspects around these IPs into different SoCs,
+so the compatible is following the SoC name. Also note that the C674x is
+just the DSP core - one part of the DSP subsystem.
+
+> 
+>> +
+>> +DSP Device Node:
+>> +================
+>> +Each DSP Core sub-system is represented as a single DT node.
+>> +
+>> +Required properties:
+>> +--------------------
+>> +The following are the mandatory properties:
+>> +
+>> +- compatible:		Should be one of the following,
+>> +			    "ti,da850-dsp" for DSPs on OMAP-L138 SoCs
+>> +
+>> +- reg:			Should contain an entry for each value in 'reg-names'.
+>> +			Each entry should have the memory region's start address
+>> +			and the size of the region, the representation matching
+>> +			the parent node's '#address-cells' and '#size-cells' values.
+>> +
+>> +- reg-names:		Should contain strings with the following names, each
+>> +			representing a specific internal memory region or a
+>> +			specific register space,
+>> +			     "l2sram", "l1pram", "l1dram", "host1cfg", "chipsig_base"
+>> +
+>> +- interrupts: 		Should contain the interrupt number used to receive the
+>> +			interrupts from the DSP. The value should follow the
+>> +			interrupt-specifier format as dictated by the
+>> +			'interrupt-parent' node.
+>> +
+>> +- memory-region:	phandle to the reserved memory node to be associated
+>> +			with the remoteproc device. The reserved memory node
+>> +			can be a CMA memory node, and should be defined as
+>> +			per the bindings in
+>> +			Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+>> +
+>> +Optional properties:
+>> +--------------------
+>> +- interrupt-parent:	phandle to the interrupt controller node. This property
+>> +			is needed if the device node hierarchy doesn't have an
+>> +			interrupt controller.
+>> +
+>> +
+>> +Example:
+>> +--------
+>> +
+>> +	/* DA850 DTS file */
+> 
+> Don't show the dts split in examples.
+> 
+>> +	{
+>> +		dsp: dsp@11800000 {
+>> +			compatible = "ti,da850-dsp";
+>> +			reg = <0x11800000 0x40000>,
+>> +			      <0x11e00000 0x8000>,
+>> +			      <0x11f00000 0x8000>,
+>> +			      <0x01c14044 0x4>,
+>> +			      <0x01c14174 0x8>;
+>> +			reg-names = "l2sram", "l1pram", "l1dram", "host1cfg",
+>> +				    "chipsig";
+>> +			interrupt-parent = <&intc>;
+>> +			interrupts = <28>;
+>> +			status = "disabled";
+> 
+> Don't show status in examples.
+> 
+>> +		};
+>> +
+>> +	};
+>> +
+>> +	/* OMAP-L138 LCDK Board file */
+>> +	reserved-memory {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges;
+>> +
+>> +		dsp_cma_pool: dsp_cma@c3000000 {
+> 
+> cma is a linuxism. dsp-memory@...
+
+OK will fix up all these comments as well.
+
+regards
+Suman
+
+> 
+>> +                        compatible = "shared-dma-pool";
+>> +                        reg = <0xc3000000 0x1000000>;
+>> +                        reusable;
+>> +                        status = "okay";
+>> +                };
+>> +	};
+>> +
+>> +	&dsp {
+>> +		status = "okay";
+>> +		memory-region = <&dsp_cma_pool>;
+>> +	};
+>> -- 
+>> 2.12.0
+>>
