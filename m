@@ -1,112 +1,196 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 4/5] soc: qcom: Add device tree binding for GLINK RPM
-Date: Thu,  4 May 2017 13:05:38 -0700
-Message-Id: <20170504200539.27027-4-bjorn.andersson@linaro.org>
-In-Reply-To: <20170504200539.27027-1-bjorn.andersson@linaro.org>
-References: <20170504200539.27027-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 1/3] Documentation: DT: add Keystone DSP remoteproc
+ binding
+References: <20170526165317.23164-1-s-anna@ti.com>
+ <20170526165317.23164-2-s-anna@ti.com>
+ <20170531191231.5qt2lfv73p572gmd@rob-hp-laptop>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <884f5585-eac2-57b2-a2be-879bf23f2e00@ti.com>
+Date: Wed, 31 May 2017 15:05:59 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170531191231.5qt2lfv73p572gmd@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add device tree binding documentation for the Qualcomm GLINK RPM, used
-for communication with the Resource Power Management subsystem in
-various Qualcomm SoCs.
+Hi Rob,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On 05/31/2017 02:12 PM, Rob Herring wrote:
+> On Fri, May 26, 2017 at 11:53:15AM -0500, Suman Anna wrote:
+>> Add the device tree bindings document for the Texas Instrument's
+>> Keystone 2 DSP remoteproc devices.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Sam Nelson <sam.nelson@ti.com>
+>> ---
+>>  .../bindings/remoteproc/ti,keystone-rproc.txt      | 132 +++++++++++++++++++++
+>>  1 file changed, 132 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+>> new file mode 100644
+>> index 000000000000..f1ba88edd00d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+>> @@ -0,0 +1,132 @@
+>> +TI Keystone DSP devices
+>> +=======================
+>> +
+>> +Binding status: Unstable - Subject to changes for using multiple memory regions
+> 
+> I don't really see what would be unstable here. memory-region is easily 
+> extended to multiple entries.
 
-Changes since v3:
-- Transition doorbell to mailbox framework
+OK will drop this line.
 
-Changes since v2:
-- Replace qcom,ipc syscon with a "doorbell"
+> 
+>> +
+>> +The TI Keystone 2 family of SoCs usually have one or more (upto 8) TI DSP Core
+>> +sub-systems that are used to offload some of the processor-intensive tasks or
+>> +algorithms, for achieving various system level goals.
+>> +
+>> +These processor sub-systems usually contain additional sub-modules like L1
+>> +and/or L2 caches/SRAMs, an Interrupt Controller, an external memory controller,
+>> +a dedicated local power/sleep controller etc. The DSP processor core in
+>> +Keystone 2 SoCs is usually a TMS320C66x CorePac processor.
+>> +
+>> +DSP Device Node:
+>> +================
+>> +Each DSP Core sub-system is represented as a single DT node. Each node has a
+>> +number of required or optional properties that enable the OS running on the
+>> +host processor (ARM CorePac) to perform the device management of the remote
+>> +processor and to communicate with the remote processor.
+>> +
+>> +Required properties:
+>> +--------------------
+>> +The following are the mandatory properties:
+>> +
+>> +- compatible:		Should be one of the following,
+>> +			    "ti,k2hk-dsp" for DSPs on Keystone 2 66AK2H/K SoCs
+>> +			    "ti,k2l-dsp" for DSPs on Keystone 2 66AK2L SoCs
+>> +			    "ti,k2e-dsp" for DSPs on Keystone 2 66AK2E SoCs
+>> +
+>> +- reg:			Should contain an entry for each value in 'reg-names'.
+>> +			Each entry should have the memory region's start address
+>> +			and the size of the region, the representation matching
+>> +			the parent node's '#address-cells' and '#size-cells' values.
+>> +
+>> +- reg-names:		Should contain strings with the following names, each
+>> +			representing a specific internal memory region, and
+>> +			should be defined in this order,
+>> +			     "l2sram", "l1pram", "l1dram"
+>> +
+>> +- label:		Should contain a string identifying the DSP instance
+>> +			within the SoC. Should be the string "dsp" followed by
+>> +			the instance number. Eg: "dsp0", "dsp1",..."dsp7" etc
+> 
+> Why does a user need to know or care?
 
-Changes since v1:
-- None
+This is used to distinguish the exact DSP instance from others since the
+DT node name is a generic "dsp". One of the uses is to be able to
+construct a firmware name within the driver using this label.
 
- .../devicetree/bindings/soc/qcom/qcom,glink.txt    | 73 ++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+> 
+>> +
+>> +- clocks: 		Should contain the device's input clock, and should be
+>> +			defined as per the bindings in,
+>> +			Documentation/devicetree/bindings/clock/keystone-gate.txt
+>> +
+>> +- ti,syscon-dev:	Should be a pair of the phandle to the Keystone Device
+>> +			State Control node, and the register offset of the DSP
+>> +			boot address register within that node's address space.
+>> +
+>> +- resets:		Should contain the phandle to the reset controller node
+>> +			managing the resets for this device, and a reset
+>> +			specifier. Please refer to the following reset bindings
+>> +			for the reset argument specifier as per SoC,
+>> +			Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
+>> +			    for 66AK2HK/66AK2L/66AK2E SoCs
+>> +
+>> +- interrupt-parent:	Should contain a phandle to the Keystone 2 IRQ controller
+>> +			IP node that is used by the ARM CorePac processor to
+>> +			receive interrupts from the DSP remote processors. See
+>> +			Documentation/devicetree/bindings/interrupt-controller/ti,keystone-irq.txt
+>> +			for details.
+>> +
+>> +- interrupts: 		Should contain an entry for each value in 'interrupt-names'.
+>> +			Each entry should have the interrupt source number used by
+>> +			the remote processor to the host processor. The values should
+>> +			follow the interrupt-specifier format as dictated by the
+>> +			'interrupt-parent' node. The purpose of each is as per the
+>> +			description in the 'interrupt-names' property.
+>> +
+>> +- interrupt-names:	Should contain strings with the following names, each
+>> +			representing a specific interrupt,
+>> +			    "vring" - interrupt for virtio based IPC
+>> +			    "exception" - interrupt for exception notification
+>> +
+>> +- kick-gpio: 		Should specify the gpio device needed for the virtio IPC
+> 
+> -gpios
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-new file mode 100644
-index 000000000000..e32198df0e9c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-@@ -0,0 +1,73 @@
-+Qualcomm RPM GLINK binding
-+
-+This binding describes the Qualcomm RPM GLINK, a fifo based mechanism for
-+communication with the Resource Power Management system on various Qualcomm
-+platforms.
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,glink-rpm"
-+
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: should specify the IRQ used by the remote processor to
-+		    signal this processor about communication related events
-+
-+- qcom,rpm-msg-ram:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: handle to RPM message memory resource
-+
-+- mboxes:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the "rpm_hlos" mailbox in APCS, as described
-+		    in mailbox/mailbox.txt
-+
-+= GLINK DEVICES
-+Each subnode of the GLINK node represent function tied to a virtual
-+communication channel. The name of the nodes are not important. The properties
-+of these nodes are defined by the individual bindings for the specific function
-+- but must contain the following property:
-+
-+- qcom,glink-channels:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: a list of channels tied to this function, used for matching
-+		    the function to a set of virtual channels
-+
-+= EXAMPLE
-+The following example represents the GLINK RPM node on a MSM8996 device, with
-+the function for the "rpm_request" channel defined, which is used for
-+regualtors and root clocks.
-+
-+	apcs_glb: apcs-glb@9820000 {
-+		compatible = "qcom,msm8996-apcs-hmss-global";
-+		reg = <0x9820000 0x1000>;
-+
-+		#mbox-cells = <1>;
-+	};
-+
-+	rpm_msg_ram: memory@68000 {
-+		compatible = "qcom,rpm-msg-ram";
-+		reg = <0x68000 0x6000>;
-+	};
-+
-+	rpm-glink {
-+		compatible = "qcom,glink-rpm";
-+
-+		interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-+
-+		qcom,rpm-msg-ram = <&rpm_msg_ram>;
-+
-+		mboxes = <&apcs_glb 0>;
-+
-+		rpm-requests {
-+			compatible = "qcom,rpm-msm8996";
-+			qcom,glink-channels = "rpm_requests";
-+
-+			...
-+		};
-+	};
--- 
-2.12.0
+Will fix.
+
+> 
+>> +			stack. This will be used to interrupt the remote processor.
+>> +			The gpio device to be used is as per the bindings in,
+>> +			Documentation/devicetree/bindings/gpio/gpio-dsp-keystone.txt
+>> +
+>> +Optional properties:
+>> +--------------------
+>> +
+>> +- memory-region:	phandle to the reserved memory node to be associated
+>> +			with the remoteproc device. The reserved memory node
+>> +			can be a CMA memory node, and should be defined as
+>> +			per the bindings in
+>> +			Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+>> +
+>> +
+>> +Example:
+>> +--------
+>> +
+>> +	/* 66AK2H/K DSP node in SoC DTS file */
+>> +	soc {
+>> +		dsp0: dsp@10800000 {
+>> +			compatible = "ti,k2hk-dsp";
+>> +			reg = <0x10800000 0x00100000>,
+>> +			      <0x10e00000 0x00008000>,
+>> +			      <0x10f00000 0x00008000>;
+>> +			reg-names = "l2sram", "l1pram", "l1dram";
+>> +			label = "dsp0";
+>> +			clocks = <&clkgem0>;
+>> +			ti,syscon-dev = <&devctrl 0x40>;
+>> +			resets = <&pscrst 0>;
+>> +			interrupt-parent = <&kirq0>;
+>> +			interrupts = <0 8>;
+>> +			interrupt-names = "vring", "exception";
+>> +			kick-gpio = <&dspgpio0 27 0>;
+>> +		};
+>> +
+>> +	};
+>> +
+>> +	/* K2HK EVM Board file */
+>> +	reserved-memory {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+>> +
+>> +		dsp_common_cma_pool: dsp_common_cma_pool@81f800000 {
+>> +			compatible = "shared-dma-pool";
+>> +			reg = <0x00000008 0x1f800000 0x00000000 0x800000>;
+>> +			reusable;
+>> +			status = "okay";
+>> +		};
+>> +	};
+>> +
+>> +	&dsp0 {
+>> +		memory-region = <&dsp_common_cma_pool>;
+>> +	};
+
+Will also fix this up based on your comments on the Davinci remoteproc
+driver binding.
+
+regards
+Suman
