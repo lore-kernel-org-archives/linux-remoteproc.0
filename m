@@ -1,35 +1,29 @@
-Return-Path: <Henri.Roosen@ginzinger.com>
-From: Henri Roosen <henri.roosen@ginzinger.com>
-Subject: [PATCH] rpmsg: virtio_rpmsg_bus: cleanup multiple assignment to ops
-Date: Fri, 2 Jun 2017 13:36:22 +0200
-Message-ID: <1496403382-32374-1-git-send-email-henri.roosen@ginzinger.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 1 Jun 2017 13:32:20 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 2/4] remoteproc: qcom: refactor mss fw image loading
+ sequence
+Message-ID: <20170601203220.GZ12920@tuxbook>
+References: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
+ <1496344641-6291-3-git-send-email-akdwived@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: linux-remoteproc@vger.kernel.org
-Cc: Henri Roosen <henri.roosen@ginzinger.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1496344641-6291-3-git-send-email-akdwived@codeaurora.org>
+To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Trivial cleanup: the .ops pointer is assigned twice. This patch removes the
-first assignment.
+On Thu 01 Jun 12:17 PDT 2017, Avaneesh Kumar Dwivedi wrote:
 
-Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 3 ---
- 1 file changed, 3 deletions(-)
+> This patch refactor code to first load all firmware blobs
+> and then update modem proc to authenticate and boot fw.
+> 
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 3c582f2..35b8379 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -390,9 +390,6 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
- 	/* Link the channel to our vrp */
- 	vch->vrp = vrp;
- 
--	/* Assign callbacks for rpmsg_channel */
--	vch->rpdev.ops = &virtio_rpmsg_ops;
--
- 	/* Assign public information to the rpmsg_device */
- 	rpdev = &vch->rpdev;
- 	rpdev->src = chinfo->src;
--- 
-2.1.4
+This looks good, but I have not had a chance to test this on older
+platforms yet.
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
