@@ -1,29 +1,69 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 1 Jun 2017 13:32:20 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v5 2/4] remoteproc: qcom: refactor mss fw image loading
- sequence
-Message-ID: <20170601203220.GZ12920@tuxbook>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v5 2/4] remoteproc: qcom: refactor mss fw image loading sequence
+Date: Fri,  2 Jun 2017 00:47:19 +0530
+Message-Id: <1496344641-6291-3-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
 References: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
- <1496344641-6291-3-git-send-email-akdwived@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1496344641-6291-3-git-send-email-akdwived@codeaurora.org>
-To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 01 Jun 12:17 PDT 2017, Avaneesh Kumar Dwivedi wrote:
+This patch refactor code to first load all firmware blobs
+and then update modem proc to authenticate and boot fw.
 
-> This patch refactor code to first load all firmware blobs
-> and then update modem proc to authenticate and boot fw.
-> 
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-This looks good, but I have not had a chance to test this on older
-platforms yet.
-
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 8fd697a..f5f8850 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -503,7 +503,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	bool relocate = false;
+ 	char seg_name[10];
+ 	ssize_t offset;
+-	size_t size;
++	size_t size = 0;
+ 	void *ptr;
+ 	int ret;
+ 	int i;
+@@ -541,7 +541,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	}
+ 
+ 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+-
++	/* Load firmware segments */
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+ 		phdr = &phdrs[i];
+ 
+@@ -574,18 +574,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
+-
+-		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+-		if (!size) {
+-			boot_addr = relocate ? qproc->mpss_phys : min_addr;
+-			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+-			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+-		}
+-
+ 		size += phdr->p_memsz;
+-		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+ 	}
+ 
++	/* Transfer ownership of modem ddr region with q6*/
++	boot_addr = relocate ? qproc->mpss_phys : min_addr;
++	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
++	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
++	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
++
+ 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(qproc->dev, "MPSS authentication timed out\n");
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
