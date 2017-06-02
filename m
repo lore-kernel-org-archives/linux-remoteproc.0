@@ -1,38 +1,34 @@
-Date: Sun, 25 Jun 2017 14:51:48 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH] rpmsg: rpmsg_core: fix null-ptr dereference for devices
  without ops
-Message-ID: <20170625215148.GJ26155@builder>
 References: <1496403321-32234-1-git-send-email-henri.roosen@ginzinger.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <46048bd4-482d-37e8-9701-71754f72ffc2@ti.com>
+Date: Fri, 2 Jun 2017 16:47:51 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1496403321-32234-1-git-send-email-henri.roosen@ginzinger.com>
-To: Henri Roosen <henri.roosen@ginzinger.com>
-Cc: linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Henri Roosen <henri.roosen@ginzinger.com>, linux-remoteproc@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 02 Jun 04:35 PDT 2017, Henri Roosen wrote:
+Hi Henri,
 
+On 06/02/2017 06:35 AM, Henri Roosen wrote:
 > A device might not have an ops structure registered. This
+
+The rpmsg devices are registered from the respective backends, which are
+supposed to plug in their ops. What is the scenario where you think
+these ops might not be populated? We ought to check for NULL ops in
+rpmsg_register_device in fact to make sure an ops pointer is supplied.
+
+regards
+Suman
+
 > patch fixes a null-prt dereference by checking ops before dereferencing
 > it.
 > 
-
-In what scenario do you end up with a rpdev without ops defined?
-
-You need at least create_ept defined in your ops to be able to do any
-form of communication. So it would probably make more sense to add a
-sanity check in rpmsg_register_device(), but perhaps I'm missing
-something.
-
-
-(If this is not true there are a bunch of other places where this needs
-to be checked as well)
-
-Regards,
-Bjorn
-
 > Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
 > ---
 >  drivers/rpmsg/rpmsg_core.c | 2 +-
@@ -51,6 +47,4 @@ Bjorn
 >  		err = rpdev->ops->announce_create(rpdev);
 >  out:
 >  	return err;
-> -- 
-> 2.1.4
 > 
