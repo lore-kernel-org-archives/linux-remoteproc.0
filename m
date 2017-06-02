@@ -1,26 +1,25 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sun, 25 Jun 2017 14:43:52 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH] rpmsg: virtio_rpmsg_bus: cleanup multiple assignment to
  ops
-Message-ID: <20170625214352.GI26155@builder>
 References: <1496403382-32374-1-git-send-email-henri.roosen@ginzinger.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <053186d1-f05d-06e0-2fa9-e15bcfa5bb02@ti.com>
+Date: Fri, 2 Jun 2017 16:40:15 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1496403382-32374-1-git-send-email-henri.roosen@ginzinger.com>
-To: Henri Roosen <henri.roosen@ginzinger.com>
-Cc: linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Henri Roosen <henri.roosen@ginzinger.com>, linux-remoteproc@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 02 Jun 04:36 PDT 2017, Henri Roosen wrote:
-
+On 06/02/2017 06:36 AM, Henri Roosen wrote:
 > Trivial cleanup: the .ops pointer is assigned twice. This patch removes the
 > first assignment.
 > 
 > Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
 
-Applied, thanks
+Acked-by: Suman Anna <s-anna@ti.com>
 
 > ---
 >  drivers/rpmsg/virtio_rpmsg_bus.c | 3 ---
@@ -40,6 +39,4 @@ Applied, thanks
 >  	/* Assign public information to the rpmsg_device */
 >  	rpdev = &vch->rpdev;
 >  	rpdev->src = chinfo->src;
-> -- 
-> 2.1.4
 > 
