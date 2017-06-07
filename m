@@ -1,249 +1,90 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v6 3/4] remoteproc: qcom: Make secure world call for mem ownership switch
-Date: Thu, 22 Jun 2017 17:38:52 +0530
-Message-Id: <1498133333-21291-4-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
-References: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 7 Jun 2017 14:20:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 3/4] remoteproc: qcom: Make secure world call for mem
+ ownership switch
+Message-ID: <20170607212026.GI12920@tuxbook>
+References: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
+ <1496344641-6291-4-git-send-email-akdwived@codeaurora.org>
+ <20170601204224.GB12920@tuxbook>
+ <613203ac-a1a1-05b1-db5c-a48003003b53@codeaurora.org>
+ <20170602175540.GD12920@tuxbook>
+ <ea7b7065-6520-eb1f-b6f3-3b2e7138cc31@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea7b7065-6520-eb1f-b6f3-3b2e7138cc31@codeaurora.org>
+To: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-MSS proc on msm8996 can not access fw loaded region without stage
-second translation of memory pages where mpss image are loaded.
-This patch in order to enable mss boot on msm8996 invoke scm call
-to switch or share ownership between apps and modem.
+On Wed 07 Jun 09:27 PDT 2017, Dwivedi, Avaneesh Kumar (avani) wrote:
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 86 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 83 insertions(+), 3 deletions(-)
+> 
+> 
+> On 6/2/2017 11:25 PM, Bjorn Andersson wrote:
+> > On Thu 01 Jun 14:42 PDT 2017, Dwivedi, Avaneesh Kumar (avani) wrote:
+> > 
+> > > Hi Bjorn,
+> > > 
+> > > Thanks lot many for such a blazing fast response :)
+> > > 
+> > > regarding your points.
+> > > 
+> > > a- Do you mean caller's of q6v5_xfer_mem_ownership() should pass two
+> > > additional inputs i.e. *next_perm and *next_vmid
+> > > 
+> > You have two cases; assign to HLOS and assign to MSS, so I imagine that
+> > you pass a single indicator of which you want to assign. I.e. rather
+> > than looking at what the current state is and flipping you pass the
+> > conditional of that if statement as a parameter.
+> OK
+> > 
+> > >      and that based on successful return of qcom_scm_assign () they should be
+> > > treated as *current_perm and *current_vmid
+> > > 
+> > Instead of your index, you take a "int *curr_perms", which you use as
+> > the current vmid list and you assign at the end of the function (like
+> > you do today).
+> > 
+> > So to transfer the ownership to the MSS you would make a function call
+> > like:
+> > 
+> > ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_owner, ..., true);
+> > 
+> > mpss_owner would have to be initialize to HLOS before calling this, but
+> > will always be holding the current value.
+> i am not finding compelling enough region to carry an input pointer to hold
+> current ownership
+> specially when i am carrying a boolean flag to check whether next->vmid will
+> be MSS or HLOS
+> I mean where am i going to use this current owner info in mss rproc driver,
+> i am yet not getting enough reason.
+> while the local array did job of maintaining and flipping the ownership
+> based on info if which image ownership transfer is being called.
+> 
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index f5f8850..ed740ab 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -110,6 +110,7 @@ struct rproc_hexagon_res {
- 	struct qcom_mss_reg_res *active_supply;
- 	char **proxy_clk_names;
- 	char **active_clk_names;
-+	bool need_mem_protection;
- };
- 
- struct q6v5 {
-@@ -151,8 +152,11 @@ struct q6v5 {
- 	phys_addr_t mpss_reloc;
- 	void *mpss_region;
- 	size_t mpss_size;
-+	bool need_mem_protection;
- 
- 	struct qcom_rproc_subdev smd_subdev;
-+	int mpss_perm;
-+	int mba_perm;
- };
- 
- static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-@@ -288,6 +292,36 @@ static struct resource_table *q6v5_find_rsc_table(struct rproc *rproc,
- 	return &table;
- }
- 
-+static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
-+				   bool remote_owner, phys_addr_t addr,
-+				   size_t size)
-+{
-+	struct qcom_scm_vmperm next;
-+	int ret;
-+
-+	if (!qproc->need_mem_protection)
-+		return 0;
-+	if (remote_owner && *current_perm == BIT(QCOM_SCM_VMID_MSS_MSA))
-+		return 0;
-+	if (!remote_owner && *current_perm == BIT(QCOM_SCM_VMID_HLOS))
-+		return 0;
-+
-+	next.vmid = remote_owner ? QCOM_SCM_VMID_MSS_MSA : QCOM_SCM_VMID_HLOS;
-+	next.perm = remote_owner ? QCOM_SCM_PERM_RW : QCOM_SCM_PERM_RWX;
-+
-+	ret = qcom_scm_assign_mem(addr,
-+		ALIGN(size, SZ_4K), *current_perm, &next, 1);
-+	if (ret < 0) {
-+		pr_err("Failed to assign memory access in range %p to %p to %s ret = %d\n",
-+			(void *)addr, (void *)(addr + size),
-+			remote_owner ? "mss" : "hlos", ret);
-+		return ret;
-+	}
-+
-+	*current_perm = ret;
-+	return 0;
-+}
-+
- static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct q6v5 *qproc = rproc->priv;
-@@ -450,6 +484,8 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- {
- 	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
- 	dma_addr_t phys;
-+	int mdata_perm;
-+	int xferop_ret;
- 	void *ptr;
- 	int ret;
- 
-@@ -461,6 +497,12 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- 
- 	memcpy(ptr, fw->data, fw->size);
- 
-+	/* Hypervisor mapping to access metadata by modem */
-+	mdata_perm = BIT(QCOM_SCM_VMID_HLOS);
-+	ret = q6v5_xfer_mem_ownership(qproc,
-+			&mdata_perm, 1, phys, fw->size);
-+	if (ret)
-+		return -EAGAIN;
- 	writel(phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
- 	writel(RMB_CMD_META_DATA_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
- 
-@@ -470,6 +512,12 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- 	else if (ret < 0)
- 		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
- 
-+	/* Metadata authentication done, remove modem access */
-+	xferop_ret = q6v5_xfer_mem_ownership(qproc,
-+			&mdata_perm, 0, phys, fw->size);
-+	if (xferop_ret)
-+		dev_warn(qproc->dev,
-+			"mdt buffer not reclaimed system may become unstable\n");
- 	dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
- 
- 	return ret < 0 ? ret : 0;
-@@ -579,6 +627,10 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 
- 	/* Transfer ownership of modem ddr region with q6*/
- 	boot_addr = relocate ? qproc->mpss_phys : min_addr;
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, 1,
-+			qproc->mpss_phys, qproc->mpss_size);
-+	if (ret)
-+		return -EAGAIN;
- 	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
- 	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
- 	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-@@ -598,6 +650,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- static int q6v5_start(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	int xfermemop_ret;
- 	int ret;
- 
- 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
-@@ -633,6 +686,11 @@ static int q6v5_start(struct rproc *rproc)
- 		goto assert_reset;
- 	}
- 
-+	/* Assign MBA image access in DDR to q6 */
-+	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, 1,
-+				qproc->mba_phys, qproc->mba_size);
-+	if (xfermemop_ret)
-+		goto assert_reset;
- 	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
- 
- 	ret = q6v5proc_reset(qproc);
-@@ -654,16 +712,21 @@ static int q6v5_start(struct rproc *rproc)
- 
- 	ret = q6v5_mpss_load(qproc);
- 	if (ret)
--		goto halt_axi_ports;
-+		goto reclaim_mem;
- 
- 	ret = wait_for_completion_timeout(&qproc->start_done,
- 					  msecs_to_jiffies(5000));
- 	if (ret == 0) {
- 		dev_err(qproc->dev, "start timed out\n");
- 		ret = -ETIMEDOUT;
--		goto halt_axi_ports;
-+		goto reclaim_mem;
- 	}
- 
-+	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, 0,
-+				qproc->mba_phys, qproc->mba_size);
-+	if (xfermemop_ret)
-+		dev_err(qproc->dev,
-+			"Failed to reclaim mba buffer system may become unstable\n");
- 	qproc->running = true;
- 
- 	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
-@@ -673,12 +736,21 @@ static int q6v5_start(struct rproc *rproc)
- 
- 	return 0;
- 
-+reclaim_mem:
-+	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, 0,
-+				qproc->mpss_phys, qproc->mpss_size);
-+	WARN_ON(xfermemop_ret);
- halt_axi_ports:
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
- 	q6v5_clk_disable(qproc->dev, qproc->active_clks,
- 			 qproc->active_clk_count);
-+	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, 0,
-+				qproc->mba_phys, qproc->mba_size);
-+	if (xfermemop_ret)
-+		dev_err(qproc->dev, "Failed to reclaim mba buffer, system may become unstable\n");
-+
- assert_reset:
- 	reset_control_assert(qproc->mss_restart);
- disable_vdd:
-@@ -698,6 +770,7 @@ static int q6v5_stop(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
- 	int ret;
-+	u32 val;
- 
- 	qproc->running = false;
- 
-@@ -715,6 +788,9 @@ static int q6v5_stop(struct rproc *rproc)
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
- 
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, 0,
-+			qproc->mpss_phys, qproc->mpss_size);
-+	WARN_ON(ret);
- 	reset_control_assert(qproc->mss_restart);
- 	q6v5_clk_disable(qproc->dev, qproc->active_clks,
- 			 qproc->active_clk_count);
-@@ -1012,6 +1088,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
-+	qproc->need_mem_protection = desc->need_mem_protection;
- 	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
- 	if (ret < 0)
- 		goto free_rproc;
-@@ -1033,7 +1110,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 		ret = PTR_ERR(qproc->state);
- 		goto free_rproc;
- 	}
--
-+	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
-+	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
- 
- 	ret = rproc_add(rproc);
-@@ -1087,6 +1165,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 		"mem",
- 		NULL
- 	},
-+	.need_mem_protection = false,
- };
- 
- static const struct rproc_hexagon_res msm8974_mss = {
-@@ -1124,6 +1203,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 		"mem",
- 		NULL
- 	},
-+	.need_mem_protection = false,
- };
- 
- static const struct of_device_id q6v5_of_match[] = {
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+As far as I can see your patch works fine, every code path will end up
+calling xfer_mem() an even number of times, meaning that when we're done
+the ownership is on the HLOS side.
+
+But the reason I don't like this flip-flop mechanism is that it forces
+us to _always_ exit every code path with an even number of calls.
+Meaning that if we ever refactor any of this code and accidentally add
+another flip, we will start seeing "random" crashes. This is the reason
+why I want the code to be explicit in "transfer permission to X".
+
+The reason for not using the "destination owner" for figuring out the
+current owner is that in the even that you call "transfer permission to
+HLOS" twice in a row, you will call TZ saying that the current ownership
+is MSS and the call will fail. In this case the calling code has no
+chance to know if we failed because we have called xfer_mem() an odd
+number of times or something else and although we are good (HLOS is
+owner) we have to treat this as a fatal error.
+
+
+So, it's all about future maintainability - not about it currently
+working.
+
+Regards,
+Bjorn
