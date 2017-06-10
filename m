@@ -1,105 +1,31 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59494 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751659AbdFISIz (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Jun 2017 14:08:55 -0400
-Subject: patch "rpmsg: use dev_groups and not dev_attrs for bus_type" added to driver-core-next
-From: <gregkh@linuxfoundation.org>
-Date: Fri, 09 Jun 2017 20:08:16 +0200
-Message-ID: <149703169698118@kroah.com>
+Return-Path: <santosh.shilimkar@oracle.com>
+Subject: Re: [PATCH v2 3/3] remoteproc/keystone: Ensure the DSPs are in reset
+ in probe
+References: <20170608002447.47580-1-s-anna@ti.com>
+ <20170608002447.47580-4-s-anna@ti.com>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Message-ID: <6ce5952b-55b0-8f77-2e14-51110d6bf979@oracle.com>
+Date: Sat, 10 Jun 2017 12:32:43 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ANSI_X3.4-1968
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com
+In-Reply-To: <20170608002447.47580-4-s-anna@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-
-This is a note to let you know that I've just added the patch titled
-
-    rpmsg: use dev_groups and not dev_attrs for bus_type
-
-to my driver-core git tree which can be found at
-    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-in the driver-core-next branch.
-
-The patch will show up in the next release of the linux-next tree
-(usually sometime within the next 24 hours during the week.)
-
-The patch will also be merged in the next major kernel release
-during the merge window.
-
-If you have any questions about this process, please let me know.
-
-
->From 39afc7af152519cc3f41dfb4460701e7c00c3391 Mon Sep 17 00:00:00 2001
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 6 Jun 2017 14:16:54 +0200
-Subject: rpmsg: use dev_groups and not dev_attrs for bus_type
-
-The dev_attrs field has long been "depreciated" and is finally being
-removed, so move the driver to use the "correct" dev_groups field
-instead for struct bus_type.
-
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: <linux-remoteproc@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/rpmsg/rpmsg_core.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 600f5f9f7431..ad3d2a9df287 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -330,7 +330,8 @@ field##_show(struct device *dev,					\
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
- 									\
- 	return sprintf(buf, format_string, rpdev->path);		\
--}
-+}									\
-+static DEVICE_ATTR_RO(field);
- 
- /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
- rpmsg_show_attr(name, id.name, "%s\n");
-@@ -345,15 +346,17 @@ static ssize_t modalias_show(struct device *dev,
- 
- 	return sprintf(buf, RPMSG_DEVICE_MODALIAS_FMT "\n", rpdev->id.name);
- }
--
--static struct device_attribute rpmsg_dev_attrs[] = {
--	__ATTR_RO(name),
--	__ATTR_RO(modalias),
--	__ATTR_RO(dst),
--	__ATTR_RO(src),
--	__ATTR_RO(announce),
--	__ATTR_NULL
-+static DEVICE_ATTR_RO(modalias);
-+
-+static struct attribute *rpmsg_dev_attrs[] = {
-+	&dev_attr_name.attr,
-+	&dev_attr_modalias.attr,
-+	&dev_attr_dst.attr,
-+	&dev_attr_src.attr,
-+	&dev_attr_announce.attr,
-+	NULL,
- };
-+ATTRIBUTE_GROUPS(rpmsg_dev);
- 
- /* rpmsg devices and drivers are matched using the service name */
- static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
-@@ -455,7 +458,7 @@ static int rpmsg_dev_remove(struct device *dev)
- static struct bus_type rpmsg_bus = {
- 	.name		= "rpmsg",
- 	.match		= rpmsg_dev_match,
--	.dev_attrs	= rpmsg_dev_attrs,
-+	.dev_groups	= rpmsg_dev_groups,
- 	.uevent		= rpmsg_uevent,
- 	.probe		= rpmsg_dev_probe,
- 	.remove		= rpmsg_dev_remove,
--- 
-2.13.1
-
-
+On 6/7/2017 5:24 PM, Suman Anna wrote:
+> From: "Andrew F. Davis" <afd@ti.com>
+> 
+> The DSPs are expected to be in reset when the driver probes a device.
+> If the DSPs are out of reset in probe, the system may crash when the
+> firmware is being loaded. So, add a check to make sure the DSP resets
+> are asserted, and if not, throw a eye-catchy warning and assert the
+> resets specifically.
+> 
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> [s-anna@ti.com: replace warning with a WARN]
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
