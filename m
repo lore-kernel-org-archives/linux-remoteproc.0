@@ -1,69 +1,55 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v5 2/4] remoteproc: qcom: refactor mss fw image loading sequence
-Date: Fri,  2 Jun 2017 00:47:19 +0530
-Message-Id: <1496344641-6291-3-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
-References: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH v3 3/3] remoteproc/keystone: Ensure the DSPs are in reset in probe
+Date: Tue, 13 Jun 2017 18:45:13 -0500
+Message-ID: <20170613234513.7624-4-s-anna@ti.com>
+In-Reply-To: <20170613234513.7624-1-s-anna@ti.com>
+References: <20170613234513.7624-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch refactor code to first load all firmware blobs
-and then update modem proc to authenticate and boot fw.
+From: "Andrew F. Davis" <afd@ti.com>
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+The DSPs are expected to be in reset when the driver probes a device.
+If the DSPs are out of reset in probe, the system may crash when the
+firmware is being loaded. So, add a check to make sure the DSP resets
+are asserted, and if not, throw a eye-catchy warning and assert the
+resets specifically.
+
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+[s-anna@ti.com: replace warning with a WARN]
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+v3: No code changes, picked up Santosh's Ack
+v2: https://patchwork.kernel.org/patch/9773679/
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8fd697a..f5f8850 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -503,7 +503,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	bool relocate = false;
- 	char seg_name[10];
- 	ssize_t offset;
--	size_t size;
-+	size_t size = 0;
- 	void *ptr;
- 	int ret;
- 	int i;
-@@ -541,7 +541,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	}
+ drivers/remoteproc/keystone_remoteproc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+index 6e09ef76f7c7..5f776bfd674a 100644
+--- a/drivers/remoteproc/keystone_remoteproc.c
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -456,6 +456,16 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 	if (of_reserved_mem_device_init(dev))
+ 		dev_warn(dev, "device does not have specific CMA pool\n");
  
- 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
--
-+	/* Load firmware segments */
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		phdr = &phdrs[i];
- 
-@@ -574,18 +574,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			memset(ptr + phdr->p_filesz, 0,
- 			       phdr->p_memsz - phdr->p_filesz);
- 		}
--
--		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
--		if (!size) {
--			boot_addr = relocate ? qproc->mpss_phys : min_addr;
--			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
--			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
--		}
--
- 		size += phdr->p_memsz;
--		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
- 	}
- 
-+	/* Transfer ownership of modem ddr region with q6*/
-+	boot_addr = relocate ? qproc->mpss_phys : min_addr;
-+	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-+	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
-+	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
++	/* ensure the DSP is in reset before loading firmware */
++	ret = reset_control_status(ksproc->reset);
++	if (ret < 0) {
++		dev_err(dev, "failed to get reset status, status = %d\n", ret);
++		goto release_mem;
++	} else if (ret == 0) {
++		WARN(1, "device is not in reset\n");
++		keystone_rproc_dsp_reset(ksproc);
++	}
 +
- 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "MPSS authentication timed out\n");
+ 	ret = rproc_add(rproc);
+ 	if (ret) {
+ 		dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.13.1
