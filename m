@@ -1,56 +1,47 @@
 Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v3 0/3] Add Keystone2 Remoteproc driver
-References: <20170613234513.7624-1-s-anna@ti.com>
 From: Suman Anna <s-anna@ti.com>
-Message-ID: <51634d20-41a1-0501-c07d-c4e5492ad422@ti.com>
-Date: Fri, 23 Jun 2017 16:31:15 -0500
+Subject: [PATCH v3 0/3] Add Keystone2 Remoteproc driver
+Date: Tue, 13 Jun 2017 18:45:10 -0500
+Message-ID: <20170613234513.7624-1-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20170613234513.7624-1-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 06/13/2017 06:45 PM, Suman Anna wrote:
-> Hi Bjorn,
-> 
-> This is v3 of the patchset that adds the DT binding and the driver for
-> loading and booting the DSP devices present on various Keystone2 SoC families.
-> The binding and driver patches have already been acked by Rob Herring and Santosh
-> Shilimkar respectively, and this is just a minor refresh with one small comment
-> from Rob addressed in the binding (Patch 1). There are no code changes in remaining
-> patches. I have picked up their Acks in all the relevant patches.
-> 
-> Appreciate it if you can pick up the series for v4.13.
+Hi Bjorn,
 
-Gentle reminder for picking this up for v4.13 merge window.
+This is v3 of the patchset that adds the DT binding and the driver for
+loading and booting the DSP devices present on various Keystone2 SoC families.
+The binding and driver patches have already been acked by Rob Herring and Santosh
+Shilimkar respectively, and this is just a minor refresh with one small comment
+from Rob addressed in the binding (Patch 1). There are no code changes in remaining
+patches. I have picked up their Acks in all the relevant patches.
 
-Thanks
+Appreciate it if you can pick up the series for v4.13.
+
+v2:
+http://marc.info/?l=linux-kernel&m=149688154304565&w=2
+v1:
+http://marc.info/?t=149581802500004&r=1&w=2
+
+regards
 Suman
 
-> 
-> v2:
-> http://marc.info/?l=linux-kernel&m=149688154304565&w=2
-> v1:
-> http://marc.info/?t=149581802500004&r=1&w=2
-> 
-> regards
-> Suman
-> 
-> Andrew F. Davis (1):
->   remoteproc/keystone: Ensure the DSPs are in reset in probe
-> 
-> Suman Anna (2):
->   dt-bindings: remoteproc: Add Keystone DSP remoteproc binding
->   remoteproc/keystone: Add a remoteproc driver for Keystone 2 DSPs
-> 
->  .../bindings/remoteproc/ti,keystone-rproc.txt      | 133 ++++++
->  drivers/remoteproc/Kconfig                         |  13 +
->  drivers/remoteproc/Makefile                        |   1 +
->  drivers/remoteproc/keystone_remoteproc.c           | 525 +++++++++++++++++++++
->  4 files changed, 672 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
->  create mode 100644 drivers/remoteproc/keystone_remoteproc.c
-> 
+Andrew F. Davis (1):
+  remoteproc/keystone: Ensure the DSPs are in reset in probe
+
+Suman Anna (2):
+  dt-bindings: remoteproc: Add Keystone DSP remoteproc binding
+  remoteproc/keystone: Add a remoteproc driver for Keystone 2 DSPs
+
+ .../bindings/remoteproc/ti,keystone-rproc.txt      | 133 ++++++
+ drivers/remoteproc/Kconfig                         |  13 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/keystone_remoteproc.c           | 525 +++++++++++++++++++++
+ 4 files changed, 672 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+ create mode 100644 drivers/remoteproc/keystone_remoteproc.c
+
+-- 
+2.13.1
