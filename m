@@ -1,55 +1,47 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH v3 3/3] remoteproc/keystone: Ensure the DSPs are in reset in probe
-Date: Tue, 13 Jun 2017 18:45:13 -0500
-Message-ID: <20170613234513.7624-4-s-anna@ti.com>
-In-Reply-To: <20170613234513.7624-1-s-anna@ti.com>
-References: <20170613234513.7624-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
+Return-Path: <spjoshi@codeaurora.org>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Subject: [PATCH 2/2] remoteproc: qcom: Register segments with remoteproc
+Date: Wed, 14 Jun 2017 11:06:56 -0700
+Message-Id: <1497463616-19868-2-git-send-email-spjoshi@codeaurora.org>
+In-Reply-To: <1497463616-19868-1-git-send-email-spjoshi@codeaurora.org>
+References: <1497463616-19868-1-git-send-email-spjoshi@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Trilok Soni <tsoni@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: "Andrew F. Davis" <afd@ti.com>
+Register the firmware segments with remoteproc framework to ensure
+that the coredumps can be collected in the event of fatal failures.
 
-The DSPs are expected to be in reset when the driver probes a device.
-If the DSPs are out of reset in probe, the system may crash when the
-firmware is being loaded. So, add a check to make sure the DSP resets
-are asserted, and if not, throw a eye-catchy warning and assert the
-resets specifically.
-
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-[s-anna@ti.com: replace warning with a WARN]
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
 ---
-v3: No code changes, picked up Santosh's Ack
-v2: https://patchwork.kernel.org/patch/9773679/
+ drivers/remoteproc/qcom_adsp_pil.c | 1 +
+ drivers/remoteproc/qcom_wcnss.c    | 1 +
+ 2 files changed, 2 insertions(+)
 
- drivers/remoteproc/keystone_remoteproc.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index 6e09ef76f7c7..5f776bfd674a 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -456,6 +456,16 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 	if (of_reserved_mem_device_init(dev))
- 		dev_warn(dev, "device does not have specific CMA pool\n");
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 335066e..f6d5ceac 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -86,6 +86,7 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ static const struct rproc_fw_ops adsp_fw_ops = {
+ 	.find_rsc_table = qcom_mdt_find_rsc_table,
+ 	.load = adsp_load,
++	.register_segments = qcom_register_dump_segments,
+ };
  
-+	/* ensure the DSP is in reset before loading firmware */
-+	ret = reset_control_status(ksproc->reset);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to get reset status, status = %d\n", ret);
-+		goto release_mem;
-+	} else if (ret == 0) {
-+		WARN(1, "device is not in reset\n");
-+		keystone_rproc_dsp_reset(ksproc);
-+	}
-+
- 	ret = rproc_add(rproc);
- 	if (ret) {
- 		dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
+ static int adsp_start(struct rproc *rproc)
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 253f152e..efa295f 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -160,6 +160,7 @@ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+ static const struct rproc_fw_ops wcnss_fw_ops = {
+ 	.find_rsc_table = qcom_mdt_find_rsc_table,
+ 	.load = wcnss_load,
++	.register_segments = qcom_register_dump_segments,
+ };
+ 
+ static void wcnss_indicate_nv_download(struct qcom_wcnss *wcnss)
 -- 
-2.13.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
