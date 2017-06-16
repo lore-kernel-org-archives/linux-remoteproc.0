@@ -1,27 +1,24 @@
-Return-Path: <ore@pengutronix.de>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [RFC PATCH 2/3] remoteproc: imx_rproc: add a NXP/Freescale imx
  rproc driver
+From: Suman Anna <s-anna@ti.com>
 References: <20170614204855.18347-1-o.rempel@pengutronix.de>
  <20170614204855.18347-3-o.rempel@pengutronix.de>
  <96edc898-ad2b-c781-b7eb-0645902837df@ti.com>
-From: Oleksij Rempel <ore@pengutronix.de>
-Message-ID: <f146c11f-1cca-68db-325b-036b0f614963@pengutronix.de>
-Date: Mon, 19 Jun 2017 09:43:51 +0200
+Message-ID: <f0a5eb12-9612-8be7-00fa-8d79905e7be8@ti.com>
+Date: Fri, 16 Jun 2017 11:20:45 -0500
 MIME-Version: 1.0
 In-Reply-To: <96edc898-ad2b-c781-b7eb-0645902837df@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: Suman Anna <s-anna@ti.com>, Oleksij Rempel <o.rempel@pengutronix.de>, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+To: Oleksij Rempel <o.rempel@pengutronix.de>, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 Cc: Oleksij Rempel <linux@rempel-privat.de>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
-
-Thank you for your review!
-
-On 15.06.2017 21:01, Suman Anna wrote:
+On 06/15/2017 02:01 PM, Suman Anna wrote:
 > Hi Oleksij,
->
+> 
 > On 06/14/2017 03:48 PM, Oleksij Rempel wrote:
 >> From: Oleksij Rempel <linux@rempel-privat.de>
 >>
@@ -29,10 +26,10 @@ On 15.06.2017 21:01, Suman Anna wrote:
 >> imx6sx as well.
 >> It will upload firmware to OCRAM, which shared memory between
 >> Cortex A7 and Cortex M4, then turn M4 on.
->
+> 
 > Mostly looks fine, need to address few comments. I take it that you
 > haven't added the binding since this is just an RFC.
->
+> 
 >>
 >> Signed-off-by: Oleksij Rempel <linux@rempel-privat.de>
 >> ---
@@ -78,9 +75,9 @@ On 15.06.2017 21:01, Suman Anna wrote:
 >> @@ -0,0 +1,264 @@
 >> +/*
 >> + * Oleksij Rempel <o.rempel@pengutronix.de>
->
+> 
 > Please add a blank line here.
->
+> 
 >> + * This program is free software; you can redistribute it and/or
 >> + * modify it under the terms of the GNU General Public License
 >> + * version 2 as published by the Free Software Foundation.
@@ -121,31 +118,10 @@ On 15.06.2017 21:01, Suman Anna wrote:
 >> +    [IMX7D_RPROC_IMEM]    = "imem",
 >> +    [IMX7D_RPROC_DMEM]    = "dmem",
 >> +};
->
+> 
 > Do you really need these to be globally defined? You only need them in
 > the addr_init function, they can be made local to that function.
-
-I don't needed. At least not with my testing remote code.
-It is mostly copy/paste from existing drivers.
-
-But according to this page, there are multiple memory regions, with 
-different mapping for data and code.
-http://developer.toradex.com/knowledge-base/freertos-on-the-cortex-m4-of-a-colibri-imx7#Memory_areas
-
-"The Cortex-M4 CPU has two buses connected to the main interconnect 
-(modified Harvard architecture). One bus is meant to fetch data (system 
-bus) whereas the other bus is meant to fetch instructions (code bus). To 
-get optimal performance, the program code should be located and linked 
-for a region which is going to be fetched through the code bus, while 
-the data area (e.g. bss or data section) should be located in a region 
-which is fetched through the system bus. There are multiple example 
-linker files in the platform/devices/MCIMX7D/linker/ sub directory which 
-can be used and/or modified. All example firmware below use the 
-MCIMX7D_M4_tcm.ld linker file (TCML region for code, and the TCMU region 
-for data)."
-
-What is the proper way to implement it with remoteproc?
-
+> 
 >> +
 >> +/**
 >> + * struct imx_rproc_mem - slim internal memory structure
@@ -156,12 +132,12 @@ What is the proper way to implement it with remoteproc?
 >> +struct imx_rproc_mem {
 >> +    void __iomem *cpu_addr;
 >> +    phys_addr_t bus_addr;
->
+> 
 > Are the rproc-view of these regions same as the bus addresses or
 > do they have their own local addresses? If latter, images that are built
 > for those will be using those addresses in which case you need some
 > offset calculation in the da_to_va ops?
->
+> 
 >> +    size_t size;
 >> +};
 >> +
@@ -174,10 +150,10 @@ What is the proper way to implement it with remoteproc?
 >> +    struct regmap            *regmap;
 >> +    struct rproc            *rproc;
 >> +    const struct imx_rproc_dcfg    *dcfg;
->
+> 
 > No need of aligning the variables, you can get rid of the additional
 > whitespaces and maintain consistent style.
->
+> 
 >> +    struct imx_rproc_mem mem[IMX7D_RPROC_MEM_MAX];
 >> +    struct clk        *clk;
 >> +};
@@ -204,6 +180,9 @@ What is the proper way to implement it with remoteproc?
 >> +                 IMX7D_SW_M4C_RST | IMX7D_SW_M4P_RST | IMX7D_ENABLE_M4);
 >> +    if (ret) {
 >> +        dev_err(dev, "Filed to enable M4!\n");
+
+typo for failed..
+
 >> +        clk_disable(priv->clk);
 >> +    }
 >> +
@@ -243,6 +222,15 @@ What is the proper way to implement it with remoteproc?
 >> +            va = (__force void *)priv->mem[i].cpu_addr;
 >> +            break;
 >> +        }
+
+missed this yesterday, but this implementation is wrong, you need to be
+doing a range check and translate here accordingly. See for an example a
+patch on a driver I submitted recently,
+https://patchwork.kernel.org/patch/9773687/
+
+regards
+Suman
+
 >> +    }
 >> +
 >> +    dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%x va = 0x%p\n", da,
@@ -318,10 +306,10 @@ What is the proper way to implement it with remoteproc?
 >> +    dcfg = of_device_get_match_data(dev);
 >> +    if (!dcfg)
 >> +        return -EINVAL;
->
+> 
 > move this up to the beginning of the function. You can avoid the cleanup
 > (you are missing an rproc_free() here)
->
+> 
 >> +
 >> +    priv = rproc->priv;
 >> +    priv->rproc = rproc;
@@ -351,16 +339,16 @@ What is the proper way to implement it with remoteproc?
 >> +    ret = clk_prepare(priv->clk);
 >> +    if (ret)
 >> +        dev_err(dev, "failed to get clock\n");
->
+> 
 > How are your internal memories clocked? If they need the same clock,
 > rproc_add() would need the clock to be enabled for loading section data
 > into those regions as part of rproc_boot(), and your current enable in
 > imx_rproc_start() will be too late. Also, do not see a balancing
 > clk_unprepare() call in remove, and a missing rproc_del() on failure here.
->
+> 
 > regards
 > Suman
->
+> 
 >> +
 >> +    return ret;
 >> +
@@ -395,5 +383,4 @@ What is the proper way to implement it with remoteproc?
 >> +MODULE_DESCRIPTION("IMX6/7 remote processor control driver");
 >> +MODULE_AUTHOR("Oleksij Rempel <o.rempel@pengutronix.de>");
 >>
->
->
+> 
