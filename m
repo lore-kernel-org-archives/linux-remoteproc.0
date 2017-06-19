@@ -1,74 +1,68 @@
-Return-Path: <gregkh@linuxfoundation.org>
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 05/16] rpmsg: use dev_groups and not dev_attrs for bus_type
-Date: Tue,  6 Jun 2017 21:22:10 +0200
-Message-Id: <20170606192221.1617-6-gregkh@linuxfoundation.org>
-In-Reply-To: <20170606192221.1617-1-gregkh@linuxfoundation.org>
-References: <20170606192221.1617-1-gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Return-Path: <ore@pengutronix.de>
+Subject: Re: [RFC PATCH 0/3] provide imx rproc driver
+References: <20170614204855.18347-1-o.rempel@pengutronix.de>
+ <20170619051338.GA3064@Sanchayan-Arch>
+From: Oleksij Rempel <ore@pengutronix.de>
+Message-ID: <544aa538-b9b6-1ed5-ffea-919fa4ebd644@pengutronix.de>
+Date: Mon, 19 Jun 2017 09:31:03 +0200
+MIME-Version: 1.0
+In-Reply-To: <20170619051338.GA3064@Sanchayan-Arch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+To: Sanchayan <maitysanchayan@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The dev_attrs field has long been "depreciated" and is finally being
-removed, so move the driver to use the "correct" dev_groups field
-instead for struct bus_type.
+Hi Sanchayan,
 
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: <linux-remoteproc@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/rpmsg/rpmsg_core.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+On 19.06.2017 07:13, Sanchayan wrote:
+> Hello Oleksij,
+>
+> On 17-06-14 22:48:52, Oleksij Rempel wrote:
+>> Hallo all,
+>>
+>> this is RFC patchset to provide remoteproc functionality on
+>> imx7d SoC.
+>> Since current kernel do not have devicetrees for board which
+>> I used for testing, this RFC patchset includes this too.
+>>
+>> For testing I used this simple counter written in ASM:
+>> ======================================
+>>         .syntax unified
+>>         .text
+>>         .thumb
+>>         .int 0x10020000                 @ Initial SP value
+>>         .int reset + 1
+>>
+>> reset:
+>>
+>>         mov     r0, #0x55
+>>         ldr     r1, =(0x40)
+>> 1:
+>>         str     r0, [r1]
+>>         add     r0, 1
+>>         b       1b
+>>
+>>         /* Dummy data, required by remoteproc loader */
+>>         /* Please FIXME, this part seem to be incorrect */
+>>         .data
+>>         .section .resource_table, "aw"
+>>         .word   1, 0, 0, 0      /* struct resource_table base */
+>>         .word   0               /* uint32_t offset[1] */
+>> ============================================================
+>> compiled with:
+>> ${CROSS}as -o imx7m4.o imx7m4.S
+>> ${CROSS}ld -Ttext=0x0 -o imx7m4.elf imx7m4.o
+>> cp imx7m4.elf /srv/nfs/sid-armhf/lib/firmware/rproc-imx_rproc-fw
+>>
+>> Functionality was confirmed with current OpenOCD master.
+>> OpenOCD cfg file can be found here:
+>> https://github.com/olerem/openocd/blob/imx7-2017.06.14/tcl/target/imx7.cfg
+>>
+>> Comment and suggestions are welcome.
+>
+> Have you by chance also tried testing this with FreeRTOS code running on the
+> M4 side?
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 600f5f9f7431..ad3d2a9df287 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -330,7 +330,8 @@ field##_show(struct device *dev,					\
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
- 									\
- 	return sprintf(buf, format_string, rpdev->path);		\
--}
-+}									\
-+static DEVICE_ATTR_RO(field);
- 
- /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
- rpmsg_show_attr(name, id.name, "%s\n");
-@@ -345,15 +346,17 @@ static ssize_t modalias_show(struct device *dev,
- 
- 	return sprintf(buf, RPMSG_DEVICE_MODALIAS_FMT "\n", rpdev->id.name);
- }
--
--static struct device_attribute rpmsg_dev_attrs[] = {
--	__ATTR_RO(name),
--	__ATTR_RO(modalias),
--	__ATTR_RO(dst),
--	__ATTR_RO(src),
--	__ATTR_RO(announce),
--	__ATTR_NULL
-+static DEVICE_ATTR_RO(modalias);
-+
-+static struct attribute *rpmsg_dev_attrs[] = {
-+	&dev_attr_name.attr,
-+	&dev_attr_modalias.attr,
-+	&dev_attr_dst.attr,
-+	&dev_attr_src.attr,
-+	&dev_attr_announce.attr,
-+	NULL,
- };
-+ATTRIBUTE_GROUPS(rpmsg_dev);
- 
- /* rpmsg devices and drivers are matched using the service name */
- static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
-@@ -455,7 +458,7 @@ static int rpmsg_dev_remove(struct device *dev)
- static struct bus_type rpmsg_bus = {
- 	.name		= "rpmsg",
- 	.match		= rpmsg_dev_match,
--	.dev_attrs	= rpmsg_dev_attrs,
-+	.dev_groups	= rpmsg_dev_groups,
- 	.uevent		= rpmsg_uevent,
- 	.probe		= rpmsg_dev_probe,
- 	.remove		= rpmsg_dev_remove,
--- 
-2.13.0
+no, currently my priority is to provide basic functionality with easy 
+understandable target code and dependencies.
