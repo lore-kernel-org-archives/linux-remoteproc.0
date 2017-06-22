@@ -1,10 +1,10 @@
 Return-Path: <akdwived@codeaurora.org>
 From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v5 4/4] remoteproc: qcom: Add support for mss remoteproc on msm8996
-Date: Fri,  2 Jun 2017 00:47:21 +0530
-Message-Id: <1496344641-6291-5-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
-References: <1496344641-6291-1-git-send-email-akdwived@codeaurora.org>
+Subject: [PATCH v6 4/4] remoteproc: qcom: Add support for mss remoteproc on msm8996
+Date: Thu, 22 Jun 2017 17:38:53 +0530
+Message-Id: <1498133333-21291-5-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
+References: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
 To: bjorn.andersson@linaro.org
 Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -32,7 +32,7 @@ index 92347fe..87a8e51 100644
  	Usage: required
  	Value type: <prop-encoded-array>
 diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 266efad..6f53b6d 100644
+index ed740ab..b1352e8 100644
 --- a/drivers/remoteproc/qcom_q6v5_pil.c
 +++ b/drivers/remoteproc/qcom_q6v5_pil.c
 @@ -32,6 +32,7 @@
@@ -76,10 +76,10 @@ index 266efad..6f53b6d 100644
  	bool need_mem_protection;
  };
  
-@@ -155,6 +168,13 @@ struct q6v5 {
- 	bool need_mem_protection;
- 
+@@ -157,6 +170,13 @@ struct q6v5 {
  	struct qcom_rproc_subdev smd_subdev;
+ 	int mpss_perm;
+ 	int mba_perm;
 +	int version;
 +};
 +
@@ -90,7 +90,7 @@ index 266efad..6f53b6d 100644
  };
  
  static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-@@ -388,33 +408,97 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+@@ -386,33 +406,97 @@ static int q6v5proc_reset(struct q6v5 *qproc)
  {
  	u32 val;
  	int ret;
@@ -212,7 +212,7 @@ index 266efad..6f53b6d 100644
  	/* Remove IO clamp */
  	val &= ~Q6SS_CLAMP_IO;
  	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-@@ -786,6 +870,15 @@ static int q6v5_stop(struct rproc *rproc)
+@@ -788,6 +872,15 @@ static int q6v5_stop(struct rproc *rproc)
  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
  	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
  
@@ -225,10 +225,10 @@ index 266efad..6f53b6d 100644
 +			QDSP6v56_CLAMP_QMC_MEM;
 +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
 +	}
- 	ret = q6v5_xfer_mem_ownership(qproc, 2,
- 		qproc->mpss_phys, qproc->mpss_size);
+ 	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, 0,
+ 			qproc->mpss_phys, qproc->mpss_size);
  	WARN_ON(ret);
-@@ -1086,6 +1179,7 @@ static int q6v5_probe(struct platform_device *pdev)
+@@ -1088,6 +1181,7 @@ static int q6v5_probe(struct platform_device *pdev)
  	if (ret)
  		goto free_rproc;
  
@@ -236,7 +236,7 @@ index 266efad..6f53b6d 100644
  	qproc->need_mem_protection = desc->need_mem_protection;
  	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
  	if (ret < 0)
-@@ -1135,6 +1229,24 @@ static int q6v5_remove(struct platform_device *pdev)
+@@ -1138,6 +1232,24 @@ static int q6v5_remove(struct platform_device *pdev)
  	return 0;
  }
  
@@ -261,7 +261,7 @@ index 266efad..6f53b6d 100644
  static const struct rproc_hexagon_res msm8916_mss = {
  	.hexagon_mba_image = "mba.mbn",
  	.proxy_supply = (struct qcom_mss_reg_res[]) {
-@@ -1163,6 +1275,7 @@ static int q6v5_remove(struct platform_device *pdev)
+@@ -1166,6 +1278,7 @@ static int q6v5_remove(struct platform_device *pdev)
  		NULL
  	},
  	.need_mem_protection = false,
@@ -269,7 +269,7 @@ index 266efad..6f53b6d 100644
  };
  
  static const struct rproc_hexagon_res msm8974_mss = {
-@@ -1201,12 +1314,14 @@ static int q6v5_remove(struct platform_device *pdev)
+@@ -1204,12 +1317,14 @@ static int q6v5_remove(struct platform_device *pdev)
  		NULL
  	},
  	.need_mem_protection = false,
