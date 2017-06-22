@@ -1,609 +1,249 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH v2 2/3] remoteproc/keystone: Add a remoteproc driver for Keystone 2 DSPs
-Date: Wed, 7 Jun 2017 19:24:46 -0500
-Message-ID: <20170608002447.47580-3-s-anna@ti.com>
-In-Reply-To: <20170608002447.47580-1-s-anna@ti.com>
-References: <20170608002447.47580-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v6 3/4] remoteproc: qcom: Make secure world call for mem ownership switch
+Date: Thu, 22 Jun 2017 17:38:52 +0530
+Message-Id: <1498133333-21291-4-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
+References: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The Texas Instrument's Keystone 2 family of SoCs has 1 or more
-TMS320C66x DSP Core Subsystems (C66x CorePacs). Each subsystem has
-a C66x Fixed/Floating-Point DSP Core, with 32KB of L1P and L1D SRAMs,
-that can be configured and partitioned as either RAM and/or Cache,
-and 1 MB of L2 SRAM. The CorePac also includes an Internal DMA (IDMA),
-External Memory Controller (EMC), Extended Memory Controller (XMC)
-with a Memory Protection and Address Extension (MPAX) unit, a Bandwidth
-Management (BWM) unit, an Interrupt Controller (INTC) and a Powerdown
-Controller (PDC).
+MSS proc on msm8996 can not access fw loaded region without stage
+second translation of memory pages where mpss image are loaded.
+This patch in order to enable mss boot on msm8996 invoke scm call
+to switch or share ownership between apps and modem.
 
-A new remoteproc module is added to perform the device management of
-these DSP devices. The driver expects the firmware names to be of the
-form "keystone-dsp<X>-fw", where X is the corresponding DSP number, and
-uses the standard remoteproc core ELF loader. The support is limited
-to images only using the DSP internal memories at the moment. This
-remoteproc driver is also designed to work with virtio, and uses the
-IPC Generation registers for performing the virtio signalling and
-getting notified of exceptions.
-
-The driver currently supports the 66AK2H/66AK2K, 66AK2L and 66AK2E
-SoCs.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Sam Nelson <sam.nelson@ti.com>
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 ---
-v2:
- - Construct firmware name using an alias instead of the 'label' property
- - Rename kick-gpio to kick-gpios
-v1: https://patchwork.kernel.org/patch/9750831/
+ drivers/remoteproc/qcom_q6v5_pil.c | 86 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 83 insertions(+), 3 deletions(-)
 
- drivers/remoteproc/Kconfig               |  13 +
- drivers/remoteproc/Makefile              |   1 +
- drivers/remoteproc/keystone_remoteproc.c | 515 +++++++++++++++++++++++++++++++
- 3 files changed, 529 insertions(+)
- create mode 100644 drivers/remoteproc/keystone_remoteproc.c
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index faad69a1a597..9839b35b6ab3 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -71,6 +71,19 @@ config DA8XX_REMOTEPROC
- 	  It's safe to say n here if you're not interested in multimedia
- 	  offloading.
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index f5f8850..ed740ab 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -110,6 +110,7 @@ struct rproc_hexagon_res {
+ 	struct qcom_mss_reg_res *active_supply;
+ 	char **proxy_clk_names;
+ 	char **active_clk_names;
++	bool need_mem_protection;
+ };
  
-+config KEYSTONE_REMOTEPROC
-+	tristate "Keystone Remoteproc support"
-+	depends on ARCH_KEYSTONE
-+	depends on RESET_CONTROLLER
-+	depends on REMOTEPROC
-+	select RPMSG_VIRTIO
-+	help
-+	  Say Y here here to support Keystone remote processors (DSP)
-+	  via the remote processor framework.
-+
-+	  It's safe to say N here if you're not interested in the Keystone
-+	  DSPs or just want to use a bare minimum kernel.
-+
- config QCOM_ADSP_PIL
- 	tristate "Qualcomm ADSP Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index ffc5e430df27..f1ce5fc8a2f3 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_elf_loader.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
-+obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
- obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
- obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-new file mode 100644
-index 000000000000..6e09ef76f7c7
---- /dev/null
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -0,0 +1,515 @@
-+/*
-+ * TI Keystone DSP remoteproc driver
-+ *
-+ * Copyright (C) 2015-2017 Texas Instruments Incorporated - http://www.ti.com/
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/workqueue.h>
-+#include <linux/of_address.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/remoteproc.h>
-+#include <linux/reset.h>
-+
-+#include "remoteproc_internal.h"
-+
-+#define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
-+
-+/**
-+ * struct keystone_rproc_mem - internal memory structure
-+ * @cpu_addr: MPU virtual address of the memory region
-+ * @bus_addr: Bus address used to access the memory region
-+ * @dev_addr: Device address of the memory region from DSP view
-+ * @size: Size of the memory region
-+ */
-+struct keystone_rproc_mem {
-+	void __iomem *cpu_addr;
-+	phys_addr_t bus_addr;
-+	u32 dev_addr;
-+	size_t size;
-+};
-+
-+/**
-+ * struct keystone_rproc - keystone remote processor driver structure
-+ * @dev: cached device pointer
-+ * @rproc: remoteproc device handle
-+ * @mem: internal memory regions data
-+ * @num_mems: number of internal memory regions
-+ * @dev_ctrl: device control regmap handle
-+ * @reset: reset control handle
-+ * @boot_offset: boot register offset in @dev_ctrl regmap
-+ * @irq_ring: irq entry for vring
-+ * @irq_fault: irq entry for exception
-+ * @kick_gpio: gpio used for virtio kicks
-+ * @workqueue: workqueue for processing virtio interrupts
-+ */
-+struct keystone_rproc {
-+	struct device *dev;
-+	struct rproc *rproc;
-+	struct keystone_rproc_mem *mem;
-+	int num_mems;
-+	struct regmap *dev_ctrl;
-+	struct reset_control *reset;
-+	u32 boot_offset;
-+	int irq_ring;
-+	int irq_fault;
-+	int kick_gpio;
-+	struct work_struct workqueue;
-+};
-+
-+/* Put the DSP processor into reset */
-+static void keystone_rproc_dsp_reset(struct keystone_rproc *ksproc)
+ struct q6v5 {
+@@ -151,8 +152,11 @@ struct q6v5 {
+ 	phys_addr_t mpss_reloc;
+ 	void *mpss_region;
+ 	size_t mpss_size;
++	bool need_mem_protection;
+ 
+ 	struct qcom_rproc_subdev smd_subdev;
++	int mpss_perm;
++	int mba_perm;
+ };
+ 
+ static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+@@ -288,6 +292,36 @@ static struct resource_table *q6v5_find_rsc_table(struct rproc *rproc,
+ 	return &table;
+ }
+ 
++static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
++				   bool remote_owner, phys_addr_t addr,
++				   size_t size)
 +{
-+	reset_control_assert(ksproc->reset);
-+}
-+
-+/* Configure the boot address and boot the DSP processor */
-+static int keystone_rproc_dsp_boot(struct keystone_rproc *ksproc, u32 boot_addr)
-+{
++	struct qcom_scm_vmperm next;
 +	int ret;
 +
-+	if (boot_addr & (SZ_1K - 1)) {
-+		dev_err(ksproc->dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
-+			boot_addr);
-+		return -EINVAL;
-+	}
++	if (!qproc->need_mem_protection)
++		return 0;
++	if (remote_owner && *current_perm == BIT(QCOM_SCM_VMID_MSS_MSA))
++		return 0;
++	if (!remote_owner && *current_perm == BIT(QCOM_SCM_VMID_HLOS))
++		return 0;
 +
-+	ret = regmap_write(ksproc->dev_ctrl, ksproc->boot_offset, boot_addr);
-+	if (ret) {
-+		dev_err(ksproc->dev, "regmap_write of boot address failed, status = %d\n",
-+			ret);
-+		return ret;
-+	}
++	next.vmid = remote_owner ? QCOM_SCM_VMID_MSS_MSA : QCOM_SCM_VMID_HLOS;
++	next.perm = remote_owner ? QCOM_SCM_PERM_RW : QCOM_SCM_PERM_RWX;
 +
-+	reset_control_deassert(ksproc->reset);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Process the remoteproc exceptions
-+ *
-+ * The exception reporting on Keystone DSP remote processors is very simple
-+ * compared to the equivalent processors on the OMAP family, it is notified
-+ * through a software-designed specific interrupt source in the IPC interrupt
-+ * generation register.
-+ *
-+ * This function just invokes the rproc_report_crash to report the exception
-+ * to the remoteproc driver core, to trigger a recovery.
-+ */
-+static irqreturn_t keystone_rproc_exception_interrupt(int irq, void *dev_id)
-+{
-+	struct keystone_rproc *ksproc = dev_id;
-+
-+	rproc_report_crash(ksproc->rproc, RPROC_FATAL_ERROR);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * Main virtqueue message workqueue function
-+ *
-+ * This function is executed upon scheduling of the keystone remoteproc
-+ * driver's workqueue. The workqueue is scheduled by the vring ISR handler.
-+ *
-+ * There is no payload message indicating the virtqueue index as is the
-+ * case with mailbox-based implementations on OMAP family. As such, this
-+ * handler processes both the Tx and Rx virtqueue indices on every invocation.
-+ * The rproc_vq_interrupt function can detect if there are new unprocessed
-+ * messages or not (returns IRQ_NONE vs IRQ_HANDLED), but there is no need
-+ * to check for these return values. The index 0 triggering will process all
-+ * pending Rx buffers, and the index 1 triggering will process all newly
-+ * available Tx buffers and will wakeup any potentially blocked senders.
-+ *
-+ * NOTE:
-+ * 1. A payload could be added by using some of the source bits in the
-+ *    IPC interrupt generation registers, but this would need additional
-+ *    changes to the overall IPC stack, and currently there are no benefits
-+ *    of adapting that approach.
-+ * 2. The current logic is based on an inherent design assumption of supporting
-+ *    only 2 vrings, but this can be changed if needed.
-+ */
-+static void handle_event(struct work_struct *work)
-+{
-+	struct keystone_rproc *ksproc =
-+		container_of(work, struct keystone_rproc, workqueue);
-+
-+	rproc_vq_interrupt(ksproc->rproc, 0);
-+	rproc_vq_interrupt(ksproc->rproc, 1);
-+}
-+
-+/*
-+ * Interrupt handler for processing vring kicks from remote processor
-+ */
-+static irqreturn_t keystone_rproc_vring_interrupt(int irq, void *dev_id)
-+{
-+	struct keystone_rproc *ksproc = dev_id;
-+
-+	schedule_work(&ksproc->workqueue);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * Power up the DSP remote processor.
-+ *
-+ * This function will be invoked only after the firmware for this rproc
-+ * was loaded, parsed successfully, and all of its resource requirements
-+ * were met.
-+ */
-+static int keystone_rproc_start(struct rproc *rproc)
-+{
-+	struct keystone_rproc *ksproc = rproc->priv;
-+	int ret;
-+
-+	INIT_WORK(&ksproc->workqueue, handle_event);
-+
-+	ret = request_irq(ksproc->irq_ring, keystone_rproc_vring_interrupt, 0,
-+			  dev_name(ksproc->dev), ksproc);
-+	if (ret) {
-+		dev_err(ksproc->dev, "failed to enable vring interrupt, ret = %d\n",
-+			ret);
-+		goto out;
-+	}
-+
-+	ret = request_irq(ksproc->irq_fault, keystone_rproc_exception_interrupt,
-+			  0, dev_name(ksproc->dev), ksproc);
-+	if (ret) {
-+		dev_err(ksproc->dev, "failed to enable exception interrupt, ret = %d\n",
-+			ret);
-+		goto free_vring_irq;
-+	}
-+
-+	ret = keystone_rproc_dsp_boot(ksproc, rproc->bootaddr);
-+	if (ret)
-+		goto free_exc_irq;
-+
-+	return 0;
-+
-+free_exc_irq:
-+	free_irq(ksproc->irq_fault, ksproc);
-+free_vring_irq:
-+	free_irq(ksproc->irq_ring, ksproc);
-+	flush_work(&ksproc->workqueue);
-+out:
-+	return ret;
-+}
-+
-+/*
-+ * Stop the DSP remote processor.
-+ *
-+ * This function puts the DSP processor into reset, and finishes processing
-+ * of any pending messages.
-+ */
-+static int keystone_rproc_stop(struct rproc *rproc)
-+{
-+	struct keystone_rproc *ksproc = rproc->priv;
-+
-+	keystone_rproc_dsp_reset(ksproc);
-+	free_irq(ksproc->irq_fault, ksproc);
-+	free_irq(ksproc->irq_ring, ksproc);
-+	flush_work(&ksproc->workqueue);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Kick the remote processor to notify about pending unprocessed messages.
-+ * The vqid usage is not used and is inconsequential, as the kick is performed
-+ * through a simulated GPIO (a bit in an IPC interrupt-triggering register),
-+ * the remote processor is expected to process both its Tx and Rx virtqueues.
-+ */
-+static void keystone_rproc_kick(struct rproc *rproc, int vqid)
-+{
-+	struct keystone_rproc *ksproc = rproc->priv;
-+
-+	if (WARN_ON(ksproc->kick_gpio < 0))
-+		return;
-+
-+	gpio_set_value(ksproc->kick_gpio, 1);
-+}
-+
-+/*
-+ * Custom function to translate a DSP device address (internal RAMs only) to a
-+ * kernel virtual address.  The DSPs can access their RAMs at either an internal
-+ * address visible only from a DSP, or at the SoC-level bus address. Both these
-+ * addresses need to be looked through for translation. The translated addresses
-+ * can be used either by the remoteproc core for loading (when using kernel
-+ * remoteproc loader), or by any rpmsg bus drivers.
-+ */
-+static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct keystone_rproc *ksproc = rproc->priv;
-+	void __iomem *va = NULL;
-+	phys_addr_t bus_addr;
-+	u32 dev_addr, offset;
-+	size_t size;
-+	int i;
-+
-+	if (len <= 0)
-+		return NULL;
-+
-+	for (i = 0; i < ksproc->num_mems; i++) {
-+		bus_addr = ksproc->mem[i].bus_addr;
-+		dev_addr = ksproc->mem[i].dev_addr;
-+		size = ksproc->mem[i].size;
-+
-+		if (da < KEYSTONE_RPROC_LOCAL_ADDRESS_MASK) {
-+			/* handle DSP-view addresses */
-+			if ((da >= dev_addr) &&
-+			    ((da + len) <= (dev_addr + size))) {
-+				offset = da - dev_addr;
-+				va = ksproc->mem[i].cpu_addr + offset;
-+				break;
-+			}
-+		} else {
-+			/* handle SoC-view addresses */
-+			if ((da >= bus_addr) &&
-+			    (da + len) <= (bus_addr + size)) {
-+				offset = da - bus_addr;
-+				va = ksproc->mem[i].cpu_addr + offset;
-+				break;
-+			}
-+		}
-+	}
-+
-+	return (__force void *)va;
-+}
-+
-+static const struct rproc_ops keystone_rproc_ops = {
-+	.start		= keystone_rproc_start,
-+	.stop		= keystone_rproc_stop,
-+	.kick		= keystone_rproc_kick,
-+	.da_to_va	= keystone_rproc_da_to_va,
-+};
-+
-+static int keystone_rproc_of_get_memories(struct platform_device *pdev,
-+					  struct keystone_rproc *ksproc)
-+{
-+	static const char * const mem_names[] = {"l2sram", "l1pram", "l1dram"};
-+	struct device *dev = &pdev->dev;
-+	struct resource *res;
-+	int num_mems = 0;
-+	int i;
-+
-+	num_mems = ARRAY_SIZE(mem_names);
-+	ksproc->mem = devm_kcalloc(ksproc->dev, num_mems,
-+				   sizeof(*ksproc->mem), GFP_KERNEL);
-+	if (!ksproc->mem)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_mems; i++) {
-+		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						   mem_names[i]);
-+		ksproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(ksproc->mem[i].cpu_addr)) {
-+			dev_err(dev, "failed to parse and map %s memory\n",
-+				mem_names[i]);
-+			return PTR_ERR(ksproc->mem[i].cpu_addr);
-+		}
-+		ksproc->mem[i].bus_addr = res->start;
-+		ksproc->mem[i].dev_addr =
-+				res->start & KEYSTONE_RPROC_LOCAL_ADDRESS_MASK;
-+		ksproc->mem[i].size = resource_size(res);
-+
-+		/* zero out memories to start in a pristine state */
-+		memset((__force void *)ksproc->mem[i].cpu_addr, 0,
-+		       ksproc->mem[i].size);
-+	}
-+	ksproc->num_mems = num_mems;
-+
-+	return 0;
-+}
-+
-+static int keystone_rproc_of_get_dev_syscon(struct platform_device *pdev,
-+					    struct keystone_rproc *ksproc)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	if (!of_property_read_bool(np, "ti,syscon-dev")) {
-+		dev_err(dev, "ti,syscon-dev property is absent\n");
-+		return -EINVAL;
-+	}
-+
-+	ksproc->dev_ctrl =
-+		syscon_regmap_lookup_by_phandle(np, "ti,syscon-dev");
-+	if (IS_ERR(ksproc->dev_ctrl)) {
-+		ret = PTR_ERR(ksproc->dev_ctrl);
-+		return ret;
-+	}
-+
-+	if (of_property_read_u32_index(np, "ti,syscon-dev", 1,
-+				       &ksproc->boot_offset)) {
-+		dev_err(dev, "couldn't read the boot register offset\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int keystone_rproc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct keystone_rproc *ksproc;
-+	struct rproc *rproc;
-+	int dsp_id;
-+	char *fw_name = NULL;
-+	char *template = "keystone-dsp%d-fw";
-+	int name_len = 0;
-+	int ret = 0;
-+
-+	if (!np) {
-+		dev_err(dev, "only DT-based devices are supported\n");
-+		return -ENODEV;
-+	}
-+
-+	dsp_id = of_alias_get_id(np, "rproc");
-+	if (dsp_id < 0) {
-+		dev_warn(dev, "device does not have an alias id\n");
-+		return dsp_id;
-+	}
-+
-+	/* construct a custom default fw name - subject to change in future */
-+	name_len = strlen(template); /* assuming a single digit alias */
-+	fw_name = devm_kzalloc(dev, name_len, GFP_KERNEL);
-+	if (!fw_name)
-+		return -ENOMEM;
-+	snprintf(fw_name, name_len, template, dsp_id);
-+
-+	rproc = rproc_alloc(dev, dev_name(dev), &keystone_rproc_ops, fw_name,
-+			    sizeof(*ksproc));
-+	if (!rproc)
-+		return -ENOMEM;
-+
-+	rproc->has_iommu = false;
-+	ksproc = rproc->priv;
-+	ksproc->rproc = rproc;
-+	ksproc->dev = dev;
-+
-+	ret = keystone_rproc_of_get_dev_syscon(pdev, ksproc);
-+	if (ret)
-+		goto free_rproc;
-+
-+	ksproc->reset = devm_reset_control_get(dev, NULL);
-+	if (IS_ERR(ksproc->reset)) {
-+		ret = PTR_ERR(ksproc->reset);
-+		goto free_rproc;
-+	}
-+
-+	/* enable clock for accessing DSP internal memories */
-+	pm_runtime_enable(dev);
-+	ret = pm_runtime_get_sync(dev);
++	ret = qcom_scm_assign_mem(addr,
++		ALIGN(size, SZ_4K), *current_perm, &next, 1);
 +	if (ret < 0) {
-+		dev_err(dev, "failed to enable clock, status = %d\n", ret);
-+		pm_runtime_put_noidle(dev);
-+		goto disable_rpm;
++		pr_err("Failed to assign memory access in range %p to %p to %s ret = %d\n",
++			(void *)addr, (void *)(addr + size),
++			remote_owner ? "mss" : "hlos", ret);
++		return ret;
 +	}
 +
-+	ret = keystone_rproc_of_get_memories(pdev, ksproc);
++	*current_perm = ret;
++	return 0;
++}
++
+ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct q6v5 *qproc = rproc->priv;
+@@ -450,6 +484,8 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+ {
+ 	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+ 	dma_addr_t phys;
++	int mdata_perm;
++	int xferop_ret;
+ 	void *ptr;
+ 	int ret;
+ 
+@@ -461,6 +497,12 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+ 
+ 	memcpy(ptr, fw->data, fw->size);
+ 
++	/* Hypervisor mapping to access metadata by modem */
++	mdata_perm = BIT(QCOM_SCM_VMID_HLOS);
++	ret = q6v5_xfer_mem_ownership(qproc,
++			&mdata_perm, 1, phys, fw->size);
 +	if (ret)
-+		goto disable_clk;
++		return -EAGAIN;
+ 	writel(phys, qproc->rmb_base + RMB_PMI_META_DATA_REG);
+ 	writel(RMB_CMD_META_DATA_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+ 
+@@ -470,6 +512,12 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
+ 	else if (ret < 0)
+ 		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
+ 
++	/* Metadata authentication done, remove modem access */
++	xferop_ret = q6v5_xfer_mem_ownership(qproc,
++			&mdata_perm, 0, phys, fw->size);
++	if (xferop_ret)
++		dev_warn(qproc->dev,
++			"mdt buffer not reclaimed system may become unstable\n");
+ 	dma_free_attrs(qproc->dev, fw->size, ptr, phys, dma_attrs);
+ 
+ 	return ret < 0 ? ret : 0;
+@@ -579,6 +627,10 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 
+ 	/* Transfer ownership of modem ddr region with q6*/
+ 	boot_addr = relocate ? qproc->mpss_phys : min_addr;
++	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, 1,
++			qproc->mpss_phys, qproc->mpss_size);
++	if (ret)
++		return -EAGAIN;
+ 	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+ 	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+ 	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+@@ -598,6 +650,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ static int q6v5_start(struct rproc *rproc)
+ {
+ 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	int xfermemop_ret;
+ 	int ret;
+ 
+ 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
+@@ -633,6 +686,11 @@ static int q6v5_start(struct rproc *rproc)
+ 		goto assert_reset;
+ 	}
+ 
++	/* Assign MBA image access in DDR to q6 */
++	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, 1,
++				qproc->mba_phys, qproc->mba_size);
++	if (xfermemop_ret)
++		goto assert_reset;
+ 	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
+ 
+ 	ret = q6v5proc_reset(qproc);
+@@ -654,16 +712,21 @@ static int q6v5_start(struct rproc *rproc)
+ 
+ 	ret = q6v5_mpss_load(qproc);
+ 	if (ret)
+-		goto halt_axi_ports;
++		goto reclaim_mem;
+ 
+ 	ret = wait_for_completion_timeout(&qproc->start_done,
+ 					  msecs_to_jiffies(5000));
+ 	if (ret == 0) {
+ 		dev_err(qproc->dev, "start timed out\n");
+ 		ret = -ETIMEDOUT;
+-		goto halt_axi_ports;
++		goto reclaim_mem;
+ 	}
+ 
++	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, 0,
++				qproc->mba_phys, qproc->mba_size);
++	if (xfermemop_ret)
++		dev_err(qproc->dev,
++			"Failed to reclaim mba buffer system may become unstable\n");
+ 	qproc->running = true;
+ 
+ 	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+@@ -673,12 +736,21 @@ static int q6v5_start(struct rproc *rproc)
+ 
+ 	return 0;
+ 
++reclaim_mem:
++	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, 0,
++				qproc->mpss_phys, qproc->mpss_size);
++	WARN_ON(xfermemop_ret);
+ halt_axi_ports:
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
+ 	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+ 			 qproc->active_clk_count);
++	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, 0,
++				qproc->mba_phys, qproc->mba_size);
++	if (xfermemop_ret)
++		dev_err(qproc->dev, "Failed to reclaim mba buffer, system may become unstable\n");
 +
-+	ksproc->irq_ring = platform_get_irq_byname(pdev, "vring");
-+	if (ksproc->irq_ring < 0) {
-+		ret = ksproc->irq_ring;
-+		dev_err(dev, "failed to get vring interrupt, status = %d\n",
-+			ret);
-+		goto disable_clk;
-+	}
-+
-+	ksproc->irq_fault = platform_get_irq_byname(pdev, "exception");
-+	if (ksproc->irq_fault < 0) {
-+		ret = ksproc->irq_fault;
-+		dev_err(dev, "failed to get exception interrupt, status = %d\n",
-+			ret);
-+		goto disable_clk;
-+	}
-+
-+	ksproc->kick_gpio = of_get_named_gpio_flags(np, "kick-gpios", 0, NULL);
-+	if (ksproc->kick_gpio < 0) {
-+		ret = ksproc->kick_gpio;
-+		dev_err(dev, "failed to get gpio for virtio kicks, status = %d\n",
-+			ret);
-+		goto disable_clk;
-+	}
-+
-+	if (of_reserved_mem_device_init(dev))
-+		dev_warn(dev, "device does not have specific CMA pool\n");
-+
-+	ret = rproc_add(rproc);
-+	if (ret) {
-+		dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
-+			ret);
-+		goto release_mem;
-+	}
-+
-+	platform_set_drvdata(pdev, ksproc);
-+
-+	return 0;
-+
-+release_mem:
-+	of_reserved_mem_device_release(dev);
-+disable_clk:
-+	pm_runtime_put_sync(dev);
-+disable_rpm:
-+	pm_runtime_disable(dev);
-+free_rproc:
-+	rproc_free(rproc);
-+	return ret;
-+}
-+
-+static int keystone_rproc_remove(struct platform_device *pdev)
-+{
-+	struct keystone_rproc *ksproc = platform_get_drvdata(pdev);
-+
-+	rproc_del(ksproc->rproc);
-+	pm_runtime_put_sync(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+	rproc_free(ksproc->rproc);
-+	of_reserved_mem_device_release(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id keystone_rproc_of_match[] = {
-+	{ .compatible = "ti,k2hk-dsp", },
-+	{ .compatible = "ti,k2l-dsp", },
-+	{ .compatible = "ti,k2e-dsp", },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, keystone_rproc_of_match);
-+
-+static struct platform_driver keystone_rproc_driver = {
-+	.probe	= keystone_rproc_probe,
-+	.remove	= keystone_rproc_remove,
-+	.driver	= {
-+		.name = "keystone-rproc",
-+		.of_match_table = keystone_rproc_of_match,
-+	},
-+};
-+
-+module_platform_driver(keystone_rproc_driver);
-+
-+MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("TI Keystone DSP Remoteproc driver");
+ assert_reset:
+ 	reset_control_assert(qproc->mss_restart);
+ disable_vdd:
+@@ -698,6 +770,7 @@ static int q6v5_stop(struct rproc *rproc)
+ {
+ 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+ 	int ret;
++	u32 val;
+ 
+ 	qproc->running = false;
+ 
+@@ -715,6 +788,9 @@ static int q6v5_stop(struct rproc *rproc)
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
+ 
++	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, 0,
++			qproc->mpss_phys, qproc->mpss_size);
++	WARN_ON(ret);
+ 	reset_control_assert(qproc->mss_restart);
+ 	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+ 			 qproc->active_clk_count);
+@@ -1012,6 +1088,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
++	qproc->need_mem_protection = desc->need_mem_protection;
+ 	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt);
+ 	if (ret < 0)
+ 		goto free_rproc;
+@@ -1033,7 +1110,8 @@ static int q6v5_probe(struct platform_device *pdev)
+ 		ret = PTR_ERR(qproc->state);
+ 		goto free_rproc;
+ 	}
+-
++	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
++	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
+ 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
+ 
+ 	ret = rproc_add(rproc);
+@@ -1087,6 +1165,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 		"mem",
+ 		NULL
+ 	},
++	.need_mem_protection = false,
+ };
+ 
+ static const struct rproc_hexagon_res msm8974_mss = {
+@@ -1124,6 +1203,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 		"mem",
+ 		NULL
+ 	},
++	.need_mem_protection = false,
+ };
+ 
+ static const struct of_device_id q6v5_of_match[] = {
 -- 
-2.12.0
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
