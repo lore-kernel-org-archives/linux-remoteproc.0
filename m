@@ -1,33 +1,55 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sun, 25 Jun 2017 14:19:55 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH 0/4] Davinci remoteproc cleanups/fixes
-Message-ID: <20170625211955.GD26155@builder>
+From: Suman Anna <s-anna@ti.com>
 References: <20170518220902.2846-1-s-anna@ti.com>
+ <d2b8d230-33db-0615-f6cf-23b8446d8f50@ti.com>
+Message-ID: <4b831afb-96be-03cc-d86b-77b423e95946@ti.com>
+Date: Fri, 23 Jun 2017 16:29:26 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170518220902.2846-1-s-anna@ti.com>
-To: Suman Anna <s-anna@ti.com>
+In-Reply-To: <d2b8d230-33db-0615-f6cf-23b8446d8f50@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 18 May 15:08 PDT 2017, Suman Anna wrote:
-
-> Hi Bjorn,
+On 06/08/2017 03:47 PM, Suman Anna wrote:
+> Bjorn,
 > 
-> The following series includes various fixes and cleanups for the TI's
-> Davinci DSP remoteproc driver. Patches are based on 4.12-rc1. Following
-> is the patch summary:
+> On 05/18/2017 05:08 PM, Suman Anna wrote:
+>> Hi Bjorn,
+>>
+>> The following series includes various fixes and cleanups for the TI's
+>> Davinci DSP remoteproc driver. Patches are based on 4.12-rc1. Following
+>> is the patch summary:
+>>
+>>  - Patch1 updates/fixes the build dependency on DMA_CMA which is not
+>>    selected by default in the davinci_defconfig.
+>>  - Patch 3 fixes a DSP boot/functionality issue with repeated 'start'
+>>    and 'stop' commands using the sysfs 'state' variable.
+>>  - Patch 2 and 4 are cleanups/code simplifications.
 > 
->  - Patch1 updates/fixes the build dependency on DMA_CMA which is not
->    selected by default in the davinci_defconfig.
->  - Patch 3 fixes a DSP boot/functionality issue with repeated 'start'
->    and 'stop' commands using the sysfs 'state' variable.
->  - Patch 2 and 4 are cleanups/code simplifications.
+> If you don't have any comments, can you queue these patches for v4.13?
+
+ping on this..
+
 > 
-
-Patches 1, 2 and 3 applied to rproc-next.
-
-Regards,
-Bjorn
+> Thanks
+> Suman
+> 
+>>
+>> regards
+>> Suman
+>>
+>> Suman Anna (4):
+>>   remoteproc/davinci: Update Kconfig to depend on DMA_CMA
+>>   remoteproc/davinci: simplify the reset function
+>>   remoteproc/davinci: fix unbalanced reset between start and stop ops
+>>   remoteproc/davinci: streamline the interrupt management
+>>
+>>  drivers/remoteproc/Kconfig            |  2 +-
+>>  drivers/remoteproc/da8xx_remoteproc.c | 60 ++++++++---------------------------
+>>  2 files changed, 15 insertions(+), 47 deletions(-)
+>>
+> 
