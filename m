@@ -1,43 +1,33 @@
-Return-Path: <Henri.Roosen@ginzinger.com>
-From: Henri Roosen <henri.roosen@ginzinger.com>
-Subject: [PATCH] rpmsg: virtio_rpmsg_bus: fix announce for devices without endpoint
-Date: Fri, 2 Jun 2017 13:35:51 +0200
-Message-ID: <1496403351-32280-1-git-send-email-henri.roosen@ginzinger.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sun, 25 Jun 2017 14:19:55 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 0/4] Davinci remoteproc cleanups/fixes
+Message-ID: <20170625211955.GD26155@builder>
+References: <20170518220902.2846-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: linux-remoteproc@vger.kernel.org
-Cc: Henri Roosen <henri.roosen@ginzinger.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170518220902.2846-1-s-anna@ti.com>
+To: Suman Anna <s-anna@ti.com>
+Cc: linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A device might not have an endpoint assigned. This patch checks if
-rpdev->ept has a value before dereferencing or using it.
+On Thu 18 May 15:08 PDT 2017, Suman Anna wrote:
 
-Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Hi Bjorn,
+> 
+> The following series includes various fixes and cleanups for the TI's
+> Davinci DSP remoteproc driver. Patches are based on 4.12-rc1. Following
+> is the patch summary:
+> 
+>  - Patch1 updates/fixes the build dependency on DMA_CMA which is not
+>    selected by default in the davinci_defconfig.
+>  - Patch 3 fixes a DSP boot/functionality issue with repeated 'start'
+>    and 'stop' commands using the sysfs 'state' variable.
+>  - Patch 2 and 4 are cleanups/code simplifications.
+> 
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 5e66e081..3c582f2 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -314,7 +314,7 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
- 	int err = 0;
- 
- 	/* need to tell remote processor's name service about this channel ? */
--	if (rpdev->announce &&
-+	if (rpdev->announce && rpdev->ept &&
- 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
- 		struct rpmsg_ns_msg nsm;
- 
-@@ -338,7 +338,7 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
- 	int err = 0;
- 
- 	/* tell remote processor's name service we're removing this channel */
--	if (rpdev->announce &&
-+	if (rpdev->announce && rpdev->ept &&
- 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
- 		struct rpmsg_ns_msg nsm;
- 
--- 
-2.1.4
+Patches 1, 2 and 3 applied to rproc-next.
+
+Regards,
+Bjorn
