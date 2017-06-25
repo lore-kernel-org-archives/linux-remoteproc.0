@@ -1,40 +1,51 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/4] remoteproc: Drop VIRTUALIZATION dependency from REMOTEPROC
-Date: Tue, 27 Jun 2017 17:46:08 -0500
-Message-ID: <20170627224610.15321-3-s-anna@ti.com>
-In-Reply-To: <20170627224610.15321-1-s-anna@ti.com>
-References: <20170627224610.15321-1-s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sun, 25 Jun 2017 14:36:30 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] rpmsg: cleanup incorrect function in dev_err message
+Message-ID: <20170625213630.GG26155@builder>
+References: <1496403365-32328-1-git-send-email-henri.roosen@ginzinger.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1496403365-32328-1-git-send-email-henri.roosen@ginzinger.com>
+To: Henri Roosen <henri.roosen@ginzinger.com>
+Cc: linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A dependency to VIRTUALIZATION has been added to REMOTEPROC in v3.10
-kernel in commit b9777859ec01 ("remoteproc: fix kconfig dependencies
-for VIRTIO") to resolve Kconfig warnings due to the inclusion of the
-virtio configuration file from the ARM's KVM config file. The KVM
-config was fixed properly in the subsequent release in commit
-8bd4ffd6b3a9 ("ARM: kvm: don't include drivers/virtio/Kconfig").
-So, drop this unneeded VIRTUALIZATION dependency from REMOTEPROC.
+On Fri 02 Jun 04:36 PDT 2017, Henri Roosen wrote:
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+> Trivial cleanup for incorrect function in dev_err message
+> 
+> Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index b950e6cd4ba2..ea344fbf378a 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -6,7 +6,6 @@ config REMOTEPROC
- 	select CRC32
- 	select FW_LOADER
- 	select VIRTIO
--	select VIRTUALIZATION
- 	help
- 	  Support for remote processors (such as DSP coprocessors). These
- 	  are mainly used on embedded systems.
--- 
-2.13.1
+Applied, thanks
+
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 0ca2ccc..0b5d0d3 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -390,7 +390,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>  
+>  	ret = device_add(dev);
+>  	if (ret) {
+> -		dev_err(dev, "device_register failed: %d\n", ret);
+> +		dev_err(dev, "device_add failed: %d\n", ret);
+>  		put_device(dev);
+>  	}
+>  
+> @@ -505,7 +505,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>  
+>  	ret = device_add(dev);
+>  	if (ret) {
+> -		dev_err(&rpdev->dev, "device_register failed: %d\n", ret);
+> +		dev_err(&rpdev->dev, "device_add failed: %d\n", ret);
+>  		put_device(dev);
+>  	}
+>  
+> -- 
+> 2.1.4
+> 
