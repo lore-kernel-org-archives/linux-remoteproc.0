@@ -1,97 +1,43 @@
-Return-Path: <gregkh@linuxfoundation.org>
-Subject: patch "rpmsg: use dev_groups and not dev_attrs for bus_type" added to driver-core-testing
-From: <gregkh@linuxfoundation.org>
-Date: Fri, 09 Jun 2017 11:01:02 +0200
-Message-ID: <1496998862104245@kroah.com>
+Date: Sun, 25 Jun 2017 14:42:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] rpmsg: virtio_rpmsg_bus: fix nameservice address
+Message-ID: <20170625214226.GH26155@builder>
+References: <1496403402-32420-1-git-send-email-henri.roosen@ginzinger.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ANSI_X3.4-1968
-Content-Transfer-Encoding: 8bit
-To: gregkh@linuxfoundation.org, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1496403402-32420-1-git-send-email-henri.roosen@ginzinger.com>
+To: Henri Roosen <henri.roosen@ginzinger.com>
+Cc: linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+On Fri 02 Jun 04:36 PDT 2017, Henri Roosen wrote:
 
-This is a note to let you know that I've just added the patch titled
+> Commit 2a48d7322dc8 ("rpmsg: rpmsg_send() operations takes rpmsg_endpoint")
+> only changed the nameservice address for virtio_rpmsg_announce_create() but
+> did not do the same change for virtio_rpmsg_announce_destroy().
+> 
+> Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
 
-    rpmsg: use dev_groups and not dev_attrs for bus_type
+Applied, thanks
 
-to my driver-core git tree which can be found at
-    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
-in the driver-core-testing branch.
-
-The patch will show up in the next release of the linux-next tree
-(usually sometime within the next 24 hours during the week.)
-
-The patch will be merged to the driver-core-next branch sometime soon,
-after it passes testing, and the merge window is open.
-
-If you have any questions about this process, please let me know.
-
-
->From 39afc7af152519cc3f41dfb4460701e7c00c3391 Mon Sep 17 00:00:00 2001
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Tue, 6 Jun 2017 14:16:54 +0200
-Subject: rpmsg: use dev_groups and not dev_attrs for bus_type
-
-The dev_attrs field has long been "depreciated" and is finally being
-removed, so move the driver to use the "correct" dev_groups field
-instead for struct bus_type.
-
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: <linux-remoteproc@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/rpmsg/rpmsg_core.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 600f5f9f7431..ad3d2a9df287 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -330,7 +330,8 @@ field##_show(struct device *dev,					\
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
- 									\
- 	return sprintf(buf, format_string, rpdev->path);		\
--}
-+}									\
-+static DEVICE_ATTR_RO(field);
- 
- /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
- rpmsg_show_attr(name, id.name, "%s\n");
-@@ -345,15 +346,17 @@ static ssize_t modalias_show(struct device *dev,
- 
- 	return sprintf(buf, RPMSG_DEVICE_MODALIAS_FMT "\n", rpdev->id.name);
- }
--
--static struct device_attribute rpmsg_dev_attrs[] = {
--	__ATTR_RO(name),
--	__ATTR_RO(modalias),
--	__ATTR_RO(dst),
--	__ATTR_RO(src),
--	__ATTR_RO(announce),
--	__ATTR_NULL
-+static DEVICE_ATTR_RO(modalias);
-+
-+static struct attribute *rpmsg_dev_attrs[] = {
-+	&dev_attr_name.attr,
-+	&dev_attr_modalias.attr,
-+	&dev_attr_dst.attr,
-+	&dev_attr_src.attr,
-+	&dev_attr_announce.attr,
-+	NULL,
- };
-+ATTRIBUTE_GROUPS(rpmsg_dev);
- 
- /* rpmsg devices and drivers are matched using the service name */
- static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
-@@ -455,7 +458,7 @@ static int rpmsg_dev_remove(struct device *dev)
- static struct bus_type rpmsg_bus = {
- 	.name		= "rpmsg",
- 	.match		= rpmsg_dev_match,
--	.dev_attrs	= rpmsg_dev_attrs,
-+	.dev_groups	= rpmsg_dev_groups,
- 	.uevent		= rpmsg_uevent,
- 	.probe		= rpmsg_dev_probe,
- 	.remove		= rpmsg_dev_remove,
--- 
-2.13.1
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 35b8379..0e0d930 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -343,7 +343,7 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+>  		struct rpmsg_ns_msg nsm;
+>  
+>  		strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> -		nsm.addr = rpdev->src;
+> +		nsm.addr = rpdev->ept->addr;
+>  		nsm.flags = RPMSG_NS_DESTROY;
+>  
+>  		err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+> -- 
+> 2.1.4
+> 
