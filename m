@@ -1,35 +1,45 @@
-Return-Path: <Henri.Roosen@ginzinger.com>
-From: Henri Roosen <henri.roosen@ginzinger.com>
-Subject: [PATCH] rpmsg: rpmsg_core: fix null-ptr dereference for devices without ops
-Date: Fri, 2 Jun 2017 13:35:21 +0200
-Message-ID: <1496403321-32234-1-git-send-email-henri.roosen@ginzinger.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sun, 25 Jun 2017 14:43:52 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] rpmsg: virtio_rpmsg_bus: cleanup multiple assignment to
+ ops
+Message-ID: <20170625214352.GI26155@builder>
+References: <1496403382-32374-1-git-send-email-henri.roosen@ginzinger.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: linux-remoteproc@vger.kernel.org
-Cc: Henri Roosen <henri.roosen@ginzinger.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1496403382-32374-1-git-send-email-henri.roosen@ginzinger.com>
+To: Henri Roosen <henri.roosen@ginzinger.com>
+Cc: linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A device might not have an ops structure registered. This
-patch fixes a null-prt dereference by checking ops before dereferencing
-it.
+On Fri 02 Jun 04:36 PDT 2017, Henri Roosen wrote:
 
-Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
----
- drivers/rpmsg/rpmsg_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Trivial cleanup: the .ops pointer is assigned twice. This patch removes the
+> first assignment.
+> 
+> Signed-off-by: Henri Roosen <henri.roosen@ginzinger.com>
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 600f5f9..0c48452 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -429,7 +429,7 @@ static int rpmsg_dev_probe(struct device *dev)
- 		goto out;
- 	}
- 
--	if (rpdev->ops->announce_create)
-+	if (rpdev->ops && rpdev->ops->announce_create)
- 		err = rpdev->ops->announce_create(rpdev);
- out:
- 	return err;
--- 
-2.1.4
+Applied, thanks
+
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 3c582f2..35b8379 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -390,9 +390,6 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+>  	/* Link the channel to our vrp */
+>  	vch->vrp = vrp;
+>  
+> -	/* Assign callbacks for rpmsg_channel */
+> -	vch->rpdev.ops = &virtio_rpmsg_ops;
+> -
+>  	/* Assign public information to the rpmsg_device */
+>  	rpdev = &vch->rpdev;
+>  	rpdev->src = chinfo->src;
+> -- 
+> 2.1.4
+> 
