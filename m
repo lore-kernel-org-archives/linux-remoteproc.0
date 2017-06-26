@@ -1,83 +1,88 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 26 Jun 2017 13:06:08 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH v3 2/3] remoteproc/keystone: Add a remoteproc driver for
  Keystone 2 DSPs
-Message-ID: <20170626200608.GG18666@tuxbook>
 References: <20170613234513.7624-1-s-anna@ti.com>
- <20170613234513.7624-3-s-anna@ti.com>
- <20170625201545.GA26155@builder>
- <1ccd9273-0fde-4241-6d99-1d03be2f5b57@ti.com>
+ <20170613234513.7624-3-s-anna@ti.com> <20170625201545.GA26155@builder>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <1ccd9273-0fde-4241-6d99-1d03be2f5b57@ti.com>
+Date: Mon, 26 Jun 2017 10:54:16 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ccd9273-0fde-4241-6d99-1d03be2f5b57@ti.com>
-To: Suman Anna <s-anna@ti.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Sam Nelson <sam.nelson@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+In-Reply-To: <20170625201545.GA26155@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Andrew F. Davis  <afd@ti.com>, Sam Nelson" <sam.nelson@ti.com>, Grygorii Strashko <grygorii.strashko@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 26 Jun 08:54 PDT 2017, Suman Anna wrote:
+Hi Bjorn,
 
-> Hi Bjorn,
+On 06/25/2017 03:15 PM, Bjorn Andersson wrote:
+> On Tue 13 Jun 16:45 PDT 2017, Suman Anna wrote:
 > 
-> On 06/25/2017 03:15 PM, Bjorn Andersson wrote:
-> > On Tue 13 Jun 16:45 PDT 2017, Suman Anna wrote:
-> > 
-> >> +static int keystone_rproc_start(struct rproc *rproc)
-> >> +{
-> >> +	struct keystone_rproc *ksproc = rproc->priv;
-> >> +	int ret;
-> >> +
-> >> +	INIT_WORK(&ksproc->workqueue, handle_event);
-> >> +
-> >> +	ret = request_irq(ksproc->irq_ring, keystone_rproc_vring_interrupt, 0,
-> >> +			  dev_name(ksproc->dev), ksproc);
-> >> +	if (ret) {
-> >> +		dev_err(ksproc->dev, "failed to enable vring interrupt, ret = %d\n",
-> >> +			ret);
-> >> +		goto out;
-> >> +	}
-> >> +
-> >> +	ret = request_irq(ksproc->irq_fault, keystone_rproc_exception_interrupt,
-> >> +			  0, dev_name(ksproc->dev), ksproc);
-> >> +	if (ret) {
-> >> +		dev_err(ksproc->dev, "failed to enable exception interrupt, ret = %d\n",
-> >> +			ret);
-> >> +		goto free_vring_irq;
-> >> +	}
-> > 
-> > I do prefer that your request any resources during probe() and
-> > potentially enable/disable them here. If below concern about using a
-> > GPIO driver is cleared already I'll take it as is though.
-> > 
-> > [..]
-> >> +static void keystone_rproc_kick(struct rproc *rproc, int vqid)
-> >> +{
-> >> +	struct keystone_rproc *ksproc = rproc->priv;
-> >> +
-> >> +	if (WARN_ON(ksproc->kick_gpio < 0))
-> >> +		return;
-> >> +
-> >> +	gpio_set_value(ksproc->kick_gpio, 1);
-> >> +}
-> >> +
-> > 
-> > This doesn't sound like a gpio-controller and the GPIO maintainer did
-> > reject an attempt by me to use the GPIO framework to abstract a similar
-> > thing. Do you already have this driver upstream or have you clarified
-> > with the maintainer that the GPIO framework is an acceptable abstraction
-> > for this?
+>> +static int keystone_rproc_start(struct rproc *rproc)
+>> +{
+>> +	struct keystone_rproc *ksproc = rproc->priv;
+>> +	int ret;
+>> +
+>> +	INIT_WORK(&ksproc->workqueue, handle_event);
+>> +
+>> +	ret = request_irq(ksproc->irq_ring, keystone_rproc_vring_interrupt, 0,
+>> +			  dev_name(ksproc->dev), ksproc);
+>> +	if (ret) {
+>> +		dev_err(ksproc->dev, "failed to enable vring interrupt, ret = %d\n",
+>> +			ret);
+>> +		goto out;
+>> +	}
+>> +
+>> +	ret = request_irq(ksproc->irq_fault, keystone_rproc_exception_interrupt,
+>> +			  0, dev_name(ksproc->dev), ksproc);
+>> +	if (ret) {
+>> +		dev_err(ksproc->dev, "failed to enable exception interrupt, ret = %d\n",
+>> +			ret);
+>> +		goto free_vring_irq;
+>> +	}
 > 
-> Yeah, this has been upstream since quite some time. See commit
-> 2134cb997f2f ("gpio: syscon: reuse for keystone 2 socs").
+> I do prefer that your request any resources during probe() and
+> potentially enable/disable them here. If below concern about using a
+> GPIO driver is cleared already I'll take it as is though.
 > 
+> [..]
+>> +static void keystone_rproc_kick(struct rproc *rproc, int vqid)
+>> +{
+>> +	struct keystone_rproc *ksproc = rproc->priv;
+>> +
+>> +	if (WARN_ON(ksproc->kick_gpio < 0))
+>> +		return;
+>> +
+>> +	gpio_set_value(ksproc->kick_gpio, 1);
+>> +}
+>> +
+> 
+> This doesn't sound like a gpio-controller and the GPIO maintainer did
+> reject an attempt by me to use the GPIO framework to abstract a similar
+> thing. Do you already have this driver upstream or have you clarified
+> with the maintainer that the GPIO framework is an acceptable abstraction
+> for this?
 
-Okay, sounds good. I have merged the series.
+Yeah, this has been upstream since quite some time. See commit
+2134cb997f2f ("gpio: syscon: reuse for keystone 2 socs").
 
+regards
+Suman
 
-I still would like to have resources allocated at probe() time, so I
-would appreciate a follow up patch moving the request_irq()s to probe,
-per above comment (but we can take that after v4.13).
-
-Regards,
-Bjorn
+> 
+> It looks equivalent to the "APCS IPC" register found in Qualcomm
+> platforms, previously implemented through a syscon but in v4.13 being
+> pushed to being a mailbox driver.
+> 
+> 
+> Apart from this I think the series looks good.
+> 
+> Regards,
+> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
