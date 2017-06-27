@@ -1,81 +1,101 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [RFC PATCH 0/3] provide imx rproc driver
-Date: Wed, 14 Jun 2017 22:48:52 +0200
-Message-Id: <20170614204855.18347-1-o.rempel@pengutronix.de>
-To: devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH] rpmsg: Solve circular dependencies involving RPMSG_VIRTIO
+References: <20170627064309.16507-1-bjorn.andersson@linaro.org>
+ <d5e30779-00c0-6e56-e99e-811afbe28932@ti.com>
+ <20170627214712.GM18666@tuxbook>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <cd9cc4ad-0f2c-ecb4-cf9d-010717439c4c@ti.com>
+Date: Tue, 27 Jun 2017 18:16:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170627214712.GM18666@tuxbook>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Peter Griffin <peter.griffin@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Hugues Fruchet <hugues.fruchet@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hallo all,
+Hi Bjorn,
 
-this is RFC patchset to provide remoteproc functionality on
-imx7d SoC.
-Since current kernel do not have devicetrees for board which
-I used for testing, this RFC patchset includes this too.
+>>>> Thanks for the patch.
+>>
+>> On 06/27/2017 01:43 AM, Bjorn Andersson wrote:
+>>> While it's very common to use RPMSG for communicating with firmware
+>>> running on these remoteprocs there is no functional dependency on RPMSG.
+>>
+>> This is not entirely accurate though. RPMSG is the IPC transport on
+>> these remoteprocs, you seem to suggest that there are alternatives for
+>> these remoteprocs. Without RPMSG, you can boot, but you will not be able
+>> to talk to the remoteprocs, so I would call it a functional dependency.
+>>
+> 
+> IMHO this functional dependency is not from the remoteproc driver but
+> your system (and firmware) design. It should be possible to write
+> firmware that exposes any other type of virtio device.
 
-For testing I used this simple counter written in ASM:
-======================================
-        .syntax unified
-        .text
-        .thumb
-        .int 0x10020000                 @ Initial SP value
-        .int reset + 1
+You may want to add this clarification to your commit description then.
 
-reset:
+> 
+>>> As such RPMSG should be selected by the system integrator and not
+>>> automatically by the remoteproc drivers.
+>>>
+>>> This does solve problems reported with circular Kconfig dependencies for
+>>> Davinci and Keystone remoteproc drivers.
+>>
+>> The Keystone one issue shows up on linux-next (and not on 4.12-rcX) due
+>> to the differing options on RESET_CONTROLLER on VIDEO_QCOM_VENUS
+>> (through QCOM_SCOM).
+> 
+> That's probably why I didn't see this when build testing before pushing
+> this.
+> 
+>> This can also be resolved by changing the depends on RESET_CONTROLLER
+>> to a select RESET_CONTROLLER or dropping the line.
+>>
+> 
+> Except that this would violate the general rule of "don't use 'select'
+> for user-selectable options".
 
-        mov     r0, #0x55
-        ldr     r1, =(0x40)
-1:
-        str     r0, [r1]
-        add     r0, 1
-        b       1b
+Yeah well, there seems to all sorts of usage w.r.t RESET_CONTROLLER and
+VIRTIO. And if the ARCHs enable the ARCH_HAS_RESET_CONTROLLER, the
+RESET_CONTROLLER dependencies are not even needed.
 
-        /* Dummy data, required by remoteproc loader */
-        /* Please FIXME, this part seem to be incorrect */
-        .data
-        .section .resource_table, "aw"
-        .word   1, 0, 0, 0      /* struct resource_table base */
-        .word   0               /* uint32_t offset[1] */
-============================================================
-compiled with:
-${CROSS}as -o imx7m4.o imx7m4.S
-${CROSS}ld -Ttext=0x0 -o imx7m4.elf imx7m4.o
-cp imx7m4.elf /srv/nfs/sid-armhf/lib/firmware/rproc-imx_rproc-fw
+A quick grep on 4.12-rc7 yielded 20 occurrences that uses depends on and
+21 for selects RESET_CONTROLLER. Similar numbers on VIRTIO are 9 and 9
+(with a split between different VIRTIO drivers even).
 
-Functionality was confirmed with current OpenOCD master.
-OpenOCD cfg file can be found here:
-https://github.com/olerem/openocd/blob/imx7-2017.06.14/tcl/target/imx7.cfg
+> 
+>> The davinci one is tricky though, as I did change it from using a select
+>> to a depends on dependency, and obviously ppc64_defconfig is something
+>> that I would not check.
 
-Comment and suggestions are welcome.
+Posted a cleanup series that removes the VIRTUALIZATION dependency from
+REMOTEPROC and RPMSG_VIRTIO options, the latter fixes the
+ppc64_defconfig issue with davinci remoteproc.
 
-Regards,
-Oleksij
+>>
+> 
+> While I hate the process of figuring out and enable all the dependencies
+> to be able to enable a particular config, this change does reduce the
+> risk of running into more of these cyclic dependencies.
+> 
+>> This patch definitely resolves both issues, but it is not obvious that
+>> someone would also have to enable RPMSG_VIRTIO to have these remoteprocs
+>> useful when looking at either of the menuconfig help.
+>>
+> 
+> This is a common issue we have with config options and while I hate to
+> add another item to the list of things that you can miss in your system
+> configuration I would prefer that my Kconfig is maintainable.
+> 
+> This also means that most remoteproc drivers should "depends on MAILBOX"
+> and not select either the framework or the specific drivers.  But let's
+> try to ignore that until after the merge window.
 
-Oleksij Rempel (3):
-  ARM: dts: imx7d: add imx7d-phyboard-zeta
-  remoteproc: imx_rproc: add a NXP/Freescale imx rproc driver
-  ARM: dts: imx7s: add rproc node
+Yeah ok, as long as you follow a consistent rule across all
+remoteproc/rpmsg drivers, that's fine. In fact, other than RPMSG_VIRTIO,
+the two drivers I added for this merge window do use/switches to a
+depends on convention.
 
- arch/arm/boot/dts/Makefile                |   1 +
- arch/arm/boot/dts/imx7d-pba-c-09.dtsi     | 272 ++++++++++++++++++++++++++++++
- arch/arm/boot/dts/imx7d-peb-av-02.dtsi    | 104 ++++++++++++
- arch/arm/boot/dts/imx7d-peb-eval-02.dtsi  | 130 ++++++++++++++
- arch/arm/boot/dts/imx7d-phyboard-zeta.dts | 144 ++++++++++++++++
- arch/arm/boot/dts/imx7d-phycore-som.dtsi  | 272 ++++++++++++++++++++++++++++++
- arch/arm/boot/dts/imx7d-pinfunc-lpsr.h    |  76 +++++++++
- arch/arm/boot/dts/imx7s.dtsi              |   9 +
- drivers/remoteproc/Kconfig                |   8 +
- drivers/remoteproc/Makefile               |   1 +
- drivers/remoteproc/imx_rproc.c            | 264 +++++++++++++++++++++++++++++
- 11 files changed, 1281 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx7d-pba-c-09.dtsi
- create mode 100644 arch/arm/boot/dts/imx7d-peb-av-02.dtsi
- create mode 100644 arch/arm/boot/dts/imx7d-peb-eval-02.dtsi
- create mode 100644 arch/arm/boot/dts/imx7d-phyboard-zeta.dts
- create mode 100644 arch/arm/boot/dts/imx7d-phycore-som.dtsi
- create mode 100644 arch/arm/boot/dts/imx7d-pinfunc-lpsr.h
- create mode 100644 drivers/remoteproc/imx_rproc.c
-
--- 
-2.11.0
+regards
+Suman
