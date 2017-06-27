@@ -1,97 +1,101 @@
-Return-Path: <spjoshi@codeaurora.org>
-From: Sarangdhar Joshi <spjoshi@codeaurora.org>
-Subject: [PATCH] remoteproc: qcom: mdt_loader: Fix rproc_da_to_va
-Date: Tue,  6 Jun 2017 18:44:41 -0700
-Message-Id: <1496799881-11097-1-git-send-email-spjoshi@codeaurora.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 3/4] remoteproc: Drop redundant REMOTEPROC dependency from driver Kconfigs
+Date: Tue, 27 Jun 2017 17:46:09 -0500
+Message-ID: <20170627224610.15321-4-s-anna@ti.com>
+In-Reply-To: <20170627224610.15321-1-s-anna@ti.com>
+References: <20170627224610.15321-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Refactoring MDT loader broke rproc_da_to_va() for Qualcomm images.  This
-causes an incorrect computation of offset and returns an incorrect
-virtual address for the relocatable segment(s).
+All the remoteproc platform driver Kconfig symbols are defined and
+included under an if REMOTEPROC condition, so the dependency on
+REMOTEPROC is implicit and they do not need an explicit 'depends
+on REMOTEPROC' line. So, clean these up.
 
-Fix this by adding an "out" parameter to qcom_mdt_loader() and setting
-the correct segment base address in that parameter.
-
-Fixes: 7f0dd07a9b29 ("remoteproc: qcom: mdt_loader: Refactor MDT loader")
-CC: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/qcom_adsp_pil.c  | 3 ++-
- drivers/remoteproc/qcom_wcnss.c     | 3 ++-
- drivers/soc/qcom/mdt_loader.c       | 5 ++++-
- include/linux/soc/qcom/mdt_loader.h | 2 +-
- 4 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/remoteproc/Kconfig | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 49fe2f8..335066e 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -79,7 +79,8 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index ea344fbf378a..945c1574f896 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -17,7 +17,6 @@ config OMAP_REMOTEPROC
+ 	depends on HAS_DMA
+ 	depends on ARCH_OMAP4 || SOC_OMAP5
+ 	depends on OMAP_IOMMU
+-	depends on REMOTEPROC
+ 	select MAILBOX
+ 	select OMAP2PLUS_MBOX
+ 	select RPMSG_VIRTIO
+@@ -37,7 +36,6 @@ config OMAP_REMOTEPROC
+ config WKUP_M3_RPROC
+ 	tristate "AMx3xx Wakeup M3 remoteproc support"
+ 	depends on SOC_AM33XX || SOC_AM43XX
+-	depends on REMOTEPROC
+ 	help
+ 	  Say y here to support Wakeup M3 remote processor on TI AM33xx
+ 	  and AM43xx family of SoCs.
+@@ -50,7 +48,6 @@ config WKUP_M3_RPROC
+ config DA8XX_REMOTEPROC
+ 	tristate "DA8xx/OMAP-L13x remoteproc support"
+ 	depends on ARCH_DAVINCI_DA8XX
+-	depends on REMOTEPROC
+ 	depends on DMA_CMA
+ 	select RPMSG_VIRTIO
+ 	help
+@@ -74,7 +71,6 @@ config KEYSTONE_REMOTEPROC
+ 	tristate "Keystone Remoteproc support"
+ 	depends on ARCH_KEYSTONE
+ 	depends on RESET_CONTROLLER
+-	depends on REMOTEPROC
+ 	select RPMSG_VIRTIO
+ 	help
+ 	  Say Y here here to support Keystone remote processors (DSP)
+@@ -86,7 +82,6 @@ config KEYSTONE_REMOTEPROC
+ config QCOM_ADSP_PIL
+ 	tristate "Qualcomm ADSP Peripheral Image Loader"
+ 	depends on OF && ARCH_QCOM
+-	depends on REMOTEPROC
+ 	depends on QCOM_SMEM
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+ 	select MFD_SYSCON
+@@ -104,7 +99,6 @@ config QCOM_Q6V5_PIL
+ 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
+ 	depends on OF && ARCH_QCOM
+ 	depends on QCOM_SMEM
+-	depends on REMOTEPROC
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+ 	select MFD_SYSCON
+ 	select QCOM_RPROC_COMMON
+@@ -118,7 +112,6 @@ config QCOM_WCNSS_PIL
+ 	depends on OF && ARCH_QCOM
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+ 	depends on QCOM_SMEM
+-	depends on REMOTEPROC
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+@@ -129,7 +122,6 @@ config QCOM_WCNSS_PIL
+ config ST_REMOTEPROC
+ 	tristate "ST remoteproc support"
+ 	depends on ARCH_STI
+-	depends on REMOTEPROC
+ 	select MAILBOX
+ 	select STI_MBOX
+ 	select RPMSG_VIRTIO
+@@ -140,7 +132,6 @@ config ST_REMOTEPROC
  
- 	return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
--			     adsp->mem_region, adsp->mem_phys, adsp->mem_size);
-+			     adsp->mem_region, adsp->mem_phys,
-+			     adsp->mem_size, &adsp->mem_reloc);
- }
+ config ST_SLIM_REMOTEPROC
+ 	tristate
+-	depends on REMOTEPROC
  
- static const struct rproc_fw_ops adsp_fw_ops = {
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index a39a1a9..253f152e 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -153,7 +153,8 @@ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
- 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+ endif # REMOTEPROC
  
- 	return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
--			     wcnss->mem_region, wcnss->mem_phys, wcnss->mem_size);
-+			     wcnss->mem_region, wcnss->mem_phys,
-+			     wcnss->mem_size, &wcnss->mem_reloc);
- }
- 
- static const struct rproc_fw_ops wcnss_fw_ops = {
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index bd63df0..b4a30fc 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -83,12 +83,13 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
-  * @mem_region:	allocated memory region to load firmware into
-  * @mem_phys:	physical address of allocated memory region
-  * @mem_size:	size of the allocated memory region
-+ * @img_base:   base address of the firmware image
-  *
-  * Returns 0 on success, negative errno otherwise.
-  */
- int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 		  const char *firmware, int pas_id, void *mem_region,
--		  phys_addr_t mem_phys, size_t mem_size)
-+		  phys_addr_t mem_phys, size_t mem_size, phys_addr_t *img_base)
- {
- 	const struct elf32_phdr *phdrs;
- 	const struct elf32_phdr *phdr;
-@@ -193,6 +194,8 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 			memset(ptr + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
- 	}
- 
-+	if (img_base)
-+		*img_base = mem_reloc;
- out:
- 	kfree(fw_name);
- 
-diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-index f423001..ea021b3 100644
---- a/include/linux/soc/qcom/mdt_loader.h
-+++ b/include/linux/soc/qcom/mdt_loader.h
-@@ -13,6 +13,6 @@
- ssize_t qcom_mdt_get_size(const struct firmware *fw);
- int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 		  const char *fw_name, int pas_id, void *mem_region,
--		  phys_addr_t mem_phys, size_t mem_size);
-+		  phys_addr_t mem_phys, size_t mem_size, phys_addr_t *img_base);
- 
- #endif
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.13.1
