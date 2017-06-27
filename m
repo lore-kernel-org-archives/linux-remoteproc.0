@@ -1,49 +1,111 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] rpmsg: Don't overwrite release op of rpdev
-Date: Sun, 25 Jun 2017 15:05:15 -0700
-Message-Id: <20170625220515.4061-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Henri Roosen <henri.roosen@ginzinger.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 4/4] remoteproc/davinci: streamline the interrupt
+ management
+References: <20170518220902.2846-1-s-anna@ti.com>
+ <20170518220902.2846-5-s-anna@ti.com> <20170625211931.GC26155@builder>
+ <8659b48d-5675-6bc9-aaf2-836ea69738d1@ti.com>
+ <20170627053845.GI18666@tuxbook>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <396e16da-830b-ca10-297c-434b5618ca25@ti.com>
+Date: Tue, 27 Jun 2017 14:14:59 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170627053845.GI18666@tuxbook>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-b0b03b811963 ("rpmsg: Release rpmsg devices in backends") attempted to
-correct the ownership of freeing rpmsg device memory. But the patch
-is not complete, in that the rpmsg core will overwrite the release op as
-the device is being registered.
+On 06/27/2017 12:38 AM, Bjorn Andersson wrote:
+> On Mon 26 Jun 09:09 PDT 2017, Suman Anna wrote:
+> 
+>> Hi Bjorn,
+>>
+>> On 06/25/2017 04:19 PM, Bjorn Andersson wrote:
+>>> On Thu 18 May 15:09 PDT 2017, Suman Anna wrote:
+>>>
+>>>> The davinci remoteproc driver is currently requesting its interrupt
+>>>> that deals with the virtio kicks in probe, and that too before all
+>>>> the associated variables used by the handler are initialized. This
+>>>> is a lot in advance before the DSP remote processor is even loaded
+>>>> and booted and is not essential. Streamline the interrupt request
+>>>> and freeing operations instead alongside the boot and shutdown of
+>>>> the remote processor.
+>>>>
+>>>
+>>> I do prefer that all resources are acquired at probe() time, rather than
+>>> handled upon each start/stop. In the current handle_event()
+>>> implementation the remoteproc code will not find the yet unallocated
+>>> notify-id's and do nothing. So this seems okay.
+>>>
+>>> [..]
+>>>> @@ -213,15 +224,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>>>  
+>>>>  	platform_set_drvdata(pdev, rproc);
+>>>>  
+>>>> -	/* everything the ISR needs is now setup, so hook it up */
+>>>> -	ret = devm_request_threaded_irq(dev, irq, da8xx_rproc_callback,
+>>>> -					handle_event, 0, "da8xx-remoteproc",
+>>>> -					rproc);
+>>>> -	if (ret) {
+>>>> -		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
+>>>> -		goto free_rproc;
+>>>> -	}
+>>>
+>>> In the error paths after this the driver will end up freeing the rproc
+>>> context before disabling the irq, so these cases need a call to
+>>> disable_irq().
+>>
+>> Hmm, I am not sure I understand why we need disable_irq() when we are
+>> not even requesting it? This is deleting code, not adding. The IRQ
+>> request and free are now balanced in the start and stop ops. The only
+>> call here is a platform_get_irq() which doesn't need any cleanup.
+>>
+> 
+> I prefer to keep the initialization of the irq at probe time. What I
+> tried to say was that the code is currently broken in regards to the
+> (theoretical?) possibility of the interrupt handler being invoked after
+> "rproc" has been freed.
+> 
+>>>
+>>>> -
+>>>>  	/*
+>>>>  	 * rproc_add() can end up enabling the DSP's clk with the DSP
+>>>>  	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+>>>> @@ -254,14 +256,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>>>>  static int da8xx_rproc_remove(struct platform_device *pdev)
+>>>>  {
+>>>>  	struct rproc *rproc = platform_get_drvdata(pdev);
+>>>> -	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+>>>> -
+>>>> -	/*
+>>>> -	 * The devm subsystem might end up releasing things before
+>>>> -	 * freeing the irq, thus allowing an interrupt to sneak in while
+>>>> -	 * the device is being removed.  This should prevent that.
+>>>> -	 */
+>>>
+>>> devres _will not_ disable the IRQ until after remove() returns, making it
+>>> possible for the interrupt handler to be executed after the rproc
+>>> context is freed.
+>>>
+>>> So this comment would benefit from an update.
+>>
+>> Again, this is deleting code, not adding. The remove after this cleanup
+>> will simply be invoking the rproc_del() and rproc_free() call, and
+>> rproc_del() does end up calling the stop since we do use auto-boot where
+>> we free the irq.
+>>
+> 
+> I would like to keep the request_irq in the probe() and as such a
+> disable_irq is needed either in stop() or here. If we leave it here
+> there's room to improve the comment.
 
-Fixes: b0b03b811963 ("rpmsg: Release rpmsg devices in backends")
-Reported-by: Henri Roosen <henri.roosen@ginzinger.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/rpmsg_core.c | 8 --------
- 1 file changed, 8 deletions(-)
+Yeah, I did understand your statements after the discussion on the
+keystone remoteproc thread, so ok with dropping this. The code already
+has the disable_irq() in remove before rproc_free(), so just needs a
+comment improvement. I will have to check the other sequences if there
+are some missing dependencies, before revising this patch.
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 600f5f9f7431..c89edaf6133b 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -461,13 +461,6 @@ static struct bus_type rpmsg_bus = {
- 	.remove		= rpmsg_dev_remove,
- };
- 
--static void rpmsg_release_device(struct device *dev)
--{
--	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
--
--	kfree(rpdev);
--}
--
- int rpmsg_register_device(struct rpmsg_device *rpdev)
- {
- 	struct device *dev = &rpdev->dev;
-@@ -477,7 +470,6 @@ int rpmsg_register_device(struct rpmsg_device *rpdev)
- 		     rpdev->id.name, rpdev->src, rpdev->dst);
- 
- 	rpdev->dev.bus = &rpmsg_bus;
--	rpdev->dev.release = rpmsg_release_device;
- 
- 	ret = device_register(&rpdev->dev);
- 	if (ret) {
--- 
-2.12.0
+regards
+Suman
