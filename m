@@ -1,40 +1,35 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/4] rpmsg: Drop VIRTUALIZATION dependency from RPMSG_VIRTIO
-Date: Tue, 27 Jun 2017 17:46:07 -0500
-Message-ID: <20170627224610.15321-2-s-anna@ti.com>
-In-Reply-To: <20170627224610.15321-1-s-anna@ti.com>
-References: <20170627224610.15321-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH 0/3] Add remoteproc driver for Hexagon Q6 - WCSS integrated core
+Date: Thu, 29 Jun 2017 19:47:38 +0530
+Message-Id: <1498745861-20531-1-git-send-email-sricharan@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A dependency to VIRTUALIZATION has been added to RPMSG_VIRTIO (back
-when it was named RPMSG) in v3.10 kernel in commit 397944df3290
-("rpmsg: fix kconfig dependencies for VIRTIO") to resolve Kconfig
-warnings due to the inclusion of the virtio configuration file from
-the ARM's KVM config file. The KVM config was fixed properly in the
-subsequent release in commit 8bd4ffd6b3a9 ("ARM: kvm: don't include
-drivers/virtio/Kconfig"). So, drop this unneeded VIRTUALIZATION
-dependency from RPMSG_VIRTIO.
+IPQ8074 has an integrated Hexagon dsp core Q6v5 and a wireless lan
+(Lithium) IP. This series adds the remoteproc driver to reset, load
+and boot Q6 firmware. The first patch is to make the mdt_loader authenticate
+the firmware only if required, so that the code can be reused for
+self-authenticating firmware like the Q6v5 core in IPQ8074.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/rpmsg/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+Sricharan R (3):
+  drivers: remoteproc: Make mdt_loader firmware authentication optional
+  drivers: remoteproc: Add Hexagon Q6 - WCSS integrated core driver
+  dt-binding: remoteproc: Add the bindings required for Hexagon - WCSS
+    core
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index 2a5d2b446de2..1323a245763b 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -36,6 +36,5 @@ config RPMSG_VIRTIO
- 	tristate
- 	select RPMSG
- 	select VIRTIO
--	select VIRTUALIZATION
- 
- endmenu
+ .../bindings/remoteproc/qcom,q6v5-wcss.txt         | 139 ++++
+ drivers/remoteproc/Kconfig                         |  13 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/q6v5-wcss.c                     | 784 +++++++++++++++++++++
+ drivers/remoteproc/qcom_adsp_pil.c                 |   3 +-
+ drivers/remoteproc/qcom_wcnss.c                    |   3 +-
+ drivers/soc/qcom/mdt_loader.c                      |  24 +-
+ include/linux/soc/qcom/mdt_loader.h                |   2 +-
+ 8 files changed, 956 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,q6v5-wcss.txt
+ create mode 100644 drivers/remoteproc/q6v5-wcss.c
+
 -- 
-2.13.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
