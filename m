@@ -1,69 +1,67 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v6 2/4] remoteproc: qcom: refactor mss fw image loading sequence
-Date: Thu, 22 Jun 2017 17:38:51 +0530
-Message-Id: <1498133333-21291-3-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
-References: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <robdclark@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20170628215323.5658-1-bjorn.andersson@linaro.org>
+References: <20170628215323.5658-1-bjorn.andersson@linaro.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 29 Jun 2017 19:06:47 -0400
+Message-ID: <CAF6AEGuenaCJk+BgKJ4KBMdqs4mJskWA3Y8FVms3gpBeFsJGew@mail.gmail.com>
+Subject: Re: [PATCH v2] rpmsg: Make modalias work for DeviceTree based devices
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch refactor code to first load all firmware blobs
-and then update modem proc to authenticate and boot fw.
+On Wed, Jun 28, 2017 at 5:53 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> When rpmsg devices are expected to be matched based on their compatible
+> the modalias should reflect this, so that module autoloading has a
+> chance to match and load the appropriate module.
+>
+> Tested-by: Rob Clark <robdclark@gmail.com>
+> Reported-by: Rob Clark <robdclark@gmail.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+and also probably:
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8fd697a..f5f8850 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -503,7 +503,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	bool relocate = false;
- 	char seg_name[10];
- 	ssize_t offset;
--	size_t size;
-+	size_t size = 0;
- 	void *ptr;
- 	int ret;
- 	int i;
-@@ -541,7 +541,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	}
- 
- 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
--
-+	/* Load firmware segments */
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		phdr = &phdrs[i];
- 
-@@ -574,18 +574,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			memset(ptr + phdr->p_filesz, 0,
- 			       phdr->p_memsz - phdr->p_filesz);
- 		}
--
--		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
--		if (!size) {
--			boot_addr = relocate ? qproc->mpss_phys : min_addr;
--			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
--			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
--		}
--
- 		size += phdr->p_memsz;
--		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
- 	}
- 
-+	/* Transfer ownership of modem ddr region with q6*/
-+	boot_addr = relocate ? qproc->mpss_phys : min_addr;
-+	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-+	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
-+	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-+
- 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "MPSS authentication timed out\n");
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Cc: <stable@vger.kernel.org>
+
+
+> ---
+>
+> Changes since v1:
+> - Also update rpmsg_uevent()
+>
+>  drivers/rpmsg/rpmsg_core.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index ad3d2a9df287..067650c5bcb6 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -343,6 +343,11 @@ static ssize_t modalias_show(struct device *dev,
+>                              struct device_attribute *attr, char *buf)
+>  {
+>         struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+> +       ssize_t len;
+> +
+> +       len = of_device_modalias(dev, buf, PAGE_SIZE);
+> +       if (len != -ENODEV)
+> +               return len;
+>
+>         return sprintf(buf, RPMSG_DEVICE_MODALIAS_FMT "\n", rpdev->id.name);
+>  }
+> @@ -387,6 +392,11 @@ static int rpmsg_dev_match(struct device *dev, struct device_driver *drv)
+>  static int rpmsg_uevent(struct device *dev, struct kobj_uevent_env *env)
+>  {
+>         struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+> +       int ret;
+> +
+> +       ret = of_device_uevent_modalias(dev, env);
+> +       if (ret != -ENODEV)
+> +               return ret;
+>
+>         return add_uevent_var(env, "MODALIAS=" RPMSG_DEVICE_MODALIAS_FMT,
+>                                         rpdev->id.name);
+> --
+> 2.12.0
+>
