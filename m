@@ -1,60 +1,61 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v1 0/2] provide imx rproc driver
-Date: Mon, 10 Jul 2017 16:42:18 +0200
-Message-Id: <20170710144220.31594-1-o.rempel@pengutronix.de>
-To: devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 5 Jul 2017 16:43:54 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] remoteproc updates for v4.13
+Message-ID: <20170705234354.GB20643@builder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Sarangdhar Joshi <spjoshi@codeaurora.org>, "Andrew F. Davis" <afd@ti.com>, Colin Ian King <colin.king@canonical.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-this patch set to provide remoteproc functionality on
-i.MX7D SoC.
+The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
 
-For testing I used this simple counter written in ASM:
-======================================
-        .syntax unified
-        .text
-        .thumb
-        .int 0x10020000                 @ Initial SP value
-        .int reset + 1
+  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
 
-reset:
+are available in the git repository at:
 
-        mov     r0, #0x55
-        ldr     r1, =(0x40)
-1:
-        str     r0, [r1]
-        add     r0, 1
-        b       1b
+  git://github.com/andersson/remoteproc tags/rproc-v4.13
 
-        /* Dummy data, required by remoteproc loader */
-        /* Please FIXME, this part seem to be incorrect */
-        .data
-        .section .resource_table, "aw"
-        .word   1, 0, 0, 0      /* struct resource_table base */
-        .word   0               /* uint32_t offset[1] */
-============================================================
-compiled with:
-${CROSS}as -o imx7m4.o imx7m4.S
-${CROSS}ld -Ttext=0x0 -o imx7m4.elf imx7m4.o
-cp imx7m4.elf /srv/nfs/sid-armhf/lib/firmware/rproc-imx_rproc-fw
+for you to fetch changes up to b0af7b7dbedd45367f8f1d91049c30b251ad528f:
 
-Functionality was confirmed with current OpenOCD master.
-OpenOCD cfg file can be found here:
-https://github.com/olerem/openocd/blob/imx7-2017.06.14/tcl/target/imx7.cfg
+  remoteproc/keystone: Fix circular dependencies for ARM configs (2017-06-27 16:21:34 -0700)
 
-Oleksij Rempel (2):
-  remoteproc: dt: Provide bindings for iMX6SX/7D Remote Processor
-    Controller driver
-  remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver
+----------------------------------------------------------------
+remoteproc updates for v4.13
 
- .../devicetree/bindings/remoteproc/imx-rproc.txt   |  44 +++
- drivers/remoteproc/Kconfig                         |  10 +
+This introduces the Keystone 2 DSP driver and refactors the start/stop code in
+recovery. The Davinci DSP driver gets a few fixes and the Kconfig gets cleaned
+up.
+
+----------------------------------------------------------------
+Andrew F. Davis (1):
+      remoteproc/keystone: Ensure the DSPs are in reset in probe
+
+Colin Ian King (1):
+      remoteproc: fix spelling mistake: "Resouce" -> "Resource"
+
+Sarangdhar Joshi (2):
+      remoteproc: Introduce rproc_{start,stop}() functions
+      remoteproc: Modify recovery path to use rproc_{start,stop}()
+
+Suman Anna (8):
+      remoteproc/davinci: Update Kconfig to depend on DMA_CMA
+      remoteproc/davinci: simplify the reset function
+      remoteproc/davinci: fix unbalanced reset between start and stop ops
+      dt-bindings: remoteproc: Add Keystone DSP remoteproc binding
+      remoteproc/keystone: Add a remoteproc driver for Keystone 2 DSPs
+      remoteproc: Drop VIRTUALIZATION dependency from REMOTEPROC
+      remoteproc: Drop redundant REMOTEPROC dependency from driver Kconfigs
+      remoteproc/keystone: Fix circular dependencies for ARM configs
+
+ .../bindings/remoteproc/ti,keystone-rproc.txt      | 133 ++++++
+ drivers/remoteproc/Kconfig                         |  22 +-
  drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/imx_rproc.c                     | 417 +++++++++++++++++++++
- 4 files changed, 472 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
- create mode 100644 drivers/remoteproc/imx_rproc.c
-
--- 
-2.11.0
+ drivers/remoteproc/da8xx_remoteproc.c              |  32 +-
+ drivers/remoteproc/keystone_remoteproc.c           | 525 +++++++++++++++++++++
+ drivers/remoteproc/remoteproc_core.c               | 178 ++++---
+ 6 files changed, 787 insertions(+), 104 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+ create mode 100644 drivers/remoteproc/keystone_remoteproc.c
