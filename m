@@ -1,34 +1,60 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: srinivas.kandagatla@linaro.org
-Subject: [PATCH] rpmsg: qcom_smd: add of_node node to edge device
-Date: Wed, 26 Jul 2017 18:53:44 +0200
-Message-Id: <20170726165344.1120-1-srinivas.kandagatla@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v1 0/2] provide imx rproc driver
+Date: Mon, 10 Jul 2017 16:42:18 +0200
+Message-Id: <20170710144220.31594-1-o.rempel@pengutronix.de>
+To: devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+this patch set to provide remoteproc functionality on
+i.MX7D SoC.
 
-This patch assigns the device node to the edge device, so that the edge
-device drivers could read required device tree properties.
+For testing I used this simple counter written in ASM:
+======================================
+        .syntax unified
+        .text
+        .thumb
+        .int 0x10020000                 @ Initial SP value
+        .int reset + 1
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/rpmsg/qcom_smd.c | 1 +
- 1 file changed, 1 insertion(+)
+reset:
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index a0a39a8..b01774e 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1368,6 +1368,7 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
- 
- 	edge->dev.parent = parent;
- 	edge->dev.release = qcom_smd_edge_release;
-+	edge->dev.of_node = node;
- 	edge->dev.groups = qcom_smd_edge_groups;
- 	dev_set_name(&edge->dev, "%s:%s", dev_name(parent), node->name);
- 	ret = device_register(&edge->dev);
+        mov     r0, #0x55
+        ldr     r1, =(0x40)
+1:
+        str     r0, [r1]
+        add     r0, 1
+        b       1b
+
+        /* Dummy data, required by remoteproc loader */
+        /* Please FIXME, this part seem to be incorrect */
+        .data
+        .section .resource_table, "aw"
+        .word   1, 0, 0, 0      /* struct resource_table base */
+        .word   0               /* uint32_t offset[1] */
+============================================================
+compiled with:
+${CROSS}as -o imx7m4.o imx7m4.S
+${CROSS}ld -Ttext=0x0 -o imx7m4.elf imx7m4.o
+cp imx7m4.elf /srv/nfs/sid-armhf/lib/firmware/rproc-imx_rproc-fw
+
+Functionality was confirmed with current OpenOCD master.
+OpenOCD cfg file can be found here:
+https://github.com/olerem/openocd/blob/imx7-2017.06.14/tcl/target/imx7.cfg
+
+Oleksij Rempel (2):
+  remoteproc: dt: Provide bindings for iMX6SX/7D Remote Processor
+    Controller driver
+  remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver
+
+ .../devicetree/bindings/remoteproc/imx-rproc.txt   |  44 +++
+ drivers/remoteproc/Kconfig                         |  10 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/imx_rproc.c                     | 417 +++++++++++++++++++++
+ 4 files changed, 472 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+ create mode 100644 drivers/remoteproc/imx_rproc.c
+
 -- 
-2.9.3
+2.11.0
