@@ -1,35 +1,32 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 0/2] Qualcomm GLINK SSR support
-Date: Mon, 24 Jul 2017 22:56:42 -0700
-Message-Id: <20170725055644.20947-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <sboyd@codeaurora.org>
+Date: Thu, 13 Jul 2017 00:54:37 -0700
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v6 1/4] firmware: scm: Add new SCM call API for switching
+ memory ownership
+Message-ID: <20170713075437.GZ22780@codeaurora.org>
+References: <1498133333-21291-1-git-send-email-akdwived@codeaurora.org>
+ <1498133333-21291-2-git-send-email-akdwived@codeaurora.org>
+ <20170707224956.GK22780@codeaurora.org>
+ <13defb94-dac3-097d-f3c6-088385b909a5@codeaurora.org>
+ <20170713055404.GS22780@codeaurora.org>
+ <ef046a1b-4b13-9416-9f28-15f069cc80a8@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef046a1b-4b13-9416-9f28-15f069cc80a8@codeaurora.org>
+To: "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This adds the common Qualcomm helpers to tie in subsystem restart notifications
-with the ADSP and Modem PILs and then adds a driver for the "glink_ssr" channel
-to propagate these notifications.
+On 07/13, Dwivedi, Avaneesh Kumar (avani) wrote:
+> OK, will do same.
+> just last thing to ask, should i resend all 4 patches together again
+> or only one patch in v7 version.
+> as chnage will be in only 1 out of 4 patches.
 
-This is needed on GLINK RPM enabled platforms to have the RPM reset the state
-of the communication channels to the peripherals, allowing them to be restarted
-without the RPM crashing due stale FIFO data.
-
-Bjorn Andersson (2):
-  remoteproc: qcom: Add support for SSR notifications
-  soc: qcom: GLINK SSR notifier
-
- drivers/remoteproc/qcom_adsp_pil.c    |   6 ++
- drivers/remoteproc/qcom_common.c      |  71 +++++++++++++++
- drivers/remoteproc/qcom_common.h      |  10 +++
- drivers/remoteproc/qcom_q6v5_pil.c    |   3 +
- drivers/soc/qcom/Kconfig              |   9 ++
- drivers/soc/qcom/Makefile             |   1 +
- drivers/soc/qcom/glink_ssr.c          | 164 ++++++++++++++++++++++++++++++++++
- include/linux/remoteproc/qcom_rproc.h |  22 +++++
- 8 files changed, 286 insertions(+)
- create mode 100644 drivers/soc/qcom/glink_ssr.c
- create mode 100644 include/linux/remoteproc/qcom_rproc.h
+I would resend all of them. That's standard practice for patch
+series.
 
 -- 
-2.12.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
