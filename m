@@ -1,52 +1,54 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH] remoteproc: Merge __rproc_boot() with rproc_boot()
-Date: Wed, 19 Jul 2017 21:06:28 -0500
-Message-ID: <20170720020628.10917-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 073/102] remoteproc: st: explicitly request exclusive reset control
+Date: Wed, 19 Jul 2017 17:26:17 +0200
+Message-Id: <20170719152646.25903-74-p.zabel@pengutronix.de>
+In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Patrice Chotard <patrice.chotard@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The additional arguments in the internal __rproc_boot() function
-were dropped in commit 2bfc311a57f5 ("remoteproc: Drop wait in
-__rproc_boot()"). The exported rproc_boot() is now just a wrapper
-around this internal function, so merge them together.
+Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+reset lines") started to transition the reset control request API calls
+to explicitly state whether the driver needs exclusive or shared reset
+control behavior. Convert all drivers requesting exclusive resets to the
+explicit API call so the temporary transition helpers can be removed.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+No functional changes.
+
+Cc: Patrice Chotard <patrice.chotard@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/remoteproc/remoteproc_core.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/remoteproc/st_remoteproc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 564061dcc019..6224f1036c19 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1129,7 +1129,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
-  *
-  * Returns 0 on success, and an appropriate error value otherwise.
-  */
--static int __rproc_boot(struct rproc *rproc)
-+int rproc_boot(struct rproc *rproc)
- {
- 	const struct firmware *firmware_p;
- 	struct device *dev;
-@@ -1180,15 +1180,6 @@ static int __rproc_boot(struct rproc *rproc)
- 	mutex_unlock(&rproc->lock);
- 	return ret;
- }
--
--/**
-- * rproc_boot() - boot a remote processor
-- * @rproc: handle of a remote processor
-- */
--int rproc_boot(struct rproc *rproc)
--{
--	return __rproc_boot(rproc);
--}
- EXPORT_SYMBOL(rproc_boot);
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index d534bf23dc560..aacef0ea3b902 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -212,7 +212,8 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 	int err;
  
- /**
+ 	if (ddata->config->sw_reset) {
+-		ddata->sw_reset = devm_reset_control_get(dev, "sw_reset");
++		ddata->sw_reset = devm_reset_control_get_exclusive(dev,
++								   "sw_reset");
+ 		if (IS_ERR(ddata->sw_reset)) {
+ 			dev_err(dev, "Failed to get S/W Reset\n");
+ 			return PTR_ERR(ddata->sw_reset);
+@@ -220,7 +221,8 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 	}
+ 
+ 	if (ddata->config->pwr_reset) {
+-		ddata->pwr_reset = devm_reset_control_get(dev, "pwr_reset");
++		ddata->pwr_reset = devm_reset_control_get_exclusive(dev,
++								    "pwr_reset");
+ 		if (IS_ERR(ddata->pwr_reset)) {
+ 			dev_err(dev, "Failed to get Power Reset\n");
+ 			return PTR_ERR(ddata->pwr_reset);
 -- 
-2.13.1
+2.11.0
