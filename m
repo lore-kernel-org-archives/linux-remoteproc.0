@@ -1,69 +1,51 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v7 2/4] remoteproc: qcom: refactor mss fw image loading sequence
-Date: Fri, 21 Jul 2017 16:19:31 +0530
-Message-Id: <1500634173-24416-3-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
-References: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 071/102] remoteproc/keystone: explicitly request exclusive
+ reset control
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+ <20170719152646.25903-72-p.zabel@pengutronix.de>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <0756b169-6f70-5919-020b-367df898dc3f@ti.com>
+Date: Wed, 19 Jul 2017 11:59:09 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170719152646.25903-72-p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch refactor code to first load all firmware blobs
-and then update modem proc to authenticate and boot fw.
+On 07/19/2017 10:26 AM, Philipp Zabel wrote:
+> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+> reset lines") started to transition the reset control request API calls
+> to explicitly state whether the driver needs exclusive or shared reset
+> control behavior. Convert all drivers requesting exclusive resets to the
+> explicit API call so the temporary transition helpers can be removed.
+> 
+> No functional changes.
+> 
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: linux-remoteproc@vger.kernel.org
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+Acked-by: Suman Anna <s-anna@ti.com>
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8fd697a..f5f8850 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -503,7 +503,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	bool relocate = false;
- 	char seg_name[10];
- 	ssize_t offset;
--	size_t size;
-+	size_t size = 0;
- 	void *ptr;
- 	int ret;
- 	int i;
-@@ -541,7 +541,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	}
- 
- 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
--
-+	/* Load firmware segments */
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		phdr = &phdrs[i];
- 
-@@ -574,18 +574,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			memset(ptr + phdr->p_filesz, 0,
- 			       phdr->p_memsz - phdr->p_filesz);
- 		}
--
--		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
--		if (!size) {
--			boot_addr = relocate ? qproc->mpss_phys : min_addr;
--			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
--			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
--		}
--
- 		size += phdr->p_memsz;
--		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
- 	}
- 
-+	/* Transfer ownership of modem ddr region with q6*/
-+	boot_addr = relocate ? qproc->mpss_phys : min_addr;
-+	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-+	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
-+	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-+
- 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "MPSS authentication timed out\n");
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+> ---
+>  drivers/remoteproc/keystone_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+> index 5f776bfd674a0..920fef072b364 100644
+> --- a/drivers/remoteproc/keystone_remoteproc.c
+> +++ b/drivers/remoteproc/keystone_remoteproc.c
+> @@ -410,7 +410,7 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto free_rproc;
+>  
+> -	ksproc->reset = devm_reset_control_get(dev, NULL);
+> +	ksproc->reset = devm_reset_control_get_exclusive(dev, NULL);
+>  	if (IS_ERR(ksproc->reset)) {
+>  		ret = PTR_ERR(ksproc->reset);
+>  		goto free_rproc;
+> 
