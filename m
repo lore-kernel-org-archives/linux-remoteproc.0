@@ -1,58 +1,43 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 5 Jul 2017 16:43:14 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] rpmsg updates for v4.13
-Message-ID: <20170705234314.GA20643@builder>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Henri Roosen <henri.roosen@ginzinger.com>, Suman Anna <s-anna@ti.com>
+Return-Path: <p.zabel@pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 072/102] remoteproc: qcom: explicitly request exclusive reset control
+Date: Wed, 19 Jul 2017 17:26:16 +0200
+Message-Id: <20170719152646.25903-73-p.zabel@pengutronix.de>
+In-Reply-To: <20170719152646.25903-1-p.zabel@pengutronix.de>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 2ea659a9ef488125eb46da6eb571de5eae5c43f6:
+Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+reset lines") started to transition the reset control request API calls
+to explicitly state whether the driver needs exclusive or shared reset
+control behavior. Convert all drivers requesting exclusive resets to the
+explicit API call so the temporary transition helpers can be removed.
 
-  Linux 4.12-rc1 (2017-05-13 13:19:49 -0700)
+No functional changes.
 
-are available in the git repository at:
+Cc: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/remoteproc/qcom_q6v5_pil.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  git://github.com/andersson/remoteproc tags/rpmsg-v4.13
-
-for you to fetch changes up to f4ce85281139214cd50900d0ff38b7d97766318f:
-
-  rpmsg: Make modalias work for DeviceTree based devices (2017-06-28 21:49:24 -0700)
-
-----------------------------------------------------------------
-rpmsg updates for v4.13
-
-This introduces the Qualcomm GLINK protocol driver and DeviceTree-based
-modalias support, as well as a number of smaller fixes.
-
-----------------------------------------------------------------
-Bjorn Andersson (5):
-      rpmsg: Release rpmsg devices in backends
-      soc: qcom: Add device tree binding for GLINK RPM
-      rpmsg: Introduce Qualcomm RPM glink driver
-      rpmsg: Don't overwrite release op of rpdev
-      rpmsg: Make modalias work for DeviceTree based devices
-
-Henri Roosen (4):
-      rpmsg: virtio_rpmsg_bus: fix announce for devices without endpoint
-      rpmsg: cleanup incorrect function in dev_err message
-      rpmsg: virtio_rpmsg_bus: fix nameservice address
-      rpmsg: virtio_rpmsg_bus: cleanup multiple assignment to ops
-
-Suman Anna (1):
-      rpmsg: Drop VIRTUALIZATION dependency from RPMSG_VIRTIO
-
- .../devicetree/bindings/soc/qcom/qcom,glink.txt    |   73 ++
- drivers/rpmsg/Kconfig                              |   11 +-
- drivers/rpmsg/Makefile                             |    1 +
- drivers/rpmsg/qcom_glink_rpm.c                     | 1233 ++++++++++++++++++++
- drivers/rpmsg/qcom_smd.c                           |   11 +
- drivers/rpmsg/rpmsg_char.c                         |    4 +-
- drivers/rpmsg/rpmsg_core.c                         |   18 +-
- drivers/rpmsg/virtio_rpmsg_bus.c                   |   18 +-
- 8 files changed, 1352 insertions(+), 17 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
- create mode 100644 drivers/rpmsg/qcom_glink_rpm.c
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 8fd697a3cf8f9..f156dfc463d85 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -867,7 +867,8 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
+ 
+ static int q6v5_init_reset(struct q6v5 *qproc)
+ {
+-	qproc->mss_restart = devm_reset_control_get(qproc->dev, NULL);
++	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
++							      NULL);
+ 	if (IS_ERR(qproc->mss_restart)) {
+ 		dev_err(qproc->dev, "failed to acquire mss restart\n");
+ 		return PTR_ERR(qproc->mss_restart);
+-- 
+2.11.0
