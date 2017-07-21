@@ -1,38 +1,69 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 4/4] remoteproc/keystone: Fix circular dependencies for ARM configs
-Date: Tue, 27 Jun 2017 17:46:10 -0500
-Message-ID: <20170627224610.15321-5-s-anna@ti.com>
-In-Reply-To: <20170627224610.15321-1-s-anna@ti.com>
-References: <20170627224610.15321-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v7 2/4] remoteproc: qcom: refactor mss fw image loading sequence
+Date: Fri, 21 Jul 2017 16:19:31 +0530
+Message-Id: <1500634173-24416-3-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
+References: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Drop the dependency on RESET_CONTROLLER for the Keystone remoteproc
-driver to resolve some circular dependencies around different choices
-for RESET_CONTROLLER on common ARM configs. This dependency is
-inherent as the RESET_CONTROLLER will be enabled due to the enabled
-ARCH_HAS_RESET_CONTROLLER for ARCH_KEYSTONE.
+This patch refactor code to first load all firmware blobs
+and then update modem proc to authenticate and boot fw.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 ---
- drivers/remoteproc/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 945c1574f896..8891a8e50f12 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -70,7 +70,6 @@ config DA8XX_REMOTEPROC
- config KEYSTONE_REMOTEPROC
- 	tristate "Keystone Remoteproc support"
- 	depends on ARCH_KEYSTONE
--	depends on RESET_CONTROLLER
- 	select RPMSG_VIRTIO
- 	help
- 	  Say Y here here to support Keystone remote processors (DSP)
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 8fd697a..f5f8850 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -503,7 +503,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	bool relocate = false;
+ 	char seg_name[10];
+ 	ssize_t offset;
+-	size_t size;
++	size_t size = 0;
+ 	void *ptr;
+ 	int ret;
+ 	int i;
+@@ -541,7 +541,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	}
+ 
+ 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+-
++	/* Load firmware segments */
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+ 		phdr = &phdrs[i];
+ 
+@@ -574,18 +574,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
+-
+-		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+-		if (!size) {
+-			boot_addr = relocate ? qproc->mpss_phys : min_addr;
+-			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+-			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+-		}
+-
+ 		size += phdr->p_memsz;
+-		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+ 	}
+ 
++	/* Transfer ownership of modem ddr region with q6*/
++	boot_addr = relocate ? qproc->mpss_phys : min_addr;
++	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
++	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
++	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
++
+ 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(qproc->dev, "MPSS authentication timed out\n");
 -- 
-2.13.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
