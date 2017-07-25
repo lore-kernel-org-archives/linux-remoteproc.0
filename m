@@ -1,240 +1,260 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v7 1/4] firmware: scm: Add new SCM call API for switching memory ownership
-Date: Fri, 21 Jul 2017 16:19:30 +0530
-Message-Id: <1500634173-24416-2-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
-References: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 1/2] remoteproc: qcom: Add support for SSR notifications
+Date: Mon, 24 Jul 2017 22:56:43 -0700
+Message-Id: <20170725055644.20947-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20170725055644.20947-1-bjorn.andersson@linaro.org>
+References: <20170725055644.20947-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Two different processors on a SOC need to switch memory ownership
-during load/unload. To enable this, second level memory map table
-need to be updated, which is done by secure layer.
-This patch adds the interface for making secure monitor call for
-memory ownership switching request.
+This adds the remoteproc part of subsystem restart, which is responsible
+for emitting notifications to other processors in the system about a
+dying remoteproc instance.
 
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+These notifications are propagated to the various communication systems
+in the various remote processors to shut down communication links that
+was left in a dangling state as the remoteproc was stopped (or crashed).
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/firmware/qcom_scm-32.c |  7 ++++
- drivers/firmware/qcom_scm-64.c | 27 ++++++++++++
- drivers/firmware/qcom_scm.c    | 94 ++++++++++++++++++++++++++++++++++++++++++
- drivers/firmware/qcom_scm.h    |  5 +++
- include/linux/qcom_scm.h       | 16 +++++++
- 5 files changed, 149 insertions(+)
+ drivers/remoteproc/qcom_adsp_pil.c    |  6 +++
+ drivers/remoteproc/qcom_common.c      | 71 +++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_common.h      | 10 +++++
+ drivers/remoteproc/qcom_q6v5_pil.c    |  3 ++
+ include/linux/remoteproc/qcom_rproc.h | 22 +++++++++++
+ 5 files changed, 112 insertions(+)
+ create mode 100644 include/linux/remoteproc/qcom_rproc.h
 
-diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
-index 93e3b96..758b910 100644
---- a/drivers/firmware/qcom_scm-32.c
-+++ b/drivers/firmware/qcom_scm-32.c
-@@ -596,3 +596,10 @@ int __qcom_scm_iommu_secure_ptbl_init(struct device *dev, u64 addr, u32 size,
- {
- 	return -ENODEV;
- }
-+
-+int __qcom_scm_assign_mem(struct device *dev, phys_addr_t mem_region,
-+			  size_t mem_sz, phys_addr_t src, size_t src_sz,
-+			  phys_addr_t dest, size_t dest_sz)
-+{
-+	return -ENODEV;
-+}
-diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
-index 6e6d561..6bdbeae 100644
---- a/drivers/firmware/qcom_scm-64.c
-+++ b/drivers/firmware/qcom_scm-64.c
-@@ -439,3 +439,30 @@ int __qcom_scm_iommu_secure_ptbl_init(struct device *dev, u64 addr, u32 size,
- 
- 	return ret;
- }
-+
-+int __qcom_scm_assign_mem(struct device *dev, phys_addr_t mem_region,
-+			  size_t mem_sz, phys_addr_t src, size_t src_sz,
-+			  phys_addr_t dest, size_t dest_sz)
-+{
-+	int ret;
-+	struct qcom_scm_desc desc = {0};
-+	struct arm_smccc_res res;
-+
-+	desc.args[0] = mem_region;
-+	desc.args[1] = mem_sz;
-+	desc.args[2] = src;
-+	desc.args[3] = src_sz;
-+	desc.args[4] = dest;
-+	desc.args[5] = dest_sz;
-+	desc.args[6] = 0;
-+
-+	desc.arginfo = QCOM_SCM_ARGS(7, QCOM_SCM_RO, QCOM_SCM_VAL,
-+				     QCOM_SCM_RO, QCOM_SCM_VAL, QCOM_SCM_RO,
-+				     QCOM_SCM_VAL, QCOM_SCM_VAL);
-+
-+	ret = qcom_scm_call(dev, QCOM_SCM_SVC_MP,
-+			    QCOM_MEM_PROT_ASSIGN_ID,
-+			    &desc, &res);
-+
-+	return ret ? : res.a1;
-+}
-diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-index bb16510..009a42d 100644
---- a/drivers/firmware/qcom_scm.c
-+++ b/drivers/firmware/qcom_scm.c
-@@ -40,6 +40,18 @@ struct qcom_scm {
- 	struct reset_controller_dev reset;
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 49fe2f807e1d..a41d399766fd 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -38,6 +38,7 @@ struct adsp_data {
+ 	const char *firmware_name;
+ 	int pas_id;
+ 	bool has_aggre2_clk;
++	const char *ssr_name;
  };
  
-+struct qcom_scm_current_perm_info {
-+	__le32 vmid;
-+	__le32 perm;
-+	__le64 ctx;
-+	__le32 ctx_size;
-+};
-+
-+struct qcom_scm_mem_map_info {
-+	__le64 mem_addr;
-+	__le64 mem_size;
-+};
-+
- static struct qcom_scm *__scm;
+ struct qcom_adsp {
+@@ -72,6 +73,7 @@ struct qcom_adsp {
+ 	size_t mem_size;
  
- static int qcom_scm_clk_enable(void)
-@@ -292,6 +304,88 @@ int qcom_scm_pas_shutdown(u32 peripheral)
+ 	struct qcom_rproc_subdev smd_subdev;
++	struct qcom_rproc_ssr ssr_subdev;
+ };
+ 
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+@@ -402,6 +404,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
++	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+@@ -423,6 +426,7 @@ static int adsp_remove(struct platform_device *pdev)
+ 	rproc_del(adsp->rproc);
+ 
+ 	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
++	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
+ 	rproc_free(adsp->rproc);
+ 
+ 	return 0;
+@@ -433,6 +437,7 @@ static const struct adsp_data adsp_resource_init = {
+ 		.firmware_name = "adsp.mdt",
+ 		.pas_id = 1,
+ 		.has_aggre2_clk = false,
++		.ssr_name = "lpass",
+ };
+ 
+ static const struct adsp_data slpi_resource_init = {
+@@ -440,6 +445,7 @@ static const struct adsp_data slpi_resource_init = {
+ 		.firmware_name = "slpi.mdt",
+ 		.pas_id = 12,
+ 		.has_aggre2_clk = true,
++		.ssr_name = "dsps",
+ };
+ 
+ static const struct of_device_id adsp_of_match[] = {
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index bb90481215c6..5556e767d65b 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -18,6 +18,7 @@
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/notifier.h>
+ #include <linux/remoteproc.h>
+ #include <linux/rpmsg/qcom_smd.h>
+ 
+@@ -25,6 +26,9 @@
+ #include "qcom_common.h"
+ 
+ #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
++#define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
++
++BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+ 
+ /**
+  * qcom_mdt_find_rsc_table() - provide dummy resource table for remoteproc
+@@ -92,5 +96,72 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
  }
- EXPORT_SYMBOL(qcom_scm_pas_shutdown);
+ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
  
 +/**
-+ * qcom_scm_assign_mem() - Make a secure call to reassign memory ownership
++ * qcom_register_ssr_notifier() - register SSR notification handler
++ * @nb:		notifier_block to notify for restart notifications
 + *
-+ * @mem_addr: mem region whose ownership need to be reassigned
-+ * @mem_sz:   size of the region.
-+ * @srcvm:    vmid for current set of owners, each set bit in
-+ *            flag indicate a unique owner
-+ * @newvm:    array having new owners and corrsponding permission
-+ *            flags
-+ * @dest_cnt: number of owners in next set.
-+ * Return next set of owners on success.
++ * Returns 0 on success, negative errno on failure.
++ *
++ * This register the @notify function as handler for restart notifications. As
++ * remote processors are stopped this function will be called, with the SSR
++ * name passed as a parameter.
 + */
-+int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz, int srcvm,
-+			struct qcom_scm_vmperm *newvm, int dest_cnt)
++int qcom_register_ssr_notifier(struct notifier_block *nb)
 +{
-+	struct qcom_scm_current_perm_info *destvm;
-+	struct qcom_scm_mem_map_info *mem;
-+	phys_addr_t memory_phys;
-+	phys_addr_t dest_phys;
-+	phys_addr_t src_phys;
-+	size_t mem_all_sz;
-+	size_t memory_sz;
-+	size_t dest_sz;
-+	size_t src_sz;
-+	int next_vm;
-+	__le32 *src;
-+	void *ptr;
-+	int ret;
-+	int len;
-+	int i;
-+
-+	src_sz = hweight_long(srcvm) * sizeof(*src);
-+	memory_sz = sizeof(*mem);
-+	dest_sz = dest_cnt * sizeof(*destvm);
-+	mem_all_sz = src_sz + memory_sz + dest_sz;
-+
-+	ptr = dma_alloc_coherent(__scm->dev, ALIGN(mem_all_sz, SZ_64),
-+				 &src_phys, GFP_KERNEL);
-+
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	/* Fill source vmid detail */
-+	src = ptr;
-+	len = hweight_long(srcvm);
-+	for (i = 0; i < len; i++) {
-+		src[i] = cpu_to_le32(ffs(srcvm) - 1);
-+		srcvm ^= 1 << (ffs(srcvm) - 1);
-+	}
-+
-+	/* Fill details of mem buff to map */
-+	mem = ptr + ALIGN(src_sz, SZ_64);
-+	memory_phys = src_phys + ALIGN(src_sz, SZ_64);
-+	mem[0].mem_addr = cpu_to_le64(mem_addr);
-+	mem[0].mem_size = cpu_to_le64(mem_sz);
-+
-+	next_vm = 0;
-+	/* Fill details of next vmid detail */
-+	destvm = ptr + ALIGN(memory_sz, SZ_64) + ALIGN(src_sz, SZ_64);
-+	dest_phys = memory_phys + ALIGN(memory_sz, SZ_64);
-+	for (i = 0; i < dest_cnt; i++) {
-+		destvm[i].vmid = cpu_to_le32(newvm[i].vmid);
-+		destvm[i].perm = cpu_to_le32(newvm[i].perm);
-+		destvm[i].ctx = 0;
-+		destvm[i].ctx_size = 0;
-+		next_vm |= BIT(newvm[i].vmid);
-+	}
-+
-+	ret = __qcom_scm_assign_mem(__scm->dev, memory_phys, memory_sz,
-+				    src_phys, src_sz, dest_phys, dest_sz);
-+	dma_free_coherent(__scm->dev, ALIGN(mem_all_sz, SZ_64),
-+			  ptr, src_phys);
-+	if (ret != 0) {
-+		dev_err(__scm->dev,
-+			"Assign memory protection call failed %d.\n", ret);
-+		return -EINVAL;
-+	} else {
-+		return next_vm;
-+	}
++	return blocking_notifier_chain_register(&ssr_notifiers, nb);
 +}
-+EXPORT_SYMBOL(qcom_scm_assign_mem);
++EXPORT_SYMBOL_GPL(qcom_register_ssr_notifier);
 +
- static int qcom_scm_pas_reset_assert(struct reset_controller_dev *rcdev,
- 				     unsigned long idx)
- {
-diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
-index 9bea691..fe54b7b 100644
---- a/drivers/firmware/qcom_scm.h
-+++ b/drivers/firmware/qcom_scm.h
-@@ -95,5 +95,10 @@ extern int __qcom_scm_iommu_secure_ptbl_size(struct device *dev, u32 spare,
- 					     size_t *size);
- extern int __qcom_scm_iommu_secure_ptbl_init(struct device *dev, u64 addr,
- 					     u32 size, u32 spare);
-+#define QCOM_MEM_PROT_ASSIGN_ID	0x16
-+extern int  __qcom_scm_assign_mem(struct device *dev,
-+				  phys_addr_t mem_region, size_t mem_sz,
-+				  phys_addr_t src, size_t src_sz,
-+				  phys_addr_t dest, size_t dest_sz);
- 
- #endif
-diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
-index e538047..a9c284d 100644
---- a/include/linux/qcom_scm.h
-+++ b/include/linux/qcom_scm.h
-@@ -23,6 +23,19 @@ struct qcom_scm_hdcp_req {
- 	u32 val;
++/**
++ * qcom_unregister_ssr_notifier() - unregister SSR notification handler
++ * @nb:		notifier_block to unregister
++ */
++void qcom_unregister_ssr_notifier(struct notifier_block *nb)
++{
++	blocking_notifier_chain_unregister(&ssr_notifiers, nb);
++}
++EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
++
++static int ssr_notify_start(struct rproc_subdev *subdev)
++{
++	return  0;
++}
++
++static void ssr_notify_stop(struct rproc_subdev *subdev)
++{
++	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
++
++	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr->name);
++}
++
++/**
++ * qcom_add_ssr_subdev() - register subdevice as restart notification source
++ * @rproc:	rproc handle
++ * @ssr:	SSR subdevice handle
++ * @ssr_name:	identifier to use for notifications originating from @rproc
++ *
++ * As the @ssr is registered with the @rproc SSR events will be sent to all
++ * registered listeners in the system as the remoteproc is shut down.
++ */
++void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
++			 const char *ssr_name)
++{
++	ssr->name = ssr_name;
++
++	rproc_add_subdev(rproc, &ssr->subdev, ssr_notify_start, ssr_notify_stop);
++}
++EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
++
++/**
++ * qcom_remove_ssr_subdev() - remove subdevice as restart notification source
++ * @rproc:	rproc handle
++ * @ssr:	SSR subdevice handle
++ */
++void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
++{
++	rproc_remove_subdev(rproc, &ssr->subdev);
++}
++EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
++
+ MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index db5c826d5cd4..fab28b64b8ea 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -12,6 +12,12 @@ struct qcom_rproc_subdev {
+ 	struct qcom_smd_edge *edge;
  };
  
-+struct qcom_scm_vmperm {
-+	int vmid;
-+	int perm;
++struct qcom_rproc_ssr {
++	struct rproc_subdev subdev;
++
++	const char *name;
 +};
 +
-+#define QCOM_SCM_VMID_HLOS       0x3
-+#define QCOM_SCM_VMID_MSS_MSA    0xF
-+#define QCOM_SCM_PERM_READ       0x4
-+#define QCOM_SCM_PERM_WRITE      0x2
-+#define QCOM_SCM_PERM_EXEC       0x1
-+#define QCOM_SCM_PERM_RW (QCOM_SCM_PERM_READ | QCOM_SCM_PERM_WRITE)
-+#define QCOM_SCM_PERM_RWX (QCOM_SCM_PERM_RW | QCOM_SCM_PERM_EXEC)
+ struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+ 					       const struct firmware *fw,
+ 					       int *tablesz);
+@@ -19,4 +25,8 @@ struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
+ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
+ 
++void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
++			 const char *ssr_name);
++void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr);
 +
- #if IS_ENABLED(CONFIG_QCOM_SCM)
- extern int qcom_scm_set_cold_boot_addr(void *entry, const cpumask_t *cpus);
- extern int qcom_scm_set_warm_boot_addr(void *entry, const cpumask_t *cpus);
-@@ -37,6 +50,9 @@ extern int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,
- 				  phys_addr_t size);
- extern int qcom_scm_pas_auth_and_reset(u32 peripheral);
- extern int qcom_scm_pas_shutdown(u32 peripheral);
-+extern int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
-+			       int src, struct qcom_scm_vmperm *newvm,
-+			       int dest_cnt);
- extern void qcom_scm_cpu_power_down(u32 flags);
- extern u32 qcom_scm_get_version(void);
- extern int qcom_scm_set_remote_state(u32 state, u32 id);
+ #endif
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 8fd697a3cf8f..fc3ef1e81433 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -153,6 +153,7 @@ struct q6v5 {
+ 	size_t mpss_size;
+ 
+ 	struct qcom_rproc_subdev smd_subdev;
++	struct qcom_rproc_ssr ssr_subdev;
+ };
+ 
+ static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+@@ -1038,6 +1039,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
++	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+@@ -1058,6 +1060,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	rproc_del(qproc->rproc);
+ 
+ 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
++	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
+ 	rproc_free(qproc->rproc);
+ 
+ 	return 0;
+diff --git a/include/linux/remoteproc/qcom_rproc.h b/include/linux/remoteproc/qcom_rproc.h
+new file mode 100644
+index 000000000000..fa8e38681b4b
+--- /dev/null
++++ b/include/linux/remoteproc/qcom_rproc.h
+@@ -0,0 +1,22 @@
++#ifndef __QCOM_RPROC_H__
++#define __QCOM_RPROC_H__
++
++struct notifier_block;
++
++#if IS_ENABLED(CONFIG_QCOM_RPROC_COMMON)
++
++int qcom_register_ssr_notifier(struct notifier_block *nb);
++void qcom_unregister_ssr_notifier(struct notifier_block *nb);
++
++#else
++
++static inline int qcom_register_ssr_notifier(struct notifier_block *nb)
++{
++	return 0;
++}
++
++static inline void qcom_unregister_ssr_notifier(struct notifier_block *nb) {}
++
++#endif
++
++#endif
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.12.0
