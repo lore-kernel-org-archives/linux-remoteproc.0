@@ -1,260 +1,103 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 1/2] remoteproc: qcom: Add support for SSR notifications
-Date: Mon, 24 Jul 2017 22:56:43 -0700
-Message-Id: <20170725055644.20947-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20170725055644.20947-1-bjorn.andersson@linaro.org>
-References: <20170725055644.20947-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH 1/3] drivers: remoteproc: Make mdt_loader firmware
+ authentication optional
+References: <1498745861-20531-1-git-send-email-sricharan@codeaurora.org>
+ <1498745861-20531-2-git-send-email-sricharan@codeaurora.org>
+ <20170726181108.GP20973@minitux>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <8efe0cb2-d169-de5b-d801-a3f6785b554f@codeaurora.org>
+Date: Fri, 28 Jul 2017 21:45:18 +0530
+MIME-Version: 1.0
+In-Reply-To: <20170726181108.GP20973@minitux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This adds the remoteproc part of subsystem restart, which is responsible
-for emitting notifications to other processors in the system about a
-dying remoteproc instance.
+Hi Bjorn,
+   Thanks for the review !
 
-These notifications are propagated to the various communication systems
-in the various remote processors to shut down communication links that
-was left in a dangling state as the remoteproc was stopped (or crashed).
+On 7/26/2017 11:41 PM, Bjorn Andersson wrote:
+> On Thu 29 Jun 07:17 PDT 2017, Sricharan R wrote:
+> 
+>> qcom_mdt_load function loads the mdt type firmware and
+>> authenticates it as well. Make the authentication only
+>> when requested by the caller, so that the function can be used
+>> by self-authenticating remoteproc as well.
+>>
+> 
+> This is good, we should be able to save some duplication the current
+> MSA PIL as well by this.
+> 
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_adsp_pil.c  |  3 ++-
+>>  drivers/remoteproc/qcom_wcnss.c     |  3 ++-
+>>  drivers/soc/qcom/mdt_loader.c       | 24 ++++++++++++++----------
+>>  include/linux/soc/qcom/mdt_loader.h |  2 +-
+> 
+> We have two additional callers being merged, so changing the prototype
+> of qcom_mdt_load() will cause issues.
+> 
+> I think the best approach is to leave all callers untouched, make the
+> current implementation of qcom_mdt_load() internal and provide two
+> exported wrapper functions: qcom_mdt_load() and qcom_mdt_load_no_init().
+> 
+> These wrappers would call the internal function with the appropriate
+> value of the boolean.
+> 
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/qcom_adsp_pil.c    |  6 +++
- drivers/remoteproc/qcom_common.c      | 71 +++++++++++++++++++++++++++++++++++
- drivers/remoteproc/qcom_common.h      | 10 +++++
- drivers/remoteproc/qcom_q6v5_pil.c    |  3 ++
- include/linux/remoteproc/qcom_rproc.h | 22 +++++++++++
- 5 files changed, 112 insertions(+)
- create mode 100644 include/linux/remoteproc/qcom_rproc.h
+ ok, will do.
 
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 49fe2f807e1d..a41d399766fd 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -38,6 +38,7 @@ struct adsp_data {
- 	const char *firmware_name;
- 	int pas_id;
- 	bool has_aggre2_clk;
-+	const char *ssr_name;
- };
+> [..]
+>> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> [..]
+>>  int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>>  		  const char *firmware, int pas_id, void *mem_region,
+>> -		  phys_addr_t mem_phys, size_t mem_size)
+>> +		  phys_addr_t mem_phys, size_t mem_size, bool auth)
+> 
+> We're not authenticating even with @auth=true, so please name this
+> "pas_init".
+>
+
+ ok will rename.
  
- struct qcom_adsp {
-@@ -72,6 +73,7 @@ struct qcom_adsp {
- 	size_t mem_size;
- 
- 	struct qcom_rproc_subdev smd_subdev;
-+	struct qcom_rproc_ssr ssr_subdev;
- };
- 
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
-@@ -402,6 +404,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	}
- 
- 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
-+	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
-@@ -423,6 +426,7 @@ static int adsp_remove(struct platform_device *pdev)
- 	rproc_del(adsp->rproc);
- 
- 	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
-+	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
- 	rproc_free(adsp->rproc);
- 
- 	return 0;
-@@ -433,6 +437,7 @@ static const struct adsp_data adsp_resource_init = {
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
-+		.ssr_name = "lpass",
- };
- 
- static const struct adsp_data slpi_resource_init = {
-@@ -440,6 +445,7 @@ static const struct adsp_data slpi_resource_init = {
- 		.firmware_name = "slpi.mdt",
- 		.pas_id = 12,
- 		.has_aggre2_clk = true,
-+		.ssr_name = "dsps",
- };
- 
- static const struct of_device_id adsp_of_match[] = {
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index bb90481215c6..5556e767d65b 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -18,6 +18,7 @@
- #include <linux/firmware.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/notifier.h>
- #include <linux/remoteproc.h>
- #include <linux/rpmsg/qcom_smd.h>
- 
-@@ -25,6 +26,9 @@
- #include "qcom_common.h"
- 
- #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
-+#define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
-+
-+BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
- 
- /**
-  * qcom_mdt_find_rsc_table() - provide dummy resource table for remoteproc
-@@ -92,5 +96,72 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
- }
- EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
- 
-+/**
-+ * qcom_register_ssr_notifier() - register SSR notification handler
-+ * @nb:		notifier_block to notify for restart notifications
-+ *
-+ * Returns 0 on success, negative errno on failure.
-+ *
-+ * This register the @notify function as handler for restart notifications. As
-+ * remote processors are stopped this function will be called, with the SSR
-+ * name passed as a parameter.
-+ */
-+int qcom_register_ssr_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_register(&ssr_notifiers, nb);
-+}
-+EXPORT_SYMBOL_GPL(qcom_register_ssr_notifier);
-+
-+/**
-+ * qcom_unregister_ssr_notifier() - unregister SSR notification handler
-+ * @nb:		notifier_block to unregister
-+ */
-+void qcom_unregister_ssr_notifier(struct notifier_block *nb)
-+{
-+	blocking_notifier_chain_unregister(&ssr_notifiers, nb);
-+}
-+EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
-+
-+static int ssr_notify_start(struct rproc_subdev *subdev)
-+{
-+	return  0;
-+}
-+
-+static void ssr_notify_stop(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-+
-+	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr->name);
-+}
-+
-+/**
-+ * qcom_add_ssr_subdev() - register subdevice as restart notification source
-+ * @rproc:	rproc handle
-+ * @ssr:	SSR subdevice handle
-+ * @ssr_name:	identifier to use for notifications originating from @rproc
-+ *
-+ * As the @ssr is registered with the @rproc SSR events will be sent to all
-+ * registered listeners in the system as the remoteproc is shut down.
-+ */
-+void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
-+			 const char *ssr_name)
-+{
-+	ssr->name = ssr_name;
-+
-+	rproc_add_subdev(rproc, &ssr->subdev, ssr_notify_start, ssr_notify_stop);
-+}
-+EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
-+
-+/**
-+ * qcom_remove_ssr_subdev() - remove subdevice as restart notification source
-+ * @rproc:	rproc handle
-+ * @ssr:	SSR subdevice handle
-+ */
-+void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
-+{
-+	rproc_remove_subdev(rproc, &ssr->subdev);
-+}
-+EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
-+
- MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
-index db5c826d5cd4..fab28b64b8ea 100644
---- a/drivers/remoteproc/qcom_common.h
-+++ b/drivers/remoteproc/qcom_common.h
-@@ -12,6 +12,12 @@ struct qcom_rproc_subdev {
- 	struct qcom_smd_edge *edge;
- };
- 
-+struct qcom_rproc_ssr {
-+	struct rproc_subdev subdev;
-+
-+	const char *name;
-+};
-+
- struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
- 					       const struct firmware *fw,
- 					       int *tablesz);
-@@ -19,4 +25,8 @@ struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
- void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
- void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
- 
-+void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
-+			 const char *ssr_name);
-+void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr);
-+
- #endif
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8fd697a3cf8f..fc3ef1e81433 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -153,6 +153,7 @@ struct q6v5 {
- 	size_t mpss_size;
- 
- 	struct qcom_rproc_subdev smd_subdev;
-+	struct qcom_rproc_ssr ssr_subdev;
- };
- 
- static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-@@ -1038,6 +1039,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 
- 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
-+	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
-@@ -1058,6 +1060,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 	rproc_del(qproc->rproc);
- 
- 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
-+	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
- 	rproc_free(qproc->rproc);
- 
- 	return 0;
-diff --git a/include/linux/remoteproc/qcom_rproc.h b/include/linux/remoteproc/qcom_rproc.h
-new file mode 100644
-index 000000000000..fa8e38681b4b
---- /dev/null
-+++ b/include/linux/remoteproc/qcom_rproc.h
-@@ -0,0 +1,22 @@
-+#ifndef __QCOM_RPROC_H__
-+#define __QCOM_RPROC_H__
-+
-+struct notifier_block;
-+
-+#if IS_ENABLED(CONFIG_QCOM_RPROC_COMMON)
-+
-+int qcom_register_ssr_notifier(struct notifier_block *nb);
-+void qcom_unregister_ssr_notifier(struct notifier_block *nb);
-+
-+#else
-+
-+static inline int qcom_register_ssr_notifier(struct notifier_block *nb)
-+{
-+	return 0;
-+}
-+
-+static inline void qcom_unregister_ssr_notifier(struct notifier_block *nb) {}
-+
-+#endif
-+
-+#endif
+>>  {
+>>  	const struct elf32_phdr *phdrs;
+>>  	const struct elf32_phdr *phdr;
+> [..]
+>> @@ -142,12 +144,14 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>>  	}
+>>  
+>>  	if (relocate) {
+>> -		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
+>> -		if (ret) {
+>> -			dev_err(dev, "unable to setup relocation\n");
+>> -			goto out;
+>> +		if (auth) {
+>> +			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
+>> +						     max_addr - min_addr);
+>> +			if (ret) {
+>> +				dev_err(dev, "unable to setup relocation\n");
+>> +				goto out;
+>> +			}
+>>  		}
+>> -
+> 
+> I like this empty line, please let me have it.
+> 
+
+ ok.
+
+Regards,
+ Sricharan
+
 -- 
-2.12.0
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
