@@ -1,79 +1,112 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v2 18/20] rpmsg: glink: Use the intents passed by remote
-Date: Thu, 24 Aug 2017 12:51:40 +0530
-Message-Id: <1503559302-3744-19-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH v2 4/4] remoteproc/davinci: Add device tree support for OMAP-L138 DSP
+Date: Tue, 1 Aug 2017 10:48:44 -0500
+Message-ID: <20170801154844.24662-5-s-anna@ti.com>
+In-Reply-To: <20170801154844.24662-1-s-anna@ti.com>
+References: <20170801154844.24662-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-While sending data, use the remote intent id buffer
-of suitable size that was passed by remote previously.
+The Davinci remoteproc driver currently supports the DSP remoteproc
+device created in legacy-style on OMAP-L13x SoCs. The driver has been
+enhanced to support the DSP remoteproc device created through Device
+Tree now. The current DT support handles the C674x DSP processor
+subsystem on OMAP-L138 SoCs.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/rpmsg/qcom_glink_native.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+v2:
+ - Add __maybe_unused and of_match_ptr to deal with non-OF builds
+ - Rebased patch after dropping the interrupt management patch from
+   the cleanup series, https://patchwork.kernel.org/patch/9735321/
+v1: https://patchwork.kernel.org/patch/9751277/
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index d93d651..163c082 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1110,19 +1110,50 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 			     void *data, int len, bool wait)
- {
- 	struct qcom_glink *glink = channel->glink;
-+	struct glink_core_rx_intent *intent = NULL;
-+	struct glink_core_rx_intent *tmp;
-+	int iid = 0;
- 	struct {
- 		struct glink_msg msg;
- 		__le32 chunk_size;
- 		__le32 left_size;
- 	} __packed req;
-+	int ret;
-+	unsigned long flags;
-+
-+	if (!glink->intentless) {
-+		if (!intent) {
-+			spin_lock_irqsave(&channel->intent_lock, flags);
-+			idr_for_each_entry(&channel->riids, tmp, iid) {
-+				if (tmp->size >= len && !tmp->in_use) {
-+					tmp->in_use = true;
-+					intent = tmp;
-+					break;
-+				}
-+			}
-+			spin_unlock_irqrestore(&channel->intent_lock, flags);
-+
-+			/* We found an available intent */
-+			if (!intent)
-+				return -EBUSY;
+ drivers/remoteproc/da8xx_remoteproc.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index c1cff78de67b..bf3b9034c319 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -16,6 +16,7 @@
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
+ 
+@@ -261,10 +262,21 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsp_clk);
+ 	}
+ 
++	if (dev->of_node) {
++		ret = of_reserved_mem_device_init(dev);
++		if (ret) {
++			dev_err(dev, "device does not have specific CMA pool: %d\n",
++				ret);
++			return ret;
 +		}
++	}
 +
-+		iid = intent->id;
+ 	rproc = rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
+ 		sizeof(*drproc));
+-	if (!rproc)
+-		return -ENOMEM;
++	if (!rproc) {
++		ret = -ENOMEM;
++		goto free_mem;
 +	}
  
- 	req.msg.cmd = cpu_to_le16(RPM_CMD_TX_DATA);
- 	req.msg.param1 = cpu_to_le16(channel->lcid);
--	req.msg.param2 = cpu_to_le32(channel->rcid);
-+	req.msg.param2 = cpu_to_le32(iid);
- 	req.chunk_size = cpu_to_le32(len);
- 	req.left_size = cpu_to_le32(0);
+ 	drproc = rproc->priv;
+ 	drproc->rproc = rproc;
+@@ -311,7 +323,9 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
  
--	return qcom_glink_tx(glink, &req, sizeof(req), data, len, wait);
-+	ret = qcom_glink_tx(glink, &req, sizeof(req), data, len, wait);
-+
-+	/* Mark intent available if we failed */
-+	if (ret)
-+		intent->in_use = false;
-+
-+	return ret;
+ free_rproc:
+ 	rproc_free(rproc);
+-
++free_mem:
++	if (dev->of_node)
++		of_reserved_mem_device_release(dev);
+ 	return ret;
  }
  
- static int qcom_glink_send(struct rpmsg_endpoint *ept, void *data, int len)
+@@ -319,6 +333,7 @@ static int da8xx_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct device *dev = &pdev->dev;
+ 
+ 	/*
+ 	 * The devm subsystem might end up releasing things before
+@@ -329,15 +344,24 @@ static int da8xx_rproc_remove(struct platform_device *pdev)
+ 
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
++	if (dev->of_node)
++		of_reserved_mem_device_release(dev);
+ 
+ 	return 0;
+ }
+ 
++static const struct of_device_id davinci_rproc_of_match[] __maybe_unused = {
++	{ .compatible = "ti,da850-dsp", },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, davinci_rproc_of_match);
++
+ static struct platform_driver da8xx_rproc_driver = {
+ 	.probe = da8xx_rproc_probe,
+ 	.remove = da8xx_rproc_remove,
+ 	.driver = {
+ 		.name = "davinci-rproc",
++		.of_match_table = of_match_ptr(davinci_rproc_of_match),
+ 	},
+ };
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.13.1
