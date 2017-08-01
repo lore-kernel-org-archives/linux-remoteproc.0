@@ -1,90 +1,128 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/2] dt-bindings: soc: qcom: Extend GLINK to cover SMEM
-Date: Tue, 29 Aug 2017 16:13:36 -0700
-Message-Id: <20170829231336.24454-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20170829231336.24454-1-bjorn.andersson@linaro.org>
-References: <20170829231336.24454-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH v2 2/4] remoteproc/davinci: Add support to parse internal memories
+Date: Tue, 1 Aug 2017 10:48:42 -0500
+Message-ID: <20170801154844.24662-3-s-anna@ti.com>
+In-Reply-To: <20170801154844.24662-1-s-anna@ti.com>
+References: <20170801154844.24662-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In addition to using GLINK for communication with the RPM it can be
-used ontop of SMEM for communicating with remoteprocs, extend the
-binding to also describe this case and reference the GLINK binding from
-the affected remoteproc bindings.
+The DSP subsystem on OMAP-L13x SoCs has various internal RAM
+memories that can accessed from the ARM side. These memories
+can be configured to be used as either RAM or Cache.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+The Davinci remoteproc driver has been enhanced to parse and
+store the kernel mappings for these internal RAM memories.
+These mappings can then be used to support direct loading of
+text/data into these memories from the remoteproc driver.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt |  7 ++++---
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt |  5 +++++
- Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt  | 13 +++++++------
- 3 files changed, 16 insertions(+), 9 deletions(-)
+v2: No code changes
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index 75ad7b8df0b1..728e4193f7a6 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -63,9 +63,10 @@ on the Qualcomm ADSP Hexagon core.
+ drivers/remoteproc/da8xx_remoteproc.c | 62 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 280b66d4f622..c1cff78de67b 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -38,9 +38,27 @@ MODULE_PARM_DESC(da8xx_fw_name,
+ #define SYSCFG_CHIPSIG3 BIT(3)
+ #define SYSCFG_CHIPSIG4 BIT(4)
  
- 
- = SUBNODES
--The adsp node may have an subnode named "smd-edge" that describes the SMD edge,
--channels and devices related to the ADSP.  See ../soc/qcom/qcom,smd.txt for
--details on how to describe the SMD edge.
-+The adsp node may have an subnode named either "smd-edge" or "glink-edge" that
-+describes the communication edge, channels and devices related to the ADSP.
-+See ../soc/qcom/qcom,smd.txt and ../soc/qcom/qcom,glink.txt for details on how
-+to describe these.
- 
- 
- = EXAMPLE
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 92347fe6890e..7ff3f7903f26 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -90,6 +90,11 @@ the memory regions used by the Hexagon firmware. Each sub-node must contain:
- 	Value type: <phandle>
- 	Definition: reference to the reserved-memory for the region
- 
-+The Hexagon node may also have an subnode named either "smd-edge" or
-+"glink-edge" that describes the communication edge, channels and devices
-+related to the Hexagon.  See ../soc/qcom/qcom,smd.txt and
-+../soc/qcom/qcom,glink.txt for details on how to describe these.
++#define DA8XX_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
 +
- = EXAMPLE
- The following example describes the resources needed to boot control the
- Hexagon, as it is found on MSM8974 boards.
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-index 50fc20c6ce91..b277eca861f7 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-@@ -1,11 +1,12 @@
--Qualcomm RPM GLINK binding
-+Qualcomm GLINK edge binding
++/**
++ * struct da8xx_rproc_mem - internal memory structure
++ * @cpu_addr: MPU virtual address of the memory region
++ * @bus_addr: Bus address used to access the memory region
++ * @dev_addr: Device address of the memory region from DSP view
++ * @size: Size of the memory region
++ */
++struct da8xx_rproc_mem {
++	void __iomem *cpu_addr;
++	phys_addr_t bus_addr;
++	u32 dev_addr;
++	size_t size;
++};
++
+ /**
+  * struct da8xx_rproc - da8xx remote processor instance state
+  * @rproc: rproc handle
++ * @mem: internal memory regions data
++ * @num_mems: number of internal memory regions
+  * @dsp_clk: placeholder for platform's DSP clk
+  * @ack_fxn: chip-specific ack function for ack'ing irq
+  * @irq_data: ack_fxn function parameter
+@@ -50,6 +68,8 @@ MODULE_PARM_DESC(da8xx_fw_name,
+  */
+ struct da8xx_rproc {
+ 	struct rproc *rproc;
++	struct da8xx_rproc_mem *mem;
++	int num_mems;
+ 	struct clk *dsp_clk;
+ 	void (*ack_fxn)(struct irq_data *data);
+ 	struct irq_data *irq_data;
+@@ -158,6 +178,44 @@ static const struct rproc_ops da8xx_rproc_ops = {
+ 	.kick = da8xx_rproc_kick,
+ };
  
--This binding describes the Qualcomm RPM GLINK, a fifo based mechanism for
--communication with the Resource Power Management system on various Qualcomm
--platforms.
-+This binding describes a Qualcomm GLINK edge, a fifo based mechanism for
-+communication between subsystem-pairs on various Qualcomm platforms. Two types
-+of edges can be described by the binding; the GLINK RPM edge and a SMEM based
-+edge.
++static int da8xx_rproc_get_internal_memories(struct platform_device *pdev,
++					     struct da8xx_rproc *drproc)
++{
++	static const char * const mem_names[] = {"l2sram", "l1pram", "l1dram"};
++	int num_mems = ARRAY_SIZE(mem_names);
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	int i;
++
++	drproc->mem = devm_kcalloc(dev, num_mems, sizeof(*drproc->mem),
++				   GFP_KERNEL);
++	if (!drproc->mem)
++		return -ENOMEM;
++
++	for (i = 0; i < num_mems; i++) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   mem_names[i]);
++		drproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
++		if (IS_ERR(drproc->mem[i].cpu_addr)) {
++			dev_err(dev, "failed to parse and map %s memory\n",
++				mem_names[i]);
++			return PTR_ERR(drproc->mem[i].cpu_addr);
++		}
++		drproc->mem[i].bus_addr = res->start;
++		drproc->mem[i].dev_addr =
++				res->start & DA8XX_RPROC_LOCAL_ADDRESS_MASK;
++		drproc->mem[i].size = resource_size(res);
++
++		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
++			mem_names[i], &drproc->mem[i].bus_addr,
++			drproc->mem[i].size, drproc->mem[i].cpu_addr,
++			drproc->mem[i].dev_addr);
++	}
++	drproc->num_mems = num_mems;
++
++	return 0;
++}
++
+ static int da8xx_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -213,6 +271,10 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	drproc->dsp_clk = dsp_clk;
+ 	rproc->has_iommu = false;
  
- - compatible:
--	Usage: required
-+	Usage: required for glink-rpm
- 	Value type: <stringlist>
- 	Definition: must be "qcom,glink-rpm"
++	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
++	if (ret)
++		goto free_rproc;
++
+ 	platform_set_drvdata(pdev, rproc);
  
-@@ -16,7 +17,7 @@ platforms.
- 		    signal this processor about communication related events
- 
- - qcom,rpm-msg-ram:
--	Usage: required
-+	Usage: required for glink-rpm
- 	Value type: <prop-encoded-array>
- 	Definition: handle to RPM message memory resource
- 
+ 	/* everything the ISR needs is now setup, so hook it up */
 -- 
-2.12.0
+2.13.1
