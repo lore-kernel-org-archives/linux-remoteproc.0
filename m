@@ -1,139 +1,55 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v3 1/6] remoteproc: qcom: mdt_loader: Make the firmware authentication optional
-Date: Thu, 31 Aug 2017 10:15:29 +0530
-Message-Id: <1504154734-12175-2-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
-References: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sricharan@codeaurora.org
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 0/4] Add DT support for davinci remoteproc driver
+References: <20170801154844.24662-1-s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <d03c1786-fd13-7fc0-aad1-dfa91ba50914@ti.com>
+Date: Tue, 1 Aug 2017 11:55:41 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170801154844.24662-1-s-anna@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-qcom_mdt_load function loads the mdt type firmware and
-initialises the secure memory as well. Make the initialisation only
-when requested by the caller, so that the function can be used
-by self-authenticating remoteproc as well.
+On 08/01/2017 10:48 AM, Suman Anna wrote:
+> Hi,
+> 
+> The following is v2 of the series [1] that adds the device tree support to
+> the Davinci remoteproc driver. Patches are baselined on 4.13-rc1, the
+> main dependent patches from the series "Davinci remoteproc cleanup/fixes"
+> [2] and the resource name additions [3] were merged and available in
+> mainline 4.13-rc1.
+> 
+> DTS nodes for the OMAP-L138 LCDK board will be added for a subsequent merge
+> window once these patches are picked up.
+> 
+> Change summary for v2:
+>  - Patches 1 and 2 are unchanged
+>  - Binding in Patch 3 revised slightly to address Rob Herring's comments
+>  - Patch 4 updated to deal with non-OF builds since Davinci platforms still
+>    support non-DT boots.
+> 
+> regards
+> Suman
+> 
+> [1] http://marc.info/?l=linux-arm-kernel&m=149514538506046&w=2
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- drivers/soc/qcom/mdt_loader.c       | 70 +++++++++++++++++++++++++++++++------
- include/linux/soc/qcom/mdt_loader.h |  3 ++
- 2 files changed, 62 insertions(+), 11 deletions(-)
+Oops, pasted the wrong link, correct link is
+http://marc.info/?l=linux-arm-kernel&m=149583015432586&w=2
 
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index bd63df0..851f5d7 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -86,9 +86,9 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
-  *
-  * Returns 0 on success, negative errno otherwise.
-  */
--int qcom_mdt_load(struct device *dev, const struct firmware *fw,
--		  const char *firmware, int pas_id, void *mem_region,
--		  phys_addr_t mem_phys, size_t mem_size)
-+static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
-+			   const char *firmware, int pas_id, void *mem_region,
-+			   phys_addr_t mem_phys, size_t mem_size, bool pas_init)
- {
- 	const struct elf32_phdr *phdrs;
- 	const struct elf32_phdr *phdr;
-@@ -119,10 +119,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	if (!fw_name)
- 		return -ENOMEM;
- 
--	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
--	if (ret) {
--		dev_err(dev, "invalid firmware metadata\n");
--		goto out;
-+	if (pas_init) {
-+		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
-+		if (ret) {
-+			dev_err(dev, "invalid firmware metadata\n");
-+			goto out;
-+		}
- 	}
- 
- 	for (i = 0; i < ehdr->e_phnum; i++) {
-@@ -142,10 +144,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	}
- 
- 	if (relocate) {
--		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
--		if (ret) {
--			dev_err(dev, "unable to setup relocation\n");
--			goto out;
-+		if (pas_init) {
-+			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
-+						     max_addr - min_addr);
-+			if (ret) {
-+				dev_err(dev, "unable to setup relocation\n");
-+				goto out;
-+			}
- 		}
- 
- 		/*
-@@ -198,7 +203,50 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 
- 	return ret;
- }
-+
-+/**
-+ * qcom_mdt_load() - sets up the secure memory for the firmware and
-+		     loads the firmware
-+ * @dev:	device handle to associate resources with
-+ * @fw:		firmware object for the mdt file
-+ * @firmware:	name of the firmware, for construction of segment file names
-+ * @pas_id:	PAS identifier
-+ * @mem_region:	allocated memory region to load firmware into
-+ * @mem_phys:	physical address of allocated memory region
-+ * @mem_size:	size of the allocated memory region
-+ *
-+ * Returns 0 on success, negative errno otherwise.
-+ */
-+int qcom_mdt_load(struct device *dev, const struct firmware *fw,
-+		  const char *firmware, int pas_id, void *mem_region,
-+		  phys_addr_t mem_phys, size_t mem_size)
-+{
-+	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
-+			       mem_size, true);
-+}
- EXPORT_SYMBOL_GPL(qcom_mdt_load);
- 
-+/**
-+ * qcom_mdt_load_no_init() - load the firmware which header is loaded as fw
-+ * @dev:	device handle to associate resources with
-+ * @fw:		firmware object for the mdt file
-+ * @firmware:	name of the firmware, for construction of segment file names
-+ * @pas_id:	PAS identifier
-+ * @mem_region:	allocated memory region to load firmware into
-+ * @mem_phys:	physical address of allocated memory region
-+ * @mem_size:	size of the allocated memory region
-+ *
-+ * Returns 0 on success, negative errno otherwise.
-+ */
-+int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
-+			  const char *firmware, int pas_id,
-+			  void *mem_region, phys_addr_t mem_phys,
-+			  size_t mem_size)
-+{
-+	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
-+			       mem_size, false);
-+}
-+EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
-+
- MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-index f423001..228053a 100644
---- a/include/linux/soc/qcom/mdt_loader.h
-+++ b/include/linux/soc/qcom/mdt_loader.h
-@@ -15,4 +15,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 		  const char *fw_name, int pas_id, void *mem_region,
- 		  phys_addr_t mem_phys, size_t mem_size);
- 
-+int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
-+			  const char *fw_name, int pas_id, void *mem_region,
-+			  phys_addr_t mem_phys, size_t mem_size);
- #endif
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> [2] http://marc.info/?l=linux-arm-kernel&m=149514538506046&w=2
+> [3] http://marc.info/?l=linux-kernel&m=149497287512869&w=2
+> 
+> Suman Anna (4):
+>   remoteproc/davinci: Switch to platform_get_resource_byname()
+>   remoteproc/davinci: Add support to parse internal memories
+>   dt-bindings: remoteproc: Add bindings for Davinci DSP processors
+>   remoteproc/davinci: Add device tree support for OMAP-L138 DSP
+> 
+>  .../bindings/remoteproc/ti,davinci-rproc.txt       | 86 +++++++++++++++++++
+>  drivers/remoteproc/da8xx_remoteproc.c              | 98 ++++++++++++++++++++--
+>  2 files changed, 179 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+> 
