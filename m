@@ -1,36 +1,45 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH 05/15] mei: make device_type const
-Date: Sat, 19 Aug 2017 13:52:16 +0530
-Message-Id: <1503130946-2854-6-git-send-email-bhumirks@gmail.com>
-In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: remoteproc: Add bindings for Davinci
+ DSP processors
+References: <20170801154844.24662-1-s-anna@ti.com>
+ <20170801154844.24662-4-s-anna@ti.com>
+ <20170810140157.osn5rtymykgdf6gp@rob-hp-laptop>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <1aec744a-5e9c-d33f-9a55-1ef4f937400d@ti.com>
+Date: Thu, 10 Aug 2017 10:05:24 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170810140157.osn5rtymykgdf6gp@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make this const as it is only stored in the type field of a device
-structure, which is const.
-Done using Coccinelle.
+On 08/10/2017 09:01 AM, Rob Herring wrote:
+> On Tue, Aug 01, 2017 at 10:48:43AM -0500, Suman Anna wrote:
+>> Add the device tree bindings document for the DSP processor
+>> subsystem devices on TI Davinci DA8xx/OMAP-L13x SoCs.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>> v2: 
+>>  - Updated the patch header
+>>  - Revised the binding status statement slightly
+>>  - Updated the example to address Rob's comments
+>>  - No changes in properties description themselves
+>> v1: https://patchwork.kernel.org/patch/9751269/
+>>
+>>  .../bindings/remoteproc/ti,davinci-rproc.txt       | 86 ++++++++++++++++++++++
+>>  1 file changed, 86 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/misc/mei/bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks Rob.
 
-diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
-index 40c7908..1ac10cb 100644
---- a/drivers/misc/mei/bus.c
-+++ b/drivers/misc/mei/bus.c
-@@ -845,7 +845,7 @@ static void mei_cl_bus_dev_release(struct device *dev)
- 	kfree(cldev);
- }
- 
--static struct device_type mei_cl_device_type = {
-+static const struct device_type mei_cl_device_type = {
- 	.release	= mei_cl_bus_dev_release,
- };
- 
--- 
-1.9.1
+Bjorn,
+Appreciate it if you can pick up the series for v4.14.
+
+Thanks,
+Suman
