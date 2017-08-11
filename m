@@ -1,72 +1,69 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH 00/18] rpmsg: glink: Add glink smem based transport
-Date: Wed, 16 Aug 2017 22:47:57 +0530
-Message-Id: <1502903895-5298-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 10 Aug 2017 21:59:25 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] remoteproc: dt: Provide bindings for iMX6SX/7D
+ Remote Processor Controller driver
+Message-ID: <20170811025925.dwkggu4tuyjj67va@rob-hp-laptop>
+References: <20170808080030.2581-1-o.rempel@pengutronix.de>
+ <20170808080030.2581-2-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20170808080030.2581-2-o.rempel@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The glink protocol works uses a shared-memory(transport) for
-communication between the local and remote processors. The
-existing glink-rpm driver implements the basic features
-of the protocol and uses msgram as the transport.
+On Tue, Aug 08, 2017 at 10:00:29AM +0200, Oleksij Rempel wrote:
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  .../devicetree/bindings/remoteproc/imx-rproc.txt   | 33 ++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+> new file mode 100644
+> index 000000000000..faf30ef3d6cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+> @@ -0,0 +1,33 @@
+> +NXP iMX6SX/iMX7D Co-Processor Bindings
+> +----------------------------------------
+> +
+> +This binding provides support for ARM Cortex M4 Co-processor found on some
+> +NXP iMX SoCs.
+> +
+> +Required properties:
+> +- compatible		Should be one of:
+> +				"fsl,imx7d-rproc"
+> +				"fsl,imx6sx-rproc"
 
-The same is extended to support smem based transport as well.
-The first few patches consolidates the code, so that the
-core protocol code is made common for both the types of
-transport.
+rproc is a Linuxism. Name it after what the M4 is called.
 
-The next set of patches add the additional features of the
-protocol required by clients using smem based transport,
-particularly support for intents.
-
- * What is intents ?
-	Intents are nothing but pre-allocated buffers that
-	both the local and the remote clients allocate and
-	share the details (about the buffer size and an id)
-	before intending to receive data. The transmitter then
-	searches for an suitable 'intent-id' based on size from
-	the list that it was notified previously and sends the data
-	targeting that intent buffer, which is then copied by the
-	receiver in to the same intent-buffer. So this avoids memory
-	allocation stalls on copy based transports.
-
-Bjorn Andersson (7):
-  rpmsg: glink: Rename glink_rpm_xx functions to qcom_glink_xx
-  rpmsg: glink: Associate indirections for pipe fifo accessor's
-  rpmsg: glink: Split rpm_probe to reuse the common code
-  rpmsg: glink: Move the common glink protocol implementation to
-    glink_native.c
-  rpmsg: glink: Allow unaligned data access
-  rpmsg: glink: Introduce glink smem based transport
-  rpmsg: glink: Make RX FIFO peak accessor to take an offset
-
-Sricharan R (11):
-  rpmsg: glink: Fix default case while handling received commands
-  rpmsg: glink: Add support for transport version negotiation
-  rpmsg: glink: Fix idr_lock from mutex to spinlock
-  rpmsg: glink: Add support for TX intents
-  rpmsg: glink: Use the local intents when receiving data
-  rpmsg: glink: Add rx done command
-  rpmsg: glink: Add announce_create ops and preallocate intents
-  rpmsg: glink: Receive and store the remote intent buffers
-  rpmsg: glink: Use the intents passed by remote
-  rpmsg: glink: Request for intents when unavailable
-  rpmsg: glink: Handle remote rx done command
-
- drivers/rpmsg/Kconfig             |   16 +-
- drivers/rpmsg/Makefile            |    2 +
- drivers/rpmsg/qcom_glink_native.c | 1593 +++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/qcom_glink_native.h |   44 +
- drivers/rpmsg/qcom_glink_rpm.c    | 1026 ++----------------------
- drivers/rpmsg/qcom_glink_smem.c   |  309 +++++++
- include/linux/rpmsg/qcom_glink.h  |   27 +
- 7 files changed, 2066 insertions(+), 951 deletions(-)
- create mode 100644 drivers/rpmsg/qcom_glink_native.c
- create mode 100644 drivers/rpmsg/qcom_glink_native.h
- create mode 100644 drivers/rpmsg/qcom_glink_smem.c
- create mode 100644 include/linux/rpmsg/qcom_glink.h
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> +- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
+> +- syscon		Phandle to syscon block which provide access to
+> +			System Reset Controller
+> +
+> +Optional properties:
+> +- memory-region		list of phandels to the reserved memory regions.
+> +			(See: ../reserved-memory/reserved-memory.txt)
+> +
+> +Example:
+> +	m4_reserved_sysmem1: rproc@80000000 {
+> +		reg = <0x80000000 0x80000>;
+> +	};
+> +
+> +	m4_reserved_sysmem2: rproc@81000000 {
+> +		reg = <0x81000000 0x80000>;
+> +	};
+> +
+> +	imx7d-rproc {
+> +		compatible	= "fsl,imx7d-rproc";
+> +		memory-region	= <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
+> +		syscon		= <&src>;
+> +		clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
+> +	};
+> -- 
+> 2.11.0
+> 
