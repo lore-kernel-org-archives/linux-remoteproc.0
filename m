@@ -1,189 +1,410 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:54476 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbdHPRUa (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Aug 2017 13:20:30 -0400
+Return-Path: <sricharan@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH 13/18] rpmsg: glink: Add rx done command
-Date: Wed, 16 Aug 2017 22:49:06 +0530
-Message-Id: <1502903951-5403-14-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH 06/18] rpmsg: glink: Introduce glink smem based transport
+Date: Wed, 16 Aug 2017 22:48:59 +0530
+Message-Id: <1502903951-5403-7-git-send-email-sricharan@codeaurora.org>
 In-Reply-To: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
 References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Send RX data receive ack to remote and also inform
-that local intent buffer is used and freed. This
-informs the remote to request for next set of
-intent buffers before doing a send operation.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+The glink protocol supports different types of
+transports (shared memory). With the core protocol
+remaining the same, the way the transport's memory is
+probed and accessed is different. So add support for
+glink's smem based transports.
+
+Adding a new smem transport register function and the
+fifo accessors for the same.
+
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 83 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ drivers/rpmsg/Kconfig            |  10 ++
+ drivers/rpmsg/Makefile           |   1 +
+ drivers/rpmsg/qcom_glink_smem.c  | 304 +++++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg/qcom_glink.h |  27 ++++
+ 4 files changed, 342 insertions(+)
+ create mode 100644 drivers/rpmsg/qcom_glink_smem.c
+ create mode 100644 include/linux/rpmsg/qcom_glink.h
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index b2a583a..b8db74a 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -76,6 +76,8 @@ struct glink_core_rx_intent {
- 	bool reuse;
- 	bool in_use;
- 	u32 offset;
+diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+index ac33688..4bd9ba3 100644
+--- a/drivers/rpmsg/Kconfig
++++ b/drivers/rpmsg/Kconfig
+@@ -27,6 +27,16 @@ config RPMSG_QCOM_GLINK_RPM
+ 	  which serves as a channel for communication with the RPM in GLINK
+ 	  enabled systems.
+ 
++config RPMSG_QCOM_GLINK_SMEM
++	tristate "Qualcomm SMEM Glink driver"
++	select RPMSG_QCOM_GLINK_NATIVE
++	depends on HAS_IOMEM
++	depends on MAILBOX
++	help
++	  Say y here to enable support for the GLINK SMEM communication driver,
++	  which provides support for using the GLINK communication protocol
++	  over SMEM.
 +
-+	struct list_head node;
- };
- 
- /**
-@@ -137,6 +139,8 @@ enum {
-  * @rcid:	channel id, in remote space
-  * @intent_lock: lock for protection of @liids
-  * @liids:	idr of all local intents
-+ * @intent_work: worker responsible for transmitting rx_done packets
-+ * @done_intents: list of intents that needs to be announced rx_done
-  * @buf:	receive buffer, for gathering fragments
-  * @buf_offset:	write offset in @buf
-  * @buf_size:	size of current @buf
-@@ -159,6 +163,8 @@ struct glink_channel {
- 
- 	spinlock_t intent_lock;
- 	struct idr liids;
-+	struct work_struct intent_work;
-+	struct list_head done_intents;
- 
- 	struct glink_core_rx_intent *buf;
- 	int buf_offset;
-@@ -178,15 +184,19 @@ struct glink_channel {
- #define RPM_CMD_CLOSE			3
- #define RPM_CMD_OPEN_ACK		4
- #define RPM_CMD_INTENT			5
-+#define RPM_CMD_RX_DONE			6
- #define RPM_CMD_RX_INTENT_REQ		7
- #define RPM_CMD_RX_INTENT_REQ_ACK	8
- #define RPM_CMD_TX_DATA			9
- #define RPM_CMD_CLOSE_ACK		11
- #define RPM_CMD_TX_DATA_CONT		12
- #define RPM_CMD_READ_NOTIF		13
-+#define RPM_CMD_RX_DONE_W_REUSE		14
- 
- #define GLINK_FEATURE_INTENTLESS	BIT(1)
- 
-+static void qcom_glink_rx_done_work(struct work_struct *work);
+ config RPMSG_QCOM_SMD
+ 	tristate "Qualcomm Shared Memory Driver (SMD)"
+ 	depends on QCOM_SMEM
+diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+index 09a756c..c71f4ab 100644
+--- a/drivers/rpmsg/Makefile
++++ b/drivers/rpmsg/Makefile
+@@ -2,5 +2,6 @@ obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+ obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
++obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
+ obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
+ obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
+diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+new file mode 100644
+index 0000000..defa10b
+--- /dev/null
++++ b/drivers/rpmsg/qcom_glink_smem.c
+@@ -0,0 +1,304 @@
++/*
++ * Copyright (c) 2016, Linaro Ltd
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 and
++ * only version 2 as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
- static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
- 						      const char *name)
- {
-@@ -198,12 +208,16 @@ static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
- 
- 	/* Setup glink internal glink_channel data */
- 	spin_lock_init(&channel->recv_lock);
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/mfd/syscon.h>
++#include <linux/slab.h>
++#include <linux/rpmsg.h>
++#include <linux/idr.h>
++#include <linux/circ_buf.h>
++#include <linux/soc/qcom/smem.h>
++#include <linux/sizes.h>
++#include <linux/delay.h>
++#include <linux/regmap.h>
++#include <linux/workqueue.h>
++#include <linux/list.h>
 +
- 	channel->glink = glink;
- 	channel->name = kstrdup(name, GFP_KERNEL);
- 
- 	init_completion(&channel->open_req);
- 	init_completion(&channel->open_ack);
- 
-+	INIT_LIST_HEAD(&channel->done_intents);
-+	INIT_WORK(&channel->intent_work, qcom_glink_rx_done_work);
++#include <linux/delay.h>
++#include <linux/rpmsg.h>
++#include <linux/rpmsg/qcom_glink.h>
 +
- 	idr_init(&channel->liids);
- 	kref_init(&channel->refcount);
- 
-@@ -395,6 +409,70 @@ static void qcom_glink_send_close_ack(struct qcom_glink *glink,
- 	qcom_glink_tx(glink, &req, sizeof(req), NULL, 0, true);
- }
- 
-+static void qcom_glink_rx_done_work(struct work_struct *work)
++#include "qcom_glink_native.h"
++
++#define FIFO_FULL_RESERVE 8
++#define FIFO_ALIGNMENT 8
++#define TX_BLOCKED_CMD_RESERVE 8 /* size of struct read_notif_request */
++
++#define SMEM_GLINK_NATIVE_XPRT_DESCRIPTOR	478
++#define SMEM_GLINK_NATIVE_XPRT_FIFO_0		479
++#define SMEM_GLINK_NATIVE_XPRT_FIFO_1		480
++
++struct glink_smem_pipe {
++	struct qcom_glink_pipe native;
++
++	__le32 *tail;
++	__le32 *head;
++
++	void *fifo;
++
++	int remote_pid;
++};
++
++#define to_smem_pipe(p) container_of(p, struct glink_smem_pipe, native)
++
++static size_t glink_smem_rx_avail(struct qcom_glink_pipe *np)
 +{
-+	struct glink_channel *channel = container_of(work, struct glink_channel,
-+						     intent_work);
-+	struct qcom_glink *glink = channel->glink;
-+	struct glink_core_rx_intent *intent, *tmp;
-+	struct {
-+		u16 id;
-+		u16 lcid;
-+		u32 liid;
-+	} __packed cmd;
++	struct glink_smem_pipe *pipe = to_smem_pipe(np);
++	size_t len;
++	void *fifo;
++	u32 head;
++	u32 tail;
 +
-+	unsigned int cid = channel->lcid;
-+	unsigned int iid;
-+	bool reuse;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&channel->intent_lock, flags);
-+	list_for_each_entry_safe(intent, tmp, &channel->done_intents, node) {
-+		list_del(&intent->node);
-+		spin_unlock_irqrestore(&channel->intent_lock, flags);
-+		iid = intent->id;
-+		reuse = intent->reuse;
-+
-+		cmd.id = reuse ? RPM_CMD_RX_DONE_W_REUSE : RPM_CMD_RX_DONE;
-+		cmd.lcid = cid;
-+		cmd.liid = iid;
-+
-+		qcom_glink_tx(glink, &cmd, sizeof(cmd), NULL, 0, true);
-+		if (!reuse) {
-+			kfree(intent->data);
-+			kfree(intent);
++	if (!pipe->fifo) {
++		fifo = qcom_smem_get(pipe->remote_pid,
++				     SMEM_GLINK_NATIVE_XPRT_FIFO_1, &len);
++		if (IS_ERR(fifo)) {
++			pr_err("failed to acquire RX fifo handle: %ld\n",
++			       PTR_ERR(fifo));
++			return 0;
 +		}
-+		spin_lock_irqsave(&channel->intent_lock, flags);
++
++		pipe->fifo = fifo;
++		pipe->native.length = len;
 +	}
-+	spin_unlock_irqrestore(&channel->intent_lock, flags);
++
++	head = le32_to_cpu(*pipe->head);
++	tail = le32_to_cpu(*pipe->tail);
++
++	if (head < tail)
++		return pipe->native.length - tail + head;
++	else
++		return head - tail;
 +}
 +
-+static void qcom_glink_rx_done(struct qcom_glink *glink,
-+			       struct glink_channel *channel,
-+			       struct glink_core_rx_intent *intent)
++static void glink_smem_rx_peak(struct qcom_glink_pipe *np,
++			       void *data, size_t count)
 +{
-+	/* We don't send RX_DONE to intentless systems */
-+	if (glink->intentless) {
-+		kfree(intent->data);
-+		kfree(intent);
-+		return;
++	struct glink_smem_pipe *pipe = to_smem_pipe(np);
++	size_t len;
++	u32 tail;
++
++	tail = le32_to_cpu(*pipe->tail);
++
++	len = min_t(size_t, count, pipe->native.length - tail);
++	if (len) {
++		__ioread32_copy(data, pipe->fifo + tail,
++				len / sizeof(u32));
 +	}
 +
-+	/* Take it off the tree of receive intents */
-+	if (!intent->reuse) {
-+		spin_lock(&channel->intent_lock);
-+		idr_remove(&channel->liids, intent->id);
-+		spin_unlock(&channel->intent_lock);
++	if (len != count) {
++		__ioread32_copy(data + len, pipe->fifo,
++				(count - len) / sizeof(u32));
 +	}
-+
-+	/* Schedule the sending of a rx_done indication */
-+	spin_lock(&channel->intent_lock);
-+	list_add_tail(&intent->node, &channel->done_intents);
-+	spin_unlock(&channel->intent_lock);
-+
-+	schedule_work(&channel->intent_work);
 +}
 +
- /**
-  * qcom_glink_receive_version() - receive version/features from remote system
-  *
-@@ -711,6 +789,8 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
- 
- 		intent->offset = 0;
- 		channel->buf = NULL;
++static void glink_smem_rx_advance(struct qcom_glink_pipe *np,
++				  size_t count)
++{
++	struct glink_smem_pipe *pipe = to_smem_pipe(np);
++	u32 tail;
 +
-+		qcom_glink_rx_done(glink, channel, intent);
- 	}
- 
- advance_rx:
-@@ -1100,6 +1180,9 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
- 	if (WARN(!channel, "close request on unknown channel\n"))
- 		return;
- 
-+	/* cancel pending rx_done work */
-+	cancel_work_sync(&channel->intent_work);
++	tail = le32_to_cpu(*pipe->tail);
 +
- 	if (channel->rpdev) {
- 		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
- 		chinfo.src = RPMSG_ADDR_ANY;
++	tail += count;
++	if (tail > pipe->native.length)
++		tail -= pipe->native.length;
++
++	*pipe->tail = cpu_to_le32(tail);
++}
++
++static size_t glink_smem_tx_avail(struct qcom_glink_pipe *np)
++{
++	struct glink_smem_pipe *pipe = to_smem_pipe(np);
++	u32 head;
++	u32 tail;
++	u32 avail;
++
++	head = le32_to_cpu(*pipe->head);
++	tail = le32_to_cpu(*pipe->tail);
++
++	if (tail <= head)
++		avail = pipe->native.length - head + tail;
++	else
++		avail = tail - head;
++
++	if (avail < (FIFO_FULL_RESERVE + TX_BLOCKED_CMD_RESERVE))
++		avail = 0;
++	else
++		avail -= FIFO_FULL_RESERVE + TX_BLOCKED_CMD_RESERVE;
++
++	return avail;
++}
++
++static unsigned int glink_smem_tx_write_one(struct glink_smem_pipe *pipe,
++					    unsigned int head,
++					    const void *data, size_t count)
++{
++	size_t len;
++
++	len = min_t(size_t, count, pipe->native.length - head);
++	if (len)
++		memcpy(pipe->fifo + head, data, len);
++
++	if (len != count)
++		memcpy(pipe->fifo, data + len, count - len);
++
++	head += count;
++	if (head >= pipe->native.length)
++		head -= pipe->native.length;
++
++	return head;
++}
++
++static void glink_smem_tx_write(struct qcom_glink_pipe *glink_pipe,
++				const void *hdr, size_t hlen,
++				const void *data, size_t dlen)
++{
++	struct glink_smem_pipe *pipe = to_smem_pipe(glink_pipe);
++	unsigned int head;
++
++	head = le32_to_cpu(*pipe->head);
++
++	head = glink_smem_tx_write_one(pipe, head, hdr, hlen);
++	head = glink_smem_tx_write_one(pipe, head, data, dlen);
++
++	/* Ensure head is always aligned to 8 bytes */
++	head = ALIGN(head, 8);
++	if (head >= pipe->native.length)
++		head -= pipe->native.length;
++
++	*pipe->head = cpu_to_le32(head);
++}
++
++struct qcom_glink *qcom_glink_smem_register(struct device *parent,
++					    struct device_node *node)
++{
++	struct glink_smem_pipe *rx_pipe;
++	struct glink_smem_pipe *tx_pipe;
++	struct qcom_glink *glink;
++	struct device *dev;
++	u32 remote_pid;
++	__le32 *descs;
++	size_t size;
++	int ret;
++
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return ERR_PTR(-ENOMEM);
++
++	dev->parent = parent;
++	dev->of_node = node;
++	dev_set_name(dev, "%s:%s", dev_name(parent), node->name);
++	ret = device_register(dev);
++	if (ret) {
++		pr_err("failed to register glink edge\n");
++		return ERR_PTR(ret);
++	}
++
++	ret = of_property_read_u32(dev->of_node, "qcom,remote-pid",
++				   &remote_pid);
++	if (ret) {
++		dev_err(dev, "failed to parse qcom,remote-pid\n");
++		goto err_put_dev;
++	}
++
++	rx_pipe = devm_kzalloc(dev, sizeof(*rx_pipe), GFP_KERNEL);
++	tx_pipe = devm_kzalloc(dev, sizeof(*tx_pipe), GFP_KERNEL);
++	if (!rx_pipe || !tx_pipe) {
++		ret = -ENOMEM;
++		goto err_put_dev;
++	}
++
++	ret = qcom_smem_alloc(remote_pid,
++			      SMEM_GLINK_NATIVE_XPRT_DESCRIPTOR, 32);
++	if (ret && ret != -EEXIST) {
++		dev_err(dev, "failed to allocate glink descriptors\n");
++		goto err_put_dev;
++	}
++
++	descs = qcom_smem_get(remote_pid,
++			      SMEM_GLINK_NATIVE_XPRT_DESCRIPTOR, &size);
++	if (IS_ERR(descs)) {
++		dev_err(dev, "failed to acquire xprt descriptor\n");
++		ret = PTR_ERR(descs);
++		goto err_put_dev;
++	}
++
++	if (size != 32) {
++		dev_err(dev, "glink descriptor of invalid size\n");
++		ret = -EINVAL;
++		goto err_put_dev;
++	}
++
++	tx_pipe->tail = &descs[0];
++	tx_pipe->head = &descs[1];
++	rx_pipe->tail = &descs[2];
++	rx_pipe->head = &descs[3];
++
++	ret = qcom_smem_alloc(remote_pid, SMEM_GLINK_NATIVE_XPRT_FIFO_0,
++			      SZ_16K);
++	if (ret && ret != -EEXIST) {
++		dev_err(dev, "failed to allocate TX fifo\n");
++		goto err_put_dev;
++	}
++
++	tx_pipe->fifo = qcom_smem_get(remote_pid, SMEM_GLINK_NATIVE_XPRT_FIFO_0,
++				      &tx_pipe->native.length);
++	if (IS_ERR(tx_pipe->fifo)) {
++		dev_err(dev, "failed to acquire TX fifo\n");
++		ret = PTR_ERR(tx_pipe->fifo);
++		goto err_put_dev;
++	}
++
++	rx_pipe->native.avail = glink_smem_rx_avail;
++	rx_pipe->native.peak = glink_smem_rx_peak;
++	rx_pipe->native.advance = glink_smem_rx_advance;
++	rx_pipe->remote_pid = remote_pid;
++
++	tx_pipe->native.avail = glink_smem_tx_avail;
++	tx_pipe->native.write = glink_smem_tx_write;
++	tx_pipe->remote_pid = remote_pid;
++
++	*rx_pipe->tail = 0;
++	*tx_pipe->head = 0;
++
++	glink = qcom_glink_native_probe(dev,
++					&rx_pipe->native, &tx_pipe->native);
++	if (IS_ERR(glink)) {
++		ret = PTR_ERR(glink);
++		goto err_put_dev;
++	}
++
++	return glink;
++
++err_put_dev:
++	put_device(dev);
++
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL_GPL(qcom_glink_smem_register);
++
++void qcom_glink_smem_unregister(struct qcom_glink *glink)
++{
++	qcom_glink_native_remove(glink);
++}
++EXPORT_SYMBOL_GPL(qcom_glink_smem_unregister);
++
++MODULE_AUTHOR("Bjorn Andersson <bjorn.andersson@linaro.org>");
++MODULE_DESCRIPTION("Qualcomm GLINK SMEM driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/rpmsg/qcom_glink.h b/include/linux/rpmsg/qcom_glink.h
+new file mode 100644
+index 0000000..a622f02
+--- /dev/null
++++ b/include/linux/rpmsg/qcom_glink.h
+@@ -0,0 +1,27 @@
++#ifndef _LINUX_RPMSG_QCOM_GLINK_H
++#define _LINUX_RPMSG_QCOM_GLINK_H
++
++#include <linux/device.h>
++
++struct qcom_glink;
++
++#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SMEM)
++
++struct qcom_glink *qcom_glink_smem_register(struct device *parent,
++					    struct device_node *node);
++void qcom_glink_smem_unregister(struct qcom_glink *glink);
++
++#else
++
++static inline struct qcom_glink *
++qcom_glink_smem_register(struct device *parent,
++			 struct device_node *node)
++{
++	return NULL;
++}
++
++static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
++
++#endif
++
++#endif
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
