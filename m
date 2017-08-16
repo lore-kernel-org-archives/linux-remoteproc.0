@@ -1,34 +1,72 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: Stop subdevices in reverse order
-Date: Sun, 27 Aug 2017 22:31:42 -0700
-Message-Id: <20170828053142.26152-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH 00/18] rpmsg: glink: Add glink smem based transport
+Date: Wed, 16 Aug 2017 22:48:53 +0530
+Message-Id: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Subdevices might depend on earlier registered subdevices for
-communication purposes, as such they should be stopped in reverse order
-so that said communication channel is removed after the dependent
-subdevice is stopped.
+The glink protocol works uses a shared-memory(transport) for
+communication between the local and remote processors. The
+existing glink-rpm driver implements the basic features
+of the protocol and uses msgram as the transport.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The same is extended to support smem based transport as well.
+The first few patches consolidates the code, so that the
+core protocol code is made common for both the types of
+transport.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e82f60182027..5aaa4c21d14d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -794,7 +794,7 @@ static void rproc_remove_subdevices(struct rproc *rproc)
- {
- 	struct rproc_subdev *subdev;
- 
--	list_for_each_entry(subdev, &rproc->subdevs, node)
-+	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
- 		subdev->remove(subdev);
- }
- 
+The next set of patches add the additional features of the
+protocol required by clients using smem based transport,
+particularly support for intents.
+
+ * What is intents ?
+	Intents are nothing but pre-allocated buffers that
+	both the local and the remote clients allocate and
+	share the details (about the buffer size and an id)
+	before intending to receive data. The transmitter then
+	searches for an suitable 'intent-id' based on size from
+	the list that it was notified previously and sends the data
+	targeting that intent buffer, which is then copied by the
+	receiver in to the same intent-buffer. So this avoids memory
+	allocation stalls on copy based transports.
+
+Bjorn Andersson (7):
+  rpmsg: glink: Rename glink_rpm_xx functions to qcom_glink_xx
+  rpmsg: glink: Associate indirections for pipe fifo accessor's
+  rpmsg: glink: Split rpm_probe to reuse the common code
+  rpmsg: glink: Move the common glink protocol implementation to
+    glink_native.c
+  rpmsg: glink: Allow unaligned data access
+  rpmsg: glink: Introduce glink smem based transport
+  rpmsg: glink: Make RX FIFO peak accessor to take an offset
+
+Sricharan R (11):
+  rpmsg: glink: Fix default case while handling received commands
+  rpmsg: glink: Add support for transport version negotiation
+  rpmsg: glink: Fix idr_lock from mutex to spinlock
+  rpmsg: glink: Add support for TX intents
+  rpmsg: glink: Use the local intents when receiving data
+  rpmsg: glink: Add rx done command
+  rpmsg: glink: Add announce_create ops and preallocate intents
+  rpmsg: glink: Receive and store the remote intent buffers
+  rpmsg: glink: Use the intents passed by remote
+  rpmsg: glink: Request for intents when unavailable
+  rpmsg: glink: Handle remote rx done command
+
+ drivers/rpmsg/Kconfig             |   16 +-
+ drivers/rpmsg/Makefile            |    2 +
+ drivers/rpmsg/qcom_glink_native.c | 1593 +++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/qcom_glink_native.h |   44 +
+ drivers/rpmsg/qcom_glink_rpm.c    | 1026 ++----------------------
+ drivers/rpmsg/qcom_glink_smem.c   |  309 +++++++
+ include/linux/rpmsg/qcom_glink.h  |   27 +
+ 7 files changed, 2066 insertions(+), 951 deletions(-)
+ create mode 100644 drivers/rpmsg/qcom_glink_native.c
+ create mode 100644 drivers/rpmsg/qcom_glink_native.h
+ create mode 100644 drivers/rpmsg/qcom_glink_smem.c
+ create mode 100644 include/linux/rpmsg/qcom_glink.h
+
 -- 
-2.12.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
