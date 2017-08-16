@@ -1,65 +1,84 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v2 0/2] provide imx rproc driver
-Date: Tue,  8 Aug 2017 10:00:28 +0200
-Message-Id: <20170808080030.2581-1-o.rempel@pengutronix.de>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH 18/18] rpmsg: glink: Handle remote rx done command
+Date: Wed, 16 Aug 2017 22:49:11 +0530
+Message-Id: <1502903951-5403-19-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
+References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-this patch set to provide remoteproc functionality on
-i.MX7D SoC.
+Once the remote side sends a rx done ack, check
+for the intent reuse information from it and
+suitably discard or reuse the remote passed
+intent buffers.
 
-For testing I used this simple counter written in ASM:
-======================================
-        .syntax unified
-        .text
-        .thumb
-        .int 0x10020000                 @ Initial SP value
-        .int reset + 1
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 42 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-reset:
-
-        mov     r0, #0x55
-        ldr     r1, =(0x40)
-1:
-        str     r0, [r1]
-        add     r0, 1
-        b       1b
-
-        /* Dummy data, required by remoteproc loader */
-        /* Please FIXME, this part seem to be incorrect */
-        .data
-        .section .resource_table, "aw"
-        .word   1, 0, 0, 0      /* struct resource_table base */
-        .word   0               /* uint32_t offset[1] */
-============================================================
-compiled with:
-${CROSS}as -o imx7m4.o imx7m4.S
-${CROSS}ld -Ttext=0x0 -o imx7m4.elf imx7m4.o
-cp imx7m4.elf /srv/nfs/sid-armhf/lib/firmware/rproc-imx_rproc-fw
-
-Functionality was confirmed with current OpenOCD master.
-OpenOCD cfg file can be found here:
-https://github.com/olerem/openocd/blob/imx7-2017.06.14/tcl/target/imx7.cfg
-
-changes:
-v2:
- - use memory-region instead of reg property
- - remove memory ranges from documentation
-
-Oleksij Rempel (2):
-  remoteproc: dt: Provide bindings for iMX6SX/7D Remote Processor
-    Controller driver
-  remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver
-
- .../devicetree/bindings/remoteproc/imx-rproc.txt   |  33 ++
- drivers/remoteproc/Kconfig                         |  10 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/imx_rproc.c                     | 426 +++++++++++++++++++++
- 4 files changed, 470 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
- create mode 100644 drivers/remoteproc/imx_rproc.c
-
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index cfacf4d..870bff6 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -647,6 +647,40 @@ static int qcom_glink_advertise_intent(struct qcom_glink *glink,
+ 	return intent;
+ }
+ 
++static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
++				      u32 cid, uint32_t iid,
++				      bool reuse)
++{
++	struct glink_core_rx_intent *intent;
++	struct glink_channel *channel;
++	unsigned long flags;
++
++	spin_lock_irqsave(&glink->idr_lock, flags);
++	channel = idr_find(&glink->rcids, cid);
++	spin_unlock_irqrestore(&glink->idr_lock, flags);
++	if (!channel) {
++		dev_err(glink->dev, "invalid channel id received\n");
++		return;
++	}
++
++	spin_lock_irqsave(&channel->intent_lock, flags);
++	intent = idr_find(&channel->riids, iid);
++
++	if (!intent) {
++		spin_unlock_irqrestore(&channel->intent_lock, flags);
++		dev_err(glink->dev, "invalid intent id received\n");
++		return;
++	}
++
++	intent->in_use = false;
++
++	if (!reuse) {
++		idr_remove(&channel->riids, intent->id);
++		kfree(intent);
++	}
++	spin_unlock_irqrestore(&channel->intent_lock, flags);
++}
++
+ /**
+  * glink_core_rx_cmd_remote_rx_intent_req() - Receive a request for rx_intent
+  *					    from remote side
+@@ -955,6 +989,14 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ 		case RPM_CMD_INTENT:
+ 			qcom_glink_handle_intent(glink, param1, param2, avail);
+ 			break;
++		case RPM_CMD_RX_DONE:
++			qcom_glink_handle_rx_done(glink, param1, param2, false);
++			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
++			break;
++		case RPM_CMD_RX_DONE_W_REUSE:
++			qcom_glink_handle_rx_done(glink, param1, param2, true);
++			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
++			break;
+ 		case RPM_CMD_RX_INTENT_REQ_ACK:
+ 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
+ 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
