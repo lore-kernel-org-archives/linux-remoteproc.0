@@ -1,8 +1,8 @@
 Return-Path: <sricharan@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
 Subject: [PATCH 00/18] rpmsg: glink: Add glink smem based transport
-Date: Wed, 16 Aug 2017 22:48:53 +0530
-Message-Id: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
+Date: Wed, 16 Aug 2017 22:47:57 +0530
+Message-Id: <1502903895-5298-1-git-send-email-sricharan@codeaurora.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
