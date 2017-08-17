@@ -1,24 +1,68 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 30 Aug 2017 16:13:46 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 0/2] provide imx rproc driver
-Message-ID: <20170830231346.GH20643@builder>
-References: <20170817071526.5930-1-o.rempel@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170817071526.5930-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
+Return-Path: <ore@pengutronix.de>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: [PATCH v3 0/2] provide imx rproc driver
+Date: Thu, 17 Aug 2017 09:15:24 +0200
+Message-Id: <20170817071526.5930-1-o.rempel@pengutronix.de>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 17 Aug 00:15 PDT 2017, Oleksij Rempel wrote:
+this patch set to provide remoteproc functionality on
+i.MX7D SoC.
 
-> this patch set to provide remoteproc functionality on
-> i.MX7D SoC.
-> 
+For testing I used this simple counter written in ASM:
+======================================
+        .syntax unified
+        .text
+        .thumb
+        .int 0x10020000                 @ Initial SP value
+        .int reset + 1
 
-Sorry for taking my time on this, applied this to the rpmsg-next branch.
+reset:
 
-Regards,
-Bjorn
+        mov     r0, #0x55
+        ldr     r1, =(0x40)
+1:
+        str     r0, [r1]
+        add     r0, 1
+        b       1b
+
+        /* Dummy data, required by remoteproc loader */
+        /* Please FIXME, this part seem to be incorrect */
+        .data
+        .section .resource_table, "aw"
+        .word   1, 0, 0, 0      /* struct resource_table base */
+        .word   0               /* uint32_t offset[1] */
+============================================================
+compiled with:
+${CROSS}as -o imx7m4.o imx7m4.S
+${CROSS}ld -Ttext=0x0 -o imx7m4.elf imx7m4.o
+cp imx7m4.elf /srv/nfs/sid-armhf/lib/firmware/rproc-imx_rproc-fw
+
+Functionality was confirmed with current OpenOCD master.
+OpenOCD cfg file can be found here:
+https://github.com/olerem/openocd/blob/imx7-2017.06.14/tcl/target/imx7.cfg
+
+changes:
+v3:
+ - rename rproc to cm4 (Cortex M4)
+
+v2:
+ - use memory-region instead of reg property
+ - remove memory ranges from documentation
+
+Oleksij Rempel (2):
+  remoteproc: dt: Provide bindings for iMX6SX/7D Remote Processor
+    Controller driver
+  remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver
+
+ .../devicetree/bindings/remoteproc/imx-rproc.txt   |  33 ++
+ drivers/remoteproc/Kconfig                         |  10 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/imx_rproc.c                     | 426 +++++++++++++++++++++
+ 4 files changed, 470 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+ create mode 100644 drivers/remoteproc/imx_rproc.c
+
+-- 
+2.11.0
