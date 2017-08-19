@@ -1,68 +1,36 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v3 0/2] provide imx rproc driver
-Date: Thu, 17 Aug 2017 09:15:24 +0200
-Message-Id: <20170817071526.5930-1-o.rempel@pengutronix.de>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH 04/15] [media] rc: make device_type const
+Date: Sat, 19 Aug 2017 13:52:15 +0530
+Message-Id: <1503130946-2854-5-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-this patch set to provide remoteproc functionality on
-i.MX7D SoC.
+Make this const as it is only stored in the type field of a device
+structure, which is const.
+Done using Coccinelle.
 
-For testing I used this simple counter written in ASM:
-======================================
-        .syntax unified
-        .text
-        .thumb
-        .int 0x10020000                 @ Initial SP value
-        .int reset + 1
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/media/rc/rc-main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-reset:
-
-        mov     r0, #0x55
-        ldr     r1, =(0x40)
-1:
-        str     r0, [r1]
-        add     r0, 1
-        b       1b
-
-        /* Dummy data, required by remoteproc loader */
-        /* Please FIXME, this part seem to be incorrect */
-        .data
-        .section .resource_table, "aw"
-        .word   1, 0, 0, 0      /* struct resource_table base */
-        .word   0               /* uint32_t offset[1] */
-============================================================
-compiled with:
-${CROSS}as -o imx7m4.o imx7m4.S
-${CROSS}ld -Ttext=0x0 -o imx7m4.elf imx7m4.o
-cp imx7m4.elf /srv/nfs/sid-armhf/lib/firmware/rproc-imx_rproc-fw
-
-Functionality was confirmed with current OpenOCD master.
-OpenOCD cfg file can be found here:
-https://github.com/olerem/openocd/blob/imx7-2017.06.14/tcl/target/imx7.cfg
-
-changes:
-v3:
- - rename rproc to cm4 (Cortex M4)
-
-v2:
- - use memory-region instead of reg property
- - remove memory ranges from documentation
-
-Oleksij Rempel (2):
-  remoteproc: dt: Provide bindings for iMX6SX/7D Remote Processor
-    Controller driver
-  remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver
-
- .../devicetree/bindings/remoteproc/imx-rproc.txt   |  33 ++
- drivers/remoteproc/Kconfig                         |  10 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/imx_rproc.c                     | 426 +++++++++++++++++++++
- 4 files changed, 470 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
- create mode 100644 drivers/remoteproc/imx_rproc.c
-
+diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
+index a9eba00..ea3da3e 100644
+--- a/drivers/media/rc/rc-main.c
++++ b/drivers/media/rc/rc-main.c
+@@ -1532,7 +1532,7 @@ static RC_FILTER_ATTR(wakeup_filter_mask, S_IRUGO|S_IWUSR,
+ 	.attrs	= rc_dev_wakeup_filter_attrs,
+ };
+ 
+-static struct device_type rc_dev_type = {
++static const struct device_type rc_dev_type = {
+ 	.release	= rc_dev_release,
+ 	.uevent		= rc_dev_uevent,
+ };
 -- 
-2.11.0
+1.9.1
