@@ -1,84 +1,36 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH 18/18] rpmsg: glink: Handle remote rx done command
-Date: Wed, 16 Aug 2017 22:49:11 +0530
-Message-Id: <1502903951-5403-19-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH 14/15] staging: greybus: make device_type const
+Date: Sat, 19 Aug 2017 13:52:25 +0530
+Message-Id: <1503130946-2854-15-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Once the remote side sends a rx done ack, check
-for the intent reuse information from it and
-suitably discard or reuse the remote passed
-intent buffers.
+Make this const as it is only stored in the type field of a device
+structure, which is const.
+Done using Coccinelle.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
 ---
- drivers/rpmsg/qcom_glink_native.c | 42 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/staging/greybus/gbphy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index cfacf4d..870bff6 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -647,6 +647,40 @@ static int qcom_glink_advertise_intent(struct qcom_glink *glink,
- 	return intent;
- }
+diff --git a/drivers/staging/greybus/gbphy.c b/drivers/staging/greybus/gbphy.c
+index 603de6f..80c1da8 100644
+--- a/drivers/staging/greybus/gbphy.c
++++ b/drivers/staging/greybus/gbphy.c
+@@ -66,7 +66,7 @@ static int gb_gbphy_idle(struct device *dev)
+ 			   gb_gbphy_idle)
+ };
  
-+static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
-+				      u32 cid, uint32_t iid,
-+				      bool reuse)
-+{
-+	struct glink_core_rx_intent *intent;
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, cid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel) {
-+		dev_err(glink->dev, "invalid channel id received\n");
-+		return;
-+	}
-+
-+	spin_lock_irqsave(&channel->intent_lock, flags);
-+	intent = idr_find(&channel->riids, iid);
-+
-+	if (!intent) {
-+		spin_unlock_irqrestore(&channel->intent_lock, flags);
-+		dev_err(glink->dev, "invalid intent id received\n");
-+		return;
-+	}
-+
-+	intent->in_use = false;
-+
-+	if (!reuse) {
-+		idr_remove(&channel->riids, intent->id);
-+		kfree(intent);
-+	}
-+	spin_unlock_irqrestore(&channel->intent_lock, flags);
-+}
-+
- /**
-  * glink_core_rx_cmd_remote_rx_intent_req() - Receive a request for rx_intent
-  *					    from remote side
-@@ -955,6 +989,14 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- 		case RPM_CMD_INTENT:
- 			qcom_glink_handle_intent(glink, param1, param2, avail);
- 			break;
-+		case RPM_CMD_RX_DONE:
-+			qcom_glink_handle_rx_done(glink, param1, param2, false);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
-+		case RPM_CMD_RX_DONE_W_REUSE:
-+			qcom_glink_handle_rx_done(glink, param1, param2, true);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		case RPM_CMD_RX_INTENT_REQ_ACK:
- 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+-static struct device_type greybus_gbphy_dev_type = {
++static const struct device_type greybus_gbphy_dev_type = {
+ 	.name	 =	"gbphy_device",
+ 	.release =	gbphy_dev_release,
+ 	.pm	=	&gb_gbphy_pm_ops,
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
