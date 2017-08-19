@@ -1,144 +1,46 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH 17/18] rpmsg: glink: Request for intents when unavailable
-Date: Wed, 16 Aug 2017 22:49:10 +0530
-Message-Id: <1502903951-5403-18-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <tomas.winkler@intel.com>
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+Subject: RE: [PATCH 05/15] mei: make device_type const
+Date: Sat, 19 Aug 2017 16:48:37 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B749EFDE4@hasmsx108.ger.corp.intel.com>
+References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+ <1503130946-2854-6-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <1503130946-2854-6-git-send-email-bhumirks@gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Return-Path: tomas.winkler@intel.com
+To: Bhumika Goyal <bhumirks@gmail.com>, "julia.lawall@lip6.fr" <julia.lawall@lip6.fr>, "bp@alien8.de" <bp@alien8.de>, "mchehab@kernel.org" <mchehab@kernel.org>, "Vetter, Daniel" <daniel.vetter@intel.com>, "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>, "seanpaul@chromium.org" <seanpaul@chromium.org>, "airlied@linux.ie" <airlied@linux.ie>, "g.liakhovetski@gmx.de" <g.liakhovetski@gmx.de>, "dwmw2@infradead.org" <dwmw2@infradead.org>, "computersforpeace@gmail.com" <computersforpeace@gmail.com>, "boris.brezillon@free-electrons.com" <boris.brezillon@free-electrons.com>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "richard@nod.at" <richard@nod.at>, "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>, "peda@axentia.se" <peda@axentia.se>, "kishon@ti.com" <kishon@ti.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "dvhart@infradead.org" <dvhart@infradead.org>, "andy@infradead.org" <andy@infradead.org>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "freude@de.ibm.com" <freude@de.ibm.com>, "schwidefsky@de.ibm.com" <schwidefsky@de.ibm.com>, "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>, "jth@kernel.org" <jth@kernel.org>, "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "lduncan@suse.com" <lduncan@suse.com>, "cleech@redhat.com" <cleech@redhat.com>, "johan@kernel.org" <johan@kernel.org>, "elder@kernel.org" <elder@kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, "fcoe-devel@open-fcoe.org" <fcoe-devel@open-fcoe.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "open-iscsi@googlegroups.com" <open-iscsi@googlegroups.com>, "greybus-dev@lists.linaro.org" <greybus-dev@lists.linaro.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-While sending data, we search for suitable sized
-intent to map and simply fail if a intent is not
-found. Instead request for a intent of required
-size and wait till one is alloted.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_glink_native.c | 73 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 71 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 7b43adc..cfacf4d 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -174,6 +174,10 @@ struct glink_channel {
- 
- 	struct completion open_ack;
- 	struct completion open_req;
-+
-+	struct mutex intent_req_lock;
-+	bool intent_req_result;
-+	struct completion intent_req_comp;
- };
- 
- #define to_glink_channel(_ept) container_of(_ept, struct glink_channel, ept)
-@@ -335,6 +339,24 @@ static void qcom_glink_send_open_ack(struct qcom_glink *glink,
- 	qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
- }
- 
-+static void qcom_glink_handle_intent_req_ack(struct qcom_glink *glink,
-+					     unsigned int cid, bool granted)
-+{
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, cid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel) {
-+		dev_err(glink->dev, "unable to find channel\n");
-+		return;
-+	}
-+
-+	channel->intent_req_result = granted;
-+	complete(&channel->intent_req_comp);
-+}
-+
- /**
-  * qcom_glink_send_open_req() - send a RPM_CMD_OPEN request to the remote
-  * @glink:
-@@ -933,6 +955,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- 		case RPM_CMD_INTENT:
- 			qcom_glink_handle_intent(glink, param1, param2, avail);
- 			break;
-+		case RPM_CMD_RX_INTENT_REQ_ACK:
-+			qcom_glink_handle_intent_req_ack(glink, param1, param2);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		default:
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
- 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
-@@ -1099,6 +1125,42 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
- 	qcom_glink_send_close_req(glink, channel);
- }
- 
-+static int qcom_glink_request_intent(struct qcom_glink *glink,
-+				     struct glink_channel *channel,
-+				     size_t size)
-+{
-+	struct {
-+		u16 id;
-+		u16 cid;
-+		u32 size;
-+	} __packed cmd;
-+
-+	int ret;
-+
-+	mutex_lock(&channel->intent_req_lock);
-+
-+	reinit_completion(&channel->intent_req_comp);
-+
-+	cmd.id = RPM_CMD_RX_INTENT_REQ;
-+	cmd.cid = channel->lcid;
-+	cmd.size = size;
-+
-+	ret = qcom_glink_tx(glink, &cmd, sizeof(cmd), NULL, 0, true);
-+	if (ret)
-+		return ret;
-+
-+	ret = wait_for_completion_timeout(&channel->intent_req_comp, 10 * HZ);
-+	if (!ret) {
-+		dev_err(glink->dev, "intent request timed out\n");
-+		ret = -ETIMEDOUT;
-+	} else {
-+		ret = channel->intent_req_result ? 0 : -ECANCELED;
-+	}
-+
-+	mutex_unlock(&channel->intent_req_lock);
-+	return ret;
-+}
-+
- static int __qcom_glink_send(struct glink_channel *channel,
- 			     void *data, int len, bool wait)
- {
-@@ -1115,7 +1177,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 	unsigned long flags;
- 
- 	if (!glink->intentless) {
--		if (!intent) {
-+		while (!intent) {
- 			spin_lock_irqsave(&channel->intent_lock, flags);
- 			idr_for_each_entry(&channel->riids, tmp, iid) {
- 				if (tmp->size >= len && !tmp->in_use) {
-@@ -1127,8 +1189,15 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 			spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
- 			/* We found an available intent */
--			if (!intent)
-+			if (intent)
-+				break;
-+
-+			if (!wait)
- 				return -EBUSY;
-+
-+			ret = qcom_glink_request_intent(glink, channel, len);
-+			if (ret < 0)
-+				return ret;
- 		}
- 
- 		iid = intent->id;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> Subject: [PATCH 05/15] mei: make device_type const
+>=20
+> Make this const as it is only stored in the type field of a device struct=
+ure,
+> which is const.
+> Done using Coccinelle.
+>=20
+> Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+> ---
+>  drivers/misc/mei/bus.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c index
+> 40c7908..1ac10cb 100644
+> --- a/drivers/misc/mei/bus.c
+> +++ b/drivers/misc/mei/bus.c
+> @@ -845,7 +845,7 @@ static void mei_cl_bus_dev_release(struct device
+> *dev)
+>  	kfree(cldev);
+>  }
+>=20
+> -static struct device_type mei_cl_device_type =3D {
+> +static const struct device_type mei_cl_device_type =3D {
+>  	.release	=3D mei_cl_bus_dev_release,
+>  };
+>=20
+LGTM
+Thanks
+Tomas=20
