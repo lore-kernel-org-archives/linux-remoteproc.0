@@ -1,64 +1,50 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH 14/18] rpmsg: glink: Add announce_create ops and preallocate intents
-Date: Wed, 16 Aug 2017 22:49:07 +0530
-Message-Id: <1502903951-5403-15-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH 12/15] s390/zcrypt: make device_type const
+Date: Sat, 19 Aug 2017 13:52:23 +0530
+Message-Id: <1503130946-2854-13-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Preallocate local intent buffers and pass the intent ids
-to the remote. This way there are some default intents
-available  for the remote to start sending data without
-having to wait by sending intent requests. Do this by
-adding the rpmsg announce_create ops, which gets called
-right after the rpmsg device gets probed.
+Make these const as they are only stored in the type field of a device
+structure, which is const.
+Done using Coccinelle.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
 ---
- drivers/rpmsg/qcom_glink_native.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/s390/crypto/ap_card.c  | 2 +-
+ drivers/s390/crypto/ap_queue.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index b8db74a..c111046 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -995,6 +995,25 @@ static struct rpmsg_endpoint *qcom_glink_create_ept(struct rpmsg_device *rpdev,
- 	return ept;
- }
- 
-+static int qcom_glink_announce_create(struct rpmsg_device *rpdev)
-+{
-+	struct glink_channel *channel = to_glink_channel(rpdev->ept);
-+	struct glink_core_rx_intent *intent;
-+	struct qcom_glink *glink = channel->glink;
-+	int num_intents = glink->intentless ? 0 : 5;
-+
-+	/* Channel is now open, advertise base set of intents */
-+	while (num_intents--) {
-+		intent = qcom_glink_alloc_intent(glink, channel, SZ_1K, true);
-+		if (!intent)
-+			break;
-+
-+		qcom_glink_advertise_intent(glink, channel, intent);
-+	}
-+
-+	return 0;
-+}
-+
- static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
- {
- 	struct glink_channel *channel = to_glink_channel(ept);
-@@ -1070,6 +1089,7 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
- 
- static const struct rpmsg_device_ops glink_device_ops = {
- 	.create_ept = qcom_glink_create_ept,
-+	.announce_create = qcom_glink_announce_create,
+diff --git a/drivers/s390/crypto/ap_card.c b/drivers/s390/crypto/ap_card.c
+index 836efac9..0329148 100644
+--- a/drivers/s390/crypto/ap_card.c
++++ b/drivers/s390/crypto/ap_card.c
+@@ -153,7 +153,7 @@ static ssize_t ap_modalias_show(struct device *dev,
+ 	NULL
  };
  
- static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+-static struct device_type ap_card_type = {
++static const struct device_type ap_card_type = {
+ 	.name = "ap_card",
+ 	.groups = ap_card_dev_attr_groups,
+ };
+diff --git a/drivers/s390/crypto/ap_queue.c b/drivers/s390/crypto/ap_queue.c
+index 0f1a5d0..e2a85c26 100644
+--- a/drivers/s390/crypto/ap_queue.c
++++ b/drivers/s390/crypto/ap_queue.c
+@@ -577,7 +577,7 @@ static ssize_t ap_interrupt_show(struct device *dev,
+ 	NULL
+ };
+ 
+-static struct device_type ap_queue_type = {
++static const struct device_type ap_queue_type = {
+ 	.name = "ap_queue",
+ 	.groups = ap_queue_dev_attr_groups,
+ };
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
