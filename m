@@ -1,90 +1,36 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v2 05/20] rpmsg: glink: Allow unaligned data access
-Date: Thu, 24 Aug 2017 12:51:27 +0530
-Message-Id: <1503559302-3744-6-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH 07/15] mux: make device_type const
+Date: Sat, 19 Aug 2017 13:52:18 +0530
+Message-Id: <1503130946-2854-8-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Make this const as it is only stored in the type field of a device
+structure, which is const.
+Done using Coccinelle.
 
-Glink protocol requires that each message is aligned
-on a 8 byte offset. This is purely a restriction
-from glink, so in order to support clients which
-do not adher to this, allow data packets of any size,
-but align the head index accordingly, effectively
-removing the alignment restriction.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
 ---
- drivers/rpmsg/qcom_glink_native.c |  6 ------
- drivers/rpmsg/qcom_glink_rpm.c    | 22 +++++++++++++++++++++-
- 2 files changed, 21 insertions(+), 7 deletions(-)
+ drivers/mux/mux-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index ffdf88e..a6394cd 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -227,9 +227,6 @@ static int qcom_glink_tx(struct qcom_glink *glink,
- 	if (tlen >= glink->tx_pipe->length)
- 		return -EINVAL;
- 
--	if (WARN(tlen % 8, "Unaligned TX request"))
--		return -EINVAL;
--
- 	ret = mutex_lock_interruptible(&glink->tx_lock);
- 	if (ret)
- 		return ret;
-@@ -695,9 +692,6 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 		__le32 left_size;
- 	} __packed req;
- 
--	if (WARN(len % 8, "RPM GLINK expects 8 byte aligned messages\n"))
--		return -EINVAL;
--
- 	req.msg.cmd = cpu_to_le16(RPM_CMD_TX_DATA);
- 	req.msg.param1 = cpu_to_le16(channel->lcid);
- 	req.msg.param2 = cpu_to_le32(channel->rcid);
-diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-index 33daa32..cc73af0 100644
---- a/drivers/rpmsg/qcom_glink_rpm.c
-+++ b/drivers/rpmsg/qcom_glink_rpm.c
-@@ -156,11 +156,31 @@ static void glink_rpm_tx_write(struct qcom_glink_pipe *glink_pipe,
- 			       const void *data, size_t dlen)
- {
- 	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
-+	size_t tlen = hlen + dlen;
-+	size_t aligned_dlen;
- 	unsigned int head;
-+	char padding[8] = {0};
-+	size_t pad;
-+
-+	/* Header length comes from glink native and is always 4 byte aligned */
-+	if (WARN(hlen % 4, "Glink Header length must be 4 bytes aligned\n"))
-+		return;
-+
-+	/*
-+	 * Move the unaligned tail of the message to the padding chunk, to
-+	 * ensure word aligned accesses
-+	 */
-+	aligned_dlen = ALIGN_DOWN(dlen, 4);
-+	if (aligned_dlen != dlen)
-+		memcpy(padding, data + aligned_dlen, dlen - aligned_dlen);
- 
- 	head = readl(pipe->head);
- 	head = glink_rpm_tx_write_one(pipe, head, hdr, hlen);
--	head = glink_rpm_tx_write_one(pipe, head, data, dlen);
-+	head = glink_rpm_tx_write_one(pipe, head, data, aligned_dlen);
-+
-+	pad = ALIGN(tlen, 8) - ALIGN_DOWN(tlen, 4);
-+	if (pad)
-+		head = glink_rpm_tx_write_one(pipe, head, padding, pad);
- 	writel(head, pipe->head);
+diff --git a/drivers/mux/mux-core.c b/drivers/mux/mux-core.c
+index 2fe96c4..68bd16d 100644
+--- a/drivers/mux/mux-core.c
++++ b/drivers/mux/mux-core.c
+@@ -58,7 +58,7 @@ static void mux_chip_release(struct device *dev)
+ 	kfree(mux_chip);
  }
  
+-static struct device_type mux_type = {
++static const struct device_type mux_type = {
+ 	.name = "mux-chip",
+ 	.release = mux_chip_release,
+ };
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
