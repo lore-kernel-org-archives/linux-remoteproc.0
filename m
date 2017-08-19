@@ -1,273 +1,45 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v3 6/6] remoteproc: qcom: Add q6v5-wcss rproc ops
-Date: Thu, 31 Aug 2017 10:15:34 +0530
-Message-Id: <1504154734-12175-7-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
-References: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sricharan@codeaurora.org
+Return-Path: <bhumirks@gmail.com>
+Return-Path: <bhumirks@gmail.com>
+From: Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH 09/15] phy: tegra: make device_type const
+Date: Sat, 19 Aug 2017 13:52:20 +0530
+Message-Id: <1503130946-2854-10-git-send-email-bhumirks@gmail.com>
+In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
+To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
+Cc: Bhumika Goyal <bhumirks@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-q6v5-wcss core's start function is mostly common
-with the q6v5 of msm8996. So reuse that and add
-the stop function.
+Make these const as they are only stored in the type field of a device
+structure, which is const.
+Done using Coccinelle.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 212 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 212 insertions(+)
+ drivers/phy/tegra/xusb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 284fb12..df8f6f0 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -104,6 +104,17 @@
- #define QDSP6SS_XO_CBCR		0x0038
- #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
- 
-+/* QDSP6v5-WCSS config/status registers */
-+#define TCSR_GLOBAL_CFG0	0x0
-+#define TCSR_GLOBAL_CFG1	0x4
-+#define SSCAON_CONFIG		0x8
-+#define SSCAON_STATUS		0xc
-+#define QDSP6SS_BHS_STATUS	0x78
-+#define QDSP6SS_RST_EVB		0x10
-+
-+#define BHS_EN_REST_ACK		BIT(0)
-+#define SSCAON_ENABLE		BIT(13)
-+
- struct reg_info {
- 	struct regulator *reg;
- 	int uV;
-@@ -770,6 +781,61 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	return ret < 0 ? ret : 0;
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 3cbcb25..bd3f1b6 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -155,7 +155,7 @@ static void tegra_xusb_pad_release(struct device *dev)
+ 	pad->soc->ops->remove(pad);
  }
  
-+static int q6v5_wcss_start(struct rproc *rproc)
-+{
-+	struct q6v5 *qproc = rproc->priv;
-+	int ret = 0;
-+
-+	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
-+			      qproc->active_clk_count);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable clocks\n");
-+		return ret;
-+	}
-+
-+	/* Release Q6 and WCSS reset */
-+	ret = reset_control_deassert(qproc->wcss_reset);
-+	if (ret)
-+		dev_err(qproc->dev, "wcss_reset failed\n");
-+
-+	ret = reset_control_deassert(qproc->wcss_q6_reset);
-+	if (ret)
-+		dev_err(qproc->dev, "wcss_q6_reset failed\n");
-+
-+	/* Lithium configuration - clock gating and bus arbitration */
-+	ret = regmap_update_bits(qproc->halt_map,
-+				 qproc->halt_nc + TCSR_GLOBAL_CFG0,
-+				 0x1F, 0x14);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(qproc->halt_map,
-+				 qproc->halt_nc + TCSR_GLOBAL_CFG1,
-+				 1, 0);
-+	if (ret)
-+		return ret;
-+
-+	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
-+	writel(rproc->bootaddr >> 4, qproc->reg_base + QDSP6SS_RST_EVB);
-+
-+	ret = q6v5_reset(qproc);
-+	if (ret)
-+		return ret;
-+
-+	q6v5_reset_rest(qproc);
-+
-+	ret = wait_for_completion_timeout(&qproc->start_done,
-+					  msecs_to_jiffies(5000));
-+	if (ret == 0) {
-+		dev_err(qproc->dev, "start timed out\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	qproc->running = true;
-+
-+	return 0;
-+}
-+
- static int q6v5_start(struct rproc *rproc)
+-static struct device_type tegra_xusb_pad_type = {
++static const struct device_type tegra_xusb_pad_type = {
+ 	.release = tegra_xusb_pad_release,
+ };
+ 
+@@ -512,7 +512,7 @@ static void tegra_xusb_port_release(struct device *dev)
  {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-@@ -893,6 +959,146 @@ static int q6v5_start(struct rproc *rproc)
- 	return ret;
  }
  
-+static int q6v5_wcss_powerdown(struct q6v5 *qproc)
-+{
-+	unsigned int val = 0;
-+	int ret;
-+
-+	/* 1 - Assert WCSS/Q6 HALTREQ */
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+
-+	/* 2 - Enable WCSSAON_CONFIG */
-+	val = readl(qproc->rmb_base + SSCAON_CONFIG);
-+	val |= SSCAON_ENABLE;
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 3 - Set SSCAON_CONFIG */
-+	val |= BIT(15);
-+	val &= ~BIT(16);
-+	val &= ~BIT(17);
-+	val &= ~BIT(18);
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 4 - SSCAON_CONFIG 1 */
-+	val |= BIT(1);
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 5 - wait for SSCAON_STATUS */
-+	ret = readl_poll_timeout(qproc->rmb_base + SSCAON_STATUS,
-+				 val, (val & 0xffff) == 0x400, 1000,
-+				 HALT_CHECK_MAX_LOOPS);
-+	if (ret) {
-+		dev_err(qproc->dev,
-+			"can't get SSCAON_STATUS rc:%d)\n", ret);
-+	}
-+
-+	/* 6 - De-assert WCSS_AON reset */
-+	reset_control_assert(qproc->wcss_aon_reset);
-+
-+	/* 7 - Disable WCSSAON_CONFIG 13 */
-+	val = readl(qproc->rmb_base + SSCAON_CONFIG);
-+	val &= ~SSCAON_ENABLE;
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 8 - De-assert WCSS/Q6 HALTREQ */
-+	reset_control_assert(qproc->wcss_reset);
-+
-+	return ret;
-+}
-+
-+static int q6v5_q6_powerdown(struct q6v5 *qproc)
-+{
-+	int i = 0, ret;
-+	unsigned int val = 0;
-+
-+	/* 1 - Halt Q6 bus interface */
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+
-+	/* 2 - Disable Q6 Core clock */
-+	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+	val &= ~Q6SS_CLK_ENABLE;
-+	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+
-+	/* 3 - Clamp I/O */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= Q6SS_CLAMP_IO;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 4 - Clamp WL */
-+	val |= QDSS_BHS_ON;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 5 - Clear Erase standby */
-+	val &= ~Q6SS_L2DATA_STBY_N;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 6 - Clear Sleep RTN */
-+	val &= ~Q6SS_SLP_RET_N;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 7 - turn off QDSP6 memory foot/head switch one bank at a time */
-+	for (i = 0; i < 20; i++) {
-+		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+		val &= ~BIT(i);
-+		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+		mdelay(1);
-+	}
-+	/* 8 - Assert QMC memory RTN */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= QDSP6v56_CLAMP_QMC_MEM;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 9 - Turn off BHS */
-+	val &= ~QDSP6v56_BHS_ON;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	udelay(1);
-+	/* 10 - Wait till BHS Reset is done */
-+	ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BHS_STATUS,
-+				 val, !(val & BHS_EN_REST_ACK), 1000,
-+				 HALT_CHECK_MAX_LOOPS);
-+	if (ret) {
-+		dev_err(qproc->dev,
-+			"BHS_STATUS not OFF (rc:%d)\n", ret);
-+	}
-+
-+	/* 11 - Enable Q6 Block reset */
-+	reset_control_assert(qproc->wcss_q6_reset);
-+
-+	return 0;
-+}
-+
-+static int q6v5_wcss_stop(struct rproc *rproc)
-+{
-+	struct q6v5 *qproc = rproc->priv;
-+	int ret = 0;
-+
-+	qproc->running = false;
-+
-+	/* WCSS powerdown */
-+	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit),
-+				    BIT(qproc->stop_bit));
-+
-+	ret = wait_for_completion_timeout(&qproc->stop_done,
-+					  msecs_to_jiffies(5000));
-+	if (ret == 0) {
-+		dev_err(qproc->dev, "timed out on wait\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
-+
-+	ret = q6v5_wcss_powerdown(qproc);
-+	if (ret)
-+		return ret;
-+
-+	/* Q6 Power down */
-+	ret = q6v5_q6_powerdown(qproc);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int q6v5_stop(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-@@ -954,6 +1160,11 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
- 	.da_to_va = q6v5_da_to_va,
+-static struct device_type tegra_xusb_port_type = {
++static const struct device_type tegra_xusb_port_type = {
+ 	.release = tegra_xusb_port_release,
  };
  
-+static const struct rproc_ops q6v5_wcss_ops = {
-+	.start = q6v5_wcss_start,
-+	.stop = q6v5_wcss_stop,
-+};
-+
- static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
- {
- 	struct q6v5 *qproc = dev;
-@@ -1401,6 +1612,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 	.version = WCSS_IPQ8074,
- 	.init_reset = q6v5_wcss_init_reset,
- 	.fw_ops = &q6v5_wcss_fw_ops,
-+	.ops = &q6v5_wcss_ops,
- };
- 
- static const struct of_device_id q6v5_of_match[] = {
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
