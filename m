@@ -1,86 +1,48 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH 01/15] EDAC: make device_type const
-Date: Sat, 19 Aug 2017 13:52:12 +0530
-Message-Id: <1503130946-2854-2-git-send-email-bhumirks@gmail.com>
-In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH 11/18] rpmsg: glink: Use the local intents when receiving
+ data
+References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
+ <1502903951-5403-12-git-send-email-sricharan@codeaurora.org>
+ <1dc63580-4a6c-750a-7cb6-00906a4ea4c0@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <65d6412f-ee00-09b1-59ee-7ff20d65827b@codeaurora.org>
+Date: Tue, 22 Aug 2017 18:09:01 +0530
+MIME-Version: 1.0
+In-Reply-To: <1dc63580-4a6c-750a-7cb6-00906a4ea4c0@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: Arun Kumar Neelakantam <aneela@codeaurora.org>, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make these const as they are only stored in the type field of a device
-structure, which is const.
-Done using Coccinelle.
+Hi,
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/edac/edac_mc_sysfs.c | 8 ++++----
- drivers/edac/i7core_edac.c   | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+<snip..>
 
-diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
-index dbc6446..e4fcfa8 100644
---- a/drivers/edac/edac_mc_sysfs.c
-+++ b/drivers/edac/edac_mc_sysfs.c
-@@ -304,7 +304,7 @@ static void csrow_attr_release(struct device *dev)
- 	kfree(csrow);
- }
+>>   -    /* Might have an ongoing, fragmented, message to append */
+>> -    if (!channel->buf) {
+>> -        channel->buf = kmalloc(chunk_size + left_size, GFP_ATOMIC);
+>> -        if (!channel->buf)
+>> -            return -ENOMEM;
+>> +    if (glink->intentless) {
+>> +        /* Might have an ongoing, fragmented, message to append */
+>> +        if (!channel->buf) {
+>> +            intent = kzalloc(sizeof(*intent), GFP_ATOMIC);
+>> +            if (!intent)
+>> +                return -ENOMEM;
+>> +
+>> +            intent->data = kmalloc(chunk_size + left_size,
+>> +                           GFP_ATOMIC);
+> 
+> Who is supposed to free the intent and intent->data memory ?
+ Well, that's done as a part of the rx_done_work.
+
+Regards,
+ Sricharan
  
--static struct device_type csrow_attr_type = {
-+static const struct device_type csrow_attr_type = {
- 	.groups		= csrow_attr_groups,
- 	.release	= csrow_attr_release,
- };
-@@ -644,7 +644,7 @@ static void dimm_attr_release(struct device *dev)
- 	kfree(dimm);
- }
- 
--static struct device_type dimm_attr_type = {
-+static const struct device_type dimm_attr_type = {
- 	.groups		= dimm_attr_groups,
- 	.release	= dimm_attr_release,
- };
-@@ -920,7 +920,7 @@ static void mci_attr_release(struct device *dev)
- 	kfree(mci);
- }
- 
--static struct device_type mci_attr_type = {
-+static const struct device_type mci_attr_type = {
- 	.groups		= mci_attr_groups,
- 	.release	= mci_attr_release,
- };
-@@ -1074,7 +1074,7 @@ static void mc_attr_release(struct device *dev)
- 	kfree(dev);
- }
- 
--static struct device_type mc_attr_type = {
-+static const struct device_type mc_attr_type = {
- 	.release	= mc_attr_release,
- };
- /*
-diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
-index d36cc84..c16c3b9 100644
---- a/drivers/edac/i7core_edac.c
-+++ b/drivers/edac/i7core_edac.c
-@@ -1094,7 +1094,7 @@ static void addrmatch_release(struct device *device)
- 	kfree(device);
- }
- 
--static struct device_type addrmatch_type = {
-+static const struct device_type addrmatch_type = {
- 	.groups		= addrmatch_groups,
- 	.release	= addrmatch_release,
- };
-@@ -1125,7 +1125,7 @@ static void all_channel_counts_release(struct device *device)
- 	kfree(device);
- }
- 
--static struct device_type all_channel_counts_type = {
-+static const struct device_type all_channel_counts_type = {
- 	.groups		= all_channel_counts_groups,
- 	.release	= all_channel_counts_release,
- };
 -- 
-1.9.1
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
