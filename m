@@ -1,36 +1,52 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH 07/15] mux: make device_type const
-Date: Sat, 19 Aug 2017 13:52:18 +0530
-Message-Id: <1503130946-2854-8-git-send-email-bhumirks@gmail.com>
-In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Return-Path: <aneela@codeaurora.org>
+Subject: Re: [PATCH 13/18] rpmsg: glink: Add rx done command
+References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
+ <1502903951-5403-14-git-send-email-sricharan@codeaurora.org>
+ <a5f890fe-7405-ff03-9a43-0e4d62683cb6@codeaurora.org>
+ <67a2b4db-fabb-9787-6813-7bd001814bfc@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Message-ID: <6b36382b-8889-0a10-d276-fe6d5bd1874e@codeaurora.org>
+Date: Wed, 23 Aug 2017 10:14:44 +0530
+MIME-Version: 1.0
+In-Reply-To: <67a2b4db-fabb-9787-6813-7bd001814bfc@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+To: Sricharan R <sricharan@codeaurora.org>, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make this const as it is only stored in the type field of a device
-structure, which is const.
-Done using Coccinelle.
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/mux/mux-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mux/mux-core.c b/drivers/mux/mux-core.c
-index 2fe96c4..68bd16d 100644
---- a/drivers/mux/mux-core.c
-+++ b/drivers/mux/mux-core.c
-@@ -58,7 +58,7 @@ static void mux_chip_release(struct device *dev)
- 	kfree(mux_chip);
- }
- 
--static struct device_type mux_type = {
-+static const struct device_type mux_type = {
- 	.name = "mux-chip",
- 	.release = mux_chip_release,
- };
--- 
-1.9.1
+On 8/22/2017 7:46 PM, Sricharan R wrote:
+> Hi,
+>>> +    /* Take it off the tree of receive intents */
+>>> +    if (!intent->reuse) {
+>>> +        spin_lock(&channel->intent_lock);
+>>> +        idr_remove(&channel->liids, intent->id);
+>>> +        spin_unlock(&channel->intent_lock);
+>>> +    }
+>>> +
+>>> +    /* Schedule the sending of a rx_done indication */
+>>> +    spin_lock(&channel->intent_lock);
+>>> +    list_add_tail(&intent->node, &channel->done_intents);
+>>> +    spin_unlock(&channel->intent_lock);
+>>> +
+>>> +    schedule_work(&channel->intent_work);
+>> Adding one more parallel path will hit performance, if this worker could not get CPU cycles
+>> or blocked by other RT or HIGH_PRIO worker on global worker pool.
+>   The idea is, by design to have parallel non-blocking paths for rx and tx (that is done as a
+>   part of rx by sending the rx_done command), otherwise trying to send the rx_done
+>   command in the rx isr context is a problem since the tx can wait for the FIFO space and
+>   in worst case, can even lead to a potential deadlock if both the local and remote try
+>   the same. Having said that, instead of queuing this work in to the global queue, this
+>   can be put in to a local glink edge owned queue (or) a threaded isr ?, downstream does the
+>   rx_done in a client specific worker.
+
+Yes, mixing RX and TX path will cause dead lock. I am okay to use 
+specific queue with HIGH_PRIO or a threaded isr.
+down stream uses both client specific worker and client RX cb [this mix 
+the TX and RX path] which want to avoid.
+>
+> Regards,
+>   Sricharan
+>
