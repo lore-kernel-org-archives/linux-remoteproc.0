@@ -1,154 +1,64 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v2 19/20] rpmsg: glink: Request for intents when unavailable
-Date: Thu, 24 Aug 2017 12:51:41 +0530
-Message-Id: <1503559302-3744-20-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 071/102] remoteproc/keystone: explicitly request exclusive
+ reset control
+From: Suman Anna <s-anna@ti.com>
+References: <20170719152646.25903-1-p.zabel@pengutronix.de>
+ <20170719152646.25903-72-p.zabel@pengutronix.de>
+ <0756b169-6f70-5919-020b-367df898dc3f@ti.com>
+Message-ID: <45e1af7f-b931-ffd4-4447-b45f9038a089@ti.com>
+Date: Thu, 24 Aug 2017 16:58:11 -0500
+MIME-Version: 1.0
+In-Reply-To: <0756b169-6f70-5919-020b-367df898dc3f@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-While sending data, we search for suitable sized
-intent to map and simply fail if a intent is not
-found. Instead request for a intent of required
-size and wait till one is alloted.
+Hi Bjorn,
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_glink_native.c | 76 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 74 insertions(+), 2 deletions(-)
+On 07/19/2017 11:59 AM, Suman Anna wrote:
+> On 07/19/2017 10:26 AM, Philipp Zabel wrote:
+>> Commit a53e35db70d1 ("reset: Ensure drivers are explicit when requesting
+>> reset lines") started to transition the reset control request API calls
+>> to explicitly state whether the driver needs exclusive or shared reset
+>> control behavior. Convert all drivers requesting exclusive resets to the
+>> explicit API call so the temporary transition helpers can be removed.
+>>
+>> No functional changes.
+>>
+>> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+>> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> Cc: linux-remoteproc@vger.kernel.org
+>> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+> Acked-by: Suman Anna <s-anna@ti.com>
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 163c082..54ddb66 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -149,6 +149,9 @@ enum {
-  * @buf_size:	size of current @buf
-  * @open_ack:	completed once remote has acked the open-request
-  * @open_req:	completed once open-request has been received
-+ * @intent_req_lock: Synchronises multiple intent requests
-+ * @intent_req_result: Result of intent request
-+ * @intent_req_comp: Completion for intent_req signalling
-  */
- struct glink_channel {
- 	struct rpmsg_endpoint ept;
-@@ -176,6 +179,10 @@ struct glink_channel {
- 
- 	struct completion open_ack;
- 	struct completion open_req;
-+
-+	struct mutex intent_req_lock;
-+	bool intent_req_result;
-+	struct completion intent_req_comp;
- };
- 
- #define to_glink_channel(_ept) container_of(_ept, struct glink_channel, ept)
-@@ -342,6 +349,24 @@ static void qcom_glink_send_open_ack(struct qcom_glink *glink,
- 	qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
- }
- 
-+static void qcom_glink_handle_intent_req_ack(struct qcom_glink *glink,
-+					     unsigned int cid, bool granted)
-+{
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, cid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel) {
-+		dev_err(glink->dev, "unable to find channel\n");
-+		return;
-+	}
-+
-+	channel->intent_req_result = granted;
-+	complete(&channel->intent_req_comp);
-+}
-+
- /**
-  * qcom_glink_send_open_req() - send a RPM_CMD_OPEN request to the remote
-  * @glink: Ptr to the glink edge
-@@ -940,6 +965,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- 		case RPM_CMD_INTENT:
- 			qcom_glink_handle_intent(glink, param1, param2, avail);
- 			break;
-+		case RPM_CMD_RX_INTENT_REQ_ACK:
-+			qcom_glink_handle_intent_req_ack(glink, param1, param2);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		default:
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
- 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
-@@ -1106,6 +1135,42 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
- 	qcom_glink_send_close_req(glink, channel);
- }
- 
-+static int qcom_glink_request_intent(struct qcom_glink *glink,
-+				     struct glink_channel *channel,
-+				     size_t size)
-+{
-+	struct {
-+		u16 id;
-+		u16 cid;
-+		u32 size;
-+	} __packed cmd;
-+
-+	int ret;
-+
-+	mutex_lock(&channel->intent_req_lock);
-+
-+	reinit_completion(&channel->intent_req_comp);
-+
-+	cmd.id = RPM_CMD_RX_INTENT_REQ;
-+	cmd.cid = channel->lcid;
-+	cmd.size = size;
-+
-+	ret = qcom_glink_tx(glink, &cmd, sizeof(cmd), NULL, 0, true);
-+	if (ret)
-+		return ret;
-+
-+	ret = wait_for_completion_timeout(&channel->intent_req_comp, 10 * HZ);
-+	if (!ret) {
-+		dev_err(glink->dev, "intent request timed out\n");
-+		ret = -ETIMEDOUT;
-+	} else {
-+		ret = channel->intent_req_result ? 0 : -ECANCELED;
-+	}
-+
-+	mutex_unlock(&channel->intent_req_lock);
-+	return ret;
-+}
-+
- static int __qcom_glink_send(struct glink_channel *channel,
- 			     void *data, int len, bool wait)
- {
-@@ -1122,7 +1187,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 	unsigned long flags;
- 
- 	if (!glink->intentless) {
--		if (!intent) {
-+		while (!intent) {
- 			spin_lock_irqsave(&channel->intent_lock, flags);
- 			idr_for_each_entry(&channel->riids, tmp, iid) {
- 				if (tmp->size >= len && !tmp->in_use) {
-@@ -1134,8 +1199,15 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 			spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
- 			/* We found an available intent */
--			if (!intent)
-+			if (intent)
-+				break;
-+
-+			if (!wait)
- 				return -EBUSY;
-+
-+			ret = qcom_glink_request_intent(glink, channel, len);
-+			if (ret < 0)
-+				return ret;
- 		}
- 
- 		iid = intent->id;
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Can you pick this one and the other 2 related remoteproc patches?
+Believe the subsystem maintainers have been picking these up, I see some
+of the other related patches in linux-next but not these.
+
+regards
+Suman
+
+> 
+>> ---
+>>  drivers/remoteproc/keystone_remoteproc.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+>> index 5f776bfd674a0..920fef072b364 100644
+>> --- a/drivers/remoteproc/keystone_remoteproc.c
+>> +++ b/drivers/remoteproc/keystone_remoteproc.c
+>> @@ -410,7 +410,7 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+>>  	if (ret)
+>>  		goto free_rproc;
+>>  
+>> -	ksproc->reset = devm_reset_control_get(dev, NULL);
+>> +	ksproc->reset = devm_reset_control_get_exclusive(dev, NULL);
+>>  	if (IS_ERR(ksproc->reset)) {
+>>  		ret = PTR_ERR(ksproc->reset);
+>>  		goto free_rproc;
+>>
+> 
