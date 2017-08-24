@@ -1,123 +1,81 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH v2 3/4] dt-bindings: remoteproc: Add bindings for Davinci DSP processors
-Date: Tue, 1 Aug 2017 10:48:43 -0500
-Message-ID: <20170801154844.24662-4-s-anna@ti.com>
-In-Reply-To: <20170801154844.24662-1-s-anna@ti.com>
-References: <20170801154844.24662-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Robert Tivy <rtivy@ti.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH v2 00/20] rpmsg: glink: Add glink smem based transport
+Date: Thu, 24 Aug 2017 12:51:22 +0530
+Message-Id: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add the device tree bindings document for the DSP processor
-subsystem devices on TI Davinci DA8xx/OMAP-L13x SoCs.
+The glink protocol works with a shared-memory(transport) for
+communication between the local and remote processors. The
+existing glink-rpm driver implements the basic features
+of the protocol and uses msgram as the transport.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
-v2: 
- - Updated the patch header
- - Revised the binding status statement slightly
- - Updated the example to address Rob's comments
- - No changes in properties description themselves
-v1: https://patchwork.kernel.org/patch/9751269/
+The same is extended to support smem based transport as well.
+The first few patches consolidates the code, so that the
+core protocol code is made common for both the types of
+transport.
 
- .../bindings/remoteproc/ti,davinci-rproc.txt       | 86 ++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
+The next set of patches adds the additional features of the
+protocol required by clients using smem based transport,
+particularly support for intents.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
-new file mode 100644
-index 000000000000..e44a97e21164
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,davinci-rproc.txt
-@@ -0,0 +1,86 @@
-+TI Davinci DSP devices
-+=======================
-+
-+Binding status: Unstable - Subject to changes for DT representation of clocks
-+			   and resets
-+
-+The TI Davinci family of SoCs usually contains a TI DSP Core sub-system that
-+is used to offload some of the processor-intensive tasks or algorithms, for
-+achieving various system level goals.
-+
-+The processor cores in the sub-system usually contain additional sub-modules
-+like L1 and/or L2 caches/SRAMs, an Interrupt Controller, an external memory
-+controller, a dedicated local power/sleep controller etc. The DSP processor
-+core used in Davinci SoCs is usually a C674x DSP CPU.
-+
-+DSP Device Node:
-+================
-+Each DSP Core sub-system is represented as a single DT node.
-+
-+Required properties:
-+--------------------
-+The following are the mandatory properties:
-+
-+- compatible:		Should be one of the following,
-+			    "ti,da850-dsp" for DSPs on OMAP-L138 SoCs
-+
-+- reg:			Should contain an entry for each value in 'reg-names'.
-+			Each entry should have the memory region's start address
-+			and the size of the region, the representation matching
-+			the parent node's '#address-cells' and '#size-cells' values.
-+
-+- reg-names:		Should contain strings with the following names, each
-+			representing a specific internal memory region or a
-+			specific register space,
-+			     "l2sram", "l1pram", "l1dram", "host1cfg", "chipsig_base"
-+
-+- interrupts: 		Should contain the interrupt number used to receive the
-+			interrupts from the DSP. The value should follow the
-+			interrupt-specifier format as dictated by the
-+			'interrupt-parent' node.
-+
-+- memory-region:	phandle to the reserved memory node to be associated
-+			with the remoteproc device. The reserved memory node
-+			can be a CMA memory node, and should be defined as
-+			per the bindings in
-+			Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+
-+Optional properties:
-+--------------------
-+- interrupt-parent:	phandle to the interrupt controller node. This property
-+			is needed if the device node hierarchy doesn't have an
-+			interrupt controller.
-+
-+
-+Example:
-+--------
-+
-+	/* DSP Reserved Memory node */
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		dsp_memory_region: dsp-memory@c3000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0xc3000000 0x1000000>;
-+			reusable;
-+		};
-+	};
-+
-+	/* DSP node */
-+	{
-+		dsp: dsp@11800000 {
-+			compatible = "ti,da850-dsp";
-+			reg = <0x11800000 0x40000>,
-+			      <0x11e00000 0x8000>,
-+			      <0x11f00000 0x8000>,
-+			      <0x01c14044 0x4>,
-+			      <0x01c14174 0x8>;
-+			reg-names = "l2sram", "l1pram", "l1dram", "host1cfg",
-+				    "chipsig";
-+			interrupt-parent = <&intc>;
-+			interrupts = <28>;
-+			memory-region = <&dsp_memory_region>;
-+		};
-+	};
+ * What is intents ?
+	Intents are nothing but pre-allocated buffers that
+	both the local and the remote clients allocate and
+	share the details (about the buffer size and an id)
+	before intending to receive data. The transmitter then
+	searches for an suitable 'intent-id' based on size from
+	the list that it was notified previously and sends the data
+	targeting that intent buffer, which is then copied by the
+	receiver in to the same intent-buffer. So this avoids memory
+	allocation stalls on copy based transports.
+
+[V2]
+        Fixed review comments and a race condition when the remote
+        device goes down. Added 2 small patches for fixing the same.
+        Previous version is here [1]
+
+[1] https://www.spinics.net/lists/arm-kernel/msg601119.html
+
+Bjorn Andersson (7):
+  rpmsg: glink: Rename glink_rpm_xx functions to qcom_glink_xx
+  rpmsg: glink: Associate indirections for pipe fifo accessor's
+  rpmsg: glink: Split rpm_probe to reuse the common code
+  rpmsg: glink: Move the common glink protocol implementation to
+    glink_native.c
+  rpmsg: glink: Allow unaligned data access
+  rpmsg: glink: Introduce glink smem based transport
+  rpmsg: glink: Make RX FIFO peak accessor to take an offset
+
+Sricharan R (13):
+  rpmsg: glink: Return -EAGAIN when there is no FIFO space
+  rpmsg: glink: Do a mbox_free_channel in remove
+  rpmsg: glink: Fix default case while handling received commands
+  rpmsg: glink: Add support for transport version negotiation
+  rpmsg: glink: Fix idr_lock from mutex to spinlock
+  rpmsg: glink: Add support for TX intents
+  rpmsg: glink: Use the local intents when receiving data
+  rpmsg: glink: Add rx done command
+  rpmsg: glink: Add announce_create ops and preallocate intents
+  rpmsg: glink: Receive and store the remote intent buffers
+  rpmsg: glink: Use the intents passed by remote
+  rpmsg: glink: Request for intents when unavailable
+  rpmsg: glink: Handle remote rx done command
+
+ drivers/rpmsg/Kconfig             |   16 +-
+ drivers/rpmsg/Makefile            |    2 +
+ drivers/rpmsg/qcom_glink_native.c | 1611 +++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/qcom_glink_native.h |   45 ++
+ drivers/rpmsg/qcom_glink_rpm.c    | 1026 ++---------------------
+ drivers/rpmsg/qcom_glink_smem.c   |  316 ++++++++
+ include/linux/rpmsg/qcom_glink.h  |   27 +
+ 7 files changed, 2092 insertions(+), 951 deletions(-)
+ create mode 100644 drivers/rpmsg/qcom_glink_native.c
+ create mode 100644 drivers/rpmsg/qcom_glink_native.h
+ create mode 100644 drivers/rpmsg/qcom_glink_smem.c
+ create mode 100644 include/linux/rpmsg/qcom_glink.h
+
 -- 
-2.13.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
