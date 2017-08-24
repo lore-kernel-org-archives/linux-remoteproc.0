@@ -1,70 +1,84 @@
-Return-Path: <joro@8bytes.org>
-From: Joerg Roedel <joro@8bytes.org>
-Subject: [PATCH 13/13] remoteproc: Use sychronized interface of the IOMMU-API
-Date: Thu, 17 Aug 2017 14:56:36 +0200
-Message-Id: <1502974596-23835-14-git-send-email-joro@8bytes.org>
-In-Reply-To: <1502974596-23835-1-git-send-email-joro@8bytes.org>
-References: <1502974596-23835-1-git-send-email-joro@8bytes.org>
-To: iommu@lists.linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>, Joerg Roedel <jroedel@suse.de>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH v2 20/20] rpmsg: glink: Handle remote rx done command
+Date: Thu, 24 Aug 2017 12:51:42 +0530
+Message-Id: <1503559302-3744-21-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
+References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Joerg Roedel <jroedel@suse.de>
+Once the remote side sends a rx done ack, check
+for the intent reuse information from it and
+suitably discard or reuse the remote passed
+intent buffers.
 
-The map and unmap functions of the IOMMU-API changed their
-semantics: They do no longer guarantee that the hardware
-TLBs are synchronized with the page-table updates they made.
-
-To make conversion easier, new synchronized functions have
-been introduced which give these guarantees again until the
-code is converted to use the new TLB-flush interface of the
-IOMMU-API, which allows certain optimizations.
-
-But for now, just convert this code to use the synchronized
-functions so that it will behave as before.
-
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/rpmsg/qcom_glink_native.c | 42 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 564061d..16db19c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -553,7 +553,8 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
- 	if (!mapping)
- 		return -ENOMEM;
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 54ddb66..08953ca 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -657,6 +657,40 @@ static int qcom_glink_advertise_intent(struct qcom_glink *glink,
+ 	return intent;
+ }
  
--	ret = iommu_map(rproc->domain, rsc->da, rsc->pa, rsc->len, rsc->flags);
-+	ret = iommu_map_sync(rproc->domain, rsc->da,
-+			     rsc->pa, rsc->len, rsc->flags);
- 	if (ret) {
- 		dev_err(dev, "failed to map devmem: %d\n", ret);
- 		goto out;
-@@ -661,8 +662,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 			goto dma_free;
- 		}
- 
--		ret = iommu_map(rproc->domain, rsc->da, dma, rsc->len,
--				rsc->flags);
-+		ret = iommu_map_sync(rproc->domain, rsc->da, dma, rsc->len,
-+				     rsc->flags);
- 		if (ret) {
- 			dev_err(dev, "iommu_map failed: %d\n", ret);
- 			goto free_mapping;
-@@ -823,7 +824,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 	list_for_each_entry_safe(entry, tmp, &rproc->mappings, node) {
- 		size_t unmapped;
- 
--		unmapped = iommu_unmap(rproc->domain, entry->da, entry->len);
-+		unmapped = iommu_unmap_sync(rproc->domain, entry->da,
-+					    entry->len);
- 		if (unmapped != entry->len) {
- 			/* nothing much to do besides complaining */
- 			dev_err(dev, "failed to unmap %u/%zu\n", entry->len,
++static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
++				      u32 cid, uint32_t iid,
++				      bool reuse)
++{
++	struct glink_core_rx_intent *intent;
++	struct glink_channel *channel;
++	unsigned long flags;
++
++	spin_lock_irqsave(&glink->idr_lock, flags);
++	channel = idr_find(&glink->rcids, cid);
++	spin_unlock_irqrestore(&glink->idr_lock, flags);
++	if (!channel) {
++		dev_err(glink->dev, "invalid channel id received\n");
++		return;
++	}
++
++	spin_lock_irqsave(&channel->intent_lock, flags);
++	intent = idr_find(&channel->riids, iid);
++
++	if (!intent) {
++		spin_unlock_irqrestore(&channel->intent_lock, flags);
++		dev_err(glink->dev, "invalid intent id received\n");
++		return;
++	}
++
++	intent->in_use = false;
++
++	if (!reuse) {
++		idr_remove(&channel->riids, intent->id);
++		kfree(intent);
++	}
++	spin_unlock_irqrestore(&channel->intent_lock, flags);
++}
++
+ /**
+  * qcom_glink_handle_intent_req() - Receive a request for rx_intent
+  *					    from remote side
+@@ -965,6 +999,14 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ 		case RPM_CMD_INTENT:
+ 			qcom_glink_handle_intent(glink, param1, param2, avail);
+ 			break;
++		case RPM_CMD_RX_DONE:
++			qcom_glink_handle_rx_done(glink, param1, param2, false);
++			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
++			break;
++		case RPM_CMD_RX_DONE_W_REUSE:
++			qcom_glink_handle_rx_done(glink, param1, param2, true);
++			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
++			break;
+ 		case RPM_CMD_RX_INTENT_REQ_ACK:
+ 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
+ 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
 -- 
-2.7.4
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
