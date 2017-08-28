@@ -1,108 +1,106 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 2/5] rpmsg: virtio_rpmsg_bus: fix sg_set_buf() when
- addr is not a valid kernel address
-References: <1490701787-15205-1-git-send-email-loic.pallardy@st.com>
- <1490701787-15205-3-git-send-email-loic.pallardy@st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <15f1e2b0-877d-9385-96e1-44f2c49aa6bb@ti.com>
-Date: Thu, 24 Aug 2017 17:03:52 -0500
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:44954 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750866AbdH1Lqp (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 28 Aug 2017 07:46:45 -0400
+Subject: Re: [PATCH v2 05/20] rpmsg: glink: Allow unaligned data access
+References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
+ <1503559302-3744-6-git-send-email-sricharan@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Message-ID: <6baef774-50ed-2dc9-8aed-5e02b0bfeaa5@codeaurora.org>
+Date: Mon, 28 Aug 2017 17:16:38 +0530
 MIME-Version: 1.0
-In-Reply-To: <1490701787-15205-3-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <1503559302-3744-6-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com, lee.jones@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, patrice.chotard@st.com, hugues.fruchet@st.com, Ludovic Barre <ludovic.barre@st.com>
+Content-Language: en-US
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Sricharan R <sricharan@codeaurora.org>, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
 
-On 03/28/2017 06:49 AM, Loic Pallardy wrote:
-> To specify memory for remoteproc, we declare (dma_declare_coherent_memory())
-> an area which is ioremap'ed to the vmalloc area.  However, this address is
-> not a kernel address so virt_addr_valid(buf) fails.
-> 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> Acked-by: Patrice Chotard <patrice.chotard@st.com>
-> Tested-by: Suman Anna <s-anna@ti.com>
 
-Can you pick up the first 2 patches from this series for v4.14? This
-does enable us to use HighMem CMA pools or carveout pools with
-virtio_rpmsg_bus, and have been sitting on the lists for some time in
-Acked/Tested status.
+On 8/24/2017 12:51 PM, Sricharan R wrote:
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+>
+> Glink protocol requires that each message is aligned
+> on a 8 byte offset. This is purely a restriction
+> from glink, so in order to support clients which
+> do not adher to this, allow data packets of any size,
+> but align the head index accordingly, effectively
+> removing the alignment restriction.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Acked-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 
-regards
-Suman
-
+Regards,
+Arun N
 > ---
-> Changes since V1:
-> - Remove extra line.
-> 
-> No change since v2.
-> 
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 28 +++++++++++++++++++++++++---
->  1 file changed, 25 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 3f44a03..1c7cde9 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -195,6 +195,28 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
->  };
->  
->  /**
-> + * rpmsg_sg_init - initialize scatterlist according to cpu address location
-> + * @sg: scatterlist to fill
-> + * @cpu_addr: virtual address of the buffer
-> + * @len: buffer length
-> + *
-> + * An internal function filling scatterlist according to virtual address
-> + * location (in vmalloc or in kernel).
-> + */
-> +static void
-> +rpmsg_sg_init(struct scatterlist *sg, void *cpu_addr, unsigned int len)
-> +{
-> +	if (is_vmalloc_addr(cpu_addr)) {
-> +		sg_init_table(sg, 1);
-> +		sg_set_page(sg, vmalloc_to_page(cpu_addr), len,
-> +			    offset_in_page(cpu_addr));
-> +	} else {
-> +		WARN_ON(!virt_addr_valid(cpu_addr));
-> +		sg_init_one(sg, cpu_addr, len);
-> +	}
-> +}
+>   drivers/rpmsg/qcom_glink_native.c |  6 ------
+>   drivers/rpmsg/qcom_glink_rpm.c    | 22 +++++++++++++++++++++-
+>   2 files changed, 21 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index ffdf88e..a6394cd 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -227,9 +227,6 @@ static int qcom_glink_tx(struct qcom_glink *glink,
+>   	if (tlen >= glink->tx_pipe->length)
+>   		return -EINVAL;
+>   
+> -	if (WARN(tlen % 8, "Unaligned TX request"))
+> -		return -EINVAL;
+> -
+>   	ret = mutex_lock_interruptible(&glink->tx_lock);
+>   	if (ret)
+>   		return ret;
+> @@ -695,9 +692,6 @@ static int __qcom_glink_send(struct glink_channel *channel,
+>   		__le32 left_size;
+>   	} __packed req;
+>   
+> -	if (WARN(len % 8, "RPM GLINK expects 8 byte aligned messages\n"))
+> -		return -EINVAL;
+> -
+>   	req.msg.cmd = cpu_to_le16(RPM_CMD_TX_DATA);
+>   	req.msg.param1 = cpu_to_le16(channel->lcid);
+>   	req.msg.param2 = cpu_to_le32(channel->rcid);
+> diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
+> index 33daa32..cc73af0 100644
+> --- a/drivers/rpmsg/qcom_glink_rpm.c
+> +++ b/drivers/rpmsg/qcom_glink_rpm.c
+> @@ -156,11 +156,31 @@ static void glink_rpm_tx_write(struct qcom_glink_pipe *glink_pipe,
+>   			       const void *data, size_t dlen)
+>   {
+>   	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
+> +	size_t tlen = hlen + dlen;
+> +	size_t aligned_dlen;
+>   	unsigned int head;
+> +	char padding[8] = {0};
+> +	size_t pad;
 > +
-> +/**
->   * __ept_release() - deallocate an rpmsg endpoint
->   * @kref: the ept's reference count
->   *
-> @@ -606,7 +628,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->  			 msg, sizeof(*msg) + msg->len, true);
->  #endif
->  
-> -	sg_init_one(&sg, msg, sizeof(*msg) + len);
-> +	rpmsg_sg_init(&sg, msg, sizeof(*msg) + len);
->  
->  	mutex_lock(&vrp->tx_lock);
->  
-> @@ -731,7 +753,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  		dev_warn(dev, "msg received with no recipient\n");
->  
->  	/* publish the real size of the buffer */
-> -	sg_init_one(&sg, msg, vrp->buf_size);
-> +	rpmsg_sg_init(&sg, msg, vrp->buf_size);
->  
->  	/* add the buffer back to the remote processor's virtqueue */
->  	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-> @@ -915,7 +937,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  		struct scatterlist sg;
->  		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
->  
-> -		sg_init_one(&sg, cpu_addr, vrp->buf_size);
-> +		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
->  
->  		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
->  					  GFP_KERNEL);
-> 
+> +	/* Header length comes from glink native and is always 4 byte aligned */
+> +	if (WARN(hlen % 4, "Glink Header length must be 4 bytes aligned\n"))
+> +		return;
+> +
+> +	/*
+> +	 * Move the unaligned tail of the message to the padding chunk, to
+> +	 * ensure word aligned accesses
+> +	 */
+> +	aligned_dlen = ALIGN_DOWN(dlen, 4);
+> +	if (aligned_dlen != dlen)
+> +		memcpy(padding, data + aligned_dlen, dlen - aligned_dlen);
+>   
+>   	head = readl(pipe->head);
+>   	head = glink_rpm_tx_write_one(pipe, head, hdr, hlen);
+> -	head = glink_rpm_tx_write_one(pipe, head, data, dlen);
+> +	head = glink_rpm_tx_write_one(pipe, head, data, aligned_dlen);
+> +
+> +	pad = ALIGN(tlen, 8) - ALIGN_DOWN(tlen, 4);
+> +	if (pad)
+> +		head = glink_rpm_tx_write_one(pipe, head, padding, pad);
+>   	writel(head, pipe->head);
+>   }
+>   
+
