@@ -1,36 +1,46 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH 06/15] mtd:  make device_type const
-Date: Sat, 19 Aug 2017 13:52:17 +0530
-Message-Id: <1503130946-2854-7-git-send-email-bhumirks@gmail.com>
-In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Return-Path: <aneela@codeaurora.org>
+Subject: Re: [PATCH v2 06/20] rpmsg: glink: Return -EAGAIN when there is no
+ FIFO space
+References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
+ <1503559302-3744-7-git-send-email-sricharan@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Message-ID: <b69734b6-d517-35c7-91b4-4b6696721a6f@codeaurora.org>
+Date: Mon, 28 Aug 2017 17:17:04 +0530
+MIME-Version: 1.0
+In-Reply-To: <1503559302-3744-7-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+To: Sricharan R <sricharan@codeaurora.org>, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make this const as it is only stored in the type field of a device
-structure, which is const.
-Done using Coccinelle.
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
----
- drivers/mtd/mtdcore.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index f872a99..e7ea842 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -340,7 +340,7 @@ static ssize_t mtd_bbtblocks_show(struct device *dev,
- };
- ATTRIBUTE_GROUPS(mtd);
- 
--static struct device_type mtd_devtype = {
-+static const struct device_type mtd_devtype = {
- 	.name		= "mtd",
- 	.groups		= mtd_groups,
- 	.release	= mtd_release,
--- 
-1.9.1
+On 8/24/2017 12:51 PM, Sricharan R wrote:
+> The TX FIFO can be full, if the remote client has
+> not read enough data (or) reading it slowly. So its
+> nessecary to return -EAGAIN to the local client to
+> enable retry.
+>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Acked-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+
+Regards,
+Arun N
+> ---
+>   drivers/rpmsg/qcom_glink_native.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index a6394cd..94b79e8 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -233,7 +233,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
+>   
+>   	while (qcom_glink_tx_avail(glink) < tlen) {
+>   		if (!wait) {
+> -			ret = -ENOMEM;
+> +			ret = -EAGAIN;
+>   			goto out;
+>   		}
+>   
