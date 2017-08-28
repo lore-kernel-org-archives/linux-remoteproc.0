@@ -1,225 +1,191 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:37696 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751736AbdHaEqX (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 31 Aug 2017 00:46:23 -0400
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v3 4/6] remoteproc: qcom: Split the head and tail of the  q6v5-pil rproc start function
-Date: Thu, 31 Aug 2017 10:15:32 +0530
-Message-Id: <1504154734-12175-5-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
-References: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sricharan@codeaurora.org
+Return-Path: <aneela@codeaurora.org>
+Subject: Re: [PATCH v2 15/20] rpmsg: glink: Add rx done command
+References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
+ <1503559302-3744-16-git-send-email-sricharan@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Message-ID: <24490135-c5ce-8d9d-b523-22c3b0538ad8@codeaurora.org>
+Date: Mon, 28 Aug 2017 17:20:31 +0530
+MIME-Version: 1.0
+In-Reply-To: <1503559302-3744-16-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+To: Sricharan R <sricharan@codeaurora.org>, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Most of the q6v5-pil start function is same for the q6v5-wcss rproc
-that will be added later. So split and move out the common pieces
-so that the same code can be reused.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 166 ++++++++++++++++++++-----------------
- 1 file changed, 91 insertions(+), 75 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 5b5811d..19f453f 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -405,75 +405,107 @@ static int q6v5_rmb_mba_wait(struct q6v5 *qproc, u32 status, int ms)
- 	return val;
- }
- 
--static int q6v5proc_reset(struct q6v5 *qproc)
-+static int q6v5_reset(struct q6v5 *qproc)
- {
--	u32 val;
--	int ret;
--	int i;
-+	u32 ret;
-+	int val, i;
- 
-+	/* Assert resets, stop core */
-+	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-+	val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
-+	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
--	if (qproc->version == MSS_MSM8996) {
--		/* Override the ACC value if required */
--		writel(QDSP6SS_ACC_OVERRIDE_VAL,
--		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-+	/* BHS require xo cbcr to be enabled */
-+	val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
-+	val |= 0x1;
-+	writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
- 
--		/* Assert resets, stop core */
--		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
--		val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
--		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+	/* Read CLKOFF bit to go low indicating CLK is enabled */
-+	ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
-+				 val, !(val & BIT(31)), 1,
-+				 HALT_CHECK_MAX_LOOPS);
-+	if (ret) {
-+		dev_err(qproc->dev,
-+			"xo cbcr enabling timed out (rc:%d)\n", ret);
-+		return ret;
-+	}
-+	/* Enable power block headswitch and wait for it to stabilize */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= QDSP6v56_BHS_ON;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	udelay(1);
- 
--		/* BHS require xo cbcr to be enabled */
--		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
--		val |= 0x1;
--		writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
-+	/* Put LDO in bypass mode */
-+	val |= QDSP6v56_LDO_BYP;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
--		/* Read CLKOFF bit to go low indicating CLK is enabled */
--		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
--					 val, !(val & BIT(31)), 1,
--					 HALT_CHECK_MAX_LOOPS);
--		if (ret) {
--			dev_err(qproc->dev,
--				"xo cbcr enabling timed out (rc:%d)\n", ret);
--			return ret;
--		}
--		/* Enable power block headswitch and wait for it to stabilize */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val |= QDSP6v56_BHS_ON;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	/* Deassert QDSP6 compiler memory clamp */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val &= ~QDSP6v56_CLAMP_QMC_MEM;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* Deassert memory peripheral sleep and L2 memory standby */
-+	val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* Turn on L1, L2, ETB and JU memories 1 at a time */
-+	val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+	for (i = 19; i >= 0; i--) {
-+		val |= BIT(i);
-+		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+		/*
-+		 * Read back value to ensure the write is done then
-+		 * wait for 1us for both memory peripheral and data
-+		 * array to turn on.
-+		 */
-+		val |= readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
- 		udelay(1);
-+	}
-+	/* Remove word line clamp */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val &= ~QDSP6v56_CLAMP_WL;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
--		/* Put LDO in bypass mode */
--		val |= QDSP6v56_LDO_BYP;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	return 0;
-+}
- 
--		/* Deassert QDSP6 compiler memory clamp */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val &= ~QDSP6v56_CLAMP_QMC_MEM;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+static void q6v5_reset_rest(struct q6v5 *qproc)
-+{
-+	u32 val;
- 
--		/* Deassert memory peripheral sleep and L2 memory standby */
--		val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
--		/* Turn on L1, L2, ETB and JU memories 1 at a time */
--		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
--		for (i = 19; i >= 0; i--) {
--			val |= BIT(i);
--			writel(val, qproc->reg_base +
--						QDSP6SS_MEM_PWR_CTL);
--			/*
--			 * Read back value to ensure the write is done then
--			 * wait for 1us for both memory peripheral and data
--			 * array to turn on.
--			 */
--			val |= readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
--			udelay(1);
--		}
--		/* Remove word line clamp */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val &= ~QDSP6v56_CLAMP_WL;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	/* Remove IO clamp */
-+	val &= ~Q6SS_CLAMP_IO;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* Bring core out of reset */
-+	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-+	val &= ~Q6SS_CORE_ARES;
-+	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+
-+	/* Turn on core clock */
-+	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+	val |= Q6SS_CLK_ENABLE;
-+	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+
-+	/* Start core execution */
-+	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-+	val &= ~Q6SS_STOP_CORE;
-+	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+}
-+
-+static int q6v5proc_reset(struct q6v5 *qproc)
-+{
-+	u32 val;
-+	int ret;
-+
-+	if (qproc->version == MSS_MSM8996) {
-+		/* Override the ACC value if required */
-+		writel(QDSP6SS_ACC_OVERRIDE_VAL,
-+		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-+		q6v5_reset(qproc);
- 	} else {
- 		/* Assert resets, stop core */
- 		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-@@ -501,24 +533,8 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 		val |= Q6SS_L2DATA_SLP_NRET_N_0;
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 	}
--	/* Remove IO clamp */
--	val &= ~Q6SS_CLAMP_IO;
--	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--
--	/* Bring core out of reset */
--	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
--	val &= ~Q6SS_CORE_ARES;
--	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
--	/* Turn on core clock */
--	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
--	val |= Q6SS_CLK_ENABLE;
--	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
--
--	/* Start core execution */
--	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
--	val &= ~Q6SS_STOP_CORE;
--	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+	q6v5_reset_rest(qproc);
- 
- 	/* Wait for PBL status */
- 	ret = q6v5_rmb_pbl_wait(qproc, 1000);
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+On 8/24/2017 12:51 PM, Sricharan R wrote:
+> Send RX data receive ack to remote and also inform
+> that local intent buffer is used and freed. This
+> informs the remote to request for next set of
+> intent buffers before doing a send operation.
+>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 
+Regards,
+Arun N
+> ---
+>   drivers/rpmsg/qcom_glink_native.c | 83 +++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 83 insertions(+)
+>
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index ff83cbb..1458bdb 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -77,6 +77,8 @@ struct glink_core_rx_intent {
+>   	bool reuse;
+>   	bool in_use;
+>   	u32 offset;
+> +
+> +	struct list_head node;
+>   };
+>   
+>   /**
+> @@ -139,6 +141,8 @@ enum {
+>    * @rcid:	channel id, in remote space
+>    * @intent_lock: lock for protection of @liids
+>    * @liids:	idr of all local intents
+> + * @intent_work: worker responsible for transmitting rx_done packets
+> + * @done_intents: list of intents that needs to be announced rx_done
+>    * @buf:	receive buffer, for gathering fragments
+>    * @buf_offset:	write offset in @buf
+>    * @buf_size:	size of current @buf
+> @@ -161,6 +165,8 @@ struct glink_channel {
+>   
+>   	spinlock_t intent_lock;
+>   	struct idr liids;
+> +	struct work_struct intent_work;
+> +	struct list_head done_intents;
+>   
+>   	struct glink_core_rx_intent *buf;
+>   	int buf_offset;
+> @@ -180,15 +186,19 @@ struct glink_channel {
+>   #define RPM_CMD_CLOSE			3
+>   #define RPM_CMD_OPEN_ACK		4
+>   #define RPM_CMD_INTENT			5
+> +#define RPM_CMD_RX_DONE			6
+>   #define RPM_CMD_RX_INTENT_REQ		7
+>   #define RPM_CMD_RX_INTENT_REQ_ACK	8
+>   #define RPM_CMD_TX_DATA			9
+>   #define RPM_CMD_CLOSE_ACK		11
+>   #define RPM_CMD_TX_DATA_CONT		12
+>   #define RPM_CMD_READ_NOTIF		13
+> +#define RPM_CMD_RX_DONE_W_REUSE		14
+>   
+>   #define GLINK_FEATURE_INTENTLESS	BIT(1)
+>   
+> +static void qcom_glink_rx_done_work(struct work_struct *work);
+> +
+>   static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
+>   						      const char *name)
+>   {
+> @@ -201,12 +211,16 @@ static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
+>   	/* Setup glink internal glink_channel data */
+>   	spin_lock_init(&channel->recv_lock);
+>   	spin_lock_init(&channel->intent_lock);
+> +
+>   	channel->glink = glink;
+>   	channel->name = kstrdup(name, GFP_KERNEL);
+>   
+>   	init_completion(&channel->open_req);
+>   	init_completion(&channel->open_ack);
+>   
+> +	INIT_LIST_HEAD(&channel->done_intents);
+> +	INIT_WORK(&channel->intent_work, qcom_glink_rx_done_work);
+> +
+>   	idr_init(&channel->liids);
+>   	kref_init(&channel->refcount);
+>   
+> @@ -402,6 +416,70 @@ static void qcom_glink_send_close_ack(struct qcom_glink *glink,
+>   	qcom_glink_tx(glink, &req, sizeof(req), NULL, 0, true);
+>   }
+>   
+> +static void qcom_glink_rx_done_work(struct work_struct *work)
+> +{
+> +	struct glink_channel *channel = container_of(work, struct glink_channel,
+> +						     intent_work);
+> +	struct qcom_glink *glink = channel->glink;
+> +	struct glink_core_rx_intent *intent, *tmp;
+> +	struct {
+> +		u16 id;
+> +		u16 lcid;
+> +		u32 liid;
+> +	} __packed cmd;
+> +
+> +	unsigned int cid = channel->lcid;
+> +	unsigned int iid;
+> +	bool reuse;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&channel->intent_lock, flags);
+> +	list_for_each_entry_safe(intent, tmp, &channel->done_intents, node) {
+> +		list_del(&intent->node);
+> +		spin_unlock_irqrestore(&channel->intent_lock, flags);
+> +		iid = intent->id;
+> +		reuse = intent->reuse;
+> +
+> +		cmd.id = reuse ? RPM_CMD_RX_DONE_W_REUSE : RPM_CMD_RX_DONE;
+> +		cmd.lcid = cid;
+> +		cmd.liid = iid;
+> +
+> +		qcom_glink_tx(glink, &cmd, sizeof(cmd), NULL, 0, true);
+> +		if (!reuse) {
+> +			kfree(intent->data);
+> +			kfree(intent);
+> +		}
+> +		spin_lock_irqsave(&channel->intent_lock, flags);
+> +	}
+> +	spin_unlock_irqrestore(&channel->intent_lock, flags);
+> +}
+> +
+> +static void qcom_glink_rx_done(struct qcom_glink *glink,
+> +			       struct glink_channel *channel,
+> +			       struct glink_core_rx_intent *intent)
+> +{
+> +	/* We don't send RX_DONE to intentless systems */
+> +	if (glink->intentless) {
+> +		kfree(intent->data);
+> +		kfree(intent);
+> +		return;
+> +	}
+> +
+> +	/* Take it off the tree of receive intents */
+> +	if (!intent->reuse) {
+> +		spin_lock(&channel->intent_lock);
+> +		idr_remove(&channel->liids, intent->id);
+> +		spin_unlock(&channel->intent_lock);
+> +	}
+> +
+> +	/* Schedule the sending of a rx_done indication */
+> +	spin_lock(&channel->intent_lock);
+> +	list_add_tail(&intent->node, &channel->done_intents);
+> +	spin_unlock(&channel->intent_lock);
+> +
+> +	schedule_work(&channel->intent_work);
+> +}
+> +
+>   /**
+>    * qcom_glink_receive_version() - receive version/features from remote system
+>    *
+> @@ -718,6 +796,8 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
+>   
+>   		intent->offset = 0;
+>   		channel->buf = NULL;
+> +
+> +		qcom_glink_rx_done(glink, channel, intent);
+>   	}
+>   
+>   advance_rx:
+> @@ -1107,6 +1187,9 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
+>   	if (WARN(!channel, "close request on unknown channel\n"))
+>   		return;
+>   
+> +	/* cancel pending rx_done work */
+> +	cancel_work_sync(&channel->intent_work);
+> +
+>   	if (channel->rpdev) {
+>   		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+>   		chinfo.src = RPMSG_ADDR_ANY;
