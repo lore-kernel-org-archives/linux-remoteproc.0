@@ -1,81 +1,60 @@
 Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v2 11/20] rpmsg: glink: Fix idr_lock from mutex to
+ spinlock
+References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
+ <1503559302-3744-12-git-send-email-sricharan@codeaurora.org>
+ <88b34df6-d697-1d98-6427-5ddfe14785b1@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v2 00/20] rpmsg: glink: Add glink smem based transport
-Date: Thu, 24 Aug 2017 12:51:22 +0530
-Message-Id: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Message-ID: <ad77bb2a-cfa2-68af-8a44-a99938aecadd@codeaurora.org>
+Date: Tue, 29 Aug 2017 04:43:47 +0530
+MIME-Version: 1.0
+In-Reply-To: <88b34df6-d697-1d98-6427-5ddfe14785b1@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: Chris Lew <clew@codeaurora.org>, ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The glink protocol works with a shared-memory(transport) for
-communication between the local and remote processors. The
-existing glink-rpm driver implements the basic features
-of the protocol and uses msgram as the transport.
+Hi Chris,
 
-The same is extended to support smem based transport as well.
-The first few patches consolidates the code, so that the
-core protocol code is made common for both the types of
-transport.
+On 8/29/2017 3:21 AM, Chris Lew wrote:
+> Hi Sricharan,
+> 
+> Minor bug in this patch.
+> 
+> On 8/24/2017 12:21 AM, Sricharan R wrote:
+> [..]
+>> @@ -829,11 +839,14 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
+>>       struct device_node *node;
+>>       int lcid;
+>>       int ret;
+>> +    unsigned long flags;
+>>   +    spin_lock_irqsave(&glink->idr_lock, flags);
+>>       idr_for_each_entry(&glink->lcids, channel, lcid) {
+>>           if (!strcmp(channel->name, name))
+>>               break;
+>>       }
+>> +    spin_unlock_irqrestore(&glink->idr_lock, flags);
+>>         if (!channel) {
+>>           channel = qcom_glink_alloc_channel(glink, name);
+>> @@ -844,15 +857,15 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
+>>           create_device = true;
+>>       }
+>>   -    mutex_lock(&glink->idr_lock);
+>> +    spin_lock_irqsave(&glink->idr_lock, flags);
+>>       ret = idr_alloc(&glink->rcids, channel, rcid, rcid + 1, GFP_KERNEL);
+> 
+> I think GFP_KERNEL should be changed to GFP_ATOMIC if the mutex is changed to spinlock.
+> 
 
-The next set of patches adds the additional features of the
-protocol required by clients using smem based transport,
-particularly support for intents.
+ ha, thanks for the catch.
 
- * What is intents ?
-	Intents are nothing but pre-allocated buffers that
-	both the local and the remote clients allocate and
-	share the details (about the buffer size and an id)
-	before intending to receive data. The transmitter then
-	searches for an suitable 'intent-id' based on size from
-	the list that it was notified previously and sends the data
-	targeting that intent buffer, which is then copied by the
-	receiver in to the same intent-buffer. So this avoids memory
-	allocation stalls on copy based transports.
-
-[V2]
-        Fixed review comments and a race condition when the remote
-        device goes down. Added 2 small patches for fixing the same.
-        Previous version is here [1]
-
-[1] https://www.spinics.net/lists/arm-kernel/msg601119.html
-
-Bjorn Andersson (7):
-  rpmsg: glink: Rename glink_rpm_xx functions to qcom_glink_xx
-  rpmsg: glink: Associate indirections for pipe fifo accessor's
-  rpmsg: glink: Split rpm_probe to reuse the common code
-  rpmsg: glink: Move the common glink protocol implementation to
-    glink_native.c
-  rpmsg: glink: Allow unaligned data access
-  rpmsg: glink: Introduce glink smem based transport
-  rpmsg: glink: Make RX FIFO peak accessor to take an offset
-
-Sricharan R (13):
-  rpmsg: glink: Return -EAGAIN when there is no FIFO space
-  rpmsg: glink: Do a mbox_free_channel in remove
-  rpmsg: glink: Fix default case while handling received commands
-  rpmsg: glink: Add support for transport version negotiation
-  rpmsg: glink: Fix idr_lock from mutex to spinlock
-  rpmsg: glink: Add support for TX intents
-  rpmsg: glink: Use the local intents when receiving data
-  rpmsg: glink: Add rx done command
-  rpmsg: glink: Add announce_create ops and preallocate intents
-  rpmsg: glink: Receive and store the remote intent buffers
-  rpmsg: glink: Use the intents passed by remote
-  rpmsg: glink: Request for intents when unavailable
-  rpmsg: glink: Handle remote rx done command
-
- drivers/rpmsg/Kconfig             |   16 +-
- drivers/rpmsg/Makefile            |    2 +
- drivers/rpmsg/qcom_glink_native.c | 1611 +++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/qcom_glink_native.h |   45 ++
- drivers/rpmsg/qcom_glink_rpm.c    | 1026 ++---------------------
- drivers/rpmsg/qcom_glink_smem.c   |  316 ++++++++
- include/linux/rpmsg/qcom_glink.h  |   27 +
- 7 files changed, 2092 insertions(+), 951 deletions(-)
- create mode 100644 drivers/rpmsg/qcom_glink_native.c
- create mode 100644 drivers/rpmsg/qcom_glink_native.h
- create mode 100644 drivers/rpmsg/qcom_glink_smem.c
- create mode 100644 include/linux/rpmsg/qcom_glink.h
+Regards,
+ Sricharan
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
