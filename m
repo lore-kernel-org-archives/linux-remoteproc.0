@@ -1,36 +1,71 @@
-Return-Path: <bhumirks@gmail.com>
-Return-Path: <bhumirks@gmail.com>
-From: Bhumika Goyal <bhumirks@gmail.com>
-Subject: [PATCH 04/15] [media] rc: make device_type const
-Date: Sat, 19 Aug 2017 13:52:15 +0530
-Message-Id: <1503130946-2854-5-git-send-email-bhumirks@gmail.com>
-In-Reply-To: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-References: <1503130946-2854-1-git-send-email-bhumirks@gmail.com>
-To: julia.lawall@lip6.fr, bp@alien8.de, mchehab@kernel.org, daniel.vetter@intel.com, jani.nikula@linux.intel.com, seanpaul@chromium.org, airlied@linux.ie, g.liakhovetski@gmx.de, tomas.winkler@intel.com, dwmw2@infradead.org, computersforpeace@gmail.com, boris.brezillon@free-electrons.com, marek.vasut@gmail.com, richard@nod.at, cyrille.pitchen@wedev4u.fr, peda@axentia.se, kishon@ti.com, bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com, dvhart@infradead.org, andy@infradead.org, ohad@wizery.com, bjorn.andersson@linaro.org, freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, jth@kernel.org, jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, lduncan@suse.com, cleech@redhat.com, johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org, heikki.krogerus@linux.intel.com, linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, fcoe-devel@open-fcoe.org, linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com, greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org, linux-usb@vger.kernel.org
-Cc: Bhumika Goyal <bhumirks@gmail.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] remoteproc: Introduce rproc handle accessor for children
+Date: Sun, 27 Aug 2017 22:34:53 -0700
+Message-Id: <20170828053453.27187-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make this const as it is only stored in the type field of a device
-structure, which is const.
-Done using Coccinelle.
+In certain circumstances rpmsg devices needs to acquire a handle to the
+ancestor remoteproc instance, e.g. to invoke rproc_report_crash() when a
+fatal error is detected. Introduce an interface that walks the device
+tree in search for a remoteproc instance and return this.
 
-Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/media/rc/rc-main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 18 ++++++++++++++++++
+ include/linux/remoteproc.h           |  2 ++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/drivers/media/rc/rc-main.c b/drivers/media/rc/rc-main.c
-index a9eba00..ea3da3e 100644
---- a/drivers/media/rc/rc-main.c
-+++ b/drivers/media/rc/rc-main.c
-@@ -1532,7 +1532,7 @@ static RC_FILTER_ATTR(wakeup_filter_mask, S_IRUGO|S_IWUSR,
- 	.attrs	= rc_dev_wakeup_filter_attrs,
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 564061dcc019..5b1b19519275 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1296,6 +1296,23 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+ EXPORT_SYMBOL(rproc_get_by_phandle);
+ 
+ /**
++ * rproc_get_by_child() - acquire rproc handle of @dev's ancestor
++ * @dev:	child device to find ancestor of
++ *
++ * Returns the ancestor rproc instance, or NULL if not found.
++ */
++struct rproc *rproc_get_by_child(struct device *dev)
++{
++	for (dev = dev->parent; dev; dev = dev->parent) {
++		if (dev->type && !strcmp(dev->type->name, "remoteproc"))
++			return dev->driver_data;
++	}
++
++	return NULL;
++}
++EXPORT_SYMBOL(rproc_get_by_child);
++
++/**
+  * rproc_add() - register a remote processor
+  * @rproc: the remote processor handle to register
+  *
+@@ -1440,6 +1457,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	rproc->dev.parent = dev;
+ 	rproc->dev.type = &rproc_type;
+ 	rproc->dev.class = &rproc_class;
++	rproc->dev.driver_data = rproc;
+ 
+ 	/* Assign a unique device index and name */
+ 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 81da49564ff4..44e630eb3d94 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -510,6 +510,8 @@ struct rproc_vdev {
  };
  
--static struct device_type rc_dev_type = {
-+static const struct device_type rc_dev_type = {
- 	.release	= rc_dev_release,
- 	.uevent		= rc_dev_uevent,
- };
+ struct rproc *rproc_get_by_phandle(phandle phandle);
++struct rproc *rproc_get_by_child(struct device *dev);
++
+ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 			  const struct rproc_ops *ops,
+ 			  const char *firmware, int len);
 -- 
-1.9.1
+2.12.0
