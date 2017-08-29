@@ -1,330 +1,147 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v2 02/20] rpmsg: glink: Associate indirections for pipe fifo accessor's
-Date: Thu, 24 Aug 2017 12:51:24 +0530
-Message-Id: <1503559302-3744-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: sricharan@codeaurora.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 1/2] remoteproc: qcom: adsp: Allow defining GLINK edge
+Date: Tue, 29 Aug 2017 16:13:35 -0700
+Message-Id: <20170829231336.24454-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-With the intention of reusing the glink core protocol commands
-and code across both rpm and smem based transports, the only thing
-different is way of accessing the shared-memory of the transport
-(FIFO). So put the fifo accessor's of the transport's pipe (rx/tx)
-behind indirections, so that the rest of the code can be shared.
-
-For this, have a qcom_glink_pipe that can be used in the common code
-containing the indirections and wrap it with glink_rpm_pipe that contains
-the transport specific members.
+Introduce the GLINK subdev, which allows the definition of a GLINK edge
+as child of a remoteproc.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_rpm.c | 144 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 106 insertions(+), 38 deletions(-)
+ drivers/remoteproc/qcom_adsp_pil.c |  3 +++
+ drivers/remoteproc/qcom_common.c   | 49 ++++++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_common.h   | 11 +++++++++
+ 3 files changed, 63 insertions(+)
 
-diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-index 56a0a66..870ce32 100644
---- a/drivers/rpmsg/qcom_glink_rpm.c
-+++ b/drivers/rpmsg/qcom_glink_rpm.c
-@@ -41,12 +41,28 @@
- #define RPM_GLINK_CID_MIN	1
- #define RPM_GLINK_CID_MAX	65536
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 49fe2f807e1d..42884ace324c 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -71,6 +71,7 @@ struct qcom_adsp {
+ 	void *mem_region;
+ 	size_t mem_size;
  
-+#define to_rpm_pipe(p)	container_of(p, struct glink_rpm_pipe, native)
-+
- struct rpm_toc_entry {
- 	__le32 id;
- 	__le32 offset;
- 	__le32 size;
- } __packed;
- 
-+struct qcom_glink;
-+
-+struct qcom_glink_pipe {
-+	size_t length;
-+
-+	size_t (*avail)(struct qcom_glink_pipe *glink_pipe);
-+	void (*peak)(struct qcom_glink_pipe *glink_pipe, void *data,
-+		     size_t count);
-+	void (*advance)(struct qcom_glink_pipe *glink_pipe, size_t count);
-+	void (*write)(struct qcom_glink_pipe *glink_pipe,
-+		      const void *hdr, size_t hlen,
-+		      const void *data, size_t dlen);
-+};
-+
- struct rpm_toc {
- 	__le32 magic;
- 	__le32 count;
-@@ -62,12 +78,12 @@ struct glink_msg {
- } __packed;
- 
- struct glink_rpm_pipe {
-+	struct qcom_glink_pipe native;
-+
- 	void __iomem *tail;
- 	void __iomem *head;
- 
- 	void __iomem *fifo;
--
--	size_t length;
++	struct qcom_rproc_glink glink_subdev;
+ 	struct qcom_rproc_subdev smd_subdev;
  };
  
+@@ -401,6 +402,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 		goto free_rproc;
+ 	}
+ 
++	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
+ 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
+ 
+ 	ret = rproc_add(rproc);
+@@ -422,6 +424,7 @@ static int adsp_remove(struct platform_device *pdev)
+ 	qcom_smem_state_put(adsp->state);
+ 	rproc_del(adsp->rproc);
+ 
++	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
+ 	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
+ 	rproc_free(adsp->rproc);
+ 
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index bb90481215c6..6357f7ae9def 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -19,11 +19,13 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/remoteproc.h>
++#include <linux/rpmsg/qcom_glink.h>
+ #include <linux/rpmsg/qcom_smd.h>
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+ 
++#define to_glink_subdev(d) container_of(d, struct qcom_rproc_glink, subdev)
+ #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+ 
  /**
-@@ -107,8 +123,8 @@ struct qcom_glink {
- 	struct mbox_client mbox_client;
- 	struct mbox_chan *mbox_chan;
- 
--	struct glink_rpm_pipe rx_pipe;
--	struct glink_rpm_pipe tx_pipe;
-+	struct qcom_glink_pipe *rx_pipe;
-+	struct qcom_glink_pipe *tx_pipe;
- 
- 	int irq;
- 
-@@ -215,9 +231,9 @@ static void qcom_glink_channel_release(struct kref *ref)
- 	kfree(channel);
+@@ -92,5 +94,52 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
  }
+ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
  
--static size_t qcom_glink_rx_avail(struct qcom_glink *glink)
-+static size_t glink_rpm_rx_avail(struct qcom_glink_pipe *glink_pipe)
- {
--	struct glink_rpm_pipe *pipe = &glink->rx_pipe;
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int head;
- 	unsigned int tail;
- 
-@@ -225,21 +241,26 @@ static size_t qcom_glink_rx_avail(struct qcom_glink *glink)
- 	tail = readl(pipe->tail);
- 
- 	if (head < tail)
--		return pipe->length - tail + head;
-+		return pipe->native.length - tail + head;
- 	else
- 		return head - tail;
- }
- 
--static void qcom_glink_rx_peak(struct qcom_glink *glink,
--			       void *data, size_t count)
-+static size_t qcom_glink_rx_avail(struct qcom_glink *glink)
++static int glink_subdev_probe(struct rproc_subdev *subdev)
 +{
-+	return glink->rx_pipe->avail(glink->rx_pipe);
++	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
++
++	glink->edge = qcom_glink_smem_register(glink->dev, glink->node);
++
++	return IS_ERR(glink->edge) ? PTR_ERR(glink->edge) : 0;
 +}
 +
-+static void glink_rpm_rx_peak(struct qcom_glink_pipe *glink_pipe,
-+			      void *data, size_t count)
- {
--	struct glink_rpm_pipe *pipe = &glink->rx_pipe;
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int tail;
- 	size_t len;
- 
- 	tail = readl(pipe->tail);
- 
--	len = min_t(size_t, count, pipe->length - tail);
-+	len = min_t(size_t, count, pipe->native.length - tail);
- 	if (len) {
- 		__ioread32_copy(data, pipe->fifo + tail,
- 				len / sizeof(u32));
-@@ -251,24 +272,35 @@ static void qcom_glink_rx_peak(struct qcom_glink *glink,
- 	}
- }
- 
--static void qcom_glink_rx_advance(struct qcom_glink *glink,
--				  size_t count)
-+static void qcom_glink_rx_peak(struct qcom_glink *glink,
-+			       void *data, size_t count)
- {
--	struct glink_rpm_pipe *pipe = &glink->rx_pipe;
-+	glink->rx_pipe->peak(glink->rx_pipe, data, count);
++static void glink_subdev_remove(struct rproc_subdev *subdev)
++{
++	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
++
++	qcom_glink_smem_unregister(glink->edge);
++	glink->edge = NULL;
 +}
 +
-+static void glink_rpm_rx_advance(struct qcom_glink_pipe *glink_pipe,
-+				 size_t count)
++/**
++ * qcom_add_glink_subdev() - try to add a GLINK subdevice to rproc
++ * @rproc:	rproc handle to parent the subdevice
++ * @glink:	reference to a GLINK subdev context
++ */
++void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
 +{
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int tail;
- 
- 	tail = readl(pipe->tail);
- 
- 	tail += count;
--	if (tail >= pipe->length)
--		tail -= pipe->length;
-+	if (tail >= pipe->native.length)
-+		tail -= pipe->native.length;
- 
- 	writel(tail, pipe->tail);
- }
- 
--static size_t qcom_glink_tx_avail(struct qcom_glink *glink)
-+static void qcom_glink_rx_advance(struct qcom_glink *glink, size_t count)
-+{
-+	glink->rx_pipe->advance(glink->rx_pipe, count);
++	struct device *dev = &rproc->dev;
++
++	glink->node = of_get_child_by_name(dev->parent->of_node, "glink-edge");
++	if (!glink->node)
++		return;
++
++	glink->dev = dev;
++	rproc_add_subdev(rproc, &glink->subdev, glink_subdev_probe, glink_subdev_remove);
 +}
++EXPORT_SYMBOL_GPL(qcom_add_glink_subdev);
 +
-+static size_t glink_rpm_tx_avail(struct qcom_glink_pipe *glink_pipe)
- {
--	struct glink_rpm_pipe *pipe = &glink->tx_pipe;
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int head;
- 	unsigned int tail;
- 
-@@ -276,19 +308,23 @@ static size_t qcom_glink_tx_avail(struct qcom_glink *glink)
- 	tail = readl(pipe->tail);
- 
- 	if (tail <= head)
--		return pipe->length - head + tail;
-+		return pipe->native.length - head + tail;
- 	else
- 		return tail - head;
- }
- 
--static unsigned int qcom_glink_tx_write(struct qcom_glink *glink,
--					unsigned int head,
--					const void *data, size_t count)
-+static size_t qcom_glink_tx_avail(struct qcom_glink *glink)
++/**
++ * qcom_remove_glink_subdev() - remove a GLINK subdevice from rproc
++ * @rproc:	rproc handle
++ * @glink:	reference to a GLINK subdev context
++ */
++void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
 +{
-+	return glink->tx_pipe->avail(glink->tx_pipe);
++	rproc_remove_subdev(rproc, &glink->subdev);
++	of_node_put(glink->node);
 +}
++EXPORT_SYMBOL_GPL(qcom_remove_glink_subdev);
 +
-+static unsigned int glink_rpm_tx_write_one(struct glink_rpm_pipe *pipe,
-+					   unsigned int head,
-+					   const void *data, size_t count)
- {
--	struct glink_rpm_pipe *pipe = &glink->tx_pipe;
- 	size_t len;
+ MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index db5c826d5cd4..db252b46ea8f 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -12,6 +12,14 @@ struct qcom_rproc_subdev {
+ 	struct qcom_smd_edge *edge;
+ };
  
--	len = min_t(size_t, count, pipe->length - head);
-+	len = min_t(size_t, count, pipe->native.length - head);
- 	if (len) {
- 		__iowrite32_copy(pipe->fifo + head, data,
- 				 len / sizeof(u32));
-@@ -300,23 +336,41 @@ static unsigned int qcom_glink_tx_write(struct qcom_glink *glink,
- 	}
- 
- 	head += count;
--	if (head >= pipe->length)
--		head -= pipe->length;
-+	if (head >= pipe->native.length)
-+		head -= pipe->native.length;
- 
- 	return head;
- }
- 
-+static void glink_rpm_tx_write(struct qcom_glink_pipe *glink_pipe,
-+			       const void *hdr, size_t hlen,
-+			       const void *data, size_t dlen)
-+{
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
-+	unsigned int head;
++struct qcom_rproc_glink {
++	struct rproc_subdev subdev;
 +
-+	head = readl(pipe->head);
-+	head = glink_rpm_tx_write_one(pipe, head, hdr, hlen);
-+	head = glink_rpm_tx_write_one(pipe, head, data, dlen);
-+	writel(head, pipe->head);
-+}
++	struct device *dev;
++	struct device_node *node;
++	struct qcom_glink *edge;
++};
 +
-+static void qcom_glink_tx_write(struct qcom_glink *glink,
-+				const void *hdr, size_t hlen,
-+				const void *data, size_t dlen)
-+{
-+	glink->tx_pipe->write(glink->tx_pipe, hdr, hlen, data, dlen);
-+}
+ struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+ 					       const struct firmware *fw,
+ 					       int *tablesz);
+@@ -19,4 +27,7 @@ struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
+ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
+ 
++void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
++void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
 +
- static int qcom_glink_tx(struct qcom_glink *glink,
- 			 const void *hdr, size_t hlen,
- 			const void *data, size_t dlen, bool wait)
- {
--	struct glink_rpm_pipe *pipe = &glink->tx_pipe;
--	unsigned int head;
- 	unsigned int tlen = hlen + dlen;
- 	int ret;
- 
- 	/* Reject packets that are too big */
--	if (tlen >= glink->tx_pipe.length)
-+	if (tlen >= glink->tx_pipe->length)
- 		return -EINVAL;
- 
- 	if (WARN(tlen % 8, "Unaligned TX request"))
-@@ -335,10 +389,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
- 		msleep(10);
- 	}
- 
--	head = readl(pipe->head);
--	head = qcom_glink_tx_write(glink, head, hdr, hlen);
--	head = qcom_glink_tx_write(glink, head, data, dlen);
--	writel(head, pipe->head);
-+	qcom_glink_tx_write(glink, hdr, hlen, data, dlen);
- 
- 	mbox_send_message(glink->mbox_chan, NULL);
- 	mbox_client_txdone(glink->mbox_chan, 0);
-@@ -1075,14 +1126,14 @@ static int glink_rpm_parse_toc(struct device *dev,
- 
- 		switch (id) {
- 		case RPM_RX_FIFO_ID:
--			rx->length = size;
-+			rx->native.length = size;
- 
- 			rx->tail = msg_ram + offset;
- 			rx->head = msg_ram + offset + sizeof(u32);
- 			rx->fifo = msg_ram + offset + 2 * sizeof(u32);
- 			break;
- 		case RPM_TX_FIFO_ID:
--			tx->length = size;
-+			tx->native.length = size;
- 
- 			tx->tail = msg_ram + offset;
- 			tx->head = msg_ram + offset + sizeof(u32);
-@@ -1107,6 +1158,8 @@ static int glink_rpm_parse_toc(struct device *dev,
- static int glink_rpm_probe(struct platform_device *pdev)
- {
- 	struct qcom_glink *glink;
-+	struct glink_rpm_pipe *rx_pipe;
-+	struct glink_rpm_pipe *tx_pipe;
- 	struct device_node *np;
- 	void __iomem *msg_ram;
- 	size_t msg_ram_size;
-@@ -1121,6 +1174,11 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 
- 	glink->dev = dev;
- 
-+	rx_pipe = devm_kzalloc(&pdev->dev, sizeof(*rx_pipe), GFP_KERNEL);
-+	tx_pipe = devm_kzalloc(&pdev->dev, sizeof(*tx_pipe), GFP_KERNEL);
-+	if (!rx_pipe || !tx_pipe)
-+		return -ENOMEM;
-+
- 	mutex_init(&glink->tx_lock);
- 	spin_lock_init(&glink->rx_lock);
- 	INIT_LIST_HEAD(&glink->rx_queue);
-@@ -1150,12 +1208,22 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	ret = glink_rpm_parse_toc(dev, msg_ram, msg_ram_size,
--				  &glink->rx_pipe, &glink->tx_pipe);
-+				  rx_pipe, tx_pipe);
- 	if (ret)
- 		return ret;
- 
--	writel(0, glink->tx_pipe.head);
--	writel(0, glink->rx_pipe.tail);
-+	/* Pipe specific accessors */
-+	rx_pipe->native.avail = glink_rpm_rx_avail;
-+	rx_pipe->native.peak = glink_rpm_rx_peak;
-+	rx_pipe->native.advance = glink_rpm_rx_advance;
-+	tx_pipe->native.avail = glink_rpm_tx_avail;
-+	tx_pipe->native.write = glink_rpm_tx_write;
-+
-+	glink->tx_pipe = &tx_pipe->native;
-+	glink->rx_pipe = &rx_pipe->native;
-+
-+	writel(0, tx_pipe->head);
-+	writel(0, rx_pipe->tail);
- 
- 	irq = platform_get_irq(pdev, 0);
- 	ret = devm_request_irq(dev, irq,
+ #endif
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.12.0
