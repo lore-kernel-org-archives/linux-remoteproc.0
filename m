@@ -1,69 +1,56 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v1 1/2] remoteproc: dt: Provide bindings for iMX6SX/7D Remote Processor Controller driver
-Date: Mon, 10 Jul 2017 16:42:19 +0200
-Message-Id: <20170710144220.31594-2-o.rempel@pengutronix.de>
-In-Reply-To: <20170710144220.31594-1-o.rempel@pengutronix.de>
-References: <20170710144220.31594-1-o.rempel@pengutronix.de>
-To: devicetree@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux@rempel-privat.de
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH v2 2/6] remoteproc: Export rproc_elf_get_boot_addr
+Date: Wed, 30 Aug 2017 20:43:40 +0530
+Message-Id: <1504106024-23569-3-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
+References: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- .../devicetree/bindings/remoteproc/imx-rproc.txt   | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+Export rproc_elf_get_boot_addr so that it can be
+used by any remoteproc to get the bootaddr of the
+elf type firmware images. This is used in the
+subsequent patch by the q6v5 based remoteproc
+while loading its elf based mdt type image.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-new file mode 100644
-index 000000000000..e7c61993e1b8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-@@ -0,0 +1,44 @@
-+NXP iMX6SX/iMX7D Co-Processor Bindings
-+----------------------------------------
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+ drivers/remoteproc/remoteproc_internal.h   | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index c523983..f6d07d9 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -110,13 +110,13 @@
+  * Note that the boot address is not a configurable property of all remote
+  * processors. Some will always boot at a specific hard-coded address.
+  */
+-static
+ u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
+ 
+ 	return ehdr->e_entry;
+ }
++EXPORT_SYMBOL(rproc_elf_get_boot_addr);
+ 
+ /**
+  * rproc_elf_load_segments() - load firmware segments to memory
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 1e9e5b3..b898510 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -125,4 +125,7 @@ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+ 
+ extern const struct rproc_fw_ops rproc_elf_fw_ops;
+ 
++/* from remoteproc_elf_loader.c */
++u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
 +
-+This binding provides support for ARM Cortex M4 Co-processor found on some
-+NXP iMX SoCs.
-+
-+Required properties:
-+- compatible		Should be one of:
-+				"fsl,imx7d-rproc"
-+				"fsl,imx6sx-rproc"
-+- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
-+- syscfg		Phandle to syscon block which provide access to
-+			System Reset Controller
-+
-+Optional properties:
-+- reg:			Should contain the address ranges for some of internal
-+			memory regions.
-+- reg-names:		Contains the corresponding names for the memory
-+			regions. These should be named "ddr", "ocram", "ocram-s",
-+			"ocram-epdc" or "ocram-pxp".
-+Fallowing memory ranges are expected:
-+- For "fsl,imx7d-rproc"
-+	<0x00900000 0x00020000> - "ocram"
-+	<0x00920000 0x00020000> - "ocram-epdc"
-+	<0x00940000 0x00008000> - "ocram-pxp"
-+	<0x80000000 0x0FFF0000> - "ddr" (code area)
-+	<0x80000000 0x60000000> - "ddr" (data area)
-+- For "fsl,imx6sx-rproc"
-+	<0x008F8000 0x00004000> - "ocram-s"
-+	<0x80000000 0x0FFF8000> - "ddr" (code area)
-+	<0x80000000 0x60000000> - "ddr" (data area)
-+
-+Note: the "ddr" code and data ranges are overlapping. Code area is smaller
-+than data area.  So this range should be carefully chosen according to your
-+system and application requirements.
-+
-+Example:
-+	imx_rproc: imx7d-rp0@0 {
-+		compatible	= "fsl,imx7d-rproc";
-+		reg		= <0x80000000 0x80000>, <0x00900000 0x2000>;
-+		reg-names	= "ddr", "ocram";
-+		syscon		= <&src>;
-+		clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
-+	};
+ #endif /* REMOTEPROC_INTERNAL_H */
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
