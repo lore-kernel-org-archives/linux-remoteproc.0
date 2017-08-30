@@ -1,120 +1,139 @@
 Return-Path: <sricharan@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v3 3/6] remoteproc: qcom: Push reset ops, fw ops, rproc ops in to of_match data
-Date: Thu, 31 Aug 2017 10:15:31 +0530
-Message-Id: <1504154734-12175-4-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
-References: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v2 1/6] remoteproc: qcom: mdt_loader: Make the firmware authentication optional
+Date: Wed, 30 Aug 2017 20:43:39 +0530
+Message-Id: <1504106024-23569-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
+References: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
 To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Instead of directly assigning reset, fw and rproc ops, put them
-in to of_match data and get from that. Currently same ops
-are used for all compatibles, but that will change when we add
-q6v5-wcss support.
+qcom_mdt_load function loads the mdt type firmware and
+initialises the secure memory as well. Make the initialisation only
+when requested by the caller, so that the function can be used
+by self-authenticating remoteproc as well.
 
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 38 +++++++++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 13 deletions(-)
+ drivers/soc/qcom/mdt_loader.c       | 70 +++++++++++++++++++++++++++++++------
+ include/linux/soc/qcom/mdt_loader.h |  3 ++
+ 2 files changed, 62 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 808ee45..5b5811d 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -116,16 +116,6 @@ struct qcom_mss_reg_res {
- 	int uA;
- };
- 
--struct rproc_hexagon_res {
--	const char *hexagon_mba_image;
--	struct qcom_mss_reg_res *proxy_supply;
--	struct qcom_mss_reg_res *active_supply;
--	char **proxy_clk_names;
--	char **active_clk_names;
--	int version;
--	bool need_mem_protection;
--};
--
- struct q6v5 {
- 	struct device *dev;
- 	struct rproc *rproc;
-@@ -173,6 +163,19 @@ struct q6v5 {
- 	int version;
- };
- 
-+struct rproc_hexagon_res {
-+	const char *hexagon_mba_image;
-+	struct qcom_mss_reg_res *proxy_supply;
-+	struct qcom_mss_reg_res *active_supply;
-+	char **proxy_clk_names;
-+	char **active_clk_names;
-+	int version;
-+	bool need_mem_protection;
-+	int (*init_reset)(struct q6v5 *qproc);
-+	const struct rproc_fw_ops *fw_ops;
-+	const struct rproc_ops *ops;
-+};
-+
- enum {
- 	MSS_MSM8916,
- 	MSS_MSM8974,
-@@ -1125,14 +1128,14 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (!desc)
- 		return -EINVAL;
- 
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
-+	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
- 			    desc->hexagon_mba_image, sizeof(*qproc));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index bd63df0..851f5d7 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -86,9 +86,9 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
+  *
+  * Returns 0 on success, negative errno otherwise.
+  */
+-int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+-		  const char *firmware, int pas_id, void *mem_region,
+-		  phys_addr_t mem_phys, size_t mem_size)
++static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
++			   const char *firmware, int pas_id, void *mem_region,
++			   phys_addr_t mem_phys, size_t mem_size, bool pas_init)
+ {
+ 	const struct elf32_phdr *phdrs;
+ 	const struct elf32_phdr *phdr;
+@@ -119,10 +119,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	if (!fw_name)
  		return -ENOMEM;
+ 
+-	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+-	if (ret) {
+-		dev_err(dev, "invalid firmware metadata\n");
+-		goto out;
++	if (pas_init) {
++		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
++		if (ret) {
++			dev_err(dev, "invalid firmware metadata\n");
++			goto out;
++		}
  	}
  
--	rproc->fw_ops = &q6v5_fw_ops;
-+	rproc->fw_ops = desc->fw_ops;
- 
- 	qproc = (struct q6v5 *)rproc->priv;
- 	qproc->dev = &pdev->dev;
-@@ -1182,7 +1185,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+@@ -142,10 +144,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
  	}
- 	qproc->active_reg_count = ret;
  
--	ret = q6v5_init_reset(qproc);
-+	ret = desc->init_reset(qproc);
- 	if (ret)
- 		goto free_rproc;
+ 	if (relocate) {
+-		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
+-		if (ret) {
+-			dev_err(dev, "unable to setup relocation\n");
+-			goto out;
++		if (pas_init) {
++			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
++						     max_addr - min_addr);
++			if (ret) {
++				dev_err(dev, "unable to setup relocation\n");
++				goto out;
++			}
+ 		}
  
-@@ -1253,6 +1256,9 @@ static int q6v5_remove(struct platform_device *pdev)
- 	},
- 	.need_mem_protection = true,
- 	.version = MSS_MSM8996,
-+	.init_reset = q6v5_init_reset,
-+	.fw_ops = &q6v5_fw_ops,
-+	.ops = &q6v5_ops,
- };
+ 		/*
+@@ -198,7 +203,50 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
  
- static const struct rproc_hexagon_res msm8916_mss = {
-@@ -1284,6 +1290,9 @@ static int q6v5_remove(struct platform_device *pdev)
- 	},
- 	.need_mem_protection = false,
- 	.version = MSS_MSM8916,
-+	.init_reset = q6v5_init_reset,
-+	.fw_ops = &q6v5_fw_ops,
-+	.ops = &q6v5_ops,
- };
+ 	return ret;
+ }
++
++/**
++ * qcom_mdt_load() - sets up the secure memory for the firmware and
++		     loads the firmware
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load(struct device *dev, const struct firmware *fw,
++		  const char *firmware, int pas_id, void *mem_region,
++		  phys_addr_t mem_phys, size_t mem_size)
++{
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, true);
++}
+ EXPORT_SYMBOL_GPL(qcom_mdt_load);
  
- static const struct rproc_hexagon_res msm8974_mss = {
-@@ -1323,6 +1332,9 @@ static int q6v5_remove(struct platform_device *pdev)
- 	},
- 	.need_mem_protection = false,
- 	.version = MSS_MSM8974,
-+	.init_reset = q6v5_init_reset,
-+	.fw_ops = &q6v5_fw_ops,
-+	.ops = &q6v5_ops,
- };
++/**
++ * qcom_mdt_load_no_init() - load the firmware which header is loaded as fw
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *firmware, int pas_id,
++			  void *mem_region, phys_addr_t mem_phys,
++			  size_t mem_size)
++{
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, false);
++}
++EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
++
+ MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+index f423001..228053a 100644
+--- a/include/linux/soc/qcom/mdt_loader.h
++++ b/include/linux/soc/qcom/mdt_loader.h
+@@ -15,4 +15,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 		  const char *fw_name, int pas_id, void *mem_region,
+ 		  phys_addr_t mem_phys, size_t mem_size);
  
- static const struct of_device_id q6v5_of_match[] = {
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *fw_name, int pas_id, void *mem_region,
++			  phys_addr_t mem_phys, size_t mem_size);
+ #endif
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
