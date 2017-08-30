@@ -1,222 +1,273 @@
 Return-Path: <sricharan@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v2 10/20] rpmsg: glink: Add support for transport version negotiation
-Date: Thu, 24 Aug 2017 12:51:32 +0530
-Message-Id: <1503559302-3744-11-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-References: <1503559302-3744-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 6/6] remoteproc: qcom: Add q6v5-wcss rproc ops
+Date: Wed, 30 Aug 2017 20:43:44 +0530
+Message-Id: <1504106024-23569-7-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
+References: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-G-link supports a version number and feature flags for each transport.
-A combination of the version number and feature flags enable/disable:
-
- (*) G-Link software updates for each edge
- (*) Individual features for each edge
-
-Endpoints negotiate both the version and the supported flags when
-the transport is opened and they cannot be changed after negotiation has
-been completed.
-
-Each full implementation of G-Link must support a minimum of the current
-version, the previous version, and the base negotiation version called v0.
+q6v5-wcss core's start function is mostly common
+with the q6v5 of msm8996. So reuse that and add
+the stop function.
 
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 75 ++++++++++++++++++++++++++++++++++++---
- drivers/rpmsg/qcom_glink_native.h |  5 +++
- drivers/rpmsg/qcom_glink_rpm.c    |  4 ++-
- drivers/rpmsg/qcom_glink_smem.c   |  1 +
- 4 files changed, 79 insertions(+), 6 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 212 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 212 insertions(+)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 9a58925..777ac6b 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -31,6 +31,7 @@
- #include "qcom_glink_native.h"
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 8da1cc7..5661487 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -104,6 +104,17 @@
+ #define QDSP6SS_XO_CBCR		0x0038
+ #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
  
- #define GLINK_NAME_SIZE		32
-+#define GLINK_VERSION_1		1
- 
- #define RPM_GLINK_CID_MIN	1
- #define RPM_GLINK_CID_MAX	65536
-@@ -94,6 +95,9 @@ struct qcom_glink {
- 	struct mutex idr_lock;
- 	struct idr lcids;
- 	struct idr rcids;
-+	unsigned long features;
++/* QDSP6v5-WCSS config/status registers */
++#define TCSR_GLOBAL_CFG0	0x0
++#define TCSR_GLOBAL_CFG1	0x4
++#define SSCAON_CONFIG		0x8
++#define SSCAON_STATUS		0xc
++#define QDSP6SS_BHS_STATUS	0x78
++#define QDSP6SS_RST_EVB		0x10
 +
-+	bool intentless;
++#define BHS_EN_REST_ACK		BIT(0)
++#define SSCAON_ENABLE		BIT(13)
++
+ struct reg_info {
+ 	struct regulator *reg;
+ 	int uV;
+@@ -774,6 +785,61 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	return ret < 0 ? ret : 0;
+ }
+ 
++static int q6v5_wcss_start(struct rproc *rproc)
++{
++	struct q6v5 *qproc = rproc->priv;
++	int ret = 0;
++
++	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
++			      qproc->active_clk_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable clocks\n");
++		return ret;
++	}
++
++	/* Release Q6 and WCSS reset */
++	ret = reset_control_deassert(qproc->wcss_reset);
++	if (ret)
++		dev_err(qproc->dev, "wcss_reset failed\n");
++
++	ret = reset_control_deassert(qproc->wcss_q6_reset);
++	if (ret)
++		dev_err(qproc->dev, "wcss_q6_reset failed\n");
++
++	/* Lithium configuration - clock gating and bus arbitration */
++	ret = regmap_update_bits(qproc->halt_map,
++				 qproc->halt_nc + TCSR_GLOBAL_CFG0,
++				 0x1F, 0x14);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(qproc->halt_map,
++				 qproc->halt_nc + TCSR_GLOBAL_CFG1,
++				 1, 0);
++	if (ret)
++		return ret;
++
++	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
++	writel(rproc->bootaddr >> 4, qproc->reg_base + QDSP6SS_RST_EVB);
++
++	ret = q6v5_reset(qproc);
++	if (ret)
++		return ret;
++
++	q6v5_reset_rest(qproc);
++
++	ret = wait_for_completion_timeout(&qproc->start_done,
++					  msecs_to_jiffies(5000));
++	if (ret == 0) {
++		dev_err(qproc->dev, "start timed out\n");
++		return -ETIMEDOUT;
++	}
++
++	qproc->running = true;
++
++	return 0;
++}
++
+ static int q6v5_start(struct rproc *rproc)
+ {
+ 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+@@ -893,6 +959,146 @@ static int q6v5_start(struct rproc *rproc)
+ 	return ret;
+ }
+ 
++static int q6v5_wcss_powerdown(struct q6v5 *qproc)
++{
++	unsigned int val = 0;
++	int ret;
++
++	/* 1 - Assert WCSS/Q6 HALTREQ */
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
++
++	/* 2 - Enable WCSSAON_CONFIG */
++	val = readl(qproc->rmb_base + SSCAON_CONFIG);
++	val |= SSCAON_ENABLE;
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
++
++	/* 3 - Set SSCAON_CONFIG */
++	val |= BIT(15);
++	val &= ~BIT(16);
++	val &= ~BIT(17);
++	val &= ~BIT(18);
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
++
++	/* 4 - SSCAON_CONFIG 1 */
++	val |= BIT(1);
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
++
++	/* 5 - wait for SSCAON_STATUS */
++	ret = readl_poll_timeout(qproc->rmb_base + SSCAON_STATUS,
++				 val, (val & 0xffff) == 0x400, 1000,
++				 HALT_CHECK_MAX_LOOPS);
++	if (ret) {
++		dev_err(qproc->dev,
++			"can't get SSCAON_STATUS rc:%d)\n", ret);
++	}
++
++	/* 6 - De-assert WCSS_AON reset */
++	reset_control_assert(qproc->wcss_aon_reset);
++
++	/* 7 - Disable WCSSAON_CONFIG 13 */
++	val = readl(qproc->rmb_base + SSCAON_CONFIG);
++	val &= ~SSCAON_ENABLE;
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
++
++	/* 8 - De-assert WCSS/Q6 HALTREQ */
++	reset_control_assert(qproc->wcss_reset);
++
++	return ret;
++}
++
++static int q6v5_q6_powerdown(struct q6v5 *qproc)
++{
++	int i = 0, ret;
++	unsigned int val = 0;
++
++	/* 1 - Halt Q6 bus interface */
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
++
++	/* 2 - Disable Q6 Core clock */
++	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
++	val &= ~Q6SS_CLK_ENABLE;
++	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
++
++	/* 3 - Clamp I/O */
++	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	val |= Q6SS_CLAMP_IO;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 4 - Clamp WL */
++	val |= QDSS_BHS_ON;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 5 - Clear Erase standby */
++	val &= ~Q6SS_L2DATA_STBY_N;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 6 - Clear Sleep RTN */
++	val &= ~Q6SS_SLP_RET_N;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 7 - turn off QDSP6 memory foot/head switch one bank at a time */
++	for (i = 0; i < 20; i++) {
++		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
++		val &= ~BIT(i);
++		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
++		mdelay(1);
++	}
++	/* 8 - Assert QMC memory RTN */
++	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	val |= QDSP6v56_CLAMP_QMC_MEM;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 9 - Turn off BHS */
++	val &= ~QDSP6v56_BHS_ON;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	udelay(1);
++	/* 10 - Wait till BHS Reset is done */
++	ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BHS_STATUS,
++				 val, !(val & BHS_EN_REST_ACK), 1000,
++				 HALT_CHECK_MAX_LOOPS);
++	if (ret) {
++		dev_err(qproc->dev,
++			"BHS_STATUS not OFF (rc:%d)\n", ret);
++	}
++
++	/* 11 - Enable Q6 Block reset */
++	reset_control_assert(qproc->wcss_q6_reset);
++
++	return 0;
++}
++
++static int q6v5_wcss_stop(struct rproc *rproc)
++{
++	struct q6v5 *qproc = rproc->priv;
++	int ret = 0;
++
++	qproc->running = false;
++
++	/* WCSS powerdown */
++	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit),
++				    BIT(qproc->stop_bit));
++
++	ret = wait_for_completion_timeout(&qproc->stop_done,
++					  msecs_to_jiffies(5000));
++	if (ret == 0) {
++		dev_err(qproc->dev, "timed out on wait\n");
++		return -ETIMEDOUT;
++	}
++
++	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
++
++	ret = q6v5_wcss_powerdown(qproc);
++	if (ret)
++		return ret;
++
++	/* Q6 Power down */
++	ret = q6v5_q6_powerdown(qproc);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int q6v5_stop(struct rproc *rproc)
+ {
+ 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+@@ -954,6 +1160,11 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	.da_to_va = q6v5_da_to_va,
  };
  
- enum {
-@@ -256,8 +260,8 @@ static int qcom_glink_send_version(struct qcom_glink *glink)
- 	struct glink_msg msg;
- 
- 	msg.cmd = cpu_to_le16(RPM_CMD_VERSION);
--	msg.param1 = cpu_to_le16(1);
--	msg.param2 = cpu_to_le32(GLINK_FEATURE_INTENTLESS);
-+	msg.param1 = cpu_to_le16(GLINK_VERSION_1);
-+	msg.param2 = cpu_to_le32(glink->features);
- 
- 	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
- }
-@@ -267,8 +271,8 @@ static void qcom_glink_send_version_ack(struct qcom_glink *glink)
- 	struct glink_msg msg;
- 
- 	msg.cmd = cpu_to_le16(RPM_CMD_VERSION_ACK);
--	msg.param1 = cpu_to_le16(1);
--	msg.param2 = cpu_to_le32(0);
-+	msg.param1 = cpu_to_le16(GLINK_VERSION_1);
-+	msg.param2 = cpu_to_le32(glink->features);
- 
- 	qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
- }
-@@ -362,6 +366,63 @@ static void qcom_glink_send_close_ack(struct qcom_glink *glink,
- 	qcom_glink_tx(glink, &req, sizeof(req), NULL, 0, true);
- }
- 
-+/**
-+ * qcom_glink_receive_version() - receive version/features from remote system
-+ *
-+ * @glink:	pointer to transport interface
-+ * @r_version:	remote version
-+ * @r_features:	remote features
-+ *
-+ * This function is called in response to a remote-initiated version/feature
-+ * negotiation sequence.
-+ */
-+static void qcom_glink_receive_version(struct qcom_glink *glink,
-+				       u32 version,
-+				       u32 features)
-+{
-+	switch (version) {
-+	case 0:
-+		break;
-+	case GLINK_VERSION_1:
-+		glink->features &= features;
-+		/* FALLTHROUGH */
-+	default:
-+		qcom_glink_send_version_ack(glink);
-+		break;
-+	}
-+}
++static const struct rproc_ops q6v5_wcss_ops = {
++	.start = q6v5_wcss_start,
++	.stop = q6v5_wcss_stop,
++};
 +
-+/**
-+ * qcom_glink_receive_version_ack() - receive negotiation ack from remote system
-+ *
-+ * @glink:	pointer to transport interface
-+ * @r_version:	remote version response
-+ * @r_features:	remote features response
-+ *
-+ * This function is called in response to a local-initiated version/feature
-+ * negotiation sequence and is the counter-offer from the remote side based
-+ * upon the initial version and feature set requested.
-+ */
-+static void qcom_glink_receive_version_ack(struct qcom_glink *glink,
-+					   u32 version,
-+					   u32 features)
-+{
-+	switch (version) {
-+	case 0:
-+		/* Version negotiation failed */
-+		break;
-+	case GLINK_VERSION_1:
-+		if (features == glink->features)
-+			break;
-+
-+		glink->features &= features;
-+		/* FALLTHROUGH */
-+	default:
-+		qcom_glink_send_version(glink);
-+		break;
-+	}
-+}
-+
- static int qcom_glink_rx_defer(struct qcom_glink *glink, size_t extra)
+ static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
  {
- 	struct glink_defer_cmd *dcmd;
-@@ -909,9 +970,10 @@ static void qcom_glink_work(struct work_struct *work)
+ 	struct q6v5 *qproc = dev;
+@@ -1400,6 +1611,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	.version = WCSS_IPQ8074,
+ 	.init_reset = q6v5_wcss_init_reset,
+ 	.fw_ops = &q6v5_wcss_fw_ops,
++	.ops = &q6v5_wcss_ops,
+ };
  
- 		switch (cmd) {
- 		case RPM_CMD_VERSION:
--			qcom_glink_send_version_ack(glink);
-+			qcom_glink_receive_version(glink, param1, param2);
- 			break;
- 		case RPM_CMD_VERSION_ACK:
-+			qcom_glink_receive_version_ack(glink, param1, param2);
- 			break;
- 		case RPM_CMD_OPEN:
- 			qcom_glink_rx_open(glink, param1, msg->data);
-@@ -932,6 +994,7 @@ static void qcom_glink_work(struct work_struct *work)
- }
- 
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
-+					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
- 					   struct qcom_glink_pipe *tx)
- {
-@@ -947,6 +1010,8 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	glink->tx_pipe = tx;
- 	glink->rx_pipe = rx;
- 
-+	glink->features = features;
-+
- 	mutex_init(&glink->tx_lock);
- 	spin_lock_init(&glink->rx_lock);
- 	INIT_LIST_HEAD(&glink->rx_queue);
-diff --git a/drivers/rpmsg/qcom_glink_native.h b/drivers/rpmsg/qcom_glink_native.h
-index 197bb9d..456ec79 100644
---- a/drivers/rpmsg/qcom_glink_native.h
-+++ b/drivers/rpmsg/qcom_glink_native.h
-@@ -14,6 +14,10 @@
- #ifndef __QCOM_GLINK_NATIVE_H__
- #define __QCOM_GLINK_NATIVE_H__
- 
-+#define GLINK_FEATURE_INTENT_REUSE	BIT(0)
-+#define GLINK_FEATURE_MIGRATION		BIT(1)
-+#define GLINK_FEATURE_TRACER_PKT	BIT(2)
-+
- struct qcom_glink_pipe {
- 	size_t length;
- 
-@@ -31,6 +35,7 @@ struct qcom_glink_pipe {
- struct qcom_glink;
- 
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
-+					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
- 					   struct qcom_glink_pipe *tx);
- void qcom_glink_native_remove(struct qcom_glink *glink);
-diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-index cc73af0..7d039cd 100644
---- a/drivers/rpmsg/qcom_glink_rpm.c
-+++ b/drivers/rpmsg/qcom_glink_rpm.c
-@@ -302,7 +302,9 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 	writel(0, tx_pipe->head);
- 	writel(0, rx_pipe->tail);
- 
--	glink = qcom_glink_native_probe(&pdev->dev, &rx_pipe->native,
-+	glink = qcom_glink_native_probe(&pdev->dev,
-+					0,
-+					&rx_pipe->native,
- 					&tx_pipe->native);
- 	if (IS_ERR(glink))
- 		return PTR_ERR(glink);
-diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-index 19179a1..b78874b 100644
---- a/drivers/rpmsg/qcom_glink_smem.c
-+++ b/drivers/rpmsg/qcom_glink_smem.c
-@@ -284,6 +284,7 @@ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
- 	*tx_pipe->head = 0;
- 
- 	glink = qcom_glink_native_probe(dev,
-+					GLINK_FEATURE_TRACER_PKT,
- 					&rx_pipe->native, &tx_pipe->native);
- 	if (IS_ERR(glink)) {
- 		ret = PTR_ERR(glink);
+ static const struct of_device_id q6v5_of_match[] = {
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
