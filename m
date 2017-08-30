@@ -1,160 +1,120 @@
 Return-Path: <sricharan@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH 03/18] rpmsg: glink: Split rpm_probe to reuse the common code
-Date: Wed, 16 Aug 2017 22:48:56 +0530
-Message-Id: <1502903951-5403-4-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 3/6] remoteproc: qcom: Push reset ops, fw ops, rproc ops in to of_match data
+Date: Wed, 30 Aug 2017 20:43:41 +0530
+Message-Id: <1504106024-23569-4-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
+References: <1504106024-23569-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Instead of directly assigning reset, fw and rproc ops, put them
+in to of_match data and get from that. Currently same ops
+are used for all compatibles, but that will change when we add
+q6v5-wcss support.
 
-There is quite some code common in glink_rpm_probe that
-can reused for glink-smem based transport as well. So
-split the function and move the code to glink_native_probe
-that can be used later when we add the support for
-glink-smem based transport. Also reuse driver's remove as well.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_rpm.c | 85 ++++++++++++++++++++++++------------------
- 1 file changed, 49 insertions(+), 36 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 38 +++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-index 870ce32..5f0fa0d 100644
---- a/drivers/rpmsg/qcom_glink_rpm.c
-+++ b/drivers/rpmsg/qcom_glink_rpm.c
-@@ -19,6 +19,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/of_irq.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/rpmsg.h>
-@@ -1155,29 +1156,21 @@ static int glink_rpm_parse_toc(struct device *dev,
- 	return -EINVAL;
- }
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 6f53b6d..afe5092 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -116,16 +116,6 @@ struct qcom_mss_reg_res {
+ 	int uA;
+ };
  
--static int glink_rpm_probe(struct platform_device *pdev)
-+struct qcom_glink *qcom_glink_native_probe(struct device *dev,
-+					   struct qcom_glink_pipe *rx,
-+					   struct qcom_glink_pipe *tx)
- {
--	struct qcom_glink *glink;
--	struct glink_rpm_pipe *rx_pipe;
--	struct glink_rpm_pipe *tx_pipe;
--	struct device_node *np;
--	void __iomem *msg_ram;
--	size_t msg_ram_size;
--	struct device *dev = &pdev->dev;
--	struct resource r;
- 	int irq;
- 	int ret;
-+	struct qcom_glink *glink;
- 
- 	glink = devm_kzalloc(dev, sizeof(*glink), GFP_KERNEL);
- 	if (!glink)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	glink->dev = dev;
+-struct rproc_hexagon_res {
+-	const char *hexagon_mba_image;
+-	struct qcom_mss_reg_res *proxy_supply;
+-	struct qcom_mss_reg_res *active_supply;
+-	char **proxy_clk_names;
+-	char **active_clk_names;
+-	int version;
+-	bool need_mem_protection;
+-};
 -
--	rx_pipe = devm_kzalloc(&pdev->dev, sizeof(*rx_pipe), GFP_KERNEL);
--	tx_pipe = devm_kzalloc(&pdev->dev, sizeof(*tx_pipe), GFP_KERNEL);
--	if (!rx_pipe || !tx_pipe)
--		return -ENOMEM;
-+	glink->tx_pipe = tx;
-+	glink->rx_pipe = rx;
+ struct q6v5 {
+ 	struct device *dev;
+ 	struct rproc *rproc;
+@@ -171,6 +161,19 @@ struct q6v5 {
+ 	int version;
+ };
  
- 	mutex_init(&glink->tx_lock);
- 	spin_lock_init(&glink->rx_lock);
-@@ -1188,14 +1181,48 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 	idr_init(&glink->lcids);
- 	idr_init(&glink->rcids);
- 
--	glink->mbox_client.dev = &pdev->dev;
-+	glink->mbox_client.dev = dev;
- 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
- 	if (IS_ERR(glink->mbox_chan)) {
- 		if (PTR_ERR(glink->mbox_chan) != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "failed to acquire IPC channel\n");
--		return PTR_ERR(glink->mbox_chan);
-+			dev_err(dev, "failed to acquire IPC channel\n");
-+		return ERR_CAST(glink->mbox_chan);
-+	}
++struct rproc_hexagon_res {
++	const char *hexagon_mba_image;
++	struct qcom_mss_reg_res *proxy_supply;
++	struct qcom_mss_reg_res *active_supply;
++	char **proxy_clk_names;
++	char **active_clk_names;
++	int version;
++	bool need_mem_protection;
++	int (*init_reset)(struct q6v5 *qproc);
++	const struct rproc_fw_ops *fw_ops;
++	const struct rproc_ops *ops;
++};
 +
-+	irq = of_irq_get(dev->of_node, 0);
-+	ret = devm_request_irq(dev, irq,
-+			       qcom_glink_intr,
-+			       IRQF_NO_SUSPEND | IRQF_SHARED,
-+			       "glink-native", glink);
-+	if (ret) {
-+		dev_err(dev, "failed to request IRQ\n");
-+		return ERR_PTR(ret);
+ enum {
+ 	MSS_MSM8916,
+ 	MSS_MSM8974,
+@@ -1118,14 +1121,14 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (!desc)
+ 		return -EINVAL;
+ 
+-	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
++	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+ 			    desc->hexagon_mba_image, sizeof(*qproc));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+ 		return -ENOMEM;
  	}
  
-+	ret = qcom_glink_send_version(glink);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return glink;
-+}
-+
-+static int glink_rpm_probe(struct platform_device *pdev)
-+{
-+	struct qcom_glink *glink;
-+	struct glink_rpm_pipe *rx_pipe;
-+	struct glink_rpm_pipe *tx_pipe;
-+	struct device_node *np;
-+	void __iomem *msg_ram;
-+	size_t msg_ram_size;
-+	struct device *dev = &pdev->dev;
-+	struct resource r;
-+	int ret;
-+
-+	rx_pipe = devm_kzalloc(&pdev->dev, sizeof(*rx_pipe), GFP_KERNEL);
-+	tx_pipe = devm_kzalloc(&pdev->dev, sizeof(*tx_pipe), GFP_KERNEL);
-+	if (!rx_pipe || !tx_pipe)
-+		return -ENOMEM;
-+
- 	np = of_parse_phandle(dev->of_node, "qcom,rpm-msg-ram", 0);
- 	ret = of_address_to_resource(np, 0, &r);
- 	of_node_put(np);
-@@ -1219,27 +1246,13 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 	tx_pipe->native.avail = glink_rpm_tx_avail;
- 	tx_pipe->native.write = glink_rpm_tx_write;
+-	rproc->fw_ops = &q6v5_fw_ops;
++	rproc->fw_ops = desc->fw_ops;
  
--	glink->tx_pipe = &tx_pipe->native;
--	glink->rx_pipe = &rx_pipe->native;
--
- 	writel(0, tx_pipe->head);
- 	writel(0, rx_pipe->tail);
+ 	qproc = (struct q6v5 *)rproc->priv;
+ 	qproc->dev = &pdev->dev;
+@@ -1175,7 +1178,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->active_reg_count = ret;
  
--	irq = platform_get_irq(pdev, 0);
--	ret = devm_request_irq(dev, irq,
--			       qcom_glink_intr,
--			       IRQF_NO_SUSPEND | IRQF_SHARED,
--			       "glink-rpm", glink);
--	if (ret) {
--		dev_err(dev, "Failed to request IRQ\n");
--		return ret;
--	}
--
--	glink->irq = irq;
--
--	ret = qcom_glink_send_version(glink);
--	if (ret)
--		return ret;
-+	glink = qcom_glink_native_probe(&pdev->dev, &rx_pipe->native,
-+					&tx_pipe->native);
-+	if (IS_ERR(glink))
-+		return PTR_ERR(glink);
+-	ret = q6v5_init_reset(qproc);
++	ret = desc->init_reset(qproc);
+ 	if (ret)
+ 		goto free_rproc;
  
- 	platform_set_drvdata(pdev, glink);
+@@ -1245,6 +1248,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	},
+ 	.need_mem_protection = true,
+ 	.version = MSS_MSM8996,
++	.init_reset = q6v5_init_reset,
++	.fw_ops = &q6v5_fw_ops,
++	.ops = &q6v5_ops,
+ };
  
+ static const struct rproc_hexagon_res msm8916_mss = {
+@@ -1276,6 +1282,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	},
+ 	.need_mem_protection = false,
+ 	.version = MSS_MSM8916,
++	.init_reset = q6v5_init_reset,
++	.fw_ops = &q6v5_fw_ops,
++	.ops = &q6v5_ops,
+ };
+ 
+ static const struct rproc_hexagon_res msm8974_mss = {
+@@ -1315,6 +1324,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	},
+ 	.need_mem_protection = false,
+ 	.version = MSS_MSM8974,
++	.init_reset = q6v5_init_reset,
++	.fw_ops = &q6v5_fw_ops,
++	.ops = &q6v5_ops,
+ };
+ 
+ static const struct of_device_id q6v5_of_match[] = {
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
