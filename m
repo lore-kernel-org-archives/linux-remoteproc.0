@@ -1,330 +1,120 @@
 Return-Path: <sricharan@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH 02/18] rpmsg: glink: Associate indirections for pipe fifo accessor's
-Date: Wed, 16 Aug 2017 22:48:55 +0530
-Message-Id: <1502903951-5403-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-References: <1502903951-5403-1-git-send-email-sricharan@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 3/6] remoteproc: qcom: Push reset ops, fw ops, rproc ops in to of_match data
+Date: Thu, 31 Aug 2017 10:15:31 +0530
+Message-Id: <1504154734-12175-4-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
+References: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Instead of directly assigning reset, fw and rproc ops, put them
+in to of_match data and get from that. Currently same ops
+are used for all compatibles, but that will change when we add
+q6v5-wcss support.
 
-With the intention of reusing the glink core protocol commands
-and code across both rpm and smem based transports, the only thing
-different is way of accessing the shared-memory of the transport
-(FIFO). So put the fifo accessor's of the transport's pipe (rx/tx)
-behind indirections, so that the rest of the code can be shared.
-
-For this, have a qcom_glink_pipe that can be used in the common code
-containing the indirections and wrap it with glink_rpm_pipe that contains
-the transport specific members.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_rpm.c | 144 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 106 insertions(+), 38 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 38 +++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-index 56a0a66..870ce32 100644
---- a/drivers/rpmsg/qcom_glink_rpm.c
-+++ b/drivers/rpmsg/qcom_glink_rpm.c
-@@ -41,12 +41,28 @@
- #define RPM_GLINK_CID_MIN	1
- #define RPM_GLINK_CID_MAX	65536
- 
-+#define to_rpm_pipe(p)	container_of(p, struct glink_rpm_pipe, native)
-+
- struct rpm_toc_entry {
- 	__le32 id;
- 	__le32 offset;
- 	__le32 size;
- } __packed;
- 
-+struct qcom_glink;
-+
-+struct qcom_glink_pipe {
-+	size_t length;
-+
-+	size_t (*avail)(struct qcom_glink_pipe *glink_pipe);
-+	void (*peak)(struct qcom_glink_pipe *glink_pipe, void *data,
-+		     size_t count);
-+	void (*advance)(struct qcom_glink_pipe *glink_pipe, size_t count);
-+	void (*write)(struct qcom_glink_pipe *glink_pipe,
-+		      const void *hdr, size_t hlen,
-+		      const void *data, size_t dlen);
-+};
-+
- struct rpm_toc {
- 	__le32 magic;
- 	__le32 count;
-@@ -62,12 +78,12 @@ struct glink_msg {
- } __packed;
- 
- struct glink_rpm_pipe {
-+	struct qcom_glink_pipe native;
-+
- 	void __iomem *tail;
- 	void __iomem *head;
- 
- 	void __iomem *fifo;
--
--	size_t length;
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 808ee45..5b5811d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -116,16 +116,6 @@ struct qcom_mss_reg_res {
+ 	int uA;
  };
  
- /**
-@@ -107,8 +123,8 @@ struct qcom_glink {
- 	struct mbox_client mbox_client;
- 	struct mbox_chan *mbox_chan;
+-struct rproc_hexagon_res {
+-	const char *hexagon_mba_image;
+-	struct qcom_mss_reg_res *proxy_supply;
+-	struct qcom_mss_reg_res *active_supply;
+-	char **proxy_clk_names;
+-	char **active_clk_names;
+-	int version;
+-	bool need_mem_protection;
+-};
+-
+ struct q6v5 {
+ 	struct device *dev;
+ 	struct rproc *rproc;
+@@ -173,6 +163,19 @@ struct q6v5 {
+ 	int version;
+ };
  
--	struct glink_rpm_pipe rx_pipe;
--	struct glink_rpm_pipe tx_pipe;
-+	struct qcom_glink_pipe *rx_pipe;
-+	struct qcom_glink_pipe *tx_pipe;
- 
- 	int irq;
- 
-@@ -215,9 +231,9 @@ static void qcom_glink_channel_release(struct kref *ref)
- 	kfree(channel);
- }
- 
--static size_t qcom_glink_rx_avail(struct qcom_glink *glink)
-+static size_t glink_rpm_rx_avail(struct qcom_glink_pipe *glink_pipe)
- {
--	struct glink_rpm_pipe *pipe = &glink->rx_pipe;
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int head;
- 	unsigned int tail;
- 
-@@ -225,21 +241,26 @@ static size_t qcom_glink_rx_avail(struct qcom_glink *glink)
- 	tail = readl(pipe->tail);
- 
- 	if (head < tail)
--		return pipe->length - tail + head;
-+		return pipe->native.length - tail + head;
- 	else
- 		return head - tail;
- }
- 
--static void qcom_glink_rx_peak(struct qcom_glink *glink,
--			       void *data, size_t count)
-+static size_t qcom_glink_rx_avail(struct qcom_glink *glink)
-+{
-+	return glink->rx_pipe->avail(glink->rx_pipe);
-+}
++struct rproc_hexagon_res {
++	const char *hexagon_mba_image;
++	struct qcom_mss_reg_res *proxy_supply;
++	struct qcom_mss_reg_res *active_supply;
++	char **proxy_clk_names;
++	char **active_clk_names;
++	int version;
++	bool need_mem_protection;
++	int (*init_reset)(struct q6v5 *qproc);
++	const struct rproc_fw_ops *fw_ops;
++	const struct rproc_ops *ops;
++};
 +
-+static void glink_rpm_rx_peak(struct qcom_glink_pipe *glink_pipe,
-+			      void *data, size_t count)
- {
--	struct glink_rpm_pipe *pipe = &glink->rx_pipe;
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int tail;
- 	size_t len;
- 
- 	tail = readl(pipe->tail);
- 
--	len = min_t(size_t, count, pipe->length - tail);
-+	len = min_t(size_t, count, pipe->native.length - tail);
- 	if (len) {
- 		__ioread32_copy(data, pipe->fifo + tail,
- 				len / sizeof(u32));
-@@ -251,24 +272,35 @@ static void qcom_glink_rx_peak(struct qcom_glink *glink,
- 	}
- }
- 
--static void qcom_glink_rx_advance(struct qcom_glink *glink,
--				  size_t count)
-+static void qcom_glink_rx_peak(struct qcom_glink *glink,
-+			       void *data, size_t count)
- {
--	struct glink_rpm_pipe *pipe = &glink->rx_pipe;
-+	glink->rx_pipe->peak(glink->rx_pipe, data, count);
-+}
-+
-+static void glink_rpm_rx_advance(struct qcom_glink_pipe *glink_pipe,
-+				 size_t count)
-+{
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int tail;
- 
- 	tail = readl(pipe->tail);
- 
- 	tail += count;
--	if (tail >= pipe->length)
--		tail -= pipe->length;
-+	if (tail >= pipe->native.length)
-+		tail -= pipe->native.length;
- 
- 	writel(tail, pipe->tail);
- }
- 
--static size_t qcom_glink_tx_avail(struct qcom_glink *glink)
-+static void qcom_glink_rx_advance(struct qcom_glink *glink, size_t count)
-+{
-+	glink->rx_pipe->advance(glink->rx_pipe, count);
-+}
-+
-+static size_t glink_rpm_tx_avail(struct qcom_glink_pipe *glink_pipe)
- {
--	struct glink_rpm_pipe *pipe = &glink->tx_pipe;
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	unsigned int head;
- 	unsigned int tail;
- 
-@@ -276,19 +308,23 @@ static size_t qcom_glink_tx_avail(struct qcom_glink *glink)
- 	tail = readl(pipe->tail);
- 
- 	if (tail <= head)
--		return pipe->length - head + tail;
-+		return pipe->native.length - head + tail;
- 	else
- 		return tail - head;
- }
- 
--static unsigned int qcom_glink_tx_write(struct qcom_glink *glink,
--					unsigned int head,
--					const void *data, size_t count)
-+static size_t qcom_glink_tx_avail(struct qcom_glink *glink)
-+{
-+	return glink->tx_pipe->avail(glink->tx_pipe);
-+}
-+
-+static unsigned int glink_rpm_tx_write_one(struct glink_rpm_pipe *pipe,
-+					   unsigned int head,
-+					   const void *data, size_t count)
- {
--	struct glink_rpm_pipe *pipe = &glink->tx_pipe;
- 	size_t len;
- 
--	len = min_t(size_t, count, pipe->length - head);
-+	len = min_t(size_t, count, pipe->native.length - head);
- 	if (len) {
- 		__iowrite32_copy(pipe->fifo + head, data,
- 				 len / sizeof(u32));
-@@ -300,23 +336,41 @@ static unsigned int qcom_glink_tx_write(struct qcom_glink *glink,
- 	}
- 
- 	head += count;
--	if (head >= pipe->length)
--		head -= pipe->length;
-+	if (head >= pipe->native.length)
-+		head -= pipe->native.length;
- 
- 	return head;
- }
- 
-+static void glink_rpm_tx_write(struct qcom_glink_pipe *glink_pipe,
-+			       const void *hdr, size_t hlen,
-+			       const void *data, size_t dlen)
-+{
-+	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
-+	unsigned int head;
-+
-+	head = readl(pipe->head);
-+	head = glink_rpm_tx_write_one(pipe, head, hdr, hlen);
-+	head = glink_rpm_tx_write_one(pipe, head, data, dlen);
-+	writel(head, pipe->head);
-+}
-+
-+static void qcom_glink_tx_write(struct qcom_glink *glink,
-+				const void *hdr, size_t hlen,
-+				const void *data, size_t dlen)
-+{
-+	glink->tx_pipe->write(glink->tx_pipe, hdr, hlen, data, dlen);
-+}
-+
- static int qcom_glink_tx(struct qcom_glink *glink,
- 			 const void *hdr, size_t hlen,
- 			const void *data, size_t dlen, bool wait)
- {
--	struct glink_rpm_pipe *pipe = &glink->tx_pipe;
--	unsigned int head;
- 	unsigned int tlen = hlen + dlen;
- 	int ret;
- 
- 	/* Reject packets that are too big */
--	if (tlen >= glink->tx_pipe.length)
-+	if (tlen >= glink->tx_pipe->length)
+ enum {
+ 	MSS_MSM8916,
+ 	MSS_MSM8974,
+@@ -1125,14 +1128,14 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (!desc)
  		return -EINVAL;
  
- 	if (WARN(tlen % 8, "Unaligned TX request"))
-@@ -335,10 +389,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
- 		msleep(10);
+-	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
++	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+ 			    desc->hexagon_mba_image, sizeof(*qproc));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+ 		return -ENOMEM;
  	}
  
--	head = readl(pipe->head);
--	head = qcom_glink_tx_write(glink, head, hdr, hlen);
--	head = qcom_glink_tx_write(glink, head, data, dlen);
--	writel(head, pipe->head);
-+	qcom_glink_tx_write(glink, hdr, hlen, data, dlen);
+-	rproc->fw_ops = &q6v5_fw_ops;
++	rproc->fw_ops = desc->fw_ops;
  
- 	mbox_send_message(glink->mbox_chan, NULL);
- 	mbox_client_txdone(glink->mbox_chan, 0);
-@@ -1075,14 +1126,14 @@ static int glink_rpm_parse_toc(struct device *dev,
+ 	qproc = (struct q6v5 *)rproc->priv;
+ 	qproc->dev = &pdev->dev;
+@@ -1182,7 +1185,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->active_reg_count = ret;
  
- 		switch (id) {
- 		case RPM_RX_FIFO_ID:
--			rx->length = size;
-+			rx->native.length = size;
- 
- 			rx->tail = msg_ram + offset;
- 			rx->head = msg_ram + offset + sizeof(u32);
- 			rx->fifo = msg_ram + offset + 2 * sizeof(u32);
- 			break;
- 		case RPM_TX_FIFO_ID:
--			tx->length = size;
-+			tx->native.length = size;
- 
- 			tx->tail = msg_ram + offset;
- 			tx->head = msg_ram + offset + sizeof(u32);
-@@ -1107,6 +1158,8 @@ static int glink_rpm_parse_toc(struct device *dev,
- static int glink_rpm_probe(struct platform_device *pdev)
- {
- 	struct qcom_glink *glink;
-+	struct glink_rpm_pipe *rx_pipe;
-+	struct glink_rpm_pipe *tx_pipe;
- 	struct device_node *np;
- 	void __iomem *msg_ram;
- 	size_t msg_ram_size;
-@@ -1121,6 +1174,11 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 
- 	glink->dev = dev;
- 
-+	rx_pipe = devm_kzalloc(&pdev->dev, sizeof(*rx_pipe), GFP_KERNEL);
-+	tx_pipe = devm_kzalloc(&pdev->dev, sizeof(*tx_pipe), GFP_KERNEL);
-+	if (!rx_pipe || !tx_pipe)
-+		return -ENOMEM;
-+
- 	mutex_init(&glink->tx_lock);
- 	spin_lock_init(&glink->rx_lock);
- 	INIT_LIST_HEAD(&glink->rx_queue);
-@@ -1150,12 +1208,22 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	ret = glink_rpm_parse_toc(dev, msg_ram, msg_ram_size,
--				  &glink->rx_pipe, &glink->tx_pipe);
-+				  rx_pipe, tx_pipe);
+-	ret = q6v5_init_reset(qproc);
++	ret = desc->init_reset(qproc);
  	if (ret)
- 		return ret;
+ 		goto free_rproc;
  
--	writel(0, glink->tx_pipe.head);
--	writel(0, glink->rx_pipe.tail);
-+	/* Pipe specific accessors */
-+	rx_pipe->native.avail = glink_rpm_rx_avail;
-+	rx_pipe->native.peak = glink_rpm_rx_peak;
-+	rx_pipe->native.advance = glink_rpm_rx_advance;
-+	tx_pipe->native.avail = glink_rpm_tx_avail;
-+	tx_pipe->native.write = glink_rpm_tx_write;
-+
-+	glink->tx_pipe = &tx_pipe->native;
-+	glink->rx_pipe = &rx_pipe->native;
-+
-+	writel(0, tx_pipe->head);
-+	writel(0, rx_pipe->tail);
+@@ -1253,6 +1256,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	},
+ 	.need_mem_protection = true,
+ 	.version = MSS_MSM8996,
++	.init_reset = q6v5_init_reset,
++	.fw_ops = &q6v5_fw_ops,
++	.ops = &q6v5_ops,
+ };
  
- 	irq = platform_get_irq(pdev, 0);
- 	ret = devm_request_irq(dev, irq,
+ static const struct rproc_hexagon_res msm8916_mss = {
+@@ -1284,6 +1290,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	},
+ 	.need_mem_protection = false,
+ 	.version = MSS_MSM8916,
++	.init_reset = q6v5_init_reset,
++	.fw_ops = &q6v5_fw_ops,
++	.ops = &q6v5_ops,
+ };
+ 
+ static const struct rproc_hexagon_res msm8974_mss = {
+@@ -1323,6 +1332,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	},
+ 	.need_mem_protection = false,
+ 	.version = MSS_MSM8974,
++	.init_reset = q6v5_init_reset,
++	.fw_ops = &q6v5_fw_ops,
++	.ops = &q6v5_ops,
+ };
+ 
+ static const struct of_device_id q6v5_of_match[] = {
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
