@@ -1,53 +1,95 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: srinivas.kandagatla@linaro.org
-Subject: [PATCH] remoteproc: qcom: select QCOM_SMP2P for all qcom pils
-Date: Wed, 13 Sep 2017 18:04:05 +0200
-Message-Id: <20170913160405.17855-1-srinivas.kandagatla@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH] remoteproc: Introduce rproc handle accessor for children
+References: <20170828053453.27187-1-bjorn.andersson@linaro.org>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <5a5166df-c95b-6199-89be-6381b934adae@ti.com>
+Date: Fri, 1 Sep 2017 16:00:46 -0500
+MIME-Version: 1.0
+In-Reply-To: <20170828053453.27187-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Hi Bjorn,
 
-All Qualcomm PIL drivers require SMP2P module to get a functional PIL,
-Currently user has to explicitly select SMP2P module, after looking
-at failure logs.
+On 08/28/2017 12:34 AM, Bjorn Andersson wrote:
+> In certain circumstances rpmsg devices needs to acquire a handle to the
+> ancestor remoteproc instance, e.g. to invoke rproc_report_crash() when a
+> fatal error is detected. Introduce an interface that walks the device
+> tree in search for a remoteproc instance and return this.
 
-Fix this by selecting SMP2P as part of dependency of pil kconfig itself.
+Thanks for the patch. I also have a need to be able to get a rproc
+handle from rpmsg device for some buffer translations. I have been using
+a somewhat similar solution downstream and was able to use this patch
+just fine.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/remoteproc/Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 18 ++++++++++++++++++
+>  include/linux/remoteproc.h           |  2 ++
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 564061dcc019..5b1b19519275 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1296,6 +1296,23 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+>  EXPORT_SYMBOL(rproc_get_by_phandle);
+>  
+>  /**
+> + * rproc_get_by_child() - acquire rproc handle of @dev's ancestor
+> + * @dev:	child device to find ancestor of
+> + *
+> + * Returns the ancestor rproc instance, or NULL if not found.
+> + */
+> +struct rproc *rproc_get_by_child(struct device *dev)
+> +{
+> +	for (dev = dev->parent; dev; dev = dev->parent) {
+> +		if (dev->type && !strcmp(dev->type->name, "remoteproc"))
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 8891a8e50f12..052c9e20abb6 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -87,6 +87,7 @@ config QCOM_ADSP_PIL
- 	select QCOM_MDT_LOADER
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
-+	select QCOM_SMP2P
- 	help
- 	  Say y here to support the TrustZone based Peripherial Image Loader
- 	  for the Qualcomm ADSP remote processors.
-@@ -102,6 +103,7 @@ config QCOM_Q6V5_PIL
- 	select MFD_SYSCON
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
-+	select QCOM_SMP2P
- 	help
- 	  Say y here to support the Qualcomm Peripherial Image Loader for the
- 	  Hexagon V5 based remote processors.
-@@ -114,6 +116,7 @@ config QCOM_WCNSS_PIL
- 	select QCOM_MDT_LOADER
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
-+	select QCOM_SMP2P
- 	help
- 	  Say y here to support the Peripheral Image Loader for the Qualcomm
- 	  Wireless Connectivity Subsystem.
--- 
-2.11.0
+It's much simpler to just check the type pointer,
+		if (dev->type && dev->type == &rproc_type)
+
+Tested both versions of the patch.
+
+
+regards
+Suman
+
+> +			return dev->driver_data;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL(rproc_get_by_child);
+> +
+> +/**
+>   * rproc_add() - register a remote processor
+>   * @rproc: the remote processor handle to register
+>   *
+> @@ -1440,6 +1457,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	rproc->dev.parent = dev;
+>  	rproc->dev.type = &rproc_type;
+>  	rproc->dev.class = &rproc_class;
+> +	rproc->dev.driver_data = rproc;
+>  
+>  	/* Assign a unique device index and name */
+>  	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 81da49564ff4..44e630eb3d94 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -510,6 +510,8 @@ struct rproc_vdev {
+>  };
+>  
+>  struct rproc *rproc_get_by_phandle(phandle phandle);
+> +struct rproc *rproc_get_by_child(struct device *dev);
+> +
+>  struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  			  const struct rproc_ops *ops,
+>  			  const char *firmware, int len);
+> 
