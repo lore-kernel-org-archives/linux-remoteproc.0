@@ -1,58 +1,51 @@
-Return-Path: <dan.carpenter@oracle.com>
-Date: Fri, 8 Sep 2017 13:34:42 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 2/2] rpmsg: glink: Fix memory leak in
- qcom_glink_alloc_intent()
-Message-ID: <20170908103440.junitv63lrzc5ih5@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20170908103345.brf5wcj5yg6zpslz@mwanda>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-Path: <arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] remoteproc: qcom: fix RPMSG_QCOM_GLINK_SMEM dependencies
+Date: Mon, 11 Sep 2017 21:54:17 +0200
+Message-Id: <20170911195431.2913102-1-arnd@arndb.de>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-We need to free "intent" and "intent->data" on a couple error paths.
+When RPMSG_QCOM_GLINK_SMEM=m and one driver causes the qcom_common.c file
+to be compiled as built-in, we get a link error:
 
-Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+drivers/remoteproc/qcom_common.o: In function `glink_subdev_remove':
+qcom_common.c:(.text+0x130): undefined reference to `qcom_glink_smem_unregister'
+qcom_common.c:(.text+0x130): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qcom_glink_smem_unregister'
+drivers/remoteproc/qcom_common.o: In function `glink_subdev_probe':
+qcom_common.c:(.text+0x160): undefined reference to `qcom_glink_smem_register'
+qcom_common.c:(.text+0x160): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qcom_glink_smem_register'
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index fecb1dafa8f3..5dcc9bf1c5bc 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -635,19 +635,18 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
- 	unsigned long flags;
- 
- 	intent = kzalloc(sizeof(*intent), GFP_KERNEL);
--
- 	if (!intent)
- 		return NULL;
- 
- 	intent->data = kzalloc(size, GFP_KERNEL);
- 	if (!intent->data)
--		return NULL;
-+		goto free_intent;
- 
- 	spin_lock_irqsave(&channel->intent_lock, flags);
- 	ret = idr_alloc_cyclic(&channel->liids, intent, 1, -1, GFP_ATOMIC);
- 	if (ret < 0) {
- 		spin_unlock_irqrestore(&channel->intent_lock, flags);
--		return NULL;
-+		goto free_data;
- 	}
- 	spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
-@@ -656,6 +655,12 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
- 	intent->reuse = reuseable;
- 
- 	return intent;
-+
-+free_data:
-+	kfree(intent->data);
-+free_intent:
-+	kfree(intent);
-+	return NULL;
- }
- 
- static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
+Out of the three PIL driver instances, QCOM_ADSP_PIL already has a
+Kconfig dependency to prevent this from happening, but the other two
+do not. This adds the same dependency there.
+
+Fixes: eea07023e6d9 ("remoteproc: qcom: adsp: Allow defining GLINK edge")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/remoteproc/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index df63e44526ac..bf04479456a0 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -109,6 +109,7 @@ config QCOM_Q6V5_PIL
+ 	depends on OF && ARCH_QCOM
+ 	depends on QCOM_SMEM
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
++	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	select MFD_SYSCON
+ 	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+@@ -120,6 +121,7 @@ config QCOM_WCNSS_PIL
+ 	tristate "Qualcomm WCNSS Peripheral Image Loader"
+ 	depends on OF && ARCH_QCOM
+ 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
++	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SMEM
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_RPROC_COMMON
+-- 
+2.9.0
