@@ -1,50 +1,87 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:40868 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751604AbdICMqQ (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 3 Sep 2017 08:46:16 -0400
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH][rpmsg-next] rpmsg: glink: fix null pointer dereference on a null intent
-Date: Sun,  3 Sep 2017 13:46:14 +0100
-Message-Id: <20170903124614.6248-1-colin.king@canonical.com>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH] remoteproc: qcom: select QCOM_SMP2P for all qcom pils
+References: <20170913160405.17855-1-srinivas.kandagatla@linaro.org>
+ <20170914165751.GN2016@tuxbook>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <3e72fa15-7c56-3b15-2532-cd3ae03b4631@linaro.org>
+Date: Fri, 15 Sep 2017 10:09:41 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20170914165751.GN2016@tuxbook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
 
-In the case where glink->intentless is true and the call
-to qcom_glink_tx fails then we have a condition where ret is
-non-zero and intent is null, causing a null pointer deference
-when setting intent->in_use to false.  Add an extra check to
-only dereference intent if intent is non-null.
 
-Detected by: CoverityScan CID#1455247 ("Explicit null dereferenced")
+On 14/09/17 17:57, Bjorn Andersson wrote:
+> On Wed 13 Sep 09:04 PDT 2017, srinivas.kandagatla@linaro.org wrote:
+> 
+>> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>
+>> All Qualcomm PIL drivers require SMP2P module to get a functional PIL,
+>> Currently user has to explicitly select SMP2P module, after looking
+>> at failure logs.
+>>
+>> Fix this by selecting SMP2P as part of dependency of pil kconfig itself.
+>>
+> 
+> The Kconfig should describe dependencies needed by the code, not by the
+> system.
 
-Fixes: 88c6060f5a7f ("rpmsg: glink: Handle remote rx done command")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rpmsg/qcom_glink_native.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I partially agree with this! As I did not realize that that there are 
+more than one SMEM_STATE drivers.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 666068202597..8bc0d0456a40 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1264,7 +1264,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
- 	ret = qcom_glink_tx(glink, &req, sizeof(req), data, len, wait);
- 
- 	/* Mark intent available if we failed */
--	if (ret)
-+	if (ret && intent)
- 		intent->in_use = false;
- 
- 	return ret;
--- 
-2.14.1
 
+The driver bindings clearly marks "qcom,smem-states" and 
+"qcom,smem-state-names" as required properties, so it makes the driver 
+dependent on SMEM_STATE.
+
+But SMEM_STATE is only selected from SMP2P Kconfig.
+
+Indirectly/directly the driver is dependent on the SMEM_STATE drivers.
+
+
+> 
+> I agree with you that this leads to wasted time trying figure out if
+> we're missing drivers/modules in the kernel, but I think that needs to
+> be solved in a more generic way.
+> 
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   drivers/remoteproc/Kconfig | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index 8891a8e50f12..052c9e20abb6 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -87,6 +87,7 @@ config QCOM_ADSP_PIL
+>>   	select QCOM_MDT_LOADER
+>>   	select QCOM_RPROC_COMMON
+>>   	select QCOM_SCM
+>> +	select QCOM_SMP2P
+
+I agree, instead of select, we should mark these configs with a
+
+depends on QCOM_SMEM_STATE
+
+
+so that the final pil kconfigs are only selected with right dependencies 
+are in place.
+Does that sound okay?
+
+
+thanks,
+srini
+
+> 
+> NB. QCOM_SMP2P is a user-selectable config option, so you are not
+> allowed to "select" it, only "depends on" it.
+> 
+> Regards,
+> Bjorn
+> 
