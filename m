@@ -1,51 +1,42 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] remoteproc: qcom: fix RPMSG_QCOM_GLINK_SMEM dependencies
-Date: Mon, 11 Sep 2017 21:54:17 +0200
-Message-Id: <20170911195431.2913102-1-arnd@arndb.de>
+Return-Path: <sudipm.mukherjee@gmail.com>
+Return-Path: <sudipm.mukherjee@gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] rpmsg: glink: fix memory leak
+Date: Sun, 17 Sep 2017 13:14:38 +0100
+Message-Id: <1505650478-4638-1-git-send-email-sudipm.mukherjee@gmail.com>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-When RPMSG_QCOM_GLINK_SMEM=m and one driver causes the qcom_common.c file
-to be compiled as built-in, we get a link error:
+We missed freeing intent and intent->data on error conditions.
 
-drivers/remoteproc/qcom_common.o: In function `glink_subdev_remove':
-qcom_common.c:(.text+0x130): undefined reference to `qcom_glink_smem_unregister'
-qcom_common.c:(.text+0x130): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qcom_glink_smem_unregister'
-drivers/remoteproc/qcom_common.o: In function `glink_subdev_probe':
-qcom_common.c:(.text+0x160): undefined reference to `qcom_glink_smem_register'
-qcom_common.c:(.text+0x160): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `qcom_glink_smem_register'
-
-Out of the three PIL driver instances, QCOM_ADSP_PIL already has a
-Kconfig dependency to prevent this from happening, but the other two
-do not. This adds the same dependency there.
-
-Fixes: eea07023e6d9 ("remoteproc: qcom: adsp: Allow defining GLINK edge")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 ---
- drivers/remoteproc/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rpmsg/qcom_glink_native.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index df63e44526ac..bf04479456a0 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -109,6 +109,7 @@ config QCOM_Q6V5_PIL
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
- 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	select MFD_SYSCON
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
-@@ -120,6 +121,7 @@ config QCOM_WCNSS_PIL
- 	tristate "Qualcomm WCNSS Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SMEM
- 	select QCOM_MDT_LOADER
- 	select QCOM_RPROC_COMMON
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 5a5e927..2e64c4d 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -640,13 +640,17 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
+ 		return NULL;
+ 
+ 	intent->data = kzalloc(size, GFP_KERNEL);
+-	if (!intent->data)
++	if (!intent->data) {
++		kfree(intent);
+ 		return NULL;
++	}
+ 
+ 	spin_lock_irqsave(&channel->intent_lock, flags);
+ 	ret = idr_alloc_cyclic(&channel->liids, intent, 1, -1, GFP_ATOMIC);
+ 	if (ret < 0) {
+ 		spin_unlock_irqrestore(&channel->intent_lock, flags);
++		kfree(intent->data);
++		kfree(intent);
+ 		return NULL;
+ 	}
+ 	spin_unlock_irqrestore(&channel->intent_lock, flags);
 -- 
-2.9.0
+2.7.4
