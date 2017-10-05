@@ -1,78 +1,43 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 4/7] remoteproc: introduce rproc_find_carveout_by_da
-Date: Fri, 27 Oct 2017 14:44:11 +0200
-Message-ID: <1509108254-22296-5-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
-References: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <anup@brainfault.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+In-Reply-To: <20171005024427.GU1165@minitux>
+References: <1506917900-12289-1-git-send-email-anup@brainfault.org> <20171005024427.GU1165@minitux>
+From: Anup Patel <anup@brainfault.org>
+Date: Thu, 5 Oct 2017 09:30:42 +0530
+Message-ID: <CAAhSdy3Dk88F-MnzCS5Ftz0o6tmVW2utELgeSB0=pQiJwVikjA@mail.gmail.com>
+Subject: Re: [PATCH v2] rpmsg: Allow RPMSG_VIRTIO to be enabled via menuconfig
+ or defconfig
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch provides a new function to find a carveout according
-to a device address (da).
-If match found, this function returns CPU virtual address corresponding
-to specified da.
+On Thu, Oct 5, 2017 at 8:14 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Sun 01 Oct 21:18 PDT 2017, Anup Patel wrote:
+>
+>> Currently, RPMSG_VIRTIO can only be enabled if some other kconfig
+>> option selects it. This does not allow it to be enabled for
+>> virtualized systems where Virtio RPMSG is available over Virtio
+>> MMIO or PCI transport.
+>>
+>> This patch updates RPMSG_VIRTIO kconfig option so that we can
+>> enable the VirtIO RPMSG driver via menuconfig or defconfig.
+>>
+>> Signed-off-by: Anup Patel <anup@brainfault.org>
+>> ---
+>
+> This part looks good (and really I think this is the right thing to do).
+> But turning RPMSG_VIRTIO into a user selectable item makes it invalid to
+> "select RPMSG_VIRTIO" from drivers/remoteproc/Kconfig.
+>
+> Can you please as part of this change remove those selects and as a
+> separate patch add CONFIG_RPMSG_VIRTIO=m to
+> arch/arm/configs/multi_v7_defconfig?
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 42 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Sure, I will update the patch as-per your suggestion and also
+send separate patch to add CONFIG_RPMSG_VIRTIO=m in
+arch/arm/configs/multi_v7_defconfig.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 279320a..78525d1 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -211,6 +211,48 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- }
- EXPORT_SYMBOL(rproc_da_to_va);
- 
-+/**
-+ * rproc_find_carveout_by_da() - lookup the carveout region for a remoteproc address
-+ * @rproc: handle of a remote processor
-+ * @da: remoteproc device address to find
-+ * @len: length of the memory region @da is pointing to
-+ *
-+ * Platform driver has the capability to register some pre-allacoted carveout
-+ * (physically contiguous memory regions) before rproc firmware loading and
-+ * associated resource table analysis. These regions may be dedicated memory
-+ * regions internal to the coprocessor or specified DDR region with specific
-+ * attributes
-+ *
-+ * This function is a helper function with which we can go over the
-+ * allocated carveouts and translate specific device addresse to virtual
-+ * addresse so we can fill firmware resource table.
-+ *
-+ * The function returns a valid virtual address on success or NULL on failure.
-+ */
-+void *rproc_find_carveout_by_da(struct rproc *rproc, u64 da, int len)
-+{
-+	struct rproc_mem_entry *carveout;
-+	void *va = NULL;
-+
-+	list_for_each_entry(carveout, &rproc->carveouts, node) {
-+		int offset = da - carveout->da;
-+
-+		/* try next carveout if da is too small */
-+		if (offset < 0)
-+			continue;
-+
-+		/* try next carveout if da is too large */
-+		if (offset + len > carveout->len)
-+			continue;
-+
-+		va = carveout->va + offset;
-+
-+		break;
-+	}
-+
-+	return va;
-+}
-+
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- {
- 	struct rproc *rproc = rvdev->rproc;
--- 
-1.9.1
+Regards,
+Anup
