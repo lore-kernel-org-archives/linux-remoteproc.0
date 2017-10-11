@@ -1,140 +1,52 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 1/2] remoteproc: debug: add resource table dump feature
-Date: Fri, 27 Oct 2017 14:41:21 +0200
-Message-ID: <1509108082-22201-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
-References: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <ore@pengutronix.de>
+Date: Wed, 11 Oct 2017 14:35:17 +0200
+From: Oleksij Rempel <ore@pengutronix.de>
+Subject: Re: [PATCH] remoteproc: imx_rproc: fix return value check in
+ imx_rproc_addr_init()
+Message-ID: <20171011123516.sc57t5sttm4uhgnn@pengutronix.de>
+References: <1507718924-127469-1-git-send-email-weiyongjun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, Loic Pallardy <loic.pallardy@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507718924-127469-1-git-send-email-weiyongjun1@huawei.com>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the capability to display the content of
-the resource table associated to a remote processor firmware.
+On Wed, Oct 11, 2017 at 10:48:44AM +0000, Wei Yongjun wrote:
+> In case of error, the function devm_ioremap() returns NULL pointer
+> not ERR_PTR(). The IS_ERR() test in the return value check should
+> be replaced with NULL test.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 612d914..fc38916 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -269,10 +269,9 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+>  
+>  		priv->mem[b].cpu_addr = devm_ioremap(&pdev->dev,
+>  						     att->sa, att->size);
+> -		if (IS_ERR(priv->mem[b].cpu_addr)) {
+> +		if (!priv->mem[b].cpu_addr) {
+>  			dev_err(dev, "devm_ioremap_resource failed\n");
+> -			err = PTR_ERR(priv->mem[b].cpu_addr);
+> -			return err;
+> +			return -ENOMEM;
+>  		}
+>  		priv->mem[b].sys_addr = att->sa;
+>  		priv->mem[b].size = att->size;
+> 
+> 
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_debugfs.c | 99 +++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 1c122e2..c1c9f58 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -155,6 +155,103 @@ static ssize_t rproc_recovery_read(struct file *filp, char __user *userbuf,
- 	.llseek = generic_file_llseek,
- };
- 
-+/* Expose resource table content via debugfs */
-+static int rproc_rsc_table_show(struct seq_file *seq, void *p)
-+{
-+	static const char * const types[] = {"carveout", "devmem", "trace", "vdev"};
-+	struct rproc *rproc = seq->private;
-+	struct resource_table *table = rproc->table_ptr;
-+	struct fw_rsc_carveout *c;
-+	struct fw_rsc_devmem *d;
-+	struct fw_rsc_trace *t;
-+	struct fw_rsc_vdev *v;
-+	int i, j;
-+
-+	if (!table) {
-+		seq_puts(seq, "No resource table found\n");
-+		return 0;
-+	}
-+
-+	for (i = 0; i < table->num; i++) {
-+		int offset = table->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table + offset;
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+
-+		switch (hdr->type) {
-+		case RSC_CARVEOUT:
-+			c = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			seq_printf(seq, "  Device Address 0x%x\n", c->da);
-+			seq_printf(seq, "  Physical Address 0x%x\n", c->pa);
-+			seq_printf(seq, "  Length 0x%x Bytes\n", c->len);
-+			seq_printf(seq, "  Flags 0x%x\n", c->flags);
-+			seq_printf(seq, "  Reserved (should be zero) [%d]\n", c->reserved);
-+			seq_printf(seq, "  Name %s\n\n", c->name);
-+			break;
-+		case RSC_DEVMEM:
-+			d = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			seq_printf(seq, "  Device Address 0x%x\n", d->da);
-+			seq_printf(seq, "  Physical Address 0x%x\n", d->pa);
-+			seq_printf(seq, "  Length 0x%x Bytes\n", d->len);
-+			seq_printf(seq, "  Flags 0x%x\n", d->flags);
-+			seq_printf(seq, "  Reserved (should be zero) [%d]\n", d->reserved);
-+			seq_printf(seq, "  Name %s\n\n", d->name);
-+			break;
-+		case RSC_TRACE:
-+			t = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			seq_printf(seq, "  Device Address 0x%x\n", t->da);
-+			seq_printf(seq, "  Length 0x%x Bytes\n", t->len);
-+			seq_printf(seq, "  Reserved (should be zero) [%d]\n", t->reserved);
-+			seq_printf(seq, "  Name %s\n\n", t->name);
-+			break;
-+		case RSC_VDEV:
-+			v = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+
-+			seq_printf(seq, "  ID %d\n", v->id);
-+			seq_printf(seq, "  Notify ID %d\n", v->notifyid);
-+			seq_printf(seq, "  Device features 0x%x\n", v->dfeatures);
-+			seq_printf(seq, "  Guest features 0x%x\n", v->gfeatures);
-+			seq_printf(seq, "  Config length 0x%x\n", v->config_len);
-+			seq_printf(seq, "  Status 0x%x\n", v->status);
-+			seq_printf(seq, "  Number of vrings %d\n", v->num_of_vrings);
-+			seq_printf(seq, "  Reserved (should be zero) [%d][%d]\n\n",
-+				   v->reserved[0], v->reserved[1]);
-+
-+			for (j = 0; j < v->num_of_vrings; j++) {
-+				seq_printf(seq, "  Vring %d\n", j);
-+				seq_printf(seq, "    Device Address 0x%x\n", v->vring[j].da);
-+				seq_printf(seq, "    Alignment %d\n", v->vring[j].align);
-+				seq_printf(seq, "    Number of buffers %d\n", v->vring[j].num);
-+				seq_printf(seq, "    Notify ID %d\n", v->vring[j].notifyid);
-+				seq_printf(seq, "    Physical Address 0x%x\n\n",
-+					   v->vring[j].pa);
-+			}
-+			break;
-+		default:
-+			seq_printf(seq, "Unknown resource type found: %d [hdr: %p]\n",
-+				   hdr->type, hdr);
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static ssize_t rproc_rsc_table_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, rproc_rsc_table_show, inode->i_private);
-+}
-+
-+static const struct file_operations rproc_rsc_table_ops = {
-+	.open		= rproc_rsc_table_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
- void rproc_remove_trace_file(struct dentry *tfile)
- {
- 	debugfs_remove(tfile);
-@@ -198,6 +295,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 			    rproc, &rproc_name_ops);
- 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_recovery_ops);
-+	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
-+			    rproc, &rproc_rsc_table_ops);
- }
- 
- void __init rproc_init_debugfs(void)
 -- 
-1.9.1
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
