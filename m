@@ -1,35 +1,59 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH] rpmsg: glink: Initialize the "intent_req_comp" completion variable
-Date: Fri, 27 Oct 2017 16:15:52 +0530
-Message-Id: <1509101152-1340-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v7 4/4] remoteproc: qcom: Add support for mss remoteproc
+ on msm8996
+References: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
+ <1500634173-24416-5-git-send-email-akdwived@codeaurora.org>
+ <20171012182052.GG1165@minitux>
+ <a92e3adc-bcd9-fbe2-7a32-ae1752845740@codeaurora.org>
+ <20171016185804.GK1165@minitux>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <54b18f4b-b399-d4aa-8ec3-1000004af445@codeaurora.org>
+Date: Thu, 19 Oct 2017 11:02:05 +0530
+MIME-Version: 1.0
+In-Reply-To: <20171016185804.GK1165@minitux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, "Dwivedi, Avaneesh Kumar (avani)" <akdwived@codeaurora.org>
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The "intent_req_comp" variable is used without initialization which
-results in NULL pointer derefernce in qcom_glink_request_intent().
+Hi Bjorn,
 
-we need to initialize the completion variable before using it.
+On 10/17/2017 12:28 AM, Bjorn Andersson wrote:
+> On Mon 16 Oct 06:19 PDT 2017, Dwivedi, Avaneesh Kumar (avani) wrote:
+>> On 10/12/2017 11:50 PM, Bjorn Andersson wrote:
+> [..]
+>>> Please fix this and add my Acked-by
+>> Sure will do, just want to ask, when i am sending updated patches, should i
+>> sent all the 4 patches in series or should skip those which are acked by
+>> you.
+> 
+> Please include all the patches in each submission (unless the maintainer
+> tells you that he/she applied some of them already).
+> 
+> Make sure to add any "Acked-by", "Reviewed-by" and "Tested-by" on your
+> patches, so that people know that they are already reviewed/tested.
+> 
+> 
+> And finally, when resending patches, add a section between "---" and the
+> diff-stat describing changes since the last version - that makes it
+> easier to see what changed since last time and will help the reviewer
+> look at the "new" things.
 
-Fixes: 27b9c5b66b23 ("rpmsg: glink: Request for intents when unavailable")
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 1 +
- 1 file changed, 1 insertion(+)
+ So i was having the ipq8074 q6 remoteproc support based on this series last time.
+ With the msm8996 now getting cleared, i will rebase my patches and repost.
+ Otherwise, just hope that you were ok with the approach [1].
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 5dcc9bf..fcd46ab 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -227,6 +227,7 @@ static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
- 
- 	init_completion(&channel->open_req);
- 	init_completion(&channel->open_ack);
-+	init_completion(&channel->intent_req_comp);
- 
- 	INIT_LIST_HEAD(&channel->done_intents);
- 	INIT_WORK(&channel->intent_work, qcom_glink_rx_done_work);
+[1] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1481961.html
+
+
+Regards,
+ Sricharan
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
