@@ -1,88 +1,71 @@
-Return-Path: <anup@brainfault.org>
-Return-Path: <anup@brainfault.org>
-From: Anup Patel <anup@brainfault.org>
-Subject: [PATCH v3] rpmsg: Allow RPMSG_VIRTIO to be enabled via menuconfig or defconfig
-Date: Thu,  5 Oct 2017 22:13:20 +0530
-Message-Id: <1507221800-25519-1-git-send-email-anup@brainfault.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v3 1/6] remoteproc: qcom: mdt_loader: Make the firmware
+ authentication optional
+References: <1504154734-12175-1-git-send-email-sricharan@codeaurora.org>
+ <1504154734-12175-2-git-send-email-sricharan@codeaurora.org>
+ <20171012182624.GH1165@minitux>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <59a7c297-8cc1-f16f-c890-ed13959da102@codeaurora.org>
+Date: Thu, 19 Oct 2017 10:52:52 +0530
+MIME-Version: 1.0
+In-Reply-To: <20171012182624.GH1165@minitux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Currently, RPMSG_VIRTIO can only be enabled if some other kconfig
-option selects it. This does not allow it to be enabled for
-virtualized systems where Virtio RPMSG is available over Virtio
-MMIO or PCI transport.
+Hi Bjorn,
 
-This patch updates RPMSG_VIRTIO kconfig option so that we can
-enable the VirtIO RPMSG driver via menuconfig or defconfig. The
-patch also removes "select RPMSG_VIRTIO" from various remoteproc
-kconfig options because it is now user selectable.
+On 10/12/2017 11:56 PM, Bjorn Andersson wrote:
+> On Wed 30 Aug 21:45 PDT 2017, Sricharan R wrote:
+> 
+>> qcom_mdt_load function loads the mdt type firmware and
+>> initialises the secure memory as well. Make the initialisation only
+>> when requested by the caller, so that the function can be used
+>> by self-authenticating remoteproc as well.
+>>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  drivers/soc/qcom/mdt_loader.c       | 70 +++++++++++++++++++++++++++++++------
+>>  include/linux/soc/qcom/mdt_loader.h |  3 ++
+>>  2 files changed, 62 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+>> index bd63df0..851f5d7 100644
+>> --- a/drivers/soc/qcom/mdt_loader.c
+>> +++ b/drivers/soc/qcom/mdt_loader.c
+>> @@ -86,9 +86,9 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
+>>   *
+>>   * Returns 0 on success, negative errno otherwise.
+>>   */
+> 
+> This kerneldoc is now lacks @pas_init, but as it's just an internal
+> function and you have kerneldoc on the public functions I suggest that
+> you drop it.
+> 
 
-Signed-off-by: Anup Patel <anup@brainfault.org>
----
+ Sure. Will change.
 
-Changes since v2:
-- Remove "select RPMSG_VIRTIO" from various remoteproc
-  kconfig options
+>> -int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>> -		  const char *firmware, int pas_id, void *mem_region,
+>> -		  phys_addr_t mem_phys, size_t mem_size)
+>> +static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>> +			   const char *firmware, int pas_id, void *mem_region,
+>> +			   phys_addr_t mem_phys, size_t mem_size, bool pas_init)
+> 
+> With this you have my Acked-by.
+> 
 
-Changes since v1:
-- Add depends on HAS_DMA to avoid build failures on
-  archs (such as um) with NO_DMA=y. For most archs,
-  HAS_DMA=y so having depends on HAS_DMA is fine. 
+ Thanks.
 
- drivers/remoteproc/Kconfig | 4 ----
- drivers/rpmsg/Kconfig      | 3 ++-
- 2 files changed, 2 insertions(+), 5 deletions(-)
+Regards,
+ Sricharan
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index df63e44..afb7628 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -28,7 +28,6 @@ config OMAP_REMOTEPROC
- 	depends on OMAP_IOMMU
- 	select MAILBOX
- 	select OMAP2PLUS_MBOX
--	select RPMSG_VIRTIO
- 	help
- 	  Say y here to support OMAP's remote processors (dual M3
- 	  and DSP on OMAP4) via the remote processor framework.
-@@ -58,7 +57,6 @@ config DA8XX_REMOTEPROC
- 	tristate "DA8xx/OMAP-L13x remoteproc support"
- 	depends on ARCH_DAVINCI_DA8XX
- 	depends on DMA_CMA
--	select RPMSG_VIRTIO
- 	help
- 	  Say y here to support DA8xx/OMAP-L13x remote processors via the
- 	  remote processor framework.
-@@ -79,7 +77,6 @@ config DA8XX_REMOTEPROC
- config KEYSTONE_REMOTEPROC
- 	tristate "Keystone Remoteproc support"
- 	depends on ARCH_KEYSTONE
--	select RPMSG_VIRTIO
- 	help
- 	  Say Y here here to support Keystone remote processors (DSP)
- 	  via the remote processor framework.
-@@ -133,7 +130,6 @@ config ST_REMOTEPROC
- 	depends on ARCH_STI
- 	select MAILBOX
- 	select STI_MBOX
--	select RPMSG_VIRTIO
- 	help
- 	  Say y here to support ST's adjunct processors via the remote
- 	  processor framework.
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index 0fe6eac..65a9f6b 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -47,7 +47,8 @@ config RPMSG_QCOM_SMD
- 	  platforms.
- 
- config RPMSG_VIRTIO
--	tristate
-+	tristate "Virtio RPMSG bus driver"
-+	depends on HAS_DMA
- 	select RPMSG
- 	select VIRTIO
- 
 -- 
-2.7.4
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+
+---
+This email has been checked for viruses by Avast antivirus software.
+https://www.avast.com/antivirus
