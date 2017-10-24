@@ -1,54 +1,70 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 1/7] remoteproc: add rproc_va_to_pa function
-Date: Fri, 27 Oct 2017 14:44:08 +0200
-Message-ID: <1509108254-22296-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
-References: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <akdwived@codeaurora.org>
+From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Subject: [PATCH v8 2/4] remoteproc: qcom: refactor mss fw image loading sequence
+Date: Tue, 24 Oct 2017 21:22:25 +0530
+Message-Id: <1508860347-25181-3-git-send-email-akdwived@codeaurora.org>
+In-Reply-To: <1508860347-25181-1-git-send-email-akdwived@codeaurora.org>
+References: <1508860347-25181-1-git-send-email-akdwived@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This new function translates CPU virtual address in
-CPU physical one according to virtual address location.
+This patch refactor code to first load all firmware blobs
+and then update modem proc to authenticate and boot fw.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Tested-and-acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index eab14b4..faa18a7 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -139,6 +139,17 @@ static void rproc_disable_iommu(struct rproc *rproc)
- 	iommu_domain_free(domain);
- }
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 2d3d5ac..39b9ee4 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -504,7 +504,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	bool relocate = false;
+ 	char seg_name[10];
+ 	ssize_t offset;
+-	size_t size;
++	size_t size = 0;
+ 	void *ptr;
+ 	int ret;
+ 	int i;
+@@ -542,7 +542,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	}
  
-+static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-+{
-+	if (is_vmalloc_addr(cpu_addr)) {
-+		return page_to_phys(vmalloc_to_page(cpu_addr)) +
-+				    offset_in_page(cpu_addr);
-+	}
-+
-+	WARN_ON(!virt_addr_valid(cpu_addr));
-+	return virt_to_phys(cpu_addr);
-+}
-+
- /**
-  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
-  * @rproc: handle of a remote processor
-@@ -700,7 +711,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	 * In this case, the device address and the physical address
- 	 * are the same.
- 	 */
--	rsc->pa = dma;
-+	rsc->pa = (u32)rproc_va_to_pa(va);
+ 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+-
++	/* Load firmware segments */
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+ 		phdr = &phdrs[i];
  
- 	carveout->va = va;
- 	carveout->len = rsc->len;
+@@ -575,18 +575,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
+-
+-		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+-		if (!size) {
+-			boot_addr = relocate ? qproc->mpss_phys : min_addr;
+-			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
+-			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+-		}
+-
+ 		size += phdr->p_memsz;
+-		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+ 	}
+ 
++	/* Transfer ownership of modem ddr region with q6*/
++	boot_addr = relocate ? qproc->mpss_phys : min_addr;
++	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
++	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
++	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
++
+ 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(qproc->dev, "MPSS authentication timed out\n");
 -- 
-1.9.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
