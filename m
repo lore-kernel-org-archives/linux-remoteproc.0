@@ -1,70 +1,33 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:57998 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751241AbdJIMma (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Oct 2017 08:42:30 -0400
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] rpmsg: glink: fix memory leak on intent and intent->data
-Date: Mon,  9 Oct 2017 13:42:14 +0100
-Message-Id: <20171009124214.17206-1-colin.king@canonical.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 25 Oct 2017 21:51:44 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3] rpmsg: Allow RPMSG_VIRTIO to be enabled via
+ menuconfig or defconfig
+Message-ID: <20171026045144.GA12511@builder>
+References: <1507221800-25519-1-git-send-email-anup@brainfault.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1507221800-25519-1-git-send-email-anup@brainfault.org>
+To: Anup Patel <anup@brainfault.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu 05 Oct 09:43 PDT 2017, Anup Patel wrote:
 
-Detected by CoverityScan, CID#1455255 ("Resource Leak")
+> Currently, RPMSG_VIRTIO can only be enabled if some other kconfig
+> option selects it. This does not allow it to be enabled for
+> virtualized systems where Virtio RPMSG is available over Virtio
+> MMIO or PCI transport.
+> 
+> This patch updates RPMSG_VIRTIO kconfig option so that we can
+> enable the VirtIO RPMSG driver via menuconfig or defconfig. The
+> patch also removes "select RPMSG_VIRTIO" from various remoteproc
+> kconfig options because it is now user selectable.
+> 
+> Signed-off-by: Anup Patel <anup@brainfault.org>
 
-Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rpmsg/qcom_glink_native.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Sorry for not picking this up earlier. Applied to rpmsg-next.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 5a5e927ea50f..53e0dd13ca3d 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -635,19 +635,18 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
- 	unsigned long flags;
- 
- 	intent = kzalloc(sizeof(*intent), GFP_KERNEL);
--
- 	if (!intent)
- 		return NULL;
- 
- 	intent->data = kzalloc(size, GFP_KERNEL);
- 	if (!intent->data)
--		return NULL;
-+		goto free_intent;
- 
- 	spin_lock_irqsave(&channel->intent_lock, flags);
- 	ret = idr_alloc_cyclic(&channel->liids, intent, 1, -1, GFP_ATOMIC);
- 	if (ret < 0) {
- 		spin_unlock_irqrestore(&channel->intent_lock, flags);
--		return NULL;
-+		goto free_data;
- 	}
- 	spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
-@@ -656,6 +655,12 @@ qcom_glink_alloc_intent(struct qcom_glink *glink,
- 	intent->reuse = reuseable;
- 
- 	return intent;
-+
-+free_data:
-+	kfree(intent->data);
-+free_intent:
-+	kfree(intent);
-+	return NULL;
- }
- 
- static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
--- 
-2.14.1
-
+Regards,
+Bjorn
