@@ -1,45 +1,47 @@
 Return-Path: <anup@brainfault.org>
-Return-Path: <anup@brainfault.org>
+MIME-Version: 1.0
+In-Reply-To: <1507222198-5052-1-git-send-email-anup@brainfault.org>
+References: <1507222198-5052-1-git-send-email-anup@brainfault.org>
 From: Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2] rpmsg: Allow RPMSG_VIRTIO to be enabled via menuconfig or defconfig
-Date: Mon,  2 Oct 2017 09:48:20 +0530
-Message-Id: <1506917900-12289-1-git-send-email-anup@brainfault.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>
+Date: Thu, 26 Oct 2017 21:33:31 +0530
+Message-ID: <CAAhSdy0weSJCp1CtcEG-V+iPD3o88W5gZzTBaU38PpHGEtaS8A@mail.gmail.com>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Select RPMSG_VIRTIO as module
+Content-Type: text/plain; charset="UTF-8"
+To: Russell King <linux@armlinux.org.uk>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>, Anup Patel <anup@brainfault.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Currently, RPMSG_VIRTIO can only be enabled if some other kconfig
-option selects it. This does not allow it to be enabled for
-virtualized systems where Virtio RPMSG is available over Virtio
-MMIO or PCI transport.
+On Thu, Oct 5, 2017 at 10:19 PM, Anup Patel <anup@brainfault.org> wrote:
+> The RPMSG_VIRTIO is now user selectable option so we explicitly
+> select it in multi_v7_defconfig. Till now RPMSG_VIRTIO was
+> selected by ST_REMOTEPROC=m in multi_v7_defconfig.
+>
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> ---
+>  arch/arm/configs/multi_v7_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> index 0cacdbf..5e689e0 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -849,6 +849,7 @@ CONFIG_TEGRA_IOMMU_GART=y
+>  CONFIG_TEGRA_IOMMU_SMMU=y
+>  CONFIG_REMOTEPROC=m
+>  CONFIG_ST_REMOTEPROC=m
+> +CONFIG_RPMSG_VIRTIO=m
+>  CONFIG_PM_DEVFREQ=y
+>  CONFIG_ARM_TEGRA_DEVFREQ=m
+>  CONFIG_MEMORY=y
+> --
+> 2.7.4
+>
 
-This patch updates RPMSG_VIRTIO kconfig option so that we can
-enable the VirtIO RPMSG driver via menuconfig or defconfig.
+Hi Arnd/Olof,
 
-Signed-off-by: Anup Patel <anup@brainfault.org>
----
+Please have a look at this patch.
 
-Changes since v1:
-- Add depends on HAS_DMA to avoid build failures on
-  archs (such as um) with NO_DMA=y. For most archs,
-  HAS_DMA=y so having depends on HAS_DMA is fine. 
+This is a follow-up patch for https://patchwork.kernel.org/patch/9987567/
 
- drivers/rpmsg/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index 0fe6eac..65a9f6b 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -47,7 +47,8 @@ config RPMSG_QCOM_SMD
- 	  platforms.
- 
- config RPMSG_VIRTIO
--	tristate
-+	tristate "Virtio RPMSG bus driver"
-+	depends on HAS_DMA
- 	select RPMSG
- 	select VIRTIO
- 
--- 
-2.7.4
+Regards,
+Anup
