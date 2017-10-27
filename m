@@ -1,70 +1,96 @@
-Return-Path: <akdwived@codeaurora.org>
-From: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Subject: [PATCH v8 2/4] remoteproc: qcom: refactor mss fw image loading sequence
-Date: Tue, 24 Oct 2017 21:22:25 +0530
-Message-Id: <1508860347-25181-3-git-send-email-akdwived@codeaurora.org>
-In-Reply-To: <1508860347-25181-1-git-send-email-akdwived@codeaurora.org>
-References: <1508860347-25181-1-git-send-email-akdwived@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 3/7] remoteproc: introduce rproc_add_carveout function
+Date: Fri, 27 Oct 2017 14:44:10 +0200
+Message-ID: <1509108254-22296-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
+References: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch refactor code to first load all firmware blobs
-and then update modem proc to authenticate and boot fw.
+This patch introduces a new API to allow platform driver to register
+platform specific carveout regions.
 
-Tested-and-acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ drivers/remoteproc/remoteproc_core.c     | 22 ++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h |  7 +++++++
+ include/linux/remoteproc.h               |  2 ++
+ 3 files changed, 31 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 2d3d5ac..39b9ee4 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -504,7 +504,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	bool relocate = false;
- 	char seg_name[10];
- 	ssize_t offset;
--	size_t size;
-+	size_t size = 0;
- 	void *ptr;
- 	int ret;
- 	int i;
-@@ -542,7 +542,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	}
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f23daf9..279320a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -737,6 +737,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	carveout->dma = dma;
+ 	carveout->da = rsc->da;
+ 	carveout->release = rproc_release_carveout;
++	carveout->priv = (void *)CARVEOUT_RSC_ALLOCATED;
  
- 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
--
-+	/* Load firmware segments */
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		phdr = &phdrs[i];
+ 	list_add_tail(&carveout->node, &rproc->carveouts);
  
-@@ -575,18 +575,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			memset(ptr + phdr->p_filesz, 0,
- 			       phdr->p_memsz - phdr->p_filesz);
- 		}
--
--		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
--		if (!size) {
--			boot_addr = relocate ? qproc->mpss_phys : min_addr;
--			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
--			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
--		}
--
- 		size += phdr->p_memsz;
--		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
- 	}
+@@ -751,6 +752,27 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	return ret;
+ }
  
-+	/* Transfer ownership of modem ddr region with q6*/
-+	boot_addr = relocate ? qproc->mpss_phys : min_addr;
-+	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-+	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
-+	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
++/**
++ * rproc_add_carveout() - register an allocated carveout region
++ * @rproc: rproc handle
++ * @mem: memory entry to register
++ *
++ * This function registers specified memory entry in @rproc carveouts list.
++ * Specified carveout should have been allocated before registering.
++ */
++int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
++{
++	if (!rproc || !mem)
++		return -EINVAL;
 +
- 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "MPSS authentication timed out\n");
++	mem->priv = (void *)CARVEOUT_EXTERNAL;
++
++	list_add_tail(&mem->node, &rproc->carveouts);
++
++	return 0;
++}
++EXPORT_SYMBOL(rproc_add_carveout);
++
+ /*
+  * A lookup table for resource handlers. The indices are defined in
+  * enum fw_resource_type.
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index c1077be..69b22ac 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -23,6 +23,13 @@
+ #include <linux/irqreturn.h>
+ #include <linux/firmware.h>
+ 
++/* Indicate carveout origin */
++enum carveout_src {
++	CARVEOUT_RSC		= 0,
++	CARVEOUT_RSC_ALLOCATED	= 1,
++	CARVEOUT_EXTERNAL	= 2,
++};
++
+ struct rproc;
+ 
+ /**
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 8780f2e..5bd5175 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -522,6 +522,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ int rproc_del(struct rproc *rproc);
+ void rproc_free(struct rproc *rproc);
+ 
++int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
++
+ int rproc_boot(struct rproc *rproc);
+ void rproc_shutdown(struct rproc *rproc);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+1.9.1
