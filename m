@@ -1,37 +1,24 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 30 Oct 2017 21:21:57 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 0/2] remoteproc: increase debug capabilities
-Message-ID: <20171031042157.GB12511@builder>
-References: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 0/2] remoteproc: increase debug capabilities
+Date: Fri, 27 Oct 2017 14:41:20 +0200
+Message-ID: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 27 Oct 05:41 PDT 2017, Loic Pallardy wrote:
+This series increases remoteproc debug capabilities by adding:
+- associated resource table dump feature
+- registered carveouts list dump feature
 
-> This series increases remoteproc debug capabilities by adding:
-> - associated resource table dump feature
-> - registered carveouts list dump feature
-> 
+Loic Pallardy (2):
+  remoteproc: debug: add resource table dump feature
+  remoteproc: debug: add carveouts list dump feature
 
-This looks very reasonable, can you please fix the problem reported by
-0-day?
+ drivers/remoteproc/remoteproc_debugfs.c | 130 ++++++++++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
 
-Regards,
-Bjorn
-
-> Loic Pallardy (2):
->   remoteproc: debug: add resource table dump feature
->   remoteproc: debug: add carveouts list dump feature
-> 
->  drivers/remoteproc/remoteproc_debugfs.c | 130 ++++++++++++++++++++++++++++++++
->  1 file changed, 130 insertions(+)
-> 
-> -- 
-> 1.9.1
-> 
+-- 
+1.9.1
