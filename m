@@ -1,43 +1,97 @@
-Return-Path: <khoroshilov@ispras.ru>
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Subject: [PATCH] rpmsg: glink: keep balance of mutex locks in qcom_glink_request_intent()
-Date: Sat,  7 Oct 2017 00:23:57 +0300
-Message-Id: <1507325037-20889-1-git-send-email-khoroshilov@ispras.ru>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 5/7] remoteproc: modify rproc_handle_carveout to support preallocated region
+Date: Fri, 27 Oct 2017 14:44:12 +0200
+Message-ID: <1509108254-22296-6-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
+References: <1509108254-22296-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-If qcom_glink_tx() fails in qcom_glink_request_intent(),
-it returns immediately leaving intent_req_lock mutex locked.
-So the next tries to send intent request lead to deadlock.
+In current version rproc_handle_carveout function support only dynamic
+region allocation.
+This patch extends rproc_handle_carveout function to support different carveout
+configurations:
+- fixed DA and fixed PA: check if already part of pre-registered carveouts
+(platform driver). If no, return error.
+- fixed DA and any PA: check if already part of pre-allocated carveouts
+(platform driver). If not found and rproc supports iommu, continue with
+dynamic allocation (DA will be used for iommu programming), else return
+error as no way to force DA.
+- any DA and any PA: use original dynamic allocation
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/rpmsg/qcom_glink_native.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 40 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 5a5e927ea50f..fecb1dafa8f3 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1197,7 +1197,7 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 78525d1..515a17a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -184,6 +184,10 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	struct rproc_mem_entry *carveout;
+ 	void *ptr = NULL;
  
- 	ret = qcom_glink_tx(glink, &cmd, sizeof(cmd), NULL, 0, true);
- 	if (ret)
--		return ret;
-+		goto unlock;
++	/*
++	 * da_to_va platform driver is deprecated. Driver should register
++	 * carveout thanks to rproc_add_carveout function
++	 */
+ 	if (rproc->ops->da_to_va) {
+ 		ptr = rproc->ops->da_to_va(rproc, da, len);
+ 		if (ptr)
+@@ -677,6 +681,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	struct rproc_mem_entry *carveout, *mapping;
+ 	struct device *dev = &rproc->dev;
+ 	dma_addr_t dma;
++	phys_addr_t pa;
+ 	void *va;
+ 	int ret;
  
- 	ret = wait_for_completion_timeout(&channel->intent_req_comp, 10 * HZ);
- 	if (!ret) {
-@@ -1207,6 +1207,7 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
- 		ret = channel->intent_req_result ? 0 : -ECANCELED;
- 	}
+@@ -698,6 +703,41 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	if (!carveout)
+ 		return -ENOMEM;
  
-+unlock:
- 	mutex_unlock(&channel->intent_req_lock);
- 	return ret;
- }
++	/* Check carveout rsc already part of a registered carveout */
++	if (rsc->da != FW_RSC_ADDR_ANY) {
++		va = rproc_find_carveout_by_da(rproc, rsc->da, rsc->len);
++
++		if (va) {
++			/* Registered region found */
++			pa = rproc_va_to_pa(va);
++			if (rsc->pa != FW_RSC_ADDR_ANY && rsc->pa != (u32)pa) {
++				/* Carveout doesn't match request */
++				dev_err(dev->parent,
++					"Failed to find carveout fitting da and pa\n");
++				return -ENOMEM;
++			}
++
++			/* Update rsc table with physical address */
++			rsc->pa = (u32)pa;
++
++			/* Update carveouts list */
++			carveout->va = va;
++			carveout->len = rsc->len;
++			carveout->da = rsc->da;
++			carveout->priv = (void *)CARVEOUT_RSC;
++
++			list_add_tail(&carveout->node, &rproc->carveouts);
++
++			return 0;
++		}
++
++		if (!rproc->domain) {
++			dev_err(dev->parent,
++				"Bad carveout rsc configuration\n");
++			return -ENOMEM;
++		}
++	}
++
+ 	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+ 	if (!va) {
+ 		dev_err(dev->parent,
 -- 
-2.7.4
+1.9.1
