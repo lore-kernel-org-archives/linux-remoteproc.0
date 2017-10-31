@@ -1,83 +1,37 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 12 Oct 2017 11:12:28 -0700
+Date: Mon, 30 Oct 2017 21:21:57 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v7 2/4] remoteproc: qcom: refactor mss fw image loading
- sequence
-Message-ID: <20171012181228.GE1165@minitux>
-References: <1500634173-24416-1-git-send-email-akdwived@codeaurora.org>
- <1500634173-24416-3-git-send-email-akdwived@codeaurora.org>
+Subject: Re: [PATCH 0/2] remoteproc: increase debug capabilities
+Message-ID: <20171031042157.GB12511@builder>
+References: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1500634173-24416-3-git-send-email-akdwived@codeaurora.org>
-To: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-Cc: sboyd@codeaurora.org, agross@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+In-Reply-To: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 21 Jul 03:49 PDT 2017, Avaneesh Kumar Dwivedi wrote:
+On Fri 27 Oct 05:41 PDT 2017, Loic Pallardy wrote:
 
-> This patch refactor code to first load all firmware blobs
-> and then update modem proc to authenticate and boot fw.
+> This series increases remoteproc debug capabilities by adding:
+> - associated resource table dump feature
+> - registered carveouts list dump feature
 > 
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+This looks very reasonable, can you please fix the problem reported by
+0-day?
 
 Regards,
 Bjorn
 
-> Signed-off-by: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
+> Loic Pallardy (2):
+>   remoteproc: debug: add resource table dump feature
+>   remoteproc: debug: add carveouts list dump feature
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index 8fd697a..f5f8850 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -503,7 +503,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  	bool relocate = false;
->  	char seg_name[10];
->  	ssize_t offset;
-> -	size_t size;
-> +	size_t size = 0;
->  	void *ptr;
->  	int ret;
->  	int i;
-> @@ -541,7 +541,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  	}
->  
->  	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
-> -
-> +	/* Load firmware segments */
->  	for (i = 0; i < ehdr->e_phnum; i++) {
->  		phdr = &phdrs[i];
->  
-> @@ -574,18 +574,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  			memset(ptr + phdr->p_filesz, 0,
->  			       phdr->p_memsz - phdr->p_filesz);
->  		}
-> -
-> -		size = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-> -		if (!size) {
-> -			boot_addr = relocate ? qproc->mpss_phys : min_addr;
-> -			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-> -			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
-> -		}
-> -
->  		size += phdr->p_memsz;
-> -		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
->  	}
->  
-> +	/* Transfer ownership of modem ddr region with q6*/
-> +	boot_addr = relocate ? qproc->mpss_phys : min_addr;
-> +	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-> +	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
-> +	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-> +
->  	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
->  	if (ret == -ETIMEDOUT)
->  		dev_err(qproc->dev, "MPSS authentication timed out\n");
+>  drivers/remoteproc/remoteproc_debugfs.c | 130 ++++++++++++++++++++++++++++++++
+>  1 file changed, 130 insertions(+)
+> 
 > -- 
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project.
+> 1.9.1
 > 
