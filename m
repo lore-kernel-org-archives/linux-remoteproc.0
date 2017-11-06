@@ -1,56 +1,75 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v4 2/6] remoteproc: Export rproc_elf_get_boot_addr
-Date: Thu,  9 Nov 2017 20:16:11 +0530
-Message-Id: <1510238775-14883-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
-References: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sricharan@codeaurora.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 2/2] remoteproc: debug: add carveouts list dump feature
+Date: Mon, 6 Nov 2017 18:09:56 +0100
+Message-ID: <1509988196-24377-3-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1509988196-24377-1-git-send-email-loic.pallardy@st.com>
+References: <1509988196-24377-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Export rproc_elf_get_boot_addr so that it can be
-used by any remoteproc to get the bootaddr of the
-elf type firmware images. This is used in the
-subsequent patch by the q6v5 based remoteproc
-while loading its elf based mdt type image.
+This patch offers the capability to dump memory carveouts associated
+to one remoteprocessor.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
- drivers/remoteproc/remoteproc_internal.h   | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+V2 :
+- Fix 0-DAY reported issues on open function prototype
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index c523983..f6d07d9 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -110,13 +110,13 @@
-  * Note that the boot address is not a configurable property of all remote
-  * processors. Some will always boot at a specific hard-coded address.
-  */
--static
- u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
+ drivers/remoteproc/remoteproc_debugfs.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index dc5e259..a204883 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -252,6 +252,35 @@ static int rproc_rsc_table_open(struct inode *inode, struct file *file)
+ 	.release	= single_release,
+ };
  
- 	return ehdr->e_entry;
- }
-+EXPORT_SYMBOL(rproc_elf_get_boot_addr);
- 
- /**
-  * rproc_elf_load_segments() - load firmware segments to memory
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index c1077be..1bbbfea 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -124,4 +124,7 @@ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
- 
- extern const struct rproc_fw_ops rproc_elf_fw_ops;
- 
-+/* from remoteproc_elf_loader.c */
-+u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
++/* Expose carveout content via debugfs */
++static int rproc_carveouts_show(struct seq_file *seq, void *p)
++{
++	struct rproc *rproc = seq->private;
++	struct rproc_mem_entry *carveout;
 +
- #endif /* REMOTEPROC_INTERNAL_H */
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		seq_puts(seq, "Carveout memory entry:\n");
++		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
++		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
++		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
++		seq_printf(seq, "\tLength: 0x%x Bytes\n\n", carveout->len);
++	}
++
++	return 0;
++}
++
++static int rproc_carveouts_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, rproc_carveouts_show, inode->i_private);
++}
++
++static const struct file_operations rproc_carveouts_ops = {
++	.open		= rproc_carveouts_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
+ void rproc_remove_trace_file(struct dentry *tfile)
+ {
+ 	debugfs_remove(tfile);
+@@ -297,6 +326,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+ 			    rproc, &rproc_recovery_ops);
+ 	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
+ 			    rproc, &rproc_rsc_table_ops);
++	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
++			    rproc, &rproc_carveouts_ops);
+ }
+ 
+ void __init rproc_init_debugfs(void)
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
