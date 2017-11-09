@@ -1,10 +1,10 @@
 Return-Path: <sricharan@codeaurora.org>
 From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v5 4/6] remoteproc: qcom: Split the head and tail of the q6v5-pil rproc start function
-Date: Tue, 14 Nov 2017 16:23:12 +0530
-Message-Id: <1510656794-3815-5-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-References: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
+Subject: [PATCH v4 4/6] remoteproc: qcom: Split the head and tail of the q6v5-pil rproc start function
+Date: Thu,  9 Nov 2017 20:16:13 +0530
+Message-Id: <1510238775-14883-5-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
+References: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
 To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
