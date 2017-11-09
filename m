@@ -1,75 +1,152 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 2/2] remoteproc: debug: add carveouts list dump feature
-Date: Mon, 6 Nov 2017 18:09:56 +0100
-Message-ID: <1509988196-24377-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1509988196-24377-1-git-send-email-loic.pallardy@st.com>
-References: <1509988196-24377-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH v4 1/6] remoteproc: qcom: mdt_loader: Make the firmware authentication optional
+Date: Thu,  9 Nov 2017 20:16:10 +0530
+Message-Id: <1510238775-14883-2-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
+References: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch offers the capability to dump memory carveouts associated
-to one remoteprocessor.
+qcom_mdt_load function loads the mdt type firmware and
+initialises the secure memory as well. Make the initialisation only
+when requested by the caller, so that the function can be used
+by self-authenticating remoteproc as well.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
-V2 :
-- Fix 0-DAY reported issues on open function prototype
+ drivers/soc/qcom/mdt_loader.c       | 82 ++++++++++++++++++++++++++-----------
+ include/linux/soc/qcom/mdt_loader.h |  3 ++
+ 2 files changed, 62 insertions(+), 23 deletions(-)
 
- drivers/remoteproc/remoteproc_debugfs.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index dc5e259..a204883 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -252,6 +252,35 @@ static int rproc_rsc_table_open(struct inode *inode, struct file *file)
- 	.release	= single_release,
- };
- 
-+/* Expose carveout content via debugfs */
-+static int rproc_carveouts_show(struct seq_file *seq, void *p)
-+{
-+	struct rproc *rproc = seq->private;
-+	struct rproc_mem_entry *carveout;
-+
-+	list_for_each_entry(carveout, &rproc->carveouts, node) {
-+		seq_puts(seq, "Carveout memory entry:\n");
-+		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
-+		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
-+		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
-+		seq_printf(seq, "\tLength: 0x%x Bytes\n\n", carveout->len);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rproc_carveouts_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, rproc_carveouts_show, inode->i_private);
-+}
-+
-+static const struct file_operations rproc_carveouts_ops = {
-+	.open		= rproc_carveouts_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
- void rproc_remove_trace_file(struct dentry *tfile)
- {
- 	debugfs_remove(tfile);
-@@ -297,6 +326,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 			    rproc, &rproc_recovery_ops);
- 	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_rsc_table_ops);
-+	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
-+			    rproc, &rproc_carveouts_ops);
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index 08bd854..65ab833 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -74,21 +74,9 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
  }
+ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
  
- void __init rproc_init_debugfs(void)
+-/**
+- * qcom_mdt_load() - load the firmware which header is loaded as fw
+- * @dev:	device handle to associate resources with
+- * @fw:		firmware object for the mdt file
+- * @firmware:	name of the firmware, for construction of segment file names
+- * @pas_id:	PAS identifier
+- * @mem_region:	allocated memory region to load firmware into
+- * @mem_phys:	physical address of allocated memory region
+- * @mem_size:	size of the allocated memory region
+- *
+- * Returns 0 on success, negative errno otherwise.
+- */
+-int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+-		  const char *firmware, int pas_id, void *mem_region,
+-		  phys_addr_t mem_phys, size_t mem_size)
++static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
++			   const char *firmware, int pas_id, void *mem_region,
++			   phys_addr_t mem_phys, size_t mem_size, bool pas_init)
+ {
+ 	const struct elf32_phdr *phdrs;
+ 	const struct elf32_phdr *phdr;
+@@ -119,10 +107,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	if (!fw_name)
+ 		return -ENOMEM;
+ 
+-	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+-	if (ret) {
+-		dev_err(dev, "invalid firmware metadata\n");
+-		goto out;
++	if (pas_init) {
++		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
++		if (ret) {
++			dev_err(dev, "invalid firmware metadata\n");
++			goto out;
++		}
+ 	}
+ 
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+@@ -142,10 +132,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	}
+ 
+ 	if (relocate) {
+-		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
+-		if (ret) {
+-			dev_err(dev, "unable to setup relocation\n");
+-			goto out;
++		if (pas_init) {
++			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
++						     max_addr - min_addr);
++			if (ret) {
++				dev_err(dev, "unable to setup relocation\n");
++				goto out;
++			}
+ 		}
+ 
+ 		/*
+@@ -197,7 +190,50 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 
+ 	return ret;
+ }
++
++/**
++ * qcom_mdt_load() - sets up the secure memory for the firmware and
++		     loads the firmware
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load(struct device *dev, const struct firmware *fw,
++		  const char *firmware, int pas_id, void *mem_region,
++		  phys_addr_t mem_phys, size_t mem_size)
++{
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, true);
++}
+ EXPORT_SYMBOL_GPL(qcom_mdt_load);
+ 
++/**
++ * qcom_mdt_load_no_init() - load the firmware which header is loaded as fw
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *firmware, int pas_id,
++			  void *mem_region, phys_addr_t mem_phys,
++			  size_t mem_size)
++{
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, false);
++}
++EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
++
+ MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+index bd8e086..151ee6a 100644
+--- a/include/linux/soc/qcom/mdt_loader.h
++++ b/include/linux/soc/qcom/mdt_loader.h
+@@ -16,4 +16,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 		  const char *fw_name, int pas_id, void *mem_region,
+ 		  phys_addr_t mem_phys, size_t mem_size);
+ 
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *fw_name, int pas_id, void *mem_region,
++			  phys_addr_t mem_phys, size_t mem_size);
+ #endif
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
