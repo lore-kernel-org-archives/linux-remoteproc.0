@@ -1,711 +1,273 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 5/5] samples: Introduce Qualcomm QMI sample client
-Date: Wed, 15 Nov 2017 12:10:12 -0800
-Message-Id: <20171115201012.25892-6-bjorn.andersson@linaro.org>
-In-Reply-To: <20171115201012.25892-1-bjorn.andersson@linaro.org>
-References: <20171115201012.25892-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH v4 6/6] remoteproc: qcom: Add q6v5-wcss rproc ops
+Date: Thu,  9 Nov 2017 20:16:15 +0530
+Message-Id: <1510238775-14883-7-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
+References: <1510238775-14883-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce a sample driver that register for server notifications and
-spawn clients for each available test service (service 15). The spawned
-clients implements the interface for encoding "ping" and "data" requests
-and decode the responses from the remote.
+q6v5-wcss core's start function is mostly common
+with the q6v5 of msm8996. So reuse that and add
+the stop function.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
+ drivers/remoteproc/qcom_q6v5_pil.c | 212 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 212 insertions(+)
 
-Changes since v2:
-- Fix some kerneldoc typos
-- Checkpatch fixes
-
-Changes since v1:
-- Adapted to updated QMI helper interface
-- Moved user space interface to debugfs
-
- samples/Kconfig                 |   9 +
- samples/Makefile                |   2 +-
- samples/qmi/Makefile            |   1 +
- samples/qmi/qmi_sample_client.c | 631 ++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 642 insertions(+), 1 deletion(-)
- create mode 100644 samples/qmi/Makefile
- create mode 100644 samples/qmi/qmi_sample_client.c
-
-diff --git a/samples/Kconfig b/samples/Kconfig
-index 9cb63188d3ef..8b20210b1eee 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -62,6 +62,15 @@ config SAMPLE_KDB
- 	  Build an example of how to dynamically add the hello
- 	  command to the kdb shell.
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 3c401ff..1b560a6 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -104,6 +104,17 @@
+ #define QDSP6SS_XO_CBCR		0x0038
+ #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
  
-+config SAMPLE_QMI_CLIENT
-+	tristate "Build qmi client sample -- loadable modules only"
-+	depends on m
-+	depends on ARCH_QCOM
-+	select QCOM_QMI_HELPERS
-+	help
-+	  Build an QMI client sample driver, which demonstrates how to
-+	  communicate with a remote QRTR service, using QMI encoded messages.
++/* QDSP6v5-WCSS config/status registers */
++#define TCSR_GLOBAL_CFG0	0x0
++#define TCSR_GLOBAL_CFG1	0x4
++#define SSCAON_CONFIG		0x8
++#define SSCAON_STATUS		0xc
++#define QDSP6SS_BHS_STATUS	0x78
++#define QDSP6SS_RST_EVB		0x10
 +
- config SAMPLE_RPMSG_CLIENT
- 	tristate "Build rpmsg client sample -- loadable modules only"
- 	depends on RPMSG && m
-diff --git a/samples/Makefile b/samples/Makefile
-index db54e766ddb1..a30833a2a19e 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,4 +3,4 @@
- obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
- 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
- 			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
--			   vfio-mdev/ statx/
-+			   vfio-mdev/ statx/ qmi/
-diff --git a/samples/qmi/Makefile b/samples/qmi/Makefile
-new file mode 100644
-index 000000000000..2b111d2769df
---- /dev/null
-+++ b/samples/qmi/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_SAMPLE_QMI_CLIENT) += qmi_sample_client.o
-diff --git a/samples/qmi/qmi_sample_client.c b/samples/qmi/qmi_sample_client.c
-new file mode 100644
-index 000000000000..3e0ef3b0f82e
---- /dev/null
-+++ b/samples/qmi/qmi_sample_client.c
-@@ -0,0 +1,631 @@
-+/*
-+ * Sample in-kernel QMI client driver
-+ *
-+ * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
-+ * Copyright (C) 2017 Linaro Ltd.
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
++#define BHS_EN_REST_ACK		BIT(0)
++#define SSCAON_ENABLE		BIT(13)
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
-+#include <linux/platform_device.h>
-+#include <linux/qrtr.h>
-+#include <linux/net.h>
-+#include <linux/completion.h>
-+#include <linux/idr.h>
-+#include <linux/string.h>
-+#include <net/sock.h>
-+#include <linux/soc/qcom/qmi.h>
-+
-+#define PING_REQ1_TLV_TYPE		0x1
-+#define PING_RESP1_TLV_TYPE		0x2
-+#define PING_OPT1_TLV_TYPE		0x10
-+#define PING_OPT2_TLV_TYPE		0x11
-+
-+#define DATA_REQ1_TLV_TYPE		0x1
-+#define DATA_RESP1_TLV_TYPE		0x2
-+#define DATA_OPT1_TLV_TYPE		0x10
-+#define DATA_OPT2_TLV_TYPE		0x11
-+
-+#define TEST_MED_DATA_SIZE_V01		8192
-+#define TEST_MAX_NAME_SIZE_V01		255
-+
-+#define TEST_PING_REQ_MSG_ID_V01	0x20
-+#define TEST_DATA_REQ_MSG_ID_V01	0x21
-+
-+#define TEST_PING_REQ_MAX_MSG_LEN_V01	266
-+#define TEST_DATA_REQ_MAX_MSG_LEN_V01	8456
-+
-+struct test_name_type_v01 {
-+	u32 name_len;
-+	char name[TEST_MAX_NAME_SIZE_V01];
-+};
-+
-+static struct qmi_elem_info test_name_type_v01_ei[] = {
-+	{
-+		.data_type      = QMI_DATA_LEN,
-+		.elem_len	= 1,
-+		.elem_size      = sizeof(u8),
-+		.is_array	= NO_ARRAY,
-+		.tlv_type	= QMI_COMMON_TLV_TYPE,
-+		.offset		= offsetof(struct test_name_type_v01,
-+					   name_len),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = TEST_MAX_NAME_SIZE_V01,
-+		.elem_size      = sizeof(char),
-+		.is_array       = VAR_LEN_ARRAY,
-+		.tlv_type       = QMI_COMMON_TLV_TYPE,
-+		.offset         = offsetof(struct test_name_type_v01,
-+					   name),
-+	},
-+	{}
-+};
-+
-+struct test_ping_req_msg_v01 {
-+	char ping[4];
-+
-+	u8 client_name_valid;
-+	struct test_name_type_v01 client_name;
-+};
-+
-+struct qmi_elem_info test_ping_req_msg_v01_ei[] = {
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = 4,
-+		.elem_size      = sizeof(char),
-+		.is_array       = STATIC_ARRAY,
-+		.tlv_type       = PING_REQ1_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_req_msg_v01,
-+					   ping),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = PING_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_req_msg_v01,
-+					   client_name_valid),
-+	},
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct test_name_type_v01),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = PING_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_req_msg_v01,
-+					   client_name),
-+		.ei_array       = test_name_type_v01_ei,
-+	},
-+	{}
-+};
-+
-+struct test_ping_resp_msg_v01 {
-+	struct qmi_response_type_v01 resp;
-+
-+	u8 pong_valid;
-+	char pong[4];
-+
-+	u8 service_name_valid;
-+	struct test_name_type_v01 service_name;
-+};
-+
-+struct qmi_elem_info test_ping_resp_msg_v01_ei[] = {
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct qmi_response_type_v01),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = PING_RESP1_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_resp_msg_v01,
-+					   resp),
-+		.ei_array       = qmi_response_type_v01_ei,
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = PING_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_resp_msg_v01,
-+					   pong_valid),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = 4,
-+		.elem_size      = sizeof(char),
-+		.is_array       = STATIC_ARRAY,
-+		.tlv_type       = PING_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_resp_msg_v01,
-+					   pong),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = PING_OPT2_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_resp_msg_v01,
-+					   service_name_valid),
-+	},
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct test_name_type_v01),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = PING_OPT2_TLV_TYPE,
-+		.offset         = offsetof(struct test_ping_resp_msg_v01,
-+					   service_name),
-+		.ei_array       = test_name_type_v01_ei,
-+	},
-+	{}
-+};
-+
-+struct test_data_req_msg_v01 {
-+	u32 data_len;
-+	u8 data[TEST_MED_DATA_SIZE_V01];
-+
-+	u8 client_name_valid;
-+	struct test_name_type_v01 client_name;
-+};
-+
-+struct qmi_elem_info test_data_req_msg_v01_ei[] = {
-+	{
-+		.data_type      = QMI_DATA_LEN,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u32),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_REQ1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_req_msg_v01,
-+					   data_len),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = TEST_MED_DATA_SIZE_V01,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = VAR_LEN_ARRAY,
-+		.tlv_type       = DATA_REQ1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_req_msg_v01,
-+					   data),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_req_msg_v01,
-+					   client_name_valid),
-+	},
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct test_name_type_v01),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_req_msg_v01,
-+					   client_name),
-+		.ei_array       = test_name_type_v01_ei,
-+	},
-+	{}
-+};
-+
-+struct test_data_resp_msg_v01 {
-+	struct qmi_response_type_v01 resp;
-+
-+	u8 data_valid;
-+	u32 data_len;
-+	u8 data[TEST_MED_DATA_SIZE_V01];
-+
-+	u8 service_name_valid;
-+	struct test_name_type_v01 service_name;
-+};
-+
-+struct qmi_elem_info test_data_resp_msg_v01_ei[] = {
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct qmi_response_type_v01),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_RESP1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_resp_msg_v01,
-+					   resp),
-+		.ei_array       = qmi_response_type_v01_ei,
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_resp_msg_v01,
-+					   data_valid),
-+	},
-+	{
-+		.data_type      = QMI_DATA_LEN,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u32),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_resp_msg_v01,
-+					   data_len),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_1_BYTE,
-+		.elem_len       = TEST_MED_DATA_SIZE_V01,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = VAR_LEN_ARRAY,
-+		.tlv_type       = DATA_OPT1_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_resp_msg_v01,
-+					   data),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u8),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_OPT2_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_resp_msg_v01,
-+					   service_name_valid),
-+	},
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct test_name_type_v01),
-+		.is_array       = NO_ARRAY,
-+		.tlv_type       = DATA_OPT2_TLV_TYPE,
-+		.offset         = offsetof(struct test_data_resp_msg_v01,
-+					   service_name),
-+		.ei_array       = test_name_type_v01_ei,
-+	},
-+	{}
-+};
-+
-+/*
-+ * ping_write() - ping_pong debugfs file write handler
-+ * @file:	debugfs file context
-+ * @user_buf:	reference to the user data (ignored)
-+ * @count:	number of bytes in @user_buf
-+ * @ppos:	offset in @file to write
-+ *
-+ * Returns @count, or negative errno on failure.
-+ *
-+ * This function allows user space to send out a ping_pong QMI encoded message
-+ * to the associated remote test service and will return with the result of the
-+ * transaction. It serves as an example of how to provide a custom response
-+ * handler.
-+ */
-+static ssize_t ping_write(struct file *file, const char __user *user_buf,
-+			  size_t count, loff_t *ppos)
+ struct reg_info {
+ 	struct regulator *reg;
+ 	int uV;
+@@ -771,6 +782,61 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	return ret < 0 ? ret : 0;
+ }
+ 
++static int q6v5_wcss_start(struct rproc *rproc)
 +{
-+	struct qmi_handle *qmi = file->private_data;
-+	struct test_ping_req_msg_v01 req = {0};
-+	struct qmi_txn txn;
-+	int ret;
++	struct q6v5 *qproc = rproc->priv;
++	int ret = 0;
 +
-+	memcpy(req.ping, "ping", sizeof(req.ping));
-+
-+	ret = qmi_txn_init(qmi, &txn, NULL, NULL);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = qmi_send_request(qmi, NULL, &txn,
-+			       TEST_PING_REQ_MSG_ID_V01,
-+			       TEST_PING_REQ_MAX_MSG_LEN_V01,
-+			       test_ping_req_msg_v01_ei, &req);
-+	if (ret < 0) {
-+		qmi_txn_cancel(&txn);
++	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
++			      qproc->active_clk_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable clocks\n");
 +		return ret;
 +	}
 +
-+	ret = qmi_txn_wait(&txn, 5 * HZ);
-+	if (ret < 0)
-+		count = ret;
++	/* Release Q6 and WCSS reset */
++	ret = reset_control_deassert(qproc->wcss_reset);
++	if (ret)
++		dev_err(qproc->dev, "wcss_reset failed\n");
 +
-+	return count;
-+}
++	ret = reset_control_deassert(qproc->wcss_q6_reset);
++	if (ret)
++		dev_err(qproc->dev, "wcss_q6_reset failed\n");
 +
-+static const struct file_operations ping_fops = {
-+	.open = simple_open,
-+	.write = ping_write,
-+};
-+
-+static void ping_pong_cb(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
-+			 struct qmi_txn *txn, const void *data)
-+{
-+	const struct test_ping_resp_msg_v01 *resp = data;
-+
-+	if (!txn) {
-+		pr_err("spurious ping response\n");
-+		return;
-+	}
-+
-+	if (resp->resp.result == QMI_RESULT_FAILURE_V01)
-+		txn->result = -ENXIO;
-+	else if (!resp->pong_valid || memcmp(resp->pong, "pong", 4))
-+		txn->result = -EINVAL;
-+
-+	complete(&txn->completion);
-+}
-+
-+/*
-+ * data_write() - data debugfs file write handler
-+ * @file:	debugfs file context
-+ * @user_buf:	reference to the user data
-+ * @count:	number of bytes in @user_buf
-+ * @ppos:	offset in @file to write
-+ *
-+ * Returns @count, or negative errno on failure.
-+ *
-+ * This function allows user space to send out a data QMI encoded message to
-+ * the associated remote test service and will return with the result of the
-+ * transaction. It serves as an example of how to have the QMI helpers decode a
-+ * transaction response into a provided object automatically.
-+ */
-+static ssize_t data_write(struct file *file, const char __user *user_buf,
-+			  size_t count, loff_t *ppos)
-+
-+{
-+	struct qmi_handle *qmi = file->private_data;
-+	struct test_data_resp_msg_v01 *resp;
-+	struct test_data_req_msg_v01 *req;
-+	struct qmi_txn txn;
-+	int ret;
-+
-+	req = kzalloc(sizeof(*req), GFP_KERNEL);
-+	if (!req)
-+		return -ENOMEM;
-+
-+	resp = kzalloc(sizeof(*resp), GFP_KERNEL);
-+	if (!resp) {
-+		kfree(req);
-+		return -ENOMEM;
-+	}
-+
-+	req->data_len = min_t(size_t, sizeof(req->data), count);
-+	if (copy_from_user(req->data, user_buf, req->data_len)) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	ret = qmi_txn_init(qmi, &txn, test_data_resp_msg_v01_ei, resp);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = qmi_send_request(qmi, NULL, &txn,
-+			       TEST_DATA_REQ_MSG_ID_V01,
-+			       TEST_DATA_REQ_MAX_MSG_LEN_V01,
-+			       test_data_req_msg_v01_ei, req);
-+	if (ret < 0) {
-+		qmi_txn_cancel(&txn);
-+		goto out;
-+	}
-+
-+	ret = qmi_txn_wait(&txn, 5 * HZ);
-+	if (ret < 0) {
-+		goto out;
-+	} else if (!resp->data_valid ||
-+		   resp->data_len != req->data_len ||
-+		   memcmp(resp->data, req->data, req->data_len)) {
-+		pr_err("response data doesn't match expectation\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	ret = count;
-+
-+out:
-+	kfree(resp);
-+	kfree(req);
-+
-+	return ret;
-+}
-+
-+static const struct file_operations data_fops = {
-+	.open = simple_open,
-+	.write = data_write,
-+};
-+
-+static struct qmi_msg_handler qmi_sample_handlers[] = {
-+	{
-+		.type = QMI_RESPONSE,
-+		.msg_id = TEST_PING_REQ_MSG_ID_V01,
-+		.ei = test_ping_resp_msg_v01_ei,
-+		.decoded_size = sizeof(struct test_ping_req_msg_v01),
-+		.fn = ping_pong_cb
-+	},
-+	{}
-+};
-+
-+struct qmi_sample {
-+	struct qmi_handle qmi;
-+
-+	struct dentry *de_dir;
-+	struct dentry *de_data;
-+	struct dentry *de_ping;
-+};
-+
-+static struct dentry *qmi_debug_dir;
-+
-+static int qmi_sample_probe(struct platform_device *pdev)
-+{
-+	struct sockaddr_qrtr *sq;
-+	struct qmi_sample *sample;
-+	char path[20];
-+	int ret;
-+
-+	sample = devm_kzalloc(&pdev->dev, sizeof(*sample), GFP_KERNEL);
-+	if (!sample)
-+		return -ENOMEM;
-+
-+	ret = qmi_handle_init(&sample->qmi, TEST_DATA_REQ_MAX_MSG_LEN_V01,
-+			      NULL,
-+			      qmi_sample_handlers);
-+	if (ret < 0)
++	/* Lithium configuration - clock gating and bus arbitration */
++	ret = regmap_update_bits(qproc->halt_map,
++				 qproc->halt_nc + TCSR_GLOBAL_CFG0,
++				 0x1F, 0x14);
++	if (ret)
 +		return ret;
 +
-+	sq = dev_get_platdata(&pdev->dev);
-+	ret = kernel_connect(sample->qmi.sock, (struct sockaddr *)sq,
-+			     sizeof(*sq), 0);
-+	if (ret < 0) {
-+		pr_err("failed to connect to remote service port\n");
-+		goto err_release_qmi_handle;
++	ret = regmap_update_bits(qproc->halt_map,
++				 qproc->halt_nc + TCSR_GLOBAL_CFG1,
++				 1, 0);
++	if (ret)
++		return ret;
++
++	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
++	writel(rproc->bootaddr >> 4, qproc->reg_base + QDSP6SS_RST_EVB);
++
++	ret = q6v5_reset(qproc);
++	if (ret)
++		return ret;
++
++	q6v5_reset_rest(qproc);
++
++	ret = wait_for_completion_timeout(&qproc->start_done,
++					  msecs_to_jiffies(5000));
++	if (ret == 0) {
++		dev_err(qproc->dev, "start timed out\n");
++		return -ETIMEDOUT;
 +	}
 +
-+	snprintf(path, sizeof(path), "%d:%d", sq->sq_node, sq->sq_port);
-+
-+	sample->de_dir = debugfs_create_dir(path, qmi_debug_dir);
-+	if (IS_ERR(sample->de_dir)) {
-+		ret = PTR_ERR(sample->de_dir);
-+		goto err_release_qmi_handle;
-+	}
-+
-+	sample->de_data = debugfs_create_file("data", 0600, sample->de_dir,
-+					      sample, &data_fops);
-+	if (IS_ERR(sample->de_data)) {
-+		ret = PTR_ERR(sample->de_data);
-+		goto err_remove_de_dir;
-+	}
-+
-+	sample->de_ping = debugfs_create_file("ping", 0600, sample->de_dir,
-+					      sample, &ping_fops);
-+	if (IS_ERR(sample->de_ping)) {
-+		ret = PTR_ERR(sample->de_ping);
-+		goto err_remove_de_data;
-+	}
-+
-+	platform_set_drvdata(pdev, sample);
-+
-+	return 0;
-+
-+err_remove_de_data:
-+	debugfs_remove(sample->de_data);
-+err_remove_de_dir:
-+	debugfs_remove(sample->de_dir);
-+err_release_qmi_handle:
-+	qmi_handle_release(&sample->qmi);
-+
-+	return ret;
-+}
-+
-+static int qmi_sample_remove(struct platform_device *pdev)
-+{
-+	struct qmi_sample *sample = platform_get_drvdata(pdev);
-+
-+	debugfs_remove(sample->de_ping);
-+	debugfs_remove(sample->de_data);
-+	debugfs_remove(sample->de_dir);
-+
-+	qmi_handle_release(&sample->qmi);
++	qproc->running = true;
 +
 +	return 0;
 +}
 +
-+static struct platform_driver qmi_sample_driver = {
-+	.probe = qmi_sample_probe,
-+	.remove = qmi_sample_remove,
-+	.driver = {
-+		.name = "qmi_sample_client",
-+	},
-+};
-+
-+static int qmi_sample_new_server(struct qmi_handle *qmi,
-+				 struct qmi_service *service)
+ static int q6v5_start(struct rproc *rproc)
+ {
+ 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+@@ -894,6 +960,146 @@ static int q6v5_start(struct rproc *rproc)
+ 	return ret;
+ }
+ 
++static int q6v5_wcss_powerdown(struct q6v5 *qproc)
 +{
-+	struct platform_device *pdev;
-+	struct sockaddr_qrtr sq = { AF_QIPCRTR, service->node, service->port };
++	unsigned int val = 0;
 +	int ret;
 +
-+	pdev = platform_device_alloc("qmi_sample_client", PLATFORM_DEVID_AUTO);
-+	if (!pdev)
-+		return -ENOMEM;
++	/* 1 - Assert WCSS/Q6 HALTREQ */
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
 +
-+	ret = platform_device_add_data(pdev, &sq, sizeof(sq));
-+	if (ret)
-+		goto err_put_device;
++	/* 2 - Enable WCSSAON_CONFIG */
++	val = readl(qproc->rmb_base + SSCAON_CONFIG);
++	val |= SSCAON_ENABLE;
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
 +
-+	ret = platform_device_add(pdev);
-+	if (ret)
-+		goto err_put_device;
++	/* 3 - Set SSCAON_CONFIG */
++	val |= BIT(15);
++	val &= ~BIT(16);
++	val &= ~BIT(17);
++	val &= ~BIT(18);
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
 +
-+	service->priv = pdev;
++	/* 4 - SSCAON_CONFIG 1 */
++	val |= BIT(1);
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
 +
-+	return 0;
-+
-+err_put_device:
-+	platform_device_put(pdev);
-+
-+	return ret;
-+}
-+
-+static void qmi_sample_del_server(struct qmi_handle *qmi,
-+				  struct qmi_service *service)
-+{
-+	struct platform_device *pdev = service->priv;
-+
-+	platform_device_unregister(pdev);
-+}
-+
-+static struct qmi_handle lookup_client;
-+
-+static struct qmi_ops lookup_ops = {
-+	.new_server = qmi_sample_new_server,
-+	.del_server = qmi_sample_del_server,
-+};
-+
-+static int qmi_sample_init(void)
-+{
-+	int ret;
-+
-+	qmi_debug_dir = debugfs_create_dir("qmi_sample", NULL);
-+	if (IS_ERR(qmi_debug_dir)) {
-+		pr_err("failed to create qmi_sample dir\n");
-+		return PTR_ERR(qmi_debug_dir);
++	/* 5 - wait for SSCAON_STATUS */
++	ret = readl_poll_timeout(qproc->rmb_base + SSCAON_STATUS,
++				 val, (val & 0xffff) == 0x400, 1000,
++				 HALT_CHECK_MAX_LOOPS);
++	if (ret) {
++		dev_err(qproc->dev,
++			"can't get SSCAON_STATUS rc:%d)\n", ret);
 +	}
 +
-+	ret = platform_driver_register(&qmi_sample_driver);
-+	if (ret)
-+		goto err_remove_debug_dir;
++	/* 6 - De-assert WCSS_AON reset */
++	reset_control_assert(qproc->wcss_aon_reset);
 +
-+	ret = qmi_handle_init(&lookup_client, 0, &lookup_ops, NULL);
-+	if (ret < 0)
-+		goto err_unregister_driver;
++	/* 7 - Disable WCSSAON_CONFIG 13 */
++	val = readl(qproc->rmb_base + SSCAON_CONFIG);
++	val &= ~SSCAON_ENABLE;
++	writel(val, qproc->rmb_base + SSCAON_CONFIG);
 +
-+	qmi_add_lookup(&lookup_client, 15, 0, 0);
-+
-+	return 0;
-+
-+err_unregister_driver:
-+	platform_driver_unregister(&qmi_sample_driver);
-+err_remove_debug_dir:
-+	debugfs_remove(qmi_debug_dir);
++	/* 8 - De-assert WCSS/Q6 HALTREQ */
++	reset_control_assert(qproc->wcss_reset);
 +
 +	return ret;
 +}
 +
-+static void qmi_sample_exit(void)
++static int q6v5_q6_powerdown(struct q6v5 *qproc)
 +{
-+	qmi_handle_release(&lookup_client);
++	int i = 0, ret;
++	unsigned int val = 0;
 +
-+	platform_driver_unregister(&qmi_sample_driver);
++	/* 1 - Halt Q6 bus interface */
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
 +
-+	debugfs_remove(qmi_debug_dir);
++	/* 2 - Disable Q6 Core clock */
++	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
++	val &= ~Q6SS_CLK_ENABLE;
++	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
++
++	/* 3 - Clamp I/O */
++	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	val |= Q6SS_CLAMP_IO;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 4 - Clamp WL */
++	val |= QDSS_BHS_ON;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 5 - Clear Erase standby */
++	val &= ~Q6SS_L2DATA_STBY_N;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 6 - Clear Sleep RTN */
++	val &= ~Q6SS_SLP_RET_N;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 7 - turn off QDSP6 memory foot/head switch one bank at a time */
++	for (i = 0; i < 20; i++) {
++		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
++		val &= ~BIT(i);
++		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
++		mdelay(1);
++	}
++	/* 8 - Assert QMC memory RTN */
++	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	val |= QDSP6v56_CLAMP_QMC_MEM;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++
++	/* 9 - Turn off BHS */
++	val &= ~QDSP6v56_BHS_ON;
++	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
++	udelay(1);
++	/* 10 - Wait till BHS Reset is done */
++	ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BHS_STATUS,
++				 val, !(val & BHS_EN_REST_ACK), 1000,
++				 HALT_CHECK_MAX_LOOPS);
++	if (ret) {
++		dev_err(qproc->dev,
++			"BHS_STATUS not OFF (rc:%d)\n", ret);
++	}
++
++	/* 11 - Enable Q6 Block reset */
++	reset_control_assert(qproc->wcss_q6_reset);
++
++	return 0;
 +}
 +
-+module_init(qmi_sample_init);
-+module_exit(qmi_sample_exit);
++static int q6v5_wcss_stop(struct rproc *rproc)
++{
++	struct q6v5 *qproc = rproc->priv;
++	int ret = 0;
 +
-+MODULE_DESCRIPTION("Sample QMI client driver");
-+MODULE_LICENSE("GPL v2");
++	qproc->running = false;
++
++	/* WCSS powerdown */
++	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit),
++				    BIT(qproc->stop_bit));
++
++	ret = wait_for_completion_timeout(&qproc->stop_done,
++					  msecs_to_jiffies(5000));
++	if (ret == 0) {
++		dev_err(qproc->dev, "timed out on wait\n");
++		return -ETIMEDOUT;
++	}
++
++	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
++
++	ret = q6v5_wcss_powerdown(qproc);
++	if (ret)
++		return ret;
++
++	/* Q6 Power down */
++	ret = q6v5_q6_powerdown(qproc);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int q6v5_stop(struct rproc *rproc)
+ {
+ 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+@@ -956,6 +1162,11 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	.da_to_va = q6v5_da_to_va,
+ };
+ 
++static const struct rproc_ops q6v5_wcss_ops = {
++	.start = q6v5_wcss_start,
++	.stop = q6v5_wcss_stop,
++};
++
+ static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
+ {
+ 	struct q6v5 *qproc = dev;
+@@ -1406,6 +1617,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	.version = WCSS_IPQ8074,
+ 	.init_reset = q6v5_wcss_init_reset,
+ 	.fw_ops = &q6v5_wcss_fw_ops,
++	.ops = &q6v5_wcss_ops,
+ };
+ 
+ static const struct of_device_id q6v5_of_match[] = {
 -- 
-2.15.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
