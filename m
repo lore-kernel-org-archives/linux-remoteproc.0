@@ -1,127 +1,62 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 12/16] remoteproc: look-up memory-device for vring allocation
-Date: Thu, 30 Nov 2017 17:46:47 +0100
-Message-ID: <1512060411-729-13-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH v5 0/6]  Add support for Hexagon q6v5-wcss integrated core
+Date: Tue, 14 Nov 2017 16:23:08 +0530
+Message-Id: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch parse existing carveout list to find a memory area
-matching on name.
+IPQ8074 has an integrated Hexagon dsp core Q6v5 and a wireless lan
+(Lithium) IP. This series adds the remoteproc driver to reset, load
+and boot Q6 firmware.
 
-Naming rule for search is the following one:
-- "vdev<vdev_id>vring<vring_id>" to find a memory pool dedicated to
-one vring belonging to one specific vdev (vdev_id).
-- "vdev<vdev_id>vrings> to find common memory pool for allocation of
-all vrings belonging to one specific vdev (vdev_id).
+The first patch is to make the mdt_loader authenticate
+the firmware only if required, so that the code can be reused for
+self-authenticating firmware like the Q6v5 core in IPQ8074. The second
+patch exports the elf header's get_boot_addr helper to reuse it.
+The next couple of patches arranges the code in the original q6v5-mpss
+rproc to add q6v5-wcss later. The last couple of patches add the relevant
+bits for the q6v5-wcss core.
 
-This allows to cover different SoC requirements like allocating vrings
-at best location taking into account access performance in read and
-write for master and slave processors.
+This is done on top of Avaneesh's msm8996 rproc support [1]
 
-If memory area found, memory device will be used as device for vring
-allocation, else rproc platform device will be used as today.
+[1] https://lkml.org/lkml/2017/10/24/771
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 25 +++++++++++++++++++++++--
- include/linux/remoteproc.h           |  2 ++
- 2 files changed, 25 insertions(+), 2 deletions(-)
+v5:
+    No change. Just updated tags in PATCH #5
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 8d990b1..6b5e2b2 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -410,8 +410,11 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	struct rproc_vring *rvring = &rvdev->vring[i];
- 	struct fw_rsc_vdev *rsc;
- 	dma_addr_t dma = -1;
-+	struct device *memdev = dev->parent;
-+	struct rproc_mem_entry *carveout;
- 	void *va;
- 	int ret, size, notifyid;
-+	char name[16];
- 
- 	/* actual size of vring (in bytes) */
- 	size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
-@@ -428,11 +431,27 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 			return -ENOMEM;
- 		}
- 	} else {
-+		/* Find any carveout matching vring */
-+		/* Try dedicated vdev j vring i pool. */
-+		snprintf(name, sizeof(name), "vdev%dvring%d", rvdev->index, i);
-+		carveout = rproc_find_carveout_by_name(rproc, name);
-+
-+		if (!carveout) {
-+			/* Try dedicated vdev j vrings pool. */
-+			snprintf(name, sizeof(name), "vdev%dvring", rvdev->index);
-+			carveout = rproc_find_carveout_by_name(rproc, name);
-+		}
-+
-+		if (carveout && carveout->memdev)
-+			memdev = &carveout->memdev->dev;
-+
-+		rvring->dev = memdev;
-+
- 		/*
- 		 * Allocate non-cacheable memory for the vring. In the future
- 		 * this call will also configure the IOMMU for us
- 		 */
--		va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
-+		va = dma_alloc_coherent(memdev, size, &dma, GFP_KERNEL);
- 		if (!va) {
- 			dev_err(dev->parent, "dma_alloc_coherent failed\n");
- 			return -EINVAL;
-@@ -455,7 +474,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	if (ret < 0) {
- 		dev_err(dev, "idr_alloc failed: %d\n", ret);
- 		if (dma != -1)
--			dma_free_coherent(dev->parent, size, va, dma);
-+			dma_free_coherent(memdev, size, va, dma);
- 		return ret;
- 	}
- 	notifyid = ret;
-@@ -565,6 +584,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 	struct device *dev = &rproc->dev;
- 	struct rproc_vdev *rvdev;
- 	int i, ret;
-+	static int index;
- 
- 	/* make sure resource isn't truncated */
- 	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
-@@ -596,6 +616,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	rvdev->id = rsc->id;
- 	rvdev->rproc = rproc;
-+	rvdev->index = index++;
- 
- 	/* parse the vrings */
- 	for (i = 0; i < rsc->num_of_vrings; i++) {
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index d7e7485..fb293d3 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -480,6 +480,7 @@ struct rproc_subdev {
-  * @vq: the virtqueue of this vring
-  */
- struct rproc_vring {
-+	struct device *dev;
- 	void *va;
- 	dma_addr_t dma;
- 	int len;
-@@ -507,6 +508,7 @@ struct rproc_vdev {
- 	struct rproc_subdev subdev;
- 
- 	unsigned int id;
-+	unsigned int index;
- 	struct list_head node;
- 	struct rproc *rproc;
- 	struct virtio_device vdev;
+V4:
+    Fixed Bjorn's comment in PATCH#1 and added his acked-by
+    Rebased on top of Avinash's latest rproc for msm8996 q6 support.
+
+V3:
+    Rebased on top of latest remoteproc next
+
+V2:
+    Last time introduced this a new rproc driver, but there is lot
+    of code that can be shared if it is added to the q6v5-mpss pil
+    driver.
+
+Sricharan R (6):
+  remoteproc: qcom: mdt_loader: Make the firmware authentication
+    optional
+  remoteproc: Export rproc_elf_get_boot_addr
+  remoteproc: qcom: Push reset ops, fw ops, rproc ops in to of_match
+    data
+  remoteproc: qcom: Split the head and tail of the q6v5-pil rproc start
+    function
+  remoteproc: qcom: Add support for q6v5-wcss pil
+  remoteproc: qcom: Add q6v5-wcss rproc ops
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   7 +-
+ drivers/remoteproc/Kconfig                         |   1 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 469 +++++++++++++++++----
+ drivers/remoteproc/remoteproc_elf_loader.c         |   2 +-
+ drivers/remoteproc/remoteproc_internal.h           |   3 +
+ drivers/soc/qcom/mdt_loader.c                      |  82 +++-
+ include/linux/soc/qcom/mdt_loader.h                |   3 +
+ 7 files changed, 453 insertions(+), 114 deletions(-)
+
 -- 
-1.9.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
