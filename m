@@ -1,117 +1,68 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 06/16] remoteproc: modify vring allocation to support preallocated region
-Date: Thu, 30 Nov 2017 17:46:41 +0100
-Message-ID: <1512060411-729-7-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 0/5]  In-kernel QMI helpers and sysmon
+Date: Wed, 15 Nov 2017 12:10:07 -0800
+Message-Id: <20171115201012.25892-1-bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Current version of rproc_alloc_vring function supports only dynamic vring
-allocation.
-This patch extends rproc_alloc_vring to verify if requested vring DA is
-already part or not of a registered carveout. If true, nothing to do, else
-just allocate vring as before.
+This series introduces a helper library for drivers that needs to implement
+clients or services in the kernel for communicating with QMI encoded messages.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 53 +++++++++++++++++++++++-------------
- 1 file changed, 34 insertions(+), 19 deletions(-)
+This is used by a set of drivers in order to implement control signaling that
+needs to happen between a driver and a service on a remote processor, such as
+the synchronization of states during a remoteproc shutdown/restart; as seen in
+the sysmon implementation.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 515a17a..bdc99cd 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -263,21 +263,41 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	struct device *dev = &rproc->dev;
- 	struct rproc_vring *rvring = &rvdev->vring[i];
- 	struct fw_rsc_vdev *rsc;
--	dma_addr_t dma;
-+	dma_addr_t dma = -1;
- 	void *va;
- 	int ret, size, notifyid;
- 
- 	/* actual size of vring (in bytes) */
- 	size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
- 
--	/*
--	 * Allocate non-cacheable memory for the vring. In the future
--	 * this call will also configure the IOMMU for us
--	 */
--	va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
--	if (!va) {
--		dev_err(dev->parent, "dma_alloc_coherent failed\n");
--		return -EINVAL;
-+	/* get vring resource table pointer */
-+	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
-+
-+	if (rsc->vring[i].da != FW_RSC_ADDR_ANY) {
-+		va = rproc_find_carveout_by_da(rproc, rsc->vring[i].da, size);
-+
-+		if (!va) {
-+			/* No region not found */
-+			dev_err(dev->parent, "Pre-allocated vring not found\n");
-+			return -ENOMEM;
-+		}
-+	} else {
-+		/*
-+		 * Allocate non-cacheable memory for the vring. In the future
-+		 * this call will also configure the IOMMU for us
-+		 */
-+		va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
-+		if (!va) {
-+			dev_err(dev->parent, "dma_alloc_coherent failed\n");
-+			return -EINVAL;
-+		}
-+		/*
-+		 * Let the rproc know the da of this vring.
-+		 * Not all platforms use dma_alloc_coherent to automatically
-+		 * set up the iommu. In this case the device address (da) will
-+		 * hold the physical address and not the device address.
-+		 */
-+		rsc->vring[i].da = dma;
- 	}
- 
- 	/*
-@@ -288,7 +308,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
- 	if (ret < 0) {
- 		dev_err(dev, "idr_alloc failed: %d\n", ret);
--		dma_free_coherent(dev->parent, size, va, dma);
-+		if (dma != -1)
-+			dma_free_coherent(dev->parent, size, va, dma);
- 		return ret;
- 	}
- 	notifyid = ret;
-@@ -304,14 +325,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	rvring->dma = dma;
- 	rvring->notifyid = notifyid;
- 
--	/*
--	 * Let the rproc know the notifyid and da of this vring.
--	 * Not all platforms use dma_alloc_coherent to automatically
--	 * set up the iommu. In this case the device address (da) will
--	 * hold the physical address and not the device address.
--	 */
--	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
--	rsc->vring[i].da = dma;
-+	/* Let the rproc know the notifyid of this vring. */
- 	rsc->vring[i].notifyid = notifyid;
- 	return 0;
- }
-@@ -348,7 +362,8 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	int idx = rvring->rvdev->vring - rvring;
- 	struct fw_rsc_vdev *rsc;
- 
--	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
-+	if (rvring->dma != -1)
-+		dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
- 	idr_remove(&rproc->notifyids, rvring->notifyid);
- 
- 	/* reset resource entry info */
+Finally a sample driver provides an implementation of the "test" protocol,
+which is a service typically implemented by Qualcomm remoteproc firmware.
+
+Changes since v2:
+- Fix reported typos
+- Checkpatch fixes
+- Use non-gpl EXPORT_SYMBOL
+
+Changes since v1:
+- Lot of modifications to QMI interface, from feedback and implementation and
+  testing of sysmon.
+- Added sysmon driver.
+- Added patch for remoteproc to pass gracefulness on subdev remove.
+- QRTR patches part of v1 was merged separately
+
+Bjorn Andersson (5):
+  soc: qcom: Introduce QMI encoder/decoder
+  soc: qcom: Introduce QMI helpers
+  remoteproc: Pass type of shutdown to subdev remove
+  remoteproc: qcom: Introduce sysmon
+  samples: Introduce Qualcomm QMI sample client
+
+ drivers/remoteproc/Kconfig           |  17 +
+ drivers/remoteproc/Makefile          |   1 +
+ drivers/remoteproc/qcom_adsp_pil.c   |  12 +
+ drivers/remoteproc/qcom_common.c     |   6 +-
+ drivers/remoteproc/qcom_common.h     |  21 +
+ drivers/remoteproc/qcom_q6v5_pil.c   |   3 +
+ drivers/remoteproc/qcom_sysmon.c     | 585 ++++++++++++++++++++++++
+ drivers/remoteproc/qcom_wcnss.c      |   4 +
+ drivers/remoteproc/remoteproc_core.c |  18 +-
+ drivers/soc/qcom/Kconfig             |   9 +
+ drivers/soc/qcom/Makefile            |   3 +
+ drivers/soc/qcom/qmi_encdec.c        | 821 +++++++++++++++++++++++++++++++++
+ drivers/soc/qcom/qmi_interface.c     | 849 +++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |   4 +-
+ include/linux/soc/qcom/qmi.h         | 272 +++++++++++
+ samples/Kconfig                      |   9 +
+ samples/Makefile                     |   2 +-
+ samples/qmi/Makefile                 |   1 +
+ samples/qmi/qmi_sample_client.c      | 631 ++++++++++++++++++++++++++
+ 19 files changed, 3253 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/remoteproc/qcom_sysmon.c
+ create mode 100644 drivers/soc/qcom/qmi_encdec.c
+ create mode 100644 drivers/soc/qcom/qmi_interface.c
+ create mode 100644 include/linux/soc/qcom/qmi.h
+ create mode 100644 samples/qmi/Makefile
+ create mode 100644 samples/qmi/qmi_sample_client.c
+
 -- 
-1.9.1
+2.15.0
