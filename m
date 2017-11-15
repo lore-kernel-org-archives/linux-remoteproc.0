@@ -1,52 +1,32 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 17 Nov 2017 16:58:59 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] rpmsg updates for v4.15
-Message-ID: <20171118005859.GA12202@builder>
+Return-Path: <baolin.wang@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Lew <clew@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Anup Patel <anup@brainfault.org>, Arun Kumar Neelakantam <aneela@codeaurora.org>
+In-Reply-To: <20171114150307.4k5kh7ggbrbpj76o@sirena.org.uk>
+References: <2d10549b83f8b4990af60a61b44514b47da4c287.1509777293.git.baolin.wang@linaro.org>
+ <CAMz4kuKeqOH7m0zx7=rmaBOg5eekw3RZZwsREOJCC0sVotG40g@mail.gmail.com> <20171114150307.4k5kh7ggbrbpj76o@sirena.org.uk>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Wed, 15 Nov 2017 10:07:34 +0800
+Message-ID: <CAMz4ku+G91yZisM5zZEthXxLu2ruVivxNZgeP3N3LQ8tGTFs7A@mail.gmail.com>
+Subject: Re: [PATCH] hwspinlock: Change hwspinlock to a bool
+Content-Type: text/plain; charset="UTF-8"
+To: Mark Brown <broonie@kernel.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-remoteproc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 33d930e59a98fa10a0db9f56c7fa2f21a4aef9b9:
+On 14 November 2017 at 23:03, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Nov 14, 2017 at 08:58:18PM +0800, Baolin Wang wrote:
+>> On 4 November 2017 at 14:37, Baolin Wang <baolin.wang@linaro.org> wrote:
+>> > Change hwspinlock to a bool in case some drivers will meet dependency
+>> > issue when hwspinlock is built as a module.
+>> >
+>> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>
+>> Could you apply this patch into K4.15 if there are no other comments? Thanks.
+>
+> It's in -next already as commit d048236dfdfe454f059a0837431c3ae3d166d4d6
+> so it ought to get sent during the merge window.
 
-  Linux 4.14-rc5 (2017-10-15 21:01:12 -0400)
+Ah, OK. Thanks Mark.
 
-are available in the Git repository at:
-
-  git://github.com/andersson/remoteproc tags/rpmsg-v4.15
-
-for you to fetch changes up to 38a9acb3bb7b2561a08144ff80a292889f389a9b:
-
-  rpmsg: glink: The mbox client knows_txdone (2017-11-15 22:58:01 -0800)
-
-----------------------------------------------------------------
-rpmsg updates for v4.15
-
-This turn RPMSG_VIRTIO into a user selectable config, fixes a few bugs in GLINK
-and provides the support for specifying initial buffer sizes for GLINK
-channels.
-
-----------------------------------------------------------------
-Anup Patel (1):
-      rpmsg: Allow RPMSG_VIRTIO to be enabled via menuconfig or defconfig
-
-Arun Kumar Neelakantam (1):
-      rpmsg: glink: Initialize the "intent_req_comp" completion variable
-
-Bjorn Andersson (2):
-      rpmsg: glink: Add missing MODULE_LICENSE
-      rpmsg: glink: The mbox client knows_txdone
-
-Chris Lew (3):
-      dt-bindings: soc: qcom: Support GLINK intents
-      rpmsg: glink: Add support to preallocate intents
-      rpmsg: glink: Use best fit intent during tx
-
- .../devicetree/bindings/soc/qcom/qcom,glink.txt    | 10 +++++
- drivers/remoteproc/Kconfig                         |  4 --
- drivers/rpmsg/Kconfig                              |  3 +-
- drivers/rpmsg/qcom_glink_native.c                  | 51 +++++++++++++++++-----
- 4 files changed, 52 insertions(+), 16 deletions(-)
+-- 
+Baolin.wang
+Best Regards
