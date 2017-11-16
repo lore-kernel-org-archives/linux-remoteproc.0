@@ -1,96 +1,148 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 03/16] remoteproc: introduce rproc_add_carveout function
-Date: Thu, 30 Nov 2017 17:46:38 +0100
-Message-ID: <1512060411-729-4-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <aneela@codeaurora.org>
+Subject: Re: [PATCH] rpmsg: qcom_smd: Access APCS through mailbox framework
+References: <20171116070842.6362-1-bjorn.andersson@linaro.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Message-ID: <b9d3c1b6-e53a-12ce-f163-9dbfda7d7309@codeaurora.org>
+Date: Thu, 16 Nov 2017 17:39:41 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+In-Reply-To: <20171116070842.6362-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch introduces a new API to allow platform driver to register
-platform specific carveout regions.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c     | 22 ++++++++++++++++++++++
- drivers/remoteproc/remoteproc_internal.h |  7 +++++++
- include/linux/remoteproc.h               |  2 ++
- 3 files changed, 31 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f23daf9..279320a 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -737,6 +737,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	carveout->dma = dma;
- 	carveout->da = rsc->da;
- 	carveout->release = rproc_release_carveout;
-+	carveout->priv = (void *)CARVEOUT_RSC_ALLOCATED;
- 
- 	list_add_tail(&carveout->node, &rproc->carveouts);
- 
-@@ -751,6 +752,27 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	return ret;
- }
- 
-+/**
-+ * rproc_add_carveout() - register an allocated carveout region
-+ * @rproc: rproc handle
-+ * @mem: memory entry to register
-+ *
-+ * This function registers specified memory entry in @rproc carveouts list.
-+ * Specified carveout should have been allocated before registering.
-+ */
-+int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
-+{
-+	if (!rproc || !mem)
-+		return -EINVAL;
-+
-+	mem->priv = (void *)CARVEOUT_EXTERNAL;
-+
-+	list_add_tail(&mem->node, &rproc->carveouts);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rproc_add_carveout);
-+
- /*
-  * A lookup table for resource handlers. The indices are defined in
-  * enum fw_resource_type.
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index c1077be..69b22ac 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -23,6 +23,13 @@
- #include <linux/irqreturn.h>
- #include <linux/firmware.h>
- 
-+/* Indicate carveout origin */
-+enum carveout_src {
-+	CARVEOUT_RSC		= 0,
-+	CARVEOUT_RSC_ALLOCATED	= 1,
-+	CARVEOUT_EXTERNAL	= 2,
-+};
-+
- struct rproc;
- 
- /**
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 8780f2e..5bd5175 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -522,6 +522,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- int rproc_del(struct rproc *rproc);
- void rproc_free(struct rproc *rproc);
- 
-+int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
-+
- int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
--- 
-1.9.1
+On 11/16/2017 12:38 PM, Bjorn Andersson wrote:
+> Attempt to acquire the APCS IPC through the mailbox framework and fall
+> back to the old syscon based approach, to allow us to move away from
+> using the syscon.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Reviewed-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+
+> ---
+>   drivers/rpmsg/qcom_smd.c | 62 +++++++++++++++++++++++++++++++++---------------
+>   1 file changed, 43 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index b01774e9fac0..ef2a526ebc8f 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -14,6 +14,7 @@
+>   
+>   #include <linux/interrupt.h>
+>   #include <linux/io.h>
+> +#include <linux/mailbox_client.h>
+>   #include <linux/mfd/syscon.h>
+>   #include <linux/module.h>
+>   #include <linux/of_irq.h>
+> @@ -107,6 +108,8 @@ static const struct {
+>    * @ipc_regmap:		regmap handle holding the outgoing ipc register
+>    * @ipc_offset:		offset within @ipc_regmap of the register for ipc
+>    * @ipc_bit:		bit in the register at @ipc_offset of @ipc_regmap
+> + * @mbox_client:	mailbox client handle
+> + * @mbox_chan:		apcs ipc mailbox channel handle
+>    * @channels:		list of all channels detected on this edge
+>    * @channels_lock:	guard for modifications of @channels
+>    * @allocated:		array of bitmaps representing already allocated channels
+> @@ -129,6 +132,9 @@ struct qcom_smd_edge {
+>   	int ipc_offset;
+>   	int ipc_bit;
+>   
+> +	struct mbox_client mbox_client;
+> +	struct mbox_chan *mbox_chan;
+> +
+>   	struct list_head channels;
+>   	spinlock_t channels_lock;
+>   
+> @@ -365,7 +371,12 @@ static void qcom_smd_signal_channel(struct qcom_smd_channel *channel)
+>   {
+>   	struct qcom_smd_edge *edge = channel->edge;
+>   
+> -	regmap_write(edge->ipc_regmap, edge->ipc_offset, BIT(edge->ipc_bit));
+> +	if (edge->mbox_chan) {
+> +		mbox_send_message(edge->mbox_chan, NULL);
+> +		mbox_client_txdone(edge->mbox_chan, 0);
+> +	} else {
+> +		regmap_write(edge->ipc_regmap, edge->ipc_offset, BIT(edge->ipc_bit));
+> +	}
+>   }
+>   
+>   /*
+> @@ -1268,27 +1279,37 @@ static int qcom_smd_parse_edge(struct device *dev,
+>   	key = "qcom,remote-pid";
+>   	of_property_read_u32(node, key, &edge->remote_pid);
+>   
+> -	syscon_np = of_parse_phandle(node, "qcom,ipc", 0);
+> -	if (!syscon_np) {
+> -		dev_err(dev, "no qcom,ipc node\n");
+> -		return -ENODEV;
+> -	}
+> +	edge->mbox_client.dev = dev;
+> +	edge->mbox_client.knows_txdone = true;
+> +	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
+> +	if (IS_ERR(edge->mbox_chan)) {
+> +		if (PTR_ERR(edge->mbox_chan) != -ENODEV)
+> +			return PTR_ERR(edge->mbox_chan);
+>   
+> -	edge->ipc_regmap = syscon_node_to_regmap(syscon_np);
+> -	if (IS_ERR(edge->ipc_regmap))
+> -		return PTR_ERR(edge->ipc_regmap);
+> +		edge->mbox_chan = NULL;
+>   
+> -	key = "qcom,ipc";
+> -	ret = of_property_read_u32_index(node, key, 1, &edge->ipc_offset);
+> -	if (ret < 0) {
+> -		dev_err(dev, "no offset in %s\n", key);
+> -		return -EINVAL;
+> -	}
+> +		syscon_np = of_parse_phandle(node, "qcom,ipc", 0);
+> +		if (!syscon_np) {
+> +			dev_err(dev, "no qcom,ipc node\n");
+> +			return -ENODEV;
+> +		}
+>   
+> -	ret = of_property_read_u32_index(node, key, 2, &edge->ipc_bit);
+> -	if (ret < 0) {
+> -		dev_err(dev, "no bit in %s\n", key);
+> -		return -EINVAL;
+> +		edge->ipc_regmap = syscon_node_to_regmap(syscon_np);
+> +		if (IS_ERR(edge->ipc_regmap))
+> +			return PTR_ERR(edge->ipc_regmap);
+> +
+> +		key = "qcom,ipc";
+> +		ret = of_property_read_u32_index(node, key, 1, &edge->ipc_offset);
+> +		if (ret < 0) {
+> +			dev_err(dev, "no offset in %s\n", key);
+> +			return -EINVAL;
+> +		}
+> +
+> +		ret = of_property_read_u32_index(node, key, 2, &edge->ipc_bit);
+> +		if (ret < 0) {
+> +			dev_err(dev, "no bit in %s\n", key);
+> +			return -EINVAL;
+> +		}
+>   	}
+>   
+>   	ret = of_property_read_string(node, "label", &edge->name);
+> @@ -1394,6 +1415,8 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+>   	return edge;
+>   
+>   unregister_dev:
+> +	if (!IS_ERR_OR_NULL(edge->mbox_chan))
+> +		mbox_free_channel(edge->mbox_chan);
+>   	put_device(&edge->dev);
+>   	return ERR_PTR(ret);
+>   }
+> @@ -1422,6 +1445,7 @@ int qcom_smd_unregister_edge(struct qcom_smd_edge *edge)
+>   	if (ret)
+>   		dev_warn(&edge->dev, "can't remove smd device: %d\n", ret);
+>   
+> +	mbox_free_channel(edge->mbox_chan);
+>   	device_unregister(&edge->dev);
+>   
+>   	return 0;
