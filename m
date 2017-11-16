@@ -1,54 +1,44 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH 0/2] remoteproc: increase debug capabilities
-Date: Mon, 6 Nov 2017 16:51:41 +0000
-Message-ID: <c655e10d26a64fcdbebd1800912038fb@SFHDAG7NODE2.st.com>
-References: <1509108082-22201-1-git-send-email-loic.pallardy@st.com>
- <20171031042157.GB12511@builder>
-In-Reply-To: <20171031042157.GB12511@builder>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] rpmsg: qcom: The mbox clients knows_txdone
+Date: Wed, 15 Nov 2017 22:08:33 -0800
+Message-Id: <20171116060833.5147-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+As both the GLINK and SMD drivers are ticking the txdone of the mailbox
+(to implement the doorbell) they should set knows_txdone.
 
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 1 +
+ drivers/rpmsg/qcom_smd.c          | 1 +
+ 2 files changed, 2 insertions(+)
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Tuesday, October 31, 2017 5:22 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-> Subject: Re: [PATCH 0/2] remoteproc: increase debug capabilities
->=20
-> On Fri 27 Oct 05:41 PDT 2017, Loic Pallardy wrote:
->=20
-> > This series increases remoteproc debug capabilities by adding:
-> > - associated resource table dump feature
-> > - registered carveouts list dump feature
-> >
->=20
-> This looks very reasonable, can you please fix the problem reported by
-> 0-day?
-Hi Bjorn,
-I'll send a v2 fixing reported issues.
-Regards,
-Loic
->=20
-> Regards,
-> Bjorn
->=20
-> > Loic Pallardy (2):
-> >   remoteproc: debug: add resource table dump feature
-> >   remoteproc: debug: add carveouts list dump feature
-> >
-> >  drivers/remoteproc/remoteproc_debugfs.c | 130
-> ++++++++++++++++++++++++++++++++
-> >  1 file changed, 130 insertions(+)
-> >
-> > --
-> > 1.9.1
-> >
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 80d9af307b40..8ae81431bada 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1576,6 +1576,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 	idr_init(&glink->rcids);
+ 
+ 	glink->mbox_client.dev = dev;
++	glink->mbox_client.knows_txdone = true;
+ 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
+ 	if (IS_ERR(glink->mbox_chan)) {
+ 		if (PTR_ERR(glink->mbox_chan) != -EPROBE_DEFER)
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 2d7199e7cb3f..2770b3189e03 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1280,6 +1280,7 @@ static int qcom_smd_parse_edge(struct device *dev,
+ 	of_property_read_u32(node, key, &edge->remote_pid);
+ 
+ 	edge->mbox_client.dev = dev;
++	edge->mbox_client.knows_txdone = true;
+ 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
+ 	if (IS_ERR(edge->mbox_chan)) {
+ 		if (PTR_ERR(edge->mbox_chan) != -ENODEV)
+-- 
+2.15.0
