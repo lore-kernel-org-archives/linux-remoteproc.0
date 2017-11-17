@@ -1,121 +1,193 @@
-Return-Path: <broonie@sirena.co.uk>
-Date: Mon, 6 Nov 2017 11:21:43 +0000
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build warning after merge of the regmap tree
-Message-ID: <20171106112143.ht4cmm2qngdbmmuy@sirena.co.uk>
-References: <20171106115214.19cb007a@canb.auug.org.au>
- <20171106152157.2ad9a5a9@canb.auug.org.au>
- <20171106153037.2afa3e7b@canb.auug.org.au>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 16 Nov 2017 22:10:34 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 1/5] soc: qcom: Introduce QMI encoder/decoder
+Message-ID: <20171117061034.GS28761@minitux>
+References: <20171115201012.25892-1-bjorn.andersson@linaro.org>
+ <20171115201012.25892-2-bjorn.andersson@linaro.org>
+ <c3b21557-d48e-925c-41a7-8f4ca7636be1@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="agmybq6rue55gqhj"
-Content-Disposition: inline
-In-Reply-To: <20171106153037.2afa3e7b@canb.auug.org.au>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org, "Yann E. MORIN" <yann.morin.1998@free.fr>, linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-List-ID: <linux-remoteproc@vger.kernel.org>
-
-
---agmybq6rue55gqhj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <c3b21557-d48e-925c-41a7-8f4ca7636be1@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Nov 06, 2017 at 03:30:37PM +1100, Stephen Rothwell wrote:
-> On Mon, 6 Nov 2017 15:21:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> > On Mon, 6 Nov 2017 11:52:14 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
+On Thu 16 Nov 04:10 PST 2017, Srinivas Kandagatla wrote:
+> On 15/11/17 20:10, Bjorn Andersson wrote:
+[..]
+> > diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> > index b00bccddcd3b..91b70b170a82 100644
+> > --- a/drivers/soc/qcom/Kconfig
+> > +++ b/drivers/soc/qcom/Kconfig
+> > @@ -35,6 +35,14 @@ config QCOM_PM
+> >   	  modes. It interface with various system drivers to put the cores in
+> >   	  low power modes.
+> > +config QCOM_QMI_HELPERS
+> Should'nt this be part of second patch? atleast the patch subject suggests
+> that its just enc/decoder but you are actually adding qmi helper symbol ?
+> Or change the order of the patch.
+> 
 
-> > > After merging the regmap tree, today's linux-next build
-> > > (arm_multi_v7_defconfig) produced this warning:
+The encoder/decoder is, and should be, compilable on its own; so this
+config option does ensure that the newly added c-file isn't just dead
+code - although it's unlikely to matter in practice.
 
-Not snipping Kconfig errors for context, looks like Kconfig is exploding...
+I don't see a reason for adding a QCOM_QMI_ENCDEC here and then rename
+that in the following commit and I don't see a reason to split it in two
+config options. So I think this is reasonable...
 
-> > > drivers/gpio/Kconfig:13:error: recursive dependency detected!
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/gpio/Kconfig:13:	symbol GPIOLIB is selected by PINCTRL_SUNXI
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/pinctrl/sunxi/Kconfig:3:	symbol PINCTRL_SUNXI is selected by =
-PINCTRL_SUN6I_A31_R
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/pinctrl/sunxi/Kconfig:21:	symbol PINCTRL_SUN6I_A31_R depends =
-on RESET_CONTROLLER
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/reset/Kconfig:4:	symbol RESET_CONTROLLER is selected by QCOM_=
-SCM
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/firmware/Kconfig:205:	symbol QCOM_SCM is selected by QCOM_ADS=
-P_PIL
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/remoteproc/Kconfig:90:	symbol QCOM_ADSP_PIL depends on QCOM_S=
-MEM
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/soc/qcom/Kconfig:49:	symbol QCOM_SMEM depends on HWSPINLOCK
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/hwspinlock/Kconfig:5:	symbol HWSPINLOCK is selected by REGMAP
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/base/regmap/Kconfig:6:	symbol REGMAP is selected by PINCTRL_S=
-X150X
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/pinctrl/Kconfig:227:	symbol PINCTRL_SX150X is selected by GPI=
-O_SX150X
-> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > > subsection "Kconfig recursive dependency limitations"
-> > > drivers/gpio/Kconfig:821:	symbol GPIO_SX150X depends on GPIOLIB
-> > > warning: (ARCH_VEXPRESS) selects MFD_VEXPRESS_SYSREG which has unmet =
-direct dependencies (HAS_IOMEM && VEXPRESS_CONFIG && GPIOLIB && !ARCH_USES_=
-GETTIMEOFFSET)
-> > > warning: (ARCH_NOMADIK && ARCH_U8500) selects PINCTRL_NOMADIK which h=
-as unmet direct dependencies (PINCTRL && (ARCH_U8500 || ARCH_NOMADIK) && OF=
- && GPIOLIB)
-> > > warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_MESON && PINCTR=
-L_OXNAS && PINCTRL_PISTACHIO && PINCTRL_PIC32 && PINCTRL_NOMADIK && PINCTRL=
-_MTK && GPIO_TB10X) selects OF_GPIO which has unmet direct dependencies (GP=
-IOLIB && OF && HAS_IOMEM)
+> > +	tristate
+> we added help to this symbol but there is no promt text associated with it,
+> so it will not show up as in menuconfig.. may be
+> 
+> tristate "QMI Helpers"
+> 
+> would be better
+> 
 
-> > > Maybe introduced by commit
+The idea is that users of these functions would "select"
+QCOM_QMI_HELPERS.
 
-> > >   f25637a6b89e ("regmap: Add a config option for hwspinlock") =20
+I don't think there is a particular point in allowing the user to select
+this without any of the clients and a "depends on" in the client just
+results in the user being forced to find this option to be able to
+enable any of the clients.
 
-> > Things got worse during the day until config started segfaulting, so I
-> > reverted this commit.
+[..]
+> > diff --git a/drivers/soc/qcom/qmi_encdec.c b/drivers/soc/qcom/qmi_encdec.c
+[..]
+> > +#include <linux/io.h>
+> 
+> do we need this?
+> 
 
-> That necessitated me reverting commits
+Nope.
 
->   8698b9364710 ("regmap: Add hardware spinlock support")
->   267f3e4f18f1 ("regmap: Also protect hwspinlock in error handling path")
->   e8419c40a5ad ("regmap: Clean up hwspinlock on regmap exit")
+[..]
+> > +/**
+> > + * skip_to_next_elem() - Skip to next element in the structure to be encoded
+> > + * @ei_array: Struct info describing the element to be skipped.
+> > + * @level: Depth level of encoding/decoding to identify nested structures.
+> > + *
+> > + * Returns struct info of the next element that can be encoded.
+> > + *
+> 
+> Should be Return: according to Documentation/doc-guide/kernel-doc.rst
+> 
+> Same comment appies to most of the functions..
+> 
 
-This seems like there's a Kconfig bug, it's claiming HWSPINLOCK is
-selected by regmap but the select is conditional and not actually
-enabled.  You could potentially get a recursive dependency but there
-isn't one right now.  The root issue here is that HWSPINLOCK can be
-built modular which makes it very painful to use from core code.
+Thanks, I have been looking for that document! Will update the comments
+throughout the patch series.
 
---agmybq6rue55gqhj
-Content-Type: application/pgp-signature; name="signature.asc"
+[..]
+> > +/**
+> > + * qmi_decode_string_elem() - Decodes elements of string data type
+> > + * @ei_array: Struct info array descibing the string element.
+> > + * @buf_dst: Buffer to store the decoded element.
+> > + * @buf_src: Buffer containing the elements in QMI wire format.
+> > + * @tlv_len: Total size of the encoded inforation corresponding to
+> > + *           this string element.
+> > + * @dec_level: Depth of the string element from the main structure.
+> > + *
+> > +
+> 
+> bad Line??
 
------BEGIN PGP SIGNATURE-----
+Looks like it.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloARcQACgkQJNaLcl1U
-h9C48Af8DsmbmPszkoeO3CrbS/ZtAc1XvCpT5THuTsvwwkZBud+FG9MsgfKvCwc1
-G2Nb2+Nqt45pUyGlHmv15OspgCTChJfuCecMCOXT/aZP/LLLhv2K1IIZR0yRCQVI
-/xJ4VijaGivf/OxvGT29Zpvz8o5If6XKbgQjpndg197BQJWsZRzVYQGupB1D5zVJ
-CmMcB8bzxogon9y+rfXoYwfjbNw9CA30hk2inBjPXed/LkVpx7De4P8qMwKIXt+8
-mkWA7U83xJ+ldBsurAgDyy++VnRBa/n8fauFcl5sub8VmImFlbI2dVV1zJQ4fZ/M
-Q4k0QT9ryC5J52upUIF5fgKEweDCCw==
-=feuq
------END PGP SIGNATURE-----
+> > + * Returns the total size of the decoded data elements on success, negative
+> > + * errno on error.
+> > +
+> Dito..
+> > + *
+> > + * This function decodes the string element of maximum length
+> > + * "ei_array->elem_len" from the source buffer "buf_src" and puts it into
+> > + * the destination buffer "buf_dst". This function returns number of bytes
+> > + * decoded from the input buffer.
 
---agmybq6rue55gqhj--
+And this should go above the "return" description.
+
+[..]
+> > +
+> > +	rc = qmi_decode_basic_elem(buf_dst, buf_src + decoded_bytes,
+> > +				   string_len, temp_ei->elem_size);
+> > +	*((char *)buf_dst + string_len) = '\0';
+> > +	decoded_bytes += rc;
+> An empty line here could be nice... same for most of the functions..
+> 
+
+I agree, I'll run over the file again.
+
+There are a few other style things that I would like to change, e.g.
+replacing u32 with size_t in a bunch of places; but I also didn't want
+to change too much from the downstream version.
+
+But fixing the spacing in the initial commit makes sense.
+
+[..]
+> > diff --git a/include/linux/soc/qcom/qmi.h b/include/linux/soc/qcom/qmi.h
+[..]
+> > +#include <linux/qrtr.h>
+> 
+> Is this include needed as part of this patch?
+> 
+
+This should be able to go in the next patch.
+
+> > +#include <linux/types.h>
+> > +
+> 
+> > +
+> > +enum qmi_array_type {
+> > +	NO_ARRAY,
+> > +	STATIC_ARRAY,
+> > +	VAR_LEN_ARRAY,
+> > +};
+> > +
+> > +/**
+> > + * struct qmi_elem_info - describes how to encode a single QMI element
+> > + * @data_type:	Data type of this element.
+> > + * @elem_len:	Array length of this element, if an array.
+> > + * @elem_size:	Size of a single instance of this data type.
+> > + * @is_array:	Array type of this element.
+> > + * @tlv_type:	QMI message specific type to identify which element
+> > + *		is present in an incoming message.
+> > + * @offset:	Specifies the offset of the first instance of this
+> > + *		element in the data structure.
+> > + * @ei_array:	Null-terminated array of @qmi_elem_info to describe nested
+> > + *		structures.
+> > + */
+> > +struct qmi_elem_info {
+> > +	enum qmi_elem_type data_type;
+> > +	u32 elem_len;
+> > +	u32 elem_size;
+> > +	enum qmi_array_type is_array;
+> 
+> naming it array_type makes it more readable.
+> 
+
+Agreed.
+
+[..]
+> > +int qmi_decode_message(const void *buf, size_t len,
+> > +		       struct qmi_elem_info *ei, void *c_struct);
+> 
+> Should we consider adding dummy functions to allow COMPILE_TEST on drivers
+> using this api?
+> 
+
+Unfortunately drivers/soc/qcom isn't built unless ARCH_QCOM is set, but
+I would prefer that we sort that out and have client drivers trigger the
+build of this as well.
+
+For other drivers I've seen the benefit of Coverity running on the x86
+target, so this would be nice to do here too.
+
+
+Thanks for the review!
+
+Regards,
+Bjorn
