@@ -1,78 +1,138 @@
-Return-Path: <clew@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 16 Nov 2017 22:30:54 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v3 2/5] soc: qcom: Introduce QMI helpers
+Message-ID: <20171117063054.GT28761@minitux>
 References: <20171115201012.25892-1-bjorn.andersson@linaro.org>
  <20171115201012.25892-3-bjorn.andersson@linaro.org>
-From: Chris Lew <clew@codeaurora.org>
-Message-ID: <98a56116-d6f8-9084-d49e-c7669ddaa945@codeaurora.org>
-Date: Fri, 17 Nov 2017 18:11:03 -0800
+ <f4dbc5f7-04aa-b493-da22-2a8df465496b@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20171115201012.25892-3-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4dbc5f7-04aa-b493-da22-2a8df465496b@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+On Thu 16 Nov 04:11 PST 2017, Srinivas Kandagatla wrote:
+> On 15/11/17 20:10, Bjorn Andersson wrote:
+[..]
+> > diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> > index 91b70b170a82..9718f1c41e3d 100644
+> > --- a/drivers/soc/qcom/Kconfig
+> > +++ b/drivers/soc/qcom/Kconfig
+> > @@ -37,6 +37,7 @@ config QCOM_PM
+> >   config QCOM_QMI_HELPERS
+> >   	tristate
+> > +	depends on ARCH_QCOM
+> 
+> This bit is confusing!!, first patch added this symbol and this patch added
+> the depends. either we move this to first patch or move out the
+> QCOM_QMI_HELPERS from first patch and include in this patch
+> 
 
-On 11/15/2017 12:10 PM, Bjorn Andersson wrote:
-[..]> +static void qmi_handle_message(struct qmi_handle *qmi,
-> +			       struct sockaddr_qrtr *sq,
-> +			       const void *buf, size_t len)
-> +{
-> +	const struct qmi_header *hdr;
-> +	struct qmi_txn tmp_txn;
-> +	struct qmi_txn *txn = NULL;
-> +	int ret;
-> +
-> +	if (len < sizeof(*hdr)) {
-> +		pr_err("ignoring short QMI packet\n");
-> +		return;
-> +	}
-> +
-> +	hdr = buf;
-> +
-> +	/* If this is a response, find the matching transaction handle */
-> +	if (hdr->type == QMI_RESPONSE) {
-> +		mutex_lock(&qmi->txn_lock);
-> +		txn = idr_find(&qmi->txns, hdr->txn_id);
-> +		if (txn)
-> +			mutex_lock(&txn->lock);
-> +		mutex_unlock(&qmi->txn_lock);
-> +	}
-> +
-> +	if (txn && txn->dest && txn->ei) {
-> +		ret = qmi_decode_message(buf, len, txn->ei, txn->dest);
-> +		if (ret < 0)
-> +			pr_err("failed to decode incoming message\n");
-> +
-> +		txn->result = ret;
-> +		complete(&txn->completion);
-> +
-> +		mutex_unlock(&txn->lock);
-> +	} else if (txn) {
-> +		qmi_invoke_handler(qmi, sq, txn, buf, len);
-> +
-> +		mutex_unlock(&txn->lock);
-> +	} else {
-> +		/* Create a txn based on the txn_id of the incoming message */
-> +		memset(&tmp_txn, 0, sizeof(tmp_txn));
-> +		tmp_txn.id = hdr->txn_id;
-> +
-> +		qmi_invoke_handler(qmi, sq, &tmp_txn, buf, len);
+Ohh, that's not right. The depends should be in the same patch.
 
-I'm seeing an opportunity for user error with timed out transactions. If 
-txn_wait gets timed out the txn is removed from the txns list. Later if 
-we get the response, it comes down to this else with the tmp_txn. Some 
-handlers may try to do a complete(&txn->completion) like the 
-qmi_sample_client ping_pong_cb. This leads to a null pointer dereference 
-since the temp txn was never initialized.
+And we don't really depends on ARCH_QCOM here, but without it Kconfig
+doesn't know that make won't enter drivers/soc/qcom so we will end up
+with a link error. I'm hoping we can fix this issue, to get some more
+compile testing of these things.
 
-Should clients not call complete and we can call the complete in the 
-else if(txn) condition?
+> >   	help
+> >   	  Helper library for handling QMI encoded messages.  QMI encoded
+> >   	  messages are used in communication between the majority of QRTR
+> > diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+[..]
+> >   obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
+> >   qmi_helpers-y	+= qmi_encdec.o
+> > +qmi_helpers-y	+= qmi_interface.o
+> for better reading.. i would suggest..
+> qmi_helpers-y	+= qmi_encdec.o qmi_interface.o
+> 
 
-Thanks,
-Chris
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sounds reasonable.
+
+> 
+> >   obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
+> >   obj-$(CONFIG_QCOM_SMEM) +=	smem.o
+> >   obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
+> > diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
+[..]
+> > +#include <linux/platform_device.h>
+> 
+> Do we need this?
+> 
+
+I don't think so.
+
+[..]
+> > +/**
+> > + * qmi_recv_new_server() - handler of NEW_SERVER control message
+> > + * @qmi:	qmi handle
+> > + * @node:	node of the new server
+> > + * @port:	port of the new server
+> > + *
+> service and instance is not documented here.
+> 
+
+Thanks for noticing, will fix these.
+
+[..]
+> > +/**
+> > + * qmi_handle_init() - initialize a QMI client handle
+> > + * @qmi:	QMI handle to initialize
+> > + * @max_msg_len: maximum size of incoming message
+> do we need this??
+> 
+
+We need a buffer into which we can receive incoming packets, so either
+we allocate a large enough buffer up front or we have to ask qrtr before
+each packet how much space we will need.
+
+I think largest possible buffer is 64kB, but typically we need much
+less. And the IDL compiler seems to output this constant, so it seems
+reasonable to pass it here.
+
+> 
+> > + * @handlers:	NULL-terminated list of QMI message handlers
+> > + *
+> recv_buf_size and ops not documented
+> 
+
+Looks like I've renamed max_msg_len to recv_buf_size, and forgot to add
+ops. Will fix.
+
+[..]
+> > +
+> > +/**
+> > + * qmi_send_indication() - send an indication QMI message
+> > + * @qmi:	QMI client handle
+> > + * @sq:		destination sockaddr
+> > + * @txn:	transaction object to use for the message
+> 
+> txn is not required here?
+> 
+
+No. Indications are fire-and-forget messages, but still need a
+transaction id, so it's confusing for the client to have to create a
+txn, use it and then cancel it (or to add another txn operation for
+this). Therefor I'm hiding the txn handling inside this function.
+
+Will fix the kerneldoc.
+
+[..]
+> > diff --git a/include/linux/soc/qcom/qmi.h b/include/linux/soc/qcom/qmi.h
+> > index 5df7edfc6bfd..9b4f4fa5bed6 100644
+> > --- a/include/linux/soc/qcom/qmi.h
+> > +++ b/include/linux/soc/qcom/qmi.h
+> 
+> Looks like this patch added few things like list, wq and so to this header
+> file, should we not add headers for those ??
+> 
+
+Will review these.
+
+Thanks for the review!
+
+Regards,
+Bjorn
