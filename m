@@ -1,56 +1,48 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v5 2/6] remoteproc: Export rproc_elf_get_boot_addr
-Date: Tue, 14 Nov 2017 16:23:10 +0530
-Message-Id: <1510656794-3815-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-References: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sricharan@codeaurora.org
+Return-Path: <clew@codeaurora.org>
+Subject: Re: [PATCH v3 4/5] remoteproc: qcom: Introduce sysmon
+References: <20171115201012.25892-1-bjorn.andersson@linaro.org>
+ <20171115201012.25892-5-bjorn.andersson@linaro.org>
+ <0ab5497e-94b4-6450-d680-14f002188714@codeaurora.org>
+ <20171117055832.GR28761@minitux>
+From: Chris Lew <clew@codeaurora.org>
+Message-ID: <ae4944d2-1198-eb5e-5fb6-8b60b5c35f19@codeaurora.org>
+Date: Fri, 17 Nov 2017 17:27:21 -0800
+MIME-Version: 1.0
+In-Reply-To: <20171117055832.GR28761@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org, runminw@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Export rproc_elf_get_boot_addr so that it can be
-used by any remoteproc to get the bootaddr of the
-elf type firmware images. This is used in the
-subsequent patch by the q6v5 based remoteproc
-while loading its elf based mdt type image.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
- drivers/remoteproc/remoteproc_internal.h   | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index c523983..f6d07d9 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -110,13 +110,13 @@
-  * Note that the boot address is not a configurable property of all remote
-  * processors. Some will always boot at a specific hard-coded address.
-  */
--static
- u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
- 
- 	return ehdr->e_entry;
- }
-+EXPORT_SYMBOL(rproc_elf_get_boot_addr);
- 
- /**
-  * rproc_elf_load_segments() - load firmware segments to memory
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index c1077be..1bbbfea 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -124,4 +124,7 @@ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
- 
- extern const struct rproc_fw_ops rproc_elf_fw_ops;
- 
-+/* from remoteproc_elf_loader.c */
-+u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
-+
- #endif /* REMOTEPROC_INTERNAL_H */
+On 11/16/2017 9:58 PM, Bjorn Andersson wrote:
+> On Thu 16 Nov 12:05 PST 2017, Chris Lew wrote:
+>>> +	req.event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN;
+>>
+>> Are there plans to add the other SSR events to sysmon notifiers? I think the
+>> SSCTL service expects to receive events about remote procs starting as well.
+>>
+> 
+> We could easily add support here to send out the AFTER_BOOTUP
+> notification, beyond that we would need to extend the subdev notifiers
+> as well.
+> 
+> But the downstream code paths does confuse me, can you confirm that
+> these messages are actually sent to the remote ssctl services?
+> 
+> Regards,
+> Bjorn
+> 
+
+Yea the other three events are definitely sent to the remote. The remote 
+side posts the events for other modules to query. I'm not sure if all of 
+the events are used by other other modules though.
+
+Thanks,
+Chris
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
