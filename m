@@ -1,44 +1,52 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 17 Nov 2017 16:58:59 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] rpmsg: qcom: The mbox clients knows_txdone
-Date: Wed, 15 Nov 2017 22:08:33 -0800
-Message-Id: <20171116060833.5147-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [GIT PULL] rpmsg updates for v4.15
+Message-ID: <20171118005859.GA12202@builder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Lew <clew@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Anup Patel <anup@brainfault.org>, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As both the GLINK and SMD drivers are ticking the txdone of the mailbox
-(to implement the doorbell) they should set knows_txdone.
+The following changes since commit 33d930e59a98fa10a0db9f56c7fa2f21a4aef9b9:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_glink_native.c | 1 +
- drivers/rpmsg/qcom_smd.c          | 1 +
- 2 files changed, 2 insertions(+)
+  Linux 4.14-rc5 (2017-10-15 21:01:12 -0400)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 80d9af307b40..8ae81431bada 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1576,6 +1576,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	idr_init(&glink->rcids);
- 
- 	glink->mbox_client.dev = dev;
-+	glink->mbox_client.knows_txdone = true;
- 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
- 	if (IS_ERR(glink->mbox_chan)) {
- 		if (PTR_ERR(glink->mbox_chan) != -EPROBE_DEFER)
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 2d7199e7cb3f..2770b3189e03 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1280,6 +1280,7 @@ static int qcom_smd_parse_edge(struct device *dev,
- 	of_property_read_u32(node, key, &edge->remote_pid);
- 
- 	edge->mbox_client.dev = dev;
-+	edge->mbox_client.knows_txdone = true;
- 	edge->mbox_chan = mbox_request_channel(&edge->mbox_client, 0);
- 	if (IS_ERR(edge->mbox_chan)) {
- 		if (PTR_ERR(edge->mbox_chan) != -ENODEV)
--- 
-2.15.0
+are available in the Git repository at:
+
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.15
+
+for you to fetch changes up to 38a9acb3bb7b2561a08144ff80a292889f389a9b:
+
+  rpmsg: glink: The mbox client knows_txdone (2017-11-15 22:58:01 -0800)
+
+----------------------------------------------------------------
+rpmsg updates for v4.15
+
+This turn RPMSG_VIRTIO into a user selectable config, fixes a few bugs in GLINK
+and provides the support for specifying initial buffer sizes for GLINK
+channels.
+
+----------------------------------------------------------------
+Anup Patel (1):
+      rpmsg: Allow RPMSG_VIRTIO to be enabled via menuconfig or defconfig
+
+Arun Kumar Neelakantam (1):
+      rpmsg: glink: Initialize the "intent_req_comp" completion variable
+
+Bjorn Andersson (2):
+      rpmsg: glink: Add missing MODULE_LICENSE
+      rpmsg: glink: The mbox client knows_txdone
+
+Chris Lew (3):
+      dt-bindings: soc: qcom: Support GLINK intents
+      rpmsg: glink: Add support to preallocate intents
+      rpmsg: glink: Use best fit intent during tx
+
+ .../devicetree/bindings/soc/qcom/qcom,glink.txt    | 10 +++++
+ drivers/remoteproc/Kconfig                         |  4 --
+ drivers/rpmsg/Kconfig                              |  3 +-
+ drivers/rpmsg/qcom_glink_native.c                  | 51 +++++++++++++++++-----
+ 4 files changed, 52 insertions(+), 16 deletions(-)
