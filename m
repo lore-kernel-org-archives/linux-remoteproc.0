@@ -1,68 +1,79 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 0/5]  In-kernel QMI helpers and sysmon
-Date: Wed, 15 Nov 2017 12:10:07 -0800
-Message-Id: <20171115201012.25892-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [RFC 2/6] dt-bindings: remoteproc: add system resource manager (SRM)
+Date: Fri, 24 Nov 2017 15:36:38 +0100
+Message-ID: <1511534202-12995-3-git-send-email-arnaud.pouliquen@st.com>
+In-Reply-To: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com, "Loic PALLARDY  <loic.pallardy@st.com>, Fabien DESSENNE" <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This series introduces a helper library for drivers that needs to implement
-clients or services in the kernel for communicating with QMI encoded messages.
+From: Fabien Dessenne <fabien.dessenne@st.com>
 
-This is used by a set of drivers in order to implement control signaling that
-needs to happen between a driver and a service on a remote processor, such as
-the synchronization of states during a remoteproc shutdown/restart; as seen in
-the sysmon implementation.
+Add Documentation of devicetree bindings to support the remote processor
+system resource manager.
 
-Finally a sample driver provides an implementation of the "test" protocol,
-which is a service typically implemented by Qualcomm remoteproc firmware.
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ .../devicetree/bindings/remoteproc/rproc-srm.txt   | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/rproc-srm.txt
 
-Changes since v2:
-- Fix reported typos
-- Checkpatch fixes
-- Use non-gpl EXPORT_SYMBOL
-
-Changes since v1:
-- Lot of modifications to QMI interface, from feedback and implementation and
-  testing of sysmon.
-- Added sysmon driver.
-- Added patch for remoteproc to pass gracefulness on subdev remove.
-- QRTR patches part of v1 was merged separately
-
-Bjorn Andersson (5):
-  soc: qcom: Introduce QMI encoder/decoder
-  soc: qcom: Introduce QMI helpers
-  remoteproc: Pass type of shutdown to subdev remove
-  remoteproc: qcom: Introduce sysmon
-  samples: Introduce Qualcomm QMI sample client
-
- drivers/remoteproc/Kconfig           |  17 +
- drivers/remoteproc/Makefile          |   1 +
- drivers/remoteproc/qcom_adsp_pil.c   |  12 +
- drivers/remoteproc/qcom_common.c     |   6 +-
- drivers/remoteproc/qcom_common.h     |  21 +
- drivers/remoteproc/qcom_q6v5_pil.c   |   3 +
- drivers/remoteproc/qcom_sysmon.c     | 585 ++++++++++++++++++++++++
- drivers/remoteproc/qcom_wcnss.c      |   4 +
- drivers/remoteproc/remoteproc_core.c |  18 +-
- drivers/soc/qcom/Kconfig             |   9 +
- drivers/soc/qcom/Makefile            |   3 +
- drivers/soc/qcom/qmi_encdec.c        | 821 +++++++++++++++++++++++++++++++++
- drivers/soc/qcom/qmi_interface.c     | 849 +++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |   4 +-
- include/linux/soc/qcom/qmi.h         | 272 +++++++++++
- samples/Kconfig                      |   9 +
- samples/Makefile                     |   2 +-
- samples/qmi/Makefile                 |   1 +
- samples/qmi/qmi_sample_client.c      | 631 ++++++++++++++++++++++++++
- 19 files changed, 3253 insertions(+), 15 deletions(-)
- create mode 100644 drivers/remoteproc/qcom_sysmon.c
- create mode 100644 drivers/soc/qcom/qmi_encdec.c
- create mode 100644 drivers/soc/qcom/qmi_interface.c
- create mode 100644 include/linux/soc/qcom/qmi.h
- create mode 100644 samples/qmi/Makefile
- create mode 100644 samples/qmi/qmi_sample_client.c
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/rproc-srm.txt b/Documentation/devicetree/bindings/remoteproc/rproc-srm.txt
+new file mode 100644
+index 0000000..986dad1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/rproc-srm.txt
+@@ -0,0 +1,45 @@
++Remoteproc System Resource Manager
++----------------------------------
++
++The remoteproc SRM (System Resource Manager) handles resources allocated
++to remote processors.
++This makes it possible for remote proc to reserve and initialize system
++resources for a peripheral assigned to a coprocessor.
++
++The devices are grouped in a core node
++
++Core
++====
++Required properties:
++- compatible: should be "rproc-srm-core"
++
++Dev
++===
++Required properties:
++- compatible: should be "rproc-srm-dev"
++
++Optional properties:
++- clocks: clocks required by the coprocessor
++- clock-names: see clock-bindings.txt
++- assigned-clocks: see clock-bindings.txt
++- assigned-clock-parents: see clock-bindings.txt
++- assigned-clock-rates: see clock-bindings.txt
++- pinctrl-x: pins configurations required by the coprocessor
++- pinctrl-names: see pinctrl-bindings.txt
++- x-supply: power supplies required by the coprocessor
++
++Example:
++	system_resources {
++		compatible = "rproc-srm-core";
++
++		mmc0: sdhci@09060000 {
++			compatible = "rproc-srm-dev";
++			pinctrl-names = "default", "idle";
++			pinctrl-0 = <&pinctrl_mmc0>;
++			pinctrl-1 = <&pinctrl_mmc1>;
++			clock-names = "mmc", "icn";
++			clocks = <&clk_s_c0_flexgen CLK_MMC_0>,
++				 <&clk_s_c0_flexgen CLK_RX_ICN_HVA>;
++			vdda-supply = <&vdda>;
++		};
++	};
 -- 
-2.15.0
+2.7.4
