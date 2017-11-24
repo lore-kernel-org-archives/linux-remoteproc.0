@@ -1,8 +1,8 @@
 Return-Path: <arnaud.pouliquen@st.com>
 From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 3/6] remoteproc: add system resource manager core
-Date: Fri, 24 Nov 2017 15:36:39 +0100
-Message-ID: <1511534202-12995-4-git-send-email-arnaud.pouliquen@st.com>
+Subject: [RFC 6/6] remoteproc: sti: select srm
+Date: Fri, 24 Nov 2017 15:36:42 +0100
+Message-ID: <1511534202-12995-7-git-send-email-arnaud.pouliquen@st.com>
 In-Reply-To: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
 References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
@@ -13,293 +13,27 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Fabien Dessenne <fabien.dessenne@st.com>
 
-The remoteproc SRM (System Resource Manager) handles resources allocated
-to remote processors.
-This makes it possible for remote proc to reserve and initialize system
-resources for a peripheral assigned to a coprocessor.
-This is the core part which is in charge of controlling the device
-children.
+Select the remote proc system resource manager for the sti platform
 
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- Documentation/remoteproc.txt        |  23 ++++
- drivers/remoteproc/Kconfig          |   8 ++
- drivers/remoteproc/Makefile         |   1 +
- drivers/remoteproc/rproc_srm_core.c | 202 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 234 insertions(+)
- create mode 100644 drivers/remoteproc/rproc_srm_core.c
+ drivers/remoteproc/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/remoteproc.txt b/Documentation/remoteproc.txt
-index 77fb03a..bec2177 100644
---- a/Documentation/remoteproc.txt
-+++ b/Documentation/remoteproc.txt
-@@ -353,3 +353,26 @@ Of course, RSC_VDEV resource entries are only good enough for static
- allocation of virtio devices. Dynamic allocations will also be made possible
- using the rpmsg bus (similar to how we already do dynamic allocations of
- rpmsg channels; read more about it in rpmsg.txt).
-+
-+8. System Resource Manager (SRM)
-+
-+Since some resources are shared (directly or not) between the processors, a
-+processor cannot manage such resources without potentially impacting the other
-+processors : as an example, if a processor changes the frequency of a clock, the
-+frequency of another clock managed by another processor may be updated too.
-+
-+The System Resource Manager prevents such resource conflicts between the
-+processors : it reserves and initializes the system resources of the peripherals
-+assigned to a remote processor.
-+
-+As of today the following resources are controlled by the SRM:
-+- clocks
-+- gpios (pinctrl)
-+- regulators (power supplies)
-+
-+The SRM is implemented as an 'rproc_subdev' and registered to remoteproc_core.
-+Unlike the virtio device (vdev), the SRM subdev is probed *before* the rproc
-+boots, ensuring the availability of the resources before the remoteproc starts.
-+
-+The resources handled by the SRM are defined in the DeviceTree: please read
-+Documentation/devicetree/bindings/remoteproc/rproc-srm.txt for details.
 diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index bf04479..4b9f187 100644
+index a49589e..1ca0ec5 100644
 --- a/drivers/remoteproc/Kconfig
 +++ b/drivers/remoteproc/Kconfig
-@@ -12,6 +12,14 @@ config REMOTEPROC
- 
- if REMOTEPROC
- 
-+config REMOTEPROC_SRM_CORE
-+	tristate "Remoteproc System Resource Manager core"
-+	help
-+	  Say y here to enable the core driver of the remoteproc System Resource
-+	  Manager (SRM).
-+	  The SRM handles resources allocated to remote processors.
-+	  The core part is in charge of controlling the device children.
-+
- config IMX_REMOTEPROC
- 	tristate "IMX6/7 remoteproc support"
- 	depends on SOC_IMX6SX || SOC_IMX7D
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 6e16450..4ec05e3 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
- remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
- remoteproc-y				+= remoteproc_elf_loader.o
-+obj-$(CONFIG_REMOTEPROC_SRM_CORE)	+= rproc_srm_core.o
- obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
-diff --git a/drivers/remoteproc/rproc_srm_core.c b/drivers/remoteproc/rproc_srm_core.c
-new file mode 100644
-index 0000000..045f10e
---- /dev/null
-+++ b/drivers/remoteproc/rproc_srm_core.c
-@@ -0,0 +1,202 @@
-+/*
-+ * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
-+ * Authors: Fabien Dessenne <fabien.dessenne@st.com>.
-+ *          Arnaud Pouliquen <arnaud.pouliquen@st.com>
-+ *          Loic Pallardy <loic.pallardy@st.com>
-+
-+ *
-+ * License type: GPLv2
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-+ * or FITNESS FOR A PARTICULAR PURPOSE.
-+ * See the GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/component.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/remoteproc.h>
-+
-+struct rproc_srm_core {
-+	struct device *dev;
-+	struct completion all_bound;
-+	int bind_status;
-+	atomic_t do_probed;
-+	struct rproc_subdev subdev;
-+};
-+
-+#define to_rproc_srm_core(s) container_of(s, struct rproc_srm_core, subdev)
-+
-+static int compare_of(struct device *dev, void *data)
-+{
-+	return dev->of_node == data;
-+}
-+
-+static void release_of(struct device *dev, void *data)
-+{
-+	of_node_put(data);
-+}
-+
-+static void rproc_srm_core_unbind(struct device *dev)
-+{
-+	component_unbind_all(dev, NULL);
-+}
-+
-+static int rproc_srm_core_bind(struct device *dev)
-+{
-+	struct rproc_srm_core *rproc_srm_core = dev_get_drvdata(dev);
-+
-+	rproc_srm_core->bind_status = component_bind_all(dev, NULL);
-+	complete(&rproc_srm_core->all_bound);
-+
-+	return rproc_srm_core->bind_status;
-+}
-+
-+static const struct component_master_ops srm_comp_ops = {
-+	.bind = rproc_srm_core_bind,
-+	.unbind = rproc_srm_core_unbind,
-+};
-+
-+static int rproc_srm_core_do_probe(struct rproc_subdev *subdev)
-+{
-+	struct rproc_srm_core *rproc_srm_core = to_rproc_srm_core(subdev);
-+	struct device *dev = rproc_srm_core->dev;
-+	struct device_node *node = dev->of_node;
-+	struct device_node *child_np;
-+	struct component_match *match = NULL;
-+	int ret;
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	init_completion(&rproc_srm_core->all_bound);
-+
-+	ret = devm_of_platform_populate(dev);
-+	if (ret) {
-+		dev_err(dev, "cannot populate node (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	child_np = of_get_next_available_child(node, NULL);
-+
-+	while (child_np) {
-+		of_node_get(child_np);
-+		component_match_add_release(dev, &match, release_of, compare_of,
-+					    child_np);
-+		child_np = of_get_next_available_child(node, child_np);
-+	}
-+
-+	if (!match) {
-+		dev_dbg(dev, "No available child\n");
-+		goto done;
-+	}
-+
-+	ret = component_master_add_with_match(dev, &srm_comp_ops, match);
-+	if (ret)
-+		goto depopulate;
-+
-+	/* Wait for every child to be bound */
-+	wait_for_completion(&rproc_srm_core->all_bound);
-+	ret = rproc_srm_core->bind_status;
-+	if (ret) {
-+		dev_err(dev, "failed to bind\n");
-+		goto master;
-+	}
-+done:
-+	atomic_inc(&rproc_srm_core->do_probed);
-+
-+	return 0;
-+
-+master:
-+	component_master_del(dev, &srm_comp_ops);
-+depopulate:
-+	devm_of_platform_depopulate(dev);
-+	return ret;
-+}
-+
-+static void rproc_srm_core_do_remove(struct rproc_subdev *subdev)
-+{
-+	struct rproc_srm_core *rproc_srm_core = to_rproc_srm_core(subdev);
-+	struct device *dev = rproc_srm_core->dev;
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	atomic_dec(&rproc_srm_core->do_probed);
-+
-+	component_master_del(dev, &srm_comp_ops);
-+	devm_of_platform_depopulate(dev);
-+}
-+
-+static int rproc_srm_core_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rproc *rproc = dev_get_drvdata(dev->parent);
-+	struct rproc_srm_core *rproc_srm_core;
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	rproc_srm_core = devm_kzalloc(dev, sizeof(struct rproc_srm_core),
-+				      GFP_KERNEL);
-+	if (!rproc_srm_core)
-+		return -ENOMEM;
-+
-+	rproc_srm_core->dev = dev;
-+
-+	/* Register as an 'early' rproc subdevice */
-+	rproc_add_early_subdev(rproc, &rproc_srm_core->subdev,
-+			       rproc_srm_core_do_probe,
-+			       rproc_srm_core_do_remove);
-+
-+	dev_set_drvdata(dev, rproc_srm_core);
-+
-+	return 0;
-+}
-+
-+static int rproc_srm_core_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rproc_srm_core *rproc_srm_core = dev_get_drvdata(dev);
-+	struct rproc *rproc = dev_get_drvdata(dev->parent);
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	if (rproc->state != RPROC_OFFLINE) {
-+		dev_warn(dev, "Releasing resources while firmware running!\n");
-+		return -EBUSY;
-+	}
-+
-+	if (atomic_read(&rproc_srm_core->do_probed))
-+		rproc_srm_core_do_remove(&rproc_srm_core->subdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rproc_srm_core_match[] = {
-+	{ .compatible = "rproc-srm-core", },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, rproc_srm_core_match);
-+
-+static struct platform_driver rproc_srm_core_driver = {
-+	.probe = rproc_srm_core_probe,
-+	.remove = rproc_srm_core_remove,
-+	.driver = {
-+		.name = "rproc-srm-core",
-+		.of_match_table = of_match_ptr(rproc_srm_core_match),
-+	},
-+};
-+
-+module_platform_driver(rproc_srm_core_driver);
-+
-+MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
-+MODULE_DESCRIPTION("Remoteproc System Resource Manager driver - core");
-+MODULE_LICENSE("GPL v2");
+@@ -154,6 +154,8 @@ config ST_REMOTEPROC
+ 	select MAILBOX
+ 	select STI_MBOX
+ 	select RPMSG_VIRTIO
++	select REMOTEPROC_SRM_CORE
++	select REMOTEPROC_SRM_DEV
+ 	help
+ 	  Say y here to support ST's adjunct processors via the remote
+ 	  processor framework.
 -- 
 2.7.4
