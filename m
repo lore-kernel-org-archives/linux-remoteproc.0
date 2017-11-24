@@ -1,273 +1,206 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v5 6/6] remoteproc: qcom: Add q6v5-wcss rproc ops
-Date: Tue, 14 Nov 2017 16:23:14 +0530
-Message-Id: <1510656794-3815-7-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-References: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sricharan@codeaurora.org
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [RFC 1/6] remoteproc: add early probed subdevices
+Date: Fri, 24 Nov 2017 15:36:37 +0100
+Message-ID: <1511534202-12995-2-git-send-email-arnaud.pouliquen@st.com>
+In-Reply-To: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com, "Loic PALLARDY  <loic.pallardy@st.com>, Fabien DESSENNE" <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-q6v5-wcss core's start function is mostly common
-with the q6v5 of msm8996. So reuse that and add
-the stop function.
+From: Fabien Dessenne <fabien.dessenne@st.com>
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Add the option to use rproc subdevices that are probed *before* the
+remote processor firmware boot.
+
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 212 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 212 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 62 +++++++++++++++++++++++++++++-------
+ include/linux/remoteproc.h           |  7 ++++
+ 2 files changed, 58 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 3c401ff..1b560a6 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -104,6 +104,17 @@
- #define QDSP6SS_XO_CBCR		0x0038
- #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
- 
-+/* QDSP6v5-WCSS config/status registers */
-+#define TCSR_GLOBAL_CFG0	0x0
-+#define TCSR_GLOBAL_CFG1	0x4
-+#define SSCAON_CONFIG		0x8
-+#define SSCAON_STATUS		0xc
-+#define QDSP6SS_BHS_STATUS	0x78
-+#define QDSP6SS_RST_EVB		0x10
-+
-+#define BHS_EN_REST_ACK		BIT(0)
-+#define SSCAON_ENABLE		BIT(13)
-+
- struct reg_info {
- 	struct regulator *reg;
- 	int uV;
-@@ -771,6 +782,61 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	return ret < 0 ? ret : 0;
- }
- 
-+static int q6v5_wcss_start(struct rproc *rproc)
-+{
-+	struct q6v5 *qproc = rproc->priv;
-+	int ret = 0;
-+
-+	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
-+			      qproc->active_clk_count);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable clocks\n");
-+		return ret;
-+	}
-+
-+	/* Release Q6 and WCSS reset */
-+	ret = reset_control_deassert(qproc->wcss_reset);
-+	if (ret)
-+		dev_err(qproc->dev, "wcss_reset failed\n");
-+
-+	ret = reset_control_deassert(qproc->wcss_q6_reset);
-+	if (ret)
-+		dev_err(qproc->dev, "wcss_q6_reset failed\n");
-+
-+	/* Lithium configuration - clock gating and bus arbitration */
-+	ret = regmap_update_bits(qproc->halt_map,
-+				 qproc->halt_nc + TCSR_GLOBAL_CFG0,
-+				 0x1F, 0x14);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(qproc->halt_map,
-+				 qproc->halt_nc + TCSR_GLOBAL_CFG1,
-+				 1, 0);
-+	if (ret)
-+		return ret;
-+
-+	/* Write bootaddr to EVB so that Q6WCSS will jump there after reset */
-+	writel(rproc->bootaddr >> 4, qproc->reg_base + QDSP6SS_RST_EVB);
-+
-+	ret = q6v5_reset(qproc);
-+	if (ret)
-+		return ret;
-+
-+	q6v5_reset_rest(qproc);
-+
-+	ret = wait_for_completion_timeout(&qproc->start_done,
-+					  msecs_to_jiffies(5000));
-+	if (ret == 0) {
-+		dev_err(qproc->dev, "start timed out\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	qproc->running = true;
-+
-+	return 0;
-+}
-+
- static int q6v5_start(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-@@ -894,6 +960,146 @@ static int q6v5_start(struct rproc *rproc)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index eab14b4..870b1fb 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -770,12 +770,12 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
  	return ret;
  }
  
-+static int q6v5_wcss_powerdown(struct q6v5 *qproc)
-+{
-+	unsigned int val = 0;
-+	int ret;
-+
-+	/* 1 - Assert WCSS/Q6 HALTREQ */
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+
-+	/* 2 - Enable WCSSAON_CONFIG */
-+	val = readl(qproc->rmb_base + SSCAON_CONFIG);
-+	val |= SSCAON_ENABLE;
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 3 - Set SSCAON_CONFIG */
-+	val |= BIT(15);
-+	val &= ~BIT(16);
-+	val &= ~BIT(17);
-+	val &= ~BIT(18);
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 4 - SSCAON_CONFIG 1 */
-+	val |= BIT(1);
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 5 - wait for SSCAON_STATUS */
-+	ret = readl_poll_timeout(qproc->rmb_base + SSCAON_STATUS,
-+				 val, (val & 0xffff) == 0x400, 1000,
-+				 HALT_CHECK_MAX_LOOPS);
+-static int rproc_probe_subdevices(struct rproc *rproc)
++static int rproc_probe_subdevices(struct list_head *head)
+ {
+ 	struct rproc_subdev *subdev;
+ 	int ret;
+ 
+-	list_for_each_entry(subdev, &rproc->subdevs, node) {
++	list_for_each_entry(subdev, head, node) {
+ 		ret = subdev->probe(subdev);
+ 		if (ret)
+ 			goto unroll_registration;
+@@ -784,17 +784,17 @@ static int rproc_probe_subdevices(struct rproc *rproc)
+ 	return 0;
+ 
+ unroll_registration:
+-	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
++	list_for_each_entry_continue_reverse(subdev, head, node)
+ 		subdev->remove(subdev);
+ 
+ 	return ret;
+ }
+ 
+-static void rproc_remove_subdevices(struct rproc *rproc)
++static void rproc_remove_subdevices(struct list_head *head)
+ {
+ 	struct rproc_subdev *subdev;
+ 
+-	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
++	list_for_each_entry_reverse(subdev, head, node)
+ 		subdev->remove(subdev);
+ }
+ 
+@@ -881,20 +881,27 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 		rproc->table_ptr = loaded_table;
+ 	}
+ 
++	/* early probe any subdevices for the remote processor */
++	ret = rproc_probe_subdevices(&rproc->early_subdevs);
 +	if (ret) {
-+		dev_err(qproc->dev,
-+			"can't get SSCAON_STATUS rc:%d)\n", ret);
++		dev_err(dev, "failed to early probe subdevices for %s: %d\n",
++			rproc->name, ret);
++		return ret;
 +	}
 +
-+	/* 6 - De-assert WCSS_AON reset */
-+	reset_control_assert(qproc->wcss_aon_reset);
+ 	/* power up the remote processor */
+ 	ret = rproc->ops->start(rproc);
+ 	if (ret) {
+ 		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
+-		return ret;
++		goto remove_early;
+ 	}
+ 
+ 	/* probe any subdevices for the remote processor */
+-	ret = rproc_probe_subdevices(rproc);
++	ret = rproc_probe_subdevices(&rproc->subdevs);
+ 	if (ret) {
+ 		dev_err(dev, "failed to probe subdevices for %s: %d\n",
+ 			rproc->name, ret);
+-		rproc->ops->stop(rproc);
+-		return ret;
++		goto stop_rproc;
+ 	}
+ 
+ 	rproc->state = RPROC_RUNNING;
+@@ -902,6 +909,12 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	dev_info(dev, "remote processor %s is now up\n", rproc->name);
+ 
+ 	return 0;
 +
-+	/* 7 - Disable WCSSAON_CONFIG 13 */
-+	val = readl(qproc->rmb_base + SSCAON_CONFIG);
-+	val &= ~SSCAON_ENABLE;
-+	writel(val, qproc->rmb_base + SSCAON_CONFIG);
-+
-+	/* 8 - De-assert WCSS/Q6 HALTREQ */
-+	reset_control_assert(qproc->wcss_reset);
-+
++stop_rproc:
++	rproc->ops->stop(rproc);
++remove_early:
++	rproc_remove_subdevices(&rproc->early_subdevs);
 +	return ret;
-+}
-+
-+static int q6v5_q6_powerdown(struct q6v5 *qproc)
-+{
-+	int i = 0, ret;
-+	unsigned int val = 0;
-+
-+	/* 1 - Halt Q6 bus interface */
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+
-+	/* 2 - Disable Q6 Core clock */
-+	val = readl(qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+	val &= ~Q6SS_CLK_ENABLE;
-+	writel(val, qproc->reg_base + QDSP6SS_GFMUX_CTL_REG);
-+
-+	/* 3 - Clamp I/O */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= Q6SS_CLAMP_IO;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 4 - Clamp WL */
-+	val |= QDSS_BHS_ON;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 5 - Clear Erase standby */
-+	val &= ~Q6SS_L2DATA_STBY_N;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 6 - Clear Sleep RTN */
-+	val &= ~Q6SS_SLP_RET_N;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 7 - turn off QDSP6 memory foot/head switch one bank at a time */
-+	for (i = 0; i < 20; i++) {
-+		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+		val &= ~BIT(i);
-+		writel(val, qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
-+		mdelay(1);
-+	}
-+	/* 8 - Assert QMC memory RTN */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= QDSP6v56_CLAMP_QMC_MEM;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+	/* 9 - Turn off BHS */
-+	val &= ~QDSP6v56_BHS_ON;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	udelay(1);
-+	/* 10 - Wait till BHS Reset is done */
-+	ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BHS_STATUS,
-+				 val, !(val & BHS_EN_REST_ACK), 1000,
-+				 HALT_CHECK_MAX_LOOPS);
-+	if (ret) {
-+		dev_err(qproc->dev,
-+			"BHS_STATUS not OFF (rc:%d)\n", ret);
-+	}
-+
-+	/* 11 - Enable Q6 Block reset */
-+	reset_control_assert(qproc->wcss_q6_reset);
-+
-+	return 0;
-+}
-+
-+static int q6v5_wcss_stop(struct rproc *rproc)
-+{
-+	struct q6v5 *qproc = rproc->priv;
-+	int ret = 0;
-+
-+	qproc->running = false;
-+
-+	/* WCSS powerdown */
-+	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit),
-+				    BIT(qproc->stop_bit));
-+
-+	ret = wait_for_completion_timeout(&qproc->stop_done,
-+					  msecs_to_jiffies(5000));
-+	if (ret == 0) {
-+		dev_err(qproc->dev, "timed out on wait\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
-+
-+	ret = q6v5_wcss_powerdown(qproc);
-+	if (ret)
-+		return ret;
-+
-+	/* Q6 Power down */
-+	ret = q6v5_q6_powerdown(qproc);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int q6v5_stop(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-@@ -956,6 +1162,11 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
- 	.da_to_va = q6v5_da_to_va,
- };
+ }
  
-+static const struct rproc_ops q6v5_wcss_ops = {
-+	.start = q6v5_wcss_start,
-+	.stop = q6v5_wcss_stop,
-+};
-+
- static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
- {
- 	struct q6v5 *qproc = dev;
-@@ -1406,6 +1617,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 	.version = WCSS_IPQ8074,
- 	.init_reset = q6v5_wcss_init_reset,
- 	.fw_ops = &q6v5_wcss_fw_ops,
-+	.ops = &q6v5_wcss_ops,
- };
+ /*
+@@ -1019,7 +1032,7 @@ static int rproc_stop(struct rproc *rproc)
+ 	int ret;
  
- static const struct of_device_id q6v5_of_match[] = {
+ 	/* remove any subdevices for the remote processor */
+-	rproc_remove_subdevices(rproc);
++	rproc_remove_subdevices(&rproc->subdevs);
+ 
+ 	/* power off the remote processor */
+ 	ret = rproc->ops->stop(rproc);
+@@ -1028,6 +1041,9 @@ static int rproc_stop(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
++	/* remove any early-probed subdevices for the remote processor */
++	rproc_remove_subdevices(&rproc->early_subdevs);
++
+ 	/* if in crash state, unlock crash handler */
+ 	if (rproc->state == RPROC_CRASHED)
+ 		complete_all(&rproc->crash_comp);
+@@ -1457,6 +1473,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->traces);
+ 	INIT_LIST_HEAD(&rproc->rvdevs);
+ 	INIT_LIST_HEAD(&rproc->subdevs);
++	INIT_LIST_HEAD(&rproc->early_subdevs);
+ 
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+ 	init_completion(&rproc->crash_comp);
+@@ -1560,9 +1577,32 @@ void rproc_add_subdev(struct rproc *rproc,
+ EXPORT_SYMBOL(rproc_add_subdev);
+ 
+ /**
++ * rproc_add_early_subdev() - add an early subdevice to a remoteproc
++ * @rproc: rproc handle to add the subdevice to
++ * @subdev: subdev handle to register
++ * @probe: function to call before the rproc boots
++ * @remove: function to call after the rproc shuts down
++ *
++ * This function differs from rproc_add_subdev() in the sense that the added
++ * subdevices are probed BEFORE the rproc boots.
++ */
++void rproc_add_early_subdev(struct rproc *rproc,
++			    struct rproc_subdev *subdev,
++			    int (*probe)(struct rproc_subdev *subdev),
++			    void (*remove)(struct rproc_subdev *subdev))
++{
++	subdev->probe = probe;
++	subdev->remove = remove;
++
++	list_add_tail(&subdev->node, &rproc->early_subdevs);
++}
++EXPORT_SYMBOL(rproc_add_early_subdev);
++
++/**
+  * rproc_remove_subdev() - remove a subdevice from a remoteproc
+  * @rproc: rproc handle to remove the subdevice from
+- * @subdev: subdev handle, previously registered with rproc_add_subdev()
++ * @subdev: subdev handle, previously registered with rproc_add_subdev() or
++ *          rproc_add_early_subdev()
+  */
+ void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev)
+ {
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 44e630e..e6b02d8 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -402,6 +402,7 @@ enum rproc_crash_type {
+  * @bootaddr: address of first instruction to boot rproc with (optional)
+  * @rvdevs: list of remote virtio devices
+  * @subdevs: list of subdevices, to following the running state
++ * @early_subdevs: list of early-probed subdevices
+  * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+  * @index: index of this rproc device
+  * @crash_handler: workqueue for handling a crash
+@@ -433,6 +434,7 @@ struct rproc {
+ 	u32 bootaddr;
+ 	struct list_head rvdevs;
+ 	struct list_head subdevs;
++	struct list_head early_subdevs;
+ 	struct idr notifyids;
+ 	int index;
+ 	struct work_struct crash_handler;
+@@ -541,6 +543,11 @@ void rproc_add_subdev(struct rproc *rproc,
+ 		      int (*probe)(struct rproc_subdev *subdev),
+ 		      void (*remove)(struct rproc_subdev *subdev));
+ 
++void rproc_add_early_subdev(struct rproc *rproc,
++			    struct rproc_subdev *subdev,
++			    int (*probe)(struct rproc_subdev *subdev),
++			    void (*remove)(struct rproc_subdev *subdev));
++
+ void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+ 
+ #endif /* REMOTEPROC_H */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
