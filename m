@@ -1,1031 +1,535 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 1/5] soc: qcom: Introduce QMI encoder/decoder
-Date: Wed, 29 Nov 2017 17:16:40 -0800
-Message-Id: <20171130011644.9421-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20171130011644.9421-1-bjorn.andersson@linaro.org>
-References: <20171130011644.9421-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [RFC 4/6] remoteproc: add system resource manager device
+Date: Fri, 24 Nov 2017 15:36:40 +0100
+Message-ID: <1511534202-12995-5-git-send-email-arnaud.pouliquen@st.com>
+In-Reply-To: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com, "Loic PALLARDY  <loic.pallardy@st.com>, Fabien DESSENNE" <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add the helper library for encoding and decoding QMI encoded messages.
-The implementation is taken from lib/qmi_encdec.c of the Qualcomm kernel
-(msm-3.18).
+From: Fabien Dessenne <fabien.dessenne@st.com>
 
-Modifications has been made to the public API, source buffers has been
-made const and the debug-logging part was omitted, for now.
+The SRM device reserves and enables the resources needed by a remote
+processor.
+In this initial commit the only managed resources are:
+- clocks which are prepared and enabled
+- pins which are configured
+- regulators which are enabled
 
-Tested-By: Chris Lew <clew@codeaurora.org>
-Tested-By: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
+ drivers/remoteproc/Kconfig         |  10 +
+ drivers/remoteproc/Makefile        |   1 +
+ drivers/remoteproc/rproc_srm_dev.c | 462 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 473 insertions(+)
+ create mode 100644 drivers/remoteproc/rproc_srm_dev.c
 
-Changes since v3:
-- Moved depends on ARCH_QCOM from patch 2
-- Kerneldoc updates
-- Style updates
-- Dropped qrtr.h include from header file
-- Rename is_array to array_type
-
-Changes since v2:
-- Checkpatch fixes
-
-Changes since v1:
-- None
-
- drivers/soc/qcom/Kconfig      |   9 +
- drivers/soc/qcom/Makefile     |   2 +
- drivers/soc/qcom/qmi_encdec.c | 826 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/soc/qcom/qmi.h  | 114 ++++++
- 4 files changed, 951 insertions(+)
- create mode 100644 drivers/soc/qcom/qmi_encdec.c
- create mode 100644 include/linux/soc/qcom/qmi.h
-
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index b81374bb6713..2411df0427d9 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -35,6 +35,15 @@ config QCOM_PM
- 	  modes. It interface with various system drivers to put the cores in
- 	  low power modes.
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 4b9f187..a49589e 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -20,6 +20,16 @@ config REMOTEPROC_SRM_CORE
+ 	  The SRM handles resources allocated to remote processors.
+ 	  The core part is in charge of controlling the device children.
  
-+config QCOM_QMI_HELPERS
-+	tristate
-+	depends on ARCH_QCOM
++config REMOTEPROC_SRM_DEV
++	tristate "Remoteproc System Resource Manager device"
++	depends on REMOTEPROC_SRM_CORE
 +	help
-+	  Helper library for handling QMI encoded messages.  QMI encoded
-+	  messages are used in communication between the majority of QRTR
-+	  clients and this helpers provide the common functionality needed for
-+	  doing this from a kernel driver.
++	  Say y here to enable the device driver of the remoteproc System
++	  Resource Manager (SRM).
++	  The SRM handles resources allocated to remote processors.
++	  The device part is in charge of reserving and initializing resources
++	  for a peripheral assigned to a coprocessor.
 +
- config QCOM_RMTFS_MEM
- 	tristate "Qualcomm Remote Filesystem memory driver"
- 	depends on ARCH_QCOM
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 40c56f67e94a..37f85b45d0a1 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -3,6 +3,8 @@ obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
- obj-$(CONFIG_QCOM_GSBI)	+=	qcom_gsbi.o
- obj-$(CONFIG_QCOM_MDT_LOADER)	+= mdt_loader.o
- obj-$(CONFIG_QCOM_PM)	+=	spm.o
-+obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
-+qmi_helpers-y	+= qmi_encdec.o
- obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
- obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
- obj-$(CONFIG_QCOM_SMEM) +=	smem.o
-diff --git a/drivers/soc/qcom/qmi_encdec.c b/drivers/soc/qcom/qmi_encdec.c
+ config IMX_REMOTEPROC
+ 	tristate "IMX6/7 remoteproc support"
+ 	depends on SOC_IMX6SX || SOC_IMX7D
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 4ec05e3..36932da 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -10,6 +10,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+ remoteproc-y				+= remoteproc_virtio.o
+ remoteproc-y				+= remoteproc_elf_loader.o
+ obj-$(CONFIG_REMOTEPROC_SRM_CORE)	+= rproc_srm_core.o
++obj-$(CONFIG_REMOTEPROC_SRM_DEV)	+= rproc_srm_dev.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+diff --git a/drivers/remoteproc/rproc_srm_dev.c b/drivers/remoteproc/rproc_srm_dev.c
 new file mode 100644
-index 000000000000..a197fc0114c3
+index 0000000..4f76da2
 --- /dev/null
-+++ b/drivers/soc/qcom/qmi_encdec.c
-@@ -0,0 +1,826 @@
++++ b/drivers/remoteproc/rproc_srm_dev.c
+@@ -0,0 +1,462 @@
 +/*
-+ * Copyright (c) 2012-2015, The Linux Foundation. All rights reserved.
-+ * Copyright (C) 2017 Linaro Ltd.
++ * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
++ * Authors: Fabien Dessenne <fabien.dessenne@st.com>.
++ *          Arnaud Pouliquen <arnaud.pouliquen@st.com>
++ *          Loic Pallardy <loic.pallardy@st.com>
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
++ * License type: GPLv2
 + *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
 + *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++ * or FITNESS FOR A PARTICULAR PURPOSE.
++ * See the GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program. If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include <linux/module.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/component.h>
 +#include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <linux/string.h>
-+#include <linux/soc/qcom/qmi.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
 +
-+#define QMI_ENCDEC_ENCODE_TLV(type, length, p_dst) do { \
-+	*p_dst++ = type; \
-+	*p_dst++ = ((u8)((length) & 0xFF)); \
-+	*p_dst++ = ((u8)(((length) >> 8) & 0xFF)); \
-+} while (0)
++#define SUPPLY_SUFFIX   "-supply"
 +
-+#define QMI_ENCDEC_DECODE_TLV(p_type, p_length, p_src) do { \
-+	*p_type = (u8)*p_src++; \
-+	*p_length = (u8)*p_src++; \
-+	*p_length |= ((u8)*p_src) << 8; \
-+} while (0)
++struct rproc_srm_clk_info {
++	struct list_head list;
++	unsigned int index;
++	struct clk *clk;
++	const char *name;
++	bool enabled;
++};
 +
-+#define QMI_ENCDEC_ENCODE_N_BYTES(p_dst, p_src, size) \
-+do { \
-+	memcpy(p_dst, p_src, size); \
-+	p_dst = (u8 *)p_dst + size; \
-+	p_src = (u8 *)p_src + size; \
-+} while (0)
++struct rproc_srm_pin_info {
++	struct list_head list;
++	unsigned int index;
++	char *name;
++};
 +
-+#define QMI_ENCDEC_DECODE_N_BYTES(p_dst, p_src, size) \
-+do { \
-+	memcpy(p_dst, p_src, size); \
-+	p_dst = (u8 *)p_dst + size; \
-+	p_src = (u8 *)p_src + size; \
-+} while (0)
++struct rproc_srm_regu_info {
++	struct list_head list;
++	unsigned int index;
++	struct regulator *regu;
++	const char *name;
++	bool enabled;
++};
 +
-+#define UPDATE_ENCODE_VARIABLES(temp_si, buf_dst, \
-+				encoded_bytes, tlv_len, encode_tlv, rc) \
-+do { \
-+	buf_dst = (u8 *)buf_dst + rc; \
-+	encoded_bytes += rc; \
-+	tlv_len += rc; \
-+	temp_si = temp_si + 1; \
-+	encode_tlv = 1; \
-+} while (0)
++struct rproc_srm_dev {
++	struct device *dev;
++	struct pinctrl *pctrl;
 +
-+#define UPDATE_DECODE_VARIABLES(buf_src, decoded_bytes, rc) \
-+do { \
-+	buf_src = (u8 *)buf_src + rc; \
-+	decoded_bytes += rc; \
-+} while (0)
++	struct list_head clk_list_head;
++	struct list_head regu_list_head;
++	struct list_head pin_list_head;
++};
 +
-+#define TLV_LEN_SIZE sizeof(u16)
-+#define TLV_TYPE_SIZE sizeof(u8)
-+#define OPTIONAL_TLV_TYPE_START 0x10
-+
-+static int qmi_encode(struct qmi_elem_info *ei_array, void *out_buf,
-+		      const void *in_c_struct, u32 out_buf_len,
-+		      int enc_level);
-+
-+static int qmi_decode(struct qmi_elem_info *ei_array, void *out_c_struct,
-+		      const void *in_buf, u32 in_buf_len, int dec_level);
-+
-+/**
-+ * skip_to_next_elem() - Skip to next element in the structure to be encoded
-+ * @ei_array: Struct info describing the element to be skipped.
-+ * @level: Depth level of encoding/decoding to identify nested structures.
-+ *
-+ * This function is used while encoding optional elements. If the flag
-+ * corresponding to an optional element is not set, then encoding the
-+ * optional element can be skipped. This function can be used to perform
-+ * that operation.
-+ *
-+ * Return: struct info of the next element that can be encoded.
-+ */
-+static struct qmi_elem_info *skip_to_next_elem(struct qmi_elem_info *ei_array,
-+					       int level)
++/* Clocks */
++static void rproc_srm_dev_deconfig_clocks(struct rproc_srm_dev *rproc_srm_dev)
 +{
-+	struct qmi_elem_info *temp_ei = ei_array;
-+	u8 tlv_type;
++	struct rproc_srm_clk_info *c;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
 +
-+	if (level > 1) {
-+		temp_ei = temp_ei + 1;
-+	} else {
-+		do {
-+			tlv_type = temp_ei->tlv_type;
-+			temp_ei = temp_ei + 1;
-+		} while (tlv_type == temp_ei->tlv_type);
-+	}
-+
-+	return temp_ei;
-+}
-+
-+/**
-+ * qmi_calc_min_msg_len() - Calculate the minimum length of a QMI message
-+ * @ei_array: Struct info array describing the structure.
-+ * @level: Level to identify the depth of the nested structures.
-+ *
-+ * Return: Expected minimum length of the QMI message or 0 on error.
-+ */
-+static int qmi_calc_min_msg_len(struct qmi_elem_info *ei_array,
-+				int level)
-+{
-+	int min_msg_len = 0;
-+	struct qmi_elem_info *temp_ei = ei_array;
-+
-+	if (!ei_array)
-+		return min_msg_len;
-+
-+	while (temp_ei->data_type != QMI_EOTI) {
-+		/* Optional elements do not count in minimum length */
-+		if (temp_ei->data_type == QMI_OPT_FLAG) {
-+			temp_ei = skip_to_next_elem(temp_ei, level);
++	list_for_each_entry(c, clk_head, list) {
++		if (!c->enabled)
 +			continue;
-+		}
 +
-+		if (temp_ei->data_type == QMI_DATA_LEN) {
-+			min_msg_len += (temp_ei->elem_size == sizeof(u8) ?
-+					sizeof(u8) : sizeof(u16));
-+			temp_ei++;
-+			continue;
-+		} else if (temp_ei->data_type == QMI_STRUCT) {
-+			min_msg_len += qmi_calc_min_msg_len(temp_ei->ei_array,
-+							    (level + 1));
-+			temp_ei++;
-+		} else if (temp_ei->data_type == QMI_STRING) {
-+			if (level > 1)
-+				min_msg_len += temp_ei->elem_len <= U8_MAX ?
-+					sizeof(u8) : sizeof(u16);
-+			min_msg_len += temp_ei->elem_len * temp_ei->elem_size;
-+			temp_ei++;
-+		} else {
-+			min_msg_len += (temp_ei->elem_len * temp_ei->elem_size);
-+			temp_ei++;
-+		}
-+
-+		/*
-+		 * Type & Length info. not prepended for elements in the
-+		 * nested structure.
-+		 */
-+		if (level == 1)
-+			min_msg_len += (TLV_TYPE_SIZE + TLV_LEN_SIZE);
++		clk_disable_unprepare(c->clk);
++		c->enabled = false;
++		dev_dbg(rproc_srm_dev->dev, "clk %d (%s) deconfigured\n",
++			c->index, c->name);
 +	}
-+
-+	return min_msg_len;
 +}
 +
-+/**
-+ * qmi_encode_basic_elem() - Encodes elements of basic/primary data type
-+ * @buf_dst: Buffer to store the encoded information.
-+ * @buf_src: Buffer containing the elements to be encoded.
-+ * @elem_len: Number of elements, in the buf_src, to be encoded.
-+ * @elem_size: Size of a single instance of the element to be encoded.
-+ *
-+ * This function encodes the "elem_len" number of data elements, each of
-+ * size "elem_size" bytes from the source buffer "buf_src" and stores the
-+ * encoded information in the destination buffer "buf_dst". The elements are
-+ * of primary data type which include u8 - u64 or similar. This
-+ * function returns the number of bytes of encoded information.
-+ *
-+ * Return: The number of bytes of encoded information.
-+ */
-+static int qmi_encode_basic_elem(void *buf_dst, const void *buf_src,
-+				 u32 elem_len, u32 elem_size)
++static int rproc_srm_dev_config_clocks(struct rproc_srm_dev *rproc_srm_dev)
 +{
-+	u32 i, rc = 0;
-+
-+	for (i = 0; i < elem_len; i++) {
-+		QMI_ENCDEC_ENCODE_N_BYTES(buf_dst, buf_src, elem_size);
-+		rc += elem_size;
-+	}
-+
-+	return rc;
-+}
-+
-+/**
-+ * qmi_encode_struct_elem() - Encodes elements of struct data type
-+ * @ei_array: Struct info array descibing the struct element.
-+ * @buf_dst: Buffer to store the encoded information.
-+ * @buf_src: Buffer containing the elements to be encoded.
-+ * @elem_len: Number of elements, in the buf_src, to be encoded.
-+ * @out_buf_len: Available space in the encode buffer.
-+ * @enc_level: Depth of the nested structure from the main structure.
-+ *
-+ * This function encodes the "elem_len" number of struct elements, each of
-+ * size "ei_array->elem_size" bytes from the source buffer "buf_src" and
-+ * stores the encoded information in the destination buffer "buf_dst". The
-+ * elements are of struct data type which includes any C structure. This
-+ * function returns the number of bytes of encoded information.
-+ *
-+ * Return: The number of bytes of encoded information on success or negative
-+ * errno on error.
-+ */
-+static int qmi_encode_struct_elem(struct qmi_elem_info *ei_array,
-+				  void *buf_dst, const void *buf_src,
-+				  u32 elem_len, u32 out_buf_len,
-+				  int enc_level)
-+{
-+	int i, rc, encoded_bytes = 0;
-+	struct qmi_elem_info *temp_ei = ei_array;
-+
-+	for (i = 0; i < elem_len; i++) {
-+		rc = qmi_encode(temp_ei->ei_array, buf_dst, buf_src,
-+				out_buf_len - encoded_bytes, enc_level);
-+		if (rc < 0) {
-+			pr_err("%s: STRUCT Encode failure\n", __func__);
-+			return rc;
-+		}
-+		buf_dst = buf_dst + rc;
-+		buf_src = buf_src + temp_ei->elem_size;
-+		encoded_bytes += rc;
-+	}
-+
-+	return encoded_bytes;
-+}
-+
-+/**
-+ * qmi_encode_string_elem() - Encodes elements of string data type
-+ * @ei_array: Struct info array descibing the string element.
-+ * @buf_dst: Buffer to store the encoded information.
-+ * @buf_src: Buffer containing the elements to be encoded.
-+ * @out_buf_len: Available space in the encode buffer.
-+ * @enc_level: Depth of the string element from the main structure.
-+ *
-+ * This function encodes a string element of maximum length "ei_array->elem_len"
-+ * bytes from the source buffer "buf_src" and stores the encoded information in
-+ * the destination buffer "buf_dst". This function returns the number of bytes
-+ * of encoded information.
-+ *
-+ * Return: The number of bytes of encoded information on success or negative
-+ * errno on error.
-+ */
-+static int qmi_encode_string_elem(struct qmi_elem_info *ei_array,
-+				  void *buf_dst, const void *buf_src,
-+				  u32 out_buf_len, int enc_level)
-+{
-+	int rc;
-+	int encoded_bytes = 0;
-+	struct qmi_elem_info *temp_ei = ei_array;
-+	u32 string_len = 0;
-+	u32 string_len_sz = 0;
-+
-+	string_len = strlen(buf_src);
-+	string_len_sz = temp_ei->elem_len <= U8_MAX ?
-+			sizeof(u8) : sizeof(u16);
-+	if (string_len > temp_ei->elem_len) {
-+		pr_err("%s: String to be encoded is longer - %d > %d\n",
-+		       __func__, string_len, temp_ei->elem_len);
-+		return -EINVAL;
-+	}
-+
-+	if (enc_level == 1) {
-+		if (string_len + TLV_LEN_SIZE + TLV_TYPE_SIZE >
-+		    out_buf_len) {
-+			pr_err("%s: Output len %d > Out Buf len %d\n",
-+			       __func__, string_len, out_buf_len);
-+			return -ETOOSMALL;
-+		}
-+	} else {
-+		if (string_len + string_len_sz > out_buf_len) {
-+			pr_err("%s: Output len %d > Out Buf len %d\n",
-+			       __func__, string_len, out_buf_len);
-+			return -ETOOSMALL;
-+		}
-+		rc = qmi_encode_basic_elem(buf_dst, &string_len,
-+					   1, string_len_sz);
-+		encoded_bytes += rc;
-+	}
-+
-+	rc = qmi_encode_basic_elem(buf_dst + encoded_bytes, buf_src,
-+				   string_len, temp_ei->elem_size);
-+	encoded_bytes += rc;
-+
-+	return encoded_bytes;
-+}
-+
-+/**
-+ * qmi_encode() - Core Encode Function
-+ * @ei_array: Struct info array describing the structure to be encoded.
-+ * @out_buf: Buffer to hold the encoded QMI message.
-+ * @in_c_struct: Pointer to the C structure to be encoded.
-+ * @out_buf_len: Available space in the encode buffer.
-+ * @enc_level: Encode level to indicate the depth of the nested structure,
-+ *             within the main structure, being encoded.
-+ *
-+ * Return: The number of bytes of encoded information on success or negative
-+ * errno on error.
-+ */
-+static int qmi_encode(struct qmi_elem_info *ei_array, void *out_buf,
-+		      const void *in_c_struct, u32 out_buf_len,
-+		      int enc_level)
-+{
-+	struct qmi_elem_info *temp_ei = ei_array;
-+	u8 opt_flag_value = 0;
-+	u32 data_len_value = 0, data_len_sz;
-+	u8 *buf_dst = (u8 *)out_buf;
-+	u8 *tlv_pointer;
-+	u32 tlv_len;
-+	u8 tlv_type;
-+	u32 encoded_bytes = 0;
-+	const void *buf_src;
-+	int encode_tlv = 0;
-+	int rc;
-+
-+	if (!ei_array)
-+		return 0;
-+
-+	tlv_pointer = buf_dst;
-+	tlv_len = 0;
-+	if (enc_level == 1)
-+		buf_dst = buf_dst + (TLV_LEN_SIZE + TLV_TYPE_SIZE);
-+
-+	while (temp_ei->data_type != QMI_EOTI) {
-+		buf_src = in_c_struct + temp_ei->offset;
-+		tlv_type = temp_ei->tlv_type;
-+
-+		if (temp_ei->array_type == NO_ARRAY) {
-+			data_len_value = 1;
-+		} else if (temp_ei->array_type == STATIC_ARRAY) {
-+			data_len_value = temp_ei->elem_len;
-+		} else if (data_len_value <= 0 ||
-+			    temp_ei->elem_len < data_len_value) {
-+			pr_err("%s: Invalid data length\n", __func__);
-+			return -EINVAL;
-+		}
-+
-+		switch (temp_ei->data_type) {
-+		case QMI_OPT_FLAG:
-+			rc = qmi_encode_basic_elem(&opt_flag_value, buf_src,
-+						   1, sizeof(u8));
-+			if (opt_flag_value)
-+				temp_ei = temp_ei + 1;
-+			else
-+				temp_ei = skip_to_next_elem(temp_ei, enc_level);
-+			break;
-+
-+		case QMI_DATA_LEN:
-+			memcpy(&data_len_value, buf_src, temp_ei->elem_size);
-+			data_len_sz = temp_ei->elem_size == sizeof(u8) ?
-+					sizeof(u8) : sizeof(u16);
-+			/* Check to avoid out of range buffer access */
-+			if ((data_len_sz + encoded_bytes + TLV_LEN_SIZE +
-+			    TLV_TYPE_SIZE) > out_buf_len) {
-+				pr_err("%s: Too Small Buffer @DATA_LEN\n",
-+				       __func__);
-+				return -ETOOSMALL;
-+			}
-+			rc = qmi_encode_basic_elem(buf_dst, &data_len_value,
-+						   1, data_len_sz);
-+			UPDATE_ENCODE_VARIABLES(temp_ei, buf_dst,
-+						encoded_bytes, tlv_len,
-+						encode_tlv, rc);
-+			if (!data_len_value)
-+				temp_ei = skip_to_next_elem(temp_ei, enc_level);
-+			else
-+				encode_tlv = 0;
-+			break;
-+
-+		case QMI_UNSIGNED_1_BYTE:
-+		case QMI_UNSIGNED_2_BYTE:
-+		case QMI_UNSIGNED_4_BYTE:
-+		case QMI_UNSIGNED_8_BYTE:
-+		case QMI_SIGNED_2_BYTE_ENUM:
-+		case QMI_SIGNED_4_BYTE_ENUM:
-+			/* Check to avoid out of range buffer access */
-+			if (((data_len_value * temp_ei->elem_size) +
-+			    encoded_bytes + TLV_LEN_SIZE + TLV_TYPE_SIZE) >
-+			    out_buf_len) {
-+				pr_err("%s: Too Small Buffer @data_type:%d\n",
-+				       __func__, temp_ei->data_type);
-+				return -ETOOSMALL;
-+			}
-+			rc = qmi_encode_basic_elem(buf_dst, buf_src,
-+						   data_len_value,
-+						   temp_ei->elem_size);
-+			UPDATE_ENCODE_VARIABLES(temp_ei, buf_dst,
-+						encoded_bytes, tlv_len,
-+						encode_tlv, rc);
-+			break;
-+
-+		case QMI_STRUCT:
-+			rc = qmi_encode_struct_elem(temp_ei, buf_dst, buf_src,
-+						    data_len_value,
-+						    out_buf_len - encoded_bytes,
-+						    enc_level + 1);
-+			if (rc < 0)
-+				return rc;
-+			UPDATE_ENCODE_VARIABLES(temp_ei, buf_dst,
-+						encoded_bytes, tlv_len,
-+						encode_tlv, rc);
-+			break;
-+
-+		case QMI_STRING:
-+			rc = qmi_encode_string_elem(temp_ei, buf_dst, buf_src,
-+						    out_buf_len - encoded_bytes,
-+						    enc_level);
-+			if (rc < 0)
-+				return rc;
-+			UPDATE_ENCODE_VARIABLES(temp_ei, buf_dst,
-+						encoded_bytes, tlv_len,
-+						encode_tlv, rc);
-+			break;
-+		default:
-+			pr_err("%s: Unrecognized data type\n", __func__);
-+			return -EINVAL;
-+		}
-+
-+		if (encode_tlv && enc_level == 1) {
-+			QMI_ENCDEC_ENCODE_TLV(tlv_type, tlv_len, tlv_pointer);
-+			encoded_bytes += (TLV_TYPE_SIZE + TLV_LEN_SIZE);
-+			tlv_pointer = buf_dst;
-+			tlv_len = 0;
-+			buf_dst = buf_dst + TLV_LEN_SIZE + TLV_TYPE_SIZE;
-+			encode_tlv = 0;
-+		}
-+	}
-+
-+	return encoded_bytes;
-+}
-+
-+/**
-+ * qmi_decode_basic_elem() - Decodes elements of basic/primary data type
-+ * @buf_dst: Buffer to store the decoded element.
-+ * @buf_src: Buffer containing the elements in QMI wire format.
-+ * @elem_len: Number of elements to be decoded.
-+ * @elem_size: Size of a single instance of the element to be decoded.
-+ *
-+ * This function decodes the "elem_len" number of elements in QMI wire format,
-+ * each of size "elem_size" bytes from the source buffer "buf_src" and stores
-+ * the decoded elements in the destination buffer "buf_dst". The elements are
-+ * of primary data type which include u8 - u64 or similar. This
-+ * function returns the number of bytes of decoded information.
-+ *
-+ * Return: The total size of the decoded data elements, in bytes.
-+ */
-+static int qmi_decode_basic_elem(void *buf_dst, const void *buf_src,
-+				 u32 elem_len, u32 elem_size)
-+{
-+	u32 i, rc = 0;
-+
-+	for (i = 0; i < elem_len; i++) {
-+		QMI_ENCDEC_DECODE_N_BYTES(buf_dst, buf_src, elem_size);
-+		rc += elem_size;
-+	}
-+
-+	return rc;
-+}
-+
-+/**
-+ * qmi_decode_struct_elem() - Decodes elements of struct data type
-+ * @ei_array: Struct info array descibing the struct element.
-+ * @buf_dst: Buffer to store the decoded element.
-+ * @buf_src: Buffer containing the elements in QMI wire format.
-+ * @elem_len: Number of elements to be decoded.
-+ * @tlv_len: Total size of the encoded inforation corresponding to
-+ *           this struct element.
-+ * @dec_level: Depth of the nested structure from the main structure.
-+ *
-+ * This function decodes the "elem_len" number of elements in QMI wire format,
-+ * each of size "(tlv_len/elem_len)" bytes from the source buffer "buf_src"
-+ * and stores the decoded elements in the destination buffer "buf_dst". The
-+ * elements are of struct data type which includes any C structure. This
-+ * function returns the number of bytes of decoded information.
-+ *
-+ * Return: The total size of the decoded data elements on success, negative
-+ * errno on error.
-+ */
-+static int qmi_decode_struct_elem(struct qmi_elem_info *ei_array,
-+				  void *buf_dst, const void *buf_src,
-+				  u32 elem_len, u32 tlv_len,
-+				  int dec_level)
-+{
-+	int i, rc, decoded_bytes = 0;
-+	struct qmi_elem_info *temp_ei = ei_array;
-+
-+	for (i = 0; i < elem_len && decoded_bytes < tlv_len; i++) {
-+		rc = qmi_decode(temp_ei->ei_array, buf_dst, buf_src,
-+				tlv_len - decoded_bytes, dec_level);
-+		if (rc < 0)
-+			return rc;
-+		buf_src = buf_src + rc;
-+		buf_dst = buf_dst + temp_ei->elem_size;
-+		decoded_bytes += rc;
-+	}
-+
-+	if ((dec_level <= 2 && decoded_bytes != tlv_len) ||
-+	    (dec_level > 2 && (i < elem_len || decoded_bytes > tlv_len))) {
-+		pr_err("%s: Fault in decoding: dl(%d), db(%d), tl(%d), i(%d), el(%d)\n",
-+		       __func__, dec_level, decoded_bytes, tlv_len,
-+		       i, elem_len);
-+		return -EFAULT;
-+	}
-+
-+	return decoded_bytes;
-+}
-+
-+/**
-+ * qmi_decode_string_elem() - Decodes elements of string data type
-+ * @ei_array: Struct info array descibing the string element.
-+ * @buf_dst: Buffer to store the decoded element.
-+ * @buf_src: Buffer containing the elements in QMI wire format.
-+ * @tlv_len: Total size of the encoded inforation corresponding to
-+ *           this string element.
-+ * @dec_level: Depth of the string element from the main structure.
-+ *
-+ * This function decodes the string element of maximum length
-+ * "ei_array->elem_len" from the source buffer "buf_src" and puts it into
-+ * the destination buffer "buf_dst". This function returns number of bytes
-+ * decoded from the input buffer.
-+ *
-+ * Return: The total size of the decoded data elements on success, negative
-+ * errno on error.
-+ */
-+static int qmi_decode_string_elem(struct qmi_elem_info *ei_array,
-+				  void *buf_dst, const void *buf_src,
-+				  u32 tlv_len, int dec_level)
-+{
-+	int rc;
-+	int decoded_bytes = 0;
-+	u32 string_len = 0;
-+	u32 string_len_sz = 0;
-+	struct qmi_elem_info *temp_ei = ei_array;
-+
-+	if (dec_level == 1) {
-+		string_len = tlv_len;
-+	} else {
-+		string_len_sz = temp_ei->elem_len <= U8_MAX ?
-+				sizeof(u8) : sizeof(u16);
-+		rc = qmi_decode_basic_elem(&string_len, buf_src,
-+					   1, string_len_sz);
-+		decoded_bytes += rc;
-+	}
-+
-+	if (string_len > temp_ei->elem_len) {
-+		pr_err("%s: String len %d > Max Len %d\n",
-+		       __func__, string_len, temp_ei->elem_len);
-+		return -ETOOSMALL;
-+	} else if (string_len > tlv_len) {
-+		pr_err("%s: String len %d > Input Buffer Len %d\n",
-+		       __func__, string_len, tlv_len);
-+		return -EFAULT;
-+	}
-+
-+	rc = qmi_decode_basic_elem(buf_dst, buf_src + decoded_bytes,
-+				   string_len, temp_ei->elem_size);
-+	*((char *)buf_dst + string_len) = '\0';
-+	decoded_bytes += rc;
-+
-+	return decoded_bytes;
-+}
-+
-+/**
-+ * find_ei() - Find element info corresponding to TLV Type
-+ * @ei_array: Struct info array of the message being decoded.
-+ * @type: TLV Type of the element being searched.
-+ *
-+ * Every element that got encoded in the QMI message will have a type
-+ * information associated with it. While decoding the QMI message,
-+ * this function is used to find the struct info regarding the element
-+ * that corresponds to the type being decoded.
-+ *
-+ * Return: Pointer to struct info, if found
-+ */
-+static struct qmi_elem_info *find_ei(struct qmi_elem_info *ei_array,
-+				     u32 type)
-+{
-+	struct qmi_elem_info *temp_ei = ei_array;
-+
-+	while (temp_ei->data_type != QMI_EOTI) {
-+		if (temp_ei->tlv_type == (u8)type)
-+			return temp_ei;
-+		temp_ei = temp_ei + 1;
-+	}
-+
-+	return NULL;
-+}
-+
-+/**
-+ * qmi_decode() - Core Decode Function
-+ * @ei_array: Struct info array describing the structure to be decoded.
-+ * @out_c_struct: Buffer to hold the decoded C struct
-+ * @in_buf: Buffer containing the QMI message to be decoded
-+ * @in_buf_len: Length of the QMI message to be decoded
-+ * @dec_level: Decode level to indicate the depth of the nested structure,
-+ *             within the main structure, being decoded
-+ *
-+ * Return: The number of bytes of decoded information on success, negative
-+ * errno on error.
-+ */
-+static int qmi_decode(struct qmi_elem_info *ei_array, void *out_c_struct,
-+		      const void *in_buf, u32 in_buf_len,
-+		      int dec_level)
-+{
-+	struct qmi_elem_info *temp_ei = ei_array;
-+	u8 opt_flag_value = 1;
-+	u32 data_len_value = 0, data_len_sz = 0;
-+	u8 *buf_dst = out_c_struct;
-+	const u8 *tlv_pointer;
-+	u32 tlv_len = 0;
-+	u32 tlv_type;
-+	u32 decoded_bytes = 0;
-+	const void *buf_src = in_buf;
-+	int rc;
-+
-+	while (decoded_bytes < in_buf_len) {
-+		if (dec_level >= 2 && temp_ei->data_type == QMI_EOTI)
-+			return decoded_bytes;
-+
-+		if (dec_level == 1) {
-+			tlv_pointer = buf_src;
-+			QMI_ENCDEC_DECODE_TLV(&tlv_type,
-+					      &tlv_len, tlv_pointer);
-+			buf_src += (TLV_TYPE_SIZE + TLV_LEN_SIZE);
-+			decoded_bytes += (TLV_TYPE_SIZE + TLV_LEN_SIZE);
-+			temp_ei = find_ei(ei_array, tlv_type);
-+			if (!temp_ei && tlv_type < OPTIONAL_TLV_TYPE_START) {
-+				pr_err("%s: Inval element info\n", __func__);
-+				return -EINVAL;
-+			} else if (!temp_ei) {
-+				UPDATE_DECODE_VARIABLES(buf_src,
-+							decoded_bytes, tlv_len);
-+				continue;
-+			}
-+		} else {
-+			/*
-+			 * No length information for elements in nested
-+			 * structures. So use remaining decodable buffer space.
-+			 */
-+			tlv_len = in_buf_len - decoded_bytes;
-+		}
-+
-+		buf_dst = out_c_struct + temp_ei->offset;
-+		if (temp_ei->data_type == QMI_OPT_FLAG) {
-+			memcpy(buf_dst, &opt_flag_value, sizeof(u8));
-+			temp_ei = temp_ei + 1;
-+			buf_dst = out_c_struct + temp_ei->offset;
-+		}
-+
-+		if (temp_ei->data_type == QMI_DATA_LEN) {
-+			data_len_sz = temp_ei->elem_size == sizeof(u8) ?
-+					sizeof(u8) : sizeof(u16);
-+			rc = qmi_decode_basic_elem(&data_len_value, buf_src,
-+						   1, data_len_sz);
-+			memcpy(buf_dst, &data_len_value, sizeof(u32));
-+			temp_ei = temp_ei + 1;
-+			buf_dst = out_c_struct + temp_ei->offset;
-+			tlv_len -= data_len_sz;
-+			UPDATE_DECODE_VARIABLES(buf_src, decoded_bytes, rc);
-+		}
-+
-+		if (temp_ei->array_type == NO_ARRAY) {
-+			data_len_value = 1;
-+		} else if (temp_ei->array_type == STATIC_ARRAY) {
-+			data_len_value = temp_ei->elem_len;
-+		} else if (data_len_value > temp_ei->elem_len) {
-+			pr_err("%s: Data len %d > max spec %d\n",
-+			       __func__, data_len_value, temp_ei->elem_len);
-+			return -ETOOSMALL;
-+		}
-+
-+		switch (temp_ei->data_type) {
-+		case QMI_UNSIGNED_1_BYTE:
-+		case QMI_UNSIGNED_2_BYTE:
-+		case QMI_UNSIGNED_4_BYTE:
-+		case QMI_UNSIGNED_8_BYTE:
-+		case QMI_SIGNED_2_BYTE_ENUM:
-+		case QMI_SIGNED_4_BYTE_ENUM:
-+			rc = qmi_decode_basic_elem(buf_dst, buf_src,
-+						   data_len_value,
-+						   temp_ei->elem_size);
-+			UPDATE_DECODE_VARIABLES(buf_src, decoded_bytes, rc);
-+			break;
-+
-+		case QMI_STRUCT:
-+			rc = qmi_decode_struct_elem(temp_ei, buf_dst, buf_src,
-+						    data_len_value, tlv_len,
-+						    dec_level + 1);
-+			if (rc < 0)
-+				return rc;
-+			UPDATE_DECODE_VARIABLES(buf_src, decoded_bytes, rc);
-+			break;
-+
-+		case QMI_STRING:
-+			rc = qmi_decode_string_elem(temp_ei, buf_dst, buf_src,
-+						    tlv_len, dec_level);
-+			if (rc < 0)
-+				return rc;
-+			UPDATE_DECODE_VARIABLES(buf_src, decoded_bytes, rc);
-+			break;
-+
-+		default:
-+			pr_err("%s: Unrecognized data type\n", __func__);
-+			return -EINVAL;
-+		}
-+		temp_ei = temp_ei + 1;
-+	}
-+
-+	return decoded_bytes;
-+}
-+
-+/**
-+ * qmi_encode_message() - Encode C structure as QMI encoded message
-+ * @type:	Type of QMI message
-+ * @msg_id:	Message ID of the message
-+ * @len:	Passed as max length of the message, updated to actual size
-+ * @txn_id:	Transaction ID
-+ * @ei:		QMI message descriptor
-+ * @c_struct:	Reference to structure to encode
-+ *
-+ * Return: Buffer with encoded message, or negative ERR_PTR() on error
-+ */
-+void *qmi_encode_message(int type, unsigned int msg_id, size_t *len,
-+			 unsigned int txn_id, struct qmi_elem_info *ei,
-+			 const void *c_struct)
-+{
-+	struct qmi_header *hdr;
-+	ssize_t msglen = 0;
-+	void *msg;
++	struct rproc_srm_clk_info *c;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
 +	int ret;
 +
-+	/* Check the possibility of a zero length QMI message */
-+	if (!c_struct) {
-+		ret = qmi_calc_min_msg_len(ei, 1);
++	/* Note: not only configuring, but also enabling */
++
++	list_for_each_entry(c, clk_head, list) {
++		if (c->enabled)
++			continue;
++
++		ret = clk_prepare_enable(c->clk);
 +		if (ret) {
-+			pr_err("%s: Calc. len %d != 0, but NULL c_struct\n",
-+			       __func__, ret);
-+			return ERR_PTR(-EINVAL);
++			dev_err(rproc_srm_dev->dev, "clk %d (%s) cfg failed\n",
++				c->index, c->name);
++			rproc_srm_dev_deconfig_clocks(rproc_srm_dev);
++			return ret;
 +		}
++		c->enabled = true;
++		dev_dbg(rproc_srm_dev->dev, "clk %d (%s) configured\n",
++			c->index, c->name);
 +	}
 +
-+	msg = kzalloc(sizeof(*hdr) + *len, GFP_KERNEL);
-+	if (!msg)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Encode message, if we have a message */
-+	if (c_struct) {
-+		msglen = qmi_encode(ei, msg + sizeof(*hdr), c_struct, *len, 1);
-+		if (msglen < 0) {
-+			kfree(msg);
-+			return ERR_PTR(msglen);
-+		}
-+	}
-+
-+	hdr = msg;
-+	hdr->type = type;
-+	hdr->txn_id = txn_id;
-+	hdr->msg_id = msg_id;
-+	hdr->msg_len = msglen;
-+
-+	*len = sizeof(*hdr) + msglen;
-+
-+	return msg;
++	return 0;
 +}
-+EXPORT_SYMBOL(qmi_encode_message);
 +
-+/**
-+ * qmi_decode_message() - Decode QMI encoded message to C structure
-+ * @buf:	Buffer with encoded message
-+ * @len:	Amount of data in @buf
-+ * @ei:		QMI message descriptor
-+ * @c_struct:	Reference to structure to decode into
-+ *
-+ * Return: The number of bytes of decoded information on success, negative
-+ * errno on error.
-+ */
-+int qmi_decode_message(const void *buf, size_t len,
-+		       struct qmi_elem_info *ei, void *c_struct)
++static void rproc_srm_dev_put_clocks(struct rproc_srm_dev *rproc_srm_dev)
 +{
-+	if (!ei)
-+		return -EINVAL;
++	struct device *dev = rproc_srm_dev->dev;
++	struct rproc_srm_clk_info *c, *tmp;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
 +
-+	if (!c_struct || !buf || !len)
-+		return -EINVAL;
-+
-+	return qmi_decode(ei, c_struct, buf + sizeof(struct qmi_header),
-+			  len - sizeof(struct qmi_header), 1);
++	list_for_each_entry_safe(c, tmp, clk_head, list) {
++		clk_put(c->clk);
++		dev_dbg(dev, "put clock %d (%s)\n", c->index, c->name);
++		list_del(&c->list);
++	}
 +}
-+EXPORT_SYMBOL(qmi_decode_message);
 +
-+/* Common header in all QMI responses */
-+struct qmi_elem_info qmi_response_type_v01_ei[] = {
-+	{
-+		.data_type	= QMI_SIGNED_2_BYTE_ENUM,
-+		.elem_len	= 1,
-+		.elem_size	= sizeof(u16),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type	= QMI_COMMON_TLV_TYPE,
-+		.offset		= offsetof(struct qmi_response_type_v01, result),
-+		.ei_array	= NULL,
-+	},
-+	{
-+		.data_type	= QMI_SIGNED_2_BYTE_ENUM,
-+		.elem_len	= 1,
-+		.elem_size	= sizeof(u16),
-+		.array_type	= NO_ARRAY,
-+		.tlv_type	= QMI_COMMON_TLV_TYPE,
-+		.offset		= offsetof(struct qmi_response_type_v01, error),
-+		.ei_array	= NULL,
-+	},
-+	{
-+		.data_type	= QMI_EOTI,
-+		.elem_len	= 0,
-+		.elem_size	= 0,
-+		.array_type	= NO_ARRAY,
-+		.tlv_type	= QMI_COMMON_TLV_TYPE,
-+		.offset		= 0,
-+		.ei_array	= NULL,
++static int rproc_srm_dev_get_clocks(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct device_node *np = dev->of_node;
++	struct rproc_srm_clk_info *c;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
++	const char *name;
++	int nb_c, ret;
++	unsigned int i;
++
++	if (!np)
++		return 0;
++
++	nb_c = of_clk_get_parent_count(np);
++	if (!nb_c)
++		return 0;
++
++	for (i = 0; i < nb_c; i++) {
++		c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
++		if (!c) {
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		c->clk = of_clk_get(np, i);
++		if (IS_ERR(c->clk)) {
++			dev_err(dev, "clock %d KO (%ld)\n", i,
++				PTR_ERR(c->clk));
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		if (!of_property_read_string_index(np, "clock-names", i,
++						   &name))
++			c->name = devm_kstrdup(dev, name, GFP_KERNEL);
++
++		c->index = i;
++
++		list_add_tail(&c->list, clk_head);
++		dev_dbg(dev, "got clock %d (%s)\n", c->index, c->name);
++	}
++
++	return 0;
++
++err:
++	rproc_srm_dev_put_clocks(rproc_srm_dev);
++	return ret;
++}
++
++/* Regulators */
++static void rproc_srm_dev_deconfig_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct rproc_srm_regu_info *r;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++
++	list_for_each_entry(r, regu_head, list) {
++		if (!r->enabled)
++			continue;
++
++		regulator_disable(r->regu);
++		r->enabled = false;
++		dev_dbg(rproc_srm_dev->dev, "regu %d (%s) disabled\n",
++			r->index, r->name);
++	}
++}
++
++static int rproc_srm_dev_config_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct rproc_srm_regu_info *r;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++	int ret;
++
++	/* Enable all the regulators */
++	list_for_each_entry(r, regu_head, list) {
++		if (r->enabled)
++			continue;
++
++		ret = regulator_enable(r->regu);
++		if (ret) {
++			dev_err(rproc_srm_dev->dev, "regu %d (%s) failed\n",
++				r->index, r->name);
++			rproc_srm_dev_deconfig_regus(rproc_srm_dev);
++			return ret;
++		}
++		r->enabled = true;
++		dev_dbg(rproc_srm_dev->dev, "regu %d (%s) enabled\n",
++			r->index, r->name);
++	}
++
++	return 0;
++}
++
++static void rproc_srm_dev_put_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct rproc_srm_regu_info *r, *tmp;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++
++	list_for_each_entry_safe(r, tmp, regu_head, list) {
++		devm_regulator_put(r->regu);
++		dev_dbg(dev, "put regu %d (%s)\n", r->index, r->name);
++		list_del(&r->list);
++	}
++}
++
++static int rproc_srm_dev_get_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct device_node *np = dev->of_node;
++	struct property *p;
++	const char *n;
++	char *name;
++	struct rproc_srm_regu_info *r;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++	int ret, nb_s = 0;
++
++	if (!np)
++		return 0;
++
++	for_each_property_of_node(np, p) {
++		n = strstr(p->name, SUPPLY_SUFFIX);
++		if (!n || n == p->name)
++			continue;
++
++		r = devm_kzalloc(dev, sizeof(*r), GFP_KERNEL);
++		if (!r) {
++			ret = -ENOMEM;
++			goto err_list;
++		}
++
++		name = devm_kstrdup(dev, p->name, GFP_KERNEL);
++		name[strlen(p->name) - strlen(SUPPLY_SUFFIX)] = '\0';
++		r->name = name;
++
++		r->regu = devm_regulator_get(dev, r->name);
++		if (IS_ERR(r->regu)) {
++			dev_err(dev, "cannot get regu %s\n", r->name);
++			ret = -EINVAL;
++			goto err_list;
++		}
++
++		r->index = nb_s++;
++
++		list_add_tail(&r->list, regu_head);
++		dev_dbg(dev, "got regu %d (%s)\n", r->index, r->name);
++	}
++
++	return 0;
++
++err_list:
++	rproc_srm_dev_put_regus(rproc_srm_dev);
++	return ret;
++}
++
++/* Pins */
++static void rproc_srm_dev_put_pins(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct rproc_srm_pin_info *p, *tmp;
++	struct list_head *pin_head = &rproc_srm_dev->pin_list_head;
++
++	list_for_each_entry_safe(p, tmp, pin_head, list) {
++		devm_kfree(dev, p->name);
++		devm_kfree(dev, p);
++		dev_dbg(dev, "remove pin cfg %d (%s)\n", p->index, p->name);
++		list_del(&p->list);
++	}
++
++	if (!IS_ERR_OR_NULL(rproc_srm_dev->pctrl))
++		devm_pinctrl_put(rproc_srm_dev->pctrl);
++}
++
++static int rproc_srm_dev_get_pins(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct device_node *np = dev->of_node;
++	struct rproc_srm_pin_info *p;
++	struct list_head *pin_head = &rproc_srm_dev->pin_list_head;
++	int ret, nb_p;
++	unsigned int i;
++	const char *name;
++
++	if (!np)
++		return 0;
++
++	rproc_srm_dev->pctrl = devm_pinctrl_get(dev);
++	if (IS_ERR(rproc_srm_dev->pctrl))
++		return 0;
++
++	nb_p = of_property_count_strings(np, "pinctrl-names");
++	if (!nb_p) {
++		dev_err(dev, "pinctrl-names not defined\n");
++		devm_pinctrl_put(rproc_srm_dev->pctrl);
++		return -EINVAL;
++	}
++
++	for (i = 0; i < nb_p; i++) {
++		p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
++		if (!p) {
++			ret = -ENOMEM;
++			goto err_list;
++		}
++
++		if (of_property_read_string_index(np, "pinctrl-names", i,
++						  &name)) {
++			dev_err(dev, "no pinctrl-names (pin %d)\n", i);
++			ret = -EINVAL;
++			goto err_list;
++		}
++		p->name = devm_kstrdup(dev, name, GFP_KERNEL);
++
++		p->index = i;
++
++		list_add_tail(&p->list, pin_head);
++		dev_dbg(dev, "found pin cfg %d (%s)\n", p->index, p->name);
++	}
++	return 0;
++
++err_list:
++	rproc_srm_dev_put_pins(rproc_srm_dev);
++	return ret;
++}
++
++/* Core */
++static void
++rproc_srm_dev_unbind(struct device *dev, struct device *master, void *data)
++{
++	struct rproc_srm_dev *rproc_srm_dev = dev_get_drvdata(dev);
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	rproc_srm_dev_deconfig_regus(rproc_srm_dev);
++	rproc_srm_dev_deconfig_clocks(rproc_srm_dev);
++
++	/* For pins: nothing to deconfig */
++}
++
++static int
++rproc_srm_dev_bind(struct device *dev, struct device *master, void *data)
++{
++	struct rproc_srm_dev *rproc_srm_dev = dev_get_drvdata(dev);
++	int ret;
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	ret = rproc_srm_dev_config_clocks(rproc_srm_dev);
++	if (ret)
++		return ret;
++
++	ret = rproc_srm_dev_config_regus(rproc_srm_dev);
++	if (ret)
++		return ret;
++
++	/* No need for pins config ("default" pinctrl applied before probe) */
++
++	return 0;
++}
++
++static const struct component_ops rproc_srm_dev_ops = {
++	.bind = rproc_srm_dev_bind,
++	.unbind = rproc_srm_dev_unbind,
++};
++
++static int rproc_srm_dev_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rproc_srm_dev *rproc_srm_dev;
++	int ret;
++
++	dev_dbg(dev, "%s for node %s\n", __func__, dev->of_node->name);
++
++	rproc_srm_dev = devm_kzalloc(dev, sizeof(struct rproc_srm_dev),
++				     GFP_KERNEL);
++	if (!rproc_srm_dev)
++		return -ENOMEM;
++
++	rproc_srm_dev->dev = dev;
++	INIT_LIST_HEAD(&rproc_srm_dev->clk_list_head);
++	INIT_LIST_HEAD(&rproc_srm_dev->pin_list_head);
++	INIT_LIST_HEAD(&rproc_srm_dev->regu_list_head);
++
++	/* Get clocks, regu and pinctrl */
++	ret = rproc_srm_dev_get_clocks(rproc_srm_dev);
++	if (ret)
++		return ret;
++
++	ret = rproc_srm_dev_get_regus(rproc_srm_dev);
++	if (ret)
++		goto err;
++
++	ret = rproc_srm_dev_get_pins(rproc_srm_dev);
++	if (ret)
++		goto err;
++
++	dev_set_drvdata(dev, rproc_srm_dev);
++
++	return  component_add(dev, &rproc_srm_dev_ops);
++
++err:
++	rproc_srm_dev_put_pins(rproc_srm_dev);
++	rproc_srm_dev_put_regus(rproc_srm_dev);
++	rproc_srm_dev_put_clocks(rproc_srm_dev);
++	return ret;
++}
++
++static int rproc_srm_dev_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rproc_srm_dev *rproc_srm_dev = dev_get_drvdata(dev);
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	component_del(dev, &rproc_srm_dev_ops);
++
++	rproc_srm_dev_put_regus(rproc_srm_dev);
++	rproc_srm_dev_put_pins(rproc_srm_dev);
++	rproc_srm_dev_put_clocks(rproc_srm_dev);
++
++	return 0;
++}
++
++static const struct of_device_id rproc_srm_dev_match[] = {
++	{ .compatible = "rproc-srm-dev", },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, rproc_srm_dev_match);
++
++static struct platform_driver rproc_srm_dev_driver = {
++	.probe = rproc_srm_dev_probe,
++	.remove = rproc_srm_dev_remove,
++	.driver = {
++		.name = "rproc-srm-dev",
++		.of_match_table = of_match_ptr(rproc_srm_dev_match),
 +	},
 +};
-+EXPORT_SYMBOL(qmi_response_type_v01_ei);
 +
-+MODULE_DESCRIPTION("QMI encoder/decoder helper");
++module_platform_driver(rproc_srm_dev_driver);
++
++MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
++MODULE_DESCRIPTION("Remoteproc System Resource Manager driver - dev");
 +MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/soc/qcom/qmi.h b/include/linux/soc/qcom/qmi.h
-new file mode 100644
-index 000000000000..1b66e9a6074f
---- /dev/null
-+++ b/include/linux/soc/qcom/qmi.h
-@@ -0,0 +1,114 @@
-+/*
-+ * Copyright (c) 2012-2014, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2017, Linaro Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+#ifndef __QMI_HELPERS_H__
-+#define __QMI_HELPERS_H__
-+
-+#include <linux/types.h>
-+
-+/**
-+ * qmi_header - wireformat header of QMI messages
-+ * @type:	type of message
-+ * @txn_id:	transaction id
-+ * @msg_id:	message id
-+ * @msg_len:	length of message payload following header
-+ */
-+struct qmi_header {
-+	u8 type;
-+	u16 txn_id;
-+	u16 msg_id;
-+	u16 msg_len;
-+} __packed;
-+
-+#define QMI_REQUEST	0
-+#define QMI_RESPONSE	2
-+#define QMI_INDICATION	4
-+
-+#define QMI_COMMON_TLV_TYPE 0
-+
-+enum qmi_elem_type {
-+	QMI_EOTI,
-+	QMI_OPT_FLAG,
-+	QMI_DATA_LEN,
-+	QMI_UNSIGNED_1_BYTE,
-+	QMI_UNSIGNED_2_BYTE,
-+	QMI_UNSIGNED_4_BYTE,
-+	QMI_UNSIGNED_8_BYTE,
-+	QMI_SIGNED_2_BYTE_ENUM,
-+	QMI_SIGNED_4_BYTE_ENUM,
-+	QMI_STRUCT,
-+	QMI_STRING,
-+};
-+
-+enum qmi_array_type {
-+	NO_ARRAY,
-+	STATIC_ARRAY,
-+	VAR_LEN_ARRAY,
-+};
-+
-+/**
-+ * struct qmi_elem_info - describes how to encode a single QMI element
-+ * @data_type:	Data type of this element.
-+ * @elem_len:	Array length of this element, if an array.
-+ * @elem_size:	Size of a single instance of this data type.
-+ * @array_type:	Array type of this element.
-+ * @tlv_type:	QMI message specific type to identify which element
-+ *		is present in an incoming message.
-+ * @offset:	Specifies the offset of the first instance of this
-+ *		element in the data structure.
-+ * @ei_array:	Null-terminated array of @qmi_elem_info to describe nested
-+ *		structures.
-+ */
-+struct qmi_elem_info {
-+	enum qmi_elem_type data_type;
-+	u32 elem_len;
-+	u32 elem_size;
-+	enum qmi_array_type array_type;
-+	u8 tlv_type;
-+	u32 offset;
-+	struct qmi_elem_info *ei_array;
-+};
-+
-+#define QMI_RESULT_SUCCESS_V01			0
-+#define QMI_RESULT_FAILURE_V01			1
-+
-+#define QMI_ERR_NONE_V01			0
-+#define QMI_ERR_MALFORMED_MSG_V01		1
-+#define QMI_ERR_NO_MEMORY_V01			2
-+#define QMI_ERR_INTERNAL_V01			3
-+#define QMI_ERR_CLIENT_IDS_EXHAUSTED_V01	5
-+#define QMI_ERR_INVALID_ID_V01			41
-+#define QMI_ERR_ENCODING_V01			58
-+#define QMI_ERR_INCOMPATIBLE_STATE_V01		90
-+#define QMI_ERR_NOT_SUPPORTED_V01		94
-+
-+/**
-+ * qmi_response_type_v01 - common response header (decoded)
-+ * @result:	result of the transaction
-+ * @error:	error value, when @result is QMI_RESULT_FAILURE_V01
-+ */
-+struct qmi_response_type_v01 {
-+	u16 result;
-+	u16 error;
-+};
-+
-+extern struct qmi_elem_info qmi_response_type_v01_ei[];
-+
-+void *qmi_encode_message(int type, unsigned int msg_id, size_t *len,
-+			 unsigned int txn_id, struct qmi_elem_info *ei,
-+			 const void *c_struct);
-+
-+int qmi_decode_message(const void *buf, size_t len,
-+		       struct qmi_elem_info *ei, void *c_struct);
-+
-+#endif
 -- 
-2.15.0
+2.7.4
