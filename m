@@ -1,8 +1,8 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 01/16] remoteproc: add rproc_va_to_pa function
-Date: Thu, 30 Nov 2017 17:46:36 +0100
-Message-ID: <1512060411-729-2-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 03/16] remoteproc: introduce rproc_add_carveout function
+Date: Thu, 30 Nov 2017 17:46:38 +0100
+Message-ID: <1512060411-729-4-git-send-email-loic.pallardy@st.com>
 In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
 References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
@@ -11,44 +11,86 @@ To: bjorn.andersson@linaro.org, ohad@wizery.com
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This new function translates CPU virtual address in
-CPU physical one according to virtual address location.
+This patch introduces a new API to allow platform driver to register
+platform specific carveout regions.
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c     | 22 ++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h |  7 +++++++
+ include/linux/remoteproc.h               |  2 ++
+ 3 files changed, 31 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index eab14b4..faa18a7 100644
+index f23daf9..279320a 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -139,6 +139,17 @@ static void rproc_disable_iommu(struct rproc *rproc)
- 	iommu_domain_free(domain);
+@@ -737,6 +737,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	carveout->dma = dma;
+ 	carveout->da = rsc->da;
+ 	carveout->release = rproc_release_carveout;
++	carveout->priv = (void *)CARVEOUT_RSC_ALLOCATED;
+ 
+ 	list_add_tail(&carveout->node, &rproc->carveouts);
+ 
+@@ -751,6 +752,27 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	return ret;
  }
  
-+static phys_addr_t rproc_va_to_pa(void *cpu_addr)
++/**
++ * rproc_add_carveout() - register an allocated carveout region
++ * @rproc: rproc handle
++ * @mem: memory entry to register
++ *
++ * This function registers specified memory entry in @rproc carveouts list.
++ * Specified carveout should have been allocated before registering.
++ */
++int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
 +{
-+	if (is_vmalloc_addr(cpu_addr)) {
-+		return page_to_phys(vmalloc_to_page(cpu_addr)) +
-+				    offset_in_page(cpu_addr);
-+	}
++	if (!rproc || !mem)
++		return -EINVAL;
 +
-+	WARN_ON(!virt_addr_valid(cpu_addr));
-+	return virt_to_phys(cpu_addr);
++	mem->priv = (void *)CARVEOUT_EXTERNAL;
++
++	list_add_tail(&mem->node, &rproc->carveouts);
++
++	return 0;
 +}
++EXPORT_SYMBOL(rproc_add_carveout);
 +
- /**
-  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
-  * @rproc: handle of a remote processor
-@@ -700,7 +711,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	 * In this case, the device address and the physical address
- 	 * are the same.
- 	 */
--	rsc->pa = dma;
-+	rsc->pa = (u32)rproc_va_to_pa(va);
+ /*
+  * A lookup table for resource handlers. The indices are defined in
+  * enum fw_resource_type.
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index c1077be..69b22ac 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -23,6 +23,13 @@
+ #include <linux/irqreturn.h>
+ #include <linux/firmware.h>
  
- 	carveout->va = va;
- 	carveout->len = rsc->len;
++/* Indicate carveout origin */
++enum carveout_src {
++	CARVEOUT_RSC		= 0,
++	CARVEOUT_RSC_ALLOCATED	= 1,
++	CARVEOUT_EXTERNAL	= 2,
++};
++
+ struct rproc;
+ 
+ /**
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 8780f2e..5bd5175 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -522,6 +522,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ int rproc_del(struct rproc *rproc);
+ void rproc_free(struct rproc *rproc);
+ 
++int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
++
+ int rproc_boot(struct rproc *rproc);
+ void rproc_shutdown(struct rproc *rproc);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
 -- 
 1.9.1
