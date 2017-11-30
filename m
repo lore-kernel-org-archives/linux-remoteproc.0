@@ -1,152 +1,186 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH v5 1/6] remoteproc: qcom: mdt_loader: Make the firmware authentication optional
-Date: Tue, 14 Nov 2017 16:23:09 +0530
-Message-Id: <1510656794-3815-2-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-References: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: sricharan@codeaurora.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 09/16] remoteproc: add memory device management support
+Date: Thu, 30 Nov 2017 17:46:44 +0100
+Message-ID: <1512060411-729-10-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-qcom_mdt_load function loads the mdt type firmware and
-initialises the secure memory as well. Make the initialisation only
-when requested by the caller, so that the function can be used
-by self-authenticating remoteproc as well.
+This patch add functions to create and delete some
+remoteproc sub-devices with dedicated dma coherent region.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+These "memory devices" are identified by their name and
+will be used for carveout, vring, buffers allocation
+in specific memory region.
+
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/soc/qcom/mdt_loader.c       | 82 ++++++++++++++++++++++++++-----------
- include/linux/soc/qcom/mdt_loader.h |  3 ++
- 2 files changed, 62 insertions(+), 23 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 134 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 123 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 08bd854..65ab833 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -74,21 +74,9 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index cc53247..76d54bf 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -69,6 +69,127 @@ static const char *rproc_crash_to_string(enum rproc_crash_type type)
+ 	return "unknown";
  }
- EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
  
--/**
-- * qcom_mdt_load() - load the firmware which header is loaded as fw
-- * @dev:	device handle to associate resources with
-- * @fw:		firmware object for the mdt file
-- * @firmware:	name of the firmware, for construction of segment file names
-- * @pas_id:	PAS identifier
-- * @mem_region:	allocated memory region to load firmware into
-- * @mem_phys:	physical address of allocated memory region
-- * @mem_size:	size of the allocated memory region
-- *
-- * Returns 0 on success, negative errno otherwise.
-- */
--int qcom_mdt_load(struct device *dev, const struct firmware *fw,
--		  const char *firmware, int pas_id, void *mem_region,
--		  phys_addr_t mem_phys, size_t mem_size)
-+static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
-+			   const char *firmware, int pas_id, void *mem_region,
-+			   phys_addr_t mem_phys, size_t mem_size, bool pas_init)
- {
- 	const struct elf32_phdr *phdrs;
- 	const struct elf32_phdr *phdr;
-@@ -119,10 +107,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	if (!fw_name)
- 		return -ENOMEM;
- 
--	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
--	if (ret) {
--		dev_err(dev, "invalid firmware metadata\n");
--		goto out;
-+	if (pas_init) {
-+		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
-+		if (ret) {
-+			dev_err(dev, "invalid firmware metadata\n");
-+			goto out;
-+		}
- 	}
- 
- 	for (i = 0; i < ehdr->e_phnum; i++) {
-@@ -142,10 +132,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	}
- 
- 	if (relocate) {
--		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
--		if (ret) {
--			dev_err(dev, "unable to setup relocation\n");
--			goto out;
-+		if (pas_init) {
-+			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
-+						     max_addr - min_addr);
-+			if (ret) {
-+				dev_err(dev, "unable to setup relocation\n");
-+				goto out;
-+			}
- 		}
- 
- 		/*
-@@ -197,7 +190,50 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 
- 	return ret;
- }
++static phys_addr_t rproc_va_to_pa(void *cpu_addr)
++{
++	if (is_vmalloc_addr(cpu_addr)) {
++		return page_to_phys(vmalloc_to_page(cpu_addr)) +
++				    offset_in_page(cpu_addr);
++	}
++
++	WARN_ON(!virt_addr_valid(cpu_addr));
++	return virt_to_phys(cpu_addr);
++}
++
++struct rproc_memdev {
++	struct device dev;
++	struct rproc *rproc;
++	struct rproc_mem_entry *mem;
++};
++
++#define to_memdevice(d) container_of(d, struct rproc_memdev, dev)
 +
 +/**
-+ * qcom_mdt_load() - sets up the secure memory for the firmware and
-+		     loads the firmware
-+ * @dev:	device handle to associate resources with
-+ * @fw:		firmware object for the mdt file
-+ * @firmware:	name of the firmware, for construction of segment file names
-+ * @pas_id:	PAS identifier
-+ * @mem_region:	allocated memory region to load firmware into
-+ * @mem_phys:	physical address of allocated memory region
-+ * @mem_size:	size of the allocated memory region
++ * rproc_memdev_release() - release the existence of a memdevice
 + *
-+ * Returns 0 on success, negative errno otherwise.
++ * @dev: the subdevice's dev
 + */
-+int qcom_mdt_load(struct device *dev, const struct firmware *fw,
-+		  const char *firmware, int pas_id, void *mem_region,
-+		  phys_addr_t mem_phys, size_t mem_size)
++static void rproc_memdev_release(struct device *dev)
 +{
-+	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
-+			       mem_size, true);
-+}
- EXPORT_SYMBOL_GPL(qcom_mdt_load);
- 
-+/**
-+ * qcom_mdt_load_no_init() - load the firmware which header is loaded as fw
-+ * @dev:	device handle to associate resources with
-+ * @fw:		firmware object for the mdt file
-+ * @firmware:	name of the firmware, for construction of segment file names
-+ * @pas_id:	PAS identifier
-+ * @mem_region:	allocated memory region to load firmware into
-+ * @mem_phys:	physical address of allocated memory region
-+ * @mem_size:	size of the allocated memory region
-+ *
-+ * Returns 0 on success, negative errno otherwise.
-+ */
-+int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
-+			  const char *firmware, int pas_id,
-+			  void *mem_region, phys_addr_t mem_phys,
-+			  size_t mem_size)
-+{
-+	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
-+			       mem_size, false);
-+}
-+EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
++	struct rproc_memdev *memd = to_memdevice(dev);
 +
- MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-index bd8e086..151ee6a 100644
---- a/include/linux/soc/qcom/mdt_loader.h
-+++ b/include/linux/soc/qcom/mdt_loader.h
-@@ -16,4 +16,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 		  const char *fw_name, int pas_id, void *mem_region,
- 		  phys_addr_t mem_phys, size_t mem_size);
++	kfree(memd);
++}
++
++/**
++ * rproc_memdev_add() - add a memory-device on remote processor
++ *
++ * @rproc: the parent remote processor
++ * @mem: memory resource entry allow to define the dma coherent memory of memory-device
++ *
++ * This function add a memory-device child on rproc parent. This memory-device allow
++ * to define a new dma coherent memory area. When the rproc would alloc a
++ * dma coherent memory it's find the memory-device that match with physical memory
++ * asked (if there is no children that match, the rproc is the default device)
++ *
++ * Returns the memory-device handle on success, and error on failure.
++ */
++static struct rproc_memdev *rproc_memdev_add(struct rproc *rproc,
++					     struct rproc_mem_entry *mem)
++{
++	struct rproc_memdev *memd;
++	int ret;
++
++	if (!mem || strlen(mem->name) == 0) {
++		ret = -EINVAL;
++		goto err;
++	}
++
++	memd = kzalloc(sizeof(*memd), GFP_KERNEL);
++	if (!memd) {
++		ret = -ENOMEM;
++		goto err;
++	}
++
++	memd->rproc = rproc;
++	memd->mem = mem;
++	memd->dev.parent = rproc->dev.parent;
++	memd->dev.release = rproc_memdev_release;
++	dev_set_name(&memd->dev, "%s#%s", dev_name(memd->dev.parent), mem->name);
++	dev_set_drvdata(&memd->dev, memd);
++
++	ret = device_register(&memd->dev);
++	if (ret)
++		goto err_dev;
++
++	ret = dmam_declare_coherent_memory(&memd->dev,
++					   rproc_va_to_pa(mem->va), mem->da,
++					   mem->len,
++					   DMA_MEMORY_EXCLUSIVE);
++	if (ret < 0)
++		goto err_dev;
++
++	return memd;
++
++err_dev:
++	put_device(&memd->dev);
++err:
++	dev_err(&rproc->dev, "unable to register subdev %s, err = %d\n",
++		(mem && strlen(mem->name)) ? mem->name : "unnamed", ret);
++	return ERR_PTR(ret);
++}
++
++/**
++ * rproc_memdev_del() - delete a memory-device of remote processor
++ *
++ * @memdev: rproc memory-device
++ */
++static void rproc_memdev_del(struct rproc_memdev *memdev)
++{
++	if (get_device(&memdev->dev)) {
++		device_unregister(&memdev->dev);
++		put_device(&memdev->dev);
++	}
++}
++
++/**
++ * rproc_memdev_unregister() - unregister memory-device of remote processor
++ *
++ * @dev: rproc memory-device
++ * @data: Not use (just to be compliant with device_for_each_child)
++ *
++ * This function is called by device_for_each_child function when unregister
++ * remote processor.
++ */
++static int rproc_memdev_unregister(struct device *dev, void *data)
++{
++	struct rproc_memdev *memd = to_memdevice(dev);
++	struct rproc *rproc = data;
++
++	if (dev != &rproc->dev)
++		rproc_memdev_del(memd);
++	return 0;
++}
++
+ /*
+  * This is the IOMMU fault handler we register with the IOMMU API
+  * (when relevant; not all remote processors access memory through
+@@ -139,17 +260,6 @@ static void rproc_disable_iommu(struct rproc *rproc)
+ 	iommu_domain_free(domain);
+ }
  
-+int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
-+			  const char *fw_name, int pas_id, void *mem_region,
-+			  phys_addr_t mem_phys, size_t mem_size);
- #endif
+-static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+-{
+-	if (is_vmalloc_addr(cpu_addr)) {
+-		return page_to_phys(vmalloc_to_page(cpu_addr)) +
+-				    offset_in_page(cpu_addr);
+-	}
+-
+-	WARN_ON(!virt_addr_valid(cpu_addr));
+-	return virt_to_phys(cpu_addr);
+-}
+-
+ /**
+  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
+  * @rproc: handle of a remote processor
+@@ -1678,6 +1788,8 @@ int rproc_del(struct rproc *rproc)
+ 
+ 	rproc_delete_debug_dir(rproc);
+ 
++	device_for_each_child(rproc->dev.parent, rproc,
++			      rproc_memdev_unregister);
+ 	/* the rproc is downref'ed as soon as it's removed from the klist */
+ 	mutex_lock(&rproc_list_mutex);
+ 	list_del(&rproc->node);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.9.1
