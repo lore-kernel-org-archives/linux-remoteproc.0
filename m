@@ -1,143 +1,72 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 1/2] remoteproc: debug: add resource table dump feature
-Date: Mon, 6 Nov 2017 18:09:55 +0100
-Message-ID: <1509988196-24377-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1509988196-24377-1-git-send-email-loic.pallardy@st.com>
-References: <1509988196-24377-1-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 11/16] remoteproc: introduce rproc_find_carveout_by_name function
+Date: Thu, 30 Nov 2017 17:46:46 +0100
+Message-ID: <1512060411-729-12-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org, ohad@wizery.com
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds the capability to display the content of
-the resource table associated to a remote processor firmware.
+This patch provides a new function to find a carveout according
+to a name.
+If match found, this function returns a point on the corresponding
+carveout.
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
-V2 :
-- Fix 0-DAY reported issues on open function prototype
+ drivers/remoteproc/remoteproc_core.c | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-drivers/remoteproc/remoteproc_debugfs.c | 99 +++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 1c122e2..dc5e259 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -155,6 +155,103 @@ static ssize_t rproc_recovery_read(struct file *filp, char __user *userbuf,
- 	.llseek = generic_file_llseek,
- };
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 2b7effb..8d990b1 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -367,6 +367,42 @@ void *rproc_find_carveout_by_da(struct rproc *rproc, u64 da, int len)
+ 	return va;
+ }
  
-+/* Expose resource table content via debugfs */
-+static int rproc_rsc_table_show(struct seq_file *seq, void *p)
++/**
++ * rproc_find_carveout_by_name() - lookup the carveout region by a name
++ * @rproc: handle of a remote processor
++ * @name: carveout name to find
++ *
++ * Platform driver has the capability to register some pre-allacoted carveout
++ * (physically contiguous memory regions) before rproc firmware loading and
++ * associated resource table analysis. These regions may be dedicated memory
++ * regions internal to the coprocessor or specified DDR region with specific
++ * attributes
++ *
++ * This function is a helper function with which we can go over the
++ * allocated carveouts and return associated region characteristics like
++ * coprocessor address, length or processor virtual address.
++ *
++ * The function returns a valid pointer on carveout entry on success or NULL on failure.
++ */
++struct rproc_mem_entry *
++rproc_find_carveout_by_name(struct rproc *rproc, char *name)
 +{
-+	static const char * const types[] = {"carveout", "devmem", "trace", "vdev"};
-+	struct rproc *rproc = seq->private;
-+	struct resource_table *table = rproc->table_ptr;
-+	struct fw_rsc_carveout *c;
-+	struct fw_rsc_devmem *d;
-+	struct fw_rsc_trace *t;
-+	struct fw_rsc_vdev *v;
-+	int i, j;
++	struct rproc_mem_entry *carveout, *mem = NULL;
 +
-+	if (!table) {
-+		seq_puts(seq, "No resource table found\n");
-+		return 0;
-+	}
++	if (!name)
++		return NULL;
 +
-+	for (i = 0; i < table->num; i++) {
-+		int offset = table->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table + offset;
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+
-+		switch (hdr->type) {
-+		case RSC_CARVEOUT:
-+			c = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			seq_printf(seq, "  Device Address 0x%x\n", c->da);
-+			seq_printf(seq, "  Physical Address 0x%x\n", c->pa);
-+			seq_printf(seq, "  Length 0x%x Bytes\n", c->len);
-+			seq_printf(seq, "  Flags 0x%x\n", c->flags);
-+			seq_printf(seq, "  Reserved (should be zero) [%d]\n", c->reserved);
-+			seq_printf(seq, "  Name %s\n\n", c->name);
-+			break;
-+		case RSC_DEVMEM:
-+			d = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			seq_printf(seq, "  Device Address 0x%x\n", d->da);
-+			seq_printf(seq, "  Physical Address 0x%x\n", d->pa);
-+			seq_printf(seq, "  Length 0x%x Bytes\n", d->len);
-+			seq_printf(seq, "  Flags 0x%x\n", d->flags);
-+			seq_printf(seq, "  Reserved (should be zero) [%d]\n", d->reserved);
-+			seq_printf(seq, "  Name %s\n\n", d->name);
-+			break;
-+		case RSC_TRACE:
-+			t = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+			seq_printf(seq, "  Device Address 0x%x\n", t->da);
-+			seq_printf(seq, "  Length 0x%x Bytes\n", t->len);
-+			seq_printf(seq, "  Reserved (should be zero) [%d]\n", t->reserved);
-+			seq_printf(seq, "  Name %s\n\n", t->name);
-+			break;
-+		case RSC_VDEV:
-+			v = rsc;
-+			seq_printf(seq, "Entry %d is of type %s\n", i, types[hdr->type]);
-+
-+			seq_printf(seq, "  ID %d\n", v->id);
-+			seq_printf(seq, "  Notify ID %d\n", v->notifyid);
-+			seq_printf(seq, "  Device features 0x%x\n", v->dfeatures);
-+			seq_printf(seq, "  Guest features 0x%x\n", v->gfeatures);
-+			seq_printf(seq, "  Config length 0x%x\n", v->config_len);
-+			seq_printf(seq, "  Status 0x%x\n", v->status);
-+			seq_printf(seq, "  Number of vrings %d\n", v->num_of_vrings);
-+			seq_printf(seq, "  Reserved (should be zero) [%d][%d]\n\n",
-+				   v->reserved[0], v->reserved[1]);
-+
-+			for (j = 0; j < v->num_of_vrings; j++) {
-+				seq_printf(seq, "  Vring %d\n", j);
-+				seq_printf(seq, "    Device Address 0x%x\n", v->vring[j].da);
-+				seq_printf(seq, "    Alignment %d\n", v->vring[j].align);
-+				seq_printf(seq, "    Number of buffers %d\n", v->vring[j].num);
-+				seq_printf(seq, "    Notify ID %d\n", v->vring[j].notifyid);
-+				seq_printf(seq, "    Physical Address 0x%x\n\n",
-+					   v->vring[j].pa);
-+			}
-+			break;
-+		default:
-+			seq_printf(seq, "Unknown resource type found: %d [hdr: %p]\n",
-+				   hdr->type, hdr);
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		/* Compare carveout and requested names */
++		if (!strcmp(carveout->name, name)) {
++			mem = carveout;
 +			break;
 +		}
 +	}
 +
-+	return 0;
++	return mem;
 +}
 +
-+static int rproc_rsc_table_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, rproc_rsc_table_show, inode->i_private);
-+}
-+
-+static const struct file_operations rproc_rsc_table_ops = {
-+	.open		= rproc_rsc_table_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
- void rproc_remove_trace_file(struct dentry *tfile)
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
  {
- 	debugfs_remove(tfile);
-@@ -198,6 +295,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 			    rproc, &rproc_name_ops);
- 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_recovery_ops);
-+	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
-+			    rproc, &rproc_rsc_table_ops);
- }
- 
- void __init rproc_init_debugfs(void)
+ 	struct rproc *rproc = rvdev->rproc;
 -- 
 1.9.1
