@@ -1,32 +1,60 @@
-Return-Path: <clew@codeaurora.org>
-Subject: Re: [PATCH v4 2/5] soc: qcom: Introduce QMI helpers
-References: <20171130011644.9421-1-bjorn.andersson@linaro.org>
- <20171130011644.9421-3-bjorn.andersson@linaro.org>
-From: Chris Lew <clew@codeaurora.org>
-Message-ID: <e011eb7b-61c2-9784-caa5-0075c4f20f14@codeaurora.org>
-Date: Thu, 30 Nov 2017 09:33:54 -0800
+Return-Path: <linux-arm-msm-owner@vger.kernel.org>
 MIME-Version: 1.0
 In-Reply-To: <20171130011644.9421-3-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20171130011644.9421-1-bjorn.andersson@linaro.org> <20171130011644.9421-3-bjorn.andersson@linaro.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Thu, 30 Nov 2017 09:18:28 +0100
+Message-ID: <CAOFm3uGR23XSfu3jS0r6=HwcQV1SZCqCrO6c1HQUTTg3dC9LJQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] soc: qcom: Introduce QMI helpers
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Bjorn,
 
+On Thu, Nov 30, 2017 at 2:16 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+[]
+> diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
+> new file mode 100644
+> index 000000000000..4027b52b0834
+> --- /dev/null
+> +++ b/drivers/soc/qcom/qmi_interface.c
+> @@ -0,0 +1,857 @@
+> +/*
+> + * Copyright (C) 2017 Linaro Ltd.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
 
-On 11/29/2017 5:16 PM, Bjorn Andersson wrote:
-> Drivers that needs to communicate with a remote QMI service all has to
-> perform the operations of discovering the service, encoding and decoding
-> the messages and operate the socket. This introduces an abstraction for
-> these common operations, reducing most of the duplication in such cases.
-> 
-> Tested-By: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-Acked-By: Chris Lew <clew@codeaurora.org>
+Could it make sense, especially for new files, to use the new SPDX ids
+and avoid adding boilerplate that will need to be cleaned up later?
+e.g. something like this instead, using the new conventions started by
+greg-kh and by documented tglx?
+
+NB: the // comment  style is not a mistake and is what Linus wants
+there. See the threads on this topic.
+
+> @@ -0,0 +1,857 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2017 Linaro Ltd.
+> + */
+
+Isn't this shorter and better? :P
+
+BTW, if you need help to fix this on the rest of Linaro contributed
+code, I maintain a tool that can help there.
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Cordially
+Philippe Ombredanne, the licensing janitor bot
