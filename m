@@ -1,79 +1,103 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 2/6] dt-bindings: remoteproc: add system resource manager (SRM)
-Date: Fri, 24 Nov 2017 15:36:38 +0100
-Message-ID: <1511534202-12995-3-git-send-email-arnaud.pouliquen@st.com>
-In-Reply-To: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
-References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 10/16] remoteproc: add memory device registering in rproc_add_carveout
+Date: Thu, 30 Nov 2017 17:46:45 +0100
+Message-ID: <1512060411-729-11-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com, "Loic PALLARDY  <loic.pallardy@st.com>, Fabien DESSENNE" <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Fabien Dessenne <fabien.dessenne@st.com>
+Add the possibility to associate a memory device to
+carveout.
 
-Add Documentation of devicetree bindings to support the remote processor
-system resource manager.
+Due to some memory mapping constraints, remoteproc related memory
+allocations should be done in a specific memory region.
+Constraint is not coming from remoteproc firmware (with defined
+device address), but from remoteproc platform driver itself.
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+In that case, platform driver has to register a carveout region with
+memory device. Memory device will be used for carveout, vring or buffer
+allocation accorfing to its name.
+
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- .../devicetree/bindings/remoteproc/rproc-srm.txt   | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/rproc-srm.txt
+ drivers/remoteproc/remoteproc_core.c | 14 +++++++++++++-
+ drivers/remoteproc/st_remoteproc.c   |  2 +-
+ include/linux/remoteproc.h           |  3 ++-
+ 3 files changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/rproc-srm.txt b/Documentation/devicetree/bindings/remoteproc/rproc-srm.txt
-new file mode 100644
-index 0000000..986dad1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/rproc-srm.txt
-@@ -0,0 +1,45 @@
-+Remoteproc System Resource Manager
-+----------------------------------
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 76d54bf..2b7effb 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -964,17 +964,29 @@ static int rproc_handle_carveout(struct rproc *rproc,
+  * rproc_add_carveout() - register an allocated carveout region
+  * @rproc: rproc handle
+  * @mem: memory entry to register
++ * @memdev: true if carveout shoult be associated to a memory device
+  *
+  * This function registers specified memory entry in @rproc carveouts list.
+  * Specified carveout should have been allocated before registering.
+  */
+-int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
++int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem, bool memdev)
+ {
++	struct rproc_memdev *memd;
 +
-+The remoteproc SRM (System Resource Manager) handles resources allocated
-+to remote processors.
-+This makes it possible for remote proc to reserve and initialize system
-+resources for a peripheral assigned to a coprocessor.
+ 	if (!rproc || !mem)
+ 		return -EINVAL;
+ 
+ 	mem->priv = (void *)CARVEOUT_EXTERNAL;
+ 
++	if (memdev) {
++		memd = rproc_memdev_add(rproc, mem);
++		if (IS_ERR(memd))
++			return -ENOMEM;
++		mem->memdev = memd;
++	} else {
++		mem->memdev = NULL;
++	}
 +
-+The devices are grouped in a core node
-+
-+Core
-+====
-+Required properties:
-+- compatible: should be "rproc-srm-core"
-+
-+Dev
-+===
-+Required properties:
-+- compatible: should be "rproc-srm-dev"
-+
-+Optional properties:
-+- clocks: clocks required by the coprocessor
-+- clock-names: see clock-bindings.txt
-+- assigned-clocks: see clock-bindings.txt
-+- assigned-clock-parents: see clock-bindings.txt
-+- assigned-clock-rates: see clock-bindings.txt
-+- pinctrl-x: pins configurations required by the coprocessor
-+- pinctrl-names: see pinctrl-bindings.txt
-+- x-supply: power supplies required by the coprocessor
-+
-+Example:
-+	system_resources {
-+		compatible = "rproc-srm-core";
-+
-+		mmc0: sdhci@09060000 {
-+			compatible = "rproc-srm-dev";
-+			pinctrl-names = "default", "idle";
-+			pinctrl-0 = <&pinctrl_mmc0>;
-+			pinctrl-1 = <&pinctrl_mmc1>;
-+			clock-names = "mmc", "icn";
-+			clocks = <&clk_s_c0_flexgen CLK_MMC_0>,
-+				 <&clk_s_c0_flexgen CLK_RX_ICN_HVA>;
-+			vdda-supply = <&vdda>;
-+		};
-+	};
+ 	list_add_tail(&mem->node, &rproc->carveouts);
+ 
+ 	return 0;
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index 1549ce8..da42ec9 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -286,7 +286,7 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 			return -EBUSY;
+ 		}
+ 
+-		rproc_add_carveout(rproc, mem);
++		rproc_add_carveout(rproc, mem, false);
+ 	}
+ 
+ 	err = clk_prepare(ddata->clk);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 66e6863..d7e7485 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -325,6 +325,7 @@ struct rproc_mem_entry {
+ 	u32 da;
+ 	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+ 	void *priv;
++	struct rproc_memdev *memdev;
+ 	char name[32];
+ 	struct list_head node;
+ };
+@@ -524,7 +525,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ int rproc_del(struct rproc *rproc);
+ void rproc_free(struct rproc *rproc);
+ 
+-int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
++int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem, bool memdev);
+ 
+ int rproc_boot(struct rproc *rproc);
+ void rproc_shutdown(struct rproc *rproc);
 -- 
-2.7.4
+1.9.1
