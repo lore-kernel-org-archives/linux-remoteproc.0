@@ -1,39 +1,38 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 6/6] remoteproc: sti: select srm
-Date: Fri, 24 Nov 2017 15:36:42 +0100
-Message-ID: <1511534202-12995-7-git-send-email-arnaud.pouliquen@st.com>
-In-Reply-To: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
-References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 16/16] rpmsg: virtio: allocate buffer from parent
+Date: Thu, 30 Nov 2017 17:46:51 +0100
+Message-ID: <1512060411-729-17-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, arnaud.pouliquen@st.com, "Loic PALLARDY  <loic.pallardy@st.com>, Fabien DESSENNE" <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Fabien Dessenne <fabien.dessenne@st.com>
+Remoteproc is now capable to create one specific sub-device per
+virtio link to associate a dedicated memory pool.
+This implies to change device used by virtio_rpmsg for
+buffer allocation from grand-parent to parent.
 
-Select the remote proc system resource manager for the sti platform
-
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index a49589e..1ca0ec5 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -154,6 +154,8 @@ config ST_REMOTEPROC
- 	select MAILBOX
- 	select STI_MBOX
- 	select RPMSG_VIRTIO
-+	select REMOTEPROC_SRM_CORE
-+	select REMOTEPROC_SRM_DEV
- 	help
- 	  Say y here to support ST's adjunct processors via the remote
- 	  processor framework.
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 82b8300..6dd25c6 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -920,7 +920,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	total_buf_space = vrp->num_bufs * vrp->buf_size;
+ 
+ 	/* allocate coherent memory for the buffers */
+-	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
++	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+ 				     total_buf_space, &vrp->bufs_dma,
+ 				     GFP_KERNEL);
+ 	if (!bufs_va) {
 -- 
-2.7.4
+1.9.1
