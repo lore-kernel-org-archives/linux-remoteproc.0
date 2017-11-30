@@ -1,85 +1,74 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 13/16] remoteproc: look-up memory-device for virtio device allocation
-Date: Thu, 30 Nov 2017 17:46:48 +0100
-Message-ID: <1512060411-729-14-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v4 0/5]  In-kernel QMI helpers and sysmon
+Date: Wed, 29 Nov 2017 17:16:39 -0800
+Message-Id: <20171130011644.9421-1-bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch parse existing carveout list to find a memory area
-matching on "vdev<vdev_id>buffer" name.
-If found, memory device will be used as parent for vdev creation, else
-rproc platform device will be used as today.
+This series introduces a helper library for drivers that needs to implement
+clients or services in the kernel for communicating with QMI encoded messages.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c   | 13 +++++++++++++
- drivers/remoteproc/remoteproc_virtio.c |  2 +-
- include/linux/remoteproc.h             |  1 +
- 3 files changed, 15 insertions(+), 1 deletion(-)
+This is used by a set of drivers in order to implement control signaling that
+needs to happen between a driver and a service on a remote processor, such as
+the synchronization of states during a remoteproc shutdown/restart; as seen in
+the sysmon implementation.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 6b5e2b2..9c12319 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -583,8 +583,11 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- {
- 	struct device *dev = &rproc->dev;
- 	struct rproc_vdev *rvdev;
-+	struct device *memdev = dev->parent;
-+	struct rproc_mem_entry *carveout;
- 	int i, ret;
- 	static int index;
-+	char name[16];
- 
- 	/* make sure resource isn't truncated */
- 	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
-@@ -637,6 +640,16 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	list_add_tail(&rvdev->node, &rproc->rvdevs);
- 
-+	/* Find associated registered carveout. */
-+	/* Try dedicated vdev buffer pool. */
-+	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-+	carveout = rproc_find_carveout_by_name(rproc, name);
-+
-+	if (carveout && carveout->memdev)
-+		memdev = &carveout->memdev->dev;
-+
-+	rvdev->dev = memdev;
-+
- 	rproc_add_subdev(rproc, &rvdev->subdev,
- 			 rproc_vdev_do_probe, rproc_vdev_do_remove);
- 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 2946348..1f7a444 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -303,7 +303,7 @@ static void rproc_virtio_dev_release(struct device *dev)
- int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- {
- 	struct rproc *rproc = rvdev->rproc;
--	struct device *dev = &rproc->dev;
-+	struct device *dev = rvdev->dev;
- 	struct virtio_device *vdev = &rvdev->vdev;
- 	int ret;
- 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index fb293d3..b3d6656 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -506,6 +506,7 @@ struct rproc_vdev {
- 	struct kref refcount;
- 
- 	struct rproc_subdev subdev;
-+	struct device *dev;
- 
- 	unsigned int id;
- 	unsigned int index;
+Finally a sample driver provides an implementation of the "test" protocol,
+which is a service typically implemented by Qualcomm remoteproc firmware.
+
+Changes since v3:
+- Don't call QMI handler for response type messages without known txn
+- Kerneldoc updates
+- Style updates
+
+Changes since v2:
+- Fix reported typos
+- Checkpatch fixes
+- Use non-gpl EXPORT_SYMBOL
+
+Changes since v1:
+- Lot of modifications to QMI interface, from feedback and implementation and
+  testing of sysmon.
+- Added sysmon driver.
+- Added patch for remoteproc to pass gracefulness on subdev remove.
+- QRTR patches part of v1 was merged separately
+
+
+Bjorn Andersson (5):
+  soc: qcom: Introduce QMI encoder/decoder
+  soc: qcom: Introduce QMI helpers
+  remoteproc: Pass type of shutdown to subdev remove
+  remoteproc: qcom: Introduce sysmon
+  samples: Introduce Qualcomm QMI sample client
+
+ drivers/remoteproc/Kconfig           |  17 +
+ drivers/remoteproc/Makefile          |   1 +
+ drivers/remoteproc/qcom_adsp_pil.c   |  12 +
+ drivers/remoteproc/qcom_common.c     |   6 +-
+ drivers/remoteproc/qcom_common.h     |  21 +
+ drivers/remoteproc/qcom_q6v5_pil.c   |   3 +
+ drivers/remoteproc/qcom_sysmon.c     | 587 ++++++++++++++++++++++++
+ drivers/remoteproc/qcom_wcnss.c      |   4 +
+ drivers/remoteproc/remoteproc_core.c |  18 +-
+ drivers/soc/qcom/Kconfig             |   9 +
+ drivers/soc/qcom/Makefile            |   2 +
+ drivers/soc/qcom/qmi_encdec.c        | 826 +++++++++++++++++++++++++++++++++
+ drivers/soc/qcom/qmi_interface.c     | 857 +++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |   4 +-
+ include/linux/soc/qcom/qmi.h         | 279 ++++++++++++
+ samples/Kconfig                      |   9 +
+ samples/Makefile                     |   2 +-
+ samples/qmi/Makefile                 |   1 +
+ samples/qmi/qmi_sample_client.c      | 631 ++++++++++++++++++++++++++
+ 19 files changed, 3274 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/remoteproc/qcom_sysmon.c
+ create mode 100644 drivers/soc/qcom/qmi_encdec.c
+ create mode 100644 drivers/soc/qcom/qmi_interface.c
+ create mode 100644 include/linux/soc/qcom/qmi.h
+ create mode 100644 samples/qmi/Makefile
+ create mode 100644 samples/qmi/qmi_sample_client.c
+
 -- 
-1.9.1
+2.15.0
