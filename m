@@ -1,48 +1,41 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] remoteproc: qcom: use %pap format string for phys_addr_t
-Date: Mon,  6 Nov 2017 14:37:17 +0100
-Message-Id: <20171106133736.584646-1-arnd@arndb.de>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 30 Nov 2017 21:31:41 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4 4/5] remoteproc: qcom: Introduce sysmon
+Message-ID: <20171201053141.GY28761@minitux>
+References: <20171130011644.9421-1-bjorn.andersson@linaro.org>
+ <20171130011644.9421-5-bjorn.andersson@linaro.org>
+ <2a4cb3e2-16ea-49f4-e40d-ee1f2a56929b@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2a4cb3e2-16ea-49f4-e40d-ee1f2a56929b@codeaurora.org>
+To: Chris Lew <clew@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-We cannot cast a phys_addr_t variable to a pointer on 32-bit architectures
-with CONFIG_PHYS_ADDR_T_64BIT set:
+On Thu 30 Nov 17:52 PST 2017, Chris Lew wrote:
 
-In file included from include/linux/kernel.h:14:0,
-                 from include/linux/clk.h:16,
-                 from drivers/remoteproc/qcom_q6v5_pil.c:18:
-drivers/remoteproc/qcom_q6v5_pil.c: In function 'q6v5_xfer_mem_ownership':
-drivers/remoteproc/qcom_q6v5_pil.c:337:10: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
-          (void *)addr, (void *)(addr + size),
-          ^
+> 
+> 
+> On 11/29/2017 5:16 PM, Bjorn Andersson wrote:
+> > The sysmon client communicates either via a dedicated SMD/GLINK channel
+> > or via QMI encoded messages over IPCROUTER with remote processors in
+> > order to perform graceful shutdown and inform about other remote
+> > processors shutting down.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> Acked-By: Chris Lew <clew@codeaurora.org>
+> 
 
-The correct way to print the contents is to use the %pap format
-string, passing the phys address by reference.
+Thanks
 
-Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Looked into who is listening to the other notifications besides
+> BEFORE_SHUTDOWN and I think subsequent patches will need to add support for
+> at least AFTER_POWERUP.
+> 
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 5460f61ee21c..4576f88499cb 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -333,9 +333,9 @@ static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
- 	ret = qcom_scm_assign_mem(addr, ALIGN(size, SZ_4K),
- 				  current_perm, &next, 1);
- 	if (ret < 0) {
--		pr_err("Failed to assign memory access in range %p to %p to %s ret = %d\n",
--		       (void *)addr, (void *)(addr + size),
--		       remote_owner ? "mss" : "hlos", ret);
-+		phys_addr_t end = addr + size;
-+		pr_err("Failed to assign memory access in range %pap to %pap to %s ret = %d\n",
-+		       &addr, &end, remote_owner ? "mss" : "hlos", ret);
- 		return ret;
- 	}
- 
--- 
-2.9.0
+Agreed.
+
+Regards,
+Bjorn
