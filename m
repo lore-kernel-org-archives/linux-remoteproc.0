@@ -1,106 +1,68 @@
-Return-Path: <clew@codeaurora.org>
-From: Chris Lew <clew@codeaurora.org>
-Subject: [PATCH 5/6] rpmsg: Introduce rpmsg_get_rproc_name
-Date: Mon, 18 Dec 2017 14:02:13 -0800
-Message-Id: <1513634534-22861-6-git-send-email-clew@codeaurora.org>
-In-Reply-To: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
-Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
+Return-Path: <joe@perches.com>
+Message-ID: <1512511413.6321.94.camel@perches.com>
+Subject: Re: [PATCH v5 1/5] soc: qcom: Introduce QMI encoder/decoder
+From: Joe Perches <joe@perches.com>
+Date: Tue, 05 Dec 2017 14:03:33 -0800
+In-Reply-To: <20171205174310.15799-2-bjorn.andersson@linaro.org>
+References: <20171205174310.15799-1-bjorn.andersson@linaro.org>
+	 <20171205174310.15799-2-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, Philippe Ombredanne <pombredanne@nexb.com>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for client's to query the edge name their channel is
-registered for. This is useful for clients who share the same channel
-identifier across different remote procs.
+On Tue, 2017-12-05 at 09:43 -0800, Bjorn Andersson wrote:
+> Add the helper library for encoding and decoding QMI encoded messages.
+> The implementation is taken from lib/qmi_encdec.c of the Qualcomm kernel
+> (msm-3.18).
+> 
+> Modifications has been made to the public API, source buffers has been
+> made const and the debug-logging part was omitted, for now.
+[]
+> diff --git a/drivers/soc/qcom/qmi_encdec.c b/drivers/soc/qcom/qmi_encdec.c
+[]
+> +#define QMI_ENCDEC_ENCODE_TLV(type, length, p_dst) do { \
+> +	*p_dst++ = type; \
+> +	*p_dst++ = ((u8)((length) & 0xFF)); \
+> +	*p_dst++ = ((u8)(((length) >> 8) & 0xFF)); \
+> +} while (0)
+> +
+> +#define QMI_ENCDEC_DECODE_TLV(p_type, p_length, p_src) do { \
+> +	*p_type = (u8)*p_src++; \
+> +	*p_length = (u8)*p_src++; \
+> +	*p_length |= ((u8)*p_src) << 8; \
+> +} while (0)
+> 
+> +#define QMI_ENCDEC_DECODE_N_BYTES(p_dst, p_src, size) \
+> +do { \
+> +	memcpy(p_dst, p_src, size); \
+> +	p_dst = (u8 *)p_dst + size; \
+> +	p_src = (u8 *)p_src + size; \
+> +} while (0)
+> +
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
----
- drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h |  3 +++
- include/linux/rpmsg.h          | 10 ++++++++++
- 3 files changed, 34 insertions(+)
+I dislike the asymmetric use of
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index dffa3aab7178..d6ebd678b089 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -78,6 +78,27 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
- }
- EXPORT_SYMBOL(rpmsg_create_ept);
- 
-+
-+/**
-+ * rpmsg_get_rproc_name() - Return the name of the rproc for this device
-+ * @rpdev: rpmsg channel device
-+ *
-+ * Expose the rproc name for clients who open the same channel across different
-+ * rprocs and need to differentiate during their probe.
-+ *
-+ * Returns char string on success and NULL on failure.
-+ */
-+const char *rpmsg_get_rproc_name(struct rpmsg_device *rpdev)
-+{
-+	if (WARN_ON(!rpdev))
-+		return NULL;
-+
-+	if (!rpdev->ops->get_rproc_name)
-+		return NULL;
-+
-+	return rpdev->ops->get_rproc_name(rpdev);
-+}
-+
- /**
-  * rpmsg_destroy_ept() - destroy an existing rpmsg endpoint
-  * @ept: endpoing to destroy
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 0cf9c7e2ee83..83a028b6883f 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -31,6 +31,7 @@
-  * @create_ept:		create backend-specific endpoint, requried
-  * @announce_create:	announce presence of new channel, optional
-  * @announce_destroy:	announce destruction of channel, optional
-+ * @get_rproc_name:	return name of the rproc for this device, optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * @announce_create and @announce_destroy are optional as the backend might
-@@ -43,6 +44,8 @@ struct rpmsg_device_ops {
- 
- 	int (*announce_create)(struct rpmsg_device *ept);
- 	int (*announce_destroy)(struct rpmsg_device *ept);
-+
-+	const char *(*get_rproc_name)(struct rpmsg_device *rpdev);
- };
- 
- /**
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 10d6ae8bbb7d..167982dc5b4f 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -160,6 +160,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- unsigned int rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
- 
-+const char *rpmsg_get_rproc_name(struct rpmsg_device *dev);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -267,6 +269,14 @@ static inline unsigned int rpmsg_poll(struct rpmsg_endpoint *ept,
- 	return 0;
- }
- 
-+static inline const char *rpmsg_get_rproc_name(struct rpmsg_device *rpdev)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return NULL;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+p_dst being incremented by 3 and
+p_src being incremented by 2 here
+
+Is it really useful to have these macros do
+any increments of arguments?
+
+Why not a static inline and use a variant of
+__be16_to_cpu/cpu_to_be16
+
+> +static int qmi_encode_basic_elem(void *buf_dst, const void *buf_src,
+> +				 u32 elem_len, u32 elem_size)
+> +{
+> +	u32 i, rc = 0;
+> +
+> +	for (i = 0; i < elem_len; i++) {
+> +		QMI_ENCDEC_ENCODE_N_BYTES(buf_dst, buf_src, elem_size);
+> +		rc += elem_size;
+> +	}
+
+I find this use obscure where buf_dst and buf_src are
+both modified with an addition by the macro.
