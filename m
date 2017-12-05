@@ -1,169 +1,120 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 5 Dec 2017 09:17:17 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v5 3/5] remoteproc: Pass type of shutdown to subdev remove
-Date: Tue,  5 Dec 2017 09:43:08 -0800
-Message-Id: <20171205174310.15799-4-bjorn.andersson@linaro.org>
-In-Reply-To: <20171205174310.15799-1-bjorn.andersson@linaro.org>
-References: <20171205174310.15799-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, Philippe Ombredanne <pombredanne@nexb.com>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] remoteproc: Pass type of shutdown to subdev remove
+Message-ID: <20171205171717.GN28761@minitux>
+References: <20171130011644.9421-1-bjorn.andersson@linaro.org>
+ <20171130011644.9421-4-bjorn.andersson@linaro.org>
+ <6d6d01bb-f8f4-3380-c9ee-3d14c707bdf0@st.com>
+ <20171205064611.GM28761@minitux>
+ <516ab4fc-f1c9-574b-3ca7-a6c3c6667358@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <516ab4fc-f1c9-574b-3ca7-a6c3c6667358@st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-remoteproc instances can be stopped either by invoking shutdown or by an
-attempt to recover from a crash. For some subdev types it's expected to
-clean up gracefully during a shutdown, but are unable to do so during a
-crash - so pass this information to the subdev remove functions.
+On Tue 05 Dec 02:54 PST 2017, Arnaud Pouliquen wrote:
 
-Acked-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> 
+> 
+> On 12/05/2017 07:46 AM, Bjorn Andersson wrote:
+> > On Fri 01 Dec 06:50 PST 2017, Arnaud Pouliquen wrote:
+> > 
+> >> hello Bjorn,
+> >>
+> >> Sorry for these late remarks/questions
+> >>
+> > 
+> > No worries, I'm happy to see you reading the patch!
+> > 
+> >>
+> >> On 11/30/2017 02:16 AM, Bjorn Andersson wrote:
+> > [..]
+> >>> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> > [..]
+> >>> @@ -785,17 +785,17 @@ static int rproc_probe_subdevices(struct rproc *rproc)
+> >>>  
+> >>>  unroll_registration:
+> >>>  	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
+> >>> -		subdev->remove(subdev);
+> >>> +		subdev->remove(subdev, false);
+> >> Why do you need to do a non graceful remove in this case? This could
+> >> lead to side effect like memory leakage...
+> >>
+> > 
+> > Regardless of this being true or false resources should always be
+> > reclaimed.
+> > 
+> > The reason for introducing this is that the modem in the Qualcomm
+> > platforms implements persistent storage and it's preferred to tell it to
+> > flush the latest data to the storage server (on the Linux side) before
+> > pulling the plug. But in the case of a firmware crash this mechanism
+> > will not be operational and there's no point in attempting this
+> > "graceful shutdown".
+> I understand your usecase for Qualcomm, but in rproc_probe_subdevices
+> there is not crash of the remote firmware , so remove should be graceful.
+> 
 
-Changes since v4:
-- Passing "graceful" in the cleanup path of probe_subdevices
+Now I get your point, sorry. I agree with you, as this is triggering a
+clean stop of the system this should be marked "graceful".
 
-Changes since v3:
-- None
+Will update, thanks.
 
-Changes since v2:
-- None
+> > 
+> > [..]
+> >>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >>> index 44e630eb3d94..20a9467744ea 100644
+> >>> --- a/include/linux/remoteproc.h
+> >>> +++ b/include/linux/remoteproc.h
+> >>> @@ -456,7 +456,7 @@ struct rproc_subdev {
+> >>>  	struct list_head node;
+> >>>  
+> >>>  	int (*probe)(struct rproc_subdev *subdev);
+> >>> -	void (*remove)(struct rproc_subdev *subdev);
+> >>> +	void (*remove)(struct rproc_subdev *subdev, bool graceful);
+> >> What about adding a new ops instead of a parameter, like a recovery
+> >> callback?
+> >>
+> > 
+> > I think that for symmetry purposes it should be probe/remove in both
+> > code paths. A possible alternative to the proposal would be to introduce
+> > an operation "request_shutdown()" the would be called in the proposed
+> > graceful code path.
+> > 
+> > 
+> > However, in the Qualcomm SMD and GLINK (conceptually equivalent to
+> > virtio-rpmsg) it is possible to open and close communication channels
+> > and it's conceivable to see that the graceful case would close all
+> > channels cleanly while the non-graceful case would just remove the rpmsg
+> > devices (and leave the channel states/memory as is).
+> > 
+> > In this case a "request_shutdown()" would complicate things, compared to
+> > the boolean.
+> > 
+> I would be more for a specific ops that inform sub-dev on a crash. This
+> would allow sub-dev to perform specific action (for instance dump) and
+> store crash information, then on remove, sub_dev would perform specific
+> action.
 
-Changes since v1:
-- New patch
+There is a separate discussion (although dormant) on how to gather core
+dumps, which should cover these cases.
 
- drivers/remoteproc/qcom_common.c     |  6 +++---
- drivers/remoteproc/remoteproc_core.c | 18 +++++++++---------
- include/linux/remoteproc.h           |  4 ++--
- 3 files changed, 14 insertions(+), 14 deletions(-)
+> This could be something like "trigger_recovery" that is propagated to
+> the sub-dev.
+> 
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index d487040b528b..7a862d41503e 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -60,7 +60,7 @@ static int glink_subdev_probe(struct rproc_subdev *subdev)
- 	return IS_ERR(glink->edge) ? PTR_ERR(glink->edge) : 0;
- }
- 
--static void glink_subdev_remove(struct rproc_subdev *subdev)
-+static void glink_subdev_remove(struct rproc_subdev *subdev, bool graceful)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-@@ -107,7 +107,7 @@ static int smd_subdev_probe(struct rproc_subdev *subdev)
- 	return PTR_ERR_OR_ZERO(smd->edge);
- }
- 
--static void smd_subdev_remove(struct rproc_subdev *subdev)
-+static void smd_subdev_remove(struct rproc_subdev *subdev, bool graceful)
- {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
- 
-@@ -176,7 +176,7 @@ static int ssr_notify_start(struct rproc_subdev *subdev)
- 	return  0;
- }
- 
--static void ssr_notify_stop(struct rproc_subdev *subdev)
-+static void ssr_notify_stop(struct rproc_subdev *subdev, bool graceful)
- {
- 	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
- 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index eab14b414bf0..b2f8afee2b67 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -307,7 +307,7 @@ static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
- 	return rproc_add_virtio_dev(rvdev, rvdev->id);
- }
- 
--static void rproc_vdev_do_remove(struct rproc_subdev *subdev)
-+static void rproc_vdev_do_remove(struct rproc_subdev *subdev, bool graceful)
- {
- 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
- 
-@@ -785,17 +785,17 @@ static int rproc_probe_subdevices(struct rproc *rproc)
- 
- unroll_registration:
- 	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
--		subdev->remove(subdev);
-+		subdev->remove(subdev, true);
- 
- 	return ret;
- }
- 
--static void rproc_remove_subdevices(struct rproc *rproc)
-+static void rproc_remove_subdevices(struct rproc *rproc, bool graceful)
- {
- 	struct rproc_subdev *subdev;
- 
- 	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
--		subdev->remove(subdev);
-+		subdev->remove(subdev, graceful);
- }
- 
- /**
-@@ -1013,13 +1013,13 @@ static int rproc_trigger_auto_boot(struct rproc *rproc)
- 	return ret;
- }
- 
--static int rproc_stop(struct rproc *rproc)
-+static int rproc_stop(struct rproc *rproc, bool graceful)
- {
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
- 	/* remove any subdevices for the remote processor */
--	rproc_remove_subdevices(rproc);
-+	rproc_remove_subdevices(rproc, graceful);
- 
- 	/* power off the remote processor */
- 	ret = rproc->ops->stop(rproc);
-@@ -1063,7 +1063,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	if (ret)
- 		return ret;
- 
--	ret = rproc_stop(rproc);
-+	ret = rproc_stop(rproc, false);
- 	if (ret)
- 		goto unlock_mutex;
- 
-@@ -1216,7 +1216,7 @@ void rproc_shutdown(struct rproc *rproc)
- 	if (!atomic_dec_and_test(&rproc->power))
- 		goto out;
- 
--	ret = rproc_stop(rproc);
-+	ret = rproc_stop(rproc, true);
- 	if (ret) {
- 		atomic_inc(&rproc->power);
- 		goto out;
-@@ -1550,7 +1550,7 @@ EXPORT_SYMBOL(rproc_del);
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
- 		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev))
-+		      void (*remove)(struct rproc_subdev *subdev, bool graceful))
- {
- 	subdev->probe = probe;
- 	subdev->remove = remove;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 44e630eb3d94..20a9467744ea 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -456,7 +456,7 @@ struct rproc_subdev {
- 	struct list_head node;
- 
- 	int (*probe)(struct rproc_subdev *subdev);
--	void (*remove)(struct rproc_subdev *subdev);
-+	void (*remove)(struct rproc_subdev *subdev, bool graceful);
- };
- 
- /* we currently support only two vrings per rvdev */
-@@ -539,7 +539,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
- 		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev));
-+		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
- 
- void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
- 
--- 
-2.15.0
+Right, this step does make sense, but is the opposite of what I need -
+i.e. a means to trigger a clean shutdown.
+
+> That would sound more flexible from my point of view.
+> 
+
+At this point I see this flexibility as unnecessary complexity, if such
+need show up (beyond the core dump gathering) we should bring this up
+again.
+
+Regards,
+Bjorn
