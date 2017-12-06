@@ -1,53 +1,46 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 21:37:29 -0800
+Date: Wed, 6 Dec 2017 13:59:40 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 15/16] remoteproc: st: associate memory device to
- memory regions
-Message-ID: <20171214053729.GP17344@builder>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-16-git-send-email-loic.pallardy@st.com>
+Subject: Re: [PATCH 16/45] drivers: rpmsg: remove duplicate includes
+Message-ID: <20171206215940.GB17344@builder>
+References: <1512579761-5613-1-git-send-email-pravin.shedge4linux@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1512060411-729-16-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+In-Reply-To: <1512579761-5613-1-git-send-email-pravin.shedge4linux@gmail.com>
+To: Pravin Shedge <pravin.shedge4linux@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
+On Wed 06 Dec 09:02 PST 2017, Pravin Shedge wrote:
 
-> Enable memory device creation for each memory region added
-> by rproc_add_carveout function.
+> These duplicate includes have been found with scripts/checkincludes.pl but
+> they have been removed manually to avoid removing false positives.
 > 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/remoteproc/st_remoteproc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index da42ec9..bf83d82 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -279,6 +279,7 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
->  		mem->dma = res.start;
->  		mem->da = res.start;
->  		mem->len = resource_size(&res);
-> +		strncpy(mem->name, node->name, sizeof(mem->name));
 
-Please add this to the previous patch.
+Applied.
 
->  		mem->va = devm_ioremap_wc(dev, mem->dma, mem->len);
->  		if (!mem->va) {
->  			dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-> @@ -286,7 +287,7 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
->  			return -EBUSY;
->  		}
->  
-> -		rproc_add_carveout(rproc, mem, false);
-> +		rproc_add_carveout(rproc, mem, true);
-
-Here you can see how easy it is to accidentally double-map the memory
-region.
-
-Regards,
+Thanks,
 Bjorn
+
+> Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
+> ---
+>  drivers/rpmsg/qcom_glink_smem.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+> index 5cdaa5f..057528e 100644
+> --- a/drivers/rpmsg/qcom_glink_smem.c
+> +++ b/drivers/rpmsg/qcom_glink_smem.c
+> @@ -29,8 +29,6 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/list.h>
+>  
+> -#include <linux/delay.h>
+> -#include <linux/rpmsg.h>
+>  #include <linux/rpmsg/qcom_glink.h>
+>  
+>  #include "qcom_glink_native.h"
+> -- 
+> 2.7.4
+> 
