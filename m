@@ -1,34 +1,65 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 6 Dec 2017 13:55:46 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] rpmsg: glink: smem: Ensure ordering during tx
-Date: Thu, 14 Dec 2017 12:15:46 -0800
-Message-Id: <20171214201546.21942-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: qcom_smd: Access APCS through mailbox framework
+Message-ID: <20171206215546.GT28761@minitux>
+References: <20171116070842.6362-1-bjorn.andersson@linaro.org>
+ <cad92480-7f12-b9f3-a3d1-0a4208849d35@codeaurora.org>
+ <20171206190232.GR28761@minitux>
+ <21b097d0-91ed-5cdc-83b0-4594dffaab6a@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <21b097d0-91ed-5cdc-83b0-4594dffaab6a@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Jitendra Sharma <shajit@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Ensure the ordering of the fifo write and the update of the write index,
-so that the index is not updated before the data has landed in the fifo.
+On Wed 06 Dec 11:54 PST 2017, Stephen Boyd wrote:
 
-Reported-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_glink_smem.c | 3 +++
- 1 file changed, 3 insertions(+)
+> On 12/06/2017 11:02 AM, Bjorn Andersson wrote:
+> > On Wed 06 Dec 04:08 PST 2017, Jitendra Sharma wrote:
+> >
+> >> Hi Bjorn,
+> >>
+> > Hi Jitendra,
+> >
+> >> On 11/16/2017 12:38 PM, Bjorn Andersson wrote:
+> > [..]
+> >>> @@ -365,7 +371,12 @@ static void qcom_smd_signal_channel(struct qcom_smd_channel *channel)
+> >>>   {
+> >>>   	struct qcom_smd_edge *edge = channel->edge;
+> >>> -	regmap_write(edge->ipc_regmap, edge->ipc_offset, BIT(edge->ipc_bit));
+> >>> +	if (edge->mbox_chan) {
+> >>> +		mbox_send_message(edge->mbox_chan, NULL);
+> >> mbox_send_message could fail. So return value should be checked
+> > qcom_apcs_ipc_send_data() can't fail, so the case when
+> > mbox_send_message() would fail is if more than MBOX_TX_QUEUE_LEN (20)
+> > callers that has managed to put their data in the queue but not yet
+> > execute msg_submit().
+> >
+> > As each bit in the APCS IPC register is modelled as it's own mailbox
+> > channel this error case would mean that as mbox_send_message() returns
+> > with an error there will soon be 20 callers entering
+> > qcom_apcs_ipc_send_data() and trigger this very bit.
+> >
+> >
+> > When this happens mbox_send_message() will print an error in the log, so
+> > there's no point in having the caller also print an error.
+> >
+> > When it comes to dealing with a failing call to mbox_send_message() we
+> > have already posted the message in the FIFO, so we have no way to abort
+> > the transmission, as such the only way to deal with this is to either
+> > retry or ignore the problem; and the mailbox queue will ensure that we
+> > retry 20 times.
+> >
+> 
+> Maybe you should wrap this up into a comment in the code? Then we don't
+> have to dig this out of the mail list archives to figure out why we
+> aren't checking for an error.
+> 
 
-diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-index 057528e23d3a..892f2b92a4d8 100644
---- a/drivers/rpmsg/qcom_glink_smem.c
-+++ b/drivers/rpmsg/qcom_glink_smem.c
-@@ -183,6 +183,9 @@ static void glink_smem_tx_write(struct qcom_glink_pipe *glink_pipe,
- 	if (head >= pipe->native.length)
- 		head -= pipe->native.length;
- 
-+	/* Ensure ordering of fifo and head update */
-+	wmb();
-+
- 	*pipe->head = cpu_to_le32(head);
- }
- 
--- 
-2.15.0
+Sounds very reasonable, I will do so.
+
+Regards,
+Bjorn
