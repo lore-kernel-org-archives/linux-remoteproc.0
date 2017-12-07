@@ -1,61 +1,87 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 16:30:56 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 01/16] remoteproc: add rproc_va_to_pa function
-Message-ID: <20171214003056.GC17344@builder>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-2-git-send-email-loic.pallardy@st.com>
+Return-Path: <pombredanne@nexb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1512060411-729-2-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+In-Reply-To: <20171205174310.15799-1-bjorn.andersson@linaro.org>
+References: <20171205174310.15799-1-bjorn.andersson@linaro.org>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Thu, 7 Dec 2017 11:20:02 +0100
+Message-ID: <CAOFm3uEG9kXLXMLSp-R94SncNxCOh1oFudKvnPVfxkbzy-3u2Q@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] In-kernel QMI helpers and sysmon
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
+On Tue, Dec 5, 2017 at 6:43 PM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> This series introduces a helper library for drivers that needs to implement
+> clients or services in the kernel for communicating with QMI encoded messages.
+>
+> This is used by a set of drivers in order to implement control signaling that
+> needs to happen between a driver and a service on a remote processor, such as
+> the synchronization of states during a remoteproc shutdown/restart; as seen in
+> the sysmon implementation.
+>
+> Finally a sample driver provides an implementation of the "test" protocol,
+> which is a service typically implemented by Qualcomm remoteproc firmware.
+>
+> Changes since v4:
+> - Use SPDX headers
+>
+> Changes since v3:
+> - Don't call QMI handler for response type messages without known txn
+> - Kerneldoc updates
+> - Style updates
+>
+> Changes since v2:
+> - Fix reported typos
+> - Checkpatch fixes
+> - Use non-gpl EXPORT_SYMBOL
+>
+> Changes since v1:
+> - Lot of modifications to QMI interface, from feedback and implementation and
+>   testing of sysmon.
+> - Added sysmon driver.
+> - Added patch for remoteproc to pass gracefulness on subdev remove.
+> - QRTR patches part of v1 was merged separately
+>
+> Bjorn Andersson (5):
+>   soc: qcom: Introduce QMI encoder/decoder
+>   soc: qcom: Introduce QMI helpers
+>   remoteproc: Pass type of shutdown to subdev remove
+>   remoteproc: qcom: Introduce sysmon
+>   samples: Introduce Qualcomm QMI sample client
+>
+>  drivers/remoteproc/Kconfig           |  17 +
+>  drivers/remoteproc/Makefile          |   1 +
+>  drivers/remoteproc/qcom_adsp_pil.c   |  12 +
+>  drivers/remoteproc/qcom_common.c     |   6 +-
+>  drivers/remoteproc/qcom_common.h     |  21 +
+>  drivers/remoteproc/qcom_q6v5_pil.c   |   3 +
+>  drivers/remoteproc/qcom_sysmon.c     | 579 ++++++++++++++++++++++++
+>  drivers/remoteproc/qcom_wcnss.c      |   4 +
+>  drivers/remoteproc/remoteproc_core.c |  18 +-
+>  drivers/soc/qcom/Kconfig             |   9 +
+>  drivers/soc/qcom/Makefile            |   2 +
+>  drivers/soc/qcom/qmi_encdec.c        | 816 +++++++++++++++++++++++++++++++++
+>  drivers/soc/qcom/qmi_interface.c     | 848 +++++++++++++++++++++++++++++++++++
+>  include/linux/remoteproc.h           |   4 +-
+>  include/linux/soc/qcom/qmi.h         | 271 +++++++++++
+>  samples/Kconfig                      |   9 +
+>  samples/Makefile                     |   2 +-
+>  samples/qmi/Makefile                 |   1 +
+>  samples/qmi/qmi_sample_client.c      | 622 +++++++++++++++++++++++++
+>  19 files changed, 3230 insertions(+), 15 deletions(-)
+>  create mode 100644 drivers/remoteproc/qcom_sysmon.c
+>  create mode 100644 drivers/soc/qcom/qmi_encdec.c
+>  create mode 100644 drivers/soc/qcom/qmi_interface.c
+>  create mode 100644 include/linux/soc/qcom/qmi.h
+>  create mode 100644 samples/qmi/Makefile
+>  create mode 100644 samples/qmi/qmi_sample_client.c
+>
+> --
+> 2.15.0
+>
 
-> This new function translates CPU virtual address in
-> CPU physical one according to virtual address location.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index eab14b4..faa18a7 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -139,6 +139,17 @@ static void rproc_disable_iommu(struct rproc *rproc)
->  	iommu_domain_free(domain);
->  }
->  
-> +static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-> +{
-> +	if (is_vmalloc_addr(cpu_addr)) {
+For this patch series and the use of SPDX ids: Thanks!
 
-Please add a comment describing when is_vmalloc_addr() would be true.
-
-> +		return page_to_phys(vmalloc_to_page(cpu_addr)) +
-> +				    offset_in_page(cpu_addr);
-> +	}
-> +
-> +	WARN_ON(!virt_addr_valid(cpu_addr));
-> +	return virt_to_phys(cpu_addr);
-> +}
-> +
->  /**
->   * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
->   * @rproc: handle of a remote processor
-> @@ -700,7 +711,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	 * In this case, the device address and the physical address
->  	 * are the same.
->  	 */
-> -	rsc->pa = dma;
-> +	rsc->pa = (u32)rproc_va_to_pa(va);
-
-This is more correct than using "dma", so this is good.
-
-Regards,
-Bjorn
+Acked-by:  Philippe Ombredanne <pombredanne@nexB.com>
