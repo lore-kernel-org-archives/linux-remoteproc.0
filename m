@@ -1,58 +1,44 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 4/5] rpmsg: smd: Fail send on a closed channel
-Date: Tue, 12 Dec 2017 15:58:56 -0800
-Message-Id: <20171212235857.10432-5-bjorn.andersson@linaro.org>
+Subject: [PATCH 3/5] rpmsg: smd: Wake up all waiters
+Date: Tue, 12 Dec 2017 15:58:55 -0800
+Message-Id: <20171212235857.10432-4-bjorn.andersson@linaro.org>
 In-Reply-To: <20171212235857.10432-1-bjorn.andersson@linaro.org>
 References: <20171212235857.10432-1-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Chris Lew <clew@quicinc.com>, Jeremy McNicoll <jmcnicol@redhat.com>, Will Newton <will.newton@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Move the check for a closed channel out from the tx-full loop to fail
-any send request on a non-open channel.
+It's possible to have multiple contexts waiting for new channel events
+and with an upcoming change it's possible to have multiple contexts
+waiting for a full FIFO. As such we need to wake them all up.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/qcom_smd.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/rpmsg/qcom_smd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 0993e95bf0f5..ed167ab52a68 100644
+index 1beddea6f087..0993e95bf0f5 100644
 --- a/drivers/rpmsg/qcom_smd.c
 +++ b/drivers/rpmsg/qcom_smd.c
-@@ -743,17 +743,13 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
- 	if (ret)
- 		return ret;
+@@ -579,7 +579,7 @@ static bool qcom_smd_channel_intr(struct qcom_smd_channel *channel)
  
--	while (qcom_smd_get_tx_avail(channel) < tlen) {
-+	while (qcom_smd_get_tx_avail(channel) < tlen &&
-+	       channel->state == SMD_CHANNEL_OPENED) {
- 		if (!wait) {
- 			ret = -EAGAIN;
- 			goto out;
+ 	/* Signal waiting qcom_smd_send() about the interrupt */
+ 	if (!GET_TX_CHANNEL_FLAG(channel, fBLOCKREADINTR))
+-		wake_up_interruptible(&channel->fblockread_event);
++		wake_up_interruptible_all(&channel->fblockread_event);
+ 
+ 	/* Don't consume any data until we've opened the channel */
+ 	if (channel->state != SMD_CHANNEL_OPENED)
+@@ -1191,7 +1191,7 @@ static void qcom_channel_scan_worker(struct work_struct *work)
+ 			dev_dbg(&edge->dev, "new channel found: '%s'\n", channel->name);
+ 			set_bit(i, edge->allocated[tbl]);
+ 
+-			wake_up_interruptible(&edge->new_channel_event);
++			wake_up_interruptible_all(&edge->new_channel_event);
  		}
- 
--		if (channel->state != SMD_CHANNEL_OPENED) {
--			ret = -EPIPE;
--			goto out;
--		}
--
- 		SET_TX_CHANNEL_FLAG(channel, fBLOCKREADINTR, 0);
- 
- 		ret = wait_event_interruptible(channel->fblockread_event,
-@@ -765,6 +761,12 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
- 		SET_TX_CHANNEL_FLAG(channel, fBLOCKREADINTR, 1);
  	}
  
-+	/* Fail if the channel was closed */
-+	if (channel->state != SMD_CHANNEL_OPENED) {
-+		ret = -EPIPE;
-+		goto out;
-+	}
-+
- 	SET_TX_CHANNEL_FLAG(channel, fTAIL, 0);
- 
- 	qcom_smd_write_fifo(channel, hdr, sizeof(hdr));
 -- 
 2.15.0
