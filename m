@@ -1,109 +1,43 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/8] remoteproc: Cache resource table size
-Date: Wed, 13 Dec 2017 14:41:05 -0800
-Message-Id: <20171213224111.17864-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20171213224111.17864-1-bjorn.andersson@linaro.org>
-References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+Subject: [PATCH 0/8] Remoteproc cleanups
+Date: Wed, 13 Dec 2017 14:41:03 -0800
+Message-Id: <20171213224111.17864-1-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-We don't re-read the resource table during a recovery, so it is possible
-in the recovery path that the resource table has a different size than
-cached_table. Store the original size of cached_table to avoid these
-getting out of sync.
+The first patch removes code that became unnecessary when the recovery flow was
+redesigned.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 20 +++++++-------------
- include/linux/remoteproc.h           |  2 ++
- 2 files changed, 9 insertions(+), 13 deletions(-)
+The following patches moves the assignment of cached_table to the resource
+table loader, rather than core code, which allows this to made optional and
+finally drops the various dummy resource tables provided by drivers.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 15e2c4530a0a..761268096fe0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -732,7 +732,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- };
- 
- /* handle firmware resource entries before booting the remote processor */
--static int rproc_handle_resources(struct rproc *rproc, int len,
-+static int rproc_handle_resources(struct rproc *rproc,
- 				  rproc_handle_resource_t handlers[RSC_LAST])
- {
- 	struct device *dev = &rproc->dev;
-@@ -742,7 +742,7 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
- 	for (i = 0; i < rproc->table_ptr->num; i++) {
- 		int offset = rproc->table_ptr->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
--		int avail = len - offset - sizeof(*hdr);
-+		int avail = rproc->table_sz - offset - sizeof(*hdr);
- 		void *rsc = (void *)hdr + sizeof(*hdr);
- 
- 		/* make sure table isn't truncated */
-@@ -849,16 +849,9 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 
- static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- {
--	struct resource_table *table, *loaded_table;
-+	struct resource_table *loaded_table;
- 	struct device *dev = &rproc->dev;
--	int ret, tablesz;
--
--	/* look for the resource table */
--	table = rproc_find_rsc_table(rproc, fw, &tablesz);
--	if (!table) {
--		dev_err(dev, "Resource table look up failed\n");
--		return -EINVAL;
--	}
-+	int ret;
- 
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
-@@ -877,7 +870,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	 */
- 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
- 	if (loaded_table) {
--		memcpy(loaded_table, rproc->cached_table, tablesz);
-+		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
- 		rproc->table_ptr = loaded_table;
- 	}
- 
-@@ -951,12 +944,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 
- 	rproc->table_ptr = rproc->cached_table;
-+	rproc->table_sz = tablesz;
- 
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
- 
- 	/* handle fw resources which are required to boot rproc */
--	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
-+	ret = rproc_handle_resources(rproc, rproc_loading_handlers);
- 	if (ret) {
- 		dev_err(dev, "Failed to process resources: %d\n", ret);
- 		goto clean_up_resources;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 2d1058111e57..b72be13d773d 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -410,6 +410,7 @@ enum rproc_crash_type {
-  * @max_notifyid: largest allocated notify id.
-  * @table_ptr: pointer to the resource table in effect
-  * @cached_table: copy of the resource table
-+ * @table_sz: size of @cached_table
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  */
- struct rproc {
-@@ -440,6 +441,7 @@ struct rproc {
- 	int max_notifyid;
- 	struct resource_table *table_ptr;
- 	struct resource_table *cached_table;
-+	size_t table_sz;
- 	bool has_iommu;
- 	bool auto_boot;
- };
+Then finally the last patch ensures that table_ptr isn't left pointing into
+memory of a stopped remoteproc.
+
+Bjorn Andersson (8):
+  remoteproc: Remove depricated crash completion
+  remoteproc: Cache resource table size
+  remoteproc: Clone rproc_ops in rproc_alloc()
+  remoteproc: Merge rproc_ops and rproc_fw_ops
+  remoteproc: Don't handle empty resource table
+  remoteproc: Move resource table load logic to find
+  remoteproc: Drop dangling find_rsc_table dummies
+  remoteproc: Reset table_ptr on stop
+
+ drivers/remoteproc/qcom_adsp_pil.c         |  8 +--
+ drivers/remoteproc/qcom_common.c           | 19 -------
+ drivers/remoteproc/qcom_common.h           |  4 --
+ drivers/remoteproc/qcom_q6v5_pil.c         | 18 +------
+ drivers/remoteproc/qcom_wcnss.c            |  8 +--
+ drivers/remoteproc/remoteproc_core.c       | 83 ++++++++++++------------------
+ drivers/remoteproc/remoteproc_elf_loader.c | 59 ++++++++++-----------
+ drivers/remoteproc/remoteproc_internal.h   | 57 +++++++-------------
+ drivers/remoteproc/st_slim_rproc.c         | 29 -----------
+ include/linux/remoteproc.h                 | 20 +++++--
+ 10 files changed, 102 insertions(+), 203 deletions(-)
+
 -- 
 2.15.0
