@@ -1,35 +1,35 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 21:34:56 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 14/16] remoteproc: look-up pre-registered carveout by
- name for carveout allocation
-Message-ID: <20171214053456.GO17344@builder>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-15-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1512060411-729-15-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Subject: [PATCH 8/8] remoteproc: Reset table_ptr on stop
+Date: Wed, 13 Dec 2017 14:41:11 -0800
+Message-Id: <20171213224111.17864-9-bjorn.andersson@linaro.org>
+In-Reply-To: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
-> +	/* By name */
-> +	mem = rproc_find_carveout_by_name(rproc, rsc->name);
-> +	if (mem) {
-> +		/*
-> +		 * Update resource table with registered carevout information
-> +		 */
-> +		rsc->len = mem->len;
+The installed resource table is no longer accessible after stopping the
+remote, so update table_ptr to point to the local copy.
 
-You should validate that len, da and pa are compatible.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> +		rsc->da = mem->da;
-> +		rsc->pa = rproc_va_to_pa(mem->va);
-> +		/* no need to register as already match one for one */
-> +		return 0;
-> +	}
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index cbd12382b219..98c088d80b3d 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1000,6 +1000,9 @@ static int rproc_stop(struct rproc *rproc, bool graceful)
+ 	/* remove any subdevices for the remote processor */
+ 	rproc_remove_subdevices(rproc, graceful);
+ 
++	/* the installed resource table is no longer accessible */
++	rproc->table_ptr = rproc->cached_table;
++
+ 	/* power off the remote processor */
+ 	ret = rproc->ops->stop(rproc);
+ 	if (ret) {
+-- 
+2.15.0
