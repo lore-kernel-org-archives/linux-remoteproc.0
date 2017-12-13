@@ -1,94 +1,84 @@
-Return-Path: <clew@codeaurora.org>
-From: Chris Lew <clew@codeaurora.org>
-Subject: [PATCH 3/6] rpmsg: glink: Add support for rpmsg glink chrdev
-Date: Mon, 18 Dec 2017 14:02:11 -0800
-Message-Id: <1513634534-22861-4-git-send-email-clew@codeaurora.org>
-In-Reply-To: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
-Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 1/8] remoteproc: Remove depricated crash completion
+Date: Wed, 13 Dec 2017 14:41:04 -0800
+Message-Id: <20171213224111.17864-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-RPMSG provides a char device interface to userspace. Probe the rpmsg
-chrdev channel to enable the rpmsg_ctrl device creation on glink
-transports.
+The crash handling now happens in a single execution context, so there's
+no longer a need for a completion to synchronize this.
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 10 ----------
+ include/linux/remoteproc.h           |  2 --
+ 2 files changed, 12 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 179132226dc2..786f2eca01f1 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -132,6 +132,13 @@ enum {
- 	GLINK_STATE_CLOSING,
- };
- 
-+struct qcom_glink_device {
-+	struct rpmsg_device rpdev;
-+	struct qcom_glink *glink;
-+};
-+
-+#define to_glink_device(_x) container_of(_x, struct qcom_glink_device, rpdev)
-+
- /**
-  * struct glink_channel - internal representation of a channel
-  * @rpdev:	rpdev reference, only used for primary endpoints
-@@ -1339,6 +1346,10 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
- 	return NULL;
- }
- 
-+static const struct rpmsg_device_ops glink_chrdev_ops = {
-+	.create_ept = qcom_glink_create_ept,
-+};
-+
- static const struct rpmsg_device_ops glink_device_ops = {
- 	.create_ept = qcom_glink_create_ept,
- 	.announce_create = qcom_glink_announce_create,
-@@ -1547,6 +1558,30 @@ static void qcom_glink_work(struct work_struct *work)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index b2f8afee2b67..15e2c4530a0a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1028,10 +1028,6 @@ static int rproc_stop(struct rproc *rproc, bool graceful)
+ 		return ret;
  	}
- }
  
-+static void qcom_glink_device_release(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct qcom_glink_device *gdev = to_glink_device(rpdev);
-+
-+	kfree(gdev);
-+}
-+
-+static int qcom_glink_create_chrdev(struct qcom_glink *glink)
-+{
-+	struct qcom_glink_device *gdev;
-+
-+	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
-+	if (!gdev)
-+		return -ENOMEM;
-+
-+	gdev->glink = glink;
-+	gdev->rpdev.ops = &glink_chrdev_ops;
-+	gdev->rpdev.dev.parent = glink->dev;
-+	gdev->rpdev.dev.release = qcom_glink_device_release;
-+
-+	return rpmsg_chrdev_register_device(&gdev->rpdev);
-+}
-+
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
-@@ -1605,6 +1640,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+-	/* if in crash state, unlock crash handler */
+-	if (rproc->state == RPROC_CRASHED)
+-		complete_all(&rproc->crash_comp);
+-
+ 	rproc->state = RPROC_OFFLINE;
+ 
+ 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
+@@ -1057,8 +1053,6 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 
+ 	dev_err(dev, "recovering %s\n", rproc->name);
+ 
+-	init_completion(&rproc->crash_comp);
+-
+ 	ret = mutex_lock_interruptible(&rproc->lock);
  	if (ret)
- 		return ERR_PTR(ret);
+ 		return ret;
+@@ -1067,9 +1061,6 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	if (ret)
+ 		goto unlock_mutex;
  
-+	ret = qcom_glink_create_chrdev(glink);
-+	if (ret)
-+		dev_err(glink->dev, "failed to register chrdev\n");
-+
- 	return glink;
- }
- EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
+-	/* wait until there is no more rproc users */
+-	wait_for_completion(&rproc->crash_comp);
+-
+ 	/* load firmware */
+ 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+ 	if (ret < 0) {
+@@ -1459,7 +1450,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->subdevs);
+ 
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+-	init_completion(&rproc->crash_comp);
+ 
+ 	rproc->state = RPROC_OFFLINE;
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 20a9467744ea..2d1058111e57 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -406,7 +406,6 @@ enum rproc_crash_type {
+  * @index: index of this rproc device
+  * @crash_handler: workqueue for handling a crash
+  * @crash_cnt: crash counter
+- * @crash_comp: completion used to sync crash handler and the rproc reload
+  * @recovery_disabled: flag that state if recovery was disabled
+  * @max_notifyid: largest allocated notify id.
+  * @table_ptr: pointer to the resource table in effect
+@@ -437,7 +436,6 @@ struct rproc {
+ 	int index;
+ 	struct work_struct crash_handler;
+ 	unsigned int crash_cnt;
+-	struct completion crash_comp;
+ 	bool recovery_disabled;
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
