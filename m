@@ -1,37 +1,64 @@
-Return-Path: <clew@codeaurora.org>
-From: Chris Lew <clew@codeaurora.org>
-Subject: [PATCH 1/6] dt-bindings: soc: qcom: Add label for GLINK bindings
-Date: Mon, 18 Dec 2017 14:02:09 -0800
-Message-Id: <1513634534-22861-2-git-send-email-clew@codeaurora.org>
-In-Reply-To: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
-Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 3/8] remoteproc: Clone rproc_ops in rproc_alloc()
+Date: Wed, 13 Dec 2017 14:41:06 -0800
+Message-Id: <20171213224111.17864-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a label property to identify the edge this node represents.
+In order to allow rproc_alloc() to, in a future patch, update entries in
+the "ops" struct we need to make a local copy of it.
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
+ include/linux/remoteproc.h           | 2 +-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-index 9663cab52246..0b8cc533ca83 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-@@ -10,6 +10,11 @@ edge.
- 	Value type: <stringlist>
- 	Definition: must be "qcom,glink-rpm"
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 761268096fe0..9bc9ee8f4513 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1342,6 +1342,7 @@ static void rproc_type_release(struct device *dev)
+ 		ida_simple_remove(&rproc_dev_index, rproc->index);
  
-+- label:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: should specify the subsystem name this edge corresponds to.
+ 	kfree(rproc->firmware);
++	kfree(rproc->ops);
+ 	kfree(rproc);
+ }
+ 
+@@ -1406,9 +1407,15 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 		return NULL;
+ 	}
+ 
++	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
++	if (!rproc->ops) {
++		kfree(p);
++		kfree(rproc);
++		return NULL;
++	}
 +
- - interrupts:
- 	Usage: required
- 	Value type: <prop-encoded-array>
+ 	rproc->firmware = p;
+ 	rproc->name = name;
+-	rproc->ops = ops;
+ 	rproc->priv = &rproc[1];
+ 	rproc->auto_boot = true;
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b72be13d773d..6cbc0379a926 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -419,7 +419,7 @@ struct rproc {
+ 	const char *name;
+ 	char *firmware;
+ 	void *priv;
+-	const struct rproc_ops *ops;
++	struct rproc_ops *ops;
+ 	struct device dev;
+ 	const struct rproc_fw_ops *fw_ops;
+ 	atomic_t power;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
