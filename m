@@ -1,88 +1,109 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 16:45:32 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 04/16] remoteproc: introduce rproc_find_carveout_by_da
-Message-ID: <20171214004532.GF17344@builder>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-5-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1512060411-729-5-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Subject: [PATCH 2/8] remoteproc: Cache resource table size
+Date: Wed, 13 Dec 2017 14:41:05 -0800
+Message-Id: <20171213224111.17864-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
+We don't re-read the resource table during a recovery, so it is possible
+in the recovery path that the resource table has a different size than
+cached_table. Store the original size of cached_table to avoid these
+getting out of sync.
 
-> This patch provides a new function to find a carveout according
-> to a device address (da).
-> If match found, this function returns CPU virtual address corresponding
-> to specified da.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 42 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 279320a..78525d1 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -211,6 +211,48 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
->  }
->  EXPORT_SYMBOL(rproc_da_to_va);
->  
-> +/**
-> + * rproc_find_carveout_by_da() - lookup the carveout region for a remoteproc address
-> + * @rproc: handle of a remote processor
-> + * @da: remoteproc device address to find
-> + * @len: length of the memory region @da is pointing to
-> + *
-> + * Platform driver has the capability to register some pre-allacoted carveout
-> + * (physically contiguous memory regions) before rproc firmware loading and
-> + * associated resource table analysis. These regions may be dedicated memory
-> + * regions internal to the coprocessor or specified DDR region with specific
-> + * attributes
-> + *
-> + * This function is a helper function with which we can go over the
-> + * allocated carveouts and translate specific device addresse to virtual
-> + * addresse so we can fill firmware resource table.
-> + *
-> + * The function returns a valid virtual address on success or NULL on failure.
-> + */
-> +void *rproc_find_carveout_by_da(struct rproc *rproc, u64 da, int len)
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 20 +++++++-------------
+ include/linux/remoteproc.h           |  2 ++
+ 2 files changed, 9 insertions(+), 13 deletions(-)
 
-The name suggest that this returns a struct rproc_mem_entry *, but the
-implementation is just a duplicate of rproc_da_to_va.
-
-I think I prefer that we just use the name based lookup in the
-subsequent patch, alternatively I think this should be made to return
-the carveout and one could then use da_to_va if you need a reference
-within that carveout.
-
-> +{
-> +	struct rproc_mem_entry *carveout;
-> +	void *va = NULL;
-> +
-> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> +		int offset = da - carveout->da;
-> +
-> +		/* try next carveout if da is too small */
-> +		if (offset < 0)
-> +			continue;
-> +
-> +		/* try next carveout if da is too large */
-> +		if (offset + len > carveout->len)
-> +			continue;
-> +
-> +		va = carveout->va + offset;
-> +
-> +		break;
-> +	}
-> +
-> +	return va;
-> +}
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 15e2c4530a0a..761268096fe0 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -732,7 +732,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
+ };
+ 
+ /* handle firmware resource entries before booting the remote processor */
+-static int rproc_handle_resources(struct rproc *rproc, int len,
++static int rproc_handle_resources(struct rproc *rproc,
+ 				  rproc_handle_resource_t handlers[RSC_LAST])
+ {
+ 	struct device *dev = &rproc->dev;
+@@ -742,7 +742,7 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
+ 	for (i = 0; i < rproc->table_ptr->num; i++) {
+ 		int offset = rproc->table_ptr->offset[i];
+ 		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
+-		int avail = len - offset - sizeof(*hdr);
++		int avail = rproc->table_sz - offset - sizeof(*hdr);
+ 		void *rsc = (void *)hdr + sizeof(*hdr);
+ 
+ 		/* make sure table isn't truncated */
+@@ -849,16 +849,9 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 
+ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct resource_table *table, *loaded_table;
++	struct resource_table *loaded_table;
+ 	struct device *dev = &rproc->dev;
+-	int ret, tablesz;
+-
+-	/* look for the resource table */
+-	table = rproc_find_rsc_table(rproc, fw, &tablesz);
+-	if (!table) {
+-		dev_err(dev, "Resource table look up failed\n");
+-		return -EINVAL;
+-	}
++	int ret;
+ 
+ 	/* load the ELF segments to memory */
+ 	ret = rproc_load_segments(rproc, fw);
+@@ -877,7 +870,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	 */
+ 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+ 	if (loaded_table) {
+-		memcpy(loaded_table, rproc->cached_table, tablesz);
++		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+ 		rproc->table_ptr = loaded_table;
+ 	}
+ 
+@@ -951,12 +944,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
+ 
+ 	rproc->table_ptr = rproc->cached_table;
++	rproc->table_sz = tablesz;
+ 
+ 	/* reset max_notifyid */
+ 	rproc->max_notifyid = -1;
+ 
+ 	/* handle fw resources which are required to boot rproc */
+-	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
++	ret = rproc_handle_resources(rproc, rproc_loading_handlers);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to process resources: %d\n", ret);
+ 		goto clean_up_resources;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 2d1058111e57..b72be13d773d 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -410,6 +410,7 @@ enum rproc_crash_type {
+  * @max_notifyid: largest allocated notify id.
+  * @table_ptr: pointer to the resource table in effect
+  * @cached_table: copy of the resource table
++ * @table_sz: size of @cached_table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
+  */
+ struct rproc {
+@@ -440,6 +441,7 @@ struct rproc {
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
+ 	struct resource_table *cached_table;
++	size_t table_sz;
+ 	bool has_iommu;
+ 	bool auto_boot;
+ };
+-- 
+2.15.0
