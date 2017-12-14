@@ -1,108 +1,132 @@
-Return-Path: <pombredanne@nexb.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 13 Dec 2017 16:59:17 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 05/16] remoteproc: modify rproc_handle_carveout to
+ support preallocated region
+Message-ID: <20171214005917.GG17344@builder>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-6-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20171201053510.GZ28761@minitux>
-References: <20171130011644.9421-1-bjorn.andersson@linaro.org>
- <20171130011644.9421-3-bjorn.andersson@linaro.org> <CAOFm3uGR23XSfu3jS0r6=HwcQV1SZCqCrO6c1HQUTTg3dC9LJQ@mail.gmail.com>
- <20171201053510.GZ28761@minitux>
-From: Philippe Ombredanne <pombredanne@nexb.com>
-Date: Fri, 1 Dec 2017 08:48:34 +0100
-Message-ID: <CAOFm3uH9D-SF2gpR6c_Eyz1q=4vYwD6SLf_RnBA9p9C=c-9c9g@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] soc: qcom: Introduce QMI helpers
-Content-Type: text/plain; charset="UTF-8"
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Chris Lew <clew@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512060411-729-6-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Dec 1, 2017 at 6:35 AM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Thu 30 Nov 00:18 PST 2017, Philippe Ombredanne wrote:
->
->> Bjorn,
->>
->> On Thu, Nov 30, 2017 at 2:16 AM, Bjorn Andersson
->> <bjorn.andersson@linaro.org> wrote:
->> []
->> > diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
->> > new file mode 100644
->> > index 000000000000..4027b52b0834
->> > --- /dev/null
->> > +++ b/drivers/soc/qcom/qmi_interface.c
->> > @@ -0,0 +1,857 @@
->> > +/*
->> > + * Copyright (C) 2017 Linaro Ltd.
->> > + *
->> > + * This software is licensed under the terms of the GNU General Public
->> > + * License version 2, as published by the Free Software Foundation, and
->> > + * may be copied, distributed, and modified under those terms.
->> > + *
->> > + * This program is distributed in the hope that it will be useful,
->> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> > + * GNU General Public License for more details.
->> > + */
->>
->> Could it make sense, especially for new files, to use the new SPDX ids
->> and avoid adding boilerplate that will need to be cleaned up later?
->> e.g. something like this instead, using the new conventions started by
->> greg-kh and by documented tglx?
->>
->> NB: the // comment  style is not a mistake and is what Linus wants
->> there. See the threads on this topic.
->>
->> > @@ -0,0 +1,857 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +/*
->> > + * Copyright (C) 2017 Linaro Ltd.
->> > + */
->>
->> Isn't this shorter and better? :P
->>
->
-> That sounds very reasonable, I will update the patches.
+On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
 
-Note that when you only have a copyright left in a header comment
-after removing the boilerplate, you might want to consider this even
-shorter and cleaner form instead. But that's just me telling this:
+> In current version rproc_handle_carveout function support only dynamic
+> region allocation.
+> This patch extends rproc_handle_carveout function to support different carveout
+> configurations:
+> - fixed DA and fixed PA: check if already part of pre-registered carveouts
+> (platform driver). If no, return error.
+> - fixed DA and any PA: check if already part of pre-allocated carveouts
+> (platform driver). If not found and rproc supports iommu, continue with
+> dynamic allocation (DA will be used for iommu programming), else return
+> error as no way to force DA.
+> - any DA and any PA: use original dynamic allocation
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 40 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 78525d1..515a17a 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -184,6 +184,10 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  	struct rproc_mem_entry *carveout;
+>  	void *ptr = NULL;
+>  
+> +	/*
+> +	 * da_to_va platform driver is deprecated. Driver should register
+> +	 * carveout thanks to rproc_add_carveout function
+> +	 */
 
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +// Copyright (C) 2017 Linaro Ltd.
+I think this comment is unrelated to the rest of this patch. I also
+think that at the end of the carveout-rework we should have a patch
+removing this ops.
 
->> BTW, if you need help to fix this on the rest of Linaro contributed
->> code, I maintain a tool that can help there.
->>
->
-> I haven't seen any guidelines on how this should be introduced
-> throughout the kernel,
+>  	if (rproc->ops->da_to_va) {
+>  		ptr = rproc->ops->da_to_va(rproc, da, len);
+>  		if (ptr)
+> @@ -677,6 +681,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	struct rproc_mem_entry *carveout, *mapping;
+>  	struct device *dev = &rproc->dev;
+>  	dma_addr_t dma;
+> +	phys_addr_t pa;
+>  	void *va;
+>  	int ret;
+>  
+> @@ -698,6 +703,41 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	if (!carveout)
+>  		return -ENOMEM;
+>  
+> +	/* Check carveout rsc already part of a registered carveout */
+> +	if (rsc->da != FW_RSC_ADDR_ANY) {
 
-Thomas has sent a first doc patch [1] set. AFAIK he is working on an
-updated version whenever his real time body clock yields a few ticks
-so he can wrap this out.  But his real time clock only rarely yield
-ticks outside of hard real time coding work ;)
+As mentioned before, I consider it perfectly viable for rsc->da to be
+ANY and the driver providing a fixed carveout.
 
-Jonathan also wrote a nice background article on the topic at LWN [2].
+> +		va = rproc_find_carveout_by_da(rproc, rsc->da, rsc->len);
+> +
+> +		if (va) {
 
-I heard this was also briefly discussed among maintainers at the
-plumbers meetup in Los Angeles: for me I only briefly discussed this
-with Linus and Greg just before the meetup, but I could not stay
-longer.
+In a system with an iommu it's possible that rsc->len is larger than
+some carveout->len and va is NULL here so we fall through, allocate some
+memory and remap a segment of the carveout. (Or hopefully fails
+attempting).
 
-> should I make a similar push for the subsystems I
-> maintain?
+> +			/* Registered region found */
+> +			pa = rproc_va_to_pa(va);
+> +			if (rsc->pa != FW_RSC_ADDR_ANY && rsc->pa != (u32)pa) {
+> +				/* Carveout doesn't match request */
+> +				dev_err(dev->parent,
+> +					"Failed to find carveout fitting da and pa\n");
+> +				return -ENOMEM;
+> +			}
+> +
+> +			/* Update rsc table with physical address */
+> +			rsc->pa = (u32)pa;
+> +
+> +			/* Update carveouts list */
+> +			carveout->va = va;
+> +			carveout->len = rsc->len;
+> +			carveout->da = rsc->da;
+> +			carveout->priv = (void *)CARVEOUT_RSC;
+> +
+> +			list_add_tail(&carveout->node, &rproc->carveouts);
 
-That would be great! And beside the fact it always feels good to
-delete lines of code for once, this is one of the rare areas where you
-can kill some lines and be pretty sure it will still compile and run
-afterwards .... well.... in most cases: Greg and Thomas found funny
-cases of .h headers included in assembly where using the // comment
-style was actually making things break weirdly and the compilation
-would go down in flames with a beautiful tail spin : in these cases,
-the convention is to use /**/ comments instead)
+rproc_find_carveout_by_da() will return a reference into a carveout, now
+we add another overlapping carveout into the same list.
 
-Again, if you need help with this, I can modestly chip in with my
-scancode-toolkit tool and good intentions.
 
-[1] https://marc.info/?l=linux-kernel&m=151051532322831&w=2
-[2] https://lwn.net/SubscriberLink/739183/262749cbe307ddc7/
--- 
-Cordially
-Philippe Ombredanne, a happy licensing comments cleaner
+I think it would be saner to not allow the resource table to describe
+subsets of carveouts registered by the driver.
+
+In which case this would better find a carveout by name or exact da,
+then check that the pa, da, len and rsc->flags are adequate.
+
+> +
+> +			return 0;
+> +		}
+> +
+> +		if (!rproc->domain) {
+
+Currently this function ignore invalid values of da when !domain, so I
+think it would be good you can submit this sanity check in it's own
+patch so that anyone bisecting this would know why their broken firmware
+suddenly isn't loadable.
+
+> +			dev_err(dev->parent,
+> +				"Bad carveout rsc configuration\n");
+> +			return -ENOMEM;
+> +		}
+> +	}
+> +
+
+Regards,
+Bjorn
