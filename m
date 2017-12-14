@@ -1,33 +1,49 @@
-Return-Path: <pravin.shedge4linux@gmail.com>
-Return-Path: <pravin.shedge4linux@gmail.com>
-From: Pravin Shedge <pravin.shedge4linux@gmail.com>
-Subject: [PATCH 16/45] drivers: rpmsg: remove duplicate includes
-Date: Wed,  6 Dec 2017 22:32:41 +0530
-Message-Id: <1512579761-5613-1-git-send-email-pravin.shedge4linux@gmail.com>
-To: linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-kernel@vger.kernel.org, pravin.shedge4linux@gmail.com
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 13 Dec 2017 16:34:27 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 02/16] remoteproc: add release ops in rproc_mem_entry
+ struct
+Message-ID: <20171214003427.GD17344@builder>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-3-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512060411-729-3-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These duplicate includes have been found with scripts/checkincludes.pl but
-they have been removed manually to avoid removing false positives.
+On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
 
-Signed-off-by: Pravin Shedge <pravin.shedge4linux@gmail.com>
----
- drivers/rpmsg/qcom_glink_smem.c | 2 --
- 1 file changed, 2 deletions(-)
+> +static int rproc_release_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+> +{
+> +	struct device *dev = &rproc->dev;
+> +
+> +	/* clean up carveout allocations */
+> +	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
+> +	list_del(&mem->node);
 
-diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-index 5cdaa5f..057528e 100644
---- a/drivers/rpmsg/qcom_glink_smem.c
-+++ b/drivers/rpmsg/qcom_glink_smem.c
-@@ -29,8 +29,6 @@
- #include <linux/workqueue.h>
- #include <linux/list.h>
- 
--#include <linux/delay.h>
--#include <linux/rpmsg.h>
- #include <linux/rpmsg/qcom_glink.h>
- 
- #include "qcom_glink_native.h"
--- 
-2.7.4
+The core is responsible for putting the node on a list, so let the
+cleanup take if off the list.
+
+> +	kfree(mem);
+> +	return 0;
+> +}
+> +
+[..]
+> @@ -319,12 +322,11 @@ struct rproc_mem_entry {
+>  	dma_addr_t dma;
+>  	int len;
+>  	u32 da;
+> +	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+
+The placement here seems random, please move it last in the struct.
+
+>  	void *priv;
+>  	struct list_head node;
+>  };
+>  
+
+Regards,
+Bjorn
