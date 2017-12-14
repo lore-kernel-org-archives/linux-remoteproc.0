@@ -1,8 +1,8 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic PALLARDY <loic.pallardy@st.com>
 Subject: RE: [PATCH 6/8] remoteproc: Move resource table load logic to find
-Date: Thu, 14 Dec 2017 12:00:13 +0000
-Message-ID: <04d54471292f446898fd162afd15388f@SFHDAG7NODE2.st.com>
+Date: Thu, 14 Dec 2017 11:25:46 +0000
+Message-ID: <63583c92f9e14fd881d53db2706ca689@SFHDAG7NODE2.st.com>
 References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
  <20171213224111.17864-7-bjorn.andersson@linaro.org>
 In-Reply-To: <20171213224111.17864-7-bjorn.andersson@linaro.org>
@@ -165,17 +165,6 @@ ts
 >  	if (!shdr)
 > -		return NULL;
 > +		return -EINVAL;
-Reading patch 7, I don't catch how firmware without resource table are supp=
-orted as if no table found, an error is returned here.
-In rproc_fw_boot, you have:
-	ret =3D rproc_load_rsc_table(rproc, fw);
-	if (ret)
-		goto disable_iommu;
-So boot process is interrupted...
-
-Regards,
-Loic
-
 >=20
 >  	table =3D (struct resource_table *)(elf_data + shdr->sh_offset);
 > -	*tablesz =3D shdr->sh_size;
@@ -199,6 +188,17 @@ Loic
 >  }
 > -EXPORT_SYMBOL(rproc_elf_find_rsc_table);
 > +EXPORT_SYMBOL(rproc_elf_load_rsc_table);
+[LPA] Hi Bjorn,
+
+I understand the simplification of the  code, but I would like to keep rpro=
+c_elf_find_rsc_table function as helper one.
+Indeed if a driver wants to override the default rproc_elf_load_rsc_table, =
+it may have to parse first the elf file to look up for resource table using=
+ rproc_elf_find_rsc_table as helper.
+
+Regards,
+Loic
+
 >=20
 >  /**
 >   * rproc_elf_find_loaded_rsc_table() - find the loaded resource table
