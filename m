@@ -1,52 +1,61 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 13 Dec 2017 16:30:56 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 5/5] rpmsg: smd: Don't hold the tx lock during wait
-Date: Tue, 12 Dec 2017 15:58:57 -0800
-Message-Id: <20171212235857.10432-6-bjorn.andersson@linaro.org>
-In-Reply-To: <20171212235857.10432-1-bjorn.andersson@linaro.org>
-References: <20171212235857.10432-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Chris Lew <clew@quicinc.com>, Jeremy McNicoll <jmcnicol@redhat.com>, Will Newton <will.newton@gmail.com>
+Subject: Re: [PATCH v2 01/16] remoteproc: add rproc_va_to_pa function
+Message-ID: <20171214003056.GC17344@builder>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-2-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512060411-729-2-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Holding the tx lock while waiting for tx-drain events from the remote
-side blocks try_send requests from failing quickly, so temporarily drop
-the tx lock while waiting.
+On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
 
-While this allows try_send to fail quickly it also could allow a
-subsequent send to succeed putting a smaller packet in the FIFO while
-we're waiting for room for our large packet. But as this lock is per
-channel we expect that clients with ordering concerns implements their
-own ordering mechanism.
+> This new function translates CPU virtual address in
+> CPU physical one according to virtual address location.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index eab14b4..faa18a7 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -139,6 +139,17 @@ static void rproc_disable_iommu(struct rproc *rproc)
+>  	iommu_domain_free(domain);
+>  }
+>  
+> +static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+> +{
+> +	if (is_vmalloc_addr(cpu_addr)) {
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_smd.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Please add a comment describing when is_vmalloc_addr() would be true.
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index ed167ab52a68..10870189c0c8 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -752,12 +752,19 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
- 
- 		SET_TX_CHANNEL_FLAG(channel, fBLOCKREADINTR, 0);
- 
-+		/* Wait without holding the tx_lock */
-+		mutex_unlock(&channel->tx_lock);
-+
- 		ret = wait_event_interruptible(channel->fblockread_event,
- 				       qcom_smd_get_tx_avail(channel) >= tlen ||
- 				       channel->state != SMD_CHANNEL_OPENED);
- 		if (ret)
- 			goto out;
- 
-+		ret = mutex_lock_interruptible(&channel->tx_lock);
-+		if (ret)
-+			goto out;
-+
- 		SET_TX_CHANNEL_FLAG(channel, fBLOCKREADINTR, 1);
- 	}
- 
--- 
-2.15.0
+> +		return page_to_phys(vmalloc_to_page(cpu_addr)) +
+> +				    offset_in_page(cpu_addr);
+> +	}
+> +
+> +	WARN_ON(!virt_addr_valid(cpu_addr));
+> +	return virt_to_phys(cpu_addr);
+> +}
+> +
+>  /**
+>   * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
+>   * @rproc: handle of a remote processor
+> @@ -700,7 +711,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	 * In this case, the device address and the physical address
+>  	 * are the same.
+>  	 */
+> -	rsc->pa = dma;
+> +	rsc->pa = (u32)rproc_va_to_pa(va);
+
+This is more correct than using "dma", so this is good.
+
+Regards,
+Bjorn
