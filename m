@@ -1,57 +1,88 @@
-Return-Path: <vincent.legoll@gmail.com>
-Return-Path: <vincent.legoll@gmail.com>
-From: Vincent Legoll <vincent.legoll@gmail.com>
-Subject: [PATCH] remoteproc: make REMOTEPROC a menuconfig to ease disabling it all
-Date: Sat,  9 Dec 2017 16:34:58 +0100
-Message-Id: <20171209153458.5195-1-vincent.legoll@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Vincent Legoll <vincent.legoll@gmail.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 13 Dec 2017 16:45:32 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 04/16] remoteproc: introduce rproc_find_carveout_by_da
+Message-ID: <20171214004532.GF17344@builder>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-5-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512060411-729-5-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-No need to get into the submenu to disable all related
-config entries.
+On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
 
-This makes it easier to disable all REMOTEPROC config options
-without entering the submenu. It will also enable one
-to see that en/dis-abled state from the outside menu.
+> This patch provides a new function to find a carveout according
+> to a device address (da).
+> If match found, this function returns CPU virtual address corresponding
+> to specified da.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 42 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 279320a..78525d1 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -211,6 +211,48 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  }
+>  EXPORT_SYMBOL(rproc_da_to_va);
+>  
+> +/**
+> + * rproc_find_carveout_by_da() - lookup the carveout region for a remoteproc address
+> + * @rproc: handle of a remote processor
+> + * @da: remoteproc device address to find
+> + * @len: length of the memory region @da is pointing to
+> + *
+> + * Platform driver has the capability to register some pre-allacoted carveout
+> + * (physically contiguous memory regions) before rproc firmware loading and
+> + * associated resource table analysis. These regions may be dedicated memory
+> + * regions internal to the coprocessor or specified DDR region with specific
+> + * attributes
+> + *
+> + * This function is a helper function with which we can go over the
+> + * allocated carveouts and translate specific device addresse to virtual
+> + * addresse so we can fill firmware resource table.
+> + *
+> + * The function returns a valid virtual address on success or NULL on failure.
+> + */
+> +void *rproc_find_carveout_by_da(struct rproc *rproc, u64 da, int len)
 
-This is only intended to change menuconfig UI, not change
-the config dependencies.
+The name suggest that this returns a struct rproc_mem_entry *, but the
+implementation is just a duplicate of rproc_da_to_va.
 
-Signed-off-by: Vincent Legoll <vincent.legoll@gmail.com>
----
- drivers/remoteproc/Kconfig | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+I think I prefer that we just use the name based lookup in the
+subsequent patch, alternatively I think this should be made to return
+the carveout and one could then use da_to_va if you need a reference
+within that carveout.
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index b609e1d3654b..29341c7d836d 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -1,4 +1,7 @@
--menu "Remoteproc drivers"
-+menuconfig REMOTEPROC_MENU
-+	bool "Remoteproc drivers"
-+
-+if REMOTEPROC_MENU
- 
- config REMOTEPROC
- 	tristate "Support for Remote Processor subsystem"
-@@ -10,8 +13,6 @@ config REMOTEPROC
- 	  Support for remote processors (such as DSP coprocessors). These
- 	  are mainly used on embedded systems.
- 
--if REMOTEPROC
--
- config IMX_REMOTEPROC
- 	tristate "IMX6/7 remoteproc support"
- 	depends on SOC_IMX6SX || SOC_IMX7D
-@@ -140,6 +141,5 @@ config ST_REMOTEPROC
- config ST_SLIM_REMOTEPROC
- 	tristate
- 
--endif # REMOTEPROC
-+endif # REMOTEPROC_MENU
- 
--endmenu
--- 
-2.14.1
+> +{
+> +	struct rproc_mem_entry *carveout;
+> +	void *va = NULL;
+> +
+> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
+> +		int offset = da - carveout->da;
+> +
+> +		/* try next carveout if da is too small */
+> +		if (offset < 0)
+> +			continue;
+> +
+> +		/* try next carveout if da is too large */
+> +		if (offset + len > carveout->len)
+> +			continue;
+> +
+> +		va = carveout->va + offset;
+> +
+> +		break;
+> +	}
+> +
+> +	return va;
+> +}
+
+Regards,
+Bjorn
