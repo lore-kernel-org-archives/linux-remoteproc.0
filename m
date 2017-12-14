@@ -1,58 +1,53 @@
-Return-Path: <clew@codeaurora.org>
-From: Chris Lew <clew@codeaurora.org>
-Subject: [PATCH 4/6] rpmsg: glink: Expose rpmsg name attr for glink
-Date: Mon, 18 Dec 2017 14:02:12 -0800
-Message-Id: <1513634534-22861-5-git-send-email-clew@codeaurora.org>
-In-Reply-To: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
-Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 13 Dec 2017 21:37:29 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 15/16] remoteproc: st: associate memory device to
+ memory regions
+Message-ID: <20171214053729.GP17344@builder>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-16-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1512060411-729-16-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Expose the name field as an attr so clients listening to uevents for
-rpmsg can identify the edge the events correspond to.
+On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+> Enable memory device creation for each memory region added
+> by rproc_add_carveout function.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/st_remoteproc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+> index da42ec9..bf83d82 100644
+> --- a/drivers/remoteproc/st_remoteproc.c
+> +++ b/drivers/remoteproc/st_remoteproc.c
+> @@ -279,6 +279,7 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+>  		mem->dma = res.start;
+>  		mem->da = res.start;
+>  		mem->len = resource_size(&res);
+> +		strncpy(mem->name, node->name, sizeof(mem->name));
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 786f2eca01f1..a897ccea3098 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1558,6 +1558,22 @@ static void qcom_glink_work(struct work_struct *work)
- 	}
- }
- 
-+static ssize_t rpmsg_name_show(struct device *dev,
-+			       struct device_attribute *attr, char *buf)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct qcom_glink_device *gdev = to_glink_device(rpdev);
-+
-+	return snprintf(buf, RPMSG_NAME_SIZE, "%s\n", gdev->glink->name);
-+}
-+static DEVICE_ATTR_RO(rpmsg_name);
-+
-+static struct attribute *qcom_glink_attrs[] = {
-+	&dev_attr_rpmsg_name.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(qcom_glink);
-+
- static void qcom_glink_device_release(struct device *dev)
- {
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-@@ -1597,6 +1613,8 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	glink->dev = dev;
-+	glink->dev->groups = qcom_glink_groups;
-+
- 	glink->tx_pipe = tx;
- 	glink->rx_pipe = rx;
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Please add this to the previous patch.
+
+>  		mem->va = devm_ioremap_wc(dev, mem->dma, mem->len);
+>  		if (!mem->va) {
+>  			dev_err(dev, "Unable to map memory region: %pa+%zx\n",
+> @@ -286,7 +287,7 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+>  			return -EBUSY;
+>  		}
+>  
+> -		rproc_add_carveout(rproc, mem, false);
+> +		rproc_add_carveout(rproc, mem, true);
+
+Here you can see how easy it is to accidentally double-map the memory
+region.
+
+Regards,
+Bjorn
