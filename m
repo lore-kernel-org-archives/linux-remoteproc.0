@@ -1,43 +1,56 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 13 Dec 2017 22:24:22 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 0/8] Remoteproc cleanups
-Date: Wed, 13 Dec 2017 14:41:03 -0800
-Message-Id: <20171213224111.17864-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 5/6] remoteproc: Add posibility to probe a sub device.
+Message-ID: <20171214062422.GT17344@builder>
+References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+ <1511534202-12995-6-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1511534202-12995-6-git-send-email-arnaud.pouliquen@st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: linux-remoteproc@vger.kernel.org, Loic PALLARDY <loic.pallardy@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The first patch removes code that became unnecessary when the recovery flow was
-redesigned.
+On Fri 24 Nov 06:36 PST 2017, Arnaud Pouliquen wrote:
 
-The following patches moves the assignment of cached_table to the resource
-table loader, rather than core code, which allows this to made optional and
-finally drops the various dummy resource tables provided by drivers.
+> @@ -1343,6 +1344,11 @@ int rproc_add(struct rproc *rproc)
+>  			return ret;
+>  	}
+>  
+> +	/* add resource manager device */
+> +	ret = devm_of_platform_populate(dev->parent);
+> +	if (ret < 0)
+> +		return ret;
 
-Then finally the last patch ensures that table_ptr isn't left pointing into
-memory of a stopped remoteproc.
+With the Qualcomm remoteprocs we describe the communication links as
+sub-nodes of the remoteproc node to allow binding drivers to channels by
+compatible, provide properties to the devices and expose remote services
+in DT (e.g. for the purpose of implementing regulators, clocks and other
+resources for the system).
 
-Bjorn Andersson (8):
-  remoteproc: Remove depricated crash completion
-  remoteproc: Cache resource table size
-  remoteproc: Clone rproc_ops in rproc_alloc()
-  remoteproc: Merge rproc_ops and rproc_fw_ops
-  remoteproc: Don't handle empty resource table
-  remoteproc: Move resource table load logic to find
-  remoteproc: Drop dangling find_rsc_table dummies
-  remoteproc: Reset table_ptr on stop
+I'm surprised this has not been brought up yet for rpmsg, but I assume
+it will come at some point, e.g. that we would have something like:
 
- drivers/remoteproc/qcom_adsp_pil.c         |  8 +--
- drivers/remoteproc/qcom_common.c           | 19 -------
- drivers/remoteproc/qcom_common.h           |  4 --
- drivers/remoteproc/qcom_q6v5_pil.c         | 18 +------
- drivers/remoteproc/qcom_wcnss.c            |  8 +--
- drivers/remoteproc/remoteproc_core.c       | 83 ++++++++++++------------------
- drivers/remoteproc/remoteproc_elf_loader.c | 59 ++++++++++-----------
- drivers/remoteproc/remoteproc_internal.h   | 57 +++++++-------------
- drivers/remoteproc/st_slim_rproc.c         | 29 -----------
- include/linux/remoteproc.h                 | 20 +++++--
- 10 files changed, 102 insertions(+), 203 deletions(-)
+remoteproc {
+	compatible = "acme,rproc";
 
--- 
-2.15.0
+	vdev0 {
+		reg = <0>;
+
+		acme_clocks: clock-controller {
+			compatible = "acme,clock-controller";
+			#clock-cells = <1>;
+		};
+	};
+};
+
+
+So blindly creating platform_devices for any subnodes of the remoteproc
+node doesn't work for the Qualcomm drivers and won't work if we ever
+want to describe something else than a platform driver as a child of any
+other remoteproc.
+
+Regards,
+Bjorn
