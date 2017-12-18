@@ -1,52 +1,94 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 21:59:04 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [RFC 2/6] dt-bindings: remoteproc: add system resource manager
- (SRM)
-Message-ID: <20171214055904.GQ17344@builder>
-References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
- <1511534202-12995-3-git-send-email-arnaud.pouliquen@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1511534202-12995-3-git-send-email-arnaud.pouliquen@st.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: linux-remoteproc@vger.kernel.org, Loic PALLARDY <loic.pallardy@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
+Return-Path: <clew@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
+Subject: [PATCH 3/6] rpmsg: glink: Add support for rpmsg glink chrdev
+Date: Mon, 18 Dec 2017 14:02:11 -0800
+Message-Id: <1513634534-22861-4-git-send-email-clew@codeaurora.org>
+In-Reply-To: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
+References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
+Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 24 Nov 06:36 PST 2017, Arnaud Pouliquen wrote:
+RPMSG provides a char device interface to userspace. Probe the rpmsg
+chrdev channel to enable the rpmsg_ctrl device creation on glink
+transports.
 
-> +Example:
-> +	system_resources {
-> +		compatible = "rproc-srm-core";
-> +
-> +		mmc0: sdhci@09060000 {
-> +			compatible = "rproc-srm-dev";
-> +			pinctrl-names = "default", "idle";
-> +			pinctrl-0 = <&pinctrl_mmc0>;
-> +			pinctrl-1 = <&pinctrl_mmc1>;
-> +			clock-names = "mmc", "icn";
-> +			clocks = <&clk_s_c0_flexgen CLK_MMC_0>,
-> +				 <&clk_s_c0_flexgen CLK_RX_ICN_HVA>;
-> +			vdda-supply = <&vdda>;
-> +		};
-> +	};
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 39 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
->From a DT perspective these properties are all on the remoteproc. This
-has the additional benefit of making the dynamic case much saner to
-implement. I.e. if you have:
-
-acme_rproc {
-	compatible = "acme,rproc";
-
-	clock-names = "ddr", "mmc";
-	clocks = <&clocker DDR>, <&clocker MMC>;
-};
-
-Then you can declare statically in the acme,rproc that the "ddr" clock
-should be enabled between boot and shutdown, or we can do this based on
-resource table information, and you can easily acquire a handle to this
-clock from a rpmsg device acting as dynamic controller of resources.
-
-Regards,
-Bjorn
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 179132226dc2..786f2eca01f1 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -132,6 +132,13 @@ enum {
+ 	GLINK_STATE_CLOSING,
+ };
+ 
++struct qcom_glink_device {
++	struct rpmsg_device rpdev;
++	struct qcom_glink *glink;
++};
++
++#define to_glink_device(_x) container_of(_x, struct qcom_glink_device, rpdev)
++
+ /**
+  * struct glink_channel - internal representation of a channel
+  * @rpdev:	rpdev reference, only used for primary endpoints
+@@ -1339,6 +1346,10 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
+ 	return NULL;
+ }
+ 
++static const struct rpmsg_device_ops glink_chrdev_ops = {
++	.create_ept = qcom_glink_create_ept,
++};
++
+ static const struct rpmsg_device_ops glink_device_ops = {
+ 	.create_ept = qcom_glink_create_ept,
+ 	.announce_create = qcom_glink_announce_create,
+@@ -1547,6 +1558,30 @@ static void qcom_glink_work(struct work_struct *work)
+ 	}
+ }
+ 
++static void qcom_glink_device_release(struct device *dev)
++{
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
++	struct qcom_glink_device *gdev = to_glink_device(rpdev);
++
++	kfree(gdev);
++}
++
++static int qcom_glink_create_chrdev(struct qcom_glink *glink)
++{
++	struct qcom_glink_device *gdev;
++
++	gdev = kzalloc(sizeof(*gdev), GFP_KERNEL);
++	if (!gdev)
++		return -ENOMEM;
++
++	gdev->glink = glink;
++	gdev->rpdev.ops = &glink_chrdev_ops;
++	gdev->rpdev.dev.parent = glink->dev;
++	gdev->rpdev.dev.release = qcom_glink_device_release;
++
++	return rpmsg_chrdev_register_device(&gdev->rpdev);
++}
++
+ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 					   unsigned long features,
+ 					   struct qcom_glink_pipe *rx,
+@@ -1605,6 +1640,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
++	ret = qcom_glink_create_chrdev(glink);
++	if (ret)
++		dev_err(glink->dev, "failed to register chrdev\n");
++
+ 	return glink;
+ }
+ EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
