@@ -1,51 +1,49 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 16:36:41 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 03/16] remoteproc: introduce rproc_add_carveout
- function
-Message-ID: <20171214003641.GE17344@builder>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-4-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1512060411-729-4-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Return-Path: <clew@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
+Subject: [PATCH 6/6] rpmsg: glink: Add get_rproc_name device op
+Date: Mon, 18 Dec 2017 14:02:14 -0800
+Message-Id: <1513634534-22861-7-git-send-email-clew@codeaurora.org>
+In-Reply-To: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
+References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
+Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f23daf9..279320a 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -737,6 +737,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	carveout->dma = dma;
->  	carveout->da = rsc->da;
->  	carveout->release = rproc_release_carveout;
-> +	carveout->priv = (void *)CARVEOUT_RSC_ALLOCATED;
+Add support for clients to query the edge name for the glink device
+their channel is registered for.
 
-I don't fancy the (ab)use of priv to keep track of this, I also don't
-see that it's ever used. Please drop it.
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-[..]
-> +int rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
-> +{
-> +	if (!rproc || !mem)
-> +		return -EINVAL;
-
-I don't see this function doing more than adding the item to the list of
-carveouts, which can't fail. So let's just rely on the user calling it
-with valid references and make it return void.
-
-> +
-> +	mem->priv = (void *)CARVEOUT_EXTERNAL;
-> +
-> +	list_add_tail(&mem->node, &rproc->carveouts);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(rproc_add_carveout);
-
-Regards,
-Bjorn
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index a897ccea3098..4748dea0748e 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1346,6 +1346,14 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
+ 	return NULL;
+ }
+ 
++static const char *qcom_glink_get_rproc_name(struct rpmsg_device *rpdev)
++{
++	struct glink_channel *channel = to_glink_channel(rpdev->ept);
++	struct qcom_glink *glink = channel->glink;
++
++	return glink->name;
++}
++
+ static const struct rpmsg_device_ops glink_chrdev_ops = {
+ 	.create_ept = qcom_glink_create_ept,
+ };
+@@ -1353,6 +1361,7 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
+ static const struct rpmsg_device_ops glink_device_ops = {
+ 	.create_ept = qcom_glink_create_ept,
+ 	.announce_create = qcom_glink_announce_create,
++	.get_rproc_name = qcom_glink_get_rproc_name,
+ };
+ 
+ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
