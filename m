@@ -1,58 +1,70 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 17:44:07 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 12/16] remoteproc: look-up memory-device for vring
- allocation
-Message-ID: <20171214014407.GM17344@builder>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-13-git-send-email-loic.pallardy@st.com>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH v5 0/6] Add support for Hexagon q6v5-wcss integrated core
+References: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <a4f0213d-62c2-b749-9fd2-e7c4a304b5e5@codeaurora.org>
+Date: Tue, 19 Dec 2017 17:21:20 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1512060411-729-13-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+In-Reply-To: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
->  	} else {
-> +		/* Find any carveout matching vring */
-> +		/* Try dedicated vdev j vring i pool. */
-> +		snprintf(name, sizeof(name), "vdev%dvring%d", rvdev->index, i);
-> +		carveout = rproc_find_carveout_by_name(rproc, name);
+Hi Bjorn,
 
-This might match a carveout representing remapped device memory, which
-wouldn't have a memdev so the logic below would silently allocate from
-the parent dma_mem instead.
+On 11/14/2017 4:23 PM, Sricharan R wrote:
+> IPQ8074 has an integrated Hexagon dsp core Q6v5 and a wireless lan
+> (Lithium) IP. This series adds the remoteproc driver to reset, load
+> and boot Q6 firmware.
+> 
+> The first patch is to make the mdt_loader authenticate
+> the firmware only if required, so that the code can be reused for
+> self-authenticating firmware like the Q6v5 core in IPQ8074. The second
+> patch exports the elf header's get_boot_addr helper to reuse it.
+> The next couple of patches arranges the code in the original q6v5-mpss
+> rproc to add q6v5-wcss later. The last couple of patches add the relevant
+> bits for the q6v5-wcss core.
+> 
+> This is done on top of Avaneesh's msm8996 rproc support [1]
+> 
+> [1] https://lkml.org/lkml/2017/10/24/771
+> 
+> v5:
+>     No change. Just updated tags in PATCH #5
+> 
+> V4:
+>     Fixed Bjorn's comment in PATCH#1 and added his acked-by
+>     Rebased on top of Avinash's latest rproc for msm8996 q6 support.
+> 
+> V3:
+>     Rebased on top of latest remoteproc next
+> 
+> V2:
+>     Last time introduced this a new rproc driver, but there is lot
+>     of code that can be shared if it is added to the q6v5-mpss pil
+>     driver.
+> 
+> Sricharan R (6):
+>   remoteproc: qcom: mdt_loader: Make the firmware authentication
+>     optional
+>   remoteproc: Export rproc_elf_get_boot_addr
+>   remoteproc: qcom: Push reset ops, fw ops, rproc ops in to of_match
+>     data
+>   remoteproc: qcom: Split the head and tail of the q6v5-pil rproc start
+>     function
+>   remoteproc: qcom: Add support for q6v5-wcss pil
+>   remoteproc: qcom: Add q6v5-wcss rproc ops
+> 
 
-I don't think this is user friendly and would be better to just use the
-information in the already mapped carveout.
-
-> +
-> +		if (!carveout) {
-> +			/* Try dedicated vdev j vrings pool. */
-> +			snprintf(name, sizeof(name), "vdev%dvring", rvdev->index);
-> +			carveout = rproc_find_carveout_by_name(rproc, name);
-> +		}
-> +
-> +		if (carveout && carveout->memdev)
-> +			memdev = &carveout->memdev->dev;
-> +
-> +		rvring->dev = memdev;
-> +
->  		/*
->  		 * Allocate non-cacheable memory for the vring. In the future
->  		 * this call will also configure the IOMMU for us
->  		 */
-> -		va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
-> +		va = dma_alloc_coherent(memdev, size, &dma, GFP_KERNEL);
-
-It's possible that you have fulfilled a resource_table carveout request
-with this memory, making the dynamic allocation likely to cause issues.
-
->  		if (!va) {
->  			dev_err(dev->parent, "dma_alloc_coherent failed\n");
->  			return -EINVAL;
+Hi Bjorn,
+ Just thought of pinging you to figure out if the
+ patches are ok and any feedback ?
 
 Regards,
-Bjorn
+ Sricharan
+
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
