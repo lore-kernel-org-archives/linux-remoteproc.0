@@ -1,180 +1,119 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
-Date: Wed, 13 Dec 2017 14:41:10 -0800
-Message-Id: <20171213224111.17864-8-bjorn.andersson@linaro.org>
-In-Reply-To: <20171213224111.17864-1-bjorn.andersson@linaro.org>
-References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [RFC 2/6] dt-bindings: remoteproc: add system resource manager
+ (SRM)
+References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
+ <1511534202-12995-3-git-send-email-arnaud.pouliquen@st.com>
+ <20171214055904.GQ17344@builder>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <c9557b8a-2ddc-0f3b-35ac-6023418b6774@st.com>
+Date: Thu, 21 Dec 2017 18:46:45 +0100
+MIME-Version: 1.0
+In-Reply-To: <20171214055904.GQ17344@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, Loic PALLARDY <loic.pallardy@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As the core now deals with the lack of a resource table, remove the
-dangling custom dummy implementations of find_rsc_table from drivers.
+Hello Bjorn,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/qcom_adsp_pil.c |  1 -
- drivers/remoteproc/qcom_common.c   | 19 -------------------
- drivers/remoteproc/qcom_common.h   |  4 ----
- drivers/remoteproc/qcom_q6v5_pil.c | 11 -----------
- drivers/remoteproc/qcom_wcnss.c    |  1 -
- drivers/remoteproc/st_slim_rproc.c | 18 ------------------
- include/linux/remoteproc.h         |  4 ----
- 7 files changed, 58 deletions(-)
+On 12/14/2017 06:59 AM, Bjorn Andersson wrote:
+> On Fri 24 Nov 06:36 PST 2017, Arnaud Pouliquen wrote:
+> 
+>> +Example:
+>> +	system_resources {
+>> +		compatible = "rproc-srm-core";
+>> +
+>> +		mmc0: sdhci@09060000 {
+>> +			compatible = "rproc-srm-dev";
+>> +			pinctrl-names = "default", "idle";
+>> +			pinctrl-0 = <&pinctrl_mmc0>;
+>> +			pinctrl-1 = <&pinctrl_mmc1>;
+>> +			clock-names = "mmc", "icn";
+>> +			clocks = <&clk_s_c0_flexgen CLK_MMC_0>,
+>> +				 <&clk_s_c0_flexgen CLK_RX_ICN_HVA>;
+>> +			vdda-supply = <&vdda>;
+>> +		};
+>> +	};
+> 
+> From a DT perspective these properties are all on the remoteproc. This
+> has the additional benefit of making the dynamic case much saner to
+> implement. I.e. if you have:
+> 
+> acme_rproc {
+> 	compatible = "acme,rproc";
+> 
+> 	clock-names = "ddr", "mmc";
+> 	clocks = <&clocker DDR>, <&clocker MMC>;
+> };
+> 
+> Then you can declare statically in the acme,rproc that the "ddr" clock
+> should be enabled between boot and shutdown, or we can do this based on
+> resource table information, and you can easily acquire a handle to this
+> clock from a rpmsg device acting as dynamic controller of resources.
 
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 7b9d810b23f1..b0b0d5ca1ca0 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -181,7 +181,6 @@ static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
--	.find_rsc_table = qcom_mdt_find_rsc_table,
- 	.load = adsp_load,
- };
- 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 818ee3657043..ce2dcc4f7de7 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -32,25 +32,6 @@
- 
- static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
- 
--/**
-- * qcom_mdt_find_rsc_table() - provide dummy resource table for remoteproc
-- * @rproc:	remoteproc handle
-- * @fw:		firmware header
-- * @tablesz:	outgoing size of the table
-- *
-- * Returns a dummy table.
-- */
--struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
--					       const struct firmware *fw,
--					       int *tablesz)
--{
--	static struct resource_table table = { .ver = 1, };
--
--	*tablesz = sizeof(table);
--	return &table;
--}
--EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
--
- static int glink_subdev_probe(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
-diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
-index 541586e528b3..73efed969bfd 100644
---- a/drivers/remoteproc/qcom_common.h
-+++ b/drivers/remoteproc/qcom_common.h
-@@ -30,10 +30,6 @@ struct qcom_rproc_ssr {
- 	const char *name;
- };
- 
--struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
--					       const struct firmware *fw,
--					       int *tablesz);
--
- void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
- void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index fbff5d842581..6f6ea0414366 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -304,16 +304,6 @@ static void q6v5_clk_disable(struct device *dev,
- 		clk_disable_unprepare(clks[i]);
- }
- 
--static struct resource_table *q6v5_find_rsc_table(struct rproc *rproc,
--						  const struct firmware *fw,
--						  int *tablesz)
--{
--	static struct resource_table table = { .ver = 1, };
--
--	*tablesz = sizeof(table);
--	return &table;
--}
--
- static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
- 				   bool remote_owner, phys_addr_t addr,
- 				   size_t size)
-@@ -927,7 +917,6 @@ static const struct rproc_ops q6v5_ops = {
- 	.start = q6v5_start,
- 	.stop = q6v5_stop,
- 	.da_to_va = q6v5_da_to_va,
--	.find_rsc_table = q6v5_find_rsc_table,
- 	.load = q6v5_load,
- };
- 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index cc44ec598522..1fa5253020dd 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -310,7 +310,6 @@ static const struct rproc_ops wcnss_ops = {
- 	.start = wcnss_start,
- 	.stop = wcnss_stop,
- 	.da_to_va = wcnss_da_to_va,
--	.find_rsc_table = qcom_mdt_find_rsc_table,
- 	.load = wcnss_load,
- };
- 
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index 1538ea915c49..c6a2a8b68c7a 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -200,28 +200,10 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return va;
- }
- 
--/*
-- * Firmware handler operations: sanity, boot address, load ...
-- */
--
--static struct resource_table empty_rsc_tbl = {
--	.ver = 1,
--	.num = 0,
--};
--
--static struct resource_table *slim_rproc_find_rsc_table(struct rproc *rproc,
--					       const struct firmware *fw,
--					       int *tablesz)
--{
--	*tablesz = sizeof(empty_rsc_tbl);
--	return &empty_rsc_tbl;
--}
--
- static const struct rproc_ops slim_rproc_ops = {
- 	.start		= slim_rproc_start,
- 	.stop		= slim_rproc_stop,
- 	.da_to_va       = slim_rproc_da_to_va,
--	.find_rsc_table = slim_rproc_find_rsc_table,
- };
- 
- /**
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index ec1ada7cc6d7..51ddde7535b9 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -332,7 +332,6 @@ struct firmware;
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-  * @da_to_va:	optional platform hook to perform address translations
-- * @find_rsc_table:	find the resource table inside the firmware image
-  * @find_loaded_rsc_table: find the loaded resouce table
-  * @load:		load firmeware to memory, where the remote processor
-  *			expects to find it
-@@ -345,9 +344,6 @@ struct rproc_ops {
- 	void (*kick)(struct rproc *rproc, int vqid);
- 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
- 	int (*load_rsc_table)(struct rproc *rproc, const struct firmware *fw);
--	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
--						 const struct firmware *fw,
--						 int *tablesz);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
--- 
-2.15.0
+Let's try to clarify the concept we propose.
+
+We distinguish 2 kinds of resources.
+
+1) The resource "inherent" to the remote processor itself:
+	- Core clocks
+	- associated memories RAM, DDR,...
+	- reset...
+These resources are already handled by remoteproc core and platform.
+
+2) The peripheral resources like a serial bus, an ADC, a DAC, GPIOs...
+This peripheral can be allocated to the remote processor.
+In this case the remote processor is in charge of managing the
+peripheral itself (peripheral registers).
+This peripheral needs clocks, regulators, pins...that are managed by
+Linux frameworks.
+Aim of the SRM is to handles these particular resources, and so to
+provide a way to configure clock, pins, regulators... requested by these
+peripherals to operate.
+
+For instance, if a remote processor needs to drive an I2C master.
+Linux needs to:
+- configure the clock tree to provide a clocks for the I2C peripheral
+and bus,
+- configure pintrl for the I2C bus.
+
+2 additional assumptions:
+- remote processor doesn't have to know the clock and pins used, Linux
+manages them.
+- remote processor should be able to get and release the I2C peripheral.
+
+This is the purpose of the SRM:
+- Provide a simple way to declare system resource associated to a
+peripheral in DT. The declaration is similar to a peripheral used by
+linux processor.
+- Provide a dynamic way to get/release and reconfigure system resources
+associated to a peripheral. This part will need RPMsg add-on to be fully
+dynamic.
+
+Associate a Linux device per peripheral allows to bind peripheral to its
+resources and to choice either a generic driver (proc-srm-dev) or a
+specific platform driver to handle it.
+for instance, a specific platform driver can be need if platform has
+some specific "system" resources that need to be handle only on Linux
+side to avoid concurrent access.
+
+Extra usecases that could be managed by srm ( to be confirmed by deeper
+analysis):
+- Remote peripheral suspend/resume.
+- DMA channels.
+- Pins configurations before and after peripheral initialization to
+avoid glitches
+- Dynamic reallocation of a peripheral, from one processor to the other
+( low power use cases).
+...
+
+Notice that, perhaps "srm" name is confusing and should be changed...
+
+Regards
+Arnaud
+> 
+> Regards,
+> Bjorn
+> 
