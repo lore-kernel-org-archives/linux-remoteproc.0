@@ -1,38 +1,41 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 13 Dec 2017 22:15:53 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [RFC 3/6] remoteproc: add system resource manager core
-Message-ID: <20171214061553.GS17344@builder>
-References: <1511534202-12995-1-git-send-email-arnaud.pouliquen@st.com>
- <1511534202-12995-4-git-send-email-arnaud.pouliquen@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1511534202-12995-4-git-send-email-arnaud.pouliquen@st.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: linux-remoteproc@vger.kernel.org, Loic PALLARDY <loic.pallardy@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
+Subject: [PATCH v2 0/4] Remoteproc core dump support
+Date: Tue, 26 Dec 2017 12:38:28 -0800
+Message-Id: <20171226203832.14928-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Suman Anna <s-anna@ti.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 24 Nov 06:36 PST 2017, Arnaud Pouliquen wrote:
+Picking up Sarangdhar's original patches for adding core dump support to
+remoteproc.
 
-> From: Fabien Dessenne <fabien.dessenne@st.com>
-> 
-> The remoteproc SRM (System Resource Manager) handles resources allocated
-> to remote processors.
-> This makes it possible for remote proc to reserve and initialize system
-> resources for a peripheral assigned to a coprocessor.
-> This is the core part which is in charge of controlling the device
-> children.
-> 
+Based on the recently proposed "load resources" hook this registers segments of
+the Qualcomm MDT file as dump segments which are used to build an ELF file
+representing the various memory segments in the case of a crash of the remote
+processor.
 
-I'm afraid I find this overly complex for the task.
+Bjorn Andersson (2):
+  remoteproc: Rename "load_rsc_table" to "parse_fw"
+  soc: qcom: mdt-loader: Return relocation base
 
-If we choose to describe these groups of resources like you have done
-here I see no point in having the SRM core.
+Sarangdhar Joshi (2):
+  remoteproc: Add remote processor coredump support
+  remoteproc: qcom: Register segments for core dump
 
-You could just make the SRM devices platform_drivers that acquire
-handles to the resources, register (early) subdevices to get the callback
-on boot/shutdown and call enable/disable on the resources there.
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c        |   4 +-
+ drivers/media/platform/qcom/venus/firmware.c |   2 +-
+ drivers/remoteproc/Kconfig                   |   1 +
+ drivers/remoteproc/qcom_adsp_pil.c           |   5 +-
+ drivers/remoteproc/qcom_common.c             |  44 +++++++++
+ drivers/remoteproc/qcom_common.h             |   2 +
+ drivers/remoteproc/qcom_wcnss.c              |   4 +-
+ drivers/remoteproc/remoteproc_core.c         | 134 ++++++++++++++++++++++++++-
+ drivers/remoteproc/remoteproc_internal.h     |   7 +-
+ drivers/soc/qcom/mdt_loader.c                |   7 +-
+ include/linux/remoteproc.h                   |  20 +++-
+ include/linux/soc/qcom/mdt_loader.h          |   3 +-
+ 12 files changed, 218 insertions(+), 15 deletions(-)
 
-Regards,
-Bjorn
+-- 
+2.15.0
