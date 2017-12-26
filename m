@@ -1,70 +1,127 @@
-Return-Path: <sricharan@codeaurora.org>
-Subject: Re: [PATCH v5 0/6] Add support for Hexagon q6v5-wcss integrated core
-References: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <a4f0213d-62c2-b749-9fd2-e7c4a304b5e5@codeaurora.org>
-Date: Tue, 19 Dec 2017 17:21:20 +0530
-MIME-Version: 1.0
-In-Reply-To: <1510656794-3815-1-git-send-email-sricharan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 4/4] remoteproc: qcom: Register segments for core dump
+Date: Tue, 26 Dec 2017 12:38:32 -0800
+Message-Id: <20171226203832.14928-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20171226203832.14928-1-bjorn.andersson@linaro.org>
+References: <20171226203832.14928-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Suman Anna <s-anna@ti.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
 
-On 11/14/2017 4:23 PM, Sricharan R wrote:
-> IPQ8074 has an integrated Hexagon dsp core Q6v5 and a wireless lan
-> (Lithium) IP. This series adds the remoteproc driver to reset, load
-> and boot Q6 firmware.
-> 
-> The first patch is to make the mdt_loader authenticate
-> the firmware only if required, so that the code can be reused for
-> self-authenticating firmware like the Q6v5 core in IPQ8074. The second
-> patch exports the elf header's get_boot_addr helper to reuse it.
-> The next couple of patches arranges the code in the original q6v5-mpss
-> rproc to add q6v5-wcss later. The last couple of patches add the relevant
-> bits for the q6v5-wcss core.
-> 
-> This is done on top of Avaneesh's msm8996 rproc support [1]
-> 
-> [1] https://lkml.org/lkml/2017/10/24/771
-> 
-> v5:
->     No change. Just updated tags in PATCH #5
-> 
-> V4:
->     Fixed Bjorn's comment in PATCH#1 and added his acked-by
->     Rebased on top of Avinash's latest rproc for msm8996 q6 support.
-> 
-> V3:
->     Rebased on top of latest remoteproc next
-> 
-> V2:
->     Last time introduced this a new rproc driver, but there is lot
->     of code that can be shared if it is added to the q6v5-mpss pil
->     driver.
-> 
-> Sricharan R (6):
->   remoteproc: qcom: mdt_loader: Make the firmware authentication
->     optional
->   remoteproc: Export rproc_elf_get_boot_addr
->   remoteproc: qcom: Push reset ops, fw ops, rproc ops in to of_match
->     data
->   remoteproc: qcom: Split the head and tail of the q6v5-pil rproc start
->     function
->   remoteproc: qcom: Add support for q6v5-wcss pil
->   remoteproc: qcom: Add q6v5-wcss rproc ops
-> 
+Register MDT segments with the remoteproc core dump functionality in
+order to include them in a core dump, in case of a recovery of the remote
+processor.
 
-Hi Bjorn,
- Just thought of pinging you to figure out if the
- patches are ok and any feedback ?
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/qcom_adsp_pil.c |  1 +
+ drivers/remoteproc/qcom_common.c   | 44 ++++++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_common.h   |  2 ++
+ drivers/remoteproc/qcom_wcnss.c    |  1 +
+ 4 files changed, 48 insertions(+)
 
-Regards,
- Sricharan
-
-
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 833763aa3f2a..af12cdd45b71 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -179,6 +179,7 @@ static const struct rproc_ops adsp_ops = {
+ 	.start = adsp_start,
+ 	.stop = adsp_stop,
+ 	.da_to_va = adsp_da_to_va,
++	.parse_fw = qcom_register_dump_segments,
+ 	.load = adsp_load,
+ };
+ 
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 6eb9161f80b3..f9a0701c94e7 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -22,6 +22,7 @@
+ #include <linux/remoteproc.h>
+ #include <linux/rpmsg/qcom_glink.h>
+ #include <linux/rpmsg/qcom_smd.h>
++#include <linux/soc/qcom/mdt_loader.h>
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+@@ -79,6 +80,49 @@ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glin
+ }
+ EXPORT_SYMBOL_GPL(qcom_remove_glink_subdev);
+ 
++/**
++ * qcom_register_dump_segments() - register segments for coredump
++ * @rproc:	remoteproc handle
++ * @fw:		firmware header
++ *
++ * Register all segments of the ELF in the remoteproc coredump segment list
++ *
++ * Return: 0 on success, negative errno on failure.
++ */
++int qcom_register_dump_segments(struct rproc *rproc,
++				const struct firmware *fw)
++{
++	const struct elf32_phdr *phdrs;
++	const struct elf32_phdr *phdr;
++	const struct elf32_hdr *ehdr;
++	int ret;
++	int i;
++
++	ehdr = (struct elf32_hdr *)fw->data;
++	phdrs = (struct elf32_phdr *)(ehdr + 1);
++
++	for (i = 0; i < ehdr->e_phnum; i++) {
++		phdr = &phdrs[i];
++
++		if (phdr->p_type != PT_LOAD)
++			continue;
++
++		if ((phdr->p_flags & QCOM_MDT_TYPE_MASK) == QCOM_MDT_TYPE_HASH)
++			continue;
++
++		if (!phdr->p_memsz)
++			continue;
++
++		ret = rproc_coredump_add_segment(rproc, phdr->p_paddr,
++						 phdr->p_memsz);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
++
+ static int smd_subdev_probe(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index 728be9834d8b..7e614520fb69 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -30,6 +30,8 @@ struct qcom_rproc_ssr {
+ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
+ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
+ 
++int qcom_register_dump_segments(struct rproc *rproc, const struct firmware *fw);
++
+ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
+ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
+ 
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 599c1aa73b7f..e9f9ba4c584d 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -309,6 +309,7 @@ static const struct rproc_ops wcnss_ops = {
+ 	.start = wcnss_start,
+ 	.stop = wcnss_stop,
+ 	.da_to_va = wcnss_da_to_va,
++	.parse_fw = qcom_register_dump_segments,
+ 	.load = wcnss_load,
+ };
+ 
 -- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.15.0
