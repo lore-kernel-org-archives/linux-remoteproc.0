@@ -1,71 +1,88 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 53/99] fs: Convert writeback to XArray
-Date: Wed, 17 Jan 2018 12:21:17 -0800
-Message-Id: <20180117202203.19756-54-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 1/8] remoteproc: Remove depricated crash completion
+Date: Fri,  5 Jan 2018 15:57:58 -0800
+Message-Id: <20180105235805.9948-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+References: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+The crash handling now happens in a single execution context, so there's
+no longer a need for a completion to synchronize this.
 
-A couple of short loops.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- fs/fs-writeback.c | 25 +++++++++----------------
- 1 file changed, 9 insertions(+), 16 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index e2c1ca667d9a..897a89489fe9 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -339,9 +339,9 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
- 	struct address_space *mapping = inode->i_mapping;
- 	struct bdi_writeback *old_wb = inode->i_wb;
- 	struct bdi_writeback *new_wb = isw->new_wb;
--	struct radix_tree_iter iter;
-+	XA_STATE(xas, &mapping->pages, 0);
-+	struct page *page;
- 	bool switched = false;
--	void **slot;
- 
- 	/*
- 	 * By the time control reaches here, RCU grace period has passed
-@@ -375,25 +375,18 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
- 	 * to possibly dirty pages while PAGECACHE_TAG_WRITEBACK points to
- 	 * pages actually under writeback.
- 	 */
--	radix_tree_for_each_tagged(slot, &mapping->pages, &iter, 0,
--				   PAGECACHE_TAG_DIRTY) {
--		struct page *page = radix_tree_deref_slot_protected(slot,
--						&mapping->pages.xa_lock);
--		if (likely(page) && PageDirty(page)) {
-+	xas_for_each_tag(&xas, page, ULONG_MAX, PAGECACHE_TAG_DIRTY) {
-+		if (PageDirty(page)) {
- 			dec_wb_stat(old_wb, WB_RECLAIMABLE);
- 			inc_wb_stat(new_wb, WB_RECLAIMABLE);
- 		}
+Changes since v1:
+- None
+
+ drivers/remoteproc/remoteproc_core.c | 10 ----------
+ include/linux/remoteproc.h           |  2 --
+ 2 files changed, 12 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index eab14b414bf0..758fad3131a3 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1028,10 +1028,6 @@ static int rproc_stop(struct rproc *rproc)
+ 		return ret;
  	}
  
--	radix_tree_for_each_tagged(slot, &mapping->pages, &iter, 0,
--				   PAGECACHE_TAG_WRITEBACK) {
--		struct page *page = radix_tree_deref_slot_protected(slot,
--						&mapping->pages.xa_lock);
--		if (likely(page)) {
--			WARN_ON_ONCE(!PageWriteback(page));
--			dec_wb_stat(old_wb, WB_WRITEBACK);
--			inc_wb_stat(new_wb, WB_WRITEBACK);
--		}
-+	xas_set(&xas, 0);
-+	xas_for_each_tag(&xas, page, ULONG_MAX, PAGECACHE_TAG_WRITEBACK) {
-+		WARN_ON_ONCE(!PageWriteback(page));
-+		dec_wb_stat(old_wb, WB_WRITEBACK);
-+		inc_wb_stat(new_wb, WB_WRITEBACK);
- 	}
+-	/* if in crash state, unlock crash handler */
+-	if (rproc->state == RPROC_CRASHED)
+-		complete_all(&rproc->crash_comp);
+-
+ 	rproc->state = RPROC_OFFLINE;
  
- 	wb_get(new_wb);
+ 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
+@@ -1057,8 +1053,6 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 
+ 	dev_err(dev, "recovering %s\n", rproc->name);
+ 
+-	init_completion(&rproc->crash_comp);
+-
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret)
+ 		return ret;
+@@ -1067,9 +1061,6 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	if (ret)
+ 		goto unlock_mutex;
+ 
+-	/* wait until there is no more rproc users */
+-	wait_for_completion(&rproc->crash_comp);
+-
+ 	/* load firmware */
+ 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+ 	if (ret < 0) {
+@@ -1459,7 +1450,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->subdevs);
+ 
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+-	init_completion(&rproc->crash_comp);
+ 
+ 	rproc->state = RPROC_OFFLINE;
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 44e630eb3d94..6f1d8e025c81 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -406,7 +406,6 @@ enum rproc_crash_type {
+  * @index: index of this rproc device
+  * @crash_handler: workqueue for handling a crash
+  * @crash_cnt: crash counter
+- * @crash_comp: completion used to sync crash handler and the rproc reload
+  * @recovery_disabled: flag that state if recovery was disabled
+  * @max_notifyid: largest allocated notify id.
+  * @table_ptr: pointer to the resource table in effect
+@@ -437,7 +436,6 @@ struct rproc {
+ 	int index;
+ 	struct work_struct crash_handler;
+ 	unsigned int crash_cnt;
+-	struct completion crash_comp;
+ 	bool recovery_disabled;
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
 -- 
-2.15.1
+2.15.0
