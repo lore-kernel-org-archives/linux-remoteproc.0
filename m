@@ -1,266 +1,184 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
-Date: Mon, 8 Jan 2018 08:14:53 +0000
-Message-ID: <df9b33b940c84d3d8095450101299b67@SFHDAG7NODE2.st.com>
-References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
- <20171213224111.17864-8-bjorn.andersson@linaro.org>
- <c3e80239c8d84645919713897fcf9e46@SFHDAG7NODE2.st.com>
- <20180105185050.GD478@tuxbook>
-In-Reply-To: <20180105185050.GD478@tuxbook>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 7/8] remoteproc: Drop dangling find_rsc_table dummies
+Date: Fri,  5 Jan 2018 15:58:04 -0800
+Message-Id: <20180105235805.9948-8-bjorn.andersson@linaro.org>
+In-Reply-To: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+References: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+As the core now deals with the lack of a resource table, remove the
+dangling custom dummy implementations of find_rsc_table from drivers.
 
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Friday, January 05, 2018 7:51 PM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>; linux-
-> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
->=20
-> On Fri 05 Jan 08:53 PST 2018, Loic PALLARDY wrote:
->=20
-> >
-> >
-> > > -----Original Message-----
-> > > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-
-> remoteproc-
-> > > owner@vger.kernel.org] On Behalf Of Bjorn Andersson
-> > > Sent: Wednesday, December 13, 2017 11:41 PM
-> > > To: Ohad Ben-Cohen <ohad@wizery.com>; Bjorn Andersson
-> > > <bjorn.andersson@linaro.org>
-> > > Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
-> > > Subject: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
-> > >
-> > > As the core now deals with the lack of a resource table, remove the
-> > > dangling custom dummy implementations of find_rsc_table from drivers.
-> > >
-> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > ---
-> > >  drivers/remoteproc/qcom_adsp_pil.c |  1 -
-> > >  drivers/remoteproc/qcom_common.c   | 19 -------------------
-> > >  drivers/remoteproc/qcom_common.h   |  4 ----
-> > >  drivers/remoteproc/qcom_q6v5_pil.c | 11 -----------
-> > >  drivers/remoteproc/qcom_wcnss.c    |  1 -
-> > >  drivers/remoteproc/st_slim_rproc.c | 18 ------------------
-> > >  include/linux/remoteproc.h         |  4 ----
-> > >  7 files changed, 58 deletions(-)
-> > >
-> > > diff --git a/drivers/remoteproc/qcom_adsp_pil.c
-> > > b/drivers/remoteproc/qcom_adsp_pil.c
-> > > index 7b9d810b23f1..b0b0d5ca1ca0 100644
-> > > --- a/drivers/remoteproc/qcom_adsp_pil.c
-> > > +++ b/drivers/remoteproc/qcom_adsp_pil.c
-> > > @@ -181,7 +181,6 @@ static const struct rproc_ops adsp_ops =3D {
-> > >  	.start =3D adsp_start,
-> > >  	.stop =3D adsp_stop,
-> > >  	.da_to_va =3D adsp_da_to_va,
-> > > -	.find_rsc_table =3D qcom_mdt_find_rsc_table,
-> > >  	.load =3D adsp_load,
-> > >  };
-> > >
-> > > diff --git a/drivers/remoteproc/qcom_common.c
-> > > b/drivers/remoteproc/qcom_common.c
-> > > index 818ee3657043..ce2dcc4f7de7 100644
-> > > --- a/drivers/remoteproc/qcom_common.c
-> > > +++ b/drivers/remoteproc/qcom_common.c
-> > > @@ -32,25 +32,6 @@
-> > >
-> > >  static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
-> > >
-> > > -/**
-> > > - * qcom_mdt_find_rsc_table() - provide dummy resource table for
-> > > remoteproc
-> > > - * @rproc:	remoteproc handle
-> > > - * @fw:		firmware header
-> > > - * @tablesz:	outgoing size of the table
-> > > - *
-> > > - * Returns a dummy table.
-> > > - */
-> > > -struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
-> > > -					       const struct firmware *fw,
-> > > -					       int *tablesz)
-> > > -{
-> > > -	static struct resource_table table =3D { .ver =3D 1, };
-> > > -
-> > > -	*tablesz =3D sizeof(table);
-> > > -	return &table;
-> > > -}
-> > > -EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
-> > > -
-> > >  static int glink_subdev_probe(struct rproc_subdev *subdev)
-> > >  {
-> > >  	struct qcom_rproc_glink *glink =3D to_glink_subdev(subdev);
-> > > diff --git a/drivers/remoteproc/qcom_common.h
-> > > b/drivers/remoteproc/qcom_common.h
-> > > index 541586e528b3..73efed969bfd 100644
-> > > --- a/drivers/remoteproc/qcom_common.h
-> > > +++ b/drivers/remoteproc/qcom_common.h
-> > > @@ -30,10 +30,6 @@ struct qcom_rproc_ssr {
-> > >  	const char *name;
-> > >  };
-> > >
-> > > -struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
-> > > -					       const struct firmware *fw,
-> > > -					       int *tablesz);
-> > > -
-> > >  void qcom_add_glink_subdev(struct rproc *rproc, struct
-> qcom_rproc_glink
-> > > *glink);
-> > >  void qcom_remove_glink_subdev(struct rproc *rproc, struct
-> > > qcom_rproc_glink *glink);
-> > >
-> > > diff --git a/drivers/remoteproc/qcom_q6v5_pil.c
-> > > b/drivers/remoteproc/qcom_q6v5_pil.c
-> > > index fbff5d842581..6f6ea0414366 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> > > @@ -304,16 +304,6 @@ static void q6v5_clk_disable(struct device *dev,
-> > >  		clk_disable_unprepare(clks[i]);
-> > >  }
-> > >
-> > > -static struct resource_table *q6v5_find_rsc_table(struct rproc *rpro=
-c,
-> > > -						  const struct firmware *fw,
-> > > -						  int *tablesz)
-> > > -{
-> > > -	static struct resource_table table =3D { .ver =3D 1, };
-> > > -
-> > > -	*tablesz =3D sizeof(table);
-> > > -	return &table;
-> > > -}
-> > > -
-> > >  static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int
-> > > *current_perm,
-> > >  				   bool remote_owner, phys_addr_t addr,
-> > >  				   size_t size)
-> > > @@ -927,7 +917,6 @@ static const struct rproc_ops q6v5_ops =3D {
-> > >  	.start =3D q6v5_start,
-> > >  	.stop =3D q6v5_stop,
-> > >  	.da_to_va =3D q6v5_da_to_va,
-> > > -	.find_rsc_table =3D q6v5_find_rsc_table,
-> > >  	.load =3D q6v5_load,
-> > >  };
-> > >
-> > > diff --git a/drivers/remoteproc/qcom_wcnss.c
-> > > b/drivers/remoteproc/qcom_wcnss.c
-> > > index cc44ec598522..1fa5253020dd 100644
-> > > --- a/drivers/remoteproc/qcom_wcnss.c
-> > > +++ b/drivers/remoteproc/qcom_wcnss.c
-> > > @@ -310,7 +310,6 @@ static const struct rproc_ops wcnss_ops =3D {
-> > >  	.start =3D wcnss_start,
-> > >  	.stop =3D wcnss_stop,
-> > >  	.da_to_va =3D wcnss_da_to_va,
-> > > -	.find_rsc_table =3D qcom_mdt_find_rsc_table,
-> > >  	.load =3D wcnss_load,
-> > >  };
-> > >
-> > > diff --git a/drivers/remoteproc/st_slim_rproc.c
-> > > b/drivers/remoteproc/st_slim_rproc.c
-> > > index 1538ea915c49..c6a2a8b68c7a 100644
-> > > --- a/drivers/remoteproc/st_slim_rproc.c
-> > > +++ b/drivers/remoteproc/st_slim_rproc.c
-> > > @@ -200,28 +200,10 @@ static void *slim_rproc_da_to_va(struct rproc
-> > > *rproc, u64 da, int len)
-> > >  	return va;
-> > >  }
-> > >
-> > > -/*
-> > > - * Firmware handler operations: sanity, boot address, load ...
-> > > - */
-> > > -
-> > > -static struct resource_table empty_rsc_tbl =3D {
-> > > -	.ver =3D 1,
-> > > -	.num =3D 0,
-> > > -};
-> > > -
-> > > -static struct resource_table *slim_rproc_find_rsc_table(struct rproc
-> *rproc,
-> > > -					       const struct firmware *fw,
-> > > -					       int *tablesz)
-> > > -{
-> > > -	*tablesz =3D sizeof(empty_rsc_tbl);
-> > > -	return &empty_rsc_tbl;
-> > > -}
-> > > -
-> > >  static const struct rproc_ops slim_rproc_ops =3D {
-> > >  	.start		=3D slim_rproc_start,
-> > >  	.stop		=3D slim_rproc_stop,
-> > >  	.da_to_va       =3D slim_rproc_da_to_va,
-> > > -	.find_rsc_table =3D slim_rproc_find_rsc_table,
-> > Hi Bjorn,
-> > Your patch is not complete for st_slim_rproc and so not working.
-> > In your patch 6/8, .load_rsc_table is define to default
-> rproc_elf_load_rsc_table if no load ops defined.
-> >
-> > 	/* Default to ELF loader if no load function is specified */
-> >  	if (!rproc->ops->load) {
-> >  		rproc->ops->load =3D rproc_elf_load_segments;
-> > -		rproc->ops->find_rsc_table =3D rproc_elf_find_rsc_table;
-> > +		rproc->ops->load_rsc_table =3D rproc_elf_load_rsc_table;
-> >
-> > As st_slim_rproc has no load ops, it will inherit from all default ops =
-including
-> rproc_elf_load_rsc_table.
-> > As no resource table present in firmware, an error will be returned and
-> st_slim_rproc will failed.
->=20
-> Thanks for catching my mistake, Loic! The expected outcome would be that
-> the slim_rproc_ops does point the "load" to the now exported ELF loader
-> symbol and by that won't get a find_rsc_table entry from the default
-> set..
->=20
-> > In case of Qualcom, load ops is defined...
->=20
-> Right, in the end the st_slim driver should have been defined just as
-> the Qualcomm one - but referencing rproc_elf_load_segments().
->=20
-> > See below B2260 log (with additional error message in
-> rproc_load_rsc_table function.
-> >
-> > [   10.201079] remoteproc remoteproc2: st231-delta is available
-> > [   10.258121] remoteproc remoteproc2: powering up st231-delta
-> > [   10.258143] remoteproc remoteproc2: Booting fw image rproc-st231-
-> delta-fw, size 44416
-> > [   10.258151] rproc_load_rsc_table: error -22
-> >
-> > Moreover with your proposal, as the choice to support or not a
-> > resource table is based on the fact rproc->ops->load_rsc_table is set
-> > or not, it is not possible with one unique driver to support firmware
-> > with resource table and firmware without resource table.
->=20
-> This is retaining the previous behaviour of failing to load/start a
-> remoteproc if no resource table is found, when the driver expects one.
-> The new scheme would allow you to specify a custom load_rsc_table that
-> calls rproc_elf_load_rsc_table() and ignores the return value to support
-> your use case.
-OK would be nice to document somewhere what's framework responsibilities an=
-d what's driver ones.
+Changes since v1:
+- None
 
->=20
-> > Will be better from my pov to consider that no resource table  found
-> > in rproc_elf_load_rsc_table function as a normal case and not an
-> > error.
->=20
-> This would be a change in behavior and I can see how this could be
-> annoying to people (by not catching their mistakes during development).
-You're right
+ drivers/remoteproc/qcom_adsp_pil.c |  1 -
+ drivers/remoteproc/qcom_common.c   | 19 -------------------
+ drivers/remoteproc/qcom_common.h   |  4 ----
+ drivers/remoteproc/qcom_q6v5_pil.c | 11 -----------
+ drivers/remoteproc/qcom_wcnss.c    |  1 -
+ drivers/remoteproc/st_slim_rproc.c | 18 ------------------
+ include/linux/remoteproc.h         |  4 ----
+ 7 files changed, 58 deletions(-)
 
->=20
-> If you think this is the preferred implementation then please submit a
-> separate patch for this so we can get some feedback from other users.
-No it is OK. I'll review v3.
-
-Regards,
-Loic
->=20
-> Regards,
-> Bjorn
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 56156c12bd73..373c167892d7 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -177,7 +177,6 @@ static const struct rproc_ops adsp_ops = {
+ 	.start = adsp_start,
+ 	.stop = adsp_stop,
+ 	.da_to_va = adsp_da_to_va,
+-	.find_rsc_table = qcom_mdt_find_rsc_table,
+ 	.load = adsp_load,
+ };
+ 
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index d487040b528b..6eb9161f80b3 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -32,25 +32,6 @@
+ 
+ static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+ 
+-/**
+- * qcom_mdt_find_rsc_table() - provide dummy resource table for remoteproc
+- * @rproc:	remoteproc handle
+- * @fw:		firmware header
+- * @tablesz:	outgoing size of the table
+- *
+- * Returns a dummy table.
+- */
+-struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+-					       const struct firmware *fw,
+-					       int *tablesz)
+-{
+-	static struct resource_table table = { .ver = 1, };
+-
+-	*tablesz = sizeof(table);
+-	return &table;
+-}
+-EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
+-
+ static int glink_subdev_probe(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index 832e20271664..728be9834d8b 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -27,10 +27,6 @@ struct qcom_rproc_ssr {
+ 	const char *name;
+ };
+ 
+-struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+-					       const struct firmware *fw,
+-					       int *tablesz);
+-
+ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
+ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 3ea668d9fd4c..b4e5e725848d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -303,16 +303,6 @@ static void q6v5_clk_disable(struct device *dev,
+ 		clk_disable_unprepare(clks[i]);
+ }
+ 
+-static struct resource_table *q6v5_find_rsc_table(struct rproc *rproc,
+-						  const struct firmware *fw,
+-						  int *tablesz)
+-{
+-	static struct resource_table table = { .ver = 1, };
+-
+-	*tablesz = sizeof(table);
+-	return &table;
+-}
+-
+ static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
+ 				   bool remote_owner, phys_addr_t addr,
+ 				   size_t size)
+@@ -926,7 +916,6 @@ static const struct rproc_ops q6v5_ops = {
+ 	.start = q6v5_start,
+ 	.stop = q6v5_stop,
+ 	.da_to_va = q6v5_da_to_va,
+-	.find_rsc_table = q6v5_find_rsc_table,
+ 	.load = q6v5_load,
+ };
+ 
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index e53fc6f268fc..3f0609236a76 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -308,7 +308,6 @@ static const struct rproc_ops wcnss_ops = {
+ 	.start = wcnss_start,
+ 	.stop = wcnss_stop,
+ 	.da_to_va = wcnss_da_to_va,
+-	.find_rsc_table = qcom_mdt_find_rsc_table,
+ 	.load = wcnss_load,
+ };
+ 
+diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+index 1bce63a06424..1ffb1f0c43d6 100644
+--- a/drivers/remoteproc/st_slim_rproc.c
++++ b/drivers/remoteproc/st_slim_rproc.c
+@@ -200,28 +200,10 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	return va;
+ }
+ 
+-/*
+- * Firmware handler operations: sanity, boot address, load ...
+- */
+-
+-static struct resource_table empty_rsc_tbl = {
+-	.ver = 1,
+-	.num = 0,
+-};
+-
+-static struct resource_table *slim_rproc_find_rsc_table(struct rproc *rproc,
+-					       const struct firmware *fw,
+-					       int *tablesz)
+-{
+-	*tablesz = sizeof(empty_rsc_tbl);
+-	return &empty_rsc_tbl;
+-}
+-
+ static const struct rproc_ops slim_rproc_ops = {
+ 	.start		= slim_rproc_start,
+ 	.stop		= slim_rproc_stop,
+ 	.da_to_va       = slim_rproc_da_to_va,
+-	.find_rsc_table = slim_rproc_find_rsc_table,
+ 	.get_boot_addr	= rproc_elf_get_boot_addr,
+ 	.load		= rproc_elf_load_segments,
+ 	.sanity_check	= rproc_elf_sanity_check,
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index cc853745e3a1..728d421fffe9 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -333,7 +333,6 @@ struct firmware;
+  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+  * @da_to_va:	optional platform hook to perform address translations
+  * @load_rsc_table:	load resource table from firmware image
+- * @find_rsc_table:	find the resource table inside the firmware image
+  * @find_loaded_rsc_table: find the loaded resouce table
+  * @load:		load firmeware to memory, where the remote processor
+  *			expects to find it
+@@ -346,9 +345,6 @@ struct rproc_ops {
+ 	void (*kick)(struct rproc *rproc, int vqid);
+ 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
+ 	int (*load_rsc_table)(struct rproc *rproc, const struct firmware *fw);
+-	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
+-						 const struct firmware *fw,
+-						 int *tablesz);
+ 	struct resource_table *(*find_loaded_rsc_table)(
+ 				struct rproc *rproc, const struct firmware *fw);
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+-- 
+2.15.0
