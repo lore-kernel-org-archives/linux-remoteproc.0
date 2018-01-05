@@ -1,43 +1,39 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 0/8] Remoteproc cleanups
-Date: Fri,  5 Jan 2018 15:57:57 -0800
-Message-Id: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+Subject: [PATCH v2 8/8] remoteproc: Reset table_ptr on stop
+Date: Fri,  5 Jan 2018 15:58:05 -0800
+Message-Id: <20180105235805.9948-9-bjorn.andersson@linaro.org>
+In-Reply-To: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+References: <20180105235805.9948-1-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The first patch removes code that became unnecessary when the recovery flow was
-redesigned.
+The installed resource table is no longer accessible after stopping the
+remote, so update table_ptr to point to the local copy.
 
-The following patches moves the assignment of cached_table to the resource
-table loader, rather than core code, which allows this to made optional and
-finally drops the various dummy resource tables provided by drivers.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-Then finally the last patch ensures that table_ptr isn't left pointing into
-memory of a stopped remoteproc.
+Changes since v1:
+- None
 
-Bjorn Andersson (8):
-  remoteproc: Remove depricated crash completion
-  remoteproc: Cache resource table size
-  remoteproc: Clone rproc_ops in rproc_alloc()
-  remoteproc: Merge rproc_ops and rproc_fw_ops
-  remoteproc: Don't handle empty resource table
-  remoteproc: Move resource table load logic to find
-  remoteproc: Drop dangling find_rsc_table dummies
-  remoteproc: Reset table_ptr on stop
+ drivers/remoteproc/remoteproc_core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/remoteproc/qcom_adsp_pil.c         |  8 +--
- drivers/remoteproc/qcom_common.c           | 19 -------
- drivers/remoteproc/qcom_common.h           |  4 --
- drivers/remoteproc/qcom_q6v5_pil.c         | 18 +------
- drivers/remoteproc/qcom_wcnss.c            |  8 +--
- drivers/remoteproc/remoteproc_core.c       | 83 ++++++++++++------------------
- drivers/remoteproc/remoteproc_elf_loader.c | 59 ++++++++++-----------
- drivers/remoteproc/remoteproc_internal.h   | 57 +++++++-------------
- drivers/remoteproc/st_slim_rproc.c         | 32 ++----------
- include/linux/remoteproc.h                 | 21 ++++++--
- 10 files changed, 106 insertions(+), 203 deletions(-)
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 84e07d5b7c2c..4170dfbd93bd 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1000,6 +1000,9 @@ static int rproc_stop(struct rproc *rproc)
+ 	/* remove any subdevices for the remote processor */
+ 	rproc_remove_subdevices(rproc);
+ 
++	/* the installed resource table is no longer accessible */
++	rproc->table_ptr = rproc->cached_table;
++
+ 	/* power off the remote processor */
+ 	ret = rproc->ops->stop(rproc);
+ 	if (ret) {
 -- 
 2.15.0
