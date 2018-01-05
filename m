@@ -1,223 +1,113 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 93/99] f2fs: Convert ino_root to XArray
-Date: Wed, 17 Jan 2018 12:21:57 -0800
-Message-Id: <20180117202203.19756-94-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 2/8] remoteproc: Cache resource table size
+Date: Fri,  5 Jan 2018 15:57:59 -0800
+Message-Id: <20180105235805.9948-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+References: <20180105235805.9948-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+We don't re-read the resource table during a recovery, so it is possible
+in the recovery path that the resource table has a different size than
+cached_table. Store the original size of cached_table to avoid these
+getting out of sync.
 
-I did a fairly major rewrite of __add_ino_entry(); please check carefully.
-Also, we can remove ino_list unless it's important to write out orphan
-inodes in the order they were orphaned.  It may also make more sense to
-combine the array of inode_management structures into a single XArray
-with tags, but that would be a job for someone who understands this
-filesystem better than I do.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- fs/f2fs/checkpoint.c | 85 +++++++++++++++++++++++-----------------------------
- fs/f2fs/f2fs.h       |  3 +-
- 2 files changed, 38 insertions(+), 50 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 4aa69bc1c70a..04d69679da13 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -403,33 +403,30 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
- 	struct inode_management *im = &sbi->im[type];
- 	struct ino_entry *e, *tmp;
+Changes since v1:
+- None
+
+ drivers/remoteproc/remoteproc_core.c | 20 +++++++-------------
+ include/linux/remoteproc.h           |  2 ++
+ 2 files changed, 9 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 758fad3131a3..208ccf709cad 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -732,7 +732,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
+ };
  
--	tmp = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_NOFS);
--
--	radix_tree_preload(GFP_NOFS | __GFP_NOFAIL);
--
--	spin_lock(&im->ino_lock);
--	e = radix_tree_lookup(&im->ino_root, ino);
--	if (!e) {
--		e = tmp;
--		if (unlikely(radix_tree_insert(&im->ino_root, ino, e)))
--			f2fs_bug_on(sbi, 1);
--
--		memset(e, 0, sizeof(struct ino_entry));
--		e->ino = ino;
--
--		list_add_tail(&e->list, &im->ino_list);
--		if (type != ORPHAN_INO)
--			im->ino_num++;
-+	xa_lock(&im->ino_root);
-+	e = xa_load(&im->ino_root, ino);
-+	if (e)
-+		goto found;
-+	xa_unlock(&im->ino_root);
-+
-+	tmp = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_NOFS | __GFP_ZERO);
-+	xa_lock(&im->ino_root);
-+	e = __xa_cmpxchg(&im->ino_root, ino, NULL, tmp,
-+						GFP_NOFS | __GFP_NOFAIL);
-+	if (e) {
-+		kmem_cache_free(ino_entry_slab, tmp);
-+		goto found;
- 	}
-+	e = tmp;
- 
-+	e->ino = ino;
-+	list_add_tail(&e->list, &im->ino_list);
-+	if (type != ORPHAN_INO)
-+		im->ino_num++;
-+found:
- 	if (type == FLUSH_INO)
- 		f2fs_set_bit(devidx, (char *)&e->dirty_device);
--
--	spin_unlock(&im->ino_lock);
--	radix_tree_preload_end();
--
--	if (e != tmp)
--		kmem_cache_free(ino_entry_slab, tmp);
-+	xa_unlock(&im->ino_root);
- }
- 
- static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
-@@ -437,17 +434,14 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- 	struct inode_management *im = &sbi->im[type];
- 	struct ino_entry *e;
- 
--	spin_lock(&im->ino_lock);
--	e = radix_tree_lookup(&im->ino_root, ino);
-+	xa_lock(&im->ino_root);
-+	e = __xa_erase(&im->ino_root, ino);
- 	if (e) {
- 		list_del(&e->list);
--		radix_tree_delete(&im->ino_root, ino);
- 		im->ino_num--;
--		spin_unlock(&im->ino_lock);
- 		kmem_cache_free(ino_entry_slab, e);
--		return;
- 	}
--	spin_unlock(&im->ino_lock);
-+	xa_unlock(&im->ino_root);
- }
- 
- void add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
-@@ -466,12 +460,8 @@ void remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
- bool exist_written_data(struct f2fs_sb_info *sbi, nid_t ino, int mode)
+ /* handle firmware resource entries before booting the remote processor */
+-static int rproc_handle_resources(struct rproc *rproc, int len,
++static int rproc_handle_resources(struct rproc *rproc,
+ 				  rproc_handle_resource_t handlers[RSC_LAST])
  {
- 	struct inode_management *im = &sbi->im[mode];
--	struct ino_entry *e;
+ 	struct device *dev = &rproc->dev;
+@@ -742,7 +742,7 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
+ 	for (i = 0; i < rproc->table_ptr->num; i++) {
+ 		int offset = rproc->table_ptr->offset[i];
+ 		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
+-		int avail = len - offset - sizeof(*hdr);
++		int avail = rproc->table_sz - offset - sizeof(*hdr);
+ 		void *rsc = (void *)hdr + sizeof(*hdr);
  
--	spin_lock(&im->ino_lock);
--	e = radix_tree_lookup(&im->ino_root, ino);
--	spin_unlock(&im->ino_lock);
--	return e ? true : false;
-+	return xa_load(&im->ino_root, ino) ? true : false;
- }
+ 		/* make sure table isn't truncated */
+@@ -849,16 +849,9 @@ static void rproc_resource_cleanup(struct rproc *rproc)
  
- void release_ino_entry(struct f2fs_sb_info *sbi, bool all)
-@@ -482,14 +472,14 @@ void release_ino_entry(struct f2fs_sb_info *sbi, bool all)
- 	for (i = all ? ORPHAN_INO : APPEND_INO; i < MAX_INO_ENTRY; i++) {
- 		struct inode_management *im = &sbi->im[i];
- 
--		spin_lock(&im->ino_lock);
-+		xa_lock(&im->ino_root);
- 		list_for_each_entry_safe(e, tmp, &im->ino_list, list) {
- 			list_del(&e->list);
--			radix_tree_delete(&im->ino_root, e->ino);
-+			__xa_erase(&im->ino_root, e->ino);
- 			kmem_cache_free(ino_entry_slab, e);
- 			im->ino_num--;
- 		}
--		spin_unlock(&im->ino_lock);
-+		xa_unlock(&im->ino_root);
- 	}
- }
- 
-@@ -506,11 +496,11 @@ bool is_dirty_device(struct f2fs_sb_info *sbi, nid_t ino,
- 	struct ino_entry *e;
- 	bool is_dirty = false;
- 
--	spin_lock(&im->ino_lock);
--	e = radix_tree_lookup(&im->ino_root, ino);
-+	xa_lock(&im->ino_root);
-+	e = xa_load(&im->ino_root, ino);
- 	if (e && f2fs_test_bit(devidx, (char *)&e->dirty_device))
- 		is_dirty = true;
--	spin_unlock(&im->ino_lock);
-+	xa_unlock(&im->ino_root);
- 	return is_dirty;
- }
- 
-@@ -519,11 +509,11 @@ int acquire_orphan_inode(struct f2fs_sb_info *sbi)
- 	struct inode_management *im = &sbi->im[ORPHAN_INO];
- 	int err = 0;
- 
--	spin_lock(&im->ino_lock);
-+	xa_lock(&im->ino_root);
- 
- #ifdef CONFIG_F2FS_FAULT_INJECTION
- 	if (time_to_inject(sbi, FAULT_ORPHAN)) {
--		spin_unlock(&im->ino_lock);
-+		xa_unlock(&im->ino_root);
- 		f2fs_show_injection_info(FAULT_ORPHAN);
- 		return -ENOSPC;
- 	}
-@@ -532,7 +522,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *sbi)
- 		err = -ENOSPC;
- 	else
- 		im->ino_num++;
--	spin_unlock(&im->ino_lock);
-+	xa_unlock(&im->ino_root);
- 
- 	return err;
- }
-@@ -541,10 +531,10 @@ void release_orphan_inode(struct f2fs_sb_info *sbi)
+ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
  {
- 	struct inode_management *im = &sbi->im[ORPHAN_INO];
+-	struct resource_table *table, *loaded_table;
++	struct resource_table *loaded_table;
+ 	struct device *dev = &rproc->dev;
+-	int ret, tablesz;
+-
+-	/* look for the resource table */
+-	table = rproc_find_rsc_table(rproc, fw, &tablesz);
+-	if (!table) {
+-		dev_err(dev, "Resource table look up failed\n");
+-		return -EINVAL;
+-	}
++	int ret;
  
--	spin_lock(&im->ino_lock);
-+	xa_lock(&im->ino_root);
- 	f2fs_bug_on(sbi, im->ino_num == 0);
- 	im->ino_num--;
--	spin_unlock(&im->ino_lock);
-+	xa_unlock(&im->ino_root);
- }
- 
- void add_orphan_inode(struct inode *inode)
-@@ -677,7 +667,7 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
- 	orphan_blocks = GET_ORPHAN_BLOCKS(im->ino_num);
- 
- 	/*
--	 * we don't need to do spin_lock(&im->ino_lock) here, since all the
-+	 * we don't need to lock the ino_root here, since all the
- 	 * orphan inode operations are covered under f2fs_lock_op().
- 	 * And, spin_lock should be avoided due to page operations below.
+ 	/* load the ELF segments to memory */
+ 	ret = rproc_load_segments(rproc, fw);
+@@ -877,7 +870,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
  	 */
-@@ -1433,8 +1423,7 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
- 	for (i = 0; i < MAX_INO_ENTRY; i++) {
- 		struct inode_management *im = &sbi->im[i];
- 
--		INIT_RADIX_TREE(&im->ino_root, GFP_ATOMIC);
--		spin_lock_init(&im->ino_lock);
-+		xa_init(&im->ino_root);
- 		INIT_LIST_HEAD(&im->ino_list);
- 		im->ino_num = 0;
+ 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+ 	if (loaded_table) {
+-		memcpy(loaded_table, rproc->cached_table, tablesz);
++		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+ 		rproc->table_ptr = loaded_table;
  	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6abf26c31d01..b3ee784b49bc 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -994,8 +994,7 @@ enum inode_type {
  
- /* for inner inode cache management */
- struct inode_management {
--	struct radix_tree_root ino_root;	/* ino entry array */
--	spinlock_t ino_lock;			/* for ino entry lock */
-+	struct xarray ino_root;			/* ino entry array */
- 	struct list_head ino_list;		/* inode list head */
- 	unsigned long ino_num;			/* number of entries */
+@@ -951,12 +944,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 		goto clean_up;
+ 
+ 	rproc->table_ptr = rproc->cached_table;
++	rproc->table_sz = tablesz;
+ 
+ 	/* reset max_notifyid */
+ 	rproc->max_notifyid = -1;
+ 
+ 	/* handle fw resources which are required to boot rproc */
+-	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
++	ret = rproc_handle_resources(rproc, rproc_loading_handlers);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to process resources: %d\n", ret);
+ 		goto clean_up_resources;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 6f1d8e025c81..6fdc62e29d6f 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -410,6 +410,7 @@ enum rproc_crash_type {
+  * @max_notifyid: largest allocated notify id.
+  * @table_ptr: pointer to the resource table in effect
+  * @cached_table: copy of the resource table
++ * @table_sz: size of @cached_table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
+  */
+ struct rproc {
+@@ -440,6 +441,7 @@ struct rproc {
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
+ 	struct resource_table *cached_table;
++	size_t table_sz;
+ 	bool has_iommu;
+ 	bool auto_boot;
  };
 -- 
-2.15.1
+2.15.0
