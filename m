@@ -1,711 +1,423 @@
-Return-Path: <arnaud.pouliquen@st.com>
-Subject: Re: [RFC] rpmsg: virtio rpmsg: Add RPMsg char driver support
+Return-Path: <jliang@xilinx.com>
+From: Jiaying Liang <jliang@xilinx.com>
+Subject: RE: [RFC] rpmsg: virtio rpmsg: Add RPMsg char driver support
+Date: Fri, 5 Jan 2018 22:10:37 +0000
+Message-ID: <BY1PR0201MB08852737FE73AAE2FFE90D7CB01C0@BY1PR0201MB0885.namprd02.prod.outlook.com>
 References: <1515107908-5351-1-git-send-email-jliang@xilinx.com>
  <ae76f2d6-475c-1bf0-009e-e6eca9c830bf@st.com>
- <BY1PR0201MB08852737FE73AAE2FFE90D7CB01C0@BY1PR0201MB0885.namprd02.prod.outlook.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Message-ID: <76870793-8f08-1efc-512e-364ecbf0f6df@st.com>
-Date: Tue, 9 Jan 2018 13:55:55 +0100
-MIME-Version: 1.0
-In-Reply-To: <BY1PR0201MB08852737FE73AAE2FFE90D7CB01C0@BY1PR0201MB0885.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <ae76f2d6-475c-1bf0-009e-e6eca9c830bf@st.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-To: Jiaying Liang <jliang@xilinx.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
 Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-
-
-On 01/05/2018 11:10 PM, Jiaying Liang wrote:
-> 
-> 
->> -----Original Message-----
->> From: Arnaud Pouliquen [mailto:arnaud.pouliquen@st.com]
->> Sent: Friday, January 05, 2018 6:48 AM
->> To: Jiaying Liang <jliang@xilinx.com>; ohad@wizery.com;
->> bjorn.andersson@linaro.org
->> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Jiaying
->> Liang <jliang@xilinx.com>
->> Subject: Re: [RFC] rpmsg: virtio rpmsg: Add RPMsg char driver support
->>
->> Hi Wendy,
->>
->> Few remarks on your patch.
->>
->> On 01/05/2018 12:18 AM, Wendy Liang wrote:
->>> virtio rpmsg was not implemented to use RPMsg char driver.
->>> Each virtio ns announcement will create a new RPMsg device which is
->>> supposed to bound to a RPMsg driver. It doesn't support dynamic
->>> endpoints with name service per RPMsg device.
->>> With RPMsg char driver, you can have multiple endpoints per RPMsg
->>> device.
->>>
->>> Here is the change from this patch:
->>> * Introduce a macro to indicate if want to use RPMsg char driver
->>>   for virtio RPMsg. The RPMsg device can either be bounded to
->>>   a simple RPMsg driver or the RPMsg char driver.
->>> * Create Virtio RPMsg char device when the virtio RPMsg driver is
->>>   probed.
->>> * when there is a remote service announced, keep it in the virtio
->>>   proc remote services list.
->>> * when there is an endpoint created, bind it to a remote service
->>>   from the remote services list. If the service doesn't exist yet,
->>>   create one and mark the service address as ANY.
->> Would be nice to simplify the review if patch was split in several patches (for
->> instance per feature introduced).
-> [Wendy] These changes are made to use the RPMsg char driver.
-> Some items such when an endpoint is created while the remote hasn't announced
-> this service yet is "new feature", but at the moment I am not 100% sure if this change follows
-> the right direction.
-> 
->>
->>>
->>> Signed-off-by: Wendy Liang <jliang@xilinx.com>
->>> ---
->>> We have different userspace applications to use RPMsg differently,
->>> what we need is a RPMsg char driver which can supports multiple
->>> endpoints per remote device.
->>> The virtio rpmsg driver at the moment doesn't support the RPMsg char
->>> driver.
->>> Please advise if this is patch is the right direction. If not, any
->>> suggestions? Thanks
->>> ---
->>>  drivers/rpmsg/Kconfig            |   8 +
->>>  drivers/rpmsg/virtio_rpmsg_bus.c | 364
->>> ++++++++++++++++++++++++++++++++++++++-
->>>  2 files changed, 365 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig index
->>> 65a9f6b..746f07e 100644
->>> --- a/drivers/rpmsg/Kconfig
->>> +++ b/drivers/rpmsg/Kconfig
->>> @@ -52,4 +52,12 @@ config RPMSG_VIRTIO
->>>  	select RPMSG
->>>  	select VIRTIO
->>>
->>> +config RPMSG_VIRTIO_CHAR
->>> +	bool "Enable Virtio RPMSG char device driver support"
->>> +	default y
->>> +	depends on RPMSG_VIRTIO
->>> +	depends on RPMSG_CHAR
->>> +	help
->>> +	  Say y here to enable to use RPMSG char device interface.
->>> +
->>>  endmenu
->>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c
->>> b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> index 82b8300..6e30a3cc 100644
->>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> @@ -56,6 +56,7 @@
->>>   * @sendq:	wait queue of sending contexts waiting for a tx buffers
->>>   * @sleepers:	number of senders that are waiting for a tx buffer
->>>   * @ns_ept:	the bus's name service endpoint
->>> + * @rsvcs:	remote services
->>>   *
->>>   * This structure stores the rpmsg state of a given virtio remote processor
->>>   * device (there might be several virtio proc devices for each
->>> physical @@ -75,6 +76,9 @@ struct virtproc_info {
->>>  	wait_queue_head_t sendq;
->>>  	atomic_t sleepers;
->>>  	struct rpmsg_endpoint *ns_ept;
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct list_head rsvcs;
->>> +#endif
->>>  };
->>>
->>>  /* The feature bitmap for virtio rpmsg */ @@ -141,6 +145,36 @@ struct
->>> virtio_rpmsg_channel {  #define to_virtio_rpmsg_channel(_rpdev) \
->>>  	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
->>>
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +/**
->>> + * struct virtio_rpmsg_rsvc - virtio RPMsg remote service
->>> + * @name: name of the RPMsg remote service
->>> + * @addr: RPMsg address of the remote service
->>> + * @ept:  local endpoint bound to the remote service
->>> + * @node: list node
->>> + */
->>> +struct virtio_rpmsg_rsvc {
->>> +	char name[RPMSG_NAME_SIZE];
->>> +	u32 addr;
->>> +	struct rpmsg_endpoint *ept;
->>> +	struct list_head node;
->>> +};
->>> +
->>> +/**
->>> + * struct virtio_rpmsg_ept - virtio RPMsg endpoint
->>> + * @rsvc: RPMsg service
->>> + * @ept:  RPMsg endpoint
->>> + *
->>> + */
->>> +struct virtio_rpmsg_ept {
->>> +	struct virtio_rpmsg_rsvc *rsvc;
->>> +	struct rpmsg_endpoint ept;
->>> +};
->>> +
->>> +#define to_virtio_rpmsg_ept(_ept) \
->>> +	container_of(_ept, struct virtio_rpmsg_ept, ept) #endif
->>> +
->>>  /*
->>>   * We're allocating buffers of 512 bytes each for communications. The
->>>   * number of buffers will be computed from the number of buffers
->>> supported @@ -216,6 +250,199 @@ rpmsg_sg_init(struct scatterlist *sg,
->> void *cpu_addr, unsigned int len)
->>>  	}
->>>  }
->>>
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +/**
->>> + * virtio_rpmsg_find_rsvc_by_name - find the announced remote service
->>> + * @vrp: virtio remote proc information
->>> + * @name: remote service name
->>> + *
->>> + * The caller is supposed to have mutex lock before calling this
->>> +function
->>> + *
->>> + * return NULL if no remote service has been found, otherwise, return
->>> + * the remote service pointer.
->>> + */
->>> +static struct virtio_rpmsg_rsvc *
->>> +virtio_rpmsg_find_rsvc_by_name(struct virtproc_info *vrp, char *name)
->>> +{
->>> +	struct virtio_rpmsg_rsvc *rsvc;
->>> +
->>> +	list_for_each_entry(rsvc, &vrp->rsvcs, node) {
->>> +		if (!strncmp(rsvc->name, name, RPMSG_NAME_SIZE))
->>> +			/* remote service has found */
->>> +			return rsvc;
->>> +	}
->>> +
->>> +	return NULL;
->>> +}
->>> +
->>> +/**
->>> + * virtio_rpmsg_create_rsvc_by_name - create remote service
->>> + * @vrp: virtio remote proc information
->>> + * @name: remote service name
->>> + *
->>> + * The caller is supposed to have mutex lock before calling this
->>> +function
->>> + *
->>> + * return NULL if remote service creation failed. otherwise, return
->>> + * the remote service pointer.
->>> + */
->>> +static struct virtio_rpmsg_rsvc *
->>> +virtio_rpmsg_create_rsvc_by_name(struct virtproc_info *vrp, char
->>> +*name) {
->>> +	struct virtio_rpmsg_rsvc *rsvc;
->>> +
->>> +	rsvc = virtio_rpmsg_find_rsvc_by_name(vrp, name);
->>> +	if (rsvc)
->>> +		return rsvc;
->> Here, I think you break the possibility to instantiate several times the same
->> service .
->> For instance, today if you have 2 communications in parallel:
->> Core1_Aplli1  <-- "foo" service --> core2_appli1
->> Core1_Aplli2  <-- "foo" service --> core2_appli2
-> [Wendy] I can add the remote service address to the input argument
-> That is to identify a remote service, it will be the "name" + service address.
->>
->> 2 ways to do it:
->> 1) one service and 4 endpoints
->> => issue it to know the destination address.
->> 2) 2 instances of the same service with default endpoint.
->>
->>> +	rsvc = kzalloc(sizeof(*rsvc), GFP_KERNEL);
->>> +	if (!rsvc)
->>> +		return NULL;
->>> +	strncpy(rsvc->name, name, RPMSG_NAME_SIZE);
->>> +	list_add_tail(&rsvc->node, &vrp->rsvcs);
->>> +	return rsvc;
->>> +}
->>> +
->>> +/**
->>> + * virtio_rpmsg_remove_rsvc_by_name - remove remote service
->>> + * @vrp: virtio remote proc information
->>> + * @name: remote service name
->>> + *
->>> + */
->>> +static void
->>> +virtio_rpmsg_remove_rsvc_by_name(struct virtproc_info *vrp, char
->>> +*name) {
->>> +	struct virtio_rpmsg_rsvc *rsvc;
->>> +	struct rpmsg_endpoint *ept;
->>> +	struct virtio_rpmsg_ept *vept;
->>> +
->>> +	mutex_lock(&vrp->endpoints_lock);
->>> +	list_for_each_entry(rsvc, &vrp->rsvcs, node) {
->>> +		if (!strncmp(rsvc->name, name, RPMSG_NAME_SIZE)) {
->>> +			/* remote service has found, no need to
->>> +			 * create
->>> +			 */
->>> +			ept = rsvc->ept;
->>> +			if (ept) {
->>> +				vept = to_virtio_rpmsg_ept(ept);
->>> +				vept->rsvc = NULL;
->>> +			}
->>> +			list_del(&rsvc->node);
->>> +			kfree(rsvc);
->>> +			break;
->>> +		}
->>> +	}
->>> +	mutex_unlock(&vrp->endpoints_lock);
->>> +}
->>> +
->>> +/**
->>> + * virtio_rpmsg_create_rsvc - create remote service with channel
->>> +information
->>> + * @vrp: virtio remote proc information
->>> + * @chinfo: channel information
->>> + *
->>> + * return remote service pointer if it is successfully created;
->>> +otherwise,
->>> + * return NULL.
->>> + */
->>> +static struct virtio_rpmsg_rsvc *
->>> +virtio_rpmsg_create_rsvc(struct virtproc_info *vrp,
->>> +			 struct rpmsg_channel_info *chinfo) {
->>> +	struct virtio_rpmsg_rsvc *rsvc;
->>> +
->>> +	mutex_lock(&vrp->endpoints_lock);
->>> +	rsvc = virtio_rpmsg_create_rsvc_by_name(vrp, chinfo->name);
->>> +	if (rsvc) {
->>> +		struct virtio_device *vdev = vrp->vdev;
->>> +
->>> +		rsvc->addr = chinfo->dst;
->>> +		dev_info(&vdev->dev, "Remote has announced
->> service %s, %d.\n",
->>> +			 chinfo->name, rsvc->addr);
->>> +	}
->>> +	mutex_unlock(&vrp->endpoints_lock);
->>> +	return rsvc;
->>> +}
->>> +
->>> +/**
->>> + * virtio_rpmsg_announce_ept_create - announce endpoint has been
->>> +created
->>> + * @ept: RPMsg endpoint
->>> + *
->>> + * return 0 if succeeded, otherwise, return error code.
->>> + */
->>> +static int virtio_rpmsg_announce_ept_create(struct rpmsg_endpoint
->>> +*ept) {
->>> +	struct virtio_rpmsg_ept *vept = to_virtio_rpmsg_ept(ept);
->>> +	struct virtio_rpmsg_rsvc *rsvc = vept->rsvc;
->>> +	struct rpmsg_device *rpdev = ept->rpdev;
->>> +	struct virtio_rpmsg_channel *vch;
->>> +	struct virtproc_info *vrp;
->>> +	struct device *dev;
->>> +	int err = 0;
->>> +
->>> +	if (!rpdev)
->>> +		/* If the endpoint is not connected to a RPMsg device,
->>> +		 * no need to send the announcement.
->>> +		 */
->>> +		return 0;
->>> +	vch = to_virtio_rpmsg_channel(rpdev);
->>> +	vrp = vch->vrp;
->>> +	dev = &ept->rpdev->dev;
->>> +	/* need to tell remote processor's name service about this channel ?
->> */
->>> +	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
->>> +		struct rpmsg_ns_msg nsm;
->>> +
->>> +		strncpy(nsm.name, rsvc->name, RPMSG_NAME_SIZE);
->>> +		nsm.addr = ept->addr;
->>> +		nsm.flags = RPMSG_NS_CREATE;
->>> +
->>> +		err = rpmsg_sendto(ept, &nsm, sizeof(nsm),
->>> +				   RPMSG_NS_ADDR);
->>> +		if (err)
->>> +			dev_err(dev, "failed to announce service %d\n", err);
->>> +	}
->>> +
->>> +	return err;
->>> +}
->>> +
->>> +/**
->>> + * virtio_rpmsg_announce_ept_destroy - announce endpoint has been
->>> +destroyed
->>> + * @ept: RPMsg endpoint
->>> + *
->>> + * return 0 if succeeded, otherwise, return error code.
->>> + */
->>> +static int virtio_rpmsg_announce_ept_destroy(struct rpmsg_endpoint
->>> +*ept) {
->>> +	struct virtio_rpmsg_ept *vept = to_virtio_rpmsg_ept(ept);
->>> +	struct virtio_rpmsg_rsvc *rsvc = vept->rsvc;
->>> +	struct rpmsg_device *rpdev = ept->rpdev;
->>> +	struct virtio_rpmsg_channel *vch;
->>> +	struct virtproc_info *vrp;
->>> +	struct device *dev;
->>> +	int err = 0;
->>> +
->>> +	if (!rpdev)
->>> +		/* If the endpoint is not connected to a RPMsg device,
->>> +		 * no need to send the announcement.
->>> +		 */
->>> +		return 0;
->>> +	vch = to_virtio_rpmsg_channel(rpdev);
->>> +	vrp = vch->vrp;
->>> +	dev = &ept->rpdev->dev;
->>> +	/* tell remote processor's name service we're removing this channel
->> */
->>> +	if (virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
->>> +		struct rpmsg_ns_msg nsm;
->>> +
->>> +		strncpy(nsm.name, rsvc->name, RPMSG_NAME_SIZE);
->>> +		nsm.addr = ept->addr;
->>> +		nsm.flags = RPMSG_NS_DESTROY;
->>> +
->>> +		err = rpmsg_sendto(ept, &nsm, sizeof(nsm),
->>> +				   RPMSG_NS_ADDR);
->>> +		if (err)
->>> +			dev_err(dev, "failed to announce service %d\n", err);
->>> +	}
->>> +
->>> +	return err;
->>> +}
->>> +#endif
->>> +
->>>  /**
->>>   * __ept_release() - deallocate an rpmsg endpoint
->>>   * @kref: the ept's reference count
->>> @@ -229,26 +456,53 @@ static void __ept_release(struct kref *kref)  {
->>>  	struct rpmsg_endpoint *ept = container_of(kref, struct
->> rpmsg_endpoint,
->>>  						  refcount);
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct virtio_rpmsg_ept *vept = to_virtio_rpmsg_ept(ept);
->>> +	struct virtio_rpmsg_channel *vch;
->>> +	struct virtproc_info *vrp;
->>> +
->>> +	if (ept->rpdev) {
->>> +		vch = to_virtio_rpmsg_channel(ept->rpdev);
->>> +		vrp = vch->vrp;
->>> +		(void)virtio_rpmsg_announce_ept_destroy(ept);
->>> +		mutex_lock(&vrp->endpoints_lock);
->>> +		vept->rsvc->ept = NULL;
->>> +		mutex_unlock(&vrp->endpoints_lock);
->>> +	}
->>> +	kfree(vept);
->>> +#else
->>>  	/*
->>>  	 * At this point no one holds a reference to ept anymore,
->>>  	 * so we can directly free it
->>>  	 */
->>>  	kfree(ept);
->>> +#endif
->>>  }
->>>
->>>  /* for more info, see below documentation of rpmsg_create_ept() */
->>> static struct rpmsg_endpoint *__rpmsg_create_ept(struct virtproc_info
->> *vrp,
->>>  						 struct rpmsg_device *rpdev,
->>>  						 rpmsg_rx_cb_t cb,
->>> -						 void *priv, u32 addr)
->>> +						 void *priv,
->>> +						 struct rpmsg_channel_info
->> *ch)
->>>  {
->>>  	int id_min, id_max, id;
->>>  	struct rpmsg_endpoint *ept;
->>> +	u32 addr = ch->src;
->>>  	struct device *dev = rpdev ? &rpdev->dev : &vrp->vdev->dev;
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct virtio_rpmsg_ept *vept;
->>> +	struct virtio_rpmsg_rsvc *rsvc;
->>>
->>> +	vept = kzalloc(sizeof(*vept), GFP_KERNEL);
->>> +	if (!vept)
->>> +		return NULL;
->>> +	ept = &vept->ept;
->>> +#else
->>>  	ept = kzalloc(sizeof(*ept), GFP_KERNEL);
->>>  	if (!ept)
->>>  		return NULL;
->>> +#endif
->>>
->>>  	kref_init(&ept->refcount);
->>>  	mutex_init(&ept->cb_lock);
->>> @@ -259,7 +513,7 @@ static struct rpmsg_endpoint
->> *__rpmsg_create_ept(struct virtproc_info *vrp,
->>>  	ept->ops = &virtio_endpoint_ops;
->>>
->>>  	/* do we need to allocate a local address ? */
->>> -	if (addr == RPMSG_ADDR_ANY) {
->>> +	if (ch->src == RPMSG_ADDR_ANY) {
->>>  		id_min = RPMSG_RESERVED_ADDRESSES;
->>>  		id_max = 0;
->>>  	} else {
->>> @@ -277,6 +531,19 @@ static struct rpmsg_endpoint
->> *__rpmsg_create_ept(struct virtproc_info *vrp,
->>>  	}
->>>  	ept->addr = id;
->>>
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	if (ept->addr != RPMSG_NS_ADDR) {
->>> +		rsvc = virtio_rpmsg_create_rsvc_by_name(vrp, ch->name);
->>> +		if (!rsvc)
->>> +			goto free_ept;
->>> +		vept->rsvc = rsvc;
->>> +		rsvc->ept = ept;
->>> +		dev_info(&vrp->vdev->dev, "RPMsg ept
->> created, %s:%d,%d.\n",
->>> +			 ch->name, ept->addr, rsvc->addr);
->>> +		(void)virtio_rpmsg_announce_ept_create(ept);
->>> +	}
->>> +#endif
->>> +
->>>  	mutex_unlock(&vrp->endpoints_lock);
->>>
->>>  	return ept;
->>> @@ -294,7 +561,7 @@ static struct rpmsg_endpoint
->>> *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev  {
->>>  	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
->>>
->>> -	return __rpmsg_create_ept(vch->vrp, rpdev, cb, priv, chinfo.src);
->>> +	return __rpmsg_create_ept(vch->vrp, rpdev, cb, priv, &chinfo);
->>>  }
->>>
->>>  /**
->>> @@ -392,6 +659,7 @@ static void virtio_rpmsg_release_device(struct
->> device *dev)
->>>  	kfree(vch);
->>>  }
->>>
->>> +#ifndef CONFIG_RPMSG_VIRTIO_CHAR
->>>  /*
->>>   * create an rpmsg channel using its name and address info.
->>>   * this function will be used to create both static and dynamic @@
->>> -444,6 +712,7 @@ static struct rpmsg_device
->>> *rpmsg_create_channel(struct virtproc_info *vrp,
->>>
->>>  	return rpdev;
->>>  }
->>> +#endif
->>>
->>>  /* super simple buffer "allocator" that is just enough for now */
->>> static void *get_a_tx_buf(struct virtproc_info *vrp) @@ -660,8 +929,21
->>> @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->>> static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data,
->>> int len)  {
->>>  	struct rpmsg_device *rpdev = ept->rpdev;
->>> -	u32 src = ept->addr, dst = rpdev->dst;
->>> +	u32 src = ept->addr;
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct virtio_rpmsg_ept *vept = to_virtio_rpmsg_ept(ept);
->>> +	u32 dst = vept->rsvc->addr;
->>> +
->>> +	if (dst == RPMSG_ADDR_ANY)
->>> +		return -EPIPE;
->>> +#else
->>> +	u32 dst = rpdev->dst;
->>> +#endif
->>>
->>> +	if (!rpdev) {
->>> +		pr_err("%s, ept %p rpdev is NULL\n", __func__, ept);
->>> +		return -EINVAL;
->>> +	}
->>>  	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
->>> }
->>>
->>> @@ -685,7 +967,16 @@ static int virtio_rpmsg_send_offchannel(struct
->>> rpmsg_endpoint *ept, u32 src,  static int virtio_rpmsg_trysend(struct
->>> rpmsg_endpoint *ept, void *data, int len)  {
->>>  	struct rpmsg_device *rpdev = ept->rpdev;
->>> -	u32 src = ept->addr, dst = rpdev->dst;
->>> +	u32 src = ept->addr;
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct virtio_rpmsg_ept *vept = to_virtio_rpmsg_ept(ept);
->>> +	u32 dst = vept->rsvc->addr;
->>> +
->>> +	if (dst == RPMSG_ADDR_ANY)
->>> +		return -EPIPE;
->>> +#else
->>> +	u32 dst = rpdev->dst;
->>> +#endif
->>>
->>>  	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
->>> } @@ -824,11 +1115,13 @@ static int rpmsg_ns_cb(struct rpmsg_device
->>> *rpdev, void *data, int len,
->>>  		       void *priv, u32 src)
->>>  {
->>>  	struct rpmsg_ns_msg *msg = data;
->>> -	struct rpmsg_device *newch;
->>>  	struct rpmsg_channel_info chinfo;
->>>  	struct virtproc_info *vrp = priv;
->>>  	struct device *dev = &vrp->vdev->dev;
->>> +#ifndef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct rpmsg_device *newch;
->>>  	int ret;
->>> +#endif
->>>
->>>  #if defined(CONFIG_DYNAMIC_DEBUG)
->>>  	dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16,
->> 1, @@
->>> -863,13 +1156,25 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev,
->> void *data, int len,
->>>  	chinfo.dst = msg->addr;
->>>
->>>  	if (msg->flags & RPMSG_NS_DESTROY) {
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +		virtio_rpmsg_remove_rsvc_by_name(vrp, chinfo.name); #else
->>>  		ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
->>>  		if (ret)
->>>  			dev_err(dev, "rpmsg_destroy_channel failed: %d\n",
->> ret);
->>> +#endif
->>>  	} else {
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +		struct virtio_rpmsg_rsvc *rsvc;
->>> +
->>> +		rsvc = virtio_rpmsg_create_rsvc(vrp, &chinfo);
->>> +		if (!rsvc)
->>> +			dev_err(dev, "virtio_rpmsg_create_rsvc failed\n");
->> #else
->>>  		newch = rpmsg_create_channel(vrp, &chinfo);
->>>  		if (!newch)
->>>  			dev_err(dev, "rpmsg_create_channel failed\n");
->>> +#endif
->>>  	}
->>>
->>>  	return 0;
->>> @@ -885,6 +1190,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>>  	int err = 0, i;
->>>  	size_t total_buf_space;
->>>  	bool notify;
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct virtio_rpmsg_channel *vch;
->>> +	struct rpmsg_device *rp_char_dev;
->>> +#endif
->>>
->>>  	vrp = kzalloc(sizeof(*vrp), GFP_KERNEL);
->>>  	if (!vrp)
->>> @@ -956,9 +1265,14 @@ static int rpmsg_probe(struct virtio_device
->>> *vdev)
->>>
->>>  	/* if supported by the remote processor, enable the name service */
->>>  	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_NS)) {
->>> +		struct rpmsg_channel_info ns_chinfo;
->>> +
->>> +		ns_chinfo.src = RPMSG_NS_ADDR;
->>> +		ns_chinfo.dst = RPMSG_NS_ADDR;
->>> +		strcpy(ns_chinfo.name, "name_service");
->>>  		/* a dedicated endpoint handles the name service msgs */
->>>  		vrp->ns_ept = __rpmsg_create_ept(vrp, NULL, rpmsg_ns_cb,
->>> -						vrp, RPMSG_NS_ADDR);
->>> +						vrp, &ns_chinfo);
->>>  		if (!vrp->ns_ept) {
->>>  			dev_err(&vdev->dev, "failed to create the ns ept\n");
->>>  			err = -ENOMEM;
->>> @@ -966,6 +1280,32 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>>  		}
->>>  	}
->>>
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	vch = kzalloc(sizeof(*vch), GFP_KERNEL);
->>> +	if (!vch) {
->>> +		err = -ENOMEM;
->>> +		goto free_coherent;
->>> +	}
->>> +
->>> +	/* Link the channel to our vrp */
->>> +	vch->vrp = vrp;
->>> +	/* Initialize remote services list */
->>> +	INIT_LIST_HEAD(&vrp->rsvcs);
->>> +
->>> +	/* Assign public information to the rpmsg_device */
->>> +	rp_char_dev = &vch->rpdev;
->>> +	rp_char_dev->ops = &virtio_rpmsg_ops;
->>> +
->>> +	rp_char_dev->dev.parent = &vrp->vdev->dev;
->>> +	rp_char_dev->dev.release = virtio_rpmsg_release_device;
->>> +	err = rpmsg_chrdev_register_device(rp_char_dev);
->>
->> I also tried to use this char device to expose rpmsg service for application.
->> Issue with this device (from my point of view) is that it has to be relied on a
->> kernel rpmsg device.
->> I suppose that your need is to expose RMPSG to userland without creating a
->> platform driver.
->> In this case perhaps an alternative could be to move this part in rmpsg_char
->> to allow to probe it in standalone...
-> [Wendy] with the existing virtio rpmsg implementation, each service will be binded
-> to a rpmsg_device. Each rpmsg_device can have multiple static endpoints.
-> But this is different to how rpmsg_char is supposed to use, rpmsg_char looks to me
-> Each endpoint created by rpmsg_char, either dynamic (without knowing the remote
-> Address beforehand) or static(specifying the remote endpoint) should be binded
-> to a service.
->
-> rpmsg_char user APIs can meet what we need, however, we uses rpmsg over virtio.
-> But at the moment the virtio_rpmsg doesn't support rpmsg_char.
-> You talked about the allow rpmsg_char to be probed in standalone, I think that's good
-> Idea, however, we need to bind the rpmsg_char to the virtio rpmsg device.
-remoteproc binds rpmsg with virtio, so calling register_rpmsg_driver
-should do the job.
-
-> 
-> How about to have "driver_override" of rpmsg_device exposed to userspace with channel
-> name information available (sysfs) and then we can dynamically bind it to rpmsg_char driver
-> from userspace? And then we can limit the rpmsg_char create endpoint feature to 
-> only create static endpoints over the same channel in case of virtio_rpmsg usage?
-
-Creating a specific device could be another solution. I have no opinion
-on what could be the best strategy.
-Bjorn, what is your feeling?
-
-A constraint to add in design is  that we should not expose all the
-rpmsg device to userland. Except if i missed something, it seems that
-activating RPMSG_VIRTIO_CHAR config exposes all the rpmsg devices.
-
-Another alternative is to expose rpmsg to userland trough some generic
-interfaces like proxy, tty, FS posix....
-
-Thanks,
-Arnaud
-
-> 
-> Thanks,
-> Wendy
-> 
->>
->> Regards
->> Arnaud
->>
->>> +	if (err) {
->>> +		kfree(vch);
->>> +		goto free_coherent;
->>> +	}
->>> +	dev_info(&vdev->dev, "Registered as RPMsg char device.\n"); #endif
->>> +
->>>  	/*
->>>  	 * Prepare to kick but don't notify yet - we can't do this before
->>>  	 * device is ready.
->>> @@ -1009,6 +1349,9 @@ static void rpmsg_remove(struct virtio_device
->> *vdev)
->>>  	struct virtproc_info *vrp = vdev->priv;
->>>  	size_t total_buf_space = vrp->num_bufs * vrp->buf_size;
->>>  	int ret;
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	struct virtio_rpmsg_rsvc *rsvc, *tmp; #endif
->>>
->>>  	vdev->config->reset(vdev);
->>>
->>> @@ -1021,6 +1364,13 @@ static void rpmsg_remove(struct virtio_device
->>> *vdev)
->>>
->>>  	idr_destroy(&vrp->endpoints);
->>>
->>> +#ifdef CONFIG_RPMSG_VIRTIO_CHAR
->>> +	list_for_each_entry_safe(rsvc, tmp, &vrp->rsvcs, node) {
->>> +		list_del(&rsvc->node);
->>> +		kfree(rsvc);
->>> +	}
->>> +#endif
->>> +
->>>  	vdev->config->del_vqs(vrp->vdev);
->>>
->>>  	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
->>>
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQXJuYXVkIFBvdWxpcXVl
+biBbbWFpbHRvOmFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tXQ0KPiBTZW50OiBGcmlkYXksIEphbnVh
+cnkgMDUsIDIwMTggNjo0OCBBTQ0KPiBUbzogSmlheWluZyBMaWFuZyA8amxpYW5nQHhpbGlueC5j
+b20+OyBvaGFkQHdpemVyeS5jb207DQo+IGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnDQo+IENj
+OiBsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsgSmlheWluZw0KPiBMaWFuZyA8amxpYW5nQHhpbGlueC5jb20+DQo+IFN1YmplY3Q6
+IFJlOiBbUkZDXSBycG1zZzogdmlydGlvIHJwbXNnOiBBZGQgUlBNc2cgY2hhciBkcml2ZXIgc3Vw
+cG9ydA0KPiANCj4gSGkgV2VuZHksDQo+IA0KPiBGZXcgcmVtYXJrcyBvbiB5b3VyIHBhdGNoLg0K
+PiANCj4gT24gMDEvMDUvMjAxOCAxMjoxOCBBTSwgV2VuZHkgTGlhbmcgd3JvdGU6DQo+ID4gdmly
+dGlvIHJwbXNnIHdhcyBub3QgaW1wbGVtZW50ZWQgdG8gdXNlIFJQTXNnIGNoYXIgZHJpdmVyLg0K
+PiA+IEVhY2ggdmlydGlvIG5zIGFubm91bmNlbWVudCB3aWxsIGNyZWF0ZSBhIG5ldyBSUE1zZyBk
+ZXZpY2Ugd2hpY2ggaXMNCj4gPiBzdXBwb3NlZCB0byBib3VuZCB0byBhIFJQTXNnIGRyaXZlci4g
+SXQgZG9lc24ndCBzdXBwb3J0IGR5bmFtaWMNCj4gPiBlbmRwb2ludHMgd2l0aCBuYW1lIHNlcnZp
+Y2UgcGVyIFJQTXNnIGRldmljZS4NCj4gPiBXaXRoIFJQTXNnIGNoYXIgZHJpdmVyLCB5b3UgY2Fu
+IGhhdmUgbXVsdGlwbGUgZW5kcG9pbnRzIHBlciBSUE1zZw0KPiA+IGRldmljZS4NCj4gPg0KPiA+
+IEhlcmUgaXMgdGhlIGNoYW5nZSBmcm9tIHRoaXMgcGF0Y2g6DQo+ID4gKiBJbnRyb2R1Y2UgYSBt
+YWNybyB0byBpbmRpY2F0ZSBpZiB3YW50IHRvIHVzZSBSUE1zZyBjaGFyIGRyaXZlcg0KPiA+ICAg
+Zm9yIHZpcnRpbyBSUE1zZy4gVGhlIFJQTXNnIGRldmljZSBjYW4gZWl0aGVyIGJlIGJvdW5kZWQg
+dG8NCj4gPiAgIGEgc2ltcGxlIFJQTXNnIGRyaXZlciBvciB0aGUgUlBNc2cgY2hhciBkcml2ZXIu
+DQo+ID4gKiBDcmVhdGUgVmlydGlvIFJQTXNnIGNoYXIgZGV2aWNlIHdoZW4gdGhlIHZpcnRpbyBS
+UE1zZyBkcml2ZXIgaXMNCj4gPiAgIHByb2JlZC4NCj4gPiAqIHdoZW4gdGhlcmUgaXMgYSByZW1v
+dGUgc2VydmljZSBhbm5vdW5jZWQsIGtlZXAgaXQgaW4gdGhlIHZpcnRpbw0KPiA+ICAgcHJvYyBy
+ZW1vdGUgc2VydmljZXMgbGlzdC4NCj4gPiAqIHdoZW4gdGhlcmUgaXMgYW4gZW5kcG9pbnQgY3Jl
+YXRlZCwgYmluZCBpdCB0byBhIHJlbW90ZSBzZXJ2aWNlDQo+ID4gICBmcm9tIHRoZSByZW1vdGUg
+c2VydmljZXMgbGlzdC4gSWYgdGhlIHNlcnZpY2UgZG9lc24ndCBleGlzdCB5ZXQsDQo+ID4gICBj
+cmVhdGUgb25lIGFuZCBtYXJrIHRoZSBzZXJ2aWNlIGFkZHJlc3MgYXMgQU5ZLg0KPiBXb3VsZCBi
+ZSBuaWNlIHRvIHNpbXBsaWZ5IHRoZSByZXZpZXcgaWYgcGF0Y2ggd2FzIHNwbGl0IGluIHNldmVy
+YWwgcGF0Y2hlcyAoZm9yDQo+IGluc3RhbmNlIHBlciBmZWF0dXJlIGludHJvZHVjZWQpLg0KW1dl
+bmR5XSBUaGVzZSBjaGFuZ2VzIGFyZSBtYWRlIHRvIHVzZSB0aGUgUlBNc2cgY2hhciBkcml2ZXIu
+DQpTb21lIGl0ZW1zIHN1Y2ggd2hlbiBhbiBlbmRwb2ludCBpcyBjcmVhdGVkIHdoaWxlIHRoZSBy
+ZW1vdGUgaGFzbid0IGFubm91bmNlZA0KdGhpcyBzZXJ2aWNlIHlldCBpcyAibmV3IGZlYXR1cmUi
+LCBidXQgYXQgdGhlIG1vbWVudCBJIGFtIG5vdCAxMDAlIHN1cmUgaWYgdGhpcyBjaGFuZ2UgZm9s
+bG93cw0KdGhlIHJpZ2h0IGRpcmVjdGlvbi4NCg0KPiANCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6
+IFdlbmR5IExpYW5nIDxqbGlhbmdAeGlsaW54LmNvbT4NCj4gPiAtLS0NCj4gPiBXZSBoYXZlIGRp
+ZmZlcmVudCB1c2Vyc3BhY2UgYXBwbGljYXRpb25zIHRvIHVzZSBSUE1zZyBkaWZmZXJlbnRseSwN
+Cj4gPiB3aGF0IHdlIG5lZWQgaXMgYSBSUE1zZyBjaGFyIGRyaXZlciB3aGljaCBjYW4gc3VwcG9y
+dHMgbXVsdGlwbGUNCj4gPiBlbmRwb2ludHMgcGVyIHJlbW90ZSBkZXZpY2UuDQo+ID4gVGhlIHZp
+cnRpbyBycG1zZyBkcml2ZXIgYXQgdGhlIG1vbWVudCBkb2Vzbid0IHN1cHBvcnQgdGhlIFJQTXNn
+IGNoYXINCj4gPiBkcml2ZXIuDQo+ID4gUGxlYXNlIGFkdmlzZSBpZiB0aGlzIGlzIHBhdGNoIGlz
+IHRoZSByaWdodCBkaXJlY3Rpb24uIElmIG5vdCwgYW55DQo+ID4gc3VnZ2VzdGlvbnM/IFRoYW5r
+cw0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3JwbXNnL0tjb25maWcgICAgICAgICAgICB8ICAgOCAr
+DQo+ID4gIGRyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNnX2J1cy5jIHwgMzY0DQo+ID4gKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwg
+MzY1IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ycG1zZy9LY29uZmlnIGIvZHJpdmVycy9ycG1zZy9LY29uZmlnIGluZGV4DQo+ID4g
+NjVhOWY2Yi4uNzQ2ZjA3ZSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3JwbXNnL0tjb25maWcN
+Cj4gPiArKysgYi9kcml2ZXJzL3JwbXNnL0tjb25maWcNCj4gPiBAQCAtNTIsNCArNTIsMTIgQEAg
+Y29uZmlnIFJQTVNHX1ZJUlRJTw0KPiA+ICAJc2VsZWN0IFJQTVNHDQo+ID4gIAlzZWxlY3QgVklS
+VElPDQo+ID4NCj4gPiArY29uZmlnIFJQTVNHX1ZJUlRJT19DSEFSDQo+ID4gKwlib29sICJFbmFi
+bGUgVmlydGlvIFJQTVNHIGNoYXIgZGV2aWNlIGRyaXZlciBzdXBwb3J0Ig0KPiA+ICsJZGVmYXVs
+dCB5DQo+ID4gKwlkZXBlbmRzIG9uIFJQTVNHX1ZJUlRJTw0KPiA+ICsJZGVwZW5kcyBvbiBSUE1T
+R19DSEFSDQo+ID4gKwloZWxwDQo+ID4gKwkgIFNheSB5IGhlcmUgdG8gZW5hYmxlIHRvIHVzZSBS
+UE1TRyBjaGFyIGRldmljZSBpbnRlcmZhY2UuDQo+ID4gKw0KPiA+ICBlbmRtZW51DQo+ID4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+ID4gYi9kcml2ZXJz
+L3JwbXNnL3ZpcnRpb19ycG1zZ19idXMuYw0KPiA+IGluZGV4IDgyYjgzMDAuLjZlMzBhM2NjIDEw
+MDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+ID4gKysr
+IGIvZHJpdmVycy9ycG1zZy92aXJ0aW9fcnBtc2dfYnVzLmMNCj4gPiBAQCAtNTYsNiArNTYsNyBA
+QA0KPiA+ICAgKiBAc2VuZHE6CXdhaXQgcXVldWUgb2Ygc2VuZGluZyBjb250ZXh0cyB3YWl0aW5n
+IGZvciBhIHR4IGJ1ZmZlcnMNCj4gPiAgICogQHNsZWVwZXJzOgludW1iZXIgb2Ygc2VuZGVycyB0
+aGF0IGFyZSB3YWl0aW5nIGZvciBhIHR4IGJ1ZmZlcg0KPiA+ICAgKiBAbnNfZXB0Ogl0aGUgYnVz
+J3MgbmFtZSBzZXJ2aWNlIGVuZHBvaW50DQo+ID4gKyAqIEByc3ZjczoJcmVtb3RlIHNlcnZpY2Vz
+DQo+ID4gICAqDQo+ID4gICAqIFRoaXMgc3RydWN0dXJlIHN0b3JlcyB0aGUgcnBtc2cgc3RhdGUg
+b2YgYSBnaXZlbiB2aXJ0aW8gcmVtb3RlIHByb2Nlc3Nvcg0KPiA+ICAgKiBkZXZpY2UgKHRoZXJl
+IG1pZ2h0IGJlIHNldmVyYWwgdmlydGlvIHByb2MgZGV2aWNlcyBmb3IgZWFjaA0KPiA+IHBoeXNp
+Y2FsIEBAIC03NSw2ICs3Niw5IEBAIHN0cnVjdCB2aXJ0cHJvY19pbmZvIHsNCj4gPiAgCXdhaXRf
+cXVldWVfaGVhZF90IHNlbmRxOw0KPiA+ICAJYXRvbWljX3Qgc2xlZXBlcnM7DQo+ID4gIAlzdHJ1
+Y3QgcnBtc2dfZW5kcG9pbnQgKm5zX2VwdDsNCj4gPiArI2lmZGVmIENPTkZJR19SUE1TR19WSVJU
+SU9fQ0hBUg0KPiA+ICsJc3RydWN0IGxpc3RfaGVhZCByc3ZjczsNCj4gPiArI2VuZGlmDQo+ID4g
+IH07DQo+ID4NCj4gPiAgLyogVGhlIGZlYXR1cmUgYml0bWFwIGZvciB2aXJ0aW8gcnBtc2cgKi8g
+QEAgLTE0MSw2ICsxNDUsMzYgQEAgc3RydWN0DQo+ID4gdmlydGlvX3JwbXNnX2NoYW5uZWwgeyAg
+I2RlZmluZSB0b192aXJ0aW9fcnBtc2dfY2hhbm5lbChfcnBkZXYpIFwNCj4gPiAgCWNvbnRhaW5l
+cl9vZihfcnBkZXYsIHN0cnVjdCB2aXJ0aW9fcnBtc2dfY2hhbm5lbCwgcnBkZXYpDQo+ID4NCj4g
+PiArI2lmZGVmIENPTkZJR19SUE1TR19WSVJUSU9fQ0hBUg0KPiA+ICsvKioNCj4gPiArICogc3Ry
+dWN0IHZpcnRpb19ycG1zZ19yc3ZjIC0gdmlydGlvIFJQTXNnIHJlbW90ZSBzZXJ2aWNlDQo+ID4g
+KyAqIEBuYW1lOiBuYW1lIG9mIHRoZSBSUE1zZyByZW1vdGUgc2VydmljZQ0KPiA+ICsgKiBAYWRk
+cjogUlBNc2cgYWRkcmVzcyBvZiB0aGUgcmVtb3RlIHNlcnZpY2UNCj4gPiArICogQGVwdDogIGxv
+Y2FsIGVuZHBvaW50IGJvdW5kIHRvIHRoZSByZW1vdGUgc2VydmljZQ0KPiA+ICsgKiBAbm9kZTog
+bGlzdCBub2RlDQo+ID4gKyAqLw0KPiA+ICtzdHJ1Y3QgdmlydGlvX3JwbXNnX3JzdmMgew0KPiA+
+ICsJY2hhciBuYW1lW1JQTVNHX05BTUVfU0laRV07DQo+ID4gKwl1MzIgYWRkcjsNCj4gPiArCXN0
+cnVjdCBycG1zZ19lbmRwb2ludCAqZXB0Ow0KPiA+ICsJc3RydWN0IGxpc3RfaGVhZCBub2RlOw0K
+PiA+ICt9Ow0KPiA+ICsNCj4gPiArLyoqDQo+ID4gKyAqIHN0cnVjdCB2aXJ0aW9fcnBtc2dfZXB0
+IC0gdmlydGlvIFJQTXNnIGVuZHBvaW50DQo+ID4gKyAqIEByc3ZjOiBSUE1zZyBzZXJ2aWNlDQo+
+ID4gKyAqIEBlcHQ6ICBSUE1zZyBlbmRwb2ludA0KPiA+ICsgKg0KPiA+ICsgKi8NCj4gPiArc3Ry
+dWN0IHZpcnRpb19ycG1zZ19lcHQgew0KPiA+ICsJc3RydWN0IHZpcnRpb19ycG1zZ19yc3ZjICpy
+c3ZjOw0KPiA+ICsJc3RydWN0IHJwbXNnX2VuZHBvaW50IGVwdDsNCj4gPiArfTsNCj4gPiArDQo+
+ID4gKyNkZWZpbmUgdG9fdmlydGlvX3JwbXNnX2VwdChfZXB0KSBcDQo+ID4gKwljb250YWluZXJf
+b2YoX2VwdCwgc3RydWN0IHZpcnRpb19ycG1zZ19lcHQsIGVwdCkgI2VuZGlmDQo+ID4gKw0KPiA+
+ICAvKg0KPiA+ICAgKiBXZSdyZSBhbGxvY2F0aW5nIGJ1ZmZlcnMgb2YgNTEyIGJ5dGVzIGVhY2gg
+Zm9yIGNvbW11bmljYXRpb25zLiBUaGUNCj4gPiAgICogbnVtYmVyIG9mIGJ1ZmZlcnMgd2lsbCBi
+ZSBjb21wdXRlZCBmcm9tIHRoZSBudW1iZXIgb2YgYnVmZmVycw0KPiA+IHN1cHBvcnRlZCBAQCAt
+MjE2LDYgKzI1MCwxOTkgQEAgcnBtc2dfc2dfaW5pdChzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnNnLA0K
+PiB2b2lkICpjcHVfYWRkciwgdW5zaWduZWQgaW50IGxlbikNCj4gPiAgCX0NCj4gPiAgfQ0KPiA+
+DQo+ID4gKyNpZmRlZiBDT05GSUdfUlBNU0dfVklSVElPX0NIQVINCj4gPiArLyoqDQo+ID4gKyAq
+IHZpcnRpb19ycG1zZ19maW5kX3JzdmNfYnlfbmFtZSAtIGZpbmQgdGhlIGFubm91bmNlZCByZW1v
+dGUgc2VydmljZQ0KPiA+ICsgKiBAdnJwOiB2aXJ0aW8gcmVtb3RlIHByb2MgaW5mb3JtYXRpb24N
+Cj4gPiArICogQG5hbWU6IHJlbW90ZSBzZXJ2aWNlIG5hbWUNCj4gPiArICoNCj4gPiArICogVGhl
+IGNhbGxlciBpcyBzdXBwb3NlZCB0byBoYXZlIG11dGV4IGxvY2sgYmVmb3JlIGNhbGxpbmcgdGhp
+cw0KPiA+ICtmdW5jdGlvbg0KPiA+ICsgKg0KPiA+ICsgKiByZXR1cm4gTlVMTCBpZiBubyByZW1v
+dGUgc2VydmljZSBoYXMgYmVlbiBmb3VuZCwgb3RoZXJ3aXNlLCByZXR1cm4NCj4gPiArICogdGhl
+IHJlbW90ZSBzZXJ2aWNlIHBvaW50ZXIuDQo+ID4gKyAqLw0KPiA+ICtzdGF0aWMgc3RydWN0IHZp
+cnRpb19ycG1zZ19yc3ZjICoNCj4gPiArdmlydGlvX3JwbXNnX2ZpbmRfcnN2Y19ieV9uYW1lKHN0
+cnVjdCB2aXJ0cHJvY19pbmZvICp2cnAsIGNoYXIgKm5hbWUpDQo+ID4gK3sNCj4gPiArCXN0cnVj
+dCB2aXJ0aW9fcnBtc2dfcnN2YyAqcnN2YzsNCj4gPiArDQo+ID4gKwlsaXN0X2Zvcl9lYWNoX2Vu
+dHJ5KHJzdmMsICZ2cnAtPnJzdmNzLCBub2RlKSB7DQo+ID4gKwkJaWYgKCFzdHJuY21wKHJzdmMt
+Pm5hbWUsIG5hbWUsIFJQTVNHX05BTUVfU0laRSkpDQo+ID4gKwkJCS8qIHJlbW90ZSBzZXJ2aWNl
+IGhhcyBmb3VuZCAqLw0KPiA+ICsJCQlyZXR1cm4gcnN2YzsNCj4gPiArCX0NCj4gPiArDQo+ID4g
+KwlyZXR1cm4gTlVMTDsNCj4gPiArfQ0KPiA+ICsNCj4gPiArLyoqDQo+ID4gKyAqIHZpcnRpb19y
+cG1zZ19jcmVhdGVfcnN2Y19ieV9uYW1lIC0gY3JlYXRlIHJlbW90ZSBzZXJ2aWNlDQo+ID4gKyAq
+IEB2cnA6IHZpcnRpbyByZW1vdGUgcHJvYyBpbmZvcm1hdGlvbg0KPiA+ICsgKiBAbmFtZTogcmVt
+b3RlIHNlcnZpY2UgbmFtZQ0KPiA+ICsgKg0KPiA+ICsgKiBUaGUgY2FsbGVyIGlzIHN1cHBvc2Vk
+IHRvIGhhdmUgbXV0ZXggbG9jayBiZWZvcmUgY2FsbGluZyB0aGlzDQo+ID4gK2Z1bmN0aW9uDQo+
+ID4gKyAqDQo+ID4gKyAqIHJldHVybiBOVUxMIGlmIHJlbW90ZSBzZXJ2aWNlIGNyZWF0aW9uIGZh
+aWxlZC4gb3RoZXJ3aXNlLCByZXR1cm4NCj4gPiArICogdGhlIHJlbW90ZSBzZXJ2aWNlIHBvaW50
+ZXIuDQo+ID4gKyAqLw0KPiA+ICtzdGF0aWMgc3RydWN0IHZpcnRpb19ycG1zZ19yc3ZjICoNCj4g
+PiArdmlydGlvX3JwbXNnX2NyZWF0ZV9yc3ZjX2J5X25hbWUoc3RydWN0IHZpcnRwcm9jX2luZm8g
+KnZycCwgY2hhcg0KPiA+ICsqbmFtZSkgew0KPiA+ICsJc3RydWN0IHZpcnRpb19ycG1zZ19yc3Zj
+ICpyc3ZjOw0KPiA+ICsNCj4gPiArCXJzdmMgPSB2aXJ0aW9fcnBtc2dfZmluZF9yc3ZjX2J5X25h
+bWUodnJwLCBuYW1lKTsNCj4gPiArCWlmIChyc3ZjKQ0KPiA+ICsJCXJldHVybiByc3ZjOw0KPiBI
+ZXJlLCBJIHRoaW5rIHlvdSBicmVhayB0aGUgcG9zc2liaWxpdHkgdG8gaW5zdGFudGlhdGUgc2V2
+ZXJhbCB0aW1lcyB0aGUgc2FtZQ0KPiBzZXJ2aWNlIC4NCj4gRm9yIGluc3RhbmNlLCB0b2RheSBp
+ZiB5b3UgaGF2ZSAyIGNvbW11bmljYXRpb25zIGluIHBhcmFsbGVsOg0KPiBDb3JlMV9BcGxsaTEg
+IDwtLSAiZm9vIiBzZXJ2aWNlIC0tPiBjb3JlMl9hcHBsaTENCj4gQ29yZTFfQXBsbGkyICA8LS0g
+ImZvbyIgc2VydmljZSAtLT4gY29yZTJfYXBwbGkyDQpbV2VuZHldIEkgY2FuIGFkZCB0aGUgcmVt
+b3RlIHNlcnZpY2UgYWRkcmVzcyB0byB0aGUgaW5wdXQgYXJndW1lbnQNClRoYXQgaXMgdG8gaWRl
+bnRpZnkgYSByZW1vdGUgc2VydmljZSwgaXQgd2lsbCBiZSB0aGUgIm5hbWUiICsgc2VydmljZSBh
+ZGRyZXNzLg0KPiANCj4gMiB3YXlzIHRvIGRvIGl0Og0KPiAxKSBvbmUgc2VydmljZSBhbmQgNCBl
+bmRwb2ludHMNCj4gPT4gaXNzdWUgaXQgdG8ga25vdyB0aGUgZGVzdGluYXRpb24gYWRkcmVzcy4N
+Cj4gMikgMiBpbnN0YW5jZXMgb2YgdGhlIHNhbWUgc2VydmljZSB3aXRoIGRlZmF1bHQgZW5kcG9p
+bnQuDQo+IA0KPiA+ICsJcnN2YyA9IGt6YWxsb2Moc2l6ZW9mKCpyc3ZjKSwgR0ZQX0tFUk5FTCk7
+DQo+ID4gKwlpZiAoIXJzdmMpDQo+ID4gKwkJcmV0dXJuIE5VTEw7DQo+ID4gKwlzdHJuY3B5KHJz
+dmMtPm5hbWUsIG5hbWUsIFJQTVNHX05BTUVfU0laRSk7DQo+ID4gKwlsaXN0X2FkZF90YWlsKCZy
+c3ZjLT5ub2RlLCAmdnJwLT5yc3Zjcyk7DQo+ID4gKwlyZXR1cm4gcnN2YzsNCj4gPiArfQ0KPiA+
+ICsNCj4gPiArLyoqDQo+ID4gKyAqIHZpcnRpb19ycG1zZ19yZW1vdmVfcnN2Y19ieV9uYW1lIC0g
+cmVtb3ZlIHJlbW90ZSBzZXJ2aWNlDQo+ID4gKyAqIEB2cnA6IHZpcnRpbyByZW1vdGUgcHJvYyBp
+bmZvcm1hdGlvbg0KPiA+ICsgKiBAbmFtZTogcmVtb3RlIHNlcnZpY2UgbmFtZQ0KPiA+ICsgKg0K
+PiA+ICsgKi8NCj4gPiArc3RhdGljIHZvaWQNCj4gPiArdmlydGlvX3JwbXNnX3JlbW92ZV9yc3Zj
+X2J5X25hbWUoc3RydWN0IHZpcnRwcm9jX2luZm8gKnZycCwgY2hhcg0KPiA+ICsqbmFtZSkgew0K
+PiA+ICsJc3RydWN0IHZpcnRpb19ycG1zZ19yc3ZjICpyc3ZjOw0KPiA+ICsJc3RydWN0IHJwbXNn
+X2VuZHBvaW50ICplcHQ7DQo+ID4gKwlzdHJ1Y3QgdmlydGlvX3JwbXNnX2VwdCAqdmVwdDsNCj4g
+PiArDQo+ID4gKwltdXRleF9sb2NrKCZ2cnAtPmVuZHBvaW50c19sb2NrKTsNCj4gPiArCWxpc3Rf
+Zm9yX2VhY2hfZW50cnkocnN2YywgJnZycC0+cnN2Y3MsIG5vZGUpIHsNCj4gPiArCQlpZiAoIXN0
+cm5jbXAocnN2Yy0+bmFtZSwgbmFtZSwgUlBNU0dfTkFNRV9TSVpFKSkgew0KPiA+ICsJCQkvKiBy
+ZW1vdGUgc2VydmljZSBoYXMgZm91bmQsIG5vIG5lZWQgdG8NCj4gPiArCQkJICogY3JlYXRlDQo+
+ID4gKwkJCSAqLw0KPiA+ICsJCQllcHQgPSByc3ZjLT5lcHQ7DQo+ID4gKwkJCWlmIChlcHQpIHsN
+Cj4gPiArCQkJCXZlcHQgPSB0b192aXJ0aW9fcnBtc2dfZXB0KGVwdCk7DQo+ID4gKwkJCQl2ZXB0
+LT5yc3ZjID0gTlVMTDsNCj4gPiArCQkJfQ0KPiA+ICsJCQlsaXN0X2RlbCgmcnN2Yy0+bm9kZSk7
+DQo+ID4gKwkJCWtmcmVlKHJzdmMpOw0KPiA+ICsJCQlicmVhazsNCj4gPiArCQl9DQo+ID4gKwl9
+DQo+ID4gKwltdXRleF91bmxvY2soJnZycC0+ZW5kcG9pbnRzX2xvY2spOw0KPiA+ICt9DQo+ID4g
+Kw0KPiA+ICsvKioNCj4gPiArICogdmlydGlvX3JwbXNnX2NyZWF0ZV9yc3ZjIC0gY3JlYXRlIHJl
+bW90ZSBzZXJ2aWNlIHdpdGggY2hhbm5lbA0KPiA+ICtpbmZvcm1hdGlvbg0KPiA+ICsgKiBAdnJw
+OiB2aXJ0aW8gcmVtb3RlIHByb2MgaW5mb3JtYXRpb24NCj4gPiArICogQGNoaW5mbzogY2hhbm5l
+bCBpbmZvcm1hdGlvbg0KPiA+ICsgKg0KPiA+ICsgKiByZXR1cm4gcmVtb3RlIHNlcnZpY2UgcG9p
+bnRlciBpZiBpdCBpcyBzdWNjZXNzZnVsbHkgY3JlYXRlZDsNCj4gPiArb3RoZXJ3aXNlLA0KPiA+
+ICsgKiByZXR1cm4gTlVMTC4NCj4gPiArICovDQo+ID4gK3N0YXRpYyBzdHJ1Y3QgdmlydGlvX3Jw
+bXNnX3JzdmMgKg0KPiA+ICt2aXJ0aW9fcnBtc2dfY3JlYXRlX3JzdmMoc3RydWN0IHZpcnRwcm9j
+X2luZm8gKnZycCwNCj4gPiArCQkJIHN0cnVjdCBycG1zZ19jaGFubmVsX2luZm8gKmNoaW5mbykg
+ew0KPiA+ICsJc3RydWN0IHZpcnRpb19ycG1zZ19yc3ZjICpyc3ZjOw0KPiA+ICsNCj4gPiArCW11
+dGV4X2xvY2soJnZycC0+ZW5kcG9pbnRzX2xvY2spOw0KPiA+ICsJcnN2YyA9IHZpcnRpb19ycG1z
+Z19jcmVhdGVfcnN2Y19ieV9uYW1lKHZycCwgY2hpbmZvLT5uYW1lKTsNCj4gPiArCWlmIChyc3Zj
+KSB7DQo+ID4gKwkJc3RydWN0IHZpcnRpb19kZXZpY2UgKnZkZXYgPSB2cnAtPnZkZXY7DQo+ID4g
+Kw0KPiA+ICsJCXJzdmMtPmFkZHIgPSBjaGluZm8tPmRzdDsNCj4gPiArCQlkZXZfaW5mbygmdmRl
+di0+ZGV2LCAiUmVtb3RlIGhhcyBhbm5vdW5jZWQNCj4gc2VydmljZSAlcywgJWQuXG4iLA0KPiA+
+ICsJCQkgY2hpbmZvLT5uYW1lLCByc3ZjLT5hZGRyKTsNCj4gPiArCX0NCj4gPiArCW11dGV4X3Vu
+bG9jaygmdnJwLT5lbmRwb2ludHNfbG9jayk7DQo+ID4gKwlyZXR1cm4gcnN2YzsNCj4gPiArfQ0K
+PiA+ICsNCj4gPiArLyoqDQo+ID4gKyAqIHZpcnRpb19ycG1zZ19hbm5vdW5jZV9lcHRfY3JlYXRl
+IC0gYW5ub3VuY2UgZW5kcG9pbnQgaGFzIGJlZW4NCj4gPiArY3JlYXRlZA0KPiA+ICsgKiBAZXB0
+OiBSUE1zZyBlbmRwb2ludA0KPiA+ICsgKg0KPiA+ICsgKiByZXR1cm4gMCBpZiBzdWNjZWVkZWQs
+IG90aGVyd2lzZSwgcmV0dXJuIGVycm9yIGNvZGUuDQo+ID4gKyAqLw0KPiA+ICtzdGF0aWMgaW50
+IHZpcnRpb19ycG1zZ19hbm5vdW5jZV9lcHRfY3JlYXRlKHN0cnVjdCBycG1zZ19lbmRwb2ludA0K
+PiA+ICsqZXB0KSB7DQo+ID4gKwlzdHJ1Y3QgdmlydGlvX3JwbXNnX2VwdCAqdmVwdCA9IHRvX3Zp
+cnRpb19ycG1zZ19lcHQoZXB0KTsNCj4gPiArCXN0cnVjdCB2aXJ0aW9fcnBtc2dfcnN2YyAqcnN2
+YyA9IHZlcHQtPnJzdmM7DQo+ID4gKwlzdHJ1Y3QgcnBtc2dfZGV2aWNlICpycGRldiA9IGVwdC0+
+cnBkZXY7DQo+ID4gKwlzdHJ1Y3QgdmlydGlvX3JwbXNnX2NoYW5uZWwgKnZjaDsNCj4gPiArCXN0
+cnVjdCB2aXJ0cHJvY19pbmZvICp2cnA7DQo+ID4gKwlzdHJ1Y3QgZGV2aWNlICpkZXY7DQo+ID4g
+KwlpbnQgZXJyID0gMDsNCj4gPiArDQo+ID4gKwlpZiAoIXJwZGV2KQ0KPiA+ICsJCS8qIElmIHRo
+ZSBlbmRwb2ludCBpcyBub3QgY29ubmVjdGVkIHRvIGEgUlBNc2cgZGV2aWNlLA0KPiA+ICsJCSAq
+IG5vIG5lZWQgdG8gc2VuZCB0aGUgYW5ub3VuY2VtZW50Lg0KPiA+ICsJCSAqLw0KPiA+ICsJCXJl
+dHVybiAwOw0KPiA+ICsJdmNoID0gdG9fdmlydGlvX3JwbXNnX2NoYW5uZWwocnBkZXYpOw0KPiA+
+ICsJdnJwID0gdmNoLT52cnA7DQo+ID4gKwlkZXYgPSAmZXB0LT5ycGRldi0+ZGV2Ow0KPiA+ICsJ
+LyogbmVlZCB0byB0ZWxsIHJlbW90ZSBwcm9jZXNzb3IncyBuYW1lIHNlcnZpY2UgYWJvdXQgdGhp
+cyBjaGFubmVsID8NCj4gKi8NCj4gPiArCWlmICh2aXJ0aW9faGFzX2ZlYXR1cmUodnJwLT52ZGV2
+LCBWSVJUSU9fUlBNU0dfRl9OUykpIHsNCj4gPiArCQlzdHJ1Y3QgcnBtc2dfbnNfbXNnIG5zbTsN
+Cj4gPiArDQo+ID4gKwkJc3RybmNweShuc20ubmFtZSwgcnN2Yy0+bmFtZSwgUlBNU0dfTkFNRV9T
+SVpFKTsNCj4gPiArCQluc20uYWRkciA9IGVwdC0+YWRkcjsNCj4gPiArCQluc20uZmxhZ3MgPSBS
+UE1TR19OU19DUkVBVEU7DQo+ID4gKw0KPiA+ICsJCWVyciA9IHJwbXNnX3NlbmR0byhlcHQsICZu
+c20sIHNpemVvZihuc20pLA0KPiA+ICsJCQkJICAgUlBNU0dfTlNfQUREUik7DQo+ID4gKwkJaWYg
+KGVycikNCj4gPiArCQkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYW5ub3VuY2Ugc2VydmljZSAl
+ZFxuIiwgZXJyKTsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlyZXR1cm4gZXJyOw0KPiA+ICt9DQo+
+ID4gKw0KPiA+ICsvKioNCj4gPiArICogdmlydGlvX3JwbXNnX2Fubm91bmNlX2VwdF9kZXN0cm95
+IC0gYW5ub3VuY2UgZW5kcG9pbnQgaGFzIGJlZW4NCj4gPiArZGVzdHJveWVkDQo+ID4gKyAqIEBl
+cHQ6IFJQTXNnIGVuZHBvaW50DQo+ID4gKyAqDQo+ID4gKyAqIHJldHVybiAwIGlmIHN1Y2NlZWRl
+ZCwgb3RoZXJ3aXNlLCByZXR1cm4gZXJyb3IgY29kZS4NCj4gPiArICovDQo+ID4gK3N0YXRpYyBp
+bnQgdmlydGlvX3JwbXNnX2Fubm91bmNlX2VwdF9kZXN0cm95KHN0cnVjdCBycG1zZ19lbmRwb2lu
+dA0KPiA+ICsqZXB0KSB7DQo+ID4gKwlzdHJ1Y3QgdmlydGlvX3JwbXNnX2VwdCAqdmVwdCA9IHRv
+X3ZpcnRpb19ycG1zZ19lcHQoZXB0KTsNCj4gPiArCXN0cnVjdCB2aXJ0aW9fcnBtc2dfcnN2YyAq
+cnN2YyA9IHZlcHQtPnJzdmM7DQo+ID4gKwlzdHJ1Y3QgcnBtc2dfZGV2aWNlICpycGRldiA9IGVw
+dC0+cnBkZXY7DQo+ID4gKwlzdHJ1Y3QgdmlydGlvX3JwbXNnX2NoYW5uZWwgKnZjaDsNCj4gPiAr
+CXN0cnVjdCB2aXJ0cHJvY19pbmZvICp2cnA7DQo+ID4gKwlzdHJ1Y3QgZGV2aWNlICpkZXY7DQo+
+ID4gKwlpbnQgZXJyID0gMDsNCj4gPiArDQo+ID4gKwlpZiAoIXJwZGV2KQ0KPiA+ICsJCS8qIElm
+IHRoZSBlbmRwb2ludCBpcyBub3QgY29ubmVjdGVkIHRvIGEgUlBNc2cgZGV2aWNlLA0KPiA+ICsJ
+CSAqIG5vIG5lZWQgdG8gc2VuZCB0aGUgYW5ub3VuY2VtZW50Lg0KPiA+ICsJCSAqLw0KPiA+ICsJ
+CXJldHVybiAwOw0KPiA+ICsJdmNoID0gdG9fdmlydGlvX3JwbXNnX2NoYW5uZWwocnBkZXYpOw0K
+PiA+ICsJdnJwID0gdmNoLT52cnA7DQo+ID4gKwlkZXYgPSAmZXB0LT5ycGRldi0+ZGV2Ow0KPiA+
+ICsJLyogdGVsbCByZW1vdGUgcHJvY2Vzc29yJ3MgbmFtZSBzZXJ2aWNlIHdlJ3JlIHJlbW92aW5n
+IHRoaXMgY2hhbm5lbA0KPiAqLw0KPiA+ICsJaWYgKHZpcnRpb19oYXNfZmVhdHVyZSh2cnAtPnZk
+ZXYsIFZJUlRJT19SUE1TR19GX05TKSkgew0KPiA+ICsJCXN0cnVjdCBycG1zZ19uc19tc2cgbnNt
+Ow0KPiA+ICsNCj4gPiArCQlzdHJuY3B5KG5zbS5uYW1lLCByc3ZjLT5uYW1lLCBSUE1TR19OQU1F
+X1NJWkUpOw0KPiA+ICsJCW5zbS5hZGRyID0gZXB0LT5hZGRyOw0KPiA+ICsJCW5zbS5mbGFncyA9
+IFJQTVNHX05TX0RFU1RST1k7DQo+ID4gKw0KPiA+ICsJCWVyciA9IHJwbXNnX3NlbmR0byhlcHQs
+ICZuc20sIHNpemVvZihuc20pLA0KPiA+ICsJCQkJICAgUlBNU0dfTlNfQUREUik7DQo+ID4gKwkJ
+aWYgKGVycikNCj4gPiArCQkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gYW5ub3VuY2Ugc2Vydmlj
+ZSAlZFxuIiwgZXJyKTsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlyZXR1cm4gZXJyOw0KPiA+ICt9
+DQo+ID4gKyNlbmRpZg0KPiA+ICsNCj4gPiAgLyoqDQo+ID4gICAqIF9fZXB0X3JlbGVhc2UoKSAt
+IGRlYWxsb2NhdGUgYW4gcnBtc2cgZW5kcG9pbnQNCj4gPiAgICogQGtyZWY6IHRoZSBlcHQncyBy
+ZWZlcmVuY2UgY291bnQNCj4gPiBAQCAtMjI5LDI2ICs0NTYsNTMgQEAgc3RhdGljIHZvaWQgX19l
+cHRfcmVsZWFzZShzdHJ1Y3Qga3JlZiAqa3JlZikgIHsNCj4gPiAgCXN0cnVjdCBycG1zZ19lbmRw
+b2ludCAqZXB0ID0gY29udGFpbmVyX29mKGtyZWYsIHN0cnVjdA0KPiBycG1zZ19lbmRwb2ludCwN
+Cj4gPiAgCQkJCQkJICByZWZjb3VudCk7DQo+ID4gKyNpZmRlZiBDT05GSUdfUlBNU0dfVklSVElP
+X0NIQVINCj4gPiArCXN0cnVjdCB2aXJ0aW9fcnBtc2dfZXB0ICp2ZXB0ID0gdG9fdmlydGlvX3Jw
+bXNnX2VwdChlcHQpOw0KPiA+ICsJc3RydWN0IHZpcnRpb19ycG1zZ19jaGFubmVsICp2Y2g7DQo+
+ID4gKwlzdHJ1Y3QgdmlydHByb2NfaW5mbyAqdnJwOw0KPiA+ICsNCj4gPiArCWlmIChlcHQtPnJw
+ZGV2KSB7DQo+ID4gKwkJdmNoID0gdG9fdmlydGlvX3JwbXNnX2NoYW5uZWwoZXB0LT5ycGRldik7
+DQo+ID4gKwkJdnJwID0gdmNoLT52cnA7DQo+ID4gKwkJKHZvaWQpdmlydGlvX3JwbXNnX2Fubm91
+bmNlX2VwdF9kZXN0cm95KGVwdCk7DQo+ID4gKwkJbXV0ZXhfbG9jaygmdnJwLT5lbmRwb2ludHNf
+bG9jayk7DQo+ID4gKwkJdmVwdC0+cnN2Yy0+ZXB0ID0gTlVMTDsNCj4gPiArCQltdXRleF91bmxv
+Y2soJnZycC0+ZW5kcG9pbnRzX2xvY2spOw0KPiA+ICsJfQ0KPiA+ICsJa2ZyZWUodmVwdCk7DQo+
+ID4gKyNlbHNlDQo+ID4gIAkvKg0KPiA+ICAJICogQXQgdGhpcyBwb2ludCBubyBvbmUgaG9sZHMg
+YSByZWZlcmVuY2UgdG8gZXB0IGFueW1vcmUsDQo+ID4gIAkgKiBzbyB3ZSBjYW4gZGlyZWN0bHkg
+ZnJlZSBpdA0KPiA+ICAJICovDQo+ID4gIAlrZnJlZShlcHQpOw0KPiA+ICsjZW5kaWYNCj4gPiAg
+fQ0KPiA+DQo+ID4gIC8qIGZvciBtb3JlIGluZm8sIHNlZSBiZWxvdyBkb2N1bWVudGF0aW9uIG9m
+IHJwbXNnX2NyZWF0ZV9lcHQoKSAqLw0KPiA+IHN0YXRpYyBzdHJ1Y3QgcnBtc2dfZW5kcG9pbnQg
+Kl9fcnBtc2dfY3JlYXRlX2VwdChzdHJ1Y3QgdmlydHByb2NfaW5mbw0KPiAqdnJwLA0KPiA+ICAJ
+CQkJCQkgc3RydWN0IHJwbXNnX2RldmljZSAqcnBkZXYsDQo+ID4gIAkJCQkJCSBycG1zZ19yeF9j
+Yl90IGNiLA0KPiA+IC0JCQkJCQkgdm9pZCAqcHJpdiwgdTMyIGFkZHIpDQo+ID4gKwkJCQkJCSB2
+b2lkICpwcml2LA0KPiA+ICsJCQkJCQkgc3RydWN0IHJwbXNnX2NoYW5uZWxfaW5mbw0KPiAqY2gp
+DQo+ID4gIHsNCj4gPiAgCWludCBpZF9taW4sIGlkX21heCwgaWQ7DQo+ID4gIAlzdHJ1Y3QgcnBt
+c2dfZW5kcG9pbnQgKmVwdDsNCj4gPiArCXUzMiBhZGRyID0gY2gtPnNyYzsNCj4gPiAgCXN0cnVj
+dCBkZXZpY2UgKmRldiA9IHJwZGV2ID8gJnJwZGV2LT5kZXYgOiAmdnJwLT52ZGV2LT5kZXY7DQo+
+ID4gKyNpZmRlZiBDT05GSUdfUlBNU0dfVklSVElPX0NIQVINCj4gPiArCXN0cnVjdCB2aXJ0aW9f
+cnBtc2dfZXB0ICp2ZXB0Ow0KPiA+ICsJc3RydWN0IHZpcnRpb19ycG1zZ19yc3ZjICpyc3ZjOw0K
+PiA+DQo+ID4gKwl2ZXB0ID0ga3phbGxvYyhzaXplb2YoKnZlcHQpLCBHRlBfS0VSTkVMKTsNCj4g
+PiArCWlmICghdmVwdCkNCj4gPiArCQlyZXR1cm4gTlVMTDsNCj4gPiArCWVwdCA9ICZ2ZXB0LT5l
+cHQ7DQo+ID4gKyNlbHNlDQo+ID4gIAllcHQgPSBremFsbG9jKHNpemVvZigqZXB0KSwgR0ZQX0tF
+Uk5FTCk7DQo+ID4gIAlpZiAoIWVwdCkNCj4gPiAgCQlyZXR1cm4gTlVMTDsNCj4gPiArI2VuZGlm
+DQo+ID4NCj4gPiAgCWtyZWZfaW5pdCgmZXB0LT5yZWZjb3VudCk7DQo+ID4gIAltdXRleF9pbml0
+KCZlcHQtPmNiX2xvY2spOw0KPiA+IEBAIC0yNTksNyArNTEzLDcgQEAgc3RhdGljIHN0cnVjdCBy
+cG1zZ19lbmRwb2ludA0KPiAqX19ycG1zZ19jcmVhdGVfZXB0KHN0cnVjdCB2aXJ0cHJvY19pbmZv
+ICp2cnAsDQo+ID4gIAllcHQtPm9wcyA9ICZ2aXJ0aW9fZW5kcG9pbnRfb3BzOw0KPiA+DQo+ID4g
+IAkvKiBkbyB3ZSBuZWVkIHRvIGFsbG9jYXRlIGEgbG9jYWwgYWRkcmVzcyA/ICovDQo+ID4gLQlp
+ZiAoYWRkciA9PSBSUE1TR19BRERSX0FOWSkgew0KPiA+ICsJaWYgKGNoLT5zcmMgPT0gUlBNU0df
+QUREUl9BTlkpIHsNCj4gPiAgCQlpZF9taW4gPSBSUE1TR19SRVNFUlZFRF9BRERSRVNTRVM7DQo+
+ID4gIAkJaWRfbWF4ID0gMDsNCj4gPiAgCX0gZWxzZSB7DQo+ID4gQEAgLTI3Nyw2ICs1MzEsMTkg
+QEAgc3RhdGljIHN0cnVjdCBycG1zZ19lbmRwb2ludA0KPiAqX19ycG1zZ19jcmVhdGVfZXB0KHN0
+cnVjdCB2aXJ0cHJvY19pbmZvICp2cnAsDQo+ID4gIAl9DQo+ID4gIAllcHQtPmFkZHIgPSBpZDsN
+Cj4gPg0KPiA+ICsjaWZkZWYgQ09ORklHX1JQTVNHX1ZJUlRJT19DSEFSDQo+ID4gKwlpZiAoZXB0
+LT5hZGRyICE9IFJQTVNHX05TX0FERFIpIHsNCj4gPiArCQlyc3ZjID0gdmlydGlvX3JwbXNnX2Ny
+ZWF0ZV9yc3ZjX2J5X25hbWUodnJwLCBjaC0+bmFtZSk7DQo+ID4gKwkJaWYgKCFyc3ZjKQ0KPiA+
+ICsJCQlnb3RvIGZyZWVfZXB0Ow0KPiA+ICsJCXZlcHQtPnJzdmMgPSByc3ZjOw0KPiA+ICsJCXJz
+dmMtPmVwdCA9IGVwdDsNCj4gPiArCQlkZXZfaW5mbygmdnJwLT52ZGV2LT5kZXYsICJSUE1zZyBl
+cHQNCj4gY3JlYXRlZCwgJXM6JWQsJWQuXG4iLA0KPiA+ICsJCQkgY2gtPm5hbWUsIGVwdC0+YWRk
+ciwgcnN2Yy0+YWRkcik7DQo+ID4gKwkJKHZvaWQpdmlydGlvX3JwbXNnX2Fubm91bmNlX2VwdF9j
+cmVhdGUoZXB0KTsNCj4gPiArCX0NCj4gPiArI2VuZGlmDQo+ID4gKw0KPiA+ICAJbXV0ZXhfdW5s
+b2NrKCZ2cnAtPmVuZHBvaW50c19sb2NrKTsNCj4gPg0KPiA+ICAJcmV0dXJuIGVwdDsNCj4gPiBA
+QCAtMjk0LDcgKzU2MSw3IEBAIHN0YXRpYyBzdHJ1Y3QgcnBtc2dfZW5kcG9pbnQNCj4gPiAqdmly
+dGlvX3JwbXNnX2NyZWF0ZV9lcHQoc3RydWN0IHJwbXNnX2RldmljZSAqcnBkZXYgIHsNCj4gPiAg
+CXN0cnVjdCB2aXJ0aW9fcnBtc2dfY2hhbm5lbCAqdmNoID0gdG9fdmlydGlvX3JwbXNnX2NoYW5u
+ZWwocnBkZXYpOw0KPiA+DQo+ID4gLQlyZXR1cm4gX19ycG1zZ19jcmVhdGVfZXB0KHZjaC0+dnJw
+LCBycGRldiwgY2IsIHByaXYsIGNoaW5mby5zcmMpOw0KPiA+ICsJcmV0dXJuIF9fcnBtc2dfY3Jl
+YXRlX2VwdCh2Y2gtPnZycCwgcnBkZXYsIGNiLCBwcml2LCAmY2hpbmZvKTsNCj4gPiAgfQ0KPiA+
+DQo+ID4gIC8qKg0KPiA+IEBAIC0zOTIsNiArNjU5LDcgQEAgc3RhdGljIHZvaWQgdmlydGlvX3Jw
+bXNnX3JlbGVhc2VfZGV2aWNlKHN0cnVjdA0KPiBkZXZpY2UgKmRldikNCj4gPiAgCWtmcmVlKHZj
+aCk7DQo+ID4gIH0NCj4gPg0KPiA+ICsjaWZuZGVmIENPTkZJR19SUE1TR19WSVJUSU9fQ0hBUg0K
+PiA+ICAvKg0KPiA+ICAgKiBjcmVhdGUgYW4gcnBtc2cgY2hhbm5lbCB1c2luZyBpdHMgbmFtZSBh
+bmQgYWRkcmVzcyBpbmZvLg0KPiA+ICAgKiB0aGlzIGZ1bmN0aW9uIHdpbGwgYmUgdXNlZCB0byBj
+cmVhdGUgYm90aCBzdGF0aWMgYW5kIGR5bmFtaWMgQEANCj4gPiAtNDQ0LDYgKzcxMiw3IEBAIHN0
+YXRpYyBzdHJ1Y3QgcnBtc2dfZGV2aWNlDQo+ID4gKnJwbXNnX2NyZWF0ZV9jaGFubmVsKHN0cnVj
+dCB2aXJ0cHJvY19pbmZvICp2cnAsDQo+ID4NCj4gPiAgCXJldHVybiBycGRldjsNCj4gPiAgfQ0K
+PiA+ICsjZW5kaWYNCj4gPg0KPiA+ICAvKiBzdXBlciBzaW1wbGUgYnVmZmVyICJhbGxvY2F0b3Ii
+IHRoYXQgaXMganVzdCBlbm91Z2ggZm9yIG5vdyAqLw0KPiA+IHN0YXRpYyB2b2lkICpnZXRfYV90
+eF9idWYoc3RydWN0IHZpcnRwcm9jX2luZm8gKnZycCkgQEAgLTY2MCw4ICs5MjksMjENCj4gPiBA
+QCBzdGF0aWMgaW50IHJwbXNnX3NlbmRfb2ZmY2hhbm5lbF9yYXcoc3RydWN0IHJwbXNnX2Rldmlj
+ZSAqcnBkZXYsDQo+ID4gc3RhdGljIGludCB2aXJ0aW9fcnBtc2dfc2VuZChzdHJ1Y3QgcnBtc2df
+ZW5kcG9pbnQgKmVwdCwgdm9pZCAqZGF0YSwNCj4gPiBpbnQgbGVuKSAgew0KPiA+ICAJc3RydWN0
+IHJwbXNnX2RldmljZSAqcnBkZXYgPSBlcHQtPnJwZGV2Ow0KPiA+IC0JdTMyIHNyYyA9IGVwdC0+
+YWRkciwgZHN0ID0gcnBkZXYtPmRzdDsNCj4gPiArCXUzMiBzcmMgPSBlcHQtPmFkZHI7DQo+ID4g
+KyNpZmRlZiBDT05GSUdfUlBNU0dfVklSVElPX0NIQVINCj4gPiArCXN0cnVjdCB2aXJ0aW9fcnBt
+c2dfZXB0ICp2ZXB0ID0gdG9fdmlydGlvX3JwbXNnX2VwdChlcHQpOw0KPiA+ICsJdTMyIGRzdCA9
+IHZlcHQtPnJzdmMtPmFkZHI7DQo+ID4gKw0KPiA+ICsJaWYgKGRzdCA9PSBSUE1TR19BRERSX0FO
+WSkNCj4gPiArCQlyZXR1cm4gLUVQSVBFOw0KPiA+ICsjZWxzZQ0KPiA+ICsJdTMyIGRzdCA9IHJw
+ZGV2LT5kc3Q7DQo+ID4gKyNlbmRpZg0KPiA+DQo+ID4gKwlpZiAoIXJwZGV2KSB7DQo+ID4gKwkJ
+cHJfZXJyKCIlcywgZXB0ICVwIHJwZGV2IGlzIE5VTExcbiIsIF9fZnVuY19fLCBlcHQpOw0KPiA+
+ICsJCXJldHVybiAtRUlOVkFMOw0KPiA+ICsJfQ0KPiA+ICAJcmV0dXJuIHJwbXNnX3NlbmRfb2Zm
+Y2hhbm5lbF9yYXcocnBkZXYsIHNyYywgZHN0LCBkYXRhLCBsZW4sIHRydWUpOw0KPiA+IH0NCj4g
+Pg0KPiA+IEBAIC02ODUsNyArOTY3LDE2IEBAIHN0YXRpYyBpbnQgdmlydGlvX3JwbXNnX3NlbmRf
+b2ZmY2hhbm5lbChzdHJ1Y3QNCj4gPiBycG1zZ19lbmRwb2ludCAqZXB0LCB1MzIgc3JjLCAgc3Rh
+dGljIGludCB2aXJ0aW9fcnBtc2dfdHJ5c2VuZChzdHJ1Y3QNCj4gPiBycG1zZ19lbmRwb2ludCAq
+ZXB0LCB2b2lkICpkYXRhLCBpbnQgbGVuKSAgew0KPiA+ICAJc3RydWN0IHJwbXNnX2RldmljZSAq
+cnBkZXYgPSBlcHQtPnJwZGV2Ow0KPiA+IC0JdTMyIHNyYyA9IGVwdC0+YWRkciwgZHN0ID0gcnBk
+ZXYtPmRzdDsNCj4gPiArCXUzMiBzcmMgPSBlcHQtPmFkZHI7DQo+ID4gKyNpZmRlZiBDT05GSUdf
+UlBNU0dfVklSVElPX0NIQVINCj4gPiArCXN0cnVjdCB2aXJ0aW9fcnBtc2dfZXB0ICp2ZXB0ID0g
+dG9fdmlydGlvX3JwbXNnX2VwdChlcHQpOw0KPiA+ICsJdTMyIGRzdCA9IHZlcHQtPnJzdmMtPmFk
+ZHI7DQo+ID4gKw0KPiA+ICsJaWYgKGRzdCA9PSBSUE1TR19BRERSX0FOWSkNCj4gPiArCQlyZXR1
+cm4gLUVQSVBFOw0KPiA+ICsjZWxzZQ0KPiA+ICsJdTMyIGRzdCA9IHJwZGV2LT5kc3Q7DQo+ID4g
+KyNlbmRpZg0KPiA+DQo+ID4gIAlyZXR1cm4gcnBtc2dfc2VuZF9vZmZjaGFubmVsX3JhdyhycGRl
+diwgc3JjLCBkc3QsIGRhdGEsIGxlbiwgZmFsc2UpOw0KPiA+IH0gQEAgLTgyNCwxMSArMTExNSwx
+MyBAQCBzdGF0aWMgaW50IHJwbXNnX25zX2NiKHN0cnVjdCBycG1zZ19kZXZpY2UNCj4gPiAqcnBk
+ZXYsIHZvaWQgKmRhdGEsIGludCBsZW4sDQo+ID4gIAkJICAgICAgIHZvaWQgKnByaXYsIHUzMiBz
+cmMpDQo+ID4gIHsNCj4gPiAgCXN0cnVjdCBycG1zZ19uc19tc2cgKm1zZyA9IGRhdGE7DQo+ID4g
+LQlzdHJ1Y3QgcnBtc2dfZGV2aWNlICpuZXdjaDsNCj4gPiAgCXN0cnVjdCBycG1zZ19jaGFubmVs
+X2luZm8gY2hpbmZvOw0KPiA+ICAJc3RydWN0IHZpcnRwcm9jX2luZm8gKnZycCA9IHByaXY7DQo+
+ID4gIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmdnJwLT52ZGV2LT5kZXY7DQo+ID4gKyNpZm5kZWYg
+Q09ORklHX1JQTVNHX1ZJUlRJT19DSEFSDQo+ID4gKwlzdHJ1Y3QgcnBtc2dfZGV2aWNlICpuZXdj
+aDsNCj4gPiAgCWludCByZXQ7DQo+ID4gKyNlbmRpZg0KPiA+DQo+ID4gICNpZiBkZWZpbmVkKENP
+TkZJR19EWU5BTUlDX0RFQlVHKQ0KPiA+ICAJZHluYW1pY19oZXhfZHVtcCgiTlMgYW5ub3VuY2Vt
+ZW50OiAiLCBEVU1QX1BSRUZJWF9OT05FLCAxNiwNCj4gMSwgQEANCj4gPiAtODYzLDEzICsxMTU2
+LDI1IEBAIHN0YXRpYyBpbnQgcnBtc2dfbnNfY2Ioc3RydWN0IHJwbXNnX2RldmljZSAqcnBkZXYs
+DQo+IHZvaWQgKmRhdGEsIGludCBsZW4sDQo+ID4gIAljaGluZm8uZHN0ID0gbXNnLT5hZGRyOw0K
+PiA+DQo+ID4gIAlpZiAobXNnLT5mbGFncyAmIFJQTVNHX05TX0RFU1RST1kpIHsNCj4gPiArI2lm
+ZGVmIENPTkZJR19SUE1TR19WSVJUSU9fQ0hBUg0KPiA+ICsJCXZpcnRpb19ycG1zZ19yZW1vdmVf
+cnN2Y19ieV9uYW1lKHZycCwgY2hpbmZvLm5hbWUpOyAjZWxzZQ0KPiA+ICAJCXJldCA9IHJwbXNn
+X3VucmVnaXN0ZXJfZGV2aWNlKCZ2cnAtPnZkZXYtPmRldiwgJmNoaW5mbyk7DQo+ID4gIAkJaWYg
+KHJldCkNCj4gPiAgCQkJZGV2X2VycihkZXYsICJycG1zZ19kZXN0cm95X2NoYW5uZWwgZmFpbGVk
+OiAlZFxuIiwNCj4gcmV0KTsNCj4gPiArI2VuZGlmDQo+ID4gIAl9IGVsc2Ugew0KPiA+ICsjaWZk
+ZWYgQ09ORklHX1JQTVNHX1ZJUlRJT19DSEFSDQo+ID4gKwkJc3RydWN0IHZpcnRpb19ycG1zZ19y
+c3ZjICpyc3ZjOw0KPiA+ICsNCj4gPiArCQlyc3ZjID0gdmlydGlvX3JwbXNnX2NyZWF0ZV9yc3Zj
+KHZycCwgJmNoaW5mbyk7DQo+ID4gKwkJaWYgKCFyc3ZjKQ0KPiA+ICsJCQlkZXZfZXJyKGRldiwg
+InZpcnRpb19ycG1zZ19jcmVhdGVfcnN2YyBmYWlsZWRcbiIpOw0KPiAjZWxzZQ0KPiA+ICAJCW5l
+d2NoID0gcnBtc2dfY3JlYXRlX2NoYW5uZWwodnJwLCAmY2hpbmZvKTsNCj4gPiAgCQlpZiAoIW5l
+d2NoKQ0KPiA+ICAJCQlkZXZfZXJyKGRldiwgInJwbXNnX2NyZWF0ZV9jaGFubmVsIGZhaWxlZFxu
+Iik7DQo+ID4gKyNlbmRpZg0KPiA+ICAJfQ0KPiA+DQo+ID4gIAlyZXR1cm4gMDsNCj4gPiBAQCAt
+ODg1LDYgKzExOTAsMTAgQEAgc3RhdGljIGludCBycG1zZ19wcm9iZShzdHJ1Y3QgdmlydGlvX2Rl
+dmljZSAqdmRldikNCj4gPiAgCWludCBlcnIgPSAwLCBpOw0KPiA+ICAJc2l6ZV90IHRvdGFsX2J1
+Zl9zcGFjZTsNCj4gPiAgCWJvb2wgbm90aWZ5Ow0KPiA+ICsjaWZkZWYgQ09ORklHX1JQTVNHX1ZJ
+UlRJT19DSEFSDQo+ID4gKwlzdHJ1Y3QgdmlydGlvX3JwbXNnX2NoYW5uZWwgKnZjaDsNCj4gPiAr
+CXN0cnVjdCBycG1zZ19kZXZpY2UgKnJwX2NoYXJfZGV2Ow0KPiA+ICsjZW5kaWYNCj4gPg0KPiA+
+ICAJdnJwID0ga3phbGxvYyhzaXplb2YoKnZycCksIEdGUF9LRVJORUwpOw0KPiA+ICAJaWYgKCF2
+cnApDQo+ID4gQEAgLTk1Niw5ICsxMjY1LDE0IEBAIHN0YXRpYyBpbnQgcnBtc2dfcHJvYmUoc3Ry
+dWN0IHZpcnRpb19kZXZpY2UNCj4gPiAqdmRldikNCj4gPg0KPiA+ICAJLyogaWYgc3VwcG9ydGVk
+IGJ5IHRoZSByZW1vdGUgcHJvY2Vzc29yLCBlbmFibGUgdGhlIG5hbWUgc2VydmljZSAqLw0KPiA+
+ICAJaWYgKHZpcnRpb19oYXNfZmVhdHVyZSh2ZGV2LCBWSVJUSU9fUlBNU0dfRl9OUykpIHsNCj4g
+PiArCQlzdHJ1Y3QgcnBtc2dfY2hhbm5lbF9pbmZvIG5zX2NoaW5mbzsNCj4gPiArDQo+ID4gKwkJ
+bnNfY2hpbmZvLnNyYyA9IFJQTVNHX05TX0FERFI7DQo+ID4gKwkJbnNfY2hpbmZvLmRzdCA9IFJQ
+TVNHX05TX0FERFI7DQo+ID4gKwkJc3RyY3B5KG5zX2NoaW5mby5uYW1lLCAibmFtZV9zZXJ2aWNl
+Iik7DQo+ID4gIAkJLyogYSBkZWRpY2F0ZWQgZW5kcG9pbnQgaGFuZGxlcyB0aGUgbmFtZSBzZXJ2
+aWNlIG1zZ3MgKi8NCj4gPiAgCQl2cnAtPm5zX2VwdCA9IF9fcnBtc2dfY3JlYXRlX2VwdCh2cnAs
+IE5VTEwsIHJwbXNnX25zX2NiLA0KPiA+IC0JCQkJCQl2cnAsIFJQTVNHX05TX0FERFIpOw0KPiA+
+ICsJCQkJCQl2cnAsICZuc19jaGluZm8pOw0KPiA+ICAJCWlmICghdnJwLT5uc19lcHQpIHsNCj4g
+PiAgCQkJZGV2X2VycigmdmRldi0+ZGV2LCAiZmFpbGVkIHRvIGNyZWF0ZSB0aGUgbnMgZXB0XG4i
+KTsNCj4gPiAgCQkJZXJyID0gLUVOT01FTTsNCj4gPiBAQCAtOTY2LDYgKzEyODAsMzIgQEAgc3Rh
+dGljIGludCBycG1zZ19wcm9iZShzdHJ1Y3QgdmlydGlvX2RldmljZSAqdmRldikNCj4gPiAgCQl9
+DQo+ID4gIAl9DQo+ID4NCj4gPiArI2lmZGVmIENPTkZJR19SUE1TR19WSVJUSU9fQ0hBUg0KPiA+
+ICsJdmNoID0ga3phbGxvYyhzaXplb2YoKnZjaCksIEdGUF9LRVJORUwpOw0KPiA+ICsJaWYgKCF2
+Y2gpIHsNCj4gPiArCQllcnIgPSAtRU5PTUVNOw0KPiA+ICsJCWdvdG8gZnJlZV9jb2hlcmVudDsN
+Cj4gPiArCX0NCj4gPiArDQo+ID4gKwkvKiBMaW5rIHRoZSBjaGFubmVsIHRvIG91ciB2cnAgKi8N
+Cj4gPiArCXZjaC0+dnJwID0gdnJwOw0KPiA+ICsJLyogSW5pdGlhbGl6ZSByZW1vdGUgc2Vydmlj
+ZXMgbGlzdCAqLw0KPiA+ICsJSU5JVF9MSVNUX0hFQUQoJnZycC0+cnN2Y3MpOw0KPiA+ICsNCj4g
+PiArCS8qIEFzc2lnbiBwdWJsaWMgaW5mb3JtYXRpb24gdG8gdGhlIHJwbXNnX2RldmljZSAqLw0K
+PiA+ICsJcnBfY2hhcl9kZXYgPSAmdmNoLT5ycGRldjsNCj4gPiArCXJwX2NoYXJfZGV2LT5vcHMg
+PSAmdmlydGlvX3JwbXNnX29wczsNCj4gPiArDQo+ID4gKwlycF9jaGFyX2Rldi0+ZGV2LnBhcmVu
+dCA9ICZ2cnAtPnZkZXYtPmRldjsNCj4gPiArCXJwX2NoYXJfZGV2LT5kZXYucmVsZWFzZSA9IHZp
+cnRpb19ycG1zZ19yZWxlYXNlX2RldmljZTsNCj4gPiArCWVyciA9IHJwbXNnX2NocmRldl9yZWdp
+c3Rlcl9kZXZpY2UocnBfY2hhcl9kZXYpOw0KPiANCj4gSSBhbHNvIHRyaWVkIHRvIHVzZSB0aGlz
+IGNoYXIgZGV2aWNlIHRvIGV4cG9zZSBycG1zZyBzZXJ2aWNlIGZvciBhcHBsaWNhdGlvbi4NCj4g
+SXNzdWUgd2l0aCB0aGlzIGRldmljZSAoZnJvbSBteSBwb2ludCBvZiB2aWV3KSBpcyB0aGF0IGl0
+IGhhcyB0byBiZSByZWxpZWQgb24gYQ0KPiBrZXJuZWwgcnBtc2cgZGV2aWNlLg0KPiBJIHN1cHBv
+c2UgdGhhdCB5b3VyIG5lZWQgaXMgdG8gZXhwb3NlIFJNUFNHIHRvIHVzZXJsYW5kIHdpdGhvdXQg
+Y3JlYXRpbmcgYQ0KPiBwbGF0Zm9ybSBkcml2ZXIuDQo+IEluIHRoaXMgY2FzZSBwZXJoYXBzIGFu
+IGFsdGVybmF0aXZlIGNvdWxkIGJlIHRvIG1vdmUgdGhpcyBwYXJ0IGluIHJtcHNnX2NoYXINCj4g
+dG8gYWxsb3cgdG8gcHJvYmUgaXQgaW4gc3RhbmRhbG9uZS4uLg0KW1dlbmR5XSB3aXRoIHRoZSBl
+eGlzdGluZyB2aXJ0aW8gcnBtc2cgaW1wbGVtZW50YXRpb24sIGVhY2ggc2VydmljZSB3aWxsIGJl
+IGJpbmRlZA0KdG8gYSBycG1zZ19kZXZpY2UuIEVhY2ggcnBtc2dfZGV2aWNlIGNhbiBoYXZlIG11
+bHRpcGxlIHN0YXRpYyBlbmRwb2ludHMuDQpCdXQgdGhpcyBpcyBkaWZmZXJlbnQgdG8gaG93IHJw
+bXNnX2NoYXIgaXMgc3VwcG9zZWQgdG8gdXNlLCBycG1zZ19jaGFyIGxvb2tzIHRvIG1lDQpFYWNo
+IGVuZHBvaW50IGNyZWF0ZWQgYnkgcnBtc2dfY2hhciwgZWl0aGVyIGR5bmFtaWMgKHdpdGhvdXQg
+a25vd2luZyB0aGUgcmVtb3RlDQpBZGRyZXNzIGJlZm9yZWhhbmQpIG9yIHN0YXRpYyhzcGVjaWZ5
+aW5nIHRoZSByZW1vdGUgZW5kcG9pbnQpIHNob3VsZCBiZSBiaW5kZWQNCnRvIGEgc2VydmljZS4N
+Cg0KcnBtc2dfY2hhciB1c2VyIEFQSXMgY2FuIG1lZXQgd2hhdCB3ZSBuZWVkLCBob3dldmVyLCB3
+ZSB1c2VzIHJwbXNnIG92ZXIgdmlydGlvLg0KQnV0IGF0IHRoZSBtb21lbnQgdGhlIHZpcnRpb19y
+cG1zZyBkb2Vzbid0IHN1cHBvcnQgcnBtc2dfY2hhci4NCllvdSB0YWxrZWQgYWJvdXQgdGhlIGFs
+bG93IHJwbXNnX2NoYXIgdG8gYmUgcHJvYmVkIGluIHN0YW5kYWxvbmUsIEkgdGhpbmsgdGhhdCdz
+IGdvb2QNCklkZWEsIGhvd2V2ZXIsIHdlIG5lZWQgdG8gYmluZCB0aGUgcnBtc2dfY2hhciB0byB0
+aGUgdmlydGlvIHJwbXNnIGRldmljZS4NCg0KSG93IGFib3V0IHRvIGhhdmUgImRyaXZlcl9vdmVy
+cmlkZSIgb2YgcnBtc2dfZGV2aWNlIGV4cG9zZWQgdG8gdXNlcnNwYWNlIHdpdGggY2hhbm5lbA0K
+bmFtZSBpbmZvcm1hdGlvbiBhdmFpbGFibGUgKHN5c2ZzKSBhbmQgdGhlbiB3ZSBjYW4gZHluYW1p
+Y2FsbHkgYmluZCBpdCB0byBycG1zZ19jaGFyIGRyaXZlcg0KZnJvbSB1c2Vyc3BhY2U/IEFuZCB0
+aGVuIHdlIGNhbiBsaW1pdCB0aGUgcnBtc2dfY2hhciBjcmVhdGUgZW5kcG9pbnQgZmVhdHVyZSB0
+byANCm9ubHkgY3JlYXRlIHN0YXRpYyBlbmRwb2ludHMgb3ZlciB0aGUgc2FtZSBjaGFubmVsIGlu
+IGNhc2Ugb2YgdmlydGlvX3JwbXNnIHVzYWdlPw0KDQpUaGFua3MsDQpXZW5keQ0KDQo+IA0KPiBS
+ZWdhcmRzDQo+IEFybmF1ZA0KPiANCj4gPiArCWlmIChlcnIpIHsNCj4gPiArCQlrZnJlZSh2Y2gp
+Ow0KPiA+ICsJCWdvdG8gZnJlZV9jb2hlcmVudDsNCj4gPiArCX0NCj4gPiArCWRldl9pbmZvKCZ2
+ZGV2LT5kZXYsICJSZWdpc3RlcmVkIGFzIFJQTXNnIGNoYXIgZGV2aWNlLlxuIik7ICNlbmRpZg0K
+PiA+ICsNCj4gPiAgCS8qDQo+ID4gIAkgKiBQcmVwYXJlIHRvIGtpY2sgYnV0IGRvbid0IG5vdGlm
+eSB5ZXQgLSB3ZSBjYW4ndCBkbyB0aGlzIGJlZm9yZQ0KPiA+ICAJICogZGV2aWNlIGlzIHJlYWR5
+Lg0KPiA+IEBAIC0xMDA5LDYgKzEzNDksOSBAQCBzdGF0aWMgdm9pZCBycG1zZ19yZW1vdmUoc3Ry
+dWN0IHZpcnRpb19kZXZpY2UNCj4gKnZkZXYpDQo+ID4gIAlzdHJ1Y3QgdmlydHByb2NfaW5mbyAq
+dnJwID0gdmRldi0+cHJpdjsNCj4gPiAgCXNpemVfdCB0b3RhbF9idWZfc3BhY2UgPSB2cnAtPm51
+bV9idWZzICogdnJwLT5idWZfc2l6ZTsNCj4gPiAgCWludCByZXQ7DQo+ID4gKyNpZmRlZiBDT05G
+SUdfUlBNU0dfVklSVElPX0NIQVINCj4gPiArCXN0cnVjdCB2aXJ0aW9fcnBtc2dfcnN2YyAqcnN2
+YywgKnRtcDsgI2VuZGlmDQo+ID4NCj4gPiAgCXZkZXYtPmNvbmZpZy0+cmVzZXQodmRldik7DQo+
+ID4NCj4gPiBAQCAtMTAyMSw2ICsxMzY0LDEzIEBAIHN0YXRpYyB2b2lkIHJwbXNnX3JlbW92ZShz
+dHJ1Y3QgdmlydGlvX2RldmljZQ0KPiA+ICp2ZGV2KQ0KPiA+DQo+ID4gIAlpZHJfZGVzdHJveSgm
+dnJwLT5lbmRwb2ludHMpOw0KPiA+DQo+ID4gKyNpZmRlZiBDT05GSUdfUlBNU0dfVklSVElPX0NI
+QVINCj4gPiArCWxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShyc3ZjLCB0bXAsICZ2cnAtPnJzdmNz
+LCBub2RlKSB7DQo+ID4gKwkJbGlzdF9kZWwoJnJzdmMtPm5vZGUpOw0KPiA+ICsJCWtmcmVlKHJz
+dmMpOw0KPiA+ICsJfQ0KPiA+ICsjZW5kaWYNCj4gPiArDQo+ID4gIAl2ZGV2LT5jb25maWctPmRl
+bF92cXModnJwLT52ZGV2KTsNCj4gPg0KPiA+ICAJZG1hX2ZyZWVfY29oZXJlbnQodmRldi0+ZGV2
+LnBhcmVudC0+cGFyZW50LCB0b3RhbF9idWZfc3BhY2UsDQo+ID4NCg==
