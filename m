@@ -1,55 +1,134 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 47/99] shmem: Convert shmem_alloc_hugepage to XArray
-Date: Wed, 17 Jan 2018 12:21:11 -0800
-Message-Id: <20180117202203.19756-48-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 4/4] remoteproc: qcom: Register segments for core dump
+Date: Fri,  5 Jan 2018 16:04:20 -0800
+Message-Id: <20180106000420.10070-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20180106000420.10070-1-bjorn.andersson@linaro.org>
+References: <20180106000420.10070-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Suman Anna <s-anna@ti.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
 
-xa_find() is a slightly easier API to use than
-radix_tree_gang_lookup_slot() because it contains its own RCU locking.
+Register MDT segments with the remoteproc core dump functionality in
+order to include them in a core dump, in case of a recovery of the remote
+processor.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- mm/shmem.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 0f49edae05e4..e8233cb7ab5c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1413,23 +1413,17 @@ static struct page *shmem_alloc_hugepage(gfp_t gfp,
- 		struct shmem_inode_info *info, pgoff_t index)
+Changes since v2:
+- None
+
+Changes since v1:
+- Extracted from first patch
+
+ drivers/remoteproc/qcom_adsp_pil.c |  1 +
+ drivers/remoteproc/qcom_common.c   | 44 ++++++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_common.h   |  2 ++
+ drivers/remoteproc/qcom_wcnss.c    |  1 +
+ 4 files changed, 48 insertions(+)
+
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 833763aa3f2a..af12cdd45b71 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -179,6 +179,7 @@ static const struct rproc_ops adsp_ops = {
+ 	.start = adsp_start,
+ 	.stop = adsp_stop,
+ 	.da_to_va = adsp_da_to_va,
++	.parse_fw = qcom_register_dump_segments,
+ 	.load = adsp_load,
+ };
+ 
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 6eb9161f80b3..f9a0701c94e7 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -22,6 +22,7 @@
+ #include <linux/remoteproc.h>
+ #include <linux/rpmsg/qcom_glink.h>
+ #include <linux/rpmsg/qcom_smd.h>
++#include <linux/soc/qcom/mdt_loader.h>
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+@@ -79,6 +80,49 @@ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glin
+ }
+ EXPORT_SYMBOL_GPL(qcom_remove_glink_subdev);
+ 
++/**
++ * qcom_register_dump_segments() - register segments for coredump
++ * @rproc:	remoteproc handle
++ * @fw:		firmware header
++ *
++ * Register all segments of the ELF in the remoteproc coredump segment list
++ *
++ * Return: 0 on success, negative errno on failure.
++ */
++int qcom_register_dump_segments(struct rproc *rproc,
++				const struct firmware *fw)
++{
++	const struct elf32_phdr *phdrs;
++	const struct elf32_phdr *phdr;
++	const struct elf32_hdr *ehdr;
++	int ret;
++	int i;
++
++	ehdr = (struct elf32_hdr *)fw->data;
++	phdrs = (struct elf32_phdr *)(ehdr + 1);
++
++	for (i = 0; i < ehdr->e_phnum; i++) {
++		phdr = &phdrs[i];
++
++		if (phdr->p_type != PT_LOAD)
++			continue;
++
++		if ((phdr->p_flags & QCOM_MDT_TYPE_MASK) == QCOM_MDT_TYPE_HASH)
++			continue;
++
++		if (!phdr->p_memsz)
++			continue;
++
++		ret = rproc_coredump_add_segment(rproc, phdr->p_paddr,
++						 phdr->p_memsz);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
++
+ static int smd_subdev_probe(struct rproc_subdev *subdev)
  {
- 	struct vm_area_struct pvma;
--	struct inode *inode = &info->vfs_inode;
--	struct address_space *mapping = inode->i_mapping;
--	pgoff_t idx, hindex;
--	void __rcu **results;
-+	struct address_space *mapping = info->vfs_inode.i_mapping;
-+	pgoff_t hindex;
- 	struct page *page;
+ 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index 728be9834d8b..7e614520fb69 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -30,6 +30,8 @@ struct qcom_rproc_ssr {
+ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
+ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink);
  
- 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE))
- 		return NULL;
++int qcom_register_dump_segments(struct rproc *rproc, const struct firmware *fw);
++
+ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
+ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd);
  
- 	hindex = round_down(index, HPAGE_PMD_NR);
--	rcu_read_lock();
--	if (radix_tree_gang_lookup_slot(&mapping->pages, &results, &idx,
--				hindex, 1) && idx < hindex + HPAGE_PMD_NR) {
--		rcu_read_unlock();
-+	if (xa_find(&mapping->pages, &hindex, hindex + HPAGE_PMD_NR - 1,
-+								XA_PRESENT))
- 		return NULL;
--	}
--	rcu_read_unlock();
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 599c1aa73b7f..e9f9ba4c584d 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -309,6 +309,7 @@ static const struct rproc_ops wcnss_ops = {
+ 	.start = wcnss_start,
+ 	.stop = wcnss_stop,
+ 	.da_to_va = wcnss_da_to_va,
++	.parse_fw = qcom_register_dump_segments,
+ 	.load = wcnss_load,
+ };
  
- 	shmem_pseudo_vma_init(&pvma, info, hindex);
- 	page = alloc_pages_vma(gfp | __GFP_COMP | __GFP_NORETRY | __GFP_NOWARN,
 -- 
-2.15.1
+2.15.0
