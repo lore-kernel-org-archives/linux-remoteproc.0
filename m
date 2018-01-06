@@ -1,66 +1,87 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 39/99] mm: Convert khugepaged_scan_shmem to XArray
-Date: Wed, 17 Jan 2018 12:21:03 -0800
-Message-Id: <20180117202203.19756-40-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 2/4] remoteproc: Rename "load_rsc_table" to "parse_fw"
+Date: Fri,  5 Jan 2018 16:04:18 -0800
+Message-Id: <20180106000420.10070-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20180106000420.10070-1-bjorn.andersson@linaro.org>
+References: <20180106000420.10070-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Suman Anna <s-anna@ti.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+The resource table is just one possible source of information that can
+be extracted from the firmware file. Generalize this interface to allow
+drivers to override this with parsers of other types of information.
 
-Slightly shorter and easier to read code.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- mm/khugepaged.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 9f49d0cd61c2..15f1b2d81a69 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1534,8 +1534,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 		pgoff_t start, struct page **hpage)
+Changes since v2:
+- Improved comment by call to rproc_parse_fw
+
+Changes since v1:
+- New patch
+
+ drivers/remoteproc/remoteproc_core.c     | 6 +++---
+ drivers/remoteproc/remoteproc_internal.h | 7 +++----
+ include/linux/remoteproc.h               | 2 +-
+ 3 files changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 5af7547b9d8d..fd257607a578 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -944,8 +944,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+ 
+ 	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
+ 
+-	/* load resource table */
+-	ret = rproc_load_rsc_table(rproc, fw);
++	/* Load resource table, core dump segment list etc from the firmware */
++	ret = rproc_parse_fw(rproc, fw);
+ 	if (ret)
+ 		goto disable_iommu;
+ 
+@@ -1555,7 +1555,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	/* Default to ELF loader if no load function is specified */
+ 	if (!rproc->ops->load) {
+ 		rproc->ops->load = rproc_elf_load_segments;
+-		rproc->ops->load_rsc_table = rproc_elf_load_rsc_table;
++		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+ 		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+ 		rproc->ops->sanity_check = rproc_elf_sanity_check;
+ 		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 55a2950c5cb7..7570beb035b5 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -88,11 +88,10 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 	return -EINVAL;
+ }
+ 
+-static inline int rproc_load_rsc_table(struct rproc *rproc,
+-				       const struct firmware *fw)
++static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
  {
- 	struct page *page = NULL;
--	struct radix_tree_iter iter;
--	void **slot;
-+	XA_STATE(xas, &mapping->pages, start);
- 	int present, swap;
- 	int node = NUMA_NO_NODE;
- 	int result = SCAN_SUCCEED;
-@@ -1544,17 +1543,11 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 	swap = 0;
- 	memset(khugepaged_node_load, 0, sizeof(khugepaged_node_load));
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->pages, &iter, start) {
--		if (iter.index >= start + HPAGE_PMD_NR)
--			break;
--
--		page = radix_tree_deref_slot(slot);
--		if (radix_tree_deref_retry(page)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, page, start + HPAGE_PMD_NR - 1) {
-+		if (xas_retry(&xas, page))
- 			continue;
--		}
+-	if (rproc->ops->load_rsc_table)
+-		return rproc->ops->load_rsc_table(rproc, fw);
++	if (rproc->ops->parse_fw)
++		return rproc->ops->parse_fw(rproc, fw);
  
--		if (radix_tree_exception(page)) {
-+		if (xa_is_value(page)) {
- 			if (++swap > khugepaged_max_ptes_swap) {
- 				result = SCAN_EXCEED_SWAP_PTE;
- 				break;
-@@ -1593,7 +1586,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
- 		present++;
- 
- 		if (need_resched()) {
--			slot = radix_tree_iter_resume(slot, &iter);
-+			xas_pause(&xas);
- 			cond_resched_rcu();
- 		}
- 	}
+ 	return 0;
+ }
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b60c3a31b75d..f16864acedad 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -344,7 +344,7 @@ struct rproc_ops {
+ 	int (*stop)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+ 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
+-	int (*load_rsc_table)(struct rproc *rproc, const struct firmware *fw);
++	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+ 	struct resource_table *(*find_loaded_rsc_table)(
+ 				struct rproc *rproc, const struct firmware *fw);
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
 -- 
-2.15.1
+2.15.0
