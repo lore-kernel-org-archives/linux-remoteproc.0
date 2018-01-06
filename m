@@ -1,68 +1,279 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 52/99] fs: Convert buffer to XArray
-Date: Wed, 17 Jan 2018 12:21:16 -0800
-Message-Id: <20180117202203.19756-53-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 1/4] remoteproc: Add remote processor coredump support
+Date: Fri,  5 Jan 2018 16:04:17 -0800
+Message-Id: <20180106000420.10070-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20180106000420.10070-1-bjorn.andersson@linaro.org>
+References: <20180106000420.10070-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Suman Anna <s-anna@ti.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Sarangdhar Joshi <spjoshi@codeaurora.org>
 
-Mostly comment fixes, but one use of __xa_set_tag.
+As the remoteproc framework restarts the remote processor after a fatal
+event, it's useful to be able to acquire a coredump of the remote
+processor's state, for post mortem debugging.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+This patch introduces a mechanism for extracting the memory contents
+after the remote has stopped and before the restart sequence has begun
+in the recovery path. The remoteproc framework builds the core dump in
+memory and use devcoredump to expose this to user space.
+
+Signed-off-by: Sarangdhar Joshi <spjoshi@codeaurora.org>
+[bjorn: Use vmalloc instead of composing the ELF on the fly]
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- fs/buffer.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1a6ae530156b..e1d18307d5c8 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -592,7 +592,7 @@ void mark_buffer_dirty_inode(struct buffer_head *bh, struct inode *inode)
- EXPORT_SYMBOL(mark_buffer_dirty_inode);
- 
- /*
-- * Mark the page dirty, and set it dirty in the radix tree, and mark the inode
-+ * Mark the page dirty, and set it dirty in the page cache, and mark the inode
-  * dirty.
-  *
-  * If warn is true, then emit a warning if the page is not uptodate and has
-@@ -609,8 +609,8 @@ void __set_page_dirty(struct page *page, struct address_space *mapping,
- 	if (page->mapping) {	/* Race with truncate? */
- 		WARN_ON_ONCE(warn && !PageUptodate(page));
- 		account_page_dirtied(page, mapping);
--		radix_tree_tag_set(&mapping->pages,
--				page_index(page), PAGECACHE_TAG_DIRTY);
-+		__xa_set_tag(&mapping->pages, page_index(page),
-+				PAGECACHE_TAG_DIRTY);
- 	}
- 	xa_unlock_irqrestore(&mapping->pages, flags);
+Changes since v2:
+- None
+
+Changes since v1:
+- vmalloc() memory to build ELF file before registering devcoredump
+- life cycle of segment list is from boot to shutdown (not start/shutdown)
+- add WANT_DEV_COREDUMP select
+- use dma_addr_t to denote device addresses
+
+ drivers/remoteproc/Kconfig           |   1 +
+ drivers/remoteproc/remoteproc_core.c | 128 +++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  18 +++++
+ 3 files changed, 147 insertions(+)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index b609e1d3654b..3e4bca77188d 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -6,6 +6,7 @@ config REMOTEPROC
+ 	select CRC32
+ 	select FW_LOADER
+ 	select VIRTIO
++	select WANT_DEV_COREDUMP
+ 	help
+ 	  Support for remote processors (such as DSP coprocessors). These
+ 	  are mainly used on embedded systems.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 4170dfbd93bd..5af7547b9d8d 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -33,6 +33,7 @@
+ #include <linux/firmware.h>
+ #include <linux/string.h>
+ #include <linux/debugfs.h>
++#include <linux/devcoredump.h>
+ #include <linux/remoteproc.h>
+ #include <linux/iommu.h>
+ #include <linux/idr.h>
+@@ -801,6 +802,20 @@ static void rproc_remove_subdevices(struct rproc *rproc)
+ 		subdev->remove(subdev);
  }
-@@ -1072,7 +1072,7 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * The relationship between dirty buffers and dirty pages:
-  *
-  * Whenever a page has any dirty buffers, the page's dirty bit is set, and
-- * the page is tagged dirty in its radix tree.
-+ * the page is tagged dirty in the page cache.
-  *
-  * At all times, the dirtiness of the buffers represents the dirtiness of
-  * subsections of the page.  If the page has buffers, the page dirty bit is
-@@ -1095,9 +1095,9 @@ __getblk_slow(struct block_device *bdev, sector_t block,
-  * mark_buffer_dirty - mark a buffer_head as needing writeout
-  * @bh: the buffer_head to mark dirty
-  *
-- * mark_buffer_dirty() will set the dirty bit against the buffer, then set its
-- * backing page dirty, then tag the page as dirty in its address_space's radix
-- * tree and then attach the address_space's inode to its superblock's dirty
-+ * mark_buffer_dirty() will set the dirty bit against the buffer, then set
-+ * its backing page dirty, then tag the page as dirty in the page cache
-+ * and then attach the address_space's inode to its superblock's dirty
-  * inode list.
-  *
-  * mark_buffer_dirty() is atomic.  It takes bh->b_page->mapping->private_lock,
+ 
++/**
++ * rproc_coredump_cleanup() - clean up dump_segments list
++ * @rproc: the remote processor handle
++ */
++static void rproc_coredump_cleanup(struct rproc *rproc)
++{
++	struct rproc_dump_segment *entry, *tmp;
++
++	list_for_each_entry_safe(entry, tmp, &rproc->dump_segments, node) {
++		list_del(&entry->node);
++		kfree(entry);
++	}
++}
++
+ /**
+  * rproc_resource_cleanup() - clean up and free all acquired resources
+  * @rproc: rproc handle
+@@ -848,6 +863,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 	/* clean up remote vdev entries */
+ 	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
+ 		kref_put(&rvdev->refcount, rproc_vdev_release);
++
++	rproc_coredump_cleanup(rproc);
+ }
+ 
+ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+@@ -1017,6 +1034,113 @@ static int rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++/**
++ * rproc_coredump_add_segment() - add segment of device memory to coredump
++ * @rproc:	handle of a remote processor
++ * @da:		device address
++ * @size:	size of segment
++ *
++ * Add device memory to the list of segments to be included in a coredump for
++ * the remoteproc.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size)
++{
++	struct rproc_dump_segment *segment;
++
++	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
++	if (!segment)
++		return -ENOMEM;
++
++	segment->da = da;
++	segment->size = size;
++
++	list_add_tail(&segment->node, &rproc->dump_segments);
++
++	return 0;
++}
++EXPORT_SYMBOL(rproc_coredump_add_segment);
++
++/**
++ * rproc_coredump() - perform coredump
++ * @rproc:	rproc handle
++ *
++ * This function will generate an ELF header for the registered segments
++ * and create a devcoredump device associated with rproc.
++ */
++static void rproc_coredump(struct rproc *rproc)
++{
++	struct rproc_dump_segment *segment;
++	struct elf32_phdr *phdr;
++	struct elf32_hdr *ehdr;
++	size_t data_size;
++	size_t offset;
++	void *data;
++	void *ptr;
++	int phnum = 0;
++
++	if (list_empty(&rproc->dump_segments))
++		return;
++
++	data_size = sizeof(*ehdr);
++	list_for_each_entry(segment, &rproc->dump_segments, node) {
++		data_size += sizeof(*phdr) + segment->size;
++
++		phnum++;
++	}
++
++	data = vmalloc(data_size);
++	if (!data)
++		return;
++
++	ehdr = data;
++
++	memset(ehdr, 0, sizeof(*ehdr));
++	memcpy(ehdr->e_ident, ELFMAG, SELFMAG);
++	ehdr->e_ident[EI_CLASS] = ELFCLASS32;
++	ehdr->e_ident[EI_DATA] = ELFDATA2LSB;
++	ehdr->e_ident[EI_VERSION] = EV_CURRENT;
++	ehdr->e_ident[EI_OSABI] = ELFOSABI_NONE;
++	ehdr->e_type = ET_CORE;
++	ehdr->e_machine = EM_NONE;
++	ehdr->e_version = EV_CURRENT;
++	ehdr->e_entry = rproc->bootaddr;
++	ehdr->e_phoff = sizeof(*ehdr);
++	ehdr->e_ehsize = sizeof(*ehdr);
++	ehdr->e_phentsize = sizeof(*phdr);
++	ehdr->e_phnum = phnum;
++
++	phdr = data + ehdr->e_phoff;
++	offset = ehdr->e_phoff + sizeof(*phdr) * ehdr->e_phnum;
++	list_for_each_entry(segment, &rproc->dump_segments, node) {
++		memset(phdr, 0, sizeof(*phdr));
++		phdr->p_type = PT_LOAD;
++		phdr->p_offset = offset;
++		phdr->p_vaddr = segment->da;
++		phdr->p_paddr = segment->da;
++		phdr->p_filesz = segment->size;
++		phdr->p_memsz = segment->size;
++		phdr->p_flags = PF_R | PF_W | PF_X;
++		phdr->p_align = 0;
++
++		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++		if (!ptr) {
++			dev_err(&rproc->dev,
++				"invalid coredump segment (%pad, %zu)\n",
++				&segment->da, segment->size);
++			memset(data + offset, 0xff, segment->size);
++		} else {
++			memcpy(data + offset, ptr, segment->size);
++		}
++
++		offset += phdr->p_filesz;
++		phdr++;
++	}
++
++	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
++}
++
+ /**
+  * rproc_trigger_recovery() - recover a remoteproc
+  * @rproc: the remote processor
+@@ -1043,6 +1167,9 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	if (ret)
+ 		goto unlock_mutex;
+ 
++	/* generate coredump */
++	rproc_coredump(rproc);
++
+ 	/* load firmware */
+ 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+ 	if (ret < 0) {
+@@ -1443,6 +1570,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->traces);
+ 	INIT_LIST_HEAD(&rproc->rvdevs);
+ 	INIT_LIST_HEAD(&rproc->subdevs);
++	INIT_LIST_HEAD(&rproc->dump_segments);
+ 
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 728d421fffe9..b60c3a31b75d 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -394,6 +394,21 @@ enum rproc_crash_type {
+ 	RPROC_FATAL_ERROR,
+ };
+ 
++/**
++ * struct rproc_dump_segment - segment info from ELF header
++ * @node:	list node related to the rproc segment list
++ * @da:		device address of the segment
++ * @size:	size of the segment
++ */
++struct rproc_dump_segment {
++	struct list_head node;
++
++	dma_addr_t da;
++	size_t size;
++
++	loff_t offset;
++};
++
+ /**
+  * struct rproc - represents a physical remote processor device
+  * @node: list node of this rproc object
+@@ -424,6 +439,7 @@ enum rproc_crash_type {
+  * @cached_table: copy of the resource table
+  * @table_sz: size of @cached_table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
++ * @dump_segments: list of segments in the firmware
+  */
+ struct rproc {
+ 	struct list_head node;
+@@ -455,6 +471,7 @@ struct rproc {
+ 	size_t table_sz;
+ 	bool has_iommu;
+ 	bool auto_boot;
++	struct list_head dump_segments;
+ };
+ 
+ /**
+@@ -534,6 +551,7 @@ void rproc_free(struct rproc *rproc);
+ int rproc_boot(struct rproc *rproc);
+ void rproc_shutdown(struct rproc *rproc);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
++int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
+ 
+ static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+ {
 -- 
-2.15.1
+2.15.0
