@@ -1,51 +1,266 @@
-Return-Path: <clew@codeaurora.org>
-Subject: Re: [PATCH 1/6] dt-bindings: soc: qcom: Add label for GLINK bindings
-References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
- <1513634534-22861-2-git-send-email-clew@codeaurora.org>
- <20171220183000.rhxgyikfqzxmqkjo@rob-hp-laptop>
- <20171221013557.GE12655@minitux>
- <d6ad476e-b68c-a1ed-9256-5997312a6024@codeaurora.org>
-From: Chris Lew <clew@codeaurora.org>
-Message-ID: <24be93c8-d09e-5250-d654-d5f7a24c094b@codeaurora.org>
-Date: Tue, 9 Jan 2018 11:11:36 -0800
-MIME-Version: 1.0
-In-Reply-To: <d6ad476e-b68c-a1ed-9256-5997312a6024@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
+Date: Mon, 8 Jan 2018 08:14:53 +0000
+Message-ID: <df9b33b940c84d3d8095450101299b67@SFHDAG7NODE2.st.com>
+References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
+ <20171213224111.17864-8-bjorn.andersson@linaro.org>
+ <c3e80239c8d84645919713897fcf9e46@SFHDAG7NODE2.st.com>
+ <20180105185050.GD478@tuxbook>
+In-Reply-To: <20180105185050.GD478@tuxbook>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh@kernel.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 
 
-On 12/21/2017 11:36 AM, Stephen Boyd wrote:
-> On 12/20/2017 05:35 PM, Bjorn Andersson wrote:
->> On Wed 20 Dec 10:30 PST 2017, Rob Herring wrote:
->>
->>> On Mon, Dec 18, 2017 at 02:02:09PM -0800, Chris Lew wrote:
->>>> Add a label property to identify the edge this node represents.
->>> Why does a user need to know this?
->>>
->> We have multiple remoteproc instances, each one having one or more
->> associated SMD or GLINK links (this node), exposing logical
->> communication channels. Some of these logical channels are exposed to
->> user space and we need a way to distinguish them there.
->>
->> In the current implementation of SMD this value goes straight into an
->> sysfs attribute that we can use when writing udev rules and for the DIAG
->> implementation to pair up channels related to the same remoteproc. This
->> adds the equivalent information for glink-backed channels.
->>
->>
->> I'm therefor in favor of picking this patch.
-> 
-> Please add these details to the commit log. Just writing what the patch
-> is doing isn't very helpful.
-> 
+> -----Original Message-----
+> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
+> Sent: Friday, January 05, 2018 7:51 PM
+> To: Loic PALLARDY <loic.pallardy@st.com>
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>; linux-
+> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
+>=20
+> On Fri 05 Jan 08:53 PST 2018, Loic PALLARDY wrote:
+>=20
+> >
+> >
+> > > -----Original Message-----
+> > > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-
+> remoteproc-
+> > > owner@vger.kernel.org] On Behalf Of Bjorn Andersson
+> > > Sent: Wednesday, December 13, 2017 11:41 PM
+> > > To: Ohad Ben-Cohen <ohad@wizery.com>; Bjorn Andersson
+> > > <bjorn.andersson@linaro.org>
+> > > Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > Subject: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
+> > >
+> > > As the core now deals with the lack of a resource table, remove the
+> > > dangling custom dummy implementations of find_rsc_table from drivers.
+> > >
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > ---
+> > >  drivers/remoteproc/qcom_adsp_pil.c |  1 -
+> > >  drivers/remoteproc/qcom_common.c   | 19 -------------------
+> > >  drivers/remoteproc/qcom_common.h   |  4 ----
+> > >  drivers/remoteproc/qcom_q6v5_pil.c | 11 -----------
+> > >  drivers/remoteproc/qcom_wcnss.c    |  1 -
+> > >  drivers/remoteproc/st_slim_rproc.c | 18 ------------------
+> > >  include/linux/remoteproc.h         |  4 ----
+> > >  7 files changed, 58 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/qcom_adsp_pil.c
+> > > b/drivers/remoteproc/qcom_adsp_pil.c
+> > > index 7b9d810b23f1..b0b0d5ca1ca0 100644
+> > > --- a/drivers/remoteproc/qcom_adsp_pil.c
+> > > +++ b/drivers/remoteproc/qcom_adsp_pil.c
+> > > @@ -181,7 +181,6 @@ static const struct rproc_ops adsp_ops =3D {
+> > >  	.start =3D adsp_start,
+> > >  	.stop =3D adsp_stop,
+> > >  	.da_to_va =3D adsp_da_to_va,
+> > > -	.find_rsc_table =3D qcom_mdt_find_rsc_table,
+> > >  	.load =3D adsp_load,
+> > >  };
+> > >
+> > > diff --git a/drivers/remoteproc/qcom_common.c
+> > > b/drivers/remoteproc/qcom_common.c
+> > > index 818ee3657043..ce2dcc4f7de7 100644
+> > > --- a/drivers/remoteproc/qcom_common.c
+> > > +++ b/drivers/remoteproc/qcom_common.c
+> > > @@ -32,25 +32,6 @@
+> > >
+> > >  static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+> > >
+> > > -/**
+> > > - * qcom_mdt_find_rsc_table() - provide dummy resource table for
+> > > remoteproc
+> > > - * @rproc:	remoteproc handle
+> > > - * @fw:		firmware header
+> > > - * @tablesz:	outgoing size of the table
+> > > - *
+> > > - * Returns a dummy table.
+> > > - */
+> > > -struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+> > > -					       const struct firmware *fw,
+> > > -					       int *tablesz)
+> > > -{
+> > > -	static struct resource_table table =3D { .ver =3D 1, };
+> > > -
+> > > -	*tablesz =3D sizeof(table);
+> > > -	return &table;
+> > > -}
+> > > -EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
+> > > -
+> > >  static int glink_subdev_probe(struct rproc_subdev *subdev)
+> > >  {
+> > >  	struct qcom_rproc_glink *glink =3D to_glink_subdev(subdev);
+> > > diff --git a/drivers/remoteproc/qcom_common.h
+> > > b/drivers/remoteproc/qcom_common.h
+> > > index 541586e528b3..73efed969bfd 100644
+> > > --- a/drivers/remoteproc/qcom_common.h
+> > > +++ b/drivers/remoteproc/qcom_common.h
+> > > @@ -30,10 +30,6 @@ struct qcom_rproc_ssr {
+> > >  	const char *name;
+> > >  };
+> > >
+> > > -struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
+> > > -					       const struct firmware *fw,
+> > > -					       int *tablesz);
+> > > -
+> > >  void qcom_add_glink_subdev(struct rproc *rproc, struct
+> qcom_rproc_glink
+> > > *glink);
+> > >  void qcom_remove_glink_subdev(struct rproc *rproc, struct
+> > > qcom_rproc_glink *glink);
+> > >
+> > > diff --git a/drivers/remoteproc/qcom_q6v5_pil.c
+> > > b/drivers/remoteproc/qcom_q6v5_pil.c
+> > > index fbff5d842581..6f6ea0414366 100644
+> > > --- a/drivers/remoteproc/qcom_q6v5_pil.c
+> > > +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+> > > @@ -304,16 +304,6 @@ static void q6v5_clk_disable(struct device *dev,
+> > >  		clk_disable_unprepare(clks[i]);
+> > >  }
+> > >
+> > > -static struct resource_table *q6v5_find_rsc_table(struct rproc *rpro=
+c,
+> > > -						  const struct firmware *fw,
+> > > -						  int *tablesz)
+> > > -{
+> > > -	static struct resource_table table =3D { .ver =3D 1, };
+> > > -
+> > > -	*tablesz =3D sizeof(table);
+> > > -	return &table;
+> > > -}
+> > > -
+> > >  static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int
+> > > *current_perm,
+> > >  				   bool remote_owner, phys_addr_t addr,
+> > >  				   size_t size)
+> > > @@ -927,7 +917,6 @@ static const struct rproc_ops q6v5_ops =3D {
+> > >  	.start =3D q6v5_start,
+> > >  	.stop =3D q6v5_stop,
+> > >  	.da_to_va =3D q6v5_da_to_va,
+> > > -	.find_rsc_table =3D q6v5_find_rsc_table,
+> > >  	.load =3D q6v5_load,
+> > >  };
+> > >
+> > > diff --git a/drivers/remoteproc/qcom_wcnss.c
+> > > b/drivers/remoteproc/qcom_wcnss.c
+> > > index cc44ec598522..1fa5253020dd 100644
+> > > --- a/drivers/remoteproc/qcom_wcnss.c
+> > > +++ b/drivers/remoteproc/qcom_wcnss.c
+> > > @@ -310,7 +310,6 @@ static const struct rproc_ops wcnss_ops =3D {
+> > >  	.start =3D wcnss_start,
+> > >  	.stop =3D wcnss_stop,
+> > >  	.da_to_va =3D wcnss_da_to_va,
+> > > -	.find_rsc_table =3D qcom_mdt_find_rsc_table,
+> > >  	.load =3D wcnss_load,
+> > >  };
+> > >
+> > > diff --git a/drivers/remoteproc/st_slim_rproc.c
+> > > b/drivers/remoteproc/st_slim_rproc.c
+> > > index 1538ea915c49..c6a2a8b68c7a 100644
+> > > --- a/drivers/remoteproc/st_slim_rproc.c
+> > > +++ b/drivers/remoteproc/st_slim_rproc.c
+> > > @@ -200,28 +200,10 @@ static void *slim_rproc_da_to_va(struct rproc
+> > > *rproc, u64 da, int len)
+> > >  	return va;
+> > >  }
+> > >
+> > > -/*
+> > > - * Firmware handler operations: sanity, boot address, load ...
+> > > - */
+> > > -
+> > > -static struct resource_table empty_rsc_tbl =3D {
+> > > -	.ver =3D 1,
+> > > -	.num =3D 0,
+> > > -};
+> > > -
+> > > -static struct resource_table *slim_rproc_find_rsc_table(struct rproc
+> *rproc,
+> > > -					       const struct firmware *fw,
+> > > -					       int *tablesz)
+> > > -{
+> > > -	*tablesz =3D sizeof(empty_rsc_tbl);
+> > > -	return &empty_rsc_tbl;
+> > > -}
+> > > -
+> > >  static const struct rproc_ops slim_rproc_ops =3D {
+> > >  	.start		=3D slim_rproc_start,
+> > >  	.stop		=3D slim_rproc_stop,
+> > >  	.da_to_va       =3D slim_rproc_da_to_va,
+> > > -	.find_rsc_table =3D slim_rproc_find_rsc_table,
+> > Hi Bjorn,
+> > Your patch is not complete for st_slim_rproc and so not working.
+> > In your patch 6/8, .load_rsc_table is define to default
+> rproc_elf_load_rsc_table if no load ops defined.
+> >
+> > 	/* Default to ELF loader if no load function is specified */
+> >  	if (!rproc->ops->load) {
+> >  		rproc->ops->load =3D rproc_elf_load_segments;
+> > -		rproc->ops->find_rsc_table =3D rproc_elf_find_rsc_table;
+> > +		rproc->ops->load_rsc_table =3D rproc_elf_load_rsc_table;
+> >
+> > As st_slim_rproc has no load ops, it will inherit from all default ops =
+including
+> rproc_elf_load_rsc_table.
+> > As no resource table present in firmware, an error will be returned and
+> st_slim_rproc will failed.
+>=20
+> Thanks for catching my mistake, Loic! The expected outcome would be that
+> the slim_rproc_ops does point the "load" to the now exported ELF loader
+> symbol and by that won't get a find_rsc_table entry from the default
+> set..
+>=20
+> > In case of Qualcom, load ops is defined...
+>=20
+> Right, in the end the st_slim driver should have been defined just as
+> the Qualcomm one - but referencing rproc_elf_load_segments().
+>=20
+> > See below B2260 log (with additional error message in
+> rproc_load_rsc_table function.
+> >
+> > [   10.201079] remoteproc remoteproc2: st231-delta is available
+> > [   10.258121] remoteproc remoteproc2: powering up st231-delta
+> > [   10.258143] remoteproc remoteproc2: Booting fw image rproc-st231-
+> delta-fw, size 44416
+> > [   10.258151] rproc_load_rsc_table: error -22
+> >
+> > Moreover with your proposal, as the choice to support or not a
+> > resource table is based on the fact rproc->ops->load_rsc_table is set
+> > or not, it is not possible with one unique driver to support firmware
+> > with resource table and firmware without resource table.
+>=20
+> This is retaining the previous behaviour of failing to load/start a
+> remoteproc if no resource table is found, when the driver expects one.
+> The new scheme would allow you to specify a custom load_rsc_table that
+> calls rproc_elf_load_rsc_table() and ignores the return value to support
+> your use case.
+OK would be nice to document somewhere what's framework responsibilities an=
+d what's driver ones.
 
-Ok, will do.
+>=20
+> > Will be better from my pov to consider that no resource table  found
+> > in rproc_elf_load_rsc_table function as a normal case and not an
+> > error.
+>=20
+> This would be a change in behavior and I can see how this could be
+> annoying to people (by not catching their mistakes during development).
+You're right
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>=20
+> If you think this is the preferred implementation then please submit a
+> separate patch for this so we can get some feedback from other users.
+No it is OK. I'll review v3.
+
+Regards,
+Loic
+>=20
+> Regards,
+> Bjorn
