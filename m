@@ -1,46 +1,54 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 48/99] shmem: Convert shmem_free_swap to XArray
-Date: Wed, 17 Jan 2018 12:21:12 -0800
-Message-Id: <20180117202203.19756-49-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <clew@codeaurora.org>
+Subject: Re: [PATCH 5/6] rpmsg: Introduce rpmsg_get_rproc_name
+References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
+ <1513634534-22861-6-git-send-email-clew@codeaurora.org>
+ <20171219175202.GB12655@minitux>
+From: Chris Lew <clew@codeaurora.org>
+Message-ID: <449b7b39-dc6a-dfcd-c149-03da03e5350d@codeaurora.org>
+Date: Tue, 9 Jan 2018 11:08:52 -0800
+MIME-Version: 1.0
+In-Reply-To: <20171219175202.GB12655@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This is a perfect use for xa_cmpxchg().  Note the use of 0 for GFP
-flags; we won't be allocating memory.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/shmem.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+On 12/19/2017 9:52 AM, Bjorn Andersson wrote:
+> On Mon 18 Dec 14:02 PST 2017, Chris Lew wrote:
+> 
+>> Add support for client's to query the edge name their channel is
+>> registered for. This is useful for clients who share the same channel
+>> identifier across different remote procs.
+>>
+> 
+> I presume this will result in a strcmp in some client driver?
+> 
+> When we're registering the rpmsg device, as part of handling of an
+> arriving "open request", we do look for an of_node with matching
+> qcom,glink-channels and if one is found we point the dev->of_node of the
+> new device to this node.
+> 
+> So I would suggest that you, in your client driver, use this to decide
+> which instance you're on; regardless if you're using compatible based
+> driver matching.
+> 
+> Does this work for you?
+> 
+> Regards,
+> Bjorn
+> 
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index e8233cb7ab5c..5a2226e06f8c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -635,16 +635,13 @@ static void shmem_delete_from_page_cache(struct page *page, void *radswap)
- }
- 
- /*
-- * Remove swap entry from radix tree, free the swap and its page cache.
-+ * Remove swap entry from page cache, free the swap and its page cache.
-  */
- static int shmem_free_swap(struct address_space *mapping,
- 			   pgoff_t index, void *radswap)
- {
--	void *old;
-+	void *old = xa_cmpxchg(&mapping->pages, index, radswap, NULL, 0);
- 
--	xa_lock_irq(&mapping->pages);
--	old = radix_tree_delete_item(&mapping->pages, index, radswap);
--	xa_unlock_irq(&mapping->pages);
- 	if (old != radswap)
- 		return -ENOENT;
- 	free_swap_and_cache(radix_to_swp_entry(radswap));
+Yea I think this works for us, we can drop this patch.
+
+Just to confirm my understanding, clients can use rpdev->dev.of_node to 
+get the parent of_node and from there get the label field? Also to 
+ensure of_node is set, client's need to add their channel to the dt with 
+qcom,glink-channels.
+
 -- 
-2.15.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
