@@ -1,160 +1,51 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v2 06/16] remoteproc: modify vring allocation to support
- preallocated region
-Date: Fri, 12 Jan 2018 08:13:11 +0000
-Message-ID: <3799d8685aff4a2b86c6db24aacfb33a@SFHDAG7NODE2.st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-7-git-send-email-loic.pallardy@st.com>
- <20171214010919.GH17344@builder>
-In-Reply-To: <20171214010919.GH17344@builder>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <clew@codeaurora.org>
+Subject: Re: [PATCH 1/6] dt-bindings: soc: qcom: Add label for GLINK bindings
+References: <1513634534-22861-1-git-send-email-clew@codeaurora.org>
+ <1513634534-22861-2-git-send-email-clew@codeaurora.org>
+ <20171220183000.rhxgyikfqzxmqkjo@rob-hp-laptop>
+ <20171221013557.GE12655@minitux>
+ <d6ad476e-b68c-a1ed-9256-5997312a6024@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
+Message-ID: <24be93c8-d09e-5250-d654-d5f7a24c094b@codeaurora.org>
+Date: Tue, 9 Jan 2018 11:11:36 -0800
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+In-Reply-To: <d6ad476e-b68c-a1ed-9256-5997312a6024@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Stephen Boyd <sboyd@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Thursday, December 14, 2017 2:09 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org
-> Subject: Re: [PATCH v2 06/16] remoteproc: modify vring allocation to supp=
-ort
-> preallocated region
->=20
-> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
->=20
-> > Current version of rproc_alloc_vring function supports only dynamic vri=
-ng
-> > allocation.
-> > This patch extends rproc_alloc_vring to verify if requested vring DA is
-> > already part or not of a registered carveout. If true, nothing to do, e=
-lse
-> > just allocate vring as before.
-> >
-> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 53
-> +++++++++++++++++++++++-------------
-> >  1 file changed, 34 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> > index 515a17a..bdc99cd 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -263,21 +263,41 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev,
-> int i)
-> >  	struct device *dev =3D &rproc->dev;
-> >  	struct rproc_vring *rvring =3D &rvdev->vring[i];
-> >  	struct fw_rsc_vdev *rsc;
-> > -	dma_addr_t dma;
-> > +	dma_addr_t dma =3D -1;
-> >  	void *va;
-> >  	int ret, size, notifyid;
-> >
-> >  	/* actual size of vring (in bytes) */
-> >  	size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
-> >
-> > -	/*
-> > -	 * Allocate non-cacheable memory for the vring. In the future
-> > -	 * this call will also configure the IOMMU for us
-> > -	 */
-> > -	va =3D dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
->=20
-> This dma_alloc_coherent() should have been a full
-> rproc_handle_carveout(), so that we don't duplicate the effort of
-> allocation and setting up the iommu mapping.
+On 12/21/2017 11:36 AM, Stephen Boyd wrote:
+> On 12/20/2017 05:35 PM, Bjorn Andersson wrote:
+>> On Wed 20 Dec 10:30 PST 2017, Rob Herring wrote:
+>>
+>>> On Mon, Dec 18, 2017 at 02:02:09PM -0800, Chris Lew wrote:
+>>>> Add a label property to identify the edge this node represents.
+>>> Why does a user need to know this?
+>>>
+>> We have multiple remoteproc instances, each one having one or more
+>> associated SMD or GLINK links (this node), exposing logical
+>> communication channels. Some of these logical channels are exposed to
+>> user space and we need a way to distinguish them there.
+>>
+>> In the current implementation of SMD this value goes straight into an
+>> sysfs attribute that we can use when writing udev rules and for the DIAG
+>> implementation to pair up channels related to the same remoteproc. This
+>> adds the equivalent information for glink-backed channels.
+>>
+>>
+>> I'm therefor in favor of picking this patch.
+> 
+> Please add these details to the commit log. Just writing what the patch
+> is doing isn't very helpful.
+> 
 
-If all memory region are defined as carveout, in that case all allocations =
-will be done before by rproc_handle_carveout
-and here we just get access to the area thanks to the carveout name...
->=20
-> > -	if (!va) {
-> > -		dev_err(dev->parent, "dma_alloc_coherent failed\n");
-> > -		return -EINVAL;
-> > +	/* get vring resource table pointer */
-> > +	rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
-> > +
-> > +	if (rsc->vring[i].da !=3D FW_RSC_ADDR_ANY) {
->=20
-> I think it's reasonable in a system with iommu to specify da, rely on
-> dynamic allocation and expect the iommu to bet configured.
+Ok, will do.
 
-It is the same as for carveout. Agree to first lookup by name and then chec=
-k requested resource parameters.
-If no region found, in that case we rely on default dynamic allocation.
-
->=20
-> > +		va =3D rproc_find_carveout_by_da(rproc, rsc->vring[i].da,
-> size);
-> > +
-> > +		if (!va) {
-> > +			/* No region not found */
-> > +			dev_err(dev->parent, "Pre-allocated vring not
-> found\n");
-> > +			return -ENOMEM;
-> > +		}
-> [..]
-> > @@ -304,14 +325,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, in=
-t
-> i)
-> >  	rvring->dma =3D dma;
-> >  	rvring->notifyid =3D notifyid;
-> >
-> > -	/*
-> > -	 * Let the rproc know the notifyid and da of this vring.
-> > -	 * Not all platforms use dma_alloc_coherent to automatically
-> > -	 * set up the iommu. In this case the device address (da) will
-> > -	 * hold the physical address and not the device address.
-> > -	 */
-> > -	rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
-> > -	rsc->vring[i].da =3D dma;
->=20
-> I prefer that we keep the rsc assignments in a single place.
-
-Ok
-
->=20
-> > +	/* Let the rproc know the notifyid of this vring. */
-> >  	rsc->vring[i].notifyid =3D notifyid;
-> >  	return 0;
-> >  }
-> > @@ -348,7 +362,8 @@ void rproc_free_vring(struct rproc_vring *rvring)
-> >  	int idx =3D rvring->rvdev->vring - rvring;
-> >  	struct fw_rsc_vdev *rsc;
-> >
-> > -	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring-
-> >dma);
-> > +	if (rvring->dma !=3D -1)
->=20
-> This doesn't feel well designed.
->=20
-> > +		dma_free_coherent(rproc->dev.parent, size, rvring->va,
-> rvring->dma);
->=20
-> How about we start by reworking rproc_alloc_vring() to utilize the
-> carveout handler logic, i.e. when we parse the vring we create (or from
-> your other patches find an existing) carveout and assign this to rvring.
-> Then rproc_alloc_vring() becomes a matter of copying the information off
-> the associated carveout to the rvring and rsc.
-
-Yes good idea, if no name match on a registered carveout, rproc_alloc_vring=
- can create one. Like that we are sure to have all the carveout handled at =
-the same location, in the same way.
-
-/Loic
->=20
-> This would also simplify the cleanup path as the carveout would be taken
-> care of by rproc_resource_cleanup(), both in the successful and
-> unsuccessful cases.
->=20
-> Regards,
-> Bjorn
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
