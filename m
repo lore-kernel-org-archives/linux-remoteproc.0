@@ -1,113 +1,61 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 2/8] remoteproc: Cache resource table size
-Date: Fri,  5 Jan 2018 15:57:59 -0800
-Message-Id: <20180105235805.9948-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20180105235805.9948-1-bjorn.andersson@linaro.org>
-References: <20180105235805.9948-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v2 11/16] remoteproc: introduce
+ rproc_find_carveout_by_name function
+Date: Mon, 15 Jan 2018 09:10:06 +0000
+Message-ID: <9a77f950ed504e27a7e8a13ec29182cb@SFHDAG7NODE2.st.com>
+References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
+ <1512060411-729-12-git-send-email-loic.pallardy@st.com>
+ <20171214013236.GL17344@builder>
+In-Reply-To: <20171214013236.GL17344@builder>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-We don't re-read the resource table during a recovery, so it is possible
-in the recovery path that the resource table has a different size than
-cached_table. Store the original size of cached_table to avoid these
-getting out of sync.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
 
-Changes since v1:
-- None
+> -----Original Message-----
+> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
+> Sent: Thursday, December 14, 2017 2:33 AM
+> To: Loic PALLARDY <loic.pallardy@st.com>
+> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> benjamin.gaignard@linaro.org
+> Subject: Re: [PATCH v2 11/16] remoteproc: introduce
+> rproc_find_carveout_by_name function
+>=20
+> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
+> > +struct rproc_mem_entry *
+> > +rproc_find_carveout_by_name(struct rproc *rproc, char *name)
+>=20
+> In almost all cases after this patch you have to do a snprintf(), so it
+> would be better to make this function format the name based on a format
+> string and variable arguments.
 
- drivers/remoteproc/remoteproc_core.c | 20 +++++++-------------
- include/linux/remoteproc.h           |  2 ++
- 2 files changed, 9 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 758fad3131a3..208ccf709cad 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -732,7 +732,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- };
- 
- /* handle firmware resource entries before booting the remote processor */
--static int rproc_handle_resources(struct rproc *rproc, int len,
-+static int rproc_handle_resources(struct rproc *rproc,
- 				  rproc_handle_resource_t handlers[RSC_LAST])
- {
- 	struct device *dev = &rproc->dev;
-@@ -742,7 +742,7 @@ static int rproc_handle_resources(struct rproc *rproc, int len,
- 	for (i = 0; i < rproc->table_ptr->num; i++) {
- 		int offset = rproc->table_ptr->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
--		int avail = len - offset - sizeof(*hdr);
-+		int avail = rproc->table_sz - offset - sizeof(*hdr);
- 		void *rsc = (void *)hdr + sizeof(*hdr);
- 
- 		/* make sure table isn't truncated */
-@@ -849,16 +849,9 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 
- static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- {
--	struct resource_table *table, *loaded_table;
-+	struct resource_table *loaded_table;
- 	struct device *dev = &rproc->dev;
--	int ret, tablesz;
--
--	/* look for the resource table */
--	table = rproc_find_rsc_table(rproc, fw, &tablesz);
--	if (!table) {
--		dev_err(dev, "Resource table look up failed\n");
--		return -EINVAL;
--	}
-+	int ret;
- 
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
-@@ -877,7 +870,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	 */
- 	loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
- 	if (loaded_table) {
--		memcpy(loaded_table, rproc->cached_table, tablesz);
-+		memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
- 		rproc->table_ptr = loaded_table;
- 	}
- 
-@@ -951,12 +944,13 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		goto clean_up;
- 
- 	rproc->table_ptr = rproc->cached_table;
-+	rproc->table_sz = tablesz;
- 
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
- 
- 	/* handle fw resources which are required to boot rproc */
--	ret = rproc_handle_resources(rproc, tablesz, rproc_loading_handlers);
-+	ret = rproc_handle_resources(rproc, rproc_loading_handlers);
- 	if (ret) {
- 		dev_err(dev, "Failed to process resources: %d\n", ret);
- 		goto clean_up_resources;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 6f1d8e025c81..6fdc62e29d6f 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -410,6 +410,7 @@ enum rproc_crash_type {
-  * @max_notifyid: largest allocated notify id.
-  * @table_ptr: pointer to the resource table in effect
-  * @cached_table: copy of the resource table
-+ * @table_sz: size of @cached_table
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  */
- struct rproc {
-@@ -440,6 +441,7 @@ struct rproc {
- 	int max_notifyid;
- 	struct resource_table *table_ptr;
- 	struct resource_table *cached_table;
-+	size_t table_sz;
- 	bool has_iommu;
- 	bool auto_boot;
- };
--- 
-2.15.0
+Good point
+/Loic
+>=20
+> > +{
+> > +	struct rproc_mem_entry *carveout, *mem =3D NULL;
+> > +
+> > +	if (!name)
+> > +		return NULL;
+> > +
+> > +	list_for_each_entry(carveout, &rproc->carveouts, node) {
+> > +		/* Compare carveout and requested names */
+> > +		if (!strcmp(carveout->name, name)) {
+> > +			mem =3D carveout;
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	return mem;
+> > +}
+> > +
+>=20
+> Regards,
+> Bjorn
