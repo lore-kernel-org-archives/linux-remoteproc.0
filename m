@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 95/99] f2fs: Convert gclist.iroot to XArray
-Date: Wed, 17 Jan 2018 12:21:59 -0800
-Message-Id: <20180117202203.19756-96-willy@infradead.org>
+Subject: [PATCH v6 54/99] nilfs2: Convert to XArray
+Date: Wed, 17 Jan 2018 12:21:18 -0800
+Message-Id: <20180117202203.19756-55-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,72 +11,206 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Straightforward conversion.
+I'm not 100% convinced that the rewrite of nilfs_copy_back_pages is
+correct, but it will at least have different bugs from the current
+version.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/f2fs/gc.c | 14 +++++++-------
- fs/f2fs/gc.h |  2 +-
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ fs/nilfs2/btnode.c | 37 +++++++++++-----------------
+ fs/nilfs2/page.c   | 72 +++++++++++++++++++++++++++++++-----------------------
+ 2 files changed, 56 insertions(+), 53 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index aac1e02f75df..2b33068dc36b 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -417,7 +417,7 @@ static struct inode *find_gc_inode(struct gc_inode_list *gc_list, nid_t ino)
+diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
+index 9e2a00207436..b5997e8c5441 100644
+--- a/fs/nilfs2/btnode.c
++++ b/fs/nilfs2/btnode.c
+@@ -177,42 +177,36 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 	ctxt->newbh = NULL;
+ 
+ 	if (inode->i_blkbits == PAGE_SHIFT) {
+-		lock_page(obh->b_page);
+-		/*
+-		 * We cannot call radix_tree_preload for the kernels older
+-		 * than 2.6.23, because it is not exported for modules.
+-		 */
++		void *entry;
++		struct page *opage = obh->b_page;
++		lock_page(opage);
+ retry:
+-		err = radix_tree_preload(GFP_NOFS & ~__GFP_HIGHMEM);
+-		if (err)
+-			goto failed_unlock;
+ 		/* BUG_ON(oldkey != obh->b_page->index); */
+-		if (unlikely(oldkey != obh->b_page->index))
+-			NILFS_PAGE_BUG(obh->b_page,
++		if (unlikely(oldkey != opage->index))
++			NILFS_PAGE_BUG(opage,
+ 				       "invalid oldkey %lld (newkey=%lld)",
+ 				       (unsigned long long)oldkey,
+ 				       (unsigned long long)newkey);
+ 
+-		xa_lock_irq(&btnc->pages);
+-		err = radix_tree_insert(&btnc->pages, newkey, obh->b_page);
+-		xa_unlock_irq(&btnc->pages);
++		entry = xa_cmpxchg(&btnc->pages, newkey, NULL, opage, GFP_NOFS);
+ 		/*
+ 		 * Note: page->index will not change to newkey until
+ 		 * nilfs_btnode_commit_change_key() will be called.
+ 		 * To protect the page in intermediate state, the page lock
+ 		 * is held.
+ 		 */
+-		radix_tree_preload_end();
+-		if (!err)
++		if (!entry)
+ 			return 0;
+-		else if (err != -EEXIST)
++		if (xa_is_err(entry)) {
++			err = xa_err(entry);
+ 			goto failed_unlock;
++		}
+ 
+ 		err = invalidate_inode_pages2_range(btnc, newkey, newkey);
+ 		if (!err)
+ 			goto retry;
+ 		/* fallback to copy mode */
+-		unlock_page(obh->b_page);
++		unlock_page(opage);
+ 	}
+ 
+ 	nbh = nilfs_btnode_create_block(btnc, newkey);
+@@ -252,9 +246,8 @@ void nilfs_btnode_commit_change_key(struct address_space *btnc,
+ 		mark_buffer_dirty(obh);
+ 
+ 		xa_lock_irq(&btnc->pages);
+-		radix_tree_delete(&btnc->pages, oldkey);
+-		radix_tree_tag_set(&btnc->pages, newkey,
+-				   PAGECACHE_TAG_DIRTY);
++		__xa_erase(&btnc->pages, oldkey);
++		__xa_set_tag(&btnc->pages, newkey, PAGECACHE_TAG_DIRTY);
+ 		xa_unlock_irq(&btnc->pages);
+ 
+ 		opage->index = obh->b_blocknr = newkey;
+@@ -283,9 +276,7 @@ void nilfs_btnode_abort_change_key(struct address_space *btnc,
+ 		return;
+ 
+ 	if (nbh == NULL) {	/* blocksize == pagesize */
+-		xa_lock_irq(&btnc->pages);
+-		radix_tree_delete(&btnc->pages, newkey);
+-		xa_unlock_irq(&btnc->pages);
++		xa_erase(&btnc->pages, newkey);
+ 		unlock_page(ctxt->bh->b_page);
+ 	} else
+ 		brelse(nbh);
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 1c6703efde9e..31d20f624971 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -304,10 +304,10 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
+ void nilfs_copy_back_pages(struct address_space *dmap,
+ 			   struct address_space *smap)
  {
- 	struct inode_entry *ie;
++	XA_STATE(xas, &dmap->pages, 0);
+ 	struct pagevec pvec;
+ 	unsigned int i, n;
+ 	pgoff_t index = 0;
+-	int err;
  
--	ie = radix_tree_lookup(&gc_list->iroot, ino);
-+	ie = xa_load(&gc_list->iroot, ino);
- 	if (ie)
- 		return ie->inode;
- 	return NULL;
-@@ -434,7 +434,7 @@ static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
- 	new_ie = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
- 	new_ie->inode = inode;
+ 	pagevec_init(&pvec);
+ repeat:
+@@ -317,43 +317,56 @@ void nilfs_copy_back_pages(struct address_space *dmap,
  
--	f2fs_radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie);
-+	xa_store(&gc_list->iroot, inode->i_ino, new_ie, GFP_NOFS);
- 	list_add_tail(&new_ie->list, &gc_list->ilist);
- }
+ 	for (i = 0; i < pagevec_count(&pvec); i++) {
+ 		struct page *page = pvec.pages[i], *dpage;
+-		pgoff_t offset = page->index;
++		xas_set(&xas, page->index);
  
-@@ -442,7 +442,7 @@ static void put_gc_inode(struct gc_inode_list *gc_list)
- {
- 	struct inode_entry *ie, *next_ie;
- 	list_for_each_entry_safe(ie, next_ie, &gc_list->ilist, list) {
--		radix_tree_delete(&gc_list->iroot, ie->inode->i_ino);
-+		xa_erase(&gc_list->iroot, ie->inode->i_ino);
- 		iput(ie->inode);
- 		list_del(&ie->list);
- 		kmem_cache_free(inode_entry_slab, ie);
-@@ -989,10 +989,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 	int ret = 0;
- 	struct cp_control cpc;
- 	unsigned int init_segno = segno;
--	struct gc_inode_list gc_list = {
--		.ilist = LIST_HEAD_INIT(gc_list.ilist),
--		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
--	};
-+	struct gc_inode_list gc_list;
+ 		lock_page(page);
+-		dpage = find_lock_page(dmap, offset);
++		do {
++			xas_lock_irq(&xas);
++			dpage = xas_create(&xas);
++			if (!xas_error(&xas))
++				break;
++			xas_unlock_irq(&xas);
++			if (!xas_nomem(&xas, GFP_NOFS)) {
++				unlock_page(page);
++				/*
++				 * Callers have a touching faith that this
++				 * function cannot fail.  Just leak the page.
++				 * Other pages may be salvagable if the
++				 * xarray doesn't need to allocate memory
++				 * to store them.
++				 */
++				WARN_ON(1);
++				page->mapping = NULL;
++				put_page(page);
++				goto shadow_remove;
++			}
++		} while (1);
 +
-+	xa_init(&gc_list.iroot);
-+	INIT_LIST_HEAD(&gc_list.ilist);
- 
- 	trace_f2fs_gc_begin(sbi->sb, sync, background,
- 				get_pages(sbi, F2FS_DIRTY_NODES),
-diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-index 9325191fab2d..769259b0a4f6 100644
---- a/fs/f2fs/gc.h
-+++ b/fs/f2fs/gc.h
-@@ -41,7 +41,7 @@ struct f2fs_gc_kthread {
- 
- struct gc_inode_list {
- 	struct list_head ilist;
--	struct radix_tree_root iroot;
-+	struct xarray iroot;
- };
- 
- /*
+ 		if (dpage) {
+-			/* override existing page on the destination cache */
++			get_page(dpage);
++			xas_unlock_irq(&xas);
++			lock_page(dpage);
++			/* override existing page in the destination cache */
+ 			WARN_ON(PageDirty(dpage));
+ 			nilfs_copy_page(dpage, page, 0);
+ 			unlock_page(dpage);
+ 			put_page(dpage);
+ 		} else {
+-			struct page *page2;
+-
+-			/* move the page to the destination cache */
+-			xa_lock_irq(&smap->pages);
+-			page2 = radix_tree_delete(&smap->pages, offset);
+-			WARN_ON(page2 != page);
+-
+-			smap->nrpages--;
+-			xa_unlock_irq(&smap->pages);
+-
+-			xa_lock_irq(&dmap->pages);
+-			err = radix_tree_insert(&dmap->pages, offset, page);
+-			if (unlikely(err < 0)) {
+-				WARN_ON(err == -EEXIST);
+-				page->mapping = NULL;
+-				put_page(page); /* for cache */
+-			} else {
+-				page->mapping = dmap;
+-				dmap->nrpages++;
+-				if (PageDirty(page))
+-					radix_tree_tag_set(&dmap->pages,
+-							   offset,
+-							   PAGECACHE_TAG_DIRTY);
+-			}
++			xas_store(&xas, page);
++			page->mapping = dmap;
++			dmap->nrpages++;
++			if (PageDirty(page))
++				xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
+ 			xa_unlock_irq(&dmap->pages);
+ 		}
++
++shadow_remove:
++		/* remove the page from the shadow cache */
++		xa_lock_irq(&smap->pages);
++		WARN_ON(__xa_erase(&smap->pages, xas.xa_index) != page);
++		smap->nrpages--;
++		xa_unlock_irq(&smap->pages);
++
+ 		unlock_page(page);
+ 	}
+ 	pagevec_release(&pvec);
+@@ -476,8 +489,7 @@ int __nilfs_clear_page_dirty(struct page *page)
+ 	if (mapping) {
+ 		xa_lock_irq(&mapping->pages);
+ 		if (test_bit(PG_dirty, &page->flags)) {
+-			radix_tree_tag_clear(&mapping->pages,
+-					     page_index(page),
++			__xa_clear_tag(&mapping->pages, page_index(page),
+ 					     PAGECACHE_TAG_DIRTY);
+ 			xa_unlock_irq(&mapping->pages);
+ 			return clear_page_dirty_for_io(page);
 -- 
 2.15.1
