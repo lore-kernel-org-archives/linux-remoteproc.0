@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 78/99] sh: intc: Convert to XArray
-Date: Wed, 17 Jan 2018 12:21:42 -0800
-Message-Id: <20180117202203.19756-79-willy@infradead.org>
+Subject: [PATCH v6 59/99] dax: More XArray conversion
+Date: Wed, 17 Jan 2018 12:21:23 -0800
+Message-Id: <20180117202203.19756-60-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,231 +11,252 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The radix tree was being protected by a raw spinlock.  I believe that
-was not necessary, and the new internal regular spinlock will be
-adequate for this array.
+This time, we want to convert get_unlocked_mapping_entry() to use the
+XArray.  That has a ripple effect, causing us to change the waitqueues
+to hash on the address of the xarray rather than the address of the
+mapping (functionally equivalent), and create a lot of on-the-stack
+xa_state which are only used as a container for passing the xarray and
+the index down to deeper function calls.
+
+Also rename dax_wake_mapping_entry_waiter() to dax_wake_entry().
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/sh/intc/core.c      |  9 ++----
- drivers/sh/intc/internals.h |  5 ++--
- drivers/sh/intc/virq.c      | 72 +++++++++++++--------------------------------
- 3 files changed, 25 insertions(+), 61 deletions(-)
+ fs/dax.c | 72 +++++++++++++++++++++++++++++-----------------------------------
+ 1 file changed, 33 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/sh/intc/core.c b/drivers/sh/intc/core.c
-index 8e72bcbd3d6d..356a423d9dcb 100644
---- a/drivers/sh/intc/core.c
-+++ b/drivers/sh/intc/core.c
-@@ -30,7 +30,6 @@
- #include <linux/syscore_ops.h>
- #include <linux/list.h>
- #include <linux/spinlock.h>
--#include <linux/radix-tree.h>
- #include <linux/export.h>
- #include <linux/sort.h>
- #include "internals.h"
-@@ -78,11 +77,8 @@ static void __init intc_register_irq(struct intc_desc *desc,
- 	struct intc_handle_int *hp;
- 	struct irq_data *irq_data;
- 	unsigned int data[2], primary;
--	unsigned long flags;
+diff --git a/fs/dax.c b/fs/dax.c
+index 8eab0b56f7f9..d3fe61b95216 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -120,7 +120,7 @@ static int dax_is_empty_entry(void *entry)
+  * DAX radix tree locking
+  */
+ struct exceptional_entry_key {
+-	struct address_space *mapping;
++	struct xarray *xa;
+ 	pgoff_t entry_start;
+ };
  
--	raw_spin_lock_irqsave(&intc_big_lock, flags);
--	radix_tree_insert(&d->tree, enum_id, intc_irq_xlate_get(irq));
--	raw_spin_unlock_irqrestore(&intc_big_lock, flags);
-+	xa_store(&d->array, enum_id, intc_irq_xlate_get(irq), GFP_ATOMIC);
+@@ -129,9 +129,10 @@ struct wait_exceptional_entry_queue {
+ 	struct exceptional_entry_key key;
+ };
+ 
+-static wait_queue_head_t *dax_entry_waitqueue(struct address_space *mapping,
+-		pgoff_t index, void *entry, struct exceptional_entry_key *key)
++static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
++		void *entry, struct exceptional_entry_key *key)
+ {
++	unsigned long index = xas->xa_index;
+ 	unsigned long hash;
  
  	/*
- 	 * Prefer single interrupt source bitmap over other combinations:
-@@ -196,8 +192,7 @@ int __init register_intc_controller(struct intc_desc *desc)
- 	INIT_LIST_HEAD(&d->list);
- 	list_add_tail(&d->list, &intc_list);
+@@ -142,10 +143,10 @@ static wait_queue_head_t *dax_entry_waitqueue(struct address_space *mapping,
+ 	if (dax_is_pmd_entry(entry))
+ 		index &= ~PG_PMD_COLOUR;
  
--	raw_spin_lock_init(&d->lock);
--	INIT_RADIX_TREE(&d->tree, GFP_ATOMIC);
-+	xa_init(&d->array);
+-	key->mapping = mapping;
++	key->xa = xas->xa;
+ 	key->entry_start = index;
  
- 	d->index = nr_intc_controllers;
+-	hash = hash_long((unsigned long)mapping ^ index, DAX_WAIT_TABLE_BITS);
++	hash = hash_long((unsigned long)xas->xa ^ index, DAX_WAIT_TABLE_BITS);
+ 	return wait_table + hash;
+ }
  
-diff --git a/drivers/sh/intc/internals.h b/drivers/sh/intc/internals.h
-index fa73c173b56a..9b6fd07e99a6 100644
---- a/drivers/sh/intc/internals.h
-+++ b/drivers/sh/intc/internals.h
-@@ -5,7 +5,7 @@
- #include <linux/list.h>
- #include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/radix-tree.h>
-+#include <linux/xarray.h>
- #include <linux/device.h>
+@@ -156,7 +157,7 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait, unsigned int mo
+ 	struct wait_exceptional_entry_queue *ewait =
+ 		container_of(wait, struct wait_exceptional_entry_queue, wait);
  
- #define _INTC_MK(fn, mode, addr_e, addr_d, width, shift) \
-@@ -54,8 +54,7 @@ struct intc_subgroup_entry {
- struct intc_desc_int {
- 	struct list_head list;
- 	struct device dev;
--	struct radix_tree_root tree;
--	raw_spinlock_t lock;
-+	struct xarray array;
- 	unsigned int index;
- 	unsigned long *reg;
- #ifdef CONFIG_SMP
-diff --git a/drivers/sh/intc/virq.c b/drivers/sh/intc/virq.c
-index a638c3048207..801c9c8b7556 100644
---- a/drivers/sh/intc/virq.c
-+++ b/drivers/sh/intc/virq.c
-@@ -12,7 +12,6 @@
- #include <linux/slab.h>
- #include <linux/irq.h>
- #include <linux/list.h>
--#include <linux/radix-tree.h>
- #include <linux/spinlock.h>
- #include <linux/export.h>
- #include "internals.h"
-@@ -27,10 +26,7 @@ struct intc_virq_list {
- #define for_each_virq(entry, head) \
- 	for (entry = head; entry; entry = entry->next)
- 
--/*
-- * Tags for the radix tree
-- */
--#define INTC_TAG_VIRQ_NEEDS_ALLOC	0
-+#define INTC_TAG_VIRQ_NEEDS_ALLOC	XA_TAG_0
- 
- void intc_irq_xlate_set(unsigned int irq, intc_enum id, struct intc_desc_int *d)
+-	if (key->mapping != ewait->key.mapping ||
++	if (key->xa != ewait->key.xa ||
+ 	    key->entry_start != ewait->key.entry_start)
+ 		return 0;
+ 	return autoremove_wake_function(wait, mode, sync, NULL);
+@@ -167,13 +168,12 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait, unsigned int mo
+  * The important information it's conveying is whether the entry at
+  * this index used to be a PMD entry.
+  */
+-static void dax_wake_mapping_entry_waiter(struct address_space *mapping,
+-		pgoff_t index, void *entry, bool wake_all)
++static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
  {
-@@ -54,23 +50,18 @@ int intc_irq_lookup(const char *chipname, intc_enum enum_id)
- 	int irq = -1;
+ 	struct exceptional_entry_key key;
+ 	wait_queue_head_t *wq;
  
- 	list_for_each_entry(d, &intc_list, list) {
--		int tagged;
--
- 		if (strcmp(d->chip.name, chipname) != 0)
- 			continue;
+-	wq = dax_entry_waitqueue(mapping, index, entry, &key);
++	wq = dax_entry_waitqueue(xas, entry, &key);
  
- 		/*
- 		 * Catch early lookups for subgroup VIRQs that have not
--		 * yet been allocated an IRQ. This already includes a
--		 * fast-path out if the tree is untagged, so there is no
--		 * need to explicitly test the root tree.
-+		 * yet been allocated an IRQ.
- 		 */
--		tagged = radix_tree_tag_get(&d->tree, enum_id,
--					    INTC_TAG_VIRQ_NEEDS_ALLOC);
--		if (unlikely(tagged))
-+		if (unlikely(xa_get_tag(&d->array, enum_id,
-+						INTC_TAG_VIRQ_NEEDS_ALLOC)))
- 			break;
- 
--		ptr = radix_tree_lookup(&d->tree, enum_id);
-+		ptr = xa_load(&d->array, enum_id);
- 		if (ptr) {
- 			irq = ptr - intc_irq_xlate;
- 			break;
-@@ -148,22 +139,16 @@ static void __init intc_subgroup_init_one(struct intc_desc *desc,
+ 	/*
+ 	 * Checking for locked entry and prepare_to_wait_exclusive() happens
+@@ -205,10 +205,9 @@ static inline void *lock_slot(struct xa_state *xas)
+  *
+  * Must be called with xa_lock held.
+  */
+-static void *get_unlocked_mapping_entry(struct address_space *mapping,
+-					pgoff_t index, void ***slotp)
++static void *get_unlocked_mapping_entry(struct xa_state *xas)
  {
- 	struct intc_map_entry *mapped;
- 	unsigned int pirq;
--	unsigned long flags;
- 	int i;
+-	void *entry, **slot;
++	void *entry;
+ 	struct wait_exceptional_entry_queue ewait;
+ 	wait_queue_head_t *wq;
  
--	mapped = radix_tree_lookup(&d->tree, subgroup->parent_id);
--	if (!mapped) {
--		WARN_ON(1);
-+	mapped = xa_load(&d->array, subgroup->parent_id);
-+	if (WARN_ON(!mapped))
+@@ -216,22 +215,19 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
+ 	ewait.wait.func = wake_exceptional_entry_func;
+ 
+ 	for (;;) {
+-		entry = __radix_tree_lookup(&mapping->pages, index, NULL,
+-					  &slot);
+-		if (!entry ||
+-		    WARN_ON_ONCE(!xa_is_value(entry)) || !dax_locked(entry)) {
+-			if (slotp)
+-				*slotp = slot;
++		entry = xas_load(xas);
++		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
++		    !dax_locked(entry))
+ 			return entry;
+-		}
+ 
+-		wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
++		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
+ 		prepare_to_wait_exclusive(wq, &ewait.wait,
+ 					  TASK_UNINTERRUPTIBLE);
+-		xa_unlock_irq(&mapping->pages);
++		xas_pause(xas);
++		xas_unlock_irq(xas);
+ 		schedule();
+ 		finish_wait(wq, &ewait.wait);
+-		xa_lock_irq(&mapping->pages);
++		xas_lock_irq(xas);
+ 	}
+ }
+ 
+@@ -251,7 +247,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
+ 	xas_store(&xas, entry);
+ 	/* Safe to not call xas_pause here -- we don't touch the array after */
+ 	xas_unlock_irq(&xas);
+-	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
++	dax_wake_entry(&xas, entry, false);
+ }
+ 
+ static void put_locked_mapping_entry(struct address_space *mapping,
+@@ -264,14 +260,13 @@ static void put_locked_mapping_entry(struct address_space *mapping,
+  * Called when we are done with radix tree entry we looked up via
+  * get_unlocked_mapping_entry() and which we didn't lock in the end.
+  */
+-static void put_unlocked_mapping_entry(struct address_space *mapping,
+-				       pgoff_t index, void *entry)
++static void put_unlocked_mapping_entry(struct xa_state *xas, void *entry)
+ {
+ 	if (!entry)
  		return;
--	}
  
- 	pirq = mapped - intc_irq_xlate;
- 
--	raw_spin_lock_irqsave(&d->lock, flags);
--
- 	for (i = 0; i < ARRAY_SIZE(subgroup->enum_ids); i++) {
- 		struct intc_subgroup_entry *entry;
--		int err;
- 
- 		if (!subgroup->enum_ids[i])
- 			continue;
-@@ -176,15 +161,14 @@ static void __init intc_subgroup_init_one(struct intc_desc *desc,
- 		entry->enum_id = subgroup->enum_ids[i];
- 		entry->handle = intc_subgroup_data(subgroup, d, i);
- 
--		err = radix_tree_insert(&d->tree, entry->enum_id, entry);
--		if (unlikely(err < 0))
-+		if (xa_err(xa_store(&d->array, entry->enum_id, entry,
-+						GFP_NOWAIT))) {
-+			kfree(entry);
- 			break;
--
--		radix_tree_tag_set(&d->tree, entry->enum_id,
-+		}
-+		xa_set_tag(&d->array, entry->enum_id,
- 				   INTC_TAG_VIRQ_NEEDS_ALLOC);
- 	}
--
--	raw_spin_unlock_irqrestore(&d->lock, flags);
+ 	/* We have to wake up next waiter for the radix tree entry lock */
+-	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
++	dax_wake_entry(xas, entry, false);
  }
  
- void __init intc_subgroup_init(struct intc_desc *desc, struct intc_desc_int *d)
-@@ -201,28 +185,16 @@ void __init intc_subgroup_init(struct intc_desc *desc, struct intc_desc_int *d)
- static void __init intc_subgroup_map(struct intc_desc_int *d)
+ /*
+@@ -308,7 +303,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 
+ restart:
+ 	xa_lock_irq(&mapping->pages);
+-	entry = get_unlocked_mapping_entry(mapping, index, &slot);
++	entry = get_unlocked_mapping_entry(&xas);
+ 
+ 	if (WARN_ON_ONCE(entry && !xa_is_value(entry))) {
+ 		entry = ERR_PTR(-EIO);
+@@ -318,8 +313,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 	if (entry) {
+ 		if (size_flag & DAX_PMD) {
+ 			if (dax_is_pte_entry(entry)) {
+-				put_unlocked_mapping_entry(mapping, index,
+-						entry);
++				put_unlocked_mapping_entry(&xas, entry);
+ 				entry = ERR_PTR(-EEXIST);
+ 				goto out_unlock;
+ 			}
+@@ -382,8 +376,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 		if (pmd_downgrade) {
+ 			radix_tree_delete(&mapping->pages, index);
+ 			mapping->nrexceptional--;
+-			dax_wake_mapping_entry_waiter(mapping, index, entry,
+-					true);
++			dax_wake_entry(&xas, entry, true);
+ 		}
+ 
+ 		entry = dax_radix_locked_entry(0, size_flag | DAX_EMPTY);
+@@ -417,12 +410,13 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 					  pgoff_t index, bool trunc)
  {
- 	struct intc_subgroup_entry *entries[32];
--	unsigned long flags;
- 	unsigned int nr_found;
- 	int i;
++	XA_STATE(xas, &mapping->pages, index);
+ 	int ret = 0;
+ 	void *entry;
+ 	struct radix_tree_root *pages = &mapping->pages;
  
--	raw_spin_lock_irqsave(&d->lock, flags);
--
--restart:
--	nr_found = radix_tree_gang_lookup_tag_slot(&d->tree,
--			(void ***)entries, 0, ARRAY_SIZE(entries),
--			INTC_TAG_VIRQ_NEEDS_ALLOC);
-+	nr_found = xa_extract(&d->array, (void **)entries, 0, ULONG_MAX,
-+			ARRAY_SIZE(entries), INTC_TAG_VIRQ_NEEDS_ALLOC);
- 
- 	for (i = 0; i < nr_found; i++) {
--		struct intc_subgroup_entry *entry;
--		int irq;
-+		struct intc_subgroup_entry *entry = entries[i];
-+		int irq = irq_alloc_desc(numa_node_id());
- 
--		entry = radix_tree_deref_slot((void **)entries[i]);
--		if (unlikely(!entry))
--			continue;
--		if (radix_tree_deref_retry(entry))
--			goto restart;
--
--		irq = irq_alloc_desc(numa_node_id());
- 		if (unlikely(irq < 0)) {
- 			pr_err("no more free IRQs, bailing..\n");
- 			break;
-@@ -250,13 +222,11 @@ static void __init intc_subgroup_map(struct intc_desc_int *d)
- 		add_virq_to_pirq(entry->pirq, irq);
- 		irq_set_chained_handler(entry->pirq, intc_virq_handler);
- 
--		radix_tree_tag_clear(&d->tree, entry->enum_id,
--				     INTC_TAG_VIRQ_NEEDS_ALLOC);
--		radix_tree_replace_slot(&d->tree, (void **)entries[i],
--					&intc_irq_xlate[irq]);
-+		xa_store(&d->array, entry->enum_id, &intc_irq_xlate[irq],
-+				GFP_NOWAIT);
-+		xa_clear_tag(&d->array, entry->enum_id,
-+				INTC_TAG_VIRQ_NEEDS_ALLOC);
- 	}
--
--	raw_spin_unlock_irqrestore(&d->lock, flags);
+ 	xa_lock_irq(&mapping->pages);
+-	entry = get_unlocked_mapping_entry(mapping, index, NULL);
++	entry = get_unlocked_mapping_entry(&xas);
+ 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
+ 		goto out;
+ 	if (!trunc &&
+@@ -433,7 +427,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 	mapping->nrexceptional--;
+ 	ret = 1;
+ out:
+-	put_unlocked_mapping_entry(mapping, index, entry);
++	put_unlocked_mapping_entry(&xas, entry);
+ 	xa_unlock_irq(&mapping->pages);
+ 	return ret;
  }
+@@ -640,7 +634,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ {
+ 	struct radix_tree_root *pages = &mapping->pages;
+ 	XA_STATE(xas, pages, index);
+-	void *entry2, **slot, *kaddr;
++	void *entry2, *kaddr;
+ 	long ret = 0, id;
+ 	sector_t sector;
+ 	pgoff_t pgoff;
+@@ -655,7 +649,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 		return -EIO;
  
- void __init intc_finalize(void)
-@@ -264,6 +234,6 @@ void __init intc_finalize(void)
- 	struct intc_desc_int *d;
+ 	xa_lock_irq(&mapping->pages);
+-	entry2 = get_unlocked_mapping_entry(mapping, index, &slot);
++	entry2 = get_unlocked_mapping_entry(&xas);
+ 	/* Entry got punched out / reallocated? */
+ 	if (!entry2 || WARN_ON_ONCE(!xa_is_value(entry2)))
+ 		goto put_unlocked;
+@@ -733,7 +727,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 	return ret;
  
- 	list_for_each_entry(d, &intc_list, list)
--		if (radix_tree_tagged(&d->tree, INTC_TAG_VIRQ_NEEDS_ALLOC))
-+		if (xa_tagged(&d->array, INTC_TAG_VIRQ_NEEDS_ALLOC))
- 			intc_subgroup_map(d);
+  put_unlocked:
+-	put_unlocked_mapping_entry(mapping, index, entry2);
++	put_unlocked_mapping_entry(&xas, entry2);
+ 	xa_unlock_irq(&mapping->pages);
+ 	return ret;
  }
+@@ -1503,16 +1497,16 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+ 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+ 	pgoff_t index = vmf->pgoff;
+ 	XA_STATE(xas, &mapping->pages, index);
+-	void *entry, **slot;
++	void *entry;
+ 	int vmf_ret, error;
+ 
+ 	xa_lock_irq(&mapping->pages);
+-	entry = get_unlocked_mapping_entry(mapping, index, &slot);
++	entry = get_unlocked_mapping_entry(&xas);
+ 	/* Did we race with someone splitting entry or so? */
+ 	if (!entry ||
+ 	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
+ 	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
+-		put_unlocked_mapping_entry(mapping, index, entry);
++		put_unlocked_mapping_entry(&xas, entry);
+ 		xa_unlock_irq(&mapping->pages);
+ 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
+ 						      VM_FAULT_NOPAGE);
 -- 
 2.15.1
