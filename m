@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 34/99] mm: Convert delete_from_swap_cache to XArray
-Date: Wed, 17 Jan 2018 12:20:58 -0800
-Message-Id: <20180117202203.19756-35-willy@infradead.org>
+Subject: [PATCH v6 69/99] brd: Convert to XArray
+Date: Wed, 17 Jan 2018 12:21:33 -0800
+Message-Id: <20180117202203.19756-70-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,104 +11,175 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Both callers of __delete_from_swap_cache have the swp_entry_t already,
-so pass that in to make constructing the XA_STATE easier.
+Convert brd_pages from a radix tree to an XArray.  Simpler and smaller
+code; in particular another user of radix_tree_preload is eliminated.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/swap.h |  5 +++--
- mm/swap_state.c      | 24 ++++++++++--------------
- mm/vmscan.c          |  2 +-
- 3 files changed, 14 insertions(+), 17 deletions(-)
+ drivers/block/brd.c | 93 ++++++++++++++++-------------------------------------
+ 1 file changed, 28 insertions(+), 65 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index e519554730fa..8eb99229dbc0 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -408,7 +408,7 @@ extern void show_swap_cache_info(void);
- extern int add_to_swap(struct page *page);
- extern int add_to_swap_cache(struct page *, swp_entry_t, gfp_t);
- extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
--extern void __delete_from_swap_cache(struct page *);
-+extern void __delete_from_swap_cache(struct page *, swp_entry_t entry);
- extern void delete_from_swap_cache(struct page *);
- extern void free_page_and_swap_cache(struct page *);
- extern void free_pages_and_swap_cache(struct page **, int);
-@@ -583,7 +583,8 @@ static inline int add_to_swap_cache(struct page *page, swp_entry_t entry,
- 	return -1;
- }
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index 8028a3a7e7fd..59a1af7aaa79 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -17,7 +17,7 @@
+ #include <linux/bio.h>
+ #include <linux/highmem.h>
+ #include <linux/mutex.h>
+-#include <linux/radix-tree.h>
++#include <linux/xarray.h>
+ #include <linux/fs.h>
+ #include <linux/slab.h>
+ #include <linux/backing-dev.h>
+@@ -29,9 +29,9 @@
+ #define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
  
--static inline void __delete_from_swap_cache(struct page *page)
-+static inline void __delete_from_swap_cache(struct page *page,
-+							swp_entry_t entry)
- {
- }
- 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index a57b5ad4c503..219e3b4f09e6 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -154,23 +154,22 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
-  * This must be called only on pages that have
-  * been verified to be in the swap cache.
+ /*
+- * Each block ramdisk device has a radix_tree brd_pages of pages that stores
+- * the pages containing the block device's contents. A brd page's ->index is
+- * its offset in PAGE_SIZE units. This is similar to, but in no way connected
++ * Each block ramdisk device has an xarray brd_pages that stores the pages
++ * containing the block device's contents. A brd page's ->index is its
++ * offset in PAGE_SIZE units. This is similar to, but in no way connected
+  * with, the kernel's pagecache or buffer cache (which sit above our block
+  * device).
   */
--void __delete_from_swap_cache(struct page *page)
-+void __delete_from_swap_cache(struct page *page, swp_entry_t entry)
- {
--	struct address_space *address_space;
-+	struct address_space *address_space = swap_address_space(entry);
- 	int i, nr = hpage_nr_pages(page);
--	swp_entry_t entry;
--	pgoff_t idx;
-+	pgoff_t idx = swp_offset(entry);
-+	XA_STATE(xas, &address_space->pages, idx);
- 
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(!PageSwapCache(page), page);
- 	VM_BUG_ON_PAGE(PageWriteback(page), page);
- 
--	entry.val = page_private(page);
--	address_space = swap_address_space(entry);
--	idx = swp_offset(entry);
- 	for (i = 0; i < nr; i++) {
--		radix_tree_delete(&address_space->pages, idx + i);
-+		void *entry = xas_store(&xas, NULL);
-+		VM_BUG_ON_PAGE(entry != page + i, entry);
- 		set_page_private(page + i, 0);
-+		xas_next(&xas);
- 	}
- 	ClearPageSwapCache(page);
- 	address_space->nrpages -= nr;
-@@ -246,14 +245,11 @@ int add_to_swap(struct page *page)
-  */
- void delete_from_swap_cache(struct page *page)
- {
--	swp_entry_t entry;
--	struct address_space *address_space;
+@@ -41,13 +41,7 @@ struct brd_device {
+ 	struct request_queue	*brd_queue;
+ 	struct gendisk		*brd_disk;
+ 	struct list_head	brd_list;
 -
--	entry.val = page_private(page);
-+	swp_entry_t entry = { .val = page_private(page) };
-+	struct address_space *address_space = swap_address_space(entry);
+-	/*
+-	 * Backing store of pages and lock to protect it. This is the contents
+-	 * of the block device.
+-	 */
+-	spinlock_t		brd_lock;
+-	struct radix_tree_root	brd_pages;
++	struct xarray		brd_pages;
+ };
  
--	address_space = swap_address_space(entry);
- 	xa_lock_irq(&address_space->pages);
--	__delete_from_swap_cache(page);
-+	__delete_from_swap_cache(page, entry);
- 	xa_unlock_irq(&address_space->pages);
+ /*
+@@ -62,17 +56,9 @@ static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
+ 	 * The page lifetime is protected by the fact that we have opened the
+ 	 * device node -- brd pages will never be deleted under us, so we
+ 	 * don't need any further locking or refcounting.
+-	 *
+-	 * This is strictly true for the radix-tree nodes as well (ie. we
+-	 * don't actually need the rcu_read_lock()), however that is not a
+-	 * documented feature of the radix-tree API so it is better to be
+-	 * safe here (we don't have total exclusion from radix tree updates
+-	 * here, only deletes).
+ 	 */
+-	rcu_read_lock();
+ 	idx = sector >> PAGE_SECTORS_SHIFT; /* sector to page index */
+-	page = radix_tree_lookup(&brd->brd_pages, idx);
+-	rcu_read_unlock();
++	page = xa_load(&brd->brd_pages, idx);
  
- 	put_swap_page(page, entry);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 2fa675a2db31..51d437a18db8 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -718,7 +718,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
- 	if (PageSwapCache(page)) {
- 		swp_entry_t swap = { .val = page_private(page) };
- 		mem_cgroup_swapout(page, swap);
--		__delete_from_swap_cache(page);
-+		__delete_from_swap_cache(page, swap);
- 		xa_unlock_irqrestore(&mapping->pages, flags);
- 		put_swap_page(page, swap);
- 	} else {
+ 	BUG_ON(page && page->index != idx);
+ 
+@@ -87,7 +73,7 @@ static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
+ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector)
+ {
+ 	pgoff_t idx;
+-	struct page *page;
++	struct page *curr, *page;
+ 	gfp_t gfp_flags;
+ 
+ 	page = brd_lookup_page(brd, sector);
+@@ -108,62 +94,40 @@ static struct page *brd_insert_page(struct brd_device *brd, sector_t sector)
+ 	if (!page)
+ 		return NULL;
+ 
+-	if (radix_tree_preload(GFP_NOIO)) {
+-		__free_page(page);
+-		return NULL;
+-	}
+-
+-	spin_lock(&brd->brd_lock);
+ 	idx = sector >> PAGE_SECTORS_SHIFT;
+ 	page->index = idx;
+-	if (radix_tree_insert(&brd->brd_pages, idx, page)) {
++	curr = xa_cmpxchg(&brd->brd_pages, idx, NULL, page, GFP_NOIO);
++	if (curr) {
+ 		__free_page(page);
+-		page = radix_tree_lookup(&brd->brd_pages, idx);
+-		BUG_ON(!page);
+-		BUG_ON(page->index != idx);
++		if (xa_err(curr)) {
++			page = NULL;
++		} else {
++			page = curr;
++			BUG_ON(!page);
++			BUG_ON(page->index != idx);
++		}
+ 	}
+-	spin_unlock(&brd->brd_lock);
+-
+-	radix_tree_preload_end();
+ 
+ 	return page;
+ }
+ 
+ /*
+- * Free all backing store pages and radix tree. This must only be called when
++ * Free all backing store pages and xarray.  This must only be called when
+  * there are no other users of the device.
+  */
+-#define FREE_BATCH 16
+ static void brd_free_pages(struct brd_device *brd)
+ {
+-	unsigned long pos = 0;
+-	struct page *pages[FREE_BATCH];
+-	int nr_pages;
+-
+-	do {
+-		int i;
+-
+-		nr_pages = radix_tree_gang_lookup(&brd->brd_pages,
+-				(void **)pages, pos, FREE_BATCH);
+-
+-		for (i = 0; i < nr_pages; i++) {
+-			void *ret;
+-
+-			BUG_ON(pages[i]->index < pos);
+-			pos = pages[i]->index;
+-			ret = radix_tree_delete(&brd->brd_pages, pos);
+-			BUG_ON(!ret || ret != pages[i]);
+-			__free_page(pages[i]);
+-		}
+-
+-		pos++;
++	XA_STATE(xas, &brd->brd_pages, 0);
++	struct page *page;
+ 
+-		/*
+-		 * This assumes radix_tree_gang_lookup always returns as
+-		 * many pages as possible. If the radix-tree code changes,
+-		 * so will this have to.
+-		 */
+-	} while (nr_pages == FREE_BATCH);
++	/* lockdep can't know there are no other users */
++	xas_lock(&xas);
++	xas_for_each(&xas, page, ULONG_MAX) {
++		BUG_ON(page->index != xas.xa_index);
++		__free_page(page);
++		xas_store(&xas, NULL);
++	}
++	xas_unlock(&xas);
+ }
+ 
+ /*
+@@ -373,8 +337,7 @@ static struct brd_device *brd_alloc(int i)
+ 	if (!brd)
+ 		goto out;
+ 	brd->brd_number		= i;
+-	spin_lock_init(&brd->brd_lock);
+-	INIT_RADIX_TREE(&brd->brd_pages, GFP_ATOMIC);
++	xa_init(&brd->brd_pages);
+ 
+ 	brd->brd_queue = blk_alloc_queue(GFP_KERNEL);
+ 	if (!brd->brd_queue)
 -- 
 2.15.1
