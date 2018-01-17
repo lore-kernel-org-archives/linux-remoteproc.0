@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 85/99] btrfs: Remove unused spinlock
-Date: Wed, 17 Jan 2018 12:21:49 -0800
-Message-Id: <20180117202203.19756-86-willy@infradead.org>
+Subject: [PATCH v6 62/99] dax: Convert dax_insert_pfn_mkwrite to XArray
+Date: Wed, 17 Jan 2018 12:21:26 -0800
+Message-Id: <20180117202203.19756-63-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,40 +11,40 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The reada_lock in struct btrfs_device was only initialised, and not
-actually used.  That's good because there's another lock also called
-reada_lock in the btrfs_fs_info that was quite heavily used.  Remove
-this one.
-
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/btrfs/volumes.c | 1 -
- fs/btrfs/volumes.h | 1 -
- 2 files changed, 2 deletions(-)
+ fs/dax.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index a25684287501..cba286183ff9 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -244,7 +244,6 @@ static struct btrfs_device *__alloc_device(void)
+diff --git a/fs/dax.c b/fs/dax.c
+index b66b8c896ed8..e6b25ef112f2 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1497,21 +1497,21 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+ 	void *entry;
+ 	int vmf_ret, error;
  
- 	spin_lock_init(&dev->io_lock);
- 
--	spin_lock_init(&dev->reada_lock);
- 	atomic_set(&dev->reada_in_flight, 0);
- 	atomic_set(&dev->dev_stats_ccnt, 0);
- 	btrfs_device_data_ordered_init(dev);
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index ff15208344a7..335fd1590458 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -136,7 +136,6 @@ struct btrfs_device {
- 	struct work_struct rcu_work;
- 
- 	/* readahead state */
--	spinlock_t reada_lock;
- 	atomic_t reada_in_flight;
- 	u64 reada_next;
- 	struct reada_zone *reada_curr_zone;
+-	xa_lock_irq(&mapping->pages);
++	xas_lock_irq(&xas);
+ 	entry = get_unlocked_mapping_entry(&xas);
+ 	/* Did we race with someone splitting entry or so? */
+ 	if (!entry ||
+ 	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
+ 	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
+ 		put_unlocked_mapping_entry(&xas, entry);
+-		xa_unlock_irq(&mapping->pages);
++		xas_unlock_irq(&xas);
+ 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
+ 						      VM_FAULT_NOPAGE);
+ 		return VM_FAULT_NOPAGE;
+ 	}
+-	radix_tree_tag_set(&mapping->pages, index, PAGECACHE_TAG_DIRTY);
++	xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
+ 	entry = lock_slot(&xas);
+-	xa_unlock_irq(&mapping->pages);
++	xas_unlock_irq(&xas);
+ 	switch (pe_size) {
+ 	case PE_SIZE_PTE:
+ 		error = vm_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
 -- 
 2.15.1
