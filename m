@@ -1,130 +1,168 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v2 13/16] remoteproc: look-up memory-device for virtio
- device allocation
-Date: Mon, 15 Jan 2018 20:57:26 +0000
-Message-ID: <752081cee4104e15914bcecde911e793@SFHDAG7NODE2.st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-14-git-send-email-loic.pallardy@st.com>
- <20171214053248.GN17344@builder>
-In-Reply-To: <20171214053248.GN17344@builder>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 31/99] mm: Convert workingset to XArray
+Date: Wed, 17 Jan 2018 12:20:55 -0800
+Message-Id: <20180117202203.19756-32-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
+We construct a fake XA_STATE and use it to delete the node with xa_store()
+rather than adding a special function for this unique use case.
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Thursday, December 14, 2017 6:33 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org
-> Subject: Re: [PATCH v2 13/16] remoteproc: look-up memory-device for virti=
-o
-> device allocation
->=20
-> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
->=20
-> > This patch parse existing carveout list to find a memory area
-> > matching on "vdev<vdev_id>buffer" name.
-> > If found, memory device will be used as parent for vdev creation, else
-> > rproc platform device will be used as today.
-> >
-> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c   | 13 +++++++++++++
-> >  drivers/remoteproc/remoteproc_virtio.c |  2 +-
-> >  include/linux/remoteproc.h             |  1 +
-> >  3 files changed, 15 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> > index 6b5e2b2..9c12319 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -583,8 +583,11 @@ static int rproc_handle_vdev(struct rproc *rproc,
-> struct fw_rsc_vdev *rsc,
-> >  {
-> >  	struct device *dev =3D &rproc->dev;
-> >  	struct rproc_vdev *rvdev;
-> > +	struct device *memdev =3D dev->parent;
-> > +	struct rproc_mem_entry *carveout;
-> >  	int i, ret;
-> >  	static int index;
-> > +	char name[16];
-> >
-> >  	/* make sure resource isn't truncated */
-> >  	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct
-> fw_rsc_vdev_vring)
-> > @@ -637,6 +640,16 @@ static int rproc_handle_vdev(struct rproc *rproc,
-> struct fw_rsc_vdev *rsc,
-> >
-> >  	list_add_tail(&rvdev->node, &rproc->rvdevs);
-> >
-> > +	/* Find associated registered carveout. */
-> > +	/* Try dedicated vdev buffer pool. */
-> > +	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-> > +	carveout =3D rproc_find_carveout_by_name(rproc, name);
-> > +
-> > +	if (carveout && carveout->memdev)
-> > +		memdev =3D &carveout->memdev->dev;
-> > +
-> > +	rvdev->dev =3D memdev;
-> > +
-> >  	rproc_add_subdev(rproc, &rvdev->subdev,
-> >  			 rproc_vdev_do_probe, rproc_vdev_do_remove);
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_virtio.c
-> b/drivers/remoteproc/remoteproc_virtio.c
-> > index 2946348..1f7a444 100644
-> > --- a/drivers/remoteproc/remoteproc_virtio.c
-> > +++ b/drivers/remoteproc/remoteproc_virtio.c
-> > @@ -303,7 +303,7 @@ static void rproc_virtio_dev_release(struct device
-> *dev)
-> >  int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
-> >  {
-> >  	struct rproc *rproc =3D rvdev->rproc;
-> > -	struct device *dev =3D &rproc->dev;
-> > +	struct device *dev =3D rvdev->dev;
->=20
-> This will cause the device structure to change shape based on there
-> being a match of a carveout or not.
->=20
->=20
-> I also think it's preferable to limit the life cycle of the allocations
-> in this memory region to a single start->stop cycle, rather than
-> boot->shutdown.
->=20
-> So I think it makes more sense to use the vdev->dev and
-> dmam_declare_coherent_memory on this. But as in the previous patch this
-> can't be a carveout that has been remapped already.
->=20
-Yes it is the main issue. Rproc_handle_carveout function will process it be=
-fore, except if we create a new status to not allocate a carveout and provi=
-de function to update carevout in resource table...
->=20
-> A somewhat unrelated topic to this is the ability to associate DT nodes
-> to rpmsg devices (I do this for the Qualcomm children), in this case we
-> would have a DT node per vdev under the remoteproc, perhaps it would
-> make more sense to introduce that and put the memory-region in that
-> node. Only thin that comes to mind is that we still need to match a
-> carveout in the resource table, in order to communicate the buffer
-> region to the remote side for your memory protection purposes.
->=20
-OK I'll have a look to Qualcom DT nodes. But as it is SW, is DT the right p=
-lace?
-But it will help to decide if there is a dedicated memory region or not for=
- virtio device.
-I'll investigate...
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ include/linux/swap.h |  9 ---------
+ mm/workingset.c      | 51 ++++++++++++++++++++++-----------------------------
+ 2 files changed, 22 insertions(+), 38 deletions(-)
 
-Regards,
-Loic
-
-> Regards,
-> Bjorn
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 394957963c4b..e519554730fa 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -306,15 +306,6 @@ void workingset_update_node(struct xa_node *node);
+ 		xas_set_update(xas, workingset_update_node);		\
+ } while (0)
+ 
+-/* Returns workingset_update_node() if the mapping has shadow entries. */
+-#define workingset_lookup_update(mapping)				\
+-({									\
+-	radix_tree_update_node_t __helper = workingset_update_node;	\
+-	if (dax_mapping(mapping) || shmem_mapping(mapping))		\
+-		__helper = NULL;					\
+-	__helper;							\
+-})
+-
+ /* linux/mm/page_alloc.c */
+ extern unsigned long totalram_pages;
+ extern unsigned long totalreserve_pages;
+diff --git a/mm/workingset.c b/mm/workingset.c
+index 91b6e16ad4c1..f7ca6ea5d8b1 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -148,7 +148,7 @@
+  * and activations is maintained (node->inactive_age).
+  *
+  * On eviction, a snapshot of this counter (along with some bits to
+- * identify the node) is stored in the now empty page cache radix tree
++ * identify the node) is stored in the now empty page cache
+  * slot of the evicted page.  This is called a shadow entry.
+  *
+  * On cache misses for which there are shadow entries, an eligible
+@@ -162,7 +162,7 @@
+ 
+ /*
+  * Eviction timestamps need to be able to cover the full range of
+- * actionable refaults. However, bits are tight in the radix tree
++ * actionable refaults. However, bits are tight in the xarray
+  * entry, and after storing the identifier for the lruvec there might
+  * not be enough left to represent every single actionable refault. In
+  * that case, we have to sacrifice granularity for distance, and group
+@@ -338,7 +338,7 @@ void workingset_activation(struct page *page)
+ 
+ static struct list_lru shadow_nodes;
+ 
+-void workingset_update_node(struct radix_tree_node *node)
++void workingset_update_node(struct xa_node *node)
+ {
+ 	/*
+ 	 * Track non-empty nodes that contain only shadow entries;
+@@ -370,7 +370,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 	local_irq_enable();
+ 
+ 	/*
+-	 * Approximate a reasonable limit for the radix tree nodes
++	 * Approximate a reasonable limit for the nodes
+ 	 * containing shadow entries. We don't need to keep more
+ 	 * shadow entries than possible pages on the active list,
+ 	 * since refault distances bigger than that are dismissed.
+@@ -385,11 +385,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 	 * worst-case density of 1/8th. Below that, not all eligible
+ 	 * refaults can be detected anymore.
+ 	 *
+-	 * On 64-bit with 7 radix_tree_nodes per page and 64 slots
++	 * On 64-bit with 7 xa_nodes per page and 64 slots
+ 	 * each, this will reclaim shadow entries when they consume
+ 	 * ~1.8% of available memory:
+ 	 *
+-	 * PAGE_SIZE / radix_tree_nodes / node_entries * 8 / PAGE_SIZE
++	 * PAGE_SIZE / xa_nodes / node_entries * 8 / PAGE_SIZE
+ 	 */
+ 	if (sc->memcg) {
+ 		cache = mem_cgroup_node_nr_lru_pages(sc->memcg, sc->nid,
+@@ -398,7 +398,7 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ 		cache = node_page_state(NODE_DATA(sc->nid), NR_ACTIVE_FILE) +
+ 			node_page_state(NODE_DATA(sc->nid), NR_INACTIVE_FILE);
+ 	}
+-	max_nodes = cache >> (RADIX_TREE_MAP_SHIFT - 3);
++	max_nodes = cache >> (XA_CHUNK_SHIFT - 3);
+ 
+ 	if (nodes <= max_nodes)
+ 		return 0;
+@@ -408,11 +408,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
+ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 					  struct list_lru_one *lru,
+ 					  spinlock_t *lru_lock,
+-					  void *arg)
++					  void *arg) __must_hold(lru_lock)
+ {
++	XA_STATE(xas, NULL, 0);
+ 	struct address_space *mapping;
+-	struct radix_tree_node *node;
+-	unsigned int i;
++	struct xa_node *node;
+ 	int ret;
+ 
+ 	/*
+@@ -420,7 +420,7 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 	 * the shadow node LRU under the mapping->pages.xa_lock and the
+ 	 * lru_lock.  Because the page cache tree is emptied before
+ 	 * the inode can be destroyed, holding the lru_lock pins any
+-	 * address_space that has radix tree nodes on the LRU.
++	 * address_space that has nodes on the LRU.
+ 	 *
+ 	 * We can then safely transition to the mapping->pages.xa_lock to
+ 	 * pin only the address_space of the particular node we want
+@@ -449,25 +449,18 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 		goto out_invalid;
+ 	if (WARN_ON_ONCE(node->count != node->nr_values))
+ 		goto out_invalid;
+-	for (i = 0; i < RADIX_TREE_MAP_SIZE; i++) {
+-		if (node->slots[i]) {
+-			if (WARN_ON_ONCE(!xa_is_value(node->slots[i])))
+-				goto out_invalid;
+-			if (WARN_ON_ONCE(!node->nr_values))
+-				goto out_invalid;
+-			if (WARN_ON_ONCE(!mapping->nrexceptional))
+-				goto out_invalid;
+-			node->slots[i] = NULL;
+-			node->nr_values--;
+-			node->count--;
+-			mapping->nrexceptional--;
+-		}
+-	}
+-	if (WARN_ON_ONCE(node->nr_values))
+-		goto out_invalid;
++	mapping->nrexceptional -= node->nr_values;
++	xas.xa = node->array;
++	xas.xa_node = rcu_dereference_protected(node->parent,
++				lockdep_is_held(&mapping->pages.xa_lock));
++	xas.xa_offset = node->offset;
++	xas.xa_update = workingset_update_node;
++	/*
++	 * We could store a shadow entry here which was the minimum of the
++	 * shadow entries we were tracking ...
++	 */
++	xas_store(&xas, NULL);
+ 	inc_lruvec_page_state(virt_to_page(node), WORKINGSET_NODERECLAIM);
+-	__radix_tree_delete_node(&mapping->pages, node,
+-				 workingset_lookup_update(mapping));
+ 
+ out_invalid:
+ 	xa_unlock(&mapping->pages);
+-- 
+2.15.1
