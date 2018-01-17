@@ -1,135 +1,112 @@
-Return-Path: <anup@brainfault.org>
-Return-Path: <anup@brainfault.org>
-From: Anup Patel <anup@brainfault.org>
-Subject: [PATCH] rpmsg: Add driver_override device attribute for rpmsg_device
-Date: Mon,  1 Jan 2018 18:01:18 +0530
-Message-Id: <1514809878-28521-1-git-send-email-anup@brainfault.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 58/99] dax: Convert lock_slot to XArray
+Date: Wed, 17 Jan 2018 12:21:22 -0800
+Message-Id: <20180117202203.19756-59-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds "driver_override" device attribute for rpmsg_device which
-will allow users to explicitly specify the rpmsg_driver to be used via
-sysfs entry.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The "driver_override" device attribute implemented here is very similar
-to "driver_override" implemented for platform, pci, and amba bus types.
-
-One important use-case of "driver_override" device attribute is to force
-use of rpmsg_chrdev driver for certain rpmsg_device instances.
-
-Signed-off-by: Anup Patel <anup@brainfault.org>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- Documentation/ABI/testing/sysfs-bus-rpmsg | 20 ++++++++++++++
- drivers/rpmsg/rpmsg_core.c                | 46 +++++++++++++++++++++++++++++--
- 2 files changed, 64 insertions(+), 2 deletions(-)
+ fs/dax.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
-index 189e419..1c8599e 100644
---- a/Documentation/ABI/testing/sysfs-bus-rpmsg
-+++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
-@@ -73,3 +73,23 @@ Description:
- 		This sysfs entry tells us whether the channel is a local
- 		server channel that is announced (values are either
- 		true or false).
-+
-+What:		/sys/bus/rpmsg/devices/.../driver_override
-+Date:		January 2018
-+KernelVersion:	4.16
-+Contact:	Ohad Ben-Cohen <ohad@wizery.com>
-+Description:
-+		Every rpmsg device is a communication channel with a remote
-+		processor. Channels are identified by a textual name (see
-+		/sys/bus/rpmsg/devices/.../name above) and have a local
-+		("source") rpmsg address, and remote ("destination") rpmsg
-+		address.
-+
-+		The listening entity (or client) which communicates with a
-+		remote processor is referred as rpmsg driver. The rpmsg device
-+		and rpmsg driver are matched based on rpmsg device name and
-+		rpmsg driver ID table.
-+
-+		This sysfs entry allows the rpmsg driver for a rpmsg device
-+		to be specified which will override standard OF, ID table
-+		and name matching.
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index dffa3aa..9a25e42 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -321,11 +321,11 @@ struct device *rpmsg_find_device(struct device *parent,
+diff --git a/fs/dax.c b/fs/dax.c
+index f3463d93a6ce..8eab0b56f7f9 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -188,12 +188,11 @@ static void dax_wake_mapping_entry_waiter(struct address_space *mapping,
+ /*
+  * Mark the given slot as locked.  Must be called with xa_lock held.
+  */
+-static inline void *lock_slot(struct address_space *mapping, void **slot)
++static inline void *lock_slot(struct xa_state *xas)
+ {
+-	unsigned long v = xa_to_value(
+-		radix_tree_deref_slot_protected(slot, &mapping->pages.xa_lock));
++	unsigned long v = xa_to_value(xas_load(xas));
+ 	void *entry = xa_mk_value(v | DAX_ENTRY_LOCK);
+-	radix_tree_replace_slot(&mapping->pages, slot, entry);
++	xas_store(xas, entry);
+ 	return entry;
  }
- EXPORT_SYMBOL(rpmsg_find_device);
  
--/* sysfs show configuration fields */
-+/* sysfs configuration fields */
- #define rpmsg_show_attr(field, path, format_string)			\
- static ssize_t								\
- field##_show(struct device *dev,					\
--			struct device_attribute *attr, char *buf)	\
-+	     struct device_attribute *attr, char *buf)			\
- {									\
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
- 									\
-@@ -333,11 +333,52 @@ field##_show(struct device *dev,					\
- }									\
- static DEVICE_ATTR_RO(field);
+@@ -244,7 +243,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
  
-+#define rpmsg_string_attr(field, path)					\
-+static ssize_t								\
-+field##_store(struct device *dev,					\
-+	      struct device_attribute *attr, const char *buf, size_t sz)\
-+{									\
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-+	char *new, *old, *cp;						\
-+									\
-+	new = kstrndup(buf, sz, GFP_KERNEL);				\
-+	if (!new)							\
-+		return -ENOMEM;						\
-+									\
-+	cp = strchr(new, '\n');						\
-+	if (cp)								\
-+		*cp = '\0';						\
-+									\
-+	device_lock(dev);						\
-+	old = rpdev->path;						\
-+	if (strlen(new)) {						\
-+		rpdev->path = new;					\
-+	} else {							\
-+		kfree(new);						\
-+		rpdev->path = NULL;					\
-+	}								\
-+	device_unlock(dev);						\
-+									\
-+	kfree(old);							\
-+									\
-+	return sz;							\
-+}									\
-+static ssize_t								\
-+field##_show(struct device *dev,					\
-+	     struct device_attribute *attr, char *buf)			\
-+{									\
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-+									\
-+	return sprintf(buf, "%s\n", rpdev->path);			\
-+}									\
-+static DEVICE_ATTR_RW(field)
-+
- /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
- rpmsg_show_attr(name, id.name, "%s\n");
- rpmsg_show_attr(src, src, "0x%x\n");
- rpmsg_show_attr(dst, dst, "0x%x\n");
- rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
-+rpmsg_string_attr(driver_override, driver_override);
+ 	xas_lock_irq(&xas);
+ 	entry = xas_load(&xas);
+-	if (WARN_ON_ONCE(!entry || !xa_is_value(entry) || !dax_locked(entry))) {
++	if (WARN_ON_ONCE(!xa_is_value(entry) || !dax_locked(entry))) {
+ 		xas_unlock_irq(&xas);
+ 		return;
+ 	}
+@@ -303,6 +302,7 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
+ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 		unsigned long size_flag)
+ {
++	XA_STATE(xas, &mapping->pages, index);
+ 	bool pmd_downgrade = false; /* splitting 2MiB entry into 4k entries? */
+ 	void *entry, **slot;
  
- static ssize_t modalias_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
-@@ -359,6 +400,7 @@ static struct attribute *rpmsg_dev_attrs[] = {
- 	&dev_attr_dst.attr,
- 	&dev_attr_src.attr,
- 	&dev_attr_announce.attr,
-+	&dev_attr_driver_override.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(rpmsg_dev);
+@@ -341,7 +341,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 			 * Make sure 'entry' remains valid while we drop
+ 			 * xa_lock.
+ 			 */
+-			entry = lock_slot(mapping, slot);
++			entry = lock_slot(&xas);
+ 		}
+ 
+ 		xa_unlock_irq(&mapping->pages);
+@@ -408,7 +408,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 		xa_unlock_irq(&mapping->pages);
+ 		return entry;
+ 	}
+-	entry = lock_slot(mapping, slot);
++	entry = lock_slot(&xas);
+  out_unlock:
+ 	xa_unlock_irq(&mapping->pages);
+ 	return entry;
+@@ -639,6 +639,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 		pgoff_t index, void *entry)
+ {
+ 	struct radix_tree_root *pages = &mapping->pages;
++	XA_STATE(xas, pages, index);
+ 	void *entry2, **slot, *kaddr;
+ 	long ret = 0, id;
+ 	sector_t sector;
+@@ -675,7 +676,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 	if (!radix_tree_tag_get(pages, index, PAGECACHE_TAG_TOWRITE))
+ 		goto put_unlocked;
+ 	/* Lock the entry to serialize with page faults */
+-	entry = lock_slot(mapping, slot);
++	entry = lock_slot(&xas);
+ 	/*
+ 	 * We can clear the tag now but we have to be careful so that concurrent
+ 	 * dax_writeback_one() calls for the same index cannot finish before we
+@@ -1500,8 +1501,9 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+ 				  pfn_t pfn)
+ {
+ 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+-	void *entry, **slot;
+ 	pgoff_t index = vmf->pgoff;
++	XA_STATE(xas, &mapping->pages, index);
++	void *entry, **slot;
+ 	int vmf_ret, error;
+ 
+ 	xa_lock_irq(&mapping->pages);
+@@ -1517,7 +1519,7 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
+ 		return VM_FAULT_NOPAGE;
+ 	}
+ 	radix_tree_tag_set(&mapping->pages, index, PAGECACHE_TAG_DIRTY);
+-	entry = lock_slot(mapping, slot);
++	entry = lock_slot(&xas);
+ 	xa_unlock_irq(&mapping->pages);
+ 	switch (pe_size) {
+ 	case PE_SIZE_PTE:
 -- 
-2.7.4
+2.15.1
