@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 64/99] dax: Convert grab_mapping_entry to XArray
-Date: Wed, 17 Jan 2018 12:21:28 -0800
-Message-Id: <20180117202203.19756-65-willy@infradead.org>
+Subject: [PATCH v6 73/99] xfs: Convert mru cache to XArray
+Date: Wed, 17 Jan 2018 12:21:37 -0800
+Message-Id: <20180117202203.19756-74-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,162 +11,212 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+This eliminates a call to radix_tree_preload().
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 98 +++++++++++++++++-----------------------------------------------
- 1 file changed, 26 insertions(+), 72 deletions(-)
+ fs/xfs/xfs_mru_cache.c | 72 +++++++++++++++++++++++---------------------------
+ 1 file changed, 33 insertions(+), 39 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 494e8fb7a98f..3eb0cf176d69 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -44,6 +44,7 @@
- 
- /* The 'colour' (ie low bits) within a PMD of a page offset.  */
- #define PG_PMD_COLOUR	((PMD_SIZE >> PAGE_SHIFT) - 1)
-+#define PMD_ORDER	(PMD_SHIFT - PAGE_SHIFT)
- 
- static wait_queue_head_t wait_table[DAX_WAIT_TABLE_ENTRIES];
- 
-@@ -89,10 +90,10 @@ static void *dax_radix_locked_entry(sector_t sector, unsigned long flags)
- 			DAX_ENTRY_LOCK);
- }
- 
--static unsigned int dax_radix_order(void *entry)
-+static unsigned int dax_entry_order(void *entry)
+diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
+index f8a674d7f092..2179bede5396 100644
+--- a/fs/xfs/xfs_mru_cache.c
++++ b/fs/xfs/xfs_mru_cache.c
+@@ -101,10 +101,9 @@
+  * an infinite loop in the code.
+  */
+ struct xfs_mru_cache {
+-	struct radix_tree_root	store;     /* Core storage data structure.  */
++	struct xarray		store;     /* Core storage data structure.  */
+ 	struct list_head	*lists;    /* Array of lists, one per grp.  */
+ 	struct list_head	reap_list; /* Elements overdue for reaping. */
+-	spinlock_t		lock;      /* Lock to protect this struct.  */
+ 	unsigned int		grp_count; /* Number of discrete groups.    */
+ 	unsigned int		grp_time;  /* Time period spanned by grps.  */
+ 	unsigned int		lru_grp;   /* Group containing time zero.   */
+@@ -232,22 +231,21 @@ _xfs_mru_cache_list_insert(
+  * data store, removing it from the reap list, calling the client's free
+  * function and deleting the element from the element zone.
+  *
+- * We get called holding the mru->lock, which we drop and then reacquire.
+- * Sparse need special help with this to tell it we know what we are doing.
++ * We get called holding the mru->store lock, which we drop and then reacquire.
++ * Sparse needs special help with this to tell it we know what we are doing.
+  */
+ STATIC void
+ _xfs_mru_cache_clear_reap_list(
+ 	struct xfs_mru_cache	*mru)
+-		__releases(mru->lock) __acquires(mru->lock)
++		__releases(mru->store) __acquires(mru->store)
  {
- 	if (xa_to_value(entry) & DAX_PMD)
--		return PMD_SHIFT - PAGE_SHIFT;
-+		return PMD_ORDER;
- 	return 0;
- }
+ 	struct xfs_mru_cache_elem *elem, *next;
+ 	struct list_head	tmp;
  
-@@ -299,10 +300,11 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- {
- 	XA_STATE(xas, &mapping->pages, index);
- 	bool pmd_downgrade = false; /* splitting 2MiB entry into 4k entries? */
--	void *entry, **slot;
-+	void *entry;
- 
-+	xas_set_order(&xas, index, size_flag ? PMD_ORDER : 0);
- restart:
--	xa_lock_irq(&mapping->pages);
-+	xas_lock_irq(&xas);
- 	entry = get_unlocked_mapping_entry(&xas);
- 
- 	if (WARN_ON_ONCE(entry && !xa_is_value(entry))) {
-@@ -326,84 +328,36 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 		}
- 	}
- 
--	/* No entry for given index? Make sure radix tree is big enough. */
--	if (!entry || pmd_downgrade) {
--		int err;
+ 	INIT_LIST_HEAD(&tmp);
+ 	list_for_each_entry_safe(elem, next, &mru->reap_list, list_node) {
 -
--		if (pmd_downgrade) {
--			/*
--			 * Make sure 'entry' remains valid while we drop
--			 * xa_lock.
--			 */
--			entry = lock_slot(&xas);
--		}
--
--		xa_unlock_irq(&mapping->pages);
-+	if (pmd_downgrade) {
-+		entry = lock_slot(&xas);
+ 		/* Remove the element from the data store. */
+-		radix_tree_delete(&mru->store, elem->key);
++		__xa_erase(&mru->store, elem->key);
+ 
  		/*
- 		 * Besides huge zero pages the only other thing that gets
- 		 * downgraded are empty entries which don't need to be
- 		 * unmapped.
+ 		 * remove to temp list so it can be freed without
+@@ -255,14 +253,14 @@ _xfs_mru_cache_clear_reap_list(
  		 */
--		if (pmd_downgrade && dax_is_zero_entry(entry))
-+		if (dax_is_zero_entry(entry)) {
-+			xas_pause(&xas);
-+			xas_unlock_irq(&xas);
- 			unmap_mapping_range(mapping,
- 				(index << PAGE_SHIFT) & PMD_MASK, PMD_SIZE, 0);
--
--		err = radix_tree_preload(
--				mapping_gfp_mask(mapping) & ~__GFP_HIGHMEM);
--		if (err) {
--			if (pmd_downgrade)
--				put_locked_mapping_entry(mapping, index);
--			return ERR_PTR(err);
-+			xas_lock_irq(&xas);
- 		}
--		xa_lock_irq(&mapping->pages);
--
--		if (!entry) {
--			/*
--			 * We needed to drop the pages lock while calling
--			 * radix_tree_preload() and we didn't have an entry to
--			 * lock.  See if another thread inserted an entry at
--			 * our index during this time.
--			 */
--			entry = __radix_tree_lookup(&mapping->pages, index,
--					NULL, &slot);
--			if (entry) {
--				radix_tree_preload_end();
--				xa_unlock_irq(&mapping->pages);
--				goto restart;
--			}
--		}
--
--		if (pmd_downgrade) {
--			radix_tree_delete(&mapping->pages, index);
--			mapping->nrexceptional--;
--			dax_wake_entry(&xas, entry, true);
--		}
--
-+		xas_store(&xas, NULL);
-+		mapping->nrexceptional--;
-+		dax_wake_entry(&xas, entry, true);
-+	}
-+	if (!entry || pmd_downgrade) {
- 		entry = dax_radix_locked_entry(0, size_flag | DAX_EMPTY);
--
--		err = __radix_tree_insert(&mapping->pages, index,
--				dax_radix_order(entry), entry);
--		radix_tree_preload_end();
--		if (err) {
--			xa_unlock_irq(&mapping->pages);
--			/*
--			 * Our insertion of a DAX entry failed, most likely
--			 * because we were inserting a PMD entry and it
--			 * collided with a PTE sized entry at a different
--			 * index in the PMD range.  We haven't inserted
--			 * anything into the radix tree and have no waiters to
--			 * wake.
--			 */
--			return ERR_PTR(err);
--		}
--		/* Good, we have inserted empty locked entry into the tree. */
--		mapping->nrexceptional++;
--		xa_unlock_irq(&mapping->pages);
--		return entry;
-+		xas_store(&xas, entry);
-+		if (!xas_error(&xas))
-+			mapping->nrexceptional++;
-+	} else {
-+		entry = lock_slot(&xas);
+ 		list_move(&elem->list_node, &tmp);
  	}
--	entry = lock_slot(&xas);
-  out_unlock:
--	xa_unlock_irq(&mapping->pages);
-+	xas_unlock_irq(&xas);
-+	if (xas_nomem(&xas, GFP_NOIO))
-+		goto restart;
- 	return entry;
+-	spin_unlock(&mru->lock);
++	xa_unlock(&mru->store);
+ 
+ 	list_for_each_entry_safe(elem, next, &tmp, list_node) {
+ 		list_del_init(&elem->list_node);
+ 		mru->free_func(elem);
+ 	}
+ 
+-	spin_lock(&mru->lock);
++	xa_lock(&mru->store);
  }
  
-@@ -682,7 +636,7 @@ static int dax_writeback_one(struct block_device *bdev,
- 	 * worry about partial PMD writebacks.
- 	 */
- 	sector = dax_radix_sector(entry);
--	size = PAGE_SIZE << dax_radix_order(entry);
-+	size = PAGE_SIZE << dax_entry_order(entry);
+ /*
+@@ -284,7 +282,7 @@ _xfs_mru_cache_reap(
+ 	if (!mru || !mru->lists)
+ 		return;
  
- 	id = dax_read_lock();
- 	ret = bdev_dax_pgoff(bdev, sector, size, &pgoff);
+-	spin_lock(&mru->lock);
++	xa_lock(&mru->store);
+ 	next = _xfs_mru_cache_migrate(mru, jiffies);
+ 	_xfs_mru_cache_clear_reap_list(mru);
+ 
+@@ -298,7 +296,7 @@ _xfs_mru_cache_reap(
+ 		queue_delayed_work(xfs_mru_reap_wq, &mru->work, next);
+ 	}
+ 
+-	spin_unlock(&mru->lock);
++	xa_unlock(&mru->store);
+ }
+ 
+ int
+@@ -358,13 +356,8 @@ xfs_mru_cache_create(
+ 	for (grp = 0; grp < mru->grp_count; grp++)
+ 		INIT_LIST_HEAD(mru->lists + grp);
+ 
+-	/*
+-	 * We use GFP_KERNEL radix tree preload and do inserts under a
+-	 * spinlock so GFP_ATOMIC is appropriate for the radix tree itself.
+-	 */
+-	INIT_RADIX_TREE(&mru->store, GFP_ATOMIC);
++	xa_init(&mru->store);
+ 	INIT_LIST_HEAD(&mru->reap_list);
+-	spin_lock_init(&mru->lock);
+ 	INIT_DELAYED_WORK(&mru->work, _xfs_mru_cache_reap);
+ 
+ 	mru->grp_time  = grp_time;
+@@ -394,17 +387,17 @@ xfs_mru_cache_flush(
+ 	if (!mru || !mru->lists)
+ 		return;
+ 
+-	spin_lock(&mru->lock);
++	xa_lock(&mru->store);
+ 	if (mru->queued) {
+-		spin_unlock(&mru->lock);
++		xa_unlock(&mru->store);
+ 		cancel_delayed_work_sync(&mru->work);
+-		spin_lock(&mru->lock);
++		xa_lock(&mru->store);
+ 	}
+ 
+ 	_xfs_mru_cache_migrate(mru, jiffies + mru->grp_count * mru->grp_time);
+ 	_xfs_mru_cache_clear_reap_list(mru);
+ 
+-	spin_unlock(&mru->lock);
++	xa_unlock(&mru->store);
+ }
+ 
+ void
+@@ -431,24 +424,24 @@ xfs_mru_cache_insert(
+ 	unsigned long		key,
+ 	struct xfs_mru_cache_elem *elem)
+ {
++	XA_STATE(xas, &mru->store, key);
+ 	int			error;
+ 
+ 	ASSERT(mru && mru->lists);
+ 	if (!mru || !mru->lists)
+ 		return -EINVAL;
+ 
+-	if (radix_tree_preload(GFP_NOFS))
+-		return -ENOMEM;
+-
+ 	INIT_LIST_HEAD(&elem->list_node);
+ 	elem->key = key;
+ 
+-	spin_lock(&mru->lock);
+-	error = radix_tree_insert(&mru->store, key, elem);
+-	radix_tree_preload_end();
+-	if (!error)
+-		_xfs_mru_cache_list_insert(mru, elem);
+-	spin_unlock(&mru->lock);
++	do {
++		xas_lock(&xas);
++		xas_store(&xas, elem);
++		error = xas_error(&xas);
++		if (!error)
++			_xfs_mru_cache_list_insert(mru, elem);
++		xas_unlock(&xas);
++	} while (xas_nomem(&xas, GFP_NOFS));
+ 
+ 	return error;
+ }
+@@ -470,11 +463,11 @@ xfs_mru_cache_remove(
+ 	if (!mru || !mru->lists)
+ 		return NULL;
+ 
+-	spin_lock(&mru->lock);
+-	elem = radix_tree_delete(&mru->store, key);
++	xa_lock(&mru->store);
++	elem = __xa_erase(&mru->store, key);
+ 	if (elem)
+ 		list_del(&elem->list_node);
+-	spin_unlock(&mru->lock);
++	xa_unlock(&mru->store);
+ 
+ 	return elem;
+ }
+@@ -520,20 +513,21 @@ xfs_mru_cache_lookup(
+ 	struct xfs_mru_cache	*mru,
+ 	unsigned long		key)
+ {
++	XA_STATE(xas, &mru->store, key);
+ 	struct xfs_mru_cache_elem *elem;
+ 
+ 	ASSERT(mru && mru->lists);
+ 	if (!mru || !mru->lists)
+ 		return NULL;
+ 
+-	spin_lock(&mru->lock);
+-	elem = radix_tree_lookup(&mru->store, key);
++	xas_lock(&xas);
++	elem = xas_load(&xas);
+ 	if (elem) {
+ 		list_del(&elem->list_node);
+ 		_xfs_mru_cache_list_insert(mru, elem);
+-		__release(mru_lock); /* help sparse not be stupid */
++		__release(&xas); /* help sparse not be stupid */
+ 	} else
+-		spin_unlock(&mru->lock);
++		xas_unlock(&xas);
+ 
+ 	return elem;
+ }
+@@ -546,7 +540,7 @@ xfs_mru_cache_lookup(
+ void
+ xfs_mru_cache_done(
+ 	struct xfs_mru_cache	*mru)
+-		__releases(mru->lock)
++		__releases(mru->store)
+ {
+-	spin_unlock(&mru->lock);
++	xa_unlock(&mru->store);
+ }
 -- 
 2.15.1
