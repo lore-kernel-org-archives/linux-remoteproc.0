@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 58/99] dax: Convert lock_slot to XArray
-Date: Wed, 17 Jan 2018 12:21:22 -0800
-Message-Id: <20180117202203.19756-59-willy@infradead.org>
+Subject: [PATCH v6 97/99] xen: Convert pvcalls-back to XArray
+Date: Wed, 17 Jan 2018 12:22:01 -0800
+Message-Id: <20180117202203.19756-98-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,102 +11,141 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+This is a straightforward conversion.
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/xen/pvcalls-back.c | 51 ++++++++++++++--------------------------------
+ 1 file changed, 15 insertions(+), 36 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index f3463d93a6ce..8eab0b56f7f9 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -188,12 +188,11 @@ static void dax_wake_mapping_entry_waiter(struct address_space *mapping,
- /*
-  * Mark the given slot as locked.  Must be called with xa_lock held.
-  */
--static inline void *lock_slot(struct address_space *mapping, void **slot)
-+static inline void *lock_slot(struct xa_state *xas)
- {
--	unsigned long v = xa_to_value(
--		radix_tree_deref_slot_protected(slot, &mapping->pages.xa_lock));
-+	unsigned long v = xa_to_value(xas_load(xas));
- 	void *entry = xa_mk_value(v | DAX_ENTRY_LOCK);
--	radix_tree_replace_slot(&mapping->pages, slot, entry);
-+	xas_store(xas, entry);
- 	return entry;
- }
+diff --git a/drivers/xen/pvcalls-back.c b/drivers/xen/pvcalls-back.c
+index c7822d8078b9..e059d2e777e1 100644
+--- a/drivers/xen/pvcalls-back.c
++++ b/drivers/xen/pvcalls-back.c
+@@ -15,10 +15,10 @@
+ #include <linux/inet.h>
+ #include <linux/kthread.h>
+ #include <linux/list.h>
+-#include <linux/radix-tree.h>
+ #include <linux/module.h>
+ #include <linux/semaphore.h>
+ #include <linux/wait.h>
++#include <linux/xarray.h>
+ #include <net/sock.h>
+ #include <net/inet_common.h>
+ #include <net/inet_connection_sock.h>
+@@ -50,7 +50,7 @@ struct pvcalls_fedata {
+ 	struct xen_pvcalls_back_ring ring;
+ 	int irq;
+ 	struct list_head socket_mappings;
+-	struct radix_tree_root socketpass_mappings;
++	struct xarray socketpass_mappings;
+ 	struct semaphore socket_lock;
+ };
  
-@@ -244,7 +243,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
- 
- 	xas_lock_irq(&xas);
- 	entry = xas_load(&xas);
--	if (WARN_ON_ONCE(!entry || !xa_is_value(entry) || !dax_locked(entry))) {
-+	if (WARN_ON_ONCE(!xa_is_value(entry) || !dax_locked(entry))) {
- 		xas_unlock_irq(&xas);
- 		return;
- 	}
-@@ -303,6 +302,7 @@ static void put_unlocked_mapping_entry(struct address_space *mapping,
- static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 		unsigned long size_flag)
- {
-+	XA_STATE(xas, &mapping->pages, index);
- 	bool pmd_downgrade = false; /* splitting 2MiB entry into 4k entries? */
- 	void *entry, **slot;
- 
-@@ -341,7 +341,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 			 * Make sure 'entry' remains valid while we drop
- 			 * xa_lock.
- 			 */
--			entry = lock_slot(mapping, slot);
-+			entry = lock_slot(&xas);
+@@ -492,10 +492,9 @@ static int pvcalls_back_release(struct xenbus_device *dev,
+ 			goto out;
  		}
- 
- 		xa_unlock_irq(&mapping->pages);
-@@ -408,7 +408,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 		xa_unlock_irq(&mapping->pages);
- 		return entry;
  	}
--	entry = lock_slot(mapping, slot);
-+	entry = lock_slot(&xas);
-  out_unlock:
- 	xa_unlock_irq(&mapping->pages);
- 	return entry;
-@@ -639,6 +639,7 @@ static int dax_writeback_one(struct block_device *bdev,
- 		pgoff_t index, void *entry)
- {
- 	struct radix_tree_root *pages = &mapping->pages;
-+	XA_STATE(xas, pages, index);
- 	void *entry2, **slot, *kaddr;
- 	long ret = 0, id;
- 	sector_t sector;
-@@ -675,7 +676,7 @@ static int dax_writeback_one(struct block_device *bdev,
- 	if (!radix_tree_tag_get(pages, index, PAGECACHE_TAG_TOWRITE))
- 		goto put_unlocked;
- 	/* Lock the entry to serialize with page faults */
--	entry = lock_slot(mapping, slot);
-+	entry = lock_slot(&xas);
- 	/*
- 	 * We can clear the tag now but we have to be careful so that concurrent
- 	 * dax_writeback_one() calls for the same index cannot finish before we
-@@ -1500,8 +1501,9 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 				  pfn_t pfn)
- {
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
--	void *entry, **slot;
- 	pgoff_t index = vmf->pgoff;
-+	XA_STATE(xas, &mapping->pages, index);
-+	void *entry, **slot;
- 	int vmf_ret, error;
+-	mappass = radix_tree_lookup(&fedata->socketpass_mappings,
+-				    req->u.release.id);
++	mappass = xa_load(&fedata->socketpass_mappings, req->u.release.id);
+ 	if (mappass != NULL) {
+-		radix_tree_delete(&fedata->socketpass_mappings, mappass->id);
++		xa_erase(&fedata->socketpass_mappings, mappass->id);
+ 		up(&fedata->socket_lock);
+ 		ret = pvcalls_back_release_passive(dev, fedata, mappass);
+ 	} else
+@@ -650,10 +649,8 @@ static int pvcalls_back_bind(struct xenbus_device *dev,
+ 	map->fedata = fedata;
+ 	map->id = req->u.bind.id;
  
- 	xa_lock_irq(&mapping->pages);
-@@ -1517,7 +1519,7 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 		return VM_FAULT_NOPAGE;
+-	down(&fedata->socket_lock);
+-	ret = radix_tree_insert(&fedata->socketpass_mappings, map->id,
+-				map);
+-	up(&fedata->socket_lock);
++	ret = xa_err(xa_store(&fedata->socketpass_mappings, map->id, map,
++								GFP_KERNEL));
+ 	if (ret)
+ 		goto out;
+ 
+@@ -689,9 +686,7 @@ static int pvcalls_back_listen(struct xenbus_device *dev,
+ 
+ 	fedata = dev_get_drvdata(&dev->dev);
+ 
+-	down(&fedata->socket_lock);
+-	map = radix_tree_lookup(&fedata->socketpass_mappings, req->u.listen.id);
+-	up(&fedata->socket_lock);
++	map = xa_load(&fedata->socketpass_mappings, req->u.listen.id);
+ 	if (map == NULL)
+ 		goto out;
+ 
+@@ -717,10 +712,7 @@ static int pvcalls_back_accept(struct xenbus_device *dev,
+ 
+ 	fedata = dev_get_drvdata(&dev->dev);
+ 
+-	down(&fedata->socket_lock);
+-	mappass = radix_tree_lookup(&fedata->socketpass_mappings,
+-		req->u.accept.id);
+-	up(&fedata->socket_lock);
++	mappass = xa_load(&fedata->socketpass_mappings, req->u.accept.id);
+ 	if (mappass == NULL)
+ 		goto out_error;
+ 
+@@ -765,10 +757,7 @@ static int pvcalls_back_poll(struct xenbus_device *dev,
+ 
+ 	fedata = dev_get_drvdata(&dev->dev);
+ 
+-	down(&fedata->socket_lock);
+-	mappass = radix_tree_lookup(&fedata->socketpass_mappings,
+-				    req->u.poll.id);
+-	up(&fedata->socket_lock);
++	mappass = xa_load(&fedata->socketpass_mappings, req->u.poll.id);
+ 	if (mappass == NULL)
+ 		return -EINVAL;
+ 
+@@ -960,7 +949,7 @@ static int backend_connect(struct xenbus_device *dev)
+ 	fedata->dev = dev;
+ 
+ 	INIT_LIST_HEAD(&fedata->socket_mappings);
+-	INIT_RADIX_TREE(&fedata->socketpass_mappings, GFP_KERNEL);
++	xa_init(&fedata->socketpass_mappings);
+ 	sema_init(&fedata->socket_lock, 1);
+ 	dev_set_drvdata(&dev->dev, fedata);
+ 
+@@ -984,9 +973,7 @@ static int backend_disconnect(struct xenbus_device *dev)
+ 	struct pvcalls_fedata *fedata;
+ 	struct sock_mapping *map, *n;
+ 	struct sockpass_mapping *mappass;
+-	struct radix_tree_iter iter;
+-	void **slot;
+-
++	unsigned long index = 0;
+ 
+ 	fedata = dev_get_drvdata(&dev->dev);
+ 
+@@ -996,18 +983,10 @@ static int backend_disconnect(struct xenbus_device *dev)
+ 		pvcalls_back_release_active(dev, fedata, map);
  	}
- 	radix_tree_tag_set(&mapping->pages, index, PAGECACHE_TAG_DIRTY);
--	entry = lock_slot(mapping, slot);
-+	entry = lock_slot(&xas);
- 	xa_unlock_irq(&mapping->pages);
- 	switch (pe_size) {
- 	case PE_SIZE_PTE:
+ 
+-	radix_tree_for_each_slot(slot, &fedata->socketpass_mappings, &iter, 0) {
+-		mappass = radix_tree_deref_slot(slot);
+-		if (!mappass)
+-			continue;
+-		if (radix_tree_exception(mappass)) {
+-			if (radix_tree_deref_retry(mappass))
+-				slot = radix_tree_iter_retry(&iter);
+-		} else {
+-			radix_tree_delete(&fedata->socketpass_mappings,
+-					  mappass->id);
+-			pvcalls_back_release_passive(dev, fedata, mappass);
+-		}
++	xa_for_each(&fedata->socketpass_mappings, mappass, index, ULONG_MAX,
++			XA_PRESENT) {
++		xa_erase(&fedata->socketpass_mappings, index);
++		pvcalls_back_release_passive(dev, fedata, mappass);
+ 	}
+ 	up(&fedata->socket_lock);
+ 
 -- 
 2.15.1
