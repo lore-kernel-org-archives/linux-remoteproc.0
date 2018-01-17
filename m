@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 66/99] page cache: Finish XArray conversion
-Date: Wed, 17 Jan 2018 12:21:30 -0800
-Message-Id: <20180117202203.19756-67-willy@infradead.org>
+Subject: [PATCH v6 36/99] mm: Convert page migration to XArray
+Date: Wed, 17 Jan 2018 12:21:00 -0800
+Message-Id: <20180117202203.19756-37-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,54 +11,130 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-With no more radix tree API users left, we can drop the GFP flags
-and use xa_init() instead of INIT_RADIX_TREE().
-
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/inode.c         | 2 +-
- include/linux/fs.h | 2 +-
- mm/swap_state.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ mm/migrate.c | 41 ++++++++++++++++-------------------------
+ 1 file changed, 16 insertions(+), 25 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index c7b00573c10d..f5680b805336 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -348,7 +348,7 @@ EXPORT_SYMBOL(inc_nlink);
- void address_space_init_once(struct address_space *mapping)
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 75d19904dd9a..7122fec9b075 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -322,7 +322,7 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
+ 	page = migration_entry_to_page(entry);
+ 
+ 	/*
+-	 * Once radix-tree replacement of page migration started, page_count
++	 * Once page cache replacement of page migration started, page_count
+ 	 * *must* be zero. And, we don't want to call wait_on_page_locked()
+ 	 * against a page without get_page().
+ 	 * So, we use get_page_unless_zero(), here. Even failed, page fault
+@@ -437,10 +437,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		struct buffer_head *head, enum migrate_mode mode,
+ 		int extra_count)
  {
- 	memset(mapping, 0, sizeof(*mapping));
--	INIT_RADIX_TREE(&mapping->pages, GFP_ATOMIC | __GFP_ACCOUNT);
-+	xa_init_flags(&mapping->pages, XA_FLAGS_LOCK_IRQ);
- 	init_rwsem(&mapping->i_mmap_rwsem);
- 	INIT_LIST_HEAD(&mapping->private_list);
- 	spin_lock_init(&mapping->private_lock);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c58bc3c619bf..b459bf4ddb62 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -410,7 +410,7 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
-  */
- struct address_space {
- 	struct inode		*host;
--	struct radix_tree_root	pages;
-+	struct xarray		pages;
- 	gfp_t			gfp_mask;
- 	atomic_t		i_mmap_writable;
- 	struct rb_root_cached	i_mmap;
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 219e3b4f09e6..25f027d0bb00 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -573,7 +573,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
- 		return -ENOMEM;
- 	for (i = 0; i < nr; i++) {
- 		space = spaces + i;
--		INIT_RADIX_TREE(&space->pages, GFP_ATOMIC|__GFP_NOWARN);
-+		xa_init_flags(&space->pages, XA_FLAGS_LOCK_IRQ);
- 		atomic_set(&space->i_mmap_writable, 0);
- 		space->a_ops = &swap_aops;
- 		/* swap cache doesn't use writeback related tags */
++	XA_STATE(xas, &mapping->pages, page_index(page));
+ 	struct zone *oldzone, *newzone;
+ 	int dirty;
+ 	int expected_count = 1 + extra_count;
+-	void **pslot;
+ 
+ 	/*
+ 	 * Device public or private pages have an extra refcount as they are
+@@ -466,21 +466,16 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	oldzone = page_zone(page);
+ 	newzone = page_zone(newpage);
+ 
+-	xa_lock_irq(&mapping->pages);
+-
+-	pslot = radix_tree_lookup_slot(&mapping->pages,
+- 					page_index(page));
++	xas_lock_irq(&xas);
+ 
+ 	expected_count += 1 + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot,
+-					&mapping->pages.xa_lock) != page) {
+-		xa_unlock_irq(&mapping->pages);
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -494,7 +489,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	if (mode == MIGRATE_ASYNC && head &&
+ 			!buffer_migrate_lock_buffers(head, mode)) {
+ 		page_ref_unfreeze(page, expected_count);
+-		xa_unlock_irq(&mapping->pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -522,7 +517,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 		SetPageDirty(newpage);
+ 	}
+ 
+-	radix_tree_replace_slot(&mapping->pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 
+ 	/*
+ 	 * Drop cache reference from old page by unfreezing
+@@ -531,7 +526,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+ 	 */
+ 	page_ref_unfreeze(page, expected_count - 1);
+ 
+-	xa_unlock(&mapping->pages);
++	xas_unlock(&xas);
+ 	/* Leave irq disabled to prevent preemption while updating stats */
+ 
+ 	/*
+@@ -571,22 +566,18 @@ EXPORT_SYMBOL(migrate_page_move_mapping);
+ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 				   struct page *newpage, struct page *page)
+ {
++	XA_STATE(xas, &mapping->pages, page_index(page));
+ 	int expected_count;
+-	void **pslot;
+-
+-	xa_lock_irq(&mapping->pages);
+-
+-	pslot = radix_tree_lookup_slot(&mapping->pages, page_index(page));
+ 
++	xas_lock_irq(&xas);
+ 	expected_count = 2 + page_has_private(page);
+-	if (page_count(page) != expected_count ||
+-		radix_tree_deref_slot_protected(pslot, &mapping->pages.xa_lock) != page) {
+-		xa_unlock_irq(&mapping->pages);
++	if (page_count(page) != expected_count || xas_load(&xas) != page) {
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+ 	if (!page_ref_freeze(page, expected_count)) {
+-		xa_unlock_irq(&mapping->pages);
++		xas_unlock_irq(&xas);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -595,11 +586,11 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 
+ 	get_page(newpage);
+ 
+-	radix_tree_replace_slot(&mapping->pages, pslot, newpage);
++	xas_store(&xas, newpage);
+ 
+ 	page_ref_unfreeze(page, expected_count - 1);
+ 
+-	xa_unlock_irq(&mapping->pages);
++	xas_unlock_irq(&xas);
+ 
+ 	return MIGRATEPAGE_SUCCESS;
+ }
 -- 
 2.15.1
