@@ -1,472 +1,70 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 4/8] remoteproc: Merge rproc_ops and rproc_fw_ops
-Date: Fri,  5 Jan 2018 15:58:01 -0800
-Message-Id: <20180105235805.9948-5-bjorn.andersson@linaro.org>
-In-Reply-To: <20180105235805.9948-1-bjorn.andersson@linaro.org>
-References: <20180105235805.9948-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 16/99] xarray: Add xas_create_range
+Date: Wed, 17 Jan 2018 12:20:40 -0800
+Message-Id: <20180117202203.19756-17-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There are currently a few different schemes used for overriding fw_ops
-or parts of fw_ops. Merge fw_ops into rproc_ops and expose the default
-ELF-loader symbols so that they can be assigned by the drivers.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-To keep backwards compatibility with the "default" case, a driver not
-specifying the "load" operation is assumed to want the full ELF-loader
-suit of functions.
+This hopefully temporary function is useful for users who have not yet
+been converted to multi-index entries.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
+ include/linux/xarray.h |  2 ++
+ lib/xarray.c           | 22 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-Changes since v1:
-- Fill load, sanity_check and get_boot_addr for st_slim
-
- drivers/remoteproc/qcom_adsp_pil.c         |  9 ++----
- drivers/remoteproc/qcom_q6v5_pil.c         |  9 ++----
- drivers/remoteproc/qcom_wcnss.c            |  9 ++----
- drivers/remoteproc/remoteproc_core.c       | 10 ++++--
- drivers/remoteproc/remoteproc_elf_loader.c | 30 +++++++-----------
- drivers/remoteproc/remoteproc_internal.h   | 51 +++++++++++-------------------
- drivers/remoteproc/st_slim_rproc.c         | 22 ++++---------
- include/linux/remoteproc.h                 | 17 ++++++++--
- 8 files changed, 67 insertions(+), 90 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 3f6af54dbc96..56156c12bd73 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -85,11 +85,6 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- 			     adsp->mem_region, adsp->mem_phys, adsp->mem_size);
- }
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 01ce313fc00e..acb6d02ff194 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -705,6 +705,8 @@ void xas_init_tags(const struct xa_state *);
+ bool xas_nomem(struct xa_state *, gfp_t);
+ void xas_pause(struct xa_state *);
  
--static const struct rproc_fw_ops adsp_fw_ops = {
--	.find_rsc_table = qcom_mdt_find_rsc_table,
--	.load = adsp_load,
--};
--
- static int adsp_start(struct rproc *rproc)
- {
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-@@ -182,6 +177,8 @@ static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
-+	.find_rsc_table = qcom_mdt_find_rsc_table,
-+	.load = adsp_load,
- };
- 
- static irqreturn_t adsp_wdog_interrupt(int irq, void *dev)
-@@ -344,8 +341,6 @@ static int adsp_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	rproc->fw_ops = &adsp_fw_ops;
--
- 	adsp = (struct qcom_adsp *)rproc->priv;
- 	adsp->dev = &pdev->dev;
- 	adsp->rproc = rproc;
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8a3fa2bcc9f6..3ea668d9fd4c 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -342,11 +342,6 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- 	return 0;
- }
- 
--static const struct rproc_fw_ops q6v5_fw_ops = {
--	.find_rsc_table = q6v5_find_rsc_table,
--	.load = q6v5_load,
--};
--
- static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
- {
- 	unsigned long timeout;
-@@ -931,6 +926,8 @@ static const struct rproc_ops q6v5_ops = {
- 	.start = q6v5_start,
- 	.stop = q6v5_stop,
- 	.da_to_va = q6v5_da_to_va,
-+	.find_rsc_table = q6v5_find_rsc_table,
-+	.load = q6v5_load,
- };
- 
- static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
-@@ -1150,8 +1147,6 @@ static int q6v5_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	rproc->fw_ops = &q6v5_fw_ops;
--
- 	qproc = (struct q6v5 *)rproc->priv;
- 	qproc->dev = &pdev->dev;
- 	qproc->rproc = rproc;
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index c7686393d505..e53fc6f268fc 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -156,11 +156,6 @@ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
- 			     wcnss->mem_region, wcnss->mem_phys, wcnss->mem_size);
- }
- 
--static const struct rproc_fw_ops wcnss_fw_ops = {
--	.find_rsc_table = qcom_mdt_find_rsc_table,
--	.load = wcnss_load,
--};
--
- static void wcnss_indicate_nv_download(struct qcom_wcnss *wcnss)
- {
- 	u32 val;
-@@ -313,6 +308,8 @@ static const struct rproc_ops wcnss_ops = {
- 	.start = wcnss_start,
- 	.stop = wcnss_stop,
- 	.da_to_va = wcnss_da_to_va,
-+	.find_rsc_table = qcom_mdt_find_rsc_table,
-+	.load = wcnss_load,
- };
- 
- static irqreturn_t wcnss_wdog_interrupt(int irq, void *dev)
-@@ -492,8 +489,6 @@ static int wcnss_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	rproc->fw_ops = &wcnss_fw_ops;
--
- 	wcnss = (struct qcom_wcnss *)rproc->priv;
- 	wcnss->dev = &pdev->dev;
- 	wcnss->rproc = rproc;
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index dbf685dbafcf..2c669a73e77d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1437,8 +1437,14 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 
- 	atomic_set(&rproc->power, 0);
- 
--	/* Set ELF as the default fw_ops handler */
--	rproc->fw_ops = &rproc_elf_fw_ops;
-+	/* Default to ELF loader if no load function is specified */
-+	if (!rproc->ops->load) {
-+		rproc->ops->load = rproc_elf_load_segments;
-+		rproc->ops->find_rsc_table = rproc_elf_find_rsc_table;
-+		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
-+		rproc->ops->sanity_check = rproc_elf_sanity_check;
-+		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
-+	}
- 
- 	mutex_init(&rproc->lock);
- 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index c523983a4aec..822fa1bf893f 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -39,8 +39,7 @@
-  *
-  * Make sure this fw image is sane.
-  */
--static int
--rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
-+int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
- {
- 	const char *name = rproc->firmware;
- 	struct device *dev = &rproc->dev;
-@@ -98,6 +97,7 @@ rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(rproc_elf_sanity_check);
- 
- /**
-  * rproc_elf_get_boot_addr() - Get rproc's boot address.
-@@ -110,13 +110,13 @@ rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
-  * Note that the boot address is not a configurable property of all remote
-  * processors. Some will always boot at a specific hard-coded address.
-  */
--static
- u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
- 
- 	return ehdr->e_entry;
- }
-+EXPORT_SYMBOL(rproc_elf_get_boot_addr);
- 
- /**
-  * rproc_elf_load_segments() - load firmware segments to memory
-@@ -142,8 +142,7 @@ u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-  * directly allocate memory for every segment/resource. This is not yet
-  * supported, though.
-  */
--static int
--rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
-+int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct device *dev = &rproc->dev;
- 	struct elf32_hdr *ehdr;
-@@ -207,6 +206,7 @@ rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 
- 	return ret;
- }
-+EXPORT_SYMBOL(rproc_elf_load_segments);
- 
- static struct elf32_shdr *
- find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
-@@ -282,9 +282,9 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
-  * size into @tablesz. If a valid table isn't found, NULL is returned
-  * (and @tablesz isn't set).
-  */
--static struct resource_table *
--rproc_elf_find_rsc_table(struct rproc *rproc, const struct firmware *fw,
--			 int *tablesz)
-+struct resource_table *rproc_elf_find_rsc_table(struct rproc *rproc,
-+						const struct firmware *fw,
-+						int *tablesz)
- {
- 	struct elf32_hdr *ehdr;
- 	struct elf32_shdr *shdr;
-@@ -303,6 +303,7 @@ rproc_elf_find_rsc_table(struct rproc *rproc, const struct firmware *fw,
- 
- 	return table;
- }
-+EXPORT_SYMBOL(rproc_elf_find_rsc_table);
- 
- /**
-  * rproc_elf_find_loaded_rsc_table() - find the loaded resource table
-@@ -315,8 +316,8 @@ rproc_elf_find_rsc_table(struct rproc *rproc, const struct firmware *fw,
-  * Returns the pointer to the resource table if it is found or NULL otherwise.
-  * If the table wasn't loaded yet the result is unspecified.
-  */
--static struct resource_table *
--rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
-+struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
-+						       const struct firmware *fw)
- {
- 	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
- 	struct elf32_shdr *shdr;
-@@ -327,11 +328,4 @@ rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *fw)
- 
- 	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
- }
--
--const struct rproc_fw_ops rproc_elf_fw_ops = {
--	.load = rproc_elf_load_segments,
--	.find_rsc_table = rproc_elf_find_rsc_table,
--	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
--	.sanity_check = rproc_elf_sanity_check,
--	.get_boot_addr = rproc_elf_get_boot_addr
--};
-+EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index c1077bec5d0b..a42690c514e2 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -25,26 +25,6 @@
- 
- struct rproc;
- 
--/**
-- * struct rproc_fw_ops - firmware format specific operations.
-- * @find_rsc_table:	find the resource table inside the firmware image
-- * @find_loaded_rsc_table: find the loaded resouce table
-- * @load:		load firmeware to memory, where the remote processor
-- *			expects to find it
-- * @sanity_check:	sanity check the fw image
-- * @get_boot_addr:	get boot address to entry point specified in firmware
-- */
--struct rproc_fw_ops {
--	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
--						 const struct firmware *fw,
--						 int *tablesz);
--	struct resource_table *(*find_loaded_rsc_table)(
--				struct rproc *rproc, const struct firmware *fw);
--	int (*load)(struct rproc *rproc, const struct firmware *fw);
--	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
--	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
--};
--
- /* from remoteproc_core.c */
- void rproc_release(struct kref *kref);
- irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-@@ -74,11 +54,20 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
- void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
- int rproc_trigger_recovery(struct rproc *rproc);
- 
-+int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-+u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
-+int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
-+struct resource_table *rproc_elf_find_rsc_table(struct rproc *rproc,
-+						const struct firmware *fw,
-+						int *tablesz);
-+struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
-+						       const struct firmware *fw);
++void xas_create_range(struct xa_state *, unsigned long max);
 +
- static inline
- int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
- {
--	if (rproc->fw_ops->sanity_check)
--		return rproc->fw_ops->sanity_check(rproc, fw);
-+	if (rproc->ops->sanity_check)
-+		return rproc->ops->sanity_check(rproc, fw);
- 
- 	return 0;
- }
-@@ -86,8 +75,8 @@ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
- static inline
- u32 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
- {
--	if (rproc->fw_ops->get_boot_addr)
--		return rproc->fw_ops->get_boot_addr(rproc, fw);
-+	if (rproc->ops->get_boot_addr)
-+		return rproc->ops->get_boot_addr(rproc, fw);
- 
- 	return 0;
- }
-@@ -95,8 +84,8 @@ u32 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
- static inline
- int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
- {
--	if (rproc->fw_ops->load)
--		return rproc->fw_ops->load(rproc, fw);
-+	if (rproc->ops->load)
-+		return rproc->ops->load(rproc, fw);
- 
- 	return -EINVAL;
- }
-@@ -106,8 +95,8 @@ struct resource_table *rproc_find_rsc_table(struct rproc *rproc,
- 					    const struct firmware *fw,
- 					    int *tablesz)
- {
--	if (rproc->fw_ops->find_rsc_table)
--		return rproc->fw_ops->find_rsc_table(rproc, fw, tablesz);
-+	if (rproc->ops->find_rsc_table)
-+		return rproc->ops->find_rsc_table(rproc, fw, tablesz);
- 
- 	return NULL;
- }
-@@ -116,12 +105,10 @@ static inline
- struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
- 						   const struct firmware *fw)
- {
--	if (rproc->fw_ops->find_loaded_rsc_table)
--		return rproc->fw_ops->find_loaded_rsc_table(rproc, fw);
-+	if (rproc->ops->find_loaded_rsc_table)
-+		return rproc->ops->find_loaded_rsc_table(rproc, fw);
- 
- 	return NULL;
- }
- 
--extern const struct rproc_fw_ops rproc_elf_fw_ops;
--
- #endif /* REMOTEPROC_INTERNAL_H */
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index 6cfd862f945b..1bce63a06424 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -200,12 +200,6 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return va;
- }
- 
--static const struct rproc_ops slim_rproc_ops = {
--	.start		= slim_rproc_start,
--	.stop		= slim_rproc_stop,
--	.da_to_va       = slim_rproc_da_to_va,
--};
--
- /*
-  * Firmware handler operations: sanity, boot address, load ...
-  */
-@@ -223,8 +217,14 @@ static struct resource_table *slim_rproc_find_rsc_table(struct rproc *rproc,
- 	return &empty_rsc_tbl;
- }
- 
--static struct rproc_fw_ops slim_rproc_fw_ops = {
-+static const struct rproc_ops slim_rproc_ops = {
-+	.start		= slim_rproc_start,
-+	.stop		= slim_rproc_stop,
-+	.da_to_va       = slim_rproc_da_to_va,
- 	.find_rsc_table = slim_rproc_find_rsc_table,
-+	.get_boot_addr	= rproc_elf_get_boot_addr,
-+	.load		= rproc_elf_load_segments,
-+	.sanity_check	= rproc_elf_sanity_check,
- };
- 
  /**
-@@ -249,7 +249,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
- 	struct rproc *rproc;
- 	struct resource *res;
- 	int err, i;
--	const struct rproc_fw_ops *elf_ops;
+  * xas_reload() - Refetch an entry from the xarray.
+  * @xas: XArray operation state.
+diff --git a/lib/xarray.c b/lib/xarray.c
+index e8ece1fff9fd..c044373d6893 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -612,6 +612,28 @@ void *xas_create(struct xa_state *xas)
+ }
+ EXPORT_SYMBOL_GPL(xas_create);
  
- 	if (!fw_name)
- 		return ERR_PTR(-EINVAL);
-@@ -267,13 +266,6 @@ struct st_slim_rproc *st_slim_rproc_alloc(struct platform_device *pdev,
- 	slim_rproc = rproc->priv;
- 	slim_rproc->rproc = rproc;
- 
--	elf_ops = rproc->fw_ops;
--	/* Use some generic elf ops */
--	slim_rproc_fw_ops.load = elf_ops->load;
--	slim_rproc_fw_ops.sanity_check = elf_ops->sanity_check;
--
--	rproc->fw_ops = &slim_rproc_fw_ops;
--
- 	/* get imem and dmem */
- 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
- 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index cc4d30a790b3..ca2021cf7b39 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -324,6 +324,7 @@ struct rproc_mem_entry {
- };
- 
- struct rproc;
-+struct firmware;
- 
- /**
-  * struct rproc_ops - platform-specific device handlers
-@@ -331,12 +332,26 @@ struct rproc;
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-  * @da_to_va:	optional platform hook to perform address translations
-+ * @find_rsc_table:	find the resource table inside the firmware image
-+ * @find_loaded_rsc_table: find the loaded resouce table
-+ * @load:		load firmeware to memory, where the remote processor
-+ *			expects to find it
-+ * @sanity_check:	sanity check the fw image
-+ * @get_boot_addr:	get boot address to entry point specified in firmware
-  */
- struct rproc_ops {
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
- 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
-+	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
-+						 const struct firmware *fw,
-+						 int *tablesz);
-+	struct resource_table *(*find_loaded_rsc_table)(
-+				struct rproc *rproc, const struct firmware *fw);
-+	int (*load)(struct rproc *rproc, const struct firmware *fw);
-+	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
-+	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
- };
- 
- /**
-@@ -390,7 +405,6 @@ enum rproc_crash_type {
-  * @priv: private data which belongs to the platform-specific rproc module
-  * @ops: platform-specific start/stop rproc handlers
-  * @dev: virtual device for refcounting and common remoteproc behavior
-- * @fw_ops: firmware-specific handlers
-  * @power: refcount of users who need this rproc powered up
-  * @state: state of the device
-  * @lock: lock which protects concurrent manipulations of the rproc
-@@ -421,7 +435,6 @@ struct rproc {
- 	void *priv;
- 	struct rproc_ops *ops;
- 	struct device dev;
--	const struct rproc_fw_ops *fw_ops;
- 	atomic_t power;
- 	unsigned int state;
- 	struct mutex lock;
++/**
++ * xas_create_range() - Ensure that stores to this range will succeed
++ * @xas: XArray operation state.
++ * @max: The highest index to create a slot for.
++ *
++ * Creates all of the slots in the range between the current position of
++ * @xas and @max.  This is for the benefit of users who have not yet been
++ * converted to multi-index entries.
++ *
++ * The implementation is naive.
++ */
++void xas_create_range(struct xa_state *xas, unsigned long max)
++{
++	XA_STATE(tmp, xas->xa, xas->xa_index);
++
++	do {
++		xas_create(&tmp);
++		xas_set(&tmp, tmp.xa_index + XA_CHUNK_SIZE);
++	} while (tmp.xa_index < max);
++}
++EXPORT_SYMBOL_GPL(xas_create_range);
++
+ static void store_siblings(struct xa_state *xas, void *entry, void *curr,
+ 				int *countp, int *valuesp)
+ {
 -- 
-2.15.0
+2.15.1
