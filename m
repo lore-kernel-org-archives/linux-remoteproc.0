@@ -1,146 +1,273 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:56121 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753947AbeAQUXA (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Jan 2018 15:23:00 -0500
+Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 81/99] i915: Convert handles_vma to XArray
-Date: Wed, 17 Jan 2018 12:21:45 -0800
-Message-Id: <20180117202203.19756-82-willy@infradead.org>
+Subject: [PATCH v6 79/99] blk-cgroup: Convert to XArray
+Date: Wed, 17 Jan 2018 12:21:43 -0800
+Message-Id: <20180117202203.19756-80-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Straightforward conversion.
+This call to radix_tree_preload is awkward.  At the point of allocation,
+we're under not only a local lock, but also under the queue lock.  So we
+can't back out, drop the lock and retry the allocation.  Replace this
+preload call with a call to xa_reserve() which will ensure the memory is
+allocated.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/gpu/drm/i915/i915_gem.c               |  2 +-
- drivers/gpu/drm/i915/i915_gem_context.c       | 12 +++++-------
- drivers/gpu/drm/i915/i915_gem_context.h       |  4 ++--
- drivers/gpu/drm/i915/i915_gem_execbuffer.c    |  6 +++---
- drivers/gpu/drm/i915/selftests/mock_context.c |  2 +-
- 5 files changed, 12 insertions(+), 14 deletions(-)
+ block/bfq-cgroup.c         |  4 ++--
+ block/blk-cgroup.c         | 52 ++++++++++++++++++++++------------------------
+ block/cfq-iosched.c        |  4 ++--
+ include/linux/blk-cgroup.h |  5 ++---
+ 4 files changed, 31 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index 25ce7bcf9988..69e944f4dfce 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -3351,7 +3351,7 @@ void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
- 		if (ctx->file_priv != fpriv)
- 			continue;
+diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
+index da1525ec4c87..0648aaa6498b 100644
+--- a/block/bfq-cgroup.c
++++ b/block/bfq-cgroup.c
+@@ -860,7 +860,7 @@ static int bfq_io_set_weight_legacy(struct cgroup_subsys_state *css,
+ 		return ret;
  
--		vma = radix_tree_delete(&ctx->handles_vma, lut->handle);
-+		vma = xa_erase(&ctx->handles_vma, lut->handle);
- 		GEM_BUG_ON(vma->obj != obj);
- 
- 		/* We allow the process to have multiple handles to the same
-diff --git a/drivers/gpu/drm/i915/i915_gem_context.c b/drivers/gpu/drm/i915/i915_gem_context.c
-index f782cf2069c1..1aff35ba6e18 100644
---- a/drivers/gpu/drm/i915/i915_gem_context.c
-+++ b/drivers/gpu/drm/i915/i915_gem_context.c
-@@ -95,9 +95,9 @@
- 
- static void lut_close(struct i915_gem_context *ctx)
- {
-+	XA_STATE(xas, &ctx->handles_vma, 0);
- 	struct i915_lut_handle *lut, *ln;
--	struct radix_tree_iter iter;
--	void __rcu **slot;
-+	struct i915_vma *vma;
- 
- 	list_for_each_entry_safe(lut, ln, &ctx->handles_list, ctx_link) {
- 		list_del(&lut->obj_link);
-@@ -105,10 +105,8 @@ static void lut_close(struct i915_gem_context *ctx)
+ 	ret = 0;
+-	spin_lock_irq(&blkcg->lock);
++	xa_lock_irq(&blkcg->blkg_array);
+ 	bfqgd->weight = (unsigned short)val;
+ 	hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
+ 		struct bfq_group *bfqg = blkg_to_bfqg(blkg);
+@@ -894,7 +894,7 @@ static int bfq_io_set_weight_legacy(struct cgroup_subsys_state *css,
+ 			bfqg->entity.prio_changed = 1;
+ 		}
  	}
+-	spin_unlock_irq(&blkcg->lock);
++	xa_unlock_irq(&blkcg->blkg_array);
  
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &ctx->handles_vma, &iter, 0) {
--		struct i915_vma *vma = rcu_dereference_raw(*slot);
--
--		radix_tree_iter_delete(&ctx->handles_vma, &iter, slot);
-+	xas_for_each(&xas, vma, ULONG_MAX) {
-+		xas_store(&xas, NULL);
- 		__i915_gem_object_release_unless_active(vma->obj);
- 	}
- 	rcu_read_unlock();
-@@ -276,7 +274,7 @@ __create_hw_context(struct drm_i915_private *dev_priv,
- 	ctx->i915 = dev_priv;
- 	ctx->priority = I915_PRIORITY_NORMAL;
+ 	return ret;
+ }
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 4117524ca45b..37962d52f1a8 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -146,12 +146,12 @@ struct blkcg_gq *blkg_lookup_slowpath(struct blkcg *blkcg,
+ 	struct blkcg_gq *blkg;
  
--	INIT_RADIX_TREE(&ctx->handles_vma, GFP_KERNEL);
-+	xa_init(&ctx->handles_vma);
- 	INIT_LIST_HEAD(&ctx->handles_list);
- 
- 	/* Default context will never have a file_priv */
-diff --git a/drivers/gpu/drm/i915/i915_gem_context.h b/drivers/gpu/drm/i915/i915_gem_context.h
-index 44688e22a5c2..8e3e0d002f77 100644
---- a/drivers/gpu/drm/i915/i915_gem_context.h
-+++ b/drivers/gpu/drm/i915/i915_gem_context.h
-@@ -181,11 +181,11 @@ struct i915_gem_context {
- 	/** remap_slice: Bitmask of cache lines that need remapping */
- 	u8 remap_slice;
- 
--	/** handles_vma: rbtree to look up our context specific obj/vma for
-+	/** handles_vma: lookup our context specific obj/vma for
- 	 * the user handle. (user handles are per fd, but the binding is
- 	 * per vm, which may be one per context or shared with the global GTT)
+ 	/*
+-	 * Hint didn't match.  Look up from the radix tree.  Note that the
++	 * Hint didn't match.  Fetch from the xarray.  Note that the
+ 	 * hint can only be updated under queue_lock as otherwise @blkg
+-	 * could have already been removed from blkg_tree.  The caller is
++	 * could have already been removed from blkg_array.  The caller is
+ 	 * responsible for grabbing queue_lock if @update_hint.
  	 */
--	struct radix_tree_root handles_vma;
-+	struct xarray handles_vma;
+-	blkg = radix_tree_lookup(&blkcg->blkg_tree, q->id);
++	blkg = xa_load(&blkcg->blkg_array, q->id);
+ 	if (blkg && blkg->q == q) {
+ 		if (update_hint) {
+ 			lockdep_assert_held(q->queue_lock);
+@@ -223,8 +223,8 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
+ 	}
  
- 	/** handles_list: reverse list of all the rbtree entries in use for
- 	 * this context, which allows us to free all the allocations on
-diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-index 435ed95df144..828f4b5473ea 100644
---- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-@@ -683,7 +683,7 @@ static int eb_select_context(struct i915_execbuffer *eb)
+ 	/* insert */
+-	spin_lock(&blkcg->lock);
+-	ret = radix_tree_insert(&blkcg->blkg_tree, q->id, blkg);
++	xa_lock(&blkcg->blkg_array);
++	ret = xa_err(__xa_store(&blkcg->blkg_array, q->id, blkg, GFP_NOWAIT));
+ 	if (likely(!ret)) {
+ 		hlist_add_head_rcu(&blkg->blkcg_node, &blkcg->blkg_list);
+ 		list_add(&blkg->q_node, &q->blkg_list);
+@@ -237,7 +237,7 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
+ 		}
+ 	}
+ 	blkg->online = true;
+-	spin_unlock(&blkcg->lock);
++	xa_unlock(&blkcg->blkg_array);
  
- static int eb_lookup_vmas(struct i915_execbuffer *eb)
+ 	if (!ret)
+ 		return blkg;
+@@ -314,7 +314,7 @@ static void blkg_destroy(struct blkcg_gq *blkg)
+ 	int i;
+ 
+ 	lockdep_assert_held(blkg->q->queue_lock);
+-	lockdep_assert_held(&blkcg->lock);
++	lockdep_assert_held(&blkcg->blkg_array.xa_lock);
+ 
+ 	/* Something wrong if we are trying to remove same group twice */
+ 	WARN_ON_ONCE(list_empty(&blkg->q_node));
+@@ -334,7 +334,7 @@ static void blkg_destroy(struct blkcg_gq *blkg)
+ 
+ 	blkg->online = false;
+ 
+-	radix_tree_delete(&blkcg->blkg_tree, blkg->q->id);
++	xa_erase(&blkcg->blkg_array, blkg->q->id);
+ 	list_del_init(&blkg->q_node);
+ 	hlist_del_init_rcu(&blkg->blkcg_node);
+ 
+@@ -368,9 +368,9 @@ static void blkg_destroy_all(struct request_queue *q)
+ 	list_for_each_entry_safe(blkg, n, &q->blkg_list, q_node) {
+ 		struct blkcg *blkcg = blkg->blkcg;
+ 
+-		spin_lock(&blkcg->lock);
++		xa_lock(&blkcg->blkg_array);
+ 		blkg_destroy(blkg);
+-		spin_unlock(&blkcg->lock);
++		xa_unlock(&blkcg->blkg_array);
+ 	}
+ 
+ 	q->root_blkg = NULL;
+@@ -443,7 +443,7 @@ static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+ 	int i;
+ 
+ 	mutex_lock(&blkcg_pol_mutex);
+-	spin_lock_irq(&blkcg->lock);
++	xa_lock_irq(&blkcg->blkg_array);
+ 
+ 	/*
+ 	 * Note that stat reset is racy - it doesn't synchronize against
+@@ -462,7 +462,7 @@ static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+ 		}
+ 	}
+ 
+-	spin_unlock_irq(&blkcg->lock);
++	xa_unlock_irq(&blkcg->blkg_array);
+ 	mutex_unlock(&blkcg_pol_mutex);
+ 	return 0;
+ }
+@@ -1012,7 +1012,7 @@ static void blkcg_css_offline(struct cgroup_subsys_state *css)
  {
--	struct radix_tree_root *handles_vma = &eb->ctx->handles_vma;
-+	struct xarray *handles_vma = &eb->ctx->handles_vma;
- 	struct drm_i915_gem_object *obj;
- 	unsigned int i;
- 	int err;
-@@ -702,7 +702,7 @@ static int eb_lookup_vmas(struct i915_execbuffer *eb)
- 		struct i915_lut_handle *lut;
- 		struct i915_vma *vma;
+ 	struct blkcg *blkcg = css_to_blkcg(css);
  
--		vma = radix_tree_lookup(handles_vma, handle);
-+		vma = xa_load(handles_vma, handle);
- 		if (likely(vma))
- 			goto add_vma;
+-	spin_lock_irq(&blkcg->lock);
++	xa_lock_irq(&blkcg->blkg_array);
  
-@@ -724,7 +724,7 @@ static int eb_lookup_vmas(struct i915_execbuffer *eb)
- 			goto err_obj;
+ 	while (!hlist_empty(&blkcg->blkg_list)) {
+ 		struct blkcg_gq *blkg = hlist_entry(blkcg->blkg_list.first,
+@@ -1023,13 +1023,13 @@ static void blkcg_css_offline(struct cgroup_subsys_state *css)
+ 			blkg_destroy(blkg);
+ 			spin_unlock(q->queue_lock);
+ 		} else {
+-			spin_unlock_irq(&blkcg->lock);
++			xa_unlock_irq(&blkcg->blkg_array);
+ 			cpu_relax();
+-			spin_lock_irq(&blkcg->lock);
++			xa_lock_irq(&blkcg->blkg_array);
+ 		}
+ 	}
+ 
+-	spin_unlock_irq(&blkcg->lock);
++	xa_unlock_irq(&blkcg->blkg_array);
+ 
+ 	wb_blkcg_offline(blkcg);
+ }
+@@ -1096,8 +1096,7 @@ blkcg_css_alloc(struct cgroup_subsys_state *parent_css)
+ 			pol->cpd_init_fn(cpd);
+ 	}
+ 
+-	spin_lock_init(&blkcg->lock);
+-	INIT_RADIX_TREE(&blkcg->blkg_tree, GFP_NOWAIT | __GFP_NOWARN);
++	xa_init_flags(&blkcg->blkg_array, XA_FLAGS_LOCK_IRQ);
+ 	INIT_HLIST_HEAD(&blkcg->blkg_list);
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 	INIT_LIST_HEAD(&blkcg->cgwb_list);
+@@ -1132,14 +1131,14 @@ blkcg_css_alloc(struct cgroup_subsys_state *parent_css)
+ int blkcg_init_queue(struct request_queue *q)
+ {
+ 	struct blkcg_gq *new_blkg, *blkg;
+-	bool preloaded;
+ 	int ret;
+ 
+ 	new_blkg = blkg_alloc(&blkcg_root, q, GFP_KERNEL);
+ 	if (!new_blkg)
+ 		return -ENOMEM;
+ 
+-	preloaded = !radix_tree_preload(GFP_KERNEL);
++	if (xa_reserve(&blkcg_root.blkg_array, q->id, GFP_KERNEL))
++		return -ENOMEM;
+ 
+ 	/*
+ 	 * Make sure the root blkg exists and count the existing blkgs.  As
+@@ -1152,11 +1151,10 @@ int blkcg_init_queue(struct request_queue *q)
+ 	spin_unlock_irq(q->queue_lock);
+ 	rcu_read_unlock();
+ 
+-	if (preloaded)
+-		radix_tree_preload_end();
+-
+-	if (IS_ERR(blkg))
++	if (IS_ERR(blkg)) {
++		xa_erase(&blkcg_root.blkg_array, q->id);
+ 		return PTR_ERR(blkg);
++	}
+ 
+ 	q->root_blkg = blkg;
+ 	q->root_rl.blkg = blkg;
+@@ -1374,8 +1372,8 @@ void blkcg_deactivate_policy(struct request_queue *q,
+ 	__clear_bit(pol->plid, q->blkcg_pols);
+ 
+ 	list_for_each_entry(blkg, &q->blkg_list, q_node) {
+-		/* grab blkcg lock too while removing @pd from @blkg */
+-		spin_lock(&blkg->blkcg->lock);
++		/* grab xa_lock too while removing @pd from @blkg */
++		xa_lock(&blkg->blkcg->blkg_array);
+ 
+ 		if (blkg->pd[pol->plid]) {
+ 			if (pol->pd_offline_fn)
+@@ -1384,7 +1382,7 @@ void blkcg_deactivate_policy(struct request_queue *q,
+ 			blkg->pd[pol->plid] = NULL;
  		}
  
--		err = radix_tree_insert(handles_vma, handle, vma);
-+		err = xa_err(xa_store(handles_vma, handle, vma, GFP_KERNEL));
- 		if (unlikely(err)) {
- 			kfree(lut);
- 			goto err_obj;
-diff --git a/drivers/gpu/drm/i915/selftests/mock_context.c b/drivers/gpu/drm/i915/selftests/mock_context.c
-index bbf80d42e793..b664a7159242 100644
---- a/drivers/gpu/drm/i915/selftests/mock_context.c
-+++ b/drivers/gpu/drm/i915/selftests/mock_context.c
-@@ -40,7 +40,7 @@ mock_context(struct drm_i915_private *i915,
- 	INIT_LIST_HEAD(&ctx->link);
- 	ctx->i915 = i915;
+-		spin_unlock(&blkg->blkcg->lock);
++		xa_unlock(&blkg->blkcg->blkg_array);
+ 	}
  
--	INIT_RADIX_TREE(&ctx->handles_vma, GFP_KERNEL);
-+	xa_init(&ctx->handles_vma);
- 	INIT_LIST_HEAD(&ctx->handles_list);
+ 	spin_unlock_irq(q->queue_lock);
+diff --git a/block/cfq-iosched.c b/block/cfq-iosched.c
+index 9f342ef1ad42..a51bef7af8df 100644
+--- a/block/cfq-iosched.c
++++ b/block/cfq-iosched.c
+@@ -1827,7 +1827,7 @@ static int __cfq_set_weight(struct cgroup_subsys_state *css, u64 val,
+ 	if (val < min || val > max)
+ 		return -ERANGE;
  
- 	ret = ida_simple_get(&i915->contexts.hw_ida,
+-	spin_lock_irq(&blkcg->lock);
++	xa_lock_irq(&blkcg->blkg_array);
+ 	cfqgd = blkcg_to_cfqgd(blkcg);
+ 	if (!cfqgd) {
+ 		ret = -EINVAL;
+@@ -1859,7 +1859,7 @@ static int __cfq_set_weight(struct cgroup_subsys_state *css, u64 val,
+ 	}
+ 
+ out:
+-	spin_unlock_irq(&blkcg->lock);
++	xa_unlock_irq(&blkcg->blkg_array);
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index e9825ff57b15..6278c49d3997 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -17,7 +17,7 @@
+ #include <linux/cgroup.h>
+ #include <linux/percpu_counter.h>
+ #include <linux/seq_file.h>
+-#include <linux/radix-tree.h>
++#include <linux/xarray.h>
+ #include <linux/blkdev.h>
+ #include <linux/atomic.h>
+ #include <linux/kthread.h>
+@@ -44,9 +44,8 @@ struct blkcg_gq;
+ 
+ struct blkcg {
+ 	struct cgroup_subsys_state	css;
+-	spinlock_t			lock;
+ 
+-	struct radix_tree_root		blkg_tree;
++	struct xarray			blkg_array;
+ 	struct blkcg_gq	__rcu		*blkg_hint;
+ 	struct hlist_head		blkg_list;
+ 
 -- 
 2.15.1
-
