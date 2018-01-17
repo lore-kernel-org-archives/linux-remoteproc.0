@@ -1,126 +1,175 @@
-Return-Path: <jmcnicol@redhat.com>
-Date: Fri, 26 Jan 2018 17:32:30 -0800
-From: Jeremy McNicoll <jmcnicol@redhat.com>
-Subject: Re: [PATCH 1/5] rpmsg: smd: Perform handshake during open
-Message-ID: <20180127013230.GB32527@mini-rhel.redhat.com>
-References: <20171212235857.10432-1-bjorn.andersson@linaro.org>
- <20171212235857.10432-2-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171212235857.10432-2-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Will Newton <will.newton@gmail.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Chris Lew <clew@quicinc.com>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 23/99] page cache: Add page_cache_range_empty function
+Date: Wed, 17 Jan 2018 12:20:47 -0800
+Message-Id: <20180117202203.19756-24-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, Dec 12, 2017 at 03:58:53PM -0800, Bjorn Andersson wrote:
-> Validate the the remote side is opening the channel that we've found by
-> performing a handshake when opening the channel.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/rpmsg/qcom_smd.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index b01774e9fac0..58dd44493420 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -200,6 +200,7 @@ struct qcom_smd_channel {
->  	char *name;
->  	enum smd_channel_state state;
->  	enum smd_channel_state remote_state;
-> +	wait_queue_head_t state_change_event;
->  
->  	struct smd_channel_info_pair *info;
->  	struct smd_channel_info_word_pair *info_word;
-> @@ -570,6 +571,8 @@ static bool qcom_smd_channel_intr(struct qcom_smd_channel *channel)
->  	if (remote_state != channel->remote_state) {
->  		channel->remote_state = remote_state;
->  		need_state_scan = true;
-> +
-> +		wake_up_interruptible_all(&channel->state_change_event);
->  	}
->  	/* Indicate that we have seen any state change */
->  	SET_RX_CHANNEL_FLAG(channel, fSTATE, 0);
-> @@ -786,7 +789,9 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
->  static int qcom_smd_channel_open(struct qcom_smd_channel *channel,
->  				 rpmsg_rx_cb_t cb)
->  {
-> +	struct qcom_smd_edge *edge = channel->edge;
->  	size_t bb_size;
-> +	int ret;
->  
->  	/*
->  	 * Packets are maximum 4k, but reduce if the fifo is smaller
-> @@ -798,9 +803,33 @@ static int qcom_smd_channel_open(struct qcom_smd_channel *channel,
->  
->  	qcom_smd_channel_set_callback(channel, cb);
->  	qcom_smd_channel_set_state(channel, SMD_CHANNEL_OPENING);
-> +
-> +	/* Wait for remote to enter opening or opened */
-> +	ret = wait_event_interruptible_timeout(channel->state_change_event,
-> +			channel->remote_state == SMD_CHANNEL_OPENING ||
-> +			channel->remote_state == SMD_CHANNEL_OPENED,
-> +			HZ);
-> +	if (!ret) {
-> +		dev_err(&edge->dev, "remote side did not enter opening state\n");
-> +		goto out_close_timeout;
-> +	}
-> +
->  	qcom_smd_channel_set_state(channel, SMD_CHANNEL_OPENED);
->  
-> +	/* Wait for remote to enter opened */
-> +	ret = wait_event_interruptible_timeout(channel->state_change_event,
-> +			channel->remote_state == SMD_CHANNEL_OPENED,
-> +			HZ);
-> +	if (!ret) {
-> +		dev_err(&edge->dev, "remote side did not enter open state\n");
-> +		goto out_close_timeout;
-> +	}
-> +
->  	return 0;
-> +
-> +out_close_timeout:
-> +	qcom_smd_channel_set_state(channel, SMD_CHANNEL_CLOSED);
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Why not do something like this, 
+btrfs has its own custom function for determining whether the page cache
+has any pages in a particular range.  Move this functionality to the
+page cache, and call it from btrfs.
 
-out_close_timeout:
-	qcom_smd_channel_set_state(channel, SMD_CHANNEL_CLOSING);
-	wait_for_a_little_bit();
-	qcom_smd_channel_set_state(channel, SMD_CHANNEL_CLOSED);
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/btrfs/btrfs_inode.h  |  7 ++++-
+ fs/btrfs/inode.c        | 70 -------------------------------------------------
+ include/linux/pagemap.h |  2 ++
+ mm/filemap.c            | 26 ++++++++++++++++++
+ 4 files changed, 34 insertions(+), 71 deletions(-)
 
-Doing something like that may get the remote back into a better
-state if say for example it was stuck, rather than jumping directly
-to CLOSED.
-
-The reason why I am suggesting this is that whilst investigating
-the problem of the SMD channel not getting created correctly, due
-to the initial state of the remote being in an unexpected state I did
-observe that if the host transistions from CLOSING to CLOSED it
-takes far less time for the host and remote to get back into
-sync.  It could be that it was a side effect of some of the changes
-that I made, although it is worth considering. 
-
-We could run some experiments to see how long it takes for host
-and remote to get back into sync when going directly to CLOSED vs.
-CLOSING, CLOSED.
-
--jeremy
-
-> +	return -ETIMEDOUT;
->  }
->  
->  /*
-> @@ -1055,6 +1084,7 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
->  	mutex_init(&channel->tx_lock);
->  	spin_lock_init(&channel->recv_lock);
->  	init_waitqueue_head(&channel->fblockread_event);
-> +	init_waitqueue_head(&channel->state_change_event);
->  
->  	info = qcom_smem_get(edge->remote_pid, smem_info_item, &info_size);
->  	if (IS_ERR(info)) {
-> -- 
-> 2.15.0
-> 
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index 63f0ccc92a71..a48bd6e0a0bb 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -365,6 +365,11 @@ static inline void btrfs_print_data_csum_error(struct btrfs_inode *inode,
+ 			logical_start, csum, csum_expected, mirror_num);
+ }
+ 
+-bool btrfs_page_exists_in_range(struct inode *inode, loff_t start, loff_t end);
++static inline bool btrfs_page_exists_in_range(struct inode *inode,
++						loff_t start, loff_t end)
++{
++	return page_cache_range_empty(inode->i_mapping, start >> PAGE_SHIFT,
++							end >> PAGE_SHIFT);
++}
+ 
+ #endif
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index dbdb5bf6bca1..d7d2c556d5a2 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -7541,76 +7541,6 @@ noinline int can_nocow_extent(struct inode *inode, u64 offset, u64 *len,
+ 	return ret;
+ }
+ 
+-bool btrfs_page_exists_in_range(struct inode *inode, loff_t start, loff_t end)
+-{
+-	struct radix_tree_root *root = &inode->i_mapping->pages;
+-	bool found = false;
+-	void **pagep = NULL;
+-	struct page *page = NULL;
+-	unsigned long start_idx;
+-	unsigned long end_idx;
+-
+-	start_idx = start >> PAGE_SHIFT;
+-
+-	/*
+-	 * end is the last byte in the last page.  end == start is legal
+-	 */
+-	end_idx = end >> PAGE_SHIFT;
+-
+-	rcu_read_lock();
+-
+-	/* Most of the code in this while loop is lifted from
+-	 * find_get_page.  It's been modified to begin searching from a
+-	 * page and return just the first page found in that range.  If the
+-	 * found idx is less than or equal to the end idx then we know that
+-	 * a page exists.  If no pages are found or if those pages are
+-	 * outside of the range then we're fine (yay!) */
+-	while (page == NULL &&
+-	       radix_tree_gang_lookup_slot(root, &pagep, NULL, start_idx, 1)) {
+-		page = radix_tree_deref_slot(pagep);
+-		if (unlikely(!page))
+-			break;
+-
+-		if (radix_tree_exception(page)) {
+-			if (radix_tree_deref_retry(page)) {
+-				page = NULL;
+-				continue;
+-			}
+-			/*
+-			 * Otherwise, shmem/tmpfs must be storing a swap entry
+-			 * here so return it without attempting to raise page
+-			 * count.
+-			 */
+-			page = NULL;
+-			break; /* TODO: Is this relevant for this use case? */
+-		}
+-
+-		if (!page_cache_get_speculative(page)) {
+-			page = NULL;
+-			continue;
+-		}
+-
+-		/*
+-		 * Has the page moved?
+-		 * This is part of the lockless pagecache protocol. See
+-		 * include/linux/pagemap.h for details.
+-		 */
+-		if (unlikely(page != *pagep)) {
+-			put_page(page);
+-			page = NULL;
+-		}
+-	}
+-
+-	if (page) {
+-		if (page->index <= end_idx)
+-			found = true;
+-		put_page(page);
+-	}
+-
+-	rcu_read_unlock();
+-	return found;
+-}
+-
+ static int lock_extent_direct(struct inode *inode, u64 lockstart, u64 lockend,
+ 			      struct extent_state **cached_state, int writing)
+ {
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 0db127c3ccac..34d4fa3ad1c5 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -245,6 +245,8 @@ pgoff_t page_cache_next_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan);
+ pgoff_t page_cache_prev_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan);
++bool page_cache_range_empty(struct address_space *mapping,
++				pgoff_t index, pgoff_t max);
+ 
+ #define FGP_ACCESSED		0x00000001
+ #define FGP_LOCK		0x00000002
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 146e8ec16ec0..f1b4480723dd 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1398,6 +1398,32 @@ pgoff_t page_cache_prev_gap(struct address_space *mapping,
+ }
+ EXPORT_SYMBOL(page_cache_prev_gap);
+ 
++bool page_cache_range_empty(struct address_space *mapping, pgoff_t index,
++				pgoff_t max)
++{
++	struct page *page;
++	XA_STATE(xas, &mapping->pages, index);
++
++	rcu_read_lock();
++	do {
++		page = xas_find(&xas, max);
++		if (xas_retry(&xas, page))
++			continue;
++		/* Shadow entries don't count */
++		if (xa_is_value(page))
++			continue;
++		/*
++		 * We don't need to try to pin this page; we're about to
++		 * release the RCU lock anyway.  It is enough to know that
++		 * there was a page here recently.
++		 */
++	} while (0);
++	rcu_read_unlock();
++
++	return page != NULL;
++}
++EXPORT_SYMBOL_GPL(page_cache_range_empty);
++
+ /**
+  * find_get_entry - find and get a page cache entry
+  * @mapping: the address_space to search
+-- 
+2.15.1
