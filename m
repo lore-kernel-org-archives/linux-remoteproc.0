@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 86/99] btrfs: Convert reada_zones to XArray
-Date: Wed, 17 Jan 2018 12:21:50 -0800
-Message-Id: <20180117202203.19756-87-willy@infradead.org>
+Subject: [PATCH v6 46/99] shmem: Convert shmem_add_to_page_cache to XArray
+Date: Wed, 17 Jan 2018 12:21:10 -0800
+Message-Id: <20180117202203.19756-47-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,183 +11,160 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The use of the reada_lock means we have to use the xa_reserve() API.
-If we can avoid using reada_lock to protect this xarray, we can drop
-the use of that function.
+This removes the last caller of radix_tree_maybe_preload_order().
+Simpler code, unless we run out of memory for new xa_nodes partway through
+inserting entries into the xarray.  Hopefully we can support multi-index
+entries in the page cache soon and all the awful code goes away.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/btrfs/reada.c   | 54 +++++++++++++++++++-----------------------------------
- fs/btrfs/volumes.c |  2 +-
- fs/btrfs/volumes.h |  2 +-
- 3 files changed, 21 insertions(+), 37 deletions(-)
+ mm/shmem.c | 87 ++++++++++++++++++++++++++++----------------------------------
+ 1 file changed, 39 insertions(+), 48 deletions(-)
 
-diff --git a/fs/btrfs/reada.c b/fs/btrfs/reada.c
-index ab852b8e3e37..ef8e84ff2012 100644
---- a/fs/btrfs/reada.c
-+++ b/fs/btrfs/reada.c
-@@ -239,17 +239,16 @@ static struct reada_zone *reada_find_zone(struct btrfs_device *dev, u64 logical,
- {
- 	struct btrfs_fs_info *fs_info = dev->fs_info;
- 	int ret;
--	struct reada_zone *zone;
-+	struct reada_zone *curr, *zone;
- 	struct btrfs_block_group_cache *cache = NULL;
- 	u64 start;
- 	u64 end;
-+	unsigned long index = logical >> PAGE_SHIFT;
- 	int i;
- 
--	zone = NULL;
- 	spin_lock(&fs_info->reada_lock);
--	ret = radix_tree_gang_lookup(&dev->reada_zones, (void **)&zone,
--				     logical >> PAGE_SHIFT, 1);
--	if (ret == 1 && logical >= zone->start && logical <= zone->end) {
-+	zone = xa_find(&dev->reada_zones, &index, ULONG_MAX, XA_PRESENT);
-+	if (zone && logical >= zone->start && logical <= zone->end) {
- 		kref_get(&zone->refcnt);
- 		spin_unlock(&fs_info->reada_lock);
- 		return zone;
-@@ -269,7 +268,8 @@ static struct reada_zone *reada_find_zone(struct btrfs_device *dev, u64 logical,
- 	if (!zone)
- 		return NULL;
- 
--	ret = radix_tree_preload(GFP_KERNEL);
-+	ret = xa_reserve(&dev->reada_zones,
-+			 (unsigned long)(end >> PAGE_SHIFT), GFP_KERNEL);
- 	if (ret) {
- 		kfree(zone);
- 		return NULL;
-@@ -290,21 +290,18 @@ static struct reada_zone *reada_find_zone(struct btrfs_device *dev, u64 logical,
- 	zone->ndevs = bbio->num_stripes;
- 
- 	spin_lock(&fs_info->reada_lock);
--	ret = radix_tree_insert(&dev->reada_zones,
-+	curr = xa_cmpxchg(&dev->reada_zones,
- 				(unsigned long)(zone->end >> PAGE_SHIFT),
--				zone);
--
--	if (ret == -EEXIST) {
-+				NULL, zone, GFP_NOWAIT | __GFP_NOWARN);
-+	if (curr) {
- 		kfree(zone);
--		ret = radix_tree_gang_lookup(&dev->reada_zones, (void **)&zone,
--					     logical >> PAGE_SHIFT, 1);
--		if (ret == 1 && logical >= zone->start && logical <= zone->end)
-+		zone = curr;
-+		if (logical >= zone->start && logical <= zone->end)
- 			kref_get(&zone->refcnt);
- 		else
- 			zone = NULL;
- 	}
- 	spin_unlock(&fs_info->reada_lock);
--	radix_tree_preload_end();
- 
- 	return zone;
- }
-@@ -537,9 +534,7 @@ static void reada_zone_release(struct kref *kref)
- {
- 	struct reada_zone *zone = container_of(kref, struct reada_zone, refcnt);
- 
--	radix_tree_delete(&zone->device->reada_zones,
--			  zone->end >> PAGE_SHIFT);
--
-+	xa_erase(&zone->device->reada_zones, zone->end >> PAGE_SHIFT);
- 	kfree(zone);
- }
- 
-@@ -592,7 +587,7 @@ static void reada_peer_zones_set_lock(struct reada_zone *zone, int lock)
- 
- 	for (i = 0; i < zone->ndevs; ++i) {
- 		struct reada_zone *peer;
--		peer = radix_tree_lookup(&zone->devs[i]->reada_zones, index);
-+		peer = xa_load(&zone->devs[i]->reada_zones, index);
- 		if (peer && peer->device != zone->device)
- 			peer->locked = lock;
- 	}
-@@ -603,12 +598,11 @@ static void reada_peer_zones_set_lock(struct reada_zone *zone, int lock)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index e4a2eb1336be..0f49edae05e4 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -558,9 +558,10 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
   */
- static int reada_pick_zone(struct btrfs_device *dev)
+ static int shmem_add_to_page_cache(struct page *page,
+ 				   struct address_space *mapping,
+-				   pgoff_t index, void *expected)
++				   pgoff_t index, void *expected, gfp_t gfp)
  {
--	struct reada_zone *top_zone = NULL;
-+	struct reada_zone *zone, *top_zone = NULL;
- 	struct reada_zone *top_locked_zone = NULL;
- 	u64 top_elems = 0;
- 	u64 top_locked_elems = 0;
- 	unsigned long index = 0;
--	int ret;
+-	int error, nr = hpage_nr_pages(page);
++	XA_STATE(xas, &mapping->pages, index);
++	unsigned long i, nr = 1UL << compound_order(page);
  
- 	if (dev->reada_curr_zone) {
- 		reada_peer_zones_set_lock(dev->reada_curr_zone, 0);
-@@ -616,14 +610,7 @@ static int reada_pick_zone(struct btrfs_device *dev)
- 		dev->reada_curr_zone = NULL;
- 	}
- 	/* pick the zone with the most elements */
--	while (1) {
--		struct reada_zone *zone;
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 	VM_BUG_ON_PAGE(index != round_down(index, nr), page);
+@@ -569,49 +570,47 @@ static int shmem_add_to_page_cache(struct page *page,
+ 	VM_BUG_ON(expected && PageTransHuge(page));
+ 
+ 	page_ref_add(page, nr);
+-	page->mapping = mapping;
+ 	page->index = index;
++	page->mapping = mapping;
+ 
+-	xa_lock_irq(&mapping->pages);
+-	if (PageTransHuge(page)) {
+-		void __rcu **results;
+-		pgoff_t idx;
+-		int i;
 -
--		ret = radix_tree_gang_lookup(&dev->reada_zones,
--					     (void **)&zone, index, 1);
--		if (ret == 0)
--			break;
--		index = (zone->end >> PAGE_SHIFT) + 1;
-+	xa_for_each(&dev->reada_zones, zone, index, ULONG_MAX, XA_PRESENT) {
- 		if (zone->locked) {
- 			if (zone->elems > top_locked_elems) {
- 				top_locked_elems = zone->elems;
-@@ -819,15 +806,13 @@ static void dump_devs(struct btrfs_fs_info *fs_info, int all)
- 
- 	spin_lock(&fs_info->reada_lock);
- 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
-+		struct reada_zone *zone;
-+
- 		btrfs_debug(fs_info, "dev %lld has %d in flight", device->devid,
- 			atomic_read(&device->reada_in_flight));
- 		index = 0;
--		while (1) {
--			struct reada_zone *zone;
--			ret = radix_tree_gang_lookup(&device->reada_zones,
--						     (void **)&zone, index, 1);
--			if (ret == 0)
--				break;
-+		xa_for_each(&dev->reada_zones, zone, index, ULONG_MAX,
-+								XA_PRESENT) {
- 			pr_debug("  zone %llu-%llu elems %llu locked %d devs",
- 				    zone->start, zone->end, zone->elems,
- 				    zone->locked);
-@@ -839,7 +824,6 @@ static void dump_devs(struct btrfs_fs_info *fs_info, int all)
- 				pr_cont(" curr off %llu",
- 					device->reada_next - zone->start);
- 			pr_cont("\n");
--			index = (zone->end >> PAGE_SHIFT) + 1;
+-		error = 0;
+-		if (radix_tree_gang_lookup_slot(&mapping->pages,
+-					&results, &idx, index, 1) &&
+-				idx < index + HPAGE_PMD_NR) {
+-			error = -EEXIST;
++	do {
++		xas_lock_irq(&xas);
++		xas_create_range(&xas, index + nr - 1);
++		if (xas_error(&xas))
++			goto unlock;
++		for (i = 0; i < nr; i++) {
++			void *entry = xas_load(&xas);
++			if (entry != expected)
++				xas_set_err(&xas, -ENOENT);
++			if (xas_error(&xas))
++				goto undo;
++			xas_store(&xas, page + i);
++			xas_next(&xas);
  		}
- 		cnt = 0;
- 		index = 0;
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index cba286183ff9..8e683799b436 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -247,7 +247,7 @@ static struct btrfs_device *__alloc_device(void)
- 	atomic_set(&dev->reada_in_flight, 0);
- 	atomic_set(&dev->dev_stats_ccnt, 0);
- 	btrfs_device_data_ordered_init(dev);
--	INIT_RADIX_TREE(&dev->reada_zones, GFP_NOFS & ~__GFP_DIRECT_RECLAIM);
-+	xa_init(&dev->reada_zones);
- 	INIT_RADIX_TREE(&dev->reada_extents, GFP_NOFS & ~__GFP_DIRECT_RECLAIM);
+-
+-		if (!error) {
+-			for (i = 0; i < HPAGE_PMD_NR; i++) {
+-				error = radix_tree_insert(&mapping->pages,
+-						index + i, page + i);
+-				VM_BUG_ON(error);
+-			}
++		if (PageTransHuge(page)) {
+ 			count_vm_event(THP_FILE_ALLOC);
++			__inc_node_page_state(page, NR_SHMEM_THPS);
+ 		}
+-	} else if (!expected) {
+-		error = radix_tree_insert(&mapping->pages, index, page);
+-	} else {
+-		error = shmem_xa_replace(mapping, index, expected, page);
+-	}
+-
+-	if (!error) {
+ 		mapping->nrpages += nr;
+-		if (PageTransHuge(page))
+-			__inc_node_page_state(page, NR_SHMEM_THPS);
+ 		__mod_node_page_state(page_pgdat(page), NR_FILE_PAGES, nr);
+ 		__mod_node_page_state(page_pgdat(page), NR_SHMEM, nr);
+-		xa_unlock_irq(&mapping->pages);
+-	} else {
++		goto unlock;
++undo:
++		while (i-- > 0) {
++			xas_store(&xas, NULL);
++			xas_prev(&xas);
++		}
++unlock:
++		xas_unlock_irq(&xas);
++	} while (xas_nomem(&xas, gfp));
++
++	if (xas_error(&xas)) {
+ 		page->mapping = NULL;
+-		xa_unlock_irq(&mapping->pages);
+ 		page_ref_sub(page, nr);
++		return xas_error(&xas);
+ 	}
+-	return error;
++
++	return 0;
+ }
  
- 	return dev;
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index 335fd1590458..aeabe03d3e44 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -139,7 +139,7 @@ struct btrfs_device {
- 	atomic_t reada_in_flight;
- 	u64 reada_next;
- 	struct reada_zone *reada_curr_zone;
--	struct radix_tree_root reada_zones;
-+	struct xarray reada_zones;
- 	struct radix_tree_root reada_extents;
+ /*
+@@ -1159,7 +1158,7 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
+ 	 */
+ 	if (!error)
+ 		error = shmem_add_to_page_cache(*pagep, mapping, index,
+-						radswap);
++						radswap, gfp);
+ 	if (error != -ENOMEM) {
+ 		/*
+ 		 * Truncation and eviction use free_swap_and_cache(), which
+@@ -1677,7 +1676,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 				false);
+ 		if (!error) {
+ 			error = shmem_add_to_page_cache(page, mapping, index,
+-						swp_to_radix_entry(swap));
++						swp_to_radix_entry(swap), gfp);
+ 			/*
+ 			 * We already confirmed swap under page lock, and make
+ 			 * no memory allocation here, so usually no possibility
+@@ -1783,13 +1782,8 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+ 				PageTransHuge(page));
+ 		if (error)
+ 			goto unacct;
+-		error = radix_tree_maybe_preload_order(gfp & GFP_RECLAIM_MASK,
+-				compound_order(page));
+-		if (!error) {
+-			error = shmem_add_to_page_cache(page, mapping, hindex,
+-							NULL);
+-			radix_tree_preload_end();
+-		}
++		error = shmem_add_to_page_cache(page, mapping, hindex,
++						NULL, gfp & GFP_RECLAIM_MASK);
+ 		if (error) {
+ 			mem_cgroup_cancel_charge(page, memcg,
+ 					PageTransHuge(page));
+@@ -2256,11 +2250,8 @@ static int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 	if (ret)
+ 		goto out_release;
  
- 	/* disk I/O failure stats. For detailed description refer to
+-	ret = radix_tree_maybe_preload(gfp & GFP_RECLAIM_MASK);
+-	if (!ret) {
+-		ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL);
+-		radix_tree_preload_end();
+-	}
++	ret = shmem_add_to_page_cache(page, mapping, pgoff, NULL,
++						gfp & GFP_RECLAIM_MASK);
+ 	if (ret)
+ 		goto out_release_uncharge;
+ 
 -- 
 2.15.1
