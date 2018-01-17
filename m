@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 28/99] page cache: Remove stray radix comment
-Date: Wed, 17 Jan 2018 12:20:52 -0800
-Message-Id: <20180117202203.19756-29-willy@infradead.org>
+Subject: [PATCH v6 91/99] btrfs: Convert name_cache to XArray
+Date: Wed, 17 Jan 2018 12:21:55 -0800
+Message-Id: <20180117202203.19756-92-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,23 +11,93 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+This is a very straightforward conversion.  The handling of collisions
+in the namecache could be better handled with an hlist, but that's a
+patch for another day.
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/filemap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/send.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d2a0031d61f5..2536fcacb5bc 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2606,7 +2606,7 @@ static struct page *do_read_cache_page(struct address_space *mapping,
- 			put_page(page);
- 			if (err == -EEXIST)
- 				goto repeat;
--			/* Presumably ENOMEM for radix tree node */
-+			/* Presumably ENOMEM for xarray node */
- 			return ERR_PTR(err);
- 		}
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 20d3300bd268..3891a8e958fa 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -23,7 +23,7 @@
+ #include <linux/mount.h>
+ #include <linux/xattr.h>
+ #include <linux/posix_acl_xattr.h>
+-#include <linux/radix-tree.h>
++#include <linux/xarray.h>
+ #include <linux/vmalloc.h>
+ #include <linux/string.h>
+ #include <linux/compat.h>
+@@ -118,7 +118,7 @@ struct send_ctx {
+ 	struct list_head new_refs;
+ 	struct list_head deleted_refs;
  
+-	struct radix_tree_root name_cache;
++	struct xarray name_cache;
+ 	struct list_head name_cache_list;
+ 	int name_cache_size;
+ 
+@@ -2021,8 +2021,7 @@ static int name_cache_insert(struct send_ctx *sctx,
+ 	int ret = 0;
+ 	struct list_head *nce_head;
+ 
+-	nce_head = radix_tree_lookup(&sctx->name_cache,
+-			(unsigned long)nce->ino);
++	nce_head = xa_load(&sctx->name_cache, (unsigned long)nce->ino);
+ 	if (!nce_head) {
+ 		nce_head = kmalloc(sizeof(*nce_head), GFP_KERNEL);
+ 		if (!nce_head) {
+@@ -2031,7 +2030,8 @@ static int name_cache_insert(struct send_ctx *sctx,
+ 		}
+ 		INIT_LIST_HEAD(nce_head);
+ 
+-		ret = radix_tree_insert(&sctx->name_cache, nce->ino, nce_head);
++		ret = xa_insert(&sctx->name_cache, nce->ino, nce_head,
++								GFP_KERNEL);
+ 		if (ret < 0) {
+ 			kfree(nce_head);
+ 			kfree(nce);
+@@ -2050,8 +2050,7 @@ static void name_cache_delete(struct send_ctx *sctx,
+ {
+ 	struct list_head *nce_head;
+ 
+-	nce_head = radix_tree_lookup(&sctx->name_cache,
+-			(unsigned long)nce->ino);
++	nce_head = xa_load(&sctx->name_cache, (unsigned long)nce->ino);
+ 	if (!nce_head) {
+ 		btrfs_err(sctx->send_root->fs_info,
+ 	      "name_cache_delete lookup failed ino %llu cache size %d, leaking memory",
+@@ -2066,7 +2065,7 @@ static void name_cache_delete(struct send_ctx *sctx,
+ 	 * We may not get to the final release of nce_head if the lookup fails
+ 	 */
+ 	if (nce_head && list_empty(nce_head)) {
+-		radix_tree_delete(&sctx->name_cache, (unsigned long)nce->ino);
++		xa_erase(&sctx->name_cache, (unsigned long)nce->ino);
+ 		kfree(nce_head);
+ 	}
+ }
+@@ -2077,7 +2076,7 @@ static struct name_cache_entry *name_cache_search(struct send_ctx *sctx,
+ 	struct list_head *nce_head;
+ 	struct name_cache_entry *cur;
+ 
+-	nce_head = radix_tree_lookup(&sctx->name_cache, (unsigned long)ino);
++	nce_head = xa_load(&sctx->name_cache, (unsigned long)ino);
+ 	if (!nce_head)
+ 		return NULL;
+ 
+@@ -6526,7 +6525,7 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
+ 
+ 	INIT_LIST_HEAD(&sctx->new_refs);
+ 	INIT_LIST_HEAD(&sctx->deleted_refs);
+-	INIT_RADIX_TREE(&sctx->name_cache, GFP_KERNEL);
++	xa_init(&sctx->name_cache);
+ 	INIT_LIST_HEAD(&sctx->name_cache_list);
+ 
+ 	sctx->flags = arg->flags;
 -- 
 2.15.1
