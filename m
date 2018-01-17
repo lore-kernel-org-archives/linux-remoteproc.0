@@ -1,227 +1,227 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 6/8] remoteproc: Move resource table load logic to find
-Date: Fri,  5 Jan 2018 15:58:03 -0800
-Message-Id: <20180105235805.9948-7-bjorn.andersson@linaro.org>
-In-Reply-To: <20180105235805.9948-1-bjorn.andersson@linaro.org>
-References: <20180105235805.9948-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 96/99] dma-debug: Convert to XArray
+Date: Wed, 17 Jan 2018 12:22:00 -0800
+Message-Id: <20180117202203.19756-97-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Extend the previous operation of finding the resource table in the ELF
-with the extra step of populating the rproc struct with a copy and the
-size. This allows drivers to override the mechanism used for acquiring
-the resource table, or omit it for firmware that is known not to have a
-resource table.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This leaves the custom, dummy, find_rsc_table implementations found in
-some drivers dangling.
+This is an unusual way to use the xarray tags.  If any other users
+come up, we can add an xas_get_tags() / xas_set_tags() API, but until
+then I don't want to encourage this kind of abuse.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
+ lib/dma-debug.c | 105 +++++++++++++++++++++++++-------------------------------
+ 1 file changed, 46 insertions(+), 59 deletions(-)
 
-Changes since v1:
-- None
-
- drivers/remoteproc/remoteproc_core.c       | 32 ++++++--------------------
- drivers/remoteproc/remoteproc_elf_loader.c | 37 ++++++++++++++++++------------
- drivers/remoteproc/remoteproc_internal.h   | 16 +++++--------
- include/linux/remoteproc.h                 |  2 ++
- 4 files changed, 37 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3160cfe897da..84e07d5b7c2c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -907,8 +907,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct device *dev = &rproc->dev;
- 	const char *name = rproc->firmware;
--	struct resource_table *table;
--	int ret, tablesz;
-+	int ret;
- 
- 	ret = rproc_fw_sanity_check(rproc, fw);
- 	if (ret)
-@@ -927,27 +926,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	}
- 
- 	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
--	ret = -EINVAL;
--
--	/* look for the resource table */
--	table = rproc_find_rsc_table(rproc, fw, &tablesz);
--	if (!table) {
--		dev_err(dev, "Failed to find resource table\n");
--		goto clean_up;
--	}
--
--	/*
--	 * Create a copy of the resource table. When a virtio device starts
--	 * and calls vring_new_virtqueue() the address of the allocated vring
--	 * will be stored in the cached_table. Before the device is started,
--	 * cached_table will be copied into device memory.
--	 */
--	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
--	if (!rproc->cached_table)
--		goto clean_up;
- 
--	rproc->table_ptr = rproc->cached_table;
--	rproc->table_sz = tablesz;
-+	/* load resource table */
-+	ret = rproc_load_rsc_table(rproc, fw);
-+	if (ret)
-+		goto disable_iommu;
- 
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
-@@ -967,11 +950,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 
- clean_up_resources:
- 	rproc_resource_cleanup(rproc);
--clean_up:
- 	kfree(rproc->cached_table);
- 	rproc->cached_table = NULL;
- 	rproc->table_ptr = NULL;
--
-+disable_iommu:
- 	rproc_disable_iommu(rproc);
- 	return ret;
- }
-@@ -1443,7 +1425,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	/* Default to ELF loader if no load function is specified */
- 	if (!rproc->ops->load) {
- 		rproc->ops->load = rproc_elf_load_segments;
--		rproc->ops->find_rsc_table = rproc_elf_find_rsc_table;
-+		rproc->ops->load_rsc_table = rproc_elf_load_rsc_table;
- 		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
- 		rproc->ops->sanity_check = rproc_elf_sanity_check;
- 		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index 822fa1bf893f..b17d72ec8603 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -268,42 +268,49 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
- }
- 
- /**
-- * rproc_elf_find_rsc_table() - find the resource table
-+ * rproc_elf_load_rsc_table() - load the resource table
-  * @rproc: the rproc handle
-  * @fw: the ELF firmware image
-- * @tablesz: place holder for providing back the table size
-  *
-  * This function finds the resource table inside the remote processor's
-- * firmware. It is used both upon the registration of @rproc (in order
-- * to look for and register the supported virito devices), and when the
-- * @rproc is booted.
-+ * firmware, load it into the @cached_table and update @table_ptr.
-  *
-- * Returns the pointer to the resource table if it is found, and write its
-- * size into @tablesz. If a valid table isn't found, NULL is returned
-- * (and @tablesz isn't set).
-+ * Return: 0 on success, negative errno on failure.
+diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+index fb4af570ce04..965b3837d060 100644
+--- a/lib/dma-debug.c
++++ b/lib/dma-debug.c
+@@ -22,7 +22,6 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/sched/task.h>
+ #include <linux/stacktrace.h>
+-#include <linux/radix-tree.h>
+ #include <linux/dma-debug.h>
+ #include <linux/spinlock.h>
+ #include <linux/vmalloc.h>
+@@ -30,6 +29,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/export.h>
+ #include <linux/device.h>
++#include <linux/xarray.h>
+ #include <linux/types.h>
+ #include <linux/sched.h>
+ #include <linux/ctype.h>
+@@ -465,9 +465,8 @@ EXPORT_SYMBOL(debug_dma_dump_mappings);
+  * At any time debug_dma_assert_idle() can be called to trigger a
+  * warning if any cachelines in the given page are in the active set.
   */
--struct resource_table *rproc_elf_find_rsc_table(struct rproc *rproc,
--						const struct firmware *fw,
--						int *tablesz)
-+int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct elf32_hdr *ehdr;
- 	struct elf32_shdr *shdr;
- 	struct device *dev = &rproc->dev;
- 	struct resource_table *table = NULL;
- 	const u8 *elf_data = fw->data;
-+	size_t tablesz;
+-static RADIX_TREE(dma_active_cacheline, GFP_NOWAIT);
+-static DEFINE_SPINLOCK(radix_lock);
+-#define ACTIVE_CACHELINE_MAX_OVERLAP ((1 << RADIX_TREE_MAX_TAGS) - 1)
++static DEFINE_XARRAY_FLAGS(dma_active_cacheline, XA_FLAGS_LOCK_IRQ);
++#define ACTIVE_CACHELINE_MAX_OVERLAP ((1 << XA_MAX_TAGS) - 1)
+ #define CACHELINE_PER_PAGE_SHIFT (PAGE_SHIFT - L1_CACHE_SHIFT)
+ #define CACHELINES_PER_PAGE (1 << CACHELINE_PER_PAGE_SHIFT)
  
- 	ehdr = (struct elf32_hdr *)elf_data;
- 
- 	shdr = find_table(dev, ehdr, fw->size);
- 	if (!shdr)
--		return NULL;
-+		return -EINVAL;
- 
- 	table = (struct resource_table *)(elf_data + shdr->sh_offset);
--	*tablesz = shdr->sh_size;
-+	tablesz = shdr->sh_size;
-+
-+	/*
-+	 * Create a copy of the resource table. When a virtio device starts
-+	 * and calls vring_new_virtqueue() the address of the allocated vring
-+	 * will be stored in the cached_table. Before the device is started,
-+	 * cached_table will be copied into device memory.
-+	 */
-+	rproc->cached_table = kmemdup(table, tablesz, GFP_KERNEL);
-+	if (!rproc->cached_table)
-+		return -ENOMEM;
- 
--	return table;
-+	rproc->table_ptr = rproc->cached_table;
-+	rproc->table_sz = tablesz;
-+
-+	return 0;
+@@ -477,37 +476,40 @@ static phys_addr_t to_cacheline_number(struct dma_debug_entry *entry)
+ 		(entry->offset >> L1_CACHE_SHIFT);
  }
--EXPORT_SYMBOL(rproc_elf_find_rsc_table);
-+EXPORT_SYMBOL(rproc_elf_load_rsc_table);
+ 
+-static int active_cacheline_read_overlap(phys_addr_t cln)
++static unsigned int active_cacheline_read_overlap(struct xa_state *xas)
+ {
+-	int overlap = 0, i;
++	unsigned int tags = 0;
++	xa_tag_t tag;
+ 
+-	for (i = RADIX_TREE_MAX_TAGS - 1; i >= 0; i--)
+-		if (radix_tree_tag_get(&dma_active_cacheline, cln, i))
+-			overlap |= 1 << i;
+-	return overlap;
++	for (tag = 0; tag < XA_MAX_TAGS; tag++)
++		if (xas_get_tag(xas, tag))
++			tags |= 1U << tag;
++
++	return tags;
+ }
+ 
+-static int active_cacheline_set_overlap(phys_addr_t cln, int overlap)
++static int active_cacheline_set_overlap(struct xa_state *xas, int overlap)
+ {
+-	int i;
++	xa_tag_t tag;
+ 
+ 	if (overlap > ACTIVE_CACHELINE_MAX_OVERLAP || overlap < 0)
+ 		return overlap;
+ 
+-	for (i = RADIX_TREE_MAX_TAGS - 1; i >= 0; i--)
+-		if (overlap & 1 << i)
+-			radix_tree_tag_set(&dma_active_cacheline, cln, i);
++	for (tag = 0; tag < XA_MAX_TAGS; tag++) {
++		if (overlap & (1U << tag))
++			xas_set_tag(xas, tag);
+ 		else
+-			radix_tree_tag_clear(&dma_active_cacheline, cln, i);
++			xas_clear_tag(xas, tag);
++	}
+ 
+ 	return overlap;
+ }
+ 
+-static void active_cacheline_inc_overlap(phys_addr_t cln)
++static void active_cacheline_inc_overlap(struct xa_state *xas)
+ {
+-	int overlap = active_cacheline_read_overlap(cln);
++	int overlap = active_cacheline_read_overlap(xas);
+ 
+-	overlap = active_cacheline_set_overlap(cln, ++overlap);
++	overlap = active_cacheline_set_overlap(xas, ++overlap);
+ 
+ 	/* If we overflowed the overlap counter then we're potentially
+ 	 * leaking dma-mappings.  Otherwise, if maps and unmaps are
+@@ -517,21 +519,22 @@ static void active_cacheline_inc_overlap(phys_addr_t cln)
+ 	 */
+ 	WARN_ONCE(overlap > ACTIVE_CACHELINE_MAX_OVERLAP,
+ 		  "DMA-API: exceeded %d overlapping mappings of cacheline %pa\n",
+-		  ACTIVE_CACHELINE_MAX_OVERLAP, &cln);
++		  ACTIVE_CACHELINE_MAX_OVERLAP, &xas->xa_index);
+ }
+ 
+-static int active_cacheline_dec_overlap(phys_addr_t cln)
++static int active_cacheline_dec_overlap(struct xa_state *xas)
+ {
+-	int overlap = active_cacheline_read_overlap(cln);
++	int overlap = active_cacheline_read_overlap(xas);
+ 
+-	return active_cacheline_set_overlap(cln, --overlap);
++	return active_cacheline_set_overlap(xas, --overlap);
+ }
+ 
+ static int active_cacheline_insert(struct dma_debug_entry *entry)
+ {
+ 	phys_addr_t cln = to_cacheline_number(entry);
++	XA_STATE(xas, &dma_active_cacheline, cln);
+ 	unsigned long flags;
+-	int rc;
++	struct dma_debug_entry *exists;
+ 
+ 	/* If the device is not writing memory then we don't have any
+ 	 * concerns about the cpu consuming stale data.  This mitigates
+@@ -540,32 +543,32 @@ static int active_cacheline_insert(struct dma_debug_entry *entry)
+ 	if (entry->direction == DMA_TO_DEVICE)
+ 		return 0;
+ 
+-	spin_lock_irqsave(&radix_lock, flags);
+-	rc = radix_tree_insert(&dma_active_cacheline, cln, entry);
+-	if (rc == -EEXIST)
+-		active_cacheline_inc_overlap(cln);
+-	spin_unlock_irqrestore(&radix_lock, flags);
++	xas_lock_irqsave(&xas, flags);
++	exists = xas_create(&xas);
++	if (exists)
++		active_cacheline_inc_overlap(&xas);
++	else
++		xas_store(&xas, entry);
++	xas_unlock_irqrestore(&xas, flags);
+ 
+-	return rc;
++	return xas_error(&xas);
+ }
+ 
+ static void active_cacheline_remove(struct dma_debug_entry *entry)
+ {
+ 	phys_addr_t cln = to_cacheline_number(entry);
++	XA_STATE(xas, &dma_active_cacheline, cln);
+ 	unsigned long flags;
+ 
+ 	/* ...mirror the insert case */
+ 	if (entry->direction == DMA_TO_DEVICE)
+ 		return;
+ 
+-	spin_lock_irqsave(&radix_lock, flags);
+-	/* since we are counting overlaps the final put of the
+-	 * cacheline will occur when the overlap count is 0.
+-	 * active_cacheline_dec_overlap() returns -1 in that case
+-	 */
+-	if (active_cacheline_dec_overlap(cln) < 0)
+-		radix_tree_delete(&dma_active_cacheline, cln);
+-	spin_unlock_irqrestore(&radix_lock, flags);
++	xas_lock_irqsave(&xas, flags);
++	xas_load(&xas);
++	if (active_cacheline_dec_overlap(&xas) < 0)
++		xas_store(&xas, NULL);
++	xas_unlock_irqrestore(&xas, flags);
+ }
  
  /**
-  * rproc_elf_find_loaded_rsc_table() - find the loaded resource table
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index a42690c514e2..55a2950c5cb7 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -57,9 +57,7 @@ int rproc_trigger_recovery(struct rproc *rproc);
- int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
- u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
- int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
--struct resource_table *rproc_elf_find_rsc_table(struct rproc *rproc,
--						const struct firmware *fw,
--						int *tablesz);
-+int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
- struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
- 						       const struct firmware *fw);
- 
-@@ -90,15 +88,13 @@ int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
- 	return -EINVAL;
- }
- 
--static inline
--struct resource_table *rproc_find_rsc_table(struct rproc *rproc,
--					    const struct firmware *fw,
--					    int *tablesz)
-+static inline int rproc_load_rsc_table(struct rproc *rproc,
-+				       const struct firmware *fw)
+@@ -578,12 +581,8 @@ static void active_cacheline_remove(struct dma_debug_entry *entry)
+  */
+ void debug_dma_assert_idle(struct page *page)
  {
--	if (rproc->ops->find_rsc_table)
--		return rproc->ops->find_rsc_table(rproc, fw, tablesz);
-+	if (rproc->ops->load_rsc_table)
-+		return rproc->ops->load_rsc_table(rproc, fw);
+-	static struct dma_debug_entry *ents[CACHELINES_PER_PAGE];
+-	struct dma_debug_entry *entry = NULL;
+-	void **results = (void **) &ents;
+-	unsigned int nents, i;
+-	unsigned long flags;
+-	phys_addr_t cln;
++	struct dma_debug_entry *entry;
++	unsigned long cln;
  
--	return NULL;
-+	return 0;
- }
+ 	if (dma_debug_disabled())
+ 		return;
+@@ -591,21 +590,9 @@ void debug_dma_assert_idle(struct page *page)
+ 	if (!page)
+ 		return;
  
- static inline
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index ca2021cf7b39..cc853745e3a1 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -332,6 +332,7 @@ struct firmware;
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-  * @da_to_va:	optional platform hook to perform address translations
-+ * @load_rsc_table:	load resource table from firmware image
-  * @find_rsc_table:	find the resource table inside the firmware image
-  * @find_loaded_rsc_table: find the loaded resouce table
-  * @load:		load firmeware to memory, where the remote processor
-@@ -344,6 +345,7 @@ struct rproc_ops {
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
- 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
-+	int (*load_rsc_table)(struct rproc *rproc, const struct firmware *fw);
- 	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
- 						 const struct firmware *fw,
- 						 int *tablesz);
+-	cln = (phys_addr_t) page_to_pfn(page) << CACHELINE_PER_PAGE_SHIFT;
+-	spin_lock_irqsave(&radix_lock, flags);
+-	nents = radix_tree_gang_lookup(&dma_active_cacheline, results, cln,
+-				       CACHELINES_PER_PAGE);
+-	for (i = 0; i < nents; i++) {
+-		phys_addr_t ent_cln = to_cacheline_number(ents[i]);
+-
+-		if (ent_cln == cln) {
+-			entry = ents[i];
+-			break;
+-		} else if (ent_cln >= cln + CACHELINES_PER_PAGE)
+-			break;
+-	}
+-	spin_unlock_irqrestore(&radix_lock, flags);
+-
++	cln = page_to_pfn(page) << CACHELINE_PER_PAGE_SHIFT;
++	entry = xa_find(&dma_active_cacheline, &cln,
++			cln + CACHELINES_PER_PAGE - 1, XA_PRESENT);
+ 	if (!entry)
+ 		return;
+ 
 -- 
-2.15.0
+2.15.1
