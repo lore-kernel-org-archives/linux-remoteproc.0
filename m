@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 36/99] mm: Convert page migration to XArray
-Date: Wed, 17 Jan 2018 12:21:00 -0800
-Message-Id: <20180117202203.19756-37-willy@infradead.org>
+Subject: [PATCH v6 94/99] f2fs: Convert extent_tree_root to XArray
+Date: Wed, 17 Jan 2018 12:21:58 -0800
+Message-Id: <20180117202203.19756-95-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,130 +11,158 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+Rename it to extent_array and use the xa_lock in place of the
+extent_tree_lock mutex.
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- mm/migrate.c | 41 ++++++++++++++++-------------------------
- 1 file changed, 16 insertions(+), 25 deletions(-)
+ fs/f2fs/extent_cache.c | 59 +++++++++++++++++++++++++-------------------------
+ fs/f2fs/f2fs.h         |  3 +--
+ 2 files changed, 30 insertions(+), 32 deletions(-)
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 75d19904dd9a..7122fec9b075 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -322,7 +322,7 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
- 	page = migration_entry_to_page(entry);
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index ff2352a0ed15..da5f3bd1808d 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -250,25 +250,25 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
+ 	struct extent_tree *et;
+ 	nid_t ino = inode->i_ino;
  
- 	/*
--	 * Once radix-tree replacement of page migration started, page_count
-+	 * Once page cache replacement of page migration started, page_count
- 	 * *must* be zero. And, we don't want to call wait_on_page_locked()
- 	 * against a page without get_page().
- 	 * So, we use get_page_unless_zero(), here. Even failed, page fault
-@@ -437,10 +437,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 		struct buffer_head *head, enum migrate_mode mode,
- 		int extra_count)
+-	mutex_lock(&sbi->extent_tree_lock);
+-	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
+-	if (!et) {
+-		et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS);
+-		f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
+-		memset(et, 0, sizeof(struct extent_tree));
+-		et->ino = ino;
+-		et->root = RB_ROOT;
+-		et->cached_en = NULL;
+-		rwlock_init(&et->lock);
+-		INIT_LIST_HEAD(&et->list);
+-		atomic_set(&et->node_cnt, 0);
+-		atomic_inc(&sbi->total_ext_tree);
+-	} else {
++	et = xa_load(&sbi->extent_array, ino);
++	if (et) {
+ 		atomic_dec(&sbi->total_zombie_tree);
+ 		list_del_init(&et->list);
++		goto out;
+ 	}
+-	mutex_unlock(&sbi->extent_tree_lock);
+ 
++	et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS | __GFP_ZERO);
++	et->ino = ino;
++	et->root = RB_ROOT;
++	et->cached_en = NULL;
++	rwlock_init(&et->lock);
++	INIT_LIST_HEAD(&et->list);
++	atomic_set(&et->node_cnt, 0);
++
++	xa_store(&sbi->extent_array, ino, et, GFP_NOFS);
++	atomic_inc(&sbi->total_ext_tree);
++
++out:
+ 	/* never died until evict_inode */
+ 	F2FS_I(inode)->extent_tree = et;
+ 
+@@ -622,7 +622,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+ 	if (!atomic_read(&sbi->total_zombie_tree))
+ 		goto free_node;
+ 
+-	if (!mutex_trylock(&sbi->extent_tree_lock))
++	if (!xa_trylock(&sbi->extent_array))
+ 		goto out;
+ 
+ 	/* 1. remove unreferenced extent tree */
+@@ -634,7 +634,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+ 		}
+ 		f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
+ 		list_del_init(&et->list);
+-		radix_tree_delete(&sbi->extent_tree_root, et->ino);
++		xa_erase(&sbi->extent_array, et->ino);
+ 		kmem_cache_free(extent_tree_slab, et);
+ 		atomic_dec(&sbi->total_ext_tree);
+ 		atomic_dec(&sbi->total_zombie_tree);
+@@ -642,13 +642,13 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+ 
+ 		if (node_cnt + tree_cnt >= nr_shrink)
+ 			goto unlock_out;
+-		cond_resched();
++		cond_resched_lock(&sbi->extent_array.xa_lock);
+ 	}
+-	mutex_unlock(&sbi->extent_tree_lock);
++	xa_unlock(&sbi->extent_array);
+ 
+ free_node:
+ 	/* 2. remove LRU extent entries */
+-	if (!mutex_trylock(&sbi->extent_tree_lock))
++	if (!xa_trylock(&sbi->extent_array))
+ 		goto out;
+ 
+ 	remained = nr_shrink - (node_cnt + tree_cnt);
+@@ -678,7 +678,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+ 	spin_unlock(&sbi->extent_lock);
+ 
+ unlock_out:
+-	mutex_unlock(&sbi->extent_tree_lock);
++	xa_unlock(&sbi->extent_array);
+ out:
+ 	trace_f2fs_shrink_extent_tree(sbi, node_cnt, tree_cnt);
+ 
+@@ -725,23 +725,23 @@ void f2fs_destroy_extent_tree(struct inode *inode)
+ 
+ 	if (inode->i_nlink && !is_bad_inode(inode) &&
+ 					atomic_read(&et->node_cnt)) {
+-		mutex_lock(&sbi->extent_tree_lock);
++		xa_lock(&sbi->extent_array);
+ 		list_add_tail(&et->list, &sbi->zombie_list);
+ 		atomic_inc(&sbi->total_zombie_tree);
+-		mutex_unlock(&sbi->extent_tree_lock);
++		xa_unlock(&sbi->extent_array);
+ 		return;
+ 	}
+ 
+ 	/* free all extent info belong to this extent tree */
+ 	node_cnt = f2fs_destroy_extent_node(inode);
+ 
+-	/* delete extent tree entry in radix tree */
+-	mutex_lock(&sbi->extent_tree_lock);
++	/* delete extent from array */
++	xa_lock(&sbi->extent_array);
+ 	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
+-	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
+-	kmem_cache_free(extent_tree_slab, et);
++	__xa_erase(&sbi->extent_array, inode->i_ino);
+ 	atomic_dec(&sbi->total_ext_tree);
+-	mutex_unlock(&sbi->extent_tree_lock);
++	xa_unlock(&sbi->extent_array);
++	kmem_cache_free(extent_tree_slab, et);
+ 
+ 	F2FS_I(inode)->extent_tree = NULL;
+ 
+@@ -787,8 +787,7 @@ void f2fs_update_extent_cache_range(struct dnode_of_data *dn,
+ 
+ void init_extent_cache_info(struct f2fs_sb_info *sbi)
  {
-+	XA_STATE(xas, &mapping->pages, page_index(page));
- 	struct zone *oldzone, *newzone;
- 	int dirty;
- 	int expected_count = 1 + extra_count;
--	void **pslot;
+-	INIT_RADIX_TREE(&sbi->extent_tree_root, GFP_NOIO);
+-	mutex_init(&sbi->extent_tree_lock);
++	xa_init(&sbi->extent_array);
+ 	INIT_LIST_HEAD(&sbi->extent_list);
+ 	spin_lock_init(&sbi->extent_lock);
+ 	atomic_set(&sbi->total_ext_tree, 0);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b3ee784b49bc..4eacef9c7274 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1064,8 +1064,7 @@ struct f2fs_sb_info {
+ 	spinlock_t inode_lock[NR_INODE_TYPE];	/* for dirty inode list lock */
  
- 	/*
- 	 * Device public or private pages have an extra refcount as they are
-@@ -466,21 +466,16 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	oldzone = page_zone(page);
- 	newzone = page_zone(newpage);
- 
--	xa_lock_irq(&mapping->pages);
--
--	pslot = radix_tree_lookup_slot(&mapping->pages,
-- 					page_index(page));
-+	xas_lock_irq(&xas);
- 
- 	expected_count += 1 + page_has_private(page);
--	if (page_count(page) != expected_count ||
--		radix_tree_deref_slot_protected(pslot,
--					&mapping->pages.xa_lock) != page) {
--		xa_unlock_irq(&mapping->pages);
-+	if (page_count(page) != expected_count || xas_load(&xas) != page) {
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
- 	if (!page_ref_freeze(page, expected_count)) {
--		xa_unlock_irq(&mapping->pages);
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -494,7 +489,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	if (mode == MIGRATE_ASYNC && head &&
- 			!buffer_migrate_lock_buffers(head, mode)) {
- 		page_ref_unfreeze(page, expected_count);
--		xa_unlock_irq(&mapping->pages);
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -522,7 +517,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 		SetPageDirty(newpage);
- 	}
- 
--	radix_tree_replace_slot(&mapping->pages, pslot, newpage);
-+	xas_store(&xas, newpage);
- 
- 	/*
- 	 * Drop cache reference from old page by unfreezing
-@@ -531,7 +526,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 	 */
- 	page_ref_unfreeze(page, expected_count - 1);
- 
--	xa_unlock(&mapping->pages);
-+	xas_unlock(&xas);
- 	/* Leave irq disabled to prevent preemption while updating stats */
- 
- 	/*
-@@ -571,22 +566,18 @@ EXPORT_SYMBOL(migrate_page_move_mapping);
- int migrate_huge_page_move_mapping(struct address_space *mapping,
- 				   struct page *newpage, struct page *page)
- {
-+	XA_STATE(xas, &mapping->pages, page_index(page));
- 	int expected_count;
--	void **pslot;
--
--	xa_lock_irq(&mapping->pages);
--
--	pslot = radix_tree_lookup_slot(&mapping->pages, page_index(page));
- 
-+	xas_lock_irq(&xas);
- 	expected_count = 2 + page_has_private(page);
--	if (page_count(page) != expected_count ||
--		radix_tree_deref_slot_protected(pslot, &mapping->pages.xa_lock) != page) {
--		xa_unlock_irq(&mapping->pages);
-+	if (page_count(page) != expected_count || xas_load(&xas) != page) {
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
- 	if (!page_ref_freeze(page, expected_count)) {
--		xa_unlock_irq(&mapping->pages);
-+		xas_unlock_irq(&xas);
- 		return -EAGAIN;
- 	}
- 
-@@ -595,11 +586,11 @@ int migrate_huge_page_move_mapping(struct address_space *mapping,
- 
- 	get_page(newpage);
- 
--	radix_tree_replace_slot(&mapping->pages, pslot, newpage);
-+	xas_store(&xas, newpage);
- 
- 	page_ref_unfreeze(page, expected_count - 1);
- 
--	xa_unlock_irq(&mapping->pages);
-+	xas_unlock_irq(&xas);
- 
- 	return MIGRATEPAGE_SUCCESS;
- }
+ 	/* for extent tree cache */
+-	struct radix_tree_root extent_tree_root;/* cache extent cache entries */
+-	struct mutex extent_tree_lock;	/* locking extent radix tree */
++	struct xarray extent_array;		/* cache extent cache entries */
+ 	struct list_head extent_list;		/* lru list for shrinker */
+ 	spinlock_t extent_lock;			/* locking extent lru list */
+ 	atomic_t total_ext_tree;		/* extent tree count */
 -- 
 2.15.1
