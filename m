@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 01/99] xarray: Add the xa_lock to the radix_tree_root
-Date: Wed, 17 Jan 2018 12:20:25 -0800
-Message-Id: <20180117202203.19756-2-willy@infradead.org>
+Subject: [PATCH v6 98/99] qrtr: Convert to XArray
+Date: Wed, 17 Jan 2018 12:22:02 -0800
+Message-Id: <20180117202203.19756-99-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,159 +11,81 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This results in no change in structure size on 64-bit x86 as it fits in
-the padding between the gfp_t and the void *.
-
-Initialising the spinlock requires a name for the benefit of lockdep,
-so RADIX_TREE_INIT() now needs to know the name of the radix tree it's
-initialising, and so do IDR_INIT() and IDA_INIT().
-
-Also add the xa_lock() and xa_unlock() family of wrappers to make it
-easier to use the lock.  If we could rely on -fplan9-extensions in
-the compiler, we could avoid all of this syntactic sugar, but that
-wasn't added until gcc 4.6.
+Moved the kref protection under the xa_lock too.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/f2fs/gc.c                   |  2 +-
- include/linux/idr.h            | 12 ++++++------
- include/linux/radix-tree.h     |  7 +++++--
- include/linux/xarray.h         | 24 ++++++++++++++++++++++++
- kernel/pid.c                   |  2 +-
- tools/include/linux/spinlock.h |  1 +
- 6 files changed, 38 insertions(+), 10 deletions(-)
- create mode 100644 include/linux/xarray.h
+ net/qrtr/qrtr.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index d844dcb80570..aac1e02f75df 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -991,7 +991,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 	unsigned int init_segno = segno;
- 	struct gc_inode_list gc_list = {
- 		.ilist = LIST_HEAD_INIT(gc_list.ilist),
--		.iroot = RADIX_TREE_INIT(GFP_NOFS),
-+		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
- 	};
+diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
+index 77ab05e23001..7de9a06d2aa2 100644
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -104,10 +104,10 @@ static inline struct qrtr_sock *qrtr_sk(struct sock *sk)
+ static unsigned int qrtr_local_nid = -1;
  
- 	trace_f2fs_gc_begin(sbi->sb, sync, background,
-diff --git a/include/linux/idr.h b/include/linux/idr.h
-index ed1459d36b9d..11eea38b9629 100644
---- a/include/linux/idr.h
-+++ b/include/linux/idr.h
-@@ -32,11 +32,11 @@ struct idr {
- #define IDR_RT_MARKER	(ROOT_IS_IDR | (__force gfp_t)			\
- 					(1 << (ROOT_TAG_SHIFT + IDR_FREE)))
+ /* for node ids */
+-static RADIX_TREE(qrtr_nodes, GFP_KERNEL);
++static DEFINE_XARRAY(qrtr_nodes);
+ /* broadcast list */
+ static LIST_HEAD(qrtr_all_nodes);
+-/* lock for qrtr_nodes, qrtr_all_nodes and node reference */
++/* lock for qrtr_all_nodes */
+ static DEFINE_MUTEX(qrtr_node_lock);
  
--#define IDR_INIT							\
-+#define IDR_INIT(name)							\
- {									\
--	.idr_rt = RADIX_TREE_INIT(IDR_RT_MARKER)			\
-+	.idr_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER)			\
+ /* local port allocation management */
+@@ -148,12 +148,15 @@ static int qrtr_bcast_enqueue(struct qrtr_node *node, struct sk_buff *skb,
+  * kref_put_mutex.  As such, the node mutex is expected to be locked on call.
+  */
+ static void __qrtr_node_release(struct kref *kref)
++		__releases(qrtr_nodes.xa_lock)
+ {
+ 	struct qrtr_node *node = container_of(kref, struct qrtr_node, ref);
+ 
+ 	if (node->nid != QRTR_EP_NID_AUTO)
+-		radix_tree_delete(&qrtr_nodes, node->nid);
++		__xa_erase(&qrtr_nodes, node->nid);
++	xa_unlock(&qrtr_nodes);
+ 
++	mutex_lock(&qrtr_node_lock);
+ 	list_del(&node->item);
+ 	mutex_unlock(&qrtr_node_lock);
+ 
+@@ -174,7 +177,7 @@ static void qrtr_node_release(struct qrtr_node *node)
+ {
+ 	if (!node)
+ 		return;
+-	kref_put_mutex(&node->ref, __qrtr_node_release, &qrtr_node_lock);
++	kref_put_lock(&node->ref, __qrtr_node_release, &qrtr_nodes.xa_lock);
  }
--#define DEFINE_IDR(name)	struct idr name = IDR_INIT
-+#define DEFINE_IDR(name)	struct idr name = IDR_INIT(name)
+ 
+ /* Pass an outgoing packet socket buffer to the endpoint driver. */
+@@ -217,10 +220,10 @@ static struct qrtr_node *qrtr_node_lookup(unsigned int nid)
+ {
+ 	struct qrtr_node *node;
+ 
+-	mutex_lock(&qrtr_node_lock);
+-	node = radix_tree_lookup(&qrtr_nodes, nid);
++	xa_lock(&qrtr_nodes);
++	node = xa_load(&qrtr_nodes, nid);
+ 	node = qrtr_node_acquire(node);
+-	mutex_unlock(&qrtr_node_lock);
++	xa_unlock(&qrtr_nodes);
+ 
+ 	return node;
+ }
+@@ -235,10 +238,8 @@ static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
+ 	if (node->nid != QRTR_EP_NID_AUTO || nid == QRTR_EP_NID_AUTO)
+ 		return;
+ 
+-	mutex_lock(&qrtr_node_lock);
+-	radix_tree_insert(&qrtr_nodes, nid, node);
+ 	node->nid = nid;
+-	mutex_unlock(&qrtr_node_lock);
++	xa_store(&qrtr_nodes, nid, node, GFP_KERNEL);
+ }
  
  /**
-  * idr_get_cursor - Return the current position of the cyclic allocator
-@@ -195,10 +195,10 @@ struct ida {
- 	struct radix_tree_root	ida_rt;
- };
- 
--#define IDA_INIT	{						\
--	.ida_rt = RADIX_TREE_INIT(IDR_RT_MARKER | GFP_NOWAIT),		\
-+#define IDA_INIT(name)	{						\
-+	.ida_rt = RADIX_TREE_INIT(name, IDR_RT_MARKER | GFP_NOWAIT),	\
- }
--#define DEFINE_IDA(name)	struct ida name = IDA_INIT
-+#define DEFINE_IDA(name)	struct ida name = IDA_INIT(name)
- 
- int ida_pre_get(struct ida *ida, gfp_t gfp_mask);
- int ida_get_new_above(struct ida *ida, int starting_id, int *p_id);
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index 6c4e2e716dac..34149e8b5f73 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -110,20 +110,23 @@ struct radix_tree_node {
- #define ROOT_TAG_SHIFT	(__GFP_BITS_SHIFT)
- 
- struct radix_tree_root {
-+	spinlock_t		xa_lock;
- 	gfp_t			gfp_mask;
- 	struct radix_tree_node	__rcu *rnode;
- };
- 
--#define RADIX_TREE_INIT(mask)	{					\
-+#define RADIX_TREE_INIT(name, mask)	{				\
-+	.xa_lock = __SPIN_LOCK_UNLOCKED(name.xa_lock),			\
- 	.gfp_mask = (mask),						\
- 	.rnode = NULL,							\
- }
- 
- #define RADIX_TREE(name, mask) \
--	struct radix_tree_root name = RADIX_TREE_INIT(mask)
-+	struct radix_tree_root name = RADIX_TREE_INIT(name, mask)
- 
- #define INIT_RADIX_TREE(root, mask)					\
- do {									\
-+	spin_lock_init(&(root)->xa_lock);				\
- 	(root)->gfp_mask = (mask);					\
- 	(root)->rnode = NULL;						\
- } while (0)
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-new file mode 100644
-index 000000000000..2dfc8006fe64
---- /dev/null
-+++ b/include/linux/xarray.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+#ifndef _LINUX_XARRAY_H
-+#define _LINUX_XARRAY_H
-+/*
-+ * eXtensible Arrays
-+ * Copyright (c) 2017 Microsoft Corporation
-+ * Author: Matthew Wilcox <mawilcox@microsoft.com>
-+ */
-+
-+#include <linux/spinlock.h>
-+
-+#define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
-+#define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
-+#define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-+#define xa_lock_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
-+#define xa_unlock_bh(xa)	spin_unlock_bh(&(xa)->xa_lock)
-+#define xa_lock_irq(xa)		spin_lock_irq(&(xa)->xa_lock)
-+#define xa_unlock_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
-+#define xa_lock_irqsave(xa, flags) \
-+				spin_lock_irqsave(&(xa)->xa_lock, flags)
-+#define xa_unlock_irqrestore(xa, flags) \
-+				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
-+
-+#endif /* _LINUX_XARRAY_H */
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 1e8bb6550ec4..fa8bbd16c0d6 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -58,7 +58,7 @@ int pid_max_max = PID_MAX_LIMIT;
-  */
- struct pid_namespace init_pid_ns = {
- 	.kref = KREF_INIT(2),
--	.idr = IDR_INIT,
-+	.idr = IDR_INIT(init_pid_ns.idr),
- 	.pid_allocated = PIDNS_ADDING,
- 	.level = 0,
- 	.child_reaper = &init_task,
-diff --git a/tools/include/linux/spinlock.h b/tools/include/linux/spinlock.h
-index 4ed569fcb139..b21b586b9854 100644
---- a/tools/include/linux/spinlock.h
-+++ b/tools/include/linux/spinlock.h
-@@ -7,6 +7,7 @@
- 
- #define spinlock_t		pthread_mutex_t
- #define DEFINE_SPINLOCK(x)	pthread_mutex_t x = PTHREAD_MUTEX_INITIALIZER;
-+#define __SPIN_LOCK_UNLOCKED(x)	(pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER
- 
- #define spin_lock_irqsave(x, f)		(void)f, pthread_mutex_lock(x)
- #define spin_unlock_irqrestore(x, f)	(void)f, pthread_mutex_unlock(x)
 -- 
 2.15.1
