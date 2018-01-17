@@ -1,85 +1,82 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v2 01/16] remoteproc: add rproc_va_to_pa function
-Date: Fri, 12 Jan 2018 07:43:09 +0000
-Message-ID: <cd29783dd87f44ba9eea02656b000bc2@SFHDAG7NODE2.st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-2-git-send-email-loic.pallardy@st.com>
- <20171214003056.GC17344@builder>
-In-Reply-To: <20171214003056.GC17344@builder>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 95/99] f2fs: Convert gclist.iroot to XArray
+Date: Wed, 17 Jan 2018 12:21:59 -0800
+Message-Id: <20180117202203.19756-96-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Hi Bjorn,
+Straightforward conversion.
 
-Thanks for the review of this series.
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/f2fs/gc.c | 14 +++++++-------
+ fs/f2fs/gc.h |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Thursday, December 14, 2017 1:31 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org
-> Subject: Re: [PATCH v2 01/16] remoteproc: add rproc_va_to_pa function
->=20
-> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
->=20
-> > This new function translates CPU virtual address in
-> > CPU physical one according to virtual address location.
-> >
-> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> > index eab14b4..faa18a7 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -139,6 +139,17 @@ static void rproc_disable_iommu(struct rproc
-> *rproc)
-> >  	iommu_domain_free(domain);
-> >  }
-> >
-> > +static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-> > +{
-> > +	if (is_vmalloc_addr(cpu_addr)) {
->=20
-> Please add a comment describing when is_vmalloc_addr() would be true.
-Yes sure.
-Regards,
-Loic
->=20
-> > +		return page_to_phys(vmalloc_to_page(cpu_addr)) +
-> > +				    offset_in_page(cpu_addr);
-> > +	}
-> > +
-> > +	WARN_ON(!virt_addr_valid(cpu_addr));
-> > +	return virt_to_phys(cpu_addr);
-> > +}
-> > +
-> >  /**
-> >   * rproc_da_to_va() - lookup the kernel virtual address for a remotepr=
-oc
-> address
-> >   * @rproc: handle of a remote processor
-> > @@ -700,7 +711,7 @@ static int rproc_handle_carveout(struct rproc
-> *rproc,
-> >  	 * In this case, the device address and the physical address
-> >  	 * are the same.
-> >  	 */
-> > -	rsc->pa =3D dma;
-> > +	rsc->pa =3D (u32)rproc_va_to_pa(va);
->=20
-> This is more correct than using "dma", so this is good.
->=20
-> Regards,
-> Bjorn
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index aac1e02f75df..2b33068dc36b 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -417,7 +417,7 @@ static struct inode *find_gc_inode(struct gc_inode_list *gc_list, nid_t ino)
+ {
+ 	struct inode_entry *ie;
+ 
+-	ie = radix_tree_lookup(&gc_list->iroot, ino);
++	ie = xa_load(&gc_list->iroot, ino);
+ 	if (ie)
+ 		return ie->inode;
+ 	return NULL;
+@@ -434,7 +434,7 @@ static void add_gc_inode(struct gc_inode_list *gc_list, struct inode *inode)
+ 	new_ie = f2fs_kmem_cache_alloc(inode_entry_slab, GFP_NOFS);
+ 	new_ie->inode = inode;
+ 
+-	f2fs_radix_tree_insert(&gc_list->iroot, inode->i_ino, new_ie);
++	xa_store(&gc_list->iroot, inode->i_ino, new_ie, GFP_NOFS);
+ 	list_add_tail(&new_ie->list, &gc_list->ilist);
+ }
+ 
+@@ -442,7 +442,7 @@ static void put_gc_inode(struct gc_inode_list *gc_list)
+ {
+ 	struct inode_entry *ie, *next_ie;
+ 	list_for_each_entry_safe(ie, next_ie, &gc_list->ilist, list) {
+-		radix_tree_delete(&gc_list->iroot, ie->inode->i_ino);
++		xa_erase(&gc_list->iroot, ie->inode->i_ino);
+ 		iput(ie->inode);
+ 		list_del(&ie->list);
+ 		kmem_cache_free(inode_entry_slab, ie);
+@@ -989,10 +989,10 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 	int ret = 0;
+ 	struct cp_control cpc;
+ 	unsigned int init_segno = segno;
+-	struct gc_inode_list gc_list = {
+-		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+-		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+-	};
++	struct gc_inode_list gc_list;
++
++	xa_init(&gc_list.iroot);
++	INIT_LIST_HEAD(&gc_list.ilist);
+ 
+ 	trace_f2fs_gc_begin(sbi->sb, sync, background,
+ 				get_pages(sbi, F2FS_DIRTY_NODES),
+diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+index 9325191fab2d..769259b0a4f6 100644
+--- a/fs/f2fs/gc.h
++++ b/fs/f2fs/gc.h
+@@ -41,7 +41,7 @@ struct f2fs_gc_kthread {
+ 
+ struct gc_inode_list {
+ 	struct list_head ilist;
+-	struct radix_tree_root iroot;
++	struct xarray iroot;
+ };
+ 
+ /*
+-- 
+2.15.1
