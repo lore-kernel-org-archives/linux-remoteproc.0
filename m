@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 94/99] f2fs: Convert extent_tree_root to XArray
-Date: Wed, 17 Jan 2018 12:21:58 -0800
-Message-Id: <20180117202203.19756-95-willy@infradead.org>
+Subject: [PATCH v6 70/99] xfs: Convert m_perag_tree to XArray
+Date: Wed, 17 Jan 2018 12:21:34 -0800
+Message-Id: <20180117202203.19756-71-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,158 +11,252 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Rename it to extent_array and use the xa_lock in place of the
-extent_tree_lock mutex.
+Getting rid of the m_perag_lock lets us also get rid of the call to
+radix_tree_preload().  This is a relatively naive conversion; we could
+improve performance over the radix tree implementation by passing around
+xa_state pointers instead of indices, possibly at the expense of extending
+rcu_read_lock() periods.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/f2fs/extent_cache.c | 59 +++++++++++++++++++++++++-------------------------
- fs/f2fs/f2fs.h         |  3 +--
- 2 files changed, 30 insertions(+), 32 deletions(-)
+ fs/xfs/libxfs/xfs_sb.c |  9 ++++-----
+ fs/xfs/xfs_icache.c    | 35 +++++++++--------------------------
+ fs/xfs/xfs_icache.h    |  6 +++---
+ fs/xfs/xfs_mount.c     | 19 ++++---------------
+ fs/xfs/xfs_mount.h     |  3 +--
+ 5 files changed, 21 insertions(+), 51 deletions(-)
 
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index ff2352a0ed15..da5f3bd1808d 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -250,25 +250,25 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode)
- 	struct extent_tree *et;
- 	nid_t ino = inode->i_ino;
+diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
+index 9b5aae2bcc0b..3b0b65eb8224 100644
+--- a/fs/xfs/libxfs/xfs_sb.c
++++ b/fs/xfs/libxfs/xfs_sb.c
+@@ -59,7 +59,7 @@ xfs_perag_get(
+ 	int			ref = 0;
  
--	mutex_lock(&sbi->extent_tree_lock);
--	et = radix_tree_lookup(&sbi->extent_tree_root, ino);
--	if (!et) {
--		et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS);
--		f2fs_radix_tree_insert(&sbi->extent_tree_root, ino, et);
--		memset(et, 0, sizeof(struct extent_tree));
--		et->ino = ino;
--		et->root = RB_ROOT;
--		et->cached_en = NULL;
--		rwlock_init(&et->lock);
--		INIT_LIST_HEAD(&et->list);
--		atomic_set(&et->node_cnt, 0);
--		atomic_inc(&sbi->total_ext_tree);
--	} else {
-+	et = xa_load(&sbi->extent_array, ino);
-+	if (et) {
- 		atomic_dec(&sbi->total_zombie_tree);
- 		list_del_init(&et->list);
-+		goto out;
- 	}
--	mutex_unlock(&sbi->extent_tree_lock);
- 
-+	et = f2fs_kmem_cache_alloc(extent_tree_slab, GFP_NOFS | __GFP_ZERO);
-+	et->ino = ino;
-+	et->root = RB_ROOT;
-+	et->cached_en = NULL;
-+	rwlock_init(&et->lock);
-+	INIT_LIST_HEAD(&et->list);
-+	atomic_set(&et->node_cnt, 0);
-+
-+	xa_store(&sbi->extent_array, ino, et, GFP_NOFS);
-+	atomic_inc(&sbi->total_ext_tree);
-+
-+out:
- 	/* never died until evict_inode */
- 	F2FS_I(inode)->extent_tree = et;
- 
-@@ -622,7 +622,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- 	if (!atomic_read(&sbi->total_zombie_tree))
- 		goto free_node;
- 
--	if (!mutex_trylock(&sbi->extent_tree_lock))
-+	if (!xa_trylock(&sbi->extent_array))
- 		goto out;
- 
- 	/* 1. remove unreferenced extent tree */
-@@ -634,7 +634,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- 		}
- 		f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
- 		list_del_init(&et->list);
--		radix_tree_delete(&sbi->extent_tree_root, et->ino);
-+		xa_erase(&sbi->extent_array, et->ino);
- 		kmem_cache_free(extent_tree_slab, et);
- 		atomic_dec(&sbi->total_ext_tree);
- 		atomic_dec(&sbi->total_zombie_tree);
-@@ -642,13 +642,13 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- 
- 		if (node_cnt + tree_cnt >= nr_shrink)
- 			goto unlock_out;
--		cond_resched();
-+		cond_resched_lock(&sbi->extent_array.xa_lock);
- 	}
--	mutex_unlock(&sbi->extent_tree_lock);
-+	xa_unlock(&sbi->extent_array);
- 
- free_node:
- 	/* 2. remove LRU extent entries */
--	if (!mutex_trylock(&sbi->extent_tree_lock))
-+	if (!xa_trylock(&sbi->extent_array))
- 		goto out;
- 
- 	remained = nr_shrink - (node_cnt + tree_cnt);
-@@ -678,7 +678,7 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
- 	spin_unlock(&sbi->extent_lock);
- 
- unlock_out:
--	mutex_unlock(&sbi->extent_tree_lock);
-+	xa_unlock(&sbi->extent_array);
- out:
- 	trace_f2fs_shrink_extent_tree(sbi, node_cnt, tree_cnt);
- 
-@@ -725,23 +725,23 @@ void f2fs_destroy_extent_tree(struct inode *inode)
- 
- 	if (inode->i_nlink && !is_bad_inode(inode) &&
- 					atomic_read(&et->node_cnt)) {
--		mutex_lock(&sbi->extent_tree_lock);
-+		xa_lock(&sbi->extent_array);
- 		list_add_tail(&et->list, &sbi->zombie_list);
- 		atomic_inc(&sbi->total_zombie_tree);
--		mutex_unlock(&sbi->extent_tree_lock);
-+		xa_unlock(&sbi->extent_array);
- 		return;
- 	}
- 
- 	/* free all extent info belong to this extent tree */
- 	node_cnt = f2fs_destroy_extent_node(inode);
- 
--	/* delete extent tree entry in radix tree */
--	mutex_lock(&sbi->extent_tree_lock);
-+	/* delete extent from array */
-+	xa_lock(&sbi->extent_array);
- 	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
--	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
--	kmem_cache_free(extent_tree_slab, et);
-+	__xa_erase(&sbi->extent_array, inode->i_ino);
- 	atomic_dec(&sbi->total_ext_tree);
--	mutex_unlock(&sbi->extent_tree_lock);
-+	xa_unlock(&sbi->extent_array);
-+	kmem_cache_free(extent_tree_slab, et);
- 
- 	F2FS_I(inode)->extent_tree = NULL;
- 
-@@ -787,8 +787,7 @@ void f2fs_update_extent_cache_range(struct dnode_of_data *dn,
- 
- void init_extent_cache_info(struct f2fs_sb_info *sbi)
+ 	rcu_read_lock();
+-	pag = radix_tree_lookup(&mp->m_perag_tree, agno);
++	pag = xa_load(&mp->m_perag_xa, agno);
+ 	if (pag) {
+ 		ASSERT(atomic_read(&pag->pag_ref) >= 0);
+ 		ref = atomic_inc_return(&pag->pag_ref);
+@@ -78,14 +78,13 @@ xfs_perag_get_tag(
+ 	xfs_agnumber_t		first,
+ 	int			tag)
  {
--	INIT_RADIX_TREE(&sbi->extent_tree_root, GFP_NOIO);
--	mutex_init(&sbi->extent_tree_lock);
-+	xa_init(&sbi->extent_array);
- 	INIT_LIST_HEAD(&sbi->extent_list);
- 	spin_lock_init(&sbi->extent_lock);
- 	atomic_set(&sbi->total_ext_tree, 0);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b3ee784b49bc..4eacef9c7274 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1064,8 +1064,7 @@ struct f2fs_sb_info {
- 	spinlock_t inode_lock[NR_INODE_TYPE];	/* for dirty inode list lock */
++	XA_STATE(xas, &mp->m_perag_xa, first);
+ 	struct xfs_perag	*pag;
+-	int			found;
+ 	int			ref;
  
- 	/* for extent tree cache */
--	struct radix_tree_root extent_tree_root;/* cache extent cache entries */
--	struct mutex extent_tree_lock;	/* locking extent radix tree */
-+	struct xarray extent_array;		/* cache extent cache entries */
- 	struct list_head extent_list;		/* lru list for shrinker */
- 	spinlock_t extent_lock;			/* locking extent lru list */
- 	atomic_t total_ext_tree;		/* extent tree count */
+ 	rcu_read_lock();
+-	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
+-					(void **)&pag, first, 1, tag);
+-	if (found <= 0) {
++	pag = xas_find_tag(&xas, ULONG_MAX, tag);
++	if (!pag) {
+ 		rcu_read_unlock();
+ 		return NULL;
+ 	}
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index 3861d61fb265..65a8b91b2e70 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -156,13 +156,10 @@ static void
+ xfs_reclaim_work_queue(
+ 	struct xfs_mount        *mp)
+ {
+-
+-	rcu_read_lock();
+-	if (radix_tree_tagged(&mp->m_perag_tree, XFS_ICI_RECLAIM_TAG)) {
++	if (xa_tagged(&mp->m_perag_xa, XFS_ICI_RECLAIM_TAG)) {
+ 		queue_delayed_work(mp->m_reclaim_workqueue, &mp->m_reclaim_work,
+ 			msecs_to_jiffies(xfs_syncd_centisecs / 6 * 10));
+ 	}
+-	rcu_read_unlock();
+ }
+ 
+ /*
+@@ -194,10 +191,7 @@ xfs_perag_set_reclaim_tag(
+ 		return;
+ 
+ 	/* propagate the reclaim tag up into the perag radix tree */
+-	spin_lock(&mp->m_perag_lock);
+-	radix_tree_tag_set(&mp->m_perag_tree, pag->pag_agno,
+-			   XFS_ICI_RECLAIM_TAG);
+-	spin_unlock(&mp->m_perag_lock);
++	xa_set_tag(&mp->m_perag_xa, pag->pag_agno, XFS_ICI_RECLAIM_TAG);
+ 
+ 	/* schedule periodic background inode reclaim */
+ 	xfs_reclaim_work_queue(mp);
+@@ -216,10 +210,7 @@ xfs_perag_clear_reclaim_tag(
+ 		return;
+ 
+ 	/* clear the reclaim tag from the perag radix tree */
+-	spin_lock(&mp->m_perag_lock);
+-	radix_tree_tag_clear(&mp->m_perag_tree, pag->pag_agno,
+-			     XFS_ICI_RECLAIM_TAG);
+-	spin_unlock(&mp->m_perag_lock);
++	xa_clear_tag(&mp->m_perag_xa, pag->pag_agno, XFS_ICI_RECLAIM_TAG);
+ 	trace_xfs_perag_clear_reclaim(mp, pag->pag_agno, -1, _RET_IP_);
+ }
+ 
+@@ -847,12 +838,10 @@ void
+ xfs_queue_eofblocks(
+ 	struct xfs_mount *mp)
+ {
+-	rcu_read_lock();
+-	if (radix_tree_tagged(&mp->m_perag_tree, XFS_ICI_EOFBLOCKS_TAG))
++	if (xa_tagged(&mp->m_perag_xa, XFS_ICI_EOFBLOCKS_TAG))
+ 		queue_delayed_work(mp->m_eofblocks_workqueue,
+ 				   &mp->m_eofblocks_work,
+ 				   msecs_to_jiffies(xfs_eofb_secs * 1000));
+-	rcu_read_unlock();
+ }
+ 
+ void
+@@ -874,12 +863,10 @@ void
+ xfs_queue_cowblocks(
+ 	struct xfs_mount *mp)
+ {
+-	rcu_read_lock();
+-	if (radix_tree_tagged(&mp->m_perag_tree, XFS_ICI_COWBLOCKS_TAG))
++	if (xa_tagged(&mp->m_perag_xa, XFS_ICI_COWBLOCKS_TAG))
+ 		queue_delayed_work(mp->m_eofblocks_workqueue,
+ 				   &mp->m_cowblocks_work,
+ 				   msecs_to_jiffies(xfs_cowb_secs * 1000));
+-	rcu_read_unlock();
+ }
+ 
+ void
+@@ -1557,7 +1544,7 @@ __xfs_inode_set_blocks_tag(
+ 	void		(*execute)(struct xfs_mount *mp),
+ 	void		(*set_tp)(struct xfs_mount *mp, xfs_agnumber_t agno,
+ 				  int error, unsigned long caller_ip),
+-	int		tag)
++	xa_tag_t	tag)
+ {
+ 	struct xfs_mount *mp = ip->i_mount;
+ 	struct xfs_perag *pag;
+@@ -1581,11 +1568,9 @@ __xfs_inode_set_blocks_tag(
+ 			   XFS_INO_TO_AGINO(ip->i_mount, ip->i_ino), tag);
+ 	if (!tagged) {
+ 		/* propagate the eofblocks tag up into the perag radix tree */
+-		spin_lock(&ip->i_mount->m_perag_lock);
+-		radix_tree_tag_set(&ip->i_mount->m_perag_tree,
++		xa_set_tag(&ip->i_mount->m_perag_xa,
+ 				   XFS_INO_TO_AGNO(ip->i_mount, ip->i_ino),
+ 				   tag);
+-		spin_unlock(&ip->i_mount->m_perag_lock);
+ 
+ 		/* kick off background trimming */
+ 		execute(ip->i_mount);
+@@ -1612,7 +1597,7 @@ __xfs_inode_clear_blocks_tag(
+ 	xfs_inode_t	*ip,
+ 	void		(*clear_tp)(struct xfs_mount *mp, xfs_agnumber_t agno,
+ 				    int error, unsigned long caller_ip),
+-	int		tag)
++	xa_tag_t	tag)
+ {
+ 	struct xfs_mount *mp = ip->i_mount;
+ 	struct xfs_perag *pag;
+@@ -1628,11 +1613,9 @@ __xfs_inode_clear_blocks_tag(
+ 			     XFS_INO_TO_AGINO(ip->i_mount, ip->i_ino), tag);
+ 	if (!radix_tree_tagged(&pag->pag_ici_root, tag)) {
+ 		/* clear the eofblocks tag from the perag radix tree */
+-		spin_lock(&ip->i_mount->m_perag_lock);
+-		radix_tree_tag_clear(&ip->i_mount->m_perag_tree,
++		xa_clear_tag(&ip->i_mount->m_perag_xa,
+ 				     XFS_INO_TO_AGNO(ip->i_mount, ip->i_ino),
+ 				     tag);
+-		spin_unlock(&ip->i_mount->m_perag_lock);
+ 		clear_tp(ip->i_mount, pag->pag_agno, -1, _RET_IP_);
+ 	}
+ 
+diff --git a/fs/xfs/xfs_icache.h b/fs/xfs/xfs_icache.h
+index d4a77588eca1..dfbf13b530bc 100644
+--- a/fs/xfs/xfs_icache.h
++++ b/fs/xfs/xfs_icache.h
+@@ -37,9 +37,9 @@ struct xfs_eofblocks {
+  */
+ #define XFS_ICI_NO_TAG		(-1)	/* special flag for an untagged lookup
+ 					   in xfs_inode_ag_iterator */
+-#define XFS_ICI_RECLAIM_TAG	0	/* inode is to be reclaimed */
+-#define XFS_ICI_EOFBLOCKS_TAG	1	/* inode has blocks beyond EOF */
+-#define XFS_ICI_COWBLOCKS_TAG	2	/* inode can have cow blocks to gc */
++#define XFS_ICI_RECLAIM_TAG	XA_TAG_0 /* inode is to be reclaimed */
++#define XFS_ICI_EOFBLOCKS_TAG	XA_TAG_1 /* inode has blocks beyond EOF */
++#define XFS_ICI_COWBLOCKS_TAG	XA_TAG_2 /* inode can have cow blocks to gc */
+ 
+ /*
+  * Flags for xfs_iget()
+diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+index c879b517cc94..0541aeb8449c 100644
+--- a/fs/xfs/xfs_mount.c
++++ b/fs/xfs/xfs_mount.c
+@@ -156,9 +156,7 @@ xfs_free_perag(
+ 	struct xfs_perag *pag;
+ 
+ 	for (agno = 0; agno < mp->m_sb.sb_agcount; agno++) {
+-		spin_lock(&mp->m_perag_lock);
+-		pag = radix_tree_delete(&mp->m_perag_tree, agno);
+-		spin_unlock(&mp->m_perag_lock);
++		pag = xa_erase(&mp->m_perag_xa, agno);
+ 		ASSERT(pag);
+ 		ASSERT(atomic_read(&pag->pag_ref) == 0);
+ 		xfs_buf_hash_destroy(pag);
+@@ -219,19 +217,11 @@ xfs_initialize_perag(
+ 			goto out_free_pag;
+ 		init_waitqueue_head(&pag->pagb_wait);
+ 
+-		if (radix_tree_preload(GFP_NOFS))
+-			goto out_hash_destroy;
+-
+-		spin_lock(&mp->m_perag_lock);
+-		if (radix_tree_insert(&mp->m_perag_tree, index, pag)) {
++		if (xa_store(&mp->m_perag_xa, index, pag, GFP_NOFS)) {
+ 			BUG();
+-			spin_unlock(&mp->m_perag_lock);
+-			radix_tree_preload_end();
+ 			error = -EEXIST;
+ 			goto out_hash_destroy;
+ 		}
+-		spin_unlock(&mp->m_perag_lock);
+-		radix_tree_preload_end();
+ 		/* first new pag is fully initialized */
+ 		if (first_initialised == NULLAGNUMBER)
+ 			first_initialised = index;
+@@ -252,7 +242,7 @@ xfs_initialize_perag(
+ out_unwind_new_pags:
+ 	/* unwind any prior newly initialized pags */
+ 	for (index = first_initialised; index < agcount; index++) {
+-		pag = radix_tree_delete(&mp->m_perag_tree, index);
++		pag = xa_erase(&mp->m_perag_xa, index);
+ 		if (!pag)
+ 			break;
+ 		xfs_buf_hash_destroy(pag);
+@@ -816,8 +806,7 @@ xfs_mountfs(
+ 	/*
+ 	 * Allocate and initialize the per-ag data.
+ 	 */
+-	spin_lock_init(&mp->m_perag_lock);
+-	INIT_RADIX_TREE(&mp->m_perag_tree, GFP_ATOMIC);
++	xa_init(&mp->m_perag_xa);
+ 	error = xfs_initialize_perag(mp, sbp->sb_agcount, &mp->m_maxagi);
+ 	if (error) {
+ 		xfs_warn(mp, "Failed per-ag init: %d", error);
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index e0792d036be2..6e5ad7b26f46 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -134,8 +134,7 @@ typedef struct xfs_mount {
+ 	xfs_extlen_t		m_ag_prealloc_blocks; /* reserved ag blocks */
+ 	uint			m_alloc_set_aside; /* space we can't use */
+ 	uint			m_ag_max_usable; /* max space per AG */
+-	struct radix_tree_root	m_perag_tree;	/* per-ag accounting info */
+-	spinlock_t		m_perag_lock;	/* lock for m_perag_tree */
++	struct xarray		m_perag_xa;	/* per-ag accounting info */
+ 	struct mutex		m_growlock;	/* growfs mutex */
+ 	int			m_fixedfsid[2];	/* unchanged for life of FS */
+ 	uint			m_dmevmask;	/* DMI events for this FS */
 -- 
 2.15.1
