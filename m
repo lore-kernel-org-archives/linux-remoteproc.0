@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 56/99] lustre: Convert to XArray
-Date: Wed, 17 Jan 2018 12:21:20 -0800
-Message-Id: <20180117202203.19756-57-willy@infradead.org>
+Subject: [PATCH v6 50/99] shmem: Comment fixups
+Date: Wed, 17 Jan 2018 12:21:14 -0800
+Message-Id: <20180117202203.19756-51-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,84 +11,74 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+Remove the last mentions of radix tree from various comments.
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/staging/lustre/lustre/llite/glimpse.c   | 12 +++++-------
- drivers/staging/lustre/lustre/mdc/mdc_request.c | 16 ++++++++--------
- 2 files changed, 13 insertions(+), 15 deletions(-)
+ mm/shmem.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/glimpse.c b/drivers/staging/lustre/lustre/llite/glimpse.c
-index 5f2843da911c..25232fdf5797 100644
---- a/drivers/staging/lustre/lustre/llite/glimpse.c
-+++ b/drivers/staging/lustre/lustre/llite/glimpse.c
-@@ -57,7 +57,7 @@ static const struct cl_lock_descr whole_file = {
- };
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4dbcfb436bd1..5110848885d4 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -743,7 +743,7 @@ void shmem_unlock_mapping(struct address_space *mapping)
+ }
  
  /*
-- * Check whether file has possible unwriten pages.
-+ * Check whether file has possible unwritten pages.
-  *
-  * \retval 1    file is mmap-ed or has dirty pages
-  *	 0    otherwise
-@@ -66,16 +66,14 @@ blkcnt_t dirty_cnt(struct inode *inode)
- {
- 	blkcnt_t cnt = 0;
- 	struct vvp_object *vob = cl_inode2vvp(inode);
--	void	      *results[1];
+- * Remove range of pages and swap entries from radix tree, and free them.
++ * Remove range of pages and swap entries from page cache, and free them.
+  * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
+  */
+ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+@@ -1118,10 +1118,10 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
+ 		 * We needed to drop mutex to make that restrictive page
+ 		 * allocation, but the inode might have been freed while we
+ 		 * dropped it: although a racing shmem_evict_inode() cannot
+-		 * complete without emptying the radix_tree, our page lock
++		 * complete without emptying the page cache, our page lock
+ 		 * on this swapcache page is not enough to prevent that -
+ 		 * free_swap_and_cache() of our swap entry will only
+-		 * trylock_page(), removing swap from radix_tree whatever.
++		 * trylock_page(), removing swap from page cache whatever.
+ 		 *
+ 		 * We must not proceed to shmem_add_to_page_cache() if the
+ 		 * inode has been freed, but of course we cannot rely on
+@@ -1187,7 +1187,7 @@ int shmem_unuse(swp_entry_t swap, struct page *page)
+ 			false);
+ 	if (error)
+ 		goto out;
+-	/* No radix_tree_preload: swap entry keeps a place for page in tree */
++	/* No memory allocation: swap entry occupies the slot for the page */
+ 	error = -EAGAIN;
  
--	if (inode->i_mapping)
--		cnt += radix_tree_gang_lookup_tag(&inode->i_mapping->pages,
--						  results, 0, 1,
--						  PAGECACHE_TAG_DIRTY);
-+	if (inode->i_mapping && xa_tagged(&inode->i_mapping->pages,
-+				PAGECACHE_TAG_DIRTY))
-+		cnt = 1;
- 	if (cnt == 0 && atomic_read(&vob->vob_mmap_cnt) > 0)
- 		cnt = 1;
- 
--	return (cnt > 0) ? 1 : 0;
-+	return cnt;
- }
- 
- int cl_glimpse_lock(const struct lu_env *env, struct cl_io *io,
-diff --git a/drivers/staging/lustre/lustre/mdc/mdc_request.c b/drivers/staging/lustre/lustre/mdc/mdc_request.c
-index 2ec79a6b17da..ea23247e9e02 100644
---- a/drivers/staging/lustre/lustre/mdc/mdc_request.c
-+++ b/drivers/staging/lustre/lustre/mdc/mdc_request.c
-@@ -934,17 +934,18 @@ static struct page *mdc_page_locate(struct address_space *mapping, __u64 *hash,
- 	 * hash _smaller_ than one we are looking for.
- 	 */
- 	unsigned long offset = hash_x_index(*hash, hash64);
-+	XA_STATE(xas, &mapping->pages, offset);
- 	struct page *page;
--	int found;
- 
--	xa_lock_irq(&mapping->pages);
--	found = radix_tree_gang_lookup(&mapping->pages,
--				       (void **)&page, offset, 1);
--	if (found > 0 && !xa_is_value(page)) {
-+	xas_lock_irq(&xas);
-+	page = xas_find(&xas, ULONG_MAX);
-+	if (xa_is_value(page))
-+		page = NULL;
-+	if (page) {
- 		struct lu_dirpage *dp;
- 
- 		get_page(page);
--		xa_unlock_irq(&mapping->pages);
-+		xas_unlock_irq(&xas);
- 		/*
- 		 * In contrast to find_lock_page() we are sure that directory
- 		 * page cannot be truncated (while DLM lock is held) and,
-@@ -992,8 +993,7 @@ static struct page *mdc_page_locate(struct address_space *mapping, __u64 *hash,
- 			page = ERR_PTR(-EIO);
- 		}
- 	} else {
--		xa_unlock_irq(&mapping->pages);
--		page = NULL;
-+		xas_unlock_irq(&xas);
+ 	mutex_lock(&shmem_swaplist_mutex);
+@@ -1863,7 +1863,7 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+ 		spin_unlock_irq(&info->lock);
+ 		goto repeat;
  	}
- 	return page;
+-	if (error == -EEXIST)	/* from above or from radix_tree_insert */
++	if (error == -EEXIST)
+ 		goto repeat;
+ 	return error;
  }
+@@ -2475,7 +2475,7 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ }
+ 
+ /*
+- * llseek SEEK_DATA or SEEK_HOLE through the radix_tree.
++ * llseek SEEK_DATA or SEEK_HOLE through the page cache.
+  */
+ static pgoff_t shmem_seek_hole_data(struct address_space *mapping,
+ 				    pgoff_t index, pgoff_t end, int whence)
+@@ -2563,7 +2563,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
+ }
+ 
+ /*
+- * We need a tag: a new tag would expand every radix_tree_node by 8 bytes,
++ * We need a tag: a new tag would expand every xa_node by 8 bytes,
+  * so reuse a tag which we firmly believe is never set or cleared on shmem.
+  */
+ #define SHMEM_TAG_PINNED        PAGECACHE_TAG_TOWRITE
 -- 
 2.15.1
