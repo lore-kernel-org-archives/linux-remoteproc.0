@@ -1,128 +1,139 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v2 2/4] remoteproc: Rename "load_rsc_table" to "parse_fw"
-Date: Wed, 3 Jan 2018 10:26:59 +0000
-Message-ID: <283cde2ddefd472eaeaa66f326df1283@SFHDAG7NODE2.st.com>
-References: <20171226203832.14928-1-bjorn.andersson@linaro.org>
- <20171226203832.14928-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20171226203832.14928-3-bjorn.andersson@linaro.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-soc@vger.kernel.org" <linux-soc@vger.kernel.org>, Suman Anna <s-anna@ti.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 40/99] pagevec: Use xa_tag_t
+Date: Wed, 17 Jan 2018 12:21:04 -0800
+Message-Id: <20180117202203.19756-41-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
+Removes sparse warnings.
 
-> -----Original Message-----
-> From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-remoteproc-
-> owner@vger.kernel.org] On Behalf Of Bjorn Andersson
-> Sent: Tuesday, December 26, 2017 9:39 PM
-> To: Ohad Ben-Cohen <ohad@wizery.com>; Bjorn Andersson
-> <bjorn.andersson@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; linux=
--
-> arm-msm@vger.kernel.org; linux-soc@vger.kernel.org; Suman Anna <s-
-> anna@ti.com>; Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
-> Subject: [PATCH v2 2/4] remoteproc: Rename "load_rsc_table" to
-> "parse_fw"
->=20
-> The resource table is just one possible source of information that can
-> be extracted from the firmware file. Generalize this interface to allow
-> drivers to override this with parsers of other types of information.
->=20
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->=20
-> Changes since v1:
-> - New patch
->=20
->  drivers/remoteproc/remoteproc_core.c     | 6 +++---
->  drivers/remoteproc/remoteproc_internal.h | 7 +++----
->  include/linux/remoteproc.h               | 2 +-
->  3 files changed, 7 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> index 5af7547b9d8d..6a72daa94673 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -944,8 +944,8 @@ static int rproc_fw_boot(struct rproc *rproc, const
-> struct firmware *fw)
->=20
->  	rproc->bootaddr =3D rproc_get_boot_addr(rproc, fw);
->=20
-> -	/* load resource table */
-> -	ret =3D rproc_load_rsc_table(rproc, fw);
-> +	/* parse firmware resources */
-> +	ret =3D rproc_parse_fw(rproc, fw);
-Hi Bjorn,
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/btrfs/extent_io.c    | 4 ++--
+ fs/ext4/inode.c         | 2 +-
+ fs/f2fs/data.c          | 2 +-
+ fs/gfs2/aops.c          | 2 +-
+ include/linux/pagevec.h | 8 +++++---
+ mm/swap.c               | 4 ++--
+ 6 files changed, 12 insertions(+), 10 deletions(-)
 
-I think it will be good to keep resource (aka rsc) in function name. only "=
-parse_fw" is not enough explicit and we don't know why rproc should parse f=
-irmware.
-
-Regards,
-Loic
-
->  	if (ret)
->  		goto disable_iommu;
->=20
-> @@ -1555,7 +1555,7 @@ struct rproc *rproc_alloc(struct device *dev, const
-> char *name,
->  	/* Default to ELF loader if no load function is specified */
->  	if (!rproc->ops->load) {
->  		rproc->ops->load =3D rproc_elf_load_segments;
-> -		rproc->ops->load_rsc_table =3D rproc_elf_load_rsc_table;
-> +		rproc->ops->parse_fw =3D rproc_elf_load_rsc_table;
->  		rproc->ops->find_loaded_rsc_table =3D
-> rproc_elf_find_loaded_rsc_table;
->  		rproc->ops->sanity_check =3D rproc_elf_sanity_check;
->  		rproc->ops->get_boot_addr =3D rproc_elf_get_boot_addr;
-> diff --git a/drivers/remoteproc/remoteproc_internal.h
-> b/drivers/remoteproc/remoteproc_internal.h
-> index 55a2950c5cb7..7570beb035b5 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -88,11 +88,10 @@ int rproc_load_segments(struct rproc *rproc, const
-> struct firmware *fw)
->  	return -EINVAL;
->  }
->=20
-> -static inline int rproc_load_rsc_table(struct rproc *rproc,
-> -				       const struct firmware *fw)
-> +static inline int rproc_parse_fw(struct rproc *rproc, const struct firmw=
-are
-> *fw)
->  {
-> -	if (rproc->ops->load_rsc_table)
-> -		return rproc->ops->load_rsc_table(rproc, fw);
-> +	if (rproc->ops->parse_fw)
-> +		return rproc->ops->parse_fw(rproc, fw);
->=20
->  	return 0;
->  }
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index de6e20a3f061..dc93ac3d1692 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -343,7 +343,7 @@ struct rproc_ops {
->  	int (*stop)(struct rproc *rproc);
->  	void (*kick)(struct rproc *rproc, int vqid);
->  	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
-> -	int (*load_rsc_table)(struct rproc *rproc, const struct firmware *fw);
-> +	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
->  	struct resource_table *(*find_loaded_rsc_table)(
->  				struct rproc *rproc, const struct firmware
-> *fw);
->  	int (*load)(struct rproc *rproc, const struct firmware *fw);
-> --
-> 2.15.0
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-remotepro=
-c" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 22948f4febe7..4301cbf4e31f 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -3795,7 +3795,7 @@ int btree_write_cache_pages(struct address_space *mapping,
+ 	pgoff_t index;
+ 	pgoff_t end;		/* Inclusive */
+ 	int scanned = 0;
+-	int tag;
++	xa_tag_t tag;
+ 
+ 	pagevec_init(&pvec);
+ 	if (wbc->range_cyclic) {
+@@ -3922,7 +3922,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
+ 	pgoff_t done_index;
+ 	int range_whole = 0;
+ 	int scanned = 0;
+-	int tag;
++	xa_tag_t tag;
+ 
+ 	/*
+ 	 * We have to hold onto the inode so that ordered extents can do their
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 534a9130f625..4b7c10853928 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2614,7 +2614,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+ 	long left = mpd->wbc->nr_to_write;
+ 	pgoff_t index = mpd->first_page;
+ 	pgoff_t end = mpd->last_page;
+-	int tag;
++	xa_tag_t tag;
+ 	int i, err = 0;
+ 	int blkbits = mpd->inode->i_blkbits;
+ 	ext4_lblk_t lblk;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8f51ac47b77f..c8f6d9806896 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1640,7 +1640,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	pgoff_t last_idx = ULONG_MAX;
+ 	int cycled;
+ 	int range_whole = 0;
+-	int tag;
++	xa_tag_t tag;
+ 
+ 	pagevec_init(&pvec);
+ 
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index 1daf15a1f00c..c78ecd008191 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -369,7 +369,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+ 	pgoff_t done_index;
+ 	int cycled;
+ 	int range_whole = 0;
+-	int tag;
++	xa_tag_t tag;
+ 
+ 	pagevec_init(&pvec);
+ 	if (wbc->range_cyclic) {
+diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
+index 5fb6580f7f23..5168901bf06d 100644
+--- a/include/linux/pagevec.h
++++ b/include/linux/pagevec.h
+@@ -9,6 +9,8 @@
+ #ifndef _LINUX_PAGEVEC_H
+ #define _LINUX_PAGEVEC_H
+ 
++#include <linux/xarray.h>
++
+ /* 14 pointers + two long's align the pagevec structure to a power of two */
+ #define PAGEVEC_SIZE	14
+ 
+@@ -40,12 +42,12 @@ static inline unsigned pagevec_lookup(struct pagevec *pvec,
+ 
+ unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
+ 		struct address_space *mapping, pgoff_t *index, pgoff_t end,
+-		int tag);
++		xa_tag_t tag);
+ unsigned pagevec_lookup_range_nr_tag(struct pagevec *pvec,
+ 		struct address_space *mapping, pgoff_t *index, pgoff_t end,
+-		int tag, unsigned max_pages);
++		xa_tag_t tag, unsigned max_pages);
+ static inline unsigned pagevec_lookup_tag(struct pagevec *pvec,
+-		struct address_space *mapping, pgoff_t *index, int tag)
++		struct address_space *mapping, pgoff_t *index, xa_tag_t tag)
+ {
+ 	return pagevec_lookup_range_tag(pvec, mapping, index, (pgoff_t)-1, tag);
+ }
+diff --git a/mm/swap.c b/mm/swap.c
+index 8d7773cb2c3f..31d79479dacf 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -991,7 +991,7 @@ EXPORT_SYMBOL(pagevec_lookup_range);
+ 
+ unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
+ 		struct address_space *mapping, pgoff_t *index, pgoff_t end,
+-		int tag)
++		xa_tag_t tag)
+ {
+ 	pvec->nr = find_get_pages_range_tag(mapping, index, end, tag,
+ 					PAGEVEC_SIZE, pvec->pages);
+@@ -1001,7 +1001,7 @@ EXPORT_SYMBOL(pagevec_lookup_range_tag);
+ 
+ unsigned pagevec_lookup_range_nr_tag(struct pagevec *pvec,
+ 		struct address_space *mapping, pgoff_t *index, pgoff_t end,
+-		int tag, unsigned max_pages)
++		xa_tag_t tag, unsigned max_pages)
+ {
+ 	pvec->nr = find_get_pages_range_tag(mapping, index, end, tag,
+ 		min_t(unsigned int, max_pages, PAGEVEC_SIZE), pvec->pages);
+-- 
+2.15.1
