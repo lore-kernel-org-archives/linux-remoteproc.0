@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 21/99] xarray: Add xa_reserve and xa_release
-Date: Wed, 17 Jan 2018 12:20:45 -0800
-Message-Id: <20180117202203.19756-22-willy@infradead.org>
+Subject: [PATCH v6 64/99] dax: Convert grab_mapping_entry to XArray
+Date: Wed, 17 Jan 2018 12:21:28 -0800
+Message-Id: <20180117202203.19756-65-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,167 +11,162 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This function simply creates a slot in the XArray for users which need
-to acquire multiple locks before storing their entry in the tree and
-so cannot use a plain xa_store().
-
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/xarray.h                 | 14 ++++++++++
- lib/xarray.c                           | 51 ++++++++++++++++++++++++++++++++++
- tools/testing/radix-tree/xarray-test.c | 25 +++++++++++++++++
- 3 files changed, 90 insertions(+)
+ fs/dax.c | 98 +++++++++++++++++-----------------------------------------------
+ 1 file changed, 26 insertions(+), 72 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 6f59f1f60205..c3f7405c5517 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -259,6 +259,7 @@ void *xa_load(struct xarray *, unsigned long index);
- void *xa_store(struct xarray *, unsigned long index, void *entry, gfp_t);
- void *xa_cmpxchg(struct xarray *, unsigned long index,
- 			void *old, void *entry, gfp_t);
-+int xa_reserve(struct xarray *, unsigned long index, gfp_t);
- bool xa_get_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_set_tag(struct xarray *, unsigned long index, xa_tag_t);
- void xa_clear_tag(struct xarray *, unsigned long index, xa_tag_t);
-@@ -373,6 +374,19 @@ static inline int xa_insert(struct xarray *xa, unsigned long index,
- 	return -EEXIST;
+diff --git a/fs/dax.c b/fs/dax.c
+index 494e8fb7a98f..3eb0cf176d69 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -44,6 +44,7 @@
+ 
+ /* The 'colour' (ie low bits) within a PMD of a page offset.  */
+ #define PG_PMD_COLOUR	((PMD_SIZE >> PAGE_SHIFT) - 1)
++#define PMD_ORDER	(PMD_SHIFT - PAGE_SHIFT)
+ 
+ static wait_queue_head_t wait_table[DAX_WAIT_TABLE_ENTRIES];
+ 
+@@ -89,10 +90,10 @@ static void *dax_radix_locked_entry(sector_t sector, unsigned long flags)
+ 			DAX_ENTRY_LOCK);
  }
  
-+/**
-+ * xa_release() - Release a reserved entry.
-+ * @xa: XArray.
-+ * @index: Index of entry.
-+ *
-+ * After calling xa_reserve(), you can call this function to release the
-+ * reservation.  It is harmless to call this function if the entry was used.
-+ */
-+static inline void xa_release(struct xarray *xa, unsigned long index)
-+{
-+	xa_cmpxchg(xa, index, NULL, NULL, 0);
-+}
-+
- #define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
- #define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
- #define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-diff --git a/lib/xarray.c b/lib/xarray.c
-index ace309cc9253..b4dec8e2d202 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1275,6 +1275,8 @@ void *xa_cmpxchg(struct xarray *xa, unsigned long index,
- 	do {
- 		xas_lock(&xas);
- 		curr = xas_load(&xas);
-+		if (curr == XA_ZERO_ENTRY)
-+			curr = NULL;
- 		if (curr == old)
- 			xas_store(&xas, entry);
- 		xas_unlock(&xas);
-@@ -1310,6 +1312,8 @@ void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
- 
- 	do {
- 		curr = xas_load(&xas);
-+		if (curr == XA_ZERO_ENTRY)
-+			curr = NULL;
- 		if (curr == old)
- 			xas_store(&xas, entry);
- 	} while (__xas_nomem(&xas, gfp));
-@@ -1318,6 +1322,53 @@ void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
- }
- EXPORT_SYMBOL(__xa_cmpxchg);
- 
-+/**
-+ * xa_reserve() - Reserve this index in the XArray.
-+ * @xa: XArray.
-+ * @index: Index into array.
-+ * @gfp: Memory allocation flags.
-+ *
-+ * Ensures there is somewhere to store an entry at @index in the array.
-+ * If there is already something stored at @index, this function does
-+ * nothing.  If there was nothing there, the entry is marked as reserved.
-+ * Loads from @index will continue to see a %NULL pointer until a
-+ * subsequent store to @index.
-+ *
-+ * If you do not use the entry that you have reserved, call xa_release()
-+ * or xa_erase() to free any unnecessary memory.
-+ *
-+ * Return: 0 if the reservation succeeded or -ENOMEM if it failed.
-+ */
-+int xa_reserve(struct xarray *xa, unsigned long index, gfp_t gfp)
-+{
-+	XA_STATE(xas, xa, index);
-+	unsigned int lock_type = xa_lock_type(xa);
-+	void *curr;
-+
-+	do {
-+		if (lock_type == XA_LOCK_IRQ)
-+			xas_lock_irq(&xas);
-+		else if (lock_type == XA_LOCK_BH)
-+			xas_lock_bh(&xas);
-+		else
-+			xas_lock(&xas);
-+
-+		curr = xas_create(&xas);
-+		if (!curr)
-+			xas_store(&xas, XA_ZERO_ENTRY);
-+
-+                if (lock_type == XA_LOCK_IRQ)
-+                        xas_unlock_irq(&xas);
-+                else if (lock_type == XA_LOCK_BH)
-+                        xas_unlock_bh(&xas);
-+                else
-+                        xas_unlock(&xas);
-+	} while (xas_nomem(&xas, gfp));
-+
-+	return xas_error(&xas);
-+}
-+EXPORT_SYMBOL(xa_reserve);
-+
- /**
-  * __xa_set_tag() - Set this tag on this entry while locked.
-  * @xa: XArray.
-diff --git a/tools/testing/radix-tree/xarray-test.c b/tools/testing/radix-tree/xarray-test.c
-index 4d3541ac31e9..fe38b53df2ab 100644
---- a/tools/testing/radix-tree/xarray-test.c
-+++ b/tools/testing/radix-tree/xarray-test.c
-@@ -502,6 +502,29 @@ void check_move(struct xarray *xa)
- 	} while (i < (1 << 16));
- }
- 
-+void check_reserve(struct xarray *xa)
-+{
-+	assert(xa_empty(xa));
-+	xa_reserve(xa, 12345678, GFP_KERNEL);
-+	assert(!xa_empty(xa));
-+	assert(!xa_load(xa, 12345678));
-+	xa_release(xa, 12345678);
-+	assert(xa_empty(xa));
-+
-+	xa_reserve(xa, 12345678, GFP_KERNEL);
-+	assert(!xa_store(xa, 12345678, xa_mk_value(12345678), GFP_NOWAIT));
-+	xa_release(xa, 12345678);
-+	assert(xa_erase(xa, 12345678) == xa_mk_value(12345678));
-+	assert(xa_empty(xa));
-+
-+	xa_reserve(xa, 12345678, GFP_KERNEL);
-+	assert(!xa_cmpxchg(xa, 12345678, NULL, xa_mk_value(12345678),
-+								GFP_NOWAIT));
-+	xa_release(xa, 12345678);
-+	assert(xa_erase(xa, 12345678) == xa_mk_value(12345678));
-+	assert(xa_empty(xa));
-+}
-+
- void xarray_checks(void)
+-static unsigned int dax_radix_order(void *entry)
++static unsigned int dax_entry_order(void *entry)
  {
- 	DEFINE_XARRAY(array);
-@@ -548,6 +571,8 @@ void xarray_checks(void)
- 
- 	check_move(&array);
- 	item_kill_tree(&array);
-+
-+	check_reserve(&array);
+ 	if (xa_to_value(entry) & DAX_PMD)
+-		return PMD_SHIFT - PAGE_SHIFT;
++		return PMD_ORDER;
+ 	return 0;
  }
  
- int __weak main(void)
+@@ -299,10 +300,11 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ {
+ 	XA_STATE(xas, &mapping->pages, index);
+ 	bool pmd_downgrade = false; /* splitting 2MiB entry into 4k entries? */
+-	void *entry, **slot;
++	void *entry;
+ 
++	xas_set_order(&xas, index, size_flag ? PMD_ORDER : 0);
+ restart:
+-	xa_lock_irq(&mapping->pages);
++	xas_lock_irq(&xas);
+ 	entry = get_unlocked_mapping_entry(&xas);
+ 
+ 	if (WARN_ON_ONCE(entry && !xa_is_value(entry))) {
+@@ -326,84 +328,36 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ 		}
+ 	}
+ 
+-	/* No entry for given index? Make sure radix tree is big enough. */
+-	if (!entry || pmd_downgrade) {
+-		int err;
+-
+-		if (pmd_downgrade) {
+-			/*
+-			 * Make sure 'entry' remains valid while we drop
+-			 * xa_lock.
+-			 */
+-			entry = lock_slot(&xas);
+-		}
+-
+-		xa_unlock_irq(&mapping->pages);
++	if (pmd_downgrade) {
++		entry = lock_slot(&xas);
+ 		/*
+ 		 * Besides huge zero pages the only other thing that gets
+ 		 * downgraded are empty entries which don't need to be
+ 		 * unmapped.
+ 		 */
+-		if (pmd_downgrade && dax_is_zero_entry(entry))
++		if (dax_is_zero_entry(entry)) {
++			xas_pause(&xas);
++			xas_unlock_irq(&xas);
+ 			unmap_mapping_range(mapping,
+ 				(index << PAGE_SHIFT) & PMD_MASK, PMD_SIZE, 0);
+-
+-		err = radix_tree_preload(
+-				mapping_gfp_mask(mapping) & ~__GFP_HIGHMEM);
+-		if (err) {
+-			if (pmd_downgrade)
+-				put_locked_mapping_entry(mapping, index);
+-			return ERR_PTR(err);
++			xas_lock_irq(&xas);
+ 		}
+-		xa_lock_irq(&mapping->pages);
+-
+-		if (!entry) {
+-			/*
+-			 * We needed to drop the pages lock while calling
+-			 * radix_tree_preload() and we didn't have an entry to
+-			 * lock.  See if another thread inserted an entry at
+-			 * our index during this time.
+-			 */
+-			entry = __radix_tree_lookup(&mapping->pages, index,
+-					NULL, &slot);
+-			if (entry) {
+-				radix_tree_preload_end();
+-				xa_unlock_irq(&mapping->pages);
+-				goto restart;
+-			}
+-		}
+-
+-		if (pmd_downgrade) {
+-			radix_tree_delete(&mapping->pages, index);
+-			mapping->nrexceptional--;
+-			dax_wake_entry(&xas, entry, true);
+-		}
+-
++		xas_store(&xas, NULL);
++		mapping->nrexceptional--;
++		dax_wake_entry(&xas, entry, true);
++	}
++	if (!entry || pmd_downgrade) {
+ 		entry = dax_radix_locked_entry(0, size_flag | DAX_EMPTY);
+-
+-		err = __radix_tree_insert(&mapping->pages, index,
+-				dax_radix_order(entry), entry);
+-		radix_tree_preload_end();
+-		if (err) {
+-			xa_unlock_irq(&mapping->pages);
+-			/*
+-			 * Our insertion of a DAX entry failed, most likely
+-			 * because we were inserting a PMD entry and it
+-			 * collided with a PTE sized entry at a different
+-			 * index in the PMD range.  We haven't inserted
+-			 * anything into the radix tree and have no waiters to
+-			 * wake.
+-			 */
+-			return ERR_PTR(err);
+-		}
+-		/* Good, we have inserted empty locked entry into the tree. */
+-		mapping->nrexceptional++;
+-		xa_unlock_irq(&mapping->pages);
+-		return entry;
++		xas_store(&xas, entry);
++		if (!xas_error(&xas))
++			mapping->nrexceptional++;
++	} else {
++		entry = lock_slot(&xas);
+ 	}
+-	entry = lock_slot(&xas);
+  out_unlock:
+-	xa_unlock_irq(&mapping->pages);
++	xas_unlock_irq(&xas);
++	if (xas_nomem(&xas, GFP_NOIO))
++		goto restart;
+ 	return entry;
+ }
+ 
+@@ -682,7 +636,7 @@ static int dax_writeback_one(struct block_device *bdev,
+ 	 * worry about partial PMD writebacks.
+ 	 */
+ 	sector = dax_radix_sector(entry);
+-	size = PAGE_SIZE << dax_radix_order(entry);
++	size = PAGE_SIZE << dax_entry_order(entry);
+ 
+ 	id = dax_read_lock();
+ 	ret = bdev_dax_pgoff(bdev, sector, size, &pgoff);
 -- 
 2.15.1
