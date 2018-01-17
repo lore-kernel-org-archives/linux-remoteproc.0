@@ -1,262 +1,146 @@
-Return-Path: <willy@infradead.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([65.50.211.133]:56121 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753947AbeAQUXA (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 17 Jan 2018 15:23:00 -0500
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 70/99] xfs: Convert m_perag_tree to XArray
-Date: Wed, 17 Jan 2018 12:21:34 -0800
-Message-Id: <20180117202203.19756-71-willy@infradead.org>
+Subject: [PATCH v6 81/99] i915: Convert handles_vma to XArray
+Date: Wed, 17 Jan 2018 12:21:45 -0800
+Message-Id: <20180117202203.19756-82-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Getting rid of the m_perag_lock lets us also get rid of the call to
-radix_tree_preload().  This is a relatively naive conversion; we could
-improve performance over the radix tree implementation by passing around
-xa_state pointers instead of indices, possibly at the expense of extending
-rcu_read_lock() periods.
+Straightforward conversion.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/xfs/libxfs/xfs_sb.c |  9 ++++-----
- fs/xfs/xfs_icache.c    | 35 +++++++++--------------------------
- fs/xfs/xfs_icache.h    |  6 +++---
- fs/xfs/xfs_mount.c     | 19 ++++---------------
- fs/xfs/xfs_mount.h     |  3 +--
- 5 files changed, 21 insertions(+), 51 deletions(-)
+ drivers/gpu/drm/i915/i915_gem.c               |  2 +-
+ drivers/gpu/drm/i915/i915_gem_context.c       | 12 +++++-------
+ drivers/gpu/drm/i915/i915_gem_context.h       |  4 ++--
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c    |  6 +++---
+ drivers/gpu/drm/i915/selftests/mock_context.c |  2 +-
+ 5 files changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
-index 9b5aae2bcc0b..3b0b65eb8224 100644
---- a/fs/xfs/libxfs/xfs_sb.c
-+++ b/fs/xfs/libxfs/xfs_sb.c
-@@ -59,7 +59,7 @@ xfs_perag_get(
- 	int			ref = 0;
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index 25ce7bcf9988..69e944f4dfce 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -3351,7 +3351,7 @@ void i915_gem_close_object(struct drm_gem_object *gem, struct drm_file *file)
+ 		if (ctx->file_priv != fpriv)
+ 			continue;
+ 
+-		vma = radix_tree_delete(&ctx->handles_vma, lut->handle);
++		vma = xa_erase(&ctx->handles_vma, lut->handle);
+ 		GEM_BUG_ON(vma->obj != obj);
+ 
+ 		/* We allow the process to have multiple handles to the same
+diff --git a/drivers/gpu/drm/i915/i915_gem_context.c b/drivers/gpu/drm/i915/i915_gem_context.c
+index f782cf2069c1..1aff35ba6e18 100644
+--- a/drivers/gpu/drm/i915/i915_gem_context.c
++++ b/drivers/gpu/drm/i915/i915_gem_context.c
+@@ -95,9 +95,9 @@
+ 
+ static void lut_close(struct i915_gem_context *ctx)
+ {
++	XA_STATE(xas, &ctx->handles_vma, 0);
+ 	struct i915_lut_handle *lut, *ln;
+-	struct radix_tree_iter iter;
+-	void __rcu **slot;
++	struct i915_vma *vma;
+ 
+ 	list_for_each_entry_safe(lut, ln, &ctx->handles_list, ctx_link) {
+ 		list_del(&lut->obj_link);
+@@ -105,10 +105,8 @@ static void lut_close(struct i915_gem_context *ctx)
+ 	}
  
  	rcu_read_lock();
--	pag = radix_tree_lookup(&mp->m_perag_tree, agno);
-+	pag = xa_load(&mp->m_perag_xa, agno);
- 	if (pag) {
- 		ASSERT(atomic_read(&pag->pag_ref) >= 0);
- 		ref = atomic_inc_return(&pag->pag_ref);
-@@ -78,14 +78,13 @@ xfs_perag_get_tag(
- 	xfs_agnumber_t		first,
- 	int			tag)
- {
-+	XA_STATE(xas, &mp->m_perag_xa, first);
- 	struct xfs_perag	*pag;
--	int			found;
- 	int			ref;
- 
- 	rcu_read_lock();
--	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
--					(void **)&pag, first, 1, tag);
--	if (found <= 0) {
-+	pag = xas_find_tag(&xas, ULONG_MAX, tag);
-+	if (!pag) {
- 		rcu_read_unlock();
- 		return NULL;
- 	}
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 3861d61fb265..65a8b91b2e70 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -156,13 +156,10 @@ static void
- xfs_reclaim_work_queue(
- 	struct xfs_mount        *mp)
- {
+-	radix_tree_for_each_slot(slot, &ctx->handles_vma, &iter, 0) {
+-		struct i915_vma *vma = rcu_dereference_raw(*slot);
 -
--	rcu_read_lock();
--	if (radix_tree_tagged(&mp->m_perag_tree, XFS_ICI_RECLAIM_TAG)) {
-+	if (xa_tagged(&mp->m_perag_xa, XFS_ICI_RECLAIM_TAG)) {
- 		queue_delayed_work(mp->m_reclaim_workqueue, &mp->m_reclaim_work,
- 			msecs_to_jiffies(xfs_syncd_centisecs / 6 * 10));
+-		radix_tree_iter_delete(&ctx->handles_vma, &iter, slot);
++	xas_for_each(&xas, vma, ULONG_MAX) {
++		xas_store(&xas, NULL);
+ 		__i915_gem_object_release_unless_active(vma->obj);
  	}
--	rcu_read_unlock();
- }
+ 	rcu_read_unlock();
+@@ -276,7 +274,7 @@ __create_hw_context(struct drm_i915_private *dev_priv,
+ 	ctx->i915 = dev_priv;
+ 	ctx->priority = I915_PRIORITY_NORMAL;
  
- /*
-@@ -194,10 +191,7 @@ xfs_perag_set_reclaim_tag(
- 		return;
+-	INIT_RADIX_TREE(&ctx->handles_vma, GFP_KERNEL);
++	xa_init(&ctx->handles_vma);
+ 	INIT_LIST_HEAD(&ctx->handles_list);
  
- 	/* propagate the reclaim tag up into the perag radix tree */
--	spin_lock(&mp->m_perag_lock);
--	radix_tree_tag_set(&mp->m_perag_tree, pag->pag_agno,
--			   XFS_ICI_RECLAIM_TAG);
--	spin_unlock(&mp->m_perag_lock);
-+	xa_set_tag(&mp->m_perag_xa, pag->pag_agno, XFS_ICI_RECLAIM_TAG);
+ 	/* Default context will never have a file_priv */
+diff --git a/drivers/gpu/drm/i915/i915_gem_context.h b/drivers/gpu/drm/i915/i915_gem_context.h
+index 44688e22a5c2..8e3e0d002f77 100644
+--- a/drivers/gpu/drm/i915/i915_gem_context.h
++++ b/drivers/gpu/drm/i915/i915_gem_context.h
+@@ -181,11 +181,11 @@ struct i915_gem_context {
+ 	/** remap_slice: Bitmask of cache lines that need remapping */
+ 	u8 remap_slice;
  
- 	/* schedule periodic background inode reclaim */
- 	xfs_reclaim_work_queue(mp);
-@@ -216,10 +210,7 @@ xfs_perag_clear_reclaim_tag(
- 		return;
- 
- 	/* clear the reclaim tag from the perag radix tree */
--	spin_lock(&mp->m_perag_lock);
--	radix_tree_tag_clear(&mp->m_perag_tree, pag->pag_agno,
--			     XFS_ICI_RECLAIM_TAG);
--	spin_unlock(&mp->m_perag_lock);
-+	xa_clear_tag(&mp->m_perag_xa, pag->pag_agno, XFS_ICI_RECLAIM_TAG);
- 	trace_xfs_perag_clear_reclaim(mp, pag->pag_agno, -1, _RET_IP_);
- }
- 
-@@ -847,12 +838,10 @@ void
- xfs_queue_eofblocks(
- 	struct xfs_mount *mp)
- {
--	rcu_read_lock();
--	if (radix_tree_tagged(&mp->m_perag_tree, XFS_ICI_EOFBLOCKS_TAG))
-+	if (xa_tagged(&mp->m_perag_xa, XFS_ICI_EOFBLOCKS_TAG))
- 		queue_delayed_work(mp->m_eofblocks_workqueue,
- 				   &mp->m_eofblocks_work,
- 				   msecs_to_jiffies(xfs_eofb_secs * 1000));
--	rcu_read_unlock();
- }
- 
- void
-@@ -874,12 +863,10 @@ void
- xfs_queue_cowblocks(
- 	struct xfs_mount *mp)
- {
--	rcu_read_lock();
--	if (radix_tree_tagged(&mp->m_perag_tree, XFS_ICI_COWBLOCKS_TAG))
-+	if (xa_tagged(&mp->m_perag_xa, XFS_ICI_COWBLOCKS_TAG))
- 		queue_delayed_work(mp->m_eofblocks_workqueue,
- 				   &mp->m_cowblocks_work,
- 				   msecs_to_jiffies(xfs_cowb_secs * 1000));
--	rcu_read_unlock();
- }
- 
- void
-@@ -1557,7 +1544,7 @@ __xfs_inode_set_blocks_tag(
- 	void		(*execute)(struct xfs_mount *mp),
- 	void		(*set_tp)(struct xfs_mount *mp, xfs_agnumber_t agno,
- 				  int error, unsigned long caller_ip),
--	int		tag)
-+	xa_tag_t	tag)
- {
- 	struct xfs_mount *mp = ip->i_mount;
- 	struct xfs_perag *pag;
-@@ -1581,11 +1568,9 @@ __xfs_inode_set_blocks_tag(
- 			   XFS_INO_TO_AGINO(ip->i_mount, ip->i_ino), tag);
- 	if (!tagged) {
- 		/* propagate the eofblocks tag up into the perag radix tree */
--		spin_lock(&ip->i_mount->m_perag_lock);
--		radix_tree_tag_set(&ip->i_mount->m_perag_tree,
-+		xa_set_tag(&ip->i_mount->m_perag_xa,
- 				   XFS_INO_TO_AGNO(ip->i_mount, ip->i_ino),
- 				   tag);
--		spin_unlock(&ip->i_mount->m_perag_lock);
- 
- 		/* kick off background trimming */
- 		execute(ip->i_mount);
-@@ -1612,7 +1597,7 @@ __xfs_inode_clear_blocks_tag(
- 	xfs_inode_t	*ip,
- 	void		(*clear_tp)(struct xfs_mount *mp, xfs_agnumber_t agno,
- 				    int error, unsigned long caller_ip),
--	int		tag)
-+	xa_tag_t	tag)
- {
- 	struct xfs_mount *mp = ip->i_mount;
- 	struct xfs_perag *pag;
-@@ -1628,11 +1613,9 @@ __xfs_inode_clear_blocks_tag(
- 			     XFS_INO_TO_AGINO(ip->i_mount, ip->i_ino), tag);
- 	if (!radix_tree_tagged(&pag->pag_ici_root, tag)) {
- 		/* clear the eofblocks tag from the perag radix tree */
--		spin_lock(&ip->i_mount->m_perag_lock);
--		radix_tree_tag_clear(&ip->i_mount->m_perag_tree,
-+		xa_clear_tag(&ip->i_mount->m_perag_xa,
- 				     XFS_INO_TO_AGNO(ip->i_mount, ip->i_ino),
- 				     tag);
--		spin_unlock(&ip->i_mount->m_perag_lock);
- 		clear_tp(ip->i_mount, pag->pag_agno, -1, _RET_IP_);
- 	}
- 
-diff --git a/fs/xfs/xfs_icache.h b/fs/xfs/xfs_icache.h
-index d4a77588eca1..dfbf13b530bc 100644
---- a/fs/xfs/xfs_icache.h
-+++ b/fs/xfs/xfs_icache.h
-@@ -37,9 +37,9 @@ struct xfs_eofblocks {
-  */
- #define XFS_ICI_NO_TAG		(-1)	/* special flag for an untagged lookup
- 					   in xfs_inode_ag_iterator */
--#define XFS_ICI_RECLAIM_TAG	0	/* inode is to be reclaimed */
--#define XFS_ICI_EOFBLOCKS_TAG	1	/* inode has blocks beyond EOF */
--#define XFS_ICI_COWBLOCKS_TAG	2	/* inode can have cow blocks to gc */
-+#define XFS_ICI_RECLAIM_TAG	XA_TAG_0 /* inode is to be reclaimed */
-+#define XFS_ICI_EOFBLOCKS_TAG	XA_TAG_1 /* inode has blocks beyond EOF */
-+#define XFS_ICI_COWBLOCKS_TAG	XA_TAG_2 /* inode can have cow blocks to gc */
- 
- /*
-  * Flags for xfs_iget()
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index c879b517cc94..0541aeb8449c 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -156,9 +156,7 @@ xfs_free_perag(
- 	struct xfs_perag *pag;
- 
- 	for (agno = 0; agno < mp->m_sb.sb_agcount; agno++) {
--		spin_lock(&mp->m_perag_lock);
--		pag = radix_tree_delete(&mp->m_perag_tree, agno);
--		spin_unlock(&mp->m_perag_lock);
-+		pag = xa_erase(&mp->m_perag_xa, agno);
- 		ASSERT(pag);
- 		ASSERT(atomic_read(&pag->pag_ref) == 0);
- 		xfs_buf_hash_destroy(pag);
-@@ -219,19 +217,11 @@ xfs_initialize_perag(
- 			goto out_free_pag;
- 		init_waitqueue_head(&pag->pagb_wait);
- 
--		if (radix_tree_preload(GFP_NOFS))
--			goto out_hash_destroy;
--
--		spin_lock(&mp->m_perag_lock);
--		if (radix_tree_insert(&mp->m_perag_tree, index, pag)) {
-+		if (xa_store(&mp->m_perag_xa, index, pag, GFP_NOFS)) {
- 			BUG();
--			spin_unlock(&mp->m_perag_lock);
--			radix_tree_preload_end();
- 			error = -EEXIST;
- 			goto out_hash_destroy;
- 		}
--		spin_unlock(&mp->m_perag_lock);
--		radix_tree_preload_end();
- 		/* first new pag is fully initialized */
- 		if (first_initialised == NULLAGNUMBER)
- 			first_initialised = index;
-@@ -252,7 +242,7 @@ xfs_initialize_perag(
- out_unwind_new_pags:
- 	/* unwind any prior newly initialized pags */
- 	for (index = first_initialised; index < agcount; index++) {
--		pag = radix_tree_delete(&mp->m_perag_tree, index);
-+		pag = xa_erase(&mp->m_perag_xa, index);
- 		if (!pag)
- 			break;
- 		xfs_buf_hash_destroy(pag);
-@@ -816,8 +806,7 @@ xfs_mountfs(
- 	/*
- 	 * Allocate and initialize the per-ag data.
+-	/** handles_vma: rbtree to look up our context specific obj/vma for
++	/** handles_vma: lookup our context specific obj/vma for
+ 	 * the user handle. (user handles are per fd, but the binding is
+ 	 * per vm, which may be one per context or shared with the global GTT)
  	 */
--	spin_lock_init(&mp->m_perag_lock);
--	INIT_RADIX_TREE(&mp->m_perag_tree, GFP_ATOMIC);
-+	xa_init(&mp->m_perag_xa);
- 	error = xfs_initialize_perag(mp, sbp->sb_agcount, &mp->m_maxagi);
- 	if (error) {
- 		xfs_warn(mp, "Failed per-ag init: %d", error);
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index e0792d036be2..6e5ad7b26f46 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -134,8 +134,7 @@ typedef struct xfs_mount {
- 	xfs_extlen_t		m_ag_prealloc_blocks; /* reserved ag blocks */
- 	uint			m_alloc_set_aside; /* space we can't use */
- 	uint			m_ag_max_usable; /* max space per AG */
--	struct radix_tree_root	m_perag_tree;	/* per-ag accounting info */
--	spinlock_t		m_perag_lock;	/* lock for m_perag_tree */
-+	struct xarray		m_perag_xa;	/* per-ag accounting info */
- 	struct mutex		m_growlock;	/* growfs mutex */
- 	int			m_fixedfsid[2];	/* unchanged for life of FS */
- 	uint			m_dmevmask;	/* DMI events for this FS */
+-	struct radix_tree_root handles_vma;
++	struct xarray handles_vma;
+ 
+ 	/** handles_list: reverse list of all the rbtree entries in use for
+ 	 * this context, which allows us to free all the allocations on
+diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+index 435ed95df144..828f4b5473ea 100644
+--- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
++++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+@@ -683,7 +683,7 @@ static int eb_select_context(struct i915_execbuffer *eb)
+ 
+ static int eb_lookup_vmas(struct i915_execbuffer *eb)
+ {
+-	struct radix_tree_root *handles_vma = &eb->ctx->handles_vma;
++	struct xarray *handles_vma = &eb->ctx->handles_vma;
+ 	struct drm_i915_gem_object *obj;
+ 	unsigned int i;
+ 	int err;
+@@ -702,7 +702,7 @@ static int eb_lookup_vmas(struct i915_execbuffer *eb)
+ 		struct i915_lut_handle *lut;
+ 		struct i915_vma *vma;
+ 
+-		vma = radix_tree_lookup(handles_vma, handle);
++		vma = xa_load(handles_vma, handle);
+ 		if (likely(vma))
+ 			goto add_vma;
+ 
+@@ -724,7 +724,7 @@ static int eb_lookup_vmas(struct i915_execbuffer *eb)
+ 			goto err_obj;
+ 		}
+ 
+-		err = radix_tree_insert(handles_vma, handle, vma);
++		err = xa_err(xa_store(handles_vma, handle, vma, GFP_KERNEL));
+ 		if (unlikely(err)) {
+ 			kfree(lut);
+ 			goto err_obj;
+diff --git a/drivers/gpu/drm/i915/selftests/mock_context.c b/drivers/gpu/drm/i915/selftests/mock_context.c
+index bbf80d42e793..b664a7159242 100644
+--- a/drivers/gpu/drm/i915/selftests/mock_context.c
++++ b/drivers/gpu/drm/i915/selftests/mock_context.c
+@@ -40,7 +40,7 @@ mock_context(struct drm_i915_private *i915,
+ 	INIT_LIST_HEAD(&ctx->link);
+ 	ctx->i915 = i915;
+ 
+-	INIT_RADIX_TREE(&ctx->handles_vma, GFP_KERNEL);
++	xa_init(&ctx->handles_vma);
+ 	INIT_LIST_HEAD(&ctx->handles_list);
+ 
+ 	ret = ida_simple_get(&i915->contexts.hw_ida,
 -- 
 2.15.1
+
