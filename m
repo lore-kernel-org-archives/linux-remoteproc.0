@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 65/99] dax: Fix sparse warning
-Date: Wed, 17 Jan 2018 12:21:29 -0800
-Message-Id: <20180117202203.19756-66-willy@infradead.org>
+Subject: [PATCH v6 35/99] mm: Convert __do_page_cache_readahead to XArray
+Date: Wed, 17 Jan 2018 12:20:59 -0800
+Message-Id: <20180117202203.19756-36-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,82 +11,27 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-sparse doesn't know that follow_pte_pmd() conditionally acquires the ptl,
-because it's in a separate compilation unit.  Move follow_pte_pmd() to
-mm.h where sparse can see it.
+This one is trivial.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/mm.h | 15 ++++++++++++++-
- mm/memory.c        | 16 +---------------
- 2 files changed, 15 insertions(+), 16 deletions(-)
+ mm/readahead.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index fe1ee4313add..9c384c486edf 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1314,7 +1314,7 @@ int copy_page_range(struct mm_struct *dst, struct mm_struct *src,
- 			struct vm_area_struct *vma);
- void unmap_mapping_range(struct address_space *mapping,
- 		loff_t const holebegin, loff_t const holelen, int even_cows);
--int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
-+int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 			     unsigned long *start, unsigned long *end,
- 			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp);
- int follow_pfn(struct vm_area_struct *vma, unsigned long address,
-@@ -1324,6 +1324,19 @@ int follow_phys(struct vm_area_struct *vma, unsigned long address,
- int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
- 			void *buf, int len, int write);
+diff --git a/mm/readahead.c b/mm/readahead.c
+index f64b31b3a84a..66bcaffd47f0 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -174,9 +174,7 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
+ 		if (page_offset > end_index)
+ 			break;
  
-+static inline int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
-+			     unsigned long *start, unsigned long *end,
-+			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
-+{
-+	int res;
-+
-+	/* (void) is needed to make gcc happy */
-+	(void) __cond_lock(*ptlp,
-+			   !(res = __follow_pte_pmd(mm, address, start, end,
-+						    ptepp, pmdpp, ptlp)));
-+	return res;
-+}
-+
- static inline void unmap_shared_mapping_range(struct address_space *mapping,
- 		loff_t const holebegin, loff_t const holelen)
- {
-diff --git a/mm/memory.c b/mm/memory.c
-index ca5674cbaff2..66184601ac03 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4201,7 +4201,7 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
- }
- #endif /* __PAGETABLE_PMD_FOLDED */
+-		rcu_read_lock();
+-		page = radix_tree_lookup(&mapping->pages, page_offset);
+-		rcu_read_unlock();
++		page = xa_load(&mapping->pages, page_offset);
+ 		if (page && !xa_is_value(page))
+ 			continue;
  
--static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
-+int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 			    unsigned long *start, unsigned long *end,
- 			    pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
- {
-@@ -4278,20 +4278,6 @@ static inline int follow_pte(struct mm_struct *mm, unsigned long address,
- 	return res;
- }
- 
--int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
--			     unsigned long *start, unsigned long *end,
--			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
--{
--	int res;
--
--	/* (void) is needed to make gcc happy */
--	(void) __cond_lock(*ptlp,
--			   !(res = __follow_pte_pmd(mm, address, start, end,
--						    ptepp, pmdpp, ptlp)));
--	return res;
--}
--EXPORT_SYMBOL(follow_pte_pmd);
--
- /**
-  * follow_pfn - look up PFN at a user virtual address
-  * @vma: memory mapping
 -- 
 2.15.1
