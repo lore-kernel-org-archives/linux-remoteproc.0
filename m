@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 55/99] f2fs: Convert to XArray
-Date: Wed, 17 Jan 2018 12:21:19 -0800
-Message-Id: <20180117202203.19756-56-willy@infradead.org>
+Subject: [PATCH v6 67/99] mm: Convert cgroup writeback to XArray
+Date: Wed, 17 Jan 2018 12:21:31 -0800
+Message-Id: <20180117202203.19756-68-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,108 +11,122 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This is a straightforward conversion.
+This is a fairly naive conversion, leaving in place the GFP_ATOMIC
+allocation.  By switching the locking around, we could use GFP_KERNEL
+and probably simplify the error handling.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/f2fs/data.c   |  3 +--
- fs/f2fs/dir.c    |  5 +----
- fs/f2fs/inline.c |  6 +-----
- fs/f2fs/node.c   | 10 ++--------
- 4 files changed, 5 insertions(+), 19 deletions(-)
+ include/linux/backing-dev-defs.h |  2 +-
+ include/linux/backing-dev.h      |  2 +-
+ mm/backing-dev.c                 | 22 ++++++++++------------
+ 3 files changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c8f6d9806896..1f3f192f152f 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2175,8 +2175,7 @@ void f2fs_set_page_dirty_nobuffers(struct page *page)
- 	xa_lock_irqsave(&mapping->pages, flags);
- 	WARN_ON_ONCE(!PageUptodate(page));
- 	account_page_dirtied(page, mapping);
--	radix_tree_tag_set(&mapping->pages,
--			page_index(page), PAGECACHE_TAG_DIRTY);
-+	__xa_set_tag(&mapping->pages, page_index(page), PAGECACHE_TAG_DIRTY);
- 	xa_unlock_irqrestore(&mapping->pages, flags);
- 	unlock_page_memcg(page);
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index bfe86b54f6c1..074a54aad33c 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -187,7 +187,7 @@ struct backing_dev_info {
+ 	struct bdi_writeback wb;  /* the root writeback info for this bdi */
+ 	struct list_head wb_list; /* list of all wbs */
+ #ifdef CONFIG_CGROUP_WRITEBACK
+-	struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
++	struct xarray cgwb_xa;		/* radix tree of active cgroup wbs */
+ 	struct rb_root cgwb_congested_tree; /* their congested states */
+ #else
+ 	struct bdi_writeback_congested *wb_congested;
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index 3df0d20e23f3..27e7b31bd802 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -271,7 +271,7 @@ static inline struct bdi_writeback *wb_find_current(struct backing_dev_info *bdi
+ 	if (!memcg_css->parent)
+ 		return &bdi->wb;
  
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index b5515ea6bb2f..296070016ec9 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -708,7 +708,6 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
- 	unsigned int bit_pos;
- 	int slots = GET_DENTRY_SLOTS(le16_to_cpu(dentry->name_len));
- 	struct address_space *mapping = page_mapping(page);
--	unsigned long flags;
- 	int i;
+-	wb = radix_tree_lookup(&bdi->cgwb_tree, memcg_css->id);
++	wb = xa_load(&bdi->cgwb_xa, memcg_css->id);
  
- 	f2fs_update_time(F2FS_I_SB(dir), REQ_TIME);
-@@ -739,10 +738,8 @@ void f2fs_delete_entry(struct f2fs_dir_entry *dentry, struct page *page,
+ 	/*
+ 	 * %current's blkcg equals the effective blkcg of its memcg.  No
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index b5f940ce0143..aa0f85df0928 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -417,8 +417,8 @@ static void wb_exit(struct bdi_writeback *wb)
+ #include <linux/memcontrol.h>
  
- 	if (bit_pos == NR_DENTRY_IN_BLOCK &&
- 			!truncate_hole(dir, page->index, page->index + 1)) {
--		xa_lock_irqsave(&mapping->pages, flags);
--		radix_tree_tag_clear(&mapping->pages, page_index(page),
-+		xa_clear_tag(&mapping->pages, page_index(page),
- 				     PAGECACHE_TAG_DIRTY);
--		xa_unlock_irqrestore(&mapping->pages, flags);
- 
- 		clear_page_dirty_for_io(page);
- 		ClearPagePrivate(page);
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 7858b8e15f33..d3c3f84beca9 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -204,7 +204,6 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 	void *src_addr, *dst_addr;
- 	struct dnode_of_data dn;
- 	struct address_space *mapping = page_mapping(page);
--	unsigned long flags;
- 	int err;
- 
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
-@@ -226,10 +225,7 @@ int f2fs_write_inline_data(struct inode *inode, struct page *page)
- 	kunmap_atomic(src_addr);
- 	set_page_dirty(dn.inode_page);
- 
--	xa_lock_irqsave(&mapping->pages, flags);
--	radix_tree_tag_clear(&mapping->pages, page_index(page),
--			     PAGECACHE_TAG_DIRTY);
--	xa_unlock_irqrestore(&mapping->pages, flags);
-+	xa_clear_tag(&mapping->pages, page_index(page), PAGECACHE_TAG_DIRTY);
- 
- 	set_inode_flag(inode, FI_APPEND_WRITE);
- 	set_inode_flag(inode, FI_DATA_EXIST);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 6b64a3009d55..0a6d5c2f996e 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -88,14 +88,10 @@ bool available_free_memory(struct f2fs_sb_info *sbi, int type)
- static void clear_node_page_dirty(struct page *page)
+ /*
+- * cgwb_lock protects bdi->cgwb_tree, bdi->cgwb_congested_tree,
+- * blkcg->cgwb_list, and memcg->cgwb_list.  bdi->cgwb_tree is also RCU
++ * cgwb_lock protects bdi->cgwb_xa, bdi->cgwb_congested_tree,
++ * blkcg->cgwb_list, and memcg->cgwb_list.  bdi->cgwb_xa is also RCU
+  * protected.
+  */
+ static DEFINE_SPINLOCK(cgwb_lock);
+@@ -539,7 +539,7 @@ static void cgwb_kill(struct bdi_writeback *wb)
  {
- 	struct address_space *mapping = page->mapping;
--	unsigned int long flags;
+ 	lockdep_assert_held(&cgwb_lock);
  
- 	if (PageDirty(page)) {
--		xa_lock_irqsave(&mapping->pages, flags);
--		radix_tree_tag_clear(&mapping->pages,
--				page_index(page),
-+		xa_clear_tag(&mapping->pages, page_index(page),
- 				PAGECACHE_TAG_DIRTY);
--		xa_unlock_irqrestore(&mapping->pages, flags);
+-	WARN_ON(!radix_tree_delete(&wb->bdi->cgwb_tree, wb->memcg_css->id));
++	WARN_ON(xa_erase(&wb->bdi->cgwb_xa, wb->memcg_css->id) != wb);
+ 	list_del(&wb->memcg_node);
+ 	list_del(&wb->blkcg_node);
+ 	percpu_ref_kill(&wb->refcnt);
+@@ -571,7 +571,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
  
- 		clear_page_dirty_for_io(page);
- 		dec_page_count(F2FS_M_SB(mapping), F2FS_DIRTY_NODES);
-@@ -1142,9 +1138,7 @@ void ra_node_page(struct f2fs_sb_info *sbi, nid_t nid)
- 		return;
- 	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
+ 	/* look up again under lock and discard on blkcg mismatch */
+ 	spin_lock_irqsave(&cgwb_lock, flags);
+-	wb = radix_tree_lookup(&bdi->cgwb_tree, memcg_css->id);
++	wb = xa_load(&bdi->cgwb_xa, memcg_css->id);
+ 	if (wb && wb->blkcg_css != blkcg_css) {
+ 		cgwb_kill(wb);
+ 		wb = NULL;
+@@ -614,8 +614,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
+ 	spin_lock_irqsave(&cgwb_lock, flags);
+ 	if (test_bit(WB_registered, &bdi->wb.state) &&
+ 	    blkcg_cgwb_list->next && memcg_cgwb_list->next) {
+-		/* we might have raced another instance of this function */
+-		ret = radix_tree_insert(&bdi->cgwb_tree, memcg_css->id, wb);
++		ret = xa_insert(&bdi->cgwb_xa, memcg_css->id, wb, GFP_ATOMIC);
+ 		if (!ret) {
+ 			list_add_tail_rcu(&wb->bdi_node, &bdi->wb_list);
+ 			list_add(&wb->memcg_node, memcg_cgwb_list);
+@@ -682,7 +681,7 @@ struct bdi_writeback *wb_get_create(struct backing_dev_info *bdi,
  
--	rcu_read_lock();
--	apage = radix_tree_lookup(&NODE_MAPPING(sbi)->pages, nid);
--	rcu_read_unlock();
-+	apage = xa_load(&NODE_MAPPING(sbi)->pages, nid);
- 	if (apage)
- 		return;
+ 	do {
+ 		rcu_read_lock();
+-		wb = radix_tree_lookup(&bdi->cgwb_tree, memcg_css->id);
++		wb = xa_load(&bdi->cgwb_xa, memcg_css->id);
+ 		if (wb) {
+ 			struct cgroup_subsys_state *blkcg_css;
  
+@@ -704,7 +703,7 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
+ {
+ 	int ret;
+ 
+-	INIT_RADIX_TREE(&bdi->cgwb_tree, GFP_ATOMIC);
++	xa_init(&bdi->cgwb_xa);
+ 	bdi->cgwb_congested_tree = RB_ROOT;
+ 
+ 	ret = wb_init(&bdi->wb, bdi, 1, GFP_KERNEL);
+@@ -717,15 +716,14 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
+ 
+ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
+ {
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &bdi->cgwb_xa, 0);
+ 	struct bdi_writeback *wb;
+ 
+ 	WARN_ON(test_bit(WB_registered, &bdi->wb.state));
+ 
+ 	spin_lock_irq(&cgwb_lock);
+-	radix_tree_for_each_slot(slot, &bdi->cgwb_tree, &iter, 0)
+-		cgwb_kill(*slot);
++	xas_for_each(&xas, wb, ULONG_MAX)
++		cgwb_kill(wb);
+ 
+ 	while (!list_empty(&bdi->wb_list)) {
+ 		wb = list_first_entry(&bdi->wb_list, struct bdi_writeback,
 -- 
 2.15.1
