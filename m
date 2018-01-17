@@ -1,135 +1,64 @@
-Return-Path: <anup@brainfault.org>
-Return-Path: <anup@brainfault.org>
-From: Anup Patel <anup@brainfault.org>
-Subject: [PATCH RESEND] rpmsg: Add driver_override device attribute for rpmsg_device
-Date: Wed, 10 Jan 2018 18:47:39 +0530
-Message-Id: <1515590259-24304-1-git-send-email-anup@brainfault.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 66/99] page cache: Finish XArray conversion
+Date: Wed, 17 Jan 2018 12:21:30 -0800
+Message-Id: <20180117202203.19756-67-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds "driver_override" device attribute for rpmsg_device which
-will allow users to explicitly specify the rpmsg_driver to be used via
-sysfs entry.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-The "driver_override" device attribute implemented here is very similar
-to "driver_override" implemented for platform, pci, and amba bus types.
+With no more radix tree API users left, we can drop the GFP flags
+and use xa_init() instead of INIT_RADIX_TREE().
 
-One important use-case of "driver_override" device attribute is to force
-use of rpmsg_chrdev driver for certain rpmsg_device instances.
-
-Signed-off-by: Anup Patel <anup@brainfault.org>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- Documentation/ABI/testing/sysfs-bus-rpmsg | 20 ++++++++++++++
- drivers/rpmsg/rpmsg_core.c                | 46 +++++++++++++++++++++++++++++--
- 2 files changed, 64 insertions(+), 2 deletions(-)
+ fs/inode.c         | 2 +-
+ include/linux/fs.h | 2 +-
+ mm/swap_state.c    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
-index 189e419..1c8599e 100644
---- a/Documentation/ABI/testing/sysfs-bus-rpmsg
-+++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
-@@ -73,3 +73,23 @@ Description:
- 		This sysfs entry tells us whether the channel is a local
- 		server channel that is announced (values are either
- 		true or false).
-+
-+What:		/sys/bus/rpmsg/devices/.../driver_override
-+Date:		January 2018
-+KernelVersion:	4.16
-+Contact:	Ohad Ben-Cohen <ohad@wizery.com>
-+Description:
-+		Every rpmsg device is a communication channel with a remote
-+		processor. Channels are identified by a textual name (see
-+		/sys/bus/rpmsg/devices/.../name above) and have a local
-+		("source") rpmsg address, and remote ("destination") rpmsg
-+		address.
-+
-+		The listening entity (or client) which communicates with a
-+		remote processor is referred as rpmsg driver. The rpmsg device
-+		and rpmsg driver are matched based on rpmsg device name and
-+		rpmsg driver ID table.
-+
-+		This sysfs entry allows the rpmsg driver for a rpmsg device
-+		to be specified which will override standard OF, ID table
-+		and name matching.
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index dffa3aa..9a25e42 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -321,11 +321,11 @@ struct device *rpmsg_find_device(struct device *parent,
- }
- EXPORT_SYMBOL(rpmsg_find_device);
- 
--/* sysfs show configuration fields */
-+/* sysfs configuration fields */
- #define rpmsg_show_attr(field, path, format_string)			\
- static ssize_t								\
- field##_show(struct device *dev,					\
--			struct device_attribute *attr, char *buf)	\
-+	     struct device_attribute *attr, char *buf)			\
- {									\
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
- 									\
-@@ -333,11 +333,52 @@ field##_show(struct device *dev,					\
- }									\
- static DEVICE_ATTR_RO(field);
- 
-+#define rpmsg_string_attr(field, path)					\
-+static ssize_t								\
-+field##_store(struct device *dev,					\
-+	      struct device_attribute *attr, const char *buf, size_t sz)\
-+{									\
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-+	char *new, *old, *cp;						\
-+									\
-+	new = kstrndup(buf, sz, GFP_KERNEL);				\
-+	if (!new)							\
-+		return -ENOMEM;						\
-+									\
-+	cp = strchr(new, '\n');						\
-+	if (cp)								\
-+		*cp = '\0';						\
-+									\
-+	device_lock(dev);						\
-+	old = rpdev->path;						\
-+	if (strlen(new)) {						\
-+		rpdev->path = new;					\
-+	} else {							\
-+		kfree(new);						\
-+		rpdev->path = NULL;					\
-+	}								\
-+	device_unlock(dev);						\
-+									\
-+	kfree(old);							\
-+									\
-+	return sz;							\
-+}									\
-+static ssize_t								\
-+field##_show(struct device *dev,					\
-+	     struct device_attribute *attr, char *buf)			\
-+{									\
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-+									\
-+	return sprintf(buf, "%s\n", rpdev->path);			\
-+}									\
-+static DEVICE_ATTR_RW(field)
-+
- /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
- rpmsg_show_attr(name, id.name, "%s\n");
- rpmsg_show_attr(src, src, "0x%x\n");
- rpmsg_show_attr(dst, dst, "0x%x\n");
- rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
-+rpmsg_string_attr(driver_override, driver_override);
- 
- static ssize_t modalias_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
-@@ -359,6 +400,7 @@ static struct attribute *rpmsg_dev_attrs[] = {
- 	&dev_attr_dst.attr,
- 	&dev_attr_src.attr,
- 	&dev_attr_announce.attr,
-+	&dev_attr_driver_override.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(rpmsg_dev);
+diff --git a/fs/inode.c b/fs/inode.c
+index c7b00573c10d..f5680b805336 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -348,7 +348,7 @@ EXPORT_SYMBOL(inc_nlink);
+ void address_space_init_once(struct address_space *mapping)
+ {
+ 	memset(mapping, 0, sizeof(*mapping));
+-	INIT_RADIX_TREE(&mapping->pages, GFP_ATOMIC | __GFP_ACCOUNT);
++	xa_init_flags(&mapping->pages, XA_FLAGS_LOCK_IRQ);
+ 	init_rwsem(&mapping->i_mmap_rwsem);
+ 	INIT_LIST_HEAD(&mapping->private_list);
+ 	spin_lock_init(&mapping->private_lock);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c58bc3c619bf..b459bf4ddb62 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -410,7 +410,7 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
+  */
+ struct address_space {
+ 	struct inode		*host;
+-	struct radix_tree_root	pages;
++	struct xarray		pages;
+ 	gfp_t			gfp_mask;
+ 	atomic_t		i_mmap_writable;
+ 	struct rb_root_cached	i_mmap;
+diff --git a/mm/swap_state.c b/mm/swap_state.c
+index 219e3b4f09e6..25f027d0bb00 100644
+--- a/mm/swap_state.c
++++ b/mm/swap_state.c
+@@ -573,7 +573,7 @@ int init_swap_address_space(unsigned int type, unsigned long nr_pages)
+ 		return -ENOMEM;
+ 	for (i = 0; i < nr; i++) {
+ 		space = spaces + i;
+-		INIT_RADIX_TREE(&space->pages, GFP_ATOMIC|__GFP_NOWARN);
++		xa_init_flags(&space->pages, XA_FLAGS_LOCK_IRQ);
+ 		atomic_set(&space->i_mmap_writable, 0);
+ 		space->a_ops = &swap_aops;
+ 		/* swap cache doesn't use writeback related tags */
 -- 
-2.7.4
+2.15.1
