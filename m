@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 96/99] dma-debug: Convert to XArray
-Date: Wed, 17 Jan 2018 12:22:00 -0800
-Message-Id: <20180117202203.19756-97-willy@infradead.org>
+Subject: [PATCH v6 30/99] mm: Convert page-writeback to XArray
+Date: Wed, 17 Jan 2018 12:20:54 -0800
+Message-Id: <20180117202203.19756-31-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,217 +11,186 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This is an unusual way to use the xarray tags.  If any other users
-come up, we can add an xas_get_tags() / xas_set_tags() API, but until
-then I don't want to encourage this kind of abuse.
+Includes moving mapping_tagged() to fs.h as a static inline, and
+changing it to return bool.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- lib/dma-debug.c | 105 +++++++++++++++++++++++++-------------------------------
- 1 file changed, 46 insertions(+), 59 deletions(-)
+ include/linux/fs.h  | 17 +++++++++------
+ mm/page-writeback.c | 62 +++++++++++++++++++----------------------------------
+ 2 files changed, 32 insertions(+), 47 deletions(-)
 
-diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-index fb4af570ce04..965b3837d060 100644
---- a/lib/dma-debug.c
-+++ b/lib/dma-debug.c
-@@ -22,7 +22,6 @@
- #include <linux/dma-mapping.h>
- #include <linux/sched/task.h>
- #include <linux/stacktrace.h>
--#include <linux/radix-tree.h>
- #include <linux/dma-debug.h>
- #include <linux/spinlock.h>
- #include <linux/vmalloc.h>
-@@ -30,6 +29,7 @@
- #include <linux/uaccess.h>
- #include <linux/export.h>
- #include <linux/device.h>
-+#include <linux/xarray.h>
- #include <linux/types.h>
- #include <linux/sched.h>
- #include <linux/ctype.h>
-@@ -465,9 +465,8 @@ EXPORT_SYMBOL(debug_dma_dump_mappings);
-  * At any time debug_dma_assert_idle() can be called to trigger a
-  * warning if any cachelines in the given page are in the active set.
-  */
--static RADIX_TREE(dma_active_cacheline, GFP_NOWAIT);
--static DEFINE_SPINLOCK(radix_lock);
--#define ACTIVE_CACHELINE_MAX_OVERLAP ((1 << RADIX_TREE_MAX_TAGS) - 1)
-+static DEFINE_XARRAY_FLAGS(dma_active_cacheline, XA_FLAGS_LOCK_IRQ);
-+#define ACTIVE_CACHELINE_MAX_OVERLAP ((1 << XA_MAX_TAGS) - 1)
- #define CACHELINE_PER_PAGE_SHIFT (PAGE_SHIFT - L1_CACHE_SHIFT)
- #define CACHELINES_PER_PAGE (1 << CACHELINE_PER_PAGE_SHIFT)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e4345c13e237..c58bc3c619bf 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -470,15 +470,18 @@ struct block_device {
+ 	struct mutex		bd_fsfreeze_mutex;
+ } __randomize_layout;
  
-@@ -477,37 +476,40 @@ static phys_addr_t to_cacheline_number(struct dma_debug_entry *entry)
- 		(entry->offset >> L1_CACHE_SHIFT);
- }
- 
--static int active_cacheline_read_overlap(phys_addr_t cln)
-+static unsigned int active_cacheline_read_overlap(struct xa_state *xas)
- {
--	int overlap = 0, i;
-+	unsigned int tags = 0;
-+	xa_tag_t tag;
- 
--	for (i = RADIX_TREE_MAX_TAGS - 1; i >= 0; i--)
--		if (radix_tree_tag_get(&dma_active_cacheline, cln, i))
--			overlap |= 1 << i;
--	return overlap;
-+	for (tag = 0; tag < XA_MAX_TAGS; tag++)
-+		if (xas_get_tag(xas, tag))
-+			tags |= 1U << tag;
++/* XArray tags, for tagging dirty and writeback pages in the pagecache. */
++#define PAGECACHE_TAG_DIRTY	XA_TAG_0
++#define PAGECACHE_TAG_WRITEBACK	XA_TAG_1
++#define PAGECACHE_TAG_TOWRITE	XA_TAG_2
 +
-+	return tags;
- }
+ /*
+- * Radix-tree tags, for tagging dirty and writeback pages within the pagecache
+- * radix trees
++ * Returns true if any of the pages in the mapping are marked with the tag.
+  */
+-#define PAGECACHE_TAG_DIRTY	0
+-#define PAGECACHE_TAG_WRITEBACK	1
+-#define PAGECACHE_TAG_TOWRITE	2
+-
+-int mapping_tagged(struct address_space *mapping, int tag);
++static inline bool mapping_tagged(struct address_space *mapping, xa_tag_t tag)
++{
++	return xa_tagged(&mapping->pages, tag);
++}
  
--static int active_cacheline_set_overlap(phys_addr_t cln, int overlap)
-+static int active_cacheline_set_overlap(struct xa_state *xas, int overlap)
+ static inline void i_mmap_lock_write(struct address_space *mapping)
  {
--	int i;
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 588ce729d199..0407436a8305 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2098,33 +2098,25 @@ void __init page_writeback_init(void)
+  * dirty pages in the file (thus it is important for this function to be quick
+  * so that it can tag pages faster than a dirtying process can create them).
+  */
+-/*
+- * We tag pages in batches of WRITEBACK_TAG_BATCH to reduce xa_lock latency.
+- */
+ void tag_pages_for_writeback(struct address_space *mapping,
+ 			     pgoff_t start, pgoff_t end)
+ {
+-#define WRITEBACK_TAG_BATCH 4096
+-	unsigned long tagged = 0;
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->pages, start);
++	unsigned int tagged = 0;
++	void *page;
+ 
+-	xa_lock_irq(&mapping->pages);
+-	radix_tree_for_each_tagged(slot, &mapping->pages, &iter, start,
+-							PAGECACHE_TAG_DIRTY) {
+-		if (iter.index > end)
+-			break;
+-		radix_tree_iter_tag_set(&mapping->pages, &iter,
+-							PAGECACHE_TAG_TOWRITE);
+-		tagged++;
+-		if ((tagged % WRITEBACK_TAG_BATCH) != 0)
++	xas_lock_irq(&xas);
++	xas_for_each_tag(&xas, page, end, PAGECACHE_TAG_DIRTY) {
++		xas_set_tag(&xas, PAGECACHE_TAG_TOWRITE);
++		if (++tagged % XA_CHECK_SCHED)
+ 			continue;
+-		slot = radix_tree_iter_resume(slot, &iter);
+-		xa_unlock_irq(&mapping->pages);
++
++		xas_pause(&xas);
++		xas_unlock_irq(&xas);
+ 		cond_resched();
+-		xa_lock_irq(&mapping->pages);
++		xas_lock_irq(&xas);
+ 	}
+-	xa_unlock_irq(&mapping->pages);
++	xas_unlock_irq(&xas);
+ }
+ EXPORT_SYMBOL(tag_pages_for_writeback);
+ 
+@@ -2164,7 +2156,7 @@ int write_cache_pages(struct address_space *mapping,
+ 	pgoff_t done_index;
+ 	int cycled;
+ 	int range_whole = 0;
+-	int tag;
 +	xa_tag_t tag;
  
- 	if (overlap > ACTIVE_CACHELINE_MAX_OVERLAP || overlap < 0)
- 		return overlap;
+ 	pagevec_init(&pvec);
+ 	if (wbc->range_cyclic) {
+@@ -2445,7 +2437,7 @@ void account_page_cleaned(struct page *page, struct address_space *mapping,
  
--	for (i = RADIX_TREE_MAX_TAGS - 1; i >= 0; i--)
--		if (overlap & 1 << i)
--			radix_tree_tag_set(&dma_active_cacheline, cln, i);
-+	for (tag = 0; tag < XA_MAX_TAGS; tag++) {
-+		if (overlap & (1U << tag))
-+			xas_set_tag(xas, tag);
- 		else
--			radix_tree_tag_clear(&dma_active_cacheline, cln, i);
-+			xas_clear_tag(xas, tag);
-+	}
- 
- 	return overlap;
- }
- 
--static void active_cacheline_inc_overlap(phys_addr_t cln)
-+static void active_cacheline_inc_overlap(struct xa_state *xas)
- {
--	int overlap = active_cacheline_read_overlap(cln);
-+	int overlap = active_cacheline_read_overlap(xas);
- 
--	overlap = active_cacheline_set_overlap(cln, ++overlap);
-+	overlap = active_cacheline_set_overlap(xas, ++overlap);
- 
- 	/* If we overflowed the overlap counter then we're potentially
- 	 * leaking dma-mappings.  Otherwise, if maps and unmaps are
-@@ -517,21 +519,22 @@ static void active_cacheline_inc_overlap(phys_addr_t cln)
- 	 */
- 	WARN_ONCE(overlap > ACTIVE_CACHELINE_MAX_OVERLAP,
- 		  "DMA-API: exceeded %d overlapping mappings of cacheline %pa\n",
--		  ACTIVE_CACHELINE_MAX_OVERLAP, &cln);
-+		  ACTIVE_CACHELINE_MAX_OVERLAP, &xas->xa_index);
- }
- 
--static int active_cacheline_dec_overlap(phys_addr_t cln)
-+static int active_cacheline_dec_overlap(struct xa_state *xas)
- {
--	int overlap = active_cacheline_read_overlap(cln);
-+	int overlap = active_cacheline_read_overlap(xas);
- 
--	return active_cacheline_set_overlap(cln, --overlap);
-+	return active_cacheline_set_overlap(xas, --overlap);
- }
- 
- static int active_cacheline_insert(struct dma_debug_entry *entry)
- {
- 	phys_addr_t cln = to_cacheline_number(entry);
-+	XA_STATE(xas, &dma_active_cacheline, cln);
- 	unsigned long flags;
--	int rc;
-+	struct dma_debug_entry *exists;
- 
- 	/* If the device is not writing memory then we don't have any
- 	 * concerns about the cpu consuming stale data.  This mitigates
-@@ -540,32 +543,32 @@ static int active_cacheline_insert(struct dma_debug_entry *entry)
- 	if (entry->direction == DMA_TO_DEVICE)
- 		return 0;
- 
--	spin_lock_irqsave(&radix_lock, flags);
--	rc = radix_tree_insert(&dma_active_cacheline, cln, entry);
--	if (rc == -EEXIST)
--		active_cacheline_inc_overlap(cln);
--	spin_unlock_irqrestore(&radix_lock, flags);
-+	xas_lock_irqsave(&xas, flags);
-+	exists = xas_create(&xas);
-+	if (exists)
-+		active_cacheline_inc_overlap(&xas);
-+	else
-+		xas_store(&xas, entry);
-+	xas_unlock_irqrestore(&xas, flags);
- 
--	return rc;
-+	return xas_error(&xas);
- }
- 
- static void active_cacheline_remove(struct dma_debug_entry *entry)
- {
- 	phys_addr_t cln = to_cacheline_number(entry);
-+	XA_STATE(xas, &dma_active_cacheline, cln);
- 	unsigned long flags;
- 
- 	/* ...mirror the insert case */
- 	if (entry->direction == DMA_TO_DEVICE)
- 		return;
- 
--	spin_lock_irqsave(&radix_lock, flags);
--	/* since we are counting overlaps the final put of the
--	 * cacheline will occur when the overlap count is 0.
--	 * active_cacheline_dec_overlap() returns -1 in that case
--	 */
--	if (active_cacheline_dec_overlap(cln) < 0)
--		radix_tree_delete(&dma_active_cacheline, cln);
--	spin_unlock_irqrestore(&radix_lock, flags);
-+	xas_lock_irqsave(&xas, flags);
-+	xas_load(&xas);
-+	if (active_cacheline_dec_overlap(&xas) < 0)
-+		xas_store(&xas, NULL);
-+	xas_unlock_irqrestore(&xas, flags);
- }
- 
- /**
-@@ -578,12 +581,8 @@ static void active_cacheline_remove(struct dma_debug_entry *entry)
+ /*
+  * For address_spaces which do not use buffers.  Just tag the page as dirty in
+- * its radix tree.
++ * the xarray.
+  *
+  * This is also used when a single buffer is being dirtied: we want to set the
+  * page dirty in that case, but not all the buffers.  This is a "bottom-up"
+@@ -2471,7 +2463,7 @@ int __set_page_dirty_nobuffers(struct page *page)
+ 		BUG_ON(page_mapping(page) != mapping);
+ 		WARN_ON_ONCE(!PagePrivate(page) && !PageUptodate(page));
+ 		account_page_dirtied(page, mapping);
+-		radix_tree_tag_set(&mapping->pages, page_index(page),
++		__xa_set_tag(&mapping->pages, page_index(page),
+ 				   PAGECACHE_TAG_DIRTY);
+ 		xa_unlock_irqrestore(&mapping->pages, flags);
+ 		unlock_page_memcg(page);
+@@ -2634,13 +2626,13 @@ EXPORT_SYMBOL(__cancel_dirty_page);
+  * Returns true if the page was previously dirty.
+  *
+  * This is for preparing to put the page under writeout.  We leave the page
+- * tagged as dirty in the radix tree so that a concurrent write-for-sync
++ * tagged as dirty in the xarray so that a concurrent write-for-sync
+  * can discover it via a PAGECACHE_TAG_DIRTY walk.  The ->writepage
+  * implementation will run either set_page_writeback() or set_page_dirty(),
+- * at which stage we bring the page's dirty flag and radix-tree dirty tag
++ * at which stage we bring the page's dirty flag and xarray dirty tag
+  * back into sync.
+  *
+- * This incoherency between the page's dirty flag and radix-tree tag is
++ * This incoherency between the page's dirty flag and xarray tag is
+  * unfortunate, but it only exists while the page is locked.
   */
- void debug_dma_assert_idle(struct page *page)
- {
--	static struct dma_debug_entry *ents[CACHELINES_PER_PAGE];
--	struct dma_debug_entry *entry = NULL;
--	void **results = (void **) &ents;
--	unsigned int nents, i;
--	unsigned long flags;
--	phys_addr_t cln;
-+	struct dma_debug_entry *entry;
-+	unsigned long cln;
+ int clear_page_dirty_for_io(struct page *page)
+@@ -2721,7 +2713,7 @@ int test_clear_page_writeback(struct page *page)
+ 		xa_lock_irqsave(&mapping->pages, flags);
+ 		ret = TestClearPageWriteback(page);
+ 		if (ret) {
+-			radix_tree_tag_clear(&mapping->pages, page_index(page),
++			__xa_clear_tag(&mapping->pages, page_index(page),
+ 						PAGECACHE_TAG_WRITEBACK);
+ 			if (bdi_cap_account_writeback(bdi)) {
+ 				struct bdi_writeback *wb = inode_to_wb(inode);
+@@ -2773,7 +2765,7 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+ 			on_wblist = mapping_tagged(mapping,
+ 						   PAGECACHE_TAG_WRITEBACK);
  
- 	if (dma_debug_disabled())
- 		return;
-@@ -591,21 +590,9 @@ void debug_dma_assert_idle(struct page *page)
- 	if (!page)
- 		return;
+-			radix_tree_tag_set(&mapping->pages, page_index(page),
++			__xa_set_tag(&mapping->pages, page_index(page),
+ 						PAGECACHE_TAG_WRITEBACK);
+ 			if (bdi_cap_account_writeback(bdi))
+ 				inc_wb_stat(inode_to_wb(inode), WB_WRITEBACK);
+@@ -2787,10 +2779,10 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+ 				sb_mark_inode_writeback(mapping->host);
+ 		}
+ 		if (!PageDirty(page))
+-			radix_tree_tag_clear(&mapping->pages, page_index(page),
++			__xa_clear_tag(&mapping->pages, page_index(page),
+ 						PAGECACHE_TAG_DIRTY);
+ 		if (!keep_write)
+-			radix_tree_tag_clear(&mapping->pages, page_index(page),
++			__xa_clear_tag(&mapping->pages, page_index(page),
+ 						PAGECACHE_TAG_TOWRITE);
+ 		xa_unlock_irqrestore(&mapping->pages, flags);
+ 	} else {
+@@ -2806,16 +2798,6 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+ }
+ EXPORT_SYMBOL(__test_set_page_writeback);
  
--	cln = (phys_addr_t) page_to_pfn(page) << CACHELINE_PER_PAGE_SHIFT;
--	spin_lock_irqsave(&radix_lock, flags);
--	nents = radix_tree_gang_lookup(&dma_active_cacheline, results, cln,
--				       CACHELINES_PER_PAGE);
--	for (i = 0; i < nents; i++) {
--		phys_addr_t ent_cln = to_cacheline_number(ents[i]);
+-/*
+- * Return true if any of the pages in the mapping are marked with the
+- * passed tag.
+- */
+-int mapping_tagged(struct address_space *mapping, int tag)
+-{
+-	return radix_tree_tagged(&mapping->pages, tag);
+-}
+-EXPORT_SYMBOL(mapping_tagged);
 -
--		if (ent_cln == cln) {
--			entry = ents[i];
--			break;
--		} else if (ent_cln >= cln + CACHELINES_PER_PAGE)
--			break;
--	}
--	spin_unlock_irqrestore(&radix_lock, flags);
--
-+	cln = page_to_pfn(page) << CACHELINE_PER_PAGE_SHIFT;
-+	entry = xa_find(&dma_active_cacheline, &cln,
-+			cln + CACHELINES_PER_PAGE - 1, XA_PRESENT);
- 	if (!entry)
- 		return;
- 
+ /**
+  * wait_for_stable_page() - wait for writeback to finish, if necessary.
+  * @page:	The page to wait on.
 -- 
 2.15.1
