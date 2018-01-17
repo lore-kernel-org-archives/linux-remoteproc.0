@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 04/99] xarray: Change definition of sibling entries
-Date: Wed, 17 Jan 2018 12:20:28 -0800
-Message-Id: <20180117202203.19756-5-willy@infradead.org>
+Subject: [PATCH v6 24/99] page cache: Add and replace pages using the XArray
+Date: Wed, 17 Jan 2018 12:20:48 -0800
+Message-Id: <20180117202203.19756-25-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,309 +11,240 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Instead of storing a pointer to the slot containing the canonical entry,
-store the offset of the slot.  Produces slightly more efficient code
-(~300 bytes) and simplifies the implementation.
+Use the XArray APIs to add and replace pages in the page cache.  This
+removes two uses of the radix tree preload API and is significantly
+shorter code.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- include/linux/xarray.h | 90 ++++++++++++++++++++++++++++++++++++++++++++++++++
- lib/radix-tree.c       | 66 +++++++++++-------------------------
- 2 files changed, 109 insertions(+), 47 deletions(-)
+ include/linux/swap.h |   8 ++-
+ mm/filemap.c         | 143 ++++++++++++++++++++++-----------------------------
+ 2 files changed, 67 insertions(+), 84 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 1aa4ff0c19b6..c308152fde7f 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -22,6 +22,12 @@
-  * x1: Value entry
-  *
-  * Attempting to store internal entries in the XArray is a bug.
-+ *
-+ * Most internal entries are pointers to the next node in the tree.
-+ * The following internal entries have a special meaning:
-+ *
-+ * 0-62: Sibling entries
-+ * 256: Retry entry
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index c2b8128799c1..394957963c4b 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -299,8 +299,12 @@ void *workingset_eviction(struct address_space *mapping, struct page *page);
+ bool workingset_refault(void *shadow);
+ void workingset_activation(struct page *page);
+ 
+-/* Do not use directly, use workingset_lookup_update */
+-void workingset_update_node(struct radix_tree_node *node);
++/* Only track the nodes of mappings with shadow entries */
++void workingset_update_node(struct xa_node *node);
++#define mapping_set_update(xas, mapping) do {				\
++	if (!dax_mapping(mapping) && !shmem_mapping(mapping))		\
++		xas_set_update(xas, workingset_update_node);		\
++} while (0)
+ 
+ /* Returns workingset_update_node() if the mapping has shadow entries. */
+ #define workingset_lookup_update(mapping)				\
+diff --git a/mm/filemap.c b/mm/filemap.c
+index f1b4480723dd..e6371b551de1 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -112,35 +112,6 @@
+  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
   */
  
- #define BITS_PER_XA_VALUE	(BITS_PER_LONG - 1)
-@@ -60,6 +66,39 @@ static inline bool xa_is_value(const void *entry)
- 	return (unsigned long)entry & 1;
- }
- 
-+/*
-+ * xa_mk_internal() - Create an internal entry.
-+ * @v: Value to turn into an internal entry.
-+ *
-+ * Return: An XArray internal entry corresponding to this value.
-+ */
-+static inline void *xa_mk_internal(unsigned long v)
-+{
-+	return (void *)((v << 2) | 2);
-+}
-+
-+/*
-+ * xa_to_internal() - Extract the value from an internal entry.
-+ * @entry: XArray entry.
-+ *
-+ * Return: The value which was stored in the internal entry.
-+ */
-+static inline unsigned long xa_to_internal(const void *entry)
-+{
-+	return (unsigned long)entry >> 2;
-+}
-+
-+/*
-+ * xa_is_internal() - Is the entry an internal entry?
-+ * @entry: XArray entry.
-+ *
-+ * Return: %true if the entry is an internal entry.
-+ */
-+static inline bool xa_is_internal(const void *entry)
-+{
-+	return ((unsigned long)entry & 3) == 2;
-+}
-+
- #define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
- #define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
- #define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
-@@ -72,4 +111,55 @@ static inline bool xa_is_value(const void *entry)
- #define xa_unlock_irqrestore(xa, flags) \
- 				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
- 
-+/* Everything below here is the Advanced API.  Proceed with caution. */
-+
-+/*
-+ * The xarray is constructed out of a set of 'chunks' of pointers.  Choosing
-+ * the best chunk size requires some tradeoffs.  A power of two recommends
-+ * itself so that we can walk the tree based purely on shifts and masks.
-+ * Generally, the larger the better; as the number of slots per level of the
-+ * tree increases, the less tall the tree needs to be.  But that needs to be
-+ * balanced against the memory consumption of each node.  On a 64-bit system,
-+ * xa_node is currently 576 bytes, and we get 7 of them per 4kB page.  If we
-+ * doubled the number of slots per node, we'd get only 3 nodes per 4kB page.
-+ */
-+#ifndef XA_CHUNK_SHIFT
-+#define XA_CHUNK_SHIFT		(CONFIG_BASE_SMALL ? 4 : 6)
-+#endif
-+#define XA_CHUNK_SIZE		(1UL << XA_CHUNK_SHIFT)
-+#define XA_CHUNK_MASK		(XA_CHUNK_SIZE - 1)
-+
-+/* Private */
-+static inline bool xa_is_node(const void *entry)
-+{
-+	return xa_is_internal(entry) && (unsigned long)entry > 4096;
-+}
-+
-+/* Private */
-+static inline void *xa_mk_sibling(unsigned int offset)
-+{
-+	return xa_mk_internal(offset);
-+}
-+
-+/* Private */
-+static inline unsigned long xa_to_sibling(const void *entry)
-+{
-+	return xa_to_internal(entry);
-+}
-+
-+/**
-+ * xa_is_sibling() - Is the entry a sibling entry?
-+ * @entry: Entry retrieved from the XArray
-+ *
-+ * Return: %true if the entry is a sibling entry.
-+ */
-+static inline bool xa_is_sibling(const void *entry)
-+{
-+	return IS_ENABLED(CONFIG_RADIX_TREE_MULTIORDER) &&
-+		xa_is_internal(entry) &&
-+		(entry < xa_mk_sibling(XA_CHUNK_SIZE - 1));
-+}
-+
-+#define XA_RETRY_ENTRY		xa_mk_internal(256)
-+
- #endif /* _LINUX_XARRAY_H */
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index 012e4869f99b..f16f63d15edc 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -37,6 +37,7 @@
- #include <linux/rcupdate.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/xarray.h>
- 
- 
- /* Number of nodes in fully populated tree of given height */
-@@ -97,24 +98,7 @@ static inline void *node_to_entry(void *ptr)
- 	return (void *)((unsigned long)ptr | RADIX_TREE_INTERNAL_NODE);
- }
- 
--#define RADIX_TREE_RETRY	node_to_entry(NULL)
--
--#ifdef CONFIG_RADIX_TREE_MULTIORDER
--/* Sibling slots point directly to another slot in the same node */
--static inline
--bool is_sibling_entry(const struct radix_tree_node *parent, void *node)
+-static int page_cache_tree_insert(struct address_space *mapping,
+-				  struct page *page, void **shadowp)
 -{
--	void __rcu **ptr = node;
--	return (parent->slots <= ptr) &&
--			(ptr < parent->slots + RADIX_TREE_MAP_SIZE);
--}
--#else
--static inline
--bool is_sibling_entry(const struct radix_tree_node *parent, void *node)
--{
--	return false;
--}
--#endif
-+#define RADIX_TREE_RETRY	XA_RETRY_ENTRY
- 
- static inline unsigned long
- get_slot_offset(const struct radix_tree_node *parent, void __rcu **slot)
-@@ -128,16 +112,10 @@ static unsigned int radix_tree_descend(const struct radix_tree_node *parent,
- 	unsigned int offset = (index >> parent->shift) & RADIX_TREE_MAP_MASK;
- 	void __rcu **entry = rcu_dereference_raw(parent->slots[offset]);
- 
--#ifdef CONFIG_RADIX_TREE_MULTIORDER
--	if (radix_tree_is_internal_node(entry)) {
--		if (is_sibling_entry(parent, entry)) {
--			void __rcu **sibentry;
--			sibentry = (void __rcu **) entry_to_node(entry);
--			offset = get_slot_offset(parent, sibentry);
--			entry = rcu_dereference_raw(*sibentry);
--		}
-+	if (xa_is_sibling(entry)) {
-+		offset = xa_to_sibling(entry);
-+		entry = rcu_dereference_raw(parent->slots[offset]);
- 	}
--#endif
- 
- 	*nodep = (void *)entry;
- 	return offset;
-@@ -299,10 +277,10 @@ static void dump_node(struct radix_tree_node *node, unsigned long index)
- 		} else if (!radix_tree_is_internal_node(entry)) {
- 			pr_debug("radix entry %p offset %ld indices %lu-%lu parent %p\n",
- 					entry, i, first, last, node);
--		} else if (is_sibling_entry(node, entry)) {
-+		} else if (xa_is_sibling(entry)) {
- 			pr_debug("radix sblng %p offset %ld indices %lu-%lu parent %p val %p\n",
- 					entry, i, first, last, node,
--					*(void **)entry_to_node(entry));
-+					node->slots[xa_to_sibling(entry)]);
- 		} else {
- 			dump_node(entry_to_node(entry), first);
- 		}
-@@ -872,8 +850,7 @@ static void radix_tree_free_nodes(struct radix_tree_node *node)
- 
- 	for (;;) {
- 		void *entry = rcu_dereference_raw(child->slots[offset]);
--		if (radix_tree_is_internal_node(entry) &&
--					!is_sibling_entry(child, entry)) {
-+		if (xa_is_node(entry)) {
- 			child = entry_to_node(entry);
- 			offset = 0;
- 			continue;
-@@ -895,7 +872,7 @@ static void radix_tree_free_nodes(struct radix_tree_node *node)
- static inline int insert_entries(struct radix_tree_node *node,
- 		void __rcu **slot, void *item, unsigned order, bool replace)
- {
--	struct radix_tree_node *child;
-+	void *sibling;
- 	unsigned i, n, tag, offset, tags = 0;
- 
- 	if (node) {
-@@ -913,7 +890,7 @@ static inline int insert_entries(struct radix_tree_node *node,
- 		offset = offset & ~(n - 1);
- 		slot = &node->slots[offset];
- 	}
--	child = node_to_entry(slot);
-+	sibling = xa_mk_sibling(offset);
- 
- 	for (i = 0; i < n; i++) {
- 		if (slot[i]) {
-@@ -930,7 +907,7 @@ static inline int insert_entries(struct radix_tree_node *node,
- 	for (i = 0; i < n; i++) {
- 		struct radix_tree_node *old = rcu_dereference_raw(slot[i]);
- 		if (i) {
--			rcu_assign_pointer(slot[i], child);
-+			rcu_assign_pointer(slot[i], sibling);
- 			for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
- 				if (tags & (1 << tag))
- 					tag_clear(node, tag, offset + i);
-@@ -940,9 +917,7 @@ static inline int insert_entries(struct radix_tree_node *node,
- 				if (tags & (1 << tag))
- 					tag_set(node, tag, offset);
- 		}
--		if (radix_tree_is_internal_node(old) &&
--					!is_sibling_entry(node, old) &&
--					(old != RADIX_TREE_RETRY))
-+		if (xa_is_node(old))
- 			radix_tree_free_nodes(old);
- 		if (xa_is_value(old))
- 			node->exceptional--;
-@@ -1101,10 +1076,10 @@ static inline void replace_sibling_entries(struct radix_tree_node *node,
- 				void __rcu **slot, int count, int exceptional)
- {
- #ifdef CONFIG_RADIX_TREE_MULTIORDER
--	void *ptr = node_to_entry(slot);
--	unsigned offset = get_slot_offset(node, slot) + 1;
-+	unsigned offset = get_slot_offset(node, slot);
-+	void *ptr = xa_mk_sibling(offset);
- 
--	while (offset < RADIX_TREE_MAP_SIZE) {
-+	while (++offset < RADIX_TREE_MAP_SIZE) {
- 		if (rcu_dereference_raw(node->slots[offset]) != ptr)
- 			break;
- 		if (count < 0) {
-@@ -1112,7 +1087,6 @@ static inline void replace_sibling_entries(struct radix_tree_node *node,
- 			node->count--;
- 		}
- 		node->exceptional += exceptional;
--		offset++;
- 	}
- #endif
- }
-@@ -1311,8 +1285,7 @@ int radix_tree_split(struct radix_tree_root *root, unsigned long index,
- 			tags |= 1 << tag;
- 
- 	for (end = offset + 1; end < RADIX_TREE_MAP_SIZE; end++) {
--		if (!is_sibling_entry(parent,
--				rcu_dereference_raw(parent->slots[end])))
-+		if (!xa_is_sibling(rcu_dereference_raw(parent->slots[end])))
- 			break;
- 		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
- 			if (tags & (1 << tag))
-@@ -1608,11 +1581,9 @@ static void set_iter_tags(struct radix_tree_iter *iter,
- static void __rcu **skip_siblings(struct radix_tree_node **nodep,
- 			void __rcu **slot, struct radix_tree_iter *iter)
- {
--	void *sib = node_to_entry(slot - 1);
+-	struct radix_tree_node *node;
+-	void **slot;
+-	int error;
 -
- 	while (iter->index < iter->next_index) {
- 		*nodep = rcu_dereference_raw(*slot);
--		if (*nodep && *nodep != sib)
-+		if (*nodep && !xa_is_sibling(*nodep))
- 			return slot;
- 		slot++;
- 		iter->index = __radix_tree_iter_add(iter, 1);
-@@ -1763,7 +1734,7 @@ void __rcu **radix_tree_next_chunk(const struct radix_tree_root *root,
- 				while (++offset	< RADIX_TREE_MAP_SIZE) {
- 					void *slot = rcu_dereference_raw(
- 							node->slots[offset]);
--					if (is_sibling_entry(node, slot))
-+					if (xa_is_sibling(slot))
- 						continue;
- 					if (slot)
- 						break;
-@@ -2282,6 +2253,7 @@ void __init radix_tree_init(void)
+-	error = __radix_tree_create(&mapping->pages, page->index, 0,
+-				    &node, &slot);
+-	if (error)
+-		return error;
+-	if (*slot) {
+-		void *p;
+-
+-		p = radix_tree_deref_slot_protected(slot,
+-						    &mapping->pages.xa_lock);
+-		if (!xa_is_value(p))
+-			return -EEXIST;
+-
+-		mapping->nrexceptional--;
+-		if (shadowp)
+-			*shadowp = p;
+-	}
+-	__radix_tree_replace(&mapping->pages, node, slot, page,
+-			     workingset_lookup_update(mapping));
+-	mapping->nrpages++;
+-	return 0;
+-}
+-
+ static void page_cache_tree_delete(struct address_space *mapping,
+ 				   struct page *page, void *shadow)
+ {
+@@ -776,51 +747,44 @@ EXPORT_SYMBOL(file_write_and_wait_range);
+  * locked.  This function does not add the new page to the LRU, the
+  * caller must do that.
+  *
+- * The remove + add is atomic.  The only way this function can fail is
+- * memory allocation failure.
++ * The remove + add is atomic.  This function cannot fail.
+  */
+ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+ {
+-	int error;
++	struct address_space *mapping = old->mapping;
++	void (*freepage)(struct page *) = mapping->a_ops->freepage;
++	pgoff_t offset = old->index;
++	XA_STATE(xas, &mapping->pages, offset);
++	unsigned long flags;
  
- 	BUILD_BUG_ON(RADIX_TREE_MAX_TAGS + __GFP_BITS_SHIFT > 32);
- 	BUILD_BUG_ON(GFP_ZONEMASK != (__force gfp_t)15);
-+	BUILD_BUG_ON(XA_CHUNK_SIZE > 255);
- 	radix_tree_node_cachep = kmem_cache_create("radix_tree_node",
- 			sizeof(struct radix_tree_node), 0,
- 			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
+ 	VM_BUG_ON_PAGE(!PageLocked(old), old);
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
+ 
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
+-	if (!error) {
+-		struct address_space *mapping = old->mapping;
+-		void (*freepage)(struct page *);
+-		unsigned long flags;
+-
+-		pgoff_t offset = old->index;
+-		freepage = mapping->a_ops->freepage;
+-
+-		get_page(new);
+-		new->mapping = mapping;
+-		new->index = offset;
++	get_page(new);
++	new->mapping = mapping;
++	new->index = offset;
+ 
+-		xa_lock_irqsave(&mapping->pages, flags);
+-		__delete_from_page_cache(old, NULL);
+-		error = page_cache_tree_insert(mapping, new, NULL);
+-		BUG_ON(error);
++	xas_lock_irqsave(&xas, flags);
++	xas_store(&xas, new);
+ 
+-		/*
+-		 * hugetlb pages do not participate in page cache accounting.
+-		 */
+-		if (!PageHuge(new))
+-			__inc_node_page_state(new, NR_FILE_PAGES);
+-		if (PageSwapBacked(new))
+-			__inc_node_page_state(new, NR_SHMEM);
+-		xa_unlock_irqrestore(&mapping->pages, flags);
+-		mem_cgroup_migrate(old, new);
+-		radix_tree_preload_end();
+-		if (freepage)
+-			freepage(old);
+-		put_page(old);
+-	}
++	old->mapping = NULL;
++	/* hugetlb pages do not participate in page cache accounting. */
++	if (!PageHuge(old))
++		__dec_node_page_state(new, NR_FILE_PAGES);
++	if (!PageHuge(new))
++		__inc_node_page_state(new, NR_FILE_PAGES);
++	if (PageSwapBacked(old))
++		__dec_node_page_state(new, NR_SHMEM);
++	if (PageSwapBacked(new))
++		__inc_node_page_state(new, NR_SHMEM);
++	xas_unlock_irqrestore(&xas, flags);
++	mem_cgroup_migrate(old, new);
++	if (freepage)
++		freepage(old);
++	put_page(old);
+ 
+-	return error;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(replace_page_cache_page);
+ 
+@@ -829,12 +793,15 @@ static int __add_to_page_cache_locked(struct page *page,
+ 				      pgoff_t offset, gfp_t gfp_mask,
+ 				      void **shadowp)
+ {
++	XA_STATE(xas, &mapping->pages, offset);
+ 	int huge = PageHuge(page);
+ 	struct mem_cgroup *memcg;
+ 	int error;
++	void *old;
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageSwapBacked(page), page);
++	mapping_set_update(&xas, mapping);
+ 
+ 	if (!huge) {
+ 		error = mem_cgroup_try_charge(page, current->mm,
+@@ -843,39 +810,51 @@ static int __add_to_page_cache_locked(struct page *page,
+ 			return error;
+ 	}
+ 
+-	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
+-	if (error) {
+-		if (!huge)
+-			mem_cgroup_cancel_charge(page, memcg, false);
+-		return error;
+-	}
+-
+ 	get_page(page);
+ 	page->mapping = mapping;
+ 	page->index = offset;
+ 
+-	xa_lock_irq(&mapping->pages);
+-	error = page_cache_tree_insert(mapping, page, shadowp);
+-	radix_tree_preload_end();
+-	if (unlikely(error))
+-		goto err_insert;
++	do {
++		xas_lock_irq(&xas);
++		old = xas_create(&xas);
++		if (xas_error(&xas))
++			goto unlock;
++		if (xa_is_value(old)) {
++			mapping->nrexceptional--;
++			if (shadowp)
++				*shadowp = old;
++		} else if (old) {
++			xas_set_err(&xas, -EEXIST);
++			goto unlock;
++		}
++
++		xas_store(&xas, page);
++		mapping->nrpages++;
++
++		/*
++		 * hugetlb pages do not participate in
++		 * page cache accounting.
++		 */
++		if (!huge)
++			__inc_node_page_state(page, NR_FILE_PAGES);
++unlock:
++		xas_unlock_irq(&xas);
++	} while (xas_nomem(&xas, gfp_mask & ~__GFP_HIGHMEM));
++
++	if (xas_error(&xas))
++		goto error;
+ 
+-	/* hugetlb pages do not participate in page cache accounting. */
+-	if (!huge)
+-		__inc_node_page_state(page, NR_FILE_PAGES);
+-	xa_unlock_irq(&mapping->pages);
+ 	if (!huge)
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+ 	trace_mm_filemap_add_to_page_cache(page);
+ 	return 0;
+-err_insert:
++error:
+ 	page->mapping = NULL;
+ 	/* Leave page->index set: truncation relies upon it */
+-	xa_unlock_irq(&mapping->pages);
+ 	if (!huge)
+ 		mem_cgroup_cancel_charge(page, memcg, false);
+ 	put_page(page);
+-	return error;
++	return xas_error(&xas);
+ }
+ 
+ /**
 -- 
 2.15.1
