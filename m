@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 59/99] dax: More XArray conversion
-Date: Wed, 17 Jan 2018 12:21:23 -0800
-Message-Id: <20180117202203.19756-60-willy@infradead.org>
+Subject: [PATCH v6 93/99] f2fs: Convert ino_root to XArray
+Date: Wed, 17 Jan 2018 12:21:57 -0800
+Message-Id: <20180117202203.19756-94-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,252 +11,213 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This time, we want to convert get_unlocked_mapping_entry() to use the
-XArray.  That has a ripple effect, causing us to change the waitqueues
-to hash on the address of the xarray rather than the address of the
-mapping (functionally equivalent), and create a lot of on-the-stack
-xa_state which are only used as a container for passing the xarray and
-the index down to deeper function calls.
-
-Also rename dax_wake_mapping_entry_waiter() to dax_wake_entry().
+I did a fairly major rewrite of __add_ino_entry(); please check carefully.
+Also, we can remove ino_list unless it's important to write out orphan
+inodes in the order they were orphaned.  It may also make more sense to
+combine the array of inode_management structures into a single XArray
+with tags, but that would be a job for someone who understands this
+filesystem better than I do.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 72 +++++++++++++++++++++++++++++-----------------------------------
- 1 file changed, 33 insertions(+), 39 deletions(-)
+ fs/f2fs/checkpoint.c | 85 +++++++++++++++++++++++-----------------------------
+ fs/f2fs/f2fs.h       |  3 +-
+ 2 files changed, 38 insertions(+), 50 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 8eab0b56f7f9..d3fe61b95216 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -120,7 +120,7 @@ static int dax_is_empty_entry(void *entry)
-  * DAX radix tree locking
-  */
- struct exceptional_entry_key {
--	struct address_space *mapping;
-+	struct xarray *xa;
- 	pgoff_t entry_start;
- };
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 4aa69bc1c70a..04d69679da13 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -403,33 +403,30 @@ static void __add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino,
+ 	struct inode_management *im = &sbi->im[type];
+ 	struct ino_entry *e, *tmp;
  
-@@ -129,9 +129,10 @@ struct wait_exceptional_entry_queue {
- 	struct exceptional_entry_key key;
- };
+-	tmp = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_NOFS);
+-
+-	radix_tree_preload(GFP_NOFS | __GFP_NOFAIL);
+-
+-	spin_lock(&im->ino_lock);
+-	e = radix_tree_lookup(&im->ino_root, ino);
+-	if (!e) {
+-		e = tmp;
+-		if (unlikely(radix_tree_insert(&im->ino_root, ino, e)))
+-			f2fs_bug_on(sbi, 1);
+-
+-		memset(e, 0, sizeof(struct ino_entry));
+-		e->ino = ino;
+-
+-		list_add_tail(&e->list, &im->ino_list);
+-		if (type != ORPHAN_INO)
+-			im->ino_num++;
++	xa_lock(&im->ino_root);
++	e = xa_load(&im->ino_root, ino);
++	if (e)
++		goto found;
++	xa_unlock(&im->ino_root);
++
++	tmp = f2fs_kmem_cache_alloc(ino_entry_slab, GFP_NOFS | __GFP_ZERO);
++	xa_lock(&im->ino_root);
++	e = __xa_cmpxchg(&im->ino_root, ino, NULL, tmp,
++						GFP_NOFS | __GFP_NOFAIL);
++	if (e) {
++		kmem_cache_free(ino_entry_slab, tmp);
++		goto found;
+ 	}
++	e = tmp;
  
--static wait_queue_head_t *dax_entry_waitqueue(struct address_space *mapping,
--		pgoff_t index, void *entry, struct exceptional_entry_key *key)
-+static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
-+		void *entry, struct exceptional_entry_key *key)
- {
-+	unsigned long index = xas->xa_index;
- 	unsigned long hash;
- 
- 	/*
-@@ -142,10 +143,10 @@ static wait_queue_head_t *dax_entry_waitqueue(struct address_space *mapping,
- 	if (dax_is_pmd_entry(entry))
- 		index &= ~PG_PMD_COLOUR;
- 
--	key->mapping = mapping;
-+	key->xa = xas->xa;
- 	key->entry_start = index;
- 
--	hash = hash_long((unsigned long)mapping ^ index, DAX_WAIT_TABLE_BITS);
-+	hash = hash_long((unsigned long)xas->xa ^ index, DAX_WAIT_TABLE_BITS);
- 	return wait_table + hash;
++	e->ino = ino;
++	list_add_tail(&e->list, &im->ino_list);
++	if (type != ORPHAN_INO)
++		im->ino_num++;
++found:
+ 	if (type == FLUSH_INO)
+ 		f2fs_set_bit(devidx, (char *)&e->dirty_device);
+-
+-	spin_unlock(&im->ino_lock);
+-	radix_tree_preload_end();
+-
+-	if (e != tmp)
+-		kmem_cache_free(ino_entry_slab, tmp);
++	xa_unlock(&im->ino_root);
  }
  
-@@ -156,7 +157,7 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait, unsigned int mo
- 	struct wait_exceptional_entry_queue *ewait =
- 		container_of(wait, struct wait_exceptional_entry_queue, wait);
+ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+@@ -437,17 +434,14 @@ static void __remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+ 	struct inode_management *im = &sbi->im[type];
+ 	struct ino_entry *e;
  
--	if (key->mapping != ewait->key.mapping ||
-+	if (key->xa != ewait->key.xa ||
- 	    key->entry_start != ewait->key.entry_start)
- 		return 0;
- 	return autoremove_wake_function(wait, mode, sync, NULL);
-@@ -167,13 +168,12 @@ static int wake_exceptional_entry_func(wait_queue_entry_t *wait, unsigned int mo
-  * The important information it's conveying is whether the entry at
-  * this index used to be a PMD entry.
-  */
--static void dax_wake_mapping_entry_waiter(struct address_space *mapping,
--		pgoff_t index, void *entry, bool wake_all)
-+static void dax_wake_entry(struct xa_state *xas, void *entry, bool wake_all)
+-	spin_lock(&im->ino_lock);
+-	e = radix_tree_lookup(&im->ino_root, ino);
++	xa_lock(&im->ino_root);
++	e = __xa_erase(&im->ino_root, ino);
+ 	if (e) {
+ 		list_del(&e->list);
+-		radix_tree_delete(&im->ino_root, ino);
+ 		im->ino_num--;
+-		spin_unlock(&im->ino_lock);
+ 		kmem_cache_free(ino_entry_slab, e);
+-		return;
+ 	}
+-	spin_unlock(&im->ino_lock);
++	xa_unlock(&im->ino_root);
+ }
+ 
+ void add_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+@@ -466,12 +460,8 @@ void remove_ino_entry(struct f2fs_sb_info *sbi, nid_t ino, int type)
+ bool exist_written_data(struct f2fs_sb_info *sbi, nid_t ino, int mode)
  {
- 	struct exceptional_entry_key key;
- 	wait_queue_head_t *wq;
+ 	struct inode_management *im = &sbi->im[mode];
+-	struct ino_entry *e;
  
--	wq = dax_entry_waitqueue(mapping, index, entry, &key);
-+	wq = dax_entry_waitqueue(xas, entry, &key);
+-	spin_lock(&im->ino_lock);
+-	e = radix_tree_lookup(&im->ino_root, ino);
+-	spin_unlock(&im->ino_lock);
+-	return e ? true : false;
++	return xa_load(&im->ino_root, ino) ? true : false;
+ }
  
- 	/*
- 	 * Checking for locked entry and prepare_to_wait_exclusive() happens
-@@ -205,10 +205,9 @@ static inline void *lock_slot(struct xa_state *xas)
-  *
-  * Must be called with xa_lock held.
-  */
--static void *get_unlocked_mapping_entry(struct address_space *mapping,
--					pgoff_t index, void ***slotp)
-+static void *get_unlocked_mapping_entry(struct xa_state *xas)
- {
--	void *entry, **slot;
-+	void *entry;
- 	struct wait_exceptional_entry_queue ewait;
- 	wait_queue_head_t *wq;
+ void release_ino_entry(struct f2fs_sb_info *sbi, bool all)
+@@ -482,14 +472,14 @@ void release_ino_entry(struct f2fs_sb_info *sbi, bool all)
+ 	for (i = all ? ORPHAN_INO : APPEND_INO; i < MAX_INO_ENTRY; i++) {
+ 		struct inode_management *im = &sbi->im[i];
  
-@@ -216,22 +215,19 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
- 	ewait.wait.func = wake_exceptional_entry_func;
- 
- 	for (;;) {
--		entry = __radix_tree_lookup(&mapping->pages, index, NULL,
--					  &slot);
--		if (!entry ||
--		    WARN_ON_ONCE(!xa_is_value(entry)) || !dax_locked(entry)) {
--			if (slotp)
--				*slotp = slot;
-+		entry = xas_load(xas);
-+		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)) ||
-+		    !dax_locked(entry))
- 			return entry;
--		}
- 
--		wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
-+		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
- 		prepare_to_wait_exclusive(wq, &ewait.wait,
- 					  TASK_UNINTERRUPTIBLE);
--		xa_unlock_irq(&mapping->pages);
-+		xas_pause(xas);
-+		xas_unlock_irq(xas);
- 		schedule();
- 		finish_wait(wq, &ewait.wait);
--		xa_lock_irq(&mapping->pages);
-+		xas_lock_irq(xas);
+-		spin_lock(&im->ino_lock);
++		xa_lock(&im->ino_root);
+ 		list_for_each_entry_safe(e, tmp, &im->ino_list, list) {
+ 			list_del(&e->list);
+-			radix_tree_delete(&im->ino_root, e->ino);
++			__xa_erase(&im->ino_root, e->ino);
+ 			kmem_cache_free(ino_entry_slab, e);
+ 			im->ino_num--;
+ 		}
+-		spin_unlock(&im->ino_lock);
++		xa_unlock(&im->ino_root);
  	}
  }
  
-@@ -251,7 +247,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
- 	xas_store(&xas, entry);
- 	/* Safe to not call xas_pause here -- we don't touch the array after */
- 	xas_unlock_irq(&xas);
--	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
-+	dax_wake_entry(&xas, entry, false);
+@@ -506,11 +496,11 @@ bool is_dirty_device(struct f2fs_sb_info *sbi, nid_t ino,
+ 	struct ino_entry *e;
+ 	bool is_dirty = false;
+ 
+-	spin_lock(&im->ino_lock);
+-	e = radix_tree_lookup(&im->ino_root, ino);
++	xa_lock(&im->ino_root);
++	e = xa_load(&im->ino_root, ino);
+ 	if (e && f2fs_test_bit(devidx, (char *)&e->dirty_device))
+ 		is_dirty = true;
+-	spin_unlock(&im->ino_lock);
++	xa_unlock(&im->ino_root);
+ 	return is_dirty;
  }
  
- static void put_locked_mapping_entry(struct address_space *mapping,
-@@ -264,14 +260,13 @@ static void put_locked_mapping_entry(struct address_space *mapping,
-  * Called when we are done with radix tree entry we looked up via
-  * get_unlocked_mapping_entry() and which we didn't lock in the end.
-  */
--static void put_unlocked_mapping_entry(struct address_space *mapping,
--				       pgoff_t index, void *entry)
-+static void put_unlocked_mapping_entry(struct xa_state *xas, void *entry)
+@@ -519,11 +509,11 @@ int acquire_orphan_inode(struct f2fs_sb_info *sbi)
+ 	struct inode_management *im = &sbi->im[ORPHAN_INO];
+ 	int err = 0;
+ 
+-	spin_lock(&im->ino_lock);
++	xa_lock(&im->ino_root);
+ 
+ #ifdef CONFIG_F2FS_FAULT_INJECTION
+ 	if (time_to_inject(sbi, FAULT_ORPHAN)) {
+-		spin_unlock(&im->ino_lock);
++		xa_unlock(&im->ino_root);
+ 		f2fs_show_injection_info(FAULT_ORPHAN);
+ 		return -ENOSPC;
+ 	}
+@@ -532,7 +522,7 @@ int acquire_orphan_inode(struct f2fs_sb_info *sbi)
+ 		err = -ENOSPC;
+ 	else
+ 		im->ino_num++;
+-	spin_unlock(&im->ino_lock);
++	xa_unlock(&im->ino_root);
+ 
+ 	return err;
+ }
+@@ -541,10 +531,10 @@ void release_orphan_inode(struct f2fs_sb_info *sbi)
  {
- 	if (!entry)
- 		return;
+ 	struct inode_management *im = &sbi->im[ORPHAN_INO];
  
- 	/* We have to wake up next waiter for the radix tree entry lock */
--	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
-+	dax_wake_entry(xas, entry, false);
+-	spin_lock(&im->ino_lock);
++	xa_lock(&im->ino_root);
+ 	f2fs_bug_on(sbi, im->ino_num == 0);
+ 	im->ino_num--;
+-	spin_unlock(&im->ino_lock);
++	xa_unlock(&im->ino_root);
  }
  
- /*
-@@ -308,7 +303,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+ void add_orphan_inode(struct inode *inode)
+@@ -677,7 +667,7 @@ static void write_orphan_inodes(struct f2fs_sb_info *sbi, block_t start_blk)
+ 	orphan_blocks = GET_ORPHAN_BLOCKS(im->ino_num);
  
- restart:
- 	xa_lock_irq(&mapping->pages);
--	entry = get_unlocked_mapping_entry(mapping, index, &slot);
-+	entry = get_unlocked_mapping_entry(&xas);
+ 	/*
+-	 * we don't need to do spin_lock(&im->ino_lock) here, since all the
++	 * we don't need to lock the ino_root here, since all the
+ 	 * orphan inode operations are covered under f2fs_lock_op().
+ 	 * And, spin_lock should be avoided due to page operations below.
+ 	 */
+@@ -1433,8 +1423,7 @@ void init_ino_entry_info(struct f2fs_sb_info *sbi)
+ 	for (i = 0; i < MAX_INO_ENTRY; i++) {
+ 		struct inode_management *im = &sbi->im[i];
  
- 	if (WARN_ON_ONCE(entry && !xa_is_value(entry))) {
- 		entry = ERR_PTR(-EIO);
-@@ -318,8 +313,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 	if (entry) {
- 		if (size_flag & DAX_PMD) {
- 			if (dax_is_pte_entry(entry)) {
--				put_unlocked_mapping_entry(mapping, index,
--						entry);
-+				put_unlocked_mapping_entry(&xas, entry);
- 				entry = ERR_PTR(-EEXIST);
- 				goto out_unlock;
- 			}
-@@ -382,8 +376,7 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- 		if (pmd_downgrade) {
- 			radix_tree_delete(&mapping->pages, index);
- 			mapping->nrexceptional--;
--			dax_wake_mapping_entry_waiter(mapping, index, entry,
--					true);
-+			dax_wake_entry(&xas, entry, true);
- 		}
+-		INIT_RADIX_TREE(&im->ino_root, GFP_ATOMIC);
+-		spin_lock_init(&im->ino_lock);
++		xa_init(&im->ino_root);
+ 		INIT_LIST_HEAD(&im->ino_list);
+ 		im->ino_num = 0;
+ 	}
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 6abf26c31d01..b3ee784b49bc 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -994,8 +994,7 @@ enum inode_type {
  
- 		entry = dax_radix_locked_entry(0, size_flag | DAX_EMPTY);
-@@ -417,12 +410,13 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
- static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 					  pgoff_t index, bool trunc)
- {
-+	XA_STATE(xas, &mapping->pages, index);
- 	int ret = 0;
- 	void *entry;
- 	struct radix_tree_root *pages = &mapping->pages;
- 
- 	xa_lock_irq(&mapping->pages);
--	entry = get_unlocked_mapping_entry(mapping, index, NULL);
-+	entry = get_unlocked_mapping_entry(&xas);
- 	if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
- 		goto out;
- 	if (!trunc &&
-@@ -433,7 +427,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 	mapping->nrexceptional--;
- 	ret = 1;
- out:
--	put_unlocked_mapping_entry(mapping, index, entry);
-+	put_unlocked_mapping_entry(&xas, entry);
- 	xa_unlock_irq(&mapping->pages);
- 	return ret;
- }
-@@ -640,7 +634,7 @@ static int dax_writeback_one(struct block_device *bdev,
- {
- 	struct radix_tree_root *pages = &mapping->pages;
- 	XA_STATE(xas, pages, index);
--	void *entry2, **slot, *kaddr;
-+	void *entry2, *kaddr;
- 	long ret = 0, id;
- 	sector_t sector;
- 	pgoff_t pgoff;
-@@ -655,7 +649,7 @@ static int dax_writeback_one(struct block_device *bdev,
- 		return -EIO;
- 
- 	xa_lock_irq(&mapping->pages);
--	entry2 = get_unlocked_mapping_entry(mapping, index, &slot);
-+	entry2 = get_unlocked_mapping_entry(&xas);
- 	/* Entry got punched out / reallocated? */
- 	if (!entry2 || WARN_ON_ONCE(!xa_is_value(entry2)))
- 		goto put_unlocked;
-@@ -733,7 +727,7 @@ static int dax_writeback_one(struct block_device *bdev,
- 	return ret;
- 
-  put_unlocked:
--	put_unlocked_mapping_entry(mapping, index, entry2);
-+	put_unlocked_mapping_entry(&xas, entry2);
- 	xa_unlock_irq(&mapping->pages);
- 	return ret;
- }
-@@ -1503,16 +1497,16 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
- 	pgoff_t index = vmf->pgoff;
- 	XA_STATE(xas, &mapping->pages, index);
--	void *entry, **slot;
-+	void *entry;
- 	int vmf_ret, error;
- 
- 	xa_lock_irq(&mapping->pages);
--	entry = get_unlocked_mapping_entry(mapping, index, &slot);
-+	entry = get_unlocked_mapping_entry(&xas);
- 	/* Did we race with someone splitting entry or so? */
- 	if (!entry ||
- 	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
- 	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
--		put_unlocked_mapping_entry(mapping, index, entry);
-+		put_unlocked_mapping_entry(&xas, entry);
- 		xa_unlock_irq(&mapping->pages);
- 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
- 						      VM_FAULT_NOPAGE);
+ /* for inner inode cache management */
+ struct inode_management {
+-	struct radix_tree_root ino_root;	/* ino entry array */
+-	spinlock_t ino_lock;			/* for ino entry lock */
++	struct xarray ino_root;			/* ino entry array */
+ 	struct list_head ino_list;		/* inode list head */
+ 	unsigned long ino_num;			/* number of entries */
+ };
 -- 
 2.15.1
