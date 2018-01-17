@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 80/99] blk-ioc: Convert to XArray
-Date: Wed, 17 Jan 2018 12:21:44 -0800
-Message-Id: <20180117202203.19756-81-willy@infradead.org>
+Subject: [PATCH v6 65/99] dax: Fix sparse warning
+Date: Wed, 17 Jan 2018 12:21:29 -0800
+Message-Id: <20180117202203.19756-66-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,113 +11,82 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Skip converting the lock to use xa_lock; I think this code can live with
-the double-locking.
+sparse doesn't know that follow_pte_pmd() conditionally acquires the ptl,
+because it's in a separate compilation unit.  Move follow_pte_pmd() to
+mm.h where sparse can see it.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- block/blk-ioc.c           | 13 +++++++------
- include/linux/iocontext.h |  6 +++---
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ include/linux/mm.h | 15 ++++++++++++++-
+ mm/memory.c        | 16 +---------------
+ 2 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/block/blk-ioc.c b/block/blk-ioc.c
-index f23311e4b201..baf83c8ac503 100644
---- a/block/blk-ioc.c
-+++ b/block/blk-ioc.c
-@@ -68,7 +68,7 @@ static void ioc_destroy_icq(struct io_cq *icq)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fe1ee4313add..9c384c486edf 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1314,7 +1314,7 @@ int copy_page_range(struct mm_struct *dst, struct mm_struct *src,
+ 			struct vm_area_struct *vma);
+ void unmap_mapping_range(struct address_space *mapping,
+ 		loff_t const holebegin, loff_t const holelen, int even_cows);
+-int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
++int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+ 			     unsigned long *start, unsigned long *end,
+ 			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp);
+ int follow_pfn(struct vm_area_struct *vma, unsigned long address,
+@@ -1324,6 +1324,19 @@ int follow_phys(struct vm_area_struct *vma, unsigned long address,
+ int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
+ 			void *buf, int len, int write);
  
- 	lockdep_assert_held(&ioc->lock);
++static inline int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
++			     unsigned long *start, unsigned long *end,
++			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
++{
++	int res;
++
++	/* (void) is needed to make gcc happy */
++	(void) __cond_lock(*ptlp,
++			   !(res = __follow_pte_pmd(mm, address, start, end,
++						    ptepp, pmdpp, ptlp)));
++	return res;
++}
++
+ static inline void unmap_shared_mapping_range(struct address_space *mapping,
+ 		loff_t const holebegin, loff_t const holelen)
+ {
+diff --git a/mm/memory.c b/mm/memory.c
+index ca5674cbaff2..66184601ac03 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4201,7 +4201,7 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
+ }
+ #endif /* __PAGETABLE_PMD_FOLDED */
  
--	radix_tree_delete(&ioc->icq_tree, icq->q->id);
-+	xa_erase(&ioc->icq_array, icq->q->id);
- 	hlist_del_init(&icq->ioc_node);
- 	list_del_init(&icq->q_node);
- 
-@@ -278,7 +278,7 @@ int create_task_io_context(struct task_struct *task, gfp_t gfp_flags, int node)
- 	atomic_set(&ioc->nr_tasks, 1);
- 	atomic_set(&ioc->active_ref, 1);
- 	spin_lock_init(&ioc->lock);
--	INIT_RADIX_TREE(&ioc->icq_tree, GFP_ATOMIC | __GFP_HIGH);
-+	xa_init_flags(&ioc->icq_array, XA_FLAGS_LOCK_IRQ);
- 	INIT_HLIST_HEAD(&ioc->icq_list);
- 	INIT_WORK(&ioc->release_work, ioc_release_fn);
- 
-@@ -363,7 +363,7 @@ struct io_cq *ioc_lookup_icq(struct io_context *ioc, struct request_queue *q)
- 	if (icq && icq->q == q)
- 		goto out;
- 
--	icq = radix_tree_lookup(&ioc->icq_tree, q->id);
-+	icq = xa_load(&ioc->icq_array, q->id);
- 	if (icq && icq->q == q)
- 		rcu_assign_pointer(ioc->icq_hint, icq);	/* allowed to race */
- 	else
-@@ -398,7 +398,7 @@ struct io_cq *ioc_create_icq(struct io_context *ioc, struct request_queue *q,
- 	if (!icq)
- 		return NULL;
- 
--	if (radix_tree_maybe_preload(gfp_mask) < 0) {
-+	if (xa_reserve(&ioc->icq_array, q->id, gfp_mask)) {
- 		kmem_cache_free(et->icq_cache, icq);
- 		return NULL;
- 	}
-@@ -412,7 +412,8 @@ struct io_cq *ioc_create_icq(struct io_context *ioc, struct request_queue *q,
- 	spin_lock_irq(q->queue_lock);
- 	spin_lock(&ioc->lock);
- 
--	if (likely(!radix_tree_insert(&ioc->icq_tree, q->id, icq))) {
-+	if (likely(!xa_store(&ioc->icq_array, q->id, icq,
-+						GFP_ATOMIC | __GFP_HIGH))) {
- 		hlist_add_head(&icq->ioc_node, &ioc->icq_list);
- 		list_add(&icq->q_node, &q->icq_list);
- 		if (et->uses_mq && et->ops.mq.init_icq)
-@@ -421,6 +422,7 @@ struct io_cq *ioc_create_icq(struct io_context *ioc, struct request_queue *q,
- 			et->ops.sq.elevator_init_icq_fn(icq);
- 	} else {
- 		kmem_cache_free(et->icq_cache, icq);
-+		xa_erase(&ioc->icq_array, q->id);
- 		icq = ioc_lookup_icq(ioc, q);
- 		if (!icq)
- 			printk(KERN_ERR "cfq: icq link failed!\n");
-@@ -428,7 +430,6 @@ struct io_cq *ioc_create_icq(struct io_context *ioc, struct request_queue *q,
- 
- 	spin_unlock(&ioc->lock);
- 	spin_unlock_irq(q->queue_lock);
--	radix_tree_preload_end();
- 	return icq;
+-static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
++int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+ 			    unsigned long *start, unsigned long *end,
+ 			    pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
+ {
+@@ -4278,20 +4278,6 @@ static inline int follow_pte(struct mm_struct *mm, unsigned long address,
+ 	return res;
  }
  
-diff --git a/include/linux/iocontext.h b/include/linux/iocontext.h
-index dba15ca8e60b..e16224f70084 100644
---- a/include/linux/iocontext.h
-+++ b/include/linux/iocontext.h
-@@ -2,9 +2,9 @@
- #ifndef IOCONTEXT_H
- #define IOCONTEXT_H
- 
--#include <linux/radix-tree.h>
- #include <linux/rcupdate.h>
- #include <linux/workqueue.h>
-+#include <linux/xarray.h>
- 
- enum {
- 	ICQ_EXITED		= 1 << 2,
-@@ -56,7 +56,7 @@ enum {
-  * - ioc->icq_list and icq->ioc_node are protected by ioc lock.
-  *   q->icq_list and icq->q_node by q lock.
-  *
-- * - ioc->icq_tree and ioc->icq_hint are protected by ioc lock, while icq
-+ * - ioc->icq_array and ioc->icq_hint are protected by ioc lock, while icq
-  *   itself is protected by q lock.  However, both the indexes and icq
-  *   itself are also RCU managed and lookup can be performed holding only
-  *   the q lock.
-@@ -111,7 +111,7 @@ struct io_context {
- 	int nr_batch_requests;     /* Number of requests left in the batch */
- 	unsigned long last_waited; /* Time last woken after wait for request */
- 
--	struct radix_tree_root	icq_tree;
-+	struct xarray		icq_array;
- 	struct io_cq __rcu	*icq_hint;
- 	struct hlist_head	icq_list;
- 
+-int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+-			     unsigned long *start, unsigned long *end,
+-			     pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
+-{
+-	int res;
+-
+-	/* (void) is needed to make gcc happy */
+-	(void) __cond_lock(*ptlp,
+-			   !(res = __follow_pte_pmd(mm, address, start, end,
+-						    ptepp, pmdpp, ptlp)));
+-	return res;
+-}
+-EXPORT_SYMBOL(follow_pte_pmd);
+-
+ /**
+  * follow_pfn - look up PFN at a user virtual address
+  * @vma: memory mapping
 -- 
 2.15.1
