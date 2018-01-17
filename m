@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 23/99] page cache: Add page_cache_range_empty function
-Date: Wed, 17 Jan 2018 12:20:47 -0800
-Message-Id: <20180117202203.19756-24-willy@infradead.org>
+Subject: [PATCH v6 86/99] btrfs: Convert reada_zones to XArray
+Date: Wed, 17 Jan 2018 12:21:50 -0800
+Message-Id: <20180117202203.19756-87-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,165 +11,183 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
-btrfs has its own custom function for determining whether the page cache
-has any pages in a particular range.  Move this functionality to the
-page cache, and call it from btrfs.
+The use of the reada_lock means we have to use the xa_reserve() API.
+If we can avoid using reada_lock to protect this xarray, we can drop
+the use of that function.
 
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/btrfs/btrfs_inode.h  |  7 ++++-
- fs/btrfs/inode.c        | 70 -------------------------------------------------
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 26 ++++++++++++++++++
- 4 files changed, 34 insertions(+), 71 deletions(-)
+ fs/btrfs/reada.c   | 54 +++++++++++++++++++-----------------------------------
+ fs/btrfs/volumes.c |  2 +-
+ fs/btrfs/volumes.h |  2 +-
+ 3 files changed, 21 insertions(+), 37 deletions(-)
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index 63f0ccc92a71..a48bd6e0a0bb 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -365,6 +365,11 @@ static inline void btrfs_print_data_csum_error(struct btrfs_inode *inode,
- 			logical_start, csum, csum_expected, mirror_num);
- }
- 
--bool btrfs_page_exists_in_range(struct inode *inode, loff_t start, loff_t end);
-+static inline bool btrfs_page_exists_in_range(struct inode *inode,
-+						loff_t start, loff_t end)
-+{
-+	return page_cache_range_empty(inode->i_mapping, start >> PAGE_SHIFT,
-+							end >> PAGE_SHIFT);
-+}
- 
- #endif
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index dbdb5bf6bca1..d7d2c556d5a2 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7541,76 +7541,6 @@ noinline int can_nocow_extent(struct inode *inode, u64 offset, u64 *len,
- 	return ret;
- }
- 
--bool btrfs_page_exists_in_range(struct inode *inode, loff_t start, loff_t end)
--{
--	struct radix_tree_root *root = &inode->i_mapping->pages;
--	bool found = false;
--	void **pagep = NULL;
--	struct page *page = NULL;
--	unsigned long start_idx;
--	unsigned long end_idx;
--
--	start_idx = start >> PAGE_SHIFT;
--
--	/*
--	 * end is the last byte in the last page.  end == start is legal
--	 */
--	end_idx = end >> PAGE_SHIFT;
--
--	rcu_read_lock();
--
--	/* Most of the code in this while loop is lifted from
--	 * find_get_page.  It's been modified to begin searching from a
--	 * page and return just the first page found in that range.  If the
--	 * found idx is less than or equal to the end idx then we know that
--	 * a page exists.  If no pages are found or if those pages are
--	 * outside of the range then we're fine (yay!) */
--	while (page == NULL &&
--	       radix_tree_gang_lookup_slot(root, &pagep, NULL, start_idx, 1)) {
--		page = radix_tree_deref_slot(pagep);
--		if (unlikely(!page))
--			break;
--
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				page = NULL;
--				continue;
--			}
--			/*
--			 * Otherwise, shmem/tmpfs must be storing a swap entry
--			 * here so return it without attempting to raise page
--			 * count.
--			 */
--			page = NULL;
--			break; /* TODO: Is this relevant for this use case? */
--		}
--
--		if (!page_cache_get_speculative(page)) {
--			page = NULL;
--			continue;
--		}
--
--		/*
--		 * Has the page moved?
--		 * This is part of the lockless pagecache protocol. See
--		 * include/linux/pagemap.h for details.
--		 */
--		if (unlikely(page != *pagep)) {
--			put_page(page);
--			page = NULL;
--		}
--	}
--
--	if (page) {
--		if (page->index <= end_idx)
--			found = true;
--		put_page(page);
--	}
--
--	rcu_read_unlock();
--	return found;
--}
--
- static int lock_extent_direct(struct inode *inode, u64 lockstart, u64 lockend,
- 			      struct extent_state **cached_state, int writing)
+diff --git a/fs/btrfs/reada.c b/fs/btrfs/reada.c
+index ab852b8e3e37..ef8e84ff2012 100644
+--- a/fs/btrfs/reada.c
++++ b/fs/btrfs/reada.c
+@@ -239,17 +239,16 @@ static struct reada_zone *reada_find_zone(struct btrfs_device *dev, u64 logical,
  {
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 0db127c3ccac..34d4fa3ad1c5 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -245,6 +245,8 @@ pgoff_t page_cache_next_gap(struct address_space *mapping,
- 			     pgoff_t index, unsigned long max_scan);
- pgoff_t page_cache_prev_gap(struct address_space *mapping,
- 			     pgoff_t index, unsigned long max_scan);
-+bool page_cache_range_empty(struct address_space *mapping,
-+				pgoff_t index, pgoff_t max);
+ 	struct btrfs_fs_info *fs_info = dev->fs_info;
+ 	int ret;
+-	struct reada_zone *zone;
++	struct reada_zone *curr, *zone;
+ 	struct btrfs_block_group_cache *cache = NULL;
+ 	u64 start;
+ 	u64 end;
++	unsigned long index = logical >> PAGE_SHIFT;
+ 	int i;
  
- #define FGP_ACCESSED		0x00000001
- #define FGP_LOCK		0x00000002
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 146e8ec16ec0..f1b4480723dd 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1398,6 +1398,32 @@ pgoff_t page_cache_prev_gap(struct address_space *mapping,
+-	zone = NULL;
+ 	spin_lock(&fs_info->reada_lock);
+-	ret = radix_tree_gang_lookup(&dev->reada_zones, (void **)&zone,
+-				     logical >> PAGE_SHIFT, 1);
+-	if (ret == 1 && logical >= zone->start && logical <= zone->end) {
++	zone = xa_find(&dev->reada_zones, &index, ULONG_MAX, XA_PRESENT);
++	if (zone && logical >= zone->start && logical <= zone->end) {
+ 		kref_get(&zone->refcnt);
+ 		spin_unlock(&fs_info->reada_lock);
+ 		return zone;
+@@ -269,7 +268,8 @@ static struct reada_zone *reada_find_zone(struct btrfs_device *dev, u64 logical,
+ 	if (!zone)
+ 		return NULL;
+ 
+-	ret = radix_tree_preload(GFP_KERNEL);
++	ret = xa_reserve(&dev->reada_zones,
++			 (unsigned long)(end >> PAGE_SHIFT), GFP_KERNEL);
+ 	if (ret) {
+ 		kfree(zone);
+ 		return NULL;
+@@ -290,21 +290,18 @@ static struct reada_zone *reada_find_zone(struct btrfs_device *dev, u64 logical,
+ 	zone->ndevs = bbio->num_stripes;
+ 
+ 	spin_lock(&fs_info->reada_lock);
+-	ret = radix_tree_insert(&dev->reada_zones,
++	curr = xa_cmpxchg(&dev->reada_zones,
+ 				(unsigned long)(zone->end >> PAGE_SHIFT),
+-				zone);
+-
+-	if (ret == -EEXIST) {
++				NULL, zone, GFP_NOWAIT | __GFP_NOWARN);
++	if (curr) {
+ 		kfree(zone);
+-		ret = radix_tree_gang_lookup(&dev->reada_zones, (void **)&zone,
+-					     logical >> PAGE_SHIFT, 1);
+-		if (ret == 1 && logical >= zone->start && logical <= zone->end)
++		zone = curr;
++		if (logical >= zone->start && logical <= zone->end)
+ 			kref_get(&zone->refcnt);
+ 		else
+ 			zone = NULL;
+ 	}
+ 	spin_unlock(&fs_info->reada_lock);
+-	radix_tree_preload_end();
+ 
+ 	return zone;
  }
- EXPORT_SYMBOL(page_cache_prev_gap);
+@@ -537,9 +534,7 @@ static void reada_zone_release(struct kref *kref)
+ {
+ 	struct reada_zone *zone = container_of(kref, struct reada_zone, refcnt);
  
-+bool page_cache_range_empty(struct address_space *mapping, pgoff_t index,
-+				pgoff_t max)
-+{
-+	struct page *page;
-+	XA_STATE(xas, &mapping->pages, index);
+-	radix_tree_delete(&zone->device->reada_zones,
+-			  zone->end >> PAGE_SHIFT);
+-
++	xa_erase(&zone->device->reada_zones, zone->end >> PAGE_SHIFT);
+ 	kfree(zone);
+ }
+ 
+@@ -592,7 +587,7 @@ static void reada_peer_zones_set_lock(struct reada_zone *zone, int lock)
+ 
+ 	for (i = 0; i < zone->ndevs; ++i) {
+ 		struct reada_zone *peer;
+-		peer = radix_tree_lookup(&zone->devs[i]->reada_zones, index);
++		peer = xa_load(&zone->devs[i]->reada_zones, index);
+ 		if (peer && peer->device != zone->device)
+ 			peer->locked = lock;
+ 	}
+@@ -603,12 +598,11 @@ static void reada_peer_zones_set_lock(struct reada_zone *zone, int lock)
+  */
+ static int reada_pick_zone(struct btrfs_device *dev)
+ {
+-	struct reada_zone *top_zone = NULL;
++	struct reada_zone *zone, *top_zone = NULL;
+ 	struct reada_zone *top_locked_zone = NULL;
+ 	u64 top_elems = 0;
+ 	u64 top_locked_elems = 0;
+ 	unsigned long index = 0;
+-	int ret;
+ 
+ 	if (dev->reada_curr_zone) {
+ 		reada_peer_zones_set_lock(dev->reada_curr_zone, 0);
+@@ -616,14 +610,7 @@ static int reada_pick_zone(struct btrfs_device *dev)
+ 		dev->reada_curr_zone = NULL;
+ 	}
+ 	/* pick the zone with the most elements */
+-	while (1) {
+-		struct reada_zone *zone;
+-
+-		ret = radix_tree_gang_lookup(&dev->reada_zones,
+-					     (void **)&zone, index, 1);
+-		if (ret == 0)
+-			break;
+-		index = (zone->end >> PAGE_SHIFT) + 1;
++	xa_for_each(&dev->reada_zones, zone, index, ULONG_MAX, XA_PRESENT) {
+ 		if (zone->locked) {
+ 			if (zone->elems > top_locked_elems) {
+ 				top_locked_elems = zone->elems;
+@@ -819,15 +806,13 @@ static void dump_devs(struct btrfs_fs_info *fs_info, int all)
+ 
+ 	spin_lock(&fs_info->reada_lock);
+ 	list_for_each_entry(device, &fs_devices->devices, dev_list) {
++		struct reada_zone *zone;
 +
-+	rcu_read_lock();
-+	do {
-+		page = xas_find(&xas, max);
-+		if (xas_retry(&xas, page))
-+			continue;
-+		/* Shadow entries don't count */
-+		if (xa_is_value(page))
-+			continue;
-+		/*
-+		 * We don't need to try to pin this page; we're about to
-+		 * release the RCU lock anyway.  It is enough to know that
-+		 * there was a page here recently.
-+		 */
-+	} while (0);
-+	rcu_read_unlock();
-+
-+	return page != NULL;
-+}
-+EXPORT_SYMBOL_GPL(page_cache_range_empty);
-+
- /**
-  * find_get_entry - find and get a page cache entry
-  * @mapping: the address_space to search
+ 		btrfs_debug(fs_info, "dev %lld has %d in flight", device->devid,
+ 			atomic_read(&device->reada_in_flight));
+ 		index = 0;
+-		while (1) {
+-			struct reada_zone *zone;
+-			ret = radix_tree_gang_lookup(&device->reada_zones,
+-						     (void **)&zone, index, 1);
+-			if (ret == 0)
+-				break;
++		xa_for_each(&dev->reada_zones, zone, index, ULONG_MAX,
++								XA_PRESENT) {
+ 			pr_debug("  zone %llu-%llu elems %llu locked %d devs",
+ 				    zone->start, zone->end, zone->elems,
+ 				    zone->locked);
+@@ -839,7 +824,6 @@ static void dump_devs(struct btrfs_fs_info *fs_info, int all)
+ 				pr_cont(" curr off %llu",
+ 					device->reada_next - zone->start);
+ 			pr_cont("\n");
+-			index = (zone->end >> PAGE_SHIFT) + 1;
+ 		}
+ 		cnt = 0;
+ 		index = 0;
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index cba286183ff9..8e683799b436 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -247,7 +247,7 @@ static struct btrfs_device *__alloc_device(void)
+ 	atomic_set(&dev->reada_in_flight, 0);
+ 	atomic_set(&dev->dev_stats_ccnt, 0);
+ 	btrfs_device_data_ordered_init(dev);
+-	INIT_RADIX_TREE(&dev->reada_zones, GFP_NOFS & ~__GFP_DIRECT_RECLAIM);
++	xa_init(&dev->reada_zones);
+ 	INIT_RADIX_TREE(&dev->reada_extents, GFP_NOFS & ~__GFP_DIRECT_RECLAIM);
+ 
+ 	return dev;
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index 335fd1590458..aeabe03d3e44 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -139,7 +139,7 @@ struct btrfs_device {
+ 	atomic_t reada_in_flight;
+ 	u64 reada_next;
+ 	struct reada_zone *reada_curr_zone;
+-	struct radix_tree_root reada_zones;
++	struct xarray reada_zones;
+ 	struct radix_tree_root reada_extents;
+ 
+ 	/* disk I/O failure stats. For detailed description refer to
 -- 
 2.15.1
