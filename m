@@ -1,8 +1,8 @@
 Return-Path: <willy@infradead.org>
 From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 62/99] dax: Convert dax_insert_pfn_mkwrite to XArray
-Date: Wed, 17 Jan 2018 12:21:26 -0800
-Message-Id: <20180117202203.19756-63-willy@infradead.org>
+Subject: [PATCH v6 25/99] page cache: Convert page deletion to XArray
+Date: Wed, 17 Jan 2018 12:20:49 -0800
+Message-Id: <20180117202203.19756-26-willy@infradead.org>
 In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
 References: <20180117202203.19756-1-willy@infradead.org>
 To: linux-kernel@vger.kernel.org
@@ -11,40 +11,69 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Matthew Wilcox <mawilcox@microsoft.com>
 
+The code is slightly shorter and simpler.
+
 Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- fs/dax.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ mm/filemap.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index b66b8c896ed8..e6b25ef112f2 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1497,21 +1497,21 @@ static int dax_insert_pfn_mkwrite(struct vm_fault *vmf,
- 	void *entry;
- 	int vmf_ret, error;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index e6371b551de1..ed30d5310e50 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -112,30 +112,28 @@
+  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
+  */
  
--	xa_lock_irq(&mapping->pages);
-+	xas_lock_irq(&xas);
- 	entry = get_unlocked_mapping_entry(&xas);
- 	/* Did we race with someone splitting entry or so? */
- 	if (!entry ||
- 	    (pe_size == PE_SIZE_PTE && !dax_is_pte_entry(entry)) ||
- 	    (pe_size == PE_SIZE_PMD && !dax_is_pmd_entry(entry))) {
- 		put_unlocked_mapping_entry(&xas, entry);
--		xa_unlock_irq(&mapping->pages);
-+		xas_unlock_irq(&xas);
- 		trace_dax_insert_pfn_mkwrite_no_entry(mapping->host, vmf,
- 						      VM_FAULT_NOPAGE);
- 		return VM_FAULT_NOPAGE;
+-static void page_cache_tree_delete(struct address_space *mapping,
++static void page_cache_delete(struct address_space *mapping,
+ 				   struct page *page, void *shadow)
+ {
+-	int i, nr;
++	XA_STATE(xas, &mapping->pages, page->index);
++	unsigned int i, nr;
+ 
+-	/* hugetlb pages are represented by one entry in the radix tree */
++	mapping_set_update(&xas, mapping);
++
++	/* hugetlb pages are represented by a single entry in the xarray */
+ 	nr = PageHuge(page) ? 1 : hpage_nr_pages(page);
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 	VM_BUG_ON_PAGE(nr != 1 && shadow, page);
+ 
+-	for (i = 0; i < nr; i++) {
+-		struct radix_tree_node *node;
+-		void **slot;
+-
+-		__radix_tree_lookup(&mapping->pages, page->index + i,
+-				    &node, &slot);
+-
+-		VM_BUG_ON_PAGE(!node && nr != 1, page);
+-
+-		radix_tree_clear_tags(&mapping->pages, node, slot);
+-		__radix_tree_replace(&mapping->pages, node, slot, shadow,
+-				workingset_lookup_update(mapping));
++	i = nr;
++repeat:
++	xas_store(&xas, shadow);
++	xas_init_tags(&xas);
++	if (--i) {
++		xas_next(&xas);
++		goto repeat;
  	}
--	radix_tree_tag_set(&mapping->pages, index, PAGECACHE_TAG_DIRTY);
-+	xas_set_tag(&xas, PAGECACHE_TAG_DIRTY);
- 	entry = lock_slot(&xas);
--	xa_unlock_irq(&mapping->pages);
-+	xas_unlock_irq(&xas);
- 	switch (pe_size) {
- 	case PE_SIZE_PTE:
- 		error = vm_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+ 
+ 	page->mapping = NULL;
+@@ -235,7 +233,7 @@ void __delete_from_page_cache(struct page *page, void *shadow)
+ 	trace_mm_filemap_delete_from_page_cache(page);
+ 
+ 	unaccount_page_cache_page(mapping, page);
+-	page_cache_tree_delete(mapping, page, shadow);
++	page_cache_delete(mapping, page, shadow);
+ }
+ 
+ static void page_cache_free_page(struct address_space *mapping,
 -- 
 2.15.1
