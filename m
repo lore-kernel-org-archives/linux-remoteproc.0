@@ -1,67 +1,54 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v2 02/16] remoteproc: add release ops in rproc_mem_entry
- struct
-Date: Fri, 12 Jan 2018 07:43:52 +0000
-Message-ID: <4dfc381266dd4290a8e53c4074fe3ccb@SFHDAG7NODE2.st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-3-git-send-email-loic.pallardy@st.com>
- <20171214003427.GD17344@builder>
-In-Reply-To: <20171214003427.GD17344@builder>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Return-Path: <willy@infradead.org>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v6 51/99] btrfs: Convert page cache to XArray
+Date: Wed, 17 Jan 2018 12:21:15 -0800
+Message-Id: <20180117202203.19756-52-willy@infradead.org>
+In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
+References: <20180117202203.19756-1-willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ fs/btrfs/compression.c | 4 +---
+ fs/btrfs/extent_io.c   | 6 ++----
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Thursday, December 14, 2017 1:34 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org
-> Subject: Re: [PATCH v2 02/16] remoteproc: add release ops in
-> rproc_mem_entry struct
->=20
-> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
->=20
-> > +static int rproc_release_carveout(struct rproc *rproc, struct
-> rproc_mem_entry *mem)
-> > +{
-> > +	struct device *dev =3D &rproc->dev;
-> > +
-> > +	/* clean up carveout allocations */
-> > +	dma_free_coherent(dev->parent, mem->len, mem->va, mem-
-> >dma);
-> > +	list_del(&mem->node);
->=20
-> The core is responsible for putting the node on a list, so let the
-> cleanup take if off the list.
-ok
->=20
-> > +	kfree(mem);
-> > +	return 0;
-> > +}
-> > +
-> [..]
-> > @@ -319,12 +322,11 @@ struct rproc_mem_entry {
-> >  	dma_addr_t dma;
-> >  	int len;
-> >  	u32 da;
-> > +	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
->=20
-> The placement here seems random, please move it last in the struct.
-ok
->=20
-> >  	void *priv;
-> >  	struct list_head node;
-> >  };
-> >
->=20
-> Regards,
-> Bjorn
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index e687d06cd97c..4174b166e235 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -449,9 +449,7 @@ static noinline int add_ra_bio_pages(struct inode *inode,
+ 		if (pg_index > end_index)
+ 			break;
+ 
+-		rcu_read_lock();
+-		page = radix_tree_lookup(&mapping->pages, pg_index);
+-		rcu_read_unlock();
++		page = xa_load(&mapping->pages, pg_index);
+ 		if (page && !xa_is_value(page)) {
+ 			misses++;
+ 			if (misses > 4)
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 4301cbf4e31f..fd5e9d887328 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -5197,11 +5197,9 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
+ 
+ 		clear_page_dirty_for_io(page);
+ 		xa_lock_irq(&page->mapping->pages);
+-		if (!PageDirty(page)) {
+-			radix_tree_tag_clear(&page->mapping->pages,
+-						page_index(page),
++		if (!PageDirty(page))
++			__xa_clear_tag(&page->mapping->pages, page_index(page),
+ 						PAGECACHE_TAG_DIRTY);
+-		}
+ 		xa_unlock_irq(&page->mapping->pages);
+ 		ClearPageError(page);
+ 		unlock_page(page);
+-- 
+2.15.1
