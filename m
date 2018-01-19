@@ -1,37 +1,45 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 35/99] mm: Convert __do_page_cache_readahead to XArray
-Date: Wed, 17 Jan 2018 12:20:59 -0800
-Message-Id: <20180117202203.19756-36-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 19 Jan 2018 07:08:00 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] rpmsg: smd: Fix double unlock in __qcom_smd_send()
+Message-ID: <20180119150800.GB887@minitux>
+References: <20180119132236.GA32641@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180119132236.GA32641@mwanda>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Fri 19 Jan 05:22 PST 2018, Dan Carpenter wrote:
 
-This one is trivial.
+> We're not holding the lock here, so we shouldn't unlock.
+> 
+> Fixes: 178f3f75bb4e ("rpmsg: smd: Don't hold the tx lock during wait")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> 
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/readahead.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Thanks Dan!
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index f64b31b3a84a..66bcaffd47f0 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -174,9 +174,7 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
- 		if (page_offset > end_index)
- 			break;
- 
--		rcu_read_lock();
--		page = radix_tree_lookup(&mapping->pages, page_offset);
--		rcu_read_unlock();
-+		page = xa_load(&mapping->pages, page_offset);
- 		if (page && !xa_is_value(page))
- 			continue;
- 
--- 
-2.15.1
+Regards,
+Bjorn
+
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index cea9a0930c4d..dd3e7eea8c38 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -759,11 +759,11 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
+>  				       qcom_smd_get_tx_avail(channel) >= tlen ||
+>  				       channel->state != SMD_CHANNEL_OPENED);
+>  		if (ret)
+> -			goto out;
+> +			goto ret;
+>  
+>  		ret = mutex_lock_interruptible(&channel->tx_lock);
+>  		if (ret)
+> -			goto out;
+> +			return ret;
+>  
+>  		SET_TX_CHANNEL_FLAG(channel, fBLOCKREADINTR, 1);
+>  	}
