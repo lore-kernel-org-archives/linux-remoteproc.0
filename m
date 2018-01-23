@@ -1,252 +1,101 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
-Date: Fri, 5 Jan 2018 16:53:18 +0000
-Message-ID: <c3e80239c8d84645919713897fcf9e46@SFHDAG7NODE2.st.com>
-References: <20171213224111.17864-1-bjorn.andersson@linaro.org>
- <20171213224111.17864-8-bjorn.andersson@linaro.org>
-In-Reply-To: <20171213224111.17864-8-bjorn.andersson@linaro.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <anup@brainfault.org>
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <1515590217-24256-1-git-send-email-anup@brainfault.org>
+References: <1515590217-24256-1-git-send-email-anup@brainfault.org>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 23 Jan 2018 19:16:13 +0530
+Message-ID: <CAAhSdy3-Uh7kRn+7gLoaEzewu21gMbB4iJ+qXQCYwsXLqJLHMw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] rpmsg: virtio_rpmsg_bus: fix rpmsg_probe() for
+ virtio-mmio transport
+Content-Type: text/plain; charset="UTF-8"
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>, Anup Patel <anup@brainfault.org>, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-
-
-> -----Original Message-----
-> From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-remoteproc-
-> owner@vger.kernel.org] On Behalf Of Bjorn Andersson
-> Sent: Wednesday, December 13, 2017 11:41 PM
-> To: Ohad Ben-Cohen <ohad@wizery.com>; Bjorn Andersson
-> <bjorn.andersson@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH 7/8] remoteproc: Drop dangling find_rsc_table dummies
->=20
-> As the core now deals with the lack of a resource table, remove the
-> dangling custom dummy implementations of find_rsc_table from drivers.
->=20
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Wed, Jan 10, 2018 at 6:46 PM, Anup Patel <anup@brainfault.org> wrote:
+> When virtio-rpmsg device is provided via virtio-mmio transport, the
+> dma_alloc_coherent() (called by rpmsg_probe()) fails on ARM/ARM64
+> systems because "vdev->dev.parent->parent" device is used as parameter
+> to dma_alloc_coherent().
+>
+> The "vdev->dev.parent->parent" device represents underlying remoteproc
+> platform device when virtio-rpmsg device is provided via virtio-remoteproc
+> transport. When virtio-rpmsg device is provided via virtio-mmio transport,
+> the "vdev->dev.parent->parent" device represents the parent device of
+> virtio-mmio platform device and dma_alloc_coherent() fails for this device
+> because generally there is no corresponding platform device and dma_ops
+> are not setup for "vdev->dev.parent->parent".
+>
+> This patch fixes dma_alloc_coherent() usage in rpmsg_probe() by trying
+> dma_alloc_coherent() with "vdev->dev.parent" device when it fails with
+> "vdev->dev.parent->parent" device.
+>
+> Fixes: b5ab5e24e960 ("remoteproc: maintain a generic child device for
+> each rproc")
+>
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> Cc: stable@vger.kernel.org
 > ---
->  drivers/remoteproc/qcom_adsp_pil.c |  1 -
->  drivers/remoteproc/qcom_common.c   | 19 -------------------
->  drivers/remoteproc/qcom_common.h   |  4 ----
->  drivers/remoteproc/qcom_q6v5_pil.c | 11 -----------
->  drivers/remoteproc/qcom_wcnss.c    |  1 -
->  drivers/remoteproc/st_slim_rproc.c | 18 ------------------
->  include/linux/remoteproc.h         |  4 ----
->  7 files changed, 58 deletions(-)
->=20
-> diff --git a/drivers/remoteproc/qcom_adsp_pil.c
-> b/drivers/remoteproc/qcom_adsp_pil.c
-> index 7b9d810b23f1..b0b0d5ca1ca0 100644
-> --- a/drivers/remoteproc/qcom_adsp_pil.c
-> +++ b/drivers/remoteproc/qcom_adsp_pil.c
-> @@ -181,7 +181,6 @@ static const struct rproc_ops adsp_ops =3D {
->  	.start =3D adsp_start,
->  	.stop =3D adsp_stop,
->  	.da_to_va =3D adsp_da_to_va,
-> -	.find_rsc_table =3D qcom_mdt_find_rsc_table,
->  	.load =3D adsp_load,
->  };
->=20
-> diff --git a/drivers/remoteproc/qcom_common.c
-> b/drivers/remoteproc/qcom_common.c
-> index 818ee3657043..ce2dcc4f7de7 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -32,25 +32,6 @@
->=20
->  static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
->=20
-> -/**
-> - * qcom_mdt_find_rsc_table() - provide dummy resource table for
-> remoteproc
-> - * @rproc:	remoteproc handle
-> - * @fw:		firmware header
-> - * @tablesz:	outgoing size of the table
-> - *
-> - * Returns a dummy table.
-> - */
-> -struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
-> -					       const struct firmware *fw,
-> -					       int *tablesz)
-> -{
-> -	static struct resource_table table =3D { .ver =3D 1, };
-> -
-> -	*tablesz =3D sizeof(table);
-> -	return &table;
-> -}
-> -EXPORT_SYMBOL_GPL(qcom_mdt_find_rsc_table);
-> -
->  static int glink_subdev_probe(struct rproc_subdev *subdev)
->  {
->  	struct qcom_rproc_glink *glink =3D to_glink_subdev(subdev);
-> diff --git a/drivers/remoteproc/qcom_common.h
-> b/drivers/remoteproc/qcom_common.h
-> index 541586e528b3..73efed969bfd 100644
-> --- a/drivers/remoteproc/qcom_common.h
-> +++ b/drivers/remoteproc/qcom_common.h
-> @@ -30,10 +30,6 @@ struct qcom_rproc_ssr {
->  	const char *name;
->  };
->=20
-> -struct resource_table *qcom_mdt_find_rsc_table(struct rproc *rproc,
-> -					       const struct firmware *fw,
-> -					       int *tablesz);
-> -
->  void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink
-> *glink);
->  void qcom_remove_glink_subdev(struct rproc *rproc, struct
-> qcom_rproc_glink *glink);
->=20
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c
-> b/drivers/remoteproc/qcom_q6v5_pil.c
-> index fbff5d842581..6f6ea0414366 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -304,16 +304,6 @@ static void q6v5_clk_disable(struct device *dev,
->  		clk_disable_unprepare(clks[i]);
->  }
->=20
-> -static struct resource_table *q6v5_find_rsc_table(struct rproc *rproc,
-> -						  const struct firmware *fw,
-> -						  int *tablesz)
-> -{
-> -	static struct resource_table table =3D { .ver =3D 1, };
-> -
-> -	*tablesz =3D sizeof(table);
-> -	return &table;
-> -}
-> -
->  static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int
-> *current_perm,
->  				   bool remote_owner, phys_addr_t addr,
->  				   size_t size)
-> @@ -927,7 +917,6 @@ static const struct rproc_ops q6v5_ops =3D {
->  	.start =3D q6v5_start,
->  	.stop =3D q6v5_stop,
->  	.da_to_va =3D q6v5_da_to_va,
-> -	.find_rsc_table =3D q6v5_find_rsc_table,
->  	.load =3D q6v5_load,
->  };
->=20
-> diff --git a/drivers/remoteproc/qcom_wcnss.c
-> b/drivers/remoteproc/qcom_wcnss.c
-> index cc44ec598522..1fa5253020dd 100644
-> --- a/drivers/remoteproc/qcom_wcnss.c
-> +++ b/drivers/remoteproc/qcom_wcnss.c
-> @@ -310,7 +310,6 @@ static const struct rproc_ops wcnss_ops =3D {
->  	.start =3D wcnss_start,
->  	.stop =3D wcnss_stop,
->  	.da_to_va =3D wcnss_da_to_va,
-> -	.find_rsc_table =3D qcom_mdt_find_rsc_table,
->  	.load =3D wcnss_load,
->  };
->=20
-> diff --git a/drivers/remoteproc/st_slim_rproc.c
-> b/drivers/remoteproc/st_slim_rproc.c
-> index 1538ea915c49..c6a2a8b68c7a 100644
-> --- a/drivers/remoteproc/st_slim_rproc.c
-> +++ b/drivers/remoteproc/st_slim_rproc.c
-> @@ -200,28 +200,10 @@ static void *slim_rproc_da_to_va(struct rproc
-> *rproc, u64 da, int len)
->  	return va;
->  }
->=20
-> -/*
-> - * Firmware handler operations: sanity, boot address, load ...
-> - */
-> -
-> -static struct resource_table empty_rsc_tbl =3D {
-> -	.ver =3D 1,
-> -	.num =3D 0,
-> -};
-> -
-> -static struct resource_table *slim_rproc_find_rsc_table(struct rproc *rp=
-roc,
-> -					       const struct firmware *fw,
-> -					       int *tablesz)
-> -{
-> -	*tablesz =3D sizeof(empty_rsc_tbl);
-> -	return &empty_rsc_tbl;
-> -}
-> -
->  static const struct rproc_ops slim_rproc_ops =3D {
->  	.start		=3D slim_rproc_start,
->  	.stop		=3D slim_rproc_stop,
->  	.da_to_va       =3D slim_rproc_da_to_va,
-> -	.find_rsc_table =3D slim_rproc_find_rsc_table,
-Hi Bjorn,=20
-Your patch is not complete for st_slim_rproc and so not working.
-In your patch 6/8, .load_rsc_table is define to default rproc_elf_load_rsc_=
-table if no load ops defined.
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 82b8300..7f8710a 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -64,6 +64,7 @@
+>  struct virtproc_info {
+>         struct virtio_device *vdev;
+>         struct virtqueue *rvq, *svq;
+> +       struct device *bufs_dev;
+>         void *rbufs, *sbufs;
+>         unsigned int num_bufs;
+>         unsigned int buf_size;
+> @@ -924,9 +925,16 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>                                      total_buf_space, &vrp->bufs_dma,
+>                                      GFP_KERNEL);
+>         if (!bufs_va) {
+> -               err = -ENOMEM;
+> -               goto vqs_del;
+> -       }
+> +               bufs_va = dma_alloc_coherent(vdev->dev.parent,
+> +                                            total_buf_space, &vrp->bufs_dma,
+> +                                            GFP_KERNEL);
+> +               if (!bufs_va) {
+> +                       err = -ENOMEM;
+> +                       goto vqs_del;
+> +               } else
+> +                       vrp->bufs_dev = vdev->dev.parent;
+> +       } else
+> +               vrp->bufs_dev = vdev->dev.parent->parent;
+>
+>         dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
+>                 bufs_va, &vrp->bufs_dma);
+> @@ -988,7 +996,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>         return 0;
+>
+>  free_coherent:
+> -       dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+> +       dma_free_coherent(vrp->bufs_dev, total_buf_space,
+>                           bufs_va, vrp->bufs_dma);
+>  vqs_del:
+>         vdev->config->del_vqs(vrp->vdev);
+> @@ -1023,7 +1031,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
+>
+>         vdev->config->del_vqs(vrp->vdev);
+>
+> -       dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+> +       dma_free_coherent(vrp->bufs_dev, total_buf_space,
+>                           vrp->rbufs, vrp->bufs_dma);
+>
+>         kfree(vrp);
+> --
+> 2.7.4
+>
 
-	/* Default to ELF loader if no load function is specified */
- 	if (!rproc->ops->load) {
- 		rproc->ops->load =3D rproc_elf_load_segments;
--		rproc->ops->find_rsc_table =3D rproc_elf_find_rsc_table;
-+		rproc->ops->load_rsc_table =3D rproc_elf_load_rsc_table;
+Hi All,
 
-As st_slim_rproc has no load ops, it will inherit from all default ops incl=
-uding rproc_elf_load_rsc_table.
-As no resource table present in firmware, an error will be returned and st_=
-slim_rproc will failed.
-In case of Qualcom, load ops is defined...
-See below B2260 log (with additional error message in rproc_load_rsc_table =
-function.
-
-[   10.201079] remoteproc remoteproc2: st231-delta is available            =
-                                  =20
-[   10.258121] remoteproc remoteproc2: powering up st231-delta             =
-                                  =20
-[   10.258143] remoteproc remoteproc2: Booting fw image rproc-st231-delta-f=
-w, size 44416                     =20
-[   10.258151] rproc_load_rsc_table: error -22 =20
-
-Moreover with your proposal, as the choice to support or not a resource tab=
-le is based on the fact rproc->ops->load_rsc_table is set or not, it is not=
- possible with one unique driver to support firmware with resource table an=
-d firmware without resource table.
-Will be better from my pov to consider that no resource table  found in rpr=
-oc_elf_load_rsc_table function as a normal case and not an error.
+Any comments on this??
 
 Regards,
-Loic
->  };
->=20
->  /**
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index ec1ada7cc6d7..51ddde7535b9 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -332,7 +332,6 @@ struct firmware;
->   * @stop:	power off the device
->   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
->   * @da_to_va:	optional platform hook to perform address translations
-> - * @find_rsc_table:	find the resource table inside the firmware image
->   * @find_loaded_rsc_table: find the loaded resouce table
->   * @load:		load firmeware to memory, where the remote
-> processor
->   *			expects to find it
-> @@ -345,9 +344,6 @@ struct rproc_ops {
->  	void (*kick)(struct rproc *rproc, int vqid);
->  	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
->  	int (*load_rsc_table)(struct rproc *rproc, const struct firmware *fw);
-> -	struct resource_table *(*find_rsc_table)(struct rproc *rproc,
-> -						 const struct firmware *fw,
-> -						 int *tablesz);
->  	struct resource_table *(*find_loaded_rsc_table)(
->  				struct rproc *rproc, const struct firmware
-> *fw);
->  	int (*load)(struct rproc *rproc, const struct firmware *fw);
-> --
-> 2.15.0
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-remotepro=
-c" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Anup
