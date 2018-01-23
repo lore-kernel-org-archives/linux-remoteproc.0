@@ -1,166 +1,147 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v2 05/16] remoteproc: modify rproc_handle_carveout to
- support preallocated region
-Date: Fri, 12 Jan 2018 07:56:27 +0000
-Message-ID: <0bbc0455b6ee45cdb0ebab04117b6a40@SFHDAG7NODE2.st.com>
-References: <1512060411-729-1-git-send-email-loic.pallardy@st.com>
- <1512060411-729-6-git-send-email-loic.pallardy@st.com>
- <20171214005917.GG17344@builder>
-In-Reply-To: <20171214005917.GG17344@builder>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <anup@brainfault.org>
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+In-Reply-To: <1515590259-24304-1-git-send-email-anup@brainfault.org>
+References: <1515590259-24304-1-git-send-email-anup@brainfault.org>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 23 Jan 2018 19:16:36 +0530
+Message-ID: <CAAhSdy31QCxvetu+duu0rVbhwRPF8=bvgQjmi1j8oM86rSvJCw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] rpmsg: Add driver_override device attribute for rpmsg_device
+Content-Type: text/plain; charset="UTF-8"
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>, Anup Patel <anup@brainfault.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+On Wed, Jan 10, 2018 at 6:47 PM, Anup Patel <anup@brainfault.org> wrote:
+> This patch adds "driver_override" device attribute for rpmsg_device which
+> will allow users to explicitly specify the rpmsg_driver to be used via
+> sysfs entry.
+>
+> The "driver_override" device attribute implemented here is very similar
+> to "driver_override" implemented for platform, pci, and amba bus types.
+>
+> One important use-case of "driver_override" device attribute is to force
+> use of rpmsg_chrdev driver for certain rpmsg_device instances.
+>
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-rpmsg | 20 ++++++++++++++
+>  drivers/rpmsg/rpmsg_core.c                | 46 +++++++++++++++++++++++++++++--
+>  2 files changed, 64 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
+> index 189e419..1c8599e 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-rpmsg
+> +++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
+> @@ -73,3 +73,23 @@ Description:
+>                 This sysfs entry tells us whether the channel is a local
+>                 server channel that is announced (values are either
+>                 true or false).
+> +
+> +What:          /sys/bus/rpmsg/devices/.../driver_override
+> +Date:          January 2018
+> +KernelVersion: 4.16
+> +Contact:       Ohad Ben-Cohen <ohad@wizery.com>
+> +Description:
+> +               Every rpmsg device is a communication channel with a remote
+> +               processor. Channels are identified by a textual name (see
+> +               /sys/bus/rpmsg/devices/.../name above) and have a local
+> +               ("source") rpmsg address, and remote ("destination") rpmsg
+> +               address.
+> +
+> +               The listening entity (or client) which communicates with a
+> +               remote processor is referred as rpmsg driver. The rpmsg device
+> +               and rpmsg driver are matched based on rpmsg device name and
+> +               rpmsg driver ID table.
+> +
+> +               This sysfs entry allows the rpmsg driver for a rpmsg device
+> +               to be specified which will override standard OF, ID table
+> +               and name matching.
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index dffa3aa..9a25e42 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -321,11 +321,11 @@ struct device *rpmsg_find_device(struct device *parent,
+>  }
+>  EXPORT_SYMBOL(rpmsg_find_device);
+>
+> -/* sysfs show configuration fields */
+> +/* sysfs configuration fields */
+>  #define rpmsg_show_attr(field, path, format_string)                    \
+>  static ssize_t                                                         \
+>  field##_show(struct device *dev,                                       \
+> -                       struct device_attribute *attr, char *buf)       \
+> +            struct device_attribute *attr, char *buf)                  \
+>  {                                                                      \
+>         struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+>                                                                         \
+> @@ -333,11 +333,52 @@ field##_show(struct device *dev,                                  \
+>  }                                                                      \
+>  static DEVICE_ATTR_RO(field);
+>
+> +#define rpmsg_string_attr(field, path)                                 \
+> +static ssize_t                                                         \
+> +field##_store(struct device *dev,                                      \
+> +             struct device_attribute *attr, const char *buf, size_t sz)\
+> +{                                                                      \
+> +       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+> +       char *new, *old, *cp;                                           \
+> +                                                                       \
+> +       new = kstrndup(buf, sz, GFP_KERNEL);                            \
+> +       if (!new)                                                       \
+> +               return -ENOMEM;                                         \
+> +                                                                       \
+> +       cp = strchr(new, '\n');                                         \
+> +       if (cp)                                                         \
+> +               *cp = '\0';                                             \
+> +                                                                       \
+> +       device_lock(dev);                                               \
+> +       old = rpdev->path;                                              \
+> +       if (strlen(new)) {                                              \
+> +               rpdev->path = new;                                      \
+> +       } else {                                                        \
+> +               kfree(new);                                             \
+> +               rpdev->path = NULL;                                     \
+> +       }                                                               \
+> +       device_unlock(dev);                                             \
+> +                                                                       \
+> +       kfree(old);                                                     \
+> +                                                                       \
+> +       return sz;                                                      \
+> +}                                                                      \
+> +static ssize_t                                                         \
+> +field##_show(struct device *dev,                                       \
+> +            struct device_attribute *attr, char *buf)                  \
+> +{                                                                      \
+> +       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+> +                                                                       \
+> +       return sprintf(buf, "%s\n", rpdev->path);                       \
+> +}                                                                      \
+> +static DEVICE_ATTR_RW(field)
+> +
+>  /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
+>  rpmsg_show_attr(name, id.name, "%s\n");
+>  rpmsg_show_attr(src, src, "0x%x\n");
+>  rpmsg_show_attr(dst, dst, "0x%x\n");
+>  rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+> +rpmsg_string_attr(driver_override, driver_override);
+>
+>  static ssize_t modalias_show(struct device *dev,
+>                              struct device_attribute *attr, char *buf)
+> @@ -359,6 +400,7 @@ static struct attribute *rpmsg_dev_attrs[] = {
+>         &dev_attr_dst.attr,
+>         &dev_attr_src.attr,
+>         &dev_attr_announce.attr,
+> +       &dev_attr_driver_override.attr,
+>         NULL,
+>  };
+>  ATTRIBUTE_GROUPS(rpmsg_dev);
+> --
+> 2.7.4
+>
 
+Hi All,
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Thursday, December 14, 2017 1:59 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org
-> Subject: Re: [PATCH v2 05/16] remoteproc: modify rproc_handle_carveout to
-> support preallocated region
->=20
-> On Thu 30 Nov 08:46 PST 2017, Loic Pallardy wrote:
->=20
-> > In current version rproc_handle_carveout function support only dynamic
-> > region allocation.
-> > This patch extends rproc_handle_carveout function to support different
-> carveout
-> > configurations:
-> > - fixed DA and fixed PA: check if already part of pre-registered carveo=
-uts
-> > (platform driver). If no, return error.
-> > - fixed DA and any PA: check if already part of pre-allocated carveouts
-> > (platform driver). If not found and rproc supports iommu, continue with
-> > dynamic allocation (DA will be used for iommu programming), else return
-> > error as no way to force DA.
-> > - any DA and any PA: use original dynamic allocation
-> >
-> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 40
-> ++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 40 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> > index 78525d1..515a17a 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -184,6 +184,10 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da,
-> int len)
-> >  	struct rproc_mem_entry *carveout;
-> >  	void *ptr =3D NULL;
-> >
-> > +	/*
-> > +	 * da_to_va platform driver is deprecated. Driver should register
-> > +	 * carveout thanks to rproc_add_carveout function
-> > +	 */
->=20
-> I think this comment is unrelated to the rest of this patch. I also
-> think that at the end of the carveout-rework we should have a patch
-> removing this ops.
+Any comments on this??
 
-I'll remove this comment and add a da_to_va clean-up patch at the end of th=
-e series
-
->=20
-> >  	if (rproc->ops->da_to_va) {
-> >  		ptr =3D rproc->ops->da_to_va(rproc, da, len);
-> >  		if (ptr)
-> > @@ -677,6 +681,7 @@ static int rproc_handle_carveout(struct rproc
-> *rproc,
-> >  	struct rproc_mem_entry *carveout, *mapping;
-> >  	struct device *dev =3D &rproc->dev;
-> >  	dma_addr_t dma;
-> > +	phys_addr_t pa;
-> >  	void *va;
-> >  	int ret;
-> >
-> > @@ -698,6 +703,41 @@ static int rproc_handle_carveout(struct rproc
-> *rproc,
-> >  	if (!carveout)
-> >  		return -ENOMEM;
-> >
-> > +	/* Check carveout rsc already part of a registered carveout */
-> > +	if (rsc->da !=3D FW_RSC_ADDR_ANY) {
->=20
-> As mentioned before, I consider it perfectly viable for rsc->da to be
-> ANY and the driver providing a fixed carveout.
-
-Yes I'll change sequence to lookup by name first and then verify exact para=
-meters matching , not only da definition.
-
->=20
-> > +		va =3D rproc_find_carveout_by_da(rproc, rsc->da, rsc->len);
-> > +
-> > +		if (va) {
->=20
-> In a system with an iommu it's possible that rsc->len is larger than
-> some carveout->len and va is NULL here so we fall through, allocate some
-> memory and remap a segment of the carveout. (Or hopefully fails
-> attempting).
->=20
-> > +			/* Registered region found */
-> > +			pa =3D rproc_va_to_pa(va);
-> > +			if (rsc->pa !=3D FW_RSC_ADDR_ANY && rsc->pa !=3D
-> (u32)pa) {
-> > +				/* Carveout doesn't match request */
-> > +				dev_err(dev->parent,
-> > +					"Failed to find carveout fitting da and
-> pa\n");
-> > +				return -ENOMEM;
-> > +			}
-> > +
-> > +			/* Update rsc table with physical address */
-> > +			rsc->pa =3D (u32)pa;
-> > +
-> > +			/* Update carveouts list */
-> > +			carveout->va =3D va;
-> > +			carveout->len =3D rsc->len;
-> > +			carveout->da =3D rsc->da;
-> > +			carveout->priv =3D (void *)CARVEOUT_RSC;
-> > +
-> > +			list_add_tail(&carveout->node, &rproc->carveouts);
->=20
-> rproc_find_carveout_by_da() will return a reference into a carveout, now
-> we add another overlapping carveout into the same list.
->=20
->=20
-> I think it would be saner to not allow the resource table to describe
-> subsets of carveouts registered by the driver.
->=20
-> In which case this would better find a carveout by name or exact da,
-> then check that the pa, da, len and rsc->flags are adequate.
-
-Agree
-/Loic
->=20
-> > +
-> > +			return 0;
-> > +		}
-> > +
-> > +		if (!rproc->domain) {
->=20
-> Currently this function ignore invalid values of da when !domain, so I
-> think it would be good you can submit this sanity check in it's own
-> patch so that anyone bisecting this would know why their broken firmware
-> suddenly isn't loadable.
->=20
-> > +			dev_err(dev->parent,
-> > +				"Bad carveout rsc configuration\n");
-> > +			return -ENOMEM;
-> > +		}
-> > +	}
-> > +
->=20
-> Regards,
-> Bjorn
+Regards,
+Anup
