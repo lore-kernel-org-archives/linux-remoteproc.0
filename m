@@ -1,91 +1,126 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 98/99] qrtr: Convert to XArray
-Date: Wed, 17 Jan 2018 12:22:02 -0800
-Message-Id: <20180117202203.19756-99-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <jmcnicol@redhat.com>
+Date: Fri, 26 Jan 2018 17:32:30 -0800
+From: Jeremy McNicoll <jmcnicol@redhat.com>
+Subject: Re: [PATCH 1/5] rpmsg: smd: Perform handshake during open
+Message-ID: <20180127013230.GB32527@mini-rhel.redhat.com>
+References: <20171212235857.10432-1-bjorn.andersson@linaro.org>
+ <20171212235857.10432-2-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171212235857.10432-2-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Will Newton <will.newton@gmail.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Chris Lew <clew@quicinc.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Tue, Dec 12, 2017 at 03:58:53PM -0800, Bjorn Andersson wrote:
+> Validate the the remote side is opening the channel that we've found by
+> performing a handshake when opening the channel.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/rpmsg/qcom_smd.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index b01774e9fac0..58dd44493420 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -200,6 +200,7 @@ struct qcom_smd_channel {
+>  	char *name;
+>  	enum smd_channel_state state;
+>  	enum smd_channel_state remote_state;
+> +	wait_queue_head_t state_change_event;
+>  
+>  	struct smd_channel_info_pair *info;
+>  	struct smd_channel_info_word_pair *info_word;
+> @@ -570,6 +571,8 @@ static bool qcom_smd_channel_intr(struct qcom_smd_channel *channel)
+>  	if (remote_state != channel->remote_state) {
+>  		channel->remote_state = remote_state;
+>  		need_state_scan = true;
+> +
+> +		wake_up_interruptible_all(&channel->state_change_event);
+>  	}
+>  	/* Indicate that we have seen any state change */
+>  	SET_RX_CHANNEL_FLAG(channel, fSTATE, 0);
+> @@ -786,7 +789,9 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
+>  static int qcom_smd_channel_open(struct qcom_smd_channel *channel,
+>  				 rpmsg_rx_cb_t cb)
+>  {
+> +	struct qcom_smd_edge *edge = channel->edge;
+>  	size_t bb_size;
+> +	int ret;
+>  
+>  	/*
+>  	 * Packets are maximum 4k, but reduce if the fifo is smaller
+> @@ -798,9 +803,33 @@ static int qcom_smd_channel_open(struct qcom_smd_channel *channel,
+>  
+>  	qcom_smd_channel_set_callback(channel, cb);
+>  	qcom_smd_channel_set_state(channel, SMD_CHANNEL_OPENING);
+> +
+> +	/* Wait for remote to enter opening or opened */
+> +	ret = wait_event_interruptible_timeout(channel->state_change_event,
+> +			channel->remote_state == SMD_CHANNEL_OPENING ||
+> +			channel->remote_state == SMD_CHANNEL_OPENED,
+> +			HZ);
+> +	if (!ret) {
+> +		dev_err(&edge->dev, "remote side did not enter opening state\n");
+> +		goto out_close_timeout;
+> +	}
+> +
+>  	qcom_smd_channel_set_state(channel, SMD_CHANNEL_OPENED);
+>  
+> +	/* Wait for remote to enter opened */
+> +	ret = wait_event_interruptible_timeout(channel->state_change_event,
+> +			channel->remote_state == SMD_CHANNEL_OPENED,
+> +			HZ);
+> +	if (!ret) {
+> +		dev_err(&edge->dev, "remote side did not enter open state\n");
+> +		goto out_close_timeout;
+> +	}
+> +
+>  	return 0;
+> +
+> +out_close_timeout:
+> +	qcom_smd_channel_set_state(channel, SMD_CHANNEL_CLOSED);
 
-Moved the kref protection under the xa_lock too.
+Why not do something like this, 
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- net/qrtr/qrtr.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+out_close_timeout:
+	qcom_smd_channel_set_state(channel, SMD_CHANNEL_CLOSING);
+	wait_for_a_little_bit();
+	qcom_smd_channel_set_state(channel, SMD_CHANNEL_CLOSED);
 
-diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
-index 77ab05e23001..7de9a06d2aa2 100644
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -104,10 +104,10 @@ static inline struct qrtr_sock *qrtr_sk(struct sock *sk)
- static unsigned int qrtr_local_nid = -1;
- 
- /* for node ids */
--static RADIX_TREE(qrtr_nodes, GFP_KERNEL);
-+static DEFINE_XARRAY(qrtr_nodes);
- /* broadcast list */
- static LIST_HEAD(qrtr_all_nodes);
--/* lock for qrtr_nodes, qrtr_all_nodes and node reference */
-+/* lock for qrtr_all_nodes */
- static DEFINE_MUTEX(qrtr_node_lock);
- 
- /* local port allocation management */
-@@ -148,12 +148,15 @@ static int qrtr_bcast_enqueue(struct qrtr_node *node, struct sk_buff *skb,
-  * kref_put_mutex.  As such, the node mutex is expected to be locked on call.
-  */
- static void __qrtr_node_release(struct kref *kref)
-+		__releases(qrtr_nodes.xa_lock)
- {
- 	struct qrtr_node *node = container_of(kref, struct qrtr_node, ref);
- 
- 	if (node->nid != QRTR_EP_NID_AUTO)
--		radix_tree_delete(&qrtr_nodes, node->nid);
-+		__xa_erase(&qrtr_nodes, node->nid);
-+	xa_unlock(&qrtr_nodes);
- 
-+	mutex_lock(&qrtr_node_lock);
- 	list_del(&node->item);
- 	mutex_unlock(&qrtr_node_lock);
- 
-@@ -174,7 +177,7 @@ static void qrtr_node_release(struct qrtr_node *node)
- {
- 	if (!node)
- 		return;
--	kref_put_mutex(&node->ref, __qrtr_node_release, &qrtr_node_lock);
-+	kref_put_lock(&node->ref, __qrtr_node_release, &qrtr_nodes.xa_lock);
- }
- 
- /* Pass an outgoing packet socket buffer to the endpoint driver. */
-@@ -217,10 +220,10 @@ static struct qrtr_node *qrtr_node_lookup(unsigned int nid)
- {
- 	struct qrtr_node *node;
- 
--	mutex_lock(&qrtr_node_lock);
--	node = radix_tree_lookup(&qrtr_nodes, nid);
-+	xa_lock(&qrtr_nodes);
-+	node = xa_load(&qrtr_nodes, nid);
- 	node = qrtr_node_acquire(node);
--	mutex_unlock(&qrtr_node_lock);
-+	xa_unlock(&qrtr_nodes);
- 
- 	return node;
- }
-@@ -235,10 +238,8 @@ static void qrtr_node_assign(struct qrtr_node *node, unsigned int nid)
- 	if (node->nid != QRTR_EP_NID_AUTO || nid == QRTR_EP_NID_AUTO)
- 		return;
- 
--	mutex_lock(&qrtr_node_lock);
--	radix_tree_insert(&qrtr_nodes, nid, node);
- 	node->nid = nid;
--	mutex_unlock(&qrtr_node_lock);
-+	xa_store(&qrtr_nodes, nid, node, GFP_KERNEL);
- }
- 
- /**
--- 
-2.15.1
+Doing something like that may get the remote back into a better
+state if say for example it was stuck, rather than jumping directly
+to CLOSED.
+
+The reason why I am suggesting this is that whilst investigating
+the problem of the SMD channel not getting created correctly, due
+to the initial state of the remote being in an unexpected state I did
+observe that if the host transistions from CLOSING to CLOSED it
+takes far less time for the host and remote to get back into
+sync.  It could be that it was a side effect of some of the changes
+that I made, although it is worth considering. 
+
+We could run some experiments to see how long it takes for host
+and remote to get back into sync when going directly to CLOSED vs.
+CLOSING, CLOSED.
+
+-jeremy
+
+> +	return -ETIMEDOUT;
+>  }
+>  
+>  /*
+> @@ -1055,6 +1084,7 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+>  	mutex_init(&channel->tx_lock);
+>  	spin_lock_init(&channel->recv_lock);
+>  	init_waitqueue_head(&channel->fblockread_event);
+> +	init_waitqueue_head(&channel->state_change_event);
+>  
+>  	info = qcom_smem_get(edge->remote_pid, smem_info_item, &info_size);
+>  	if (IS_ERR(info)) {
+> -- 
+> 2.15.0
+> 
