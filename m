@@ -1,40 +1,48 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 42/99] shmem: Convert shmem_confirm_swap to XArray
-Date: Wed, 17 Jan 2018 12:21:06 -0800
-Message-Id: <20180117202203.19756-43-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <jmcnicol@redhat.com>
+Date: Fri, 26 Jan 2018 17:35:34 -0800
+From: Jeremy McNicoll <jmcnicol@redhat.com>
+Subject: Re: [PATCH 0/5] Qualcomm SMD updates
+Message-ID: <20180127013534.GA734@mini-rhel.redhat.com>
+References: <20171212235857.10432-1-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171212235857.10432-1-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Will Newton <will.newton@gmail.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Chris Lew <clew@quicinc.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Tue, Dec 12, 2017 at 03:58:52PM -0800, Bjorn Andersson wrote:
+> A series of fixes for a few issues reported or seen with SMD.
+> 
+> The first two fixes changes the trigger for creating devices for channels
+> found, which should cause the rpm-smd driver to probe on 8909 and 8994 devices.
+> 
 
-xa_load has its own RCU locking, so we can eliminate it here.
+.... and 8992.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/shmem.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+> The third patch fixes an issue when multiple callers end up waiting on events.
+> 
+> The forth fix moves the check for a closed channel out of the tx-full loop, to
+> fail non-full send requests on a closed channel as well.
+> 
+> The last fix improves the handling of concurrent send-requests, allowing
+> concurrent sends, in particular try_send, to progress even though we're
+> sleeping waiting for room in the tx fifo.
+> 
+> Bjorn Andersson (5):
+>   rpmsg: smd: Perform handshake during open
+>   rpmsg: smd: Create device for all channels
+>   rpmsg: smd: Wake up all waiters
+>   rpmsg: smd: Fail send on a closed channel
+>   rpmsg: smd: Don't hold the tx lock during wait
+> 
+>  drivers/rpmsg/qcom_smd.c | 60 +++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 47 insertions(+), 13 deletions(-)
+>
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index fad6c9e7402e..654f367aca90 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -348,12 +348,7 @@ static int shmem_xa_replace(struct address_space *mapping,
- static bool shmem_confirm_swap(struct address_space *mapping,
- 			       pgoff_t index, swp_entry_t swap)
- {
--	void *item;
--
--	rcu_read_lock();
--	item = radix_tree_lookup(&mapping->pages, index);
--	rcu_read_unlock();
--	return item == swp_to_radix_entry(swap);
-+	return xa_load(&mapping->pages, index) == swp_to_radix_entry(swap);
- }
- 
- /*
--- 
-2.15.1
+
+Please add my tested by on this series as I have verified them on both
+my Nexus 5X and 6P.  
+
+-jeremy
