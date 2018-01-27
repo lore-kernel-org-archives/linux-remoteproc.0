@@ -1,113 +1,88 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 57/99] dax: Convert dax_unlock_mapping_entry to XArray
-Date: Wed, 17 Jan 2018 12:21:21 -0800
-Message-Id: <20180117202203.19756-58-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <jmcnicol@redhat.com>
+Date: Fri, 26 Jan 2018 17:01:52 -0800
+From: Jeremy McNicoll <jmcnicol@redhat.com>
+Subject: Re: [PATCH 2/5] rpmsg: smd: Create device for all channels
+Message-ID: <20180127010152.GA32527@mini-rhel.redhat.com>
+References: <20171212235857.10432-1-bjorn.andersson@linaro.org>
+ <20171212235857.10432-3-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171212235857.10432-3-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Will Newton <will.newton@gmail.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Chris Lew <clew@quicinc.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Tue, Dec 12, 2017 at 03:58:54PM -0800, Bjorn Andersson wrote:
+> Rather than selectively creating devices only for the channels that the
+> remote have moved to "opening" state let's create devices for all
+> channels found. The driver model will match drivers to the ones we care
+> about and attempt to open these.
+> 
+> The one case where this fails is if the user loads a firmware that lacks
+> a particular channel of the previous firmware that was running, in which
+> case we would find the old channel and attempt to probe it. The channel
+> opening handshake will ensure this will result in a graceful failure.
 
-Replace slot_locked() with dax_locked() and inline unlock_slot() into
-its only caller.
+Another case is that on the 8992/8994 there is no call to create_device
+due to the RPM always leaving the RX channel in the CLOSING state.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- fs/dax.c | 48 ++++++++++++++++--------------------------------
- 1 file changed, 16 insertions(+), 32 deletions(-)
+I believe this may be happening in the LK based on this message:
+"[270] Waiting for the RPM to populate smd channel table "
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 5097a606da1a..f3463d93a6ce 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -73,6 +73,11 @@ fs_initcall(init_dax_wait_table);
- #define DAX_ZERO_PAGE	(1UL << 2)
- #define DAX_EMPTY	(1UL << 3)
- 
-+static bool dax_locked(void *entry)
-+{
-+	return xa_to_value(entry) & DAX_ENTRY_LOCK;
-+}
-+
- static unsigned long dax_radix_sector(void *entry)
- {
- 	return xa_to_value(entry) >> DAX_SHIFT;
-@@ -180,16 +185,6 @@ static void dax_wake_mapping_entry_waiter(struct address_space *mapping,
- 		__wake_up(wq, TASK_NORMAL, wake_all ? 0 : 1, &key);
- }
- 
--/*
-- * Check whether the given slot is locked.  Must be called with xa_lock held.
-- */
--static inline int slot_locked(struct address_space *mapping, void **slot)
--{
--	unsigned long entry = xa_to_value(
--		radix_tree_deref_slot_protected(slot, &mapping->pages.xa_lock));
--	return entry & DAX_ENTRY_LOCK;
--}
--
- /*
-  * Mark the given slot as locked.  Must be called with xa_lock held.
-  */
-@@ -202,18 +197,6 @@ static inline void *lock_slot(struct address_space *mapping, void **slot)
- 	return entry;
- }
- 
--/*
-- * Mark the given slot as unlocked.  Must be called with xa_lock held.
-- */
--static inline void *unlock_slot(struct address_space *mapping, void **slot)
--{
--	unsigned long v = xa_to_value(
--		radix_tree_deref_slot_protected(slot, &mapping->pages.xa_lock));
--	void *entry = xa_mk_value(v & ~DAX_ENTRY_LOCK);
--	radix_tree_replace_slot(&mapping->pages, slot, entry);
--	return entry;
--}
--
- /*
-  * Lookup entry in radix tree, wait for it to become unlocked if it is
-  * a DAX entry and return it. The caller must call
-@@ -237,8 +220,7 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
- 		entry = __radix_tree_lookup(&mapping->pages, index, NULL,
- 					  &slot);
- 		if (!entry ||
--		    WARN_ON_ONCE(!xa_is_value(entry)) ||
--		    !slot_locked(mapping, slot)) {
-+		    WARN_ON_ONCE(!xa_is_value(entry)) || !dax_locked(entry)) {
- 			if (slotp)
- 				*slotp = slot;
- 			return entry;
-@@ -257,17 +239,19 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
- static void dax_unlock_mapping_entry(struct address_space *mapping,
- 				     pgoff_t index)
- {
--	void *entry, **slot;
-+	XA_STATE(xas, &mapping->pages, index);
-+	void *entry;
- 
--	xa_lock_irq(&mapping->pages);
--	entry = __radix_tree_lookup(&mapping->pages, index, NULL, &slot);
--	if (WARN_ON_ONCE(!entry || !xa_is_value(entry) ||
--			 !slot_locked(mapping, slot))) {
--		xa_unlock_irq(&mapping->pages);
-+	xas_lock_irq(&xas);
-+	entry = xas_load(&xas);
-+	if (WARN_ON_ONCE(!entry || !xa_is_value(entry) || !dax_locked(entry))) {
-+		xas_unlock_irq(&xas);
- 		return;
- 	}
--	unlock_slot(mapping, slot);
--	xa_unlock_irq(&mapping->pages);
-+	entry = xa_mk_value(xa_to_value(entry) & ~DAX_ENTRY_LOCK);
-+	xas_store(&xas, entry);
-+	/* Safe to not call xas_pause here -- we don't touch the array after */
-+	xas_unlock_irq(&xas);
- 	dax_wake_mapping_entry_waiter(mapping, index, entry, false);
- }
- 
--- 
-2.15.1
+The exact same behaviour has been observed on the downstream kernel
+(initial state needing to be ignored in order).  Stated another way,
+downstream _BLINDLY_ calls platform_device_register in smd_alloc_channel
+regardless of the value returned by ch->half_ch->get_state(ch->recv));
+
+In the afore mentioned case _ALL_ of the images (RPM, bootloader: BZ11h, LK)
+used on the Nexus 5X/6P under test were unmodified as provided by MSM
+and/or Google.  
+
+
+> 
+> The result of this patch is that we will actively open the RPM channel
+> even though it's left in a state other than "opening" after the boot
+> loader's closing of the channel.
+>
+
+Its been a while since I looked at this closely but, isn't the result
+of this patch that we now will create a channel / register a platform
+device if the state of the channel is left in any state. 
+
+> Reported-by: Jeremy McNicoll <jmcnicol@redhat.com>
+
+.....and Suggested-by: Jeremy McNicoll <jeremymc@redhat.com>
+
+
+> Reported-by: Will Newton <will.newton@gmail.com>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/rpmsg/qcom_smd.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 58dd44493420..1beddea6f087 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -1225,11 +1225,6 @@ static void qcom_channel_state_worker(struct work_struct *work)
+>  		if (channel->state != SMD_CHANNEL_CLOSED)
+>  			continue;
+>  
+> -		remote_state = GET_RX_CHANNEL_INFO(channel, state);
+> -		if (remote_state != SMD_CHANNEL_OPENING &&
+> -		    remote_state != SMD_CHANNEL_OPENED)
+> -			continue;
+> -
+
+
+The code looks good, and the change is _VERY_ familiar. 
+
+-jeremy
+
+>  		if (channel->registered)
+>  			continue;
+>  
+> -- 
+> 2.15.0
+> 
