@@ -1,38 +1,72 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 7 Feb 2018 07:27:53 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] remoteproc: Remove null character write of shared mem
-Message-ID: <20180207152753.GO9465@builder>
-References: <1518009762-26480-1-git-send-email-shajit@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1518009762-26480-1-git-send-email-shajit@codeaurora.org>
-To: Jitendra Sharma <shajit@codeaurora.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <shajit@codeaurora.org>
+From: Jitendra Sharma <shajit@codeaurora.org>
+Subject: [PATCH] remoteproc: Remove null character write of shared mem
+Date: Wed,  7 Feb 2018 18:52:42 +0530
+Message-Id: <1518009762-26480-1-git-send-email-shajit@codeaurora.org>
+To: bjorn.andersson@linaro.org, sboyd@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Jitendra Sharma <shajit@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 07 Feb 05:22 PST 2018, Jitendra Sharma wrote:
+remoteproc is writing '\0' in the shared mem region. This
+region is shared among multiple clients that are also trying
+to read. Hence they miss first character.
 
-> remoteproc is writing '\0' in the shared mem region. This
-> region is shared among multiple clients that are also trying
-> to read. Hence they miss first character.
-> 
-> Remove this null character write, as this mem area is
-> supposed to be Read only.
-> 
-> Further during every subsystem reboot, this region is
-> initialized with default, hence no need to write this
-> region.
+Remove this null character write, as this mem area is
+supposed to be Read only.
 
-Thanks for your patch Jitendra!
+Further during every subsystem reboot, this region is
+initialized with default, hence no need to write this
+region.
 
-The write was removed from the downstream kernel in msm-4.9, late last
-year. Can you please confirm that you describe here is valid for
-platforms supported prior to this change as well?
+Signed-off-by: Jitendra Sharma <shajit@codeaurora.org>
+---
+ drivers/remoteproc/qcom_adsp_pil.c | 3 ---
+ drivers/remoteproc/qcom_q6v5_pil.c | 3 ---
+ drivers/remoteproc/qcom_wcnss.c    | 3 ---
+ 3 files changed, 9 deletions(-)
 
-E.g. is what you're describing true for wcnss on 8064, adsp on 8974 and
-mpss on 8916?
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 373c167..4a2ee6c 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -201,9 +201,6 @@ static irqreturn_t adsp_fatal_interrupt(int irq, void *dev)
+ 
+ 	rproc_report_crash(adsp->rproc, RPROC_FATAL_ERROR);
+ 
+-	if (!IS_ERR(msg))
+-		msg[0] = '\0';
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index b4e5e72..f51e143 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -959,9 +959,6 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *dev)
+ 
+ 	rproc_report_crash(qproc->rproc, RPROC_FATAL_ERROR);
+ 
+-	if (!IS_ERR(msg))
+-		msg[0] = '\0';
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 3f06092..043f3d3 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -332,9 +332,6 @@ static irqreturn_t wcnss_fatal_interrupt(int irq, void *dev)
+ 
+ 	rproc_report_crash(wcnss->rproc, RPROC_FATAL_ERROR);
+ 
+-	if (!IS_ERR(msg))
+-		msg[0] = '\0';
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
