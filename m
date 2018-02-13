@@ -1,48 +1,86 @@
-Return-Path: <clew@codeaurora.org>
-Subject: Re: [PATCH] rpmsg: glink: Use spinlock in tx path
-References: <20180213190404.25026-1-bjorn.andersson@linaro.org>
-From: Chris Lew <clew@codeaurora.org>
-Message-ID: <f376c90c-513d-0148-7bd2-9aae2151fd2d@codeaurora.org>
-Date: Wed, 21 Feb 2018 11:39:45 -0800
-MIME-Version: 1.0
-In-Reply-To: <20180213190404.25026-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Srini Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] rpmsg: glink: Use spinlock in tx path
+Date: Tue, 13 Feb 2018 11:04:04 -0800
+Message-Id: <20180213190404.25026-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Chris Lew <clew@codeaurora.org>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Srini Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hey Bjorn,
+Switch the tx_lock to a spinlock we allow clients to use rpmsg_trysend()
+from atomic context.
 
-Minor issue with the glink patch.
+In order to allow clients to sleep while waiting for space in the FIFO
+we release the lock temporarily around the delay; which should be
+replaced by sending a READ_NOTIF and waiting for the remote to signal
+us that space has been made available.
 
-Thanks,
-Chris
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-On 2/13/2018 11:04 AM, Bjorn Andersson wrote:
-
-[..]
-> @@ -288,15 +288,14 @@ static int qcom_glink_tx(struct qcom_glink *glink,
->   			 const void *data, size_t dlen, bool wait)
->   {
->   	unsigned int tlen = hlen + dlen;
-> +	unsigned long flags;
->   	int ret;
->   
->   	/* Reject packets that are too big */
->   	if (tlen >= glink->tx_pipe->length)
->   		return -EINVAL;
->   
-> -	ret = mutex_lock_interruptible(&glink->tx_lock);
-> -	if (ret)
-> -		return ret;
-> +	spin_lock_irqsave(&glink->tx_lock, flags);
->   
-
-qcom_glink_tx will return an uninitialized ret value with removal of 
-mutex_lock_interruptible.
-
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index e0f31ed096a5..6e950e9afa82 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -113,7 +113,7 @@ struct qcom_glink {
+ 	spinlock_t rx_lock;
+ 	struct list_head rx_queue;
+ 
+-	struct mutex tx_lock;
++	spinlock_t tx_lock;
+ 
+ 	spinlock_t idr_lock;
+ 	struct idr lcids;
+@@ -288,15 +288,14 @@ static int qcom_glink_tx(struct qcom_glink *glink,
+ 			 const void *data, size_t dlen, bool wait)
+ {
+ 	unsigned int tlen = hlen + dlen;
++	unsigned long flags;
+ 	int ret;
+ 
+ 	/* Reject packets that are too big */
+ 	if (tlen >= glink->tx_pipe->length)
+ 		return -EINVAL;
+ 
+-	ret = mutex_lock_interruptible(&glink->tx_lock);
+-	if (ret)
+-		return ret;
++	spin_lock_irqsave(&glink->tx_lock, flags);
+ 
+ 	while (qcom_glink_tx_avail(glink) < tlen) {
+ 		if (!wait) {
+@@ -304,7 +303,12 @@ static int qcom_glink_tx(struct qcom_glink *glink,
+ 			goto out;
+ 		}
+ 
++		/* Wait without holding the tx_lock */
++		spin_unlock_irqrestore(&glink->tx_lock, flags);
++
+ 		usleep_range(10000, 15000);
++
++		spin_lock_irqsave(&glink->tx_lock, flags);
+ 	}
+ 
+ 	qcom_glink_tx_write(glink, hdr, hlen, data, dlen);
+@@ -313,7 +317,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
+ 	mbox_client_txdone(glink->mbox_chan, 0);
+ 
+ out:
+-	mutex_unlock(&glink->tx_lock);
++	spin_unlock_irqrestore(&glink->tx_lock, flags);
+ 
+ 	return ret;
+ }
+@@ -1567,7 +1571,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 	glink->features = features;
+ 	glink->intentless = intentless;
+ 
+-	mutex_init(&glink->tx_lock);
++	spin_lock_init(&glink->tx_lock);
+ 	spin_lock_init(&glink->rx_lock);
+ 	INIT_LIST_HEAD(&glink->rx_queue);
+ 	INIT_WORK(&glink->rx_work, qcom_glink_work);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
