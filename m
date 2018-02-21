@@ -1,60 +1,147 @@
-Return-Path: <willy@infradead.org>
-From: Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v6 49/99] shmem: Convert shmem_partial_swap_usage to XArray
-Date: Wed, 17 Jan 2018 12:21:13 -0800
-Message-Id: <20180117202203.19756-50-willy@infradead.org>
-In-Reply-To: <20180117202203.19756-1-willy@infradead.org>
-References: <20180117202203.19756-1-willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, linux-usb@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, intel-gfx@lists.freedesktop.org, cgroups@vger.kernel.org, linux-sh@vger.kernel.org, David Howells <dhowells@redhat.com>
+Return-Path: <anup@brainfault.org>
+MIME-Version: 1.0
+In-Reply-To: <1515590259-24304-1-git-send-email-anup@brainfault.org>
+References: <1515590259-24304-1-git-send-email-anup@brainfault.org>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 21 Feb 2018 17:10:02 +0530
+Message-ID: <CAAhSdy3n-LuubSj+GNFoub3HJp0jap3Bu3f_NVeaYhc1H_7mHw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] rpmsg: Add driver_override device attribute for rpmsg_device
+Content-Type: text/plain; charset="UTF-8"
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>, Anup Patel <anup@brainfault.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Wed, Jan 10, 2018 at 6:47 PM, Anup Patel <anup@brainfault.org> wrote:
+> This patch adds "driver_override" device attribute for rpmsg_device which
+> will allow users to explicitly specify the rpmsg_driver to be used via
+> sysfs entry.
+>
+> The "driver_override" device attribute implemented here is very similar
+> to "driver_override" implemented for platform, pci, and amba bus types.
+>
+> One important use-case of "driver_override" device attribute is to force
+> use of rpmsg_chrdev driver for certain rpmsg_device instances.
+>
+> Signed-off-by: Anup Patel <anup@brainfault.org>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-rpmsg | 20 ++++++++++++++
+>  drivers/rpmsg/rpmsg_core.c                | 46 +++++++++++++++++++++++++++++--
+>  2 files changed, 64 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
+> index 189e419..1c8599e 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-rpmsg
+> +++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
+> @@ -73,3 +73,23 @@ Description:
+>                 This sysfs entry tells us whether the channel is a local
+>                 server channel that is announced (values are either
+>                 true or false).
+> +
+> +What:          /sys/bus/rpmsg/devices/.../driver_override
+> +Date:          January 2018
+> +KernelVersion: 4.16
+> +Contact:       Ohad Ben-Cohen <ohad@wizery.com>
+> +Description:
+> +               Every rpmsg device is a communication channel with a remote
+> +               processor. Channels are identified by a textual name (see
+> +               /sys/bus/rpmsg/devices/.../name above) and have a local
+> +               ("source") rpmsg address, and remote ("destination") rpmsg
+> +               address.
+> +
+> +               The listening entity (or client) which communicates with a
+> +               remote processor is referred as rpmsg driver. The rpmsg device
+> +               and rpmsg driver are matched based on rpmsg device name and
+> +               rpmsg driver ID table.
+> +
+> +               This sysfs entry allows the rpmsg driver for a rpmsg device
+> +               to be specified which will override standard OF, ID table
+> +               and name matching.
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index dffa3aa..9a25e42 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -321,11 +321,11 @@ struct device *rpmsg_find_device(struct device *parent,
+>  }
+>  EXPORT_SYMBOL(rpmsg_find_device);
+>
+> -/* sysfs show configuration fields */
+> +/* sysfs configuration fields */
+>  #define rpmsg_show_attr(field, path, format_string)                    \
+>  static ssize_t                                                         \
+>  field##_show(struct device *dev,                                       \
+> -                       struct device_attribute *attr, char *buf)       \
+> +            struct device_attribute *attr, char *buf)                  \
+>  {                                                                      \
+>         struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+>                                                                         \
+> @@ -333,11 +333,52 @@ field##_show(struct device *dev,                                  \
+>  }                                                                      \
+>  static DEVICE_ATTR_RO(field);
+>
+> +#define rpmsg_string_attr(field, path)                                 \
+> +static ssize_t                                                         \
+> +field##_store(struct device *dev,                                      \
+> +             struct device_attribute *attr, const char *buf, size_t sz)\
+> +{                                                                      \
+> +       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+> +       char *new, *old, *cp;                                           \
+> +                                                                       \
+> +       new = kstrndup(buf, sz, GFP_KERNEL);                            \
+> +       if (!new)                                                       \
+> +               return -ENOMEM;                                         \
+> +                                                                       \
+> +       cp = strchr(new, '\n');                                         \
+> +       if (cp)                                                         \
+> +               *cp = '\0';                                             \
+> +                                                                       \
+> +       device_lock(dev);                                               \
+> +       old = rpdev->path;                                              \
+> +       if (strlen(new)) {                                              \
+> +               rpdev->path = new;                                      \
+> +       } else {                                                        \
+> +               kfree(new);                                             \
+> +               rpdev->path = NULL;                                     \
+> +       }                                                               \
+> +       device_unlock(dev);                                             \
+> +                                                                       \
+> +       kfree(old);                                                     \
+> +                                                                       \
+> +       return sz;                                                      \
+> +}                                                                      \
+> +static ssize_t                                                         \
+> +field##_show(struct device *dev,                                       \
+> +            struct device_attribute *attr, char *buf)                  \
+> +{                                                                      \
+> +       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+> +                                                                       \
+> +       return sprintf(buf, "%s\n", rpdev->path);                       \
+> +}                                                                      \
+> +static DEVICE_ATTR_RW(field)
+> +
+>  /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
+>  rpmsg_show_attr(name, id.name, "%s\n");
+>  rpmsg_show_attr(src, src, "0x%x\n");
+>  rpmsg_show_attr(dst, dst, "0x%x\n");
+>  rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+> +rpmsg_string_attr(driver_override, driver_override);
+>
+>  static ssize_t modalias_show(struct device *dev,
+>                              struct device_attribute *attr, char *buf)
+> @@ -359,6 +400,7 @@ static struct attribute *rpmsg_dev_attrs[] = {
+>         &dev_attr_dst.attr,
+>         &dev_attr_src.attr,
+>         &dev_attr_announce.attr,
+> +       &dev_attr_driver_override.attr,
+>         NULL,
+>  };
+>  ATTRIBUTE_GROUPS(rpmsg_dev);
+> --
+> 2.7.4
+>
 
-Simpler code because the xarray takes care of things like the limit and
-dereferencing the slot.
+Hi Bjorn,
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- mm/shmem.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+Can you please review this patch?
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 5a2226e06f8c..4dbcfb436bd1 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -658,29 +658,17 @@ static int shmem_free_swap(struct address_space *mapping,
- unsigned long shmem_partial_swap_usage(struct address_space *mapping,
- 						pgoff_t start, pgoff_t end)
- {
--	struct radix_tree_iter iter;
--	void **slot;
-+	XA_STATE(xas, &mapping->pages, start);
- 	struct page *page;
- 	unsigned long swapped = 0;
- 
- 	rcu_read_lock();
--
--	radix_tree_for_each_slot(slot, &mapping->pages, &iter, start) {
--		if (iter.index >= end)
--			break;
--
--		page = radix_tree_deref_slot(slot);
--
--		if (radix_tree_deref_retry(page)) {
--			slot = radix_tree_iter_retry(&iter);
--			continue;
--		}
--
-+	xas_for_each(&xas, page, end - 1) {
- 		if (xa_is_value(page))
- 			swapped++;
- 
- 		if (need_resched()) {
--			slot = radix_tree_iter_resume(slot, &iter);
-+			xas_pause(&xas);
- 			cond_resched_rcu();
- 		}
- 	}
--- 
-2.15.1
+Regards,
+Anup
