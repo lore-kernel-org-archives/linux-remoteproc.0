@@ -1,19 +1,48 @@
-Return-Path: <anup@brainfault.org>
+Return-Path: <clew@codeaurora.org>
+Subject: Re: [PATCH] rpmsg: glink: Use spinlock in tx path
+References: <20180213190404.25026-1-bjorn.andersson@linaro.org>
+From: Chris Lew <clew@codeaurora.org>
+Message-ID: <f376c90c-513d-0148-7bd2-9aae2151fd2d@codeaurora.org>
+Date: Wed, 21 Feb 2018 11:39:45 -0800
 MIME-Version: 1.0
-In-Reply-To: <1515590259-24304-1-git-send-email-anup@brainfault.org>
-References: <1515590259-24304-1-git-send-email-anup@brainfault.org>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 6 Feb 2018 10:14:29 +0530
-Message-ID: <CAAhSdy1cMqus8UZkj3jxOVVvgMgd=PLMSFb1JHewFoTa=WMLxQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND] rpmsg: Add driver_override device attribute for rpmsg_device
-Content-Type: text/plain; charset="UTF-8"
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>, Anup Patel <anup@brainfault.org>
+In-Reply-To: <20180213190404.25026-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Srini Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+Hey Bjorn,
 
-Can you please have a look at this patch?
+Minor issue with the glink patch.
 
-Regards,
-Anup
+Thanks,
+Chris
+
+On 2/13/2018 11:04 AM, Bjorn Andersson wrote:
+
+[..]
+> @@ -288,15 +288,14 @@ static int qcom_glink_tx(struct qcom_glink *glink,
+>   			 const void *data, size_t dlen, bool wait)
+>   {
+>   	unsigned int tlen = hlen + dlen;
+> +	unsigned long flags;
+>   	int ret;
+>   
+>   	/* Reject packets that are too big */
+>   	if (tlen >= glink->tx_pipe->length)
+>   		return -EINVAL;
+>   
+> -	ret = mutex_lock_interruptible(&glink->tx_lock);
+> -	if (ret)
+> -		return ret;
+> +	spin_lock_irqsave(&glink->tx_lock, flags);
+>   
+
+qcom_glink_tx will return an uninitialized ret value with removal of 
+mutex_lock_interruptible.
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
