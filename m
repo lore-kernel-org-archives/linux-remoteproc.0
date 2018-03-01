@@ -1,8 +1,8 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 04/13] remoteproc: add name in rproc_mem_entry struct
-Date: Thu, 1 Mar 2018 17:23:51 +0100
-Message-ID: <1519921440-21356-5-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v3 12/13] rpmsg: virtio: allocate buffer from parent
+Date: Thu, 1 Mar 2018 17:23:59 +0100
+Message-ID: <1519921440-21356-13-git-send-email-loic.pallardy@st.com>
 In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
 References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
@@ -11,60 +11,28 @@ To: bjorn.andersson@linaro.org, ohad@wizery.com
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add name field in struct rproc_mem_entry.
-This new field will be used to match memory area
-requested in resource table with pre-registered carveout.
+Remoteproc is now capable to create one specific sub-device per
+virtio link to associate a dedicated memory pool.
+This implies to change device used by virtio_rpmsg for
+buffer allocation from grand-parent to parent.
 
 Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c    | 1 +
- drivers/remoteproc/remoteproc_debugfs.c | 1 +
- include/linux/remoteproc.h              | 2 ++
- 3 files changed, 4 insertions(+)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 5f11536..f73a0cf 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -749,6 +749,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	carveout->dma = dma;
- 	carveout->da = rsc->da;
- 	carveout->release = rproc_release_carveout;
-+	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 82b8300..6dd25c6 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -920,7 +920,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	total_buf_space = vrp->num_bufs * vrp->buf_size;
  
- 	list_add_tail(&carveout->node, &rproc->carveouts);
- 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index a204883..fc0e570 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -260,6 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
- 
- 	list_for_each_entry(carveout, &rproc->carveouts, node) {
- 		seq_puts(seq, "Carveout memory entry:\n");
-+		seq_printf(seq, "\tName: %s\n", carveout->name);
- 		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
- 		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
- 		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index dedc138..2202c08 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -315,6 +315,7 @@ struct fw_rsc_vdev {
-  * @da: device address
-  * @release: release associated memory
-  * @priv: associated data
-+ * @name: associated memory region name (optional)
-  * @node: list node
-  */
- struct rproc_mem_entry {
-@@ -323,6 +324,7 @@ struct rproc_mem_entry {
- 	int len;
- 	u32 da;
- 	void *priv;
-+	char name[32];
- 	struct list_head node;
- 	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
- };
+ 	/* allocate coherent memory for the buffers */
+-	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
++	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+ 				     total_buf_space, &vrp->bufs_dma,
+ 				     GFP_KERNEL);
+ 	if (!bufs_va) {
 -- 
 1.9.1
