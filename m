@@ -1,37 +1,101 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: srinivas.kandagatla@linaro.org
-Subject: [PATCH 2/3] rpmsg: core: make rpmsg bus DMA capable
-Date: Fri,  2 Mar 2018 14:55:30 +0000
-Message-Id: <20180302145531.20463-3-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
-References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
-To: will.deacon@arm.com, robin.murphy@arm.com, bjorn.andersson@linaro.org
-Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v3 09/13] remoteproc: modify rproc_handle_carveout to support pre-registered region
+Date: Thu, 1 Mar 2018 17:23:56 +0100
+Message-ID: <1519921440-21356-10-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In current version rproc_handle_carveout function support only dynamic
+region allocation.
+This patch extends rproc_handle_carveout function to support pre-registered
+region. Match is done on region name, then requested device address and
+length are checked.
+If no name match found, original allocation is used.
 
-Many of the rpmsg clients like audio drivers need to allocate
-dma memory. Make this bus DMA capable so that the child devices
-can use dma apis.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/rpmsg/rpmsg_core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/remoteproc/remoteproc_core.c | 49 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index e84c71f8d6ab..540a3f3567b8 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -472,6 +472,7 @@ struct bus_type rpmsg_bus = {
- 	.uevent		= rpmsg_uevent,
- 	.probe		= rpmsg_dev_probe,
- 	.remove		= rpmsg_dev_remove,
-+	.force_dma	= true,
- };
- EXPORT_SYMBOL(rpmsg_bus);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 0ebbc4f..49b28a0 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -679,7 +679,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 				 struct fw_rsc_carveout *rsc,
+ 				 int offset, int avail)
+ {
+-	struct rproc_mem_entry *carveout, *mapping = NULL;
++	struct rproc_mem_entry *carveout, *mapping = NULL, *mem;
+ 	struct device *dev = &rproc->dev;
+ 	dma_addr_t dma;
+ 	void *va;
+@@ -699,6 +699,51 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+ 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
  
++	/* Check carveout rsc already part of a registered carveout */
++	/* Search by name */
++	mem = rproc_find_carveout_by_name(rproc, rsc->name);
++	if (mem) {
++		int delta = 0;
++
++		if (rsc->da != FW_RSC_ADDR_ANY) {
++			delta = rsc->da - mem->da;
++
++			/* Check requested resource belongs to registered carveout */
++			if (delta < 0) {
++				dev_err(dev->parent,
++					"Registered carveout doesn't fit da request\n");
++				return -ENOMEM;
++			}
++
++			if (delta + rsc->len > mem->len) {
++				dev_err(dev->parent,
++					"Registered carveout doesn't fit len request\n");
++				return -ENOMEM;
++			}
++		} else {
++			/* Check requested resource length */
++			if (rsc->len > mem->len) {
++				dev_err(dev->parent,
++					"Registered carveout doesn't fit len request\n");
++				return -ENOMEM;
++			}
++			/* Update resource da with registered resource value */
++			rsc->da = mem->da;
++		}
++
++		/*
++		 * Update resource pa
++		 * Use va if defined else dma to generate pa
++		 */
++		if (mem->va)
++			rsc->pa = rproc_va_to_pa(mem->va) + delta;
++		else
++			rsc->pa = (u32)mem->dma + delta;
++
++		return 0;
++	}
++
++	/* No registered carveout found, allocate a new one */
+ 	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
+ 	if (!va) {
+ 		dev_err(dev->parent,
+@@ -761,6 +806,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 
+ 		dev_dbg(dev, "carveout mapped 0x%x to %pad\n",
+ 			rsc->da, &dma);
++	} else {
++		rsc->da = (u32)dma;
+ 	}
+ 
+ 	/*
 -- 
-2.15.1
+1.9.1
