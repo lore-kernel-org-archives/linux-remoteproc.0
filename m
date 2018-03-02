@@ -1,41 +1,74 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/3] remoteproc: imx_rproc: Fix an error handling path in 'imx_rproc_probe()'
-Date: Wed, 14 Mar 2018 20:56:37 +0100
-Message-Id: <f944d560ce1b1573be00697d66c4a49b14680af9.1521057013.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Return-Path: <robin.murphy@arm.com>
+Subject: Re: [PATCH 1/3] rpmsg: core: export rpmsg bus type
+References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
+ <20180302145531.20463-2-srinivas.kandagatla@linaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <96ca6e59-071d-4eca-704f-8bb646f072dd@arm.com>
+Date: Fri, 2 Mar 2018 15:25:27 +0000
+MIME-Version: 1.0
+In-Reply-To: <20180302145531.20463-2-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: srinivas.kandagatla@linaro.org, will.deacon@arm.com, bjorn.andersson@linaro.org
+Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-If 'of_device_get_match_data()' fails, we must undo the previous
-'rproc_alloc()' call.
+On 02/03/18 14:55, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> Export rpmsg bus type so that iommu drivers iommu ops to
+> rpmsg bus type.
+> 
+> On Qualcomm SoCs ADSP exposes functions like audio and
+> other which need iommu access, as these drivers are part
+> of rpmsg bus, able to allocate memory from iommus is basic
+> requirement. So expose this bus so that iommu drivers can
+> add ops to this.
 
-Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/remoteproc/imx_rproc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+IOMMU drivers are built-in while rpmsg can be built as a module, so that 
+isn't always going to work.
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 633268e9d550..05bcbce2013a 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -339,8 +339,10 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	}
- 
- 	dcfg = of_device_get_match_data(dev);
--	if (!dcfg)
--		return -EINVAL;
-+	if (!dcfg) {
-+		ret = -EINVAL;
-+		goto err_put_rproc;
-+	}
- 
- 	priv = rproc->priv;
- 	priv->rproc = rproc;
--- 
-2.14.1
+Robin.
+
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   drivers/rpmsg/rpmsg_core.c | 3 ++-
+>   include/linux/rpmsg.h      | 2 +-
+>   2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 5a081762afcc..e84c71f8d6ab 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -465,7 +465,7 @@ static int rpmsg_dev_remove(struct device *dev)
+>   	return err;
+>   }
+>   
+> -static struct bus_type rpmsg_bus = {
+> +struct bus_type rpmsg_bus = {
+>   	.name		= "rpmsg",
+>   	.match		= rpmsg_dev_match,
+>   	.dev_groups	= rpmsg_dev_groups,
+> @@ -473,6 +473,7 @@ static struct bus_type rpmsg_bus = {
+>   	.probe		= rpmsg_dev_probe,
+>   	.remove		= rpmsg_dev_remove,
+>   };
+> +EXPORT_SYMBOL(rpmsg_bus);
+>   
+>   int rpmsg_register_device(struct rpmsg_device *rpdev)
+>   {
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index ca07366c4c33..869e5946b7df 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -49,7 +49,7 @@ struct rpmsg_device;
+>   struct rpmsg_endpoint;
+>   struct rpmsg_device_ops;
+>   struct rpmsg_endpoint_ops;
+> -
+> +extern struct bus_type rpmsg_bus;
+>   /**
+>    * struct rpmsg_channel_info - channel info representation
+>    * @name: name of service
+> 
