@@ -1,133 +1,41 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v5 7/8] remoteproc/davinci: use the reset framework
-Date: Fri, 30 Mar 2018 17:28:55 +0200
-Message-Id: <20180330152856.12297-8-brgl@bgdev.pl>
-In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
-References: <20180330152856.12297-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <sibis@codeaurora.org>
+From: sibis <sibis@codeaurora.org>
+Subject: [PATCH 0/6] Add support for remoteproc modem-pil on SDM845 SoCs  
+Date: Fri,  2 Mar 2018 14:53:33 +0530
+Message-Id: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+This patch series add support for remoteproc Q6v5 modem-pil on Qualcomm
+SDM845 SoC. The first patch adds AOSS (Always on subsystem) reset driver
+to provide for mss reset line. The third patch adds the APCS offset for
+SDM845. The last couple of patches add the resets sequence for Q6 on
+SDM845 and adds helper functions for arbitrary reset assert/deassert
+sequences.
 
-Switch to using the reset framework instead of handcoded reset routines
-we used so far.
+sibis (6):
+  reset: qcom: AOSS (Always on subsystem) reset controller
+  dt-bindings: mailbox: Add APCS global binding for SDM845 SoCs
+  mailbox: Add support for Qualcomm SDM845 SoCs
+  dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
+  remoteproc: qcom: Add support for mss remoteproc on SDM845
+  remoteproc: qcom: Reorder active clks enable and reset
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   3 +-
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   5 +-
+ .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   1 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 149 +++++++++++++++++--
+ drivers/reset/Kconfig                              |  10 ++
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-qcom-aoss.c                    | 161 +++++++++++++++++++++
+ include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
+ 9 files changed, 386 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+ create mode 100644 drivers/reset/reset-qcom-aoss.c
+ create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index b668e32996e2..76c06b70a1c6 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/bitops.h>
- #include <linux/clk.h>
-+#include <linux/reset.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -20,8 +21,6 @@
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
- 
--#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
--
- #include "remoteproc_internal.h"
- 
- static char *da8xx_fw_name;
-@@ -72,6 +71,7 @@ struct da8xx_rproc {
- 	struct da8xx_rproc_mem *mem;
- 	int num_mems;
- 	struct clk *dsp_clk;
-+	struct reset_control *dsp_reset;
- 	void (*ack_fxn)(struct irq_data *data);
- 	struct irq_data *irq_data;
- 	void __iomem *chipsig;
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	struct reset_control *dsp_reset = drproc->dsp_reset;
- 	int ret;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
-@@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 		return ret;
- 	}
- 
--	davinci_clk_reset_deassert(dsp_clk);
-+	ret = reset_control_deassert(dsp_reset);
-+	if (ret) {
-+		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
-+		clk_disable_unprepare(dsp_clk);
-+		return ret;
-+	}
- 
- 	return 0;
- }
-@@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
- static int da8xx_rproc_stop(struct rproc *rproc)
- {
- 	struct da8xx_rproc *drproc = rproc->priv;
-+	struct device *dev = rproc->dev.parent;
-+	int ret;
-+
-+	ret = reset_control_assert(drproc->dsp_reset);
-+	if (ret) {
-+		dev_err(dev, "reset_control_assert() failed: %d\n", ret);
-+		return ret;
-+	}
- 
--	davinci_clk_reset_assert(drproc->dsp_clk);
- 	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
-@@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	struct resource *bootreg_res;
- 	struct resource *chipsig_res;
- 	struct clk *dsp_clk;
-+	struct reset_control *dsp_reset;
- 	void __iomem *chipsig;
- 	void __iomem *bootreg;
- 	int irq;
-@@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsp_clk);
- 	}
- 
-+	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
-+	if (IS_ERR(dsp_reset)) {
-+		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
-+			dev_err(dev, "unable to get reset control: %ld\n",
-+				PTR_ERR(dsp_reset));
-+
-+		return PTR_ERR(dsp_reset);
-+	}
-+
- 	if (dev->of_node) {
- 		ret = of_reserved_mem_device_init(dev);
- 		if (ret) {
-@@ -287,6 +310,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	drproc = rproc->priv;
- 	drproc->rproc = rproc;
- 	drproc->dsp_clk = dsp_clk;
-+	drproc->dsp_reset = dsp_reset;
- 	rproc->has_iommu = false;
- 
- 	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
-@@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
- 	 * held in reset at the time it is called.
- 	 */
--	ret = davinci_clk_reset_assert(drproc->dsp_clk);
-+	ret = reset_control_assert(dsp_reset);
- 	if (ret)
- 		goto free_rproc;
- 
 -- 
-2.16.3
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
