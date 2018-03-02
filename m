@@ -1,106 +1,75 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 03/13] remoteproc: add release ops in rproc_mem_entry struct
-Date: Thu, 1 Mar 2018 17:23:50 +0100
-Message-ID: <1519921440-21356-4-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <sibis@codeaurora.org>
+From: sibis <sibis@codeaurora.org>
+Subject: [PATCH 6/6] remoteproc: qcom: Reorder active clks enable and reset
+Date: Fri,  2 Mar 2018 14:53:39 +0530
+Message-Id: <1519982619-28336-7-git-send-email-sibis@codeaurora.org>
+In-Reply-To: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
+References: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Memory entry could be allocated in different ways (ioremap,
-dma_alloc_coherent, internal RAM allocator...).
-This patch introduces a release ops in rproc_mem_entry structure
-to associate dedicated release mechanism to each memory entry descriptor
-in order to keep remoteproc core generic.
+Active clks need to be enabled before Asserting/Deasserting
+the reset lines in SDM845
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: sibis <sibis@codeaurora.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 23 +++++++++++++++++++++--
- include/linux/remoteproc.h           |  5 ++++-
- 2 files changed, 25 insertions(+), 3 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index eb1b779..5f11536 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -597,6 +597,24 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
- }
- 
- /**
-+ * rproc_release_carveout() - release acquired carveout
-+ * @rproc: rproc handle
-+ * @mem: the memory entry to release
-+ *
-+ * This function releases specified memory entry @mem allocated via
-+ * dma_alloc_coherent() function by @rproc.
-+ */
-+static int rproc_release_carveout(struct rproc *rproc,
-+				  struct rproc_mem_entry *mem)
-+{
-+	struct device *dev = &rproc->dev;
-+
-+	/* clean up carveout allocations */
-+	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
-+	return 0;
-+}
-+
-+/**
-  * rproc_handle_carveout() - handle phys contig memory allocation requests
-  * @rproc: rproc handle
-  * @rsc: the resource entry
-@@ -730,6 +748,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	carveout->len = rsc->len;
- 	carveout->dma = dma;
- 	carveout->da = rsc->da;
-+	carveout->release = rproc_release_carveout;
- 
- 	list_add_tail(&carveout->node, &rproc->carveouts);
- 
-@@ -863,8 +882,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
- 
- 	/* clean up carveout allocations */
- 	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
--		dma_free_coherent(dev->parent, entry->len, entry->va,
--				  entry->dma);
-+		if (entry->release)
-+			entry->release(rproc, entry);
- 		list_del(&entry->node);
- 		kfree(entry);
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index f4997e0..cf45fe6 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -841,17 +841,18 @@ static int q6v5_start(struct rproc *rproc)
+ 		dev_err(qproc->dev, "failed to enable supplies\n");
+ 		goto disable_proxy_clk;
  	}
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 728d421..dedc138 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -305,12 +305,15 @@ struct fw_rsc_vdev {
- 	struct fw_rsc_vdev_vring vring[0];
- } __packed;
+-	ret = qproc->ops->reset_start(qproc);
+-	if (ret) {
+-		dev_err(qproc->dev, "failed to deassert mss restart\n");
+-		goto disable_vdd;
+-	}
  
-+struct rproc;
+ 	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
+ 			      qproc->active_clk_count);
+ 	if (ret) {
+ 		dev_err(qproc->dev, "failed to enable clocks\n");
+-		goto assert_reset;
++		goto disable_vdd;
++	}
 +
- /**
-  * struct rproc_mem_entry - memory entry descriptor
-  * @va:	virtual address
-  * @dma: dma address
-  * @len: length, in bytes
-  * @da: device address
-+ * @release: release associated memory
-  * @priv: associated data
-  * @node: list node
-  */
-@@ -321,9 +324,9 @@ struct rproc_mem_entry {
- 	u32 da;
- 	void *priv;
- 	struct list_head node;
-+	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
- };
++	ret = qproc->ops->reset_start(qproc);
++	if (ret) {
++		dev_err(qproc->dev, "failed to deassert mss restart\n");
++		goto disable_active_clks;
+ 	}
  
--struct rproc;
- struct firmware;
+ 	/* Assign MBA image access in DDR to q6 */
+@@ -862,7 +863,7 @@ static int q6v5_start(struct rproc *rproc)
+ 		dev_err(qproc->dev,
+ 			"assigning Q6 access to mba memory failed: %d\n",
+ 			xfermemop_ret);
+-		goto disable_active_clks;
++		goto assert_reset;
+ 	}
  
- /**
+ 	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
+@@ -931,12 +932,12 @@ static int q6v5_start(struct rproc *rproc)
+ 			"Failed to reclaim mba buffer, system may become unstable\n");
+ 	}
+ 
++assert_reset:
++	qproc->ops->reset_stop(qproc);
+ disable_active_clks:
+ 	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+ 			 qproc->active_clk_count);
+ 
+-assert_reset:
+-	qproc->ops->reset_stop(qproc);
+ disable_vdd:
+ 	q6v5_regulator_disable(qproc, qproc->active_regs,
+ 			       qproc->active_reg_count);
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
