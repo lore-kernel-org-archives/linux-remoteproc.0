@@ -1,36 +1,35 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: srinivas.kandagatla@linaro.org
-Subject: [PATCH 0/3] drivers: rpmsg: make rpmsg bus DMA capable
-Date: Fri,  2 Mar 2018 14:55:28 +0000
-Message-Id: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
-To: will.deacon@arm.com, robin.murphy@arm.com, bjorn.andersson@linaro.org
-Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <sibis@codeaurora.org>
+From: sibis <sibis@codeaurora.org>
+Subject: [PATCH 2/6] dt-bindings: mailbox: Add APCS global binding for SDM845 SoCs
+Date: Fri,  2 Mar 2018 14:53:35 +0530
+Message-Id: <1519982619-28336-3-git-send-email-sibis@codeaurora.org>
+In-Reply-To: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
+References: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Include SDM845 APCS binding to the list of possible bindings
 
-On Qualcomm SoCs, DSP exposes many functionalities like audio,
-as these drivers are child of rpmsg bus. Any dma allocations
-or iommu operations on these devices would fail as the rpmsg
-bus is not marked as dma capable bus.
+Signed-off-by: sibis <sibis@codeaurora.org>
+---
+ Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This patchset makes the rpmsg bus dma capable.
-
-This patchset is tested on DB410c and DB820c boards.
-
-Thanks,
-srini
-
-Srinivas Kandagatla (3):
-  rpmsg: core: export rpmsg bus type
-  rpmsg: core: make rpmsg bus DMA capable
-  iommu: armsmmu: set iommu ops for rpmsg bus
-
- drivers/iommu/arm-smmu.c   | 5 +++++
- drivers/rpmsg/rpmsg_core.c | 4 +++-
- include/linux/rpmsg.h      | 2 +-
- 3 files changed, 9 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+index 16964f0..a60d2b2 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
++++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+@@ -9,7 +9,8 @@ platforms.
+ 	Value type: <string>
+ 	Definition: must be one of:
+ 		    "qcom,msm8916-apcs-kpss-global",
+-		    "qcom,msm8996-apcs-hmss-global"
++		    "qcom,msm8996-apcs-hmss-global",
++		    "qcom,sdm845-apcs-hmss-global"
+ 
+ - reg:
+ 	Usage: required
 -- 
-2.15.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
