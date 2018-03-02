@@ -1,33 +1,68 @@
-Return-Path: <sibis@codeaurora.org>
-From: sibis <sibis@codeaurora.org>
-Subject: [PATCH 3/6] mailbox: Add support for Qualcomm SDM845 SoCs
-Date: Mon,  5 Mar 2018 15:23:30 +0530
-Message-Id: <1520243613-30393-4-git-send-email-sibis@codeaurora.org>
-In-Reply-To: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
-References: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
+Return-Path: <robin.murphy@arm.com>
+Subject: Re: [PATCH 3/3] iommu: armsmmu: set iommu ops for rpmsg bus
+References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
+ <20180302145531.20463-4-srinivas.kandagatla@linaro.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <57fc5480-c57e-dfd3-e6af-5e5bba296430@arm.com>
+Date: Fri, 2 Mar 2018 16:59:12 +0000
+MIME-Version: 1.0
+In-Reply-To: <20180302145531.20463-4-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: srinivas.kandagatla@linaro.org, will.deacon@arm.com, bjorn.andersson@linaro.org
+Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add the corresponding APCS offset for SDM845 SoC
+On 02/03/18 14:55, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> On Qualcomm SoCs, ADSP exposes many functions like audio and
+> others. These services need iommu access to allocate any
+> memory for the DSP. As these drivers are childeren of
+> rpmsg bus, able to allocate memory from iommus is basic
+> requirement. So set arm smmu iommu ops for this bus type.
 
-Signed-off-by: sibis <sibis@codeaurora.org>
----
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 1 +
- 1 file changed, 1 insertion(+)
+Documentation/rpmsg.txt: "Every rpmsg device is a communication channel 
+with a remote processor (thus rpmsg devices are called channels)."
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 57bde0d..62d704d 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -125,6 +125,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
- static const struct of_device_id qcom_apcs_ipc_of_match[] = {
- 	{ .compatible = "qcom,msm8916-apcs-kpss-global", .data = (void *)8 },
- 	{ .compatible = "qcom,msm8996-apcs-hmss-global", .data = (void *)16 },
-+	{ .compatible = "qcom,sdm845-apcs-hmss-global", .data = (void *)12 },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, qcom_apcs_ipc_of_match);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I'd instinctively assume that a remote processor already has its own 
+memory, and that a communication channel doesn't somehow go directly 
+through an IOMMU, so that "basic requirement" seems like a pretty big 
+assumption.
+
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   drivers/iommu/arm-smmu.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index e6920d32ac9e..9b63489af15c 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -53,6 +53,7 @@
+>   #include <linux/spinlock.h>
+>   
+>   #include <linux/amba/bus.h>
+> +#include <linux/rpmsg.h>
+>   
+>   #include "io-pgtable.h"
+>   #include "arm-smmu-regs.h"
+> @@ -2168,6 +2169,10 @@ static void arm_smmu_bus_init(void)
+>   		bus_set_iommu(&pci_bus_type, &arm_smmu_ops);
+>   	}
+>   #endif
+> +#ifdef CONFIG_RPMSG
+
+Ah, so this will at least build OK with RPMSG=m, but I doubt it does 
+what you want it to in that case.
+
+Robin.
+
+> +	if (!iommu_present(&rpmsg_bus))
+> +		bus_set_iommu(&rpmsg_bus, &arm_smmu_ops);
+> +#endif
+>   }
+>   
+>   static int arm_smmu_device_probe(struct platform_device *pdev)
+> 
