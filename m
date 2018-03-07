@@ -1,48 +1,51 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 17/21] scsi: hisi_sas: Remove depends on HAS_DMA in case of platform dependency
-Date: Fri, 16 Mar 2018 14:51:50 +0100
-Message-Id: <1521208314-4783-18-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
-References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 7 Mar 2018 15:56:12 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 4/6] dt-bindings: remoteproc: Add Q6v5 Modem PIL binding
+ for SDM845
+Message-ID: <20180307215612.pk3igiws37mnoy2p@rob-hp-laptop>
+References: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
+ <1520243613-30393-5-git-send-email-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520243613-30393-5-git-send-email-sibis@codeaurora.org>
+To: sibis <sibis@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+On Mon, Mar 05, 2018 at 03:23:31PM +0530, sibis wrote:
+> Add new compatible string for Qualcomm SDM845 SoCs
+> 
+> Signed-off-by: sibis <sibis@codeaurora.org>
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+Full name.
 
-This simplifies the dependencies, and allows to improve compile-testing.
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> index 00d3d58..11907db 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> @@ -9,8 +9,9 @@ on the Qualcomm Hexagon core.
+>  	Definition: must be one of:
+>  		    "qcom,q6v5-pil",
+>  		    "qcom,msm8916-mss-pil",
+> -		    "qcom,msm8974-mss-pil"
+> -		    "qcom,msm8996-mss-pil"
+> +		    "qcom,msm8974-mss-pil",
+> +		    "qcom,msm8996-mss-pil",
+> +		    "qcom,sdm845-mss-pil"
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
----
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/scsi/hisi_sas/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Drop the comma.
 
-diff --git a/drivers/scsi/hisi_sas/Kconfig b/drivers/scsi/hisi_sas/Kconfig
-index d42f29a5eb65046d..57183fce70fb6355 100644
---- a/drivers/scsi/hisi_sas/Kconfig
-+++ b/drivers/scsi/hisi_sas/Kconfig
-@@ -1,6 +1,6 @@
- config SCSI_HISI_SAS
- 	tristate "HiSilicon SAS"
--	depends on HAS_DMA && HAS_IOMEM
-+	depends on HAS_IOMEM
- 	depends on ARM64 || COMPILE_TEST
- 	select SCSI_SAS_LIBSAS
- 	select BLK_DEV_INTEGRITY
--- 
-2.7.4
+>  
+>  - reg:
+>  	Usage: required
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
