@@ -1,52 +1,50 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi S <sibis@codeaurora.org>
-Subject: [PATCH v3 0/7] Add support for remoteproc modem-pil on SDM845 SoCs
-Date: Wed, 14 Mar 2018 14:51:16 +0530
-Message-Id: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 7 Mar 2018 15:55:41 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 2/6] dt-bindings: mailbox: Add APCS global binding for
+ SDM845 SoCs
+Message-ID: <20180307215541.hs55cfdlrga7p7qo@rob-hp-laptop>
+References: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
+ <1520243613-30393-3-git-send-email-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520243613-30393-3-git-send-email-sibis@codeaurora.org>
+To: sibis <sibis@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch series add support for remoteproc Q6v5 modem-pil on Qualcomm
-SDM845 SoC. The second patch adds AOSS (Always on subsystem) reset driver
-to provide for mss reset line. The fourth patch adds the APCS offset for
-SDM845. The last couple of patches add the resets sequence for Q6 on
-SDM845 and adds helper functions for arbitrary reset assert/deassert
-sequences.
+On Mon, Mar 05, 2018 at 03:23:29PM +0530, sibis wrote:
+> Include SDM845 APCS binding to the list of possible bindings
+> 
+> Signed-off-by: sibis <sibis@codeaurora.org>
 
-V3:
-   Removed syscon dependency for the aoss reset driver
-   Split dt-bindings and the aoss reset driver into separate patches
-   Corrected few typos and replaced misconfigured author name
+Need a full name.
 
-V2:
-   Addressed reset-qcom-aoss review suggestions and reworked
-   re-ordering of the active clk and reset sequence in
-   qcom_q6v5_pil
+> ---
+>  Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+> index 16964f0..a60d2b2 100644
+> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+> @@ -9,7 +9,8 @@ platforms.
+>  	Value type: <string>
+>  	Definition: must be one of:
+>  		    "qcom,msm8916-apcs-kpss-global",
+> -		    "qcom,msm8996-apcs-hmss-global"
+> +		    "qcom,msm8996-apcs-hmss-global",
+> +		    "qcom,sdm845-apcs-hmss-global"
 
-Sibi S (7):
-  dt-bindings: reset: Add AOSS reset bindings for SDM845 SoCs
-  reset: qcom: AOSS (always on subsystem) reset controller
-  dt-bindings: mailbox: Add APCS global binding for SDM845 SoCs
-  mailbox: Add support for Qualcomm SDM845 SoCs
-  dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
-  remoteproc: qcom: Add support for mss remoteproc on SDM845
-  remoteproc: qcom: Always assert and deassert reset signals in SDM845
+Drop the comma so we can have 1 line changes instead of 3 in the 
+future.
 
- .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   1 +
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
- .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
- drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   1 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 163 ++++++++++++++++++++-
- drivers/reset/Kconfig                              |  10 ++
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-qcom-aoss.c                    | 156 ++++++++++++++++++++
- include/dt-bindings/reset/qcom,sdm845-aoss.h       |  17 +++
- 9 files changed, 398 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
- create mode 100644 drivers/reset/reset-qcom-aoss.c
- create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  
+>  - reg:
+>  	Usage: required
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
