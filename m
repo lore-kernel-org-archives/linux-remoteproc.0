@@ -1,37 +1,46 @@
-Return-Path: <sibis@codeaurora.org>
-From: sibis <sibis@codeaurora.org>
-Subject: [PATCH 4/6] dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
-Date: Mon,  5 Mar 2018 15:23:31 +0530
-Message-Id: <1520243613-30393-5-git-send-email-sibis@codeaurora.org>
-In-Reply-To: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
-References: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH 2/2] rpmsg: smd: use put_device() if device_register fail
+Date: Thu,  8 Mar 2018 15:06:08 +0530
+Message-Id: <340cac8a81a84cf3054f8adcdb169f740b212c34.1520501519.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+References: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+References: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add new compatible string for Qualcomm SDM845 SoCs
+if device_register() returned an error! Always use put_device()
+to give up the reference initialized. unregister device for
+other return error.
 
-Signed-off-by: sibis <sibis@codeaurora.org>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/rpmsg/qcom_smd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 00d3d58..11907db 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -9,8 +9,9 @@ on the Qualcomm Hexagon core.
- 	Definition: must be one of:
- 		    "qcom,q6v5-pil",
- 		    "qcom,msm8916-mss-pil",
--		    "qcom,msm8974-mss-pil"
--		    "qcom,msm8996-mss-pil"
-+		    "qcom,msm8974-mss-pil",
-+		    "qcom,msm8996-mss-pil",
-+		    "qcom,sdm845-mss-pil"
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 92d0c6a..ff8101a 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1408,6 +1408,7 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+ 	ret = device_register(&edge->dev);
+ 	if (ret) {
+ 		pr_err("failed to register smd edge\n");
++		put_device(&edge->dev);
+ 		return ERR_PTR(ret);
+ 	}
  
- - reg:
- 	Usage: required
+@@ -1428,7 +1429,7 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
+ 	return edge;
+ 
+ unregister_dev:
+-	put_device(&edge->dev);
++	device_unregister(&edge->dev);
+ 	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(qcom_smd_register_edge);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
