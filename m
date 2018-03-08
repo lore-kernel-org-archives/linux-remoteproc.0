@@ -1,166 +1,46 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi S <sibis@codeaurora.org>
-Subject: [PATCH v3 6/7] remoteproc: qcom: Add support for mss remoteproc on SDM845
-Date: Wed, 14 Mar 2018 14:51:22 +0530
-Message-Id: <1521019283-32212-7-git-send-email-sibis@codeaurora.org>
-In-Reply-To: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
-References: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <arvind.yadav.cs@gmail.com>
+Return-Path: <arvind.yadav.cs@gmail.com>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: [PATCH 1/2] rpmsg: glink: use put_device() if device_register fail
+Date: Thu,  8 Mar 2018 15:06:07 +0530
+Message-Id: <3bf53792e96a3889604dde687627a04a06ff3a6e.1520501519.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+References: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+In-Reply-To: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+References: <cover.1520501519.git.arvind.yadav.cs@gmail.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
->From SDM845, the Q6SS reset sequence on software side has been
-simplified with the introduction of boot FSM which assists in
-bringing the Q6 out of reset
+if device_register() returned an error! Always use put_device()
+to give up the reference initialized. And unregister device for
+other return error.
 
-Add GLINK subdevice to allow definition of GLINK edge as a
-child of modem-pil
-
-Signed-off-by: Sibi S <sibis@codeaurora.org>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 65 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 1 deletion(-)
+ drivers/rpmsg/qcom_glink_smem.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index b4e5e72..92bf125 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -57,6 +57,8 @@
- #define RMB_PMI_META_DATA_REG		0x10
- #define RMB_PMI_CODE_START_REG		0x14
- #define RMB_PMI_CODE_LENGTH_REG		0x18
-+#define RMB_MBA_MSS_STATUS		0x40
-+#define RMB_MBA_ALT_RESET		0x44
- 
- #define RMB_CMD_META_DATA_READY		0x1
- #define RMB_CMD_LOAD_READY		0x2
-@@ -104,6 +106,13 @@
- #define QDSP6SS_XO_CBCR		0x0038
- #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
- 
-+/* QDSP6v65 parameters */
-+#define QDSP6SS_SLEEP                   0x3C
-+#define QDSP6SS_BOOT_CORE_START         0x400
-+#define QDSP6SS_BOOT_CMD                0x404
-+#define SLEEP_CHECK_MAX_LOOPS           200
-+#define BOOT_FSM_TIMEOUT                10000
-+
- struct reg_info {
- 	struct regulator *reg;
- 	int uV;
-@@ -166,6 +175,7 @@ struct q6v5 {
- 	void *mpss_region;
- 	size_t mpss_size;
- 
-+	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	bool need_mem_protection;
-@@ -178,6 +188,7 @@ enum {
- 	MSS_MSM8916,
- 	MSS_MSM8974,
- 	MSS_MSM8996,
-+	MSS_SDM845,
- };
- 
- static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-@@ -384,8 +395,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	int ret;
- 	int i;
- 
-+	if (qproc->version == MSS_SDM845) {
- 
--	if (qproc->version == MSS_MSM8996) {
-+		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
-+		val |= 0x1;
-+		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
-+
-+		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
-+					 val, !(val & BIT(31)), 1,
-+					 SLEEP_CHECK_MAX_LOOPS);
-+		if (ret) {
-+			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
-+			return -ETIMEDOUT;
-+		}
-+
-+		/* De-assert QDSP6 stop core */
-+		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
-+		/* Trigger boot FSM */
-+		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
-+
-+		ret = readl_poll_timeout(qproc->rmb_base + RMB_MBA_MSS_STATUS,
-+				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
-+		if (ret) {
-+			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
-+			return ret;
-+		}
-+
-+		goto pbl_wait;
-+
-+	} else if (qproc->version == MSS_MSM8996) {
- 		/* Override the ACC value if required */
- 		writel(QDSP6SS_ACC_OVERRIDE_VAL,
- 		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-@@ -493,6 +531,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	val &= ~Q6SS_STOP_CORE;
- 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
-+pbl_wait:
- 	/* Wait for PBL status */
- 	ret = q6v5_rmb_pbl_wait(qproc, 1000);
- 	if (ret == -ETIMEDOUT) {
-@@ -1213,6 +1252,7 @@ static int q6v5_probe(struct platform_device *pdev)
+diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+index 892f2b9..3fa9d43 100644
+--- a/drivers/rpmsg/qcom_glink_smem.c
++++ b/drivers/rpmsg/qcom_glink_smem.c
+@@ -217,6 +217,7 @@ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
+ 	ret = device_register(dev);
+ 	if (ret) {
+ 		pr_err("failed to register glink edge\n");
++		put_device(dev);
+ 		return ERR_PTR(ret);
  	}
- 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
-+	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
- 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
- 	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
  
-@@ -1234,6 +1274,7 @@ static int q6v5_remove(struct platform_device *pdev)
+@@ -299,7 +300,7 @@ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
+ 	return glink;
  
- 	rproc_del(qproc->rproc);
+ err_put_dev:
+-	put_device(dev);
++	device_unregister(dev);
  
-+	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
- 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
- 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
- 	rproc_free(qproc->rproc);
-@@ -1241,6 +1282,27 @@ static int q6v5_remove(struct platform_device *pdev)
- 	return 0;
+ 	return ERR_PTR(ret);
  }
- 
-+static const struct rproc_hexagon_res sdm845_mss = {
-+	.hexagon_mba_image = "mba.mbn",
-+	.proxy_clk_names = (char*[]){
-+			"xo",
-+			"axis2",
-+			"prng",
-+			NULL
-+	},
-+	.active_clk_names = (char*[]){
-+			"iface",
-+			"bus",
-+			"mem",
-+			"gpll0_mss",
-+			"snoc_axi",
-+			"mnoc_axi",
-+			NULL
-+	},
-+	.need_mem_protection = true,
-+	.version = MSS_SDM845,
-+};
-+
- static const struct rproc_hexagon_res msm8996_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_clk_names = (char*[]){
-@@ -1334,6 +1396,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
- 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
- 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
-+	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_of_match);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
