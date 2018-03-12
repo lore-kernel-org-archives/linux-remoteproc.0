@@ -1,82 +1,49 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v5 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
-Date: Fri, 30 Mar 2018 17:28:56 +0200
-Message-Id: <20180330152856.12297-9-brgl@bgdev.pl>
-In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
-References: <20180330152856.12297-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <sibis@codeaurora.org>
+Subject: Re: [PATCH 1/6] reset: qcom: AOSS (Always on subsystem) reset
+ controller
+References: <1520243613-30393-1-git-send-email-sibis@codeaurora.org>
+ <1520243613-30393-2-git-send-email-sibis@codeaurora.org>
+ <20180307213514.4sv7ucxo25jpomz3@rob-hp-laptop>
+ <519c6298-0619-d98e-6c45-c70936af93c3@codeaurora.org>
+ <4a45b7a5-5bc4-ed03-0cf4-c87c8b99fbb2@codeaurora.org>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <5a73b5fb-d70b-5bbc-e9ba-ce343d3985c3@codeaurora.org>
+Date: Mon, 12 Mar 2018 12:31:52 +0530
+MIME-Version: 1.0
+In-Reply-To: <4a45b7a5-5bc4-ed03-0cf4-c87c8b99fbb2@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Trilok Soni <tsoni@codeaurora.org>, Rob Herring <robh@kernel.org>
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Trilok,
+Thanks for the review. I will include it in the v3 patch series.
 
-This code is no longer used. Remove it.
+On 03/10/2018 02:59 AM, Trilok Soni wrote:
+> Sibi,
+> 
+> One cosmetic comment below.
+> 
+> On 3/9/2018 6:55 AM, Sibi S wrote:
+>> +
+>>>> +This binding describes a reset-controller found on AOSS (Always on 
+>>>> SubSysem)
+>>>> +for Qualcomm SDM845 SoCs.
+> 
+> S/SubSysem/Subsytem
+>
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
----
- arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
- drivers/clk/davinci/psc.c                  | 18 ------------------
- 2 files changed, 39 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
-diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
-deleted file mode 100644
-index 42ed4f2f5ce4..000000000000
---- a/arch/arm/mach-davinci/include/mach/clock.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * arch/arm/mach-davinci/include/mach/clock.h
-- *
-- * Clock control driver for DaVinci - header file
-- *
-- * Authors: Vladimir Barinov <source@mvista.com>
-- *
-- * 2007 (c) MontaVista Software, Inc. This file is licensed under
-- * the terms of the GNU General Public License version 2. This program
-- * is licensed "as is" without any warranty of any kind, whether express
-- * or implied.
-- */
--#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
--#define __ASM_ARCH_DAVINCI_CLOCK_H
--
--struct clk;
--
--int davinci_clk_reset_assert(struct clk *c);
--int davinci_clk_reset_deassert(struct clk *c);
--
--#endif
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 063df62381ea..75c4bc6f23e3 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
- 	return 0;
- }
- 
--/*
-- * REVISIT: These exported functions can be removed after a non-DT lookup is
-- * added to the reset controller framework and the davinci-rproc driver is
-- * updated to use the generic reset controller framework.
-- */
--
--int davinci_clk_reset_assert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, true);
--}
--EXPORT_SYMBOL(davinci_clk_reset_assert);
--
--int davinci_clk_reset_deassert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, false);
--}
--EXPORT_SYMBOL(davinci_clk_reset_deassert);
--
- static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
- 				    unsigned long id)
- {
+Will correct it
+
+> ---Trilok Soni
+> 
+> 
+> 
+
 -- 
-2.16.3
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
