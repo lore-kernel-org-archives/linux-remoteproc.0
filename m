@@ -1,65 +1,57 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: srinivas.kandagatla@linaro.org
-Subject: [PATCH 1/3] rpmsg: core: export rpmsg bus type
-Date: Fri,  2 Mar 2018 14:55:29 +0000
-Message-Id: <20180302145531.20463-2-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
-References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
-To: will.deacon@arm.com, robin.murphy@arm.com, bjorn.andersson@linaro.org
-Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 3/3] remoteproc: imx_rproc: Slightly simplify code in 'imx_rproc_probe()'
+Date: Wed, 14 Mar 2018 20:56:39 +0100
+Message-Id: <fbc1425293b6540a6fc835264fba2b71f2b63444.1521057013.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+We can return directly at the beginning of the function and save the 'err'
+label.
+We can also explicitly return 0 when the probe succeed.
 
-Export rpmsg bus type so that iommu drivers iommu ops to
-rpmsg bus type.
-
-On Qualcomm SoCs ADSP exposes functions like audio and
-other which need iommu access, as these drivers are part
-of rpmsg bus, able to allocate memory from iommus is basic
-requirement. So expose this bus so that iommu drivers can
-add ops to this.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/rpmsg/rpmsg_core.c | 3 ++-
- include/linux/rpmsg.h      | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/remoteproc/imx_rproc.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 5a081762afcc..e84c71f8d6ab 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -465,7 +465,7 @@ static int rpmsg_dev_remove(struct device *dev)
- 	return err;
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 6d02ef62a626..54c07fd3f204 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -333,10 +333,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	/* set some other name then imx */
+ 	rproc = rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
+ 			    NULL, sizeof(*priv));
+-	if (!rproc) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!rproc)
++		return -ENOMEM;
+ 
+ 	dcfg = of_device_get_match_data(dev);
+ 	if (!dcfg) {
+@@ -381,13 +379,13 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 		goto err_put_clk;
+ 	}
+ 
+-	return ret;
++	return 0;
+ 
+ err_put_clk:
+ 	clk_disable_unprepare(priv->clk);
+ err_put_rproc:
+ 	rproc_free(rproc);
+-err:
++
+ 	return ret;
  }
  
--static struct bus_type rpmsg_bus = {
-+struct bus_type rpmsg_bus = {
- 	.name		= "rpmsg",
- 	.match		= rpmsg_dev_match,
- 	.dev_groups	= rpmsg_dev_groups,
-@@ -473,6 +473,7 @@ static struct bus_type rpmsg_bus = {
- 	.probe		= rpmsg_dev_probe,
- 	.remove		= rpmsg_dev_remove,
- };
-+EXPORT_SYMBOL(rpmsg_bus);
- 
- int rpmsg_register_device(struct rpmsg_device *rpdev)
- {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index ca07366c4c33..869e5946b7df 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -49,7 +49,7 @@ struct rpmsg_device;
- struct rpmsg_endpoint;
- struct rpmsg_device_ops;
- struct rpmsg_endpoint_ops;
--
-+extern struct bus_type rpmsg_bus;
- /**
-  * struct rpmsg_channel_info - channel info representation
-  * @name: name of service
 -- 
-2.15.1
+2.14.1
