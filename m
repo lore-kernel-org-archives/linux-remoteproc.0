@@ -1,313 +1,166 @@
 Return-Path: <sibis@codeaurora.org>
-From: sibis <sibis@codeaurora.org>
-Subject: [PATCH 1/6] reset: qcom: AOSS (Always on subsystem) reset controller
-Date: Fri,  2 Mar 2018 14:53:34 +0530
-Message-Id: <1519982619-28336-2-git-send-email-sibis@codeaurora.org>
-In-Reply-To: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
-References: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
+From: Sibi S <sibis@codeaurora.org>
+Subject: [PATCH v3 6/7] remoteproc: qcom: Add support for mss remoteproc on SDM845
+Date: Wed, 14 Mar 2018 14:51:22 +0530
+Message-Id: <1521019283-32212-7-git-send-email-sibis@codeaurora.org>
+In-Reply-To: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
+References: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add reset controller driver for Qualcomm SDM845 SoC to
-control reset signals provided by AOSS for Modem, Venus
-ADSP, GPU, Camera, Wireless, Display subsystem
+>From SDM845, the Q6SS reset sequence on software side has been
+simplified with the introduction of boot FSM which assists in
+bringing the Q6 out of reset
 
-Signed-off-by: sibis <sibis@codeaurora.org>
+Add GLINK subdevice to allow definition of GLINK edge as a
+child of modem-pil
+
+Signed-off-by: Sibi S <sibis@codeaurora.org>
 ---
- .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
- drivers/reset/Kconfig                              |  10 ++
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-qcom-aoss.c                    | 161 +++++++++++++++++++++
- include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
- 5 files changed, 243 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
- create mode 100644 drivers/reset/reset-qcom-aoss.c
- create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
+ drivers/remoteproc/qcom_q6v5_pil.c | 65 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-new file mode 100644
-index 0000000..5318e14
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-@@ -0,0 +1,54 @@
-+Qualcomm AOSS Reset Controller
-+======================================
-+
-+This binding describes a reset-controller found on AOSS (Always on SubSysem)
-+for Qualcomm SDM845 SoCs.
-+
-+Required properties:
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be:
-+		    "qcom,aoss-reset-sdm845", "syscon"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must specify the base address and size of the
-+		    syscon device.
-+
-+
-+- #reset-cells:
-+	Usage: required
-+	Value type: <uint>
-+	Definition: must be 1; cell entry represents the reset index.
-+
-+example:
-+
-+aoss_reset: qcom,reset-controller@b2e0100 {
-+	compatible = "qcom,aoss-reset-sdm845", "syscon";
-+	reg = <0xc2b0000 0x20004>;
-+	#reset-cells = <1>;
-+};
-+
-+
-+Specifying reset lines connected to IP modules
-+==============================================
-+
-+Device nodes that need access to reset lines should
-+specify them as a reset phandle in their corresponding node as
-+specified in reset.txt.
-+
-+Example:
-+
-+	modem-pil@4080000 {
-+		...
-+
-+		resets = <&aoss_reset AOSS_CC_MSS_RESTART>;
-+		reset-names = "mss_restart";
-+
-+		...
-+        };
-+
-+For list of all valid reset indicies see
-+<dt-bindings/reset/qcom,aoss-sdm845.h>
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 7fc7769..4b1da86 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -81,6 +81,16 @@ config RESET_PISTACHIO
- 	help
- 	  This enables the reset driver for ImgTec Pistachio SoCs.
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index b4e5e72..92bf125 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -57,6 +57,8 @@
+ #define RMB_PMI_META_DATA_REG		0x10
+ #define RMB_PMI_CODE_START_REG		0x14
+ #define RMB_PMI_CODE_LENGTH_REG		0x18
++#define RMB_MBA_MSS_STATUS		0x40
++#define RMB_MBA_ALT_RESET		0x44
  
-+config RESET_QCOM_AOSS
-+	bool "Qcom AOSS Reset Driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	select MFD_SYSCON
-+	help
-+	  This enables the AOSS (Always On SubSystem) reset driver
-+	  for Qcom SoCs. Say Y if you want to control reset signals
-+	  provided by AOSS for Modem, Venus, ADSP, GPU, Camera,
-+	  Wireless, Display subsystem. Otherwise, say N.
+ #define RMB_CMD_META_DATA_READY		0x1
+ #define RMB_CMD_LOAD_READY		0x2
+@@ -104,6 +106,13 @@
+ #define QDSP6SS_XO_CBCR		0x0038
+ #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
+ 
++/* QDSP6v65 parameters */
++#define QDSP6SS_SLEEP                   0x3C
++#define QDSP6SS_BOOT_CORE_START         0x400
++#define QDSP6SS_BOOT_CMD                0x404
++#define SLEEP_CHECK_MAX_LOOPS           200
++#define BOOT_FSM_TIMEOUT                10000
 +
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST
- 	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 132c24f..c30044a 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
- obj-$(CONFIG_RESET_MESON) += reset-meson.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-+obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
-diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
-new file mode 100644
-index 0000000..eb8c69b
---- /dev/null
-+++ b/drivers/reset/reset-qcom-aoss.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
+ struct reg_info {
+ 	struct regulator *reg;
+ 	int uV;
+@@ -166,6 +175,7 @@ struct q6v5 {
+ 	void *mpss_region;
+ 	size_t mpss_size;
+ 
++	struct qcom_rproc_glink glink_subdev;
+ 	struct qcom_rproc_subdev smd_subdev;
+ 	struct qcom_rproc_ssr ssr_subdev;
+ 	bool need_mem_protection;
+@@ -178,6 +188,7 @@ enum {
+ 	MSS_MSM8916,
+ 	MSS_MSM8974,
+ 	MSS_MSM8996,
++	MSS_SDM845,
+ };
+ 
+ static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+@@ -384,8 +395,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 	int ret;
+ 	int i;
+ 
++	if (qproc->version == MSS_SDM845) {
+ 
+-	if (qproc->version == MSS_MSM8996) {
++		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
++		val |= 0x1;
++		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
 +
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/regmap.h>
-+#include <linux/of_device.h>
-+#include <dt-bindings/reset/qcom,aoss-sdm845.h>
++		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
++					 val, !(val & BIT(31)), 1,
++					 SLEEP_CHECK_MAX_LOOPS);
++		if (ret) {
++			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
++			return -ETIMEDOUT;
++		}
 +
-+struct qcom_aoss_reset_map {
-+	unsigned int reg;
-+	u8 bit;
-+};
++		/* De-assert QDSP6 stop core */
++		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
++		/* Trigger boot FSM */
++		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
 +
-+struct qcom_aoss_desc {
-+	const struct regmap_config *config;
-+	const struct qcom_aoss_reset_map *resets;
-+	int delay;
-+	size_t num_resets;
-+};
++		ret = readl_poll_timeout(qproc->rmb_base + RMB_MBA_MSS_STATUS,
++				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
++		if (ret) {
++			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
++			return ret;
++		}
 +
-+struct qcom_aoss_reset_data {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+	const struct qcom_aoss_desc *desc;
-+};
++		goto pbl_wait;
 +
-+static const struct regmap_config aoss_sdm845_regmap_config = {
-+	.name		= "aoss-reset",
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x20000,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_aoss_reset_map aoss_sdm845_resets[] = {
-+	[AOSS_CC_MSS_RESTART] = { 0x0, 0 },
-+	[AOSS_CC_CAMSS_RESTART] = { 0x1000, 0 },
-+	[AOSS_CC_VENUS_RESTART] = { 0x2000, 0 },
-+	[AOSS_CC_GPU_RESTART] = { 0x3000, 0 },
-+	[AOSS_CC_DISPSS_RESTART] = { 0x4000, 0 },
-+	[AOSS_CC_WCSS_RESTART] = { 0x10000, 0 },
-+	[AOSS_CC_LPASS_RESTART] = { 0x20000, 0 },
-+};
-+
-+static const struct qcom_aoss_desc aoss_sdm845_desc = {
-+	.config = &aoss_sdm845_regmap_config,
-+	.resets = aoss_sdm845_resets,
-+	/* Wait 6 32kHz sleep cycles for reset */
-+	.delay = 200,
-+	.num_resets = ARRAY_SIZE(aoss_sdm845_resets),
-+};
-+
-+static struct qcom_aoss_reset_data *to_qcom_aoss_reset_data(
-+				struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct qcom_aoss_reset_data, rcdev);
-+}
-+
-+static int qcom_aoss_control_assert(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-+	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-+
-+	if (idx >= rcdev->nr_resets)
-+		return -EINVAL;
-+
-+	return regmap_update_bits(data->regmap, map->reg,
-+					BIT(map->bit), BIT(map->bit));
-+}
-+
-+static int qcom_aoss_control_deassert(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-+	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-+
-+	if (idx >= rcdev->nr_resets)
-+		return -EINVAL;
-+
-+	return regmap_update_bits(data->regmap, map->reg, BIT(map->bit), 0);
-+}
-+
-+static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-+	int ret;
-+
-+	ret = rcdev->ops->assert(rcdev, idx);
-+	if (ret)
-+		return ret;
-+
-+	udelay(data->desc->delay);
-+
-+	ret = rcdev->ops->deassert(rcdev, idx);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static const struct reset_control_ops qcom_aoss_reset_ops = {
-+	.reset = qcom_aoss_control_reset,
-+	.assert = qcom_aoss_control_assert,
-+	.deassert = qcom_aoss_control_deassert,
-+};
-+
-+static int qcom_aoss_reset_probe(struct platform_device *pdev)
-+{
-+	struct qcom_aoss_reset_data *data;
-+	struct device *dev = &pdev->dev;
-+	const struct qcom_aoss_desc *desc;
-+
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->desc = desc;
-+	data->regmap = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(dev, "Unable to get aoss-reset regmap");
-+		return PTR_ERR(data->regmap);
-+	}
-+	regmap_attach_dev(dev, data->regmap, desc->config);
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &qcom_aoss_reset_ops;
-+	data->rcdev.nr_resets = desc->num_resets;
-+	data->rcdev.of_node = pdev->dev.of_node;
-+
-+	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-+}
-+
-+static const struct of_device_id qcom_aoss_reset_of_match[] = {
-+	{ .compatible = "qcom,aoss-reset-sdm845", .data = &aoss_sdm845_desc},
-+	{}
-+};
-+
-+static struct platform_driver qcom_aoss_reset_driver = {
-+	.probe = qcom_aoss_reset_probe,
-+	.driver  = {
-+		.name  = "qcom_aoss_reset",
-+		.of_match_table = qcom_aoss_reset_of_match,
++	} else if (qproc->version == MSS_MSM8996) {
+ 		/* Override the ACC value if required */
+ 		writel(QDSP6SS_ACC_OVERRIDE_VAL,
+ 		       qproc->reg_base + QDSP6SS_STRAP_ACC);
+@@ -493,6 +531,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 	val &= ~Q6SS_STOP_CORE;
+ 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+ 
++pbl_wait:
+ 	/* Wait for PBL status */
+ 	ret = q6v5_rmb_pbl_wait(qproc, 1000);
+ 	if (ret == -ETIMEDOUT) {
+@@ -1213,6 +1252,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+ 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
++	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
+ 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
+ 	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
+ 
+@@ -1234,6 +1274,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 
+ 	rproc_del(qproc->rproc);
+ 
++	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+ 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+ 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
+ 	rproc_free(qproc->rproc);
+@@ -1241,6 +1282,27 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct rproc_hexagon_res sdm845_mss = {
++	.hexagon_mba_image = "mba.mbn",
++	.proxy_clk_names = (char*[]){
++			"xo",
++			"axis2",
++			"prng",
++			NULL
 +	},
++	.active_clk_names = (char*[]){
++			"iface",
++			"bus",
++			"mem",
++			"gpll0_mss",
++			"snoc_axi",
++			"mnoc_axi",
++			NULL
++	},
++	.need_mem_protection = true,
++	.version = MSS_SDM845,
 +};
 +
-+builtin_platform_driver(qcom_aoss_reset_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/dt-bindings/reset/qcom,aoss-sdm845.h b/include/dt-bindings/reset/qcom,aoss-sdm845.h
-new file mode 100644
-index 0000000..e9b38fc
---- /dev/null
-+++ b/include/dt-bindings/reset/qcom,aoss-sdm845.h
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_AOSS_SDM_845_H
-+#define _DT_BINDINGS_RESET_AOSS_SDM_845_H
-+
-+#define AOSS_CC_MSS_RESTART	0
-+#define AOSS_CC_CAMSS_RESTART	1
-+#define AOSS_CC_VENUS_RESTART	2
-+#define AOSS_CC_GPU_RESTART	3
-+#define AOSS_CC_DISPSS_RESTART	4
-+#define AOSS_CC_WCSS_RESTART	5
-+#define AOSS_CC_LPASS_RESTART	6
-+
-+#endif
+ static const struct rproc_hexagon_res msm8996_mss = {
+ 	.hexagon_mba_image = "mba.mbn",
+ 	.proxy_clk_names = (char*[]){
+@@ -1334,6 +1396,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
+ 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+ 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
++	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, q6v5_of_match);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
