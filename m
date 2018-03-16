@@ -1,134 +1,40 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 13/13] remoteproc: st: add reserved memory support
-Date: Thu, 1 Mar 2018 17:24:00 +0100
-Message-ID: <1519921440-21356-14-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <b.zolnierkie@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 04/21] fbdev: Remove depends on HAS_DMA in case of
+ platform dependency
+Date: Fri, 16 Mar 2018 17:01:13 +0100
+Message-id: <1863306.fWLBGQtWhd@amdc3058>
+In-reply-to: <1521208314-4783-5-git-send-email-geert@linux-m68k.org>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+	<CGME20180316152138epcas1p3e0e107cd14fd6fb4aeb595e0e7661ab7@epcas1p3.samsung.com>
+	<1521208314-4783-5-git-send-email-geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller  <davem@davemloft.net>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull" <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-ST remote processor needs some specified memory regions for
-firmware and IPC.
-Memory regions are defined as reserved memory and should
-be registered in remoteproc core thanks to rproc_add_carveout
-function before rproc_start. For this, st rproc driver implements
-prepare ops.
+On Friday, March 16, 2018 02:51:37 PM Geert Uytterhoeven wrote:
+> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+> In most cases this other symbol is an architecture or platform specific
+> symbol, or PCI.
+> 
+> Generic symbols and drivers without platform dependencies keep their
+> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+> cannot work anyway.
+> 
+> This simplifies the dependencies, and allows to improve compile-testing.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/st_remoteproc.c | 68 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 60 insertions(+), 8 deletions(-)
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index aacef0e..72a19a0 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -19,6 +19,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
-@@ -91,6 +92,64 @@ static void st_rproc_kick(struct rproc *rproc, int vqid)
- 		dev_err(dev, "failed to send message via mbox: %d\n", ret);
- }
- 
-+static int st_rproc_mem_release(struct rproc *rproc,
-+				struct rproc_mem_entry *mem)
-+{
-+	struct device *dev = rproc->dev.parent;
-+
-+	devm_iounmap(dev, mem->va);
-+
-+	return 0;
-+}
-+
-+static int st_rproc_prepare(struct rproc *rproc)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	struct device_node *np = dev->of_node;
-+	struct rproc_mem_entry *mem;
-+	void *va;
-+	struct reserved_mem *rmem;
-+	struct of_phandle_iterator it;
-+	int err;
-+
-+	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-+	while ((err = of_phandle_iterator_next(&it)) == 0) {
-+		va = NULL;
-+		rmem = of_reserved_mem_lookup(it.node);
-+
-+		/*  No need to map vdev buffer */
-+		if (strcmp(it.node->name, "vdev0buffer")) {
-+			va = devm_ioremap_wc(dev, rmem->base, rmem->size);
-+			if (!va) {
-+				dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-+					&rmem->base, rmem->size);
-+				return -EBUSY;
-+			}
-+
-+			/* Register memory region */
-+			mem = rproc_mem_entry_init(dev, va,
-+						   (dma_addr_t)rmem->base,
-+						   rmem->size, rmem->base,
-+						   st_rproc_mem_release,
-+						   it.node->name);
-+		} else {
-+			/* Register vdev buffer */
-+			mem = rproc_mem_entry_init(dev, NULL,
-+						   (dma_addr_t)rmem->base,
-+						   rmem->size, rmem->base,
-+						   NULL,
-+						   it.node->name);
-+		}
-+
-+		if (!mem)
-+			return -ENOMEM;
-+
-+		rproc_add_carveout(rproc, mem);
-+	}
-+
-+	return 0;
-+}
-+
- static int st_rproc_start(struct rproc *rproc)
- {
- 	struct st_rproc *ddata = rproc->priv;
-@@ -161,6 +220,7 @@ static int st_rproc_stop(struct rproc *rproc)
- 	.kick		= st_rproc_kick,
- 	.start		= st_rproc_start,
- 	.stop		= st_rproc_stop,
-+	.prepare	= st_rproc_prepare,
- };
- 
- /*
-@@ -254,12 +314,6 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	err = of_reserved_mem_device_init(dev);
--	if (err) {
--		dev_err(dev, "Failed to obtain shared memory\n");
--		return err;
--	}
--
- 	err = clk_prepare(ddata->clk);
- 	if (err)
- 		dev_err(dev, "failed to get clock\n");
-@@ -387,8 +441,6 @@ static int st_rproc_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(ddata->clk);
- 
--	of_reserved_mem_device_release(&pdev->dev);
--
- 	for (i = 0; i < ST_RPROC_MAX_VRING * MBOX_MAX; i++)
- 		mbox_free_channel(ddata->mbox_chan[i]);
- 
--- 
-1.9.1
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
