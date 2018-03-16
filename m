@@ -1,41 +1,124 @@
-Return-Path: <sibis@codeaurora.org>
-From: sibis <sibis@codeaurora.org>
-Subject: [PATCH 0/6] Add support for remoteproc modem-pil on SDM845 SoCs  
-Date: Fri,  2 Mar 2018 14:53:33 +0530
-Message-Id: <1519982619-28336-1-git-send-email-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, robh+dt@kernel.org, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 01/21] ASoC: Remove depends on HAS_DMA in case of platform dependency
+Date: Fri, 16 Mar 2018 14:51:34 +0100
+Message-Id: <1521208314-4783-2-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch series add support for remoteproc Q6v5 modem-pil on Qualcomm
-SDM845 SoC. The first patch adds AOSS (Always on subsystem) reset driver
-to provide for mss reset line. The third patch adds the APCS offset for
-SDM845. The last couple of patches add the resets sequence for Q6 on
-SDM845 and adds helper functions for arbitrary reset assert/deassert
-sequences.
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
-sibis (6):
-  reset: qcom: AOSS (Always on subsystem) reset controller
-  dt-bindings: mailbox: Add APCS global binding for SDM845 SoCs
-  mailbox: Add support for Qualcomm SDM845 SoCs
-  dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
-  remoteproc: qcom: Add support for mss remoteproc on SDM845
-  remoteproc: qcom: Reorder active clks enable and reset
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
- .../bindings/mailbox/qcom,apcs-kpss-global.txt     |   3 +-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   5 +-
- .../devicetree/bindings/reset/qcom,aoss-reset.txt  |  54 +++++++
- drivers/mailbox/qcom-apcs-ipc-mailbox.c            |   1 +
- drivers/remoteproc/qcom_q6v5_pil.c                 | 149 +++++++++++++++++--
- drivers/reset/Kconfig                              |  10 ++
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-qcom-aoss.c                    | 161 +++++++++++++++++++++
- include/dt-bindings/reset/qcom,aoss-sdm845.h       |  17 +++
- 9 files changed, 386 insertions(+), 15 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
- create mode 100644 drivers/reset/reset-qcom-aoss.c
- create mode 100644 include/dt-bindings/reset/qcom,aoss-sdm845.h
+This simplifies the dependencies, and allows to improve compile-testing.
 
+Note:
+  - The various SND_SOC_LPASS_* symbols had to loose their dependencies
+    on HAS_DMA, as they are selected by SND_SOC_STORM and/or
+    SND_SOC_APQ8016_SBC.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+---
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Drop dependency of SND_SOC_LPASS_IPQ806X on HAS_DMA,
+  - Split per subsystem.
+---
+ sound/soc/bcm/Kconfig      | 3 +--
+ sound/soc/kirkwood/Kconfig | 1 -
+ sound/soc/pxa/Kconfig      | 1 -
+ sound/soc/qcom/Kconfig     | 7 ++-----
+ 4 files changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/bcm/Kconfig b/sound/soc/bcm/Kconfig
+index edf367100ebd2f17..02f50b7a966ff262 100644
+--- a/sound/soc/bcm/Kconfig
++++ b/sound/soc/bcm/Kconfig
+@@ -11,9 +11,8 @@ config SND_BCM2835_SOC_I2S
+ config SND_SOC_CYGNUS
+ 	tristate "SoC platform audio for Broadcom Cygnus chips"
+ 	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  Say Y if you want to add support for ASoC audio on Broadcom
+ 	  Cygnus chips (bcm958300, bcm958305, bcm911360)
+ 
+-	  If you don't know what to do here, say N.
+\ No newline at end of file
++	  If you don't know what to do here, say N.
+diff --git a/sound/soc/kirkwood/Kconfig b/sound/soc/kirkwood/Kconfig
+index bc3c7b5ac752e471..132bb83f8e99aff3 100644
+--- a/sound/soc/kirkwood/Kconfig
++++ b/sound/soc/kirkwood/Kconfig
+@@ -1,7 +1,6 @@
+ config SND_KIRKWOOD_SOC
+ 	tristate "SoC Audio for the Marvell Kirkwood and Dove chips"
+ 	depends on ARCH_DOVE || ARCH_MVEBU || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  Say Y or M if you want to add support for codecs attached to
+ 	  the Kirkwood I2S interface. You will also need to select the
+diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
+index 484ab3c2ad672fc8..960744e46edc0549 100644
+--- a/sound/soc/pxa/Kconfig
++++ b/sound/soc/pxa/Kconfig
+@@ -1,7 +1,6 @@
+ config SND_PXA2XX_SOC
+ 	tristate "SoC Audio for the Intel PXA2xx chip"
+ 	depends on ARCH_PXA || COMPILE_TEST
+-	depends on HAS_DMA
+ 	select SND_PXA2XX_LIB
+ 	help
+ 	  Say Y or M if you want to add support for codecs attached to
+diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+index 8ec9a074b38bd702..3cc252e55468eaab 100644
+--- a/sound/soc/qcom/Kconfig
++++ b/sound/soc/qcom/Kconfig
+@@ -11,24 +11,21 @@ config SND_SOC_LPASS_CPU
+ 
+ config SND_SOC_LPASS_PLATFORM
+ 	tristate
+-	depends on HAS_DMA
+ 	select REGMAP_MMIO
+ 
+ config SND_SOC_LPASS_IPQ806X
+ 	tristate
+-	depends on HAS_DMA
+ 	select SND_SOC_LPASS_CPU
+ 	select SND_SOC_LPASS_PLATFORM
+ 
+ config SND_SOC_LPASS_APQ8016
+ 	tristate
+-	depends on HAS_DMA
+ 	select SND_SOC_LPASS_CPU
+ 	select SND_SOC_LPASS_PLATFORM
+ 
+ config SND_SOC_STORM
+ 	tristate "ASoC I2S support for Storm boards"
+-	depends on SND_SOC_QCOM && HAS_DMA
++	depends on SND_SOC_QCOM
+ 	select SND_SOC_LPASS_IPQ806X
+ 	select SND_SOC_MAX98357A
+ 	help
+@@ -37,7 +34,7 @@ config SND_SOC_STORM
+ 
+ config SND_SOC_APQ8016_SBC
+ 	tristate "SoC Audio support for APQ8016 SBC platforms"
+-	depends on SND_SOC_QCOM && HAS_DMA
++	depends on SND_SOC_QCOM
+ 	select SND_SOC_LPASS_APQ8016
+ 	help
+           Support for Qualcomm Technologies LPASS audio block in
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
