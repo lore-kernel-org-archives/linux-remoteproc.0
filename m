@@ -1,47 +1,64 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] Revert "rpmsg: smd: Create device for all channels"
-Date: Thu, 15 Mar 2018 11:12:44 -0700
-Message-Id: <20180315181244.8859-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v2 07/21] i2c: Remove depends on HAS_DMA in case of platform dependency
+Date: Fri, 16 Mar 2018 14:51:40 +0100
+Message-Id: <1521208314-4783-8-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In an effort to pick up channels that are in a funky state we
-optimistically tried to open all channels that we found, with the
-addition that we failed if the other side did not handshake the opening.
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
-But as we're starting the modem a second time all channels are found -
-in a "funky" state - and we try to open them. But the modem firmware
-requires the IPCRTR to be up in order to initialize. So any channels we
-try to open before that will fail and will not be opened again.
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
-This takes care of the regression, at the cost of reintroducing the
-previous behavior of handling of channels with "funky" states.
+This simplifies the dependencies, and allows to improve compile-testing.
 
-Reverts commit c12fc4519f60 ("rpmsg: smd: Create device for all channels")
-
-Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/rpmsg/qcom_smd.c | 5 +++++
- 1 file changed, 5 insertions(+)
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Split per subsystem.
+---
+ drivers/i2c/busses/Kconfig | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 92d0c6a7a837..1bca889bbea5 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1234,6 +1234,11 @@ static void qcom_channel_state_worker(struct work_struct *work)
- 		if (channel->state != SMD_CHANNEL_CLOSED)
- 			continue;
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index e2954fb86d659f36..2ce9bbd5d56ed06a 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -725,7 +725,6 @@ config I2C_MPC
+ config I2C_MT65XX
+ 	tristate "MediaTek I2C adapter"
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  This selects the MediaTek(R) Integrated Inter Circuit bus driver
+ 	  for MT65xx and MT81xx.
+@@ -903,7 +902,6 @@ config I2C_SH7760
  
-+		remote_state = GET_RX_CHANNEL_INFO(channel, state);
-+		if (remote_state != SMD_CHANNEL_OPENING &&
-+		    remote_state != SMD_CHANNEL_OPENED)
-+			continue;
-+
- 		if (channel->registered)
- 			continue;
+ config I2C_SH_MOBILE
+ 	tristate "SuperH Mobile I2C Controller"
+-	depends on HAS_DMA
+ 	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
+ 	help
+ 	  If you say yes to this option, support will be included for the
+@@ -1106,7 +1104,6 @@ config I2C_XLP9XX
  
+ config I2C_RCAR
+ 	tristate "Renesas R-Car I2C Controller"
+-	depends on HAS_DMA
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select I2C_SLAVE
+ 	help
 -- 
-2.16.2
+2.7.4
