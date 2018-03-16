@@ -1,50 +1,37 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 6/8] remoteproc: da8xx: prepare and unprepare the clock where needed
-Date: Wed, 21 Mar 2018 13:08:05 +0100
-Message-Id: <20180321120807.18032-7-brgl@bgdev.pl>
-In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
-References: <20180321120807.18032-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <herbert@gondor.apana.org.au>
+Date: Fri, 16 Mar 2018 23:52:14 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v2 03/21] crypto: Remove depends on HAS_DMA in case of
+ platform dependency
+Message-ID: <20180316155214.GA7250@gondor.apana.org.au>
+References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+ <1521208314-4783-4-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521208314-4783-4-git-send-email-geert@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, Mar 16, 2018 at 02:51:36PM +0100, Geert Uytterhoeven wrote:
+> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+> In most cases this other symbol is an architecture or platform specific
+> symbol, or PCI.
+> 
+> Generic symbols and drivers without platform dependencies keep their
+> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+> cannot work anyway.
+> 
+> This simplifies the dependencies, and allows to improve compile-testing.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-We're currently switching the platform to using the common clock
-framework. We need to explicitly prepare and unprepare the rproc
-clock.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 592bf0fc52e8..83f2d66ad3a9 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	rv = clk_enable(dsp_clk);
-+	rv = clk_prepare_enable(dsp_clk);
- 	if (rv) {
--		dev_err(dev, "clk_enable() failed: %d\n", rv);
-+		dev_err(dev, "clk_prepare_enable() failed: %d\n", rv);
- 		return rv;
- 	}
- 
-@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- 	struct da8xx_rproc *drproc = rproc->priv;
- 
- 	davinci_clk_reset_assert(drproc->dsp_clk);
--	clk_disable(drproc->dsp_clk);
-+	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
- }
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 -- 
-2.16.1
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
