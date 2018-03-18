@@ -1,124 +1,85 @@
-Return-Path: <anup@brainfault.org>
-Return-Path: <anup@brainfault.org>
-From: Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2] rpmsg: Add driver_override device attribute for rpmsg_device
-Date: Fri, 23 Mar 2018 21:41:17 +0530
-Message-Id: <1521821477-31378-1-git-send-email-anup@brainfault.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sun, 18 Mar 2018 15:47:24 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/3] rpmsg: core: make rpmsg bus DMA capable
+Message-ID: <20180318224724.GJ5626@tuxbook-pro>
+References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
+ <20180302145531.20463-3-srinivas.kandagatla@linaro.org>
+ <07503032-b08b-10ea-9d34-ddf85c682a9d@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07503032-b08b-10ea-9d34-ddf85c682a9d@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: srinivas.kandagatla@linaro.org, will.deacon@arm.com, joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds "driver_override" device attribute for rpmsg_device which
-will allow users to explicitly specify the rpmsg_driver to be used via
-sysfs entry.
+On Fri 02 Mar 08:14 PST 2018, Robin Murphy wrote:
 
-The "driver_override" device attribute implemented here is very similar
-to "driver_override" implemented for platform, pci, and amba bus types.
+> On 02/03/18 14:55, srinivas.kandagatla@linaro.org wrote:
+> > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > 
+> > Many of the rpmsg clients like audio drivers need to allocate
+> > dma memory. Make this bus DMA capable so that the child devices
+> > can use dma apis.
+> 
+> AFAICS after 15 minutes in the docs and code, the rpmsg "bus" is a virtual
+> one based around shared-memory mailbox communication, so I don't really see
+> how DMA exists in that context - I think maybe that abstraction needs
+> looking at.
+> 
 
-One important use-case of "driver_override" device attribute is to force
-use of rpmsg_chrdev driver for certain rpmsg_device instances.
+That's right, rpmsg shuffles messages back and forth to some coprocessor
+over shared memory, the contexts generating and receiving these messages
+are "rpmsg devices".
 
-Signed-off-by: Anup Patel <anup@brainfault.org>
+The problem Srinivas is facing is that one of these rpmsg devices is
+trying to allocate and map a larger chunk of memory to be shared with
+the coprocessor, which is then going to be referenced in the messages
+being passed in rpmsg.
 
-Changes since v1:
- - Removed un-related changes from patch
- - Renamed "path" to "member" in rpmsg_string_attr() macro
- - Used strcspn() instead of strchr() in rpmsg_string_attr() macro
+> However, from grepping through the DTs it seems at first glance like the
+> non-trivial things under the "qcom,smd" bus mostly map to actual platform
+> devices via the "qcom,smd-edge" property - if those platform devices are the
+> physical DMA masters, they should be the ones used for DMA API operations.
+> 
 
----
- Documentation/ABI/testing/sysfs-bus-rpmsg | 20 ++++++++++++++++
- drivers/rpmsg/rpmsg_core.c                | 39 +++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+One of the rpmsg implementations is virtio based and have a similar
+problem, there dma_alloc*() is called with dev->parent->parent as
+device, but this causes issues as dev->parent might not be what the
+original author expected it to -- so this needs to be reworked as well.
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
-index 189e419..1c8599e 100644
---- a/Documentation/ABI/testing/sysfs-bus-rpmsg
-+++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
-@@ -73,3 +73,23 @@ Description:
- 		This sysfs entry tells us whether the channel is a local
- 		server channel that is announced (values are either
- 		true or false).
-+
-+What:		/sys/bus/rpmsg/devices/.../driver_override
-+Date:		March 2018
-+KernelVersion:	4.17
-+Contact:	Ohad Ben-Cohen <ohad@wizery.com>
-+Description:
-+		Every rpmsg device is a communication channel with a remote
-+		processor. Channels are identified by a textual name (see
-+		/sys/bus/rpmsg/devices/.../name above) and have a local
-+		("source") rpmsg address, and remote ("destination") rpmsg
-+		address.
-+
-+		The listening entity (or client) which communicates with a
-+		remote processor is referred as rpmsg driver. The rpmsg device
-+		and rpmsg driver are matched based on rpmsg device name and
-+		rpmsg driver ID table.
-+
-+		This sysfs entry allows the rpmsg driver for a rpmsg device
-+		to be specified which will override standard OF, ID table
-+		and name matching.
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 5a08176..3e71976 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -333,11 +333,49 @@ field##_show(struct device *dev,					\
- }									\
- static DEVICE_ATTR_RO(field);
- 
-+#define rpmsg_string_attr(field, member)				\
-+static ssize_t								\
-+field##_store(struct device *dev, struct device_attribute *attr,	\
-+	      const char *buf, size_t sz)				\
-+{									\
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-+	char *new, *old;						\
-+									\
-+	new = kstrndup(buf, sz, GFP_KERNEL);				\
-+	if (!new)							\
-+		return -ENOMEM;						\
-+	new[strcspn(new, "\n")] = '\0';					\
-+									\
-+	device_lock(dev);						\
-+	old = rpdev->member;						\
-+	if (strlen(new)) {						\
-+		rpdev->member = new;					\
-+	} else {							\
-+		kfree(new);						\
-+		rpdev->member = NULL;					\
-+	}								\
-+	device_unlock(dev);						\
-+									\
-+	kfree(old);							\
-+									\
-+	return sz;							\
-+}									\
-+static ssize_t								\
-+field##_show(struct device *dev,					\
-+	     struct device_attribute *attr, char *buf)			\
-+{									\
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-+									\
-+	return sprintf(buf, "%s\n", rpdev->member);			\
-+}									\
-+static DEVICE_ATTR_RW(field)
-+
- /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
- rpmsg_show_attr(name, id.name, "%s\n");
- rpmsg_show_attr(src, src, "0x%x\n");
- rpmsg_show_attr(dst, dst, "0x%x\n");
- rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
-+rpmsg_string_attr(driver_override, driver_override);
- 
- static ssize_t modalias_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
-@@ -359,6 +397,7 @@ static struct attribute *rpmsg_dev_attrs[] = {
- 	&dev_attr_dst.attr,
- 	&dev_attr_src.attr,
- 	&dev_attr_announce.attr,
-+	&dev_attr_driver_override.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(rpmsg_dev);
--- 
-2.7.4
+> > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > ---
+> >   drivers/rpmsg/rpmsg_core.c | 1 +
+> >   1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> > index e84c71f8d6ab..540a3f3567b8 100644
+> > --- a/drivers/rpmsg/rpmsg_core.c
+> > +++ b/drivers/rpmsg/rpmsg_core.c
+> > @@ -472,6 +472,7 @@ struct bus_type rpmsg_bus = {
+> >   	.uevent		= rpmsg_uevent,
+> >   	.probe		= rpmsg_dev_probe,
+> >   	.remove		= rpmsg_dev_remove,
+> > +	.force_dma	= true,
+> 
+> Regardless of the above, would you really need to use this brute force hack
+> instead of just fixing the DTs? I'm struggling to find which drivers might
+> currently be relying on this :/
+> 
+
+The rpmsg devices, described as child nodes of rpmsg bus relates to
+specific functions in the coprocessor firmware. The fact that the
+firmware can be started and stopped dynamically makes the current layout
+quite convenient (in comparison to e.g. how we would describe a
+mailbox).
+
+We know for these cases that dev->parent->parent is a remoteproc
+instance representing the coprocessor that sits on the other side of the
+communication channel. So we did investigate if we could just have that
+to allocate and map buffers. The problem with this is that these
+functions has multiple iommu contexts.
+
+Regards,
+Bjorn
