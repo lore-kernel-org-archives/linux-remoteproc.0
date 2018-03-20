@@ -1,101 +1,85 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 08/13] remoteproc: add prepare and unprepare ops
-Date: Thu, 1 Mar 2018 17:23:55 +0100
-Message-ID: <1519921440-21356-9-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <atull@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+In-Reply-To: <CAMuHMdU-0VOs6MYrCaCrtRfBqGgaQfox1AgbExNNcYxVC6Uh-Q@mail.gmail.com>
+References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+ <1521208314-4783-7-git-send-email-geert@linux-m68k.org> <CANk1AXR3sv2=G-KsQh1p0rdcvy-3XZs6qVy5EMbcAMS6OSVzeQ@mail.gmail.com>
+ <CAMuHMdU-0VOs6MYrCaCrtRfBqGgaQfox1AgbExNNcYxVC6Uh-Q@mail.gmail.com>
+From: Alan Tull <atull@kernel.org>
+Date: Tue, 20 Mar 2018 13:20:11 -0500
+Message-ID: <CANk1AXRve3asPTufFYe=C_YPfyGwDpXxOWYZbWDq2bAnVkj00A@mail.gmail.com>
+Subject: Re: [PATCH v2 06/21] fpga: Remove depends on HAS_DMA in case of
+ platform dependency
+Content-Type: text/plain; charset="UTF-8"
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, iommu@lists.linux-foundation.org, USB list <linux-usb@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, linux-ide@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, Linux I2C <linux-i2c@vger.kernel.org>, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, Linux Media Mailing List <linux-media@vger.kernel.org>, Linux MMC List <linux-mmc@vger.kernel.org>, MTD Maling List <linux-mtd@lists.infradead.org>, netdev <netdev@vger.kernel.org>, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On some SoC architecture, it is needed to enable HW like
-clock, bus, regulator, memory region... before loading
-co-processor firmware.
+On Tue, Mar 20, 2018 at 5:04 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
-This patch introduces prepare and unprepare ops to execute
-platform specific function before firmware loading and after
-stop execution.
+Hi Geert,
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 20 +++++++++++++++++++-
- include/linux/remoteproc.h           |  4 ++++
- 2 files changed, 23 insertions(+), 1 deletion(-)
+> Hi Alan,
+>
+> On Mon, Mar 19, 2018 at 5:06 PM, Alan Tull <atull@kernel.org> wrote:
+>> On Fri, Mar 16, 2018 at 8:51 AM, Geert Uytterhoeven
+>> <geert@linux-m68k.org> wrote:
+>> This essentially removes this commit
+>>
+>> commit 1c8cb409491403036919dd1c6b45013dc8835a44
+>> Author: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+>> Date:   Wed Aug 3 13:45:46 2016 -0700
+>>
+>>     drivers/fpga/Kconfig: fix build failure
+>>
+>>     While building m32r allmodconfig the build is failing with the error:
+>>
+>>       ERROR: "bad_dma_ops" [drivers/fpga/zynq-fpga.ko] undefined!
+>>
+>>     Xilinx Zynq FPGA is using DMA but there was no dependency while
+>>     building.
+>>
+>>     Link: http://lkml.kernel.org/r/1464346526-13913-1-git-send-email-sudipm.mukherjee@gmail.com
+>>     Signed-off-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+>>     Acked-by: Moritz Fischer <moritz.fischer@ettus.com>
+>>     Cc: Alan Tull <atull@opensource.altera.com>
+>>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>>     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+>
+> Yes it does. The major change is that the first (core) series introduces
+> all needed dummies to do successful compile-testing on NO_DMA=y platforms.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 7a500cb..0ebbc4f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1058,12 +1058,22 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 		return ret;
- 	}
- 
-+	/* Prepare rproc for firmware loading if needed */
-+	if (rproc->ops->prepare) {
-+		ret = rproc->ops->prepare(rproc);
-+		if (ret) {
-+			dev_err(dev, "can't prepare rproc %s: %d\n",
-+				rproc->name, ret);
-+			goto disable_iommu;
-+		}
-+	}
-+
- 	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
- 
- 	/* load resource table */
- 	ret = rproc_load_rsc_table(rproc, fw);
- 	if (ret)
--		goto disable_iommu;
-+		goto unprepare_rproc;
- 
- 	/* reset max_notifyid */
- 	rproc->max_notifyid = -1;
-@@ -1086,6 +1096,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	kfree(rproc->cached_table);
- 	rproc->cached_table = NULL;
- 	rproc->table_ptr = NULL;
-+unprepare_rproc:
-+	/* release HW resources if needed */
-+	if (rproc->ops->unprepare)
-+		rproc->ops->unprepare(rproc);
- disable_iommu:
- 	rproc_disable_iommu(rproc);
- 	return ret;
-@@ -1331,6 +1345,10 @@ void rproc_shutdown(struct rproc *rproc)
- 	/* clean up all acquired resources */
- 	rproc_resource_cleanup(rproc);
- 
-+	/* release HW resources if needed */
-+	if (rproc->ops->unprepare)
-+		rproc->ops->unprepare(rproc);
-+
- 	rproc_disable_iommu(rproc);
- 
- 	/* Free the copy of the resource table */
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 4aa30bd..dcfa601 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -333,6 +333,8 @@ struct rproc_mem_entry {
- 
- /**
-  * struct rproc_ops - platform-specific device handlers
-+ * @prepare:	prepare device for code loading
-+ * @unprepare:	unprepare device after stop
-  * @start:	power on the device and boot it
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-@@ -345,6 +347,8 @@ struct rproc_mem_entry {
-  * @get_boot_addr:	get boot address to entry point specified in firmware
-  */
- struct rproc_ops {
-+	int (*prepare)(struct rproc *rproc);
-+	int (*unprepare)(struct rproc *rproc);
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
--- 
-1.9.1
+OK yes, I looked at the first patch that does the fix.  Looks good.
+Thanks for doing this.
+
+>
+>>> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+>>> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+>>> In most cases this other symbol is an architecture or platform specific
+>>> symbol, or PCI.
+>>>
+>>> Generic symbols and drivers without platform dependencies keep their
+>>> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+>>> cannot work anyway.
+>>>
+>>> This simplifies the dependencies, and allows to improve compile-testing.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>>> Reviewed-by: Mark Brown <broonie@kernel.org>
+>>> Acked-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Alan Tull <atull@kernel.org>
+
+Regards,
+Alan
+
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
