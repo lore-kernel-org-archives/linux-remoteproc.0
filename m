@@ -1,64 +1,57 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 07/21] i2c: Remove depends on HAS_DMA in case of platform dependency
-Date: Fri, 16 Mar 2018 14:51:40 +0100
-Message-Id: <1521208314-4783-8-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20180318230410.382f69a1@bbrezillon>
 References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+ <1521208314-4783-15-git-send-email-geert@linux-m68k.org> <20180318230410.382f69a1@bbrezillon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Mar 2018 11:06:48 +0100
+Message-ID: <CAMuHMdW2ohqEC2QZ8p7d9cN08a14pV19VcyWMKLS-egzc5JLMA@mail.gmail.com>
+Subject: Re: [PATCH v2 14/21] mtd: Remove depends on HAS_DMA in case of
+ platform dependency
+Content-Type: text/plain; charset="UTF-8"
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, iommu@lists.linux-foundation.org, USB list <linux-usb@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, linux-ide@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, Linux I2C <linux-i2c@vger.kernel.org>, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, Linux Media Mailing List <linux-media@vger.kernel.org>, Linux MMC List <linux-mmc@vger.kernel.org>, MTD Maling List <linux-mtd@lists.infradead.org>, netdev <netdev@vger.kernel.org>, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi <linux-spi@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+Hi Boris,
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+On Sun, Mar 18, 2018 at 11:04 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Fri, 16 Mar 2018 14:51:47 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+>> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+>> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+>> In most cases this other symbol is an architecture or platform specific
+>> symbol, or PCI.
+>>
+>> Generic symbols and drivers without platform dependencies keep their
+>> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+>> cannot work anyway.
+>>
+>> This simplifies the dependencies, and allows to improve compile-testing.
+>>
+>
+> Don't know which release you're targeting but it's likely to conflict
+> with the change I have in my nand/next branch. Is this a problem if I
+> take this patch through the mtd tree after [1] has reached Linus' tree?
 
-This simplifies the dependencies, and allows to improve compile-testing.
+No problem, I will rebase and resubmit after v4.17-rc1.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
----
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/i2c/busses/Kconfig | 3 ---
- 1 file changed, 3 deletions(-)
+> [1]https://lkml.org/lkml/2018/3/16/435
+>
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Reviewed-by: Mark Brown <broonie@kernel.org>
+>> Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index e2954fb86d659f36..2ce9bbd5d56ed06a 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -725,7 +725,6 @@ config I2C_MPC
- config I2C_MT65XX
- 	tristate "MediaTek I2C adapter"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 	  This selects the MediaTek(R) Integrated Inter Circuit bus driver
- 	  for MT65xx and MT81xx.
-@@ -903,7 +902,6 @@ config I2C_SH7760
- 
- config I2C_SH_MOBILE
- 	tristate "SuperH Mobile I2C Controller"
--	depends on HAS_DMA
- 	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  If you say yes to this option, support will be included for the
-@@ -1106,7 +1104,6 @@ config I2C_XLP9XX
- 
- config I2C_RCAR
- 	tristate "Renesas R-Car I2C Controller"
--	depends on HAS_DMA
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select I2C_SLAVE
- 	help
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
