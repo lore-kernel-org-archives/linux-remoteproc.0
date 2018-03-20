@@ -1,69 +1,64 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 0/8] ARM: davinci: complete the conversion to using the reset framework
-Date: Fri, 23 Mar 2018 10:36:01 +0100
-Message-Id: <20180323093609.24576-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <AM5PR04MB3267989AB6A81639F61AB165ECD40@AM5PR04MB3267.eurprd04.prod.outlook.com>
+References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
+ <1521208314-4783-11-git-send-email-geert@linux-m68k.org> <AM5PR04MB3267989AB6A81639F61AB165ECD40@AM5PR04MB3267.eurprd04.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 20 Mar 2018 11:09:06 +0100
+Message-ID: <CAMuHMdXZNqO0NDESs9Y3uJs0kmQSXY05ei0xJE9uT9EUixuxAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 10/21] lightnvm: Remove depends on HAS_DMA in case of
+ platform dependency
+Content-Type: text/plain; charset="UTF-8"
+To: Madalin-cristian Bucur <madalin.bucur@nxp.com>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux1394-devel@lists.sourceforge.net" <linux1394-devel@lists.sourceforge.net>, "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Madalin-cristian,
 
-This series converts the only user of the handcoded, mach-specific reset
-routines in the davinci platform to using the reset framework.
+On Mon, Mar 19, 2018 at 6:27 AM, Madalin-cristian Bucur
+<madalin.bucur@nxp.com> wrote:
+>> -----Original Message-----
+>> From: netdev-owner@vger.kernel.org [mailto:netdev-owner@vger.kernel.org]
+>> On Behalf Of Geert Uytterhoeven
+>> Remove dependencies on HAS_DMA where a Kconfig symbol depends on
+>> another
+>> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+>> In most cases this other symbol is an architecture or platform specific
+>> symbol, or PCI.
+>>
+>> Generic symbols and drivers without platform dependencies keep their
+>> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+>> cannot work anyway.
+>>
+>> This simplifies the dependencies, and allows to improve compile-testing.
+>>
+>> Notes:
+>>   - FSL_FMAN keeps its dependency on HAS_DMA, as it calls set_dma_ops(),
+>>     which does not exist if HAS_DMA=n (Do we need a dummy? The use of
+>>     set_dma_ops() in this driver is questionable),
+>
+> Hi,
+>
+> The set_dma_ops() is no longer required in the fsl/fman, I'll send a patch to remove it.
 
-Patch 1 modifies the way lookup entries are registered with the reset
-framework.
+Thank you, looking forward to it!
 
-Patches 2-4 add necessary lookups/DT-properties.
+>>   - SND_SOC_LPASS_IPQ806X and SND_SOC_LPASS_PLATFORM loose their
+>>     dependency on HAS_DMA, as they are selected from
+>>     SND_SOC_APQ8016_SBC.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Reviewed-by: Mark Brown <broonie@kernel.org>
+>> Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-Patches 5-7 convert the davinci-rproc driver to the reset framework.
+Gr{oetje,eeting}s,
 
-Patch 8 removes now dead code.
-
-Philipp: it turned out that it's indeed better to use the reset
-controller's device name for the entry lookup.
-
-Tested both in DT and legacy modes by booting the examples from
-ti-ipc-rtos recipe in meta-ti.
-
-This series applies on top of David Lechner's common-clk-v9 branch[1]
-with Philipp Zabel's reset/next branch[2] pulled in.
-
-It can be found in my github tree as well[3].
-
-[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-[2] git://git.pengutronix.de/git/pza/linux reset/next
-[3] git@github.com:brgl/linux.git topic/davinci-reset
-
-v1 -> v2:
-- fixed the device tree patches the descriptions of which were mixed up
-- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
-  reset provider, since it's possible that the lookup table was not yet
-  registered
-- made the local variable naming consistent in the davinci-rproc driver
-- fixed a typo in PATCH 5/8
-
-Bartosz Golaszewski (8):
-  reset: modify the way reset lookup works for board files
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-  clk: davinci: add a reset lookup table for psc0
-  remoteproc: da8xx: add the missing retval check for clk_enable()
-  remoteproc: da8xx: prepare and unprepare the clock where needed
-  remoteproc: da8xx: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
-
- arch/arm/boot/dts/da850.dtsi               |  2 ++
- arch/arm/mach-davinci/include/mach/clock.h | 21 --------------
- drivers/clk/davinci/psc-da850.c            |  8 ++++++
- drivers/clk/davinci/psc.c                  | 19 +------------
- drivers/remoteproc/da8xx_remoteproc.c      | 44 +++++++++++++++++++++++++-----
- drivers/reset/core.c                       | 33 +++++++++++++++++++---
- include/linux/reset-controller.h           |  8 ++++--
- 7 files changed, 82 insertions(+), 53 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+                        Geert
 
 -- 
-2.16.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
