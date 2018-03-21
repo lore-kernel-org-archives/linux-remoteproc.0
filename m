@@ -1,146 +1,122 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 05/13] remoteproc: add helper function to allocate and init rproc_mem_entry struct
-Date: Thu, 1 Mar 2018 17:23:52 +0100
-Message-ID: <1519921440-21356-6-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 7/8] remoteproc: da8xx: use the reset framework
+Date: Wed, 21 Mar 2018 13:08:06 +0100
+Message-Id: <20180321120807.18032-8-brgl@bgdev.pl>
+In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
+References: <20180321120807.18032-1-brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch introduces rproc_mem_entry_init helper function to
-simplify rproc_mem_entry structure allocation and filling by
-client.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Switch to using the reset framework instead of handcoded reset routines
+we used so far.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 64 +++++++++++++++++++++++++++---------
- include/linux/remoteproc.h           |  5 +++
- 2 files changed, 53 insertions(+), 16 deletions(-)
+ drivers/remoteproc/da8xx_remoteproc.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f73a0cf..4c92b7d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -636,7 +636,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 				 struct fw_rsc_carveout *rsc,
- 				 int offset, int avail)
- {
--	struct rproc_mem_entry *carveout, *mapping;
-+	struct rproc_mem_entry *carveout, *mapping = NULL;
- 	struct device *dev = &rproc->dev;
- 	dma_addr_t dma;
- 	void *va;
-@@ -656,16 +656,11 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
- 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 83f2d66ad3a9..fc29b78d0f77 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -10,6 +10,7 @@
  
--	carveout = kzalloc(sizeof(*carveout), GFP_KERNEL);
--	if (!carveout)
--		return -ENOMEM;
+ #include <linux/bitops.h>
+ #include <linux/clk.h>
++#include <linux/reset.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -20,8 +21,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
+ 
+-#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
 -
- 	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
- 	if (!va) {
- 		dev_err(dev->parent,
- 			"failed to allocate dma memory: len 0x%x\n", rsc->len);
--		ret = -ENOMEM;
--		goto free_carv;
-+		return -ENOMEM;
+ #include "remoteproc_internal.h"
+ 
+ static char *da8xx_fw_name;
+@@ -72,6 +71,7 @@ struct da8xx_rproc {
+ 	struct da8xx_rproc_mem *mem;
+ 	int num_mems;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void (*ack_fxn)(struct irq_data *data);
+ 	struct irq_data *irq_data;
+ 	void __iomem *chipsig;
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	struct reset_control *dsp_reset = drproc->dsp_reset;
+ 	int rv;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+@@ -155,7 +156,11 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 		return rv;
  	}
  
- 	dev_dbg(dev, "carveout va %p, dma %pad, len 0x%x\n",
-@@ -744,27 +739,64 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	 */
- 	rsc->pa = (u32)rproc_va_to_pa(va);
- 
--	carveout->va = va;
--	carveout->len = rsc->len;
--	carveout->dma = dma;
--	carveout->da = rsc->da;
--	carveout->release = rproc_release_carveout;
--	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
-+	carveout = rproc_mem_entry_init(dev, va, dma, rsc->len, rsc->da,
-+					rproc_release_carveout, rsc->name);
-+	if (!carveout)
-+		goto free_carv;
- 
- 	list_add_tail(&carveout->node, &rproc->carveouts);
+-	davinci_clk_reset_deassert(dsp_clk);
++	rv = reset_control_deassert(dsp_reset);
++	if (rv) {
++		dev_err(dev, "reset_control_deassert() failed: %d\n", rv);
++		return rv;
++	}
  
  	return 0;
- 
-+free_carv:
-+	kfree(carveout);
- free_mapping:
- 	kfree(mapping);
- dma_free:
- 	dma_free_coherent(dev->parent, rsc->len, va, dma);
--free_carv:
--	kfree(carveout);
- 	return ret;
  }
+@@ -163,8 +168,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ static int da8xx_rproc_stop(struct rproc *rproc)
+ {
+ 	struct da8xx_rproc *drproc = rproc->priv;
++	int rv;
++
++	rv = reset_control_assert(drproc->dsp_reset);
++	if (rv) {
++		dev_err(rproc->dev.parent,
++			"reset_control_assert() failed: %d\n", rv);
++		return rv;
++	}
  
--/*
-+/**
-+ * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
-+ * @dev: pointer on device struct
-+ * @va: virtual address
-+ * @dma: dma address
-+ * @len: memory carveout length
-+ * @da: device address
-+ * @release: memory carveout function
-+ * @name: carveout name
-+ *
-+ * This function allocates a rproc_mem_entry struct and fill it with parameters
-+ * provided by client.
-+ */
-+struct rproc_mem_entry *rproc_mem_entry_init(struct device *dev,
-+		void *va, dma_addr_t dma, int len, u32 da,
-+		int (*release)(struct rproc *, struct rproc_mem_entry *),
-+		const char *name, ...)
-+{
-+	struct rproc_mem_entry *mem;
-+	va_list args;
-+
-+	mem = devm_kzalloc(dev, sizeof(*mem), GFP_KERNEL);
-+	if (!mem)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mem->va = va;
-+	mem->dma = dma;
-+	mem->da = da;
-+	mem->len = len;
-+	mem->release = release;
-+
-+	va_start(args, name);
-+	snprintf(mem->name, sizeof(mem->name), name, args);
-+	va_end(args);
-+
-+	return mem;
-+}
-+EXPORT_SYMBOL(rproc_mem_entry_init);
-+
-+/**
-  * A lookup table for resource handlers. The indices are defined in
-  * enum fw_resource_type.
-  */
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 2202c08..59b60f1 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -536,6 +536,11 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- int rproc_del(struct rproc *rproc);
- void rproc_free(struct rproc *rproc);
+-	davinci_clk_reset_assert(drproc->dsp_clk);
+ 	clk_disable_unprepare(drproc->dsp_clk);
  
-+struct rproc_mem_entry *rproc_mem_entry_init(struct device *dev,
-+		void *va, dma_addr_t dma, int len, u32 da,
-+		int (*release)(struct rproc *, struct rproc_mem_entry *),
-+		const char *name, ...);
+ 	return 0;
+@@ -232,6 +244,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	struct resource *bootreg_res;
+ 	struct resource *chipsig_res;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void __iomem *chipsig;
+ 	void __iomem *bootreg;
+ 	int irq;
+@@ -268,6 +281,13 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsp_clk);
+ 	}
+ 
++	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(dsp_reset)) {
++		dev_err(dev, "unable to get reset control: %ld\n",
++			PTR_ERR(dsp_reset));
++		return PTR_ERR(dsp_reset);
++	}
 +
- int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ 	if (dev->of_node) {
+ 		ret = of_reserved_mem_device_init(dev);
+ 		if (ret) {
+@@ -309,7 +329,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+ 	 * held in reset at the time it is called.
+ 	 */
+-	ret = davinci_clk_reset_assert(drproc->dsp_clk);
++	ret = reset_control_assert(dsp_reset);
+ 	if (ret)
+ 		goto free_rproc;
+ 
 -- 
-1.9.1
+2.16.1
