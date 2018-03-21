@@ -1,46 +1,58 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 01/13] remoteproc: configure IOMMU only if device address requested
-Date: Thu, 1 Mar 2018 17:23:48 +0100
-Message-ID: <1519921440-21356-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <anup@brainfault.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+In-Reply-To: <20180318224744.GL5626@tuxbook-pro>
+References: <1515590217-24256-1-git-send-email-anup@brainfault.org> <20180318224744.GL5626@tuxbook-pro>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 21 Mar 2018 13:34:18 +0530
+Message-ID: <CAAhSdy2JcXTkbtO95yjp4eYQ7cTwS62hh_U1qk3k7taN2ySWgw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] rpmsg: virtio_rpmsg_bus: fix rpmsg_probe() for
+ virtio-mmio transport
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-If there is no IOMMU associate to remote processor device,
-remoteproc_core won't be able to satisfy device address requested
-in firmware resource table.
-Return an error as configuration won't be coherent.
+On Mon, Mar 19, 2018 at 4:17 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Wed 10 Jan 05:16 PST 2018, Anup Patel wrote:
+>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> [..]
+>> @@ -924,9 +925,16 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>>                                    total_buf_space, &vrp->bufs_dma,
+>>                                    GFP_KERNEL);
+>>       if (!bufs_va) {
+>> -             err = -ENOMEM;
+>> -             goto vqs_del;
+>> -     }
+>> +             bufs_va = dma_alloc_coherent(vdev->dev.parent,
+>> +                                          total_buf_space, &vrp->bufs_dma,
+>> +                                          GFP_KERNEL);
+>> +             if (!bufs_va) {
+>> +                     err = -ENOMEM;
+>> +                     goto vqs_del;
+>> +             } else
+>> +                     vrp->bufs_dev = vdev->dev.parent;
+>> +     } else
+>> +             vrp->bufs_dev = vdev->dev.parent->parent;
+>
+> I really don't fancy the idea of us allocating on behalf of our
+> grandparent here, as you show it's not certain that our grandparent is
+> what someone originally expected it to be.
+>
+> With the purpose of being able to control these allocations there is an
+> ongoing discussion related to this, which I believe will result in this
+> being changed to at least vdev->dev.parent..
+>
+>
+> I do expect that this discussion will be brought up during Linaro
+> Connect the coming week.
+>
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Currently, rpmsg_probe() is broken for virtio-mmio transport
+hence I send this patch as a stable fix.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4170dfb..56b33e4 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -654,7 +654,15 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	 * to use the iommu-based DMA API: we expect 'dma' to contain the
- 	 * physical address in this case.
- 	 */
--	if (rproc->domain) {
-+
-+	if (rsc->da != FW_RSC_ADDR_ANY && !rproc->domain) {
-+		dev_err(dev->parent,
-+			"Bad carveout rsc configuration\n");
-+		ret = -ENOMEM;
-+		goto dma_free;
-+	}
-+
-+	if (rsc->da != FW_RSC_ADDR_ANY && rproc->domain) {
- 		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
- 		if (!mapping) {
- 			ret = -ENOMEM;
--- 
-1.9.1
+In general, I am fine if we are eventually going towards
+vdev->dev.parent usage.
+
+Regards,
+Anup
