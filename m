@@ -1,154 +1,108 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 1/8] reset: modify the way reset lookup works for board files
-Date: Fri, 23 Mar 2018 10:36:02 +0100
-Message-Id: <20180323093609.24576-2-brgl@bgdev.pl>
-In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <anup@brainfault.org>
+MIME-Version: 1.0
+In-Reply-To: <20180318224736.GK5626@tuxbook-pro>
+References: <1515590259-24304-1-git-send-email-anup@brainfault.org> <20180318224736.GK5626@tuxbook-pro>
+From: Anup Patel <anup@brainfault.org>
+Date: Wed, 21 Mar 2018 13:29:58 +0530
+Message-ID: <CAAhSdy31EEJYHn2qoWiCeRJfhLqPmyxVKU83RSrzozgWig86tw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] rpmsg: Add driver_override device attribute for rpmsg_device
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Mar 19, 2018 at 4:17 AM, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> On Wed 10 Jan 05:17 PST 2018, Anup Patel wrote:
+>
+>> This patch adds "driver_override" device attribute for rpmsg_device which
+>> will allow users to explicitly specify the rpmsg_driver to be used via
+>> sysfs entry.
+>>
+>> The "driver_override" device attribute implemented here is very similar
+>> to "driver_override" implemented for platform, pci, and amba bus types.
+>>
+>> One important use-case of "driver_override" device attribute is to force
+>> use of rpmsg_chrdev driver for certain rpmsg_device instances.
+>>
+>
+> I assume you mean specifically for the case where you want to prevent
+> some kernel driver to probe for some given channel?
 
-Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
-introduced reset control lookup mechanism for boards that still use
-board files.
+Yes, there are few use-cases where we want to prevent kernel
+driver and rather access rpmsg device from user-space using
+rpmsg_chrdev driver.
 
-The routine used to register lookup entries takes the corresponding
-reset_controlled_dev structure as argument.
+>
+> The intention with rpmsg_char is that you through the rpmsg_ctrlX
+> interface create and destroy endpoints dynamically, so you wouldn't need
+> to use this mechanism to bind some specific channel to rpmsg_char.
+>
+>
+> That said, this does make sense for completeness sake.
+>
+> [..]
+>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>> index dffa3aa..9a25e42 100644
+>> --- a/drivers/rpmsg/rpmsg_core.c
+>> +++ b/drivers/rpmsg/rpmsg_core.c
+>> @@ -321,11 +321,11 @@ struct device *rpmsg_find_device(struct device *parent,
+>>  }
+>>  EXPORT_SYMBOL(rpmsg_find_device);
+>>
+>> -/* sysfs show configuration fields */
+>> +/* sysfs configuration fields */
+>>  #define rpmsg_show_attr(field, path, format_string)                  \
+>>  static ssize_t                                                               \
+>>  field##_show(struct device *dev,                                     \
+>> -                     struct device_attribute *attr, char *buf)       \
+>> +          struct device_attribute *attr, char *buf)                  \
+>
+> Seems unnecessary.
 
-It's been determined however that for the first user of this new
-interface - davinci psc driver - it will be easier to register the
-lookup entries using the reset controller device name.
+OK, I will drop these changes.
 
-This patch changes the way lookup entries are added.
+>
+>>  {                                                                    \
+>>       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+>>                                                                       \
+>> @@ -333,11 +333,52 @@ field##_show(struct device *dev,                                        \
+>>  }                                                                    \
+>>  static DEVICE_ATTR_RO(field);
+>>
+>> +#define rpmsg_string_attr(field, path)                                       \
+>
+> "path" is an odd name for these, I think it's a "member".
+>
+>> +static ssize_t                                                               \
+>> +field##_store(struct device *dev,                                    \
+>> +           struct device_attribute *attr, const char *buf, size_t sz)\
+>
+> field##_store(struct device *dev, struct device_attribute *attr,        \
+>               const char *buf, size_t sz)                               \
+>
+> Is prettier
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
- include/linux/reset-controller.h |  8 +++++---
- 2 files changed, 34 insertions(+), 7 deletions(-)
+OK, I will update this.
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 06fa4907afc4..f37048e55336 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
- 
- /**
-  * reset_controller_add_lookup - register a set of lookup entries
-- * @rcdev: initialized reset controller device owning the reset line
-+ * @provider: name of the reset controller provider
-  * @lookup: array of reset lookup entries
-  * @num_entries: number of entries in the lookup array
-  */
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-+void reset_controller_add_lookup(const char *provider,
- 				 struct reset_control_lookup *lookup,
- 				 unsigned int num_entries)
- {
-@@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
- 			continue;
- 		}
- 
--		entry->rcdev = rcdev;
-+		entry->provider = provider;
- 		list_add_tail(&entry->list, &reset_lookup_list);
- 	}
- 	mutex_unlock(&reset_lookup_mutex);
-@@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- }
- EXPORT_SYMBOL_GPL(__of_reset_control_get);
- 
-+static struct reset_controller_dev *
-+__reset_controller_by_name(const char *name)
-+{
-+	struct reset_controller_dev *rcdev;
-+
-+	lockdep_assert_held(&reset_list_mutex);
-+
-+	list_for_each_entry(rcdev, &reset_controller_list, list) {
-+		if (!rcdev->dev)
-+			continue;
-+
-+		if (!strcmp(name, dev_name(rcdev->dev)))
-+			return rcdev;
-+	}
-+
-+	return NULL;
-+}
-+
- static struct reset_control *
- __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 				bool shared, bool optional)
- {
- 	const struct reset_control_lookup *lookup;
-+	struct reset_controller_dev *rcdev;
- 	const char *dev_id = dev_name(dev);
- 	struct reset_control *rstc = NULL;
- 
-@@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 		    ((con_id && lookup->con_id) &&
- 		     !strcmp(con_id, lookup->con_id))) {
- 			mutex_lock(&reset_list_mutex);
--			rstc = __reset_control_get_internal(lookup->rcdev,
-+			rcdev = __reset_controller_by_name(lookup->provider);
-+			if (!rcdev) {
-+				mutex_unlock(&reset_list_mutex);
-+				continue;
-+			}
-+
-+			rstc = __reset_control_get_internal(rcdev,
- 							    lookup->index,
- 							    shared);
- 			mutex_unlock(&reset_list_mutex);
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index 25698f6c1fae..1a6c25d825d3 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -30,14 +30,14 @@ struct of_phandle_args;
-  * struct reset_control_lookup - represents a single lookup entry
-  *
-  * @list: internal list of all reset lookup entries
-- * @rcdev: reset controller device controlling this reset line
-+ * @provider: name of the reset controller device controlling this reset line
-  * @index: ID of the reset controller in the reset controller device
-  * @dev_id: name of the device associated with this reset line
-  * @con_id name of the reset line (can be NULL)
-  */
- struct reset_control_lookup {
- 	struct list_head list;
--	struct reset_controller_dev *rcdev;
-+	const char *provider;
- 	unsigned int index;
- 	const char *dev_id;
- 	const char *con_id;
-@@ -57,6 +57,7 @@ struct reset_control_lookup {
-  * @owner: kernel module of the reset controller driver
-  * @list: internal list of reset controller devices
-  * @reset_control_head: head of internal list of requested reset controls
-+ * @dev: corresponding driver model device struct
-  * @of_node: corresponding device tree node as phandle target
-  * @of_reset_n_cells: number of cells in reset line specifiers
-  * @of_xlate: translation function to translate from specifier as found in the
-@@ -68,6 +69,7 @@ struct reset_controller_dev {
- 	struct module *owner;
- 	struct list_head list;
- 	struct list_head reset_control_head;
-+	struct device *dev;
- 	struct device_node *of_node;
- 	int of_reset_n_cells;
- 	int (*of_xlate)(struct reset_controller_dev *rcdev,
-@@ -82,7 +84,7 @@ struct device;
- int devm_reset_controller_register(struct device *dev,
- 				   struct reset_controller_dev *rcdev);
- 
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-+void reset_controller_add_lookup(const char *provider,
- 				 struct reset_control_lookup *lookup,
- 				 unsigned int num_entries);
- 
--- 
-2.16.1
+>
+>> +{                                                                    \
+>> +     struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
+>> +     char *new, *old, *cp;                                           \
+>> +                                                                     \
+>> +     new = kstrndup(buf, sz, GFP_KERNEL);                            \
+>> +     if (!new)                                                       \
+>> +             return -ENOMEM;                                         \
+>> +                                                                     \
+>> +     cp = strchr(new, '\n');                                         \
+>> +     if (cp)                                                         \
+>> +             *cp = '\0';                                             \
+>
+> I prefer
+>
+>         new[strcspn(new, "\n")] = '\0';
+
+Sure, I will update this.
+
+Thanks,
+Anup
