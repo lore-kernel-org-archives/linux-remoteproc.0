@@ -1,153 +1,133 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v2 00/21] Allow compile-testing NO_DMA (drivers)
-Date: Fri, 16 Mar 2018 14:51:33 +0100
-Message-Id: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, linux-scsi@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <sibis@codeaurora.org>
+Subject: Re: [PATCH v3 1/7] dt-bindings: reset: Add AOSS reset bindings for
+ SDM845 SoCs
+References: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
+ <1521019283-32212-2-git-send-email-sibis@codeaurora.org>
+ <20180318224459.GC5626@tuxbook-pro>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <d5a7f0c0-5daa-d2ac-a383-9456e9e38e4f@codeaurora.org>
+Date: Wed, 21 Mar 2018 11:59:30 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180318224459.GC5626@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-	Hi all,
+Hi Bjorn,
+Thanks for the review.
 
-If NO_DMA=y, get_dma_ops() returns a reference to the non-existing
-symbol bad_dma_ops, thus causing a link failure if it is ever used.
+On 03/19/2018 04:14 AM, Bjorn Andersson wrote:
+> On Wed 14 Mar 02:21 PDT 2018, Sibi S wrote:
+>> +- reg:
+>> +	Usage: required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: must specify the base address and size of the register
+>> +	            space.
+>> +
+>> +
+> 
+> Double empty lines.
+> 
 
-The intention of this is twofold:
-  1. To catch users of the DMA API on systems that do no support the DMA
-     mapping API,
-  2. To avoid building drivers that cannot work on such systems anyway.
+will remove them
 
-However, the disadvantage is that we have to keep on adding dependencies
-on HAS_DMA all over the place.
+>> +- #reset-cells:
+>> +	Usage: required
+>> +	Value type: <uint>
+>> +	Definition: must be 1; cell entry represents the reset index.
+>> +
+>> +example:
+> 
+> Please capitalize the initial char.
+>
 
-Thanks to the COMPILE_TEST symbol, lots of drivers now depend on one or
-more platform dependencies (that imply HAS_DMA) || COMPILE_TEST, thus
-already covering intention #2.  Having to add an explicit dependency on
-HAS_DMA here is cumbersome, and hinders compile-testing.
+sure
 
-Hence I think the time is ripe to reconsider the link failure.
-Patch series "[PATCH v2 0/5] Allow compile-testing NO_DMA (core)"
-(https://lkml.org/lkml/2018/3/16/435) already:
-  - Changed get_dma_ops() to return NULL instead,
-  - Added a few more dummies to enable compile-testing.
+>> +
+>> +aoss_reset: qcom,reset-controller@b2e0100 {
+>> +	compatible = "qcom,sdm845-aoss-reset";
+>> +	reg = <0xc2b0000 0x20004>;
+> 
+> 0x20004 does seem very even, please verify this size.
+> 
 
-This patch series:
-  - Removes dependencies on HAS_DMA for symbols that already have
-    platform dependencies implying HAS_DMA.
+even though the reg space after that range is unused, the AOSS reset
+driver is supposed to control only those listed reset lines
 
-To avoid allmodconfig/allyesconfig regressions on NO_DMA=y platforms,
-this (drivers) series should be applied after the previous (core)
-series (but not many people may notice/care ;-)
+>> +	#reset-cells = <1>;
+>> +};
+>> +
+>> +
+>> +Specifying reset lines connected to IP modules
+> 
+> "AOSS reset clients"
+> 
 
-Changes compared to v1:
-  - Add Reviewed-by, Acked-by,
-  - Drop dependency of SND_SOC_LPASS_IPQ806X on HAS_DMA,
-  - Drop dependency of VIDEOBUF{,2}_DMA_{CONTIG,SG} on HAS_DMA,
-  - Drop new dependencies of VIDEO_IPU3_CIO2, DVB_C8SECTPFE, and
-    MTD_NAND_MARVELL on HAS_DMA,
-  - Split in per-subsystem patches,
-  - Split-off the core part in a separate series.
+yep this heading makes much more sense
 
-This series is against v4.16-rc5. It can also be found at
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git/log/?h=no-dma-compile-testing-v2
+> Although you could probably get a way with just referring to reset.txt
+> and the header file.
+> 
+>> +==============================================
+>> +
+>> +Device nodes that need access to reset lines should
+>> +specify them as a reset phandle in their corresponding node as
+>> +specified in reset.txt.
+>> +
+>> +For list of all valid reset indicies see
+>> +<dt-bindings/reset/qcom,sdm845-aoss.h>
+>> +
+>> +Example:
+>> +
+>> +modem-pil@4080000 {
+>> +	...
+>> +
+>> +	resets = <&aoss_reset AOSS_CC_MSS_RESTART>;
+>> +	reset-names = "mss_restart";
+>> +
+>> +	...
+>> +};
+>> diff --git a/include/dt-bindings/reset/qcom,sdm845-aoss.h b/include/dt-bindings/reset/qcom,sdm845-aoss.h
+>> new file mode 100644
+>> index 0000000..e9b38fc
+>> --- /dev/null
+>> +++ b/include/dt-bindings/reset/qcom,sdm845-aoss.h
+>> @@ -0,0 +1,17 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+> 
+> For tooling reasons header files should have their SPDX License tag
+> wrapped in /* */
+> 
 
-It has been compile-tested with allmodconfig and allyesconfig for
-m68k/sun3, and has received attention from the kbuild test robot.
+Sure will replace it
 
-Thanks!
-
-Geert Uytterhoeven (21):
-  ASoC: Remove depends on HAS_DMA in case of platform dependency
-  ata: Remove depends on HAS_DMA in case of platform dependency
-  crypto: Remove depends on HAS_DMA in case of platform dependency
-  fbdev: Remove depends on HAS_DMA in case of platform dependency
-  firewire: Remove depends on HAS_DMA in case of platform dependency
-  fpga: Remove depends on HAS_DMA in case of platform dependency
-  i2c: Remove depends on HAS_DMA in case of platform dependency
-  iio: adc: Remove depends on HAS_DMA in case of platform dependency
-  iommu: Remove depends on HAS_DMA in case of platform dependency
-  lightnvm: Remove depends on HAS_DMA in case of platform dependency
-  mailbox: Remove depends on HAS_DMA in case of platform dependency
-  media: Remove depends on HAS_DMA in case of platform dependency
-  mmc: Remove depends on HAS_DMA in case of platform dependency
-  mtd: Remove depends on HAS_DMA in case of platform dependency
-  net: Remove depends on HAS_DMA in case of platform dependency
-  remoteproc: Remove depends on HAS_DMA in case of platform dependency
-  scsi: hisi_sas: Remove depends on HAS_DMA in case of platform
-    dependency
-  serial: Remove depends on HAS_DMA in case of platform dependency
-  spi: Remove depends on HAS_DMA in case of platform dependency
-  staging: vc04_services: Remove depends on HAS_DMA in case of platform
-    dependency
-  usb: Remove depends on HAS_DMA in case of platform dependency
-
- drivers/ata/Kconfig                             |  2 --
- drivers/crypto/Kconfig                          | 14 +++------
- drivers/firewire/Kconfig                        |  1 -
- drivers/fpga/Kconfig                            |  1 -
- drivers/i2c/busses/Kconfig                      |  3 --
- drivers/iio/adc/Kconfig                         |  2 --
- drivers/iommu/Kconfig                           |  5 ++--
- drivers/lightnvm/Kconfig                        |  2 +-
- drivers/mailbox/Kconfig                         |  2 --
- drivers/media/common/videobuf2/Kconfig          |  2 --
- drivers/media/pci/dt3155/Kconfig                |  1 -
- drivers/media/pci/intel/ipu3/Kconfig            |  1 -
- drivers/media/pci/solo6x10/Kconfig              |  1 -
- drivers/media/pci/sta2x11/Kconfig               |  1 -
- drivers/media/pci/tw5864/Kconfig                |  1 -
- drivers/media/pci/tw686x/Kconfig                |  1 -
- drivers/media/platform/Kconfig                  | 40 ++++++++-----------------
- drivers/media/platform/am437x/Kconfig           |  2 +-
- drivers/media/platform/atmel/Kconfig            |  4 +--
- drivers/media/platform/blackfin/Kconfig         |  1 -
- drivers/media/platform/davinci/Kconfig          |  6 ----
- drivers/media/platform/marvell-ccic/Kconfig     |  3 +-
- drivers/media/platform/rcar-vin/Kconfig         |  2 +-
- drivers/media/platform/soc_camera/Kconfig       |  3 +-
- drivers/media/platform/sti/c8sectpfe/Kconfig    |  2 +-
- drivers/media/v4l2-core/Kconfig                 |  2 --
- drivers/mmc/host/Kconfig                        | 10 ++-----
- drivers/mtd/nand/Kconfig                        |  8 ++---
- drivers/mtd/spi-nor/Kconfig                     |  2 +-
- drivers/net/ethernet/amd/Kconfig                |  2 +-
- drivers/net/ethernet/apm/xgene-v2/Kconfig       |  1 -
- drivers/net/ethernet/apm/xgene/Kconfig          |  1 -
- drivers/net/ethernet/arc/Kconfig                |  6 ++--
- drivers/net/ethernet/broadcom/Kconfig           |  2 --
- drivers/net/ethernet/calxeda/Kconfig            |  2 +-
- drivers/net/ethernet/hisilicon/Kconfig          |  2 +-
- drivers/net/ethernet/marvell/Kconfig            |  8 ++---
- drivers/net/ethernet/mellanox/mlxsw/Kconfig     |  2 +-
- drivers/net/ethernet/renesas/Kconfig            |  2 --
- drivers/net/wireless/broadcom/brcm80211/Kconfig |  1 -
- drivers/net/wireless/quantenna/qtnfmac/Kconfig  |  2 +-
- drivers/remoteproc/Kconfig                      |  1 -
- drivers/scsi/hisi_sas/Kconfig                   |  2 +-
- drivers/spi/Kconfig                             | 12 ++------
- drivers/staging/media/davinci_vpfe/Kconfig      |  1 -
- drivers/staging/media/omap4iss/Kconfig          |  1 -
- drivers/staging/vc04_services/Kconfig           |  1 -
- drivers/tty/serial/Kconfig                      |  4 ---
- drivers/usb/gadget/udc/Kconfig                  |  4 +--
- drivers/usb/mtu3/Kconfig                        |  2 +-
- drivers/video/fbdev/Kconfig                     |  3 +-
- sound/soc/bcm/Kconfig                           |  3 +-
- sound/soc/kirkwood/Kconfig                      |  1 -
- sound/soc/pxa/Kconfig                           |  1 -
- sound/soc/qcom/Kconfig                          |  7 ++---
- 55 files changed, 56 insertions(+), 143 deletions(-)
+>> +/*
+>> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_RESET_AOSS_SDM_845_H
+>> +#define _DT_BINDINGS_RESET_AOSS_SDM_845_H
+>> +
+>> +#define AOSS_CC_MSS_RESTART	0
+>> +#define AOSS_CC_CAMSS_RESTART	1
+>> +#define AOSS_CC_VENUS_RESTART	2
+>> +#define AOSS_CC_GPU_RESTART	3
+>> +#define AOSS_CC_DISPSS_RESTART	4
+>> +#define AOSS_CC_WCSS_RESTART	5
+>> +#define AOSS_CC_LPASS_RESTART	6
+>> +
+>> +#endif
+> 
+> Apart from these nits this looks reasonable.
+> 
+> Regards,
+> Bjorn
+> 
 
 -- 
-2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
