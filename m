@@ -1,101 +1,26 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 09/13] remoteproc: modify rproc_handle_carveout to support pre-registered region
-Date: Thu, 1 Mar 2018 17:23:56 +0100
-Message-ID: <1519921440-21356-10-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 8/8] clk: davinci: kill
+ davinci_clk_reset_assert/deassert()
+References: <20180321120807.18032-1-brgl@bgdev.pl>
+ <20180321120807.18032-9-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <eabfd878-bae9-f373-5f97-ab77519aef05@lechnology.com>
+Date: Wed, 21 Mar 2018 11:23:18 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+In-Reply-To: <20180321120807.18032-9-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In current version rproc_handle_carveout function support only dynamic
-region allocation.
-This patch extends rproc_handle_carveout function to support pre-registered
-region. Match is done on region name, then requested device address and
-length are checked.
-If no name match found, original allocation is used.
+On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This code is no longer used. Remove it.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 49 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 48 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 0ebbc4f..49b28a0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -679,7 +679,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 				 struct fw_rsc_carveout *rsc,
- 				 int offset, int avail)
- {
--	struct rproc_mem_entry *carveout, *mapping = NULL;
-+	struct rproc_mem_entry *carveout, *mapping = NULL, *mem;
- 	struct device *dev = &rproc->dev;
- 	dma_addr_t dma;
- 	void *va;
-@@ -699,6 +699,51 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
- 		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
- 
-+	/* Check carveout rsc already part of a registered carveout */
-+	/* Search by name */
-+	mem = rproc_find_carveout_by_name(rproc, rsc->name);
-+	if (mem) {
-+		int delta = 0;
-+
-+		if (rsc->da != FW_RSC_ADDR_ANY) {
-+			delta = rsc->da - mem->da;
-+
-+			/* Check requested resource belongs to registered carveout */
-+			if (delta < 0) {
-+				dev_err(dev->parent,
-+					"Registered carveout doesn't fit da request\n");
-+				return -ENOMEM;
-+			}
-+
-+			if (delta + rsc->len > mem->len) {
-+				dev_err(dev->parent,
-+					"Registered carveout doesn't fit len request\n");
-+				return -ENOMEM;
-+			}
-+		} else {
-+			/* Check requested resource length */
-+			if (rsc->len > mem->len) {
-+				dev_err(dev->parent,
-+					"Registered carveout doesn't fit len request\n");
-+				return -ENOMEM;
-+			}
-+			/* Update resource da with registered resource value */
-+			rsc->da = mem->da;
-+		}
-+
-+		/*
-+		 * Update resource pa
-+		 * Use va if defined else dma to generate pa
-+		 */
-+		if (mem->va)
-+			rsc->pa = rproc_va_to_pa(mem->va) + delta;
-+		else
-+			rsc->pa = (u32)mem->dma + delta;
-+
-+		return 0;
-+	}
-+
-+	/* No registered carveout found, allocate a new one */
- 	va = dma_alloc_coherent(dev->parent, rsc->len, &dma, GFP_KERNEL);
- 	if (!va) {
- 		dev_err(dev->parent,
-@@ -761,6 +806,8 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 
- 		dev_dbg(dev, "carveout mapped 0x%x to %pad\n",
- 			rsc->da, &dma);
-+	} else {
-+		rsc->da = (u32)dma;
- 	}
- 
- 	/*
--- 
-1.9.1
+Reviewed-by: David Lechner <david@lechnology.com>
