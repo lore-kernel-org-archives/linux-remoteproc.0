@@ -1,9 +1,9 @@
 Return-Path: <brgl@bgdev.pl>
 Return-Path: <brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the reset framework
-Date: Fri, 23 Mar 2018 14:04:47 +0100
-Message-Id: <20180323130455.11470-1-brgl@bgdev.pl>
+Subject: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the reset framework
+Date: Fri, 23 Mar 2018 12:47:01 +0100
+Message-Id: <20180323114709.20330-1-brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -55,10 +55,6 @@ v2 -> v3:
   emit an error message if devm_reset_control_get_exclusive() returns
   this error code
 
-v3 -> v4:
-- make index the second parameter in RESET_LOOKUP() (right after the
-  provider name)
-
 Bartosz Golaszewski (8):
   reset: modify the way reset lookup works for board files
   ARM: davinci: dts: make psc0 a reset provider
@@ -75,8 +71,8 @@ Bartosz Golaszewski (8):
  drivers/clk/davinci/psc.c                  | 19 +-------------
  drivers/remoteproc/da8xx_remoteproc.c      | 42 +++++++++++++++++++++++++-----
  drivers/reset/core.c                       | 38 ++++++++++++++++++++++-----
- include/linux/reset-controller.h           | 14 +++++-----
- 7 files changed, 84 insertions(+), 59 deletions(-)
+ include/linux/reset-controller.h           | 12 +++++----
+ 7 files changed, 83 insertions(+), 58 deletions(-)
  delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
 -- 
