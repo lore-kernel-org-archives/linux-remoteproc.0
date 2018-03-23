@@ -1,9 +1,9 @@
 Return-Path: <brgl@bgdev.pl>
 Return-Path: <brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the reset framework
-Date: Fri, 23 Mar 2018 12:47:01 +0100
-Message-Id: <20180323114709.20330-1-brgl@bgdev.pl>
+Subject: [PATCH v2 0/8] ARM: davinci: complete the conversion to using the reset framework
+Date: Fri, 23 Mar 2018 10:36:01 +0100
+Message-Id: <20180323093609.24576-1-brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -45,16 +45,6 @@ v1 -> v2:
 - made the local variable naming consistent in the davinci-rproc driver
 - fixed a typo in PATCH 5/8
 
-v2 -> v3:
-- modify PATCH 1/8: drop the provider argument from the function adding
-  lookup entries and instead pass the provider name to the RESET_LOOKUP
-  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
-  cannot get the corresponding reset controller
-- modify the reset lookup entry in psc-da850
-- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
-  emit an error message if devm_reset_control_get_exclusive() returns
-  this error code
-
 Bartosz Golaszewski (8):
   reset: modify the way reset lookup works for board files
   ARM: davinci: dts: make psc0 a reset provider
@@ -66,13 +56,13 @@ Bartosz Golaszewski (8):
   clk: davinci: kill davinci_clk_reset_assert/deassert()
 
  arch/arm/boot/dts/da850.dtsi               |  2 ++
- arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------
- drivers/clk/davinci/psc-da850.c            |  7 +++++
- drivers/clk/davinci/psc.c                  | 19 +-------------
- drivers/remoteproc/da8xx_remoteproc.c      | 42 +++++++++++++++++++++++++-----
- drivers/reset/core.c                       | 38 ++++++++++++++++++++++-----
- include/linux/reset-controller.h           | 12 +++++----
- 7 files changed, 83 insertions(+), 58 deletions(-)
+ arch/arm/mach-davinci/include/mach/clock.h | 21 --------------
+ drivers/clk/davinci/psc-da850.c            |  8 ++++++
+ drivers/clk/davinci/psc.c                  | 19 +------------
+ drivers/remoteproc/da8xx_remoteproc.c      | 44 +++++++++++++++++++++++++-----
+ drivers/reset/core.c                       | 33 +++++++++++++++++++---
+ include/linux/reset-controller.h           |  8 ++++--
+ 7 files changed, 82 insertions(+), 53 deletions(-)
  delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
 -- 
