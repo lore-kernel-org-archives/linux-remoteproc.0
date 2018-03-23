@@ -1,100 +1,126 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH] rpmsg: glink: Use spinlock in tx path
-References: <20180213190404.25026-1-bjorn.andersson@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <572c1691-cb6d-773b-a9e9-19ad1da079a5@linaro.org>
-Date: Tue, 20 Mar 2018 10:14:36 +0800
+Return-Path: <bgolaszewski@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20180213190404.25026-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Chris Lew <clew@codeaurora.org>, Arun Kumar Neelakantam <aneela@codeaurora.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1521812598.3406.8.camel@pengutronix.de>
+References: <20180323130455.11470-1-brgl@bgdev.pl> <20180323130455.11470-2-brgl@bgdev.pl>
+ <1521812598.3406.8.camel@pengutronix.de>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Fri, 23 Mar 2018 14:46:18 +0100
+Message-ID: <CAMpxmJUOUvBH6bArXDn1TkS0ZXttD2CCk-cMw0TH52FoRNRdmA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/8] reset: modify the way reset lookup works for board files
+Content-Type: text/plain; charset="UTF-8"
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, arm-soc <linux-arm-kernel@lists.infradead.org>, linux-devicetree <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+2018-03-23 14:43 GMT+01:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> On Fri, 2018-03-23 at 14:04 +0100, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+>> introduced reset control lookup mechanism for boards that still use
+>> board files.
+>>
+>> The routine used to register lookup entries takes the corresponding
+>> reset_controlled_dev structure as argument.
+>>
+>> It's been determined however that for the first user of this new
+>> interface - davinci psc driver - it will be easier to register the
+>> lookup entries using the reset controller device name.
+>>
+>> This patch changes the way lookup entries are added.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>  drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
+>>  include/linux/reset-controller.h | 14 ++++++++------
+>>  2 files changed, 39 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+>> index 06fa4907afc4..f4a29c046995 100644
+>> --- a/drivers/reset/core.c
+>> +++ b/drivers/reset/core.c
+>> @@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+>>
+>>  /**
+>>   * reset_controller_add_lookup - register a set of lookup entries
+>> - * @rcdev: initialized reset controller device owning the reset line
+>>   * @lookup: array of reset lookup entries
+>>   * @num_entries: number of entries in the lookup array
+>>   */
+>> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>> -                              struct reset_control_lookup *lookup,
+>> +void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+>>                                unsigned int num_entries)
+>>  {
+>>       struct reset_control_lookup *entry;
+>> @@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>>       for (i = 0; i < num_entries; i++) {
+>>               entry = &lookup[i];
+>>
+>> -             if (!entry->dev_id) {
+>> -                     pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
+>> +             if (!entry->dev_id || !entry->provider) {
+>> +                     pr_warn("%s(): reset lookup entry badly specified, skipping\n",
+>>                               __func__);
+>>                       continue;
+>>               }
+>>
+>> -             entry->rcdev = rcdev;
+>>               list_add_tail(&entry->list, &reset_lookup_list);
+>>       }
+>>       mutex_unlock(&reset_lookup_mutex);
+>> @@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+>>  }
+>>  EXPORT_SYMBOL_GPL(__of_reset_control_get);
+>>
+>> +static struct reset_controller_dev *
+>> +__reset_controller_by_name(const char *name)
+>> +{
+>> +     struct reset_controller_dev *rcdev;
+>> +
+>> +     lockdep_assert_held(&reset_list_mutex);
+>> +
+>> +     list_for_each_entry(rcdev, &reset_controller_list, list) {
+>> +             if (!rcdev->dev)
+>> +                     continue;
+>> +
+>> +             if (!strcmp(name, dev_name(rcdev->dev)))
+>> +                     return rcdev;
+>> +     }
+>> +
+>> +     return NULL;
+>> +}
+>> +
+>>  static struct reset_control *
+>>  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>>                               bool shared, bool optional)
+>>  {
+>>       const struct reset_control_lookup *lookup;
+>> +     struct reset_controller_dev *rcdev;
+>>       const char *dev_id = dev_name(dev);
+>>       struct reset_control *rstc = NULL;
+>>
+>> @@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>>                   ((con_id && lookup->con_id) &&
+>>                    !strcmp(con_id, lookup->con_id))) {
+>>                       mutex_lock(&reset_list_mutex);
+>> -                     rstc = __reset_control_get_internal(lookup->rcdev,
+>> +                     rcdev = __reset_controller_by_name(lookup->provider);
+>> +                     if (!rcdev) {
+>> +                             mutex_unlock(&reset_list_mutex);
+>> +                             mutex_unlock(&reset_lookup_mutex);
+>> +                             /* Reset provider may not be ready yet. */
+>> +                             return -EPROBE_DEFER;
+>
+> Thanks, I've applied this patch to reset/next with the following change:
+>
+> -                               return -EPROBE_DEFER;
+> +                               return ERR_PTR(-EPROBE_DEFER);
+>
+> regards
+> Philipp
 
+Oops, thanks for spotting that.
 
-On 14/02/18 03:04, Bjorn Andersson wrote:
-> Switch the tx_lock to a spinlock we allow clients to use rpmsg_trysend()
-> from atomic context.
-> 
-> In order to allow clients to sleep while waiting for space in the FIFO
-> we release the lock temporarily around the delay; which should be
-> replaced by sending a READ_NOTIF and waiting for the remote to signal
-> us that space has been made available.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-
-with ret set to 0 in qcom_glink_tx()
-
-Tested-by: Srinivas kandagatla <srinivas.kandagatla@linaro.org>
-
->   drivers/rpmsg/qcom_glink_native.c | 16 ++++++++++------
->   1 file changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index e0f31ed096a5..6e950e9afa82 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -113,7 +113,7 @@ struct qcom_glink {
->   	spinlock_t rx_lock;
->   	struct list_head rx_queue;
->   
-> -	struct mutex tx_lock;
-> +	spinlock_t tx_lock;
->   
->   	spinlock_t idr_lock;
->   	struct idr lcids;
-> @@ -288,15 +288,14 @@ static int qcom_glink_tx(struct qcom_glink *glink,
->   			 const void *data, size_t dlen, bool wait)
->   {
->   	unsigned int tlen = hlen + dlen;
-> +	unsigned long flags;
->   	int ret;
->   
->   	/* Reject packets that are too big */
->   	if (tlen >= glink->tx_pipe->length)
->   		return -EINVAL;
->   
-> -	ret = mutex_lock_interruptible(&glink->tx_lock);
-> -	if (ret)
-> -		return ret;
-> +	spin_lock_irqsave(&glink->tx_lock, flags);
->   
->   	while (qcom_glink_tx_avail(glink) < tlen) {
->   		if (!wait) {
-> @@ -304,7 +303,12 @@ static int qcom_glink_tx(struct qcom_glink *glink,
->   			goto out;
->   		}
->   
-> +		/* Wait without holding the tx_lock */
-> +		spin_unlock_irqrestore(&glink->tx_lock, flags);
-> +
->   		usleep_range(10000, 15000);
-> +
-> +		spin_lock_irqsave(&glink->tx_lock, flags);
->   	}
->   
->   	qcom_glink_tx_write(glink, hdr, hlen, data, dlen);
-> @@ -313,7 +317,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
->   	mbox_client_txdone(glink->mbox_chan, 0);
->   
->   out:
-> -	mutex_unlock(&glink->tx_lock);
-> +	spin_unlock_irqrestore(&glink->tx_lock, flags);
->   
->   	return ret;
->   }
-> @@ -1567,7 +1571,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
->   	glink->features = features;
->   	glink->intentless = intentless;
->   
-> -	mutex_init(&glink->tx_lock);
-> +	spin_lock_init(&glink->tx_lock);
->   	spin_lock_init(&glink->rx_lock);
->   	INIT_LIST_HEAD(&glink->rx_queue);
->   	INIT_WORK(&glink->rx_work, qcom_glink_work);
-> 
+Thanks,
+Bart
