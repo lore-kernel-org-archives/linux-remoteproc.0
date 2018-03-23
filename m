@@ -1,11 +1,11 @@
 Return-Path: <brgl@bgdev.pl>
 Return-Path: <brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v4 6/8] remoteproc: da8xx: prepare and unprepare the clock where needed
-Date: Fri, 23 Mar 2018 14:04:53 +0100
-Message-Id: <20180323130455.11470-7-brgl@bgdev.pl>
-In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
+Subject: [PATCH v3 6/8] remoteproc: da8xx: prepare and unprepare the clock where needed
+Date: Fri, 23 Mar 2018 12:47:07 +0100
+Message-Id: <20180323114709.20330-7-brgl@bgdev.pl>
+In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
+References: <20180323114709.20330-1-brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
