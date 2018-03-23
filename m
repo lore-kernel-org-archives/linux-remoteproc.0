@@ -1,11 +1,11 @@
 Return-Path: <brgl@bgdev.pl>
 Return-Path: <brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 7/8] remoteproc: da8xx: use the reset framework
-Date: Fri, 23 Mar 2018 12:47:08 +0100
-Message-Id: <20180323114709.20330-8-brgl@bgdev.pl>
-In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
-References: <20180323114709.20330-1-brgl@bgdev.pl>
+Subject: [PATCH v2 7/8] remoteproc: da8xx: use the reset framework
+Date: Fri, 23 Mar 2018 10:36:08 +0100
+Message-Id: <20180323093609.24576-8-brgl@bgdev.pl>
+In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
+References: <20180323093609.24576-1-brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -17,11 +17,11 @@ we used so far.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+ drivers/remoteproc/da8xx_remoteproc.c | 34 +++++++++++++++++++++++++++++-----
+ 1 file changed, 29 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index f134192922e0..3689473f8b49 100644
+index f134192922e0..b99c0f0cc38e 100644
 --- a/drivers/remoteproc/da8xx_remoteproc.c
 +++ b/drivers/remoteproc/da8xx_remoteproc.c
 @@ -10,6 +10,7 @@
@@ -95,23 +95,25 @@ index f134192922e0..3689473f8b49 100644
  	void __iomem *chipsig;
  	void __iomem *bootreg;
  	int irq;
-@@ -268,6 +281,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+@@ -268,6 +281,17 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
  		return PTR_ERR(dsp_clk);
  	}
  
 +	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
 +	if (IS_ERR(dsp_reset)) {
-+		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
-+			dev_err(dev, "unable to get reset control: %ld\n",
-+				PTR_ERR(dsp_reset));
++		/* The platform lookup may not be registered yet. */
++		if (PTR_ERR(dsp_reset) == -ENOENT)
++			return -EPROBE_DEFER;
 +
++		dev_err(dev, "unable to get reset control: %ld\n",
++			PTR_ERR(dsp_reset));
 +		return PTR_ERR(dsp_reset);
 +	}
 +
  	if (dev->of_node) {
  		ret = of_reserved_mem_device_init(dev);
  		if (ret) {
-@@ -309,7 +331,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+@@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
  	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
  	 * held in reset at the time it is called.
  	 */
