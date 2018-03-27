@@ -1,36 +1,64 @@
 Return-Path: <brgl@bgdev.pl>
 Return-Path: <brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v5 1/8] ARM: davinci: dts: make psc0 a reset provider
-Date: Fri, 30 Mar 2018 17:28:49 +0200
-Message-Id: <20180330152856.12297-2-brgl@bgdev.pl>
-In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
-References: <20180330152856.12297-1-brgl@bgdev.pl>
+Subject: [PATCH v3 3/8] clk: davinci: add a reset lookup table for psc0
+Date: Tue, 27 Mar 2018 11:20:26 +0200
+Message-Id: <20180327092031.11251-4-brgl@bgdev.pl>
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The psc driver registers with the reset framework as a provider. Add
-the #reset-cells property to the psc0 node.
+In order to be able to use the reset framework in legacy boot mode as
+well, add the reset lookup table to the psc driver for da850 variant.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/davinci/psc-da850.c | 7 +++++++
+ drivers/clk/davinci/psc.c       | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index a3b9a99b43ca..dad64dbf1f23 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -123,6 +123,7 @@
- 			compatible = "ti,da850-psc0";
- 			reg = <0x10000 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
- 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
- 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+index ccc7eb17bf3a..d196dcbed560 100644
+--- a/drivers/clk/davinci/psc-da850.c
++++ b/drivers/clk/davinci/psc-da850.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/reset-controller.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/init.h>
+@@ -66,8 +67,14 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
+ 				"fck",	"ecap.1",
+ 				"fck",	"ecap.2");
+ 
++static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
++	RESET_LOOKUP("da850-psc0", 15, "davinci-rproc.0", NULL),
++};
++
+ static int da850_psc0_init(struct device *dev, void __iomem *base)
+ {
++	reset_controller_add_lookup(da850_psc0_reset_lookup_table,
++				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
+ 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
+ }
+ 
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 3b0e59dfbdd7..063df62381ea 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
+ 
+ 	psc->rcdev.ops = &davinci_psc_reset_ops;
+ 	psc->rcdev.owner = THIS_MODULE;
++	psc->rcdev.dev = dev;
+ 	psc->rcdev.of_node = dev->of_node;
+ 	psc->rcdev.of_reset_n_cells = 1;
+ 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
 -- 
-2.16.3
+2.16.1
