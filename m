@@ -1,36 +1,38 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 6/8] remoteproc/davinci: use octal permissions for module_param()
-Date: Tue, 27 Mar 2018 11:20:29 +0200
-Message-Id: <20180327092031.11251-7-brgl@bgdev.pl>
-In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
-References: <20180327092031.11251-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 1/3] rpmsg: smd: Fix container_of macros
+Date: Tue, 27 Mar 2018 14:06:41 -0700
+Message-Id: <20180327210643.3436-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20180327210643.3436-1-bjorn.andersson@linaro.org>
+References: <20180327210643.3436-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The container_of macros should not use the same name for the parameter
+as the member to use for lookup, as this will result in a compilation
+error unless the passed parameter has the same name as the member.
 
-Checkpatch recommends to use octal perms instead of S_IRUGO.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rpmsg/qcom_smd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index f134192922e0..b668e32996e2 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -25,7 +25,7 @@
- #include "remoteproc_internal.h"
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index dabd73bd5577..6bb9d21be6bc 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -167,9 +167,9 @@ struct qcom_smd_endpoint {
+ 	struct qcom_smd_channel *qsch;
+ };
  
- static char *da8xx_fw_name;
--module_param(da8xx_fw_name, charp, S_IRUGO);
-+module_param(da8xx_fw_name, charp, 0444);
- MODULE_PARM_DESC(da8xx_fw_name,
- 		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
+-#define to_smd_device(_rpdev)	container_of(_rpdev, struct qcom_smd_device, rpdev)
++#define to_smd_device(r)	container_of(r, struct qcom_smd_device, rpdev)
+ #define to_smd_edge(d)		container_of(d, struct qcom_smd_edge, dev)
+-#define to_smd_endpoint(ept)	container_of(ept, struct qcom_smd_endpoint, ept)
++#define to_smd_endpoint(e)	container_of(e, struct qcom_smd_endpoint, ept)
  
+ /**
+  * struct qcom_smd_channel - smd channel struct
 -- 
-2.16.1
+2.16.2
