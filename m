@@ -1,50 +1,36 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: srinivas.kandagatla@linaro.org
-Subject: [PATCH 3/3] iommu: armsmmu: set iommu ops for rpmsg bus
-Date: Fri,  2 Mar 2018 14:55:31 +0000
-Message-Id: <20180302145531.20463-4-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
-References: <20180302145531.20463-1-srinivas.kandagatla@linaro.org>
-To: will.deacon@arm.com, robin.murphy@arm.com, bjorn.andersson@linaro.org
-Cc: joro@8bytes.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 2/8] ARM: davinci: dts: add a reset control to the dsp node
+Date: Tue, 27 Mar 2018 11:20:25 +0200
+Message-Id: <20180327092031.11251-3-brgl@bgdev.pl>
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On Qualcomm SoCs, ADSP exposes many functions like audio and
-others. These services need iommu access to allocate any
-memory for the DSP. As these drivers are childeren of
-rpmsg bus, able to allocate memory from iommus is basic
-requirement. So set arm smmu iommu ops for this bus type.
+The davinci-rproc driver will soon use the reset framework. Add the
+resets property to the dsp node in da850.dtsi.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/iommu/arm-smmu.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index e6920d32ac9e..9b63489af15c 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -53,6 +53,7 @@
- #include <linux/spinlock.h>
- 
- #include <linux/amba/bus.h>
-+#include <linux/rpmsg.h>
- 
- #include "io-pgtable.h"
- #include "arm-smmu-regs.h"
-@@ -2168,6 +2169,10 @@ static void arm_smmu_bus_init(void)
- 		bus_set_iommu(&pci_bus_type, &arm_smmu_ops);
- 	}
- #endif
-+#ifdef CONFIG_RPMSG
-+	if (!iommu_present(&rpmsg_bus))
-+		bus_set_iommu(&rpmsg_bus, &arm_smmu_ops);
-+#endif
- }
- 
- static int arm_smmu_device_probe(struct platform_device *pdev)
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index dad64dbf1f23..5b485e44b83e 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -109,6 +109,7 @@
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
+ 		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
 -- 
-2.15.1
+2.16.1
