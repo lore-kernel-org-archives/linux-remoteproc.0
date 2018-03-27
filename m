@@ -1,57 +1,32 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] remoteproc: imx_rproc: Slightly simplify code in 'imx_rproc_probe()'
-Date: Wed, 14 Mar 2018 20:56:39 +0100
-Message-Id: <fbc1425293b6540a6fc835264fba2b71f2b63444.1521057013.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1521057013.git.christophe.jaillet@wanadoo.fr>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 0/3] rpmsg: smd: Redeliver messages after probe
+Date: Tue, 27 Mar 2018 14:06:40 -0700
+Message-Id: <20180327210643.3436-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-We can return directly at the beginning of the function and save the 'err'
-label.
-We can also explicitly return 0 when the probe succeed.
+A race condition exists in SMD where incoming messages might be processed
+before we've finished executing the rpmsg device's probe function. The driver's
+callback function will in this case be unable to handle the incoming message
+and might return an error.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/remoteproc/imx_rproc.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Using the announce_create ops we can invoke the handler for incoming messages
+once again after probe returns, solving this issue.
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 6d02ef62a626..54c07fd3f204 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -333,10 +333,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	/* set some other name then imx */
- 	rproc = rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
- 			    NULL, sizeof(*priv));
--	if (!rproc) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!rproc)
-+		return -ENOMEM;
- 
- 	dcfg = of_device_get_match_data(dev);
- 	if (!dcfg) {
-@@ -381,13 +379,13 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 		goto err_put_clk;
- 	}
- 
--	return ret;
-+	return 0;
- 
- err_put_clk:
- 	clk_disable_unprepare(priv->clk);
- err_put_rproc:
- 	rproc_free(rproc);
--err:
-+
- 	return ret;
- }
- 
+With SMD and QRTR this shows a high failure rate, but there are (at least
+theoretical) similar issues in glink and virtio-rpmsg, so this needs to be
+further investigated.
+
+Bjorn Andersson (3):
+  rpmsg: smd: Fix container_of macros
+  rpmsg: Only invoke announce_create for rpdev with endpoints
+  rpmsg: smd: Use announce_create to process any receive work
+
+ drivers/rpmsg/qcom_smd.c   | 22 ++++++++++++++++++++--
+ drivers/rpmsg/rpmsg_core.c |  2 +-
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
 -- 
-2.14.1
+2.16.2
