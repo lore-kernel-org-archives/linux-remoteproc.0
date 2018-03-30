@@ -1,75 +1,36 @@
 Return-Path: <brgl@bgdev.pl>
 Return-Path: <brgl@bgdev.pl>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 0/8] ARM: davinci: complete the conversion to using the reset framework
-Date: Tue, 27 Mar 2018 11:20:23 +0200
-Message-Id: <20180327092031.11251-1-brgl@bgdev.pl>
+Subject: [PATCH v5 6/8] remoteproc/davinci: use octal permissions for module_param()
+Date: Fri, 30 Mar 2018 17:28:54 +0200
+Message-Id: <20180330152856.12297-7-brgl@bgdev.pl>
+In-Reply-To: <20180330152856.12297-1-brgl@bgdev.pl>
+References: <20180330152856.12297-1-brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This series converts the only user of the handcoded, mach-specific reset
-routines in the davinci platform to using the reset framework.
+Checkpatch recommends to use octal perms instead of S_IRUGO.
 
-Patches 1-3 add necessary lookups/DT-properties.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patches 4-6 fix issues found in the remoteproc davinci driver.
-
-Patch 7 converts the davinci-rproc driver to the reset framework.
-
-Patch 8 removes now dead code.
-
-Philipp: it turned out that it's indeed better to use the reset
-controller's device name for the entry lookup.
-
-Tested both in DT and legacy modes by booting the examples from
-ti-ipc-rtos recipe in meta-ti.
-
-This series applies on top of David Lechner's common-clk-v9 branch[1]
-with Philipp Zabel's reset/next branch[2] pulled in.
-
-It can be found in my github tree as well[3].
-
-[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-[2] git://git.pengutronix.de/git/pza/linux reset/next
-[3] git@github.com:brgl/linux.git topic/davinci-reset
-
-v1 -> v2:
-- fixed the device tree patches the descriptions of which were mixed up
-- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
-  reset provider, since it's possible that the lookup table was not yet
-  registered
-- made the local variable naming consistent in the davinci-rproc driver
-- fixed a typo in PATCH 5/8
-
-v2 -> v3:
-- reworded the commit messages (s/remoteproc: da8xx/remoteproc\/davinci/)
-- call clk_disable_unprepare() if reset_control_deassert() fails in
-  da8xx_rproc_start()
-- added a patch fixing the S_IRUGO checkpatch warning, since we're
-  already modifying this driver anyway
-- added a temp variable for code brevity in da8xx_rproc_stop()
-- removed patch 1/8 (already applied to reset/next)
-
-Bartosz Golaszewski (8):
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-  clk: davinci: add a reset lookup table for psc0
-  remoteproc/davinci: add the missing retval check for clk_enable()
-  remoteproc/davinci: prepare and unprepare the clock where needed
-  remoteproc/davinci: use octal permissions for module_param()
-  remoteproc/davinci: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
-
- arch/arm/boot/dts/da850.dtsi               |  2 ++
- arch/arm/mach-davinci/include/mach/clock.h | 21 --------------
- drivers/clk/davinci/psc-da850.c            |  7 +++++
- drivers/clk/davinci/psc.c                  | 19 +------------
- drivers/remoteproc/da8xx_remoteproc.c      | 45 ++++++++++++++++++++++++------
- 5 files changed, 47 insertions(+), 47 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
-
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index f134192922e0..b668e32996e2 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -25,7 +25,7 @@
+ #include "remoteproc_internal.h"
+ 
+ static char *da8xx_fw_name;
+-module_param(da8xx_fw_name, charp, S_IRUGO);
++module_param(da8xx_fw_name, charp, 0444);
+ MODULE_PARM_DESC(da8xx_fw_name,
+ 		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
+ 
 -- 
-2.16.1
+2.16.3
