@@ -1,36 +1,120 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v6 5/7] remoteproc/davinci: use octal permissions for module_param()
-Date: Tue, 17 Apr 2018 19:30:36 +0200
-Message-Id: <20180417173038.25510-6-brgl@bgdev.pl>
-In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <shajit@codeaurora.org>
+Subject: Re: [PATCH] remoteproc: Remove null character write of shared mem
+From: Jitendra Sharma <shajit@codeaurora.org>
+References: <1518009762-26480-1-git-send-email-shajit@codeaurora.org>
+ <20180207152753.GO9465@builder>
+ <d097d5db-b68c-6a29-2032-bb62e8d08d09@codeaurora.org>
+ <20180212183925.GX7250@minitux>
+ <a11c85ad-d409-7e92-43d1-a5d0bda0a625@codeaurora.org>
+Message-ID: <0b84bad3-ff22-f73b-41d1-f70df97d5a06@codeaurora.org>
+Date: Thu, 5 Apr 2018 14:29:23 +0530
+MIME-Version: 1.0
+In-Reply-To: <a11c85ad-d409-7e92-43d1-a5d0bda0a625@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Bjorn,
 
-Checkpatch recommends to use octal perms instead of S_IRUGO.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/remoteproc/da8xx_remoteproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2/13/2018 12:42 PM, Jitendra Sharma wrote:
+>
+>
+> On 2/13/2018 12:09 AM, Bjorn Andersson wrote:
+>> On Thu 08 Feb 01:12 PST 2018, Jitendra Sharma wrote:
+>>
+>>> Hi Bjorn,
+>>>
+>>>
+>>> On 2/7/2018 8:57 PM, Bjorn Andersson wrote:
+>>>> On Wed 07 Feb 05:22 PST 2018, Jitendra Sharma wrote:
+>>>>
+>>>>> remoteproc is writing '\0' in the shared mem region. This
+>>>>> region is shared among multiple clients that are also trying
+>>>>> to read. Hence they miss first character.
+>>>>>
+>>>>> Remove this null character write, as this mem area is
+>>>>> supposed to be Read only.
+>>>>>
+>>>>> Further during every subsystem reboot, this region is
+>>>>> initialized with default, hence no need to write this
+>>>>> region.
+>>>> Thanks for your patch Jitendra!
+>>>>
+>>>> The write was removed from the downstream kernel in msm-4.9, late last
+>>>> year. Can you please confirm that you describe here is valid for
+>>>> platforms supported prior to this change as well?
+>>>>
+>>>> E.g. is what you're describing true for wcnss on 8064, adsp on 8974 
+>>>> and
+>>>> mpss on 8916?
+>>> To provide a history.
+>>> We got a internal request, where during subsystem crash/restart, in our
+>>> recovery path, we try to get the cause of crash by reading shared 
+>>> memory
+>>> region.
+>>> But, because in recovery path we write null to first character of 
+>>> shared
+>>> memory string. So, any other client which in the meantime try to 
+>>> dump the
+>>> crash region will miss first character of crash region.
+>>> For example: actual "err_crash_reason " will be read by other 
+>>> interested
+>>> clients as "rr_crash_reason"
+>>>
+>>> Now as this piece of code is present since long 3.10,3.18,4.4 time, 
+>>> so we
+>>> were not sure of this snippet's reason of existence. Here, initially we
+>>> tried to find out reason for this null write, where we guessed this 
+>>> snippet
+>>> is lying there to ensure, that across subsequent crashes, we always 
+>>> get a
+>>> new updated reason/string(as we are writing null to first character of
+>>> shared mem) and not some older stale string.
+>>>
+>>> But this understanding was rejected by subsystem owners saying that 
+>>> crash
+>>> reason, shared memory item is re-initialized at non-HLOS bootup so 
+>>> it will
+>>> get clear automatically.Hence, there is no need to write null 
+>>> character.
+>>>
+>>> So, because of above reason, we could say that this snippet is 
+>>> causing a bug
+>>> and should be fixed and this change should be valid for any platform.
+>> Thanks for investigating this and letting me know.
+>>
+>> As you say the only time this had the potential to be a problem would be
+>> if we have a fatal error with a message followed by a crash that doesn't
+>> fill out the message - in this case we could have read the old message.
+>>
+>> I have merged your "v1" patch - which as it's the second version of the
+>> patch, should be titled v2.
+> Thanks Bjorn.
+> I have termed it v1 assuming earlier patch is v0. Anyways I should 
+> have send out first patch
+> with proper version to avoid confusion.
+I guess you agreed for this patch and picked in your tree. But, I am 
+wondering why its still not merged in kernel mainline.
+Is anything pending/missing from my side to move it further or are there 
+any queries related to that patch?
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index f134192922e0..b668e32996e2 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -25,7 +25,7 @@
- #include "remoteproc_internal.h"
- 
- static char *da8xx_fw_name;
--module_param(da8xx_fw_name, charp, S_IRUGO);
-+module_param(da8xx_fw_name, charp, 0444);
- MODULE_PARM_DESC(da8xx_fw_name,
- 		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
- 
--- 
-2.17.0
+Thanks,
+Jitendra
+>>
+>> Regards,
+>> Bjorn
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe 
+>> linux-arm-msm" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at http://vger.kernel.org/majordomo-info.html
+>
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
