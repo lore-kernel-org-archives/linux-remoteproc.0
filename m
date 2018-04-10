@@ -1,37 +1,58 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v6 2/7] ARM: davinci: dts: add a reset control to the dsp node
-Date: Tue, 17 Apr 2018 19:30:33 +0200
-Message-Id: <20180417173038.25510-3-brgl@bgdev.pl>
-In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH] remoteproc: fix crashed parameter logic on stop call.
+Date: Tue, 10 Apr 2018 10:57:25 +0200
+Message-ID: <1523350645-19073-1-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, arnaud.pouliquen@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Fix rproc_add_subdev parameter name and inverse the crashed logic.
 
-The davinci-rproc driver will soon use the reset framework. Add the
-resets property to the dsp node in da850.dtsi.
+Fixes: "remoteproc: Pass type of shutdown to subdev remove"
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/remoteproc/remoteproc_core.c | 4 ++--
+ include/linux/remoteproc.h           | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index d56e670d9a32..250aeee53202 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -109,6 +109,7 @@
- 		interrupt-parent = <&intc>;
- 		interrupts = <28>;
- 		clocks = <&psc0 15>;
-+		resets = <&psc0 15>;
- 		status = "disabled";
- 	};
- 	soc@1c00000 {
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 6d9c583..a9609d9 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = rproc_stop(rproc, false);
++	ret = rproc_stop(rproc, true);
+ 	if (ret)
+ 		goto unlock_mutex;
+ 
+@@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
+ 	if (!atomic_dec_and_test(&rproc->power))
+ 		goto out;
+ 
+-	ret = rproc_stop(rproc, true);
++	ret = rproc_stop(rproc, false);
+ 	if (ret) {
+ 		atomic_inc(&rproc->power);
+ 		goto out;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index d09a9c7..dfdaede9 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+ void rproc_add_subdev(struct rproc *rproc,
+ 		      struct rproc_subdev *subdev,
+ 		      int (*probe)(struct rproc_subdev *subdev),
+-		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
++		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
+ 
+ void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+ 
 -- 
-2.17.0
+2.7.4
