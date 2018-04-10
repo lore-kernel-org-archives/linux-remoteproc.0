@@ -1,37 +1,66 @@
-Return-Path: <robherring2@gmail.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 10 Apr 2018 11:27:29 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/3] rpmsg: Only invoke announce_create for rpdev with
+ endpoints
+Message-ID: <20180410182729.GB1510@tuxbook-pro>
+References: <20180327210643.3436-1-bjorn.andersson@linaro.org>
+ <20180327210643.3436-3-bjorn.andersson@linaro.org>
+ <3c952b4ca0cc4666ba01cf0dbe605248@SFHDAG7NODE2.st.com>
 MIME-Version: 1.0
-In-Reply-To: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
-References: <1521208314-4783-1-git-send-email-geert@linux-m68k.org>
-From: Rob Herring <robherring2@gmail.com>
-Date: Wed, 4 Apr 2018 19:32:53 -0500
-Message-ID: <CAL_JsqJMppYaz31Gg8BH2OaAxs56dnjZ4y+nzBBp-Tt2odaqCw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/21] Allow compile-testing NO_DMA (drivers)
-Content-Type: text/plain; charset="UTF-8"
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux USB List <linux-usb@vger.kernel.org>, linux-scsi@vger.kernel.org, Linux-ALSA <alsa-devel@alsa-project.org>, linux-ide@vger.kernel.org, "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" <linux-crypto@vger.kernel.org>, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, Linux I2C <linux-i2c@vger.kernel.org>, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, linux-mtd@lists.infradead.org, netdev <netdev@vger.kernel.org>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c952b4ca0cc4666ba01cf0dbe605248@SFHDAG7NODE2.st.com>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Mar 16, 2018 at 8:51 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->         Hi all,
->
-> If NO_DMA=y, get_dma_ops() returns a reference to the non-existing
-> symbol bad_dma_ops, thus causing a link failure if it is ever used.
->
-> The intention of this is twofold:
->   1. To catch users of the DMA API on systems that do no support the DMA
->      mapping API,
->   2. To avoid building drivers that cannot work on such systems anyway.
->
-> However, the disadvantage is that we have to keep on adding dependencies
-> on HAS_DMA all over the place.
->
-> Thanks to the COMPILE_TEST symbol, lots of drivers now depend on one or
-> more platform dependencies (that imply HAS_DMA) || COMPILE_TEST, thus
-> already covering intention #2.  Having to add an explicit dependency on
-> HAS_DMA here is cumbersome, and hinders compile-testing.
+On Tue 03 Apr 02:12 PDT 2018, Loic PALLARDY wrote:
+> > -----Original Message-----
+> > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-remoteproc-
+> > owner@vger.kernel.org] On Behalf Of Bjorn Andersson
+[..]
+> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> > index dffa3aab7178..e85d2691d2cf 100644
+> > --- a/drivers/rpmsg/rpmsg_core.c
+> > +++ b/drivers/rpmsg/rpmsg_core.c
+> > @@ -442,7 +442,7 @@ static int rpmsg_dev_probe(struct device *dev)
+> >  		goto out;
+> >  	}
+> > 
+> > -	if (rpdev->ops->announce_create)
+> > +	if (ept && rpdev->ops->announce_create)
+> 
+> This check is already part of virtio_rpmsg.c (see line 341)
+> 	/* need to tell remote processor's name service about this channel ? */
+> 	if (rpdev->announce && rpdev->ept &&
+> 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
 
-The same can be said for CONFIG_IOMEM and CONFIG_OF. Any plans to
-remove those too? CONFIG_IOMEM is mostly just a !CONFIG_UM option.
+The introduction of rpdev->ept in this check was done by Henri, as he
+was implementing rpmsg_char support for virtio_rpmsg:
 
-Rob
+b2599ebffb2d ("rpmsg: virtio_rpmsg_bus: fix announce for devices without endpoint")
+
+It's there because the rpmsg_device will not have a primary endpoint and
+as such there's no communication channel to announce. We could add this
+check in each implementation of announce, but I think it's a common
+issue.
+
+> 
+> should it be part of qcom_smd driver too? (but each implementation will duplicate checks)
+> Or may have a generic check in the core including rpdev->announce as well (and doing virtio_rpmsg.c clean-up)
+> 
+
+I think we want to remove the ept check in virtio_rpmsg, to reduce that
+part of the duplication at least.
+
+> Change will become:
+> 	if (rpdev->announce && ept && rpdev->ops->announce_create)
+> 
+
+That might make sense, let's see what Wendy comes up with related to
+rpmsg_char and supporting Linux-side services, as I suspect that this
+handling might be affected.
+
+Regards,
+Bjorn
