@@ -1,120 +1,77 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v3 00/13] remoteproc: add fixed memory region support
-Date: Tue, 3 Apr 2018 12:04:17 +0000
-Message-ID: <206695dbbf5c4c968680ec3df9937b52@SFHDAG7NODE2.st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-To: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v3 17/20] serial: Remove depends on HAS_DMA in case of platform dependency
+Date: Tue, 17 Apr 2018 19:49:17 +0200
+Message-Id: <1523987360-18760-18-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,=20
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
-Just a gentle ping...
-As discussed during Linaro connect, I'll appreciate if you can share me you=
-r comments...
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
-Regards,
-Loic
+This simplifies the dependencies, and allows to improve compile-testing.
 
-> -----Original Message-----
-> From: Loic PALLARDY
-> Sent: Thursday, March 01, 2018 5:24 PM
-> To: bjorn.andersson@linaro.org; ohad@wizery.com
-> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org; Loic PALLARDY <loic.pallardy@st.com>
-> Subject: [PATCH v3 00/13] remoteproc: add fixed memory region support
->=20
-> The aim of the series is to implement carveout memory management as
-> discussed during OpenAMP weekly call and defined in proposed document
-> [1]
->=20
-> This first series focus only on adding support of the different types of
-> carveout memories (dynamic, fixed, platform driver depend...).
-> 64bit resource table will be addressed in a next series.
->=20
-> [1]: http://openamp.github.io/docs/mca/coprocessor-memory-definition-
-> v6.pdf
->=20
-> ---
-> Changes sine V2:
-> Reshuffle the series to:
-> - Take into account Bjorn's comments.
-> - Add patch to check consistency between carveout resource request and
-> IOMMU
->   support.
-> - Introduce platform specific prepare and unprepare ops to enable HW like
->   clock, bus, regulator, memory region... before loading co-processor
-> firmware.
-> - Rely on memory carveout management for all remoteproc memory
-> allocations.
-> - Lookup pre-registered carveout by name first.
-> - Create a subdevice for each vdev declared in firmware resource table th=
-at
->   will be used by virtio based driver to retrieve specific memory pool.
->=20
-> This series takes some assumptions for carveout names associated to vdev:
-> - For vring: "vdev%xvring%x" with vdev index from resource table and vrin=
-g
-> index
->   in vdev.
-> - For vdev buffer: "vdev%xbuffer" with vdev index from resource table
->=20
-> This will be changed in the future, adding names field in vdev resource i=
-n
-> next resource table version.
->=20
->=20
-> Changes since V1:
-> - Minor corrections on first 7 patches (error management)
-> - Add "memory device" support on the top of first 7 patches.
->   Goal is to answer use case reported during OpenAMP weekly discussion:
->   - "Be able to specify memory region for vring and buffer allocation, ev=
-en
->     if no specific request defined in firmware resource table."
->   Patches offer the capability to create a "memory device" associated to =
-a
->   carveout with a dedicated DMA memory pool. Different resource handlers
-> are
->   modified to look-up for specific carveout by name. If match found and
-> associated
->   "memory device" present, device is used instead of rproc platform devic=
-e
-> for
->   allocation.
->=20
->=20
-> Loic Pallardy (13):
->   remoteproc: configure IOMMU only if device address requested
->   remoteproc: add rproc_va_to_pa function
->   remoteproc: add release ops in rproc_mem_entry struct
->   remoteproc: add name in rproc_mem_entry struct
->   remoteproc: add helper function to allocate and init rproc_mem_entry
->     struct
->   remoteproc: introduce rproc_add_carveout function
->   remoteproc: introduce rproc_find_carveout_by_name function
->   remoteproc: add prepare and unprepare ops
->   remoteproc: modify rproc_handle_carveout to support pre-registered
->     region
->   remoteproc: modify vring allocation to support pre-registered region
->   remoteproc: create vdev subdevice with specific dma memory pool
->   rpmsg: virtio: allocate buffer from parent
->   remoteproc: st: add reserved memory support
->=20
->  drivers/remoteproc/remoteproc_core.c    | 332
-> ++++++++++++++++++++++++++++----
->  drivers/remoteproc/remoteproc_debugfs.c |   1 +
->  drivers/remoteproc/remoteproc_virtio.c  |   2 +-
->  drivers/remoteproc/st_remoteproc.c      |  68 ++++++-
->  drivers/rpmsg/virtio_rpmsg_bus.c        |   2 +-
->  include/linux/remoteproc.h              |  22 ++-
->  6 files changed, 379 insertions(+), 48 deletions(-)
->=20
-> --
-> 1.9.1
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+v3:
+  - Add Acked-by,
+  - Rebase to v4.17-rc1,
+
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Split per subsystem.
+---
+ drivers/tty/serial/Kconfig | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 0f058df0b0701fe2..25b8c0a8a50397d6 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -115,7 +115,6 @@ config SERIAL_SB1250_DUART_CONSOLE
+ 
+ config SERIAL_ATMEL
+ 	bool "AT91 on-chip serial port support"
+-	depends on HAS_DMA
+ 	depends on ARCH_AT91 || COMPILE_TEST
+ 	select SERIAL_CORE
+ 	select SERIAL_MCTRL_GPIO if GPIOLIB
+@@ -500,7 +499,6 @@ config SERIAL_SA1100_CONSOLE
+ 
+ config SERIAL_IMX
+ 	tristate "IMX serial port support"
+-	depends on HAS_DMA
+ 	depends on ARCH_MXC || COMPILE_TEST
+ 	select SERIAL_CORE
+ 	select RATIONAL
+@@ -1262,7 +1260,6 @@ config SERIAL_PCH_UART_CONSOLE
+ 
+ config SERIAL_MXS_AUART
+ 	tristate "MXS AUART support"
+-	depends on HAS_DMA
+ 	depends on ARCH_MXS || MACH_ASM9260 || COMPILE_TEST
+ 	select SERIAL_CORE
+ 	select SERIAL_MCTRL_GPIO if GPIOLIB
+@@ -1473,7 +1470,6 @@ config SERIAL_SPRD_CONSOLE
+ config SERIAL_STM32
+ 	tristate "STMicroelectronics STM32 serial port support"
+ 	select SERIAL_CORE
+-	depends on HAS_DMA
+ 	depends on ARCH_STM32 || COMPILE_TEST
+ 	help
+ 	  This driver is for the on-chip Serial Controller on
+-- 
+2.7.4
