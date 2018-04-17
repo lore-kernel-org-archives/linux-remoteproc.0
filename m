@@ -1,105 +1,209 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 1/5] dt-bindings: reset: Add AOSS reset bindings for SDM845 SoCs
-Date: Wed, 25 Apr 2018 20:38:39 +0530
-Message-Id: <20180425150843.26657-2-sibis@codeaurora.org>
-In-Reply-To: <20180425150843.26657-1-sibis@codeaurora.org>
-References: <20180425150843.26657-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 17 Apr 2018 14:53:34 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/2] hwspinlock: Introduce one new mode for hwspinlock
+Message-ID: <20180417215334.GF17344@builder>
+References: <d7fe0ed3d2dccf51e04a5c9032a73d1fd62dd1c1.1523156656.git.baolin.wang@linaro.org>
+ <f18e7e37046873a393ca43ee91986b9e192e977c.1523156656.git.baolin.wang@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f18e7e37046873a393ca43ee91986b9e192e977c.1523156656.git.baolin.wang@linaro.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: ohad@wizery.com, arnd@arndb.de, broonie@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add SDM845 AOSS (always on subsystem) reset controller binding
+On Sat 07 Apr 20:06 PDT 2018, Baolin Wang wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
- include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
- 2 files changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
- create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
+> In some scenarios, user need do some time-consuming or sleepable
+> operations under the hardware spinlock protection for synchronization
+> between the multiple subsystems.
+> 
+> For example, there is one PMIC efuse on Spreadtrum platform, which
+> need to be accessed under one hardware lock. But during the hardware
+> lock protection, the efuse operation is time-consuming to almost 5 ms,
+> so we can not disable the interrupts or preemption so long in this case.
+> 
+> Thus we can introduce one new mode to indicate that we just acquire the
+> hardware lock and do not disable interrupts or preemption, meanwhile we
+> should force user to protect the hardware lock with mutex or spinlock to
+> avoid dead-lock.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-new file mode 100644
-index 000000000000..e5201de9a314
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-@@ -0,0 +1,52 @@
-+Qualcomm AOSS Reset Controller
-+======================================
-+
-+This binding describes a reset-controller found on AOSS (always on subsystem)
-+for Qualcomm SDM845 SoCs.
-+
-+Required properties:
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be:
-+		    "qcom,sdm845-aoss-reset"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must specify the base address and size of the register
-+	            space.
-+
-+- #reset-cells:
-+	Usage: required
-+	Value type: <uint>
-+	Definition: must be 1; cell entry represents the reset index.
-+
-+Example:
-+
-+aoss_reset: qcom,reset-controller@b2e0100 {
-+	compatible = "qcom,sdm845-aoss-reset";
-+	reg = <0xc2b0000 0x21000>;
-+	#reset-cells = <1>;
-+};
-+
-+Specifying reset lines connected to IP modules
-+==============================================
-+
-+Device nodes that need access to reset lines should
-+specify them as a reset phandle in their corresponding node as
-+specified in reset.txt.
-+
-+For list of all valid reset indicies see
-+<dt-bindings/reset/qcom,sdm845-aoss.h>
-+
-+Example:
-+
-+modem-pil@4080000 {
-+	...
-+
-+	resets = <&aoss_reset AOSS_CC_MSS_RESTART>;
-+	reset-names = "mss_restart";
-+
-+	...
-+};
-diff --git a/include/dt-bindings/reset/qcom,sdm845-aoss.h b/include/dt-bindings/reset/qcom,sdm845-aoss.h
-new file mode 100644
-index 000000000000..476c5fc873b6
---- /dev/null
-+++ b/include/dt-bindings/reset/qcom,sdm845-aoss.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_AOSS_SDM_845_H
-+#define _DT_BINDINGS_RESET_AOSS_SDM_845_H
-+
-+#define AOSS_CC_MSS_RESTART	0
-+#define AOSS_CC_CAMSS_RESTART	1
-+#define AOSS_CC_VENUS_RESTART	2
-+#define AOSS_CC_GPU_RESTART	3
-+#define AOSS_CC_DISPSS_RESTART	4
-+#define AOSS_CC_WCSS_RESTART	5
-+#define AOSS_CC_LPASS_RESTART	6
-+
-+#endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Looks good, both patches applied.
+
+Thanks,
+Bjorn
+
+> ---
+>  drivers/hwspinlock/hwspinlock_core.c |   34 ++++++++++++++++----
+>  include/linux/hwspinlock.h           |   58 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 85 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+> index f4a59f5..5278d05 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -71,10 +71,16 @@
+>   * This function attempts to lock an hwspinlock, and will immediately
+>   * fail if the hwspinlock is already taken.
+>   *
+> - * Upon a successful return from this function, preemption (and possibly
+> - * interrupts) is disabled, so the caller must not sleep, and is advised to
+> - * release the hwspinlock as soon as possible. This is required in order to
+> - * minimize remote cores polling on the hardware interconnect.
+> + * Caution: If the mode is HWLOCK_RAW, that means user must protect the routine
+> + * of getting hardware lock with mutex or spinlock. Since in some scenarios,
+> + * user need some time-consuming or sleepable operations under the hardware
+> + * lock, they need one sleepable lock (like mutex) to protect the operations.
+> + *
+> + * If the mode is not HWLOCK_RAW, upon a successful return from this function,
+> + * preemption (and possibly interrupts) is disabled, so the caller must not
+> + * sleep, and is advised to release the hwspinlock as soon as possible. This is
+> + * required in order to minimize remote cores polling on the hardware
+> + * interconnect.
+>   *
+>   * The user decides whether local interrupts are disabled or not, and if yes,
+>   * whether he wants their previous state to be saved. It is up to the user
+> @@ -113,6 +119,9 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>  	case HWLOCK_IRQ:
+>  		ret = spin_trylock_irq(&hwlock->lock);
+>  		break;
+> +	case HWLOCK_RAW:
+> +		ret = 1;
+> +		break;
+>  	default:
+>  		ret = spin_trylock(&hwlock->lock);
+>  		break;
+> @@ -134,6 +143,9 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>  		case HWLOCK_IRQ:
+>  			spin_unlock_irq(&hwlock->lock);
+>  			break;
+> +		case HWLOCK_RAW:
+> +			/* Nothing to do */
+> +			break;
+>  		default:
+>  			spin_unlock(&hwlock->lock);
+>  			break;
+> @@ -170,9 +182,14 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>   * is already taken, the function will busy loop waiting for it to
+>   * be released, but give up after @timeout msecs have elapsed.
+>   *
+> - * Upon a successful return from this function, preemption is disabled
+> - * (and possibly local interrupts, too), so the caller must not sleep,
+> - * and is advised to release the hwspinlock as soon as possible.
+> + * Caution: If the mode is HWLOCK_RAW, that means user must protect the routine
+> + * of getting hardware lock with mutex or spinlock. Since in some scenarios,
+> + * user need some time-consuming or sleepable operations under the hardware
+> + * lock, they need one sleepable lock (like mutex) to protect the operations.
+> + *
+> + * If the mode is not HWLOCK_RAW, upon a successful return from this function,
+> + * preemption is disabled (and possibly local interrupts, too), so the caller
+> + * must not sleep, and is advised to release the hwspinlock as soon as possible.
+>   * This is required in order to minimize remote cores polling on the
+>   * hardware interconnect.
+>   *
+> @@ -266,6 +283,9 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>  	case HWLOCK_IRQ:
+>  		spin_unlock_irq(&hwlock->lock);
+>  		break;
+> +	case HWLOCK_RAW:
+> +		/* Nothing to do */
+> +		break;
+>  	default:
+>  		spin_unlock(&hwlock->lock);
+>  		break;
+> diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+> index 859d673..fe450ee 100644
+> --- a/include/linux/hwspinlock.h
+> +++ b/include/linux/hwspinlock.h
+> @@ -24,6 +24,7 @@
+>  /* hwspinlock mode argument */
+>  #define HWLOCK_IRQSTATE	0x01	/* Disable interrupts, save state */
+>  #define HWLOCK_IRQ	0x02	/* Disable interrupts, don't save state */
+> +#define HWLOCK_RAW	0x03
+>  
+>  struct device;
+>  struct device_node;
+> @@ -176,6 +177,25 @@ static inline int hwspin_trylock_irq(struct hwspinlock *hwlock)
+>  }
+>  
+>  /**
+> + * hwspin_trylock_raw() - attempt to lock a specific hwspinlock
+> + * @hwlock: an hwspinlock which we want to trylock
+> + *
+> + * This function attempts to lock an hwspinlock, and will immediately fail
+> + * if the hwspinlock is already taken.
+> + *
+> + * Caution: User must protect the routine of getting hardware lock with mutex
+> + * or spinlock to avoid dead-lock, that will let user can do some time-consuming
+> + * or sleepable operations under the hardware lock.
+> + *
+> + * Returns 0 if we successfully locked the hwspinlock, -EBUSY if
+> + * the hwspinlock was already taken, and -EINVAL if @hwlock is invalid.
+> + */
+> +static inline int hwspin_trylock_raw(struct hwspinlock *hwlock)
+> +{
+> +	return __hwspin_trylock(hwlock, HWLOCK_RAW, NULL);
+> +}
+> +
+> +/**
+>   * hwspin_trylock() - attempt to lock a specific hwspinlock
+>   * @hwlock: an hwspinlock which we want to trylock
+>   *
+> @@ -243,6 +263,29 @@ int hwspin_lock_timeout_irq(struct hwspinlock *hwlock, unsigned int to)
+>  }
+>  
+>  /**
+> + * hwspin_lock_timeout_raw() - lock an hwspinlock with timeout limit
+> + * @hwlock: the hwspinlock to be locked
+> + * @to: timeout value in msecs
+> + *
+> + * This function locks the underlying @hwlock. If the @hwlock
+> + * is already taken, the function will busy loop waiting for it to
+> + * be released, but give up when @timeout msecs have elapsed.
+> + *
+> + * Caution: User must protect the routine of getting hardware lock with mutex
+> + * or spinlock to avoid dead-lock, that will let user can do some time-consuming
+> + * or sleepable operations under the hardware lock.
+> + *
+> + * Returns 0 when the @hwlock was successfully taken, and an appropriate
+> + * error code otherwise (most notably an -ETIMEDOUT if the @hwlock is still
+> + * busy after @timeout msecs). The function will never sleep.
+> + */
+> +static inline
+> +int hwspin_lock_timeout_raw(struct hwspinlock *hwlock, unsigned int to)
+> +{
+> +	return __hwspin_lock_timeout(hwlock, to, HWLOCK_RAW, NULL);
+> +}
+> +
+> +/**
+>   * hwspin_lock_timeout() - lock an hwspinlock with timeout limit
+>   * @hwlock: the hwspinlock to be locked
+>   * @to: timeout value in msecs
+> @@ -302,6 +345,21 @@ static inline void hwspin_unlock_irq(struct hwspinlock *hwlock)
+>  }
+>  
+>  /**
+> + * hwspin_unlock_raw() - unlock hwspinlock
+> + * @hwlock: a previously-acquired hwspinlock which we want to unlock
+> + *
+> + * This function will unlock a specific hwspinlock.
+> + *
+> + * @hwlock must be already locked (e.g. by hwspin_trylock()) before calling
+> + * this function: it is a bug to call unlock on a @hwlock that is already
+> + * unlocked.
+> + */
+> +static inline void hwspin_unlock_raw(struct hwspinlock *hwlock)
+> +{
+> +	__hwspin_unlock(hwlock, HWLOCK_RAW, NULL);
+> +}
+> +
+> +/**
+>   * hwspin_unlock() - unlock hwspinlock
+>   * @hwlock: a previously-acquired hwspinlock which we want to unlock
+>   *
+> -- 
+> 1.7.9.5
+> 
