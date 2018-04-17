@@ -1,52 +1,53 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v6 3/7] remoteproc/davinci: add the missing retval check for clk_enable()
-Date: Tue, 17 Apr 2018 19:30:34 +0200
-Message-Id: <20180417173038.25510-4-brgl@bgdev.pl>
-In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v3 06/20] fpga: Remove depends on HAS_DMA in case of platform dependency
+Date: Tue, 17 Apr 2018 19:49:06 +0200
+Message-Id: <1523987360-18760-7-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
-The davinci platform is being switched to using the common clock
-framework, where clk_enable() can fail. Add the return value check.
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: David Lechner <david@lechnology.com>
+This simplifies the dependencies, and allows to improve compile-testing.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Alan Tull <atull@kernel.org>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+v3:
+  - Add Acked-by,
+  - Rebase to v4.17-rc1,
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index bf3b9034c319..2b24291337b7 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	int ret;
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Split per subsystem.
+---
+ drivers/fpga/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index f47ef848bcd056d5..fd539132542e30ee 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -53,7 +53,6 @@ config FPGA_MGR_ALTERA_CVP
+ config FPGA_MGR_ZYNQ_FPGA
+ 	tristate "Xilinx Zynq FPGA"
+ 	depends on ARCH_ZYNQ || COMPILE_TEST
+-	depends on HAS_DMA
+ 	help
+ 	  FPGA manager driver support for Xilinx Zynq FPGAs.
  
- 	/* hw requires the start (boot) address be on 1KB boundary */
- 	if (rproc->bootaddr & 0x3ff) {
-@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	clk_enable(dsp_clk);
-+	ret = clk_enable(dsp_clk);
-+	if (ret) {
-+		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		return ret;
-+	}
-+
- 	davinci_clk_reset_deassert(dsp_clk);
- 
- 	return 0;
 -- 
-2.17.0
+2.7.4
