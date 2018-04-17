@@ -1,43 +1,37 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] remoteproc: Prevent incorrect rproc state on xfer mem ownership failure
-Date: Wed, 18 Apr 2018 01:14:15 +0530
-Message-Id: <20180417194415.5155-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 2/7] ARM: davinci: dts: add a reset control to the dsp node
+Date: Tue, 17 Apr 2018 19:30:33 +0200
+Message-Id: <20180417173038.25510-3-brgl@bgdev.pl>
+In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+To: Suman Anna <s-anna@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Any failure in the secure call for transferring mem ownership of mba
-region to Q6 would result in reporting that the remoteproc device
-is running. This is because the previous q6v5_clk_enable would have
-been a success. Prevent this by updating variable 'ret' accordingly.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+The davinci-rproc driver will soon use the reset framework. Add the
+resets property to the dsp node in da850.dtsi.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8e70a627e0bb..296eb3f8b551 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -761,13 +761,12 @@ static int q6v5_start(struct rproc *rproc)
- 	}
- 
- 	/* Assign MBA image access in DDR to q6 */
--	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
- 						qproc->mba_phys,
- 						qproc->mba_size);
--	if (xfermemop_ret) {
-+	if (ret) {
- 		dev_err(qproc->dev,
--			"assigning Q6 access to mba memory failed: %d\n",
--			xfermemop_ret);
-+			"assigning Q6 access to mba memory failed: %d\n", ret);
- 		goto disable_active_clks;
- 	}
- 
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index d56e670d9a32..250aeee53202 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -109,6 +109,7 @@
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
+ 		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
