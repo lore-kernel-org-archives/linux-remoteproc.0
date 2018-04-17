@@ -1,95 +1,71 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42277 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751464AbeD0MQz (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:16:55 -0400
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] remoteproc/ste: remove abandoned include file
-Date: Fri, 27 Apr 2018 14:16:38 +0200
-Message-id: <20180427121638.10887-1-a.hajda@samsung.com>
-References: <CGME20180427121651eucas1p2c4ebea8480acdc9016448eb58dd41e09@eucas1p2.samsung.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Linus Walleij <linus.walleij@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Suman Anna <s-anna@ti.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v3 09/20] iommu: Remove depends on HAS_DMA in case of platform dependency
+Date: Tue, 17 Apr 2018 19:49:09 +0200
+Message-Id: <1523987360-18760-10-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-STE modem driver has been removed in 2016. This include has no
-users since then.
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Jean Delvare <jdelvare@suse.de>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Suman Anna <s-anna@ti.com>
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
+
+This simplifies the dependencies, and allows to improve compile-testing.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Joerg Roedel <jroedel@suse.de>
 ---
- include/linux/ste_modem_shm.h | 56 -----------------------------------
- 1 file changed, 56 deletions(-)
- delete mode 100644 include/linux/ste_modem_shm.h
+v3:
+  - Add Acked-by,
+  - Rebase to v4.17-rc1,
 
-diff --git a/include/linux/ste_modem_shm.h b/include/linux/ste_modem_shm.h
-deleted file mode 100644
-index 8444a4eff1bb..000000000000
---- a/include/linux/ste_modem_shm.h
-+++ /dev/null
-@@ -1,56 +0,0 @@
--/*
-- * Copyright (C) ST-Ericsson AB 2012
-- * Author: Sjur Brendeland / sjur.brandeland@stericsson.com
-- *
-- * License terms: GNU General Public License (GPL) version 2
-- */
--
--#ifndef __INC_MODEM_DEV_H
--#define __INC_MODEM_DEV_H
--#include <linux/types.h>
--#include <linux/platform_device.h>
--
--struct ste_modem_device;
--
--/**
-- * struct ste_modem_dev_cb - Callbacks for modem initiated events.
-- * @kick: Called when the modem kicks the host.
-- *
-- * This structure contains callbacks for actions triggered by the modem.
-- */
--struct ste_modem_dev_cb {
--	void (*kick)(struct ste_modem_device *mdev, int notify_id);
--};
--
--/**
-- * struct ste_modem_dev_ops - Functions to control modem and modem interface.
-- *
-- * @power:	Main power switch, used for cold-start or complete power off.
-- * @kick:	Kick the modem.
-- * @kick_subscribe: Subscribe for notifications from the modem.
-- * @setup:	Provide callback functions to modem device.
-- *
-- * This structure contains functions used by the ste remoteproc driver
-- * to manage the modem.
-- */
--struct ste_modem_dev_ops {
--	int (*power)(struct ste_modem_device *mdev, bool on);
--	int (*kick)(struct ste_modem_device *mdev, int notify_id);
--	int (*kick_subscribe)(struct ste_modem_device *mdev, int notify_id);
--	int (*setup)(struct ste_modem_device *mdev,
--		     struct ste_modem_dev_cb *cfg);
--};
--
--/**
-- * struct ste_modem_device - represent the STE modem device
-- * @pdev: Reference to platform device
-- * @ops: Operations used to manage the modem.
-- * @drv_data: Driver private data.
-- */
--struct ste_modem_device {
--	struct platform_device pdev;
--	struct ste_modem_dev_ops ops;
--	void *drv_data;
--};
--
--#endif /*INC_MODEM_DEV_H*/
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Split per subsystem.
+---
+ drivers/iommu/Kconfig | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index df171cb8582296b9..c76157e57f6ba4ba 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -23,7 +23,7 @@ config IOMMU_IO_PGTABLE
+ config IOMMU_IO_PGTABLE_LPAE
+ 	bool "ARMv7/v8 Long Descriptor Format"
+ 	select IOMMU_IO_PGTABLE
+-	depends on HAS_DMA && (ARM || ARM64 || (COMPILE_TEST && !GENERIC_ATOMIC64))
++	depends on ARM || ARM64 || (COMPILE_TEST && !GENERIC_ATOMIC64)
+ 	help
+ 	  Enable support for the ARM long descriptor pagetable format.
+ 	  This allocator supports 4K/2M/1G, 16K/32M and 64K/512M page
+@@ -42,7 +42,7 @@ config IOMMU_IO_PGTABLE_LPAE_SELFTEST
+ config IOMMU_IO_PGTABLE_ARMV7S
+ 	bool "ARMv7/v8 Short Descriptor Format"
+ 	select IOMMU_IO_PGTABLE
+-	depends on HAS_DMA && (ARM || ARM64 || COMPILE_TEST)
++	depends on ARM || ARM64 || COMPILE_TEST
+ 	help
+ 	  Enable support for the ARM Short-descriptor pagetable format.
+ 	  This supports 32-bit virtual and physical addresses mapped using
+@@ -376,7 +376,6 @@ config QCOM_IOMMU
+ 	# Note: iommu drivers cannot (yet?) be built as modules
+ 	bool "Qualcomm IOMMU Support"
+ 	depends on ARCH_QCOM || (COMPILE_TEST && !GENERIC_ATOMIC64)
+-	depends on HAS_DMA
+ 	select IOMMU_API
+ 	select IOMMU_IO_PGTABLE_LPAE
+ 	select ARM_DMA_USE_IOMMU
 -- 
-2.17.0
-
+2.7.4
