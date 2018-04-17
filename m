@@ -1,33 +1,37 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 3/5] dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
-Date: Wed, 25 Apr 2018 20:38:41 +0530
-Message-Id: <20180425150843.26657-4-sibis@codeaurora.org>
-In-Reply-To: <20180425150843.26657-1-sibis@codeaurora.org>
-References: <20180425150843.26657-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 1/7] ARM: davinci: dts: make psc0 a reset provider
+Date: Tue, 17 Apr 2018 19:30:32 +0200
+Message-Id: <20180417173038.25510-2-brgl@bgdev.pl>
+In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+To: Suman Anna <s-anna@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add new compatible string for Qualcomm SDM845 SoCs
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 1 +
+ arch/arm/boot/dts/da850.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 00d3d58a102f..d90182425450 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -11,6 +11,7 @@ on the Qualcomm Hexagon core.
- 		    "qcom,msm8916-mss-pil",
- 		    "qcom,msm8974-mss-pil"
- 		    "qcom,msm8996-mss-pil"
-+		    "qcom,sdm845-mss-pil"
- 
- - reg:
- 	Usage: required
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index b9639695dc8c..d56e670d9a32 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -123,6 +123,7 @@
+ 			compatible = "ti,da850-psc0";
+ 			reg = <0x10000 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+ 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
