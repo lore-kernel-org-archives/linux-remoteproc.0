@@ -1,120 +1,59 @@
-Return-Path: <shajit@codeaurora.org>
-Subject: Re: [PATCH] remoteproc: Remove null character write of shared mem
-From: Jitendra Sharma <shajit@codeaurora.org>
-References: <1518009762-26480-1-git-send-email-shajit@codeaurora.org>
- <20180207152753.GO9465@builder>
- <d097d5db-b68c-6a29-2032-bb62e8d08d09@codeaurora.org>
- <20180212183925.GX7250@minitux>
- <a11c85ad-d409-7e92-43d1-a5d0bda0a625@codeaurora.org>
-Message-ID: <0b84bad3-ff22-f73b-41d1-f70df97d5a06@codeaurora.org>
-Date: Thu, 5 Apr 2018 14:29:23 +0530
-MIME-Version: 1.0
-In-Reply-To: <a11c85ad-d409-7e92-43d1-a5d0bda0a625@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v3 02/20] ata: Remove depends on HAS_DMA in case of platform dependency
+Date: Tue, 17 Apr 2018 19:49:02 +0200
+Message-Id: <1523987360-18760-3-git-send-email-geert@linux-m68k.org>
+In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
+Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
-On 2/13/2018 12:42 PM, Jitendra Sharma wrote:
->
->
-> On 2/13/2018 12:09 AM, Bjorn Andersson wrote:
->> On Thu 08 Feb 01:12 PST 2018, Jitendra Sharma wrote:
->>
->>> Hi Bjorn,
->>>
->>>
->>> On 2/7/2018 8:57 PM, Bjorn Andersson wrote:
->>>> On Wed 07 Feb 05:22 PST 2018, Jitendra Sharma wrote:
->>>>
->>>>> remoteproc is writing '\0' in the shared mem region. This
->>>>> region is shared among multiple clients that are also trying
->>>>> to read. Hence they miss first character.
->>>>>
->>>>> Remove this null character write, as this mem area is
->>>>> supposed to be Read only.
->>>>>
->>>>> Further during every subsystem reboot, this region is
->>>>> initialized with default, hence no need to write this
->>>>> region.
->>>> Thanks for your patch Jitendra!
->>>>
->>>> The write was removed from the downstream kernel in msm-4.9, late last
->>>> year. Can you please confirm that you describe here is valid for
->>>> platforms supported prior to this change as well?
->>>>
->>>> E.g. is what you're describing true for wcnss on 8064, adsp on 8974 
->>>> and
->>>> mpss on 8916?
->>> To provide a history.
->>> We got a internal request, where during subsystem crash/restart, in our
->>> recovery path, we try to get the cause of crash by reading shared 
->>> memory
->>> region.
->>> But, because in recovery path we write null to first character of 
->>> shared
->>> memory string. So, any other client which in the meantime try to 
->>> dump the
->>> crash region will miss first character of crash region.
->>> For example: actual "err_crash_reason " will be read by other 
->>> interested
->>> clients as "rr_crash_reason"
->>>
->>> Now as this piece of code is present since long 3.10,3.18,4.4 time, 
->>> so we
->>> were not sure of this snippet's reason of existence. Here, initially we
->>> tried to find out reason for this null write, where we guessed this 
->>> snippet
->>> is lying there to ensure, that across subsequent crashes, we always 
->>> get a
->>> new updated reason/string(as we are writing null to first character of
->>> shared mem) and not some older stale string.
->>>
->>> But this understanding was rejected by subsystem owners saying that 
->>> crash
->>> reason, shared memory item is re-initialized at non-HLOS bootup so 
->>> it will
->>> get clear automatically.Hence, there is no need to write null 
->>> character.
->>>
->>> So, because of above reason, we could say that this snippet is 
->>> causing a bug
->>> and should be fixed and this change should be valid for any platform.
->> Thanks for investigating this and letting me know.
->>
->> As you say the only time this had the potential to be a problem would be
->> if we have a fatal error with a message followed by a crash that doesn't
->> fill out the message - in this case we could have read the old message.
->>
->> I have merged your "v1" patch - which as it's the second version of the
->> patch, should be titled v2.
-> Thanks Bjorn.
-> I have termed it v1 assuming earlier patch is v0. Anyways I should 
-> have send out first patch
-> with proper version to avoid confusion.
-I guess you agreed for this patch and picked in your tree. But, I am 
-wondering why its still not merged in kernel mainline.
-Is anything pending/missing from my side to move it further or are there 
-any queries related to that patch?
+This simplifies the dependencies, and allows to improve compile-testing.
 
-Thanks,
-Jitendra
->>
->> Regards,
->> Bjorn
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe 
->> linux-arm-msm" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+---
+v3:
+  - Rebase to v4.17-rc1,
+
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Split per subsystem.
+---
+ drivers/ata/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+index 2b16e7c8fff35764..39b181d6bd0d8cf2 100644
+--- a/drivers/ata/Kconfig
++++ b/drivers/ata/Kconfig
+@@ -398,7 +398,6 @@ config SATA_DWC_VDEBUG
+ 
+ config SATA_HIGHBANK
+ 	tristate "Calxeda Highbank SATA support"
+-	depends on HAS_DMA
+ 	depends on ARCH_HIGHBANK || COMPILE_TEST
+ 	help
+ 	  This option enables support for the Calxeda Highbank SoC's
+@@ -408,7 +407,6 @@ config SATA_HIGHBANK
+ 
+ config SATA_MV
+ 	tristate "Marvell SATA support"
+-	depends on HAS_DMA
+ 	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
+ 		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
+ 	select GENERIC_PHY
+-- 
+2.7.4
