@@ -1,111 +1,78 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 13/20] mmc: Remove depends on HAS_DMA in case of platform dependency
-Date: Tue, 17 Apr 2018 19:49:13 +0200
-Message-Id: <1523987360-18760-14-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v6 0/7] ARM: davinci: complete the conversion to using the reset framework
+Date: Tue, 17 Apr 2018 19:30:31 +0200
+Message-Id: <20180417173038.25510-1-brgl@bgdev.pl>
+To: Suman Anna <s-anna@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+This series converts the only user of the handcoded, mach-specific reset
+routines in the davinci platform to using the reset framework.
 
-This simplifies the dependencies, and allows to improve compile-testing.
+Patches 1-2 add necessary lookups/DT-properties.
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-v3:
-  - Add Acked-by,
-  - Rebase to v4.17-rc1,
+Patches 3-5 fix issues found in the remoteproc davinci driver.
 
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/mmc/host/Kconfig | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+Patch 6 converts the davinci-rproc driver to the reset framework.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 9589f9c9046f14b1..3978d0418958bf6b 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -358,7 +358,6 @@ config MMC_MESON_MX_SDIO
- 	tristate "Amlogic Meson6/Meson8/Meson8b SD/MMC Host Controller support"
- 	depends on ARCH_MESON || COMPILE_TEST
- 	depends on COMMON_CLK
--	depends on HAS_DMA
- 	depends on OF
- 	help
- 	  This selects support for the SD/MMC Host Controller on
-@@ -401,7 +400,6 @@ config MMC_OMAP
- 
- config MMC_OMAP_HS
- 	tristate "TI OMAP High Speed Multimedia Card Interface support"
--	depends on HAS_DMA
- 	depends on ARCH_OMAP2PLUS || ARCH_KEYSTONE || COMPILE_TEST
- 	help
- 	  This selects the TI OMAP High Speed Multimedia card Interface.
-@@ -511,7 +509,6 @@ config MMC_DAVINCI
- 
- config MMC_GOLDFISH
- 	tristate "goldfish qemu Multimedia Card Interface support"
--	depends on HAS_DMA
- 	depends on GOLDFISH || COMPILE_TEST
- 	help
- 	  This selects the Goldfish Multimedia card Interface emulation
-@@ -605,7 +602,7 @@ config MMC_SDHI
- 
- config MMC_SDHI_SYS_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using SYS-DMAC"
--	depends on MMC_SDHI && HAS_DMA
-+	depends on MMC_SDHI
- 	default MMC_SDHI if (SUPERH || ARM)
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
-@@ -615,7 +612,7 @@ config MMC_SDHI_SYS_DMAC
- config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
- 	depends on ARM64 || COMPILE_TEST
--	depends on MMC_SDHI && HAS_DMA
-+	depends on MMC_SDHI
- 	default MMC_SDHI if ARM64
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
-@@ -669,7 +666,6 @@ config MMC_CAVIUM_THUNDERX
- 
- config MMC_DW
- 	tristate "Synopsys DesignWare Memory Card Interface"
--	depends on HAS_DMA
- 	depends on ARC || ARM || ARM64 || MIPS || COMPILE_TEST
- 	help
- 	  This selects support for the Synopsys DesignWare Mobile Storage IP
-@@ -748,7 +744,6 @@ config MMC_DW_ZX
- 
- config MMC_SH_MMCIF
- 	tristate "SuperH Internal MMCIF support"
--	depends on HAS_DMA
- 	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  This selects the MMC Host Interface controller (MMCIF) found in various
-@@ -868,7 +863,6 @@ config MMC_TOSHIBA_PCI
- config MMC_BCM2835
- 	tristate "Broadcom BCM2835 SDHOST MMC Controller support"
- 	depends on ARCH_BCM2835 || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 	  This selects the BCM2835 SDHOST MMC controller. If you have
- 	  a BCM2835 platform with SD or MMC devices, say Y or M here.
+Patch 7 removes now dead code.
+
+Tested both in DT and legacy modes by booting the examples from
+ti-ipc-rtos recipe in meta-ti.
+
+This series applies on top of David Lechner's common-clk-v9 branch[1].
+
+[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
+
+v1 -> v2:
+- fixed the device tree patches the descriptions of which were mixed up
+- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
+  reset provider, since it's possible that the lookup table was not yet
+  registered
+- made the local variable naming consistent in the davinci-rproc driver
+- fixed a typo in PATCH 5/8
+
+v2 -> v3:
+- modify PATCH 1/8: drop the provider argument from the function adding
+  lookup entries and instead pass the provider name to the RESET_LOOKUP
+  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
+  cannot get the corresponding reset controller
+- modify the reset lookup entry in psc-da850
+- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
+  emit an error message if devm_reset_control_get_exclusive() returns
+  this error code
+
+v3 -> v4:
+- make index the second parameter in RESET_LOOKUP() (right after the
+  provider name)
+
+v4 -> v5:
+- fix a bug where the dsp_reset object correctly stored in drproc struct
+
+v5 -> v6:
+- rebased on top of v4.17-rc1 and retested
+- dropped patches that were applied during 4.17 merge window
+- added relevant review and ack tags
+
+Bartosz Golaszewski (7):
+  ARM: davinci: dts: make psc0 a reset provider
+  ARM: davinci: dts: add a reset control to the dsp node
+  remoteproc/davinci: add the missing retval check for clk_enable()
+  remoteproc/davinci: prepare and unprepare the clock where needed
+  remoteproc/davinci: use octal permissions for module_param()
+  remoteproc/davinci: use the reset framework
+  clk: davinci: kill davinci_clk_reset_assert/deassert()
+
+ arch/arm/boot/dts/da850.dtsi               |  2 +
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ----------
+ drivers/clk/davinci/psc.c                  | 18 ---------
+ drivers/remoteproc/da8xx_remoteproc.c      | 46 ++++++++++++++++++----
+ 4 files changed, 40 insertions(+), 47 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+
 -- 
-2.7.4
+2.17.0
