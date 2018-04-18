@@ -1,129 +1,39 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 01/20] ASoC: Remove depends on HAS_DMA in case of platform dependency
-Date: Tue, 17 Apr 2018 19:49:01 +0200
-Message-Id: <1523987360-18760-2-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <brgl@bgdev.pl>
+MIME-Version: 1.0
+In-Reply-To: <14b8384d-707d-42b7-b3ac-1ad914997a2e@ti.com>
+References: <20180417173038.25510-1-brgl@bgdev.pl> <20180417173038.25510-7-brgl@bgdev.pl>
+ <14b8384d-707d-42b7-b3ac-1ad914997a2e@ti.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 18 Apr 2018 10:56:30 +0200
+Message-ID: <CAMRc=Mfj=M2a8Dw1SCzc4DBG6B+B8gbkr9DKaaSKiEs9hN6Bag@mail.gmail.com>
+Subject: Re: [PATCH v6 6/7] remoteproc/davinci: use the reset framework
+Content-Type: text/plain; charset="UTF-8"
+To: Sekhar Nori <nsekhar@ti.com>
+Cc: Suman Anna <s-anna@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+2018-04-18 7:44 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+> On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Switch to using the reset framework instead of handcoded reset routines
+>> we used so far.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Looks good!
+>
+> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+>
+> This depends on DaVinci gaining common clock / reset framework support
+> though. I am guessing remoteproc maintainers will have to be reminded
+> when its safe to apply.
+>
+> Thanks,
+> Sekhar
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+Right, I assume you plan to apply the platform & DT patches from David
+for 4.18? We can then provide an immutable branch to remoteproc
+maintainers.
 
-This simplifies the dependencies, and allows to improve compile-testing.
-
-Note:
-  - The various SND_SOC_LPASS_* symbols had to loose their dependencies
-    on HAS_DMA, as they are selected by SND_SOC_STORM and/or
-    SND_SOC_APQ8016_SBC.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Mark Brown <broonie@kernel.org>
----
-v3:
-  - Add Acked-by,
-  - Rebase to v4.17-rc1,
-
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Drop dependency of SND_SOC_LPASS_IPQ806X on HAS_DMA,
-  - Split per subsystem.
----
- sound/soc/bcm/Kconfig      | 3 +--
- sound/soc/kirkwood/Kconfig | 1 -
- sound/soc/pxa/Kconfig      | 1 -
- sound/soc/qcom/Kconfig     | 7 ++-----
- 4 files changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/sound/soc/bcm/Kconfig b/sound/soc/bcm/Kconfig
-index edf367100ebd2f17..02f50b7a966ff262 100644
---- a/sound/soc/bcm/Kconfig
-+++ b/sound/soc/bcm/Kconfig
-@@ -11,9 +11,8 @@ config SND_BCM2835_SOC_I2S
- config SND_SOC_CYGNUS
- 	tristate "SoC platform audio for Broadcom Cygnus chips"
- 	depends on ARCH_BCM_CYGNUS || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 	  Say Y if you want to add support for ASoC audio on Broadcom
- 	  Cygnus chips (bcm958300, bcm958305, bcm911360)
- 
--	  If you don't know what to do here, say N.
-\ No newline at end of file
-+	  If you don't know what to do here, say N.
-diff --git a/sound/soc/kirkwood/Kconfig b/sound/soc/kirkwood/Kconfig
-index bc3c7b5ac752e471..132bb83f8e99aff3 100644
---- a/sound/soc/kirkwood/Kconfig
-+++ b/sound/soc/kirkwood/Kconfig
-@@ -1,7 +1,6 @@
- config SND_KIRKWOOD_SOC
- 	tristate "SoC Audio for the Marvell Kirkwood and Dove chips"
- 	depends on ARCH_DOVE || ARCH_MVEBU || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 	  Say Y or M if you want to add support for codecs attached to
- 	  the Kirkwood I2S interface. You will also need to select the
-diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
-index 484ab3c2ad672fc8..960744e46edc0549 100644
---- a/sound/soc/pxa/Kconfig
-+++ b/sound/soc/pxa/Kconfig
-@@ -1,7 +1,6 @@
- config SND_PXA2XX_SOC
- 	tristate "SoC Audio for the Intel PXA2xx chip"
- 	depends on ARCH_PXA || COMPILE_TEST
--	depends on HAS_DMA
- 	select SND_PXA2XX_LIB
- 	help
- 	  Say Y or M if you want to add support for codecs attached to
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 8ec9a074b38bd702..3cc252e55468eaab 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -11,24 +11,21 @@ config SND_SOC_LPASS_CPU
- 
- config SND_SOC_LPASS_PLATFORM
- 	tristate
--	depends on HAS_DMA
- 	select REGMAP_MMIO
- 
- config SND_SOC_LPASS_IPQ806X
- 	tristate
--	depends on HAS_DMA
- 	select SND_SOC_LPASS_CPU
- 	select SND_SOC_LPASS_PLATFORM
- 
- config SND_SOC_LPASS_APQ8016
- 	tristate
--	depends on HAS_DMA
- 	select SND_SOC_LPASS_CPU
- 	select SND_SOC_LPASS_PLATFORM
- 
- config SND_SOC_STORM
- 	tristate "ASoC I2S support for Storm boards"
--	depends on SND_SOC_QCOM && HAS_DMA
-+	depends on SND_SOC_QCOM
- 	select SND_SOC_LPASS_IPQ806X
- 	select SND_SOC_MAX98357A
- 	help
-@@ -37,7 +34,7 @@ config SND_SOC_STORM
- 
- config SND_SOC_APQ8016_SBC
- 	tristate "SoC Audio support for APQ8016 SBC platforms"
--	depends on SND_SOC_QCOM && HAS_DMA
-+	depends on SND_SOC_QCOM
- 	select SND_SOC_LPASS_APQ8016
- 	help
-           Support for Qualcomm Technologies LPASS audio block in
--- 
-2.7.4
+Bart
