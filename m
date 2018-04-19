@@ -1,49 +1,91 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 19 Apr 2018 10:22:49 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 4/7] mailbox: Add support for Qualcomm SDM845 SoCs
-Message-ID: <20180419172249.GY18510@minitux>
-References: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
- <1521019283-32212-5-git-send-email-sibis@codeaurora.org>
+Return-Path: <kvalo@codeaurora.org>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: [PATCH v3 15/20] net: Remove depends on HAS_DMA in case of platform dependency
+In-Reply-To: <1523987360-18760-16-git-send-email-geert@linux-m68k.org> (Geert
+	Uytterhoeven's message of "Tue, 17 Apr 2018 19:49:15 +0200")
+References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+	<1523987360-18760-16-git-send-email-geert@linux-m68k.org>
+Date: Thu, 19 Apr 2018 19:41:15 +0300
+Message-ID: <87wox3i1xw.fsf@kamboji.qca.qualcomm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521019283-32212-5-git-send-email-sibis@codeaurora.org>
-To: Sibi S <sibis@codeaurora.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Content-Type: text/plain
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pi tchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>, iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 14 Mar 02:21 PDT 2018, Sibi S wrote:
+(adding linux-wireless)
 
-> Add the corresponding APCS offset for SDM845 SoC
-> 
-> Signed-off-by: Sibi S <sibis@codeaurora.org>
+Geert Uytterhoeven <geert@linux-m68k.org> writes:
 
-Full name please.
-
+> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+> In most cases this other symbol is an architecture or platform specific
+> symbol, or PCI.
+>
+> Generic symbols and drivers without platform dependencies keep their
+> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+> cannot work anyway.
+>
+> This simplifies the dependencies, and allows to improve compile-testing.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
 > ---
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> index 57bde0d..62d704d 100644
-> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -125,6 +125,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
->  static const struct of_device_id qcom_apcs_ipc_of_match[] = {
->  	{ .compatible = "qcom,msm8916-apcs-kpss-global", .data = (void *)8 },
->  	{ .compatible = "qcom,msm8996-apcs-hmss-global", .data = (void *)16 },
-> +	{ .compatible = "qcom,sdm845-apcs-hmss-global", .data = (void *)12 },
+> v3:
+>   - Rebase to v4.17-rc1,
+>   - Drop obsolete note about FSL_FMAN,
+>
+> v2:
+>   - Add Reviewed-by, Acked-by,
+>   - Drop RFC state,
+>   - Split per subsystem.
+> ---
+>  drivers/net/ethernet/amd/Kconfig                | 2 +-
+>  drivers/net/ethernet/apm/xgene-v2/Kconfig       | 1 -
+>  drivers/net/ethernet/apm/xgene/Kconfig          | 1 -
+>  drivers/net/ethernet/arc/Kconfig                | 6 ++++--
+>  drivers/net/ethernet/broadcom/Kconfig           | 2 --
+>  drivers/net/ethernet/calxeda/Kconfig            | 2 +-
+>  drivers/net/ethernet/hisilicon/Kconfig          | 2 +-
+>  drivers/net/ethernet/marvell/Kconfig            | 8 +++-----
+>  drivers/net/ethernet/mellanox/mlxsw/Kconfig     | 2 +-
+>  drivers/net/ethernet/renesas/Kconfig            | 2 --
+>  drivers/net/wireless/broadcom/brcm80211/Kconfig | 1 -
+>  drivers/net/wireless/quantenna/qtnfmac/Kconfig  | 2 +-
+>  12 files changed, 12 insertions(+), 19 deletions(-)
 
-The block seems to be called "apss shared", so make the compatible
-"qcom,sdm845-apss-shared".
+For wireless:
 
-Please resubmit this patch separate from the others in the series, as
-they can be merged independently of the rest of the series.
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
 
+Leaving the hunks for linux-wireless list to see:
 
-PS. For updates like this you can generally submit the dt and code
-together.
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/Kconfig b/drivers/net/wireless/broadcom/brcm80211/Kconfig
+> index 9d99eb42d9176f0f..6acba67bca07abd7 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/Kconfig
+> +++ b/drivers/net/wireless/broadcom/brcm80211/Kconfig
+> @@ -60,7 +60,6 @@ config BRCMFMAC_PCIE
+>  	bool "PCIE bus interface support for FullMAC driver"
+>  	depends on BRCMFMAC
+>  	depends on PCI
+> -	depends on HAS_DMA
+>  	select BRCMFMAC_PROTO_MSGBUF
+>  	select FW_LOADER
+>  	---help---
+> diff --git a/drivers/net/wireless/quantenna/qtnfmac/Kconfig b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
+> index 025fa6018550895a..8d1492a90bd135c0 100644
+> --- a/drivers/net/wireless/quantenna/qtnfmac/Kconfig
+> +++ b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
+> @@ -7,7 +7,7 @@ config QTNFMAC
+>  config QTNFMAC_PEARL_PCIE
+>  	tristate "Quantenna QSR10g PCIe support"
+>  	default n
+> -	depends on HAS_DMA && PCI && CFG80211
+> +	depends on PCI && CFG80211
+>  	select QTNFMAC
+>  	select FW_LOADER
+>  	select CRC32
 
-Regards,
-Bjorn
+-- 
+Kalle Valo
