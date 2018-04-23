@@ -1,92 +1,63 @@
-Return-Path: <mst@redhat.com>
-Date: Mon, 23 Apr 2018 14:52:19 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: virtio remoteproc device
-Message-ID: <20180423144812-mutt-send-email-mst@kernel.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: virtio remoteproc device
+Date: Mon, 23 Apr 2018 08:55:57 +0000
+Message-ID: <1d7df45a692b42bd9d70462e0af63ca9@SFHDAG7NODE2.st.com>
 References: <20180420194321-mutt-send-email-mst@kernel.org>
  <CAAhSdy2JncLrpc0WUoBtB4g+bnGtUWiFOS=sxnTF9fkw9a3UnQ@mail.gmail.com>
- <1d7df45a692b42bd9d70462e0af63ca9@SFHDAG7NODE2.st.com>
+In-Reply-To: <CAAhSdy2JncLrpc0WUoBtB4g+bnGtUWiFOS=sxnTF9fkw9a3UnQ@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d7df45a692b42bd9d70462e0af63ca9@SFHDAG7NODE2.st.com>
-To: Loic PALLARDY <loic.pallardy@st.com>
-Cc: Anup Patel <anup@brainfault.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
+To: Anup Patel <anup@brainfault.org>, "Michael S. Tsirkin" <mst@redhat.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 08:55:57AM +0000, Loic PALLARDY wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-remoteproc-
-> > owner@vger.kernel.org] On Behalf Of Anup Patel
-> > Sent: Sunday, April 22, 2018 6:08 AM
-> > To: Michael S. Tsirkin <mst@redhat.com>
-> > Cc: linux-remoteproc@vger.kernel.org; Ohad Ben-Cohen
-> > <ohad@wizery.com>; Bjorn Andersson <bjorn.andersson@linaro.org>;
-> > virtualization@lists.linux-foundation.org
-> > Subject: Re: virtio remoteproc device
-> > 
-> > On Fri, Apr 20, 2018 at 10:23 PM, Michael S. Tsirkin <mst@redhat.com>
-> > wrote:
-> > > Hello!
-> > > I note the following in the serial console:
-> > >
-> > >       if (is_rproc_serial(vdev)) {
-> > >                 /*
-> > >                  * Allocate DMA memory from ancestor. When a virtio
-> > >                  * device is created by remoteproc, the DMA memory is
-> > >                  * associated with the grandparent device:
-> > >                  * vdev => rproc => platform-dev.
-> > >                  */
-> > >                 if (!vdev->dev.parent || !vdev->dev.parent->parent)
-> > >                         goto free_buf;
-> > >                 buf->dev = vdev->dev.parent->parent;
-> > >
-> > >                 /* Increase device refcnt to avoid freeing it */
-> > >                 get_device(buf->dev);
-> > >                 buf->buf = dma_alloc_coherent(buf->dev, buf_size, &buf->dma,
-> > >                                               GFP_KERNEL);
-> > >         }
-> > >
-> > > Added here:
-> > >         commit 1b6370463e88b0c1c317de16d7b962acc1dab4f2
-> > >         Author: Sjur Br�ndeland <sjur.brandeland@stericsson.com>
-> > >         Date:   Fri Dec 14 14:40:51 2012 +1030
-> > >
-> > >     virtio_console: Add support for remoteproc serial
-> > >
-> > >
-> > > I am not familiar with rproc so I have a question:
-> > > why is it required to use coherent memory here,
-> > > and why through a grandparent device?
-> > 
-> > I faced similar issue when I tried VirtIO RPMSG bus over
-> > VirtIO MMIO transport.
-> > 
-> > Here's my fix for VirtIO RPMSG bus driver:
-> > https://patchwork.kernel.org/patch/10155145/
-> 
-> Hi Anup and Michael,
-> 
-> I pushed a series to modify virtio device allocation in remoteproc. Please see [1].
-> It allows to remove allocation based on "grand-parent" device in the case of virtio device allocated by remoteproc.
-> Virto_console patch missing, only virtio_rpmsg modification proposed. I can add it in next version.
-> 
-> Regards,
-> Loic
-> 
-> [1] https://lkml.org/lkml/2018/3/1/644
-
-Thanks!
-Based on that patch, can remoteproc force VIRTIO_F_IOMMU_PLATFORM
-in features and then drop special-casing of dma completely?
-
-> > 
-> > Regards,
-> > Anup
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtcmVtb3RlcHJv
+Yy1vd25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1yZW1vdGVwcm9jLQ0KPiBvd25l
+ckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBBbnVwIFBhdGVsDQo+IFNlbnQ6IFN1bmRh
+eSwgQXByaWwgMjIsIDIwMTggNjowOCBBTQ0KPiBUbzogTWljaGFlbCBTLiBUc2lya2luIDxtc3RA
+cmVkaGF0LmNvbT4NCj4gQ2M6IGxpbnV4LXJlbW90ZXByb2NAdmdlci5rZXJuZWwub3JnOyBPaGFk
+IEJlbi1Db2hlbg0KPiA8b2hhZEB3aXplcnkuY29tPjsgQmpvcm4gQW5kZXJzc29uIDxiam9ybi5h
+bmRlcnNzb25AbGluYXJvLm9yZz47DQo+IHZpcnR1YWxpemF0aW9uQGxpc3RzLmxpbnV4LWZvdW5k
+YXRpb24ub3JnDQo+IFN1YmplY3Q6IFJlOiB2aXJ0aW8gcmVtb3RlcHJvYyBkZXZpY2UNCj4gDQo+
+IE9uIEZyaSwgQXByIDIwLCAyMDE4IGF0IDEwOjIzIFBNLCBNaWNoYWVsIFMuIFRzaXJraW4gPG1z
+dEByZWRoYXQuY29tPg0KPiB3cm90ZToNCj4gPiBIZWxsbyENCj4gPiBJIG5vdGUgdGhlIGZvbGxv
+d2luZyBpbiB0aGUgc2VyaWFsIGNvbnNvbGU6DQo+ID4NCj4gPiAgICAgICBpZiAoaXNfcnByb2Nf
+c2VyaWFsKHZkZXYpKSB7DQo+ID4gICAgICAgICAgICAgICAgIC8qDQo+ID4gICAgICAgICAgICAg
+ICAgICAqIEFsbG9jYXRlIERNQSBtZW1vcnkgZnJvbSBhbmNlc3Rvci4gV2hlbiBhIHZpcnRpbw0K
+PiA+ICAgICAgICAgICAgICAgICAgKiBkZXZpY2UgaXMgY3JlYXRlZCBieSByZW1vdGVwcm9jLCB0
+aGUgRE1BIG1lbW9yeSBpcw0KPiA+ICAgICAgICAgICAgICAgICAgKiBhc3NvY2lhdGVkIHdpdGgg
+dGhlIGdyYW5kcGFyZW50IGRldmljZToNCj4gPiAgICAgICAgICAgICAgICAgICogdmRldiA9PiBy
+cHJvYyA9PiBwbGF0Zm9ybS1kZXYuDQo+ID4gICAgICAgICAgICAgICAgICAqLw0KPiA+ICAgICAg
+ICAgICAgICAgICBpZiAoIXZkZXYtPmRldi5wYXJlbnQgfHwgIXZkZXYtPmRldi5wYXJlbnQtPnBh
+cmVudCkNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZyZWVfYnVmOw0KPiA+ICAg
+ICAgICAgICAgICAgICBidWYtPmRldiA9IHZkZXYtPmRldi5wYXJlbnQtPnBhcmVudDsNCj4gPg0K
+PiA+ICAgICAgICAgICAgICAgICAvKiBJbmNyZWFzZSBkZXZpY2UgcmVmY250IHRvIGF2b2lkIGZy
+ZWVpbmcgaXQgKi8NCj4gPiAgICAgICAgICAgICAgICAgZ2V0X2RldmljZShidWYtPmRldik7DQo+
+ID4gICAgICAgICAgICAgICAgIGJ1Zi0+YnVmID0gZG1hX2FsbG9jX2NvaGVyZW50KGJ1Zi0+ZGV2
+LCBidWZfc2l6ZSwgJmJ1Zi0+ZG1hLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBHRlBfS0VSTkVMKTsNCj4gPiAgICAgICAgIH0NCj4gPg0KPiA+IEFk
+ZGVkIGhlcmU6DQo+ID4gICAgICAgICBjb21taXQgMWI2MzcwNDYzZTg4YjBjMWMzMTdkZTE2ZDdi
+OTYyYWNjMWRhYjRmMg0KPiA+ICAgICAgICAgQXV0aG9yOiBTanVyIEJyw6ZuZGVsYW5kIDxzanVy
+LmJyYW5kZWxhbmRAc3Rlcmljc3Nvbi5jb20+DQo+ID4gICAgICAgICBEYXRlOiAgIEZyaSBEZWMg
+MTQgMTQ6NDA6NTEgMjAxMiArMTAzMA0KPiA+DQo+ID4gICAgIHZpcnRpb19jb25zb2xlOiBBZGQg
+c3VwcG9ydCBmb3IgcmVtb3RlcHJvYyBzZXJpYWwNCj4gPg0KPiA+DQo+ID4gSSBhbSBub3QgZmFt
+aWxpYXIgd2l0aCBycHJvYyBzbyBJIGhhdmUgYSBxdWVzdGlvbjoNCj4gPiB3aHkgaXMgaXQgcmVx
+dWlyZWQgdG8gdXNlIGNvaGVyZW50IG1lbW9yeSBoZXJlLA0KPiA+IGFuZCB3aHkgdGhyb3VnaCBh
+IGdyYW5kcGFyZW50IGRldmljZT8NCj4gDQo+IEkgZmFjZWQgc2ltaWxhciBpc3N1ZSB3aGVuIEkg
+dHJpZWQgVmlydElPIFJQTVNHIGJ1cyBvdmVyDQo+IFZpcnRJTyBNTUlPIHRyYW5zcG9ydC4NCj4g
+DQo+IEhlcmUncyBteSBmaXggZm9yIFZpcnRJTyBSUE1TRyBidXMgZHJpdmVyOg0KPiBodHRwczov
+L3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwMTU1MTQ1Lw0KDQpIaSBBbnVwIGFuZCBNaWNo
+YWVsLA0KDQpJIHB1c2hlZCBhIHNlcmllcyB0byBtb2RpZnkgdmlydGlvIGRldmljZSBhbGxvY2F0
+aW9uIGluIHJlbW90ZXByb2MuIFBsZWFzZSBzZWUgWzFdLg0KSXQgYWxsb3dzIHRvIHJlbW92ZSBh
+bGxvY2F0aW9uIGJhc2VkIG9uICJncmFuZC1wYXJlbnQiIGRldmljZSBpbiB0aGUgY2FzZSBvZiB2
+aXJ0aW8gZGV2aWNlIGFsbG9jYXRlZCBieSByZW1vdGVwcm9jLg0KVmlydG9fY29uc29sZSBwYXRj
+aCBtaXNzaW5nLCBvbmx5IHZpcnRpb19ycG1zZyBtb2RpZmljYXRpb24gcHJvcG9zZWQuIEkgY2Fu
+IGFkZCBpdCBpbiBuZXh0IHZlcnNpb24uDQoNClJlZ2FyZHMsDQpMb2ljDQoNClsxXSBodHRwczov
+L2xrbWwub3JnL2xrbWwvMjAxOC8zLzEvNjQ0DQoNCj4gDQo+IFJlZ2FyZHMsDQo+IEFudXANCj4g
+LS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vi
+c2NyaWJlIGxpbnV4LXJlbW90ZXByb2MiIGluDQo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBt
+YWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6
+Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0K
