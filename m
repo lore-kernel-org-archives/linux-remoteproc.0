@@ -1,8 +1,8 @@
 Return-Path: <mst@redhat.com>
-Date: Mon, 23 Apr 2018 22:40:38 +0300
+Date: Mon, 23 Apr 2018 14:52:19 +0300
 From: "Michael S. Tsirkin" <mst@redhat.com>
 Subject: Re: virtio remoteproc device
-Message-ID: <20180423223717-mutt-send-email-mst@kernel.org>
+Message-ID: <20180423144812-mutt-send-email-mst@kernel.org>
 References: <20180420194321-mutt-send-email-mst@kernel.org>
  <CAAhSdy2JncLrpc0WUoBtB4g+bnGtUWiFOS=sxnTF9fkw9a3UnQ@mail.gmail.com>
  <1d7df45a692b42bd9d70462e0af63ca9@SFHDAG7NODE2.st.com>
@@ -78,7 +78,11 @@ On Mon, Apr 23, 2018 at 08:55:57AM +0000, Loic PALLARDY wrote:
 > Loic
 > 
 > [1] https://lkml.org/lkml/2018/3/1/644
-> 
+
+Thanks!
+Based on that patch, can remoteproc force VIRTIO_F_IOMMU_PLATFORM
+in features and then drop special-casing of dma completely?
+
 > > 
 > > Regards,
 > > Anup
@@ -86,46 +90,3 @@ On Mon, Apr 23, 2018 at 08:55:57AM +0000, Loic PALLARDY wrote:
 > > To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
 > > the body of a message to majordomo@vger.kernel.org
 > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-So on top of your patches, can we just force use of DMA API
-and drop special casting?
-E.g. maybe something like the below - completely untested - patch?
-Does it work for you?
-
-
-diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-index 2108551..6c6767c 100644
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -40,7 +40,8 @@
- #include <linux/dma-mapping.h>
- #include "../tty/hvc/hvc_console.h"
- 
--#define is_rproc_enabled IS_ENABLED(CONFIG_REMOTEPROC)
-+//#define is_rproc_enabled IS_ENABLED(CONFIG_REMOTEPROC)
-+#define is_rproc_enabled 0
- 
- /*
-  * This is a global struct for storing common data for all the devices
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index b0633fd..4a13ca2 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -199,7 +199,7 @@ static u64 rproc_virtio_get_features(struct virtio_device *vdev)
- 
- 	rsc = (void *)rvdev->rproc->table_ptr + rvdev->rsc_offset;
- 
--	return rsc->dfeatures;
-+	return rsc->dfeatures | (1ULL << VIRTIO_F_IOMMU_PLATFORM);
- }
- 
- static int rproc_virtio_finalize_features(struct virtio_device *vdev)
-@@ -213,7 +213,7 @@ static int rproc_virtio_finalize_features(struct virtio_device *vdev)
- 	vring_transport_features(vdev);
- 
- 	/* Make sure we don't have any features > 32 bits! */
--	BUG_ON((u32)vdev->features != vdev->features);
-+	//BUG_ON((u32)vdev->features != vdev->features);
- 
- 	/*
- 	 * Remember the finalized features of our vdev, and provide it
