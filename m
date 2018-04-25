@@ -1,78 +1,120 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 20/20] usb: Remove depends on HAS_DMA in case of platform dependency
-Date: Tue, 17 Apr 2018 19:49:20 +0200
-Message-Id: <1523987360-18760-21-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
+Subject: Re: [PATCH] remoteproc: rename "crashed" parameter
+References: <20180425133626.11781-1-elder@linaro.org>
+ <93951de4-3758-0293-eeb1-bba9dd561c4b@st.com>
+From: Alex Elder <elder@linaro.org>
+Message-ID: <31b8864a-d94e-64cf-40dd-d03d40963513@linaro.org>
+Date: Wed, 25 Apr 2018 09:47:46 -0500
+MIME-Version: 1.0
+In-Reply-To: <93951de4-3758-0293-eeb1-bba9dd561c4b@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+On 04/25/2018 08:49 AM, Arnaud Pouliquen wrote:
+> Hello Alex,
+> 
+> I have already proposed it few weeks ago.
+> 
+> https://lkml.org/lkml/2018/4/10/192
+> 
+> could you ack it, if you test it on your side?
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+I am unable to test it.  I found the bug by inspection (perhaps as
+you did).  However I'll give you:
 
-This simplifies the dependencies, and allows to improve compile-testing.
+Acked-by: Alex Elder <elder@linaro.org>
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com> [drivers/usb/gadget/]
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-v3:
-  - Add Acked-by,
-  - Rebase to v4.17-rc1,
+or 
 
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/usb/gadget/udc/Kconfig | 4 ++--
- drivers/usb/mtu3/Kconfig       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Alex Elder <elder@linaro.org>
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 0875d38476ee9395..9c3b4f86965e80c7 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -179,7 +179,7 @@ config USB_R8A66597
- 
- config USB_RENESAS_USBHS_UDC
- 	tristate 'Renesas USBHS controller'
--	depends on USB_RENESAS_USBHS && HAS_DMA
-+	depends on USB_RENESAS_USBHS
- 	help
- 	   Renesas USBHS is a discrete USB host and peripheral controller chip
- 	   that supports both full and high speed USB 2.0 data transfers.
-@@ -192,7 +192,7 @@ config USB_RENESAS_USBHS_UDC
- config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
--	depends on EXTCON && HAS_DMA
-+	depends on EXTCON
- 	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
- 	   that supports super, high, and full speed USB 3.0 data transfers.
-diff --git a/drivers/usb/mtu3/Kconfig b/drivers/usb/mtu3/Kconfig
-index 25cd61947beea51e..c0c0eb88e5eafc74 100644
---- a/drivers/usb/mtu3/Kconfig
-+++ b/drivers/usb/mtu3/Kconfig
-@@ -2,7 +2,7 @@
- 
- config USB_MTU3
- 	tristate "MediaTek USB3 Dual Role controller"
--	depends on EXTCON && (USB || USB_GADGET) && HAS_DMA
-+	depends on EXTCON && (USB || USB_GADGET)
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select USB_XHCI_MTK if USB_SUPPORT && USB_XHCI_HCD
- 	help
--- 
-2.7.4
+					-Alex
+
+> Thanks,
+> Arnaud
+> 
+> On 04/25/2018 03:36 PM, Alex Elder wrote:
+>> The last commit to "remoteproc_core.c":
+>>   880f5b388252 remoteproc: eAPass type of shutdown to subdev remove
+>> added a Boolean flag to the subdevice remove method, to distinguish
+>> between graceful shutdown and a crash.  Unfortunately, the names of
+>> the parameters were inconsistent, and in fact have opposite meanings.
+>>
+>> In most cases, the parameter is named "crashed", but rproc_add_subdev()
+>> names the parameter "graceful" in the prototype for the remove method.
+>>
+>> The remove method is ultimately called (and supplied with the Boolean
+>> flag value) by rproc_remove_subdevices().  That is only called by
+>> rproc_stop(), and in the two spots where that is used, "graceful" is
+>> the right name for the flag:
+>>   rproc_shutdown() passes true, indicating a graceful shutdown
+>>   rproc_trigger_recovery() passes false, indicating a crash
+>>
+>> The fix is to make the parameter name consistent, and making the
+>> name and sense of the parameter to always be "crashed" produces the
+>> smallest change.  So that's what this patch does.
+>>
+>> To verify this change, rproc_add_subdev() is called in five spots:
+>>   - qcom_add_glink_subdev() passes glink_subdev_remove()
+>>   - qcom_add_smd_subdev() passes smd_subdev_remove()
+>>   - qcom_add_ssr_subdev() passes ssr_notify_stop()
+>>   - qcom_add_sysmon_subdev() passes sysmon_stop()
+>>   - rproc_handle_vdev() passes rproc_vdev_do_remove()
+>>
+>> Of these, only sysmon_stop() uses its "crashed" parameter.  And it
+>> clearly assumes that "crashed" is the intended meaning:
+>>
+>>         /* Don't request graceful shutdown if we've crashed */
+>>         if (crashed)
+>>                 return;
+>>
+>> So this function (added after the "crashed" parameter was added)
+>> exhibited buggy behavior, which is now fixed by this patch.
+>>
+>> Signed-off-by: Alex Elder <elder@linaro.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 4 ++--
+>>  include/linux/remoteproc.h           | 2 +-
+>>  2 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 6d9c5832ce47..a9609d971f7f 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	ret = rproc_stop(rproc, false);
+>> +	ret = rproc_stop(rproc, true);
+>>  	if (ret)
+>>  		goto unlock_mutex;
+>>  
+>> @@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
+>>  	if (!atomic_dec_and_test(&rproc->power))
+>>  		goto out;
+>>  
+>> -	ret = rproc_stop(rproc, true);
+>> +	ret = rproc_stop(rproc, false);
+>>  	if (ret) {
+>>  		atomic_inc(&rproc->power);
+>>  		goto out;
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index d09a9c7af109..dfdaede9139e 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+>>  void rproc_add_subdev(struct rproc *rproc,
+>>  		      struct rproc_subdev *subdev,
+>>  		      int (*probe)(struct rproc_subdev *subdev),
+>> -		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
+>> +		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
+>>  
+>>  void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+>>  
+>>
