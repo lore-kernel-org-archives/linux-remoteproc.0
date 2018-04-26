@@ -1,53 +1,40 @@
-Return-Path: <mst@redhat.com>
-Date: Fri, 20 Apr 2018 19:53:55 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: virtio remoteproc device
-Message-ID: <20180420194321-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-To: linux-remoteproc@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, virtualization@lists.linux-foundation.org
+Return-Path: <clew@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
+Subject: [PATCH v2 0/6] Add chrdev and name query support for GLINK
+Date: Wed, 25 Apr 2018 19:07:46 -0700
+Message-Id: <1524708472-18263-1-git-send-email-clew@codeaurora.org>
+To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello!
-I note the following in the serial console:
+Add support for the GLINK rpmsg transport to register a rpmsg chrdev.
+This will create the rpmsg_ctrl nodes for userspace clients to open 
+rpmsg epts. Create a label property that will help userspace clients
+distinguish between the different GLINK links. The rpmsg chrdev 
+allocation is done by allocating a local channel which also allocates
+an ept. We need to add some guards against edge cases for this chrdev
+because it will never fully open.
 
-      if (is_rproc_serial(vdev)) {
-                /*
-                 * Allocate DMA memory from ancestor. When a virtio
-                 * device is created by remoteproc, the DMA memory is
-                 * associated with the grandparent device:
-                 * vdev => rproc => platform-dev.
-                 */
-                if (!vdev->dev.parent || !vdev->dev.parent->parent)
-                        goto free_buf;
-                buf->dev = vdev->dev.parent->parent;
+Changes since v1:
+- Add explanation to dt-bindings commit message
+- Add patch complete_all the open_req/ack variables
+- Add patch to prevent null pointer dereference in chrdev channel release
+- Change chrdev allocation to use glink channel allocation
+- Change glink attr struct to const
 
-                /* Increase device refcnt to avoid freeing it */
-                get_device(buf->dev);
-                buf->buf = dma_alloc_coherent(buf->dev, buf_size, &buf->dma,
-                                              GFP_KERNEL);
-        }
+Chris Lew (6):
+  dt-bindings: soc: qcom: Add label for GLINK bindings
+  rpmsg: glink: Store edge name for glink device
+  rpmsg: glink: Use complete_all for open states
+  rpmsg: Guard against null endpoint ops in destroy
+  rpmsg: glink: Add support for rpmsg glink chrdev
+  rpmsg: glink: Expose rpmsg name attr for glink
 
-Added here:
-	commit 1b6370463e88b0c1c317de16d7b962acc1dab4f2
-	Author: Sjur Br�ndeland <sjur.brandeland@stericsson.com>
-	Date:   Fri Dec 14 14:40:51 2012 +1030
-
-    virtio_console: Add support for remoteproc serial
-
-
-I am not familiar with rproc so I have a question:
-why is it required to use coherent memory here,
-and why through a grandparent device?
-
-Would it work to instead change vring_use_dma_api
-to whitelist rproc (like we do for xen)?
-
-I can sent a patch for your testing.
-Thanks!
+ .../devicetree/bindings/soc/qcom/qcom,glink.txt    |  5 ++
+ drivers/rpmsg/qcom_glink_native.c                  | 68 +++++++++++++++++++++-
+ drivers/rpmsg/rpmsg_core.c                         |  2 +-
+ 3 files changed, 71 insertions(+), 4 deletions(-)
 
 -- 
-MST
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
