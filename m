@@ -1,78 +1,51 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v6 0/7] ARM: davinci: complete the conversion to using the reset framework
-Date: Tue, 17 Apr 2018 19:30:31 +0200
-Message-Id: <20180417173038.25510-1-brgl@bgdev.pl>
-To: Suman Anna <s-anna@ti.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <clew@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
+Subject: [PATCH v3 2/6] rpmsg: glink: Store edge name for glink device
+Date: Thu, 26 Apr 2018 15:59:01 -0700
+Message-Id: <1524783545-21951-3-git-send-email-clew@codeaurora.org>
+In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Channels may need to identify the edge their channel was probed for.
+Store the edge name by reading the label property from device tree or
+default to the node name.
 
-This series converts the only user of the handcoded, mach-specific reset
-routines in the davinci platform to using the reset framework.
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+---
 
-Patches 1-2 add necessary lookups/DT-properties.
+Changes since v1:
+- None
 
-Patches 3-5 fix issues found in the remoteproc davinci driver.
+ drivers/rpmsg/qcom_glink_native.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Patch 6 converts the davinci-rproc driver to the reset framework.
-
-Patch 7 removes now dead code.
-
-Tested both in DT and legacy modes by booting the examples from
-ti-ipc-rtos recipe in meta-ti.
-
-This series applies on top of David Lechner's common-clk-v9 branch[1].
-
-[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-
-v1 -> v2:
-- fixed the device tree patches the descriptions of which were mixed up
-- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
-  reset provider, since it's possible that the lookup table was not yet
-  registered
-- made the local variable naming consistent in the davinci-rproc driver
-- fixed a typo in PATCH 5/8
-
-v2 -> v3:
-- modify PATCH 1/8: drop the provider argument from the function adding
-  lookup entries and instead pass the provider name to the RESET_LOOKUP
-  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
-  cannot get the corresponding reset controller
-- modify the reset lookup entry in psc-da850
-- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
-  emit an error message if devm_reset_control_get_exclusive() returns
-  this error code
-
-v3 -> v4:
-- make index the second parameter in RESET_LOOKUP() (right after the
-  provider name)
-
-v4 -> v5:
-- fix a bug where the dsp_reset object correctly stored in drproc struct
-
-v5 -> v6:
-- rebased on top of v4.17-rc1 and retested
-- dropped patches that were applied during 4.17 merge window
-- added relevant review and ack tags
-
-Bartosz Golaszewski (7):
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-  remoteproc/davinci: add the missing retval check for clk_enable()
-  remoteproc/davinci: prepare and unprepare the clock where needed
-  remoteproc/davinci: use octal permissions for module_param()
-  remoteproc/davinci: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
-
- arch/arm/boot/dts/da850.dtsi               |  2 +
- arch/arm/mach-davinci/include/mach/clock.h | 21 ----------
- drivers/clk/davinci/psc.c                  | 18 ---------
- drivers/remoteproc/da8xx_remoteproc.c      | 46 ++++++++++++++++++----
- 4 files changed, 40 insertions(+), 47 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
-
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 768ef542a841..c3f548e2ff20 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -101,6 +101,8 @@ struct glink_core_rx_intent {
+ struct qcom_glink {
+ 	struct device *dev;
+ 
++	const char *name;
++
+ 	struct mbox_client mbox_client;
+ 	struct mbox_chan *mbox_chan;
+ 
+@@ -1580,6 +1582,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 	idr_init(&glink->lcids);
+ 	idr_init(&glink->rcids);
+ 
++	ret = of_property_read_string(dev->of_node, "label", &glink->name);
++	if (ret < 0)
++		glink->name = dev->of_node->name;
++
+ 	glink->mbox_client.dev = dev;
+ 	glink->mbox_client.knows_txdone = true;
+ 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
 -- 
-2.17.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
