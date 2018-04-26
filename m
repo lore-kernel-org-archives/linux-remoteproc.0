@@ -1,44 +1,66 @@
 Return-Path: <clew@codeaurora.org>
 From: Chris Lew <clew@codeaurora.org>
-Subject: [PATCH v2 1/6] dt-bindings: soc: qcom: Add label for GLINK bindings
-Date: Wed, 25 Apr 2018 19:07:47 -0700
-Message-Id: <1524708472-18263-2-git-send-email-clew@codeaurora.org>
-In-Reply-To: <1524708472-18263-1-git-send-email-clew@codeaurora.org>
-References: <1524708472-18263-1-git-send-email-clew@codeaurora.org>
+Subject: [PATCH v3 6/6] rpmsg: glink: Expose rpmsg name attr for glink
+Date: Thu, 26 Apr 2018 15:59:05 -0700
+Message-Id: <1524783545-21951-7-git-send-email-clew@codeaurora.org>
+In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
 To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There are GLINK clients who open the same channel on multiple GLINK
-links. These clients need a way to distinguish which remoteproc they
-are communicating to. Add a label property to identify the edge this
-node represents.
+Expose the name field as an attr so clients listening to uevents for
+rpmsg can identify the edge the events correspond to.
 
 Signed-off-by: Chris Lew <clew@codeaurora.org>
 ---
 
+Changes since v2:
+- Remove const on attribute struct
+
 Changes since v1:
-- Add explanation for label in commit message
+- Add const to attribute struct
+- Get name from glink channel
 
- Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/rpmsg/qcom_glink_native.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-index 9663cab52246..0b8cc533ca83 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-@@ -10,6 +10,11 @@ edge.
- 	Value type: <stringlist>
- 	Definition: must be "qcom,glink-rpm"
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 1418926f6110..c2983a53058f 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1552,6 +1552,22 @@ static void qcom_glink_work(struct work_struct *work)
+ 	}
+ }
  
-+- label:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: should specify the subsystem name this edge corresponds to.
++static ssize_t rpmsg_name_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
++{
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
++	struct glink_channel *channel = to_glink_channel(rpdev->ept);
 +
- - interrupts:
- 	Usage: required
- 	Value type: <prop-encoded-array>
++	return snprintf(buf, RPMSG_NAME_SIZE, "%s\n", channel->glink->name);
++}
++static DEVICE_ATTR_RO(rpmsg_name);
++
++static struct attribute *qcom_glink_attrs[] = {
++	&dev_attr_rpmsg_name.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(qcom_glink);
++
+ static void qcom_glink_device_release(struct device *dev)
+ {
+ 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+@@ -1601,6 +1617,8 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	glink->dev = dev;
++	glink->dev->groups = qcom_glink_groups;
++
+ 	glink->tx_pipe = tx;
+ 	glink->rx_pipe = rx;
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
