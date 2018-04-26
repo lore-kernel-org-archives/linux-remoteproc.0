@@ -1,64 +1,49 @@
-Return-Path: <mst@redhat.com>
-Date: Thu, 19 Apr 2018 20:35:57 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
-Message-ID: <1524159181-351878-1-git-send-email-mst@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: linux-kernel@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Jason Wang <jasowang@redhat.com>, virtualization@lists.linux-foundation.org, Paolo Bonzini <pbonzini@redhat.com>
+Return-Path: <clew@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
+Subject: [PATCH v3 3/6] rpmsg: glink: Use complete_all for open states
+Date: Thu, 26 Apr 2018 15:59:02 -0700
+Message-Id: <1524783545-21951-4-git-send-email-clew@codeaurora.org>
+In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-virtio is using barriers to order memory accesses, thus
-dma_wmb/rmb is a good match.
+The open_req and open_ack completion variables are the state variables
+to represet a remote channel as open. Use complete_all so there are no
+races with waiters and using completion_done.
 
-Build-tested on x86: Before
-
-[mst@tuck linux]$ size drivers/virtio/virtio_ring.o
-   text    data     bss     dec     hex filename
-  11392     820       0   12212    2fb4 drivers/virtio/virtio_ring.o
-
-After
-mst@tuck linux]$ size drivers/virtio/virtio_ring.o
-   text    data     bss     dec     hex filename
-  11284     820       0   12104    2f48 drivers/virtio/virtio_ring.o
-
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
 ---
 
-It's good in theory, but could one of RPMSG maintainers please review
-and ack this patch? Or even better test it?
+Changes since v1:
+- New change
 
-All these barriers are useless on Intel anyway ...
-
- include/linux/virtio_ring.h | 4 ++--
+ drivers/rpmsg/qcom_glink_native.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
-index bbf3252..fab0213 100644
---- a/include/linux/virtio_ring.h
-+++ b/include/linux/virtio_ring.h
-@@ -35,7 +35,7 @@ static inline void virtio_rmb(bool weak_barriers)
- 	if (weak_barriers)
- 		virt_rmb();
- 	else
--		rmb();
-+		dma_rmb();
- }
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index c3f548e2ff20..120d6b9bb9f3 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -957,7 +957,7 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
+ 		return -EINVAL;
+ 	}
  
- static inline void virtio_wmb(bool weak_barriers)
-@@ -43,7 +43,7 @@ static inline void virtio_wmb(bool weak_barriers)
- 	if (weak_barriers)
- 		virt_wmb();
- 	else
--		wmb();
-+		dma_wmb();
- }
+-	complete(&channel->open_ack);
++	complete_all(&channel->open_ack);
  
- static inline void virtio_store_mb(bool weak_barriers,
+ 	return 0;
+ }
+@@ -1401,7 +1401,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
+ 	channel->rcid = ret;
+ 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+ 
+-	complete(&channel->open_req);
++	complete_all(&channel->open_req);
+ 
+ 	if (create_device) {
+ 		rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
 -- 
-MST
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
