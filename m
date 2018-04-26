@@ -1,10 +1,10 @@
 Return-Path: <clew@codeaurora.org>
 From: Chris Lew <clew@codeaurora.org>
-Subject: [PATCH v2 5/6] rpmsg: glink: Add support for rpmsg glink chrdev
-Date: Wed, 25 Apr 2018 19:07:51 -0700
-Message-Id: <1524708472-18263-6-git-send-email-clew@codeaurora.org>
-In-Reply-To: <1524708472-18263-1-git-send-email-clew@codeaurora.org>
-References: <1524708472-18263-1-git-send-email-clew@codeaurora.org>
+Subject: [PATCH v3 5/6] rpmsg: glink: Add support for rpmsg glink chrdev
+Date: Thu, 26 Apr 2018 15:59:04 -0700
+Message-Id: <1524783545-21951-6-git-send-email-clew@codeaurora.org>
+In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
 To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
