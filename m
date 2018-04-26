@@ -1,197 +1,49 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 2/5] reset: qcom: AOSS (always on subsystem) reset controller
-Date: Wed, 25 Apr 2018 20:38:40 +0530
-Message-Id: <20180425150843.26657-3-sibis@codeaurora.org>
-In-Reply-To: <20180425150843.26657-1-sibis@codeaurora.org>
-References: <20180425150843.26657-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <clew@codeaurora.org>
+From: Chris Lew <clew@codeaurora.org>
+Subject: [PATCH v2 3/6] rpmsg: glink: Use complete_all for open states
+Date: Wed, 25 Apr 2018 19:07:49 -0700
+Message-Id: <1524708472-18263-4-git-send-email-clew@codeaurora.org>
+In-Reply-To: <1524708472-18263-1-git-send-email-clew@codeaurora.org>
+References: <1524708472-18263-1-git-send-email-clew@codeaurora.org>
+To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add reset controller driver for Qualcomm SDM845 SoC to
-control reset signals provided by AOSS for Modem, Venus
-ADSP, GPU, Camera, Wireless, Display subsystem
+The open_req and open_ack completion variables are the state variables
+to represet a remote channel as open. Use complete_all so there are no
+races with waiters and using completion_done.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
 ---
- drivers/reset/Kconfig           |   9 +++
- drivers/reset/Makefile          |   1 +
- drivers/reset/reset-qcom-aoss.c | 133 ++++++++++++++++++++++++++++++++
- 3 files changed, 143 insertions(+)
- create mode 100644 drivers/reset/reset-qcom-aoss.c
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index c0b292be1b72..756ad2b27d0f 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -82,6 +82,15 @@ config RESET_PISTACHIO
- 	help
- 	  This enables the reset driver for ImgTec Pistachio SoCs.
+Changes since v1:
+- New change
+
+ drivers/rpmsg/qcom_glink_native.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index c3f548e2ff20..120d6b9bb9f3 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -957,7 +957,7 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
+ 		return -EINVAL;
+ 	}
  
-+config RESET_QCOM_AOSS
-+	bool "Qcom AOSS Reset Driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  This enables the AOSS (always on subsystem) reset driver
-+	  for Qualcomm SDM845 SoCs. Say Y if you want to control
-+	  reset signals provided by AOSS for Modem, Venus, ADSP,
-+	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
-+
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST
- 	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index c1261dcfe9ad..6881e4d287f0 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
- obj-$(CONFIG_RESET_MESON) += reset-meson.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-+obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
-new file mode 100644
-index 000000000000..3b0bbb387f7b
---- /dev/null
-+++ b/drivers/reset/reset-qcom-aoss.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of_device.h>
-+#include <dt-bindings/reset/qcom,sdm845-aoss.h>
-+
-+struct qcom_aoss_reset_map {
-+	unsigned int reg;
-+};
-+
-+struct qcom_aoss_desc {
-+	const struct qcom_aoss_reset_map *resets;
-+	size_t num_resets;
-+};
-+
-+struct qcom_aoss_reset_data {
-+	struct reset_controller_dev rcdev;
-+	void __iomem *base;
-+	const struct qcom_aoss_desc *desc;
-+};
-+
-+static const struct qcom_aoss_reset_map sdm845_aoss_resets[] = {
-+	[AOSS_CC_MSS_RESTART] = {0x0},
-+	[AOSS_CC_CAMSS_RESTART] = {0x1000},
-+	[AOSS_CC_VENUS_RESTART] = {0x2000},
-+	[AOSS_CC_GPU_RESTART] = {0x3000},
-+	[AOSS_CC_DISPSS_RESTART] = {0x4000},
-+	[AOSS_CC_WCSS_RESTART] = {0x10000},
-+	[AOSS_CC_LPASS_RESTART] = {0x20000},
-+};
-+
-+static const struct qcom_aoss_desc sdm845_aoss_desc = {
-+	.resets = sdm845_aoss_resets,
-+	.num_resets = ARRAY_SIZE(sdm845_aoss_resets),
-+};
-+
-+static inline struct qcom_aoss_reset_data *to_qcom_aoss_reset_data(
-+				struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct qcom_aoss_reset_data, rcdev);
-+}
-+
-+static int qcom_aoss_control_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long idx)
-+{
-+	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-+	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-+
-+	writel(1, data->base + map->reg);
-+	/* Wait 6 32kHz sleep cycles for reset */
-+	usleep_range(200, 210);
-+	return 0;
-+}
-+
-+static int qcom_aoss_control_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long idx)
-+{
-+	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-+	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-+
-+	writel(0, data->base + map->reg);
-+	/* Wait 6 32kHz sleep cycles for reset */
-+	usleep_range(200, 210);
-+	return 0;
-+}
-+
-+static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	qcom_aoss_control_assert(rcdev, idx);
-+
-+	return qcom_aoss_control_deassert(rcdev, idx);
-+}
-+
-+static const struct reset_control_ops qcom_aoss_reset_ops = {
-+	.reset = qcom_aoss_control_reset,
-+	.assert = qcom_aoss_control_assert,
-+	.deassert = qcom_aoss_control_deassert,
-+};
-+
-+static int qcom_aoss_reset_probe(struct platform_device *pdev)
-+{
-+	struct qcom_aoss_reset_data *data;
-+	struct device *dev = &pdev->dev;
-+	const struct qcom_aoss_desc *desc;
-+	struct resource *res;
-+
-+	desc = of_device_get_match_data(dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->desc = desc;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(data->base))
-+		return PTR_ERR(data->base);
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &qcom_aoss_reset_ops;
-+	data->rcdev.nr_resets = desc->num_resets;
-+	data->rcdev.of_node = dev->of_node;
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static const struct of_device_id qcom_aoss_reset_of_match[] = {
-+	{ .compatible = "qcom,sdm845-aoss-reset", .data = &sdm845_aoss_desc },
-+	{}
-+};
-+
-+static struct platform_driver qcom_aoss_reset_driver = {
-+	.probe = qcom_aoss_reset_probe,
-+	.driver  = {
-+		.name = "qcom_aoss_reset",
-+		.of_match_table = qcom_aoss_reset_of_match,
-+	},
-+};
-+
-+builtin_platform_driver(qcom_aoss_reset_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
-+MODULE_LICENSE("GPL v2");
+-	complete(&channel->open_ack);
++	complete_all(&channel->open_ack);
+ 
+ 	return 0;
+ }
+@@ -1401,7 +1401,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
+ 	channel->rcid = ret;
+ 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+ 
+-	complete(&channel->open_req);
++	complete_all(&channel->open_req);
+ 
+ 	if (create_device) {
+ 		rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
