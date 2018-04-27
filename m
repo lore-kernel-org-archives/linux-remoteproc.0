@@ -1,166 +1,49 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 4/5] remoteproc: qcom: Add support for mss remoteproc on SDM845
-Date: Wed, 25 Apr 2018 20:38:42 +0530
-Message-Id: <20180425150843.26657-5-sibis@codeaurora.org>
-In-Reply-To: <20180425150843.26657-1-sibis@codeaurora.org>
-References: <20180425150843.26657-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v6 5/7] remoteproc/davinci: use octal permissions for
+ module_param()
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+ <20180417173038.25510-6-brgl@bgdev.pl>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <0bd29608-fe2c-50c8-3f8c-eb1b2f001a6d@ti.com>
+Date: Fri, 27 Apr 2018 12:11:54 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180417173038.25510-6-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
->From SDM845, the Q6SS reset sequence on software side has been
-simplified with the introduction of boot FSM which assists in
-bringing the Q6 out of reset
+On 04/17/2018 12:30 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Checkpatch recommends to use octal perms instead of S_IRUGO.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add GLINK subdevice to allow definition of GLINK edge as a
-child of modem-pil
+Looks like you missed by Acked-by from v3, so adding it back
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 65 +++++++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 1 deletion(-)
+Acked-by: Suman Anna <s-anna@ti.com>
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 7e2d04d4f2f0..4d9504e8bf8e 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -57,6 +57,8 @@
- #define RMB_PMI_META_DATA_REG		0x10
- #define RMB_PMI_CODE_START_REG		0x14
- #define RMB_PMI_CODE_LENGTH_REG		0x18
-+#define RMB_MBA_MSS_STATUS		0x40
-+#define RMB_MBA_ALT_RESET		0x44
- 
- #define RMB_CMD_META_DATA_READY		0x1
- #define RMB_CMD_LOAD_READY		0x2
-@@ -104,6 +106,13 @@
- #define QDSP6SS_XO_CBCR		0x0038
- #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
- 
-+/* QDSP6v65 parameters */
-+#define QDSP6SS_SLEEP                   0x3C
-+#define QDSP6SS_BOOT_CORE_START         0x400
-+#define QDSP6SS_BOOT_CMD                0x404
-+#define SLEEP_CHECK_MAX_LOOPS           200
-+#define BOOT_FSM_TIMEOUT                10000
-+
- struct reg_info {
- 	struct regulator *reg;
- 	int uV;
-@@ -170,6 +179,7 @@ struct q6v5 {
- 	void *mpss_region;
- 	size_t mpss_size;
- 
-+	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
-@@ -184,6 +194,7 @@ enum {
- 	MSS_MSM8916,
- 	MSS_MSM8974,
- 	MSS_MSM8996,
-+	MSS_SDM845,
- };
- 
- static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-@@ -390,8 +401,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	int ret;
- 	int i;
- 
-+	if (qproc->version == MSS_SDM845) {
- 
--	if (qproc->version == MSS_MSM8996) {
-+		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
-+		val |= 0x1;
-+		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
-+
-+		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
-+					 val, !(val & BIT(31)), 1,
-+					 SLEEP_CHECK_MAX_LOOPS);
-+		if (ret) {
-+			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
-+			return -ETIMEDOUT;
-+		}
-+
-+		/* De-assert QDSP6 stop core */
-+		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
-+		/* Trigger boot FSM */
-+		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
-+
-+		ret = readl_poll_timeout(qproc->rmb_base + RMB_MBA_MSS_STATUS,
-+				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
-+		if (ret) {
-+			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
-+			return ret;
-+		}
-+
-+		goto pbl_wait;
-+
-+	} else if (qproc->version == MSS_MSM8996) {
- 		/* Override the ACC value if required */
- 		writel(QDSP6SS_ACC_OVERRIDE_VAL,
- 		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-@@ -499,6 +537,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 	val &= ~Q6SS_STOP_CORE;
- 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
-+pbl_wait:
- 	/* Wait for PBL status */
- 	ret = q6v5_rmb_pbl_wait(qproc, 1000);
- 	if (ret == -ETIMEDOUT) {
-@@ -1256,6 +1295,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
-+	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
- 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
- 	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
- 	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
-@@ -1279,6 +1319,7 @@ static int q6v5_remove(struct platform_device *pdev)
- 	rproc_del(qproc->rproc);
- 
- 	qcom_remove_sysmon_subdev(qproc->sysmon);
-+	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
- 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
- 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
- 	rproc_free(qproc->rproc);
-@@ -1286,6 +1327,27 @@ static int q6v5_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct rproc_hexagon_res sdm845_mss = {
-+	.hexagon_mba_image = "mba.mbn",
-+	.proxy_clk_names = (char*[]){
-+			"xo",
-+			"axis2",
-+			"prng",
-+			NULL
-+	},
-+	.active_clk_names = (char*[]){
-+			"iface",
-+			"bus",
-+			"mem",
-+			"gpll0_mss",
-+			"snoc_axi",
-+			"mnoc_axi",
-+			NULL
-+	},
-+	.need_mem_protection = true,
-+	.version = MSS_SDM845,
-+};
-+
- static const struct rproc_hexagon_res msm8996_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_clk_names = (char*[]){
-@@ -1379,6 +1441,7 @@ static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
- 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
- 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
-+	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_of_match);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards
+Suman
+
+> ---
+>  drivers/remoteproc/da8xx_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+> index f134192922e0..b668e32996e2 100644
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -25,7 +25,7 @@
+>  #include "remoteproc_internal.h"
+>  
+>  static char *da8xx_fw_name;
+> -module_param(da8xx_fw_name, charp, S_IRUGO);
+> +module_param(da8xx_fw_name, charp, 0444);
+>  MODULE_PARM_DESC(da8xx_fw_name,
+>  		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
+>  
+> 
