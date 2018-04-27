@@ -1,49 +1,82 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 05/20] firewire: Remove depends on HAS_DMA in case of platform dependency
-Date: Tue, 17 Apr 2018 19:49:05 +0200
-Message-Id: <1523987360-18760-6-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <fengguang.wu@intel.com>
+Date: Fri, 27 Apr 2018 09:24:21 +0800
+From: kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v2 6/6] rpmsg: glink: Expose rpmsg name attr for glink
+Message-ID: <201804270908.gvoFdL1v%fengguang.wu@intel.com>
+References: <1524708472-18263-7-git-send-email-clew@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524708472-18263-7-git-send-email-clew@codeaurora.org>
+To: Chris Lew <clew@codeaurora.org>
+Cc: kbuild-all@01.org, bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+Hi Chris,
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+Thank you for the patch! Perhaps something to improve:
 
-This simplifies the dependencies, and allows to improve compile-testing.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.17-rc2 next-20180426]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+url:    https://github.com/0day-ci/linux/commits/Chris-Lew/Add-chrdev-and-name-query-support-for-GLINK/20180427-023202
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+   drivers/rpmsg/qcom_glink_native.c:624:16: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] id @@    got  short [unsigned] [usertype] id @@
+   drivers/rpmsg/qcom_glink_native.c:624:16:    expected unsigned short [unsigned] [usertype] id
+   drivers/rpmsg/qcom_glink_native.c:624:16:    got restricted __le16 [usertype] <noident>
+   drivers/rpmsg/qcom_glink_native.c:625:18: sparse: incorrect type in assignment (different base types) @@    expected unsigned short [unsigned] [usertype] lcid @@    got  short [unsigned] [usertype] lcid @@
+   drivers/rpmsg/qcom_glink_native.c:625:18:    expected unsigned short [unsigned] [usertype] lcid
+   drivers/rpmsg/qcom_glink_native.c:625:18:    got restricted __le16 [usertype] <noident>
+   drivers/rpmsg/qcom_glink_native.c:626:19: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] count @@    got ed int [unsigned] [usertype] count @@
+   drivers/rpmsg/qcom_glink_native.c:626:19:    expected unsigned int [unsigned] [usertype] count
+   drivers/rpmsg/qcom_glink_native.c:626:19:    got restricted __le32 [usertype] <noident>
+   drivers/rpmsg/qcom_glink_native.c:627:18: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] size @@    got ed int [unsigned] [usertype] size @@
+   drivers/rpmsg/qcom_glink_native.c:627:18:    expected unsigned int [unsigned] [usertype] size
+   drivers/rpmsg/qcom_glink_native.c:627:18:    got restricted __le32 [usertype] <noident>
+   drivers/rpmsg/qcom_glink_native.c:628:18: sparse: incorrect type in assignment (different base types) @@    expected unsigned int [unsigned] [usertype] liid @@    got ed int [unsigned] [usertype] liid @@
+   drivers/rpmsg/qcom_glink_native.c:628:18:    expected unsigned int [unsigned] [usertype] liid
+   drivers/rpmsg/qcom_glink_native.c:628:18:    got restricted __le32 [usertype] <noident>
+>> drivers/rpmsg/qcom_glink_native.c:1569:1: sparse: incorrect type in initializer (different modifiers) @@    expected struct attribute **attrs @@    got structstruct attribute **attrs @@
+   drivers/rpmsg/qcom_glink_native.c:1569:1:    expected struct attribute **attrs
+   drivers/rpmsg/qcom_glink_native.c:1569:1:    got struct attribute const **<noident>
+   In file included from include/linux/kobject.h:20:0,
+                    from include/linux/irqdesc.h:6,
+                    from include/linux/irq.h:517,
+                    from arch/x86/include/asm/hardirq.h:6,
+                    from include/linux/hardirq.h:9,
+                    from include/linux/interrupt.h:11,
+                    from drivers/rpmsg/qcom_glink_native.c:15:
+   drivers/rpmsg/qcom_glink_native.c:1569:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+    ATTRIBUTE_GROUPS(qcom_glink);
+                     ^
+   include/linux/sysfs.h:154:11: note: in definition of macro 'ATTRIBUTE_GROUPS'
+     .attrs = _name##_attrs,     31-           ^~~~~
+   drivers/rpmsg/qcom_glink_native.c:1569:18: note: (near initialization for 'qcom_glink_group.attrs')
+    ATTRIBUTE_GROUPS(qcom_glink);
+                     ^
+   include/linux/sysfs.h:154:11: note: in definition of macro 'ATTRIBUTE_GROUPS'
+     .attrs = _name##_attrs,     37-           ^~~~~
+   cc1: some warnings being treated as errors
+
+vim +1569 drivers/rpmsg/qcom_glink_native.c
+
+  1564	
+  1565	static const struct attribute *qcom_glink_attrs[] = {
+  1566		&dev_attr_rpmsg_name.attr,
+  1567		NULL
+  1568	};
+> 1569	ATTRIBUTE_GROUPS(qcom_glink);
+  1570	
+
 ---
-v3:
-  - Rebase to v4.17-rc1,
-
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/firewire/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/firewire/Kconfig b/drivers/firewire/Kconfig
-index 145974f9662b63e6..4199849e37585181 100644
---- a/drivers/firewire/Kconfig
-+++ b/drivers/firewire/Kconfig
-@@ -1,5 +1,4 @@
- menu "IEEE 1394 (FireWire) support"
--	depends on HAS_DMA
- 	depends on PCI || COMPILE_TEST
- 	# firewire-core does not depend on PCI but is
- 	# not useful without PCI controller driver
--- 
-2.7.4
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
