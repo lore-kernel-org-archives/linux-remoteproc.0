@@ -1,67 +1,90 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 07/20] i2c: Remove depends on HAS_DMA in case of platform dependency
-Date: Tue, 17 Apr 2018 19:49:07 +0200
-Message-Id: <1523987360-18760-8-git-send-email-geert@linux-m68k.org>
-In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
-To: Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>, Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, David Woodhouse <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Cc: iommu@lists.linux-foundation.org, linux-usb@vger.kernel.org, alsa-devel@alsa-project.org, linux-ide@vger.kernel.org, linux-crypto@vger.kernel.org, linux-fbdev@vger.kernel.org, linux1394-devel@lists.sourceforge.net, linux-fpga@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+Return-Path: <sibis@codeaurora.org>
+Subject: Re: [PATCH v4 1/5] dt-bindings: reset: Add AOSS reset bindings for
+ SDM845 SoCs
+References: <20180425150843.26657-1-sibis@codeaurora.org>
+ <20180425150843.26657-2-sibis@codeaurora.org>
+ <1524824650.17614.4.camel@pengutronix.de>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <9e5ed0e1-e397-68f4-281b-6df09c8c125e@codeaurora.org>
+Date: Fri, 27 Apr 2018 16:15:06 +0530
+MIME-Version: 1.0
+In-Reply-To: <1524824650.17614.4.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
+Hi Philipp,
 
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
+Thanks for the review
 
-This simplifies the dependencies, and allows to improve compile-testing.
+On 04/27/2018 03:54 PM, Philipp Zabel wrote:
+> Hi Sibi,
+> 
+> On Wed, 2018-04-25 at 20:38 +0530, Sibi Sankar wrote:
+>> Add SDM845 AOSS (always on subsystem) reset controller binding
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
+>>   include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
+>>   2 files changed, 69 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>>   create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>> new file mode 100644
+>> index 000000000000..e5201de9a314
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>> @@ -0,0 +1,52 @@
+>> +Qualcomm AOSS Reset Controller
+>> +======================================
+>> +
+>> +This binding describes a reset-controller found on AOSS (always on subsystem)
+>> +for Qualcomm SDM845 SoCs.
+>> +
+>> +Required properties:
+>> +- compatible:
+>> +	Usage: required
+>> +	Value type: <string>
+>> +	Definition: must be:
+>> +		    "qcom,sdm845-aoss-reset"
+>> +
+>> +- reg:
+>> +	Usage: required
+>> +	Value type: <prop-encoded-array>
+>> +	Definition: must specify the base address and size of the register
+>> +	            space.
+>> +
+>> +- #reset-cells:
+>> +	Usage: required
+>> +	Value type: <uint>
+>> +	Definition: must be 1; cell entry represents the reset index.
+>> +
+>> +Example:
+>> +
+>> +aoss_reset: qcom,reset-controller@b2e0100 {
+> 
+> The node name should be "reset-controller", not "qcom,reset-controller"
+> 
+>> +	compatible = "qcom,sdm845-aoss-reset";
+>> +	reg = <0xc2b0000 0x21000>;
+> 
+> The address here should match the address part of the node name above.
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
----
-v3:
-  - Rebase to v4.17-rc1,
+sure will change them
 
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/i2c/busses/Kconfig | 3 ---
- 1 file changed, 3 deletions(-)
+> Apart from those two nitpicks, the binding looks good to me.
+>
+> regards
+> Philipp
+> 
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index c4865b08d7fb9e3b..8d21b9825d71764d 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -707,7 +707,6 @@ config I2C_MPC
- config I2C_MT65XX
- 	tristate "MediaTek I2C adapter"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 	  This selects the MediaTek(R) Integrated Inter Circuit bus driver
- 	  for MT65xx and MT81xx.
-@@ -885,7 +884,6 @@ config I2C_SH7760
- 
- config I2C_SH_MOBILE
- 	tristate "SuperH Mobile I2C Controller"
--	depends on HAS_DMA
- 	depends on ARCH_SHMOBILE || ARCH_RENESAS || COMPILE_TEST
- 	help
- 	  If you say yes to this option, support will be included for the
-@@ -1098,7 +1096,6 @@ config I2C_XLP9XX
- 
- config I2C_RCAR
- 	tristate "Renesas R-Car I2C Controller"
--	depends on HAS_DMA
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select I2C_SLAVE
- 	help
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
