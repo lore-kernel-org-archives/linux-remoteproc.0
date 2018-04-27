@@ -1,58 +1,33 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH] remoteproc: fix crashed parameter logic on stop call.
-Date: Tue, 10 Apr 2018 10:57:25 +0200
-Message-ID: <1523350645-19073-1-git-send-email-arnaud.pouliquen@st.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 27 Apr 2018 08:37:27 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3] rpmsg: qcom_smd: Access APCS through mailbox framework
+Message-ID: <20180427133727.gr5turvdfycgmbzm@rob-hp-laptop>
+References: <20180420011757.22389-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, arnaud.pouliquen@st.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420011757.22389-1-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Nicolas Dechesne <nicolas.dechesne@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fix rproc_add_subdev parameter name and inverse the crashed logic.
+On Thu, Apr 19, 2018 at 06:17:57PM -0700, Bjorn Andersson wrote:
+> Attempt to acquire the APCS IPC through the mailbox framework and fall
+> back to the old syscon based approach, to allow us to move away from
+> using the syscon.
+> 
+> Reviewed-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Changes since v2:
+> - Added comment about mbox_send_message() return value.
+> 
+>  .../devicetree/bindings/soc/qcom/qcom,smd.txt      |  8 ++-
+>  drivers/rpmsg/Kconfig                              |  1 +
+>  drivers/rpmsg/qcom_smd.c                           | 67 ++++++++++++++++------
+>  3 files changed, 56 insertions(+), 20 deletions(-)
 
-Fixes: "remoteproc: Pass type of shutdown to subdev remove"
-
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 4 ++--
- include/linux/remoteproc.h           | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 6d9c583..a9609d9 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	if (ret)
- 		return ret;
- 
--	ret = rproc_stop(rproc, false);
-+	ret = rproc_stop(rproc, true);
- 	if (ret)
- 		goto unlock_mutex;
- 
-@@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
- 	if (!atomic_dec_and_test(&rproc->power))
- 		goto out;
- 
--	ret = rproc_stop(rproc, true);
-+	ret = rproc_stop(rproc, false);
- 	if (ret) {
- 		atomic_inc(&rproc->power);
- 		goto out;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index d09a9c7..dfdaede9 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
- 		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
-+		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
- 
- void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
- 
--- 
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
