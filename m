@@ -1,81 +1,43 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 9 May 2018 17:12:02 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 04/13] remoteproc: add name in rproc_mem_entry struct
-Message-ID: <20180510001202.GC29093@builder>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-5-git-send-email-loic.pallardy@st.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v6 0/7] ARM: davinci: complete the conversion to using the
+ reset framework
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <08106d9b-6350-9aa1-9c58-50dd0aaf690c@ti.com>
+Date: Tue, 1 May 2018 16:22:29 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519921440-21356-5-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+In-Reply-To: <20180417173038.25510-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
+Hi Bartosz,
 
-> Add name field in struct rproc_mem_entry.
-> This new field will be used to match memory area
-> requested in resource table with pre-registered carveout.
+On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/remoteproc/remoteproc_core.c    | 1 +
->  drivers/remoteproc/remoteproc_debugfs.c | 1 +
->  include/linux/remoteproc.h              | 2 ++
->  3 files changed, 4 insertions(+)
+> This series converts the only user of the handcoded, mach-specific reset
+> routines in the davinci platform to using the reset framework.
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 5f11536..f73a0cf 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -749,6 +749,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	carveout->dma = dma;
->  	carveout->da = rsc->da;
->  	carveout->release = rproc_release_carveout;
-> +	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
->  
->  	list_add_tail(&carveout->node, &rproc->carveouts);
->  
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index a204883..fc0e570 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -260,6 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
->  
->  	list_for_each_entry(carveout, &rproc->carveouts, node) {
->  		seq_puts(seq, "Carveout memory entry:\n");
-> +		seq_printf(seq, "\tName: %s\n", carveout->name);
->  		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
->  		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
->  		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index dedc138..2202c08 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -315,6 +315,7 @@ struct fw_rsc_vdev {
->   * @da: device address
->   * @release: release associated memory
->   * @priv: associated data
-> + * @name: associated memory region name (optional)
->   * @node: list node
->   */
->  struct rproc_mem_entry {
-> @@ -323,6 +324,7 @@ struct rproc_mem_entry {
->  	int len;
->  	u32 da;
->  	void *priv;
-> +	char name[32];
->  	struct list_head node;
->  	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
->  };
-> -- 
-> 1.9.1
+> Patches 1-2 add necessary lookups/DT-properties.
 > 
+> Patches 3-5 fix issues found in the remoteproc davinci driver.
+> 
+> Patch 6 converts the davinci-rproc driver to the reset framework.
+> 
+> Patch 7 removes now dead code.
+> 
+> Tested both in DT and legacy modes by booting the examples from
+> ti-ipc-rtos recipe in meta-ti.
+> 
+> This series applies on top of David Lechner's common-clk-v9 branch[1].
+
+To make it easier for Bjorn to apply his patches, can you please
+separate out the remoteproc parts which are safe to apply to v4.17-rc1
+and repost the series? Please collect the reviews and acks too.
+
+Thanks,
+Sekhar
