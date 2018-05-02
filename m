@@ -1,49 +1,36 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/5] rpmsg: virtio_rpmsg_bus: Switch to SPDX license identifier
-Date: Thu, 31 May 2018 12:11:00 -0500
-Message-ID: <20180531171103.8703-3-s-anna@ti.com>
-In-Reply-To: <20180531171103.8703-1-s-anna@ti.com>
-References: <20180531171103.8703-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/3] remoteproc/davinci: common clock framework related fixes
+Date: Wed,  2 May 2018 11:56:56 +0200
+Message-Id: <20180502095659.3626-1-brgl@bgdev.pl>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>, Suman Anna <s-anna@ti.com>, Aparna Balasubramanian <aparnab@ti.com>, Kevin Hilman <khilman@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use the appropriate SPDX license identifier in the virtio rpmsg
-bus driver source file and drop the previous boilerplate license
-text.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+Hi Bjorn,
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 82b83002fcba..664f957012cd 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Virtio-based remote processor messaging bus
-  *
-@@ -6,15 +7,6 @@
-  *
-  * Ohad Ben-Cohen <ohad@wizery.com>
-  * Brian Swetland <swetland@google.com>
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- 
- #define pr_fmt(fmt) "%s: " fmt, __func__
+this series contains the patches from my previous remoteproc series[1]
+which are safe to apply on top of 4.17-rc1. They contain fixes needed
+for the driver to work once we're done converting to using the CCF for
+DaVinci.
+
+The last remoteproc patch will be sent later once the platform parts
+are applied.
+
+All the patches are reviewed and tested.
+
+[1] https://lkml.org/lkml/2018/4/17/1000
+
+Bartosz Golaszewski (3):
+  remoteproc/davinci: add the missing retval check for clk_enable()
+  remoteproc/davinci: prepare and unprepare the clock where needed
+  remoteproc/davinci: use octal permissions for module_param()
+
+ drivers/remoteproc/da8xx_remoteproc.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
 -- 
 2.17.0
