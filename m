@@ -1,105 +1,53 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 1/8] dt-bindings: reset: Add AOSS reset bindings for SDM845 SoCs
-Date: Mon, 21 May 2018 22:57:07 +0530
-Message-Id: <20180521172714.8551-2-sibis@codeaurora.org>
-In-Reply-To: <20180521172714.8551-1-sibis@codeaurora.org>
-References: <20180521172714.8551-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 2/3] remoteproc/davinci: prepare and unprepare the clock where needed
+Date: Wed,  2 May 2018 11:56:58 +0200
+Message-Id: <20180502095659.3626-3-brgl@bgdev.pl>
+In-Reply-To: <20180502095659.3626-1-brgl@bgdev.pl>
+References: <20180502095659.3626-1-brgl@bgdev.pl>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>, Suman Anna <s-anna@ti.com>, Aparna Balasubramanian <aparnab@ti.com>, Kevin Hilman <khilman@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add SDM845 AOSS (always on subsystem) reset controller binding
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+We're currently switching the platform to using the common clock
+framework. We need to explicitly prepare and unprepare the rproc
+clock.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Suman Anna <s-anna@ti.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
- .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
- include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
- 2 files changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
- create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
+ drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-new file mode 100644
-index 000000000000..cd5dcafb4ed7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-@@ -0,0 +1,52 @@
-+Qualcomm AOSS Reset Controller
-+======================================
-+
-+This binding describes a reset-controller found on AOSS (always on subsystem)
-+for Qualcomm SDM845 SoCs.
-+
-+Required properties:
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be:
-+		    "qcom,sdm845-aoss-reset"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must specify the base address and size of the register
-+	            space.
-+
-+- #reset-cells:
-+	Usage: required
-+	Value type: <uint>
-+	Definition: must be 1; cell entry represents the reset index.
-+
-+Example:
-+
-+aoss_reset: reset-controller@c2b0000 {
-+	compatible = "qcom,sdm845-aoss-reset";
-+	reg = <0xc2b0000 0x21000>;
-+	#reset-cells = <1>;
-+};
-+
-+Specifying reset lines connected to IP modules
-+==============================================
-+
-+Device nodes that need access to reset lines should
-+specify them as a reset phandle in their corresponding node as
-+specified in reset.txt.
-+
-+For list of all valid reset indicies see
-+<dt-bindings/reset/qcom,sdm845-aoss.h>
-+
-+Example:
-+
-+modem-pil@4080000 {
-+	...
-+
-+	resets = <&aoss_reset AOSS_CC_MSS_RESTART>;
-+	reset-names = "mss_restart";
-+
-+	...
-+};
-diff --git a/include/dt-bindings/reset/qcom,sdm845-aoss.h b/include/dt-bindings/reset/qcom,sdm845-aoss.h
-new file mode 100644
-index 000000000000..476c5fc873b6
---- /dev/null
-+++ b/include/dt-bindings/reset/qcom,sdm845-aoss.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_RESET_AOSS_SDM_845_H
-+#define _DT_BINDINGS_RESET_AOSS_SDM_845_H
-+
-+#define AOSS_CC_MSS_RESTART	0
-+#define AOSS_CC_CAMSS_RESTART	1
-+#define AOSS_CC_VENUS_RESTART	2
-+#define AOSS_CC_GPU_RESTART	3
-+#define AOSS_CC_DISPSS_RESTART	4
-+#define AOSS_CC_WCSS_RESTART	5
-+#define AOSS_CC_LPASS_RESTART	6
-+
-+#endif
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 2b24291337b7..f134192922e0 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 
+ 	writel(rproc->bootaddr, drproc->bootreg);
+ 
+-	ret = clk_enable(dsp_clk);
++	ret = clk_prepare_enable(dsp_clk);
+ 	if (ret) {
+-		dev_err(dev, "clk_enable() failed: %d\n", ret);
++		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
+ 	struct da8xx_rproc *drproc = rproc->priv;
+ 
+ 	davinci_clk_reset_assert(drproc->dsp_clk);
+-	clk_disable(drproc->dsp_clk);
++	clk_disable_unprepare(drproc->dsp_clk);
+ 
+ 	return 0;
+ }
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
