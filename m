@@ -1,56 +1,81 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 9 May 2018 17:12:02 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [RFC PATCH 0/5] Hexagon remoteproc spring cleaning
-Date: Tue, 22 May 2018 22:20:49 -0700
-Message-Id: <20180523052054.19025-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sricharan R <sricharan@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] remoteproc: add name in rproc_mem_entry struct
+Message-ID: <20180510001202.GC29093@builder>
+References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+ <1519921440-21356-5-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519921440-21356-5-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-With the introduction of support for the non-MSA Hexagon WCSS driver from
-Sricharan and the non-PAS ADSP driver from Rohit it makes sense to overhaul the
-structure of the Qualcomm "Q6V5 drivers".
+On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
 
-The first patch is from Sricharan's series and included here for completeness.
-The second patch introduces a set of helper functions, based on the current
-state of the qcom_q6v5_pil driver. The third and forth patch migrates the PAS
-and the MSA drivers over to using these helpers. Finally a (completely)
-reworked version of Sricharan's WCSS remoteproc driver is introduced.
+> Add name field in struct rproc_mem_entry.
+> This new field will be used to match memory area
+> requested in resource table with pre-registered carveout.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-With this in place I suggest that we rename qcom_adsp_pil.c to qcom_q6v5_pas.c,
-qcom_q6v5_pil.c to qcom_q6v5_msa.c and depending on the details of the non-PAS
-ADSP we could potentially combine that into a qcom_q6v5_pil.c - or we carry
-them as separate files.
+Regards,
+Bjorn
 
-Looking at the remaining non-essential parts of these drivers we have
-memory-region handling and halt_axi handling. The prior is actively being
-worked on and the latter should (if no better abstraction is presented) be
-possible to just put in the new qcom_q6v5.c.
-
-Bjorn Andersson (3):
-  remoteproc: q6v5: Extract common resource handling
-  remoteproc: qcom: adsp: Use common q6v5 helpers
-  remoteproc: qcom: q6v5-pil: Use common q6v5 helpers
-
-Sricharan R (2):
-  remoteproc: qcom: mdt_loader: Make the firmware authentication
-    optional
-  remoteproc: qcom: Introduce Hexagon V5 based WCSS driver
-
- drivers/remoteproc/Kconfig          |  23 ++
- drivers/remoteproc/Makefile         |   2 +
- drivers/remoteproc/qcom_adsp_pil.c  | 156 ++------
- drivers/remoteproc/qcom_q6v5.c      | 243 ++++++++++++
- drivers/remoteproc/qcom_q6v5.h      |  46 +++
- drivers/remoteproc/qcom_q6v5_pil.c  | 157 +-------
- drivers/remoteproc/qcom_q6v5_wcss.c | 580 ++++++++++++++++++++++++++++
- drivers/soc/qcom/mdt_loader.c       |  87 +++--
- include/linux/soc/qcom/mdt_loader.h |   4 +
- 9 files changed, 1002 insertions(+), 296 deletions(-)
- create mode 100644 drivers/remoteproc/qcom_q6v5.c
- create mode 100644 drivers/remoteproc/qcom_q6v5.h
- create mode 100644 drivers/remoteproc/qcom_q6v5_wcss.c
-
--- 
-2.17.0
+> ---
+>  drivers/remoteproc/remoteproc_core.c    | 1 +
+>  drivers/remoteproc/remoteproc_debugfs.c | 1 +
+>  include/linux/remoteproc.h              | 2 ++
+>  3 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 5f11536..f73a0cf 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -749,6 +749,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	carveout->dma = dma;
+>  	carveout->da = rsc->da;
+>  	carveout->release = rproc_release_carveout;
+> +	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
+>  
+>  	list_add_tail(&carveout->node, &rproc->carveouts);
+>  
+> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> index a204883..fc0e570 100644
+> --- a/drivers/remoteproc/remoteproc_debugfs.c
+> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> @@ -260,6 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
+>  
+>  	list_for_each_entry(carveout, &rproc->carveouts, node) {
+>  		seq_puts(seq, "Carveout memory entry:\n");
+> +		seq_printf(seq, "\tName: %s\n", carveout->name);
+>  		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
+>  		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
+>  		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index dedc138..2202c08 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -315,6 +315,7 @@ struct fw_rsc_vdev {
+>   * @da: device address
+>   * @release: release associated memory
+>   * @priv: associated data
+> + * @name: associated memory region name (optional)
+>   * @node: list node
+>   */
+>  struct rproc_mem_entry {
+> @@ -323,6 +324,7 @@ struct rproc_mem_entry {
+>  	int len;
+>  	u32 da;
+>  	void *priv;
+> +	char name[32];
+>  	struct list_head node;
+>  	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+>  };
+> -- 
+> 1.9.1
+> 
