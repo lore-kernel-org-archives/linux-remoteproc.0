@@ -1,117 +1,74 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH 4/5] remoteproc: rename subdev probe and remove functions
-Date: Tue, 15 May 2018 15:53:44 -0500
-Message-Id: <20180515205345.8090-5-elder@linaro.org>
-In-Reply-To: <20180515205345.8090-1-elder@linaro.org>
-References: <20180515205345.8090-1-elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 9 May 2018 17:56:50 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 06/13] remoteproc: introduce rproc_add_carveout
+ function
+Message-ID: <20180510005650.GH29093@builder>
+References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+ <1519921440-21356-7-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519921440-21356-7-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rename functions used when subdevices are started and stopped to
-reflect the new naming scheme.
+On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
 
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- drivers/remoteproc/qcom_common.c     | 16 ++++++++--------
- drivers/remoteproc/remoteproc_core.c |  8 ++++----
- 2 files changed, 12 insertions(+), 12 deletions(-)
+> This patch introduces a new API to allow platform driver to register
+> platform specific carveout regions.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 4ae87c5b8793..6f77840140bf 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -33,7 +33,7 @@
- 
- static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
- 
--static int glink_subdev_probe(struct rproc_subdev *subdev)
-+static int glink_subdev_start(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-@@ -42,7 +42,7 @@ static int glink_subdev_probe(struct rproc_subdev *subdev)
- 	return PTR_ERR_OR_ZERO(glink->edge);
- }
- 
--static void glink_subdev_remove(struct rproc_subdev *subdev, bool crashed)
-+static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-@@ -64,8 +64,8 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
- 		return;
- 
- 	glink->dev = dev;
--	glink->subdev.start = glink_subdev_probe;
--	glink->subdev.stop = glink_subdev_remove;
-+	glink->subdev.start = glink_subdev_start;
-+	glink->subdev.stop = glink_subdev_stop;
- 
- 	rproc_add_subdev(rproc, &glink->subdev);
- }
-@@ -129,7 +129,7 @@ int qcom_register_dump_segments(struct rproc *rproc,
- }
- EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
- 
--static int smd_subdev_probe(struct rproc_subdev *subdev)
-+static int smd_subdev_start(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
- 
-@@ -138,7 +138,7 @@ static int smd_subdev_probe(struct rproc_subdev *subdev)
- 	return PTR_ERR_OR_ZERO(smd->edge);
- }
- 
--static void smd_subdev_remove(struct rproc_subdev *subdev, bool crashed)
-+static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
- 
-@@ -160,8 +160,8 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
- 		return;
- 
- 	smd->dev = dev;
--	smd->subdev.start = smd_subdev_probe;
--	smd->subdev.stop = smd_subdev_remove;
-+	smd->subdev.start = smd_subdev_start;
-+	smd->subdev.stop = smd_subdev_stop;
- 
- 	rproc_add_subdev(rproc, &smd->subdev);
- }
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ca39fad175f2..2ede7ae6f5bc 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -301,14 +301,14 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	rsc->vring[idx].notifyid = -1;
- }
- 
--static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
-+static int rproc_vdev_do_start(struct rproc_subdev *subdev)
- {
- 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
- 
- 	return rproc_add_virtio_dev(rvdev, rvdev->id);
- }
- 
--static void rproc_vdev_do_remove(struct rproc_subdev *subdev, bool crashed)
-+static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
- 
-@@ -399,8 +399,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	list_add_tail(&rvdev->node, &rproc->rvdevs);
- 
--	rvdev->subdev.start = rproc_vdev_do_probe;
--	rvdev->subdev.stop = rproc_vdev_do_remove;
-+	rvdev->subdev.start = rproc_vdev_do_start;
-+	rvdev->subdev.stop = rproc_vdev_do_stop;
- 
- 	rproc_add_subdev(rproc, &rvdev->subdev);
- 
--- 
-2.17.0
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++++
+>  include/linux/remoteproc.h           |  2 ++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 4c92b7d..91aa22b 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -758,6 +758,20 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  }
+>  
+>  /**
+> + * rproc_add_carveout() - register an allocated carveout region
+> + * @rproc: rproc handle
+> + * @mem: memory entry to register
+> + *
+> + * This function registers specified memory entry in @rproc carveouts list.
+> + * Specified carveout should have been allocated before registering.
+> + */
+> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+> +{
+> +	list_add_tail(&mem->node, &rproc->carveouts);
+> +}
+> +EXPORT_SYMBOL(rproc_add_carveout);
+> +
+> +/**
+>   * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
+>   * @dev: pointer on device struct
+>   * @va: virtual address
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 59b60f1..4aa30bd 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -536,6 +536,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  int rproc_del(struct rproc *rproc);
+>  void rproc_free(struct rproc *rproc);
+>  
+> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+> +
+>  struct rproc_mem_entry *rproc_mem_entry_init(struct device *dev,
+>  		void *va, dma_addr_t dma, int len, u32 da,
+>  		int (*release)(struct rproc *, struct rproc_mem_entry *),
+> -- 
+> 1.9.1
+> 
