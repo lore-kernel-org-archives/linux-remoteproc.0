@@ -1,151 +1,43 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH 1/5] remoteproc: Rename subdev functions to start/stop
-Date: Tue, 15 May 2018 15:53:41 -0500
-Message-Id: <20180515205345.8090-2-elder@linaro.org>
-In-Reply-To: <20180515205345.8090-1-elder@linaro.org>
-References: <20180515205345.8090-1-elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/6] hwspinlock: Convert to use SPDX license identifiers
+Date: Fri, 11 May 2018 12:03:15 -0500
+Message-ID: <20180511170321.2452-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi Bjorn,
 
-"start" and "stop" are more suitable names for how these two operations
-are used, and they fit better with the upcoming introduction of two
-additional operations in the struct.
+The following series switches over the current licensing text in
+various HwSpinlock drivers to the SPDX licensing format. Please
+let me know if you need any changes. If you are ok with the changes,
+I will make similar changes to the remoteproc and rpmsg drivers and
+post them at the earliest so that they can be picked up for 4.18.
 
-[elder@linaro.org: minor comment edits]
+regards
+Suman
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Alex Elder <elder@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 30 ++++++++++++++--------------
- include/linux/remoteproc.h           | 14 ++++++-------
- 2 files changed, 22 insertions(+), 22 deletions(-)
+Suman Anna (6):
+  hwspinlock/core: Switch to SPDX license identifier
+  hwspinlock/omap: Switch to SPDX license identifier
+  hwspinlock: qcom: Switch to SPDX license identifier
+  hwspinlock/sirf: Switch to SPDX license identifier
+  hwspinlock/u8500: Switch to SPDX license identifier
+  hwspinlock: sprd: Switch to SPDX license identifier
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a9609d971f7f..5dd58e6bea88 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -774,13 +774,13 @@ static int rproc_handle_resources(struct rproc *rproc,
- 	return ret;
- }
- 
--static int rproc_probe_subdevices(struct rproc *rproc)
-+static int rproc_start_subdevices(struct rproc *rproc)
- {
- 	struct rproc_subdev *subdev;
- 	int ret;
- 
- 	list_for_each_entry(subdev, &rproc->subdevs, node) {
--		ret = subdev->probe(subdev);
-+		ret = subdev->start(subdev);
- 		if (ret)
- 			goto unroll_registration;
- 	}
-@@ -789,17 +789,17 @@ static int rproc_probe_subdevices(struct rproc *rproc)
- 
- unroll_registration:
- 	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
--		subdev->remove(subdev, true);
-+		subdev->stop(subdev, true);
- 
- 	return ret;
- }
- 
--static void rproc_remove_subdevices(struct rproc *rproc, bool crashed)
-+static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
- {
- 	struct rproc_subdev *subdev;
- 
- 	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
--		subdev->remove(subdev, crashed);
-+		subdev->stop(subdev, crashed);
- }
- 
- /**
-@@ -901,8 +901,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 		return ret;
- 	}
- 
--	/* probe any subdevices for the remote processor */
--	ret = rproc_probe_subdevices(rproc);
-+	/* Start any subdevices for the remote processor */
-+	ret = rproc_start_subdevices(rproc);
- 	if (ret) {
- 		dev_err(dev, "failed to probe subdevices for %s: %d\n",
- 			rproc->name, ret);
-@@ -1014,8 +1014,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
--	/* remove any subdevices for the remote processor */
--	rproc_remove_subdevices(rproc, crashed);
-+	/* Stop any subdevices for the remote processor */
-+	rproc_stop_subdevices(rproc, crashed);
- 
- 	/* the installed resource table is no longer accessible */
- 	rproc->table_ptr = rproc->cached_table;
-@@ -1657,16 +1657,16 @@ EXPORT_SYMBOL(rproc_del);
-  * rproc_add_subdev() - add a subdevice to a remoteproc
-  * @rproc: rproc handle to add the subdevice to
-  * @subdev: subdev handle to register
-- * @probe: function to call when the rproc boots
-- * @remove: function to call when the rproc shuts down
-+ * @start: function to call after the rproc is started
-+ * @stop: function to call before the rproc is stopped
-  */
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
--		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev, bool crashed))
-+		      int (*start)(struct rproc_subdev *subdev),
-+		      void (*stop)(struct rproc_subdev *subdev, bool crashed))
- {
--	subdev->probe = probe;
--	subdev->remove = remove;
-+	subdev->start = start;
-+	subdev->stop = stop;
- 
- 	list_add_tail(&subdev->node, &rproc->subdevs);
- }
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index dfdaede9139e..bf55bf2a5ee1 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -477,15 +477,15 @@ struct rproc {
- /**
-  * struct rproc_subdev - subdevice tied to a remoteproc
-  * @node: list node related to the rproc subdevs list
-- * @probe: probe function, called as the rproc is started
-- * @remove: remove function, called as the rproc is being stopped, the @crashed
-- *	    parameter indicates if this originates from the a recovery
-+ * @start: start function, called after the rproc has been started
-+ * @stop: stop function, called before the rproc is stopped; the @crashed
-+ *	    parameter indicates if this originates from a recovery
-  */
- struct rproc_subdev {
- 	struct list_head node;
- 
--	int (*probe)(struct rproc_subdev *subdev);
--	void (*remove)(struct rproc_subdev *subdev, bool crashed);
-+	int (*start)(struct rproc_subdev *subdev);
-+	void (*stop)(struct rproc_subdev *subdev, bool crashed);
- };
- 
- /* we currently support only two vrings per rvdev */
-@@ -568,8 +568,8 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- 
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
--		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
-+		      int (*start)(struct rproc_subdev *subdev),
-+		      void (*stop)(struct rproc_subdev *subdev, bool crashed));
- 
- void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
- 
+ drivers/hwspinlock/Kconfig               |  1 +
+ drivers/hwspinlock/hwspinlock_core.c     | 10 +---------
+ drivers/hwspinlock/hwspinlock_internal.h | 10 +---------
+ drivers/hwspinlock/omap_hwspinlock.c     | 10 +---------
+ drivers/hwspinlock/qcom_hwspinlock.c     | 10 +---------
+ drivers/hwspinlock/sirf_hwspinlock.c     |  3 +--
+ drivers/hwspinlock/sprd_hwspinlock.c     | 10 +---------
+ drivers/hwspinlock/u8500_hsem.c          | 10 +---------
+ include/linux/hwspinlock.h               | 10 +---------
+ 9 files changed, 9 insertions(+), 65 deletions(-)
+
 -- 
 2.17.0
