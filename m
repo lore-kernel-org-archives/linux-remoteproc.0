@@ -1,37 +1,52 @@
 Return-Path: <s-anna@ti.com>
 From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 3/5] rpmsg: smd: Switch to SPDX license identifier
-Date: Thu, 31 May 2018 12:11:01 -0500
-Message-ID: <20180531171103.8703-4-s-anna@ti.com>
-In-Reply-To: <20180531171103.8703-1-s-anna@ti.com>
-References: <20180531171103.8703-1-s-anna@ti.com>
+Subject: [PATCH 1/6] hwspinlock/core: Switch to SPDX license identifier
+Date: Fri, 11 May 2018 12:03:16 -0500
+Message-ID: <20180511170321.2452-2-s-anna@ti.com>
+In-Reply-To: <20180511170321.2452-1-s-anna@ti.com>
+References: <20180511170321.2452-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use the appropriate SPDX license identifier in the rpmsg SMD backend
-driver source file and drop the previous boilerplate license text.
+Use the appropriate SPDX license identifier in the Hwspinlock core
+driver source files and drop the previous boilerplate license text.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/rpmsg/qcom_smd.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/hwspinlock/Kconfig               |  1 +
+ drivers/hwspinlock/hwspinlock_core.c     | 10 +---------
+ drivers/hwspinlock/hwspinlock_internal.h | 10 +---------
+ include/linux/hwspinlock.h               | 10 +---------
+ 4 files changed, 4 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 5ce9bf7b897d..0819836fc178 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1,15 +1,7 @@
+diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+index f0f467983960..e895d29500ee 100644
+--- a/drivers/hwspinlock/Kconfig
++++ b/drivers/hwspinlock/Kconfig
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ #
+ # Generic HWSPINLOCK framework
+ #
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index 4074441444fe..a41bc79aaa15 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -1,18 +1,10 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Copyright (c) 2015, Sony Mobile Communications AB.
-  * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+  * Hardware spinlock framework
+  *
+  * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com
+  *
+  * Contact: Ohad Ben-Cohen <ohad@wizery.com>
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published
+- * by the Free Software Foundation.
 - *
 - * This program is distributed in the hope that it will be useful,
 - * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,6 +54,54 @@ index 5ce9bf7b897d..0819836fc178 100644
 - * GNU General Public License for more details.
   */
  
- #include <linux/interrupt.h>
+ #define pr_fmt(fmt)    "%s: " fmt, __func__
+diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
+index d26f78b8f214..9eb6bd020dc7 100644
+--- a/drivers/hwspinlock/hwspinlock_internal.h
++++ b/drivers/hwspinlock/hwspinlock_internal.h
+@@ -1,18 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Hardware spinlocks internal header
+  *
+  * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com
+  *
+  * Contact: Ohad Ben-Cohen <ohad@wizery.com>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published
+- * by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef __HWSPINLOCK_HWSPINLOCK_H
+diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+index 859d673d98c8..cd6cd7fbd3c9 100644
+--- a/include/linux/hwspinlock.h
++++ b/include/linux/hwspinlock.h
+@@ -1,18 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Hardware spinlock public header
+  *
+  * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com
+  *
+  * Contact: Ohad Ben-Cohen <ohad@wizery.com>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published
+- * by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef __LINUX_HWSPINLOCK_H
 -- 
 2.17.0
