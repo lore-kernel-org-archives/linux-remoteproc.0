@@ -1,62 +1,240 @@
 Return-Path: <sibis@codeaurora.org>
 From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 0/8] Add support for remoteproc modem-pil on SDM845 SoCs
-Date: Mon, 21 May 2018 22:57:06 +0530
-Message-Id: <20180521172714.8551-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Subject: [PATCH] remoteproc: Introduce prepare/unprepare ops for rproc coredump
+Date: Sat, 12 May 2018 19:51:21 +0530
+Message-Id: <20180512142121.12046-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch series add support for remoteproc Q6v5 modem-pil on Qualcomm
-SDM845 SoC. The first patch adds AOSS (Always on subsystem) reset driver
-to provide for mss reset line. The last couple of patches add the resets
-sequence for Q6 on SDM845 and adds helper functions for arbitrary reset
-assert/deassert sequences.
+In some occasions the remoteproc device might need to
+prepare some hardware before the coredump can be performed
+and cleanup the state afterwards.
 
-V5:
-   corrected dt-binding and increased usleep_range for aoss reset driver
-   Include the ready interrupt handling in the patch series 
-   Replaced reset ops with a simpler helper function
-   Re-ordered and split patches as recommended
-   Inlined q6v5_request_irq function
+Q6V5 modem requires the mba to be loaded before the
+coredump and some cleanup of the resources afterwards.
 
-V4:
-   Removed regmap depencencies from aoss reset driver
-   Separted apss shared mailbox into separate patch
-   Corrected all nits and replaced with author full name
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
 
-V3:
-   Removed syscon dependency for the aoss reset driver
-   Split dt-bindings and the aoss reset driver into separate patches
-   Corrected few typos and replaced misconfigured author name
+This patch depends on:
+https://patchwork.kernel.org/patch/10363399/
 
-V2:
-   Addressed reset-qcom-aoss review suggestions and reworked
-   re-ordering of the active clk and reset sequence in
-   qcom_q6v5_pil
+ drivers/remoteproc/qcom_q6v5_pil.c       | 64 ++++++++++++++++++++----
+ drivers/remoteproc/remoteproc_core.c     |  5 ++
+ drivers/remoteproc/remoteproc_internal.h | 16 ++++++
+ include/linux/remoteproc.h               |  4 ++
+ 4 files changed, 79 insertions(+), 10 deletions(-)
 
-Sibi Sankar (8):
-  dt-bindings: reset: Add AOSS reset bindings for SDM845 SoCs
-  reset: qcom: AOSS (always on subsystem) reset controller
-  remoteproc: Move proxy unvote to handover irq handler
-  remoteproc: Synchronize proxy unvote from multiple contexts
-  dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
-  remoteproc: qcom: Introduce reset assert/deassert helper functions
-  remoteproc: qcom: Add support for mss remoteproc on SDM845
-  remoteproc: qcom: Allow defining GLINK edge for mss remoteproc
-
- .../bindings/remoteproc/qcom,q6v5.txt         |   1 +
- .../bindings/reset/qcom,aoss-reset.txt        |  52 +++++
- drivers/remoteproc/qcom_q6v5_pil.c            | 212 ++++++++++++++++--
- drivers/reset/Kconfig                         |   9 +
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-qcom-aoss.c               | 133 +++++++++++
- include/dt-bindings/reset/qcom,sdm845-aoss.h  |  17 ++
- 7 files changed, 404 insertions(+), 21 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
- create mode 100644 drivers/reset/reset-qcom-aoss.c
- create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
-
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 1f861b214850..ef643c0aec5f 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -160,6 +160,7 @@ struct q6v5 {
+ 	struct completion start_done;
+ 	struct completion stop_done;
+ 	bool running;
++	bool coredump_pending;
+ 
+ 	phys_addr_t mba_phys;
+ 	void *mba_region;
+@@ -663,6 +664,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	}
+ 
+ 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
++	qproc->mpss_reloc = mpss_reloc;
+ 	/* Load firmware segments */
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+ 		phdr = &phdrs[i];
+@@ -737,7 +739,7 @@ static int q6v5_start(struct rproc *rproc)
+ 				    qproc->proxy_reg_count);
+ 	if (ret) {
+ 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
+-		return ret;
++		goto clear_coredump_pending;
+ 	}
+ 
+ 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
+@@ -793,6 +795,21 @@ static int q6v5_start(struct rproc *rproc)
+ 		goto halt_axi_ports;
+ 	}
+ 
++	if (qproc->coredump_pending) {
++		dev_info(qproc->dev, "MBA booted, skipping mpss for coredump\n");
++		qproc->coredump_pending = false;
++		enable_irq(qproc->handover_interrupt);
++		enable_irq(qproc->wdog_interrupt);
++		enable_irq(qproc->fatal_interrupt);
++		xfermemop_ret = q6v5_xfer_mem_ownership(qproc,
++							&qproc->mba_perm, false,
++							qproc->mba_phys,
++							qproc->mba_size);
++		if (xfermemop_ret)
++			dev_err(qproc->dev, "Failed to reclaim mba buffer\n");
++		return 0;
++	}
++
+ 	dev_info(qproc->dev, "MBA booted, loading mpss\n");
+ 
+ 	ret = q6v5_mpss_load(qproc);
+@@ -859,6 +876,8 @@ static int q6v5_start(struct rproc *rproc)
+ disable_proxy_reg:
+ 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 			       qproc->proxy_reg_count);
++clear_coredump_pending:
++	qproc->coredump_pending = false;
+ 
+ 	return ret;
+ }
+@@ -869,17 +888,19 @@ static int q6v5_stop(struct rproc *rproc)
+ 	int ret;
+ 	u32 val;
+ 
+-	qproc->running = false;
+-
+-	qcom_smem_state_update_bits(qproc->state,
+-				    BIT(qproc->stop_bit), BIT(qproc->stop_bit));
++	if (qproc->running) {
++		qproc->running = false;
++		qcom_smem_state_update_bits(qproc->state,
++				BIT(qproc->stop_bit), BIT(qproc->stop_bit));
+ 
+-	ret = wait_for_completion_timeout(&qproc->stop_done,
+-					  msecs_to_jiffies(5000));
+-	if (ret == 0)
+-		dev_err(qproc->dev, "timed out on wait\n");
++		ret = wait_for_completion_timeout(&qproc->stop_done,
++				msecs_to_jiffies(5000));
++		if (ret == 0)
++			dev_err(qproc->dev, "timed out on wait\n");
+ 
+-	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
++		qcom_smem_state_update_bits(qproc->state,
++				BIT(qproc->stop_bit), 0);
++	}
+ 
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
+ 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+@@ -930,10 +951,31 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	return qproc->mpss_region + offset;
+ }
+ 
++static int qcom_mpss_register_dump_segments(struct rproc *rproc,
++				const struct firmware *fw_unused)
++{
++	const struct firmware *fw;
++	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	int ret;
++
++	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
++	if (ret < 0) {
++		dev_err(qproc->dev, "unable to load modem.mdt\n");
++		return ret;
++	}
++	ret = qcom_register_dump_segments(rproc, fw);
++
++	release_firmware(fw);
++	return ret;
++}
++
+ static const struct rproc_ops q6v5_ops = {
+ 	.start = q6v5_start,
+ 	.stop = q6v5_stop,
+ 	.da_to_va = q6v5_da_to_va,
++	.parse_fw = qcom_mpss_register_dump_segments,
++	.prepare_coredump = q6v5_start,
++	.unprepare_coredump = q6v5_stop,
+ 	.load = q6v5_load,
+ };
+ 
+@@ -949,6 +991,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
+ 		return IRQ_HANDLED;
+ 	}
+ 
++	qproc->coredump_pending = true;
+ 	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, MPSS_CRASH_REASON_SMEM, &len);
+ 	if (!IS_ERR(msg) && len > 0 && msg[0])
+ 		dev_err(qproc->dev, "watchdog received: %s\n", msg);
+@@ -966,6 +1009,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *dev)
+ 	size_t len;
+ 	char *msg;
+ 
++	qproc->coredump_pending = true;
+ 	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, MPSS_CRASH_REASON_SMEM, &len);
+ 	if (!IS_ERR(msg) && len > 0 && msg[0])
+ 		dev_err(qproc->dev, "fatal error received: %s\n", msg);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index a9609d971f7f..8c254d9b5c67 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1083,6 +1083,9 @@ static void rproc_coredump(struct rproc *rproc)
+ 	if (list_empty(&rproc->dump_segments))
+ 		return;
+ 
++	if (rproc_prepare_coredump(rproc))
++		return;
++
+ 	data_size = sizeof(*ehdr);
+ 	list_for_each_entry(segment, &rproc->dump_segments, node) {
+ 		data_size += sizeof(*phdr) + segment->size;
+@@ -1139,6 +1142,8 @@ static void rproc_coredump(struct rproc *rproc)
+ 	}
+ 
+ 	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
++
++	rproc_unprepare_coredump(rproc);
+ }
+ 
+ /**
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 7570beb035b5..22a1b276e110 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -96,6 +96,22 @@ static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+ 	return 0;
+ }
+ 
++static inline int rproc_prepare_coredump(struct rproc *rproc)
++{
++	if (rproc->ops->prepare_coredump)
++		return rproc->ops->prepare_coredump(rproc);
++
++	return 0;
++}
++
++static inline int rproc_unprepare_coredump(struct rproc *rproc)
++{
++	if (rproc->ops->unprepare_coredump)
++		return rproc->ops->unprepare_coredump(rproc);
++
++	return 0;
++}
++
+ static inline
+ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+ 						   const struct firmware *fw)
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index dfdaede9139e..010819e01279 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -333,6 +333,8 @@ struct firmware;
+  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+  * @da_to_va:	optional platform hook to perform address translations
+  * @load_rsc_table:	load resource table from firmware image
++ * @prepare_coredump:	prepare function, called before coredump
++ * @unprepare_coredump:	unprepare function, called post coredump
+  * @find_loaded_rsc_table: find the loaded resouce table
+  * @load:		load firmeware to memory, where the remote processor
+  *			expects to find it
+@@ -345,6 +347,8 @@ struct rproc_ops {
+ 	void (*kick)(struct rproc *rproc, int vqid);
+ 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
++	int (*prepare_coredump)(struct rproc *rproc);
++	int (*unprepare_coredump)(struct rproc *rproc);
+ 	struct resource_table *(*find_loaded_rsc_table)(
+ 				struct rproc *rproc, const struct firmware *fw);
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
