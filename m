@@ -1,53 +1,121 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/3] remoteproc/davinci: prepare and unprepare the clock where needed
-Date: Wed,  2 May 2018 11:56:58 +0200
-Message-Id: <20180502095659.3626-3-brgl@bgdev.pl>
-In-Reply-To: <20180502095659.3626-1-brgl@bgdev.pl>
-References: <20180502095659.3626-1-brgl@bgdev.pl>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>, Suman Anna <s-anna@ti.com>, Aparna Balasubramanian <aparnab@ti.com>, Kevin Hilman <khilman@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH V6 2/5] remoteproc: qcom: Push reset ops, rproc ops in to of_match data
+Date: Mon, 14 May 2018 16:16:49 +0530
+Message-Id: <1526294812-23390-3-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
+References: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, sibis@codeaurora.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Instead of directly assigning reset and rproc ops, put them
+in to of_match data and get from that. Currently same ops
+are used for all compatibles, but that will change when we add
+q6v5-wcss support.
 
-We're currently switching the platform to using the common clock
-framework. We need to explicitly prepare and unprepare the rproc
-clock.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 2b24291337b7..f134192922e0 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index a3d65a7..cc26cab 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -125,18 +125,6 @@ struct qcom_mss_reg_res {
+ 	int uA;
+ };
  
- 	writel(rproc->bootaddr, drproc->bootreg);
+-struct rproc_hexagon_res {
+-	const char *hexagon_mba_image;
+-	struct qcom_mss_reg_res *proxy_supply;
+-	struct qcom_mss_reg_res *active_supply;
+-	char **proxy_clk_names;
+-	char **reset_clk_names;
+-	char **active_clk_names;
+-	int version;
+-	bool need_mem_protection;
+-	bool has_alt_reset;
+-};
+-
+ struct q6v5 {
+ 	struct device *dev;
+ 	struct rproc *rproc;
+@@ -197,6 +185,20 @@ struct q6v5 {
+ 	int version;
+ };
  
--	ret = clk_enable(dsp_clk);
-+	ret = clk_prepare_enable(dsp_clk);
- 	if (ret) {
--		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		dev_err(dev, "clk_prepare_enable() failed: %d\n", ret);
- 		return ret;
++struct rproc_hexagon_res {
++	const char *hexagon_mba_image;
++	struct qcom_mss_reg_res *proxy_supply;
++	struct qcom_mss_reg_res *active_supply;
++	char **proxy_clk_names;
++	char **reset_clk_names;
++	char **active_clk_names;
++	int version;
++	bool need_mem_protection;
++	bool has_alt_reset;
++	int (*init_reset)(struct q6v5 *qproc);
++	const struct rproc_ops *ops;
++};
++
+ enum {
+ 	MSS_MSM8916,
+ 	MSS_MSM8974,
+@@ -1250,7 +1252,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (!desc)
+ 		return -EINVAL;
+ 
+-	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
++	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+ 			    desc->hexagon_mba_image, sizeof(*qproc));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+@@ -1321,7 +1323,7 @@ static int q6v5_probe(struct platform_device *pdev)
  	}
+ 	qproc->active_reg_count = ret;
  
-@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- 	struct da8xx_rproc *drproc = rproc->priv;
+-	ret = q6v5_init_reset(qproc);
++	ret = desc->init_reset(qproc);
+ 	if (ret)
+ 		goto free_rproc;
  
- 	davinci_clk_reset_assert(drproc->dsp_clk);
--	clk_disable(drproc->dsp_clk);
-+	clk_disable_unprepare(drproc->dsp_clk);
+@@ -1417,6 +1419,8 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = true,
+ 	.version = MSS_SDM845,
++	.init_reset = q6v5_init_reset,
++	.ops = &q6v5_ops,
+ };
  
- 	return 0;
- }
+ static const struct rproc_hexagon_res msm8996_mss = {
+@@ -1436,6 +1440,8 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = false,
+ 	.version = MSS_MSM8996,
++	.init_reset = q6v5_init_reset,
++	.ops = &q6v5_ops,
+ };
+ 
+ static const struct rproc_hexagon_res msm8916_mss = {
+@@ -1468,6 +1474,8 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	.need_mem_protection = false,
+ 	.has_alt_reset = false,
+ 	.version = MSS_MSM8916,
++	.init_reset = q6v5_init_reset,
++	.ops = &q6v5_ops,
+ };
+ 
+ static const struct rproc_hexagon_res msm8974_mss = {
+@@ -1508,6 +1516,8 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	.need_mem_protection = false,
+ 	.has_alt_reset = false,
+ 	.version = MSS_MSM8974,
++	.init_reset = q6v5_init_reset,
++	.ops = &q6v5_ops,
+ };
+ 
+ static const struct of_device_id q6v5_of_match[] = {
 -- 
-2.17.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
