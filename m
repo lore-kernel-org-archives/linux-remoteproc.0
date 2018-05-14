@@ -1,184 +1,67 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 18 May 2018 14:31:04 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 4/5] remoteproc: qcom: Add support for mss remoteproc
- on SDM845
-Message-ID: <20180518213104.GT14924@minitux>
-References: <20180425150843.26657-1-sibis@codeaurora.org>
- <20180425150843.26657-5-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425150843.26657-5-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <sricharan@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Subject: [PATCH V6 0/5] Add support for Hexagon q6v5-wcss integrated core
+Date: Mon, 14 May 2018 16:16:47 +0530
+Message-Id: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, sibis@codeaurora.org
+Cc: sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 25 Apr 08:08 PDT 2018, Sibi Sankar wrote:
+IPQ8074 has an integrated Hexagon dsp core Q6v5 and a wireless lan
+(Lithium) IP. This series adds the remoteproc driver to reset, load
+and boot Q6 firmware.
 
-> From SDM845, the Q6SS reset sequence on software side has been
-> simplified with the introduction of boot FSM which assists in
-> bringing the Q6 out of reset
-> 
-> Add GLINK subdevice to allow definition of GLINK edge as a
-> child of modem-pil
-> 
+The first patch is to make the mdt_loader authenticate
+the firmware only if required, so that the code can be reused for
+self-authenticating firmware like the Q6v5 core in IPQ8074. The second
+patch exports the elf header's get_boot_addr helper to reuse it.
+The next couple of patches arranges the code in the original q6v5-mpss
+rproc to add q6v5-wcss later. The last couple of patches add the relevant
+bits for the q6v5-wcss core.
 
-Please split this in two patches; one adding sdm845 and one adding the
-glink subdev. You can squash in the addition of the compatible in the dt
-binding into the sdm845 code patch, you wish as well.
+This is done on top of Avaneesh's msm8996 rproc support [1]
 
-Apart from that this looks good!
+[1] https://lkml.org/lkml/2017/10/24/771
 
-Regards,
-Bjorn
+V6:
+   Rebased on top of,
+   https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1674300.html
 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_pil.c | 65 +++++++++++++++++++++++++++++-
->  1 file changed, 64 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index 7e2d04d4f2f0..4d9504e8bf8e 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -57,6 +57,8 @@
->  #define RMB_PMI_META_DATA_REG		0x10
->  #define RMB_PMI_CODE_START_REG		0x14
->  #define RMB_PMI_CODE_LENGTH_REG		0x18
-> +#define RMB_MBA_MSS_STATUS		0x40
-> +#define RMB_MBA_ALT_RESET		0x44
->  
->  #define RMB_CMD_META_DATA_READY		0x1
->  #define RMB_CMD_LOAD_READY		0x2
-> @@ -104,6 +106,13 @@
->  #define QDSP6SS_XO_CBCR		0x0038
->  #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
->  
-> +/* QDSP6v65 parameters */
-> +#define QDSP6SS_SLEEP                   0x3C
-> +#define QDSP6SS_BOOT_CORE_START         0x400
-> +#define QDSP6SS_BOOT_CMD                0x404
-> +#define SLEEP_CHECK_MAX_LOOPS           200
-> +#define BOOT_FSM_TIMEOUT                10000
-> +
->  struct reg_info {
->  	struct regulator *reg;
->  	int uV;
-> @@ -170,6 +179,7 @@ struct q6v5 {
->  	void *mpss_region;
->  	size_t mpss_size;
->  
-> +	struct qcom_rproc_glink glink_subdev;
->  	struct qcom_rproc_subdev smd_subdev;
->  	struct qcom_rproc_ssr ssr_subdev;
->  	struct qcom_sysmon *sysmon;
-> @@ -184,6 +194,7 @@ enum {
->  	MSS_MSM8916,
->  	MSS_MSM8974,
->  	MSS_MSM8996,
-> +	MSS_SDM845,
->  };
->  
->  static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
-> @@ -390,8 +401,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->  	int ret;
->  	int i;
->  
-> +	if (qproc->version == MSS_SDM845) {
->  
-> -	if (qproc->version == MSS_MSM8996) {
-> +		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
-> +		val |= 0x1;
-> +		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
-> +
-> +		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
-> +					 val, !(val & BIT(31)), 1,
-> +					 SLEEP_CHECK_MAX_LOOPS);
-> +		if (ret) {
-> +			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
-> +			return -ETIMEDOUT;
-> +		}
-> +
-> +		/* De-assert QDSP6 stop core */
-> +		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
-> +		/* Trigger boot FSM */
-> +		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
-> +
-> +		ret = readl_poll_timeout(qproc->rmb_base + RMB_MBA_MSS_STATUS,
-> +				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
-> +		if (ret) {
-> +			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
-> +			return ret;
-> +		}
-> +
-> +		goto pbl_wait;
-> +
-> +	} else if (qproc->version == MSS_MSM8996) {
->  		/* Override the ACC value if required */
->  		writel(QDSP6SS_ACC_OVERRIDE_VAL,
->  		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-> @@ -499,6 +537,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->  	val &= ~Q6SS_STOP_CORE;
->  	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
->  
-> +pbl_wait:
->  	/* Wait for PBL status */
->  	ret = q6v5_rmb_pbl_wait(qproc, 1000);
->  	if (ret == -ETIMEDOUT) {
-> @@ -1256,6 +1295,7 @@ static int q6v5_probe(struct platform_device *pdev)
->  	}
->  	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
->  	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
-> +	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
->  	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
->  	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
->  	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
-> @@ -1279,6 +1319,7 @@ static int q6v5_remove(struct platform_device *pdev)
->  	rproc_del(qproc->rproc);
->  
->  	qcom_remove_sysmon_subdev(qproc->sysmon);
-> +	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
->  	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
->  	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
->  	rproc_free(qproc->rproc);
-> @@ -1286,6 +1327,27 @@ static int q6v5_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static const struct rproc_hexagon_res sdm845_mss = {
-> +	.hexagon_mba_image = "mba.mbn",
-> +	.proxy_clk_names = (char*[]){
-> +			"xo",
-> +			"axis2",
-> +			"prng",
-> +			NULL
-> +	},
-> +	.active_clk_names = (char*[]){
-> +			"iface",
-> +			"bus",
-> +			"mem",
-> +			"gpll0_mss",
-> +			"snoc_axi",
-> +			"mnoc_axi",
-> +			NULL
-> +	},
-> +	.need_mem_protection = true,
-> +	.version = MSS_SDM845,
-> +};
-> +
->  static const struct rproc_hexagon_res msm8996_mss = {
->  	.hexagon_mba_image = "mba.mbn",
->  	.proxy_clk_names = (char*[]){
-> @@ -1379,6 +1441,7 @@ static const struct of_device_id q6v5_of_match[] = {
->  	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
->  	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
->  	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
-> +	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, q6v5_of_match);
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+   Dropped remoteproc: Export rproc_elf_get_boot_addr, as it is already merged
+   by a different patch from Bjorn.
+
+   Minor change to the q6 power down sequence.
+
+v5:
+    No change. Just updated tags in PATCH #5
+
+V4:
+    Fixed Bjorn's comment in PATCH#1 and added his acked-by
+    Rebased on top of Avinash's latest rproc for msm8996 q6 support.
+
+V3:
+    Rebased on top of latest remoteproc next
+
+V2:
+    Last time introduced this a new rproc driver, but there is lot
+    of code that can be shared if it is added to the q6v5-mpss pil
+    driver.
+
+Sricharan R (5):
+  remoteproc: qcom: mdt_loader: Make the firmware authentication
+    optional
+  remoteproc: qcom: Push reset ops, rproc ops in to of_match data
+  remoteproc: qcom: Split the head and tail of the q5v5-pil rproc reset
+    function
+  remoteproc: qcom: Add support for q6v5-wcss pil
+  remoteproc: qcom: Add q6v5-wcss rproc ops
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   7 +-
+ drivers/remoteproc/Kconfig                         |   1 +
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 468 +++++++++++++++++----
+ drivers/soc/qcom/mdt_loader.c                      |  87 ++--
+ include/linux/soc/qcom/mdt_loader.h                |   4 +
+ 5 files changed, 450 insertions(+), 117 deletions(-)
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
