@@ -1,68 +1,37 @@
 Return-Path: <elder@linaro.org>
 Return-Path: <elder@linaro.org>
 From: Alex Elder <elder@linaro.org>
-Subject: [PATCH 2/5] remoteproc: Make start and stop in subdev optional
-Date: Tue, 15 May 2018 15:53:42 -0500
-Message-Id: <20180515205345.8090-3-elder@linaro.org>
-In-Reply-To: <20180515205345.8090-1-elder@linaro.org>
-References: <20180515205345.8090-1-elder@linaro.org>
+Subject: [PATCH 0/5] remoteproc: updates for new events
+Date: Tue, 15 May 2018 15:53:40 -0500
+Message-Id: <20180515205345.8090-1-elder@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+This series changes the prototype for rproc_add_subdev().  The
+caller is now responsible for populating the function pointers
+recorded in the rproc_subdev structure, rather than having them be
+passed as arguments.  These two existing function pointers have been
+renamed ("probe" is now "start" and "remove" is now "stop"), and
+they are now optional.  Callback functions may now also be assigned
+for two new events (prior to start and after stop).
 
-Some subdevices, such as glink ssr only care about the stop operation,
-so make the operations optional to reduce client code.
+					-Alex
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Alex Elder <elder@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+Alex Elder (1):
+  remoteproc: rename subdev probe and remove functions
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 5dd58e6bea88..981ae6dff145 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -780,16 +780,20 @@ static int rproc_start_subdevices(struct rproc *rproc)
- 	int ret;
- 
- 	list_for_each_entry(subdev, &rproc->subdevs, node) {
--		ret = subdev->start(subdev);
--		if (ret)
--			goto unroll_registration;
-+		if (subdev->start) {
-+			ret = subdev->start(subdev);
-+			if (ret)
-+				goto unroll_registration;
-+		}
- 	}
- 
- 	return 0;
- 
- unroll_registration:
--	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
--		subdev->stop(subdev, true);
-+	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
-+		if (subdev->stop)
-+			subdev->stop(subdev, true);
-+	}
- 
- 	return ret;
- }
-@@ -798,8 +802,10 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
- {
- 	struct rproc_subdev *subdev;
- 
--	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
--		subdev->stop(subdev, crashed);
-+	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-+		if (subdev->stop)
-+			subdev->stop(subdev, crashed);
-+	}
- }
- 
- /**
+Bjorn Andersson (4):
+  remoteproc: Rename subdev functions to start/stop
+  remoteproc: Make start and stop in subdev optional
+  remoteproc: Make client initialize ops in rproc_subdev
+  remoteproc: Introduce prepare and unprepare for subdevices
+
+ drivers/remoteproc/qcom_common.c     |  26 ++++---
+ drivers/remoteproc/qcom_sysmon.c     |   5 +-
+ drivers/remoteproc/remoteproc_core.c | 110 ++++++++++++++++++++-------
+ include/linux/remoteproc.h           |  19 ++---
+ 4 files changed, 109 insertions(+), 51 deletions(-)
+
 -- 
 2.17.0
