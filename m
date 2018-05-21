@@ -1,50 +1,50 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 5/6] hwspinlock/u8500: Switch to SPDX license identifier
-Date: Fri, 11 May 2018 12:03:20 -0500
-Message-ID: <20180511170321.2452-6-s-anna@ti.com>
-In-Reply-To: <20180511170321.2452-1-s-anna@ti.com>
-References: <20180511170321.2452-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>, "Mathieu J . Poirier  <mathieu.poirier@linaro.org>, Linus Walleij" <linus.walleij@linaro.org>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v5 8/8] remoteproc: qcom: Allow defining GLINK edge for mss remoteproc
+Date: Mon, 21 May 2018 22:57:14 +0530
+Message-Id: <20180521172714.8551-9-sibis@codeaurora.org>
+In-Reply-To: <20180521172714.8551-1-sibis@codeaurora.org>
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use the appropriate SPDX license identifier in the U8500 HWSEM
-driver source file and drop the previous boilerplate license text.
+Add GLINK subdevice to allow definition of GLINK edge as a
+child of modem-pil.
 
-Cc: Mathieu J. Poirier <mathieu.poirier@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/hwspinlock/u8500_hsem.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/hwspinlock/u8500_hsem.c b/drivers/hwspinlock/u8500_hsem.c
-index e93eabbd660f..84a92d424e8d 100644
---- a/drivers/hwspinlock/u8500_hsem.c
-+++ b/drivers/hwspinlock/u8500_hsem.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * u8500 HWSEM driver
-  *
-@@ -10,15 +11,6 @@
-  *   Simon Que <sque@ti.com>
-  *   Hari Kanigeri <h-kanigeri2@ti.com>
-  *   Ohad Ben-Cohen <ohad@wizery.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but
-- * WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-- * General Public License for more details.
-  */
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 5e85ce975ef8..7656731a6c51 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -183,6 +183,7 @@ struct q6v5 {
+ 	void *mpss_region;
+ 	size_t mpss_size;
  
- #include <linux/module.h>
++	struct qcom_rproc_glink glink_subdev;
+ 	struct qcom_rproc_subdev smd_subdev;
+ 	struct qcom_rproc_ssr ssr_subdev;
+ 	struct qcom_sysmon *sysmon;
+@@ -1347,6 +1348,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+ 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
++	qcom_add_glink_subdev(rproc, &qproc->glink_subdev);
+ 	qcom_add_smd_subdev(rproc, &qproc->smd_subdev);
+ 	qcom_add_ssr_subdev(rproc, &qproc->ssr_subdev, "mpss");
+ 	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
+@@ -1370,6 +1372,7 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	rproc_del(qproc->rproc);
+ 
+ 	qcom_remove_sysmon_subdev(qproc->sysmon);
++	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+ 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+ 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
+ 	rproc_free(qproc->rproc);
 -- 
-2.17.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
