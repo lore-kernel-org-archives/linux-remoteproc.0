@@ -1,121 +1,169 @@
-Return-Path: <sricharan@codeaurora.org>
-From: Sricharan R <sricharan@codeaurora.org>
-Subject: [PATCH V6 2/5] remoteproc: qcom: Push reset ops, rproc ops in to of_match data
-Date: Mon, 14 May 2018 16:16:49 +0530
-Message-Id: <1526294812-23390-3-git-send-email-sricharan@codeaurora.org>
-In-Reply-To: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
-References: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, sibis@codeaurora.org
-Cc: sricharan@codeaurora.org
+Return-Path: <sibis@codeaurora.org>
+Subject: Re: [PATCH v4 5/5] remoteproc: qcom: Always assert and deassert reset
+ signals in SDM845
+References: <20180425150843.26657-1-sibis@codeaurora.org>
+ <20180425150843.26657-6-sibis@codeaurora.org>
+ <20180518214708.GU14924@minitux>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <e4422d6e-c151-0823-606f-e43a9ae62f80@codeaurora.org>
+Date: Mon, 21 May 2018 22:27:47 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180518214708.GU14924@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Instead of directly assigning reset and rproc ops, put them
-in to of_match data and get from that. Currently same ops
-are used for all compatibles, but that will change when we add
-q6v5-wcss support.
+Hi Bjorn,
+Thanks for the review. Will make all the required changes in v5.
 
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 38 ++++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+On 05/19/2018 03:17 AM, Bjorn Andersson wrote:
+> On Wed 25 Apr 08:08 PDT 2018, Sibi Sankar wrote:
+> 
+>> SDM845 brings a new reset signal ALT_RESET which is a part of the MSS
+>> subsystem hence requires some of the active clks to be enabled before
+>> assert/deassert
+>>
+>> Reset the modem if the BOOT FSM does timeout
+>>
+>> Reset assert/deassert sequence vary across SoCs adding reset, adding
+>> start/stop helper functions to handle SoC specific reset sequences
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 81 ++++++++++++++++++++++++++++--
+>>   1 file changed, 76 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+> [..]
+>> @@ -349,6 +356,32 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+>>   	return 0;
+>>   }
+>>   
+>> +static int q6v5_reset_assert(struct q6v5 *qproc)
+>> +{
+>> +	return reset_control_assert(qproc->mss_restart);
+>> +}
+>> +
+>> +static int q6v5_reset_deassert(struct q6v5 *qproc)
+>> +{
+>> +	return reset_control_deassert(qproc->mss_restart);
+>> +}
+>> +
+>> +static int q6v5_alt_reset_assert(struct q6v5 *qproc)
+>> +{
+>> +	return reset_control_reset(qproc->mss_restart);
+>> +}
+>> +
+>> +static int q6v5_alt_reset_deassert(struct q6v5 *qproc)
+>> +{
+>> +	/* Ensure alt reset is written before restart reg */
+>> +	writel(1, qproc->rmb_base + RMB_MBA_ALT_RESET);
+>> +
+>> +	reset_control_reset(qproc->mss_restart);
+>> +
+>> +	writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
+>> +	return 0;
+>> +}
+>> +
+> 
+> Rather than having these four functions and scattering jumps to some
+> function pointer in the code I think it will be shorter and cleaner to
+> just have the q6v5_reset_{asert,deassert}() functions and in there check
+> if has_alt_reset and take appropriate action.
+> 
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index a3d65a7..cc26cab 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -125,18 +125,6 @@ struct qcom_mss_reg_res {
- 	int uA;
- };
- 
--struct rproc_hexagon_res {
--	const char *hexagon_mba_image;
--	struct qcom_mss_reg_res *proxy_supply;
--	struct qcom_mss_reg_res *active_supply;
--	char **proxy_clk_names;
--	char **reset_clk_names;
--	char **active_clk_names;
--	int version;
--	bool need_mem_protection;
--	bool has_alt_reset;
--};
--
- struct q6v5 {
- 	struct device *dev;
- 	struct rproc *rproc;
-@@ -197,6 +185,20 @@ struct q6v5 {
- 	int version;
- };
- 
-+struct rproc_hexagon_res {
-+	const char *hexagon_mba_image;
-+	struct qcom_mss_reg_res *proxy_supply;
-+	struct qcom_mss_reg_res *active_supply;
-+	char **proxy_clk_names;
-+	char **reset_clk_names;
-+	char **active_clk_names;
-+	int version;
-+	bool need_mem_protection;
-+	bool has_alt_reset;
-+	int (*init_reset)(struct q6v5 *qproc);
-+	const struct rproc_ops *ops;
-+};
-+
- enum {
- 	MSS_MSM8916,
- 	MSS_MSM8974,
-@@ -1250,7 +1252,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (!desc)
- 		return -EINVAL;
- 
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
-+	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
- 			    desc->hexagon_mba_image, sizeof(*qproc));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
-@@ -1321,7 +1323,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->active_reg_count = ret;
- 
--	ret = q6v5_init_reset(qproc);
-+	ret = desc->init_reset(qproc);
- 	if (ret)
- 		goto free_rproc;
- 
-@@ -1417,6 +1419,8 @@ static int q6v5_remove(struct platform_device *pdev)
- 	.need_mem_protection = true,
- 	.has_alt_reset = true,
- 	.version = MSS_SDM845,
-+	.init_reset = q6v5_init_reset,
-+	.ops = &q6v5_ops,
- };
- 
- static const struct rproc_hexagon_res msm8996_mss = {
-@@ -1436,6 +1440,8 @@ static int q6v5_remove(struct platform_device *pdev)
- 	.need_mem_protection = true,
- 	.has_alt_reset = false,
- 	.version = MSS_MSM8996,
-+	.init_reset = q6v5_init_reset,
-+	.ops = &q6v5_ops,
- };
- 
- static const struct rproc_hexagon_res msm8916_mss = {
-@@ -1468,6 +1474,8 @@ static int q6v5_remove(struct platform_device *pdev)
- 	.need_mem_protection = false,
- 	.has_alt_reset = false,
- 	.version = MSS_MSM8916,
-+	.init_reset = q6v5_init_reset,
-+	.ops = &q6v5_ops,
- };
- 
- static const struct rproc_hexagon_res msm8974_mss = {
-@@ -1508,6 +1516,8 @@ static int q6v5_remove(struct platform_device *pdev)
- 	.need_mem_protection = false,
- 	.has_alt_reset = false,
- 	.version = MSS_MSM8974,
-+	.init_reset = q6v5_init_reset,
-+	.ops = &q6v5_ops,
- };
- 
- static const struct of_device_id q6v5_of_match[] = {
+yes this seems simpler
+
+>>   static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
+>>   {
+>>   	unsigned long timeout;
+>> @@ -424,6 +457,8 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>>   				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
+>>   		if (ret) {
+>>   			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
+>> +			/* Reset the modem so that boot FSM is in reset state */
+>> +			qproc->reset_deassert(qproc);
+> 
+> 
+> A thing like this typically should go into it's own patch, to keep a
+> clear record of why it was changed, but as this is simply amending the
+> previous patch it indicates that that one wasn't complete.
+> 
+> So if you reorder the two patches you can just put this directly into
+> the sdm845 patch, making it "complete".
+> 
+> (This also means that I want to merge the handover vs ready interrupt
+> patch before that one, so please include it in the next revision of the
+> series).
+> 
+
+Will re-order them.
+
+
+>>   			return ret;
+>>   		}
+>>   
+>> @@ -792,12 +827,20 @@ static int q6v5_start(struct rproc *rproc)
+>>   		dev_err(qproc->dev, "failed to enable supplies\n");
+>>   		goto disable_proxy_clk;
+>>   	}
+>> -	ret = reset_control_deassert(qproc->mss_restart);
+>> +
+>> +	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
+>> +			      qproc->reset_clk_count);
+> 
+> Remind me, why can't you always enable the active clock before
+> deasserting reset? That way we wouldn't have to split out the iface
+> clock handling to be just slightly longer than the active clocks.
+> 
+
+Have to introduce reset clks for backward compatibility, both msm8916
+and msm8996 require the mss_reset to be deasserted before enabling
+the active clks.
+
+>>   	if (ret) {
+>> -		dev_err(qproc->dev, "failed to deassert mss restart\n");
+>> +		dev_err(qproc->dev, "failed to enable reset clocks\n");
+>>   		goto disable_vdd;
+>>   	}
+>>   
+>> +	ret = qproc->reset_deassert(qproc);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev, "failed to deassert mss restart\n");
+>> +		goto disable_reset_clks;
+>> +	}
+>> +
+> [..]
+>> @@ -1335,8 +1399,11 @@ static const struct rproc_hexagon_res sdm845_mss = {
+>>   			"prng",
+>>   			NULL
+>>   	},
+>> -	.active_clk_names = (char*[]){
+>> +	.reset_clk_names = (char*[]){
+>>   			"iface",
+>> +			NULL
+>> +	},
+>> +	.active_clk_names = (char*[]){
+> 
+> Again, if you reorder your patches to first add the support for
+> alt_reset and then introduce sdm845 you don't need to modify the
+> previous patch directly to make it work.
+> 
+
+yeah I'll re-order them
+
+>>   			"bus",
+>>   			"mem",
+>>   			"gpll0_mss",
+> 
+> Regards,
+> Bjorn
+> 
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
