@@ -1,240 +1,288 @@
 Return-Path: <sibis@codeaurora.org>
 From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] remoteproc: Introduce prepare/unprepare ops for rproc coredump
-Date: Sat, 12 May 2018 19:51:21 +0530
-Message-Id: <20180512142121.12046-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v5 7/8] remoteproc: qcom: Add support for mss remoteproc on SDM845
+Date: Mon, 21 May 2018 22:57:13 +0530
+Message-Id: <20180521172714.8551-8-sibis@codeaurora.org>
+In-Reply-To: <20180521172714.8551-1-sibis@codeaurora.org>
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In some occasions the remoteproc device might need to
-prepare some hardware before the coredump can be performed
-and cleanup the state afterwards.
+>From SDM845, the Q6SS reset sequence on software side has been
+simplified with the introduction of boot FSM which assists in
+bringing the Q6 out of reset.
 
-Q6V5 modem requires the mba to be loaded before the
-coredump and some cleanup of the resources afterwards.
+SDM845 brings a new reset signal ALT_RESET which is a part of
+the MSS subsystem hence requires reset clks to be enabled before
+assert/deassert. Use the SoC specific reset helper function to
+add support for ALT_RESET in SDM845.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
-
-This patch depends on:
-https://patchwork.kernel.org/patch/10363399/
-
- drivers/remoteproc/qcom_q6v5_pil.c       | 64 ++++++++++++++++++++----
- drivers/remoteproc/remoteproc_core.c     |  5 ++
- drivers/remoteproc/remoteproc_internal.h | 16 ++++++
- include/linux/remoteproc.h               |  4 ++
- 4 files changed, 79 insertions(+), 10 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 109 ++++++++++++++++++++++++++++-
+ 1 file changed, 107 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 1f861b214850..ef643c0aec5f 100644
+index 552805bc07c1..5e85ce975ef8 100644
 --- a/drivers/remoteproc/qcom_q6v5_pil.c
 +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -160,6 +160,7 @@ struct q6v5 {
- 	struct completion start_done;
- 	struct completion stop_done;
- 	bool running;
-+	bool coredump_pending;
+@@ -57,6 +57,8 @@
+ #define RMB_PMI_META_DATA_REG		0x10
+ #define RMB_PMI_CODE_START_REG		0x14
+ #define RMB_PMI_CODE_LENGTH_REG		0x18
++#define RMB_MBA_MSS_STATUS		0x40
++#define RMB_MBA_ALT_RESET		0x44
  
- 	phys_addr_t mba_phys;
- 	void *mba_region;
-@@ -663,6 +664,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	}
+ #define RMB_CMD_META_DATA_READY		0x1
+ #define RMB_CMD_LOAD_READY		0x2
+@@ -104,6 +106,13 @@
+ #define QDSP6SS_XO_CBCR		0x0038
+ #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
  
- 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
-+	qproc->mpss_reloc = mpss_reloc;
- 	/* Load firmware segments */
- 	for (i = 0; i < ehdr->e_phnum; i++) {
- 		phdr = &phdrs[i];
-@@ -737,7 +739,7 @@ static int q6v5_start(struct rproc *rproc)
- 				    qproc->proxy_reg_count);
- 	if (ret) {
- 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
--		return ret;
-+		goto clear_coredump_pending;
- 	}
++/* QDSP6v65 parameters */
++#define QDSP6SS_SLEEP                   0x3C
++#define QDSP6SS_BOOT_CORE_START         0x400
++#define QDSP6SS_BOOT_CMD                0x404
++#define SLEEP_CHECK_MAX_LOOPS           200
++#define BOOT_FSM_TIMEOUT                10000
++
+ struct reg_info {
+ 	struct regulator *reg;
+ 	int uV;
+@@ -121,9 +130,11 @@ struct rproc_hexagon_res {
+ 	struct qcom_mss_reg_res *proxy_supply;
+ 	struct qcom_mss_reg_res *active_supply;
+ 	char **proxy_clk_names;
++	char **reset_clk_names;
+ 	char **active_clk_names;
+ 	int version;
+ 	bool need_mem_protection;
++	bool has_alt_reset;
+ };
  
- 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
-@@ -793,6 +795,21 @@ static int q6v5_start(struct rproc *rproc)
- 		goto halt_axi_ports;
- 	}
+ struct q6v5 {
+@@ -148,8 +159,10 @@ struct q6v5 {
+ 	int fatal_irq;
  
-+	if (qproc->coredump_pending) {
-+		dev_info(qproc->dev, "MBA booted, skipping mpss for coredump\n");
-+		qproc->coredump_pending = false;
-+		enable_irq(qproc->handover_interrupt);
-+		enable_irq(qproc->wdog_interrupt);
-+		enable_irq(qproc->fatal_interrupt);
-+		xfermemop_ret = q6v5_xfer_mem_ownership(qproc,
-+							&qproc->mba_perm, false,
-+							qproc->mba_phys,
-+							qproc->mba_size);
-+		if (xfermemop_ret)
-+			dev_err(qproc->dev, "Failed to reclaim mba buffer\n");
+ 	struct clk *active_clks[8];
++	struct clk *reset_clks[4];
+ 	struct clk *proxy_clks[4];
+ 	int active_clk_count;
++	int reset_clk_count;
+ 	int proxy_clk_count;
+ 
+ 	struct reg_info active_regs[1];
+@@ -174,6 +187,7 @@ struct q6v5 {
+ 	struct qcom_rproc_ssr ssr_subdev;
+ 	struct qcom_sysmon *sysmon;
+ 	bool need_mem_protection;
++	bool has_alt_reset;
+ 	bool unvoted_flag;
+ 	int mpss_perm;
+ 	int mba_perm;
+@@ -184,6 +198,7 @@ enum {
+ 	MSS_MSM8916,
+ 	MSS_MSM8974,
+ 	MSS_MSM8996,
++	MSS_SDM845,
+ };
+ 
+ static int q6v5_regulator_init(struct device *dev, struct reg_info *regs,
+@@ -354,11 +369,22 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+ 
+ static int q6v5_reset_assert(struct q6v5 *qproc)
+ {
++	if (qproc->has_alt_reset)
++		return reset_control_reset(qproc->mss_restart);
++
+ 	return reset_control_assert(qproc->mss_restart);
+ }
+ 
+ static int q6v5_reset_deassert(struct q6v5 *qproc)
+ {
++	if (qproc->has_alt_reset) {
++		writel(1, qproc->rmb_base + RMB_MBA_ALT_RESET);
++		reset_control_reset(qproc->mss_restart);
++		writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
++
 +		return 0;
 +	}
 +
- 	dev_info(qproc->dev, "MBA booted, loading mpss\n");
- 
- 	ret = q6v5_mpss_load(qproc);
-@@ -859,6 +876,8 @@ static int q6v5_start(struct rproc *rproc)
- disable_proxy_reg:
- 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
- 			       qproc->proxy_reg_count);
-+clear_coredump_pending:
-+	qproc->coredump_pending = false;
- 
- 	return ret;
+ 	return reset_control_deassert(qproc->mss_restart);
  }
-@@ -869,17 +888,19 @@ static int q6v5_stop(struct rproc *rproc)
+ 
+@@ -414,8 +440,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
  	int ret;
- 	u32 val;
+ 	int i;
  
--	qproc->running = false;
--
--	qcom_smem_state_update_bits(qproc->state,
--				    BIT(qproc->stop_bit), BIT(qproc->stop_bit));
-+	if (qproc->running) {
-+		qproc->running = false;
-+		qcom_smem_state_update_bits(qproc->state,
-+				BIT(qproc->stop_bit), BIT(qproc->stop_bit));
++	if (qproc->version == MSS_SDM845) {
++		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
++		val |= 0x1;
++		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
  
--	ret = wait_for_completion_timeout(&qproc->stop_done,
--					  msecs_to_jiffies(5000));
--	if (ret == 0)
--		dev_err(qproc->dev, "timed out on wait\n");
-+		ret = wait_for_completion_timeout(&qproc->stop_done,
-+				msecs_to_jiffies(5000));
-+		if (ret == 0)
-+			dev_err(qproc->dev, "timed out on wait\n");
- 
--	qcom_smem_state_update_bits(qproc->state, BIT(qproc->stop_bit), 0);
-+		qcom_smem_state_update_bits(qproc->state,
-+				BIT(qproc->stop_bit), 0);
-+	}
- 
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-@@ -930,10 +951,31 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return qproc->mpss_region + offset;
- }
- 
-+static int qcom_mpss_register_dump_segments(struct rproc *rproc,
-+				const struct firmware *fw_unused)
-+{
-+	const struct firmware *fw;
-+	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	int ret;
+-	if (qproc->version == MSS_MSM8996) {
++		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
++					 val, !(val & BIT(31)), 1,
++					 SLEEP_CHECK_MAX_LOOPS);
++		if (ret) {
++			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
++			return -ETIMEDOUT;
++		}
 +
-+	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
++		/* De-assert QDSP6 stop core */
++		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
++		/* Trigger boot FSM */
++		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
++
++		ret = readl_poll_timeout(qproc->rmb_base + RMB_MBA_MSS_STATUS,
++				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
++		if (ret) {
++			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
++			/* Reset the modem so that boot FSM is in reset state */
++			q6v5_reset_deassert(qproc);
++			return ret;
++		}
++
++		goto pbl_wait;
++	} else if (qproc->version == MSS_MSM8996) {
+ 		/* Override the ACC value if required */
+ 		writel(QDSP6SS_ACC_OVERRIDE_VAL,
+ 		       qproc->reg_base + QDSP6SS_STRAP_ACC);
+@@ -523,6 +576,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 	val &= ~Q6SS_STOP_CORE;
+ 	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+ 
++pbl_wait:
+ 	/* Wait for PBL status */
+ 	ret = q6v5_rmb_pbl_wait(qproc, 1000);
+ 	if (ret == -ETIMEDOUT) {
+@@ -777,10 +831,18 @@ static int q6v5_start(struct rproc *rproc)
+ 		dev_err(qproc->dev, "failed to enable supplies\n");
+ 		goto disable_proxy_clk;
+ 	}
++
++	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
++			      qproc->reset_clk_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable reset clocks\n");
++		goto disable_vdd;
++	}
++
+ 	ret = q6v5_reset_deassert(qproc);
+ 	if (ret) {
+ 		dev_err(qproc->dev, "failed to deassert mss restart\n");
+-		goto disable_vdd;
++		goto disable_reset_clks;
+ 	}
+ 
+ 	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
+@@ -870,6 +932,9 @@ static int q6v5_start(struct rproc *rproc)
+ 
+ assert_reset:
+ 	q6v5_reset_assert(qproc);
++disable_reset_clks:
++	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
++			 qproc->reset_clk_count);
+ disable_vdd:
+ 	q6v5_regulator_disable(qproc, qproc->active_regs,
+ 			       qproc->active_reg_count);
+@@ -929,6 +994,8 @@ static int q6v5_stop(struct rproc *rproc)
+ 				       qproc->proxy_reg_count);
+ 	}
+ 
++	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
++			 qproc->reset_clk_count);
+ 	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+ 			 qproc->active_clk_count);
+ 	q6v5_regulator_disable(qproc, qproc->active_regs,
+@@ -1208,6 +1275,14 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->proxy_clk_count = ret;
+ 
++	ret = q6v5_init_clocks(&pdev->dev, qproc->reset_clks,
++			       desc->reset_clk_names);
 +	if (ret < 0) {
-+		dev_err(qproc->dev, "unable to load modem.mdt\n");
-+		return ret;
++		dev_err(&pdev->dev, "Failed to get reset clocks.\n");
++		goto free_rproc;
 +	}
-+	ret = qcom_register_dump_segments(rproc, fw);
++	qproc->reset_clk_count = ret;
 +
-+	release_firmware(fw);
-+	return ret;
-+}
-+
- static const struct rproc_ops q6v5_ops = {
- 	.start = q6v5_start,
- 	.stop = q6v5_stop,
- 	.da_to_va = q6v5_da_to_va,
-+	.parse_fw = qcom_mpss_register_dump_segments,
-+	.prepare_coredump = q6v5_start,
-+	.unprepare_coredump = q6v5_stop,
- 	.load = q6v5_load,
- };
+ 	ret = q6v5_init_clocks(&pdev->dev, qproc->active_clks,
+ 			       desc->active_clk_names);
+ 	if (ret < 0) {
+@@ -1237,6 +1312,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 		goto free_rproc;
  
-@@ -949,6 +991,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *dev)
- 		return IRQ_HANDLED;
- 	}
- 
-+	qproc->coredump_pending = true;
- 	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, MPSS_CRASH_REASON_SMEM, &len);
- 	if (!IS_ERR(msg) && len > 0 && msg[0])
- 		dev_err(qproc->dev, "watchdog received: %s\n", msg);
-@@ -966,6 +1009,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *dev)
- 	size_t len;
- 	char *msg;
- 
-+	qproc->coredump_pending = true;
- 	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, MPSS_CRASH_REASON_SMEM, &len);
- 	if (!IS_ERR(msg) && len > 0 && msg[0])
- 		dev_err(qproc->dev, "fatal error received: %s\n", msg);
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a9609d971f7f..8c254d9b5c67 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1083,6 +1083,9 @@ static void rproc_coredump(struct rproc *rproc)
- 	if (list_empty(&rproc->dump_segments))
- 		return;
- 
-+	if (rproc_prepare_coredump(rproc))
-+		return;
-+
- 	data_size = sizeof(*ehdr);
- 	list_for_each_entry(segment, &rproc->dump_segments, node) {
- 		data_size += sizeof(*phdr) + segment->size;
-@@ -1139,6 +1142,8 @@ static void rproc_coredump(struct rproc *rproc)
- 	}
- 
- 	dev_coredumpv(&rproc->dev, data, data_size, GFP_KERNEL);
-+
-+	rproc_unprepare_coredump(rproc);
- }
- 
- /**
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 7570beb035b5..22a1b276e110 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -96,6 +96,22 @@ static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+ 	qproc->version = desc->version;
++	qproc->has_alt_reset = desc->has_alt_reset;
+ 	qproc->need_mem_protection = desc->need_mem_protection;
+ 	ret = q6v5_request_irq(qproc, pdev, "wdog", q6v5_wdog_interrupt,
+ 			       &qproc->wdog_irq);
+@@ -1301,6 +1377,31 @@ static int q6v5_remove(struct platform_device *pdev)
  	return 0;
  }
  
-+static inline int rproc_prepare_coredump(struct rproc *rproc)
-+{
-+	if (rproc->ops->prepare_coredump)
-+		return rproc->ops->prepare_coredump(rproc);
++static const struct rproc_hexagon_res sdm845_mss = {
++	.hexagon_mba_image = "mba.mbn",
++	.proxy_clk_names = (char*[]){
++			"xo",
++			"axis2",
++			"prng",
++			NULL
++	},
++	.reset_clk_names = (char*[]){
++			"iface",
++			"snoc_axi",
++			NULL
++	},
++	.active_clk_names = (char*[]){
++			"bus",
++			"mem",
++			"gpll0_mss",
++			"mnoc_axi",
++			NULL
++	},
++	.need_mem_protection = true,
++	.has_alt_reset = true,
++	.version = MSS_SDM845,
++};
 +
-+	return 0;
-+}
-+
-+static inline int rproc_unprepare_coredump(struct rproc *rproc)
-+{
-+	if (rproc->ops->unprepare_coredump)
-+		return rproc->ops->unprepare_coredump(rproc);
-+
-+	return 0;
-+}
-+
- static inline
- struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
- 						   const struct firmware *fw)
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index dfdaede9139e..010819e01279 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -333,6 +333,8 @@ struct firmware;
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-  * @da_to_va:	optional platform hook to perform address translations
-  * @load_rsc_table:	load resource table from firmware image
-+ * @prepare_coredump:	prepare function, called before coredump
-+ * @unprepare_coredump:	unprepare function, called post coredump
-  * @find_loaded_rsc_table: find the loaded resouce table
-  * @load:		load firmeware to memory, where the remote processor
-  *			expects to find it
-@@ -345,6 +347,8 @@ struct rproc_ops {
- 	void (*kick)(struct rproc *rproc, int vqid);
- 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
-+	int (*prepare_coredump)(struct rproc *rproc);
-+	int (*unprepare_coredump)(struct rproc *rproc);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ static const struct rproc_hexagon_res msm8996_mss = {
+ 	.hexagon_mba_image = "mba.mbn",
+ 	.proxy_clk_names = (char*[]){
+@@ -1316,6 +1417,7 @@ static const struct rproc_hexagon_res msm8996_mss = {
+ 			NULL
+ 	},
+ 	.need_mem_protection = true,
++	.has_alt_reset = false,
+ 	.version = MSS_MSM8996,
+ };
+ 
+@@ -1347,6 +1449,7 @@ static const struct rproc_hexagon_res msm8916_mss = {
+ 		NULL
+ 	},
+ 	.need_mem_protection = false,
++	.has_alt_reset = false,
+ 	.version = MSS_MSM8916,
+ };
+ 
+@@ -1386,6 +1489,7 @@ static const struct rproc_hexagon_res msm8974_mss = {
+ 		NULL
+ 	},
+ 	.need_mem_protection = false,
++	.has_alt_reset = false,
+ 	.version = MSS_MSM8974,
+ };
+ 
+@@ -1394,6 +1498,7 @@ static const struct of_device_id q6v5_of_match[] = {
+ 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
+ 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+ 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
++	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, q6v5_of_match);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
