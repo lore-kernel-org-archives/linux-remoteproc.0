@@ -1,74 +1,62 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 9 May 2018 17:56:50 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 06/13] remoteproc: introduce rproc_add_carveout
- function
-Message-ID: <20180510005650.GH29093@builder>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-7-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519921440-21356-7-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v5 0/8] Add support for remoteproc modem-pil on SDM845 SoCs
+Date: Mon, 21 May 2018 22:57:06 +0530
+Message-Id: <20180521172714.8551-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, sibis@codeaurora.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
+This patch series add support for remoteproc Q6v5 modem-pil on Qualcomm
+SDM845 SoC. The first patch adds AOSS (Always on subsystem) reset driver
+to provide for mss reset line. The last couple of patches add the resets
+sequence for Q6 on SDM845 and adds helper functions for arbitrary reset
+assert/deassert sequences.
 
-> This patch introduces a new API to allow platform driver to register
-> platform specific carveout regions.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+V5:
+   corrected dt-binding and increased usleep_range for aoss reset driver
+   Include the ready interrupt handling in the patch series 
+   Replaced reset ops with a simpler helper function
+   Re-ordered and split patches as recommended
+   Inlined q6v5_request_irq function
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+V4:
+   Removed regmap depencencies from aoss reset driver
+   Separted apss shared mailbox into separate patch
+   Corrected all nits and replaced with author full name
 
-Regards,
-Bjorn
+V3:
+   Removed syscon dependency for the aoss reset driver
+   Split dt-bindings and the aoss reset driver into separate patches
+   Corrected few typos and replaced misconfigured author name
 
-> ---
->  drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++++
->  include/linux/remoteproc.h           |  2 ++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 4c92b7d..91aa22b 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -758,6 +758,20 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  }
->  
->  /**
-> + * rproc_add_carveout() - register an allocated carveout region
-> + * @rproc: rproc handle
-> + * @mem: memory entry to register
-> + *
-> + * This function registers specified memory entry in @rproc carveouts list.
-> + * Specified carveout should have been allocated before registering.
-> + */
-> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
-> +{
-> +	list_add_tail(&mem->node, &rproc->carveouts);
-> +}
-> +EXPORT_SYMBOL(rproc_add_carveout);
-> +
-> +/**
->   * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
->   * @dev: pointer on device struct
->   * @va: virtual address
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 59b60f1..4aa30bd 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -536,6 +536,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  int rproc_del(struct rproc *rproc);
->  void rproc_free(struct rproc *rproc);
->  
-> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
-> +
->  struct rproc_mem_entry *rproc_mem_entry_init(struct device *dev,
->  		void *va, dma_addr_t dma, int len, u32 da,
->  		int (*release)(struct rproc *, struct rproc_mem_entry *),
-> -- 
-> 1.9.1
-> 
+V2:
+   Addressed reset-qcom-aoss review suggestions and reworked
+   re-ordering of the active clk and reset sequence in
+   qcom_q6v5_pil
+
+Sibi Sankar (8):
+  dt-bindings: reset: Add AOSS reset bindings for SDM845 SoCs
+  reset: qcom: AOSS (always on subsystem) reset controller
+  remoteproc: Move proxy unvote to handover irq handler
+  remoteproc: Synchronize proxy unvote from multiple contexts
+  dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
+  remoteproc: qcom: Introduce reset assert/deassert helper functions
+  remoteproc: qcom: Add support for mss remoteproc on SDM845
+  remoteproc: qcom: Allow defining GLINK edge for mss remoteproc
+
+ .../bindings/remoteproc/qcom,q6v5.txt         |   1 +
+ .../bindings/reset/qcom,aoss-reset.txt        |  52 +++++
+ drivers/remoteproc/qcom_q6v5_pil.c            | 212 ++++++++++++++++--
+ drivers/reset/Kconfig                         |   9 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-qcom-aoss.c               | 133 +++++++++++
+ include/dt-bindings/reset/qcom,sdm845-aoss.h  |  17 ++
+ 7 files changed, 404 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+ create mode 100644 drivers/reset/reset-qcom-aoss.c
+ create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
