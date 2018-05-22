@@ -1,37 +1,135 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH 0/5] remoteproc: updates for new events
-Date: Tue, 15 May 2018 15:53:40 -0500
-Message-Id: <20180515205345.8090-1-elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <sibis@codeaurora.org>
+Subject: Re: [PATCH v5 3/8] remoteproc: Move proxy unvote to handover irq
+ handler
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+ <20180521172714.8551-4-sibis@codeaurora.org> <20180522043511.GW14924@minitux>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <310ca259-d4d2-240d-f0a6-057456c1bf5e@codeaurora.org>
+Date: Tue, 22 May 2018 12:01:11 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180522043511.GW14924@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This series changes the prototype for rproc_add_subdev().  The
-caller is now responsible for populating the function pointers
-recorded in the rproc_subdev structure, rather than having them be
-passed as arguments.  These two existing function pointers have been
-renamed ("probe" is now "start" and "remove" is now "stop"), and
-they are now optional.  Callback functions may now also be assigned
-for two new events (prior to start and after stop).
+Hi Bjorn,
+Thanks for the review.
 
-					-Alex
+On 05/22/2018 10:05 AM, Bjorn Andersson wrote:
+> On Mon 21 May 10:27 PDT 2018, Sibi Sankar wrote:
+> 
+>> Introduce interrupt handler for smp2p ready interrupt to
+>> handle start completion. Move the proxy votes for clocks
+>> and regulators to the handover interrupt context.
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> 
+> I added the "synchronization logic" of patch 4 to this one, to make it
+> functional and after testing on db820c I merged patch 3 through 8 into
+> rproc-next.
+> 
 
-Alex Elder (1):
-  remoteproc: rename subdev probe and remove functions
+making the q6v5_request_irq return the irq number seems more elegant
+unlike the approach I took earlier.
 
-Bjorn Andersson (4):
-  remoteproc: Rename subdev functions to start/stop
-  remoteproc: Make start and stop in subdev optional
-  remoteproc: Make client initialize ops in rproc_subdev
-  remoteproc: Introduce prepare and unprepare for subdevices
+> I skipped the remainder of patch 4, as I think the ready_irq should be
+> included and I wonder if irq management can remove the need for the
+> "running" variable.
+>
 
- drivers/remoteproc/qcom_common.c     |  26 ++++---
- drivers/remoteproc/qcom_sysmon.c     |   5 +-
- drivers/remoteproc/remoteproc_core.c | 110 ++++++++++++++++++++-------
- include/linux/remoteproc.h           |  19 ++---
- 4 files changed, 109 insertions(+), 51 deletions(-)
+will include the ready_irq as well. I think we may need to keep
+"running" for coredump but will check if it can substituted with
+irq management.
+
+> I also moved the enable_irq before we actually start the core, since
+> it's been shown downstream that the smp2p irq might fire fast enough for
+> us to miss it (and the smp2p driver does not redeliver interrupts).
+> 
+> Regards,
+> Bjorn
+> 
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pil.c | 29 +++++++++++++++++++++++------
+>>   1 file changed, 23 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index 76a0c00aa04a..6333bdcd9448 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -809,11 +809,6 @@ static int q6v5_start(struct rproc *rproc)
+>>   			"Failed to reclaim mba buffer system may become unstable\n");
+>>   	qproc->running = true;
+>>   
+>> -	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> -			 qproc->proxy_clk_count);
+>> -	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> -			       qproc->proxy_reg_count);
+>> -
+>>   	return 0;
+>>   
+>>   reclaim_mpss:
+>> @@ -892,6 +887,12 @@ static int q6v5_stop(struct rproc *rproc)
+>>   	WARN_ON(ret);
+>>   
+>>   	reset_control_assert(qproc->mss_restart);
+>> +
+>> +	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> +			 qproc->proxy_clk_count);
+>> +	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> +			       qproc->proxy_reg_count);
+>> +
+>>   	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+>>   			 qproc->active_clk_count);
+>>   	q6v5_regulator_disable(qproc, qproc->active_regs,
+>> @@ -959,7 +960,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *dev)
+>>   	return IRQ_HANDLED;
+>>   }
+>>   
+>> -static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
+>> +static irqreturn_t q6v5_ready_interrupt(int irq, void *dev)
+>>   {
+>>   	struct q6v5 *qproc = dev;
+>>   
+>> @@ -967,6 +968,18 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
+>>   	return IRQ_HANDLED;
+>>   }
+>>   
+>> +static irqreturn_t q6v5_handover_interrupt(int irq, void *dev)
+>> +{
+>> +	struct q6v5 *qproc = dev;
+>> +
+>> +	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+>> +			 qproc->proxy_clk_count);
+>> +	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+>> +			       qproc->proxy_reg_count);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>   static irqreturn_t q6v5_stop_ack_interrupt(int irq, void *dev)
+>>   {
+>>   	struct q6v5 *qproc = dev;
+>> @@ -1194,6 +1207,10 @@ static int q6v5_probe(struct platform_device *pdev)
+>>   	if (ret < 0)
+>>   		goto free_rproc;
+>>   
+>> +	ret = q6v5_request_irq(qproc, pdev, "ready", q6v5_ready_interrupt);
+>> +	if (ret < 0)
+>> +		goto free_rproc;
+>> +
+>>   	ret = q6v5_request_irq(qproc, pdev, "handover", q6v5_handover_interrupt);
+>>   	if (ret < 0)
+>>   		goto free_rproc;
+>> -- 
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+> 
 
 -- 
-2.17.0
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
