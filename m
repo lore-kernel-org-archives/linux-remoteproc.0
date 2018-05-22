@@ -1,40 +1,29 @@
-Return-Path: <mst@redhat.com>
-Date: Wed, 30 May 2018 17:10:56 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
-Message-ID: <20180530163740-mutt-send-email-mst@kernel.org>
-References: <1524159181-351878-1-git-send-email-mst@redhat.com>
- <5047d08c-9f9e-2902-d425-1fac849ce5b4@redhat.com>
- <20180419204017-mutt-send-email-mst@kernel.org>
- <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 22 May 2018 11:17:22 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 1/8] dt-bindings: reset: Add AOSS reset bindings for
+ SDM845 SoCs
+Message-ID: <20180522161722.GA18729@rob-hp-laptop>
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+ <20180521172714.8551-2-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Jason Wang <jasowang@redhat.com>, virtualization@lists.linux-foundation.org
+In-Reply-To: <20180521172714.8551-2-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 07:48:24PM +0200, Paolo Bonzini wrote:
-> On 19/04/2018 19:46, Michael S. Tsirkin wrote:
-> >> This should be okay, but I wonder if there should be a virtio_wmb(...)
-> >> or an "if (weak_barriers) wmb()" before the "writel" in vm_notify
-> >> (drivers/virtio/virtio_mmio.c).
-> >>
-> >> Thanks,
-> >>
-> >> Paolo
-> > That one uses weak barriers AFAIK.
-> > 
-> > IIUC you mean rproc_virtio_notify.
-> > 
-> > I suspect it works because specific kick callbacks have a barrier internally.
+On Mon, May 21, 2018 at 10:57:07PM +0530, Sibi Sankar wrote:
+> Add SDM845 AOSS (always on subsystem) reset controller binding
 > 
-> Yes, that one.  At least keystone_rproc_kick doesn't seem to have a barrier.
-> 
-> Paolo
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
+>  include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
+>  2 files changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>  create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
 
-Any feedback from rproc maintainers?
-
--- 
-MST
+Reviewed-by: Rob Herring <robh@kernel.org>
