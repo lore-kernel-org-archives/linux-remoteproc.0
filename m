@@ -1,43 +1,97 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 0/6] hwspinlock: Convert to use SPDX license identifiers
-Date: Fri, 11 May 2018 12:03:15 -0500
-Message-ID: <20180511170321.2452-1-s-anna@ti.com>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [PATCH V6 3/5] remoteproc: qcom: Split the head and tail of the
+ q5v5-pil rproc reset function
+References: <1526294812-23390-1-git-send-email-sricharan@codeaurora.org>
+ <1526294812-23390-4-git-send-email-sricharan@codeaurora.org>
+ <20180518122233.GB31996@vkoul-mobl>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <97221658-49a9-a61f-75ea-41559222bb38@codeaurora.org>
+Date: Tue, 22 May 2018 14:20:14 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
+In-Reply-To: <20180518122233.GB31996@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Vinod <vkoul@kernel.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, david.brown@linaro.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, sibis@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+Hi Vinod,
 
-The following series switches over the current licensing text in
-various HwSpinlock drivers to the SPDX licensing format. Please
-let me know if you need any changes. If you are ok with the changes,
-I will make similar changes to the remoteproc and rpmsg drivers and
-post them at the earliest so that they can be picked up for 4.18.
+Thanks for the review.
 
-regards
-Suman
+On 5/18/2018 5:52 PM, Vinod wrote:
+> On 14-05-18, 16:16, Sricharan R wrote:
+> 
+>> +static int q6v5_reset(struct q6v5 *qproc)
+>> +{
+>> +	u32 ret;
+>> +	int val, i;
+>> +
+>> +	/* Assert resets, stop core */
+>> +	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> +	val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
+>> +	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+>> +
+>> +	/* BHS require xo cbcr to be enabled */
+>> +	val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
+>> +	val |= 0x1;
+>> +	writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
+> 
+> consider adding a updatel macro which does read, update and write for you...
+> 
 
-Suman Anna (6):
-  hwspinlock/core: Switch to SPDX license identifier
-  hwspinlock/omap: Switch to SPDX license identifier
-  hwspinlock: qcom: Switch to SPDX license identifier
-  hwspinlock/sirf: Switch to SPDX license identifier
-  hwspinlock/u8500: Switch to SPDX license identifier
-  hwspinlock: sprd: Switch to SPDX license identifier
+ ok.
 
- drivers/hwspinlock/Kconfig               |  1 +
- drivers/hwspinlock/hwspinlock_core.c     | 10 +---------
- drivers/hwspinlock/hwspinlock_internal.h | 10 +---------
- drivers/hwspinlock/omap_hwspinlock.c     | 10 +---------
- drivers/hwspinlock/qcom_hwspinlock.c     | 10 +---------
- drivers/hwspinlock/sirf_hwspinlock.c     |  3 +--
- drivers/hwspinlock/sprd_hwspinlock.c     | 10 +---------
- drivers/hwspinlock/u8500_hsem.c          | 10 +---------
- include/linux/hwspinlock.h               | 10 +---------
- 9 files changed, 9 insertions(+), 65 deletions(-)
+>> +
+>> +	/* Read CLKOFF bit to go low indicating CLK is enabled */
+>> +	ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
+>> +				 val, !(val & BIT(31)), 1,
+>> +				 HALT_CHECK_MAX_LOOPS);
+>> +	if (ret) {
+>> +		dev_err(qproc->dev,
+>> +			"xo cbcr enabling timed out (rc:%d)\n", ret);
+>> +		return ret;
+>> +	}
+>> +	/* Enable power block headswitch and wait for it to stabilize */
+>> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val |= QDSP6v56_BHS_ON;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> 
+> why is this read required
+> 
+
+ It was a ditto of what was given in the programming sequence from HW folks.
+ yeah, logically the readl does not look needed. Will remove and update.
+
+>> +	udelay(1);
+>> +
+>> +	/* Put LDO in bypass mode */
+>> +	val |= QDSP6v56_LDO_BYP;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* Deassert QDSP6 compiler memory clamp */
+>> +	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +	val &= ~QDSP6v56_CLAMP_QMC_MEM;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* Deassert memory peripheral sleep and L2 memory standby */
+>> +	val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
+>> +	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> +
+>> +	/* Turn on L1, L2, ETB and JU memories 1 at a time */
+>> +	val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+>> +	for (i = 19; i >= 0; i--) {
+> 
+> where is the magic number 19 coming from?
+> 
+
+ Its the total number of Q6's memory head/foot switch banks. Infact
+ the magic was there even before my patch. But will add a Macro to fix it.
+
+Regards,
+ Sricharan
 
 -- 
-2.17.0
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
