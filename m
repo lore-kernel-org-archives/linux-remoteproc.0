@@ -1,164 +1,164 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH 5/5] remoteproc: Introduce prepare and unprepare for subdevices
-Date: Tue, 15 May 2018 15:53:45 -0500
-Message-Id: <20180515205345.8090-6-elder@linaro.org>
-In-Reply-To: <20180515205345.8090-1-elder@linaro.org>
-References: <20180515205345.8090-1-elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [RFC PATCH 1/5] remoteproc: qcom: mdt_loader: Make the firmware authentication optional
+Date: Tue, 22 May 2018 22:20:50 -0700
+Message-Id: <20180523052054.19025-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sricharan R <sricharan@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>, Andy Gross <andy.gross@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Sricharan R <sricharan@codeaurora.org>
 
-On rare occasions a subdevice might need to prepare some hardware
-resources before a remote processor is booted, and clean up some
-state after it has been shut down.
+qcom_mdt_load function loads the mdt type firmware and
+initialises the secure memory as well. Make the initialisation only
+when requested by the caller, so that the function can be used
+by self-authenticating remoteproc as well.
 
-One such example is the IP Accelerator found in various Qualcomm
-platforms, which is accessed directly from both the modem remoteproc
-and the application subsystem and requires an intricate lockstep
-process when bringing the modem up and down.
-
-[elder@linaro.org: minor description and comment edits]
-
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Alex Elder <elder@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 56 ++++++++++++++++++++++++++--
- include/linux/remoteproc.h           |  4 ++
- 2 files changed, 57 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 2ede7ae6f5bc..283b258f5e0f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -776,6 +776,30 @@ static int rproc_handle_resources(struct rproc *rproc,
+No changes from Sricharan's V6.
+
+ drivers/soc/qcom/mdt_loader.c       | 87 ++++++++++++++++++++---------
+ include/linux/soc/qcom/mdt_loader.h |  4 ++
+ 2 files changed, 66 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index dc09d7ac905f..1c488024c698 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -74,23 +74,10 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
+ }
+ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
+ 
+-/**
+- * qcom_mdt_load() - load the firmware which header is loaded as fw
+- * @dev:	device handle to associate resources with
+- * @fw:		firmware object for the mdt file
+- * @firmware:	name of the firmware, for construction of segment file names
+- * @pas_id:	PAS identifier
+- * @mem_region:	allocated memory region to load firmware into
+- * @mem_phys:	physical address of allocated memory region
+- * @mem_size:	size of the allocated memory region
+- * @reloc_base:	adjusted physical address after relocation
+- *
+- * Returns 0 on success, negative errno otherwise.
+- */
+-int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+-		  const char *firmware, int pas_id, void *mem_region,
+-		  phys_addr_t mem_phys, size_t mem_size,
+-		  phys_addr_t *reloc_base)
++static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
++			   const char *firmware, int pas_id, void *mem_region,
++			   phys_addr_t mem_phys, size_t mem_size,
++			   phys_addr_t *reloc_base, bool pas_init)
+ {
+ 	const struct elf32_phdr *phdrs;
+ 	const struct elf32_phdr *phdr;
+@@ -121,10 +108,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	if (!fw_name)
+ 		return -ENOMEM;
+ 
+-	ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
+-	if (ret) {
+-		dev_err(dev, "invalid firmware metadata\n");
+-		goto out;
++	if (pas_init) {
++		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
++		if (ret) {
++			dev_err(dev, "invalid firmware metadata\n");
++			goto out;
++		}
+ 	}
+ 
+ 	for (i = 0; i < ehdr->e_phnum; i++) {
+@@ -144,10 +133,13 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	}
+ 
+ 	if (relocate) {
+-		ret = qcom_scm_pas_mem_setup(pas_id, mem_phys, max_addr - min_addr);
+-		if (ret) {
+-			dev_err(dev, "unable to setup relocation\n");
+-			goto out;
++		if (pas_init) {
++			ret = qcom_scm_pas_mem_setup(pas_id, mem_phys,
++						     max_addr - min_addr);
++			if (ret) {
++				dev_err(dev, "unable to setup relocation\n");
++				goto out;
++			}
+ 		}
+ 
+ 		/*
+@@ -202,7 +194,52 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 
  	return ret;
  }
- 
-+static int rproc_prepare_subdevices(struct rproc *rproc)
++
++/**
++ * qcom_mdt_load() - load the firmware which header is loaded as fw
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ * @reloc_base:	adjusted physical address after relocation
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load(struct device *dev, const struct firmware *fw,
++		  const char *firmware, int pas_id, void *mem_region,
++		  phys_addr_t mem_phys, size_t mem_size,
++		  phys_addr_t *reloc_base)
 +{
-+	struct rproc_subdev *subdev;
-+	int ret;
-+
-+	list_for_each_entry(subdev, &rproc->subdevs, node) {
-+		if (subdev->prepare) {
-+			ret = subdev->prepare(subdev);
-+			if (ret)
-+				goto unroll_preparation;
-+		}
-+	}
-+
-+	return 0;
-+
-+unroll_preparation:
-+	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
-+		if (subdev->unprepare)
-+			subdev->unprepare(subdev);
-+	}
-+
-+	return ret;
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, reloc_base, true);
 +}
-+
- static int rproc_start_subdevices(struct rproc *rproc)
- {
- 	struct rproc_subdev *subdev;
-@@ -810,6 +834,16 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
- 	}
- }
+ EXPORT_SYMBOL_GPL(qcom_mdt_load);
  
-+static void rproc_unprepare_subdevices(struct rproc *rproc)
++/**
++ * qcom_mdt_load_no_init() - load the firmware which header is loaded as fw
++ * @dev:	device handle to associate resources with
++ * @fw:		firmware object for the mdt file
++ * @firmware:	name of the firmware, for construction of segment file names
++ * @pas_id:	PAS identifier
++ * @mem_region:	allocated memory region to load firmware into
++ * @mem_phys:	physical address of allocated memory region
++ * @mem_size:	size of the allocated memory region
++ * @reloc_base:	adjusted physical address after relocation
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *firmware, int pas_id,
++			  void *mem_region, phys_addr_t mem_phys,
++			  size_t mem_size, phys_addr_t *reloc_base)
 +{
-+	struct rproc_subdev *subdev;
-+
-+	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-+		if (subdev->unprepare)
-+			subdev->unprepare(subdev);
-+	}
++	return __qcom_mdt_load(dev, fw, firmware, pas_id, mem_region, mem_phys,
++			       mem_size, reloc_base, false);
 +}
++EXPORT_SYMBOL_GPL(qcom_mdt_load_no_init);
 +
- /**
-  * rproc_coredump_cleanup() - clean up dump_segments list
-  * @rproc: the remote processor handle
-@@ -902,11 +936,18 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 		rproc->table_ptr = loaded_table;
- 	}
+ MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+index 5b98bbdabc25..944b06aefb0f 100644
+--- a/include/linux/soc/qcom/mdt_loader.h
++++ b/include/linux/soc/qcom/mdt_loader.h
+@@ -17,4 +17,8 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 		  phys_addr_t mem_phys, size_t mem_size,
+ 		  phys_addr_t *reloc_base);
  
-+	ret = rproc_prepare_subdevices(rproc);
-+	if (ret) {
-+		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
-+			rproc->name, ret);
-+		return ret;
-+	}
-+
- 	/* power up the remote processor */
- 	ret = rproc->ops->start(rproc);
- 	if (ret) {
- 		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
--		return ret;
-+		goto unprepare_subdevices;
- 	}
- 
- 	/* Start any subdevices for the remote processor */
-@@ -914,8 +955,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	if (ret) {
- 		dev_err(dev, "failed to probe subdevices for %s: %d\n",
- 			rproc->name, ret);
--		rproc->ops->stop(rproc);
--		return ret;
-+		goto stop_rproc;
- 	}
- 
- 	rproc->state = RPROC_RUNNING;
-@@ -923,6 +963,14 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	dev_info(dev, "remote processor %s is now up\n", rproc->name);
- 
- 	return 0;
-+
-+stop_rproc:
-+	rproc->ops->stop(rproc);
-+
-+unprepare_subdevices:
-+	rproc_unprepare_subdevices(rproc);
-+
-+	return ret;
- }
- 
- /*
-@@ -1035,6 +1083,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 		return ret;
- 	}
- 
-+	rproc_unprepare_subdevices(rproc);
-+
- 	rproc->state = RPROC_OFFLINE;
- 
- 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 8f1426330cca..e3c5d856b6da 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -477,15 +477,19 @@ struct rproc {
- /**
-  * struct rproc_subdev - subdevice tied to a remoteproc
-  * @node: list node related to the rproc subdevs list
-+ * @prepare: prepare function, called before the rproc is started
-  * @start: start function, called after the rproc has been started
-  * @stop: stop function, called before the rproc is stopped; the @crashed
-  *	    parameter indicates if this originates from a recovery
-+ * @unprepare: unprepare function, called after the rproc has been stopped
-  */
- struct rproc_subdev {
- 	struct list_head node;
- 
-+	int (*prepare)(struct rproc_subdev *subdev);
- 	int (*start)(struct rproc_subdev *subdev);
- 	void (*stop)(struct rproc_subdev *subdev, bool crashed);
-+	void (*unprepare)(struct rproc_subdev *subdev);
- };
- 
- /* we currently support only two vrings per rvdev */
++int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
++			  const char *fw_name, int pas_id, void *mem_region,
++			  phys_addr_t mem_phys, size_t mem_size,
++			  phys_addr_t *reloc_base);
+ #endif
 -- 
 2.17.0
