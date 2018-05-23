@@ -1,72 +1,102 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 28 May 2018 21:07:42 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [RFC PATCH 5/5] remoteproc: qcom: Introduce Hexagon V5 based
- WCSS driver
-Message-ID: <20180529040742.GD2259@tuxbook-pro>
+Return-Path: <sricharan@codeaurora.org>
+Subject: Re: [RFC PATCH 5/5] remoteproc: qcom: Introduce Hexagon V5 based WCSS
+ driver
 References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
  <20180523052054.19025-6-bjorn.andersson@linaro.org>
- <20180523060516.GD20991@vkoul-mobl>
- <20180523065815.GZ14924@minitux>
+ <20180523060516.GD20991@vkoul-mobl> <20180523065815.GZ14924@minitux>
  <20180523073723.GF20991@vkoul-mobl>
- <fa0af8c1-f635-13e7-e600-4c1f91a48351@codeaurora.org>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <fa0af8c1-f635-13e7-e600-4c1f91a48351@codeaurora.org>
+Date: Wed, 23 May 2018 20:18:08 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa0af8c1-f635-13e7-e600-4c1f91a48351@codeaurora.org>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: Vinod <vkoul@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Sibi Sankar <sibis@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+In-Reply-To: <20180523073723.GF20991@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Vinod <vkoul@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Sibi Sankar <sibis@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>, Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 23 May 07:48 PDT 2018, Sricharan R wrote:
-> On 5/23/2018 1:07 PM, Vinod wrote:
-> > On 22-05-18, 23:58, Bjorn Andersson wrote:
-> >> On Tue 22 May 23:05 PDT 2018, Vinod wrote:
-> >>> On 22-05-18, 22:20, Bjorn Andersson wrote:
-[..]
-> >>> Looking at the patch, few other comments would be applicable too, so would be
-> >>> great if you/Sricharan can update this
-> >>>
-> >>
-> >> I agree, the primary purpose of this patch was rather to get feedback on
-> >> the structure of the drivers, I do expect this to take another round
-> >> through the editor to get some polishing touches. Sorry if this wasn't
-> >> clear from the description.
-> > 
-> > Since Sricharan replied to comments, I though they would be fixed. Yeah this is
-> > fine from RFC..
-> > 
+Hi Bjorn,
+
+On 5/23/2018 1:07 PM, Vinod wrote:
+> On 22-05-18, 23:58, Bjorn Andersson wrote:
+>> On Tue 22 May 23:05 PDT 2018, Vinod wrote:
+>>
+>>> On 22-05-18, 22:20, Bjorn Andersson wrote:
+>>>
+>>>> +static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+>>>> +{
+>>>> +	int ret;
+>>>> +	u32 val;
+>>>> +	int i;
+>>>> +
+>>>> +	/* Assert resets, stop core */
+>>>> +	val = readl(wcss->reg_base + QDSP6SS_RESET_REG);
+>>>> +	val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
+>>>> +	writel(val, wcss->reg_base + QDSP6SS_RESET_REG);
+>>>> +
+>>>> +	/* BHS require xo cbcr to be enabled */
+>>>> +	val = readl(wcss->reg_base + QDSP6SS_XO_CBCR);
+>>>> +	val |= 0x1;
+>>>> +	writel(val, wcss->reg_base + QDSP6SS_XO_CBCR);
+>>>
+>>> As commented on previous patch, it would help IMO to add a modify() wrapper
+>>> here which would perform read, modify and write.
+>>>
+>>
+>> Iirc the code ended up like this because a lot of these operations ended
+>> up being line wrapped and harder to read using some modify(reg, mask,
+>> val) helper. That said, the function isn't very pretty in it's current
+>> state either...
 > 
->  Thanks for this.
+> Agreed :) and i thought modify make help it make better
 > 
->  Tested this on ipq8074 and wcss rproc is up with this.
+>> One of the parts of the RFC is that this sequence is a verbatim copy
+>> from the qcom_q6v5_pil.c driver for 8996, so if we find this duplication
+>> suitable I would prefer that we keep them the same.
+>>
+>>
+>> The alternative to duplicating this function is as Sricharan proposed to
+>> have the qcom_q6v5_pil.c be both a driver for both the single-stage
+>> remoteproc and the two-stage (load boot loader, then modem firmware).
+>>
+>>> Looking at the patch, few other comments would be applicable too, so would be
+>>> great if you/Sricharan can update this
+>>>
+>>
+>> I agree, the primary purpose of this patch was rather to get feedback on
+>> the structure of the drivers, I do expect this to take another round
+>> through the editor to get some polishing touches. Sorry if this wasn't
+>> clear from the description.
 > 
->  Tested-by: Sricharan R <sricharan@codeaurora.org>
+> Since Sricharan replied to comments, I though they would be fixed. Yeah this is
+> fine from RFC..
 > 
 
-Thanks Sricharan!
+ Thanks for this.
 
->  So regarding the cleanup, as i see, this consolidates the code much better.
-> 
->  so about the point of avoiding duplication for soc specific functions like
->  qcv5_wcss_reset common between qcv5_wcss and qcv5_pil drivers as done in my
->  series, with a second thought that feels it might be difficult to maintain
->  in the longer run. Since the sequences are specific to each soc and for now
->  although some part of it is common, for a minor update in one soc, common
->  code needs to reworked every time and tested on all boards that share them.
-> 
->  So feels like having the duplication for hw init sequences is the cleaner way.
-> 
+ Tested this on ipq8074 and wcss rproc is up with this.
 
-Sounds good, then let's go with this approach!
+ Tested-by: Sricharan R <sricharan@codeaurora.org>
 
->  Apart from that for other comments on the q6v5 wcss driver, i can address them
->  on this final patch that you have posted and same can be included in your
->  next version. Please let me know how you want to go about it.
-> 
+ So regarding the cleanup, as i see, this consolidates the code much better.
 
-If you can help me review the first 4 patches and fix up and resend the
-5th that would be greatly appreciated.
+ so about the point of avoiding duplication for soc specific functions like
+ qcv5_wcss_reset common between qcv5_wcss and qcv5_pil drivers as done in my
+ series, with a second thought that feels it might be difficult to maintain
+ in the longer run. Since the sequences are specific to each soc and for now
+ although some part of it is common, for a minor update in one soc, common
+ code needs to reworked every time and tested on all boards that share them.
+
+ So feels like having the duplication for hw init sequences is the cleaner way.
+
+ Apart from that for other comments on the q6v5 wcss driver, i can address them
+ on this final patch that you have posted and same can be included in your
+ next version. Please let me know how you want to go about it.
 
 Regards,
-Bjorn
+ Sricharan
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
