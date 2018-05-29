@@ -1,674 +1,137 @@
-Return-Path: <rohitkr@codeaurora.org>
-From: Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH] remoteproc:  Add APSS based Qualcomm ADSP PIL driver for SDM845
-Date: Sun, 13 May 2018 12:31:48 +0530
-Message-Id: <1526194908-19027-1-git-send-email-rohitkr@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bgoswami@codeaurora.org, sbpata@codeaurora.org, asishb@codeaurora.org, rkarra@codeaurora.org
-Cc: Rohit kumar <rohitkr@codeaurora.org>, RajendraBabu Medisetti <rajendrabm@codeaurora.org>, Krishnamurthy Renu <krishnamurthy.renu@codeaurora.org>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+Subject: Re: [PATCH 5/5] remoteproc: Introduce prepare and unprepare for
+ subdevices
+Date: Tue, 29 May 2018 15:44:51 +0000
+Message-ID: <ffa85ea6-fc01-b853-d89e-fec7ae7a90a4@st.com>
+References: <20180515205345.8090-1-elder@linaro.org>
+ <20180515205345.8090-6-elder@linaro.org>
+ <90ecf369-517c-1741-0af2-c1988986d2a9@st.com>
+ <872c26d7-52ff-d82f-373e-236fd713ec33@st.com>
+ <b4497e23-fbc2-e739-07ed-af78273cce09@linaro.org>
+In-Reply-To: <b4497e23-fbc2-e739-07ed-af78273cce09@linaro.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6B7F6B418CA96A4E97BC53A469A0CEF9@st.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Alex Elder <elder@linaro.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This adds Qualcomm ADSP PIL driver support for SDM845 with ADSP bootup
-and shutdown operation handled from Application Processor SubSystem(APSS).
-
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-Signed-off-by: RajendraBabu Medisetti <rajendrabm@codeaurora.org>
-Signed-off-by: Krishnamurthy Renu <krishnamurthy.renu@codeaurora.org>
----
- .../devicetree/bindings/remoteproc/qcom,adsp.txt   |   1 +
- drivers/remoteproc/Makefile                        |   3 +-
- drivers/remoteproc/qcom_adsp_pil.c                 | 122 ++++-----
- drivers/remoteproc/qcom_adsp_pil.h                 |  86 ++++++
- drivers/remoteproc/qcom_adsp_pil_sdm845.c          | 304 +++++++++++++++++++++
- 5 files changed, 454 insertions(+), 62 deletions(-)
- create mode 100644 drivers/remoteproc/qcom_adsp_pil.h
- create mode 100644 drivers/remoteproc/qcom_adsp_pil_sdm845.c
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index 728e419..a9fe033 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -10,6 +10,7 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,msm8974-adsp-pil"
- 		    "qcom,msm8996-adsp-pil"
- 		    "qcom,msm8996-slpi-pil"
-+		    "qcom,sdm845-apss-adsp-pil"
- 
- - interrupts-extended:
- 	Usage: required
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 02627ed..759831b 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -14,7 +14,8 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
- obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
--obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
-+obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp.o
-+qcom_adsp-objs				+= qcom_adsp_pil.o qcom_adsp_pil_sdm845.o
- obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
- obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index 89a86ce..9ab3698 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -1,5 +1,5 @@
- /*
-- * Qualcomm ADSP/SLPI Peripheral Image Loader for MSM8974 and MSM8996
-+ * Qualcomm ADSP/SLPI Peripheral Image Loader for MSM8974, MSM8996 and SDM845.
-  *
-  * Copyright (C) 2016 Linaro Ltd
-  * Copyright (C) 2014 Sony Mobile Communications AB
-@@ -22,7 +22,6 @@
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
--#include <linux/platform_device.h>
- #include <linux/qcom_scm.h>
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
-@@ -30,56 +29,8 @@
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- 
--#include "qcom_common.h"
- #include "remoteproc_internal.h"
--
--struct adsp_data {
--	int crash_reason_smem;
--	const char *firmware_name;
--	int pas_id;
--	bool has_aggre2_clk;
--
--	const char *ssr_name;
--	const char *sysmon_name;
--	int ssctl_id;
--};
--
--struct qcom_adsp {
--	struct device *dev;
--	struct rproc *rproc;
--
--	int wdog_irq;
--	int fatal_irq;
--	int ready_irq;
--	int handover_irq;
--	int stop_ack_irq;
--
--	struct qcom_smem_state *state;
--	unsigned stop_bit;
--
--	struct clk *xo;
--	struct clk *aggre2_clk;
--
--	struct regulator *cx_supply;
--	struct regulator *px_supply;
--
--	int pas_id;
--	int crash_reason_smem;
--	bool has_aggre2_clk;
--
--	struct completion start_done;
--	struct completion stop_done;
--
--	phys_addr_t mem_phys;
--	phys_addr_t mem_reloc;
--	void *mem_region;
--	size_t mem_size;
--
--	struct qcom_rproc_glink glink_subdev;
--	struct qcom_rproc_subdev smd_subdev;
--	struct qcom_rproc_ssr ssr_subdev;
--	struct qcom_sysmon *sysmon;
--};
-+#include "qcom_adsp_pil.h"
- 
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- {
-@@ -112,18 +63,32 @@ static int adsp_start(struct rproc *rproc)
- 	if (ret)
- 		goto disable_cx_supply;
- 
--	ret = qcom_scm_pas_auth_and_reset(adsp->pas_id);
--	if (ret) {
--		dev_err(adsp->dev,
--			"failed to authenticate image and release reset\n");
--		goto disable_px_supply;
-+	if (adsp->is_apss_controlled) {
-+		ret = adsp->ops->bringup(adsp);
-+		if (ret) {
-+			dev_err(adsp->dev, "adsp bringup failed\n");
-+			adsp->ops->bringdown(adsp);
-+			goto disable_px_supply;
-+		}
-+	} else {
-+		ret = qcom_scm_pas_auth_and_reset(adsp->pas_id);
-+		if (ret) {
-+			dev_err(adsp->dev,
-+				"failed to authenticate image and release reset\n");
-+			goto disable_px_supply;
-+		}
- 	}
- 
- 	ret = wait_for_completion_timeout(&adsp->start_done,
- 					  msecs_to_jiffies(5000));
- 	if (!ret) {
- 		dev_err(adsp->dev, "start timed out\n");
--		qcom_scm_pas_shutdown(adsp->pas_id);
-+
-+		if (adsp->is_apss_controlled)
-+			adsp->ops->bringdown(adsp);
-+		else
-+			qcom_scm_pas_shutdown(adsp->pas_id);
-+
- 		ret = -ETIMEDOUT;
- 		goto disable_px_supply;
- 	}
-@@ -160,7 +125,11 @@ static int adsp_stop(struct rproc *rproc)
- 				    BIT(adsp->stop_bit),
- 				    0);
- 
--	ret = qcom_scm_pas_shutdown(adsp->pas_id);
-+	if (adsp->is_apss_controlled)
-+		ret = adsp->ops->bringdown(adsp);
-+	else
-+		ret = qcom_scm_pas_shutdown(adsp->pas_id);
-+
- 	if (ret)
- 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
- 
-@@ -334,8 +303,9 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (!desc)
- 		return -EINVAL;
- 
--	if (!qcom_scm_is_available())
--		return -EPROBE_DEFER;
-+	if (!desc->is_apss_controlled)
-+		if (!qcom_scm_is_available())
-+			return -EPROBE_DEFER;
- 
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
- 			    desc->firmware_name, sizeof(*adsp));
-@@ -350,6 +320,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->pas_id = desc->pas_id;
- 	adsp->crash_reason_smem = desc->crash_reason_smem;
- 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
-+	adsp->is_apss_controlled = desc->is_apss_controlled;
- 	platform_set_drvdata(pdev, adsp);
- 
- 	init_completion(&adsp->start_done);
-@@ -399,6 +370,19 @@ static int adsp_probe(struct platform_device *pdev)
- 		goto free_rproc;
- 	}
- 
-+	if (adsp->is_apss_controlled) {
-+		if (!desc->ops || !desc->ops->bringup ||
-+		    !desc->ops->bringdown || !desc->ops->map_regs) {
-+			dev_err(&pdev->dev, "SoC ops not defined\n");
-+			ret = -EINVAL;
-+			goto free_rproc;
-+		}
-+		adsp->ops = desc->ops;
-+		ret = adsp->ops->map_regs(adsp, pdev);
-+		if (ret)
-+			goto free_rproc;
-+	}
-+
- 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
- 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
- 	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
-@@ -434,11 +418,24 @@ static int adsp_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct adsp_data sdm845_apss_adsp_resource_init = {
-+		.crash_reason_smem = 423,
-+		.firmware_name = "adsp.mdt",
-+		.pas_id = 1,
-+		.has_aggre2_clk = false,
-+		.is_apss_controlled = true,
-+		.ssr_name = "lpass",
-+		.sysmon_name = "adsp",
-+		.ssctl_id = 0x14,
-+		.ops = &sdm845_soc_ops,
-+};
-+
- static const struct adsp_data adsp_resource_init = {
- 		.crash_reason_smem = 423,
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
-+		.is_apss_controlled = false,
- 		.ssr_name = "lpass",
- 		.sysmon_name = "adsp",
- 		.ssctl_id = 0x14,
-@@ -449,6 +446,7 @@ static int adsp_remove(struct platform_device *pdev)
- 		.firmware_name = "slpi.mdt",
- 		.pas_id = 12,
- 		.has_aggre2_clk = true,
-+		.is_apss_controlled = false,
- 		.ssr_name = "dsps",
- 		.sysmon_name = "slpi",
- 		.ssctl_id = 0x16,
-@@ -458,6 +456,8 @@ static int adsp_remove(struct platform_device *pdev)
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
-+	{ .compatible = "qcom,sdm845-apss-adsp-pil",
-+	  .data = &sdm845_apss_adsp_resource_init},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, adsp_of_match);
-@@ -472,5 +472,5 @@ static int adsp_remove(struct platform_device *pdev)
- };
- 
- module_platform_driver(adsp_driver);
--MODULE_DESCRIPTION("Qualcomm MSM8974/MSM8996 ADSP Peripherial Image Loader");
-+MODULE_DESCRIPTION("Qualcomm MSM8974/MSM8996/SDM845 ADSP Peripherial Image Loader");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/remoteproc/qcom_adsp_pil.h b/drivers/remoteproc/qcom_adsp_pil.h
-new file mode 100644
-index 0000000..29fd086
---- /dev/null
-+++ b/drivers/remoteproc/qcom_adsp_pil.h
-@@ -0,0 +1,86 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved
-+
-+#ifndef __QCOM_ADSP_PIL_H__
-+#define __QCOM_ADSP_PIL_H__
-+
-+#include <linux/platform_device.h>
-+#include "qcom_common.h"
-+
-+struct qcom_adsp;
-+
-+struct soc_ops {
-+	int (*bringup)(struct qcom_adsp *adsp);
-+	int (*bringdown)(struct qcom_adsp *adsp);
-+	int (*map_regs)(struct qcom_adsp *adsp, struct platform_device *pdev);
-+};
-+
-+struct adsp_data {
-+	int crash_reason_smem;
-+	const char *firmware_name;
-+	int pas_id;
-+	bool has_aggre2_clk;
-+	bool is_apss_controlled;
-+	const char *ssr_name;
-+	const char *sysmon_name;
-+	int ssctl_id;
-+	struct soc_ops *ops;
-+};
-+
-+struct qcom_adsp {
-+	struct device *dev;
-+	struct rproc *rproc;
-+
-+	int wdog_irq;
-+	int fatal_irq;
-+	int ready_irq;
-+	int handover_irq;
-+	int stop_ack_irq;
-+
-+	struct qcom_smem_state *state;
-+	unsigned int stop_bit;
-+
-+	struct clk *xo;
-+	struct clk *aggre2_clk;
-+
-+	struct regulator *cx_supply;
-+	struct regulator *px_supply;
-+
-+	int pas_id;
-+	int crash_reason_smem;
-+	bool has_aggre2_clk;
-+	bool is_apss_controlled;
-+
-+	struct completion start_done;
-+	struct completion stop_done;
-+
-+	phys_addr_t mem_phys;
-+	phys_addr_t mem_reloc;
-+	void *mem_region;
-+	size_t mem_size;
-+
-+	struct soc_ops *ops;
-+	void *priv_reg;
-+
-+	struct qcom_rproc_glink glink_subdev;
-+	struct qcom_rproc_subdev smd_subdev;
-+	struct qcom_rproc_ssr ssr_subdev;
-+	struct qcom_sysmon *sysmon;
-+};
-+
-+extern struct soc_ops sdm845_soc_ops;
-+
-+static inline void update_bits(void *reg, u32 mask_val, u32 set_val, u32 shift)
-+{
-+	u32 reg_val = 0;
-+
-+	reg_val = ((readl(reg)) & ~mask_val) | ((set_val << shift) & mask_val);
-+	writel(reg_val, reg);
-+}
-+
-+static inline unsigned int read_bit(void *reg, u32 mask, int shift)
-+{
-+	return ((readl(reg) & mask) >> shift);
-+}
-+
-+#endif
-diff --git a/drivers/remoteproc/qcom_adsp_pil_sdm845.c b/drivers/remoteproc/qcom_adsp_pil_sdm845.c
-new file mode 100644
-index 0000000..7518385
---- /dev/null
-+++ b/drivers/remoteproc/qcom_adsp_pil_sdm845.c
-@@ -0,0 +1,304 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm APSS Based ADSP bootup/shutdown ops for SDM845.
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+
-+#include "qcom_adsp_pil.h"
-+
-+/* set values */
-+#define CLK_ENABLE				0x1
-+#define CLK_DISABLE				0x0
-+/* time out value */
-+#define ACK_TIMEOUT				200000
-+/* mask values */
-+#define CLK_MASK				GENMASK(4, 0)
-+#define EVB_MASK				GENMASK(27, 4)
-+#define SPIN_CLKOFF_MASK			BIT(31)
-+#define AUDIO_SYNC_RESET_MASK			BIT(2)
-+#define CLK_ENABLE_MASK				BIT(0)
-+#define HAL_CLK_MASK				BIT(1)
-+/* GCC register offsets */
-+#define GCC_BASE				0x00147000
-+#define SWAY_CBCR_OFFSET			0x00000008
-+/*LPASS register base address and offsets*/
-+#define LPASS_BASE				0x17000000
-+#define AON_CBCR_OFFSET				0x00014098
-+#define CMD_RCGR_OFFSET				0x00014000
-+#define CFG_RCGR_OFFSET				0x00014004
-+#define AHBS_AON_CBCR_OFFSET			0x00033000
-+#define AHBM_AON_CBCR_OFFSET			0x00026000
-+/*QDSP6SS register base address and offsets*/
-+#define QDSP6SS_BASE				0x17300000
-+#define RST_EVB_OFFSET				0x00000010
-+#define SLEEP_CBCR_OFFSET			0x0000003C
-+#define XO_CBCR_OFFSET				0x00000038
-+#define CORE_CBCR_OFFSET			0x00000020
-+#define CORE_START_OFFSET			0x00000400
-+#define BOOT_CMD_OFFSET				0x00000404
-+#define BOOT_STATUS_OFFSET			0x00000408
-+#define RET_CFG_OFFSET				0x0000001C
-+/*TCSR register base address and offsets*/
-+#define TCSR_BASE				0x01F62000
-+#define TCSR_LPASS_MASTER_IDLE_OFFSET		0x00000008
-+#define TCSR_LPASS_HALTACK_OFFSET		0x00000004
-+#define TCSR_LPASS_PWR_ON_OFFSET		0x00000010
-+#define TCSR_LPASS_HALTREQ_OFFSET		0X00000000
-+
-+#define RPMH_PDC_SYNC_RESET_ADDR		0x0B2E0100
-+#define AOSS_CC_LPASS_RESTART_ADDR		0x0C2D0000
-+
-+struct sdm845_reg {
-+	void __iomem *gcc_base;
-+	void __iomem *lpass_base;
-+	void __iomem *qdsp6ss_base;
-+	void __iomem *tcsr_base;
-+	void __iomem *pdc_sync;
-+	void __iomem *cc_lpass;
-+};
-+
-+static int sdm845_map_registers(struct qcom_adsp *adsp,
-+				struct platform_device *pdev)
-+{
-+	struct sdm845_reg *reg;
-+
-+	adsp->priv_reg = devm_kzalloc(&pdev->dev, sizeof(struct sdm845_reg),
-+			GFP_KERNEL);
-+	if (!adsp->priv_reg)
-+		return -ENOMEM;
-+
-+	reg = adsp->priv_reg;
-+
-+	reg->gcc_base = devm_ioremap(adsp->dev, GCC_BASE, 0xc);
-+	if (!reg->gcc_base) {
-+		dev_err(adsp->dev, "%s: failed to map GCC base registers\n",
-+				__func__);
-+		return -ENOMEM;
-+	}
-+
-+	reg->lpass_base = devm_ioremap(adsp->dev, LPASS_BASE, 0x8E004);
-+	if (!reg->lpass_base) {
-+		dev_err(adsp->dev, "%s: failed to map LPASS base registers\n",
-+				__func__);
-+		return -ENOMEM;
-+	}
-+	reg->qdsp6ss_base =  devm_ioremap(adsp->dev, QDSP6SS_BASE, 0x40c);
-+	if (!reg->qdsp6ss_base) {
-+		dev_err(adsp->dev, "%s: failed to map QDSP6SS base registers\n",
-+				__func__);
-+		return -ENOMEM;
-+	}
-+	reg->tcsr_base = devm_ioremap(adsp->dev, TCSR_BASE, 0x14);
-+	if (!reg->tcsr_base) {
-+		dev_err(adsp->dev, "%s: failed to map TCSR base registers\n",
-+				__func__);
-+		return -ENOMEM;
-+	}
-+	reg->pdc_sync = devm_ioremap(adsp->dev, RPMH_PDC_SYNC_RESET_ADDR, 0x4);
-+	if (!reg->pdc_sync) {
-+		dev_err(adsp->dev, "%s: failed to map RPMH_PDC_SYNC_RESET register\n",
-+				__func__);
-+		return -ENOMEM;
-+	}
-+	reg->cc_lpass = devm_ioremap(adsp->dev, AOSS_CC_LPASS_RESTART_ADDR,
-+			0x4);
-+	if (!reg->cc_lpass) {
-+		dev_err(adsp->dev, "%s:failed to map AOSS_CC_LPASS_RESTART register\n",
-+				__func__);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static int clk_enable_spin(void *reg, int read_shift, int write_shift)
-+{
-+	u32 maxDelay = 500;
-+	u32 val;
-+
-+	update_bits(reg, CLK_ENABLE_MASK, CLK_ENABLE, write_shift);
-+	val = readl(reg);
-+	if (!(readl(reg) & HAL_CLK_MASK)) {
-+		/*
-+		 * wait for disabling of HW signal CLK_OFF to confirm that
-+		 * clock is actually ON.
-+		 */
-+		while (maxDelay-- && read_bit(reg, SPIN_CLKOFF_MASK,
-+							read_shift))
-+			udelay(1);
-+	}
-+	if (!maxDelay) {
-+		pr_err("%s: fail to update register = %p\n", __func__, reg);
-+		return -ETIMEDOUT;
-+	}
-+	return 0;
-+}
-+
-+static int sdm845_adsp_clk_enable(struct qcom_adsp *adsp)
-+{
-+	u32 ret;
-+	u32 maxDelay = 100;
-+	struct sdm845_reg *reg = adsp->priv_reg;
-+
-+	/* Enable SWAY clock */
-+	ret = clk_enable_spin(reg->gcc_base + SWAY_CBCR_OFFSET, CLK_MASK, 0x0);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable LPASS AHB AON Bus */
-+	ret = clk_enable_spin(reg->lpass_base + AON_CBCR_OFFSET, CLK_MASK, 0x0);
-+	if (ret)
-+		return ret;
-+
-+	/* Set the AON clock root to be sourced by XO */
-+	writel(CLK_DISABLE, reg->lpass_base + CFG_RCGR_OFFSET);
-+	writel(CLK_ENABLE, reg->lpass_base + CMD_RCGR_OFFSET);
-+
-+	while (read_bit((reg->lpass_base + CMD_RCGR_OFFSET), CLK_ENABLE, 0)
-+						&& maxDelay--)
-+		udelay(2);
-+
-+	if (!maxDelay) {
-+		pr_err("%s: fail to enable CMD_RCGR clock\n", __func__);
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* Enable the QDSP6SS AHBM and AHBS clocks */
-+	ret = clk_enable_spin(reg->lpass_base + AHBS_AON_CBCR_OFFSET,
-+				CLK_MASK, 0x0);
-+	if (ret)
-+		return ret;
-+	ret = clk_enable_spin(reg->lpass_base + AHBM_AON_CBCR_OFFSET,
-+				CLK_MASK, 0x0);
-+	if (ret)
-+		return ret;
-+
-+	/* Turn on the XO clock, required to boot FSM */
-+	update_bits(reg->qdsp6ss_base + XO_CBCR_OFFSET, CLK_ENABLE_MASK,
-+							CLK_ENABLE, 0x0);
-+
-+	/* Enable the QDSP6SS sleep clock for the QDSP6 watchdog enablement */
-+	update_bits(reg->qdsp6ss_base + SLEEP_CBCR_OFFSET,
-+					CLK_ENABLE_MASK, CLK_ENABLE, 0x0);
-+
-+	/* Configure QDSP6 core CBC to enable clock */
-+	update_bits(reg->qdsp6ss_base + CORE_CBCR_OFFSET, CLK_ENABLE_MASK,
-+					CLK_ENABLE, 0x0);
-+	return 0;
-+}
-+
-+static int sdm845_adsp_reset(struct qcom_adsp *adsp)
-+{
-+	u32 timeout = ACK_TIMEOUT;
-+	struct sdm845_reg *reg = adsp->priv_reg;
-+
-+	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset */
-+	update_bits(reg->qdsp6ss_base + CORE_START_OFFSET,
-+					CLK_ENABLE_MASK, CLK_ENABLE, 0x0);
-+	/* Trigger boot FSM to start QDSP6 */
-+	writel(CLK_ENABLE, reg->qdsp6ss_base + BOOT_CMD_OFFSET);
-+
-+	/* Wait for core to come out of reset */
-+	while ((!(readl(reg->qdsp6ss_base +
-+			BOOT_STATUS_OFFSET))) && (timeout-- > 0))
-+		udelay(5);
-+
-+	if (!timeout)
-+		return -ETIMEDOUT;
-+
-+	return 0;
-+}
-+
-+static int sdm845_bringup(struct qcom_adsp *adsp)
-+{
-+	u32 ret;
-+	struct sdm845_reg *reg = adsp->priv_reg;
-+
-+	ret = sdm845_adsp_clk_enable(adsp);
-+	if (ret) {
-+		dev_err(adsp->dev, "%s: sdm845_adsp_clk_enable failed\n",
-+				__func__);
-+		return ret;
-+	}
-+	/* Program boot address */
-+	update_bits(reg->qdsp6ss_base + RST_EVB_OFFSET,
-+				EVB_MASK, (adsp->mem_phys) >> 8, 0x4);
-+
-+	/* Wait for addresses to be programmed before starting adsp */
-+	mb();
-+	ret = sdm845_adsp_reset(adsp);
-+	if (ret)
-+		dev_err(adsp->dev, "%s: De-assert QDSP6 out of reset failed\n",
-+					__func__);
-+	return ret;
-+}
-+
-+static int sdm845_bringdown(struct qcom_adsp *adsp)
-+{
-+	u32 acktimeout = ACK_TIMEOUT;
-+	u32 temp;
-+	struct sdm845_reg *reg = adsp->priv_reg;
-+
-+	/* Reset the retention logic */
-+	update_bits(reg->qdsp6ss_base + RET_CFG_OFFSET,
-+			CLK_ENABLE_MASK, CLK_ENABLE, 0x0);
-+	/* Disable the slave way clock to LPASS */
-+	update_bits(reg->gcc_base + SWAY_CBCR_OFFSET,
-+			CLK_ENABLE_MASK, CLK_DISABLE, 0x0);
-+
-+	/* QDSP6 master port needs to be explicitly halted */
-+	temp = read_bit(reg->tcsr_base + TCSR_LPASS_PWR_ON_OFFSET,
-+			CLK_ENABLE, 0x0);
-+	temp = temp && !read_bit(reg->tcsr_base + TCSR_LPASS_MASTER_IDLE_OFFSET,
-+			CLK_ENABLE, 0x0);
-+	if (temp) {
-+		writel(CLK_ENABLE, reg->tcsr_base + TCSR_LPASS_HALTREQ_OFFSET);
-+		/*  Wait for halt ACK from QDSP6 */
-+		while ((read_bit(reg->tcsr_base + TCSR_LPASS_HALTACK_OFFSET,
-+				CLK_DISABLE, 0x0) == 0) && (acktimeout-- > 0))
-+			udelay(5);
-+
-+		if (acktimeout) {
-+			if (read_bit(reg->tcsr_base +
-+					TCSR_LPASS_MASTER_IDLE_OFFSET,
-+						CLK_ENABLE, 0x0) != 1)
-+				dev_warn(adsp->dev,
-+						"%s: failed to receive %s\n",
-+						__func__, "TCSR MASTER ACK");
-+		} else {
-+			dev_err(adsp->dev, "%s: failed to receive halt ack\n",
-+					__func__);
-+			return -ETIMEDOUT;
-+		}
-+	}
-+
-+	/* Assert the LPASS PDC Reset */
-+	update_bits(reg->pdc_sync,  AUDIO_SYNC_RESET_MASK,
-+			CLK_ENABLE, 0x2);
-+	/* Place the LPASS processor into reset */
-+	writel(CLK_ENABLE, reg->cc_lpass);
-+	/* wait after asserting subsystem restart from AOSS */
-+	udelay(200);
-+
-+	/* Clear the halt request for the AXIM and AHBM for Q6 */
-+	writel(CLK_DISABLE, reg->tcsr_base + TCSR_LPASS_HALTREQ_OFFSET);
-+
-+	/* De-assert the LPASS PDC Reset */
-+	update_bits(reg->pdc_sync, AUDIO_SYNC_RESET_MASK,
-+			CLK_DISABLE, 0x2);
-+	/* Remove the LPASS reset */
-+	writel(CLK_DISABLE, reg->cc_lpass);
-+	/* wait after de-asserting subsystem restart from AOSS */
-+	udelay(200);
-+
-+	return 0;
-+}
-+
-+struct soc_ops sdm845_soc_ops = {
-+	.bringup = sdm845_bringup,
-+	.bringdown = sdm845_bringdown,
-+	.map_regs = sdm845_map_registers,
-+};
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+SGkgQWxleCwNCg0KDQpUaGF0J3MgdGhlIGNvcnJlY3Qgc3ludGF4IChJIHdyb3RlIGl0IHdpdGgg
+dGhlIG9mZmljaWFsIGZvcm0gYSBmZXcgbGluZXMgDQpsYXRlciAoYWZ0ZXIgdGhlIFNpZ25lZC1v
+ZmYtYnkgLyBBY2tlZC1ieSkpLg0KDQpZb3UgY2FuIGFkZCBpdCB0byB0aGUgZnVsbCBwYXRjaCBz
+ZXQgKGFsdGhvdWdoIEkgdGVzdGVkIG9ubHkgdGhlIGNvcmUgDQpwYXJ0ICsgdGhlIGZ1dHVyZSBT
+VCBkcml2ZXIgcGFydCkNCg0KQlINCg0KDQpGYWJpZW4NCg0KDQoNCk9uIDI5LzA1LzE4IDE3OjMx
+LCBBbGV4IEVsZGVyIHdyb3RlOg0KPiBPbiAwNS8yOS8yMDE4IDEwOjMwIEFNLCBGYWJpZW4gREVT
+U0VOTkUgd3JvdGU6DQo+PiBIaSwNCj4+DQo+PiBBZGRpbmcgbXkgJ1Rlc3RlZC1ieScuDQo+IE5v
+cm1hbGx5IHlvdSB3b3VsZCBzYXk6DQo+DQo+ICAgICAgVGVzdGVkLWJ5OiBGYWJpZW4gREVTU0VO
+TkUgPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+DQo+DQo+IFRoZSByZWFzb24gaXQgbWlnaHQgYmUg
+aW1wb3J0YW50IGlzIHlvdSBtaWdodCB3aXNoIHRvIGluZGljYXRlIHRoZQ0KPiBuYW1lIGFuZC9v
+ciBlLW1haWwgYXMgc29tZXRoaW5nIGRpZmZlcmVudCBmcm9tIHdoYXQgeW91J3JlIG5vdw0KPiBz
+ZW5kaW5nIGZyb20uDQo+DQo+IElzIHdoYXQgSSB3cm90ZSBhYm92ZSB0aGUgd2F5IHlvdSB3b3Vs
+ZCBsaWtlIGl0IHRvIGFwcGVhcj8NCj4NCj4gSSB3aWxsIGFkZCB0aGF0IGxpbmUgdG8gZXZlcnkg
+b25lIG9mIG15IHBhdGNoZXMgd2hlbiBJIHVwZGF0ZSB0aGVtLg0KPg0KPiBUaGFua3MuDQo+DQo+
+IAkJCQkJLUFsZXgNCj4+IEJSLA0KPj4NCj4+IEZhYmllbg0KPj4NCj4+DQo+PiBPbiAyOS8wNS8x
+OCAxNzoyNiwgQXJuYXVkIFBvdWxpcXVlbiB3cm90ZToNCj4+PiBIaSBGYWJpZW4sDQo+Pj4gUGxl
+YXNlICwgY291bGQgeW91IGFkZCB5b3VyICJUZXN0ZWQtYnkiIGFzIHlvdSB0ZXN0IGl0IG9uIFNU
+IHBsYXRmb3JtPw0KPj4+DQo+Pj4gVGhhbmtzDQo+Pj4gQXJuYXVkDQo+Pj4NCj4+PiBPbiAwNS8x
+NS8yMDE4IDEwOjUzIFBNLCBBbGV4IEVsZGVyIHdyb3RlOg0KPj4+PiBGcm9tOiBCam9ybiBBbmRl
+cnNzb24gPGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnPg0KPj4+Pg0KPj4+PiBPbiByYXJlIG9j
+Y2FzaW9ucyBhIHN1YmRldmljZSBtaWdodCBuZWVkIHRvIHByZXBhcmUgc29tZSBoYXJkd2FyZQ0K
+Pj4+PiByZXNvdXJjZXMgYmVmb3JlIGEgcmVtb3RlIHByb2Nlc3NvciBpcyBib290ZWQsIGFuZCBj
+bGVhbiB1cCBzb21lDQo+Pj4+IHN0YXRlIGFmdGVyIGl0IGhhcyBiZWVuIHNodXQgZG93bi4NCj4+
+Pj4NCj4+Pj4gT25lIHN1Y2ggZXhhbXBsZSBpcyB0aGUgSVAgQWNjZWxlcmF0b3IgZm91bmQgaW4g
+dmFyaW91cyBRdWFsY29tbQ0KPj4+PiBwbGF0Zm9ybXMsIHdoaWNoIGlzIGFjY2Vzc2VkIGRpcmVj
+dGx5IGZyb20gYm90aCB0aGUgbW9kZW0gcmVtb3RlcHJvYw0KPj4+PiBhbmQgdGhlIGFwcGxpY2F0
+aW9uIHN1YnN5c3RlbSBhbmQgcmVxdWlyZXMgYW4gaW50cmljYXRlIGxvY2tzdGVwDQo+Pj4+IHBy
+b2Nlc3Mgd2hlbiBicmluZ2luZyB0aGUgbW9kZW0gdXAgYW5kIGRvd24uDQo+Pj4+DQo+Pj4+IFtl
+bGRlckBsaW5hcm8ub3JnOiBtaW5vciBkZXNjcmlwdGlvbiBhbmQgY29tbWVudCBlZGl0c10NCj4+
+Pj4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogQmpvcm4gQW5kZXJzc29uIDxiam9ybi5hbmRlcnNzb25A
+bGluYXJvLm9yZz4NCj4+Pj4gQWNrZWQtYnk6IEFsZXggRWxkZXIgPGVsZGVyQGxpbmFyby5vcmc+
+DQo+PiBUZXN0ZWQtYnk6IEZhYmllbiBEZXNzZW5uZSA8ZmFiaWVuLmRlc3Nlbm5lQHN0LmNvbT4N
+Cj4+DQo+Pj4+IC0tLQ0KPj4+PiAgICBkcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3Jl
+LmMgfCA1NiArKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+Pj4+ICAgIGluY2x1ZGUvbGlu
+dXgvcmVtb3RlcHJvYy5oICAgICAgICAgICB8ICA0ICsrDQo+Pj4+ICAgIDIgZmlsZXMgY2hhbmdl
+ZCwgNTcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4+Pj4NCj4+Pj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyBiL2RyaXZlcnMvcmVtb3Rl
+cHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPj4+PiBpbmRleCAyZWRlN2FlNmY1YmMuLjI4M2IyNThm
+NWUwZiAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29y
+ZS5jDQo+Pj4+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPj4+
+PiBAQCAtNzc2LDYgKzc3NiwzMCBAQCBzdGF0aWMgaW50IHJwcm9jX2hhbmRsZV9yZXNvdXJjZXMo
+c3RydWN0IHJwcm9jICpycHJvYywNCj4+Pj4gICAgCXJldHVybiByZXQ7DQo+Pj4+ICAgIH0NCj4+
+Pj4gICAgDQo+Pj4+ICtzdGF0aWMgaW50IHJwcm9jX3ByZXBhcmVfc3ViZGV2aWNlcyhzdHJ1Y3Qg
+cnByb2MgKnJwcm9jKQ0KPj4+PiArew0KPj4+PiArCXN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRl
+djsNCj4+Pj4gKwlpbnQgcmV0Ow0KPj4+PiArDQo+Pj4+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeShz
+dWJkZXYsICZycHJvYy0+c3ViZGV2cywgbm9kZSkgew0KPj4+PiArCQlpZiAoc3ViZGV2LT5wcmVw
+YXJlKSB7DQo+Pj4+ICsJCQlyZXQgPSBzdWJkZXYtPnByZXBhcmUoc3ViZGV2KTsNCj4+Pj4gKwkJ
+CWlmIChyZXQpDQo+Pj4+ICsJCQkJZ290byB1bnJvbGxfcHJlcGFyYXRpb247DQo+Pj4+ICsJCX0N
+Cj4+Pj4gKwl9DQo+Pj4+ICsNCj4+Pj4gKwlyZXR1cm4gMDsNCj4+Pj4gKw0KPj4+PiArdW5yb2xs
+X3ByZXBhcmF0aW9uOg0KPj4+PiArCWxpc3RfZm9yX2VhY2hfZW50cnlfY29udGludWVfcmV2ZXJz
+ZShzdWJkZXYsICZycHJvYy0+c3ViZGV2cywgbm9kZSkgew0KPj4+PiArCQlpZiAoc3ViZGV2LT51
+bnByZXBhcmUpDQo+Pj4+ICsJCQlzdWJkZXYtPnVucHJlcGFyZShzdWJkZXYpOw0KPj4+PiArCX0N
+Cj4+Pj4gKw0KPj4+PiArCXJldHVybiByZXQ7DQo+Pj4+ICt9DQo+Pj4+ICsNCj4+Pj4gICAgc3Rh
+dGljIGludCBycHJvY19zdGFydF9zdWJkZXZpY2VzKHN0cnVjdCBycHJvYyAqcnByb2MpDQo+Pj4+
+ICAgIHsNCj4+Pj4gICAgCXN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRldjsNCj4+Pj4gQEAgLTgx
+MCw2ICs4MzQsMTYgQEAgc3RhdGljIHZvaWQgcnByb2Nfc3RvcF9zdWJkZXZpY2VzKHN0cnVjdCBy
+cHJvYyAqcnByb2MsIGJvb2wgY3Jhc2hlZCkNCj4+Pj4gICAgCX0NCj4+Pj4gICAgfQ0KPj4+PiAg
+ICANCj4+Pj4gK3N0YXRpYyB2b2lkIHJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHN0cnVjdCBy
+cHJvYyAqcnByb2MpDQo+Pj4+ICt7DQo+Pj4+ICsJc3RydWN0IHJwcm9jX3N1YmRldiAqc3ViZGV2
+Ow0KPj4+PiArDQo+Pj4+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeV9yZXZlcnNlKHN1YmRldiwgJnJw
+cm9jLT5zdWJkZXZzLCBub2RlKSB7DQo+Pj4+ICsJCWlmIChzdWJkZXYtPnVucHJlcGFyZSkNCj4+
+Pj4gKwkJCXN1YmRldi0+dW5wcmVwYXJlKHN1YmRldik7DQo+Pj4+ICsJfQ0KPj4+PiArfQ0KPj4+
+PiArDQo+Pj4+ICAgIC8qKg0KPj4+PiAgICAgKiBycHJvY19jb3JlZHVtcF9jbGVhbnVwKCkgLSBj
+bGVhbiB1cCBkdW1wX3NlZ21lbnRzIGxpc3QNCj4+Pj4gICAgICogQHJwcm9jOiB0aGUgcmVtb3Rl
+IHByb2Nlc3NvciBoYW5kbGUNCj4+Pj4gQEAgLTkwMiwxMSArOTM2LDE4IEBAIHN0YXRpYyBpbnQg
+cnByb2Nfc3RhcnQoc3RydWN0IHJwcm9jICpycHJvYywgY29uc3Qgc3RydWN0IGZpcm13YXJlICpm
+dykNCj4+Pj4gICAgCQlycHJvYy0+dGFibGVfcHRyID0gbG9hZGVkX3RhYmxlOw0KPj4+PiAgICAJ
+fQ0KPj4+PiAgICANCj4+Pj4gKwlyZXQgPSBycHJvY19wcmVwYXJlX3N1YmRldmljZXMocnByb2Mp
+Ow0KPj4+PiArCWlmIChyZXQpIHsNCj4+Pj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gcHJl
+cGFyZSBzdWJkZXZpY2VzIGZvciAlczogJWRcbiIsDQo+Pj4+ICsJCQlycHJvYy0+bmFtZSwgcmV0
+KTsNCj4+Pj4gKwkJcmV0dXJuIHJldDsNCj4+Pj4gKwl9DQo+Pj4+ICsNCj4+Pj4gICAgCS8qIHBv
+d2VyIHVwIHRoZSByZW1vdGUgcHJvY2Vzc29yICovDQo+Pj4+ICAgIAlyZXQgPSBycHJvYy0+b3Bz
+LT5zdGFydChycHJvYyk7DQo+Pj4+ICAgIAlpZiAocmV0KSB7DQo+Pj4+ICAgIAkJZGV2X2Vycihk
+ZXYsICJjYW4ndCBzdGFydCBycHJvYyAlczogJWRcbiIsIHJwcm9jLT5uYW1lLCByZXQpOw0KPj4+
+PiAtCQlyZXR1cm4gcmV0Ow0KPj4+PiArCQlnb3RvIHVucHJlcGFyZV9zdWJkZXZpY2VzOw0KPj4+
+PiAgICAJfQ0KPj4+PiAgICANCj4+Pj4gICAgCS8qIFN0YXJ0IGFueSBzdWJkZXZpY2VzIGZvciB0
+aGUgcmVtb3RlIHByb2Nlc3NvciAqLw0KPj4+PiBAQCAtOTE0LDggKzk1NSw3IEBAIHN0YXRpYyBp
+bnQgcnByb2Nfc3RhcnQoc3RydWN0IHJwcm9jICpycHJvYywgY29uc3Qgc3RydWN0IGZpcm13YXJl
+ICpmdykNCj4+Pj4gICAgCWlmIChyZXQpIHsNCj4+Pj4gICAgCQlkZXZfZXJyKGRldiwgImZhaWxl
+ZCB0byBwcm9iZSBzdWJkZXZpY2VzIGZvciAlczogJWRcbiIsDQo+Pj4+ICAgIAkJCXJwcm9jLT5u
+YW1lLCByZXQpOw0KPj4+PiAtCQlycHJvYy0+b3BzLT5zdG9wKHJwcm9jKTsNCj4+Pj4gLQkJcmV0
+dXJuIHJldDsNCj4+Pj4gKwkJZ290byBzdG9wX3Jwcm9jOw0KPj4+PiAgICAJfQ0KPj4+PiAgICAN
+Cj4+Pj4gICAgCXJwcm9jLT5zdGF0ZSA9IFJQUk9DX1JVTk5JTkc7DQo+Pj4+IEBAIC05MjMsNiAr
+OTYzLDE0IEBAIHN0YXRpYyBpbnQgcnByb2Nfc3RhcnQoc3RydWN0IHJwcm9jICpycHJvYywgY29u
+c3Qgc3RydWN0IGZpcm13YXJlICpmdykNCj4+Pj4gICAgCWRldl9pbmZvKGRldiwgInJlbW90ZSBw
+cm9jZXNzb3IgJXMgaXMgbm93IHVwXG4iLCBycHJvYy0+bmFtZSk7DQo+Pj4+ICAgIA0KPj4+PiAg
+ICAJcmV0dXJuIDA7DQo+Pj4+ICsNCj4+Pj4gK3N0b3BfcnByb2M6DQo+Pj4+ICsJcnByb2MtPm9w
+cy0+c3RvcChycHJvYyk7DQo+Pj4+ICsNCj4+Pj4gK3VucHJlcGFyZV9zdWJkZXZpY2VzOg0KPj4+
+PiArCXJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHJwcm9jKTsNCj4+Pj4gKw0KPj4+PiArCXJl
+dHVybiByZXQ7DQo+Pj4+ICAgIH0NCj4+Pj4gICAgDQo+Pj4+ICAgIC8qDQo+Pj4+IEBAIC0xMDM1
+LDYgKzEwODMsOCBAQCBzdGF0aWMgaW50IHJwcm9jX3N0b3Aoc3RydWN0IHJwcm9jICpycHJvYywg
+Ym9vbCBjcmFzaGVkKQ0KPj4+PiAgICAJCXJldHVybiByZXQ7DQo+Pj4+ICAgIAl9DQo+Pj4+ICAg
+IA0KPj4+PiArCXJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHJwcm9jKTsNCj4+Pj4gKw0KPj4+
+PiAgICAJcnByb2MtPnN0YXRlID0gUlBST0NfT0ZGTElORTsNCj4+Pj4gICAgDQo+Pj4+ICAgIAlk
+ZXZfaW5mbyhkZXYsICJzdG9wcGVkIHJlbW90ZSBwcm9jZXNzb3IgJXNcbiIsIHJwcm9jLT5uYW1l
+KTsNCj4+Pj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oIGIvaW5jbHVk
+ZS9saW51eC9yZW1vdGVwcm9jLmgNCj4+Pj4gaW5kZXggOGYxNDI2MzMwY2NhLi5lM2M1ZDg1NmI2
+ZGEgMTAwNjQ0DQo+Pj4+IC0tLSBhL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+Pj4+ICsr
+KyBiL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+Pj4+IEBAIC00NzcsMTUgKzQ3NywxOSBA
+QCBzdHJ1Y3QgcnByb2Mgew0KPj4+PiAgICAvKioNCj4+Pj4gICAgICogc3RydWN0IHJwcm9jX3N1
+YmRldiAtIHN1YmRldmljZSB0aWVkIHRvIGEgcmVtb3RlcHJvYw0KPj4+PiAgICAgKiBAbm9kZTog
+bGlzdCBub2RlIHJlbGF0ZWQgdG8gdGhlIHJwcm9jIHN1YmRldnMgbGlzdA0KPj4+PiArICogQHBy
+ZXBhcmU6IHByZXBhcmUgZnVuY3Rpb24sIGNhbGxlZCBiZWZvcmUgdGhlIHJwcm9jIGlzIHN0YXJ0
+ZWQNCj4+Pj4gICAgICogQHN0YXJ0OiBzdGFydCBmdW5jdGlvbiwgY2FsbGVkIGFmdGVyIHRoZSBy
+cHJvYyBoYXMgYmVlbiBzdGFydGVkDQo+Pj4+ICAgICAqIEBzdG9wOiBzdG9wIGZ1bmN0aW9uLCBj
+YWxsZWQgYmVmb3JlIHRoZSBycHJvYyBpcyBzdG9wcGVkOyB0aGUgQGNyYXNoZWQNCj4+Pj4gICAg
+ICoJICAgIHBhcmFtZXRlciBpbmRpY2F0ZXMgaWYgdGhpcyBvcmlnaW5hdGVzIGZyb20gYSByZWNv
+dmVyeQ0KPj4+PiArICogQHVucHJlcGFyZTogdW5wcmVwYXJlIGZ1bmN0aW9uLCBjYWxsZWQgYWZ0
+ZXIgdGhlIHJwcm9jIGhhcyBiZWVuIHN0b3BwZWQNCj4+Pj4gICAgICovDQo+Pj4+ICAgIHN0cnVj
+dCBycHJvY19zdWJkZXYgew0KPj4+PiAgICAJc3RydWN0IGxpc3RfaGVhZCBub2RlOw0KPj4+PiAg
+ICANCj4+Pj4gKwlpbnQgKCpwcmVwYXJlKShzdHJ1Y3QgcnByb2Nfc3ViZGV2ICpzdWJkZXYpOw0K
+Pj4+PiAgICAJaW50ICgqc3RhcnQpKHN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRldik7DQo+Pj4+
+ICAgIAl2b2lkICgqc3RvcCkoc3RydWN0IHJwcm9jX3N1YmRldiAqc3ViZGV2LCBib29sIGNyYXNo
+ZWQpOw0KPj4+PiArCXZvaWQgKCp1bnByZXBhcmUpKHN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRl
+dik7DQo+Pj4+ICAgIH07DQo+Pj4+ICAgIA0KPj4+PiAgICAvKiB3ZSBjdXJyZW50bHkgc3VwcG9y
+dCBvbmx5IHR3byB2cmluZ3MgcGVyIHJ2ZGV2ICovDQo+Pj4+DQo=
