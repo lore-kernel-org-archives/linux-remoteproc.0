@@ -1,26 +1,32 @@
-Return-Path: <robh@kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <3ef231eb-b6c4-b173-89fe-88e376a30b72@codeaurora.org>
-References: <20180521172714.8551-1-sibis@codeaurora.org> <20180521172714.8551-6-sibis@codeaurora.org>
- <20180522155626.GA2744@rob-hp-laptop> <3ef231eb-b6c4-b173-89fe-88e376a30b72@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 29 May 2018 10:45:30 -0500
-Message-ID: <CAL_Jsq++NFBfjhirWXAengow5K0ZRz7Qm2P+RGi+jQkVxJ9vNQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/8] dt-bindings: remoteproc: Add Q6v5 Modem PIL
- binding for SDM845
-Content-Type: text/plain; charset="UTF-8"
-To: Sibi S <sibis@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org, Georgi Djakov <georgi.djakov@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, Kyle Yan <kyan@codeaurora.org>, Sricharan <sricharan@codeaurora.org>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Trilok Soni <tsoni@codeaurora.org>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v5 5/8] dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
+Date: Tue, 29 May 2018 20:11:15 +0530
+Message-Id: <20180529144115.28981-1-sibis@codeaurora.org>
+To: robh+dt@kernel.org
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, p.zabel@pengutronix.de, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, May 29, 2018 at 9:37 AM, Sibi S <sibis@codeaurora.org> wrote:
-> Hi Rob,
-> Will send it out again.
+Add new compatible string for Qualcomm SDM845 SoCs
 
-Please don't top post on mail lists.
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-You don't need to resend *just* to add tags. A new version just needs
-them because maintainers aren't going to go search through your prior
-versions for you to add them. But my mentioning it should be enough.
-
-Rob
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 00d3d58a102f..d90182425450 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -11,6 +11,7 @@ on the Qualcomm Hexagon core.
+ 		    "qcom,msm8916-mss-pil",
+ 		    "qcom,msm8974-mss-pil"
+ 		    "qcom,msm8996-mss-pil"
++		    "qcom,sdm845-mss-pil"
+ 
+ - reg:
+ 	Usage: required
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
