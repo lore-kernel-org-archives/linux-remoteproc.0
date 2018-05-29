@@ -1,137 +1,208 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
 Subject: Re: [PATCH 5/5] remoteproc: Introduce prepare and unprepare for
  subdevices
-Date: Tue, 29 May 2018 15:44:51 +0000
-Message-ID: <ffa85ea6-fc01-b853-d89e-fec7ae7a90a4@st.com>
 References: <20180515205345.8090-1-elder@linaro.org>
  <20180515205345.8090-6-elder@linaro.org>
  <90ecf369-517c-1741-0af2-c1988986d2a9@st.com>
  <872c26d7-52ff-d82f-373e-236fd713ec33@st.com>
- <b4497e23-fbc2-e739-07ed-af78273cce09@linaro.org>
-In-Reply-To: <b4497e23-fbc2-e739-07ed-af78273cce09@linaro.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6B7F6B418CA96A4E97BC53A469A0CEF9@st.com>
-Content-Transfer-Encoding: base64
+From: Alex Elder <elder@linaro.org>
+Message-ID: <b4497e23-fbc2-e739-07ed-af78273cce09@linaro.org>
+Date: Tue, 29 May 2018 10:31:49 -0500
 MIME-Version: 1.0
-To: Alex Elder <elder@linaro.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+In-Reply-To: <872c26d7-52ff-d82f-373e-236fd713ec33@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Fabien DESSENNE <fabien.dessenne@st.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
 Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgQWxleCwNCg0KDQpUaGF0J3MgdGhlIGNvcnJlY3Qgc3ludGF4IChJIHdyb3RlIGl0IHdpdGgg
-dGhlIG9mZmljaWFsIGZvcm0gYSBmZXcgbGluZXMgDQpsYXRlciAoYWZ0ZXIgdGhlIFNpZ25lZC1v
-ZmYtYnkgLyBBY2tlZC1ieSkpLg0KDQpZb3UgY2FuIGFkZCBpdCB0byB0aGUgZnVsbCBwYXRjaCBz
-ZXQgKGFsdGhvdWdoIEkgdGVzdGVkIG9ubHkgdGhlIGNvcmUgDQpwYXJ0ICsgdGhlIGZ1dHVyZSBT
-VCBkcml2ZXIgcGFydCkNCg0KQlINCg0KDQpGYWJpZW4NCg0KDQoNCk9uIDI5LzA1LzE4IDE3OjMx
-LCBBbGV4IEVsZGVyIHdyb3RlOg0KPiBPbiAwNS8yOS8yMDE4IDEwOjMwIEFNLCBGYWJpZW4gREVT
-U0VOTkUgd3JvdGU6DQo+PiBIaSwNCj4+DQo+PiBBZGRpbmcgbXkgJ1Rlc3RlZC1ieScuDQo+IE5v
-cm1hbGx5IHlvdSB3b3VsZCBzYXk6DQo+DQo+ICAgICAgVGVzdGVkLWJ5OiBGYWJpZW4gREVTU0VO
-TkUgPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+DQo+DQo+IFRoZSByZWFzb24gaXQgbWlnaHQgYmUg
-aW1wb3J0YW50IGlzIHlvdSBtaWdodCB3aXNoIHRvIGluZGljYXRlIHRoZQ0KPiBuYW1lIGFuZC9v
-ciBlLW1haWwgYXMgc29tZXRoaW5nIGRpZmZlcmVudCBmcm9tIHdoYXQgeW91J3JlIG5vdw0KPiBz
-ZW5kaW5nIGZyb20uDQo+DQo+IElzIHdoYXQgSSB3cm90ZSBhYm92ZSB0aGUgd2F5IHlvdSB3b3Vs
-ZCBsaWtlIGl0IHRvIGFwcGVhcj8NCj4NCj4gSSB3aWxsIGFkZCB0aGF0IGxpbmUgdG8gZXZlcnkg
-b25lIG9mIG15IHBhdGNoZXMgd2hlbiBJIHVwZGF0ZSB0aGVtLg0KPg0KPiBUaGFua3MuDQo+DQo+
-IAkJCQkJLUFsZXgNCj4+IEJSLA0KPj4NCj4+IEZhYmllbg0KPj4NCj4+DQo+PiBPbiAyOS8wNS8x
-OCAxNzoyNiwgQXJuYXVkIFBvdWxpcXVlbiB3cm90ZToNCj4+PiBIaSBGYWJpZW4sDQo+Pj4gUGxl
-YXNlICwgY291bGQgeW91IGFkZCB5b3VyICJUZXN0ZWQtYnkiIGFzIHlvdSB0ZXN0IGl0IG9uIFNU
-IHBsYXRmb3JtPw0KPj4+DQo+Pj4gVGhhbmtzDQo+Pj4gQXJuYXVkDQo+Pj4NCj4+PiBPbiAwNS8x
-NS8yMDE4IDEwOjUzIFBNLCBBbGV4IEVsZGVyIHdyb3RlOg0KPj4+PiBGcm9tOiBCam9ybiBBbmRl
-cnNzb24gPGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnPg0KPj4+Pg0KPj4+PiBPbiByYXJlIG9j
-Y2FzaW9ucyBhIHN1YmRldmljZSBtaWdodCBuZWVkIHRvIHByZXBhcmUgc29tZSBoYXJkd2FyZQ0K
-Pj4+PiByZXNvdXJjZXMgYmVmb3JlIGEgcmVtb3RlIHByb2Nlc3NvciBpcyBib290ZWQsIGFuZCBj
-bGVhbiB1cCBzb21lDQo+Pj4+IHN0YXRlIGFmdGVyIGl0IGhhcyBiZWVuIHNodXQgZG93bi4NCj4+
-Pj4NCj4+Pj4gT25lIHN1Y2ggZXhhbXBsZSBpcyB0aGUgSVAgQWNjZWxlcmF0b3IgZm91bmQgaW4g
-dmFyaW91cyBRdWFsY29tbQ0KPj4+PiBwbGF0Zm9ybXMsIHdoaWNoIGlzIGFjY2Vzc2VkIGRpcmVj
-dGx5IGZyb20gYm90aCB0aGUgbW9kZW0gcmVtb3RlcHJvYw0KPj4+PiBhbmQgdGhlIGFwcGxpY2F0
-aW9uIHN1YnN5c3RlbSBhbmQgcmVxdWlyZXMgYW4gaW50cmljYXRlIGxvY2tzdGVwDQo+Pj4+IHBy
-b2Nlc3Mgd2hlbiBicmluZ2luZyB0aGUgbW9kZW0gdXAgYW5kIGRvd24uDQo+Pj4+DQo+Pj4+IFtl
-bGRlckBsaW5hcm8ub3JnOiBtaW5vciBkZXNjcmlwdGlvbiBhbmQgY29tbWVudCBlZGl0c10NCj4+
-Pj4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogQmpvcm4gQW5kZXJzc29uIDxiam9ybi5hbmRlcnNzb25A
-bGluYXJvLm9yZz4NCj4+Pj4gQWNrZWQtYnk6IEFsZXggRWxkZXIgPGVsZGVyQGxpbmFyby5vcmc+
-DQo+PiBUZXN0ZWQtYnk6IEZhYmllbiBEZXNzZW5uZSA8ZmFiaWVuLmRlc3Nlbm5lQHN0LmNvbT4N
-Cj4+DQo+Pj4+IC0tLQ0KPj4+PiAgICBkcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3Jl
-LmMgfCA1NiArKysrKysrKysrKysrKysrKysrKysrKysrKy0tDQo+Pj4+ICAgIGluY2x1ZGUvbGlu
-dXgvcmVtb3RlcHJvYy5oICAgICAgICAgICB8ICA0ICsrDQo+Pj4+ICAgIDIgZmlsZXMgY2hhbmdl
-ZCwgNTcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4+Pj4NCj4+Pj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyBiL2RyaXZlcnMvcmVtb3Rl
-cHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPj4+PiBpbmRleCAyZWRlN2FlNmY1YmMuLjI4M2IyNThm
-NWUwZiAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29y
-ZS5jDQo+Pj4+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPj4+
-PiBAQCAtNzc2LDYgKzc3NiwzMCBAQCBzdGF0aWMgaW50IHJwcm9jX2hhbmRsZV9yZXNvdXJjZXMo
-c3RydWN0IHJwcm9jICpycHJvYywNCj4+Pj4gICAgCXJldHVybiByZXQ7DQo+Pj4+ICAgIH0NCj4+
-Pj4gICAgDQo+Pj4+ICtzdGF0aWMgaW50IHJwcm9jX3ByZXBhcmVfc3ViZGV2aWNlcyhzdHJ1Y3Qg
-cnByb2MgKnJwcm9jKQ0KPj4+PiArew0KPj4+PiArCXN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRl
-djsNCj4+Pj4gKwlpbnQgcmV0Ow0KPj4+PiArDQo+Pj4+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeShz
-dWJkZXYsICZycHJvYy0+c3ViZGV2cywgbm9kZSkgew0KPj4+PiArCQlpZiAoc3ViZGV2LT5wcmVw
-YXJlKSB7DQo+Pj4+ICsJCQlyZXQgPSBzdWJkZXYtPnByZXBhcmUoc3ViZGV2KTsNCj4+Pj4gKwkJ
-CWlmIChyZXQpDQo+Pj4+ICsJCQkJZ290byB1bnJvbGxfcHJlcGFyYXRpb247DQo+Pj4+ICsJCX0N
-Cj4+Pj4gKwl9DQo+Pj4+ICsNCj4+Pj4gKwlyZXR1cm4gMDsNCj4+Pj4gKw0KPj4+PiArdW5yb2xs
-X3ByZXBhcmF0aW9uOg0KPj4+PiArCWxpc3RfZm9yX2VhY2hfZW50cnlfY29udGludWVfcmV2ZXJz
-ZShzdWJkZXYsICZycHJvYy0+c3ViZGV2cywgbm9kZSkgew0KPj4+PiArCQlpZiAoc3ViZGV2LT51
-bnByZXBhcmUpDQo+Pj4+ICsJCQlzdWJkZXYtPnVucHJlcGFyZShzdWJkZXYpOw0KPj4+PiArCX0N
-Cj4+Pj4gKw0KPj4+PiArCXJldHVybiByZXQ7DQo+Pj4+ICt9DQo+Pj4+ICsNCj4+Pj4gICAgc3Rh
-dGljIGludCBycHJvY19zdGFydF9zdWJkZXZpY2VzKHN0cnVjdCBycHJvYyAqcnByb2MpDQo+Pj4+
-ICAgIHsNCj4+Pj4gICAgCXN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRldjsNCj4+Pj4gQEAgLTgx
-MCw2ICs4MzQsMTYgQEAgc3RhdGljIHZvaWQgcnByb2Nfc3RvcF9zdWJkZXZpY2VzKHN0cnVjdCBy
-cHJvYyAqcnByb2MsIGJvb2wgY3Jhc2hlZCkNCj4+Pj4gICAgCX0NCj4+Pj4gICAgfQ0KPj4+PiAg
-ICANCj4+Pj4gK3N0YXRpYyB2b2lkIHJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHN0cnVjdCBy
-cHJvYyAqcnByb2MpDQo+Pj4+ICt7DQo+Pj4+ICsJc3RydWN0IHJwcm9jX3N1YmRldiAqc3ViZGV2
-Ow0KPj4+PiArDQo+Pj4+ICsJbGlzdF9mb3JfZWFjaF9lbnRyeV9yZXZlcnNlKHN1YmRldiwgJnJw
-cm9jLT5zdWJkZXZzLCBub2RlKSB7DQo+Pj4+ICsJCWlmIChzdWJkZXYtPnVucHJlcGFyZSkNCj4+
-Pj4gKwkJCXN1YmRldi0+dW5wcmVwYXJlKHN1YmRldik7DQo+Pj4+ICsJfQ0KPj4+PiArfQ0KPj4+
-PiArDQo+Pj4+ICAgIC8qKg0KPj4+PiAgICAgKiBycHJvY19jb3JlZHVtcF9jbGVhbnVwKCkgLSBj
-bGVhbiB1cCBkdW1wX3NlZ21lbnRzIGxpc3QNCj4+Pj4gICAgICogQHJwcm9jOiB0aGUgcmVtb3Rl
-IHByb2Nlc3NvciBoYW5kbGUNCj4+Pj4gQEAgLTkwMiwxMSArOTM2LDE4IEBAIHN0YXRpYyBpbnQg
-cnByb2Nfc3RhcnQoc3RydWN0IHJwcm9jICpycHJvYywgY29uc3Qgc3RydWN0IGZpcm13YXJlICpm
-dykNCj4+Pj4gICAgCQlycHJvYy0+dGFibGVfcHRyID0gbG9hZGVkX3RhYmxlOw0KPj4+PiAgICAJ
-fQ0KPj4+PiAgICANCj4+Pj4gKwlyZXQgPSBycHJvY19wcmVwYXJlX3N1YmRldmljZXMocnByb2Mp
-Ow0KPj4+PiArCWlmIChyZXQpIHsNCj4+Pj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gcHJl
-cGFyZSBzdWJkZXZpY2VzIGZvciAlczogJWRcbiIsDQo+Pj4+ICsJCQlycHJvYy0+bmFtZSwgcmV0
-KTsNCj4+Pj4gKwkJcmV0dXJuIHJldDsNCj4+Pj4gKwl9DQo+Pj4+ICsNCj4+Pj4gICAgCS8qIHBv
-d2VyIHVwIHRoZSByZW1vdGUgcHJvY2Vzc29yICovDQo+Pj4+ICAgIAlyZXQgPSBycHJvYy0+b3Bz
-LT5zdGFydChycHJvYyk7DQo+Pj4+ICAgIAlpZiAocmV0KSB7DQo+Pj4+ICAgIAkJZGV2X2Vycihk
-ZXYsICJjYW4ndCBzdGFydCBycHJvYyAlczogJWRcbiIsIHJwcm9jLT5uYW1lLCByZXQpOw0KPj4+
-PiAtCQlyZXR1cm4gcmV0Ow0KPj4+PiArCQlnb3RvIHVucHJlcGFyZV9zdWJkZXZpY2VzOw0KPj4+
-PiAgICAJfQ0KPj4+PiAgICANCj4+Pj4gICAgCS8qIFN0YXJ0IGFueSBzdWJkZXZpY2VzIGZvciB0
-aGUgcmVtb3RlIHByb2Nlc3NvciAqLw0KPj4+PiBAQCAtOTE0LDggKzk1NSw3IEBAIHN0YXRpYyBp
-bnQgcnByb2Nfc3RhcnQoc3RydWN0IHJwcm9jICpycHJvYywgY29uc3Qgc3RydWN0IGZpcm13YXJl
-ICpmdykNCj4+Pj4gICAgCWlmIChyZXQpIHsNCj4+Pj4gICAgCQlkZXZfZXJyKGRldiwgImZhaWxl
-ZCB0byBwcm9iZSBzdWJkZXZpY2VzIGZvciAlczogJWRcbiIsDQo+Pj4+ICAgIAkJCXJwcm9jLT5u
-YW1lLCByZXQpOw0KPj4+PiAtCQlycHJvYy0+b3BzLT5zdG9wKHJwcm9jKTsNCj4+Pj4gLQkJcmV0
-dXJuIHJldDsNCj4+Pj4gKwkJZ290byBzdG9wX3Jwcm9jOw0KPj4+PiAgICAJfQ0KPj4+PiAgICAN
-Cj4+Pj4gICAgCXJwcm9jLT5zdGF0ZSA9IFJQUk9DX1JVTk5JTkc7DQo+Pj4+IEBAIC05MjMsNiAr
-OTYzLDE0IEBAIHN0YXRpYyBpbnQgcnByb2Nfc3RhcnQoc3RydWN0IHJwcm9jICpycHJvYywgY29u
-c3Qgc3RydWN0IGZpcm13YXJlICpmdykNCj4+Pj4gICAgCWRldl9pbmZvKGRldiwgInJlbW90ZSBw
-cm9jZXNzb3IgJXMgaXMgbm93IHVwXG4iLCBycHJvYy0+bmFtZSk7DQo+Pj4+ICAgIA0KPj4+PiAg
-ICAJcmV0dXJuIDA7DQo+Pj4+ICsNCj4+Pj4gK3N0b3BfcnByb2M6DQo+Pj4+ICsJcnByb2MtPm9w
-cy0+c3RvcChycHJvYyk7DQo+Pj4+ICsNCj4+Pj4gK3VucHJlcGFyZV9zdWJkZXZpY2VzOg0KPj4+
-PiArCXJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHJwcm9jKTsNCj4+Pj4gKw0KPj4+PiArCXJl
-dHVybiByZXQ7DQo+Pj4+ICAgIH0NCj4+Pj4gICAgDQo+Pj4+ICAgIC8qDQo+Pj4+IEBAIC0xMDM1
-LDYgKzEwODMsOCBAQCBzdGF0aWMgaW50IHJwcm9jX3N0b3Aoc3RydWN0IHJwcm9jICpycHJvYywg
-Ym9vbCBjcmFzaGVkKQ0KPj4+PiAgICAJCXJldHVybiByZXQ7DQo+Pj4+ICAgIAl9DQo+Pj4+ICAg
-IA0KPj4+PiArCXJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHJwcm9jKTsNCj4+Pj4gKw0KPj4+
-PiAgICAJcnByb2MtPnN0YXRlID0gUlBST0NfT0ZGTElORTsNCj4+Pj4gICAgDQo+Pj4+ICAgIAlk
-ZXZfaW5mbyhkZXYsICJzdG9wcGVkIHJlbW90ZSBwcm9jZXNzb3IgJXNcbiIsIHJwcm9jLT5uYW1l
-KTsNCj4+Pj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oIGIvaW5jbHVk
-ZS9saW51eC9yZW1vdGVwcm9jLmgNCj4+Pj4gaW5kZXggOGYxNDI2MzMwY2NhLi5lM2M1ZDg1NmI2
-ZGEgMTAwNjQ0DQo+Pj4+IC0tLSBhL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+Pj4+ICsr
-KyBiL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+Pj4+IEBAIC00NzcsMTUgKzQ3NywxOSBA
-QCBzdHJ1Y3QgcnByb2Mgew0KPj4+PiAgICAvKioNCj4+Pj4gICAgICogc3RydWN0IHJwcm9jX3N1
-YmRldiAtIHN1YmRldmljZSB0aWVkIHRvIGEgcmVtb3RlcHJvYw0KPj4+PiAgICAgKiBAbm9kZTog
-bGlzdCBub2RlIHJlbGF0ZWQgdG8gdGhlIHJwcm9jIHN1YmRldnMgbGlzdA0KPj4+PiArICogQHBy
-ZXBhcmU6IHByZXBhcmUgZnVuY3Rpb24sIGNhbGxlZCBiZWZvcmUgdGhlIHJwcm9jIGlzIHN0YXJ0
-ZWQNCj4+Pj4gICAgICogQHN0YXJ0OiBzdGFydCBmdW5jdGlvbiwgY2FsbGVkIGFmdGVyIHRoZSBy
-cHJvYyBoYXMgYmVlbiBzdGFydGVkDQo+Pj4+ICAgICAqIEBzdG9wOiBzdG9wIGZ1bmN0aW9uLCBj
-YWxsZWQgYmVmb3JlIHRoZSBycHJvYyBpcyBzdG9wcGVkOyB0aGUgQGNyYXNoZWQNCj4+Pj4gICAg
-ICoJICAgIHBhcmFtZXRlciBpbmRpY2F0ZXMgaWYgdGhpcyBvcmlnaW5hdGVzIGZyb20gYSByZWNv
-dmVyeQ0KPj4+PiArICogQHVucHJlcGFyZTogdW5wcmVwYXJlIGZ1bmN0aW9uLCBjYWxsZWQgYWZ0
-ZXIgdGhlIHJwcm9jIGhhcyBiZWVuIHN0b3BwZWQNCj4+Pj4gICAgICovDQo+Pj4+ICAgIHN0cnVj
-dCBycHJvY19zdWJkZXYgew0KPj4+PiAgICAJc3RydWN0IGxpc3RfaGVhZCBub2RlOw0KPj4+PiAg
-ICANCj4+Pj4gKwlpbnQgKCpwcmVwYXJlKShzdHJ1Y3QgcnByb2Nfc3ViZGV2ICpzdWJkZXYpOw0K
-Pj4+PiAgICAJaW50ICgqc3RhcnQpKHN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRldik7DQo+Pj4+
-ICAgIAl2b2lkICgqc3RvcCkoc3RydWN0IHJwcm9jX3N1YmRldiAqc3ViZGV2LCBib29sIGNyYXNo
-ZWQpOw0KPj4+PiArCXZvaWQgKCp1bnByZXBhcmUpKHN0cnVjdCBycHJvY19zdWJkZXYgKnN1YmRl
-dik7DQo+Pj4+ICAgIH07DQo+Pj4+ICAgIA0KPj4+PiAgICAvKiB3ZSBjdXJyZW50bHkgc3VwcG9y
-dCBvbmx5IHR3byB2cmluZ3MgcGVyIHJ2ZGV2ICovDQo+Pj4+DQo=
+On 05/29/2018 10:30 AM, Fabien DESSENNE wrote:
+> Hi,
+> 
+> Adding my 'Tested-by'.
+
+Normally you would say:
+
+    Tested-by: Fabien DESSENNE <fabien.dessenne@st.com>
+
+The reason it might be important is you might wish to indicate the
+name and/or e-mail as something different from what you're now
+sending from.
+
+Is what I wrote above the way you would like it to appear?
+
+I will add that line to every one of my patches when I update them.
+
+Thanks.
+
+					-Alex
+> 
+> BR,
+> 
+> Fabien
+> 
+> 
+> On 29/05/18 17:26, Arnaud Pouliquen wrote:
+>> Hi Fabien,
+>> Please , could you add your "Tested-by" as you test it on ST platform?
+>>
+>> Thanks
+>> Arnaud
+>>
+>> On 05/15/2018 10:53 PM, Alex Elder wrote:
+>>> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>
+>>> On rare occasions a subdevice might need to prepare some hardware
+>>> resources before a remote processor is booted, and clean up some
+>>> state after it has been shut down.
+>>>
+>>> One such example is the IP Accelerator found in various Qualcomm
+>>> platforms, which is accessed directly from both the modem remoteproc
+>>> and the application subsystem and requires an intricate lockstep
+>>> process when bringing the modem up and down.
+>>>
+>>> [elder@linaro.org: minor description and comment edits]
+>>>
+>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>> Acked-by: Alex Elder <elder@linaro.org>
+> 
+> Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
+> 
+>>> ---
+>>>   drivers/remoteproc/remoteproc_core.c | 56 ++++++++++++++++++++++++++--
+>>>   include/linux/remoteproc.h           |  4 ++
+>>>   2 files changed, 57 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>>> index 2ede7ae6f5bc..283b258f5e0f 100644
+>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>> @@ -776,6 +776,30 @@ static int rproc_handle_resources(struct rproc *rproc,
+>>>   	return ret;
+>>>   }
+>>>   
+>>> +static int rproc_prepare_subdevices(struct rproc *rproc)
+>>> +{
+>>> +	struct rproc_subdev *subdev;
+>>> +	int ret;
+>>> +
+>>> +	list_for_each_entry(subdev, &rproc->subdevs, node) {
+>>> +		if (subdev->prepare) {
+>>> +			ret = subdev->prepare(subdev);
+>>> +			if (ret)
+>>> +				goto unroll_preparation;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	return 0;
+>>> +
+>>> +unroll_preparation:
+>>> +	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
+>>> +		if (subdev->unprepare)
+>>> +			subdev->unprepare(subdev);
+>>> +	}
+>>> +
+>>> +	return ret;
+>>> +}
+>>> +
+>>>   static int rproc_start_subdevices(struct rproc *rproc)
+>>>   {
+>>>   	struct rproc_subdev *subdev;
+>>> @@ -810,6 +834,16 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
+>>>   	}
+>>>   }
+>>>   
+>>> +static void rproc_unprepare_subdevices(struct rproc *rproc)
+>>> +{
+>>> +	struct rproc_subdev *subdev;
+>>> +
+>>> +	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
+>>> +		if (subdev->unprepare)
+>>> +			subdev->unprepare(subdev);
+>>> +	}
+>>> +}
+>>> +
+>>>   /**
+>>>    * rproc_coredump_cleanup() - clean up dump_segments list
+>>>    * @rproc: the remote processor handle
+>>> @@ -902,11 +936,18 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>>   		rproc->table_ptr = loaded_table;
+>>>   	}
+>>>   
+>>> +	ret = rproc_prepare_subdevices(rproc);
+>>> +	if (ret) {
+>>> +		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
+>>> +			rproc->name, ret);
+>>> +		return ret;
+>>> +	}
+>>> +
+>>>   	/* power up the remote processor */
+>>>   	ret = rproc->ops->start(rproc);
+>>>   	if (ret) {
+>>>   		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
+>>> -		return ret;
+>>> +		goto unprepare_subdevices;
+>>>   	}
+>>>   
+>>>   	/* Start any subdevices for the remote processor */
+>>> @@ -914,8 +955,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>>   	if (ret) {
+>>>   		dev_err(dev, "failed to probe subdevices for %s: %d\n",
+>>>   			rproc->name, ret);
+>>> -		rproc->ops->stop(rproc);
+>>> -		return ret;
+>>> +		goto stop_rproc;
+>>>   	}
+>>>   
+>>>   	rproc->state = RPROC_RUNNING;
+>>> @@ -923,6 +963,14 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>>   	dev_info(dev, "remote processor %s is now up\n", rproc->name);
+>>>   
+>>>   	return 0;
+>>> +
+>>> +stop_rproc:
+>>> +	rproc->ops->stop(rproc);
+>>> +
+>>> +unprepare_subdevices:
+>>> +	rproc_unprepare_subdevices(rproc);
+>>> +
+>>> +	return ret;
+>>>   }
+>>>   
+>>>   /*
+>>> @@ -1035,6 +1083,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+>>>   		return ret;
+>>>   	}
+>>>   
+>>> +	rproc_unprepare_subdevices(rproc);
+>>> +
+>>>   	rproc->state = RPROC_OFFLINE;
+>>>   
+>>>   	dev_info(dev, "stopped remote processor %s\n", rproc->name);
+>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>> index 8f1426330cca..e3c5d856b6da 100644
+>>> --- a/include/linux/remoteproc.h
+>>> +++ b/include/linux/remoteproc.h
+>>> @@ -477,15 +477,19 @@ struct rproc {
+>>>   /**
+>>>    * struct rproc_subdev - subdevice tied to a remoteproc
+>>>    * @node: list node related to the rproc subdevs list
+>>> + * @prepare: prepare function, called before the rproc is started
+>>>    * @start: start function, called after the rproc has been started
+>>>    * @stop: stop function, called before the rproc is stopped; the @crashed
+>>>    *	    parameter indicates if this originates from a recovery
+>>> + * @unprepare: unprepare function, called after the rproc has been stopped
+>>>    */
+>>>   struct rproc_subdev {
+>>>   	struct list_head node;
+>>>   
+>>> +	int (*prepare)(struct rproc_subdev *subdev);
+>>>   	int (*start)(struct rproc_subdev *subdev);
+>>>   	void (*stop)(struct rproc_subdev *subdev, bool crashed);
+>>> +	void (*unprepare)(struct rproc_subdev *subdev);
+>>>   };
+>>>   
+>>>   /* we currently support only two vrings per rvdev */
+>>>
