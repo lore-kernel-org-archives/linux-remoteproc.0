@@ -1,96 +1,58 @@
-Return-Path: <sibis@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 28 May 2018 22:05:23 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v2] remoteproc: Introduce prepare/unprepare ops for rproc
  coredump
+Message-ID: <20180529050523.GG2259@tuxbook-pro>
 References: <20180521184559.20864-1-sibis@codeaurora.org>
- <20180529050523.GG2259@tuxbook-pro>
-From: Sibi S <sibis@codeaurora.org>
-Message-ID: <58528924-0ca1-fe23-741c-ad3d2c1d4388@codeaurora.org>
-Date: Tue, 29 May 2018 19:36:10 +0530
 MIME-Version: 1.0
-In-Reply-To: <20180529050523.GG2259@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521184559.20864-1-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
 Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
-Thanks for the review.
+On Mon 21 May 11:45 PDT 2018, Sibi Sankar wrote:
 
-
-On 05/29/2018 10:35 AM, Bjorn Andersson wrote:
-> On Mon 21 May 11:45 PDT 2018, Sibi Sankar wrote:
+> In some occasions the remoteproc device might need to
+> prepare some hardware before the coredump can be performed
+> and cleanup the state afterwards.
 > 
->> In some occasions the remoteproc device might need to
->> prepare some hardware before the coredump can be performed
->> and cleanup the state afterwards.
->>
->> Q6V5 modem requires the mba to be loaded before the
->> coredump and some cleanup of the resources afterwards.
->>
-> 
-> This describes two different changes, so please put it in two+ patches.
->
-
-
-The second change just describes an example of a remoteproc device
-that requires remoteproc coredump prepare and unprepare but sure
-with restructuring required in msa it definitely will require 2+
-patches.
-
-
-> [..]
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index dfdaede9139e..010819e01279 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -333,6 +333,8 @@ struct firmware;
->>    * @kick:	kick a virtqueue (virtqueue id given as a parameter)
->>    * @da_to_va:	optional platform hook to perform address translations
->>    * @load_rsc_table:	load resource table from firmware image
->> + * @prepare_coredump:	prepare function, called before coredump
->> + * @unprepare_coredump:	unprepare function, called post coredump
-> 
-> I believe there will be other cases where we will need driver-specific
-> logic to extract the memory content of the segments, e.g. through custom
-> hardware sequences or non-mmio reads.
-> 
-> To support this I think we should extend the struct rproc_dump_segment
-> to carry an optional "dump" function that if specified will be used
-> instead of the memcpy in rproc_coredump(). Drivers can then for each
-> segment specify this function, if needed.
+> Q6V5 modem requires the mba to be loaded before the
+> coredump and some cleanup of the resources afterwards.
 > 
 
-In q6 modem mba needs to unlocked just once for all the segments to
-be dumped but as you say other remote processors may need it for each
-segment. This logic should be internal to the dump function anyway. So
-will use the dump function approach. What about the cleanup path, can we
-still reserve it till the coredump is done?
+This describes two different changes, so please put it in two+ patches.
+
+[..]
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index dfdaede9139e..010819e01279 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -333,6 +333,8 @@ struct firmware;
+>   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+>   * @da_to_va:	optional platform hook to perform address translations
+>   * @load_rsc_table:	load resource table from firmware image
+> + * @prepare_coredump:	prepare function, called before coredump
+> + * @unprepare_coredump:	unprepare function, called post coredump
+
+I believe there will be other cases where we will need driver-specific
+logic to extract the memory content of the segments, e.g. through custom
+hardware sequences or non-mmio reads.
+
+To support this I think we should extend the struct rproc_dump_segment
+to carry an optional "dump" function that if specified will be used
+instead of the memcpy in rproc_coredump(). Drivers can then for each
+segment specify this function, if needed.
+
+Through some restructuring in the msa driver and your patch you should
+be able to implement this using such a mechanism instead - and it would
+be useful to these other cases as well.
 
 
+PS. I hope we can get away from some of the conditionals in your patch
+through some restructuring of the code.
 
-> Through some restructuring in the msa driver and your patch you should
-> be able to implement this using such a mechanism instead - and it would
-> be useful to these other cases as well.
-> 
-> 
-> PS. I hope we can get away from some of the conditionals in your patch
-> through some restructuring of the code.
-> 
-
-
-Thought you might preferred the conditionals with the least amount of
-code addition/change but having prepare and unprepare coredump again
-calling q6v5_start/stop respectively seemed a little hacky anyway.
-Sure will restructure msa as needed :)
-
-
-> Regards,
-> Bjorn
-> 
-
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Bjorn
