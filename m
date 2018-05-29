@@ -1,142 +1,138 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 18 May 2018 14:47:08 -0700
+Date: Mon, 28 May 2018 21:36:34 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 5/5] remoteproc: qcom: Always assert and deassert
- reset signals in SDM845
-Message-ID: <20180518214708.GU14924@minitux>
-References: <20180425150843.26657-1-sibis@codeaurora.org>
- <20180425150843.26657-6-sibis@codeaurora.org>
+Subject: Re: [PATCH] remoteproc: Add APSS based Qualcomm ADSP PIL driver for
+ SDM845
+Message-ID: <20180529043634.GF2259@tuxbook-pro>
+References: <1526194908-19027-1-git-send-email-rohitkr@codeaurora.org>
+ <20180523062645.GY14924@minitux>
+ <767dc01f-abed-8192-0274-ff5fc092f60b@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425150843.26657-6-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+In-Reply-To: <767dc01f-abed-8192-0274-ff5fc092f60b@codeaurora.org>
+To: Rohit Kumar <rohitkr@codeaurora.org>
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bgoswami@codeaurora.org, sbpata@codeaurora.org, asishb@codeaurora.org, rkarra@codeaurora.org, RajendraBabu Medisetti <rajendrabm@codeaurora.org>, Krishnamurthy Renu <krishnamurthy.renu@codeaurora.org>, asishb@qti.qualcomm.com, Ramlal Karra <rkarra@qti.qualcomm.com>, Rohit Kumar <rohkumar@qti.qualcomm.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 25 Apr 08:08 PDT 2018, Sibi Sankar wrote:
+On Wed 23 May 22:18 PDT 2018, Rohit Kumar wrote:
 
-> SDM845 brings a new reset signal ALT_RESET which is a part of the MSS
-> subsystem hence requires some of the active clks to be enabled before
-> assert/deassert
+> Thanks Bjorn for reviewing.
 > 
-> Reset the modem if the BOOT FSM does timeout
 > 
-> Reset assert/deassert sequence vary across SoCs adding reset, adding
-> start/stop helper functions to handle SoC specific reset sequences
+> On 5/23/2018 11:56 AM, Bjorn Andersson wrote:
+> > On Sun 13 May 00:01 PDT 2018, Rohit kumar wrote:
+> > 
+> > > --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> > > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+> > > @@ -10,6 +10,7 @@ on the Qualcomm ADSP Hexagon core.
+> > >   		    "qcom,msm8974-adsp-pil"
+> > >   		    "qcom,msm8996-adsp-pil"
+> > >   		    "qcom,msm8996-slpi-pil"
+> > > +		    "qcom,sdm845-apss-adsp-pil"
+> > Afaict there's nothing in this binding that ties this to the apss, so I
+> > don't think we should base the compatible on this. The differentiation
+> > is PAS vs non-PAS; so let's start naming the PAS variants
+> > "qcom,platform-subsystem-pas" and the non-PAS
+> > "qcom,platform-subsystem-pil" instead.
+> > 
+> > I.e. please make this "qcom,sdm845-adsp-pil".
+> > 
+> > More importantly, any resources such as clocks or reset lines should
+> > come from DT and as such you need to extend the binding quite a bit -
+> > which I suggest you do by introducing a new binding document.
+> Sure. Will create new dt-binding document with clocks and reset driver info
+> added for sdm845 PIL.
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_pil.c | 81 ++++++++++++++++++++++++++++--
->  1 file changed, 76 insertions(+), 5 deletions(-)
+> > >   - interrupts-extended:
+> > >   	Usage: required
+> > > diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> > > index 02627ed..759831b 100644
+> > > --- a/drivers/remoteproc/Makefile
+> > > +++ b/drivers/remoteproc/Makefile
+> > > @@ -14,7 +14,8 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+> > >   obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+> > >   obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+> > >   obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
+> > > -obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
+> > > +obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp.o
+> > > +qcom_adsp-objs				+= qcom_adsp_pil.o qcom_adsp_pil_sdm845.o
+> > >   obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
+> > >   obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
+> > >   obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
+> > > diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+> > I get the feeling that the main reason for modifying this file is its
+> > name, not that it reduces the complexity of the final solution. I
+> > definitely think it's cleaner to have some structural duplication and
+> > keep this driver handling the various PAS based remoteprocs.
+> The main intention was to re-use exisiting APIs in PAS based PIL
+> driver as the major change was w.r.t. start and stop of ADSP firmware.
+> Load(), interrupt handling and few other APIs will be same as done in
+> exisiting PAS based PIL driver.
+
+A very good intention, I just think it's good to keep the PAS driver
+only dealing with PAS targets and work on reducing the duplication in
+other ways; keeping the logic as simple as possible.
+
+> > Please see the RFC series I posted reducing the duplication between the
+> > various "Q6V5 drivers".
+> I went through the RFC. Our code will fit into the design. However, we
+> will still have some amount of code duplication between PAS and
+> Non-PAS ADSP PIL driver. Will this be fine?
+
+I'm sorry for not finding the time to provide you this feedback earlier.
+
+> Please suggest.
+> Will wait for your response whether to write complete new driver or reuse
+> exisitng one.
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+
+For the Hexagon based non-PAS WCSS remoteproc in IPQ8074 we're creating
+a new driver [1], in doing so I extracted some common helper functions
+that reduces the duplication between the drivers and there are a few
+more things on the way (e.g. reduce the code needed to deal with
+memory-regions).
+
+Please have a look at either extending this (non-PAS, non-MSA) driver to
+cover the ADSP as well. It's hard for me to see how the exact details
+will look after extracting the clocks and resets to their appropriate
+drivers, if it doesn't fit the details we should work further on making
+sure frameworks and helper functions reduces the logical duplication
+between drivers.
+
+[1] https://patchwork.kernel.org/patch/10420185/
+ 
+> > [..]
+> > > diff --git a/drivers/remoteproc/qcom_adsp_pil.h b/drivers/remoteproc/qcom_adsp_pil.h
+> > [..]
+> > > +static inline void update_bits(void *reg, u32 mask_val, u32 set_val, u32 shift)
+> > > +{
+> > > +	u32 reg_val = 0;
+> > > +
+> > > +	reg_val = ((readl(reg)) & ~mask_val) | ((set_val << shift) & mask_val);
+> > > +	writel(reg_val, reg);
+> > > +}
+> > > +
+> > > +static inline unsigned int read_bit(void *reg, u32 mask, int shift)
+> > > +{
+> > > +	return ((readl(reg) & mask) >> shift);
+> > > +}
+> > I don't like these helper functions, their prototype is nonstandard and
+> > makes it really hard to read all the calling code.
+> > 
+> > I would prefer if you just inline the operations directly, to make it
+> > clearer what's going on in each case - if not then at least follow the
+> > prototype of e.g. regmap_udpate_bits(), which people might be used to.
+> Sure. Will update these APIs to follow standard format used in regmap and
+> other drivers.
+
+I like Rob's argument here (just use readl/writel) and it does suit our
+current style.
+
 [..]
-> @@ -349,6 +356,32 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
->  	return 0;
->  }
->  
-> +static int q6v5_reset_assert(struct q6v5 *qproc)
-> +{
-> +	return reset_control_assert(qproc->mss_restart);
-> +}
-> +
-> +static int q6v5_reset_deassert(struct q6v5 *qproc)
-> +{
-> +	return reset_control_deassert(qproc->mss_restart);
-> +}
-> +
-> +static int q6v5_alt_reset_assert(struct q6v5 *qproc)
-> +{
-> +	return reset_control_reset(qproc->mss_restart);
-> +}
-> +
-> +static int q6v5_alt_reset_deassert(struct q6v5 *qproc)
-> +{
-> +	/* Ensure alt reset is written before restart reg */
-> +	writel(1, qproc->rmb_base + RMB_MBA_ALT_RESET);
-> +
-> +	reset_control_reset(qproc->mss_restart);
-> +
-> +	writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
-> +	return 0;
-> +}
-> +
+> Thanks,
+> Rohit
+> 
 
-Rather than having these four functions and scattering jumps to some
-function pointer in the code I think it will be shorter and cleaner to
-just have the q6v5_reset_{asert,deassert}() functions and in there check
-if has_alt_reset and take appropriate action.
-
->  static int q6v5_rmb_pbl_wait(struct q6v5 *qproc, int ms)
->  {
->  	unsigned long timeout;
-> @@ -424,6 +457,8 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->  				val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
->  		if (ret) {
->  			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
-> +			/* Reset the modem so that boot FSM is in reset state */
-> +			qproc->reset_deassert(qproc);
-
-
-A thing like this typically should go into it's own patch, to keep a
-clear record of why it was changed, but as this is simply amending the
-previous patch it indicates that that one wasn't complete.
-
-So if you reorder the two patches you can just put this directly into
-the sdm845 patch, making it "complete".
-
-(This also means that I want to merge the handover vs ready interrupt
-patch before that one, so please include it in the next revision of the
-series).
-
->  			return ret;
->  		}
->  
-> @@ -792,12 +827,20 @@ static int q6v5_start(struct rproc *rproc)
->  		dev_err(qproc->dev, "failed to enable supplies\n");
->  		goto disable_proxy_clk;
->  	}
-> -	ret = reset_control_deassert(qproc->mss_restart);
-> +
-> +	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
-> +			      qproc->reset_clk_count);
-
-Remind me, why can't you always enable the active clock before
-deasserting reset? That way we wouldn't have to split out the iface
-clock handling to be just slightly longer than the active clocks.
-
->  	if (ret) {
-> -		dev_err(qproc->dev, "failed to deassert mss restart\n");
-> +		dev_err(qproc->dev, "failed to enable reset clocks\n");
->  		goto disable_vdd;
->  	}
->  
-> +	ret = qproc->reset_deassert(qproc);
-> +	if (ret) {
-> +		dev_err(qproc->dev, "failed to deassert mss restart\n");
-> +		goto disable_reset_clks;
-> +	}
-> +
-[..]
-> @@ -1335,8 +1399,11 @@ static const struct rproc_hexagon_res sdm845_mss = {
->  			"prng",
->  			NULL
->  	},
-> -	.active_clk_names = (char*[]){
-> +	.reset_clk_names = (char*[]){
->  			"iface",
-> +			NULL
-> +	},
-> +	.active_clk_names = (char*[]){
-
-Again, if you reorder your patches to first add the support for
-alt_reset and then introduce sdm845 you don't need to modify the
-previous patch directly to make it work.
-
->  			"bus",
->  			"mem",
->  			"gpll0_mss",
-
-Regards,
+Thank you Rohit,
 Bjorn
