@@ -1,98 +1,96 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 9 May 2018 17:19:03 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 07/13] remoteproc: introduce
- rproc_find_carveout_by_name function
-Message-ID: <20180510001903.GD29093@builder>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-8-git-send-email-loic.pallardy@st.com>
+Return-Path: <sibis@codeaurora.org>
+Subject: Re: [PATCH v2] remoteproc: Introduce prepare/unprepare ops for rproc
+ coredump
+References: <20180521184559.20864-1-sibis@codeaurora.org>
+ <20180529050523.GG2259@tuxbook-pro>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <58528924-0ca1-fe23-741c-ad3d2c1d4388@codeaurora.org>
+Date: Tue, 29 May 2018 19:36:10 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519921440-21356-8-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+In-Reply-To: <20180529050523.GG2259@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
+Hi Bjorn,
+Thanks for the review.
 
-> This patch provides a new function to find a carveout according
-> to a name.
-> If match found, this function returns a pointer on the corresponding
-> carveout (rproc_mem_entry structure).
+
+On 05/29/2018 10:35 AM, Bjorn Andersson wrote:
+> On Mon 21 May 11:45 PDT 2018, Sibi Sankar wrote:
 > 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 43 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
+>> In some occasions the remoteproc device might need to
+>> prepare some hardware before the coredump can be performed
+>> and cleanup the state afterwards.
+>>
+>> Q6V5 modem requires the mba to be loaded before the
+>> coredump and some cleanup of the resources afterwards.
+>>
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 91aa22b..7a500cb 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -216,6 +216,49 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
->  }
->  EXPORT_SYMBOL(rproc_da_to_va);
->  
-> +/**
-> + * rproc_find_carveout_by_name() - lookup the carveout region by a name
-> + * @rproc: handle of a remote processor
-> + * @name,..: carveout name to find (standard printf format)
-> + *
-> + * Platform driver has the capability to register some pre-allacoted carveout
-> + * (physically contiguous memory regions) before rproc firmware loading and
-> + * associated resource table analysis. These regions may be dedicated memory
-> + * regions internal to the coprocessor or specified DDR region with specific
-> + * attributes
-> + *
-> + * This function is a helper function with which we can go over the
-> + * allocated carveouts and return associated region characteristics like
-> + * coprocessor address, length or processor virtual address.
-> + *
-> + * The function returns a valid pointer on carveout entry on success
-> + * or NULL on failure.
+> This describes two different changes, so please put it in two+ patches.
+>
 
-The kerneldoc format for describing the return value is
 
- * Return: description
+The second change just describes an example of a remoteproc device
+that requires remoteproc coredump prepare and unprepare but sure
+with restructuring required in msa it definitely will require 2+
+patches.
 
-> + */
-> +struct rproc_mem_entry *
-> +rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
-> +{
-> +	va_list args;
-> +	char _name[32];
-> +	struct rproc_mem_entry *carveout, *mem = NULL;
-> +
-> +	va_start(args, name);
-> +	snprintf(_name, sizeof(_name), name, args);
-> +	va_end(args);
-> +
-> +	if (!name)
-> +		return NULL;
 
-If you would like for it to actually be valid to pass NULL for name,
-then I think you should move this check to the top of the function.
+> [..]
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index dfdaede9139e..010819e01279 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -333,6 +333,8 @@ struct firmware;
+>>    * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+>>    * @da_to_va:	optional platform hook to perform address translations
+>>    * @load_rsc_table:	load resource table from firmware image
+>> + * @prepare_coredump:	prepare function, called before coredump
+>> + * @unprepare_coredump:	unprepare function, called post coredump
+> 
+> I believe there will be other cases where we will need driver-specific
+> logic to extract the memory content of the segments, e.g. through custom
+> hardware sequences or non-mmio reads.
+> 
+> To support this I think we should extend the struct rproc_dump_segment
+> to carry an optional "dump" function that if specified will be used
+> instead of the memcpy in rproc_coredump(). Drivers can then for each
+> segment specify this function, if needed.
+> 
 
-But I suspect that you're looking for (name[0] == '\0'), to check if we
-where passed an empty string, e.g. from a resource table without
-resource names.
+In q6 modem mba needs to unlocked just once for all the segments to
+be dumped but as you say other remote processors may need it for each
+segment. This logic should be internal to the dump function anyway. So
+will use the dump function approach. What about the cleanup path, can we
+still reserve it till the coredump is done?
 
-> +
-> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> +		/* Compare carveout and requested names */
-> +		if (!strcmp(carveout->name, name)) {
-> +			mem = carveout;
-> +			break;
 
-Just return carveout when you find it.
 
-> +		}
-> +	}
-> +
-> +	return mem;
-> +}
-> +
+> Through some restructuring in the msa driver and your patch you should
+> be able to implement this using such a mechanism instead - and it would
+> be useful to these other cases as well.
+> 
+> 
+> PS. I hope we can get away from some of the conditionals in your patch
+> through some restructuring of the code.
+> 
 
-Regards,
-Bjorn
+
+Thought you might preferred the conditionals with the least amount of
+code addition/change but having prepare and unprepare coredump again
+calling q6v5_start/stop respectively seemed a little hacky anyway.
+Sure will restructure msa as needed :)
+
+
+> Regards,
+> Bjorn
+> 
+
+-- 
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
