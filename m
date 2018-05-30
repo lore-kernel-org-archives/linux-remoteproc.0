@@ -1,51 +1,40 @@
-Return-Path: <clew@codeaurora.org>
-From: Chris Lew <clew@codeaurora.org>
-Subject: [PATCH v3 2/6] rpmsg: glink: Store edge name for glink device
-Date: Thu, 26 Apr 2018 15:59:01 -0700
-Message-Id: <1524783545-21951-3-git-send-email-clew@codeaurora.org>
-In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
-References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
-To: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, clew@codeaurora.org
+Return-Path: <mst@redhat.com>
+Date: Wed, 30 May 2018 17:10:56 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
+Message-ID: <20180530163740-mutt-send-email-mst@kernel.org>
+References: <1524159181-351878-1-git-send-email-mst@redhat.com>
+ <5047d08c-9f9e-2902-d425-1fac849ce5b4@redhat.com>
+ <20180419204017-mutt-send-email-mst@kernel.org>
+ <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Jason Wang <jasowang@redhat.com>, virtualization@lists.linux-foundation.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Channels may need to identify the edge their channel was probed for.
-Store the edge name by reading the label property from device tree or
-default to the node name.
+On Thu, Apr 19, 2018 at 07:48:24PM +0200, Paolo Bonzini wrote:
+> On 19/04/2018 19:46, Michael S. Tsirkin wrote:
+> >> This should be okay, but I wonder if there should be a virtio_wmb(...)
+> >> or an "if (weak_barriers) wmb()" before the "writel" in vm_notify
+> >> (drivers/virtio/virtio_mmio.c).
+> >>
+> >> Thanks,
+> >>
+> >> Paolo
+> > That one uses weak barriers AFAIK.
+> > 
+> > IIUC you mean rproc_virtio_notify.
+> > 
+> > I suspect it works because specific kick callbacks have a barrier internally.
+> 
+> Yes, that one.  At least keystone_rproc_kick doesn't seem to have a barrier.
+> 
+> Paolo
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
----
+Any feedback from rproc maintainers?
 
-Changes since v1:
-- None
-
- drivers/rpmsg/qcom_glink_native.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 768ef542a841..c3f548e2ff20 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -101,6 +101,8 @@ struct glink_core_rx_intent {
- struct qcom_glink {
- 	struct device *dev;
- 
-+	const char *name;
-+
- 	struct mbox_client mbox_client;
- 	struct mbox_chan *mbox_chan;
- 
-@@ -1580,6 +1582,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	idr_init(&glink->lcids);
- 	idr_init(&glink->rcids);
- 
-+	ret = of_property_read_string(dev->of_node, "label", &glink->name);
-+	if (ret < 0)
-+		glink->name = dev->of_node->name;
-+
- 	glink->mbox_client.dev = dev;
- 	glink->mbox_client.knows_txdone = true;
- 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+MST
