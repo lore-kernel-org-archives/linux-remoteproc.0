@@ -1,8 +1,8 @@
 Return-Path: <s-anna@ti.com>
 From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 5/5] rpmsg: char: Switch to SPDX license identifier
-Date: Thu, 31 May 2018 12:11:03 -0500
-Message-ID: <20180531171103.8703-6-s-anna@ti.com>
+Subject: [PATCH 3/5] rpmsg: smd: Switch to SPDX license identifier
+Date: Thu, 31 May 2018 12:11:01 -0500
+Message-ID: <20180531171103.8703-4-s-anna@ti.com>
 In-Reply-To: <20180531171103.8703-1-s-anna@ti.com>
 References: <20180531171103.8703-1-s-anna@ti.com>
 MIME-Version: 1.0
@@ -11,51 +11,23 @@ To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use the appropriate SPDX license identifier in the rpmsg char driver
-source file and drop the previous boilerplate license text. The uapi
-header file already had the SPDX license identifier added as part of
-a mass update but the license text removal was deferred for later,
-and this patch drops the same.
+Use the appropriate SPDX license identifier in the rpmsg SMD backend
+driver source file and drop the previous boilerplate license text.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/rpmsg/rpmsg_char.c | 10 +---------
- include/uapi/linux/rpmsg.h |  9 ---------
- 2 files changed, 1 insertion(+), 18 deletions(-)
+ drivers/rpmsg/qcom_smd.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 1efdf9ff8679..76a4477c6364 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -1,3 +1,4 @@
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 5ce9bf7b897d..0819836fc178 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1,15 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0
  /*
-  * Copyright (c) 2016, Linaro Ltd.
-  * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
-@@ -7,15 +8,6 @@
-  *
-  * Based on rpmsg performance statistics driver by Michal Simek, which in turn
-  * was based on TI & Google OMX rpmsg driver.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 and
-- * only version 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
- #include <linux/cdev.h>
- #include <linux/device.h>
-diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-index 225eb38705dc..e14c6dab4223 100644
---- a/include/uapi/linux/rpmsg.h
-+++ b/include/uapi/linux/rpmsg.h
-@@ -1,15 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
- /*
-  * Copyright (c) 2016, Linaro Ltd.
+  * Copyright (c) 2015, Sony Mobile Communications AB.
+  * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 and
@@ -67,6 +39,6 @@ index 225eb38705dc..e14c6dab4223 100644
 - * GNU General Public License for more details.
   */
  
- #ifndef _UAPI_RPMSG_H_
+ #include <linux/interrupt.h>
 -- 
 2.17.0
