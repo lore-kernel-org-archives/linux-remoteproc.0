@@ -1,118 +1,46 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Wed, 9 May 2018 17:53:58 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 03/13] remoteproc: add release ops in rproc_mem_entry
- struct
-Message-ID: <20180510005358.GG29093@builder>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-4-git-send-email-loic.pallardy@st.com>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/5] rpmsg: Convert to use SPDX license identifiers
+Date: Thu, 31 May 2018 12:10:58 -0500
+Message-ID: <20180531171103.8703-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519921440-21356-4-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
+Hi Bjorn,
 
-> Memory entry could be allocated in different ways (ioremap,
-> dma_alloc_coherent, internal RAM allocator...).
-> This patch introduces a release ops in rproc_mem_entry structure
-> to associate dedicated release mechanism to each memory entry descriptor
-> in order to keep remoteproc core generic.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+The following series switches over the current licensing text in
+various rpmsg drivers to the SPDX licensing format. I see that you
+have already picked up my series for the HwSpinlock drivers, so this
+series does the same for the rpmsg drivers. Please pick these as well
+for 4.18. Patches done on top of latest upstream kernel.
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+regards
+Suman
 
-Regards,
-Bjorn
+Suman Anna (5):
+  rpmsg: Switch to SPDX license identifier
+  rpmsg: virtio_rpmsg_bus: Switch to SPDX license identifier
+  rpmsg: smd: Switch to SPDX license identifier
+  rpmsg: glink: Switch to SPDX license identifier
+  rpmsg: char: Switch to SPDX license identifier
 
-> ---
->  drivers/remoteproc/remoteproc_core.c | 23 +++++++++++++++++++++--
->  include/linux/remoteproc.h           |  5 ++++-
->  2 files changed, 25 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index eb1b779..5f11536 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -597,6 +597,24 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
->  }
->  
->  /**
-> + * rproc_release_carveout() - release acquired carveout
-> + * @rproc: rproc handle
-> + * @mem: the memory entry to release
-> + *
-> + * This function releases specified memory entry @mem allocated via
-> + * dma_alloc_coherent() function by @rproc.
-> + */
-> +static int rproc_release_carveout(struct rproc *rproc,
-> +				  struct rproc_mem_entry *mem)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +
-> +	/* clean up carveout allocations */
-> +	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
-> +	return 0;
-> +}
-> +
-> +/**
->   * rproc_handle_carveout() - handle phys contig memory allocation requests
->   * @rproc: rproc handle
->   * @rsc: the resource entry
-> @@ -730,6 +748,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	carveout->len = rsc->len;
->  	carveout->dma = dma;
->  	carveout->da = rsc->da;
-> +	carveout->release = rproc_release_carveout;
->  
->  	list_add_tail(&carveout->node, &rproc->carveouts);
->  
-> @@ -863,8 +882,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
->  
->  	/* clean up carveout allocations */
->  	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
-> -		dma_free_coherent(dev->parent, entry->len, entry->va,
-> -				  entry->dma);
-> +		if (entry->release)
-> +			entry->release(rproc, entry);
->  		list_del(&entry->node);
->  		kfree(entry);
->  	}
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 728d421..dedc138 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -305,12 +305,15 @@ struct fw_rsc_vdev {
->  	struct fw_rsc_vdev_vring vring[0];
->  } __packed;
->  
-> +struct rproc;
-> +
->  /**
->   * struct rproc_mem_entry - memory entry descriptor
->   * @va:	virtual address
->   * @dma: dma address
->   * @len: length, in bytes
->   * @da: device address
-> + * @release: release associated memory
->   * @priv: associated data
->   * @node: list node
->   */
-> @@ -321,9 +324,9 @@ struct rproc_mem_entry {
->  	u32 da;
->  	void *priv;
->  	struct list_head node;
-> +	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
->  };
->  
-> -struct rproc;
->  struct firmware;
->  
->  /**
-> -- 
-> 1.9.1
-> 
+ drivers/rpmsg/Kconfig             |  2 ++
+ drivers/rpmsg/qcom_glink_native.c | 10 +---------
+ drivers/rpmsg/qcom_glink_native.h | 10 +---------
+ drivers/rpmsg/qcom_glink_rpm.c    | 10 +---------
+ drivers/rpmsg/qcom_glink_smem.c   | 10 +---------
+ drivers/rpmsg/qcom_smd.c          | 10 +---------
+ drivers/rpmsg/rpmsg_char.c        | 10 +---------
+ drivers/rpmsg/rpmsg_core.c        | 10 +---------
+ drivers/rpmsg/rpmsg_internal.h    | 10 +---------
+ drivers/rpmsg/virtio_rpmsg_bus.c  | 10 +---------
+ include/linux/rpmsg.h             | 27 +--------------------------
+ include/linux/rpmsg/qcom_glink.h  |  2 ++
+ include/uapi/linux/rpmsg.h        |  9 ---------
+ 13 files changed, 14 insertions(+), 116 deletions(-)
+
+-- 
+2.17.0
