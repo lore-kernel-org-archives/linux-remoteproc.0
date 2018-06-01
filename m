@@ -1,58 +1,38 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [RFC v2 4/5] remoteproc: probe the system resource manager
-Date: Wed, 27 Jun 2018 10:06:21 +0200
-Message-ID: <1530086782-5046-5-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
-References: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic Pallardy <loic.pallardy@st.com>, Oleksij
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>, Alex Elder <elder@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 3/4] spi: sprd: Replace of_hwspin_lock_get_id() with of_hwspin_lock_get_id_byname()
+Date: Fri,  1 Jun 2018 17:04:54 +0800
+Message-Id: <1ee51555e05ad1fbfca7fac60050d318be9181f6.1527843425.git.baolin.wang@linaro.org>
+In-Reply-To: <1be6adeb558fada77de79a40cd5ef7dc2719c945.1527843425.git.baolin.wang@linaro.org>
+References: <1be6adeb558fada77de79a40cd5ef7dc2719c945.1527843425.git.baolin.wang@linaro.org>
+In-Reply-To: <1be6adeb558fada77de79a40cd5ef7dc2719c945.1527843425.git.baolin.wang@linaro.org>
+References: <1be6adeb558fada77de79a40cd5ef7dc2719c945.1527843425.git.baolin.wang@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, broonie@kernel.org
+Cc: baolin.wang@linaro.org, linux-spi@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-When a remote processor registers, populate the device tree to probe
-the SRM core driver
+Now the hwlock core has supplied new function to get a specific hwlock id
+by one hwlock name, which is more clear for users. So change to use
+of_hwspin_lock_get_id_byname().
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/spi/spi-sprd-adi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 283b258..a67f918 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -41,6 +41,7 @@
- #include <linux/crc32.h>
- #include <linux/virtio_ids.h>
- #include <linux/virtio_ring.h>
-+#include <linux/of_platform.h>
- #include <asm/byteorder.h>
- 
- #include "remoteproc_internal.h"
-@@ -1485,6 +1486,11 @@ int rproc_add(struct rproc *rproc)
- 			return ret;
- 	}
- 
-+	/* add resource manager device */
-+	ret = devm_of_platform_populate(dev->parent);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* expose to rproc_get_by_phandle users */
- 	mutex_lock(&rproc_list_mutex);
- 	list_add(&rproc->node, &rproc_list);
-@@ -1705,6 +1711,8 @@ int rproc_del(struct rproc *rproc)
- 	list_del(&rproc->node);
- 	mutex_unlock(&rproc_list_mutex);
- 
-+	of_platform_depopulate(rproc->dev.parent);
-+
- 	device_del(&rproc->dev);
- 
- 	return 0;
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index 6fc50cf..d8d5e2f 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -459,7 +459,7 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 	sadi->slave_pbase = res->start + ADI_SLAVE_OFFSET;
+ 	sadi->ctlr = ctlr;
+ 	sadi->dev = &pdev->dev;
+-	ret = of_hwspin_lock_get_id(np, 0);
++	ret = of_hwspin_lock_get_id_byname(np, "adi");
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "can not get the hardware spinlock\n");
+ 		goto put_ctlr;
 -- 
-2.7.4
+1.7.9.5
