@@ -1,53 +1,63 @@
-Return-Path: <baolin.wang@linaro.org>
-Return-Path: <baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH] hwspinlock: Fix incorrect return pointers
-Date: Thu, 28 Jun 2018 10:32:21 +0800
-Message-Id: <782fc498b4f4c6e8130d64face93023eb3dc9866.1530152980.git.baolin.wang@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: broonie@kernel.org, dan.carpenter@oracle.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, baolin.wang@linaro.org
+Return-Path: <rohitkr@codeaurora.org>
+Subject: Re: [RFC PATCH 0/5] Hexagon remoteproc spring cleaning
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+From: Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <9dd77f05-9ac4-55d1-5f79-03f40c9306f9@codeaurora.org>
+Date: Fri, 1 Jun 2018 19:03:43 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The commit 4f1acd758b08 ("hwspinlock: Add devm_xxx() APIs to request/free
-hwlock") introduces one bug, that will return one error pointer if failed
-to request one hwlock, but we expect NULL pointer on error for consumers.
-This patch will fix this issue.
+Thanks Bjorn for the cleanup.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/hwspinlock/hwspinlock_core.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I validated PAS and Non- PAS ADSP PIL with the cleanup changes on SDM845.
 
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index e16d648..2bad40d 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -877,10 +877,10 @@ struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
- 
- 	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
- 	if (!ptr)
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 
- 	hwlock = hwspin_lock_request();
--	if (!IS_ERR(hwlock)) {
-+	if (hwlock) {
- 		*ptr = hwlock;
- 		devres_add(dev, ptr);
- 	} else {
-@@ -913,10 +913,10 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
- 
- 	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
- 	if (!ptr)
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 
- 	hwlock = hwspin_lock_request_specific(id);
--	if (!IS_ERR(hwlock)) {
-+	if (hwlock) {
- 		*ptr = hwlock;
- 		devres_add(dev, ptr);
- 	} else {
+Adding tag for ADSP PIL.
+
+Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+
+On 5/23/2018 10:50 AM, Bjorn Andersson wrote:
+> With the introduction of support for the non-MSA Hexagon WCSS driver from
+> Sricharan and the non-PAS ADSP driver from Rohit it makes sense to overhaul the
+> structure of the Qualcomm "Q6V5 drivers".
+>
+> The first patch is from Sricharan's series and included here for completeness.
+> The second patch introduces a set of helper functions, based on the current
+> state of the qcom_q6v5_pil driver. The third and forth patch migrates the PAS
+> and the MSA drivers over to using these helpers. Finally a (completely)
+> reworked version of Sricharan's WCSS remoteproc driver is introduced.
+>
+>
+> With this in place I suggest that we rename qcom_adsp_pil.c to qcom_q6v5_pas.c,
+
+I am making changes for non-PAS ADSP PIL by creating new file.
+In case you plan to rename qcom_adsp_pil.c to qcom_q6v5_pas, please 
+include that change with this.
+Also, let me know the filename which we should keep it for non-PAS ADSP 
+PIL driver.
+> qcom_q6v5_pil.c to qcom_q6v5_msa.c and depending on the details of the non-PAS
+> ADSP we could potentially combine that into a qcom_q6v5_pil.c - or we carry
+> them as separate files.
+I tried comparing qcom_q6v5_pil.c with non-PAS ADSP pil driver. I don't 
+think that we can combine
+them as there are good amount of code differences. However, we can take 
+a look into it once
+I post non-PAS ADSP PIL.
+>
+> Looking at the remaining non-essential parts of these drivers we have
+> memory-region handling and halt_axi handling. The prior is actively being
+> worked on and the latter should (if no better abstraction is presented) be
+> possible to just put in the new qcom_q6v5.c.
+>
+
+Thanks,
+Rohit
+
 -- 
-1.7.9.5
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
