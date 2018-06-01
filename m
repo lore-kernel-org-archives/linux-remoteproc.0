@@ -1,42 +1,52 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-Subject: [PATCH 7/8] ARM: dts: da850: add node for PRUSS
-Date: Sat, 23 Jun 2018 16:08:09 -0500
-Message-Id: <20180623210810.21232-8-david@lechnology.com>
-In-Reply-To: <20180623210810.21232-1-david@lechnology.com>
-References: <20180623210810.21232-1-david@lechnology.com>
-To: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Return-Path: <rohitkr@codeaurora.org>
+Subject: Re: [RFC PATCH 3/5] remoteproc: qcom: adsp: Use common q6v5 helpers
+References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
+ <20180523052054.19025-4-bjorn.andersson@linaro.org>
+From: Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <101bb9f7-b571-ef00-e957-a83fb80e1536@codeaurora.org>
+Date: Fri, 1 Jun 2018 19:05:37 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180523052054.19025-4-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This adds a new remoteproc node to the da850 device tree for the PRUSS.
+Hi Bjorn,
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
+Reviewed and validated PAS and non-PAS ADSP PIL on sdm845 with the changes.
 
-Note: this requires the recent common-clk patches for power-domains
+Adding tag.
 
- arch/arm/boot/dts/da850.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index 3fc8b8fd816e..8b052e96fb53 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -540,6 +540,14 @@
- 			clocks = <&pll0_auxclk>;
- 			status = "disabled";
- 		};
-+		pru_rproc: cpu@30000 {
-+			compatible = "ti,da850-pru-rproc";
-+			reg = <0x30000 0x10000>;
-+			interrupts = <3>, <4>;
-+			interrupt-names = "pru0-vq", "pru1-vq";
-+			power-domains = <&psc0 13>;
-+			status = "disabled";
-+		};
- 		mmc0: mmc@40000 {
- 			compatible = "ti,da830-mmc";
- 			reg = <0x40000 0x1000>;
+On 5/23/2018 10:50 AM, Bjorn Andersson wrote:
+> Migrate the Hexagon V5 PAS (ADSP) driver to using the newly extracted
+> helper functions. The use of the handover callback does introduce latent
+> disabling of proxy resources. But apart from this there should be no
+> change in functionality.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+>   drivers/remoteproc/Kconfig         |   1 +
+>   drivers/remoteproc/qcom_adsp_pil.c | 156 +++++------------------------
+>   2 files changed, 28 insertions(+), 129 deletions(-)
+>
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 63b79ea91a21..d51d155cf8bd 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -93,6 +93,7 @@ config QCOM_ADSP_PIL
+>   	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>   	select MFD_SYSCON
+>   	select QCOM_MDT_LOADER
+>
+
+Thanks,
+Rohit
+
 -- 
-2.17.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
