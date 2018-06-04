@@ -1,118 +1,293 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH v2 4/5] remoteproc: rename subdev probe and remove functions
-Date: Tue, 26 Jun 2018 07:11:58 -0500
-Message-Id: <20180626121159.7267-5-elder@linaro.org>
-In-Reply-To: <20180626121159.7267-1-elder@linaro.org>
-References: <20180626121159.7267-1-elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 3/4] remoteproc: qcom: adsp: Use common q6v5 helpers
+Date: Mon,  4 Jun 2018 13:30:37 -0700
+Message-Id: <20180604203038.14080-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20180604203038.14080-1-bjorn.andersson@linaro.org>
+References: <20180604203038.14080-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sricharan R <sricharan@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rename functions used when subdevices are started and stopped to
-reflect the new naming scheme.
+Migrate the Hexagon V5 PAS (ADSP) driver to using the newly extracted
+helper functions. The use of the handover callback does introduce latent
+disabling of proxy resources. But apart from this there should be no
+change in functionality.
 
-Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by Alex Elder <elder@linaro.org>
+Reviewed-by: Rohit kumar <rohitkr@codeaurora.org>
+Reviewed-by: Sricharan R <sricharan@codeaurora.org>
+Tested-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/qcom_common.c     | 16 ++++++++--------
- drivers/remoteproc/remoteproc_core.c |  8 ++++----
- 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 4ae87c5b8793..6f77840140bf 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -33,7 +33,7 @@
+Changes since RFC:
+- Picked up reviewed-by from Rohit and Sricharan
+
+ drivers/remoteproc/Kconfig         |   1 +
+ drivers/remoteproc/qcom_adsp_pil.c | 156 +++++------------------------
+ 2 files changed, 28 insertions(+), 129 deletions(-)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 63b79ea91a21..d51d155cf8bd 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -93,6 +93,7 @@ config QCOM_ADSP_PIL
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	select MFD_SYSCON
+ 	select QCOM_MDT_LOADER
++	select QCOM_Q6V5_COMMON
+ 	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
+index 89a86ce07f99..d4339a6da616 100644
+--- a/drivers/remoteproc/qcom_adsp_pil.c
++++ b/drivers/remoteproc/qcom_adsp_pil.c
+@@ -31,6 +31,7 @@
+ #include <linux/soc/qcom/smem_state.h>
  
- static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+ #include "qcom_common.h"
++#include "qcom_q6v5.h"
+ #include "remoteproc_internal.h"
  
--static int glink_subdev_probe(struct rproc_subdev *subdev)
-+static int glink_subdev_start(struct rproc_subdev *subdev)
+ struct adsp_data {
+@@ -48,14 +49,7 @@ struct qcom_adsp {
+ 	struct device *dev;
+ 	struct rproc *rproc;
+ 
+-	int wdog_irq;
+-	int fatal_irq;
+-	int ready_irq;
+-	int handover_irq;
+-	int stop_ack_irq;
+-
+-	struct qcom_smem_state *state;
+-	unsigned stop_bit;
++	struct qcom_q6v5 q6v5;
+ 
+ 	struct clk *xo;
+ 	struct clk *aggre2_clk;
+@@ -96,6 +90,8 @@ static int adsp_start(struct rproc *rproc)
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+ 	int ret;
+ 
++	qcom_q6v5_prepare(&adsp->q6v5);
++
+ 	ret = clk_prepare_enable(adsp->xo);
+ 	if (ret)
+ 		return ret;
+@@ -119,16 +115,14 @@ static int adsp_start(struct rproc *rproc)
+ 		goto disable_px_supply;
+ 	}
+ 
+-	ret = wait_for_completion_timeout(&adsp->start_done,
+-					  msecs_to_jiffies(5000));
+-	if (!ret) {
++	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5000));
++	if (ret == -ETIMEDOUT) {
+ 		dev_err(adsp->dev, "start timed out\n");
+ 		qcom_scm_pas_shutdown(adsp->pas_id);
+-		ret = -ETIMEDOUT;
+ 		goto disable_px_supply;
+ 	}
+ 
+-	ret = 0;
++	return 0;
+ 
+ disable_px_supply:
+ 	regulator_disable(adsp->px_supply);
+@@ -142,28 +136,34 @@ static int adsp_start(struct rproc *rproc)
+ 	return ret;
+ }
+ 
++static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
++{
++	struct qcom_adsp *adsp = container_of(q6v5, struct qcom_adsp, q6v5);
++
++	regulator_disable(adsp->px_supply);
++	regulator_disable(adsp->cx_supply);
++	clk_disable_unprepare(adsp->aggre2_clk);
++	clk_disable_unprepare(adsp->xo);
++}
++
+ static int adsp_stop(struct rproc *rproc)
  {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	int handover;
+ 	int ret;
  
-@@ -42,7 +42,7 @@ static int glink_subdev_probe(struct rproc_subdev *subdev)
- 	return PTR_ERR_OR_ZERO(glink->edge);
+-	qcom_smem_state_update_bits(adsp->state,
+-				    BIT(adsp->stop_bit),
+-				    BIT(adsp->stop_bit));
+-
+-	ret = wait_for_completion_timeout(&adsp->stop_done,
+-					  msecs_to_jiffies(5000));
+-	if (ret == 0)
++	ret = qcom_q6v5_request_stop(&adsp->q6v5);
++	if (ret == -ETIMEDOUT)
+ 		dev_err(adsp->dev, "timed out on wait\n");
+ 
+-	qcom_smem_state_update_bits(adsp->state,
+-				    BIT(adsp->stop_bit),
+-				    0);
+-
+ 	ret = qcom_scm_pas_shutdown(adsp->pas_id);
+ 	if (ret)
+ 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
+ 
++	handover = qcom_q6v5_unprepare(&adsp->q6v5);
++	if (handover)
++		qcom_pas_handover(&adsp->q6v5);
++
+ 	return ret;
  }
  
--static void glink_subdev_remove(struct rproc_subdev *subdev, bool crashed)
-+static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+@@ -187,53 +187,6 @@ static const struct rproc_ops adsp_ops = {
+ 	.load = adsp_load,
+ };
+ 
+-static irqreturn_t adsp_wdog_interrupt(int irq, void *dev)
+-{
+-	struct qcom_adsp *adsp = dev;
+-
+-	rproc_report_crash(adsp->rproc, RPROC_WATCHDOG);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t adsp_fatal_interrupt(int irq, void *dev)
+-{
+-	struct qcom_adsp *adsp = dev;
+-	size_t len;
+-	char *msg;
+-
+-	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, adsp->crash_reason_smem, &len);
+-	if (!IS_ERR(msg) && len > 0 && msg[0])
+-		dev_err(adsp->dev, "fatal error received: %s\n", msg);
+-
+-	rproc_report_crash(adsp->rproc, RPROC_FATAL_ERROR);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t adsp_ready_interrupt(int irq, void *dev)
+-{
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t adsp_handover_interrupt(int irq, void *dev)
+-{
+-	struct qcom_adsp *adsp = dev;
+-
+-	complete(&adsp->start_done);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t adsp_stop_ack_interrupt(int irq, void *dev)
+-{
+-	struct qcom_adsp *adsp = dev;
+-
+-	complete(&adsp->stop_done);
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static int adsp_init_clock(struct qcom_adsp *adsp)
  {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-@@ -64,8 +64,8 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
- 		return;
- 
- 	glink->dev = dev;
--	glink->subdev.start = glink_subdev_probe;
--	glink->subdev.stop = glink_subdev_remove;
-+	glink->subdev.start = glink_subdev_start;
-+	glink->subdev.stop = glink_subdev_stop;
- 
- 	rproc_add_subdev(rproc, &glink->subdev);
+ 	int ret;
+@@ -272,29 +225,6 @@ static int adsp_init_regulator(struct qcom_adsp *adsp)
+ 	return PTR_ERR_OR_ZERO(adsp->px_supply);
  }
-@@ -129,7 +129,7 @@ int qcom_register_dump_segments(struct rproc *rproc,
- }
- EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
  
--static int smd_subdev_probe(struct rproc_subdev *subdev)
-+static int smd_subdev_start(struct rproc_subdev *subdev)
+-static int adsp_request_irq(struct qcom_adsp *adsp,
+-			     struct platform_device *pdev,
+-			     const char *name,
+-			     irq_handler_t thread_fn)
+-{
+-	int ret;
+-
+-	ret = platform_get_irq_byname(pdev, name);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "no %s IRQ defined\n", name);
+-		return ret;
+-	}
+-
+-	ret = devm_request_threaded_irq(&pdev->dev, ret,
+-					NULL, thread_fn,
+-					IRQF_ONESHOT,
+-					"adsp", adsp);
+-	if (ret)
+-		dev_err(&pdev->dev, "request %s IRQ failed\n", name);
+-
+-	return ret;
+-}
+-
+ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
  {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+ 	struct device_node *node;
+@@ -348,13 +278,9 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->pas_id = desc->pas_id;
+-	adsp->crash_reason_smem = desc->crash_reason_smem;
+ 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+ 	platform_set_drvdata(pdev, adsp);
  
-@@ -138,7 +138,7 @@ static int smd_subdev_probe(struct rproc_subdev *subdev)
- 	return PTR_ERR_OR_ZERO(smd->edge);
- }
+-	init_completion(&adsp->start_done);
+-	init_completion(&adsp->stop_done);
+-
+ 	ret = adsp_alloc_memory_region(adsp);
+ 	if (ret)
+ 		goto free_rproc;
+@@ -367,37 +293,10 @@ static int adsp_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
  
--static void smd_subdev_remove(struct rproc_subdev *subdev, bool crashed)
-+static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+-	ret = adsp_request_irq(adsp, pdev, "wdog", adsp_wdog_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->wdog_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "fatal", adsp_fatal_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->fatal_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "ready", adsp_ready_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->ready_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "handover", adsp_handover_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->handover_irq = ret;
+-
+-	ret = adsp_request_irq(adsp, pdev, "stop-ack", adsp_stop_ack_interrupt);
+-	if (ret < 0)
+-		goto free_rproc;
+-	adsp->stop_ack_irq = ret;
+-
+-	adsp->state = qcom_smem_state_get(&pdev->dev, "stop",
+-					  &adsp->stop_bit);
+-	if (IS_ERR(adsp->state)) {
+-		ret = PTR_ERR(adsp->state);
++	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
++			     qcom_pas_handover);
++	if (ret)
+ 		goto free_rproc;
+-	}
+ 
+ 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
+ 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
+@@ -422,7 +321,6 @@ static int adsp_remove(struct platform_device *pdev)
  {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+ 	struct qcom_adsp *adsp = platform_get_drvdata(pdev);
  
-@@ -160,8 +160,8 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
- 		return;
+-	qcom_smem_state_put(adsp->state);
+ 	rproc_del(adsp->rproc);
  
- 	smd->dev = dev;
--	smd->subdev.start = smd_subdev_probe;
--	smd->subdev.stop = smd_subdev_remove;
-+	smd->subdev.start = smd_subdev_start;
-+	smd->subdev.stop = smd_subdev_stop;
- 
- 	rproc_add_subdev(rproc, &smd->subdev);
- }
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ca39fad175f2..2ede7ae6f5bc 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -301,14 +301,14 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	rsc->vring[idx].notifyid = -1;
- }
- 
--static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
-+static int rproc_vdev_do_start(struct rproc_subdev *subdev)
- {
- 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
- 
- 	return rproc_add_virtio_dev(rvdev, rvdev->id);
- }
- 
--static void rproc_vdev_do_remove(struct rproc_subdev *subdev, bool crashed)
-+static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
- 
-@@ -399,8 +399,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	list_add_tail(&rvdev->node, &rproc->rvdevs);
- 
--	rvdev->subdev.start = rproc_vdev_do_probe;
--	rvdev->subdev.stop = rproc_vdev_do_remove;
-+	rvdev->subdev.start = rproc_vdev_do_start;
-+	rvdev->subdev.stop = rproc_vdev_do_stop;
- 
- 	rproc_add_subdev(rproc, &rvdev->subdev);
- 
+ 	qcom_remove_glink_subdev(adsp->rproc, &adsp->glink_subdev);
 -- 
-2.17.1
+2.17.0
