@@ -1,212 +1,91 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-Subject: [PATCH 2/8] remoteproc: add page lookup for TI PRU to ELF loader
-Date: Sat, 23 Jun 2018 16:08:04 -0500
-Message-Id: <20180623210810.21232-3-david@lechnology.com>
-In-Reply-To: <20180623210810.21232-1-david@lechnology.com>
-References: <20180623210810.21232-1-david@lechnology.com>
-To: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 4 Jun 2018 12:35:55 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2] rpmsg: smd: do not use mananged resources for
+ endpoints and channels
+Message-ID: <20180604193555.GB3206@builder>
+References: <20180604093901.6963-1-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180604093901.6963-1-srinivas.kandagatla@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, bgoswami@codeaurora.org, linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This adds a special handler to the default remoteproc ELF firmware
-loader that looks up the memory map on TI PRU firmware files.
+On Mon 04 Jun 02:39 PDT 2018, Srinivas Kandagatla wrote:
 
-These processors have multiple memory maps that share the same address
-space, so we need to know the page in addition to the physical address
-in order to translate the address to a local CPU address.
+> All the managed resources would be freed by the time release function
+> is invoked. Handling such memory in qcom_smd_edge_release() would do
+> bad things.
+> 
+> Found this issue while testing Audio usecase where the dsp is started up
+> and shutdown in a loop.
+> 
+> This patch fixes this issue by using simple kzalloc for allocating
+> channel->name and channel which is then freed in qcom_smd_edge_release().
+> 
+> Without this patch restarting a remoteproc would crash the system.
+> Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- drivers/remoteproc/remoteproc_elf_loader.c | 117 +++++++++++++++++++--
- include/uapi/linux/elf-em.h                |   1 +
- 2 files changed, 112 insertions(+), 6 deletions(-)
+Thanks Srini,
+Bjorn
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index 8888d39e1b13..f041b6fb798f 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -32,6 +32,103 @@
- 
- #include "remoteproc_internal.h"
- 
-+#define SHT_TI_PHATTRS 0x7F000004
-+#define SHT_TI_SH_PAGE 0x7F000007
-+
-+typedef struct {
-+	Elf32_Half pha_seg_id; /* Segment id */
-+	Elf32_Half pha_tag_id; /* Attribute kind id */
-+	union {
-+		Elf32_Off pha_offset; /* byte offset within the section */
-+		Elf32_Word pha_value; /* Constant tag value */
-+	} pha_un;
-+} Elf32_TI_PHAttrs;
-+
-+/* this struct is reverse engineered, so not sure what most of the values are */
-+struct ti_section_page {
-+	u32 unk0;
-+	u32 unk1;
-+	u32 unk2;
-+	u32 unk3;
-+	u32 unk4;
-+	u16 size;
-+	u16 unk5;
-+	u16 unk6;
-+	u8 data[0]; /* array of size */
-+};
-+
-+/**
-+ * rproc_elf_segment_to_map() - Gets memory map for segment
-+ * @id: segment id
-+ * @elf_data: pointer to ELF file data
-+ *
-+ * Returns the memory map for the segment.
-+ */
-+static int rproc_elf_segment_to_map(u32 id, const u8 *elf_data)
-+{
-+	struct elf32_hdr *ehdr;
-+	struct elf32_shdr *shdr;
-+	Elf32_TI_PHAttrs *attrs = NULL;
-+	int i;
-+
-+	ehdr = (struct elf32_hdr *)elf_data;
-+	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
-+
-+	if (ehdr->e_machine != EM_TI_PRU)
-+		return 0;
-+
-+	for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
-+		if (shdr->sh_type == SHT_TI_PHATTRS) {
-+			attrs = (Elf32_TI_PHAttrs *)(elf_data + shdr->sh_offset);
-+			break;
-+		}
-+	}
-+
-+	if (!attrs)
-+		return 0;
-+
-+	/* list is terminated by tag id == 0 (PHA_NULL) */
-+	for (; attrs->pha_tag_id; attrs++) {
-+		if (attrs->pha_tag_id == 3 && attrs->pha_seg_id == id)
-+			return attrs->pha_un.pha_value;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * rproc_elf_section_to_map() - Gets memory map for section
-+ * @id: segment id
-+ * @elf_data: pointer to ELF file data
-+ *
-+ * Returns the memory map for the section.
-+ */
-+static int rproc_elf_section_to_map(u32 id, const u8 *elf_data)
-+{
-+	struct elf32_hdr *ehdr;
-+	struct elf32_shdr *shdr;
-+	struct ti_section_page *map = NULL;
-+	int i;
-+
-+	ehdr = (struct elf32_hdr *)elf_data;
-+	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
-+
-+	if (ehdr->e_machine != EM_TI_PRU)
-+		return 0;
-+
-+	for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
-+		if (shdr->sh_type == SHT_TI_SH_PAGE) {
-+			map = (struct ti_section_page *)(elf_data + shdr->sh_offset);
-+			break;
-+		}
-+	}
-+
-+	if (!map || id >= map->size)
-+		return 0;
-+
-+	return map->data[id];
-+}
-+
- /**
-  * rproc_elf_sanity_check() - Sanity Check ELF firmware image
-  * @rproc: the remote processor handle
-@@ -147,7 +244,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = &rproc->dev;
- 	struct elf32_hdr *ehdr;
- 	struct elf32_phdr *phdr;
--	int i, ret = 0;
-+	int i, map, ret = 0;
- 	const u8 *elf_data = fw->data;
- 
- 	ehdr = (struct elf32_hdr *)elf_data;
-@@ -181,8 +278,10 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 			break;
- 		}
- 
-+		map = rproc_elf_segment_to_map(i, elf_data);
-+
- 		/* grab the kernel address for this device address */
--		ptr = rproc_da_to_va(rproc, da, memsz, 0);
-+		ptr = rproc_da_to_va(rproc, da, memsz, map);
- 		if (!ptr) {
- 			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
- 			ret = -EINVAL;
-@@ -209,7 +308,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- EXPORT_SYMBOL(rproc_elf_load_segments);
- 
- static struct elf32_shdr *
--find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
-+find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size, int *id)
- {
- 	struct elf32_shdr *shdr;
- 	int i;
-@@ -261,6 +360,9 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
- 			return NULL;
- 		}
- 
-+		if (id)
-+			*id = i;
-+
- 		return shdr;
- 	}
- 
-@@ -288,7 +390,7 @@ int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw)
- 
- 	ehdr = (struct elf32_hdr *)elf_data;
- 
--	shdr = find_table(dev, ehdr, fw->size);
-+	shdr = find_table(dev, ehdr, fw->size, NULL);
- 	if (!shdr)
- 		return -EINVAL;
- 
-@@ -328,11 +430,14 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
- {
- 	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
- 	struct elf32_shdr *shdr;
-+	int id, map;
- 
--	shdr = find_table(&rproc->dev, ehdr, fw->size);
-+	shdr = find_table(&rproc->dev, ehdr, fw->size, &id);
- 	if (!shdr)
- 		return NULL;
- 
--	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, 0);
-+	map = rproc_elf_section_to_map(id, fw->data);
-+
-+	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, map);
- }
- EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
-diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
-index 31aa10178335..ce114abc7a50 100644
---- a/include/uapi/linux/elf-em.h
-+++ b/include/uapi/linux/elf-em.h
-@@ -37,6 +37,7 @@
- #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
- #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
- #define EM_TI_C6000	140	/* TI C6X DSPs */
-+#define EM_TI_PRU	144	/* TI Programmable Realtime Unit */
- #define EM_AARCH64	183	/* ARM 64 bit */
- #define EM_TILEPRO	188	/* Tilera TILEPro */
- #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
--- 
-2.17.1
+> ---
+>  drivers/rpmsg/qcom_smd.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 5ce9bf7b897d..f63adcd95eb0 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -1100,12 +1100,12 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+>  	void *info;
+>  	int ret;
+>  
+> -	channel = devm_kzalloc(&edge->dev, sizeof(*channel), GFP_KERNEL);
+> +	channel = kzalloc(sizeof(*channel), GFP_KERNEL);
+>  	if (!channel)
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	channel->edge = edge;
+> -	channel->name = devm_kstrdup(&edge->dev, name, GFP_KERNEL);
+> +	channel->name = kstrdup(name, GFP_KERNEL);
+>  	if (!channel->name)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> @@ -1156,8 +1156,8 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+>  	return channel;
+>  
+>  free_name_and_channel:
+> -	devm_kfree(&edge->dev, channel->name);
+> -	devm_kfree(&edge->dev, channel);
+> +	kfree(channel->name);
+> +	kfree(channel);
+>  
+>  	return ERR_PTR(ret);
+>  }
+> @@ -1378,13 +1378,13 @@ static int qcom_smd_parse_edge(struct device *dev,
+>   */
+>  static void qcom_smd_edge_release(struct device *dev)
+>  {
+> -	struct qcom_smd_channel *channel;
+> +	struct qcom_smd_channel *channel, *tmp;
+>  	struct qcom_smd_edge *edge = to_smd_edge(dev);
+>  
+> -	list_for_each_entry(channel, &edge->channels, list) {
+> -		SET_RX_CHANNEL_INFO(channel, state, SMD_CHANNEL_CLOSED);
+> -		SET_RX_CHANNEL_INFO(channel, head, 0);
+> -		SET_RX_CHANNEL_INFO(channel, tail, 0);
+> +	list_for_each_entry_safe(channel, tmp, &edge->channels, list) {
+> +		list_del(&channel->list);
+> +		kfree(channel->name);
+> +		kfree(channel);
+>  	}
+>  
+>  	kfree(edge);
+> -- 
+> 2.16.2
+> 
