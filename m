@@ -1,306 +1,103 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [RFC v2 2/5] remoteproc: add system resource manager core
-Date: Wed, 27 Jun 2018 10:06:19 +0200
-Message-ID: <1530086782-5046-3-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
-References: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from userp2130.oracle.com ([156.151.31.86]:54798 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753529AbeFGISc (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 7 Jun 2018 04:18:32 -0400
+Date: Thu, 7 Jun 2018 11:18:22 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [bug report] remoteproc: st_slim_rproc: add a slimcore rproc driver
+Message-ID: <20180607081822.yibwdwv4zpnynigd@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic Pallardy <loic.pallardy@st.com>, Oleksij
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>, Alex Elder <elder@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: peter.griffin@linaro.org
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The remoteproc SRM (System Resource Manager) handles resources allocated
-to remote processors.
-This makes it possible for remote proc to reserve and initialize system
-resources for a peripheral assigned to a coprocessor.
-This is the core part which is in charge of controlling the device
-children.
+Hello Peter Griffin,
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- Documentation/remoteproc.txt        |  23 ++++
- drivers/remoteproc/Kconfig          |   8 ++
- drivers/remoteproc/Makefile         |   1 +
- drivers/remoteproc/rproc_srm_core.c | 205 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 237 insertions(+)
- create mode 100644 drivers/remoteproc/rproc_srm_core.c
+The patch bb6869b21478: "remoteproc: st_slim_rproc: add a slimcore
+rproc driver" from Oct 18, 2016, leads to the following static
+checker warning:
 
-diff --git a/Documentation/remoteproc.txt b/Documentation/remoteproc.txt
-index 77fb03a..bec2177 100644
---- a/Documentation/remoteproc.txt
-+++ b/Documentation/remoteproc.txt
-@@ -353,3 +353,26 @@ Of course, RSC_VDEV resource entries are only good enough for static
- allocation of virtio devices. Dynamic allocations will also be made possible
- using the rpmsg bus (similar to how we already do dynamic allocations of
- rpmsg channels; read more about it in rpmsg.txt).
-+
-+8. System Resource Manager (SRM)
-+
-+Since some resources are shared (directly or not) between the processors, a
-+processor cannot manage such resources without potentially impacting the other
-+processors : as an example, if a processor changes the frequency of a clock, the
-+frequency of another clock managed by another processor may be updated too.
-+
-+The System Resource Manager prevents such resource conflicts between the
-+processors : it reserves and initializes the system resources of the peripherals
-+assigned to a remote processor.
-+
-+As of today the following resources are controlled by the SRM:
-+- clocks
-+- gpios (pinctrl)
-+- regulators (power supplies)
-+
-+The SRM is implemented as an 'rproc_subdev' and registered to remoteproc_core.
-+Unlike the virtio device (vdev), the SRM subdev is probed *before* the rproc
-+boots, ensuring the availability of the resources before the remoteproc starts.
-+
-+The resources handled by the SRM are defined in the DeviceTree: please read
-+Documentation/devicetree/bindings/remoteproc/rproc-srm.txt for details.
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index cd1c168..e981831 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -13,6 +13,14 @@ config REMOTEPROC
- 
- if REMOTEPROC
- 
-+config REMOTEPROC_SRM_CORE
-+	tristate "Remoteproc System Resource Manager core"
-+	help
-+	  Say y here to enable the core driver of the remoteproc System Resource
-+	  Manager (SRM).
-+	  The SRM handles resources allocated to remote processors.
-+	  The core part is in charge of controlling the device children.
-+
- config IMX_REMOTEPROC
- 	tristate "IMX6/7 remoteproc support"
- 	depends on SOC_IMX6SX || SOC_IMX7D
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 02627ed..2be447a 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
- remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
- remoteproc-y				+= remoteproc_elf_loader.o
-+obj-$(CONFIG_REMOTEPROC_SRM_CORE)	+= rproc_srm_core.o
- obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
-diff --git a/drivers/remoteproc/rproc_srm_core.c b/drivers/remoteproc/rproc_srm_core.c
-new file mode 100644
-index 0000000..29fcc73
---- /dev/null
-+++ b/drivers/remoteproc/rproc_srm_core.c
-@@ -0,0 +1,205 @@
-+/*
-+ * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
-+ * Author: Fabien Dessenne <fabien.dessenne@st.com>.
-+ *
-+ * License type: GPLv2
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-+ * or FITNESS FOR A PARTICULAR PURPOSE.
-+ * See the GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along with
-+ * this program. If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/component.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/remoteproc.h>
-+
-+#define BIND_TIMEOUT 10000
-+
-+struct rproc_srm_core {
-+	struct device *dev;
-+	struct completion all_bound;
-+	int bind_status;
-+	atomic_t prepared;
-+	struct rproc_subdev subdev;
-+};
-+
-+#define to_rproc_srm_core(s) container_of(s, struct rproc_srm_core, subdev)
-+
-+static int compare_of(struct device *dev, void *data)
-+{
-+	return dev->of_node == data;
-+}
-+
-+static void release_of(struct device *dev, void *data)
-+{
-+	of_node_put(data);
-+}
-+
-+static void rproc_srm_core_unbind(struct device *dev)
-+{
-+	component_unbind_all(dev, NULL);
-+}
-+
-+static int rproc_srm_core_bind(struct device *dev)
-+{
-+	struct rproc_srm_core *rproc_srm_core = dev_get_drvdata(dev);
-+
-+	rproc_srm_core->bind_status = component_bind_all(dev, NULL);
-+	complete(&rproc_srm_core->all_bound);
-+
-+	return rproc_srm_core->bind_status;
-+}
-+
-+static const struct component_master_ops srm_comp_ops = {
-+	.bind = rproc_srm_core_bind,
-+	.unbind = rproc_srm_core_unbind,
-+};
-+
-+static int rproc_srm_core_prepare(struct rproc_subdev *subdev)
-+{
-+	struct rproc_srm_core *rproc_srm_core = to_rproc_srm_core(subdev);
-+	struct device *dev = rproc_srm_core->dev;
-+	struct device_node *node = dev->of_node;
-+	struct device_node *child_np;
-+	struct component_match *match = NULL;
-+	int ret;
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	init_completion(&rproc_srm_core->all_bound);
-+
-+	ret = devm_of_platform_populate(dev);
-+	if (ret) {
-+		dev_err(dev, "cannot populate node (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	child_np = of_get_next_available_child(node, NULL);
-+
-+	while (child_np) {
-+		of_node_get(child_np);
-+		component_match_add_release(dev, &match, release_of, compare_of,
-+					    child_np);
-+		child_np = of_get_next_available_child(node, child_np);
-+	}
-+
-+	if (!match) {
-+		dev_dbg(dev, "No available child\n");
-+		goto done;
-+	}
-+
-+	ret = component_master_add_with_match(dev, &srm_comp_ops, match);
-+	if (ret)
-+		goto depopulate;
-+
-+	/* Wait for every child to be bound */
-+	if (!wait_for_completion_timeout(&rproc_srm_core->all_bound,
-+					 msecs_to_jiffies(BIND_TIMEOUT))) {
-+		dev_err(dev, "bind timeout\n");
-+		ret = -ETIMEDOUT;
-+		goto master;
-+	}
-+
-+	ret = rproc_srm_core->bind_status;
-+	if (ret) {
-+		dev_err(dev, "failed to bind\n");
-+		goto master;
-+	}
-+done:
-+	atomic_inc(&rproc_srm_core->prepared);
-+
-+	return 0;
-+
-+master:
-+	component_master_del(dev, &srm_comp_ops);
-+depopulate:
-+	devm_of_platform_depopulate(dev);
-+	return ret;
-+}
-+
-+static void rproc_srm_core_do_unprepare(struct rproc_subdev *subdev)
-+{
-+	struct rproc_srm_core *rproc_srm_core = to_rproc_srm_core(subdev);
-+	struct device *dev = rproc_srm_core->dev;
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	atomic_dec(&rproc_srm_core->prepared);
-+
-+	component_master_del(dev, &srm_comp_ops);
-+	devm_of_platform_depopulate(dev);
-+}
-+
-+static int rproc_srm_core_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rproc *rproc = dev_get_drvdata(dev->parent);
-+	struct rproc_srm_core *rproc_srm_core;
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	rproc_srm_core = devm_kzalloc(dev, sizeof(struct rproc_srm_core),
-+				      GFP_KERNEL);
-+	if (!rproc_srm_core)
-+		return -ENOMEM;
-+
-+	rproc_srm_core->dev = dev;
-+
-+	/* Register rproc subdevice with (un)prepare ops */
-+	rproc_srm_core->subdev.prepare = rproc_srm_core_prepare;
-+	rproc_srm_core->subdev.unprepare = rproc_srm_core_unprepare;
-+	rproc_add_subdev(rproc, &rproc_srm_core->subdev);
-+
-+	dev_set_drvdata(dev, rproc_srm_core);
-+
-+	return 0;
-+}
-+
-+static int rproc_srm_core_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rproc_srm_core *rproc_srm_core = dev_get_drvdata(dev);
-+	struct rproc *rproc = dev_get_drvdata(dev->parent);
-+
-+	dev_dbg(dev, "%s\n", __func__);
-+
-+	if (atomic_read(&rproc->power) > 0)
-+		dev_warn(dev, "Releasing resources while firmware running!\n");
-+
-+	if (atomic_read(&rproc_srm_core->prepared))
-+		rproc_srm_core_unprepare(&rproc_srm_core->subdev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rproc_srm_core_match[] = {
-+	{ .compatible = "rproc-srm-core", },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, rproc_srm_core_match);
-+
-+static struct platform_driver rproc_srm_core_driver = {
-+	.probe = rproc_srm_core_probe,
-+	.remove = rproc_srm_core_remove,
-+	.driver = {
-+		.name = "rproc-srm-core",
-+		.of_match_table = of_match_ptr(rproc_srm_core_match),
-+	},
-+};
-+
-+module_platform_driver(rproc_srm_core_driver);
-+
-+MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
-+MODULE_DESCRIPTION("Remoteproc System Resource Manager driver - core");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+	drivers/remoteproc/st_slim_rproc.c:131 slim_rproc_start()
+	warn: potential ! vs ~ typo
+
+	drivers/remoteproc/st_slim_rproc.c:170 slim_rproc_stop()
+	warn: potential ! vs ~ typo
+
+drivers/remoteproc/st_slim_rproc.c
+   116  static int slim_rproc_start(struct rproc *rproc)
+   117  {
+   118          struct device *dev = &rproc->dev;
+   119          struct st_slim_rproc *slim_rproc = rproc->priv;
+   120          unsigned long hw_id, hw_ver, fw_rev;
+   121          u32 val;
+   122  
+   123          /* disable CPU pipeline clock & reset CPU pipeline */
+   124          val = SLIM_CLK_GATE_DIS | SLIM_CLK_GATE_RESET;
+   125          writel(val, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
+   126  
+   127          /* disable SLIM core STBus sync */
+   128          writel(SLIM_STBUS_SYNC_DIS, slim_rproc->peri + SLIM_STBUS_SYNC_OFST);
+   129  
+   130          /* enable cpu pipeline clock */
+   131          writel(!SLIM_CLK_GATE_DIS,
+                       ^^^^^^^^^^^^^^^^^^
+Did we intend to write ~1 or 0?
+
+   132                  slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
+   133  
+   134          /* clear int & cmd mailbox */
+   135          writel(~0U, slim_rproc->peri + SLIM_INT_CLR_OFST);
+   136          writel(~0U, slim_rproc->peri + SLIM_CMD_CLR_OFST);
+   137  
+   138          /* enable all channels cmd & int */
+   139          writel(~0U, slim_rproc->peri + SLIM_INT_MASK_OFST);
+   140          writel(~0U, slim_rproc->peri + SLIM_CMD_MASK_OFST);
+   141  
+   142          /* enable cpu */
+   143          writel(SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
+   144  
+   145          hw_id = readl_relaxed(slim_rproc->slimcore + SLIM_ID_OFST);
+   146          hw_ver = readl_relaxed(slim_rproc->slimcore + SLIM_VER_OFST);
+   147  
+   148          fw_rev = readl(slim_rproc->mem[ST_SLIM_DMEM].cpu_addr +
+   149                          SLIM_REV_ID_OFST);
+   150  
+   151          dev_info(dev, "fw rev:%ld.%ld on SLIM %ld.%ld\n",
+   152                   SLIM_REV_ID_MAJ(fw_rev), SLIM_REV_ID_MIN(fw_rev),
+   153                   hw_id, hw_ver);
+   154  
+   155          return 0;
+   156  }
+   157  
+   158  static int slim_rproc_stop(struct rproc *rproc)
+   159  {
+   160          struct st_slim_rproc *slim_rproc = rproc->priv;
+   161          u32 val;
+   162  
+   163          /* mask all (cmd & int) channels */
+   164          writel(0UL, slim_rproc->peri + SLIM_INT_MASK_OFST);
+   165          writel(0UL, slim_rproc->peri + SLIM_CMD_MASK_OFST);
+   166  
+   167          /* disable cpu pipeline clock */
+   168          writel(SLIM_CLK_GATE_DIS, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
+   169  
+   170          writel(!SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
+                        ^^^^^^^^^^^
+
+   171  
+   172          val = readl(slim_rproc->slimcore + SLIM_EN_OFST);
+   173          if (val & SLIM_EN_RUN)
+   174                  dev_warn(&rproc->dev, "Failed to disable SLIM");
+   175  
+   176          dev_dbg(&rproc->dev, "slim stopped\n");
+   177  
+   178          return 0;
+   179  }
+
+regards,
+dan carpenter
