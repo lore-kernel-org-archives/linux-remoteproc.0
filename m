@@ -1,55 +1,54 @@
-Return-Path: <ore@pengutronix.de>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: [PATCH v1 1/2] imx-rproc: dt: provide new remote-nodes option
-Date: Fri, 15 Jun 2018 13:57:30 +0200
-Message-Id: <20180615115731.18424-1-o.rempel@pengutronix.de>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, dl-linux-imx <linux-imx@nxp.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 11 Jun 2018 11:23:17 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] hwspinlock updates for v4.18
+Message-ID: <20180611182317.GC3206@builder>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Baolin Wang <baolin.wang@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On AMP systems we need to make sure that some device
-nodes are not used by main system and reserved for
-external system. Some of configuration should be
-maintained by main system. For example clocks and pins.
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- .../devicetree/bindings/remoteproc/imx-rproc.txt    | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-index fbcefd965dc4..40bec03e094c 100644
---- a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-@@ -15,6 +15,7 @@ Required properties:
- Optional properties:
- - memory-region		list of phandels to the reserved memory regions.
- 			(See: ../reserved-memory/reserved-memory.txt)
-+- remote-nodes		list of device node phandels used by remote system.
- 
- Example:
- 	m4_reserved_sysmem1: cm4@80000000 {
-@@ -25,9 +26,21 @@ Example:
- 		reg = <0x81000000 0x80000>;
- 	};
- 
-+	/* node reserved for rproc */
-+	&uart1 {
-+		assigned-clock-rates = <240000000>;
-+		status = "disabled";
-+	};
-+
-+	&gpt2 {
-+		assigned-clock-rates = <24000000>;
-+		status = "disabled";
-+	};
-+
- 	imx7d-cm4 {
- 		compatible	= "fsl,imx7d-cm4";
- 		memory-region	= <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
- 		syscon		= <&src>;
- 		clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
-+		remote-nodes	= <&gpt2>, <&uart1>;
- 	};
--- 
-2.17.1
+are available in the Git repository at:
+
+  git://github.com/andersson/remoteproc tags/hwlock-v4.18
+
+for you to fetch changes up to e759176c7f6b6d84a31276e11d687f232f6e4ecf:
+
+  hwspinlock/u8500: Switch to SPDX license identifier (2018-05-24 12:05:11 -0700)
+
+----------------------------------------------------------------
+hwspinlock updates for v4.18
+
+In addition to migrating the files to use SPDX license headers this
+introduces the ability for clients to operate a hwlock without the
+framework taking any additional locks.
+
+----------------------------------------------------------------
+Baolin Wang (2):
+      hwspinlock: Convert to use 'switch' statement
+      hwspinlock: Introduce one new mode for hwspinlock
+
+Suman Anna (6):
+      hwspinlock/core: Switch to SPDX license identifier
+      hwspinlock/omap: Switch to SPDX license identifier
+      hwspinlock: qcom: Switch to SPDX license identifier
+      hwspinlock/sirf: Switch to SPDX license identifier
+      hwspinlock: sprd: Switch to SPDX license identifier
+      hwspinlock/u8500: Switch to SPDX license identifier
+
+ drivers/hwspinlock/Kconfig               |  1 +
+ drivers/hwspinlock/hwspinlock_core.c     | 77 +++++++++++++++++++++-----------
+ drivers/hwspinlock/hwspinlock_internal.h | 10 +----
+ drivers/hwspinlock/omap_hwspinlock.c     | 10 +----
+ drivers/hwspinlock/qcom_hwspinlock.c     | 10 +----
+ drivers/hwspinlock/sirf_hwspinlock.c     |  3 +-
+ drivers/hwspinlock/sprd_hwspinlock.c     | 10 +----
+ drivers/hwspinlock/u8500_hsem.c          | 10 +----
+ include/linux/hwspinlock.h               | 68 ++++++++++++++++++++++++----
+ 9 files changed, 118 insertions(+), 81 deletions(-)
