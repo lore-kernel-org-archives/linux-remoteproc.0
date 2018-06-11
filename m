@@ -1,47 +1,62 @@
-Return-Path: <niklas.cassel@linaro.org>
-Return-Path: <niklas.cassel@linaro.org>
-From: Niklas Cassel <niklas.cassel@linaro.org>
-Subject: [PATCH v2 0/7] soc: qcom: Allow COMPILE_TEST of all drivers
-Date: Thu, 14 Jun 2018 13:11:31 +0200
-Message-Id: <20180614111138.8923-1-niklas.cassel@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 11 Jun 2018 11:24:24 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] remoteproc updates for v4.18
+Message-ID: <20180611182424.GD3206@builder>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: andy.gross@linaro.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-msm@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org, alsa-devel@alsa-project.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Since commit cab673583d96 ("soc: Unconditionally include qcom Makefile"),
-we unconditionally include the soc/qcom/Makefile.
+The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
 
-This opens up the possibility to compile test the code even when
-building for other architectures.
+  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
 
-This patch series prepares and enables all but two Kconfigs to be
-compile tested even when building for other architectures.
+are available in the Git repository at:
 
+  git://github.com/andersson/remoteproc tags/rproc-v4.18
 
-Changes since v1:
-Added two new patches, "ASoC: qdsp6: Add depends on OF"
-and "soc: qcom: Remove bogus depends on OF".
-Patch "soc: qcom: Allow COMPILE_TEST of all drivers"
-now adds "depends on ARCH_QCOM || COMPILE_TEST" to the menu entry.
+for you to fetch changes up to 4725496e4872824fa6182d412c66c00cae978a62:
 
+  remoteproc: q6v5: Allow defining GLINK edge for mss remoteproc (2018-05-29 20:10:34 -0700)
 
-Niklas Cassel (7):
-  rpmsg: smd: Add missing include of sizes.h
-  soc: qcom: smem: Add missing include of sizes.h
-  soc: qcom: smp2p: Add select IRQ_DOMAIN
-  soc: qcom: smsm: Add select IRQ_DOMAIN
-  ASoC: qdsp6: Add depends on OF
-  soc: qcom: Remove bogus depends on OF
-  soc: qcom: Allow COMPILE_TEST of all drivers
+----------------------------------------------------------------
+remoteproc updates for v4.18
 
- drivers/rpmsg/qcom_smd.c |  1 +
- drivers/soc/qcom/Kconfig | 14 +++++---------
- drivers/soc/qcom/smem.c  |  1 +
- sound/soc/qcom/Kconfig   |  2 +-
- 4 files changed, 8 insertions(+), 10 deletions(-)
+This brings a few minor fixes to the Davinci driver, drops a orphan
+include file from the StE cleanup done ealier and introduces support for
+booting the modem on Qualcomm's SDM845 platform.
 
--- 
-2.17.1
+----------------------------------------------------------------
+Andrzej Hajda (1):
+      remoteproc/ste: remove abandoned include file
+
+Bartosz Golaszewski (3):
+      remoteproc/davinci: add the missing retval check for clk_enable()
+      remoteproc/davinci: prepare and unprepare the clock where needed
+      remoteproc/davinci: use octal permissions for module_param()
+
+Bjorn Andersson (2):
+      Merge tag 'v4.17-rc4' into rproc-next
+      remoteproc: q6v5: Return irq from q6v5_request_irq()
+
+Geert Uytterhoeven (1):
+      remoteproc: Remove depends on HAS_DMA in case of platform dependency
+
+Sibi Sankar (6):
+      remoteproc: Prevent incorrect rproc state on xfer mem ownership failure
+      remoteproc: q6v5: Move proxy unvote to handover irq handler
+      dt-bindings: remoteproc: Add Q6v5 Modem PIL binding for SDM845
+      remoteproc: q6v5: Introduce reset assert/deassert helper functions
+      remoteproc: q6v5: Add support for mss remoteproc on SDM845
+      remoteproc: q6v5: Allow defining GLINK edge for mss remoteproc
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
+ drivers/remoteproc/Kconfig                         |   1 -
+ drivers/remoteproc/da8xx_remoteproc.c              |  12 +-
+ drivers/remoteproc/qcom_q6v5_pil.c                 | 201 ++++++++++++++++++---
+ include/linux/ste_modem_shm.h                      |  56 ------
+ 5 files changed, 188 insertions(+), 83 deletions(-)
+ delete mode 100644 include/linux/ste_modem_shm.h
