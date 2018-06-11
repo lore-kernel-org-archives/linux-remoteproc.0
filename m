@@ -1,57 +1,60 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] rpmsg: core: add support to power domains for devices
-Date: Fri, 15 Jun 2018 10:59:39 +0100
-Message-Id: <20180615095939.1331-1-srinivas.kandagatla@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <mst@redhat.com>
+Date: Mon, 11 Jun 2018 19:23:53 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PULL] vhost: cleanups and fixes
+Message-ID: <20180611192353-mutt-send-email-mst@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, stable@vger.kernel.org, kevin@guarana.org, liang.z.li@intel.com, mhocko@kernel.org, mhocko@suse.com, mst@redhat.com, ohad@wizery.com, syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com, tiwei.bie@intel.com, wei.w.wang@intel.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Some of the rpmsg devices need to switch on power domains to communicate
-with remote processor. For example on Qualcomm DB820c platform LPASS
-power domain needs to switched on for any kind of audio services.
-This patch adds the missing power domain support in rpmsg core.
+The following changes since commit 29dcea88779c856c7dc92040a0c01233263101d4:
 
-Without this patch attempting to play audio via QDSP on DB820c would
-reboot the system.
+  Linux 4.17 (2018-06-03 14:15:21 -0700)
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/rpmsg/rpmsg_core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+are available in the Git repository at:
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index b714a543a91d..8122807db380 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/rpmsg.h>
- #include <linux/of_device.h>
-+#include <linux/pm_domain.h>
- #include <linux/slab.h>
- 
- #include "rpmsg_internal.h"
-@@ -449,6 +450,10 @@ static int rpmsg_dev_probe(struct device *dev)
- 	struct rpmsg_endpoint *ept = NULL;
- 	int err;
- 
-+	err = dev_pm_domain_attach(dev, true);
-+	if (err)
-+		goto out;
-+
- 	if (rpdrv->callback) {
- 		strncpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
- 		chinfo.src = rpdev->src;
-@@ -490,6 +495,8 @@ static int rpmsg_dev_remove(struct device *dev)
- 
- 	rpdrv->remove(rpdev);
- 
-+	dev_pm_domain_detach(dev, true);
-+
- 	if (rpdev->ept)
- 		rpmsg_destroy_ept(rpdev->ept);
- 
--- 
-2.16.2
+  git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+
+for you to fetch changes up to aa15783ee62d57d69433101ede3e3ed11e48161d:
+
+  virtio: update the comments for transport features (2018-06-07 22:17:40 +0300)
+
+----------------------------------------------------------------
+virtio, vhost: features, fixes
+
+VF support for virtio.
+Free page hint request support for VM migration.
+DMA barriers for virtio strong barriers.
+Bugfixes.
+
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+
+----------------------------------------------------------------
+Michael S. Tsirkin (2):
+      virtio_ring: switch to dma_XX barriers for rpmsg
+      vhost: fix info leak due to uninitialized memory
+
+Tiwei Bie (2):
+      virtio_pci: support enabling VFs
+      virtio: update the comments for transport features
+
+Wei Wang (4):
+      mm: support reporting free page blocks
+      virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+      mm/page_poison: expose page_poisoning_enabled to kernel modules
+      virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
+
+ drivers/vhost/vhost.c               |   3 +
+ drivers/virtio/virtio_balloon.c     | 298 +++++++++++++++++++++++++++++++-----
+ drivers/virtio/virtio_pci_common.c  |  30 ++++
+ drivers/virtio/virtio_pci_modern.c  |  14 ++
+ include/linux/mm.h                  |   6 +
+ include/linux/virtio_ring.h         |   4 +-
+ include/uapi/linux/virtio_balloon.h |   7 +
+ include/uapi/linux/virtio_config.h  |  16 +-
+ mm/page_alloc.c                     |  97 ++++++++++++
+ mm/page_poison.c                    |   6 +
+ 10 files changed, 439 insertions(+), 42 deletions(-)
