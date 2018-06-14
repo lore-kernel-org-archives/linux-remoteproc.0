@@ -1,63 +1,47 @@
-Return-Path: <rohitkr@codeaurora.org>
-Subject: Re: [RFC PATCH 0/5] Hexagon remoteproc spring cleaning
-References: <20180523052054.19025-1-bjorn.andersson@linaro.org>
-From: Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <9dd77f05-9ac4-55d1-5f79-03f40c9306f9@codeaurora.org>
-Date: Fri, 1 Jun 2018 19:03:43 +0530
+Return-Path: <niklas.cassel@linaro.org>
+Return-Path: <niklas.cassel@linaro.org>
+From: Niklas Cassel <niklas.cassel@linaro.org>
+Subject: [PATCH v2 0/7] soc: qcom: Allow COMPILE_TEST of all drivers
+Date: Thu, 14 Jun 2018 13:11:31 +0200
+Message-Id: <20180614111138.8923-1-niklas.cassel@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180523052054.19025-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To: andy.gross@linaro.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Brown <david.brown@linaro.org>, Patrick Lai <plai@codeaurora.org>, Banajit Goswami <bgoswami@codeaurora.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-arm-msm@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org, alsa-devel@alsa-project.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Thanks Bjorn for the cleanup.
+Since commit cab673583d96 ("soc: Unconditionally include qcom Makefile"),
+we unconditionally include the soc/qcom/Makefile.
 
-I validated PAS and Non- PAS ADSP PIL with the cleanup changes on SDM845.
+This opens up the possibility to compile test the code even when
+building for other architectures.
 
-Adding tag for ADSP PIL.
+This patch series prepares and enables all but two Kconfigs to be
+compile tested even when building for other architectures.
 
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 
-On 5/23/2018 10:50 AM, Bjorn Andersson wrote:
-> With the introduction of support for the non-MSA Hexagon WCSS driver from
-> Sricharan and the non-PAS ADSP driver from Rohit it makes sense to overhaul the
-> structure of the Qualcomm "Q6V5 drivers".
->
-> The first patch is from Sricharan's series and included here for completeness.
-> The second patch introduces a set of helper functions, based on the current
-> state of the qcom_q6v5_pil driver. The third and forth patch migrates the PAS
-> and the MSA drivers over to using these helpers. Finally a (completely)
-> reworked version of Sricharan's WCSS remoteproc driver is introduced.
->
->
-> With this in place I suggest that we rename qcom_adsp_pil.c to qcom_q6v5_pas.c,
+Changes since v1:
+Added two new patches, "ASoC: qdsp6: Add depends on OF"
+and "soc: qcom: Remove bogus depends on OF".
+Patch "soc: qcom: Allow COMPILE_TEST of all drivers"
+now adds "depends on ARCH_QCOM || COMPILE_TEST" to the menu entry.
 
-I am making changes for non-PAS ADSP PIL by creating new file.
-In case you plan to rename qcom_adsp_pil.c to qcom_q6v5_pas, please 
-include that change with this.
-Also, let me know the filename which we should keep it for non-PAS ADSP 
-PIL driver.
-> qcom_q6v5_pil.c to qcom_q6v5_msa.c and depending on the details of the non-PAS
-> ADSP we could potentially combine that into a qcom_q6v5_pil.c - or we carry
-> them as separate files.
-I tried comparing qcom_q6v5_pil.c with non-PAS ADSP pil driver. I don't 
-think that we can combine
-them as there are good amount of code differences. However, we can take 
-a look into it once
-I post non-PAS ADSP PIL.
->
-> Looking at the remaining non-essential parts of these drivers we have
-> memory-region handling and halt_axi handling. The prior is actively being
-> worked on and the latter should (if no better abstraction is presented) be
-> possible to just put in the new qcom_q6v5.c.
->
 
-Thanks,
-Rohit
+Niklas Cassel (7):
+  rpmsg: smd: Add missing include of sizes.h
+  soc: qcom: smem: Add missing include of sizes.h
+  soc: qcom: smp2p: Add select IRQ_DOMAIN
+  soc: qcom: smsm: Add select IRQ_DOMAIN
+  ASoC: qdsp6: Add depends on OF
+  soc: qcom: Remove bogus depends on OF
+  soc: qcom: Allow COMPILE_TEST of all drivers
+
+ drivers/rpmsg/qcom_smd.c |  1 +
+ drivers/soc/qcom/Kconfig | 14 +++++---------
+ drivers/soc/qcom/smem.c  |  1 +
+ sound/soc/qcom/Kconfig   |  2 +-
+ 4 files changed, 8 insertions(+), 10 deletions(-)
 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.1
