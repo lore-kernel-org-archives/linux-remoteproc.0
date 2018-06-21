@@ -1,88 +1,135 @@
-Return-Path: <baolin.wang@linaro.org>
-Return-Path: <baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 1/4] hwspinlock: Add one new API to support getting a specific hwlock by the name
-Date: Fri,  1 Jun 2018 17:04:52 +0800
-Message-Id: <1be6adeb558fada77de79a40cd5ef7dc2719c945.1527843425.git.baolin.wang@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, broonie@kernel.org
-Cc: baolin.wang@linaro.org, linux-spi@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v7 1/4] remoteproc/davinci: use the reset framework
+Date: Thu, 21 Jun 2018 09:37:03 +0200
+Message-Id: <20180621073706.22812-2-brgl@bgdev.pl>
+In-Reply-To: <20180621073706.22812-1-brgl@bgdev.pl>
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The hardware spinlock binding already supplied the 'hwlock-names' property
-to match and get a specific hwlock, but did not supply one API for users
-to get a specific hwlock by the hwlock name. So this patch introduces one
-API to support this requirement.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Switch to using the reset framework instead of handcoded reset routines
+we used so far.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/hwspinlock/hwspinlock_core.c |   29 +++++++++++++++++++++++++++++
- include/linux/hwspinlock.h           |    7 +++++++
- 2 files changed, 36 insertions(+)
+ drivers/remoteproc/da8xx_remoteproc.c | 34 +++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index 5278d05..00bde06 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -375,6 +375,35 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
- }
- EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id);
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index b668e32996e2..76c06b70a1c6 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -10,6 +10,7 @@
  
-+/**
-+ * of_hwspin_lock_get_id_byname() - get lock id for an specified hwlock name
-+ * @np: device node from which to request the specific hwlock
-+ * @name: hwlock name
-+ *
-+ * This function provides a means for DT users of the hwspinlock module to
-+ * get the global lock id of a specific hwspinlock using the specified name of
-+ * the hwspinlock device, so that it can be requested using the normal
-+ * hwspin_lock_request_specific() API.
-+ *
-+ * Returns the global lock id number on success, -EPROBE_DEFER if the hwspinlock
-+ * device is not yet registered, -EINVAL on invalid args specifier value or an
-+ * appropriate error as returned from the OF parsing of the DT client node.
-+ */
-+int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
-+{
-+	int index;
-+
-+	if (!name)
-+		return -EINVAL;
-+
-+	index = of_property_match_string(np, "hwlock-names", name);
-+	if (index < 0)
-+		return index;
-+
-+	return of_hwspin_lock_get_id(np, index);
-+}
-+EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
-+
- static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
- {
- 	struct hwspinlock *tmp;
-diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
-index fe450ee..f165cc8 100644
---- a/include/linux/hwspinlock.h
-+++ b/include/linux/hwspinlock.h
-@@ -74,6 +74,7 @@ int __hwspin_lock_timeout(struct hwspinlock *, unsigned int, int,
- 							unsigned long *);
- int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
- void __hwspin_unlock(struct hwspinlock *, int, unsigned long *);
-+int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name);
+ #include <linux/bitops.h>
+ #include <linux/clk.h>
++#include <linux/reset.h>
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -20,8 +21,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
  
- #else /* !CONFIG_HWSPINLOCK */
+-#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+-
+ #include "remoteproc_internal.h"
  
-@@ -133,6 +134,12 @@ static inline int hwspin_lock_get_id(struct hwspinlock *hwlock)
+ static char *da8xx_fw_name;
+@@ -72,6 +71,7 @@ struct da8xx_rproc {
+ 	struct da8xx_rproc_mem *mem;
+ 	int num_mems;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void (*ack_fxn)(struct irq_data *data);
+ 	struct irq_data *irq_data;
+ 	void __iomem *chipsig;
+@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = rproc->dev.parent;
+ 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
++	struct reset_control *dsp_reset = drproc->dsp_reset;
+ 	int ret;
+ 
+ 	/* hw requires the start (boot) address be on 1KB boundary */
+@@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
+-	davinci_clk_reset_deassert(dsp_clk);
++	ret = reset_control_deassert(dsp_reset);
++	if (ret) {
++		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
++		clk_disable_unprepare(dsp_clk);
++		return ret;
++	}
+ 
  	return 0;
  }
- 
-+static inline
-+int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
-+{
-+	return 0;
-+}
+@@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
+ static int da8xx_rproc_stop(struct rproc *rproc)
+ {
+ 	struct da8xx_rproc *drproc = rproc->priv;
++	struct device *dev = rproc->dev.parent;
++	int ret;
 +
- #endif /* !CONFIG_HWSPINLOCK */
++	ret = reset_control_assert(drproc->dsp_reset);
++	if (ret) {
++		dev_err(dev, "reset_control_assert() failed: %d\n", ret);
++		return ret;
++	}
  
- /**
+-	davinci_clk_reset_assert(drproc->dsp_clk);
+ 	clk_disable_unprepare(drproc->dsp_clk);
+ 
+ 	return 0;
+@@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	struct resource *bootreg_res;
+ 	struct resource *chipsig_res;
+ 	struct clk *dsp_clk;
++	struct reset_control *dsp_reset;
+ 	void __iomem *chipsig;
+ 	void __iomem *bootreg;
+ 	int irq;
+@@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsp_clk);
+ 	}
+ 
++	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(dsp_reset)) {
++		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
++			dev_err(dev, "unable to get reset control: %ld\n",
++				PTR_ERR(dsp_reset));
++
++		return PTR_ERR(dsp_reset);
++	}
++
+ 	if (dev->of_node) {
+ 		ret = of_reserved_mem_device_init(dev);
+ 		if (ret) {
+@@ -287,6 +310,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	drproc = rproc->priv;
+ 	drproc->rproc = rproc;
+ 	drproc->dsp_clk = dsp_clk;
++	drproc->dsp_reset = dsp_reset;
+ 	rproc->has_iommu = false;
+ 
+ 	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
+@@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+ 	 * held in reset at the time it is called.
+ 	 */
+-	ret = davinci_clk_reset_assert(drproc->dsp_clk);
++	ret = reset_control_assert(dsp_reset);
+ 	if (ret)
+ 		goto free_rproc;
+ 
 -- 
-1.7.9.5
+2.17.1
