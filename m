@@ -1,40 +1,68 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
- reset framework
-References: <20180621073706.22812-1-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
-Date: Thu, 21 Jun 2018 16:22:24 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180621073706.22812-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the reset framework
+Date: Thu, 21 Jun 2018 09:37:02 +0200
+Message-Id: <20180621073706.22812-1-brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bartosz,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> These are the remaining patches that still need to be merged in order
-> to complete the conversion of the davinci dsp driver to using the reset
-> framework.
-> 
-> They apply on top of v4.18-rc1 with David Lechner's remaining patches
-> merged.
+These are the remaining patches that still need to be merged in order
+to complete the conversion of the davinci dsp driver to using the reset
+framework.
 
-Series looks good to me.
+They apply on top of v4.18-rc1 with David Lechner's remaining patches
+merged.
 
-To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
-and #2 ?
+v1 -> v2:
+- fixed the device tree patches the descriptions of which were mixed up
+- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
+  reset provider, since it's possible that the lookup table was not yet
+  registered
+- made the local variable naming consistent in the davinci-rproc driver
+- fixed a typo in PATCH 5/8
 
-Given the dependencies and to preserve bisect its easiest if I take the
-series with acks from remoteproc and clock maintainers.
+v2 -> v3:
+- modify PATCH 1/8: drop the provider argument from the function adding
+  lookup entries and instead pass the provider name to the RESET_LOOKUP
+  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
+  cannot get the corresponding reset controller
+- modify the reset lookup entry in psc-da850
+- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
+  emit an error message if devm_reset_control_get_exclusive() returns
+  this error code
 
-Open to other suggestions as well.
+v3 -> v4:
+- make index the second parameter in RESET_LOOKUP() (right after the
+  provider name)
 
-Thanks,
-Sekhar
+v4 -> v5:
+- fix a bug where the dsp_reset object correctly stored in drproc struct
+
+v5 -> v6:
+- rebased on top of v4.17-rc1 and retested
+- dropped patches that were applied during 4.17 merge window
+- added relevant review and ack tags
+
+v6 -> v7:
+- rebased on top of v4.18-rc1 and dropped patches that were applied for
+  v4.17
+
+Bartosz Golaszewski (4):
+  remoteproc/davinci: use the reset framework
+  clk: davinci: kill davinci_clk_reset_assert/deassert()
+  ARM: davinci: dts: make psc0 a reset provider
+  ARM: davinci: dts: add a reset control to the dsp node
+
+ arch/arm/boot/dts/da850.dtsi               |  2 ++
+ arch/arm/mach-davinci/include/mach/clock.h | 21 -------------
+ drivers/clk/davinci/psc.c                  | 18 ------------
+ drivers/remoteproc/da8xx_remoteproc.c      | 34 ++++++++++++++++++----
+ 4 files changed, 31 insertions(+), 44 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+
+-- 
+2.17.1
