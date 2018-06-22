@@ -1,159 +1,188 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-Subject: Re: [PATCH 4/5] remoteproc: rename subdev probe and remove functions
-From: Alex Elder <elder@linaro.org>
-References: <20180515205345.8090-1-elder@linaro.org>
- <20180515205345.8090-5-elder@linaro.org>
- <dc10f869-48fb-84da-9df2-409d6c3568dc@st.com>
- <726fa7c1-dab8-c1e5-721a-2f60d7f967d8@linaro.org>
-Message-ID: <62d746d5-5cfb-11e4-17ba-e3d8f4eeb659@linaro.org>
-Date: Mon, 25 Jun 2018 20:32:26 -0500
-MIME-Version: 1.0
-In-Reply-To: <726fa7c1-dab8-c1e5-721a-2f60d7f967d8@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <baolin.wang@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 2/8] hwspinlock: Add devm_xxx() APIs to request/free hwlock
+Date: Fri, 22 Jun 2018 16:08:59 +0800
+Message-Id: <f75f8ab18e2e27077536692ae35e3dd707920238.1529654288.git.baolin.wang@linaro.org>
+In-Reply-To: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+References: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+In-Reply-To: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+References: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, broonie@kernel.org
+Cc: baolin.wang@linaro.org, linux-spi@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 05/29/2018 06:53 AM, Alex Elder wrote:
-> On 05/29/2018 04:12 AM, Arnaud Pouliquen wrote:
->> Hello Alex
->>
->>
->> We have the same needs (prepare unprepare steps) on our platform. We
->> tested you core patches and they answers to our need.
-> 
-> I'm very glad to hear that.  Would you offer your "Tested-by" on these?
-> 
-> On your comment below, yes, I will re-send v2 and will separate the
-> core from the glink code.
+This patch introduces some devm_xxx() APIs to help to request or free
+the hwlocks, which will help to simplify the cleanup code for drivers
+requesting one hwlock, ensuring that the hwlock is automatically freed
+whenever the device is unbound.
 
-Arnaud, despite what I said above, I'm about to resend the code but
-will *not* be separating the core code from glink code.  It turns
-out that the glink code (and smd and ssr) are really part of the
-core code at the moment.  So after talking with Bjorn I agreed to
-just send the code without splitting them.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/hwspinlock/hwspinlock_core.c |  110 ++++++++++++++++++++++++++++++++++
+ include/linux/hwspinlock.h           |   22 +++++++
+ 2 files changed, 132 insertions(+)
 
-Sorry.
-
-					-Alex
-
-> Thanks.
-> 
-> 					-Alex
-> 
->> Just a remark below
->>
->> On 05/15/2018 10:53 PM, Alex Elder wrote:
->>> Rename functions used when subdevices are started and stopped to
->>> reflect the new naming scheme.
->>>
->>> Signed-off-by: Alex Elder <elder@linaro.org>
->>> ---
->>>  drivers/remoteproc/qcom_common.c     | 16 ++++++++--------
->>>  drivers/remoteproc/remoteproc_core.c |  8 ++++----
->>>  2 files changed, 12 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
->>> index 4ae87c5b8793..6f77840140bf 100644
->>> --- a/drivers/remoteproc/qcom_common.c
->>> +++ b/drivers/remoteproc/qcom_common.c
->>> @@ -33,7 +33,7 @@
->>>  
->>>  static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
->>>  
->>> -static int glink_subdev_probe(struct rproc_subdev *subdev)
->>> +static int glink_subdev_start(struct rproc_subdev *subdev)
->>>  {
->>>  	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
->>>  
->>> @@ -42,7 +42,7 @@ static int glink_subdev_probe(struct rproc_subdev *subdev)
->>>  	return PTR_ERR_OR_ZERO(glink->edge);
->>>  }
->>>  
->>> -static void glink_subdev_remove(struct rproc_subdev *subdev, bool crashed)
->>> +static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
->>>  {
->>>  	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
->>>  
->>> @@ -64,8 +64,8 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
->>>  		return;
->>>  
->>>  	glink->dev = dev;
->>> -	glink->subdev.start = glink_subdev_probe;
->>> -	glink->subdev.stop = glink_subdev_remove;
->>> +	glink->subdev.start = glink_subdev_start;
->>> +	glink->subdev.stop = glink_subdev_stop;
->>>  
->>>  	rproc_add_subdev(rproc, &glink->subdev);
->>>  }
->>> @@ -129,7 +129,7 @@ int qcom_register_dump_segments(struct rproc *rproc,
->>>  }
->>>  EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
->>>  
->>> -static int smd_subdev_probe(struct rproc_subdev *subdev)
->>> +static int smd_subdev_start(struct rproc_subdev *subdev)
->>>  {
->>>  	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
->>>  
->>> @@ -138,7 +138,7 @@ static int smd_subdev_probe(struct rproc_subdev *subdev)
->>>  	return PTR_ERR_OR_ZERO(smd->edge);
->>>  }
->>>  
->>> -static void smd_subdev_remove(struct rproc_subdev *subdev, bool crashed)
->>> +static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
->>>  {
->>>  	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
->>>  
->>> @@ -160,8 +160,8 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
->>>  		return;
->>>  
->>>  	smd->dev = dev;
->>> -	smd->subdev.start = smd_subdev_probe;
->>> -	smd->subdev.stop = smd_subdev_remove;
->>> +	smd->subdev.start = smd_subdev_start;
->>> +	smd->subdev.stop = smd_subdev_stop;
->>>  
->>>  	rproc_add_subdev(rproc, &smd->subdev);
->>>  }
->>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->>> index ca39fad175f2..2ede7ae6f5bc 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -301,14 +301,14 @@ void rproc_free_vring(struct rproc_vring *rvring)
->>>  	rsc->vring[idx].notifyid = -1;
->>>  }
->>>  
->>> -static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
->>> +static int rproc_vdev_do_start(struct rproc_subdev *subdev)
->>>  {
->>>  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
->>>  
->>>  	return rproc_add_virtio_dev(rvdev, rvdev->id);
->>>  }
->>>  
->>> -static void rproc_vdev_do_remove(struct rproc_subdev *subdev, bool crashed)
->>> +static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
->>>  {
->>>  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
->>>  
->>> @@ -399,8 +399,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
->>>  
->>>  	list_add_tail(&rvdev->node, &rproc->rvdevs);
->>>  
->>> -	rvdev->subdev.start = rproc_vdev_do_probe;
->>> -	rvdev->subdev.stop = rproc_vdev_do_remove;
->>> +	rvdev->subdev.start = rproc_vdev_do_start;
->>> +	rvdev->subdev.stop = rproc_vdev_do_stop;
->>>  
->>>  	rproc_add_subdev(rproc, &rvdev->subdev);
->>
->> Could you split in 2 patches one for the core another, the other for the
->> glink driver?
->>
->> Regards
->> Arnaud
->>
-> 
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index bea3586..d542b6f 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -735,6 +735,116 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_free);
+ 
++static int devm_hwspin_lock_match(struct device *dev, void *res, void *data)
++{
++	struct hwspinlock **hwlock = res;
++
++	if (WARN_ON(!hwlock || !*hwlock))
++		return 0;
++
++	return *hwlock == data;
++}
++
++static void devm_hwspin_lock_release(struct device *dev, void *res)
++{
++	hwspin_lock_free(*(struct hwspinlock **)res);
++}
++
++/**
++ * devm_hwspin_lock_free() - free a specific hwspinlock for a managed device
++ * @dev: the device to free the specific hwspinlock
++ * @hwlock: the specific hwspinlock to free
++ *
++ * This function mark @hwlock as free again.
++ * Should only be called with an @hwlock that was retrieved from
++ * an earlier call to hwspin_lock_request{_specific}.
++ *
++ * Should be called from a process context (might sleep)
++ *
++ * Returns 0 on success, or an appropriate error code on failure
++ */
++int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock)
++{
++	int ret;
++
++	ret = devres_release(dev, devm_hwspin_lock_release,
++			     devm_hwspin_lock_match, hwlock);
++	WARN_ON(ret);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(devm_hwspin_lock_free);
++
++/**
++ * devm_hwspin_lock_request() - request an hwspinlock for a managed device
++ * @dev: the device to request an hwspinlock
++ *
++ * This function should be called by users of the hwspinlock device,
++ * in order to dynamically assign them an unused hwspinlock.
++ * Usually the user of this lock will then have to communicate the lock's id
++ * to the remote core before it can be used for synchronization (to get the
++ * id of a given hwlock, use hwspin_lock_get_id()).
++ *
++ * Should be called from a process context (might sleep)
++ *
++ * Returns the address of the assigned hwspinlock, or NULL on error
++ */
++struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
++{
++	struct hwspinlock **ptr, *hwlock;
++
++	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	hwlock = hwspin_lock_request();
++	if (!IS_ERR(hwlock)) {
++		*ptr = hwlock;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return hwlock;
++}
++EXPORT_SYMBOL_GPL(devm_hwspin_lock_request);
++
++/**
++ * devm_hwspin_lock_request_specific() - request for a specific hwspinlock for
++ *					 a managed device
++ * @dev: the device to request the specific hwspinlock
++ * @id: index of the specific hwspinlock that is requested
++ *
++ * This function should be called by users of the hwspinlock module,
++ * in order to assign them a specific hwspinlock.
++ * Usually early board code will be calling this function in order to
++ * reserve specific hwspinlock ids for predefined purposes.
++ *
++ * Should be called from a process context (might sleep)
++ *
++ * Returns the address of the assigned hwspinlock, or NULL on error
++ */
++struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
++						     unsigned int id)
++{
++	struct hwspinlock **ptr, *hwlock;
++
++	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	hwlock = hwspin_lock_request_specific(id);
++	if (!IS_ERR(hwlock)) {
++		*ptr = hwlock;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return hwlock;
++}
++EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
++
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("Hardware spinlock interface");
+ MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
+diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+index 2b6f389..dfd0593 100644
+--- a/include/linux/hwspinlock.h
++++ b/include/linux/hwspinlock.h
+@@ -67,6 +67,10 @@ int __hwspin_lock_timeout(struct hwspinlock *, unsigned int, int,
+ int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
+ void __hwspin_unlock(struct hwspinlock *, int, unsigned long *);
+ int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name);
++int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock);
++struct hwspinlock *devm_hwspin_lock_request(struct device *dev);
++struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
++						     unsigned int id);
+ 
+ #else /* !CONFIG_HWSPINLOCK */
+ 
+@@ -132,6 +136,24 @@ int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
+ 	return 0;
+ }
+ 
++static inline
++int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock)
++{
++	return 0;
++}
++
++static inline struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++static inline
++struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
++						     unsigned int id)
++{
++	return ERR_PTR(-ENODEV);
++}
++
+ #endif /* !CONFIG_HWSPINLOCK */
+ 
+ /**
+-- 
+1.7.9.5
