@@ -1,69 +1,33 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH resend 2/5] remoteproc: Make start and stop in subdev optional
-Date: Mon, 25 Jun 2018 20:34:06 -0500
-Message-Id: <20180626013409.5125-3-elder@linaro.org>
-In-Reply-To: <20180626013409.5125-1-elder@linaro.org>
-References: <20180626013409.5125-1-elder@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <david@lechnology.com>
+From: David Lechner <david@lechnology.com>
+Subject: [PATCH 6/8] ARM: davinci_all_defconfig: enable PRU remoteproc module
+Date: Sat, 23 Jun 2018 16:08:08 -0500
+Message-Id: <20180623210810.21232-7-david@lechnology.com>
+In-Reply-To: <20180623210810.21232-1-david@lechnology.com>
+References: <20180623210810.21232-1-david@lechnology.com>
+To: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: David Lechner <david@lechnology.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+This enabled the remoteproc module for the PRU on DA8xx-type devices.
 
-Some subdevices, such as glink ssr only care about the stop operation,
-so make the operations optional to reduce client code.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Alex Elder <elder@linaro.org>
-Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ arch/arm/configs/davinci_all_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 5dd58e6bea88..981ae6dff145 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -780,16 +780,20 @@ static int rproc_start_subdevices(struct rproc *rproc)
- 	int ret;
- 
- 	list_for_each_entry(subdev, &rproc->subdevs, node) {
--		ret = subdev->start(subdev);
--		if (ret)
--			goto unroll_registration;
-+		if (subdev->start) {
-+			ret = subdev->start(subdev);
-+			if (ret)
-+				goto unroll_registration;
-+		}
- 	}
- 
- 	return 0;
- 
- unroll_registration:
--	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node)
--		subdev->stop(subdev, true);
-+	list_for_each_entry_continue_reverse(subdev, &rproc->subdevs, node) {
-+		if (subdev->stop)
-+			subdev->stop(subdev, true);
-+	}
- 
- 	return ret;
- }
-@@ -798,8 +802,10 @@ static void rproc_stop_subdevices(struct rproc *rproc, bool crashed)
- {
- 	struct rproc_subdev *subdev;
- 
--	list_for_each_entry_reverse(subdev, &rproc->subdevs, node)
--		subdev->stop(subdev, crashed);
-+	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
-+		if (subdev->stop)
-+			subdev->stop(subdev, crashed);
-+	}
- }
- 
- /**
+diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+index a1b6e106b867..1bcc7c6a03ee 100644
+--- a/arch/arm/configs/davinci_all_defconfig
++++ b/arch/arm/configs/davinci_all_defconfig
+@@ -214,6 +214,8 @@ CONFIG_DMADEVICES=y
+ CONFIG_TI_EDMA=y
+ CONFIG_REMOTEPROC=m
+ CONFIG_DA8XX_REMOTEPROC=m
++CONFIG_TI_PRU_REMOTEPROC=m
++CONFIG_RPMSG_VIRTIO=m
+ CONFIG_MEMORY=y
+ CONFIG_TI_AEMIF=m
+ CONFIG_DA8XX_DDRCTL=y
 -- 
 2.17.1
