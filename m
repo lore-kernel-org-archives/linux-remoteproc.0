@@ -1,128 +1,214 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: New remoteproc driver for TI PRU
-References: <20180623210810.21232-1-david@lechnology.com>
-Message-ID: <e0a883af-8228-5b06-3186-f57d8f898aaa@ti.com>
-Date: Fri, 29 Jun 2018 12:58:05 +0300
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 22 Jun 2018 17:46:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 2/8] reset: qcom: AOSS (always on subsystem) reset
+ controller
+Message-ID: <20180623004626.GR3402@tuxbook-pro>
+References: <20180521172714.8551-1-sibis@codeaurora.org>
+ <20180521172714.8551-3-sibis@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180623210810.21232-1-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-To: David Lechner <david@lechnology.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, "Anna, Suman" <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180521172714.8551-3-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-+Suman & Tero
+On Mon 21 May 10:27 PDT 2018, Sibi Sankar wrote:
 
-Hi David,
-
-On 24/06/18 00:08, David Lechner wrote:
+> Add reset controller driver for Qualcomm SDM845 SoC to
+> control reset signals provided by AOSS for Modem, Venus
+> ADSP, GPU, Camera, Wireless, Display subsystem
 > 
-> Date: Sat, 23 Jun 2018 15:43:59 -0500
-> Subject: [PATCH 0/8] New remoteproc driver for TI PRU
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+
+With the adaptions discussed in the DT binding patch (compatible and
+register offsets) you have my:
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/reset/Kconfig           |   9 +++
+>  drivers/reset/Makefile          |   1 +
+>  drivers/reset/reset-qcom-aoss.c | 133 ++++++++++++++++++++++++++++++++
+>  3 files changed, 143 insertions(+)
+>  create mode 100644 drivers/reset/reset-qcom-aoss.c
 > 
-> This series adds a new remoteproc driver for the TI Programmable Runtime Unit
-> (PRU) that is present in some TI Sitara processors. This code has been tested
-> working on AM1808 (LEGO MINDSTORMS EV3) and AM3358 (BeagleBone Green).
-
-This is great. We have been working on something similar and I think it would
-be great if we can collaborate to get all our needs addressed.
-
-Our primary requirement is that it should be possible for a user (e.g. kernel driver) to
-- request a specific PRU core load a specific firmware blob and boot/stop the PRU.
-- configure INTC interrupt mapping based on either resource table or DT
-- use request_irq to request and use an interrupt.
-- request access to DRAM/SRAM
-- configure gpimode/miirt/xfr (CFG space)
-
-The work is published here
-
-PRUSS platform bus driver (platform resets & quirks)
-https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pruss_soc_bus.c
-
-PRUSS core driver (resource management e.g. SRAM/DRAM for clients)
-https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pruss.c
-
-PRU Rproc driver (PRU remoteproc driver)
-https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pru_rproc.c
-
-INTC driver (irqchip support for INTC)
-https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pruss_intc.c
-
-Please have a look at it. I think it addresses most if not all of what your series addresses.
-Maybe Suman and you can decide which driver to start with and get the missing pieces addressed.
-
-An example of a client driver
-https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/net/ethernet/ti/prueth.c
-and DT node for that
-https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/arch/arm/boot/dts/am335x-icev2-prueth.dts#line25
-
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index c0b292be1b72..756ad2b27d0f 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -82,6 +82,15 @@ config RESET_PISTACHIO
+>  	help
+>  	  This enables the reset driver for ImgTec Pistachio SoCs.
+>  
+> +config RESET_QCOM_AOSS
+> +	bool "Qcom AOSS Reset Driver"
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	help
+> +	  This enables the AOSS (always on subsystem) reset driver
+> +	  for Qualcomm SDM845 SoCs. Say Y if you want to control
+> +	  reset signals provided by AOSS for Modem, Venus, ADSP,
+> +	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
+> +
+>  config RESET_SIMPLE
+>  	bool "Simple Reset Controller Driver" if COMPILE_TEST
+>  	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index c1261dcfe9ad..6881e4d287f0 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
+>  obj-$(CONFIG_RESET_MESON) += reset-meson.o
+>  obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
+>  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+> +obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+> diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
+> new file mode 100644
+> index 000000000000..d9ca7339c434
+> --- /dev/null
+> +++ b/drivers/reset/reset-qcom-aoss.c
+> @@ -0,0 +1,133 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/of_device.h>
+> +#include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> +
+> +struct qcom_aoss_reset_map {
+> +	unsigned int reg;
+> +};
+> +
+> +struct qcom_aoss_desc {
+> +	const struct qcom_aoss_reset_map *resets;
+> +	size_t num_resets;
+> +};
+> +
+> +struct qcom_aoss_reset_data {
+> +	struct reset_controller_dev rcdev;
+> +	void __iomem *base;
+> +	const struct qcom_aoss_desc *desc;
+> +};
+> +
+> +static const struct qcom_aoss_reset_map sdm845_aoss_resets[] = {
+> +	[AOSS_CC_MSS_RESTART] = {0x0},
+> +	[AOSS_CC_CAMSS_RESTART] = {0x1000},
+> +	[AOSS_CC_VENUS_RESTART] = {0x2000},
+> +	[AOSS_CC_GPU_RESTART] = {0x3000},
+> +	[AOSS_CC_DISPSS_RESTART] = {0x4000},
+> +	[AOSS_CC_WCSS_RESTART] = {0x10000},
+> +	[AOSS_CC_LPASS_RESTART] = {0x20000},
+> +};
+> +
+> +static const struct qcom_aoss_desc sdm845_aoss_desc = {
+> +	.resets = sdm845_aoss_resets,
+> +	.num_resets = ARRAY_SIZE(sdm845_aoss_resets),
+> +};
+> +
+> +static inline struct qcom_aoss_reset_data *to_qcom_aoss_reset_data(
+> +				struct reset_controller_dev *rcdev)
+> +{
+> +	return container_of(rcdev, struct qcom_aoss_reset_data, rcdev);
+> +}
+> +
+> +static int qcom_aoss_control_assert(struct reset_controller_dev *rcdev,
+> +				    unsigned long idx)
+> +{
+> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
+> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
+> +
+> +	writel(1, data->base + map->reg);
+> +	/* Wait 6 32kHz sleep cycles for reset */
+> +	usleep_range(200, 300);
+> +	return 0;
+> +}
+> +
+> +static int qcom_aoss_control_deassert(struct reset_controller_dev *rcdev,
+> +				      unsigned long idx)
+> +{
+> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
+> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
+> +
+> +	writel(0, data->base + map->reg);
+> +	/* Wait 6 32kHz sleep cycles for reset */
+> +	usleep_range(200, 300);
+> +	return 0;
+> +}
+> +
+> +static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
+> +					unsigned long idx)
+> +{
+> +	qcom_aoss_control_assert(rcdev, idx);
+> +
+> +	return qcom_aoss_control_deassert(rcdev, idx);
+> +}
+> +
+> +static const struct reset_control_ops qcom_aoss_reset_ops = {
+> +	.reset = qcom_aoss_control_reset,
+> +	.assert = qcom_aoss_control_assert,
+> +	.deassert = qcom_aoss_control_deassert,
+> +};
+> +
+> +static int qcom_aoss_reset_probe(struct platform_device *pdev)
+> +{
+> +	struct qcom_aoss_reset_data *data;
+> +	struct device *dev = &pdev->dev;
+> +	const struct qcom_aoss_desc *desc;
+> +	struct resource *res;
+> +
+> +	desc = of_device_get_match_data(dev);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->desc = desc;
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	data->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(data->base))
+> +		return PTR_ERR(data->base);
+> +
+> +	data->rcdev.owner = THIS_MODULE;
+> +	data->rcdev.ops = &qcom_aoss_reset_ops;
+> +	data->rcdev.nr_resets = desc->num_resets;
+> +	data->rcdev.of_node = dev->of_node;
+> +
+> +	return devm_reset_controller_register(dev, &data->rcdev);
+> +}
+> +
+> +static const struct of_device_id qcom_aoss_reset_of_match[] = {
+> +	{ .compatible = "qcom,sdm845-aoss-reset", .data = &sdm845_aoss_desc },
+> +	{}
+> +};
+> +
+> +static struct platform_driver qcom_aoss_reset_driver = {
+> +	.probe = qcom_aoss_reset_probe,
+> +	.driver  = {
+> +		.name = "qcom_aoss_reset",
+> +		.of_match_table = qcom_aoss_reset_of_match,
+> +	},
+> +};
+> +
+> +builtin_platform_driver(qcom_aoss_reset_driver);
+> +
+> +MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 > 
-> There are a couple of quirks that had to be worked around in order to get this
-> working. The PRU units have multiple memory maps. Notably, both the instruction
-> RAM and data RAM are at address 0x0. This caused the da_to_va callback to not
-> work because the same address could refer to two different locations. To work
-> around this, the first two patches add a "map" parameter to the da_to_va
-> callbacks so that we have an extra bit of information to make this distinction.
-> 
-> Also, on AM38xx we have to use pdata for accessing a reset since there is not
-> a reset controller. There are several other devices doing this, so the seems
-> the best way for now.
-> 
-> For anyone else who would like to test, I used the rpmsg-client-sample driver.
-> Just enable it in your kernel config. Then grab the appropriate firmware[1]
-> and put in in /lib/firmware/. Use sysfs to start and stop the PRU:
-> 
->         echo start > /sys/class/remoteproc<n>/state
->         echo stop > /sys/class/remoteproc<n>/state
-> 
-> [1]: firmware downloads:
-> 
-> AM18XX: https://github.com/ev3dev/ev3dev-pru-firmware/releases/download/mainline-kernel-testing/AM18xx-PRU-rpmsg-client-sample.zip
-> AM335X: https://github.com/ev3dev/ev3dev-pru-firmware/releases/download/mainline-kernel-testing/AM335x-PRU-rpmsg-client-sample.zip
-> 
-> David Lechner (8):
->   remoteproc: add map parameter to da_to_va
->   remoteproc: add page lookup for TI PRU to ELF loader
->   ARM: OMAP2+: add pdata quirks for PRUSS reset
->   dt-bindings: add bindings for TI PRU as remoteproc
->   remoteproc: new driver for TI PRU
->   ARM: davinci_all_defconfig: enable PRU remoteproc module
->   ARM: dts: da850: add node for PRUSS
->   ARM: dts: am33xx: add node for PRU remoteproc
-> 
->  .../bindings/remoteproc/ti_pru_rproc.txt      |  51 ++
->  MAINTAINERS                                   |   5 +
->  arch/arm/boot/dts/am33xx.dtsi                 |   9 +
->  arch/arm/boot/dts/da850.dtsi                  |   8 +
->  arch/arm/configs/davinci_all_defconfig        |   2 +
->  arch/arm/mach-omap2/pdata-quirks.c            |   9 +
->  drivers/remoteproc/Kconfig                    |   7 +
->  drivers/remoteproc/Makefile                   |   1 +
->  drivers/remoteproc/imx_rproc.c                |   2 +-
->  drivers/remoteproc/keystone_remoteproc.c      |   3 +-
->  drivers/remoteproc/qcom_adsp_pil.c            |   2 +-
->  drivers/remoteproc/qcom_q6v5_pil.c            |   2 +-
->  drivers/remoteproc/qcom_wcnss.c               |   2 +-
->  drivers/remoteproc/remoteproc_core.c          |  10 +-
->  drivers/remoteproc/remoteproc_elf_loader.c    | 117 +++-
->  drivers/remoteproc/remoteproc_internal.h      |   2 +-
->  drivers/remoteproc/st_slim_rproc.c            |   2 +-
->  drivers/remoteproc/ti_pru_rproc.c             | 660 ++++++++++++++++++
->  drivers/remoteproc/wkup_m3_rproc.c            |   3 +-
->  include/linux/platform_data/ti-pruss.h        |  18 +
->  include/linux/remoteproc.h                    |   2 +-
->  include/uapi/linux/elf-em.h                   |   1 +
->  22 files changed, 899 insertions(+), 19 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti_pru_rproc.txt
->  create mode 100644 drivers/remoteproc/ti_pru_rproc.c
->  create mode 100644 include/linux/platform_data/ti-pruss.h
-> 
-
--- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
