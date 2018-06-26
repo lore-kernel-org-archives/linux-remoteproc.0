@@ -1,364 +1,153 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/4] remoteproc: q6v5: Extract common resource handling
-Date: Mon,  4 Jun 2018 13:30:36 -0700
-Message-Id: <20180604203038.14080-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20180604203038.14080-1-bjorn.andersson@linaro.org>
-References: <20180604203038.14080-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sricharan R <sricharan@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
+From: Alex Elder <elder@linaro.org>
+Subject: [PATCH v2 3/5] remoteproc: Make client initialize ops in rproc_subdev
+Date: Tue, 26 Jun 2018 07:11:57 -0500
+Message-Id: <20180626121159.7267-4-elder@linaro.org>
+In-Reply-To: <20180626121159.7267-1-elder@linaro.org>
+References: <20180626121159.7267-1-elder@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Shared between all Hexagon V5 based remoteprocs is the handling of the 5
-interrupts and the SMP2P stop request, so break this out into a separate
-function in order to allow these drivers to be cleaned up.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Reviewed-by: Rohit kumar <rohitkr@codeaurora.org>
-Tested-by: Rohit kumar <rohitkr@codeaurora.org>
+In preparation of adding the additional prepare and unprepare operations
+make the client responsible for filling out the function pointers of the
+rproc_subdev. This makes the arguments to rproc_add_subdev() more
+manageable, in particular when some of the functions are left out.
+
+Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+[elder@linaro.org: added comment about assigning function pointers]
+Signed-off-by Alex Elder <elder@linaro.org>
 ---
+ drivers/remoteproc/qcom_common.c     | 18 ++++++++++--------
+ drivers/remoteproc/qcom_sysmon.c     |  5 ++++-
+ drivers/remoteproc/remoteproc_core.c | 18 +++++++-----------
+ include/linux/remoteproc.h           |  5 +----
+ 4 files changed, 22 insertions(+), 24 deletions(-)
 
-Changes since RFC:
-- Corrected header comment
-- Corrected copy-pasted crash type in wdog_intr
-- Picked up Rohit's reviewed-by
-
- drivers/remoteproc/Kconfig     |   5 +
- drivers/remoteproc/Makefile    |   1 +
- drivers/remoteproc/qcom_q6v5.c | 243 +++++++++++++++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5.h |  46 +++++++
- 4 files changed, 295 insertions(+)
- create mode 100644 drivers/remoteproc/qcom_q6v5.c
- create mode 100644 drivers/remoteproc/qcom_q6v5.h
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index cd1c168fd188..63b79ea91a21 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -102,6 +102,11 @@ config QCOM_ADSP_PIL
- config QCOM_RPROC_COMMON
- 	tristate
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index acfc99f82fb8..4ae87c5b8793 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -64,7 +64,10 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
+ 		return;
  
-+config QCOM_Q6V5_COMMON
-+	tristate
-+	depends on ARCH_QCOM
-+	depends on QCOM_SMEM
+ 	glink->dev = dev;
+-	rproc_add_subdev(rproc, &glink->subdev, glink_subdev_probe, glink_subdev_remove);
++	glink->subdev.start = glink_subdev_probe;
++	glink->subdev.stop = glink_subdev_remove;
 +
- config QCOM_Q6V5_PIL
- 	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
- 	depends on OF && ARCH_QCOM
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 02627ede8d4a..5dd0249cf76a 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
- obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
- obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
- obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
-+obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
- obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
- obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
- obj-$(CONFIG_QCOM_WCNSS_PIL)		+= qcom_wcnss_pil.o
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-new file mode 100644
-index 000000000000..400cdf936f6b
---- /dev/null
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -0,0 +1,243 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Qualcomm Peripheral Image Loader for Q6V5
++	rproc_add_subdev(rproc, &glink->subdev);
+ }
+ EXPORT_SYMBOL_GPL(qcom_add_glink_subdev);
+ 
+@@ -157,7 +160,10 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+ 		return;
+ 
+ 	smd->dev = dev;
+-	rproc_add_subdev(rproc, &smd->subdev, smd_subdev_probe, smd_subdev_remove);
++	smd->subdev.start = smd_subdev_probe;
++	smd->subdev.stop = smd_subdev_remove;
++
++	rproc_add_subdev(rproc, &smd->subdev);
+ }
+ EXPORT_SYMBOL_GPL(qcom_add_smd_subdev);
+ 
+@@ -202,11 +208,6 @@ void qcom_unregister_ssr_notifier(struct notifier_block *nb)
+ }
+ EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
+ 
+-static int ssr_notify_start(struct rproc_subdev *subdev)
+-{
+-	return  0;
+-}
+-
+ static void ssr_notify_stop(struct rproc_subdev *subdev, bool crashed)
+ {
+ 	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
+@@ -227,8 +228,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
+ 			 const char *ssr_name)
+ {
+ 	ssr->name = ssr_name;
++	ssr->subdev.stop = ssr_notify_stop;
+ 
+-	rproc_add_subdev(rproc, &ssr->subdev, ssr_notify_start, ssr_notify_stop);
++	rproc_add_subdev(rproc, &ssr->subdev);
+ }
+ EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
+ 
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index f085545d7da5..e976a602b015 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -469,7 +469,10 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
+ 
+ 	qmi_add_lookup(&sysmon->qmi, 43, 0, 0);
+ 
+-	rproc_add_subdev(rproc, &sysmon->subdev, sysmon_start, sysmon_stop);
++	sysmon->subdev.start = sysmon_start;
++	sysmon->subdev.stop = sysmon_stop;
++
++	rproc_add_subdev(rproc, &sysmon->subdev);
+ 
+ 	sysmon->nb.notifier_call = sysmon_notify;
+ 	blocking_notifier_chain_register(&sysmon_notifiers, &sysmon->nb);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 981ae6dff145..ca39fad175f2 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -399,8 +399,10 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 
+ 	list_add_tail(&rvdev->node, &rproc->rvdevs);
+ 
+-	rproc_add_subdev(rproc, &rvdev->subdev,
+-			 rproc_vdev_do_probe, rproc_vdev_do_remove);
++	rvdev->subdev.start = rproc_vdev_do_probe;
++	rvdev->subdev.stop = rproc_vdev_do_remove;
++
++	rproc_add_subdev(rproc, &rvdev->subdev);
+ 
+ 	return 0;
+ 
+@@ -1663,17 +1665,11 @@ EXPORT_SYMBOL(rproc_del);
+  * rproc_add_subdev() - add a subdevice to a remoteproc
+  * @rproc: rproc handle to add the subdevice to
+  * @subdev: subdev handle to register
+- * @start: function to call after the rproc is started
+- * @stop: function to call before the rproc is stopped
 + *
-+ * Copyright (C) 2016-2018 Linaro Ltd.
-+ * Copyright (C) 2014 Sony Mobile Communications AB
-+ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/soc/qcom/smem.h>
-+#include <linux/soc/qcom/smem_state.h>
-+#include <linux/remoteproc.h>
-+#include "qcom_q6v5.h"
-+
-+/**
-+ * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
-+ * @q6v5:	reference to qcom_q6v5 context to be reinitialized
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
-+{
-+	reinit_completion(&q6v5->start_done);
-+	reinit_completion(&q6v5->stop_done);
-+
-+	q6v5->running = true;
-+	q6v5->handover_issued = false;
-+
-+	enable_irq(q6v5->handover_irq);
-+
-+	return 0;
-+}
-+
-+/**
-+ * qcom_q6v5_unprepare() - unprepare the qcom_q6v5 context after stop
-+ * @q6v5:	reference to qcom_q6v5 context to be unprepared
-+ *
-+ * Return: 0 on success, 1 if handover hasn't yet been called
-+ */
-+int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
-+{
-+	disable_irq(q6v5->handover_irq);
-+
-+	return !q6v5->handover_issued;
-+}
-+
-+static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+	size_t len;
-+	char *msg;
-+
-+	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
-+	if (!q6v5->running) {
-+		complete(&q6v5->stop_done);
-+		return IRQ_HANDLED;
-+	}
-+
-+	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	if (!IS_ERR(msg) && len > 0 && msg[0])
-+		dev_err(q6v5->dev, "watchdog received: %s\n", msg);
-+	else
-+		dev_err(q6v5->dev, "watchdog without message\n");
-+
-+	rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+	size_t len;
-+	char *msg;
-+
-+	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-+	if (!IS_ERR(msg) && len > 0 && msg[0])
-+		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
-+	else
-+		dev_err(q6v5->dev, "fatal error without message\n");
-+
-+	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	complete(&q6v5->start_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * qcom_q6v5_wait_for_start() - wait for remote processor start signal
-+ * @q6v5:	reference to qcom_q6v5 context
-+ * @timeout:	timeout to wait for the event, in jiffies
-+ *
-+ * qcom_q6v5_unprepare() should not be called when this function fails.
-+ *
-+ * Return: 0 on success, -ETIMEDOUT on timeout
-+ */
-+int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
-+{
-+	int ret;
-+
-+	ret = wait_for_completion_timeout(&q6v5->start_done, timeout);
-+	if (!ret)
-+		disable_irq(q6v5->handover_irq);
-+
-+	return !ret ? -ETIMEDOUT : 0;
-+}
-+
-+static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	if (q6v5->handover)
-+		q6v5->handover(q6v5);
-+
-+	q6v5->handover_issued = true;
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
-+{
-+	struct qcom_q6v5 *q6v5 = data;
-+
-+	complete(&q6v5->stop_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * qcom_q6v5_request_stop() - request the remote processor to stop
-+ * @q6v5:	reference to qcom_q6v5 context
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
-+{
-+	int ret;
-+
-+	q6v5->running = false;
-+
-+	qcom_smem_state_update_bits(q6v5->state,
-+				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
-+
-+	ret = wait_for_completion_timeout(&q6v5->stop_done, 5 * HZ);
-+
-+	qcom_smem_state_update_bits(q6v5->state, BIT(q6v5->stop_bit), 0);
-+
-+	return ret == 0 ? -ETIMEDOUT : 0;
-+}
-+
-+/**
-+ * qcom_q6v5_init() - initializer of the q6v5 common struct
-+ * @q6v5:	handle to be initialized
-+ * @pdev:	platform_device reference for acquiring resources
-+ * @rproc:	associated remoteproc instance
-+ * @crash_reason: SMEM id for crash reason string, or 0 if none
-+ * @handover:	function to be called when proxy resources should be released
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-+		   struct rproc *rproc, int crash_reason,
-+		   void (*handover)(struct qcom_q6v5 *q6v5))
-+{
-+	int ret;
-+
-+	q6v5->rproc = rproc;
-+	q6v5->dev = &pdev->dev;
-+	q6v5->crash_reason = crash_reason;
-+	q6v5->handover = handover;
-+
-+	init_completion(&q6v5->start_done);
-+	init_completion(&q6v5->stop_done);
-+
-+	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->wdog_irq,
-+					NULL, q6v5_wdog_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 wdog", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire wdog IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
-+					NULL, q6v5_fatal_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 fatal", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire fatal IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
-+					NULL, q6v5_ready_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 ready", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire ready IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
-+					NULL, q6v5_handover_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 handover", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire handover IRQ\n");
-+		return ret;
-+	}
-+	disable_irq(q6v5->handover_irq);
-+
-+	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-+	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
-+					NULL, q6v5_stop_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 stop", q6v5);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire stop-ack IRQ\n");
-+		return ret;
-+	}
-+
-+	q6v5->state = qcom_smem_state_get(&pdev->dev, "stop", &q6v5->stop_bit);
-+	if (IS_ERR(q6v5->state)) {
-+		dev_err(&pdev->dev, "failed to acquire stop state\n");
-+		return PTR_ERR(q6v5->state);
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-new file mode 100644
-index 000000000000..7ac92c1e0f49
---- /dev/null
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __QCOM_Q6V5_H__
-+#define __QCOM_Q6V5_H__
-+
-+#include <linux/kernel.h>
-+#include <linux/completion.h>
-+
-+struct rproc;
-+struct qcom_smem_state;
-+
-+struct qcom_q6v5 {
-+	struct device *dev;
-+	struct rproc *rproc;
-+
-+	struct qcom_smem_state *state;
-+	unsigned stop_bit;
-+
-+	int wdog_irq;
-+	int fatal_irq;
-+	int ready_irq;
-+	int handover_irq;
-+	int stop_irq;
-+
-+	bool handover_issued;
-+
-+	struct completion start_done;
-+	struct completion stop_done;
-+
-+	int crash_reason;
-+
-+	bool running;
-+
-+	void (*handover)(struct qcom_q6v5 *q6v5);
-+};
-+
-+int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
-+		   struct rproc *rproc, int crash_reason,
-+		   void (*handover)(struct qcom_q6v5 *q6v5));
-+
-+int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
-+int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
-+
-+#endif
++ * Caller is responsible for populating optional subdevice function pointers.
+  */
+-void rproc_add_subdev(struct rproc *rproc,
+-		      struct rproc_subdev *subdev,
+-		      int (*start)(struct rproc_subdev *subdev),
+-		      void (*stop)(struct rproc_subdev *subdev, bool crashed))
++void rproc_add_subdev(struct rproc *rproc, struct rproc_subdev *subdev)
+ {
+-	subdev->start = start;
+-	subdev->stop = stop;
+-
+ 	list_add_tail(&subdev->node, &rproc->subdevs);
+ }
+ EXPORT_SYMBOL(rproc_add_subdev);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index bf55bf2a5ee1..8f1426330cca 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -566,10 +566,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+ 	return rvdev->rproc;
+ }
+ 
+-void rproc_add_subdev(struct rproc *rproc,
+-		      struct rproc_subdev *subdev,
+-		      int (*start)(struct rproc_subdev *subdev),
+-		      void (*stop)(struct rproc_subdev *subdev, bool crashed));
++void rproc_add_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+ 
+ void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+ 
 -- 
-2.17.0
+2.17.1
