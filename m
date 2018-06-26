@@ -1,90 +1,118 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 22 Jun 2018 17:44:33 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v5 1/8] dt-bindings: reset: Add AOSS reset bindings for
- SDM845 SoCs
-Message-ID: <20180623004433.GQ3402@tuxbook-pro>
-References: <20180521172714.8551-1-sibis@codeaurora.org>
- <20180521172714.8551-2-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521172714.8551-2-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
+From: Alex Elder <elder@linaro.org>
+Subject: [PATCH v2 4/5] remoteproc: rename subdev probe and remove functions
+Date: Tue, 26 Jun 2018 07:11:58 -0500
+Message-Id: <20180626121159.7267-5-elder@linaro.org>
+In-Reply-To: <20180626121159.7267-1-elder@linaro.org>
+References: <20180626121159.7267-1-elder@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 21 May 10:27 PDT 2018, Sibi Sankar wrote:
+Rename functions used when subdevices are started and stopped to
+reflect the new naming scheme.
 
-> Add SDM845 AOSS (always on subsystem) reset controller binding
-> 
+Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by Alex Elder <elder@linaro.org>
+---
+ drivers/remoteproc/qcom_common.c     | 16 ++++++++--------
+ drivers/remoteproc/remoteproc_core.c |  8 ++++----
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-I think it would be better if you made the binding represent the entire
-clock controller, rather than only the reset-related portion of it.
-
-As I can't find anything in the downstream kernel that references the
-clock part of the hardware block I think the driver can be kept as is
-(with updated compatible and adjust the offsets of the registers)
-
-
-This makes the DT better represents the hardware and it makes it
-possible to control the clocks in the future, without breaking backwards
-compatibility with existing DTBs.
-
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
->  include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
->  2 files changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
->  create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
-> 
-> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> new file mode 100644
-> index 000000000000..cd5dcafb4ed7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> @@ -0,0 +1,52 @@
-> +Qualcomm AOSS Reset Controller
-> +======================================
-> +
-> +This binding describes a reset-controller found on AOSS (always on subsystem)
-> +for Qualcomm SDM845 SoCs.
-> +
-> +Required properties:
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be:
-> +		    "qcom,sdm845-aoss-reset"
-
-qcom,sdm845-aoss-cc
-
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: must specify the base address and size of the register
-> +	            space.
-> +
-> +- #reset-cells:
-> +	Usage: required
-> +	Value type: <uint>
-> +	Definition: must be 1; cell entry represents the reset index.
-> +
-> +Example:
-> +
-> +aoss_reset: reset-controller@c2b0000 {
-> +	compatible = "qcom,sdm845-aoss-reset";
-> +	reg = <0xc2b0000 0x21000>;
-
-reg = <0xc2a0000 0x31000>;
-
-> +	#reset-cells = <1>;
-> +};
-> +
-
-Apart from this the binding looks good!
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 4ae87c5b8793..6f77840140bf 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -33,7 +33,7 @@
+ 
+ static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
+ 
+-static int glink_subdev_probe(struct rproc_subdev *subdev)
++static int glink_subdev_start(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+ 
+@@ -42,7 +42,7 @@ static int glink_subdev_probe(struct rproc_subdev *subdev)
+ 	return PTR_ERR_OR_ZERO(glink->edge);
+ }
+ 
+-static void glink_subdev_remove(struct rproc_subdev *subdev, bool crashed)
++static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+ {
+ 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+ 
+@@ -64,8 +64,8 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
+ 		return;
+ 
+ 	glink->dev = dev;
+-	glink->subdev.start = glink_subdev_probe;
+-	glink->subdev.stop = glink_subdev_remove;
++	glink->subdev.start = glink_subdev_start;
++	glink->subdev.stop = glink_subdev_stop;
+ 
+ 	rproc_add_subdev(rproc, &glink->subdev);
+ }
+@@ -129,7 +129,7 @@ int qcom_register_dump_segments(struct rproc *rproc,
+ }
+ EXPORT_SYMBOL_GPL(qcom_register_dump_segments);
+ 
+-static int smd_subdev_probe(struct rproc_subdev *subdev)
++static int smd_subdev_start(struct rproc_subdev *subdev)
+ {
+ 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+ 
+@@ -138,7 +138,7 @@ static int smd_subdev_probe(struct rproc_subdev *subdev)
+ 	return PTR_ERR_OR_ZERO(smd->edge);
+ }
+ 
+-static void smd_subdev_remove(struct rproc_subdev *subdev, bool crashed)
++static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+ {
+ 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+ 
+@@ -160,8 +160,8 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+ 		return;
+ 
+ 	smd->dev = dev;
+-	smd->subdev.start = smd_subdev_probe;
+-	smd->subdev.stop = smd_subdev_remove;
++	smd->subdev.start = smd_subdev_start;
++	smd->subdev.stop = smd_subdev_stop;
+ 
+ 	rproc_add_subdev(rproc, &smd->subdev);
+ }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ca39fad175f2..2ede7ae6f5bc 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -301,14 +301,14 @@ void rproc_free_vring(struct rproc_vring *rvring)
+ 	rsc->vring[idx].notifyid = -1;
+ }
+ 
+-static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
++static int rproc_vdev_do_start(struct rproc_subdev *subdev)
+ {
+ 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
+ 
+ 	return rproc_add_virtio_dev(rvdev, rvdev->id);
+ }
+ 
+-static void rproc_vdev_do_remove(struct rproc_subdev *subdev, bool crashed)
++static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
+ {
+ 	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
+ 
+@@ -399,8 +399,8 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 
+ 	list_add_tail(&rvdev->node, &rproc->rvdevs);
+ 
+-	rvdev->subdev.start = rproc_vdev_do_probe;
+-	rvdev->subdev.stop = rproc_vdev_do_remove;
++	rvdev->subdev.start = rproc_vdev_do_start;
++	rvdev->subdev.stop = rproc_vdev_do_stop;
+ 
+ 	rproc_add_subdev(rproc, &rvdev->subdev);
+ 
+-- 
+2.17.1
