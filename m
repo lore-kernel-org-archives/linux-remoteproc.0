@@ -1,12 +1,14 @@
 Return-Path: <elder@linaro.org>
 Return-Path: <elder@linaro.org>
 From: Alex Elder <elder@linaro.org>
-Subject: [PATCH v2 0/5] remoteproc: updates for new events
-Date: Tue, 26 Jun 2018 07:11:54 -0500
-Message-Id: <20180626121159.7267-1-elder@linaro.org>
+Subject: [PATCH resend 0/5] remoteproc: updates for new events
+Date: Mon, 25 Jun 2018 20:34:04 -0500
+Message-Id: <20180626013409.5125-1-elder@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
+
+(This is just a rebase of https://lkml.org/lkml/2018/5/15/919)
 
 This series changes the prototype for rproc_add_subdev().  The
 caller is now responsible for populating the function pointers
@@ -17,8 +19,6 @@ they are now optional.  Callback functions may now also be assigned
 for two new events (prior to start and after stop).
 
 					-Alex
-
-v2: Adjusted signoff sections of patches as requested by Bjorn.
 
 Alex Elder (1):
   remoteproc: rename subdev probe and remove functions
