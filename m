@@ -1,11 +1,11 @@
 Return-Path: <elder@linaro.org>
 Return-Path: <elder@linaro.org>
 From: Alex Elder <elder@linaro.org>
-Subject: [PATCH v2 5/5] remoteproc: Introduce prepare and unprepare for subdevices
-Date: Tue, 26 Jun 2018 07:11:59 -0500
-Message-Id: <20180626121159.7267-6-elder@linaro.org>
-In-Reply-To: <20180626121159.7267-1-elder@linaro.org>
-References: <20180626121159.7267-1-elder@linaro.org>
+Subject: [PATCH resend 5/5] remoteproc: Introduce prepare and unprepare for subdevices
+Date: Mon, 25 Jun 2018 20:34:09 -0500
+Message-Id: <20180626013409.5125-6-elder@linaro.org>
+In-Reply-To: <20180626013409.5125-1-elder@linaro.org>
+References: <20180626013409.5125-1-elder@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -21,10 +21,11 @@ platforms, which is accessed directly from both the modem remoteproc
 and the application subsystem and requires an intricate lockstep
 process when bringing the modem up and down.
 
-Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 [elder@linaro.org: minor description and comment edits]
-Signed-off-by Alex Elder <elder@linaro.org>
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Alex Elder <elder@linaro.org>
+Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
  drivers/remoteproc/remoteproc_core.c | 56 ++++++++++++++++++++++++++--
  include/linux/remoteproc.h           |  4 ++
