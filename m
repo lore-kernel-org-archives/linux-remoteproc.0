@@ -1,11 +1,11 @@
 Return-Path: <elder@linaro.org>
 Return-Path: <elder@linaro.org>
 From: Alex Elder <elder@linaro.org>
-Subject: [PATCH v2 2/5] remoteproc: Make start and stop in subdev optional
-Date: Tue, 26 Jun 2018 07:11:56 -0500
-Message-Id: <20180626121159.7267-3-elder@linaro.org>
-In-Reply-To: <20180626121159.7267-1-elder@linaro.org>
-References: <20180626121159.7267-1-elder@linaro.org>
+Subject: [PATCH resend 2/5] remoteproc: Make start and stop in subdev optional
+Date: Mon, 25 Jun 2018 20:34:06 -0500
+Message-Id: <20180626013409.5125-3-elder@linaro.org>
+In-Reply-To: <20180626013409.5125-1-elder@linaro.org>
+References: <20180626013409.5125-1-elder@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -15,9 +15,9 @@ From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Some subdevices, such as glink ssr only care about the stop operation,
 so make the operations optional to reduce client code.
 
-Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by Alex Elder <elder@linaro.org>
+Acked-by: Alex Elder <elder@linaro.org>
+Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
  drivers/remoteproc/remoteproc_core.c | 20 +++++++++++++-------
  1 file changed, 13 insertions(+), 7 deletions(-)
