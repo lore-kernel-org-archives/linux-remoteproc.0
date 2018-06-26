@@ -1,11 +1,11 @@
 Return-Path: <elder@linaro.org>
 Return-Path: <elder@linaro.org>
 From: Alex Elder <elder@linaro.org>
-Subject: [PATCH v2 3/5] remoteproc: Make client initialize ops in rproc_subdev
-Date: Tue, 26 Jun 2018 07:11:57 -0500
-Message-Id: <20180626121159.7267-4-elder@linaro.org>
-In-Reply-To: <20180626121159.7267-1-elder@linaro.org>
-References: <20180626121159.7267-1-elder@linaro.org>
+Subject: [PATCH resend 3/5] remoteproc: Make client initialize ops in rproc_subdev
+Date: Mon, 25 Jun 2018 20:34:07 -0500
+Message-Id: <20180626013409.5125-4-elder@linaro.org>
+In-Reply-To: <20180626013409.5125-1-elder@linaro.org>
+References: <20180626013409.5125-1-elder@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
@@ -17,10 +17,11 @@ make the client responsible for filling out the function pointers of the
 rproc_subdev. This makes the arguments to rproc_add_subdev() more
 manageable, in particular when some of the functions are left out.
 
-Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 [elder@linaro.org: added comment about assigning function pointers]
-Signed-off-by Alex Elder <elder@linaro.org>
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Alex Elder <elder@linaro.org>
+Tested-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
  drivers/remoteproc/qcom_common.c     | 18 ++++++++++--------
  drivers/remoteproc/qcom_sysmon.c     |  5 ++++-
