@@ -1,79 +1,642 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-Subject: 
-Date: Sat, 23 Jun 2018 16:08:02 -0500
-Message-Id: <20180623210810.21232-1-david@lechnology.com>
-To: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [RFC v2 3/5] remoteproc: add system resource manager device
+Date: Wed, 27 Jun 2018 10:06:20 +0200
+Message-ID: <1530086782-5046-4-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
+References: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic Pallardy <loic.pallardy@st.com>, Oleksij
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>, Alex Elder <elder@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+The SRM device reserves and enables the resources needed by a remote
+processor.
+In this initial commit the only managed resources are:
+- clocks which are prepared and enabled
+- pins which are configured
+- regulators which are enabled
+- interrupts which are prepared
 
-Date: Sat, 23 Jun 2018 15:43:59 -0500
-Subject: [PATCH 0/8] New remoteproc driver for TI PRU
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/Kconfig         |  10 +
+ drivers/remoteproc/Makefile        |   1 +
+ drivers/remoteproc/rproc_srm_dev.c | 570 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 581 insertions(+)
+ create mode 100644 drivers/remoteproc/rproc_srm_dev.c
 
-This series adds a new remoteproc driver for the TI Programmable Runtime Unit
-(PRU) that is present in some TI Sitara processors. This code has been tested
-working on AM1808 (LEGO MINDSTORMS EV3) and AM3358 (BeagleBone Green).
-
-There are a couple of quirks that had to be worked around in order to get this
-working. The PRU units have multiple memory maps. Notably, both the instruction
-RAM and data RAM are at address 0x0. This caused the da_to_va callback to not
-work because the same address could refer to two different locations. To work
-around this, the first two patches add a "map" parameter to the da_to_va
-callbacks so that we have an extra bit of information to make this distinction.
-
-Also, on AM38xx we have to use pdata for accessing a reset since there is not
-a reset controller. There are several other devices doing this, so the seems
-the best way for now.
-
-For anyone else who would like to test, I used the rpmsg-client-sample driver.
-Just enable it in your kernel config. Then grab the appropriate firmware[1]
-and put in in /lib/firmware/. Use sysfs to start and stop the PRU:
-
-        echo start > /sys/class/remoteproc<n>/state
-        echo stop > /sys/class/remoteproc<n>/state
-
-[1]: firmware downloads:
-
-AM18XX: https://github.com/ev3dev/ev3dev-pru-firmware/releases/download/mainline-kernel-testing/AM18xx-PRU-rpmsg-client-sample.zip
-AM335X: https://github.com/ev3dev/ev3dev-pru-firmware/releases/download/mainline-kernel-testing/AM335x-PRU-rpmsg-client-sample.zip
-
-David Lechner (8):
-  remoteproc: add map parameter to da_to_va
-  remoteproc: add page lookup for TI PRU to ELF loader
-  ARM: OMAP2+: add pdata quirks for PRUSS reset
-  dt-bindings: add bindings for TI PRU as remoteproc
-  remoteproc: new driver for TI PRU
-  ARM: davinci_all_defconfig: enable PRU remoteproc module
-  ARM: dts: da850: add node for PRUSS
-  ARM: dts: am33xx: add node for PRU remoteproc
-
- .../bindings/remoteproc/ti_pru_rproc.txt      |  51 ++
- MAINTAINERS                                   |   5 +
- arch/arm/boot/dts/am33xx.dtsi                 |   9 +
- arch/arm/boot/dts/da850.dtsi                  |   8 +
- arch/arm/configs/davinci_all_defconfig        |   2 +
- arch/arm/mach-omap2/pdata-quirks.c            |   9 +
- drivers/remoteproc/Kconfig                    |   7 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/imx_rproc.c                |   2 +-
- drivers/remoteproc/keystone_remoteproc.c      |   3 +-
- drivers/remoteproc/qcom_adsp_pil.c            |   2 +-
- drivers/remoteproc/qcom_q6v5_pil.c            |   2 +-
- drivers/remoteproc/qcom_wcnss.c               |   2 +-
- drivers/remoteproc/remoteproc_core.c          |  10 +-
- drivers/remoteproc/remoteproc_elf_loader.c    | 117 +++-
- drivers/remoteproc/remoteproc_internal.h      |   2 +-
- drivers/remoteproc/st_slim_rproc.c            |   2 +-
- drivers/remoteproc/ti_pru_rproc.c             | 660 ++++++++++++++++++
- drivers/remoteproc/wkup_m3_rproc.c            |   3 +-
- include/linux/platform_data/ti-pruss.h        |  18 +
- include/linux/remoteproc.h                    |   2 +-
- include/uapi/linux/elf-em.h                   |   1 +
- 22 files changed, 899 insertions(+), 19 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti_pru_rproc.txt
- create mode 100644 drivers/remoteproc/ti_pru_rproc.c
- create mode 100644 include/linux/platform_data/ti-pruss.h
-
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index e981831..5d5cec9 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -21,6 +21,16 @@ config REMOTEPROC_SRM_CORE
+ 	  The SRM handles resources allocated to remote processors.
+ 	  The core part is in charge of controlling the device children.
+ 
++config REMOTEPROC_SRM_DEV
++	tristate "Remoteproc System Resource Manager device"
++	depends on REMOTEPROC_SRM_CORE
++	help
++	  Say y here to enable the device driver of the remoteproc System
++	  Resource Manager (SRM).
++	  The SRM handles resources allocated to remote processors.
++	  The device part is in charge of reserving and initializing resources
++	  for a peripheral assigned to a coprocessor.
++
+ config IMX_REMOTEPROC
+ 	tristate "IMX6/7 remoteproc support"
+ 	depends on SOC_IMX6SX || SOC_IMX7D
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 2be447a..7cb767b 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -10,6 +10,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+ remoteproc-y				+= remoteproc_virtio.o
+ remoteproc-y				+= remoteproc_elf_loader.o
+ obj-$(CONFIG_REMOTEPROC_SRM_CORE)	+= rproc_srm_core.o
++obj-$(CONFIG_REMOTEPROC_SRM_DEV)	+= rproc_srm_dev.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+diff --git a/drivers/remoteproc/rproc_srm_dev.c b/drivers/remoteproc/rproc_srm_dev.c
+new file mode 100644
+index 0000000..4b2e6ac
+--- /dev/null
++++ b/drivers/remoteproc/rproc_srm_dev.c
+@@ -0,0 +1,570 @@
++/*
++ * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
++ * Author: Fabien Dessenne <fabien.dessenne@st.com>.
++ *
++ * License type: GPLv2
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++ * or FITNESS FOR A PARTICULAR PURPOSE.
++ * See the GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/component.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
++
++#define SUPPLY_SUFFIX   "-supply"
++
++struct rproc_srm_clk_info {
++	struct list_head list;
++	unsigned int index;
++	struct clk *clk;
++	const char *name;
++	bool enabled;
++};
++
++struct rproc_srm_pin_info {
++	struct list_head list;
++	unsigned int index;
++	char *name;
++};
++
++struct rproc_srm_regu_info {
++	struct list_head list;
++	unsigned int index;
++	struct regulator *regu;
++	const char *name;
++	bool enabled;
++};
++
++struct rproc_srm_irq_info {
++	struct list_head list;
++	unsigned int index;
++	char *name;
++	int irq;
++	bool enabled;
++};
++
++struct rproc_srm_dev {
++	struct device *dev;
++	struct pinctrl *pctrl;
++
++	struct list_head clk_list_head;
++	struct list_head regu_list_head;
++	struct list_head pin_list_head;
++	struct list_head irq_list_head;
++};
++
++/* irqs */
++static void rproc_srm_dev_put_irqs(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct rproc_srm_irq_info *info, *tmp;
++	struct list_head *irq_head = &rproc_srm_dev->irq_list_head;
++
++	list_for_each_entry_safe(info, tmp, irq_head, list) {
++		devm_free_irq(dev, info->irq, NULL);
++		dev_dbg(dev, "Put irq %d (%s)\n", info->irq, info->name);
++		list_del(&info->list);
++	}
++}
++
++static irqreturn_t rproc_srm_dev_irq_handler(int irq, void *dev)
++{
++	dev_warn(dev, "Spurious interrupt\n");
++	return IRQ_HANDLED;
++}
++
++static int rproc_srm_dev_get_irqs(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct platform_device *pdev = to_platform_device(dev);
++	struct device_node *np = dev->of_node;
++	struct rproc_srm_irq_info *info;
++	struct list_head *irq_head = &rproc_srm_dev->irq_list_head;
++	const char *name;
++	int nr, ret, irq;
++	unsigned int i;
++
++	if (!np)
++		return 0;
++
++	nr = platform_irq_count(pdev);
++	dev_dbg(dev, "irq count = %d\n", nr);
++	if (!nr)
++		return 0;
++
++	for (i = 0; i < nr; i++) {
++		info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
++		if (!info) {
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		irq = platform_get_irq(pdev, i);
++		if (irq <= 0) {
++			ret = irq;
++			dev_err(dev, "Failed to get irq (%d)\n", ret);
++			goto err;
++		}
++
++		info->irq = irq;
++
++		/* Register a dummy irq handleras not used by Linux */
++		ret = devm_request_irq(dev, info->irq,
++				       rproc_srm_dev_irq_handler, 0,
++				       dev_name(dev), NULL);
++		if (ret) {
++			dev_err(dev, "Failed to request irq (%d)\n", ret);
++			goto err;
++		}
++
++		/*
++		 * Disable IRQ. Since it is used by the remote processor we
++		 * must not use the 'irq lazy disable' optimization
++		 */
++		irq_set_status_flags(info->irq, IRQ_DISABLE_UNLAZY);
++
++		if (!of_property_read_string_index(np, "interrupt-names", i,
++						   &name))
++			info->name = devm_kstrdup(dev, name, GFP_KERNEL);
++
++		info->index = i;
++
++		list_add_tail(&info->list, irq_head);
++		dev_dbg(dev, "Got irq %d (%s)\n", info->irq, info->name);
++	}
++
++	return 0;
++
++err:
++	rproc_srm_dev_put_irqs(rproc_srm_dev);
++
++	return ret;
++}
++
++/* Clocks */
++static void rproc_srm_dev_deconfig_clocks(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct rproc_srm_clk_info *c;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
++
++	list_for_each_entry(c, clk_head, list) {
++		if (!c->enabled)
++			continue;
++
++		clk_disable_unprepare(c->clk);
++		c->enabled = false;
++		dev_dbg(rproc_srm_dev->dev, "clk %d (%s) deconfigured\n",
++			c->index, c->name);
++	}
++}
++
++static int rproc_srm_dev_config_clocks(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct rproc_srm_clk_info *c;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
++	int ret;
++
++	/* Note: not only configuring, but also enabling */
++
++	list_for_each_entry(c, clk_head, list) {
++		if (c->enabled)
++			continue;
++
++		ret = clk_prepare_enable(c->clk);
++		if (ret) {
++			dev_err(rproc_srm_dev->dev, "clk %d (%s) cfg failed\n",
++				c->index, c->name);
++			rproc_srm_dev_deconfig_clocks(rproc_srm_dev);
++			return ret;
++		}
++		c->enabled = true;
++		dev_dbg(rproc_srm_dev->dev, "clk %d (%s) configured\n",
++			c->index, c->name);
++	}
++
++	return 0;
++}
++
++static void rproc_srm_dev_put_clocks(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct rproc_srm_clk_info *c, *tmp;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
++
++	list_for_each_entry_safe(c, tmp, clk_head, list) {
++		clk_put(c->clk);
++		dev_dbg(dev, "put clock %d (%s)\n", c->index, c->name);
++		list_del(&c->list);
++	}
++}
++
++static int rproc_srm_dev_get_clocks(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct device_node *np = dev->of_node;
++	struct rproc_srm_clk_info *c;
++	struct list_head *clk_head = &rproc_srm_dev->clk_list_head;
++	const char *name;
++	int nb_c, ret;
++	unsigned int i;
++
++	if (!np)
++		return 0;
++
++	nb_c = of_clk_get_parent_count(np);
++	if (!nb_c)
++		return 0;
++
++	for (i = 0; i < nb_c; i++) {
++		c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
++		if (!c) {
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		c->clk = of_clk_get(np, i);
++		if (IS_ERR(c->clk)) {
++			dev_err(dev, "clock %d KO (%ld)\n", i,
++				PTR_ERR(c->clk));
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		if (!of_property_read_string_index(np, "clock-names", i,
++						   &name))
++			c->name = devm_kstrdup(dev, name, GFP_KERNEL);
++
++		c->index = i;
++
++		list_add_tail(&c->list, clk_head);
++		dev_dbg(dev, "got clock %d (%s)\n", c->index, c->name);
++	}
++
++	return 0;
++
++err:
++	rproc_srm_dev_put_clocks(rproc_srm_dev);
++	return ret;
++}
++
++/* Regulators */
++static void rproc_srm_dev_deconfig_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct rproc_srm_regu_info *r;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++
++	list_for_each_entry(r, regu_head, list) {
++		if (!r->enabled)
++			continue;
++
++		regulator_disable(r->regu);
++		r->enabled = false;
++		dev_dbg(rproc_srm_dev->dev, "regu %d (%s) disabled\n",
++			r->index, r->name);
++	}
++}
++
++static int rproc_srm_dev_config_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct rproc_srm_regu_info *r;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++	int ret;
++
++	/* Enable all the regulators */
++	list_for_each_entry(r, regu_head, list) {
++		if (r->enabled)
++			continue;
++
++		ret = regulator_enable(r->regu);
++		if (ret) {
++			dev_err(rproc_srm_dev->dev, "regu %d (%s) failed\n",
++				r->index, r->name);
++			rproc_srm_dev_deconfig_regus(rproc_srm_dev);
++			return ret;
++		}
++		r->enabled = true;
++		dev_dbg(rproc_srm_dev->dev, "regu %d (%s) enabled\n",
++			r->index, r->name);
++	}
++
++	return 0;
++}
++
++static void rproc_srm_dev_put_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct rproc_srm_regu_info *r, *tmp;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++
++	list_for_each_entry_safe(r, tmp, regu_head, list) {
++		devm_regulator_put(r->regu);
++		dev_dbg(dev, "put regu %d (%s)\n", r->index, r->name);
++		list_del(&r->list);
++	}
++}
++
++static int rproc_srm_dev_get_regus(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct device_node *np = dev->of_node;
++	struct property *p;
++	const char *n;
++	char *name;
++	struct rproc_srm_regu_info *r;
++	struct list_head *regu_head = &rproc_srm_dev->regu_list_head;
++	int ret, nb_s = 0;
++
++	if (!np)
++		return 0;
++
++	for_each_property_of_node(np, p) {
++		n = strstr(p->name, SUPPLY_SUFFIX);
++		if (!n || n == p->name)
++			continue;
++
++		r = devm_kzalloc(dev, sizeof(*r), GFP_KERNEL);
++		if (!r) {
++			ret = -ENOMEM;
++			goto err_list;
++		}
++
++		name = devm_kstrdup(dev, p->name, GFP_KERNEL);
++		name[strlen(p->name) - strlen(SUPPLY_SUFFIX)] = '\0';
++		r->name = name;
++
++		r->regu = devm_regulator_get(dev, r->name);
++		if (IS_ERR(r->regu)) {
++			dev_err(dev, "cannot get regu %s\n", r->name);
++			ret = -EINVAL;
++			goto err_list;
++		}
++
++		r->index = nb_s++;
++
++		list_add_tail(&r->list, regu_head);
++		dev_dbg(dev, "got regu %d (%s)\n", r->index, r->name);
++	}
++
++	return 0;
++
++err_list:
++	rproc_srm_dev_put_regus(rproc_srm_dev);
++	return ret;
++}
++
++/* Pins */
++static void rproc_srm_dev_put_pins(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct rproc_srm_pin_info *p, *tmp;
++	struct list_head *pin_head = &rproc_srm_dev->pin_list_head;
++
++	list_for_each_entry_safe(p, tmp, pin_head, list) {
++		devm_kfree(dev, p->name);
++		devm_kfree(dev, p);
++		dev_dbg(dev, "remove pin cfg %d (%s)\n", p->index, p->name);
++		list_del(&p->list);
++	}
++
++	if (!IS_ERR_OR_NULL(rproc_srm_dev->pctrl)) {
++		devm_pinctrl_put(rproc_srm_dev->pctrl);
++		rproc_srm_dev->pctrl = NULL;
++	}
++}
++
++static int rproc_srm_dev_get_pins(struct rproc_srm_dev *rproc_srm_dev)
++{
++	struct device *dev = rproc_srm_dev->dev;
++	struct device_node *np = dev->of_node;
++	struct rproc_srm_pin_info *p;
++	struct list_head *pin_head = &rproc_srm_dev->pin_list_head;
++	int ret, nb_p;
++	unsigned int i;
++	const char *name;
++
++	if (!np)
++		return 0;
++
++	/* Assumption here is that "default" pinctrl applied before probe */
++
++	rproc_srm_dev->pctrl = devm_pinctrl_get(dev);
++	if (IS_ERR(rproc_srm_dev->pctrl))
++		return 0;
++
++	nb_p = of_property_count_strings(np, "pinctrl-names");
++	if (nb_p <= 0) {
++		dev_err(dev, "pinctrl-names not defined\n");
++		ret = -EINVAL;
++		goto err;
++	}
++
++	for (i = 0; i < nb_p; i++) {
++		p = devm_kzalloc(dev, sizeof(*p), GFP_KERNEL);
++		if (!p) {
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		if (of_property_read_string_index(np, "pinctrl-names", i,
++						  &name)) {
++			dev_err(dev, "no pinctrl-names (pin %d)\n", i);
++			ret = -EINVAL;
++			goto err;
++		}
++		p->name = devm_kstrdup(dev, name, GFP_KERNEL);
++
++		p->index = i;
++
++		list_add_tail(&p->list, pin_head);
++		dev_dbg(dev, "found pin cfg %d (%s)\n", p->index, p->name);
++	}
++	return 0;
++
++err:
++	rproc_srm_dev_put_pins(rproc_srm_dev);
++	return ret;
++}
++
++/* Core */
++static void
++rproc_srm_dev_unbind(struct device *dev, struct device *master, void *data)
++{
++	struct rproc_srm_dev *rproc_srm_dev = dev_get_drvdata(dev);
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	rproc_srm_dev_deconfig_regus(rproc_srm_dev);
++	rproc_srm_dev_deconfig_clocks(rproc_srm_dev);
++
++	/* For pins and IRQs: nothing to deconfigure */
++}
++
++static int
++rproc_srm_dev_bind(struct device *dev, struct device *master, void *data)
++{
++	struct rproc_srm_dev *rproc_srm_dev = dev_get_drvdata(dev);
++	int ret;
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	ret = rproc_srm_dev_config_clocks(rproc_srm_dev);
++	if (ret)
++		return ret;
++
++	ret = rproc_srm_dev_config_regus(rproc_srm_dev);
++	if (ret)
++		return ret;
++
++	/* For pins and IRQs: nothing to configure */
++	return 0;
++}
++
++static const struct component_ops rproc_srm_dev_ops = {
++	.bind = rproc_srm_dev_bind,
++	.unbind = rproc_srm_dev_unbind,
++};
++
++static int rproc_srm_dev_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rproc_srm_dev *rproc_srm_dev;
++	int ret;
++
++	dev_dbg(dev, "%s for node %s\n", __func__, dev->of_node->name);
++
++	rproc_srm_dev = devm_kzalloc(dev, sizeof(struct rproc_srm_dev),
++				     GFP_KERNEL);
++	if (!rproc_srm_dev)
++		return -ENOMEM;
++
++	rproc_srm_dev->dev = dev;
++	INIT_LIST_HEAD(&rproc_srm_dev->clk_list_head);
++	INIT_LIST_HEAD(&rproc_srm_dev->pin_list_head);
++	INIT_LIST_HEAD(&rproc_srm_dev->regu_list_head);
++	INIT_LIST_HEAD(&rproc_srm_dev->irq_list_head);
++
++	/* Get clocks, regu, irqs and pinctrl */
++	ret = rproc_srm_dev_get_clocks(rproc_srm_dev);
++	if (ret)
++		return ret;
++
++	ret = rproc_srm_dev_get_regus(rproc_srm_dev);
++	if (ret)
++		goto err;
++
++	ret = rproc_srm_dev_get_pins(rproc_srm_dev);
++	if (ret)
++		goto err;
++
++	ret = rproc_srm_dev_get_irqs(rproc_srm_dev);
++	if (ret)
++		goto err;
++
++	dev_set_drvdata(dev, rproc_srm_dev);
++
++	return  component_add(dev, &rproc_srm_dev_ops);
++
++err:
++	rproc_srm_dev_put_irqs(rproc_srm_dev);
++	rproc_srm_dev_put_pins(rproc_srm_dev);
++	rproc_srm_dev_put_regus(rproc_srm_dev);
++	rproc_srm_dev_put_clocks(rproc_srm_dev);
++	return ret;
++}
++
++static int rproc_srm_dev_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rproc_srm_dev *rproc_srm_dev = dev_get_drvdata(dev);
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	component_del(dev, &rproc_srm_dev_ops);
++
++	rproc_srm_dev_put_irqs(rproc_srm_dev);
++	rproc_srm_dev_put_regus(rproc_srm_dev);
++	rproc_srm_dev_put_pins(rproc_srm_dev);
++	rproc_srm_dev_put_clocks(rproc_srm_dev);
++
++	return 0;
++}
++
++static const struct of_device_id rproc_srm_dev_match[] = {
++	{ .compatible = "rproc-srm-dev", },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, rproc_srm_dev_match);
++
++static struct platform_driver rproc_srm_dev_driver = {
++	.probe = rproc_srm_dev_probe,
++	.remove = rproc_srm_dev_remove,
++	.driver = {
++		.name = "rproc-srm-dev",
++		.of_match_table = of_match_ptr(rproc_srm_dev_match),
++	},
++};
++
++module_platform_driver(rproc_srm_dev_driver);
++
++MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
++MODULE_DESCRIPTION("Remoteproc System Resource Manager driver - dev");
++MODULE_LICENSE("GPL v2");
 -- 
-2.17.1
+2.7.4
