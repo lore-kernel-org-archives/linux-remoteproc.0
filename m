@@ -1,33 +1,58 @@
-Return-Path: <david@lechnology.com>
-From: David Lechner <david@lechnology.com>
-Subject: [PATCH 6/8] ARM: davinci_all_defconfig: enable PRU remoteproc module
-Date: Sat, 23 Jun 2018 16:08:08 -0500
-Message-Id: <20180623210810.21232-7-david@lechnology.com>
-In-Reply-To: <20180623210810.21232-1-david@lechnology.com>
-References: <20180623210810.21232-1-david@lechnology.com>
-To: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: David Lechner <david@lechnology.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [RFC v2 4/5] remoteproc: probe the system resource manager
+Date: Wed, 27 Jun 2018 10:06:21 +0200
+Message-ID: <1530086782-5046-5-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
+References: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic Pallardy <loic.pallardy@st.com>, Oleksij
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>, Alex Elder <elder@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This enabled the remoteproc module for the PRU on DA8xx-type devices.
+When a remote processor registers, populate the device tree to probe
+the SRM core driver
 
-Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- arch/arm/configs/davinci_all_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
-index a1b6e106b867..1bcc7c6a03ee 100644
---- a/arch/arm/configs/davinci_all_defconfig
-+++ b/arch/arm/configs/davinci_all_defconfig
-@@ -214,6 +214,8 @@ CONFIG_DMADEVICES=y
- CONFIG_TI_EDMA=y
- CONFIG_REMOTEPROC=m
- CONFIG_DA8XX_REMOTEPROC=m
-+CONFIG_TI_PRU_REMOTEPROC=m
-+CONFIG_RPMSG_VIRTIO=m
- CONFIG_MEMORY=y
- CONFIG_TI_AEMIF=m
- CONFIG_DA8XX_DDRCTL=y
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 283b258..a67f918 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -41,6 +41,7 @@
+ #include <linux/crc32.h>
+ #include <linux/virtio_ids.h>
+ #include <linux/virtio_ring.h>
++#include <linux/of_platform.h>
+ #include <asm/byteorder.h>
+ 
+ #include "remoteproc_internal.h"
+@@ -1485,6 +1486,11 @@ int rproc_add(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++	/* add resource manager device */
++	ret = devm_of_platform_populate(dev->parent);
++	if (ret < 0)
++		return ret;
++
+ 	/* expose to rproc_get_by_phandle users */
+ 	mutex_lock(&rproc_list_mutex);
+ 	list_add(&rproc->node, &rproc_list);
+@@ -1705,6 +1711,8 @@ int rproc_del(struct rproc *rproc)
+ 	list_del(&rproc->node);
+ 	mutex_unlock(&rproc_list_mutex);
+ 
++	of_platform_depopulate(rproc->dev.parent);
++
+ 	device_del(&rproc->dev);
+ 
+ 	return 0;
 -- 
-2.17.1
+2.7.4
