@@ -1,214 +1,306 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 22 Jun 2018 17:46:26 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v5 2/8] reset: qcom: AOSS (always on subsystem) reset
- controller
-Message-ID: <20180623004626.GR3402@tuxbook-pro>
-References: <20180521172714.8551-1-sibis@codeaurora.org>
- <20180521172714.8551-3-sibis@codeaurora.org>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [RFC v2 2/5] remoteproc: add system resource manager core
+Date: Wed, 27 Jun 2018 10:06:19 +0200
+Message-ID: <1530086782-5046-3-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
+References: <1530086782-5046-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521172714.8551-3-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, georgi.djakov@linaro.org, jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic Pallardy <loic.pallardy@st.com>, Oleksij
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>, Alex Elder <elder@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 21 May 10:27 PDT 2018, Sibi Sankar wrote:
+The remoteproc SRM (System Resource Manager) handles resources allocated
+to remote processors.
+This makes it possible for remote proc to reserve and initialize system
+resources for a peripheral assigned to a coprocessor.
+This is the core part which is in charge of controlling the device
+children.
 
-> Add reset controller driver for Qualcomm SDM845 SoC to
-> control reset signals provided by AOSS for Modem, Venus
-> ADSP, GPU, Camera, Wireless, Display subsystem
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ Documentation/remoteproc.txt        |  23 ++++
+ drivers/remoteproc/Kconfig          |   8 ++
+ drivers/remoteproc/Makefile         |   1 +
+ drivers/remoteproc/rproc_srm_core.c | 205 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 237 insertions(+)
+ create mode 100644 drivers/remoteproc/rproc_srm_core.c
 
-With the adaptions discussed in the DT binding patch (compatible and
-register offsets) you have my:
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  drivers/reset/Kconfig           |   9 +++
->  drivers/reset/Makefile          |   1 +
->  drivers/reset/reset-qcom-aoss.c | 133 ++++++++++++++++++++++++++++++++
->  3 files changed, 143 insertions(+)
->  create mode 100644 drivers/reset/reset-qcom-aoss.c
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index c0b292be1b72..756ad2b27d0f 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -82,6 +82,15 @@ config RESET_PISTACHIO
->  	help
->  	  This enables the reset driver for ImgTec Pistachio SoCs.
->  
-> +config RESET_QCOM_AOSS
-> +	bool "Qcom AOSS Reset Driver"
-> +	depends on ARCH_QCOM || COMPILE_TEST
-> +	help
-> +	  This enables the AOSS (always on subsystem) reset driver
-> +	  for Qualcomm SDM845 SoCs. Say Y if you want to control
-> +	  reset signals provided by AOSS for Modem, Venus, ADSP,
-> +	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
-> +
->  config RESET_SIMPLE
->  	bool "Simple Reset Controller Driver" if COMPILE_TEST
->  	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index c1261dcfe9ad..6881e4d287f0 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
->  obj-$(CONFIG_RESET_MESON) += reset-meson.o
->  obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
->  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-> +obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
->  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
->  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
->  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-> diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
-> new file mode 100644
-> index 000000000000..d9ca7339c434
-> --- /dev/null
-> +++ b/drivers/reset/reset-qcom-aoss.c
-> @@ -0,0 +1,133 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/of_device.h>
-> +#include <dt-bindings/reset/qcom,sdm845-aoss.h>
-> +
-> +struct qcom_aoss_reset_map {
-> +	unsigned int reg;
-> +};
-> +
-> +struct qcom_aoss_desc {
-> +	const struct qcom_aoss_reset_map *resets;
-> +	size_t num_resets;
-> +};
-> +
-> +struct qcom_aoss_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	void __iomem *base;
-> +	const struct qcom_aoss_desc *desc;
-> +};
-> +
-> +static const struct qcom_aoss_reset_map sdm845_aoss_resets[] = {
-> +	[AOSS_CC_MSS_RESTART] = {0x0},
-> +	[AOSS_CC_CAMSS_RESTART] = {0x1000},
-> +	[AOSS_CC_VENUS_RESTART] = {0x2000},
-> +	[AOSS_CC_GPU_RESTART] = {0x3000},
-> +	[AOSS_CC_DISPSS_RESTART] = {0x4000},
-> +	[AOSS_CC_WCSS_RESTART] = {0x10000},
-> +	[AOSS_CC_LPASS_RESTART] = {0x20000},
-> +};
-> +
-> +static const struct qcom_aoss_desc sdm845_aoss_desc = {
-> +	.resets = sdm845_aoss_resets,
-> +	.num_resets = ARRAY_SIZE(sdm845_aoss_resets),
-> +};
-> +
-> +static inline struct qcom_aoss_reset_data *to_qcom_aoss_reset_data(
-> +				struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct qcom_aoss_reset_data, rcdev);
-> +}
-> +
-> +static int qcom_aoss_control_assert(struct reset_controller_dev *rcdev,
-> +				    unsigned long idx)
-> +{
-> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-> +
-> +	writel(1, data->base + map->reg);
-> +	/* Wait 6 32kHz sleep cycles for reset */
-> +	usleep_range(200, 300);
-> +	return 0;
-> +}
-> +
-> +static int qcom_aoss_control_deassert(struct reset_controller_dev *rcdev,
-> +				      unsigned long idx)
-> +{
-> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
-> +	const struct qcom_aoss_reset_map *map = &data->desc->resets[idx];
-> +
-> +	writel(0, data->base + map->reg);
-> +	/* Wait 6 32kHz sleep cycles for reset */
-> +	usleep_range(200, 300);
-> +	return 0;
-> +}
-> +
-> +static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
-> +					unsigned long idx)
-> +{
-> +	qcom_aoss_control_assert(rcdev, idx);
-> +
-> +	return qcom_aoss_control_deassert(rcdev, idx);
-> +}
-> +
-> +static const struct reset_control_ops qcom_aoss_reset_ops = {
-> +	.reset = qcom_aoss_control_reset,
-> +	.assert = qcom_aoss_control_assert,
-> +	.deassert = qcom_aoss_control_deassert,
-> +};
-> +
-> +static int qcom_aoss_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct qcom_aoss_reset_data *data;
-> +	struct device *dev = &pdev->dev;
-> +	const struct qcom_aoss_desc *desc;
-> +	struct resource *res;
-> +
-> +	desc = of_device_get_match_data(dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->desc = desc;
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	data->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(data->base))
-> +		return PTR_ERR(data->base);
-> +
-> +	data->rcdev.owner = THIS_MODULE;
-> +	data->rcdev.ops = &qcom_aoss_reset_ops;
-> +	data->rcdev.nr_resets = desc->num_resets;
-> +	data->rcdev.of_node = dev->of_node;
-> +
-> +	return devm_reset_controller_register(dev, &data->rcdev);
-> +}
-> +
-> +static const struct of_device_id qcom_aoss_reset_of_match[] = {
-> +	{ .compatible = "qcom,sdm845-aoss-reset", .data = &sdm845_aoss_desc },
-> +	{}
-> +};
-> +
-> +static struct platform_driver qcom_aoss_reset_driver = {
-> +	.probe = qcom_aoss_reset_probe,
-> +	.driver  = {
-> +		.name = "qcom_aoss_reset",
-> +		.of_match_table = qcom_aoss_reset_of_match,
-> +	},
-> +};
-> +
-> +builtin_platform_driver(qcom_aoss_reset_driver);
-> +
-> +MODULE_DESCRIPTION("Qualcomm AOSS Reset Driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+diff --git a/Documentation/remoteproc.txt b/Documentation/remoteproc.txt
+index 77fb03a..bec2177 100644
+--- a/Documentation/remoteproc.txt
++++ b/Documentation/remoteproc.txt
+@@ -353,3 +353,26 @@ Of course, RSC_VDEV resource entries are only good enough for static
+ allocation of virtio devices. Dynamic allocations will also be made possible
+ using the rpmsg bus (similar to how we already do dynamic allocations of
+ rpmsg channels; read more about it in rpmsg.txt).
++
++8. System Resource Manager (SRM)
++
++Since some resources are shared (directly or not) between the processors, a
++processor cannot manage such resources without potentially impacting the other
++processors : as an example, if a processor changes the frequency of a clock, the
++frequency of another clock managed by another processor may be updated too.
++
++The System Resource Manager prevents such resource conflicts between the
++processors : it reserves and initializes the system resources of the peripherals
++assigned to a remote processor.
++
++As of today the following resources are controlled by the SRM:
++- clocks
++- gpios (pinctrl)
++- regulators (power supplies)
++
++The SRM is implemented as an 'rproc_subdev' and registered to remoteproc_core.
++Unlike the virtio device (vdev), the SRM subdev is probed *before* the rproc
++boots, ensuring the availability of the resources before the remoteproc starts.
++
++The resources handled by the SRM are defined in the DeviceTree: please read
++Documentation/devicetree/bindings/remoteproc/rproc-srm.txt for details.
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index cd1c168..e981831 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -13,6 +13,14 @@ config REMOTEPROC
+ 
+ if REMOTEPROC
+ 
++config REMOTEPROC_SRM_CORE
++	tristate "Remoteproc System Resource Manager core"
++	help
++	  Say y here to enable the core driver of the remoteproc System Resource
++	  Manager (SRM).
++	  The SRM handles resources allocated to remote processors.
++	  The core part is in charge of controlling the device children.
++
+ config IMX_REMOTEPROC
+ 	tristate "IMX6/7 remoteproc support"
+ 	depends on SOC_IMX6SX || SOC_IMX7D
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 02627ed..2be447a 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
+ remoteproc-y				+= remoteproc_sysfs.o
+ remoteproc-y				+= remoteproc_virtio.o
+ remoteproc-y				+= remoteproc_elf_loader.o
++obj-$(CONFIG_REMOTEPROC_SRM_CORE)	+= rproc_srm_core.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+diff --git a/drivers/remoteproc/rproc_srm_core.c b/drivers/remoteproc/rproc_srm_core.c
+new file mode 100644
+index 0000000..29fcc73
+--- /dev/null
++++ b/drivers/remoteproc/rproc_srm_core.c
+@@ -0,0 +1,205 @@
++/*
++ * Copyright (C) 2017, STMicroelectronics - All Rights Reserved
++ * Author: Fabien Dessenne <fabien.dessenne@st.com>.
++ *
++ * License type: GPLv2
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++ * or FITNESS FOR A PARTICULAR PURPOSE.
++ * See the GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program. If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/component.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <linux/remoteproc.h>
++
++#define BIND_TIMEOUT 10000
++
++struct rproc_srm_core {
++	struct device *dev;
++	struct completion all_bound;
++	int bind_status;
++	atomic_t prepared;
++	struct rproc_subdev subdev;
++};
++
++#define to_rproc_srm_core(s) container_of(s, struct rproc_srm_core, subdev)
++
++static int compare_of(struct device *dev, void *data)
++{
++	return dev->of_node == data;
++}
++
++static void release_of(struct device *dev, void *data)
++{
++	of_node_put(data);
++}
++
++static void rproc_srm_core_unbind(struct device *dev)
++{
++	component_unbind_all(dev, NULL);
++}
++
++static int rproc_srm_core_bind(struct device *dev)
++{
++	struct rproc_srm_core *rproc_srm_core = dev_get_drvdata(dev);
++
++	rproc_srm_core->bind_status = component_bind_all(dev, NULL);
++	complete(&rproc_srm_core->all_bound);
++
++	return rproc_srm_core->bind_status;
++}
++
++static const struct component_master_ops srm_comp_ops = {
++	.bind = rproc_srm_core_bind,
++	.unbind = rproc_srm_core_unbind,
++};
++
++static int rproc_srm_core_prepare(struct rproc_subdev *subdev)
++{
++	struct rproc_srm_core *rproc_srm_core = to_rproc_srm_core(subdev);
++	struct device *dev = rproc_srm_core->dev;
++	struct device_node *node = dev->of_node;
++	struct device_node *child_np;
++	struct component_match *match = NULL;
++	int ret;
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	init_completion(&rproc_srm_core->all_bound);
++
++	ret = devm_of_platform_populate(dev);
++	if (ret) {
++		dev_err(dev, "cannot populate node (%d)\n", ret);
++		return ret;
++	}
++
++	child_np = of_get_next_available_child(node, NULL);
++
++	while (child_np) {
++		of_node_get(child_np);
++		component_match_add_release(dev, &match, release_of, compare_of,
++					    child_np);
++		child_np = of_get_next_available_child(node, child_np);
++	}
++
++	if (!match) {
++		dev_dbg(dev, "No available child\n");
++		goto done;
++	}
++
++	ret = component_master_add_with_match(dev, &srm_comp_ops, match);
++	if (ret)
++		goto depopulate;
++
++	/* Wait for every child to be bound */
++	if (!wait_for_completion_timeout(&rproc_srm_core->all_bound,
++					 msecs_to_jiffies(BIND_TIMEOUT))) {
++		dev_err(dev, "bind timeout\n");
++		ret = -ETIMEDOUT;
++		goto master;
++	}
++
++	ret = rproc_srm_core->bind_status;
++	if (ret) {
++		dev_err(dev, "failed to bind\n");
++		goto master;
++	}
++done:
++	atomic_inc(&rproc_srm_core->prepared);
++
++	return 0;
++
++master:
++	component_master_del(dev, &srm_comp_ops);
++depopulate:
++	devm_of_platform_depopulate(dev);
++	return ret;
++}
++
++static void rproc_srm_core_do_unprepare(struct rproc_subdev *subdev)
++{
++	struct rproc_srm_core *rproc_srm_core = to_rproc_srm_core(subdev);
++	struct device *dev = rproc_srm_core->dev;
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	atomic_dec(&rproc_srm_core->prepared);
++
++	component_master_del(dev, &srm_comp_ops);
++	devm_of_platform_depopulate(dev);
++}
++
++static int rproc_srm_core_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rproc *rproc = dev_get_drvdata(dev->parent);
++	struct rproc_srm_core *rproc_srm_core;
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	rproc_srm_core = devm_kzalloc(dev, sizeof(struct rproc_srm_core),
++				      GFP_KERNEL);
++	if (!rproc_srm_core)
++		return -ENOMEM;
++
++	rproc_srm_core->dev = dev;
++
++	/* Register rproc subdevice with (un)prepare ops */
++	rproc_srm_core->subdev.prepare = rproc_srm_core_prepare;
++	rproc_srm_core->subdev.unprepare = rproc_srm_core_unprepare;
++	rproc_add_subdev(rproc, &rproc_srm_core->subdev);
++
++	dev_set_drvdata(dev, rproc_srm_core);
++
++	return 0;
++}
++
++static int rproc_srm_core_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rproc_srm_core *rproc_srm_core = dev_get_drvdata(dev);
++	struct rproc *rproc = dev_get_drvdata(dev->parent);
++
++	dev_dbg(dev, "%s\n", __func__);
++
++	if (atomic_read(&rproc->power) > 0)
++		dev_warn(dev, "Releasing resources while firmware running!\n");
++
++	if (atomic_read(&rproc_srm_core->prepared))
++		rproc_srm_core_unprepare(&rproc_srm_core->subdev);
++
++	return 0;
++}
++
++static const struct of_device_id rproc_srm_core_match[] = {
++	{ .compatible = "rproc-srm-core", },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, rproc_srm_core_match);
++
++static struct platform_driver rproc_srm_core_driver = {
++	.probe = rproc_srm_core_probe,
++	.remove = rproc_srm_core_remove,
++	.driver = {
++		.name = "rproc-srm-core",
++		.of_match_table = of_match_ptr(rproc_srm_core_match),
++	},
++};
++
++module_platform_driver(rproc_srm_core_driver);
++
++MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
++MODULE_DESCRIPTION("Remoteproc System Resource Manager driver - core");
++MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
