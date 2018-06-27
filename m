@@ -1,103 +1,57 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from userp2130.oracle.com ([156.151.31.86]:54798 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753529AbeFGISc (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jun 2018 04:18:32 -0400
-Date: Thu, 7 Jun 2018 11:18:22 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [bug report] remoteproc: st_slim_rproc: add a slimcore rproc driver
-Message-ID: <20180607081822.yibwdwv4zpnynigd@kili.mountain>
+Return-Path: <baolin.wang@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: peter.griffin@linaro.org
-Cc: linux-remoteproc@vger.kernel.org
+In-Reply-To: <20180626205138.GF3206@builder>
+References: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+ <e5f5f315a882fe5cdd161c8cb1790c9f3de0920a.1529654288.git.baolin.wang@linaro.org>
+ <20180626205138.GF3206@builder>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Wed, 27 Jun 2018 10:17:21 +0800
+Message-ID: <CAMz4kuLVFc3YuSue8AQ8brjj+bDq-k-fOTRp_3M4xV1O=aYhgg@mail.gmail.com>
+Subject: Re: [PATCH 6/8] hwspinlock: sprd: Use devm_hwspin_lock_register()
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-remoteproc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello Peter Griffin,
+On 27 June 2018 at 04:51, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+> On Fri 22 Jun 01:09 PDT 2018, Baolin Wang wrote:
+>
+>> Use devm_hwspin_lock_register() to register the hwlock controller to
+>> avoid unregistering the device explicitly.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>>  drivers/hwspinlock/sprd_hwspinlock.c |    6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
+>> index dc42bf5..ba5daf6 100644
+>> --- a/drivers/hwspinlock/sprd_hwspinlock.c
+>> +++ b/drivers/hwspinlock/sprd_hwspinlock.c
+>> @@ -120,8 +120,9 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
+>>       platform_set_drvdata(pdev, sprd_hwlock);
+>>       pm_runtime_enable(&pdev->dev);
+>>
+>> -     ret = hwspin_lock_register(&sprd_hwlock->bank, &pdev->dev,
+>> -                                &sprd_hwspinlock_ops, 0, SPRD_HWLOCKS_NUM);
+>> +     ret = devm_hwspin_lock_register(&pdev->dev, &sprd_hwlock->bank,
+>> +                                     &sprd_hwspinlock_ops, 0,
+>> +                                     SPRD_HWLOCKS_NUM);
+>>       if (ret) {
+>>               pm_runtime_disable(&pdev->dev);
+>>               clk_disable_unprepare(sprd_hwlock->clk);
+>> @@ -135,7 +136,6 @@ static int sprd_hwspinlock_remove(struct platform_device *pdev)
+>>  {
+>>       struct sprd_hwspinlock_dev *sprd_hwlock = platform_get_drvdata(pdev);
+>>
+>> -     hwspin_lock_unregister(&sprd_hwlock->bank);
+>
+> Until the hwspinlock is unregistered it's possible for clients to issue
+> operations on it, so disabling power and clocks before that seems bad.
 
-The patch bb6869b21478: "remoteproc: st_slim_rproc: add a slimcore
-rproc driver" from Oct 18, 2016, leads to the following static
-checker warning:
+Yes, you are right. So may be register some additional actions with devm
+core to call the clock disable as appropriate. Thanks.
 
-	drivers/remoteproc/st_slim_rproc.c:131 slim_rproc_start()
-	warn: potential ! vs ~ typo
-
-	drivers/remoteproc/st_slim_rproc.c:170 slim_rproc_stop()
-	warn: potential ! vs ~ typo
-
-drivers/remoteproc/st_slim_rproc.c
-   116  static int slim_rproc_start(struct rproc *rproc)
-   117  {
-   118          struct device *dev = &rproc->dev;
-   119          struct st_slim_rproc *slim_rproc = rproc->priv;
-   120          unsigned long hw_id, hw_ver, fw_rev;
-   121          u32 val;
-   122  
-   123          /* disable CPU pipeline clock & reset CPU pipeline */
-   124          val = SLIM_CLK_GATE_DIS | SLIM_CLK_GATE_RESET;
-   125          writel(val, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
-   126  
-   127          /* disable SLIM core STBus sync */
-   128          writel(SLIM_STBUS_SYNC_DIS, slim_rproc->peri + SLIM_STBUS_SYNC_OFST);
-   129  
-   130          /* enable cpu pipeline clock */
-   131          writel(!SLIM_CLK_GATE_DIS,
-                       ^^^^^^^^^^^^^^^^^^
-Did we intend to write ~1 or 0?
-
-   132                  slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
-   133  
-   134          /* clear int & cmd mailbox */
-   135          writel(~0U, slim_rproc->peri + SLIM_INT_CLR_OFST);
-   136          writel(~0U, slim_rproc->peri + SLIM_CMD_CLR_OFST);
-   137  
-   138          /* enable all channels cmd & int */
-   139          writel(~0U, slim_rproc->peri + SLIM_INT_MASK_OFST);
-   140          writel(~0U, slim_rproc->peri + SLIM_CMD_MASK_OFST);
-   141  
-   142          /* enable cpu */
-   143          writel(SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
-   144  
-   145          hw_id = readl_relaxed(slim_rproc->slimcore + SLIM_ID_OFST);
-   146          hw_ver = readl_relaxed(slim_rproc->slimcore + SLIM_VER_OFST);
-   147  
-   148          fw_rev = readl(slim_rproc->mem[ST_SLIM_DMEM].cpu_addr +
-   149                          SLIM_REV_ID_OFST);
-   150  
-   151          dev_info(dev, "fw rev:%ld.%ld on SLIM %ld.%ld\n",
-   152                   SLIM_REV_ID_MAJ(fw_rev), SLIM_REV_ID_MIN(fw_rev),
-   153                   hw_id, hw_ver);
-   154  
-   155          return 0;
-   156  }
-   157  
-   158  static int slim_rproc_stop(struct rproc *rproc)
-   159  {
-   160          struct st_slim_rproc *slim_rproc = rproc->priv;
-   161          u32 val;
-   162  
-   163          /* mask all (cmd & int) channels */
-   164          writel(0UL, slim_rproc->peri + SLIM_INT_MASK_OFST);
-   165          writel(0UL, slim_rproc->peri + SLIM_CMD_MASK_OFST);
-   166  
-   167          /* disable cpu pipeline clock */
-   168          writel(SLIM_CLK_GATE_DIS, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
-   169  
-   170          writel(!SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
-                        ^^^^^^^^^^^
-
-   171  
-   172          val = readl(slim_rproc->slimcore + SLIM_EN_OFST);
-   173          if (val & SLIM_EN_RUN)
-   174                  dev_warn(&rproc->dev, "Failed to disable SLIM");
-   175  
-   176          dev_dbg(&rproc->dev, "slim stopped\n");
-   177  
-   178          return 0;
-   179  }
-
-regards,
-dan carpenter
+-- 
+Baolin.wang
+Best Regards
