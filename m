@@ -1,60 +1,53 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/3] rpmsg: glink: correctly annotate intent members
-Date: Mon, 18 Jun 2018 13:33:37 +0100
-Message-Id: <20180618123339.24115-2-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20180618123339.24115-1-srinivas.kandagatla@linaro.org>
-References: <20180618123339.24115-1-srinivas.kandagatla@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH] hwspinlock: Fix incorrect return pointers
+Date: Thu, 28 Jun 2018 10:32:21 +0800
+Message-Id: <782fc498b4f4c6e8130d64face93023eb3dc9866.1530152980.git.baolin.wang@linaro.org>
 To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: broonie@kernel.org, dan.carpenter@oracle.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, baolin.wang@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As intent structure members are not correctly annotated, leading to below warnings
+The commit 4f1acd758b08 ("hwspinlock: Add devm_xxx() APIs to request/free
+hwlock") introduces one bug, that will return one error pointer if failed
+to request one hwlock, but we expect NULL pointer on error for consumers.
+This patch will fix this issue.
 
-qcom_glink_native.c:614:16: warning: incorrect type in assignment (different base types)
-qcom_glink_native.c:614:16:    expected unsigned short [unsigned] [usertype] id
-qcom_glink_native.c:614:16:    got restricted __le16 [usertype] <noident>
-qcom_glink_native.c:615:18: warning: incorrect type in assignment (different base types)
-qcom_glink_native.c:615:18:    expected unsigned short [unsigned] [usertype] lcid
-qcom_glink_native.c:615:18:    got restricted __le16 [usertype] <noident>
-qcom_glink_native.c:616:19: warning: incorrect type in assignment (different base types)
-qcom_glink_native.c:616:19:    expected unsigned int [unsigned] [usertype] count
-qcom_glink_native.c:616:19:    got restricted __le32 [usertype] <noident>
-qcom_glink_native.c:617:18: warning: incorrect type in assignment (different base types)
-qcom_glink_native.c:617:18:    expected unsigned int [unsigned] [usertype] size
-qcom_glink_native.c:617:18:    got restricted __le32 [usertype] <noident>
-qcom_glink_native.c:618:18: warning: incorrect type in assignment (different base types)
-qcom_glink_native.c:618:18:    expected unsigned int [unsigned] [usertype] liid
-qcom_glink_native.c:618:18:    got restricted __le32 [usertype] <noident>
-
-Fix this by correctly annotating them.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/hwspinlock/hwspinlock_core.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index f505f58b797d..e4eb5a1f417a 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -603,11 +603,11 @@ static int qcom_glink_advertise_intent(struct qcom_glink *glink,
- 				       struct glink_core_rx_intent *intent)
- {
- 	struct command {
--		u16 id;
--		u16 lcid;
--		u32 count;
--		u32 size;
--		u32 liid;
-+		__le16 id;
-+		__le16 lcid;
-+		__le32 count;
-+		__le32 size;
-+		__le32 liid;
- 	} __packed;
- 	struct command cmd;
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index e16d648..2bad40d 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -877,10 +877,10 @@ struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
  
+ 	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
+ 	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	hwlock = hwspin_lock_request();
+-	if (!IS_ERR(hwlock)) {
++	if (hwlock) {
+ 		*ptr = hwlock;
+ 		devres_add(dev, ptr);
+ 	} else {
+@@ -913,10 +913,10 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
+ 
+ 	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
+ 	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++		return NULL;
+ 
+ 	hwlock = hwspin_lock_request_specific(id);
+-	if (!IS_ERR(hwlock)) {
++	if (hwlock) {
+ 		*ptr = hwlock;
+ 		devres_add(dev, ptr);
+ 	} else {
 -- 
-2.16.2
+1.7.9.5
