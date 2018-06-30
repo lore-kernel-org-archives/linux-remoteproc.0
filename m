@@ -1,135 +1,137 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v7 1/4] remoteproc/davinci: use the reset framework
-Date: Thu, 21 Jun 2018 09:37:03 +0200
-Message-Id: <20180621073706.22812-2-brgl@bgdev.pl>
-In-Reply-To: <20180621073706.22812-1-brgl@bgdev.pl>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: New remoteproc driver for TI PRU
+References: <20180623210810.21232-1-david@lechnology.com>
+ <e0a883af-8228-5b06-3186-f57d8f898aaa@ti.com>
+ <8fc18d40-72f5-9215-26f0-1492e3a6c0e7@lechnology.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <536d28bd-bcdd-1665-e1c8-828572051cfb@ti.com>
+Date: Fri, 29 Jun 2018 19:17:36 -0500
+MIME-Version: 1.0
+In-Reply-To: <8fc18d40-72f5-9215-26f0-1492e3a6c0e7@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: David Lechner <david@lechnology.com>, Roger Quadros <rogerq@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi David,
 
-Switch to using the reset framework instead of handcoded reset routines
-we used so far.
+On 06/29/2018 12:44 PM, David Lechner wrote:
+> On 06/29/2018 04:58 AM, Roger Quadros wrote:
+>> +Suman & Tero
+>>
+>> Hi David,
+>>
+>> On 24/06/18 00:08, David Lechner wrote:
+>>>
+>>> Date: Sat, 23 Jun 2018 15:43:59 -0500
+>>> Subject: [PATCH 0/8] New remoteproc driver for TI PRU
+>>>
+>>> This series adds a new remoteproc driver for the TI Programmable
+>>> Runtime Unit
+>>> (PRU) that is present in some TI Sitara processors. This code has
+>>> been tested
+>>> working on AM1808 (LEGO MINDSTORMS EV3) and AM3358 (BeagleBone Green).
+>>
+>> This is great. We have been working on something similar and I think
+>> it would
+>> be great if we can collaborate to get all our needs addressed.
+> 
+> Yes, I have used the PRU with the TI kernel on BeagleBone so I've seen
+> the TI
+> implementation. My primary interest is in the AM1808, which has a far
+> simpler
+> PRU than other SoCs. So, I was hoping I could get away with just
+> implementing
+> the basic stuff that I need and let TI add the more complex stuff later.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/remoteproc/da8xx_remoteproc.c | 34 +++++++++++++++++++++++----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+Thanks for the series. PRUSS is present on many SoCs now, and each with
+their own integration quirks, both in terms of SoC connections as well
+as internal sub-modules within the subsystem. We currently support
+AM335x, AM437x, AM57xx, Keystone 2 based 66AK2G and a newer generation
+AM65x as well. It should be relatively straight-forward to scale this
+for AM1808/OMAP-L138 as well. The move to the standard Common Clock and
+Reset frameworks for clocks with the Davinci chips should make it
+relatively straight-forward for the architecture pieces.
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index b668e32996e2..76c06b70a1c6 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/bitops.h>
- #include <linux/clk.h>
-+#include <linux/reset.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -20,8 +21,6 @@
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
- 
--#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
--
- #include "remoteproc_internal.h"
- 
- static char *da8xx_fw_name;
-@@ -72,6 +71,7 @@ struct da8xx_rproc {
- 	struct da8xx_rproc_mem *mem;
- 	int num_mems;
- 	struct clk *dsp_clk;
-+	struct reset_control *dsp_reset;
- 	void (*ack_fxn)(struct irq_data *data);
- 	struct irq_data *irq_data;
- 	void __iomem *chipsig;
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	struct reset_control *dsp_reset = drproc->dsp_reset;
- 	int ret;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
-@@ -155,7 +156,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 		return ret;
- 	}
- 
--	davinci_clk_reset_deassert(dsp_clk);
-+	ret = reset_control_deassert(dsp_reset);
-+	if (ret) {
-+		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
-+		clk_disable_unprepare(dsp_clk);
-+		return ret;
-+	}
- 
- 	return 0;
- }
-@@ -163,8 +169,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
- static int da8xx_rproc_stop(struct rproc *rproc)
- {
- 	struct da8xx_rproc *drproc = rproc->priv;
-+	struct device *dev = rproc->dev.parent;
-+	int ret;
-+
-+	ret = reset_control_assert(drproc->dsp_reset);
-+	if (ret) {
-+		dev_err(dev, "reset_control_assert() failed: %d\n", ret);
-+		return ret;
-+	}
- 
--	davinci_clk_reset_assert(drproc->dsp_clk);
- 	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
-@@ -232,6 +245,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	struct resource *bootreg_res;
- 	struct resource *chipsig_res;
- 	struct clk *dsp_clk;
-+	struct reset_control *dsp_reset;
- 	void __iomem *chipsig;
- 	void __iomem *bootreg;
- 	int irq;
-@@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsp_clk);
- 	}
- 
-+	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
-+	if (IS_ERR(dsp_reset)) {
-+		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
-+			dev_err(dev, "unable to get reset control: %ld\n",
-+				PTR_ERR(dsp_reset));
-+
-+		return PTR_ERR(dsp_reset);
-+	}
-+
- 	if (dev->of_node) {
- 		ret = of_reserved_mem_device_init(dev);
- 		if (ret) {
-@@ -287,6 +310,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	drproc = rproc->priv;
- 	drproc->rproc = rproc;
- 	drproc->dsp_clk = dsp_clk;
-+	drproc->dsp_reset = dsp_reset;
- 	rproc->has_iommu = false;
- 
- 	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
-@@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
- 	 * held in reset at the time it is called.
- 	 */
--	ret = davinci_clk_reset_assert(drproc->dsp_clk);
-+	ret = reset_control_assert(dsp_reset);
- 	if (ret)
- 		goto free_rproc;
- 
--- 
-2.17.1
+I will take a look at your series in detail sometime next week, and
+mostly post our series to the upstream lists as well within the next
+couple of weeks so that it is easier for discussion on the upstream lists.
+
+> 
+>>
+>> Our primary requirement is that it should be possible for a user (e.g.
+>> kernel driver) to
+>> - request a specific PRU core load a specific firmware blob and
+>> boot/stop the PRU.
+> 
+> For this, I was thinking of suggesting a generic remoteproc
+> provider/consumer
+> binding that is similar to other subsystems. For example:
+> 
+> Provider node has:
+> 
+>     #remoteproc-cells = <1>;
+> 
+> And consumer has:
+> 
+>     remoteprocs = <&pruss 0>, <&pruss 1>;
+>     remoteproc-names = "pru0", "pru1";
+
+We do have an existing API in remoteproc core today,
+rproc_get_by_phandle() for this, though it is not as sophisticated or
+designed in a standard way that we see on some other sub-systems. One
+thing that's currently missing from this is a sense of exclusive access,
+as we do want to restrict access to a PRU to a single client at a time.
+> 
+> The consumer device would be responsible for determining the firmware file
+> and for calling the rproc boot function.
+> 
+> 
+>> - configure INTC interrupt mapping based on either resource table or DT
+>> - use request_irq to request and use an interrupt.
+> 
+> I didn't consider creating a new interrupt controller in device tree, but
+> that makes sense. I will have to look into it some more.
+> 
+
+Couple of iterations on our vendor tree all but resulted in representing
+various sub-modules as child nodes - this allows to reuse different
+drivers to deal with specific functionality like MDIO, UART etc. The
+number of registers across all PRUSS sub-modules and SoCs are too huge
+to support through a single driver.
+
+> 
+>> - request access to DRAM/SRAM
+> 
+> Can the existing device tree bindings for reserved-memory be used for this?
+
+Typically, reserved-memory is used for reserving regions in DDR, not
+mmio spaces. There is the SRAM driver in general to deal with on-chip
+memories.
+
+> I would expect the consumer nodes to use this and not the PRUSS provider
+> node.
+
+We will need access from both, as the remoteproc core does the loading
+in general leveraging specific rproc ops from a remoteproc
+implementation driver.
+
+> 
+> 
+>> - configure gpimode/miirt/xfr (CFG space)
+> 
+> I have no idea what this stuff is. :-)
+
+There are all the different sub-modules/register spaces dealing
+specifically with internal pinmuxes, some serial/parallel GPIO pin
+operations etc.
+
+regards
+Suman
+
+> 
+> (This is what I was referring to when I said I was hoping that someone
+> else could add more later).
+> 
