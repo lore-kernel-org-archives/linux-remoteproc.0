@@ -1,100 +1,72 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 3 Jul 2018 14:59:32 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 4/8] dt-bindings: add bindings for TI PRU as remoteproc
-Message-ID: <20180703205932.GA28054@rob-hp-laptop>
+Return-Path: <rogerq@ti.com>
+Subject: Re: [PATCH 5/8] remoteproc: new driver for TI PRU
 References: <20180623210810.21232-1-david@lechnology.com>
- <20180623210810.21232-5-david@lechnology.com>
+ <20180623210810.21232-6-david@lechnology.com>
+ <ce87a7dc-ecf6-f3fd-9121-bf99216f7412@ti.com>
+ <CA+CtpRhQ07=3UytY7QrfnpWkY06UqHbNVq099Coez3C4H3U5yg@mail.gmail.com>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <d331a7dc-9fb0-aa05-36e6-3e1373b6fd16@ti.com>
+Date: Mon, 2 Jul 2018 11:05:04 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180623210810.21232-5-david@lechnology.com>
-To: David Lechner <david@lechnology.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <CA+CtpRhQ07=3UytY7QrfnpWkY06UqHbNVq099Coez3C4H3U5yg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+To: Derald Woods <woods.technical@gmail.com>
+Cc: David Lechner <david@lechnology.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, "Anna, Suman" <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Sat, Jun 23, 2018 at 04:08:06PM -0500, David Lechner wrote:
-> This adds a new binding for the TI Programmable Runtime Unit (PRU)
-> as a remoteproc device.
+Derald,
+
+On 30/06/18 22:02, Derald Woods wrote:
 > 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  .../bindings/remoteproc/ti_pru_rproc.txt      | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti_pru_rproc.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti_pru_rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti_pru_rproc.txt
-> new file mode 100644
-> index 000000000000..0e80a8db46d0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti_pru_rproc.txt
-> @@ -0,0 +1,51 @@
-> +TI Programmable Realtime Unit (PRU)
-> +===================================
-> +
-> +Some TI Sitara SoCs contain a Programmable Realtime Unit subsystem with two
-> +processor cores that can be used for hard-realtime tasks.
-> +
-> +
-> +Required properties:
-> +--------------------
-> +The following are the mandatory properties:
-> +
-> +- compatible:		Should be one of the following,
-> +			    "ti,da850-pru-rproc" for AM18xx/OMAPL138 SoCs
-> +			    "ti,am3352-pru-rproc" for AM355x SoCs
-> +
-> +- reg:			Should contain the memory region for the PRUSS
-> +
-> +- interrupts: 		Should contain the interrupt number used to receive the
-> +			virtualqueue kick interrupts from the PRU (i.e.
-> +			PRU_EVTOUT0 and PRU_EVTOUT1)
-> +
-> +- interrupt-names	Should contain "pru0-vq", "pru1-vq"
-> +
-> +Optional properties:
-> +--------------------
-> +
-> +- power-domains:	A phandle to the power domain that powers the PRUSS
-
-Only for da850?
-
-> +
-> +- ti,hwmods:		Name of the hwmod associated to the PRUSS, which is
-> +			typically "pruss"
-
-Only for am3352?
-
-typically? You should enumerate possible values.
-
-> +
-> +Example:
-> +--------
-> +
-> +	// AM18xx
-> +	pru_rproc: cpu@30000 {
-
-cpu is reserved for cpu nodes.
-
-> +		compatible = "ti,da850-pru-rproc";
-> +		reg = <0x30000 0x10000>;
-> +		interrupts = <3>, <4>;
-> +		interrupt-names = "pru0-vq", "pru1-vq";
-> +		power-domains = <&psc0 13>;
-> +	};
-> +
-> +	// AM335x
-> +	pru_rproc: cpu@4a300000 {
-> +		compatible = "ti,am3352-pru-rproc";
-> +		reg = <0x4a300000 0x80000>;
-> +		interrupts = <20>, <21>;
-> +		interrupt-names = "pru0-vq", "pru1-vq";
-> +		ti,hwmods = "pruss";
-> +	};
-
-Really need 2 examples?
-
-> -- 
-> 2.17.1
+> On Fri, Jun 29, 2018 at 5:14 AM, Roger Quadros <rogerq@ti.com <mailto:rogerq@ti.com>> wrote:
 > 
+> 
+> 
+>     On 24/06/18 00:08, David Lechner wrote:
+>     > This adds a new remoteproc driver for TI Programmable Realtime Units
+>     > (PRUs).
+>     >
+>     > This has been tested working on AM1808 (LEGO MINDSTORMS EV3) using the
+>     > sample rpmsg client driver.
+>     >
+>     > Signed-off-by: David Lechner <david@lechnology.com <mailto:david@lechnology.com>>
+>     > ---
+>     >  MAINTAINERS                       |   5 +
+>     >  drivers/remoteproc/Kconfig        |   7 +
+>     >  drivers/remoteproc/Makefile       |   1 +
+>     >  drivers/remoteproc/ti_pru_rproc.c | 660 ++++++++++++++++++++++++++++++
+>     >  4 files changed, 673 insertions(+)
+>     >  create mode 100644 drivers/remoteproc/ti_pru_rproc.c
+
+<snip>
+
+> 
+>     We already have a working irq_chip implementation for INTC.
+>     https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pruss_intc.c <https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pruss_intc.c>
+> 
+>     I think we can leverage directly from that.
+> 
+>     This way pru_rproc or client device nodes can easily specify a pruss_intc interrupt parent and the
+>     SYSEVENT number as the irq. Then device drivers can simply use request_irq().
+> 
+>     example usage here
+>     https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/arch/arm/boot/dts/am33xx.dtsi#line986 <https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/arch/arm/boot/dts/am33xx.dtsi#line986>
+>     https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pru_rproc.c#line670 <https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pru_rproc.c#line670>
+> 
+> 
+> 
+> 
+> ​Is this PRU code on a path to be added to the mainline kernel?​ There is an increase in the number of available systems which would benefit from consistent PRU interfaces. If code is not mainlined, or on a mainline path, some may think it is not usable or ready for production. Is this a permanent "out-of-tree" and/or "TI-tree" development. Just wondering.
+> 
+
+Yes, we constantly upstream our work. We are currently working to get the PRU support upstream.
+
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
