@@ -1,50 +1,29 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sun, 1 Jul 2018 23:33:51 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] rpmsg: smd: Add missing include of sizes.h
-Message-ID: <20180702063351.GA21402@builder>
-References: <20180629170101.16255-1-niklas.cassel@linaro.org>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v7 3/4] ARM: davinci: dts: make psc0 a reset provider
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+ <20180621073706.22812-4-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <b56077f5-c8ef-6c19-7b2e-c82eec23d127@ti.com>
+Date: Mon, 2 Jul 2018 17:27:21 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180629170101.16255-1-niklas.cassel@linaro.org>
-To: Niklas Cassel <niklas.cassel@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180621073706.22812-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 29 Jun 10:01 PDT 2018, Niklas Cassel wrote:
-
-> Add missing include of sizes.h.
+On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> drivers/rpmsg/qcom_smd.c: In function �qcom_smd_channel_open�:
-> drivers/rpmsg/qcom_smd.c:809:36: error: �SZ_4K� undeclared (first use in this function)
->   bb_size = min(channel->fifo_size, SZ_4K);
->                                     ^~~~~
+> The psc driver registers with the reset framework as a provider. Add
+> the #reset-cells property to the psc0 node.
 > 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: David Lechner <david@lechnology.com>
 
-Applied
+Applied to v4.19/dt branch of my tree.
 
 Thanks,
-Bjorn
-
-> ---
->  drivers/rpmsg/qcom_smd.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 6437bbeebc91..8695cb041c31 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -14,6 +14,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/sched.h>
-> +#include <linux/sizes.h>
->  #include <linux/slab.h>
->  #include <linux/soc/qcom/smem.h>
->  #include <linux/wait.h>
-> -- 
-> 2.17.1
-> 
+Sekhar
