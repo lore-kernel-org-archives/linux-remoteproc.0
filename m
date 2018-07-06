@@ -1,66 +1,82 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 4/6] remoteproc: qcom: q6v5-pil: Add custom dump function for modem
-Date: Fri, 27 Jul 2018 20:50:01 +0530
-Message-Id: <20180727152003.11663-5-sibis@codeaurora.org>
-In-Reply-To: <20180727152003.11663-1-sibis@codeaurora.org>
-References: <20180727152003.11663-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <vkoul@kernel.org>
+Date: Fri, 6 Jul 2018 09:36:15 +0530
+From: Vinod <vkoul@kernel.org>
+Subject: Re: [PATCH 1/1] remoteproc: correct rproc_free_vring() to avoid
+ invalid kernel paging
+Message-ID: <20180706040615.GN22377@vkoul-mobl>
+References: <1530806353-13664-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530806353-13664-1-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The per segment dump function is responsible for loading the mba
-before device memory segments associated with coredump can be populated
-and for cleaning up the resources post coredump.
+On 05-07-18, 17:59, Loic Pallardy wrote:
+> If rproc_start() failed, rproc_resource_cleanup() is called to clean
+> debufs entries, then associated iommu mappings, carveouts and vdev.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+typo debufs...
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index eacf9f0bf49e..ac3342f9ea5a 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -182,6 +182,7 @@ struct q6v5 {
- 	struct qcom_sysmon *sysmon;
- 	bool need_mem_protection;
- 	bool has_alt_reset;
-+	u32 valid_mask;
- 	int mpss_perm;
- 	int mba_perm;
- 	int version;
-@@ -924,6 +925,30 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	return ret < 0 ? ret : 0;
- }
- 
-+static void qcom_q6v5_dump_segment(struct rproc *rproc, void *ptr, size_t len,
-+								   void *priv)
-+{
-+	int ret = 0;
-+	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	static u32 pending_mask;
-+
-+	/* Unlock mba before copying segments */
-+	if (!qproc->mba_loaded)
-+		ret = q6v5_mba_load(qproc);
-+
-+	if (!ptr || ret)
-+		memset(priv, 0xff, len);
-+	else
-+		memcpy(priv, ptr, len);
-+
-+	pending_mask++;
-+	if (pending_mask == qproc->valid_mask) {
-+		if (qproc->mba_loaded)
-+			q6v5_mba_reclaim(qproc);
-+		pending_mask = 0;
-+	}
-+}
-+
- static int q6v5_start(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+> Issue occurs when rproc_free_vring() is trying to reset vring resource
+> table entry.
+> At this time, table_ptr is pointing on loaded resource table and carveouts
+> amready released, so access to loaded resource table is generating a kernel
+
+typo amready..
+
+> paging error:
+> 
+> [   12.696535] Unable to handle kernel paging request at virtual address f0f357cc
+> [   12.696540] pgd = (ptrval)
+> [   12.696542] [f0f357cc] *pgd=6d2d0811, *pte=00000000, *ppte=00000000
+> [   12.696558] Internal error: Oops: 807 [#1] SMP ARM
+> [   12.696563] Modules linked in: rpmsg_core v4l2_mem2mem videobuf2_dma_contig sti_drm v4l2_common vida
+> [   12.696598] CPU: 1 PID: 48 Comm: kworker/1:1 Tainted: G        W         4.18.0-rc2-00018-g3170fdd-8
+> [   12.696602] Hardware name: STi SoC with Flattened Device Tree
+> [   12.696625] Workqueue: events request_firmware_work_func
+> [   12.696659] PC is at rproc_free_vring+0x84/0xbc [remoteproc]
+> [   12.696667] LR is at rproc_free_vring+0x70/0xbc [remoteproc]
+> 
+> This patch proposes to simply remove reset of resource table vring entries,
+> as firmware and resource table are reloaded at each rproc boot.
+> rproc_trigger_recovery() not impacted as resources not touched during recovery
+> procedure.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index a9609d9..9a8b47c 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -289,16 +289,10 @@ void rproc_free_vring(struct rproc_vring *rvring)
+>  {
+>  	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
+>  	struct rproc *rproc = rvring->rvdev->rproc;
+> -	int idx = rvring->rvdev->vring - rvring;
+> -	struct fw_rsc_vdev *rsc;
+>  
+>  	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
+>  	idr_remove(&rproc->notifyids, rvring->notifyid);
+>  
+> -	/* reset resource entry info */
+> -	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
+> -	rsc->vring[idx].da = 0;
+> -	rsc->vring[idx].notifyid = -1;
+>  }
+>  
+>  static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+~Vinod
