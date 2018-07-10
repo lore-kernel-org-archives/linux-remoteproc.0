@@ -1,40 +1,56 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 7/9] rpmsg: glink: Remove chunk size word align warning
-Date: Fri, 27 Jul 2018 17:47:27 +0530
-Message-Id: <1532693849-7037-8-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 10 Jul 2018 14:09:31 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: qcom: q6v5-pil: fix modem hang on SDM845
+ after axis2 clk unvote
+Message-ID: <20180710210931.GA5090@builder>
+References: <20180709151220.12641-1-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709151220.12641-1-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+On Mon 09 Jul 08:12 PDT 2018, Sibi Sankar wrote:
 
-It is possible for the chunk sizes coming from the non RPM remote procs
-to not be word aligned. Remove the alignment warning and continue to
-read from the FIFO so execution is not stalled.
+> GCC_MSS_AXIS2 clock is used for disabling boot IMEM (a part of
+> AP boot up). With Boot IMEM disable now a part TZ/ATF, AXIS2
+> clock is no longer required post AP boot up and expected to
+> remain untouched. However if the clock is turned ON after Q6
+> is brought out of reset and later turned off, it results in
+> modem hang. When Q6 attempts a power collapse the internal
+> handshaking to check if AXIS2 is idle never goes through since
+> it is turned off preventing the RSC from getting triggered,
+> leaving modem in a funky state. Hence removing AXIS2 clk
+> enable/disable from the driver.
+> 
+> [bjorn: identified unvoting axis2 clk caused modem hang]
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 3 ---
- 1 file changed, 3 deletions(-)
+Thanks Sibi
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 7b4ffa0..484b427 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -789,9 +789,6 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
- 		return -EAGAIN;
- 	}
- 
--	if (WARN(chunk_size % 4, "Incoming data must be word aligned\n"))
--		return -EINVAL;
--
- 	rcid = le16_to_cpu(hdr.msg.param1);
- 	spin_lock_irqsave(&glink->idr_lock, flags);
- 	channel = idr_find(&glink->rcids, rcid);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/qcom_q6v5_pil.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+> index e04319573c91..d7a4b9eca5d2 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+> @@ -1243,7 +1243,6 @@ static const struct rproc_hexagon_res sdm845_mss = {
+>  	.hexagon_mba_image = "mba.mbn",
+>  	.proxy_clk_names = (char*[]){
+>  			"xo",
+> -			"axis2",
+>  			"prng",
+>  			NULL
+>  	},
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
