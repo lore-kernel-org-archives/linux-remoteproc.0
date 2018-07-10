@@ -1,48 +1,103 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 3/9] rpmsg: glink: Use complete_all for open states
-Date: Fri, 27 Jul 2018 17:47:23 +0530
-Message-Id: <1532693849-7037-4-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 10 Jul 2018 14:08:16 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: qcom q6v5: fix modular build
+Message-ID: <20180710210816.GB21402@builder>
+References: <20180706125804.3572356-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706125804.3572356-1-arnd@arndb.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rohit kumar <rohitkr@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+On Fri 06 Jul 05:57 PDT 2018, Arnd Bergmann wrote:
 
-The open_req and open_ack completion variables are the state variables
-to represet a remote channel as open. Use complete_all so there are no
-races with waiters and using completion_done.
+> The new driver only works as built-in code at the moment but fails
+> with a link error when configured as a loadable module:
+> 
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/remoteproc/qcom_q6v5.o
+> see include/linux/module.h for more information
+> ERROR: "qcom_q6v5_init" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+> ERROR: "qcom_q6v5_wait_for_start" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+> ERROR: "qcom_q6v5_prepare" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+> ERROR: "qcom_q6v5_unprepare" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+> ERROR: "qcom_q6v5_request_stop" [drivers/remoteproc/qcom_q6v5_pil.ko] undefined!
+> ERROR: "qcom_q6v5_init" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> ERROR: "qcom_q6v5_wait_for_start" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> ERROR: "qcom_q6v5_prepare" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> ERROR: "qcom_q6v5_unprepare" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> ERROR: "qcom_q6v5_request_stop" [drivers/remoteproc/qcom_adsp_pil.ko] undefined!
+> 
+> This exports the internal symbols as needed and adds the MODULE_LICENSE()
+> and MODULE_DESCRIPTION() tags. I could not figure out the author, so I
+> did not add a MODULE_AUTHOR() tag for now.
+> 
+> Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource handling")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks Arnd.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 22a3cac..f43341d 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -949,7 +949,7 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 		return -EINVAL;
- 	}
- 
--	complete(&channel->open_ack);
-+	complete_all(&channel->open_ack);
- 
- 	return 0;
- }
-@@ -1393,7 +1393,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
- 	channel->rcid = ret;
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
- 
--	complete(&channel->open_req);
-+	complete_all(&channel->open_req);
- 
- 	if (create_device) {
- 		rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/qcom_q6v5.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> index 400cdf936f6b..61a760ee4aac 100644
+> --- a/drivers/remoteproc/qcom_q6v5.c
+> +++ b/drivers/remoteproc/qcom_q6v5.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/module.h>
+>  #include <linux/soc/qcom/smem.h>
+>  #include <linux/soc/qcom/smem_state.h>
+>  #include <linux/remoteproc.h>
+> @@ -32,6 +33,7 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5)
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_prepare);
+>  
+>  /**
+>   * qcom_q6v5_unprepare() - unprepare the qcom_q6v5 context after stop
+> @@ -45,6 +47,7 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
+>  
+>  	return !q6v5->handover_issued;
+>  }
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
+>  
+>  static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
+>  {
+> @@ -114,6 +117,7 @@ int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
+>  
+>  	return !ret ? -ETIMEDOUT : 0;
+>  }
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_wait_for_start);
+>  
+>  static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+>  {
+> @@ -157,6 +161,7 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
+>  
+>  	return ret == 0 ? -ETIMEDOUT : 0;
+>  }
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
+>  
+>  /**
+>   * qcom_q6v5_init() - initializer of the q6v5 common struct
+> @@ -241,3 +246,7 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_init);
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Q6V5");
+> -- 
+> 2.9.0
+> 
