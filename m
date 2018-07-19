@@ -1,19 +1,21 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 30 Jul 2018 21:21:40 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <sricharan@codeaurora.org>
 Subject: Re: [PATCH] remoteproc: qcom: fix Q6V5_WCSS dependencies
-Message-ID: <20180731042140.GD5090@builder>
 References: <20180718111730.3531477-1-arnd@arndb.de>
+From: Sricharan R <sricharan@codeaurora.org>
+Message-ID: <4fe9f7c1-84b6-9216-2557-a408071d390a@codeaurora.org>
+Date: Thu, 19 Jul 2018 17:30:28 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180718111730.3531477-1-arnd@arndb.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Arnd Bergmann <arnd@arndb.de>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rohit kumar <rohitkr@codeaurora.org>, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 18 Jul 04:16 PDT 2018, Arnd Bergmann wrote:
+Hi Arnd,
 
+On 7/18/2018 4:46 PM, Arnd Bergmann wrote:
 > A new driver got added that depends on QCOM_SMD and fails to link
 > as built-in with CONFIG_QCOM_SMD=m:
 > 
@@ -25,18 +27,16 @@ On Wed 18 Jul 04:16 PDT 2018, Arnd Bergmann wrote:
 > We've fixed the same thing several times before, so use the same
 > dependency here.
 > 
-
-I have a change where I remove this inherited dependency, so I asked
-Sricharan to only depend on the ones he actually uses - but I forgot
-that I haven't pushed this.
-
-Sorry about screwing this up again. Thanks for catching it!
-
-Regards,
-Bjorn
-
 > Fixes: 3a3d4163e0bf ("remoteproc: qcom: Introduce Hexagon V5 based WCSS driver")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Oops, missed it. Sorry.
+
+Acked-by: Sricharan R <sricharan@codeaurora.org>
+
+Regards,
+ Sricharan
+
 > ---
 >  drivers/remoteproc/Kconfig | 1 +
 >  1 file changed, 1 insertion(+)
@@ -53,6 +53,7 @@ Bjorn
 >  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
 >  	depends on QCOM_SYSMON || QCOM_SYSMON=n
 >  	select MFD_SYSCON
-> -- 
-> 2.9.0
 > 
+
+-- 
+"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
