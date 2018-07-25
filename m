@@ -1,67 +1,70 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: Fix rpmsg_remove() release
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: Fix rpmsg_remove() release
  order
-Date: Thu, 26 Jul 2018 07:09:13 +0000
-Message-ID: <41d5058358014bbd8ab4329ecb5355f6@SFHDAG7NODE2.st.com>
 References: <1532552826-30003-1-git-send-email-loic.pallardy@st.com>
- <d9b7192b-2fc7-664f-d9a5-b90c8644b991@ti.com>
-In-Reply-To: <d9b7192b-2fc7-664f-d9a5-b90c8644b991@ti.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <d9b7192b-2fc7-664f-d9a5-b90c8644b991@ti.com>
+Date: Wed, 25 Jul 2018 17:32:06 -0500
 MIME-Version: 1.0
-To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+In-Reply-To: <1532552826-30003-1-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4gQW5uYSA8cy1h
-bm5hQHRpLmNvbT4NCj4gU2VudDogVGh1cnNkYXksIEp1bHkgMjYsIDIwMTggMTI6MzIgQU0NCj4g
-VG86IExvaWMgUEFMTEFSRFkgPGxvaWMucGFsbGFyZHlAc3QuY29tPjsgYmpvcm4uYW5kZXJzc29u
-QGxpbmFyby5vcmc7DQo+IG9oYWRAd2l6ZXJ5LmNvbQ0KPiBDYzogbGludXgtcmVtb3RlcHJvY0B2
-Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IEFybmF1ZCBQ
-T1VMSVFVRU4gPGFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tPjsNCj4gYmVuamFtaW4uZ2FpZ25hcmRA
-bGluYXJvLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMV0gcnBtc2c6IHZpcnRpb19ycG1z
-Z19idXM6IEZpeCBycG1zZ19yZW1vdmUoKQ0KPiByZWxlYXNlIG9yZGVyDQo+IA0KPiBIaSBMb2lj
-LA0KPiANCj4gT24gMDcvMjUvMjAxOCAwNDowNyBQTSwgTG9pYyBQYWxsYXJkeSB3cm90ZToNCj4g
-PiBJbiBycG1zZ19yZW1vdmUoKSBwcm9jZWR1cmUsIGNoaWxkcmVuIGFyZSByZW1vdmVkIHRoZW4g
-TmFtZQ0KPiA+IFNlcnZpY2UgYW5ub3VuY2VtZW50IGVuZHBvaW50IGlzIGRlc3Ryb3llZCBhbmQg
-ZGV2aWNlIHJlbGVhc2VkLg0KPiA+DQo+ID4gSXNzdWUgd2l0aCBjdXJyZW50IGltcGxlbWVudGF0
-aW9uIGlzIGlmIGEgTlMgYW5ub3VuY2VtZW50DQo+ID4gY3JlYXRpb24gcmVxdWVzdCBpcyBvbmdv
-aW5nIChyZWNlaXZlZCBiZWZvcmUgdmlydGlvIHJlc2V0KSwNCj4gPiBjaGlsZCBkZXZpY2UgY291
-bGQgYmUgY3JlYXRlZCBhZnRlciBjaGlsZHJlbiByZW1vdmluZy4NCj4gPiBJbiB0aGF0IGNhc2Ug
-cnBtc2dfcmVtb3ZlKCkgaXMgZnJlZWluZyBycG1zZ192aXJ0aW9fYnVzLA0KPiA+IGxlYWRpbmcg
-dG8gYW4gaW5jb25zaXN0ZW50IHN0YXRlLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBpcyBkZXN0cm95
-aW5nIE5TIGFubm91bmNlbWVudCBzZXJ2aWNlIGVuZHBvaW50IGJlZm9yZQ0KPiA+IHJlbW92aW5n
-IGNoaWxkcmVuIHRvIGd1YXJhbnRlZSB0aGF0IGxpc3Qgb2YgY2hpbGQgZGV2aWNlcyBpcw0KPiA+
-IGZpeGVkIGFuZCBhbGwgb2YgdGhlbSB3aWxsIGJlIGNvcnJlY3RseSByZW1vdmVkIGJlZm9yZSBj
-bGVhbmluZw0KPiA+IHJlc291cmNlcy4NCj4gDQo+IEkgZG8gbm90IHRoaW5rIHRoaXMgaXMgdGhl
-IHJpZ2h0IGZpeCBmb3IgdGhlIHByb2JsZW0geW91IGV4cGxhaW5lZC4NCj4gVGhlIHJlbW92YWwg
-b2YgcnBtc2cgZGV2aWNlcyBjYW4gYWN0dWFsbHkgaW52b2tlIHRoZSBhbm5vdW5jZV9kZXN0cm95
-DQo+IGluIHRoZSBycG1zZ19kZXZfcmVtb3ZlKCkuDQoNClllcyBpdCB3YXMgb25lIG9mIG15IGlu
-dGVycm9nYXRpb24gY29ycmVjdGluZyBpdCBsaWtlIHRoYXQuIEJ1dCBhcyB2aXJ0aW8gbGluayBo
-YXMgYmVlbiBwdXQgaW4gcmVzZXQgc3RhdGUganVzdCBiZWZvcmUsIG5vIG1lc3NhZ2UgY291bGQg
-YmUgc2VudCB0byBjb3Byb2Nlc3Nvci4uLg0KT3RoZXIgcG9zc2libGUgY29ycmVjdGlvbiAobWF5
-YmUgbGVzcyBlbGVnYW50KSwga2VlcGluZyBjdXJyZW50IG9yZGVyLCBpcyB0byBpbnRyb2R1Y2Ug
-YSBycG1zZyBidXMgInN0YXR1cyIgdGhhdCB3aWxsIGJlIGNoZWNrZWQgYmVmb3JlIHJlZ2lzdGVy
-aW5nIG5ldyBkZXZpY2UuDQpBbnl3YXksIHdlIG5lZWQgdG8gcHJldmVudCBuZXcgcnBtc2cgZGV2
-aWNlIHJlZ2lzdGVyIGFmdGVyIGNoaWxkcmVuIHJlbW92YWwgdG8gYXZvaWQgb3JwaGFuIGRldmlj
-ZS4NCg0KUmVnYXJkcywNCkxvaWMNCj4gDQo+IHJlZ2FyZHMNCj4gU3VtYW4NCj4gDQo+ID4NCj4g
-PiBmaXhlczogYmNhYmJjY2FiZmZlICgicnBtc2c6IFNwbGl0IG9mZiBnZW5lcmljIHRhaWwgb2Yg
-Y3JlYXRlX2NoYW5uZWwoKSIpDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBMb2ljIFBhbGxhcmR5
-IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9ycG1zZy92aXJ0
-aW9fcnBtc2dfYnVzLmMgfCA2ICsrKy0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRp
-b25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcnBt
-c2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+IGIvZHJpdmVycy9ycG1zZy92aXJ0aW9fcnBtc2dfYnVz
-LmMNCj4gPiBpbmRleCA2NjRmOTU3Li5mNWQ0ODFmIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMv
-cnBtc2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+ID4gKysrIGIvZHJpdmVycy9ycG1zZy92aXJ0aW9f
-cnBtc2dfYnVzLmMNCj4gPiBAQCAtMTAwNCwxMyArMTAwNCwxMyBAQCBzdGF0aWMgdm9pZCBycG1z
-Z19yZW1vdmUoc3RydWN0IHZpcnRpb19kZXZpY2UNCj4gKnZkZXYpDQo+ID4NCj4gPiAgCXZkZXYt
-PmNvbmZpZy0+cmVzZXQodmRldik7DQo+ID4NCj4gPiArCWlmICh2cnAtPm5zX2VwdCkNCj4gPiAr
-CQlfX3JwbXNnX2Rlc3Ryb3lfZXB0KHZycCwgdnJwLT5uc19lcHQpOw0KPiA+ICsNCj4gPiAgCXJl
-dCA9IGRldmljZV9mb3JfZWFjaF9jaGlsZCgmdmRldi0+ZGV2LCBOVUxMLA0KPiBycG1zZ19yZW1v
-dmVfZGV2aWNlKTsNCj4gPiAgCWlmIChyZXQpDQo+ID4gIAkJZGV2X3dhcm4oJnZkZXYtPmRldiwg
-ImNhbid0IHJlbW92ZSBycG1zZyBkZXZpY2U6ICVkXG4iLA0KPiByZXQpOw0KPiA+DQo+ID4gLQlp
-ZiAodnJwLT5uc19lcHQpDQo+ID4gLQkJX19ycG1zZ19kZXN0cm95X2VwdCh2cnAsIHZycC0+bnNf
-ZXB0KTsNCj4gPiAtDQo+ID4gIAlpZHJfZGVzdHJveSgmdnJwLT5lbmRwb2ludHMpOw0KPiA+DQo+
-ID4gIAl2ZGV2LT5jb25maWctPmRlbF92cXModnJwLT52ZGV2KTsNCj4gPg0KDQo=
+Hi Loic,
+
+On 07/25/2018 04:07 PM, Loic Pallardy wrote:
+> In rpmsg_remove() procedure, children are removed then Name
+> Service announcement endpoint is destroyed and device released.
+> 
+> Issue with current implementation is if a NS announcement
+> creation request is ongoing (received before virtio reset),
+> child device could be created after children removing.
+> In that case rpmsg_remove() is freeing rpmsg_virtio_bus,
+> leading to an inconsistent state.
+> 
+> This patch is destroying NS announcement service endpoint before
+> removing children to guarantee that list of child devices is
+> fixed and all of them will be correctly removed before cleaning
+> resources.
+
+I do not think this is the right fix for the problem you explained.
+The removal of rpmsg devices can actually invoke the announce_destroy
+in the rpmsg_dev_remove().
+
+regards
+Suman
+
+> 
+> fixes: bcabbccabffe ("rpmsg: Split off generic tail of create_channel()")
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 664f957..f5d481f 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -1004,13 +1004,13 @@ static void rpmsg_remove(struct virtio_device *vdev)
+>  
+>  	vdev->config->reset(vdev);
+>  
+> +	if (vrp->ns_ept)
+> +		__rpmsg_destroy_ept(vrp, vrp->ns_ept);
+> +
+>  	ret = device_for_each_child(&vdev->dev, NULL, rpmsg_remove_device);
+>  	if (ret)
+>  		dev_warn(&vdev->dev, "can't remove rpmsg device: %d\n", ret);
+>  
+> -	if (vrp->ns_ept)
+> -		__rpmsg_destroy_ept(vrp, vrp->ns_ept);
+> -
+>  	idr_destroy(&vrp->endpoints);
+>  
+>  	vdev->config->del_vqs(vrp->vdev);
+> 
