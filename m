@@ -1,126 +1,92 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v2 1/1] remoteproc: correct rproc_free_vring() to avoid
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v2 1/1] remoteproc: correct rproc_free_vring() to avoid
  invalid kernel paging
+Date: Thu, 26 Jul 2018 07:48:59 +0000
+Message-ID: <8e943f4d2a1b4e10a8a0756c737d53a8@SFHDAG7NODE2.st.com>
 References: <1530863212-16584-1-git-send-email-loic.pallardy@st.com>
  <ee64ddf7-e9c6-0b77-8a4e-44f77d264fe0@ti.com>
- <8e943f4d2a1b4e10a8a0756c737d53a8@SFHDAG7NODE2.st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <56aeb569-cd4d-3769-fdad-ee3d4dbdc19b@ti.com>
-Date: Thu, 26 Jul 2018 18:51:47 -0500
-MIME-Version: 1.0
-In-Reply-To: <8e943f4d2a1b4e10a8a0756c737d53a8@SFHDAG7NODE2.st.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <ee64ddf7-e9c6-0b77-8a4e-44f77d264fe0@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Loic,
-
-On 07/26/2018 02:48 AM, Loic PALLARDY wrote:
-> Hi Suman,
->>
->> Hi Loic,
->>
->> On 07/06/2018 02:46 AM, Loic Pallardy wrote:
->>> If rproc_start() failed, rproc_resource_cleanup() is called to clean
->>> debugfs entries, then associated iommu mappings, carveouts and vdev.
->>> Issue occurs when rproc_free_vring() is trying to reset vring resource
->>> table entry.
->>> At this time, table_ptr is pointing on loaded resource table and carveouts
->>> already released, so access to loaded resource table is generating a kernel
->>> paging error:
->>
->> Are you using a device specific CMA pool or carveout, and if so, where
->> the pool is? If not, where is the default CMA pool? I am trying to
->> reproduce the issue on my platform with the start failure as you
->> suggested, but haven't seen it so far. That said, I have seen the exact
->> same crash when using HighMEM CMA pools on my downstream kernel
->> when
->> stopping the processor, and the root cause is essentially the same as
->> what you summarized here. The issue was present with LowMem pools as
->> well, but got masked because of the kernel linear mapping.
-> 
-> I have a carveout declared in firmware resource table for co-processor code and data, and st driver has a specific 
-> reserved memory region to fit fix address space requested by co-processor.
-> So CPU access to code and loaded resource table area is granted thanks to allocation done by rproc_handle_carveout().
-
-Where are the vrings getting allocated from?
-
-In anycase, I prefer that we should actually reset the table_ptr in
-rproc_start() in failure cases (undo the operation essentially) as we
-don't call rproc_stop() in those cases. This will result in symmetric
-code. We already have the reset handled in rproc_stop() added recently
-in commit 0a8b81cb2e41 ("remoteproc: Reset table_ptr on stop"). Let me
-know what you think, I can send a quick patch.
-
-regards
-Suman
-
-> 
->>
->>>
->>> [   12.696535] Unable to handle kernel paging request at virtual address
->> f0f357cc
->>> [   12.696540] pgd = (ptrval)
->>> [   12.696542] [f0f357cc] *pgd=6d2d0811, *pte=00000000, *ppte=00000000
->>> [   12.696558] Internal error: Oops: 807 [#1] SMP ARM
->>> [   12.696563] Modules linked in: rpmsg_core v4l2_mem2mem
->> videobuf2_dma_contig sti_drm v4l2_common vida
->>> [   12.696598] CPU: 1 PID: 48 Comm: kworker/1:1 Tainted: G        W
->> 4.18.0-rc2-00018-g3170fdd-8
->>> [   12.696602] Hardware name: STi SoC with Flattened Device Tree
->>> [   12.696625] Workqueue: events request_firmware_work_func
->>> [   12.696659] PC is at rproc_free_vring+0x84/0xbc [remoteproc]
->>> [   12.696667] LR is at rproc_free_vring+0x70/0xbc [remoteproc]
->>>
->>> This patch proposes to simply remove reset of resource table vring entries,
->>> as firmware and resource table are reloaded at each rproc boot.
->>> rproc_trigger_recovery() not impacted as resources not touched during
->> recovery
->>> procedure.
->>
->> And error recovery doesn't work for me after the rproc_start, stop got
->> introduced.
-> Recovery no available on B2260, but I'll test it on another platform this week
-> 
-> Regards,
-> Loic
->>
->> regards
->> Suman
->>
->>>
->>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
->>> ---
->>> Changes from V1: typo fixes in commit message
->>>
->>>  drivers/remoteproc/remoteproc_core.c | 6 ------
->>>  1 file changed, 6 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c
->> b/drivers/remoteproc/remoteproc_core.c
->>> index a9609d9..9a8b47c 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -289,16 +289,10 @@ void rproc_free_vring(struct rproc_vring *rvring)
->>>  {
->>>  	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
->>>  	struct rproc *rproc = rvring->rvdev->rproc;
->>> -	int idx = rvring->rvdev->vring - rvring;
->>> -	struct fw_rsc_vdev *rsc;
->>>
->>>  	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring-
->>> dma);
->>>  	idr_remove(&rproc->notifyids, rvring->notifyid);
->>>
->>> -	/* reset resource entry info */
->>> -	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
->>> -	rsc->vring[idx].da = 0;
->>> -	rsc->vring[idx].notifyid = -1;
->>>  }
->>>
->>>  static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
->>>
-> 
+SGkgU3VtYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4g
+QW5uYSA8cy1hbm5hQHRpLmNvbT4NCj4gU2VudDogVGh1cnNkYXksIEp1bHkgMjYsIDIwMTggMTI6
+MDkgQU0NCj4gVG86IExvaWMgUEFMTEFSRFkgPGxvaWMucGFsbGFyZHlAc3QuY29tPjsgYmpvcm4u
+YW5kZXJzc29uQGxpbmFyby5vcmc7DQo+IG9oYWRAd2l6ZXJ5LmNvbQ0KPiBDYzogbGludXgtcmVt
+b3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+
+IEFybmF1ZCBQT1VMSVFVRU4gPGFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tPjsNCj4gYmVuamFtaW4u
+Z2FpZ25hcmRAbGluYXJvLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDEvMV0gcmVtb3Rl
+cHJvYzogY29ycmVjdCBycHJvY19mcmVlX3ZyaW5nKCkgdG8gYXZvaWQNCj4gaW52YWxpZCBrZXJu
+ZWwgcGFnaW5nDQo+IA0KPiBIaSBMb2ljLA0KPiANCj4gT24gMDcvMDYvMjAxOCAwMjo0NiBBTSwg
+TG9pYyBQYWxsYXJkeSB3cm90ZToNCj4gPiBJZiBycHJvY19zdGFydCgpIGZhaWxlZCwgcnByb2Nf
+cmVzb3VyY2VfY2xlYW51cCgpIGlzIGNhbGxlZCB0byBjbGVhbg0KPiA+IGRlYnVnZnMgZW50cmll
+cywgdGhlbiBhc3NvY2lhdGVkIGlvbW11IG1hcHBpbmdzLCBjYXJ2ZW91dHMgYW5kIHZkZXYuDQo+
+ID4gSXNzdWUgb2NjdXJzIHdoZW4gcnByb2NfZnJlZV92cmluZygpIGlzIHRyeWluZyB0byByZXNl
+dCB2cmluZyByZXNvdXJjZQ0KPiA+IHRhYmxlIGVudHJ5Lg0KPiA+IEF0IHRoaXMgdGltZSwgdGFi
+bGVfcHRyIGlzIHBvaW50aW5nIG9uIGxvYWRlZCByZXNvdXJjZSB0YWJsZSBhbmQgY2FydmVvdXRz
+DQo+ID4gYWxyZWFkeSByZWxlYXNlZCwgc28gYWNjZXNzIHRvIGxvYWRlZCByZXNvdXJjZSB0YWJs
+ZSBpcyBnZW5lcmF0aW5nIGEga2VybmVsDQo+ID4gcGFnaW5nIGVycm9yOg0KPiANCj4gQXJlIHlv
+dSB1c2luZyBhIGRldmljZSBzcGVjaWZpYyBDTUEgcG9vbCBvciBjYXJ2ZW91dCwgYW5kIGlmIHNv
+LCB3aGVyZQ0KPiB0aGUgcG9vbCBpcz8gSWYgbm90LCB3aGVyZSBpcyB0aGUgZGVmYXVsdCBDTUEg
+cG9vbD8gSSBhbSB0cnlpbmcgdG8NCj4gcmVwcm9kdWNlIHRoZSBpc3N1ZSBvbiBteSBwbGF0Zm9y
+bSB3aXRoIHRoZSBzdGFydCBmYWlsdXJlIGFzIHlvdQ0KPiBzdWdnZXN0ZWQsIGJ1dCBoYXZlbid0
+IHNlZW4gaXQgc28gZmFyLiBUaGF0IHNhaWQsIEkgaGF2ZSBzZWVuIHRoZSBleGFjdA0KPiBzYW1l
+IGNyYXNoIHdoZW4gdXNpbmcgSGlnaE1FTSBDTUEgcG9vbHMgb24gbXkgZG93bnN0cmVhbSBrZXJu
+ZWwNCj4gd2hlbg0KPiBzdG9wcGluZyB0aGUgcHJvY2Vzc29yLCBhbmQgdGhlIHJvb3QgY2F1c2Ug
+aXMgZXNzZW50aWFsbHkgdGhlIHNhbWUgYXMNCj4gd2hhdCB5b3Ugc3VtbWFyaXplZCBoZXJlLiBU
+aGUgaXNzdWUgd2FzIHByZXNlbnQgd2l0aCBMb3dNZW0gcG9vbHMgYXMNCj4gd2VsbCwgYnV0IGdv
+dCBtYXNrZWQgYmVjYXVzZSBvZiB0aGUga2VybmVsIGxpbmVhciBtYXBwaW5nLg0KDQpJIGhhdmUg
+YSBjYXJ2ZW91dCBkZWNsYXJlZCBpbiBmaXJtd2FyZSByZXNvdXJjZSB0YWJsZSBmb3IgY28tcHJv
+Y2Vzc29yIGNvZGUgYW5kIGRhdGEsIGFuZCBzdCBkcml2ZXIgaGFzIGEgc3BlY2lmaWMgDQpyZXNl
+cnZlZCBtZW1vcnkgcmVnaW9uIHRvIGZpdCBmaXggYWRkcmVzcyBzcGFjZSByZXF1ZXN0ZWQgYnkg
+Y28tcHJvY2Vzc29yLg0KU28gQ1BVIGFjY2VzcyB0byBjb2RlIGFuZCBsb2FkZWQgcmVzb3VyY2Ug
+dGFibGUgYXJlYSBpcyBncmFudGVkIHRoYW5rcyB0byBhbGxvY2F0aW9uIGRvbmUgYnkgcnByb2Nf
+aGFuZGxlX2NhcnZlb3V0KCkuDQoNCj4gDQo+ID4NCj4gPiBbICAgMTIuNjk2NTM1XSBVbmFibGUg
+dG8gaGFuZGxlIGtlcm5lbCBwYWdpbmcgcmVxdWVzdCBhdCB2aXJ0dWFsIGFkZHJlc3MNCj4gZjBm
+MzU3Y2MNCj4gPiBbICAgMTIuNjk2NTQwXSBwZ2QgPSAocHRydmFsKQ0KPiA+IFsgICAxMi42OTY1
+NDJdIFtmMGYzNTdjY10gKnBnZD02ZDJkMDgxMSwgKnB0ZT0wMDAwMDAwMCwgKnBwdGU9MDAwMDAw
+MDANCj4gPiBbICAgMTIuNjk2NTU4XSBJbnRlcm5hbCBlcnJvcjogT29wczogODA3IFsjMV0gU01Q
+IEFSTQ0KPiA+IFsgICAxMi42OTY1NjNdIE1vZHVsZXMgbGlua2VkIGluOiBycG1zZ19jb3JlIHY0
+bDJfbWVtMm1lbQ0KPiB2aWRlb2J1ZjJfZG1hX2NvbnRpZyBzdGlfZHJtIHY0bDJfY29tbW9uIHZp
+ZGENCj4gPiBbICAgMTIuNjk2NTk4XSBDUFU6IDEgUElEOiA0OCBDb21tOiBrd29ya2VyLzE6MSBU
+YWludGVkOiBHICAgICAgICBXDQo+IDQuMTguMC1yYzItMDAwMTgtZzMxNzBmZGQtOA0KPiA+IFsg
+ICAxMi42OTY2MDJdIEhhcmR3YXJlIG5hbWU6IFNUaSBTb0Mgd2l0aCBGbGF0dGVuZWQgRGV2aWNl
+IFRyZWUNCj4gPiBbICAgMTIuNjk2NjI1XSBXb3JrcXVldWU6IGV2ZW50cyByZXF1ZXN0X2Zpcm13
+YXJlX3dvcmtfZnVuYw0KPiA+IFsgICAxMi42OTY2NTldIFBDIGlzIGF0IHJwcm9jX2ZyZWVfdnJp
+bmcrMHg4NC8weGJjIFtyZW1vdGVwcm9jXQ0KPiA+IFsgICAxMi42OTY2NjddIExSIGlzIGF0IHJw
+cm9jX2ZyZWVfdnJpbmcrMHg3MC8weGJjIFtyZW1vdGVwcm9jXQ0KPiA+DQo+ID4gVGhpcyBwYXRj
+aCBwcm9wb3NlcyB0byBzaW1wbHkgcmVtb3ZlIHJlc2V0IG9mIHJlc291cmNlIHRhYmxlIHZyaW5n
+IGVudHJpZXMsDQo+ID4gYXMgZmlybXdhcmUgYW5kIHJlc291cmNlIHRhYmxlIGFyZSByZWxvYWRl
+ZCBhdCBlYWNoIHJwcm9jIGJvb3QuDQo+ID4gcnByb2NfdHJpZ2dlcl9yZWNvdmVyeSgpIG5vdCBp
+bXBhY3RlZCBhcyByZXNvdXJjZXMgbm90IHRvdWNoZWQgZHVyaW5nDQo+IHJlY292ZXJ5DQo+ID4g
+cHJvY2VkdXJlLg0KPiANCj4gQW5kIGVycm9yIHJlY292ZXJ5IGRvZXNuJ3Qgd29yayBmb3IgbWUg
+YWZ0ZXIgdGhlIHJwcm9jX3N0YXJ0LCBzdG9wIGdvdA0KPiBpbnRyb2R1Y2VkLg0KUmVjb3Zlcnkg
+bm8gYXZhaWxhYmxlIG9uIEIyMjYwLCBidXQgSSdsbCB0ZXN0IGl0IG9uIGFub3RoZXIgcGxhdGZv
+cm0gdGhpcyB3ZWVrDQoNClJlZ2FyZHMsDQpMb2ljDQo+IA0KPiByZWdhcmRzDQo+IFN1bWFuDQo+
+IA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTG9pYyBQYWxsYXJkeSA8bG9pYy5wYWxsYXJkeUBz
+dC5jb20+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlcyBmcm9tIFYxOiB0eXBvIGZpeGVzIGluIGNvbW1p
+dCBtZXNzYWdlDQo+ID4NCj4gPiAgZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5j
+IHwgNiAtLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDYgZGVsZXRpb25zKC0pDQo+ID4NCj4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jDQo+IGIv
+ZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jDQo+ID4gaW5kZXggYTk2MDlkOS4u
+OWE4YjQ3YyAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19j
+b3JlLmMNCj4gPiArKysgYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4g
+PiBAQCAtMjg5LDE2ICsyODksMTAgQEAgdm9pZCBycHJvY19mcmVlX3ZyaW5nKHN0cnVjdCBycHJv
+Y192cmluZyAqcnZyaW5nKQ0KPiA+ICB7DQo+ID4gIAlpbnQgc2l6ZSA9IFBBR0VfQUxJR04odnJp
+bmdfc2l6ZShydnJpbmctPmxlbiwgcnZyaW5nLT5hbGlnbikpOw0KPiA+ICAJc3RydWN0IHJwcm9j
+ICpycHJvYyA9IHJ2cmluZy0+cnZkZXYtPnJwcm9jOw0KPiA+IC0JaW50IGlkeCA9IHJ2cmluZy0+
+cnZkZXYtPnZyaW5nIC0gcnZyaW5nOw0KPiA+IC0Jc3RydWN0IGZ3X3JzY192ZGV2ICpyc2M7DQo+
+ID4NCj4gPiAgCWRtYV9mcmVlX2NvaGVyZW50KHJwcm9jLT5kZXYucGFyZW50LCBzaXplLCBydnJp
+bmctPnZhLCBydnJpbmctDQo+ID5kbWEpOw0KPiA+ICAJaWRyX3JlbW92ZSgmcnByb2MtPm5vdGlm
+eWlkcywgcnZyaW5nLT5ub3RpZnlpZCk7DQo+ID4NCj4gPiAtCS8qIHJlc2V0IHJlc291cmNlIGVu
+dHJ5IGluZm8gKi8NCj4gPiAtCXJzYyA9ICh2b2lkICopcnByb2MtPnRhYmxlX3B0ciArIHJ2cmlu
+Zy0+cnZkZXYtPnJzY19vZmZzZXQ7DQo+ID4gLQlyc2MtPnZyaW5nW2lkeF0uZGEgPSAwOw0KPiA+
+IC0JcnNjLT52cmluZ1tpZHhdLm5vdGlmeWlkID0gLTE7DQo+ID4gIH0NCj4gPg0KPiA+ICBzdGF0
+aWMgaW50IHJwcm9jX3ZkZXZfZG9fcHJvYmUoc3RydWN0IHJwcm9jX3N1YmRldiAqc3ViZGV2KQ0K
+PiA+DQoNCg==
