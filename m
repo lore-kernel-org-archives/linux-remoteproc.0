@@ -1,54 +1,48 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 0/9] Add chrdev and name query support for GLINK
-Date: Fri, 27 Jul 2018 17:47:20 +0530
-Message-Id: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 1/1] rpmsg: virtio_rpmsg_bus: Fix rpmsg_create_channel
+ memory leak
+Date: Thu, 26 Jul 2018 07:04:23 +0000
+Message-ID: <fd10ef4f445641b2b333bffa5da225f6@SFHDAG7NODE2.st.com>
+References: <1532552916-30111-1-git-send-email-loic.pallardy@st.com>
+ <19e8f6e7-3ee6-6606-164c-3bb953a13da5@ti.com>
+In-Reply-To: <19e8f6e7-3ee6-6606-164c-3bb953a13da5@ti.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for the GLINK rpmsg transport to register a rpmsg chrdev.
-This will create the rpmsg_ctrl nodes for userspace clients to open 
-rpmsg epts. Create a label property that will help userspace clients
-distinguish between the different GLINK links. The rpmsg chrdev 
-allocation is done by allocating a local channel which also allocates
-an ept. We need to add some guards against edge cases for this chrdev
-because it will never fully open.
-
-Changes since v3:
-- Change to device_add_group for rpmsg name attr
-- Add patch to unregister the rpmsg device
-- Add patch to support compat ioctl for rpmsg char driver
-
-Changes since v2:
-- Revert change to make glink attribute table const
-
-Changes since v1:
-- Add explanation to dt-bindings commit message
-- Add patch complete_all the open_req/ack variables
-- Add patch to prevent null pointer dereference in chrdev channel release
-- Change chrdev allocation to use glink channel allocation
-- Change glink attr struct to const
-
-Arun Kumar Neelakantam (2):
-  rpmsg: glink: unregister rpmsg device during endpoint destroy
-  rpmsg: Add compat ioctl for rpmsg char driver
-
-Chris Lew (7):
-  dt-bindings: soc: qcom: Add label for GLINK bindings
-  rpmsg: glink: Store edge name for glink device
-  rpmsg: glink: Use complete_all for open states
-  rpmsg: Guard against null endpoint ops in destroy
-  rpmsg: glink: Add support for rpmsg glink chrdev
-  rpmsg: glink: Expose rpmsg name attr for glink
-  rpmsg: glink: Remove chunk size word align warning
-
- .../devicetree/bindings/soc/qcom/qcom,glink.txt    |  5 ++
- drivers/rpmsg/qcom_glink_native.c                  | 88 ++++++++++++++++++++--
- drivers/rpmsg/rpmsg_char.c                         |  2 +
- drivers/rpmsg/rpmsg_core.c                         |  2 +-
- 4 files changed, 90 insertions(+), 7 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+SGkgU3VtYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4g
+QW5uYSA8cy1hbm5hQHRpLmNvbT4NCj4gU2VudDogVGh1cnNkYXksIEp1bHkgMjYsIDIwMTggMTI6
+MzcgQU0NCj4gVG86IExvaWMgUEFMTEFSRFkgPGxvaWMucGFsbGFyZHlAc3QuY29tPjsgYmpvcm4u
+YW5kZXJzc29uQGxpbmFyby5vcmc7DQo+IG9oYWRAd2l6ZXJ5LmNvbQ0KPiBDYzogbGludXgtcmVt
+b3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+
+IEFybmF1ZCBQT1VMSVFVRU4gPGFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tPjsNCj4gYmVuamFtaW4u
+Z2FpZ25hcmRAbGluYXJvLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMV0gcnBtc2c6IHZp
+cnRpb19ycG1zZ19idXM6IEZpeA0KPiBycG1zZ19jcmVhdGVfY2hhbm5lbCBtZW1vcnkgbGVhaw0K
+PiANCj4gSGkgTG9pYywNCj4gDQo+IE9uIDA3LzI1LzIwMTggMDQ6MDggUE0sIExvaWMgUGFsbGFy
+ZHkgd3JvdGU6DQo+ID4gSW4gY2FzZSBvZiBycG1zZ19yZWdpc3Rlcl9kZXZpY2UoKSBmYWlsdXJl
+LCB2Y2ggcHJldmlvdXNseQ0KPiA+IGFsbG9jYXRlZCBtdXN0IGJlIGZyZWUuDQo+ID4NCj4gDQo+
+IElzbid0IHRoaXMgYWxyZWFkeSBoYW5kbGVkIHRocm91Z2ggdGhlIHZpcnRpb19ycG1zZ19yZWxl
+YXNlX2RldmljZSgpDQo+IGNhbGxiYWNrIGFzIHBhcnQgb2YgdGhlIHB1dF9kZXZpY2UoKSBpbiBy
+cG1zZ19yZWdpc3Rlcl9kZXZpY2UoKSBmYWlsdXJlLg0KDQpZZXMgeW91J3JlIHJpZ2h0LCBwdXRf
+ZGV2aWNlKCkgaXMgZG9pbmcgdGhlIGpvYi4NClBsZWFzZSBmb3JnZXQgdGhpcyBwYXRjaC4NCg0K
+UmVnYXJkcywNCkxvaWMgDQoNCj4gDQo+IHJlZ2FyZHMNCj4gU3VtYW4NCj4gDQo+ID4gZml4ZXM6
+IDZlZWQ1OThhMDQ5MSAoInJwbXNnOiBTcGxpdCBvZmYgZ2VuZXJpYyB0YWlsIG9mIGNyZWF0ZV9j
+aGFubmVsKCkiKQ0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTG9pYyBQYWxsYXJkeSA8bG9pYy5w
+YWxsYXJkeUBzdC5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNn
+X2J1cy5jIHwgNCArKystDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JwbXNnL3ZpcnRpb19y
+cG1zZ19idXMuYw0KPiBiL2RyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+ID4gaW5k
+ZXggNjY0Zjk1Ny4uMTBmOTI3ZSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3JwbXNnL3ZpcnRp
+b19ycG1zZ19idXMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNnX2J1cy5j
+DQo+ID4gQEAgLTQzMSw4ICs0MzEsMTAgQEAgc3RhdGljIHN0cnVjdCBycG1zZ19kZXZpY2UNCj4g
+KnJwbXNnX2NyZWF0ZV9jaGFubmVsKHN0cnVjdCB2aXJ0cHJvY19pbmZvICp2cnAsDQo+ID4gIAly
+cGRldi0+ZGV2LnBhcmVudCA9ICZ2cnAtPnZkZXYtPmRldjsNCj4gPiAgCXJwZGV2LT5kZXYucmVs
+ZWFzZSA9IHZpcnRpb19ycG1zZ19yZWxlYXNlX2RldmljZTsNCj4gPiAgCXJldCA9IHJwbXNnX3Jl
+Z2lzdGVyX2RldmljZShycGRldik7DQo+ID4gLQlpZiAocmV0KQ0KPiA+ICsJaWYgKHJldCkgew0K
+PiA+ICsJCWtmcmVlKHZjaCk7DQo+ID4gIAkJcmV0dXJuIE5VTEw7DQo+ID4gKwl9DQo+ID4NCj4g
+PiAgCXJldHVybiBycGRldjsNCj4gPiAgfQ0KPiA+DQoNCg==
