@@ -1,72 +1,72 @@
-Return-Path: <rogerq@ti.com>
-Subject: Re: [PATCH 5/8] remoteproc: new driver for TI PRU
-References: <20180623210810.21232-1-david@lechnology.com>
- <20180623210810.21232-6-david@lechnology.com>
- <ce87a7dc-ecf6-f3fd-9121-bf99216f7412@ti.com>
- <CA+CtpRhQ07=3UytY7QrfnpWkY06UqHbNVq099Coez3C4H3U5yg@mail.gmail.com>
-From: Roger Quadros <rogerq@ti.com>
-Message-ID: <d331a7dc-9fb0-aa05-36e6-3e1373b6fd16@ti.com>
-Date: Mon, 2 Jul 2018 11:05:04 +0300
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 06/17] remoteproc: introduce rproc_add_carveout function
+Date: Fri, 27 Jul 2018 15:14:41 +0200
+Message-ID: <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+CtpRhQ07=3UytY7QrfnpWkY06UqHbNVq099Coez3C4H3U5yg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-To: Derald Woods <woods.technical@gmail.com>
-Cc: David Lechner <david@lechnology.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, "Anna, Suman" <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Derald,
+This patch introduces a new API to allow platform driver to register
+platform specific carveout regions.
 
-On 30/06/18 22:02, Derald Woods wrote:
-> 
-> 
-> On Fri, Jun 29, 2018 at 5:14 AM, Roger Quadros <rogerq@ti.com <mailto:rogerq@ti.com>> wrote:
-> 
-> 
-> 
->     On 24/06/18 00:08, David Lechner wrote:
->     > This adds a new remoteproc driver for TI Programmable Realtime Units
->     > (PRUs).
->     >
->     > This has been tested working on AM1808 (LEGO MINDSTORMS EV3) using the
->     > sample rpmsg client driver.
->     >
->     > Signed-off-by: David Lechner <david@lechnology.com <mailto:david@lechnology.com>>
->     > ---
->     >  MAINTAINERS                       |   5 +
->     >  drivers/remoteproc/Kconfig        |   7 +
->     >  drivers/remoteproc/Makefile       |   1 +
->     >  drivers/remoteproc/ti_pru_rproc.c | 660 ++++++++++++++++++++++++++++++
->     >  4 files changed, 673 insertions(+)
->     >  create mode 100644 drivers/remoteproc/ti_pru_rproc.c
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
+ include/linux/remoteproc.h           |  2 ++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-<snip>
-
-> 
->     We already have a working irq_chip implementation for INTC.
->     https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pruss_intc.c <https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pruss_intc.c>
-> 
->     I think we can leverage directly from that.
-> 
->     This way pru_rproc or client device nodes can easily specify a pruss_intc interrupt parent and the
->     SYSEVENT number as the irq. Then device drivers can simply use request_irq().
-> 
->     example usage here
->     https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/arch/arm/boot/dts/am33xx.dtsi#line986 <https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/arch/arm/boot/dts/am33xx.dtsi#line986>
->     https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pru_rproc.c#line670 <https://git.ti.com/ti-linux-kernel/ti-linux-kernel/blobs/ti-linux-4.14.y/drivers/remoteproc/pru_rproc.c#line670>
-> 
-> 
-> 
-> 
-> ​Is this PRU code on a path to be added to the mainline kernel?​ There is an increase in the number of available systems which would benefit from consistent PRU interfaces. If code is not mainlined, or on a mainline path, some may think it is not usable or ready for production. Is this a permanent "out-of-tree" and/or "TI-tree" development. Just wondering.
-> 
-
-Yes, we constantly upstream our work. We are currently working to get the PRU support upstream.
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index b76760e..fe6c4e4 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -747,7 +747,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	if (!carveout)
+ 		goto free_carv;
+ 
+-	list_add_tail(&carveout->node, &rproc->carveouts);
++	rproc_add_carveout(rproc, carveout);
+ 
+ 	return 0;
+ 
+@@ -761,6 +761,20 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ }
+ 
+ /**
++ * rproc_add_carveout() - register an allocated carveout region
++ * @rproc: rproc handle
++ * @mem: memory entry to register
++ *
++ * This function registers specified memory entry in @rproc carveouts list.
++ * Specified carveout should have been allocated before registering.
++ */
++void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
++{
++	list_add_tail(&mem->node, &rproc->carveouts);
++}
++EXPORT_SYMBOL(rproc_add_carveout);
++
++/**
+  * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
+  * @dev: pointer on device struct
+  * @va: virtual address
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 4bc961f..55f30fc 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -558,6 +558,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ int rproc_del(struct rproc *rproc);
+ void rproc_free(struct rproc *rproc);
+ 
++void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
++
+ struct rproc_mem_entry *
+ rproc_mem_entry_init(struct device *dev,
+ 		     void *va, dma_addr_t dma, int len, u32 da,
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.9.1
