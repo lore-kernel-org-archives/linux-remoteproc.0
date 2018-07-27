@@ -1,203 +1,162 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 2/4] reset: qcom: PDC (Power Domain Controller) reset controller
-Date: Fri, 27 Jul 2018 20:58:09 +0530
-Message-Id: <20180727152811.15258-2-sibis@codeaurora.org>
-In-Reply-To: <20180727152811.15258-1-sibis@codeaurora.org>
-References: <20180727152811.15258-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 16/17] remoteproc: st: add reserved memory support
+Date: Fri, 27 Jul 2018 15:14:51 +0200
+Message-ID: <1532697292-14272-17-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add reset controller for SDM845 SoC to control reset signals
-provided by PDC for Modem, Compute, Display, GPU, Debug, AOP,
-Sensors, Audio, SP and APPS
+ST remote processor needs some specified memory regions for
+firmware and IPC.
+Memory regions are defined as reserved memory and should
+be registered in remoteproc core thanks to rproc_add_carveout
+function before rproc_start. For this, st rproc driver implements
+prepare ops.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/reset/Kconfig          |   9 +++
- drivers/reset/Makefile         |   1 +
- drivers/reset/reset-qcom-pdc.c | 139 +++++++++++++++++++++++++++++++++
- 3 files changed, 149 insertions(+)
- create mode 100644 drivers/reset/reset-qcom-pdc.c
+ drivers/remoteproc/st_remoteproc.c | 96 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 85 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 13d28fdbdbb5..5344e202a630 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
- 	  reset signals provided by AOSS for Modem, Venus, ADSP,
- 	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index aacef0e..45958d5 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -19,6 +19,7 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+@@ -91,6 +92,82 @@ static void st_rproc_kick(struct rproc *rproc, int vqid)
+ 		dev_err(dev, "failed to send message via mbox: %d\n", ret);
+ }
  
-+config RESET_QCOM_PDC
-+	bool "Qcom PDC Reset Driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  This enables the PDC (Power Domain Controller) reset driver
-+	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
-+	  to control reset signals provided by PDC for Modem, Compute,
-+	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
-+
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST
- 	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 4243c38228e2..d08e8b90046a 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
-+obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
-new file mode 100644
-index 000000000000..64a0041e3452
---- /dev/null
-+++ b/drivers/reset/reset-qcom-pdc.c
-@@ -0,0 +1,139 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/regmap.h>
-+#include <linux/of_device.h>
-+#include <dt-bindings/reset/qcom,sdm845-pdc.h>
-+
-+struct qcom_pdc_reset_map {
-+	u8 bit;
-+};
-+
-+struct qcom_pdc_desc {
-+	const struct regmap_config *config;
-+	const struct qcom_pdc_reset_map *resets;
-+	size_t num_resets;
-+};
-+
-+struct qcom_pdc_reset_data {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+	const struct qcom_pdc_desc *desc;
-+};
-+
-+static const struct regmap_config sdm845_pdc_regmap_config = {
-+	.name		= "pdc-reset",
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x20000,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_pdc_reset_map sdm845_pdc_resets[] = {
-+	[PDC_APPS_SYNC_RESET] = {0},
-+	[PDC_SP_SYNC_RESET] = {1},
-+	[PDC_AUDIO_SYNC_RESET] = {2},
-+	[PDC_SENSORS_SYNC_RESET] = {3},
-+	[PDC_AOP_SYNC_RESET] = {4},
-+	[PDC_DEBUG_SYNC_RESET] = {5},
-+	[PDC_GPU_SYNC_RESET] = {6},
-+	[PDC_DISPLAY_SYNC_RESET] = {7},
-+	[PDC_COMPUTE_SYNC_RESET] = {8},
-+	[PDC_MODEM_SYNC_RESET] = {9},
-+};
-+
-+static const struct qcom_pdc_desc sdm845_pdc_desc = {
-+	.config = &sdm845_pdc_regmap_config,
-+	.resets = sdm845_pdc_resets,
-+	.num_resets = ARRAY_SIZE(sdm845_pdc_resets),
-+};
-+
-+static inline struct qcom_pdc_reset_data *to_qcom_pdc_reset_data(
-+				struct reset_controller_dev *rcdev)
++static int st_rproc_mem_alloc(struct rproc *rproc,
++			      struct rproc_mem_entry *mem)
 +{
-+	return container_of(rcdev, struct qcom_pdc_reset_data, rcdev);
-+}
++	struct device *dev = rproc->dev.parent;
++	void *va;
 +
-+static int qcom_pdc_control_assert(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
-+	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
-+
-+	return regmap_update_bits(data->regmap, 0x100,
-+					BIT(map->bit), BIT(map->bit));
-+}
-+
-+static int qcom_pdc_control_deassert(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
-+	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
-+
-+	return regmap_update_bits(data->regmap, 0x100, BIT(map->bit), 0);
-+}
-+
-+static const struct reset_control_ops qcom_pdc_reset_ops = {
-+	.assert = qcom_pdc_control_assert,
-+	.deassert = qcom_pdc_control_deassert,
-+};
-+
-+static int qcom_pdc_reset_probe(struct platform_device *pdev)
-+{
-+	struct qcom_pdc_reset_data *data;
-+	struct device *dev = &pdev->dev;
-+	const struct qcom_pdc_desc *desc;
-+	void __iomem *base;
-+	struct resource *res;
-+
-+	desc = of_device_get_match_data(dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
++	va = ioremap_wc(mem->dma, mem->len);
++	if (!va) {
++		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
++			&mem->dma, mem->len);
 +		return -ENOMEM;
-+
-+	data->desc = desc;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(dev, "Unable to get pdc-global regmap");
-+		return PTR_ERR(data->regmap);
 +	}
 +
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &qcom_pdc_reset_ops;
-+	data->rcdev.nr_resets = desc->num_resets;
-+	data->rcdev.of_node = dev->of_node;
++	/* Update memory entry va */
++	mem->va = va;
 +
-+	return devm_reset_controller_register(dev, &data->rcdev);
++	return 0;
 +}
 +
-+static const struct of_device_id qcom_pdc_reset_of_match[] = {
-+	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
-+	{}
-+};
++static int st_rproc_mem_release(struct rproc *rproc,
++				struct rproc_mem_entry *mem)
++{
++	iounmap(mem->va);
 +
-+static struct platform_driver qcom_pdc_reset_driver = {
-+	.probe = qcom_pdc_reset_probe,
-+	.driver = {
-+		.name = "qcom_pdc_reset",
-+		.of_match_table = qcom_pdc_reset_of_match,
-+	},
-+};
++	return 0;
++}
 +
-+builtin_platform_driver(qcom_pdc_reset_driver);
++static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
++{
++	struct device *dev = rproc->dev.parent;
++	struct device_node *np = dev->of_node;
++	struct rproc_mem_entry *mem;
++	void *va;
++	struct reserved_mem *rmem;
++	struct of_phandle_iterator it;
++	int err, index = 0;
 +
-+MODULE_DESCRIPTION("Qualcomm PDC Reset Driver");
-+MODULE_LICENSE("GPL v2");
++	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
++	while ((err = of_phandle_iterator_next(&it)) == 0) {
++		va = NULL;
++		rmem = of_reserved_mem_lookup(it.node);
++
++		/*  No need to map vdev buffer */
++		if (strcmp(it.node->name, "vdev0buffer")) {
++			va = devm_ioremap_wc(dev, rmem->base, rmem->size);
++			if (!va) {
++				dev_err(dev, "Unable to map memory region: %pa+%zx\n",
++					&rmem->base, rmem->size);
++				return -ENOMEM;
++			}
++
++			/* Register memory region */
++			mem = rproc_mem_entry_init(dev, va,
++						   (dma_addr_t)rmem->base,
++						   rmem->size, rmem->base,
++						   st_rproc_mem_alloc,
++						   st_rproc_mem_release,
++						   it.node->name);
++		} else {
++			/* Register reserved memory for vdev buffer allocation */
++			mem = rproc_of_resm_mem_entry_init(dev, index,
++							   rmem->size,
++							   rmem->base,
++							   it.node->name);
++		}
++
++		if (!mem)
++			return -ENOMEM;
++
++		rproc_add_carveout(rproc, mem);
++		index++;
++	}
++
++	return rproc_elf_load_rsc_table(rproc, fw);
++}
++
+ static int st_rproc_start(struct rproc *rproc)
+ {
+ 	struct st_rproc *ddata = rproc->priv;
+@@ -158,9 +235,14 @@ static int st_rproc_stop(struct rproc *rproc)
+ }
+ 
+ static const struct rproc_ops st_rproc_ops = {
+-	.kick		= st_rproc_kick,
+-	.start		= st_rproc_start,
+-	.stop		= st_rproc_stop,
++	.kick			= st_rproc_kick,
++	.start			= st_rproc_start,
++	.stop			= st_rproc_stop,
++	.parse_fw		= st_rproc_parse_fw,
++	.load			= rproc_elf_load_segments,
++	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
++	.sanity_check		= rproc_elf_sanity_check,
++	.get_boot_addr		= rproc_elf_get_boot_addr,
+ };
+ 
+ /*
+@@ -254,12 +336,6 @@ static int st_rproc_parse_dt(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	err = of_reserved_mem_device_init(dev);
+-	if (err) {
+-		dev_err(dev, "Failed to obtain shared memory\n");
+-		return err;
+-	}
+-
+ 	err = clk_prepare(ddata->clk);
+ 	if (err)
+ 		dev_err(dev, "failed to get clock\n");
+@@ -387,8 +463,6 @@ static int st_rproc_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(ddata->clk);
+ 
+-	of_reserved_mem_device_release(&pdev->dev);
+-
+ 	for (i = 0; i < ST_RPROC_MAX_VRING * MBOX_MAX; i++)
+ 		mbox_free_channel(ddata->mbox_chan[i]);
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
