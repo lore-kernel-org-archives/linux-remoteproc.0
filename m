@@ -1,29 +1,54 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v7 3/4] ARM: davinci: dts: make psc0 a reset provider
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <20180621073706.22812-4-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <b56077f5-c8ef-6c19-7b2e-c82eec23d127@ti.com>
-Date: Mon, 2 Jul 2018 17:27:21 +0530
-MIME-Version: 1.0
-In-Reply-To: <20180621073706.22812-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V4 0/9] Add chrdev and name query support for GLINK
+Date: Fri, 27 Jul 2018 17:47:20 +0530
+Message-Id: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The psc driver registers with the reset framework as a provider. Add
-> the #reset-cells property to the psc0 node.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
+Add support for the GLINK rpmsg transport to register a rpmsg chrdev.
+This will create the rpmsg_ctrl nodes for userspace clients to open 
+rpmsg epts. Create a label property that will help userspace clients
+distinguish between the different GLINK links. The rpmsg chrdev 
+allocation is done by allocating a local channel which also allocates
+an ept. We need to add some guards against edge cases for this chrdev
+because it will never fully open.
 
-Applied to v4.19/dt branch of my tree.
+Changes since v3:
+- Change to device_add_group for rpmsg name attr
+- Add patch to unregister the rpmsg device
+- Add patch to support compat ioctl for rpmsg char driver
 
-Thanks,
-Sekhar
+Changes since v2:
+- Revert change to make glink attribute table const
+
+Changes since v1:
+- Add explanation to dt-bindings commit message
+- Add patch complete_all the open_req/ack variables
+- Add patch to prevent null pointer dereference in chrdev channel release
+- Change chrdev allocation to use glink channel allocation
+- Change glink attr struct to const
+
+Arun Kumar Neelakantam (2):
+  rpmsg: glink: unregister rpmsg device during endpoint destroy
+  rpmsg: Add compat ioctl for rpmsg char driver
+
+Chris Lew (7):
+  dt-bindings: soc: qcom: Add label for GLINK bindings
+  rpmsg: glink: Store edge name for glink device
+  rpmsg: glink: Use complete_all for open states
+  rpmsg: Guard against null endpoint ops in destroy
+  rpmsg: glink: Add support for rpmsg glink chrdev
+  rpmsg: glink: Expose rpmsg name attr for glink
+  rpmsg: glink: Remove chunk size word align warning
+
+ .../devicetree/bindings/soc/qcom/qcom,glink.txt    |  5 ++
+ drivers/rpmsg/qcom_glink_native.c                  | 88 ++++++++++++++++++++--
+ drivers/rpmsg/rpmsg_char.c                         |  2 +
+ drivers/rpmsg/rpmsg_core.c                         |  2 +-
+ 4 files changed, 90 insertions(+), 7 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
