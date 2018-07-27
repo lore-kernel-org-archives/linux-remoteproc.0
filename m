@@ -1,58 +1,77 @@
-Return-Path: <nsekhar@ti.com>
-Subject: Re: [PATCH v7 0/4] ARM: davinci: complete the conversion to using the
- reset framework
-References: <20180621073706.22812-1-brgl@bgdev.pl>
- <9ec10627-49a5-07ad-8c9d-5ac873096cc0@ti.com>
- <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <e4bd9f57-617a-a59e-5d05-be1a6b3e6b3d@ti.com>
-Date: Mon, 2 Jul 2018 17:38:24 +0530
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=Me1JTuw40tMWaai2oKMxmc_ktN2OKBhF8tmGt0cQ6magg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 5/6] remoteproc: qcom: q6v5-pil: Register segments/dumpfn for coredump
+Date: Fri, 27 Jul 2018 20:50:02 +0530
+Message-Id: <20180727152003.11663-6-sibis@codeaurora.org>
+In-Reply-To: <20180727152003.11663-1-sibis@codeaurora.org>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+Register the MDT segments and custom dumpfn with the remoteproc core
+dump functionality.
 
-On Thursday 21 June 2018 05:11 PM, Bartosz Golaszewski wrote:
-> 2018-06-21 12:52 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->> Hi Bartosz,
->>
->> On Thursday 21 June 2018 01:07 PM, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> These are the remaining patches that still need to be merged in order
->>> to complete the conversion of the davinci dsp driver to using the reset
->>> framework.
->>>
->>> They apply on top of v4.18-rc1 with David Lechner's remaining patches
->>> merged.
->>
->> Series looks good to me.
->>
->> To preserve bisect, shouldn't the order of applying be patch #3, #4, #1
->> and #2 ?
->>
->> Given the dependencies and to preserve bisect its easiest if I take the
->> series with acks from remoteproc and clock maintainers.
->>
->> Open to other suggestions as well.
->>
->> Thanks,
->> Sekhar
-> 
-> Oops you're right about the order. Do you want me to resend?
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_pil.c | 40 ++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-With your ack, I can queue 1/4 for v4.19 and provide an immutable commit
-to you (on top of v4.18-rc1) for you to merge any further changes you
-want to queue from your tree.
-
-Bartosz, given the number of moving pieces, I think its better to keep
-2/4 for v4.20 release - once all other other dependencies have been merged.
-
-Thanks,
-Sekhar
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index ac3342f9ea5a..22bb049c3e7f 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -1058,10 +1058,50 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	return qproc->mpss_region + offset;
+ }
+ 
++static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
++				const struct firmware *fw_unused)
++{
++	const struct firmware *fw;
++	const struct elf32_phdr *phdrs;
++	const struct elf32_phdr *phdr;
++	const struct elf32_hdr *ehdr;
++	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	int ret;
++	int i;
++
++	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
++	if (ret < 0) {
++		dev_err(qproc->dev, "unable to load modem.mdt\n");
++		return ret;
++	}
++
++	qproc->valid_mask = 0;
++	ehdr = (struct elf32_hdr *)fw->data;
++	phdrs = (struct elf32_phdr *)(ehdr + 1);
++
++	for (i = 0; i < ehdr->e_phnum; i++) {
++		phdr = &phdrs[i];
++
++		if (!q6v5_phdr_valid(phdr))
++			continue;
++
++		ret = rproc_coredump_add_custom_segment(rproc, phdr->p_paddr,
++					phdr->p_memsz, qcom_q6v5_dump_segment);
++		if (ret)
++			break;
++
++		qproc->valid_mask++;
++	}
++
++	release_firmware(fw);
++	return ret;
++}
++
+ static const struct rproc_ops q6v5_ops = {
+ 	.start = q6v5_start,
+ 	.stop = q6v5_stop,
+ 	.da_to_va = q6v5_da_to_va,
++	.parse_fw = qcom_q6v5_register_dump_segments,
+ 	.load = q6v5_load,
+ };
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
