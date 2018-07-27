@@ -1,40 +1,69 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] remoteproc: qcom: fix Q6V5_WCSS dependencies
-Date: Wed, 18 Jul 2018 13:16:26 +0200
-Message-Id: <20180718111730.3531477-1-arnd@arndb.de>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sricharan R <sricharan@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V4 6/9] rpmsg: glink: Expose rpmsg name attr for glink
+Date: Fri, 27 Jul 2018 17:47:26 +0530
+Message-Id: <1532693849-7037-7-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
+References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A new driver got added that depends on QCOM_SMD and fails to link
-as built-in with CONFIG_QCOM_SMD=m:
+From: Chris Lew <clew@codeaurora.org>
 
-drivers/remoteproc/qcom_common.o: In function `smd_subdev_stop':
-qcom_common.c:(.text+0x674): undefined reference to `qcom_smd_unregister_edge'
-drivers/remoteproc/qcom_common.o: In function `smd_subdev_start':
-qcom_common.c:(.text+0x700): undefined reference to `qcom_smd_register_edge'
+Expose the name field as an attr so clients listening to uevents for
+rpmsg can identify the edge the events correspond to.
 
-We've fixed the same thing several times before, so use the same
-dependency here.
-
-Fixes: 3a3d4163e0bf ("remoteproc: qcom: Introduce Hexagon V5 based WCSS driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- drivers/remoteproc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/rpmsg/qcom_glink_native.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 0dde3753c3a5..052d4dd347f9 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -127,6 +127,7 @@ config QCOM_Q6V5_WCSS
- 	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
- 	depends on QCOM_SMEM
-+	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
- 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
- 	depends on QCOM_SYSMON || QCOM_SYSMON=n
- 	select MFD_SYSCON
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 9f3d026..7b4ffa0 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1544,6 +1544,26 @@ static void qcom_glink_work(struct work_struct *work)
+ 	}
+ }
+ 
++static ssize_t rpmsg_name_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
++{
++	int ret = 0;
++	const char *name;
++
++	ret = of_property_read_string(dev->of_node, "label", &name);
++	if (ret < 0)
++		name = dev->of_node->name;
++
++	return snprintf(buf, RPMSG_NAME_SIZE, "%s\n", name);
++}
++static DEVICE_ATTR_RO(rpmsg_name);
++
++static struct attribute *qcom_glink_attrs[] = {
++	&dev_attr_rpmsg_name.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(qcom_glink);
++
+ static void qcom_glink_device_release(struct device *dev)
+ {
+ 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+@@ -1593,6 +1613,12 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	glink->dev = dev;
++	glink->dev->groups = qcom_glink_groups;
++
++	ret = device_add_groups(dev, qcom_glink_groups);
++	if (ret)
++		dev_err(dev, "failed to add groups\n");
++
+ 	glink->tx_pipe = tx;
+ 	glink->rx_pipe = rx;
+ 
 -- 
-2.9.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
