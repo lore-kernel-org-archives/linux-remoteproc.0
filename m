@@ -1,65 +1,50 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 1/1] remoteproc: correct rproc_free_vring() to avoid invalid kernel paging
-Date: Fri, 6 Jul 2018 09:46:52 +0200
-Message-ID: <1530863212-16584-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V4 2/9] rpmsg: glink: Store edge name for glink device
+Date: Fri, 27 Jul 2018 17:47:22 +0530
+Message-Id: <1532693849-7037-3-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
+References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-If rproc_start() failed, rproc_resource_cleanup() is called to clean
-debugfs entries, then associated iommu mappings, carveouts and vdev.
-Issue occurs when rproc_free_vring() is trying to reset vring resource
-table entry.
-At this time, table_ptr is pointing on loaded resource table and carveouts
-already released, so access to loaded resource table is generating a kernel
-paging error:
+From: Chris Lew <clew@codeaurora.org>
 
-[   12.696535] Unable to handle kernel paging request at virtual address f0f357cc
-[   12.696540] pgd = (ptrval)
-[   12.696542] [f0f357cc] *pgd=6d2d0811, *pte=00000000, *ppte=00000000
-[   12.696558] Internal error: Oops: 807 [#1] SMP ARM
-[   12.696563] Modules linked in: rpmsg_core v4l2_mem2mem videobuf2_dma_contig sti_drm v4l2_common vida
-[   12.696598] CPU: 1 PID: 48 Comm: kworker/1:1 Tainted: G        W         4.18.0-rc2-00018-g3170fdd-8
-[   12.696602] Hardware name: STi SoC with Flattened Device Tree
-[   12.696625] Workqueue: events request_firmware_work_func
-[   12.696659] PC is at rproc_free_vring+0x84/0xbc [remoteproc]
-[   12.696667] LR is at rproc_free_vring+0x70/0xbc [remoteproc]
+Channels may need to identify the edge their channel was probed for.
+Store the edge name by reading the label property from device tree or
+default to the node name.
 
-This patch proposes to simply remove reset of resource table vring entries,
-as firmware and resource table are reloaded at each rproc boot.
-rproc_trigger_recovery() not impacted as resources not touched during recovery
-procedure.
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
-Changes from V1: typo fixes in commit message
+ drivers/rpmsg/qcom_glink_native.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- drivers/remoteproc/remoteproc_core.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a9609d9..9a8b47c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -289,16 +289,10 @@ void rproc_free_vring(struct rproc_vring *rvring)
- {
- 	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
- 	struct rproc *rproc = rvring->rvdev->rproc;
--	int idx = rvring->rvdev->vring - rvring;
--	struct fw_rsc_vdev *rsc;
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index f505f58..22a3cac 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -93,6 +93,8 @@ struct glink_core_rx_intent {
+ struct qcom_glink {
+ 	struct device *dev;
  
- 	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
- 	idr_remove(&rproc->notifyids, rvring->notifyid);
++	const char *name;
++
+ 	struct mbox_client mbox_client;
+ 	struct mbox_chan *mbox_chan;
  
--	/* reset resource entry info */
--	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
--	rsc->vring[idx].da = 0;
--	rsc->vring[idx].notifyid = -1;
- }
+@@ -1572,6 +1574,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 	idr_init(&glink->lcids);
+ 	idr_init(&glink->rcids);
  
- static int rproc_vdev_do_probe(struct rproc_subdev *subdev)
++	ret = of_property_read_string(dev->of_node, "label", &glink->name);
++	if (ret < 0)
++		glink->name = dev->of_node->name;
++
+ 	glink->mbox_client.dev = dev;
+ 	glink->mbox_client.knows_txdone = true;
+ 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
