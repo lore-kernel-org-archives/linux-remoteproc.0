@@ -1,189 +1,84 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 6 Jul 2018 14:32:36 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2] remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
-Message-ID: <20180706203236.GA24729@rob-hp-laptop>
-References: <1530264053-8394-1-git-send-email-rohitkr@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 15/17] remoteproc: da8xx: declare reserved memory region for vdev device
+Date: Fri, 27 Jul 2018 15:14:50 +0200
+Message-ID: <1532697292-14272-16-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530264053-8394-1-git-send-email-rohitkr@codeaurora.org>
-To: Rohit kumar <rohitkr@codeaurora.org>
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bgoswami@codeaurora.org, sbpata@codeaurora.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Jun 29, 2018 at 02:50:53PM +0530, Rohit kumar wrote:
-> This adds APSS based ADSP PIL driver for QCOM SoCs.
-> Added initial support for SDM845 with ADSP bootup and
-> shutdown operation handled from Application Processor
-> SubSystem(APSS).
-> 
-> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-> ---
-> Changes since v1:
-> - Used APIs from qcom_q6v5.c
-> - Use clock, reset and regmap driver APIs instead of 
->   directly writing into the LPASS registers.
-> - Created new file for non PAS ADSP PIL instead of extending
->   existing ADSP PIL driver.
-> - cleanups as suggested by Bjorn and Rob.
-> 
->  .../bindings/remoteproc/qcom,non-pas-adsp.txt      | 138 +++++
+This patch introduces da8xx_rproc_parse_fw() to declare a
+carveout region based on reserved memory for vdev buffer
+allocation.
 
-This should be a separate patch.
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 38 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
->  drivers/remoteproc/Kconfig                         |  18 +
->  drivers/remoteproc/Makefile                        |   1 +
->  drivers/remoteproc/qcom_nonpas_adsp_pil.c          | 667 +++++++++++++++++++++
->  4 files changed, 824 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
->  create mode 100644 drivers/remoteproc/qcom_nonpas_adsp_pil.c
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
-> new file mode 100644
-> index 0000000..0581aaa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
-> @@ -0,0 +1,138 @@
-> +Qualcomm Technology Inc. Non PAS ADSP Peripheral Image Loader
-> +
-> +This document defines the binding for a component that loads and boots firmware
-> +on the Qualcomm Technology Inc. ADSP Hexagon core.
-> +
-> +- compatible:
-> +	Usage: required
-> +	Value type: <string>
-> +	Definition: must be one of:
-> +		    "qcom,sdm845-apss-adsp-pil"
-
-Didn't Bjorn say to drop the 'apss' part?
-
-> +
-> +- reg:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: must specify the base address and size of the qdsp6ss
-> +
-> +- reg-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "qdsp6ss"
-> +
-> +- interrupts-extended:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: must list the watchdog, fatal IRQs ready, handover and
-> +		    stop-ack IRQs
-> +
-> +- interrupt-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
-> +
-> +- clocks:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition:  List of phandle and clock specifier pairs
-> +
-> +- clock-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: List of clock input name strings sorted in the same
-> +				order as the clocks property.
-> +
-> +- resets:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to the reset-controller for the lpass
-> +
-> +- reset-names:
-> +        Usage: required
-> +        Value type: <stringlist>
-> +        Definition: must be "pdc_sync" and "cc_lpass"
-> +
-> +- qcom,halt-regs:
-> +	Usage: required
-> +	Value type: <prop-encoded-array>
-> +	Definition: a phandle reference to a syscon representing TCSR followed
-> +			by the offset within syscon for lpass halt register.
-> +
-> +- cx-supply:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to the regulator to be held on behalf of the
-> +		    booting Hexagon core
-> +
-> +- px-supply:
-> +	Usage: optional
-> +	Value type: <phandle>
-> +	Definition: reference to the px regulator to be held on behalf of the
-> +		    booting Hexagon core
-> +
-> +- memory-region:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to the reserved-memory for the ADSP
-> +
-> +- qcom,smem-states:
-> +	Usage: required
-> +	Value type: <phandle>
-> +	Definition: reference to the smem state for requesting the ADSP to
-> +		    shut down
-> +
-> +- qcom,smem-state-names:
-> +	Usage: required
-> +	Value type: <stringlist>
-> +	Definition: must be "stop"
-> +
-> +
-> += SUBNODES
-> +The adsp node may have an subnode named either "smd-edge" or "glink-edge" that
-> +describes the communication edge, channels and devices related to the ADSP.
-> +See ../soc/qcom/qcom,smd.txt and ../soc/qcom/qcom,glink.txt for details on how
-> +to describe these.
-> +
-> +
-> += EXAMPLE
-> +The following example describes the resources needed to boot control the
-> +ADSP, as it is found on SDM845 boards.
-> +	adsp-pil {
-> +		compatible = "qcom,sdm845-apss-adsp-pil";
-> +
-> +		reg = <0x17300000 0x40c>;
-> +		reg-names = "qdsp6ss";
-> +
-> +		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
-> +			<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +			<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +			<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +			<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "wdog", "fatal", "ready",
-> +			"handover", "stop-ack";
-> +
-> +		clocks = <&clock_rpmh RPMH_CXO_CLK>,
-> +			<&lpasscc GCC_LPASS_SWAY_CLK>,
-> +			<&lpasscc LPASS_AUDIO_WRAPPER_AON_CLK>,
-> +			<&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
-> +			<&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
-> +			<&lpasscc LPASS_QDSP6SS_XO_CLK>,
-> +			<&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
-> +			<&lpasscc LPASS_QDSP6SS_CORE_CLK>;
-> +		clock-names = "xo", "sway_cbcr", "lpass_aon",
-> +			"lpass_ahbs_aon_cbcr",
-> +			"lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
-> +			"qdsp6ss_sleep", "qdsp6ss_core";
-> +
-> +		cx-supply = <&pm8998_s9_level>;
-> +
-> +		resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
-> +			 <&aoss_reset AOSS_CC_LPASS_RESTART>;
-> +		reset-names = "pdc_sync", "cc_lpass";
-> +
-> +		qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
-> +
-> +		memory-region = <&pil_adsp_mem>;
-> +
-> +		qcom,smem-states = <&adsp_smp2p_out 0>;
-> +		qcom,smem-state-names = "stop";
-> +	};
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index b668e32..679a076 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -16,6 +16,7 @@
+ #include <linux/irq.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/of_address.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
+@@ -179,10 +180,47 @@ static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
+ 	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
+ }
+ 
++static int da8xx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
++{
++	struct device *dev = rproc->dev.parent;
++	struct rproc_mem_entry *mem;
++	struct device_node *node;
++	struct resource res;
++	int err;
++
++	node = of_parse_phandle(dev->of_node, "memory-region", 0);
++	if (!node) {
++		dev_err(dev, "No memory-region specified\n");
++		return -EINVAL;
++	}
++
++	err = of_address_to_resource(node, 0, &res);
++	if (err) {
++		dev_err(dev, "Bad memory-region definition\n");
++		return err;
++	}
++
++	/* Register memory region for vdev buffer allocation */
++	mem = rproc_of_resm_mem_entry_init(dev, 0, resource_size(&res),
++					   res.start, "vdev0buffer");
++
++	if (!mem)
++		return -ENOMEM;
++
++	rproc_add_carveout(rproc, mem);
++
++	return rproc_elf_load_rsc_table(rproc, fw);
++}
++
+ static const struct rproc_ops da8xx_rproc_ops = {
+ 	.start = da8xx_rproc_start,
+ 	.stop = da8xx_rproc_stop,
+ 	.kick = da8xx_rproc_kick,
++	.parse_fw = da8xx_rproc_parse_fw,
++	.load = rproc_elf_load_segments,
++	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
++	.sanity_check = rproc_elf_sanity_check,
++	.get_boot_addr = rproc_elf_get_boot_addr,
+ };
+ 
+ static int da8xx_rproc_get_internal_memories(struct platform_device *pdev,
+-- 
+1.9.1
