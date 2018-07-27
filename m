@@ -1,94 +1,212 @@
-Return-Path: <rogerq@ti.com>
-Subject: Re: New remoteproc driver for TI PRU
-References: <20180623210810.21232-1-david@lechnology.com>
- <e0a883af-8228-5b06-3186-f57d8f898aaa@ti.com>
- <8fc18d40-72f5-9215-26f0-1492e3a6c0e7@lechnology.com>
-From: Roger Quadros <rogerq@ti.com>
-Message-ID: <419db83e-7918-7b54-c18a-d786c47e8ef5@ti.com>
-Date: Mon, 2 Jul 2018 11:17:44 +0300
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 13/17] remoteproc: create vdev subdevice with specific dma memory pool
+Date: Fri, 27 Jul 2018 15:14:48 +0200
+Message-ID: <1532697292-14272-14-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-In-Reply-To: <8fc18d40-72f5-9215-26f0-1492e3a6c0e7@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-To: David Lechner <david@lechnology.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, "Anna, Suman" <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 29/06/18 20:44, David Lechner wrote:
-> On 06/29/2018 04:58 AM, Roger Quadros wrote:
->> +Suman & Tero
->>
->> Hi David,
->>
->> On 24/06/18 00:08, David Lechner wrote:
->>>
->>> Date: Sat, 23 Jun 2018 15:43:59 -0500
->>> Subject: [PATCH 0/8] New remoteproc driver for TI PRU
->>>
->>> This series adds a new remoteproc driver for the TI Programmable Runtime Unit
->>> (PRU) that is present in some TI Sitara processors. This code has been tested
->>> working on AM1808 (LEGO MINDSTORMS EV3) and AM3358 (BeagleBone Green).
->>
->> This is great. We have been working on something similar and I think it would
->> be great if we can collaborate to get all our needs addressed.
-> 
-> Yes, I have used the PRU with the TI kernel on BeagleBone so I've seen the TI
-> implementation. My primary interest is in the AM1808, which has a far simpler
-> PRU than other SoCs. So, I was hoping I could get away with just implementing
-> the basic stuff that I need and let TI add the more complex stuff later.
-> 
+This patch creates a dedicated vdev subdevice for each vdev declared
+in firmware resource table and associates carveout named "vdev%dbuffer"
+(with %d vdev index in resource table) if any as dma coherent memory pool.
 
-The PRUSS core is essentially the same thing on most of our SoCs. They might
-be varying in amount of RAM and integrated modules though. So PRUSS core support
-should be scalable across all SoCs.
+Then vdev subdevice is used as parent for virtio device.
 
-It is perfectly fine to get basic support in first and add the rest as we go along.
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+---
+ drivers/remoteproc/remoteproc_core.c     | 35 +++++++++++++++++++++++---
+ drivers/remoteproc/remoteproc_internal.h |  1 +
+ drivers/remoteproc/remoteproc_virtio.c   | 42 +++++++++++++++++++++++++++++++-
+ include/linux/remoteproc.h               |  1 +
+ 4 files changed, 75 insertions(+), 4 deletions(-)
 
->>
->> Our primary requirement is that it should be possible for a user (e.g. kernel driver) to
->> - request a specific PRU core load a specific firmware blob and boot/stop the PRU.
-> 
-> For this, I was thinking of suggesting a generic remoteproc provider/consumer
-> binding that is similar to other subsystems. For example:
-> 
-> Provider node has:
-> 
->     #remoteproc-cells = <1>;
-> 
-> And consumer has:
-> 
->     remoteprocs = <&pruss 0>, <&pruss 1>;
->     remoteproc-names = "pru0", "pru1";
-> 
-> The consumer device would be responsible for determining the firmware file
-> and for calling the rproc boot function.
-> 
-> 
->> - configure INTC interrupt mapping based on either resource table or DT
->> - use request_irq to request and use an interrupt.
-> 
-> I didn't consider creating a new interrupt controller in device tree, but
-> that makes sense. I will have to look into it some more.
-> 
-> 
->> - request access to DRAM/SRAM
-> 
-> Can the existing device tree bindings for reserved-memory be used for this?
-> I would expect the consumer nodes to use this and not the PRUSS provider node.
-> 
-> 
->> - configure gpimode/miirt/xfr (CFG space)
-> 
-> I have no idea what this stuff is. :-)
-> 
-> (This is what I was referring to when I said I was hoping that someone
-> else could add more later).
-> 
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 4edc6f0..adcc66e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -39,6 +39,7 @@
+ #include <linux/idr.h>
+ #include <linux/elf.h>
+ #include <linux/crc32.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/virtio_ids.h>
+ #include <linux/virtio_ring.h>
+ #include <asm/byteorder.h>
+@@ -145,7 +146,7 @@ static void rproc_disable_iommu(struct rproc *rproc)
+ 	iommu_domain_free(domain);
+ }
+ 
+-static phys_addr_t rproc_va_to_pa(void *cpu_addr)
++phys_addr_t rproc_va_to_pa(void *cpu_addr)
+ {
+ 	/*
+ 	 * Return physical address according to virtual address location
+@@ -160,6 +161,7 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+ 	WARN_ON(!virt_addr_valid(cpu_addr));
+ 	return virt_to_phys(cpu_addr);
+ }
++EXPORT_SYMBOL(rproc_va_to_pa);
+ 
+ /**
+  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
+@@ -423,6 +425,20 @@ static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
+ }
+ 
+ /**
++ * rproc_rvdev_release() - release the existence of a rvdev
++ *
++ * @dev: the subdevice's dev
++ */
++static void rproc_rvdev_release(struct device *dev)
++{
++	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
++
++	of_reserved_mem_device_release(dev);
++
++	kfree(rvdev);
++}
++
++/**
+  * rproc_handle_vdev() - handle a vdev fw resource
+  * @rproc: the remote processor
+  * @rsc: the vring resource descriptor
+@@ -455,6 +471,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 	struct device *dev = &rproc->dev;
+ 	struct rproc_vdev *rvdev;
+ 	int i, ret;
++	char name[16];
+ 
+ 	/* make sure resource isn't truncated */
+ 	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
+@@ -488,6 +505,18 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 	rvdev->rproc = rproc;
+ 	rvdev->index = rproc->nb_vdev++;
+ 
++	/* Initialise vdev subdevice */
++	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
++	rvdev->dev.parent = rproc->dev.parent;
++	rvdev->dev.release = rproc_rvdev_release;
++	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
++	dev_set_drvdata(&rvdev->dev, rvdev);
++	dma_set_coherent_mask(&rvdev->dev, DMA_BIT_MASK(32));
++
++	ret = device_register(&rvdev->dev);
++	if (ret)
++		goto free_rvdev;
++
+ 	/* parse the vrings */
+ 	for (i = 0; i < rsc->num_of_vrings; i++) {
+ 		ret = rproc_parse_vring(rvdev, rsc, i);
+@@ -518,7 +547,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 	for (i--; i >= 0; i--)
+ 		rproc_free_vring(&rvdev->vring[i]);
+ free_rvdev:
+-	kfree(rvdev);
++	device_unregister(&rvdev->dev);
+ 	return ret;
+ }
+ 
+@@ -536,7 +565,7 @@ void rproc_vdev_release(struct kref *ref)
+ 
+ 	rproc_remove_subdev(rproc, &rvdev->subdev);
+ 	list_del(&rvdev->node);
+-	kfree(rvdev);
++	device_unregister(&rvdev->dev);
+ }
+ 
+ /**
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index f6cad24..bfeacfd 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -52,6 +52,7 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
++phys_addr_t rproc_va_to_pa(void *cpu_addr);
+ int rproc_trigger_recovery(struct rproc *rproc);
+ 
+ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index de21f62..9ee63c0 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -17,7 +17,9 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/dma-mapping.h>
+ #include <linux/export.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/remoteproc.h>
+ #include <linux/virtio.h>
+ #include <linux/virtio_config.h>
+@@ -315,10 +317,48 @@ static void rproc_virtio_dev_release(struct device *dev)
+ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+ {
+ 	struct rproc *rproc = rvdev->rproc;
+-	struct device *dev = &rproc->dev;
++	struct device *dev = &rvdev->dev;
+ 	struct virtio_device *vdev = &rvdev->vdev;
++	struct rproc_mem_entry *mem;
+ 	int ret;
+ 
++	/* Try to find dedicated vdev buffer carveout */
++	mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
++	if (mem) {
++		phys_addr_t pa;
++
++		if (mem->of_resm_idx != -1) {
++			struct device_node *np = rproc->dev.parent->of_node;
++
++			/* Associate reserved memory to vdev device */
++			ret = of_reserved_mem_device_init_by_idx(dev, np,
++								 mem->of_resm_idx);
++			if (ret) {
++				dev_err(dev, "Can't associate reserved memory\n");
++				goto out;
++			}
++		} else {
++			if (mem->va) {
++				dev_warn(dev, "vdev %d buffer already mapped\n",
++					 rvdev->index);
++				pa = rproc_va_to_pa(mem->va);
++			} else {
++				/* Use dma address as carveout no memmapped yet */
++				pa = (phys_addr_t)mem->dma;
++			}
++
++			/* Associate vdev buffer memory pool to vdev subdev */
++			ret = dmam_declare_coherent_memory(dev, pa,
++							   mem->da,
++							   mem->len,
++							   DMA_MEMORY_EXCLUSIVE);
++			if (ret < 0) {
++				dev_err(dev, "Failed to associate buffer\n");
++				goto out;
++			}
++		}
++	}
++
+ 	vdev->id.device	= id,
+ 	vdev->config = &rproc_virtio_config_ops,
+ 	vdev->dev.parent = dev;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 6b3a234..2921dd2 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -547,6 +547,7 @@ struct rproc_vdev {
+ 	struct kref refcount;
+ 
+ 	struct rproc_subdev subdev;
++	struct device dev;
+ 
+ 	unsigned int id;
+ 	struct list_head node;
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.9.1
