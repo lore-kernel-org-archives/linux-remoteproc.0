@@ -1,40 +1,60 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 4/9] rpmsg: Guard against null endpoint ops in destroy
-Date: Fri, 27 Jul 2018 17:47:24 +0530
-Message-Id: <1532693849-7037-5-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 02/17] remoteproc: add rproc_va_to_pa function
+Date: Fri, 27 Jul 2018 15:14:37 +0200
+Message-ID: <1532697292-14272-3-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+This new function translates CPU virtual address in
+CPU physical one according to virtual address location.
 
-In RPMSG GLINK the chrdev device will allocate an ept as part of the
-rpdev creation. This device will not register endpoint ops even though
-it has an allocated ept. Protect against the case where the device is
-being destroyed.
-
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/rpmsg_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index b714a54..0860328 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -80,7 +80,7 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
-  */
- void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
- {
--	if (ept)
-+	if (ept && ept->ops)
- 		ept->ops->destroy_ept(ept);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 437fabf..8e5fe1e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -140,6 +140,22 @@ static void rproc_disable_iommu(struct rproc *rproc)
+ 	iommu_domain_free(domain);
  }
- EXPORT_SYMBOL(rpmsg_destroy_ept);
+ 
++static phys_addr_t rproc_va_to_pa(void *cpu_addr)
++{
++	/*
++	 * Return physical address according to virtual address location
++	 * - in vmalloc: if region ioremapped or defined as dma_alloc_coherent
++	 * - in kernel: if region allocated in generic dma memory pool
++	 */
++	if (is_vmalloc_addr(cpu_addr)) {
++		return page_to_phys(vmalloc_to_page(cpu_addr)) +
++				    offset_in_page(cpu_addr);
++	}
++
++	WARN_ON(!virt_addr_valid(cpu_addr));
++	return virt_to_phys(cpu_addr);
++}
++
+ /**
+  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
+  * @rproc: handle of a remote processor
+@@ -711,7 +727,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	 * In this case, the device address and the physical address
+ 	 * are the same.
+ 	 */
+-	rsc->pa = dma;
++	rsc->pa = (u32)rproc_va_to_pa(va);
+ 
+ 	carveout->va = va;
+ 	carveout->len = rsc->len;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
