@@ -1,89 +1,307 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 14/17] remoteproc: keystone: declare reserved memory region for vdev device
-Date: Fri, 27 Jul 2018 15:14:49 +0200
-Message-ID: <1532697292-14272-15-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 3/6] remoteproc: qcom: q6v5-pil: Refactor mba load/unload sequence
+Date: Fri, 27 Jul 2018 20:50:00 +0530
+Message-Id: <20180727152003.11663-4-sibis@codeaurora.org>
+In-Reply-To: <20180727152003.11663-1-sibis@codeaurora.org>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch introduces keystone_rproc_parse_fw() to declare a
-carveout region based on reserved memory for vdev buffer
-allocation, if a memory region has been declared on rproc DT node.
+Refactor re-useable parts of mba load/unload sequence into mba_load and
+mba_reclaim respectively and introduce mba_load flag. This is done in
+order to prevent code duplication for modem coredump which requires the
+mba to be loaded.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/keystone_remoteproc.c | 53 +++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 4 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c | 243 +++++++++++++++++------------
+ 1 file changed, 144 insertions(+), 99 deletions(-)
 
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index aaac311..ef542f2 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -293,11 +293,56 @@ static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return (__force void *)va;
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index d7a4b9eca5d2..eacf9f0bf49e 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -165,6 +165,7 @@ struct q6v5 {
+ 	int proxy_reg_count;
+ 
+ 	bool running;
++	bool mba_loaded;
+ 
+ 	phys_addr_t mba_phys;
+ 	void *mba_region;
+@@ -669,6 +670,145 @@ static bool q6v5_phdr_valid(const struct elf32_phdr *phdr)
+ 	return true;
  }
  
-+/*
-+ * Custom function to register platform specific memory region(s)
-+ * before loading firmware resource table thanks to generic
-+ * rproc_elf_load_rsc_table() function.
-+ */
-+static int keystone_rproc_parse_fw(struct rproc *rproc,
-+				   const struct firmware *fw)
++static int q6v5_mba_load(struct q6v5 *qproc)
 +{
-+	struct device *dev = rproc->dev.parent;
-+	struct rproc_mem_entry *mem;
-+	struct device_node *node;
-+	struct resource res;
-+	int err;
++	int ret;
++	int xfermemop_ret;
 +
-+	node = of_parse_phandle(dev->of_node, "memory-region", 0);
-+	if (!node) {
-+		dev_warn(dev, "No memory-region specified\n");
-+		goto out;
++	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
++				    qproc->proxy_reg_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable proxy supplies\n");
++		return ret;
 +	}
 +
-+	err = of_address_to_resource(node, 0, &res);
-+	if (err) {
-+		dev_err(dev, "Bad memory-region definition\n");
-+		return err;
++	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
++			      qproc->proxy_clk_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable proxy clocks\n");
++		goto disable_proxy_reg;
 +	}
 +
-+	/* Register memory region for vdev buffer allocation */
-+	mem = rproc_of_resm_mem_entry_init(dev, 0, resource_size(&res),
-+					   res.start, "vdev0buffer");
++	ret = q6v5_regulator_enable(qproc, qproc->active_regs,
++				    qproc->active_reg_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable supplies\n");
++		goto disable_proxy_clk;
++	}
 +
-+	if (!mem)
-+		return -ENOMEM;
++	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
++			      qproc->reset_clk_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable reset clocks\n");
++		goto disable_vdd;
++	}
 +
-+	rproc_add_carveout(rproc, mem);
++	ret = q6v5_reset_deassert(qproc);
++	if (ret) {
++		dev_err(qproc->dev, "failed to deassert mss restart\n");
++		goto disable_reset_clks;
++	}
 +
-+out:
-+	return rproc_elf_load_rsc_table(rproc, fw);
++	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
++			      qproc->active_clk_count);
++	if (ret) {
++		dev_err(qproc->dev, "failed to enable clocks\n");
++		goto assert_reset;
++	}
++
++	/* Assign MBA image access in DDR to q6 */
++	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
++				      qproc->mba_phys, qproc->mba_size);
++	if (ret) {
++		dev_err(qproc->dev,
++			"assigning Q6 access to mba memory failed: %d\n", ret);
++		goto disable_active_clks;
++	}
++
++	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
++
++	ret = q6v5proc_reset(qproc);
++	if (ret)
++		goto reclaim_mba;
++
++	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
++	if (ret == -ETIMEDOUT) {
++		dev_err(qproc->dev, "MBA boot timed out\n");
++		goto halt_axi_ports;
++	} else if (ret != RMB_MBA_XPU_UNLOCKED &&
++		   ret != RMB_MBA_XPU_UNLOCKED_SCRIBBLED) {
++		dev_err(qproc->dev, "MBA returned unexpected status %d\n", ret);
++		ret = -EINVAL;
++		goto halt_axi_ports;
++	}
++
++	qproc->mba_loaded = true;
++	return 0;
++
++halt_axi_ports:
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
++
++reclaim_mba:
++	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
++						qproc->mba_phys,
++						qproc->mba_size);
++	if (xfermemop_ret) {
++		dev_err(qproc->dev,
++			"Failed to reclaim mba buffer, system may become unstable\n");
++	}
++
++disable_active_clks:
++	q6v5_clk_disable(qproc->dev, qproc->active_clks,
++			 qproc->active_clk_count);
++assert_reset:
++	q6v5_reset_assert(qproc);
++disable_reset_clks:
++	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
++			 qproc->reset_clk_count);
++disable_vdd:
++	q6v5_regulator_disable(qproc, qproc->active_regs,
++			       qproc->active_reg_count);
++disable_proxy_clk:
++	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
++			 qproc->proxy_clk_count);
++disable_proxy_reg:
++	q6v5_regulator_disable(qproc, qproc->proxy_regs,
++			       qproc->proxy_reg_count);
++
++	return ret;
 +}
 +
- static const struct rproc_ops keystone_rproc_ops = {
--	.start		= keystone_rproc_start,
--	.stop		= keystone_rproc_stop,
--	.kick		= keystone_rproc_kick,
--	.da_to_va	= keystone_rproc_da_to_va,
-+	.start			= keystone_rproc_start,
-+	.stop			= keystone_rproc_stop,
-+	.kick			= keystone_rproc_kick,
-+	.da_to_va		= keystone_rproc_da_to_va,
-+	.parse_fw		= keystone_rproc_parse_fw,
-+	.load			= rproc_elf_load_segments,
-+	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
-+	.sanity_check		= rproc_elf_sanity_check,
-+	.get_boot_addr		= rproc_elf_get_boot_addr,
++static void q6v5_mba_reclaim(struct q6v5 *qproc)
++{
++	int xfermemop_ret;
 +
- };
++	qproc->mba_loaded = false;
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
++	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
++	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
++						qproc->mba_phys,
++						qproc->mba_size);
++	if (xfermemop_ret) {
++		dev_err(qproc->dev,
++			"Failed to reclaim mba buffer, system may become unstable\n");
++	}
++
++	q6v5_clk_disable(qproc->dev, qproc->active_clks,
++			 qproc->active_clk_count);
++	q6v5_reset_assert(qproc);
++	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
++			 qproc->reset_clk_count);
++	q6v5_regulator_disable(qproc, qproc->active_regs,
++			       qproc->active_reg_count);
++	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
++			 qproc->proxy_clk_count);
++	q6v5_regulator_disable(qproc, qproc->proxy_regs,
++			       qproc->proxy_reg_count);
++}
++
+ static int q6v5_mpss_load(struct q6v5 *qproc)
+ {
+ 	const struct elf32_phdr *phdrs;
+@@ -792,72 +932,9 @@ static int q6v5_start(struct rproc *rproc)
  
- static int keystone_rproc_of_get_memories(struct platform_device *pdev,
+ 	qcom_q6v5_prepare(&qproc->q6v5);
+ 
+-	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
+-				    qproc->proxy_reg_count);
+-	if (ret) {
+-		dev_err(qproc->dev, "failed to enable proxy supplies\n");
+-		goto disable_irqs;
+-	}
+-
+-	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
+-			      qproc->proxy_clk_count);
+-	if (ret) {
+-		dev_err(qproc->dev, "failed to enable proxy clocks\n");
+-		goto disable_proxy_reg;
+-	}
+-
+-	ret = q6v5_regulator_enable(qproc, qproc->active_regs,
+-				    qproc->active_reg_count);
+-	if (ret) {
+-		dev_err(qproc->dev, "failed to enable supplies\n");
+-		goto disable_proxy_clk;
+-	}
+-
+-	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
+-			      qproc->reset_clk_count);
+-	if (ret) {
+-		dev_err(qproc->dev, "failed to enable reset clocks\n");
+-		goto disable_vdd;
+-	}
+-
+-	ret = q6v5_reset_deassert(qproc);
+-	if (ret) {
+-		dev_err(qproc->dev, "failed to deassert mss restart\n");
+-		goto disable_reset_clks;
+-	}
+-
+-	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
+-			      qproc->active_clk_count);
+-	if (ret) {
+-		dev_err(qproc->dev, "failed to enable clocks\n");
+-		goto assert_reset;
+-	}
+-
+-	/* Assign MBA image access in DDR to q6 */
+-	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
+-				      qproc->mba_phys, qproc->mba_size);
+-	if (ret) {
+-		dev_err(qproc->dev,
+-			"assigning Q6 access to mba memory failed: %d\n", ret);
+-		goto disable_active_clks;
+-	}
+-
+-	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
+-
+-	ret = q6v5proc_reset(qproc);
++	ret = q6v5_mba_load(qproc);
+ 	if (ret)
+-		goto reclaim_mba;
+-
+-	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
+-	if (ret == -ETIMEDOUT) {
+-		dev_err(qproc->dev, "MBA boot timed out\n");
+-		goto halt_axi_ports;
+-	} else if (ret != RMB_MBA_XPU_UNLOCKED &&
+-		   ret != RMB_MBA_XPU_UNLOCKED_SCRIBBLED) {
+-		dev_err(qproc->dev, "MBA returned unexpected status %d\n", ret);
+-		ret = -EINVAL;
+-		goto halt_axi_ports;
+-	}
++		goto disable_irqs;
+ 
+ 	dev_info(qproc->dev, "MBA booted, loading mpss\n");
+ 
+@@ -886,40 +963,7 @@ static int q6v5_start(struct rproc *rproc)
+ 						false, qproc->mpss_phys,
+ 						qproc->mpss_size);
+ 	WARN_ON(xfermemop_ret);
+-
+-halt_axi_ports:
+-	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
+-	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
+-	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
+-
+-reclaim_mba:
+-	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
+-						qproc->mba_phys,
+-						qproc->mba_size);
+-	if (xfermemop_ret) {
+-		dev_err(qproc->dev,
+-			"Failed to reclaim mba buffer, system may become unstable\n");
+-	}
+-
+-disable_active_clks:
+-	q6v5_clk_disable(qproc->dev, qproc->active_clks,
+-			 qproc->active_clk_count);
+-
+-assert_reset:
+-	q6v5_reset_assert(qproc);
+-disable_reset_clks:
+-	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
+-			 qproc->reset_clk_count);
+-disable_vdd:
+-	q6v5_regulator_disable(qproc, qproc->active_regs,
+-			       qproc->active_reg_count);
+-disable_proxy_clk:
+-	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+-			 qproc->proxy_clk_count);
+-disable_proxy_reg:
+-	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+-			       qproc->proxy_reg_count);
+-
++	q6v5_mba_reclaim(qproc);
+ disable_irqs:
+ 	qcom_q6v5_unprepare(&qproc->q6v5);
+ 
+@@ -933,6 +977,7 @@ static int q6v5_stop(struct rproc *rproc)
+ 	u32 val;
+ 
+ 	qproc->running = false;
++	qproc->mba_loaded = false;
+ 
+ 	ret = qcom_q6v5_request_stop(&qproc->q6v5);
+ 	if (ret == -ETIMEDOUT)
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
