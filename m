@@ -1,106 +1,88 @@
 Return-Path: <sibis@codeaurora.org>
 From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 1/4] dt-bindings: reset: Add PDC reset binding for SDM845 SoCs
-Date: Fri, 27 Jul 2018 20:58:08 +0530
-Message-Id: <20180727152811.15258-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 2/6] remoteproc: Add mechanism for custom dump function assignment
+Date: Fri, 27 Jul 2018 20:49:59 +0530
+Message-Id: <20180727152003.11663-3-sibis@codeaurora.org>
+In-Reply-To: <20180727152003.11663-1-sibis@codeaurora.org>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add SDM845 PDC (Power Domain Controller) reset controller binding
+This patch adds a mechanism for assigning each rproc segment with
+a custom dump function. It is to be called for each rproc segment
+during coredump if assigned.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- .../bindings/reset/qcom,pdc-reset.txt         | 52 +++++++++++++++++++
- include/dt-bindings/reset/qcom,sdm845-pdc.h   | 20 +++++++
- 2 files changed, 72 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
- create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
+ drivers/remoteproc/remoteproc_core.c | 37 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  5 ++++
+ 2 files changed, 42 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-new file mode 100644
-index 000000000000..85e159962e08
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-@@ -0,0 +1,52 @@
-+PDC Reset Controller
-+======================================
-+
-+This binding describes a reset-controller found on PDC-Global(Power Domain
-+Controller) block for Qualcomm Technologies Inc SDM845 SoCs.
-+
-+Required properties:
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be:
-+		    "qcom,sdm845-pdc-global"
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: must specify the base address and size of the register
-+	            space.
-+
-+- #reset-cells:
-+	Usage: required
-+	Value type: <uint>
-+	Definition: must be 1; cell entry represents the reset index.
-+
-+Example:
-+
-+pdc_reset: reset-controller@b2e0000 {
-+	compatible = "qcom,sdm845-pdc-global";
-+	reg = <0xb2e0000 0x20000>;
-+	#reset-cells = <1>;
-+};
-+
-+PDC reset clients
-+======================================
-+
-+Device nodes that need access to reset lines should
-+specify them as a reset phandle in their corresponding node as
-+specified in reset.txt.
-+
-+For list of all valid reset indicies see
-+<dt-bindings/reset/qcom,sdm845-pdc.h>
-+
-+Example:
-+
-+modem-pil@4080000 {
-+	...
-+
-+	resets = <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+	reset-names = "pdc_restart";
-+
-+	...
-+};
-diff --git a/include/dt-bindings/reset/qcom,sdm845-pdc.h b/include/dt-bindings/reset/qcom,sdm845-pdc.h
-new file mode 100644
-index 000000000000..53c37f9c319a
---- /dev/null
-+++ b/include/dt-bindings/reset/qcom,sdm845-pdc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ec56cd822b26..3d70b7dd1f18 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1120,6 +1120,43 @@ int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size)
+ }
+ EXPORT_SYMBOL(rproc_coredump_add_segment);
+ 
++/**
++ * rproc_coredump_add_custom_segment() - add segment of device memory to
++ *					 coredump and extend it with custom
++ *					 dump function
++ * @rproc:	handle of a remote processor
++ * @da:		device address
++ * @size:	size of segment
++ * @dumpfn:	custom dump function called for each segment during coredump
++ *
++ * Add device memory to the list of segments to be included in a coredump for
++ * the remoteproc and associate the segment with the given custom dump
++ * function.
++ *
++ * Return: 0 on success, negative errno on error.
 + */
++int rproc_coredump_add_custom_segment(struct rproc *rproc,
++				      dma_addr_t da, size_t size,
++				      void (*dumpfn)(struct rproc *rproc,
++						     void *ptr, size_t len,
++						     void *priv))
++{
++	struct rproc_dump_segment *segment;
 +
-+#ifndef _DT_BINDINGS_RESET_PDC_SDM_845_H
-+#define _DT_BINDINGS_RESET_PDC_SDM_845_H
++	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
++	if (!segment)
++		return -ENOMEM;
 +
-+#define PDC_APPS_SYNC_RESET	0
-+#define PDC_SP_SYNC_RESET	1
-+#define PDC_AUDIO_SYNC_RESET	2
-+#define PDC_SENSORS_SYNC_RESET	3
-+#define PDC_AOP_SYNC_RESET	4
-+#define PDC_DEBUG_SYNC_RESET	5
-+#define PDC_GPU_SYNC_RESET	6
-+#define PDC_DISPLAY_SYNC_RESET	7
-+#define PDC_COMPUTE_SYNC_RESET	8
-+#define PDC_MODEM_SYNC_RESET	9
++	segment->da = da;
++	segment->size = size;
++	segment->dump = dumpfn;
 +
-+#endif
++	list_add_tail(&segment->node, &rproc->dump_segments);
++
++	return 0;
++}
++EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
++
+ /**
+  * rproc_coredump() - perform coredump
+  * @rproc:	rproc handle
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 0fbb01a9955c..5a1ad008ec28 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -560,6 +560,11 @@ int rproc_boot(struct rproc *rproc);
+ void rproc_shutdown(struct rproc *rproc);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
++int rproc_coredump_add_custom_segment(struct rproc *rproc,
++				      dma_addr_t da, size_t size,
++				      void (*dumpfn)(struct rproc *rproc,
++						     void *ptr, size_t len,
++						     void *priv));
+ 
+ static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+ {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
