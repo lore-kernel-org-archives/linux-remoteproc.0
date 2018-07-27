@@ -1,83 +1,107 @@
-Return-Path: <brgl@bgdev.pl>
-Return-Path: <brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v7 2/4] clk: davinci: kill davinci_clk_reset_assert/deassert()
-Date: Thu, 21 Jun 2018 09:37:04 +0200
-Message-Id: <20180621073706.22812-3-brgl@bgdev.pl>
-In-Reply-To: <20180621073706.22812-1-brgl@bgdev.pl>
-References: <20180621073706.22812-1-brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 03/17] remoteproc: add release ops in rproc_mem_entry struct
+Date: Fri, 27 Jul 2018 15:14:38 +0200
+Message-ID: <1532697292-14272-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Memory entry could be allocated in different ways (ioremap,
+dma_alloc_coherent, internal RAM allocator...).
+This patch introduces a release ops in rproc_mem_entry structure
+to associate dedicated release mechanism to each memory entry descriptor
+in order to keep remoteproc core generic.
 
-This code is no longer used. Remove it.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
- drivers/clk/davinci/psc.c                  | 18 ------------------
- 2 files changed, 39 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+ drivers/remoteproc/remoteproc_core.c | 23 +++++++++++++++++++++--
+ include/linux/remoteproc.h           |  5 ++++-
+ 2 files changed, 25 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
-deleted file mode 100644
-index 42ed4f2f5ce4..000000000000
---- a/arch/arm/mach-davinci/include/mach/clock.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * arch/arm/mach-davinci/include/mach/clock.h
-- *
-- * Clock control driver for DaVinci - header file
-- *
-- * Authors: Vladimir Barinov <source@mvista.com>
-- *
-- * 2007 (c) MontaVista Software, Inc. This file is licensed under
-- * the terms of the GNU General Public License version 2. This program
-- * is licensed "as is" without any warranty of any kind, whether express
-- * or implied.
-- */
--#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
--#define __ASM_ARCH_DAVINCI_CLOCK_H
--
--struct clk;
--
--int davinci_clk_reset_assert(struct clk *c);
--int davinci_clk_reset_deassert(struct clk *c);
--
--#endif
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index fffbed5e263b..5b69e24a224f 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -303,24 +303,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
- 	return 0;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 8e5fe1e..24fe11f 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -600,6 +600,24 @@ static int rproc_handle_devmem(struct rproc *rproc, struct fw_rsc_devmem *rsc,
  }
  
--/*
-- * REVISIT: These exported functions can be removed after a non-DT lookup is
-- * added to the reset controller framework and the davinci-rproc driver is
-- * updated to use the generic reset controller framework.
-- */
--
--int davinci_clk_reset_assert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, true);
--}
--EXPORT_SYMBOL(davinci_clk_reset_assert);
--
--int davinci_clk_reset_deassert(struct clk *clk)
--{
--	return davinci_lpsc_clk_reset(clk, false);
--}
--EXPORT_SYMBOL(davinci_clk_reset_deassert);
--
- static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
- 				    unsigned long id)
- {
+ /**
++ * rproc_release_carveout() - release acquired carveout
++ * @rproc: rproc handle
++ * @mem: the memory entry to release
++ *
++ * This function releases specified memory entry @mem allocated via
++ * dma_alloc_coherent() function by @rproc.
++ */
++static int rproc_release_carveout(struct rproc *rproc,
++				  struct rproc_mem_entry *mem)
++{
++	struct device *dev = &rproc->dev;
++
++	/* clean up carveout allocations */
++	dma_free_coherent(dev->parent, mem->len, mem->va, mem->dma);
++	return 0;
++}
++
++/**
+  * rproc_handle_carveout() - handle phys contig memory allocation requests
+  * @rproc: rproc handle
+  * @rsc: the resource entry
+@@ -733,6 +751,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+ 	carveout->len = rsc->len;
+ 	carveout->dma = dma;
+ 	carveout->da = rsc->da;
++	carveout->release = rproc_release_carveout;
+ 
+ 	list_add_tail(&carveout->node, &rproc->carveouts);
+ 
+@@ -920,8 +939,8 @@ static void rproc_resource_cleanup(struct rproc *rproc)
+ 
+ 	/* clean up carveout allocations */
+ 	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+-		dma_free_coherent(dev->parent, entry->len, entry->va,
+-				  entry->dma);
++		if (entry->release)
++			entry->release(rproc, entry);
+ 		list_del(&entry->node);
+ 		kfree(entry);
+ 	}
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index e3c5d85..bef2e83 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -305,12 +305,15 @@ struct fw_rsc_vdev {
+ 	struct fw_rsc_vdev_vring vring[0];
+ } __packed;
+ 
++struct rproc;
++
+ /**
+  * struct rproc_mem_entry - memory entry descriptor
+  * @va:	virtual address
+  * @dma: dma address
+  * @len: length, in bytes
+  * @da: device address
++ * @release: release associated memory
+  * @priv: associated data
+  * @node: list node
+  */
+@@ -321,9 +324,9 @@ struct rproc_mem_entry {
+ 	u32 da;
+ 	void *priv;
+ 	struct list_head node;
++	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+ };
+ 
+-struct rproc;
+ struct firmware;
+ 
+ /**
 -- 
-2.17.1
+1.9.1
