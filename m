@@ -1,88 +1,78 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 2/6] remoteproc: Add mechanism for custom dump function assignment
-Date: Fri, 27 Jul 2018 20:49:59 +0530
-Message-Id: <20180727152003.11663-3-sibis@codeaurora.org>
-In-Reply-To: <20180727152003.11663-1-sibis@codeaurora.org>
-References: <20180727152003.11663-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v4 07/17] remoteproc: introduce rproc_find_carveout_by_name function
+Date: Fri, 27 Jul 2018 15:14:42 +0200
+Message-ID: <1532697292-14272-8-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds a mechanism for assigning each rproc segment with
-a custom dump function. It is to be called for each rproc segment
-during coredump if assigned.
+This patch provides a new function to find a carveout according
+to a name.
+If match found, this function returns a pointer on the corresponding
+carveout (rproc_mem_entry structure).
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 37 ++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  5 ++++
- 2 files changed, 42 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 42 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ec56cd822b26..3d70b7dd1f18 100644
+index fe6c4e4..77b39ba 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1120,6 +1120,43 @@ int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size)
+@@ -217,6 +217,48 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
  }
- EXPORT_SYMBOL(rproc_coredump_add_segment);
+ EXPORT_SYMBOL(rproc_da_to_va);
  
 +/**
-+ * rproc_coredump_add_custom_segment() - add segment of device memory to
-+ *					 coredump and extend it with custom
-+ *					 dump function
-+ * @rproc:	handle of a remote processor
-+ * @da:		device address
-+ * @size:	size of segment
-+ * @dumpfn:	custom dump function called for each segment during coredump
++ * rproc_find_carveout_by_name() - lookup the carveout region by a name
++ * @rproc: handle of a remote processor
++ * @name,..: carveout name to find (standard printf format)
 + *
-+ * Add device memory to the list of segments to be included in a coredump for
-+ * the remoteproc and associate the segment with the given custom dump
-+ * function.
++ * Platform driver has the capability to register some pre-allacoted carveout
++ * (physically contiguous memory regions) before rproc firmware loading and
++ * associated resource table analysis. These regions may be dedicated memory
++ * regions internal to the coprocessor or specified DDR region with specific
++ * attributes
 + *
-+ * Return: 0 on success, negative errno on error.
++ * This function is a helper function with which we can go over the
++ * allocated carveouts and return associated region characteristics like
++ * coprocessor address, length or processor virtual address.
++ *
++ * Return: a valid pointer on carveout entry on success or NULL on failure.
 + */
-+int rproc_coredump_add_custom_segment(struct rproc *rproc,
-+				      dma_addr_t da, size_t size,
-+				      void (*dumpfn)(struct rproc *rproc,
-+						     void *ptr, size_t len,
-+						     void *priv))
++struct rproc_mem_entry *
++rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
 +{
-+	struct rproc_dump_segment *segment;
++	va_list args;
++	char _name[32];
++	struct rproc_mem_entry *carveout, *mem = NULL;
 +
-+	segment = kzalloc(sizeof(*segment), GFP_KERNEL);
-+	if (!segment)
-+		return -ENOMEM;
++	if (!name)
++		return NULL;
 +
-+	segment->da = da;
-+	segment->size = size;
-+	segment->dump = dumpfn;
++	va_start(args, name);
++	vsnprintf(_name, sizeof(_name), name, args);
++	va_end(args);
 +
-+	list_add_tail(&segment->node, &rproc->dump_segments);
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		/* Compare carveout and requested names */
++		if (!strcmp(carveout->name, _name)) {
++			mem = carveout;
++			break;
++		}
++	}
 +
-+	return 0;
++	return mem;
 +}
-+EXPORT_SYMBOL(rproc_coredump_add_custom_segment);
 +
- /**
-  * rproc_coredump() - perform coredump
-  * @rproc:	rproc handle
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 0fbb01a9955c..5a1ad008ec28 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -560,6 +560,11 @@ int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
- int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
-+int rproc_coredump_add_custom_segment(struct rproc *rproc,
-+				      dma_addr_t da, size_t size,
-+				      void (*dumpfn)(struct rproc *rproc,
-+						     void *ptr, size_t len,
-+						     void *priv));
- 
- static inline struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
  {
+ 	struct rproc *rproc = rvdev->rproc;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
