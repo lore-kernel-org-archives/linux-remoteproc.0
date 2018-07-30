@@ -1,107 +1,32 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 00/17] remoteproc: add fixed memory region support
-Date: Fri, 27 Jul 2018 15:14:35 +0200
-Message-ID: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 30 Jul 2018 16:30:37 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V4 1/9] dt-bindings: soc: qcom: Add label for GLINK
+ bindings
+Message-ID: <20180730223037.GA17877@rob-hp-laptop>
+References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
+ <1532693849-7037-2-git-send-email-aneela@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1532693849-7037-2-git-send-email-aneela@codeaurora.org>
+To: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, arnaud.pouliquen@st.com, andy.gross@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, David Brown <david.brown@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The aim of the series is to implement carveout memory management as
-discussed during OpenAMP weekly call and defined in proposed document [1]
+On Fri, Jul 27, 2018 at 05:47:21PM +0530, Arun Kumar Neelakantam wrote:
+> From: Chris Lew <clew@codeaurora.org>
+> 
+> There are GLINK clients who open the same channel on multiple GLINK
+> links. These clients need a way to distinguish which remoteproc they
+> are communicating to. Add a label property to identify the edge this
+> node represents.
+> 
+> Signed-off-by: Chris Lew <clew@codeaurora.org>
+> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-This first series focus only on adding support of the different types of
-carveout memories (dynamic, fixed, platform driver depend...).
-64bit resource table will be addressed in a next series.
-Cent
-[1]: http://openamp.github.io/docs/mca/coprocessor-memory-definition-v6.pdf
-
----
-Changes since V3:
-- Rebase on top of Bjorn remoteproc next git (3d065621c921)
-- Apply on top of "remoteproc: replace "%p" with "%pK"" [2]
-- Lot of changes to centralize carveout allocation before rproc_start()
-- Remove prepare/unprepare ops and rely on parse_fw instead of
-- Add possibility to assign reserved memory region to vdev device
-- Adapt TI da8xx and keystone remoteproc driver
-
-As V3 series, V4 series takes some assumptions for carveout names
-associated to vdev:
-- For vring: "vdev%xvring%x" with vdev index from resource table and vring index
-  in vdev.
-- For vdev buffer: "vdev%xbuffer" with vdev index from resource table
-
-[2] https://patchwork.kernel.org/patch/10511599
-
-Changes since V2:
-Reshuffle the series to: 
-- Take into account Bjorn's comments.
-- Add patch to check consistency between carveout resource request and IOMMU
-  support.
-- Introduce platform specific prepare and unprepare ops to enable HW like
-  clock, bus, regulator, memory region... before loading co-processor firmware.
-- Rely on memory carveout management for all remoteproc memory allocations.
-- Lookup pre-registered carveout by name first.
-- Create a subdevice for each vdev declared in firmware resource table that
-  will be used by virtio based driver to retrieve specific memory pool.
-
-This series takes some assumptions for carveout names associated to vdev:
-- For vring: "vdev%xvring%x" with vdev index from resource table and vring index
-  in vdev.
-- For vdev buffer: "vdev%xbuffer" with vdev index from resource table
-
-This will be changed in the future, adding names field in vdev resource in
-next resource table version.
-
-
-Changes since V1:
-- Minor corrections on first 7 patches (error management)
-- Add "memory device" support on the top of first 7 patches.
-  Goal is to answer use case reported during OpenAMP weekly discussion:
-  - "Be able to specify memory region for vring and buffer allocation, even
-    if no specific request defined in firmware resource table."
-  Patches offer the capability to create a "memory device" associated to a
-  carveout with a dedicated DMA memory pool. Different resource handlers are
-  modified to look-up for specific carveout by name. If match found and associated
-  "memory device" present, device is used instead of rproc platform device for
-  allocation.
-
-
-Loic Pallardy (17):
-  remoteproc: configure IOMMU only if device address requested
-  remoteproc: add rproc_va_to_pa function
-  remoteproc: add release ops in rproc_mem_entry struct
-  remoteproc: add name in rproc_mem_entry struct
-  remoteproc: add helper function to allocate and init rproc_mem_entry
-    struct
-  remoteproc: introduce rproc_add_carveout function
-  remoteproc: introduce rproc_find_carveout_by_name function
-  remoteproc: add alloc ops in rproc_mem_entry struct
-  remoteproc: add helper function to allocate rproc_mem_entry from
-    reserved memory
-  remoteproc: add helper function to check carveout device address
-  remoteproc: modify rproc_handle_carveout to support pre-registered
-    region
-  remoteproc: modify vring allocation to rely on centralized carveout
-    allocator
-  remoteproc: create vdev subdevice with specific dma memory pool
-  remoteproc: keystone: declare reserved memory region for vdev device
-  remoteproc: da8xx: declare reserved memory region for vdev device
-  remoteproc: st: add reserved memory support
-  rpmsg: virtio: allocate buffer from parent
-
- drivers/remoteproc/da8xx_remoteproc.c    |  38 ++
- drivers/remoteproc/keystone_remoteproc.c |  53 ++-
- drivers/remoteproc/remoteproc_core.c     | 572 +++++++++++++++++++++++++------
- drivers/remoteproc/remoteproc_debugfs.c  |   1 +
- drivers/remoteproc/remoteproc_internal.h |   3 +
- drivers/remoteproc/remoteproc_virtio.c   |  56 ++-
- drivers/remoteproc/st_remoteproc.c       |  96 +++++-
- drivers/rpmsg/virtio_rpmsg_bus.c         |   6 +-
- include/linux/remoteproc.h               |  35 +-
- 9 files changed, 728 insertions(+), 132 deletions(-)
-
--- 
-1.9.1
+Reviewed-by: Rob Herring <robh@kernel.org>
