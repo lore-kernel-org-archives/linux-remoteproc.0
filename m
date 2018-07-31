@@ -1,53 +1,58 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH] remoteproc: Reset table_ptr in rproc_start() failure paths
-Date: Thu, 26 Jul 2018 20:15:35 -0500
-Message-ID: <20180727011535.21729-1-s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 30 Jul 2018 21:21:40 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: qcom: fix Q6V5_WCSS dependencies
+Message-ID: <20180731042140.GD5090@builder>
+References: <20180718111730.3531477-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718111730.3531477-1-arnd@arndb.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Sricharan R <sricharan@codeaurora.org>, Rohit kumar <rohitkr@codeaurora.org>, Sarangdhar Joshi <spjoshi@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Unwind the modified table_ptr and restore it to the local copy
-upon any subsequent failures in the rproc_start() function. This
-keeps the function to remain balanced on failures without the need
-to balance any modified variables elsewhere.
+On Wed 18 Jul 04:16 PDT 2018, Arnd Bergmann wrote:
 
-While at this, do some minor cleanup of the extra lines between
-the failure labels as well.
+> A new driver got added that depends on QCOM_SMD and fails to link
+> as built-in with CONFIG_QCOM_SMD=m:
+> 
+> drivers/remoteproc/qcom_common.o: In function `smd_subdev_stop':
+> qcom_common.c:(.text+0x674): undefined reference to `qcom_smd_unregister_edge'
+> drivers/remoteproc/qcom_common.o: In function `smd_subdev_start':
+> qcom_common.c:(.text+0x700): undefined reference to `qcom_smd_register_edge'
+> 
+> We've fixed the same thing several times before, so use the same
+> dependency here.
+> 
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/remoteproc_core.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+I have a change where I remove this inherited dependency, so I asked
+Sricharan to only depend on the ones he actually uses - but I forgot
+that I haven't pushed this.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index eadff6ce2f7f..afef2d491c5b 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -953,7 +953,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	if (ret) {
- 		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
- 			rproc->name, ret);
--		return ret;
-+		goto reset_table_ptr;
- 	}
- 
- 	/* power up the remote processor */
-@@ -979,10 +979,11 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 
- stop_rproc:
- 	rproc->ops->stop(rproc);
--
- unprepare_subdevices:
- 	rproc_unprepare_subdevices(rproc);
--
-+reset_table_ptr:
-+	if (loaded_table)
-+		rproc->table_ptr = rproc->cached_table;
- 	return ret;
- }
- 
--- 
-2.18.0
+Sorry about screwing this up again. Thanks for catching it!
+
+Regards,
+Bjorn
+
+> Fixes: 3a3d4163e0bf ("remoteproc: qcom: Introduce Hexagon V5 based WCSS driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/remoteproc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 0dde3753c3a5..052d4dd347f9 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -127,6 +127,7 @@ config QCOM_Q6V5_WCSS
+>  	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+>  	depends on OF && ARCH_QCOM
+>  	depends on QCOM_SMEM
+> +	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+>  	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>  	depends on QCOM_SYSMON || QCOM_SYSMON=n
+>  	select MFD_SYSCON
+> -- 
+> 2.9.0
+> 
