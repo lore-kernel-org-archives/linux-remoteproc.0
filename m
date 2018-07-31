@@ -1,70 +1,85 @@
-Return-Path: <baolin.wang@linaro.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH] remoteproc: Reset table_ptr in rproc_start() failure
+ paths
+References: <20180727011535.21729-1-s-anna@ti.com>
+ <20180731041559.GC5090@builder>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <aba8605f-86e0-c50b-680c-2d5602c25a03@ti.com>
+Date: Tue, 31 Jul 2018 09:49:19 -0500
 MIME-Version: 1.0
-In-Reply-To: <782fc498b4f4c6e8130d64face93023eb3dc9866.1530152980.git.baolin.wang@linaro.org>
-References: <782fc498b4f4c6e8130d64face93023eb3dc9866.1530152980.git.baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Mon, 30 Jul 2018 19:34:24 +0800
-Message-ID: <CAMz4kuKGaMh=M9=P4TkpF4w0onJZJcRaPd+twMyEpj56KNVJLA@mail.gmail.com>
-Subject: Re: [PATCH] hwspinlock: Fix incorrect return pointers
-Content-Type: text/plain; charset="UTF-8"
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, linux-remoteproc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Baolin Wang <baolin.wang@linaro.org>
+In-Reply-To: <20180731041559.GC5090@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+On 07/30/2018 11:15 PM, Bjorn Andersson wrote:
+> On Thu 26 Jul 18:15 PDT 2018, Suman Anna wrote:
+> 
+>> Unwind the modified table_ptr and restore it to the local copy
+>> upon any subsequent failures in the rproc_start() function. This
+>> keeps the function to remain balanced on failures without the need
+>> to balance any modified variables elsewhere.
+>>
+> 
+> Good catch.
+> 
+>> While at this, do some minor cleanup of the extra lines between
+>> the failure labels as well.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 7 ++++---
+>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index eadff6ce2f7f..afef2d491c5b 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -953,7 +953,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>  	if (ret) {
+>>  		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
+>>  			rproc->name, ret);
+>> -		return ret;
+>> +		goto reset_table_ptr;
+>>  	}
+>>  
+>>  	/* power up the remote processor */
+>> @@ -979,10 +979,11 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>  
+>>  stop_rproc:
+>>  	rproc->ops->stop(rproc);
+>> -
+>>  unprepare_subdevices:
+>>  	rproc_unprepare_subdevices(rproc);
+>> -
+>> +reset_table_ptr:
+>> +	if (loaded_table)
+> 
+> Regardless of us having a loaded_table it should have the same value as
+> cached_table when we return - which might be NULL if we don't have a
+> resource table.
+> 
+> So I applied this without the conditional, please object if I missed
+> something.
 
-On 28 June 2018 at 10:32, Baolin Wang <baolin.wang@linaro.org> wrote:
-> The commit 4f1acd758b08 ("hwspinlock: Add devm_xxx() APIs to request/free
-> hwlock") introduces one bug, that will return one error pointer if failed
-> to request one hwlock, but we expect NULL pointer on error for consumers.
-> This patch will fix this issue.
->
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Yeah, that's fine. I added the conditional only to keep it symmetric,
+it gets modified only if loaded_table was non-NULL in the first place,
+and is pointing to the cached_table otherwise.
 
-Could you pick up this patch which fixes the incorrect return value
-issue? Thanks.
+regards
+Suman
 
-> ---
->  drivers/hwspinlock/hwspinlock_core.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-> index e16d648..2bad40d 100644
-> --- a/drivers/hwspinlock/hwspinlock_core.c
-> +++ b/drivers/hwspinlock/hwspinlock_core.c
-> @@ -877,10 +877,10 @@ struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
->
->         ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
->         if (!ptr)
-> -               return ERR_PTR(-ENOMEM);
-> +               return NULL;
->
->         hwlock = hwspin_lock_request();
-> -       if (!IS_ERR(hwlock)) {
-> +       if (hwlock) {
->                 *ptr = hwlock;
->                 devres_add(dev, ptr);
->         } else {
-> @@ -913,10 +913,10 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
->
->         ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
->         if (!ptr)
-> -               return ERR_PTR(-ENOMEM);
-> +               return NULL;
->
->         hwlock = hwspin_lock_request_specific(id);
-> -       if (!IS_ERR(hwlock)) {
-> +       if (hwlock) {
->                 *ptr = hwlock;
->                 devres_add(dev, ptr);
->         } else {
-> --
-> 1.7.9.5
->
-
-
-
--- 
-Baolin Wang
-Best Regards
+> 
+> Regards,
+> Bjorn
+> 
+>> +		rproc->table_ptr = rproc->cached_table;
+>>  	return ret;
+>>  }
+>>  
+>> -- 
+>> 2.18.0
+>>
