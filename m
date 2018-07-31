@@ -1,91 +1,228 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 5/9] rpmsg: glink: Add support for rpmsg glink chrdev
-Date: Fri, 27 Jul 2018 17:47:25 +0530
-Message-Id: <1532693849-7037-6-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <sibis@codeaurora.org>
+Subject: Re: [PATCH 2/4] reset: qcom: PDC (Power Domain Controller) reset
+ controller
+References: <20180727152811.15258-1-sibis@codeaurora.org>
+ <20180727152811.15258-2-sibis@codeaurora.org>
+ <1533027087.3444.7.camel@pengutronix.de>
+From: Sibi S <sibis@codeaurora.org>
+Message-ID: <72f17bfc-9b19-7cfa-2aa7-8d45cd1ed39e@codeaurora.org>
+Date: Tue, 31 Jul 2018 18:30:38 +0530
+MIME-Version: 1.0
+In-Reply-To: <1533027087.3444.7.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+Hi Philipp,
+Thanks for the review!
 
-RPMSG provides a char device interface to userspace. Probe the rpmsg
-chrdev channel to enable the rpmsg_ctrl device creation on glink
-transports.
+On 07/31/2018 02:21 PM, Philipp Zabel wrote:
+> On Fri, 2018-07-27 at 20:58 +0530, Sibi Sankar wrote:
+>> Add reset controller for SDM845 SoC to control reset signals
+>> provided by PDC for Modem, Compute, Display, GPU, Debug, AOP,
+>> Sensors, Audio, SP and APPS
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   drivers/reset/Kconfig          |   9 +++
+>>   drivers/reset/Makefile         |   1 +
+>>   drivers/reset/reset-qcom-pdc.c | 139 +++++++++++++++++++++++++++++++++
+>>   3 files changed, 149 insertions(+)
+>>   create mode 100644 drivers/reset/reset-qcom-pdc.c
+>>
+>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>> index 13d28fdbdbb5..5344e202a630 100644
+>> --- a/drivers/reset/Kconfig
+>> +++ b/drivers/reset/Kconfig
+>> @@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
+>>   	  reset signals provided by AOSS for Modem, Venus, ADSP,
+>>   	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
+>>   
+>> +config RESET_QCOM_PDC
+>> +	bool "Qcom PDC Reset Driver"
+>> +	depends on ARCH_QCOM || COMPILE_TEST
+>> +	help
+>> +	  This enables the PDC (Power Domain Controller) reset driver
+>> +	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
+>> +	  to control reset signals provided by PDC for Modem, Compute,
+>> +	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
+>> +
+>>   config RESET_SIMPLE
+>>   	bool "Simple Reset Controller Driver" if COMPILE_TEST
+>>   	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+>> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+>> index 4243c38228e2..d08e8b90046a 100644
+>> --- a/drivers/reset/Makefile
+>> +++ b/drivers/reset/Makefile
+>> @@ -16,6 +16,7 @@ obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
+>>   obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
+>>   obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>>   obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>> +obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
+>>   obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>>   obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+>>   obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+>> diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
+>> new file mode 100644
+>> index 000000000000..64a0041e3452
+>> --- /dev/null
+>> +++ b/drivers/reset/reset-qcom-pdc.c
+>> @@ -0,0 +1,139 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset-controller.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/of_device.h>
+>> +#include <dt-bindings/reset/qcom,sdm845-pdc.h>
+>> +
+>> +struct qcom_pdc_reset_map {
+>> +	u8 bit;
+>> +};
+>> +
+>> +struct qcom_pdc_desc {
+>> +	const struct regmap_config *config;
+>> +	const struct qcom_pdc_reset_map *resets;
+>> +	size_t num_resets;
+>> +};
+>> +
+>> +struct qcom_pdc_reset_data {
+>> +	struct reset_controller_dev rcdev;
+>> +	struct regmap *regmap;
+>> +	const struct qcom_pdc_desc *desc;
+>> +};
+>> +
+>> +static const struct regmap_config sdm845_pdc_regmap_config = {
+>> +	.name		= "pdc-reset",
+>> +	.reg_bits	= 32,
+>> +	.reg_stride	= 4,
+>> +	.val_bits	= 32,
+>> +	.max_register	= 0x20000,
+>> +	.fast_io	= true,
+>> +};
+>> +
+>> +static const struct qcom_pdc_reset_map sdm845_pdc_resets[] = {
+>> +	[PDC_APPS_SYNC_RESET] = {0},
+>> +	[PDC_SP_SYNC_RESET] = {1},
+>> +	[PDC_AUDIO_SYNC_RESET] = {2},
+>> +	[PDC_SENSORS_SYNC_RESET] = {3},
+>> +	[PDC_AOP_SYNC_RESET] = {4},
+>> +	[PDC_DEBUG_SYNC_RESET] = {5},
+>> +	[PDC_GPU_SYNC_RESET] = {6},
+>> +	[PDC_DISPLAY_SYNC_RESET] = {7},
+>> +	[PDC_COMPUTE_SYNC_RESET] = {8},
+>> +	[PDC_MODEM_SYNC_RESET] = {9},
+>> +};
+>> +
+>> +static const struct qcom_pdc_desc sdm845_pdc_desc = {
+>> +	.config = &sdm845_pdc_regmap_config,
+>> +	.resets = sdm845_pdc_resets,
+>> +	.num_resets = ARRAY_SIZE(sdm845_pdc_resets),
+>> +};
+>> +
+>> +static inline struct qcom_pdc_reset_data *to_qcom_pdc_reset_data(
+>> +				struct reset_controller_dev *rcdev)
+>> +{
+>> +	return container_of(rcdev, struct qcom_pdc_reset_data, rcdev);
+>> +}
+>> +
+>> +static int qcom_pdc_control_assert(struct reset_controller_dev *rcdev,
+>> +					unsigned long idx)
+>> +{
+>> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
+>> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
+>> +
+>> +	return regmap_update_bits(data->regmap, 0x100,
+> 
+> Does this register have a name? If so, a #define would be preferable.
+> Otherwise this driver looks fine to me.
+> 
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 40 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 39 insertions(+), 1 deletion(-)
+Yes will had a separate #define for it.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index f43341d..9f3d026 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1158,7 +1158,7 @@ static int qcom_glink_announce_create(struct rpmsg_device *rpdev)
- 	__be32 *val = defaults;
- 	int size;
- 
--	if (glink->intentless)
-+	if (glink->intentless || !completion_done(&channel->open_ack))
- 		return 0;
- 
- 	prop = of_find_property(np, "qcom,intents", NULL);
-@@ -1544,6 +1544,40 @@ static void qcom_glink_work(struct work_struct *work)
- 	}
- }
- 
-+static void qcom_glink_device_release(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct glink_channel *channel = to_glink_channel(rpdev->ept);
-+
-+	/* Release qcom_glink_alloc_channel() reference */
-+	kref_put(&channel->refcount, qcom_glink_channel_release);
-+	kfree(rpdev);
-+}
-+
-+static int qcom_glink_create_chrdev(struct qcom_glink *glink)
-+{
-+	struct rpmsg_device *rpdev;
-+	struct glink_channel *channel;
-+
-+	rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
-+	if (!rpdev)
-+		return -ENOMEM;
-+
-+	channel = qcom_glink_alloc_channel(glink, "rpmsg_chrdev");
-+	if (IS_ERR(channel)) {
-+		kfree(rpdev);
-+		return PTR_ERR(channel);
-+	}
-+	channel->rpdev = rpdev;
-+
-+	rpdev->ept = &channel->ept;
-+	rpdev->ops = &glink_device_ops;
-+	rpdev->dev.parent = glink->dev;
-+	rpdev->dev.release = qcom_glink_device_release;
-+
-+	return rpmsg_chrdev_register_device(rpdev);
-+}
-+
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
-@@ -1603,6 +1637,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-+	ret = qcom_glink_create_chrdev(glink);
-+	if (ret)
-+		dev_err(glink->dev, "failed to register chrdev\n");
-+
- 	return glink;
- }
- EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
+>> +					BIT(map->bit), BIT(map->bit));
+>> +}
+>> +
+>> +static int qcom_pdc_control_deassert(struct reset_controller_dev *rcdev,
+>> +					unsigned long idx)
+>> +{
+>> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
+>> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
+>> +
+>> +	return regmap_update_bits(data->regmap, 0x100, BIT(map->bit), 0);
+>> +}
+>> +
+>> +static const struct reset_control_ops qcom_pdc_reset_ops = {
+>> +	.assert = qcom_pdc_control_assert,
+>> +	.deassert = qcom_pdc_control_deassert,
+>> +};
+>> +
+>> +static int qcom_pdc_reset_probe(struct platform_device *pdev)
+>> +{
+>> +	struct qcom_pdc_reset_data *data;
+>> +	struct device *dev = &pdev->dev;
+>> +	const struct qcom_pdc_desc *desc;
+>> +	void __iomem *base;
+>> +	struct resource *res;
+>> +
+>> +	desc = of_device_get_match_data(dev);
+>> +	if (!desc)
+>> +		return -EINVAL;
+>> +
+>> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	data->desc = desc;
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	base = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(base))
+>> +		return PTR_ERR(base);
+>> +
+>> +	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
+>> +	if (IS_ERR(data->regmap)) {
+>> +		dev_err(dev, "Unable to get pdc-global regmap");
+>> +		return PTR_ERR(data->regmap);
+>> +	}
+>> +
+>> +	data->rcdev.owner = THIS_MODULE;
+>> +	data->rcdev.ops = &qcom_pdc_reset_ops;
+>> +	data->rcdev.nr_resets = desc->num_resets;
+>> +	data->rcdev.of_node = dev->of_node;
+>> +
+>> +	return devm_reset_controller_register(dev, &data->rcdev);
+>> +}
+>> +
+>> +static const struct of_device_id qcom_pdc_reset_of_match[] = {
+>> +	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
+>> +	{}
+>> +};
+>> +
+>> +static struct platform_driver qcom_pdc_reset_driver = {
+>> +	.probe = qcom_pdc_reset_probe,
+>> +	.driver = {
+>> +		.name = "qcom_pdc_reset",
+>> +		.of_match_table = qcom_pdc_reset_of_match,
+>> +	},
+>> +};
+>> +
+>> +builtin_platform_driver(qcom_pdc_reset_driver);
+>> +
+>> +MODULE_DESCRIPTION("Qualcomm PDC Reset Driver");
+>> +MODULE_LICENSE("GPL v2");
+> 
+> regards
+> Philipp
+> 
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
 a Linux Foundation Collaborative Project
