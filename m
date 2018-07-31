@@ -1,50 +1,56 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 2/9] rpmsg: glink: Store edge name for glink device
-Date: Fri, 27 Jul 2018 17:47:22 +0530
-Message-Id: <1532693849-7037-3-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-References: <1532693849-7037-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, robh+dt@kernel.org, arnaud.pouliquen@st.com, andy.gross@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH v7 1/4] remoteproc/davinci: use the reset framework
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+ <20180621073706.22812-2-brgl@bgdev.pl> <20180731042539.GE5090@builder>
+ <CAMRc=MdwCruRZ_EQ3Pzq-=HdhiA6pfSZczRKMa5i9Rju0JgHig@mail.gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <c3484965-1efe-2425-86e0-ecb78ea189dd@ti.com>
+Date: Tue, 31 Jul 2018 15:34:33 +0530
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=MdwCruRZ_EQ3Pzq-=HdhiA6pfSZczRKMa5i9Rju0JgHig@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+Bjorn,
 
-Channels may need to identify the edge their channel was probed for.
-Store the edge name by reading the label property from device tree or
-default to the node name.
+On Tuesday 31 July 2018 01:25 PM, Bartosz Golaszewski wrote:
+> 2018-07-31 6:25 GMT+02:00 Bjorn Andersson <bjorn.andersson@linaro.org>:
+>> On Thu 21 Jun 00:37 PDT 2018, Bartosz Golaszewski wrote:
+>>
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> Switch to using the reset framework instead of handcoded reset routines
+>>> we used so far.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+>>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>>
+>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>
+> 
+> Sekhar,
+> 
+> can you take this through your tree or is it already too late?
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+The last -rc is already tagged and I am not sure ARM-SoC will be open to
+new stuff now (there is also a bit of lag after I send my pull request).
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index f505f58..22a3cac 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -93,6 +93,8 @@ struct glink_core_rx_intent {
- struct qcom_glink {
- 	struct device *dev;
- 
-+	const char *name;
-+
- 	struct mbox_client mbox_client;
- 	struct mbox_chan *mbox_chan;
- 
-@@ -1572,6 +1574,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	idr_init(&glink->lcids);
- 	idr_init(&glink->rcids);
- 
-+	ret = of_property_read_string(dev->of_node, "label", &glink->name);
-+	if (ret < 0)
-+		glink->name = dev->of_node->name;
-+
- 	glink->mbox_client.dev = dev;
- 	glink->mbox_client.knows_txdone = true;
- 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Is this something you can take in your tree along with Suman's patch?
+
+There are no build dependencies with my tree, so it will be safe to
+queue from your tree. It will be great if this can be merged late in the
+cycle though to avoid breaking remoteproc even for short while during
+the merge window.
+
+Or if you okay with it, it will be safest to send it soon after
+v4.19-rc1 is tagged.
+
+Let me know.
+
+Thanks,
+Sekhar
