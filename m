@@ -1,66 +1,88 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: qcom: adsp: Add SDM845 ADSP and CDSP support
-Date: Tue, 28 Aug 2018 00:14:58 -0700
-Message-Id: <20180828071458.26858-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH] rpmsg: char: Migrate to iter versions of read and write
+Date: Tue,  7 Aug 2018 00:14:24 -0700
+Message-Id: <20180807071424.3236-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for booting the Audio and Compute DSPs found in Qualcomm's
-SDM845 platform.
+In order to be able to use the aio interface for writing to a rpmsg_char
+the write_iter function must be implemented, so migrate to iter version
+for read and write functions.
 
-As with the previous platforms the power rail handling needs to be
-updated once the appropriate support lands upstream.
+Regular read and write uses the iter methods if present and is as such
+unaffected.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- .../devicetree/bindings/remoteproc/qcom,adsp.txt     |  2 ++
- drivers/remoteproc/qcom_q6v5_pas.c                   | 12 ++++++++++++
- 2 files changed, 14 insertions(+)
+ drivers/rpmsg/rpmsg_char.c | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index 728e4193f7a6..b7d058228185 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -10,6 +10,8 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,msm8974-adsp-pil"
- 		    "qcom,msm8996-adsp-pil"
- 		    "qcom,msm8996-slpi-pil"
-+		    "qcom,sdm845-adsp-pas"
-+		    "qcom,sdm845-cdsp-pas"
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index a76b963a7e50..eea5ebbb5119 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -167,9 +167,9 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 	return 0;
+ }
  
- - interrupts-extended:
- 	Usage: required
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 2478ef3cd519..53eff2afda06 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -342,6 +342,16 @@ static const struct adsp_data adsp_resource_init = {
- 		.ssctl_id = 0x14,
- };
+-static ssize_t rpmsg_eptdev_read(struct file *filp, char __user *buf,
+-				 size_t len, loff_t *f_pos)
++static ssize_t rpmsg_eptdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
++	struct file *filp = iocb->ki_filp;
+ 	struct rpmsg_eptdev *eptdev = filp->private_data;
+ 	unsigned long flags;
+ 	struct sk_buff *skb;
+@@ -205,8 +205,8 @@ static ssize_t rpmsg_eptdev_read(struct file *filp, char __user *buf,
+ 	if (!skb)
+ 		return -EFAULT;
  
-+static const struct adsp_data cdsp_resource_init = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mdt",
-+	.pas_id = 18,
-+	.has_aggre2_clk = false,
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
+-	use = min_t(size_t, len, skb->len);
+-	if (copy_to_user(buf, skb->data, use))
++	use = min_t(size_t, iov_iter_count(to), skb->len);
++	if (copy_to_iter(skb->data, use, to) != use)
+ 		use = -EFAULT;
+ 
+ 	kfree_skb(skb);
+@@ -214,16 +214,21 @@ static ssize_t rpmsg_eptdev_read(struct file *filp, char __user *buf,
+ 	return use;
+ }
+ 
+-static ssize_t rpmsg_eptdev_write(struct file *filp, const char __user *buf,
+-				  size_t len, loff_t *f_pos)
++static ssize_t rpmsg_eptdev_write_iter(struct kiocb *iocb,
++				       struct iov_iter *from)
+ {
++	struct file *filp = iocb->ki_filp;
+ 	struct rpmsg_eptdev *eptdev = filp->private_data;
++	size_t len = iov_iter_count(from);
+ 	void *kbuf;
+ 	int ret;
+ 
+-	kbuf = memdup_user(buf, len);
+-	if (IS_ERR(kbuf))
+-		return PTR_ERR(kbuf);
++	kbuf = kzalloc(len, GFP_KERNEL);
++	if (!kbuf)
++		return -ENOMEM;
 +
- static const struct adsp_data slpi_resource_init = {
- 		.crash_reason_smem = 424,
- 		.firmware_name = "slpi.mdt",
-@@ -355,6 +365,8 @@ static const struct adsp_data slpi_resource_init = {
- static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
-+	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
-+	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
- 	{ },
- };
++	if (!copy_from_iter_full(kbuf, len, from))
++		return -EFAULT;
+ 
+ 	if (mutex_lock_interruptible(&eptdev->ept_lock)) {
+ 		ret = -ERESTARTSYS;
+@@ -281,8 +286,8 @@ static const struct file_operations rpmsg_eptdev_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = rpmsg_eptdev_open,
+ 	.release = rpmsg_eptdev_release,
+-	.read = rpmsg_eptdev_read,
+-	.write = rpmsg_eptdev_write,
++	.read_iter = rpmsg_eptdev_read_iter,
++	.write_iter = rpmsg_eptdev_write_iter,
+ 	.poll = rpmsg_eptdev_poll,
+ 	.unlocked_ioctl = rpmsg_eptdev_ioctl,
+ 	.compat_ioctl = rpmsg_eptdev_ioctl,
 -- 
 2.18.0
