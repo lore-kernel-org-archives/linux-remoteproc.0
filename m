@@ -1,32 +1,43 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc/davinci: Use %zx for formating size_t
-Date: Thu, 16 Aug 2018 17:49:19 -0700
-Message-Id: <20180817004919.10805-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, Suman Anna <s-anna@ti.com>
+Return-Path: <nsekhar@ti.com>
+Subject: Re: [PATCH] remoteproc/davinci: Mark error recovery as disabled
+References: <20180723232757.9147-1-s-anna@ti.com>
+ <0550997f-8e32-fb56-2a70-74235b969ce2@ti.com> <20180813185224.GG5090@builder>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <5a6e69f7-7da1-1b8e-d082-18f39d5139dc@ti.com>
+Date: Tue, 14 Aug 2018 10:50:54 +0530
+MIME-Version: 1.0
+In-Reply-To: <20180813185224.GG5090@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Suman Anna <s-anna@ti.com>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-da8xx_rproc_mem size is of type size_t, so use %zx to format the debug
-print of it to avoid a compile warning.
+Hi Bjorn,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/da8xx_remoteproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tuesday 14 August 2018 12:22 AM, Bjorn Andersson wrote:
+> On Mon 13 Aug 08:11 PDT 2018, Suman Anna wrote:
+> 
+>> Hi Bjorn,
+>>
+>> On 07/23/2018 06:27 PM, Suman Anna wrote:
+>>> The Davinci remoteproc driver does not support error recovery at
+>>> present, so mark the corresponding remoteproc flag appropriately
+>>> so that the debugfs flag shows the value as 'disabled' by default.
+>>>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>
+>> Can you pick up this minor patch for 4.19 please, I do not see this in
+>> your rproc-next branch?
+>>
+> 
+> Of course, the patch is applied now, will send my pull request in a few
+> days.
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index e230bef71be1..d200334577f6 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -226,7 +226,7 @@ static int da8xx_rproc_get_internal_memories(struct platform_device *pdev,
- 				res->start & DA8XX_RPROC_LOCAL_ADDRESS_MASK;
- 		drproc->mem[i].size = resource_size(res);
- 
--		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
-+		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %p da 0x%x\n",
- 			mem_names[i], &drproc->mem[i].bus_addr,
- 			drproc->mem[i].size, drproc->mem[i].cpu_addr,
- 			drproc->mem[i].dev_addr);
--- 
-2.18.0
+Can you also please pick patch 1/4 here:
+
+https://patchwork.kernel.org/patch/10479365/
+
+Thanks,
+Sekhar
