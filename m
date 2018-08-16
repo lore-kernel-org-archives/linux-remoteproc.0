@@ -1,111 +1,97 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 7 Aug 2018 12:16:59 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: reset: Add PDC reset binding for SDM845
- SoCs
-Message-ID: <20180807181659.GA20659@rob-hp-laptop>
-References: <20180727152811.15258-1-sibis@codeaurora.org>
- <1533026547.3444.4.camel@pengutronix.de>
- <28f34ddf-03b2-0baa-c04f-15e546ef3f75@codeaurora.org>
+Return-Path: <jliang@xilinx.com>
+Return-Path: wendy.liang@xilinx.com
+From: Wendy Liang <wendy.liang@xilinx.com>
+Subject: [PATCH 4/7] firmware: xlnx-zynqmp: Add request/release node
+Date: Thu, 16 Aug 2018 00:06:27 -0700
+Message-ID: <1534403190-28523-5-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28f34ddf-03b2-0baa-c04f-15e546ef3f75@codeaurora.org>
-To: Sibi S <sibis@codeaurora.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, ilina@codeaurora.org
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, rajan.vaja@xilinx.com, jollys@xilinx.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, Jul 31, 2018 at 06:27:24PM +0530, Sibi S wrote:
-> Hi Philipp,
-> Thanks for the review!
-> 
-> On 07/31/2018 02:12 PM, Philipp Zabel wrote:
-> > Hi Sibi,
-> > 
-> > On Fri, 2018-07-27 at 20:58 +0530, Sibi Sankar wrote:
-> > > Add SDM845 PDC (Power Domain Controller) reset controller binding
-> > > 
-> > > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> > > ---
-> > >   .../bindings/reset/qcom,pdc-reset.txt         | 52 +++++++++++++++++++
-> > >   include/dt-bindings/reset/qcom,sdm845-pdc.h   | 20 +++++++
-> > >   2 files changed, 72 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-> > >   create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-> > > new file mode 100644
-> > > index 000000000000..85e159962e08
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/reset/qcom,pdc-reset.txt
-> > > @@ -0,0 +1,52 @@
-> > > +PDC Reset Controller
-> > > +======================================
-> > > +
-> > > +This binding describes a reset-controller found on PDC-Global(Power Domain
-> > > +Controller) block for Qualcomm Technologies Inc SDM845 SoCs.
-> > > +
-> > > +Required properties:
-> > > +- compatible:
-> > > +	Usage: required
-> > > +	Value type: <string>
-> > > +	Definition: must be:
-> > > +		    "qcom,sdm845-pdc-global"
-> > > +
-> > > +- reg:
-> > > +	Usage: required
-> > > +	Value type: <prop-encoded-array>
-> > > +	Definition: must specify the base address and size of the register
-> > > +	            space.
-> > > +
-> > > +- #reset-cells:
-> > > +	Usage: required
-> > > +	Value type: <uint>
-> > > +	Definition: must be 1; cell entry represents the reset index.
-> > > +
-> > > +Example:
-> > > +
-> > > +pdc_reset: reset-controller@b2e0000 {
-> > 
-> > Is this really just a reset controller?
-> > 
-> > The name makes it sound like a driver binding to this should also
-> > provide pm_genpd and the binding should probably call this a power-
-> > controller: Documentation/devicetree/bindings/power/power_domain.txt.
-> > 
-> 
-> The PDC-global reg space which is a part of PDC-wrapper reg space seems
-> to be only used for the reset lines.
-> 
-> Couple of other drivers use other parts of the PDC-wrapper reg space:
-> https://patchwork.kernel.org/patch/10223701/ (PDC-Interrupt controller)
-> https://patchwork.kernel.org/patch/10255767/ (GMU-PDC incorrectly tries
-> to occupy the entire pdc-wrapper reg space)
-> 
-> since it couldn't be logically mapped into pdc-interrupt driver, it had
-> to be included as a separate reset driver.
+Add request/release resource node EEMI operations.
 
-You can't have overlapping regions in DT (well, you can because we have 
-to work-around existing DTs that do, but you shouldn't).
+Signed-off-by: Wendy Liang <jliang@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 30 ++++++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  7 +++++++
+ 2 files changed, 37 insertions(+)
 
-A single node can be multiple providers such as interrupt controller and 
-reset controller. It's an OS problem to split that into multiple 
-drivers.
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index ce6c746..2e97f60 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -447,6 +447,34 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
+ 	return ret;
+ }
  
-> > > +	compatible = "qcom,sdm845-pdc-global";
-> > > +	reg = <0xb2e0000 0x20000>;
-> > 
-> > This looks like this is the register space of the complete PDC, not just
-> > the reset register?
-> > 
-> 
-> The entire register space was chosen because it is only used for its
-> reset lines (had a good look at the downstream kernel and had a conversation
-> with Lina) and to ensure break backward compatibility for
-> the for the dt entry if the reg-space was used for other purposes in
-> the future.
-
-Why do you want to ensure breaking backwards compatibility?
-
-Rob
++/**
++ * zynqmp_pm_request_node - PM call to request a node with specific capabilities
++ * @node:		Node ID of the slave
++ * @capabilities:	Requested capabilities of the slave
++ * @qos:		Quality of service (not supported)
++ * @ack:		Flag to specify whether acknowledge is requested
++ *
++ * Return:		Returns status, either success or error+reason
++ */
++static int zynqmp_pm_request_node(const u32 node, const u32 capabilities,
++				  const u32 qos,
++				  const enum zynqmp_pm_request_ack ack)
++{
++	return zynqmp_pm_invoke_fn(PM_REQUEST_NODE, node, capabilities,
++				   qos, ack, NULL);
++}
++
++/**
++ * zynqmp_pm_release_node - PM call to release a node
++ * @node:	Node ID of the slave
++ *
++ * Return:	Returns status, either success or error+reason
++ */
++static int zynqmp_pm_release_node(const u32 node)
++{
++	return zynqmp_pm_invoke_fn(PM_RELEASE_NODE, node, 0, 0, 0, NULL);
++}
++
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.ioctl = zynqmp_pm_ioctl,
+@@ -460,6 +488,8 @@ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.clock_getrate = zynqmp_pm_clock_getrate,
+ 	.clock_setparent = zynqmp_pm_clock_setparent,
+ 	.clock_getparent = zynqmp_pm_clock_getparent,
++	.request_node = zynqmp_pm_request_node,
++	.release_node = zynqmp_pm_release_node,
+ };
+ 
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 83ebadf..02067a3 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -54,6 +54,8 @@ enum pm_api_id {
+ 	PM_CLOCK_GETRATE,
+ 	PM_CLOCK_SETPARENT,
+ 	PM_CLOCK_GETPARENT,
++	PM_REQUEST_NODE = 13,
++	PM_RELEASE_NODE = 14,
+ };
+ 
+ /* PMU-FW return status codes */
+@@ -130,6 +132,11 @@ struct zynqmp_eemi_ops {
+ 	int (*clock_getrate)(u32 clock_id, u64 *rate);
+ 	int (*clock_setparent)(u32 clock_id, u32 parent_id);
+ 	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
++	int (*request_node)(const u32 node,
++			    const u32 capabilities,
++			    const u32 qos,
++			    const enum zynqmp_pm_request_ack ack);
++	int (*release_node)(const u32 node);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+-- 
+2.7.4
