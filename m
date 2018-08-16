@@ -1,50 +1,60 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 0/6] Add support for PDC Global on SDM845 SoCs
-Date: Fri, 24 Aug 2018 18:48:54 +0530
-Message-Id: <20180824131900.5353-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <jliang@xilinx.com>
+Return-Path: wendy.liang@xilinx.com
+From: Wendy Liang <wendy.liang@xilinx.com>
+Subject: [PATCH 1/7] firmware: xlnx-zynqmp: Add RPU ioctl enums
+Date: Thu, 16 Aug 2018 00:06:24 -0700
+Message-ID: <1534403190-28523-2-git-send-email-jliang@xilinx.com>
+In-Reply-To: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, rajan.vaja@xilinx.com, jollys@xilinx.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch series add support for PDC Global (Power Domain Controller)
-on SDM845 SoCs and adds pdc reset lines assert/deassert to remoteproc
-Q6v5 modem-pil. The first two patches adds PDC Global reset driver to
-control reset signals of Modem, Compute, Display, GPU, Debug, AOP,
-Sensors, Audio, SP and APPS. The last four patches (cleans up)/adds pdc
-reset lines to q6v5 bindings and asserts/deasserts in modem start/stop
-path.
+Add ZynqMP firmware ioctl enums for RPU configuration.
 
-v2:
-  Incorporated Philipp/Bjorn/Rob suggestions
-  Renamed reset binding to pdc-global.txt
-  replaced offset with #define of register name
-  replaced with devm_reset_control_get_exclusive()
-  Separted dt binding from the drivers 
+Signed-off-by: Wendy Liang <jliang@xilinx.com>
+---
+ include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-The last 4 remoteproc patches can be picked up after the pdc global
-reset driver lands on linux-next.
-
-Sibi Sankar (6):
-  dt-bindings: reset: Add PDC Global binding for SDM845 SoCs
-  reset: qcom: PDC Global (Power Domain Controller) reset controller
-  dt-bindings: remoteproc: Remove additional definition tag
-  dt-bindings: remoteproc: Add PDC reset binding for Q6V5 PIL
-  remoteproc: qcom: q6v5-pil: Explicitly get mss_restart line
-  remoteproc: qcom: q6v5-pil: Add PDC reset for modem on SDM845 SoCs
-
- .../bindings/remoteproc/qcom,q6v5.txt         |   6 +-
- .../bindings/reset/qcom,pdc-global.txt        |  52 +++++++
- drivers/remoteproc/qcom_q6v5_pil.c            |  31 +++-
- drivers/reset/Kconfig                         |   9 ++
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-qcom-pdc.c                | 142 ++++++++++++++++++
- include/dt-bindings/reset/qcom,sdm845-pdc.h   |  20 +++
- 7 files changed, 254 insertions(+), 7 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
- create mode 100644 drivers/reset/reset-qcom-pdc.c
- create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
-
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index a3ef7d6..9c4258f 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -59,6 +59,10 @@ enum pm_ret_status {
+ };
+ 
+ enum pm_ioctl_id {
++	IOCTL_GET_RPU_OPER_MODE = 0,
++	IOCTL_SET_RPU_OPER_MODE,
++	IOCTL_RPU_BOOT_ADDR_CONFIG,
++	IOCTL_TCM_COMB_CONFIG,
+ 	IOCTL_SET_PLL_FRAC_MODE = 8,
+ 	IOCTL_GET_PLL_FRAC_MODE,
+ 	IOCTL_SET_PLL_FRAC_DATA,
+@@ -75,6 +79,21 @@ enum pm_query_id {
+ 	PM_QID_CLOCK_GET_NUM_CLOCKS = 12,
+ };
+ 
++enum rpu_oper_mode {
++	PM_RPU_MODE_LOCKSTEP,
++	PM_RPU_MODE_SPLIT,
++};
++
++enum rpu_boot_mem {
++	PM_RPU_BOOTMEM_LOVEC,
++	PM_RPU_BOOTMEM_HIVEC,
++};
++
++enum rpu_tcm_comb {
++	PM_RPU_TCM_SPLIT,
++	PM_RPU_TCM_COMB,
++};
++
+ /**
+  * struct zynqmp_pm_query_data - PM query data
+  * @qid:	query ID
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
