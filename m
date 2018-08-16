@@ -1,41 +1,42 @@
 Return-Path: <jliang@xilinx.com>
 Return-Path: wendy.liang@xilinx.com
 From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [PATCH 2/7] firmware: xlnx-zynqmp: Add request ack enums
-Date: Thu, 16 Aug 2018 00:06:25 -0700
-Message-ID: <1534403190-28523-3-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
-References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+Subject: [PATCH 0/7] Add Xilinx ZynqMP R5 remoteproc driver
+Date: Thu, 16 Aug 2018 00:06:23 -0700
+Message-ID: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, rajan.vaja@xilinx.com, jollys@xilinx.com
 Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add firmware request ack enums which will be used in firmware
-request calls.
+There are Cortex-R5 processors on Xilinx ZynqMP UltraScale+
+MPSoC.
+This patch is to add an Xilinx ZynqMP R5 remoteproc driver to
+enable Linux kernel to bringup R5, and enable communication
+between Linux kernel and R5.
 
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
----
- include/linux/firmware/xlnx-zynqmp.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+This patch series is based on top of Xilinx firmware patch set:
+https://patchwork.kernel.org/cover/10555405/
 
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 9c4258f..e3b7292 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -32,6 +32,12 @@
- /* Number of 32bits values in payload */
- #define PAYLOAD_ARG_CNT	4U
- 
-+enum zynqmp_pm_request_ack {
-+	ZYNQMP_PM_REQUEST_ACK_NO = 1,
-+	ZYNQMP_PM_REQUEST_ACK_BLOCKING,
-+	ZYNQMP_PM_REQUEST_ACK_NON_BLOCKING,
-+};
-+
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_IOCTL = 34,
+Wendy Liang (7):
+  firmware: xlnx-zynqmp: Add RPU ioctl enums
+  firmware: xlnx-zynqmp: Add request ack enums
+  firmware: xilinx-zynqmp: Add request access capability macro
+  firmware: xlnx-zynqmp: Add request/release node
+  firmware: xlnx-zynqmp: Add shutdown/wakeup request
+  remoteproc: Add Xilinx ZynqMP R5 remoteproc
+  Documentation: devicetree: Add Xilinx R5 rproc binding
+
+ .../remoteproc/xlnx,zynqmp-r5-remoteproc.txt       |  81 +++
+ drivers/firmware/xilinx/zynqmp.c                   |  65 ++
+ drivers/remoteproc/Kconfig                         |   9 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/zynqmp_r5_remoteproc.c          | 692 +++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h               |  43 ++
+ 6 files changed, 891 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+ create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+
 -- 
 2.7.4
