@@ -1,13 +1,13 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 17 Aug 2018 14:45:22 -0700
+Date: Fri, 17 Aug 2018 14:44:47 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] hwspinlock updates for v4.19
-Message-ID: <20180817214522.GC3941@tuxbook-pro>
+Subject: [GIT PULL] rpmsg updates for v4.19
+Message-ID: <20180817214447.GB3941@tuxbook-pro>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Chris Lew <clew@codeaurora.org>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Niklas Cassel <niklas.cassel@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
@@ -16,30 +16,39 @@ The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
 are available in the Git repository at:
 
-  git://github.com/andersson/remoteproc tags/hwlock-v4.19
+  git://github.com/andersson/remoteproc tags/rpmsg-v4.19
 
-for you to fetch changes up to ddb34f480d1b8051bc18e6ff22e93a6c9a33f94f:
+for you to fetch changes up to 00b645e0b4e4a3e5f8d88a4e9acf7e80045c34b4:
 
-  hwspinlock: Fix incorrect return pointers (2018-07-30 20:54:51 -0700)
-
-----------------------------------------------------------------
-hwspinlock updates for v4.19
-
-This introduces devres helpers and an API to request a lock by name,
-then migrates the sprd SPI driver to use these.
+  rpmsg: Add compat ioctl for rpmsg char driver (2018-07-30 23:40:23 -0700)
 
 ----------------------------------------------------------------
-Baolin Wang (8):
-      hwspinlock: Add one new API to support getting a specific hwlock by the name
-      hwspinlock: Add devm_xxx() APIs to request/free hwlock
-      hwspinlock: Add devm_xxx() APIs to register/unregister one hwlock controller
-      hwspinlock: Remove redundant config
-      hwspinlock: Fix one comment mistake
-      spi: sprd: Replace of_hwspin_lock_get_id() with of_hwspin_lock_get_id_byname()
-      spi: sprd: Change to use devm_hwspin_lock_request_specific()
-      hwspinlock: Fix incorrect return pointers
+rpmsg updates for v4.19
 
- drivers/hwspinlock/hwspinlock_core.c | 223 ++++++++++++++++++++++++++++++++++-
- drivers/spi/spi-sprd-adi.c           |  11 +-
- include/linux/hwspinlock.h           |  37 +++++-
- 3 files changed, 262 insertions(+), 9 deletions(-)
+This fixes a few compile and kerneldoc warnings, allows rpmsg devices to
+handle power domains, allow for labeling GLINK edges and supports compat
+for rpmsg_char.
+
+----------------------------------------------------------------
+Arun Kumar Neelakantam (1):
+      rpmsg: Add compat ioctl for rpmsg char driver
+
+Chris Lew (2):
+      dt-bindings: soc: qcom: Add label for GLINK bindings
+      rpmsg: glink: Store edge name for glink device
+
+Niklas Cassel (1):
+      rpmsg: smd: Add missing include of sizes.h
+
+Srinivas Kandagatla (4):
+      rpmsg: glink: correctly annotate intent members
+      rpmsg: glink: Fix various kerneldoc warnings.
+      rpmsg: smd: fix kerneldoc warnings
+      rpmsg: core: add support to power domains for devices
+
+ .../devicetree/bindings/soc/qcom/qcom,glink.txt    |  5 +++
+ drivers/rpmsg/qcom_glink_native.c                  | 51 +++++++++++++---------
+ drivers/rpmsg/qcom_smd.c                           | 10 ++++-
+ drivers/rpmsg/rpmsg_char.c                         |  2 +
+ drivers/rpmsg/rpmsg_core.c                         |  7 +++
+ 5 files changed, 53 insertions(+), 22 deletions(-)
