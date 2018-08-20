@@ -1,52 +1,133 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 7 Aug 2018 12:18:35 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 4/4] remoteproc: qcom: q6v5-pil: Add PDC restart for
- modem on SDM845 SoCs
-Message-ID: <20180807181835.GA28960@rob-hp-laptop>
-References: <20180727152811.15258-1-sibis@codeaurora.org>
- <20180727152811.15258-4-sibis@codeaurora.org>
+Return-Path: <sunnyliangjy@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727152811.15258-4-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+In-Reply-To: <CAAtXAHd0jmV32bSyxCyMSh9fcP63sM+6-SkTMS=gA1fJKGKtig@mail.gmail.com>
+References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+ <1534403190-28523-8-git-send-email-jliang@xilinx.com> <CAAtXAHd0jmV32bSyxCyMSh9fcP63sM+6-SkTMS=gA1fJKGKtig@mail.gmail.com>
+From: Wendy Liang <sunnyliangjy@gmail.com>
+Date: Sun, 19 Aug 2018 22:55:53 -0700
+Message-ID: <CAA07jV8Bf5kxJPiPMGdpqs_6KhMnjnAC4=5GomJBKgTbVSXV4Q@mail.gmail.com>
+Subject: Re: [PATCH 7/7] Documentation: devicetree: Add Xilinx R5 rproc binding
+Content-Type: text/plain; charset="UTF-8"
+To: Moritz Fischer <moritz.fischer@ettus.com>
+Cc: Wendy Liang <wendy.liang@xilinx.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, rajan.vaja@xilinx.com, jollys@xilinx.com, linux-remoteproc@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Devicetree List <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Jul 27, 2018 at 08:58:11PM +0530, Sibi Sankar wrote:
-> In the presence of a PDC block working with subsystem RSC,
-> assert/deassert PDC restart in modem start/stop path.
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  .../bindings/remoteproc/qcom,q6v5.txt         |  4 +++
-
-Please split bindings to separate patch.
-
->  drivers/remoteproc/qcom_q6v5_pil.c            | 27 ++++++++++++++++---
->  2 files changed, 27 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> index 601dd9f389aa..124fb1dc6fb8 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> @@ -51,6 +51,8 @@ on the Qualcomm Hexagon core.
->  	Usage: required
->  	Value type: <phandle>
->  	Definition: reference to the reset-controller for the modem sub-system
-> +		    reference to the list of 2 reset-controllers for the modem
-> +		    sub-system on SDM845 SoCs
->  		    reference to the list of 3 reset-controllers for the
->  		    wcss sub-system
->  
-> @@ -58,6 +60,8 @@ on the Qualcomm Hexagon core.
->  	Usage: required
->  	Value type: <stringlist>
->  	Definition: must be "mss_restart" for the modem sub-system
-> +	Definition: must be "mss_restart", "pdc_restart" for the modem
-> +		    sub-system on SDM845 SoCs
->  	Definition: must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
->  		    for the wcss syb-system
->  
+On Fri, Aug 17, 2018 at 9:31 AM, Moritz Fischer
+<moritz.fischer@ettus.com> wrote:
+> Hi Wendy,
+>
+> couple of minor stuff inline.
+>
+> On Thu, Aug 16, 2018 at 12:06 AM, Wendy Liang <wendy.liang@xilinx.com> wrote:
+>> Add device tree binding for Xilinx Cortex-r5 remoteproc.
+>>
+>> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+>> ---
+>>  .../remoteproc/xlnx,zynqmp-r5-remoteproc.txt       | 81 ++++++++++++++++++++++
+>>  1 file changed, 81 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+>> new file mode 100644
+>> index 0000000..3940019
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+>> @@ -0,0 +1,81 @@
+>> +Xilinx ARM Cortex A53-R5 remoteproc driver
+>> +==========================================
+>> +
+>> +ZynqMP family of devices use two Cortex R5 processors to help with various
+>> +low power / real time tasks.
+>
+> The ZynqMP family [..] uses [..]
+Will update in next version
+>> +
+>> +This driver requires specific ZynqMP hardware design.
+>
+> *a* specific ZynqMP hardware design. What does that mean?
+>> +
+>> +ZynqMP R5 RemoteProc Device Node:
+>> +=================================
+>> +A zynqmp_r5_remoteproc device node is used to represent a R5 IP instance
+>> +within ZynqMP SoC.
+>> +
+>> +Required properties:
+>> +--------------------
+>> + - compatible : Should be "xlnx,zynqmp-r5-remoteproc-1.0"
+>> + - reg : Address and length of the register set for the device. It
+>> +        contains in the same order as described reg-names
+>
+> ?
+>> + - reg-names: Contain the register set names.
+>
+> Contains
+Will update in next version
+>
+>> +              "tcm_a" and "tcm_b" for TCM memories.
+>> +              If the user uses the remoteproc driver with the RPMsg kernel
+>> +              driver,"ipi" for the IPI register used to communicate with RPU
+>> +              is also required.
+>> +              Otherwise, if user only uses the remoteproc driver to boot RPU
+>> +              firmware, "ipi" is not required.
+>> + - tcm-pnode-id: TCM resources power nodes IDs which are used to request TCM
+>> +                 resources for the remoteproc driver to access.
+>> + - rpu-pnode-id : RPU power node id which is used by the remoteproc driver
+>> +                  to start RPU or shut it down.
+>> +
+>> +Optional properties:
+>> +--------------------
+>> + - core_conf : R5 core configuration (valid string - split0 or split1 or
+>> +               lock-step), default is lock-step.
+>> + - memory-region: memories regions for RPU executable and DMA memory.
+>> + - interrupts : Interrupt mapping for remoteproc IPI. It is required if the
+>> +                user uses the remoteproc driver with the RPMsg kernel driver.
+>> + - interrupt-parent : Phandle for the interrupt controller. It is required if
+>> +                      the user uses the remoteproc driver with the RPMsg kernel
+>> +                      kernel driver.
+>> +
+>> +Example:
+>> +--------
+>> +       reserved-memory {
+>> +               #address-cells = <2>;
+>> +               #size-cells = <2>;
+>> +               ranges;
+>> +               rproc_0_fw_reserved: rproc@3ed000000 {
+>> +                       compatible = "rproc-prog-memory";
+>> +                       no-map;
+>> +                       reg = <0x0 0x3ed00000 0x0 0x40000>;
+>> +               };
+>> +               rproc_0_dma_reserved: rproc@3ed400000 {
+>> +                       compatible = "shared-dma-pool";
+>> +                       no-map;
+>> +                       reg = <0x0 0x3ed40000 0x0 0x80000>;
+>> +               };
+>> +       };
+>> +
+>> +       firmware {
+>> +               zynqmp_firmware: zynqmp-firmware {
+>> +                       compatible = "xlnx,zynqmp-firmware";
+>> +                       method = "smc";
+>> +               };
+>> +       };
+>> +
+>> +       zynqmp-r5-remoteproc@0 {
+>> +               compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
+>> +               reg = <0x0 0xFFE00000 0x0 0x10000>,
+>> +                       <0x0 0xFFE20000 0x0 0x10000>,
+>> +                       <0x0 0xff340000 0x0 0x100>;
+>> +               reg-names = "tcm_a", "tcm_b", "ipi";
+>> +               dma-ranges;
+>> +               core_conf = "split0";
+>> +               memory-region = <&rproc_0_fw_reserved>,
+>> +                               <&rproc_0_dma_reserved>;
+>> +               tcm-pnode-id = <0xf>, <0x10>;
+>> +               rpu-pnode-id = <0x7>;
+>> +               interrupt-parent = <&gic>;
+>> +               interrupts = <0 29 4>;
+>> +       } ;
+>> --
+>> 2.7.4
+>>
+>
+> Cheers,
+> Moritz
