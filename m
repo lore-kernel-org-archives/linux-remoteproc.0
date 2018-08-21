@@ -1,66 +1,58 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: New remoteproc driver for TI PRU
-References: <20180623210810.21232-1-david@lechnology.com>
- <e0a883af-8228-5b06-3186-f57d8f898aaa@ti.com>
- <8fc18d40-72f5-9215-26f0-1492e3a6c0e7@lechnology.com>
- <536d28bd-bcdd-1665-e1c8-828572051cfb@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <5bd5e388-959c-cff7-df38-d267e06d4d96@lechnology.com>
-Date: Mon, 6 Aug 2018 11:32:24 -0500
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 21 Aug 2018 15:17:40 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/4] reset: qcom: PDC (Power Domain Controller) reset
+ controller
+Message-ID: <20180821221740.GB2353@minitux>
+References: <20180727152811.15258-1-sibis@codeaurora.org>
+ <20180727152811.15258-2-sibis@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <536d28bd-bcdd-1665-e1c8-828572051cfb@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180727152811.15258-2-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 06/29/2018 07:17 PM, Suman Anna wrote:
-> Hi David,
-> 
-> On 06/29/2018 12:44 PM, David Lechner wrote:
->> On 06/29/2018 04:58 AM, Roger Quadros wrote:
->>> +Suman & Tero
->>>
->>> Hi David,
->>>
->>> On 24/06/18 00:08, David Lechner wrote:
->>>>
->>>> Date: Sat, 23 Jun 2018 15:43:59 -0500
->>>> Subject: [PATCH 0/8] New remoteproc driver for TI PRU
->>>>
->>>> This series adds a new remoteproc driver for the TI Programmable
->>>> Runtime Unit
->>>> (PRU) that is present in some TI Sitara processors. This code has
->>>> been tested
->>>> working on AM1808 (LEGO MINDSTORMS EV3) and AM3358 (BeagleBone Green).
->>>
->>> This is great. We have been working on something similar and I think
->>> it would
->>> be great if we can collaborate to get all our needs addressed.
->>
->> Yes, I have used the PRU with the TI kernel on BeagleBone so I've seen
->> the TI
->> implementation. My primary interest is in the AM1808, which has a far
->> simpler
->> PRU than other SoCs. So, I was hoping I could get away with just
->> implementing
->> the basic stuff that I need and let TI add the more complex stuff later.
-> 
-> Thanks for the series. PRUSS is present on many SoCs now, and each with
-> their own integration quirks, both in terms of SoC connections as well
-> as internal sub-modules within the subsystem. We currently support
-> AM335x, AM437x, AM57xx, Keystone 2 based 66AK2G and a newer generation
-> AM65x as well. It should be relatively straight-forward to scale this
-> for AM1808/OMAP-L138 as well. The move to the standard Common Clock and
-> Reset frameworks for clocks with the Davinci chips should make it
-> relatively straight-forward for the architecture pieces.
-> 
-> I will take a look at your series in detail sometime next week, and
-> mostly post our series to the upstream lists as well within the next
-> couple of weeks so that it is easier for discussion on the upstream lists.
-> 
+On Fri 27 Jul 08:28 PDT 2018, Sibi Sankar wrote:
 
-Have you had time to look at this yet? If you are too busy, I can submit
-a v2 with the interrupt controller broken out into a separate driver.
+> Add reset controller for SDM845 SoC to control reset signals
+> provided by PDC for Modem, Compute, Display, GPU, Debug, AOP,
+> Sensors, Audio, SP and APPS
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  drivers/reset/Kconfig          |   9 +++
+>  drivers/reset/Makefile         |   1 +
+>  drivers/reset/reset-qcom-pdc.c | 139 +++++++++++++++++++++++++++++++++
+>  3 files changed, 149 insertions(+)
+>  create mode 100644 drivers/reset/reset-qcom-pdc.c
+> 
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 13d28fdbdbb5..5344e202a630 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
+>  	  reset signals provided by AOSS for Modem, Venus, ADSP,
+>  	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
+>  
+> +config RESET_QCOM_PDC
+> +	bool "Qcom PDC Reset Driver"
+
+"Qualcomm"
+
+And I do not see a strong reason for this not being tristate, the
+consumers we've talked about so far can all be modules.
+
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	help
+> +	  This enables the PDC (Power Domain Controller) reset driver
+> +	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
+> +	  to control reset signals provided by PDC for Modem, Compute,
+> +	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
+> +
+
+Implementation looks fine.
+
+Regards,
+Bjorn
