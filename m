@@ -1,35 +1,35 @@
 Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.kmu-office.ch ([178.209.48.109]:58980 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728713AbeH3QrJ (ORCPT
+Received: from mail-qk0-f181.google.com ([209.85.220.181]:39959 "EHLO
+        mail-qk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeHXDYe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Aug 2018 12:47:09 -0400
+        Thu, 23 Aug 2018 23:24:34 -0400
+Received: by mail-qk0-f181.google.com with SMTP id c126-v6so4802312qkd.7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Aug 2018 16:52:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Thu, 30 Aug 2018 14:45:05 +0200
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: rproc_elf_load_segments: rproc_elf_load_segments elf loading
- problem
+Reply-To: dry@embedded-synergy.co.za
 In-Reply-To: <20180823161233.de5d0de132d42f0089eadcb8@posteo.de>
 References: <CABViPYkb+g9GkJNVU6AUpzJRwLwZSD9PuxzDrDzgzb6Z0Ky1Gw@mail.gmail.com>
- <4941e366-f41f-9b8f-8c23-b840a01b3970@ti.com>
- <CABViPYmZH6dVYH7V9kOTi6KJeoFt1axOzVq6NSrASsFPJsg0eg@mail.gmail.com>
+ <4941e366-f41f-9b8f-8c23-b840a01b3970@ti.com> <CABViPYmZH6dVYH7V9kOTi6KJeoFt1axOzVq6NSrASsFPJsg0eg@mail.gmail.com>
  <20180823161233.de5d0de132d42f0089eadcb8@posteo.de>
-Message-ID: <ba736f03f42b66c0dd30e3a2e9c2fe84@agner.ch>
+From: Denis Ryndine <dry@embedded-synergy.co.za>
+Date: Fri, 24 Aug 2018 09:52:31 +1000
+Message-ID: <CABViPY=r+hBf7V4DfVavLjxmnSEynFxcugq19fUBtQL8QxEi-g@mail.gmail.com>
+Subject: Re: rproc_elf_load_segments: rproc_elf_load_segments elf loading problem
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 To: Felix Siegel <felix.siegel@posteo.de>
-Cc: dry@embedded-synergy.co.za, Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org, linux-remoteproc-owner@vger.kernel.org
+Cc: Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi there,
+Hello Felix,
 
-On 23.08.2018 16:12, Felix Siegel wrote:
+On Fri, Aug 24, 2018 at 12:12 AM, Felix Siegel <felix.siegel@posteo.de> wrote:
 > Hi Denis,
-> 
+>
 > On Thu, 23 Aug 2018 11:28:08 +1000
 > Denis Ryndine <dry@embedded-synergy.co.za> wrote:
-> 
+>
 >> Hello Suman,
 >>
 >> On Thu, Aug 23, 2018 at 6:50 AM, Suman Anna <s-anna@ti.com> wrote:
@@ -83,72 +83,53 @@ On 23.08.2018 16:12, Felix Siegel wrote:
 >> See imx_rproc.c - imx_rproc_da_to_va() ->  imx_rproc_da_to_sys(),
 >> which would return the needed address: there is enough in that memory
 >> block for filesz, but not for memsz.
-> 
+>
 > I had a similar problem with the iMX7 working with TCM.
-> Your fix would probably work however this only occurs due to strange
-> behaviour in the NXP linker and startup files.
-> The NXP linker file stores the data segment directly behind the code
-> segment in the code memory region
-> (causing the difference between VirtAddr and PhysAddr) and the startup
-> assembly then loads the data segment into the data memory region.
+> Your fix would probably work however this only occurs due to strange behaviour in the NXP linker and startup files.
 
-I also worked with the i.MX 7 TCM linker file, and I agree, in the
-context of remoteproc etc the linker file does really
-unnecessary/strange section placements.
+I understand, changing the layout of sections in linker script will
+make this go away. It may seem though it shouldn't hurt, as it's
+filesz bytes that gets programmed.
 
-I guess this comes from the microcontroller world, there memory is
-volatile and the firmware initialization code loads the .data section
-into memory from ROM.
+> The NXP linker file stores the data segment directly behind the code segment in the code memory region
 
-That said, the difference in VirtAddr and PhysAddr is caused by the `AT`
-keyword in the linker file:
-https://sourceware.org/binutils/docs/ld/Output-Section-LMA.html
+I read it (script) that they only put initialization and RO/read-only
+data directly behind text, within text segment. Organization wise this
+looks nice, put text & other RO data together (at least for those apps
+which don't modify it runtime)
 
->From what I can tell, because remoteproc uses paddr as base and memsz as
-length, remoteproc makes the assumption that the virtual and physical
-addressing is fully aligned... For a lot of linker files this is
-probably a reasonable assumption since we do not *need* startup code
-which relocates sections...
-
-However, if we make this assumption, maybe we should check if paddr and
-vaddr are really aligned, e.g. by using:
-
-WARN_ON(phdr->p_paddr != phdr->p_vaddr)
-
-Or, we could not zero out in case paddr/vaddr are not aligned, just to
-be on the safe side e.g.:
-
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -200,7 +200,7 @@ int rproc_elf_load_segments(struct rproc *rproc,
-const struct firmware *fw)
-                 * did this for us. albeit harmless, we may consider
-removing
-                 * this.
-                 */
--               if (memsz > filesz)
-+               if (phdr->p_paddr == phdr->p_vaddr && memsz > filesz)
-                        memset(ptr + filesz, 0, memsz - filesz);
-        }
-
-
-> 
-> This would make sense for a normal microcontroller with persistent
-> memory to boot from, but atleast on the imx7 the M4 requires the A7 to
-> start it
+> (causing the difference between VirtAddr and PhysAddr) and the startup assembly then loads the data segment into the data memory region.
+>
+> This would make sense for a normal microcontroller with persistent memory to boot from, but atleast on the imx7 the M4 requires the A7 to start it
 > and the supported memory regions are all volatile anyway.
-> 
-> After I changed the linker script and the startup routine it worked
-> for me. It also avoids needlessly copying data around.
+>
+> After I changed the linker script and the startup routine it worked for me. It also avoids needlessly copying data around.
 
-True, and that is what we ended up doing to.
+Oops, didn't think about the unnecessary copying of data by on the app start up.
+However, may be because on iMXx you can lock / secure the text & RO
+data memory from further modifications after it's been programmed, so
+that could be advantageous?
 
-Still, maybe the kernel could behave a bit smarter.
+Apologies with this iMX stuff discussion here, on the question about
+general elf proc load.
 
---
-Stefan
+Going back to rproc_elf_load_segments however, it's been pointed out
+to me on another forum that there will be another problem with my
+strange linker script & the elf it produces:
 
->>
+
+* Zero out remaining memory for this segment.
+*
+* This isn't strictly required since dma_alloc_coherent already
+* did this for us. albeit harmless, we may consider removing
+* this.
+*/
+if (memsz > filesz)
+   memset(ptr + filesz, 0, memsz - filesz);
+
+This ain't going to be harmless for my case, as it will go cross
+segments and may go cross physical memories.
+
 >>
 >> > regards
 >> > Suman
@@ -156,7 +137,8 @@ Stefan
 >> Regards,
 >>
 >> Denis
-> 
+>
 > Regards,
-> 
+>
 > Felix
+>
