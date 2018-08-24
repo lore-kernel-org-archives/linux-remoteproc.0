@@ -1,97 +1,35 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [PATCH 4/7] firmware: xlnx-zynqmp: Add request/release node
-Date: Thu, 16 Aug 2018 00:06:27 -0700
-Message-ID: <1534403190-28523-5-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
-References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, rajan.vaja@xilinx.com, jollys@xilinx.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 5/6] remoteproc: qcom: q6v5-pil: Explicitly get mss_restart line
+Date: Fri, 24 Aug 2018 18:48:59 +0530
+Message-Id: <20180824131900.5353-6-sibis@codeaurora.org>
+In-Reply-To: <20180824131900.5353-1-sibis@codeaurora.org>
+References: <20180824131900.5353-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add request/release resource node EEMI operations.
+Explicitly get mss_restart to facilitate adding PDC reset line
+for modem on SDM845 SoCs
 
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/firmware/xilinx/zynqmp.c     | 30 ++++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h |  7 +++++++
- 2 files changed, 37 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pil.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index ce6c746..2e97f60 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -447,6 +447,34 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
- 	return ret;
- }
- 
-+/**
-+ * zynqmp_pm_request_node - PM call to request a node with specific capabilities
-+ * @node:		Node ID of the slave
-+ * @capabilities:	Requested capabilities of the slave
-+ * @qos:		Quality of service (not supported)
-+ * @ack:		Flag to specify whether acknowledge is requested
-+ *
-+ * Return:		Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_request_node(const u32 node, const u32 capabilities,
-+				  const u32 qos,
-+				  const enum zynqmp_pm_request_ack ack)
-+{
-+	return zynqmp_pm_invoke_fn(PM_REQUEST_NODE, node, capabilities,
-+				   qos, ack, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_release_node - PM call to release a node
-+ * @node:	Node ID of the slave
-+ *
-+ * Return:	Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_release_node(const u32 node)
-+{
-+	return zynqmp_pm_invoke_fn(PM_RELEASE_NODE, node, 0, 0, 0, NULL);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
-@@ -460,6 +488,8 @@ static const struct zynqmp_eemi_ops eemi_ops = {
- 	.clock_getrate = zynqmp_pm_clock_getrate,
- 	.clock_setparent = zynqmp_pm_clock_setparent,
- 	.clock_getparent = zynqmp_pm_clock_getparent,
-+	.request_node = zynqmp_pm_request_node,
-+	.release_node = zynqmp_pm_release_node,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 83ebadf..02067a3 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -54,6 +54,8 @@ enum pm_api_id {
- 	PM_CLOCK_GETRATE,
- 	PM_CLOCK_SETPARENT,
- 	PM_CLOCK_GETPARENT,
-+	PM_REQUEST_NODE = 13,
-+	PM_RELEASE_NODE = 14,
- };
- 
- /* PMU-FW return status codes */
-@@ -130,6 +132,11 @@ struct zynqmp_eemi_ops {
- 	int (*clock_getrate)(u32 clock_id, u64 *rate);
- 	int (*clock_setparent)(u32 clock_id, u32 parent_id);
- 	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
-+	int (*request_node)(const u32 node,
-+			    const u32 capabilities,
-+			    const u32 qos,
-+			    const enum zynqmp_pm_request_ack ack);
-+	int (*release_node)(const u32 node);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index b1296d614b8b..968413edf0c8 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -1177,7 +1177,7 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
+ static int q6v5_init_reset(struct q6v5 *qproc)
+ {
+ 	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
+-							      NULL);
++							      "mss_restart");
+ 	if (IS_ERR(qproc->mss_restart)) {
+ 		dev_err(qproc->dev, "failed to acquire mss restart\n");
+ 		return PTR_ERR(qproc->mss_restart);
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
