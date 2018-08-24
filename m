@@ -1,60 +1,98 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [PATCH 1/7] firmware: xlnx-zynqmp: Add RPU ioctl enums
-Date: Thu, 16 Aug 2018 00:06:24 -0700
-Message-ID: <1534403190-28523-2-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
-References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, rajan.vaja@xilinx.com, jollys@xilinx.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 6/6] remoteproc: qcom: q6v5-pil: Add PDC reset for modem on SDM845 SoCs
+Date: Fri, 24 Aug 2018 18:49:00 +0530
+Message-Id: <20180824131900.5353-7-sibis@codeaurora.org>
+In-Reply-To: <20180824131900.5353-1-sibis@codeaurora.org>
+References: <20180824131900.5353-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add ZynqMP firmware ioctl enums for RPU configuration.
+In the presence of a PDC block working with subsystem RSC, assert/deassert
+PDC reset in modem start/stop path.
 
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pil.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index a3ef7d6..9c4258f 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -59,6 +59,10 @@ enum pm_ret_status {
- };
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 968413edf0c8..835fa005fe3e 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -149,6 +149,7 @@ struct q6v5 {
+ 	u32 halt_nc;
  
- enum pm_ioctl_id {
-+	IOCTL_GET_RPU_OPER_MODE = 0,
-+	IOCTL_SET_RPU_OPER_MODE,
-+	IOCTL_RPU_BOOT_ADDR_CONFIG,
-+	IOCTL_TCM_COMB_CONFIG,
- 	IOCTL_SET_PLL_FRAC_MODE = 8,
- 	IOCTL_GET_PLL_FRAC_MODE,
- 	IOCTL_SET_PLL_FRAC_DATA,
-@@ -75,6 +79,21 @@ enum pm_query_id {
- 	PM_QID_CLOCK_GET_NUM_CLOCKS = 12,
- };
+ 	struct reset_control *mss_restart;
++	struct reset_control *pdc_reset;
  
-+enum rpu_oper_mode {
-+	PM_RPU_MODE_LOCKSTEP,
-+	PM_RPU_MODE_SPLIT,
-+};
+ 	struct qcom_q6v5 q6v5;
+ 
+@@ -349,10 +350,17 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+ 
+ static int q6v5_reset_assert(struct q6v5 *qproc)
+ {
+-	if (qproc->has_alt_reset)
+-		return reset_control_reset(qproc->mss_restart);
+-	else
+-		return reset_control_assert(qproc->mss_restart);
++	int ret;
 +
-+enum rpu_boot_mem {
-+	PM_RPU_BOOTMEM_LOVEC,
-+	PM_RPU_BOOTMEM_HIVEC,
-+};
++	if (qproc->has_alt_reset) {
++		reset_control_assert(qproc->pdc_reset);
++		ret = reset_control_reset(qproc->mss_restart);
++		reset_control_deassert(qproc->pdc_reset);
++	} else {
++		ret = reset_control_assert(qproc->mss_restart);
++	}
 +
-+enum rpu_tcm_comb {
-+	PM_RPU_TCM_SPLIT,
-+	PM_RPU_TCM_COMB,
-+};
++	return ret;
+ }
+ 
+ static int q6v5_reset_deassert(struct q6v5 *qproc)
+@@ -360,9 +368,11 @@ static int q6v5_reset_deassert(struct q6v5 *qproc)
+ 	int ret;
+ 
+ 	if (qproc->has_alt_reset) {
++		reset_control_assert(qproc->pdc_reset);
+ 		writel(1, qproc->rmb_base + RMB_MBA_ALT_RESET);
+ 		ret = reset_control_reset(qproc->mss_restart);
+ 		writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
++		reset_control_deassert(qproc->pdc_reset);
+ 	} else {
+ 		ret = reset_control_deassert(qproc->mss_restart);
+ 	}
+@@ -1183,6 +1193,15 @@ static int q6v5_init_reset(struct q6v5 *qproc)
+ 		return PTR_ERR(qproc->mss_restart);
+ 	}
+ 
++	if (qproc->has_alt_reset) {
++		qproc->pdc_reset = devm_reset_control_get_exclusive(qproc->dev,
++								"pdc_reset");
++		if (IS_ERR(qproc->pdc_reset)) {
++			dev_err(qproc->dev, "failed to acquire pdc reset\n");
++			return PTR_ERR(qproc->pdc_reset);
++		}
++	}
 +
- /**
-  * struct zynqmp_pm_query_data - PM query data
-  * @qid:	query ID
+ 	return 0;
+ }
+ 
+@@ -1303,12 +1322,12 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->active_reg_count = ret;
+ 
++	qproc->has_alt_reset = desc->has_alt_reset;
+ 	ret = q6v5_init_reset(qproc);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+ 	qproc->version = desc->version;
+-	qproc->has_alt_reset = desc->has_alt_reset;
+ 	qproc->need_mem_protection = desc->need_mem_protection;
+ 
+ 	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
