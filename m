@@ -1,107 +1,50 @@
-Return-Path: <rohitkr@codeaurora.org>
-Subject: Re: [PATCH v2] remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
-From: Rohit Kumar <rohitkr@codeaurora.org>
-References: <1530264053-8394-1-git-send-email-rohitkr@codeaurora.org>
- <20180706203236.GA24729@rob-hp-laptop>
- <43dcb60b-720f-27ab-3696-dbf0fe0b65fc@codeaurora.org>
-Message-ID: <be77dbce-49aa-862f-0192-f0264b5aa588@codeaurora.org>
-Date: Fri, 3 Aug 2018 16:53:05 +0530
-MIME-Version: 1.0
-In-Reply-To: <43dcb60b-720f-27ab-3696-dbf0fe0b65fc@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, bgoswami@codeaurora.org, sbpata@codeaurora.org
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 0/6] Add support for PDC Global on SDM845 SoCs
+Date: Fri, 24 Aug 2018 18:48:54 +0530
+Message-Id: <20180824131900.5353-1-sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello Bjorn,
+This patch series add support for PDC Global (Power Domain Controller)
+on SDM845 SoCs and adds pdc reset lines assert/deassert to remoteproc
+Q6v5 modem-pil. The first two patches adds PDC Global reset driver to
+control reset signals of Modem, Compute, Display, GPU, Debug, AOP,
+Sensors, Audio, SP and APPS. The last four patches (cleans up)/adds pdc
+reset lines to q6v5 bindings and asserts/deasserts in modem start/stop
+path.
 
+v2:
+  Incorporated Philipp/Bjorn/Rob suggestions
+  Renamed reset binding to pdc-global.txt
+  replaced offset with #define of register name
+  replaced with devm_reset_control_get_exclusive()
+  Separted dt binding from the drivers 
 
-Can you please let us know the suggest the file name and review the patch.
+The last 4 remoteproc patches can be picked up after the pdc global
+reset driver lands on linux-next.
 
+Sibi Sankar (6):
+  dt-bindings: reset: Add PDC Global binding for SDM845 SoCs
+  reset: qcom: PDC Global (Power Domain Controller) reset controller
+  dt-bindings: remoteproc: Remove additional definition tag
+  dt-bindings: remoteproc: Add PDC reset binding for Q6V5 PIL
+  remoteproc: qcom: q6v5-pil: Explicitly get mss_restart line
+  remoteproc: qcom: q6v5-pil: Add PDC reset for modem on SDM845 SoCs
 
-On 7/9/2018 11:29 AM, Rohit Kumar wrote:
-> Thanks Rob for reviewing.
->
->
-> On 7/7/2018 2:02 AM, Rob Herring wrote:
->> On Fri, Jun 29, 2018 at 02:50:53PM +0530, Rohit kumar wrote:
->>> This adds APSS based ADSP PIL driver for QCOM SoCs.
->>> Added initial support for SDM845 with ADSP bootup and
->>> shutdown operation handled from Application Processor
->>> SubSystem(APSS).
->>>
->>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
->>> ---
->>> Changes since v1:
->>> - Used APIs from qcom_q6v5.c
->>> - Use clock, reset and regmap driver APIs instead of
->>>    directly writing into the LPASS registers.
->>> - Created new file for non PAS ADSP PIL instead of extending
->>>    existing ADSP PIL driver.
->>> - cleanups as suggested by Bjorn and Rob.
->>>
->>>   .../bindings/remoteproc/qcom,non-pas-adsp.txt      | 138 +++++
->> This should be a separate patch.
->
-> Ok. Will separate it in next spin.
->>> drivers/remoteproc/Kconfig                         |  18 +
->>>   drivers/remoteproc/Makefile                        |   1 +
->>>   drivers/remoteproc/qcom_nonpas_adsp_pil.c          | 667 
->>> +++++++++++++++++++++
->>>   4 files changed, 824 insertions(+)
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
->>>   create mode 100644 drivers/remoteproc/qcom_nonpas_adsp_pil.c
->>>
->>> diff --git 
->>> a/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt 
->>> b/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
->>> new file mode 100644
->>> index 0000000..0581aaa
->>> --- /dev/null
->>> +++ 
->>> b/Documentation/devicetree/bindings/remoteproc/qcom,non-pas-adsp.txt
->>> @@ -0,0 +1,138 @@
->>> +Qualcomm Technology Inc. Non PAS ADSP Peripheral Image Loader
->>> +
->>> +This document defines the binding for a component that loads and 
->>> boots firmware
->>> +on the Qualcomm Technology Inc. ADSP Hexagon core.
->>> +
->>> +- compatible:
->>> +    Usage: required
->>> +    Value type: <string>
->>> +    Definition: must be one of:
->>> +            "qcom,sdm845-apss-adsp-pil"
->> Didn't Bjorn say to drop the 'apss' part?
->
-> Yes, he had asked to rename compatible string for  existing PIL driver 
-> as "qcom,platform-subsystem-pas"
-> and non-pas pil driver as "qcom,platform-subsystem-pil". I wanted to 
-> get confirmation from Bjorn whether
-> we should rename the filename too.
-> @Bjorn, can you please suggest filename and compatible strings for the 
-> two drivers.
->>> +
->>> +- reg:
->>> +    Usage: required
->>> +    Value type: <prop-encoded-array>
->>> +    Definition: must specify the base address and size of the qdsp6ss
->>> +
->>> +- reg-names:
->>> +    Usage: required
->>> +    Value type: <stringlist>
->>> +    Definition: must be "qdsp6ss"
->>> +
->>>
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe 
->> linux-remoteproc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at http://vger.kernel.org/majordomo-info.html
->
-> Thanks,
-> Rohit
->
+ .../bindings/remoteproc/qcom,q6v5.txt         |   6 +-
+ .../bindings/reset/qcom,pdc-global.txt        |  52 +++++++
+ drivers/remoteproc/qcom_q6v5_pil.c            |  31 +++-
+ drivers/reset/Kconfig                         |   9 ++
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-qcom-pdc.c                | 142 ++++++++++++++++++
+ include/dt-bindings/reset/qcom,sdm845-pdc.h   |  20 +++
+ 7 files changed, 254 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
+ create mode 100644 drivers/reset/reset-qcom-pdc.c
+ create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
