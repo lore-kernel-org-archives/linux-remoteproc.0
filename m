@@ -1,98 +1,85 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 6/6] remoteproc: qcom: q6v5-pil: Add PDC reset for modem on SDM845 SoCs
-Date: Fri, 24 Aug 2018 18:49:00 +0530
-Message-Id: <20180824131900.5353-7-sibis@codeaurora.org>
-In-Reply-To: <20180824131900.5353-1-sibis@codeaurora.org>
+Return-Path: <mka@chromium.org>
+Return-Path: <mka@chromium.org>
+Date: Tue, 28 Aug 2018 09:56:19 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v2 2/6] reset: qcom: PDC Global (Power Domain Controller)
+ reset controller
+Message-ID: <20180828165619.GA10879@google.com>
 References: <20180824131900.5353-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+ <20180824131900.5353-3-sibis@codeaurora.org>
+ <20180828002236.GX160295@google.com>
+ <20180828030253.GF2523@minitux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180828030253.GF2523@minitux>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Sibi Sankar <sibis@codeaurora.org>, p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In the presence of a PDC block working with subsystem RSC, assert/deassert
-PDC reset in modem start/stop path.
+On Mon, Aug 27, 2018 at 08:02:53PM -0700, Bjorn Andersson wrote:
+> On Mon 27 Aug 17:22 PDT 2018, Matthias Kaehlcke wrote:
+> > On Fri, Aug 24, 2018 at 06:48:56PM +0530, Sibi Sankar wrote:
+> > > diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
+> [..]
+> > > +struct qcom_pdc_desc {
+> > > +	const struct regmap_config *config;
+> > > +	const struct qcom_pdc_reset_map *resets;
+> > > +	size_t num_resets;
+> > > +};
+> > 
+> > Not sure if this structure adds much value or just a layer of
+> > indirection:
+> > 
+> > - .config is only accessed in _probe(), sdm845_pdc_regmap_config could
+> >   be used directly
+> > - .resets is used in _(de)assert(), sdm845_pdc_resets could be used
+> >   directly
+> > - .num_resets is only accessed in _probe(),
+> >   ARRAY_SIZE(sdm845_pdc_resets) could be used instead
+> > 
+> > It probably makes sense if it is planned to support reset controllers
+> > of other SoCs with this driver.
+> > 
+> 
+> I like this suggestion, once we need the configurability we can add the
+> type for it. It also shows that only .resets would need to be referenced
+> by qcom_pdc_reset_data.
+> 
+> > > +struct qcom_pdc_reset_data {
+> > > +	struct reset_controller_dev rcdev;
+> > > +	struct regmap *regmap;
+> > > +	const struct qcom_pdc_desc *desc;
+> > > +};
+> [..]
+> > > +static int qcom_pdc_reset_probe(struct platform_device *pdev)
+> > > +{
+> [..]
+> > > +	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
+> > > +	if (IS_ERR(data->regmap)) {
+> > > +		dev_err(dev, "Unable to get pdc-global regmap");
+> > 
+> > Add missing '\n'
+> > 
+> > Say 'pdc-reset' instead of 'pdc-global'? (see also my other comment
+> > below).
+> > 
+> 
+> This regmap is created out of the single anonymous "reg", so I think the
+> error should be reduced to "Unable to initialize regmap\n".
+> 
+> [..]
+> > > +static const struct of_device_id qcom_pdc_reset_of_match[] = {
+> > > +	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
+> > 
+> > Should this be 'qcom,sdm845-pdc-reset' which is more specific than
+> > 'global' and in line with the name and purpose of the driver?
+> > Obviously this would require to adjust the bindings doc too.
+> > 
+> 
+> No, the binding describes the hardware block named "PDC Global",
+> currently implemented as a reset controller. The reason for doing this
+> is so that we one day can expose additional interfaces in a backwards
+> compatible fashion.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pil.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 968413edf0c8..835fa005fe3e 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -149,6 +149,7 @@ struct q6v5 {
- 	u32 halt_nc;
- 
- 	struct reset_control *mss_restart;
-+	struct reset_control *pdc_reset;
- 
- 	struct qcom_q6v5 q6v5;
- 
-@@ -349,10 +350,17 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- 
- static int q6v5_reset_assert(struct q6v5 *qproc)
- {
--	if (qproc->has_alt_reset)
--		return reset_control_reset(qproc->mss_restart);
--	else
--		return reset_control_assert(qproc->mss_restart);
-+	int ret;
-+
-+	if (qproc->has_alt_reset) {
-+		reset_control_assert(qproc->pdc_reset);
-+		ret = reset_control_reset(qproc->mss_restart);
-+		reset_control_deassert(qproc->pdc_reset);
-+	} else {
-+		ret = reset_control_assert(qproc->mss_restart);
-+	}
-+
-+	return ret;
- }
- 
- static int q6v5_reset_deassert(struct q6v5 *qproc)
-@@ -360,9 +368,11 @@ static int q6v5_reset_deassert(struct q6v5 *qproc)
- 	int ret;
- 
- 	if (qproc->has_alt_reset) {
-+		reset_control_assert(qproc->pdc_reset);
- 		writel(1, qproc->rmb_base + RMB_MBA_ALT_RESET);
- 		ret = reset_control_reset(qproc->mss_restart);
- 		writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
-+		reset_control_deassert(qproc->pdc_reset);
- 	} else {
- 		ret = reset_control_deassert(qproc->mss_restart);
- 	}
-@@ -1183,6 +1193,15 @@ static int q6v5_init_reset(struct q6v5 *qproc)
- 		return PTR_ERR(qproc->mss_restart);
- 	}
- 
-+	if (qproc->has_alt_reset) {
-+		qproc->pdc_reset = devm_reset_control_get_exclusive(qproc->dev,
-+								"pdc_reset");
-+		if (IS_ERR(qproc->pdc_reset)) {
-+			dev_err(qproc->dev, "failed to acquire pdc reset\n");
-+			return PTR_ERR(qproc->pdc_reset);
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -1303,12 +1322,12 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->active_reg_count = ret;
- 
-+	qproc->has_alt_reset = desc->has_alt_reset;
- 	ret = q6v5_init_reset(qproc);
- 	if (ret)
- 		goto free_rproc;
- 
- 	qproc->version = desc->version;
--	qproc->has_alt_reset = desc->has_alt_reset;
- 	qproc->need_mem_protection = desc->need_mem_protection;
- 
- 	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Sounds reasonable, thanks for the clarification.
