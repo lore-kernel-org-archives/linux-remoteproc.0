@@ -1,29 +1,30 @@
-Return-Path: <mka@chromium.org>
-Return-Path: <mka@chromium.org>
-Date: Mon, 27 Aug 2018 17:38:23 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 27 Aug 2018 17:33:02 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v2 1/6] dt-bindings: reset: Add PDC Global binding for
  SDM845 SoCs
-Message-ID: <20180828003823.GY160295@google.com>
+Message-ID: <20180828003302.GE2523@minitux>
 References: <20180824131900.5353-1-sibis@codeaurora.org>
  <20180824131900.5353-2-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180824131900.5353-2-sibis@codeaurora.org>
 To: Sibi Sankar <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Cc: p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Sibi,
+On Fri 24 Aug 06:18 PDT 2018, Sibi Sankar wrote:
 
-On Fri, Aug 24, 2018 at 06:48:55PM +0530, Sibi Sankar wrote:
 > Add PDC Global(Power Domain Controller) binding for SDM845 SoCs.
-
-nit: missing blank before the opening parenthesis.
-
 > 
 > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
 > ---
 >  .../bindings/reset/qcom,pdc-global.txt        | 52 +++++++++++++++++++
 >  include/dt-bindings/reset/qcom,sdm845-pdc.h   | 20 +++++++
@@ -42,13 +43,7 @@ nit: missing blank before the opening parenthesis.
 > +
 > +This binding describes a reset-controller found on PDC-Global(Power Domain
 > +Controller) block for Qualcomm Technologies Inc SDM845 SoCs.
-
-Are there other PDC reset controllers that aren't 'global'? Otherwise
-I'd suggest to use 'pdc-reset' instead of 'pdc-global', which is more
-specific and in line with the name of the driver added by this series.
-Or something like 'pdc-reset-global/main' if there are other
-controllers?
-
+> +
 > +Required properties:
 > +- compatible:
 > +	Usage: required
@@ -83,9 +78,45 @@ controllers?
 > +specified in reset.txt.
 > +
 > +For list of all valid reset indicies see
-
-s/indicies/indices/ (or s/indicies/lines/ ?)
-
-Cheers
-
-Matthias
+> +<dt-bindings/reset/qcom,sdm845-pdc.h>
+> +
+> +Example:
+> +
+> +modem-pil@4080000 {
+> +	...
+> +
+> +	resets = <&pdc_reset PDC_MODEM_SYNC_RESET>;
+> +	reset-names = "pdc_reset";
+> +
+> +	...
+> +};
+> diff --git a/include/dt-bindings/reset/qcom,sdm845-pdc.h b/include/dt-bindings/reset/qcom,sdm845-pdc.h
+> new file mode 100644
+> index 000000000000..53c37f9c319a
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/qcom,sdm845-pdc.h
+> @@ -0,0 +1,20 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_RESET_PDC_SDM_845_H
+> +#define _DT_BINDINGS_RESET_PDC_SDM_845_H
+> +
+> +#define PDC_APPS_SYNC_RESET	0
+> +#define PDC_SP_SYNC_RESET	1
+> +#define PDC_AUDIO_SYNC_RESET	2
+> +#define PDC_SENSORS_SYNC_RESET	3
+> +#define PDC_AOP_SYNC_RESET	4
+> +#define PDC_DEBUG_SYNC_RESET	5
+> +#define PDC_GPU_SYNC_RESET	6
+> +#define PDC_DISPLAY_SYNC_RESET	7
+> +#define PDC_COMPUTE_SYNC_RESET	8
+> +#define PDC_MODEM_SYNC_RESET	9
+> +
+> +#endif
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
