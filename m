@@ -1,83 +1,231 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 27 Aug 2018 20:02:53 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <mka@chromium.org>
+Return-Path: <mka@chromium.org>
+Date: Mon, 27 Aug 2018 17:22:36 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
 Subject: Re: [PATCH v2 2/6] reset: qcom: PDC Global (Power Domain Controller)
  reset controller
-Message-ID: <20180828030253.GF2523@minitux>
+Message-ID: <20180828002236.GX160295@google.com>
 References: <20180824131900.5353-1-sibis@codeaurora.org>
  <20180824131900.5353-3-sibis@codeaurora.org>
- <20180828002236.GX160295@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180828002236.GX160295@google.com>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: Sibi Sankar <sibis@codeaurora.org>, p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+In-Reply-To: <20180824131900.5353-3-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, p.zabel@pengutronix.de, robh+dt@kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 27 Aug 17:22 PDT 2018, Matthias Kaehlcke wrote:
-> On Fri, Aug 24, 2018 at 06:48:56PM +0530, Sibi Sankar wrote:
-> > diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
-[..]
-> > +struct qcom_pdc_desc {
-> > +	const struct regmap_config *config;
-> > +	const struct qcom_pdc_reset_map *resets;
-> > +	size_t num_resets;
-> > +};
-> 
-> Not sure if this structure adds much value or just a layer of
-> indirection:
-> 
-> - .config is only accessed in _probe(), sdm845_pdc_regmap_config could
->   be used directly
-> - .resets is used in _(de)assert(), sdm845_pdc_resets could be used
->   directly
-> - .num_resets is only accessed in _probe(),
->   ARRAY_SIZE(sdm845_pdc_resets) could be used instead
-> 
-> It probably makes sense if it is planned to support reset controllers
-> of other SoCs with this driver.
-> 
+Hi Sibi,
 
-I like this suggestion, once we need the configurability we can add the
-type for it. It also shows that only .resets would need to be referenced
-by qcom_pdc_reset_data.
-
-> > +struct qcom_pdc_reset_data {
-> > +	struct reset_controller_dev rcdev;
-> > +	struct regmap *regmap;
-> > +	const struct qcom_pdc_desc *desc;
-> > +};
-[..]
-> > +static int qcom_pdc_reset_probe(struct platform_device *pdev)
-> > +{
-[..]
-> > +	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
-> > +	if (IS_ERR(data->regmap)) {
-> > +		dev_err(dev, "Unable to get pdc-global regmap");
+On Fri, Aug 24, 2018 at 06:48:56PM +0530, Sibi Sankar wrote:
+> Add reset controller for SDM845 SoCs to control reset signals provided
+> by PDC Global for Modem, Compute, Display, GPU, Debug, AOP, Sensors,
+> Audio, SP and APPS
 > 
-> Add missing '\n'
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  drivers/reset/Kconfig          |   9 +++
+>  drivers/reset/Makefile         |   1 +
+>  drivers/reset/reset-qcom-pdc.c | 142 +++++++++++++++++++++++++++++++++
+>  3 files changed, 152 insertions(+)
+>  create mode 100644 drivers/reset/reset-qcom-pdc.c
 > 
-> Say 'pdc-reset' instead of 'pdc-global'? (see also my other comment
-> below).
-> 
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 13d28fdbdbb5..c21da9fe51ec 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
+>  	  reset signals provided by AOSS for Modem, Venus, ADSP,
+>  	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
+>  
+> +config RESET_QCOM_PDC
+> +	tristate "Qualcomm PDC Reset Driver"
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	help
+> +	  This enables the PDC (Power Domain Controller) reset driver
+> +	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
+> +	  to control reset signals provided by PDC for Modem, Compute,
+> +	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
 
-This regmap is created out of the single anonymous "reg", so I think the
-error should be reduced to "Unable to initialize regmap\n".
+What exactly does APPS mean? The AP cores, the entire SoC, something
+else?
 
-[..]
-> > +static const struct of_device_id qcom_pdc_reset_of_match[] = {
-> > +	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
-> 
-> Should this be 'qcom,sdm845-pdc-reset' which is more specific than
-> 'global' and in line with the name and purpose of the driver?
-> Obviously this would require to adjust the bindings doc too.
-> 
+> +
+>  config RESET_SIMPLE
+>  	bool "Simple Reset Controller Driver" if COMPILE_TEST
+>  	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 4243c38228e2..d08e8b90046a 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -16,6 +16,7 @@ obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
+>  obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
+>  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>  obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+> +obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
+>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+> diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
+> new file mode 100644
+> index 000000000000..bb6a5e5ee0f8
+> --- /dev/null
+> +++ b/drivers/reset/reset-qcom-pdc.c
+> @@ -0,0 +1,142 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/regmap.h>
+> +#include <linux/of_device.h>
+> +#include <dt-bindings/reset/qcom,sdm845-pdc.h>
 
-No, the binding describes the hardware block named "PDC Global",
-currently implemented as a reset controller. The reason for doing this
-is so that we one day can expose additional interfaces in a backwards
-compatible fashion.
+Headers should be sorted in alphabetical order.
 
-Regards,
-Bjorn
+> +
+> +#define RPMH_PDC_SYNC_RESET	0x100
+> +
+> +struct qcom_pdc_reset_map {
+> +	u8 bit;
+> +};
+> +
+> +struct qcom_pdc_desc {
+> +	const struct regmap_config *config;
+> +	const struct qcom_pdc_reset_map *resets;
+> +	size_t num_resets;
+> +};
+
+Not sure if this structure adds much value or just a layer of
+indirection:
+
+- .config is only accessed in _probe(), sdm845_pdc_regmap_config could
+  be used directly
+- .resets is used in _(de)assert(), sdm845_pdc_resets could be used
+  directly
+- .num_resets is only accessed in _probe(),
+  ARRAY_SIZE(sdm845_pdc_resets) could be used instead
+
+It probably makes sense if it is planned to support reset controllers
+of other SoCs with this driver.
+
+> +struct qcom_pdc_reset_data {
+> +	struct reset_controller_dev rcdev;
+> +	struct regmap *regmap;
+> +	const struct qcom_pdc_desc *desc;
+> +};
+> +
+> +static const struct regmap_config sdm845_pdc_regmap_config = {
+> +	.name		= "pdc-reset",
+> +	.reg_bits	= 32,
+> +	.reg_stride	= 4,
+> +	.val_bits	= 32,
+> +	.max_register	= 0x20000,
+> +	.fast_io	= true,
+> +};
+> +
+> +static const struct qcom_pdc_reset_map sdm845_pdc_resets[] = {
+> +	[PDC_APPS_SYNC_RESET] = {0},
+> +	[PDC_SP_SYNC_RESET] = {1},
+> +	[PDC_AUDIO_SYNC_RESET] = {2},
+> +	[PDC_SENSORS_SYNC_RESET] = {3},
+> +	[PDC_AOP_SYNC_RESET] = {4},
+> +	[PDC_DEBUG_SYNC_RESET] = {5},
+> +	[PDC_GPU_SYNC_RESET] = {6},
+> +	[PDC_DISPLAY_SYNC_RESET] = {7},
+> +	[PDC_COMPUTE_SYNC_RESET] = {8},
+> +	[PDC_MODEM_SYNC_RESET] = {9},
+> +};
+> +
+> +static const struct qcom_pdc_desc sdm845_pdc_desc = {
+> +	.config = &sdm845_pdc_regmap_config,
+> +	.resets = sdm845_pdc_resets,
+> +	.num_resets = ARRAY_SIZE(sdm845_pdc_resets),
+> +};
+> +
+> +static inline struct qcom_pdc_reset_data *to_qcom_pdc_reset_data(
+> +				struct reset_controller_dev *rcdev)
+> +{
+> +	return container_of(rcdev, struct qcom_pdc_reset_data, rcdev);
+> +}
+> +
+> +static int qcom_pdc_control_assert(struct reset_controller_dev *rcdev,
+> +					unsigned long idx)
+> +{
+> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
+> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
+> +
+> +	return regmap_update_bits(data->regmap, RPMH_PDC_SYNC_RESET,
+> +					BIT(map->bit), BIT(map->bit));
+> +}
+> +
+> +static int qcom_pdc_control_deassert(struct reset_controller_dev *rcdev,
+> +					unsigned long idx)
+> +{
+> +	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
+> +	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
+> +
+> +	return regmap_update_bits(data->regmap, RPMH_PDC_SYNC_RESET,
+> +					BIT(map->bit), 0);
+> +}
+> +
+> +static const struct reset_control_ops qcom_pdc_reset_ops = {
+> +	.assert = qcom_pdc_control_assert,
+> +	.deassert = qcom_pdc_control_deassert,
+> +};
+> +
+> +static int qcom_pdc_reset_probe(struct platform_device *pdev)
+> +{
+> +	struct qcom_pdc_reset_data *data;
+> +	struct device *dev = &pdev->dev;
+> +	const struct qcom_pdc_desc *desc;
+> +	void __iomem *base;
+> +	struct resource *res;
+> +
+> +	desc = of_device_get_match_data(dev);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	data->desc = desc;
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
+> +	if (IS_ERR(data->regmap)) {
+> +		dev_err(dev, "Unable to get pdc-global regmap");
+
+Add missing '\n'
+
+Say 'pdc-reset' instead of 'pdc-global'? (see also my other comment
+below).
+
+> +		return PTR_ERR(data->regmap);
+> +	}
+> +
+> +	data->rcdev.owner = THIS_MODULE;
+> +	data->rcdev.ops = &qcom_pdc_reset_ops;
+> +	data->rcdev.nr_resets = desc->num_resets;
+> +	data->rcdev.of_node = dev->of_node;
+> +
+> +	return devm_reset_controller_register(dev, &data->rcdev);
+> +}
+> +
+> +static const struct of_device_id qcom_pdc_reset_of_match[] = {
+> +	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
+
+Should this be 'qcom,sdm845-pdc-reset' which is more specific than
+'global' and in line with the name and purpose of the driver?
+Obviously this would require to adjust the bindings doc too.
+
+Cheers
+
+Matthias
