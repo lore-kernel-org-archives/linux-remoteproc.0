@@ -1,104 +1,184 @@
-Return-Path: <jliang@xilinx.com>
-Return-Path: wendy.liang@xilinx.com
-From: Wendy Liang <wendy.liang@xilinx.com>
-Subject: [PATCH 5/7] firmware: xlnx-zynqmp: Add shutdown/wakeup request
-Date: Thu, 16 Aug 2018 00:06:28 -0700
-Message-ID: <1534403190-28523-6-git-send-email-jliang@xilinx.com>
-In-Reply-To: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
-References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+Return-Path: <niklas.cassel@linaro.org>
+Return-Path: <niklas.cassel@linaro.org>
+Date: Fri, 31 Aug 2018 11:44:50 +0200
+From: Niklas Cassel <niklas.cassel@linaro.org>
+Subject: Re: [PATCH] remoteproc: qcom: Rename Hexagon v5 PAS driver
+Message-ID: <20180831094450.GA17121@centauri.lan>
+References: <20180828051203.22394-1-bjorn.andersson@linaro.org>
+ <20180829092520.GA9677@centauri.ideon.se>
+ <20180831031053.GP2523@minitux>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, rajan.vaja@xilinx.com, jollys@xilinx.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180831031053.GP2523@minitux>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Rohit kumar <rohitkr@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add shutdown/wakeup a resource eemi operations to shutdown
-or bringup a resource.
+On Thu, Aug 30, 2018 at 08:10:53PM -0700, Bjorn Andersson wrote:
+> On Wed 29 Aug 02:25 PDT 2018, Niklas Cassel wrote:
+> 
+> > On Mon, Aug 27, 2018 at 10:12:03PM -0700, Bjorn Andersson wrote:
+> > > The Hexagon v5 ADSP driver is used for more than only the ADSP and
+> > > there's an upcoming non-PAS ADSP PIL for SDM845, so rename the driver to
+> > > qcom_q6v5_pas in order to better suite this.
+> > 
+> > Hello Bjorn,
+> > 
+> > so I'm a bit new to this, but after your rename we will have:
+> > 
+> > QCOM_Q6V5_PIL
+> > and
+> > QCOM_Q6V5_PAS
+> > 
+> > that both are PILs.
+> > I guess that the difference is that the latter uses TrustZone?
+> > 
+> > The ADSP for some QCOM SoCs is a Hexagon v5, therefore the
+> > QCOM_Q6V5_PAS can also boot certain ADSPs?
+> > 
+> > But we also have QCOM_Q6V5_WCSS
+> > "Qualcomm Hexagon based WCSS Peripheral Image Loader",
+> > which also appears to be Hexagon v5 based, but I assume that
+> > neither QCOM_Q6V5_PIL nor QCOM_Q6V5_PAS can boot the WCSS?
+> > 
+> > There is also an upcoming non-PAS ADSP PIL loader for SDM845,
+> > but I guess that the ADSP there is not based on Hexagon v5,
+> > so the QCOM_Q6V5_PIL will not be able to boot it?
+> > 
+> > This all seems to be quite confusing, perhaps the help texts
+> > could be improved to mitigate this confusion?
+> > 
+> 
+> You're right, as proposed this is confusing.
+> 
+> The plan is to have QCOM_Q6V5_PAS, which deals with standard Hexagon
+> peripherals that relies on the PAS service in TrustZone and then rename
+> QCOM_Q6V5_PIL to QCOM_Q6V5_MSA to denote that this is the remoteproc
+> driver for the self-authenticating modem.
 
-Signed-off-by: Wendy Liang <jliang@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 35 +++++++++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h |  8 ++++++++
- 2 files changed, 43 insertions(+)
+Ok. It might be a good idea to send both driver renames in a single
+patch series, so that it is easier to verify that the renaming is
+consistent.
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 2e97f60..aa83262 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -475,6 +475,39 @@ static int zynqmp_pm_release_node(const u32 node)
- 	return zynqmp_pm_invoke_fn(PM_RELEASE_NODE, node, 0, 0, 0, NULL);
- }
- 
-+/**
-+ * zynqmp_pm_force_powerdown - PM call to request for another PU or subsystem to
-+ *				be powered down forcefully
-+ * @target:	Node ID of the targeted PU or subsystem
-+ * @ack:	Flag to specify whether acknowledge is requested
-+ *
-+ * Return:	Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_force_powerdown(const u32 target,
-+				     const enum zynqmp_pm_request_ack ack)
-+{
-+	return zynqmp_pm_invoke_fn(PM_FORCE_POWERDOWN, target, ack, 0, 0, NULL);
-+}
-+
-+/**
-+ * zynqmp_pm_request_wakeup - PM call to wake up selected master or subsystem
-+ * @node:	Node ID of the master or subsystem
-+ * @set_addr:	Specifies whether the address argument is relevant
-+ * @address:	Address from which to resume when woken up
-+ * @ack:	Flag to specify whether acknowledge requested
-+ *
-+ * Return:	Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_request_wakeup(const u32 node,
-+				    const bool set_addr,
-+				    const u64 address,
-+				    const enum zynqmp_pm_request_ack ack)
-+{
-+	/* set_addr flag is encoded into 1st bit of address */
-+	return zynqmp_pm_invoke_fn(PM_REQUEST_WAKEUP, node, address | set_addr,
-+				   address >> 32, ack, NULL);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.ioctl = zynqmp_pm_ioctl,
-@@ -490,6 +523,8 @@ static const struct zynqmp_eemi_ops eemi_ops = {
- 	.clock_getparent = zynqmp_pm_clock_getparent,
- 	.request_node = zynqmp_pm_request_node,
- 	.release_node = zynqmp_pm_release_node,
-+	.force_powerdown = zynqmp_pm_force_powerdown,
-+	.request_wakeup = zynqmp_pm_request_wakeup,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 02067a3..efc73bc 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -54,6 +54,8 @@ enum pm_api_id {
- 	PM_CLOCK_GETRATE,
- 	PM_CLOCK_SETPARENT,
- 	PM_CLOCK_GETPARENT,
-+	PM_FORCE_POWERDOWN = 8,
-+	PM_REQUEST_WAKEUP = 10,
- 	PM_REQUEST_NODE = 13,
- 	PM_RELEASE_NODE = 14,
- };
-@@ -137,6 +139,12 @@ struct zynqmp_eemi_ops {
- 			    const u32 qos,
- 			    const enum zynqmp_pm_request_ack ack);
- 	int (*release_node)(const u32 node);
-+	int (*force_powerdown)(const u32 target,
-+			       const enum zynqmp_pm_request_ack ack);
-+	int (*request_wakeup)(const u32 node,
-+			      const bool set_addr,
-+			      const u64 address,
-+			      const enum zynqmp_pm_request_ack ack);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
--- 
-2.7.4
+> 
+> The QCOM_Q6V5_WCSS then fits into this pattern, of being the non-TZ
+> based WCSS remoteproc driver.
+> 
+> > > 
+> > > Cc: Rohit kumar <rohitkr@codeaurora.org>
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > ---
+> > >  drivers/remoteproc/Kconfig                    | 22 +++++++++----------
+> > >  drivers/remoteproc/Makefile                   |  2 +-
+> > >  .../{qcom_adsp_pil.c => qcom_q6v5_pas.c}      |  4 ++--
+> > 
+> > You should probably also edit the qcom_defconfig:
+> > arch/arm/configs/qcom_defconfig:CONFIG_QCOM_ADSP_PIL=y
+> > 
+> 
+> Yes, this needs to be done as well. But needs to be done in a separate
+> patch.
+
+Doing it in the same patch would ensure that we don't break bisectability.
+
+
+
+Kind regards,
+Niklas
+
+> 
+> > >  3 files changed, 14 insertions(+), 14 deletions(-)
+> > >  rename drivers/remoteproc/{qcom_adsp_pil.c => qcom_q6v5_pas.c} (98%)
+> > > 
+> > > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > > index 052d4dd347f9..c98c0b2a2237 100644
+> > > --- a/drivers/remoteproc/Kconfig
+> > > +++ b/drivers/remoteproc/Kconfig
+> > > @@ -84,8 +84,16 @@ config KEYSTONE_REMOTEPROC
+> > >  	  It's safe to say N here if you're not interested in the Keystone
+> > >  	  DSPs or just want to use a bare minimum kernel.
+> > >  
+> > > -config QCOM_ADSP_PIL
+> > > -	tristate "Qualcomm ADSP Peripheral Image Loader"
+> > > +config QCOM_RPROC_COMMON
+> > > +	tristate
+> > > +
+> > > +config QCOM_Q6V5_COMMON
+> > > +	tristate
+> > > +	depends on ARCH_QCOM
+> > > +	depends on QCOM_SMEM
+> > > +
+> > > +config QCOM_Q6V5_PAS
+> > > +	tristate "Qualcomm Hexagon v5 Peripheral Authentication Service support"
+> > >  	depends on OF && ARCH_QCOM
+> > >  	depends on QCOM_SMEM
+> > >  	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
+> > > @@ -98,15 +106,7 @@ config QCOM_ADSP_PIL
+> > >  	select QCOM_SCM
+> > >  	help
+> > >  	  Say y here to support the TrustZone based Peripherial Image Loader
+> > 
+> > Since you are editing this help text, yoy may just as well s/Peripherial/Peripheral.
+> > 
+> 
+> Thanks, will do.
+> 
+> Regards,
+> Bjorn
+> 
+> > Kind regards,
+> > Niklas
+> > 
+> > > -	  for the Qualcomm ADSP remote processors.
+> > > -
+> > > -config QCOM_RPROC_COMMON
+> > > -	tristate
+> > > -
+> > > -config QCOM_Q6V5_COMMON
+> > > -	tristate
+> > > -	depends on ARCH_QCOM
+> > > -	depends on QCOM_SMEM
+> > > +	  for the Qualcomm Hexagon v5 based remote processors.
+> > >  
+> > >  config QCOM_Q6V5_PIL
+> > >  	tristate "Qualcomm Hexagon V5 Peripherial Image Loader"
+> > > diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> > > index 03332fa7e2ee..eb86c8ba5a87 100644
+> > > --- a/drivers/remoteproc/Makefile
+> > > +++ b/drivers/remoteproc/Makefile
+> > > @@ -14,9 +14,9 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+> > >  obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+> > >  obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+> > >  obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
+> > > -obj-$(CONFIG_QCOM_ADSP_PIL)		+= qcom_adsp_pil.o
+> > >  obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
+> > >  obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
+> > > +obj-$(CONFIG_QCOM_Q6V5_PAS)		+= qcom_q6v5_pas.o
+> > >  obj-$(CONFIG_QCOM_Q6V5_PIL)		+= qcom_q6v5_pil.o
+> > >  obj-$(CONFIG_QCOM_Q6V5_WCSS)		+= qcom_q6v5_wcss.o
+> > >  obj-$(CONFIG_QCOM_SYSMON)		+= qcom_sysmon.o
+> > > diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > similarity index 98%
+> > > rename from drivers/remoteproc/qcom_adsp_pil.c
+> > > rename to drivers/remoteproc/qcom_q6v5_pas.c
+> > > index d4339a6da616..2478ef3cd519 100644
+> > > --- a/drivers/remoteproc/qcom_adsp_pil.c
+> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > @@ -364,11 +364,11 @@ static struct platform_driver adsp_driver = {
+> > >  	.probe = adsp_probe,
+> > >  	.remove = adsp_remove,
+> > >  	.driver = {
+> > > -		.name = "qcom_adsp_pil",
+> > > +		.name = "qcom_q6v5_pas",
+> > >  		.of_match_table = adsp_of_match,
+> > >  	},
+> > >  };
+> > >  
+> > >  module_platform_driver(adsp_driver);
+> > > -MODULE_DESCRIPTION("Qualcomm MSM8974/MSM8996 ADSP Peripherial Image Loader");
+> > > +MODULE_DESCRIPTION("Qualcomm Hexagon v5 Peripheral Authentication Service driver");
+> > >  MODULE_LICENSE("GPL v2");
+> > > -- 
+> > > 2.18.0
+> > > 
