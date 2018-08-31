@@ -4,8 +4,8 @@ Subject: Re: [PATCH v3] rpmsg: qcom_smd: Access APCS through mailbox framework
 From: Frank Rowand <frowand.list@gmail.com>
 References: <20180420011757.22389-1-bjorn.andersson@linaro.org>
  <c6e2e87c-e2fd-c0ea-dbb9-5246b8694272@gmail.com>
-Message-ID: <7a9ae9a0-8d26-6968-6357-d5347cc44333@gmail.com>
-Date: Thu, 30 Aug 2018 21:05:12 -0700
+Message-ID: <dba700cb-70a7-095e-82a4-0fabf8aab7ea@gmail.com>
+Date: Thu, 30 Aug 2018 21:04:53 -0700
 MIME-Version: 1.0
 In-Reply-To: <c6e2e87c-e2fd-c0ea-dbb9-5246b8694272@gmail.com>
 Content-Type: text/plain; charset=utf-8
@@ -46,15 +46,13 @@ On 08/30/18 20:57, Frank Rowand wrote:
 > I'll reply to this email with the console messages for 4.18 and for 4.18 with
 > this commit reverted.
 
-
-
 < snip >
 
 Note that I have commented out the WARN_ON() in gic_irq_domain_translate()
 at drivers/irqchip/irq-gic.c:1016 to remove a lot of noise from the boot
 messages.
 
-Here are the console messages for 4.18, with ab460a2e72da reverted:
+Here are the console messages for 4.18:
 
 Android Bootloader - UART_DM Initialized!!!
 [0] welcome to lk
@@ -75,18 +73,18 @@ Android Bootloader - UART_DM Initialized!!!
 [460] -- reset --
 [460] -- portchange --
 [650] fastboot: processing commands
-[760] fastboot: download:00ed6000
-[1250] fastboot: boot
-[1270] Found Appeneded Flattened Device tree
-[1270] cmdline: console=ttyMSM0,115200,n8 androidboot.hardware=qcom user_debug=31 maxcpus=2 msm_rtb.filter=0x37 ehci-hcd.park=3 kgdboc=ttyMSM0,115200 debug and
+[750] fastboot: download:00ece000
+[1220] fastboot: boot
+[1240] Found Appeneded Flattened Device tree
+[1240] cmdline: console=ttyMSM0,115200,n8 androidboot.hardware=qcom user_debug=31 maxcpus=2 msm_rtb.filter=0x37 ehci-hcd.park=3 kgdboc=ttyMSM0,115200 debug and
 roidboot.emmc=true androidboot.serialno=40081c41 androidboot.baseband=apq
-[1290] Updating device tree: start
-[1300] Updating device tree: done
-[1300] booting linux @ 0x8000, ramdisk @ 0x2000000 (9533134), tags/device tree @ 0x1e00000
-[1310] Turn off MIPI_VIDEO_PANEL.
-[1310] Continuous splash enabled, keeping panel alive.
+[1270] Updating device tree: start
+[1270] Updating device tree: done
+[1270] booting linux @ 0x8000, ramdisk @ 0x2000000 (9533134), tags/device tree @ 0x1e00000
+[1280] Turn off MIPI_VIDEO_PANEL.
+[1280] Continuous splash enabled, keeping panel alive.
 Booting Linux on physical CPU 0x0
-Linux version 4.18.0-dirty (frowand@xps8900) (gcc version 4.6.x-google 20120106 (prerelease) (GCC)) #2 SMP PREEMPT Thu Aug 30 20:26:18 PDT 2018
+Linux version 4.18.0-dirty (frowand@xps8900) (gcc version 4.6.x-google 20120106 (prerelease) (GCC)) #3 SMP PREEMPT Thu Aug 30 20:32:21 PDT 2018
 CPU: ARMv7 Processor [512f06f0] revision 0 (ARMv7), cr=10c5787d
 CPU: div instructions available: patching division code
 CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
@@ -106,7 +104,7 @@ Kernel command line: console=ttyMSM0,115200,n8 androidboot.hardware=qcom user_de
 SM0,115200 debug androidboot.emmc=true androidboot.serialno=40081c41 androidboot.baseband=apq
 Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
 Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
-Memory: 1926832K/1967104K available (8192K kernel code, 793K rwdata, 3260K rodata, 1024K init, 267K bss, 40272K reserved, 0K cma-reserved, 13107
+Memory: 1926844K/1967104K available (8192K kernel code, 782K rwdata, 3212K rodata, 1024K init, 267K bss, 40260K reserved, 0K cma-reserved, 13107
 20K highmem)
 Virtual kernel memory layout:
     vector  : 0xffff0000 - 0xffff1000   (   4 kB)
@@ -117,7 +115,7 @@ Virtual kernel memory layout:
     modules : 0xbf000000 - 0xbfe00000   (  14 MB)
       .text : 0x(ptrval) - 0x(ptrval)   (9184 kB)
       .init : 0x(ptrval) - 0x(ptrval)   (1024 kB)
-      .data : 0x(ptrval) - 0x(ptrval)   ( 794 kB)
+      .data : 0x(ptrval) - 0x(ptrval)   ( 783 kB)
        .bss : 0x(ptrval) - 0x(ptrval)   ( 268 kB)
 SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
 Preemptible hierarchical RCU implementation.
@@ -186,7 +184,7 @@ fuse init (API version 7.27)
 Key type asymmetric registered
 Asymmetric key parser 'x509' registered
 bounce: pool size: 64 pages
-Block layer SCSI generic (bsg) driver version 0.4 loaded (major 250)
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 251)
 io scheduler noop registered
 io scheduler deadline registered
 io scheduler cfq registered (default)
@@ -262,129 +260,27 @@ sdhci-pltfm: SDHCI platform and OF driver helper
 sdhci_msm f98a4900.sdhci: Got CD GPIO
 usbcore: registered new interface driver usbhid
 usbhid: USB HID core driver
-remoteproc remoteproc0: releasing adsp-pil
 oprofile: using timer interrupt.
 NET: Registered protocol family 17
 Key type dns_resolver registered
 Registering SWP/SWPB emulation handler
 Loading compiled-in X.509 certificates
-s1: supplied by regulator-dummy
-s1: Bringing 0uV into 675000-675000uV
 sdhci_msm f98a4900.sdhci: Got CD GPIO
-remoteproc remoteproc0: releasing adsp-pil
-s2: supplied by regulator-dummy
-s2: Bringing 0uV into 500000-500000uV
-rtc-pm8xxx fc4cf000.spmi:pm8941@0:rtc@6000: setting system clock to 1970-01-01 03:12:34 UTC (11554)
-s3: supplied by regulator-dummy
+rtc-pm8xxx fc4cf000.spmi:pm8941@0:rtc@6000: setting system clock to 1970-01-01 03:17:32 UTC (11852)
 cfg80211: Loading compiled-in X.509 certificates for regulatory database
-s3: Bringing 0uV into 500000-500000uV
-s4: supplied by regulator-dummy
 cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-s4: Bringing 0uV into 500000-500000uV
 platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
-s5: supplied by regulator-dummy
 ALSA device list:
-s6: supplied by regulator-dummy
-cfg80211: failed to load regulatory.db
-s7: supplied by regulator-dummy
-  No soundcard�[    2.107810] s1: supplied by regulator-dummy
-s1: Bringing 0uV into 1300000-1300000uV
-Freeing unused kernel memory: 1024K
-s2: supplied by regulator-dummy
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-s2: Bringing 0uV into 2150000-2150000uV
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-s3: supplied by regulator-dummy
-s3: Bringing 0uV into 1800000-1800000uV
-remoteproc remoteproc0: releasing adsp-pil
-l1: supplied by s1
+cfg80211: failed to load regul�[    2.013428] Freeing unused kernel memory: 1024K
 mkdir: can't create directory '/bin': File exists
-mkdir: can't [    2.165006] l1: Bringing 0uV into 1225000-1225000uV
-l2: supplied by s3
-create directory '/dev': File exists
-l2: Bringing 0uV into 1200000-1200000uV
-l3: supplied by s1
-l3: Bringing 0uV into 1225000-1225000uV
-l4: supplied by s1
+mkdir: can't create directory '/dev': File exists
 mdev: unknown user/group 'root:uucp' on line 34
-l4: Bringing 0uV into 1225000-1225000uV
-l5: supplied by s2
-l5: Bringing 0uV into 1800000-1800000uV
-l6: supplied by s2
-l6: Bringing 0uV into 1800000-1800000uV
-l7: supplied by s2
-l7: Bringing 0uV into 1800000-1800000uV
-l8: supplied by regulator-dummy
-l8: Bringing 0uV into 1800000-1800000uV
-l9: supplied by regulator-dummy
-l9: Bringing 0uV into 1800000-1800000uV
-l10: supplied by regulator-dummy
-l10: Bringing 0uV into 1800000-1800000uV
-l11: supplied by s1
-l11: Bringing 0uV into 1300000-1300000uV
-l12: supplied by s2
-l12: Bringing 0uV into 1800000-1800000uV
-l13: supplied by regulator-dummy
-l13: Bringing 0uV into 1800000-1800000uV
-l14: supplied by s2
-l14: Bringing 0uV into 1800000-1800000uV
-l15: supplied by s2
-l15: Bringing 0uV into 2050000-2050000uV
-l16: supplied by regulator-dummy
-l16: Bringing 0uV into 2700000-2700000uV
-l17: supplied by regulator-dummy
-l17: Bringing 0uV into 2700000-2700000uV
-l18: supplied by regulator-dummy
-l18: Bringing 0uV into 2850000-2850000uV
-l19: supplied by regulator-dummy
-l19: Bringing 0uV into 3300000-3300000uV
-l20: supplied by regulator-dummy
-l20: Bringing 0uV into 2950000-2950000uV
-l21: supplied by regulator-dummy
-l21: Bringing 0uV into 2950000-2950000uV
-l22: supplied by regulator-dummy
-l22: Bringing 0uV into 3000000-3000000uV
-l23: supplied by regulator-dummy
-l23: Bringing 0uV into 3000000-3000000uV
-l24: supplied by regulator-dummy
-l24: Bringing 0uV into 3075000-3075000uV
-lvs1: supplied by s3
-lvs2: supplied by s3
-lvs3: supplied by s3
-5vs1: supplied by s4
-5vs2: supplied by s4
-mmc0: Switching to 3.3V signalling voltage failed
-mmc0: SDHCI controller on f9824900.sdhci [f9824900.sdhci] using ADMA
-sdhci_msm f98a4900.sdhci: Got CD GPIO
-mmc1: SDHCI controller on f98a4900.sdhci [f98a4900.sdhci] using ADMA
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
-mmc0: new HS200 MMC card at address 0001
-mmcblk0: mmc0:0001 SEM16G 14.7 GiB 
-mmcblk0boot0: mmc0:0001 SEM16G partition 1 4.00 MiB
-mmcblk0boot1: mmc0:0001 SEM16G partition 2 4.00 MiB
-mmcblk0rpmb: mmc0:0001 SEM16G partition 3 4.00 MiB, chardev (247:0)
-random: fast init done
- mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
-mmc1: new ultra high speed DDR50 SDHC card at address aaaa
-mmcblk1: mmc1:aaaa SU16G 14.8 GiB 
- mmcblk1: p1
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
-qcom_adsp_pil adsp-pil: adsp-pil supply px not found, using dummy regulator
-qcom_adsp_pil adsp-pil: no fatal IRQ defined
-remoteproc remoteproc0: releasing adsp-pil
 Attempt to mount partitions: /usr/system /usr/data
-Mounting partitions from: /dev/mmcblk0
-EXT4-fs (mmcblk0p12): mounted filesystem with ordered data mode. Opts: (null)
-EXT4-fs (mmcblk0p13): recovery complete
-EXT4-fs (mmcblk0p13): mounted filesystem with ordered data mode. Opts: (null)
-/ # 
-/ # 
+fdisk: can't open '/dev/mmcblk0': No such file or directory
+fdisk: can't open '/dev/mmcblk1': No such file or directory
+
+ERROR: did not find system partition on
+       /dev/mmcblk0
+       /dev/mmcblk1
+
 / # 
