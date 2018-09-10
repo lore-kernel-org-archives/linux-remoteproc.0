@@ -1,9 +1,8 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 10 Sep 2018 15:01:22 -0500
-From: Rob Herring <robh@kernel.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 10 Sep 2018 11:27:52 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v3 1/2] dt-binding: remoteproc: Add QTI ADSP PIL bindings
-Message-ID: <20180910200122.GA16410@bogus>
+Message-ID: <20180910182752.GD2523@minitux>
 References: <1535975560-8200-1-git-send-email-rohitkr@codeaurora.org>
  <1535975560-8200-2-git-send-email-rohitkr@codeaurora.org>
 MIME-Version: 1.0
@@ -11,14 +10,22 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1535975560-8200-2-git-send-email-rohitkr@codeaurora.org>
 To: Rohit kumar <rohitkr@codeaurora.org>
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Sep 03, 2018 at 05:22:39PM +0530, Rohit kumar wrote:
+On Mon 03 Sep 04:52 PDT 2018, Rohit kumar wrote:
+
 > Add devicetree bindings documentation file for Qualcomm
 > Technolgies Inc ADSP Peripheral Image Loader.
 > 
 > Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+
+Rob, this revision looks good to me and I would like to move ahead and
+merge it.
+
+Regards,
+Bjorn
+
 > ---
 >  .../bindings/remoteproc/qcom,adsp-pil.txt          | 123 +++++++++++++++++++++
 >  1 file changed, 123 insertions(+)
@@ -61,18 +68,12 @@ On Mon, Sep 03, 2018 at 05:22:39PM +0530, Rohit kumar wrote:
 > +	Usage: required
 > +	Value type: <prop-encoded-array>
 > +	Definition:  List of phandle and clock specifier pairs
-
-How many clocks?
-
 > +
 > +- clock-names:
 > +	Usage: required
 > +	Value type: <stringlist>
 > +	Definition: List of clock input name strings sorted in the same
 > +				order as the clocks property.
-
-What are the names?
-
 > +
 > +- power-domains:
 > +	Usage: required
@@ -83,9 +84,6 @@ What are the names?
 > +	Usage: required
 > +	Value type: <phandle>
 > +	Definition: reference to the reset-controller for the lpass
-
-How many?
-
 > +
 > +- reset-names:
 > +        Usage: required
