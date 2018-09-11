@@ -1,32 +1,47 @@
-Return-Path: <tsoni@codeaurora.org>
-Subject: Re: [PATCH] samples/rpmsg: Introduce a module parameter for message
- count
-References: <20180911174643.26199-1-s-anna@ti.com>
-From: Trilok Soni <tsoni@codeaurora.org>
-Message-ID: <2d904881-ec72-dd68-48ff-b8307642bc63@codeaurora.org>
-Date: Tue, 11 Sep 2018 11:17:40 -0700
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH] samples/rpmsg: Introduce a module parameter for message count
+Date: Tue, 11 Sep 2018 12:46:43 -0500
+Message-ID: <20180911174643.26199-1-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180911174643.26199-1-s-anna@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Bjorn,
+The current rpmsg_client_sample uses a fixed number of messages to
+be sent to each instance. This is currently set at 100. Introduce
+an optional module parameter 'count' so that the number of messages
+to be exchanged can be made flexible.
 
->   
->   #define MSG		"hello world!"
-> -#define MSG_LIMIT	100
-> +
-> +static int count = 100;
-> +module_param(count, int, 0644);
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ samples/rpmsg/rpmsg_client_sample.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I thought Greg KH doesn't want any new code to have module_param call, 
-right? Are we Ok here or I am missing something here.
-
+diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
+index f161dfd3e70a..9b6b27ea504f 100644
+--- a/samples/rpmsg/rpmsg_client_sample.c
++++ b/samples/rpmsg/rpmsg_client_sample.c
+@@ -22,7 +22,9 @@
+ #include <linux/rpmsg.h>
+ 
+ #define MSG		"hello world!"
+-#define MSG_LIMIT	100
++
++static int count = 100;
++module_param(count, int, 0644);
+ 
+ struct instance_data {
+ 	int rx_count;
+@@ -41,7 +43,7 @@ static int rpmsg_sample_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 		       data, len,  true);
+ 
+ 	/* samples should not live forever */
+-	if (idata->rx_count >= MSG_LIMIT) {
++	if (idata->rx_count >= count) {
+ 		dev_info(&rpdev->dev, "goodbye!\n");
+ 		return 0;
+ 	}
 -- 
----Trilok Soni
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
-Linux Foundation Collaborative Project
+2.18.0
