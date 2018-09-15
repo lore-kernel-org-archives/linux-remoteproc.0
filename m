@@ -1,38 +1,82 @@
-Return-Path: <rohitkr@codeaurora.org>
-From: Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH v3 0/2] Add ADSP PIL driver for SDM845
-Date: Mon,  3 Sep 2018 17:22:38 +0530
-Message-Id: <1535975560-8200-1-git-send-email-rohitkr@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org
-Cc: Rohit kumar <rohitkr@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 4/5] remoteproc: Introduce deny_sysfs_ops flag
+Date: Fri, 14 Sep 2018 19:37:24 -0500
+Message-ID: <20180915003725.17549-5-s-anna@ti.com>
+In-Reply-To: <20180915003725.17549-1-s-anna@ti.com>
+References: <20180915003725.17549-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This provides initial patchset for ADSP PIL driver for SDM845.
+The remoteproc framework provides sysfs interfaces for changing
+the firmware name and for starting/stopping a remote processor
+through the sysfs files 'state' and 'firmware'. These interfaces
+are currently allowed irrespective of how the remoteprocs were
+booted (like remoteproc self auto-boot, remoteproc client-driven
+boot etc). These interfaces can adversely affect a remoteproc
+and its clients especially when a remoteproc is being controlled
+by a remoteproc client driver(s). Also, not all remoteproc
+drivers may want to support the sysfs interfaces by default.
 
-Changes since v2:
-	Separated dt-bindings documentation into separate patch.
-	Used clk_bulk APIs for adsp clocks.
-	Used power domain API and use reference to rpmhd resource.
-	Renamed qcom_nonpas_adsp_pil.c to qcom_adsp_pil.c
-	Removed smd as sdm845 does not support smd.
-	Removed px_supply and aggre2_clk for sdm845 as they are not required.
-	Removed reg-names as there is only one register.
+Add support to deny the sysfs state/firmware change by introducing
+a state flag 'deny_sysfs_ops' that the individual remoteproc drivers
+can set based on their usage needs. The default behavior is to
+allow the sysfs operations as before.
 
-This patch is dependent on the rpmh powerdomain driver https://lkml.org/lkml/2018/6/27/7
-and renaming of Hexagon v5 PAS driver https://lkml.org/lkml/2018/8/28/129 .
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/remoteproc/remoteproc_sysfs.c | 8 ++++++++
+ include/linux/remoteproc.h            | 2 ++
+ 2 files changed, 10 insertions(+)
 
-Rohit kumar (2):
-  dt-binding: remoteproc: Add QTI ADSP PIL bindings
-  remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
-
- .../bindings/remoteproc/qcom,adsp-pil.txt          | 123 +++++
- drivers/remoteproc/Kconfig                         |  14 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/qcom_adsp_pil.c                 | 500 +++++++++++++++++++++
- 4 files changed, 638 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
- create mode 100644 drivers/remoteproc/qcom_adsp_pil.c
-
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index ce93f4d710f3..b2d8c11b89d0 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -36,6 +36,10 @@ static ssize_t firmware_store(struct device *dev,
+ 	char *p;
+ 	int err, len = count;
+ 
++	/* restrict sysfs operations if not allowed by remoteproc drivers */
++	if (rproc->deny_sysfs_ops)
++		return -EPERM;
++
+ 	err = mutex_lock_interruptible(&rproc->lock);
+ 	if (err) {
+ 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
+@@ -102,6 +106,10 @@ static ssize_t state_store(struct device *dev,
+ 	struct rproc *rproc = to_rproc(dev);
+ 	int ret = 0;
+ 
++	/* restrict sysfs operations if not allowed by remoteproc drivers */
++	if (rproc->deny_sysfs_ops)
++		return -EPERM;
++
+ 	if (sysfs_streq(buf, "start")) {
+ 		if (rproc->state == RPROC_RUNNING)
+ 			return -EBUSY;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 75f9ca05b865..d21252b4f758 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -440,6 +440,7 @@ struct rproc_dump_segment {
+  * @table_sz: size of @cached_table
+  * @has_iommu: flag to indicate if remote processor is behind an MMU
+  * @auto_boot: flag to indicate if remote processor should be auto-started
++ * @deny_sysfs_ops: flag to not permit sysfs operations on state and firmware
+  * @dump_segments: list of segments in the firmware
+  */
+ struct rproc {
+@@ -472,6 +473,7 @@ struct rproc {
+ 	size_t table_sz;
+ 	bool has_iommu;
+ 	bool auto_boot;
++	bool deny_sysfs_ops;
+ 	struct list_head dump_segments;
+ };
+ 
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.18.0
