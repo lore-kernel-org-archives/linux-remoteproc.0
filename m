@@ -1,60 +1,43 @@
-Return-Path: <vkoul@kernel.org>
-Date: Tue, 7 Aug 2018 11:45:39 +0530
-From: Vinod <vkoul@kernel.org>
-Subject: Re: [PATCH v3 1/6] remoteproc: Introduce custom dump function for
- each remoteproc segment
-Message-ID: <20180807061539.GG2395@vkoul-mobl>
-References: <20180727152003.11663-1-sibis@codeaurora.org>
- <20180727152003.11663-2-sibis@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 2/5] remoteproc: Check for NULL firmwares in sysfs interface
+Date: Fri, 14 Sep 2018 19:37:22 -0500
+Message-ID: <20180915003725.17549-3-s-anna@ti.com>
+In-Reply-To: <20180915003725.17549-1-s-anna@ti.com>
+References: <20180915003725.17549-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727152003.11663-2-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Sibi,
+The remoteproc framework provides a sysfs file 'firmware'
+for modifying the firmware image name from userspace. Add
+an additional check to ensure NULL firmwares are errored
+out right away, rather than getting a delayed error while
+requesting a firmware during the start of a remoteproc
+later on.
 
-On 27-07-18, 20:49, Sibi Sankar wrote:
-> Introduce custom dump function per remoteproc segment. It is responsible
-> for filling the device memory segment associated with coredump
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 15 ++++++++++-----
->  include/linux/remoteproc.h           |  3 +++
->  2 files changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 283b258f5e0f..ec56cd822b26 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1183,13 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
->  		phdr->p_align = 0;
->  
->  		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-> -		if (!ptr) {
-> -			dev_err(&rproc->dev,
-> +
-> +		if (segment->dump) {
-> +			segment->dump(rproc, ptr, segment->size, data + offset);
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Am not sure I follow, you are calling this w/o checking if ptr is valid,
-so you maybe passing null to segment->dump() ?
-
-> +		} else {
-> +			if (!ptr) {
-> +				dev_err(&rproc->dev,
->  				"invalid coredump segment (%pad, %zu)\n",
->  				&segment->da, segment->size);
-> -			memset(data + offset, 0xff, segment->size);
-> -		} else {
-> -			memcpy(data + offset, ptr, segment->size);
-> +				memset(data + offset, 0xff, segment->size);
-> +			} else {
-> +				memcpy(data + offset, ptr, segment->size);
-> +			}
-
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 2142b3ea726e..ce93f4d710f3 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -49,6 +49,11 @@ static ssize_t firmware_store(struct device *dev,
+ 	}
+ 
+ 	len = strcspn(buf, "\n");
++	if (!len) {
++		dev_err(dev, "can't provide a NULL firmware\n");
++		err = -EINVAL;
++		goto out;
++	}
+ 
+ 	p = kstrndup(buf, len, GFP_KERNEL);
+ 	if (!p) {
 -- 
-~Vinod
+2.18.0
