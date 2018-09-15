@@ -1,53 +1,45 @@
-Return-Path: <colin.king@canonical.com>
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] rpmsg: fix memory leak on channel
-Date: Thu, 27 Sep 2018 22:36:27 +0100
-Message-Id: <20180927213627.12752-1-colin.king@canonical.com>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 0/5] remoteproc sysfs fixes/improvements
+Date: Fri, 14 Sep 2018 19:37:20 -0500
+Message-ID: <20180915003725.17549-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Bjorn,
 
-Currently a failed allocation of channel->name leads to an
-immediate return without freeing channel. Fix this by setting
-ret to -ENOMEM and jumping to an exit path that kfree's channel.
+The following series includes couple of fixes and improvements
+associated with the sysfs interfaces. Patches are based on top
+of 4.19-rc1. The first 3 patches are independent of each other.
 
-Detected by CoverityScan, CID#1473692 ("Resource Leak")
+Following is the patch summary:
+ - Patch 1 fixes an issue with unbalanced sysfs start/stop
+   and module removal
+ - Patch 2 adds a minor additional check on firmware name
+   being echoed into the sysfs file
+ - Patch 3 is a minor kerneldoc fix.
+ - Patches 4 and 5 introduce a new request denial to sysfs
+   interfaces to not allow userspace to meddle with a remoteproc
+   client driven boot flow, and usage of it by Wkup M3 remoteproc
+   driver
 
-Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rpmsg/qcom_smd.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+regards
+Suman
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 0dae7c9f4a8f..4abbeea782fa 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1122,8 +1122,10 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
- 
- 	channel->edge = edge;
- 	channel->name = kstrdup(name, GFP_KERNEL);
--	if (!channel->name)
--		return ERR_PTR(-ENOMEM);
-+	if (!channel->name) {
-+		ret = -ENOMEM;
-+		goto free_channel;
-+	}
- 
- 	spin_lock_init(&channel->tx_lock);
- 	spin_lock_init(&channel->recv_lock);
-@@ -1173,6 +1175,7 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
- 
- free_name_and_channel:
- 	kfree(channel->name);
-+free_channel:
- 	kfree(channel);
- 
- 	return ERR_PTR(ret);
+Suman Anna (5):
+  remoteproc: Fix unbalanced boot with sysfs for no auto-boot rprocs
+  remoteproc: Check for NULL firmwares in sysfs interface
+  remoteproc: Add missing kernel-doc comment for auto-boot
+  remoteproc: Introduce deny_sysfs_ops flag
+  remoteproc/wkup_m3: Set deny_sysfs_ops flag
+
+ drivers/remoteproc/remoteproc_sysfs.c | 29 ++++++++++++++++++++++++++-
+ drivers/remoteproc/wkup_m3_rproc.c    |  1 +
+ include/linux/remoteproc.h            |  3 +++
+ 3 files changed, 32 insertions(+), 1 deletion(-)
+
 -- 
-2.17.1
+2.18.0
