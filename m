@@ -1,89 +1,68 @@
-Return-Path: <sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 25 Sep 2018 12:20:00 +0530
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: Propagate EPROBE_DEFER
-In-Reply-To: <20180920015151.15957-1-bjorn.andersson@linaro.org>
-References: <20180920015151.15957-1-bjorn.andersson@linaro.org>
-Message-ID: <a1fdf85cb2e23b173243ba3b43b818bb@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, stable@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] remoteproc: qcom: q6v5: Propagate EPROBE_DEFER
+Date: Wed, 19 Sep 2018 18:51:51 -0700
+Message-Id: <20180920015151.15957-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 2018-09-20 07:21, Bjorn Andersson wrote:
-> In the case that the interrupts fail to result because of the
-> interrupt-controller not yet being registered the
-> platform_get_irq_byname() call will fail with -EPROBE_DEFER, but 
-> passing
-> this into devm_request_threaded_irq() will result in -EINVAL being
-> returned, the driver is therefor not reprobed later.
-> 
+In the case that the interrupts fail to result because of the
+interrupt-controller not yet being registered the
+platform_get_irq_byname() call will fail with -EPROBE_DEFER, but passing
+this into devm_request_threaded_irq() will result in -EINVAL being
+returned, the driver is therefor not reprobed later.
 
-The patch looks fine.
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource handling")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/qcom_q6v5.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-> Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource 
-> handling")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/remoteproc/qcom_q6v5.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5.c 
-> b/drivers/remoteproc/qcom_q6v5.c
-> index 61a760ee4aac..e9ab90c19304 100644
-> --- a/drivers/remoteproc/qcom_q6v5.c
-> +++ b/drivers/remoteproc/qcom_q6v5.c
-> @@ -198,6 +198,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	}
-> 
->  	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
-> +	if (q6v5->fatal_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
->  					NULL, q6v5_fatal_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> @@ -208,6 +211,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	}
-> 
->  	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
-> +	if (q6v5->ready_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
->  					NULL, q6v5_ready_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> @@ -218,6 +224,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	}
-> 
->  	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
-> +	if (q6v5->handover_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
->  					NULL, q6v5_handover_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> @@ -229,6 +238,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> platform_device *pdev,
->  	disable_irq(q6v5->handover_irq);
-> 
->  	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-> +	if (q6v5->stop_irq == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
->  					NULL, q6v5_stop_interrupt,
->  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 61a760ee4aac..e9ab90c19304 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -198,6 +198,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
++	if (q6v5->fatal_irq == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
+ 					NULL, q6v5_fatal_interrupt,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+@@ -208,6 +211,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
++	if (q6v5->ready_irq == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
+ 					NULL, q6v5_ready_interrupt,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+@@ -218,6 +224,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
++	if (q6v5->handover_irq == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
+ 					NULL, q6v5_handover_interrupt,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+@@ -229,6 +238,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	disable_irq(q6v5->handover_irq);
+ 
+ 	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
++	if (q6v5->stop_irq == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
+ 					NULL, q6v5_stop_interrupt,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
 -- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.18.0
