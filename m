@@ -1,237 +1,63 @@
-Return-Path: <rnayak@codeaurora.org>
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v2] remoteproc: q6v5: Add support to vote for rpmh power domains
-Date: Tue,  4 Sep 2018 12:40:46 +0530
-Message-Id: <20180904071046.8152-1-rnayak@codeaurora.org>
-To: bjorn.andersson@linaro.org, sibis@codeaurora.org, ulf.hansson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail-qt1-f174.google.com ([209.85.160.174]:37498 "EHLO
+        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbeIYK3Z (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 25 Sep 2018 06:29:25 -0400
+Received: by mail-qt1-f174.google.com with SMTP id n6-v6so11986586qtl.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Sep 2018 21:23:49 -0700 (PDT)
+MIME-Version: 1.0
+Reply-To: dry@embedded-synergy.co.za
+From: Denis Ryndine <dry@embedded-synergy.co.za>
+Date: Tue, 25 Sep 2018 14:23:40 +1000
+Message-ID: <CABViPY=msr16UGzRFQRcLLD6tZ77A-jsGbkn9HEnqA6zvGbuTQ@mail.gmail.com>
+Subject: review: imx_rproc stop, start steps
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-With rpmh ARC resources being modelled as power domains with performance
-state,
-we need to proxy vote on these for SDM845.
-Add support to vote on multiple of them, now that genpd supports
-associating
-mutliple power domains to a device.
+Hello,
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Please review stop, start steps on imx_rproc, with respect to  iMX7D.
+
+The start method will set M4P bit - platform reset - which resets M4
+platform (ref DRM for platform) and does not guarantee M4 memory
+preserving. That includes caches and TCM.
+
+I cannot point out where in DRM it mentions TCM will be invalidated,
+but I had support case with NXP on this and reply explicitly was TCM
+is not guaranteed to preserve their content after CM4 platform reset.
+
+Thus,  stop, load firmware to TCM, start, as defined currently, not
+guaranteed to work.
+
+I suggest to change stop and start routines for iMX7D as:
+
+1. In stop : Set M4C_NON_SCLR_RST bit (as is currently done), which
+sets bits 0 and 1 in the M4 reset control register IMX7D_SRC_SCR
+(the reset bits part of the register is now as after POR ). Core is
+held in reset.
+
+2.  In stop : issue platform reset - set IMX7D_SW_M4P_RST - keeping
+the other bits as is, and wait will platform reset to complete.  The
+M4 platform reset does not clear bits 0, 1 (core reset bits).
+
+3. In start:  clear IMX7D_SW_M4C_NON_SCLR_RST / bit 0, to reset the
+core and start execution.
+
+Unless the stop method is ever meant to be used just for
+stopping/resetting core only ( is there such use ?), this is then the
+more correct way to stop, start, and possibly load new firmware
+in-between.
+
+Even if TCM contents loss isn't an actual problem, the above steps are
+closer to the procedure as outlined in Detailed Procedure in AN5317
+application note.
+
+Regards,
+
+Denis Ryndine
+
 ---
-Changes in v2:
-* Drop the perf vote along with disabling the powerdomain
-* pm_suspend_ignore_children() to not mess with runtime PM of children
-* Detach powerdomains as part of .remove and in error path during probe,
-issue reported by Brian Norris <briannorris@chromium.org>
-* Use dev_pm_domain_attach_by_name() api
-
- drivers/remoteproc/qcom_q6v5_pil.c | 111 ++++++++++++++++++++++++++++-
- 1 file changed, 109 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index d7a4b9eca5d2..f4b3a9b09a5d 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -25,6 +25,8 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
-@@ -131,6 +133,7 @@ struct rproc_hexagon_res {
- 	char **proxy_clk_names;
- 	char **reset_clk_names;
- 	char **active_clk_names;
-+	char **pd_names;
- 	int version;
- 	bool need_mem_protection;
- 	bool has_alt_reset;
-@@ -155,9 +158,11 @@ struct q6v5 {
- 	struct clk *active_clks[8];
- 	struct clk *reset_clks[4];
- 	struct clk *proxy_clks[4];
-+	struct device *pd_devs[3];
- 	int active_clk_count;
- 	int reset_clk_count;
- 	int proxy_clk_count;
-+	int pd_count;
- 
- 	struct reg_info active_regs[1];
- 	struct reg_info proxy_regs[3];
-@@ -316,6 +321,40 @@ static void q6v5_clk_disable(struct device *dev,
- 		clk_disable_unprepare(clks[i]);
- }
- 
-+static int q6v5_powerdomain_enable(struct device *dev, struct device **devs,
-+				   int count)
-+{
-+	int i;
-+
-+	if (!count)
-+		return 0;
-+
-+	if (count > 1)
-+		for (i = 0; i < count; i++)
-+			dev_pm_genpd_set_performance_state(devs[i], INT_MAX);
-+	else
-+		dev_pm_genpd_set_performance_state(dev, INT_MAX);
-+
-+	return pm_runtime_get_sync(dev);
-+}
-+
-+static int q6v5_powerdomain_disable(struct device *dev, struct device **devs,
-+				    int count)
-+{
-+	int i;
-+
-+	if (!count)
-+		return 0;
-+
-+	if (count > 1)
-+		for (i = 0; i < count; i++)
-+			dev_pm_genpd_set_performance_state(devs[i], 0);
-+	else
-+		dev_pm_genpd_set_performance_state(dev, 0);
-+
-+	return pm_runtime_put(dev);
-+}
-+
- static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
- 				   bool remote_owner, phys_addr_t addr,
- 				   size_t size)
-@@ -792,11 +831,18 @@ static int q6v5_start(struct rproc *rproc)
- 
- 	qcom_q6v5_prepare(&qproc->q6v5);
- 
-+	ret = q6v5_powerdomain_enable(qproc->dev, qproc->pd_devs,
-+				      qproc->pd_count);
-+	if (ret < 0) {
-+		dev_err(qproc->dev, "failed to enable power domains\n");
-+		goto disable_irqs;
-+	}
-+
- 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
- 				    qproc->proxy_reg_count);
- 	if (ret) {
- 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
--		goto disable_irqs;
-+		goto disable_powerdomains;
- 	}
- 
- 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
-@@ -920,6 +966,8 @@ static int q6v5_start(struct rproc *rproc)
- 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
- 			       qproc->proxy_reg_count);
- 
-+disable_powerdomains:
-+	q6v5_powerdomain_disable(qproc->dev, qproc->pd_devs, qproc->pd_count);
- disable_irqs:
- 	qcom_q6v5_unprepare(&qproc->q6v5);
- 
-@@ -972,7 +1020,7 @@ static int q6v5_stop(struct rproc *rproc)
- 			 qproc->active_clk_count);
- 	q6v5_regulator_disable(qproc, qproc->active_regs,
- 			       qproc->active_reg_count);
--
-+	q6v5_powerdomain_disable(qproc->dev, qproc->pd_devs, qproc->pd_count);
- 	return 0;
- }
- 
-@@ -1063,6 +1111,48 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
- 	return i;
- }
- 
-+static int q6v5_powerdomain_attach(struct device *dev, struct device **devs,
-+				   char **pd_names)
-+{
-+	int i = 0, num_pds;
-+
-+	if (!pd_names)
-+		return 0;
-+
-+	while (pd_names[i])
-+		i++;
-+
-+	num_pds = i;
-+
-+	if (num_pds > 1) {
-+		for (i = 0; i < num_pds; i++) {
-+			devs[i] = dev_pm_domain_attach_by_name(dev,
-+							       pd_names[i]);
-+			if (IS_ERR(devs[i]))
-+				return PTR_ERR(devs[i]);
-+			if (!device_link_add(dev, devs[i], DL_FLAG_STATELESS |
-+					     DL_FLAG_PM_RUNTIME))
-+				return -EINVAL;
-+		}
-+	}
-+
-+	pm_suspend_ignore_children(dev, true);
-+	pm_runtime_enable(dev);
-+
-+	return num_pds;
-+};
-+
-+static void q6v5_powerdomain_detach(struct q6v5 *qproc)
-+{
-+	int i;
-+
-+	if (qproc->pd_count > 1)
-+		for (i = 0; i < qproc->pd_count; i++)
-+			dev_pm_domain_detach(qproc->pd_devs[i], true);
-+
-+	pm_runtime_disable(qproc->dev);
-+}
-+
- static int q6v5_init_reset(struct q6v5 *qproc)
- {
- 	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
-@@ -1192,6 +1282,14 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->active_reg_count = ret;
- 
-+	ret = q6v5_powerdomain_attach(&pdev->dev, qproc->pd_devs,
-+				      desc->pd_names);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to init power domains\n");
-+		goto free_rproc;
-+	}
-+	qproc->pd_count = ret;
-+
- 	ret = q6v5_init_reset(qproc);
- 	if (ret)
- 		goto free_rproc;
-@@ -1219,6 +1317,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	return 0;
- 
- free_rproc:
-+	q6v5_powerdomain_detach(qproc);
- 	rproc_free(rproc);
- 
- 	return ret;
-@@ -1228,6 +1327,8 @@ static int q6v5_remove(struct platform_device *pdev)
- {
- 	struct q6v5 *qproc = platform_get_drvdata(pdev);
- 
-+	q6v5_powerdomain_detach(qproc);
-+
- 	rproc_del(qproc->rproc);
- 
- 	qcom_remove_sysmon_subdev(qproc->sysmon);
-@@ -1258,6 +1359,12 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 			"mnoc_axi",
- 			NULL
- 	},
-+	.pd_names = (char*[]){
-+			"cx",
-+			"mx",
-+			"mss",
-+			NULL
-+	},
- 	.need_mem_protection = true,
- 	.has_alt_reset = true,
- 	.version = MSS_SDM845,
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+dry@embedded-synergy.co.za | www.embedded-synergy.co.za
