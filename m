@@ -1,45 +1,53 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 0/5] remoteproc sysfs fixes/improvements
-Date: Fri, 14 Sep 2018 19:37:20 -0500
-Message-ID: <20180915003725.17549-1-s-anna@ti.com>
+Return-Path: <sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 26 Sep 2018 21:18:53 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH] remoteproc: qcom: pas: Add QCS404 remoteprocs
+In-Reply-To: <20180925233550.GB27436@tuxbook-pro>
+References: <20180920172237.30965-1-bjorn.andersson@linaro.org>
+ <f0887494a9957496399046bac9b1fa32@codeaurora.org>
+ <20180925233550.GB27436@tuxbook-pro>
+Message-ID: <78799383c083420b8109455c463fc730@codeaurora.org>
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel-owner@vger.kernel.org, linux-remoteproc-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+On 2018-09-26 05:05, Bjorn Andersson wrote:
+> On Tue 25 Sep 03:18 PDT 2018, Sibi Sankar wrote:
+>> On 2018-09-20 22:52, Bjorn Andersson wrote:
+>> > diff --git a/drivers/remoteproc/qcom_adsp_pil.c
+>> > b/drivers/remoteproc/qcom_adsp_pil.c
+>> > index da2254ea1135..fcbb816a9698 100644
+>> > --- a/drivers/remoteproc/qcom_adsp_pil.c
+>> > +++ b/drivers/remoteproc/qcom_adsp_pil.c
+>> > @@ -362,10 +362,22 @@ static const struct adsp_data slpi_resource_init =
+>> > {
+>> >  		.ssctl_id = 0x16,
+>> >  };
+>> >
+>> > +static const struct adsp_data wcss_resource_init = {
+>> > +	.crash_reason_smem = 421,
+>> > +	.firmware_name = "wcnss.mdt",
+>> > +	.pas_id = 6,
+>> > +	.ssr_name = "mpss",
+>> > +	.sysmon_name = "wlan",
+>> 
+>> Shouldn't the sysmon name be "wcnss" instead of "wlan"?
+>> 
+> 
+> I derived this from the downstream kernel, perhaps I got it wrong?
+> 
 
-The following series includes couple of fixes and improvements
-associated with the sysfs interfaces. Patches are based on top
-of 4.19-rc1. The first 3 patches are independent of each other.
+I could see that the label is "wcnss" and glink-label is "mpss" 
+downstream.
 
-Following is the patch summary:
- - Patch 1 fixes an issue with unbalanced sysfs start/stop
-   and module removal
- - Patch 2 adds a minor additional check on firmware name
-   being echoed into the sysfs file
- - Patch 3 is a minor kerneldoc fix.
- - Patches 4 and 5 introduce a new request denial to sysfs
-   interfaces to not allow userspace to meddle with a remoteproc
-   client driven boot flow, and usage of it by Wkup M3 remoteproc
-   driver
-
-regards
-Suman
-
-Suman Anna (5):
-  remoteproc: Fix unbalanced boot with sysfs for no auto-boot rprocs
-  remoteproc: Check for NULL firmwares in sysfs interface
-  remoteproc: Add missing kernel-doc comment for auto-boot
-  remoteproc: Introduce deny_sysfs_ops flag
-  remoteproc/wkup_m3: Set deny_sysfs_ops flag
-
- drivers/remoteproc/remoteproc_sysfs.c | 29 ++++++++++++++++++++++++++-
- drivers/remoteproc/wkup_m3_rproc.c    |  1 +
- include/linux/remoteproc.h            |  3 +++
- 3 files changed, 32 insertions(+), 1 deletion(-)
+> Regards,
+> Bjorn
 
 -- 
-2.18.0
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
