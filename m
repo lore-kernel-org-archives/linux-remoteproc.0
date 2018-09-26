@@ -1,37 +1,122 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
 Subject: Re: [PATCH] rpmsg: core: add support to power domains for devices
 References: <20180615095939.1331-1-srinivas.kandagatla@linaro.org>
  <a80cce14-9e57-32a2-760f-3d29de009f99@ti.com>
  <91dda9df-8074-925d-dcd3-d7c01e6f2363@st.com>
  <9afb010d-397f-2103-6692-bb4ca55b8236@ti.com>
- <4e1b6773-c4da-4638-eee7-2f996d387903@st.com>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <0c06bde3-59f2-fad4-90ff-5818e9bab853@linaro.org>
-Date: Wed, 26 Sep 2018 14:06:40 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <4e1b6773-c4da-4638-eee7-2f996d387903@st.com>
+Date: Wed, 26 Sep 2018 14:48:14 +0200
 MIME-Version: 1.0
-In-Reply-To: <4e1b6773-c4da-4638-eee7-2f996d387903@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <9afb010d-397f-2103-6692-bb4ca55b8236@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, Suman Anna <s-anna@ti.com>, ohad@wizery.com, bjorn.andersson@linaro.org
+Content-Transfer-Encoding: 8bit
+To: Suman Anna <s-anna@ti.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Hi Suman,
 
 
-On 26/09/18 13:48, Arnaud Pouliquen wrote:
-> Sorry something was wrong in my fw used yesterday for testing...so
-> forget my previous status.
+On 09/25/2018 09:02 PM, Suman Anna wrote:
+> Hi Arnaud,
 > 
-> I re-tested it and I have the same issue (-ENODEV) with rpmsg device
-> probed on ns announcement rpmsg from remote side.
-> So we confirm the issue.
+>> On 09/25/2018 02:25 AM, Suman Anna wrote:
+>>> Hi Srinivas,
+>>>
+>>> On 06/15/2018 04:59 AM, Srinivas Kandagatla wrote:
+>>>> Some of the rpmsg devices need to switch on power domains to communicate
+>>>> with remote processor. For example on Qualcomm DB820c platform LPASS
+>>>> power domain needs to switched on for any kind of audio services.
+>>>> This patch adds the missing power domain support in rpmsg core.
+>>>>
+>>>> Without this patch attempting to play audio via QDSP on DB820c would
+>>>> reboot the system.
+>>>>
+>>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>>> ---
+>>>>  drivers/rpmsg/rpmsg_core.c | 7 +++++++
+>>>>  1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>>>> index b714a543a91d..8122807db380 100644
+>>>> --- a/drivers/rpmsg/rpmsg_core.c
+>>>> +++ b/drivers/rpmsg/rpmsg_core.c
+>>>> @@ -15,6 +15,7 @@
+>>>>  #include <linux/module.h>
+>>>>  #include <linux/rpmsg.h>
+>>>>  #include <linux/of_device.h>
+>>>> +#include <linux/pm_domain.h>
+>>>>  #include <linux/slab.h>
+>>>>  
+>>>>  #include "rpmsg_internal.h"
+>>>> @@ -449,6 +450,10 @@ static int rpmsg_dev_probe(struct device *dev)
+>>>>  	struct rpmsg_endpoint *ept = NULL;
+>>>>  	int err;
+>>>>  
+>>>> +	err = dev_pm_domain_attach(dev, true);
+>>>> +	if (err)
+>>>> +		goto out;
+>>>
+>>> This patch has broken the virtio-rpmsg stack based rpmsg devices. These
+>>> devices are non-DT and the rpmsg_dev_probe() is now failing with -19
+>>> (-ENODEV) error code.
+>>>
+>>> Loic, Arnaud,
+>>> Can one of you double-confirm this behavior on ST platforms as well?
+>>> The patch came through 4.14.71 stable release and broke our downstream
+>>> kernels.
+> 
+>> I do not reproduce issue on 4.14.0 + your patch,  on my ST platform (not
+>> able to test on the LTS branch).
+>> By looking the source code, seems that your issue is related to
+>> genpd_dev_pm_attach that returns -ENODEV because you have
+>> no remoteproc device node...
+>> Do you have a rproc node defined in your DT? we have one.
+> 
+> The dev here is not the remoteproc dev but the rpmsg device which does
+> not have an OF node, and so I get the ENODEV due to the check on
+> dev->of_node in genpd_dev_pm_attach. I do have DT remoteproc nodes.
+> 
+> Are you publishing an rpmsg device from the remote side and are they
+> being probed? Issue is seen only during the probe phase, you will not
+> see any errors if the rpmsg devices are just being published and created.
+Sorry something was wrong in my fw used yesterday for testing...so
+forget my previous status.
 
+I re-tested it and I have the same issue (-ENODEV) with rpmsg device
+probed on ns announcement rpmsg from remote side.
+So we confirm the issue.
 
-A revert patch is in the stable queue now for 4.14 and 4.18 stable.
-http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+Regards
+Arnaud
 
-Issue reported should be fixed soon!!
-
---srini
+> 
+> regards
+> Suman
+> 
+>>
+>> Regards
+>> Arnaud
+>>
+>>>
+>>> regards
+>>> Suman
+>>>
+>>>> +
+>>>>  	if (rpdrv->callback) {
+>>>>  		strncpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+>>>>  		chinfo.src = rpdev->src;
+>>>> @@ -490,6 +495,8 @@ static int rpmsg_dev_remove(struct device *dev)
+>>>>  
+>>>>  	rpdrv->remove(rpdev);
+>>>>  
+>>>> +	dev_pm_domain_detach(dev, true);
+>>>> +
+>>>>  	if (rpdev->ept)
+>>>>  		rpmsg_destroy_ept(rpdev->ept);
+>>>>  
+>>>>
+>>>
+> 
