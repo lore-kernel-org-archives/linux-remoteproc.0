@@ -1,65 +1,39 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 26 Sep 2018 10:14:38 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2] remoteproc: qcom: pas: Add QCS404 remoteprocs
-Date: Thu, 27 Sep 2018 12:03:46 -0700
-Message-Id: <20180927190346.2984-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH] rpmsg: core: add support to power domains for devices
+Message-ID: <20180926171438.GA29702@builder>
+References: <20180615095939.1331-1-srinivas.kandagatla@linaro.org>
+ <a80cce14-9e57-32a2-760f-3d29de009f99@ti.com>
+ <91dda9df-8074-925d-dcd3-d7c01e6f2363@st.com>
+ <9afb010d-397f-2103-6692-bb4ca55b8236@ti.com>
+ <4e1b6773-c4da-4638-eee7-2f996d387903@st.com>
+ <0c06bde3-59f2-fad4-90ff-5818e9bab853@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c06bde3-59f2-fad4-90ff-5818e9bab853@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@st.com>, Suman Anna <s-anna@ti.com>, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add compatibles for the three PAS based remote processors found in
-QCS404.
+On Wed 26 Sep 06:06 PDT 2018, Srinivas Kandagatla wrote:
+> On 26/09/18 13:48, Arnaud Pouliquen wrote:
+> > Sorry something was wrong in my fw used yesterday for testing...so
+> > forget my previous status.
+> > 
+> > I re-tested it and I have the same issue (-ENODEV) with rpmsg device
+> > probed on ns announcement rpmsg from remote side.
+> > So we confirm the issue.
+> 
+> 
+> A revert patch is in the stable queue now for 4.14 and 4.18 stable.
+> http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+> 
+> Issue reported should be fixed soon!!
+> 
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+Thanks guys!
 
-Changes since v1:
-- Fixed incorrect sysmon_name, as pointed out by Sibi.
-
- .../devicetree/bindings/remoteproc/qcom,adsp.txt     |  3 +++
- drivers/remoteproc/qcom_adsp_pil.c                   | 12 ++++++++++++
- 2 files changed, 15 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index b7d058228185..9c0cff3a5ed8 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -10,6 +10,9 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,msm8974-adsp-pil"
- 		    "qcom,msm8996-adsp-pil"
- 		    "qcom,msm8996-slpi-pil"
-+		    "qcom,qcs404-adsp-pas"
-+		    "qcom,qcs404-cdsp-pas"
-+		    "qcom,qcs404-wcss-pas"
- 		    "qcom,sdm845-adsp-pas"
- 		    "qcom,sdm845-cdsp-pas"
- 
-diff --git a/drivers/remoteproc/qcom_adsp_pil.c b/drivers/remoteproc/qcom_adsp_pil.c
-index da2254ea1135..d5e58235e83a 100644
---- a/drivers/remoteproc/qcom_adsp_pil.c
-+++ b/drivers/remoteproc/qcom_adsp_pil.c
-@@ -362,10 +362,22 @@ static const struct adsp_data slpi_resource_init = {
- 		.ssctl_id = 0x16,
- };
- 
-+static const struct adsp_data wcss_resource_init = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "wcnss.mdt",
-+	.pas_id = 6,
-+	.ssr_name = "mpss",
-+	.sysmon_name = "wcnss",
-+	.ssctl_id = 0x12,
-+};
-+
- static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
-+	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
-+	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
-+	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
- 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
- 	{ },
--- 
-2.18.0
+Regards,
+Bjorn
