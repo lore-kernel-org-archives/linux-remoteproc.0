@@ -1,43 +1,30 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/5] remoteproc: Check for NULL firmwares in sysfs interface
-Date: Fri, 14 Sep 2018 19:37:22 -0500
-Message-ID: <20180915003725.17549-3-s-anna@ti.com>
-In-Reply-To: <20180915003725.17549-1-s-anna@ti.com>
-References: <20180915003725.17549-1-s-anna@ti.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 26 Sep 2018 11:00:41 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4] dt-binding: remoteproc: Add QTI ADSP PIL bindings
+Message-ID: <20180926160041.GA9880@bogus>
+References: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
+To: Rohit kumar <rohitkr@codeaurora.org>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, rohkumar@qti.qualcomm.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The remoteproc framework provides a sysfs file 'firmware'
-for modifying the firmware image name from userspace. Add
-an additional check to ensure NULL firmwares are errored
-out right away, rather than getting a delayed error while
-requesting a firmware during the start of a remoteproc
-later on.
+On Tue, 11 Sep 2018 09:24:01 +0530, Rohit kumar wrote:
+> Add devicetree bindings documentation file for Qualcomm
+> Technolgies Inc ADSP Peripheral Image Loader.
+> 
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+> Changes since v3:
+> Addressed comments given by Rob
+> 
+>  .../bindings/remoteproc/qcom,adsp-pil.txt          | 126 +++++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
+> 
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 2142b3ea726e..ce93f4d710f3 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -49,6 +49,11 @@ static ssize_t firmware_store(struct device *dev,
- 	}
- 
- 	len = strcspn(buf, "\n");
-+	if (!len) {
-+		dev_err(dev, "can't provide a NULL firmware\n");
-+		err = -EINVAL;
-+		goto out;
-+	}
- 
- 	p = kstrndup(buf, len, GFP_KERNEL);
- 	if (!p) {
--- 
-2.18.0
+Reviewed-by: Rob Herring <robh@kernel.org>
