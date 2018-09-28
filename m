@@ -1,82 +1,64 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/5] remoteproc: Fix unbalanced boot with sysfs for no auto-boot rprocs
-Date: Fri, 14 Sep 2018 19:37:21 -0500
-Message-ID: <20180915003725.17549-2-s-anna@ti.com>
-In-Reply-To: <20180915003725.17549-1-s-anna@ti.com>
-References: <20180915003725.17549-1-s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 27 Sep 2018 20:12:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] rpmsg: fix memory leak on channel
+Message-ID: <20180928031226.GB29702@builder>
+References: <20180927213627.12752-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180927213627.12752-1-colin.king@canonical.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The remoteproc core performs automatic boot and shutdown of a remote
-processor during rproc_add() and rproc_del() for remote processors
-supporting 'auto-boot'. The remoteproc devices not using 'auto-boot'
-require either a remoteproc client driver or a userspace client to
-use the sysfs 'state' variable to perform the boot and shutdown. The
-in-kernel client drivers hold the corresponding remoteproc driver
-module's reference count when they acquire a rproc handle through
-the rproc_get_by_phandle() API, but there is no such support for
-userspace applications performing the boot through sysfs interface.
+On Thu 27 Sep 14:36 PDT 2018, Colin King wrote:
 
-The shutdown of a remoteproc upon removing a remoteproc platform
-driver is automatic only with 'auto-boot' and this can cause a
-remoteproc with no auto-boot to stay powered on and never freed
-up if booted using the sysfs interface without a matching stop,
-and when the remoteproc driver module is removed or unbound from
-the device. This will result in a memory leak as well as the
-corresponding remoteproc ida being never deallocated. Fix this
-by holding a module reference count for the remoteproc's driver
-during a sysfs 'start' and releasing it during the sysfs 'stop'
-operation.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently a failed allocation of channel->name leads to an
+> immediate return without freeing channel. Fix this by setting
+> ret to -ENOMEM and jumping to an exit path that kfree's channel.
+> 
+> Detected by CoverityScan, CID#1473692 ("Resource Leak")
+> 
+> Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/remoteproc_sysfs.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Added Cc: stable and applied.
 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 47be411400e5..2142b3ea726e 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -11,6 +11,7 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/module.h>
- #include <linux/remoteproc.h>
- 
- #include "remoteproc_internal.h"
-@@ -100,14 +101,27 @@ static ssize_t state_store(struct device *dev,
- 		if (rproc->state == RPROC_RUNNING)
- 			return -EBUSY;
- 
-+		/*
-+		 * prevent underlying implementation from being removed
-+		 * when remoteproc does not support auto-boot
-+		 */
-+		if (!rproc->auto_boot &&
-+		    !try_module_get(dev->parent->driver->owner))
-+			return -EINVAL;
-+
- 		ret = rproc_boot(rproc);
--		if (ret)
-+		if (ret) {
- 			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
-+			if (!rproc->auto_boot)
-+				module_put(dev->parent->driver->owner);
-+		}
- 	} else if (sysfs_streq(buf, "stop")) {
- 		if (rproc->state != RPROC_RUNNING)
- 			return -EINVAL;
- 
- 		rproc_shutdown(rproc);
-+		if (!rproc->auto_boot)
-+			module_put(dev->parent->driver->owner);
- 	} else {
- 		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
- 		ret = -EINVAL;
--- 
-2.18.0
+Thanks,
+Bjorn
+
+> ---
+>  drivers/rpmsg/qcom_smd.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 0dae7c9f4a8f..4abbeea782fa 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -1122,8 +1122,10 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+>  
+>  	channel->edge = edge;
+>  	channel->name = kstrdup(name, GFP_KERNEL);
+> -	if (!channel->name)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (!channel->name) {
+> +		ret = -ENOMEM;
+> +		goto free_channel;
+> +	}
+>  
+>  	spin_lock_init(&channel->tx_lock);
+>  	spin_lock_init(&channel->recv_lock);
+> @@ -1173,6 +1175,7 @@ static struct qcom_smd_channel *qcom_smd_create_channel(struct qcom_smd_edge *ed
+>  
+>  free_name_and_channel:
+>  	kfree(channel->name);
+> +free_channel:
+>  	kfree(channel);
+>  
+>  	return ERR_PTR(ret);
+> -- 
+> 2.17.1
+> 
