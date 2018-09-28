@@ -1,179 +1,68 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:45727 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeIFE3i (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Sep 2018 00:29:38 -0400
-Received: by mail-qt0-f178.google.com with SMTP id g44-v6so10260789qtb.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Sep 2018 16:57:04 -0700 (PDT)
+Return-Path: <anup@brainfault.org>
 MIME-Version: 1.0
-Reply-To: dry@embedded-synergy.co.za
-In-Reply-To: <ba736f03f42b66c0dd30e3a2e9c2fe84@agner.ch>
-References: <CABViPYkb+g9GkJNVU6AUpzJRwLwZSD9PuxzDrDzgzb6Z0Ky1Gw@mail.gmail.com>
- <4941e366-f41f-9b8f-8c23-b840a01b3970@ti.com> <CABViPYmZH6dVYH7V9kOTi6KJeoFt1axOzVq6NSrASsFPJsg0eg@mail.gmail.com>
- <20180823161233.de5d0de132d42f0089eadcb8@posteo.de> <ba736f03f42b66c0dd30e3a2e9c2fe84@agner.ch>
-From: Denis Ryndine <dry@embedded-synergy.co.za>
-Date: Thu, 6 Sep 2018 09:57:04 +1000
-Message-ID: <CABViPY=XgcOTwuK=aHntZ_N4zhg_z6RG8BSFWxSM_EqNWpoZ5A@mail.gmail.com>
-Subject: Re: rproc_elf_load_segments: rproc_elf_load_segments elf loading problem
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com> <1532697292-14272-18-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1532697292-14272-18-git-send-email-loic.pallardy@st.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 28 Sep 2018 13:26:50 +0530
+Message-ID: <CAAhSdy3nyHqv+6EaYxN9qW0qhnNgTk-8MhFeB7QTBgxaFBtVVA@mail.gmail.com>
+Subject: Re: [PATCH v4 17/17] rpmsg: virtio: allocate buffer from parent
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: Felix Siegel <felix.siegel@posteo.de>, Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org, linux-remoteproc-owner@vger.kernel.org
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>, arnaud pouliquen <arnaud.pouliquen@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello there,
-
-The issues (both) looks like were raised over a year ago by
-henri.roosen@ginzinger.com.
-See here: https://lists.gt.net/linux/kernel/2684252?search_string=rproc_elf_load_segments;#2684252
-
-But the suggested fixes for both - filesz and memset - were curbed, ref Bjorn.
-
-Is this unfortunate .. ?
-
-Denis Ryndine | Lead Software Engineer | Embedded Synergy (Pty) Ltd |
-P.O. Box 55874 | Polokwane | Limpopo | 0700 | South Africa
-T +27110837168
-dry@embedded-synergy.co.za | www.embedded-synergy.co.za
-
-
-On Thu, Aug 30, 2018 at 10:45 PM, Stefan Agner <stefan@agner.ch> wrote:
-> Hi there,
+On Fri, Jul 27, 2018 at 6:45 PM Loic Pallardy <loic.pallardy@st.com> wrote:
 >
-> On 23.08.2018 16:12, Felix Siegel wrote:
->> Hi Denis,
->>
->> On Thu, 23 Aug 2018 11:28:08 +1000
->> Denis Ryndine <dry@embedded-synergy.co.za> wrote:
->>
->>> Hello Suman,
->>>
->>> On Thu, Aug 23, 2018 at 6:50 AM, Suman Anna <s-anna@ti.com> wrote:
->>> >
->>> > Hi Denis,
->>> >
->>> > On 08/20/2018 12:40 AM, Denis Ryndine wrote:
->>> > > Hello,
->>> > >
->>> > > The following may look like an error, could someone review.
->>> > >
->>> > > In rproc_elf_load_segments:
->>> > >
->>> > > /* grab the kernel address for this device address */
->>> > > ptr = rproc_da_to_va(rproc, da, memsz);
->>> > >
->>> > > The last parameter should be filesz. Otherwise this call may fail, as
->>> > > the case when da is an address within a segment / memory.
->>> > > (E.g.  placing a RO data after the code within text segment /memory ).
->>> >
->>> > No, it's alright, memsz >= filesz usually. The actual loadable content
->>>
->>> No issue here.
->>>
->>> > will be filesz, the rest is zero initialized. Both these are from the
->>> > program headers. Have you seen some issues around this?
->>>
->>> If the da points to the beginning of the segment or the device's
->>> memory then it's all good. But da can point somewhere with-in or at
->>> the end of the previous memory segment, where there is enough room to
->>> fit filesz.
->>> The check above may fail using memsz  (memsz >= filesz) if there isn't
->>> physical memory left to fit memsz, but for  >= filesz.
->>>
->>> Consider an OCRAM linked firmware (for iMX),  with elf :
->>>
->>> Program Headers:
->>> Type Offset VirtAddr PhysAddr FileSiz MemSiz Flg Align
->>> LOAD 0x001000 0x00000000 0x00000000 0x00240 0x00240 R 0x1000
->>> LOAD 0x002000 0x00910000 0x00910000 0x0c2e0 0x0c2e0 RWE 0x1000
->>> LOAD 0x00f000 0x20220000 0x0091c2e0 0x00210 0x072e0 RW 0x1000
->>>
->>> The grab kernel address fails trying grab too much:
->>> remoteproc remoteproc0: bad phdr da 0x91c2e0 mem 0x72e0
->>>
->>> But it shouldn't, as there is enough space in that memory for the
->>> filesz, which is what to be programmed into it, not the memsz.
->>>
->>> For iMX, for example, the device specific  rproc_da_to_va() would have
->>> resolved the needed kernel address, if filesz would have been passed.
->>> See imx_rproc.c - imx_rproc_da_to_va() ->  imx_rproc_da_to_sys(),
->>> which would return the needed address: there is enough in that memory
->>> block for filesz, but not for memsz.
->>
->> I had a similar problem with the iMX7 working with TCM.
->> Your fix would probably work however this only occurs due to strange
->> behaviour in the NXP linker and startup files.
->> The NXP linker file stores the data segment directly behind the code
->> segment in the code memory region
->> (causing the difference between VirtAddr and PhysAddr) and the startup
->> assembly then loads the data segment into the data memory region.
+> Remoteproc is now capable to create one specific sub-device per
+> virtio link to associate a dedicated memory pool.
+> This implies to change device used by virtio_rpmsg for
+> buffer allocation from grand-parent to parent.
 >
-> I also worked with the i.MX 7 TCM linker file, and I agree, in the
-> context of remoteproc etc the linker file does really
-> unnecessary/strange section placements.
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> I guess this comes from the microcontroller world, there memory is
-> volatile and the firmware initialization code loads the .data section
-> into memory from ROM.
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 664f957..5c89201 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -912,7 +912,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>         total_buf_space = vrp->num_bufs * vrp->buf_size;
 >
-> That said, the difference in VirtAddr and PhysAddr is caused by the `AT`
-> keyword in the linker file:
-> https://sourceware.org/binutils/docs/ld/Output-Section-LMA.html
+>         /* allocate coherent memory for the buffers */
+> -       bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
+> +       bufs_va = dma_alloc_coherent(vdev->dev.parent,
+>                                      total_buf_space, &vrp->bufs_dma,
+>                                      GFP_KERNEL);
+>         if (!bufs_va) {
+> @@ -980,7 +980,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>         return 0;
 >
-> From what I can tell, because remoteproc uses paddr as base and memsz as
-> length, remoteproc makes the assumption that the virtual and physical
-> addressing is fully aligned... For a lot of linker files this is
-> probably a reasonable assumption since we do not *need* startup code
-> which relocates sections...
+>  free_coherent:
+> -       dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+> +       dma_free_coherent(vdev->dev.parent, total_buf_space,
+>                           bufs_va, vrp->bufs_dma);
+>  vqs_del:
+>         vdev->config->del_vqs(vrp->vdev);
+> @@ -1015,7 +1015,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
 >
-> However, if we make this assumption, maybe we should check if paddr and
-> vaddr are really aligned, e.g. by using:
+>         vdev->config->del_vqs(vrp->vdev);
 >
-> WARN_ON(phdr->p_paddr != phdr->p_vaddr)
+> -       dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
+> +       dma_free_coherent(vdev->dev.parent, total_buf_space,
+>                           vrp->rbufs, vrp->bufs_dma);
 >
-> Or, we could not zero out in case paddr/vaddr are not aligned, just to
-> be on the safe side e.g.:
->
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -200,7 +200,7 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> const struct firmware *fw)
->                  * did this for us. albeit harmless, we may consider
-> removing
->                  * this.
->                  */
-> -               if (memsz > filesz)
-> +               if (phdr->p_paddr == phdr->p_vaddr && memsz > filesz)
->                         memset(ptr + filesz, 0, memsz - filesz);
->         }
->
->
->>
->> This would make sense for a normal microcontroller with persistent
->> memory to boot from, but atleast on the imx7 the M4 requires the A7 to
->> start it
->> and the supported memory regions are all volatile anyway.
->>
->> After I changed the linker script and the startup routine it worked
->> for me. It also avoids needlessly copying data around.
->
-> True, and that is what we ended up doing to.
->
-> Still, maybe the kernel could behave a bit smarter.
->
+>         kfree(vrp);
 > --
-> Stefan
+> 1.9.1
 >
->>>
->>>
->>> > regards
->>> > Suman
->>>
->>> Regards,
->>>
->>> Denis
->>
->> Regards,
->>
->> Felix
+
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Also, tried this patch on Linux running inside Guest/VM on
+Xvisor ARM/ARM64.
+Tested-by: Anup Patel <anup@brainfault.org>
+
+Regards,
+Anup
