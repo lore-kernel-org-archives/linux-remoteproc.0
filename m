@@ -1,87 +1,56 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH 3/6] dt-bindings: clock: qcom: Introduce QCOM WCSS Q6DSP clock bindings
-Date: Tue,  9 Oct 2018 18:35:54 +0530
-Message-Id: <1539090357-20853-4-git-send-email-govinds@codeaurora.org>
-In-Reply-To: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
-References: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Govind Singh <govinds@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 0/5] remoteproc sysfs fixes/improvements
+References: <20180915003725.17549-1-s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <63b8b9a3-d938-cb7a-9a77-12159d4f38a7@ti.com>
+Date: Mon, 1 Oct 2018 16:11:29 -0500
+MIME-Version: 1.0
+In-Reply-To: <20180915003725.17549-1-s-anna@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add device tree bindings for WiFi QDSP subsystem clock controls
-found in OCS405 soc.
+Hi Bjorn,
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,wcsscc.txt      | 26 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,wcss-qcs404.h       | 24 ++++++++++++++++++++
- 2 files changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
- create mode 100644 include/dt-bindings/clock/qcom,wcss-qcs404.h
+On 09/14/2018 07:37 PM, Suman Anna wrote:
+> Hi Bjorn,
+> 
+> The following series includes couple of fixes and improvements
+> associated with the sysfs interfaces. Patches are based on top
+> of 4.19-rc1. The first 3 patches are independent of each other.
+> 
+> Following is the patch summary:
+>  - Patch 1 fixes an issue with unbalanced sysfs start/stop
+>    and module removal
+>  - Patch 2 adds a minor additional check on firmware name
+>    being echoed into the sysfs file
+>  - Patch 3 is a minor kerneldoc fix.
+>  - Patches 4 and 5 introduce a new request denial to sysfs
+>    interfaces to not allow userspace to meddle with a remoteproc
+>    client driven boot flow, and usage of it by Wkup M3 remoteproc
+>    driver
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,wcsscc.txt b/Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
-new file mode 100644
-index 0000000..2b19ef0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
-@@ -0,0 +1,26 @@
-+Qualcomm WCSS Clock Controller Binding
-+-----------------------------------------------
-+
-+Required properties :
-+- compatible		: shall contain "qcom,qcs404-wcsscc"
-+- #clock-cells		: from common clock binding, shall contain 1.
-+- reg			: shall contain base register address and size,
-+			  in the order
-+			Index-0 maps to WCSS_Q6SSTOP clocks register region
-+			Index-1 maps to WCSS_TCSR register region
-+			Index-2 maps to WCSS_QDSP6SS register region
-+
-+Optional properties :
-+- reg-names	: register names of WCSS domain
-+		 "wcss_q6sstop", "wcnss_tcsr", "wcss_qdsp6ss".
-+
-+Example:
-+The below node has to be defined in the cases where the WCSS peripheral loader
-+would bring the subsystem out of reset.
-+
-+	clock_wcsscc: qcom,wcsscc@7000000 {
-+		compatible = "qcom,qcs404-wcsscc";
-+		reg = <0x07500000 0x4e000>, <0x07550000 0x8012>, <0x07400000 0x104>;
-+		reg-names = "wcss_q6sstop", "wcnss_tcsr", "wcss_qdsp6ss";
-+		#clock-cells = <1>;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,wcss-qcs404.h b/include/dt-bindings/clock/qcom,wcss-qcs404.h
-new file mode 100644
-index 0000000..45dd659
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,wcss-qcs404.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_WCSS_QCS404_H
-+#define _DT_BINDINGS_CLK_WCSS_QCS404_H
-+
-+#define WCSS_AHBFABRIC_CBCR_CLK			0
-+#define WCSS_AHBS_CBCR_CLK			1
-+#define WCSS_TCM_CBCR_CLK			2
-+#define WCSS_AHBM_CBCR_CLK			3
-+#define WCSS_AXIM_CBCR_CLK			4
-+#define WCSS_BCR_CBCR_CLK			5
-+#define WCSS_LCC_CBCR_CLK			6
-+#define WCSS_QDSP6SS_XO_CBCR_CLK		7
-+#define WCSS_QDSP6SS_SLEEP_CBCR_CLK		8
-+#define WCSS_QDSP6SS_GFMMUX_CLK			9
-+
-+#define Q6SSTOP_QDSP6SS_RESET			0
-+#define Q6SSTOP_QDSP6SS_CORE_RESET		1
-+#define Q6SSTOP_QDSP6SS_BUS_RESET		2
-+#define Q6SSTOP_BCR_RESET			3
-+#endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Can you pick up this series for 4.20 please if you don't have any comments?
+
+regards
+Suman
+
+> 
+> regards
+> Suman
+> 
+> Suman Anna (5):
+>   remoteproc: Fix unbalanced boot with sysfs for no auto-boot rprocs
+>   remoteproc: Check for NULL firmwares in sysfs interface
+>   remoteproc: Add missing kernel-doc comment for auto-boot
+>   remoteproc: Introduce deny_sysfs_ops flag
+>   remoteproc/wkup_m3: Set deny_sysfs_ops flag
+> 
+>  drivers/remoteproc/remoteproc_sysfs.c | 29 ++++++++++++++++++++++++++-
+>  drivers/remoteproc/wkup_m3_rproc.c    |  1 +
+>  include/linux/remoteproc.h            |  3 +++
+>  3 files changed, 32 insertions(+), 1 deletion(-)
+> 
