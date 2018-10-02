@@ -1,21 +1,23 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Fri, 5 Oct 2018 23:13:41 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
 Subject: Re: [PATCH 1/5] remoteproc: Fix unbalanced boot with sysfs for no
  auto-boot rprocs
-Message-ID: <20181006061341.GC12063@builder>
 References: <20180915003725.17549-1-s-anna@ti.com>
  <20180915003725.17549-2-s-anna@ti.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <eb98b312-020b-60c4-627f-a916ad436e21@st.com>
+Date: Tue, 2 Oct 2018 11:27:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180915003725.17549-2-s-anna@ti.com>
-To: Suman Anna <s-anna@ti.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 14 Sep 17:37 PDT 2018, Suman Anna wrote:
+Hi Suman,
 
+On 09/15/2018 02:37 AM, Suman Anna wrote:
 > The remoteproc core performs automatic boot and shutdown of a remote
 > processor during rproc_add() and rproc_del() for remote processors
 > supporting 'auto-boot'. The remoteproc devices not using 'auto-boot'
@@ -37,22 +39,6 @@ On Fri 14 Sep 17:37 PDT 2018, Suman Anna wrote:
 > during a sysfs 'start' and releasing it during the sysfs 'stop'
 > operation.
 > 
-
-This prevents you from rmmod'ing the remoteproc driver, but it does not
-prevent you from issuing an unbind of the driver - resulting in the same
-issue.
-
-I would prefer if we made sure that rproc_del() always cleaned up any
-resources (and stopped the remoteproc processor), but I'm uncertain of
-how to deal with remote processors that are supposed to survive Linux
-shutting down.
-
-But I'm also uncertain how we can make the remoteproc core ensure that
-no dynamic resources are leaked in such scenario.
-
-Regards,
-Bjorn
-
 > Signed-off-by: Suman Anna <s-anna@ti.com>
 > ---
 >  drivers/remoteproc/remoteproc_sysfs.c | 16 +++++++++++++++-
@@ -99,6 +85,10 @@ Bjorn
 >  	} else {
 >  		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
 >  		ret = -EINVAL;
-> -- 
-> 2.18.0
 > 
+Looks good for me, i tested on ST platform and did not detect any
+regression.
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+
+Regards
+Arnaud
