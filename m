@@ -1,36 +1,56 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-From: Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] remoteproc: qcom: q6v5-pil: add SCM probe dependency
-Date: Mon,  8 Oct 2018 19:08:05 -0700
-Message-Id: <20181009020805.143982-1-briannorris@chromium.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, Brian Norris <briannorris@chromium.org>
+Content-Transfer-Encoding: quoted-printable
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <159d6244-8077-e21f-36d9-ccb1eeb3ed78@lechnology.com>
+References: <20180621073706.22812-1-brgl@bgdev.pl> <20180621073706.22812-3-brgl@bgdev.pl>
+ <160f4225-236c-af54-9693-120e834af578@lechnology.com>
+ <CAMRc=McmwWt5OdCxGntDJ-5cxte+Ad2FJcnmWT8NxnBtzP40DA@mail.gmail.com>
+ <159d6244-8077-e21f-36d9-ccb1eeb3ed78@lechnology.com>
+Message-ID: <153849568750.119890.126631906736660249@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v7 2/4] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date: Tue, 02 Oct 2018 08:54:47 -0700
+To: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, linux-remoteproc@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Similar to qcom_q6v5_pas and qcom_wcnss drivers, probe will fail if SCM
-is not up.
+Quoting David Lechner (2018-10-02 08:28:44)
+> On 10/02/2018 10:08 AM, Bartosz Golaszewski wrote:
+> > pt., 6 lip 2018 o 19:54 David Lechner <david@lechnology.com> napisa=C5=
+=82(a):
+> >>
+> >> On 06/21/2018 02:37 AM, Bartosz Golaszewski wrote:
+> >>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>>
+> >>> This code is no longer used. Remove it.
+> >>>
+> >>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>> Reviewed-by: David Lechner <david@lechnology.com>
+> >>> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> >>> ---
+> >>
+> >> I've picked this up in clk-davinci-4.20, so it will just hang out
+> >> there for a while until the rest of this series gets merged.
+> >>
+> > =
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 3 +++
- 1 file changed, 3 insertions(+)
+> > Hi David,
+> > =
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index a839b07a58b1..8836ca1bc0c1 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1151,6 +1151,9 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (!desc)
- 		return -EINVAL;
- 
-+	if (!qcom_scm_is_available())
-+		return -EPROBE_DEFER;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
- 			    desc->hexagon_mba_image, sizeof(*qproc));
- 	if (!rproc) {
--- 
-2.19.0.605.g01d371f741-goog
+> > I don't see this patch in next yet. Is it queued for 4.20?
+> > =
+
+> > Thanks in advance,
+> > Bartosz
+> > =
+
+> =
+
+> This is currently the only clk-davinici patch I have queued, so it
+> might be easier to just resend it and let Stephen/Mike pick it up
+> directly instead of me sending a pull request for one patch.
+> =
+
+
+Ok I applied it directly to clk-next.
