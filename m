@@ -1,220 +1,126 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 2/4] rpmsg: glink: Add support to handle signals command
-Date: Mon,  8 Oct 2018 12:08:16 +0530
-Message-Id: <1538980699-21516-3-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
-References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 4/5] remoteproc: Introduce deny_sysfs_ops flag
+References: <20180915003725.17549-1-s-anna@ti.com>
+ <20180915003725.17549-5-s-anna@ti.com>
+ <36e85566-69e5-0a3a-edf1-6e0cfd8b388b@st.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <63b9447a-0589-f9d8-bfc0-1f6350b7c185@ti.com>
+Date: Tue, 2 Oct 2018 10:14:28 -0500
+MIME-Version: 1.0
+In-Reply-To: <36e85566-69e5-0a3a-edf1-6e0cfd8b388b@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remote peripherals send signal notifications over glink with commandID 15.
+Hi Arnaud,
 
-Add support to send and receive the signal command and convert the signals
-from NATIVE to TIOCM while receiving and vice versa while sending.
+Thanks for the review and testing of the series.
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+On 10/02/2018 04:47 AM, Arnaud Pouliquen wrote:
+> Hi Suman,
+> 
+> On 09/15/2018 02:37 AM, Suman Anna wrote:
+>> The remoteproc framework provides sysfs interfaces for changing
+>> the firmware name and for starting/stopping a remote processor
+>> through the sysfs files 'state' and 'firmware'. These interfaces
+>> are currently allowed irrespective of how the remoteprocs were
+>> booted (like remoteproc self auto-boot, remoteproc client-driven
+>> boot etc). These interfaces can adversely affect a remoteproc
+>> and its clients especially when a remoteproc is being controlled
+>> by a remoteproc client driver(s). Also, not all remoteproc
+>> drivers may want to support the sysfs interfaces by default.
+>>
+>> Add support to deny the sysfs state/firmware change by introducing
+>> a state flag 'deny_sysfs_ops' that the individual remoteproc drivers
+>> can set based on their usage needs. The default behavior is to
+>> allow the sysfs operations as before.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/remoteproc_sysfs.c | 8 ++++++++
+>>  include/linux/remoteproc.h            | 2 ++
+>>  2 files changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+>> index ce93f4d710f3..b2d8c11b89d0 100644
+>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>> @@ -36,6 +36,10 @@ static ssize_t firmware_store(struct device *dev,
+>>  	char *p;
+>>  	int err, len = count;
+>>  
+>> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
+>> +	if (rproc->deny_sysfs_ops)
+>> +		return -EPERM;
+>> +
+>>  	err = mutex_lock_interruptible(&rproc->lock);
+>>  	if (err) {
+>>  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
+>> @@ -102,6 +106,10 @@ static ssize_t state_store(struct device *dev,
+>>  	struct rproc *rproc = to_rproc(dev);
+>>  	int ret = 0;
+>>  
+>> +	/* restrict sysfs operations if not allowed by remoteproc drivers */
+>> +	if (rproc->deny_sysfs_ops)
+>> +		return -EPERM;
+>> +
+>>  	if (sysfs_streq(buf, "start")) {
+>>  		if (rproc->state == RPROC_RUNNING)
+>>  			return -EBUSY;
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 75f9ca05b865..d21252b4f758 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -440,6 +440,7 @@ struct rproc_dump_segment {
+>>   * @table_sz: size of @cached_table
+>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>>   * @auto_boot: flag to indicate if remote processor should be auto-started
+>> + * @deny_sysfs_ops: flag to not permit sysfs operations on state and firmware
+>>   * @dump_segments: list of segments in the firmware
+>>   */
+>>  struct rproc {
+>> @@ -472,6 +473,7 @@ struct rproc {
+>>  	size_t table_sz;
+>>  	bool has_iommu;
+>>  	bool auto_boot;
+>> +	bool deny_sysfs_ops;
+>>  	struct list_head dump_segments;
+>>  };
+> 
+> I'm concerned about granularity. Are we denying all write access to the
+> state and the firmware name?
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index e2ce4e6..e90f543 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-+ * Copyright (c) 2018, The Linux Foundation.
-  * Copyright (c) 2016-2017, Linaro Ltd
-  */
- 
-@@ -17,6 +18,7 @@
- #include <linux/rpmsg.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/workqueue.h>
- #include <linux/mailbox_client.h>
- 
-@@ -150,6 +152,8 @@ enum {
-  * @intent_req_lock: Synchronises multiple intent requests
-  * @intent_req_result: Result of intent request
-  * @intent_req_comp: Completion for intent_req signalling
-+ * @lsigs:	local side signals
-+ * @rsigs:	remote side signals
-  */
- struct glink_channel {
- 	struct rpmsg_endpoint ept;
-@@ -181,6 +185,10 @@ struct glink_channel {
- 	struct mutex intent_req_lock;
- 	bool intent_req_result;
- 	struct completion intent_req_comp;
-+
-+	unsigned int lsigs;
-+	unsigned int rsigs;
-+
- };
- 
- #define to_glink_channel(_ept) container_of(_ept, struct glink_channel, ept)
-@@ -201,9 +209,15 @@ struct glink_channel {
- #define RPM_CMD_TX_DATA_CONT		12
- #define RPM_CMD_READ_NOTIF		13
- #define RPM_CMD_RX_DONE_W_REUSE		14
-+#define RPM_CMD_SIGNALS			15
- 
- #define GLINK_FEATURE_INTENTLESS	BIT(1)
- 
-+#define NATIVE_DTR_SIG	BIT(31)
-+#define NATIVE_CTS_SIG	BIT(30)
-+#define NATIVE_CD_SIG	BIT(29)
-+#define NATIVE_RI_SIG	BIT(28)
-+
- static void qcom_glink_rx_done_work(struct work_struct *work);
- 
- static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-@@ -957,6 +971,76 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 	return 0;
- }
- 
-+/**
-+ * qcom_glink_send_signals() - convert a signal  cmd to wire format and transmit
-+ * @glink:	The transport to transmit on.
-+ * @channel:	The glink channel
-+ * @sigs:	The signals to encode.
-+ *
-+ * Return: 0 on success or standard Linux error code.
-+ */
-+static int qcom_glink_send_signals(struct qcom_glink *glink,
-+				   struct glink_channel *channel,
-+				   u32 sigs)
-+{
-+	struct glink_msg msg;
-+
-+	/* convert signals from TIOCM to NATIVE */
-+	sigs &= 0x0fff;
-+	if (sigs & TIOCM_DTR)
-+		sigs |= NATIVE_DTR_SIG;
-+	if (sigs & TIOCM_RTS)
-+		sigs |= NATIVE_CTS_SIG;
-+	if (sigs & TIOCM_CD)
-+		sigs |= NATIVE_CD_SIG;
-+	if (sigs & TIOCM_RI)
-+		sigs |= NATIVE_RI_SIG;
-+
-+	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
-+	msg.param1 = cpu_to_le16(channel->lcid);
-+	msg.param2 = cpu_to_le32(sigs);
-+
-+	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
-+}
-+
-+static int qcom_glink_handle_signals(struct qcom_glink *glink,
-+				     unsigned int rcid, unsigned int signals)
-+{
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+	u32 old;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, rcid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel) {
-+		dev_err(glink->dev, "signal for non-existing channel\n");
-+		return -EINVAL;
-+	}
-+
-+	old = channel->rsigs;
-+
-+	/* convert signals from NATIVE to TIOCM */
-+	if (signals & NATIVE_DTR_SIG)
-+		signals |= TIOCM_DSR;
-+	if (signals & NATIVE_CTS_SIG)
-+		signals |= TIOCM_CTS;
-+	if (signals & NATIVE_CD_SIG)
-+		signals |= TIOCM_CD;
-+	if (signals & NATIVE_RI_SIG)
-+		signals |= TIOCM_RI;
-+	signals &= 0x0fff;
-+
-+	channel->rsigs = signals;
-+
-+	if (channel->ept.sig_cb) {
-+		channel->ept.sig_cb(channel->ept.rpdev, channel->ept.priv,
-+				    old, channel->rsigs);
-+	}
-+
-+	return 0;
-+}
-+
- static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- {
- 	struct qcom_glink *glink = data;
-@@ -1018,6 +1102,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
- 			break;
-+		case RPM_CMD_SIGNALS:
-+			qcom_glink_handle_signals(glink, param1, param2);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		default:
- 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
- 			ret = -EINVAL;
-@@ -1315,6 +1403,42 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- 	return __qcom_glink_send(channel, data, len, false);
- }
- 
-+static int qcom_glink_get_sigs(struct rpmsg_endpoint *ept)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+
-+	return channel->rsigs;
-+}
-+
-+static int qcom_glink_set_sigs(struct rpmsg_endpoint *ept, u32 set, u32 clear)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+	struct qcom_glink *glink = channel->glink;
-+	u32 sigs = channel->lsigs;
-+
-+	if (set & TIOCM_DTR)
-+		sigs |= TIOCM_DTR;
-+	if (set & TIOCM_RTS)
-+		sigs |= TIOCM_RTS;
-+	if (set & TIOCM_CD)
-+		sigs |= TIOCM_CD;
-+	if (set & TIOCM_RI)
-+		sigs |= TIOCM_RI;
-+
-+	if (clear & TIOCM_DTR)
-+		sigs &= ~TIOCM_DTR;
-+	if (clear & TIOCM_RTS)
-+		sigs &= ~TIOCM_RTS;
-+	if (clear & TIOCM_CD)
-+		sigs &= ~TIOCM_CD;
-+	if (clear & TIOCM_RI)
-+		sigs &= ~TIOCM_RI;
-+
-+	channel->lsigs = sigs;
-+
-+	return qcom_glink_send_signals(glink, channel, sigs);
-+}
-+
- /*
-  * Finds the device_node for the glink child interested in this channel.
-  */
-@@ -1348,6 +1472,8 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
- 	.destroy_ept = qcom_glink_destroy_ept,
- 	.send = qcom_glink_send,
- 	.trysend = qcom_glink_trysend,
-+	.get_signals = qcom_glink_get_sigs,
-+	.set_signals = qcom_glink_set_sigs,
- };
- 
- static void qcom_glink_rpdev_release(struct device *dev)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Not by default. This is relevant only when a remoteproc platform driver
+has configured these fields.
+
+> Would it be interesting to have a bit-field to separately allow/deny
+> write access:
+> - to change the firmware name
+> - to start the firmware
+> - to stop the firmware
+> ?
+
+Do you have use-cases for the individual options?
+
+> 
+> For instance, if firmware is stored in the file system, the auto_boot
+> mode is not functional (if remote proc in built-in).
+
+This has to do with late FS init, the auto-boot would work if you have
+your images in early FS like initramfs or initramdisk with built-in
+driver (this is not a remoteproc specific problem and is the case with
+all drivers using request_firmware()).
+
+ We could have to
+> allow user application to start the firmware, but deny to change the
+> firmware name or stop it.
+
+I am not sure if we want to differentiate as the above example almost
+kinda depends on how you put together the system. It can be easily
+expanded for what you are asking if there is a real need/use-case.
+
+regards
+Suman
