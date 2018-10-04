@@ -1,41 +1,96 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH 3/5] ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
-Date: Wed, 31 Oct 2018 10:30:30 +0100
-Message-Id: <20181031093032.20386-4-benjamin.gaignard@st.com>
-In-Reply-To: <20181031093032.20386-1-benjamin.gaignard@st.com>
-References: <20181031093032.20386-1-benjamin.gaignard@st.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V2 4/4] rpmsg: char: Add signal callback and POLLPRI support
+Date: Thu,  4 Oct 2018 19:10:20 +0530
+Message-Id: <1538660420-27797-5-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1538660420-27797-1-git-send-email-aneela@codeaurora.org>
+References: <1538660420-27797-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Declare hwspinlock device for stm32mp157 SoC
+Register a callback to get the signal notifications from rpmsg and
+send POLLPRI mask to indicate the signal change in POLL system call.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- arch/arm/boot/dts/stm32mp157c.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/rpmsg/rpmsg_char.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index 185541a5b69f..9b16c28f8ac3 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -803,6 +803,15 @@
- 			status = "disabled";
- 		};
- 
-+		hsem: hwspinlock@4c000000 {
-+			compatible = "st,stm32-hwspinlock";
-+			#hwlock-cells = <1>;
-+			reg = <0x4c000000 0x400>;
-+			clocks = <&rcc HSEM>;
-+			clock-names = "hwspinlock";
-+			status = "disabled";
-+		};
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 9380c6e..194d54a 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -64,6 +64,7 @@ struct rpmsg_ctrldev {
+  * @queue_lock:	synchronization of @queue operations
+  * @queue:	incoming message queue
+  * @readq:	wait object for incoming queue
++ * @sig_pending:state of signal notification
+  */
+ struct rpmsg_eptdev {
+ 	struct device dev;
+@@ -78,6 +79,8 @@ struct rpmsg_eptdev {
+ 	spinlock_t queue_lock;
+ 	struct sk_buff_head queue;
+ 	wait_queue_head_t readq;
 +
- 		rcc: rcc@50000000 {
- 			compatible = "st,stm32mp1-rcc", "syscon";
- 			reg = <0x50000000 0x1000>;
++	bool sig_pending;
+ };
+ 
+ static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+@@ -122,6 +125,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+ 	return 0;
+ }
+ 
++static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv,
++			 u32 old, u32 new)
++{
++	struct rpmsg_eptdev *eptdev = priv;
++
++	eptdev->sig_pending = true;
++
++	/* wake up any blocking processes, waiting for signal notification */
++	wake_up_interruptible(&eptdev->readq);
++	return 0;
++}
++
+ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ {
+ 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+@@ -138,6 +153,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ 		return -EINVAL;
+ 	}
+ 
++	ept->sig_cb = rpmsg_sigs_cb;
+ 	eptdev->ept = ept;
+ 	filp->private_data = eptdev;
+ 
+@@ -157,6 +173,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 		eptdev->ept = NULL;
+ 	}
+ 	mutex_unlock(&eptdev->ept_lock);
++	eptdev->sig_pending = false;
+ 
+ 	/* Discard all SKBs */
+ 	while (!skb_queue_empty(&eptdev->queue)) {
+@@ -263,6 +280,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+ 	if (!skb_queue_empty(&eptdev->queue))
+ 		mask |= EPOLLIN | EPOLLRDNORM;
+ 
++	if (eptdev->sig_pending)
++		mask |= POLLPRI;
++
+ 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
+ 
+ 	return mask;
+@@ -307,6 +327,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+ 
+ 	switch (cmd) {
+ 	case TIOCMGET:
++		eptdev->sig_pending = false;
+ 		ret = rpmsg_get_signals(eptdev->ept, &lsigs, &rsigs);
+ 		if (!ret)
+ 			ret = put_user(rsigs, (int __user *)arg);
 -- 
-2.15.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
