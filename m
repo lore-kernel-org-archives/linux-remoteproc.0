@@ -1,69 +1,34 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] remoteproc: qcom: q6v5: Fix a race condition on fatal crash
-Date: Mon,  1 Oct 2018 19:55:00 +0530
-Message-Id: <20181001142500.25457-1-sibis@codeaurora.org>
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V2 0/4] Add TIOCM Signals support for RPMSG char devices
+Date: Thu,  4 Oct 2018 19:10:16 +0530
+Message-Id: <1538660420-27797-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Currently with GLINK_SSR enabled each fatal crash results in servicing
-a crash from wdog as well. This is due to a race that occurs in setting
-the running flag in the shutdown path. Fix this by moving the running
-flag to the end of fatal interrupt handler.
+Glink transport support signals to exchange state notification between
+local and remote side clients. Adding support to send/receive the signal
+command and notify the clients through callback and POLL notification.
 
-Crash Logs:
-qcom-q6v5-pil 4080000.remoteproc: fatal error without message
-remoteproc remoteproc0: crash detected in 4080000.remoteproc: type fatal
-	error
-remoteproc remoteproc0: handling crash #1 in 4080000.remoteproc
-remoteproc remoteproc0: recovering 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: watchdog without message
-remoteproc remoteproc0: crash detected in 4080000.remoteproc: type watchdog
-remoteproc:glink-edge: intent request timed out
-qcom_glink_ssr remoteproc:glink-edge.glink_ssr.-1.-1: failed to send
-	cleanup message
-qcom_glink_ssr remoteproc:glink-edge.glink_ssr.-1.-1: timeout waiting
-	for cleanup done message
-qcom-q6v5-pil 4080000.remoteproc: timed out on wait
-qcom-q6v5-pil 4080000.remoteproc: port failed halt
-remoteproc remoteproc0: stopped remote processor 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: MBA booted, loading mpss
-remoteproc remoteproc0: remote processor 4080000.remoteproc is now up
-remoteproc remoteproc0: handling crash #2 in 4080000.remoteproc
-remoteproc remoteproc0: recovering 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: port failed halt
-remoteproc remoteproc0: stopped remote processor 4080000.remoteproc
-qcom-q6v5-pil 4080000.remoteproc: MBA booted, loading mpss
-remoteproc remoteproc0: remote processor 4080000.remoteproc is now up
+Changes since v1:
+- Split the patches as per functional areas like core, char, glink
+- Add set, clear mask for TIOCMSET
+- Merge the char signal callback and POLLPRI patches
 
-[bjorn: move running flag to the end of fatal interrupt handler]
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Arun Kumar Neelakantam (4):
+  rpmsg: core: Add signal API support
+  rpmsg: glink: Add support to handle signals command
+  rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+  rpmsg: char: Add signal callback and POLLPRI support
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index e9ab90c19304..edeb2e43209e 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -84,6 +84,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- 	else
- 		dev_err(q6v5->dev, "fatal error without message\n");
- 
-+	q6v5->running = false;
- 	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
- 
- 	return IRQ_HANDLED;
-@@ -150,8 +151,6 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
- {
- 	int ret;
- 
--	q6v5->running = false;
--
- 	qcom_smem_state_update_bits(q6v5->state,
- 				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
- 
+ drivers/rpmsg/qcom_glink_native.c | 130 ++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_char.c        |  75 +++++++++++++++++++++-
+ drivers/rpmsg/rpmsg_core.c        |  42 ++++++++++++
+ drivers/rpmsg/rpmsg_internal.h    |   5 ++
+ include/linux/rpmsg.h             |  27 ++++++++
+ 5 files changed, 276 insertions(+), 3 deletions(-)
+
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
