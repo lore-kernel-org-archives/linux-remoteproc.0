@@ -1,79 +1,120 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 1/5] remoteproc: Introduce custom dump function for each remoteproc segment
-Date: Wed, 17 Oct 2018 19:25:23 +0530
-Message-Id: <20181017135527.30592-2-sibis@codeaurora.org>
-In-Reply-To: <20181017135527.30592-1-sibis@codeaurora.org>
-References: <20181017135527.30592-1-sibis@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 3 Oct 2018 17:54:33 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 3/5] rpmsg: Add TIOCMGET/TIOCMSET ioctl support
+Message-ID: <20181004005433.GX2523@minitux>
+References: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
+ <1538566463-24627-4-git-send-email-aneela@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, kyan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538566463-24627-4-git-send-email-aneela@codeaurora.org>
+To: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Cc: ohad@wizery.com, clew@codeaurora.org, sricharan@codeaurora.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce custom dump function and private data per remoteproc dump
-segment. The dump function is responsible for filling the device memory
-segment associated with coredump
+On Wed 03 Oct 04:34 PDT 2018, Arun Kumar Neelakantam wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/remoteproc_core.c | 16 ++++++++++------
- include/linux/remoteproc.h           |  6 ++++++
- 2 files changed, 16 insertions(+), 6 deletions(-)
+> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
+> to get/set the low level transport signals.
+> 
+> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 54 +++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 51 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 86003d5..c983d6c 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/rpmsg.h>
+>  #include <linux/skbuff.h>
+>  #include <linux/slab.h>
+> +#include <linux/termios.h>
+>  #include <linux/uaccess.h>
+>  #include <uapi/linux/rpmsg.h>
+>  
+> @@ -274,15 +275,62 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+>  	return mask;
+>  }
+>  
+> +static int rpmsg_eptdev_tiocmset(struct file *fp, unsigned int cmd,
+> +				 unsigned long arg)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index aa6206706fe3..afa4274b6ccd 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1183,14 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
- 		phdr->p_flags = PF_R | PF_W | PF_X;
- 		phdr->p_align = 0;
- 
--		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
--		if (!ptr) {
--			dev_err(&rproc->dev,
-+		if (segment->dump) {
-+			segment->dump(rproc, segment, data + offset);
-+		} else {
-+			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-+			if (!ptr) {
-+				dev_err(&rproc->dev,
- 				"invalid coredump segment (%pad, %zu)\n",
- 				&segment->da, segment->size);
--			memset(data + offset, 0xff, segment->size);
--		} else {
--			memcpy(data + offset, ptr, segment->size);
-+				memset(data + offset, 0xff, segment->size);
-+			} else {
-+				memcpy(data + offset, ptr, segment->size);
-+			}
- 		}
- 
- 		offset += phdr->p_filesz;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e3c5d856b6da..2a93e102d2ad 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -399,6 +399,9 @@ enum rproc_crash_type {
-  * @node:	list node related to the rproc segment list
-  * @da:		device address of the segment
-  * @size:	size of the segment
-+ * @priv:	private data associated with the dump_segment
-+ * @dump:	custom dump function to fill device memory segment associated
-+ *		with coredump
-  */
- struct rproc_dump_segment {
- 	struct list_head node;
-@@ -406,6 +409,9 @@ struct rproc_dump_segment {
- 	dma_addr_t da;
- 	size_t size;
- 
-+	void *priv;
-+	void (*dump)(struct rproc *rproc, struct rproc_dump_segment *segment,
-+		     void *dest);
- 	loff_t offset;
- };
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Make arg type int __user *
+
+> +{
+> +	struct rpmsg_eptdev *eptdev = fp->private_data;
+> +	u32 lsigs, rsigs, val;
+> +	int ret;
+> +
+> +	ret = get_user(val, (u32 *)arg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	switch (cmd) {
+> +	case TIOCMBIS:
+> +		lsigs |= val;
+> +		break;
+> +	case TIOCMBIC:
+> +		lsigs &= ~val;
+> +		break;
+> +	case TIOCMSET:
+> +		lsigs = val;
+> +		break;
+> +	}
+> +
+> +	ret = rpmsg_set_sigs(eptdev->ept, lsigs);
+
+This is racy, as the signals might change while we update them. Mimic
+tty_tiocmset() instead and make rpmsg_set_sigs() take a clear and set
+mask.
+
+And please do spell out rpmsg_set_signal() and rpmsg_get_signal().
+
+> +	return ret;
+
+return rpmsg_set_signals();
+
+> +}
+> +
+>  static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  			       unsigned long arg)
+>  {
+>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+> +	u32 lsigs, rsigs;
+> +	int ret;
+>  
+> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+> -		return -EINVAL;
+> +	switch (cmd) {
+> +	case TIOCMGET:
+> +		ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
+> +		if (!ret)
+> +			ret = put_user(rsigs, (u32 *)arg);
+
+Cast to int __user *
+
+> +		break;
+> +	case TIOCMSET:
+> +	case TIOCMBIS:
+> +	case TIOCMBIC:
+> +		ret = rpmsg_eptdev_tiocmset(fp, cmd, arg);
+> +		break;
+> +	case RPMSG_DESTROY_EPT_IOCTL:
+> +		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+>  
+> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +	return ret;
+>  }
+
+Regards,
+Bjorn
