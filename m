@@ -1,386 +1,220 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 3/5] remoteproc: qcom: q6v5-mss: Refactor mba load/unload sequence
-Date: Wed, 17 Oct 2018 19:25:25 +0530
-Message-Id: <20181017135527.30592-4-sibis@codeaurora.org>
-In-Reply-To: <20181017135527.30592-1-sibis@codeaurora.org>
-References: <20181017135527.30592-1-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, kyan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V3 2/4] rpmsg: glink: Add support to handle signals command
+Date: Fri,  5 Oct 2018 12:29:34 +0530
+Message-Id: <1538722776-13648-3-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1538722776-13648-1-git-send-email-aneela@codeaurora.org>
+References: <1538722776-13648-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Refactor re-useable parts of mba load/unload sequence into mba_load and
-mba_reclaim respectively. This is done in order to prevent code duplication
-for modem coredump, which requires the mba to be loaded before dumping
-the segments. The following changes in functionality are intended:
+Remote peripherals send signal notifications over glink with commandID 15.
 
-* Add software bypass to avoid high MX current in mpss error path.
-* Remove the proxy votes of clk/regs only after the active/reset clks/regs.
-* Reclaim MBA memory after mpss_load failure in mba_reclaim func.
-* Set/Unset the dump_mba_loaded flag on mba_load/mba_reclaim respectively.
+Add support to send and receive the signal command and convert the signals
+from NATIVE to TIOCM while receiving and vice versa while sending.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 308 ++++++++++++++++-------------
- 1 file changed, 170 insertions(+), 138 deletions(-)
+ drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index f52b64120877..87d7f4d0c176 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -167,6 +167,7 @@ struct q6v5 {
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index e2ce4e6..e90f543 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
++ * Copyright (c) 2018, The Linux Foundation.
+  * Copyright (c) 2016-2017, Linaro Ltd
+  */
  
- 	bool running;
+@@ -17,6 +18,7 @@
+ #include <linux/rpmsg.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
++#include <linux/termios.h>
+ #include <linux/workqueue.h>
+ #include <linux/mailbox_client.h>
  
-+	bool dump_mba_loaded;
- 	phys_addr_t mba_phys;
- 	void *mba_region;
- 	size_t mba_size;
-@@ -679,6 +680,171 @@ static bool q6v5_phdr_valid(const struct elf32_phdr *phdr)
- 	return true;
- }
+@@ -150,6 +152,8 @@ enum {
+  * @intent_req_lock: Synchronises multiple intent requests
+  * @intent_req_result: Result of intent request
+  * @intent_req_comp: Completion for intent_req signalling
++ * @lsigs:	local side signals
++ * @rsigs:	remote side signals
+  */
+ struct glink_channel {
+ 	struct rpmsg_endpoint ept;
+@@ -181,6 +185,10 @@ struct glink_channel {
+ 	struct mutex intent_req_lock;
+ 	bool intent_req_result;
+ 	struct completion intent_req_comp;
++
++	unsigned int lsigs;
++	unsigned int rsigs;
++
+ };
  
-+static int q6v5_mba_load(struct q6v5 *qproc)
-+{
-+	int ret;
-+	int xfermemop_ret;
-+
-+	qcom_q6v5_prepare(&qproc->q6v5);
-+
-+	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
-+				    qproc->proxy_reg_count);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable proxy supplies\n");
-+		goto disable_irqs;
-+	}
-+
-+	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
-+			      qproc->proxy_clk_count);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable proxy clocks\n");
-+		goto disable_proxy_reg;
-+	}
-+
-+	ret = q6v5_regulator_enable(qproc, qproc->active_regs,
-+				    qproc->active_reg_count);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable supplies\n");
-+		goto disable_proxy_clk;
-+	}
-+
-+	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
-+			      qproc->reset_clk_count);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable reset clocks\n");
-+		goto disable_vdd;
-+	}
-+
-+	ret = q6v5_reset_deassert(qproc);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to deassert mss restart\n");
-+		goto disable_reset_clks;
-+	}
-+
-+	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
-+			      qproc->active_clk_count);
-+	if (ret) {
-+		dev_err(qproc->dev, "failed to enable clocks\n");
-+		goto assert_reset;
-+	}
-+
-+	/* Assign MBA image access in DDR to q6 */
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
-+				      qproc->mba_phys, qproc->mba_size);
-+	if (ret) {
-+		dev_err(qproc->dev,
-+			"assigning Q6 access to mba memory failed: %d\n", ret);
-+		goto disable_active_clks;
-+	}
-+
-+	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
-+
-+	ret = q6v5proc_reset(qproc);
-+	if (ret)
-+		goto reclaim_mba;
-+
-+	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
-+	if (ret == -ETIMEDOUT) {
-+		dev_err(qproc->dev, "MBA boot timed out\n");
-+		goto halt_axi_ports;
-+	} else if (ret != RMB_MBA_XPU_UNLOCKED &&
-+		   ret != RMB_MBA_XPU_UNLOCKED_SCRIBBLED) {
-+		dev_err(qproc->dev, "MBA returned unexpected status %d\n", ret);
-+		ret = -EINVAL;
-+		goto halt_axi_ports;
-+	}
-+
-+	qproc->dump_mba_loaded = true;
-+	return 0;
-+
-+halt_axi_ports:
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-+
-+reclaim_mba:
-+	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
-+						qproc->mba_phys,
-+						qproc->mba_size);
-+	if (xfermemop_ret) {
-+		dev_err(qproc->dev,
-+			"Failed to reclaim mba buffer, system may become unstable\n");
-+	}
-+
-+disable_active_clks:
-+	q6v5_clk_disable(qproc->dev, qproc->active_clks,
-+			 qproc->active_clk_count);
-+assert_reset:
-+	q6v5_reset_assert(qproc);
-+disable_reset_clks:
-+	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
-+			 qproc->reset_clk_count);
-+disable_vdd:
-+	q6v5_regulator_disable(qproc, qproc->active_regs,
-+			       qproc->active_reg_count);
-+disable_proxy_clk:
-+	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
-+			 qproc->proxy_clk_count);
-+disable_proxy_reg:
-+	q6v5_regulator_disable(qproc, qproc->proxy_regs,
-+			       qproc->proxy_reg_count);
-+disable_irqs:
-+	qcom_q6v5_unprepare(&qproc->q6v5);
-+
-+	return ret;
-+}
-+
-+static void q6v5_mba_reclaim(struct q6v5 *qproc)
-+{
-+	int ret;
-+	u32 val;
-+
-+	qproc->dump_mba_loaded = false;
-+
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
-+	if (qproc->version == MSS_MSM8996) {
-+		/*
-+		 * To avoid high MX current during LPASS/MSS restart.
-+		 */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val |= Q6SS_CLAMP_IO | QDSP6v56_CLAMP_WL |
-+			QDSP6v56_CLAMP_QMC_MEM;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	}
-+
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-+						false, qproc->mpss_phys,
-+						qproc->mpss_size);
-+	WARN_ON(ret);
-+
-+	q6v5_reset_assert(qproc);
-+
-+	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
-+			 qproc->reset_clk_count);
-+	q6v5_clk_disable(qproc->dev, qproc->active_clks,
-+			 qproc->active_clk_count);
-+	q6v5_regulator_disable(qproc, qproc->active_regs,
-+			       qproc->active_reg_count);
-+
-+	/* In case of failure or coredump scenario where reclaiming MBA memory
-+	 * could not happen reclaim it here.
-+	 */
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
-+						qproc->mba_phys,
-+						qproc->mba_size);
-+	WARN_ON(ret);
-+
-+	ret = qcom_q6v5_unprepare(&qproc->q6v5);
-+	if (ret) {
-+		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
-+				 qproc->proxy_clk_count);
-+		q6v5_regulator_disable(qproc, qproc->proxy_regs,
-+				       qproc->proxy_reg_count);
-+	}
-+}
-+
- static int q6v5_mpss_load(struct q6v5 *qproc)
- {
- 	const struct elf32_phdr *phdrs;
-@@ -801,74 +967,9 @@ static int q6v5_start(struct rproc *rproc)
- 	int xfermemop_ret;
- 	int ret;
+ #define to_glink_channel(_ept) container_of(_ept, struct glink_channel, ept)
+@@ -201,9 +209,15 @@ struct glink_channel {
+ #define RPM_CMD_TX_DATA_CONT		12
+ #define RPM_CMD_READ_NOTIF		13
+ #define RPM_CMD_RX_DONE_W_REUSE		14
++#define RPM_CMD_SIGNALS			15
  
--	qcom_q6v5_prepare(&qproc->q6v5);
--
--	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
--				    qproc->proxy_reg_count);
--	if (ret) {
--		dev_err(qproc->dev, "failed to enable proxy supplies\n");
--		goto disable_irqs;
--	}
--
--	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
--			      qproc->proxy_clk_count);
--	if (ret) {
--		dev_err(qproc->dev, "failed to enable proxy clocks\n");
--		goto disable_proxy_reg;
--	}
--
--	ret = q6v5_regulator_enable(qproc, qproc->active_regs,
--				    qproc->active_reg_count);
--	if (ret) {
--		dev_err(qproc->dev, "failed to enable supplies\n");
--		goto disable_proxy_clk;
--	}
--
--	ret = q6v5_clk_enable(qproc->dev, qproc->reset_clks,
--			      qproc->reset_clk_count);
--	if (ret) {
--		dev_err(qproc->dev, "failed to enable reset clocks\n");
--		goto disable_vdd;
--	}
--
--	ret = q6v5_reset_deassert(qproc);
--	if (ret) {
--		dev_err(qproc->dev, "failed to deassert mss restart\n");
--		goto disable_reset_clks;
--	}
--
--	ret = q6v5_clk_enable(qproc->dev, qproc->active_clks,
--			      qproc->active_clk_count);
--	if (ret) {
--		dev_err(qproc->dev, "failed to enable clocks\n");
--		goto assert_reset;
--	}
--
--	/* Assign MBA image access in DDR to q6 */
--	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
--				      qproc->mba_phys, qproc->mba_size);
--	if (ret) {
--		dev_err(qproc->dev,
--			"assigning Q6 access to mba memory failed: %d\n", ret);
--		goto disable_active_clks;
--	}
--
--	writel(qproc->mba_phys, qproc->rmb_base + RMB_MBA_IMAGE_REG);
--
--	ret = q6v5proc_reset(qproc);
-+	ret = q6v5_mba_load(qproc);
- 	if (ret)
--		goto reclaim_mba;
--
--	ret = q6v5_rmb_mba_wait(qproc, 0, 5000);
--	if (ret == -ETIMEDOUT) {
--		dev_err(qproc->dev, "MBA boot timed out\n");
--		goto halt_axi_ports;
--	} else if (ret != RMB_MBA_XPU_UNLOCKED &&
--		   ret != RMB_MBA_XPU_UNLOCKED_SCRIBBLED) {
--		dev_err(qproc->dev, "MBA returned unexpected status %d\n", ret);
--		ret = -EINVAL;
--		goto halt_axi_ports;
--	}
-+		return ret;
+ #define GLINK_FEATURE_INTENTLESS	BIT(1)
  
- 	dev_info(qproc->dev, "MBA booted, loading mpss\n");
++#define NATIVE_DTR_SIG	BIT(31)
++#define NATIVE_CTS_SIG	BIT(30)
++#define NATIVE_CD_SIG	BIT(29)
++#define NATIVE_RI_SIG	BIT(28)
++
+ static void qcom_glink_rx_done_work(struct work_struct *work);
  
-@@ -897,42 +998,7 @@ static int q6v5_start(struct rproc *rproc)
- 						false, qproc->mpss_phys,
- 						qproc->mpss_size);
- 	WARN_ON(xfermemop_ret);
--
--halt_axi_ports:
--	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
--	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
--	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
--
--reclaim_mba:
--	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
--						qproc->mba_phys,
--						qproc->mba_size);
--	if (xfermemop_ret) {
--		dev_err(qproc->dev,
--			"Failed to reclaim mba buffer, system may become unstable\n");
--	}
--
--disable_active_clks:
--	q6v5_clk_disable(qproc->dev, qproc->active_clks,
--			 qproc->active_clk_count);
--
--assert_reset:
--	q6v5_reset_assert(qproc);
--disable_reset_clks:
--	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
--			 qproc->reset_clk_count);
--disable_vdd:
--	q6v5_regulator_disable(qproc, qproc->active_regs,
--			       qproc->active_reg_count);
--disable_proxy_clk:
--	q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
--			 qproc->proxy_clk_count);
--disable_proxy_reg:
--	q6v5_regulator_disable(qproc, qproc->proxy_regs,
--			       qproc->proxy_reg_count);
--
--disable_irqs:
--	qcom_q6v5_unprepare(&qproc->q6v5);
-+	q6v5_mba_reclaim(qproc);
- 
- 	return ret;
- }
-@@ -941,7 +1007,6 @@ static int q6v5_stop(struct rproc *rproc)
- {
- 	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
- 	int ret;
--	u32 val;
- 
- 	qproc->running = false;
- 
-@@ -949,40 +1014,7 @@ static int q6v5_stop(struct rproc *rproc)
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "timed out on wait\n");
- 
--	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
--	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
--	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
--	if (qproc->version == MSS_MSM8996) {
--		/*
--		 * To avoid high MX current during LPASS/MSS restart.
--		 */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val |= Q6SS_CLAMP_IO | QDSP6v56_CLAMP_WL |
--			QDSP6v56_CLAMP_QMC_MEM;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--	}
--
--
--	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
--				      qproc->mpss_phys, qproc->mpss_size);
--	WARN_ON(ret);
--
--	q6v5_reset_assert(qproc);
--
--	ret = qcom_q6v5_unprepare(&qproc->q6v5);
--	if (ret) {
--		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
--				 qproc->proxy_clk_count);
--		q6v5_regulator_disable(qproc, qproc->proxy_regs,
--				       qproc->proxy_reg_count);
--	}
--
--	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
--			 qproc->reset_clk_count);
--	q6v5_clk_disable(qproc->dev, qproc->active_clks,
--			 qproc->active_clk_count);
--	q6v5_regulator_disable(qproc, qproc->active_regs,
--			       qproc->active_reg_count);
-+	q6v5_mba_reclaim(qproc);
- 
+ static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
+@@ -957,6 +971,76 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
  	return 0;
  }
+ 
++/**
++ * qcom_glink_send_signals() - convert a signal  cmd to wire format and transmit
++ * @glink:	The transport to transmit on.
++ * @channel:	The glink channel
++ * @sigs:	The signals to encode.
++ *
++ * Return: 0 on success or standard Linux error code.
++ */
++static int qcom_glink_send_signals(struct qcom_glink *glink,
++				   struct glink_channel *channel,
++				   u32 sigs)
++{
++	struct glink_msg msg;
++
++	/* convert signals from TIOCM to NATIVE */
++	sigs &= 0x0fff;
++	if (sigs & TIOCM_DTR)
++		sigs |= NATIVE_DTR_SIG;
++	if (sigs & TIOCM_RTS)
++		sigs |= NATIVE_CTS_SIG;
++	if (sigs & TIOCM_CD)
++		sigs |= NATIVE_CD_SIG;
++	if (sigs & TIOCM_RI)
++		sigs |= NATIVE_RI_SIG;
++
++	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
++	msg.param1 = cpu_to_le16(channel->lcid);
++	msg.param2 = cpu_to_le32(sigs);
++
++	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
++}
++
++static int qcom_glink_handle_signals(struct qcom_glink *glink,
++				     unsigned int rcid, unsigned int signals)
++{
++	struct glink_channel *channel;
++	unsigned long flags;
++	u32 old;
++
++	spin_lock_irqsave(&glink->idr_lock, flags);
++	channel = idr_find(&glink->rcids, rcid);
++	spin_unlock_irqrestore(&glink->idr_lock, flags);
++	if (!channel) {
++		dev_err(glink->dev, "signal for non-existing channel\n");
++		return -EINVAL;
++	}
++
++	old = channel->rsigs;
++
++	/* convert signals from NATIVE to TIOCM */
++	if (signals & NATIVE_DTR_SIG)
++		signals |= TIOCM_DSR;
++	if (signals & NATIVE_CTS_SIG)
++		signals |= TIOCM_CTS;
++	if (signals & NATIVE_CD_SIG)
++		signals |= TIOCM_CD;
++	if (signals & NATIVE_RI_SIG)
++		signals |= TIOCM_RI;
++	signals &= 0x0fff;
++
++	channel->rsigs = signals;
++
++	if (channel->ept.sig_cb) {
++		channel->ept.sig_cb(channel->ept.rpdev, channel->ept.priv,
++				    old, channel->rsigs);
++	}
++
++	return 0;
++}
++
+ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ {
+ 	struct qcom_glink *glink = data;
+@@ -1018,6 +1102,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
+ 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+ 			break;
++		case RPM_CMD_SIGNALS:
++			qcom_glink_handle_signals(glink, param1, param2);
++			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
++			break;
+ 		default:
+ 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
+ 			ret = -EINVAL;
+@@ -1315,6 +1403,42 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return __qcom_glink_send(channel, data, len, false);
+ }
+ 
++static int qcom_glink_get_sigs(struct rpmsg_endpoint *ept)
++{
++	struct glink_channel *channel = to_glink_channel(ept);
++
++	return channel->rsigs;
++}
++
++static int qcom_glink_set_sigs(struct rpmsg_endpoint *ept, u32 set, u32 clear)
++{
++	struct glink_channel *channel = to_glink_channel(ept);
++	struct qcom_glink *glink = channel->glink;
++	u32 sigs = channel->lsigs;
++
++	if (set & TIOCM_DTR)
++		sigs |= TIOCM_DTR;
++	if (set & TIOCM_RTS)
++		sigs |= TIOCM_RTS;
++	if (set & TIOCM_CD)
++		sigs |= TIOCM_CD;
++	if (set & TIOCM_RI)
++		sigs |= TIOCM_RI;
++
++	if (clear & TIOCM_DTR)
++		sigs &= ~TIOCM_DTR;
++	if (clear & TIOCM_RTS)
++		sigs &= ~TIOCM_RTS;
++	if (clear & TIOCM_CD)
++		sigs &= ~TIOCM_CD;
++	if (clear & TIOCM_RI)
++		sigs &= ~TIOCM_RI;
++
++	channel->lsigs = sigs;
++
++	return qcom_glink_send_signals(glink, channel, sigs);
++}
++
+ /*
+  * Finds the device_node for the glink child interested in this channel.
+  */
+@@ -1348,6 +1472,8 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
+ 	.destroy_ept = qcom_glink_destroy_ept,
+ 	.send = qcom_glink_send,
+ 	.trysend = qcom_glink_trysend,
++	.get_signals = qcom_glink_get_sigs,
++	.set_signals = qcom_glink_set_sigs,
+ };
+ 
+ static void qcom_glink_rpdev_release(struct device *dev)
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
