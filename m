@@ -1,54 +1,47 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH 2/5] rpmsg: Add signal callback to rpmsg char device
-Date: Wed,  3 Oct 2018 17:04:20 +0530
-Message-Id: <1538566463-24627-3-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
-References: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 5 Oct 2018 23:30:33 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: Populate hardcoded param using driver data
+Message-ID: <20181006063033.GG12063@builder>
+References: <1538215641-25665-1-git-send-email-govinds@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538215641-25665-1-git-send-email-govinds@codeaurora.org>
+To: Govind Singh <govinds@codeaurora.org>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Register a callback to get the signal notifications from rpmsg.
+On Sat 29 Sep 03:07 PDT 2018, Govind Singh wrote:
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/rpmsg_char.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> Q6 based WiFi fw loading is supported across
+> different targets, ex: IPQ8074/QCS404. In order to
+> support different fw names/pas id etc, populate
+> hardcoded param using driver data.
+> 
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index a76b963..86003d5 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2012, PetaLogix
-  * Copyright (c) 2011, Texas Instruments, Inc.
-  * Copyright (c) 2011, Google, Inc.
-+ * Copyright (c) 2018, The Linux Foundation.
-  *
-  * Based on rpmsg performance statistics driver by Michal Simek, which in turn
-  * was based on TI & Google OMX rpmsg driver.
-@@ -120,6 +121,12 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
- 	return 0;
- }
- 
-+static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv,
-+			 u32 old, u32 new)
-+{
-+	return 0;
-+}
-+
- static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- {
- 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-@@ -136,6 +143,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- 		return -EINVAL;
- 	}
- 
-+	ept->sig_cb = rpmsg_sigs_cb;
- 	eptdev->ept = ept;
- 	filp->private_data = eptdev;
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+This patch prepares the driver for the introduction of some variation of
+some of the given parameters. Please submit this patch together with the
+patch introducing that new code.
+
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+[..]
+> +static const struct wcss_data wcss_ipq8074_res_init = {
+> +		.firmware_name = "IPQ8074/q6_fw.mdt",
+> +		.crash_reason_smem = 421,
+> +		.pas_handover = NULL,
+
+Please don't inherit my broken indentation from the adsp driver ;)
+
+> +};
+> +
+>  static const struct of_device_id q6v5_wcss_of_match[] = {
+> -	{ .compatible = "qcom,ipq8074-wcss-pil" },
+> +	{ .compatible = "ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
+
+You lost qcom, in the compatible here.
+
+> +
+
+Regards,
+Bjorn
