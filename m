@@ -1,81 +1,48 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v5 5/5] remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump
-Date: Wed, 17 Oct 2018 19:25:27 +0530
-Message-Id: <20181017135527.30592-6-sibis@codeaurora.org>
-In-Reply-To: <20181017135527.30592-1-sibis@codeaurora.org>
-References: <20181017135527.30592-1-sibis@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 5 Oct 2018 23:14:36 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 3/5] remoteproc: Add missing kernel-doc comment for
+ auto-boot
+Message-ID: <20181006061436.GE12063@builder>
+References: <20180915003725.17549-1-s-anna@ti.com>
+ <20180915003725.17549-4-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, kyan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180915003725.17549-4-s-anna@ti.com>
+To: Suman Anna <s-anna@ti.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Register the MDT segments, custom dumpfn and private data with the
-remoteproc core dump functionality.
+On Fri 14 Sep 17:37 PDT 2018, Suman Anna wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 42 ++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+> The commit ddf711872c9d ("remoteproc: Introduce auto-boot flag")
+> introduced the auto-boot flag but missed adding the corresponding
+> kernel-doc comment. Add the same.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 0d3b9d70823e..8ceebde75d02 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1064,10 +1064,52 @@ static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return qproc->mpss_region + offset;
- }
- 
-+static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
-+				const struct firmware *mba_fw)
-+{
-+	const struct firmware *fw;
-+	const struct elf32_phdr *phdrs;
-+	const struct elf32_phdr *phdr;
-+	const struct elf32_hdr *ehdr;
-+	struct q6v5 *qproc = rproc->priv;
-+	unsigned long i;
-+	int ret;
-+
-+	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
-+	if (ret < 0) {
-+		dev_err(qproc->dev, "unable to load modem.mdt\n");
-+		return ret;
-+	}
-+
-+	ehdr = (struct elf32_hdr *)fw->data;
-+	phdrs = (struct elf32_phdr *)(ehdr + 1);
-+	qproc->dump_complete_mask = 0;
-+
-+	for (i = 0; i < ehdr->e_phnum; i++) {
-+		phdr = &phdrs[i];
-+
-+		if (!q6v5_phdr_valid(phdr))
-+			continue;
-+
-+		ret = rproc_coredump_add_custom_segment(rproc, phdr->p_paddr,
-+							phdr->p_memsz,
-+							(void *)i,
-+							qcom_q6v5_dump_segment);
-+		if (ret)
-+			break;
-+
-+		qproc->dump_complete_mask |= BIT(i);
-+	}
-+
-+	release_firmware(fw);
-+	return ret;
-+}
-+
- static const struct rproc_ops q6v5_ops = {
- 	.start = q6v5_start,
- 	.stop = q6v5_stop,
- 	.da_to_va = q6v5_da_to_va,
-+	.parse_fw = qcom_q6v5_register_dump_segments,
- 	.load = q6v5_load,
- };
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Applied.
+
+Thanks,
+Bjorn
+
+> ---
+>  include/linux/remoteproc.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index e3c5d856b6da..75f9ca05b865 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -439,6 +439,7 @@ struct rproc_dump_segment {
+>   * @cached_table: copy of the resource table
+>   * @table_sz: size of @cached_table
+>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> + * @auto_boot: flag to indicate if remote processor should be auto-started
+>   * @dump_segments: list of segments in the firmware
+>   */
+>  struct rproc {
+> -- 
+> 2.18.0
+> 
