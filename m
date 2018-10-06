@@ -1,96 +1,131 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V4 4/4] rpmsg: char: Add signal callback and POLLPRI support
-Date: Mon,  8 Oct 2018 12:08:18 +0530
-Message-Id: <1538980699-21516-5-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
-References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 5 Oct 2018 22:50:16 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 7/7] Documentation: devicetree: Add Xilinx R5 rproc
+ binding
+Message-ID: <20181006055016.GB9450@builder>
+References: <1534403190-28523-1-git-send-email-jliang@xilinx.com>
+ <1534403190-28523-8-git-send-email-jliang@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534403190-28523-8-git-send-email-jliang@xilinx.com>
+To: Wendy Liang <wendy.liang@xilinx.com>
+Cc: ohad@wizery.com, michal.simek@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, rajan.vaja@xilinx.com, jollys@xilinx.com, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Register a callback to get the signal notifications from rpmsg and
-send POLLPRI mask to indicate the signal change in POLL system call.
+On Thu 16 Aug 00:06 PDT 2018, Wendy Liang wrote:
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/rpmsg_char.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> Add device tree binding for Xilinx Cortex-r5 remoteproc.
+> 
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+> ---
+>  .../remoteproc/xlnx,zynqmp-r5-remoteproc.txt       | 81 ++++++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+> new file mode 100644
+> index 0000000..3940019
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-remoteproc.txt
+> @@ -0,0 +1,81 @@
+> +Xilinx ARM Cortex A53-R5 remoteproc driver
+> +==========================================
+> +
+> +ZynqMP family of devices use two Cortex R5 processors to help with various
+> +low power / real time tasks.
+> +
+> +This driver requires specific ZynqMP hardware design.
+> +
+> +ZynqMP R5 RemoteProc Device Node:
+> +=================================
+> +A zynqmp_r5_remoteproc device node is used to represent a R5 IP instance
+> +within ZynqMP SoC.
+> +
+> +Required properties:
+> +--------------------
+> + - compatible : Should be "xlnx,zynqmp-r5-remoteproc-1.0"
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index b136684..8a3cbe9 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -64,6 +64,7 @@ struct rpmsg_ctrldev {
-  * @queue_lock:	synchronization of @queue operations
-  * @queue:	incoming message queue
-  * @readq:	wait object for incoming queue
-+ * @sig_pending:state of signal notification
-  */
- struct rpmsg_eptdev {
- 	struct device dev;
-@@ -78,6 +79,8 @@ struct rpmsg_eptdev {
- 	spinlock_t queue_lock;
- 	struct sk_buff_head queue;
- 	wait_queue_head_t readq;
-+
-+	bool sig_pending;
- };
- 
- static int rpmsg_eptdev_destroy(struct device *dev, void *data)
-@@ -122,6 +125,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
- 	return 0;
- }
- 
-+static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv,
-+			 u32 old, u32 new)
-+{
-+	struct rpmsg_eptdev *eptdev = priv;
-+
-+	eptdev->sig_pending = true;
-+
-+	/* wake up any blocking processes, waiting for signal notification */
-+	wake_up_interruptible(&eptdev->readq);
-+	return 0;
-+}
-+
- static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- {
- 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-@@ -138,6 +153,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- 		return -EINVAL;
- 	}
- 
-+	ept->sig_cb = rpmsg_sigs_cb;
- 	eptdev->ept = ept;
- 	filp->private_data = eptdev;
- 
-@@ -157,6 +173,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- 		eptdev->ept = NULL;
- 	}
- 	mutex_unlock(&eptdev->ept_lock);
-+	eptdev->sig_pending = false;
- 
- 	/* Discard all SKBs */
- 	while (!skb_queue_empty(&eptdev->queue)) {
-@@ -263,6 +280,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
- 	if (!skb_queue_empty(&eptdev->queue))
- 		mask |= EPOLLIN | EPOLLRDNORM;
- 
-+	if (eptdev->sig_pending)
-+		mask |= POLLPRI;
-+
- 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
- 
- 	return mask;
-@@ -306,6 +326,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 
- 	switch (cmd) {
- 	case TIOCMGET:
-+		eptdev->sig_pending = false;
- 		ret = rpmsg_get_signals(eptdev->ept);
- 		if (ret >= 0)
- 			ret = put_user(ret, (int __user *)arg);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+What is 1.0?
+
+> + - reg : Address and length of the register set for the device. It
+> +        contains in the same order as described reg-names
+> + - reg-names: Contain the register set names.
+> +              "tcm_a" and "tcm_b" for TCM memories.
+> +              If the user uses the remoteproc driver with the RPMsg kernel
+> +              driver,"ipi" for the IPI register used to communicate with RPU
+> +              is also required.
+> +              Otherwise, if user only uses the remoteproc driver to boot RPU
+> +              firmware, "ipi" is not required.
+> + - tcm-pnode-id: TCM resources power nodes IDs which are used to request TCM
+> +                 resources for the remoteproc driver to access.
+> + - rpu-pnode-id : RPU power node id which is used by the remoteproc driver
+> +                  to start RPU or shut it down.
+> +
+> +Optional properties:
+> +--------------------
+> + - core_conf : R5 core configuration (valid string - split0 or split1 or
+> +               lock-step), default is lock-step.
+> + - memory-region: memories regions for RPU executable and DMA memory.
+> + - interrupts : Interrupt mapping for remoteproc IPI. It is required if the
+> +                user uses the remoteproc driver with the RPMsg kernel driver.
+> + - interrupt-parent : Phandle for the interrupt controller. It is required if
+> +                      the user uses the remoteproc driver with the RPMsg kernel
+> +                      kernel driver.
+> +
+> +Example:
+> +--------
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		rproc_0_fw_reserved: rproc@3ed000000 {
+> +			compatible = "rproc-prog-memory";
+> +			no-map;
+> +			reg = <0x0 0x3ed00000 0x0 0x40000>;
+> +		};
+> +		rproc_0_dma_reserved: rproc@3ed400000 {
+> +			compatible = "shared-dma-pool";
+> +			no-map;
+> +			reg = <0x0 0x3ed40000 0x0 0x80000>;
+> +		};
+> +	};
+> +
+> +	firmware {
+> +		zynqmp_firmware: zynqmp-firmware {
+> +			compatible = "xlnx,zynqmp-firmware";
+> +			method = "smc";
+> +		};
+> +	};
+> +
+> +	zynqmp-r5-remoteproc@0 {
+
+remoteproc@ffe00000 {
+
+> +		compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
+> +		reg = <0x0 0xFFE00000 0x0 0x10000>,
+> +			<0x0 0xFFE20000 0x0 0x10000>,
+> +			<0x0 0xff340000 0x0 0x100>;
+
+Make all addresses lowercase, rather than mixing case.
+
+> +		reg-names = "tcm_a", "tcm_b", "ipi";
+> +		dma-ranges;
+> +		core_conf = "split0";
+> +		memory-region = <&rproc_0_fw_reserved>,
+> +				<&rproc_0_dma_reserved>;
+> +		tcm-pnode-id = <0xf>, <0x10>;
+> +		rpu-pnode-id = <0x7>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 29 4>;
+
+interrutps = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+
+> +	} ;
+> -- 
+> 2.7.4
+> 
+
+Regards,
+Bjorn
