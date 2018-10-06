@@ -1,100 +1,65 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH 3/5] rpmsg: Add TIOCMGET/TIOCMSET ioctl support
-Date: Wed,  3 Oct 2018 17:04:21 +0530
-Message-Id: <1538566463-24627-4-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
-References: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Fri, 5 Oct 2018 23:55:08 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4] dt-binding: remoteproc: Add QTI ADSP PIL bindings
+Message-ID: <20181006065508.GK12063@builder>
+References: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536638041-11033-1-git-send-email-rohitkr@codeaurora.org>
+To: Rohit kumar <rohitkr@codeaurora.org>
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, rohkumar@qti.qualcomm.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
-to get/set the low level transport signals.
+On Mon 10 Sep 20:54 PDT 2018, Rohit kumar wrote:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
+[..]
+> += EXAMPLE
+> +The following example describes the resources needed to boot control the
+> +ADSP, as it is found on SDM845 boards.
+> +	adsp-pil {
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/rpmsg_char.c | 54 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 51 insertions(+), 3 deletions(-)
+Updated this to remoteproc@17300000 and applied the patch to rproc-next.
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 86003d5..c983d6c 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -20,6 +20,7 @@
- #include <linux/rpmsg.h>
- #include <linux/skbuff.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/uaccess.h>
- #include <uapi/linux/rpmsg.h>
- 
-@@ -274,15 +275,62 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
- 	return mask;
- }
- 
-+static int rpmsg_eptdev_tiocmset(struct file *fp, unsigned int cmd,
-+				 unsigned long arg)
-+{
-+	struct rpmsg_eptdev *eptdev = fp->private_data;
-+	u32 lsigs, rsigs, val;
-+	int ret;
-+
-+	ret = get_user(val, (u32 *)arg);
-+	if (ret)
-+		return ret;
-+
-+	ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
-+	if (ret < 0)
-+		return ret;
-+
-+	switch (cmd) {
-+	case TIOCMBIS:
-+		lsigs |= val;
-+		break;
-+	case TIOCMBIC:
-+		lsigs &= ~val;
-+		break;
-+	case TIOCMSET:
-+		lsigs = val;
-+		break;
-+	}
-+
-+	ret = rpmsg_set_sigs(eptdev->ept, lsigs);
-+	return ret;
-+}
-+
- static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 			       unsigned long arg)
- {
- 	struct rpmsg_eptdev *eptdev = fp->private_data;
-+	u32 lsigs, rsigs;
-+	int ret;
- 
--	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
--		return -EINVAL;
-+	switch (cmd) {
-+	case TIOCMGET:
-+		ret = rpmsg_get_sigs(eptdev->ept, &lsigs, &rsigs);
-+		if (!ret)
-+			ret = put_user(rsigs, (u32 *)arg);
-+		break;
-+	case TIOCMSET:
-+	case TIOCMBIS:
-+	case TIOCMBIC:
-+		ret = rpmsg_eptdev_tiocmset(fp, cmd, arg);
-+		break;
-+	case RPMSG_DESTROY_EPT_IOCTL:
-+		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-+	default:
-+		ret = -EINVAL;
-+	}
- 
--	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-+	return ret;
- }
- 
- static const struct file_operations rpmsg_eptdev_fops = {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Bjorn
+
+> +		compatible = "qcom,sdm845-adsp-pil";
+> +
+> +		reg = <0x17300000 0x40c>;
+> +
+> +		interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +			<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +		interrupt-names = "wdog", "fatal", "ready",
+> +			"handover", "stop-ack";
+> +
+> +		clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +			<&gcc GCC_LPASS_SWAY_CLK>,
+> +			<&lpasscc LPASS_AUDIO_WRAPPER_AON_CLK>,
+> +			<&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
+> +			<&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
+> +			<&lpasscc LPASS_QDSP6SS_XO_CLK>,
+> +			<&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
+> +			<&lpasscc LPASS_QDSP6SS_CORE_CLK>;
+> +		clock-names = "xo", "sway_cbcr", "lpass_aon",
+> +			"lpass_ahbs_aon_cbcr",
+> +			"lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
+> +			"qdsp6ss_sleep", "qdsp6ss_core";
+> +
+> +		power-domains = <&rpmhpd SDM845_CX>;
+> +
+> +		resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
+> +			 <&aoss_reset AOSS_CC_LPASS_RESTART>;
+> +		reset-names = "pdc_sync", "cc_lpass";
+> +
+> +		qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
+> +
+> +		memory-region = <&pil_adsp_mem>;
+> +
+> +		qcom,smem-states = <&adsp_smp2p_out 0>;
+> +		qcom,smem-state-names = "stop";
+> +	};
