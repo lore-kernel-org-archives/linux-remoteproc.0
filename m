@@ -1,73 +1,207 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 01/17] remoteproc: configure IOMMU only if device
- address requested
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
- <1532697292-14272-2-git-send-email-loic.pallardy@st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <f6af2ded-dfcd-7cb9-6557-a17c40166836@ti.com>
-Date: Tue, 23 Oct 2018 12:25:49 -0500
-MIME-Version: 1.0
-In-Reply-To: <1532697292-14272-2-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V4 1/4] rpmsg: core: Add signal API support
+Date: Mon,  8 Oct 2018 12:08:15 +0530
+Message-Id: <1538980699-21516-2-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Loic,
+Some transports like Glink support the state notifications between
+clients using signals similar to serial protocol signals.
 
-On 7/27/18 8:14 AM, Loic Pallardy wrote:
-> If there is no IOMMU associate to remote processor device,
-> remoteproc_core won't be able to satisfy device address requested
-> in firmware resource table.
-> Return an error as configuration won't be coherent.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+---
+ drivers/rpmsg/rpmsg_core.c     | 41 +++++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h |  5 +++++
+ include/linux/rpmsg.h          | 26 ++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
 
-This patch is breaking my Davinci platforms. It is not really required
-that you _should_ have IOMMUs when a valid DA is mentioned. Please see
-the existing description (paras 4 and 5) on the fw_rsc_carveout
-kerneldoc in remoteproc.h file.
-
-We do have platforms where we have some internal sub-modules within the
-remote processor sub-system that provides some linear
-address-translation (most common case with 32-bit processors supporting
-64-bit addresses). Also, we have some upcoming SoCs where we have an MMU
-but is not programmable by Linux.
-
-There is one comment there, but I don't think this is actually handled
-in the current remoteproc core.
-"If @da is set to
- * FW_RSC_ADDR_ANY, then the host will dynamically allocate it, and then
- * overwrite @da with the dynamically allocated address."
-
-regards
-Suman
-
-> ---
->  drivers/remoteproc/remoteproc_core.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 4cd1a8e..437fabf 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -657,7 +657,15 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	 * to use the iommu-based DMA API: we expect 'dma' to contain the
->  	 * physical address in this case.
->  	 */
-> -	if (rproc->domain) {
-> +
-> +	if (rsc->da != FW_RSC_ADDR_ANY && !rproc->domain) {
-> +		dev_err(dev->parent,
-> +			"Bad carveout rsc configuration\n");
-> +		ret = -ENOMEM;
-> +		goto dma_free;
-> +	}
-> +
-> +	if (rsc->da != FW_RSC_ADDR_ANY && rproc->domain) {
->  		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
->  		if (!mapping) {
->  			ret = -ENOMEM;
-> 
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 8122807..3d7458a 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -2,6 +2,7 @@
+ /*
+  * remote processor messaging bus
+  *
++ * Copyright (c) 2018, The Linux Foundation.
+  * Copyright (C) 2011 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  *
+@@ -283,6 +284,42 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ }
+ EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+ 
++/**
++ * rpmsg_get_signals() - get the signals for this endpoint
++ * @ept:	the rpmsg endpoint
++ *
++ * Returns signal bits on success and an appropriate error value on failure.
++ */
++int rpmsg_get_signals(struct rpmsg_endpoint *ept)
++{
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->get_signals)
++		return -EOPNOTSUPP;
++
++	return ept->ops->get_signals(ept);
++}
++EXPORT_SYMBOL(rpmsg_get_signals);
++
++/**
++ * rpmsg_set_signals() - set the remote signals for this endpoint
++ * @ept:	the rpmsg endpoint
++ * @set:	set mask for signals
++ * @clear:	clear mask for signals
++ *
++ * Returns 0 on success and an appropriate error value on failure.
++ */
++int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear)
++{
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->set_signals)
++		return -EOPNOTSUPP;
++
++	return ept->ops->set_signals(ept, set, clear);
++}
++EXPORT_SYMBOL(rpmsg_set_signals);
++
+ /*
+  * match an rpmsg channel with a channel info struct.
+  * this is used to make sure we're not creating rpmsg devices for channels
+@@ -468,6 +505,10 @@ static int rpmsg_dev_probe(struct device *dev)
+ 
+ 		rpdev->ept = ept;
+ 		rpdev->src = ept->addr;
++
++		if (rpdrv->signals)
++			ept->sig_cb = rpdrv->signals;
++
+ 	}
+ 
+ 	err = rpdrv->probe(rpdev);
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 0d791c3..033656d 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -2,6 +2,7 @@
+ /*
+  * remote processor messaging bus internals
+  *
++ * Copyright (c) 2018, The Linux Foundation.
+  * Copyright (C) 2011 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  *
+@@ -46,6 +47,8 @@ struct rpmsg_device_ops {
+  * @trysend:		see @rpmsg_trysend(), required
+  * @trysendto:		see @rpmsg_trysendto(), optional
+  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
++ * @get_signals:	see @rpmsg_get_signals(), optional
++ * @set_signals:	see @rpmsg_set_signals(), optional
+  *
+  * Indirection table for the operations that a rpmsg backend should implement.
+  * In addition to @destroy_ept, the backend must at least implement @send and
+@@ -65,6 +68,8 @@ struct rpmsg_endpoint_ops {
+ 			     void *data, int len);
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
++	int (*get_signals)(struct rpmsg_endpoint *ept);
++	int (*set_signals)(struct rpmsg_endpoint *ept, u32 set, u32 clear);
+ };
+ 
+ int rpmsg_register_device(struct rpmsg_device *rpdev);
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 9fe156d..48c8ae3 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -2,6 +2,7 @@
+ /*
+  * Remote processor messaging
+  *
++ * Copyright (c) 2018 The Linux Foundation.
+  * Copyright (C) 2011 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  * All rights reserved.
+@@ -60,6 +61,7 @@ struct rpmsg_device {
+ };
+ 
+ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
++typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32, u32);
+ 
+ /**
+  * struct rpmsg_endpoint - binds a local rpmsg address to its user
+@@ -67,6 +69,7 @@ struct rpmsg_device {
+  * @refcount: when this drops to zero, the ept is deallocated
+  * @cb: rx callback handler
+  * @cb_lock: must be taken before accessing/changing @cb
++ * @sig_cb: rx serial signal handler
+  * @addr: local rpmsg address
+  * @priv: private data for the driver's use
+  *
+@@ -89,6 +92,7 @@ struct rpmsg_endpoint {
+ 	struct kref refcount;
+ 	rpmsg_rx_cb_t cb;
+ 	struct mutex cb_lock;
++	rpmsg_rx_sig_t sig_cb;
+ 	u32 addr;
+ 	void *priv;
+ 
+@@ -102,6 +106,7 @@ struct rpmsg_endpoint {
+  * @probe: invoked when a matching rpmsg channel (i.e. device) is found
+  * @remove: invoked when the rpmsg channel is removed
+  * @callback: invoked when an inbound message is received on the channel
++ * @signals: invoked when a serial signal change is received on the channel
+  */
+ struct rpmsg_driver {
+ 	struct device_driver drv;
+@@ -109,6 +114,7 @@ struct rpmsg_driver {
+ 	int (*probe)(struct rpmsg_device *dev);
+ 	void (*remove)(struct rpmsg_device *dev);
+ 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
++	int (*signals)(struct rpmsg_device *, void *, u32, u32);
+ };
+ 
+ #if IS_ENABLED(CONFIG_RPMSG)
+@@ -135,6 +141,9 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 			poll_table *wait);
+ 
++int rpmsg_get_signals(struct rpmsg_endpoint *ept);
++int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear);
++
+ #else
+ 
+ static inline int register_rpmsg_device(struct rpmsg_device *dev)
+@@ -242,6 +251,23 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+ 	return 0;
+ }
+ 
++static inline int rpmsg_get_signals(struct rpmsg_endpoint *ept)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
++static inline int rpmsg_set_signals(struct rpmsg_endpoint *ept,
++				    u32 set, u32 clear)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
+ #endif /* IS_ENABLED(CONFIG_RPMSG) */
+ 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
