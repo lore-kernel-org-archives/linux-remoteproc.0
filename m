@@ -1,50 +1,88 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sun, 7 Oct 2018 23:55:02 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 6/6] remoteproc: qcom: q6v5-pil: Assign the relocated
- address
-Message-ID: <20181008065502.GQ12063@builder>
-References: <20180727152003.11663-1-sibis@codeaurora.org>
- <20180727152003.11663-7-sibis@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH] samples/rpmsg: Introduce a module parameter for message
+ count
+References: <20180911174643.26199-1-s-anna@ti.com>
+ <20181006062231.GF12063@builder>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <d14448ad-21c1-0a1a-0264-2efece209fc6@ti.com>
+Date: Mon, 8 Oct 2018 11:33:46 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727152003.11663-7-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+In-Reply-To: <20181006062231.GF12063@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 27 Jul 08:20 PDT 2018, Sibi Sankar wrote:
+Hi Bjorn,
 
-> Assign the relocated base of the modem image, as the offsets
-> from the virtual memory might not be based on the physical
-> address.
+On 10/06/2018 01:22 AM, Bjorn Andersson wrote:
+> On Tue 11 Sep 10:46 PDT 2018, Suman Anna wrote:
 > 
-
-In order to get this merged before the first call to rproc_da_to_va() I
-applied this patch to rproc-next.
-
-Thanks,
-Bjorn
-
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_pil.c | 1 +
->  1 file changed, 1 insertion(+)
+>> The current rpmsg_client_sample uses a fixed number of messages to
+>> be sent to each instance. This is currently set at 100. Introduce
+>> an optional module parameter 'count' so that the number of messages
+>> to be exchanged can be made flexible.
+>>
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> index 22bb049c3e7f..b1296d614b8b 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pil.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
-> @@ -862,6 +862,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  	}
->  
->  	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
-> +	qproc->mpss_reloc = mpss_reloc;
->  	/* Load firmware segments */
->  	for (i = 0; i < ehdr->e_phnum; i++) {
->  		phdr = &phdrs[i];
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> Rather than sending N messages as fast as possible to any sample channel
+> that comes up, how about making the sample create a debugfs entry that
+> we can write messages to from user space?
+
+This sample demonstrates a kernel-level rpmsg usage, and I would prefer
+to maintain the current simplicity, and not add in any userspace
+interaction. That perhaps can be done as a different sample. I use this
+sample to serve as the basic test for checking the rpmsg transport
+functionality with multiple remoteprocs and/or multiple instances per
+remoteproc at the same time. The count parameter helps me with both
+early Silicon development, as well as exercising increased message
+exchanges so that the vring buffers are cycled.
+
 > 
+> That would make it possible to improve the handling of multiple
+> remoteprocs and would allow for a variation in message lengths etc.
+
+FWIW, this already support multiple instances from the same remoteproc
+or different remoteproc.
+
+regards
+Suman
+
+
+> 
+> Regards,
+> Bjorn
+> 
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  samples/rpmsg/rpmsg_client_sample.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
+>> index f161dfd3e70a..9b6b27ea504f 100644
+>> --- a/samples/rpmsg/rpmsg_client_sample.c
+>> +++ b/samples/rpmsg/rpmsg_client_sample.c
+>> @@ -22,7 +22,9 @@
+>>  #include <linux/rpmsg.h>
+>>  
+>>  #define MSG		"hello world!"
+>> -#define MSG_LIMIT	100
+>> +
+>> +static int count = 100;
+>> +module_param(count, int, 0644);
+>>  
+>>  struct instance_data {
+>>  	int rx_count;
+>> @@ -41,7 +43,7 @@ static int rpmsg_sample_cb(struct rpmsg_device *rpdev, void *data, int len,
+>>  		       data, len,  true);
+>>  
+>>  	/* samples should not live forever */
+>> -	if (idata->rx_count >= MSG_LIMIT) {
+>> +	if (idata->rx_count >= count) {
+>>  		dev_info(&rpdev->dev, "goodbye!\n");
+>>  		return 0;
+>>  	}
+>> -- 
+>> 2.18.0
+>>
