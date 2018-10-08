@@ -1,42 +1,105 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v2 1/6] dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
-Date: Fri, 12 Oct 2018 15:10:39 +0530
-Message-Id: <1539337244-9505-2-git-send-email-govinds@codeaurora.org>
-In-Reply-To: <1539337244-9505-1-git-send-email-govinds@codeaurora.org>
-References: <1539337244-9505-1-git-send-email-govinds@codeaurora.org>
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Govind Singh <govinds@codeaurora.org>
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V4 3/4] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+Date: Mon,  8 Oct 2018 12:08:17 +0530
+Message-Id: <1538980699-21516-4-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add device tree bindings for WiFi QDSP gcc clock controls found in
-QCS404 soc.
+Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
+to get/set the low level transport signals.
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- include/dt-bindings/clock/qcom,gcc-qcs404.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/rpmsg/rpmsg_char.c | 53 +++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 50 insertions(+), 3 deletions(-)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-index e2def29..ba6bc55 100644
---- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-+++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-@@ -147,6 +147,8 @@
- #define GCC_MDP_TBU_CLK					138
- #define GCC_QDSS_DAP_CLK				139
- #define GCC_DCC_XO_CLK					140
-+#define GCC_WCSS_Q6_AHB_CBCR_CLK			141
-+#define GCC_WCSS_Q6_AXIM_CBCR_CLK			142
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index a76b963..b136684 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
++ * Copyright (c) 2018, The Linux Foundation.
+  * Copyright (c) 2016, Linaro Ltd.
+  * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
+  * Copyright (c) 2012, PetaLogix
+@@ -19,6 +20,7 @@
+ #include <linux/rpmsg.h>
+ #include <linux/skbuff.h>
+ #include <linux/slab.h>
++#include <linux/termios.h>
+ #include <linux/uaccess.h>
+ #include <uapi/linux/rpmsg.h>
  
- #define GCC_GENI_IR_BCR					0
- #define GCC_USB_HS_BCR					1
-@@ -162,5 +164,6 @@
- #define GCC_PCIE_0_LINK_DOWN_BCR			11
- #define GCC_PCIEPHY_0_PHY_BCR				12
- #define GCC_EMAC_BCR					13
-+#define GCC_WDSP_RESTART				14
+@@ -266,15 +268,60 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+ 	return mask;
+ }
  
- #endif
++static int rpmsg_eptdev_tiocmset(struct file *fp, unsigned int cmd,
++				 int __user *arg)
++{
++	struct rpmsg_eptdev *eptdev = fp->private_data;
++	u32 set, clear, val;
++	int ret;
++
++	ret = get_user(val, arg);
++	if (ret)
++		return ret;
++	set = clear = 0;
++	switch (cmd) {
++	case TIOCMBIS:
++		set = val;
++		break;
++	case TIOCMBIC:
++		clear = val;
++		break;
++	case TIOCMSET:
++		set = val;
++		clear = ~val;
++		break;
++	}
++
++	set &= TIOCM_DTR | TIOCM_RTS | TIOCM_CD | TIOCM_RI;
++	clear &= TIOCM_DTR | TIOCM_RTS | TIOCM_CD | TIOCM_RI;
++
++	return rpmsg_set_signals(eptdev->ept, set, clear);
++}
++
+ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+ 			       unsigned long arg)
+ {
+ 	struct rpmsg_eptdev *eptdev = fp->private_data;
++	int ret;
+ 
+-	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+-		return -EINVAL;
++	switch (cmd) {
++	case TIOCMGET:
++		ret = rpmsg_get_signals(eptdev->ept);
++		if (ret >= 0)
++			ret = put_user(ret, (int __user *)arg);
++		break;
++	case TIOCMSET:
++	case TIOCMBIS:
++	case TIOCMBIC:
++		ret = rpmsg_eptdev_tiocmset(fp, cmd, (int __user *)arg);
++		break;
++	case RPMSG_DESTROY_EPT_IOCTL:
++		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
++	default:
++		ret = -EINVAL;
++	}
+ 
+-	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
++	return ret;
+ }
+ 
+ static const struct file_operations rpmsg_eptdev_fops = {
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
