@@ -1,95 +1,96 @@
-Date: Fri, 5 Oct 2018 23:39:38 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: Propagate EPROBE_DEFER
-Message-ID: <20181006063938.GJ12063@builder>
-References: <20180920015151.15957-1-bjorn.andersson@linaro.org>
- <a1fdf85cb2e23b173243ba3b43b818bb@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1fdf85cb2e23b173243ba3b43b818bb@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, stable@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Return-Path: <aneela@codeaurora.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V4 4/4] rpmsg: char: Add signal callback and POLLPRI support
+Date: Mon,  8 Oct 2018 12:08:18 +0530
+Message-Id: <1538980699-21516-5-git-send-email-aneela@codeaurora.org>
+In-Reply-To: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 24 Sep 23:50 PDT 2018, Sibi Sankar wrote:
+Register a callback to get the signal notifications from rpmsg and
+send POLLPRI mask to indicate the signal change in POLL system call.
 
-> On 2018-09-20 07:21, Bjorn Andersson wrote:
-> > In the case that the interrupts fail to result because of the
-> > interrupt-controller not yet being registered the
-> > platform_get_irq_byname() call will fail with -EPROBE_DEFER, but passing
-> > this into devm_request_threaded_irq() will result in -EINVAL being
-> > returned, the driver is therefor not reprobed later.
-> > 
-> 
-> The patch looks fine.
-> Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
-> 
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+---
+ drivers/rpmsg/rpmsg_char.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Thanks for the review Sibi, applied the patch.
-
-Regards,
-Bjorn
-
-> > Fixes: 3b415c8fb263 ("remoteproc: q6v5: Extract common resource
-> > handling")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  drivers/remoteproc/qcom_q6v5.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5.c
-> > b/drivers/remoteproc/qcom_q6v5.c
-> > index 61a760ee4aac..e9ab90c19304 100644
-> > --- a/drivers/remoteproc/qcom_q6v5.c
-> > +++ b/drivers/remoteproc/qcom_q6v5.c
-> > @@ -198,6 +198,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> > platform_device *pdev,
-> >  	}
-> > 
-> >  	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
-> > +	if (q6v5->fatal_irq == -EPROBE_DEFER)
-> > +		return -EPROBE_DEFER;
-> > +
-> >  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
-> >  					NULL, q6v5_fatal_interrupt,
-> >  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> > @@ -208,6 +211,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> > platform_device *pdev,
-> >  	}
-> > 
-> >  	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
-> > +	if (q6v5->ready_irq == -EPROBE_DEFER)
-> > +		return -EPROBE_DEFER;
-> > +
-> >  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
-> >  					NULL, q6v5_ready_interrupt,
-> >  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> > @@ -218,6 +224,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> > platform_device *pdev,
-> >  	}
-> > 
-> >  	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
-> > +	if (q6v5->handover_irq == -EPROBE_DEFER)
-> > +		return -EPROBE_DEFER;
-> > +
-> >  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
-> >  					NULL, q6v5_handover_interrupt,
-> >  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> > @@ -229,6 +238,9 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct
-> > platform_device *pdev,
-> >  	disable_irq(q6v5->handover_irq);
-> > 
-> >  	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-> > +	if (q6v5->stop_irq == -EPROBE_DEFER)
-> > +		return -EPROBE_DEFER;
-> > +
-> >  	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
-> >  					NULL, q6v5_stop_interrupt,
-> >  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> 
-> -- 
-> -- Sibi Sankar --
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project.
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index b136684..8a3cbe9 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -64,6 +64,7 @@ struct rpmsg_ctrldev {
+  * @queue_lock:	synchronization of @queue operations
+  * @queue:	incoming message queue
+  * @readq:	wait object for incoming queue
++ * @sig_pending:state of signal notification
+  */
+ struct rpmsg_eptdev {
+ 	struct device dev;
+@@ -78,6 +79,8 @@ struct rpmsg_eptdev {
+ 	spinlock_t queue_lock;
+ 	struct sk_buff_head queue;
+ 	wait_queue_head_t readq;
++
++	bool sig_pending;
+ };
+ 
+ static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+@@ -122,6 +125,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+ 	return 0;
+ }
+ 
++static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv,
++			 u32 old, u32 new)
++{
++	struct rpmsg_eptdev *eptdev = priv;
++
++	eptdev->sig_pending = true;
++
++	/* wake up any blocking processes, waiting for signal notification */
++	wake_up_interruptible(&eptdev->readq);
++	return 0;
++}
++
+ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ {
+ 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+@@ -138,6 +153,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ 		return -EINVAL;
+ 	}
+ 
++	ept->sig_cb = rpmsg_sigs_cb;
+ 	eptdev->ept = ept;
+ 	filp->private_data = eptdev;
+ 
+@@ -157,6 +173,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 		eptdev->ept = NULL;
+ 	}
+ 	mutex_unlock(&eptdev->ept_lock);
++	eptdev->sig_pending = false;
+ 
+ 	/* Discard all SKBs */
+ 	while (!skb_queue_empty(&eptdev->queue)) {
+@@ -263,6 +280,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+ 	if (!skb_queue_empty(&eptdev->queue))
+ 		mask |= EPOLLIN | EPOLLRDNORM;
+ 
++	if (eptdev->sig_pending)
++		mask |= POLLPRI;
++
+ 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
+ 
+ 	return mask;
+@@ -306,6 +326,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+ 
+ 	switch (cmd) {
+ 	case TIOCMGET:
++		eptdev->sig_pending = false;
+ 		ret = rpmsg_get_signals(eptdev->ept);
+ 		if (ret >= 0)
+ 			ret = put_user(ret, (int __user *)arg);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
