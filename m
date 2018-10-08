@@ -1,204 +1,105 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH 2/5] hwspinlock: add STM32 hwspinlock device
-Date: Wed, 31 Oct 2018 10:30:29 +0100
-Message-Id: <20181031093032.20386-3-benjamin.gaignard@st.com>
-In-Reply-To: <20181031093032.20386-1-benjamin.gaignard@st.com>
-References: <20181031093032.20386-1-benjamin.gaignard@st.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 1/5] remoteproc: Fix unbalanced boot with sysfs for no
+ auto-boot rprocs
+References: <20180915003725.17549-1-s-anna@ti.com>
+ <20180915003725.17549-2-s-anna@ti.com> <20181006061341.GC12063@builder>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <28c0d25e-62eb-0d6c-c479-52eb7fc6f095@ti.com>
+Date: Mon, 8 Oct 2018 11:42:42 -0500
+MIME-Version: 1.0
+In-Reply-To: <20181006061341.GC12063@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds support of hardware semaphores for stm32mp1 SoC.
-The hardware block provides 32 semaphores.
+On 10/06/2018 01:13 AM, Bjorn Andersson wrote:
+> On Fri 14 Sep 17:37 PDT 2018, Suman Anna wrote:
+> 
+>> The remoteproc core performs automatic boot and shutdown of a
+>> remote processor during rproc_add() and rproc_del() for remote
+>> processors supporting 'auto-boot'. The remoteproc devices not using
+>> 'auto-boot' require either a remoteproc client driver or a
+>> userspace client to use the sysfs 'state' variable to perform the
+>> boot and shutdown. The in-kernel client drivers hold the
+>> corresponding remoteproc driver module's reference count when they
+>> acquire a rproc handle through the rproc_get_by_phandle() API, but
+>> there is no such support for userspace applications performing the
+>> boot through sysfs interface.
+>> 
+>> The shutdown of a remoteproc upon removing a remoteproc platform 
+>> driver is automatic only with 'auto-boot' and this can cause a 
+>> remoteproc with no auto-boot to stay powered on and never freed up
+>> if booted using the sysfs interface without a matching stop, and
+>> when the remoteproc driver module is removed or unbound from the
+>> device. This will result in a memory leak as well as the 
+>> corresponding remoteproc ida being never deallocated. Fix this by
+>> holding a module reference count for the remoteproc's driver during
+>> a sysfs 'start' and releasing it during the sysfs 'stop' 
+>> operation.
+>> 
+> 
+> This prevents you from rmmod'ing the remoteproc driver, but it does
+> not prevent you from issuing an unbind of the driver - resulting in
+> the same issue.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- drivers/hwspinlock/Kconfig            |   9 +++
- drivers/hwspinlock/Makefile           |   1 +
- drivers/hwspinlock/stm32_hwspinlock.c | 147 ++++++++++++++++++++++++++++++++++
- 3 files changed, 157 insertions(+)
- create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+Well, the unbind is always a problem as it ignores the module usecounts,
+and that's a generic issue. I have used suppress_bind_attrs in the
+relevant remoteproc drivers downstream (need to actually add that for
+wkup_m3) when they are being booted by other clients, otherwise more
+often than not the client drivers create a kernel crash.
 
-diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-index e895d29500ee..e1a20b460590 100644
---- a/drivers/hwspinlock/Kconfig
-+++ b/drivers/hwspinlock/Kconfig
-@@ -59,3 +59,12 @@ config HSEM_U8500
- 	  SoC.
- 
- 	  If unsure, say N.
-+
-+config HWSPINLOCK_STM32
-+	tristate "STM32 Hardware Spinlock device"
-+	depends on MACH_STM32MP157
-+	depends on HWSPINLOCK
-+	help
-+	  Say y here to support the STM32 Hardware Spinlock device.
-+
-+	  If unsure, say N.
-diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
-index b87c01a506a4..c0a9505b4dcf 100644
---- a/drivers/hwspinlock/Makefile
-+++ b/drivers/hwspinlock/Makefile
-@@ -9,3 +9,4 @@ obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
- obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
-+obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
-diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
-new file mode 100644
-index 000000000000..6a0fafac7389
---- /dev/null
-+++ b/drivers/hwspinlock/stm32_hwspinlock.c
-@@ -0,0 +1,147 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) STMicroelectronics SA 2018
-+ * Author: Benjamin Gaignard <benjamin.gaignard@st.com> for STMicroelectronics.
-+ * License terms:  GNU General Public License (GPL), version 2
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/hwspinlock.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+
-+#include "hwspinlock_internal.h"
-+
-+#define STM32_MUTEX_COREID	BIT(8)
-+#define STM32_MUTEX_LOCK_BIT	BIT(31)
-+#define STM32_MUTEX_NUM_LOCKS	32
-+
-+struct stm32_hwspinlock {
-+	struct clk *clk;
-+	struct hwspinlock_device bank;
-+};
-+
-+static int stm32_hwspinlock_trylock(struct hwspinlock *lock)
-+{
-+	void __iomem *lock_addr = lock->priv;
-+	u32 status;
-+
-+	writel(STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID, lock_addr);
-+	status = readl(lock_addr);
-+
-+	return status == (STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID);
-+}
-+
-+static void stm32_hwspinlock_unlock(struct hwspinlock *lock)
-+{
-+	void __iomem *lock_addr = lock->priv;
-+
-+	writel(STM32_MUTEX_COREID, lock_addr);
-+}
-+
-+static const struct hwspinlock_ops stm32_hwspinlock_ops = {
-+	.trylock	= stm32_hwspinlock_trylock,
-+	.unlock		= stm32_hwspinlock_unlock,
-+};
-+
-+static int stm32_hwspinlock_probe(struct platform_device *pdev)
-+{
-+	struct stm32_hwspinlock *hw;
-+	void __iomem *io_base;
-+	struct resource *res;
-+	size_t array_size;
-+	int i, ret;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	io_base = devm_ioremap_resource(&pdev->dev, res);
-+	if (!io_base)
-+		return -ENOMEM;
-+
-+	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
-+	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
-+	if (!hw)
-+		return -ENOMEM;
-+
-+	hw->clk = devm_clk_get(&pdev->dev, "hwspinlock");
-+	if (IS_ERR(hw->clk))
-+		return PTR_ERR(hw->clk);
-+
-+	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
-+		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
-+
-+	platform_set_drvdata(pdev, hw);
-+	pm_runtime_enable(&pdev->dev);
-+
-+	ret = hwspin_lock_register(&hw->bank, &pdev->dev, &stm32_hwspinlock_ops,
-+				   0, STM32_MUTEX_NUM_LOCKS);
-+
-+	if (ret)
-+		pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int stm32_hwspinlock_remove(struct platform_device *pdev)
-+{
-+	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	ret = hwspin_lock_unregister(&hw->bank);
-+	if (ret) {
-+		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
-+		return ret;
-+	}
-+
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused stm32_hwspinlock_runtime_suspend(struct device *dev)
-+{
-+	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(hw->clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused stm32_hwspinlock_runtime_resume(struct device *dev)
-+{
-+	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
-+
-+	clk_prepare_enable(hw->clk);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops stm32_hwspinlock_pm_ops = {
-+	SET_RUNTIME_PM_OPS(stm32_hwspinlock_runtime_suspend,
-+			   stm32_hwspinlock_runtime_resume,
-+			   NULL)
-+};
-+
-+static const struct of_device_id stm32_hwpinlock_ids[] = {
-+	{ .compatible = "st,stm32-hwspinlock", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
-+
-+static struct platform_driver stm32_hwspinlock_driver = {
-+	.probe		= stm32_hwspinlock_probe,
-+	.remove		= stm32_hwspinlock_remove,
-+	.driver		= {
-+		.name	= "stm32_hwspinlock",
-+		.of_match_table = stm32_hwpinlock_ids,
-+		.pm	= &stm32_hwspinlock_pm_ops,
-+	},
-+};
-+module_platform_driver(stm32_hwspinlock_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("Hardware spinlock driver for STM32 SoCs");
-+MODULE_AUTHOR("Benjamin Gaignard <benjamin.gaignard@st.com>");
--- 
-2.15.0
+> 
+> I would prefer if we made sure that rproc_del() always cleaned up
+> any resources (and stopped the remoteproc processor), but I'm
+> uncertain of how to deal with remote processors that are supposed to
+> survive Linux shutting down.
+
+This creates unbalanced paths and we definitely do not want stop a
+processor from underneath the client drivers that have booted them.
+Hence this patch which creates parity with auto-booted processors and
+still requested by some other clients.
+
+regards
+Suman
+
+> 
+> But I'm also uncertain how we can make the remoteproc core ensure
+> that no dynamic resources are leaked in such scenario.
+> 
+> Regards, Bjorn
+> 
+>> Signed-off-by: Suman Anna <s-anna@ti.com> --- 
+>> drivers/remoteproc/remoteproc_sysfs.c | 16 +++++++++++++++- 1 file
+>> changed, 15 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
+>> b/drivers/remoteproc/remoteproc_sysfs.c index
+>> 47be411400e5..2142b3ea726e 100644 ---
+>> a/drivers/remoteproc/remoteproc_sysfs.c +++
+>> b/drivers/remoteproc/remoteproc_sysfs.c @@ -11,6 +11,7 @@ * GNU
+>> General Public License for more details. */
+>> 
+>> +#include <linux/module.h> #include <linux/remoteproc.h>
+>> 
+>> #include "remoteproc_internal.h" @@ -100,14 +101,27 @@ static
+>> ssize_t state_store(struct device *dev, if (rproc->state ==
+>> RPROC_RUNNING) return -EBUSY;
+>> 
+>> +		/* +		 * prevent underlying implementation from being removed +
+>> * when remoteproc does not support auto-boot +		 */ +		if
+>> (!rproc->auto_boot && +
+>> !try_module_get(dev->parent->driver->owner)) +			return -EINVAL; + 
+>> ret = rproc_boot(rproc); -		if (ret) +		if (ret) { 
+>> dev_err(&rproc->dev, "Boot failed: %d\n", ret); +			if
+>> (!rproc->auto_boot) +				module_put(dev->parent->driver->owner); +
+>> } } else if (sysfs_streq(buf, "stop")) { if (rproc->state !=
+>> RPROC_RUNNING) return -EINVAL;
+>> 
+>> rproc_shutdown(rproc); +		if (!rproc->auto_boot) +
+>> module_put(dev->parent->driver->owner); } else { 
+>> dev_err(&rproc->dev, "Unrecognised option: %s\n", buf); ret =
+>> -EINVAL; -- 2.18.0
+>> 
