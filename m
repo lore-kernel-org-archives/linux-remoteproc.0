@@ -1,37 +1,79 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V3 0/4] Add TIOCM Signals support for RPMSG char devices
-Date: Fri,  5 Oct 2018 12:29:32 +0530
-Message-Id: <1538722776-13648-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v4 1/5] remoteproc: Introduce custom dump function for each remoteproc segment
+Date: Tue,  9 Oct 2018 21:53:35 +0530
+Message-Id: <20181009162339.30522-2-sibis@codeaurora.org>
+In-Reply-To: <20181009162339.30522-1-sibis@codeaurora.org>
+References: <20181009162339.30522-1-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, kyan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Glink transport support signals to exchange state notification between
-local and remote side clients. Adding support to send/receive the signal
-command and notify the clients through callback and POLL notification.
+Introduce custom dump function and private data per remoteproc dump
+segment. The dump function is responsible for filling the device memory
+segment associated with coredump
 
-Changes since v1:
-- Split the patches as per functional areas like core, char, glink
-- Add set, clear mask for TIOCMSET
-- Merge the char signal callback and POLLPRI patches
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 16 ++++++++++------
+ include/linux/remoteproc.h           |  6 ++++++
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-Changes since v2:
-- Modify the rpmsg_get_signals function prototype
-
-Arun Kumar Neelakantam (4):
-  rpmsg: core: Add signal API support
-  rpmsg: glink: Add support to handle signals command
-  rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-  rpmsg: char: Add signal callback and POLLPRI support
-
- drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/rpmsg_char.c        |  74 +++++++++++++++++++++-
- drivers/rpmsg/rpmsg_core.c        |  41 +++++++++++++
- drivers/rpmsg/rpmsg_internal.h    |   5 ++
- include/linux/rpmsg.h             |  26 ++++++++
- 5 files changed, 269 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index aa6206706fe3..afa4274b6ccd 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1183,14 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
+ 		phdr->p_flags = PF_R | PF_W | PF_X;
+ 		phdr->p_align = 0;
+ 
+-		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+-		if (!ptr) {
+-			dev_err(&rproc->dev,
++		if (segment->dump) {
++			segment->dump(rproc, segment, data + offset);
++		} else {
++			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++			if (!ptr) {
++				dev_err(&rproc->dev,
+ 				"invalid coredump segment (%pad, %zu)\n",
+ 				&segment->da, segment->size);
+-			memset(data + offset, 0xff, segment->size);
+-		} else {
+-			memcpy(data + offset, ptr, segment->size);
++				memset(data + offset, 0xff, segment->size);
++			} else {
++				memcpy(data + offset, ptr, segment->size);
++			}
+ 		}
+ 
+ 		offset += phdr->p_filesz;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index e3c5d856b6da..2a93e102d2ad 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -399,6 +399,9 @@ enum rproc_crash_type {
+  * @node:	list node related to the rproc segment list
+  * @da:		device address of the segment
+  * @size:	size of the segment
++ * @priv:	private data associated with the dump_segment
++ * @dump:	custom dump function to fill device memory segment associated
++ *		with coredump
+  */
+ struct rproc_dump_segment {
+ 	struct list_head node;
+@@ -406,6 +409,9 @@ struct rproc_dump_segment {
+ 	dma_addr_t da;
+ 	size_t size;
+ 
++	void *priv;
++	void (*dump)(struct rproc *rproc, struct rproc_dump_segment *segment,
++		     void *dest);
+ 	loff_t offset;
+ };
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
