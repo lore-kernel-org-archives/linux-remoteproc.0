@@ -1,47 +1,97 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sat, 6 Oct 2018 00:05:21 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 05/17] compat_ioctl: move more drivers to
- generic_compat_ioctl_ptrarg
-Message-ID: <20181006070521.GM12063@builder>
-References: <20180912150142.157913-1-arnd@arndb.de>
- <20180912151134.436719-1-arnd@arndb.de>
+Return-Path: <sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180912151134.436719-1-arnd@arndb.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "David S. Miller" <davem@davemloft.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, sparclinux@vger.kernel.org, linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 09 Oct 2018 21:49:44 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH v3 4/6] remoteproc: qcom: q6v5-pil: Add custom dump
+ function for modem
+In-Reply-To: <20181008064505.GO12063@builder>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+ <20180727152003.11663-5-sibis@codeaurora.org>
+ <20181008064505.GO12063@builder>
+Message-ID: <ab7ccaf06b92de38224202f3ca16749b@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 12 Sep 08:08 PDT 2018, Arnd Bergmann wrote:
+Hi Bjorn,
+Thanks for the review !
 
-[..]
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index a76b963a7e50..02aefb2b2d47 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -285,7 +285,7 @@ static const struct file_operations rpmsg_eptdev_fops = {
->  	.write = rpmsg_eptdev_write,
->  	.poll = rpmsg_eptdev_poll,
->  	.unlocked_ioctl = rpmsg_eptdev_ioctl,
-> -	.compat_ioctl = rpmsg_eptdev_ioctl,
-> +	.compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->  
->  static ssize_t name_show(struct device *dev, struct device_attribute *attr,
-> @@ -446,7 +446,7 @@ static const struct file_operations rpmsg_ctrldev_fops = {
->  	.open = rpmsg_ctrldev_open,
->  	.release = rpmsg_ctrldev_release,
->  	.unlocked_ioctl = rpmsg_ctrldev_ioctl,
-> -	.compat_ioctl = rpmsg_ctrldev_ioctl,
-> +	.compat_ioctl = generic_compat_ioctl_ptrarg,
->  };
->  
+On 2018-10-08 12:15, Bjorn Andersson wrote:
+> On Fri 27 Jul 08:20 PDT 2018, Sibi Sankar wrote:
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c 
+>> b/drivers/remoteproc/qcom_q6v5_pil.c
+> [..]
+>> +static void qcom_q6v5_dump_segment(struct rproc *rproc, void *ptr, 
+>> size_t len,
+>> +								   void *priv)
+>> +{
+>> +	int ret = 0;
+>> +	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+>> +	static u32 pending_mask;
+> 
+> I dislike that this is a static variable. And it tracks the segments
+> that has already been dumped, i.e. the !pending.
+> 
+>> +
+>> +	/* Unlock mba before copying segments */
+>> +	if (!qproc->mba_loaded)
+>> +		ret = q6v5_mba_load(qproc);
+>> +
+>> +	if (!ptr || ret)
+>> +		memset(priv, 0xff, len);
+>> +	else
+>> +		memcpy(priv, ptr, len);
+>> +
+>> +	pending_mask++;
+> 
+> This is a "count" and not a "mask".
+> 
 
-For rpmsg part
+will rename it to count in the next re-spin. We can implement this as
+a mask as well, the only disadvantage I see in that case is the need
+for another flag to determine if mba is loaded since the mask for the
+first segment may not be zero (the first segment may not be valid).
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> I can see a few different cases where one would like to be able to pass
+> custom data/information from the segment-registration to the dump
+> function. So how about adding a "void *priv" to the dump segment.
+> 
+> For this particular case we could typecast segment->priv to an unsigned
+> long (as this is always the same size) and use that as a bitmask, which
+> we use to update pending_mask.
+> 
 
-Regards,
-Bjorn
+sure will do the same
+
+>> +	if (pending_mask == qproc->valid_mask) {
+>> +		if (qproc->mba_loaded)
+>> +			q6v5_mba_reclaim(qproc);
+>> +		pending_mask = 0;
+>> +	}
+> 
+> I think it would be cleaner to reset pending_mask in the start 
+> function,
+> and then return early in this function when we have dumped all the
+> segments.
+> 
+> If so can pending_mask == 0 and pending_mask == all be the triggers for
+> loading and reclaiming the mba? So we don't have two different trackers
+> for this?
+> 
+
+with the private data stored per dump segment this becomes much simpler 
+:)
+
+>> +}
+>> +
+> 
+> Regards,
+> Bjorn
+
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
