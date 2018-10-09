@@ -1,77 +1,126 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 04/17] remoteproc: add name in rproc_mem_entry struct
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
- <1532697292-14272-5-git-send-email-loic.pallardy@st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <0eee8e53-a639-e886-7f23-edc697242be3@ti.com>
-Date: Tue, 23 Oct 2018 12:06:16 -0500
-MIME-Version: 1.0
-In-Reply-To: <1532697292-14272-5-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH 5/6] remoteproc: qcom: wcss: populate hardcoded param using driver data
+Date: Tue,  9 Oct 2018 18:35:56 +0530
+Message-Id: <1539090357-20853-6-git-send-email-govinds@codeaurora.org>
+In-Reply-To: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
+References: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 7/27/18 8:14 AM, Loic Pallardy wrote:
-> Add name field in struct rproc_mem_entry.
-> This new field will be used to match memory area
-> requested in resource table with pre-registered carveout.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Q6 based WiFi fw loading is supported across
+different targets, ex: IPQ8074/QCS404. In order to
+support different fw names/pas id etc, populate
+hardcoded param using driver data.
 
-Acked-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 36 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/remoteproc/remoteproc_core.c    | 1 +
->  drivers/remoteproc/remoteproc_debugfs.c | 1 +
->  include/linux/remoteproc.h              | 2 ++
->  3 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 24fe11f..d7e3138 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -752,6 +752,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	carveout->dma = dma;
->  	carveout->da = rsc->da;
->  	carveout->release = rproc_release_carveout;
-> +	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
->  
->  	list_add_tail(&carveout->node, &rproc->carveouts);
->  
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index a5c29f2..e90135c 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -260,6 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
->  
->  	list_for_each_entry(carveout, &rproc->carveouts, node) {
->  		seq_puts(seq, "Carveout memory entry:\n");
-> +		seq_printf(seq, "\tName: %s\n", carveout->name);
->  		seq_printf(seq, "\tVirtual address: %pK\n", carveout->va);
->  		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
->  		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index bef2e83..0e21098 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -315,6 +315,7 @@ struct fw_rsc_vdev {
->   * @da: device address
->   * @release: release associated memory
->   * @priv: associated data
-> + * @name: associated memory region name (optional)
->   * @node: list node
->   */
->  struct rproc_mem_entry {
-> @@ -323,6 +324,7 @@ struct rproc_mem_entry {
->  	int len;
->  	u32 da;
->  	void *priv;
-> +	char name[32];
->  	struct list_head node;
->  	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
->  };
-> 
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index f93e1e4..24e276d 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -8,6 +8,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+@@ -16,7 +17,6 @@
+ #include "qcom_common.h"
+ #include "qcom_q6v5.h"
+ 
+-#define WCSS_CRASH_REASON		421
+ 
+ /* Q6SS Register Offsets */
+ #define Q6SS_RESET_REG		0x014
+@@ -70,6 +70,14 @@
+ #define TCSR_WCSS_CLK_MASK	0x1F
+ #define TCSR_WCSS_CLK_ENABLE	0x14
+ 
++struct wcss_data {
++	void (*pas_handover)(struct qcom_q6v5 *q6v5);
++	const char *firmware_name;
++	int crash_reason_smem;
++	int version;
++	int pas_id;
++};
++
+ struct q6v5_wcss {
+ 	struct device *dev;
+ 
+@@ -91,6 +99,10 @@ struct q6v5_wcss {
+ 	phys_addr_t mem_reloc;
+ 	void *mem_region;
+ 	size_t mem_size;
++
++	int crash_reason_smem;
++	int pas_id;
++	int version;
+ };
+ 
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+@@ -527,12 +539,17 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
+ 
+ static int q6v5_wcss_probe(struct platform_device *pdev)
+ {
++	const struct wcss_data *desc;
+ 	struct q6v5_wcss *wcss;
+ 	struct rproc *rproc;
+ 	int ret;
+ 
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ops,
+-			    "IPQ8074/q6_fw.mdt", sizeof(*wcss));
++			    desc->firmware_name, sizeof(*wcss));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+ 		return -ENOMEM;
+@@ -540,6 +557,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 
+ 	wcss = rproc->priv;
+ 	wcss->dev = &pdev->dev;
++	wcss->pas_id = desc->pas_id;
++	wcss->version = desc->version;
++	wcss->crash_reason_smem = desc->crash_reason_smem;
+ 
+ 	ret = q6v5_wcss_init_mmio(wcss, pdev);
+ 	if (ret)
+@@ -553,7 +573,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, WCSS_CRASH_REASON, NULL);
++	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reason_smem,
++			     desc->pas_handover);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+@@ -581,8 +602,15 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct wcss_data wcss_ipq8074_res_init = {
++	.firmware_name = "IPQ8074/q6_fw.mdt",
++	.crash_reason_smem = 421,
++	.pas_handover = NULL,
++};
++
+ static const struct of_device_id q6v5_wcss_of_match[] = {
+-	{ .compatible = "qcom,ipq8074-wcss-pil" },
++	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
++
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, q6v5_wcss_of_match);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
