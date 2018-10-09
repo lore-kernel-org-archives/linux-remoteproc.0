@@ -1,79 +1,117 @@
 Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 1/5] remoteproc: Introduce custom dump function for each remoteproc segment
-Date: Tue,  9 Oct 2018 21:53:35 +0530
-Message-Id: <20181009162339.30522-2-sibis@codeaurora.org>
-In-Reply-To: <20181009162339.30522-1-sibis@codeaurora.org>
-References: <20181009162339.30522-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, kyan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 09 Oct 2018 21:38:46 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH v3 1/6] remoteproc: Introduce custom dump function for
+ each remoteproc segment
+In-Reply-To: <20181008062333.GN12063@builder>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+ <20180727152003.11663-2-sibis@codeaurora.org>
+ <20181008062333.GN12063@builder>
+Message-ID: <002930d1f2515a5988f98a3bb1a5ceed@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, linux-remoteproc-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce custom dump function and private data per remoteproc dump
-segment. The dump function is responsible for filling the device memory
-segment associated with coredump
+Hi Bjorn,
+Thanks for the review :)
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/remoteproc_core.c | 16 ++++++++++------
- include/linux/remoteproc.h           |  6 ++++++
- 2 files changed, 16 insertions(+), 6 deletions(-)
+On 2018-10-08 11:53, Bjorn Andersson wrote:
+> On Fri 27 Jul 08:19 PDT 2018, Sibi Sankar wrote:
+> 
+>> Introduce custom dump function per remoteproc segment. It is 
+>> responsible
+>> for filling the device memory segment associated with coredump
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 15 ++++++++++-----
+>>  include/linux/remoteproc.h           |  3 +++
+>>  2 files changed, 13 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/drivers/remoteproc/remoteproc_core.c 
+>> b/drivers/remoteproc/remoteproc_core.c
+>> index 283b258f5e0f..ec56cd822b26 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1183,13 +1183,18 @@ static void rproc_coredump(struct rproc 
+>> *rproc)
+>>  		phdr->p_align = 0;
+>> 
+>>  		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+>> -		if (!ptr) {
+>> -			dev_err(&rproc->dev,
+>> +
+>> +		if (segment->dump) {
+>> +			segment->dump(rproc, ptr, segment->size, data + offset);
+> 
+> rproc_da_to_va() is an exported symbol, so if you pass segment to the
+> dump function the driver can, if it needs to, call the function itself.
+> 
+> A typical use case, that I see, is to use the custom dump function to
+> write out CPU or hardware state to the dump file, in which case the 
+> "da"
+> won't be valid.
+> 
+> 
+> So please make this call dump(rproc, segment, data + offset) and move
+> the rproc_da_to_va() into the else block.
+> 
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index aa6206706fe3..afa4274b6ccd 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1183,14 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
- 		phdr->p_flags = PF_R | PF_W | PF_X;
- 		phdr->p_align = 0;
- 
--		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
--		if (!ptr) {
--			dev_err(&rproc->dev,
-+		if (segment->dump) {
-+			segment->dump(rproc, segment, data + offset);
-+		} else {
-+			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-+			if (!ptr) {
-+				dev_err(&rproc->dev,
- 				"invalid coredump segment (%pad, %zu)\n",
- 				&segment->da, segment->size);
--			memset(data + offset, 0xff, segment->size);
--		} else {
--			memcpy(data + offset, ptr, segment->size);
-+				memset(data + offset, 0xff, segment->size);
-+			} else {
-+				memcpy(data + offset, ptr, segment->size);
-+			}
- 		}
- 
- 		offset += phdr->p_filesz;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e3c5d856b6da..2a93e102d2ad 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -399,6 +399,9 @@ enum rproc_crash_type {
-  * @node:	list node related to the rproc segment list
-  * @da:		device address of the segment
-  * @size:	size of the segment
-+ * @priv:	private data associated with the dump_segment
-+ * @dump:	custom dump function to fill device memory segment associated
-+ *		with coredump
-  */
- struct rproc_dump_segment {
- 	struct list_head node;
-@@ -406,6 +409,9 @@ struct rproc_dump_segment {
- 	dma_addr_t da;
- 	size_t size;
- 
-+	void *priv;
-+	void (*dump)(struct rproc *rproc, struct rproc_dump_segment *segment,
-+		     void *dest);
- 	loff_t offset;
- };
- 
+yup will redefine it.
+
+>> +		} else {
+>> +			if (!ptr) {
+>> +				dev_err(&rproc->dev,
+>>  				"invalid coredump segment (%pad, %zu)\n",
+>>  				&segment->da, segment->size);
+>> -			memset(data + offset, 0xff, segment->size);
+>> -		} else {
+>> -			memcpy(data + offset, ptr, segment->size);
+>> +				memset(data + offset, 0xff, segment->size);
+>> +			} else {
+>> +				memcpy(data + offset, ptr, segment->size);
+>> +			}
+>>  		}
+>> 
+>>  		offset += phdr->p_filesz;
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index e3c5d856b6da..0fbb01a9955c 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -399,6 +399,8 @@ enum rproc_crash_type {
+>>   * @node:	list node related to the rproc segment list
+>>   * @da:		device address of the segment
+>>   * @size:	size of the segment
+>> + * @dump:	custom dump function to fill device memory segment 
+>> associated
+>> + *		with coredump
+>>   */
+>>  struct rproc_dump_segment {
+>>  	struct list_head node;
+>> @@ -406,6 +408,7 @@ struct rproc_dump_segment {
+>>  	dma_addr_t da;
+>>  	size_t size;
+>> 
+>> +	void (*dump)(struct rproc *rproc, void *ptr, size_t len, void 
+>> *priv);
+> 
+> "priv" isn't the best name to represent the memory to which you expect
+> dump to write to. Please call it "dest".
+> 
+
+will rename it
+
+>>  	loff_t offset;
+>>  };
+> 
+> Regards,
+> Bjorn
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
