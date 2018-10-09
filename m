@@ -1,52 +1,109 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
+Return-Path: <briannorris@chromium.org>
+Return-Path: <briannorris@chromium.org>
+From: Brian Norris <briannorris@chromium.org>
+Subject: [PATCH] remoteproc: qcom: q6v5: shore up resource probe handling
+Date: Tue,  9 Oct 2018 15:25:27 -0700
+Message-Id: <20181009222527.74260-1-briannorris@chromium.org>
 MIME-Version: 1.0
-References: <20181009222527.74260-1-briannorris@chromium.org>
-In-Reply-To: <20181009222527.74260-1-briannorris@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 9 Oct 2018 16:34:25 -0700
-Message-ID: <CAD=FV=Vh4NWUS--dDU5N0b86ZoRd7kEj7Zuk5VCE=WkaRWp=tg@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: shore up resource probe handling
-Content-Type: text/plain; charset="UTF-8"
-To: Brian Norris <briannorris@chromium.org>
-Cc: ohad@wizery.com, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, sibis@codeaurora.org
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Brian Norris <briannorris@chromium.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+Commit d5269c4553a6 ("remoteproc: qcom: q6v5: Propagate EPROBE_DEFER")
+fixed up our probe code to handle -EPROBE_DEFER, but it ignored one of
+our interrupts, and it also didn't really handle all the other error
+codes you might get (e.g., with a bad DT definition). Handle those all
+explicitly.
 
-On Tue, Oct 9, 2018 at 3:33 PM Brian Norris <briannorris@chromium.org> wrote:
-> +       if (q6v5->wdog_irq < 0) {
-> +               if (q6v5->wdog_irq != -EPROBE_DEFER)
-> +                       dev_err(&pdev->dev,
-> +                               "failed to retrieve wdog IRQ: %d\n",
-> +                               q6v5->wdog_irq);
-> +               return q6v5->wdog_irq;
-> +       }
+Fixes: d5269c4553a6 ("remoteproc: qcom: q6v5: Propagate EPROBE_DEFER")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/remoteproc/qcom_q6v5.c | 44 +++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 8 deletions(-)
 
-optional: Since there's the same pattern 5 times here, I wonder if we
-should abstract it out to a helper function that would print the
-error?
-
-...in the ideal case it would be somewhere that all Linux drivers
-could use since this is a super common pattern, but that might be a
-bit too much yak shaving...
-
-
-> @@ -237,8 +260,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->         disable_irq(q6v5->handover_irq);
->
->         q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
-> -       if (q6v5->stop_irq == -EPROBE_DEFER)
-> -               return -EPROBE_DEFER;
-> +       if (q6v5->stop_irq < 0) {
-> +               if (q6v5->stop_irq != -EPROBE_DEFER)
-> +                       dev_err(&pdev->dev,
-> +                               "failed to retrieve stop IRQ: %d\n",
-> +                               q6v5->stop_irq);
-> +               return q6v5->stop_irq;
-
-Nitty nit that it's the "stop-ack" IRQ, not the "stop" IRQ.  The error
-message below this one calls it stop-ack too so it would be ideal to
-keep it consistent between the two error messages.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index edeb2e43209e..7d6a98072b21 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -187,6 +187,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	init_completion(&q6v5->stop_done);
+ 
+ 	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
++	if (q6v5->wdog_irq < 0) {
++		if (q6v5->wdog_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve wdog IRQ: %d\n",
++				q6v5->wdog_irq);
++		return q6v5->wdog_irq;
++	}
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->wdog_irq,
+ 					NULL, q6v5_wdog_interrupt,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+@@ -197,8 +205,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
+-	if (q6v5->fatal_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->fatal_irq < 0) {
++		if (q6v5->fatal_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve fatal IRQ: %d\n",
++				q6v5->fatal_irq);
++		return q6v5->fatal_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
+ 					NULL, q6v5_fatal_interrupt,
+@@ -210,8 +223,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
+-	if (q6v5->ready_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->ready_irq < 0) {
++		if (q6v5->ready_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve ready IRQ: %d\n",
++				q6v5->ready_irq);
++		return q6v5->ready_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
+ 					NULL, q6v5_ready_interrupt,
+@@ -223,8 +241,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	}
+ 
+ 	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
+-	if (q6v5->handover_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->handover_irq < 0) {
++		if (q6v5->handover_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve handover IRQ: %d\n",
++				q6v5->handover_irq);
++		return q6v5->handover_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
+ 					NULL, q6v5_handover_interrupt,
+@@ -237,8 +260,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	disable_irq(q6v5->handover_irq);
+ 
+ 	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
+-	if (q6v5->stop_irq == -EPROBE_DEFER)
+-		return -EPROBE_DEFER;
++	if (q6v5->stop_irq < 0) {
++		if (q6v5->stop_irq != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"failed to retrieve stop IRQ: %d\n",
++				q6v5->stop_irq);
++		return q6v5->stop_irq;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
+ 					NULL, q6v5_stop_interrupt,
+-- 
+2.19.0.605.g01d371f741-goog
