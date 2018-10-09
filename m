@@ -1,91 +1,39 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 06/17] remoteproc: introduce rproc_add_carveout
- function
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
- <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <8f6737ec-6132-25df-107c-b646310b2dce@ti.com>
-Date: Tue, 23 Oct 2018 12:05:28 -0500
-MIME-Version: 1.0
-In-Reply-To: <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH 0/6] Add non PAS wcss Q6 support for QCS404
+Date: Tue,  9 Oct 2018 18:35:51 +0530
+Message-Id: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn, Loic,
+Add non PAS(Peripheral Authentication System) WCSS remoteproc
+driver support and wcss clock/reset controls for QCS404 SOC.
+Add WCSS q6 bootup and shutdown sequence handled from
+Application Processor SubSystem(APSS).
 
-On 7/27/18 8:14 AM, Loic Pallardy wrote:
-> This patch introduces a new API to allow platform driver to register
-> platform specific carveout regions.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Govind Singh (6):
+  dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
+  clk: qcom: Add WCSS gcc clock control for QCS404
+  dt-bindings: clock: qcom: Introduce QCOM WCSS Q6DSP clock bindings
+  clk: qcom: Add WCSS Q6DSP clock controller for QCS404
+  remoteproc: qcom: wcss: populate hardcoded param using driver data
+  remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
 
-Hmm, I do not prefer that this function be exported. It adds no value,
-and this adds an asymmetric API for remoteproc drivers to add a mem
-entry to the internal remoteproc lists, while relying on the remoteproc
-core to remove them. The carveout list maintenance is a remoteproc
-internal scheme, and so should be maintained that way. Further more, on
-the current series, all the existing calls are immediately after a
-rproc_of_resm_mem_entry_init() or a rproc_mem_entry_init() function,
-which means this could very well be folded into those individual functions.
+ .../devicetree/bindings/clock/qcom,wcsscc.txt      |  26 +
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-qcs404.c                      |  39 +-
+ drivers/clk/qcom/wcsscc-qcs404.c                   | 290 +++++++++
+ drivers/remoteproc/qcom_q6v5_wcss.c                | 666 +++++++++++++++++++--
+ include/dt-bindings/clock/qcom,gcc-qcs404.h        |   3 +
+ include/dt-bindings/clock/qcom,wcss-qcs404.h       |  24 +
+ 9 files changed, 1020 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
+ create mode 100644 drivers/clk/qcom/wcsscc-qcs404.c
+ create mode 100644 include/dt-bindings/clock/qcom,wcss-qcs404.h
 
-regards
-Suman
-
-> ---
->  drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
->  include/linux/remoteproc.h           |  2 ++
->  2 files changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index b76760e..fe6c4e4 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -747,7 +747,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	if (!carveout)
->  		goto free_carv;
->  
-> -	list_add_tail(&carveout->node, &rproc->carveouts);
-> +	rproc_add_carveout(rproc, carveout);
->  
->  	return 0;
->  
-> @@ -761,6 +761,20 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  }
->  
->  /**
-> + * rproc_add_carveout() - register an allocated carveout region
-> + * @rproc: rproc handle
-> + * @mem: memory entry to register
-> + *
-> + * This function registers specified memory entry in @rproc carveouts list.
-> + * Specified carveout should have been allocated before registering.
-> + */
-> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
-> +{
-> +	list_add_tail(&mem->node, &rproc->carveouts);
-> +}
-> +EXPORT_SYMBOL(rproc_add_carveout);
-> +
-> +/**
->   * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
->   * @dev: pointer on device struct
->   * @va: virtual address
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 4bc961f..55f30fc 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -558,6 +558,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  int rproc_del(struct rproc *rproc);
->  void rproc_free(struct rproc *rproc);
->  
-> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
-> +
->  struct rproc_mem_entry *
->  rproc_mem_entry_init(struct device *dev,
->  		     void *va, dma_addr_t dma, int len, u32 da,
-> 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
