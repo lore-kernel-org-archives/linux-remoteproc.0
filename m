@@ -1,112 +1,74 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 29 Oct 2018 16:32:47 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] remoteproc updates for v4.20
-Message-ID: <20181029233247.GV12063@builder>
+Return-Path: <sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, Sibi Sankar <sibis@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Brian Norris <briannorris@chromium.org>, Rohit kumar <rohitkr@codeaurora.org>, Suman Anna <s-anna@ti.com>, Wei Yongjun <weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 09 Oct 2018 21:51:42 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH v3 5/6] remoteproc: qcom: q6v5-pil: Register
+ segments/dumpfn for coredump
+In-Reply-To: <20181008064828.GP12063@builder>
+References: <20180727152003.11663-1-sibis@codeaurora.org>
+ <20180727152003.11663-6-sibis@codeaurora.org>
+ <20181008064828.GP12063@builder>
+Message-ID: <dda01ec2e056d4ae2946484aa101b5bc@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+Hi Bjorn,
+Thanks for the review !
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+On 2018-10-08 12:18, Bjorn Andersson wrote:
+> On Fri 27 Jul 08:20 PDT 2018, Sibi Sankar wrote:
+> 
+>> Register the MDT segments and custom dumpfn with the remoteproc core
+>> dump functionality.
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_q6v5_pil.c | 40 
+>> ++++++++++++++++++++++++++++++
+>>  1 file changed, 40 insertions(+)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c 
+>> b/drivers/remoteproc/qcom_q6v5_pil.c
+>> index ac3342f9ea5a..22bb049c3e7f 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pil.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
+>> @@ -1058,10 +1058,50 @@ static void *q6v5_da_to_va(struct rproc 
+>> *rproc, u64 da, int len)
+>>  	return qproc->mpss_region + offset;
+>>  }
+>> 
+>> +static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>> +				const struct firmware *fw_unused)
+> 
+> How about naming it mba_fw instead of unused? Just as unused, but 
+> easier
+> to understand why it isn't used.
+> 
 
-are available in the Git repository at:
+sure
 
-  git://github.com/andersson/remoteproc tags/rproc-v4.20
+>> +{
+>> +	const struct firmware *fw;
+>> +	const struct elf32_phdr *phdrs;
+>> +	const struct elf32_phdr *phdr;
+>> +	const struct elf32_hdr *ehdr;
+>> +	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
+> 
+> No need for an explicit typecast from void *.
+> 
 
-for you to fetch changes up to f18b7e914fd2ed5e8b5733644cefcf62f7582679:
+will remove it
 
-  remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump (2018-10-19 12:54:03 -0700)
+> The rest looks good!
+> 
+> Regards,
+> Bjorn
 
-----------------------------------------------------------------
-remoteproc updates for v4.20
-
-This contains a series of patches that reworks the memory carveout
-handling in remoteproc, in order to allow this to be reused for
-statically allocated memory regions to be used for e.g. firmware.
-
-It adds support for audio DSP (both TZ-assisted and non-TZ assisted) and
-compute DSP on Qualcomm SDM845, TZ-assisted audio DSP, compute DSP and
-WiFi processor on Qualcomm QCS404 and through some renaming of the
-drivers cleans up the naming situation.
-
-Finally support for custom coreudmp segment handlers is added and
-is used in the Qualcomm modem remoteproc driver to gather memory dumps
-of the firmware.
-
-----------------------------------------------------------------
-Bjorn Andersson (6):
-      remoteproc/davinci: Use %zx for formating size_t
-      remoteproc: qcom: adsp: Add SDM845 ADSP and CDSP support
-      remoteproc: qcom: q6v5: Propagate EPROBE_DEFER
-      remoteproc: qcom: Rename Hexagon v5 PAS driver
-      remoteproc: qcom: Rename Hexagon v5 modem driver
-      remoteproc: qcom: pas: Add QCS404 remoteprocs
-
-Brian Norris (2):
-      remoteproc: qcom: q6v5-mss: add SCM probe dependency
-      remoteproc: qcom: q6v5: shore up resource probe handling
-
-Loic Pallardy (12):
-      remoteproc: configure IOMMU only if device address requested
-      remoteproc: add rproc_va_to_pa function
-      remoteproc: add release ops in rproc_mem_entry struct
-      remoteproc: add name in rproc_mem_entry struct
-      remoteproc: add helper function to allocate and init rproc_mem_entry struct
-      remoteproc: introduce rproc_add_carveout function
-      remoteproc: introduce rproc_find_carveout_by_name function
-      remoteproc: add alloc ops in rproc_mem_entry struct
-      remoteproc: add helper function to allocate rproc_mem_entry from reserved memory
-      remoteproc: add helper function to check carveout device address
-      remoteproc: modify rproc_handle_carveout to support pre-registered region
-      remoteproc: modify vring allocation to rely on centralized carveout allocator
-
-Rohit kumar (2):
-      dt-binding: remoteproc: Add QTI ADSP PIL bindings
-      remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
-
-Sibi Sankar (11):
-      dt-bindings: remoteproc: qcom: Remove additional definition tag
-      dt-bindings: remoteproc: Add PDC reset binding for Q6V5 PIL
-      remoteproc: qcom: q6v5-pil: Explicitly get mss_restart line
-      remoteproc: qcom: q6v5-pil: Add PDC reset for modem on SDM845 SoCs
-      remoteproc: qcom: q6v5: Fix a race condition on fatal crash
-      remoteproc: qcom: q6v5-pil: Assign the relocated address
-      remoteproc: Introduce custom dump function for each remoteproc segment
-      remoteproc: Add mechanism for custom dump function assignment
-      remoteproc: qcom: q6v5-mss: Refactor mba load/unload sequence
-      remoteproc: qcom: q6v5-mss: Add custom dump function for modem
-      remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump
-
-Suman Anna (2):
-      remoteproc: Check for NULL firmwares in sysfs interface
-      remoteproc: Add missing kernel-doc comment for auto-boot
-
-Wei Yongjun (1):
-      remoteproc: qcom: qcom_q6v5_adsp: Fix some return value check
-
- .../bindings/remoteproc/qcom,adsp-pil.txt          | 126 +++++
- .../devicetree/bindings/remoteproc/qcom,adsp.txt   |   5 +
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   8 +-
- drivers/remoteproc/Kconfig                         |  46 +-
- drivers/remoteproc/Makefile                        |   5 +-
- drivers/remoteproc/da8xx_remoteproc.c              |   2 +-
- drivers/remoteproc/qcom_q6v5.c                     |  43 +-
- drivers/remoteproc/qcom_q6v5_adsp.c                | 497 +++++++++++++++++
- .../{qcom_q6v5_pil.c => qcom_q6v5_mss.c}           | 420 ++++++++++-----
- .../{qcom_adsp_pil.c => qcom_q6v5_pas.c}           |  28 +-
- drivers/remoteproc/remoteproc_core.c               | 595 +++++++++++++++++----
- drivers/remoteproc/remoteproc_debugfs.c            |   1 +
- drivers/remoteproc/remoteproc_internal.h           |   2 +
- drivers/remoteproc/remoteproc_sysfs.c              |   5 +
- drivers/remoteproc/remoteproc_virtio.c             |  14 +-
- include/linux/remoteproc.h                         |  47 +-
- 16 files changed, 1557 insertions(+), 287 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
- create mode 100644 drivers/remoteproc/qcom_q6v5_adsp.c
- rename drivers/remoteproc/{qcom_q6v5_pil.c => qcom_q6v5_mss.c} (90%)
- rename drivers/remoteproc/{qcom_adsp_pil.c => qcom_q6v5_pas.c} (90%)
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
