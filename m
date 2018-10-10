@@ -1,220 +1,69 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V3 2/4] rpmsg: glink: Add support to handle signals command
-Date: Fri,  5 Oct 2018 12:29:34 +0530
-Message-Id: <1538722776-13648-3-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1538722776-13648-1-git-send-email-aneela@codeaurora.org>
-References: <1538722776-13648-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 9 Oct 2018 23:19:20 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: qcom: q6v5: shore up resource probe handling
+Message-ID: <20181010061920.GS12063@builder>
+References: <20181009222527.74260-1-briannorris@chromium.org>
+ <CAD=FV=Vh4NWUS--dDU5N0b86ZoRd7kEj7Zuk5VCE=WkaRWp=tg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Vh4NWUS--dDU5N0b86ZoRd7kEj7Zuk5VCE=WkaRWp=tg@mail.gmail.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>, ohad@wizery.com, linux-remoteproc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, sibis@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remote peripherals send signal notifications over glink with commandID 15.
+On Tue 09 Oct 16:34 PDT 2018, Doug Anderson wrote:
 
-Add support to send and receive the signal command and convert the signals
-from NATIVE to TIOCM while receiving and vice versa while sending.
+> Hi,
+> 
+> On Tue, Oct 9, 2018 at 3:33 PM Brian Norris <briannorris@chromium.org> wrote:
+> > +       if (q6v5->wdog_irq < 0) {
+> > +               if (q6v5->wdog_irq != -EPROBE_DEFER)
+> > +                       dev_err(&pdev->dev,
+> > +                               "failed to retrieve wdog IRQ: %d\n",
+> > +                               q6v5->wdog_irq);
+> > +               return q6v5->wdog_irq;
+> > +       }
+> 
+> optional: Since there's the same pattern 5 times here, I wonder if we
+> should abstract it out to a helper function that would print the
+> error?
+> 
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+Before breaking this code out to a common function shared between the
+various q6v5 drivers this was a separate helper function, but that
+wasn't pretty either :/
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index e2ce4e6..e90f543 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-+ * Copyright (c) 2018, The Linux Foundation.
-  * Copyright (c) 2016-2017, Linaro Ltd
-  */
- 
-@@ -17,6 +18,7 @@
- #include <linux/rpmsg.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/workqueue.h>
- #include <linux/mailbox_client.h>
- 
-@@ -150,6 +152,8 @@ enum {
-  * @intent_req_lock: Synchronises multiple intent requests
-  * @intent_req_result: Result of intent request
-  * @intent_req_comp: Completion for intent_req signalling
-+ * @lsigs:	local side signals
-+ * @rsigs:	remote side signals
-  */
- struct glink_channel {
- 	struct rpmsg_endpoint ept;
-@@ -181,6 +185,10 @@ struct glink_channel {
- 	struct mutex intent_req_lock;
- 	bool intent_req_result;
- 	struct completion intent_req_comp;
-+
-+	unsigned int lsigs;
-+	unsigned int rsigs;
-+
- };
- 
- #define to_glink_channel(_ept) container_of(_ept, struct glink_channel, ept)
-@@ -201,9 +209,15 @@ struct glink_channel {
- #define RPM_CMD_TX_DATA_CONT		12
- #define RPM_CMD_READ_NOTIF		13
- #define RPM_CMD_RX_DONE_W_REUSE		14
-+#define RPM_CMD_SIGNALS			15
- 
- #define GLINK_FEATURE_INTENTLESS	BIT(1)
- 
-+#define NATIVE_DTR_SIG	BIT(31)
-+#define NATIVE_CTS_SIG	BIT(30)
-+#define NATIVE_CD_SIG	BIT(29)
-+#define NATIVE_RI_SIG	BIT(28)
-+
- static void qcom_glink_rx_done_work(struct work_struct *work);
- 
- static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-@@ -957,6 +971,76 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 	return 0;
- }
- 
-+/**
-+ * qcom_glink_send_signals() - convert a signal  cmd to wire format and transmit
-+ * @glink:	The transport to transmit on.
-+ * @channel:	The glink channel
-+ * @sigs:	The signals to encode.
-+ *
-+ * Return: 0 on success or standard Linux error code.
-+ */
-+static int qcom_glink_send_signals(struct qcom_glink *glink,
-+				   struct glink_channel *channel,
-+				   u32 sigs)
-+{
-+	struct glink_msg msg;
-+
-+	/* convert signals from TIOCM to NATIVE */
-+	sigs &= 0x0fff;
-+	if (sigs & TIOCM_DTR)
-+		sigs |= NATIVE_DTR_SIG;
-+	if (sigs & TIOCM_RTS)
-+		sigs |= NATIVE_CTS_SIG;
-+	if (sigs & TIOCM_CD)
-+		sigs |= NATIVE_CD_SIG;
-+	if (sigs & TIOCM_RI)
-+		sigs |= NATIVE_RI_SIG;
-+
-+	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
-+	msg.param1 = cpu_to_le16(channel->lcid);
-+	msg.param2 = cpu_to_le32(sigs);
-+
-+	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
-+}
-+
-+static int qcom_glink_handle_signals(struct qcom_glink *glink,
-+				     unsigned int rcid, unsigned int signals)
-+{
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+	u32 old;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, rcid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel) {
-+		dev_err(glink->dev, "signal for non-existing channel\n");
-+		return -EINVAL;
-+	}
-+
-+	old = channel->rsigs;
-+
-+	/* convert signals from NATIVE to TIOCM */
-+	if (signals & NATIVE_DTR_SIG)
-+		signals |= TIOCM_DSR;
-+	if (signals & NATIVE_CTS_SIG)
-+		signals |= TIOCM_CTS;
-+	if (signals & NATIVE_CD_SIG)
-+		signals |= TIOCM_CD;
-+	if (signals & NATIVE_RI_SIG)
-+		signals |= TIOCM_RI;
-+	signals &= 0x0fff;
-+
-+	channel->rsigs = signals;
-+
-+	if (channel->ept.sig_cb) {
-+		channel->ept.sig_cb(channel->ept.rpdev, channel->ept.priv,
-+				    old, channel->rsigs);
-+	}
-+
-+	return 0;
-+}
-+
- static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- {
- 	struct qcom_glink *glink = data;
-@@ -1018,6 +1102,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
- 			break;
-+		case RPM_CMD_SIGNALS:
-+			qcom_glink_handle_signals(glink, param1, param2);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		default:
- 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
- 			ret = -EINVAL;
-@@ -1315,6 +1403,42 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- 	return __qcom_glink_send(channel, data, len, false);
- }
- 
-+static int qcom_glink_get_sigs(struct rpmsg_endpoint *ept)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+
-+	return channel->rsigs;
-+}
-+
-+static int qcom_glink_set_sigs(struct rpmsg_endpoint *ept, u32 set, u32 clear)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+	struct qcom_glink *glink = channel->glink;
-+	u32 sigs = channel->lsigs;
-+
-+	if (set & TIOCM_DTR)
-+		sigs |= TIOCM_DTR;
-+	if (set & TIOCM_RTS)
-+		sigs |= TIOCM_RTS;
-+	if (set & TIOCM_CD)
-+		sigs |= TIOCM_CD;
-+	if (set & TIOCM_RI)
-+		sigs |= TIOCM_RI;
-+
-+	if (clear & TIOCM_DTR)
-+		sigs &= ~TIOCM_DTR;
-+	if (clear & TIOCM_RTS)
-+		sigs &= ~TIOCM_RTS;
-+	if (clear & TIOCM_CD)
-+		sigs &= ~TIOCM_CD;
-+	if (clear & TIOCM_RI)
-+		sigs &= ~TIOCM_RI;
-+
-+	channel->lsigs = sigs;
-+
-+	return qcom_glink_send_signals(glink, channel, sigs);
-+}
-+
- /*
-  * Finds the device_node for the glink child interested in this channel.
-  */
-@@ -1348,6 +1472,8 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
- 	.destroy_ept = qcom_glink_destroy_ept,
- 	.send = qcom_glink_send,
- 	.trysend = qcom_glink_trysend,
-+	.get_signals = qcom_glink_get_sigs,
-+	.set_signals = qcom_glink_set_sigs,
- };
- 
- static void qcom_glink_rpdev_release(struct device *dev)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> ...in the ideal case it would be somewhere that all Linux drivers
+> could use since this is a super common pattern, but that might be a
+> bit too much yak shaving...
+> 
+
+Yeah I agree, it would be a nice helper but there's a bunch of variants
+involved. I've added it on the "someday/maybe" list.
+
+> 
+> > @@ -237,8 +260,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+> >         disable_irq(q6v5->handover_irq);
+> >
+> >         q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
+> > -       if (q6v5->stop_irq == -EPROBE_DEFER)
+> > -               return -EPROBE_DEFER;
+> > +       if (q6v5->stop_irq < 0) {
+> > +               if (q6v5->stop_irq != -EPROBE_DEFER)
+> > +                       dev_err(&pdev->dev,
+> > +                               "failed to retrieve stop IRQ: %d\n",
+> > +                               q6v5->stop_irq);
+> > +               return q6v5->stop_irq;
+> 
+> Nitty nit that it's the "stop-ack" IRQ, not the "stop" IRQ.  The error
+> message below this one calls it stop-ack too so it would be ideal to
+> keep it consistent between the two error messages.
+> 
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+I applied the patch with the nit fixed and your r-b.
+
+Thanks,
+Bjorn
