@@ -1,109 +1,182 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-From: Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] remoteproc: qcom: q6v5: shore up resource probe handling
-Date: Tue,  9 Oct 2018 15:25:27 -0700
-Message-Id: <20181009222527.74260-1-briannorris@chromium.org>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH V4 0/4] Add TIOCM Signals support for RPMSG char devices
+References: <1538980699-21516-1-git-send-email-aneela@codeaurora.org>
+ <a64808ba-3c67-3ee9-9c13-3787e5ce7ab1@st.com>
+ <20181008162325.GA1331@tuxbook-pro>
+ <a3bba20d-1913-ec4c-f0a9-66413276efd8@st.com>
+ <20181009182712.GC28399@tuxbook-pro>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <8efdf3c6-2c52-cff2-d99f-3abb0b54cb31@st.com>
+Date: Fri, 12 Oct 2018 11:46:18 +0200
 MIME-Version: 1.0
+In-Reply-To: <20181009182712.GC28399@tuxbook-pro>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Brian Norris <briannorris@chromium.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, ohad@wizery.com, clew@codeaurora.org, sricharan@codeaurora.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Commit d5269c4553a6 ("remoteproc: qcom: q6v5: Propagate EPROBE_DEFER")
-fixed up our probe code to handle -EPROBE_DEFER, but it ignored one of
-our interrupts, and it also didn't really handle all the other error
-codes you might get (e.g., with a bad DT definition). Handle those all
-explicitly.
 
-Fixes: d5269c4553a6 ("remoteproc: qcom: q6v5: Propagate EPROBE_DEFER")
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
- drivers/remoteproc/qcom_q6v5.c | 44 +++++++++++++++++++++++++++-------
- 1 file changed, 36 insertions(+), 8 deletions(-)
+On 10/09/2018 08:27 PM, Bjorn Andersson wrote:
+> On Tue 09 Oct 09:02 PDT 2018, Arnaud Pouliquen wrote:
+> 
+>> hello Bjorn,
+>>
+>> On 10/08/2018 06:23 PM, Bjorn Andersson wrote:
+>>> On Mon 08 Oct 06:08 PDT 2018, Arnaud Pouliquen wrote:
+>>>
+>>>> Hi Arun, Bjorn,
+>>>>
+>>>> On 10/08/2018 08:38 AM, Arun Kumar Neelakantam wrote:
+>>>>> Glink transport support signals to exchange state notification between
+>>>>> local and remote side clients. Adding support to send/receive the signal
+>>>>> command and notify the clients through callback and POLL notification.
+>>>>
+>>>> Please correct me if i'm wrong...My concern here is that this patchset
+>>>> implements a rpmsg service in the rpmsg core. I would separate this from
+>>>> the rpmsg core, as this is not part of the rpmsg protocol but seems
+>>>> linked to the serial protocol itself.
+>>>> Could it be implemented in rpmsg_char, using a dedicated channel...?
+>>>>
+>>>
+>>> rpmsg_char does expose a rpmsg channel (be it virtio, smd or glink) to
+>>> user space. This patch series add support for invoking TIOCMGET and
+>>> TIOCMSET on these channels.
+>>
+>> I'm not familiar with this concept, that could explain that i don't
+>> understand this patchset...
+>>
+>> TIOCMGET and TIOCMSET is related to the serial/console flow control, to
+>> control remote modem/processor, right?
+>>
+> 
+> Correct, using the known tty ioctls for flow control we allow userspace
+> to communicate flow control information to the rpmsg_char driver.
+> 
+>> it seems be implemented only to support the rpmsg_char ioctl interface.
+>> When i have a look to the glink code, signal is treated by a message
+>> sent to remote processor. Therefore it seems that it could be treated as
+>> a service on top of rpmsg (so treat it in rpmsg_char instead of extend
+>> the rpmsg protocol to treat it in glink driver).
+>>
+> 
+> The glink message is a control message, so it's not possible to pass
+> this inside a channel. As such it's not possible to solve this entirely
+> in rpmsg_char.
+> 
+> Looking at SMD, this is a set of bits in a per-channel control
+> structure. So there it's clearer that it's some side-band control
+> information.
+> 
+> 
+> Further more, the rpmsg_char driver just exposes a channel to user
+> space, it does not care about the data inside. As such it's not possible
+> to generically extend it to support this with in-band messages.
+> 
+>>>
+>>> In addition to adding the client side of this to rpmsg_char it provides
+>>> this support for glink, but the same mechanism exists in smd - while
+>>> this is not supported (today) by the virtio rpmsg.
+>> This is my main concern, i would like to be sure that this service is
+>> not related to specific needs introduced by the rmpsg char implementation:
+>> In this case this should not be part of the rpmsg core but perhaps some
+>> ops directly provided to the rpmsg_char on registration
+>> (rpmsg_chrdev_register_device?)...
+>>
+> 
+> Arun's imminent need is for a user space client that needs to flow
+> control the incoming data stream. But the possibility of controlling the
+> incoming flow of data is useful in a number of situations.
+> 
+>>>
+>>>
+>>> I'm uncertain of how we could implement this mechanism for virtio rpmsg,
+>>> given that it as a transport doesn't really have a concept of
+>>> channels/flows - but it's really useful to have!
+>>>
+>>> PS. rpmsg_set_signals() can be called from any rpmsg device to perform
+>>> flow control of the communication channel.
+>>
+>> For my point of view this patch-set extends the rpmsg protocol to add
+>> channel flow control.
+>> Does it make sense to have a flow control in rpmsg protocol?
+>> if yes, should it be linked to a channel or to the remote processor itself?
+>>
+> 
+> Having per-channel flow control particularly useful in scenarios where
+> one has multiple types of data flowing over a shared underlying FIFO -
+> such as virtio rpmsg. As this allows these different applications to
+> limit the data rate without having to use application specific side band
+> controls.
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index edeb2e43209e..7d6a98072b21 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -187,6 +187,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
- 	init_completion(&q6v5->stop_done);
- 
- 	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
-+	if (q6v5->wdog_irq < 0) {
-+		if (q6v5->wdog_irq != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"failed to retrieve wdog IRQ: %d\n",
-+				q6v5->wdog_irq);
-+		return q6v5->wdog_irq;
-+	}
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->wdog_irq,
- 					NULL, q6v5_wdog_interrupt,
- 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-@@ -197,8 +205,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
- 	}
- 
- 	q6v5->fatal_irq = platform_get_irq_byname(pdev, "fatal");
--	if (q6v5->fatal_irq == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	if (q6v5->fatal_irq < 0) {
-+		if (q6v5->fatal_irq != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"failed to retrieve fatal IRQ: %d\n",
-+				q6v5->fatal_irq);
-+		return q6v5->fatal_irq;
-+	}
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->fatal_irq,
- 					NULL, q6v5_fatal_interrupt,
-@@ -210,8 +223,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
- 	}
- 
- 	q6v5->ready_irq = platform_get_irq_byname(pdev, "ready");
--	if (q6v5->ready_irq == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	if (q6v5->ready_irq < 0) {
-+		if (q6v5->ready_irq != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"failed to retrieve ready IRQ: %d\n",
-+				q6v5->ready_irq);
-+		return q6v5->ready_irq;
-+	}
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->ready_irq,
- 					NULL, q6v5_ready_interrupt,
-@@ -223,8 +241,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
- 	}
- 
- 	q6v5->handover_irq = platform_get_irq_byname(pdev, "handover");
--	if (q6v5->handover_irq == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	if (q6v5->handover_irq < 0) {
-+		if (q6v5->handover_irq != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"failed to retrieve handover IRQ: %d\n",
-+				q6v5->handover_irq);
-+		return q6v5->handover_irq;
-+	}
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->handover_irq,
- 					NULL, q6v5_handover_interrupt,
-@@ -237,8 +260,13 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
- 	disable_irq(q6v5->handover_irq);
- 
- 	q6v5->stop_irq = platform_get_irq_byname(pdev, "stop-ack");
--	if (q6v5->stop_irq == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	if (q6v5->stop_irq < 0) {
-+		if (q6v5->stop_irq != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"failed to retrieve stop IRQ: %d\n",
-+				q6v5->stop_irq);
-+		return q6v5->stop_irq;
-+	}
- 
- 	ret = devm_request_threaded_irq(&pdev->dev, q6v5->stop_irq,
- 					NULL, q6v5_stop_interrupt,
--- 
-2.19.0.605.g01d371f741-goog
+Agree that per-channel flow control could be useful to give priorities
+an limit data flow rate. And as discussed yesterday in Openamp meeting,
+rpmsg seems the well place to add a kind of channel controller.
+
+That's means than we should probably need a generic way to configure
+flow control, not based on TTY ioctl protocol, but compatible with its
+associated feature.
+
+If you need a short term solution, perhaps, a first step could be to
+define a more generic API, that would be bypassed to the rpmsg backend
+driver...
+
+>From my POV, a blocking point in current patch is that rpmsg_set_signals
+and rpmsg_get_signals create dependency between the client the back-end
+driver in term of parameters. Both have to know the signification of
+these parameters, that are not defined in the interface, but in user
+ioctl API. This seems not suitable for non rpmsg_char client that would
+use flow control.
+Other concern is that the term "signals" seems too generic if it is
+dedicated to flow control.
+
+Regards,
+Arnaud
+
+> 
+>> Extra comment: associated documentation update is missing.
+>>
+> 
+> Good catch, we should have a section in Documentation/rpmsg.txt
+> describing this mechanism.
+> 
+> Regards,
+> Bjorn
+> 
+>> Regards,
+>> Arnaud
+>>
+>>>
+>>> Regards,
+>>> Bjorn
+>>>
+>>>> Regards
+>>>> Arnaud
+>>>>
+>>>>>
+>>>>> Changes since v1:
+>>>>> - Split the patches as per functional areas like core, char, glink
+>>>>> - Add set, clear mask for TIOCMSET
+>>>>> - Merge the char signal callback and POLLPRI patches
+>>>>>
+>>>>> Changes since v2:
+>>>>> - Modify the rpmsg_get_signals function prototype
+>>>>>
+>>>>> Changes since v3:
+>>>>> - Correct the TICOMGET case handling as per new rpmsg_get_signals prototype
+>>>>> - Update the rpmsg_get_signals function header
+>>>>>
+>>>>> Arun Kumar Neelakantam (4):
+>>>>>   rpmsg: core: Add signal API support
+>>>>>   rpmsg: glink: Add support to handle signals command
+>>>>>   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+>>>>>   rpmsg: char: Add signal callback and POLLPRI support
+>>>>>
+>>>>>  drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
+>>>>>  drivers/rpmsg/rpmsg_char.c        |  74 +++++++++++++++++++++-
+>>>>>  drivers/rpmsg/rpmsg_core.c        |  41 +++++++++++++
+>>>>>  drivers/rpmsg/rpmsg_internal.h    |   5 ++
+>>>>>  include/linux/rpmsg.h             |  26 ++++++++
+>>>>>  5 files changed, 269 insertions(+), 3 deletions(-)
+>>>>>
