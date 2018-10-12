@@ -1,94 +1,42 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sun, 7 Oct 2018 23:23:33 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 1/6] remoteproc: Introduce custom dump function for
- each remoteproc segment
-Message-ID: <20181008062333.GN12063@builder>
-References: <20180727152003.11663-1-sibis@codeaurora.org>
- <20180727152003.11663-2-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180727152003.11663-2-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v2 0/6] Add non PAS wcss Q6 support for QCS404
+Date: Fri, 12 Oct 2018 15:10:38 +0530
+Message-Id: <1539337244-9505-1-git-send-email-govinds@codeaurora.org>
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 27 Jul 08:19 PDT 2018, Sibi Sankar wrote:
+Add non PAS(Peripheral Authentication System) WCSS remoteproc
+driver support and wcss clock/reset controls for QCS404 SOC.
+Add WCSS q6 bootup and shutdown sequence handled from
+Application Processor SubSystem(APSS).
 
-> Introduce custom dump function per remoteproc segment. It is responsible
-> for filling the device memory segment associated with coredump
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 15 ++++++++++-----
->  include/linux/remoteproc.h           |  3 +++
->  2 files changed, 13 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 283b258f5e0f..ec56cd822b26 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1183,13 +1183,18 @@ static void rproc_coredump(struct rproc *rproc)
->  		phdr->p_align = 0;
->  
->  		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-> -		if (!ptr) {
-> -			dev_err(&rproc->dev,
-> +
-> +		if (segment->dump) {
-> +			segment->dump(rproc, ptr, segment->size, data + offset);
+Govind Singh (6):
+  dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
+  clk: qcom: Add WCSS gcc clock control for QCS404
+  dt-bindings: clock: qcom: Introduce QCOM WCSS Q6DSP clock bindings
+  clk: qcom: Add WCSS Q6DSP clock controller for QCS404
+  remoteproc: qcom: wcss: populate hardcoded param using driver data
+  remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
 
-rproc_da_to_va() is an exported symbol, so if you pass segment to the
-dump function the driver can, if it needs to, call the function itself.
+Changes since v1:
+  Corrected clock names as per comments in v1 patch.
 
-A typical use case, that I see, is to use the custom dump function to
-write out CPU or hardware state to the dump file, in which case the "da"
-won't be valid.
+ .../devicetree/bindings/clock/qcom,wcsscc.txt      |  26 +
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   1 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-qcs404.c                      |  37 +-
+ drivers/clk/qcom/wcsscc-qcs404.c                   | 290 +++++++++
+ drivers/remoteproc/qcom_q6v5_wcss.c                | 666 +++++++++++++++++++--
+ include/dt-bindings/clock/qcom,gcc-qcs404.h        |   3 +
+ include/dt-bindings/clock/qcom,wcss-qcs404.h       |  24 +
+ 9 files changed, 1018 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
+ create mode 100644 drivers/clk/qcom/wcsscc-qcs404.c
+ create mode 100644 include/dt-bindings/clock/qcom,wcss-qcs404.h
 
-
-So please make this call dump(rproc, segment, data + offset) and move
-the rproc_da_to_va() into the else block.
-
-> +		} else {
-> +			if (!ptr) {
-> +				dev_err(&rproc->dev,
->  				"invalid coredump segment (%pad, %zu)\n",
->  				&segment->da, segment->size);
-> -			memset(data + offset, 0xff, segment->size);
-> -		} else {
-> -			memcpy(data + offset, ptr, segment->size);
-> +				memset(data + offset, 0xff, segment->size);
-> +			} else {
-> +				memcpy(data + offset, ptr, segment->size);
-> +			}
->  		}
->  
->  		offset += phdr->p_filesz;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index e3c5d856b6da..0fbb01a9955c 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -399,6 +399,8 @@ enum rproc_crash_type {
->   * @node:	list node related to the rproc segment list
->   * @da:		device address of the segment
->   * @size:	size of the segment
-> + * @dump:	custom dump function to fill device memory segment associated
-> + *		with coredump
->   */
->  struct rproc_dump_segment {
->  	struct list_head node;
-> @@ -406,6 +408,7 @@ struct rproc_dump_segment {
->  	dma_addr_t da;
->  	size_t size;
->  
-> +	void (*dump)(struct rproc *rproc, void *ptr, size_t len, void *priv);
-
-"priv" isn't the best name to represent the memory to which you expect
-dump to write to. Please call it "dest".
-
->  	loff_t offset;
->  };
-
-Regards,
-Bjorn
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
