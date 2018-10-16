@@ -1,38 +1,47 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH] rpmsg: virtio_rpmsg_bus: replace "%p" with "%pK"
-Date: Tue, 23 Oct 2018 20:19:09 -0500
-Message-ID: <20181024011909.21674-1-s-anna@ti.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
+Content-Transfer-Encoding: quoted-printable
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1539337244-9505-3-git-send-email-govinds@codeaurora.org>
+References: <1539337244-9505-1-git-send-email-govinds@codeaurora.org>
+ <1539337244-9505-3-git-send-email-govinds@codeaurora.org>
+Message-ID: <153965169170.5275.12866721145155274552@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v2 2/6] clk: qcom: Add WCSS gcc clock control for QCS404
+Date: Mon, 15 Oct 2018 18:01:31 -0700
+To: Govind Singh <govinds@codeaurora.org>, andy.gross@linaro.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org, sibis@codeaurora.org, sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The virtio_rpmsg_bus driver uses the "%p" format-specifier for
-printing the vring buffer address. This prints only a hashed
-pointer even for previliged users. Use "%pK" instead so that
-the address can be printed during debug using kptr_restrict
-sysctl.
+Quoting Govind Singh (2018-10-12 02:40:40)
+>  static const struct regmap_config gcc_qcs404_regmap_config =3D {
+> @@ -2669,7 +2699,7 @@ enum {
+>         .fast_io        =3D true,
+>  };
+>  =
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> -static const struct qcom_cc_desc gcc_qcs404_desc =3D {
+> +static struct qcom_cc_desc gcc_qcs404_desc =3D {
+>         .config =3D &gcc_qcs404_regmap_config,
+>         .clks =3D gcc_qcs404_clocks,
+>         .num_clks =3D ARRAY_SIZE(gcc_qcs404_clocks),
+> @@ -2702,6 +2732,11 @@ static int gcc_qcs404_probe(struct platform_device=
+ *pdev)
+>         clk_prepare_enable(apss_ahb_clk_src.clkr.hw.clk);
+>         clk_prepare_enable(gpll0_ao_out_main.clkr.hw.clk);
+>  =
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index f29dee731026..1345f373a1a0 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -950,7 +950,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
- 		goto vqs_del;
- 	}
- 
--	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
-+	dev_dbg(&vdev->dev, "buffers: va %pK, dma %pad\n",
- 		bufs_va, &vrp->bufs_dma);
- 
- 	/* half of the buffers is dedicated for RX */
--- 
-2.19.1
+> +       if (of_property_read_bool(pdev->dev.of_node, "qcom,wcss-protected=
+")) {
+
+Is this documented? And shouldn't it be inverted? If it isn't protected
+then we do this?
+
+> +               gcc_qcs404_clocks[GCC_WCSS_Q6_AHB_CBCR_CLK] =3D &gcc_wdsp=
+_q6ss_ahbs_clk.clkr;
+> +               gcc_qcs404_clocks[GCC_WCSS_Q6_AXIM_CBCR_CLK] =3D &gcc_wds=
+p_q6ss_axim_clk.clkr;
+> +       }
+> +
+>         return qcom_cc_really_probe(pdev, &gcc_qcs404_desc, regmap);
+>  }
+> =20
