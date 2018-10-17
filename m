@@ -1,42 +1,28 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH 1/6] dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
-Date: Tue,  9 Oct 2018 18:35:52 +0530
-Message-Id: <1539090357-20853-2-git-send-email-govinds@codeaurora.org>
-In-Reply-To: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
-References: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Govind Singh <govinds@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 17 Oct 2018 15:02:11 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add QCOM WCSS GCC clock
+ bindings
+Message-ID: <20181017200211.GA17394@bogus>
+References: <1539337244-9505-1-git-send-email-govinds@codeaurora.org>
+ <1539337244-9505-2-git-send-email-govinds@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539337244-9505-2-git-send-email-govinds@codeaurora.org>
+To: Govind Singh <govinds@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add device tree bindings for WiFi QDSP gcc clock controls found in
-QCS404 soc.
+On Fri, 12 Oct 2018 15:10:39 +0530, Govind Singh wrote:
+> Add device tree bindings for WiFi QDSP gcc clock controls found in
+> QCS404 soc.
+> 
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> ---
+>  include/dt-bindings/clock/qcom,gcc-qcs404.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- include/dt-bindings/clock/qcom,gcc-qcs404.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-index e2def29..ba6bc55 100644
---- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-+++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-@@ -147,6 +147,8 @@
- #define GCC_MDP_TBU_CLK					138
- #define GCC_QDSS_DAP_CLK				139
- #define GCC_DCC_XO_CLK					140
-+#define GCC_WCSS_Q6_AHB_CBCR_CLK			141
-+#define GCC_WCSS_Q6_AXIM_CBCR_CLK			142
- 
- #define GCC_GENI_IR_BCR					0
- #define GCC_USB_HS_BCR					1
-@@ -162,5 +164,6 @@
- #define GCC_PCIE_0_LINK_DOWN_BCR			11
- #define GCC_PCIEPHY_0_PHY_BCR				12
- #define GCC_EMAC_BCR					13
-+#define GCC_WDSP_RESTART				14
- 
- #endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Rob Herring <robh@kernel.org>
