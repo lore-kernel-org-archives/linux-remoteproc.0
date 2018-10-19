@@ -1,87 +1,58 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v2 3/6] dt-bindings: clock: qcom: Introduce QCOM WCSS Q6DSP clock bindings
-Date: Fri, 12 Oct 2018 15:10:41 +0530
-Message-Id: <1539337244-9505-4-git-send-email-govinds@codeaurora.org>
-In-Reply-To: <1539337244-9505-1-git-send-email-govinds@codeaurora.org>
-References: <1539337244-9505-1-git-send-email-govinds@codeaurora.org>
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Govind Singh <govinds@codeaurora.org>
+Date: Fri, 19 Oct 2018 11:35:14 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 0/5] Add coredump support for Q6v5 Modem remoteproc
+Message-ID: <20181019183514.GU12063@builder>
+References: <20181017135527.30592-1-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181017135527.30592-1-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org, kyan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add device tree bindings for WiFi QDSP subsystem clock controls
-found in OCS405 soc.
+On Wed 17 Oct 06:55 PDT 2018, Sibi Sankar wrote:
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,wcsscc.txt      | 26 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,wcss-qcs404.h       | 24 ++++++++++++++++++++
- 2 files changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
- create mode 100644 include/dt-bindings/clock/qcom,wcss-qcs404.h
+> This patch series add coredump support for modem on SDM845, MSM8996
+> and MSM8916 SoCs. Modem requires the mba to be loaded before a
+> coredump can be performed and this is achieved using a custom per
+> segment dump function.
+> 
+> V5:
+>   Add software bypass to avoid high MX current in mpss_load error path.
+>   Remove the proxy votes of clk/regs only after the active/reset clks/regs.
+>   Reclaim MBA memory after mpss_load failure in mba_reclaim func.
+>   Revert to dump_fn to as done with v3 with a mask based approach.
+> 
+> V4:
+>   Addressed Bjorn's comments.
+> 
+> V3:
+>   [bjorn]:replace prepare/unprepare ops with a more generalised per segment
+>   dump function
+> 
+> V2:
+>   Introduce prepare/unprepare ops for rproc coredump
+> 
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,wcsscc.txt b/Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
-new file mode 100644
-index 0000000..2b19ef0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
-@@ -0,0 +1,26 @@
-+Qualcomm WCSS Clock Controller Binding
-+-----------------------------------------------
-+
-+Required properties :
-+- compatible		: shall contain "qcom,qcs404-wcsscc"
-+- #clock-cells		: from common clock binding, shall contain 1.
-+- reg			: shall contain base register address and size,
-+			  in the order
-+			Index-0 maps to WCSS_Q6SSTOP clocks register region
-+			Index-1 maps to WCSS_TCSR register region
-+			Index-2 maps to WCSS_QDSP6SS register region
-+
-+Optional properties :
-+- reg-names	: register names of WCSS domain
-+		 "wcss_q6sstop", "wcnss_tcsr", "wcss_qdsp6ss".
-+
-+Example:
-+The below node has to be defined in the cases where the WCSS peripheral loader
-+would bring the subsystem out of reset.
-+
-+	clock_wcsscc: qcom,wcsscc@7000000 {
-+		compatible = "qcom,qcs404-wcsscc";
-+		reg = <0x07500000 0x4e000>, <0x07550000 0x8012>, <0x07400000 0x104>;
-+		reg-names = "wcss_q6sstop", "wcnss_tcsr", "wcss_qdsp6ss";
-+		#clock-cells = <1>;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,wcss-qcs404.h b/include/dt-bindings/clock/qcom,wcss-qcs404.h
-new file mode 100644
-index 0000000..45dd659
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,wcss-qcs404.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_WCSS_QCS404_H
-+#define _DT_BINDINGS_CLK_WCSS_QCS404_H
-+
-+#define WCSS_AHBFABRIC_CBCR_CLK			0
-+#define WCSS_AHBS_CBCR_CLK			1
-+#define WCSS_TCM_CBCR_CLK			2
-+#define WCSS_AHBM_CBCR_CLK			3
-+#define WCSS_AXIM_CBCR_CLK			4
-+#define WCSS_BCR_CBCR_CLK			5
-+#define WCSS_LCC_CBCR_CLK			6
-+#define WCSS_QDSP6SS_XO_CBCR_CLK		7
-+#define WCSS_QDSP6SS_SLEEP_CBCR_CLK		8
-+#define WCSS_QDSP6SS_GFMMUX_CLK			9
-+
-+#define Q6SSTOP_QDSP6SS_RESET			0
-+#define Q6SSTOP_QDSP6SS_CORE_RESET		1
-+#define Q6SSTOP_QDSP6SS_BUS_RESET		2
-+#define Q6SSTOP_BCR_RESET			3
-+#endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Applied
+
+Regards,
+Bjorn
+
+> Sibi Sankar (5):
+>   remoteproc: Introduce custom dump function for each remoteproc segment
+>   remoteproc: Add mechanism for custom dump function assignment
+>   remoteproc: qcom: q6v5-mss: Refactor mba load/unload sequence
+>   remoteproc: qcom: q6v5-mss: Add custom dump function for modem
+>   remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump
+> 
+>  drivers/remoteproc/qcom_q6v5_mss.c   | 379 +++++++++++++++++----------
+>  drivers/remoteproc/remoteproc_core.c |  55 +++-
+>  include/linux/remoteproc.h           |  11 +
+>  3 files changed, 303 insertions(+), 142 deletions(-)
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
