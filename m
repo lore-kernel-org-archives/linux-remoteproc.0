@@ -1,113 +1,70 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 02/17] remoteproc: add rproc_va_to_pa function
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v4 02/17] remoteproc: add rproc_va_to_pa function
+Date: Tue, 23 Oct 2018 19:51:30 +0000
+Message-ID: <68acbbf905384f6c80b646330a3d1344@SFHDAG7NODE2.st.com>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
  <1532697292-14272-3-git-send-email-loic.pallardy@st.com>
  <91e489e7-86c3-6ee3-918d-151ef1697429@ti.com>
- <68acbbf905384f6c80b646330a3d1344@SFHDAG7NODE2.st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <8f19b68f-10f5-b21f-9143-eadb0103999b@ti.com>
-Date: Tue, 23 Oct 2018 22:19:24 -0500
-MIME-Version: 1.0
-In-Reply-To: <68acbbf905384f6c80b646330a3d1344@SFHDAG7NODE2.st.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <91e489e7-86c3-6ee3-918d-151ef1697429@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 10/23/18 2:51 PM, Loic PALLARDY wrote:
-> Hi Suman,
-> 
->> -----Original Message-----
->> From: Suman Anna <s-anna@ti.com>
->> Sent: mardi 23 octobre 2018 18:51
->> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.org;
->> ohad@wizery.com
->> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
->> benjamin.gaignard@linaro.org
->> Subject: Re: [PATCH v4 02/17] remoteproc: add rproc_va_to_pa function
->>
->> Hi Loic, Bjorn,
->>
->> On 7/27/18 8:14 AM, Loic Pallardy wrote:
->>> This new function translates CPU virtual address in
->>> CPU physical one according to virtual address location.
->>>
->>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
->>> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>> ---
->>>  drivers/remoteproc/remoteproc_core.c | 18 +++++++++++++++++-
->>>  1 file changed, 17 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c
->> b/drivers/remoteproc/remoteproc_core.c
->>> index 437fabf..8e5fe1e 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -140,6 +140,22 @@ static void rproc_disable_iommu(struct rproc
->> *rproc)
->>>  	iommu_domain_free(domain);
->>>  }
->>>
->>> +static phys_addr_t rproc_va_to_pa(void *cpu_addr)
->>> +{
->>> +	/*
->>> +	 * Return physical address according to virtual address location
->>> +	 * - in vmalloc: if region ioremapped or defined as
->> dma_alloc_coherent
->>> +	 * - in kernel: if region allocated in generic dma memory pool
->>> +	 */
->>> +	if (is_vmalloc_addr(cpu_addr)) {
->>> +		return page_to_phys(vmalloc_to_page(cpu_addr)) +
->>> +				    offset_in_page(cpu_addr);
->>> +	}
->>> +
->>> +	WARN_ON(!virt_addr_valid(cpu_addr));
->>> +	return virt_to_phys(cpu_addr);
->>> +}
->>> +
->>>  /**
->>>   * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc
->> address
->>>   * @rproc: handle of a remote processor
->>> @@ -711,7 +727,7 @@ static int rproc_handle_carveout(struct rproc
->> *rproc,
->>>  	 * In this case, the device address and the physical address
->>>  	 * are the same.
->>>  	 */
->>> -	rsc->pa = dma;
->>> +	rsc->pa = (u32)rproc_va_to_pa(va);
->>
->> While I agree with the direction here, we ought to add a check here
->> warning users if some address bits are getting lost as a result of the
->> typecast. Granted the issue may have been present previously with
->> dma_addr_t as well, but most platforms were using 32-bit dma addresses,
->> so this was kinda masked. There are ARMv7 platforms with LPAE enabled
->> allowing physical addresses > 32-bits.
->>
->> In anycase, we definitely have a need for a v2 for the fw_rsc_carveout
->> structure to deal with 64-bit addresses.
->>
-> 
-> Agree with you.
-> Assumption for this series was to keep resource table as it is. Resource table improvement is planned in a second step.
-
-Perhaps, we should add a WARN_ON for the time being until we enhance the
-resource table for 64-bit platforms/addresses.
-
-regards
-Suman
-
-> Regards,
-> Loic
-> 
->> regards
->> Suman
->>
->>>
->>>  	carveout->va = va;
->>>  	carveout->len = rsc->len;
->>>
-> 
+SGkgU3VtYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4g
+QW5uYSA8cy1hbm5hQHRpLmNvbT4NCj4gU2VudDogbWFyZGkgMjMgb2N0b2JyZSAyMDE4IDE4OjUx
+DQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT47IGJqb3JuLmFuZGVy
+c3NvbkBsaW5hcm8ub3JnOw0KPiBvaGFkQHdpemVyeS5jb20NCj4gQ2M6IGxpbnV4LXJlbW90ZXBy
+b2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBBcm5h
+dWQgUE9VTElRVUVOIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT47DQo+IGJlbmphbWluLmdhaWdu
+YXJkQGxpbmFyby5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAwMi8xN10gcmVtb3RlcHJv
+YzogYWRkIHJwcm9jX3ZhX3RvX3BhIGZ1bmN0aW9uDQo+IA0KPiBIaSBMb2ljLCBCam9ybiwNCj4g
+DQo+IE9uIDcvMjcvMTggODoxNCBBTSwgTG9pYyBQYWxsYXJkeSB3cm90ZToNCj4gPiBUaGlzIG5l
+dyBmdW5jdGlvbiB0cmFuc2xhdGVzIENQVSB2aXJ0dWFsIGFkZHJlc3MgaW4NCj4gPiBDUFUgcGh5
+c2ljYWwgb25lIGFjY29yZGluZyB0byB2aXJ0dWFsIGFkZHJlc3MgbG9jYXRpb24uDQo+ID4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBMb2ljIFBhbGxhcmR5IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCj4g
+PiBBY2tlZC1ieTogQmpvcm4gQW5kZXJzc29uIDxiam9ybi5hbmRlcnNzb25AbGluYXJvLm9yZz4N
+Cj4gPiAtLS0NCj4gPiAgZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jIHwgMTgg
+KysrKysrKysrKysrKysrKystDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCsp
+LCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9yZW1vdGVwcm9j
+L3JlbW90ZXByb2NfY29yZS5jDQo+IGIvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29y
+ZS5jDQo+ID4gaW5kZXggNDM3ZmFiZi4uOGU1ZmUxZSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJz
+L3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gPiArKysgYi9kcml2ZXJzL3JlbW90ZXBy
+b2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gPiBAQCAtMTQwLDYgKzE0MCwyMiBAQCBzdGF0aWMgdm9p
+ZCBycHJvY19kaXNhYmxlX2lvbW11KHN0cnVjdCBycHJvYw0KPiAqcnByb2MpDQo+ID4gIAlpb21t
+dV9kb21haW5fZnJlZShkb21haW4pOw0KPiA+ICB9DQo+ID4NCj4gPiArc3RhdGljIHBoeXNfYWRk
+cl90IHJwcm9jX3ZhX3RvX3BhKHZvaWQgKmNwdV9hZGRyKQ0KPiA+ICt7DQo+ID4gKwkvKg0KPiA+
+ICsJICogUmV0dXJuIHBoeXNpY2FsIGFkZHJlc3MgYWNjb3JkaW5nIHRvIHZpcnR1YWwgYWRkcmVz
+cyBsb2NhdGlvbg0KPiA+ICsJICogLSBpbiB2bWFsbG9jOiBpZiByZWdpb24gaW9yZW1hcHBlZCBv
+ciBkZWZpbmVkIGFzDQo+IGRtYV9hbGxvY19jb2hlcmVudA0KPiA+ICsJICogLSBpbiBrZXJuZWw6
+IGlmIHJlZ2lvbiBhbGxvY2F0ZWQgaW4gZ2VuZXJpYyBkbWEgbWVtb3J5IHBvb2wNCj4gPiArCSAq
+Lw0KPiA+ICsJaWYgKGlzX3ZtYWxsb2NfYWRkcihjcHVfYWRkcikpIHsNCj4gPiArCQlyZXR1cm4g
+cGFnZV90b19waHlzKHZtYWxsb2NfdG9fcGFnZShjcHVfYWRkcikpICsNCj4gPiArCQkJCSAgICBv
+ZmZzZXRfaW5fcGFnZShjcHVfYWRkcik7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJV0FSTl9PTigh
+dmlydF9hZGRyX3ZhbGlkKGNwdV9hZGRyKSk7DQo+ID4gKwlyZXR1cm4gdmlydF90b19waHlzKGNw
+dV9hZGRyKTsNCj4gPiArfQ0KPiA+ICsNCj4gPiAgLyoqDQo+ID4gICAqIHJwcm9jX2RhX3RvX3Zh
+KCkgLSBsb29rdXAgdGhlIGtlcm5lbCB2aXJ0dWFsIGFkZHJlc3MgZm9yIGEgcmVtb3RlcHJvYw0K
+PiBhZGRyZXNzDQo+ID4gICAqIEBycHJvYzogaGFuZGxlIG9mIGEgcmVtb3RlIHByb2Nlc3Nvcg0K
+PiA+IEBAIC03MTEsNyArNzI3LDcgQEAgc3RhdGljIGludCBycHJvY19oYW5kbGVfY2FydmVvdXQo
+c3RydWN0IHJwcm9jDQo+ICpycHJvYywNCj4gPiAgCSAqIEluIHRoaXMgY2FzZSwgdGhlIGRldmlj
+ZSBhZGRyZXNzIGFuZCB0aGUgcGh5c2ljYWwgYWRkcmVzcw0KPiA+ICAJICogYXJlIHRoZSBzYW1l
+Lg0KPiA+ICAJICovDQo+ID4gLQlyc2MtPnBhID0gZG1hOw0KPiA+ICsJcnNjLT5wYSA9ICh1MzIp
+cnByb2NfdmFfdG9fcGEodmEpOw0KPiANCj4gV2hpbGUgSSBhZ3JlZSB3aXRoIHRoZSBkaXJlY3Rp
+b24gaGVyZSwgd2Ugb3VnaHQgdG8gYWRkIGEgY2hlY2sgaGVyZQ0KPiB3YXJuaW5nIHVzZXJzIGlm
+IHNvbWUgYWRkcmVzcyBiaXRzIGFyZSBnZXR0aW5nIGxvc3QgYXMgYSByZXN1bHQgb2YgdGhlDQo+
+IHR5cGVjYXN0LiBHcmFudGVkIHRoZSBpc3N1ZSBtYXkgaGF2ZSBiZWVuIHByZXNlbnQgcHJldmlv
+dXNseSB3aXRoDQo+IGRtYV9hZGRyX3QgYXMgd2VsbCwgYnV0IG1vc3QgcGxhdGZvcm1zIHdlcmUg
+dXNpbmcgMzItYml0IGRtYSBhZGRyZXNzZXMsDQo+IHNvIHRoaXMgd2FzIGtpbmRhIG1hc2tlZC4g
+VGhlcmUgYXJlIEFSTXY3IHBsYXRmb3JtcyB3aXRoIExQQUUgZW5hYmxlZA0KPiBhbGxvd2luZyBw
+aHlzaWNhbCBhZGRyZXNzZXMgPiAzMi1iaXRzLg0KPiANCj4gSW4gYW55Y2FzZSwgd2UgZGVmaW5p
+dGVseSBoYXZlIGEgbmVlZCBmb3IgYSB2MiBmb3IgdGhlIGZ3X3JzY19jYXJ2ZW91dA0KPiBzdHJ1
+Y3R1cmUgdG8gZGVhbCB3aXRoIDY0LWJpdCBhZGRyZXNzZXMuDQo+IA0KDQpBZ3JlZSB3aXRoIHlv
+dS4NCkFzc3VtcHRpb24gZm9yIHRoaXMgc2VyaWVzIHdhcyB0byBrZWVwIHJlc291cmNlIHRhYmxl
+IGFzIGl0IGlzLiBSZXNvdXJjZSB0YWJsZSBpbXByb3ZlbWVudCBpcyBwbGFubmVkIGluIGEgc2Vj
+b25kIHN0ZXAuDQpSZWdhcmRzLA0KTG9pYw0KDQo+IHJlZ2FyZHMNCj4gU3VtYW4NCj4gDQo+ID4N
+Cj4gPiAgCWNhcnZlb3V0LT52YSA9IHZhOw0KPiA+ICAJY2FydmVvdXQtPmxlbiA9IHJzYy0+bGVu
+Ow0KPiA+DQoNCg==
