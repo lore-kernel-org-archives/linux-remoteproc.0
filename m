@@ -1,157 +1,88 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH v4 01/17] remoteproc: configure IOMMU only if device
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v4 01/17] remoteproc: configure IOMMU only if device
  address requested
+Date: Tue, 23 Oct 2018 19:40:39 +0000
+Message-ID: <c23ecc9e33fd477c9afa03066b245644@SFHDAG7NODE2.st.com>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
  <1532697292-14272-2-git-send-email-loic.pallardy@st.com>
  <f6af2ded-dfcd-7cb9-6557-a17c40166836@ti.com>
- <c23ecc9e33fd477c9afa03066b245644@SFHDAG7NODE2.st.com>
-Message-ID: <42092363-d9ff-9a98-680d-9c8fbeaed2be@ti.com>
-Date: Tue, 23 Oct 2018 22:46:35 -0500
-MIME-Version: 1.0
-In-Reply-To: <c23ecc9e33fd477c9afa03066b245644@SFHDAG7NODE2.st.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <f6af2ded-dfcd-7cb9-6557-a17c40166836@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 10/23/18 2:40 PM, Loic PALLARDY wrote:
-> Hi Suman,
-> 
->> -----Original Message-----
->> From: Suman Anna <s-anna@ti.com>
->> Sent: mardi 23 octobre 2018 19:26
->> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.org;
->> ohad@wizery.com
->> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
->> benjamin.gaignard@linaro.org
->> Subject: Re: [PATCH v4 01/17] remoteproc: configure IOMMU only if device
->> address requested
->>
->> Hi Loic,
->>
->> On 7/27/18 8:14 AM, Loic Pallardy wrote:
->>> If there is no IOMMU associate to remote processor device,
->>> remoteproc_core won't be able to satisfy device address requested
->>> in firmware resource table.
->>> Return an error as configuration won't be coherent.
->>>
->>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
->>
->> This patch is breaking my Davinci platforms. It is not really required
->> that you _should_ have IOMMUs when a valid DA is mentioned. Please see
->> the existing description (paras 4 and 5) on the fw_rsc_carveout
->> kerneldoc in remoteproc.h file.
-> 
-> Thanks for pointing this comment. Indeed sMMU is not mandatory, and at first sight I agree we should remove the restriction introduced by the patch.
-> Driver porting on the series should be done before adding this.
->>
->> We do have platforms where we have some internal sub-modules within the
->> remote processor sub-system that provides some linear
->> address-translation (most common case with 32-bit processors supporting
->> 64-bit addresses). Also, we have some upcoming SoCs where we have an
->> MMU
->> but is not programmable by Linux.
->>
->> There is one comment there, but I don't think this is actually handled
->> in the current remoteproc core.
->> "If @da is set to
->>  * FW_RSC_ADDR_ANY, then the host will dynamically allocate it, and then
->>  * overwrite @da with the dynamically allocated address."
->>
-> I don't remember it was implemented like described.
-
-Yes, it was missing, and one of your patches seem to add this behavior
-now. That said, I really don't think the remoteproc core can dictate the
- da. Even if the individual remoteproc driver were to furnish this, how
-would you get such data without forcing a fixed behavior for all
-possible firmwares (not desirable). We should get rid of this comment,
-and any code that seems to do this.
-
-> 
-> I have remarks about the comment:
-> "* We will always use @da to negotiate the device addresses, even if it
->  * isn't using an iommu. In that case, though, it will obviously contain
->  * physical addresses."
-> 
-> When there is no sMMU, we can't consider that da contains a physical address because coprocessor can have its own memory map just because it is a 32bit processor accessing only a part of the memory and the main is 64bit one. The 2 processors won't see the internal memory at the same base address for example.
-
-Agreed, believe it was valid when it was written (32-bit platforms
-supporting 32-bit addresses). I think this is akin to an IPA
-(Intermediate Physical Address).
-
-> So what should we do when carveout allocated by host is not fitting with resource table request?
-> - put a warning and overwrite da address in the resource table?
-
-Hmm, why da? This goes to my earlier comment about how you are able to
-decide the da. Atleast your current ST driver seems to be assigning the
-same value as the physical bus address for da, which would prompt why
-you would still need a carveout entry in the resource table if it is
-truly one-to-one.
-
-Eg, I have an upcoming usecase with R5Fs on newer TI SoCs where we
-actually have a sub-module called Region Address Translator (RAT) which
-can only be programmed by the R5F for translating the 32-bit CPU
-addresses to larger physical address space, and yet I need the da and pa
-to be able to do loading. I cannot dictate the da since that is what the
-firmware images are linked against. So, have to rely on the firmware
-providing this data for me.
-
-> - stop rproc probe as no match detected?
-
-I think that is the safest approach.
-
-> 
-> Later in the series, carveout allocation is changed. Resource table carveout are either linked with an existing carveout registered by driver or added to carveout list for allocations.
-> In the case you described, TI driver should first register the specific carveout regions thank to the helper.
-
-The current series should still continue to work without having to
-enforce new name assignments (unless needed and being defined to use the
-new features being added).
-
-> 
-> Regards,
-> Loic
-> 
->> regards
->> Suman
->>
->>> ---
->>>  drivers/remoteproc/remoteproc_core.c | 10 +++++++++-
->>>  1 file changed, 9 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c
->> b/drivers/remoteproc/remoteproc_core.c
->>> index 4cd1a8e..437fabf 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -657,7 +657,15 @@ static int rproc_handle_carveout(struct rproc
->> *rproc,
->>>  	 * to use the iommu-based DMA API: we expect 'dma' to contain the
->>>  	 * physical address in this case.
->>>  	 */
->>> -	if (rproc->domain) {
->>> +
->>> +	if (rsc->da != FW_RSC_ADDR_ANY && !rproc->domain) {
-
-Maybe this should really be a reverse check when you have MMUs,
-if (rproc->domain && rsc->da == FW_RSC_ADDR_ANY)
-
-regards
-Suman
-
->>> +		dev_err(dev->parent,
->>> +			"Bad carveout rsc configuration\n");
->>> +		ret = -ENOMEM;
->>> +		goto dma_free;
->>> +	}
->>> +
->>> +	if (rsc->da != FW_RSC_ADDR_ANY && rproc->domain) {
->>>  		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
->>>  		if (!mapping) {
->>>  			ret = -ENOMEM;
->>>
-> 
+SGkgU3VtYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4g
+QW5uYSA8cy1hbm5hQHRpLmNvbT4NCj4gU2VudDogbWFyZGkgMjMgb2N0b2JyZSAyMDE4IDE5OjI2
+DQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT47IGJqb3JuLmFuZGVy
+c3NvbkBsaW5hcm8ub3JnOw0KPiBvaGFkQHdpemVyeS5jb20NCj4gQ2M6IGxpbnV4LXJlbW90ZXBy
+b2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBBcm5h
+dWQgUE9VTElRVUVOIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT47DQo+IGJlbmphbWluLmdhaWdu
+YXJkQGxpbmFyby5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAwMS8xN10gcmVtb3RlcHJv
+YzogY29uZmlndXJlIElPTU1VIG9ubHkgaWYgZGV2aWNlDQo+IGFkZHJlc3MgcmVxdWVzdGVkDQo+
+IA0KPiBIaSBMb2ljLA0KPiANCj4gT24gNy8yNy8xOCA4OjE0IEFNLCBMb2ljIFBhbGxhcmR5IHdy
+b3RlOg0KPiA+IElmIHRoZXJlIGlzIG5vIElPTU1VIGFzc29jaWF0ZSB0byByZW1vdGUgcHJvY2Vz
+c29yIGRldmljZSwNCj4gPiByZW1vdGVwcm9jX2NvcmUgd29uJ3QgYmUgYWJsZSB0byBzYXRpc2Z5
+IGRldmljZSBhZGRyZXNzIHJlcXVlc3RlZA0KPiA+IGluIGZpcm13YXJlIHJlc291cmNlIHRhYmxl
+Lg0KPiA+IFJldHVybiBhbiBlcnJvciBhcyBjb25maWd1cmF0aW9uIHdvbid0IGJlIGNvaGVyZW50
+Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTG9pYyBQYWxsYXJkeSA8bG9pYy5wYWxsYXJkeUBz
+dC5jb20+DQo+IA0KPiBUaGlzIHBhdGNoIGlzIGJyZWFraW5nIG15IERhdmluY2kgcGxhdGZvcm1z
+LiBJdCBpcyBub3QgcmVhbGx5IHJlcXVpcmVkDQo+IHRoYXQgeW91IF9zaG91bGRfIGhhdmUgSU9N
+TVVzIHdoZW4gYSB2YWxpZCBEQSBpcyBtZW50aW9uZWQuIFBsZWFzZSBzZWUNCj4gdGhlIGV4aXN0
+aW5nIGRlc2NyaXB0aW9uIChwYXJhcyA0IGFuZCA1KSBvbiB0aGUgZndfcnNjX2NhcnZlb3V0DQo+
+IGtlcm5lbGRvYyBpbiByZW1vdGVwcm9jLmggZmlsZS4NCg0KVGhhbmtzIGZvciBwb2ludGluZyB0
+aGlzIGNvbW1lbnQuIEluZGVlZCBzTU1VIGlzIG5vdCBtYW5kYXRvcnksIGFuZCBhdCBmaXJzdCBz
+aWdodCBJIGFncmVlIHdlIHNob3VsZCByZW1vdmUgdGhlIHJlc3RyaWN0aW9uIGludHJvZHVjZWQg
+YnkgdGhlIHBhdGNoLg0KRHJpdmVyIHBvcnRpbmcgb24gdGhlIHNlcmllcyBzaG91bGQgYmUgZG9u
+ZSBiZWZvcmUgYWRkaW5nIHRoaXMuDQo+IA0KPiBXZSBkbyBoYXZlIHBsYXRmb3JtcyB3aGVyZSB3
+ZSBoYXZlIHNvbWUgaW50ZXJuYWwgc3ViLW1vZHVsZXMgd2l0aGluIHRoZQ0KPiByZW1vdGUgcHJv
+Y2Vzc29yIHN1Yi1zeXN0ZW0gdGhhdCBwcm92aWRlcyBzb21lIGxpbmVhcg0KPiBhZGRyZXNzLXRy
+YW5zbGF0aW9uIChtb3N0IGNvbW1vbiBjYXNlIHdpdGggMzItYml0IHByb2Nlc3NvcnMgc3VwcG9y
+dGluZw0KPiA2NC1iaXQgYWRkcmVzc2VzKS4gQWxzbywgd2UgaGF2ZSBzb21lIHVwY29taW5nIFNv
+Q3Mgd2hlcmUgd2UgaGF2ZSBhbg0KPiBNTVUNCj4gYnV0IGlzIG5vdCBwcm9ncmFtbWFibGUgYnkg
+TGludXguDQo+IA0KPiBUaGVyZSBpcyBvbmUgY29tbWVudCB0aGVyZSwgYnV0IEkgZG9uJ3QgdGhp
+bmsgdGhpcyBpcyBhY3R1YWxseSBoYW5kbGVkDQo+IGluIHRoZSBjdXJyZW50IHJlbW90ZXByb2Mg
+Y29yZS4NCj4gIklmIEBkYSBpcyBzZXQgdG8NCj4gICogRldfUlNDX0FERFJfQU5ZLCB0aGVuIHRo
+ZSBob3N0IHdpbGwgZHluYW1pY2FsbHkgYWxsb2NhdGUgaXQsIGFuZCB0aGVuDQo+ICAqIG92ZXJ3
+cml0ZSBAZGEgd2l0aCB0aGUgZHluYW1pY2FsbHkgYWxsb2NhdGVkIGFkZHJlc3MuIg0KPiANCkkg
+ZG9uJ3QgcmVtZW1iZXIgaXQgd2FzIGltcGxlbWVudGVkIGxpa2UgZGVzY3JpYmVkLg0KDQpJIGhh
+dmUgcmVtYXJrcyBhYm91dCB0aGUgY29tbWVudDoNCiIqIFdlIHdpbGwgYWx3YXlzIHVzZSBAZGEg
+dG8gbmVnb3RpYXRlIHRoZSBkZXZpY2UgYWRkcmVzc2VzLCBldmVuIGlmIGl0DQogKiBpc24ndCB1
+c2luZyBhbiBpb21tdS4gSW4gdGhhdCBjYXNlLCB0aG91Z2gsIGl0IHdpbGwgb2J2aW91c2x5IGNv
+bnRhaW4NCiAqIHBoeXNpY2FsIGFkZHJlc3Nlcy4iDQoNCldoZW4gdGhlcmUgaXMgbm8gc01NVSwg
+d2UgY2FuJ3QgY29uc2lkZXIgdGhhdCBkYSBjb250YWlucyBhIHBoeXNpY2FsIGFkZHJlc3MgYmVj
+YXVzZSBjb3Byb2Nlc3NvciBjYW4gaGF2ZSBpdHMgb3duIG1lbW9yeSBtYXAganVzdCBiZWNhdXNl
+IGl0IGlzIGEgMzJiaXQgcHJvY2Vzc29yIGFjY2Vzc2luZyBvbmx5IGEgcGFydCBvZiB0aGUgbWVt
+b3J5IGFuZCB0aGUgbWFpbiBpcyA2NGJpdCBvbmUuIFRoZSAyIHByb2Nlc3NvcnMgd29uJ3Qgc2Vl
+IHRoZSBpbnRlcm5hbCBtZW1vcnkgYXQgdGhlIHNhbWUgYmFzZSBhZGRyZXNzIGZvciBleGFtcGxl
+Lg0KDQpTbyB3aGF0IHNob3VsZCB3ZSBkbyB3aGVuIGNhcnZlb3V0IGFsbG9jYXRlZCBieSBob3N0
+IGlzIG5vdCBmaXR0aW5nIHdpdGggcmVzb3VyY2UgdGFibGUgcmVxdWVzdD8NCi0gcHV0IGEgd2Fy
+bmluZyBhbmQgb3ZlcndyaXRlIGRhIGFkZHJlc3MgaW4gdGhlIHJlc291cmNlIHRhYmxlPw0KLSBz
+dG9wIHJwcm9jIHByb2JlIGFzIG5vIG1hdGNoIGRldGVjdGVkPw0KDQpMYXRlciBpbiB0aGUgc2Vy
+aWVzLCBjYXJ2ZW91dCBhbGxvY2F0aW9uIGlzIGNoYW5nZWQuIFJlc291cmNlIHRhYmxlIGNhcnZl
+b3V0IGFyZSBlaXRoZXIgbGlua2VkIHdpdGggYW4gZXhpc3RpbmcgY2FydmVvdXQgcmVnaXN0ZXJl
+ZCBieSBkcml2ZXIgb3IgYWRkZWQgdG8gY2FydmVvdXQgbGlzdCBmb3IgYWxsb2NhdGlvbnMuDQpJ
+biB0aGUgY2FzZSB5b3UgZGVzY3JpYmVkLCBUSSBkcml2ZXIgc2hvdWxkIGZpcnN0IHJlZ2lzdGVy
+IHRoZSBzcGVjaWZpYyBjYXJ2ZW91dCByZWdpb25zIHRoYW5rIHRvIHRoZSBoZWxwZXIuDQoNClJl
+Z2FyZHMsDQpMb2ljDQoNCj4gcmVnYXJkcw0KPiBTdW1hbg0KPiANCj4gPiAtLS0NCj4gPiAgZHJp
+dmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jIHwgMTAgKysrKysrKysrLQ0KPiA+ICAx
+IGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jDQo+IGIvZHJp
+dmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jDQo+ID4gaW5kZXggNGNkMWE4ZS4uNDM3
+ZmFiZiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3Jl
+LmMNCj4gPiArKysgYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gPiBA
+QCAtNjU3LDcgKzY1NywxNSBAQCBzdGF0aWMgaW50IHJwcm9jX2hhbmRsZV9jYXJ2ZW91dChzdHJ1
+Y3QgcnByb2MNCj4gKnJwcm9jLA0KPiA+ICAJICogdG8gdXNlIHRoZSBpb21tdS1iYXNlZCBETUEg
+QVBJOiB3ZSBleHBlY3QgJ2RtYScgdG8gY29udGFpbiB0aGUNCj4gPiAgCSAqIHBoeXNpY2FsIGFk
+ZHJlc3MgaW4gdGhpcyBjYXNlLg0KPiA+ICAJICovDQo+ID4gLQlpZiAocnByb2MtPmRvbWFpbikg
+ew0KPiA+ICsNCj4gPiArCWlmIChyc2MtPmRhICE9IEZXX1JTQ19BRERSX0FOWSAmJiAhcnByb2Mt
+PmRvbWFpbikgew0KPiA+ICsJCWRldl9lcnIoZGV2LT5wYXJlbnQsDQo+ID4gKwkJCSJCYWQgY2Fy
+dmVvdXQgcnNjIGNvbmZpZ3VyYXRpb25cbiIpOw0KPiA+ICsJCXJldCA9IC1FTk9NRU07DQo+ID4g
+KwkJZ290byBkbWFfZnJlZTsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlpZiAocnNjLT5kYSAhPSBG
+V19SU0NfQUREUl9BTlkgJiYgcnByb2MtPmRvbWFpbikgew0KPiA+ICAJCW1hcHBpbmcgPSBremFs
+bG9jKHNpemVvZigqbWFwcGluZyksIEdGUF9LRVJORUwpOw0KPiA+ICAJCWlmICghbWFwcGluZykg
+ew0KPiA+ICAJCQlyZXQgPSAtRU5PTUVNOw0KPiA+DQoNCg==
