@@ -1,83 +1,77 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH 5/5] rpmsg: glink: Convert the native signals to TIOCM
-Date: Wed,  3 Oct 2018 17:04:23 +0530
-Message-Id: <1538566463-24627-6-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
-References: <1538566463-24627-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v4 04/17] remoteproc: add name in rproc_mem_entry struct
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-5-git-send-email-loic.pallardy@st.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <0eee8e53-a639-e886-7f23-edc697242be3@ti.com>
+Date: Tue, 23 Oct 2018 12:06:16 -0500
+MIME-Version: 1.0
+In-Reply-To: <1532697292-14272-5-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Native signals over SMEM transport are different from Linux TIOCM signals.
-Add a macro to convert signals when sent or received from clients.
+On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> Add name field in struct rproc_mem_entry.
+> This new field will be used to match memory area
+> requested in resource table with pre-registered carveout.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+Acked-by: Suman Anna <s-anna@ti.com>
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index ff8751b..3054c86 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -18,6 +18,7 @@
- #include <linux/rpmsg.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/workqueue.h>
- #include <linux/mailbox_client.h>
- 
-@@ -211,6 +212,11 @@ struct glink_channel {
- 
- #define GLINK_FEATURE_INTENTLESS	BIT(1)
- 
-+#define NATIVE_DTR_SIG BIT(31)
-+#define NATIVE_CTS_SIG BIT(30)
-+#define NATIVE_CD_SIG BIT(29)
-+#define NATIVE_RI_SIG BIT(28)
-+
- static void qcom_glink_rx_done_work(struct work_struct *work);
- 
- static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-@@ -998,6 +1004,18 @@ static int qcom_glink_handle_signals(struct qcom_glink *glink,
- 	}
- 
- 	old = channel->rsigs;
-+
-+	/* convert signals from NATIVE to TIOCM */
-+	if (signals & NATIVE_DTR_SIG)
-+		signals |= TIOCM_DSR;
-+	if (signals & NATIVE_CTS_SIG)
-+		signals |= TIOCM_CTS;
-+	if (signals & NATIVE_CD_SIG)
-+		signals |= TIOCM_CD;
-+	if (signals & NATIVE_RI_SIG)
-+		signals |= TIOCM_RI;
-+	signals &= 0x0fff;
-+
- 	channel->rsigs = signals;
- 
- 	if (channel->ept.sig_cb)
-@@ -1387,6 +1405,17 @@ static int qcom_glink_set_sigs(struct rpmsg_endpoint *ept, u32 sigs)
- 
- 	channel->lsigs = sigs;
- 
-+	/* convert signals from TIOCM to NATIVE */
-+	sigs &= 0x0fff;
-+	if (sigs & TIOCM_DTR)
-+		sigs |= NATIVE_DTR_SIG;
-+	if (sigs & TIOCM_RTS)
-+		sigs |= NATIVE_CTS_SIG;
-+	if (sigs & TIOCM_CD)
-+		sigs |= NATIVE_CD_SIG;
-+	if (sigs & TIOCM_RI)
-+		sigs |= NATIVE_RI_SIG;
-+
- 	return qcom_glink_send_signals(glink, channel, sigs);
- }
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> ---
+>  drivers/remoteproc/remoteproc_core.c    | 1 +
+>  drivers/remoteproc/remoteproc_debugfs.c | 1 +
+>  include/linux/remoteproc.h              | 2 ++
+>  3 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 24fe11f..d7e3138 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -752,6 +752,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	carveout->dma = dma;
+>  	carveout->da = rsc->da;
+>  	carveout->release = rproc_release_carveout;
+> +	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
+>  
+>  	list_add_tail(&carveout->node, &rproc->carveouts);
+>  
+> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> index a5c29f2..e90135c 100644
+> --- a/drivers/remoteproc/remoteproc_debugfs.c
+> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> @@ -260,6 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
+>  
+>  	list_for_each_entry(carveout, &rproc->carveouts, node) {
+>  		seq_puts(seq, "Carveout memory entry:\n");
+> +		seq_printf(seq, "\tName: %s\n", carveout->name);
+>  		seq_printf(seq, "\tVirtual address: %pK\n", carveout->va);
+>  		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
+>  		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index bef2e83..0e21098 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -315,6 +315,7 @@ struct fw_rsc_vdev {
+>   * @da: device address
+>   * @release: release associated memory
+>   * @priv: associated data
+> + * @name: associated memory region name (optional)
+>   * @node: list node
+>   */
+>  struct rproc_mem_entry {
+> @@ -323,6 +324,7 @@ struct rproc_mem_entry {
+>  	int len;
+>  	u32 da;
+>  	void *priv;
+> +	char name[32];
+>  	struct list_head node;
+>  	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
+>  };
+> 
