@@ -1,82 +1,91 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v4 06/17] remoteproc: introduce rproc_add_carveout
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v4 06/17] remoteproc: introduce rproc_add_carveout
  function
-Date: Tue, 23 Oct 2018 19:48:22 +0000
-Message-ID: <415434350e194ee78811629fa41aa7d2@SFHDAG7NODE2.st.com>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
  <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
- <8f6737ec-6132-25df-107c-b646310b2dce@ti.com>
-In-Reply-To: <8f6737ec-6132-25df-107c-b646310b2dce@ti.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <8f6737ec-6132-25df-107c-b646310b2dce@ti.com>
+Date: Tue, 23 Oct 2018 12:05:28 -0500
 MIME-Version: 1.0
-To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+In-Reply-To: <1532697292-14272-7-git-send-email-loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Loic Pallardy <loic.pallardy@st.com>, bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4gQW5uYSA8cy1h
-bm5hQHRpLmNvbT4NCj4gU2VudDogbWFyZGkgMjMgb2N0b2JyZSAyMDE4IDE5OjA1DQo+IFRvOiBM
-b2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT47IGJqb3JuLmFuZGVyc3NvbkBsaW5h
-cm8ub3JnOw0KPiBvaGFkQHdpemVyeS5jb20NCj4gQ2M6IGxpbnV4LXJlbW90ZXByb2NAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBBcm5hdWQgUE9VTElR
-VUVOIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT47DQo+IGJlbmphbWluLmdhaWduYXJkQGxpbmFy
-by5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAwNi8xN10gcmVtb3RlcHJvYzogaW50cm9k
-dWNlIHJwcm9jX2FkZF9jYXJ2ZW91dA0KPiBmdW5jdGlvbg0KPiANCj4gSGkgQmpvcm4sIExvaWMs
-DQo+IA0KPiBPbiA3LzI3LzE4IDg6MTQgQU0sIExvaWMgUGFsbGFyZHkgd3JvdGU6DQo+ID4gVGhp
-cyBwYXRjaCBpbnRyb2R1Y2VzIGEgbmV3IEFQSSB0byBhbGxvdyBwbGF0Zm9ybSBkcml2ZXIgdG8g
-cmVnaXN0ZXINCj4gPiBwbGF0Zm9ybSBzcGVjaWZpYyBjYXJ2ZW91dCByZWdpb25zLg0KPiA+DQo+
-ID4gU2lnbmVkLW9mZi1ieTogTG9pYyBQYWxsYXJkeSA8bG9pYy5wYWxsYXJkeUBzdC5jb20+DQo+
-ID4gQWNrZWQtYnk6IEJqb3JuIEFuZGVyc3NvbiA8Ympvcm4uYW5kZXJzc29uQGxpbmFyby5vcmc+
-DQo+IA0KPiBIbW0sIEkgZG8gbm90IHByZWZlciB0aGF0IHRoaXMgZnVuY3Rpb24gYmUgZXhwb3J0
-ZWQuIEl0IGFkZHMgbm8gdmFsdWUsDQo+IGFuZCB0aGlzIGFkZHMgYW4gYXN5bW1ldHJpYyBBUEkg
-Zm9yIHJlbW90ZXByb2MgZHJpdmVycyB0byBhZGQgYSBtZW0NCj4gZW50cnkgdG8gdGhlIGludGVy
-bmFsIHJlbW90ZXByb2MgbGlzdHMsIHdoaWxlIHJlbHlpbmcgb24gdGhlIHJlbW90ZXByb2MNCj4g
-Y29yZSB0byByZW1vdmUgdGhlbS4gVGhlIGNhcnZlb3V0IGxpc3QgbWFpbnRlbmFuY2UgaXMgYSBy
-ZW1vdGVwcm9jDQo+IGludGVybmFsIHNjaGVtZSwgYW5kIHNvIHNob3VsZCBiZSBtYWludGFpbmVk
-IHRoYXQgd2F5LiBGdXJ0aGVyIG1vcmUsIG9uDQo+IHRoZSBjdXJyZW50IHNlcmllcywgYWxsIHRo
-ZSBleGlzdGluZyBjYWxscyBhcmUgaW1tZWRpYXRlbHkgYWZ0ZXIgYQ0KPiBycHJvY19vZl9yZXNt
-X21lbV9lbnRyeV9pbml0KCkgb3IgYSBycHJvY19tZW1fZW50cnlfaW5pdCgpIGZ1bmN0aW9uLA0K
-PiB3aGljaCBtZWFucyB0aGlzIGNvdWxkIHZlcnkgd2VsbCBiZSBmb2xkZWQgaW50byB0aG9zZSBp
-bmRpdmlkdWFsIGZ1bmN0aW9ucy4NCj4gDQpJIHRoaW5rIGl0IGhhcyBiZWVuIGludHJvZHVjZWQg
-aW4gZmlyc3Qgc2VyaWVzLiBMb29rIHRoYXQgcnByb2NfYWRkX2NhcnZlb3V0KCkgY2FsbCBjb3Vs
-ZCBiZSBpbnRlZ3JhdGVkIGluIGhlbHBlciBmdW5jdGlvbnMgbm93Lg0KSSBjYW4gcHJvcG9zZSBh
-IHBhdGNoIHRvIGNvcnJlY3QgdGhpcy4NCg0KUmVnYXJkcywNCkxvaWMNCj4gcmVnYXJkcw0KPiBT
-dW1hbg0KPiANCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29y
-ZS5jIHwgMTYgKysrKysrKysrKysrKysrLQ0KPiA+ICBpbmNsdWRlL2xpbnV4L3JlbW90ZXByb2Mu
-aCAgICAgICAgICAgfCAgMiArKw0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDE3IGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JlbW90ZXBy
-b2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19j
-b3JlLmMNCj4gPiBpbmRleCBiNzY3NjBlLi5mZTZjNGU0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZl
-cnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcmVtb3Rl
-cHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+IEBAIC03NDcsNyArNzQ3LDcgQEAgc3RhdGljIGlu
-dCBycHJvY19oYW5kbGVfY2FydmVvdXQoc3RydWN0IHJwcm9jDQo+ICpycHJvYywNCj4gPiAgCWlm
-ICghY2FydmVvdXQpDQo+ID4gIAkJZ290byBmcmVlX2NhcnY7DQo+ID4NCj4gPiAtCWxpc3RfYWRk
-X3RhaWwoJmNhcnZlb3V0LT5ub2RlLCAmcnByb2MtPmNhcnZlb3V0cyk7DQo+ID4gKwlycHJvY19h
-ZGRfY2FydmVvdXQocnByb2MsIGNhcnZlb3V0KTsNCj4gPg0KPiA+ICAJcmV0dXJuIDA7DQo+ID4N
-Cj4gPiBAQCAtNzYxLDYgKzc2MSwyMCBAQCBzdGF0aWMgaW50IHJwcm9jX2hhbmRsZV9jYXJ2ZW91
-dChzdHJ1Y3QgcnByb2MNCj4gKnJwcm9jLA0KPiA+ICB9DQo+ID4NCj4gPiAgLyoqDQo+ID4gKyAq
-IHJwcm9jX2FkZF9jYXJ2ZW91dCgpIC0gcmVnaXN0ZXIgYW4gYWxsb2NhdGVkIGNhcnZlb3V0IHJl
-Z2lvbg0KPiA+ICsgKiBAcnByb2M6IHJwcm9jIGhhbmRsZQ0KPiA+ICsgKiBAbWVtOiBtZW1vcnkg
-ZW50cnkgdG8gcmVnaXN0ZXINCj4gPiArICoNCj4gPiArICogVGhpcyBmdW5jdGlvbiByZWdpc3Rl
-cnMgc3BlY2lmaWVkIG1lbW9yeSBlbnRyeSBpbiBAcnByb2MgY2FydmVvdXRzIGxpc3QuDQo+ID4g
-KyAqIFNwZWNpZmllZCBjYXJ2ZW91dCBzaG91bGQgaGF2ZSBiZWVuIGFsbG9jYXRlZCBiZWZvcmUg
-cmVnaXN0ZXJpbmcuDQo+ID4gKyAqLw0KPiA+ICt2b2lkIHJwcm9jX2FkZF9jYXJ2ZW91dChzdHJ1
-Y3QgcnByb2MgKnJwcm9jLCBzdHJ1Y3QgcnByb2NfbWVtX2VudHJ5DQo+ICptZW0pDQo+ID4gK3sN
-Cj4gPiArCWxpc3RfYWRkX3RhaWwoJm1lbS0+bm9kZSwgJnJwcm9jLT5jYXJ2ZW91dHMpOw0KPiA+
-ICt9DQo+ID4gK0VYUE9SVF9TWU1CT0wocnByb2NfYWRkX2NhcnZlb3V0KTsNCj4gPiArDQo+ID4g
-Ky8qKg0KPiA+ICAgKiBycHJvY19tZW1fZW50cnlfaW5pdCgpIC0gYWxsb2NhdGUgYW5kIGluaXRp
-YWxpemUgcnByb2NfbWVtX2VudHJ5IHN0cnVjdA0KPiA+ICAgKiBAZGV2OiBwb2ludGVyIG9uIGRl
-dmljZSBzdHJ1Y3QNCj4gPiAgICogQHZhOiB2aXJ0dWFsIGFkZHJlc3MNCj4gPiBkaWZmIC0tZ2l0
-IGEvaW5jbHVkZS9saW51eC9yZW1vdGVwcm9jLmggYi9pbmNsdWRlL2xpbnV4L3JlbW90ZXByb2Mu
-aA0KPiA+IGluZGV4IDRiYzk2MWYuLjU1ZjMwZmMgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9s
-aW51eC9yZW1vdGVwcm9jLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3JlbW90ZXByb2MuaA0K
-PiA+IEBAIC01NTgsNiArNTU4LDggQEAgc3RydWN0IHJwcm9jICpycHJvY19hbGxvYyhzdHJ1Y3Qg
-ZGV2aWNlICpkZXYsIGNvbnN0DQo+IGNoYXIgKm5hbWUsDQo+ID4gIGludCBycHJvY19kZWwoc3Ry
-dWN0IHJwcm9jICpycHJvYyk7DQo+ID4gIHZvaWQgcnByb2NfZnJlZShzdHJ1Y3QgcnByb2MgKnJw
-cm9jKTsNCj4gPg0KPiA+ICt2b2lkIHJwcm9jX2FkZF9jYXJ2ZW91dChzdHJ1Y3QgcnByb2MgKnJw
-cm9jLCBzdHJ1Y3QgcnByb2NfbWVtX2VudHJ5DQo+ICptZW0pOw0KPiA+ICsNCj4gPiAgc3RydWN0
-IHJwcm9jX21lbV9lbnRyeSAqDQo+ID4gIHJwcm9jX21lbV9lbnRyeV9pbml0KHN0cnVjdCBkZXZp
-Y2UgKmRldiwNCj4gPiAgCQkgICAgIHZvaWQgKnZhLCBkbWFfYWRkcl90IGRtYSwgaW50IGxlbiwg
-dTMyIGRhLA0KPiA+DQoNCg==
+Hi Bjorn, Loic,
+
+On 7/27/18 8:14 AM, Loic Pallardy wrote:
+> This patch introduces a new API to allow platform driver to register
+> platform specific carveout regions.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Hmm, I do not prefer that this function be exported. It adds no value,
+and this adds an asymmetric API for remoteproc drivers to add a mem
+entry to the internal remoteproc lists, while relying on the remoteproc
+core to remove them. The carveout list maintenance is a remoteproc
+internal scheme, and so should be maintained that way. Further more, on
+the current series, all the existing calls are immediately after a
+rproc_of_resm_mem_entry_init() or a rproc_mem_entry_init() function,
+which means this could very well be folded into those individual functions.
+
+regards
+Suman
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
+>  include/linux/remoteproc.h           |  2 ++
+>  2 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index b76760e..fe6c4e4 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -747,7 +747,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	if (!carveout)
+>  		goto free_carv;
+>  
+> -	list_add_tail(&carveout->node, &rproc->carveouts);
+> +	rproc_add_carveout(rproc, carveout);
+>  
+>  	return 0;
+>  
+> @@ -761,6 +761,20 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  }
+>  
+>  /**
+> + * rproc_add_carveout() - register an allocated carveout region
+> + * @rproc: rproc handle
+> + * @mem: memory entry to register
+> + *
+> + * This function registers specified memory entry in @rproc carveouts list.
+> + * Specified carveout should have been allocated before registering.
+> + */
+> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+> +{
+> +	list_add_tail(&mem->node, &rproc->carveouts);
+> +}
+> +EXPORT_SYMBOL(rproc_add_carveout);
+> +
+> +/**
+>   * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
+>   * @dev: pointer on device struct
+>   * @va: virtual address
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 4bc961f..55f30fc 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -558,6 +558,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  int rproc_del(struct rproc *rproc);
+>  void rproc_free(struct rproc *rproc);
+>  
+> +void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+> +
+>  struct rproc_mem_entry *
+>  rproc_mem_entry_init(struct device *dev,
+>  		     void *va, dma_addr_t dma, int len, u32 da,
+> 
