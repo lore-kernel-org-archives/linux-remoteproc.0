@@ -1,56 +1,38 @@
-Return-Path: <rafael.tinoco@linaro.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH] rpmsg: virtio_rpmsg_bus: replace "%p" with "%pK"
+Date: Tue, 23 Oct 2018 20:19:09 -0500
+Message-ID: <20181024011909.21674-1-s-anna@ti.com>
 MIME-Version: 1.0
-References: <20180924113114.334025954@linuxfoundation.org> <20180925090733.GB21224@kroah.com>
- <20180926002857.ajqqxi2qcfcwsg7g@xps.therub.org>
-In-Reply-To: <20180926002857.ajqqxi2qcfcwsg7g@xps.therub.org>
-From: Rafael Tinoco <rafael.tinoco@linaro.org>
-Date: Wed, 26 Sep 2018 00:01:53 -0300
-Message-ID: <CADtBP2Do8u9Em2kUeb9nuux+kD=sjUpQ2XLetYO3vrdPxiYNKA@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/173] 4.14.72-stable review
-Content-Type: text/plain; charset="UTF-8"
-To: gregkh@linuxfoundation.org, Linux Kernel <linux-kernel@vger.kernel.org>, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Suman Anna <s-anna@ti.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Greg,
+The virtio_rpmsg_bus driver uses the "%p" format-specifier for
+printing the vring buffer address. This prints only a hashed
+pointer even for previliged users. Use "%pK" instead so that
+the address can be printed during debug using kptr_restrict
+sysctl.
 
-> > > This is the start of the stable review cycle for the 4.14.72 release.
-> > > There are 173 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Wed Sep 26 11:30:10 UTC 2018.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >     https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.72-rc1.gz
-> > > or in the git tree and branch at:
-> > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > > and the diffstat can be found below.
-> >
-> > -rc2 is out to resolve some reported problems:
-> >       https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.72-rc2.gz
->
-> -rc2 looks good. There is a problem on dragonboard during boot that was
-> introduced in v4.14.71 that I didn't notice last week. We'll bisect it
-> and report back later this week. dragonboard on the other branches (4.9,
-> 4.18, mainline) looks fine.
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As Dan pointed out, during validation, we have bisected this issue on
-a dragonboard 410c (can't find root device) to the following commit
-for v4.14:
-
-[1ed3a9307230] rpmsg: core: add support to power domains for devices
-
-There is an on-going discussion on "[PATCH] rpmsg: core: add support
-to power domains for devices" about this patch having other
-dependencies and breaking something else on v4.14 as well.
-
-Do you think we could drop this patch, for now, in a possible -rc3 for
-v4.14.72 ? Dragonboards aren't being tested, because of this, since
-v4.14.70. Hopefully it isn't too late for this release =).
-
-BTW, I have just tested removing the commit from -rc2 and the board boots okay.
-
-Thank you
--Rafael
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index f29dee731026..1345f373a1a0 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -950,7 +950,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 		goto vqs_del;
+ 	}
+ 
+-	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
++	dev_dbg(&vdev->dev, "buffers: va %pK, dma %pad\n",
+ 		bufs_va, &vrp->bufs_dma);
+ 
+ 	/* half of the buffers is dedicated for RX */
+-- 
+2.19.1
