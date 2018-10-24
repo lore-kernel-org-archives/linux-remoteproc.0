@@ -1,172 +1,85 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 10/17] remoteproc: add helper function to check
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v4 10/17] remoteproc: add helper function to check
  carveout device address
+Date: Wed, 24 Oct 2018 15:24:03 +0000
+Message-ID: <8b16461d7d99487480253cde5cdcfd2c@SFHDAG7NODE2.st.com>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
  <1532697292-14272-11-git-send-email-loic.pallardy@st.com>
  <2844874b-9484-aeee-c614-411d0ff38d12@ti.com>
- <8b16461d7d99487480253cde5cdcfd2c@SFHDAG7NODE2.st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <5e86ac7e-e0db-205e-1c60-bc0be9f75859@ti.com>
-Date: Thu, 25 Oct 2018 17:50:07 -0500
-MIME-Version: 1.0
-In-Reply-To: <8b16461d7d99487480253cde5cdcfd2c@SFHDAG7NODE2.st.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <2844874b-9484-aeee-c614-411d0ff38d12@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Loic,
-
-On 10/24/18 10:24 AM, Loic PALLARDY wrote:
-> Hi Suman,
-> 
->> -----Original Message-----
->> From: Suman Anna <s-anna@ti.com>
->> Sent: mercredi 24 octobre 2018 00:14
->> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.org;
->> ohad@wizery.com
->> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
->> benjamin.gaignard@linaro.org
->> Subject: Re: [PATCH v4 10/17] remoteproc: add helper function to check
->> carveout device address
->>
->> Hi Loic,
->>
->> On 7/27/18 8:14 AM, Loic Pallardy wrote:
->>> This patch introduces a function to verify that a specified carveout
->>> is fitting request device address and associated length
->>>
->>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
->>> ---
->>>  drivers/remoteproc/remoteproc_core.c | 47
->> ++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 47 insertions(+)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c
->> b/drivers/remoteproc/remoteproc_core.c
->>> index 1e0fe3e..5dd5edf 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -259,6 +259,53 @@ struct rproc_mem_entry *
->>>  	return mem;
->>>  }
->>>
->>> +/**
->>> + * rproc_check_carveout_da() - Check specified carveout da configuration
->>> + * @rproc: handle of a remote processor
->>> + * @mem: pointer on carveout to check
->>> + * @da: area device address
->>> + * @len: associated area size
->>> + *
->>> + * This function is a helper function to verify requested device area
->> (couple
->>> + * da, len) is part of specified carevout.
->>
->> %s/carevout/carveout/
-> OK
->>
->>> + *
->>> + * Return: 0 if carveout matchs request else -ENOMEM
->>
->> %s/matchs/matches/
-> OK
->>
->>> + */
->>> +int rproc_check_carveout_da(struct rproc *rproc, struct
->> rproc_mem_entry *mem,
->>
->> static int since this seems to be only a local function.
-> OK
->>
->>> +			    u32 da, u32 len)
->>> +{
->>> +	struct device *dev = &rproc->dev;
->>> +	int delta = 0;
->>> +
->>> +	/* Check requested resource length */
->>> +	if (len > mem->len) {
->>> +		dev_err(dev, "Registered carveout doesn't fit len
->> request\n");
->>> +		return -ENOMEM;
->>
->> ENOMEM not typically used for these kind of errors, you were probably
->> inclined to used this since it is dealing with memory.
-> 
-> -EINVAL will be better
->>
->>> +	}
->>> +
->>
->> Both the below codepaths are exercised only when da is not
->> FW_RSC_ADDR_ANY, and you are returning 0 otherwise (which is the case of
->> matches as per your description above). Is that what you really want -
->> should it be an error
-> 
-> Yes when da is equal to FW_RSC_ADDR_ANY we should check the length too
-
-Can you update the comments in the function description accordingly as
-well, the current code silently returns 0 if da = FW_RSC_ADDR_ANY.
-
-> 
->>
->>> +	if (da != FW_RSC_ADDR_ANY && mem->da == FW_RSC_ADDR_ANY)
->> {
->>> +		/* Update existing carveout da */
->>> +		mem->da = da;
->>
->> Where would you need to update this?
-
-> In that case, we have 2 carveouts with the same name.
-> One has some fixed requests. The other one has none.
-> The goal here is to align both on the one which has the strongest requirements.
-> I think length is missing.
-
-It almost looks like there is a need for range overlap checks on all the
-carveouts after all of them are registered, and error out if any overlap
-irrespective of the name schema.
-
-regards
-Suman
-
-> 
-> Regards,
-> Loic
-> 
->>
->> regards
->> Suman
->>
->>> +	} else if (da != FW_RSC_ADDR_ANY && mem->da !=
->> FW_RSC_ADDR_ANY) {
->>> +		delta = da - mem->da;
->>> +
->>> +		/* Check requested resource belongs to registered carveout
->> */
->>> +		if (delta < 0) {
->>> +			dev_err(dev,
->>> +				"Registered carveout doesn't fit da
->> request\n");
->>> +			return -ENOMEM;
->>> +		}
->>> +
->>> +		if (delta + len > mem->len) {
->>> +			dev_err(dev,
->>> +				"Registered carveout doesn't fit len
->> request\n");
->>> +			return -ENOMEM;
->>> +		}
->>> +	}
->>> +
->>> +	return 0;
->>
->>
->>> +}
->>> +
->>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->>>  {
->>>  	struct rproc *rproc = rvdev->rproc;
->>>
-> 
+SGkgU3VtYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4g
+QW5uYSA8cy1hbm5hQHRpLmNvbT4NCj4gU2VudDogbWVyY3JlZGkgMjQgb2N0b2JyZSAyMDE4IDAw
+OjE0DQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT47IGJqb3JuLmFu
+ZGVyc3NvbkBsaW5hcm8ub3JnOw0KPiBvaGFkQHdpemVyeS5jb20NCj4gQ2M6IGxpbnV4LXJlbW90
+ZXByb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBB
+cm5hdWQgUE9VTElRVUVOIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT47DQo+IGJlbmphbWluLmdh
+aWduYXJkQGxpbmFyby5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAxMC8xN10gcmVtb3Rl
+cHJvYzogYWRkIGhlbHBlciBmdW5jdGlvbiB0byBjaGVjaw0KPiBjYXJ2ZW91dCBkZXZpY2UgYWRk
+cmVzcw0KPiANCj4gSGkgTG9pYywNCj4gDQo+IE9uIDcvMjcvMTggODoxNCBBTSwgTG9pYyBQYWxs
+YXJkeSB3cm90ZToNCj4gPiBUaGlzIHBhdGNoIGludHJvZHVjZXMgYSBmdW5jdGlvbiB0byB2ZXJp
+ZnkgdGhhdCBhIHNwZWNpZmllZCBjYXJ2ZW91dA0KPiA+IGlzIGZpdHRpbmcgcmVxdWVzdCBkZXZp
+Y2UgYWRkcmVzcyBhbmQgYXNzb2NpYXRlZCBsZW5ndGgNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6
+IExvaWMgUGFsbGFyZHkgPGxvaWMucGFsbGFyZHlAc3QuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2
+ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMgfCA0Nw0KPiArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDQ3IGluc2VydGlvbnMo
+KykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19j
+b3JlLmMNCj4gYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gPiBpbmRl
+eCAxZTBmZTNlLi41ZGQ1ZWRmIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9y
+ZW1vdGVwcm9jX2NvcmUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9j
+X2NvcmUuYw0KPiA+IEBAIC0yNTksNiArMjU5LDUzIEBAIHN0cnVjdCBycHJvY19tZW1fZW50cnkg
+Kg0KPiA+ICAJcmV0dXJuIG1lbTsNCj4gPiAgfQ0KPiA+DQo+ID4gKy8qKg0KPiA+ICsgKiBycHJv
+Y19jaGVja19jYXJ2ZW91dF9kYSgpIC0gQ2hlY2sgc3BlY2lmaWVkIGNhcnZlb3V0IGRhIGNvbmZp
+Z3VyYXRpb24NCj4gPiArICogQHJwcm9jOiBoYW5kbGUgb2YgYSByZW1vdGUgcHJvY2Vzc29yDQo+
+ID4gKyAqIEBtZW06IHBvaW50ZXIgb24gY2FydmVvdXQgdG8gY2hlY2sNCj4gPiArICogQGRhOiBh
+cmVhIGRldmljZSBhZGRyZXNzDQo+ID4gKyAqIEBsZW46IGFzc29jaWF0ZWQgYXJlYSBzaXplDQo+
+ID4gKyAqDQo+ID4gKyAqIFRoaXMgZnVuY3Rpb24gaXMgYSBoZWxwZXIgZnVuY3Rpb24gdG8gdmVy
+aWZ5IHJlcXVlc3RlZCBkZXZpY2UgYXJlYQ0KPiAoY291cGxlDQo+ID4gKyAqIGRhLCBsZW4pIGlz
+IHBhcnQgb2Ygc3BlY2lmaWVkIGNhcmV2b3V0Lg0KPiANCj4gJXMvY2FyZXZvdXQvY2FydmVvdXQv
+DQpPSw0KPiANCj4gPiArICoNCj4gPiArICogUmV0dXJuOiAwIGlmIGNhcnZlb3V0IG1hdGNocyBy
+ZXF1ZXN0IGVsc2UgLUVOT01FTQ0KPiANCj4gJXMvbWF0Y2hzL21hdGNoZXMvDQpPSw0KPiANCj4g
+PiArICovDQo+ID4gK2ludCBycHJvY19jaGVja19jYXJ2ZW91dF9kYShzdHJ1Y3QgcnByb2MgKnJw
+cm9jLCBzdHJ1Y3QNCj4gcnByb2NfbWVtX2VudHJ5ICptZW0sDQo+IA0KPiBzdGF0aWMgaW50IHNp
+bmNlIHRoaXMgc2VlbXMgdG8gYmUgb25seSBhIGxvY2FsIGZ1bmN0aW9uLg0KT0sNCj4gDQo+ID4g
+KwkJCSAgICB1MzIgZGEsIHUzMiBsZW4pDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBkZXZpY2UgKmRl
+diA9ICZycHJvYy0+ZGV2Ow0KPiA+ICsJaW50IGRlbHRhID0gMDsNCj4gPiArDQo+ID4gKwkvKiBD
+aGVjayByZXF1ZXN0ZWQgcmVzb3VyY2UgbGVuZ3RoICovDQo+ID4gKwlpZiAobGVuID4gbWVtLT5s
+ZW4pIHsNCj4gPiArCQlkZXZfZXJyKGRldiwgIlJlZ2lzdGVyZWQgY2FydmVvdXQgZG9lc24ndCBm
+aXQgbGVuDQo+IHJlcXVlc3RcbiIpOw0KPiA+ICsJCXJldHVybiAtRU5PTUVNOw0KPiANCj4gRU5P
+TUVNIG5vdCB0eXBpY2FsbHkgdXNlZCBmb3IgdGhlc2Uga2luZCBvZiBlcnJvcnMsIHlvdSB3ZXJl
+IHByb2JhYmx5DQo+IGluY2xpbmVkIHRvIHVzZWQgdGhpcyBzaW5jZSBpdCBpcyBkZWFsaW5nIHdp
+dGggbWVtb3J5Lg0KDQotRUlOVkFMIHdpbGwgYmUgYmV0dGVyDQo+IA0KPiA+ICsJfQ0KPiA+ICsN
+Cj4gDQo+IEJvdGggdGhlIGJlbG93IGNvZGVwYXRocyBhcmUgZXhlcmNpc2VkIG9ubHkgd2hlbiBk
+YSBpcyBub3QNCj4gRldfUlNDX0FERFJfQU5ZLCBhbmQgeW91IGFyZSByZXR1cm5pbmcgMCBvdGhl
+cndpc2UgKHdoaWNoIGlzIHRoZSBjYXNlIG9mDQo+IG1hdGNoZXMgYXMgcGVyIHlvdXIgZGVzY3Jp
+cHRpb24gYWJvdmUpLiBJcyB0aGF0IHdoYXQgeW91IHJlYWxseSB3YW50IC0NCj4gc2hvdWxkIGl0
+IGJlIGFuIGVycm9yDQoNClllcyB3aGVuIGRhIGlzIGVxdWFsIHRvIEZXX1JTQ19BRERSX0FOWSB3
+ZSBzaG91bGQgY2hlY2sgdGhlIGxlbmd0aCB0b28NCg0KPiANCj4gPiArCWlmIChkYSAhPSBGV19S
+U0NfQUREUl9BTlkgJiYgbWVtLT5kYSA9PSBGV19SU0NfQUREUl9BTlkpDQo+IHsNCj4gPiArCQkv
+KiBVcGRhdGUgZXhpc3RpbmcgY2FydmVvdXQgZGEgKi8NCj4gPiArCQltZW0tPmRhID0gZGE7DQo+
+IA0KPiBXaGVyZSB3b3VsZCB5b3UgbmVlZCB0byB1cGRhdGUgdGhpcz8NCkluIHRoYXQgY2FzZSwg
+d2UgaGF2ZSAyIGNhcnZlb3V0cyB3aXRoIHRoZSBzYW1lIG5hbWUuDQpPbmUgaGFzIHNvbWUgZml4
+ZWQgcmVxdWVzdHMuIFRoZSBvdGhlciBvbmUgaGFzIG5vbmUuDQpUaGUgZ29hbCBoZXJlIGlzIHRv
+IGFsaWduIGJvdGggb24gdGhlIG9uZSB3aGljaCBoYXMgdGhlIHN0cm9uZ2VzdCByZXF1aXJlbWVu
+dHMuDQpJIHRoaW5rIGxlbmd0aCBpcyBtaXNzaW5nLg0KDQpSZWdhcmRzLA0KTG9pYw0KDQo+IA0K
+PiByZWdhcmRzDQo+IFN1bWFuDQo+IA0KPiA+ICsJfSBlbHNlIGlmIChkYSAhPSBGV19SU0NfQURE
+Ul9BTlkgJiYgbWVtLT5kYSAhPQ0KPiBGV19SU0NfQUREUl9BTlkpIHsNCj4gPiArCQlkZWx0YSA9
+IGRhIC0gbWVtLT5kYTsNCj4gPiArDQo+ID4gKwkJLyogQ2hlY2sgcmVxdWVzdGVkIHJlc291cmNl
+IGJlbG9uZ3MgdG8gcmVnaXN0ZXJlZCBjYXJ2ZW91dA0KPiAqLw0KPiA+ICsJCWlmIChkZWx0YSA8
+IDApIHsNCj4gPiArCQkJZGV2X2VycihkZXYsDQo+ID4gKwkJCQkiUmVnaXN0ZXJlZCBjYXJ2ZW91
+dCBkb2Vzbid0IGZpdCBkYQ0KPiByZXF1ZXN0XG4iKTsNCj4gPiArCQkJcmV0dXJuIC1FTk9NRU07
+DQo+ID4gKwkJfQ0KPiA+ICsNCj4gPiArCQlpZiAoZGVsdGEgKyBsZW4gPiBtZW0tPmxlbikgew0K
+PiA+ICsJCQlkZXZfZXJyKGRldiwNCj4gPiArCQkJCSJSZWdpc3RlcmVkIGNhcnZlb3V0IGRvZXNu
+J3QgZml0IGxlbg0KPiByZXF1ZXN0XG4iKTsNCj4gPiArCQkJcmV0dXJuIC1FTk9NRU07DQo+ID4g
+KwkJfQ0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCXJldHVybiAwOw0KPiANCj4gDQo+ID4gK30NCj4g
+PiArDQo+ID4gIGludCBycHJvY19hbGxvY192cmluZyhzdHJ1Y3QgcnByb2NfdmRldiAqcnZkZXYs
+IGludCBpKQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgcnByb2MgKnJwcm9jID0gcnZkZXYtPnJwcm9j
+Ow0KPiA+DQoNCg==
