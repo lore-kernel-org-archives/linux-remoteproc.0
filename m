@@ -1,397 +1,230 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
  centralized carveout allocator
+Date: Wed, 24 Oct 2018 15:14:05 +0000
+Message-ID: <c21433c8034a438d8d7c5044c181c2e0@SFHDAG7NODE2.st.com>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
  <1532697292-14272-13-git-send-email-loic.pallardy@st.com>
  <59fad1e3-11a2-939e-c47e-4351fb636e2d@ti.com>
- <c21433c8034a438d8d7c5044c181c2e0@SFHDAG7NODE2.st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <edff6a62-5b4c-433b-d824-51143b83ad93@ti.com>
-Date: Mon, 29 Oct 2018 15:17:59 -0500
-MIME-Version: 1.0
-In-Reply-To: <c21433c8034a438d8d7c5044c181c2e0@SFHDAG7NODE2.st.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <59fad1e3-11a2-939e-c47e-4351fb636e2d@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
-Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Loic,
-
-On 10/24/18 10:14 AM, Loic PALLARDY wrote:
-> Hi Suman,
-> 
->> -----Original Message-----
->> From: Suman Anna <s-anna@ti.com>
->> Sent: mercredi 24 octobre 2018 02:14
->> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.org;
->> ohad@wizery.com
->> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
->> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
->> benjamin.gaignard@linaro.org
->> Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
->> centralized carveout allocator
->>
->> On 7/27/18 8:14 AM, Loic Pallardy wrote:
->>> Current version of rproc_alloc_vring function supports only dynamic vring
->>> allocation.
->>>
->>> This patch allows to allocate vrings based on memory region declatation.
->>> Vrings are now manage like memory carveouts, to communize memory
->> management
->>> code in rproc_alloc_registered_carveouts().
->>>
->>> Allocated buffer is retrieved in rp_find_vq() thanks to
->>> rproc_find_carveout_by_name() functions for.
->>>
->>> This patch sets vrings names to vdev"x"vring"y" with x vdev index in
->>> resource table and y vring index in vdev. This will be updated when
->>> name will be associated to vdev in firmware resource table.
->>>
->>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
->>> ---
->>>  drivers/remoteproc/remoteproc_core.c     | 61 +++++++++++++++++------
->> ---------
->>>  drivers/remoteproc/remoteproc_internal.h |  2 ++
->>>  drivers/remoteproc/remoteproc_virtio.c   | 14 +++++++-
->>>  include/linux/remoteproc.h               |  6 ++--
->>>  4 files changed, 51 insertions(+), 32 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/remoteproc_core.c
->> b/drivers/remoteproc/remoteproc_core.c
->>> index c543d04..4edc6f0 100644
->>> --- a/drivers/remoteproc/remoteproc_core.c
->>> +++ b/drivers/remoteproc/remoteproc_core.c
->>> @@ -53,6 +53,11 @@ typedef int (*rproc_handle_resources_t)(struct
->> rproc *rproc,
->>>  typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
->>>  				 void *, int offset, int avail);
->>>
->>> +static int rproc_alloc_carveout(struct rproc *rproc,
->>> +				struct rproc_mem_entry *mem);
->>> +static int rproc_release_carveout(struct rproc *rproc,
->>> +				  struct rproc_mem_entry *mem);
->>> +
->>>  /* Unique indices for remoteproc devices */
->>>  static DEFINE_IDA(rproc_dev_index);
->>>
->>> @@ -312,21 +317,33 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev,
->> int i)
->>>  	struct device *dev = &rproc->dev;
->>>  	struct rproc_vring *rvring = &rvdev->vring[i];
->>>  	struct fw_rsc_vdev *rsc;
->>> -	dma_addr_t dma;
->>> -	void *va;
->>>  	int ret, size, notifyid;
->>> +	struct rproc_mem_entry *mem;
->>>
->>>  	/* actual size of vring (in bytes) */
->>>  	size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
->>>
->>> -	/*
->>> -	 * Allocate non-cacheable memory for the vring. In the future
->>> -	 * this call will also configure the IOMMU for us
->>> -	 */
->>> -	va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
->>> -	if (!va) {
->>> -		dev_err(dev->parent, "dma_alloc_coherent failed\n");
->>> -		return -EINVAL;
->>> +	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
->>> +
->>> +	/* Search for pre-registered carveout */
->>> +	mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d",
->> rvdev->index,
->>> +					  i);
->>> +	if (mem) {
->>> +		if (rproc_check_carveout_da(rproc, mem, rsc->vring[i].da,
->> size))
->>> +			return -ENOMEM;
->>> +	} else {
->>> +		/* Register carveout in in list */
->>> +		mem = rproc_mem_entry_init(dev, 0, 0, size, rsc-
->>> vring[i].da,
->>> +					   rproc_alloc_carveout,
->>> +					   rproc_release_carveout,
->>> +					   "vdev%dvring%d",
->>> +					   rvdev->index, i);
->>> +		if (!mem) {
->>> +			dev_err(dev, "Can't allocate memory entry
->> structure\n");
->>> +			return -ENOMEM;
->>> +		}
->>> +
->>> +		rproc_add_carveout(rproc, mem);
->>>  	}
->>>
->>>  	/*
->>> @@ -337,7 +354,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->>>  	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
->>>  	if (ret < 0) {
->>>  		dev_err(dev, "idr_alloc failed: %d\n", ret);
->>> -		dma_free_coherent(dev->parent, size, va, dma);
->>>  		return ret;
->>>  	}
->>>  	notifyid = ret;
->>> @@ -346,21 +362,9 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int
->> i)
->>>  	if (notifyid > rproc->max_notifyid)
->>>  		rproc->max_notifyid = notifyid;
->>>
->>> -	dev_dbg(dev, "vring%d: va %pK dma %pad size 0x%x idr %d\n",
->>> -		i, va, &dma, size, notifyid);
->>> -
->>> -	rvring->va = va;
->>> -	rvring->dma = dma;
->>>  	rvring->notifyid = notifyid;
->>>
->>> -	/*
->>> -	 * Let the rproc know the notifyid and da of this vring.
->>> -	 * Not all platforms use dma_alloc_coherent to automatically
->>> -	 * set up the iommu. In this case the device address (da) will
->>> -	 * hold the physical address and not the device address.
->>> -	 */
->>> -	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
->>> -	rsc->vring[i].da = dma;
->>> +	/* Let the rproc know the notifyid of this vring.*/
->>>  	rsc->vring[i].notifyid = notifyid;
->>>  	return 0;
->>>  }
->>> @@ -392,12 +396,10 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev,
->> int i)
->>>
->>>  void rproc_free_vring(struct rproc_vring *rvring)
->>>  {
->>> -	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
->>>  	struct rproc *rproc = rvring->rvdev->rproc;
->>>  	int idx = rvring->rvdev->vring - rvring;
->>>  	struct fw_rsc_vdev *rsc;
->>>
->>> -	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring-
->>> dma);
->>>  	idr_remove(&rproc->notifyids, rvring->notifyid);
->>
->> Also, I am not sure if FW_RSC_ADDR_ANY semantics were enforced
->> previously on the vring da. It was simply overwritten irrespective of
->> the value. Now, I am running again into the "bad carveout rsc
->> configuration value" due to the iommu_domain_check if
->> !FW_RSC_ADDR_ANY.
-> 
-
-Just realized that I missed responding on this thread last week.
-
-> When are you running into the "bad carveout rsc configuration value" ? 
-> This patch is creating one carveout per vring to rely on generic carveout allocator.
-> Then carveout is retrieved from carveout  list and vring resource table information updated.
-> 
-> If the da of the carveout was fixed in the resource table, it is normal you have this error.
-
-Yes, and if the vring da value is FW_RSC_ADDR_ANY, then I don't run into
-this particular error. It's just that the semantics of vring da is open
-previously, and my above comment being 0 was being used as a reset value
-as well.
-
-> To solve that ST driver is registering one fixed carveout per vring (with the right name today)
-
-Yeah, we still expect to allocate these dynamically, so there won't be
-any registration needed.
-
-> It is the same discussion as with Patch 1. 
-
-Right, except that we have a da from RSC_CARVEOUT and a da from vring,
-and the previous code had some slight differences between the two. The
-vring da semantics were never set before (value was always being
-overwritten, also it didn't have a pa field), whereas the remoteproc.h
-documentation did mention about FW_RSC_ADDR_ANY (without any backing
-implementation previously) for the RSC_CARVEOUT da, with the entry also
-having a field for pa.
-
-If we consider we can't change fixed coprocessor address requests, rproc
-core should stop its execution.
-> It is the responsibility of platform driver to register the right memory regions.
-> That's what we discussed with you and Bill in OpenAMP forum.
-> TI usecase was to have the same DSP firmware with the same resource table being able to run on any DSP.
-
-Yeah, it only covers one of the usecases/platforms (Keystone 2 DSP
-platforms). And this only worked on these platforms so far because we
-only were using internal memories - so there were no RSC_CARVEOUT
-entries with valid da. Our Davinci DSP is a single instance and we do
-have a RSC_CARVEOUT there, which fails due to the same Patch 1 logic
-here as well.
-
-> In that case each DSP platform driver has to provide the right memory region configuration with the correct pa to da.
-> 
->>
->> FWIW, the rproc_free_vring was actually using the value 0 when resetting.
->  
-> It is no more needed as the carveout list is cleared at each stop and recreated at each start.
-> Moreover resource table (and firmware) is reloaded at each coprocessor start.
-
-Yes, agreed. This is about the semantics of vring da from before (no
-enforcement to strict enforcement of FW_RSC_ADDR_ANY). The overwriting
-on da field on vrings with the dma address is actually a mistake, which
-we are trying to proliferate more now. It all comes down to the fact of
-treating da as dma address when it is not going to be the case on all
-remoteprocs.
-
-regards
-Suman
-
-> 
-> Regards,
-> Loic
->>
->> regards
->> Suman
->>
->>>
->>>  	/* reset resource entry info */
->>> @@ -484,6 +486,7 @@ static int rproc_handle_vdev(struct rproc *rproc,
->> struct fw_rsc_vdev *rsc,
->>>
->>>  	rvdev->id = rsc->id;
->>>  	rvdev->rproc = rproc;
->>> +	rvdev->index = rproc->nb_vdev++;
->>>
->>>  	/* parse the vrings */
->>>  	for (i = 0; i < rsc->num_of_vrings; i++) {
->>> @@ -528,9 +531,6 @@ void rproc_vdev_release(struct kref *ref)
->>>
->>>  	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
->>>  		rvring = &rvdev->vring[id];
->>> -		if (!rvring->va)
->>> -			continue;
->>> -
->>>  		rproc_free_vring(rvring);
->>>  	}
->>>
->>> @@ -1322,6 +1322,9 @@ static int rproc_fw_boot(struct rproc *rproc,
->> const struct firmware *fw)
->>>  	/* reset max_notifyid */
->>>  	rproc->max_notifyid = -1;
->>>
->>> +	/* reset handled vdev */
->>> +	rproc->nb_vdev = 0;
->>> +
->>>  	/* handle fw resources which are required to boot rproc */
->>>  	ret = rproc_handle_resources(rproc, rproc_loading_handlers);
->>>  	if (ret) {
->>> diff --git a/drivers/remoteproc/remoteproc_internal.h
->> b/drivers/remoteproc/remoteproc_internal.h
->>> index 7570beb..f6cad24 100644
->>> --- a/drivers/remoteproc/remoteproc_internal.h
->>> +++ b/drivers/remoteproc/remoteproc_internal.h
->>> @@ -60,6 +60,8 @@ struct dentry *rproc_create_trace_file(const char
->> *name, struct rproc *rproc,
->>>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware
->> *fw);
->>>  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc
->> *rproc,
->>>  						       const struct firmware
->> *fw);
->>> +struct rproc_mem_entry *
->>> +rproc_find_carveout_by_name(struct rproc *rproc, const char *name,
->> ...);
->>>
->>>  static inline
->>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
->>> diff --git a/drivers/remoteproc/remoteproc_virtio.c
->> b/drivers/remoteproc/remoteproc_virtio.c
->>> index bbecd44..de21f62 100644
->>> --- a/drivers/remoteproc/remoteproc_virtio.c
->>> +++ b/drivers/remoteproc/remoteproc_virtio.c
->>> @@ -76,7 +76,9 @@ static struct virtqueue *rp_find_vq(struct
->> virtio_device *vdev,
->>>  	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
->>>  	struct rproc *rproc = vdev_to_rproc(vdev);
->>>  	struct device *dev = &rproc->dev;
->>> +	struct rproc_mem_entry *mem;
->>>  	struct rproc_vring *rvring;
->>> +	struct fw_rsc_vdev *rsc;
->>>  	struct virtqueue *vq;
->>>  	void *addr;
->>>  	int len, size;
->>> @@ -88,8 +90,14 @@ static struct virtqueue *rp_find_vq(struct
->> virtio_device *vdev,
->>>  	if (!name)
->>>  		return NULL;
->>>
->>> +	/* Search allocated memory region by name */
->>> +	mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d",
->> rvdev->index,
->>> +					  id);
->>> +	if (!mem || !mem->va)
->>> +		return ERR_PTR(-ENOMEM);
->>> +
->>>  	rvring = &rvdev->vring[id];
->>> -	addr = rvring->va;
->>> +	addr = mem->va;
->>>  	len = rvring->len;
->>>
->>>  	/* zero vring */
->>> @@ -114,6 +122,10 @@ static struct virtqueue *rp_find_vq(struct
->> virtio_device *vdev,
->>>  	rvring->vq = vq;
->>>  	vq->priv = rvring;
->>>
->>> +	/* Update vring in resource table */
->>> +	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
->>> +	rsc->vring[id].da = mem->da;
->>> +
->>>  	return vq;
->>>  }
->>>
->>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>> index 4cdd0c6..6b3a234 100644
->>> --- a/include/linux/remoteproc.h
->>> +++ b/include/linux/remoteproc.h
->>> @@ -453,6 +453,7 @@ struct rproc_dump_segment {
->>>   * @table_sz: size of @cached_table
->>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
->>>   * @dump_segments: list of segments in the firmware
->>> + * @nb_vdev: number of vdev currently handled by rproc
->>>   */
->>>  struct rproc {
->>>  	struct list_head node;
->>> @@ -485,6 +486,7 @@ struct rproc {
->>>  	bool has_iommu;
->>>  	bool auto_boot;
->>>  	struct list_head dump_segments;
->>> +	int nb_vdev;
->>>  };
->>>
->>>  /**
->>> @@ -512,7 +514,6 @@ struct rproc_subdev {
->>>  /**
->>>   * struct rproc_vring - remoteproc vring state
->>>   * @va:	virtual address
->>> - * @dma: dma address
->>>   * @len: length, in bytes
->>>   * @da: device address
->>>   * @align: vring alignment
->>> @@ -522,7 +523,6 @@ struct rproc_subdev {
->>>   */
->>>  struct rproc_vring {
->>>  	void *va;
->>> -	dma_addr_t dma;
->>>  	int len;
->>>  	u32 da;
->>>  	u32 align;
->>> @@ -541,6 +541,7 @@ struct rproc_vring {
->>>   * @vdev: the virio device
->>>   * @vring: the vrings for this vdev
->>>   * @rsc_offset: offset of the vdev's resource entry
->>> + * @index: vdev position versus other vdev declared in resource table
->>>   */
->>>  struct rproc_vdev {
->>>  	struct kref refcount;
->>> @@ -553,6 +554,7 @@ struct rproc_vdev {
->>>  	struct virtio_device vdev;
->>>  	struct rproc_vring vring[RVDEV_NUM_VRINGS];
->>>  	u32 rsc_offset;
->>> +	u32 index;
->>>  };
->>>
->>>  struct rproc *rproc_get_by_phandle(phandle phandle);
->>>
-> 
+SGkgU3VtYW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4g
+QW5uYSA8cy1hbm5hQHRpLmNvbT4NCj4gU2VudDogbWVyY3JlZGkgMjQgb2N0b2JyZSAyMDE4IDAy
+OjE0DQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT47IGJqb3JuLmFu
+ZGVyc3NvbkBsaW5hcm8ub3JnOw0KPiBvaGFkQHdpemVyeS5jb20NCj4gQ2M6IGxpbnV4LXJlbW90
+ZXByb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBB
+cm5hdWQgUE9VTElRVUVOIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT47DQo+IGJlbmphbWluLmdh
+aWduYXJkQGxpbmFyby5vcmcNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAxMi8xN10gcmVtb3Rl
+cHJvYzogbW9kaWZ5IHZyaW5nIGFsbG9jYXRpb24gdG8gcmVseSBvbg0KPiBjZW50cmFsaXplZCBj
+YXJ2ZW91dCBhbGxvY2F0b3INCj4gDQo+IE9uIDcvMjcvMTggODoxNCBBTSwgTG9pYyBQYWxsYXJk
+eSB3cm90ZToNCj4gPiBDdXJyZW50IHZlcnNpb24gb2YgcnByb2NfYWxsb2NfdnJpbmcgZnVuY3Rp
+b24gc3VwcG9ydHMgb25seSBkeW5hbWljIHZyaW5nDQo+ID4gYWxsb2NhdGlvbi4NCj4gPg0KPiA+
+IFRoaXMgcGF0Y2ggYWxsb3dzIHRvIGFsbG9jYXRlIHZyaW5ncyBiYXNlZCBvbiBtZW1vcnkgcmVn
+aW9uIGRlY2xhdGF0aW9uLg0KPiA+IFZyaW5ncyBhcmUgbm93IG1hbmFnZSBsaWtlIG1lbW9yeSBj
+YXJ2ZW91dHMsIHRvIGNvbW11bml6ZSBtZW1vcnkNCj4gbWFuYWdlbWVudA0KPiA+IGNvZGUgaW4g
+cnByb2NfYWxsb2NfcmVnaXN0ZXJlZF9jYXJ2ZW91dHMoKS4NCj4gPg0KPiA+IEFsbG9jYXRlZCBi
+dWZmZXIgaXMgcmV0cmlldmVkIGluIHJwX2ZpbmRfdnEoKSB0aGFua3MgdG8NCj4gPiBycHJvY19m
+aW5kX2NhcnZlb3V0X2J5X25hbWUoKSBmdW5jdGlvbnMgZm9yLg0KPiA+DQo+ID4gVGhpcyBwYXRj
+aCBzZXRzIHZyaW5ncyBuYW1lcyB0byB2ZGV2IngidnJpbmcieSIgd2l0aCB4IHZkZXYgaW5kZXgg
+aW4NCj4gPiByZXNvdXJjZSB0YWJsZSBhbmQgeSB2cmluZyBpbmRleCBpbiB2ZGV2LiBUaGlzIHdp
+bGwgYmUgdXBkYXRlZCB3aGVuDQo+ID4gbmFtZSB3aWxsIGJlIGFzc29jaWF0ZWQgdG8gdmRldiBp
+biBmaXJtd2FyZSByZXNvdXJjZSB0YWJsZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IExvaWMg
+UGFsbGFyZHkgPGxvaWMucGFsbGFyZHlAc3QuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3Jl
+bW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMgICAgIHwgNjEgKysrKysrKysrKysrKysrKystLS0t
+LS0NCj4gLS0tLS0tLS0tDQo+ID4gIGRyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2ludGVy
+bmFsLmggfCAgMiArKw0KPiA+ICBkcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY192aXJ0aW8u
+YyAgIHwgMTQgKysrKysrKy0NCj4gPiAgaW5jbHVkZS9saW51eC9yZW1vdGVwcm9jLmggICAgICAg
+ICAgICAgICB8ICA2ICsrLS0NCj4gPiAgNCBmaWxlcyBjaGFuZ2VkLCA1MSBpbnNlcnRpb25zKCsp
+LCAzMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JlbW90ZXBy
+b2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19j
+b3JlLmMNCj4gPiBpbmRleCBjNTQzZDA0Li40ZWRjNmYwIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZl
+cnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcmVtb3Rl
+cHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+IEBAIC01Myw2ICs1MywxMSBAQCB0eXBlZGVmIGlu
+dCAoKnJwcm9jX2hhbmRsZV9yZXNvdXJjZXNfdCkoc3RydWN0DQo+IHJwcm9jICpycHJvYywNCj4g
+PiAgdHlwZWRlZiBpbnQgKCpycHJvY19oYW5kbGVfcmVzb3VyY2VfdCkoc3RydWN0IHJwcm9jICpy
+cHJvYywNCj4gPiAgCQkJCSB2b2lkICosIGludCBvZmZzZXQsIGludCBhdmFpbCk7DQo+ID4NCj4g
+PiArc3RhdGljIGludCBycHJvY19hbGxvY19jYXJ2ZW91dChzdHJ1Y3QgcnByb2MgKnJwcm9jLA0K
+PiA+ICsJCQkJc3RydWN0IHJwcm9jX21lbV9lbnRyeSAqbWVtKTsNCj4gPiArc3RhdGljIGludCBy
+cHJvY19yZWxlYXNlX2NhcnZlb3V0KHN0cnVjdCBycHJvYyAqcnByb2MsDQo+ID4gKwkJCQkgIHN0
+cnVjdCBycHJvY19tZW1fZW50cnkgKm1lbSk7DQo+ID4gKw0KPiA+ICAvKiBVbmlxdWUgaW5kaWNl
+cyBmb3IgcmVtb3RlcHJvYyBkZXZpY2VzICovDQo+ID4gIHN0YXRpYyBERUZJTkVfSURBKHJwcm9j
+X2Rldl9pbmRleCk7DQo+ID4NCj4gPiBAQCAtMzEyLDIxICszMTcsMzMgQEAgaW50IHJwcm9jX2Fs
+bG9jX3ZyaW5nKHN0cnVjdCBycHJvY192ZGV2ICpydmRldiwNCj4gaW50IGkpDQo+ID4gIAlzdHJ1
+Y3QgZGV2aWNlICpkZXYgPSAmcnByb2MtPmRldjsNCj4gPiAgCXN0cnVjdCBycHJvY192cmluZyAq
+cnZyaW5nID0gJnJ2ZGV2LT52cmluZ1tpXTsNCj4gPiAgCXN0cnVjdCBmd19yc2NfdmRldiAqcnNj
+Ow0KPiA+IC0JZG1hX2FkZHJfdCBkbWE7DQo+ID4gLQl2b2lkICp2YTsNCj4gPiAgCWludCByZXQs
+IHNpemUsIG5vdGlmeWlkOw0KPiA+ICsJc3RydWN0IHJwcm9jX21lbV9lbnRyeSAqbWVtOw0KPiA+
+DQo+ID4gIAkvKiBhY3R1YWwgc2l6ZSBvZiB2cmluZyAoaW4gYnl0ZXMpICovDQo+ID4gIAlzaXpl
+ID0gUEFHRV9BTElHTih2cmluZ19zaXplKHJ2cmluZy0+bGVuLCBydnJpbmctPmFsaWduKSk7DQo+
+ID4NCj4gPiAtCS8qDQo+ID4gLQkgKiBBbGxvY2F0ZSBub24tY2FjaGVhYmxlIG1lbW9yeSBmb3Ig
+dGhlIHZyaW5nLiBJbiB0aGUgZnV0dXJlDQo+ID4gLQkgKiB0aGlzIGNhbGwgd2lsbCBhbHNvIGNv
+bmZpZ3VyZSB0aGUgSU9NTVUgZm9yIHVzDQo+ID4gLQkgKi8NCj4gPiAtCXZhID0gZG1hX2FsbG9j
+X2NvaGVyZW50KGRldi0+cGFyZW50LCBzaXplLCAmZG1hLCBHRlBfS0VSTkVMKTsNCj4gPiAtCWlm
+ICghdmEpIHsNCj4gPiAtCQlkZXZfZXJyKGRldi0+cGFyZW50LCAiZG1hX2FsbG9jX2NvaGVyZW50
+IGZhaWxlZFxuIik7DQo+ID4gLQkJcmV0dXJuIC1FSU5WQUw7DQo+ID4gKwlyc2MgPSAodm9pZCAq
+KXJwcm9jLT50YWJsZV9wdHIgKyBydmRldi0+cnNjX29mZnNldDsNCj4gPiArDQo+ID4gKwkvKiBT
+ZWFyY2ggZm9yIHByZS1yZWdpc3RlcmVkIGNhcnZlb3V0ICovDQo+ID4gKwltZW0gPSBycHJvY19m
+aW5kX2NhcnZlb3V0X2J5X25hbWUocnByb2MsICJ2ZGV2JWR2cmluZyVkIiwNCj4gcnZkZXYtPmlu
+ZGV4LA0KPiA+ICsJCQkJCSAgaSk7DQo+ID4gKwlpZiAobWVtKSB7DQo+ID4gKwkJaWYgKHJwcm9j
+X2NoZWNrX2NhcnZlb3V0X2RhKHJwcm9jLCBtZW0sIHJzYy0+dnJpbmdbaV0uZGEsDQo+IHNpemUp
+KQ0KPiA+ICsJCQlyZXR1cm4gLUVOT01FTTsNCj4gPiArCX0gZWxzZSB7DQo+ID4gKwkJLyogUmVn
+aXN0ZXIgY2FydmVvdXQgaW4gaW4gbGlzdCAqLw0KPiA+ICsJCW1lbSA9IHJwcm9jX21lbV9lbnRy
+eV9pbml0KGRldiwgMCwgMCwgc2l6ZSwgcnNjLQ0KPiA+dnJpbmdbaV0uZGEsDQo+ID4gKwkJCQkJ
+ICAgcnByb2NfYWxsb2NfY2FydmVvdXQsDQo+ID4gKwkJCQkJICAgcnByb2NfcmVsZWFzZV9jYXJ2
+ZW91dCwNCj4gPiArCQkJCQkgICAidmRldiVkdnJpbmclZCIsDQo+ID4gKwkJCQkJICAgcnZkZXYt
+PmluZGV4LCBpKTsNCj4gPiArCQlpZiAoIW1lbSkgew0KPiA+ICsJCQlkZXZfZXJyKGRldiwgIkNh
+bid0IGFsbG9jYXRlIG1lbW9yeSBlbnRyeQ0KPiBzdHJ1Y3R1cmVcbiIpOw0KPiA+ICsJCQlyZXR1
+cm4gLUVOT01FTTsNCj4gPiArCQl9DQo+ID4gKw0KPiA+ICsJCXJwcm9jX2FkZF9jYXJ2ZW91dChy
+cHJvYywgbWVtKTsNCj4gPiAgCX0NCj4gPg0KPiA+ICAJLyoNCj4gPiBAQCAtMzM3LDcgKzM1NCw2
+IEBAIGludCBycHJvY19hbGxvY192cmluZyhzdHJ1Y3QgcnByb2NfdmRldiAqcnZkZXYsIGludCBp
+KQ0KPiA+ICAJcmV0ID0gaWRyX2FsbG9jKCZycHJvYy0+bm90aWZ5aWRzLCBydnJpbmcsIDAsIDAs
+IEdGUF9LRVJORUwpOw0KPiA+ICAJaWYgKHJldCA8IDApIHsNCj4gPiAgCQlkZXZfZXJyKGRldiwg
+Imlkcl9hbGxvYyBmYWlsZWQ6ICVkXG4iLCByZXQpOw0KPiA+IC0JCWRtYV9mcmVlX2NvaGVyZW50
+KGRldi0+cGFyZW50LCBzaXplLCB2YSwgZG1hKTsNCj4gPiAgCQlyZXR1cm4gcmV0Ow0KPiA+ICAJ
+fQ0KPiA+ICAJbm90aWZ5aWQgPSByZXQ7DQo+ID4gQEAgLTM0NiwyMSArMzYyLDkgQEAgaW50IHJw
+cm9jX2FsbG9jX3ZyaW5nKHN0cnVjdCBycHJvY192ZGV2ICpydmRldiwgaW50DQo+IGkpDQo+ID4g
+IAlpZiAobm90aWZ5aWQgPiBycHJvYy0+bWF4X25vdGlmeWlkKQ0KPiA+ICAJCXJwcm9jLT5tYXhf
+bm90aWZ5aWQgPSBub3RpZnlpZDsNCj4gPg0KPiA+IC0JZGV2X2RiZyhkZXYsICJ2cmluZyVkOiB2
+YSAlcEsgZG1hICVwYWQgc2l6ZSAweCV4IGlkciAlZFxuIiwNCj4gPiAtCQlpLCB2YSwgJmRtYSwg
+c2l6ZSwgbm90aWZ5aWQpOw0KPiA+IC0NCj4gPiAtCXJ2cmluZy0+dmEgPSB2YTsNCj4gPiAtCXJ2
+cmluZy0+ZG1hID0gZG1hOw0KPiA+ICAJcnZyaW5nLT5ub3RpZnlpZCA9IG5vdGlmeWlkOw0KPiA+
+DQo+ID4gLQkvKg0KPiA+IC0JICogTGV0IHRoZSBycHJvYyBrbm93IHRoZSBub3RpZnlpZCBhbmQg
+ZGEgb2YgdGhpcyB2cmluZy4NCj4gPiAtCSAqIE5vdCBhbGwgcGxhdGZvcm1zIHVzZSBkbWFfYWxs
+b2NfY29oZXJlbnQgdG8gYXV0b21hdGljYWxseQ0KPiA+IC0JICogc2V0IHVwIHRoZSBpb21tdS4g
+SW4gdGhpcyBjYXNlIHRoZSBkZXZpY2UgYWRkcmVzcyAoZGEpIHdpbGwNCj4gPiAtCSAqIGhvbGQg
+dGhlIHBoeXNpY2FsIGFkZHJlc3MgYW5kIG5vdCB0aGUgZGV2aWNlIGFkZHJlc3MuDQo+ID4gLQkg
+Ki8NCj4gPiAtCXJzYyA9ICh2b2lkICopcnByb2MtPnRhYmxlX3B0ciArIHJ2ZGV2LT5yc2Nfb2Zm
+c2V0Ow0KPiA+IC0JcnNjLT52cmluZ1tpXS5kYSA9IGRtYTsNCj4gPiArCS8qIExldCB0aGUgcnBy
+b2Mga25vdyB0aGUgbm90aWZ5aWQgb2YgdGhpcyB2cmluZy4qLw0KPiA+ICAJcnNjLT52cmluZ1tp
+XS5ub3RpZnlpZCA9IG5vdGlmeWlkOw0KPiA+ICAJcmV0dXJuIDA7DQo+ID4gIH0NCj4gPiBAQCAt
+MzkyLDEyICszOTYsMTAgQEAgaW50IHJwcm9jX2FsbG9jX3ZyaW5nKHN0cnVjdCBycHJvY192ZGV2
+ICpydmRldiwNCj4gaW50IGkpDQo+ID4NCj4gPiAgdm9pZCBycHJvY19mcmVlX3ZyaW5nKHN0cnVj
+dCBycHJvY192cmluZyAqcnZyaW5nKQ0KPiA+ICB7DQo+ID4gLQlpbnQgc2l6ZSA9IFBBR0VfQUxJ
+R04odnJpbmdfc2l6ZShydnJpbmctPmxlbiwgcnZyaW5nLT5hbGlnbikpOw0KPiA+ICAJc3RydWN0
+IHJwcm9jICpycHJvYyA9IHJ2cmluZy0+cnZkZXYtPnJwcm9jOw0KPiA+ICAJaW50IGlkeCA9IHJ2
+cmluZy0+cnZkZXYtPnZyaW5nIC0gcnZyaW5nOw0KPiA+ICAJc3RydWN0IGZ3X3JzY192ZGV2ICpy
+c2M7DQo+ID4NCj4gPiAtCWRtYV9mcmVlX2NvaGVyZW50KHJwcm9jLT5kZXYucGFyZW50LCBzaXpl
+LCBydnJpbmctPnZhLCBydnJpbmctDQo+ID5kbWEpOw0KPiA+ICAJaWRyX3JlbW92ZSgmcnByb2Mt
+Pm5vdGlmeWlkcywgcnZyaW5nLT5ub3RpZnlpZCk7DQo+IA0KPiBBbHNvLCBJIGFtIG5vdCBzdXJl
+IGlmIEZXX1JTQ19BRERSX0FOWSBzZW1hbnRpY3Mgd2VyZSBlbmZvcmNlZA0KPiBwcmV2aW91c2x5
+IG9uIHRoZSB2cmluZyBkYS4gSXQgd2FzIHNpbXBseSBvdmVyd3JpdHRlbiBpcnJlc3BlY3RpdmUg
+b2YNCj4gdGhlIHZhbHVlLiBOb3csIEkgYW0gcnVubmluZyBhZ2FpbiBpbnRvIHRoZSAiYmFkIGNh
+cnZlb3V0IHJzYw0KPiBjb25maWd1cmF0aW9uIHZhbHVlIiBkdWUgdG8gdGhlIGlvbW11X2RvbWFp
+bl9jaGVjayBpZg0KPiAhRldfUlNDX0FERFJfQU5ZLg0KDQpXaGVuIGFyZSB5b3UgcnVubmluZyBp
+bnRvIHRoZSAiYmFkIGNhcnZlb3V0IHJzYyBjb25maWd1cmF0aW9uIHZhbHVlIiA/IA0KVGhpcyBw
+YXRjaCBpcyBjcmVhdGluZyBvbmUgY2FydmVvdXQgcGVyIHZyaW5nIHRvIHJlbHkgb24gZ2VuZXJp
+YyBjYXJ2ZW91dCBhbGxvY2F0b3IuDQpUaGVuIGNhcnZlb3V0IGlzIHJldHJpZXZlZCBmcm9tIGNh
+cnZlb3V0ICBsaXN0IGFuZCB2cmluZyByZXNvdXJjZSB0YWJsZSBpbmZvcm1hdGlvbiB1cGRhdGVk
+Lg0KDQpJZiB0aGUgZGEgb2YgdGhlIGNhcnZlb3V0IHdhcyBmaXhlZCBpbiB0aGUgcmVzb3VyY2Ug
+dGFibGUsIGl0IGlzIG5vcm1hbCB5b3UgaGF2ZSB0aGlzIGVycm9yLg0KVG8gc29sdmUgdGhhdCBT
+VCBkcml2ZXIgaXMgcmVnaXN0ZXJpbmcgb25lIGZpeGVkIGNhcnZlb3V0IHBlciB2cmluZyAod2l0
+aCB0aGUgcmlnaHQgbmFtZSB0b2RheSkNCg0KSXQgaXMgdGhlIHNhbWUgZGlzY3Vzc2lvbiBhcyB3
+aXRoIFBhdGNoIDEuIElmIHdlIGNvbnNpZGVyIHdlIGNhbid0IGNoYW5nZSBmaXhlZCBjb3Byb2Nl
+c3NvciBhZGRyZXNzIHJlcXVlc3RzLCBycHJvYyBjb3JlIHNob3VsZCBzdG9wIGl0cyBleGVjdXRp
+b24uDQpJdCBpcyB0aGUgcmVzcG9uc2liaWxpdHkgb2YgcGxhdGZvcm0gZHJpdmVyIHRvIHJlZ2lz
+dGVyIHRoZSByaWdodCBtZW1vcnkgcmVnaW9ucy4NClRoYXQncyB3aGF0IHdlIGRpc2N1c3NlZCB3
+aXRoIHlvdSBhbmQgQmlsbCBpbiBPcGVuQU1QIGZvcnVtLg0KVEkgdXNlY2FzZSB3YXMgdG8gaGF2
+ZSB0aGUgc2FtZSBEU1AgZmlybXdhcmUgd2l0aCB0aGUgc2FtZSByZXNvdXJjZSB0YWJsZSBiZWlu
+ZyBhYmxlIHRvIHJ1biBvbiBhbnkgRFNQLg0KSW4gdGhhdCBjYXNlIGVhY2ggRFNQIHBsYXRmb3Jt
+IGRyaXZlciBoYXMgdG8gcHJvdmlkZSB0aGUgcmlnaHQgbWVtb3J5IHJlZ2lvbiBjb25maWd1cmF0
+aW9uIHdpdGggdGhlIGNvcnJlY3QgcGEgdG8gZGEuDQoNCj4gDQo+IEZXSVcsIHRoZSBycHJvY19m
+cmVlX3ZyaW5nIHdhcyBhY3R1YWxseSB1c2luZyB0aGUgdmFsdWUgMCB3aGVuIHJlc2V0dGluZy4N
+CiANCkl0IGlzIG5vIG1vcmUgbmVlZGVkIGFzIHRoZSBjYXJ2ZW91dCBsaXN0IGlzIGNsZWFyZWQg
+YXQgZWFjaCBzdG9wIGFuZCByZWNyZWF0ZWQgYXQgZWFjaCBzdGFydC4NCk1vcmVvdmVyIHJlc291
+cmNlIHRhYmxlIChhbmQgZmlybXdhcmUpIGlzIHJlbG9hZGVkIGF0IGVhY2ggY29wcm9jZXNzb3Ig
+c3RhcnQuDQoNClJlZ2FyZHMsDQpMb2ljDQo+IA0KPiByZWdhcmRzDQo+IFN1bWFuDQo+IA0KPiA+
+DQo+ID4gIAkvKiByZXNldCByZXNvdXJjZSBlbnRyeSBpbmZvICovDQo+ID4gQEAgLTQ4NCw2ICs0
+ODYsNyBAQCBzdGF0aWMgaW50IHJwcm9jX2hhbmRsZV92ZGV2KHN0cnVjdCBycHJvYyAqcnByb2Ms
+DQo+IHN0cnVjdCBmd19yc2NfdmRldiAqcnNjLA0KPiA+DQo+ID4gIAlydmRldi0+aWQgPSByc2Mt
+PmlkOw0KPiA+ICAJcnZkZXYtPnJwcm9jID0gcnByb2M7DQo+ID4gKwlydmRldi0+aW5kZXggPSBy
+cHJvYy0+bmJfdmRldisrOw0KPiA+DQo+ID4gIAkvKiBwYXJzZSB0aGUgdnJpbmdzICovDQo+ID4g
+IAlmb3IgKGkgPSAwOyBpIDwgcnNjLT5udW1fb2ZfdnJpbmdzOyBpKyspIHsNCj4gPiBAQCAtNTI4
+LDkgKzUzMSw2IEBAIHZvaWQgcnByb2NfdmRldl9yZWxlYXNlKHN0cnVjdCBrcmVmICpyZWYpDQo+
+ID4NCj4gPiAgCWZvciAoaWQgPSAwOyBpZCA8IEFSUkFZX1NJWkUocnZkZXYtPnZyaW5nKTsgaWQr
+Kykgew0KPiA+ICAJCXJ2cmluZyA9ICZydmRldi0+dnJpbmdbaWRdOw0KPiA+IC0JCWlmICghcnZy
+aW5nLT52YSkNCj4gPiAtCQkJY29udGludWU7DQo+ID4gLQ0KPiA+ICAJCXJwcm9jX2ZyZWVfdnJp
+bmcocnZyaW5nKTsNCj4gPiAgCX0NCj4gPg0KPiA+IEBAIC0xMzIyLDYgKzEzMjIsOSBAQCBzdGF0
+aWMgaW50IHJwcm9jX2Z3X2Jvb3Qoc3RydWN0IHJwcm9jICpycHJvYywNCj4gY29uc3Qgc3RydWN0
+IGZpcm13YXJlICpmdykNCj4gPiAgCS8qIHJlc2V0IG1heF9ub3RpZnlpZCAqLw0KPiA+ICAJcnBy
+b2MtPm1heF9ub3RpZnlpZCA9IC0xOw0KPiA+DQo+ID4gKwkvKiByZXNldCBoYW5kbGVkIHZkZXYg
+Ki8NCj4gPiArCXJwcm9jLT5uYl92ZGV2ID0gMDsNCj4gPiArDQo+ID4gIAkvKiBoYW5kbGUgZncg
+cmVzb3VyY2VzIHdoaWNoIGFyZSByZXF1aXJlZCB0byBib290IHJwcm9jICovDQo+ID4gIAlyZXQg
+PSBycHJvY19oYW5kbGVfcmVzb3VyY2VzKHJwcm9jLCBycHJvY19sb2FkaW5nX2hhbmRsZXJzKTsN
+Cj4gPiAgCWlmIChyZXQpIHsNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9yZW1vdGVwcm9jL3Jl
+bW90ZXByb2NfaW50ZXJuYWwuaA0KPiBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2lu
+dGVybmFsLmgNCj4gPiBpbmRleCA3NTcwYmViLi5mNmNhZDI0IDEwMDY0NA0KPiA+IC0tLSBhL2Ry
+aXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2ludGVybmFsLmgNCj4gPiArKysgYi9kcml2ZXJz
+L3JlbW90ZXByb2MvcmVtb3RlcHJvY19pbnRlcm5hbC5oDQo+ID4gQEAgLTYwLDYgKzYwLDggQEAg
+c3RydWN0IGRlbnRyeSAqcnByb2NfY3JlYXRlX3RyYWNlX2ZpbGUoY29uc3QgY2hhcg0KPiAqbmFt
+ZSwgc3RydWN0IHJwcm9jICpycHJvYywNCj4gPiAgaW50IHJwcm9jX2VsZl9sb2FkX3JzY190YWJs
+ZShzdHJ1Y3QgcnByb2MgKnJwcm9jLCBjb25zdCBzdHJ1Y3QgZmlybXdhcmUNCj4gKmZ3KTsNCj4g
+PiAgc3RydWN0IHJlc291cmNlX3RhYmxlICpycHJvY19lbGZfZmluZF9sb2FkZWRfcnNjX3RhYmxl
+KHN0cnVjdCBycHJvYw0KPiAqcnByb2MsDQo+ID4gIAkJCQkJCSAgICAgICBjb25zdCBzdHJ1Y3Qg
+ZmlybXdhcmUNCj4gKmZ3KTsNCj4gPiArc3RydWN0IHJwcm9jX21lbV9lbnRyeSAqDQo+ID4gK3Jw
+cm9jX2ZpbmRfY2FydmVvdXRfYnlfbmFtZShzdHJ1Y3QgcnByb2MgKnJwcm9jLCBjb25zdCBjaGFy
+ICpuYW1lLA0KPiAuLi4pOw0KPiA+DQo+ID4gIHN0YXRpYyBpbmxpbmUNCj4gPiAgaW50IHJwcm9j
+X2Z3X3Nhbml0eV9jaGVjayhzdHJ1Y3QgcnByb2MgKnJwcm9jLCBjb25zdCBzdHJ1Y3QgZmlybXdh
+cmUgKmZ3KQ0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY192
+aXJ0aW8uYw0KPiBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX3ZpcnRpby5jDQo+ID4g
+aW5kZXggYmJlY2Q0NC4uZGUyMWY2MiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3JlbW90ZXBy
+b2MvcmVtb3RlcHJvY192aXJ0aW8uYw0KPiA+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1v
+dGVwcm9jX3ZpcnRpby5jDQo+ID4gQEAgLTc2LDcgKzc2LDkgQEAgc3RhdGljIHN0cnVjdCB2aXJ0
+cXVldWUgKnJwX2ZpbmRfdnEoc3RydWN0DQo+IHZpcnRpb19kZXZpY2UgKnZkZXYsDQo+ID4gIAlz
+dHJ1Y3QgcnByb2NfdmRldiAqcnZkZXYgPSB2ZGV2X3RvX3J2ZGV2KHZkZXYpOw0KPiA+ICAJc3Ry
+dWN0IHJwcm9jICpycHJvYyA9IHZkZXZfdG9fcnByb2ModmRldik7DQo+ID4gIAlzdHJ1Y3QgZGV2
+aWNlICpkZXYgPSAmcnByb2MtPmRldjsNCj4gPiArCXN0cnVjdCBycHJvY19tZW1fZW50cnkgKm1l
+bTsNCj4gPiAgCXN0cnVjdCBycHJvY192cmluZyAqcnZyaW5nOw0KPiA+ICsJc3RydWN0IGZ3X3Jz
+Y192ZGV2ICpyc2M7DQo+ID4gIAlzdHJ1Y3QgdmlydHF1ZXVlICp2cTsNCj4gPiAgCXZvaWQgKmFk
+ZHI7DQo+ID4gIAlpbnQgbGVuLCBzaXplOw0KPiA+IEBAIC04OCw4ICs5MCwxNCBAQCBzdGF0aWMg
+c3RydWN0IHZpcnRxdWV1ZSAqcnBfZmluZF92cShzdHJ1Y3QNCj4gdmlydGlvX2RldmljZSAqdmRl
+diwNCj4gPiAgCWlmICghbmFtZSkNCj4gPiAgCQlyZXR1cm4gTlVMTDsNCj4gPg0KPiA+ICsJLyog
+U2VhcmNoIGFsbG9jYXRlZCBtZW1vcnkgcmVnaW9uIGJ5IG5hbWUgKi8NCj4gPiArCW1lbSA9IHJw
+cm9jX2ZpbmRfY2FydmVvdXRfYnlfbmFtZShycHJvYywgInZkZXYlZHZyaW5nJWQiLA0KPiBydmRl
+di0+aW5kZXgsDQo+ID4gKwkJCQkJICBpZCk7DQo+ID4gKwlpZiAoIW1lbSB8fCAhbWVtLT52YSkN
+Cj4gPiArCQlyZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsNCj4gPiArDQo+ID4gIAlydnJpbmcgPSAm
+cnZkZXYtPnZyaW5nW2lkXTsNCj4gPiAtCWFkZHIgPSBydnJpbmctPnZhOw0KPiA+ICsJYWRkciA9
+IG1lbS0+dmE7DQo+ID4gIAlsZW4gPSBydnJpbmctPmxlbjsNCj4gPg0KPiA+ICAJLyogemVybyB2
+cmluZyAqLw0KPiA+IEBAIC0xMTQsNiArMTIyLDEwIEBAIHN0YXRpYyBzdHJ1Y3QgdmlydHF1ZXVl
+ICpycF9maW5kX3ZxKHN0cnVjdA0KPiB2aXJ0aW9fZGV2aWNlICp2ZGV2LA0KPiA+ICAJcnZyaW5n
+LT52cSA9IHZxOw0KPiA+ICAJdnEtPnByaXYgPSBydnJpbmc7DQo+ID4NCj4gPiArCS8qIFVwZGF0
+ZSB2cmluZyBpbiByZXNvdXJjZSB0YWJsZSAqLw0KPiA+ICsJcnNjID0gKHZvaWQgKilycHJvYy0+
+dGFibGVfcHRyICsgcnZkZXYtPnJzY19vZmZzZXQ7DQo+ID4gKwlyc2MtPnZyaW5nW2lkXS5kYSA9
+IG1lbS0+ZGE7DQo+ID4gKw0KPiA+ICAJcmV0dXJuIHZxOw0KPiA+ICB9DQo+ID4NCj4gPiBkaWZm
+IC0tZ2l0IGEvaW5jbHVkZS9saW51eC9yZW1vdGVwcm9jLmggYi9pbmNsdWRlL2xpbnV4L3JlbW90
+ZXByb2MuaA0KPiA+IGluZGV4IDRjZGQwYzYuLjZiM2EyMzQgMTAwNjQ0DQo+ID4gLS0tIGEvaW5j
+bHVkZS9saW51eC9yZW1vdGVwcm9jLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3JlbW90ZXBy
+b2MuaA0KPiA+IEBAIC00NTMsNiArNDUzLDcgQEAgc3RydWN0IHJwcm9jX2R1bXBfc2VnbWVudCB7
+DQo+ID4gICAqIEB0YWJsZV9zejogc2l6ZSBvZiBAY2FjaGVkX3RhYmxlDQo+ID4gICAqIEBoYXNf
+aW9tbXU6IGZsYWcgdG8gaW5kaWNhdGUgaWYgcmVtb3RlIHByb2Nlc3NvciBpcyBiZWhpbmQgYW4g
+TU1VDQo+ID4gICAqIEBkdW1wX3NlZ21lbnRzOiBsaXN0IG9mIHNlZ21lbnRzIGluIHRoZSBmaXJt
+d2FyZQ0KPiA+ICsgKiBAbmJfdmRldjogbnVtYmVyIG9mIHZkZXYgY3VycmVudGx5IGhhbmRsZWQg
+YnkgcnByb2MNCj4gPiAgICovDQo+ID4gIHN0cnVjdCBycHJvYyB7DQo+ID4gIAlzdHJ1Y3QgbGlz
+dF9oZWFkIG5vZGU7DQo+ID4gQEAgLTQ4NSw2ICs0ODYsNyBAQCBzdHJ1Y3QgcnByb2Mgew0KPiA+
+ICAJYm9vbCBoYXNfaW9tbXU7DQo+ID4gIAlib29sIGF1dG9fYm9vdDsNCj4gPiAgCXN0cnVjdCBs
+aXN0X2hlYWQgZHVtcF9zZWdtZW50czsNCj4gPiArCWludCBuYl92ZGV2Ow0KPiA+ICB9Ow0KPiA+
+DQo+ID4gIC8qKg0KPiA+IEBAIC01MTIsNyArNTE0LDYgQEAgc3RydWN0IHJwcm9jX3N1YmRldiB7
+DQo+ID4gIC8qKg0KPiA+ICAgKiBzdHJ1Y3QgcnByb2NfdnJpbmcgLSByZW1vdGVwcm9jIHZyaW5n
+IHN0YXRlDQo+ID4gICAqIEB2YToJdmlydHVhbCBhZGRyZXNzDQo+ID4gLSAqIEBkbWE6IGRtYSBh
+ZGRyZXNzDQo+ID4gICAqIEBsZW46IGxlbmd0aCwgaW4gYnl0ZXMNCj4gPiAgICogQGRhOiBkZXZp
+Y2UgYWRkcmVzcw0KPiA+ICAgKiBAYWxpZ246IHZyaW5nIGFsaWdubWVudA0KPiA+IEBAIC01MjIs
+NyArNTIzLDYgQEAgc3RydWN0IHJwcm9jX3N1YmRldiB7DQo+ID4gICAqLw0KPiA+ICBzdHJ1Y3Qg
+cnByb2NfdnJpbmcgew0KPiA+ICAJdm9pZCAqdmE7DQo+ID4gLQlkbWFfYWRkcl90IGRtYTsNCj4g
+PiAgCWludCBsZW47DQo+ID4gIAl1MzIgZGE7DQo+ID4gIAl1MzIgYWxpZ247DQo+ID4gQEAgLTU0
+MSw2ICs1NDEsNyBAQCBzdHJ1Y3QgcnByb2NfdnJpbmcgew0KPiA+ICAgKiBAdmRldjogdGhlIHZp
+cmlvIGRldmljZQ0KPiA+ICAgKiBAdnJpbmc6IHRoZSB2cmluZ3MgZm9yIHRoaXMgdmRldg0KPiA+
+ICAgKiBAcnNjX29mZnNldDogb2Zmc2V0IG9mIHRoZSB2ZGV2J3MgcmVzb3VyY2UgZW50cnkNCj4g
+PiArICogQGluZGV4OiB2ZGV2IHBvc2l0aW9uIHZlcnN1cyBvdGhlciB2ZGV2IGRlY2xhcmVkIGlu
+IHJlc291cmNlIHRhYmxlDQo+ID4gICAqLw0KPiA+ICBzdHJ1Y3QgcnByb2NfdmRldiB7DQo+ID4g
+IAlzdHJ1Y3Qga3JlZiByZWZjb3VudDsNCj4gPiBAQCAtNTUzLDYgKzU1NCw3IEBAIHN0cnVjdCBy
+cHJvY192ZGV2IHsNCj4gPiAgCXN0cnVjdCB2aXJ0aW9fZGV2aWNlIHZkZXY7DQo+ID4gIAlzdHJ1
+Y3QgcnByb2NfdnJpbmcgdnJpbmdbUlZERVZfTlVNX1ZSSU5HU107DQo+ID4gIAl1MzIgcnNjX29m
+ZnNldDsNCj4gPiArCXUzMiBpbmRleDsNCj4gPiAgfTsNCj4gPg0KPiA+ICBzdHJ1Y3QgcnByb2Mg
+KnJwcm9jX2dldF9ieV9waGFuZGxlKHBoYW5kbGUgcGhhbmRsZSk7DQo+ID4NCg0K
