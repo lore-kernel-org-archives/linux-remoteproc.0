@@ -1,342 +1,239 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v4 13/17] remoteproc: create vdev subdevice with specific
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v4 13/17] remoteproc: create vdev subdevice with specific
  dma memory pool
+Date: Wed, 24 Oct 2018 12:42:41 +0000
+Message-ID: <30fc4389a49244c29c0025b3923dd565@SFHDAG7NODE2.st.com>
 References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
  <1532697292-14272-14-git-send-email-loic.pallardy@st.com>
  <CAA07jV8tJNwQ0RMu_SG=KKjRNNGx=X5XW0Mzu1VFSPgJa-Uwrg@mail.gmail.com>
  <88325716f2a6447a9e12312674be317b@SFHDAG7NODE2.st.com>
  <CAA07jV_=9xGtD70CL9=A553_pL-_HyZbcx-WV9buficNn-eY+g@mail.gmail.com>
  <cd8a9458-7102-2250-b849-a3aadaffa1a0@ti.com>
- <5ef0c9cddc52458a858c2af0590f3b5f@SFHDAG7NODE2.st.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <3689cf80-c48b-08d0-e72b-f53138830735@ti.com>
-Date: Thu, 25 Oct 2018 15:16:40 -0500
-MIME-Version: 1.0
-In-Reply-To: <5ef0c9cddc52458a858c2af0590f3b5f@SFHDAG7NODE2.st.com>
-Content-Type: text/plain; charset="utf-8"
+ <472565ee-1327-a8a4-3b32-224ccafd3daf@ti.com>
+In-Reply-To: <472565ee-1327-a8a4-3b32-224ccafd3daf@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Loic PALLARDY <loic.pallardy@st.com>, Wendy Liang <sunnyliangjy@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, Wendy Liang <sunnyliangjy@gmail.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 10/24/18 7:40 AM, Loic PALLARDY wrote:
-> Hi Suman,
-> 
->> -----Original Message-----
->> From: Suman Anna <s-anna@ti.com>
->> Sent: mercredi 24 octobre 2018 03:22
->> To: Wendy Liang <sunnyliangjy@gmail.com>; Loic PALLARDY
->> <loic.pallardy@st.com>
->> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>; Ohad Ben-Cohen
->> <ohad@wizery.com>; linux-remoteproc@vger.kernel.org; Linux Kernel
->> Mailing List <linux-kernel@vger.kernel.org>; Arnaud POULIQUEN
->> <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org
->> Subject: Re: [PATCH v4 13/17] remoteproc: create vdev subdevice with
->> specific dma memory pool
->>
->> On 9/27/18 3:18 PM, Wendy Liang wrote:
->>> Hi Loic,
->>>
->>>
->>> On Thu, Sep 27, 2018 at 12:22 PM Loic PALLARDY <loic.pallardy@st.com>
->> wrote:
->>>>
->>>> Hi Wendy
->>>>
->>>>> -----Original Message-----
->>>>> From: Wendy Liang <sunnyliangjy@gmail.com>
->>>>> Sent: Thursday, September 27, 2018 7:17 PM
->>>>> To: Loic PALLARDY <loic.pallardy@st.com>
->>>>> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>; Ohad Ben-Cohen
->>>>> <ohad@wizery.com>; linux-remoteproc@vger.kernel.org; Linux Kernel
->>>>> Mailing List <linux-kernel@vger.kernel.org>; Arnaud POULIQUEN
->>>>> <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org; Suman
->> Anna
->>>>> <s-anna@ti.com>
->>>>> Subject: Re: [PATCH v4 13/17] remoteproc: create vdev subdevice with
->>>>> specific dma memory pool
->>>>>
->>>>> On Fri, Jul 27, 2018 at 6:16 AM Loic Pallardy <loic.pallardy@st.com>
->> wrote:
->>>>>>
->>>>>> This patch creates a dedicated vdev subdevice for each vdev declared
->>>>>> in firmware resource table and associates carveout named
->> "vdev%dbuffer"
->>>>>> (with %d vdev index in resource table) if any as dma coherent memory
->>>>> pool.
->>>>>>
->>>>>> Then vdev subdevice is used as parent for virtio device.
->>>>>>
->>>>>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
->>>>>> ---
->>>>>>  drivers/remoteproc/remoteproc_core.c     | 35
->>>>> +++++++++++++++++++++++---
->>>>>>  drivers/remoteproc/remoteproc_internal.h |  1 +
->>>>>>  drivers/remoteproc/remoteproc_virtio.c   | 42
->>>>> +++++++++++++++++++++++++++++++-
->>>>>>  include/linux/remoteproc.h               |  1 +
->>>>>>  4 files changed, 75 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c
->>>>> b/drivers/remoteproc/remoteproc_core.c
->>>>>> index 4edc6f0..adcc66e 100644
->>>>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>>>> @@ -39,6 +39,7 @@
->>>>>>  #include <linux/idr.h>
->>>>>>  #include <linux/elf.h>
->>>>>>  #include <linux/crc32.h>
->>>>>> +#include <linux/of_reserved_mem.h>
->>>>>>  #include <linux/virtio_ids.h>
->>>>>>  #include <linux/virtio_ring.h>
->>>>>>  #include <asm/byteorder.h>
->>>>>> @@ -145,7 +146,7 @@ static void rproc_disable_iommu(struct rproc
->>>>> *rproc)
->>>>>>         iommu_domain_free(domain);
->>>>>>  }
->>>>>>
->>>>>> -static phys_addr_t rproc_va_to_pa(void *cpu_addr)
->>>>>> +phys_addr_t rproc_va_to_pa(void *cpu_addr)
->>>>>>  {
->>>>>>         /*
->>>>>>          * Return physical address according to virtual address location
->>>>>> @@ -160,6 +161,7 @@ static phys_addr_t rproc_va_to_pa(void
->>>>> *cpu_addr)
->>>>>>         WARN_ON(!virt_addr_valid(cpu_addr));
->>>>>>         return virt_to_phys(cpu_addr);
->>>>>>  }
->>>>>> +EXPORT_SYMBOL(rproc_va_to_pa);
->>>>>>
->>>>>>  /**
->>>>>>   * rproc_da_to_va() - lookup the kernel virtual address for a
->> remoteproc
->>>>> address
->>>>>> @@ -423,6 +425,20 @@ static void rproc_vdev_do_stop(struct
->>>>> rproc_subdev *subdev, bool crashed)
->>>>>>  }
->>>>>>
->>>>>>  /**
->>>>>> + * rproc_rvdev_release() - release the existence of a rvdev
->>>>>> + *
->>>>>> + * @dev: the subdevice's dev
->>>>>> + */
->>>>>> +static void rproc_rvdev_release(struct device *dev)
->>>>>> +{
->>>>>> +       struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev,
->> dev);
->>>>>> +
->>>>>> +       of_reserved_mem_device_release(dev);
->>>>>> +
->>>>>> +       kfree(rvdev);
->>>>>> +}
->>>>>> +
->>>>>> +/**
->>>>>>   * rproc_handle_vdev() - handle a vdev fw resource
->>>>>>   * @rproc: the remote processor
->>>>>>   * @rsc: the vring resource descriptor
->>>>>> @@ -455,6 +471,7 @@ static int rproc_handle_vdev(struct rproc
->> *rproc,
->>>>> struct fw_rsc_vdev *rsc,
->>>>>>         struct device *dev = &rproc->dev;
->>>>>>         struct rproc_vdev *rvdev;
->>>>>>         int i, ret;
->>>>>> +       char name[16];
->>>>>>
->>>>>>         /* make sure resource isn't truncated */
->>>>>>         if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct
->>>>> fw_rsc_vdev_vring)
->>>>>> @@ -488,6 +505,18 @@ static int rproc_handle_vdev(struct rproc
->> *rproc,
->>>>> struct fw_rsc_vdev *rsc,
->>>>>>         rvdev->rproc = rproc;
->>>>>>         rvdev->index = rproc->nb_vdev++;
->>>>>>
->>>>>> +       /* Initialise vdev subdevice */
->>>>>> +       snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
->>>>>> +       rvdev->dev.parent = rproc->dev.parent;
->>>>>> +       rvdev->dev.release = rproc_rvdev_release;
->>>>>> +       dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev-
->>>>>> dev.parent), name);
->>>>>> +       dev_set_drvdata(&rvdev->dev, rvdev);
->>>>>> +       dma_set_coherent_mask(&rvdev->dev, DMA_BIT_MASK(32));
->>>>> I tried the latest kernel, this function will not set the DMA coherent mask
->> as
->>>>> dma_supported() of the &rvdev->dev will return false.
->>>>> As this is a device created at run time, should it be force to support
->> DMA?
->>>>> should it directly set the dma_coherent_mask?
->>>>
->>>> Thanks for pointing me this issue. I tested on top of 4.18-rc1 few months
->> ago...
->>>> Could you please give me kernel version on which you are testing the
->> series?
->>>> Is you platform 32bit or 64bit ?
->>>> I'll rebase and check on my side.
->>>
->>> I am testing with 4.19-rc4 on aarch64 platform.
->>
->> Btw, I ran into this on my v7 platform as well (4.19-rc6). The
->> dma_set_coherent_mask fails with error EIO. I did get my allocations
->> through though.
-> 
-> I don't have issue on v7 platform. Anyway I have now an Xilinx Ultra96 board running on my desk. It looks like vdev device doesn't have dma support, so not possible to set mask.
-> Need to continue the investigations...
-
-Strange how it is working for you, the dma support on vdev device should
-be the same for all of us right - vdevs are created during runtime.
-
-Think somehow, dma_supported() function is returning non-zero value for you.
-
-regards
-Suman
-
-> Regards,
-> Loic
->>
->> regards
->> Suman
->>
->>>
->>> Best Regards,
->>> Wendy
->>>>
->>>> Regards,
->>>> Loic
->>>>
->>>>>
->>>>>> +
->>>>>> +       ret = device_register(&rvdev->dev);
->>>>>> +       if (ret)
->>>>>> +               goto free_rvdev;
->>>>>> +
->>>>>>         /* parse the vrings */
->>>>>>         for (i = 0; i < rsc->num_of_vrings; i++) {
->>>>>>                 ret = rproc_parse_vring(rvdev, rsc, i);
->>>>>> @@ -518,7 +547,7 @@ static int rproc_handle_vdev(struct rproc
->> *rproc,
->>>>> struct fw_rsc_vdev *rsc,
->>>>>>         for (i--; i >= 0; i--)
->>>>>>                 rproc_free_vring(&rvdev->vring[i]);
->>>>>>  free_rvdev:
->>>>>> -       kfree(rvdev);
->>>>>> +       device_unregister(&rvdev->dev);
->>>>>>         return ret;
->>>>>>  }
->>>>>>
->>>>>> @@ -536,7 +565,7 @@ void rproc_vdev_release(struct kref *ref)
->>>>>>
->>>>>>         rproc_remove_subdev(rproc, &rvdev->subdev);
->>>>>>         list_del(&rvdev->node);
->>>>>> -       kfree(rvdev);
->>>>>> +       device_unregister(&rvdev->dev);
->>>>>>  }
->>>>>>
->>>>>>  /**
->>>>>> diff --git a/drivers/remoteproc/remoteproc_internal.h
->>>>> b/drivers/remoteproc/remoteproc_internal.h
->>>>>> index f6cad24..bfeacfd 100644
->>>>>> --- a/drivers/remoteproc/remoteproc_internal.h
->>>>>> +++ b/drivers/remoteproc/remoteproc_internal.h
->>>>>> @@ -52,6 +52,7 @@ struct dentry *rproc_create_trace_file(const char
->>>>> *name, struct rproc *rproc,
->>>>>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
->>>>>>
->>>>>>  void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
->>>>>> +phys_addr_t rproc_va_to_pa(void *cpu_addr);
->>>>>>  int rproc_trigger_recovery(struct rproc *rproc);
->>>>>>
->>>>>>  int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware
->> *fw);
->>>>>> diff --git a/drivers/remoteproc/remoteproc_virtio.c
->>>>> b/drivers/remoteproc/remoteproc_virtio.c
->>>>>> index de21f62..9ee63c0 100644
->>>>>> --- a/drivers/remoteproc/remoteproc_virtio.c
->>>>>> +++ b/drivers/remoteproc/remoteproc_virtio.c
->>>>>> @@ -17,7 +17,9 @@
->>>>>>   * GNU General Public License for more details.
->>>>>>   */
->>>>>>
->>>>>> +#include <linux/dma-mapping.h>
->>>>>>  #include <linux/export.h>
->>>>>> +#include <linux/of_reserved_mem.h>
->>>>>>  #include <linux/remoteproc.h>
->>>>>>  #include <linux/virtio.h>
->>>>>>  #include <linux/virtio_config.h>
->>>>>> @@ -315,10 +317,48 @@ static void rproc_virtio_dev_release(struct
->> device
->>>>> *dev)
->>>>>>  int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->>>>>>  {
->>>>>>         struct rproc *rproc = rvdev->rproc;
->>>>>> -       struct device *dev = &rproc->dev;
->>>>>> +       struct device *dev = &rvdev->dev;
->>>>>>         struct virtio_device *vdev = &rvdev->vdev;
->>>>>> +       struct rproc_mem_entry *mem;
->>>>>>         int ret;
->>>>>>
->>>>>> +       /* Try to find dedicated vdev buffer carveout */
->>>>>> +       mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer",
->> rvdev-
->>>>>> index);
->>>>>> +       if (mem) {
->>>>>> +               phys_addr_t pa;
->>>>>> +
->>>>>> +               if (mem->of_resm_idx != -1) {
->>>>>> +                       struct device_node *np = rproc->dev.parent->of_node;
->>>>>> +
->>>>>> +                       /* Associate reserved memory to vdev device */
->>>>>> +                       ret = of_reserved_mem_device_init_by_idx(dev, np,
->>>>>> +                                                                mem->of_resm_idx);
->>>>>> +                       if (ret) {
->>>>>> +                               dev_err(dev, "Can't associate reserved memory\n");
->>>>>> +                               goto out;
->>>>>> +                       }
->>>>>> +               } else {
->>>>>> +                       if (mem->va) {
->>>>>> +                               dev_warn(dev, "vdev %d buffer already mapped\n",
->>>>>> +                                        rvdev->index);
->>>>>> +                               pa = rproc_va_to_pa(mem->va);
->>>>>> +                       } else {
->>>>>> +                               /* Use dma address as carveout no memmapped yet
->> */
->>>>>> +                               pa = (phys_addr_t)mem->dma;
->>>>>> +                       }
->>>>>> +
->>>>>> +                       /* Associate vdev buffer memory pool to vdev subdev */
->>>>>> +                       ret = dmam_declare_coherent_memory(dev, pa,
->>>>>> +                                                          mem->da,
->>>>>> +                                                          mem->len,
->>>>>> +                                                          DMA_MEMORY_EXCLUSIVE);
->>>>>> +                       if (ret < 0) {
->>>>>> +                               dev_err(dev, "Failed to associate buffer\n");
->>>>>> +                               goto out;
->>>>>> +                       }
->>>>>> +               }
->>>>>> +       }
->>>>>> +
->>>>>>         vdev->id.device = id,
->>>>>>         vdev->config = &rproc_virtio_config_ops,
->>>>>>         vdev->dev.parent = dev;
->>>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>>>> index 6b3a234..2921dd2 100644
->>>>>> --- a/include/linux/remoteproc.h
->>>>>> +++ b/include/linux/remoteproc.h
->>>>>> @@ -547,6 +547,7 @@ struct rproc_vdev {
->>>>>>         struct kref refcount;
->>>>>>
->>>>>>         struct rproc_subdev subdev;
->>>>>> +       struct device dev;
->>>>>>
->>>>>>         unsigned int id;
->>>>>>         struct list_head node;
->>>>>> --
->>>>>> 1.9.1
->>>>>>
->>>>>> --
->>>>>> To unsubscribe from this list: send the line "unsubscribe linux-
->> remoteproc"
->>>>> in
->>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3VtYW4gQW5uYSA8cy1h
+bm5hQHRpLmNvbT4NCj4gU2VudDogbWVyY3JlZGkgMjQgb2N0b2JyZSAyMDE4IDAzOjQ5DQo+IFRv
+OiBXZW5keSBMaWFuZyA8c3VubnlsaWFuZ2p5QGdtYWlsLmNvbT47IExvaWMgUEFMTEFSRFkNCj4g
+PGxvaWMucGFsbGFyZHlAc3QuY29tPg0KPiBDYzogQmpvcm4gQW5kZXJzc29uIDxiam9ybi5hbmRl
+cnNzb25AbGluYXJvLm9yZz47IE9oYWQgQmVuLUNvaGVuDQo+IDxvaGFkQHdpemVyeS5jb20+OyBs
+aW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZzsgTGludXggS2VybmVsDQo+IE1haWxpbmcg
+TGlzdCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IEFybmF1ZCBQT1VMSVFVRU4NCj4g
+PGFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tPjsgYmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZw0K
+PiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDEzLzE3XSByZW1vdGVwcm9jOiBjcmVhdGUgdmRldiBz
+dWJkZXZpY2Ugd2l0aA0KPiBzcGVjaWZpYyBkbWEgbWVtb3J5IHBvb2wNCj4gDQo+IE9uIDEwLzIz
+LzE4IDg6MjIgUE0sIFN1bWFuIEFubmEgd3JvdGU6DQo+ID4gT24gOS8yNy8xOCAzOjE4IFBNLCBX
+ZW5keSBMaWFuZyB3cm90ZToNCj4gPj4gSGkgTG9pYywNCj4gPj4NCj4gPj4NCj4gPj4gT24gVGh1
+LCBTZXAgMjcsIDIwMTggYXQgMTI6MjIgUE0gTG9pYyBQQUxMQVJEWSA8bG9pYy5wYWxsYXJkeUBz
+dC5jb20+DQo+IHdyb3RlOg0KPiA+Pj4NCj4gPj4+IEhpIFdlbmR5DQo+ID4+Pg0KPiA+Pj4+IC0t
+LS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+Pj4gRnJvbTogV2VuZHkgTGlhbmcgPHN1bm55
+bGlhbmdqeUBnbWFpbC5jb20+DQo+ID4+Pj4gU2VudDogVGh1cnNkYXksIFNlcHRlbWJlciAyNywg
+MjAxOCA3OjE3IFBNDQo+ID4+Pj4gVG86IExvaWMgUEFMTEFSRFkgPGxvaWMucGFsbGFyZHlAc3Qu
+Y29tPg0KPiA+Pj4+IENjOiBCam9ybiBBbmRlcnNzb24gPGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8u
+b3JnPjsgT2hhZCBCZW4tQ29oZW4NCj4gPj4+PiA8b2hhZEB3aXplcnkuY29tPjsgbGludXgtcmVt
+b3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmc7IExpbnV4IEtlcm5lbA0KPiA+Pj4+IE1haWxpbmcgTGlz
+dCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IEFybmF1ZCBQT1VMSVFVRU4NCj4gPj4+
+PiA8YXJuYXVkLnBvdWxpcXVlbkBzdC5jb20+OyBiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3Jn
+OyBTdW1hbg0KPiBBbm5hDQo+ID4+Pj4gPHMtYW5uYUB0aS5jb20+DQo+ID4+Pj4gU3ViamVjdDog
+UmU6IFtQQVRDSCB2NCAxMy8xN10gcmVtb3RlcHJvYzogY3JlYXRlIHZkZXYgc3ViZGV2aWNlIHdp
+dGgNCj4gPj4+PiBzcGVjaWZpYyBkbWEgbWVtb3J5IHBvb2wNCj4gPj4+Pg0KPiA+Pj4+IE9uIEZy
+aSwgSnVsIDI3LCAyMDE4IGF0IDY6MTYgQU0gTG9pYyBQYWxsYXJkeSA8bG9pYy5wYWxsYXJkeUBz
+dC5jb20+DQo+IHdyb3RlOg0KPiA+Pj4+Pg0KPiA+Pj4+PiBUaGlzIHBhdGNoIGNyZWF0ZXMgYSBk
+ZWRpY2F0ZWQgdmRldiBzdWJkZXZpY2UgZm9yIGVhY2ggdmRldiBkZWNsYXJlZA0KPiA+Pj4+PiBp
+biBmaXJtd2FyZSByZXNvdXJjZSB0YWJsZSBhbmQgYXNzb2NpYXRlcyBjYXJ2ZW91dCBuYW1lZA0K
+PiAidmRldiVkYnVmZmVyIg0KPiA+Pj4+PiAod2l0aCAlZCB2ZGV2IGluZGV4IGluIHJlc291cmNl
+IHRhYmxlKSBpZiBhbnkgYXMgZG1hIGNvaGVyZW50DQo+IG1lbW9yeQ0KPiA+Pj4+IHBvb2wuDQo+
+ID4+Pj4+DQo+ID4+Pj4+IFRoZW4gdmRldiBzdWJkZXZpY2UgaXMgdXNlZCBhcyBwYXJlbnQgZm9y
+IHZpcnRpbyBkZXZpY2UuDQo+ID4+Pj4+DQo+ID4+Pj4+IFNpZ25lZC1vZmYtYnk6IExvaWMgUGFs
+bGFyZHkgPGxvaWMucGFsbGFyZHlAc3QuY29tPg0KPiA+Pj4+PiAtLS0NCj4gPj4+Pj4gIGRyaXZl
+cnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyAgICAgfCAzNQ0KPiA+Pj4+ICsrKysrKysr
+KysrKysrKysrKysrKysrLS0tDQo+ID4+Pj4+ICBkcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJv
+Y19pbnRlcm5hbC5oIHwgIDEgKw0KPiA+Pj4+PiAgZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXBy
+b2NfdmlydGlvLmMgICB8IDQyDQo+ID4+Pj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+Ky0NCj4gPj4+Pj4gIGluY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oICAgICAgICAgICAgICAgfCAg
+MSArDQo+ID4+Pj4+ICA0IGZpbGVzIGNoYW5nZWQsIDc1IGluc2VydGlvbnMoKyksIDQgZGVsZXRp
+b25zKC0pDQo+ID4+Pj4+DQo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JlbW90ZXByb2Mv
+cmVtb3RlcHJvY19jb3JlLmMNCj4gPj4+PiBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9j
+X2NvcmUuYw0KPiA+Pj4+PiBpbmRleCA0ZWRjNmYwLi5hZGNjNjZlIDEwMDY0NA0KPiA+Pj4+PiAt
+LS0gYS9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gPj4+Pj4gKysrIGIv
+ZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jDQo+ID4+Pj4+IEBAIC0zOSw2ICsz
+OSw3IEBADQo+ID4+Pj4+ICAjaW5jbHVkZSA8bGludXgvaWRyLmg+DQo+ID4+Pj4+ICAjaW5jbHVk
+ZSA8bGludXgvZWxmLmg+DQo+ID4+Pj4+ICAjaW5jbHVkZSA8bGludXgvY3JjMzIuaD4NCj4gPj4+
+Pj4gKyNpbmNsdWRlIDxsaW51eC9vZl9yZXNlcnZlZF9tZW0uaD4NCj4gPj4+Pj4gICNpbmNsdWRl
+IDxsaW51eC92aXJ0aW9faWRzLmg+DQo+ID4+Pj4+ICAjaW5jbHVkZSA8bGludXgvdmlydGlvX3Jp
+bmcuaD4NCj4gPj4+Pj4gICNpbmNsdWRlIDxhc20vYnl0ZW9yZGVyLmg+DQo+ID4+Pj4+IEBAIC0x
+NDUsNyArMTQ2LDcgQEAgc3RhdGljIHZvaWQgcnByb2NfZGlzYWJsZV9pb21tdShzdHJ1Y3QgcnBy
+b2MNCj4gPj4+PiAqcnByb2MpDQo+ID4+Pj4+ICAgICAgICAgaW9tbXVfZG9tYWluX2ZyZWUoZG9t
+YWluKTsNCj4gPj4+Pj4gIH0NCj4gPj4+Pj4NCj4gPj4+Pj4gLXN0YXRpYyBwaHlzX2FkZHJfdCBy
+cHJvY192YV90b19wYSh2b2lkICpjcHVfYWRkcikNCj4gPj4+Pj4gK3BoeXNfYWRkcl90IHJwcm9j
+X3ZhX3RvX3BhKHZvaWQgKmNwdV9hZGRyKQ0KPiA+Pj4+PiAgew0KPiA+Pj4+PiAgICAgICAgIC8q
+DQo+ID4+Pj4+ICAgICAgICAgICogUmV0dXJuIHBoeXNpY2FsIGFkZHJlc3MgYWNjb3JkaW5nIHRv
+IHZpcnR1YWwgYWRkcmVzcyBsb2NhdGlvbg0KPiA+Pj4+PiBAQCAtMTYwLDYgKzE2MSw3IEBAIHN0
+YXRpYyBwaHlzX2FkZHJfdCBycHJvY192YV90b19wYSh2b2lkDQo+ID4+Pj4gKmNwdV9hZGRyKQ0K
+PiA+Pj4+PiAgICAgICAgIFdBUk5fT04oIXZpcnRfYWRkcl92YWxpZChjcHVfYWRkcikpOw0KPiA+
+Pj4+PiAgICAgICAgIHJldHVybiB2aXJ0X3RvX3BoeXMoY3B1X2FkZHIpOw0KPiA+Pj4+PiAgfQ0K
+PiA+Pj4+PiArRVhQT1JUX1NZTUJPTChycHJvY192YV90b19wYSk7DQo+ID4+Pj4+DQo+ID4+Pj4+
+ICAvKioNCj4gPj4+Pj4gICAqIHJwcm9jX2RhX3RvX3ZhKCkgLSBsb29rdXAgdGhlIGtlcm5lbCB2
+aXJ0dWFsIGFkZHJlc3MgZm9yIGENCj4gcmVtb3RlcHJvYw0KPiA+Pj4+IGFkZHJlc3MNCj4gPj4+
+Pj4gQEAgLTQyMyw2ICs0MjUsMjAgQEAgc3RhdGljIHZvaWQgcnByb2NfdmRldl9kb19zdG9wKHN0
+cnVjdA0KPiA+Pj4+IHJwcm9jX3N1YmRldiAqc3ViZGV2LCBib29sIGNyYXNoZWQpDQo+ID4+Pj4+
+ICB9DQo+ID4+Pj4+DQo+ID4+Pj4+ICAvKioNCj4gPj4+Pj4gKyAqIHJwcm9jX3J2ZGV2X3JlbGVh
+c2UoKSAtIHJlbGVhc2UgdGhlIGV4aXN0ZW5jZSBvZiBhIHJ2ZGV2DQo+ID4+Pj4+ICsgKg0KPiA+
+Pj4+PiArICogQGRldjogdGhlIHN1YmRldmljZSdzIGRldg0KPiA+Pj4+PiArICovDQo+ID4+Pj4+
+ICtzdGF0aWMgdm9pZCBycHJvY19ydmRldl9yZWxlYXNlKHN0cnVjdCBkZXZpY2UgKmRldikNCj4g
+Pj4+Pj4gK3sNCj4gPj4+Pj4gKyAgICAgICBzdHJ1Y3QgcnByb2NfdmRldiAqcnZkZXYgPSBjb250
+YWluZXJfb2YoZGV2LCBzdHJ1Y3QgcnByb2NfdmRldiwNCj4gZGV2KTsNCj4gPj4+Pj4gKw0KPiA+
+Pj4+PiArICAgICAgIG9mX3Jlc2VydmVkX21lbV9kZXZpY2VfcmVsZWFzZShkZXYpOw0KPiA+Pj4+
+PiArDQo+ID4+Pj4+ICsgICAgICAga2ZyZWUocnZkZXYpOw0KPiA+Pj4+PiArfQ0KPiA+Pj4+PiAr
+DQo+ID4+Pj4+ICsvKioNCj4gPj4+Pj4gICAqIHJwcm9jX2hhbmRsZV92ZGV2KCkgLSBoYW5kbGUg
+YSB2ZGV2IGZ3IHJlc291cmNlDQo+ID4+Pj4+ICAgKiBAcnByb2M6IHRoZSByZW1vdGUgcHJvY2Vz
+c29yDQo+ID4+Pj4+ICAgKiBAcnNjOiB0aGUgdnJpbmcgcmVzb3VyY2UgZGVzY3JpcHRvcg0KPiA+
+Pj4+PiBAQCAtNDU1LDYgKzQ3MSw3IEBAIHN0YXRpYyBpbnQgcnByb2NfaGFuZGxlX3ZkZXYoc3Ry
+dWN0IHJwcm9jDQo+ICpycHJvYywNCj4gPj4+PiBzdHJ1Y3QgZndfcnNjX3ZkZXYgKnJzYywNCj4g
+Pj4+Pj4gICAgICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcnByb2MtPmRldjsNCj4gPj4+Pj4g
+ICAgICAgICBzdHJ1Y3QgcnByb2NfdmRldiAqcnZkZXY7DQo+ID4+Pj4+ICAgICAgICAgaW50IGks
+IHJldDsNCj4gPj4+Pj4gKyAgICAgICBjaGFyIG5hbWVbMTZdOw0KPiA+Pj4+Pg0KPiA+Pj4+PiAg
+ICAgICAgIC8qIG1ha2Ugc3VyZSByZXNvdXJjZSBpc24ndCB0cnVuY2F0ZWQgKi8NCj4gPj4+Pj4g
+ICAgICAgICBpZiAoc2l6ZW9mKCpyc2MpICsgcnNjLT5udW1fb2ZfdnJpbmdzICogc2l6ZW9mKHN0
+cnVjdA0KPiA+Pj4+IGZ3X3JzY192ZGV2X3ZyaW5nKQ0KPiA+Pj4+PiBAQCAtNDg4LDYgKzUwNSwx
+OCBAQCBzdGF0aWMgaW50IHJwcm9jX2hhbmRsZV92ZGV2KHN0cnVjdCBycHJvYw0KPiAqcnByb2Ms
+DQo+ID4+Pj4gc3RydWN0IGZ3X3JzY192ZGV2ICpyc2MsDQo+ID4+Pj4+ICAgICAgICAgcnZkZXYt
+PnJwcm9jID0gcnByb2M7DQo+ID4+Pj4+ICAgICAgICAgcnZkZXYtPmluZGV4ID0gcnByb2MtPm5i
+X3ZkZXYrKzsNCj4gPj4+Pj4NCj4gPj4+Pj4gKyAgICAgICAvKiBJbml0aWFsaXNlIHZkZXYgc3Vi
+ZGV2aWNlICovDQo+ID4+Pj4+ICsgICAgICAgc25wcmludGYobmFtZSwgc2l6ZW9mKG5hbWUpLCAi
+dmRldiVkYnVmZmVyIiwgcnZkZXYtPmluZGV4KTsNCj4gPj4+Pj4gKyAgICAgICBydmRldi0+ZGV2
+LnBhcmVudCA9IHJwcm9jLT5kZXYucGFyZW50Ow0KPiA+Pj4+PiArICAgICAgIHJ2ZGV2LT5kZXYu
+cmVsZWFzZSA9IHJwcm9jX3J2ZGV2X3JlbGVhc2U7DQo+ID4+Pj4+ICsgICAgICAgZGV2X3NldF9u
+YW1lKCZydmRldi0+ZGV2LCAiJXMjJXMiLCBkZXZfbmFtZShydmRldi0NCj4gPj4+Pj4gZGV2LnBh
+cmVudCksIG5hbWUpOw0KPiA+Pj4+PiArICAgICAgIGRldl9zZXRfZHJ2ZGF0YSgmcnZkZXYtPmRl
+diwgcnZkZXYpOw0KPiA+Pj4+PiArICAgICAgIGRtYV9zZXRfY29oZXJlbnRfbWFzaygmcnZkZXYt
+PmRldiwgRE1BX0JJVF9NQVNLKDMyKSk7DQo+ID4+Pj4gSSB0cmllZCB0aGUgbGF0ZXN0IGtlcm5l
+bCwgdGhpcyBmdW5jdGlvbiB3aWxsIG5vdCBzZXQgdGhlIERNQSBjb2hlcmVudA0KPiBtYXNrIGFz
+DQo+ID4+Pj4gZG1hX3N1cHBvcnRlZCgpIG9mIHRoZSAmcnZkZXYtPmRldiB3aWxsIHJldHVybiBm
+YWxzZS4NCj4gPj4+PiBBcyB0aGlzIGlzIGEgZGV2aWNlIGNyZWF0ZWQgYXQgcnVuIHRpbWUsIHNo
+b3VsZCBpdCBiZSBmb3JjZSB0byBzdXBwb3J0DQo+IERNQT8NCj4gPj4+PiBzaG91bGQgaXQgZGly
+ZWN0bHkgc2V0IHRoZSBkbWFfY29oZXJlbnRfbWFzaz8NCj4gPj4+DQo+ID4+PiBUaGFua3MgZm9y
+IHBvaW50aW5nIG1lIHRoaXMgaXNzdWUuIEkgdGVzdGVkIG9uIHRvcCBvZiA0LjE4LXJjMSBmZXcg
+bW9udGhzDQo+IGFnby4uLg0KPiA+Pj4gQ291bGQgeW91IHBsZWFzZSBnaXZlIG1lIGtlcm5lbCB2
+ZXJzaW9uIG9uIHdoaWNoIHlvdSBhcmUgdGVzdGluZyB0aGUNCj4gc2VyaWVzPw0KPiA+Pj4gSXMg
+eW91IHBsYXRmb3JtIDMyYml0IG9yIDY0Yml0ID8NCj4gPj4+IEknbGwgcmViYXNlIGFuZCBjaGVj
+ayBvbiBteSBzaWRlLg0KPiA+Pg0KPiA+PiBJIGFtIHRlc3Rpbmcgd2l0aCA0LjE5LXJjNCBvbiBh
+YXJjaDY0IHBsYXRmb3JtLg0KPiA+DQo+ID4gQnR3LCBJIHJhbiBpbnRvIHRoaXMgb24gbXkgdjcg
+cGxhdGZvcm0gYXMgd2VsbCAoNC4xOS1yYzYpLiBUaGUNCj4gPiBkbWFfc2V0X2NvaGVyZW50X21h
+c2sgZmFpbHMgd2l0aCBlcnJvciBFSU8uIEkgZGlkIGdldCBteSBhbGxvY2F0aW9ucw0KPiA+IHRo
+cm91Z2ggdGhvdWdoLg0KPiANCj4gQ29ycmVjdGlvbiwgdGhhdCB3YXMgYmVmb3JlIFBhdGNoIDE3
+LiBXaXRoIHBhdGNoIDE3LCB0aGlzIGZhaWxzLg0KDQpZZXMgbm9ybWFsIGFzIGRldmljZSBmb3Ig
+YWxsb2NhdGlvbiBpcyBjaGFuZ2VkIFBhdGNoMTcuIA0KUmVnYXJkcywNCkxvaWMNCj4gDQo+IHJl
+Z2FyZHMNCj4gU3VtYW4NCj4gDQo+ID4NCj4gPiByZWdhcmRzDQo+ID4gU3VtYW4NCj4gPg0KPiA+
+Pg0KPiA+PiBCZXN0IFJlZ2FyZHMsDQo+ID4+IFdlbmR5DQo+ID4+Pg0KPiA+Pj4gUmVnYXJkcywN
+Cj4gPj4+IExvaWMNCj4gPj4+DQo+ID4+Pj4NCj4gPj4+Pj4gKw0KPiA+Pj4+PiArICAgICAgIHJl
+dCA9IGRldmljZV9yZWdpc3RlcigmcnZkZXYtPmRldik7DQo+ID4+Pj4+ICsgICAgICAgaWYgKHJl
+dCkNCj4gPj4+Pj4gKyAgICAgICAgICAgICAgIGdvdG8gZnJlZV9ydmRldjsNCj4gPj4+Pj4gKw0K
+PiA+Pj4+PiAgICAgICAgIC8qIHBhcnNlIHRoZSB2cmluZ3MgKi8NCj4gPj4+Pj4gICAgICAgICBm
+b3IgKGkgPSAwOyBpIDwgcnNjLT5udW1fb2ZfdnJpbmdzOyBpKyspIHsNCj4gPj4+Pj4gICAgICAg
+ICAgICAgICAgIHJldCA9IHJwcm9jX3BhcnNlX3ZyaW5nKHJ2ZGV2LCByc2MsIGkpOw0KPiA+Pj4+
+PiBAQCAtNTE4LDcgKzU0Nyw3IEBAIHN0YXRpYyBpbnQgcnByb2NfaGFuZGxlX3ZkZXYoc3RydWN0
+IHJwcm9jDQo+ICpycHJvYywNCj4gPj4+PiBzdHJ1Y3QgZndfcnNjX3ZkZXYgKnJzYywNCj4gPj4+
+Pj4gICAgICAgICBmb3IgKGktLTsgaSA+PSAwOyBpLS0pDQo+ID4+Pj4+ICAgICAgICAgICAgICAg
+ICBycHJvY19mcmVlX3ZyaW5nKCZydmRldi0+dnJpbmdbaV0pOw0KPiA+Pj4+PiAgZnJlZV9ydmRl
+djoNCj4gPj4+Pj4gLSAgICAgICBrZnJlZShydmRldik7DQo+ID4+Pj4+ICsgICAgICAgZGV2aWNl
+X3VucmVnaXN0ZXIoJnJ2ZGV2LT5kZXYpOw0KPiA+Pj4+PiAgICAgICAgIHJldHVybiByZXQ7DQo+
+ID4+Pj4+ICB9DQo+ID4+Pj4+DQo+ID4+Pj4+IEBAIC01MzYsNyArNTY1LDcgQEAgdm9pZCBycHJv
+Y192ZGV2X3JlbGVhc2Uoc3RydWN0IGtyZWYgKnJlZikNCj4gPj4+Pj4NCj4gPj4+Pj4gICAgICAg
+ICBycHJvY19yZW1vdmVfc3ViZGV2KHJwcm9jLCAmcnZkZXYtPnN1YmRldik7DQo+ID4+Pj4+ICAg
+ICAgICAgbGlzdF9kZWwoJnJ2ZGV2LT5ub2RlKTsNCj4gPj4+Pj4gLSAgICAgICBrZnJlZShydmRl
+dik7DQo+ID4+Pj4+ICsgICAgICAgZGV2aWNlX3VucmVnaXN0ZXIoJnJ2ZGV2LT5kZXYpOw0KPiA+
+Pj4+PiAgfQ0KPiA+Pj4+Pg0KPiA+Pj4+PiAgLyoqDQo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19pbnRlcm5hbC5oDQo+ID4+Pj4gYi9kcml2ZXJzL3Jl
+bW90ZXByb2MvcmVtb3RlcHJvY19pbnRlcm5hbC5oDQo+ID4+Pj4+IGluZGV4IGY2Y2FkMjQuLmJm
+ZWFjZmQgMTAwNjQ0DQo+ID4+Pj4+IC0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9j
+X2ludGVybmFsLmgNCj4gPj4+Pj4gKysrIGIvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2Nf
+aW50ZXJuYWwuaA0KPiA+Pj4+PiBAQCAtNTIsNiArNTIsNyBAQCBzdHJ1Y3QgZGVudHJ5ICpycHJv
+Y19jcmVhdGVfdHJhY2VfZmlsZShjb25zdA0KPiBjaGFyDQo+ID4+Pj4gKm5hbWUsIHN0cnVjdCBy
+cHJvYyAqcnByb2MsDQo+ID4+Pj4+ICBpbnQgcnByb2NfYWxsb2NfdnJpbmcoc3RydWN0IHJwcm9j
+X3ZkZXYgKnJ2ZGV2LCBpbnQgaSk7DQo+ID4+Pj4+DQo+ID4+Pj4+ICB2b2lkICpycHJvY19kYV90
+b192YShzdHJ1Y3QgcnByb2MgKnJwcm9jLCB1NjQgZGEsIGludCBsZW4pOw0KPiA+Pj4+PiArcGh5
+c19hZGRyX3QgcnByb2NfdmFfdG9fcGEodm9pZCAqY3B1X2FkZHIpOw0KPiA+Pj4+PiAgaW50IHJw
+cm9jX3RyaWdnZXJfcmVjb3Zlcnkoc3RydWN0IHJwcm9jICpycHJvYyk7DQo+ID4+Pj4+DQo+ID4+
+Pj4+ICBpbnQgcnByb2NfZWxmX3Nhbml0eV9jaGVjayhzdHJ1Y3QgcnByb2MgKnJwcm9jLCBjb25z
+dCBzdHJ1Y3QgZmlybXdhcmUNCj4gKmZ3KTsNCj4gPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+cmVtb3RlcHJvYy9yZW1vdGVwcm9jX3ZpcnRpby5jDQo+ID4+Pj4gYi9kcml2ZXJzL3JlbW90ZXBy
+b2MvcmVtb3RlcHJvY192aXJ0aW8uYw0KPiA+Pj4+PiBpbmRleCBkZTIxZjYyLi45ZWU2M2MwIDEw
+MDY0NA0KPiA+Pj4+PiAtLS0gYS9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY192aXJ0aW8u
+Yw0KPiA+Pj4+PiArKysgYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY192aXJ0aW8uYw0K
+PiA+Pj4+PiBAQCAtMTcsNyArMTcsOSBAQA0KPiA+Pj4+PiAgICogR05VIEdlbmVyYWwgUHVibGlj
+IExpY2Vuc2UgZm9yIG1vcmUgZGV0YWlscy4NCj4gPj4+Pj4gICAqLw0KPiA+Pj4+Pg0KPiA+Pj4+
+PiArI2luY2x1ZGUgPGxpbnV4L2RtYS1tYXBwaW5nLmg+DQo+ID4+Pj4+ICAjaW5jbHVkZSA8bGlu
+dXgvZXhwb3J0Lmg+DQo+ID4+Pj4+ICsjaW5jbHVkZSA8bGludXgvb2ZfcmVzZXJ2ZWRfbWVtLmg+
+DQo+ID4+Pj4+ICAjaW5jbHVkZSA8bGludXgvcmVtb3RlcHJvYy5oPg0KPiA+Pj4+PiAgI2luY2x1
+ZGUgPGxpbnV4L3ZpcnRpby5oPg0KPiA+Pj4+PiAgI2luY2x1ZGUgPGxpbnV4L3ZpcnRpb19jb25m
+aWcuaD4NCj4gPj4+Pj4gQEAgLTMxNSwxMCArMzE3LDQ4IEBAIHN0YXRpYyB2b2lkIHJwcm9jX3Zp
+cnRpb19kZXZfcmVsZWFzZShzdHJ1Y3QNCj4gZGV2aWNlDQo+ID4+Pj4gKmRldikNCj4gPj4+Pj4g
+IGludCBycHJvY19hZGRfdmlydGlvX2RldihzdHJ1Y3QgcnByb2NfdmRldiAqcnZkZXYsIGludCBp
+ZCkNCj4gPj4+Pj4gIHsNCj4gPj4+Pj4gICAgICAgICBzdHJ1Y3QgcnByb2MgKnJwcm9jID0gcnZk
+ZXYtPnJwcm9jOw0KPiA+Pj4+PiAtICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZycHJvYy0+
+ZGV2Ow0KPiA+Pj4+PiArICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZydmRldi0+ZGV2Ow0K
+PiA+Pj4+PiAgICAgICAgIHN0cnVjdCB2aXJ0aW9fZGV2aWNlICp2ZGV2ID0gJnJ2ZGV2LT52ZGV2
+Ow0KPiA+Pj4+PiArICAgICAgIHN0cnVjdCBycHJvY19tZW1fZW50cnkgKm1lbTsNCj4gPj4+Pj4g
+ICAgICAgICBpbnQgcmV0Ow0KPiA+Pj4+Pg0KPiA+Pj4+PiArICAgICAgIC8qIFRyeSB0byBmaW5k
+IGRlZGljYXRlZCB2ZGV2IGJ1ZmZlciBjYXJ2ZW91dCAqLw0KPiA+Pj4+PiArICAgICAgIG1lbSA9
+IHJwcm9jX2ZpbmRfY2FydmVvdXRfYnlfbmFtZShycHJvYywgInZkZXYlZGJ1ZmZlciIsDQo+IHJ2
+ZGV2LQ0KPiA+Pj4+PiBpbmRleCk7DQo+ID4+Pj4+ICsgICAgICAgaWYgKG1lbSkgew0KPiA+Pj4+
+PiArICAgICAgICAgICAgICAgcGh5c19hZGRyX3QgcGE7DQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKyAg
+ICAgICAgICAgICAgIGlmIChtZW0tPm9mX3Jlc21faWR4ICE9IC0xKSB7DQo+ID4+Pj4+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBycHJvYy0+ZGV2LnBh
+cmVudC0+b2Zfbm9kZTsNCj4gPj4+Pj4gKw0KPiA+Pj4+PiArICAgICAgICAgICAgICAgICAgICAg
+ICAvKiBBc3NvY2lhdGUgcmVzZXJ2ZWQgbWVtb3J5IHRvIHZkZXYgZGV2aWNlICovDQo+ID4+Pj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IG9mX3Jlc2VydmVkX21lbV9kZXZpY2VfaW5p
+dF9ieV9pZHgoZGV2LCBucCwNCj4gPj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBtZW0tPm9mX3Jlc21faWR4KTsNCj4g
+Pj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKHJldCkgew0KPiA+Pj4+PiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAiQ2FuJ3QgYXNzb2NpYXRlIHJl
+c2VydmVkIG1lbW9yeVxuIik7DQo+ID4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgZ290byBvdXQ7DQo+ID4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgIH0NCj4gPj4+Pj4g
+KyAgICAgICAgICAgICAgIH0gZWxzZSB7DQo+ID4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAg
+IGlmIChtZW0tPnZhKSB7DQo+ID4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ZGV2X3dhcm4oZGV2LCAidmRldiAlZCBidWZmZXIgYWxyZWFkeSBtYXBwZWRcbiIsDQo+ID4+Pj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcnZkZXYtPmluZGV4KTsN
+Cj4gPj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYSA9IHJwcm9jX3ZhX3Rv
+X3BhKG1lbS0+dmEpOw0KPiA+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICB9IGVsc2Ugew0K
+PiA+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC8qIFVzZSBkbWEgYWRkcmVz
+cyBhcyBjYXJ2ZW91dCBubyBtZW1tYXBwZWQgeWV0DQo+ICovDQo+ID4+Pj4+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgcGEgPSAocGh5c19hZGRyX3QpbWVtLT5kbWE7DQo+ID4+Pj4+
+ICsgICAgICAgICAgICAgICAgICAgICAgIH0NCj4gPj4+Pj4gKw0KPiA+Pj4+PiArICAgICAgICAg
+ICAgICAgICAgICAgICAvKiBBc3NvY2lhdGUgdmRldiBidWZmZXIgbWVtb3J5IHBvb2wgdG8gdmRl
+diBzdWJkZXYgKi8NCj4gPj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gZG1hbV9k
+ZWNsYXJlX2NvaGVyZW50X21lbW9yeShkZXYsIHBhLA0KPiA+Pj4+PiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1lbS0+ZGEsDQo+ID4+
+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgbWVtLT5sZW4sDQo+ID4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgRE1BX01FTU9SWV9FWENMVVNJVkUpOw0KPiA+Pj4+
+PiArICAgICAgICAgICAgICAgICAgICAgICBpZiAocmV0IDwgMCkgew0KPiA+Pj4+PiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAiRmFpbGVkIHRvIGFzc29jaWF0
+ZSBidWZmZXJcbiIpOw0KPiA+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGdv
+dG8gb3V0Ow0KPiA+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICB9DQo+ID4+Pj4+ICsgICAg
+ICAgICAgICAgICB9DQo+ID4+Pj4+ICsgICAgICAgfQ0KPiA+Pj4+PiArDQo+ID4+Pj4+ICAgICAg
+ICAgdmRldi0+aWQuZGV2aWNlID0gaWQsDQo+ID4+Pj4+ICAgICAgICAgdmRldi0+Y29uZmlnID0g
+JnJwcm9jX3ZpcnRpb19jb25maWdfb3BzLA0KPiA+Pj4+PiAgICAgICAgIHZkZXYtPmRldi5wYXJl
+bnQgPSBkZXY7DQo+ID4+Pj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3JlbW90ZXByb2Mu
+aCBiL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+ID4+Pj4+IGluZGV4IDZiM2EyMzQuLjI5
+MjFkZDIgMTAwNjQ0DQo+ID4+Pj4+IC0tLSBhL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+
+ID4+Pj4+ICsrKyBiL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+ID4+Pj4+IEBAIC01NDcs
+NiArNTQ3LDcgQEAgc3RydWN0IHJwcm9jX3ZkZXYgew0KPiA+Pj4+PiAgICAgICAgIHN0cnVjdCBr
+cmVmIHJlZmNvdW50Ow0KPiA+Pj4+Pg0KPiA+Pj4+PiAgICAgICAgIHN0cnVjdCBycHJvY19zdWJk
+ZXYgc3ViZGV2Ow0KPiA+Pj4+PiArICAgICAgIHN0cnVjdCBkZXZpY2UgZGV2Ow0KPiA+Pj4+Pg0K
+PiA+Pj4+PiAgICAgICAgIHVuc2lnbmVkIGludCBpZDsNCj4gPj4+Pj4gICAgICAgICBzdHJ1Y3Qg
+bGlzdF9oZWFkIG5vZGU7DQo+ID4+Pj4+IC0tDQo+ID4+Pj4+IDEuOS4xDQo+ID4+Pj4+DQo+ID4+
+Pj4+IC0tDQo+ID4+Pj4+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBs
+aW5lICJ1bnN1YnNjcmliZSBsaW51eC0NCj4gcmVtb3RlcHJvYyINCj4gPj4+PiBpbg0KPiA+Pj4+
+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZw0KPiA+
+Pj4+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
+ZG9tby0NCj4gaW5mby5odG1sDQo+ID4NCg0K
