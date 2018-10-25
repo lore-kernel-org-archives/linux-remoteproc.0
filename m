@@ -1,126 +1,172 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH 5/6] remoteproc: qcom: wcss: populate hardcoded param using driver data
-Date: Tue,  9 Oct 2018 18:35:56 +0530
-Message-Id: <1539090357-20853-6-git-send-email-govinds@codeaurora.org>
-In-Reply-To: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
-References: <1539090357-20853-1-git-send-email-govinds@codeaurora.org>
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Govind Singh <govinds@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v4 10/17] remoteproc: add helper function to check
+ carveout device address
+References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
+ <1532697292-14272-11-git-send-email-loic.pallardy@st.com>
+ <2844874b-9484-aeee-c614-411d0ff38d12@ti.com>
+ <8b16461d7d99487480253cde5cdcfd2c@SFHDAG7NODE2.st.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <5e86ac7e-e0db-205e-1c60-bc0be9f75859@ti.com>
+Date: Thu, 25 Oct 2018 17:50:07 -0500
+MIME-Version: 1.0
+In-Reply-To: <8b16461d7d99487480253cde5cdcfd2c@SFHDAG7NODE2.st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Q6 based WiFi fw loading is supported across
-different targets, ex: IPQ8074/QCS404. In order to
-support different fw names/pas id etc, populate
-hardcoded param using driver data.
+Hi Loic,
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 36 ++++++++++++++++++++++++++++++++----
- 1 file changed, 32 insertions(+), 4 deletions(-)
+On 10/24/18 10:24 AM, Loic PALLARDY wrote:
+> Hi Suman,
+> 
+>> -----Original Message-----
+>> From: Suman Anna <s-anna@ti.com>
+>> Sent: mercredi 24 octobre 2018 00:14
+>> To: Loic PALLARDY <loic.pallardy@st.com>; bjorn.andersson@linaro.org;
+>> ohad@wizery.com
+>> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+>> benjamin.gaignard@linaro.org
+>> Subject: Re: [PATCH v4 10/17] remoteproc: add helper function to check
+>> carveout device address
+>>
+>> Hi Loic,
+>>
+>> On 7/27/18 8:14 AM, Loic Pallardy wrote:
+>>> This patch introduces a function to verify that a specified carveout
+>>> is fitting request device address and associated length
+>>>
+>>> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+>>> ---
+>>>  drivers/remoteproc/remoteproc_core.c | 47
+>> ++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 47 insertions(+)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_core.c
+>> b/drivers/remoteproc/remoteproc_core.c
+>>> index 1e0fe3e..5dd5edf 100644
+>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>> @@ -259,6 +259,53 @@ struct rproc_mem_entry *
+>>>  	return mem;
+>>>  }
+>>>
+>>> +/**
+>>> + * rproc_check_carveout_da() - Check specified carveout da configuration
+>>> + * @rproc: handle of a remote processor
+>>> + * @mem: pointer on carveout to check
+>>> + * @da: area device address
+>>> + * @len: associated area size
+>>> + *
+>>> + * This function is a helper function to verify requested device area
+>> (couple
+>>> + * da, len) is part of specified carevout.
+>>
+>> %s/carevout/carveout/
+> OK
+>>
+>>> + *
+>>> + * Return: 0 if carveout matchs request else -ENOMEM
+>>
+>> %s/matchs/matches/
+> OK
+>>
+>>> + */
+>>> +int rproc_check_carveout_da(struct rproc *rproc, struct
+>> rproc_mem_entry *mem,
+>>
+>> static int since this seems to be only a local function.
+> OK
+>>
+>>> +			    u32 da, u32 len)
+>>> +{
+>>> +	struct device *dev = &rproc->dev;
+>>> +	int delta = 0;
+>>> +
+>>> +	/* Check requested resource length */
+>>> +	if (len > mem->len) {
+>>> +		dev_err(dev, "Registered carveout doesn't fit len
+>> request\n");
+>>> +		return -ENOMEM;
+>>
+>> ENOMEM not typically used for these kind of errors, you were probably
+>> inclined to used this since it is dealing with memory.
+> 
+> -EINVAL will be better
+>>
+>>> +	}
+>>> +
+>>
+>> Both the below codepaths are exercised only when da is not
+>> FW_RSC_ADDR_ANY, and you are returning 0 otherwise (which is the case of
+>> matches as per your description above). Is that what you really want -
+>> should it be an error
+> 
+> Yes when da is equal to FW_RSC_ADDR_ANY we should check the length too
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index f93e1e4..24e276d 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -16,7 +17,6 @@
- #include "qcom_common.h"
- #include "qcom_q6v5.h"
- 
--#define WCSS_CRASH_REASON		421
- 
- /* Q6SS Register Offsets */
- #define Q6SS_RESET_REG		0x014
-@@ -70,6 +70,14 @@
- #define TCSR_WCSS_CLK_MASK	0x1F
- #define TCSR_WCSS_CLK_ENABLE	0x14
- 
-+struct wcss_data {
-+	void (*pas_handover)(struct qcom_q6v5 *q6v5);
-+	const char *firmware_name;
-+	int crash_reason_smem;
-+	int version;
-+	int pas_id;
-+};
-+
- struct q6v5_wcss {
- 	struct device *dev;
- 
-@@ -91,6 +99,10 @@ struct q6v5_wcss {
- 	phys_addr_t mem_reloc;
- 	void *mem_region;
- 	size_t mem_size;
-+
-+	int crash_reason_smem;
-+	int pas_id;
-+	int version;
- };
- 
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
-@@ -527,12 +539,17 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
- 
- static int q6v5_wcss_probe(struct platform_device *pdev)
- {
-+	const struct wcss_data *desc;
- 	struct q6v5_wcss *wcss;
- 	struct rproc *rproc;
- 	int ret;
- 
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ops,
--			    "IPQ8074/q6_fw.mdt", sizeof(*wcss));
-+			    desc->firmware_name, sizeof(*wcss));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
- 		return -ENOMEM;
-@@ -540,6 +557,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 
- 	wcss = rproc->priv;
- 	wcss->dev = &pdev->dev;
-+	wcss->pas_id = desc->pas_id;
-+	wcss->version = desc->version;
-+	wcss->crash_reason_smem = desc->crash_reason_smem;
- 
- 	ret = q6v5_wcss_init_mmio(wcss, pdev);
- 	if (ret)
-@@ -553,7 +573,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, WCSS_CRASH_REASON, NULL);
-+	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reason_smem,
-+			     desc->pas_handover);
- 	if (ret)
- 		goto free_rproc;
- 
-@@ -581,8 +602,15 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct wcss_data wcss_ipq8074_res_init = {
-+	.firmware_name = "IPQ8074/q6_fw.mdt",
-+	.crash_reason_smem = 421,
-+	.pas_handover = NULL,
-+};
-+
- static const struct of_device_id q6v5_wcss_of_match[] = {
--	{ .compatible = "qcom,ipq8074-wcss-pil" },
-+	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
-+
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_wcss_of_match);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Can you update the comments in the function description accordingly as
+well, the current code silently returns 0 if da = FW_RSC_ADDR_ANY.
+
+> 
+>>
+>>> +	if (da != FW_RSC_ADDR_ANY && mem->da == FW_RSC_ADDR_ANY)
+>> {
+>>> +		/* Update existing carveout da */
+>>> +		mem->da = da;
+>>
+>> Where would you need to update this?
+
+> In that case, we have 2 carveouts with the same name.
+> One has some fixed requests. The other one has none.
+> The goal here is to align both on the one which has the strongest requirements.
+> I think length is missing.
+
+It almost looks like there is a need for range overlap checks on all the
+carveouts after all of them are registered, and error out if any overlap
+irrespective of the name schema.
+
+regards
+Suman
+
+> 
+> Regards,
+> Loic
+> 
+>>
+>> regards
+>> Suman
+>>
+>>> +	} else if (da != FW_RSC_ADDR_ANY && mem->da !=
+>> FW_RSC_ADDR_ANY) {
+>>> +		delta = da - mem->da;
+>>> +
+>>> +		/* Check requested resource belongs to registered carveout
+>> */
+>>> +		if (delta < 0) {
+>>> +			dev_err(dev,
+>>> +				"Registered carveout doesn't fit da
+>> request\n");
+>>> +			return -ENOMEM;
+>>> +		}
+>>> +
+>>> +		if (delta + len > mem->len) {
+>>> +			dev_err(dev,
+>>> +				"Registered carveout doesn't fit len
+>> request\n");
+>>> +			return -ENOMEM;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	return 0;
+>>
+>>
+>>> +}
+>>> +
+>>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+>>>  {
+>>>  	struct rproc *rproc = rvdev->rproc;
+>>>
+> 
