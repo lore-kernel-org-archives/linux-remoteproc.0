@@ -1,46 +1,190 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH] rpmsg: glink: smem: Support rx peak for size less than 4 bytes
-Date: Wed,  3 Oct 2018 17:08:20 +0530
-Message-Id: <1538566700-29469-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH 5/5] hwspinlock: Add test module
+Date: Wed, 31 Oct 2018 10:30:32 +0100
+Message-Id: <20181031093032.20386-6-benjamin.gaignard@st.com>
+In-Reply-To: <20181031093032.20386-1-benjamin.gaignard@st.com>
+References: <20181031093032.20386-1-benjamin.gaignard@st.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current rx peak function fails to read the data if size is
-less than 4bytes.
+Create a test module to perform simple unitary tests on hwspinlock.
+It doesn't cover all the possibles cases but at least allow to test
+that very basic features are working.
 
-Use memcpy_fromio to support data reads of size less than 4 bytes.
-
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- drivers/rpmsg/qcom_glink_smem.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ drivers/hwspinlock/Kconfig           |   9 +++
+ drivers/hwspinlock/Makefile          |   1 +
+ drivers/hwspinlock/hwspinlock_test.c | 132 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 142 insertions(+)
+ create mode 100644 drivers/hwspinlock/hwspinlock_test.c
 
-diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-index 2b5cf27..7b65443 100644
---- a/drivers/rpmsg/qcom_glink_smem.c
-+++ b/drivers/rpmsg/qcom_glink_smem.c
-@@ -89,15 +89,11 @@ static void glink_smem_rx_peak(struct qcom_glink_pipe *np,
- 		tail -= pipe->native.length;
+diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+index e1a20b460590..f340ebb4d1f7 100644
+--- a/drivers/hwspinlock/Kconfig
++++ b/drivers/hwspinlock/Kconfig
+@@ -68,3 +68,12 @@ config HWSPINLOCK_STM32
+ 	  Say y here to support the STM32 Hardware Spinlock device.
  
- 	len = min_t(size_t, count, pipe->native.length - tail);
--	if (len) {
--		__ioread32_copy(data, pipe->fifo + tail,
--				len / sizeof(u32));
--	}
-+	if (len)
-+		memcpy_fromio(data, pipe->fifo + tail, len);
- 
--	if (len != count) {
--		__ioread32_copy(data + len, pipe->fifo,
--				(count - len) / sizeof(u32));
--	}
-+	if (len != count)
-+		memcpy_fromio(data + len, pipe->fifo, (count - len));
- }
- 
- static void glink_smem_rx_advance(struct qcom_glink_pipe *np,
+ 	  If unsure, say N.
++
++config HWSPINLOCK_TEST
++	tristate "hwspinlock test module"
++	depends on HWSPINLOCK && m
++	default n
++	help
++	  Select M here if you want to build hwspinlock test module
++
++	  If unsure, say N.
+diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
+index c0a9505b4dcf..e6b3d0212fe0 100644
+--- a/drivers/hwspinlock/Makefile
++++ b/drivers/hwspinlock/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
+ obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
+ obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
++obj-$(CONFIG_HWSPINLOCK_TEST) 		+= hwspinlock_test.o
+diff --git a/drivers/hwspinlock/hwspinlock_test.c b/drivers/hwspinlock/hwspinlock_test.c
+new file mode 100644
+index 000000000000..75819337e45a
+--- /dev/null
++++ b/drivers/hwspinlock/hwspinlock_test.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) STMicroelectronics SA 2018
++ * Author: Benjamin Gaignard <benjamin.gaignard@st.com> for STMicroelectronics.
++ * License terms:  GNU General Public License (GPL), version 2
++ */
++
++#include <linux/hwspinlock.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++
++#define TIMEOUT	50 /* ms */
++
++static void hwspin_lock_test_twice_request_specific(void)
++{
++	struct hwspinlock *lock0 = hwspin_lock_request_specific(0);
++	struct hwspinlock *lock1 = hwspin_lock_request_specific(1);
++
++	int ret;
++
++	if (!lock0 || !lock1) {
++		pr_warn("Can't request twice hwspin_lock\n");
++		return;
++	}
++
++	ret = hwspin_trylock(lock0);
++	if (ret)
++		pr_warn("Can't trylock requested hwspin_lock 0 (%d)\n", ret);
++
++	ret = hwspin_trylock(lock1);
++	if (ret)
++		pr_warn("Can't trylock requested hwspin_lock 1 (%d)\n", ret);
++
++	hwspin_unlock(lock0);
++	hwspin_unlock(lock1);
++
++	ret = hwspin_lock_free(lock0);
++	if (ret)
++		pr_warn("Can't free requested hwspin_lock 0\n");
++
++	ret = hwspin_lock_free(lock1);
++	if (ret)
++		pr_warn("Can't free requested hwspin_lock 0\n");
++}
++
++static void hwspin_lock_test_trylock(void)
++{
++	struct hwspinlock *lock = hwspin_lock_request();
++	int ret;
++
++	if (!lock) {
++		pr_warn("Can't request hwspin_lock\n");
++		return;
++	}
++
++	ret = hwspin_trylock(lock);
++	if (ret)
++		pr_warn("Can't trylock requested hwspin_lock (%d)\n", ret);
++
++	/* Try to lock a second time, this should failed */
++	ret = hwspin_trylock(lock);
++	if (ret != -EBUSY)
++		pr_warn("Getting twice the same lock ! (%d)\n", ret);
++
++	hwspin_unlock(lock);
++	ret = hwspin_lock_free(lock);
++	if (ret)
++		pr_warn("Can't free requested hwspin_lock 0\n");
++}
++
++static void hwspin_lock_test_request_specific(void)
++{
++	/*
++	 * Let's assume that any hwspin_lock driver would at least have one
++	 * lock at index 0
++	 */
++	struct hwspinlock *lock = hwspin_lock_request_specific(0);
++	int ret;
++
++	if (!lock) {
++		pr_warn("Can't request hwspin_lock 0\n");
++		return;
++	}
++
++	ret = hwspin_lock_timeout(lock, TIMEOUT);
++	if (ret)
++		pr_warn("Can't lock requested hwspin_lock 0 (%d)\n", ret);
++
++	hwspin_unlock(lock);
++	ret = hwspin_lock_free(lock);
++	if (ret)
++		pr_warn("Can't free requested hwspin_lock 0\n");
++}
++
++static void hwspin_lock_test_request(void)
++{
++	struct hwspinlock *lock = hwspin_lock_request();
++	int ret;
++
++	if (!lock) {
++		pr_warn("Can't request hwspin_lock\n");
++		return;
++	}
++
++	ret = hwspin_lock_timeout(lock, TIMEOUT);
++	if (ret)
++		pr_warn("Can't lock requested hwspin_lock (%d)\n", ret);
++
++	hwspin_unlock(lock);
++	ret = hwspin_lock_free(lock);
++	if (ret)
++		pr_warn("Can't free requested hwspin_lock\n");
++}
++
++/*
++ * Test hwspinlock user API when module is loaded
++ */
++static int __init hwspin_lock_test_init(void)
++{
++	pr_warn("Loading hwspinlock test module\n");
++	hwspin_lock_test_request();
++	hwspin_lock_test_request_specific();
++	hwspin_lock_test_trylock();
++	hwspin_lock_test_twice_request_specific();
++
++	return 0;
++}
++
++module_init(hwspin_lock_test_init);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Hardware spinlock test driver");
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
