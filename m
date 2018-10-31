@@ -1,105 +1,204 @@
-Return-Path: <aneela@codeaurora.org>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V3 3/4] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-Date: Fri,  5 Oct 2018 12:29:35 +0530
-Message-Id: <1538722776-13648-4-git-send-email-aneela@codeaurora.org>
-In-Reply-To: <1538722776-13648-1-git-send-email-aneela@codeaurora.org>
-References: <1538722776-13648-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH 2/5] hwspinlock: add STM32 hwspinlock device
+Date: Wed, 31 Oct 2018 10:30:29 +0100
+Message-Id: <20181031093032.20386-3-benjamin.gaignard@st.com>
+In-Reply-To: <20181031093032.20386-1-benjamin.gaignard@st.com>
+References: <20181031093032.20386-1-benjamin.gaignard@st.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
-to get/set the low level transport signals.
+This patch adds support of hardware semaphores for stm32mp1 SoC.
+The hardware block provides 32 semaphores.
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- drivers/rpmsg/rpmsg_char.c | 53 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 3 deletions(-)
+ drivers/hwspinlock/Kconfig            |   9 +++
+ drivers/hwspinlock/Makefile           |   1 +
+ drivers/hwspinlock/stm32_hwspinlock.c | 147 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 157 insertions(+)
+ create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index a76b963..16978f7b 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-+ * Copyright (c) 2018, The Linux Foundation.
-  * Copyright (c) 2016, Linaro Ltd.
-  * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
-  * Copyright (c) 2012, PetaLogix
-@@ -19,6 +20,7 @@
- #include <linux/rpmsg.h>
- #include <linux/skbuff.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/uaccess.h>
- #include <uapi/linux/rpmsg.h>
+diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+index e895d29500ee..e1a20b460590 100644
+--- a/drivers/hwspinlock/Kconfig
++++ b/drivers/hwspinlock/Kconfig
+@@ -59,3 +59,12 @@ config HSEM_U8500
+ 	  SoC.
  
-@@ -266,15 +268,60 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
- 	return mask;
- }
- 
-+static int rpmsg_eptdev_tiocmset(struct file *fp, unsigned int cmd,
-+				 int __user *arg)
+ 	  If unsure, say N.
++
++config HWSPINLOCK_STM32
++	tristate "STM32 Hardware Spinlock device"
++	depends on MACH_STM32MP157
++	depends on HWSPINLOCK
++	help
++	  Say y here to support the STM32 Hardware Spinlock device.
++
++	  If unsure, say N.
+diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
+index b87c01a506a4..c0a9505b4dcf 100644
+--- a/drivers/hwspinlock/Makefile
++++ b/drivers/hwspinlock/Makefile
+@@ -9,3 +9,4 @@ obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
+ obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
++obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
+diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+new file mode 100644
+index 000000000000..6a0fafac7389
+--- /dev/null
++++ b/drivers/hwspinlock/stm32_hwspinlock.c
+@@ -0,0 +1,147 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) STMicroelectronics SA 2018
++ * Author: Benjamin Gaignard <benjamin.gaignard@st.com> for STMicroelectronics.
++ * License terms:  GNU General Public License (GPL), version 2
++ */
++
++#include <linux/clk.h>
++#include <linux/hwspinlock.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++
++#include "hwspinlock_internal.h"
++
++#define STM32_MUTEX_COREID	BIT(8)
++#define STM32_MUTEX_LOCK_BIT	BIT(31)
++#define STM32_MUTEX_NUM_LOCKS	32
++
++struct stm32_hwspinlock {
++	struct clk *clk;
++	struct hwspinlock_device bank;
++};
++
++static int stm32_hwspinlock_trylock(struct hwspinlock *lock)
 +{
-+	struct rpmsg_eptdev *eptdev = fp->private_data;
-+	u32 set, clear, val;
-+	int ret;
++	void __iomem *lock_addr = lock->priv;
++	u32 status;
 +
-+	ret = get_user(val, arg);
-+	if (ret)
-+		return ret;
-+	set = clear = 0;
-+	switch (cmd) {
-+	case TIOCMBIS:
-+		set = val;
-+		break;
-+	case TIOCMBIC:
-+		clear = val;
-+		break;
-+	case TIOCMSET:
-+		set = val;
-+		clear = ~val;
-+		break;
-+	}
++	writel(STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID, lock_addr);
++	status = readl(lock_addr);
 +
-+	set &= TIOCM_DTR | TIOCM_RTS | TIOCM_CD | TIOCM_RI;
-+	clear &= TIOCM_DTR | TIOCM_RTS | TIOCM_CD | TIOCM_RI;
-+
-+	return rpmsg_set_signals(eptdev->ept, set, clear);
++	return status == (STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID);
 +}
 +
- static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 			       unsigned long arg)
- {
- 	struct rpmsg_eptdev *eptdev = fp->private_data;
-+	int ret;
- 
--	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
--		return -EINVAL;
-+	switch (cmd) {
-+	case TIOCMGET:
-+		ret = rpmsg_get_signals(eptdev->ept);
-+		if (!ret)
-+			ret = put_user(ret, (int __user *)arg);
-+		break;
-+	case TIOCMSET:
-+	case TIOCMBIS:
-+	case TIOCMBIC:
-+		ret = rpmsg_eptdev_tiocmset(fp, cmd, (int __user *)arg);
-+		break;
-+	case RPMSG_DESTROY_EPT_IOCTL:
-+		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-+	default:
-+		ret = -EINVAL;
-+	}
- 
--	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
++static void stm32_hwspinlock_unlock(struct hwspinlock *lock)
++{
++	void __iomem *lock_addr = lock->priv;
++
++	writel(STM32_MUTEX_COREID, lock_addr);
++}
++
++static const struct hwspinlock_ops stm32_hwspinlock_ops = {
++	.trylock	= stm32_hwspinlock_trylock,
++	.unlock		= stm32_hwspinlock_unlock,
++};
++
++static int stm32_hwspinlock_probe(struct platform_device *pdev)
++{
++	struct stm32_hwspinlock *hw;
++	void __iomem *io_base;
++	struct resource *res;
++	size_t array_size;
++	int i, ret;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	io_base = devm_ioremap_resource(&pdev->dev, res);
++	if (!io_base)
++		return -ENOMEM;
++
++	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
++	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
++	if (!hw)
++		return -ENOMEM;
++
++	hw->clk = devm_clk_get(&pdev->dev, "hwspinlock");
++	if (IS_ERR(hw->clk))
++		return PTR_ERR(hw->clk);
++
++	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
++		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
++
++	platform_set_drvdata(pdev, hw);
++	pm_runtime_enable(&pdev->dev);
++
++	ret = hwspin_lock_register(&hw->bank, &pdev->dev, &stm32_hwspinlock_ops,
++				   0, STM32_MUTEX_NUM_LOCKS);
++
++	if (ret)
++		pm_runtime_disable(&pdev->dev);
++
 +	return ret;
- }
- 
- static const struct file_operations rpmsg_eptdev_fops = {
++}
++
++static int stm32_hwspinlock_remove(struct platform_device *pdev)
++{
++	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
++	int ret;
++
++	ret = hwspin_lock_unregister(&hw->bank);
++	if (ret) {
++		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
++		return ret;
++	}
++
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static int __maybe_unused stm32_hwspinlock_runtime_suspend(struct device *dev)
++{
++	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(hw->clk);
++
++	return 0;
++}
++
++static int __maybe_unused stm32_hwspinlock_runtime_resume(struct device *dev)
++{
++	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
++
++	clk_prepare_enable(hw->clk);
++
++	return 0;
++}
++
++static const struct dev_pm_ops stm32_hwspinlock_pm_ops = {
++	SET_RUNTIME_PM_OPS(stm32_hwspinlock_runtime_suspend,
++			   stm32_hwspinlock_runtime_resume,
++			   NULL)
++};
++
++static const struct of_device_id stm32_hwpinlock_ids[] = {
++	{ .compatible = "st,stm32-hwspinlock", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
++
++static struct platform_driver stm32_hwspinlock_driver = {
++	.probe		= stm32_hwspinlock_probe,
++	.remove		= stm32_hwspinlock_remove,
++	.driver		= {
++		.name	= "stm32_hwspinlock",
++		.of_match_table = stm32_hwpinlock_ids,
++		.pm	= &stm32_hwspinlock_pm_ops,
++	},
++};
++module_platform_driver(stm32_hwspinlock_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Hardware spinlock driver for STM32 SoCs");
++MODULE_AUTHOR("Benjamin Gaignard <benjamin.gaignard@st.com>");
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0
