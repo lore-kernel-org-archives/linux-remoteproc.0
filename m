@@ -1,47 +1,68 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] dt-bindings: remoteproc: qcom: Add power-domain bindings for Q6V5
-Date: Wed, 21 Nov 2018 02:38:28 +0530
-Message-Id: <20181120210828.12590-1-sibis@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 7 Nov 2018 22:49:59 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 1/5] dt-bindings: hwlock: Document STM32 hwspinlock
+ bindings
+Message-ID: <20181108064959.GC12063@builder>
+References: <20181031093032.20386-1-benjamin.gaignard@st.com>
+ <20181031093032.20386-2-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, ohad@wizery.com, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031093032.20386-2-benjamin.gaignard@st.com>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add power-domain bindings for Q6V5 MSS on SDM845 SoCs.
+On Wed 31 Oct 02:30 PDT 2018, Benjamin Gaignard wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
+> Add bindings for STM32 hardware spinlock device
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+>  .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> new file mode 100644
+> index 000000000000..7a999479d802
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> @@ -0,0 +1,23 @@
+> +STM32 Hardware Spinlock Device Binding
+> +-------------------------------------
+> +
+> +Required properties :
+> +- compatible : should be "st,stm32-hwspinlock".
+> +- reg : the register address of hwspinlock.
+> +- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
+> +	hwlock, so the number of cells should be <1> here.
+> +- clock-names : Must contain "hwspinlock".
 
-Add dt-binding corresponding to https://patchwork.kernel.org/patch/10586893/
-(remoteproc: q6v5: Add support to vote for rpmh power domains)
+This is supposed to be the name of the clock signal of this hardware
+block, is it really named "hwspinlock"? Note that you can probably omit
+the clock-names property, as you only have a single clock...
 
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt      | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Apart from that, I think the binding looks good.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 14947562bc67..bd9f4882fcf0 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -75,6 +75,17 @@ on the Qualcomm Hexagon core.
- 	Definition: reference to the regulators to be held on behalf of the
- 		    booting of the Hexagon core
- 
-+- power-domains:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the cx, mx and mss power-domains to be held on
-+		    behalf of the booting the Hexagon core
-+
-+- power-domain-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "cx", "mx", "mss"
-+
- - qcom,smem-states:
- 	Usage: required
- 	Value type: <phandle>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Bjorn
+
+> +- clocks : Must contain a phandle entry for the clock in clock-names, see the
+> +	common clock bindings.
+> +
+> +Please look at the generic hwlock binding for usage information for consumers,
+> +"Documentation/devicetree/bindings/hwlock/hwlock.txt"
+> +
+> +Example of hwlock provider:
+> +	hwspinlock@4c000000 {
+> +		compatible = "st,stm32-hwspinlock";
+> +		#hwlock-cells = <1>;
+> +		reg = <0x4c000000 0x400>;
+> +		clocks = <&rcc HSEM>;
+> +		clock-names = "hwspinlock";
+> +	};
+> -- 
+> 2.15.0
+> 
