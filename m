@@ -1,63 +1,86 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 02/17] soc: ti: pruss: Define platform data for PRUSS bus driver
-Date: Thu, 22 Nov 2018 13:38:58 +0200
-Message-ID: <1542886753-17625-3-git-send-email-rogerq@ti.com>
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 7 Nov 2018 22:47:35 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/5] hwspinlock: add STM32 hwspinlock device
+Message-ID: <20181108064735.GB12063@builder>
+References: <20181031093032.20386-1-benjamin.gaignard@st.com>
+ <20181031093032.20386-3-benjamin.gaignard@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031093032.20386-3-benjamin.gaignard@st.com>
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On Wed 31 Oct 02:30 PDT 2018, Benjamin Gaignard wrote:
+> diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+> index e895d29500ee..e1a20b460590 100644
+> --- a/drivers/hwspinlock/Kconfig
+> +++ b/drivers/hwspinlock/Kconfig
+> @@ -59,3 +59,12 @@ config HSEM_U8500
+>  	  SoC.
+>  
+>  	  If unsure, say N.
+> +
+> +config HWSPINLOCK_STM32
 
-The PRUSS can have a PRCM reset line associated with the IP on
-some OMAP architecture based SoCs. The reset needs to be programmed
-properly before accessing any of the internal registers in the PRUSS.
-This functionality is achieved through the omap_device layer, which
-is not exposed outside of mach-omap2 layer. Define a platform data
-structure for PRUSS so that this API can be invoked through platform
-data ops from the driver.
+Please keep these alphabetically sorted.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- include/linux/platform_data/ti-pruss.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 include/linux/platform_data/ti-pruss.h
+> +	tristate "STM32 Hardware Spinlock device"
+> +	depends on MACH_STM32MP157
+> +	depends on HWSPINLOCK
+> +	help
+> +	  Say y here to support the STM32 Hardware Spinlock device.
+> +
+> +	  If unsure, say N.
+> diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
+> index b87c01a506a4..c0a9505b4dcf 100644
+> --- a/drivers/hwspinlock/Makefile
+> +++ b/drivers/hwspinlock/Makefile
+> @@ -9,3 +9,4 @@ obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
+>  obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
+>  obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
+>  obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
+> +obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
 
-diff --git a/include/linux/platform_data/ti-pruss.h b/include/linux/platform_data/ti-pruss.h
-new file mode 100644
-index 0000000..96a66cc
---- /dev/null
-+++ b/include/linux/platform_data/ti-pruss.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Platform data for PRUSS on TI SoCs
-+ *
-+ * Copyright (C) 2014-2018 Texas Instruments Incorporated - http://www.ti.com/
-+ */
-+
-+#ifndef _PLAT_TI_PRUSS_H
-+#define _PLAT_TI_PRUSS_H
-+
-+struct platform_device;
-+
-+/**
-+ * struct pruss_platform_data - PRUSS platform data
-+ * @reset_name: name of the reset
-+ * @assert_reset: PRU-specific handler for putting the device in reset
-+ * @deassert_reset: PRU-specific handler for releasing the device from reset
-+ */
-+struct pruss_platform_data {
-+	const char *reset_name;
-+	int (*assert_reset)(struct platform_device *pdev, const char *name);
-+	int (*deassert_reset)(struct platform_device *pdev, const char *name);
-+};
-+
-+#endif /* _PLAT_TI_PRUSS_H */
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Ditto.
+
+> diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+> new file mode 100644
+> index 000000000000..6a0fafac7389
+> --- /dev/null
+> +++ b/drivers/hwspinlock/stm32_hwspinlock.c
+> @@ -0,0 +1,147 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) STMicroelectronics SA 2018
+> + * Author: Benjamin Gaignard <benjamin.gaignard@st.com> for STMicroelectronics.
+> + * License terms:  GNU General Public License (GPL), version 2
+
+Didn't you already state your license terms with the SPDX header above?
+
+> + */
+[..]
+> +static int stm32_hwspinlock_remove(struct platform_device *pdev)
+> +{
+> +	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
+> +	int ret;
+> +
+> +	ret = hwspin_lock_unregister(&hw->bank);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
+> +		return ret;
+
+The return value of platform_device is ignored, so printing an error
+message is fine, but don't "abort".
+
+> +	}
+> +
+> +	pm_runtime_disable(&pdev->dev);
+> +
+> +	return 0;
+> +}
+
+Regards,
+Bjorn
