@@ -1,129 +1,136 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: Regression by commit 7e83cab824a86704cdbd7735c19d34e0ce423dc5
-Date: Thu, 8 Nov 2018 20:10:02 +0000
-Message-ID: <19a24ba22925476c950f204e330a6a09@SFHDAG7NODE2.st.com>
-References: <CAH2Cfb_yqjYSNf62rvwsOGCG-x+XVNBGwdKrBCfuCO0B2SSSUQ@mail.gmail.com>
- <20181108062214.GY12063@builder>
- <CAH2Cfb-MCKk78J8x8fBhZdVHYN-eNHh6kL2iSXqmEMwrw-txPw@mail.gmail.com>
- <20181108072608.GF12063@builder>
- <989d41d8edce4912a9172943adac4e1e@SFHDAG7NODE2.st.com>
- <CAH2Cfb-yErNdQ2+yYa4GaS0uM-ixgjmLGm2bVU5_SnG=aEfm3g@mail.gmail.com>
-In-Reply-To: <CAH2Cfb-yErNdQ2+yYa4GaS0uM-ixgjmLGm2bVU5_SnG=aEfm3g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Return-Path: <xiaoxiang781216@gmail.com>
 MIME-Version: 1.0
-To: xiang xiao <xiaoxiang781216@gmail.com>
-Cc: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "spjoshi@codeaurora.org" <spjoshi@codeaurora.org>
+References: <CAH2Cfb_yqjYSNf62rvwsOGCG-x+XVNBGwdKrBCfuCO0B2SSSUQ@mail.gmail.com>
+ <20181108062214.GY12063@builder> <CAH2Cfb-MCKk78J8x8fBhZdVHYN-eNHh6kL2iSXqmEMwrw-txPw@mail.gmail.com>
+ <20181108072608.GF12063@builder> <989d41d8edce4912a9172943adac4e1e@SFHDAG7NODE2.st.com>
+In-Reply-To: <989d41d8edce4912a9172943adac4e1e@SFHDAG7NODE2.st.com>
+From: xiang xiao <xiaoxiang781216@gmail.com>
+Date: Fri, 9 Nov 2018 02:11:08 +0800
+Message-ID: <CAH2Cfb-yErNdQ2+yYa4GaS0uM-ixgjmLGm2bVU5_SnG=aEfm3g@mail.gmail.com>
+Subject: Re: Regression by commit 7e83cab824a86704cdbd7735c19d34e0ce423dc5
+Content-Type: text/plain; charset="UTF-8"
+To: loic.pallardy@st.com
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, spjoshi@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogeGlhbmcgeGlhbyA8eGlh
-b3hpYW5nNzgxMjE2QGdtYWlsLmNvbT4NCj4gU2VudDogamV1ZGkgOCBub3ZlbWJyZSAyMDE4IDE5
-OjExDQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCj4gQ2M6IGJq
-b3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnOyBsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9y
-ZzsNCj4gc3Bqb3NoaUBjb2RlYXVyb3JhLm9yZw0KPiBTdWJqZWN0OiBSZTogUmVncmVzc2lvbiBi
-eSBjb21taXQNCj4gN2U4M2NhYjgyNGE4NjcwNGNkYmQ3NzM1YzE5ZDM0ZTBjZTQyM2RjNQ0KPiAN
-Cj4gTG9pYywgVGhlIHBhdGNoIGNhbid0IGZpeCBteSBpc3N1ZTooLCBob3cgZG8geW91IHRyaWdn
-ZXIgdmlydGlvIGRldmljZQ0KPiBkZXN0cm95IHByb2Nlc3M/DQo+IDEuR28gdGhyb3VnaCBzaHV0
-ZG93bi9zdGFydCBjaXJjbGUNCj4gMi5PciB0cmlnZ2VyIHNvbWUgY3Jhc2ggbWFudWFsbHkNCj4g
-TXkgcHJvYmxlbSBoYXBwZW4gaW4gdGhlIHNlY29uZCBjYXNlLCBtYXliZSB5b3UgY2FuIHRyeSBp
-dCB0byBzZWUgd2hhdA0KPiBoYXBwZW4gb24geW91ciBwbGF0Zm9ybS4NCj4gDQoNCkkgcnVuIHN0
-cmVzcyB0ZXN0IGRvaW5nIHN0YXJ0L3NodXRkb3duIGNpcmNsZSBvbiBteSBwbGF0Zm9ybSBhbmQg
-Zm91bmQgaXNzdWUgSSByZXBvcnRlZC4NCkknbGwgZG8gdGhlIHNhbWUgd2l0aCBjcmFzaCBhbmQg
-cmVjb3ZlcnkgdXNpbmcgcHJvcG9zZWQgZGVidWdmcyBpbnRlcmZhY2UgZm9yIHRoYXQgYW5kIGxl
-dCB5b3Uga25vdw0KDQpSZWdhcmRzLA0KTG9pYw0KDQo+IE9uIFRodSwgTm92IDgsIDIwMTggYXQg
-NDoxNiBQTSBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4gd3JvdGU6DQo+ID4N
-Cj4gPg0KPiA+DQo+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJvbTog
-bGludXgtcmVtb3RlcHJvYy1vd25lckB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LXJlbW90ZXByb2Mt
-DQo+ID4gPiBvd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uIEJlaGFsZiBPZiBCam9ybiBBbmRlcnNz
-b24NCj4gPiA+IFNlbnQ6IGpldWRpIDggbm92ZW1icmUgMjAxOCAwODoyNg0KPiA+ID4gVG86IHhp
-YW5nIHhpYW8gPHhpYW94aWFuZzc4MTIxNkBnbWFpbC5jb20+DQo+ID4gPiBDYzogbGludXgtcmVt
-b3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmc7IHNwam9zaGlAY29kZWF1cm9yYS5vcmcNCj4gPiA+IFN1
-YmplY3Q6IFJlOiBSZWdyZXNzaW9uIGJ5IGNvbW1pdA0KPiA+ID4gN2U4M2NhYjgyNGE4NjcwNGNk
-YmQ3NzM1YzE5ZDM0ZTBjZTQyM2RjNQ0KPiA+ID4NCj4gPiA+IE9uIFdlZCAwNyBOb3YgMjI6MzYg
-UFNUIDIwMTgsIHhpYW5nIHhpYW8gd3JvdGU6DQo+ID4gPg0KPiA+ID4gPiBPbiBUaHUsIE5vdiA4
-LCAyMDE4IGF0IDI6MTggUE0gQmpvcm4gQW5kZXJzc29uDQo+ID4gPiA+IDxiam9ybi5hbmRlcnNz
-b25AbGluYXJvLm9yZz4gd3JvdGU6DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBPbiBXZWQgMDcgTm92
-IDA2OjI1IFBTVCAyMDE4LCB4aWFuZyB4aWFvIHdyb3RlOg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4g
-PiBUaGlzIGNvbW1pdCByZXBsYWNlIHJwcm9jX3tzaHV0ZG93bixib290fSgpIHdpdGgNCj4gcnBy
-b2Nfe3N0b3Asc3RhcnR9KCksDQo+ID4gPiA+ID4gPiB3aGljaCBza2lwIGRlc3Ryb3kgdGhlIHZp
-cnRpbyBkZXZpY2UgYXQgc3RvcCBidXQgcmVpbml0aWFsaXplIGl0IGFnYWluIGF0DQo+ID4gPiA+
-ID4gPiBzdGFydDoNCj4gPiA+ID4gPiA+IFsgIDYwMy40NDY4MDVdIHJlbW90ZXByb2MgcmVtb3Rl
-cHJvYzA6IGNyYXNoIGRldGVjdGVkIGluDQo+ID4gPiA+ID4gPiBmOTIxMDAwMC50b3Bwd3I6dGw0
-MjEtcnByb2M6IHR5cGUgbW11ZmF1bHQNCj4gPiA+ID4gPiA+IFsgIDYwMy40NTY4ODNdIHJlbW90
-ZXByb2MgcmVtb3RlcHJvYzA6IGhhbmRsaW5nIGNyYXNoICMxIGluDQo+ID4gPiA+ID4gPiBmOTIx
-MDAwMC50b3Bwd3I6dGw0MjEtcnByb2MNCj4gPiA+ID4gPiA+IFsgIDYwMy40Njk1OTNdIHJlbW90
-ZXByb2MgcmVtb3RlcHJvYzA6IHJlY292ZXJpbmcNCj4gPiA+ID4gPiA+IGY5MjEwMDAwLnRvcHB3
-cjp0bDQyMS1ycHJvYw0KPiA+ID4gPiA+ID4gWyAgNjAzLjQ4MzE3Ml0gcmVtb3RlcHJvYyByZW1v
-dGVwcm9jMDogc3RvcHBlZCByZW1vdGUgcHJvY2Vzc29yDQo+ID4gPiA+ID4gPiBmOTIxMDAwMC50
-b3Bwd3I6dGw0MjEtcnByb2MNCj4gPiA+ID4gPiA+IFsgIDYwMy40OTU5OTldIGtvYmplY3QgKGZm
-ZmZmZmMwYjhjNTEwOTgpOiB0cmllZCB0byBpbml0IGFuIGluaXRpYWxpemVkDQo+ID4gPiA+ID4g
-PiBvYmplY3QsIHNvbWV0aGluZyBpcyBzZXJpb3VzbHkgd3JvbmcuDQo+ID4gPiA+ID4gPg0KPiA+
-ID4gPiA+DQo+ID4gPiA+ID4gSSB0aG91Z2h0IHRoaXMgaXNzdWUgd2FzIGZpeGVkLg0KPiA+ID4g
-PiA+DQo+ID4gPiA+IFdoaWNoIHBhdGNoIGZpeCB0aGlzIGlzc3VlPyBJIGFtIHVzaW5nIDQuMTkg
-a2VybmVsLg0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IEknbSB1bmFibGUgdG8gZmluZCBzdWNoIGNv
-bW1pdCByaWdodCBub3cuIEFuZCBnaXZlbiB5b3VyIHJlcG9ydCBJDQo+ID4gPiBiZWxpZXZlIHRo
-aXMgc3RpbGwgaXMgYSBidWcgdGhlbi4NCj4gPg0KPiA+IEkgc2VuZCBmaXggWzFdIGZvciBhIHNp
-bWlsYXIgaXNzdWUgaW4gSnVseS4gQWZ0ZXIgaW52ZXN0aWdhdGlvbiwgSSBmb3VuZCBhbiBpc3N1
-ZQ0KPiBhdCBycG1zZyBsZXZlbCBpbiByZW1vdmUgcHJvY2VkdXJlLg0KPiA+IEluIHNvbWUgY2Fz
-ZSB2aXJ0aW8gZGV2aWNlIGNhbid0IGJlIGRlc3Ryb3llZCBhcyBzb21lIGNoaWxkIGFyZSBzdGls
-bA0KPiByZWdpc3RlcmVkLg0KPiA+IENvdWxkIHlvdSBwbGVhc2UgdGVzdCBteSBwYXRjaCB0byBz
-ZWUgaWYgaXQgZml4IHlvdXIgaXNzdWU/DQo+ID4NCj4gPiBSZWdhcmRzLA0KPiA+IExvaWMNCj4g
-Pg0KPiA+IDE6IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTA1NDQ3NTcvDQo+
-ID4NCj4gPiA+DQo+ID4gPiA+ID4gPiAgIF5eXl5eXl5eXl5eXl5eXl5eXl5eXg0KPiA+ID4gPiA+
-ID4gWyAgNjAzLjUwNjg2OF0gQ1BVOiA1IFBJRDogMTk4IENvbW06IGt3b3JrZXIvNToxIFRhaW50
-ZWQ6IEcgICAgICAgIFcNCj4gPiA+ID4gPiA+ICA0LjkuMjctMDQ0NTQtZ2Q0YzE4MjktZGlydHkg
-IzI1NQ0KPiA+ID4gPiA+ID4gWyAgNjAzLjUxNzQ2OF0gSGFyZHdhcmUgbmFtZTogQmFua3MgKERU
-KQ0KPiA+ID4gPiA+ID4gWyAgNjAzLjUyMTU4MV0gV29ya3F1ZXVlOiBldmVudHMgcnByb2NfY3Jh
-c2hfaGFuZGxlcl93b3JrDQo+ID4gPiA+ID4gPiBbICA2MDMuNTI3MzQyXSBDYWxsIHRyYWNlOg0K
-PiA+ID4gPiA+ID4gWyAgNjAzLjUzMDA4Nl0gWzxmZmZmZmY4MDA4MDhiZDljPl0gZHVtcF9iYWNr
-dHJhY2UrMHgwLzB4MWNjDQo+ID4gPiA+ID4gPiBbICA2MDMuNTM2MTE1XSBbPGZmZmZmZjgwMDgw
-OGJmN2M+XSBzaG93X3N0YWNrKzB4MTQvMHgxYw0KPiA+ID4gPiA+ID4gWyAgNjAzLjU0MTc3MV0g
-WzxmZmZmZmY4MDA4M2ZlZjA4Pl0gZHVtcF9zdGFjaysweGE4LzB4ZTANCj4gPiA+ID4gPiA+IFsg
-IDYwMy41NDc0MjNdIFs8ZmZmZmZmODAwODQwMmIyND5dIGtvYmplY3RfaW5pdCsweDhjLzB4OWMN
-Cj4gPiA+ID4gPiA+IFsgIDYwMy41NTMyODBdIFs8ZmZmZmZmODAwODUzNzU4Yz5dIGRldmljZV9p
-bml0aWFsaXplKzB4M2MvMHhlOA0KPiA+ID4gPiA+ID4gWyAgNjAzLjU1OTYwOV0gWzxmZmZmZmY4
-MDA4NTM5N2Q0Pl0gZGV2aWNlX3JlZ2lzdGVyKzB4MTQvMHgyOA0KPiA+ID4gPiA+ID4gWyAgNjAz
-LjU2NTc1MF0gWzxmZmZmZmY4MDA4NGI3NzdjPl0NCj4gcmVnaXN0ZXJfdmlydGlvX2RldmljZSsw
-eGM0LzB4MTE0DQo+ID4gPiA+ID4gPiBbICA2MDMuNTcyNjY5XSBbPGZmZmZmZjgwMDg4NzhiMjA+
-XQ0KPiBycHJvY19hZGRfdmlydGlvX2RldisweDdjLzB4MTA4DQo+ID4gPiA+ID4gPiBbICA2MDMu
-NTc5MzkwXSBbPGZmZmZmZjgwMDg4NzVjYmM+XQ0KPiBycHJvY192ZGV2X2RvX3Byb2JlKzB4MTQv
-MHgxYw0KPiA+ID4gPiA+ID4gWyAgNjAzLjU4NTkxMV0gWzxmZmZmZmY4MDA4ODc1YTYwPl0gcnBy
-b2Nfc3RhcnQrMHhhYy8weDFhYw0KPiA+ID4gPiA+ID4gWyAgNjAzLjU5MTc1NF0gWzxmZmZmZmY4
-MDA4ODc3YTY4Pl0NCj4gPiA+IHJwcm9jX3RyaWdnZXJfcmVjb3ZlcnkrMHgyZjgvMHgzMjQNCj4g
-PiA+ID4gPiA+IFsgIDYwMy41OTg3NjNdIFs8ZmZmZmZmODAwODg3N2IyND5dDQo+ID4gPiBycHJv
-Y19jcmFzaF9oYW5kbGVyX3dvcmsrMHg5MC8weGIwDQo+ID4gPiA+ID4gPiBbICA2MDMuNjA1Nzc4
-XSBbPGZmZmZmZjgwMDgwY2Q1NzA+XQ0KPiBwcm9jZXNzX29uZV93b3JrKzB4MjA0LzB4NzA0DQo+
-ID4gPiA+ID4gPiBbICA2MDMuNjEyMjAyXSBbPGZmZmZmZjgwMDgwY2RhYzQ+XSB3b3JrZXJfdGhy
-ZWFkKzB4NTQvMHg0YTgNCj4gPiA+ID4gPiA+IFsgIDYwMy42MTgyNDhdIFs8ZmZmZmZmODAwODBk
-NGFlYz5dIGt0aHJlYWQrMHhlYy8weDEwMA0KPiA+ID4gPiA+ID4gWyAgNjAzLjYyMzcwM10gWzxm
-ZmZmZmY4MDA4MDgzODkwPl0gcmV0X2Zyb21fZm9yaysweDEwLzB4NDANCj4gPiA+ID4gPiA+DQo+
-ID4gPiA+ID4gPiBXaGVuIHRoZSBjcmFzaCBoYXBwZW4sIGlzIGl0IGJldHRlciB0byBkZXN0cm95
-IGFuZCByZWNyZWF0ZSBhbGwgdmlydGlvDQo+ID4gPiA+ID4gPiBkZXZpY2UgYW5kIGl0J3MgY2hp
-bGRyZW4ocnBtc2cgZGV2aWNlKSBhZ2FpbiB0byBtYXRjaCB0aGUgcmVtb3RlDQo+IHNpZGUNCj4g
-PiA+IHN0YXRlDQo+ID4gPiA+ID4gPiBsaWtlIHRoZSBvcmlnaW5hbCBiZWhhdmlvcj8NCj4gPiA+
-ID4gPiA+DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBZZXMsIGl0J3MgbGlrZWx5IHRoYXQgdGhlIHBy
-b3RvY29scyBvbiB0b3AgZG9lcyBzaGFyZSBzb21lIHN0YXRlLCBzbyB3ZQ0KPiA+ID4gPiA+IGRv
-IG5vdCBoYXZlIGFueSBjaG9pY2UgYnV0IHRvIHJlcG9ydCB0aGlzIHVwIHRvIHRoZSB2aXJ0aW8g
-ZGV2aWNlLg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gUmVtb3ZpbmcgYW5kIHJlLXByb2JpbmcgdGhl
-IGRldmljZXMgLSByYXRoZXIgdGhhbiBoYXZpbmcgc29tZSBvdGhlcg0KPiA+ID4gZm9ybQ0KPiA+
-ID4gPiA+IG9mIG5vdGlmaWNhdGlvbiBvZiB0aGlzIGV2ZW50IC0gbWFrZXMgdGhlIGNvZGUgc2lt
-cGxlci4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gQnV0IGl0IHNlZW1zIHdlJ3Jl
-IHRyeWluZyB0byByZS1yZWdpc3RlciB0aGUgc2FtZSBkZXZpY2UgdGhlIHNlY29uZA0KPiA+ID4g
-PiA+IHRpbWUsIHJhdGhlciB0aGFuIGluaXRpYWxpemUgYSBuZXcgb25lLg0KPiA+ID4gPiA+DQo+
-ID4gPiA+IElmIHdlIHVzZSBvbmUgbmV3IGhlcmUsIHRoZSBvbGQgbmVlZCB0byBiZSBkZXN0cm95
-ZWQgdG8gYXZvaWQgdGhlDQo+IGxlYWsuDQo+ID4gPiA+IEJhc2ljYWxseSwgaXQncyBiZWNvbWUg
-dGhlIG9sZCBhcHByb2FjaCBhZ2Fpbi4NCj4gPiA+ID4NCj4gPiA+DQo+ID4gPiBZb3UncmUgcmln
-aHQsIGZvciB2ZGV2cyB3ZSBtdXN0IHRlYXIgdGhlbSBkb3duIGFuZCBicmluZyB0aGVtIHVwIGFn
-YWluLg0KPiA+ID4NCj4gPiA+IFRoZSByZWFzb24gZm9yIGludHJvZHVjaW5nIHRoZSBvZmZlbmRp
-bmcgY29tbWl0IHdhcyBmb3IgY2FydmVvdXRzIHRvDQo+ID4gPiBiZSBhbGxvY2F0ZWQgcGFzdCB0
-aGUgc3RvcCgpIGNhbGwsIHNvIHRoYXQgd2UgY2FuIHN0b3AgdGhlIGNvcmUgYW5kDQo+ID4gPiBw
-cm92aWRlIGEgY29yZWR1bXAgZm9yIHBvc3QgbW9ydGVtIGRlYnVnZ2luZy4NCj4gPiA+DQo+ID4g
-PiA+IFdlIGFyZSBidWlsZGluZyBtYW55IHJwbXNnIGRldmljZXMgb24gdG9wIG9mIHJwcm9jL3Zp
-cnRpbywgZWFjaCBvbmUNCj4gPiA+ID4gaGFzIHRoZSBpbnRlcm5hbCBzdGF0ZSBzeW5jIHdpdGgg
-dGhlIHJlbW90ZSBzaWRlLg0KPiA+ID4gPiBJZiByZW1vdGUgc2lkZSBjcmFzaCBhbmQgcmVib290
-IGFnYWluLCBhbGwgc3RhdGUgaXMgc3RhbGUgYW5kIG5lZWQgdG8NCj4gPiA+ID4gcmVzZXQgdG8g
-dGhlIGRlZmF1bHQgc3RhdGUuDQo+ID4gPiA+IFJlbW92aW5nIGFuZCByZS1wcm9iaW5nIGlzIHRo
-ZSBjbGVhbiBhbmQgc2ltcGxlIHNvbHV0aW9uLCBJIHRoaW5rIHRvby4NCj4gPiA+ID4NCj4gPiA+
-DQo+ID4gPiBSZWdhcmRzLA0KPiA+ID4gQmpvcm4NCg==
+Loic, The patch can't fix my issue:(, how do you trigger virtio device
+destroy process?
+1.Go through shutdown/start circle
+2.Or trigger some crash manually
+My problem happen in the second case, maybe you can try it to see what
+happen on your platform.
+
+On Thu, Nov 8, 2018 at 4:16 PM Loic PALLARDY <loic.pallardy@st.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
+> > owner@vger.kernel.org> On Behalf Of Bjorn Andersson
+> > Sent: jeudi 8 novembre 2018 08:26
+> > To: xiang xiao <xiaoxiang781216@gmail.com>
+> > Cc: linux-remoteproc@vger.kernel.org; spjoshi@codeaurora.org
+> > Subject: Re: Regression by commit
+> > 7e83cab824a86704cdbd7735c19d34e0ce423dc5
+> >
+> > On Wed 07 Nov 22:36 PST 2018, xiang xiao wrote:
+> >
+> > > On Thu, Nov 8, 2018 at 2:18 PM Bjorn Andersson
+> > > <bjorn.andersson@linaro.org> wrote:
+> > > >
+> > > > On Wed 07 Nov 06:25 PST 2018, xiang xiao wrote:
+> > > >
+> > > > > This commit replace rproc_{shutdown,boot}() with rproc_{stop,start}(),
+> > > > > which skip destroy the virtio device at stop but reinitialize it again at
+> > > > > start:
+> > > > > [  603.446805] remoteproc remoteproc0: crash detected in
+> > > > > f9210000.toppwr:tl421-rproc: type mmufault
+> > > > > [  603.456883] remoteproc remoteproc0: handling crash #1 in
+> > > > > f9210000.toppwr:tl421-rproc
+> > > > > [  603.469593] remoteproc remoteproc0: recovering
+> > > > > f9210000.toppwr:tl421-rproc
+> > > > > [  603.483172] remoteproc remoteproc0: stopped remote processor
+> > > > > f9210000.toppwr:tl421-rproc
+> > > > > [  603.495999] kobject (ffffffc0b8c51098): tried to init an initialized
+> > > > > object, something is seriously wrong.
+> > > > >
+> > > >
+> > > > I thought this issue was fixed.
+> > > >
+> > > Which patch fix this issue? I am using 4.19 kernel.
+> > >
+> >
+> > I'm unable to find such commit right now. And given your report I
+> > believe this still is a bug then.
+>
+> I send fix [1] for a similar issue in July. After investigation, I found an issue at rpmsg level in remove procedure.
+> In some case virtio device can't be destroyed as some child are still registered.
+> Could you please test my patch to see if it fix your issue?
+>
+> Regards,
+> Loic
+>
+> 1: https://patchwork.kernel.org/patch/10544757/
+>
+> >
+> > > > >   ^^^^^^^^^^^^^^^^^^^^^
+> > > > > [  603.506868] CPU: 5 PID: 198 Comm: kworker/5:1 Tainted: G        W
+> > > > >  4.9.27-04454-gd4c1829-dirty #255
+> > > > > [  603.517468] Hardware name: Banks (DT)
+> > > > > [  603.521581] Workqueue: events rproc_crash_handler_work
+> > > > > [  603.527342] Call trace:
+> > > > > [  603.530086] [<ffffff800808bd9c>] dump_backtrace+0x0/0x1cc
+> > > > > [  603.536115] [<ffffff800808bf7c>] show_stack+0x14/0x1c
+> > > > > [  603.541771] [<ffffff80083fef08>] dump_stack+0xa8/0xe0
+> > > > > [  603.547423] [<ffffff8008402b24>] kobject_init+0x8c/0x9c
+> > > > > [  603.553280] [<ffffff800853758c>] device_initialize+0x3c/0xe8
+> > > > > [  603.559609] [<ffffff80085397d4>] device_register+0x14/0x28
+> > > > > [  603.565750] [<ffffff80084b777c>] register_virtio_device+0xc4/0x114
+> > > > > [  603.572669] [<ffffff8008878b20>] rproc_add_virtio_dev+0x7c/0x108
+> > > > > [  603.579390] [<ffffff8008875cbc>] rproc_vdev_do_probe+0x14/0x1c
+> > > > > [  603.585911] [<ffffff8008875a60>] rproc_start+0xac/0x1ac
+> > > > > [  603.591754] [<ffffff8008877a68>]
+> > rproc_trigger_recovery+0x2f8/0x324
+> > > > > [  603.598763] [<ffffff8008877b24>]
+> > rproc_crash_handler_work+0x90/0xb0
+> > > > > [  603.605778] [<ffffff80080cd570>] process_one_work+0x204/0x704
+> > > > > [  603.612202] [<ffffff80080cdac4>] worker_thread+0x54/0x4a8
+> > > > > [  603.618248] [<ffffff80080d4aec>] kthread+0xec/0x100
+> > > > > [  603.623703] [<ffffff8008083890>] ret_from_fork+0x10/0x40
+> > > > >
+> > > > > When the crash happen, is it better to destroy and recreate all virtio
+> > > > > device and it's children(rpmsg device) again to match the remote side
+> > state
+> > > > > like the original behavior?
+> > > > >
+> > > >
+> > > > Yes, it's likely that the protocols on top does share some state, so we
+> > > > do not have any choice but to report this up to the virtio device.
+> > > >
+> > > > Removing and re-probing the devices - rather than having some other
+> > form
+> > > > of notification of this event - makes the code simpler.
+> > > >
+> > > >
+> > > > But it seems we're trying to re-register the same device the second
+> > > > time, rather than initialize a new one.
+> > > >
+> > > If we use one new here, the old need to be destroyed to avoid the leak.
+> > > Basically, it's become the old approach again.
+> > >
+> >
+> > You're right, for vdevs we must tear them down and bring them up again.
+> >
+> > The reason for introducing the offending commit was for carveouts to
+> > be allocated past the stop() call, so that we can stop the core and
+> > provide a coredump for post mortem debugging.
+> >
+> > > We are building many rpmsg devices on top of rproc/virtio, each one
+> > > has the internal state sync with the remote side.
+> > > If remote side crash and reboot again, all state is stale and need to
+> > > reset to the default state.
+> > > Removing and re-probing is the clean and simple solution, I think too.
+> > >
+> >
+> > Regards,
+> > Bjorn
