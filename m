@@ -1,272 +1,45 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 12/17] soc: ti: pruss: add pruss_cfg_read()/update() API
-Date: Thu, 22 Nov 2018 13:39:08 +0200
-Message-ID: <1542886753-17625-13-git-send-email-rogerq@ti.com>
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH v2 3/4] ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
+Date: Thu,  8 Nov 2018 10:05:01 +0100
+Message-Id: <20181108090502.14543-4-benjamin.gaignard@st.com>
+In-Reply-To: <20181108090502.14543-1-benjamin.gaignard@st.com>
+References: <20181108090502.14543-1-benjamin.gaignard@st.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add two new APIs pruss_cfg_read() and pruss_cfg_update()
-to the PRUSS platform driver to allow other drivers to read and
-update the registers in the CFG submodule within the PRUSS.
+Declare hwspinlock device for stm32mp157 SoC
 
-This interface provides a simple way for client drivers
-without having them to include and parse these syscon nodes within
-their respective device nodes.
-
-The register definitions for the CFG registors have also been added.
-
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- drivers/soc/ti/Kconfig |   1 +
- drivers/soc/ti/pruss.c |  52 +++++++++++++++++++++++++
- drivers/soc/ti/pruss.h |   2 +
- include/linux/pruss.h  | 101 +++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 156 insertions(+)
+version 2 :
+- change clock name from hwspinlock to hsem to be align with hardware
+  documentation
 
-diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-index d1ea6da..d239996 100644
---- a/drivers/soc/ti/Kconfig
-+++ b/drivers/soc/ti/Kconfig
-@@ -76,6 +76,7 @@ config TI_SCI_PM_DOMAINS
- config TI_PRUSS
- 	tristate "TI PRU-ICSS Subsystem Platform drivers"
- 	depends on SOC_AM33XX
-+	select MFD_SYSCON
- 	default n
- 	help
- 	  TI PRU-ICSS Subsystem platform specific support.
-diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index 90ee5b9..63c7d8c 100644
---- a/drivers/soc/ti/pruss.c
-+++ b/drivers/soc/ti/pruss.c
-@@ -10,9 +10,11 @@
- #include <linux/dma-mapping.h>
- #include <linux/module.h>
- #include <linux/io.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/pruss.h>
-+#include <linux/regmap.h>
- #include <linux/remoteproc.h>
+ arch/arm/boot/dts/stm32mp157c.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 185541a5b69f..98f824d8b0f0 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -803,6 +803,15 @@
+ 			status = "disabled";
+ 		};
  
- #include "pruss.h"
-@@ -152,6 +154,47 @@ int pruss_release_mem_region(struct pruss *pruss,
- }
- EXPORT_SYMBOL_GPL(pruss_release_mem_region);
- 
-+/**
-+ * pruss_cfg_read() - read a PRUSS CFG register
-+ * @pruss: the pruss instance handle
-+ * @reg: register offset within the CFG sub-module
-+ * @val: pointer to return the value in
-+ *
-+ * Reads a given register within CFG module of PRUSS
-+ * and returns it through the passed-in @val pointer
-+ *
-+ * Returns 0 on success, or an error code otherwise
-+ */
-+int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val)
-+{
-+	if (IS_ERR_OR_NULL(pruss))
-+		return -EINVAL;
++		hsem: hwspinlock@4c000000 {
++			compatible = "st,stm32-hwspinlock";
++			#hwlock-cells = <1>;
++			reg = <0x4c000000 0x400>;
++			clocks = <&rcc HSEM>;
++			clock-names = "hwsem";
++			status = "disabled";
++		};
 +
-+	return regmap_read(pruss->cfg, reg, val);
-+}
-+EXPORT_SYMBOL_GPL(pruss_cfg_read);
-+
-+/**
-+ * pruss_cfg_update() - update a PRUSS CFG register
-+ * @pruss: the pruss instance handle
-+ * @reg: register offset within the CFG sub-module
-+ * @mask: bit mask to use for programming the @val
-+ * @val: value to write
-+ *
-+ * Updates a given register within CFG sub-module of PRUSS
-+ *
-+ * Returns 0 on success, or an error code otherwise
-+ */
-+int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
-+		     unsigned int mask, unsigned int val)
-+{
-+	if (IS_ERR_OR_NULL(pruss))
-+		return -EINVAL;
-+
-+	return regmap_update_bits(pruss->cfg, reg, mask, val);
-+}
-+EXPORT_SYMBOL_GPL(pruss_cfg_update);
-+
- static int pruss_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -180,6 +223,15 @@ static int pruss_probe(struct platform_device *pdev)
- 	pruss->dev = dev;
- 	mutex_init(&pruss->lock);
- 
-+	np = of_get_child_by_name(node, "cfg");
-+	if (!np)
-+		return -ENODEV;
-+
-+	pruss->cfg = syscon_node_to_regmap(np);
-+	of_node_put(np);
-+	if (IS_ERR(pruss->cfg))
-+		return -ENODEV;
-+
- 	np = of_get_child_by_name(node, "memories");
- 	if (!np)
- 		return -ENODEV;
-diff --git a/drivers/soc/ti/pruss.h b/drivers/soc/ti/pruss.h
-index f8878c2..45de1be 100644
---- a/drivers/soc/ti/pruss.h
-+++ b/drivers/soc/ti/pruss.h
-@@ -34,6 +34,7 @@ struct pruss_intc_config {
- /**
-  * struct pruss - PRUSS parent structure
-  * @dev: pruss device pointer
-+ * @cfg: regmap for config region
-  * @mem_regions: data for each of the PRUSS memory regions
-  * @mem_in_use: to indicate if memory resource is in use
-  * @host_mask: indicate which HOST IRQs are enabled
-@@ -41,6 +42,7 @@ struct pruss_intc_config {
-  */
- struct pruss {
- 	struct device *dev;
-+	struct regmap *cfg;
- 	struct pruss_mem_region mem_regions[PRUSS_MEM_MAX];
- 	struct pruss_mem_region *mem_in_use[PRUSS_MEM_MAX];
- 	u32 host_mask;
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index b9135d6..3ed175a 100644
---- a/include/linux/pruss.h
-+++ b/include/linux/pruss.h
-@@ -10,6 +10,92 @@
- #ifndef __LINUX_PRUSS_H
- #define __LINUX_PRUSS_H
- 
-+/*
-+ * PRU_ICSS_CFG registers
-+ * SYSCFG, ISRP, ISP, IESP, IECP, SCRP applicable on AMxxxx devices only
-+ */
-+#define PRUSS_CFG_REVID		0x00
-+#define PRUSS_CFG_SYSCFG	0x04
-+#define PRUSS_CFG_GPCFG(x)	(0x08 + (x) * 4)
-+#define PRUSS_CFG_CGR		0x10
-+#define PRUSS_CFG_ISRP		0x14
-+#define PRUSS_CFG_ISP		0x18
-+#define PRUSS_CFG_IESP		0x1C
-+#define PRUSS_CFG_IECP		0x20
-+#define PRUSS_CFG_SCRP		0x24
-+#define PRUSS_CFG_PMAO		0x28
-+#define PRUSS_CFG_MII_RT	0x2C
-+#define PRUSS_CFG_IEPCLK	0x30
-+#define PRUSS_CFG_SPP		0x34
-+#define PRUSS_CFG_PIN_MX	0x40
-+
-+/* PRUSS_GPCFG register bits */
-+#define PRUSS_GPCFG_PRU_GPO_SH_SEL		BIT(25)
-+
-+#define PRUSS_GPCFG_PRU_DIV1_SHIFT		20
-+#define PRUSS_GPCFG_PRU_DIV1_MASK		GENMASK(24, 20)
-+
-+#define PRUSS_GPCFG_PRU_DIV0_SHIFT		15
-+#define PRUSS_GPCFG_PRU_DIV0_MASK		GENMASK(15, 19)
-+
-+#define PRUSS_GPCFG_PRU_GPO_MODE		BIT(14)
-+#define PRUSS_GPCFG_PRU_GPO_MODE_DIRECT		0
-+#define PRUSS_GPCFG_PRU_GPO_MODE_SERIAL		BIT(14)
-+
-+#define PRUSS_GPCFG_PRU_GPI_SB			BIT(13)
-+
-+#define PRUSS_GPCFG_PRU_GPI_DIV1_SHIFT		8
-+#define PRUSS_GPCFG_PRU_GPI_DIV1_MASK		GENMASK(12, 8)
-+
-+#define PRUSS_GPCFG_PRU_GPI_DIV0_SHIFT		3
-+#define PRUSS_GPCFG_PRU_GPI_DIV0_MASK		GENMASK(7, 3)
-+
-+#define PRUSS_GPCFG_PRU_GPI_CLK_MODE_POSITIVE	0
-+#define PRUSS_GPCFG_PRU_GPI_CLK_MODE_NEGATIVE	BIT(2)
-+#define PRUSS_GPCFG_PRU_GPI_CLK_MODE		BIT(2)
-+
-+#define PRUSS_GPCFG_PRU_GPI_MODE_MASK		GENMASK(1, 0)
-+#define PRUSS_GPCFG_PRU_GPI_MODE_SHIFT		0
-+
-+#define PRUSS_GPCFG_PRU_MUX_SEL_SHIFT		26
-+#define PRUSS_GPCFG_PRU_MUX_SEL_MASK		GENMASK(29, 26)
-+
-+/* PRUSS_MII_RT register bits */
-+#define PRUSS_MII_RT_EVENT_EN			BIT(0)
-+
-+/* PRUSS_SPP register bits */
-+#define PRUSS_SPP_XFER_SHIFT_EN			BIT(1)
-+#define PRUSS_SPP_PRU1_PAD_HP_EN		BIT(0)
-+
-+/**
-+ * enum pruss_gp_mux_sel - PRUSS GPI/O Mux modes for the
-+ * PRUSS_GPCFG0/1 registers
-+ *
-+ * NOTE: The below defines are the most common values, but there
-+ * are some exceptions like on 66AK2G, where the RESERVED and MII2
-+ * values are interchanged. Also, this bit-field does not exist on
-+ * AM335x SoCs
-+ */
-+enum pruss_gp_mux_sel {
-+	PRUSS_GP_MUX_SEL_GP = 0,
-+	PRUSS_GP_MUX_SEL_ENDAT,
-+	PRUSS_GP_MUX_SEL_RESERVED,
-+	PRUSS_GP_MUX_SEL_SD,
-+	PRUSS_GP_MUX_SEL_MII2,
-+	PRUSS_GP_MUX_SEL_MAX,
-+};
-+
-+/**
-+ * enum pruss_gpi_mode - PRUSS GPI configuration modes, used
-+ *			 to program the PRUSS_GPCFG0/1 registers
-+ */
-+enum pruss_gpi_mode {
-+	PRUSS_GPI_MODE_DIRECT = 0,
-+	PRUSS_GPI_MODE_PARALLEL,
-+	PRUSS_GPI_MODE_28BIT_SHIFT,
-+	PRUSS_GPI_MODE_MII,
-+};
-+
- /**
-  * enum pruss_mem - PRUSS memory range identifiers
-  */
-@@ -46,6 +132,10 @@ int pruss_release_mem_region(struct pruss *pruss,
- 
- int pruss_intc_trigger(unsigned int irq);
- 
-+int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val);
-+int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
-+		     unsigned int mask, unsigned int val);
-+
- #else
- 
- static inline struct pruss *pruss_get(struct rproc *rproc)
-@@ -73,6 +163,17 @@ static inline int pruss_intc_trigger(unsigned int irq)
- 	return -ENOTSUPP;
- }
- 
-+int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
-+		     unsigned int mask, unsigned int val)
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif /* CONFIG_TI_PRUSS */
- 
- #endif /* __LINUX_PRUSS_H */
+ 		rcc: rcc@50000000 {
+ 			compatible = "st,stm32mp1-rcc", "syscon";
+ 			reg = <0x50000000 0x1000>;
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.15.0
