@@ -1,240 +1,227 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 03/17] soc: ti: pruss: Add pruss_soc_bus platform driver
-Date: Thu, 22 Nov 2018 13:38:59 +0200
-Message-ID: <1542886753-17625-4-git-send-email-rogerq@ti.com>
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH v3 2/4] hwspinlock: add STM32 hwspinlock device
+Date: Mon, 12 Nov 2018 16:23:40 +0100
+Message-Id: <20181112152342.6561-3-benjamin.gaignard@st.com>
+In-Reply-To: <20181112152342.6561-1-benjamin.gaignard@st.com>
+References: <20181112152342.6561-1-benjamin.gaignard@st.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+This patch adds support of hardware semaphores for stm32mp1 SoC.
+The hardware block provides 32 semaphores.
 
-The Programmable Real-Time Unit - Industrial Communication
-Subsystem (PRU-ICSS) is present of various TI SoCs such as
-AM335x or AM437x or the Keystone 66AK2G. Each SoC can have
-one or more PRUSS instances that may or may not be identical.
-For example, AM335x SoCs have a single PRUSS, while AM437x has
-two PRUSS instances PRUSS1 and PRUSS0, with the PRUSS0 being
-a cut-down version of the PRUSS1.
-
-The PRUSS consists of dual 32-bit RISC cores called the
-Programmable Real-Time Units (PRUs), some shared, data and
-instruction memories, some internal peripheral modules, and
-an interrupt controller. The programmable nature of the PRUs
-provide flexibility to implement custom peripheral interfaces,
-fast real-time responses, or specialized data handling.
-
-The PRU-ICSS functionality is achieved through four different
-modules, each implementing a platform driver addressing a
-specific portion of the PRUSS. Some sub-modules of the PRU-ICSS
-IP reuse some of the existing drivers (like davinci mdio driver
-or the generic syscon driver). The pruss_soc_bus driver deals
-with the SoC integration aspects of the PRUSS IP(s) and manages
-the common clock, reset and interconnect configuration and
-creates the child PRUSS devices. The second pruss driver is
-responsible for the creation and deletion of various platform
-devices for the child PRU device and other child devices. A third
-driver manages the PRUSS interrupt controller and implements an
-irqchip driver to provide a Linux standard way of interrupt
-management to PRU clients. The fourth platform driver is a
-remoteproc driver and performs the individual PRU RISC cores
-management. This design provides flexibility in representing
-the different modules of PRUSS accordingly.
-
-This patch introduces the first part i.e. pruss_soc_bus driver.
-The driver currently supports the AM335x SoC.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- drivers/soc/ti/Kconfig         |  11 ++++
- drivers/soc/ti/Makefile        |   1 +
- drivers/soc/ti/pruss_soc_bus.c | 142 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 154 insertions(+)
- create mode 100644 drivers/soc/ti/pruss_soc_bus.c
+version 3 :
+- use postcore_initcall() instead of module_platform_driver()
+  
+version 2 :
+- change clock name from hwspinlock to hsem to be align with hardware
+  documentation
+- remove useless licence terms from header
+- fix alphabetic order issues
+- do not abort remove function if hwspin_lock_unregister() failed
 
-diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-index be4570b..d1ea6da 100644
---- a/drivers/soc/ti/Kconfig
-+++ b/drivers/soc/ti/Kconfig
-@@ -73,4 +73,15 @@ config TI_SCI_PM_DOMAINS
- 	  called ti_sci_pm_domains. Note this is needed early in boot before
- 	  rootfs may be available.
+ drivers/hwspinlock/Kconfig            |   9 ++
+ drivers/hwspinlock/Makefile           |   1 +
+ drivers/hwspinlock/stm32_hwspinlock.c | 156 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 166 insertions(+)
+ create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+
+diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+index e895d29500ee..7869c67e5b6b 100644
+--- a/drivers/hwspinlock/Kconfig
++++ b/drivers/hwspinlock/Kconfig
+@@ -49,6 +49,15 @@ config HWSPINLOCK_SPRD
  
-+config TI_PRUSS
-+	tristate "TI PRU-ICSS Subsystem Platform drivers"
-+	depends on SOC_AM33XX
-+	default n
+ 	  If unsure, say N.
+ 
++config HWSPINLOCK_STM32
++	tristate "STM32 Hardware Spinlock device"
++	depends on MACH_STM32MP157
++	depends on HWSPINLOCK
 +	help
-+	  TI PRU-ICSS Subsystem platform specific support.
++	  Say y here to support the STM32 Hardware Spinlock device.
 +
-+	  Say Y or M here to support the Programmable Realtime Unit (PRU)
-+	  processors on various TI SoCs. It's safe to say N here if you're
-+	  not interested in the PRU or if you are unsure.
++	  If unsure, say N.
 +
- endif # SOC_TI
-diff --git a/drivers/soc/ti/Makefile b/drivers/soc/ti/Makefile
-index a22edc0..ac6b695 100644
---- a/drivers/soc/ti/Makefile
-+++ b/drivers/soc/ti/Makefile
-@@ -8,3 +8,4 @@ obj-$(CONFIG_KEYSTONE_NAVIGATOR_DMA)	+= knav_dma.o
- obj-$(CONFIG_AMX3_PM)			+= pm33xx.o
- obj-$(CONFIG_WKUP_M3_IPC)		+= wkup_m3_ipc.o
- obj-$(CONFIG_TI_SCI_PM_DOMAINS)		+= ti_sci_pm_domains.o
-+obj-$(CONFIG_TI_PRUSS)			+= pruss_soc_bus.o
-diff --git a/drivers/soc/ti/pruss_soc_bus.c b/drivers/soc/ti/pruss_soc_bus.c
+ config HSEM_U8500
+ 	tristate "STE Hardware Semaphore functionality"
+ 	depends on HWSPINLOCK
+diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
+index b87c01a506a4..ed053e3f02be 100644
+--- a/drivers/hwspinlock/Makefile
++++ b/drivers/hwspinlock/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_HWSPINLOCK_OMAP)		+= omap_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
++obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
+ obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
+diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
 new file mode 100644
-index 0000000..16b4802
+index 000000000000..34a8e009dc93
 --- /dev/null
-+++ b/drivers/soc/ti/pruss_soc_bus.c
-@@ -0,0 +1,142 @@
++++ b/drivers/hwspinlock/stm32_hwspinlock.c
+@@ -0,0 +1,156 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * PRU-ICSS SoC bus driver for various TI SoCs
-+ *
-+ * Copyright (C) 2016-2018 Texas Instruments Incorporated - http://www.ti.com/
-+ *	Suman Anna <s-anna@ti.com>
-+ *	Keerthy <j-keerthy@ti.com>
++ * Copyright (C) STMicroelectronics SA 2018
++ * Author: Benjamin Gaignard <benjamin.gaignard@st.com> for STMicroelectronics.
 + */
 +
++#include <linux/clk.h>
++#include <linux/hwspinlock.h>
 +#include <linux/io.h>
++#include <linux/kernel.h>
 +#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_address.h>
++#include <linux/of.h>
 +#include <linux/platform_device.h>
 +#include <linux/pm_runtime.h>
 +
-+#include <linux/platform_data/ti-pruss.h>
++#include "hwspinlock_internal.h"
 +
-+/**
-+ * struct pruss_soc_bus - PRUSS SoC bus structure
-+ * @syscfg: kernel mapped address for SYSCFG register
-+ * @has_reset: cached variable for storing global module reset flag
-+ */
-+struct pruss_soc_bus {
-+	void __iomem *syscfg;
-+	bool has_reset;
++#define STM32_MUTEX_COREID	BIT(8)
++#define STM32_MUTEX_LOCK_BIT	BIT(31)
++#define STM32_MUTEX_NUM_LOCKS	32
++
++struct stm32_hwspinlock {
++	struct clk *clk;
++	struct hwspinlock_device bank;
 +};
 +
-+/**
-+ * struct pruss_soc_bus_match_data - PRUSS SoC bus driver match data
-+ * @has_reset: flag to indicate the presence of global module reset
-+ */
-+struct pruss_soc_bus_match_data {
-+	bool has_reset;
-+};
-+
-+static int pruss_soc_bus_probe(struct platform_device *pdev)
++static int stm32_hwspinlock_trylock(struct hwspinlock *lock)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->of_node;
-+	struct pruss_platform_data *pdata = dev_get_platdata(dev);
-+	struct pruss_soc_bus *psoc_bus;
-+	const struct pruss_soc_bus_match_data *data;
-+	int ret;
++	void __iomem *lock_addr = lock->priv;
++	u32 status;
 +
-+	psoc_bus = devm_kzalloc(dev, sizeof(*psoc_bus), GFP_KERNEL);
-+	if (!psoc_bus)
++	writel(STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID, lock_addr);
++	status = readl(lock_addr);
++
++	return status == (STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID);
++}
++
++static void stm32_hwspinlock_unlock(struct hwspinlock *lock)
++{
++	void __iomem *lock_addr = lock->priv;
++
++	writel(STM32_MUTEX_COREID, lock_addr);
++}
++
++static const struct hwspinlock_ops stm32_hwspinlock_ops = {
++	.trylock	= stm32_hwspinlock_trylock,
++	.unlock		= stm32_hwspinlock_unlock,
++};
++
++static int stm32_hwspinlock_probe(struct platform_device *pdev)
++{
++	struct stm32_hwspinlock *hw;
++	void __iomem *io_base;
++	struct resource *res;
++	size_t array_size;
++	int i, ret;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	io_base = devm_ioremap_resource(&pdev->dev, res);
++	if (!io_base)
 +		return -ENOMEM;
 +
-+	psoc_bus->syscfg = of_iomap(node, 0);
-+	if (!psoc_bus->syscfg)
++	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
++	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
++	if (!hw)
 +		return -ENOMEM;
 +
-+	data = of_device_get_match_data(dev);
-+	if (!data) {
-+		dev_err(dev, "missing match data\n");
-+		return -ENODEV;
-+	}
++	hw->clk = devm_clk_get(&pdev->dev, "hsem");
++	if (IS_ERR(hw->clk))
++		return PTR_ERR(hw->clk);
 +
-+	if (data->has_reset && (!pdata || !pdata->deassert_reset ||
-+				!pdata->assert_reset || !pdata->reset_name)) {
-+		dev_err(dev, "platform data (reset configuration information) missing\n");
-+		return -ENODEV;
-+	}
-+	psoc_bus->has_reset = data->has_reset;
-+	platform_set_drvdata(pdev, psoc_bus);
++	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
++		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
 +
-+	if (psoc_bus->has_reset) {
-+		ret = pdata->deassert_reset(pdev, pdata->reset_name);
-+		if (ret) {
-+			dev_err(dev, "deassert_reset failed: %d\n", ret);
-+			goto fail_reset;
-+		}
-+	}
++	platform_set_drvdata(pdev, hw);
++	pm_runtime_enable(&pdev->dev);
 +
-+	pm_runtime_enable(dev);
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(dev);
-+		goto fail_clock;
-+	}
++	ret = hwspin_lock_register(&hw->bank, &pdev->dev, &stm32_hwspinlock_ops,
++				   0, STM32_MUTEX_NUM_LOCKS);
 +
-+	ret = of_platform_populate(node, NULL, NULL, dev);
 +	if (ret)
-+		goto fail_of;
++		pm_runtime_disable(&pdev->dev);
 +
-+	return 0;
-+
-+fail_of:
-+	pm_runtime_put_sync(dev);
-+fail_clock:
-+	pm_runtime_disable(dev);
-+	if (psoc_bus->has_reset)
-+		pdata->assert_reset(pdev, pdata->reset_name);
-+fail_reset:
-+	iounmap(psoc_bus->syscfg);
 +	return ret;
 +}
 +
-+static int pruss_soc_bus_remove(struct platform_device *pdev)
++static int stm32_hwspinlock_remove(struct platform_device *pdev)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct pruss_platform_data *pdata = dev_get_platdata(dev);
-+	struct pruss_soc_bus *psoc_bus = platform_get_drvdata(pdev);
++	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
++	int ret;
 +
-+	of_platform_depopulate(dev);
++	ret = hwspin_lock_unregister(&hw->bank);
++	if (ret)
++		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
 +
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
-+
-+	if (psoc_bus->has_reset)
-+		pdata->assert_reset(pdev, pdata->reset_name);
-+	iounmap(psoc_bus->syscfg);
++	pm_runtime_disable(&pdev->dev);
 +
 +	return 0;
 +}
 +
-+/* instance-specific driver private data */
-+static const struct pruss_soc_bus_match_data am335x_data = {
-+	.has_reset = true,
++static int __maybe_unused stm32_hwspinlock_runtime_suspend(struct device *dev)
++{
++	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(hw->clk);
++
++	return 0;
++}
++
++static int __maybe_unused stm32_hwspinlock_runtime_resume(struct device *dev)
++{
++	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
++
++	clk_prepare_enable(hw->clk);
++
++	return 0;
++}
++
++static const struct dev_pm_ops stm32_hwspinlock_pm_ops = {
++	SET_RUNTIME_PM_OPS(stm32_hwspinlock_runtime_suspend,
++			   stm32_hwspinlock_runtime_resume,
++			   NULL)
 +};
 +
-+static const struct of_device_id pruss_soc_bus_of_match[] = {
-+	{ .compatible = "ti,am3356-pruss-soc-bus", .data = &am335x_data, },
-+	{ /* sentinel */ },
++static const struct of_device_id stm32_hwpinlock_ids[] = {
++	{ .compatible = "st,stm32-hwspinlock", },
++	{},
 +};
-+MODULE_DEVICE_TABLE(of, pruss_soc_bus_of_match);
++MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
 +
-+static struct platform_driver pruss_soc_bus_driver = {
-+	.driver	= {
-+		.name = "pruss-soc-bus",
-+		.of_match_table = pruss_soc_bus_of_match,
++static struct platform_driver stm32_hwspinlock_driver = {
++	.probe		= stm32_hwspinlock_probe,
++	.remove		= stm32_hwspinlock_remove,
++	.driver		= {
++		.name	= "stm32_hwspinlock",
++		.of_match_table = stm32_hwpinlock_ids,
++		.pm	= &stm32_hwspinlock_pm_ops,
 +	},
-+	.probe	= pruss_soc_bus_probe,
-+	.remove	= pruss_soc_bus_remove,
 +};
-+module_platform_driver(pruss_soc_bus_driver);
 +
-+MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
-+MODULE_AUTHOR("Keerthy <j-keerthy@ti.com>");
-+MODULE_DESCRIPTION("PRU-ICSS SoC Bus Driver for TI SoCs");
++static int __init stm32_hwspinlock_init(void)
++{
++	return platform_driver_register(&stm32_hwspinlock_driver);
++}
++/* board init code might need to reserve hwspinlocks for predefined purposes */
++postcore_initcall(stm32_hwspinlock_init);
++
++static void __exit stm32_hwspinlock_exit(void)
++{
++	platform_driver_unregister(&stm32_hwspinlock_driver);
++}
++module_exit(stm32_hwspinlock_exit);
++
 +MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Hardware spinlock driver for STM32 SoCs");
++MODULE_AUTHOR("Benjamin Gaignard <benjamin.gaignard@st.com>");
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.15.0
