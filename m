@@ -1,71 +1,52 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 14/17] ARM: OMAP2+: use pdata quirks for PRUSS reset lines on AM335x
-Date: Thu, 22 Nov 2018 13:39:10 +0200
-Message-ID: <1542886753-17625-15-git-send-email-rogerq@ti.com>
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH v3 0/4] Add support of STM32 hwspinlock
+References: <20181112152342.6561-1-benjamin.gaignard@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <e252e4c7-ec95-b4c2-f988-526fd8bda942@st.com>
+Date: Tue, 13 Nov 2018 09:09:48 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+In-Reply-To: <20181112152342.6561-1-benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hi Benjamin
 
-The omap_device API is needed to perform the reset management for
-any IP instances with PRCM RSTCTRL registers (hard reset lines).
-This API is limited to the mach-omap2 layer, and cannot be exposed
-to drivers layer directly. So use platform data ops and pdata quirks
-for the PRUSS IP in AM335x SoCs to plumb the required omap_device
-API. The PRUSS SoC bus driver can then use these pdata ops to
-achieve the required reset functionality.
+On 11/12/18 4:23 PM, Benjamin Gaignard wrote:
+> This serie adds the support of the hardware semaphore block for stm32mp1 SoC.
+> 
+> version 3:
+> - fix clock name in properties description.
+> - use postcore_initcall() instead of module_platform_driver()
+> 
+> version 2:
+> - fix comments done by Bjorn about clock naming, license terms in header,
+>    alphabetic ordering in Makefile and Kconfig and remove function
+> - Do not push test module in this version while waiting for feedbacks about it
+> 
+> 
+> Benjamin Gaignard (4):
+>    dt-bindings: hwlock: Document STM32 hwspinlock bindings
+>    hwspinlock: add STM32 hwspinlock device
+>    ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
+>    ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
 
-This is being implemented this way as there is no separate reset
-driver at the moment.
+DT patches applied on stm32-next.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- arch/arm/mach-omap2/pdata-quirks.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Regards
+Alex
 
-diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
-index 9fec5f8..97fc5a2 100644
---- a/arch/arm/mach-omap2/pdata-quirks.c
-+++ b/arch/arm/mach-omap2/pdata-quirks.c
-@@ -26,6 +26,7 @@
- #include <linux/platform_data/hsmmc-omap.h>
- #include <linux/platform_data/iommu-omap.h>
- #include <linux/platform_data/ti-sysc.h>
-+#include <linux/platform_data/ti-pruss.h>
- #include <linux/platform_data/wkup_m3.h>
- #include <linux/platform_data/asoc-ti-mcbsp.h>
- 
-@@ -438,6 +439,14 @@ static struct wkup_m3_platform_data wkup_m3_data = {
- };
- #endif
- 
-+#ifdef CONFIG_SOC_AM33XX
-+static struct pruss_platform_data pruss_pdata = {
-+	.reset_name = "pruss",
-+	.assert_reset = omap_device_assert_hardreset,
-+	.deassert_reset = omap_device_deassert_hardreset,
-+};
-+#endif
-+
- #ifdef CONFIG_SOC_OMAP5
- static void __init omap5_uevm_legacy_init(void)
- {
-@@ -580,6 +589,8 @@ static struct of_dev_auxdata omap_auxdata_lookup[] = {
- #ifdef CONFIG_SOC_AM33XX
- 	OF_DEV_AUXDATA("ti,am3352-wkup-m3", 0x44d00000, "44d00000.wkup_m3",
- 		       &wkup_m3_data),
-+	OF_DEV_AUXDATA("ti,am3356-pruss-soc-bus", 0x4a326004,
-+		       "4a326004.pruss-soc-bus", &pruss_pdata),
- #endif
- #ifdef CONFIG_SOC_AM43XX
- 	OF_DEV_AUXDATA("ti,am4372-wkup-m3", 0x44d00000, "44d00000.wkup_m3",
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+>   .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 +++
+>   arch/arm/boot/dts/stm32mp157c-ed1.dts              |   4 +
+>   arch/arm/boot/dts/stm32mp157c.dtsi                 |   9 ++
+>   drivers/hwspinlock/Kconfig                         |   9 ++
+>   drivers/hwspinlock/Makefile                        |   1 +
+>   drivers/hwspinlock/stm32_hwspinlock.c              | 156 +++++++++++++++++++++
+>   6 files changed, 202 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+>   create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+> 
