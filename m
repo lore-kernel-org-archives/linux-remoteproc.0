@@ -1,101 +1,233 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 10/17] soc: ti: pruss_intc: Add API to trigger a PRU sysevent
-Date: Thu, 22 Nov 2018 13:39:06 +0200
-Message-ID: <1542886753-17625-11-git-send-email-rogerq@ti.com>
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Return-Path: <benjamin.gaignard@linaro.org>
+Return-Path: <benjamin.gaignard@linaro.org>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH v4 2/4] hwspinlock: add STM32 hwspinlock device
+Date: Wed, 14 Nov 2018 10:00:25 +0100
+Message-Id: <20181114090027.7580-3-benjamin.gaignard@linaro.org>
+In-Reply-To: <20181114090027.7580-1-benjamin.gaignard@linaro.org>
+References: <20181114090027.7580-1-benjamin.gaignard@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+From: Benjamin Gaignard <benjamin.gaignard@st.com>
 
-The PRUSS INTC can generate an interrupt to various processor
-subsystems on the SoC through a set of 64 possible PRU system
-events. These system events can be used by PRU client drivers
-or applications for event notifications/signalling between PRUs
-and MPU or other processors. A new API, pruss_intc_trigger() is
-provided to MPU-side PRU client drivers/applications to be able
-to trigger an event/interrupt using IRQ numbers provided by the
-PRUSS-INTC irqdomain chip.
+This patch adds support of hardware semaphores for stm32mp1 SoC.
+The hardware block provides 32 semaphores.
 
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 ---
- drivers/soc/ti/pruss_intc.c | 31 +++++++++++++++++++++++++++++++
- include/linux/pruss.h       |  7 +++++++
- 2 files changed, 38 insertions(+)
+version 4:
+- add Linaro SoB
 
-diff --git a/drivers/soc/ti/pruss_intc.c b/drivers/soc/ti/pruss_intc.c
-index df6b83b..6158b63 100644
---- a/drivers/soc/ti/pruss_intc.c
-+++ b/drivers/soc/ti/pruss_intc.c
-@@ -395,6 +395,37 @@ static void pruss_intc_irq_relres(struct irq_data *data)
- 	module_put(THIS_MODULE);
- }
+version 3 :
+- use postcore_initcall() instead of module_platform_driver()
+  
+version 2 :
+- change clock name from hwspinlock to hsem to be align with hardware
+  documentation
+- remove useless licence terms from header
+- fix alphabetic order issues
+- do not abort remove function if hwspin_lock_unregister() failed
+
+ drivers/hwspinlock/Kconfig            |   9 ++
+ drivers/hwspinlock/Makefile           |   1 +
+ drivers/hwspinlock/stm32_hwspinlock.c | 156 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 166 insertions(+)
+ create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+
+diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+index e895d29500ee..7869c67e5b6b 100644
+--- a/drivers/hwspinlock/Kconfig
++++ b/drivers/hwspinlock/Kconfig
+@@ -49,6 +49,15 @@ config HWSPINLOCK_SPRD
  
-+/**
-+ * pruss_intc_trigger() - trigger a PRU system event
-+ * @irq: linux IRQ number associated with a PRU system event
-+ *
-+ * Trigger an interrupt by signalling a specific PRU system event.
-+ * This can be used by PRUSS client users to raise/send an event to
-+ * a PRU or any other core that is listening on the host interrupt
-+ * mapped to that specific PRU system event. The @irq variable is the
-+ * Linux IRQ number associated with a specific PRU system event that
-+ * a client user/application uses. The interrupt mappings for this is
-+ * provided by the PRUSS INTC irqchip instance.
-+ *
-+ * Returns 0 on success, or an error value upon failure.
+ 	  If unsure, say N.
+ 
++config HWSPINLOCK_STM32
++	tristate "STM32 Hardware Spinlock device"
++	depends on MACH_STM32MP157
++	depends on HWSPINLOCK
++	help
++	  Say y here to support the STM32 Hardware Spinlock device.
++
++	  If unsure, say N.
++
+ config HSEM_U8500
+ 	tristate "STE Hardware Semaphore functionality"
+ 	depends on HWSPINLOCK
+diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
+index b87c01a506a4..ed053e3f02be 100644
+--- a/drivers/hwspinlock/Makefile
++++ b/drivers/hwspinlock/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_HWSPINLOCK_OMAP)		+= omap_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
+ obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
++obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
+ obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
+diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+new file mode 100644
+index 000000000000..34a8e009dc93
+--- /dev/null
++++ b/drivers/hwspinlock/stm32_hwspinlock.c
+@@ -0,0 +1,156 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) STMicroelectronics SA 2018
++ * Author: Benjamin Gaignard <benjamin.gaignard@st.com> for STMicroelectronics.
 + */
-+int pruss_intc_trigger(unsigned int irq)
++
++#include <linux/clk.h>
++#include <linux/hwspinlock.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++
++#include "hwspinlock_internal.h"
++
++#define STM32_MUTEX_COREID	BIT(8)
++#define STM32_MUTEX_LOCK_BIT	BIT(31)
++#define STM32_MUTEX_NUM_LOCKS	32
++
++struct stm32_hwspinlock {
++	struct clk *clk;
++	struct hwspinlock_device bank;
++};
++
++static int stm32_hwspinlock_trylock(struct hwspinlock *lock)
 +{
-+	struct irq_desc *desc;
++	void __iomem *lock_addr = lock->priv;
++	u32 status;
 +
-+	if (irq <= 0)
-+		return -EINVAL;
++	writel(STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID, lock_addr);
++	status = readl(lock_addr);
 +
-+	desc = irq_to_desc(irq);
-+	if (!desc)
-+		return -EINVAL;
++	return status == (STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID);
++}
 +
-+	pruss_intc_irq_retrigger(&desc->irq_data);
++static void stm32_hwspinlock_unlock(struct hwspinlock *lock)
++{
++	void __iomem *lock_addr = lock->priv;
++
++	writel(STM32_MUTEX_COREID, lock_addr);
++}
++
++static const struct hwspinlock_ops stm32_hwspinlock_ops = {
++	.trylock	= stm32_hwspinlock_trylock,
++	.unlock		= stm32_hwspinlock_unlock,
++};
++
++static int stm32_hwspinlock_probe(struct platform_device *pdev)
++{
++	struct stm32_hwspinlock *hw;
++	void __iomem *io_base;
++	struct resource *res;
++	size_t array_size;
++	int i, ret;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	io_base = devm_ioremap_resource(&pdev->dev, res);
++	if (!io_base)
++		return -ENOMEM;
++
++	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
++	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
++	if (!hw)
++		return -ENOMEM;
++
++	hw->clk = devm_clk_get(&pdev->dev, "hsem");
++	if (IS_ERR(hw->clk))
++		return PTR_ERR(hw->clk);
++
++	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
++		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
++
++	platform_set_drvdata(pdev, hw);
++	pm_runtime_enable(&pdev->dev);
++
++	ret = hwspin_lock_register(&hw->bank, &pdev->dev, &stm32_hwspinlock_ops,
++				   0, STM32_MUTEX_NUM_LOCKS);
++
++	if (ret)
++		pm_runtime_disable(&pdev->dev);
++
++	return ret;
++}
++
++static int stm32_hwspinlock_remove(struct platform_device *pdev)
++{
++	struct stm32_hwspinlock *hw = platform_get_drvdata(pdev);
++	int ret;
++
++	ret = hwspin_lock_unregister(&hw->bank);
++	if (ret)
++		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
++
++	pm_runtime_disable(&pdev->dev);
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(pruss_intc_trigger);
 +
- static int pruss_intc_irq_domain_map(struct irq_domain *d, unsigned int virq,
- 				     irq_hw_number_t hw)
- {
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index 198ae25..768b698 100644
---- a/include/linux/pruss.h
-+++ b/include/linux/pruss.h
-@@ -41,6 +41,8 @@ int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
- int pruss_release_mem_region(struct pruss *pruss,
- 			     struct pruss_mem_region *region);
- 
-+int pruss_intc_trigger(unsigned int irq);
-+
- #else
- 
- static inline int pruss_request_mem_region(struct pruss *pruss,
-@@ -56,6 +58,11 @@ static inline int pruss_release_mem_region(struct pruss *pruss,
- 	return -ENOTSUPP;
- }
- 
-+static inline int pruss_intc_trigger(unsigned int irq)
++static int __maybe_unused stm32_hwspinlock_runtime_suspend(struct device *dev)
 +{
-+	return -ENOTSUPP;
++	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(hw->clk);
++
++	return 0;
 +}
 +
- #endif /* CONFIG_TI_PRUSS */
- 
- #endif /* __LINUX_PRUSS_H */
++static int __maybe_unused stm32_hwspinlock_runtime_resume(struct device *dev)
++{
++	struct stm32_hwspinlock *hw = dev_get_drvdata(dev);
++
++	clk_prepare_enable(hw->clk);
++
++	return 0;
++}
++
++static const struct dev_pm_ops stm32_hwspinlock_pm_ops = {
++	SET_RUNTIME_PM_OPS(stm32_hwspinlock_runtime_suspend,
++			   stm32_hwspinlock_runtime_resume,
++			   NULL)
++};
++
++static const struct of_device_id stm32_hwpinlock_ids[] = {
++	{ .compatible = "st,stm32-hwspinlock", },
++	{},
++};
++MODULE_DEVICE_TABLE(of, stm32_hwpinlock_ids);
++
++static struct platform_driver stm32_hwspinlock_driver = {
++	.probe		= stm32_hwspinlock_probe,
++	.remove		= stm32_hwspinlock_remove,
++	.driver		= {
++		.name	= "stm32_hwspinlock",
++		.of_match_table = stm32_hwpinlock_ids,
++		.pm	= &stm32_hwspinlock_pm_ops,
++	},
++};
++
++static int __init stm32_hwspinlock_init(void)
++{
++	return platform_driver_register(&stm32_hwspinlock_driver);
++}
++/* board init code might need to reserve hwspinlocks for predefined purposes */
++postcore_initcall(stm32_hwspinlock_init);
++
++static void __exit stm32_hwspinlock_exit(void)
++{
++	platform_driver_unregister(&stm32_hwspinlock_driver);
++}
++module_exit(stm32_hwspinlock_exit);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Hardware spinlock driver for STM32 SoCs");
++MODULE_AUTHOR("Benjamin Gaignard <benjamin.gaignard@st.com>");
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.15.0
