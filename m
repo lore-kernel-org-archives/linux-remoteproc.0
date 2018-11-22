@@ -1,83 +1,135 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 15/17] ARM: dts: AM33xx: Add the PRU-ICSS DT nodes
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 15/17] ARM: dts: AM33xx: Add the PRU-ICSS DT nodes
+Date: Thu, 22 Nov 2018 13:39:11 +0200
+Message-ID: <1542886753-17625-16-git-send-email-rogerq@ti.com>
+In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
 References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
- <1542886753-17625-16-git-send-email-rogerq@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <55dc1462-b154-8e57-c352-88f8ff28a708@lechnology.com>
-Date: Mon, 26 Nov 2018 10:37:23 -0600
 MIME-Version: 1.0
-In-Reply-To: <1542886753-17625-16-git-send-email-rogerq@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Roger Quadros <rogerq@ti.com>, tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain
+To: tony@atomide.com
+Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 11/22/18 5:39 AM, Roger Quadros wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> Add the DT nodes for the PRU-ICSS on AM33xx family of SoCs. The
-> AM33xx SoCs contain a single PRU-ICSS instance and is represented
-> by the pruss-soc-bus node and a child PRUSS node. PRU-ICSS is not
-> supported on AM3352 SoC though in the AM33xx family, so the nodes
-> are added in disabled state to the common am33xx dtsi file. They
-> should be enabled in only those derivative board files that use
-> a SoC containing PRU-ICSS.
-> 
-> The PRUSS subsystem node contains the entire address space and
-> the various interrupts generated towards the main MPU. The various
-> sub-modules of the PRU-ICSS are represented as individual child
-> nodes (so platform devices themselves) of the PRUSS subsystem node.
-> These include the two PRU cores and the interrupt controller. The
-> Industrial Ethernet Peripheral (IEP), the Real Time Media Independent
-> Interface controller (MII_RT), and the CFG sub-module are represented
-> as syscon nodes. All the Data RAMs are represented within a child
-> node of its own named 'memories' without any compatible.
-> 
-> The DT nodes use all standard properties. The regs property in
-> the PRU nodes define the addresses for the Instruction RAM, the
-> Debug and Control sub-modules for that PRU core. The firmware for
-> each PRU core is defined through a 'firmware-name' property.
-> 
-> The default names for the firmware images for each PRU core are
-> defined as follows (these can be adjusted either in derivative
-> board dts files or through sysfs at runtime if required):
->       PRU-ICSS PRU0 Core: am335x-pru1_0-fw
->       PRU-ICSS PRU1 Core: am335x-pru1_1-fw
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
->   arch/arm/boot/dts/am33xx.dtsi | 72 +++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 72 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
-> index d3dd6a1..ce42cd9 100644
-> --- a/arch/arm/boot/dts/am33xx.dtsi
-> +++ b/arch/arm/boot/dts/am33xx.dtsi
-> @@ -924,6 +924,78 @@
->   			};
->   		};
->   
-> +		pruss_soc_bus: pruss_soc_bus@4a326004 {
-> +			compatible = "ti,am3356-pruss-soc-bus";
-> +			reg = <0x4a326004 0x4>;
-> +			ti,hwmods = "pruss";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +			status = "disabled";
-> +
-> +			pruss: pruss@4a300000 {
+From: Suman Anna <s-anna@ti.com>
 
-<snip>
+Add the DT nodes for the PRU-ICSS on AM33xx family of SoCs. The
+AM33xx SoCs contain a single PRU-ICSS instance and is represented
+by the pruss-soc-bus node and a child PRUSS node. PRU-ICSS is not
+supported on AM3352 SoC though in the AM33xx family, so the nodes
+are added in disabled state to the common am33xx dtsi file. They
+should be enabled in only those derivative board files that use
+a SoC containing PRU-ICSS.
 
-> +
->   		elm: elm@48080000 {
->   			compatible = "ti,am3352-elm";
->   			reg = <0x48080000 0x2000>;
-> 
+The PRUSS subsystem node contains the entire address space and
+the various interrupts generated towards the main MPU. The various
+sub-modules of the PRU-ICSS are represented as individual child
+nodes (so platform devices themselves) of the PRUSS subsystem node.
+These include the two PRU cores and the interrupt controller. The
+Industrial Ethernet Peripheral (IEP), the Real Time Media Independent
+Interface controller (MII_RT), and the CFG sub-module are represented
+as syscon nodes. All the Data RAMs are represented within a child
+node of its own named 'memories' without any compatible.
 
-This doesn't apply cleanly to next-20181126. elm: elm@48080000 node
-is not there. If it was, it seems like the pruss node should be after
-instead of before to keep things sorted since 4a300000 > 48080000.
+The DT nodes use all standard properties. The regs property in
+the PRU nodes define the addresses for the Instruction RAM, the
+Debug and Control sub-modules for that PRU core. The firmware for
+each PRU core is defined through a 'firmware-name' property.
+
+The default names for the firmware images for each PRU core are
+defined as follows (these can be adjusted either in derivative
+board dts files or through sysfs at runtime if required):
+     PRU-ICSS PRU0 Core: am335x-pru1_0-fw
+     PRU-ICSS PRU1 Core: am335x-pru1_1-fw
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ arch/arm/boot/dts/am33xx.dtsi | 72 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
+
+diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+index d3dd6a1..ce42cd9 100644
+--- a/arch/arm/boot/dts/am33xx.dtsi
++++ b/arch/arm/boot/dts/am33xx.dtsi
+@@ -924,6 +924,78 @@
+ 			};
+ 		};
+ 
++		pruss_soc_bus: pruss_soc_bus@4a326004 {
++			compatible = "ti,am3356-pruss-soc-bus";
++			reg = <0x4a326004 0x4>;
++			ti,hwmods = "pruss";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++			status = "disabled";
++
++			pruss: pruss@4a300000 {
++				compatible = "ti,am3356-pruss";
++				reg = <0x4a300000 0x80000>;
++				interrupts = <20 21 22 23 24 25 26 27>;
++				interrupt-names = "host2", "host3", "host4",
++						  "host5", "host6", "host7",
++						  "host8", "host9";
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges;
++				status = "disabled";
++
++				pruss_mem: memories@4a300000 {
++					reg = <0x4a300000 0x2000>,
++					      <0x4a302000 0x2000>,
++					      <0x4a310000 0x3000>;
++					reg-names = "dram0", "dram1",
++						    "shrdram2";
++				};
++
++				pruss_cfg: cfg@4a326000 {
++					compatible = "syscon";
++					reg = <0x4a326000 0x2000>;
++				};
++
++				pruss_iep: iep@4a32e000 {
++					compatible = "syscon";
++					reg = <0x4a32e000 0x31c>;
++				};
++
++				pruss_mii_rt: mii_rt@4a332000 {
++					compatible = "syscon";
++					reg = <0x4a332000 0x58>;
++				};
++
++				pruss_intc: intc@4a320000 {
++					compatible = "ti,am3356-pruss-intc";
++					reg = <0x4a320000 0x2000>;
++					reg-names = "intc";
++					interrupt-controller;
++					#interrupt-cells = <1>;
++				};
++
++				pru0: pru@4a334000 {
++					compatible = "ti,am3356-pru";
++					reg = <0x4a334000 0x2000>,
++					      <0x4a322000 0x400>,
++					      <0x4a322400 0x100>;
++					reg-names = "iram", "control", "debug";
++					firmware-name = "am335x-pru0-fw";
++				};
++
++				pru1: pru@4a338000 {
++					compatible = "ti,am3356-pru";
++					reg = <0x4a338000 0x2000>,
++					      <0x4a324000 0x400>,
++					      <0x4a324400 0x100>;
++					reg-names = "iram", "control", "debug";
++					firmware-name = "am335x-pru1-fw";
++				};
++			};
++		};
++
+ 		elm: elm@48080000 {
+ 			compatible = "ti,am3352-elm";
+ 			reg = <0x48080000 0x2000>;
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
