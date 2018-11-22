@@ -1,35 +1,73 @@
-Return-Path: <tony@atomide.com>
-Date: Fri, 23 Nov 2018 08:35:22 -0800
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 07/17] soc: ti: pruss: enable OCP master ports in SYSCFG
- always
-Message-ID: <20181123163522.GB53235@atomide.com>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 07/17] soc: ti: pruss: enable OCP master ports in SYSCFG always
+Date: Thu, 22 Nov 2018 13:39:03 +0200
+Message-ID: <1542886753-17625-8-git-send-email-rogerq@ti.com>
+In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
 References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
- <1542886753-17625-8-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542886753-17625-8-git-send-email-rogerq@ti.com>
-To: Roger Quadros <rogerq@ti.com>
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain
+To: tony@atomide.com
+Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-* Roger Quadros <rogerq@ti.com> [181122 11:39]:
-> @@ -160,6 +159,11 @@ static int pruss_enable_module(struct device *dev)
->  	pruss_soc_bus_rmw(psoc_bus->syscfg, SYSCFG_STANDBY_MODE_MASK,
->  			  SYSCFG_STANDBY_MODE_SMART);
->  
-> +	/* enable OCP master ports/disable MStandby */
-> +	ret = pruss_soc_bus_enable_ocp_master_ports(dev);
-> +	if (ret)
-> +		pruss_disable_module(dev);
-> +
->  	return ret;
+From: Suman Anna <s-anna@ti.com>
 
-Seems like all you should need to do here with ti-sysc is to
-leave out SYSC_IDLE_SMART and SYSC_IDLE_SMART_WKUP in the dts
-for ti,sysc-midle property for am335x.
+The PRUSS CFG module's SYSCFG register is used for managing the
+PRCM clock management settings at the PRU-ICSS subsystem level,
+and is being programmed for the PRCM Idle/Standby protocol properly
+during probe and remove. The register is also programmed to enable
+the OCP master ports (disable MStandby) by default during probe now
+to allow the PRUs access to on-chip memories and peripherals outside
+the PRUSS without having to do it in firmware (primarily for the PRU
+Ethernet usecase currently, the firmware is not programming this
+register).
 
-Regards,
+NOTE:
+1. The AM57xx TRM suggests to enable "No Standby" during the
+   Idle + Standby state to an Active/Normal state, but this
+   sequence is not documented in either of AM33xx and AM437x
+   SoCs. Furthermore, it did not have an impact on the working
+   of Ethernet Rx, so is left out.
+2. This has an impact on the PM suspend/resume operation usually
+   (same bit is used to trigger PRU standby), and even when the
+   PRU cores are in halted state. The STANDBY_INIT has to be
+   re-programmed to initiate a standby sequence and have the PM
+   suspend/resume functional when PRUs are halted. This is already
+   handled in commit b7e68ab66385 ("remoteproc/pruss_soc: fix system
+   suspend/MStandby config issues").
 
-Tony
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/soc/ti/pruss_soc_bus.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/ti/pruss_soc_bus.c b/drivers/soc/ti/pruss_soc_bus.c
+index 46dfb7a..f477168 100644
+--- a/drivers/soc/ti/pruss_soc_bus.c
++++ b/drivers/soc/ti/pruss_soc_bus.c
+@@ -67,8 +67,7 @@ static inline void pruss_soc_bus_rmw(void __iomem *reg, u32 mask, u32 set)
+  * outside of the PRU-ICSS. The function has to wait for the PRCM to
+  * acknowledge through the monitoring of the PRUSS_SYSCFG.SUB_MWAIT bit.
+  */
+-static
+-int __maybe_unused pruss_soc_bus_enable_ocp_master_ports(struct device *dev)
++static int pruss_soc_bus_enable_ocp_master_ports(struct device *dev)
+ {
+ 	struct pruss_soc_bus *psoc_bus = dev_get_drvdata(dev);
+ 	u32 syscfg_val, i;
+@@ -160,6 +159,11 @@ static int pruss_enable_module(struct device *dev)
+ 	pruss_soc_bus_rmw(psoc_bus->syscfg, SYSCFG_STANDBY_MODE_MASK,
+ 			  SYSCFG_STANDBY_MODE_SMART);
+ 
++	/* enable OCP master ports/disable MStandby */
++	ret = pruss_soc_bus_enable_ocp_master_ports(dev);
++	if (ret)
++		pruss_disable_module(dev);
++
+ 	return ret;
+ }
+ 
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
