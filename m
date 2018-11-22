@@ -1,34 +1,64 @@
-Return-Path: <colin.king@canonical.com>
-From: Colin King <colin.king@canonical.com>
-Subject: [PATCH] remoteproc: qcom: fix spelling mistake "Peripherial" -> "Peripheral"
-Date: Mon, 26 Nov 2018 14:27:35 +0000
-Message-Id: <20181126142735.29294-1-colin.king@canonical.com>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 16/17] ARM: dts: AM33xx: Add PRU system events for virtio
+Date: Thu, 22 Nov 2018 13:39:12 +0200
+Message-ID: <1542886753-17625-17-git-send-email-rogerq@ti.com>
+In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+To: tony@atomide.com
+Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Suman Anna <s-anna@ti.com>
 
-There is a spelling mistake in the module description text, fix it.
+Two PRU system events "vring" and "kick" have been added to each
+of the PRU nodes in the PRU-ICSS remote processor subsystem to
+enable the virtio/rpmsg communication between MPU and that PRU
+core. The additions are done in the base am33xx.dtsi file, and
+so are inherited by all the AM33xx boards. Do note that PRUSS
+is not available on all AM335x SoCs.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+The PRU system events is the preferred approach over using OMAP
+mailboxes, as it eliminates an external peripheral access from
+the PRU-side, and keeps the interrupt generation internal to the
+PRUSS. The difference from MPU would be minimal in using one
+versus the other.
+
+Mailboxes can still be used if desired. Either approach would
+require that an appropriate firmware image is loaded/booted on
+the PRU.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/qcom_wcnss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/am33xx.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index b0e07e9f42d5..1152da49a18a 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -622,5 +622,5 @@ static void __exit wcnss_exit(void)
- }
- module_exit(wcnss_exit);
+diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
+index ce42cd9..b7e3f69 100644
+--- a/arch/arm/boot/dts/am33xx.dtsi
++++ b/arch/arm/boot/dts/am33xx.dtsi
+@@ -983,6 +983,9 @@
+ 					      <0x4a322400 0x100>;
+ 					reg-names = "iram", "control", "debug";
+ 					firmware-name = "am335x-pru0-fw";
++					interrupt-parent = <&pruss_intc>;
++					interrupts = <16>, <17>;
++					interrupt-names = "vring", "kick";
+ 				};
  
--MODULE_DESCRIPTION("Qualcomm Peripherial Image Loader for Wireless Subsystem");
-+MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Wireless Subsystem");
- MODULE_LICENSE("GPL v2");
+ 				pru1: pru@4a338000 {
+@@ -992,6 +995,9 @@
+ 					      <0x4a324400 0x100>;
+ 					reg-names = "iram", "control", "debug";
+ 					firmware-name = "am335x-pru1-fw";
++					interrupt-parent = <&pruss_intc>;
++					interrupts = <18>, <19>;
++					interrupt-names = "vring", "kick";
+ 				};
+ 			};
+ 		};
 -- 
-2.19.1
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
