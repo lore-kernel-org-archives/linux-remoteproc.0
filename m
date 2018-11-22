@@ -1,34 +1,101 @@
-Return-Path: <david@lechnology.com>
-Subject: Re: [PATCH 10/17] soc: ti: pruss_intc: Add API to trigger a PRU
- sysevent
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 10/17] soc: ti: pruss_intc: Add API to trigger a PRU sysevent
+Date: Thu, 22 Nov 2018 13:39:06 +0200
+Message-ID: <1542886753-17625-11-git-send-email-rogerq@ti.com>
+In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
 References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
- <1542886753-17625-11-git-send-email-rogerq@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <ff55c96e-21db-c361-2c99-4b1c8e6060aa@lechnology.com>
-Date: Mon, 26 Nov 2018 15:18:25 -0600
 MIME-Version: 1.0
-In-Reply-To: <1542886753-17625-11-git-send-email-rogerq@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Roger Quadros <rogerq@ti.com>, tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain
+To: tony@atomide.com
+Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 11/22/18 5:39 AM, Roger Quadros wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The PRUSS INTC can generate an interrupt to various processor
-> subsystems on the SoC through a set of 64 possible PRU system
-> events. These system events can be used by PRU client drivers
-> or applications for event notifications/signalling between PRUs
-> and MPU or other processors. A new API, pruss_intc_trigger() is
-> provided to MPU-side PRU client drivers/applications to be able
-> to trigger an event/interrupt using IRQ numbers provided by the
-> PRUSS-INTC irqdomain chip.
+From: Suman Anna <s-anna@ti.com>
 
-Could we just use something like this:
+The PRUSS INTC can generate an interrupt to various processor
+subsystems on the SoC through a set of 64 possible PRU system
+events. These system events can be used by PRU client drivers
+or applications for event notifications/signalling between PRUs
+and MPU or other processors. A new API, pruss_intc_trigger() is
+provided to MPU-side PRU client drivers/applications to be able
+to trigger an event/interrupt using IRQ numbers provided by the
+PRUSS-INTC irqdomain chip.
 
-	irq_set_irqchip_state(irq, IRQCHIP_STATE_PENDING, true);
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/soc/ti/pruss_intc.c | 31 +++++++++++++++++++++++++++++++
+ include/linux/pruss.h       |  7 +++++++
+ 2 files changed, 38 insertions(+)
 
-instead of introducing a new API?
+diff --git a/drivers/soc/ti/pruss_intc.c b/drivers/soc/ti/pruss_intc.c
+index df6b83b..6158b63 100644
+--- a/drivers/soc/ti/pruss_intc.c
++++ b/drivers/soc/ti/pruss_intc.c
+@@ -395,6 +395,37 @@ static void pruss_intc_irq_relres(struct irq_data *data)
+ 	module_put(THIS_MODULE);
+ }
+ 
++/**
++ * pruss_intc_trigger() - trigger a PRU system event
++ * @irq: linux IRQ number associated with a PRU system event
++ *
++ * Trigger an interrupt by signalling a specific PRU system event.
++ * This can be used by PRUSS client users to raise/send an event to
++ * a PRU or any other core that is listening on the host interrupt
++ * mapped to that specific PRU system event. The @irq variable is the
++ * Linux IRQ number associated with a specific PRU system event that
++ * a client user/application uses. The interrupt mappings for this is
++ * provided by the PRUSS INTC irqchip instance.
++ *
++ * Returns 0 on success, or an error value upon failure.
++ */
++int pruss_intc_trigger(unsigned int irq)
++{
++	struct irq_desc *desc;
++
++	if (irq <= 0)
++		return -EINVAL;
++
++	desc = irq_to_desc(irq);
++	if (!desc)
++		return -EINVAL;
++
++	pruss_intc_irq_retrigger(&desc->irq_data);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pruss_intc_trigger);
++
+ static int pruss_intc_irq_domain_map(struct irq_domain *d, unsigned int virq,
+ 				     irq_hw_number_t hw)
+ {
+diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+index 198ae25..768b698 100644
+--- a/include/linux/pruss.h
++++ b/include/linux/pruss.h
+@@ -41,6 +41,8 @@ int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
+ int pruss_release_mem_region(struct pruss *pruss,
+ 			     struct pruss_mem_region *region);
+ 
++int pruss_intc_trigger(unsigned int irq);
++
+ #else
+ 
+ static inline int pruss_request_mem_region(struct pruss *pruss,
+@@ -56,6 +58,11 @@ static inline int pruss_release_mem_region(struct pruss *pruss,
+ 	return -ENOTSUPP;
+ }
+ 
++static inline int pruss_intc_trigger(unsigned int irq)
++{
++	return -ENOTSUPP;
++}
++
+ #endif /* CONFIG_TI_PRUSS */
+ 
+ #endif /* __LINUX_PRUSS_H */
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
