@@ -1,84 +1,184 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 7/7] remoteproc: fix rproc_check_carveout_da() returned error and comments
-Date: Thu, 29 Nov 2018 22:29:28 +0100
-Message-ID: <1543526968-56091-8-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
-References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 04/17] soc: ti: pruss: Fix system suspend/MStandby config issues
+Date: Thu, 22 Nov 2018 13:39:00 +0200
+Message-ID: <1542886753-17625-5-git-send-email-rogerq@ti.com>
+In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+To: tony@atomide.com
+Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fix typo in comments.
-Change returned error from ENOMEM to EINVAL as
-not dealing with memory allocation.
-Remove carveout forced da update and return an error
-when no configuration match
+From: Suman Anna <s-anna@ti.com>
 
-Fixes: c874bf59add0 ("remoteproc: add helper function to check carveout device address")
+The PRU-ICSS subsystem has a separate PRUSS_CFG module that contains
+various configuration registers. This includes a control bit STANDBY_INIT
+in PRUSS_CFG register to initiate a Standby sequence (when set) and
+trigger a MStandby request to the SoC's PRCM module. This same bit is
+also used to enable the OCP master ports (when cleared). The system
+suspend/resume functionality on AM33xx/AM437x/AM57xx SoCs requires
+all initiators to assert their MStandby signal properly inorder to
+successfully enter suspend, and resume on a wakeup event.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Certain firmwares can enable the OCP master ports through the
+STANDBY_INIT programming on the firmware side in order to access
+peripherals or memories external to the PRUSS. This causes a hang
+in the resume sequence on AM33xx/AM437x boards and requires a
+board reset to come out of the hang.
+
+This patch adds the preliminary System PM callbacks in the PRUSS SoC
+bus driver, and fixes this system resume hang by setting the STANDBY_INIT
+in the PM system suspend callback and resetting it back in the PM system
+resume callback, if so configured. The clearing of the STANDBY_INIT
+during resume requires an acknowledgment from PRCM and is done through
+the monitoring of the PRUSS_SYSCFG.SUB_MWAIT bit.
+
+NOTE:
+1. This patch only adds the PM callbacks with code to fix the System
+   Suspend/Resume hang issue on AM33xx/AM437x SoCs, but does not
+   implement the full context save and restore required for the PRUSS
+   drivers to work across system suspend/resume when the power domain
+   is switched off (L4PER domain is switched OFF on AM335x/AM437x
+   during system suspend/resume, so PRUSS modules do lose context).
+2. The PRUSS driver functionality on AM57xx SoCs is not affected that
+   much because the PER power domain to which the PRUSS IPs belong is
+   not switched OFF during suspend/resume.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/soc/ti/pruss_soc_bus.c | 85 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 9dbcc16f8782..b69ce5bff732 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -276,25 +276,27 @@ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
-  * @len: associated area size
-  *
-  * This function is a helper function to verify requested device area (couple
-- * da, len) is part of specified carevout.
-+ * da, len) is part of specified carveout.
-+ * If da is not set (defined as FW_RSC_ADDR_ANY), only requested length is
-+ * checked.
-  *
-- * Return: 0 if carveout match request else -ENOMEM
-+ * Return: 0 if carveout matches request else error
+diff --git a/drivers/soc/ti/pruss_soc_bus.c b/drivers/soc/ti/pruss_soc_bus.c
+index 16b4802..d4da55d2 100644
+--- a/drivers/soc/ti/pruss_soc_bus.c
++++ b/drivers/soc/ti/pruss_soc_bus.c
+@@ -7,6 +7,7 @@
+  *	Keerthy <j-keerthy@ti.com>
   */
--int rproc_check_carveout_da(struct rproc *rproc, struct rproc_mem_entry *mem,
--			    u32 da, u32 len)
-+static int rproc_check_carveout_da(struct rproc *rproc,
-+				   struct rproc_mem_entry *mem, u32 da, u32 len)
+ 
++#include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of_platform.h>
+@@ -16,13 +17,18 @@
+ 
+ #include <linux/platform_data/ti-pruss.h>
+ 
++#define SYSCFG_STANDBY_INIT	BIT(4)
++#define SYSCFG_SUB_MWAIT_READY	BIT(5)
++
+ /**
+  * struct pruss_soc_bus - PRUSS SoC bus structure
+  * @syscfg: kernel mapped address for SYSCFG register
++ * @in_standby: flag for storing standby status
+  * @has_reset: cached variable for storing global module reset flag
+  */
+ struct pruss_soc_bus {
+ 	void __iomem *syscfg;
++	bool in_standby;
+ 	bool has_reset;
+ };
+ 
+@@ -34,6 +40,81 @@ struct pruss_soc_bus_match_data {
+ 	bool has_reset;
+ };
+ 
++static inline void pruss_soc_bus_rmw(void __iomem *reg, u32 mask, u32 set)
++{
++	u32 val;
++
++	val = readl_relaxed(reg);
++	val &= ~mask;
++	val |= (set & mask);
++	writel_relaxed(val, reg);
++}
++
++/*
++ * This function programs the PRUSS_SYSCFG.STANDBY_INIT bit to achieve dual
++ * functionalities - one is to deassert the MStandby signal to the device
++ * PRCM, and the other is to enable OCP master ports to allow accesses
++ * outside of the PRU-ICSS. The function has to wait for the PRCM to
++ * acknowledge through the monitoring of the PRUSS_SYSCFG.SUB_MWAIT bit.
++ */
++static
++int __maybe_unused pruss_soc_bus_enable_ocp_master_ports(struct device *dev)
++{
++	struct pruss_soc_bus *psoc_bus = dev_get_drvdata(dev);
++	u32 syscfg_val, i;
++	bool ready = false;
++
++	pruss_soc_bus_rmw(psoc_bus->syscfg, SYSCFG_STANDBY_INIT, 0);
++
++	/* wait till we are ready for transactions - delay is arbitrary */
++	for (i = 0; i < 10; i++) {
++		syscfg_val = readl_relaxed(psoc_bus->syscfg);
++		ready = !(syscfg_val & SYSCFG_SUB_MWAIT_READY);
++		if (ready)
++			break;
++		udelay(5);
++	}
++
++	if (!ready) {
++		dev_err(dev, "timeout waiting for SUB_MWAIT_READY\n");
++		return -ETIMEDOUT;
++	}
++
++	return 0;
++}
++
++static int __maybe_unused pruss_soc_bus_suspend(struct device *dev)
++{
++	struct pruss_soc_bus *psoc_bus = dev_get_drvdata(dev);
++	u32 syscfg_val;
++
++	syscfg_val = readl_relaxed(psoc_bus->syscfg);
++	psoc_bus->in_standby = syscfg_val & SYSCFG_STANDBY_INIT;
++
++	/* initiate MStandby, undo the MStandby config in probe */
++	if (!psoc_bus->in_standby) {
++		pruss_soc_bus_rmw(psoc_bus->syscfg, SYSCFG_STANDBY_INIT,
++				  SYSCFG_STANDBY_INIT);
++	}
++
++	return 0;
++}
++
++static int __maybe_unused pruss_soc_bus_resume(struct device *dev)
++{
++	struct pruss_soc_bus *psoc_bus = dev_get_drvdata(dev);
++	int ret = 0;
++
++	/* re-enable OCP master ports/disable MStandby */
++	if (!psoc_bus->in_standby) {
++		ret = pruss_soc_bus_enable_ocp_master_ports(dev);
++		if (ret)
++			dev_err(dev, "%s failed\n", __func__);
++	}
++
++	return ret;
++}
++
+ static int pruss_soc_bus_probe(struct platform_device *pdev)
  {
- 	struct device *dev = &rproc->dev;
--	int delta = 0;
-+	int delta;
+ 	struct device *dev = &pdev->dev;
+@@ -126,9 +207,13 @@ static const struct of_device_id pruss_soc_bus_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, pruss_soc_bus_of_match);
  
- 	/* Check requested resource length */
- 	if (len > mem->len) {
- 		dev_err(dev, "Registered carveout doesn't fit len request\n");
--		return -ENOMEM;
-+		return -EINVAL;
- 	}
- 
- 	if (da != FW_RSC_ADDR_ANY && mem->da == FW_RSC_ADDR_ANY) {
--		/* Update existing carveout da */
--		mem->da = da;
-+		/* Address doesn't match registered carveout configuration */
-+		return -EINVAL;
- 	} else if (da != FW_RSC_ADDR_ANY && mem->da != FW_RSC_ADDR_ANY) {
- 		delta = da - mem->da;
- 
-@@ -302,13 +304,13 @@ int rproc_check_carveout_da(struct rproc *rproc, struct rproc_mem_entry *mem,
- 		if (delta < 0) {
- 			dev_err(dev,
- 				"Registered carveout doesn't fit da request\n");
--			return -ENOMEM;
-+			return -EINVAL;
- 		}
- 
- 		if (delta + len > mem->len) {
- 			dev_err(dev,
- 				"Registered carveout doesn't fit len request\n");
--			return -ENOMEM;
-+			return -EINVAL;
- 		}
- 	}
- 
++static SIMPLE_DEV_PM_OPS(pruss_soc_bus_pm_ops,
++			 pruss_soc_bus_suspend, pruss_soc_bus_resume);
++
+ static struct platform_driver pruss_soc_bus_driver = {
+ 	.driver	= {
+ 		.name = "pruss-soc-bus",
++		.pm = &pruss_soc_bus_pm_ops,
+ 		.of_match_table = pruss_soc_bus_of_match,
+ 	},
+ 	.probe	= pruss_soc_bus_probe,
 -- 
-2.7.4
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
