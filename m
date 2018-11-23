@@ -1,37 +1,28 @@
-Return-Path: <rogerq@ti.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 23 Nov 2018 08:37:42 -0800
+From: Tony Lindgren <tony@atomide.com>
 Subject: Re: [PATCH 08/17] soc: ti: pruss: Add a PRUSS irqchip driver for
  PRUSS interrupts
+Message-ID: <20181123163742.GC53235@atomide.com>
 References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
  <1542886753-17625-9-git-send-email-rogerq@ti.com>
- <20181123163742.GC53235@atomide.com>
-From: Roger Quadros <rogerq@ti.com>
-Message-ID: <5BFBAA24.1070503@ti.com>
-Date: Mon, 26 Nov 2018 10:09:08 +0200
 MIME-Version: 1.0
-In-Reply-To: <20181123163742.GC53235@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-To: Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542886753-17625-9-git-send-email-rogerq@ti.com>
+To: Roger Quadros <rogerq@ti.com>
 Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Tony,
+* Roger Quadros <rogerq@ti.com> [181122 11:39]:
+> The PRUSS INTC module is reference counted during the interrupt
+> setup phase through the irqchip's irq_request_resources() and
+> irq_release_resources() ops. This restricts the module from being
+> removed as long as there are active interrupt users.
 
-On 23/11/18 18:37, Tony Lindgren wrote:
-> * Roger Quadros <rogerq@ti.com> [181122 11:39]:
->> The PRUSS INTC module is reference counted during the interrupt
->> setup phase through the irqchip's irq_request_resources() and
->> irq_release_resources() ops. This restricts the module from being
->> removed as long as there are active interrupt users.
-> 
-> So are there any reasons why this could not be just a regular
-> drivers/irqchip driver nowadays?
+So are there any reasons why this could not be just a regular
+drivers/irqchip driver nowadays?
 
-This is a reqular irqchip driver. Do you mean it should be moved
-to drivers/irqchip directory?
+Regards,
 
-cheers,
--roger
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Tony
