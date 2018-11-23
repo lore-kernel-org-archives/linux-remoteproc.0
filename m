@@ -1,38 +1,35 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 3/7] remoteproc: fix rproc_alloc_carveout() bad variable cast
-Date: Thu, 29 Nov 2018 22:29:24 +0100
-Message-ID: <1543526968-56091-4-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
-References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <tony@atomide.com>
+Date: Fri, 23 Nov 2018 08:35:22 -0800
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH 07/17] soc: ti: pruss: enable OCP master ports in SYSCFG
+ always
+Message-ID: <20181123163522.GB53235@atomide.com>
+References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+ <1542886753-17625-8-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542886753-17625-8-git-send-email-rogerq@ti.com>
+To: Roger Quadros <rogerq@ti.com>
+Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-As dma member of struct rproc_mem_entry is dma_addr_t, no
-need to cast in u32.
+* Roger Quadros <rogerq@ti.com> [181122 11:39]:
+> @@ -160,6 +159,11 @@ static int pruss_enable_module(struct device *dev)
+>  	pruss_soc_bus_rmw(psoc_bus->syscfg, SYSCFG_STANDBY_MODE_MASK,
+>  			  SYSCFG_STANDBY_MODE_SMART);
+>  
+> +	/* enable OCP master ports/disable MStandby */
+> +	ret = pruss_soc_bus_enable_ocp_master_ports(dev);
+> +	if (ret)
+> +		pruss_disable_module(dev);
+> +
+>  	return ret;
 
-Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry struct")
+Seems like all you should need to do here with ti-sysc is to
+leave out SYSC_IDLE_SMART and SYSC_IDLE_SMART_WKUP in the dts
+for ti,sysc-midle property for am335x.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 28df71cb3fef..18a1bbf820c9 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -775,7 +775,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
- 		mem->da = (u32)dma;
- 	}
- 
--	mem->dma = (u32)dma;
-+	mem->dma = dma;
- 	mem->va = va;
- 
- 	return 0;
--- 
-2.7.4
+Tony
