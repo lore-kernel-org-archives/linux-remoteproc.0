@@ -1,8 +1,8 @@
 Return-Path: <rogerq@ti.com>
 From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 03/16] remoteproc: Add support to handle device specific resource types
-Date: Mon, 26 Nov 2018 09:52:36 +0200
-Message-ID: <1543218769-5507-4-git-send-email-rogerq@ti.com>
+Subject: [PATCH 15/16] remoteproc/pru: add support for parsing pru interrupt mapping from DT
+Date: Mon, 26 Nov 2018 09:52:48 +0200
+Message-ID: <1543218769-5507-16-git-send-email-rogerq@ti.com>
 In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
@@ -11,176 +11,197 @@ To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
 
-The remoteproc framework handles a fixed set of resource table entries
-today. To make it scalable across multiple platforms, it makes sense
-for the framework to provide a way for the device specific implementation
-to define and handle vendor specific resource types. These resource types
-would be very specific to an implementation instance that it does not
-make sense for the framework to handle it. There can be two types of
-such resources depending on whether they need to be handled prior to
-the loading of the firmware segments or after. A post-loading resource
-type is typically needed because it references a loaded segment pointer
-for conveying the resource information.
+PRU interrupt mapping can now be parsed from devicetree also, from
+ti,pru-interrupt-map property. This is an alternative configuration
+method in addition to the legacy resource table config. If both are
+provided, the config in DT takes precedence.
 
-For instance, a remoteproc implementation might want timers information
-embedded in the resource table so that the driver could parse the binary
-and enable accordingly. Another example would be hwspinlocks that it
-is using, to properly share system wide resources. A PRU post-loading
-vendor resource handler for interrupts requires the PRU event - interrupt
-channel information to be loaded into device memory.
-
-This patch adds a function pointer to the list of rproc_ops for the
-driver implementation to handle such custom vendor resources, and
-reuses the same handler between pre-loading and post-loading resource
-types, with the sub-types in the implementation handling the processing
-of those resource types.
-
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+[s-anna@ti.com: various fixes and cleanups]
 Signed-off-by: Suman Anna <s-anna@ti.com>
-
-merge: remoteproc: simplify VENDOR specific resource
-
-We don't need PRE and POST loading as we'll fix the PRU resource
-table to be self sufficient.
-
-Earlier it was half baked with channel mapping located elsewhere
-in data section thus requiring data section to be loaded before
-we can figure out the full INTC map.
-
-Fix vendor resource to be TLV and definition agnostic.
-
-Show in debugfs.
-
 Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c    | 36 +++++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_debugfs.c |  3 +++
- include/linux/remoteproc.h              | 15 +++++++++++++-
- 3 files changed, 53 insertions(+), 1 deletion(-)
+ drivers/remoteproc/pru_rproc.c | 109 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 106 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 581e6e8..9e387ab 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -898,6 +898,41 @@ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
- EXPORT_SYMBOL(rproc_add_carveout);
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 84f006b..540cce3 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -63,6 +63,7 @@ enum pru_mem {
+  * @irq_ring: IRQ number to use for processing vring buffers
+  * @irq_kick: IRQ number to use to perform virtio kick
+  * @mem_regions: data for each of the PRU memory regions
++ * @intc_config: PRU INTC configuration data
+  * @dram0: PRUSS DRAM0 region
+  * @dram1: PRUSS DRAM1 region
+  * @shrdram: PRUSS SHARED RAM region
+@@ -73,6 +74,7 @@ enum pru_mem {
+  * @shrdram_da: device address of shared Data RAM
+  * @fw_name: name of firmware image used during loading
+  * @gpmux_save: saved value for gpmux config
++ * @dt_irqs: number of irqs configured from DT
+  * @lock: mutex to protect client usage
+  * @dbg_single_step: debug state variable to set PRU into single step mode
+  * @dbg_continuous: debug state variable to restore PRU execution mode
+@@ -87,6 +89,7 @@ struct pru_rproc {
+ 	int irq_vring;
+ 	int irq_kick;
+ 	struct pruss_mem_region mem_regions[PRU_MEM_MAX];
++	struct pruss_intc_config intc_config;
+ 	struct pruss_mem_region dram0;
+ 	struct pruss_mem_region dram1;
+ 	struct pruss_mem_region shrdram;
+@@ -97,6 +100,7 @@ struct pru_rproc {
+ 	u32 shrdram_da;
+ 	const char *fw_name;
+ 	u8 gpmux_save;
++	int dt_irqs;
+ 	struct mutex lock; /* client access lock */
+ 	u32 dbg_single_step;
+ 	u32 dbg_continuous;
+@@ -180,6 +184,87 @@ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+ 	return rproc;
+ }
  
- /**
-+ * rproc_handle_vendor_rsc() - provide implementation specific hook
-+ *			       to handle vendor/custom resources
-+ * @rproc: the remote processor
-+ * @rsc: vendor resource to be handled by remoteproc drivers
-+ * @offset: offset of the resource data in resource table
-+ * @avail: size of available data
-+ *
-+ * Remoteproc implementations might want to add resource table entries
-+ * that are not generic enough to be handled by the framework. This
-+ * provides a hook to handle such custom resources.
-+ *
-+ * Returns 0 on success, or an appropriate error code otherwise
-+ */
-+static int rproc_handle_vendor_rsc(struct rproc *rproc,
-+				   struct fw_rsc_vendor *rsc,
-+				   int offset, int avail)
++static int pru_get_intc_dt_config(struct device *dev, const char *propname,
++				  int index,
++				  struct pruss_intc_config *intc_config)
 +{
-+	struct device *dev = &rproc->dev;
++	struct device_node *np = dev->of_node;
++	struct property *prop;
++	int ret = 0, entries, i;
++	int dt_irqs = 0;
++	u32 *arr;
++	int max_system_events, max_pru_channels, max_pru_host_ints;
 +
-+	if (sizeof(*rsc) > avail) {
-+		dev_err(dev, "vendor rsc is truncated\n");
-+		return -EINVAL;
-+	}
++	max_system_events = MAX_PRU_SYS_EVENTS;
++	max_pru_channels = MAX_PRU_CHANNELS;
++	max_pru_host_ints = MAX_PRU_CHANNELS;
 +
-+	dev_dbg(dev, "vendor rsc:");
-+
-+	if (!rproc->ops->handle_vendor_rsc) {
-+		dev_err(dev, "no vendor rsc handler! ignoring resource\n");
++	prop = of_find_property(np, propname, NULL);
++	if (!prop)
 +		return 0;
++
++	entries = of_property_count_u32_elems(np, propname);
++	if (entries <= 0 || entries % 4)
++		return -EINVAL;
++
++	arr = kmalloc_array(entries, sizeof(u32), GFP_KERNEL);
++	if (!arr)
++		return -ENOMEM;
++
++	ret = of_property_read_u32_array(np, propname, arr, entries);
++	if (ret)
++		return -EINVAL;
++
++	for (i = 0; i < ARRAY_SIZE(intc_config->sysev_to_ch); i++)
++		intc_config->sysev_to_ch[i] = -1;
++
++	for (i = 0; i < ARRAY_SIZE(intc_config->ch_to_host); i++)
++		intc_config->ch_to_host[i] = -1;
++
++	for (i = 0; i < entries; i += 4) {
++		if (arr[i] != index)
++			continue;
++
++		if (arr[i + 1] < 0 ||
++		    arr[i + 1] >= max_system_events) {
++			dev_dbg(dev, "bad sys event %d\n", arr[i + 1]);
++			ret = -EINVAL;
++			goto err;
++		}
++
++		if (arr[i + 2] < 0 ||
++		    arr[i + 2] >= max_pru_channels) {
++			dev_dbg(dev, "bad channel %d\n", arr[i + 2]);
++			ret = -EINVAL;
++			goto err;
++		}
++
++		if (arr[i + 3] < 0 ||
++		    arr[i + 3] >= max_pru_host_ints) {
++			dev_dbg(dev, "bad irq %d\n", arr[i + 3]);
++			ret = -EINVAL;
++			goto err;
++		}
++
++		intc_config->sysev_to_ch[arr[i + 1]] = arr[i + 2];
++		dev_dbg(dev, "sysevt-to-ch[%d] -> %d\n", arr[i + 1],
++			arr[i + 2]);
++
++		intc_config->ch_to_host[arr[i + 2]] = arr[i + 3];
++		dev_dbg(dev, "chnl-to-host[%d] -> %d\n", arr[i + 2],
++			arr[i + 3]);
++
++		dt_irqs++;
 +	}
 +
-+	return rproc->ops->handle_vendor_rsc(rproc, (void *)rsc);
++	kfree(arr);
++	return dt_irqs;
++
++err:
++	kfree(arr);
++	return ret;
 +}
 +
-+/**
-  * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
-  * @dev: pointer on device struct
-  * @va: virtual address
-@@ -985,6 +1020,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
- 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
- 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
-+	[RSC_VENDOR] = (rproc_handle_resource_t)rproc_handle_vendor_rsc,
- 	[RSC_VDEV] = (rproc_handle_resource_t)rproc_handle_vdev,
- };
- 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index f330a9a..971c8ba 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -254,6 +254,9 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 					   v->vring[j].pa);
- 			}
- 			break;
-+		case RSC_VENDOR:
-+			seq_printf(seq, "Entry %d is of type %s [Vendor specific]\n",
-+				   i, types[hdr->type]);
- 		default:
- 			seq_printf(seq, "Unknown resource type found: %d [hdr: %pK]\n",
- 				   hdr->type, hdr);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 063468b..4881415 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -101,6 +101,7 @@ struct fw_rsc_hdr {
-  *		    the remote processor will be writing logs.
-  * @RSC_VDEV:       declare support for a virtio device, and serve as its
-  *		    virtio header.
-+ * @RSC_VENDOR:	    vendor specific resource type.
-  * @RSC_LAST:       just keep this one at the end
-  *
-  * For more details regarding a specific resource type, please see its
-@@ -116,7 +117,8 @@ enum fw_resource_type {
- 	RSC_DEVMEM	= 1,
- 	RSC_TRACE	= 2,
- 	RSC_VDEV	= 3,
--	RSC_LAST	= 4,
-+	RSC_VENDOR	= 4,
-+	RSC_LAST,
- };
- 
- #define FW_RSC_ADDR_ANY (-1)
-@@ -309,6 +311,14 @@ struct fw_rsc_vdev {
- struct rproc;
- 
  /**
-+ * struct fw_rsc_vendor - vendor specific resource definition
-+ * @data: resource data. vendor defined.
-+ */
-+struct fw_rsc_vendor {
-+	u8 data[0];
-+} __packed;
+  * pru_rproc_get() - get the PRU rproc instance from a device node
+  * @np: the user/client device node
+@@ -251,6 +336,15 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
+ 		}
+ 	}
+ 
++	ret = pru_get_intc_dt_config(dev, "ti,pru-interrupt-map",
++				     index, &pru->intc_config);
++	if (ret < 0) {
++		dev_err(dev, "error getting DT interrupt map: %d\n", ret);
++		goto err;
++	}
 +
-+/**
-  * struct rproc_mem_entry - memory entry descriptor
-  * @va:	virtual address
-  * @dma: dma address
-@@ -361,6 +371,7 @@ struct firmware;
-  * @da_to_va:	optional platform hook to perform address translations
-  * @parse_fw:	parse firmware to extract information (e.g. resource table)
-  * @find_loaded_rsc_table: find the loaded resouce table
-+ * @handle_vendor_rsc:	hook to handle device specific resource table entries
-  * @load:		load firmware to memory, where the remote processor
-  *			expects to find it
-  * @sanity_check:	sanity check the fw image
-@@ -374,6 +385,8 @@ struct rproc_ops {
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
-+	int (*handle_vendor_rsc)(struct rproc *rproc,
-+				 struct fw_rsc_vendor *rsc);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
++	pru->dt_irqs = ret;
++
+ 	return rproc;
+ 
+ err:
+@@ -568,7 +662,13 @@ static int pru_rproc_start(struct rproc *rproc)
+ 	dev_dbg(dev, "starting PRU%d: entry-point = 0x%x\n",
+ 		pru->id, (rproc->bootaddr >> 2));
+ 
+-	/* TODO: INTC setup */
++	if (pru->dt_irqs) {
++		ret = pruss_intc_configure(pru->pruss, &pru->intc_config);
++		if (ret) {
++			dev_err(dev, "failed to configure intc %d\n", ret);
++			return ret;
++		}
++	}
+ 
+ 	if (!list_empty(&pru->rproc->rvdevs)) {
+ 		if (!pru->mbox && (pru->irq_vring <= 0 || pru->irq_kick <= 0)) {
+@@ -596,7 +696,8 @@ static int pru_rproc_start(struct rproc *rproc)
+ 	return 0;
+ 
+ fail:
+-	/* TODO: INTC cleanup */
++	if (pru->dt_irqs)
++		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
+ 
+ 	return ret;
+ }
+@@ -618,7 +719,9 @@ static int pru_rproc_stop(struct rproc *rproc)
+ 	    !pru->mbox && pru->irq_vring > 0)
+ 		free_irq(pru->irq_vring, pru);
+ 
+-	/* TODO: INTC cleanup */
++	/* undo INTC config */
++	if (pru->dt_irqs)
++		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
+ 
+ 	return 0;
+ }
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
