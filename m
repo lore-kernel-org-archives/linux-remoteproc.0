@@ -1,106 +1,274 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-Date: Tue, 27 Nov 2018 14:28:28 +0530
-Message-Id: <20181127085828.17908-1-sibis@codeaurora.org>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 16/16] remoteproc/pru: Add support for INTC Interrupt map resource
+Date: Mon, 26 Nov 2018 09:52:49 +0200
+Message-ID: <1543218769-5507-17-git-send-email-rogerq@ti.com>
+In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, dianders@chromium.org, evgreen@chromium.org, briannorris@chromium.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
+Use the vendor specific resource mechanism to get the
+INTC mapping details from firmware.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+pru-software-support-package [1] has been historically using
+version 0 for this. However, the data structure is not scaleable
+and is not self sufficient.
+1) it hard codes number of channel to host mappings so is not
+scaleable to newer SoCs than have more of these.
+2) it does not contain the event to channel mappings within
+itself but relies on a pointer to point to another section
+in data memory. This causes a weird complication that the
+respective data section must be loaded before we can really
+use the INTC map.
+
+With this patch we drop support for version 0 and support
+version 1 which is a more robust and scalable data structure.
+It should be able to support a sufficiently large number (255) of
+sysevents, channels and host interrupts and is self contained
+so it can be used without dependency on order of loading sections.
+
+[1]  git://git.ti.com/pru-software-support-package/pru-software-support-package.git
+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
+ drivers/remoteproc/pru_rproc.c | 110 +++++++++++++++++++++++++++++++++++++++--
+ drivers/remoteproc/pru_rproc.h |  48 +++++++-----------
+ 2 files changed, 126 insertions(+), 32 deletions(-)
 
-The remoteproc mss node depends on the following bindings:
-https://patchwork.kernel.org/patch/10490559/ - rpmhp dt bindings
-https://patchwork.kernel.org/patch/10678301/ - AOP QMP dt bindings
-https://patchwork.kernel.org/patch/10691215/ - mss power-domain dt bindings
-https://patchwork.kernel.org/patch/10691213/ - shutdown-ack dt bindings
-
-It also depends on the mpss and mba memory regions and pdc reset node.
-https://patchwork.kernel.org/patch/10662089/
-https://patchwork.kernel.org/patch/10657325/
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 63 ++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 58870273dbc9..df16ee464872 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1095,6 +1095,69 @@
- 			};
- 		};
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 540cce3..9e22c70 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -75,6 +75,7 @@ enum pru_mem {
+  * @fw_name: name of firmware image used during loading
+  * @gpmux_save: saved value for gpmux config
+  * @dt_irqs: number of irqs configured from DT
++ * @fw_irqs: number of irqs configured from FW
+  * @lock: mutex to protect client usage
+  * @dbg_single_step: debug state variable to set PRU into single step mode
+  * @dbg_continuous: debug state variable to restore PRU execution mode
+@@ -101,6 +102,7 @@ struct pru_rproc {
+ 	const char *fw_name;
+ 	u8 gpmux_save;
+ 	int dt_irqs;
++	int fw_irqs;
+ 	struct mutex lock; /* client access lock */
+ 	u32 dbg_single_step;
+ 	u32 dbg_continuous;
+@@ -651,6 +653,107 @@ static void pru_rproc_kick(struct rproc *rproc, int vq_id)
+ 	}
+ }
  
-+		remoteproc@4080000 {
-+			compatible = "qcom,sdm845-mss-pil";
-+			reg = <0x04080000 0x408>, <0x04180000 0x48>;
++/*
++ * parse the custom interrupt map resource and save the intc_config
++ * for use when booting the processor.
++ */
++static int pru_handle_vendor_intrmap(struct rproc *rproc,
++				     struct fw_rsc_pruss_intrmap *rsc)
++{
++	int fw_irqs = 0, i, ret = 0;
++	u8 *arr;
++	struct device *dev = &rproc->dev;
++	struct pru_rproc *pru = rproc->priv;
 +
-+			reg-names = "qdsp6", "rmb";
++	dev_dbg(dev, "vendor rsc intc: version %d\n", rsc->version);
 +
-+			interrupts-extended =
-+				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
++	/*
++	 * 0 was prototyping version. Not supported.
++	 * 1 is currently supported version.
++	 */
++	if (rsc->version == 0 || rsc->version > 1) {
++		dev_err(dev, "Unsupported version %d\n", rsc->version);
++		return -EINVAL;
++	}
 +
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
++	/* DT provided INTC config takes precedence */
++	if (pru->dt_irqs) {
++		dev_info(dev, "INTC config in DT and FW. Using DT config.\n");
++		return 0;
++	}
 +
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+				 <&gcc GCC_PRNG_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
++	arr = rsc->data;
 +
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "prng", "xo";
++	for (i = 0; i < ARRAY_SIZE(pru->intc_config.sysev_to_ch); i++)
++		pru->intc_config.sysev_to_ch[i] = -1;
 +
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
++	for (i = 0; i < ARRAY_SIZE(pru->intc_config.ch_to_host); i++)
++		pru->intc_config.ch_to_host[i] = -1;
 +
-+			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+			reset-names = "mss_restart", "pdc_reset";
++	for (i = 0; i < rsc->num_maps * 3; i += 3) {
++		if (arr[i] < 0 ||
++		    arr[i] >= MAX_PRU_SYS_EVENTS) {
++			dev_err(dev, "bad sys event %d\n", arr[i]);
++			ret = -EINVAL;
++			goto err;
++		}
 +
-+			qcom,halt-regs = <&tcsr_mutex_regs
-+						0x23000 0x25000 0x24000>;
++		if (arr[i + 1] < 0 ||
++		    arr[i + 1] >= MAX_PRU_CHANNELS) {
++			dev_err(dev, "bad channel %d\n", arr[i + 1]);
++			ret = -EINVAL;
++			goto err;
++		}
 +
-+			power-domains = <&aoss_qmp_pd AOSS_QMP_LS_MODEM>,
-+					<&rpmhpd SDM845_CX>,
-+					<&rpmhpd SDM845_MX>,
-+					<&rpmhpd SDM845_MSS>;
-+			power-domain-names = "aop", "cx", "mx", "mss";
++		if (arr[i + 2] < 0 ||
++		    arr[i + 2] >= MAX_PRU_CHANNELS) {
++			dev_err(dev, "bad host irq %d\n", arr[i + 2]);
++				ret = -EINVAL;
++			goto err;
++		}
 +
-+			mba {
-+				memory-region = <&mba_region>;
-+			};
++		pru->intc_config.sysev_to_ch[arr[i]] = arr[i + 1];
++		dev_dbg(dev, "sysevt-to-ch[%d] -> %d\n", arr[i],
++			arr[i + 1]);
 +
-+			mpss {
-+				memory-region = <&mpss_region>;
-+			};
++		pru->intc_config.ch_to_host[arr[i + 1]] = arr[i + 2];
++		dev_dbg(dev, "chnl-to-host[%d] -> %d\n", arr[i + 1],
++			arr[i + 2]);
 +
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+				mbox-names = "mpss_smem";
-+			};
-+		};
++		fw_irqs++;
++	}
 +
- 		usb_1_hsphy: phy@88e2000 {
- 			compatible = "qcom,sdm845-qusb2-phy";
- 			reg = <0x88e2000 0x400>;
++	pru->fw_irqs = fw_irqs;
++	return 0;
++
++err:
++	pru->fw_irqs = 0;
++	return ret;
++}
++
++/* PRU-specific vendor resource handler */
++static int pru_rproc_handle_vendor_rsc(struct rproc *rproc,
++				       struct fw_rsc_vendor *ven_rsc)
++{
++	struct device *dev = rproc->dev.parent;
++	int ret = -EINVAL;
++
++	struct fw_rsc_pruss_intrmap *rsc;
++
++	rsc = (struct fw_rsc_pruss_intrmap *)ven_rsc->data;
++
++	switch (rsc->type) {
++	case PRUSS_RSC_INTRS:
++		ret = pru_handle_vendor_intrmap(rproc, rsc);
++		break;
++	default:
++		dev_err(dev, "%s: cannot handle unknown type %d\n", __func__,
++			rsc->type);
++	}
++
++	return ret;
++}
++
+ /* start a PRU core */
+ static int pru_rproc_start(struct rproc *rproc)
+ {
+@@ -662,7 +765,7 @@ static int pru_rproc_start(struct rproc *rproc)
+ 	dev_dbg(dev, "starting PRU%d: entry-point = 0x%x\n",
+ 		pru->id, (rproc->bootaddr >> 2));
+ 
+-	if (pru->dt_irqs) {
++	if (pru->dt_irqs || pru->fw_irqs) {
+ 		ret = pruss_intc_configure(pru->pruss, &pru->intc_config);
+ 		if (ret) {
+ 			dev_err(dev, "failed to configure intc %d\n", ret);
+@@ -696,7 +799,7 @@ static int pru_rproc_start(struct rproc *rproc)
+ 	return 0;
+ 
+ fail:
+-	if (pru->dt_irqs)
++	if (pru->dt_irqs || pru->fw_irqs)
+ 		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
+ 
+ 	return ret;
+@@ -720,7 +823,7 @@ static int pru_rproc_stop(struct rproc *rproc)
+ 		free_irq(pru->irq_vring, pru);
+ 
+ 	/* undo INTC config */
+-	if (pru->dt_irqs)
++	if (pru->dt_irqs || pru->fw_irqs)
+ 		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
+ 
+ 	return 0;
+@@ -815,6 +918,7 @@ static struct rproc_ops pru_rproc_ops = {
+ 	.stop			= pru_rproc_stop,
+ 	.kick			= pru_rproc_kick,
+ 	.da_to_va		= pru_da_to_va,
++	.handle_vendor_rsc	= pru_rproc_handle_vendor_rsc,
+ };
+ 
+ static int pru_rproc_set_id(struct pru_rproc *pru)
+diff --git a/drivers/remoteproc/pru_rproc.h b/drivers/remoteproc/pru_rproc.h
+index 35240e9..a9413f6 100644
+--- a/drivers/remoteproc/pru_rproc.h
++++ b/drivers/remoteproc/pru_rproc.h
+@@ -23,43 +23,33 @@ enum pruss_rsc_types {
+ 	PRUSS_RSC_MAX	= 2,
+ };
+ 
+-/**
+- * struct pruss_event_chnl - PRU system events _to_ channel mapping
+- * @event: number of the system event
+- * @chnl: channel number assigned to a given @event
+- *
+- * PRU system events are mapped to channels, and these channels are mapped
+- * to host interrupts. Events can be mapped to channels in a one-to-one or
+- * many-to-one ratio (multiple events per channel), and channels can be
+- * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
+- * channels per interrupt).
+- *
+- */
+-struct pruss_event_chnl {
+-	s8 event;
+-	s8 chnl;
+-};
+ 
+ /**
+- * struct fw_rsc_custom_intrmap - custom resource to define PRU interrupts
+- * @reserved: reserved field providing padding and alignment
+- * @chnl_host_intr_map: array of PRU channels to host interrupt mappings
+- * @event_chnl_map_size: number of event_channel mappings defined in
+- *			 @event_chnl_map_addr
+- * @event_chnl_map_addr: PRU device address of pointer to array of events to
+- *			 channel mappings (struct pruss_event_chnl elements)
++ * struct fw_rsc_pruss_intrmap - vendor resource to define PRU interrupts
++ * @type: should be PRUSS_RSC_INTRS
++ * @version: should be 1 or greater. 0 was for prototyping and is not supported
++ * @num_maps: number of interrupt mappings that follow
++ * @data: Array of 'num_maps' mappings.
++ *		Each mapping is a triplet {s, c, h}
++ *		s - system event id
++ *		c - channel id
++ *		h - host interrupt id
+  *
+  * PRU system events are mapped to channels, and these channels are mapped
+  * to host interrupts. Events can be mapped to channels in a one-to-one or
+  * many-to-one ratio (multiple events per channel), and channels can be
+  * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
+  * channels per interrupt).
++ *
++ * This resource is variable length due to the nature of INTC map.
++ * The below data structure is scalable so it can support sufficiently
++ * large number of sysevents and hosts.
+  */
+-struct fw_rsc_custom_intrmap {
+-	u16 reserved;
+-	s8 chnl_host_intr_map[10];
+-	u32 event_chnl_map_size;
+-	u32 event_chnl_map_addr;
+-};
++struct fw_rsc_pruss_intrmap {
++	u16 type;
++	u16 version;
++	u8 num_maps;
++	u8 data[];
++} __packed;
+ 
+ #endif	/* _PRU_REMOTEPROC_H_ */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
