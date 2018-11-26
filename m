@@ -1,35 +1,175 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v2 0/4] Add support of STM32 hwspinlock
-Date: Thu,  8 Nov 2018 10:04:58 +0100
-Message-Id: <20181108090502.14543-1-benjamin.gaignard@st.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 08/16] remoteproc/pru: Add pru_rproc_set_ctable() function
+Date: Mon, 26 Nov 2018 09:52:41 +0200
+Message-ID: <1543218769-5507-9-git-send-email-rogerq@ti.com>
+In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This serie adds the support of the hardware semaphore block for stm32mp1 SoC.
+Some firmwares expect the OS drivers to configure the CTABLE
+entries publishing dynamically allocated memory regions. For
+example, the PRU Ethernet firmwares use the C28 and C30 entries
+for retrieving the Shared RAM and System SRAM (OCMC) areas
+allocated by the PRU Ethernet client driver.
 
-version 2:
-- fix comments done by Bjorn about clock naming, license terms in header,
-  alphabetic ordering in Makefile and Kconfig and remove function
-- Do not push test module in this version while waiting for feedbacks about it
+Provide a way for users to do that through a new API,
+pru_rproc_set_ctable(). The API returns 0 on success and
+a negative value on error.
 
-Benjamin Gaignard (4):
-  dt-bindings: hwlock: Document STM32 hwspinlock bindings
-  hwspinlock: add STM32 hwspinlock device
-  ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
-  ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
+NOTE:
+The programmable CTABLE entries are typically re-programmed by
+the PRU firmwares when dealing with a certain block of memory
+during block processing. This API provides an interface to the
+PRU client drivers to publish a dynamically allocated memory
+block with the PRU firmware using a CTABLE entry instead of a
+negotiated address in shared memory. Additional synchronization
+may be needed between the PRU client drivers and firmwares if
+different addresses needs to be published at run-time reusing
+the same CTABLE entry.
 
- .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 ++++
- arch/arm/boot/dts/stm32mp157c-ed1.dts              |   4 +
- arch/arm/boot/dts/stm32mp157c.dtsi                 |   9 ++
- drivers/hwspinlock/Kconfig                         |   9 ++
- drivers/hwspinlock/Makefile                        |   1 +
- drivers/hwspinlock/stm32_hwspinlock.c              | 144 +++++++++++++++++++++
- 6 files changed, 190 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
- create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+[s-anna@ti.com: add the NOTE: on patch description, minor cleanups]
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/remoteproc/pru_rproc.c | 51 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/pruss.h          | 29 ++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
 
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index e0554b3..fa3559b 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -65,6 +65,7 @@ enum pru_mem {
+  * @dram0: PRUSS DRAM0 region
+  * @dram1: PRUSS DRAM1 region
+  * @shrdram: PRUSS SHARED RAM region
++ * @rmw_lock: lock for read, modify, write operations on registers
+  * @iram_da: device address of Instruction RAM for this PRU
+  * @pdram_da: device address of primary Data RAM for this PRU
+  * @sdram_da: device address of secondary Data RAM for this PRU
+@@ -85,6 +86,7 @@ struct pru_rproc {
+ 	struct pruss_mem_region dram0;
+ 	struct pruss_mem_region dram1;
+ 	struct pruss_mem_region shrdram;
++	spinlock_t rmw_lock; /* register access lock */
+ 	u32 iram_da;
+ 	u32 pdram_da;
+ 	u32 sdram_da;
+@@ -107,6 +109,54 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
+ 	writel_relaxed(val, pru->mem_regions[PRU_MEM_CTRL].va + reg);
+ }
+ 
++static inline
++void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
++			 u32 mask, u32 set)
++{
++	u32 val;
++	unsigned long flags;
++
++	spin_lock_irqsave(&pru->rmw_lock, flags);
++
++	val = pru_control_read_reg(pru, reg);
++	val &= ~mask;
++	val |= (set & mask);
++	pru_control_write_reg(pru, reg, val);
++
++	spin_unlock_irqrestore(&pru->rmw_lock, flags);
++}
++
++/**
++ * pru_rproc_set_ctable() - set the constant table index for the PRU
++ * @rproc: the rproc instance of the PRU
++ * @c: constant table index to set
++ * @addr: physical address to set it to
++ */
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
++{
++	struct pru_rproc *pru = rproc->priv;
++	unsigned int reg;
++	u32 mask, set;
++	u16 idx;
++	u16 idx_mask;
++
++	/* pointer is 16 bit and index is 8-bit so mask out the rest */
++	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
++
++	/* ctable uses bit 8 and upwards only */
++	idx = (addr >> 8) & idx_mask;
++
++	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
++	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
++	mask = idx_mask << (16 * (c & 1));
++	set = idx << (16 * (c & 1));
++
++	pru_control_set_reg(pru, reg, mask, set);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
++
+ static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
+ {
+ 	return readl_relaxed(pru->mem_regions[PRU_MEM_DEBUG].va + reg);
+@@ -537,6 +587,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 	pru->pruss = platform_get_drvdata(ppdev);
+ 	pru->rproc = rproc;
+ 	pru->fw_name = fw_name;
++	spin_lock_init(&pru->rmw_lock);
+ 
+ 	ret = pruss_request_mem_region(pru->pruss, PRUSS_MEM_DRAM0,
+ 				       &pru->dram0);
+diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+index c797fb1..af04a1c 100644
+--- a/include/linux/pruss.h
++++ b/include/linux/pruss.h
+@@ -134,7 +134,22 @@ struct pruss_intc_config {
+ 	s8 ch_to_host[MAX_PRU_CHANNELS];
+ };
+ 
++/**
++ * enum pru_ctable_idx - Configurable Constant table index identifiers
++ */
++enum pru_ctable_idx {
++	PRU_C24 = 0,
++	PRU_C25,
++	PRU_C26,
++	PRU_C27,
++	PRU_C28,
++	PRU_C29,
++	PRU_C30,
++	PRU_C31,
++};
++
+ struct pruss;
++struct rproc;
+ 
+ #if IS_ENABLED(CONFIG_TI_PRUSS)
+ 
+@@ -232,4 +247,18 @@ int pruss_intc_unconfigure(struct pruss *pruss,
+ 
+ #endif /* CONFIG_TI_PRUSS */
+ 
++#if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
++
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
++
++#else
++
++static inline int pru_rproc_set_ctable(struct rproc *rproc,
++				       enum pru_ctable_idx c, u32 addr)
++{
++	return -ENOTSUPP;
++}
++
++#endif /* CONFIG_PRUSS_REMOTEPROC */
++
+ #endif /* __LINUX_PRUSS_H */
 -- 
-2.15.0
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
