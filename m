@@ -1,70 +1,186 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-pf1-f179.google.com ([209.85.210.179]:46818 "EHLO
-        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbeKGRFa (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Nov 2018 12:05:30 -0500
-Received: by mail-pf1-f179.google.com with SMTP id r64-v6so7331395pfb.13
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Nov 2018 23:36:21 -0800 (PST)
-Received: from WIN71807150011 ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm15985176pfs.108.2018.11.06.23.36.19
-        for <linux-remoteproc@vger.kernel.org>
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 23:36:20 -0800 (PST)
-From: "Xiang Xiao" <xiaoxiang781216@gmail.com>
-Subject: Regression by commit 7e83cab824a86704cdbd7735c19d34e0ce423dc5
-Date: Wed, 7 Nov 2018 15:36:04 +0800
-Message-ID: <037a01d4766c$8baaf750$a300e5f0$@gmail.com>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 03/16] remoteproc: Add support to handle device specific resource types
+Date: Mon, 26 Nov 2018 09:52:36 +0200
+Message-ID: <1543218769-5507-4-git-send-email-rogerq@ti.com>
+In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Content-Language: zh-cn
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This commit replace rproc_{shutdown,boot}() with rproc_{stop,start}(), =
-which
-skip destroy the virtio device at stop but reinitialize it again at =
-start:
-[ 1502.733760] remoteproc remoteproc0: crash detected in
-f9210000.toppwr:tl421-rproc: type watchdog
-[ 1502.744019] remoteproc remoteproc0: handling crash #1 in
-f9210000.toppwr:tl421-rproc
-[ 1502.820741] remoteproc remoteproc0: recovering
-f9210000.toppwr:tl421-rproc
-[ 1502.831588] remoteproc remoteproc0: stopped remote processor
-f9210000.toppwr:tl421-rproc
-[ 1502.844458] kobject (ffffffc0b8d1b898): tried to init an initialized
-object, something is seriously wrong.
-[ 1502.855415] CPU: 6 PID: 169 Comm: kworker/6:1 Tainted: =
-G=A0=A0=A0=A0=A0=A0=A0 W=A0=A0=A0=A0=A0=A0
-4.9.27-04453-g1a03c96 #253
-[ 1502.865442] Hardware name: Banks (DT)
-[ 1502.869557] Workqueue: events rproc_crash_handler_work
-[ 1502.875319] Call trace:
-[ 1502.878066] [<ffffff800808bd9c>] dump_backtrace+0x0/0x1cc
-[ 1502.884106] [<ffffff800808bf7c>] show_stack+0x14/0x1c
-[ 1502.889761] [<ffffff80083fef08>] dump_stack+0xa8/0xe0
-[ 1502.895415] [<ffffff8008402b24>] kobject_init+0x8c/0x9c
-[ 1502.901262] [<ffffff800853758c>] device_initialize+0x3c/0xe8
-[ 1502.907590] [<ffffff80085397d4>] device_register+0x14/0x28
-[ 1502.913727] [<ffffff80084b777c>] register_virtio_device+0xc4/0x114
-[ 1502.920641] [<ffffff8008878b20>] rproc_add_virtio_dev+0x7c/0x108
-[ 1502.927360] [<ffffff8008875cbc>] rproc_vdev_do_probe+0x14/0x1c
-[ 1502.933883] [<ffffff8008875a60>] rproc_start+0xac/0x1ac
-[ 1502.939728] [<ffffff8008877a68>] rproc_trigger_recovery+0x2f8/0x324
-[ 1502.946740] [<ffffff8008877b24>] rproc_crash_handler_work+0x90/0xb0
-[ 1502.953752] [<ffffff80080cd570>] process_one_work+0x204/0x704
-[ 1502.960179] [<ffffff80080cdac4>] worker_thread+0x54/0x4a8
-[ 1502.966225] [<ffffff80080d4aec>] kthread+0xec/0x100
-[ 1502.971683] [<ffffff8008083890>] ret_from_fork+0x10/0x40
-When the crash happen, It=92s better to destroy and recreate all virtio =
-device
-and it=92s children(rpmsg device) again to match the remote side state =
-like
-the original behavior.
+From: Suman Anna <s-anna@ti.com>
 
-Thanks
-Xiang
+The remoteproc framework handles a fixed set of resource table entries
+today. To make it scalable across multiple platforms, it makes sense
+for the framework to provide a way for the device specific implementation
+to define and handle vendor specific resource types. These resource types
+would be very specific to an implementation instance that it does not
+make sense for the framework to handle it. There can be two types of
+such resources depending on whether they need to be handled prior to
+the loading of the firmware segments or after. A post-loading resource
+type is typically needed because it references a loaded segment pointer
+for conveying the resource information.
+
+For instance, a remoteproc implementation might want timers information
+embedded in the resource table so that the driver could parse the binary
+and enable accordingly. Another example would be hwspinlocks that it
+is using, to properly share system wide resources. A PRU post-loading
+vendor resource handler for interrupts requires the PRU event - interrupt
+channel information to be loaded into device memory.
+
+This patch adds a function pointer to the list of rproc_ops for the
+driver implementation to handle such custom vendor resources, and
+reuses the same handler between pre-loading and post-loading resource
+types, with the sub-types in the implementation handling the processing
+of those resource types.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+
+merge: remoteproc: simplify VENDOR specific resource
+
+We don't need PRE and POST loading as we'll fix the PRU resource
+table to be self sufficient.
+
+Earlier it was half baked with channel mapping located elsewhere
+in data section thus requiring data section to be loaded before
+we can figure out the full INTC map.
+
+Fix vendor resource to be TLV and definition agnostic.
+
+Show in debugfs.
+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ drivers/remoteproc/remoteproc_core.c    | 36 +++++++++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_debugfs.c |  3 +++
+ include/linux/remoteproc.h              | 15 +++++++++++++-
+ 3 files changed, 53 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 581e6e8..9e387ab 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -898,6 +898,41 @@ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+ EXPORT_SYMBOL(rproc_add_carveout);
+ 
+ /**
++ * rproc_handle_vendor_rsc() - provide implementation specific hook
++ *			       to handle vendor/custom resources
++ * @rproc: the remote processor
++ * @rsc: vendor resource to be handled by remoteproc drivers
++ * @offset: offset of the resource data in resource table
++ * @avail: size of available data
++ *
++ * Remoteproc implementations might want to add resource table entries
++ * that are not generic enough to be handled by the framework. This
++ * provides a hook to handle such custom resources.
++ *
++ * Returns 0 on success, or an appropriate error code otherwise
++ */
++static int rproc_handle_vendor_rsc(struct rproc *rproc,
++				   struct fw_rsc_vendor *rsc,
++				   int offset, int avail)
++{
++	struct device *dev = &rproc->dev;
++
++	if (sizeof(*rsc) > avail) {
++		dev_err(dev, "vendor rsc is truncated\n");
++		return -EINVAL;
++	}
++
++	dev_dbg(dev, "vendor rsc:");
++
++	if (!rproc->ops->handle_vendor_rsc) {
++		dev_err(dev, "no vendor rsc handler! ignoring resource\n");
++		return 0;
++	}
++
++	return rproc->ops->handle_vendor_rsc(rproc, (void *)rsc);
++}
++
++/**
+  * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
+  * @dev: pointer on device struct
+  * @va: virtual address
+@@ -985,6 +1020,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
+ 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
+ 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
+ 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
++	[RSC_VENDOR] = (rproc_handle_resource_t)rproc_handle_vendor_rsc,
+ 	[RSC_VDEV] = (rproc_handle_resource_t)rproc_handle_vdev,
+ };
+ 
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index f330a9a..971c8ba 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -254,6 +254,9 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
+ 					   v->vring[j].pa);
+ 			}
+ 			break;
++		case RSC_VENDOR:
++			seq_printf(seq, "Entry %d is of type %s [Vendor specific]\n",
++				   i, types[hdr->type]);
+ 		default:
+ 			seq_printf(seq, "Unknown resource type found: %d [hdr: %pK]\n",
+ 				   hdr->type, hdr);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 063468b..4881415 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -101,6 +101,7 @@ struct fw_rsc_hdr {
+  *		    the remote processor will be writing logs.
+  * @RSC_VDEV:       declare support for a virtio device, and serve as its
+  *		    virtio header.
++ * @RSC_VENDOR:	    vendor specific resource type.
+  * @RSC_LAST:       just keep this one at the end
+  *
+  * For more details regarding a specific resource type, please see its
+@@ -116,7 +117,8 @@ enum fw_resource_type {
+ 	RSC_DEVMEM	= 1,
+ 	RSC_TRACE	= 2,
+ 	RSC_VDEV	= 3,
+-	RSC_LAST	= 4,
++	RSC_VENDOR	= 4,
++	RSC_LAST,
+ };
+ 
+ #define FW_RSC_ADDR_ANY (-1)
+@@ -309,6 +311,14 @@ struct fw_rsc_vdev {
+ struct rproc;
+ 
+ /**
++ * struct fw_rsc_vendor - vendor specific resource definition
++ * @data: resource data. vendor defined.
++ */
++struct fw_rsc_vendor {
++	u8 data[0];
++} __packed;
++
++/**
+  * struct rproc_mem_entry - memory entry descriptor
+  * @va:	virtual address
+  * @dma: dma address
+@@ -361,6 +371,7 @@ struct firmware;
+  * @da_to_va:	optional platform hook to perform address translations
+  * @parse_fw:	parse firmware to extract information (e.g. resource table)
+  * @find_loaded_rsc_table: find the loaded resouce table
++ * @handle_vendor_rsc:	hook to handle device specific resource table entries
+  * @load:		load firmware to memory, where the remote processor
+  *			expects to find it
+  * @sanity_check:	sanity check the fw image
+@@ -374,6 +385,8 @@ struct rproc_ops {
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+ 	struct resource_table *(*find_loaded_rsc_table)(
+ 				struct rproc *rproc, const struct firmware *fw);
++	int (*handle_vendor_rsc)(struct rproc *rproc,
++				 struct fw_rsc_vendor *rsc);
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
