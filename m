@@ -1,8 +1,8 @@
 Return-Path: <rogerq@ti.com>
 From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 06/16] dt-bindings: remoteproc: ti-pruss: Update bindings for supporting rpmsg
-Date: Mon, 26 Nov 2018 09:52:39 +0200
-Message-ID: <1543218769-5507-7-git-send-email-rogerq@ti.com>
+Subject: [PATCH 14/16] remoteproc/pru: configure firmware based on client setup
+Date: Mon, 26 Nov 2018 09:52:47 +0200
+Message-ID: <1543218769-5507-15-git-send-email-rogerq@ti.com>
 In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
@@ -11,95 +11,78 @@ To: ohad@wizery.com, bjorn.andersson@linaro.org
 Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
 
-Update the PRUSS DT bindings to add the properties required to support the
-optional virtio rpmsg stack using the virtio-ring based communication
-transport between MPU and a PRU core.
+Client device node property firmware-name is now used to configure
+firmware for the PRU instances. The default firmware is also
+restored once releasing the PRU resource.
 
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Roger Quadros <rogerq@ti.com>
 Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- .../devicetree/bindings/soc/ti/ti,pruss.txt        | 39 ++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/remoteproc/pru_rproc.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-index 24fedad..3e5f32f 100644
---- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-+++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-@@ -175,6 +175,32 @@ Required Properties:
- - firmware-name  : should contain the name of the default firmware image file
-                    located on the firmware search path
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 9a08937..84f006b 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -132,6 +132,21 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
+ 	spin_unlock_irqrestore(&pru->rmw_lock, flags);
+ }
  
-+Optional Properties:
-+--------------------
-+The virtio based communication between the MPU and a PRU core _requires_
-+either the 'mboxes' property, or the set of 'interrupt-parent', 'interrupts'
-+and 'interrupt-names' properties to be defined. The latter option is the
-+preferred choice. The 'mboxes' property is not applicable for 66AK2G and
-+DA850/OMAP-L138 SoCs.
++/**
++ * pru_rproc_set_firmware() - set firmware for a pru core
++ * @rproc: the rproc instance of the PRU
++ * @fw_name: the new firmware name, or NULL if default is desired
++ */
++static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
++{
++	struct pru_rproc *pru = rproc->priv;
 +
-+- mboxes           : OMAP Mailbox specifier denoting the sub-mailbox, if using
-+                     a mailbox for IPC signalling between host and a PRU core.
-+                     The specifier format is as per the bindings,
-+                         Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
-+                     This property should match with the sub-mailbox node used
-+                     in the corresponding firmware image.
-+- interrupt-parent : phandle to the PRUSS INTC node. Should be defined if
-+                     interrupts property is to be used.
-+- interrupts       : array of interrupt specifiers if using PRU system events
-+                     for IPC signalling between host and a PRU core. This
-+                     property should match with the PRU system event used in
-+                     the corresponding firmware image.
-+- interrupt-names  : should use one of the following names for each interrupt,
-+                     the name should match the corresponding PRU system event
-+                     number,
-+                         "vring" - for PRU to HOST virtqueue signalling
-+                         "kick"  - for HOST to PRU virtqueue signalling
++	if (!fw_name)
++		fw_name = pru->fw_name;
 +
++	return rproc_set_firmware(rproc, fw_name);
++}
++
+ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+ {
+ 	struct device_node *rproc_np = NULL;
+@@ -189,6 +204,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
+ 	struct device *dev;
+ 	int ret;
+ 	u32 mux;
++	const char *fw_name;
  
- MDIO Child Node
- ================
-@@ -243,6 +269,9 @@ Example:
- 				      <0x4a322400 0x100>;
- 				reg-names = "iram", "control", "debug";
- 				firmware-name = "am335x-pru0-fw";
-+				interrupt-parent = <&pruss_intc>;
-+				interrupts = <16>, <17>;
-+				interrupt-names = "vring", "kick";
- 			};
+ 	rproc = __pru_rproc_get(np, index);
+ 	if (IS_ERR(rproc))
+@@ -225,6 +241,16 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
+ 		}
+ 	}
  
- 			pru1: pru@4a338000 {
-@@ -252,6 +281,10 @@ Example:
- 				      <0x4a324400 0x100>;
- 				reg-names = "iram", "control", "debug";
- 				firmware-name = "am335x-pru1-fw";
-+				interrupt-parent = <&pruss_intc>;
-+				interrupts = <18>, <19>;
-+				interrupt-names = "vring", "kick";
-+				/* mboxes = <&mailbox &mbox_pru1>; */
- 			};
++	ret = of_property_read_string_index(np, "firmware-name", index,
++					    &fw_name);
++	if (!ret) {
++		ret = pru_rproc_set_firmware(rproc, fw_name);
++		if (ret) {
++			dev_err(dev, "failed to set firmware: %d\n", ret);
++			goto err;
++		}
++	}
++
+ 	return rproc;
  
- 			pruss_mdio: mdio@4a332400 {
-@@ -329,6 +362,9 @@ Example:
- 				      <0x54422400 0x100>;
- 				reg-names = "iram", "control", "debug";
- 				firmware-name = "am437x-pru1_0-fw";
-+				interrupt-parent = <&pruss1_intc>;
-+				interrupts = <16>, <17>;
-+				interrupt-names = "vring", "kick";
- 			};
+ err:
+@@ -255,6 +281,7 @@ void pru_rproc_put(struct rproc *rproc)
+ 	if (!pru->client_np)
+ 		return;
  
- 			pru1_1: pru@54438000 {
-@@ -338,6 +374,9 @@ Example:
- 				      <0x54424400 0x100>;
- 				reg-names = "iram", "control", "debug";
- 				firmware-name = "am437x-pru1_1-fw";
-+				interrupt-parent = <&pruss1_intc>;
-+				interrupts = <18>, <19>;
-+				interrupt-names = "vring", "kick";
- 			};
++	pru_rproc_set_firmware(rproc, NULL);
+ 	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
  
- 			pruss1_mdio: mdio@54432400 {
+ 	mutex_lock(&pru->lock);
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
