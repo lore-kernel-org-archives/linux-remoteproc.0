@@ -1,165 +1,322 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 2/2] remoteproc: sysmon: Wait for shutdown-ack/ind on sysmon shutdown
-Date: Wed, 21 Nov 2018 02:32:08 +0530
-Message-Id: <20181120210209.9029-2-sibis@codeaurora.org>
-In-Reply-To: <20181120210209.9029-1-sibis@codeaurora.org>
-References: <20181120210209.9029-1-sibis@codeaurora.org>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 07/16] remoteproc/pru: Add support for virtio rpmsg stack
+Date: Mon, 26 Nov 2018 09:52:40 +0200
+Message-ID: <1543218769-5507-8-git-send-email-rogerq@ti.com>
+In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, ohad@wizery.com, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-After sending a sysmon shutdown request to the SSCTL service on the
-subsystem, wait for the service to send shutdown-ack interrupt or
-an indication message back.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+The PRU remoteproc driver has been enhanced to support the optional
+rpmsg stack using the virtio-ring based communication transport
+between MPU and a PRU core. This provides support to any firmware
+images supporting the virtio devices.
+
+The virtio-ring signalling support is provided either through a OMAP
+mailbox or through two PRU system events on OMAP-architecture based
+SoCs - one event used in each direction for kicking from one processor
+and receiving notification on the other processor. The virtio rpmsg
+signalling is enabled only using using PRU system events for interrupts
+on the Keystone-architecture based 66AK2G SoCs (it is possible to
+implement using an alternate Keystone specific IPCGR registers as well).
+The driver supports both signalling options, though the PRU events based
+signalling is the recommended option as it avoids an external peripheral
+access from the PRU side. It also provides a uniform solution across
+both the OMAP, Keystone and Davinci architectures. The PRU events based
+signalling takes precedence if both options are mentioned. Either of the
+options would require the corresponding firmware support though. A build
+dependency against MAILBOX is also added. Note that the OMAP Mailbox
+IP is not present on 66AK2G and Davinci SoCs, so it is only selected
+for OMAP-based SoCs.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/qcom_sysmon.c | 59 +++++++++++++++++++++++++++++++-
- 1 file changed, 58 insertions(+), 1 deletion(-)
+ drivers/remoteproc/Kconfig     |   2 +
+ drivers/remoteproc/pru_rproc.c | 169 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 168 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index e976a602b015..a545181341d1 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2017, Linaro Ltd.
-  */
- #include <linux/firmware.h>
-+#include <linux/interrupt.h>
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 333666e..b89acb0 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -200,6 +200,8 @@ config ST_SLIM_REMOTEPROC
+ config PRUSS_REMOTEPROC
+ 	tristate "TI PRUSS remoteproc support"
+ 	depends on TI_PRUSS
++	select MAILBOX
++	select OMAP2PLUS_MBOX if ARCH_OMAP2PLUS
+ 	default n
+ 	help
+ 	  Support for TI PRU-ICSS remote processors via the remote processor
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 73a7f13..e0554b3 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -10,6 +10,7 @@
+ #include <linux/bitops.h>
+ #include <linux/debugfs.h>
+ #include <linux/interrupt.h>
++#include <linux/mailbox_client.h>
  #include <linux/module.h>
- #include <linux/notifier.h>
- #include <linux/slab.h>
-@@ -25,6 +26,7 @@ struct qcom_sysmon {
- 
- 	const char *name;
- 
-+	int shutdown_irq;
- 	int ssctl_version;
- 	int ssctl_instance;
- 
-@@ -34,6 +36,7 @@ struct qcom_sysmon {
- 
- 	struct rpmsg_endpoint *ept;
- 	struct completion comp;
-+	struct completion shutdown_comp;
- 	struct mutex lock;
- 
- 	bool ssr_ack;
-@@ -137,6 +140,7 @@ static int sysmon_callback(struct rpmsg_device *rpdev, void *data, int count,
+ #include <linux/of_device.h>
+ #include <linux/remoteproc.h>
+@@ -56,6 +57,10 @@ enum pru_mem {
+  * @id: id of the PRU core within the PRUSS
+  * @pruss: back-reference to parent PRUSS structure
+  * @rproc: remoteproc pointer for this PRU core
++ * @mbox: mailbox channel handle used for vring signalling with MPU
++ * @client: mailbox client to request the mailbox channel
++ * @irq_ring: IRQ number to use for processing vring buffers
++ * @irq_kick: IRQ number to use to perform virtio kick
+  * @mem_regions: data for each of the PRU memory regions
+  * @dram0: PRUSS DRAM0 region
+  * @dram1: PRUSS DRAM1 region
+@@ -72,6 +77,10 @@ struct pru_rproc {
+ 	int id;
+ 	struct pruss *pruss;
+ 	struct rproc *rproc;
++	struct mbox_chan *mbox;
++	struct mbox_client client;
++	int irq_vring;
++	int irq_kick;
+ 	struct pruss_mem_region mem_regions[PRU_MEM_MAX];
+ 	struct pruss_mem_region dram0;
+ 	struct pruss_mem_region dram1;
+@@ -233,22 +242,124 @@ static void pru_rproc_create_debug_entries(struct rproc *rproc)
+ 			    rproc, &pru_rproc_debug_ss_fops);
  }
  
- #define SSCTL_SHUTDOWN_REQ		0x21
-+#define SSCTL_SHUTDOWN_READY_IND	0x21
- #define SSCTL_SUBSYS_EVENT_REQ		0x23
- 
- #define SSCTL_MAX_MSG_LEN		7
-@@ -252,6 +256,29 @@ static struct qmi_elem_info ssctl_subsys_event_resp_ei[] = {
- 	{}
- };
- 
-+static struct qmi_elem_info ssctl_shutdown_ind_ei[] = {
-+	{}
-+};
-+
-+static void sysmon_ind_cb(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
-+			  struct qmi_txn *txn, const void *data)
++/**
++ * pru_rproc_mbox_callback() - inbound mailbox message handler
++ * @client: mailbox client pointer used for requesting the mailbox channel
++ * @data: mailbox payload
++ *
++ * This handler is invoked by omap's mailbox driver whenever a mailbox
++ * message is received. Usually, the mailbox payload simply contains
++ * the index of the virtqueue that is kicked by the PRU remote processor,
++ * and we let remoteproc core handle it.
++ *
++ * In addition to virtqueue indices, we might also have some out-of-band
++ * values that indicates different events. Those values are deliberately
++ * very big so they don't coincide with virtqueue indices.
++ */
++static void pru_rproc_mbox_callback(struct mbox_client *client, void *data)
 +{
-+	struct qcom_sysmon *sysmon = container_of(qmi, struct qcom_sysmon, qmi);
++	struct pru_rproc *pru = container_of(client, struct pru_rproc, client);
++	struct device *dev = &pru->rproc->dev;
++	u32 msg = (u32)data;
 +
-+	complete(&sysmon->shutdown_comp);
++	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
++
++	/* msg contains the index of the triggered vring */
++	if (rproc_vq_interrupt(pru->rproc, msg) == IRQ_NONE)
++		dev_dbg(dev, "no message was found in vqid %d\n", msg);
 +}
 +
-+static struct qmi_msg_handler qmi_indication_handler[] = {
-+	{
-+		.type = QMI_INDICATION,
-+		.msg_id = SSCTL_SHUTDOWN_READY_IND,
-+		.ei = ssctl_shutdown_ind_ei,
-+		.decoded_size = 0,
-+		.fn = sysmon_ind_cb
-+	},
-+	{}
-+};
-+
- /**
-  * ssctl_request_shutdown() - request shutdown via SSCTL QMI service
-  * @sysmon:	sysmon context
-@@ -262,6 +289,7 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
- 	struct qmi_txn txn;
- 	int ret;
- 
-+	reinit_completion(&sysmon->shutdown_comp);
- 	ret = qmi_txn_init(&sysmon->qmi, &txn, ssctl_shutdown_resp_ei, &resp);
- 	if (ret < 0) {
- 		dev_err(sysmon->dev, "failed to allocate QMI txn\n");
-@@ -283,6 +311,14 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
- 		dev_err(sysmon->dev, "shutdown request failed\n");
- 	else
- 		dev_dbg(sysmon->dev, "shutdown request completed\n");
-+
-+	if (sysmon->shutdown_irq > 0) {
-+		ret = wait_for_completion_timeout(&sysmon->shutdown_comp,
-+						  msecs_to_jiffies(5000));
-+		if (!ret)
-+			dev_err(sysmon->dev,
-+				"timeout waiting for shutdown ack\n");
-+	}
- }
- 
- /**
-@@ -432,6 +468,15 @@ static int sysmon_notify(struct notifier_block *nb, unsigned long event,
- 	return NOTIFY_DONE;
- }
- 
-+static irqreturn_t sysmon_shutdown_interrupt(int irq, void *data)
++/**
++ * pru_rproc_vring_interrupt() - interrupt handler for processing vrings
++ * @irq: irq number associated with the PRU event MPU is listening on
++ * @data: interrupt handler data, will be a PRU rproc structure
++ *
++ * This handler is used by the PRU remoteproc driver when using PRU system
++ * events for processing the virtqueues. Unlike the mailbox IP, there is
++ * no payload associated with an interrupt, so either a unique event is
++ * used for each virtqueue kick, or a both virtqueues are processed on
++ * a single event. The latter is chosen to conserve the usable PRU system
++ * events.
++ */
++static irqreturn_t pru_rproc_vring_interrupt(int irq, void *data)
 +{
-+	struct qcom_sysmon *sysmon = data;
++	struct pru_rproc *pru = data;
 +
-+	complete(&sysmon->shutdown_comp);
++	dev_dbg(&pru->rproc->dev, "got vring irq\n");
++
++	/* process incoming buffers on both the Rx and Tx vrings */
++	rproc_vq_interrupt(pru->rproc, 0);
++	rproc_vq_interrupt(pru->rproc, 1);
 +
 +	return IRQ_HANDLED;
 +}
 +
- /**
-  * qcom_add_sysmon_subdev() - create a sysmon subdev for the given remoteproc
-  * @rproc:	rproc context to associate the subdev with
-@@ -445,6 +490,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 					   int ssctl_instance)
- {
- 	struct qcom_sysmon *sysmon;
-+	struct platform_device *pdev;
- 	int ret;
- 
- 	sysmon = kzalloc(sizeof(*sysmon), GFP_KERNEL);
-@@ -453,14 +499,25 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 
- 	sysmon->dev = rproc->dev.parent;
- 	sysmon->rproc = rproc;
-+	pdev = container_of(sysmon->dev, struct platform_device, dev);
- 
- 	sysmon->name = name;
- 	sysmon->ssctl_instance = ssctl_instance;
- 
- 	init_completion(&sysmon->comp);
-+	init_completion(&sysmon->shutdown_comp);
- 	mutex_init(&sysmon->lock);
- 
--	ret = qmi_handle_init(&sysmon->qmi, SSCTL_MAX_MSG_LEN, &ssctl_ops, NULL);
-+	sysmon->shutdown_irq = platform_get_irq_byname(pdev, "shutdown-ack");
-+	ret = devm_request_threaded_irq(sysmon->dev, sysmon->shutdown_irq,
-+					NULL, sysmon_shutdown_interrupt,
-+					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+					"q6v5 shutdown-ack", sysmon);
-+	if (ret)
-+		dev_err(sysmon->dev, "failed to acquire shutdown-ack IRQ\n");
++/* kick a virtqueue */
++static void pru_rproc_kick(struct rproc *rproc, int vq_id)
++{
++	struct device *dev = &rproc->dev;
++	struct pru_rproc *pru = rproc->priv;
++	int ret;
 +
-+	ret = qmi_handle_init(&sysmon->qmi, SSCTL_MAX_MSG_LEN, &ssctl_ops,
-+			      qmi_indication_handler);
- 	if (ret < 0) {
- 		dev_err(sysmon->dev, "failed to initialize qmi handle\n");
- 		kfree(sysmon);
++	dev_dbg(dev, "kicking vqid %d on PRU%d\n", vq_id, pru->id);
++
++	if (pru->irq_kick > 0) {
++		ret = pruss_intc_trigger(pru->irq_kick);
++		if (ret < 0)
++			dev_err(dev, "pruss_intc_trigger failed: %d\n", ret);
++	} else if (pru->mbox) {
++		/*
++		 * send the index of the triggered virtqueue in the mailbox
++		 * payload
++		 */
++		ret = mbox_send_message(pru->mbox, (void *)vq_id);
++		if (ret < 0)
++			dev_err(dev, "mbox_send_message failed: %d\n", ret);
++	}
++}
++
+ /* start a PRU core */
+ static int pru_rproc_start(struct rproc *rproc)
+ {
+ 	struct device *dev = &rproc->dev;
+ 	struct pru_rproc *pru = rproc->priv;
+ 	u32 val;
++	int ret;
+ 
+ 	dev_dbg(dev, "starting PRU%d: entry-point = 0x%x\n",
+ 		pru->id, (rproc->bootaddr >> 2));
+ 
++	/* TODO: INTC setup */
++
++	if (!list_empty(&pru->rproc->rvdevs)) {
++		if (!pru->mbox && (pru->irq_vring <= 0 || pru->irq_kick <= 0)) {
++			dev_err(dev, "virtio vring interrupt mechanisms are not provided\n");
++			ret = -EINVAL;
++			goto fail;
++		}
++
++		if (!pru->mbox && pru->irq_vring > 0) {
++			ret = request_threaded_irq(pru->irq_vring, NULL,
++						   pru_rproc_vring_interrupt,
++						   IRQF_ONESHOT, dev_name(dev),
++						   pru);
++			if (ret) {
++				dev_err(dev, "failed to enable vring interrupt, ret = %d\n",
++					ret);
++				goto fail;
++			}
++		}
++	}
++
+ 	val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
+ 	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
+ 
+-	/* TODO: INTC setup */
+-
+ 	return 0;
++
++fail:
++	/* TODO: INTC cleanup */
++
++	return ret;
+ }
+ 
+ /* stop/disable a PRU core */
+@@ -264,6 +375,10 @@ static int pru_rproc_stop(struct rproc *rproc)
+ 	val &= ~CTRL_CTRL_EN;
+ 	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
+ 
++	if (!list_empty(&pru->rproc->rvdevs) &&
++	    !pru->mbox && pru->irq_vring > 0)
++		free_irq(pru->irq_vring, pru);
++
+ 	/* TODO: INTC cleanup */
+ 
+ 	return 0;
+@@ -356,6 +471,7 @@ static void *pru_da_to_va(struct rproc *rproc, u64 da, int len, u32 flags)
+ static struct rproc_ops pru_rproc_ops = {
+ 	.start			= pru_rproc_start,
+ 	.stop			= pru_rproc_stop,
++	.kick			= pru_rproc_kick,
+ 	.da_to_va		= pru_da_to_va,
+ };
+ 
+@@ -383,6 +499,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 	struct pru_rproc *pru;
+ 	const char *fw_name;
+ 	struct rproc *rproc = NULL;
++	struct mbox_client *client;
+ 	struct resource *res;
+ 	int i, ret;
+ 	const char *mem_names[PRU_MEM_MAX] = { "iram", "control", "debug" };
+@@ -475,10 +592,51 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, rproc);
+ 
++	/* get optional vring and kick interrupts for supporting virtio rpmsg */
++	pru->irq_vring = platform_get_irq_byname(pdev, "vring");
++	if (pru->irq_vring <= 0) {
++		ret = pru->irq_vring;
++		if (ret == -EPROBE_DEFER)
++			goto free_rproc;
++		dev_dbg(dev, "unable to get vring interrupt, status = %d\n",
++			ret);
++	}
++
++	pru->irq_kick = platform_get_irq_byname(pdev, "kick");
++	if (pru->irq_kick <= 0) {
++		ret = pru->irq_kick;
++		if (ret == -EPROBE_DEFER)
++			goto free_rproc;
++		dev_dbg(dev, "unable to get kick interrupt, status = %d\n",
++			ret);
++	}
++
++	/*
++	 * get optional mailbox for virtio rpmsg signalling if vring and kick
++	 * interrupts are not specified for OMAP architecture based SoCs
++	 */
++	if (pru->irq_vring <= 0 && pru->irq_kick <= 0 &&
++	    !of_device_is_compatible(np, "ti,k2g-pru") &&
++	    !of_device_is_compatible(np, "ti,da850-pru")) {
++		client = &pru->client;
++		client->dev = dev;
++		client->tx_done = NULL;
++		client->rx_callback = pru_rproc_mbox_callback;
++		client->tx_block = false;
++		client->knows_txdone = false;
++		pru->mbox = mbox_request_channel(client, 0);
++		if (IS_ERR(pru->mbox)) {
++			ret = PTR_ERR(pru->mbox);
++			pru->mbox = NULL;
++			dev_dbg(dev, "unable to get mailbox channel, status = %d\n",
++				ret);
++		}
++	}
++
+ 	ret = rproc_add(pru->rproc);
+ 	if (ret) {
+ 		dev_err(dev, "rproc_add failed: %d\n", ret);
+-		goto free_rproc;
++		goto put_mbox;
+ 	}
+ 
+ 	pru_rproc_create_debug_entries(rproc);
+@@ -487,6 +645,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++put_mbox:
++	mbox_free_channel(pru->mbox);
+ free_rproc:
+ 	rproc_free(rproc);
+ 	return ret;
+@@ -496,9 +656,12 @@ static int pru_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct pru_rproc *pru = rproc->priv;
+ 
+ 	dev_info(dev, "%s: removing rproc %s\n", __func__, rproc->name);
+ 
++	mbox_free_channel(pru->mbox);
++
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
