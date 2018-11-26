@@ -1,44 +1,176 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 2/7] remoteproc: fix rproc_da_to_va in case of unallocated carveout
-Date: Thu, 29 Nov 2018 22:29:23 +0100
-Message-ID: <1543526968-56091-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
-References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH 11/16] soc: ti: pruss: add helper functions to set GPI mode, MII_RT_event and XFR
+Date: Mon, 26 Nov 2018 09:52:44 +0200
+Message-ID: <1543218769-5507-12-git-send-email-rogerq@ti.com>
+In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-With introduction of rproc_alloc_registered_carveouts() which
-delays carveout allocation just before the start of the remote
-processor, rproc_da_to_va() could be called before all carveouts
-are allocated.
-This patch adds a check in rproc_da_to_va() to return NULL if
-carveout is not allocated.
+From: Suman Anna <s-anna@ti.com>
 
-Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry struct")
+The PRUSS CFG module is represented as a syscon node and is currently
+managed by the PRUSS platform driver. Add easy accessor functions to set
+GPI mode, MII_RT event enable/disable and XFR (XIN XOUT) enable/disable
+to enable the PRUSS Ethernet usecase. These functions reuse the generic
+pruss_regmap_update() API function.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/pruss.h | 115 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c1a66e25b173..28df71cb3fef 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -204,6 +204,10 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- 	list_for_each_entry(carveout, &rproc->carveouts, node) {
- 		int offset = da - carveout->da;
+diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+index c0a3b3e..7227aae 100644
+--- a/include/linux/pruss.h
++++ b/include/linux/pruss.h
+@@ -204,6 +204,69 @@ int pruss_intc_configure(struct pruss *pruss,
+ int pruss_intc_unconfigure(struct pruss *pruss,
+ 			   struct pruss_intc_config *intc_config);
  
-+		/*  Verify that carveout is allocated */
-+		if (!carveout->va)
-+			continue;
++/**
++ * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
++ * @pruss: pruss instance
++ * @id: PRU identifier (0-1)
++ * @mux: pointer to store the current mux value into
++ */
++static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
++				      enum pruss_pru_id id, u8 *mux)
++{
++	int ret = 0;
++	u32 val;
 +
- 		/* try next carveout if da is too small */
- 		if (offset < 0)
- 			continue;
++	ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(id), &val);
++	if (!ret)
++		*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
++			    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
++	return ret;
++}
++
++/**
++ * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
++ * @pruss: pruss instance
++ * @pru_id: PRU identifier (0-1)
++ * @mux: new mux value for PRU
++ */
++static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
++				      enum pruss_pru_id id, u8 mux)
++{
++	if (mux >= PRUSS_GP_MUX_SEL_MAX)
++		return -EINVAL;
++
++	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(id),
++				PRUSS_GPCFG_PRU_MUX_SEL_MASK,
++				(u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
++}
++
++/**
++ * pruss_cfg_miirt_enable() - Enable/disable MII RT Events
++ * @pruss: the pruss instance
++ * @enable: enable/disable
++ *
++ * Enable/disable the MII RT Events for the PRUSS.
++ */
++static inline int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
++{
++	u32 set = enable ? PRUSS_MII_RT_EVENT_EN : 0;
++
++	return pruss_cfg_update(pruss, PRUSS_CFG_MII_RT,
++				PRUSS_MII_RT_EVENT_EN, set);
++}
++
++/**
++ * pruss_cfg_xfr_enable() - Enable/disable XIN XOUT shift functionality
++ * @pruss: the pruss instance
++ * @enable: enable/disable
++ */
++static inline int pruss_cfg_xfr_enable(struct pruss *pruss, bool enable)
++{
++	u32 set = enable ? PRUSS_SPP_XFER_SHIFT_EN : 0;
++
++	return pruss_cfg_update(pruss, PRUSS_CFG_SPP,
++				PRUSS_SPP_XFER_SHIFT_EN, set);
++}
+ #else
+ 
+ static inline struct pruss *pruss_get(struct rproc *rproc)
+@@ -254,6 +317,28 @@ int pruss_intc_unconfigure(struct pruss *pruss,
+ 	return -ENOTSUPP;
+ }
+ 
++static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
++				      enum pruss_pru_id id, u8 *mux)
++{
++	return -ENOTSUPP;
++}
++
++static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
++				      enum pruss_pru_id id, u8 mux)
++{
++	return -ENOTSUPP;
++}
++
++static inline int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
++{
++	return -ENOTSUPP;
++}
++
++static inline int pruss_cfg_xfr_enable(struct pruss *pruss, bool enable)
++{
++	return -ENOTSUPP;
++}
++
+ #endif /* CONFIG_TI_PRUSS */
+ 
+ #if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
+@@ -263,6 +348,30 @@ void pru_rproc_put(struct rproc *rproc);
+ enum pruss_pru_id pru_rproc_get_id(struct rproc *rproc);
+ int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
+ 
++/**
++ * pruss_cfg_gpimode() - set the GPI mode of the PRU
++ * @pruss: the pruss instance handle
++ * @pru: the rproc instance handle of the PRU
++ * @mode: GPI mode to set
++ *
++ * Sets the GPI mode for a given PRU by programming the
++ * corresponding PRUSS_CFG_GPCFGx register
++ *
++ * Returns 0 on success, or an error code otherwise
++ */
++static inline int pruss_cfg_gpimode(struct pruss *pruss, struct rproc *pru,
++				    enum pruss_gpi_mode mode)
++{
++	enum pruss_pru_id id = pru_rproc_get_id(pru);
++
++	if (id < 0)
++		return -EINVAL;
++
++	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(id),
++				PRUSS_GPCFG_PRU_GPI_MODE_MASK,
++				mode << PRUSS_GPCFG_PRU_GPI_MODE_SHIFT);
++}
++
+ #else
+ 
+ static inline struct rproc *pru_rproc_get(struct device_node *node, int index)
+@@ -283,6 +392,12 @@ static inline int pru_rproc_set_ctable(struct rproc *rproc,
+ 	return -ENOTSUPP;
+ }
+ 
++static inline int pruss_cfg_gpimode(struct pruss *pruss, struct rproc *pru,
++				    enum pruss_gpi_mode mode)
++{
++	return -ENOTSUPP;
++}
++
+ #endif /* CONFIG_PRUSS_REMOTEPROC */
+ 
+ #endif /* __LINUX_PRUSS_H */
 -- 
-2.7.4
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
