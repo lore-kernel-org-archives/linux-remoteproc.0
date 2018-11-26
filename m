@@ -1,69 +1,34 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 1/2] remoteproc: replace bool from struct rproc by u8
-Date: Thu, 29 Nov 2018 22:16:19 +0100
-Message-ID: <1543526180-55934-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1543526180-55934-1-git-send-email-loic.pallardy@st.com>
-References: <1543526180-55934-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] remoteproc: qcom: fix spelling mistake "Peripherial" -> "Peripheral"
+Date: Mon, 26 Nov 2018 14:27:35 +0000
+Message-Id: <20181126142735.29294-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Post [1] and checkpatch tool indicate that usage of bool type
-in structure is now no more allowed/advised.
-This patch replaces bool by unsigned char (u8) and reorders
-struct rproc fields to avoid padding.
+From: Colin Ian King <colin.king@canonical.com>
 
-[1] https://lkml.org/lkml/2017/11/21/384
+There is a spelling mistake in the module description text, fix it.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- include/linux/remoteproc.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/remoteproc/qcom_wcnss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 507a2b524208..b6660088949f 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -452,15 +452,15 @@ struct rproc_dump_segment {
-  * @index: index of this rproc device
-  * @crash_handler: workqueue for handling a crash
-  * @crash_cnt: crash counter
-- * @recovery_disabled: flag that state if recovery was disabled
-  * @max_notifyid: largest allocated notify id.
-  * @table_ptr: pointer to the resource table in effect
-  * @cached_table: copy of the resource table
-  * @table_sz: size of @cached_table
-- * @has_iommu: flag to indicate if remote processor is behind an MMU
-- * @auto_boot: flag to indicate if remote processor should be auto-started
-  * @dump_segments: list of segments in the firmware
-  * @nb_vdev: number of vdev currently handled by rproc
-+ * @recovery_disabled: flag that state if recovery was disabled
-+ * @has_iommu: flag to indicate if remote processor is behind an MMU
-+ * @auto_boot: flag to indicate if remote processor should be auto-started
-  */
- struct rproc {
- 	struct list_head node;
-@@ -485,15 +485,15 @@ struct rproc {
- 	int index;
- 	struct work_struct crash_handler;
- 	unsigned int crash_cnt;
--	bool recovery_disabled;
- 	int max_notifyid;
- 	struct resource_table *table_ptr;
- 	struct resource_table *cached_table;
- 	size_t table_sz;
--	bool has_iommu;
--	bool auto_boot;
- 	struct list_head dump_segments;
- 	int nb_vdev;
-+	u8 recovery_disabled;
-+	u8 has_iommu;
-+	u8 auto_boot;
- };
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index b0e07e9f42d5..1152da49a18a 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -622,5 +622,5 @@ static void __exit wcnss_exit(void)
+ }
+ module_exit(wcnss_exit);
  
- /**
+-MODULE_DESCRIPTION("Qualcomm Peripherial Image Loader for Wireless Subsystem");
++MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for Wireless Subsystem");
+ MODULE_LICENSE("GPL v2");
 -- 
-2.7.4
+2.19.1
