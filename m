@@ -1,40 +1,106 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v3 0/4] Add support of STM32 hwspinlock
-Date: Mon, 12 Nov 2018 16:23:38 +0100
-Message-Id: <20181112152342.6561-1-benjamin.gaignard@st.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+Date: Tue, 27 Nov 2018 14:28:28 +0530
+Message-Id: <20181127085828.17908-1-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, dianders@chromium.org, evgreen@chromium.org, briannorris@chromium.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This serie adds the support of the hardware semaphore block for stm32mp1 SoC.
+This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
 
-version 3:
-- fix clock name in properties description.
-- use postcore_initcall() instead of module_platform_driver()
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
 
-version 2:
-- fix comments done by Bjorn about clock naming, license terms in header,
-  alphabetic ordering in Makefile and Kconfig and remove function
-- Do not push test module in this version while waiting for feedbacks about it
+The remoteproc mss node depends on the following bindings:
+https://patchwork.kernel.org/patch/10490559/ - rpmhp dt bindings
+https://patchwork.kernel.org/patch/10678301/ - AOP QMP dt bindings
+https://patchwork.kernel.org/patch/10691215/ - mss power-domain dt bindings
+https://patchwork.kernel.org/patch/10691213/ - shutdown-ack dt bindings
 
+It also depends on the mpss and mba memory regions and pdc reset node.
+https://patchwork.kernel.org/patch/10662089/
+https://patchwork.kernel.org/patch/10657325/
 
-Benjamin Gaignard (4):
-  dt-bindings: hwlock: Document STM32 hwspinlock bindings
-  hwspinlock: add STM32 hwspinlock device
-  ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
-  ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 63 ++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
- .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 +++
- arch/arm/boot/dts/stm32mp157c-ed1.dts              |   4 +
- arch/arm/boot/dts/stm32mp157c.dtsi                 |   9 ++
- drivers/hwspinlock/Kconfig                         |   9 ++
- drivers/hwspinlock/Makefile                        |   1 +
- drivers/hwspinlock/stm32_hwspinlock.c              | 156 +++++++++++++++++++++
- 6 files changed, 202 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
- create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
-
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 58870273dbc9..df16ee464872 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1095,6 +1095,69 @@
+ 			};
+ 		};
+ 
++		remoteproc@4080000 {
++			compatible = "qcom,sdm845-mss-pil";
++			reg = <0x04080000 0x408>, <0x04180000 0x48>;
++
++			reg-names = "qdsp6", "rmb";
++
++			interrupts-extended =
++				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
++
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack",
++					  "shutdown-ack";
++
++			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
++				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
++				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
++				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
++				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
++				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
++				 <&gcc GCC_PRNG_AHB_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK>;
++
++			clock-names = "iface", "bus", "mem", "gpll0_mss",
++				      "snoc_axi", "mnoc_axi", "prng", "xo";
++
++			qcom,smem-states = <&modem_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
++				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
++			reset-names = "mss_restart", "pdc_reset";
++
++			qcom,halt-regs = <&tcsr_mutex_regs
++						0x23000 0x25000 0x24000>;
++
++			power-domains = <&aoss_qmp_pd AOSS_QMP_LS_MODEM>,
++					<&rpmhpd SDM845_CX>,
++					<&rpmhpd SDM845_MX>,
++					<&rpmhpd SDM845_MSS>;
++			power-domain-names = "aop", "cx", "mx", "mss";
++
++			mba {
++				memory-region = <&mba_region>;
++			};
++
++			mpss {
++				memory-region = <&mpss_region>;
++			};
++
++			glink-edge {
++				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
++				label = "modem";
++				qcom,remote-pid = <1>;
++				mboxes = <&apss_shared 12>;
++				mbox-names = "mpss_smem";
++			};
++		};
++
+ 		usb_1_hsphy: phy@88e2000 {
+ 			compatible = "qcom,sdm845-qusb2-phy";
+ 			reg = <0x88e2000 0x400>;
 -- 
-2.15.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
