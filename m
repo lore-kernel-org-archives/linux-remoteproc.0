@@ -1,218 +1,178 @@
 Return-Path: <rogerq@ti.com>
+Subject: Re: [PATCH 06/17] soc: ti: pruss: Add a platform driver for PRUSS in
+ TI SoCs
+References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+ <1542886753-17625-7-git-send-email-rogerq@ti.com>
+ <1608af03-35b5-79ce-4995-84e85e740687@lechnology.com>
 From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 09/16] remoteproc/pru: add APIs to get and put the PRU cores
-Date: Mon, 26 Nov 2018 09:52:42 +0200
-Message-ID: <1543218769-5507-10-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Message-ID: <5BFD5FFD.9010807@ti.com>
+Date: Tue, 27 Nov 2018 17:17:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+In-Reply-To: <1608af03-35b5-79ce-4995-84e85e740687@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: David Lechner <david@lechnology.com>, tony@atomide.com
+Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Tero Kristo <t-kristo@ti.com>
+On 26/11/18 23:15, David Lechner wrote:
+> On 11/22/18 5:39 AM, Roger Quadros wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> The PRUSS platform driver deals with the overall PRUSS and is
+>> used for managing the subsystem level resources like various
+>> memories. It is responsible for the creation and deletion of
+>> the platform devices for the child PRU devices and other child
+>> devices (Interrupt Controller or MDIO node or some syscon nodes)
+>> so that they can be managed by specific platform drivers.
+>>
+>> This design provides flexibility in representing the different
+>> modules of PRUSS accordingly, and at the same time allowing the
+>> PRUSS driver to add some instance specific configuration within
+>> an SoC.
+>>
+>> The driver currently supports the AM335x SoC.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> ---
+>>   drivers/soc/ti/Makefile |   2 +-
+>>   drivers/soc/ti/pruss.c  | 116 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/soc/ti/pruss.h  |  44 ++++++++++++++++++
+>>   3 files changed, 161 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/soc/ti/pruss.c
+>>   create mode 100644 drivers/soc/ti/pruss.h
+>>
+> 
+> ...
+> 
+>> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+>> new file mode 100644
+>> index 0000000..0840b59
+>> --- /dev/null
+>> +++ b/drivers/soc/ti/pruss.c
+>> @@ -0,0 +1,116 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * PRU-ICSS platform driver for various TI SoCs
+>> + *
+>> + * Copyright (C) 2014-2018 Texas Instruments Incorporated - http://www.ti.com/
+>> + *    Suman Anna <s-anna@ti.com>
+>> + *    Andrew F. Davis <afd@ti.com>
+>> + */
+>> +
+>> +#include <linux/dma-mapping.h>
+>> +#include <linux/module.h>
+> 
+> alphabetical order?
 
-Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
-driver to allow client drivers to acquire and release the remoteproc
-device associated with a PRU core. The PRU cores are treated as
-resources with only one client owning it at a time.
+ok.
 
-The pru_rproc_get() function returns the rproc handle corresponding
-to a PRU core identified by the device tree "prus" property under
-the client node. The pru_rproc_put() is the complementary function
-to pru_rproc_get().
+> 
+>> +#include <linux/io.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_device.h>
+>> +
+>> +#include "pruss.h"
+>> +
+>> +static int pruss_probe(struct platform_device *pdev)
+>> +{
+>> +    struct device *dev = &pdev->dev;
+>> +    struct device_node *node = dev->of_node;
+>> +    struct device_node *np;
+>> +    struct pruss *pruss;
+>> +    struct resource res;
+>> +    int ret, i, index;
+>> +    const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
+>> +
+>> +    if (!node) {
+>> +        dev_err(dev, "Non-DT platform device not supported\n");
+>> +        return -ENODEV;
+>> +    }
+>> +
+>> +    ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
+>> +    if (ret) {
+>> +        dev_err(dev, "dma_set_coherent_mask: %d\n", ret);
+>> +        return ret;
+>> +    }
+>> +
+>> +    pruss = devm_kzalloc(dev, sizeof(*pruss), GFP_KERNEL);
+>> +    if (!pruss)
+>> +        return -ENOMEM;
+>> +
+>> +    pruss->dev = dev;
+>> +
+>> +    np = of_get_child_by_name(node, "memories");
+>> +    if (!np)
+> 
+> error message?
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-[s-anna@ti.com: improve error checking, various fixes and cleanups]
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/pru_rproc.c | 112 +++++++++++++++++++++++++++++++++++++++++
- include/linux/pruss.h          |   9 ++++
- 2 files changed, 121 insertions(+)
+Yes.
+> 
+>> +        return -ENODEV;
+>> +
+>> +    for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
+>> +        index = of_property_match_string(np, "reg-names", mem_names[i]);
+>> +        if (index < 0) {
+>> +            of_node_put(np);
+>> +            return index;
+>> +        }
+>> +
+>> +        if (of_address_to_resource(np, index, &res)) {
+>> +            of_node_put(np);
+>> +            return -EINVAL;
+>> +        }
+>> +
+>> +        pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
+>> +                            resource_size(&res));
+>> +        if (!pruss->mem_regions[i].va) {
+>> +            dev_err(dev, "failed to parse and map memory resource %d %s\n",
+>> +                i, mem_names[i]);
+>> +            of_node_put(np);
+>> +            return -ENOMEM;
+>> +        }
+>> +        pruss->mem_regions[i].pa = res.start;
+>> +        pruss->mem_regions[i].size = resource_size(&res);
+>> +
+>> +        dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %p\n",
+>> +            mem_names[i], &pruss->mem_regions[i].pa,
+>> +            pruss->mem_regions[i].size, pruss->mem_regions[i].va);
+>> +    }
+>> +    of_node_put(np);
+>> +
+>> +    platform_set_drvdata(pdev, pruss);
+>> +
+>> +    dev_info(&pdev->dev, "creating PRU cores and other child platform devices\n");
+> 
+> Is this really needed? Or dev_dbg instead?
+> 
+>> +    ret = of_platform_populate(node, NULL, NULL, &pdev->dev);
+>> +    if (ret)
+>> +        dev_err(dev, "of_platform_populate failed\n");
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +static int pruss_remove(struct platform_device *pdev)
+>> +{
+>> +    struct device *dev = &pdev->dev;
+>> +
+>> +    dev_info(dev, "remove PRU cores and other child platform devices\n");
+> 
+> same here... looks like debug message
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index fa3559b..2aa05b0 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -57,6 +57,7 @@ enum pru_mem {
-  * @id: id of the PRU core within the PRUSS
-  * @pruss: back-reference to parent PRUSS structure
-  * @rproc: remoteproc pointer for this PRU core
-+ * @client_np: client device node
-  * @mbox: mailbox channel handle used for vring signalling with MPU
-  * @client: mailbox client to request the mailbox channel
-  * @irq_ring: IRQ number to use for processing vring buffers
-@@ -71,6 +72,7 @@ enum pru_mem {
-  * @sdram_da: device address of secondary Data RAM for this PRU
-  * @shrdram_da: device address of shared Data RAM
-  * @fw_name: name of firmware image used during loading
-+ * @lock: mutex to protect client usage
-  * @dbg_single_step: debug state variable to set PRU into single step mode
-  * @dbg_continuous: debug state variable to restore PRU execution mode
-  */
-@@ -78,6 +80,7 @@ struct pru_rproc {
- 	int id;
- 	struct pruss *pruss;
- 	struct rproc *rproc;
-+	struct device_node *client_np;
- 	struct mbox_chan *mbox;
- 	struct mbox_client client;
- 	int irq_vring;
-@@ -92,6 +95,7 @@ struct pru_rproc {
- 	u32 sdram_da;
- 	u32 shrdram_da;
- 	const char *fw_name;
-+	struct mutex lock; /* client access lock */
- 	u32 dbg_single_step;
- 	u32 dbg_continuous;
- };
-@@ -126,6 +130,113 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
- 	spin_unlock_irqrestore(&pru->rmw_lock, flags);
- }
- 
-+static struct rproc *__pru_rproc_get(struct device_node *np, int index)
-+{
-+	struct device_node *rproc_np = NULL;
-+	struct platform_device *pdev;
-+	struct rproc *rproc;
-+
-+	rproc_np = of_parse_phandle(np, "prus", index);
-+	if (!rproc_np || !of_device_is_available(rproc_np))
-+		return ERR_PTR(-ENODEV);
-+
-+	pdev = of_find_device_by_node(rproc_np);
-+	of_node_put(rproc_np);
-+
-+	if (!pdev)
-+		/* probably PRU not yet probed */
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	/* TODO: replace the crude string based check to make sure it is PRU */
-+	if (!strstr(dev_name(&pdev->dev), "pru")) {
-+		put_device(&pdev->dev);
-+		return ERR_PTR(-ENODEV);
-+	}
-+
-+	rproc = platform_get_drvdata(pdev);
-+	put_device(&pdev->dev);
-+	if (!rproc)
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	get_device(&rproc->dev);
-+
-+	return rproc;
-+}
-+
-+/**
-+ * pru_rproc_get() - get the PRU rproc instance from a device node
-+ * @np: the user/client device node
-+ * @index: index to use for the prus property
-+ *
-+ * This function looks through a client device node's "prus" property at index
-+ * @index and returns the rproc handle for a valid PRU remote processor if
-+ * found. The function allows only one user to own the PRU rproc resource at
-+ * a time. Caller must call pru_rproc_put() when done with using the rproc,
-+ * not required if the function returns a failure.
-+ *
-+ * Returns the rproc handle on success, and an ERR_PTR on failure using one
-+ * of the following error values
-+ *    -ENODEV if device is not found
-+ *    -EBUSY if PRU is already acquired by anyone
-+ *    -EPROBE_DEFER is PRU device is not probed yet
-+ */
-+struct rproc *pru_rproc_get(struct device_node *np, int index)
-+{
-+	struct rproc *rproc;
-+	struct pru_rproc *pru;
-+
-+	rproc = __pru_rproc_get(np, index);
-+	if (IS_ERR(rproc))
-+		return rproc;
-+
-+	pru = rproc->priv;
-+
-+	mutex_lock(&pru->lock);
-+
-+	if (pru->client_np) {
-+		mutex_unlock(&pru->lock);
-+		put_device(&rproc->dev);
-+		return ERR_PTR(-EBUSY);
-+	}
-+
-+	pru->client_np = np;
-+
-+	mutex_unlock(&pru->lock);
-+
-+	return rproc;
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_get);
-+
-+/**
-+ * pru_rproc_put() - release the PRU rproc resource
-+ * @rproc: the rproc resource to release
-+ *
-+ * Releases the PRU rproc resource and makes it available to other
-+ * users.
-+ */
-+void pru_rproc_put(struct rproc *rproc)
-+{
-+	struct pru_rproc *pru;
-+
-+	if (IS_ERR_OR_NULL(rproc))
-+		return;
-+
-+	/* TODO: replace the crude string based check to make sure it is PRU */
-+	if (!strstr(dev_name(rproc->dev.parent), "pru"))
-+		return;
-+
-+	pru = rproc->priv;
-+	if (!pru->client_np)
-+		return;
-+
-+	mutex_lock(&pru->lock);
-+	pru->client_np = NULL;
-+	mutex_unlock(&pru->lock);
-+
-+	put_device(&rproc->dev);
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_put);
-+
- /**
-  * pru_rproc_set_ctable() - set the constant table index for the PRU
-  * @rproc: the rproc instance of the PRU
-@@ -588,6 +699,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 	pru->rproc = rproc;
- 	pru->fw_name = fw_name;
- 	spin_lock_init(&pru->rmw_lock);
-+	mutex_init(&pru->lock);
- 
- 	ret = pruss_request_mem_region(pru->pruss, PRUSS_MEM_DRAM0,
- 				       &pru->dram0);
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index af04a1c..405039a 100644
---- a/include/linux/pruss.h
-+++ b/include/linux/pruss.h
-@@ -249,10 +249,19 @@ int pruss_intc_unconfigure(struct pruss *pruss,
- 
- #if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
- 
-+struct rproc *pru_rproc_get(struct device_node *node, int index);
-+void pru_rproc_put(struct rproc *rproc);
- int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
- 
- #else
- 
-+static inline struct rproc *pru_rproc_get(struct device_node *node, int index)
-+{
-+	return ERR_PTR(-ENOTSUPP);
-+}
-+
-+static inline void pru_rproc_put(struct rproc *rproc) { }
-+
- static inline int pru_rproc_set_ctable(struct rproc *rproc,
- 				       enum pru_ctable_idx c, u32 addr)
- {
+Yes for both.
+> 
+>> +    of_platform_depopulate(dev);
+>> +
+>> +    return 0;
+>> +}
+>> +
+
+cheers,
+-roger
+
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
