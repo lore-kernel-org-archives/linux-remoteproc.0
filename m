@@ -1,176 +1,98 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 11/16] soc: ti: pruss: add helper functions to set GPI mode, MII_RT_event and XFR
-Date: Mon, 26 Nov 2018 09:52:44 +0200
-Message-ID: <1543218769-5507-12-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Return-Path: <david@lechnology.com>
+Subject: Re: [PATCH 01/16] remoteproc: Extend rproc_da_to_va() API with a
+ flags parameter
 References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-2-git-send-email-rogerq@ti.com>
+ <d93c4c96-e0b9-59cd-6098-92684bc2360b@lechnology.com>
+ <5BFFBFA0.9000104@ti.com>
+From: David Lechner <david@lechnology.com>
+Message-ID: <ec83108c-1748-cec4-bebf-119d261fb229@lechnology.com>
+Date: Thu, 29 Nov 2018 10:12:42 -0600
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+In-Reply-To: <5BFFBFA0.9000104@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Roger Quadros <rogerq@ti.com>, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On 11/29/18 4:29 AM, Roger Quadros wrote:
+> Bjorn, Suman,
+> 
+> On 26/11/18 23:29, David Lechner wrote:
+>> On 11/26/18 1:52 AM, Roger Quadros wrote:
+>>> From: Suman Anna <s-anna@ti.com>
+>>>
+>>> The rproc_da_to_va() API is currently used to perform any device
+>>> to kernel address translations to meet the different needs of the
+>>> remoteproc core/platform drivers (eg: loading). The function also
+>>> invokes the da_to_va ops, if present, to allow the remoteproc
+>>> platform drivers to provide address translation. However, not all
+>>> platform implementations have linear address spaces, and may need
+>>> an additional parameter to be able to perform proper translations.
+>>>
+>>> The rproc_da_to_va() API and the rproc .da_to_va ops have therefore
+>>> been expanded to take in an additional flags field enabling some
+>>> remoteproc implementations (like the TI PRUSS remoteproc driver)
+>>> to use these flags. Also, define some semantics for this flags
+>>> argument as this can vary from one implementation to another. A
+>>> new flags type is encoded into the upper 16 bits along side the
+>>> actual value in the lower 16-bits for the flags argument, to
+>>> allow different individual implementations to have better
+>>> flexibility in interpreting the flags as per their needs.
+>>
+>> This seems like an overly complex solution for a rather simple
+>> problem. Instead of passing all sorts of flags, could we just add
+>> a parameter named "page" to da_to_va() that indicates the memory
+>> page of the address in the remote processor?
+>>
+>> Or perhaps there is some other use for all of these flags that I
+>> am not aware of?
+> 
+> I'm not a big fan of this patch either.
+> 
+> rproc_da_to_va() is used at the following places
+> 
+> 2 qcom_q6v5_mss.c         qcom_q6v5_dump_segment           974 void *ptr = rproc_da_to_va(rproc, segment->da, segment->size,
+> 3 remoteproc_core.c       rproc_da_to_va                   197 void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, u32 flags)
+> 4 remoteproc_core.c       rproc_handle_trace               582 ptr = rproc_da_to_va(rproc, rsc->da, rsc->len, RPROC_FLAGS_NONE);
+> 5 remoteproc_core.c       rproc_coredump                  1592 ptr = rproc_da_to_va(rproc, segment->da, segment->size,
+> 6 remoteproc_elf_loader.c rproc_elf_load_segments          185 ptr = rproc_da_to_va(rproc, da, memsz,
+> 7 remoteproc_elf_loader.c rproc_elf_find_loaded_rsc_table  337 return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size,
+> 
+> At rproc_elf_load_segments() we need to pass enough information so that
+> the rproc driver can load the segment into proper area (IRAM vs DRAM).
+> So providing page should suffice.
 
-The PRUSS CFG module is represented as a syscon node and is currently
-managed by the PRUSS platform driver. Add easy accessor functions to set
-GPI mode, MII_RT event enable/disable and XFR (XIN XOUT) enable/disable
-to enable the PRUSS Ethernet usecase. These functions reuse the generic
-pruss_regmap_update() API function.
+FYI, the PRU series I sent a while back has some patches to do
+something like this so feel free to use them if they are helpful.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- include/linux/pruss.h | 115 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 115 insertions(+)
+https://lore.kernel.org/lkml/20180623210810.21232-2-david@lechnology.com/
+https://lore.kernel.org/lkml/20180623210810.21232-3-david@lechnology.com/
 
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index c0a3b3e..7227aae 100644
---- a/include/linux/pruss.h
-+++ b/include/linux/pruss.h
-@@ -204,6 +204,69 @@ int pruss_intc_configure(struct pruss *pruss,
- int pruss_intc_unconfigure(struct pruss *pruss,
- 			   struct pruss_intc_config *intc_config);
- 
-+/**
-+ * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @id: PRU identifier (0-1)
-+ * @mux: pointer to store the current mux value into
-+ */
-+static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id id, u8 *mux)
-+{
-+	int ret = 0;
-+	u32 val;
-+
-+	ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(id), &val);
-+	if (!ret)
-+		*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
-+			    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-+	return ret;
-+}
-+
-+/**
-+ * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @pru_id: PRU identifier (0-1)
-+ * @mux: new mux value for PRU
-+ */
-+static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id id, u8 mux)
-+{
-+	if (mux >= PRUSS_GP_MUX_SEL_MAX)
-+		return -EINVAL;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(id),
-+				PRUSS_GPCFG_PRU_MUX_SEL_MASK,
-+				(u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-+}
-+
-+/**
-+ * pruss_cfg_miirt_enable() - Enable/disable MII RT Events
-+ * @pruss: the pruss instance
-+ * @enable: enable/disable
-+ *
-+ * Enable/disable the MII RT Events for the PRUSS.
-+ */
-+static inline int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
-+{
-+	u32 set = enable ? PRUSS_MII_RT_EVENT_EN : 0;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_MII_RT,
-+				PRUSS_MII_RT_EVENT_EN, set);
-+}
-+
-+/**
-+ * pruss_cfg_xfr_enable() - Enable/disable XIN XOUT shift functionality
-+ * @pruss: the pruss instance
-+ * @enable: enable/disable
-+ */
-+static inline int pruss_cfg_xfr_enable(struct pruss *pruss, bool enable)
-+{
-+	u32 set = enable ? PRUSS_SPP_XFER_SHIFT_EN : 0;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_SPP,
-+				PRUSS_SPP_XFER_SHIFT_EN, set);
-+}
- #else
- 
- static inline struct pruss *pruss_get(struct rproc *rproc)
-@@ -254,6 +317,28 @@ int pruss_intc_unconfigure(struct pruss *pruss,
- 	return -ENOTSUPP;
- }
- 
-+static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id id, u8 *mux)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id id, u8 mux)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pruss_cfg_xfr_enable(struct pruss *pruss, bool enable)
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif /* CONFIG_TI_PRUSS */
- 
- #if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
-@@ -263,6 +348,30 @@ void pru_rproc_put(struct rproc *rproc);
- enum pruss_pru_id pru_rproc_get_id(struct rproc *rproc);
- int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
- 
-+/**
-+ * pruss_cfg_gpimode() - set the GPI mode of the PRU
-+ * @pruss: the pruss instance handle
-+ * @pru: the rproc instance handle of the PRU
-+ * @mode: GPI mode to set
-+ *
-+ * Sets the GPI mode for a given PRU by programming the
-+ * corresponding PRUSS_CFG_GPCFGx register
-+ *
-+ * Returns 0 on success, or an error code otherwise
-+ */
-+static inline int pruss_cfg_gpimode(struct pruss *pruss, struct rproc *pru,
-+				    enum pruss_gpi_mode mode)
-+{
-+	enum pruss_pru_id id = pru_rproc_get_id(pru);
-+
-+	if (id < 0)
-+		return -EINVAL;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(id),
-+				PRUSS_GPCFG_PRU_GPI_MODE_MASK,
-+				mode << PRUSS_GPCFG_PRU_GPI_MODE_SHIFT);
-+}
-+
- #else
- 
- static inline struct rproc *pru_rproc_get(struct device_node *node, int index)
-@@ -283,6 +392,12 @@ static inline int pru_rproc_set_ctable(struct rproc *rproc,
- 	return -ENOTSUPP;
- }
- 
-+static inline int pruss_cfg_gpimode(struct pruss *pruss, struct rproc *pru,
-+				    enum pruss_gpi_mode mode)
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif /* CONFIG_PRUSS_REMOTEPROC */
- 
- #endif /* __LINUX_PRUSS_H */
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+> I want to understand more about rproc_elf_find_loaded_rsc_table() myself.
+> rproc_elf_find_loaded_rsc_table() is called only in rproc_start() in remoteproc_core.c
+> with the comment
+> 
+>          /*
+>           * The starting device has been given the rproc->cached_table as the
+>           * resource table. The address of the vring along with the other
+>           * allocated resources (carveouts etc) is stored in cached_table.
+>           * In order to pass this information to the remote device we must copy
+>           * this information to device memory. We also update the table_ptr so
+>           * that any subsequent changes will be applied to the loaded version.
+>           */
+>          loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+> 
+> Why isn't cached_table sufficient?
+> Why do we need to call rproc_find_loaded_rsc_table()?
+> 
+> why do we need to load the resource table into remote processor memory at all.
+> As discussed earlier, some PRU systems have very little memory (512 bytes?)
+> and we want to avoid unnecessary loading.
+> 
+> cheers,
+> -roger
+> 
