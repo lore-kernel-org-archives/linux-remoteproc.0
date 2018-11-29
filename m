@@ -1,65 +1,69 @@
-Return-Path: <xiaoxiang781216@gmail.com>
-Return-Path: <xiaoxiang781216@gmail.com>
-From: Xiang Xiao <xiaoxiang781216@gmail.com>
-Subject: [PATCH] remoteproc: debug: add crash debugfs node
-Date: Wed,  7 Nov 2018 23:26:01 +0800
-Message-Id: <1541604361-1475-1-git-send-email-xiaoxiang@xiaomi.com>
-To: linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org
-Cc: Xiang Xiao <xiaoxiang@xiaomi.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 1/2] remoteproc: replace bool from struct rproc by u8
+Date: Thu, 29 Nov 2018 22:16:19 +0100
+Message-ID: <1543526180-55934-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1543526180-55934-1-git-send-email-loic.pallardy@st.com>
+References: <1543526180-55934-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-so we can trigger the crash manully which could:
-1.test the crash handling code path more easily
-2.update the firmware without reboot kernel
+Post [1] and checkpatch tool indicate that usage of bool type
+in structure is now no more allowed/advised.
+This patch replaces bool by unsigned char (u8) and reorders
+struct rproc fields to avoid padding.
 
-Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
+[1] https://lkml.org/lkml/2017/11/21/384
+
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/remoteproc_debugfs.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ include/linux/remoteproc.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 0808466..fca4b2b 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -154,6 +154,30 @@ static const struct file_operations rproc_recovery_ops = {
- 	.llseek = generic_file_llseek,
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 507a2b524208..b6660088949f 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -452,15 +452,15 @@ struct rproc_dump_segment {
+  * @index: index of this rproc device
+  * @crash_handler: workqueue for handling a crash
+  * @crash_cnt: crash counter
+- * @recovery_disabled: flag that state if recovery was disabled
+  * @max_notifyid: largest allocated notify id.
+  * @table_ptr: pointer to the resource table in effect
+  * @cached_table: copy of the resource table
+  * @table_sz: size of @cached_table
+- * @has_iommu: flag to indicate if remote processor is behind an MMU
+- * @auto_boot: flag to indicate if remote processor should be auto-started
+  * @dump_segments: list of segments in the firmware
+  * @nb_vdev: number of vdev currently handled by rproc
++ * @recovery_disabled: flag that state if recovery was disabled
++ * @has_iommu: flag to indicate if remote processor is behind an MMU
++ * @auto_boot: flag to indicate if remote processor should be auto-started
+  */
+ struct rproc {
+ 	struct list_head node;
+@@ -485,15 +485,15 @@ struct rproc {
+ 	int index;
+ 	struct work_struct crash_handler;
+ 	unsigned int crash_cnt;
+-	bool recovery_disabled;
+ 	int max_notifyid;
+ 	struct resource_table *table_ptr;
+ 	struct resource_table *cached_table;
+ 	size_t table_sz;
+-	bool has_iommu;
+-	bool auto_boot;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
++	u8 recovery_disabled;
++	u8 has_iommu;
++	u8 auto_boot;
  };
  
-+/* expose the crash trigger via debugfs */
-+static ssize_t
-+rproc_crash_write(struct file *filp, const char __user *user_buf,
-+		  size_t count, loff_t *ppos)
-+{
-+	struct rproc *rproc = filp->private_data;
-+	unsigned int type;
-+	int ret;
-+
-+	ret = kstrtouint_from_user(user_buf, count, 0, &type);
-+	if (ret < 0)
-+		return ret;
-+
-+	rproc_report_crash(rproc, type);
-+
-+	return count;
-+}
-+
-+static const struct file_operations rproc_crash_ops = {
-+	.write = rproc_crash_write,
-+	.open = simple_open,
-+	.llseek = generic_file_llseek,
-+};
-+
- /* Expose resource table content via debugfs */
- static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- {
-@@ -324,6 +348,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
- 			    rproc, &rproc_name_ops);
- 	debugfs_create_file("recovery", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_recovery_ops);
-+	debugfs_create_file("crash", 0200, rproc->dbg_dir,
-+			    rproc, &rproc_crash_ops);
- 	debugfs_create_file("resource_table", 0400, rproc->dbg_dir,
- 			    rproc, &rproc_rsc_table_ops);
- 	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
+ /**
 -- 
 2.7.4
