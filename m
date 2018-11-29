@@ -1,38 +1,43 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 0/2] remoteproc: add support for preloaded firmware
-Date: Thu, 29 Nov 2018 22:16:18 +0100
-Message-ID: <1543526180-55934-1-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH 0/3] remoteproc: complete fixed memory region support
+Date: Thu, 29 Nov 2018 22:32:35 +0100
+Message-ID: <1543527158-56163-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org, ohad@wizery.com
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch series introduces a new flag in remoteproc core to add
-support of remote processor having their firmware loading by another
-way than standard remoteproc core sequence.
+This new series corresponds to the remaining patches from [1]
+addressing fixed memory region support for remote processor.
 
-Firmware could be ROMed, loaded by security or bootloader before kernel
-boot or loaded by a special rproc platform driver interface.
-
-When "preloaded" flag is set by rproc platform driver, remoteproc core
-doesn't request firmware and execute rproc_start sequence as usual allocating
-associated rproc resources.
-It is rproc platform driver responsibility to implement the right firmware
-load operations according to HW specificities like resource table location
-or firmware definition if needed.
+The three remaining patches allow to:
+- assign a specific memory region to vdev sub device. As all virtio based
+  services are using virtio device parent for memory allocation, I propose to
+  keep a dedicated vdev device per virtio link for memory allocation. A second
+  step will be to used virtio device itself.
+- migrate ST driver on new memory carveout management
+- allocate virtio rpmsg buffer from parent device
 
 Regards,
 Loic
 
-Loic Pallardy (2):
-  remoteproc: replace bool from struct rproc by u8
-  remoteproc: add support for co-processor booted before kernel
 
- drivers/remoteproc/remoteproc_core.c | 37 +++++++++++++++++++++++++++---------
- include/linux/remoteproc.h           | 14 ++++++++------
- 2 files changed, 36 insertions(+), 15 deletions(-)
+[1] https://lkml.org/lkml/2018/7/27/612
+
+Loic Pallardy (3):
+  remoteproc: create vdev subdevice with specific dma memory pool
+  remoteproc: st: add reserved memory support
+  rpmsg: virtio: allocate buffer from parent
+
+ drivers/remoteproc/remoteproc_core.c     | 46 ++++++++++++++--
+ drivers/remoteproc/remoteproc_internal.h |  1 +
+ drivers/remoteproc/remoteproc_virtio.c   | 42 ++++++++++++++-
+ drivers/remoteproc/st_remoteproc.c       | 91 ++++++++++++++++++++++++++++----
+ drivers/rpmsg/virtio_rpmsg_bus.c         |  6 +--
+ include/linux/remoteproc.h               |  1 +
+ 6 files changed, 169 insertions(+), 18 deletions(-)
 
 -- 
 2.7.4
