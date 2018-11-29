@@ -1,41 +1,45 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 0/7] remoteproc: Fixes for memoy carveout management
-Date: Thu, 29 Nov 2018 22:29:21 +0100
-Message-ID: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <rogerq@ti.com>
+Subject: Re: [PATCH 05/16] remoteproc/pru: Add pru-specific debugfs support
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-6-git-send-email-rogerq@ti.com>
+ <d0e227e3-39dc-dfc8-b94c-3d9d072f6562@lechnology.com>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <5BFFBCAC.9000004@ti.com>
+Date: Thu, 29 Nov 2018 12:17:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+In-Reply-To: <d0e227e3-39dc-dfc8-b94c-3d9d072f6562@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: David Lechner <david@lechnology.com>, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These patches fix the comments sent on remoteproc mailing
-list after acceptation of memory carveout patch series [1].
+On 27/11/18 00:37, David Lechner wrote:
+> On 11/26/18 1:52 AM, Roger Quadros wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> The remoteproc core creates certain standard debugfs entries,
+>> that does not give a whole lot of useful information for the
+>> PRUs. The PRU remoteproc driver is enhanced to add additional
+>> debugfs entries for PRU. These will be auto-cleaned up when
+>> the parent rproc debug directory is removed.
+>>
+>> The enhanced debugfs support adds two new entries: 'regs' and
+>> 'single_step'. The 'regs' dumps out the useful CTRL sub-module
+>> registers as well as each of the 32 GPREGs and CT_REGs registers.
+>> The GPREGs and CT_REGs though are printed only when the PRU is
+>> halted and accessible as per the IP design.
+>>
+> 
+> If the driver used regmap to access the CTRL I/O memory, then
+> 'regs' wouldn't be needed since regmap already does debugfs.
+> 
 
-In few words, series corrects:
-- memory carveout allocation for rproc without iommu
-- rproc_da_to_va and trace buffer access to take into account
-  late carveout allocation
-- resource table cast by adding warning messages
+ok, we could split out CTRL from this and use regmap.
 
-Regards,
-Loic
-
-[1] https://lkml.org/lkml/2018/7/27/612
-
-Loic Pallardy (7):
-  remoteproc: correct rproc_mem_entry_init() comments
-  remoteproc: fix rproc_da_to_va in case of unallocated carveout
-  remoteproc: fix rproc_alloc_carveout() bad variable cast
-  remoteproc: add warning on resource table cast
-  remoteproc: fix rproc_alloc_carveout() for rproc with iommu domain
-  remoteproc: fix trace buffer va initialization
-  remoteproc: fix rproc_check_carveout_da() returned error and comments
-
- drivers/remoteproc/remoteproc_core.c     | 91 +++++++++++++++++++-------------
- drivers/remoteproc/remoteproc_debugfs.c  | 21 ++++++--
- drivers/remoteproc/remoteproc_internal.h |  9 +++-
- 3 files changed, 78 insertions(+), 43 deletions(-)
+cheers,
+-roger
 
 -- 
-2.7.4
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
