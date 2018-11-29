@@ -1,88 +1,161 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 14/16] remoteproc/pru: configure firmware based on client setup
-Date: Mon, 26 Nov 2018 09:52:47 +0200
-Message-ID: <1543218769-5507-15-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 6/7] remoteproc: fix trace buffer va initialization
+Date: Thu, 29 Nov 2018 22:29:27 +0100
+Message-ID: <1543526968-56091-7-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Tero Kristo <t-kristo@ti.com>
+With rproc_alloc_registered_carveouts() introduction, carveouts are
+allocated after resource table parsing.
+rproc_da_to_va() may return NULL at trace resource registering.
+This patch modifies trace debufs registering to provide device address
+(da) instead of va.
+da to va translation is done at each trace buffer access
+through debugfs interface.
 
-Client device node property firmware-name is now used to configure
-firmware for the PRU instances. The default firmware is also
-restored once releasing the PRU resource.
+Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry struct")
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/pru_rproc.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/remoteproc/remoteproc_core.c     | 26 ++++++++++----------------
+ drivers/remoteproc/remoteproc_debugfs.c  | 21 +++++++++++++++++----
+ drivers/remoteproc/remoteproc_internal.h |  9 ++++++++-
+ 3 files changed, 35 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 9a08937..84f006b 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -132,6 +132,21 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
- 	spin_unlock_irqrestore(&pru->rmw_lock, flags);
- }
- 
-+/**
-+ * pru_rproc_set_firmware() - set firmware for a pru core
-+ * @rproc: the rproc instance of the PRU
-+ * @fw_name: the new firmware name, or NULL if default is desired
-+ */
-+static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
-+{
-+	struct pru_rproc *pru = rproc->priv;
-+
-+	if (!fw_name)
-+		fw_name = pru->fw_name;
-+
-+	return rproc_set_firmware(rproc, fw_name);
-+}
-+
- static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f19bc6961e40..9dbcc16f8782 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -562,9 +562,8 @@ void rproc_vdev_release(struct kref *ref)
+ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+ 			      int offset, int avail)
  {
- 	struct device_node *rproc_np = NULL;
-@@ -189,6 +204,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
- 	struct device *dev;
- 	int ret;
- 	u32 mux;
-+	const char *fw_name;
+-	struct rproc_mem_entry *trace;
++	struct rproc_debug_trace *trace;
+ 	struct device *dev = &rproc->dev;
+-	void *ptr;
+ 	char name[15];
  
- 	rproc = __pru_rproc_get(np, index);
- 	if (IS_ERR(rproc))
-@@ -225,6 +241,16 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
- 		}
+ 	if (sizeof(*rsc) > avail) {
+@@ -578,28 +577,23 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+ 		return -EINVAL;
  	}
  
-+	ret = of_property_read_string_index(np, "firmware-name", index,
-+					    &fw_name);
-+	if (!ret) {
-+		ret = pru_rproc_set_firmware(rproc, fw_name);
-+		if (ret) {
-+			dev_err(dev, "failed to set firmware: %d\n", ret);
-+			goto err;
-+		}
-+	}
+-	/* what's the kernel address of this resource ? */
+-	ptr = rproc_da_to_va(rproc, rsc->da, rsc->len);
+-	if (!ptr) {
+-		dev_err(dev, "erroneous trace resource entry\n");
+-		return -EINVAL;
+-	}
+-
+ 	trace = kzalloc(sizeof(*trace), GFP_KERNEL);
+ 	if (!trace)
+ 		return -ENOMEM;
+ 
+ 	/* set the trace buffer dma properties */
+-	trace->len = rsc->len;
+-	trace->va = ptr;
++	trace->trace_mem.len = rsc->len;
++	trace->trace_mem.da = rsc->da;
 +
- 	return rproc;
++	/* set pointer on rproc device */
++	trace->rproc = rproc;
  
- err:
-@@ -255,6 +281,7 @@ void pru_rproc_put(struct rproc *rproc)
- 	if (!pru->client_np)
- 		return;
+ 	/* make sure snprintf always null terminates, even if truncating */
+ 	snprintf(name, sizeof(name), "trace%d", rproc->num_traces);
  
-+	pru_rproc_set_firmware(rproc, NULL);
- 	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
+ 	/* create the debugfs entry */
+-	trace->priv = rproc_create_trace_file(name, rproc, trace);
+-	if (!trace->priv) {
+-		trace->va = NULL;
++	trace->tfile = rproc_create_trace_file(name, rproc, trace);
++	if (!trace->tfile) {
+ 		kfree(trace);
+ 		return -EINVAL;
+ 	}
+@@ -608,8 +602,8 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
  
- 	mutex_lock(&pru->lock);
+ 	rproc->num_traces++;
+ 
+-	dev_dbg(dev, "%s added: va %pK, da 0x%x, len 0x%x\n",
+-		name, ptr, rsc->da, rsc->len);
++	dev_dbg(dev, "%s added: da 0x%x, len 0x%x\n",
++		name, rsc->da, rsc->len);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index e90135c64af0..11240b4d0a91 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -47,10 +47,23 @@ static struct dentry *rproc_dbg;
+ static ssize_t rproc_trace_read(struct file *filp, char __user *userbuf,
+ 				size_t count, loff_t *ppos)
+ {
+-	struct rproc_mem_entry *trace = filp->private_data;
+-	int len = strnlen(trace->va, trace->len);
++	struct rproc_debug_trace *data = filp->private_data;
++	struct rproc_mem_entry *trace = &data->trace_mem;
++	void *va;
++	char buf[100];
++	int len;
++
++	va = rproc_da_to_va(data->rproc, trace->da, trace->len);
++
++	if (!va) {
++		len = scnprintf(buf, sizeof(buf), "Trace %s not available\n",
++				trace->name);
++		va = buf;
++	} else {
++		len = strnlen(va, trace->len);
++	}
+ 
+-	return simple_read_from_buffer(userbuf, count, ppos, trace->va, len);
++	return simple_read_from_buffer(userbuf, count, ppos, va, len);
+ }
+ 
+ static const struct file_operations trace_rproc_ops = {
+@@ -288,7 +301,7 @@ void rproc_remove_trace_file(struct dentry *tfile)
+ }
+ 
+ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+-				       struct rproc_mem_entry *trace)
++				       struct rproc_debug_trace *trace)
+ {
+ 	struct dentry *tfile;
+ 
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index f6cad243d7ca..7d8936688164 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -25,6 +25,13 @@
+ 
+ struct rproc;
+ 
++struct rproc_debug_trace {
++	struct rproc *rproc;
++	struct dentry *tfile;
++	struct list_head node;
++	struct rproc_mem_entry trace_mem;
++};
++
+ /* from remoteproc_core.c */
+ void rproc_release(struct kref *kref);
+ irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
+@@ -37,7 +44,7 @@ void rproc_remove_virtio_dev(struct rproc_vdev *rvdev);
+ /* from remoteproc_debugfs.c */
+ void rproc_remove_trace_file(struct dentry *tfile);
+ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+-				       struct rproc_mem_entry *trace);
++				       struct rproc_debug_trace *trace);
+ void rproc_delete_debug_dir(struct rproc *rproc);
+ void rproc_create_debug_dir(struct rproc *rproc);
+ void rproc_init_debugfs(void);
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
