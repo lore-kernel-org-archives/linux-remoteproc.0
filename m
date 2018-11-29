@@ -1,38 +1,81 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15180 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726459AbeK3Wiu (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:38:50 -0500
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] remoteproc: remove duplicated include from qcom_sysmon.c
-Date: Fri, 30 Nov 2018 19:29:23 +0800
-Message-ID: <20181130112923.1168-1-yuehaibing@huawei.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 5/7] remoteproc: fix rproc_alloc_carveout() for rproc with iommu domain
+Date: Thu, 29 Nov 2018 22:29:26 +0100
+Message-ID: <1543526968-56091-6-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc@vger.kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove duplicated include.
+Correct remoteproc core behavior when memory carveout device
+address is fixed in resource table and rproc device doesn't have
+associated IOMMU.
+Current returned error is breaking legacy on TI platforms.
+This patch restores previous behavior. It adds a warn message when
+allocation doesn't fit carveout request, but doesn't stop rproc_start()
+sequence anymore.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Fixes: 3bc8140b157c ("remoteproc: configure IOMMU only if device address requested")
+
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/qcom_sysmon.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index e976a60..603b813 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -7,7 +7,6 @@
- #include <linux/notifier.h>
- #include <linux/slab.h>
- #include <linux/io.h>
--#include <linux/notifier.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc/qcom_rproc.h>
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 61c954bd695e..f19bc6961e40 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -719,6 +719,18 @@ static int rproc_alloc_carveout(struct rproc *rproc,
+ 	dev_dbg(dev, "carveout va %pK, dma %pad, len 0x%x\n",
+ 		va, &dma, mem->len);
+ 
++	if (mem->da != FW_RSC_ADDR_ANY && !rproc->domain) {
++		/*
++		 * Check requested da is equal to dma address
++		 * and print a warn message in case of missalignment.
++		 * Don't stop rproc_start sequence as coprocessor may
++		 * build pa to da translation on its side.
++		 */
++		if (mem->da != (u32)dma)
++			dev_warn(dev->parent,
++				 "Allocated carveout doesn't fit device address request\n");
++	}
++
+ 	/*
+ 	 * Ok, this is non-standard.
+ 	 *
+@@ -736,15 +748,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
+ 	 * to use the iommu-based DMA API: we expect 'dma' to contain the
+ 	 * physical address in this case.
+ 	 */
+-
+-	if (mem->da != FW_RSC_ADDR_ANY) {
+-		if (!rproc->domain) {
+-			dev_err(dev->parent,
+-				"Bad carveout rsc configuration\n");
+-			ret = -ENOMEM;
+-			goto dma_free;
+-		}
+-
++	if (mem->da != FW_RSC_ADDR_ANY && rproc->domain) {
+ 		mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
+ 		if (!mapping) {
+ 			ret = -ENOMEM;
+@@ -771,7 +775,9 @@ static int rproc_alloc_carveout(struct rproc *rproc,
+ 
+ 		dev_dbg(dev, "carveout mapped 0x%x to %pad\n",
+ 			mem->da, &dma);
+-	} else {
++	}
++
++	if (mem->da == FW_RSC_ADDR_ANY) {
+ 		/* Update device address as undefined by requester */
+ 		if (sizeof(dma_addr_t) > sizeof(u32))
+ 			dev_warn(dev, "DMA address cast in 32bit to fit resource table format\n");
 -- 
-2.7.0
+2.7.4
