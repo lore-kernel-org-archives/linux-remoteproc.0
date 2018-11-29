@@ -1,168 +1,59 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 02/16] remoteproc: Add a rproc_set_firmware() API
-Date: Mon, 26 Nov 2018 09:52:35 +0200
-Message-ID: <1543218769-5507-3-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 3/3] rpmsg: virtio: allocate buffer from parent
+Date: Thu, 29 Nov 2018 22:32:38 +0100
+Message-ID: <1543527158-56163-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1543527158-56163-1-git-send-email-loic.pallardy@st.com>
+References: <1543527158-56163-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Remoteproc is now capable to create one specific sub-device per
+virtio link to associate a dedicated memory pool.
+This implies to change device used by virtio_rpmsg for
+buffer allocation from grand-parent to parent.
 
-A new API, rproc_set_firmware() is added to allow the remoteproc platform
-drivers and remoteproc client drivers to be able to configure a custom
-firmware name that is different from the default name used during
-remoteproc registration. This function is being introduced to provide
-a kernel-level equivalent of the current sysfs interface to remoteproc
-client drivers. This allows some remoteproc drivers to choose different
-firmwares at runtime when the remote processor is not running based on
-the functional feature it is providing using that remote processor.
-The TI PRU Ethernet driver will be an example of such usage as it
-requires to use different firmwares for different supported protocols.
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Tested-by: Anup Patel <anup@brainfault.org>
 
-Also, update the firmware_store() function used by the sysfs interface
-to reuse this function to avoid code duplication.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c  | 61 +++++++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_sysfs.c | 33 ++-----------------
- include/linux/remoteproc.h            |  1 +
- 3 files changed, 64 insertions(+), 31 deletions(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 39458a7..581e6e8 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2151,6 +2151,67 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
- }
- EXPORT_SYMBOL(rproc_report_crash);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 664f957012cd..5c892019ce89 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -912,7 +912,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	total_buf_space = vrp->num_bufs * vrp->buf_size;
  
-+/**
-+ * rproc_set_firmware() - assign a new firmware
-+ * @rproc: rproc handle to which the new firmware is being assigned
-+ * @fw_name: new firmware name to be assigned
-+ *
-+ * This function allows remoteproc drivers or clients to configure a custom
-+ * firmware name that is different from the default name used during remoteproc
-+ * registration. The function does not trigger a remote processor boot,
-+ * only sets the firmware name used for a subsequent boot. This function
-+ * should also be called only when the remote processor is offline.
-+ *
-+ * This allows either the userspace to configure a different name through
-+ * sysfs or a kernel-level remoteproc or a remoteproc client driver to set
-+ * a specific firmware when it is controlling the boot and shutdown of the
-+ * remote processor.
-+ *
-+ * Returns 0 on success or a negative value upon failure
-+ */
-+int rproc_set_firmware(struct rproc *rproc, const char *fw_name)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	int ret, len;
-+	char *p;
-+
-+	if (!rproc || !fw_name)
-+		return -EINVAL;
-+
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret) {
-+		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-+		return -EINVAL;
-+	}
-+
-+	if (rproc->state != RPROC_OFFLINE) {
-+		dev_err(dev, "can't change firmware while running\n");
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	len = strcspn(fw_name, "\n");
-+	if (!len) {
-+		dev_err(dev, "can't provide a NULL firmware\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	p = kstrndup(fw_name, len, GFP_KERNEL);
-+	if (!p) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	kfree(rproc->firmware);
-+	rproc->firmware = p;
-+
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL(rproc_set_firmware);
-+
- static int __init remoteproc_init(void)
- {
- 	rproc_init_sysfs();
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 3a4c3d7..6cf04a7 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -32,38 +32,9 @@ static ssize_t firmware_store(struct device *dev,
- 			      const char *buf, size_t count)
- {
- 	struct rproc *rproc = to_rproc(dev);
--	char *p;
--	int err, len = count;
-+	int err;
+ 	/* allocate coherent memory for the buffers */
+-	bufs_va = dma_alloc_coherent(vdev->dev.parent->parent,
++	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+ 				     total_buf_space, &vrp->bufs_dma,
+ 				     GFP_KERNEL);
+ 	if (!bufs_va) {
+@@ -980,7 +980,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	return 0;
  
--	err = mutex_lock_interruptible(&rproc->lock);
--	if (err) {
--		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
--		return -EINVAL;
--	}
--
--	if (rproc->state != RPROC_OFFLINE) {
--		dev_err(dev, "can't change firmware while running\n");
--		err = -EBUSY;
--		goto out;
--	}
--
--	len = strcspn(buf, "\n");
--	if (!len) {
--		dev_err(dev, "can't provide a NULL firmware\n");
--		err = -EINVAL;
--		goto out;
--	}
--
--	p = kstrndup(buf, len, GFP_KERNEL);
--	if (!p) {
--		err = -ENOMEM;
--		goto out;
--	}
--
--	kfree(rproc->firmware);
--	rproc->firmware = p;
--out:
--	mutex_unlock(&rproc->lock);
-+	err = rproc_set_firmware(rproc, buf);
+ free_coherent:
+-	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
++	dma_free_coherent(vdev->dev.parent, total_buf_space,
+ 			  bufs_va, vrp->bufs_dma);
+ vqs_del:
+ 	vdev->config->del_vqs(vrp->vdev);
+@@ -1015,7 +1015,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
  
- 	return err ? err : count;
- }
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 9e01a44..063468b 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -604,6 +604,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, int len,
+ 	vdev->config->del_vqs(vrp->vdev);
  
- int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
-+int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
- int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
- int rproc_coredump_add_custom_segment(struct rproc *rproc,
+-	dma_free_coherent(vdev->dev.parent->parent, total_buf_space,
++	dma_free_coherent(vdev->dev.parent, total_buf_space,
+ 			  vrp->rbufs, vrp->bufs_dma);
+ 
+ 	kfree(vrp);
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
