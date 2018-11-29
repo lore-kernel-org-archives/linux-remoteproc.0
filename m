@@ -1,55 +1,226 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v2 1/4] dt-bindings: hwlock: Document STM32 hwspinlock bindings
-Date: Thu,  8 Nov 2018 10:04:59 +0100
-Message-Id: <20181108090502.14543-2-benjamin.gaignard@st.com>
-In-Reply-To: <20181108090502.14543-1-benjamin.gaignard@st.com>
-References: <20181108090502.14543-1-benjamin.gaignard@st.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 1/3] remoteproc: create vdev subdevice with specific dma memory pool
+Date: Thu, 29 Nov 2018 22:32:36 +0100
+Message-ID: <1543527158-56163-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1543527158-56163-1-git-send-email-loic.pallardy@st.com>
+References: <1543527158-56163-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add bindings for STM32 hardware spinlock device
+This patch creates a dedicated vdev subdevice for each vdev declared
+in firmware resource table and associates carveout named "vdev%dbuffer"
+(with %d vdev index in resource table) if any as dma coherent memory pool.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Then vdev subdevice is used as parent for virtio device.
+
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
-version 2 :
-- change clock name from hwspinlock to hsem to be align with hardware
-  documentation
+ drivers/remoteproc/remoteproc_core.c     | 46 +++++++++++++++++++++++++++++---
+ drivers/remoteproc/remoteproc_internal.h |  1 +
+ drivers/remoteproc/remoteproc_virtio.c   | 42 ++++++++++++++++++++++++++++-
+ include/linux/remoteproc.h               |  1 +
+ 4 files changed, 86 insertions(+), 4 deletions(-)
 
- .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-
-diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-new file mode 100644
-index 000000000000..6e933b218574
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-@@ -0,0 +1,23 @@
-+STM32 Hardware Spinlock Device Binding
-+-------------------------------------
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 54ec38fc5dca..49272da6edd7 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -39,9 +39,11 @@
+ #include <linux/idr.h>
+ #include <linux/elf.h>
+ #include <linux/crc32.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/virtio_ids.h>
+ #include <linux/virtio_ring.h>
+ #include <asm/byteorder.h>
++#include <linux/platform_device.h>
+ 
+ #include "remoteproc_internal.h"
+ 
+@@ -145,7 +147,7 @@ static void rproc_disable_iommu(struct rproc *rproc)
+ 	iommu_domain_free(domain);
+ }
+ 
+-static phys_addr_t rproc_va_to_pa(void *cpu_addr)
++phys_addr_t rproc_va_to_pa(void *cpu_addr)
+ {
+ 	/*
+ 	 * Return physical address according to virtual address location
+@@ -160,6 +162,7 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+ 	WARN_ON(!virt_addr_valid(cpu_addr));
+ 	return virt_to_phys(cpu_addr);
+ }
++EXPORT_SYMBOL(rproc_va_to_pa);
+ 
+ /**
+  * rproc_da_to_va() - lookup the kernel virtual address for a remoteproc address
+@@ -423,6 +426,20 @@ static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
+ }
+ 
+ /**
++ * rproc_rvdev_release() - release the existence of a rvdev
++ *
++ * @dev: the subdevice's dev
++ */
++static void rproc_rvdev_release(struct device *dev)
++{
++	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
 +
-+Required properties :
-+- compatible : should be "st,stm32-hwspinlock".
-+- reg : the register address of hwspinlock.
-+- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
-+	hwlock, so the number of cells should be <1> here.
-+- clock-names : Must contain "hwspinlock".
-+- clocks : Must contain a phandle entry for the clock in clock-names, see the
-+	common clock bindings.
++	of_reserved_mem_device_release(dev);
 +
-+Please look at the generic hwlock binding for usage information for consumers,
-+"Documentation/devicetree/bindings/hwlock/hwlock.txt"
++	kfree(rvdev);
++}
 +
-+Example of hwlock provider:
-+	hwspinlock@4c000000 {
-+		compatible = "st,stm32-hwspinlock";
-+		#hwlock-cells = <1>;
-+		reg = <0x4c000000 0x400>;
-+		clocks = <&rcc HSEM>;
-+		clock-names = "hsem";
-+	};
++/**
+  * rproc_handle_vdev() - handle a vdev fw resource
+  * @rproc: the remote processor
+  * @rsc: the vring resource descriptor
+@@ -455,6 +472,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 	struct device *dev = &rproc->dev;
+ 	struct rproc_vdev *rvdev;
+ 	int i, ret;
++	char name[16];
+ 
+ 	/* make sure resource isn't truncated */
+ 	if (sizeof(*rsc) + rsc->num_of_vrings * sizeof(struct fw_rsc_vdev_vring)
+@@ -488,6 +506,28 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 	rvdev->rproc = rproc;
+ 	rvdev->index = rproc->nb_vdev++;
+ 
++	/* Initialise vdev subdevice */
++	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
++	rvdev->dev.parent = rproc->dev.parent;
++	rvdev->dev.release = rproc_rvdev_release;
++	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
++	dev_set_drvdata(&rvdev->dev, rvdev);
++
++	ret = device_register(&rvdev->dev);
++	if (ret)
++		goto free_rvdev;
++
++	/* Make device dma capable by inheriting from parent's capabilities */
++	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
++
++	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
++					   dma_get_mask(rproc->dev.parent));
++	if (ret) {
++		dev_warn(dev,
++			 "Failed to set DMA mask %llx. Trying to continue... %x\n",
++			 dma_get_mask(rproc->dev.parent), ret);
++	}
++
+ 	/* parse the vrings */
+ 	for (i = 0; i < rsc->num_of_vrings; i++) {
+ 		ret = rproc_parse_vring(rvdev, rsc, i);
+@@ -518,7 +558,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 	for (i--; i >= 0; i--)
+ 		rproc_free_vring(&rvdev->vring[i]);
+ free_rvdev:
+-	kfree(rvdev);
++	device_unregister(&rvdev->dev);
+ 	return ret;
+ }
+ 
+@@ -536,7 +576,7 @@ void rproc_vdev_release(struct kref *ref)
+ 
+ 	rproc_remove_subdev(rproc, &rvdev->subdev);
+ 	list_del(&rvdev->node);
+-	kfree(rvdev);
++	device_unregister(&rvdev->dev);
+ }
+ 
+ /**
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index f6cad243d7ca..bfeacfd40947 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -52,6 +52,7 @@ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
++phys_addr_t rproc_va_to_pa(void *cpu_addr);
+ int rproc_trigger_recovery(struct rproc *rproc);
+ 
+ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index de21f620b882..9ee63c0dfbc3 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -17,7 +17,9 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/dma-mapping.h>
+ #include <linux/export.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/remoteproc.h>
+ #include <linux/virtio.h>
+ #include <linux/virtio_config.h>
+@@ -315,10 +317,48 @@ static void rproc_virtio_dev_release(struct device *dev)
+ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+ {
+ 	struct rproc *rproc = rvdev->rproc;
+-	struct device *dev = &rproc->dev;
++	struct device *dev = &rvdev->dev;
+ 	struct virtio_device *vdev = &rvdev->vdev;
++	struct rproc_mem_entry *mem;
+ 	int ret;
+ 
++	/* Try to find dedicated vdev buffer carveout */
++	mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
++	if (mem) {
++		phys_addr_t pa;
++
++		if (mem->of_resm_idx != -1) {
++			struct device_node *np = rproc->dev.parent->of_node;
++
++			/* Associate reserved memory to vdev device */
++			ret = of_reserved_mem_device_init_by_idx(dev, np,
++								 mem->of_resm_idx);
++			if (ret) {
++				dev_err(dev, "Can't associate reserved memory\n");
++				goto out;
++			}
++		} else {
++			if (mem->va) {
++				dev_warn(dev, "vdev %d buffer already mapped\n",
++					 rvdev->index);
++				pa = rproc_va_to_pa(mem->va);
++			} else {
++				/* Use dma address as carveout no memmapped yet */
++				pa = (phys_addr_t)mem->dma;
++			}
++
++			/* Associate vdev buffer memory pool to vdev subdev */
++			ret = dmam_declare_coherent_memory(dev, pa,
++							   mem->da,
++							   mem->len,
++							   DMA_MEMORY_EXCLUSIVE);
++			if (ret < 0) {
++				dev_err(dev, "Failed to associate buffer\n");
++				goto out;
++			}
++		}
++	}
++
+ 	vdev->id.device	= id,
+ 	vdev->config = &rproc_virtio_config_ops,
+ 	vdev->dev.parent = dev;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 507a2b524208..beecd8cf2eb5 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -554,6 +554,7 @@ struct rproc_vdev {
+ 	struct kref refcount;
+ 
+ 	struct rproc_subdev subdev;
++	struct device dev;
+ 
+ 	unsigned int id;
+ 	struct list_head node;
 -- 
-2.15.0
+2.7.4
