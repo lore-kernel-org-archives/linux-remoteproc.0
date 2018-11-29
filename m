@@ -1,207 +1,37 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 15/16] remoteproc/pru: add support for parsing pru interrupt mapping from DT
-Date: Mon, 26 Nov 2018 09:52:48 +0200
-Message-ID: <1543218769-5507-16-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH 1/7] remoteproc: correct rproc_mem_entry_init() comments
+Date: Thu, 29 Nov 2018 22:29:22 +0100
+Message-ID: <1543526968-56091-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Tero Kristo <t-kristo@ti.com>
+Add alloc parameter description and correct comment
+about release one.
 
-PRU interrupt mapping can now be parsed from devicetree also, from
-ti,pru-interrupt-map property. This is an alternative configuration
-method in addition to the legacy resource table config. If both are
-provided, the config in DT takes precedence.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-[s-anna@ti.com: various fixes and cleanups]
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
- drivers/remoteproc/pru_rproc.c | 109 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 106 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 84f006b..540cce3 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -63,6 +63,7 @@ enum pru_mem {
-  * @irq_ring: IRQ number to use for processing vring buffers
-  * @irq_kick: IRQ number to use to perform virtio kick
-  * @mem_regions: data for each of the PRU memory regions
-+ * @intc_config: PRU INTC configuration data
-  * @dram0: PRUSS DRAM0 region
-  * @dram1: PRUSS DRAM1 region
-  * @shrdram: PRUSS SHARED RAM region
-@@ -73,6 +74,7 @@ enum pru_mem {
-  * @shrdram_da: device address of shared Data RAM
-  * @fw_name: name of firmware image used during loading
-  * @gpmux_save: saved value for gpmux config
-+ * @dt_irqs: number of irqs configured from DT
-  * @lock: mutex to protect client usage
-  * @dbg_single_step: debug state variable to set PRU into single step mode
-  * @dbg_continuous: debug state variable to restore PRU execution mode
-@@ -87,6 +89,7 @@ struct pru_rproc {
- 	int irq_vring;
- 	int irq_kick;
- 	struct pruss_mem_region mem_regions[PRU_MEM_MAX];
-+	struct pruss_intc_config intc_config;
- 	struct pruss_mem_region dram0;
- 	struct pruss_mem_region dram1;
- 	struct pruss_mem_region shrdram;
-@@ -97,6 +100,7 @@ struct pru_rproc {
- 	u32 shrdram_da;
- 	const char *fw_name;
- 	u8 gpmux_save;
-+	int dt_irqs;
- 	struct mutex lock; /* client access lock */
- 	u32 dbg_single_step;
- 	u32 dbg_continuous;
-@@ -180,6 +184,87 @@ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
- 	return rproc;
- }
- 
-+static int pru_get_intc_dt_config(struct device *dev, const char *propname,
-+				  int index,
-+				  struct pruss_intc_config *intc_config)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct property *prop;
-+	int ret = 0, entries, i;
-+	int dt_irqs = 0;
-+	u32 *arr;
-+	int max_system_events, max_pru_channels, max_pru_host_ints;
-+
-+	max_system_events = MAX_PRU_SYS_EVENTS;
-+	max_pru_channels = MAX_PRU_CHANNELS;
-+	max_pru_host_ints = MAX_PRU_CHANNELS;
-+
-+	prop = of_find_property(np, propname, NULL);
-+	if (!prop)
-+		return 0;
-+
-+	entries = of_property_count_u32_elems(np, propname);
-+	if (entries <= 0 || entries % 4)
-+		return -EINVAL;
-+
-+	arr = kmalloc_array(entries, sizeof(u32), GFP_KERNEL);
-+	if (!arr)
-+		return -ENOMEM;
-+
-+	ret = of_property_read_u32_array(np, propname, arr, entries);
-+	if (ret)
-+		return -EINVAL;
-+
-+	for (i = 0; i < ARRAY_SIZE(intc_config->sysev_to_ch); i++)
-+		intc_config->sysev_to_ch[i] = -1;
-+
-+	for (i = 0; i < ARRAY_SIZE(intc_config->ch_to_host); i++)
-+		intc_config->ch_to_host[i] = -1;
-+
-+	for (i = 0; i < entries; i += 4) {
-+		if (arr[i] != index)
-+			continue;
-+
-+		if (arr[i + 1] < 0 ||
-+		    arr[i + 1] >= max_system_events) {
-+			dev_dbg(dev, "bad sys event %d\n", arr[i + 1]);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		if (arr[i + 2] < 0 ||
-+		    arr[i + 2] >= max_pru_channels) {
-+			dev_dbg(dev, "bad channel %d\n", arr[i + 2]);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		if (arr[i + 3] < 0 ||
-+		    arr[i + 3] >= max_pru_host_ints) {
-+			dev_dbg(dev, "bad irq %d\n", arr[i + 3]);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		intc_config->sysev_to_ch[arr[i + 1]] = arr[i + 2];
-+		dev_dbg(dev, "sysevt-to-ch[%d] -> %d\n", arr[i + 1],
-+			arr[i + 2]);
-+
-+		intc_config->ch_to_host[arr[i + 2]] = arr[i + 3];
-+		dev_dbg(dev, "chnl-to-host[%d] -> %d\n", arr[i + 2],
-+			arr[i + 3]);
-+
-+		dt_irqs++;
-+	}
-+
-+	kfree(arr);
-+	return dt_irqs;
-+
-+err:
-+	kfree(arr);
-+	return ret;
-+}
-+
- /**
-  * pru_rproc_get() - get the PRU rproc instance from a device node
-  * @np: the user/client device node
-@@ -251,6 +336,15 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
- 		}
- 	}
- 
-+	ret = pru_get_intc_dt_config(dev, "ti,pru-interrupt-map",
-+				     index, &pru->intc_config);
-+	if (ret < 0) {
-+		dev_err(dev, "error getting DT interrupt map: %d\n", ret);
-+		goto err;
-+	}
-+
-+	pru->dt_irqs = ret;
-+
- 	return rproc;
- 
- err:
-@@ -568,7 +662,13 @@ static int pru_rproc_start(struct rproc *rproc)
- 	dev_dbg(dev, "starting PRU%d: entry-point = 0x%x\n",
- 		pru->id, (rproc->bootaddr >> 2));
- 
--	/* TODO: INTC setup */
-+	if (pru->dt_irqs) {
-+		ret = pruss_intc_configure(pru->pruss, &pru->intc_config);
-+		if (ret) {
-+			dev_err(dev, "failed to configure intc %d\n", ret);
-+			return ret;
-+		}
-+	}
- 
- 	if (!list_empty(&pru->rproc->rvdevs)) {
- 		if (!pru->mbox && (pru->irq_vring <= 0 || pru->irq_kick <= 0)) {
-@@ -596,7 +696,8 @@ static int pru_rproc_start(struct rproc *rproc)
- 	return 0;
- 
- fail:
--	/* TODO: INTC cleanup */
-+	if (pru->dt_irqs)
-+		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
- 
- 	return ret;
- }
-@@ -618,7 +719,9 @@ static int pru_rproc_stop(struct rproc *rproc)
- 	    !pru->mbox && pru->irq_vring > 0)
- 		free_irq(pru->irq_vring, pru);
- 
--	/* TODO: INTC cleanup */
-+	/* undo INTC config */
-+	if (pru->dt_irqs)
-+		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
- 
- 	return 0;
- }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 54ec38fc5dca..c1a66e25b173 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -900,7 +900,8 @@ EXPORT_SYMBOL(rproc_add_carveout);
+  * @dma: dma address
+  * @len: memory carveout length
+  * @da: device address
+- * @release: memory carveout function
++ * @alloc: memory carveout allocation function
++ * @release: memory carveout release function
+  * @name: carveout name
+  *
+  * This function allocates a rproc_mem_entry struct and fill it with parameters
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
