@@ -1,274 +1,60 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 16/16] remoteproc/pru: Add support for INTC Interrupt map resource
-Date: Mon, 26 Nov 2018 09:52:49 +0200
-Message-ID: <1543218769-5507-17-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 4/7] remoteproc: add warning on resource table cast
+Date: Fri, 30 Nov 2018 20:48:16 +0000
+Message-ID: <cdcc435066ff48aebc9b02e7e0b13c8f@SFHDAG7NODE2.st.com>
+References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+ <1543526968-56091-5-git-send-email-loic.pallardy@st.com>
+ <CAK8P3a25Y3y1Zjtf18i6Tgt83npLvbCeBvcd-r1+u8ijp=X2Yw@mail.gmail.com>
+In-Reply-To: <CAK8P3a25Y3y1Zjtf18i6Tgt83npLvbCeBvcd-r1+u8ijp=X2Yw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use the vendor specific resource mechanism to get the
-INTC mapping details from firmware.
-
-pru-software-support-package [1] has been historically using
-version 0 for this. However, the data structure is not scaleable
-and is not self sufficient.
-1) it hard codes number of channel to host mappings so is not
-scaleable to newer SoCs than have more of these.
-2) it does not contain the event to channel mappings within
-itself but relies on a pointer to point to another section
-in data memory. This causes a weird complication that the
-respective data section must be loaded before we can really
-use the INTC map.
-
-With this patch we drop support for version 0 and support
-version 1 which is a more robust and scalable data structure.
-It should be able to support a sufficiently large number (255) of
-sysevents, channels and host interrupts and is self contained
-so it can be used without dependency on order of loading sections.
-
-[1]  git://git.ti.com/pru-software-support-package/pru-software-support-package.git
-
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/remoteproc/pru_rproc.c | 110 +++++++++++++++++++++++++++++++++++++++--
- drivers/remoteproc/pru_rproc.h |  48 +++++++-----------
- 2 files changed, 126 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 540cce3..9e22c70 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -75,6 +75,7 @@ enum pru_mem {
-  * @fw_name: name of firmware image used during loading
-  * @gpmux_save: saved value for gpmux config
-  * @dt_irqs: number of irqs configured from DT
-+ * @fw_irqs: number of irqs configured from FW
-  * @lock: mutex to protect client usage
-  * @dbg_single_step: debug state variable to set PRU into single step mode
-  * @dbg_continuous: debug state variable to restore PRU execution mode
-@@ -101,6 +102,7 @@ struct pru_rproc {
- 	const char *fw_name;
- 	u8 gpmux_save;
- 	int dt_irqs;
-+	int fw_irqs;
- 	struct mutex lock; /* client access lock */
- 	u32 dbg_single_step;
- 	u32 dbg_continuous;
-@@ -651,6 +653,107 @@ static void pru_rproc_kick(struct rproc *rproc, int vq_id)
- 	}
- }
- 
-+/*
-+ * parse the custom interrupt map resource and save the intc_config
-+ * for use when booting the processor.
-+ */
-+static int pru_handle_vendor_intrmap(struct rproc *rproc,
-+				     struct fw_rsc_pruss_intrmap *rsc)
-+{
-+	int fw_irqs = 0, i, ret = 0;
-+	u8 *arr;
-+	struct device *dev = &rproc->dev;
-+	struct pru_rproc *pru = rproc->priv;
-+
-+	dev_dbg(dev, "vendor rsc intc: version %d\n", rsc->version);
-+
-+	/*
-+	 * 0 was prototyping version. Not supported.
-+	 * 1 is currently supported version.
-+	 */
-+	if (rsc->version == 0 || rsc->version > 1) {
-+		dev_err(dev, "Unsupported version %d\n", rsc->version);
-+		return -EINVAL;
-+	}
-+
-+	/* DT provided INTC config takes precedence */
-+	if (pru->dt_irqs) {
-+		dev_info(dev, "INTC config in DT and FW. Using DT config.\n");
-+		return 0;
-+	}
-+
-+	arr = rsc->data;
-+
-+	for (i = 0; i < ARRAY_SIZE(pru->intc_config.sysev_to_ch); i++)
-+		pru->intc_config.sysev_to_ch[i] = -1;
-+
-+	for (i = 0; i < ARRAY_SIZE(pru->intc_config.ch_to_host); i++)
-+		pru->intc_config.ch_to_host[i] = -1;
-+
-+	for (i = 0; i < rsc->num_maps * 3; i += 3) {
-+		if (arr[i] < 0 ||
-+		    arr[i] >= MAX_PRU_SYS_EVENTS) {
-+			dev_err(dev, "bad sys event %d\n", arr[i]);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		if (arr[i + 1] < 0 ||
-+		    arr[i + 1] >= MAX_PRU_CHANNELS) {
-+			dev_err(dev, "bad channel %d\n", arr[i + 1]);
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		if (arr[i + 2] < 0 ||
-+		    arr[i + 2] >= MAX_PRU_CHANNELS) {
-+			dev_err(dev, "bad host irq %d\n", arr[i + 2]);
-+				ret = -EINVAL;
-+			goto err;
-+		}
-+
-+		pru->intc_config.sysev_to_ch[arr[i]] = arr[i + 1];
-+		dev_dbg(dev, "sysevt-to-ch[%d] -> %d\n", arr[i],
-+			arr[i + 1]);
-+
-+		pru->intc_config.ch_to_host[arr[i + 1]] = arr[i + 2];
-+		dev_dbg(dev, "chnl-to-host[%d] -> %d\n", arr[i + 1],
-+			arr[i + 2]);
-+
-+		fw_irqs++;
-+	}
-+
-+	pru->fw_irqs = fw_irqs;
-+	return 0;
-+
-+err:
-+	pru->fw_irqs = 0;
-+	return ret;
-+}
-+
-+/* PRU-specific vendor resource handler */
-+static int pru_rproc_handle_vendor_rsc(struct rproc *rproc,
-+				       struct fw_rsc_vendor *ven_rsc)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	int ret = -EINVAL;
-+
-+	struct fw_rsc_pruss_intrmap *rsc;
-+
-+	rsc = (struct fw_rsc_pruss_intrmap *)ven_rsc->data;
-+
-+	switch (rsc->type) {
-+	case PRUSS_RSC_INTRS:
-+		ret = pru_handle_vendor_intrmap(rproc, rsc);
-+		break;
-+	default:
-+		dev_err(dev, "%s: cannot handle unknown type %d\n", __func__,
-+			rsc->type);
-+	}
-+
-+	return ret;
-+}
-+
- /* start a PRU core */
- static int pru_rproc_start(struct rproc *rproc)
- {
-@@ -662,7 +765,7 @@ static int pru_rproc_start(struct rproc *rproc)
- 	dev_dbg(dev, "starting PRU%d: entry-point = 0x%x\n",
- 		pru->id, (rproc->bootaddr >> 2));
- 
--	if (pru->dt_irqs) {
-+	if (pru->dt_irqs || pru->fw_irqs) {
- 		ret = pruss_intc_configure(pru->pruss, &pru->intc_config);
- 		if (ret) {
- 			dev_err(dev, "failed to configure intc %d\n", ret);
-@@ -696,7 +799,7 @@ static int pru_rproc_start(struct rproc *rproc)
- 	return 0;
- 
- fail:
--	if (pru->dt_irqs)
-+	if (pru->dt_irqs || pru->fw_irqs)
- 		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
- 
- 	return ret;
-@@ -720,7 +823,7 @@ static int pru_rproc_stop(struct rproc *rproc)
- 		free_irq(pru->irq_vring, pru);
- 
- 	/* undo INTC config */
--	if (pru->dt_irqs)
-+	if (pru->dt_irqs || pru->fw_irqs)
- 		pruss_intc_unconfigure(pru->pruss, &pru->intc_config);
- 
- 	return 0;
-@@ -815,6 +918,7 @@ static struct rproc_ops pru_rproc_ops = {
- 	.stop			= pru_rproc_stop,
- 	.kick			= pru_rproc_kick,
- 	.da_to_va		= pru_da_to_va,
-+	.handle_vendor_rsc	= pru_rproc_handle_vendor_rsc,
- };
- 
- static int pru_rproc_set_id(struct pru_rproc *pru)
-diff --git a/drivers/remoteproc/pru_rproc.h b/drivers/remoteproc/pru_rproc.h
-index 35240e9..a9413f6 100644
---- a/drivers/remoteproc/pru_rproc.h
-+++ b/drivers/remoteproc/pru_rproc.h
-@@ -23,43 +23,33 @@ enum pruss_rsc_types {
- 	PRUSS_RSC_MAX	= 2,
- };
- 
--/**
-- * struct pruss_event_chnl - PRU system events _to_ channel mapping
-- * @event: number of the system event
-- * @chnl: channel number assigned to a given @event
-- *
-- * PRU system events are mapped to channels, and these channels are mapped
-- * to host interrupts. Events can be mapped to channels in a one-to-one or
-- * many-to-one ratio (multiple events per channel), and channels can be
-- * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
-- * channels per interrupt).
-- *
-- */
--struct pruss_event_chnl {
--	s8 event;
--	s8 chnl;
--};
- 
- /**
-- * struct fw_rsc_custom_intrmap - custom resource to define PRU interrupts
-- * @reserved: reserved field providing padding and alignment
-- * @chnl_host_intr_map: array of PRU channels to host interrupt mappings
-- * @event_chnl_map_size: number of event_channel mappings defined in
-- *			 @event_chnl_map_addr
-- * @event_chnl_map_addr: PRU device address of pointer to array of events to
-- *			 channel mappings (struct pruss_event_chnl elements)
-+ * struct fw_rsc_pruss_intrmap - vendor resource to define PRU interrupts
-+ * @type: should be PRUSS_RSC_INTRS
-+ * @version: should be 1 or greater. 0 was for prototyping and is not supported
-+ * @num_maps: number of interrupt mappings that follow
-+ * @data: Array of 'num_maps' mappings.
-+ *		Each mapping is a triplet {s, c, h}
-+ *		s - system event id
-+ *		c - channel id
-+ *		h - host interrupt id
-  *
-  * PRU system events are mapped to channels, and these channels are mapped
-  * to host interrupts. Events can be mapped to channels in a one-to-one or
-  * many-to-one ratio (multiple events per channel), and channels can be
-  * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
-  * channels per interrupt).
-+ *
-+ * This resource is variable length due to the nature of INTC map.
-+ * The below data structure is scalable so it can support sufficiently
-+ * large number of sysevents and hosts.
-  */
--struct fw_rsc_custom_intrmap {
--	u16 reserved;
--	s8 chnl_host_intr_map[10];
--	u32 event_chnl_map_size;
--	u32 event_chnl_map_addr;
--};
-+struct fw_rsc_pruss_intrmap {
-+	u16 type;
-+	u16 version;
-+	u8 num_maps;
-+	u8 data[];
-+} __packed;
- 
- #endif	/* _PRU_REMOTEPROC_H_ */
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQXJuZCBCZXJnbWFubiA8
+YXJuZEBhcm5kYi5kZT4NCj4gU2VudDogdmVuZHJlZGkgMzAgbm92ZW1icmUgMjAxOCAxNTozMw0K
+PiBUbzogTG9pYyBQQUxMQVJEWSA8bG9pYy5wYWxsYXJkeUBzdC5jb20+DQo+IENjOiBCam9ybiBB
+bmRlcnNzb24gPGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnPjsgT2hhZCBCZW4tQ29oZW4NCj4g
+PG9oYWRAd2l6ZXJ5LmNvbT47IGxpbnV4LXJlbW90ZXByb2NAdmdlci5rZXJuZWwub3JnOyBMaW51
+eCBLZXJuZWwNCj4gTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsg
+QXJuYXVkIFBPVUxJUVVFTg0KPiA8YXJuYXVkLnBvdWxpcXVlbkBzdC5jb20+OyBCZW5qYW1pbiBH
+YWlnbmFyZA0KPiA8YmVuamFtaW4uZ2FpZ25hcmRAbGluYXJvLm9yZz47IFN1bWFuIEFubmEgPHMt
+YW5uYUB0aS5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNC83XSByZW1vdGVwcm9jOiBhZGQg
+d2FybmluZyBvbiByZXNvdXJjZSB0YWJsZSBjYXN0DQo+IA0KPiBPbiBUaHUsIE5vdiAyOSwgMjAx
+OCBhdCAxMDozMSBQTSBMb2ljIFBhbGxhcmR5IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4gd3JvdGU6
+DQo+ID4NCj4gPiBUb2RheSByZXNvdXJjZSB0YWJsZSBzdXBwb3J0cyBvbmx5IDMyYml0IGFkZHJl
+c3MgZmllbGRzLg0KPiA+IFRoaXMgaXMgbm90IGNvbXBsaWFudCB3aXRoIDY0Yml0IHBsYXRmb3Jt
+IGZvciB3aGljaCBhZGRyZXNzZXMNCj4gPiBhcmUgY2FzdCBpbiAzMmJpdC4NCj4gPiBUaGlzIHBh
+dGNoIGFkZHMgd2FybiBtZXNzYWdlcyB3aGVuIGFkZHJlc3MgY2FzdCBpcyBkb25lLg0KPiA+DQo+
+ID4gU2lnbmVkLW9mZi1ieTogTG9pYyBQYWxsYXJkeSA8bG9pYy5wYWxsYXJkeUBzdC5jb20+DQo+
+ID4gLS0tDQo+ID4gIGRyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyB8IDggKysr
+KysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiBiL2RyaXZl
+cnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+IGluZGV4IDE4YTFiYmY4MjBjOS4u
+NjFjOTU0YmQ2OTVlIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVw
+cm9jX2NvcmUuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUu
+Yw0KPiA+IEBAIC03NzIsNiArNzcyLDEwIEBAIHN0YXRpYyBpbnQgcnByb2NfYWxsb2NfY2FydmVv
+dXQoc3RydWN0IHJwcm9jICpycHJvYywNCj4gPiAgICAgICAgICAgICAgICAgZGV2X2RiZyhkZXYs
+ICJjYXJ2ZW91dCBtYXBwZWQgMHgleCB0byAlcGFkXG4iLA0KPiA+ICAgICAgICAgICAgICAgICAg
+ICAgICAgIG1lbS0+ZGEsICZkbWEpOw0KPiA+ICAgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAg
+ICAgICAgICAgLyogVXBkYXRlIGRldmljZSBhZGRyZXNzIGFzIHVuZGVmaW5lZCBieSByZXF1ZXN0
+ZXIgKi8NCj4gPiArICAgICAgICAgICAgICAgaWYgKHNpemVvZihkbWFfYWRkcl90KSA+IHNpemVv
+Zih1MzIpKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGRldl93YXJuKGRldiwgIkRNQSBh
+ZGRyZXNzIGNhc3QgaW4gMzJiaXQgdG8gZml0IHJlc291cmNlIHRhYmxlDQo+IGZvcm1hdFxuIik7
+DQo+ID4gKw0KPiA+ICAgICAgICAgICAgICAgICBtZW0tPmRhID0gKHUzMilkbWE7DQo+ID4gICAg
+ICAgICB9DQo+IA0KPiBJIHRoaW5rIHRoaXMgcGF0Y2ggaXMgd3Jvbmc6IHNpemVvZihkbWFfYWRk
+cl90KSBpcyBkZWZpbmVkIHRvIGJlIGxhcmdlIGVub3VnaA0KPiB0byBzdXBwb3J0IGFueSBtYWNo
+aW5lIHRoYXQgdGhlIGtlcm5lbCBjYW4gcnVuIG9uLiBJZiB5b3UgYnVpbGQgYSBrZXJuZWwgdGhh
+dA0KPiBoYXBwZW5zIHRvIHdvcmsgb24gYW4gQVJNMzIgcGxhdGZvcm0gd2l0aCBMUEFFIGVuYWJs
+ZWQsIHRoZW4gdGhpcyB3aWxsDQo+IHdhcm4gZXZlcnkgdGltZSwgZXZlbiBpZiB5b3UgYXJlIHJ1
+bm5pbmcgb24gYSBtYWNoaW5lIHRoYXQgb25seSBoYXMgYSAzMi1iaXQNCj4gYWRkcmVzcyBzcGFj
+ZS4NCg0KSSBzdXBwb3NlIGlmIExQQUUgaXMgZW5hYmxlZCwgYWRkcmVzcyBzcGFjZSBpcyBsYXJn
+ZXIgdGhhbiAzMmJpdC4NCkJ1dCBJIGFncmVlIGl0IGlzIHBvc3NpYmxlIHRvIGRpc3BsYXkgYSB3
+YXJuIG9ubHkgd2hlbiBzb21lIGluZm9ybWF0aW9uIHdpbGwgYmUgbG9zdA0KZHVlIHRvIGNhc3Qu
+DQpJJ2xsIHByb3Bvc2UgYSBuZXcgdmVyc2lvbiB0ZXN0aW5nIGRtYSBhZGRyZXNzIGl0c2VsZiBh
+bmQgZGlzcGxheWluZyB3YXJuIG9ubHkgaWYgYWJvdmUgNEdCLg0KDQpSZWdhcmRzLA0KTG9pYw0K
+PiANCj4gICAgICBBcm5kDQo=
