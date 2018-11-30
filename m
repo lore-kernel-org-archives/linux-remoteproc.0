@@ -1,64 +1,35 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 16/17] ARM: dts: AM33xx: Add PRU system events for virtio
-Date: Thu, 22 Nov 2018 13:39:12 +0200
-Message-ID: <1542886753-17625-17-git-send-email-rogerq@ti.com>
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] rpmsg: core: make rpmsg bus DMA capable
+Date: Fri, 30 Nov 2018 11:20:49 +0000
+Message-Id: <20181130112049.14444-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Content-Transfer-Encoding: 8bit
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Many of the rpmsg clients like audio, fastrpc drivers need to allocate
+dma memory. Make this bus DMA capable so that the child devices can
+use dma apis.
 
-Two PRU system events "vring" and "kick" have been added to each
-of the PRU nodes in the PRU-ICSS remote processor subsystem to
-enable the virtio/rpmsg communication between MPU and that PRU
-core. The additions are done in the base am33xx.dtsi file, and
-so are inherited by all the AM33xx boards. Do note that PRUSS
-is not available on all AM335x SoCs.
-
-The PRU system events is the preferred approach over using OMAP
-mailboxes, as it eliminates an external peripheral access from
-the PRU-side, and keeps the interrupt generation internal to the
-PRUSS. The difference from MPU would be minimal in using one
-versus the other.
-
-Mailboxes can still be used if desired. Either approach would
-require that an appropriate firmware image is loaded/booted on
-the PRU.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- arch/arm/boot/dts/am33xx.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/rpmsg/rpmsg_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
-index ce42cd9..b7e3f69 100644
---- a/arch/arm/boot/dts/am33xx.dtsi
-+++ b/arch/arm/boot/dts/am33xx.dtsi
-@@ -983,6 +983,9 @@
- 					      <0x4a322400 0x100>;
- 					reg-names = "iram", "control", "debug";
- 					firmware-name = "am335x-pru0-fw";
-+					interrupt-parent = <&pruss_intc>;
-+					interrupts = <16>, <17>;
-+					interrupt-names = "vring", "kick";
- 				};
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 8122807db380..33881e70f478 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -510,6 +510,7 @@ static struct bus_type rpmsg_bus = {
+ 	.uevent		= rpmsg_uevent,
+ 	.probe		= rpmsg_dev_probe,
+ 	.remove		= rpmsg_dev_remove,
++	.dma_configure	= platform_dma_configure,
+ };
  
- 				pru1: pru@4a338000 {
-@@ -992,6 +995,9 @@
- 					      <0x4a324400 0x100>;
- 					reg-names = "iram", "control", "debug";
- 					firmware-name = "am335x-pru1-fw";
-+					interrupt-parent = <&pruss_intc>;
-+					interrupts = <18>, <19>;
-+					interrupt-names = "vring", "kick";
- 				};
- 			};
- 		};
+ int rpmsg_register_device(struct rpmsg_device *rpdev)
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.19.2
