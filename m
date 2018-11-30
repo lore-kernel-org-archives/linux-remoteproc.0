@@ -1,102 +1,38 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 13/16] remoteproc/pru: add support for configuring GPMUX based on client setup
-Date: Mon, 26 Nov 2018 09:52:46 +0200
-Message-ID: <1543218769-5507-14-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15180 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726459AbeK3Wiu (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:38:50 -0500
+From: YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] remoteproc: remove duplicated include from qcom_sysmon.c
+Date: Fri, 30 Nov 2018 19:29:23 +0800
+Message-ID: <20181130112923.1168-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: linux-remoteproc@vger.kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Tero Kristo <t-kristo@ti.com>
+Remove duplicated include.
 
-Client device node property ti,pruss-gp-mux-sel can now be used to
-configure the GPMUX config value for PRU.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-[s-anna@ti.com: simplify the pru id usage]
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/remoteproc/pru_rproc.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/remoteproc/qcom_sysmon.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index d8b823d..9a08937 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -72,6 +72,7 @@ enum pru_mem {
-  * @sdram_da: device address of secondary Data RAM for this PRU
-  * @shrdram_da: device address of shared Data RAM
-  * @fw_name: name of firmware image used during loading
-+ * @gpmux_save: saved value for gpmux config
-  * @lock: mutex to protect client usage
-  * @dbg_single_step: debug state variable to set PRU into single step mode
-  * @dbg_continuous: debug state variable to restore PRU execution mode
-@@ -95,6 +96,7 @@ struct pru_rproc {
- 	u32 sdram_da;
- 	u32 shrdram_da;
- 	const char *fw_name;
-+	u8 gpmux_save;
- 	struct mutex lock; /* client access lock */
- 	u32 dbg_single_step;
- 	u32 dbg_continuous;
-@@ -184,12 +186,16 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
- {
- 	struct rproc *rproc;
- 	struct pru_rproc *pru;
-+	struct device *dev;
-+	int ret;
-+	u32 mux;
- 
- 	rproc = __pru_rproc_get(np, index);
- 	if (IS_ERR(rproc))
- 		return rproc;
- 
- 	pru = rproc->priv;
-+	dev = &rproc->dev;
- 
- 	mutex_lock(&pru->lock);
- 
-@@ -203,7 +209,27 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
- 
- 	mutex_unlock(&pru->lock);
- 
-+	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
-+	if (ret) {
-+		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
-+					 &mux);
-+	if (!ret) {
-+		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
-+		if (ret) {
-+			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
- 	return rproc;
-+
-+err:
-+	pru_rproc_put(rproc);
-+	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(pru_rproc_get);
- 
-@@ -229,6 +255,8 @@ void pru_rproc_put(struct rproc *rproc)
- 	if (!pru->client_np)
- 		return;
- 
-+	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
-+
- 	mutex_lock(&pru->lock);
- 	pru->client_np = NULL;
- 	mutex_unlock(&pru->lock);
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index e976a60..603b813 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -7,7 +7,6 @@
+ #include <linux/notifier.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+-#include <linux/notifier.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc/qcom_rproc.h>
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.0
