@@ -1,184 +1,54 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 04/17] soc: ti: pruss: Fix system suspend/MStandby config issues
-Date: Thu, 22 Nov 2018 13:39:00 +0200
-Message-ID: <1542886753-17625-5-git-send-email-rogerq@ti.com>
-In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
-References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+Return-Path: <dinuxbg@gmail.com>
+Return-Path: <dinuxbg@gmail.com>
+From: Dimitar Dimitrov <dinuxbg@gmail.com>
+Subject: Re: [PATCH 04/16] remoteproc/pru: Add PRU remoteproc driver
+Date: Fri, 30 Nov 2018 23:39:48 +0200
+Message-ID: <308735274.C9ZyqtqOL8@tpdeb>
+In-Reply-To: <1543218769-5507-5-git-send-email-rogerq@ti.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com> <1543218769-5507-5-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com
-Cc: robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+To: Roger Quadros <rogerq@ti.com>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On Monday, 12/26/2018, 9:52:37 EET Roger Quadros wrote:
+> +/*
+> + * Convert PRU device address (instruction space) to kernel virtual address
+> + *
+> + * A PRU does not have an unified address space. Each PRU has its very own
+> + * private Instruction RAM, and its device address is identical to that of
+> + * its primary Data RAM device address.
+> + */
+> +static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, int len)
+> +{
+> +       u32 offset;
+> +       void *va = NULL;
+> +
+> +       if (len <= 0)
+> +               return NULL;
 
-The PRU-ICSS subsystem has a separate PRUSS_CFG module that contains
-various configuration registers. This includes a control bit STANDBY_INIT
-in PRUSS_CFG register to initiate a Standby sequence (when set) and
-trigger a MStandby request to the SoC's PRCM module. This same bit is
-also used to enable the OCP master ports (when cleared). The system
-suspend/resume functionality on AM33xx/AM437x/AM57xx SoCs requires
-all initiators to assert their MStandby signal properly inorder to
-successfully enter suspend, and resume on a wakeup event.
+Could you please clear the upper 4 bits the of IRAM device address, in order 
+to support binutils ELF images? Here is an example line to add here:
 
-Certain firmwares can enable the OCP master ports through the
-STANDBY_INIT programming on the firmware side in order to access
-peripherals or memories external to the PRUSS. This causes a hang
-in the resume sequence on AM33xx/AM437x boards and requires a
-board reset to come out of the hang.
++       /* GNU binutils do not support multiple address spaces. The 
++        * default linker script from the official GNU pru-ld places 
++        * IRAM at an arbitrary high offset, in order to differentiate it 
++        * from DRAM. Hence we need to strip the artificial offset 
++        * from the IRAM address. 
++        */ 
++       da &= ~0xf0000000u; 
++
 
-This patch adds the preliminary System PM callbacks in the PRUSS SoC
-bus driver, and fixes this system resume hang by setting the STANDBY_INIT
-in the PM system suspend callback and resetting it back in the PM system
-resume callback, if so configured. The clearing of the STANDBY_INIT
-during resume requires an acknowledgment from PRCM and is done through
-the monitoring of the PRUSS_SYSCFG.SUB_MWAIT bit.
 
-NOTE:
-1. This patch only adds the PM callbacks with code to fix the System
-   Suspend/Resume hang issue on AM33xx/AM437x SoCs, but does not
-   implement the full context save and restore required for the PRUSS
-   drivers to work across system suspend/resume when the power domain
-   is switched off (L4PER domain is switched OFF on AM335x/AM437x
-   during system suspend/resume, so PRUSS modules do lose context).
-2. The PRUSS driver functionality on AM57xx SoCs is not affected that
-   much because the PER power domain to which the PRUSS IPs belong is
-   not switched OFF during suspend/resume.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/soc/ti/pruss_soc_bus.c | 85 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
-
-diff --git a/drivers/soc/ti/pruss_soc_bus.c b/drivers/soc/ti/pruss_soc_bus.c
-index 16b4802..d4da55d2 100644
---- a/drivers/soc/ti/pruss_soc_bus.c
-+++ b/drivers/soc/ti/pruss_soc_bus.c
-@@ -7,6 +7,7 @@
-  *	Keerthy <j-keerthy@ti.com>
-  */
- 
-+#include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
-@@ -16,13 +17,18 @@
- 
- #include <linux/platform_data/ti-pruss.h>
- 
-+#define SYSCFG_STANDBY_INIT	BIT(4)
-+#define SYSCFG_SUB_MWAIT_READY	BIT(5)
-+
- /**
-  * struct pruss_soc_bus - PRUSS SoC bus structure
-  * @syscfg: kernel mapped address for SYSCFG register
-+ * @in_standby: flag for storing standby status
-  * @has_reset: cached variable for storing global module reset flag
-  */
- struct pruss_soc_bus {
- 	void __iomem *syscfg;
-+	bool in_standby;
- 	bool has_reset;
- };
- 
-@@ -34,6 +40,81 @@ struct pruss_soc_bus_match_data {
- 	bool has_reset;
- };
- 
-+static inline void pruss_soc_bus_rmw(void __iomem *reg, u32 mask, u32 set)
-+{
-+	u32 val;
-+
-+	val = readl_relaxed(reg);
-+	val &= ~mask;
-+	val |= (set & mask);
-+	writel_relaxed(val, reg);
-+}
-+
-+/*
-+ * This function programs the PRUSS_SYSCFG.STANDBY_INIT bit to achieve dual
-+ * functionalities - one is to deassert the MStandby signal to the device
-+ * PRCM, and the other is to enable OCP master ports to allow accesses
-+ * outside of the PRU-ICSS. The function has to wait for the PRCM to
-+ * acknowledge through the monitoring of the PRUSS_SYSCFG.SUB_MWAIT bit.
-+ */
-+static
-+int __maybe_unused pruss_soc_bus_enable_ocp_master_ports(struct device *dev)
-+{
-+	struct pruss_soc_bus *psoc_bus = dev_get_drvdata(dev);
-+	u32 syscfg_val, i;
-+	bool ready = false;
-+
-+	pruss_soc_bus_rmw(psoc_bus->syscfg, SYSCFG_STANDBY_INIT, 0);
-+
-+	/* wait till we are ready for transactions - delay is arbitrary */
-+	for (i = 0; i < 10; i++) {
-+		syscfg_val = readl_relaxed(psoc_bus->syscfg);
-+		ready = !(syscfg_val & SYSCFG_SUB_MWAIT_READY);
-+		if (ready)
-+			break;
-+		udelay(5);
-+	}
-+
-+	if (!ready) {
-+		dev_err(dev, "timeout waiting for SUB_MWAIT_READY\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused pruss_soc_bus_suspend(struct device *dev)
-+{
-+	struct pruss_soc_bus *psoc_bus = dev_get_drvdata(dev);
-+	u32 syscfg_val;
-+
-+	syscfg_val = readl_relaxed(psoc_bus->syscfg);
-+	psoc_bus->in_standby = syscfg_val & SYSCFG_STANDBY_INIT;
-+
-+	/* initiate MStandby, undo the MStandby config in probe */
-+	if (!psoc_bus->in_standby) {
-+		pruss_soc_bus_rmw(psoc_bus->syscfg, SYSCFG_STANDBY_INIT,
-+				  SYSCFG_STANDBY_INIT);
-+	}
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused pruss_soc_bus_resume(struct device *dev)
-+{
-+	struct pruss_soc_bus *psoc_bus = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	/* re-enable OCP master ports/disable MStandby */
-+	if (!psoc_bus->in_standby) {
-+		ret = pruss_soc_bus_enable_ocp_master_ports(dev);
-+		if (ret)
-+			dev_err(dev, "%s failed\n", __func__);
-+	}
-+
-+	return ret;
-+}
-+
- static int pruss_soc_bus_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -126,9 +207,13 @@ static const struct of_device_id pruss_soc_bus_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, pruss_soc_bus_of_match);
- 
-+static SIMPLE_DEV_PM_OPS(pruss_soc_bus_pm_ops,
-+			 pruss_soc_bus_suspend, pruss_soc_bus_resume);
-+
- static struct platform_driver pruss_soc_bus_driver = {
- 	.driver	= {
- 		.name = "pruss-soc-bus",
-+		.pm = &pruss_soc_bus_pm_ops,
- 		.of_match_table = pruss_soc_bus_of_match,
- 	},
- 	.probe	= pruss_soc_bus_probe,
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +
+> +       if (da >= pru->iram_da &&
+> +           da + len <= pru->iram_da + pru->mem_regions[PRU_MEM_IRAM].size { 
+> +               offset = da - pru->iram_da;
+> +               va = (__force void *)(pru->mem_regions[PRU_MEM_IRAM].va +
+> +                                     offset);
+> +       }
+> +
+> +       return va;
+> +}
