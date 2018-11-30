@@ -1,322 +1,220 @@
 Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH 07/16] remoteproc/pru: Add support for virtio rpmsg stack
-Date: Mon, 26 Nov 2018 09:52:40 +0200
-Message-ID: <1543218769-5507-8-git-send-email-rogerq@ti.com>
-In-Reply-To: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+Subject: Re: [PATCH 12/16] dt-bindings: remoteproc: ti-pruss: Document
+ application node bindings
 References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-13-git-send-email-rogerq@ti.com>
+ <6a945433-00b2-e0e5-2dc8-2a4d2bf0db6f@lechnology.com> <5BFFBA5F.703@ti.com>
+ <377707a9-6ea8-8faf-35dc-0aa1fddda272@lechnology.com>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <5C01222D.3060104@ti.com>
+Date: Fri, 30 Nov 2018 13:42:37 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+In-Reply-To: <377707a9-6ea8-8faf-35dc-0aa1fddda272@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: David Lechner <david@lechnology.com>, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On 29/11/18 18:33, David Lechner wrote:
+> On 11/29/18 4:07 AM, Roger Quadros wrote:
+>> On 27/11/18 01:27, David Lechner wrote:
+>>> On 11/26/18 1:52 AM, Roger Quadros wrote:
+>>>> From: Tero Kristo <t-kristo@ti.com>
+>>>>
+>>>> Add documentation for the Texas Instruments PRU application nodes.
+>>>> These are used to configure specific user applications for PRU instances.
+>>>
+>>> Could this be made into a generic remoteproc producer/consumer binding? Or
+>>> are there really things that are specific to the TI PRU that need to be
+>>> handled?
+>>
+>> The remoteproc handle and firmware name sound generic enough.
+>> But there are TI PRU specific properties as well which we'll discuss if
+>> they can be made generic.
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>> [s-anna@ti.com: some binding updates]
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>>> ---
+>>>>    .../devicetree/bindings/soc/ti/ti,pruss.txt        | 43 ++++++++++++++++++++++
+>>>>    1 file changed, 43 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>> index 3e5f32f..94c91ee 100644
+>>>> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>> @@ -210,6 +210,38 @@ used in TI Davinci SoCs. Please refer to the corresponding binding document,
+>>>>    Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
+>>>>      +Application/User Nodes
+>>>> +=======================
+>>>
+>>> Are these supposed to be stand-alone platform devices?
+>>>
+>>
+>> Yes. The first use case we're going to address is the Ethernet ports on the IDKs.
+>> (Industrial development Kit) http://www.ti.com/tool/TMDXIDK437X
+>>
+>>>> +A PRU application/user node typically uses one or more PRU device nodes to
+>>>> +implement a PRU application/functionality. Each application/client node would
+>>>> +need a reference to at least a PRU node, and optionally pass some configuration
+>>>> +parameters.
+>>>
+>>> I thought device tree is not supposed to be used for configuration.
+>>
+>> I think we need to word it properly. It is really a hardware/firmware map.
+>>>
+>>>> +
+>>>> +Required Properties:
+>>>> +--------------------
+>>>> +- prus                 : phandles to the PRU nodes used
+>>>> +
+>>>> +Optional Properties:
+>>>> +--------------------
+>>>> +- firmware-name        : firmwares for the PRU cores, the default firmware
+>>>> +                         for the core from the PRU node will be used if not
+>>>> +                         provided. The firmware names should correspond to
+>>>> +                         the PRU cores listed in the 'prus' property
+>>>
+>>> Perhaps this should be a "compatible" property instead of "firmware-name"? The
+>>> driver that matches the compatible string can then set the firmware names.
+>>
+>> Compatible property is there to choose the application driver. Should have mentioned
+>> it in Required properties.
+>>
+>> It is tricky for the driver to decipher the firmware-name as it needs to support
+>> the same use case on multiple platforms and the firmware name will be different for each.
+>> The driver itself is platform agnostic.
+>>
+>> So providing the firmware-name in the DT is the easiest and scalable solution.
+>>>
+>>>> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
+>>>> +                         register for a PRU. This selects the internal muxing
+>>>> +                         scheme for the PRU instance. If not provided, the
+>>>> +                         default out-of-reset value (0) for the PRU core is
+>>>> +                         used. Values should correspond to the PRU cores listed
+>>>> +                         in the 'prus' property
+>>>
+>>> Is this supposed to be a pinmux? So maybe we should be using pinmux bindings?
+>>
+>> We already have pinmux binding for the PRU pins. This GP mux setting is an odd duck.
+>>
+>> It provides a way for a set of signals inside the ICSS to be connected to the PRU pins
+>> on the SOC, which are again multiplexed with other SOC pins via the regular pinmux.
+>>
+>> Some of the sets are
+>>
+>> GPIO mode (0)
+>> EnDAT mode (1)
+>> SD mode (3)
+>> MII2 mode (4)
+>>
+>> The application node needs to decide which set it wants to use.
+>>
+>>>
+>>>> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
+>>>> +                         with each entry consisting of 4 cell-values. First one
+>>>> +                         is an index towards the "prus" property to identify the
+>>>> +                         PRU core for the interrupt map, second is the PRU
+>>>> +                         System Event id, third is the PRU interrupt channel id
+>>>> +                         and fourth is the PRU host interrupt id. If provided,
+>>>> +                         this map will supercede any other configuration
+>>>> +                         provided through firmware
+>>>
+>>> Could this mapping just be cells of the interrupt consumer nodes instead of an
+>>> extra property? As I mentioned in a reply to another patch, unless there is a
+>>> compelling reason to do otherwise, the channel to host mapping can be required
+>>> to be 1:1 as recommended in the TRMs, so that cell can be omitted. Also, since
+>>> the interrupt controller is independent of the PRU cores, the cell specifying the
+>>> index of the PRU core is not needed in this case. The #interrupt-cells already
+>>> includes a cell for the system event number, so this just leaves one cell, the
+>>> host channel, to be added to the #interrupt-cells.
+>>>
+>>> So, instead of:
+>>>
+>>>      ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+>>>
+>>> we could have:
+>>>
+>>>      interrupt-parent = <&pruss_intc>;
+>>>      interrupts = <16 7>, <19 3>;
+>>>
+>>
+>> No, interrupts property will be used to provide the actual sysevent IRQs to the
+>> application driver. Below is how the ethernet application node looks like.
+>>
+>>     pruss2_eth {
+>>         compatible = "ti,am57-prueth";
+>>         prus = <&pru2_0>, <&pru2_1>;
+>>         firmware-name = "ti-pruss/am57xx-pru0-prueth-fw.elf",
+>>                 "ti-pruss/am57xx-pru1-prueth-fw.elf";
+>>         sram = <&ocmcram1>;
+>>         interrupt-parent = <&pruss2_intc>;
+>>         mii-rt = <&pruss2_mii_rt>;
+>>         iep = <&pruss2_iep>;
+>>
+>>         pruss2_emac0: ethernet-mii0 {
+>>             phy-handle = <&pruss2_eth0_phy>;
+>>             phy-mode = "mii";
+>>             interrupts = <20>, <22>;
+>>             interrupt-names = "rx", "tx";
+>>         };
+>>
+>>         pruss2_emac1: ethernet-mii1 {
+>>             phy-handle = <&pruss2_eth1_phy>;
+>>             phy-mode = "mii";
+>>             interrupts = <21>, <23>;
+>>             interrupt-names = "rx", "tx";
+>>         };
+>>     };
+>>
+>> You can see that interrupts is providing the RX and TX sysevents.
+>>
+>> There needs to be a different way to provide the internal INTC map.
+>>
+>> Currently there are 2 ways of providing the INTC map. One is via the
+>> resource table and other is via DT.
+>>
+>>> There are also already alternate interrupt bindings that allow for the case
+>>> where there is more than one interrupt-parent.
+> 
+> Thanks for the insights. On the example above there is not a
+> ti,pru-interrupt-map property. Does this mean that the interrupt
+> mapping table comes from the firmware/resource-table in this case?
+> 
 
-The PRU remoteproc driver has been enhanced to support the optional
-rpmsg stack using the virtio-ring based communication transport
-between MPU and a PRU core. This provides support to any firmware
-images supporting the virtio devices.
+Yes, that's correct.
 
-The virtio-ring signalling support is provided either through a OMAP
-mailbox or through two PRU system events on OMAP-architecture based
-SoCs - one event used in each direction for kicking from one processor
-and receiving notification on the other processor. The virtio rpmsg
-signalling is enabled only using using PRU system events for interrupts
-on the Keystone-architecture based 66AK2G SoCs (it is possible to
-implement using an alternate Keystone specific IPCGR registers as well).
-The driver supports both signalling options, though the PRU events based
-signalling is the recommended option as it avoids an external peripheral
-access from the PRU side. It also provides a uniform solution across
-both the OMAP, Keystone and Davinci architectures. The PRU events based
-signalling takes precedence if both options are mentioned. Either of the
-options would require the corresponding firmware support though. A build
-dependency against MAILBOX is also added. Note that the OMAP Mailbox
-IP is not present on 66AK2G and Davinci SoCs, so it is only selected
-for OMAP-based SoCs.
+>>>
+>>>> +
+>>>>    Example:
+>>>>    ========
+>>>>    1.    /* AM33xx PRU-ICSS */
+>>>> @@ -397,3 +429,14 @@ Example:
+>>>>                ...
+>>>>            };
+>>>>        };
+>>>> +
+>>>> +3:    /* PRU application node example */
+>>>> +    app_node: app_node {
+>>>> +        prus = <&pru1_0>, <&pru1_1>;
+>>>> +        firmware-name = "pruss-app-fw", "pruss-app-fw-2";
+>>>> +        ti,pruss-gp-mux-sel = <2>, <1>;
+>>>> +        /* setup interrupts for prus:
+>>>> +           prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
+>>>> +           prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
+>>>> +        ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+>>>> +    }
+>>>>
+>>>
+>>
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/Kconfig     |   2 +
- drivers/remoteproc/pru_rproc.c | 169 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 168 insertions(+), 3 deletions(-)
+cheers,
+-roger
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 333666e..b89acb0 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -200,6 +200,8 @@ config ST_SLIM_REMOTEPROC
- config PRUSS_REMOTEPROC
- 	tristate "TI PRUSS remoteproc support"
- 	depends on TI_PRUSS
-+	select MAILBOX
-+	select OMAP2PLUS_MBOX if ARCH_OMAP2PLUS
- 	default n
- 	help
- 	  Support for TI PRU-ICSS remote processors via the remote processor
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 73a7f13..e0554b3 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -10,6 +10,7 @@
- #include <linux/bitops.h>
- #include <linux/debugfs.h>
- #include <linux/interrupt.h>
-+#include <linux/mailbox_client.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/remoteproc.h>
-@@ -56,6 +57,10 @@ enum pru_mem {
-  * @id: id of the PRU core within the PRUSS
-  * @pruss: back-reference to parent PRUSS structure
-  * @rproc: remoteproc pointer for this PRU core
-+ * @mbox: mailbox channel handle used for vring signalling with MPU
-+ * @client: mailbox client to request the mailbox channel
-+ * @irq_ring: IRQ number to use for processing vring buffers
-+ * @irq_kick: IRQ number to use to perform virtio kick
-  * @mem_regions: data for each of the PRU memory regions
-  * @dram0: PRUSS DRAM0 region
-  * @dram1: PRUSS DRAM1 region
-@@ -72,6 +77,10 @@ struct pru_rproc {
- 	int id;
- 	struct pruss *pruss;
- 	struct rproc *rproc;
-+	struct mbox_chan *mbox;
-+	struct mbox_client client;
-+	int irq_vring;
-+	int irq_kick;
- 	struct pruss_mem_region mem_regions[PRU_MEM_MAX];
- 	struct pruss_mem_region dram0;
- 	struct pruss_mem_region dram1;
-@@ -233,22 +242,124 @@ static void pru_rproc_create_debug_entries(struct rproc *rproc)
- 			    rproc, &pru_rproc_debug_ss_fops);
- }
- 
-+/**
-+ * pru_rproc_mbox_callback() - inbound mailbox message handler
-+ * @client: mailbox client pointer used for requesting the mailbox channel
-+ * @data: mailbox payload
-+ *
-+ * This handler is invoked by omap's mailbox driver whenever a mailbox
-+ * message is received. Usually, the mailbox payload simply contains
-+ * the index of the virtqueue that is kicked by the PRU remote processor,
-+ * and we let remoteproc core handle it.
-+ *
-+ * In addition to virtqueue indices, we might also have some out-of-band
-+ * values that indicates different events. Those values are deliberately
-+ * very big so they don't coincide with virtqueue indices.
-+ */
-+static void pru_rproc_mbox_callback(struct mbox_client *client, void *data)
-+{
-+	struct pru_rproc *pru = container_of(client, struct pru_rproc, client);
-+	struct device *dev = &pru->rproc->dev;
-+	u32 msg = (u32)data;
-+
-+	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
-+
-+	/* msg contains the index of the triggered vring */
-+	if (rproc_vq_interrupt(pru->rproc, msg) == IRQ_NONE)
-+		dev_dbg(dev, "no message was found in vqid %d\n", msg);
-+}
-+
-+/**
-+ * pru_rproc_vring_interrupt() - interrupt handler for processing vrings
-+ * @irq: irq number associated with the PRU event MPU is listening on
-+ * @data: interrupt handler data, will be a PRU rproc structure
-+ *
-+ * This handler is used by the PRU remoteproc driver when using PRU system
-+ * events for processing the virtqueues. Unlike the mailbox IP, there is
-+ * no payload associated with an interrupt, so either a unique event is
-+ * used for each virtqueue kick, or a both virtqueues are processed on
-+ * a single event. The latter is chosen to conserve the usable PRU system
-+ * events.
-+ */
-+static irqreturn_t pru_rproc_vring_interrupt(int irq, void *data)
-+{
-+	struct pru_rproc *pru = data;
-+
-+	dev_dbg(&pru->rproc->dev, "got vring irq\n");
-+
-+	/* process incoming buffers on both the Rx and Tx vrings */
-+	rproc_vq_interrupt(pru->rproc, 0);
-+	rproc_vq_interrupt(pru->rproc, 1);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/* kick a virtqueue */
-+static void pru_rproc_kick(struct rproc *rproc, int vq_id)
-+{
-+	struct device *dev = &rproc->dev;
-+	struct pru_rproc *pru = rproc->priv;
-+	int ret;
-+
-+	dev_dbg(dev, "kicking vqid %d on PRU%d\n", vq_id, pru->id);
-+
-+	if (pru->irq_kick > 0) {
-+		ret = pruss_intc_trigger(pru->irq_kick);
-+		if (ret < 0)
-+			dev_err(dev, "pruss_intc_trigger failed: %d\n", ret);
-+	} else if (pru->mbox) {
-+		/*
-+		 * send the index of the triggered virtqueue in the mailbox
-+		 * payload
-+		 */
-+		ret = mbox_send_message(pru->mbox, (void *)vq_id);
-+		if (ret < 0)
-+			dev_err(dev, "mbox_send_message failed: %d\n", ret);
-+	}
-+}
-+
- /* start a PRU core */
- static int pru_rproc_start(struct rproc *rproc)
- {
- 	struct device *dev = &rproc->dev;
- 	struct pru_rproc *pru = rproc->priv;
- 	u32 val;
-+	int ret;
- 
- 	dev_dbg(dev, "starting PRU%d: entry-point = 0x%x\n",
- 		pru->id, (rproc->bootaddr >> 2));
- 
-+	/* TODO: INTC setup */
-+
-+	if (!list_empty(&pru->rproc->rvdevs)) {
-+		if (!pru->mbox && (pru->irq_vring <= 0 || pru->irq_kick <= 0)) {
-+			dev_err(dev, "virtio vring interrupt mechanisms are not provided\n");
-+			ret = -EINVAL;
-+			goto fail;
-+		}
-+
-+		if (!pru->mbox && pru->irq_vring > 0) {
-+			ret = request_threaded_irq(pru->irq_vring, NULL,
-+						   pru_rproc_vring_interrupt,
-+						   IRQF_ONESHOT, dev_name(dev),
-+						   pru);
-+			if (ret) {
-+				dev_err(dev, "failed to enable vring interrupt, ret = %d\n",
-+					ret);
-+				goto fail;
-+			}
-+		}
-+	}
-+
- 	val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
- 	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
- 
--	/* TODO: INTC setup */
--
- 	return 0;
-+
-+fail:
-+	/* TODO: INTC cleanup */
-+
-+	return ret;
- }
- 
- /* stop/disable a PRU core */
-@@ -264,6 +375,10 @@ static int pru_rproc_stop(struct rproc *rproc)
- 	val &= ~CTRL_CTRL_EN;
- 	pru_control_write_reg(pru, PRU_CTRL_CTRL, val);
- 
-+	if (!list_empty(&pru->rproc->rvdevs) &&
-+	    !pru->mbox && pru->irq_vring > 0)
-+		free_irq(pru->irq_vring, pru);
-+
- 	/* TODO: INTC cleanup */
- 
- 	return 0;
-@@ -356,6 +471,7 @@ static void *pru_da_to_va(struct rproc *rproc, u64 da, int len, u32 flags)
- static struct rproc_ops pru_rproc_ops = {
- 	.start			= pru_rproc_start,
- 	.stop			= pru_rproc_stop,
-+	.kick			= pru_rproc_kick,
- 	.da_to_va		= pru_da_to_va,
- };
- 
-@@ -383,6 +499,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 	struct pru_rproc *pru;
- 	const char *fw_name;
- 	struct rproc *rproc = NULL;
-+	struct mbox_client *client;
- 	struct resource *res;
- 	int i, ret;
- 	const char *mem_names[PRU_MEM_MAX] = { "iram", "control", "debug" };
-@@ -475,10 +592,51 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, rproc);
- 
-+	/* get optional vring and kick interrupts for supporting virtio rpmsg */
-+	pru->irq_vring = platform_get_irq_byname(pdev, "vring");
-+	if (pru->irq_vring <= 0) {
-+		ret = pru->irq_vring;
-+		if (ret == -EPROBE_DEFER)
-+			goto free_rproc;
-+		dev_dbg(dev, "unable to get vring interrupt, status = %d\n",
-+			ret);
-+	}
-+
-+	pru->irq_kick = platform_get_irq_byname(pdev, "kick");
-+	if (pru->irq_kick <= 0) {
-+		ret = pru->irq_kick;
-+		if (ret == -EPROBE_DEFER)
-+			goto free_rproc;
-+		dev_dbg(dev, "unable to get kick interrupt, status = %d\n",
-+			ret);
-+	}
-+
-+	/*
-+	 * get optional mailbox for virtio rpmsg signalling if vring and kick
-+	 * interrupts are not specified for OMAP architecture based SoCs
-+	 */
-+	if (pru->irq_vring <= 0 && pru->irq_kick <= 0 &&
-+	    !of_device_is_compatible(np, "ti,k2g-pru") &&
-+	    !of_device_is_compatible(np, "ti,da850-pru")) {
-+		client = &pru->client;
-+		client->dev = dev;
-+		client->tx_done = NULL;
-+		client->rx_callback = pru_rproc_mbox_callback;
-+		client->tx_block = false;
-+		client->knows_txdone = false;
-+		pru->mbox = mbox_request_channel(client, 0);
-+		if (IS_ERR(pru->mbox)) {
-+			ret = PTR_ERR(pru->mbox);
-+			pru->mbox = NULL;
-+			dev_dbg(dev, "unable to get mailbox channel, status = %d\n",
-+				ret);
-+		}
-+	}
-+
- 	ret = rproc_add(pru->rproc);
- 	if (ret) {
- 		dev_err(dev, "rproc_add failed: %d\n", ret);
--		goto free_rproc;
-+		goto put_mbox;
- 	}
- 
- 	pru_rproc_create_debug_entries(rproc);
-@@ -487,6 +645,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+put_mbox:
-+	mbox_free_channel(pru->mbox);
- free_rproc:
- 	rproc_free(rproc);
- 	return ret;
-@@ -496,9 +656,12 @@ static int pru_rproc_remove(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct rproc *rproc = platform_get_drvdata(pdev);
-+	struct pru_rproc *pru = rproc->priv;
- 
- 	dev_info(dev, "%s: removing rproc %s\n", __func__, rproc->name);
- 
-+	mbox_free_channel(pru->mbox);
-+
- 	rproc_del(rproc);
- 	rproc_free(rproc);
- 
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
