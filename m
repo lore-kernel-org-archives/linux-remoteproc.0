@@ -1,57 +1,35 @@
-Return-Path: <benjamin.gaignard@linaro.org>
-Return-Path: <benjamin.gaignard@linaro.org>
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH v3 1/4] dt-bindings: hwlock: Document STM32 hwspinlock bindings
-Date: Mon, 12 Nov 2018 16:23:39 +0100
-Message-Id: <20181112152342.6561-2-benjamin.gaignard@st.com>
-In-Reply-To: <20181112152342.6561-1-benjamin.gaignard@st.com>
-References: <20181112152342.6561-1-benjamin.gaignard@st.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, Benjamin Gaignard <benjamin.gaignard@st.com>
+Return-Path: <rohitkr@codeaurora.org>
+From: Rohit kumar <rohitkr@codeaurora.org>
+Subject: [PATCH 2/2] remoteproc: q6v5_adsp: Remove voting for lpass_aon clock
+Date: Fri, 30 Nov 2018 12:59:10 +0530
+Message-Id: <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
+In-Reply-To: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
+References: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org
+Cc: Rohit kumar <rohitkr@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add bindings for STM32 hardware spinlock device
+Lpass_aon clock is on by default. Remove it from lpass
+clock list to avoid voting for it.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 ---
-version 3 :
-- fix clock name in properties description
-version 2 :
-- change clock name from hwspinlock to hsem to be align with hardware
-  documentation
+ drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-
-diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-new file mode 100644
-index 000000000000..adf4f000ea3d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-@@ -0,0 +1,23 @@
-+STM32 Hardware Spinlock Device Binding
-+-------------------------------------
-+
-+Required properties :
-+- compatible : should be "st,stm32-hwspinlock".
-+- reg : the register address of hwspinlock.
-+- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
-+	hwlock, so the number of cells should be <1> here.
-+- clock-names : Must contain "hsem".
-+- clocks : Must contain a phandle entry for the clock in clock-names, see the
-+	common clock bindings.
-+
-+Please look at the generic hwlock binding for usage information for consumers,
-+"Documentation/devicetree/bindings/hwlock/hwlock.txt"
-+
-+Example of hwlock provider:
-+	hwspinlock@4c000000 {
-+		compatible = "st,stm32-hwspinlock";
-+		#hwlock-cells = <1>;
-+		reg = <0x4c000000 0x400>;
-+		clocks = <&rcc HSEM>;
-+		clock-names = "hsem";
-+	};
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 79374d1..4829173 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -48,7 +48,7 @@
+ 
+ /* list of clocks required by ADSP PIL */
+ static const char * const adsp_clk_id[] = {
+-	"sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
++	"sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+ 	"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
+ };
+ 
 -- 
-2.15.0
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
