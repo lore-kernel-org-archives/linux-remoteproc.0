@@ -1,138 +1,55 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v3 5/7] remoteproc: qcom: wcss: populate hardcoded param using driver data
-Date: Sat, 15 Dec 2018 16:05:55 +0530
-Message-Id: <20181215103557.2748-6-govinds@codeaurora.org>
-In-Reply-To: <20181215103557.2748-1-govinds@codeaurora.org>
-References: <20181215103557.2748-1-govinds@codeaurora.org>
+Return-Path: <alexandre.torgue@st.com>
+Subject: Re: [PATCH v3 0/4] Add support of STM32 hwspinlock
+References: <20181112152342.6561-1-benjamin.gaignard@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <5c137862-e8fa-abb4-d931-f5c63db50649@st.com>
+Date: Mon, 3 Dec 2018 09:46:03 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+In-Reply-To: <20181112152342.6561-1-benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Benjamin Gaignard <benjamin.gaignard@linaro.org>, ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Q6 based WiFi fw loading is supported across
-different targets, ex: IPQ8074/QCS404. In order to
-support different fw names/pas id etc, populate
-hardcoded param using driver data.
+Hi Benjamin,
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 40 ++++++++++++++++++++++++-----
- 1 file changed, 34 insertions(+), 6 deletions(-)
+On 11/12/18 4:23 PM, Benjamin Gaignard wrote:
+> This serie adds the support of the hardware semaphore block for stm32mp1 SoC.
+> 
+> version 3:
+> - fix clock name in properties description.
+> - use postcore_initcall() instead of module_platform_driver()
+> 
+> version 2:
+> - fix comments done by Bjorn about clock naming, license terms in header,
+>    alphabetic ordering in Makefile and Kconfig and remove function
+> - Do not push test module in this version while waiting for feedbacks about it
+> 
+> 
+> Benjamin Gaignard (4):
+>    dt-bindings: hwlock: Document STM32 hwspinlock bindings
+>    hwspinlock: add STM32 hwspinlock device
+>    ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
+>    ARM: dts: stm32: enable hwspinlock on stm32mp157c-ed1
+> 
+>   .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 +++
+>   arch/arm/boot/dts/stm32mp157c-ed1.dts              |   4 +
+>   arch/arm/boot/dts/stm32mp157c.dtsi                 |   9 ++
+>   drivers/hwspinlock/Kconfig                         |   9 ++
+>   drivers/hwspinlock/Makefile                        |   1 +
+>   drivers/hwspinlock/stm32_hwspinlock.c              | 156 +++++++++++++++++++++
+>   6 files changed, 202 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+>   create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+> 
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index f93e1e4a1cc0..129f82404656 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -16,7 +17,6 @@
- #include "qcom_common.h"
- #include "qcom_q6v5.h"
- 
--#define WCSS_CRASH_REASON		421
- 
- /* Q6SS Register Offsets */
- #define Q6SS_RESET_REG		0x014
-@@ -70,6 +70,14 @@
- #define TCSR_WCSS_CLK_MASK	0x1F
- #define TCSR_WCSS_CLK_ENABLE	0x14
- 
-+struct wcss_data {
-+	void (*pas_handover)(struct qcom_q6v5 *q6v5);
-+	const char *firmware_name;
-+	int crash_reason_smem;
-+	int version;
-+	int pas_id;
-+};
-+
- struct q6v5_wcss {
- 	struct device *dev;
- 
-@@ -91,6 +99,10 @@ struct q6v5_wcss {
- 	phys_addr_t mem_reloc;
- 	void *mem_region;
- 	size_t mem_size;
-+
-+	int crash_reason_smem;
-+	int pas_id;
-+	int version;
- };
- 
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
-@@ -427,7 +439,7 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
- 				     wcss->mem_size, &wcss->mem_reloc);
- }
- 
--static const struct rproc_ops q6v5_wcss_ops = {
-+static const struct rproc_ops q6v5_wcss_ipq8074_ops = {
- 	.start = q6v5_wcss_start,
- 	.stop = q6v5_wcss_stop,
- 	.da_to_va = q6v5_wcss_da_to_va,
-@@ -527,12 +539,17 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
- 
- static int q6v5_wcss_probe(struct platform_device *pdev)
- {
-+	const struct wcss_data *desc;
- 	struct q6v5_wcss *wcss;
- 	struct rproc *rproc;
- 	int ret;
- 
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ops,
--			    "IPQ8074/q6_fw.mdt", sizeof(*wcss));
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ipq8074_ops,
-+			    desc->firmware_name, sizeof(*wcss));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
- 		return -ENOMEM;
-@@ -540,6 +557,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 
- 	wcss = rproc->priv;
- 	wcss->dev = &pdev->dev;
-+	wcss->pas_id = desc->pas_id;
-+	wcss->version = desc->version;
-+	wcss->crash_reason_smem = desc->crash_reason_smem;
- 
- 	ret = q6v5_wcss_init_mmio(wcss, pdev);
- 	if (ret)
-@@ -553,7 +573,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, WCSS_CRASH_REASON, NULL);
-+	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reason_smem,
-+			     desc->pas_handover);
- 	if (ret)
- 		goto free_rproc;
- 
-@@ -581,8 +602,15 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct wcss_data wcss_ipq8074_res_init = {
-+	.firmware_name = "IPQ8074/q6_fw.mdt",
-+	.crash_reason_smem = 421,
-+	.pas_handover = NULL,
-+};
-+
- static const struct of_device_id q6v5_wcss_of_match[] = {
--	{ .compatible = "qcom,ipq8074-wcss-pil" },
-+	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
-+
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_wcss_of_match);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+There is a (strong) dependency between pinctrl and hsem.
+As our pin controller is enabled by default, it's better to enable also
+your hwspinlock device by default. It will avoid pin controller probe 
+defer and a no stable behavior. So, I gonna remove DT patches from 
+stm32-next. Those Dt patches will not be included in my 4.20 pull-request.
+
+regards
+Alex
