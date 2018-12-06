@@ -1,63 +1,46 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 7/8] dt-bindings: remoteproc: qcom: Add power-domain bindings for Q6V5
-Date: Wed, 26 Dec 2018 18:22:28 +0530
-Message-Id: <20181226125229.20149-7-sibis@codeaurora.org>
-In-Reply-To: <20181226125229.20149-1-sibis@codeaurora.org>
-References: <20181226125229.20149-1-sibis@codeaurora.org>
+Return-Path: <benjamin.gaignard@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+References: <20181114090027.7580-1-benjamin.gaignard@linaro.org>
+ <CA+M3ks5m1=gsGqB55T4xSGtAQW9Ct3Fxqx-gbYg=GoNwoX6B-w@mail.gmail.com> <20181206011045.GA23336@builder>
+In-Reply-To: <20181206011045.GA23336@builder>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date: Thu, 6 Dec 2018 10:10:48 +0100
+Message-ID: <CA+M3ks5-5OWPz7Dan5fO6vTp74NpgCNxRhj1CL14hHSaTwrouQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] Add support of STM32 hwspinlock
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-stm32@st-md-mailman.stormreply.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add power-domain bindings for Q6V5 MSS on MSM8996 and SDM845 SoCs.
+Le jeu. 6 d=C3=A9c. 2018 =C3=A0 02:12, Bjorn Andersson
+<bjorn.andersson@linaro.org> a =C3=A9crit :
+>
+> On Fri 30 Nov 06:45 PST 2018, Benjamin Gaignard wrote:
+>
+> > Le mer. 14 nov. 2018 =C4=85 10:00, Benjamin Gaignard
+> > <benjamin.gaignard@linaro.org> a =C3=A9crit :
+> > >
+> > > This serie adds the support of the hardware semaphore block for stm32=
+mp1 SoC.
+> > >
+> > > version 4:
+> > > - add Linaro SoB
+> >
+> > Gentle ping on this series
+> >
+>
+> Sorry about that Benjamin, I was convinced that I picked your patches
+> already. Applied first two patches to hwspinlock tree.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
+Thanks.
 
-v3:
-  * Fixup dt-binding documentation as suggested by Doug
-  * Dropping Rob's Reviewed-by due to documentation style
-    change
+>
+> I expect the dts update to go through the ST tree, and I guess the
+> complaint from 0day tells us they already are?
 
-v2:
-  * Add load_state power-domain
-  * List cx and mx power-domains for MSM8996
+Yes I will send fixed dts patches for stm32 tree
 
- .../bindings/remoteproc/qcom,q6v5.txt         | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 65713de70be5..17ecaae5e5e0 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -106,6 +106,25 @@ For the compatible string below the following supplies are required:
- 	Definition: reference to the regulators to be held on behalf of the
- 		    booting of the Hexagon core
- 
-+- power-domains:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to power-domains that match power-domain-names
-+
-+- power-domain-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: The power-domains needed depend on the compatible string:
-+	qcom,q6v5-pil:
-+	qcom,ipq8074-wcss-pil:
-+	qcom,msm8916-mss-pil:
-+	qcom,msm8974-mss-pil:
-+		    no power-domain names required
-+	qcom,msm8996-mss-pil:
-+		    must be "cx", "mx"
-+	qcom,sdm845-mss-pil:
-+		    must be "cx", "mx", "mss", "load_state"
-+
- - qcom,smem-states:
- 	Usage: required
- 	Value type: <phandle>
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+> Regards,
+> Bjorn
