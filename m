@@ -1,172 +1,195 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 2/2] remoteproc: qcom: Add support for parsing fw dt bindings
-Date: Fri, 28 Dec 2018 10:18:19 +0530
-Message-Id: <20181228044819.5697-3-sibis@codeaurora.org>
-In-Reply-To: <20181228044819.5697-1-sibis@codeaurora.org>
-References: <20181228044819.5697-1-sibis@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 6/7] remoteproc: fix trace buffer va initialization
+Date: Thu, 6 Dec 2018 20:37:05 +0000
+Message-ID: <1a6e9b2e45c54d4183370e827e0e2891@SFHDAG7NODE2.st.com>
+References: <1543526968-56091-1-git-send-email-loic.pallardy@st.com>
+ <1543526968-56091-7-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1543526968-56091-7-git-send-email-loic.pallardy@st.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org
-Cc: briannorris@chromium.org, akdwived@codeaurora.org, clew@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+To: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, "s-anna@ti.com" <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for parsing "firmware-name" dt bindings which specifies
-the relative paths of mba/modem/pas image as strings. Fallback to
-the default paths for mba/modem/pas image on -EINVAL.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 46 +++++++++++++++++++++++-------
- drivers/remoteproc/qcom_q6v5_pas.c | 11 ++++++-
- 2 files changed, 46 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 01be7314e176..c75179006e24 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -188,6 +188,7 @@ struct q6v5 {
- 	bool has_alt_reset;
- 	int mpss_perm;
- 	int mba_perm;
-+	const char *hexagon_mdt_image;
- 	int version;
- };
- 
-@@ -860,17 +861,27 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
- 	bool relocate = false;
--	char seg_name[10];
-+	char *fw_name;
-+	size_t fw_name_len;
- 	ssize_t offset;
- 	size_t size = 0;
- 	void *ptr;
- 	int ret;
- 	int i;
- 
--	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
-+	fw_name_len = strlen(qproc->hexagon_mdt_image);
-+	if (fw_name_len <= 4)
-+		return -EINVAL;
-+
-+	fw_name = kstrdup(qproc->hexagon_mdt_image, GFP_KERNEL);
-+	if (!fw_name)
-+		return -ENOMEM;
-+
-+	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
- 	if (ret < 0) {
--		dev_err(qproc->dev, "unable to load modem.mdt\n");
--		return ret;
-+		dev_err(qproc->dev, "unable to load %s\n",
-+			qproc->hexagon_mdt_image);
-+		goto out;
- 	}
- 
- 	/* Initialize the RMB validator */
-@@ -918,10 +929,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 		ptr = qproc->mpss_region + offset;
- 
- 		if (phdr->p_filesz) {
--			snprintf(seg_name, sizeof(seg_name), "modem.b%02d", i);
--			ret = request_firmware(&seg_fw, seg_name, qproc->dev);
-+			snprintf(fw_name + fw_name_len - 3, fw_name_len,
-+				 "b%02d", i);
-+			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
- 			if (ret) {
--				dev_err(qproc->dev, "failed to load %s\n", seg_name);
-+				dev_err(qproc->dev, "failed to load %s\n",
-+					fw_name);
- 				goto release_firmware;
- 			}
- 
-@@ -960,6 +973,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 
- release_firmware:
- 	release_firmware(fw);
-+out:
-+	kfree(fw_name);
- 
- 	return ret < 0 ? ret : 0;
- }
-@@ -1075,9 +1090,10 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 	unsigned long i;
- 	int ret;
- 
--	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
-+	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
- 	if (ret < 0) {
--		dev_err(qproc->dev, "unable to load modem.mdt\n");
-+		dev_err(qproc->dev, "unable to load %s\n",
-+			qproc->hexagon_mdt_image);
- 		return ret;
- 	}
- 
-@@ -1253,6 +1269,8 @@ static int q6v5_probe(struct platform_device *pdev)
- 	const struct rproc_hexagon_res *desc;
- 	struct q6v5 *qproc;
- 	struct rproc *rproc;
-+	const char *mba_image;
-+	const char *fw_name[2];
- 	int ret;
- 
- 	desc = of_device_get_match_data(&pdev->dev);
-@@ -1262,8 +1280,15 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (desc->need_mem_protection && !qcom_scm_is_available())
- 		return -EPROBE_DEFER;
- 
-+	ret = of_property_read_string_array(pdev->dev.of_node, "firmware-name",
-+					    fw_name, 2);
-+	if (ret != -EINVAL && ret != 2)
-+		return ret > 0 ? -EINVAL : ret;
-+
-+	mba_image = (ret != 2) ? desc->hexagon_mba_image : fw_name[0];
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
--			    desc->hexagon_mba_image, sizeof(*qproc));
-+			    mba_image, sizeof(*qproc));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
- 		return -ENOMEM;
-@@ -1272,6 +1297,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc = (struct q6v5 *)rproc->priv;
- 	qproc->dev = &pdev->dev;
- 	qproc->rproc = rproc;
-+	qproc->hexagon_mdt_image = (ret != 2) ? "modem.mdt" : fw_name[1];
- 	platform_set_drvdata(pdev, qproc);
- 
- 	ret = q6v5_init_mem(qproc, pdev);
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index b1e63fcd5fdf..141c7da29e9a 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -258,6 +258,8 @@ static int adsp_probe(struct platform_device *pdev)
- 	const struct adsp_data *desc;
- 	struct qcom_adsp *adsp;
- 	struct rproc *rproc;
-+	const char *fw_name;
-+	const char *of_fw_name;
- 	int ret;
- 
- 	desc = of_device_get_match_data(&pdev->dev);
-@@ -267,8 +269,15 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (!qcom_scm_is_available())
- 		return -EPROBE_DEFER;
- 
-+	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-+				      &of_fw_name);
-+	if (ret && ret != -EINVAL)
-+		return ret;
-+
-+	fw_name = ret ? desc->firmware_name : of_fw_name;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
--			    desc->firmware_name, sizeof(*adsp));
-+			    fw_name, sizeof(*adsp));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> -----Original Message-----
+> From: Loic PALLARDY
+> Sent: jeudi 29 novembre 2018 22:29
+> To: bjorn.andersson@linaro.org; ohad@wizery.com
+> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> benjamin.gaignard@linaro.org; s-anna@ti.com; Loic PALLARDY
+> <loic.pallardy@st.com>
+> Subject: [PATCH 6/7] remoteproc: fix trace buffer va initialization
+>=20
+> With rproc_alloc_registered_carveouts() introduction, carveouts are
+> allocated after resource table parsing.
+> rproc_da_to_va() may return NULL at trace resource registering.
+> This patch modifies trace debufs registering to provide device address
+> (da) instead of va.
+> da to va translation is done at each trace buffer access
+> through debugfs interface.
+>=20
+> Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry
+> struct")
+>=20
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c     | 26 ++++++++++----------------
+>  drivers/remoteproc/remoteproc_debugfs.c  | 21 +++++++++++++++++----
+>  drivers/remoteproc/remoteproc_internal.h |  9 ++++++++-
+>  3 files changed, 35 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/remoteproc/remoteproc_core.c
+> b/drivers/remoteproc/remoteproc_core.c
+> index f19bc6961e40..9dbcc16f8782 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -562,9 +562,8 @@ void rproc_vdev_release(struct kref *ref)
+>  static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *=
+rsc,
+>  			      int offset, int avail)
+>  {
+> -	struct rproc_mem_entry *trace;
+> +	struct rproc_debug_trace *trace;
+>  	struct device *dev =3D &rproc->dev;
+> -	void *ptr;
+>  	char name[15];
+>=20
+>  	if (sizeof(*rsc) > avail) {
+> @@ -578,28 +577,23 @@ static int rproc_handle_trace(struct rproc *rproc,
+> struct fw_rsc_trace *rsc,
+>  		return -EINVAL;
+>  	}
+>=20
+> -	/* what's the kernel address of this resource ? */
+> -	ptr =3D rproc_da_to_va(rproc, rsc->da, rsc->len);
+> -	if (!ptr) {
+> -		dev_err(dev, "erroneous trace resource entry\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	trace =3D kzalloc(sizeof(*trace), GFP_KERNEL);
+>  	if (!trace)
+>  		return -ENOMEM;
+>=20
+>  	/* set the trace buffer dma properties */
+> -	trace->len =3D rsc->len;
+> -	trace->va =3D ptr;
+> +	trace->trace_mem.len =3D rsc->len;
+> +	trace->trace_mem.da =3D rsc->da;
+> +
+> +	/* set pointer on rproc device */
+> +	trace->rproc =3D rproc;
+>=20
+>  	/* make sure snprintf always null terminates, even if truncating */
+>  	snprintf(name, sizeof(name), "trace%d", rproc->num_traces);
+>=20
+>  	/* create the debugfs entry */
+> -	trace->priv =3D rproc_create_trace_file(name, rproc, trace);
+> -	if (!trace->priv) {
+> -		trace->va =3D NULL;
+> +	trace->tfile =3D rproc_create_trace_file(name, rproc, trace);
+> +	if (!trace->tfile) {
+>  		kfree(trace);
+>  		return -EINVAL;
+>  	}
+> @@ -608,8 +602,8 @@ static int rproc_handle_trace(struct rproc *rproc,
+> struct fw_rsc_trace *rsc,
+>=20
+>  	rproc->num_traces++;
+>=20
+> -	dev_dbg(dev, "%s added: va %pK, da 0x%x, len 0x%x\n",
+> -		name, ptr, rsc->da, rsc->len);
+> +	dev_dbg(dev, "%s added: da 0x%x, len 0x%x\n",
+> +		name, rsc->da, rsc->len);
+>=20
+>  	return 0;
+>  }
+
+rproc_resource_cleanup() modification not included in this patch. (lost dur=
+ing rebase)
+I'll post a v2.
+
+Regards,
+Loic
+
+> diff --git a/drivers/remoteproc/remoteproc_debugfs.c
+> b/drivers/remoteproc/remoteproc_debugfs.c
+> index e90135c64af0..11240b4d0a91 100644
+> --- a/drivers/remoteproc/remoteproc_debugfs.c
+> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> @@ -47,10 +47,23 @@ static struct dentry *rproc_dbg;
+>  static ssize_t rproc_trace_read(struct file *filp, char __user *userbuf,
+>  				size_t count, loff_t *ppos)
+>  {
+> -	struct rproc_mem_entry *trace =3D filp->private_data;
+> -	int len =3D strnlen(trace->va, trace->len);
+> +	struct rproc_debug_trace *data =3D filp->private_data;
+> +	struct rproc_mem_entry *trace =3D &data->trace_mem;
+> +	void *va;
+> +	char buf[100];
+> +	int len;
+> +
+> +	va =3D rproc_da_to_va(data->rproc, trace->da, trace->len);
+> +
+> +	if (!va) {
+> +		len =3D scnprintf(buf, sizeof(buf), "Trace %s not available\n",
+> +				trace->name);
+> +		va =3D buf;
+> +	} else {
+> +		len =3D strnlen(va, trace->len);
+> +	}
+>=20
+> -	return simple_read_from_buffer(userbuf, count, ppos, trace->va,
+> len);
+> +	return simple_read_from_buffer(userbuf, count, ppos, va, len);
+>  }
+>=20
+>  static const struct file_operations trace_rproc_ops =3D {
+> @@ -288,7 +301,7 @@ void rproc_remove_trace_file(struct dentry *tfile)
+>  }
+>=20
+>  struct dentry *rproc_create_trace_file(const char *name, struct rproc
+> *rproc,
+> -				       struct rproc_mem_entry *trace)
+> +				       struct rproc_debug_trace *trace)
+>  {
+>  	struct dentry *tfile;
+>=20
+> diff --git a/drivers/remoteproc/remoteproc_internal.h
+> b/drivers/remoteproc/remoteproc_internal.h
+> index f6cad243d7ca..7d8936688164 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -25,6 +25,13 @@
+>=20
+>  struct rproc;
+>=20
+> +struct rproc_debug_trace {
+> +	struct rproc *rproc;
+> +	struct dentry *tfile;
+> +	struct list_head node;
+> +	struct rproc_mem_entry trace_mem;
+> +};
+> +
+>  /* from remoteproc_core.c */
+>  void rproc_release(struct kref *kref);
+>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
+> @@ -37,7 +44,7 @@ void rproc_remove_virtio_dev(struct rproc_vdev
+> *rvdev);
+>  /* from remoteproc_debugfs.c */
+>  void rproc_remove_trace_file(struct dentry *tfile);
+>  struct dentry *rproc_create_trace_file(const char *name, struct rproc
+> *rproc,
+> -				       struct rproc_mem_entry *trace);
+> +				       struct rproc_debug_trace *trace);
+>  void rproc_delete_debug_dir(struct rproc *rproc);
+>  void rproc_create_debug_dir(struct rproc *rproc);
+>  void rproc_init_debugfs(void);
+> --
+> 2.7.4
