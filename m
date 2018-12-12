@@ -1,38 +1,39 @@
 Return-Path: <sibis@codeaurora.org>
 From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 3/7] dt-bindings: remoteproc: qcom: Fixup regulator dependencies
-Date: Mon, 17 Dec 2018 15:37:20 +0530
-Message-Id: <20181217100724.4593-3-sibis@codeaurora.org>
-In-Reply-To: <20181217100724.4593-1-sibis@codeaurora.org>
-References: <20181217100724.4593-1-sibis@codeaurora.org>
+Subject: [PATCH 0/2] Add firmware bindings for Q6V5 MSS
+Date: Wed, 12 Dec 2018 18:14:54 +0530
+Message-Id: <20181212124456.3164-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, Sibi Sankar <sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org
+Cc: briannorris@chromium.org, akdwived@codeaurora.org, clew@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fixup regulator supply dependencies for Q6V5 MSS on MSM996 SoCs.
+Q6V5 MSS on certain SoCs like SDM845 are capable of operating under
+completely different configuration (like Non-Modem WLAN configuration)
+depending on the firmware loaded without any change in boot sequence
+of the Hexagon core. The patch series is ultimately aimed to avoid
+multiple compatibles per SoC to just specify different upstreamed firmware
+locations. This is achieved by introducing "qcom,firmware" binding
+to store the relative path of mba and modem metadata.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+remoteproc@4080000 { 
+	...
+	qcom,firmware = "qcom/sdm845/mss/mba.mbn",
+			"qcom/sdm845/mss/modem.mdt";
+	...
+}
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 780adc043b37..98894e6ad456 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -76,7 +76,9 @@ on the Qualcomm Hexagon core.
- 	Usage: required
- 	Value type: <phandle>
- 	Definition: reference to the regulators to be held on behalf of the
--		    booting of the Hexagon core
-+		    booting of the Hexagon core on MSM8916 SoCs
-+		    reference to the pll-supply regulator to be held on behalf
-+		    of the booting of the Hexagon core on MSM8996 SoCs
- 
- - qcom,smem-states:
- 	Usage: required
+Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+SibiSankar (2):
+  dt-bindings: remoteproc: qcom: Add firmware bindings for Q6V5 MSS
+  remoteproc: qcom: q6v5-mss: Add support for parsing fw dt bindings
+
+ .../bindings/remoteproc/qcom,q6v5.txt         |  7 +++
+ drivers/remoteproc/qcom_q6v5_mss.c            | 49 ++++++++++++++++---
+ 2 files changed, 48 insertions(+), 8 deletions(-)
+
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
