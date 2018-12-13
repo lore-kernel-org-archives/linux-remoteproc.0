@@ -1,96 +1,51 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 5/7] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-Date: Mon, 17 Dec 2018 15:37:22 +0530
-Message-Id: <20181217100724.4593-5-sibis@codeaurora.org>
-In-Reply-To: <20181217100724.4593-1-sibis@codeaurora.org>
-References: <20181217100724.4593-1-sibis@codeaurora.org>
+Return-Path: <dianders@chromium.org>
+Return-Path: <dianders@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, Sibi Sankar <sibis@codeaurora.org>
+References: <20181120210828.12590-1-sibis@codeaurora.org>
+In-Reply-To: <20181120210828.12590-1-sibis@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 13 Dec 2018 14:05:18 -0800
+Message-ID: <CAD=FV=WC7UQnNsbqwevhxML2Xmq3z4c7uiJ8ddn4tE2H3zAHZg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom: Add power-domain bindings
+ for Q6V5
+Content-Type: text/plain; charset="UTF-8"
+To: sibis@codeaurora.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, Ohad Ben Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
+Hi,
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
+On Tue, Nov 20, 2018 at 1:08 PM Sibi Sankar <sibis@codeaurora.org> wrote:
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> index 14947562bc67..bd9f4882fcf0 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+> @@ -75,6 +75,17 @@ on the Qualcomm Hexagon core.
+>         Definition: reference to the regulators to be held on behalf of the
+>                     booting of the Hexagon core
+>
+> +- power-domains:
+> +       Usage: required
 
-v2:
-  * Fixed style changes
-  * Added missing clocks in the dt-bindings
-  * Split mss remoteproc node into a number of patches
+Assuming I understand correctly, presumably you want to say that it's
+required to list _either_ power-domains or supplies.  Right now you
+have the bindings saying that you need both regulators and
+power-domains on all boards.
 
-This patch depends on the mpss and mba memory regions and pdc reset node.
-https://patchwork.kernel.org/patch/10662089/
-https://patchwork.kernel.org/patch/10657325/
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 52 ++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+> +       Value type: <phandle>
+> +       Definition: reference to the cx, mx and mss power-domains to be held on
+> +                   behalf of the booting the Hexagon core
+> +
+> +- power-domain-names:
+> +       Usage: required
+> +       Value type: <stringlist>
+> +       Definition: must be "cx", "mx", "mss"
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 5da9fa1feb8a..33ff8668828f 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1366,6 +1366,58 @@
- 			};
- 		};
- 
-+		remoteproc@4080000 {
-+			compatible = "qcom,sdm845-mss-pil";
-+			reg = <0x04080000 0x408>, <0x04180000 0x48>;
-+			reg-names = "qdsp6", "rmb";
-+
-+			interrupts-extended =
-+				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+				 <&gcc GCC_PRNG_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "prng", "xo";
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+			reset-names = "mss_restart", "pdc_reset";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs
-+						0x23000 0x25000 0x24000>;
-+
-+			mba {
-+				memory-region = <&mba_region>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_region>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+				mbox-names = "mpss_smem";
-+			};
-+		};
-+
- 		usb_1_hsphy: phy@88e2000 {
- 			compatible = "qcom,sdm845-qusb2-phy";
- 			reg = <0x88e2000 0x400>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Comparing to the patch you posted at
+<https://lkml.kernel.org/r/20181127085828.17908-1-sibis@codeaurora.org>,
+it seems like maybe you also need "aop" listed here?
+
+
+
+-Doug
