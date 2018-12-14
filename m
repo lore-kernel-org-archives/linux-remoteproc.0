@@ -1,93 +1,90 @@
-Return-Path: <dinuxbg@gmail.com>
-Return-Path: <dinuxbg@gmail.com>
-From: Dimitar Dimitrov <dinuxbg@gmail.com>
+Return-Path: <rogerq@ti.com>
 Subject: Re: [PATCH 04/16] remoteproc/pru: Add PRU remoteproc driver
-Date: Sat, 15 Dec 2018 15:43:41 +0200
-Message-ID: <6339524.5sMj8qDFZB@tpdeb>
-In-Reply-To: <5C137DB4.9070602@ti.com>
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com> <308735274.C9ZyqtqOL8@tpdeb> <5C137DB4.9070602@ti.com>
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-5-git-send-email-rogerq@ti.com> <308735274.C9ZyqtqOL8@tpdeb>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <5C137DB4.9070602@ti.com>
+Date: Fri, 14 Dec 2018 11:53:56 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-To: Roger Quadros <rogerq@ti.com>
+In-Reply-To: <308735274.C9ZyqtqOL8@tpdeb>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Dimitar Dimitrov <dinuxbg@gmail.com>
 Cc: ohad@wizery.com, bjorn.andersson@linaro.org, tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, David Lechner <david@lechnology.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, 12/14 2018 11:53:56 EET Roger Quadros wrote:
-> Hi Dimitar,
+Hi Dimitar,
+
+On 30/11/18 23:39, Dimitar Dimitrov wrote:
+> On Monday, 12/26/2018, 9:52:37 EET Roger Quadros wrote:
+>> +/*
+>> + * Convert PRU device address (instruction space) to kernel virtual address
+>> + *
+>> + * A PRU does not have an unified address space. Each PRU has its very own
+>> + * private Instruction RAM, and its device address is identical to that of
+>> + * its primary Data RAM device address.
+>> + */
+>> +static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, int len)
+>> +{
+>> +       u32 offset;
+>> +       void *va = NULL;
+>> +
+>> +       if (len <= 0)
+>> +               return NULL;
 > 
-> On 30/11/18 23:39, Dimitar Dimitrov wrote:
-> > On Monday, 12/26/2018, 9:52:37 EET Roger Quadros wrote:
-> >> +/*
-> >> + * Convert PRU device address (instruction space) to kernel virtual
-> >> address + *
-> >> + * A PRU does not have an unified address space. Each PRU has its very
-> >> own
-> >> + * private Instruction RAM, and its device address is identical to that
-> >> of
-> >> + * its primary Data RAM device address.
-> >> + */
-> >> +static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, int len)
-> >> +{
-> >> +       u32 offset;
-> >> +       void *va = NULL;
-> >> +
-> >> +       if (len <= 0)
-> >> +               return NULL;
-> > 
-> > Could you please clear the upper 4 bits the of IRAM device address, in
-> > order to support binutils ELF images? Here is an example line to add
-> > here:
-> > 
-> > +       /* GNU binutils do not support multiple address spaces. The
-> > +        * default linker script from the official GNU pru-ld places
-> > +        * IRAM at an arbitrary high offset, in order to differentiate it
-> > +        * from DRAM. Hence we need to strip the artificial offset
-> > +        * from the IRAM address.
-> > +        */
-> > +       da &= ~0xf0000000u;
-> > +
+> Could you please clear the upper 4 bits the of IRAM device address, in order 
+> to support binutils ELF images? Here is an example line to add here:
 > 
-> After some more thought I'm not very sure how to proceed.
+> +       /* GNU binutils do not support multiple address spaces. The 
+> +        * default linker script from the official GNU pru-ld places 
+> +        * IRAM at an arbitrary high offset, in order to differentiate it 
+> +        * from DRAM. Hence we need to strip the artificial offset 
+> +        * from the IRAM address. 
+> +        */ 
+> +       da &= ~0xf0000000u; 
+> +
 > 
-> I'll be using the below 2 patches in the next patch spin in place of
-> patch 1 in the current series.
-> https://lore.kernel.org/lkml/20180623210810.21232-2-david@lechnology.com/
-> https://lore.kernel.org/lkml/20180623210810.21232-3-david@lechnology.com/
-> 
-> They figure out the PAGE (IRAM vs DRAM) by looking at TI specific section
-> attributes.
-> 
-> e.g.
-> [18] .TI.phattrs LOPROC+f000004 00000000 000e08 000010 00 0 0 4
-> [19] .TI.section.flags LOPROC+f000005 00000000 000e68 00002a 00 0 0 0
-> [20] .TI.section.page LOPROC+f000007 00000000 000e92 00002a 00 0 0 0
-> 
-> AFAIK the ELF by GNU pru-ld won't contain these sections.
-These sections are not documented, so pru-ld does not generate them.
+
+After some more thought I'm not very sure how to proceed.
+
+I'll be using the below 2 patches in the next patch spin in place of
+patch 1 in the current series.
+https://lore.kernel.org/lkml/20180623210810.21232-2-david@lechnology.com/
+https://lore.kernel.org/lkml/20180623210810.21232-3-david@lechnology.com/
+
+They figure out the PAGE (IRAM vs DRAM) by looking at TI specific section
+attributes.
+
+e.g.
+[18] .TI.phattrs LOPROC+f000004 00000000 000e08 000010 00 0 0 4
+[19] .TI.section.flags LOPROC+f000005 00000000 000e68 00002a 00 0 0 0
+[20] .TI.section.page LOPROC+f000007 00000000 000e92 00002a 00 0 0 0
+
+AFAIK the ELF by GNU pru-ld won't contain these sections.
+
+We need to support ELF generated by both tools (TI clpru and GNU pru-ld).
+Is it safe to assume that if the ELF doesn't have the TI specific sections
+then it was generated by gnupru?
+
+Is there a more straight forward way of differentiating the two. e.g. by looking
+at something in the ELF header?
 
 > 
-> We need to support ELF generated by both tools (TI clpru and GNU pru-ld).
-> Is it safe to assume that if the ELF doesn't have the TI specific sections
-> then it was generated by gnupru?
-Right now this is correct. My concern is that in the future TI may decide to 
-document these sections, and pru-ld default linker script may get updated. On 
-the other hand, if TI considers these specific to their toolchain and not 
-applicable to GNU, then go ahead and use this indicator.
-
-Slightly more robust might be to check if MSB byte of the entry address is 
-non-zero:
-  Entry point address:               0x20000000
-                                       ^^
+>> +
+>> +       if (da >= pru->iram_da &&
+>> +           da + len <= pru->iram_da + pru->mem_regions[PRU_MEM_IRAM].size { 
+>> +               offset = da - pru->iram_da;
+>> +               va = (__force void *)(pru->mem_regions[PRU_MEM_IRAM].va +
+>> +                                     offset);
+>> +       }
+>> +
+>> +       return va;
+>> +}
 > 
-> Is there a more straight forward way of differentiating the two. e.g. by
-> looking at something in the ELF header?
+> 
 
-Is there a reason to differentiate? As long as you zero the MSB byte of IRAM 
-device addresses, there should be no conflict. Very large IRAM addresses are 
-unlikely to ever be valid, so it should be safe to zero the MSB for any PRU 
-ELF image.
-
-
-Regards,
-Dimitar
+cheers,
+-roger
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
