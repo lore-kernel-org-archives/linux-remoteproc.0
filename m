@@ -1,62 +1,51 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 2/8] dt-bindings: remoteproc: qcom: Add missing clocks for SDM845
-Date: Sat, 29 Dec 2018 00:23:01 +0530
-Message-Id: <20181228185307.25645-2-sibis@codeaurora.org>
-In-Reply-To: <20181228185307.25645-1-sibis@codeaurora.org>
-References: <20181228185307.25645-1-sibis@codeaurora.org>
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v3 7/7] remoteproc: qcom: wcss: explicitly request exclusive reset control
+Date: Sat, 15 Dec 2018 16:05:57 +0530
+Message-Id: <20181215103557.2748-8-govinds@codeaurora.org>
+In-Reply-To: <20181215103557.2748-1-govinds@codeaurora.org>
+References: <20181215103557.2748-1-govinds@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add missing clock bindings for Q6V5 MSS on SDM845 SoCs.
+Use request exclusive reset control for wcss reset controls.
 
-Fixes: fb22022ff63d ("dt-bindings: remoteproc: Add Q6v5 Modem PIL
-binding for SDM845")
-
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
 ---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v4:
-  * Re-order clocks for consistency as suggested by Rob
-
-v3:
-  * Fixup dt-binding documentation as suggested by Doug
-
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 9ff5b0309417..d645c8db29fd 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -39,13 +39,21 @@ on the Qualcomm Hexagon core.
- - clocks:
- 	Usage: required
- 	Value type: <phandle>
--	Definition: reference to the iface, bus and mem clocks to be held on
--		    behalf of the booting of the Hexagon core
-+	Definition: reference to the clocks that match clock-names
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 3f66bd8fa407..b382e5eba26d 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -756,20 +756,20 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 	struct device *dev = wcss->dev;
  
- - clock-names:
- 	Usage: required
- 	Value type: <stringlist>
--	Definition: must be "iface", "bus", "mem"
-+	Definition: The clocks needed depend on the compatible string:
-+	qcom,ipq8074-wcss-pil:
-+		    no clock names required
-+	qcom,q6v5-pil:
-+	qcom,msm8916-mss-pil:
-+	qcom,msm8974-mss-pil:
-+		    must be "iface", "bus", "mem", "xo"
-+	qcom,sdm845-mss-pil:
-+		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
-+		    "snoc_axi", "mnoc_axi", "prng"
+ 	if (aon_reset_required) {
+-		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");
++		wcss->wcss_aon_reset = devm_reset_control_get_exclusive(dev, "wcss_aon_reset");
+ 		if (IS_ERR(wcss->wcss_aon_reset)) {
+ 			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
+ 			return PTR_ERR(wcss->wcss_aon_reset);
+ 		}
+ 	}
  
- - resets:
- 	Usage: required
+-	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
++	wcss->wcss_reset = devm_reset_control_get_exclusive(dev, "wcss_reset");
+ 	if (IS_ERR(wcss->wcss_reset)) {
+ 		dev_err(wcss->dev, "unable to acquire wcss_reset\n");
+ 		return PTR_ERR(wcss->wcss_reset);
+ 	}
+ 
+-	wcss->wcss_q6_reset = devm_reset_control_get(dev, "wcss_q6_reset");
++	wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
+ 	if (IS_ERR(wcss->wcss_q6_reset)) {
+ 		dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
+ 		return PTR_ERR(wcss->wcss_q6_reset);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
