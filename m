@@ -1,37 +1,32 @@
-Return-Path: <rohitkr@codeaurora.org>
-From: Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH 1/2] arm64: dts: qcom: sdm845: Add ADSP reserve-memory nodes
-Date: Thu, 20 Dec 2018 19:09:33 +0530
-Message-Id: <1545313174-13481-2-git-send-email-rohitkr@codeaurora.org>
-In-Reply-To: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
-References: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
-To: dianders@chromium.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org, linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org
-Cc: Rohit kumar <rohitkr@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 17 Dec 2018 14:48:15 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 6/7] remoteproc: qcom: wcss: Add non pas wcss Q6
+ support for QCS404
+Message-ID: <20181217204815.GA17099@bogus>
+References: <20181215103557.2748-1-govinds@codeaurora.org>
+ <20181215103557.2748-7-govinds@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181215103557.2748-7-govinds@codeaurora.org>
+To: Govind Singh <govinds@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org, linux-clk@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add memory nodes required for remoteproc q6v5_adsp pil.
+On Sat, Dec 15, 2018 at 04:05:56PM +0530, Govind Singh wrote:
+> Add non PAS WCSS remoteproc driver support for QCS404 SOC.
+> Add WCSS q6 bootup and shutdown sequence handled from
+> Application Processor SubSystem(APSS).
+> 
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> ---
+>  .../bindings/remoteproc/qcom,q6v5.txt         |  61 ++
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Please add acks/reviewed-bys when posting new versions.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 23a253b..c0a012f 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -88,6 +88,11 @@
- 			reg = <0 0x86200000 0 0x2d00000>;
- 			no-map;
- 		};
-+
-+		pil_adsp_mem: memory@8b100000 {
-+			reg = <0 0x8b100000 0 0x1a00000>;
-+			no-map;
-+		};
- 	};
- 
- 	cpus {
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+In the future, please split bindings to a separate patch.
+
+>  drivers/remoteproc/qcom_q6v5_wcss.c           | 544 +++++++++++++++++-
+>  2 files changed, 577 insertions(+), 28 deletions(-)
