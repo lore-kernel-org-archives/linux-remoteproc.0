@@ -1,44 +1,77 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 6/8] remoteproc: qcom: q6v5-mss: Add missing regulator for MSM8996
-Date: Sat, 29 Dec 2018 00:23:05 +0530
-Message-Id: <20181228185307.25645-6-sibis@codeaurora.org>
-In-Reply-To: <20181228185307.25645-1-sibis@codeaurora.org>
-References: <20181228185307.25645-1-sibis@codeaurora.org>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181215103557.2748-6-govinds@codeaurora.org>
+Subject: Re: [PATCH v3 5/7] remoteproc: qcom: wcss: populate hardcoded param using driver data
+References: <20181215103557.2748-1-govinds@codeaurora.org> <20181215103557.2748-6-govinds@codeaurora.org>
+Message-ID: <154507292461.19322.16649255647859149880@swboyd.mtv.corp.google.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Date: Mon, 17 Dec 2018 10:55:24 -0800
+To: Govind Singh <govinds@codeaurora.org>, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add proxy vote for pll supply on MSM8996 SoC.
+Quoting Govind Singh (2018-12-15 02:35:55)
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qco=
+m_q6v5_wcss.c
+> index f93e1e4a1cc0..129f82404656 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -16,7 +17,6 @@
+>  #include "qcom_common.h"
+>  #include "qcom_q6v5.h"
+> =20
+> -#define WCSS_CRASH_REASON              421
+> =20
+>  /* Q6SS Register Offsets */
+>  #define Q6SS_RESET_REG         0x014
+> @@ -70,6 +70,14 @@
+>  #define TCSR_WCSS_CLK_MASK     0x1F
+>  #define TCSR_WCSS_CLK_ENABLE   0x14
+> =20
+> +struct wcss_data {
+> +       void (*pas_handover)(struct qcom_q6v5 *q6v5);
+> +       const char *firmware_name;
+> +       int crash_reason_smem;
+> +       int version;
 
-Fixes: 9f058fa2efb1 ("remoteproc: qcom: Add support for mss remoteproc
-on msm8996")
+version can be negative?
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> +       int pas_id;
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index cb5f0d3ac6a3..c86dc40cfb8c 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1395,6 +1395,13 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 
- static const struct rproc_hexagon_res msm8996_mss = {
- 	.hexagon_mba_image = "mba.mbn",
-+	.proxy_supply = (struct qcom_mss_reg_res[]) {
-+		{
-+			.supply = "pll",
-+			.uA = 100000,
-+		},
-+		{}
-+	},
- 	.proxy_clk_names = (char*[]){
- 			"xo",
- 			"pnoc",
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+And the pas_id can be negative too?
+
+> +};
+> +
+>  struct q6v5_wcss {
+>         struct device *dev;
+> =20
+> @@ -553,7 +573,8 @@ static int q6v5_wcss_probe(struct platform_device *pd=
+ev)
+>         if (ret)
+>                 goto free_rproc;
+> =20
+> -       ret =3D qcom_q6v5_init(&wcss->q6v5, pdev, rproc, WCSS_CRASH_REASO=
+N, NULL);
+> +       ret =3D qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reas=
+on_smem,
+> +                            desc->pas_handover);
+>         if (ret)
+>                 goto free_rproc;
+> =20
+> @@ -581,8 +602,15 @@ static int q6v5_wcss_remove(struct platform_device *=
+pdev)
+>         return 0;
+>  }
+> =20
+> +static const struct wcss_data wcss_ipq8074_res_init =3D {
+> +       .firmware_name =3D "IPQ8074/q6_fw.mdt",
+> +       .crash_reason_smem =3D 421,
+
+Why destroy the #define and inline it here? Keep the define around and
+use it here instead?
+
+> +       .pas_handover =3D NULL,
+
+This surely isn't needed to be assigned to NULL.
