@@ -1,49 +1,52 @@
-Return-Path: <patrice.chotard@st.com>
-From: Patrice CHOTARD <patrice.chotard@st.com>
-Subject: Re: [PATCH] remoteproc: fix a ! vs ~ typo
-Date: Thu, 20 Dec 2018 10:05:55 +0000
-Message-ID: <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
-References: <20181218081657.GA32567@kadam>
-In-Reply-To: <20181218081657.GA32567@kadam>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <111A8AC40A93AF4E931F39DC0E71A333@st.com>
-Content-Transfer-Encoding: base64
+Return-Path: <dan.carpenter@oracle.com>
+Date: Tue, 18 Dec 2018 11:16:57 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] remoteproc: fix a ! vs ~ typo
+Message-ID: <20181218081657.GA32567@kadam>
 MIME-Version: 1.0
-To: Dan Carpenter <dan.carpenter@oracle.com>, Peter Griffin <peter.griffin@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Loic PALLARDY <loic.pallardy@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Patrice Chotard <patrice.chotard@st.com>, Peter Griffin <peter.griffin@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgRGFuDQoNCk9uIDEyLzE4LzE4IDk6MTYgQU0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IFRo
-aXMgaXMgZnJvbSBzdGF0aWMgYW5hbHlzaXMgYW5kIG5vdCBmcm9tIHRlc3RpbmcuICBJdCBkb2Vz
-bid0IHJlYWxseQ0KPiBtYWtlIHNlbnNlIHRvIHRhbGsgYWJvdXQgIUJJVCgwKSBzbyBwcm9iYWJs
-eSB+QklUKDApIHdhcyBpbnRlbmRlZC4NCj4gSSBoYWQgdG8gY2FzdCBpdCBmcm9tIHVuc2lnbmVk
-IGxvbmcgdG8gdW5zaWduZWQgaW50IHRvIHNpbGVuY2UgYSBHQ0MNCj4gd2FybmluZy4NCj4gDQo+
-IEZpeGVzOiBiYjY4NjliMjE0NzggKCJQZXRlciBHcmlmZmluIDxwZXRlci5ncmlmZmluQGxpbmFy
-by5vcmc+IikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBv
-cmFjbGUuY29tPg0KPiAtLS0NCj4gDQo+IFNvcnJ5IGZvciB0aGUgY3JhcCBjb21taXQgbWVzc2Fn
-ZS4gIEknbSBwcmV0dHkgc3VyZSB0aGUgc3RhdGljIGNoZWNrZXINCj4gd2FybmluZyBpcyBjb3Jy
-ZWN0LCBidXQgSSBkb24ndCBrbm93IHdoYXQgdGhlIHJ1biB0aW1lIGltcGFjdCBvZiB0aGlzDQo+
-IGJ1ZyB3b3VsZCBiZS4NCj4gDQo+ICBkcml2ZXJzL3JlbW90ZXByb2Mvc3Rfc2xpbV9ycHJvYy5j
-IHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9u
-cygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9zdF9zbGltX3Jwcm9j
-LmMgYi9kcml2ZXJzL3JlbW90ZXByb2Mvc3Rfc2xpbV9ycHJvYy5jDQo+IGluZGV4IGQ3MTFkOTQz
-MGE0Zi4uYTY0NmRmYjlkNmNkIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3JlbW90ZXByb2Mvc3Rf
-c2xpbV9ycHJvYy5jDQo+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9zdF9zbGltX3Jwcm9jLmMN
-Cj4gQEAgLTEyOCw3ICsxMjgsNyBAQCBzdGF0aWMgaW50IHNsaW1fcnByb2Nfc3RhcnQoc3RydWN0
-IHJwcm9jICpycHJvYykNCj4gIAl3cml0ZWwoU0xJTV9TVEJVU19TWU5DX0RJUywgc2xpbV9ycHJv
-Yy0+cGVyaSArIFNMSU1fU1RCVVNfU1lOQ19PRlNUKTsNCj4gIA0KPiAgCS8qIGVuYWJsZSBjcHUg
-cGlwZWxpbmUgY2xvY2sgKi8NCj4gLQl3cml0ZWwoIVNMSU1fQ0xLX0dBVEVfRElTLA0KPiArCXdy
-aXRlbCgodW5zaWduZWQgaW50KX5TTElNX0NMS19HQVRFX0RJUywNCj4gIAkJc2xpbV9ycHJvYy0+
-c2xpbWNvcmUgKyBTTElNX0NMS19HQVRFX09GU1QpOw0KPiAgDQo+ICAJLyogY2xlYXIgaW50ICYg
-Y21kIG1haWxib3ggKi8NCj4gQEAgLTE2Nyw3ICsxNjcsNyBAQCBzdGF0aWMgaW50IHNsaW1fcnBy
-b2Nfc3RvcChzdHJ1Y3QgcnByb2MgKnJwcm9jKQ0KPiAgCS8qIGRpc2FibGUgY3B1IHBpcGVsaW5l
-IGNsb2NrICovDQo+ICAJd3JpdGVsKFNMSU1fQ0xLX0dBVEVfRElTLCBzbGltX3Jwcm9jLT5zbGlt
-Y29yZSArIFNMSU1fQ0xLX0dBVEVfT0ZTVCk7DQo+ICANCj4gLQl3cml0ZWwoIVNMSU1fRU5fUlVO
-LCBzbGltX3Jwcm9jLT5zbGltY29yZSArIFNMSU1fRU5fT0ZTVCk7DQo+ICsJd3JpdGVsKCh1bnNp
-Z25lZCBpbnQpflNMSU1fRU5fUlVOLCBzbGltX3Jwcm9jLT5zbGltY29yZSArIFNMSU1fRU5fT0ZT
-VCk7DQo+ICANCj4gIAl2YWwgPSByZWFkbChzbGltX3Jwcm9jLT5zbGltY29yZSArIFNMSU1fRU5f
-T0ZTVCk7DQo+ICAJaWYgKHZhbCAmIFNMSU1fRU5fUlVOKQ0KPiANCg0KV3JpdGluZyAhU0xJTV9D
-TEtfR0FURV9ESVMgb3IgKHVuc2lnbmVkIGludCl+U0xJTV9DTEtfR0FURV9ESVMgZG9uJ3QNCmdp
-dmUgdGhlIHNhbWUgcmVzdWx0Og0KDQohU0xJTV9DTEtfR0FURV9ESVMgPSAwDQoNCih1bnNpZ25l
-ZCBpbnQpflNMSU1fQ0xLX0dBVEVfRElTID0gMHhmZmZmZmZmZQ0KDQpQYXRyaWNlDQoNCg==
+This is from static analysis and not from testing.  It doesn't really
+make sense to talk about !BIT(0) so probably ~BIT(0) was intended.
+I had to cast it from unsigned long to unsigned int to silence a GCC
+warning.
+
+Fixes: bb6869b21478 ("Peter Griffin <peter.griffin@linaro.org>")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+
+Sorry for the crap commit message.  I'm pretty sure the static checker
+warning is correct, but I don't know what the run time impact of this
+bug would be.
+
+ drivers/remoteproc/st_slim_rproc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+index d711d9430a4f..a646dfb9d6cd 100644
+--- a/drivers/remoteproc/st_slim_rproc.c
++++ b/drivers/remoteproc/st_slim_rproc.c
+@@ -128,7 +128,7 @@ static int slim_rproc_start(struct rproc *rproc)
+ 	writel(SLIM_STBUS_SYNC_DIS, slim_rproc->peri + SLIM_STBUS_SYNC_OFST);
+ 
+ 	/* enable cpu pipeline clock */
+-	writel(!SLIM_CLK_GATE_DIS,
++	writel((unsigned int)~SLIM_CLK_GATE_DIS,
+ 		slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
+ 
+ 	/* clear int & cmd mailbox */
+@@ -167,7 +167,7 @@ static int slim_rproc_stop(struct rproc *rproc)
+ 	/* disable cpu pipeline clock */
+ 	writel(SLIM_CLK_GATE_DIS, slim_rproc->slimcore + SLIM_CLK_GATE_OFST);
+ 
+-	writel(!SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
++	writel((unsigned int)~SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
+ 
+ 	val = readl(slim_rproc->slimcore + SLIM_EN_OFST);
+ 	if (val & SLIM_EN_RUN)
+-- 
+2.17.1
