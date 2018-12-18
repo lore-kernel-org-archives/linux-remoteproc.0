@@ -1,53 +1,55 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 18 Dec 2018 11:27:09 -0600
-From: Rob Herring <robh@kernel.org>
+Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+MIME-Version: 1.0
+References: <20181217100724.4593-1-sibis@codeaurora.org> <20181217100724.4593-2-sibis@codeaurora.org>
+ <CAD=FV=Ui6ys4R3nenix3USeRPAd_vVdrArXxdf-iEc=4QRhE+A@mail.gmail.com> <8decd38d8e28c6657949f3c140947977@codeaurora.org>
+In-Reply-To: <8decd38d8e28c6657949f3c140947977@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 18 Dec 2018 08:07:59 -0800
+Message-ID: <CAD=FV=Xuh0pUTcKOGPANmgfeGxQfHwN5RWg+E9srzuGq2_AmAQ@mail.gmail.com>
 Subject: Re: [PATCH v2 2/7] dt-bindings: remoteproc: qcom: Add clock bindings
  for Q6V5
-Message-ID: <20181218172709.GA19660@bogus>
-References: <20181217100724.4593-1-sibis@codeaurora.org>
- <20181217100724.4593-2-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217100724.4593-2-sibis@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-arm-msm-owner@vger.kernel.org
 To: Sibi Sankar <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, Evan Green <evgreen@chromium.org>, Brian Norris <briannorris@chromium.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Dec 17, 2018 at 03:37:19PM +0530, Sibi Sankar wrote:
-> Add missing clock bindings for Q6V5 MSS on SDM845 SoCs.
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt       | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> index 9ff5b0309417..780adc043b37 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-> @@ -39,13 +39,17 @@ on the Qualcomm Hexagon core.
->  - clocks:
->  	Usage: required
->  	Value type: <phandle>
-> -	Definition: reference to the iface, bus and mem clocks to be held on
-> -		    behalf of the booting of the Hexagon core
-> +	Definition: reference to the list of 4 clocks for the modem sub-system
-> +		    reference to the list of 8 clocks for the modem sub-system
-> +		    on SDM845 SoCs
->  
->  - clock-names:
->  	Usage: required
->  	Value type: <stringlist>
-> -	Definition: must be "iface", "bus", "mem"
-> +	Definition: must be "iface", "bus", "mem", "xo" for the modem sub-system
-> +		    must be "iface", "bus", "mem", "gpll0_mss", "snoc_axi",
-> +		    "mnoc_axi", "prng", "xo" for the modem sub-system on SDM845
-> +		    SoCs
+Hi,
 
-This seems to me a list of all clocks you need enabled, not what clocks 
-actually go to the modem. Specifically, shouldn't the *noc_axi clocks be 
-managed by the interconnect driver?
+On Mon, Dec 17, 2018 at 9:52 PM Sibi Sankar <sibis@codeaurora.org> wrote:
+> >> @@ -39,13 +39,17 @@ on the Qualcomm Hexagon core.
+> >>  - clocks:
+> >>         Usage: required
+> >>         Value type: <phandle>
+> >> -       Definition: reference to the iface, bus and mem clocks to be
+> >> held on
+> >> -                   behalf of the booting of the Hexagon core
+> >> +       Definition: reference to the list of 4 clocks for the modem
+> >> sub-system
+> >> +                   reference to the list of 8 clocks for the modem
+> >> sub-system
+> >> +                   on SDM845 SoCs
+> >
+> > The above is confusing because you don't list the SoCs that are
+> > supposed to use the 4 clocks.  How about instead:
+> >
+> > Definition: reference to the clocks that match clock-names
+> >
+>
+> AFAIK, only the exceptions are captured. I am fine
+> with both, I'll wait for Bjorn/Rob's preference.
 
-Rob
+Sure, waiting for Bjron / Rob to chime in sounds good.  If you are
+going to document just the exception, though, IMO at least reword it.
+AKA:
+
+reference to the list of 8 clocks for the modem sub-system on SDM845
+SoCs; reference to the list of 4 clocks for the modem sub-system on
+all other SoCs.
+
+...the key being the "on all other" to make it clear.  ...but I still
+like my original suggestion of using less prose and more lists, so
+hopefully Bjorn / Rob are OK with that.
+
+
+-Doug
