@@ -1,49 +1,32 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 4/8] remoteproc: qcom: q6v5-mss: Add missing clocks for MSM8996
-Date: Wed, 26 Dec 2018 18:22:25 +0530
-Message-Id: <20181226125229.20149-4-sibis@codeaurora.org>
-In-Reply-To: <20181226125229.20149-1-sibis@codeaurora.org>
-References: <20181226125229.20149-1-sibis@codeaurora.org>
+Return-Path: <dan.carpenter@oracle.com>
+Date: Thu, 20 Dec 2018 13:17:32 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] remoteproc: fix a ! vs ~ typo
+Message-ID: <20181220101732.GR19692@kadam>
+References: <20181218081657.GA32567@kadam>
+ <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Loic PALLARDY <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Proxy vote for QDSS clock and remove vote on handover interrupt
-to provide MSS PBL with access to STM hardware registers during
-boot. Add "snoc_axi" and "mnoc_axi" to the active clock list.
+On Thu, Dec 20, 2018 at 10:05:55AM +0000, Patrice CHOTARD wrote:
+> Hi Dan
+> 
+> On 12/18/18 9:16 AM, Dan Carpenter wrote:
+> > This is from static analysis and not from testing.  It doesn't really
+> > make sense to talk about !BIT(0) so probably ~BIT(0) was intended.
+> > I had to cast it from unsigned long to unsigned int to silence a GCC
+> > warning.
+> > 
+> > Fixes: bb6869b21478 ("Peter Griffin <peter.griffin@linaro.org>")
 
-Fixes: 9f058fa2efb1 ("remoteproc: qcom: Add support for mss remoteproc
-on msm8996")
+And oh...  I put Peter's email here instead of the commit title.  Sorry.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 3 +++
- 1 file changed, 3 insertions(+)
+I will resend if we decide the patch is required.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 01be7314e176..2f12901dd1a7 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1398,6 +1398,7 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 	.proxy_clk_names = (char*[]){
- 			"xo",
- 			"pnoc",
-+			"qdss",
- 			NULL
- 	},
- 	.active_clk_names = (char*[]){
-@@ -1405,6 +1406,8 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 			"bus",
- 			"mem",
- 			"gpll0_mss_clk",
-+			"snoc_axi",
-+			"mnoc_axi",
- 			NULL
- 	},
- 	.need_mem_protection = true,
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards,
+dan carpenter
