@@ -1,46 +1,52 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 6/7] arm64: dts: qcom: sdm845: Add power-domain for Q6V5 MSS node
-Date: Mon, 17 Dec 2018 15:37:23 +0530
-Message-Id: <20181217100724.4593-6-sibis@codeaurora.org>
-In-Reply-To: <20181217100724.4593-1-sibis@codeaurora.org>
-References: <20181217100724.4593-1-sibis@codeaurora.org>
+Return-Path: <rogerq@ti.com>
+Subject: Re: [PATCH 05/16] remoteproc/pru: Add pru-specific debugfs support
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-6-git-send-email-rogerq@ti.com>
+ <d0e227e3-39dc-dfc8-b94c-3d9d072f6562@lechnology.com>
+ <5BFFBCAC.9000004@ti.com> <5C191770.9090804@ti.com>
+ <20181219123812.GC8130@sirena.org.uk> <5C1A670E.9020904@ti.com>
+ <6ebcd7a6-6c85-0312-0651-fb4fbfc25e55@lechnology.com>
+ <20181219170725.GH8130@sirena.org.uk> <20181219171816.GE6707@atomide.com>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <5C1B56A0.7050801@ti.com>
+Date: Thu, 20 Dec 2018 10:45:20 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, Sibi Sankar <sibis@codeaurora.org>
+In-Reply-To: <20181219171816.GE6707@atomide.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+To: Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>
+Cc: David Lechner <david@lechnology.com>, ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add power-domains cx, mx, mss and load_state for Q6V5 MSS node.
+On 19/12/18 19:18, Tony Lindgren wrote:
+> * Mark Brown <broonie@kernel.org> [181219 17:07]:
+>> On Wed, Dec 19, 2018 at 04:48:52PM +0100, David Lechner wrote:
+>>> On 12/19/18 4:43 PM, Roger Quadros wrote:
+>>
+>>>> Did I do something wrong or we just need to enhance regmap_debugfs.c?
+>>
+>>> Do you assign the name field in pru_regmap_config and
+>>> pru_debug_regmap_config?
+>>
+>> Yeah, you'll at least need to override the name since the default is to
+>> use the name of the device and that'll result in two duplicates.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
+I hadn't set the name field and this was the issue. It is resolved now.
+Thanks :)
 
-This patch depends on the following bindings:
-https://patchwork.kernel.org/patch/10725801/ - rpmhpd dt bindings
-https://patchwork.kernel.org/patch/10725793/ - rpmhpd dt node
-https://patchwork.kernel.org/patch/10678301/ - AOP QMP dt bindings
+> 
+> Also combining IO regions often has a serious issue that the
+> separate IO regions may not be in the same device (or same
+> interconnect target module).
+> 
+> This means that flushing a posted write with a read-back for
+> an IO region will only flush it for a single device and not
+> the other(s). And this leads into hard to find bugs :)
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Agree.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 33ff8668828f..56f5f55db9e2 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1401,6 +1401,12 @@
- 			qcom,halt-regs = <&tcsr_mutex_regs
- 						0x23000 0x25000 0x24000>;
- 
-+			power-domains = <&aoss_qmp_pd AOSS_QMP_LS_MODEM>,
-+					<&rpmhpd SDM845_CX>,
-+					<&rpmhpd SDM845_MX>,
-+					<&rpmhpd SDM845_MSS>;
-+			power-domain-names = "load_state", "cx", "mx", "mss";
-+
- 			mba {
- 				memory-region = <&mba_region>;
- 			};
+cheers,
+-roger
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
