@@ -1,8 +1,8 @@
 Return-Path: <dan.carpenter@oracle.com>
-Date: Thu, 20 Dec 2018 13:17:32 +0300
+Date: Thu, 20 Dec 2018 13:14:02 +0300
 From: Dan Carpenter <dan.carpenter@oracle.com>
 Subject: Re: [PATCH] remoteproc: fix a ! vs ~ typo
-Message-ID: <20181220101732.GR19692@kadam>
+Message-ID: <20181220101402.GQ19692@kadam>
 References: <20181218081657.GA32567@kadam>
  <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
 MIME-Version: 1.0
@@ -14,19 +14,24 @@ Cc: Peter Griffin <peter.griffin@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, 
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 On Thu, Dec 20, 2018 at 10:05:55AM +0000, Patrice CHOTARD wrote:
-> Hi Dan
-> 
-> On 12/18/18 9:16 AM, Dan Carpenter wrote:
-> > This is from static analysis and not from testing.  It doesn't really
-> > make sense to talk about !BIT(0) so probably ~BIT(0) was intended.
-> > I had to cast it from unsigned long to unsigned int to silence a GCC
-> > warning.
+> > -	writel(!SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
+> > +	writel((unsigned int)~SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
+> >  
+> >  	val = readl(slim_rproc->slimcore + SLIM_EN_OFST);
+> >  	if (val & SLIM_EN_RUN)
 > > 
-> > Fixes: bb6869b21478 ("Peter Griffin <peter.griffin@linaro.org>")
+> 
+> Writing !SLIM_CLK_GATE_DIS or (unsigned int)~SLIM_CLK_GATE_DIS don't
+> give the same result:
+> 
+> !SLIM_CLK_GATE_DIS = 0
+> 
+> (unsigned int)~SLIM_CLK_GATE_DIS = 0xfffffffe
 
-And oh...  I put Peter's email here instead of the commit title.  Sorry.
-
-I will resend if we decide the patch is required.
+Right.  !BIT(0) is zero.  I'm pretty sure we meant to do a bitwise
+negate and not a logical negate from looking at the code, but I don't
+know the real world impact and can't test it.  It's kind of a crap
+patch, but I think it's correct.
 
 regards,
 dan carpenter
