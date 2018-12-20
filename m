@@ -1,37 +1,49 @@
-Return-Path: <dan.carpenter@oracle.com>
-Date: Thu, 20 Dec 2018 13:14:02 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Return-Path: <patrice.chotard@st.com>
+From: Patrice CHOTARD <patrice.chotard@st.com>
 Subject: Re: [PATCH] remoteproc: fix a ! vs ~ typo
-Message-ID: <20181220101402.GQ19692@kadam>
+Date: Thu, 20 Dec 2018 10:05:55 +0000
+Message-ID: <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
 References: <20181218081657.GA32567@kadam>
- <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
+In-Reply-To: <20181218081657.GA32567@kadam>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <111A8AC40A93AF4E931F39DC0E71A333@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ed56497-be6f-f4e2-642d-47e2b0f45f42@st.com>
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Loic PALLARDY <loic.pallardy@st.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>, Peter Griffin <peter.griffin@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, Loic PALLARDY <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu, Dec 20, 2018 at 10:05:55AM +0000, Patrice CHOTARD wrote:
-> > -	writel(!SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
-> > +	writel((unsigned int)~SLIM_EN_RUN, slim_rproc->slimcore + SLIM_EN_OFST);
-> >  
-> >  	val = readl(slim_rproc->slimcore + SLIM_EN_OFST);
-> >  	if (val & SLIM_EN_RUN)
-> > 
-> 
-> Writing !SLIM_CLK_GATE_DIS or (unsigned int)~SLIM_CLK_GATE_DIS don't
-> give the same result:
-> 
-> !SLIM_CLK_GATE_DIS = 0
-> 
-> (unsigned int)~SLIM_CLK_GATE_DIS = 0xfffffffe
-
-Right.  !BIT(0) is zero.  I'm pretty sure we meant to do a bitwise
-negate and not a logical negate from looking at the code, but I don't
-know the real world impact and can't test it.  It's kind of a crap
-patch, but I think it's correct.
-
-regards,
-dan carpenter
+SGkgRGFuDQoNCk9uIDEyLzE4LzE4IDk6MTYgQU0sIERhbiBDYXJwZW50ZXIgd3JvdGU6DQo+IFRo
+aXMgaXMgZnJvbSBzdGF0aWMgYW5hbHlzaXMgYW5kIG5vdCBmcm9tIHRlc3RpbmcuICBJdCBkb2Vz
+bid0IHJlYWxseQ0KPiBtYWtlIHNlbnNlIHRvIHRhbGsgYWJvdXQgIUJJVCgwKSBzbyBwcm9iYWJs
+eSB+QklUKDApIHdhcyBpbnRlbmRlZC4NCj4gSSBoYWQgdG8gY2FzdCBpdCBmcm9tIHVuc2lnbmVk
+IGxvbmcgdG8gdW5zaWduZWQgaW50IHRvIHNpbGVuY2UgYSBHQ0MNCj4gd2FybmluZy4NCj4gDQo+
+IEZpeGVzOiBiYjY4NjliMjE0NzggKCJQZXRlciBHcmlmZmluIDxwZXRlci5ncmlmZmluQGxpbmFy
+by5vcmc+IikNCj4gU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRlckBv
+cmFjbGUuY29tPg0KPiAtLS0NCj4gDQo+IFNvcnJ5IGZvciB0aGUgY3JhcCBjb21taXQgbWVzc2Fn
+ZS4gIEknbSBwcmV0dHkgc3VyZSB0aGUgc3RhdGljIGNoZWNrZXINCj4gd2FybmluZyBpcyBjb3Jy
+ZWN0LCBidXQgSSBkb24ndCBrbm93IHdoYXQgdGhlIHJ1biB0aW1lIGltcGFjdCBvZiB0aGlzDQo+
+IGJ1ZyB3b3VsZCBiZS4NCj4gDQo+ICBkcml2ZXJzL3JlbW90ZXByb2Mvc3Rfc2xpbV9ycHJvYy5j
+IHwgNCArKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9u
+cygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9zdF9zbGltX3Jwcm9j
+LmMgYi9kcml2ZXJzL3JlbW90ZXByb2Mvc3Rfc2xpbV9ycHJvYy5jDQo+IGluZGV4IGQ3MTFkOTQz
+MGE0Zi4uYTY0NmRmYjlkNmNkIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3JlbW90ZXByb2Mvc3Rf
+c2xpbV9ycHJvYy5jDQo+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9zdF9zbGltX3Jwcm9jLmMN
+Cj4gQEAgLTEyOCw3ICsxMjgsNyBAQCBzdGF0aWMgaW50IHNsaW1fcnByb2Nfc3RhcnQoc3RydWN0
+IHJwcm9jICpycHJvYykNCj4gIAl3cml0ZWwoU0xJTV9TVEJVU19TWU5DX0RJUywgc2xpbV9ycHJv
+Yy0+cGVyaSArIFNMSU1fU1RCVVNfU1lOQ19PRlNUKTsNCj4gIA0KPiAgCS8qIGVuYWJsZSBjcHUg
+cGlwZWxpbmUgY2xvY2sgKi8NCj4gLQl3cml0ZWwoIVNMSU1fQ0xLX0dBVEVfRElTLA0KPiArCXdy
+aXRlbCgodW5zaWduZWQgaW50KX5TTElNX0NMS19HQVRFX0RJUywNCj4gIAkJc2xpbV9ycHJvYy0+
+c2xpbWNvcmUgKyBTTElNX0NMS19HQVRFX09GU1QpOw0KPiAgDQo+ICAJLyogY2xlYXIgaW50ICYg
+Y21kIG1haWxib3ggKi8NCj4gQEAgLTE2Nyw3ICsxNjcsNyBAQCBzdGF0aWMgaW50IHNsaW1fcnBy
+b2Nfc3RvcChzdHJ1Y3QgcnByb2MgKnJwcm9jKQ0KPiAgCS8qIGRpc2FibGUgY3B1IHBpcGVsaW5l
+IGNsb2NrICovDQo+ICAJd3JpdGVsKFNMSU1fQ0xLX0dBVEVfRElTLCBzbGltX3Jwcm9jLT5zbGlt
+Y29yZSArIFNMSU1fQ0xLX0dBVEVfT0ZTVCk7DQo+ICANCj4gLQl3cml0ZWwoIVNMSU1fRU5fUlVO
+LCBzbGltX3Jwcm9jLT5zbGltY29yZSArIFNMSU1fRU5fT0ZTVCk7DQo+ICsJd3JpdGVsKCh1bnNp
+Z25lZCBpbnQpflNMSU1fRU5fUlVOLCBzbGltX3Jwcm9jLT5zbGltY29yZSArIFNMSU1fRU5fT0ZT
+VCk7DQo+ICANCj4gIAl2YWwgPSByZWFkbChzbGltX3Jwcm9jLT5zbGltY29yZSArIFNMSU1fRU5f
+T0ZTVCk7DQo+ICAJaWYgKHZhbCAmIFNMSU1fRU5fUlVOKQ0KPiANCg0KV3JpdGluZyAhU0xJTV9D
+TEtfR0FURV9ESVMgb3IgKHVuc2lnbmVkIGludCl+U0xJTV9DTEtfR0FURV9ESVMgZG9uJ3QNCmdp
+dmUgdGhlIHNhbWUgcmVzdWx0Og0KDQohU0xJTV9DTEtfR0FURV9ESVMgPSAwDQoNCih1bnNpZ25l
+ZCBpbnQpflNMSU1fQ0xLX0dBVEVfRElTID0gMHhmZmZmZmZmZQ0KDQpQYXRyaWNlDQoNCg==
