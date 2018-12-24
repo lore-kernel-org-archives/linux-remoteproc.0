@@ -1,404 +1,113 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [RFC,3/5] remoteproc: move IPI interface into separate file.
-Date: Wed, 26 Dec 2018 15:53:11 +0800
-Message-Id: <20181226075330.82462-4-pihsun@chromium.org>
-In-Reply-To: <20181226075330.82462-1-pihsun@chromium.org>
-References: <20181226075330.82462-1-pihsun@chromium.org>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 3/4] remoteproc: qcom: Wait for shutdown-ack/ind on sysmon shutdown
+Date: Mon, 24 Dec 2018 14:18:24 +0530
+Message-Id: <20181224084824.25193-3-sibis@codeaurora.org>
+In-Reply-To: <20181224084824.25193-1-sibis@codeaurora.org>
+References: <20181224084824.25193-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Nicolas Boichat <drinkcat@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, ohad@wizery.com, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Move the IPI interface into a separate file mtk_scp_ipi.c, so the things
-that use the interface only can depend on the module only.
+After sending a sysmon shutdown request to the SSCTL service on the
+subsystem, wait for the service to send shutdown-ack interrupt or
+an indication message to signal the completion of graceful shutdown.
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/Makefile      |   2 +-
- drivers/remoteproc/mtk_common.h  |  73 +++++++++++++++
- drivers/remoteproc/mtk_scp.c     | 153 +------------------------------
- drivers/remoteproc/mtk_scp_ipi.c | 109 ++++++++++++++++++++++
- 4 files changed, 184 insertions(+), 153 deletions(-)
- create mode 100644 drivers/remoteproc/mtk_common.h
- create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ drivers/remoteproc/qcom_sysmon.c | 40 +++++++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 98e3498dbbe0e..16b3e5e7a81c8 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -10,7 +10,7 @@ remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
- remoteproc-y				+= remoteproc_elf_loader.o
- obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
--obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o
-+obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-new file mode 100644
-index 0000000000000..ae55fca2ce2d7
---- /dev/null
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2018 MediaTek Inc.
-+
-+#ifndef __RPROC_MTK_COMMON_H
-+#define __RPROC_MTK_COMMON_H
-+
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+
-+#define MT8183_SW_RSTN			0x0
-+#define MT8183_SW_RSTN_BIT		BIT(0)
-+#define MT8183_SCP_TO_HOST		0x1C
-+#define MT8183_SCP_IPC_INT_BIT		BIT(0)
-+#define MT8183_SCP_WDT_INT_BIT		BIT(8)
-+#define MT8183_HOST_TO_SCP		0x28
-+#define MT8183_HOST_IPC_INT_BIT		BIT(0)
-+#define MT8183_SCP_SRAM_PDN		0x402C
-+
-+#define SCP_FW_VER_LEN		32
-+
-+struct scp_run {
-+	u32 signaled;
-+	s8 fw_ver[SCP_FW_VER_LEN];
-+	u32 dec_capability;
-+	u32 enc_capability;
-+	wait_queue_head_t wq;
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index c0d6ee8de995..0da83638ca99 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -36,6 +36,7 @@ struct qcom_sysmon {
+ 
+ 	struct rpmsg_endpoint *ept;
+ 	struct completion comp;
++	struct completion ind_comp;
+ 	struct mutex lock;
+ 
+ 	bool ssr_ack;
+@@ -139,6 +140,7 @@ static int sysmon_callback(struct rpmsg_device *rpdev, void *data, int count,
+ }
+ 
+ #define SSCTL_SHUTDOWN_REQ		0x21
++#define SSCTL_SHUTDOWN_READY_IND	0x21
+ #define SSCTL_SUBSYS_EVENT_REQ		0x23
+ 
+ #define SSCTL_MAX_MSG_LEN		7
+@@ -254,6 +256,29 @@ static struct qmi_elem_info ssctl_subsys_event_resp_ei[] = {
+ 	{}
+ };
+ 
++static struct qmi_elem_info ssctl_shutdown_ind_ei[] = {
++	{}
 +};
 +
-+struct scp_ipi_desc {
-+	ipi_handler_t handler;
-+	const char *name;
-+	void *priv;
-+};
-+
-+struct mtk_scp {
-+	struct device *dev;
-+	struct rproc *rproc;
-+	struct clk *clk;
-+	void __iomem *reg_base;
-+	void __iomem *sram_base;
-+	size_t sram_size;
-+
-+	struct share_obj *recv_buf;
-+	struct share_obj *send_buf;
-+	struct scp_run run;
-+	struct mutex scp_mutex; /* for protecting mtk_scp data structure */
-+	struct scp_ipi_desc ipi_desc[IPI_MAX];
-+	bool ipi_id_ack[IPI_MAX];
-+	wait_queue_head_t ack_wq;
-+
-+	void __iomem *cpu_addr;
-+	phys_addr_t phys_addr;
-+	size_t dram_size;
-+};
-+
-+/**
-+ * struct share_obj - SRAM buffer shared with
-+ *		      AP and SCP
-+ *
-+ * @id:		IPI id
-+ * @len:	share buffer length
-+ * @share_buf:	share buffer data
-+ */
-+struct share_obj {
-+	s32 id;
-+	u32 len;
-+	u8 share_buf[288];
-+};
-+
-+#endif
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 7a1a8fe53b54a..aaebe96bcfd66 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -14,163 +14,12 @@
- #include <linux/remoteproc.h>
- 
- #include "remoteproc_internal.h"
--
--#define MT8183_SW_RSTN			0x0
--#define MT8183_SW_RSTN_BIT		BIT(0)
--#define MT8183_SCP_TO_HOST		0x1C
--#define MT8183_SCP_IPC_INT_BIT		BIT(0)
--#define MT8183_SCP_WDT_INT_BIT		BIT(8)
--#define MT8183_HOST_TO_SCP		0x28
--#define MT8183_HOST_IPC_INT_BIT		BIT(0)
--#define MT8183_SCP_SRAM_PDN		0x402C
-+#include "mtk_common.h"
- 
- #define INIT_TIMEOUT_MS		2000
--#define IPI_TIMEOUT_MS		2000
--#define SCP_FW_VER_LEN		32
- 
- #define MAX_CODE_SIZE 0x500000
- 
--struct scp_run {
--	u32 signaled;
--	s8 fw_ver[SCP_FW_VER_LEN];
--	u32 dec_capability;
--	u32 enc_capability;
--	wait_queue_head_t wq;
--};
--
--struct scp_ipi_desc {
--	ipi_handler_t handler;
--	const char *name;
--	void *priv;
--};
--
--struct mtk_scp {
--	struct device *dev;
--	struct rproc *rproc;
--	struct clk *clk;
--	void __iomem *reg_base;
--	void __iomem *sram_base;
--	size_t sram_size;
--
--	struct share_obj *recv_buf;
--	struct share_obj *send_buf;
--	struct scp_run run;
--	struct mutex scp_mutex; /* for protecting mtk_scp data structure */
--	struct scp_ipi_desc ipi_desc[IPI_MAX];
--	bool ipi_id_ack[IPI_MAX];
--	wait_queue_head_t ack_wq;
--
--	void __iomem *cpu_addr;
--	phys_addr_t phys_addr;
--	size_t dram_size;
--};
--
--/**
-- * struct share_obj - SRAM buffer shared with
-- *		      AP and SCP
-- *
-- * @id:		IPI id
-- * @len:	share buffer length
-- * @share_buf:	share buffer data
-- */
--struct share_obj {
--	s32 id;
--	u32 len;
--	u8 share_buf[288];
--};
--
--int scp_ipi_register(struct platform_device *pdev,
--		     enum ipi_id id,
--		     ipi_handler_t handler,
--		     const char *name,
--		     void *priv)
--{
--	struct mtk_scp *scp = platform_get_drvdata(pdev);
--	struct scp_ipi_desc *ipi_desc;
--
--	if (!scp) {
--		dev_err(&pdev->dev, "scp device is not ready\n");
--		return -EPROBE_DEFER;
--	}
--
--	if (WARN(id < 0 ||  id >= IPI_MAX || handler == NULL,
--	    "register scp ipi id %d with invalid arguments\n", id))
--		return -EINVAL;
--
--	ipi_desc = scp->ipi_desc;
--	ipi_desc[id].name = name;
--	ipi_desc[id].handler = handler;
--	ipi_desc[id].priv = priv;
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(scp_ipi_register);
--
--int scp_ipi_send(struct platform_device *pdev,
--		 enum ipi_id id, void *buf,
--		 unsigned int len,
--		 unsigned int wait)
--{
--	struct mtk_scp *scp = platform_get_drvdata(pdev);
--	struct share_obj *send_obj = scp->send_buf;
--	unsigned long timeout;
--	int ret;
--
--	if (WARN(id <= IPI_SCP_INIT || id >= IPI_MAX ||
--	    len > sizeof(send_obj->share_buf) || !buf,
--	    "failed to send ipi message\n"))
--		return -EINVAL;
--
--	ret = clk_prepare_enable(scp->clk);
--	if (ret) {
--		dev_err(scp->dev, "failed to enable clock\n");
--		return ret;
--	}
--
--	mutex_lock(&scp->scp_mutex);
--
--	 /* Wait until SCP receives the last command */
--	timeout = jiffies + msecs_to_jiffies(IPI_TIMEOUT_MS);
--	do {
--		if (time_after(jiffies, timeout)) {
--			dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
--			ret = -EIO;
--			mutex_unlock(&scp->scp_mutex);
--			goto clock_disable;
--		}
--	} while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
--
--	memcpy(send_obj->share_buf, buf, len);
--	send_obj->len = len;
--	send_obj->id = id;
--
--	scp->ipi_id_ack[id] = false;
--	/* send the command to SCP */
--	writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
--
--	mutex_unlock(&scp->scp_mutex);
--
--	if (wait) {
--		/* wait for SCP's ACK */
--		timeout = msecs_to_jiffies(wait);
--		ret = wait_event_timeout(scp->ack_wq,
--					 scp->ipi_id_ack[id],
--					 timeout);
--		scp->ipi_id_ack[id] = false;
--		if (WARN(!ret,
--			 "scp ipi %d ack time out !", id))
--			ret = -EIO;
--		else
--			ret = 0;
--	}
--
--clock_disable:
--	clk_disable_unprepare(scp->clk);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(scp_ipi_send);
--
- struct platform_device *scp_get_plat_device(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-new file mode 100644
-index 0000000000000..6923066869874
---- /dev/null
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2018 MediaTek Inc.
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_data/mtk_scp.h>
-+#include <linux/platform_device.h>
-+
-+#include "mtk_common.h"
-+
-+#define IPI_TIMEOUT_MS		2000
-+
-+int scp_ipi_register(struct platform_device *pdev,
-+		     enum ipi_id id,
-+		     ipi_handler_t handler,
-+		     const char *name,
-+		     void *priv)
++static void sysmon_ind_cb(struct qmi_handle *qmi, struct sockaddr_qrtr *sq,
++			  struct qmi_txn *txn, const void *data)
 +{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+	struct scp_ipi_desc *ipi_desc;
++	struct qcom_sysmon *sysmon = container_of(qmi, struct qcom_sysmon, qmi);
 +
-+	if (!scp) {
-+		dev_err(&pdev->dev, "scp device is not ready\n");
-+		return -EPROBE_DEFER;
-+	}
-+
-+	if (WARN(id < 0 || id >= IPI_MAX || handler == NULL,
-+	    "register scp ipi id %d with invalid arguments\n", id))
-+		return -EINVAL;
-+
-+	ipi_desc = scp->ipi_desc;
-+	ipi_desc[id].name = name;
-+	ipi_desc[id].handler = handler;
-+	ipi_desc[id].priv = priv;
-+
-+	return 0;
++	complete(&sysmon->ind_comp);
 +}
-+EXPORT_SYMBOL_GPL(scp_ipi_register);
 +
-+int scp_ipi_send(struct platform_device *pdev,
-+		 enum ipi_id id, void *buf,
-+		 unsigned int len,
-+		 unsigned int wait)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+	struct share_obj *send_obj = scp->send_buf;
-+	unsigned long timeout;
-+	int ret;
++static struct qmi_msg_handler qmi_indication_handler[] = {
++	{
++		.type = QMI_INDICATION,
++		.msg_id = SSCTL_SHUTDOWN_READY_IND,
++		.ei = ssctl_shutdown_ind_ei,
++		.decoded_size = 0,
++		.fn = sysmon_ind_cb
++	},
++	{}
++};
 +
-+	if (WARN(id <= IPI_SCP_INIT || id >= IPI_MAX ||
-+	    len > sizeof(send_obj->share_buf) || !buf,
-+	    "failed to send ipi message\n"))
-+		return -EINVAL;
+ /**
+  * ssctl_request_shutdown() - request shutdown via SSCTL QMI service
+  * @sysmon:	sysmon context
+@@ -264,6 +289,7 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
+ 	struct qmi_txn txn;
+ 	int ret;
+ 
++	reinit_completion(&sysmon->ind_comp);
+ 	ret = qmi_txn_init(&sysmon->qmi, &txn, ssctl_shutdown_resp_ei, &resp);
+ 	if (ret < 0) {
+ 		dev_err(sysmon->dev, "failed to allocate QMI txn\n");
+@@ -285,6 +311,16 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
+ 		dev_err(sysmon->dev, "shutdown request failed\n");
+ 	else
+ 		dev_dbg(sysmon->dev, "shutdown request completed\n");
 +
-+	ret = clk_prepare_enable(scp->clk);
-+	if (ret) {
-+		dev_err(scp->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
-+	mutex_lock(&scp->scp_mutex);
-+
-+	 /* Wait until SCP receives the last command */
-+	timeout = jiffies + msecs_to_jiffies(IPI_TIMEOUT_MS);
-+	do {
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
-+			ret = -EIO;
-+			mutex_unlock(&scp->scp_mutex);
-+			goto clock_disable;
++	if (sysmon->q6v5) {
++		ret = qcom_q6v5_wait_for_shutdown(sysmon->q6v5, 10 * HZ);
++		if (ret) {
++			ret = try_wait_for_completion(&sysmon->ind_comp);
++			if (!ret)
++				dev_err(sysmon->dev,
++					"timeout waiting for shutdown ack\n");
 +		}
-+	} while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
-+
-+	memcpy(send_obj->share_buf, buf, len);
-+	send_obj->len = len;
-+	send_obj->id = id;
-+
-+	scp->ipi_id_ack[id] = false;
-+	/* send the command to SCP */
-+	writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
-+
-+	mutex_unlock(&scp->scp_mutex);
-+
-+	if (wait) {
-+		/* wait for SCP's ACK */
-+		timeout = msecs_to_jiffies(wait);
-+		ret = wait_event_timeout(scp->ack_wq,
-+					 scp->ipi_id_ack[id],
-+					 timeout);
-+		scp->ipi_id_ack[id] = false;
-+		if (WARN(!ret,
-+			 "scp ipi %d ack time out !", id))
-+			ret = -EIO;
-+		else
-+			ret = 0;
 +	}
-+
-+clock_disable:
-+	clk_disable_unprepare(scp->clk);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(scp_ipi_send);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MediaTek scp IPI interface");
+ }
+ 
+ /**
+@@ -462,9 +498,11 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
+ 	sysmon->q6v5 = q6v5;
+ 
+ 	init_completion(&sysmon->comp);
++	init_completion(&sysmon->ind_comp);
+ 	mutex_init(&sysmon->lock);
+ 
+-	ret = qmi_handle_init(&sysmon->qmi, SSCTL_MAX_MSG_LEN, &ssctl_ops, NULL);
++	ret = qmi_handle_init(&sysmon->qmi, SSCTL_MAX_MSG_LEN, &ssctl_ops,
++			      qmi_indication_handler);
+ 	if (ret < 0) {
+ 		dev_err(sysmon->dev, "failed to initialize qmi handle\n");
+ 		kfree(sysmon);
 -- 
-2.20.1.415.g653613c723-goog
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
