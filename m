@@ -1,63 +1,69 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware bindings for Q6V5
-Date: Fri, 28 Dec 2018 10:18:18 +0530
-Message-Id: <20181228044819.5697-2-sibis@codeaurora.org>
-In-Reply-To: <20181228044819.5697-1-sibis@codeaurora.org>
-References: <20181228044819.5697-1-sibis@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [RFC,0/5] Add support for mt8183 SCP.
+Date: Wed, 26 Dec 2018 15:53:08 +0800
+Message-Id: <20181226075330.82462-1-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org
-Cc: briannorris@chromium.org, akdwived@codeaurora.org, clew@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Nicolas Boichat <drinkcat@chromium.org>, "open list:OPEN FIRMWARE AND FLATTENED" <devicetree@vger.kernel.org>, DEVICE, Eddie Huang <eddie.huang@mediatek.com>, Erin Lo <erin.lo@mediatek.com>, "moderated list:ARM/Mediatek SoC" <linux-arm-kernel@lists.infradead.org>, support, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC" <linux-mediatek@lists.infradead.org>support, "open list:REMOTE PROCESSOR" <linux-remoteproc@vger.kernel.org>, SUBSYSTEM
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add optional "firmware-name" bindings for Q6V5 MSS and PAS based
-remoteprocs. For Q6V5 MSS/PAS the two/one relative firmware
-paths/path are to be listed respectively. Fallback to the default
-images for mba/modem for Q6V5 MSS or the default Hexagon image
-for Q6V5 PAS if the "firmware-name" binding is not present.
+Add support for controlling and communicating with mt8183's system
+control processor (SCP), using the remoteproc & rpmsg framework.
+And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 6 ++++++
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 7 +++++++
- 2 files changed, 13 insertions(+)
+The overall structure of the series is:
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2).
+* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
+  interrupt (IPI) and shared memory (Patch 2, 3).
+* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
+  device. Supports name service for SCP firmware to
+  announce channels (Patch 4).
+* platform/chrome/cros_ec_rpmsg.c: Communicates with the SCP over the
+  rpmsg framework (like what platform/chrome/cros_ec_{i2c,spi}.c does)
+  (Patch 5).
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index 9c0cff3a5ed8..60ee0f73071a 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -27,6 +27,12 @@ on the Qualcomm ADSP Hexagon core.
- 	Value type: <stringlist>
- 	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
- 
-+- firmware-name:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: must list the relative firmware image path for the
-+		    Hexagon Core.
-+
- - clocks:
- 	Usage: required
- 	Value type: <prop-encoded-array>
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 9ff5b0309417..3a99e7379d8c 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -36,6 +36,13 @@ on the Qualcomm Hexagon core.
- 	Value type: <stringlist>
- 	Definition: must be "wdog", "fatal", "ready", "handover", "stop-ack"
- 
-+- firmware-name:
-+	Usage: optional
-+	Value type: <stringlist>
-+	Definition: must list the relative firmware image paths for mba and
-+		    modem. They are used for booting and authenticating the
-+		    Hexagon core.
-+
- - clocks:
- 	Usage: required
- 	Value type: <phandle>
+Since I'm not familiar with the remoteproc / rpmsg framework, and there
+are not much other custom rpmsg driver for reference, would like some
+review / comments on the overall structure of the driver.
+
+
+Erin Lo (2):
+  dt-bindings: Add a binding for Mediatek SCP
+  remoteproc/mediatek: add SCP support for mt8183
+
+Pi-Hsun Shih (3):
+  remoteproc: move IPI interface into separate file.
+  rpmsg: add rpmsg support for mt8183 SCP.
+  mfd: cros_ec: add EC host command support using rpmsg.
+
+ .../bindings/remoteproc/mtk,scp.txt           |  10 +
+ drivers/mfd/cros_ec_dev.c                     |  10 +
+ drivers/platform/chrome/Kconfig               |   8 +
+ drivers/platform/chrome/Makefile              |   1 +
+ drivers/platform/chrome/cros_ec_rpmsg.c       | 164 +++++++
+ drivers/remoteproc/Kconfig                    |   9 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  76 +++
+ drivers/remoteproc/mtk_scp.c                  | 441 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 109 +++++
+ drivers/rpmsg/Kconfig                         |   5 +
+ drivers/rpmsg/Makefile                        |   1 +
+ drivers/rpmsg/mtk_rpmsg.c                     | 341 ++++++++++++++
+ include/linux/mfd/cros_ec.h                   |   1 +
+ include/linux/mfd/cros_ec_commands.h          |   2 +
+ include/linux/platform_data/mtk_scp.h         | 143 ++++++
+ include/linux/rpmsg/mtk_rpmsg.h               |  34 ++
+ 17 files changed, 1356 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+ create mode 100644 drivers/platform/chrome/cros_ec_rpmsg.c
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp.c
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/platform_data/mtk_scp.h
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.20.1.415.g653613c723-goog
