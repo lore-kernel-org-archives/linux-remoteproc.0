@@ -1,34 +1,69 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Thu, 27 Dec 2018 15:23:50 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 5/8] dt-bindings: remoteproc: qcom: Fixup regulator
- dependencies
-Message-ID: <20181227212350.GA26216@bogus>
+Return-Path: <sibis@codeaurora.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 5/8] dt-bindings: remoteproc: qcom: Fixup regulator dependencies
+Date: Wed, 26 Dec 2018 18:22:26 +0530
+Message-Id: <20181226125229.20149-5-sibis@codeaurora.org>
+In-Reply-To: <20181226125229.20149-1-sibis@codeaurora.org>
 References: <20181226125229.20149-1-sibis@codeaurora.org>
- <20181226125229.20149-5-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181226125229.20149-5-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, 26 Dec 2018 18:22:26 +0530, Sibi Sankar wrote:
-> Fixup regulator supply dependencies for Q6V5 MSS on MSM996 SoCs.
-> 
-> Fixes: 9f058fa2efb1 ("remoteproc: qcom: Add support for mss remoteproc
-> on msm8996")
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
-> 
-> v3:
->   * Fixup dt-binding documentation as suggested by Doug
-> 
->  .../bindings/remoteproc/qcom,q6v5.txt         | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
+Fixup regulator supply dependencies for Q6V5 MSS on MSM996 SoCs.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Fixes: 9f058fa2efb1 ("remoteproc: qcom: Add support for mss remoteproc
+on msm8996")
+
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+
+v3:
+  * Fixup dt-binding documentation as suggested by Doug
+
+ .../bindings/remoteproc/qcom,q6v5.txt         | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index af8788783e2b..65713de70be5 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -76,6 +76,19 @@ on the Qualcomm Hexagon core.
+ 		    must be "mss_restart", "pdc_reset" for the modem
+ 		    sub-system on SDM845 SoCs
+ 
++For the compatible strings below the following supplies are required:
++  "qcom,q6v5-pil"
++  "qcom,msm8916-mss-pil",
++- cx-supply:
++- mx-supply:
++- pll-supply:
++	Usage: required
++	Value type: <phandle>
++	Definition: reference to the regulators to be held on behalf of the
++		    booting of the Hexagon core
++
++For the compatible string below the following supplies are required:
++  "qcom,msm8974-mss-pil"
+ - cx-supply:
+ - mss-supply:
+ - mx-supply:
+@@ -85,6 +98,14 @@ on the Qualcomm Hexagon core.
+ 	Definition: reference to the regulators to be held on behalf of the
+ 		    booting of the Hexagon core
+ 
++For the compatible string below the following supplies are required:
++  "qcom,msm8996-mss-pil"
++- pll-supply:
++	Usage: required
++	Value type: <phandle>
++	Definition: reference to the regulators to be held on behalf of the
++		    booting of the Hexagon core
++
+ - qcom,smem-states:
+ 	Usage: required
+ 	Value type: <phandle>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
