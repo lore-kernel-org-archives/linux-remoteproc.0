@@ -1,135 +1,404 @@
-Return-Path: <rohitkr@codeaurora.org>
-From: Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH 2/2] arm64: dts: qcom: sdm845: Add Q6V5 ADSP node
-Date: Thu, 20 Dec 2018 19:09:34 +0530
-Message-Id: <1545313174-13481-3-git-send-email-rohitkr@codeaurora.org>
-In-Reply-To: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
-References: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
-To: dianders@chromium.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org, linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org
-Cc: Rohit kumar <rohitkr@codeaurora.org>
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [RFC,3/5] remoteproc: move IPI interface into separate file.
+Date: Wed, 26 Dec 2018 15:53:11 +0800
+Message-Id: <20181226075330.82462-4-pihsun@chromium.org>
+In-Reply-To: <20181226075330.82462-1-pihsun@chromium.org>
+References: <20181226075330.82462-1-pihsun@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Nicolas Boichat <drinkcat@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds Q6V5 ADSP remoteproc node for SDM845 SoCs.
+Move the IPI interface into a separate file mtk_scp_ipi.c, so the things
+that use the interface only can depend on the module only.
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 ---
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 96 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 95 insertions(+), 1 deletion(-)
+ drivers/remoteproc/Makefile      |   2 +-
+ drivers/remoteproc/mtk_common.h  |  73 +++++++++++++++
+ drivers/remoteproc/mtk_scp.c     | 153 +------------------------------
+ drivers/remoteproc/mtk_scp_ipi.c | 109 ++++++++++++++++++++++
+ 4 files changed, 184 insertions(+), 153 deletions(-)
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index c0a012f..dfeb3cf 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -13,6 +13,9 @@
- #include <dt-bindings/reset/qcom,sdm845-aoss.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-+#include <dt-bindings/soc/qcom,apr.h>
-+#include <dt-bindings/sound/qcom,q6afe.h>
-+#include <dt-bindings/sound/qcom,q6asm.h>
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 98e3498dbbe0e..16b3e5e7a81c8 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -10,7 +10,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+ remoteproc-y				+= remoteproc_virtio.o
+ remoteproc-y				+= remoteproc_elf_loader.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+-obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o
++obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+ obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+ obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
+diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+new file mode 100644
+index 0000000000000..ae55fca2ce2d7
+--- /dev/null
++++ b/drivers/remoteproc/mtk_common.h
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2018 MediaTek Inc.
++
++#ifndef __RPROC_MTK_COMMON_H
++#define __RPROC_MTK_COMMON_H
++
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/remoteproc.h>
++
++#define MT8183_SW_RSTN			0x0
++#define MT8183_SW_RSTN_BIT		BIT(0)
++#define MT8183_SCP_TO_HOST		0x1C
++#define MT8183_SCP_IPC_INT_BIT		BIT(0)
++#define MT8183_SCP_WDT_INT_BIT		BIT(8)
++#define MT8183_HOST_TO_SCP		0x28
++#define MT8183_HOST_IPC_INT_BIT		BIT(0)
++#define MT8183_SCP_SRAM_PDN		0x402C
++
++#define SCP_FW_VER_LEN		32
++
++struct scp_run {
++	u32 signaled;
++	s8 fw_ver[SCP_FW_VER_LEN];
++	u32 dec_capability;
++	u32 enc_capability;
++	wait_queue_head_t wq;
++};
++
++struct scp_ipi_desc {
++	ipi_handler_t handler;
++	const char *name;
++	void *priv;
++};
++
++struct mtk_scp {
++	struct device *dev;
++	struct rproc *rproc;
++	struct clk *clk;
++	void __iomem *reg_base;
++	void __iomem *sram_base;
++	size_t sram_size;
++
++	struct share_obj *recv_buf;
++	struct share_obj *send_buf;
++	struct scp_run run;
++	struct mutex scp_mutex; /* for protecting mtk_scp data structure */
++	struct scp_ipi_desc ipi_desc[IPI_MAX];
++	bool ipi_id_ack[IPI_MAX];
++	wait_queue_head_t ack_wq;
++
++	void __iomem *cpu_addr;
++	phys_addr_t phys_addr;
++	size_t dram_size;
++};
++
++/**
++ * struct share_obj - SRAM buffer shared with
++ *		      AP and SCP
++ *
++ * @id:		IPI id
++ * @len:	share buffer length
++ * @share_buf:	share buffer data
++ */
++struct share_obj {
++	s32 id;
++	u32 len;
++	u8 share_buf[288];
++};
++
++#endif
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 7a1a8fe53b54a..aaebe96bcfd66 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -14,163 +14,12 @@
+ #include <linux/remoteproc.h>
  
- / {
- 	interrupt-parent = <&intc>;
-@@ -1691,7 +1694,98 @@
- 				status = "disabled";
- 			};
- 		};
--	};
-+
-+		adsp_pil: remoteproc@17300000 {
-+			compatible = "qcom,sdm845-adsp-pil";
-+
-+			reg = <0x17300000 0x410>;
-+			reg-names = "qdsp6ss";
-+
-+			interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_LPASS_SWAY_CLK>,
-+				 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
-+				 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
-+				 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
-+				 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
-+				 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
-+
-+			clock-names = "xo", "sway_cbcr", "lpass_ahbs_aon_cbcr",
-+				      "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
-+				      "qdsp6ss_sleep", "qdsp6ss_core";
-+
-+			resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
-+				 <&aoss_reset AOSS_CC_LPASS_RESTART>;
-+			reset-names = "pdc_sync", "cc_lpass";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
-+
-+			memory-region = <&pil_adsp_mem>;
-+
-+			qcom,smem-states = <&adsp_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			glink-edge {
-+				compatible = "qcom,glink-smem";
-+				interrupts = <0 156 IRQ_TYPE_EDGE_RISING>;
-+
-+				label = "lpass";
-+				qcom,remote-pid = <2>;
-+				mboxes = <&apss_shared 8>;
-+				mbox-names = "adsp_smem";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				apr@4 {
-+					compatible = "qcom,apr-v2";
-+					qcom,glink-channels = "apr_audio_svc";
-+					reg = <APR_DOMAIN_ADSP>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					q6core {
-+						compatible = "qcom,q6core";
-+						reg = <APR_SVC_ADSP_CORE>;
-+					};
-+
-+					q6afe {
-+						compatible = "qcom,q6afe";
-+						reg = <APR_SVC_AFE>;
-+						q6afedai: afedais {
-+							compatible = "qcom,q6afe-dais";
-+							#sound-dai-cells = <1>;
-+							#address-cells = <1>;
-+							#size-cells = <0>;
-+						};
-+					};
-+
-+					q6asm {
-+						compatible = "qcom,q6asm";
-+						reg = <APR_SVC_ASM>;
-+						q6asmdai: asmdai{
-+							compatible = "qcom,q6asm-dais";
-+							iommus = <&apps_smmu 0x1821 0x0>;
-+							#sound-dai-cells = <1>;
-+						};
-+					};
-+
-+					q6adm {
-+						compatible = "qcom,q6adm";
-+						reg = <APR_SVC_ADM>;
-+						q6routing: routing {
-+							compatible = "qcom,q6adm-routing";
-+							#sound-dai-cells = <0>;
-+						};
-+					};
-+				};
-+			};
-+			status = "disabled";
-+		};
+ #include "remoteproc_internal.h"
+-
+-#define MT8183_SW_RSTN			0x0
+-#define MT8183_SW_RSTN_BIT		BIT(0)
+-#define MT8183_SCP_TO_HOST		0x1C
+-#define MT8183_SCP_IPC_INT_BIT		BIT(0)
+-#define MT8183_SCP_WDT_INT_BIT		BIT(8)
+-#define MT8183_HOST_TO_SCP		0x28
+-#define MT8183_HOST_IPC_INT_BIT		BIT(0)
+-#define MT8183_SCP_SRAM_PDN		0x402C
++#include "mtk_common.h"
  
- 	thermal-zones {
- 		cpu0-thermal {
+ #define INIT_TIMEOUT_MS		2000
+-#define IPI_TIMEOUT_MS		2000
+-#define SCP_FW_VER_LEN		32
+ 
+ #define MAX_CODE_SIZE 0x500000
+ 
+-struct scp_run {
+-	u32 signaled;
+-	s8 fw_ver[SCP_FW_VER_LEN];
+-	u32 dec_capability;
+-	u32 enc_capability;
+-	wait_queue_head_t wq;
+-};
+-
+-struct scp_ipi_desc {
+-	ipi_handler_t handler;
+-	const char *name;
+-	void *priv;
+-};
+-
+-struct mtk_scp {
+-	struct device *dev;
+-	struct rproc *rproc;
+-	struct clk *clk;
+-	void __iomem *reg_base;
+-	void __iomem *sram_base;
+-	size_t sram_size;
+-
+-	struct share_obj *recv_buf;
+-	struct share_obj *send_buf;
+-	struct scp_run run;
+-	struct mutex scp_mutex; /* for protecting mtk_scp data structure */
+-	struct scp_ipi_desc ipi_desc[IPI_MAX];
+-	bool ipi_id_ack[IPI_MAX];
+-	wait_queue_head_t ack_wq;
+-
+-	void __iomem *cpu_addr;
+-	phys_addr_t phys_addr;
+-	size_t dram_size;
+-};
+-
+-/**
+- * struct share_obj - SRAM buffer shared with
+- *		      AP and SCP
+- *
+- * @id:		IPI id
+- * @len:	share buffer length
+- * @share_buf:	share buffer data
+- */
+-struct share_obj {
+-	s32 id;
+-	u32 len;
+-	u8 share_buf[288];
+-};
+-
+-int scp_ipi_register(struct platform_device *pdev,
+-		     enum ipi_id id,
+-		     ipi_handler_t handler,
+-		     const char *name,
+-		     void *priv)
+-{
+-	struct mtk_scp *scp = platform_get_drvdata(pdev);
+-	struct scp_ipi_desc *ipi_desc;
+-
+-	if (!scp) {
+-		dev_err(&pdev->dev, "scp device is not ready\n");
+-		return -EPROBE_DEFER;
+-	}
+-
+-	if (WARN(id < 0 ||  id >= IPI_MAX || handler == NULL,
+-	    "register scp ipi id %d with invalid arguments\n", id))
+-		return -EINVAL;
+-
+-	ipi_desc = scp->ipi_desc;
+-	ipi_desc[id].name = name;
+-	ipi_desc[id].handler = handler;
+-	ipi_desc[id].priv = priv;
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(scp_ipi_register);
+-
+-int scp_ipi_send(struct platform_device *pdev,
+-		 enum ipi_id id, void *buf,
+-		 unsigned int len,
+-		 unsigned int wait)
+-{
+-	struct mtk_scp *scp = platform_get_drvdata(pdev);
+-	struct share_obj *send_obj = scp->send_buf;
+-	unsigned long timeout;
+-	int ret;
+-
+-	if (WARN(id <= IPI_SCP_INIT || id >= IPI_MAX ||
+-	    len > sizeof(send_obj->share_buf) || !buf,
+-	    "failed to send ipi message\n"))
+-		return -EINVAL;
+-
+-	ret = clk_prepare_enable(scp->clk);
+-	if (ret) {
+-		dev_err(scp->dev, "failed to enable clock\n");
+-		return ret;
+-	}
+-
+-	mutex_lock(&scp->scp_mutex);
+-
+-	 /* Wait until SCP receives the last command */
+-	timeout = jiffies + msecs_to_jiffies(IPI_TIMEOUT_MS);
+-	do {
+-		if (time_after(jiffies, timeout)) {
+-			dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
+-			ret = -EIO;
+-			mutex_unlock(&scp->scp_mutex);
+-			goto clock_disable;
+-		}
+-	} while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
+-
+-	memcpy(send_obj->share_buf, buf, len);
+-	send_obj->len = len;
+-	send_obj->id = id;
+-
+-	scp->ipi_id_ack[id] = false;
+-	/* send the command to SCP */
+-	writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
+-
+-	mutex_unlock(&scp->scp_mutex);
+-
+-	if (wait) {
+-		/* wait for SCP's ACK */
+-		timeout = msecs_to_jiffies(wait);
+-		ret = wait_event_timeout(scp->ack_wq,
+-					 scp->ipi_id_ack[id],
+-					 timeout);
+-		scp->ipi_id_ack[id] = false;
+-		if (WARN(!ret,
+-			 "scp ipi %d ack time out !", id))
+-			ret = -EIO;
+-		else
+-			ret = 0;
+-	}
+-
+-clock_disable:
+-	clk_disable_unprepare(scp->clk);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(scp_ipi_send);
+-
+ struct platform_device *scp_get_plat_device(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+new file mode 100644
+index 0000000000000..6923066869874
+--- /dev/null
++++ b/drivers/remoteproc/mtk_scp_ipi.c
+@@ -0,0 +1,109 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2018 MediaTek Inc.
++
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_data/mtk_scp.h>
++#include <linux/platform_device.h>
++
++#include "mtk_common.h"
++
++#define IPI_TIMEOUT_MS		2000
++
++int scp_ipi_register(struct platform_device *pdev,
++		     enum ipi_id id,
++		     ipi_handler_t handler,
++		     const char *name,
++		     void *priv)
++{
++	struct mtk_scp *scp = platform_get_drvdata(pdev);
++	struct scp_ipi_desc *ipi_desc;
++
++	if (!scp) {
++		dev_err(&pdev->dev, "scp device is not ready\n");
++		return -EPROBE_DEFER;
++	}
++
++	if (WARN(id < 0 || id >= IPI_MAX || handler == NULL,
++	    "register scp ipi id %d with invalid arguments\n", id))
++		return -EINVAL;
++
++	ipi_desc = scp->ipi_desc;
++	ipi_desc[id].name = name;
++	ipi_desc[id].handler = handler;
++	ipi_desc[id].priv = priv;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(scp_ipi_register);
++
++int scp_ipi_send(struct platform_device *pdev,
++		 enum ipi_id id, void *buf,
++		 unsigned int len,
++		 unsigned int wait)
++{
++	struct mtk_scp *scp = platform_get_drvdata(pdev);
++	struct share_obj *send_obj = scp->send_buf;
++	unsigned long timeout;
++	int ret;
++
++	if (WARN(id <= IPI_SCP_INIT || id >= IPI_MAX ||
++	    len > sizeof(send_obj->share_buf) || !buf,
++	    "failed to send ipi message\n"))
++		return -EINVAL;
++
++	ret = clk_prepare_enable(scp->clk);
++	if (ret) {
++		dev_err(scp->dev, "failed to enable clock\n");
++		return ret;
++	}
++
++	mutex_lock(&scp->scp_mutex);
++
++	 /* Wait until SCP receives the last command */
++	timeout = jiffies + msecs_to_jiffies(IPI_TIMEOUT_MS);
++	do {
++		if (time_after(jiffies, timeout)) {
++			dev_err(scp->dev, "scp_ipi_send: IPI timeout!\n");
++			ret = -EIO;
++			mutex_unlock(&scp->scp_mutex);
++			goto clock_disable;
++		}
++	} while (readl(scp->reg_base + MT8183_HOST_TO_SCP));
++
++	memcpy(send_obj->share_buf, buf, len);
++	send_obj->len = len;
++	send_obj->id = id;
++
++	scp->ipi_id_ack[id] = false;
++	/* send the command to SCP */
++	writel(MT8183_HOST_IPC_INT_BIT, scp->reg_base + MT8183_HOST_TO_SCP);
++
++	mutex_unlock(&scp->scp_mutex);
++
++	if (wait) {
++		/* wait for SCP's ACK */
++		timeout = msecs_to_jiffies(wait);
++		ret = wait_event_timeout(scp->ack_wq,
++					 scp->ipi_id_ack[id],
++					 timeout);
++		scp->ipi_id_ack[id] = false;
++		if (WARN(!ret,
++			 "scp ipi %d ack time out !", id))
++			ret = -EIO;
++		else
++			ret = 0;
++	}
++
++clock_disable:
++	clk_disable_unprepare(scp->clk);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(scp_ipi_send);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("MediaTek scp IPI interface");
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.20.1.415.g653613c723-goog
