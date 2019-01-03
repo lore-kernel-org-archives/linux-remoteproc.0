@@ -1,10 +1,9 @@
-Return-Path: <briannorris@chromium.org>
-Return-Path: <briannorris@chromium.org>
-Date: Thu, 3 Jan 2019 15:44:27 -0800
-From: Brian Norris <briannorris@chromium.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 3 Jan 2019 15:09:28 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v2 2/2] remoteproc: qcom: Add support for parsing fw dt
  bindings
-Message-ID: <20190103234426.GB181833@google.com>
+Message-ID: <20190103230928.GF31596@builder>
 References: <20181228044819.5697-1-sibis@codeaurora.org>
  <20181228044819.5697-3-sibis@codeaurora.org>
 MIME-Version: 1.0
@@ -12,15 +11,21 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20181228044819.5697-3-sibis@codeaurora.org>
 To: Sibi Sankar <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, akdwived@codeaurora.org, clew@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org, briannorris@chromium.org, akdwived@codeaurora.org, clew@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Dec 28, 2018 at 10:18:19AM +0530, Sibi Sankar wrote:
+On Thu 27 Dec 20:48 PST 2018, Sibi Sankar wrote:
+
 > Add support for parsing "firmware-name" dt bindings which specifies
 > the relative paths of mba/modem/pas image as strings. Fallback to
 > the default paths for mba/modem/pas image on -EINVAL.
 > 
 > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+
+Thanks Sibi, just some minor style issues I would prefer to have fixed.
+
+I picked patch 1, so no need to resend that.
+
 > ---
 >  drivers/remoteproc/qcom_q6v5_mss.c | 46 +++++++++++++++++++++++-------
 >  drivers/remoteproc/qcom_q6v5_pas.c | 11 ++++++-
@@ -61,6 +66,9 @@ On Fri, Dec 28, 2018 at 10:18:19AM +0530, Sibi Sankar wrote:
 > +		return -ENOMEM;
 > +
 > +	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
+
+Use fw_name here.
+
 >  	if (ret < 0) {
 > -		dev_err(qproc->dev, "unable to load modem.mdt\n");
 > -		return ret;
@@ -78,19 +86,14 @@ On Fri, Dec 28, 2018 at 10:18:19AM +0530, Sibi Sankar wrote:
 > -			ret = request_firmware(&seg_fw, seg_name, qproc->dev);
 > +			snprintf(fw_name + fw_name_len - 3, fw_name_len,
 > +				 "b%02d", i);
-
-So, you're assuming that 'fw_name' ends in '.XXX' (for some 3-char value
-of 'XXX')? Seems a bit odd. But if you really want this, it feels like
-you should enforce this, and either comment on what you're doing or else
-use a proper computation that makes it clear (e.g., strlen("bin")).
-
-Brian
-
 > +			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
 >  			if (ret) {
 > -				dev_err(qproc->dev, "failed to load %s\n", seg_name);
 > +				dev_err(qproc->dev, "failed to load %s\n",
 > +					fw_name);
+
+Follow my lead and break the 80-char limit.
+
 >  				goto release_firmware;
 >  			}
 >  
@@ -135,6 +138,26 @@ Brian
 > +		return ret > 0 ? -EINVAL : ret;
 > +
 > +	mba_image = (ret != 2) ? desc->hexagon_mba_image : fw_name[0];
+
+Use the fact that of_property_read_string_index() leaves the output
+parameter untouched if it doesn't succeed in parsing the property.
+
+I.e. do:
+
+mba_image = desc->hexagon_mba_image;
+ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
+				    0, &mba_image);
+if (ret < 0 && ret != -EINVAL)
+	fail();
+
+and
+
+qproc->hexagon_mdt_image = "modem.mdt";
+ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
+				    1, &qproc->hexagon_mdt_image);
+if (ret < 0 && ret != -EINVAL)
+	fail();
+
 > +
 >  	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
 > -			    desc->hexagon_mba_image, sizeof(*qproc));
@@ -173,6 +196,10 @@ Brian
 > +		return ret;
 > +
 > +	fw_name = ret ? desc->firmware_name : of_fw_name;
+
+As above, please use the fact that the last parameter of
+of_property_read_string() doesn't modify the output if it fails.
+
 > +
 >  	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
 > -			    desc->firmware_name, sizeof(*adsp));
@@ -180,7 +207,6 @@ Brian
 >  	if (!rproc) {
 >  		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
 >  		return -ENOMEM;
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+
+Regards,
+Bjorn
