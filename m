@@ -1,48 +1,48 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v5 00/10] Qualcomm AOSS QMP driver and modem dts
-Date: Wed, 30 Jan 2019 16:39:23 -0800
-Message-Id: <20190131003933.11436-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Thu, 3 Jan 2019 15:19:26 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC,1/5] dt-bindings: Add a binding for Mediatek SCP
+Message-ID: <20190103211926.GA7622@bogus>
+References: <20181226075330.82462-1-pihsun@chromium.org>
+ <20181226075330.82462-2-pihsun@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181226075330.82462-2-pihsun@chromium.org>
+To: Pi-Hsun Shih <pihsun@chromium.org>
+Cc: Nicolas Boichat <drinkcat@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Update the reserved memory map for SDM845, add the ADSP and CDSP nodes,
-introduce a communication driver for the AOSS and a PD driver for this and
-finally add the modem remoteproc driver.
+On Wed, Dec 26, 2018 at 03:53:09PM +0800, Pi-Hsun Shih wrote:
+> From: Erin Lo <erin.lo@mediatek.com>
+> 
+> Add a DT binding documentation of SCP for the
+> MT8183 SoC from Mediatek.
+> 
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> ---
+>  .../devicetree/bindings/remoteproc/mtk,scp.txt         | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+> new file mode 100644
+> index 0000000000000..b07e5c4ca9af1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+> @@ -0,0 +1,9 @@
+> +Mediatek SCP Bindings
+> +----------------------------------------
+> +
+> +This binding provides support for ARM Cortex M4 Co-processor found on some
+> +Mediatek SoCs.
+> +
+> +Required properties:
+> +- compatible		Should be "mediatek,mt8183-scp"
+> +- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
 
-Bjorn Andersson (8):
-  arm64: dts: qcom: sdm845: Update reserved memory map
-  arm64: dts: qcom: sdm845: Define rmtfs memory
-  arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
-  dt-bindings: soc: qcom: Add AOSS QMP binding
-  soc: qcom: Add AOSS QMP communication driver
-  soc: qcom: Add AOSS QMP genpd provider
-  remoteproc: q6v5-mss: Active powerdomain for SDM845
-  arm64: dts: qcom: Add AOSS QMP node
+Seems like this is going to be incomplete considering this used for the 
+CrOS EC.
 
-Rajendra Nayak (1):
-  remoteproc: q6v5-mss: Vote for rpmh power domains
-
-Sibi Sankar (1):
-  arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-
- .../bindings/soc/qcom/qcom,aoss-qmp.txt       |  76 +++++
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts       |   8 +
- arch/arm64/boot/dts/qcom/sdm845.dtsi          | 207 +++++++++++-
- drivers/remoteproc/qcom_q6v5_mss.c            | 146 +++++++-
- drivers/soc/qcom/Kconfig                      |  18 +
- drivers/soc/qcom/Makefile                     |   2 +
- drivers/soc/qcom/aoss-qmp-pd.c                | 138 ++++++++
- drivers/soc/qcom/aoss-qmp.c                   | 317 ++++++++++++++++++
- include/dt-bindings/power/qcom-aoss-qmp.h     |  15 +
- include/linux/soc/qcom/aoss-qmp.h             |  14 +
- 10 files changed, 930 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
- create mode 100644 drivers/soc/qcom/aoss-qmp-pd.c
- create mode 100644 drivers/soc/qcom/aoss-qmp.c
- create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
- create mode 100644 include/linux/soc/qcom/aoss-qmp.h
-
--- 
-2.18.0
+Rob
