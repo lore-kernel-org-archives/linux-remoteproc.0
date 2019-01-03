@@ -1,56 +1,54 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v4 1/6] dt-bindings: Add a binding for Mediatek SCP
-Date: Thu, 31 Jan 2019 17:31:26 +0800
-Message-Id: <20190131093131.245531-2-pihsun@chromium.org>
-In-Reply-To: <20190131093131.245531-1-pihsun@chromium.org>
-References: <20190131093131.245531-1-pihsun@chromium.org>
+Date: Thu, 3 Jan 2019 12:07:55 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH -next] hwspinlock: fix return value check in
+ stm32_hwspinlock_probe()
+Message-ID: <20190103200755.GD31596@builder>
+References: <1546498950-105456-1-git-send-email-weiyongjun1@huawei.com>
+ <16205f0c-3514-731c-e948-38695e3a525d@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16205f0c-3514-731c-e948-38695e3a525d@st.com>
+To: Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Cc: Wei Yongjun <weiyongjun1@huawei.com>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Erin Lo <erin.lo@mediatek.com>
+On Thu 03 Jan 02:06 PST 2019, Benjamin GAIGNARD wrote:
 
-Add a DT binding documentation of SCP for the
-MT8183 SoC from Mediatek.
+> 
+> On 1/3/19 8:02 AM, Wei Yongjun wrote:
+> > In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+> > and never returns NULL. The NULL test in the return value check should
+> > be replaced with IS_ERR().
+> >
+> > Fixes: f24fcff1d267 ("hwspinlock: add STM32 hwspinlock device")
+> > Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> Acked-by: Benjamin Gaignard <benjamin.gaignard@gmail.com>
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes from v3:
- - No change.
+Thanks for the fix and the review!
 
-Changes from v2:
- - No change. I realized that for this patch series, there's no need to
-   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
-   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
-   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
-   created by SCP name service.
+Regards,
+Bjorn
 
-Changes from v1:
- - No change.
----
- .../devicetree/bindings/remoteproc/mtk,scp.txt         | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-new file mode 100644
-index 00000000000000..b07e5c4ca9af1d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-@@ -0,0 +1,10 @@
-+Mediatek SCP Bindings
-+----------------------------------------
-+
-+This binding provides support for ARM Cortex M4 Co-processor found on some
-+Mediatek SoCs.
-+
-+Required properties:
-+- compatible		Should be "mediatek,mt8183-scp"
-+- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
-+
--- 
-2.20.1.611.gfbb209baf1-goog
+> > ---
+> >   drivers/hwspinlock/stm32_hwspinlock.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+> > index 34a8e00..4418392 100644
+> > --- a/drivers/hwspinlock/stm32_hwspinlock.c
+> > +++ b/drivers/hwspinlock/stm32_hwspinlock.c
+> > @@ -57,8 +57,8 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+> >   
+> >   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >   	io_base = devm_ioremap_resource(&pdev->dev, res);
+> > -	if (!io_base)
+> > -		return -ENOMEM;
+> > +	if (IS_ERR(io_base))
+> > +		return PTR_ERR(io_base);
+> >   
+> >   	array_size = STM32_MUTEX_NUM_LOCKS * sizeof(struct hwspinlock);
+> >   	hw = devm_kzalloc(&pdev->dev, sizeof(*hw) + array_size, GFP_KERNEL);
+> >
+> >
+> >
