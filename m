@@ -1,44 +1,48 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 3 Jan 2019 12:02:59 -0800
+Date: Mon, 7 Jan 2019 09:30:03 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] hwspinlock updates for v4.21
-Message-ID: <20190103200259.GA1563@tuxbook-pro>
+Subject: Re: [PATCH] rpmsg: core: Make remove handler for rpmsg driver
+ optional.
+Message-ID: <20190107173003.GL31596@builder>
+References: <20190107113833.243672-1-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>, Wei Yongjun <weiyongjun1@huawei.com>
+In-Reply-To: <20190107113833.243672-1-pihsun@chromium.org>
+To: Pi-Hsun Shih <pihsun@chromium.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, "open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+On Mon 07 Jan 03:38 PST 2019, Pi-Hsun Shih wrote:
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> Most other bus (for example, SPI, i2c) have the remove handler for
+> driver optional. Make remove handler for rpmsg driver optional too.
+> 
+> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 
-are available in the Git repository at:
+Thanks Pi-Hsun, applied.
 
-  git://github.com/andersson/remoteproc tags/hwlock-v4.21
+Regards,
+Bjorn
 
-for you to fetch changes up to 4d5a91fd1f42a821d14b92b082b8e71be9911ba5:
-
-  hwspinlock: fix return value check in stm32_hwspinlock_probe() (2019-01-03 11:42:10 -0800)
-
-----------------------------------------------------------------
-hwspinlock updates for v4.21
-
-This adds support for the hardware semaphores found in STM32MP1.
-
-----------------------------------------------------------------
-Benjamin Gaignard (2):
-      dt-bindings: hwlock: Document STM32 hwspinlock bindings
-      hwspinlock: add STM32 hwspinlock device
-
-Wei Yongjun (1):
-      hwspinlock: fix return value check in stm32_hwspinlock_probe()
-
- .../bindings/hwlock/st,stm32-hwspinlock.txt        |  23 +++
- drivers/hwspinlock/Kconfig                         |   9 ++
- drivers/hwspinlock/Makefile                        |   1 +
- drivers/hwspinlock/stm32_hwspinlock.c              | 156 +++++++++++++++++++++
- 4 files changed, 189 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
- create mode 100644 drivers/hwspinlock/stm32_hwspinlock.c
+> ---
+>  drivers/rpmsg/rpmsg_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 8122807db38094..ea88fd4e2a6ecf 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -493,7 +493,8 @@ static int rpmsg_dev_remove(struct device *dev)
+>  	if (rpdev->ops->announce_destroy)
+>  		err = rpdev->ops->announce_destroy(rpdev);
+>  
+> -	rpdrv->remove(rpdev);
+> +	if (rpdrv->remove)
+> +		rpdrv->remove(rpdev);
+>  
+>  	dev_pm_domain_detach(dev, true);
+>  
+> -- 
+> 2.20.1.97.g81188d93c3-goog
+> 
