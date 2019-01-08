@@ -1,30 +1,189 @@
-Return-Path: <xiaoxiang781216@gmail.com>
-Return-Path: <xiaoxiang781216@gmail.com>
-From: Xiang Xiao <xiaoxiang781216@gmail.com>
-Subject: [PATCH 0/3] Enhance virtio rpmsg bus driver buffer allocation
-Date: Thu, 31 Jan 2019 23:41:17 +0800
-Message-Id: <1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, wendy.liang@xilinx.com, arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Xiang Xiao <xiaoxiang@xiaomi.com>
+Return-Path: <rohitkr@codeaurora.org>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sdm845: Add Q6V5 ADSP node
+References: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
+ <1545313174-13481-3-git-send-email-rohitkr@codeaurora.org>
+ <20190103235002.GI31596@builder>
+From: Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <80142100-35db-41d0-5340-dbdbc4c84113@codeaurora.org>
+Date: Tue, 8 Jan 2019 18:04:39 +0530
+MIME-Version: 1.0
+In-Reply-To: <20190103235002.GI31596@builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: dianders@chromium.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
-This series enhance the buffer allocation by:
-1.Support the different buffer number in rx/tx direction
-2.Get the individual rx/tx buffer size from config space
+Thanks Bjorn for review.
 
-Here is the related OpenAMP change:
-https://github.com/OpenAMP/open-amp/pull/155
+On 1/4/2019 5:20 AM, Bjorn Andersson wrote:
+> On Thu 20 Dec 05:39 PST 2018, Rohit kumar wrote:
+>
+>> This patch adds Q6V5 ADSP remoteproc node for SDM845 SoCs.
+>>
+> Thanks Rohit, nice to see these things on the list!
+>
+>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 96 +++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 95 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> index c0a012f..dfeb3cf 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> @@ -13,6 +13,9 @@
+>>   #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>>   #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+>>   #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+>> +#include <dt-bindings/soc/qcom,apr.h>
+>> +#include <dt-bindings/sound/qcom,q6afe.h>
+>> +#include <dt-bindings/sound/qcom,q6asm.h>
+>>   
+>>   / {
+>>   	interrupt-parent = <&intc>;
+>> @@ -1691,7 +1694,98 @@
+>>   				status = "disabled";
+>>   			};
+>>   		};
+>> -	};
+>> +
+>> +		adsp_pil: remoteproc@17300000 {
+> Please sort nodes by address, then name.
 
-Xiang Xiao (3):
-  rpmsg: virtio_rpmsg_bus: allow the different vring size for send/recv
-  rpmsg: virtio_rpmsg_bus: allocate rx/tx buffer separately
-  rpmsg: virtio_rpmsg_bus: get buffer size from config space
+Sure.
 
- drivers/rpmsg/virtio_rpmsg_bus.c  | 127 +++++++++++++++++++++++---------------
- include/uapi/linux/virtio_rpmsg.h |  24 +++++++
- 2 files changed, 100 insertions(+), 51 deletions(-)
- create mode 100644 include/uapi/linux/virtio_rpmsg.h
+
+>
+>> +			compatible = "qcom,sdm845-adsp-pil";
+>> +
+>> +			reg = <0x17300000 0x410>;
+>> +			reg-names = "qdsp6ss";
+> reg-names was dropped from the binding (iirc), please omit it here.
+
+
+Yup. Will remove it in next spin.
+
+>
+>> +
+>> +			interrupts-extended = <&intc 0 162 IRQ_TYPE_EDGE_RISING>,
+> s/0/GIC_SPI/
+okay.
+>
+>> +				<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+>> +				<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+>> +				<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+>> +				<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+>> +			interrupt-names = "wdog", "fatal", "ready",
+>> +					  "handover", "stop-ack";
+>> +
+>> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+>> +				 <&gcc GCC_LPASS_SWAY_CLK>,
+>> +				 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
+>> +				 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
+>> +				 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
+>> +				 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
+>> +				 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
+>> +
+>> +			clock-names = "xo", "sway_cbcr", "lpass_ahbs_aon_cbcr",
+>> +				      "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
+>> +				      "qdsp6ss_sleep", "qdsp6ss_core";
+>> +
+>> +			resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
+>> +				 <&aoss_reset AOSS_CC_LPASS_RESTART>;
+>> +			reset-names = "pdc_sync", "cc_lpass";
+>> +
+>> +			qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
+>> +
+>> +			memory-region = <&pil_adsp_mem>;
+>> +
+>> +			qcom,smem-states = <&adsp_smp2p_out 0>;
+>> +			qcom,smem-state-names = "stop";
+>> +
+>> +			glink-edge {
+> So we will end up duplicating these between the PAS based and non-PAS
+> based remoteprocs. I don't have a better idea right now, but this
+> deserves some thought.
+
+
+Yup. Will try to think if we can have some common node for glink-edge.
+
+>> +				compatible = "qcom,glink-smem";
+>> +				interrupts = <0 156 IRQ_TYPE_EDGE_RISING>;
+> s/0/GIC_SPI/
+
+sure
+
+
+>
+>> +
+>> +				label = "lpass";
+>> +				qcom,remote-pid = <2>;
+>> +				mboxes = <&apss_shared 8>;
+>> +				mbox-names = "adsp_smem";
+> mbox-names is not a documented property, please omit it.
+
+
+okay
+
+>
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +				apr@4 {
+>> +					compatible = "qcom,apr-v2";
+>> +					qcom,glink-channels = "apr_audio_svc";
+>> +					reg = <APR_DOMAIN_ADSP>;
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>> +					q6core {
+>> +						compatible = "qcom,q6core";
+>> +						reg = <APR_SVC_ADSP_CORE>;
+>> +					};
+>> +
+>> +					q6afe {
+>> +						compatible = "qcom,q6afe";
+>> +						reg = <APR_SVC_AFE>;
+>> +						q6afedai: afedais {
+>> +							compatible = "qcom,q6afe-dais";
+>> +							#sound-dai-cells = <1>;
+>> +							#address-cells = <1>;
+>> +							#size-cells = <0>;
+>> +						};
+>> +					};
+>> +
+>> +					q6asm {
+>> +						compatible = "qcom,q6asm";
+>> +						reg = <APR_SVC_ASM>;
+>> +						q6asmdai: asmdai{
+>> +							compatible = "qcom,q6asm-dais";
+>> +							iommus = <&apps_smmu 0x1821 0x0>;
+>> +							#sound-dai-cells = <1>;
+>> +						};
+>> +					};
+>> +
+>> +					q6adm {
+>> +						compatible = "qcom,q6adm";
+>> +						reg = <APR_SVC_ADM>;
+>> +						q6routing: routing {
+>> +							compatible = "qcom,q6adm-routing";
+>> +							#sound-dai-cells = <0>;
+>> +						};
+>> +					};
+>> +				};
+>> +			};
+>> +			status = "disabled";
+> Properties must come before subnodes.
+Yup, right. Will update in next spin.
+>
+>> +		};
+> Regards,
+> Bjorn
+
+Thanks,
+
+Rohit
 
 -- 
-2.7.4
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the Linux Foundation.
