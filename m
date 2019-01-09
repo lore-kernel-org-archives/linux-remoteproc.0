@@ -1,78 +1,119 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:45718 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726500AbfAIRAf (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:00:35 -0500
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v5 8/8] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+Date: Wed,  9 Jan 2019 22:30:10 +0530
+Message-Id: <20190109170010.15430-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-References: <20190109170010.15430-1-sibis@codeaurora.org>
-In-Reply-To: <20190109170010.15430-1-sibis@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 11 Jan 2019 13:06:42 -0800
-Message-ID: <CAD=FV=Xu3m5=ByHo_38T=H2cm4VqkndVjJ1rUkD2gp-2SWFXdQ@mail.gmail.com>
-Subject: Re: [PATCH v5 8/8] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-Content-Type: text/plain; charset="UTF-8"
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, Evan Green <evgreen@chromium.org>, Brian Norris <briannorris@chromium.org>, sricharan@codeaurora.org
+Content-Transfer-Encoding: 8bit
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
 
-On Wed, Jan 9, 2019 at 9:00 AM Sibi Sankar <sibis@codeaurora.org> wrote:
->
-> This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
->
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
-> v5:
->   * Use qmp_aop updated dt binding
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+---
 
-nit: since this is now a singleton patch in v5 (because patches #1 -
-#7 landed), the general policy is to drop the "8/8" in the subject.
-AKA I believe the subject of the patch ought to have been:
+v5:
+  * Use qmp_aop updated dt binding
 
-[PATCH v5] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+v3:
+  * with shutdown-ack irq redesign make it mandatory,
+    merge multiple patches into a single one
 
+v2:
+  * Fixed style changes
+  * Added missing clocks in the dt-bindings
+  * Split mss remoteproc node into a number of patches
 
-> v3:
->   * with shutdown-ack irq redesign make it mandatory,
->     merge multiple patches into a single one
->
-> v2:
->   * Fixed style changes
->   * Added missing clocks in the dt-bindings
->   * Split mss remoteproc node into a number of patches
->
-> This patch depends on the following bindings:
-> https://patchwork.kernel.org/patch/10662089/ - mba/mpss reserved regions
-> https://patchwork.kernel.org/patch/10657325/ - pdc reset node
-> https://patchwork.kernel.org/patch/10753659/ - rpmhpd dt node
-> https://patchwork.kernel.org/patch/10749469/ - AOP QMP dt bindings
-> https://patchwork.kernel.org/patch/10751757/ - shutdown-irq binding
->
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 60 ++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 5da9fa1feb8a..e021b15f87fd 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1366,6 +1366,66 @@
->                         };
->                 };
->
-> +               remoteproc@4080000 {
+This patch depends on the following bindings:
+https://patchwork.kernel.org/patch/10662089/ - mba/mpss reserved regions
+https://patchwork.kernel.org/patch/10657325/ - pdc reset node
+https://patchwork.kernel.org/patch/10753659/ - rpmhpd dt node
+https://patchwork.kernel.org/patch/10749469/ - AOP QMP dt bindings
+https://patchwork.kernel.org/patch/10751757/ - shutdown-irq binding
 
-It would be handy if you added a label here, AKA:
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 60 ++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-mss_pil: remoteproc@4080000 {
-
-It's expected that boards will need to refer to this node so that they
-can provide a firmware-name, so you need to give them a label to grab
-onto.
-
-...and actually, I wonder if boards will also need to be able to set
-status = "okay"?  Right now they don't because you don't have a status
-= "disabled" in sdm845.dtsi, but maybe you should?  Are there ever
-going to be any boards with sdm845 that don't hook up the modem?
-
-
--Doug
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 5da9fa1feb8a..e021b15f87fd 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1366,6 +1366,66 @@
+ 			};
+ 		};
+ 
++		remoteproc@4080000 {
++			compatible = "qcom,sdm845-mss-pil";
++			reg = <0x04080000 0x408>, <0x04180000 0x48>;
++			reg-names = "qdsp6", "rmb";
++
++			interrupts-extended =
++				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack",
++					  "shutdown-ack";
++
++			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
++				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
++				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
++				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
++				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
++				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
++				 <&gcc GCC_PRNG_AHB_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "iface", "bus", "mem", "gpll0_mss",
++				      "snoc_axi", "mnoc_axi", "prng", "xo";
++
++			qcom,smem-states = <&modem_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
++				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
++			reset-names = "mss_restart", "pdc_reset";
++
++			qcom,halt-regs = <&tcsr_mutex_regs
++						0x23000 0x25000 0x24000>;
++
++			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
++					<&rpmhpd SDM845_CX>,
++					<&rpmhpd SDM845_MX>,
++					<&rpmhpd SDM845_MSS>;
++			power-domain-names = "load_state", "cx", "mx", "mss";
++
++			mba {
++				memory-region = <&mba_region>;
++			};
++
++			mpss {
++				memory-region = <&mpss_region>;
++			};
++
++			glink-edge {
++				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
++				label = "modem";
++				qcom,remote-pid = <1>;
++				mboxes = <&apss_shared 12>;
++				mbox-names = "mpss_smem";
++			};
++		};
++
+ 		usb_1_hsphy: phy@88e2000 {
+ 			compatible = "qcom,sdm845-qusb2-phy";
+ 			reg = <0x88e2000 0x400>;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
