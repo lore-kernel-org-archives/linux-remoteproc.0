@@ -1,70 +1,47 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH 1/2] remoteproc: Add __iomem to return of rproc_da_to_va.
-Date: Mon, 21 Jan 2019 15:34:07 +0800
-Message-Id: <20190121073408.56557-1-pihsun@chromium.org>
+Return-Path: <robh+dt@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20181228044819.5697-1-sibis@codeaurora.org> <20181228044819.5697-2-sibis@codeaurora.org>
+ <20190103233014.GA181833@google.com> <20190103235043.GA195759@google.com>
+ <20190104000145.GJ31596@builder> <20190104001158.GA200069@google.com>
+ <20190105015430.GA67838@google.com> <CAL_JsqLbMNB6EzYCzmq5PBc9EvVmYifsoJBwymV621h385Hv0w@mail.gmail.com>
+ <20190109215532.GA178267@google.com>
+In-Reply-To: <20190109215532.GA178267@google.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 10 Jan 2019 08:56:12 -0600
+Message-ID: <CAL_JsqKF5i8HNT-ez+Q=Dv9OA-Lf1VaqpZbL2ouo0Bm+v5FxJg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware
+ bindings for Q6V5
+Content-Type: text/plain; charset="UTF-8"
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Sibi Sankar <sibis@codeaurora.org>, David Brown <david.brown@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <andy.gross@linaro.org>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, Chris Lew <clew@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-msm-owner@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The return value of rproc_da_to_va would probably be device memory. Add
-__iomem annotation to it.
+On Wed, Jan 9, 2019 at 3:55 PM Brian Norris <briannorris@chromium.org> wrote:
+>
+> On Tue, Jan 08, 2019 at 09:22:30AM -0600, Rob Herring wrote:
+> > On Fri, Jan 4, 2019 at 7:54 PM Brian Norris <briannorris@chromium.org> wrote:
+> > > To add to my thoughts, since I think maybe Sibi was a little unclear of
+> > > my thoughts:
+> > >
+> > > One of my primary concerns with the existing approach is that it's
+> > > basically a complete free-for-all. We should have some minimal standards
+> > > (enforced in code) such that our DTB can never point us at something
+> > > like /lib/firmware/<other-vendor>/foo.bin (or /lib/firmware/modem.mdt;
+> > > or lots of other bad examples). This could probably be done simply by
+> > > always prefixing 'qcom/' (I don't remember -- does request_firmware()
+> > > follow '..'? e.g., 'firmware-name = "../bar/foo.bin"'.)
+> >
+> > We can write a schema to enforce some of this:
+> >
+> > firmware-name:
+> >   pattern: "^\w.*"
+>
+> Are DT schemas ready to use/enforce? Or would this currently just be a
+> suggestion? I'm out of the loop. But I guess that would be interesting.
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
----
-I feel that there might be more things that need to be changed
-(especially for the carveouts things). I didn't change them since I
-don't know how to test that part. Comments needed.
----
- drivers/remoteproc/remoteproc_core.c     | 4 ++--
- drivers/remoteproc/remoteproc_internal.h | 2 +-
- include/linux/remoteproc.h               | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Yes, please! Initial support is in 5.0-rc.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 54ec38fc5dca62..7cb8393e1b39f6 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -190,10 +190,10 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-  * here the output of the DMA API for the carveouts, which should be more
-  * correct.
-  */
--void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+void __iomem *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- {
- 	struct rproc_mem_entry *carveout;
--	void *ptr = NULL;
-+	void __iomem *ptr = NULL;
- 
- 	if (rproc->ops->da_to_va) {
- 		ptr = rproc->ops->da_to_va(rproc, da, len);
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index f6cad243d7cac9..df7abe049cdef2 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -51,7 +51,7 @@ void rproc_exit_sysfs(void);
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
- 
--void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
-+void __iomem *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
- int rproc_trigger_recovery(struct rproc *rproc);
- 
- int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 68e72f33c705e1..065a68a5e6e577 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -356,7 +356,7 @@ struct rproc_ops {
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
--	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
-+	void __iomem *(*da_to_va)(struct rproc *rproc, u64 da, int len);
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
--- 
-2.20.1.321.g9e740568ce-goog
+I'm not requiring new bindings to be written as schemas just yet
+though. We need to ring out any issues with early adopters.
+
+Rob
