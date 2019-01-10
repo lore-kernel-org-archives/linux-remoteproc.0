@@ -1,37 +1,48 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 1/7] remoteproc: correct rproc_mem_entry_init() comments
-Date: Thu, 10 Jan 2019 14:49:05 +0100
-Message-ID: <1547128151-44077-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
-References: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 0/3] remoteproc: complete fixed memory region support
+Date: Thu, 10 Jan 2019 14:50:48 +0100
+Message-ID: <1547128251-44137-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org, ohad@wizery.com
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add alloc parameter description and correct comment
-about release one.
+This new series corresponds to the remaining patches from [1]
+addressing fixed memory region support for remote processor.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+The three remaining patches allow to:
+- assign a specific memory region to vdev sub device. As all virtio based
+  services are using virtio device parent for memory allocation, I propose to
+  keep a dedicated vdev device per virtio link for memory allocation. A second
+  step will be to used virtio device itself.
+- migrate ST driver on new memory carveout management
+- allocate virtio rpmsg buffer from parent device
+
+Regards,
+Loic
+
+
+[1] https://lkml.org/lkml/2018/7/27/612
+
 ---
- drivers/remoteproc/remoteproc_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes from V1:
+- rebase on kernel v5.0-rc0
+- correct error management for device registering
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 54ec38fc5dca..c1a66e25b173 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -900,7 +900,8 @@ EXPORT_SYMBOL(rproc_add_carveout);
-  * @dma: dma address
-  * @len: memory carveout length
-  * @da: device address
-- * @release: memory carveout function
-+ * @alloc: memory carveout allocation function
-+ * @release: memory carveout release function
-  * @name: carveout name
-  *
-  * This function allocates a rproc_mem_entry struct and fill it with parameters
+Loic Pallardy (3):
+  remoteproc: create vdev subdevice with specific dma memory pool
+  remoteproc: st: add reserved memory support
+  rpmsg: virtio: allocate buffer from parent
+
+ drivers/remoteproc/remoteproc_core.c     | 47 +++++++++++++++--
+ drivers/remoteproc/remoteproc_internal.h |  1 +
+ drivers/remoteproc/remoteproc_virtio.c   | 42 ++++++++++++++-
+ drivers/remoteproc/st_remoteproc.c       | 91 ++++++++++++++++++++++++++++----
+ drivers/rpmsg/virtio_rpmsg_bus.c         |  6 +--
+ include/linux/remoteproc.h               |  1 +
+ 6 files changed, 170 insertions(+), 18 deletions(-)
+
 -- 
 2.7.4
