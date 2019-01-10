@@ -1,97 +1,37 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 10/10] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
-Date: Tue, 29 Jan 2019 15:20:09 -0800
-Message-Id: <20190129232009.5033-11-bjorn.andersson@linaro.org>
-In-Reply-To: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-References: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 1/7] remoteproc: correct rproc_mem_entry_init() comments
+Date: Thu, 10 Jan 2019 14:49:05 +0100
+Message-ID: <1547128151-44077-2-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
+References: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Sibi Sankar <sibis@codeaurora.org>
+Add alloc parameter description and correct comment
+about release one.
 
-This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
-
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
+ drivers/remoteproc/remoteproc_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes since v3:
-- Fixed sort order in /soc
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 58 ++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 24c30be974bf..eb02c39d2048 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1618,6 +1618,64 @@
- 			};
- 		};
- 
-+		mss_pil: remoteproc@4080000 {
-+			compatible = "qcom,sdm845-mss-pil";
-+			reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
-+			reg-names = "qdsp6", "rmb";
-+
-+			interrupts-extended =
-+				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+				 <&gcc GCC_PRNG_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "prng", "xo";
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+			reset-names = "mss_restart", "pdc_reset";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+
-+			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
-+					<&rpmhpd SDM845_CX>,
-+					<&rpmhpd SDM845_MX>,
-+					<&rpmhpd SDM845_MSS>;
-+			power-domain-names = "load_state", "cx", "mx", "mss";
-+
-+			mba {
-+				memory-region = <&mba_region>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_region>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apss_shared 12>;
-+			};
-+		};
-+
- 		gpucc: clock-controller@5090000 {
- 			compatible = "qcom,sdm845-gpucc";
- 			reg = <0 0x05090000 0 0x9000>;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 54ec38fc5dca..c1a66e25b173 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -900,7 +900,8 @@ EXPORT_SYMBOL(rproc_add_carveout);
+  * @dma: dma address
+  * @len: memory carveout length
+  * @da: device address
+- * @release: memory carveout function
++ * @alloc: memory carveout allocation function
++ * @release: memory carveout release function
+  * @name: carveout name
+  *
+  * This function allocates a rproc_mem_entry struct and fill it with parameters
 -- 
-2.18.0
+2.7.4
