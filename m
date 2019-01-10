@@ -1,52 +1,38 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [RFC v3 1/5] dt-bindings: Add a binding for Mediatek SCP
-Date: Mon, 21 Jan 2019 15:18:29 +0800
-Message-Id: <20190121071833.43443-2-pihsun@chromium.org>
-In-Reply-To: <20190121071833.43443-1-pihsun@chromium.org>
-References: <20190121071833.43443-1-pihsun@chromium.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic Pallardy <loic.pallardy@st.com>
+Subject: [PATCH v2 3/7] remoteproc: fix rproc_alloc_carveout() bad variable cast
+Date: Thu, 10 Jan 2019 14:49:07 +0100
+Message-ID: <1547128151-44077-4-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
+References: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Nicolas Boichat <drinkcat@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Erin Lo <erin.lo@mediatek.com>
+As dma member of struct rproc_mem_entry is dma_addr_t, no
+need to cast in u32.
 
-Add a DT binding documentation of SCP for the
-MT8183 SoC from Mediatek.
+Fixes: d7c51706d095 ("remoteproc: add alloc ops in rproc_mem_entry struct")
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 ---
-Changes from v2:
- - No change. I realized that for this patch series, there's no need to
-   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
-   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
-   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
-   created by SCP name service.
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from v1:
- - No change.
----
- .../devicetree/bindings/remoteproc/mtk,scp.txt         | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-new file mode 100644
-index 00000000000000..b07e5c4ca9af1d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-@@ -0,0 +1,10 @@
-+Mediatek SCP Bindings
-+----------------------------------------
-+
-+This binding provides support for ARM Cortex M4 Co-processor found on some
-+Mediatek SoCs.
-+
-+Required properties:
-+- compatible		Should be "mediatek,mt8183-scp"
-+- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
-+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 28df71cb3fef..18a1bbf820c9 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -775,7 +775,7 @@ static int rproc_alloc_carveout(struct rproc *rproc,
+ 		mem->da = (u32)dma;
+ 	}
+ 
+-	mem->dma = (u32)dma;
++	mem->dma = dma;
+ 	mem->va = va;
+ 
+ 	return 0;
 -- 
-2.20.1.321.g9e740568ce-goog
+2.7.4
