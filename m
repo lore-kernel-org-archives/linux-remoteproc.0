@@ -1,210 +1,181 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH 1/1] remoteproc: fix recovery procedure
-Date: Thu, 17 Jan 2019 17:15:49 +0000
-Message-ID: <2d1111783db04141a30fe6ee8f7cf54b@SFHDAG7NODE2.st.com>
-References: <1547031403-34535-1-git-send-email-loic.pallardy@st.com>
- <CAH2Cfb_4qFAEjiANLpRmQL5o9-JCPHCBULLz5-r=zbK9EwiT_A@mail.gmail.com>
- <a7040498e7dc4e64b0748052c3ff3403@SFHDAG7NODE2.st.com>
- <CAH2Cfb-jgvGWoQ+gim_17bEeg65Kh8=KDDtpe8LZCp=LAr_OLQ@mail.gmail.com>
-In-Reply-To: <CAH2Cfb-jgvGWoQ+gim_17bEeg65Kh8=KDDtpe8LZCp=LAr_OLQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Return-Path: <xiaoxiang781216@gmail.com>
 MIME-Version: 1.0
-To: xiang xiao <xiaoxiang781216@gmail.com>
+References: <1547031403-34535-1-git-send-email-loic.pallardy@st.com>
+ <CAH2Cfb_4qFAEjiANLpRmQL5o9-JCPHCBULLz5-r=zbK9EwiT_A@mail.gmail.com> <a7040498e7dc4e64b0748052c3ff3403@SFHDAG7NODE2.st.com>
+In-Reply-To: <a7040498e7dc4e64b0748052c3ff3403@SFHDAG7NODE2.st.com>
+From: xiang xiao <xiaoxiang781216@gmail.com>
+Date: Tue, 15 Jan 2019 14:46:04 +0800
+Message-ID: <CAH2Cfb-jgvGWoQ+gim_17bEeg65Kh8=KDDtpe8LZCp=LAr_OLQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
+Content-Type: text/plain; charset="UTF-8"
+To: Loic PALLARDY <loic.pallardy@st.com>
 Cc: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, "s-anna@ti.com" <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgWGlhbmcsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgt
-cmVtb3RlcHJvYy1vd25lckB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LXJlbW90ZXByb2MtDQo+IG93
-bmVyQHZnZXIua2VybmVsLm9yZz4gT24gQmVoYWxmIE9mIHhpYW5nIHhpYW8NCj4gU2VudDogbWFy
-ZGkgMTUgamFudmllciAyMDE5IDA3OjQ2DQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxh
-cmR5QHN0LmNvbT4NCj4gQ2M6IGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnOyBvaGFkQHdpemVy
-eS5jb207IGxpbnV4LQ0KPiByZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZzsgQXJuYXVkDQo+IFBPVUxJUVVFTiA8YXJuYXVkLnBvdWxpcXVlbkBz
-dC5jb20+OyBiZW5qYW1pbi5nYWlnbmFyZEBsaW5hcm8ub3JnOyBzLQ0KPiBhbm5hQHRpLmNvbQ0K
-PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMV0gcmVtb3RlcHJvYzogZml4IHJlY292ZXJ5IHByb2Nl
-ZHVyZQ0KPiANCj4gSGVyZSBpcyBteSBvdXRwdXQgYWZ0ZXIgYXBwbHkgeW91ciBwYXRjaCwgdGhl
-IGR1cGxpY2F0aW9uIGRldmljZSBzdGlsbCBleGlzdDoNCj4gWyAgIDQ4LjAxMjMwMF0gcmVtb3Rl
-cHJvYyByZW1vdGVwcm9jMDogY3Jhc2ggZGV0ZWN0ZWQgaW4NCj4gZjkyMTAwMDAudG9wcHdyOnRs
-NDIxLXJwcm9jOiB0eXBlIHdhdGNoZG9nDQo+IFsgICA0OC4wMjM0NzNdIHJlbW90ZXByb2MgcmVt
-b3RlcHJvYzA6IGhhbmRsaW5nIGNyYXNoICMxIGluDQo+IGY5MjEwMDAwLnRvcHB3cjp0bDQyMS1y
-cHJvYw0KPiBbICAgNDguMDM3NTA0XSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiByZWNvdmVyaW5n
-IGY5MjEwMDAwLnRvcHB3cjp0bDQyMS0NCj4gcnByb2MNCj4gWyAgIDQ4LjA0ODgzN10gcmVtb3Rl
-cHJvYyByZW1vdGVwcm9jMDogc3RvcHBlZCByZW1vdGUgcHJvY2Vzc29yDQo+IGY5MjEwMDAwLnRv
-cHB3cjp0bDQyMS1ycHJvYw0KPiBbICAgNDguMDYxOTY5XSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRp
-bzI6IHJwbXNnIGhvc3QgaXMgb25saW5lDQo+IFsgICA0OC4wNjE5NzZdIHZpcnRpb19ycG1zZ19i
-dXMgdmlydGlvMjogY3JlYXRpbmcgY2hhbm5lbCBycG1zZy10dHlBRFNQIGFkZHINCj4gMHgxDQpG
-aXJzdCBycG1zZy10dHlBRFNQIGFubm91bmNlbWVudA0KDQo+IFsgICA0OC4wNjI5NTZdIHZpcnRp
-b19ycG1zZ19idXMgdmlydGlvMjogY3JlYXRpbmcgY2hhbm5lbCBycG1zZy1jbGsgYWRkciAweDIN
-Cj4gWyAgIDQ4LjA2MzQ4OV0gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjcmVhdGluZyBjaGFu
-bmVsIHJwbXNnLXN5c2xvZyBhZGRyDQo+IDB4Mw0KPiBbICAgNDguMDYzODE1XSB2aXJ0aW9fcnBt
-c2dfYnVzIHZpcnRpbzI6IGNyZWF0aW5nIGNoYW5uZWwgcnBtc2ctcnRjIGFkZHIgMHg0DQo+IFsg
-ICA0OC4wNjQwNjRdIHZpcnRpb19ycG1zZ19idXMgdmlydGlvMjogY3JlYXRpbmcgY2hhbm5lbCBy
-cG1zZy10dHlBRFNQIGFkZHINCj4gMHgxDQpTZWNvbmQgcnBtc2ctdHR5QURTUCBhbm5vdW5jZW1l
-bnQNCg0KPiBbICAgNDguMDY0MDgwXSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IGNoYW5uZWwN
-Cj4gcnBtc2ctdHR5QURTUDpmZmZmZmZmZjoxIGFscmVhZHkgZXhpc3QNCj4gWyAgIDQ4LjA2NDA4
-N10gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBycG1zZ19jcmVhdGVfY2hhbm5lbCBmYWlsZWQN
-Cj4gWyAgIDQ4LjA2NDEwMl0gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjcmVhdGluZyBjaGFu
-bmVsIHJwbXNnLXR0eUFEU1AgYWRkcg0KPiAweDENCj4gWyAgIDQ4LjA2NDExOF0gdmlydGlvX3Jw
-bXNnX2J1cyB2aXJ0aW8yOiBjaGFubmVsDQo+IHJwbXNnLXR0eUFEU1A6ZmZmZmZmZmY6MSBhbHJl
-YWR5IGV4aXN0DQo+IFsgICA0OC4wNjQxMjddIHZpcnRpb19ycG1zZ19idXMgdmlydGlvMjogcnBt
-c2dfY3JlYXRlX2NoYW5uZWwgZmFpbGVkDQo+IFsgICA0OC4wNjQxMzldIHZpcnRpb19ycG1zZ19i
-dXMgdmlydGlvMjogY3JlYXRpbmcgY2hhbm5lbCBycG1zZy1jbGsgYWRkciAweDINCj4gWyAgIDQ4
-LjA2NDE1M10gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjaGFubmVsIHJwbXNnLWNsazpmZmZm
-ZmZmZjoyDQo+IGFscmVhZHkgZXhpc3QNCj4gWyAgIDQ4LjA2NDE1OV0gdmlydGlvX3JwbXNnX2J1
-cyB2aXJ0aW8yOiBycG1zZ19jcmVhdGVfY2hhbm5lbCBmYWlsZWQNCj4gWyAgIDQ4LjA2NDE3NF0g
-dmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjcmVhdGluZyBjaGFubmVsIHJwbXNnLXN5c2xvZyBh
-ZGRyDQo+IDB4Mw0KPiBbICAgNDguMDY0MTkyXSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IGNo
-YW5uZWwNCj4gcnBtc2ctc3lzbG9nOmZmZmZmZmZmOjMgYWxyZWFkeSBleGlzdA0KPiBbICAgNDgu
-MDY0MjAwXSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IHJwbXNnX2NyZWF0ZV9jaGFubmVsIGZh
-aWxlZA0KPiBbICAgNDguMDY0MjEzXSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IGNyZWF0aW5n
-IGNoYW5uZWwgcnBtc2ctcnRjIGFkZHIgMHg0DQo+IFsgICA0OC4wNjQyMjldIHZpcnRpb19ycG1z
-Z19idXMgdmlydGlvMjogY2hhbm5lbCBycG1zZy1ydGM6ZmZmZmZmZmY6NA0KPiBhbHJlYWR5IGV4
-aXN0DQo+IFsgICA0OC4wNjQyMzVdIHZpcnRpb19ycG1zZ19idXMgdmlydGlvMjogcnBtc2dfY3Jl
-YXRlX2NoYW5uZWwgZmFpbGVkDQo+IFsgICA0OC4wNjQyODZdIHZpcnRpb19ycG1zZ19idXMgdmly
-dGlvMjogY3JlYXRpbmcgY2hhbm5lbCBycG1zZy1zeXNsb2cgYWRkcg0KPiAweDMNCj4gWyAgIDQ4
-LjA2NDMwMl0gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjaGFubmVsDQo+IHJwbXNnLXN5c2xv
-ZzpmZmZmZmZmZjozIGFscmVhZHkgZXhpc3QNCj4gWyAgIDQ4LjA2NDMwNl0gdmlydGlvX3JwbXNn
-X2J1cyB2aXJ0aW8yOiBycG1zZ19jcmVhdGVfY2hhbm5lbCBmYWlsZWQNCj4gWyAgIDQ4LjA2NDMx
-OF0gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjcmVhdGluZyBjaGFubmVsIHJwbXNnLXJ0YyBh
-ZGRyIDB4NA0KPiBbICAgNDguMDY0MzM0XSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IGNoYW5u
-ZWwgcnBtc2ctcnRjOmZmZmZmZmZmOjQNCj4gYWxyZWFkeSBleGlzdA0KPiBbICAgNDguMDY0MzM5
-XSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IHJwbXNnX2NyZWF0ZV9jaGFubmVsIGZhaWxlZA0K
-PiBbICAgNDguMDY0MzUxXSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IGNyZWF0aW5nIGNoYW5u
-ZWwgcnBtc2ctaG9zdGZzIGFkZHINCj4gMHg1DQo+IFsgICA0OC4wNjQ3NzNdIHZpcnRpb19ycG1z
-Z19idXMgdmlydGlvMjogY3JlYXRpbmcgY2hhbm5lbCBycG1zZy1ob3N0ZnMgYWRkcg0KPiAweDUN
-Cj4gWyAgIDQ4LjA2NDc4OV0gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjaGFubmVsDQo+IHJw
-bXNnLWhvc3RmczpmZmZmZmZmZjo1IGFscmVhZHkgZXhpc3QNCj4gWyAgIDQ4LjA2NDc5N10gdmly
-dGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBycG1zZ19jcmVhdGVfY2hhbm5lbCBmYWlsZWQNCj4gWyAg
-IDQ4LjA2NDkzMF0gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjcmVhdGluZyBjaGFubmVsICBh
-ZGRyIDB4NWY3MzYxDQo+IFsgICA0OC4wNjQ5NDVdIHZpcnRpb19ycG1zZ19idXMgdmlydGlvMjog
-cnBtc2dfZmluZF9kZXZpY2UgZmFpbGVkDQo+IFsgICA0OC4wNjQ5NTddIHZpcnRpb19ycG1zZ19i
-dXMgdmlydGlvMjogY3JlYXRpbmcgY2hhbm5lbCBycG1zZy1ydGMgYWRkciAweDQNCj4gWyAgIDQ4
-LjA2NDk3M10gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjaGFubmVsIHJwbXNnLXJ0YzpmZmZm
-ZmZmZjo0DQo+IGFscmVhZHkgZXhpc3QNCj4gWyAgIDQ4LjA2NDk3OV0gdmlydGlvX3JwbXNnX2J1
-cyB2aXJ0aW8yOiBycG1zZ19jcmVhdGVfY2hhbm5lbCBmYWlsZWQNCj4gWyAgIDQ4LjA2NTAxNV0g
-dmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8yOiBjcmVhdGluZyBjaGFubmVsIHJwbXNnLWhvc3RmcyBh
-ZGRyDQo+IDB4NQ0KPiBbICAgNDguMDY1MDMwXSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IGNo
-YW5uZWwNCj4gcnBtc2ctaG9zdGZzOmZmZmZmZmZmOjUgYWxyZWFkeSBleGlzdA0KPiBbICAgNDgu
-MDY1MDM1XSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzI6IHJwbXNnX2NyZWF0ZV9jaGFubmVsIGZh
-aWxlZA0KPiBbICAgNDguMzUyMTUwXSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiByZWdpc3RlcmVk
-IHZpcnRpbzIgKHR5cGUgNykNCj4gWyAgIDQ4LjM1ODgxM10gcmVtb3RlcHJvYyByZW1vdGVwcm9j
-MDogcmVtb3RlIHByb2Nlc3Nvcg0KPiBmOTIxMDAwMC50b3Bwd3I6dGw0MjEtcnByb2MgaXMgbm93
-IHVwDQo+IGRvIEkgc3RpbGwgbWlzcyBhbnkgYWRkaXRpb25hbCBwYXRjaD8NCg0KSW4geW91ciB0
-cmFjZSwgSSBjYW4gc2VlIHRoYXQgeW91ciBycG1zZyBkZXZpY2UgYXJlIGFubm91bmNlZCB0d2lj
-ZSBhbmQgZXJyb3IgaXMgb24gdGhlIHNlY29uZCBhbm5vdW5jZW1lbnQgd2hpY2ggaXMgbm9ybWFs
-IGFzIGVuZHBvaW50IElEIGlzIGFscmVhZHkgdXNlZC4NCnZpcnRpb19ycG1zZ19idXMgdmlydGlv
-MjogcnBtc2dfY3JlYXRlX2NoYW5uZWwgZmFpbGVkIC0tPiBtZWFucyB5b3UgY2FuJ3QgZ2V0IHRo
-ZSByZXF1ZXN0ZWQgaWRyLg0KDQpJbiBjb2RlIHlvdSBwb2ludGluZyBpbiBbMV0gSSBjYW4gc2Vl
-IHRoYXQgeW91IGFyZSB1c2luZyBvcHRpbWl6ZWQgdmVyc2lvbiBvZiBycG1zZywgaGF2aW5nIHpl
-cm8gY29weSBmZWF0dXJlcyBhbmQgbWF5YmUgb3RoZXJzIGNvbWluZyBmcm9tIHJwbXNnLWxpdGUu
-DQpPbiBteSBzaWRlIEknbSB0ZXN0aW5nIHdpdGggb2ZmaWNpYWwgcmVsZWFzZSBmcm9tIE9wZW5B
-TVAgYW5kIEkgaGF2ZSBubyBtb2RpZmljYXRpb24gb24gTGludXggcnBtc2cgKG9uIHRoZSB0b3Ag
-b2Yga2VybmVsIDUuMC1yYzApLg0KQ291bGQgeW91IGNoZWNrIGNvbnRlbnQgb2YgdGhlIHNoYXJl
-ZCBtZW1vcnkgYWZ0ZXIgcmVjb3Zlcnkgc2VxdWVuY2U/IE1heWJlIHByZXZpb3VzIG1lc3NhZ2Vz
-IGFyZSBzdGlsbCBwcmVzZW50IGxlYWRpbmcgdG8gZG91YmxlIGFubm91bmNlbWVudC4NCkNvdWxk
-IHlvdSBwbGVhc2UgcmV0cnkgb24gYSBtYWlubGluZSBrZXJuZWwgd2l0aG91dCBycG1zZyBvcHRp
-bWl6YXRpb24gPw0KDQpPbiBteSBzaWRlIEkgdHJpZWQgdGhlIHJwbXNnX3R0eSBkcml2ZXIgeW91
-IHBvaW50ZWQgaW4gWzFdIChJIGp1c3QgYWRkIHNvbWUgc3R1YnMgZm9yIHplcm8gY29weSkgYW5k
-IEkgc3VjY2VlZCB0byByZWNvdmVyIG9uIG15IHBsYXRmb3JtIHdpdGggaXQsIHNvIG5vIGlzc3Vl
-IG9uIHJwbXNnIGNsaWVudCBpbXBsZW1lbnRhdGlvbiBzaWRlLg0KDQpSZWdhcmRzLA0KTG9pYw0K
-DQpbMV0gaHR0cHM6Ly9naXRodWIuY29tL3RoZXNvZnByb2plY3QvbGludXgvcHVsbC8xNzcNCg0K
-DQo+IA0KPiBUaGFua3MNCj4gWGlhbmcNCj4gDQo+IE9uIFR1ZSwgSmFuIDE1LCAyMDE5IGF0IDQ6
-MjMgQU0gTG9pYyBQQUxMQVJEWSA8bG9pYy5wYWxsYXJkeUBzdC5jb20+DQo+IHdyb3RlOg0KPiA+
-DQo+ID4gSGkgWGlhbmcsDQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
-ID4gPiBGcm9tOiB4aWFuZyB4aWFvIDx4aWFveGlhbmc3ODEyMTZAZ21haWwuY29tPg0KPiA+ID4g
-U2VudDogc2FtZWRpIDEyIGphbnZpZXIgMjAxOSAxOToyOQ0KPiA+ID4gVG86IExvaWMgUEFMTEFS
-RFkgPGxvaWMucGFsbGFyZHlAc3QuY29tPg0KPiA+ID4gQ2M6IGJqb3JuLmFuZGVyc3NvbkBsaW5h
-cm8ub3JnOyBvaGFkQHdpemVyeS5jb207IGxpbnV4LQ0KPiA+ID4gcmVtb3RlcHJvY0B2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEFybmF1ZA0KPiA+ID4gUE9V
-TElRVUVOIDxhcm5hdWQucG91bGlxdWVuQHN0LmNvbT47DQo+IGJlbmphbWluLmdhaWduYXJkQGxp
-bmFyby5vcmc7IHMtDQo+ID4gPiBhbm5hQHRpLmNvbQ0KPiA+ID4gU3ViamVjdDogUmU6IFtQQVRD
-SCAxLzFdIHJlbW90ZXByb2M6IGZpeCByZWNvdmVyeSBwcm9jZWR1cmUNCj4gPiA+DQo+ID4gPiBI
-aSBMb2ljLA0KPiA+ID4gVGhlIGNoYW5nZSBqdXN0IGhpZGUgdGhlIHByb2JsZW0sIEkgdGhpbmsu
-IFRoZSBiaWcgaXNzdWUgaXM6DQo+ID4gPiAxLnZpcnRpbyBkZXZpY2VzIGFyZW4ndCBkZXN0cm95
-ZWQgYnkgcnBwcm9jX3N0b3ANCj4gPiBWaXJ0aW8gZGV2aWNlcyBhcmUgZGVzdHJveWVkIGJ5IHJw
-cm9jX3N0b3AoKSBhcyB2ZGV2IGlzIHJlZ2lzdGVyZWQgYXMgcnByb2MNCj4gc3ViIGRldmljZS4N
-Cj4gPiBycHJvY19zdG9wKCkgaXMgY2FsbGluZyBycHJvY19zdG9wX3N1YmRldmljZXMoKSB3aGlj
-aCBpcyBpbiBjaGFyZ2Ugb2YNCj4gcmVtb3ZpbmcgdmlydGlvIGRldmljZSBhbmQgYXNzb2NpYXRl
-ZCBjaGlsZHJlbi4NCj4gPiBycHJvY192ZGV2X2RvX3N0b3AoKSAtLT4gcnByb2NfcmVtb3ZlX3Zp
-cnRpb19kZXYoKSAtLT4NCj4gdW5yZWdpc3Rlcl92aXJ0aW9fZGV2aWNlKCkNCj4gPg0KPiA+IFBs
-ZWFzZSBmaW5kIGJlbG93IHRyYWNlIG9mIGEgcmVjb3Zlcnkgb24gbXkgU1QgU09DLiBNeSAyIHJw
-bXNnIHR0eSBhcmUNCj4gcmVtb3ZlZCBhbmQgcmUtaW5zZXJ0ZWQgY29ycmVjdGx5DQo+ID4gcm9v
-dEBzdG0zMm1wMTp+IyBscyAvZGV2L3R0eVJQTVNHKg0KPiA+IC9kZXYvdHR5UlBNU0cwICAvZGV2
-L3R0eVJQTVNHMQ0KPiA+IHJvb3RAc3RtMzJtcDE6fiMgWyAgMTU0LjgzMjUyM10gcmVtb3RlcHJv
-YyByZW1vdGVwcm9jMDogY3Jhc2gNCj4gZGV0ZWN0ZWQgaW4gbTQ6IHR5cGUgd2F0Y2hkb2cNCj4g
-PiBbICAxNTQuODM3NzI1XSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiBoYW5kbGluZyBjcmFzaCAj
-MiBpbiBtNA0KPiA+IFsgIDE1NC44NDMzMTldIHJlbW90ZXByb2MgcmVtb3RlcHJvYzA6IHJlY292
-ZXJpbmcgbTQNCj4gPiBbICAxNTQuODQ5MTg1XSBycG1zZ190dHkgdmlydGlvMC5ycG1zZy10dHkt
-Y2hhbm5lbC4tMS4wOiBycG1zZyB0dHkgZGV2aWNlIDANCj4gaXMgcmVtb3ZlZA0KPiA+IFsgIDE1
-NC44NTc1NzJdIHJwbXNnX3R0eSB2aXJ0aW8wLnJwbXNnLXR0eS1jaGFubmVsLi0xLjE6IHJwbXNn
-IHR0eSBkZXZpY2UgMQ0KPiBpcyByZW1vdmVkDQo+ID4gWyAgMTU1LjM4MjMyN10gcmVtb3RlcHJv
-YyByZW1vdGVwcm9jMDogd2FybmluZzogcmVtb3RlIEZXIHNodXRkb3duDQo+IHdpdGhvdXQgYWNr
-DQo+ID4gWyAgMTU1LjM4Nzg1N10gcmVtb3RlcHJvYyByZW1vdGVwcm9jMDogc3RvcHBlZCByZW1v
-dGUgcHJvY2Vzc29yIG00DQo+ID4gWyAgMTU1LjM5ODk4OF0gIG00QDAjdmRldjBidWZmZXI6IGFz
-c2lnbmVkIHJlc2VydmVkIG1lbW9yeSBub2RlDQo+IHZkZXYwYnVmZmVyQDEwMDQ0MDAwDQo+ID4g
-WyAgMTU1LjQwNTkxMF0gdmlydGlvX3JwbXNnX2J1cyB2aXJ0aW8wOiBjcmVhdGluZyBjaGFubmVs
-IHJwbXNnLXR0eS1jaGFubmVsDQo+IGFkZHIgMHgwDQo+ID4gWyAgMTU1LjQxMzQyMl0gcnBtc2df
-dHR5IHZpcnRpbzAucnBtc2ctdHR5LWNoYW5uZWwuLTEuMDogbmV3IGNoYW5uZWw6DQo+IDB4NDAw
-IC0+IDB4MCA6IHR0eVJQTVNHMA0KPiA+IFsgIDE1NS40MjEwMzhdIHZpcnRpb19ycG1zZ19idXMg
-dmlydGlvMDogY3JlYXRpbmcgY2hhbm5lbCBycG1zZy10dHktY2hhbm5lbA0KPiBhZGRyIDB4MQ0K
-PiA+IFsgIDE1NS40MjkwODhdIHJwbXNnX3R0eSB2aXJ0aW8wLnJwbXNnLXR0eS1jaGFubmVsLi0x
-LjE6IG5ldyBjaGFubmVsOg0KPiAweDQwMSAtPiAweDEgOiB0dHlSUE1TRzENCj4gPiBbICAxNTUu
-NDM3MzM4XSB2aXJ0aW9fcnBtc2dfYnVzIHZpcnRpbzA6IHJwbXNnIGhvc3QgaXMgb25saW5lDQo+
-ID4gWyAgMTU1LjQ0MjQwMV0gIG00QDAjdmRldjBidWZmZXI6IHJlZ2lzdGVyZWQgdmlydGlvMCAo
-dHlwZSA3KQ0KPiA+IFsgIDE1NS40NjExNTRdIHJlbW90ZXByb2MgcmVtb3RlcHJvYzA6IHJlbW90
-ZSBwcm9jZXNzb3IgbTQgaXMgbm93IHVwDQo+ID4gbHMgL2Rldi90dHlSUE1TRyoNCj4gPiAvZGV2
-L3R0eVJQTVNHMCAgL2Rldi90dHlSUE1TRzENCj4gPiByb290QHN0bTMybXAxOn4jDQo+ID4NCj4g
-PiBBcyB2ZGV2IGlzIGluY2x1ZGluZyBpbiBhIGxhcmdlciBzdHJ1Y3QgYWxsb2NhdGVkIGJ5IHJw
-cm9jLCBpdCBpcyBzYWZlIHRvIHNldCBpdCB0byAwDQo+IGJlZm9yZSBpbml0aWFsaXppbmcgdmly
-dGlvIGRldmljZSB3aGlsZSBycHJvYyBzdWJkZXZpY2Ugc2VxdWVuY2UgaXMgcmVzcGVjdGVkLg0K
-PiA+DQo+ID4gPiAyLmFuZCB0aGVuIHJwbXNnIGNoaWxkIGRldmljZXMgYXJlbid0IGRlc3Ryb3ll
-ZCB0b28NCj4gPiA+IFRoZW4sIHdoZW4gdGhlIHJlbW90ZSBzdGFydCBhbmQgY3JlYXRlIHJwbXNn
-IGNoYW5uZWwgYWdhaW4sIHRoZQ0KPiA+ID4gZHVwbGljYXRlZCBjaGFubmVsIHdpbGwgYXBwZWFy
-IGluIGtlcm5lbC4NCj4gPiA+IFRvIGZpeCB0aGlzIHByb2JsZW0sIHdlIG5lZWQgZ28gdGhyb3Vn
-aCBycHByb2Nfc2h1dGRvd24vcnByb2NfYm9vdCB0bw0KPiA+ID4gZGVzdHJveSBhbGwgZGV2aWNl
-cyh2aXJ0aW8gYW5kIHJwbXNnKSBhbmQgY3JlYXRlIHRoZW0gYWdhaW4uDQo+ID4gUnByb2Nfc2h1
-dGRvd24vcnByb2NfYm9vdCBpcyBzb2x2aW5nIHRoZSBpc3N1ZSB0b28sIGV4Y2VwdCBpZg0KPiBy
-cHJvY19ib290KCkgd2FzIGNhbGxlZCBzZXZlcmFsIHRpbWVzIGFuZCBzbyBycHJvYy0+cG93ZXIg
-YXRvbWljIG5vdCBlcXVhbA0KPiB0byAxLg0KPiA+IFVzaW5nIG9ubHkgcnByb2Nfc3RvcCgpIGFu
-ZCBycHJvY19zdGFydCgpIGFsbG93cyB0byBwcmVzZXJ2ZSBycHJvYy0+cG93ZXINCj4gYW5kIHNv
-IHRvIGJlIHNpbGVudCBmcm9tIHJwcm9jIHVzZXIgcG92Lg0KPiA+DQo+ID4gUmVnYXJkcywNCj4g
-PiBMb2ljDQo+ID4gPg0KPiA+ID4gVGhhbmtzDQo+ID4gPiBYaWFuZw0KPiA+ID4NCj4gPiA+IE9u
-IFdlZCwgSmFuIDksIDIwMTkgYXQgNjo1NiBQTSBMb2ljIFBhbGxhcmR5IDxsb2ljLnBhbGxhcmR5
-QHN0LmNvbT4NCj4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+IENvbW1pdCA3ZTgzY2FiODI0YTg3
-ZTgzY2FiODI0YTggKCJyZW1vdGVwcm9jOiBNb2RpZnkgcmVjb3ZlcnkNCj4gcGF0aA0KPiA+ID4g
-PiB0byB1c2UgcnByb2Nfe3N0YXJ0LHN0b3B9KCkiKSByZXBsYWNlcyBycHJvY197c2h1dGRvd24s
-Ym9vdH0oKSB3aXRoDQo+ID4gPiA+IHJwcm9jX3tzdG9wLHN0YXJ0fSgpLCB3aGljaCBza2lwcyBk
-ZXN0cm95IHRoZSB2aXJ0aW8gZGV2aWNlIGF0IHN0b3ANCj4gPiA+ID4gYnV0IHJlLWluaXRpYWxp
-emVzIGl0IGFnYWluIGF0IHN0YXJ0Lg0KPiA+ID4gPg0KPiA+ID4gPiBJc3N1ZSBpcyB0aGF0IHN0
-cnVjdCB2aXJ0aW9fZGV2IGlzIG5vdCBjb3JyZWN0bHkgcmVpbml0aWFsaXplZCBsaWtlIGRvbmUN
-Cj4gPiA+ID4gYXQgaW5pdGlhbCBhbGxvY2F0aW9uIHRoYW5rcyB0byBremFsbG9jKCkgYW5kIGtv
-YmplY3QgaXMgY29uc2lkZXJlZCBhcw0KPiA+ID4gPiBhbHJlYWR5IGluaXRpYWxpemVkIGJ5IGtl
-cm5lbC4gVGhhdCBpcyBkdWUgdG8gdGhlIGZhY3Qgc3RydWN0IHZpcnRpb19kZXYNCj4gPiA+ID4g
-aXMgYWxsb2NhdGVkIGFuZCByZWxlYXNlZCBhdCB2ZGV2IHJlc291cmNlIGhhbmRsaW5nIGxldmVs
-IG1hbmFnZWQgYW5kDQo+ID4gPiA+IHZpcnRpbyBkZXZpY2UgaXMgcmVnaXN0ZXJlZCBhbmQgdW5y
-ZWdpc3RlcmVkIGF0IHJwcm9jIHN1YmRldmljZXMgbGV2ZWwuDQo+ID4gPiA+DQo+ID4gPiA+IFRo
-aXMgcGF0Y2ggaW5pdGlhbGl6ZXMgc3RydWN0IHZpcnRpb19kZXYgdG8gMCBiZWZvcmUgdXNpbmcg
-aXQgYW5kDQo+ID4gPiA+IHJlZ2lzdGVyaW5nIGl0Lg0KPiA+ID4gPg0KPiA+ID4gPiBGaXhlczog
-N2U4M2NhYjgyNGE4ICgicmVtb3RlcHJvYzogTW9kaWZ5IHJlY292ZXJ5IHBhdGggdG8gdXNlDQo+
-ID4gPiBycHJvY197c3RhcnQsc3RvcH0oKSIpDQo+ID4gPiA+DQo+ID4gPiA+IFJlcG9ydGVkLWJ5
-OiBYaWFuZyBYaWFvIDx4aWFveGlhbmc3ODEyMTZAZ21haWwuY29tPg0KPiA+ID4gPiBTaWduZWQt
-b2ZmLWJ5OiBMb2ljIFBhbGxhcmR5IDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCj4gPiA+ID4gLS0t
-DQo+ID4gPiA+ICBkcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY192aXJ0aW8uYyB8IDIgKysN
-Cj4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykNCj4gPiA+ID4NCj4gPiA+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX3ZpcnRpby5jDQo+
-ID4gPiBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX3ZpcnRpby5jDQo+ID4gPiA+IGlu
-ZGV4IDE4M2ZjNDJhNTEwYS4uODhlYWRlOTkzOTVjIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2
-ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY192aXJ0aW8uYw0KPiA+ID4gPiArKysgYi9kcml2ZXJz
-L3JlbW90ZXByb2MvcmVtb3RlcHJvY192aXJ0aW8uYw0KPiA+ID4gPiBAQCAtMzMyLDYgKzMzMiw4
-IEBAIGludCBycHJvY19hZGRfdmlydGlvX2RldihzdHJ1Y3QgcnByb2NfdmRldg0KPiAqcnZkZXYs
-DQo+ID4gPiBpbnQgaWQpDQo+ID4gPiA+ICAgICAgICAgc3RydWN0IHZpcnRpb19kZXZpY2UgKnZk
-ZXYgPSAmcnZkZXYtPnZkZXY7DQo+ID4gPiA+ICAgICAgICAgaW50IHJldDsNCj4gPiA+ID4NCj4g
-PiA+ID4gKyAgICAgICAvKiBSZXNldCB2ZGV2IHN0cnVjdCBhcyB5b3UgZG9uJ3Qga25vdyBob3cg
-aXQgaGFzIGJlZW4gcHJldmlvdXNseQ0KPiA+ID4gdXNlZCAqLw0KPiA+ID4gPiArICAgICAgIG1l
-bXNldCh2ZGV2LCAwLCBzaXplb2Yoc3RydWN0IHZpcnRpb19kZXZpY2UpKTsNCj4gPiA+ID4gICAg
-ICAgICB2ZGV2LT5pZC5kZXZpY2UgPSBpZCwNCj4gPiA+ID4gICAgICAgICB2ZGV2LT5jb25maWcg
-PSAmcnByb2NfdmlydGlvX2NvbmZpZ19vcHMsDQo+ID4gPiA+ICAgICAgICAgdmRldi0+ZGV2LnBh
-cmVudCA9IGRldjsNCj4gPiA+ID4gLS0NCj4gPiA+ID4gMi43LjQNCj4gPiA+ID4NCg==
+Here is my output after apply your patch, the duplication device still exist:
+[   48.012300] remoteproc remoteproc0: crash detected in
+f9210000.toppwr:tl421-rproc: type watchdog
+[   48.023473] remoteproc remoteproc0: handling crash #1 in
+f9210000.toppwr:tl421-rproc
+[   48.037504] remoteproc remoteproc0: recovering f9210000.toppwr:tl421-rproc
+[   48.048837] remoteproc remoteproc0: stopped remote processor
+f9210000.toppwr:tl421-rproc
+[   48.061969] virtio_rpmsg_bus virtio2: rpmsg host is online
+[   48.061976] virtio_rpmsg_bus virtio2: creating channel rpmsg-ttyADSP addr 0x1
+[   48.062956] virtio_rpmsg_bus virtio2: creating channel rpmsg-clk addr 0x2
+[   48.063489] virtio_rpmsg_bus virtio2: creating channel rpmsg-syslog addr 0x3
+[   48.063815] virtio_rpmsg_bus virtio2: creating channel rpmsg-rtc addr 0x4
+[   48.064064] virtio_rpmsg_bus virtio2: creating channel rpmsg-ttyADSP addr 0x1
+[   48.064080] virtio_rpmsg_bus virtio2: channel
+rpmsg-ttyADSP:ffffffff:1 already exist
+[   48.064087] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064102] virtio_rpmsg_bus virtio2: creating channel rpmsg-ttyADSP addr 0x1
+[   48.064118] virtio_rpmsg_bus virtio2: channel
+rpmsg-ttyADSP:ffffffff:1 already exist
+[   48.064127] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064139] virtio_rpmsg_bus virtio2: creating channel rpmsg-clk addr 0x2
+[   48.064153] virtio_rpmsg_bus virtio2: channel rpmsg-clk:ffffffff:2
+already exist
+[   48.064159] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064174] virtio_rpmsg_bus virtio2: creating channel rpmsg-syslog addr 0x3
+[   48.064192] virtio_rpmsg_bus virtio2: channel
+rpmsg-syslog:ffffffff:3 already exist
+[   48.064200] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064213] virtio_rpmsg_bus virtio2: creating channel rpmsg-rtc addr 0x4
+[   48.064229] virtio_rpmsg_bus virtio2: channel rpmsg-rtc:ffffffff:4
+already exist
+[   48.064235] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064286] virtio_rpmsg_bus virtio2: creating channel rpmsg-syslog addr 0x3
+[   48.064302] virtio_rpmsg_bus virtio2: channel
+rpmsg-syslog:ffffffff:3 already exist
+[   48.064306] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064318] virtio_rpmsg_bus virtio2: creating channel rpmsg-rtc addr 0x4
+[   48.064334] virtio_rpmsg_bus virtio2: channel rpmsg-rtc:ffffffff:4
+already exist
+[   48.064339] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064351] virtio_rpmsg_bus virtio2: creating channel rpmsg-hostfs addr 0x5
+[   48.064773] virtio_rpmsg_bus virtio2: creating channel rpmsg-hostfs addr 0x5
+[   48.064789] virtio_rpmsg_bus virtio2: channel
+rpmsg-hostfs:ffffffff:5 already exist
+[   48.064797] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.064930] virtio_rpmsg_bus virtio2: creating channel  addr 0x5f7361
+[   48.064945] virtio_rpmsg_bus virtio2: rpmsg_find_device failed
+[   48.064957] virtio_rpmsg_bus virtio2: creating channel rpmsg-rtc addr 0x4
+[   48.064973] virtio_rpmsg_bus virtio2: channel rpmsg-rtc:ffffffff:4
+already exist
+[   48.064979] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.065015] virtio_rpmsg_bus virtio2: creating channel rpmsg-hostfs addr 0x5
+[   48.065030] virtio_rpmsg_bus virtio2: channel
+rpmsg-hostfs:ffffffff:5 already exist
+[   48.065035] virtio_rpmsg_bus virtio2: rpmsg_create_channel failed
+[   48.352150] remoteproc remoteproc0: registered virtio2 (type 7)
+[   48.358813] remoteproc remoteproc0: remote processor
+f9210000.toppwr:tl421-rproc is now up
+do I still miss any additional patch?
+
+Thanks
+Xiang
+
+On Tue, Jan 15, 2019 at 4:23 AM Loic PALLARDY <loic.pallardy@st.com> wrote:
+>
+> Hi Xiang,
+>
+> > -----Original Message-----
+> > From: xiang xiao <xiaoxiang781216@gmail.com>
+> > Sent: samedi 12 janvier 2019 19:29
+> > To: Loic PALLARDY <loic.pallardy@st.com>
+> > Cc: bjorn.andersson@linaro.org; ohad@wizery.com; linux-
+> > remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
+> > POULIQUEN <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org; s-
+> > anna@ti.com
+> > Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
+> >
+> > Hi Loic,
+> > The change just hide the problem, I think. The big issue is:
+> > 1.virtio devices aren't destroyed by rpproc_stop
+> Virtio devices are destroyed by rproc_stop() as vdev is registered as rproc sub device.
+> rproc_stop() is calling rproc_stop_subdevices() which is in charge of removing virtio device and associated children.
+> rproc_vdev_do_stop() --> rproc_remove_virtio_dev() --> unregister_virtio_device()
+>
+> Please find below trace of a recovery on my ST SOC. My 2 rpmsg tty are removed and re-inserted correctly
+> root@stm32mp1:~# ls /dev/ttyRPMSG*
+> /dev/ttyRPMSG0  /dev/ttyRPMSG1
+> root@stm32mp1:~# [  154.832523] remoteproc remoteproc0: crash detected in m4: type watchdog
+> [  154.837725] remoteproc remoteproc0: handling crash #2 in m4
+> [  154.843319] remoteproc remoteproc0: recovering m4
+> [  154.849185] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: rpmsg tty device 0 is removed
+> [  154.857572] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: rpmsg tty device 1 is removed
+> [  155.382327] remoteproc remoteproc0: warning: remote FW shutdown without ack
+> [  155.387857] remoteproc remoteproc0: stopped remote processor m4
+> [  155.398988]  m4@0#vdev0buffer: assigned reserved memory node vdev0buffer@10044000
+> [  155.405910] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-channel addr 0x0
+> [  155.413422] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: new channel: 0x400 -> 0x0 : ttyRPMSG0
+> [  155.421038] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-channel addr 0x1
+> [  155.429088] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: new channel: 0x401 -> 0x1 : ttyRPMSG1
+> [  155.437338] virtio_rpmsg_bus virtio0: rpmsg host is online
+> [  155.442401]  m4@0#vdev0buffer: registered virtio0 (type 7)
+> [  155.461154] remoteproc remoteproc0: remote processor m4 is now up
+> ls /dev/ttyRPMSG*
+> /dev/ttyRPMSG0  /dev/ttyRPMSG1
+> root@stm32mp1:~#
+>
+> As vdev is including in a larger struct allocated by rproc, it is safe to set it to 0 before initializing virtio device while rproc subdevice sequence is respected.
+>
+> > 2.and then rpmsg child devices aren't destroyed too
+> > Then, when the remote start and create rpmsg channel again, the
+> > duplicated channel will appear in kernel.
+> > To fix this problem, we need go through rpproc_shutdown/rproc_boot to
+> > destroy all devices(virtio and rpmsg) and create them again.
+> Rproc_shutdown/rproc_boot is solving the issue too, except if rproc_boot() was called several times and so rproc->power atomic not equal to 1.
+> Using only rproc_stop() and rproc_start() allows to preserve rproc->power and so to be silent from rproc user pov.
+>
+> Regards,
+> Loic
+> >
+> > Thanks
+> > Xiang
+> >
+> > On Wed, Jan 9, 2019 at 6:56 PM Loic Pallardy <loic.pallardy@st.com> wrote:
+> > >
+> > > Commit 7e83cab824a87e83cab824a8 ("remoteproc: Modify recovery path
+> > > to use rproc_{start,stop}()") replaces rproc_{shutdown,boot}() with
+> > > rproc_{stop,start}(), which skips destroy the virtio device at stop
+> > > but re-initializes it again at start.
+> > >
+> > > Issue is that struct virtio_dev is not correctly reinitialized like done
+> > > at initial allocation thanks to kzalloc() and kobject is considered as
+> > > already initialized by kernel. That is due to the fact struct virtio_dev
+> > > is allocated and released at vdev resource handling level managed and
+> > > virtio device is registered and unregistered at rproc subdevices level.
+> > >
+> > > This patch initializes struct virtio_dev to 0 before using it and
+> > > registering it.
+> > >
+> > > Fixes: 7e83cab824a8 ("remoteproc: Modify recovery path to use
+> > rproc_{start,stop}()")
+> > >
+> > > Reported-by: Xiang Xiao <xiaoxiang781216@gmail.com>
+> > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_virtio.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> > b/drivers/remoteproc/remoteproc_virtio.c
+> > > index 183fc42a510a..88eade99395c 100644
+> > > --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > @@ -332,6 +332,8 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev,
+> > int id)
+> > >         struct virtio_device *vdev = &rvdev->vdev;
+> > >         int ret;
+> > >
+> > > +       /* Reset vdev struct as you don't know how it has been previously
+> > used */
+> > > +       memset(vdev, 0, sizeof(struct virtio_device));
+> > >         vdev->id.device = id,
+> > >         vdev->config = &rproc_virtio_config_ops,
+> > >         vdev->dev.parent = dev;
+> > > --
+> > > 2.7.4
+> > >
