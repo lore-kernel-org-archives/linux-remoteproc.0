@@ -1,68 +1,62 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 3 Jan 2019 12:17:20 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 1/8] dt-bindings: soc: qcom: Add remote-pid binding
- for GLINK SMEM
-Message-ID: <20190103201720.GE31596@builder>
-References: <20181228185307.25645-1-sibis@codeaurora.org>
+Return-Path: <pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181228185307.25645-1-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org, dianders@chromium.org, linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, evgreen@chromium.org, briannorris@chromium.org, sricharan@codeaurora.org
+References: <20190108052606.59426-1-pihsun@chromium.org> <20190108052606.59426-2-pihsun@chromium.org>
+ <20190115203448.GA32546@bogus>
+In-Reply-To: <20190115203448.GA32546@bogus>
+From: Peter Shih <pihsun@chromium.org>
+Date: Wed, 16 Jan 2019 12:00:16 +0800
+Message-ID: <CANdKZ0fbP1Nm3GkO1ujeuaj4zAOQCdJ3MPowDQ-fJCUZ42a3dA@mail.gmail.com>
+Subject: Re: [RFC v2 1/6] dt-bindings: Add a binding for Mediatek SCP
+Content-Type: text/plain; charset="UTF-8"
+To: Rob Herring <robh@kernel.org>
+Cc: Nicolas Boichat <drinkcat@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 28 Dec 10:53 PST 2018, Sibi Sankar wrote:
+On Wed, Jan 16, 2019 at 4:34 AM Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, Jan 08, 2019 at 01:26:01PM +0800, Pi-Hsun Shih wrote:
+> > From: Erin Lo <erin.lo@mediatek.com>
+> >
+> > Add a DT binding documentation of SCP for the
+> > MT8183 SoC from Mediatek.
+> >
+> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > ---
+> > Changes from v1:
+> >  - no change
+>
+> No answer to my question on v1?
+>
 
-> Add missing qcom,remote-pid dt binding required for GLINK SMEM
-> which specifies the remote endpoint of the GLINK edge.
-> 
-> Fixes: 2b41d6c8e696 ("dt-bindings: soc: qcom: Extend GLINK to cover
-> SMEM")
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Sorry I missed the last mail.
 
-Thanks for the updates Sibi!
+Yes there would be additional optional properties. For the current patch
+series, the "cros-ec-rpmsg" entry would not be listed in the device tree, but
+there would be a "mediatek,mt8183-rpmsg" under this node.
 
-@Andy, as this relates to rpmsg I'll take this (patch 1/8) through the
-rpmsg tree.
+Would update this in v3.
 
-And I'm picking 2-7 through the remoteproc tree.
-
-
-PS. Please use a --cover-letter when sending a series of patches.
-
-Regards,
-Bjorn
-
-> ---
-> 
-> v3:
->   * Fixed typo
-> 
->  Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-> index 0b8cc533ca83..587bb1ddc8cc 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-> @@ -21,6 +21,11 @@ edge.
->  	Definition: should specify the IRQ used by the remote processor to
->  		    signal this processor about communication related events
->  
-> +- qcom,remote-pid:
-> +	Usage: required for glink-smem
-> +	Value type: <u32>
-> +	Definition: specifies the identifier of the remote endpoint of this edge
-> +
->  - qcom,rpm-msg-ram:
->  	Usage: required for glink-rpm
->  	Value type: <prop-encoded-array>
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+> > ---
+> >  .../devicetree/bindings/remoteproc/mtk,scp.txt         | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+> > new file mode 100644
+> > index 00000000000000..b07e5c4ca9af1d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+> > @@ -0,0 +1,10 @@
+> > +Mediatek SCP Bindings
+> > +----------------------------------------
+> > +
+> > +This binding provides support for ARM Cortex M4 Co-processor found on some
+> > +Mediatek SoCs.
+> > +
+> > +Required properties:
+> > +- compatible         Should be "mediatek,mt8183-scp"
+> > +- clocks             Clock for co-processor (See: ../clock/clock-bindings.txt)
+> > +
+> > --
+> > 2.20.1.97.g81188d93c3-goog
+> >
