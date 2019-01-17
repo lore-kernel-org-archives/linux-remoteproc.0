@@ -1,271 +1,221 @@
 Return-Path: <loic.pallardy@st.com>
 From: Loic PALLARDY <loic.pallardy@st.com>
 Subject: RE: [PATCH 1/1] remoteproc: fix recovery procedure
-Date: Thu, 17 Jan 2019 21:44:11 +0000
-Message-ID: <cea725c192b64f088ae28ab953e3eac7@SFHDAG7NODE2.st.com>
+Date: Thu, 17 Jan 2019 20:52:07 +0000
+Message-ID: <d17b43ecf7c74c03b3d7a540f4d262e1@SFHDAG7NODE2.st.com>
 References: <1547031403-34535-1-git-send-email-loic.pallardy@st.com>
  <CAH2Cfb_4qFAEjiANLpRmQL5o9-JCPHCBULLz5-r=zbK9EwiT_A@mail.gmail.com>
  <a7040498e7dc4e64b0748052c3ff3403@SFHDAG7NODE2.st.com>
  <20190117180007.GX9278@minitux>
- <d17b43ecf7c74c03b3d7a540f4d262e1@SFHDAG7NODE2.st.com>
-In-Reply-To: <d17b43ecf7c74c03b3d7a540f4d262e1@SFHDAG7NODE2.st.com>
+In-Reply-To: <20190117180007.GX9278@minitux>
 Content-Language: en-US
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-To: Loic PALLARDY <loic.pallardy@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: xiang xiao <xiaoxiang781216@gmail.com>, "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, "s-anna@ti.com" <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-
+Hi Bjorn,
 
 > -----Original Message-----
-> From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
-> owner@vger.kernel.org> On Behalf Of Loic PALLARDY
-> Sent: jeudi 17 janvier 2019 21:52
-> To: Bjorn Andersson <bjorn.andersson@linaro.org>
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Sent: jeudi 17 janvier 2019 19:00
+> To: Loic PALLARDY <loic.pallardy@st.com>
 > Cc: xiang xiao <xiaoxiang781216@gmail.com>; ohad@wizery.com; linux-
 > remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
 > POULIQUEN <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org; s-
 > anna@ti.com
-> Subject: RE: [PATCH 1/1] remoteproc: fix recovery procedure
+> Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
 >=20
-> Hi Bjorn,
+> On Mon 14 Jan 12:23 PST 2019, Loic PALLARDY wrote:
 >=20
-> > -----Original Message-----
-> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Sent: jeudi 17 janvier 2019 19:00
-> > To: Loic PALLARDY <loic.pallardy@st.com>
-> > Cc: xiang xiao <xiaoxiang781216@gmail.com>; ohad@wizery.com; linux-
-> > remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
-> > POULIQUEN <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org;
-> s-
-> > anna@ti.com
-> > Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
+> > Hi Xiang,
 > >
-> > On Mon 14 Jan 12:23 PST 2019, Loic PALLARDY wrote:
-> >
-> > > Hi Xiang,
+> > > -----Original Message-----
+> > > From: xiang xiao <xiaoxiang781216@gmail.com>
+> > > Sent: samedi 12 janvier 2019 19:29
+> > > To: Loic PALLARDY <loic.pallardy@st.com>
+> > > Cc: bjorn.andersson@linaro.org; ohad@wizery.com; linux-
+> > > remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
+> > > POULIQUEN <arnaud.pouliquen@st.com>;
+> benjamin.gaignard@linaro.org; s-
+> > > anna@ti.com
+> > > Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
 > > >
-> > > > -----Original Message-----
-> > > > From: xiang xiao <xiaoxiang781216@gmail.com>
-> > > > Sent: samedi 12 janvier 2019 19:29
-> > > > To: Loic PALLARDY <loic.pallardy@st.com>
-> > > > Cc: bjorn.andersson@linaro.org; ohad@wizery.com; linux-
-> > > > remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
-> > > > POULIQUEN <arnaud.pouliquen@st.com>;
-> > benjamin.gaignard@linaro.org; s-
-> > > > anna@ti.com
-> > > > Subject: Re: [PATCH 1/1] remoteproc: fix recovery procedure
-> > > >
-> >
-> > Thanks Loic for picking this up again.
-> >
-> > > > Hi Loic,
-> > > > The change just hide the problem, I think. The big issue is:
-> > > > 1.virtio devices aren't destroyed by rpproc_stop
-> > > Virtio devices are destroyed by rproc_stop() as vdev is registered as=
- rproc
-> > sub device.
-> > > rproc_stop() is calling rproc_stop_subdevices() which is in charge of
-> > removing virtio device and associated children.
-> > > rproc_vdev_do_stop() --> rproc_remove_virtio_dev() -->
-> > unregister_virtio_device()
-> > >
-> >
-> > Xiang is right, unregister_virtio_device() ends up decrementing the
-> > refcount of device and might free it, but it's not guaranteed.
 >=20
-> But it that case calling rproc_shutdown() doesn't guarantee devices are f=
-ree,
-> it is the same.
-> The only difference will be that rproc_vdev will be released by rproc and
-> then reallocated. So virtio device allocation is restarting with a virgin=
- memory
-> buffer. But you will have some ghost devices and restart may failed too.
-> I post a fix [1] last summer to be sure virtio device won't be released w=
-hile
-> still registered or registering... So there is still potential issue.
+> Thanks Loic for picking this up again.
 >=20
+> > > Hi Loic,
+> > > The change just hide the problem, I think. The big issue is:
+> > > 1.virtio devices aren't destroyed by rpproc_stop
+> > Virtio devices are destroyed by rproc_stop() as vdev is registered as r=
+proc
+> sub device.
+> > rproc_stop() is calling rproc_stop_subdevices() which is in charge of
+> removing virtio device and associated children.
+> > rproc_vdev_do_stop() --> rproc_remove_virtio_dev() -->
+> unregister_virtio_device()
 > >
-> > So I think we need to decouple the rproc_vdev and virtio_device, to
-> > allow the latter to potentially outlive the prior.
-> >
-> I checked how to decouple at least the allocation because one issue here.
-> The main issue is that all references are done based on container_of().
-> I look for a fix having the less impacts on the current code, but still p=
-ossible to
-> create cross pointer references between rproc_vdev and virtio device.
-> It will clean up the memory allocation procedure, but the problem is stil=
-l
-> there if sub virtio devices not well release.
-> We need to not be able to restart remote processor if at least one sub de=
-vice
-> was not correctly release...
 >=20
-> > > Please find below trace of a recovery on my ST SOC. My 2 rpmsg tty ar=
-e
-> > removed and re-inserted correctly
-> > > root@stm32mp1:~# ls /dev/ttyRPMSG*
-> > > /dev/ttyRPMSG0  /dev/ttyRPMSG1
-> > > root@stm32mp1:~# [  154.832523] remoteproc remoteproc0: crash
-> > detected in m4: type watchdog
-> > > [  154.837725] remoteproc remoteproc0: handling crash #2 in m4
-> > > [  154.843319] remoteproc remoteproc0: recovering m4
-> > > [  154.849185] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: rpmsg tty de=
-vice
-> 0
-> > is removed
-> > > [  154.857572] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: rpmsg tty de=
-vice
-> 1
-> > is removed
-> > > [  155.382327] remoteproc remoteproc0: warning: remote FW shutdown
-> > without ack
-> > > [  155.387857] remoteproc remoteproc0: stopped remote processor m4
-> > > [  155.398988]  m4@0#vdev0buffer: assigned reserved memory node
-> > vdev0buffer@10044000
-> > > [  155.405910] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-
-> channel
-> > addr 0x0
-> > > [  155.413422] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: new channel:
-> > 0x400 -> 0x0 : ttyRPMSG0
-> > > [  155.421038] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-
-> channel
-> > addr 0x1
-> > > [  155.429088] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: new channel:
-> > 0x401 -> 0x1 : ttyRPMSG1
-> > > [  155.437338] virtio_rpmsg_bus virtio0: rpmsg host is online
-> > > [  155.442401]  m4@0#vdev0buffer: registered virtio0 (type 7)
-> > > [  155.461154] remoteproc remoteproc0: remote processor m4 is now up
-> > > ls /dev/ttyRPMSG*
-> > > /dev/ttyRPMSG0  /dev/ttyRPMSG1
-> > > root@stm32mp1:~#
-> > >
-> > > As vdev is including in a larger struct allocated by rproc, it is saf=
-e
-> > > to set it to 0 before initializing virtio device while rproc subdevic=
-e
-> > > sequence is respected.
-> > >
-> >
-> > It's likely that this works in most use cases, but if for some reason
-> > there's additional references held those will operate on the object pas=
-t
-> > your clearing of it.
->=20
-> In fact, as the memory is free/kzalloc, virtio device fields are not all =
-at 0 as
-> during boot sequence.
-> As mentioned below issue is coming from kobject state_initialized field w=
-hich
-> is not in a correct state.
-> This field is only set by kobject_init().
-> I think normal way of working is to release memory when a device is no mo=
-re
-> used.
-> But another solution could be to reset it in kobject_cleanup() or
-> kobject_del() in order to have a symmetrical procedure.
+> Xiang is right, unregister_virtio_device() ends up decrementing the
+> refcount of device and might free it, but it's not guaranteed.
 
-Reading some literature, it is a bad idea.
-Having a look to device_initialize () function description, it is clearly m=
-ention device struct must be 0 (except fields provided by user) before. (Sa=
-me in kobject documentation)
+But it that case calling rproc_shutdown() doesn't guarantee devices are fre=
+e, it is the same.
+The only difference will be that rproc_vdev will be released by rproc and t=
+hen reallocated. So virtio device allocation is restarting with a virgin me=
+mory buffer. But you will have some ghost devices and restart may failed to=
+o.
+I post a fix [1] last summer to be sure virtio device won't be released whi=
+le still registered or registering... So there is still potential issue.
 
-Extract drivers/base/core.c [1]
-* All fields in @dev must be initialized by the caller to 0, except
- * for those explicitly set to some other value.  The simplest
- * approach is to use kzalloc() to allocate the structure containing
- * @dev.
+>=20
+> So I think we need to decouple the rproc_vdev and virtio_device, to
+> allow the latter to potentially outlive the prior.
+>=20
+I checked how to decouple at least the allocation because one issue here. T=
+he main issue is that all references are done based on container_of().
+I look for a fix having the less impacts on the current code, but still pos=
+sible to create cross pointer references between rproc_vdev and virtio devi=
+ce.
+It will clean up the memory allocation procedure, but the problem is still =
+there if sub virtio devices not well release.
+We need to not be able to restart remote processor if at least one sub devi=
+ce was not correctly release...
 
-So memset or kfree/kzalloc of virtio_device manadatory.
+> > Please find below trace of a recovery on my ST SOC. My 2 rpmsg tty are
+> removed and re-inserted correctly
+> > root@stm32mp1:~# ls /dev/ttyRPMSG*
+> > /dev/ttyRPMSG0  /dev/ttyRPMSG1
+> > root@stm32mp1:~# [  154.832523] remoteproc remoteproc0: crash
+> detected in m4: type watchdog
+> > [  154.837725] remoteproc remoteproc0: handling crash #2 in m4
+> > [  154.843319] remoteproc remoteproc0: recovering m4
+> > [  154.849185] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: rpmsg tty devi=
+ce 0
+> is removed
+> > [  154.857572] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: rpmsg tty devi=
+ce 1
+> is removed
+> > [  155.382327] remoteproc remoteproc0: warning: remote FW shutdown
+> without ack
+> > [  155.387857] remoteproc remoteproc0: stopped remote processor m4
+> > [  155.398988]  m4@0#vdev0buffer: assigned reserved memory node
+> vdev0buffer@10044000
+> > [  155.405910] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-cha=
+nnel
+> addr 0x0
+> > [  155.413422] rpmsg_tty virtio0.rpmsg-tty-channel.-1.0: new channel:
+> 0x400 -> 0x0 : ttyRPMSG0
+> > [  155.421038] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-cha=
+nnel
+> addr 0x1
+> > [  155.429088] rpmsg_tty virtio0.rpmsg-tty-channel.-1.1: new channel:
+> 0x401 -> 0x1 : ttyRPMSG1
+> > [  155.437338] virtio_rpmsg_bus virtio0: rpmsg host is online
+> > [  155.442401]  m4@0#vdev0buffer: registered virtio0 (type 7)
+> > [  155.461154] remoteproc remoteproc0: remote processor m4 is now up
+> > ls /dev/ttyRPMSG*
+> > /dev/ttyRPMSG0  /dev/ttyRPMSG1
+> > root@stm32mp1:~#
+> >
+> > As vdev is including in a larger struct allocated by rproc, it is safe
+> > to set it to 0 before initializing virtio device while rproc subdevice
+> > sequence is respected.
+> >
+>=20
+> It's likely that this works in most use cases, but if for some reason
+> there's additional references held those will operate on the object past
+> your clearing of it.
+
+In fact, as the memory is free/kzalloc, virtio device fields are not all at=
+ 0 as during boot sequence.
+As mentioned below issue is coming from kobject state_initialized field whi=
+ch is not in a correct state.
+This field is only set by kobject_init().
+I think normal way of working is to release memory when a device is no more=
+ used.
+But another solution could be to reset it in kobject_cleanup() or kobject_d=
+el() in order to have a symmetrical procedure.
 
 Regards,
 Loic
+[1] https://patchwork.kernel.org/patch/10544757/
 
-[1]: https://elixir.bootlin.com/linux/latest/source/drivers/base/core.c#L14=
-82
 >=20
 > Regards,
-> Loic
-> [1] https://patchwork.kernel.org/patch/10544757/
+> Bjorn
 >=20
+> > > 2.and then rpmsg child devices aren't destroyed too
+> > > Then, when the remote start and create rpmsg channel again, the
+> > > duplicated channel will appear in kernel.
+> > > To fix this problem, we need go through rpproc_shutdown/rproc_boot to
+> > > destroy all devices(virtio and rpmsg) and create them again.
+> > Rproc_shutdown/rproc_boot is solving the issue too, except if
+> rproc_boot() was called several times and so rproc->power atomic not equa=
+l
+> to 1.
+> > Using only rproc_stop() and rproc_start() allows to preserve rproc->pow=
+er
+> and so to be silent from rproc user pov.
 > >
 > > Regards,
-> > Bjorn
-> >
-> > > > 2.and then rpmsg child devices aren't destroyed too
-> > > > Then, when the remote start and create rpmsg channel again, the
-> > > > duplicated channel will appear in kernel.
-> > > > To fix this problem, we need go through rpproc_shutdown/rproc_boot
-> to
-> > > > destroy all devices(virtio and rpmsg) and create them again.
-> > > Rproc_shutdown/rproc_boot is solving the issue too, except if
-> > rproc_boot() was called several times and so rproc->power atomic not
-> equal
-> > to 1.
-> > > Using only rproc_stop() and rproc_start() allows to preserve rproc-
-> >power
-> > and so to be silent from rproc user pov.
+> > Loic
 > > >
-> > > Regards,
-> > > Loic
+> > > Thanks
+> > > Xiang
+> > >
+> > > On Wed, Jan 9, 2019 at 6:56 PM Loic Pallardy <loic.pallardy@st.com>
+> wrote:
 > > > >
-> > > > Thanks
-> > > > Xiang
+> > > > Commit 7e83cab824a87e83cab824a8 ("remoteproc: Modify recovery
+> path
+> > > > to use rproc_{start,stop}()") replaces rproc_{shutdown,boot}() with
+> > > > rproc_{stop,start}(), which skips destroy the virtio device at stop
+> > > > but re-initializes it again at start.
 > > > >
-> > > > On Wed, Jan 9, 2019 at 6:56 PM Loic Pallardy <loic.pallardy@st.com>
-> > wrote:
-> > > > >
-> > > > > Commit 7e83cab824a87e83cab824a8 ("remoteproc: Modify recovery
-> > path
-> > > > > to use rproc_{start,stop}()") replaces rproc_{shutdown,boot}() wi=
-th
-> > > > > rproc_{stop,start}(), which skips destroy the virtio device at st=
-op
-> > > > > but re-initializes it again at start.
-> > > > >
-> > > > > Issue is that struct virtio_dev is not correctly reinitialized li=
-ke done
-> > > > > at initial allocation thanks to kzalloc() and kobject is consider=
-ed as
-> > > > > already initialized by kernel. That is due to the fact struct vir=
-tio_dev
-> > > > > is allocated and released at vdev resource handling level managed
-> and
-> > > > > virtio device is registered and unregistered at rproc subdevices =
-level.
-> > > > >
-> > > > > This patch initializes struct virtio_dev to 0 before using it and
-> > > > > registering it.
-> > > > >
-> > > > > Fixes: 7e83cab824a8 ("remoteproc: Modify recovery path to use
-> > > > rproc_{start,stop}()")
-> > > > >
-> > > > > Reported-by: Xiang Xiao <xiaoxiang781216@gmail.com>
-> > > > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> > > > > ---
-> > > > >  drivers/remoteproc/remoteproc_virtio.c | 2 ++
-> > > > >  1 file changed, 2 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/remoteproc/remoteproc_virtio.c
-> > > > b/drivers/remoteproc/remoteproc_virtio.c
-> > > > > index 183fc42a510a..88eade99395c 100644
-> > > > > --- a/drivers/remoteproc/remoteproc_virtio.c
-> > > > > +++ b/drivers/remoteproc/remoteproc_virtio.c
-> > > > > @@ -332,6 +332,8 @@ int rproc_add_virtio_dev(struct rproc_vdev
-> > *rvdev,
-> > > > int id)
-> > > > >         struct virtio_device *vdev =3D &rvdev->vdev;
-> > > > >         int ret;
-> > > > >
-> > > > > +       /* Reset vdev struct as you don't know how it has been
-> previously
-> > > > used */
-> > > > > +       memset(vdev, 0, sizeof(struct virtio_device));
-> > > > >         vdev->id.device =3D id,
-> > > > >         vdev->config =3D &rproc_virtio_config_ops,
-> > > > >         vdev->dev.parent =3D dev;
-> > > > > --
-> > > > > 2.7.4
-> > > > >
+> > > > Issue is that struct virtio_dev is not correctly reinitialized like=
+ done
+> > > > at initial allocation thanks to kzalloc() and kobject is considered=
+ as
+> > > > already initialized by kernel. That is due to the fact struct virti=
+o_dev
+> > > > is allocated and released at vdev resource handling level managed a=
+nd
+> > > > virtio device is registered and unregistered at rproc subdevices le=
+vel.
+> > > >
+> > > > This patch initializes struct virtio_dev to 0 before using it and
+> > > > registering it.
+> > > >
+> > > > Fixes: 7e83cab824a8 ("remoteproc: Modify recovery path to use
+> > > rproc_{start,stop}()")
+> > > >
+> > > > Reported-by: Xiang Xiao <xiaoxiang781216@gmail.com>
+> > > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > > > ---
+> > > >  drivers/remoteproc/remoteproc_virtio.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> > > b/drivers/remoteproc/remoteproc_virtio.c
+> > > > index 183fc42a510a..88eade99395c 100644
+> > > > --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > > +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > > @@ -332,6 +332,8 @@ int rproc_add_virtio_dev(struct rproc_vdev
+> *rvdev,
+> > > int id)
+> > > >         struct virtio_device *vdev =3D &rvdev->vdev;
+> > > >         int ret;
+> > > >
+> > > > +       /* Reset vdev struct as you don't know how it has been prev=
+iously
+> > > used */
+> > > > +       memset(vdev, 0, sizeof(struct virtio_device));
+> > > >         vdev->id.device =3D id,
+> > > >         vdev->config =3D &rproc_virtio_config_ops,
+> > > >         vdev->dev.parent =3D dev;
+> > > > --
+> > > > 2.7.4
+> > > >
