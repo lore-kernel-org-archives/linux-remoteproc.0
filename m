@@ -1,47 +1,46 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v2 0/7] remoteproc: Fixes for memoy carveout management
-Date: Thu, 10 Jan 2019 14:49:04 +0100
-Message-ID: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 18 Jan 2019 10:51:53 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH v6] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+In-Reply-To: <CAD=FV=V2XoaDVy9hnh-S=jbzU-Di0KoD7gM2CxpZm3646k9ZjA@mail.gmail.com>
+References: <20190114192201.23779-1-sibis@codeaurora.org>
+ <CAD=FV=V2XoaDVy9hnh-S=jbzU-Di0KoD7gM2CxpZm3646k9ZjA@mail.gmail.com>
+Message-ID: <d3a814812039fdc7459656e2150e00a5@codeaurora.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, Evan Green <evgreen@chromium.org>, Brian Norris <briannorris@chromium.org>, sricharan@codeaurora.org, linux-soc-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-These patches fix the comments sent on remoteproc mailing
-list after acceptation of memory carveout patch series [1].
+On 2019-01-18 04:35, Doug Anderson wrote:
+> Hi,
+> 
+> On Mon, Jan 14, 2019 at 11:22 AM Sibi Sankar <sibis@codeaurora.org> 
+> wrote:
+>> +               mss_pil: remoteproc@4080000 {
+>> +                       compatible = "qcom,sdm845-mss-pil";
+>> +                       reg = <0x04080000 0x408>, <0x04180000 0x48>;
+> 
+> This will now need to be adjusted to:
+> 
+> reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
 
-In few words, series corrects:
-- memory carveout allocation for rproc without iommu
-- rproc_da_to_va and trace buffer access to take into account
-  late carveout allocation
-- resource table cast by adding warning messages
+Yup, this was on my todo list after Bjorn
+posted out the patch
 
-Regards,
-Loic
-
-[1] https://lkml.org/lkml/2018/7/27/612
-
----
-Changes from v1:
-- Modify way to notify resource table cast issue
-- Complete trace buffer patch
-
-
-Loic Pallardy (7):
-  remoteproc: correct rproc_mem_entry_init() comments
-  remoteproc: fix rproc_da_to_va in case of unallocated carveout
-  remoteproc: fix rproc_alloc_carveout() bad variable cast
-  remoteproc: add warning on resource table cast
-  remoteproc: fix rproc_alloc_carveout() for rproc with iommu domain
-  remoteproc: fix trace buffer va initialization
-  remoteproc: fix rproc_check_carveout_da() returned error and comments
-
- drivers/remoteproc/remoteproc_core.c     | 108 ++++++++++++++++++-------------
- drivers/remoteproc/remoteproc_debugfs.c  |  21 ++++--
- drivers/remoteproc/remoteproc_internal.h |   9 ++-
- 3 files changed, 89 insertions(+), 49 deletions(-)
+> 
+> This fixes things up to deal with the patch ("arm64: dts: qcom:
+> sdm845: Increase address and size cells for soc"), AKA:
+> - https://patchwork.kernel.org/patch/10767511/
+> - 
+> https://lkml.kernel.org/r/20190117042940.25487-2-bjorn.andersson@linaro.org
+> 
+> 
+> -Doug
 
 -- 
-2.7.4
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
