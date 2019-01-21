@@ -1,84 +1,70 @@
-Return-Path: <sibis@codeaurora.org>
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH 1/2] remoteproc: Add __iomem to return of rproc_da_to_va.
+Date: Mon, 21 Jan 2019 15:34:07 +0800
+Message-Id: <20190121073408.56557-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 18 Jan 2019 12:34:38 +0530
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: [PATCH] remoteproc: qcom_q6v5: don't auto boot remote processor
-In-Reply-To: <20180529042047.GE2259@tuxbook-pro>
-References: <20180524192141.20323-1-ramon.fried@gmail.com>
- <20180529042047.GE2259@tuxbook-pro>
-Message-ID: <e554b7e525554d49d193ff1f8ca51359@codeaurora.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ramon Fried <ramon.fried@gmail.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel-owner@vger.kernel.org, Brian, briannorris@chromium.org
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 2018-05-29 09:50, Bjorn Andersson wrote:
-> On Thu 24 May 12:21 PDT 2018, Ramon Fried wrote:
-> 
->> Sometimes that rmtfs userspace module is not brought
->> up fast enough and the modem crashes.
->> disabling automated boot in the driver and triggering
->> the boot from user-space sovles the problem.
->> 
->> Signed-off-by: Ramon Fried <ramon.fried@gmail.com>
-> 
-> Thanks for your patch Ramon. While this nudges the behavior to make
-> things work slightly better I think we need to describe the explicit
-> dependency between the mss firmware and the existence of rmtfs.
-> 
-> As our remoteprocs are essentially always-on I would prefer that they
-> start "automatically" and not through use of the sysfs interface.
-> 
-> But we're at the point where this is a real problem on 410, 820 and 
-> 845,
-> so we have to come up with some way to tie these pieces together. If
-> your patch suits that solution I will happily take it.
-> 
-> Regards,
-> Bjorn
+The return value of rproc_da_to_va would probably be device memory. Add
+__iomem annotation to it.
 
-After experimenting with in kernel solutions for
-three revisions and observing problems on graceful
-shutdown usecase, switching to controlling the
-remoteproc mss through rmtfs seems to solve all
-the known issues.
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+---
+I feel that there might be more things that need to be changed
+(especially for the carveouts things). I didn't change them since I
+don't know how to test that part. Comments needed.
+---
+ drivers/remoteproc/remoteproc_core.c     | 4 ++--
+ drivers/remoteproc/remoteproc_internal.h | 2 +-
+ include/linux/remoteproc.h               | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-https://patchwork.kernel.org/patch/10662395/
-
-we should probably get this merged in, now that
-we are planning to start/stop mss through
-rmtfs.
-
-
-Acked-by: Sibi Sankar <sibis@codeaurora.org>
-
-> 
->> ---
->>  drivers/remoteproc/qcom_q6v5_pil.c | 2 ++
->>  1 file changed, 2 insertions(+)
->> 
->> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c 
->> b/drivers/remoteproc/qcom_q6v5_pil.c
->> index cbbafdcaaecb..719ee96445b3 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pil.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pil.c
->> @@ -1133,6 +1133,8 @@ static int q6v5_probe(struct platform_device 
->> *pdev)
->>  		return -ENOMEM;
->>  	}
->> 
->> +	rproc->auto_boot = false;
->> +
->>  	qproc = (struct q6v5 *)rproc->priv;
->>  	qproc->dev = &pdev->dev;
->>  	qproc->rproc = rproc;
->> --
->> 2.17.0
->> 
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 54ec38fc5dca62..7cb8393e1b39f6 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -190,10 +190,10 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+  * here the output of the DMA API for the carveouts, which should be more
+  * correct.
+  */
+-void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++void __iomem *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+ {
+ 	struct rproc_mem_entry *carveout;
+-	void *ptr = NULL;
++	void __iomem *ptr = NULL;
+ 
+ 	if (rproc->ops->da_to_va) {
+ 		ptr = rproc->ops->da_to_va(rproc, da, len);
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index f6cad243d7cac9..df7abe049cdef2 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -51,7 +51,7 @@ void rproc_exit_sysfs(void);
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+-void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
++void __iomem *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
+ int rproc_trigger_recovery(struct rproc *rproc);
+ 
+ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 68e72f33c705e1..065a68a5e6e577 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -356,7 +356,7 @@ struct rproc_ops {
+ 	int (*start)(struct rproc *rproc);
+ 	int (*stop)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+-	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
++	void __iomem *(*da_to_va)(struct rproc *rproc, u64 da, int len);
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+ 	struct resource_table *(*find_loaded_rsc_table)(
+ 				struct rproc *rproc, const struct firmware *fw);
 -- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+2.20.1.321.g9e740568ce-goog
