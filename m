@@ -1,58 +1,38 @@
 Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-eopbgr130078.outbound.protection.outlook.com ([40.107.13.78]:64319
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725950AbfAVCcY (ORCPT
+Received: from bombadil.infradead.org ([198.137.202.133]:45568 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727979AbfAUI2f (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:32:24 -0500
-From: Peng Fan <peng.fan@nxp.com>
-Subject: RE: [RFC] virtio_ring: check dma_mem for xen_domain
-Date: Tue, 22 Jan 2019 02:32:19 +0000
-Message-ID: <AM0PR04MB44815AC8861DBED64E959DB688980@AM0PR04MB4481.eurprd04.prod.outlook.com>
+        Mon, 21 Jan 2019 03:28:35 -0500
+Date: Mon, 21 Jan 2019 00:28:30 -0800
+From: "hch@infradead.org" <hch@infradead.org>
+Subject: Re: [RFC] virtio_ring: check dma_mem for xen_domain
+Message-ID: <20190121082830.GC12420@infradead.org>
 References: <20190121050056.14325-1-peng.fan@nxp.com>
- <20190121082830.GC12420@infradead.org>
-In-Reply-To: <20190121082830.GC12420@infradead.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121050056.14325-1-peng.fan@nxp.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
-To: "hch@infradead.org" <hch@infradead.org>
-Cc: "mst@redhat.com" <mst@redhat.com>, "jasowang@redhat.com" <jasowang@redhat.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "mst@redhat.com" <mst@redhat.com>, "jasowang@redhat.com" <jasowang@redhat.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>, "hch@infradead.org" <hch@infradead.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBoY2hAaW5mcmFkZWFk
-Lm9yZyBbbWFpbHRvOmhjaEBpbmZyYWRlYWQub3JnXQ0KPiBTZW50OiAyMDE5xOox1MIyMcjVIDE2
-OjI5DQo+IFRvOiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gQ2M6IG1zdEByZWRoYXQu
-Y29tOyBqYXNvd2FuZ0ByZWRoYXQuY29tOyBzc3RhYmVsbGluaUBrZXJuZWwub3JnOw0KPiBoY2hA
-aW5mcmFkZWFkLm9yZzsgdmlydHVhbGl6YXRpb25AbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmc7
-DQo+IHhlbi1kZXZlbEBsaXN0cy54ZW5wcm9qZWN0Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZzsNCj4gbGludXgtcmVtb3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDog
-UmU6IFtSRkNdIHZpcnRpb19yaW5nOiBjaGVjayBkbWFfbWVtIGZvciB4ZW5fZG9tYWluDQo+IA0K
-PiBPbiBNb24sIEphbiAyMSwgMjAxOSBhdCAwNDo1MTo1N0FNICswMDAwLCBQZW5nIEZhbiB3cm90
-ZToNCj4gPiBvbiBpLk1YOFFNLCBNNF8xIGlzIGNvbW11bmljYXRpbmcgd2l0aCBEb21VIHVzaW5n
-IHJwbXNnIHdpdGggYSBmaXhlZA0KPiA+IGFkZHJlc3MgYXMgdGhlIGRtYSBtZW0gYnVmZmVyIHdo
-aWNoIGlzIHByZWRlZmluZWQuDQo+ID4NCj4gPiBXaXRob3V0IHRoaXMgcGF0Y2gsIHRoZSBmbG93
-IGlzOg0KPiA+IHZyaW5nX21hcF9vbmVfc2cgLT4gdnJpbmdfdXNlX2RtYV9hcGkNCj4gPiAgICAg
-ICAgICAgICAgICAgIC0+IGRtYV9tYXBfcGFnZQ0KPiA+IAkJICAgICAgIC0+IF9fc3dpb3RsYl9t
-YXBfcGFnZQ0KPiA+IAkJICAgICAgICAgICAgICAgIC0+c3dpb3RsYl9tYXBfcGFnZQ0KPiA+IAkJ
-CQktPl9fZG1hX21hcF9hcmVhKHBoeXNfdG9fdmlydChkbWFfdG9fcGh5cyhkZXYsDQo+IGRldl9h
-ZGRyKSksIHNpemUsDQo+ID4gZGlyKTsgSG93ZXZlciB3ZSBhcmUgdXNpbmcgcGVyIGRldmljZSBk
-bWEgYXJlYSBmb3IgcnBtc2csIHBoeXNfdG9fdmlydA0KPiA+IGNvdWxkIG5vdCByZXR1cm4gYSBj
-b3JyZWN0IHZpcnR1YWwgYWRkcmVzcyBmb3IgdmlydHVhbCBhZGRyZXNzIGluDQo+ID4gdm1hbGxv
-YyBhcmVhLiBUaGVuIGtlcm5lbCBwYW5pYy4NCj4gDQo+IEFuZCB0aGF0IGlzIHRoZSByaWdodCB0
-aGluZyB0byBkby4gIFlvdSBtdXN0IG5vdCBjYWxsIGRtYV9tYXBfKiBvbiBtZW1vcnkNCj4gdGhh
-dCB3YXMgYWxsb2NhdGVkIGZyb20gZG1hX2FsbG9jXyouDQoNClVuZGVyc3RhbmQuIEJ1dCB0aGUg
-Y3VycmVudCBjb2RlIGlzIHRoYXQgdnJpbmdfdXNlX2RtYV9hcGkgd2lsbCBhbHdheXMgcmV0dXJu
-DQp0cnVlLCBpZiB0aGUgY3VycmVudCBPUyBpcyBhIHhlbiBWTS4NCg0KQWN0dWFsbHkgaXQgbmVl
-ZHMgdG8gcmV0dXJuIGZhbHNlIGZvciBteSBjYXNlLCB0aGVuIHdlIGNvdWxkIHVzZSBzZ19waHlz
-KHNnKQ0KdG8gZ2V0IHRoZSBjb3JyZWN0IHBoeXNpY2FsIGFkZHJlc3MuDQoNCj4gDQo+IFdlIGFj
-dHVhbGx5IGhhdmUgYW5vdGhlciB0aHJlYWQgd2hpY2ggYXBwZWFycyB0byBiZSBmb3IgdGhpcyBz
-YW1lIGlzc3VlLg0KDQpZb3UgbWVhbiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNo
-LzEwNzQyOTIzLyA/DQoNCllvdSBzdWdnZXN0IHVzZSBjbWEgdGhlcmUsIGJ1dCB2cmluZ191c2Vf
-ZG1hX2FwaSB3aWxsIHN0aWxsIHJldHVybiB0cnVlIGlmIHRoZSBPUw0KaXMgcnVubmluZyBvbiB4
-ZW4uIFRoZW4gdnJpbmdfbWFwX29uZV9zZyB3aWxsIHN0aWxsIHJ1bnMgaW50byBfX2RtYV9tYXBf
-YXJlYS4NCg0KSW4gbXkgY2FzZSwganVzdCBuZWVkIHZyaW5nX3VzZV9kbWFfYXBpIHRvIHJldHVy
-biBmYWxzZSBhbmQgdXNlIHNnX3BoeXMoc2cpIHRvDQpnZXQgdGhlIGNvcnJlY3QgcGh5c2ljYWwg
-YWRkcmVzcywgd2hldGhlciBwZXIgZG1hIHJlc2VydmVkIGFyZWEgb3IgcGVyIGRldmljZSBjbWEu
-DQoNClRoYW5rcywNClBlbmcuDQo=
+On Mon, Jan 21, 2019 at 04:51:57AM +0000, Peng Fan wrote:
+> on i.MX8QM, M4_1 is communicating with DomU using rpmsg with a fixed
+> address as the dma mem buffer which is predefined.
+> 
+> Without this patch, the flow is:
+> vring_map_one_sg -> vring_use_dma_api
+>                  -> dma_map_page
+> 		       -> __swiotlb_map_page
+> 		                ->swiotlb_map_page
+> 				->__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
+> However we are using per device dma area for rpmsg, phys_to_virt
+> could not return a correct virtual address for virtual address in
+> vmalloc area. Then kernel panic.
+
+And that is the right thing to do.  You must not call dma_map_* on
+memory that was allocated from dma_alloc_*.
+
+We actually have another thread which appears to be for this same issue.
