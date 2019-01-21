@@ -1,52 +1,40 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 3 Jan 2019 15:42:49 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: sdm845: Add ADSP reserve-memory
- nodes
-Message-ID: <20190103234249.GH31596@builder>
-References: <1545313174-13481-1-git-send-email-rohitkr@codeaurora.org>
- <1545313174-13481-2-git-send-email-rohitkr@codeaurora.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 21 Jan 2019 09:30:17 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [RFC v3 1/5] dt-bindings: Add a binding for Mediatek SCP
+Message-ID: <20190121153017.GA4608@bogus>
+References: <20190121071833.43443-1-pihsun@chromium.org>
+ <20190121071833.43443-2-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545313174-13481-2-git-send-email-rohitkr@codeaurora.org>
-To: Rohit kumar <rohitkr@codeaurora.org>
-Cc: dianders@chromium.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org, linux-remoteproc@vger.kernel.org
+In-Reply-To: <20190121071833.43443-2-pihsun@chromium.org>
+To: Pi-Hsun Shih <pihsun@chromium.org>
+Cc: Nicolas Boichat <drinkcat@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 20 Dec 05:39 PST 2018, Rohit kumar wrote:
-
-> Add memory nodes required for remoteproc q6v5_adsp pil.
+On Mon, 21 Jan 2019 15:18:29 +0800, Pi-Hsun Shih wrote:
+> From: Erin Lo <erin.lo@mediatek.com>
 > 
-
-This range doesn't match the documented memory map. I would prefer to
-see a "Specify all PIL regions as defined in V10" or similar.
-
-Regards,
-Bjorn
-
-> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+> Add a DT binding documentation of SCP for the
+> MT8183 SoC from Mediatek.
+> 
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 > ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
+> Changes from v2:
+>  - No change. I realized that for this patch series, there's no need to
+>    add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+>    the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+>    directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+>    created by SCP name service.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 23a253b..c0a012f 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -88,6 +88,11 @@
->  			reg = <0 0x86200000 0 0x2d00000>;
->  			no-map;
->  		};
-> +
-> +		pil_adsp_mem: memory@8b100000 {
-> +			reg = <0 0x8b100000 0 0x1a00000>;
-> +			no-map;
-> +		};
->  	};
->  
->  	cpus {
-> -- 
-> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-> is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> Changes from v1:
+>  - No change.
+> ---
+>  .../devicetree/bindings/remoteproc/mtk,scp.txt         | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
 > 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
