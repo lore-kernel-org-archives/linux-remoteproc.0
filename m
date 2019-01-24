@@ -1,83 +1,77 @@
-Return-Path: <sstabellini@kernel.org>
-Date: Thu, 24 Jan 2019 11:14:53 -0800 (PST)
-From: Stefano Stabellini <sstabellini@kernel.org>
+Return-Path: <peng.fan@nxp.com>
+From: Peng Fan <peng.fan@nxp.com>
 Subject: RE: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
-In-Reply-To: <AM0PR04MB4481BE680ACB40E78456DA64889A0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Message-ID: <alpine.DEB.2.10.1901241110290.17936@sstabellini-ThinkPad-X260>
-References: <20190121050056.14325-1-peng.fan@nxp.com> <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260> <20190123071232.GA20526@infradead.org> <alpine.DEB.2.10.1901230935280.17936@sstabellini-ThinkPad-X260> <20190123211405.GA4971@infradead.org>
- <alpine.DEB.2.10.1901231427010.17936@sstabellini-ThinkPad-X260> <AM0PR04MB4481BE680ACB40E78456DA64889A0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+Date: Thu, 24 Jan 2019 06:47:28 +0000
+Message-ID: 
+ <AM0PR04MB4481BE680ACB40E78456DA64889A0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <20190121050056.14325-1-peng.fan@nxp.com>
+ <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260>
+ <20190123071232.GA20526@infradead.org>
+ <alpine.DEB.2.10.1901230935280.17936@sstabellini-ThinkPad-X260>
+ <20190123211405.GA4971@infradead.org>
+ <alpine.DEB.2.10.1901231427010.17936@sstabellini-ThinkPad-X260>
+In-Reply-To: <alpine.DEB.2.10.1901231427010.17936@sstabellini-ThinkPad-X260>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-539770563-1548357127=:17936"
-Content-ID: <alpine.DEB.2.10.1901241112100.17936@sstabellini-ThinkPad-X260>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>, "hch@infradead.org" <hch@infradead.org>, "mst@redhat.com" <mst@redhat.com>, "jasowang@redhat.com" <jasowang@redhat.com>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, "luto@kernel.org" <luto@kernel.org>, "jgross@suse.com" <jgross@suse.com>, "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "jliang@xilinx.com" <jliang@xilinx.com>
+To: Stefano Stabellini <sstabellini@kernel.org>, "hch@infradead.org" <hch@infradead.org>
+Cc: "mst@redhat.com" <mst@redhat.com>, "jasowang@redhat.com" <jasowang@redhat.com>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, "luto@kernel.org" <luto@kernel.org>, "jgross@suse.com" <jgross@suse.com>, "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "jliang@xilinx.com" <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-539770563-1548357127=:17936
-Content-Type: TEXT/PLAIN; CHARSET=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.DEB.2.10.1901241112101.17936@sstabellini-ThinkPad-X260>
-
-On Thu, 24 Jan 2019, Peng Fan wrote:
-> Hi stefano,
-> 
-> > -----Original Message-----
-> > From: Stefano Stabellini [mailto:sstabellini@kernel.org]
-> > Sent: 2019年1月24日 7:44
-> > To: hch@infradead.org
-> > Cc: Stefano Stabellini <sstabellini@kernel.org>; Peng Fan
-> > <peng.fan@nxp.com>; mst@redhat.com; jasowang@redhat.com;
-> > xen-devel@lists.xenproject.org; linux-remoteproc@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; virtualization@lists.linux-foundation.org;
-> > luto@kernel.org; jgross@suse.com; boris.ostrovsky@oracle.com;
-> > bjorn.andersson@linaro.org; jliang@xilinx.com
-> > Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
-> > 
-> > On Wed, 23 Jan 2019, hch@infradead.org wrote:
-> > > On Wed, Jan 23, 2019 at 01:04:33PM -0800, Stefano Stabellini wrote:
-> > > > If vring_use_dma_api is actually supposed to return true when
-> > > > dma_dev->dma_mem is set, then both Peng's patch and the patch I
-> > > > wrote are not fixing the real issue here.
-> > > >
-> > > > I don't know enough about remoteproc to know where the problem
-> > > > actually lies though.
-> > >
-> > > The problem is the following:
-> > >
-> > > Devices can declare a specific memory region that they want to use
-> > > when the driver calls dma_alloc_coherent for the device, this is done
-> > > using the shared-dma-pool DT attribute, which comes in two variants
-> > > that would be a little to much to explain here.
-> > >
-> > > remoteproc makes use of that because apparently the device can only
-> > > communicate using that region.  But it then feeds back memory obtained
-> > > with dma_alloc_coherent into the virtio code.  For that it calls
-> > > vmalloc_to_page on the dma_alloc_coherent, which is a huge no-go for
-> > > the ĐMA API and only worked accidentally on a few platform, and
-> > > apparently arm64 just changed a few internals that made it stop
-> > > working for remoteproc.
-> > >
-> > > The right answer is to not use the DMA API to allocate memory from a
-> > > device-speficic region, but to tie the driver directly into the DT
-> > > reserved memory API in a way that allows it to easilt obtain a struct
-> > > device for it.
-> > 
-> > If I understand correctly, Peng should be able to reproduce the problem on
-> > native Linux without any Xen involvement simply by forcing
-> > vring_use_dma_api to return true. Peng, can you confirm?
-> 
-> It is another issue without xen involvement, 
-> There is an thread talking this: https://patchwork.kernel.org/patch/10742923/
-> 
-> Without xen, vring_use_dma_api will return false.
-> With xen, if vring_use_dma_api returns true, it will dma_map_xx and trigger dump.
-
-It is true that for Xen on ARM DomUs it is not necessary today to return
-true from vring_use_dma_api. However, returning true from
-vring_use_dma_api should not break Linux. When the rpmesg issue is
-fixed, this problem should also go away without any need for additional
-changes on the xen side I think.
---8323329-539770563-1548357127=:17936--
+SGkgc3RlZmFubywNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVm
+YW5vIFN0YWJlbGxpbmkgW21haWx0bzpzc3RhYmVsbGluaUBrZXJuZWwub3JnXQ0KPiBTZW50OiAy
+MDE55bm0MeaciDI05pelIDc6NDQNCj4gVG86IGhjaEBpbmZyYWRlYWQub3JnDQo+IENjOiBTdGVm
+YW5vIFN0YWJlbGxpbmkgPHNzdGFiZWxsaW5pQGtlcm5lbC5vcmc+OyBQZW5nIEZhbg0KPiA8cGVu
+Zy5mYW5AbnhwLmNvbT47IG1zdEByZWRoYXQuY29tOyBqYXNvd2FuZ0ByZWRoYXQuY29tOw0KPiB4
+ZW4tZGV2ZWxAbGlzdHMueGVucHJvamVjdC5vcmc7IGxpbnV4LXJlbW90ZXByb2NAdmdlci5rZXJu
+ZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyB2aXJ0dWFsaXphdGlvbkBs
+aXN0cy5saW51eC1mb3VuZGF0aW9uLm9yZzsNCj4gbHV0b0BrZXJuZWwub3JnOyBqZ3Jvc3NAc3Vz
+ZS5jb207IGJvcmlzLm9zdHJvdnNreUBvcmFjbGUuY29tOw0KPiBiam9ybi5hbmRlcnNzb25AbGlu
+YXJvLm9yZzsgamxpYW5nQHhpbGlueC5jb20NCj4gU3ViamVjdDogUmU6IFtYZW4tZGV2ZWxdIFtS
+RkNdIHZpcnRpb19yaW5nOiBjaGVjayBkbWFfbWVtIGZvciB4ZW5fZG9tYWluDQo+IA0KPiBPbiBX
+ZWQsIDIzIEphbiAyMDE5LCBoY2hAaW5mcmFkZWFkLm9yZyB3cm90ZToNCj4gPiBPbiBXZWQsIEph
+biAyMywgMjAxOSBhdCAwMTowNDozM1BNIC0wODAwLCBTdGVmYW5vIFN0YWJlbGxpbmkgd3JvdGU6
+DQo+ID4gPiBJZiB2cmluZ191c2VfZG1hX2FwaSBpcyBhY3R1YWxseSBzdXBwb3NlZCB0byByZXR1
+cm4gdHJ1ZSB3aGVuDQo+ID4gPiBkbWFfZGV2LT5kbWFfbWVtIGlzIHNldCwgdGhlbiBib3RoIFBl
+bmcncyBwYXRjaCBhbmQgdGhlIHBhdGNoIEkNCj4gPiA+IHdyb3RlIGFyZSBub3QgZml4aW5nIHRo
+ZSByZWFsIGlzc3VlIGhlcmUuDQo+ID4gPg0KPiA+ID4gSSBkb24ndCBrbm93IGVub3VnaCBhYm91
+dCByZW1vdGVwcm9jIHRvIGtub3cgd2hlcmUgdGhlIHByb2JsZW0NCj4gPiA+IGFjdHVhbGx5IGxp
+ZXMgdGhvdWdoLg0KPiA+DQo+ID4gVGhlIHByb2JsZW0gaXMgdGhlIGZvbGxvd2luZzoNCj4gPg0K
+PiA+IERldmljZXMgY2FuIGRlY2xhcmUgYSBzcGVjaWZpYyBtZW1vcnkgcmVnaW9uIHRoYXQgdGhl
+eSB3YW50IHRvIHVzZQ0KPiA+IHdoZW4gdGhlIGRyaXZlciBjYWxscyBkbWFfYWxsb2NfY29oZXJl
+bnQgZm9yIHRoZSBkZXZpY2UsIHRoaXMgaXMgZG9uZQ0KPiA+IHVzaW5nIHRoZSBzaGFyZWQtZG1h
+LXBvb2wgRFQgYXR0cmlidXRlLCB3aGljaCBjb21lcyBpbiB0d28gdmFyaWFudHMNCj4gPiB0aGF0
+IHdvdWxkIGJlIGEgbGl0dGxlIHRvIG11Y2ggdG8gZXhwbGFpbiBoZXJlLg0KPiA+DQo+ID4gcmVt
+b3RlcHJvYyBtYWtlcyB1c2Ugb2YgdGhhdCBiZWNhdXNlIGFwcGFyZW50bHkgdGhlIGRldmljZSBj
+YW4gb25seQ0KPiA+IGNvbW11bmljYXRlIHVzaW5nIHRoYXQgcmVnaW9uLiAgQnV0IGl0IHRoZW4g
+ZmVlZHMgYmFjayBtZW1vcnkgb2J0YWluZWQNCj4gPiB3aXRoIGRtYV9hbGxvY19jb2hlcmVudCBp
+bnRvIHRoZSB2aXJ0aW8gY29kZS4gIEZvciB0aGF0IGl0IGNhbGxzDQo+ID4gdm1hbGxvY190b19w
+YWdlIG9uIHRoZSBkbWFfYWxsb2NfY29oZXJlbnQsIHdoaWNoIGlzIGEgaHVnZSBuby1nbyBmb3IN
+Cj4gPiB0aGUgxJBNQSBBUEkgYW5kIG9ubHkgd29ya2VkIGFjY2lkZW50YWxseSBvbiBhIGZldyBw
+bGF0Zm9ybSwgYW5kDQo+ID4gYXBwYXJlbnRseSBhcm02NCBqdXN0IGNoYW5nZWQgYSBmZXcgaW50
+ZXJuYWxzIHRoYXQgbWFkZSBpdCBzdG9wDQo+ID4gd29ya2luZyBmb3IgcmVtb3RlcHJvYy4NCj4g
+Pg0KPiA+IFRoZSByaWdodCBhbnN3ZXIgaXMgdG8gbm90IHVzZSB0aGUgRE1BIEFQSSB0byBhbGxv
+Y2F0ZSBtZW1vcnkgZnJvbSBhDQo+ID4gZGV2aWNlLXNwZWZpY2ljIHJlZ2lvbiwgYnV0IHRvIHRp
+ZSB0aGUgZHJpdmVyIGRpcmVjdGx5IGludG8gdGhlIERUDQo+ID4gcmVzZXJ2ZWQgbWVtb3J5IEFQ
+SSBpbiBhIHdheSB0aGF0IGFsbG93cyBpdCB0byBlYXNpbHQgb2J0YWluIGEgc3RydWN0DQo+ID4g
+ZGV2aWNlIGZvciBpdC4NCj4gDQo+IElmIEkgdW5kZXJzdGFuZCBjb3JyZWN0bHksIFBlbmcgc2hv
+dWxkIGJlIGFibGUgdG8gcmVwcm9kdWNlIHRoZSBwcm9ibGVtIG9uDQo+IG5hdGl2ZSBMaW51eCB3
+aXRob3V0IGFueSBYZW4gaW52b2x2ZW1lbnQgc2ltcGx5IGJ5IGZvcmNpbmcNCj4gdnJpbmdfdXNl
+X2RtYV9hcGkgdG8gcmV0dXJuIHRydWUuIFBlbmcsIGNhbiB5b3UgY29uZmlybT8NCg0KSXQgaXMg
+YW5vdGhlciBpc3N1ZSB3aXRob3V0IHhlbiBpbnZvbHZlbWVudCwgDQpUaGVyZSBpcyBhbiB0aHJl
+YWQgdGFsa2luZyB0aGlzOiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwNzQy
+OTIzLw0KDQpXaXRob3V0IHhlbiwgdnJpbmdfdXNlX2RtYV9hcGkgd2lsbCByZXR1cm4gZmFsc2Uu
+DQpXaXRoIHhlbiwgaWYgdnJpbmdfdXNlX2RtYV9hcGkgcmV0dXJucyB0cnVlLCBpdCB3aWxsIGRt
+YV9tYXBfeHggYW5kIHRyaWdnZXIgZHVtcC4NCg0KVGhhbmtzLA0KUGVuZy4NCg0KPiANCj4gQW5k
+IHRoZSByaWdodCBmaXggaXMgbm90IHRvIGNhbGwgdm1hbGxvY190b19wYWdlIG9uIGEgZG1hX2Fs
+bG9jX2NvaGVyZW50DQo+IGJ1ZmZlciAtLSBJIGRvbid0IGtub3cgYWJvdXQgdGhlIHJlY2VudCBj
+aGFuZ2VzIG9uIGFybTY0LCBidXQgdGhhdCdzIG5vdCBnb2luZw0KPiB0byB3b3JrIHdpdGggYXJt
+MzIgZWl0aGVyIEFGQUlLLiBHaXZlbiB0aGF0IEkgZG9uJ3QgaGF2ZSBhIHJlcHJvLCBJJ2xsIGxl
+YXZlIGl0IHRvDQo+IFBlbmcgYW5kL29yIG90aGVycyB0byBzZW5kIHRoZSBhcHByb3ByaWF0ZSBw
+YXRjaCBmb3IgcmVtb3RlcHJvYy4NCj4gDQo+IA0KPiA+IFRoaXMgaXMgb3J0aG9nb25hbCB0byBh
+bm90aGVyIGlzc3VlLCBhbmQgdGhhdCBpcyB0aGF0IGhhcmR3YXJlIHZpcnRpbw0KPiA+IGRldmlj
+ZXMgcmVhbGx5IGFsd2F5cyBuZWVkIHRvIHVzZSB0aGUgRE1BIEFQSSwgb3RoZXJ3aXNlIHdlJ2xs
+IGJ5cGFzcw0KPiA+IHN1Y2ggZmVhdHVyZXMgYXMgdGhlIGRldmljZSBzcGVjaWZpYyBETUEgcG9v
+bHMsIERNQSBvZmZzZXRzLCBjYWNoZQ0KPiA+IGZsdXNoaW5nLCBldGMsIGV0Yy4NCj4gDQo+IEkg
+dW5kZXJzdGFuZCwgSSdsbCBkcm9wIG15IHBhdGNoLg0K
