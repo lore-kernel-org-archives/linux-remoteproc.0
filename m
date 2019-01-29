@@ -1,70 +1,271 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-eopbgr150057.outbound.protection.outlook.com ([40.107.15.57]:63424
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727566AbfAUHQd (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:16:33 -0500
-From: Peng Fan <peng.fan@nxp.com>
-Subject: [RFC] virtio_ring: check dma_mem for xen_domain
-Date: Mon, 21 Jan 2019 04:51:57 +0000
-Message-ID: <20190121050056.14325-1-peng.fan@nxp.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: "mst@redhat.com" <mst@redhat.com>, "jasowang@redhat.com" <jasowang@redhat.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>, "hch@infradead.org" <hch@infradead.org>
-Cc: "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Peng Fan <peng.fan@nxp.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v4 07/10] remoteproc: q6v5-mss: Vote for rpmh power domains
+Date: Tue, 29 Jan 2019 15:20:06 -0800
+Message-Id: <20190129232009.5033-8-bjorn.andersson@linaro.org>
+In-Reply-To: <20190129232009.5033-1-bjorn.andersson@linaro.org>
+References: <20190129232009.5033-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-on i.MX8QM, M4_1 is communicating with DomU using rpmsg with a fixed
-address as the dma mem buffer which is predefined.
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-Without this patch, the flow is:
-vring_map_one_sg -> vring_use_dma_api
-                 -> dma_map_page
-		       -> __swiotlb_map_page
-		                ->swiotlb_map_page
-				->__dma_map_area(phys_to_virt(dma_to_phys(dev, dev_addr)), size, dir);
-However we are using per device dma area for rpmsg, phys_to_virt
-could not return a correct virtual address for virtual address in
-vmalloc area. Then kernel panic.
+With rpmh ARC resources being modelled as power domains with performance
+state, we need to proxy vote on these for SDM845.
+Add support to vote on multiple of them, now that genpd supports
+associating mutliple power domains to a device.
 
-With this patch, vring_use_dma_api will return false, and
-vring_map_one_sg will return sg_phys(sg) which is the correct phys
-address in the predefined memory region.
-vring_map_one_sg -> vring_use_dma_api
-                 -> sg_phys(sg)
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Tested-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+[bjorn: Drop device link, improve error handling, name things "proxy"]
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/virtio/virtio_ring.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index cd7e755484e3..8993d7cb3592 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -248,6 +248,8 @@ static inline bool virtqueue_use_indirect(struct virtqu=
-eue *_vq,
-=20
- static bool vring_use_dma_api(struct virtio_device *vdev)
- {
-+	struct device *dma_dev =3D vdev->dev.parent;
+Changes since v3:
+- Rebased upon latest remoteproc branch
+
+ drivers/remoteproc/qcom_q6v5_mss.c | 119 +++++++++++++++++++++++++++--
+ 1 file changed, 114 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 07d1cc52a647..c32c63e351a0 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -25,6 +25,8 @@
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/remoteproc.h>
+@@ -131,6 +133,7 @@ struct rproc_hexagon_res {
+ 	char **proxy_clk_names;
+ 	char **reset_clk_names;
+ 	char **active_clk_names;
++	char **proxy_pd_names;
+ 	int version;
+ 	bool need_mem_protection;
+ 	bool has_alt_reset;
+@@ -156,9 +159,11 @@ struct q6v5 {
+ 	struct clk *active_clks[8];
+ 	struct clk *reset_clks[4];
+ 	struct clk *proxy_clks[4];
++	struct device *proxy_pds[3];
+ 	int active_clk_count;
+ 	int reset_clk_count;
+ 	int proxy_clk_count;
++	int proxy_pd_count;
+ 
+ 	struct reg_info active_regs[1];
+ 	struct reg_info proxy_regs[3];
+@@ -321,6 +326,41 @@ static void q6v5_clk_disable(struct device *dev,
+ 		clk_disable_unprepare(clks[i]);
+ }
+ 
++static int q6v5_pds_enable(struct q6v5 *qproc, struct device **pds,
++			   size_t pd_count)
++{
++	int ret;
++	int i;
 +
- 	if (!virtio_has_iommu_quirk(vdev))
- 		return true;
-=20
-@@ -260,7 +262,7 @@ static bool vring_use_dma_api(struct virtio_device *vde=
-v)
- 	 * the DMA API if we're a Xen guest, which at least allows
- 	 * all of the sensible Xen configurations to work correctly.
- 	 */
--	if (xen_domain())
-+	if (xen_domain() && !dma_dev->dma_mem)
- 		return true;
-=20
- 	return false;
---=20
-2.14.1
++	for (i = 0; i < pd_count; i++) {
++		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
++		ret = pm_runtime_get_sync(pds[i]);
++		if (ret < 0)
++			goto unroll_pd_votes;
++	}
++
++	return 0;
++
++unroll_pd_votes:
++	for (i--; i >= 0; i--) {
++		dev_pm_genpd_set_performance_state(pds[i], 0);
++		pm_runtime_put(pds[i]);
++	}
++
++	return ret;
++};
++
++static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
++			     size_t pd_count)
++{
++	int i;
++
++	for (i = 0; i < pd_count; i++) {
++		dev_pm_genpd_set_performance_state(pds[i], 0);
++		pm_runtime_put(pds[i]);
++	}
++}
++
+ static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
+ 				   bool remote_owner, phys_addr_t addr,
+ 				   size_t size)
+@@ -690,11 +730,17 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ 
+ 	qcom_q6v5_prepare(&qproc->q6v5);
+ 
++	ret = q6v5_pds_enable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
++	if (ret < 0) {
++		dev_err(qproc->dev, "failed to enable proxy power domains\n");
++		goto disable_irqs;
++	}
++
+ 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
+ 				    qproc->proxy_reg_count);
+ 	if (ret) {
+ 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
+-		goto disable_irqs;
++		goto disable_proxy_pds;
+ 	}
+ 
+ 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
+@@ -791,6 +837,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+ disable_proxy_reg:
+ 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 			       qproc->proxy_reg_count);
++disable_proxy_pds:
++	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ disable_irqs:
+ 	qcom_q6v5_unprepare(&qproc->q6v5);
+ 
+@@ -841,6 +889,8 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+ 
+ 	ret = qcom_q6v5_unprepare(&qproc->q6v5);
+ 	if (ret) {
++		q6v5_pds_disable(qproc, qproc->proxy_pds,
++				 qproc->proxy_pd_count);
+ 		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
+ 				 qproc->proxy_clk_count);
+ 		q6v5_regulator_disable(qproc, qproc->proxy_regs,
+@@ -1121,6 +1171,7 @@ static void qcom_msa_handover(struct qcom_q6v5 *q6v5)
+ 			 qproc->proxy_clk_count);
+ 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
+ 			       qproc->proxy_reg_count);
++	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ }
+ 
+ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
+@@ -1181,6 +1232,45 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
+ 	return i;
+ }
+ 
++static int q6v5_pds_attach(struct device *dev, struct device **devs,
++			   char **pd_names)
++{
++	size_t num_pds = 0;
++	int ret;
++	int i;
++
++	if (!pd_names)
++		return 0;
++
++	while (pd_names[num_pds])
++		num_pds++;
++
++	for (i = 0; i < num_pds; i++) {
++		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
++		if (IS_ERR(devs[i])) {
++			ret = PTR_ERR(devs[i]);
++			goto unroll_attach;
++		}
++	}
++
++	return num_pds;
++
++unroll_attach:
++	for (i--; i >= 0; i--)
++		dev_pm_domain_detach(devs[i], false);
++
++	return ret;
++};
++
++static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
++			    size_t pd_count)
++{
++	int i;
++
++	for (i = 0; i < pd_count; i++)
++		dev_pm_domain_detach(pds[i], false);
++}
++
+ static int q6v5_init_reset(struct q6v5 *qproc)
+ {
+ 	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
+@@ -1322,10 +1412,18 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	}
+ 	qproc->active_reg_count = ret;
+ 
++	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
++			      desc->proxy_pd_names);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to init power domains\n");
++		goto free_rproc;
++	}
++	qproc->proxy_pd_count = ret;
++
+ 	qproc->has_alt_reset = desc->has_alt_reset;
+ 	ret = q6v5_init_reset(qproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	qproc->version = desc->version;
+ 	qproc->need_mem_protection = desc->need_mem_protection;
+@@ -1333,7 +1431,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
+ 			     qcom_msa_handover);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+ 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
+@@ -1343,15 +1441,17 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
+ 	if (IS_ERR(qproc->sysmon)) {
+ 		ret = PTR_ERR(qproc->sysmon);
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 	}
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	return 0;
+ 
++detach_proxy_pds:
++	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ free_rproc:
+ 	rproc_free(rproc);
+ 
+@@ -1368,6 +1468,9 @@ static int q6v5_remove(struct platform_device *pdev)
+ 	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+ 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+ 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
++
++	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
++
+ 	rproc_free(qproc->rproc);
+ 
+ 	return 0;
+@@ -1392,6 +1495,12 @@ static const struct rproc_hexagon_res sdm845_mss = {
+ 			"mnoc_axi",
+ 			NULL
+ 	},
++	.proxy_pd_names = (char*[]){
++			"cx",
++			"mx",
++			"mss",
++			NULL
++	},
+ 	.need_mem_protection = true,
+ 	.has_alt_reset = true,
+ 	.version = MSS_SDM845,
+-- 
+2.18.0
