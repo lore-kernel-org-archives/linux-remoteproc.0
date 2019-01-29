@@ -1,45 +1,48 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52032 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725807AbfBADOh (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 31 Jan 2019 22:14:37 -0500
-From: YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] remoteproc: make rproc_check_carveout_da static
-Date: Fri, 1 Feb 2019 11:13:17 +0800
-Message-ID: <20190201031317.18820-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v4 00/10] Qualcomm AOSS QMP driver and modem dts
+Date: Tue, 29 Jan 2019 15:19:59 -0800
+Message-Id: <20190129232009.5033-1-bjorn.andersson@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fixes the following sparse warnings:
+Update the reserved memory map for SDM845, add the ADSP and CDSP nodes,
+introduce a communication driver for the AOSS and a PD driver for this and
+finally add the modem remoteproc driver.
 
-drivers/remoteproc/remoteproc_core.c:279:5: warning:
- symbol 'rproc_check_carveout_da' was not declared. Should it be static?
+Bjorn Andersson (8):
+  arm64: dts: qcom: sdm845: Update reserved memory map
+  arm64: dts: qcom: sdm845: Define rmtfs memory
+  arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
+  dt-bindings: soc: qcom: Add AOSS QMP binding
+  soc: qcom: Add AOSS QMP communication driver
+  soc: qcom: Add AOSS QMP genpd provider
+  remoteproc: q6v5-mss: Active powerdomain for SDM845
+  arm64: dts: qcom: Add AOSS QMP node
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/remoteproc/remoteproc_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Rajendra Nayak (1):
+  remoteproc: q6v5-mss: Vote for rpmh power domains
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 54ec38f..5d4954d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -276,8 +276,9 @@ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
-  *
-  * Return: 0 if carveout match request else -ENOMEM
-  */
--int rproc_check_carveout_da(struct rproc *rproc, struct rproc_mem_entry *mem,
--			    u32 da, u32 len)
-+static int rproc_check_carveout_da(struct rproc *rproc,
-+				   struct rproc_mem_entry *mem,
-+				   u32 da, u32 len)
- {
- 	struct device *dev = &rproc->dev;
- 	int delta = 0;
+Sibi Sankar (1):
+  arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+
+ .../bindings/soc/qcom/qcom,aoss-qmp.txt       |  76 +++++
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts       |   8 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 206 +++++++++++-
+ drivers/remoteproc/qcom_q6v5_mss.c            | 146 +++++++-
+ drivers/soc/qcom/Kconfig                      |  18 +
+ drivers/soc/qcom/Makefile                     |   2 +
+ drivers/soc/qcom/aoss-qmp-pd.c                | 138 ++++++++
+ drivers/soc/qcom/aoss-qmp.c                   | 317 ++++++++++++++++++
+ include/dt-bindings/power/qcom-aoss-qmp.h     |  15 +
+ include/linux/soc/qcom/aoss-qmp.h             |  14 +
+ 10 files changed, 932 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+ create mode 100644 drivers/soc/qcom/aoss-qmp-pd.c
+ create mode 100644 drivers/soc/qcom/aoss-qmp.c
+ create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
+ create mode 100644 include/linux/soc/qcom/aoss-qmp.h
+
 -- 
-2.7.0
+2.18.0
