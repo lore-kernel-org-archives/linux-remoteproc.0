@@ -1,53 +1,89 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 09/10] arm64: dts: qcom: Add AOSS QMP node
-Date: Tue, 29 Jan 2019 15:20:08 -0800
-Message-Id: <20190129232009.5033-10-bjorn.andersson@linaro.org>
-In-Reply-To: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-References: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <rohitkr@codeaurora.org>
+Subject: Re: [PATCH 2/2] remoteproc: q6v5_adsp: Remove voting for lpass_aon
+ clock
+From: Rohit Kumar <rohitkr@codeaurora.org>
+References: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
+ <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
+ <f6f9b4a2-6205-0ba5-9a3a-b34bd814d303@codeaurora.org>
+ <20190107071359.GK31596@builder>
+ <214831ef-2139-7b48-1654-537634f898f4@codeaurora.org>
+Message-ID: <d90f7817-294e-a96e-0eb0-293a06e9190a@codeaurora.org>
+Date: Wed, 30 Jan 2019 10:38:50 +0530
+MIME-Version: 1.0
+In-Reply-To: <214831ef-2139-7b48-1654-537634f898f4@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The AOSS QMP provides a number of power domains, used for QDSS and
-PIL, add the node for this.
+Hello Bjorn,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On 1/14/2019 4:14 PM, Rohit Kumar wrote:
+>
+> On 1/7/2019 12:43 PM, Bjorn Andersson wrote:
+>> On Thu 03 Jan 20:36 PST 2019, Rohit Kumar wrote:
+>>
+>>> Hello Bjorn,
+>>>
+>>> Can you please review this patch series too.
+>>>
+>>> LPASS_AON clock support is already removed from lpass clock driver.
+>>>
+>> Applied the two patches.
+>
+I did not see this in next yet. Can you please pick this up.
 
-Changes since v3:
-- None
+Thanks,
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Rohit
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index d193f85e5835..24c30be974bf 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/interconnect/qcom,sdm845.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy-qcom-qusb2.h>
-+#include <dt-bindings/power/qcom-aoss-qmp.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/reset/qcom,sdm845-aoss.h>
- #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-@@ -2081,6 +2082,15 @@
- 			#reset-cells = <1>;
- 		};
- 
-+		aoss_qmp: qmp@c300000 {
-+			compatible = "qcom,sdm845-aoss-qmp";
-+			reg = <0 0x0c300000 0 0x100000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
-+			mboxes = <&apss_shared 0>;
-+
-+			#power-domain-cells = <1>;
-+		};
-+
- 		spmi_bus: spmi@c440000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg = <0 0x0c440000 0 0x1100>,
+> Hello Bjorn,
+>
+>
+> Can you please point me to the tree where this is applied.
+>
+>
+> Thanks,
+>
+> Rohit
+>
+>> Thanks,
+>> Bjorn
+>>
+>>> Thanks,
+>>>
+>>> Rohit
+>>>
+>>> On 11/30/2018 12:59 PM, Rohit kumar wrote:
+>>>> Lpass_aon clock is on by default. Remove it from lpass
+>>>> clock list to avoid voting for it.
+>>>>
+>>>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>>>> ---
+>>>>    drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c 
+>>>> b/drivers/remoteproc/qcom_q6v5_adsp.c
+>>>> index 79374d1..4829173 100644
+>>>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+>>>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+>>>> @@ -48,7 +48,7 @@
+>>>>    /* list of clocks required by ADSP PIL */
+>>>>    static const char * const adsp_clk_id[] = {
+>>>> -    "sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", 
+>>>> "lpass_ahbm_aon_cbcr",
+>>>> +    "sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+>>>>        "qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
+>>>>    };
+>>> -- 
+>>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a 
+>>> member
+>>> of the Code Aurora Forum, hosted by the Linux Foundation.
+>>>
 -- 
-2.18.0
+
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the Linux Foundation.
