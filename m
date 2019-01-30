@@ -1,175 +1,133 @@
-Return-Path: <sibis@codeaurora.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3] remoteproc: qcom: Add support for parsing fw dt bindings
-Date: Tue, 15 Jan 2019 01:20:01 +0530
-Message-Id: <20190114195001.7016-1-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, briannorris@chromium.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org
-Cc: akdwived@codeaurora.org, clew@codeaurora.org, linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <rohitkr@codeaurora.org>
+From: Rohit kumar <rohitkr@codeaurora.org>
+Subject: [PATCH v2] arm64: dts: sdm845: Add Q6V5 ADSP node
+Date: Wed, 30 Jan 2019 14:16:29 +0530
+Message-Id: <1548837989-22904-1-git-send-email-rohitkr@codeaurora.org>
+To: dianders@chromium.org, andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, plai@codeaurora.org, bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org, linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org, rohkumar@qti.qualcomm.com
+Cc: Rohit kumar <rohitkr@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for parsing "firmware-name" dt bindings which specifies
-the relative paths of mba/modem/pas image as strings. Fallback to
-the default paths for mba/modem/pas image on -EINVAL.
+This patch adds Q6V5 ADSP pil remoteproc node
+for SDM845 SoC.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 ---
+Changes since v1:
+Addressed comments given by Bjorn.
 
-v3:
- * Fixed minor code style issues
- * Add comments for firmware blob name generation
-   and use sprintf instead
+This depends on below upstream patch which defines adsp_mem node:
+https://lkml.org/lkml/2019/1/29/1392
 
- drivers/remoteproc/qcom_q6v5_mss.c | 47 +++++++++++++++++++++++-------
- drivers/remoteproc/qcom_q6v5_pas.c |  9 +++++-
- 2 files changed, 45 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 89 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index c86dc40cfb8c..41e92a025d21 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -188,6 +188,7 @@ struct q6v5 {
- 	bool has_alt_reset;
- 	int mpss_perm;
- 	int mba_perm;
-+	const char *hexagon_mdt_image;
- 	int version;
- };
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 33f5f4b..31cb8db 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -18,6 +18,7 @@
+ #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+ #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
++#include <dt-bindings/soc/qcom,apr.h>
  
-@@ -860,17 +861,26 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
- 	bool relocate = false;
--	char seg_name[10];
-+	char *fw_name;
-+	size_t fw_name_len;
- 	ssize_t offset;
- 	size_t size = 0;
- 	void *ptr;
- 	int ret;
- 	int i;
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -2048,6 +2049,94 @@
+ 			status = "disabled";
+ 		};
  
--	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
-+	fw_name_len = strlen(qproc->hexagon_mdt_image);
-+	if (fw_name_len <= 4)
-+		return -EINVAL;
++		adsp_pil: remoteproc-adsp-pil@17300000 {
++			compatible = "qcom,sdm845-adsp-pil";
 +
-+	fw_name = kstrdup(qproc->hexagon_mdt_image, GFP_KERNEL);
-+	if (!fw_name)
-+		return -ENOMEM;
++			reg = <0x17300000 0x410>;
++			interrupts-extended =
++				<&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
 +
-+	ret = request_firmware(&fw, fw_name, qproc->dev);
- 	if (ret < 0) {
--		dev_err(qproc->dev, "unable to load modem.mdt\n");
--		return ret;
-+		dev_err(qproc->dev, "unable to load %s\n", fw_name);
-+		goto out;
- 	}
- 
- 	/* Initialize the RMB validator */
-@@ -918,10 +928,11 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 		ptr = qproc->mpss_region + offset;
- 
- 		if (phdr->p_filesz) {
--			snprintf(seg_name, sizeof(seg_name), "modem.b%02d", i);
--			ret = request_firmware(&seg_fw, seg_name, qproc->dev);
-+			/* Replace "xxx.xxx" with "xxx.bxx" */
-+			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
-+			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
- 			if (ret) {
--				dev_err(qproc->dev, "failed to load %s\n", seg_name);
-+				dev_err(qproc->dev, "failed to load %s\n", fw_name);
- 				goto release_firmware;
- 			}
- 
-@@ -960,6 +971,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 
- release_firmware:
- 	release_firmware(fw);
-+out:
-+	kfree(fw_name);
- 
- 	return ret < 0 ? ret : 0;
- }
-@@ -1075,9 +1088,10 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 	unsigned long i;
- 	int ret;
- 
--	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
-+	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
- 	if (ret < 0) {
--		dev_err(qproc->dev, "unable to load modem.mdt\n");
-+		dev_err(qproc->dev, "unable to load %s\n",
-+			qproc->hexagon_mdt_image);
- 		return ret;
- 	}
- 
-@@ -1253,6 +1267,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	const struct rproc_hexagon_res *desc;
- 	struct q6v5 *qproc;
- 	struct rproc *rproc;
-+	const char *mba_image;
- 	int ret;
- 
- 	desc = of_device_get_match_data(&pdev->dev);
-@@ -1262,8 +1277,14 @@ static int q6v5_probe(struct platform_device *pdev)
- 	if (desc->need_mem_protection && !qcom_scm_is_available())
- 		return -EPROBE_DEFER;
- 
-+	mba_image = desc->hexagon_mba_image;
-+	ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
-+					    0, &mba_image);
-+	if (ret < 0 && ret != -EINVAL)
-+		return ret;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&gcc GCC_LPASS_SWAY_CLK>,
++				 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
++				 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
++				 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
++				 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
++				 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
 +
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
--			    desc->hexagon_mba_image, sizeof(*qproc));
-+			    mba_image, sizeof(*qproc));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
- 		return -ENOMEM;
-@@ -1272,6 +1293,12 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc = (struct q6v5 *)rproc->priv;
- 	qproc->dev = &pdev->dev;
- 	qproc->rproc = rproc;
-+	qproc->hexagon_mdt_image = "modem.mdt";
-+	ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
-+					    1, &qproc->hexagon_mdt_image);
-+	if (ret < 0 && ret != -EINVAL)
-+		return ret;
++			clock-names = "xo", "sway_cbcr", "lpass_ahbs_aon_cbcr",
++				      "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
++				      "qdsp6ss_sleep", "qdsp6ss_core";
 +
- 	platform_set_drvdata(pdev, qproc);
- 
- 	ret = q6v5_init_mem(qproc, pdev);
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index b1e63fcd5fdf..cfdafd68e2cd 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -258,6 +258,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	const struct adsp_data *desc;
- 	struct qcom_adsp *adsp;
- 	struct rproc *rproc;
-+	const char *fw_name;
- 	int ret;
- 
- 	desc = of_device_get_match_data(&pdev->dev);
-@@ -267,8 +268,14 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (!qcom_scm_is_available())
- 		return -EPROBE_DEFER;
- 
-+	fw_name = desc->firmware_name;
-+	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-+				      &fw_name);
-+	if (ret < 0 && ret != -EINVAL)
-+		return ret;
++			resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
++				 <&aoss_reset AOSS_CC_LPASS_RESTART>;
++			reset-names = "pdc_sync", "cc_lpass";
 +
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
--			    desc->firmware_name, sizeof(*adsp));
-+			    fw_name, sizeof(*adsp));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
++			qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
++
++			memory-region = <&adsp_mem>;
++
++			qcom,smem-states = <&adsp_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++			glink-edge {
++				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
++				label = "lpass";
++				qcom,remote-pid = <2>;
++				mboxes = <&apss_shared 8>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				apr@4 {
++					compatible = "qcom,apr-v2";
++					qcom,glink-channels = "apr_audio_svc";
++					reg = <APR_DOMAIN_ADSP>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					q6core {
++						compatible = "qcom,q6core";
++						reg = <APR_SVC_ADSP_CORE>;
++					};
++
++					q6afe {
++						compatible = "qcom,q6afe";
++						reg = <APR_SVC_AFE>;
++						q6afedai: afedais {
++							compatible = "qcom,q6afe-dais";
++							#sound-dai-cells = <1>;
++							#address-cells = <1>;
++							#size-cells = <0>;
++						};
++					};
++
++					q6asm {
++						compatible = "qcom,q6asm";
++						reg = <APR_SVC_ASM>;
++						q6asmdai: asmdai{
++							compatible = "qcom,q6asm-dais";
++							iommus = <&apps_smmu 0x1821 0x0>;
++							#sound-dai-cells = <1>;
++						};
++					};
++
++					q6adm {
++						compatible = "qcom,q6adm";
++						reg = <APR_SVC_ADM>;
++						q6routing: routing {
++							compatible = "qcom,q6adm-routing";
++							#sound-dai-cells = <0>;
++						};
++					};
++				};
++			};
++		};
++
+ 		apss_shared: mailbox@17990000 {
+ 			compatible = "qcom,sdm845-apss-shared";
+ 			reg = <0 0x17990000 0 0x1000>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
