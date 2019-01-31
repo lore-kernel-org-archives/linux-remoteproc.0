@@ -1,48 +1,216 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 1/1] remoteproc: fix recovery procedure
-Date: Wed, 9 Jan 2019 11:56:43 +0100
-Message-ID: <1547031403-34535-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, s-anna@ti.com, xiaoxiang781216@gmail.com, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <xiaoxiang781216@gmail.com>
+Return-Path: <xiaoxiang781216@gmail.com>
+From: Xiang Xiao <xiaoxiang781216@gmail.com>
+Subject: [PATCH 3/3] rpmsg: virtio_rpmsg_bus: get buffer size from config space
+Date: Thu, 31 Jan 2019 23:41:20 +0800
+Message-Id: <1548949280-31794-4-git-send-email-xiaoxiang@xiaomi.com>
+In-Reply-To: <1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com>
+References: <1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, wendy.liang@xilinx.com, arnaud.pouliquen@st.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Xiang Xiao <xiaoxiang@xiaomi.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Commit 7e83cab824a87e83cab824a8 ("remoteproc: Modify recovery path
-to use rproc_{start,stop}()") replaces rproc_{shutdown,boot}() with
-rproc_{stop,start}(), which skips destroy the virtio device at stop
-but re-initializes it again at start.
+512 bytes isn't always suitable for all case, let firmware
+maker decide the best value from resource table.
+enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
 
-Issue is that struct virtio_dev is not correctly reinitialized like done
-at initial allocation thanks to kzalloc() and kobject is considered as
-already initialized by kernel. That is due to the fact struct virtio_dev
-is allocated and released at vdev resource handling level managed and
-virtio device is registered and unregistered at rproc subdevices level.
-
-This patch initializes struct virtio_dev to 0 before using it and
-registering it.
-
-Fixes: 7e83cab824a8 ("remoteproc: Modify recovery path to use rproc_{start,stop}()")
-
-Reported-by: Xiang Xiao <xiaoxiang781216@gmail.com>
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
 ---
- drivers/remoteproc/remoteproc_virtio.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/rpmsg/virtio_rpmsg_bus.c  | 50 +++++++++++++++++++++++++--------------
+ include/uapi/linux/virtio_rpmsg.h | 24 +++++++++++++++++++
+ 2 files changed, 56 insertions(+), 18 deletions(-)
+ create mode 100644 include/uapi/linux/virtio_rpmsg.h
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 183fc42a510a..88eade99395c 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -332,6 +332,8 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 	struct virtio_device *vdev = &rvdev->vdev;
- 	int ret;
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 59c4554..049dd97 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -16,6 +16,7 @@
+ #include <linux/virtio.h>
+ #include <linux/virtio_ids.h>
+ #include <linux/virtio_config.h>
++#include <linux/virtio_rpmsg.h>
+ #include <linux/scatterlist.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/slab.h>
+@@ -38,7 +39,8 @@
+  * @sbufs:	kernel address of tx buffers
+  * @num_rbufs:	total number of buffers for rx
+  * @num_sbufs:	total number of buffers for tx
+- * @buf_size:	size of one rx or tx buffer
++ * @rbuf_size:	size of one rx buffer
++ * @sbuf_size:	size of one tx buffer
+  * @last_sbuf:	index of last tx buffer used
+  * @rbufs_dma:	dma base addr of rx buffers
+  * @sbufs_dma:	dma base addr of tx buffers
+@@ -61,7 +63,8 @@ struct virtproc_info {
+ 	void *rbufs, *sbufs;
+ 	unsigned int num_rbufs;
+ 	unsigned int num_sbufs;
+-	unsigned int buf_size;
++	unsigned int rbuf_size;
++	unsigned int sbuf_size;
+ 	int last_sbuf;
+ 	dma_addr_t rbufs_dma;
+ 	dma_addr_t sbufs_dma;
+@@ -73,9 +76,6 @@ struct virtproc_info {
+ 	struct rpmsg_endpoint *ns_ept;
+ };
  
-+	/* Reset vdev struct as you don't know how it has been previously used */
-+	memset(vdev, 0, sizeof(struct virtio_device));
- 	vdev->id.device	= id,
- 	vdev->config = &rproc_virtio_config_ops,
- 	vdev->dev.parent = dev;
+-/* The feature bitmap for virtio rpmsg */
+-#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+-
+ /**
+  * struct rpmsg_hdr - common header for all rpmsg messages
+  * @src: source address
+@@ -452,7 +452,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+ 
+ 	/* either pick the next unused tx buffer */
+ 	if (vrp->last_sbuf < vrp->num_sbufs)
+-		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
++		ret = vrp->sbufs + vrp->sbuf_size * vrp->last_sbuf++;
+ 	/* or recycle a used one */
+ 	else
+ 		ret = virtqueue_get_buf(vrp->svq, &len);
+@@ -578,7 +578,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 	 * messaging), or to improve the buffer allocator, to support
+ 	 * variable-length buffer sizes.
+ 	 */
+-	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
++	if (len > vrp->sbuf_size - sizeof(struct rpmsg_hdr)) {
+ 		dev_err(dev, "message is too big (%d)\n", len);
+ 		return -EMSGSIZE;
+ 	}
+@@ -718,7 +718,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 	 * We currently use fixed-sized buffers, so trivially sanitize
+ 	 * the reported payload length.
+ 	 */
+-	if (len > vrp->buf_size ||
++	if (len > vrp->rbuf_size ||
+ 	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
+ 		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+ 		return -EINVAL;
+@@ -751,7 +751,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 		dev_warn(dev, "msg received with no recipient\n");
+ 
+ 	/* publish the real size of the buffer */
+-	rpmsg_sg_init(&sg, msg, vrp->buf_size);
++	rpmsg_sg_init(&sg, msg, vrp->rbuf_size);
+ 
+ 	/* add the buffer back to the remote processor's virtqueue */
+ 	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+@@ -907,11 +907,24 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	else
+ 		vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
+ 
+-	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
++	/* try to get buffer size from config space */
++	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
++		/* note: virtio_rpmsg_config is defined from remote view */
++		virtio_cread(vdev, struct virtio_rpmsg_config,
++			     txbuf_size, &vrp->rbuf_size);
++		virtio_cread(vdev, struct virtio_rpmsg_config,
++			     rxbuf_size, &vrp->sbuf_size);
++	}
++
++	/* use the default if resource table doesn't provide one */
++	if (!vrp->rbuf_size)
++		vrp->rbuf_size = MAX_RPMSG_BUF_SIZE;
++	if (!vrp->sbuf_size)
++		vrp->sbuf_size = MAX_RPMSG_BUF_SIZE;
+ 
+ 	/* allocate coherent memory for the buffers */
+ 	vrp->rbufs = dma_alloc_coherent(vdev->dev.parent->parent,
+-					vrp->num_rbufs * vrp->buf_size,
++					vrp->num_rbufs * vrp->rbuf_size,
+ 					&vrp->rbufs_dma, GFP_KERNEL);
+ 	if (!vrp->rbufs) {
+ 		err = -ENOMEM;
+@@ -922,7 +935,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 		vrp->rbufs, &vrp->rbufs_dma);
+ 
+ 	vrp->sbufs = dma_alloc_coherent(vdev->dev.parent->parent,
+-					vrp->num_sbufs * vrp->buf_size,
++					vrp->num_sbufs * vrp->sbuf_size,
+ 					&vrp->sbufs_dma, GFP_KERNEL);
+ 	if (!vrp->sbufs) {
+ 		err = -ENOMEM;
+@@ -935,9 +948,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	/* set up the receive buffers */
+ 	for (i = 0; i < vrp->num_rbufs; i++) {
+ 		struct scatterlist sg;
+-		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
++		void *cpu_addr = vrp->rbufs + i * vrp->rbuf_size;
+ 
+-		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
++		rpmsg_sg_init(&sg, cpu_addr, vrp->rbuf_size);
+ 
+ 		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+ 					  GFP_KERNEL);
+@@ -984,11 +997,11 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ free_sbufs:
+ 	dma_free_coherent(vdev->dev.parent->parent,
+-			  vrp->num_sbufs * vrp->buf_size,
++			  vrp->num_sbufs * vrp->sbuf_size,
+ 			  vrp->sbufs, vrp->sbufs_dma);
+ free_rbufs:
+ 	dma_free_coherent(vdev->dev.parent->parent,
+-			  vrp->num_rbufs * vrp->buf_size,
++			  vrp->num_rbufs * vrp->rbuf_size,
+ 			  vrp->rbufs, vrp->rbufs_dma);
+ vqs_del:
+ 	vdev->config->del_vqs(vrp->vdev);
+@@ -1023,10 +1036,10 @@ static void rpmsg_remove(struct virtio_device *vdev)
+ 	vdev->config->del_vqs(vrp->vdev);
+ 
+ 	dma_free_coherent(vdev->dev.parent->parent,
+-			  vrp->num_sbufs * vrp->buf_size,
++			  vrp->num_sbufs * vrp->sbuf_size,
+ 			  vrp->sbufs, vrp->sbufs_dma);
+ 	dma_free_coherent(vdev->dev.parent->parent,
+-			  vrp->num_rbufs * vrp->buf_size,
++			  vrp->num_rbufs * vrp->rbuf_size,
+ 			  vrp->rbufs, vrp->rbufs_dma);
+ 
+ 	kfree(vrp);
+@@ -1039,6 +1052,7 @@ static struct virtio_device_id id_table[] = {
+ 
+ static unsigned int features[] = {
+ 	VIRTIO_RPMSG_F_NS,
++	VIRTIO_RPMSG_F_BUFSZ,
+ };
+ 
+ static struct virtio_driver virtio_ipc_driver = {
+diff --git a/include/uapi/linux/virtio_rpmsg.h b/include/uapi/linux/virtio_rpmsg.h
+new file mode 100644
+index 0000000..24fa0dd
+--- /dev/null
++++ b/include/uapi/linux/virtio_rpmsg.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Copyright (C) Pinecone Inc. 2019
++ * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
++ */
++
++#ifndef _UAPI_LINUX_VIRTIO_RPMSG_H
++#define _UAPI_LINUX_VIRTIO_RPMSG_H
++
++#include <linux/types.h>
++
++/* The feature bitmap for virtio rpmsg */
++#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
++#define VIRTIO_RPMSG_F_BUFSZ	2 /* RP get buffer size from config space */
++
++struct virtio_rpmsg_config {
++	/* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
++	__u32 txbuf_size;
++	__u32 rxbuf_size;
++	__u32 reserved[14]; /* Reserve for the future use */
++	/* Put the customize config here */
++} __attribute__((packed));
++
++#endif /* _UAPI_LINUX_VIRTIO_RPMSG_H */
 -- 
 2.7.4
