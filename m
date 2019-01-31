@@ -1,20 +1,20 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v5 04/10] dt-bindings: soc: qcom: Add AOSS QMP binding
-Date: Wed, 30 Jan 2019 16:39:27 -0800
-Message-Id: <20190131003933.11436-5-bjorn.andersson@linaro.org>
+Subject: [PATCH v5 10/10] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+Date: Wed, 30 Jan 2019 16:39:33 -0800
+Message-Id: <20190131003933.11436-11-bjorn.andersson@linaro.org>
 In-Reply-To: <20190131003933.11436-1-bjorn.andersson@linaro.org>
 References: <20190131003933.11436-1-bjorn.andersson@linaro.org>
 To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add binding for the QMP based side-channel communication mechanism to
-the AOSS, which is used to control resources not exposed through the
-RPMh interface.
+From: Sibi Sankar <sibis@codeaurora.org>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
+
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
@@ -22,116 +22,79 @@ Changes since v4:
 - None
 
 Changes since v3:
-- Spelled out QMP
+- Fixed sort order in /soc
 
- .../bindings/soc/qcom/qcom,aoss-qmp.txt       | 76 +++++++++++++++++++
- include/dt-bindings/power/qcom-aoss-qmp.h     | 15 ++++
- 2 files changed, 91 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
- create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 58 ++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
-new file mode 100644
-index 000000000000..9ce6c42192ad
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
-@@ -0,0 +1,76 @@
-+Qualcomm Always-On Subsystem side channel binding
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index dc43fee8bb90..cba09899282e 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1613,6 +1613,64 @@
+ 			};
+ 		};
+ 
++		mss_pil: remoteproc@4080000 {
++			compatible = "qcom,sdm845-mss-pil";
++			reg = <0 0x04080000 0 0x408>, <0 0x04180000 0 0x48>;
++			reg-names = "qdsp6", "rmb";
 +
-+This binding describes the hardware component responsible for side channel
-+requests to the always-on subsystem (AOSS), used for certain power management
-+requests that is not handled by the standard RPMh interface. Each client in the
-+SoC has it's own block of message RAM and IRQ for communication with the AOSS.
-+The protocol used to communicate in the message RAM is known as Qualcomm
-+Messagin Protocol (QMP)
++			interrupts-extended =
++				<&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
++				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack",
++					  "shutdown-ack";
 +
-+The AOSS side channel exposes control over a set of resources, used to control
-+a set of debug related clocks and to affect the low power state of resources
-+related to the secondary subsystems. These resources are exposed as a set of
-+power-domains.
++			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
++				 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
++				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
++				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
++				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
++				 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
++				 <&gcc GCC_PRNG_AHB_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "iface", "bus", "mem", "gpll0_mss",
++				      "snoc_axi", "mnoc_axi", "prng", "xo";
 +
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be "qcom,sdm845-aoss-qmp"
++			qcom,smem-states = <&modem_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
 +
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: the base address and size of the message RAM for this
-+		    client's communication with the AOSS
++			resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
++				 <&pdc_reset PDC_MODEM_SYNC_RESET>;
++			reset-names = "mss_restart", "pdc_reset";
 +
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: should specify the AOSS message IRQ for this client
++			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
 +
-+- mboxes:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the mailbox representing the outgoing doorbell
-+		    in APCS for this client, as described in mailbox/mailbox.txt
++			power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
++					<&rpmhpd SDM845_CX>,
++					<&rpmhpd SDM845_MX>,
++					<&rpmhpd SDM845_MSS>;
++			power-domain-names = "load_state", "cx", "mx", "mss";
 +
-+- #power-domain-cells:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: must be 1
-+		    The provided power-domains are:
-+		    QDSS clock-domain (0), CDSP state (1), LPASS state (2),
-+		    modem state (3), SLPI state (4), SPSS state (5) and Venus
-+		    state (6).
++			mba {
++				memory-region = <&mba_region>;
++			};
 +
-+= SUBNODES
-+The AOSS side channel also provides the controls for three cooling devices,
-+these are expressed as subnodes of the QMP node. The name of the node is used
-+to identify the resource and must therefor be "cx", "mx" or "ebi".
++			mpss {
++				memory-region = <&mpss_region>;
++			};
 +
-+- #cooling-cells:
-+	Usage: optional
-+	Value type: <u32>
-+	Definition: must be 2
++			glink-edge {
++				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
++				label = "modem";
++				qcom,remote-pid = <1>;
++				mboxes = <&apss_shared 12>;
++			};
++		};
 +
-+= EXAMPLE
-+
-+The following example represents the AOSS side-channel message RAM and the
-+mechanism exposing the power-domains, as found in SDM845.
-+
-+  aoss_qmp: qmp@c300000 {
-+	  compatible = "qcom,sdm845-aoss-qmp";
-+	  reg = <0x0c300000 0x100000>;
-+	  interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
-+	  mboxes = <&apss_shared 0>;
-+
-+	  #power-domain-cells = <1>;
-+
-+	  cx_cdev: cx {
-+		#cooling-cells = <2>;
-+	  };
-+
-+	  mx_cdev: mx {
-+		#cooling-cells = <2>;
-+	  };
-+  };
-diff --git a/include/dt-bindings/power/qcom-aoss-qmp.h b/include/dt-bindings/power/qcom-aoss-qmp.h
-new file mode 100644
-index 000000000000..7d8ac1a4f90c
---- /dev/null
-+++ b/include/dt-bindings/power/qcom-aoss-qmp.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, Linaro Ltd. */
-+
-+#ifndef __DT_BINDINGS_POWER_QCOM_AOSS_QMP_H
-+#define __DT_BINDINGS_POWER_QCOM_AOSS_QMP_H
-+
-+#define AOSS_QMP_QDSS_CLK	0
-+#define AOSS_QMP_LS_CDSP		1
-+#define AOSS_QMP_LS_LPASS	2
-+#define AOSS_QMP_LS_MODEM	3
-+#define AOSS_QMP_LS_SLPI		4
-+#define AOSS_QMP_LS_SPSS		5
-+#define AOSS_QMP_LS_VENUS	6
-+
-+#endif
+ 		gpucc: clock-controller@5090000 {
+ 			compatible = "qcom,sdm845-gpucc";
+ 			reg = <0 0x05090000 0 0x9000>;
 -- 
 2.18.0
