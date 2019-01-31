@@ -1,129 +1,151 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 30 Jan 2019 20:51:28 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 01/10] arm64: dts: qcom: sdm845: Update reserved memory map
-Date: Tue, 29 Jan 2019 15:20:00 -0800
-Message-Id: <20190129232009.5033-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-References: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v5 08/10] remoteproc: q6v5-mss: Active powerdomain for
+ SDM845
+Message-ID: <20190131045128.GO31596@builder>
+References: <20190131003933.11436-1-bjorn.andersson@linaro.org>
+ <20190131003933.11436-9-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131003933.11436-9-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Update existing and add missing regions to the reserved memory map, as
-described in version 10.
+On Wed 30 Jan 16:39 PST 2019, Bjorn Andersson wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> The SDM845 MSS needs the load_state powerdomain voted for during the
+> duration of the MSS being powered on, to let the AOSS know that it may
+> not perform certain power save measures. So vote for this.
+> 
+> Tested-by: Sibi Sankar <sibis@codeaurora.org>
+> Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
 
-Changes since v3:
-- Added hyp and xbl memory nodes.
-- Labeled all PIL nodes
+Applied
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 71 ++++++++++++++++++++++++++--
- 1 file changed, 68 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 33f5f4ba6160..c363848e9001 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -73,6 +73,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		hyp_mem: memory@85700000 {
-+			reg = <0x0 0x85700000 0 0x600000>;
-+			no-map;
-+		};
-+
-+		xbl_mem: memory@85e00000 {
-+			reg = <0x0 0x85e00000 0 0x100000>;
-+			no-map;
-+		};
-+
- 		memory@85fc0000 {
- 			reg = <0 0x85fc0000 0 0x20000>;
- 			no-map;
-@@ -90,12 +100,47 @@
- 		};
- 
- 		memory@86200000 {
--			reg = <0 0x86200000 0 0x2d00000>;
-+			reg = <0 0x86200000 0 0x100000>;
-+			no-map;
-+		};
-+
-+		tz_mem: memory@86300000 {
-+			reg = <0 0x86300000 0 0x2c00000>;
-+			no-map;
-+		};
-+
-+		qseecom_mem: memory@8ab00000 {
-+			reg = <0 0x8ab00000 0 0x1400000>;
-+			no-map;
-+		};
-+
-+		camera_mem: memory@8bf00000 {
-+			reg = <0 0x8bf00000 0 0x500000>;
- 			no-map;
- 		};
- 
--		wlan_msa_mem: memory@96700000 {
--			reg = <0 0x96700000 0 0x100000>;
-+		ipa_fw_mem: memory@8c400000 {
-+			reg = <0 0x8c400000 0 0x10000>;
-+			no-map;
-+		};
-+
-+		ipa_gsi_mem: memory@8c410000 {
-+			reg = <0 0x8c410000 0 0x5000>;
-+			no-map;
-+		};
-+
-+		gpu_mem: memory@8c415000 {
-+			reg = <0 0x8c415000 0 0x2000>;
-+			no-map;
-+		};
-+
-+		adsp_mem: memory@8c500000 {
-+			reg = <0 0x8c500000 0 0x1a00000>;
-+			no-map;
-+		};
-+
-+		wlan_msa_mem: memory@8df00000 {
-+			reg = <0 0x8df00000 0 0x100000>;
- 			no-map;
- 		};
- 
-@@ -104,10 +149,30 @@
- 			no-map;
- 		};
- 
-+		venus_mem: memory@95800000 {
-+			reg = <0 0x95800000 0 0x500000>;
-+			no-map;
-+		};
-+
-+		cdsp_mem: memory@95d00000 {
-+			reg = <0 0x95d00000 0 0x800000>;
-+			no-map;
-+		};
-+
- 		mba_region: memory@96500000 {
- 			reg = <0 0x96500000 0 0x200000>;
- 			no-map;
- 		};
-+
-+		slpi_mem: memory@96700000 {
-+			reg = <0 0x96700000 0 0x1400000>;
-+			no-map;
-+		};
-+
-+		spss_mem: memory@97b00000 {
-+			reg = <0 0x97b00000 0 0x100000>;
-+			no-map;
-+		};
- 	};
- 
- 	cpus {
--- 
-2.18.0
+> Changes since v4:
+> - None
+> 
+> Changes since v3:
+> - None
+> 
+>  drivers/remoteproc/qcom_q6v5_mss.c | 31 ++++++++++++++++++++++++++++--
+>  1 file changed, 29 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index c32c63e351a0..e30f5486fd20 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -133,6 +133,7 @@ struct rproc_hexagon_res {
+>  	char **proxy_clk_names;
+>  	char **reset_clk_names;
+>  	char **active_clk_names;
+> +	char **active_pd_names;
+>  	char **proxy_pd_names;
+>  	int version;
+>  	bool need_mem_protection;
+> @@ -159,10 +160,12 @@ struct q6v5 {
+>  	struct clk *active_clks[8];
+>  	struct clk *reset_clks[4];
+>  	struct clk *proxy_clks[4];
+> +	struct device *active_pds[1];
+>  	struct device *proxy_pds[3];
+>  	int active_clk_count;
+>  	int reset_clk_count;
+>  	int proxy_clk_count;
+> +	int active_pd_count;
+>  	int proxy_pd_count;
+>  
+>  	struct reg_info active_regs[1];
+> @@ -730,10 +733,16 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+>  
+>  	qcom_q6v5_prepare(&qproc->q6v5);
+>  
+> +	ret = q6v5_pds_enable(qproc, qproc->active_pds, qproc->active_pd_count);
+> +	if (ret < 0) {
+> +		dev_err(qproc->dev, "failed to enable active power domains\n");
+> +		goto disable_irqs;
+> +	}
+> +
+>  	ret = q6v5_pds_enable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+>  	if (ret < 0) {
+>  		dev_err(qproc->dev, "failed to enable proxy power domains\n");
+> -		goto disable_irqs;
+> +		goto disable_active_pds;
+>  	}
+>  
+>  	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
+> @@ -839,6 +848,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
+>  			       qproc->proxy_reg_count);
+>  disable_proxy_pds:
+>  	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+> +disable_active_pds:
+> +	q6v5_pds_disable(qproc, qproc->active_pds, qproc->active_pd_count);
+>  disable_irqs:
+>  	qcom_q6v5_unprepare(&qproc->q6v5);
+>  
+> @@ -878,6 +889,7 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+>  			 qproc->active_clk_count);
+>  	q6v5_regulator_disable(qproc, qproc->active_regs,
+>  			       qproc->active_reg_count);
+> +	q6v5_pds_disable(qproc, qproc->active_pds, qproc->active_pd_count);
+>  
+>  	/* In case of failure or coredump scenario where reclaiming MBA memory
+>  	 * could not happen reclaim it here.
+> @@ -1412,11 +1424,19 @@ static int q6v5_probe(struct platform_device *pdev)
+>  	}
+>  	qproc->active_reg_count = ret;
+>  
+> +	ret = q6v5_pds_attach(&pdev->dev, qproc->active_pds,
+> +			      desc->active_pd_names);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "Failed to attach active power domains\n");
+> +		goto free_rproc;
+> +	}
+> +	qproc->active_pd_count = ret;
+> +
+>  	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
+>  			      desc->proxy_pd_names);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "Failed to init power domains\n");
+> -		goto free_rproc;
+> +		goto detach_active_pds;
+>  	}
+>  	qproc->proxy_pd_count = ret;
+>  
+> @@ -1452,6 +1472,8 @@ static int q6v5_probe(struct platform_device *pdev)
+>  
+>  detach_proxy_pds:
+>  	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+> +detach_active_pds:
+> +	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
+>  free_rproc:
+>  	rproc_free(rproc);
+>  
+> @@ -1469,6 +1491,7 @@ static int q6v5_remove(struct platform_device *pdev)
+>  	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+>  	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
+>  
+> +	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
+>  	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+>  
+>  	rproc_free(qproc->rproc);
+> @@ -1495,6 +1518,10 @@ static const struct rproc_hexagon_res sdm845_mss = {
+>  			"mnoc_axi",
+>  			NULL
+>  	},
+> +	.active_pd_names = (char*[]){
+> +			"load_state",
+> +			NULL
+> +	},
+>  	.proxy_pd_names = (char*[]){
+>  			"cx",
+>  			"mx",
+> -- 
+> 2.18.0
+> 
