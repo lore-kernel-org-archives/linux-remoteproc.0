@@ -1,271 +1,639 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 07/10] remoteproc: q6v5-mss: Vote for rpmh power domains
-Date: Tue, 29 Jan 2019 15:20:06 -0800
-Message-Id: <20190129232009.5033-8-bjorn.andersson@linaro.org>
-In-Reply-To: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-References: <20190129232009.5033-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v4 3/6] rpmsg: add rpmsg support for mt8183 SCP.
+Date: Thu, 31 Jan 2019 17:31:28 +0800
+Message-Id: <20190131093131.245531-4-pihsun@chromium.org>
+In-Reply-To: <20190131093131.245531-1-pihsun@chromium.org>
+References: <20190131093131.245531-1-pihsun@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Boichat <drinkcat@chromium.org>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Add a simple rpmsg support for mt8183 SCP, that use IPI / IPC directly.
 
-With rpmh ARC resources being modelled as power domains with performance
-state, we need to proxy vote on these for SDM845.
-Add support to vote on multiple of them, now that genpd supports
-associating mutliple power domains to a device.
-
-Tested-by: Sibi Sankar <sibis@codeaurora.org>
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-[bjorn: Drop device link, improve error handling, name things "proxy"]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 ---
+Changes from v3:
+ - Change from unprepare to stop, to stop the rpmsg driver before the
+   rproc is stopped, avoiding problem that some rpmsg would fail after
+   rproc is stopped.
+ - Add missing spin_lock_init, and use destroy_ept instead of kref_put.
 
-Changes since v3:
-- Rebased upon latest remoteproc branch
+Changes from v2:
+ - Unregiser IPI handler on unprepare.
+ - Lock the channel list on operations.
+ - Move SCP_IPI_NS_SERVICE to 0xFF.
 
- drivers/remoteproc/qcom_q6v5_mss.c | 119 +++++++++++++++++++++++++++--
- 1 file changed, 114 insertions(+), 5 deletions(-)
+Changes from v1:
+ - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
+   short-lived work items.
+ - Fix several issues checkpatch found.
+---
+ drivers/remoteproc/mtk_common.h       |   3 +
+ drivers/remoteproc/mtk_scp.c          |  29 +-
+ drivers/remoteproc/mtk_scp_ipi.c      |   5 +-
+ drivers/rpmsg/Kconfig                 |  10 +
+ drivers/rpmsg/Makefile                |   1 +
+ drivers/rpmsg/mtk_rpmsg.c             | 384 ++++++++++++++++++++++++++
+ include/linux/platform_data/mtk_scp.h |   6 +-
+ include/linux/rpmsg/mtk_rpmsg.h       |  35 +++
+ 8 files changed, 466 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 07d1cc52a647..c32c63e351a0 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -25,6 +25,8 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
-@@ -131,6 +133,7 @@ struct rproc_hexagon_res {
- 	char **proxy_clk_names;
- 	char **reset_clk_names;
- 	char **active_clk_names;
-+	char **proxy_pd_names;
- 	int version;
- 	bool need_mem_protection;
- 	bool has_alt_reset;
-@@ -156,9 +159,11 @@ struct q6v5 {
- 	struct clk *active_clks[8];
- 	struct clk *reset_clks[4];
- 	struct clk *proxy_clks[4];
-+	struct device *proxy_pds[3];
- 	int active_clk_count;
- 	int reset_clk_count;
- 	int proxy_clk_count;
-+	int proxy_pd_count;
+diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+index 162798c44ad7f1..7efe2e7374e5ec 100644
+--- a/drivers/remoteproc/mtk_common.h
++++ b/drivers/remoteproc/mtk_common.h
+@@ -54,6 +54,9 @@ struct mtk_scp {
+ 	void __iomem *cpu_addr;
+ 	phys_addr_t phys_addr;
+ 	size_t dram_size;
++
++	struct platform_device *pdev;
++	struct rproc_subdev *rpmsg_subdev;
+ };
  
- 	struct reg_info active_regs[1];
- 	struct reg_info proxy_regs[3];
-@@ -321,6 +326,41 @@ static void q6v5_clk_disable(struct device *dev,
- 		clk_disable_unprepare(clks[i]);
+ /**
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 920c81c3525c2a..c0375119c53289 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -13,6 +13,7 @@
+ #include <linux/platform_data/mtk_scp.h>
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
++#include <linux/rpmsg/mtk_rpmsg.h>
+ 
+ #include "mtk_common.h"
+ #include "remoteproc_internal.h"
+@@ -303,6 +304,23 @@ static int scp_map_memory_region(struct mtk_scp *scp)
+ 	return 0;
  }
  
-+static int q6v5_pds_enable(struct q6v5 *qproc, struct device **pds,
-+			   size_t pd_count)
++static void scp_add_rpmsg_subdev(struct mtk_scp *scp)
 +{
-+	int ret;
-+	int i;
++	scp->rpmsg_subdev =
++		mtk_rpmsg_create_rproc_subdev(scp->pdev, scp->rproc);
++	if (scp->rpmsg_subdev)
++		rproc_add_subdev(scp->rproc, scp->rpmsg_subdev);
++}
 +
-+	for (i = 0; i < pd_count; i++) {
-+		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
-+		ret = pm_runtime_get_sync(pds[i]);
-+		if (ret < 0)
-+			goto unroll_pd_votes;
++static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
++{
++	if (scp->rpmsg_subdev) {
++		rproc_remove_subdev(scp->rproc, scp->rpmsg_subdev);
++		mtk_rpmsg_destroy_rproc_subdev(scp->rpmsg_subdev);
++		scp->rpmsg_subdev = NULL;
++	}
++}
++
+ static int mtk_scp_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -326,6 +344,7 @@ static int mtk_scp_probe(struct platform_device *pdev)
+ 	scp = (struct mtk_scp *)rproc->priv;
+ 	scp->rproc = rproc;
+ 	scp->dev = dev;
++	scp->pdev = pdev;
+ 	platform_set_drvdata(pdev, scp);
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+@@ -396,13 +415,16 @@ static int mtk_scp_probe(struct platform_device *pdev)
+ 	init_waitqueue_head(&scp->run.wq);
+ 	init_waitqueue_head(&scp->ack_wq);
+ 
++	scp_add_rpmsg_subdev(scp);
++
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto destroy_mutex;
++		goto remove_subdev;
+ 
+-	return ret;
++	return 0;
+ 
+-destroy_mutex:
++remove_subdev:
++	scp_remove_rpmsg_subdev(scp);
+ 	mutex_destroy(&scp->scp_mutex);
+ free_rproc:
+ 	rproc_free(rproc);
+@@ -414,6 +436,7 @@ static int mtk_scp_remove(struct platform_device *pdev)
+ {
+ 	struct mtk_scp *scp = platform_get_drvdata(pdev);
+ 
++	scp_remove_rpmsg_subdev(scp);
+ 	rproc_del(scp->rproc);
+ 	rproc_free(scp->rproc);
+ 
+diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+index 51b8449a692970..1026089335a5c3 100644
+--- a/drivers/remoteproc/mtk_scp_ipi.c
++++ b/drivers/remoteproc/mtk_scp_ipi.c
+@@ -93,8 +93,9 @@ int scp_ipi_send(struct platform_device *pdev,
+ 	int ret;
+ 
+ 	if (WARN(id <= SCP_IPI_INIT || id >= SCP_IPI_MAX ||
+-	    len > sizeof(send_obj->share_buf) || !buf,
+-	    "failed to send ipi message\n"))
++			 id == SCP_IPI_NS_SERVICE ||
++			 len > sizeof(send_obj->share_buf) || !buf,
++		 "failed to send ipi message\n"))
+ 		return -EINVAL;
+ 
+ 	ret = clk_prepare_enable(scp->clk);
+diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+index d0322b41eca54c..270eca663fb8c0 100644
+--- a/drivers/rpmsg/Kconfig
++++ b/drivers/rpmsg/Kconfig
+@@ -15,6 +15,16 @@ config RPMSG_CHAR
+ 	  in /dev. They make it possible for user-space programs to send and
+ 	  receive rpmsg packets.
+ 
++config RPMSG_MTK_SCP
++	tristate "MediaTek SCP"
++	depends on MTK_SCP
++	select RPMSG
++	help
++	  Say y here to enable support providing communication channels to
++	  remote processors in MediaTek platforms.
++	  This use IPI and IPC to communicate with remote processors, with a
++	  send and receive buffer of size 1.
++
+ config RPMSG_QCOM_GLINK_NATIVE
+ 	tristate
+ 	select RPMSG
+diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+index 9aa859502d2752..ae92a7fb08f623 100644
+--- a/drivers/rpmsg/Makefile
++++ b/drivers/rpmsg/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+ obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
++obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
+diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+new file mode 100644
+index 00000000000000..55498ff0a3497d
+--- /dev/null
++++ b/drivers/rpmsg/mtk_rpmsg.c
+@@ -0,0 +1,384 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright 2018 Google LLC.
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_data/mtk_scp.h>
++#include <linux/platform_device.h>
++#include <linux/remoteproc.h>
++#include <linux/rpmsg/mtk_rpmsg.h>
++#include <linux/workqueue.h>
++
++#include "rpmsg_internal.h"
++
++struct mtk_rpmsg_device {
++	struct rpmsg_device rpdev;
++	struct platform_device *scp_pdev;
++};
++
++struct mtk_rpmsg_endpoint {
++	struct rpmsg_endpoint ept;
++	struct platform_device *scp_pdev;
++};
++
++struct mtk_rpmsg_rproc_subdev {
++	struct rproc *scp_rproc;
++	struct platform_device *scp_pdev;
++	struct rpmsg_endpoint *ns_ept;
++	struct rproc_subdev subdev;
++
++	struct work_struct register_work;
++	struct list_head channels;
++	spinlock_t channels_lock;
++};
++
++#define to_mtk_subdev(d) container_of(d, struct mtk_rpmsg_rproc_subdev, subdev)
++
++struct mtk_rpmsg_channel_info {
++	struct rpmsg_channel_info info;
++	bool registered;
++	struct list_head list;
++};
++
++/**
++ * struct rpmsg_ns_msg - dynamic name service announcement message
++ * @name: name of remote service that is published
++ * @addr: address of remote service that is published
++ *
++ * This message is sent across to publish a new service. When we receive these
++ * messages, an appropriate rpmsg channel (i.e device) is created. In turn, the
++ * ->probe() or ->remove() handler of the appropriate rpmsg driver will be
++ *  invoked (if/as-soon-as one is registered).
++ */
++struct rpmsg_ns_msg {
++	char name[RPMSG_NAME_SIZE];
++	u32 addr;
++} __packed;
++
++#define to_scp_device(r)	container_of(r, struct mtk_rpmsg_device, rpdev)
++#define to_scp_endpoint(r)	container_of(r, struct mtk_rpmsg_endpoint, ept)
++
++static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops;
++
++static void __ept_release(struct kref *kref)
++{
++	struct rpmsg_endpoint *ept = container_of(kref, struct rpmsg_endpoint,
++						  refcount);
++	kfree(to_scp_endpoint(ept));
++}
++
++static void mtk_rpmsg_ipi_handler(void *data, unsigned int len, void *priv)
++{
++	struct mtk_rpmsg_endpoint *mept = priv;
++	struct rpmsg_endpoint *ept = &mept->ept;
++	int ret;
++
++	ret = (*ept->cb)(ept->rpdev, data, len, ept->priv, ept->addr);
++	if (ret)
++		dev_warn(&ept->rpdev->dev, "rpmsg handler return error = %d",
++			 ret);
++}
++
++static struct rpmsg_endpoint *
++__rpmsg_create_ept(struct platform_device *scp_pdev, struct rpmsg_device *rpdev,
++		   rpmsg_rx_cb_t cb, void *priv,
++		   u32 id)
++{
++	struct mtk_rpmsg_endpoint *mept;
++	struct rpmsg_endpoint *ept;
++
++	int ret;
++
++	mept = kzalloc(sizeof(*mept), GFP_KERNEL);
++	if (!mept)
++		return NULL;
++	mept->scp_pdev = scp_pdev;
++
++	ept = &mept->ept;
++	kref_init(&ept->refcount);
++
++	ept->rpdev = rpdev;
++	ept->cb = cb;
++	ept->priv = priv;
++	ept->ops = &mtk_rpmsg_endpoint_ops;
++	ept->addr = id;
++
++	ret = scp_ipi_register(scp_pdev, id, mtk_rpmsg_ipi_handler, mept);
++	if (ret) {
++		dev_err(&scp_pdev->dev, "ipi register failed, id = %d", id);
++		kref_put(&ept->refcount, __ept_release);
++		return NULL;
++	}
++
++	return ept;
++}
++
++static struct rpmsg_endpoint *
++mtk_rpmsg_create_ept(struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
++		     struct rpmsg_channel_info chinfo)
++{
++	struct platform_device *scp_pdev = to_scp_device(rpdev)->scp_pdev;
++
++	return __rpmsg_create_ept(scp_pdev, rpdev, cb, priv, chinfo.src);
++}
++
++static const struct rpmsg_device_ops mtk_rpmsg_device_ops = {
++	.create_ept = mtk_rpmsg_create_ept,
++};
++
++static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
++{
++	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
++
++	scp_ipi_unregister(mept->scp_pdev, ept->addr);
++	kref_put(&ept->refcount, __ept_release);
++}
++
++static int __mtk_rpmsg_send(struct mtk_rpmsg_endpoint *mept, void *data,
++			    int len, bool wait)
++{
++	/*
++	 * TODO: This currently ignore the "wait" argument, and always wait
++	 * until SCP receive the last command.
++	 */
++	return scp_ipi_send(mept->scp_pdev, mept->ept.addr, data, len, 0);
++}
++
++static int mtk_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
++{
++	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
++
++	return __mtk_rpmsg_send(mept, data, len, true);
++}
++
++static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++{
++	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
++
++	return __mtk_rpmsg_send(mept, data, len, false);
++}
++
++static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops = {
++	.destroy_ept = mtk_rpmsg_destroy_ept,
++	.send = mtk_rpmsg_send,
++	.trysend = mtk_rpmsg_trysend,
++};
++
++static void mtk_rpmsg_release_device(struct device *dev)
++{
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
++	struct mtk_rpmsg_device *mdev = to_scp_device(rpdev);
++
++	kfree(mdev);
++}
++
++static int mtk_rpmsg_register_device(struct platform_device *scp_pdev,
++				     struct rpmsg_channel_info *info)
++{
++	struct rpmsg_device *rpdev;
++	struct mtk_rpmsg_device *mdev;
++	int ret;
++
++	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
++	if (!mdev)
++		return -ENOMEM;
++
++	mdev->scp_pdev = scp_pdev;
++
++	rpdev = &mdev->rpdev;
++	rpdev->ops = &mtk_rpmsg_device_ops;
++	rpdev->src = info->src;
++	rpdev->dst = info->dst;
++	strncpy(rpdev->id.name, info->name, RPMSG_NAME_SIZE);
++
++	rpdev->dev.parent = &scp_pdev->dev;
++	rpdev->dev.release = mtk_rpmsg_release_device;
++
++	ret = rpmsg_register_device(rpdev);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void mtk_register_device_work_function(struct work_struct *register_work)
++{
++	struct mtk_rpmsg_rproc_subdev *mtk_subdev = container_of(
++		register_work, struct mtk_rpmsg_rproc_subdev, register_work);
++	struct platform_device *scp_pdev = mtk_subdev->scp_pdev;
++	struct mtk_rpmsg_channel_info *info;
++
++	int ret;
++	unsigned long flags;
++
++	spin_lock_irqsave(&mtk_subdev->channels_lock, flags);
++	list_for_each_entry(info, &mtk_subdev->channels, list) {
++		if (info->registered)
++			continue;
++
++		spin_unlock_irqrestore(&mtk_subdev->channels_lock, flags);
++		ret = mtk_rpmsg_register_device(scp_pdev, &info->info);
++		spin_lock_irqsave(&mtk_subdev->channels_lock, flags);
++
++		if (ret) {
++			dev_err(&scp_pdev->dev, "Can't create rpmsg_device\n");
++			continue;
++		}
++
++		info->registered = true;
++	}
++	spin_unlock_irqrestore(&mtk_subdev->channels_lock, flags);
++}
++
++static int mtk_rpmsg_create_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
++				   char *name, u32 addr)
++{
++	struct mtk_rpmsg_channel_info *info;
++	unsigned long flags;
++
++	/* This is called in interrupt context from name service callback. */
++	info = kzalloc(sizeof(*info), GFP_ATOMIC);
++	if (!info)
++		return -ENOMEM;
++
++	strncpy(info->info.name, name, RPMSG_NAME_SIZE);
++	info->info.src = addr;
++	info->info.dst = RPMSG_ADDR_ANY;
++	spin_lock_irqsave(&mtk_subdev->channels_lock, flags);
++	list_add(&info->list, &mtk_subdev->channels);
++	spin_unlock_irqrestore(&mtk_subdev->channels_lock, flags);
++
++	schedule_work(&mtk_subdev->register_work);
++	return 0;
++}
++
++static int mtk_rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
++			   void *priv, u32 src)
++{
++	struct rpmsg_ns_msg *msg = data;
++	struct mtk_rpmsg_rproc_subdev *mtk_subdev = priv;
++	struct device *dev = &mtk_subdev->scp_pdev->dev;
++
++	int ret;
++
++	if (len != sizeof(*msg)) {
++		dev_err(dev, "malformed ns msg (%d)\n", len);
++		return -EINVAL;
++	}
++
++	/*
++	 * the name service ept does _not_ belong to a real rpmsg channel,
++	 * and is handled by the rpmsg bus itself.
++	 * for sanity reasons, make sure a valid rpdev has _not_ sneaked
++	 * in somehow.
++	 */
++	if (rpdev) {
++		dev_err(dev, "anomaly: ns ept has an rpdev handle\n");
++		return -EINVAL;
++	}
++
++	/* don't trust the remote processor for null terminating the name */
++	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
++
++	dev_info(dev, "creating channel %s addr 0x%x\n", msg->name, msg->addr);
++
++	ret = mtk_rpmsg_create_device(mtk_subdev, msg->name, msg->addr);
++	if (ret) {
++		dev_err(dev, "create rpmsg device failed\n");
++		return ret;
 +	}
 +
 +	return 0;
-+
-+unroll_pd_votes:
-+	for (i--; i >= 0; i--) {
-+		dev_pm_genpd_set_performance_state(pds[i], 0);
-+		pm_runtime_put(pds[i]);
-+	}
-+
-+	return ret;
-+};
-+
-+static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
-+			     size_t pd_count)
-+{
-+	int i;
-+
-+	for (i = 0; i < pd_count; i++) {
-+		dev_pm_genpd_set_performance_state(pds[i], 0);
-+		pm_runtime_put(pds[i]);
-+	}
 +}
 +
- static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
- 				   bool remote_owner, phys_addr_t addr,
- 				   size_t size)
-@@ -690,11 +730,17 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 
- 	qcom_q6v5_prepare(&qproc->q6v5);
- 
-+	ret = q6v5_pds_enable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
-+	if (ret < 0) {
-+		dev_err(qproc->dev, "failed to enable proxy power domains\n");
-+		goto disable_irqs;
++int mtk_rpmsg_prepare(struct rproc_subdev *subdev)
++{
++	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
++	struct platform_device *scp_pdev;
++
++	mtk_subdev = to_mtk_subdev(subdev);
++	scp_pdev = mtk_subdev->scp_pdev;
++
++	/* a dedicated endpoint handles the name service msgs */
++	mtk_subdev->ns_ept =
++		__rpmsg_create_ept(scp_pdev, NULL, mtk_rpmsg_ns_cb, mtk_subdev,
++				   SCP_IPI_NS_SERVICE);
++	if (!mtk_subdev->ns_ept) {
++		dev_err(&scp_pdev->dev,
++			"failed to create name service endpoint\n");
++		return -ENOMEM;
 +	}
 +
- 	ret = q6v5_regulator_enable(qproc, qproc->proxy_regs,
- 				    qproc->proxy_reg_count);
- 	if (ret) {
- 		dev_err(qproc->dev, "failed to enable proxy supplies\n");
--		goto disable_irqs;
-+		goto disable_proxy_pds;
- 	}
- 
- 	ret = q6v5_clk_enable(qproc->dev, qproc->proxy_clks,
-@@ -791,6 +837,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- disable_proxy_reg:
- 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
- 			       qproc->proxy_reg_count);
-+disable_proxy_pds:
-+	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- disable_irqs:
- 	qcom_q6v5_unprepare(&qproc->q6v5);
- 
-@@ -841,6 +889,8 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 
- 	ret = qcom_q6v5_unprepare(&qproc->q6v5);
- 	if (ret) {
-+		q6v5_pds_disable(qproc, qproc->proxy_pds,
-+				 qproc->proxy_pd_count);
- 		q6v5_clk_disable(qproc->dev, qproc->proxy_clks,
- 				 qproc->proxy_clk_count);
- 		q6v5_regulator_disable(qproc, qproc->proxy_regs,
-@@ -1121,6 +1171,7 @@ static void qcom_msa_handover(struct qcom_q6v5 *q6v5)
- 			 qproc->proxy_clk_count);
- 	q6v5_regulator_disable(qproc, qproc->proxy_regs,
- 			       qproc->proxy_reg_count);
-+	q6v5_pds_disable(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- }
- 
- static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
-@@ -1181,6 +1232,45 @@ static int q6v5_init_clocks(struct device *dev, struct clk **clks,
- 	return i;
- }
- 
-+static int q6v5_pds_attach(struct device *dev, struct device **devs,
-+			   char **pd_names)
++	return 0;
++}
++
++void mtk_rpmsg_stop(struct rproc_subdev *subdev, bool crashed)
 +{
-+	size_t num_pds = 0;
-+	int ret;
-+	int i;
++	struct mtk_rpmsg_channel_info *info, *next;
++	struct device *dev;
++	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
++	unsigned long flags;
 +
-+	if (!pd_names)
-+		return 0;
++	dev = &mtk_subdev->scp_pdev->dev;
 +
-+	while (pd_names[num_pds])
-+		num_pds++;
++	mtk_rpmsg_destroy_ept(mtk_subdev->ns_ept);
++	cancel_work_sync(&mtk_subdev->register_work);
 +
-+	for (i = 0; i < num_pds; i++) {
-+		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
-+		if (IS_ERR(devs[i])) {
-+			ret = PTR_ERR(devs[i]);
-+			goto unroll_attach;
++	spin_lock_irqsave(&mtk_subdev->channels_lock, flags);
++	list_for_each_entry(info, &mtk_subdev->channels, list) {
++		if (!info->registered)
++			continue;
++		spin_unlock_irqrestore(&mtk_subdev->channels_lock, flags);
++		if (rpmsg_unregister_device(dev, &info->info)) {
++			dev_warn(
++				dev,
++				"rpmsg_unregister_device failed for %s.%d.%d\n",
++				info->info.name, info->info.src,
++				info->info.dst);
 +		}
++		spin_lock_irqsave(&mtk_subdev->channels_lock, flags);
 +	}
 +
-+	return num_pds;
-+
-+unroll_attach:
-+	for (i--; i >= 0; i--)
-+		dev_pm_domain_detach(devs[i], false);
-+
-+	return ret;
-+};
-+
-+static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
-+			    size_t pd_count)
-+{
-+	int i;
-+
-+	for (i = 0; i < pd_count; i++)
-+		dev_pm_domain_detach(pds[i], false);
++	list_for_each_entry_safe(info, next,
++				 &mtk_subdev->channels, list) {
++		list_del(&info->list);
++		kfree(info);
++	}
++	spin_unlock_irqrestore(&mtk_subdev->channels_lock, flags);
 +}
 +
- static int q6v5_init_reset(struct q6v5 *qproc)
- {
- 	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
-@@ -1322,10 +1412,18 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 	qproc->active_reg_count = ret;
- 
-+	ret = q6v5_pds_attach(&pdev->dev, qproc->proxy_pds,
-+			      desc->proxy_pd_names);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to init power domains\n");
-+		goto free_rproc;
-+	}
-+	qproc->proxy_pd_count = ret;
++struct rproc_subdev *
++mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
++			      struct rproc *scp_rproc)
++{
++	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
 +
- 	qproc->has_alt_reset = desc->has_alt_reset;
- 	ret = q6v5_init_reset(qproc);
- 	if (ret)
--		goto free_rproc;
-+		goto detach_proxy_pds;
- 
- 	qproc->version = desc->version;
- 	qproc->need_mem_protection = desc->need_mem_protection;
-@@ -1333,7 +1431,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM,
- 			     qcom_msa_handover);
- 	if (ret)
--		goto free_rproc;
-+		goto detach_proxy_pds;
- 
- 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
- 	qproc->mba_perm = BIT(QCOM_SCM_VMID_HLOS);
-@@ -1343,15 +1441,17 @@ static int q6v5_probe(struct platform_device *pdev)
- 	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
- 	if (IS_ERR(qproc->sysmon)) {
- 		ret = PTR_ERR(qproc->sysmon);
--		goto free_rproc;
-+		goto detach_proxy_pds;
- 	}
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto free_rproc;
-+		goto detach_proxy_pds;
- 
- 	return 0;
- 
-+detach_proxy_pds:
-+	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- free_rproc:
- 	rproc_free(rproc);
- 
-@@ -1368,6 +1468,9 @@ static int q6v5_remove(struct platform_device *pdev)
- 	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
- 	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
- 	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
++	mtk_subdev = kzalloc(sizeof(*mtk_subdev), GFP_KERNEL);
++	if (!mtk_subdev)
++		return NULL;
 +
-+	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
++	mtk_subdev->scp_pdev = scp_pdev;
++	mtk_subdev->scp_rproc = scp_rproc;
++	mtk_subdev->subdev.prepare = mtk_rpmsg_prepare;
++	mtk_subdev->subdev.stop = mtk_rpmsg_stop;
++	INIT_LIST_HEAD(&mtk_subdev->channels);
++	INIT_WORK(&mtk_subdev->register_work,
++		  mtk_register_device_work_function);
++	spin_lock_init(&mtk_subdev->channels_lock);
 +
- 	rproc_free(qproc->rproc);
++	return &mtk_subdev->subdev;
++}
++EXPORT_SYMBOL_GPL(mtk_rpmsg_create_rproc_subdev);
++
++void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev)
++{
++	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
++
++	kfree(mtk_subdev);
++}
++EXPORT_SYMBOL_GPL(mtk_rpmsg_destroy_rproc_subdev);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("MediaTek scp rpmsg driver");
+diff --git a/include/linux/platform_data/mtk_scp.h b/include/linux/platform_data/mtk_scp.h
+index 0e999ec319446b..643ef305a9e88d 100644
+--- a/include/linux/platform_data/mtk_scp.h
++++ b/include/linux/platform_data/mtk_scp.h
+@@ -22,7 +22,7 @@ typedef void (*scp_ipi_handler_t) (void *data,
+  *			 command to SCP.
+  *			 For other IPI below, AP should send the request
+  *			 to SCP to trigger the interrupt.
+- * @IPI_MAX:		 The maximum IPI number
++ * @SCP_IPI_MAX:	 The maximum IPI number
+  */
  
- 	return 0;
-@@ -1392,6 +1495,12 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 			"mnoc_axi",
- 			NULL
- 	},
-+	.proxy_pd_names = (char*[]){
-+			"cx",
-+			"mx",
-+			"mss",
-+			NULL
-+	},
- 	.need_mem_protection = true,
- 	.has_alt_reset = true,
- 	.version = MSS_SDM845,
+ enum scp_ipi_id {
+@@ -34,9 +34,11 @@ enum scp_ipi_id {
+ 	SCP_IPI_VENC_VP8,
+ 	SCP_IPI_MDP,
+ 	SCP_IPI_CROS_HOST_CMD,
+-	SCP_IPI_MAX,
+ };
+ 
++#define SCP_IPI_NS_SERVICE 0xFF
++#define SCP_IPI_MAX 0x100
++
+ /**
+  * scp_ipi_register - register an ipi function
+  *
+diff --git a/include/linux/rpmsg/mtk_rpmsg.h b/include/linux/rpmsg/mtk_rpmsg.h
+new file mode 100644
+index 00000000000000..8d21cd3d35b012
+--- /dev/null
++++ b/include/linux/rpmsg/mtk_rpmsg.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright 2018 Google LLC.
++ */
++
++#ifndef __LINUX_RPMSG_MTK_RPMSG_H
++#define __LINUX_RPMSG_MTK_RPMSG_H
++
++#include <linux/device.h>
++#include <linux/remoteproc.h>
++
++#if IS_ENABLED(CONFIG_RPMSG_MTK_SCP)
++
++struct rproc_subdev *
++mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
++			      struct rproc *scp_rproc);
++
++void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev);
++
++#else
++
++static inline struct rproc_subdev *
++mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
++			      struct rproc *scp_rproc)
++{
++	return NULL;
++}
++
++static inline void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev)
++{
++}
++
++#endif
++
++#endif
 -- 
-2.18.0
+2.20.1.611.gfbb209baf1-goog
