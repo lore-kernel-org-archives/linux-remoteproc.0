@@ -1,13 +1,12 @@
 Return-Path: <sibis@codeaurora.org>
-Subject: Re: [PATCH v5 03/10] arm64: dts: sdm845: Introduce ADSP and CDSP PAS
- nodes
+Subject: Re: [PATCH v5 09/10] arm64: dts: qcom: Add AOSS QMP node
 References: <20190131003933.11436-1-bjorn.andersson@linaro.org>
- <20190131003933.11436-4-bjorn.andersson@linaro.org>
+ <20190131003933.11436-10-bjorn.andersson@linaro.org>
 From: Sibi Sankar <sibis@codeaurora.org>
-Message-ID: <4539b3ca-cace-9c71-0453-94427ad79b73@codeaurora.org>
-Date: Fri, 1 Feb 2019 11:19:51 +0530
+Message-ID: <fe4c1e15-ae5d-3f10-e265-39df3230c30c@codeaurora.org>
+Date: Fri, 1 Feb 2019 12:47:25 +0530
 MIME-Version: 1.0
-In-Reply-To: <20190131003933.11436-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20190131003933.11436-10-bjorn.andersson@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -20,10 +19,10 @@ Hey Bjorn,
 Tested-by: Sibi Sankar <sibis@codeaurora.org>
 Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
 
+
 On 01/31/2019 06:09 AM, Bjorn Andersson wrote:
-> Add the Audio DSP (ADSP) and Compute DSP (CDSP) nodes for TrustZone
-> based remoteproc, supporting booting these cores on e.g. the MTP, and
-> enable the same for the MTP.
+> The AOSS QMP provides a number of power domains, used for QDSS and
+> PIL, add the node for this.
 > 
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
@@ -32,107 +31,39 @@ On 01/31/2019 06:09 AM, Bjorn Andersson wrote:
 > - None
 > 
 > Changes since v3:
-> - Make xo reference the actual CXO clock
+> - None
 > 
->   arch/arm64/boot/dts/qcom/sdm845-mtp.dts |  8 ++++
->   arch/arm64/boot/dts/qcom/sdm845.dtsi    | 58 +++++++++++++++++++++++++
->   2 files changed, 66 insertions(+)
+>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> index af8c6a2445a2..02b8357c8ce8 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> @@ -48,6 +48,10 @@
->   	};
->   };
->   
-> +&adsp_pas {
-> +	status = "okay";
-> +};
-> +
->   &apps_rsc {
->   	pm8998-rpmh-regulators {
->   		compatible = "qcom,pm8998-rpmh-regulators";
-> @@ -344,6 +348,10 @@
->   	};
->   };
->   
-> +&cdsp_pas {
-> +	status = "okay";
-> +};
-> +
->   &gcc {
->   	protected-clocks = <GCC_QSPI_CORE_CLK>,
->   			   <GCC_QSPI_CORE_CLK_SRC>,
 > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index d19486ba1e5e..07d9cd6fba7d 100644
+> index 07d9cd6fba7d..dc43fee8bb90 100644
 > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
 > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -325,6 +325,64 @@
+> @@ -14,6 +14,7 @@
+>   #include <dt-bindings/interconnect/qcom,sdm845.h>
+>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   #include <dt-bindings/phy/phy-qcom-qusb2.h>
+> +#include <dt-bindings/power/qcom-aoss-qmp.h>
+>   #include <dt-bindings/power/qcom-rpmpd.h>
+>   #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>   #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+> @@ -2076,6 +2077,15 @@
+>   			#reset-cells = <1>;
 >   		};
->   	};
 >   
-> +	adsp_pas: remoteproc-adsp {
-> +		compatible = "qcom,sdm845-adsp-pas";
+> +		aoss_qmp: qmp@c300000 {
+> +			compatible = "qcom,sdm845-aoss-qmp";
+> +			reg = <0 0x0c300000 0 0x100000>;
+> +			interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
+> +			mboxes = <&apss_shared 0>;
 > +
-> +		interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "wdog", "fatal", "ready",
-> +				  "handover", "stop-ack";
-> +
-> +		clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +		clock-names = "xo";
-> +
-> +		memory-region = <&adsp_mem>;
-> +
-> +		qcom,smem-states = <&adsp_smp2p_out 0>;
-> +		qcom,smem-state-names = "stop";
-> +
-> +		status = "disabled";
-> +
-> +		glink-edge {
-> +			interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-> +			label = "lpass";
-> +			qcom,remote-pid = <2>;
-> +			mboxes = <&apss_shared 8>;
+> +			#power-domain-cells = <1>;
 > +		};
-> +	};
 > +
-> +	cdsp_pas: remoteproc-cdsp {
-> +		compatible = "qcom,sdm845-cdsp-pas";
-> +
-> +		interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "wdog", "fatal", "ready",
-> +				  "handover", "stop-ack";
-> +
-> +		clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +		clock-names = "xo";
-> +
-> +		memory-region = <&cdsp_mem>;
-> +
-> +		qcom,smem-states = <&cdsp_smp2p_out 0>;
-> +		qcom,smem-state-names = "stop";
-> +
-> +		status = "disabled";
-> +
-> +		glink-edge {
-> +			interrupts = <GIC_SPI 574 IRQ_TYPE_EDGE_RISING>;
-> +			label = "turing";
-> +			qcom,remote-pid = <5>;
-> +			mboxes = <&apss_shared 4>;
-> +		};
-> +	};
-> +
->   	tcsr_mutex: hwlock {
->   		compatible = "qcom,tcsr-mutex";
->   		syscon = <&tcsr_mutex_regs 0 0x1000>;
+>   		spmi_bus: spmi@c440000 {
+>   			compatible = "qcom,spmi-pmic-arb";
+>   			reg = <0 0x0c440000 0 0x1100>,
 > 
 
 -- 
