@@ -1,168 +1,72 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 08/14] remoteproc: Add support to handle device specific resource types
-Date: Mon, 4 Feb 2019 16:22:41 +0200
-Message-ID: <1549290167-876-9-git-send-email-rogerq@ti.com>
-In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH v2 0/7] remoteproc: Fixes for memoy carveout management
+Date: Fri, 1 Feb 2019 15:59:27 +0000
+Message-ID: <6d88bb6cdf1947c185b7aebe01a998a0@SFHDAG7NODE2.st.com>
+References: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
+In-Reply-To: <1547128151-44077-1-git-send-email-loic.pallardy@st.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+To: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>
+Cc: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Arnaud POULIQUEN  <arnaud.pouliquen@st.com>, benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, "s-anna@ti.com" <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hi Bjorn,
 
-The remoteproc framework handles a fixed set of resource table entries
-today. To make it scalable across multiple platforms, it makes sense
-for the framework to provide a way for the device specific implementation
-to define and handle vendor specific resource types. These resource types
-would be very specific to an implementation instance that it does not
-make sense for the framework to handle it.
+> -----Original Message-----
+> From: Loic PALLARDY <loic.pallardy@st.com>
+> Sent: jeudi 10 janvier 2019 14:49
+> To: bjorn.andersson@linaro.org; ohad@wizery.com
+> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> benjamin.gaignard@linaro.org; s-anna@ti.com; Loic PALLARDY
+> <loic.pallardy@st.com>
+> Subject: [PATCH v2 0/7] remoteproc: Fixes for memoy carveout
+> management
+>=20
+> These patches fix the comments sent on remoteproc mailing
+> list after acceptation of memory carveout patch series [1].
+>=20
+> In few words, series corrects:
+> - memory carveout allocation for rproc without iommu
+> - rproc_da_to_va and trace buffer access to take into account
+>   late carveout allocation
+> - resource table cast by adding warning messages
 
-For instance, a remoteproc implementation might want timers information
-embedded in the resource table so that the driver could parse the binary
-and enable accordingly. Another example would be hwspinlocks that it
-is using, to properly share system wide resources. The PRU interrupt
-controller's interrupt-map could be provided via a vendor specific
-resource.
+Could you please merge this series for next pull request as it contains onl=
+y fixes of patches merged in kernel 4.20.
 
-This patch adds a function pointer to the list of rproc_ops for the
-driver implementation to handle such custom vendor resources.
+Regards,
+Loic=20
 
-[rogerq@ti.com] Get rid of pre/post loaders. Show in debugfs.
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/remoteproc/remoteproc_core.c    | 36 +++++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_debugfs.c |  3 +++
- include/linux/remoteproc.h              | 17 ++++++++++++++--
- 3 files changed, 54 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 2d9646f..b43aa40 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -896,6 +896,41 @@ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
- EXPORT_SYMBOL(rproc_add_carveout);
- 
- /**
-+ * rproc_handle_vendor_rsc() - provide implementation specific hook
-+ *			       to handle vendor/custom resources
-+ * @rproc: the remote processor
-+ * @rsc: vendor resource to be handled by remoteproc drivers
-+ * @offset: offset of the resource data in resource table
-+ * @avail: size of available data
-+ *
-+ * Remoteproc implementations might want to add resource table entries
-+ * that are not generic enough to be handled by the framework. This
-+ * provides a hook to handle such custom resources.
-+ *
-+ * Returns 0 on success, or an appropriate error code otherwise
-+ */
-+static int rproc_handle_vendor_rsc(struct rproc *rproc,
-+				   struct fw_rsc_vendor *rsc,
-+				   int offset, int avail)
-+{
-+	struct device *dev = &rproc->dev;
-+
-+	if (sizeof(*rsc) > avail) {
-+		dev_err(dev, "vendor rsc is truncated\n");
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(dev, "vendor rsc:");
-+
-+	if (!rproc->ops->handle_vendor_rsc) {
-+		dev_err(dev, "no vendor rsc handler! ignoring resource\n");
-+		return 0;
-+	}
-+
-+	return rproc->ops->handle_vendor_rsc(rproc, (void *)rsc);
-+}
-+
-+/**
-  * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
-  * @dev: pointer on device struct
-  * @va: virtual address
-@@ -983,6 +1018,7 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- 	[RSC_CARVEOUT] = (rproc_handle_resource_t)rproc_handle_carveout,
- 	[RSC_DEVMEM] = (rproc_handle_resource_t)rproc_handle_devmem,
- 	[RSC_TRACE] = (rproc_handle_resource_t)rproc_handle_trace,
-+	[RSC_VENDOR] = (rproc_handle_resource_t)rproc_handle_vendor_rsc,
- 	[RSC_VDEV] = (rproc_handle_resource_t)rproc_handle_vdev,
- };
- 
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index e90135c..ef66165 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -230,6 +230,9 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 					   v->vring[j].pa);
- 			}
- 			break;
-+		case RSC_VENDOR:
-+			seq_printf(seq, "Entry %d is of type %s [Vendor specific]\n",
-+				   i, types[hdr->type]);
- 		default:
- 			seq_printf(seq, "Unknown resource type found: %d [hdr: %pK]\n",
- 				   hdr->type, hdr);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index b5aa5fb..9f4c457 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -100,6 +100,7 @@ struct fw_rsc_hdr {
-  *		    the remote processor will be writing logs.
-  * @RSC_VDEV:       declare support for a virtio device, and serve as its
-  *		    virtio header.
-+ * @RSC_VENDOR:	    vendor specific resource type.
-  * @RSC_LAST:       just keep this one at the end
-  *
-  * For more details regarding a specific resource type, please see its
-@@ -115,7 +116,8 @@ enum fw_resource_type {
- 	RSC_DEVMEM	= 1,
- 	RSC_TRACE	= 2,
- 	RSC_VDEV	= 3,
--	RSC_LAST	= 4,
-+	RSC_VENDOR	= 4,
-+	RSC_LAST,
- };
- 
- #define FW_RSC_ADDR_ANY (-1)
-@@ -308,6 +310,14 @@ struct fw_rsc_vdev {
- struct rproc;
- 
- /**
-+ * struct fw_rsc_vendor - vendor specific resource definition
-+ * @data: resource data. vendor defined.
-+ */
-+struct fw_rsc_vendor {
-+	u8 data[0];
-+} __packed;
-+
-+/**
-  * struct rproc_mem_entry - memory entry descriptor
-  * @va:	virtual address
-  * @dma: dma address
-@@ -347,7 +357,8 @@ struct firmware;
-  * @da_to_va:	optional platform hook to perform address translations
-  * @load_rsc_table:	load resource table from firmware image
-  * @find_loaded_rsc_table: find the loaded resouce table
-- * @load:		load firmeware to memory, where the remote processor
-+ * @handle_vendor_rsc:	hook to handle device specific resource table entries
-+ * @load:		load firmware to memory, where the remote processor
-  *			expects to find it
-  * @sanity_check:	sanity check the fw image
-  * @get_boot_addr:	get boot address to entry point specified in firmware
-@@ -360,6 +371,8 @@ struct rproc_ops {
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
-+	int (*handle_vendor_rsc)(struct rproc *rproc,
-+				 struct fw_rsc_vendor *rsc);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>=20
+> Regards,
+> Loic
+>=20
+> [1] https://lkml.org/lkml/2018/7/27/612
+>=20
+> ---
+> Changes from v1:
+> - Modify way to notify resource table cast issue
+> - Complete trace buffer patch
+>=20
+>=20
+> Loic Pallardy (7):
+>   remoteproc: correct rproc_mem_entry_init() comments
+>   remoteproc: fix rproc_da_to_va in case of unallocated carveout
+>   remoteproc: fix rproc_alloc_carveout() bad variable cast
+>   remoteproc: add warning on resource table cast
+>   remoteproc: fix rproc_alloc_carveout() for rproc with iommu domain
+>   remoteproc: fix trace buffer va initialization
+>   remoteproc: fix rproc_check_carveout_da() returned error and comments
+>=20
+>  drivers/remoteproc/remoteproc_core.c     | 108 ++++++++++++++++++-----
+> --------
+>  drivers/remoteproc/remoteproc_debugfs.c  |  21 ++++--
+>  drivers/remoteproc/remoteproc_internal.h |   9 ++-
+>  3 files changed, 89 insertions(+), 49 deletions(-)
+>=20
+> --
+> 2.7.4
