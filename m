@@ -1,169 +1,109 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 07/14] remoteproc: Add a rproc_set_firmware() API
-Date: Mon, 4 Feb 2019 16:22:40 +0200
-Message-ID: <1549290167-876-8-git-send-email-rogerq@ti.com>
-In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+Return-Path: <dianders@chromium.org>
+Return-Path: <dianders@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+References: <20190131003933.11436-1-bjorn.andersson@linaro.org> <20190131003933.11436-7-bjorn.andersson@linaro.org>
+In-Reply-To: <20190131003933.11436-7-bjorn.andersson@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 1 Feb 2019 15:39:00 -0800
+Message-ID: <CAD=FV=Us8-VBGhwuJHCAGAxV13FOYOx2WBDegQ60SSG=oSO=EQ@mail.gmail.com>
+Subject: Re: [PATCH v5 06/10] soc: qcom: Add AOSS QMP genpd provider
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hi,
 
-A new API, rproc_set_firmware() is added to allow the remoteproc platform
-drivers and remoteproc client drivers to be able to configure a custom
-firmware name that is different from the default name used during
-remoteproc registration. This function is being introduced to provide
-a kernel-level equivalent of the current sysfs interface to remoteproc
-client drivers. This allows some remoteproc drivers to choose different
-firmwares at runtime when the remote processor is not running based on
-the functional feature it is providing using that remote processor.
-The TI PRU Ethernet driver will be an example of such usage as it
-requires to use different firmwares for different supported protocols.
+On Wed, Jan 30, 2019 at 4:40 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+> +struct qmp_pd {
+> +       struct qmp *qmp;
+> +
+> +       struct generic_pm_domain pd;
+> +
+> +       const char *name;
 
-Also, update the firmware_store() function used by the sysfs interface
-to reuse this function to avoid code duplication.
+nit: why do you need name?  Can't you just reach in and use pd.name
+since they're the same?
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/remoteproc/remoteproc_core.c  | 61 +++++++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_sysfs.c | 33 ++-----------------
- include/linux/remoteproc.h            |  1 +
- 3 files changed, 64 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 06ef4fa..2d9646f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2149,6 +2149,67 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
- }
- EXPORT_SYMBOL(rproc_report_crash);
- 
-+/**
-+ * rproc_set_firmware() - assign a new firmware
-+ * @rproc: rproc handle to which the new firmware is being assigned
-+ * @fw_name: new firmware name to be assigned
-+ *
-+ * This function allows remoteproc drivers or clients to configure a custom
-+ * firmware name that is different from the default name used during remoteproc
-+ * registration. The function does not trigger a remote processor boot,
-+ * only sets the firmware name used for a subsequent boot. This function
-+ * should also be called only when the remote processor is offline.
-+ *
-+ * This allows either the userspace to configure a different name through
-+ * sysfs or a kernel-level remoteproc or a remoteproc client driver to set
-+ * a specific firmware when it is controlling the boot and shutdown of the
-+ * remote processor.
-+ *
-+ * Returns 0 on success or a negative value upon failure
-+ */
-+int rproc_set_firmware(struct rproc *rproc, const char *fw_name)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	int ret, len;
-+	char *p;
-+
-+	if (!rproc || !fw_name)
-+		return -EINVAL;
-+
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret) {
-+		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-+		return -EINVAL;
-+	}
-+
-+	if (rproc->state != RPROC_OFFLINE) {
-+		dev_err(dev, "can't change firmware while running\n");
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	len = strcspn(fw_name, "\n");
-+	if (!len) {
-+		dev_err(dev, "empty firmware name string\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	p = kstrndup(fw_name, len, GFP_KERNEL);
-+	if (!p) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	kfree(rproc->firmware);
-+	rproc->firmware = p;
-+
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL(rproc_set_firmware);
-+
- static int __init remoteproc_init(void)
- {
- 	rproc_init_sysfs();
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 3a4c3d7..6cf04a7 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -32,38 +32,9 @@ static ssize_t firmware_store(struct device *dev,
- 			      const char *buf, size_t count)
- {
- 	struct rproc *rproc = to_rproc(dev);
--	char *p;
--	int err, len = count;
-+	int err;
- 
--	err = mutex_lock_interruptible(&rproc->lock);
--	if (err) {
--		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
--		return -EINVAL;
--	}
--
--	if (rproc->state != RPROC_OFFLINE) {
--		dev_err(dev, "can't change firmware while running\n");
--		err = -EBUSY;
--		goto out;
--	}
--
--	len = strcspn(buf, "\n");
--	if (!len) {
--		dev_err(dev, "can't provide a NULL firmware\n");
--		err = -EINVAL;
--		goto out;
--	}
--
--	p = kstrndup(buf, len, GFP_KERNEL);
--	if (!p) {
--		err = -ENOMEM;
--		goto out;
--	}
--
--	kfree(rproc->firmware);
--	rproc->firmware = p;
--out:
--	mutex_unlock(&rproc->lock);
-+	err = rproc_set_firmware(rproc, buf);
- 
- 	return err ? err : count;
- }
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e908b58..b5aa5fb 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -590,6 +590,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, int len,
- 
- int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
-+int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
- int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
- int rproc_coredump_add_custom_segment(struct rproc *rproc,
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +static int qmp_pd_clock_toggle(struct qmp_pd *res, bool enable)
+> +{
+> +       char buf[AOSS_QMP_PD_MSG_LEN];
+> +
+> +       snprintf(buf, sizeof(buf), "{class: clock, res: %s, val: %d}",
+> +                res->name, !!enable);
+
+nit: "enable" is a bool, so "!!" shouldn't be necessary right?
+
+
+> +       return qmp_send(res->qmp, buf, sizeof(buf));
+
+It appears that you write a string less than 96 bytes onto your stack
+buffer but then send the full 96 bytes of stack to the AOSS.  That
+doesn't seem like a very good idea to me.  Sorry, but your secret plan
+to embed NSA code in the AOSS firmware and scrape data off the kernel
+stack has been foiled.
+
+
+> +static int qmp_pd_image_toggle(struct qmp_pd *res, bool enable)
+> +{
+> +       char buf[AOSS_QMP_PD_MSG_LEN];
+> +
+> +       snprintf(buf, sizeof(buf),
+> +                "{class: image, res: load_state, name: %s, val: %s}",
+> +                res->name, enable ? "on" : "off");
+> +       return qmp_send(res->qmp, buf, sizeof(buf));
+
+Please tell me you're joking that for turning on/off clocks "val" is
+1/0 but for turning off images "val" is on/off.
+
+
+> +static int qmp_pd_probe(struct platform_device *pdev)
+> +{
+> +       struct genpd_onecell_data *data;
+> +       struct device *parent = pdev->dev.parent;
+> +       struct qmp_pd *res;
+> +       struct qmp *qmp;
+> +       size_t num = ARRAY_SIZE(sdm845_resources);
+> +       int i;
+> +
+> +       qmp = dev_get_drvdata(pdev->dev.parent);
+> +       if (!qmp)
+> +               return -EINVAL;
+> +
+> +       res = devm_kcalloc(&pdev->dev, num, sizeof(*res), GFP_KERNEL);
+> +       if (!res)
+> +               return -ENOMEM;
+> +
+> +       data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return -ENOMEM;
+> +
+> +       data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
+> +                                    GFP_KERNEL);
+> +
+> +       for (i = 0; i < num; i++) {
+> +               pm_genpd_init(&res[i].pd, NULL, true);
+> +               res[i].qmp = qmp;
+> +               res[i].name = sdm845_resources[i].name;
+> +
+> +               res[i].pd.name = sdm845_resources[i].name;
+> +               res[i].pd.power_on = sdm845_resources[i].on;
+> +               res[i].pd.power_off = sdm845_resources[i].off;
+> +
+> +               data->domains[data->num_domains++] = &res[i].pd;
+
+nit: data->domains[i] = &res[i].pd;
+
+...and then somewhere in this function (not in the loop) just write:
+
+data->num_domains = num;
+
+
+I think that's the same, right?  They you don't have to re-compute
+num_domains by adding 1 at at time and it'd also be more obvious that
+all the array accesses in the loop were the same number?
+
+
+-Doug
