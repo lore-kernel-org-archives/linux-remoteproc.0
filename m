@@ -1,162 +1,42 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 11/14] remoteproc/pru: Add pru_rproc_set_ctable() and pru_rproc_set_gpimode()
-Date: Mon, 4 Feb 2019 16:22:44 +0200
-Message-ID: <1549290167-876-12-git-send-email-rogerq@ti.com>
-In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+Return-Path: <govinds@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com, "Andrew F . Davis" <afd@ti.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Sat, 02 Feb 2019 21:02:26 +0530
+From: Govind Singh <govinds@codeaurora.org>
+Subject: Re: [PATCH v3 4/7] clk: qcom: Add WCSS gcc clock control for QCS404
+In-Reply-To: <20181215175657.GB12886@minitux>
+References: <20181215103557.2748-1-govinds@codeaurora.org>
+ <20181215103557.2748-5-govinds@codeaurora.org>
+ <20181215175657.GB12886@minitux>
+Message-ID: <1b902e355d7b4f03229f821082e21147@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, sboyd@kernel.org, linux-clk@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Some firmwares expect the OS drivers to configure the CTABLE
-entries publishing dynamically allocated memory regions. For
-example, the PRU Ethernet firmwares use the C28 and C30 entries
-for retrieving the Shared RAM and System SRAM (OCMC) areas
-allocated by the PRU Ethernet client driver.
+On 2018-12-15 23:26, Bjorn Andersson wrote:
+> On Sat 15 Dec 02:35 PST 2018, Govind Singh wrote:
+>> diff --git a/drivers/clk/qcom/gcc-qcs404.c 
+>> b/drivers/clk/qcom/gcc-qcs404.c
+> [..]
+>> @@ -2726,6 +2770,11 @@ static int gcc_qcs404_probe(struct 
+>> platform_device *pdev)
+>>  			return ret;
+>>  	}
+>> 
+>> +#ifdef CONFIG_QCS_WCSSCC_404
+> 
+> We don't do compile time configuration of things like this, expect all
+> variants of QCS404 (regardless of security solution) to run off the 
+> same
+> kernel binary.
+> 
+> Instead use the recently introduced "protected-clocks" property.
+> 
 
-Provide a way for users to do that through a new API,
-pru_rproc_set_ctable(). The API returns 0 on success and
-a negative value on error.
+Fixed in v4. Seems LPASS is no more using "protected-clocks", i used 
+"unprotected-clocks" property to avoid inverted logic.
 
-NOTE:
-The programmable CTABLE entries are typically re-programmed by
-the PRU firmwares when dealing with a certain block of memory
-during block processing. This API provides an interface to the
-PRU client drivers to publish a dynamically allocated memory
-block with the PRU firmware using a CTABLE entry instead of a
-negotiated address in shared memory. Additional synchronization
-may be needed between the PRU client drivers and firmwares if
-different addresses needs to be published at run-time reusing
-the same CTABLE entry.
-
-Some client drivers need to set the GPI mode of the
-PRU. The GPI mode select bits like in the GPCFG register
-space. Add pru_rproc_set_gpimode() API to set the GPI
-mode for the PRU.
-
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-[s-anna@ti.com: add the NOTE: on patch description, minor cleanups]
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/pru_rproc.c       | 48 ++++++++++++++++++++++++++++++++++++
- include/linux/remoteproc/pru_rproc.h | 30 ++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
-
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index ddd4b64..85463f7 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -398,6 +398,54 @@ void pru_rproc_put(struct rproc *rproc)
- }
- EXPORT_SYMBOL_GPL(pru_rproc_put);
- 
-+/**
-+ * pru_rproc_set_ctable() - set the constant table index for the PRU
-+ * @rproc: the rproc instance of the PRU
-+ * @c: constant table index to set
-+ * @addr: physical address to set it to
-+ */
-+int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
-+{
-+	struct pru_rproc *pru = rproc->priv;
-+	unsigned int reg;
-+	u32 mask, set;
-+	u16 idx;
-+	u16 idx_mask;
-+
-+	/* pointer is 16 bit and index is 8-bit so mask out the rest */
-+	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
-+
-+	/* ctable uses bit 8 and upwards only */
-+	idx = (addr >> 8) & idx_mask;
-+
-+	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
-+	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
-+	mask = idx_mask << (16 * (c & 1));
-+	set = idx << (16 * (c & 1));
-+
-+	regmap_update_bits(pru->ctrl_regmap, reg, mask, set);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
-+
-+/**
-+ * pru_rproc_set_gpimode() - set the GPI mode for the PRU
-+ * @rproc: the rproc instance of the PRU
-+ * @mode: GPI mode to set
-+ *
-+ * Returns 0 on success, negative error value otherwise.
-+ */
-+int pru_rproc_set_gpimode(struct rproc *rproc, enum pruss_gpi_mode mode)
-+{
-+	struct pru_rproc *pru = rproc->priv;
-+
-+	return regmap_update_bits(pru->cfg, pru->gpcfg_reg,
-+				  PRUSS_GPCFG_PRU_GPI_MODE_MASK,
-+				  mode << PRUSS_GPCFG_PRU_GPI_MODE_SHIFT);
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_set_gpimode);
-+
- /*
-  * Control PRU single-step mode
-  *
-diff --git a/include/linux/remoteproc/pru_rproc.h b/include/linux/remoteproc/pru_rproc.h
-index 841da09..887d996 100644
---- a/include/linux/remoteproc/pru_rproc.h
-+++ b/include/linux/remoteproc/pru_rproc.h
-@@ -8,10 +8,28 @@
- #ifndef __LINUX_REMOTEPROC_PRU_RPROC_H
- #define __LINUX_REMOTEPROC_PRU_RPROC_H
- 
-+/**
-+ * enum pru_ctable_idx - Configurable Constant table index identifiers
-+ */
-+enum pru_ctable_idx {
-+	PRU_C24 = 0,
-+	PRU_C25,
-+	PRU_C26,
-+	PRU_C27,
-+	PRU_C28,
-+	PRU_C29,
-+	PRU_C30,
-+	PRU_C31,
-+};
-+
-+enum pruss_gpi_mode;
-+
- #if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
- 
- struct rproc *pru_rproc_get(struct device_node *node, int index);
- void pru_rproc_put(struct rproc *rproc);
-+int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
-+int pru_rproc_set_gpimode(struct rproc *rproc, enum pruss_gpi_mode mode);
- 
- #else
- 
-@@ -22,6 +40,18 @@ static inline struct rproc *pru_rproc_get(struct device_node *node, int index)
- 
- static inline void pru_rproc_put(struct rproc *rproc) { }
- 
-+static inline int pru_rproc_set_ctable(struct rproc *rproc,
-+				       enum pru_ctable_idx c, u32 addr)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int pru_rproc_set_gpimode(struct rproc *rproc,
-+					enum pruss_gpi_mode mode)
-+{
-+	return -ENOTSUPP;
-+}
-+
- #endif /* CONFIG_PRUSS_REMOTEPROC */
- 
- #endif /* __LINUX_REMOTEPROC_PRU_RPROC_H */
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Regards,
+> Bjorn
