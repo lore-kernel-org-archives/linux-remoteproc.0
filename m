@@ -1,54 +1,51 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from zimbra2.kalray.eu ([92.103.151.219]:49188 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728092AbfB1OQC (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Feb 2019 09:16:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 8EC4427E03A4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 15:16:00 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id WQpq5UZn8wXL for <linux-remoteproc@vger.kernel.org>;
-        Thu, 28 Feb 2019 15:16:00 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 57ED127E05A1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 15:16:00 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id doc3VVmQ2SLr for <linux-remoteproc@vger.kernel.org>;
-        Thu, 28 Feb 2019 15:16:00 +0100 (CET)
-Received: from zimbra2.kalray.eu (zimbra2.kalray.eu [192.168.40.202])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 43ADF27E03A4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 15:16:00 +0100 (CET)
-Date: Thu, 28 Feb 2019 15:16:00 +0100 (CET)
-From: =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-Message-ID: <218127790.10567888.1551363360251.JavaMail.zimbra@kalray.eu>
-Subject: [PATCH] remoteproc: remove unused typedef
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v4 8/8] remoteproc: qcom: wcss: explicitly request exclusive reset control
+Date: Sat,  2 Feb 2019 20:56:26 +0530
+Message-Id: <20190202152626.1006-9-govinds@codeaurora.org>
+In-Reply-To: <20190202152626.1006-1-govinds@codeaurora.org>
+References: <20190202152626.1006-1-govinds@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-rproc_handle_resources_t typedef is not used anymore, remove it.
----
- drivers/remoteproc/remoteproc_core.c | 2 --
- 1 file changed, 2 deletions(-)
+Use request exclusive reset control for wcss reset controls.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 54ec38fc5dca..40d8895b7c52 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -48,8 +48,6 @@
- static DEFINE_MUTEX(rproc_list_mutex);
- static LIST_HEAD(rproc_list);
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 0b1f6f537a1e..0821c94be6eb 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -752,20 +752,20 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 	struct device *dev = wcss->dev;
  
--typedef int (*rproc_handle_resources_t)(struct rproc *rproc,
--				struct resource_table *table, int len);
- typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
- 				 void *, int offset, int avail);
+ 	if (aon_reset_required) {
+-		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");;
++		wcss->wcss_aon_reset = devm_reset_control_get_exclusive(dev, "wcss_aon_reset");
+ 		if (IS_ERR(wcss->wcss_aon_reset)) {
+ 			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
+ 			return PTR_ERR(wcss->wcss_aon_reset);
+ 		}
+ 	}
  
+-	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
++	wcss->wcss_reset = devm_reset_control_get_exclusive(dev, "wcss_reset");
+ 	if (IS_ERR(wcss->wcss_reset)) {
+ 		dev_err(wcss->dev, "unable to acquire wcss_reset\n");
+ 		return PTR_ERR(wcss->wcss_reset);
+ 	}
+ 
+-	wcss->wcss_q6_reset = devm_reset_control_get(dev, "wcss_q6_reset");
++	wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
+ 	if (IS_ERR(wcss->wcss_q6_reset)) {
+ 		dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
+ 		return PTR_ERR(wcss->wcss_q6_reset);
 -- 
-2.15.0.276.g89ea799
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
