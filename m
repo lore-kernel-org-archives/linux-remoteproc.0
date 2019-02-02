@@ -1,9 +1,9 @@
 Return-Path: <mka@chromium.org>
 Return-Path: <mka@chromium.org>
-Date: Fri, 1 Feb 2019 17:03:46 -0800
+Date: Fri, 1 Feb 2019 16:17:49 -0800
 From: Matthias Kaehlcke <mka@chromium.org>
 Subject: Re: [PATCH v4 2/6] remoteproc/mediatek: add SCP support for mt8183
-Message-ID: <20190202010346.GA117604@google.com>
+Message-ID: <20190202001749.GT81583@google.com>
 References: <20190131093131.245531-1-pihsun@chromium.org>
  <20190131093131.245531-3-pihsun@chromium.org>
 MIME-Version: 1.0
@@ -14,10 +14,7 @@ To: Pi-Hsun Shih <pihsun@chromium.org>
 Cc: Erin Lo <erin.lo@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Pi-Hsun Shih,
-
-[excuses if you receive this mail twice, mutt garbled up the headers
-and it didn't make it to all recipients/lists]
+Hi Pi-Hsun,
 
 a few comments inline.
 
@@ -75,7 +72,7 @@ On Thu, Jan 31, 2019 at 05:31:27PM +0800, Pi-Hsun Shih wrote:
 
 It would be good to spell out SCP somewhere, e.g.
 
-"... support Mediatek's system companion processor (SCP) via ..."
+"... support Mediatek's system control processor (SCP) via ..."
 
 the example is less important IMO, though it's prefectly fine if you
 can still squeeze it in ;-)
@@ -275,13 +272,13 @@ nit: use uppercase for acronyms (SCP, IPI, ...) in messages and comments?
 
 You could consider to change this to:
 
-        if (rcv_obj->id >= SCP_IPI_MAX || !ipi_desc[rcv_obj->id].handler) {
-                dev_err(scp->dev, "No such ipi id = %d\n", rcv_obj->id);
-                return;
-        }
+	if (rcv_obj->id >= SCP_IPI_MAX || !ipi_desc[rcv_obj->id].handler) {
+		dev_err(scp->dev, "No such ipi id = %d\n", rcv_obj->id);
+		return;
+	}
 
-        memcpy_fromio(tmp_data, &rcv_obj->share_buf, rcv_obj->len);
-        ...
+	memcpy_fromio(tmp_data, &rcv_obj->share_buf, rcv_obj->len);
+	...
 
 Feel free to leave as is if you prefer.
 
@@ -508,10 +505,10 @@ initialization is unnecessary
 
 possible readability tweak:
 
-        if (!ptr)
-                return ERR_PTR(-EINVAL);
+	if (!ptr)
+		return ERR_PTR(-EINVAL);
 
-        return ptr;
+	return ptr;
 
 > +}
 > +EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
@@ -641,7 +638,6 @@ either add a check for 'res' or do resource_size() after the check of
 shouldn't the interrupt be requested after initializing the mutex and
 the waitqueues?
 
-> +
 > +	if (ret) {
 > +		dev_err(dev, "failed to request irq\n");
 > +		goto free_rproc;
@@ -733,8 +729,8 @@ the waitqueues?
 
 I think you'd get more useful information with this:
 
-        if (WARN_ON(id < 0) || WARN_ON(id >= SCP_IPI_MAX) || WARN_ON(!handler))
-                return -EINVAL;
+  	if (WARN_ON(id < 0) || WARN_ON(id >= SCP_IPI_MAX) || WARN_ON(!handler))
+		return -EINVAL;
 
 > +		return -EINVAL;
 > +
@@ -803,11 +799,11 @@ I think you'd get more useful information with this:
 > +
 > +	if (WARN(id <= SCP_IPI_INIT || id >= SCP_IPI_MAX ||
 > +	    len > sizeof(send_obj->share_buf) || !buf,
+> +	    "failed to send ipi message\n"))
+> +		return -EINVAL;
 
 similar as above, consider a combination of WARN_ONs
 
-> +	    "failed to send ipi message\n"))
-> +		return -EINVAL;
 > +
 > +	ret = clk_prepare_enable(scp->clk);
 > +	if (ret) {
@@ -868,7 +864,6 @@ proc 2> send data => BOOM
 > +		else
 > +			ret = 0;
 > +	}
-> +
 > +clock_disable:
 > +	clk_disable_unprepare(scp->clk);
 > +
