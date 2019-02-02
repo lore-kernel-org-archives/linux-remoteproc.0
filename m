@@ -1,109 +1,172 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
+Return-Path: <govinds@codeaurora.org>
 MIME-Version: 1.0
-References: <20190131003933.11436-1-bjorn.andersson@linaro.org> <20190131003933.11436-7-bjorn.andersson@linaro.org>
-In-Reply-To: <20190131003933.11436-7-bjorn.andersson@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 1 Feb 2019 15:39:00 -0800
-Message-ID: <CAD=FV=Us8-VBGhwuJHCAGAxV13FOYOx2WBDegQ60SSG=oSO=EQ@mail.gmail.com>
-Subject: Re: [PATCH v5 06/10] soc: qcom: Add AOSS QMP genpd provider
-Content-Type: text/plain; charset="UTF-8"
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Sat, 02 Feb 2019 21:15:43 +0530
+From: Govind Singh <govinds@codeaurora.org>
+Subject: Re: [PATCH v3 2/7] clk: qcom: Add WCSS Q6DSP clock controller for
+ QCS404
+In-Reply-To: <154507272487.19322.760504004108754132@swboyd.mtv.corp.google.com>
+References: <20181215103557.2748-1-govinds@codeaurora.org>
+ <20181215103557.2748-3-govinds@codeaurora.org>
+ <154507272487.19322.760504004108754132@swboyd.mtv.corp.google.com>
+Message-ID: <e7f94a34ff56cd008245fadf766d4c23@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
 
-On Wed, Jan 30, 2019 at 4:40 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> +struct qmp_pd {
-> +       struct qmp *qmp;
-> +
-> +       struct generic_pm_domain pd;
-> +
-> +       const char *name;
+On 2018-12-18 00:22, Stephen Boyd wrote:
+> Quoting Govind Singh (2018-12-15 02:35:52)
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 9fe28b9ceba8..84acc7718691 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -222,6 +222,15 @@ config QCS_GCC_404
+>>           Say Y if you want to use multimedia devices or peripheral
+>>           devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
+>> 
+>> +config QCS_WCSSCC_404
+>> +       tristate "QCS404 WCSS Clock Controller"
+>> +       depends on COMMON_CLK_QCOM
+> 
+> This is going away, so you can drop this depends on statement soon.
+> 
 
-nit: why do you need name?  Can't you just reach in and use pd.name
-since they're the same?
+Removed in v4.
 
+>> +       select QCS_GCC_404
+>> +       help
+>> +         Support for the WCSS clock controller on QCS404 devices.
+>> +         Say Y if you want to use the WCSS branch clocks of the WCSS 
+>> clock
+>> +         controller to reset the WCSS subsystem.
+>> +
+>>  config SDM_GCC_845
+>>         tristate "SDM845 Global Clock Controller"
+>>         select QCOM_GDSC
+>> diff --git a/drivers/clk/qcom/wcsscc-qcs404.c 
+>> b/drivers/clk/qcom/wcsscc-qcs404.c
+>> new file mode 100644
+>> index 000000000000..bd694ef1b6ac
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/wcsscc-qcs404.c
+>> @@ -0,0 +1,297 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_address.h>
+> 
+> Is this used?
+> 
+>> +#include <linux/clk.h>
+> 
+> Is this used?
+> 
 
-> +static int qmp_pd_clock_toggle(struct qmp_pd *res, bool enable)
-> +{
-> +       char buf[AOSS_QMP_PD_MSG_LEN];
-> +
-> +       snprintf(buf, sizeof(buf), "{class: clock, res: %s, val: %d}",
-> +                res->name, !!enable);
+Removed unnecessary includes and cleanup suggested by you in v4.
 
-nit: "enable" is a bool, so "!!" shouldn't be necessary right?
+> 
+>> + * CLK_IGNORE_UNUSED flags which prevent these
+>> + * clocks from being gated during bootup.
+> 
+> Ok.. but userspace is after CLK_IGNORE_UNUSED would process these clks?
+> So we're keeping them on from the bootloader why? Something is using
+> these clks during that operation but after that point they need to be
+> turned off?
+> 
 
+Yes remote proc will process this clock during rproc start. I discussed 
+this issue with Bjorn.
+I will seek his help.
+Need to root cause why these clocks are voted from bootloader.
 
-> +       return qmp_send(res->qmp, buf, sizeof(buf));
+>> + */
+>> +
+>> +static int wcss_clocks_qcs404_probe(struct platform_device *pdev, int 
+>> index,
+>> +                                   const struct qcom_cc_desc *desc)
+>> +{
+>> +       struct regmap *regmap;
+>> +       struct resource *res;
+>> +       void __iomem *base;
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+>> +       base = devm_ioremap_resource(&pdev->dev, res);
+>> +       if (IS_ERR(base))
+>> +               return -ENOMEM;
+>> +
+>> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, 
+>> desc->config);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+>> +
+>> +       return qcom_cc_really_probe(pdev, desc, regmap);
+>> +}
+> 
+> You're the second user of this "probe on reg region" logic. Please
+> extract it out of the lpasscc driver and put it into common.c so it can
+> be reused by the two drivers.
+> 
 
-It appears that you write a string less than 96 bytes onto your stack
-buffer but then send the full 96 bytes of stack to the AOSS.  That
-doesn't seem like a very good idea to me.  Sorry, but your secret plan
-to embed NSA code in the AOSS firmware and scrape data off the kernel
-stack has been foiled.
+I have addressed in v4.
 
+>> +
+>> +static int wcss_cc_qcs404_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct qcom_cc_desc *desc;
+>> +       int ret;
+>> +
+>> +       wcss_regmap_config.name = "wcss_q6sstop";
+>> +       desc = &wcss_q6sstop_qcs404_desc;
+>> +
+>> +       ret = wcss_clocks_qcs404_probe(pdev, 0, desc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       wcss_regmap_config.name = "wcnss_tcsr";
+>> +       desc = &wcnss_tcsr_qcs404_desc;
+>> +
+>> +       ret = wcss_clocks_qcs404_probe(pdev, 1, desc);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       wcss_regmap_config.name = "wcss_qdsp6ss";
+>> +       desc = &wcnss_qdsp6ss_qcs404_desc;
+>> +
+>> +       return wcss_clocks_qcs404_probe(pdev, 2, desc);
+>> +}
+>> +
+>> +static struct platform_driver wcss_cc_qcs404_driver = {
+>> +       .probe          = wcss_cc_qcs404_probe,
+>> +       .driver         = {
+>> +               .name   = "qcs404-wcsscc",
+>> +               .of_match_table = wcss_cc_qcs404_match_table,
+>> +       },
+>> +};
+>> +
+>> +static int __init wcss_cc_qcs404_init(void)
+>> +{
+>> +       return platform_driver_register(&wcss_cc_qcs404_driver);
+>> +}
+>> +subsys_initcall(wcss_cc_qcs404_init);
+> 
+> Where is the driver removal exit function?
+> 
 
-> +static int qmp_pd_image_toggle(struct qmp_pd *res, bool enable)
-> +{
-> +       char buf[AOSS_QMP_PD_MSG_LEN];
-> +
-> +       snprintf(buf, sizeof(buf),
-> +                "{class: image, res: load_state, name: %s, val: %s}",
-> +                res->name, enable ? "on" : "off");
-> +       return qmp_send(res->qmp, buf, sizeof(buf));
+My bad, added in v4.
 
-Please tell me you're joking that for turning on/off clocks "val" is
-1/0 but for turning off images "val" is on/off.
+>> +
+>> +MODULE_LICENSE("GPL v2");
+> 
+> MODULE_DESCRIPTION?
 
-
-> +static int qmp_pd_probe(struct platform_device *pdev)
-> +{
-> +       struct genpd_onecell_data *data;
-> +       struct device *parent = pdev->dev.parent;
-> +       struct qmp_pd *res;
-> +       struct qmp *qmp;
-> +       size_t num = ARRAY_SIZE(sdm845_resources);
-> +       int i;
-> +
-> +       qmp = dev_get_drvdata(pdev->dev.parent);
-> +       if (!qmp)
-> +               return -EINVAL;
-> +
-> +       res = devm_kcalloc(&pdev->dev, num, sizeof(*res), GFP_KERNEL);
-> +       if (!res)
-> +               return -ENOMEM;
-> +
-> +       data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +
-> +       data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
-> +                                    GFP_KERNEL);
-> +
-> +       for (i = 0; i < num; i++) {
-> +               pm_genpd_init(&res[i].pd, NULL, true);
-> +               res[i].qmp = qmp;
-> +               res[i].name = sdm845_resources[i].name;
-> +
-> +               res[i].pd.name = sdm845_resources[i].name;
-> +               res[i].pd.power_on = sdm845_resources[i].on;
-> +               res[i].pd.power_off = sdm845_resources[i].off;
-> +
-> +               data->domains[data->num_domains++] = &res[i].pd;
-
-nit: data->domains[i] = &res[i].pd;
-
-...and then somewhere in this function (not in the loop) just write:
-
-data->num_domains = num;
-
-
-I think that's the same, right?  They you don't have to re-compute
-num_domains by adding 1 at at time and it'd also be more obvious that
-all the array accesses in the loop were the same number?
-
-
--Doug
+BR,
+Govind
