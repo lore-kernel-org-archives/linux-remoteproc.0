@@ -1,34 +1,63 @@
-Return-Path: <xiaoxiang781216@gmail.com>
-Return-Path: <xiaoxiang781216@gmail.com>
-From: Xiang Xiao <xiaoxiang781216@gmail.com>
-Subject: Re: [v4,00/14] ASoC: Sound Open Firmware (SOF) core
-Date: Tue, 19 Feb 2019 04:03:08 +0800
-Message-Id: <1550520188-9253-1-git-send-email-xiaoxiang@xiaomi.com>
-In-Reply-To: <20190213220734.10471-1-pierre-louis.bossart@linux.intel.com>
-References: <20190213220734.10471-1-pierre-louis.bossart@linux.intel.com>
-To: Daniel Baluta <daniel.baluta@gmail.com>, andriy.shevchenko@intel.com, tiwai@suse.de, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, liam.r.girdwood@linux.intel.com, vkoul@kernel.org, broonie@kernel.org, Alan Cox <alan@linux.intel.com>, sound-open-firmware@alsa-project.org, alsa-devel@alsa-project.org, Bjorn Andersson <bjorn.andersson@linaro.org>, wendy.liang@xilinx.com, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Kumar Gala <kumar.gala@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: Xiang Xiao <xiaoxiang@xiaomi.com>
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v4 0/8] Add non PAS wcss Q6 support for QCS404
+Date: Sat,  2 Feb 2019 20:56:18 +0530
+Message-Id: <20190202152626.1006-1-govinds@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Should we utilize official IPC frameowrk instead reinverting the wheel?
-1.Load firmware by drivers/remoteproc
-  https://www.kernel.org/doc/Documentation/remoteproc.txt
-2.Do the comunication through drivers/rpmsg
-  https://www.kernel.org/doc/Documentation/rpmsg.txt
-Many vendor(TI, Qualcomm, ST, NXP, Xilinx...) migrate to remoteproc/rpmsg, why Intel provide an other IPC mechanism?
-Actually, remoteproc/rpmsg is much better than SOF IPC because:
-1.Completely isolate the firmware load and message transfer:
-  The same rpmsg driver could run on any remote processor
-2.Separate the application protocol from transfer layer:
-  One remote processor could host many rpmsg services
-3.Completely follow kernel driver model(rpsmg_bus, rpmsg_device and rpmsg_driver).
-4.Support by many RTOS(Bare Metal, FreeRTOS, Zephyr, NuttX, Nucleus, uC/OS...) for remote side:
-  https://github.com/OpenAMP/open-amp
-  https://github.com/NXPmicro/rpmsg-lite
-5.Maintained by the standard committee:
-  https://www.multicore-association.org/workgroup/oamp.php
-  https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=virtio
-Since the keypoint of SOF is the platform agnostic and modular, please use the standard technique here.
+Add non PAS(Peripheral Authentication System) WCSS remoteproc
+driver support and wcss clock/reset controls for QCS404 SOC.
+Add WCSS q6 bootup and shutdown sequence handled from
+Application Processor SubSystem(APSS).
 
-Thanks
-Xiang
+
+Changes since v3:
+ dt binding cleanup.
+ Fixed remoteproc recovery.
+ Added remoteproc dump support.
+ wcsscc cleanup/refactoring.
+
+Changes since v2:
+ Removed unused properties.
+ Refactored code to have common logic b/w ipq8074 and QCS404, wherever possible.
+ Added compatible example.
+ Removed wcss-protected bool.
+
+Changes since v1:
+  Corrected clock names as per comments in v1 patch.
+
+
+Govind Singh (8):
+  dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
+  clk: qcom: Add WCSS gcc clock control for QCS404
+  dt-bindings: clock: qcom: Introduce QCOM WCSS Q6DSP clock bindings
+  clk: qcom: Add WCSS Q6DSP clock controller for QCS404
+  remoteproc: qcom: wcss: populate hardcoded param using driver data
+  dt-binding: remoteproc: Add QTI WCSS PIL bindings
+  remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
+  remoteproc: qcom: wcss: explicitly request exclusive reset control
+
+ .../devicetree/bindings/clock/qcom,wcsscc.txt |  26 +
+ .../bindings/remoteproc/qcom,q6v5.txt         |  61 ++
+ drivers/clk/qcom/Kconfig                      |   8 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/common.c                     |  20 +
+ drivers/clk/qcom/common.h                     |   3 +-
+ drivers/clk/qcom/gcc-qcs404.c                 |  37 +-
+ drivers/clk/qcom/lpasscc-sdm845.c             |  23 +-
+ drivers/clk/qcom/wcsscc-qcs404.c              | 282 +++++++++
+ drivers/remoteproc/qcom_q6v5_wcss.c           | 587 ++++++++++++++++--
+ include/dt-bindings/clock/qcom,gcc-qcs404.h   |   3 +
+ include/dt-bindings/clock/qcom,wcss-qcs404.h  |  25 +
+ 12 files changed, 1013 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
+ create mode 100644 drivers/clk/qcom/wcsscc-qcs404.c
+ create mode 100644 include/dt-bindings/clock/qcom,wcss-qcs404.h
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
