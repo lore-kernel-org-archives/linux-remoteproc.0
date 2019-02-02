@@ -1,221 +1,756 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 05/14] remoteproc: add map parameter to da_to_va
-Date: Mon, 4 Feb 2019 16:22:38 +0200
-Message-ID: <1549290167-876-6-git-send-email-rogerq@ti.com>
-In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v4 7/8] remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
+Date: Sat,  2 Feb 2019 20:56:25 +0530
+Message-Id: <20190202152626.1006-8-govinds@codeaurora.org>
+In-Reply-To: <20190202152626.1006-1-govinds@codeaurora.org>
+References: <20190202152626.1006-1-govinds@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: David Lechner <david@lechnology.com>
+Add non PAS WCSS remoteproc driver support for QCS404 SOC.
+Add WCSS q6 bootup and shutdown sequence handled from
+Application Processor SubSystem(APSS).
 
-This adds a new map parameter to the da_to_va callback for remoteproc
-devices. This parameter will be used by devices that have more than
-one memory map, such as the PRU found in TI Sitara SoCs.
-
-On these devices, the same physical memory address can refer to two
-different locations, i.e. instruction memory or data memory both start
-at 0x0. So, an extra bit of information is needed in the da_to_va
-callback to tell these apart.
-
-Devices that only have a single memory map will just pass 0 for this
-parameter. For now we are using 0 everywhere, but later patches will
-modify this value.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
 ---
- drivers/remoteproc/imx_rproc.c             |  2 +-
- drivers/remoteproc/keystone_remoteproc.c   |  3 ++-
- drivers/remoteproc/qcom_q6v5_mss.c         |  2 +-
- drivers/remoteproc/qcom_wcnss.c            |  2 +-
- drivers/remoteproc/remoteproc_core.c       | 11 +++++++----
- drivers/remoteproc/remoteproc_elf_loader.c |  4 ++--
- drivers/remoteproc/remoteproc_internal.h   |  2 +-
- drivers/remoteproc/st_slim_rproc.c         |  2 +-
- drivers/remoteproc/wkup_m3_rproc.c         |  3 ++-
- include/linux/remoteproc.h                 |  2 +-
- 10 files changed, 19 insertions(+), 14 deletions(-)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 554 ++++++++++++++++++++++++++--
+ 1 file changed, 519 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 54c07fd..78c3502 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -211,7 +211,7 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
- 	return -ENOENT;
- }
- 
--static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
- {
- 	struct imx_rproc *priv = rproc->priv;
- 	void *va = NULL;
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index aaac311..0f87cf9 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -254,7 +254,8 @@ static void keystone_rproc_kick(struct rproc *rproc, int vqid)
-  * can be used either by the remoteproc core for loading (when using kernel
-  * remoteproc loader), or by any rpmsg bus drivers.
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index f18b55227805..0b1f6f537a1e 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -4,14 +4,19 @@
+  * Copyright (C) 2014 Sony Mobile Communications AB
+  * Copyright (c) 2012-2018, The Linux Foundation. All rights reserved.
   */
--static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len,
-+				     int map)
- {
- 	struct keystone_rproc *ksproc = rproc->priv;
- 	void __iomem *va = NULL;
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 01be731..d0cdc34 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -971,7 +971,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- 	int ret = 0;
- 	struct q6v5 *qproc = rproc->priv;
- 	unsigned long mask = BIT((unsigned long)segment->priv);
--	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-+	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size, 0);
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/io.h>
+ #include <linux/iopoll.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
++#include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+ #include "qcom_common.h"
+@@ -23,6 +28,9 @@
+ #define Q6SS_GFMUX_CTL_REG		0x020
+ #define Q6SS_PWR_CTL_REG		0x030
+ #define Q6SS_MEM_PWR_CTL		0x0B0
++#define Q6SS_STRAP_ACC			0x110
++#define Q6SS_CGC_OVERRIDE		0x034
++#define Q6SS_BCR_REG			0x6000
  
- 	/* Unlock mba before copying segments */
- 	if (!qproc->dump_mba_loaded)
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index b0e07e9..92b05fb 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -295,7 +295,7 @@ static int wcnss_stop(struct rproc *rproc)
+ /* AXI Halt Register Offsets */
+ #define AXI_HALTREQ_REG			0x0
+@@ -36,6 +44,9 @@
+ #define Q6SS_CORE_ARES			BIT(1)
+ #define Q6SS_BUS_ARES_ENABLE		BIT(2)
+ 
++/* Q6SS_BRC_RESET */
++#define Q6SS_BRC_BLK_ARES		BIT(0)
++
+ /* Q6SS_GFMUX_CTL */
+ #define Q6SS_CLK_ENABLE			BIT(1)
+ 
+@@ -44,6 +55,7 @@
+ #define Q6SS_SLP_RET_N			BIT(19)
+ #define Q6SS_CLAMP_IO			BIT(20)
+ #define QDSS_BHS_ON			BIT(21)
++#define QDSS_Q6_MEMORIES		GENMASK(15, 0)
+ 
+ /* Q6SS parameters */
+ #define Q6SS_LDO_BYP		BIT(25)
+@@ -70,10 +82,22 @@
+ #define TCSR_WCSS_CLK_MASK	0x1F
+ #define TCSR_WCSS_CLK_ENABLE	0x14
+ 
++#define MAX_HALT_REG		3
++enum {
++	WCSS_IPQ8074,
++	WCSS_QCS404,
++};
++
+ struct wcss_data {
+ 	const char *firmware_name;
+ 	int crash_reason_smem;
+ 	u8 version;
++	bool aon_reset_required;
++	const char *ssr_name;
++	const char *sysmon_name;
++	int ssctl_id;
++	const struct rproc_ops *ops;
++	bool requires_force_stop;
+ };
+ 
+ struct q6v5_wcss {
+@@ -87,9 +111,29 @@ struct q6v5_wcss {
+ 	u32 halt_wcss;
+ 	u32 halt_nc;
+ 
++	struct clk *xo;
++	struct clk *ahbfabric_cbcr_clk;
++	struct clk *gcc_abhs_cbcr;
++	struct clk *gcc_axim_cbcr;
++	struct clk *lcc_csr_cbcr;
++	struct clk *ahbs_cbcr;
++	struct clk *tcm_slave_cbcr;
++	struct clk *qdsp6ss_abhm_cbcr;
++	struct clk *qdsp6ss_sleep_cbcr;
++	struct clk *qdsp6ss_axim_cbcr;
++	struct clk *qdsp6ss_xo_cbcr;
++	struct clk *qdsp6ss_core_gfmux;
++	struct clk *wcss_bcr_cbcr;
++	struct regulator *cx_supply;
++
++	struct qcom_rproc_glink glink_subdev;
++	struct qcom_rproc_ssr ssr_subdev;
++	struct qcom_sysmon *sysmon;
++
+ 	struct reset_control *wcss_aon_reset;
+ 	struct reset_control *wcss_reset;
+ 	struct reset_control *wcss_q6_reset;
++	struct reset_control *wcss_q6_bcr_reset;
+ 
+ 	struct qcom_q6v5 q6v5;
+ 
+@@ -97,9 +141,9 @@ struct q6v5_wcss {
+ 	phys_addr_t mem_reloc;
+ 	void *mem_region;
+ 	size_t mem_size;
+-
+ 	int crash_reason_smem;
+ 	u8 version;
++	bool requires_force_stop;
+ };
+ 
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+@@ -242,6 +286,195 @@ static int q6v5_wcss_start(struct rproc *rproc)
  	return ret;
  }
  
--static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len)
-+static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len, int map)
- {
- 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
- 	int offset;
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 54ec38f..06ef4fa 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -166,6 +166,8 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-  * @rproc: handle of a remote processor
-  * @da: remoteproc device address to translate
-  * @len: length of the memory region @da is pointing to
-+ * @map: indicates which memory map to use for devices with more than one
-+ *       memory map or 0 for devices that only have a single memory map
-  *
-  * Some remote processors will ask us to allocate them physically contiguous
-  * memory regions (which we call "carveouts"), and map them to specific
-@@ -190,13 +192,13 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
-  * here the output of the DMA API for the carveouts, which should be more
-  * correct.
-  */
--void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
- {
- 	struct rproc_mem_entry *carveout;
- 	void *ptr = NULL;
++static int q6v5_wcss_qcs404_power_on(struct q6v5_wcss *wcss)
++{
++	unsigned long val;
++	int ret, idx;
++
++	/* Toggle the restart */
++	reset_control_assert(wcss->wcss_reset);
++	usleep_range(200, 300);
++	reset_control_deassert(wcss->wcss_reset);
++	usleep_range(200, 300);
++
++	/* Enable GCC_WDSP_Q6SS_AHBS_CBCR clock */
++	ret = clk_prepare_enable(wcss->gcc_abhs_cbcr);
++	if (ret)
++		return ret;
++
++	/* Remove reset to the WCNSS QDSP6SS */
++	reset_control_deassert(wcss->wcss_q6_bcr_reset);
++
++	/* Enable Q6SSTOP_AHBFABRIC_CBCR clock */
++	ret = clk_prepare_enable(wcss->ahbfabric_cbcr_clk);
++	if (ret)
++		goto disable_gcc_abhs_cbcr_clk;
++
++	/* Enable the LCCCSR CBC clock, Q6SSTOP_Q6SSTOP_LCC_CSR_CBCR clock */
++	ret = clk_prepare_enable(wcss->lcc_csr_cbcr);
++	if (ret)
++		goto disable_ahbfabric_cbcr_clk;
++
++	/* Enable the Q6AHBS CBC, Q6SSTOP_Q6SS_AHBS_CBCR clock */
++	ret = clk_prepare_enable(wcss->ahbs_cbcr);
++	if (ret)
++		goto disable_csr_cbcr_clk;
++
++	/* Enable the TCM slave CBC, Q6SSTOP_Q6SS_TCM_SLAVE_CBCR clock */
++	ret = clk_prepare_enable(wcss->tcm_slave_cbcr);
++	if (ret)
++		goto disable_ahbs_cbcr_clk;
++
++	/* Enable the Q6SS AHB master CBC, Q6SSTOP_Q6SS_AHBM_CBCR clock */
++	ret = clk_prepare_enable(wcss->qdsp6ss_abhm_cbcr);
++	if (ret)
++		goto disable_tcm_slave_cbcr_clk;
++
++	/* Enable the Q6SS AXI master CBC, Q6SSTOP_Q6SS_AXIM_CBCR clock */
++	ret = clk_prepare_enable(wcss->qdsp6ss_axim_cbcr);
++	if (ret)
++		goto disable_abhm_cbcr_clk;
++
++	/* Enable the Q6SS XO CBC */
++	ret = clk_prepare_enable(wcss->qdsp6ss_xo_cbcr);
++	if (ret)
++		goto disable_axim_cbcr_clk;
++
++	writel(0, wcss->reg_base + Q6SS_CGC_OVERRIDE);
++
++	/* Enable QDSP6 sleep clock clock */
++	ret = clk_prepare_enable(wcss->qdsp6ss_sleep_cbcr);
++	if (ret)
++		goto disable_xo_cbcr_clk;
++
++	/* Enable the Enable the Q6 AXI clock, GCC_WDSP_Q6SS_AXIM_CBCR*/
++	ret = clk_prepare_enable(wcss->gcc_axim_cbcr);
++	if (ret)
++		goto disable_sleep_cbcr_clk;
++
++	/* Assert resets, stop core */
++	val = readl(wcss->reg_base + Q6SS_RESET_REG);
++	val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
++	writel(val, wcss->reg_base + Q6SS_RESET_REG);
++
++	/* Program the QDSP6SS PWR_CTL register */
++	writel(0x01700000, wcss->reg_base + Q6SS_PWR_CTL_REG);
++
++	writel(0x03700000, wcss->reg_base + Q6SS_PWR_CTL_REG);
++
++	writel(0x03300000, wcss->reg_base + Q6SS_PWR_CTL_REG);
++
++	writel(0x033C0000, wcss->reg_base + Q6SS_PWR_CTL_REG);
++
++	/*
++	 * Enable memories by turning on the QDSP6 memory foot/head switch, one
++	 * bank at a time to avoid in-rush current
++	 */
++	for (idx = 28; idx >= 0; idx--) {
++		writel((readl(wcss->reg_base + Q6SS_MEM_PWR_CTL) |
++			(1 << idx)), wcss->reg_base + Q6SS_MEM_PWR_CTL);
++	}
++
++	writel(0x031C0000, wcss->reg_base + Q6SS_PWR_CTL_REG);
++	writel(0x030C0000, wcss->reg_base + Q6SS_PWR_CTL_REG);
++
++	val = readl(wcss->reg_base + Q6SS_RESET_REG);
++	val &= ~Q6SS_CORE_ARES;
++	writel(val, wcss->reg_base + Q6SS_RESET_REG);
++
++	/* Enable the Q6 core clock at the GFM, Q6SSTOP_QDSP6SS_GFMUX_CTL */
++	ret = clk_prepare_enable(wcss->qdsp6ss_core_gfmux);
++	if (ret)
++		goto disable_gcc_axim_cbcr_clk;
++
++	/* Enable sleep clock branch needed for BCR circuit */
++	ret = clk_prepare_enable(wcss->wcss_bcr_cbcr);
++	if (ret)
++		goto disable_core_gfmux_clk;
++
++	return 0;
++
++disable_core_gfmux_clk:
++	clk_disable_unprepare(wcss->qdsp6ss_core_gfmux);
++disable_gcc_axim_cbcr_clk:
++	clk_disable_unprepare(wcss->gcc_axim_cbcr);
++disable_sleep_cbcr_clk:
++	clk_disable_unprepare(wcss->qdsp6ss_sleep_cbcr);
++disable_xo_cbcr_clk:
++	clk_disable_unprepare(wcss->qdsp6ss_xo_cbcr);
++disable_axim_cbcr_clk:
++	clk_disable_unprepare(wcss->qdsp6ss_axim_cbcr);
++disable_abhm_cbcr_clk:
++	clk_disable_unprepare(wcss->qdsp6ss_abhm_cbcr);
++disable_tcm_slave_cbcr_clk:
++	clk_disable_unprepare(wcss->tcm_slave_cbcr);
++disable_ahbs_cbcr_clk:
++	clk_disable_unprepare(wcss->ahbs_cbcr);
++disable_csr_cbcr_clk:
++	clk_disable_unprepare(wcss->lcc_csr_cbcr);
++disable_ahbfabric_cbcr_clk:
++	clk_disable_unprepare(wcss->ahbfabric_cbcr_clk);
++disable_gcc_abhs_cbcr_clk:
++	clk_disable_unprepare(wcss->gcc_abhs_cbcr);
++
++	return ret;
++}
++
++static inline int q6v5_wcss_qcs404_reset(struct q6v5_wcss *wcss)
++{
++	unsigned long val;
++
++	writel(0x80800000, wcss->reg_base + Q6SS_STRAP_ACC);
++
++	/* Start core execution */
++	val = readl(wcss->reg_base + Q6SS_RESET_REG);
++	val &= ~Q6SS_STOP_CORE;
++	writel(val, wcss->reg_base + Q6SS_RESET_REG);
++
++	return 0;
++}
++
++static int q6v5_qcs404_wcss_start(struct rproc *rproc)
++{
++	struct q6v5_wcss *wcss = rproc->priv;
++	int ret;
++
++	ret = clk_prepare_enable(wcss->xo);
++	if (ret)
++		return ret;
++
++	ret = regulator_enable(wcss->cx_supply);
++	if (ret)
++		goto disable_xo_clk;
++
++	qcom_q6v5_prepare(&wcss->q6v5);
++
++	ret = q6v5_wcss_qcs404_power_on(wcss);
++	if (ret) {
++		dev_err(wcss->dev, "wcss clk_enable failed\n");
++		goto disable_cx_supply;
++	}
++
++	writel(rproc->bootaddr >> 4, wcss->reg_base + Q6SS_RST_EVB);
++
++	q6v5_wcss_qcs404_reset(wcss);
++
++	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
++	if (ret == -ETIMEDOUT) {
++		dev_err(wcss->dev, "start timed out\n");
++		goto disable_cx_supply;
++	}
++
++	return 0;
++
++disable_cx_supply:
++	regulator_disable(wcss->cx_supply);
++disable_xo_clk:
++	clk_disable_unprepare(wcss->xo);
++
++	return ret;
++}
++
+ static void q6v5_wcss_halt_axi_port(struct q6v5_wcss *wcss,
+ 				    struct regmap *halt_map,
+ 				    u32 offset)
+@@ -276,6 +509,58 @@ static void q6v5_wcss_halt_axi_port(struct q6v5_wcss *wcss,
+ 	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 0);
+ }
  
- 	if (rproc->ops->da_to_va) {
--		ptr = rproc->ops->da_to_va(rproc, da, len);
-+		ptr = rproc->ops->da_to_va(rproc, da, len, map);
- 		if (ptr)
- 			goto out;
- 	}
-@@ -575,7 +577,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
++static int q6v5_qcs404_wcss_shutdown(struct q6v5_wcss *wcss)
++{
++	unsigned long val;
++	int ret;
++
++	q6v5_wcss_halt_axi_port(wcss, wcss->halt_map, wcss->halt_wcss);
++
++	/* assert clamps to avoid MX current inrush */
++	val = readl(wcss->reg_base + Q6SS_PWR_CTL_REG);
++	val |= (Q6SS_CLAMP_IO | Q6SS_CLAMP_WL | Q6SS_CLAMP_QMC_MEM);
++	writel(val, wcss->reg_base + Q6SS_PWR_CTL_REG);
++
++	/* Disable memories by turning off memory foot/headswitch */
++	writel((readl(wcss->reg_base + Q6SS_MEM_PWR_CTL) &
++		~QDSS_Q6_MEMORIES),
++		wcss->reg_base + Q6SS_MEM_PWR_CTL);
++
++	/* Clear the BHS_ON bit */
++	val = readl(wcss->reg_base + Q6SS_PWR_CTL_REG);
++	val &= ~Q6SS_BHS_ON;
++	writel(val, wcss->reg_base + Q6SS_PWR_CTL_REG);
++
++	clk_disable_unprepare(wcss->ahbfabric_cbcr_clk);
++	clk_disable_unprepare(wcss->lcc_csr_cbcr);
++	clk_disable_unprepare(wcss->tcm_slave_cbcr);
++	clk_disable_unprepare(wcss->qdsp6ss_abhm_cbcr);
++	clk_disable_unprepare(wcss->qdsp6ss_axim_cbcr);
++	clk_disable_unprepare(wcss->qdsp6ss_xo_cbcr);
++	clk_disable_unprepare(wcss->ahbs_cbcr);
++	clk_disable_unprepare(wcss->wcss_bcr_cbcr);
++	clk_disable_unprepare(wcss->qdsp6ss_core_gfmux);
++	clk_disable_unprepare(wcss->gcc_abhs_cbcr);
++
++	ret = reset_control_assert(wcss->wcss_reset);
++	if (ret) {
++		dev_err(wcss->dev, "wcss_reset failed\n");
++		return ret;
++	}
++	usleep_range(200, 300);
++
++	ret = reset_control_deassert(wcss->wcss_reset);
++	if (ret) {
++		dev_err(wcss->dev, "wcss_reset failed\n");
++		return ret;
++	}
++	usleep_range(200, 300);
++
++	clk_disable_unprepare(wcss->gcc_axim_cbcr);
++
++	return 0;
++}
++
+ static int q6v5_wcss_powerdown(struct q6v5_wcss *wcss)
+ {
+ 	int ret;
+@@ -395,20 +680,28 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 	int ret;
+ 
+ 	/* WCSS powerdown */
+-	ret = qcom_q6v5_request_stop(&wcss->q6v5);
+-	if (ret == -ETIMEDOUT) {
+-		dev_err(wcss->dev, "timed out on wait\n");
+-		return ret;
++	if (wcss->requires_force_stop) {
++		ret = qcom_q6v5_request_stop(&wcss->q6v5);
++		if (ret == -ETIMEDOUT) {
++			dev_err(wcss->dev, "timed out on wait\n");
++			return ret;
++		}
  	}
  
- 	/* what's the kernel address of this resource ? */
--	ptr = rproc_da_to_va(rproc, rsc->da, rsc->len);
-+	ptr = rproc_da_to_va(rproc, rsc->da, rsc->len, 0);
- 	if (!ptr) {
- 		dev_err(dev, "erroneous trace resource entry\n");
+-	ret = q6v5_wcss_powerdown(wcss);
+-	if (ret)
+-		return ret;
+-
+-	/* Q6 Power down */
+-	ret = q6v5_q6_powerdown(wcss);
+-	if (ret)
+-		return ret;
++	if (wcss->version == WCSS_QCS404) {
++		ret = q6v5_qcs404_wcss_shutdown(wcss);
++		if (ret)
++			return ret;
++	} else {
++		ret = q6v5_wcss_powerdown(wcss);
++		if (ret)
++			return ret;
++
++		/* Q6 Power down */
++		ret = q6v5_q6_powerdown(wcss);
++		if (ret)
++			return ret;
++	}
+ 
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+@@ -444,14 +737,26 @@ static const struct rproc_ops q6v5_wcss_ipq8074_ops = {
+ 	.get_boot_addr = rproc_elf_get_boot_addr,
+ };
+ 
+-static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss)
++static const struct rproc_ops q6v5_wcss_qcs404_ops = {
++	.start = q6v5_qcs404_wcss_start,
++	.stop = q6v5_wcss_stop,
++	.da_to_va = q6v5_wcss_da_to_va,
++	.load = q6v5_wcss_load,
++	.get_boot_addr = rproc_elf_get_boot_addr,
++	.parse_fw = qcom_register_dump_segments,
++};
++
++static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
++				bool aon_reset_required)
+ {
+ 	struct device *dev = wcss->dev;
+ 
+-	wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");
+-	if (IS_ERR(wcss->wcss_aon_reset)) {
+-		dev_err(wcss->dev, "unable to acquire wcss_aon_reset\n");
+-		return PTR_ERR(wcss->wcss_aon_reset);
++	if (aon_reset_required) {
++		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");;
++		if (IS_ERR(wcss->wcss_aon_reset)) {
++			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
++			return PTR_ERR(wcss->wcss_aon_reset);
++		}
+ 	}
+ 
+ 	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
+@@ -466,41 +771,60 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss)
+ 		return PTR_ERR(wcss->wcss_q6_reset);
+ 	}
+ 
++	wcss->wcss_q6_bcr_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_bcr_reset");
++	if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
++		dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
++		return PTR_ERR(wcss->wcss_q6_reset);
++	}
++
+ 	return 0;
+ }
+ 
+ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
+ 			       struct platform_device *pdev)
+ {
+-	struct of_phandle_args args;
++	unsigned int halt_reg[MAX_HALT_REG] = {0};
++	struct device_node *syscon;
+ 	struct resource *res;
+ 	int ret;
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qdsp6");
+-	wcss->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	wcss->reg_base = devm_ioremap(&pdev->dev, res->start,
++				      resource_size(res));
+ 	if (IS_ERR(wcss->reg_base))
+ 		return PTR_ERR(wcss->reg_base);
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rmb");
+-	wcss->rmb_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(wcss->rmb_base))
+-		return PTR_ERR(wcss->rmb_base);
++	if (wcss->version == WCSS_IPQ8074) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rmb");
++		wcss->rmb_base = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(wcss->rmb_base))
++			return PTR_ERR(wcss->rmb_base);
++	}
+ 
+-	ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
+-					       "qcom,halt-regs", 3, 0, &args);
+-	if (ret < 0) {
++	syscon = of_parse_phandle(pdev->dev.of_node,
++				  "qcom,halt-regs", 0);
++	if (!syscon) {
+ 		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
  		return -EINVAL;
-@@ -1549,7 +1551,8 @@ static void rproc_coredump(struct rproc *rproc)
- 		if (segment->dump) {
- 			segment->dump(rproc, segment, data + offset);
- 		} else {
--			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-+			ptr = rproc_da_to_va(rproc, segment->da,
-+					     segment->size, 0);
- 			if (!ptr) {
- 				dev_err(&rproc->dev,
- 					"invalid coredump segment (%pad, %zu)\n",
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index b17d72e..8888d39 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -182,7 +182,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 		}
+ 	}
  
- 		/* grab the kernel address for this device address */
--		ptr = rproc_da_to_va(rproc, da, memsz);
-+		ptr = rproc_da_to_va(rproc, da, memsz, 0);
- 		if (!ptr) {
- 			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
- 			ret = -EINVAL;
-@@ -333,6 +333,6 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
- 	if (!shdr)
- 		return NULL;
+-	wcss->halt_map = syscon_node_to_regmap(args.np);
+-	of_node_put(args.np);
++	wcss->halt_map = syscon_node_to_regmap(syscon);
++	of_node_put(syscon);
+ 	if (IS_ERR(wcss->halt_map))
+ 		return PTR_ERR(wcss->halt_map);
  
--	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
-+	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, 0);
+-	wcss->halt_q6 = args.args[0];
+-	wcss->halt_wcss = args.args[1];
+-	wcss->halt_nc = args.args[2];
++	ret = of_property_read_variable_u32_array(pdev->dev.of_node,
++						  "qcom,halt-regs",
++						  halt_reg, 0,
++						  MAX_HALT_REG);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
++		return -EINVAL;
++	}
++
++	wcss->halt_q6 = halt_reg[0];
++	wcss->halt_wcss = halt_reg[1];
++	wcss->halt_nc = halt_reg[2];
+ 
+ 	return 0;
  }
- EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index f6cad24..15e0833 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -51,7 +51,7 @@ void rproc_exit_sysfs(void);
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
- 
--void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
-+void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map);
- int rproc_trigger_recovery(struct rproc *rproc);
- 
- int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index d711d94..8b843c8 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -178,7 +178,7 @@ static int slim_rproc_stop(struct rproc *rproc)
+@@ -534,6 +858,132 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
  	return 0;
  }
  
--static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
++static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
++{
++	int ret;
++
++	wcss->xo = devm_clk_get(wcss->dev, "xo");
++	if (IS_ERR(wcss->xo)) {
++		ret = PTR_ERR(wcss->xo);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get xo clock");
++		return ret;
++	}
++
++	wcss->gcc_abhs_cbcr = devm_clk_get(wcss->dev, "gcc_abhs_cbcr");
++	if (IS_ERR(wcss->gcc_abhs_cbcr)) {
++		ret = PTR_ERR(wcss->gcc_abhs_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get gcc abhs clock");
++		return PTR_ERR(wcss->gcc_abhs_cbcr);
++	}
++
++	wcss->gcc_axim_cbcr = devm_clk_get(wcss->dev, "gcc_axim_cbcr");
++	if (IS_ERR(wcss->gcc_axim_cbcr)) {
++		ret = PTR_ERR(wcss->gcc_axim_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get gcc axim clock\n");
++		return PTR_ERR(wcss->gcc_axim_cbcr);
++	}
++
++	wcss->ahbfabric_cbcr_clk = devm_clk_get(wcss->dev,
++						"wcss_ahbfabric_cbcr");
++	if (IS_ERR(wcss->ahbfabric_cbcr_clk)) {
++		ret = PTR_ERR(wcss->ahbfabric_cbcr_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get ahbfabric clock\n");
++		return PTR_ERR(wcss->ahbfabric_cbcr_clk);
++	}
++
++	wcss->lcc_csr_cbcr = devm_clk_get(wcss->dev, "wcnss_csr_cbcr");
++	if (IS_ERR(wcss->lcc_csr_cbcr)) {
++		ret = PTR_ERR(wcss->lcc_csr_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get csr cbcr clk\n");
++		return PTR_ERR(wcss->lcc_csr_cbcr);
++	}
++
++	wcss->ahbs_cbcr = devm_clk_get(wcss->dev,
++				       "wcnss_ahbs_cbcr");
++	if (IS_ERR(wcss->ahbs_cbcr)) {
++		ret = PTR_ERR(wcss->ahbs_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get ahbs_cbcr clk\n");
++		return PTR_ERR(wcss->ahbs_cbcr);
++	}
++
++	wcss->tcm_slave_cbcr = devm_clk_get(wcss->dev,
++					    "wcnss_tcm_slave_cbcr");
++	if (IS_ERR(wcss->tcm_slave_cbcr)) {
++		ret = PTR_ERR(wcss->tcm_slave_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get tcm cbcr clk\n");
++		return PTR_ERR(wcss->tcm_slave_cbcr);
++	}
++
++	wcss->qdsp6ss_abhm_cbcr = devm_clk_get(wcss->dev, "wcnss_abhm_cbcr");
++	if (IS_ERR(wcss->qdsp6ss_abhm_cbcr)) {
++		ret = PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get abhm cbcr clk\n");
++		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
++	}
++
++	wcss->qdsp6ss_axim_cbcr = devm_clk_get(wcss->dev, "wcnss_axim_cbcr");
++	if (IS_ERR(wcss->qdsp6ss_axim_cbcr)) {
++		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
++		return PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
++	}
++
++	wcss->qdsp6ss_sleep_cbcr = devm_clk_get(wcss->dev, "wcnss_sleep_cbcr");
++	if (IS_ERR(wcss->qdsp6ss_sleep_cbcr)) {
++		ret = PTR_ERR(wcss->qdsp6ss_sleep_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get qdsp6ss_sleep clk\n");
++		return PTR_ERR(wcss->qdsp6ss_sleep_cbcr);
++	}
++
++	wcss->qdsp6ss_xo_cbcr = devm_clk_get(wcss->dev,
++					     "wcnss_qdsp6ss_xo_cbcr");
++	if (IS_ERR(wcss->qdsp6ss_xo_cbcr)) {
++		ret = PTR_ERR(wcss->qdsp6ss_xo_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get qdsp6ss_xo_cbcr clk\n");
++		return PTR_ERR(wcss->qdsp6ss_xo_cbcr);
++	}
++
++	wcss->qdsp6ss_core_gfmux = devm_clk_get(wcss->dev, "wcnss_core_gfm");
++	if (IS_ERR(wcss->qdsp6ss_core_gfmux)) {
++		ret = PTR_ERR(wcss->qdsp6ss_core_gfmux);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get core gfm clk\n");
++		return PTR_ERR(wcss->qdsp6ss_core_gfmux);
++	}
++
++	wcss->wcss_bcr_cbcr = devm_clk_get(wcss->dev, "wcss_bcr_cbcr");
++	if (IS_ERR(wcss->wcss_bcr_cbcr)) {
++		ret = PTR_ERR(wcss->wcss_bcr_cbcr);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "failed to get bcr cbcr clk\n");
++		return PTR_ERR(wcss->wcss_bcr_cbcr);
++	}
++
++	return 0;
++}
++
++static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
++{
++	wcss->cx_supply = devm_regulator_get(wcss->dev, "cx");
++	if (IS_ERR(wcss->cx_supply))
++		return PTR_ERR(wcss->cx_supply);
++
++	regulator_set_load(wcss->cx_supply, 100000);
++
++	return 0;
++}
++
+ static int q6v5_wcss_probe(struct platform_device *pdev)
  {
- 	struct st_slim_rproc *slim_rproc = rproc->priv;
- 	void *va = NULL;
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 1ada0e5..12cb26e 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -88,7 +88,8 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
+ 	const struct wcss_data *desc;
+@@ -545,7 +995,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (!desc)
+ 		return -EINVAL;
  
--static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len,
-+				    int map)
- {
- 	struct wkup_m3_rproc *wkupm3 = rproc->priv;
- 	void *va = NULL;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 507a2b5..e908b58 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -356,7 +356,7 @@ struct rproc_ops {
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
--	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
-+	void * (*da_to_va)(struct rproc *rproc, u64 da, int len, int map);
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
+-	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ipq8074_ops,
++	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+ 			    desc->firmware_name, sizeof(*wcss));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+@@ -555,7 +1005,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	wcss = rproc->priv;
+ 	wcss->dev = &pdev->dev;
+ 	wcss->version = desc->version;
+-	wcss->crash_reason_smem = desc->crash_reason_smem;
++
++	wcss->version = desc->version;
++	wcss->requires_force_stop = desc->requires_force_stop;
+ 
+ 	ret = q6v5_wcss_init_mmio(wcss, pdev);
+ 	if (ret)
+@@ -565,7 +1017,17 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	ret = q6v5_wcss_init_reset(wcss);
++	if (wcss->version == WCSS_QCS404) {
++		ret = q6v5_wcss_init_clock(wcss);
++		if (ret)
++			goto free_rproc;
++
++		ret = q6v5_wcss_init_regulator(wcss);
++		if (ret)
++			goto free_rproc;
++	}
++
++	ret = q6v5_wcss_init_reset(wcss, desc->aon_reset_required);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+@@ -574,6 +1036,12 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
++	qcom_add_glink_subdev(rproc, &wcss->glink_subdev);
++	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, desc->ssr_name);
++	wcss->sysmon = qcom_add_sysmon_subdev(rproc,
++					      desc->sysmon_name,
++					      desc->ssctl_id);
++
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+ 		goto free_rproc;
+@@ -601,10 +1069,26 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ static const struct wcss_data wcss_ipq8074_res_init = {
+ 	.firmware_name = "IPQ8074/q6_fw.mdt",
+ 	.crash_reason_smem = 421,
++	.aon_reset_required = true,
++	.ops = &q6v5_wcss_ipq8074_ops,
++	.requires_force_stop = true,
++};
++
++static const struct wcss_data wcss_qcs404_res_init = {
++	.crash_reason_smem = 421,
++	.firmware_name = "wcnss.mdt",
++	.version = WCSS_QCS404,
++	.aon_reset_required = false,
++	.ssr_name = "mpss",
++	.sysmon_name = "wcnss",
++	.ssctl_id = 0x12,
++	.ops = &q6v5_wcss_qcs404_ops,
++	.requires_force_stop = false,
+ };
+ 
+ static const struct of_device_id q6v5_wcss_of_match[] = {
+ 	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
++	{ .compatible = "qcom,qcs404-wcss-pil", .data = &wcss_qcs404_res_init },
+ 
+ 	{ },
+ };
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
