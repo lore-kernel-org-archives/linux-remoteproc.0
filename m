@@ -1,46 +1,37 @@
-Return-Path: <xiaoxiang781216@gmail.com>
-Return-Path: <xiaoxiang781216@gmail.com>
-From: Xiang Xiao <xiaoxiang781216@gmail.com>
-Subject: [PATCH] rpmsg: add match optional callback to rpmsg_driver
-Date: Fri,  1 Feb 2019 11:24:19 +0800
-Message-Id: <1548991459-12515-1-git-send-email-xiaoxiang@xiaomi.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Xiang Xiao <xiaoxiang@xiaomi.com>
+Return-Path: <tony@atomide.com>
+Date: Mon, 4 Feb 2019 08:35:46 -0800
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2 02/14] soc: ti: pruss: Add a platform driver for PRUSS
+ in TI SoCs
+Message-ID: <20190204163546.GJ5720@atomide.com>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-3-git-send-email-rogerq@ti.com>
+ <99a3717c-7eab-07d2-e73e-f302c3848b8a@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <99a3717c-7eab-07d2-e73e-f302c3848b8a@ti.com>
+To: "Andrew F. Davis" <afd@ti.com>
+Cc: Roger Quadros <rogerq@ti.com>, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Keerthy <j-keerthy@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-so the driver could decide whether support a particular device at runtime
+* Andrew F. Davis <afd@ti.com> [190204 14:52]:
+> On 2/4/19 8:22 AM, Roger Quadros wrote:
+> > From: Suman Anna <s-anna@ti.com>
+> > +++ b/drivers/soc/ti/Kconfig
+> > @@ -73,4 +73,16 @@ config TI_SCI_PM_DOMAINS
+> >  	  called ti_sci_pm_domains. Note this is needed early in boot before
+> >  	  rootfs may be available.
+> >  
+> > +config TI_PRUSS
+> > +	tristate "TI PRU-ICSS Subsystem Platform drivers"
+> > +	depends on SOC_AM33XX || SOC_AM43XX || SOC_DRA7XX
+> > +	select MFD_SYSCON
+> > +	default n
 
-Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
----
- drivers/rpmsg/rpmsg_core.c | 3 +++
- include/linux/rpmsg.h      | 1 +
- 2 files changed, 4 insertions(+)
+Just a nitpick comment, we have n as the default already,
+so default n can be dropped.
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index ea88fd4..afdd1c6 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -413,6 +413,9 @@ static int rpmsg_dev_match(struct device *dev, struct device_driver *drv)
- 	if (rpdev->driver_override)
- 		return !strcmp(rpdev->driver_override, drv->name);
- 
-+	if (rpdrv->match)
-+		return rpdrv->match(rpdev, rpdrv);
-+
- 	if (ids)
- 		for (i = 0; ids[i].name[0]; i++)
- 			if (rpmsg_id_match(rpdev, &ids[i]))
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d..7a5a342 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -109,6 +109,7 @@ struct rpmsg_driver {
- 	int (*probe)(struct rpmsg_device *dev);
- 	void (*remove)(struct rpmsg_device *dev);
- 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-+	int (*match)(struct rpmsg_device *dev, struct rpmsg_driver *drv);
- };
- 
- #if IS_ENABLED(CONFIG_RPMSG)
--- 
-2.7.4
+Regards,
+
+Tony
