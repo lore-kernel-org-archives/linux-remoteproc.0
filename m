@@ -1,8 +1,8 @@
 Return-Path: <rogerq@ti.com>
 From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
-Date: Mon, 4 Feb 2019 16:22:34 +0200
-Message-ID: <1549290167-876-2-git-send-email-rogerq@ti.com>
+Subject: [PATCH v2 12/14] remoteproc/pru: Add support for virtio rpmsg stack
+Date: Mon, 4 Feb 2019 16:22:45 +0200
+Message-ID: <1549290167-876-13-git-send-email-rogerq@ti.com>
 In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
 References: <1549290167-876-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
@@ -13,237 +13,304 @@ List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Suman Anna <s-anna@ti.com>
 
-This patch adds the bindings for the Programmable Real-Time Unit
-and Industrial Communication Subsystem (PRU-ICSS) present on various
-SoCs such as AM33xx, AM437x, AM57xx, Keystone 66AK2G SoC, etc. It is
-present on the Davinci based OMAPL138 SoCs and K3 architecture
-based AM65x SoCs as well (not covered for now).
+The PRU remoteproc driver has been enhanced to support the optional
+rpmsg stack using the virtio-ring based communication transport
+between MPU and a PRU core. This provides support to any firmware
+images supporting the virtio devices.
+
+The virtio-ring signalling support is provided either through a OMAP
+mailbox or through two PRU system events on OMAP-architecture based
+SoCs - one event used in each direction for kicking from one processor
+and receiving notification on the other processor. The virtio rpmsg
+signalling is enabled only using using PRU system events for interrupts
+on the Keystone-architecture based 66AK2G SoCs (it is possible to
+implement using an alternate Keystone specific IPCGR registers as well).
+The driver supports both signalling options, though the PRU events based
+signalling is the recommended option as it avoids an external peripheral
+access from the PRU side. It also provides a uniform solution across
+both the OMAP, Keystone and Davinci architectures. The PRU events based
+signalling takes precedence if both options are mentioned. Either of the
+options would require the corresponding firmware support though. A build
+dependency against MAILBOX is also added. Note that the OMAP Mailbox
+IP is not present on 66AK2G and Davinci SoCs, so it is only selected
+for OMAP-based SoCs.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
 Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- .../devicetree/bindings/soc/ti/ti,pruss.txt        | 212 +++++++++++++++++++++
- 1 file changed, 212 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+ drivers/remoteproc/Kconfig     |   2 +
+ drivers/remoteproc/pru_rproc.c | 165 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 166 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-new file mode 100644
-index 0000000..5ac76fd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-@@ -0,0 +1,212 @@
-+PRU-ICSS on TI SoCs
-+===================
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 333666e..b89acb0 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -200,6 +200,8 @@ config ST_SLIM_REMOTEPROC
+ config PRUSS_REMOTEPROC
+ 	tristate "TI PRUSS remoteproc support"
+ 	depends on TI_PRUSS
++	select MAILBOX
++	select OMAP2PLUS_MBOX if ARCH_OMAP2PLUS
+ 	default n
+ 	help
+ 	  Support for TI PRU-ICSS remote processors via the remote processor
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 85463f7..b47c4fd 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -11,6 +11,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqchip/irq-pruss-intc.h>
++#include <linux/mailbox_client.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+@@ -64,6 +65,10 @@
+  * @debug_regmap: regmap to PRU DEBUG IOMEM
+  * @client_np: client device node
+  * @intc_config: PRU INTC configuration data
++ * @mbox: mailbox channel handle used for vring signalling with MPU
++ * @client: mailbox client to request the mailbox channel
++ * @irq_ring: IRQ number to use for processing vring buffers
++ * @irq_kick: IRQ number to use to perform virtio kick
+  * @dram0: PRUSS DRAM0 region
+  * @dram1: PRUSS DRAM1 region
+  * @shrdram: PRUSS SHARED RAM region
+@@ -90,6 +95,10 @@ struct pru_rproc {
+ 	struct regmap *debug_regmap;
+ 	struct device_node *client_np;
+ 	struct pruss_intc_config intc_config;
++	struct mbox_chan *mbox;
++	struct mbox_client client;
++	int irq_vring;
++	int irq_kick;
+ 	struct pruss_mem_region dram0;
+ 	struct pruss_mem_region dram1;
+ 	struct pruss_mem_region shrdram;
+@@ -615,6 +624,82 @@ static int pru_rproc_handle_vendor_rsc(struct rproc *rproc,
+ 	return ret;
+ }
+ 
++/**
++ * pru_rproc_mbox_callback() - inbound mailbox message handler
++ * @client: mailbox client pointer used for requesting the mailbox channel
++ * @data: mailbox payload
++ *
++ * This handler is invoked by omap's mailbox driver whenever a mailbox
++ * message is received. Usually, the mailbox payload simply contains
++ * the index of the virtqueue that is kicked by the PRU remote processor,
++ * and we let remoteproc core handle it.
++ *
++ * In addition to virtqueue indices, we might also have some out-of-band
++ * values that indicates different events. Those values are deliberately
++ * very big so they don't coincide with virtqueue indices.
++ */
++static void pru_rproc_mbox_callback(struct mbox_client *client, void *data)
++{
++	struct pru_rproc *pru = container_of(client, struct pru_rproc, client);
++	struct device *dev = &pru->rproc->dev;
++	u32 msg = (u32)data;
 +
-+The Programmable Real-Time Unit and Industrial Communication Subsystem
-+(PRU-ICSS) is present on various TI SoCs such as AM335x, AM437x, Keystone
-+66AK2G, etc. A PRUSS consists of dual 32-bit RISC cores (Programmable
-+Real-Time Units, or PRUs) with program memory and data memory.
++	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
 +
-+The programmable nature of the PRUs provide flexibility to implement
-+custom peripheral interfaces, fast real-time responses, or specialized
-+data handling. The common peripheral modules include the following,
++	/* msg contains the index of the triggered vring */
++	if (rproc_vq_interrupt(pru->rproc, msg) == IRQ_NONE)
++		dev_dbg(dev, "no message was found in vqid %d\n", msg);
++}
 +
-+  - Enhanced GPIO with async capture and serial support
-+  - an Ethernet MII_RT module with two MII ports
-+  - an MDIO port to control external Ethernet PHYs
-+  - an Industrial Ethernet Peripheral (IEP) to manage/generate Industrial
-+    Ethernet functions
-+  - an Enhanced Capture Module (eCAP)
-+  - a 16550-compatible UART to support PROFIBUS
-+  - Interrupt controller with 64 input events and 10 Host interrupts.
++/**
++ * pru_rproc_vring_interrupt() - interrupt handler for processing vrings
++ * @irq: irq number associated with the PRU event MPU is listening on
++ * @data: interrupt handler data, will be a PRU rproc structure
++ *
++ * This handler is used by the PRU remoteproc driver when using PRU system
++ * events for processing the virtqueues. Unlike the mailbox IP, there is
++ * no payload associated with an interrupt, so either a unique event is
++ * used for each virtqueue kick, or a both virtqueues are processed on
++ * a single event. The latter is chosen to conserve the usable PRU system
++ * events.
++ */
++static irqreturn_t pru_rproc_vring_interrupt(int irq, void *data)
++{
++	struct pru_rproc *pru = data;
 +
-+A shared Data RAM, if present, can be accessed by both the PRU cores. The
-+Interrupt Controller (INTC) and a CFG module are common to both the PRU
-+cores.
++	dev_dbg(&pru->rproc->dev, "got vring irq\n");
 +
-+Various sub-modules within a PRU-ICSS subsystem are represented as individual
-+nodes.
++	/* process incoming buffers on both the Rx and Tx vrings */
++	rproc_vq_interrupt(pru->rproc, 0);
++	rproc_vq_interrupt(pru->rproc, 1);
 +
-+PRUSS Node
-+=============
++	return IRQ_HANDLED;
++}
 +
-+This node represents the entire ICSS instance and the various modules are
-+contained as children. The PRUSS driver is responsible for managing the
-+common resources i.e. DRAM0, DRAM1, SHARED_RAM and CFG space.
++/* kick a virtqueue */
++static void pru_rproc_kick(struct rproc *rproc, int vq_id)
++{
++	struct device *dev = &rproc->dev;
++	struct pru_rproc *pru = rproc->priv;
++	int ret;
 +
-+Required Properties:
-+--------------------
-+- compatible     : should be one of,
-+                       "ti,am3356-pruss" for AM335x family of SoCs
-+                       "ti,am4376-pruss" for AM437x family of SoCs
-+                       "ti,am5728-pruss" for AM57xx family of SoCs
-+                       "ti,k2g-pruss" for 66AK2G family of SoCs
-+- reg            : base address and size for each of the Data RAMs as
-+                   mentioned in reg-names, and in the same order as the
-+                   reg-names
-+- reg-names      : should contain a string(s) from among the following names,
-+                   each representing a specific Data RAM region. Some PRU-ICSS
-+		   instances on certain SoCs might not have Shared DRAM.
-+                       "dram0" for Data RAM0,
-+                       "dram1" for Data RAM1,
-+                       "shrdram2" for Shared Data RAM,
-+- #address-cells : should be 1
-+- #size-cells    : should be 1
-+- ranges         : no specific range translations required, child nodes have the
-+                   same address view as the parent, so should be mentioned without
-+                   any value for the property
++	dev_dbg(dev, "kicking vqid %d on PRU%d\n", vq_id, pru->id);
 +
-+Optional Properties:
-+--------------------
-+- no-shared-ram	: Should be present if the instance doesn't have Shared RAM.
-+		  e.g. AM4376 ICSS0 instance doesn't have Shared RAM.
-+
-+The PRUSS node will have one or more of the folowing child nodes.
-+
-+PRU CORES
-+=========
-+ICSS typically has 2 PRU cores. These should be represented as remoteproc devices.
-+
-+INTC node
-+=========
-+ICSS has one INTC interrupt controller module. This should be represented as
-+a standard interrupt-controller node.
-+
-+CFG, IEP, MII_RT
-+================
-+The individual sub-modules CFG, IEP and MII_RT are represented as a syscon
-+node each with specific node names as below:
-+                  "cfg" for CFG sub-module,
-+                  "iep" for IEP sub-module,
-+                  "mii_rt" for MII-RT sub-module,
-+
-+See Documentation/devicetree/bindings/mfd/syscon.txt for details.
-+
-+MDIO
-+====
-+Each PRUSS has an MDIO module that can be used to control external PHYs. The
-+MDIO module used within the PRU-ICSS is an instance of the MDIO Controller
-+used in TI Davinci SoCs. Please refer to the corresponding binding document,
-+Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
-+
-+Application/User Nodes
-+=======================
-+A PRU application/user node typically uses one or more PRU device nodes to
-+implement a PRU application/functionality. Each application/client node would
-+need a reference to at least a PRU node, and optionally pass some configuration
-+parameters.
-+
-+Required Properties:
-+--------------------
-+- prus                 : phandles to the PRU nodes used
-+
-+Optional Properties:
-+--------------------
-+- firmware-name        : firmwares for the PRU cores, the default firmware
-+                         for the core from the PRU node will be used if not
-+                         provided. The firmware names should correspond to
-+                         the PRU cores listed in the 'prus' property
-+- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
-+                         register for a PRU. This selects the internal muxing
-+                         scheme for the PRU instance. If not provided, the
-+                         default out-of-reset value (0) for the PRU core is
-+                         used. Values should correspond to the PRU cores listed
-+                         in the 'prus' property
-+- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
-+                         with each entry consisting of 4 cell-values. First one
-+                         is an index towards the "prus" property to identify the
-+                         PRU core for the interrupt map, second is the PRU
-+                         System Event id, third is the PRU interrupt channel id
-+                         and fourth is the PRU host interrupt id. If provided,
-+                         this map will supercede any other configuration
-+                         provided through firmware
-+
-+Example:
-+========
-+1.	/* AM33xx PRU-ICSS */
-+
-+	pruss: pruss@0 {
-+		compatible = "ti,am3356-pruss";
-+		reg = <0x0 0x2000>,
-+		      <0x2000 0x2000>,
-+		      <0x10000 0x3000>;
-+		reg-names = "dram0", "dram1",
-+			    "shrdram2";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		pruss_cfg: cfg@26000 {
-+			compatible = "syscon";
-+			reg = <0x26000 0x2000>;
-+		};
-+
-+		pruss_iep: iep@2e000 {
-+			compatible = "syscon";
-+			reg = <0x2e000 0x31c>;
-+		};
-+
-+		pruss_mii_rt: mii_rt@32000 {
-+			compatible = "syscon";
-+			reg = <0x32000 0x58>;
-+		};
-+
-+		pruss_intc: intc@20000 {
-+			compatible = "ti,am3356-pruss-intc";
-+			reg = <0x20000 0x2000>;
-+			reg-names = "intc";
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			interrupts = <20 21 22 23 24 25 26 27>;
-+			interrupt-names = "host2", "host3", "host4",
-+					  "host5", "host6", "host7",
-+					  "host8", "host9";
-+		};
-+
-+		pru0: pru@34000 {
-+			compatible = "ti,am3356-pru";
-+			reg = <0x34000 0x2000>,
-+			      <0x22000 0x400>,
-+			      <0x22400 0x100>;
-+			reg-names = "iram", "control", "debug";
-+			gpcfg = <&pruss_cfg 0x8>;
-+			firmware-name = "am335x-pru0-fw";
-+			interrupt-parent = <&pruss_intc>;
-+			interrupts = <16>, <17>;
-+			interrupt-names = "vring", "kick";
-+		};
-+
-+		pru1: pru@38000 {
-+			compatible = "ti,am3356-pru";
-+			reg = <0x38000 0x2000>,
-+			      <0x24000 0x400>,
-+			      <0x24400 0x100>;
-+			reg-names = "iram", "control", "debug";
-+			gpcfg = <&pruss_cfg 0xc>;
-+			firmware-name = "am335x-pru1-fw";
-+			interrupt-parent = <&pruss_intc>;
-+			interrupts = <18>, <19>;
-+			interrupt-names = "vring", "kick";
-+		};
-+
-+		pruss_mdio: mdio@32400 {
-+			compatible = "ti,davinci_mdio";
-+			reg = <0x32400 0x90>;
-+			clocks = <&dpll_core_m4_ck>;
-+			clock-names = "fck";
-+			bus_freq = <1000000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+	};
-+
-+2:	/* PRU application node example */
-+	app_node: app_node {
-+		prus = <&pru0>, <&pru1>;
-+		firmware-name = "pruss-app-fw", "pruss-app-fw-2";
-+		ti,pruss-gp-mux-sel = <2>, <1>;
-+		/* setup interrupts for prus:
-+		   prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
-+		   prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
-+		ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
++	if (pru->irq_kick > 0) {
++		ret = pruss_intc_trigger(pru->irq_kick);
++		if (ret < 0)
++			dev_err(dev, "pruss_intc_trigger failed: %d\n", ret);
++	} else if (pru->mbox) {
++		/*
++		 * send the index of the triggered virtqueue in the mailbox
++		 * payload
++		 */
++		ret = mbox_send_message(pru->mbox, (void *)vq_id);
++		if (ret < 0)
++			dev_err(dev, "mbox_send_message failed: %d\n", ret);
 +	}
++}
++
+ /* start a PRU core */
+ static int pru_rproc_start(struct rproc *rproc)
+ {
+@@ -635,10 +720,36 @@ static int pru_rproc_start(struct rproc *rproc)
+ 		}
+ 	}
+ 
++	if (!list_empty(&pru->rproc->rvdevs)) {
++		if (!pru->mbox && (pru->irq_vring <= 0 || pru->irq_kick <= 0)) {
++			dev_err(dev, "virtio vring interrupt mechanisms are not provided\n");
++			ret = -EINVAL;
++			goto fail;
++		}
++
++		if (!pru->mbox && pru->irq_vring > 0) {
++			ret = request_threaded_irq(pru->irq_vring, NULL,
++						   pru_rproc_vring_interrupt,
++						   IRQF_ONESHOT, dev_name(dev),
++						   pru);
++			if (ret) {
++				dev_err(dev, "failed to enable vring interrupt, ret = %d\n",
++					ret);
++				goto fail;
++			}
++		}
++	}
++
+ 	val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
+ 	regmap_write(pru->ctrl_regmap, PRU_CTRL_CTRL, val);
+ 
+ 	return 0;
++
++fail:
++	if (pru->dt_irqs || pru->fw_irqs)
++		pruss_intc_unconfigure(rproc->dev.parent, &pru->intc_config);
++
++	return ret;
+ }
+ 
+ /* stop/disable a PRU core */
+@@ -650,6 +761,10 @@ static int pru_rproc_stop(struct rproc *rproc)
+ 	dev_dbg(dev, "stopping PRU%d\n", pru->id);
+ 	regmap_update_bits(pru->ctrl_regmap, PRU_CTRL_CTRL, CTRL_CTRL_EN, 0);
+ 
++	if (!list_empty(&pru->rproc->rvdevs) &&
++	    !pru->mbox && pru->irq_vring > 0)
++		free_irq(pru->irq_vring, pru);
++
+ 	/* undo INTC config */
+ 	if (pru->dt_irqs || pru->fw_irqs)
+ 		pruss_intc_unconfigure(rproc->dev.parent, &pru->intc_config);
+@@ -746,6 +861,7 @@ static void *pru_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ static struct rproc_ops pru_rproc_ops = {
+ 	.start			= pru_rproc_start,
+ 	.stop			= pru_rproc_stop,
++	.kick			= pru_rproc_kick,
+ 	.da_to_va		= pru_da_to_va,
+ 	.handle_vendor_rsc	= pru_rproc_handle_vendor_rsc,
+ };
+@@ -789,6 +905,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 	struct pru_rproc *pru;
+ 	const char *fw_name;
+ 	struct rproc *rproc = NULL;
++	struct mbox_client *client;
+ 	struct resource *res;
+ 	int ret;
+ 	void __iomem *va;
+@@ -924,10 +1041,51 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, rproc);
+ 
++	/* get optional vring and kick interrupts for supporting virtio rpmsg */
++	pru->irq_vring = platform_get_irq_byname(pdev, "vring");
++	if (pru->irq_vring <= 0) {
++		ret = pru->irq_vring;
++		if (ret == -EPROBE_DEFER)
++			goto free_rproc;
++		dev_dbg(dev, "unable to get vring interrupt, status = %d\n",
++			ret);
++	}
++
++	pru->irq_kick = platform_get_irq_byname(pdev, "kick");
++	if (pru->irq_kick <= 0) {
++		ret = pru->irq_kick;
++		if (ret == -EPROBE_DEFER)
++			goto free_rproc;
++		dev_dbg(dev, "unable to get kick interrupt, status = %d\n",
++			ret);
++	}
++
++	/*
++	 * get optional mailbox for virtio rpmsg signalling if vring and kick
++	 * interrupts are not specified for OMAP architecture based SoCs
++	 */
++	if (pru->irq_vring <= 0 && pru->irq_kick <= 0 &&
++	    !of_device_is_compatible(np, "ti,k2g-pru") &&
++	    !of_device_is_compatible(np, "ti,da850-pru")) {
++		client = &pru->client;
++		client->dev = dev;
++		client->tx_done = NULL;
++		client->rx_callback = pru_rproc_mbox_callback;
++		client->tx_block = false;
++		client->knows_txdone = false;
++		pru->mbox = mbox_request_channel(client, 0);
++		if (IS_ERR(pru->mbox)) {
++			ret = PTR_ERR(pru->mbox);
++			pru->mbox = NULL;
++			dev_dbg(dev, "unable to get mailbox channel, status = %d\n",
++				ret);
++		}
++	}
++
+ 	ret = rproc_add(pru->rproc);
+ 	if (ret) {
+ 		dev_err(dev, "rproc_add failed: %d\n", ret);
+-		goto free_rproc;
++		goto put_mbox;
+ 	}
+ 
+ 	pru_rproc_create_debug_entries(rproc);
+@@ -936,6 +1094,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++put_mbox:
++	mbox_free_channel(pru->mbox);
+ free_rproc:
+ 	rproc_free(rproc);
+ 	return ret;
+@@ -945,9 +1105,12 @@ static int pru_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct pru_rproc *pru = rproc->priv;
+ 
+ 	dev_info(dev, "%s: removing rproc %s\n", __func__, rproc->name);
+ 
++	mbox_free_channel(pru->mbox);
++
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
+ 
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
