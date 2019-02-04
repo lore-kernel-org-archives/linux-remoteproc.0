@@ -1,100 +1,221 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v4 6/8] dt-binding: remoteproc: Add QTI WCSS PIL bindings
-Date: Sat,  2 Feb 2019 20:56:24 +0530
-Message-Id: <20190202152626.1006-7-govinds@codeaurora.org>
-In-Reply-To: <20190202152626.1006-1-govinds@codeaurora.org>
-References: <20190202152626.1006-1-govinds@codeaurora.org>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH v2 05/14] remoteproc: add map parameter to da_to_va
+Date: Mon, 4 Feb 2019 16:22:38 +0200
+Message-ID: <1549290167-876-6-git-send-email-rogerq@ti.com>
+In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+Content-Type: text/plain
+To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add devicetree bindings for WCSS non pas remoteproc.
+From: David Lechner <david@lechnology.com>
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
-Acked-by: Rob Herring <robh@kernel.org>
+This adds a new map parameter to the da_to_va callback for remoteproc
+devices. This parameter will be used by devices that have more than
+one memory map, such as the PRU found in TI Sitara SoCs.
+
+On these devices, the same physical memory address can refer to two
+different locations, i.e. instruction memory or data memory both start
+at 0x0. So, an extra bit of information is needed in the da_to_va
+callback to tell these apart.
+
+Devices that only have a single memory map will just pass 0 for this
+parameter. For now we are using 0 everywhere, but later patches will
+modify this value.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- .../bindings/remoteproc/qcom,q6v5.txt         | 61 +++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ drivers/remoteproc/imx_rproc.c             |  2 +-
+ drivers/remoteproc/keystone_remoteproc.c   |  3 ++-
+ drivers/remoteproc/qcom_q6v5_mss.c         |  2 +-
+ drivers/remoteproc/qcom_wcnss.c            |  2 +-
+ drivers/remoteproc/remoteproc_core.c       | 11 +++++++----
+ drivers/remoteproc/remoteproc_elf_loader.c |  4 ++--
+ drivers/remoteproc/remoteproc_internal.h   |  2 +-
+ drivers/remoteproc/st_slim_rproc.c         |  2 +-
+ drivers/remoteproc/wkup_m3_rproc.c         |  3 ++-
+ include/linux/remoteproc.h                 |  2 +-
+ 10 files changed, 19 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 9ff5b0309417..1fe8e9f72204 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -13,6 +13,7 @@ on the Qualcomm Hexagon core.
- 		    "qcom,msm8974-mss-pil"
- 		    "qcom,msm8996-mss-pil"
- 		    "qcom,sdm845-mss-pil"
-+		    "qcom,qcs404-wcss-pil"
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 54c07fd..78c3502 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -211,7 +211,7 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+ 	return -ENOENT;
+ }
  
- - reg:
- 	Usage: required
-@@ -153,3 +154,63 @@ Hexagon, as it is found on MSM8974 boards.
- 			memory-region = <&mpss_region>;
- 		};
- 	};
-+
-+	remoteproc-wcss {
-+		compatible = "qcom,qcs404-wcss-pil";
-+		reg = <0x07400000 0x00104>;
-+		reg-names = "qdsp6";
-+
-+		interrupts-extended = <&intc GIC_SPI 153 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&xo_board>,
-+			 <&gcc GCC_WCSS_Q6_AHB_CBCR_CLK>,
-+			 <&gcc GCC_WCSS_Q6_AXIM_CBCR_CLK>,
-+
-+			 <&clock_wcsscc WCSS_AHBFABRIC_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_LCC_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_AHBS_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_TCM_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_AHBM_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_AXIM_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_QDSP6SS_XO_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_QDSP6SS_SLEEP_CBCR_CLK>,
-+			 <&clock_wcsscc WCSS_QDSP6SS_GFMMUX_CLK>,
-+			 <&clock_wcsscc WCSS_BCR_CBCR_CLK>;
-+
-+		clock-names = "xo", "gcc_abhs_cbcr", "gcc_axim_cbcr",
-+			      "wcss_ahbfabric_cbcr", "wcnss_csr_cbcr",
-+			      "wcnss_ahbs_cbcr", "wcnss_tcm_slave_cbcr",
-+			      "wcnss_abhm_cbcr", "wcnss_axim_cbcr",
-+			      "wcnss_qdsp6ss_xo_cbcr", "wcnss_sleep_cbcr",
-+			      "wcnss_core_gfm", "wcss_bcr_cbcr";
-+		resets = <&gcc GCC_WDSP_RESTART>,
-+			 <&clock_wcsscc Q6SSTOP_QDSP6SS_RESET>,
-+			 <&clock_wcsscc Q6SSTOP_QDSP6SS_CORE_RESET>,
-+			 <&clock_wcsscc Q6SSTOP_QDSP6SS_BUS_RESET>,
-+			 <&clock_wcsscc Q6SSTOP_BCR_RESET>;
-+		reset-names = "wcss_reset", "wcss_q6_reset",
-+			      "wcss_q6_core_reset", "wcss_q6_bus_reset",
-+			      "wcss_q6_bcr_reset";
-+
-+		memory-region = <&wlan_fw_mem>;
-+
-+		qcom,smem-states = <&wcss_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+		qcom,halt-regs = <&tcsr_wlan_q6 0x18000>;
-+		glink-edge {
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			qcom,remote-pid = <1>;
-+			mboxes = <&apcs_glb 16>;
-+
-+			label = "wcss";
-+			};
-+		};
-+
+-static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct imx_rproc *priv = rproc->priv;
+ 	void *va = NULL;
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+index aaac311..0f87cf9 100644
+--- a/drivers/remoteproc/keystone_remoteproc.c
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -254,7 +254,8 @@ static void keystone_rproc_kick(struct rproc *rproc, int vqid)
+  * can be used either by the remoteproc core for loading (when using kernel
+  * remoteproc loader), or by any rpmsg bus drivers.
+  */
+-static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len,
++				     int map)
+ {
+ 	struct keystone_rproc *ksproc = rproc->priv;
+ 	void __iomem *va = NULL;
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 01be731..d0cdc34 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -971,7 +971,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 	int ret = 0;
+ 	struct q6v5 *qproc = rproc->priv;
+ 	unsigned long mask = BIT((unsigned long)segment->priv);
+-	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size, 0);
+ 
+ 	/* Unlock mba before copying segments */
+ 	if (!qproc->dump_mba_loaded)
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index b0e07e9..92b05fb 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -295,7 +295,7 @@ static int wcnss_stop(struct rproc *rproc)
+ 	return ret;
+ }
+ 
+-static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+ 	int offset;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 54ec38f..06ef4fa 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -166,6 +166,8 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+  * @rproc: handle of a remote processor
+  * @da: remoteproc device address to translate
+  * @len: length of the memory region @da is pointing to
++ * @map: indicates which memory map to use for devices with more than one
++ *       memory map or 0 for devices that only have a single memory map
+  *
+  * Some remote processors will ask us to allocate them physically contiguous
+  * memory regions (which we call "carveouts"), and map them to specific
+@@ -190,13 +192,13 @@ static phys_addr_t rproc_va_to_pa(void *cpu_addr)
+  * here the output of the DMA API for the carveouts, which should be more
+  * correct.
+  */
+-void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct rproc_mem_entry *carveout;
+ 	void *ptr = NULL;
+ 
+ 	if (rproc->ops->da_to_va) {
+-		ptr = rproc->ops->da_to_va(rproc, da, len);
++		ptr = rproc->ops->da_to_va(rproc, da, len, map);
+ 		if (ptr)
+ 			goto out;
+ 	}
+@@ -575,7 +577,7 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
+ 	}
+ 
+ 	/* what's the kernel address of this resource ? */
+-	ptr = rproc_da_to_va(rproc, rsc->da, rsc->len);
++	ptr = rproc_da_to_va(rproc, rsc->da, rsc->len, 0);
+ 	if (!ptr) {
+ 		dev_err(dev, "erroneous trace resource entry\n");
+ 		return -EINVAL;
+@@ -1549,7 +1551,8 @@ static void rproc_coredump(struct rproc *rproc)
+ 		if (segment->dump) {
+ 			segment->dump(rproc, segment, data + offset);
+ 		} else {
+-			ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++			ptr = rproc_da_to_va(rproc, segment->da,
++					     segment->size, 0);
+ 			if (!ptr) {
+ 				dev_err(&rproc->dev,
+ 					"invalid coredump segment (%pad, %zu)\n",
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index b17d72e..8888d39 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -182,7 +182,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 		}
+ 
+ 		/* grab the kernel address for this device address */
+-		ptr = rproc_da_to_va(rproc, da, memsz);
++		ptr = rproc_da_to_va(rproc, da, memsz, 0);
+ 		if (!ptr) {
+ 			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
+ 			ret = -EINVAL;
+@@ -333,6 +333,6 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+ 	if (!shdr)
+ 		return NULL;
+ 
+-	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
++	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, 0);
+ }
+ EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index f6cad24..15e0833 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -51,7 +51,7 @@ void rproc_exit_sysfs(void);
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+-void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
++void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map);
+ int rproc_trigger_recovery(struct rproc *rproc);
+ 
+ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+index d711d94..8b843c8 100644
+--- a/drivers/remoteproc/st_slim_rproc.c
++++ b/drivers/remoteproc/st_slim_rproc.c
+@@ -178,7 +178,7 @@ static int slim_rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
+-static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len, int map)
+ {
+ 	struct st_slim_rproc *slim_rproc = rproc->priv;
+ 	void *va = NULL;
+diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+index 1ada0e5..12cb26e 100644
+--- a/drivers/remoteproc/wkup_m3_rproc.c
++++ b/drivers/remoteproc/wkup_m3_rproc.c
+@@ -88,7 +88,8 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
+-static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len,
++				    int map)
+ {
+ 	struct wkup_m3_rproc *wkupm3 = rproc->priv;
+ 	void *va = NULL;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 507a2b5..e908b58 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -356,7 +356,7 @@ struct rproc_ops {
+ 	int (*start)(struct rproc *rproc);
+ 	int (*stop)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+-	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
++	void * (*da_to_va)(struct rproc *rproc, u64 da, int len, int map);
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+ 	struct resource_table *(*find_loaded_rsc_table)(
+ 				struct rproc *rproc, const struct firmware *fw);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
