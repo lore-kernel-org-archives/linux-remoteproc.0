@@ -1,37 +1,95 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 18 Feb 2019 13:36:23 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 09/14] dt-binding: remoteproc: Add binding doc for PRU
- Cores in the PRU-ICSS
-Message-ID: <20190218193623.GA20566@bogus>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH v2 09/14] dt-binding: remoteproc: Add binding doc for PRU Cores in the PRU-ICSS
+Date: Mon, 4 Feb 2019 16:22:42 +0200
+Message-ID: <1549290167-876-10-git-send-email-rogerq@ti.com>
+In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
 References: <1549290167-876-1-git-send-email-rogerq@ti.com>
- <1549290167-876-10-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549290167-876-10-git-send-email-rogerq@ti.com>
-To: Roger Quadros <rogerq@ti.com>
-Cc: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain
+To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com, Rob Herring <robh+dt@kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, 4 Feb 2019 16:22:42 +0200, Roger Quadros wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The Programmable Real-Time Unit Subsystem (PRUSS) consists of
-> dual 32-bit RISC cores (Programmable Real-Time Units, or PRUs)
-> for program execution. This patch adds a remoteproc platform
-> driver for managing the individual PRU RISC cores life cycle.
-> 
-> Add DT binding documentation for that.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> ---
->  .../bindings/remoteproc/ti,pru-rproc.txt           | 56 ++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
-> 
+From: Suman Anna <s-anna@ti.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The Programmable Real-Time Unit Subsystem (PRUSS) consists of
+dual 32-bit RISC cores (Programmable Real-Time Units, or PRUs)
+for program execution. This patch adds a remoteproc platform
+driver for managing the individual PRU RISC cores life cycle.
+
+Add DT binding documentation for that.
+
+Cc: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ .../bindings/remoteproc/ti,pru-rproc.txt           | 56 ++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
+new file mode 100644
+index 0000000..02dfd0e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
+@@ -0,0 +1,56 @@
++PRU Core on TI SoCs
++===================
++
++Each PRUSS has dual PRU cores, each represented by a PRU child node. Each node
++can optionally be rendered inactive by using the standard DT string property,
++"status".
++
++Required Properties:
++--------------------
++- compatible     : should be
++                       "ti,am3356-pru" for AM335x family of SoCs
++                       "ti,am4376-pru" for AM437x family of SoCs
++                       "ti,am5728-pru" for AM57xx family of SoCs
++                       "ti,k2g-pru" for 66AK2G family of SoCs
++- reg            : base address and size for each of the 3 sub-module address
++                   spaces as mentioned in reg-names, and in the same order as
++                   the reg-names
++- reg-names      : should contain each of the following 3 names, the binding is
++                   agnostic of the order of these reg-names
++                       "iram" for Instruction RAM,
++                       "control" for the CTRL sub-module registers,
++                       "debug" for the Debug sub-module registers,
++
++- firmware-name  : should contain the name of the firmware image file
++		   located on the firmware search path. This firmware will be
++		   used as default if the Application node or User (via sysfs)
++		   doesn't provide a firmware-name.
++
++- gpcfg		 : pHandle to CFG module's syscon regmap and offset to PRU's
++		   GPCFG register.
++
++Optional Properties:
++--------------------
++The virtio based communication between the MPU and a PRU core _requires_
++either the 'mboxes' property, or the set of 'interrupt-parent', 'interrupts'
++and 'interrupt-names' properties to be defined. The latter option is the
++preferred choice. The 'mboxes' property is not applicable for 66AK2G and
++DA850/OMAP-L138 SoCs.
++
++- mboxes           : OMAP Mailbox specifier denoting the sub-mailbox, if using
++                     a mailbox for IPC signalling between host and a PRU core.
++                     The specifier format is as per the bindings,
++                         Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
++                     This property should match with the sub-mailbox node used
++                     in the corresponding firmware image.
++- interrupt-parent : phandle to the PRUSS INTC node. Should be defined if
++                     interrupts property is to be used.
++- interrupts       : array of interrupt specifiers if using PRU system events
++                     for IPC signalling between host and a PRU core. This
++                     property should match with the PRU system event used in
++                     the corresponding firmware image.
++- interrupt-names  : should use one of the following names for each interrupt,
++                     the name should match the corresponding PRU system event
++                     number,
++                         "vring" - for PRU to HOST virtqueue signalling
++                         "kick"  - for HOST to PRU virtqueue signalling
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
