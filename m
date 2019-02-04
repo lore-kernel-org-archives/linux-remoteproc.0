@@ -1,632 +1,162 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v5 4/6] rpmsg: add rpmsg support for mt8183 SCP.
-Date: Thu, 21 Feb 2019 16:47:27 +0800
-Message-Id: <20190221084729.101784-5-pihsun@chromium.org>
-In-Reply-To: <20190221084729.101784-1-pihsun@chromium.org>
-References: <20190221084729.101784-1-pihsun@chromium.org>
+Return-Path: <rogerq@ti.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: [PATCH v2 11/14] remoteproc/pru: Add pru_rproc_set_ctable() and pru_rproc_set_gpimode()
+Date: Mon, 4 Feb 2019 16:22:44 +0200
+Message-ID: <1549290167-876-12-git-send-email-rogerq@ti.com>
+In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Erin Lo <erin.lo@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain
+To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com, "Andrew F . Davis" <afd@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a simple rpmsg support for mt8183 SCP, that use IPI / IPC directly.
+Some firmwares expect the OS drivers to configure the CTABLE
+entries publishing dynamically allocated memory regions. For
+example, the PRU Ethernet firmwares use the C28 and C30 entries
+for retrieving the Shared RAM and System SRAM (OCMC) areas
+allocated by the PRU Ethernet client driver.
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Provide a way for users to do that through a new API,
+pru_rproc_set_ctable(). The API returns 0 on success and
+a negative value on error.
+
+NOTE:
+The programmable CTABLE entries are typically re-programmed by
+the PRU firmwares when dealing with a certain block of memory
+during block processing. This API provides an interface to the
+PRU client drivers to publish a dynamically allocated memory
+block with the PRU firmware using a CTABLE entry instead of a
+negotiated address in shared memory. Additional synchronization
+may be needed between the PRU client drivers and firmwares if
+different addresses needs to be published at run-time reusing
+the same CTABLE entry.
+
+Some client drivers need to set the GPI mode of the
+PRU. The GPI mode select bits like in the GPCFG register
+space. Add pru_rproc_set_gpimode() API to set the GPI
+mode for the PRU.
+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+[s-anna@ti.com: add the NOTE: on patch description, minor cleanups]
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
-Changes from v4:
- - Match and fill the device tree node to the created rpmsg subdevice,
-   so the rpmsg subdevice can utilize the properties and subnodes on
-   device tree (This is similar to what drivers/rpmsg/qcom_smd.c does).
+ drivers/remoteproc/pru_rproc.c       | 48 ++++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc/pru_rproc.h | 30 ++++++++++++++++++++++
+ 2 files changed, 78 insertions(+)
 
-Changes from v3:
- - Change from unprepare to stop, to stop the rpmsg driver before the
-   rproc is stopped, avoiding problem that some rpmsg would fail after
-   rproc is stopped.
- - Add missing spin_lock_init, and use destroy_ept instead of kref_put.
-
-Changes from v2:
- - Unregiser IPI handler on unprepare.
- - Lock the channel list on operations.
- - Move SCP_IPI_NS_SERVICE to 0xFF.
-
-Changes from v1:
- - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
-   short-lived work items.
- - Fix several issues checkpatch found.
----
- drivers/remoteproc/mtk_common.h       |   2 +
- drivers/remoteproc/mtk_scp.c          |  30 +-
- drivers/remoteproc/mtk_scp_ipi.c      |   1 +
- drivers/rpmsg/Kconfig                 |   9 +
- drivers/rpmsg/Makefile                |   1 +
- drivers/rpmsg/mtk_rpmsg.c             | 385 ++++++++++++++++++++++++++
- include/linux/platform_data/mtk_scp.h |   4 +-
- include/linux/rpmsg/mtk_rpmsg.h       |  35 +++
- 8 files changed, 462 insertions(+), 5 deletions(-)
- create mode 100644 drivers/rpmsg/mtk_rpmsg.c
- create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 7504ae1bc0efe2..19a90781027125 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -54,6 +54,8 @@ struct mtk_scp {
- 	void __iomem *cpu_addr;
- 	phys_addr_t phys_addr;
- 	size_t dram_size;
-+
-+	struct rproc_subdev *rpmsg_subdev;
- };
- 
- /**
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index c689a8cc41f092..7680edb7ca5f58 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -13,6 +13,7 @@
- #include <linux/platform_data/mtk_scp.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
-+#include <linux/rpmsg/mtk_rpmsg.h>
- 
- #include "mtk_common.h"
- #include "remoteproc_internal.h"
-@@ -471,6 +472,23 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 	return 0;
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index ddd4b64..85463f7 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -398,6 +398,54 @@ void pru_rproc_put(struct rproc *rproc)
  }
+ EXPORT_SYMBOL_GPL(pru_rproc_put);
  
-+static void scp_add_rpmsg_subdev(struct mtk_scp *scp)
++/**
++ * pru_rproc_set_ctable() - set the constant table index for the PRU
++ * @rproc: the rproc instance of the PRU
++ * @c: constant table index to set
++ * @addr: physical address to set it to
++ */
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
 +{
-+	scp->rpmsg_subdev = mtk_rpmsg_create_rproc_subdev(
-+		to_platform_device(scp->dev), scp->rproc);
-+	if (scp->rpmsg_subdev)
-+		rproc_add_subdev(scp->rproc, scp->rpmsg_subdev);
-+}
++	struct pru_rproc *pru = rproc->priv;
++	unsigned int reg;
++	u32 mask, set;
++	u16 idx;
++	u16 idx_mask;
 +
-+static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
-+{
-+	if (scp->rpmsg_subdev) {
-+		rproc_remove_subdev(scp->rproc, scp->rpmsg_subdev);
-+		mtk_rpmsg_destroy_rproc_subdev(scp->rpmsg_subdev);
-+		scp->rpmsg_subdev = NULL;
-+	}
-+}
++	/* pointer is 16 bit and index is 8-bit so mask out the rest */
++	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
 +
- static int scp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -552,22 +570,25 @@ static int scp_probe(struct platform_device *pdev)
- 	init_waitqueue_head(&scp->run.wq);
- 	init_waitqueue_head(&scp->ack_wq);
- 
-+	scp_add_rpmsg_subdev(scp);
++	/* ctable uses bit 8 and upwards only */
++	idx = (addr >> 8) & idx_mask;
 +
- 	ret = devm_request_threaded_irq(dev, platform_get_irq(pdev, 0), NULL,
- 					scp_irq_handler, IRQF_ONESHOT,
- 					pdev->name, scp);
- 
- 	if (ret) {
- 		dev_err(dev, "failed to request irq\n");
--		goto destroy_mutex;
-+		goto remove_subdev;
- 	}
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto destroy_mutex;
-+		goto remove_subdev;
- 
--	return ret;
++	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
++	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
++	mask = idx_mask << (16 * (c & 1));
++	set = idx << (16 * (c & 1));
++
++	regmap_update_bits(pru->ctrl_regmap, reg, mask, set);
++
 +	return 0;
- 
--destroy_mutex:
-+remove_subdev:
-+	scp_remove_rpmsg_subdev(scp);
- 	mutex_destroy(&scp->lock);
- free_rproc:
- 	rproc_free(rproc);
-@@ -579,6 +600,7 @@ static int scp_remove(struct platform_device *pdev)
- {
- 	struct mtk_scp *scp = platform_get_drvdata(pdev);
- 
-+	scp_remove_rpmsg_subdev(scp);
- 	rproc_del(scp->rproc);
- 	rproc_free(scp->rproc);
- 
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index f5d271c0f6239b..10b0cbda7aee38 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -99,6 +99,7 @@ int scp_ipi_send(struct platform_device *pdev,
- 	int ret;
- 
- 	if (WARN_ON(id <= SCP_IPI_INIT) || WARN_ON(id >= SCP_IPI_MAX) ||
-+	    WARN_ON(id == SCP_IPI_NS_SERVICE) ||
- 	    WARN_ON(len > sizeof(send_obj->share_buf)) || WARN_ON(!buf))
- 		return -EINVAL;
- 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index d0322b41eca54c..85e3cc075cb473 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -15,6 +15,15 @@ config RPMSG_CHAR
- 	  in /dev. They make it possible for user-space programs to send and
- 	  receive rpmsg packets.
- 
-+config RPMSG_MTK_SCP
-+	tristate "MediaTek SCP"
-+	depends on MTK_SCP
-+	select RPMSG
-+	help
-+	  Say y here to enable support providing communication channels to
-+	  remote processors in MediaTek platforms.
-+	  This use IPI and IPC to communicate with remote processors.
-+
- config RPMSG_QCOM_GLINK_NATIVE
- 	tristate
- 	select RPMSG
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 9aa859502d2752..ae92a7fb08f623 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
- obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
-+obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
-diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-new file mode 100644
-index 00000000000000..fab1413a0a650c
---- /dev/null
-+++ b/drivers/rpmsg/mtk_rpmsg.c
-@@ -0,0 +1,385 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright 2018 Google LLC.
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_data/mtk_scp.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+#include <linux/rpmsg/mtk_rpmsg.h>
-+#include <linux/workqueue.h>
-+
-+#include "rpmsg_internal.h"
-+
-+struct mtk_rpmsg_device {
-+	struct rpmsg_device rpdev;
-+	struct platform_device *scp_pdev;
-+};
-+
-+struct mtk_rpmsg_endpoint {
-+	struct rpmsg_endpoint ept;
-+	struct platform_device *scp_pdev;
-+};
-+
-+struct mtk_rpmsg_rproc_subdev {
-+	struct rproc *scp_rproc;
-+	struct platform_device *scp_pdev;
-+	struct rpmsg_endpoint *ns_ept;
-+	struct rproc_subdev subdev;
-+
-+	struct work_struct register_work;
-+	struct list_head channels;
-+	struct mutex channels_lock;
-+};
-+
-+#define to_mtk_subdev(d) container_of(d, struct mtk_rpmsg_rproc_subdev, subdev)
-+
-+struct mtk_rpmsg_channel_info {
-+	struct rpmsg_channel_info info;
-+	bool registered;
-+	struct list_head list;
-+};
++}
++EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
 +
 +/**
-+ * struct rpmsg_ns_msg - dynamic name service announcement message
-+ * @name: name of remote service that is published
-+ * @addr: address of remote service that is published
++ * pru_rproc_set_gpimode() - set the GPI mode for the PRU
++ * @rproc: the rproc instance of the PRU
++ * @mode: GPI mode to set
 + *
-+ * This message is sent across to publish a new service. When we receive these
-+ * messages, an appropriate rpmsg channel (i.e device) is created. In turn, the
-+ * ->probe() handler of the appropriate rpmsg driver will be invoked
-+ *  (if/as-soon-as one is registered).
++ * Returns 0 on success, negative error value otherwise.
 + */
-+struct rpmsg_ns_msg {
-+	char name[RPMSG_NAME_SIZE];
-+	u32 addr;
-+} __packed;
-+
-+#define to_scp_device(r)	container_of(r, struct mtk_rpmsg_device, rpdev)
-+#define to_scp_endpoint(r)	container_of(r, struct mtk_rpmsg_endpoint, ept)
-+
-+static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops;
-+
-+static void __ept_release(struct kref *kref)
++int pru_rproc_set_gpimode(struct rproc *rproc, enum pruss_gpi_mode mode)
 +{
-+	struct rpmsg_endpoint *ept = container_of(kref, struct rpmsg_endpoint,
-+						  refcount);
-+	kfree(to_scp_endpoint(ept));
++	struct pru_rproc *pru = rproc->priv;
++
++	return regmap_update_bits(pru->cfg, pru->gpcfg_reg,
++				  PRUSS_GPCFG_PRU_GPI_MODE_MASK,
++				  mode << PRUSS_GPCFG_PRU_GPI_MODE_SHIFT);
 +}
++EXPORT_SYMBOL_GPL(pru_rproc_set_gpimode);
 +
-+static void mtk_rpmsg_ipi_handler(void *data, unsigned int len, void *priv)
-+{
-+	struct mtk_rpmsg_endpoint *mept = priv;
-+	struct rpmsg_endpoint *ept = &mept->ept;
-+	int ret;
-+
-+	ret = (*ept->cb)(ept->rpdev, data, len, ept->priv, ept->addr);
-+	if (ret)
-+		dev_warn(&ept->rpdev->dev, "rpmsg handler return error = %d",
-+			 ret);
-+}
-+
-+static struct rpmsg_endpoint *
-+__rpmsg_create_ept(struct platform_device *scp_pdev, struct rpmsg_device *rpdev,
-+		   rpmsg_rx_cb_t cb, void *priv,
-+		   u32 id)
-+{
-+	struct mtk_rpmsg_endpoint *mept;
-+	struct rpmsg_endpoint *ept;
-+	int ret;
-+
-+	mept = kzalloc(sizeof(*mept), GFP_KERNEL);
-+	if (!mept)
-+		return NULL;
-+	mept->scp_pdev = scp_pdev;
-+
-+	ept = &mept->ept;
-+	kref_init(&ept->refcount);
-+
-+	ept->rpdev = rpdev;
-+	ept->cb = cb;
-+	ept->priv = priv;
-+	ept->ops = &mtk_rpmsg_endpoint_ops;
-+	ept->addr = id;
-+
-+	ret = scp_ipi_register(scp_pdev, id, mtk_rpmsg_ipi_handler, mept);
-+	if (ret) {
-+		dev_err(&scp_pdev->dev, "IPI register failed, id = %d", id);
-+		kref_put(&ept->refcount, __ept_release);
-+		return NULL;
-+	}
-+
-+	return ept;
-+}
-+
-+static struct rpmsg_endpoint *
-+mtk_rpmsg_create_ept(struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
-+		     struct rpmsg_channel_info chinfo)
-+{
-+	struct platform_device *scp_pdev = to_scp_device(rpdev)->scp_pdev;
-+
-+	return __rpmsg_create_ept(scp_pdev, rpdev, cb, priv, chinfo.src);
-+}
-+
-+static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
-+{
-+	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
-+
-+	scp_ipi_unregister(mept->scp_pdev, ept->addr);
-+	kref_put(&ept->refcount, __ept_release);
-+}
-+
-+static int mtk_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
-+
-+	return scp_ipi_send(mept->scp_pdev, mept->ept.addr, data, len, 0);
-+}
-+
-+static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct mtk_rpmsg_endpoint *mept = to_scp_endpoint(ept);
-+
-+	/*
-+	 * TODO: This currently is same as mtk_rpmsg_send, and wait until SCP
-+	 * received the last command.
-+	 */
-+	return scp_ipi_send(mept->scp_pdev, mept->ept.addr, data, len, 0);
-+}
-+
-+static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops = {
-+	.destroy_ept = mtk_rpmsg_destroy_ept,
-+	.send = mtk_rpmsg_send,
-+	.trysend = mtk_rpmsg_trysend,
-+};
-+
-+static void mtk_rpmsg_release_device(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct mtk_rpmsg_device *mdev = to_scp_device(rpdev);
-+
-+	kfree(mdev);
-+}
-+
-+static const struct rpmsg_device_ops mtk_rpmsg_device_ops = {
-+	.create_ept = mtk_rpmsg_create_ept,
-+};
-+
-+static struct device_node *
-+mtk_rpmsg_match_device_subnode(struct device_node *node, const char *channel)
-+{
-+	struct device_node *child;
-+	const char *name;
-+	int ret;
-+
-+	for_each_available_child_of_node(node, child) {
-+		ret = of_property_read_string(child, "mtk,rpmsg-name", &name);
-+		if (ret)
-+			continue;
-+
-+		if (strcmp(name, channel) == 0)
-+			return child;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int mtk_rpmsg_register_device(struct platform_device *scp_pdev,
-+				     struct rpmsg_channel_info *info)
-+{
-+	struct rpmsg_device *rpdev;
-+	struct mtk_rpmsg_device *mdev;
-+	int ret;
-+
-+	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
-+	if (!mdev)
-+		return -ENOMEM;
-+
-+	mdev->scp_pdev = scp_pdev;
-+
-+	rpdev = &mdev->rpdev;
-+	rpdev->ops = &mtk_rpmsg_device_ops;
-+	rpdev->src = info->src;
-+	rpdev->dst = info->dst;
-+	strncpy(rpdev->id.name, info->name, RPMSG_NAME_SIZE);
-+
-+	rpdev->dev.of_node = mtk_rpmsg_match_device_subnode(
-+		scp_pdev->dev.of_node, info->name);
-+	rpdev->dev.parent = &scp_pdev->dev;
-+	rpdev->dev.release = mtk_rpmsg_release_device;
-+
-+	ret = rpmsg_register_device(rpdev);
-+	if (ret) {
-+		kfree(mdev);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void mtk_register_device_work_function(struct work_struct *register_work)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = container_of(
-+		register_work, struct mtk_rpmsg_rproc_subdev, register_work);
-+	struct platform_device *scp_pdev = mtk_subdev->scp_pdev;
-+	struct mtk_rpmsg_channel_info *info;
-+	int ret;
-+
-+	mutex_lock(&mtk_subdev->channels_lock);
-+	list_for_each_entry(info, &mtk_subdev->channels, list) {
-+		if (info->registered)
-+			continue;
-+
-+		ret = mtk_rpmsg_register_device(scp_pdev, &info->info);
-+		if (ret) {
-+			dev_err(&scp_pdev->dev, "Can't create rpmsg_device\n");
-+			continue;
-+		}
-+
-+		info->registered = true;
-+	}
-+	mutex_unlock(&mtk_subdev->channels_lock);
-+}
-+
-+static int mtk_rpmsg_create_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
-+				   char *name, u32 addr)
-+{
-+	struct mtk_rpmsg_channel_info *info;
-+
-+	info = kzalloc(sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	strncpy(info->info.name, name, RPMSG_NAME_SIZE);
-+	info->info.src = addr;
-+	info->info.dst = RPMSG_ADDR_ANY;
-+	mutex_lock(&mtk_subdev->channels_lock);
-+	list_add(&info->list, &mtk_subdev->channels);
-+	mutex_unlock(&mtk_subdev->channels_lock);
-+
-+	schedule_work(&mtk_subdev->register_work);
-+	return 0;
-+}
-+
-+static int mtk_rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
-+			   void *priv, u32 src)
-+{
-+	struct rpmsg_ns_msg *msg = data;
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = priv;
-+	struct device *dev = &mtk_subdev->scp_pdev->dev;
-+
-+	int ret;
-+
-+	if (len != sizeof(*msg)) {
-+		dev_err(dev, "malformed ns msg (%d)\n", len);
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * the name service ept does _not_ belong to a real rpmsg channel,
-+	 * and is handled by the rpmsg bus itself.
-+	 * for sanity reasons, make sure a valid rpdev has _not_ sneaked
-+	 * in somehow.
-+	 */
-+	if (rpdev) {
-+		dev_err(dev, "anomaly: ns ept has an rpdev handle\n");
-+		return -EINVAL;
-+	}
-+
-+	/* don't trust the remote processor for null terminating the name */
-+	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
-+
-+	dev_info(dev, "creating channel %s addr 0x%x\n", msg->name, msg->addr);
-+
-+	ret = mtk_rpmsg_create_device(mtk_subdev, msg->name, msg->addr);
-+	if (ret) {
-+		dev_err(dev, "create rpmsg device failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+int mtk_rpmsg_prepare(struct rproc_subdev *subdev)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+	struct platform_device *scp_pdev = mtk_subdev->scp_pdev;
-+
-+	/* a dedicated endpoint handles the name service msgs */
-+	mtk_subdev->ns_ept =
-+		__rpmsg_create_ept(scp_pdev, NULL, mtk_rpmsg_ns_cb, mtk_subdev,
-+				   SCP_IPI_NS_SERVICE);
-+	if (!mtk_subdev->ns_ept) {
-+		dev_err(&scp_pdev->dev,
-+			"failed to create name service endpoint\n");
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+void mtk_rpmsg_stop(struct rproc_subdev *subdev, bool crashed)
-+{
-+	struct mtk_rpmsg_channel_info *info, *next;
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+	struct device *dev = &mtk_subdev->scp_pdev->dev;
-+
-+	mtk_rpmsg_destroy_ept(mtk_subdev->ns_ept);
-+	cancel_work_sync(&mtk_subdev->register_work);
-+
-+	mutex_lock(&mtk_subdev->channels_lock);
-+	list_for_each_entry(info, &mtk_subdev->channels, list) {
-+		if (!info->registered)
-+			continue;
-+		if (rpmsg_unregister_device(dev, &info->info)) {
-+			dev_warn(
-+				dev,
-+				"rpmsg_unregister_device failed for %s.%d.%d\n",
-+				info->info.name, info->info.src,
-+				info->info.dst);
-+		}
-+	}
-+
-+	list_for_each_entry_safe(info, next,
-+				 &mtk_subdev->channels, list) {
-+		list_del(&info->list);
-+		kfree(info);
-+	}
-+	mutex_unlock(&mtk_subdev->channels_lock);
-+}
-+
-+struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
-+			      struct rproc *scp_rproc)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
-+
-+	mtk_subdev = kzalloc(sizeof(*mtk_subdev), GFP_KERNEL);
-+	if (!mtk_subdev)
-+		return NULL;
-+
-+	mtk_subdev->scp_pdev = scp_pdev;
-+	mtk_subdev->scp_rproc = scp_rproc;
-+	mtk_subdev->subdev.prepare = mtk_rpmsg_prepare;
-+	mtk_subdev->subdev.stop = mtk_rpmsg_stop;
-+	INIT_LIST_HEAD(&mtk_subdev->channels);
-+	INIT_WORK(&mtk_subdev->register_work,
-+		  mtk_register_device_work_function);
-+	mutex_init(&mtk_subdev->channels_lock);
-+
-+	return &mtk_subdev->subdev;
-+}
-+EXPORT_SYMBOL_GPL(mtk_rpmsg_create_rproc_subdev);
-+
-+void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+
-+	kfree(mtk_subdev);
-+}
-+EXPORT_SYMBOL_GPL(mtk_rpmsg_destroy_rproc_subdev);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MediaTek scp rpmsg driver");
-diff --git a/include/linux/platform_data/mtk_scp.h b/include/linux/platform_data/mtk_scp.h
-index 7625eede2e5832..e26e5f6146e68e 100644
---- a/include/linux/platform_data/mtk_scp.h
-+++ b/include/linux/platform_data/mtk_scp.h
-@@ -34,9 +34,11 @@ enum scp_ipi_id {
- 	SCP_IPI_VENC_VP8,
- 	SCP_IPI_MDP,
- 	SCP_IPI_CROS_HOST_CMD,
--	SCP_IPI_MAX,
-+	SCP_IPI_NS_SERVICE = 0xFF,
-+	SCP_IPI_MAX = 0x100,
- };
- 
-+
- /**
-  * scp_ipi_register - register an ipi function
+ /*
+  * Control PRU single-step mode
   *
-diff --git a/include/linux/rpmsg/mtk_rpmsg.h b/include/linux/rpmsg/mtk_rpmsg.h
-new file mode 100644
-index 00000000000000..8d21cd3d35b012
---- /dev/null
-+++ b/include/linux/rpmsg/mtk_rpmsg.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2018 Google LLC.
+diff --git a/include/linux/remoteproc/pru_rproc.h b/include/linux/remoteproc/pru_rproc.h
+index 841da09..887d996 100644
+--- a/include/linux/remoteproc/pru_rproc.h
++++ b/include/linux/remoteproc/pru_rproc.h
+@@ -8,10 +8,28 @@
+ #ifndef __LINUX_REMOTEPROC_PRU_RPROC_H
+ #define __LINUX_REMOTEPROC_PRU_RPROC_H
+ 
++/**
++ * enum pru_ctable_idx - Configurable Constant table index identifiers
 + */
++enum pru_ctable_idx {
++	PRU_C24 = 0,
++	PRU_C25,
++	PRU_C26,
++	PRU_C27,
++	PRU_C28,
++	PRU_C29,
++	PRU_C30,
++	PRU_C31,
++};
 +
-+#ifndef __LINUX_RPMSG_MTK_RPMSG_H
-+#define __LINUX_RPMSG_MTK_RPMSG_H
++enum pruss_gpi_mode;
 +
-+#include <linux/device.h>
-+#include <linux/remoteproc.h>
-+
-+#if IS_ENABLED(CONFIG_RPMSG_MTK_SCP)
-+
-+struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
-+			      struct rproc *scp_rproc);
-+
-+void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev);
-+
-+#else
-+
-+static inline struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *scp_pdev,
-+			      struct rproc *scp_rproc)
+ #if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
+ 
+ struct rproc *pru_rproc_get(struct device_node *node, int index);
+ void pru_rproc_put(struct rproc *rproc);
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
++int pru_rproc_set_gpimode(struct rproc *rproc, enum pruss_gpi_mode mode);
+ 
+ #else
+ 
+@@ -22,6 +40,18 @@ static inline struct rproc *pru_rproc_get(struct device_node *node, int index)
+ 
+ static inline void pru_rproc_put(struct rproc *rproc) { }
+ 
++static inline int pru_rproc_set_ctable(struct rproc *rproc,
++				       enum pru_ctable_idx c, u32 addr)
 +{
-+	return NULL;
++	return -ENOTSUPP;
 +}
 +
-+static inline void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev)
++static inline int pru_rproc_set_gpimode(struct rproc *rproc,
++					enum pruss_gpi_mode mode)
 +{
++	return -ENOTSUPP;
 +}
 +
-+#endif
-+
-+#endif
+ #endif /* CONFIG_PRUSS_REMOTEPROC */
+ 
+ #endif /* __LINUX_REMOTEPROC_PRU_RPROC_H */
 -- 
-2.21.0.rc0.258.g878e2cd30e-goog
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
