@@ -3,88 +3,32 @@ Return-Path: <matthias.bgg@gmail.com>
 Subject: Re: [PATCH v4 2/6] remoteproc/mediatek: add SCP support for mt8183
 References: <20190131093131.245531-1-pihsun@chromium.org>
  <20190131093131.245531-3-pihsun@chromium.org>
- <20190202001749.GT81583@google.com>
 From: Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <cc1407f1-c236-f0af-a6c1-366aeac259f4@gmail.com>
-Date: Mon, 4 Feb 2019 19:02:17 +0100
+Message-ID: <f0aeabf4-1ebe-ddf5-1ea3-27db5e51e04d@gmail.com>
+Date: Mon, 4 Feb 2019 18:59:28 +0100
 MIME-Version: 1.0
-In-Reply-To: <20190202001749.GT81583@google.com>
+In-Reply-To: <20190131093131.245531-3-pihsun@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: Matthias Kaehlcke <mka@chromium.org>, Pi-Hsun Shih <pihsun@chromium.org>
+To: Pi-Hsun Shih <pihsun@chromium.org>
 Cc: Erin Lo <erin.lo@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 
 
-On 02/02/2019 01:17, Matthias Kaehlcke wrote:
-> Hi Pi-Hsun,
-> 
-> a few comments inline.
-> 
-> It's the first time I dabble into remoteproc, I don't claim to have a
-> complete understanding of the driver at this point ;-)
-> 
-> On Thu, Jan 31, 2019 at 05:31:27PM +0800, Pi-Hsun Shih wrote:
->> From: Erin Lo <erin.lo@mediatek.com>
->>
->> Provide a basic driver to control Cortex M4 co-processor
->>
->> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
->> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
->> ---
->> Changes from v3:
->>  - Fix some issue found by checkpatch.
->>  - Make writes aligned in scp_ipi_send.
->>
->> Changes from v2:
->>  - Squash patch 3 from v2 (separate the ipi interface) into this patch.
->>  - Remove unused name argument from scp_ipi_register.
->>  - Add scp_ipi_unregister for proper cleanup.
->>  - Move IPI ids in sync with firmware.
->>  - Add mb() in proper place, and correctly clear the run->signaled.
->>
->> Changes from v1:
->>  - Extract functions and rename variables in mtk_scp.c.
->> ---
->>  drivers/remoteproc/Kconfig            |   9 +
->>  drivers/remoteproc/Makefile           |   1 +
->>  drivers/remoteproc/mtk_common.h       |  73 +++++
->>  drivers/remoteproc/mtk_scp.c          | 441 ++++++++++++++++++++++++++
->>  drivers/remoteproc/mtk_scp_ipi.c      | 157 +++++++++
->>  include/linux/platform_data/mtk_scp.h | 135 ++++++++
->>  6 files changed, 816 insertions(+)
->>  create mode 100644 drivers/remoteproc/mtk_common.h
->>  create mode 100644 drivers/remoteproc/mtk_scp.c
->>  create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
->>  create mode 100644 include/linux/platform_data/mtk_scp.h
->>
->> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->> index f0abd260804473..ee0bda23768938 100644
->> --- a/drivers/remoteproc/Kconfig
->> +++ b/drivers/remoteproc/Kconfig
->> @@ -22,6 +22,15 @@ config IMX_REMOTEPROC
->>  
->>  	  It's safe to say N here.
->>  
->> +config MTK_SCP
->> +        tristate "Mediatek SCP support"
->> +        depends on ARCH_MEDIATEK
->> +        help
->> +          Say y here to support Mediatek's SCP (Cortex M4
->> +          on MT8183) via the remote processor framework.
-> 
-> It would be good to spell out SCP somewhere, e.g.
-> 
-> "... support Mediatek's system control processor (SCP) via ..."
-> 
-> the example is less important IMO, though it's prefectly fine if you
-> can still squeeze it in ;-)
-> 
+On 31/01/2019 10:31, Pi-Hsun Shih wrote:
+> From: Erin Lo <erin.lo@mediatek.com>
+[...]
+> +struct platform_device *scp_get_plat_device(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *scp_node;
+> +	struct platform_device *scp_pdev;
+> +
+> +	scp_node = of_parse_phandle(dev->of_node, "mediatek,scp", 0);
 
-In which way is this different from
-drivers/soc/mediatek/mtk-scpsys.c ?
+IHMO this should be reflected in the binding description
 
 Regards,
-Matthias (the other one ;)
+Matthias
