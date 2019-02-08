@@ -1,53 +1,58 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
- <1549290167-876-2-git-send-email-rogerq@ti.com>
- <20190204163312.GI5720@atomide.com> <5C5959DB.2090608@ti.com>
- <f1b689cc-5d1b-0333-7a1c-cb6d58169e12@ti.com> <5C59AEA3.1080400@ti.com>
- <124e9f09-fb60-071d-e2ba-ec6f7fb3955c@ti.com>
- <20190205161945.GS5720@atomide.com> <5C5AF77D.8020007@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <90c359d8-c899-cf99-3c82-9d39f2b7765c@ti.com>
-Date: Wed, 13 Feb 2019 20:47:02 -0600
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <5C5AF77D.8020007@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Roger Quadros <rogerq@ti.com>, Tony Lindgren <tony@atomide.com>, Murali Karicheri <m-karicheri2@ti.com>
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1549290167-876-1-git-send-email-rogerq@ti.com> <1549290167-876-2-git-send-email-rogerq@ti.com>
+In-Reply-To: <1549290167-876-2-git-send-email-rogerq@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 8 Feb 2019 14:51:20 +0100
+Message-ID: <CACRpkdamWQUW_O+gageB4Q6XuBg+t-h+eW1gpor7_DHvx41j=A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
+Content-Type: text/plain; charset="UTF-8"
+To: Roger Quadros <rogerq@ti.com>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: ext Tony Lindgren <tony@atomide.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Suman Anna <s-anna@ti.com>, David Lechner <david@lechnology.com>, "Nori, Sekhar" <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>, nsaulnier@ti.com, jreeder@ti.com, Murali Karicheri <m-karicheri2@ti.com>, woods.technical@gmail.com, Linux-OMAP <linux-omap@vger.kernel.org>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 2/6/19 9:04 AM, Roger Quadros wrote:
-> 
-> 
-> On 05/02/19 18:19, Tony Lindgren wrote:
->> * Murali Karicheri <m-karicheri2@ti.com> [190205 16:13]:
->>> On 02/05/2019 10:41 AM, Roger Quadros wrote:
->>>> What I'm suggesting here is that kernel remoteproc driver should have nothing to do
->>>> with the other PRU's data RAM.
->>>>
->>>> The application driver if needs both PRUs then it can obviously access both DRAMs
->>>> as it has a phandle to both PRUs.
->>>>
->>> That should be fine.
->>
->> That sounds good to me too.
->>
->> For dts, yeah please allocate the resources for the modules
->> where the resources belong to on the PRUSS internal interconnect :)
->> Devices can move around on the interconnect between SoCs and the
->> modules can get swapped or added.
-> 
-> If you take a look at "Figure 30-1. PRU-ICSS Overview" in 
-> http://www.tij.co.jp/jp/lit/ug/spruhz7h/spruhz7h.pdf
-> 
-> You can see that DRAM0 and DRAM1 are not part of PRU. That means
-> they shouldn't be in the PRU node then.
+On Mon, Feb 4, 2019 at 3:24 PM Roger Quadros <rogerq@ti.com> wrote:
 
-Yes, they do not belong to a PRU, and should not be defined underneath
-one. Both are accessible from both PRU cores, so it is upto the
-application on how they can partition the usage.
+> From: Suman Anna <s-anna@ti.com>
+>
+> This patch adds the bindings for the Programmable Real-Time Unit
+> and Industrial Communication Subsystem (PRU-ICSS) present on various
+> SoCs such as AM33xx, AM437x, AM57xx, Keystone 66AK2G SoC, etc. It is
+> present on the Davinci based OMAPL138 SoCs and K3 architecture
+> based AM65x SoCs as well (not covered for now).
+>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
 
-regards
-Suman
+(...)
+> +               pruss_intc: intc@20000 {
+> +                       compatible = "ti,am3356-pruss-intc";
+> +                       reg = <0x20000 0x2000>;
+> +                       reg-names = "intc";
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <1>;
+> +                       interrupts = <20 21 22 23 24 25 26 27>;
+> +                       interrupt-names = "host2", "host3", "host4",
+> +                                         "host5", "host6", "host7",
+> +                                         "host8", "host9";
+
+If thsese interrupts are mapped 1-to-1 to a parent interrupt controller
+then this is a hierarchical interrupt domain and then these should
+be handled locally in the driver as offset from child to parent
+statically encoded in the driver.
+
+Several old drivers and old device tree bindings make this kind
+of maps, but it is not how we do it anymore, if we can avoid it.
+
+To be able to use hierarchical interrupt domain in the kernel, the top
+interrupt controller must use the hierarchical (v2) irqdomain, so
+if this is anything else than the ARM GIC it will be an interesting
+undertaking to handle this.
+
+The more I understand of hierarchical irqdomains, the more of
+workarounds where we should be using it I see, we really need
+to spread this knowledge. Using it requires a lot of upfront work
+sometimes, sorry about that but the end result is so much better.
+
+Yours,
+Linus Walleij
