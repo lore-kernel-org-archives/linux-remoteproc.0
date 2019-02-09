@@ -1,110 +1,174 @@
 Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from zimbra2.kalray.eu ([92.103.151.219]:35714 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731755AbfB1Hnd (ORCPT
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34918 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfBIEGd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Feb 2019 02:43:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 0D8DC27E02CF
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 08:43:32 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id fdgSinUAgtT4 for <linux-remoteproc@vger.kernel.org>;
-        Thu, 28 Feb 2019 08:43:31 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id B497A27E03A3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 08:43:31 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 0y6riaphLwNb for <linux-remoteproc@vger.kernel.org>;
-        Thu, 28 Feb 2019 08:43:31 +0100 (CET)
-Received: from zimbra2.kalray.eu (zimbra2.kalray.eu [192.168.40.202])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id A429D27E02CF
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 08:43:31 +0100 (CET)
-Date: Thu, 28 Feb 2019 08:43:31 +0100 (CET)
-From: =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-Message-ID: <238022034.10402985.1551339811648.JavaMail.zimbra@kalray.eu>
-Subject: dynamic vring allocation and 64 bits resources/loader
+        Fri, 8 Feb 2019 23:06:33 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b17so4504782eds.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 08 Feb 2019 20:06:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <CAB7rCTjfQoFOQkStQFP96+44jjZJSaWxQRk8JuktVGDE19Q7MQ@mail.gmail.com>
+ <CAAPnCLxo5+Fr3txN0Vjp0OkrxB-YrX0drPgyGbH92r8ttHvsxQ@mail.gmail.com> <CAB7rCThrnzHSCRZ-d+qLd507d5wZVby40u1k8ViK7cS=z5OyRA@mail.gmail.com>
+In-Reply-To: <CAB7rCThrnzHSCRZ-d+qLd507d5wZVby40u1k8ViK7cS=z5OyRA@mail.gmail.com>
+From: Mike <puffy.taco@gmail.com>
+Date: Fri, 8 Feb 2019 22:06:18 -0600
+Message-ID: <CAB7rCTg=hWXPbgoPreD58F3azEP=swotKsQRdLnoYAs8dkR+HQ@mail.gmail.com>
+Subject: Re: Rpmsg Char Driver
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+To: Denis R <dry.embdev@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,=20
+On Thu, Feb 7, 2019 at 1:37 PM Mike <puffy.taco@gmail.com> wrote:
+>
+> Hey Denis,
+>
+> On Wed, Feb 6, 2019 at 10:12 PM Denis R <dry.embdev@gmail.com> wrote:
+> >
+> > Hello Mike,
+> >
+> > On Thu, Feb 7, 2019 at 9:45 AM Mike <puffy.taco@gmail.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > First, I think this is the right place for questions relating to
+> > > rpmsg, but please redirect me if I'm wrong.
+> > >
+> > > I'm looking to get access to send messages from userspace to the rpmsg
+> > > bus, but am not sure the best way.  The base of my work is a 4.9
+> > > series kernel for NXP's i.MX7D,
+> >
+> > Have you seen the imx_rpmsg_tty driver as part of NXP's 4.9 kernel?
+> > This is the driver which will create the A7-M4  channel to the other
+> > side,
+> > and the ttyRPMSG device, with one default endpoint.
+> >
+>
+> Yes, I've been using that driver to facilitate porting RPMsg-Lite to
+> the RTOS I'm using on the M4.
+>
+> > > but I've been comparing it to mainline
+> > > to see if there's anything I could utilize.  In particular, I was
+> > > looking at the config option RPMSG_CHAR which states:
+> > >
+> > > "Say Y here to export rpmsg endpoints as device files, usually found
+> > > in /dev. They make it possible for user-space programs to send and
+> > > receive rpmsg packets."
+> > >
+> > > I compiled a kernel with that option but I don't see any device files
+> > > in /dev.  Looking through the code, it seems like only the qcom_smd
+> > > driver actually uses this driver, so I assume the Kconfig help text is
+> > > somewhat misleading?
+> > >
+> > > Is there a general purpose way to open a channel from userspace?  Or
+> > > am I best off using the name service from the remote processor to
+> > > announce all the channels I want and write a generic driver that
+> > > creates a char device to expose an interface to each?
+> >
+> > I too would be interested to know how far ahead is the mainstream on
+> > that. It would be great if there is a new or updated driver which
+> > creates ttyrpmsg devices dynamically
+> > for the new endpoints that application may create.
+> >
+> > I was going to expand the imx_rpmsg_tty to do this just for ones I
+> > need, but of course would rather use an already working driver for
+> > this of exists.
+> >
+>
+> I'm in the same place.  The downside to me of the tty driver was that
+> everything became a stream of bytes, when ultimately everything I was
+> sending was more message based.  Worked just fine to get everything
+> tested, but if I can move more decision making to userspace, that
+> suits me.  I did cherry-pick a few commits as the char driver didn't
+> compile as it was based on the source provided by NXP.  Seems like the
+> right driver to use as I previously looked at what seemed like the
+> same prior art, but I just can't figure out if it should start working
+> without drastic changes to one of the drivers.
+>
 
-I am currently implementing remote proc for our processor and after some te=
-sts,=20
-I have the following questions.=20
+Examined it a bit more and figured out what the qcom_smd driver was
+doing, so I ported that to the virtio_rpmsg_bus.  Code below, my
+apologies for gmail mangling the tabs into spaces.  Intent isn't to
+submit it as a patch against current mainline as I'm not building from
+there, but I can if it helps people look it over.  I also had to
+modify the rpmsg_char driver because the destination channel wasn't
+being utilized.  It seems that all endpoints in that driver are using
+the rpmsg_device from the ctrl device, so the proper destination is
+never carried through.  One option is as below, the other would be to
+alloc an rpmsg_device for each endpoint.  Again, this was based on a
+4.9 kernel from NXP, but I cherry-picked all the meaningful patches
+from drivers/rpmsg/* to bring it close enough to mainline.  The virtio
+rpmsg bus doesn't export an rpmsg_name attribute, but modifying the
+associated udev rules to account for that gets a useful device name to
+userspace and I can create endpoints and transfer data.  Does this
+seem like the right direction for the virtio bus?  I saw one commit
+that was pushing towards a driver_override in sysfs to make use of
+rpmsg_char, but my assumption was that you would need to first have
+the remote announce an endpoint before you could assign the char
+driver, where this approach instantiates it from the start.
 
-1) When allocating vring dynamically (da =3D=3D (-1)), the remoteproc core =
-allocates=20
-carveouts for each of these vrings:=20
 
-[ 34.410000] remoteproc remoteproc0: rsc: type 3=20
-[ 34.420000] remoteproc remoteproc0: vdev rsc: id 7, dfeatures 0x0, cfg len=
- 0, 2 vrings=20
-[ 34.430000] remoteproc remoteproc0: vdev rsc: vring0: da 0xffffffff, qsz 2=
-56, align 4096=20
-[ 34.430000] remoteproc remoteproc0: vdev rsc: vring1: da 0xffffffff, qsz 2=
-56, align 4096=20
-[ 34.450000] remoteproc remoteproc0: carveout va (____ptrval____), dma 0x00=
-0000011ec88000, len 0x3000=20
-[ 34.460000] remoteproc remoteproc0: carveout va (____ptrval____), dma 0x00=
-0000011ec8c000, len 0x3000=20
-[ 34.460000] remoteproc remoteproc0: da =3D 0x0 len =3D 0x10440 va =3D 0x(_=
-___ptrval____)=20
-[ 34.490000] remoteproc remoteproc0: da =3D 0x10440 len =3D 0x10 va =3D 0x(=
-____ptrval____)=20
-[ 34.500000] remoteproc remoteproc0: da =3D 0x10450 len =3D 0xc4f0 va =3D 0=
-x(____ptrval____)=20
-[ 34.520000] remoteproc remoteproc0: da =3D 0xa46000 len =3D 0x2b4 va =3D 0=
-x(____ptrval____)=20
-[ 34.530000] remoteproc remoteproc0: da =3D 0xe3e8 len =3D 0x58 va =3D 0x(_=
-___ptrval____)=20
-[ 34.550000] remoteproc remoteproc0: registered virtio0 (type 7)=20
-[ 34.560000] remoteproc remoteproc0: remote processor cluster1 is now up=20
-Hello world from cluster1=20
-VRING0 da: 0xffffffff, pa: 0, notify_id: 0=20
-VRING1 da: 0xffffffff, pa: 0, notify_id: 1=20
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 0b5d0d342ab0..fa06ea9207c2 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -244,9 +244,9 @@ static ssize_t rpmsg_eptdev_write(struct file
+*filp, const char __user *buf,
+     }
 
-Rsc table contains the following:=20
+     if (filp->f_flags & O_NONBLOCK)
+-        ret = rpmsg_trysend(eptdev->ept, kbuf, len);
++        ret = rpmsg_trysendto(eptdev->ept, kbuf, len, eptdev->chinfo.dst);
+     else
+-        ret = rpmsg_send(eptdev->ept, kbuf, len);
++        ret = rpmsg_sendto(eptdev->ept, kbuf, len, eptdev->chinfo.dst);
 
-/* Virtio device entry */=20
-{=20
-RSC_VDEV, VIRTIO_ID_RPMSG, 0, 0, 0, 0, 0,=20
-NUM_VRINGS, {0, 0},=20
-},=20
-/* Vring rsc entry - part of vdev_rsc entry */=20
-{=20
-(-1), VRING_ALIGN, VRING_SIZE, 0, 0=20
-},=20
-{=20
-(-1), VRING_ALIGN, VRING_SIZE, 0, 0=20
-},=20
+ unlock_eptdev:
+     mutex_unlock(&eptdev->ept_lock);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index b7fa5676893b..612120447771 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -880,6 +880,22 @@ static int rpmsg_ns_cb(struct rpmsg_device
+*rpdev, void *data, int len,
+     return 0;
+ }
 
-I was expecting remoteproc core to update vring pa but the=20
-rproc_alloc_registered_carveouts function only update resources for carveou=
-ts.=20
-Is this the expected behaviour or am I missing something ? I tried adding t=
-wo=20
-carveouts named after the vdev%dvring%d scheme and the carveout resources a=
-re=20
-indeed correctly updated (but vring are still not updated). BTW, I'm workin=
-g=20
-on a v5.0-rc5 kernel if its of any interest.=20
++static int rpmsg_create_chrdev(struct virtproc_info *vrp)
++{
++    struct virtio_rpmsg_channel *vch;
++
++    vch = kzalloc(sizeof(*vch), GFP_KERNEL);
++    if (!vch)
++        return -ENOMEM;
++
++    vch->vrp = vrp;
++    vch->rpdev.ops = &virtio_rpmsg_ops;
++    vch->rpdev.dev.parent = &vrp->vdev->dev;
++    vch->rpdev.dev.release = virtio_rpmsg_release_device;
++
++    return rpmsg_chrdev_register_device(&vch->rpdev);
++}
++
+ static int rpmsg_probe(struct virtio_device *vdev)
+ {
+     vq_callback_t *vq_cbs[] = { rpmsg_recv_done, rpmsg_xmit_done };
+@@ -990,6 +1006,10 @@ static int rpmsg_probe(struct virtio_device *vdev)
+     if (notify)
+         virtqueue_notify(vrp->rvq);
 
-2) Regarding resource structs (rsc_*). They are all defined using u32 types=
-=20
-(da, etc for instance). I saw it was planned to support 64 bits resources i=
-n=20
-some mail from 2018. However, this does not seems supported yet. Are there=
-=20
-any new plans to support it ?=20
++    err = rpmsg_create_chrdev(vrp);
++    if (err)
++        dev_err(&vdev->dev, "failed to register chrdev for virtio\n");
++
+     dev_info(&vdev->dev, "rpmsg host is online\n");
 
-3) Same question regarding an elf64 loader.=20
+     return 0;
 
-Regards,=20
-
-Cl=C3=A9ment=20
+> > > Thanks,
+> > > Mike
+> >
+> > Regards,
+> >
+> > Denis
