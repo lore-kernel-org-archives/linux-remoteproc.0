@@ -1,32 +1,56 @@
-Return-Path: <pierre-louis.bossart@linux.intel.com>
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH 1/2] MAINTAINERS: RPMSG: fix git tree location
-Date: Fri, 22 Feb 2019 22:20:16 -0600
-Message-Id: <20190223042017.21985-1-pierre-louis.bossart@linux.intel.com>
-To: linux-remoteproc@vger.kernel.org
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Return-Path: <mka@chromium.org>
+Return-Path: <mka@chromium.org>
+Date: Wed, 13 Feb 2019 09:01:05 -0800
+From: Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH v4 2/6] remoteproc/mediatek: add SCP support for mt8183
+Message-ID: <20190213170105.GX117604@google.com>
+References: <20190131093131.245531-1-pihsun@chromium.org>
+ <20190131093131.245531-3-pihsun@chromium.org>
+ <20190202001749.GT81583@google.com>
+ <CANdKZ0ds2s46h-Rs-4aJSuVFkoaeEzXi96m2zbx5XjBhhsc3Xw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANdKZ0ds2s46h-Rs-4aJSuVFkoaeEzXi96m2zbx5XjBhhsc3Xw@mail.gmail.com>
+To: Pi-Hsun Shih <pihsun@chromium.org>
+Cc: Erin Lo <erin.lo@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current information isn't up-to-date, use Bjorn Andersson's github
-instead.
+On Wed, Feb 13, 2019 at 11:20:18AM +0800, Pi-Hsun Shih wrote:
+> Hi,
+> 
+> Thanks for the review, would address most comments in next version of patch.
+> 
+> On Sat, Feb 2, 2019 at 8:17 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> > Hi Pi-Hsun,
+> >
+> > a few comments inline.
+> >
+> > It's the first time I dabble into remoteproc, I don't claim to have a
+> > complete understanding of the driver at this point ;-)
+> >
+> > On Thu, Jan 31, 2019 at 05:31:27PM +0800, Pi-Hsun Shih wrote:
+> > > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> > > new file mode 100644
+> > > index 00000000000000..920c81c3525c2a
+> > > --- /dev/null
+> > > +++ b/drivers/remoteproc/mtk_scp.c
+> > > +             return ret;
+> > > +     }
+> > > +
+> > > +     writel(0x0, scp->reg_base + MT8183_SCP_SRAM_PDN);
+> >
+> > what is the purpose of this write?
+> >
+> 
+> Answer from Erin:
+> The code needs to execute on scp’s SRAM.
+> We need to turn on the power of SRAM before using it.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please add a brief comment since this is not evident from the code.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32d444476a90..461fb5d3e5e2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12893,7 +12893,7 @@ REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
- M:	Ohad Ben-Cohen <ohad@wizery.com>
- M:	Bjorn Andersson <bjorn.andersson@linaro.org>
- L:	linux-remoteproc@vger.kernel.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/rpmsg.git
-+T:	git git://github.com/andersson/remoteproc
- S:	Maintained
- F:	drivers/rpmsg/
- F:	Documentation/rpmsg.txt
--- 
-2.17.1
+Thanks
+
+Matthias
