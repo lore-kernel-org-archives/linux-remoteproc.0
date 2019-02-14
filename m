@@ -1,21 +1,21 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 18 Feb 2019 13:32:52 -0600
-From: Rob Herring <robh@kernel.org>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH v2 03/14] dt-binding: irqchip: Add pruss-intc-irq driver
  for PRUSS interrupts
-Message-ID: <20190218193252.GA6313@bogus>
 References: <1549290167-876-1-git-send-email-rogerq@ti.com>
  <1549290167-876-4-git-send-email-rogerq@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <aaf5e1c7-ae07-ab01-8047-cb95def2d740@ti.com>
+Date: Wed, 13 Feb 2019 20:40:52 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <1549290167-876-4-git-send-email-rogerq@ti.com>
-To: Roger Quadros <rogerq@ti.com>
-Cc: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Roger Quadros <rogerq@ti.com>, tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Feb 04, 2019 at 04:22:36PM +0200, Roger Quadros wrote:
+On 2/4/19 8:22 AM, Roger Quadros wrote:
 > From: "Andrew F. Davis" <afd@ti.com>
 > 
 > The Programmable Real-Time Unit Subsystem (PRUSS) contains an
@@ -45,6 +45,14 @@ On Mon, Feb 04, 2019 at 04:22:36PM +0200, Roger Quadros wrote:
 > Signed-off-by: Roger Quadros <rogerq@ti.com>
 > ---
 >  .../interrupt-controller/ti,pruss-intc-irq.txt     | 51 ++++++++++++++++++++++
+
+Better to name the file just ti,pruss-intc.txt.
+
+Also, one minor nit, %s/dt-binding/dt-bindings/ on the the patch title.
+
+regards
+Suman
+
 >  1 file changed, 51 insertions(+)
 >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
 > 
@@ -74,9 +82,6 @@ On Mon, Feb 04, 2019 at 04:22:36PM +0200, Roger Quadros wrote:
 > +                             "ti,k2g-pruss-intc" for 66AK2G family of SoCs
 > +- reg                  : base address and size for the PRUSS INTC sub-module
 > +- reg-names            : should contain the string "intc"
-
-Not really useful with only 1 entry.
-
 > +- interrupts     : all the interrupts generated towards the main host
 > +                   processor in the SoC. The format depends on the
 > +                   interrupt specifier for the particular SoC's MPU
@@ -97,9 +102,6 @@ Not really useful with only 1 entry.
 > +Example:
 > +--------
 > +		pruss_intc: intc@20000 {
-
-interrupt-controller@20000
-
 > +			compatible = "ti,am3356-pruss-intc";
 > +			reg = <0x20000 0x2000>;
 > +			reg-names = "intc";
@@ -111,7 +113,4 @@ interrupt-controller@20000
 > +					  "host8", "host9";
 > +		};
 > +
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 > 
