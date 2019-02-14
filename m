@@ -1,86 +1,103 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v5 1/6] dt-bindings: Add a binding for Mediatek SCP
-Date: Thu, 21 Feb 2019 16:47:24 +0800
-Message-Id: <20190221084729.101784-2-pihsun@chromium.org>
-In-Reply-To: <20190221084729.101784-1-pihsun@chromium.org>
-References: <20190221084729.101784-1-pihsun@chromium.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 10/14] remoteproc/pru: Add PRU remoteproc driver
+From: Suman Anna <s-anna@ti.com>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-11-git-send-email-rogerq@ti.com>
+ <acf08e5e-d65f-84cf-5d3f-a8e0977933f4@ti.com>
+Message-ID: <448fc985-9822-54b1-c0aa-070d6dcaad1a@ti.com>
+Date: Wed, 13 Feb 2019 21:44:26 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <acf08e5e-d65f-84cf-5d3f-a8e0977933f4@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Roger Quadros <rogerq@ti.com>, tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, "Andrew F . Davis" <afd@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Erin Lo <erin.lo@mediatek.com>
+On 2/13/19 8:35 PM, Suman Anna wrote:
+> Hi Roger,
+> 
+> On 2/4/19 8:22 AM, Roger Quadros wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> The Programmable Real-Time Unit Subsystem (PRUSS) consists of
+>> dual 32-bit RISC cores (Programmable Real-Time Units, or PRUs)
+>> for program execution. This patch adds a remoteproc platform
+>> driver for managing the individual PRU RISC cores life cycle.
+>>
+>> This remoteproc driver does not have support for error recovery
+>> and system suspend/resume features. Different compatibles are
+>> used to allow providing scalability for instance-specific device
+>> data if needed. The driver uses a default firmware-name retrieved
+>> from device-tree, and the firmwares are expected to be present
+>> in the standard Linux firmware search paths. They can also be
+>> adjusted by userspace if required through the sysfs interface
+>> provided by the remoteproc core.
+>>
+>> The PRU remoteproc driver uses a client-driven boot methodology
+>> - it does _not_ support auto-boot so that the PRU load and boot
+>> is dictated by the corresponding client drivers for achieving
+>> various usecases. This allows flexibility for the client drivers
+>> or applications to set a firmware name (if needed) based on their
+>> desired functionality and boot the PRU. The sysfs bind and unbind
+>> attributes have also been suppressed so that the PRU devices cannot
+>> be unbound and thereby shutdown a PRU from underneath a PRU client
+>> driver.
+>>
+>> A new entry 'single_step' is added to the remoteproc debugfs dir.
+>> The 'single_step' utilizes the single-step execution of the PRU
+>> cores. Writing a non-zero value performs a single step, and a
+>> zero value restores the PRU to execute in the same mode as the
+>> mode before the first single step. (note: if the PRU is halted
+>> because of a halt instruction, then no change occurs).
+>>
+>> pru_rproc_get() and pru_rproc_put() functions allow client drivers
+>> to acquire and release the remoteproc device associated with a PRU core.
+>> The PRU cores are treated as resources with only one client owning
+>> it at a time.
+>>
+>> PRU interrupt mapping can be provided via devicetree using
+>> ti,pru-interrupt-map property or via the resource table in the
+>> firmware blob. If both are provided, the config in DT takes precedence.
+>> For interrupt map via resource table, pru-software-support-package [1]
+>> has been historically using version 0 for this. However, the current
+>> data structure is not scaleable and is not self sufficient.
+>> 1) it hard codes number of channel to host mappings so is not
+>> scaleable to newer SoCs than have more of these.
+>> 2) it does not contain the event to channel mappings within
+>> itself but relies on a pointer to point to another section
+>> in data memory. This causes a weird complication that the
+>> respective data section must be loaded before we can really
+>> use the INTC map.
+>>
+>> With this patch we drop support for version 0 and support
+>> version 1 which is a more robust and scalable data structure.
+>> It should be able to support a sufficiently large number (255) of
+>> sysevents, channels and host interrupts and is self contained
+>> so it can be used without dependency on order of loading sections.
+> 
+> Hmm, looks like you squashed a whole bunch of patches into this. I would
+> prefer some of the logical ones to be separated out just like before,
+> makes it easier to review the interfaces.
+> 
+> Looks like you have also changed usage behavior on couple of things and
+> dropped some of my original changes. I was not able to test this series
+> either on AM335x or on AM57xx to comment more on the behavior (not even
+> seeing the pruss devices populated, not sure what pieces are missing still).
 
-Add a DT binding documentation of SCP for the
-MT8183 SoC from Mediatek.
+Able to get the PRUSS devices show up on AM335x atleast after enabling
+the Reset Controller related configs, but no such luck on AM57xx.
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
-Changes from v4:
- - Add detail of more properties.
- - Document the usage of mtk,rpmsg-name in subnode from the new design.
+regards
+Suman
 
-Changes from v3:
- - No change.
-
-Changes from v2:
- - No change. I realized that for this patch series, there's no need to
-   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
-   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
-   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
-   created by SCP name service.
-
-Changes from v1:
- - No change.
----
- .../bindings/remoteproc/mtk,scp.txt           | 37 +++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-new file mode 100644
-index 00000000000000..8cf8b0e0d98a4c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-@@ -0,0 +1,37 @@
-+Mediatek SCP Bindings
-+----------------------------------------
-+
-+This binding provides support for ARM Cortex M4 Co-processor found on some
-+Mediatek SoCs.
-+
-+Required properties:
-+- compatible		Should be "mediatek,mt8183-scp"
-+- reg			Should contain the address ranges for the two memory
-+			regions, SRAM and CFG.
-+- reg-names		Contains the corresponding names for the two memory
-+			regions. These should be named "sram" & "cfg".
-+- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
-+- clock-names		Contains the corresponding name for the clock. This
-+			should be named "main".
-+
-+Subnodes
-+--------
-+
-+When CONFIG_RPMSG_MTK_SCP is enabled, subnodes of the SCP represent rpmsg
-+devices. The names of the devices are not important. The properties of these
-+nodes are defined by the individual bindings for the rpmsg devices - but must
-+contain the following property:
-+
-+- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
-+			the subnode to rpmsg device announced by SCP.
-+
-+Example:
-+
-+	scp: scp@10500000 {
-+		compatible = "mediatek,mt8183-scp";
-+		reg = <0 0x10500000 0 0x80000>,
-+		      <0 0x105c0000 0 0x5000>;
-+		reg-names = "sram", "cfg";
-+		clocks = <&infracfg CLK_INFRA_SCPSYS>;
-+		clock-names = "main";
-+	};
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+> 
+>>
+>> [1]  git://git.ti.com/pru-software-support-package/pru-software-support-package.git
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> ---
