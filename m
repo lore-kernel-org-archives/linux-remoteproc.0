@@ -1,51 +1,123 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v4 8/8] remoteproc: qcom: wcss: explicitly request exclusive reset control
-Date: Sat,  2 Feb 2019 20:56:26 +0530
-Message-Id: <20190202152626.1006-9-govinds@codeaurora.org>
-In-Reply-To: <20190202152626.1006-1-govinds@codeaurora.org>
-References: <20190202152626.1006-1-govinds@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 01/16] remoteproc: Extend rproc_da_to_va() API with a
+ flags parameter
+References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
+ <1543218769-5507-2-git-send-email-rogerq@ti.com>
+ <d93c4c96-e0b9-59cd-6098-92684bc2360b@lechnology.com>
+ <5BFFBFA0.9000104@ti.com>
+ <ec83108c-1748-cec4-bebf-119d261fb229@lechnology.com>
+ <5C065107.8080600@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <09c30d72-9d1c-9c96-a1ef-8d30fc8c5bfa@ti.com>
+Date: Wed, 13 Feb 2019 21:35:48 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+In-Reply-To: <5C065107.8080600@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Roger Quadros <rogerq@ti.com>, David Lechner <david@lechnology.com>, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use request exclusive reset control for wcss reset controls.
+Hi Roger,
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 12/4/18 4:03 AM, Roger Quadros wrote:
+> On 29/11/18 18:12, David Lechner wrote:
+>> On 11/29/18 4:29 AM, Roger Quadros wrote:
+>>> Bjorn, Suman,
+>>>
+>>> On 26/11/18 23:29, David Lechner wrote:
+>>>> On 11/26/18 1:52 AM, Roger Quadros wrote:
+>>>>> From: Suman Anna <s-anna@ti.com>
+>>>>>
+>>>>> The rproc_da_to_va() API is currently used to perform any device
+>>>>> to kernel address translations to meet the different needs of the
+>>>>> remoteproc core/platform drivers (eg: loading). The function also
+>>>>> invokes the da_to_va ops, if present, to allow the remoteproc
+>>>>> platform drivers to provide address translation. However, not all
+>>>>> platform implementations have linear address spaces, and may need
+>>>>> an additional parameter to be able to perform proper translations.
+>>>>>
+>>>>> The rproc_da_to_va() API and the rproc .da_to_va ops have therefore
+>>>>> been expanded to take in an additional flags field enabling some
+>>>>> remoteproc implementations (like the TI PRUSS remoteproc driver)
+>>>>> to use these flags. Also, define some semantics for this flags
+>>>>> argument as this can vary from one implementation to another. A
+>>>>> new flags type is encoded into the upper 16 bits along side the
+>>>>> actual value in the lower 16-bits for the flags argument, to
+>>>>> allow different individual implementations to have better
+>>>>> flexibility in interpreting the flags as per their needs.
+>>>>
+>>>> This seems like an overly complex solution for a rather simple
+>>>> problem. Instead of passing all sorts of flags, could we just add
+>>>> a parameter named "page" to da_to_va() that indicates the memory
+>>>> page of the address in the remote processor?
+>>>>
+>>>> Or perhaps there is some other use for all of these flags that I
+>>>> am not aware of?
+>>>
+>>> I'm not a big fan of this patch either.
+>>>
+>>> rproc_da_to_va() is used at the following places
+>>>
+>>> 2 qcom_q6v5_mss.c         qcom_q6v5_dump_segment           974 void *ptr = rproc_da_to_va(rproc, segment->da, segment->size,
+>>> 3 remoteproc_core.c       rproc_da_to_va                   197 void *rproc_da_to_va(struct rproc *rproc, u64 da, int len, u32 flags)
+>>> 4 remoteproc_core.c       rproc_handle_trace               582 ptr = rproc_da_to_va(rproc, rsc->da, rsc->len, RPROC_FLAGS_NONE);
+>>> 5 remoteproc_core.c       rproc_coredump                  1592 ptr = rproc_da_to_va(rproc, segment->da, segment->size,
+>>> 6 remoteproc_elf_loader.c rproc_elf_load_segments          185 ptr = rproc_da_to_va(rproc, da, memsz,
+>>> 7 remoteproc_elf_loader.c rproc_elf_find_loaded_rsc_table  337 return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size,
+>>>
+>>> At rproc_elf_load_segments() we need to pass enough information so that
+>>> the rproc driver can load the segment into proper area (IRAM vs DRAM).
+>>> So providing page should suffice.
+>>
+>> FYI, the PRU series I sent a while back has some patches to do
+>> something like this so feel free to use them if they are helpful.
+>>
+>> https://lore.kernel.org/lkml/20180623210810.21232-2-david@lechnology.com/
+>> https://lore.kernel.org/lkml/20180623210810.21232-3-david@lechnology.com/
+>>
+> 
+> Thanks. I think we need to do something like that. Too bad you had to reverse engineer
+> the TI specific headers. I'll check if we have this available somewhere internally.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 0b1f6f537a1e..0821c94be6eb 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -752,20 +752,20 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
- 	struct device *dev = wcss->dev;
- 
- 	if (aon_reset_required) {
--		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");;
-+		wcss->wcss_aon_reset = devm_reset_control_get_exclusive(dev, "wcss_aon_reset");
- 		if (IS_ERR(wcss->wcss_aon_reset)) {
- 			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
- 			return PTR_ERR(wcss->wcss_aon_reset);
- 		}
- 	}
- 
--	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
-+	wcss->wcss_reset = devm_reset_control_get_exclusive(dev, "wcss_reset");
- 	if (IS_ERR(wcss->wcss_reset)) {
- 		dev_err(wcss->dev, "unable to acquire wcss_reset\n");
- 		return PTR_ERR(wcss->wcss_reset);
- 	}
- 
--	wcss->wcss_q6_reset = devm_reset_control_get(dev, "wcss_q6_reset");
-+	wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
- 	if (IS_ERR(wcss->wcss_q6_reset)) {
- 		dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
- 		return PTR_ERR(wcss->wcss_q6_reset);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I commented on this in your v2 series, but let's see if we can
+incorporate some of this custom logic within the PRU remoteproc driver
+else. The remoteproc core does allow you to use your own implementations
+for some firmware related ops.
+
+> 
+>>>
+>>> I want to understand more about rproc_elf_find_loaded_rsc_table() myself.
+>>> rproc_elf_find_loaded_rsc_table() is called only in rproc_start() in remoteproc_core.c
+>>> with the comment
+>>>
+>>>          /*
+>>>           * The starting device has been given the rproc->cached_table as the
+>>>           * resource table. The address of the vring along with the other
+>>>           * allocated resources (carveouts etc) is stored in cached_table.
+>>>           * In order to pass this information to the remote device we must copy
+>>>           * this information to device memory. We also update the table_ptr so
+>>>           * that any subsequent changes will be applied to the loaded version.
+>>>           */
+>>>          loaded_table = rproc_find_loaded_rsc_table(rproc, fw);
+>>>
+>>> Why isn't cached_table sufficient?
+>>> Why do we need to call rproc_find_loaded_rsc_table()?
+>>>
+>>> why do we need to load the resource table into remote processor memory at all.
+>>> As discussed earlier, some PRU systems have very little memory (512 bytes?)
+>>> and we want to avoid unnecessary loading.
+>>>
+> 
+> This question still holds.
+> Suman?
+
+The resource table is used for publishing back various allocated
+resource values to the remote processor, so this needs to be loaded into
+memory. For example, with RSC_CARVEOUTs, we fill in the address Linux
+kernel allocated. With VDEVs, the virtio config status is shared and
+used for synchronization between the Linux host and the remote processor.
+
+regards
+Suman
