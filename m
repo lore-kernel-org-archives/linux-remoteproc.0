@@ -1,4 +1,4 @@
-Return-Path: <s-anna@ti.com>
+Return-Path: <rogerq@ti.com>
 Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
 References: <1549290167-876-1-git-send-email-rogerq@ti.com>
  <1549290167-876-2-git-send-email-rogerq@ti.com>
@@ -6,23 +6,22 @@ References: <1549290167-876-1-git-send-email-rogerq@ti.com>
  <9c58bc48-90bf-8ac5-7fbd-0f6443e3fc5e@ti.com>
  <CACRpkdb4Q0efW5MaDmPTmewq-RFwXOTp15DCE1VpPf6g216iBw@mail.gmail.com>
  <5C65490E.6000800@ti.com> <86ef8asfap.wl-marc.zyngier@arm.com>
- <5C658CE4.5030307@ti.com> <5C658DD6.8080309@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <61cf956c-77d7-2316-65a4-de5896e5c082@ti.com>
-Date: Thu, 14 Feb 2019 18:59:24 -0600
+ <5C658CE4.5030307@ti.com> <aaff678a-820c-279e-632e-1ad25953029d@arm.com>
+From: Roger Quadros <rogerq@ti.com>
+Message-ID: <5C659C6F.5010000@ti.com>
+Date: Thu, 14 Feb 2019 18:50:55 +0200
 MIME-Version: 1.0
-In-Reply-To: <5C658DD6.8080309@ti.com>
+In-Reply-To: <aaff678a-820c-279e-632e-1ad25953029d@arm.com>
 Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: Roger Quadros <rogerq@ti.com>, Marc Zyngier <marc.zyngier@arm.com>, "Davis, Andrew" <afd@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>
+To: Marc Zyngier <marc.zyngier@arm.com>, Suman Anna <s-anna@ti.com>, Davis
 Cc: Linus Walleij <linus.walleij@linaro.org>, ext Tony Lindgren <tony@atomide.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, David Lechner <david@lechnology.com>, "Nori, Sekhar  <nsekhar@ti.com>, Tero Kristo" <t-kristo@ti.com>, nsaulnier@ti.com, jreeder@ti.com, Murali Karicheri <m-karicheri2@ti.com>, woods.technical@gmail.com, Linux-OMAP <linux-omap@vger.kernel.org>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 2/14/19 9:48 AM, Roger Quadros wrote:
-> fixed DTML id.
-> 
-> On 14/02/19 17:44, Roger Quadros wrote:
+
+
+On 14/02/19 17:51, Marc Zyngier wrote:
+> On 14/02/2019 15:44, Roger Quadros wrote:
 >> On 14/02/19 14:52, Marc Zyngier wrote:
 >>> On Thu, 14 Feb 2019 10:55:10 +0000,
 >>> Roger Quadros <rogerq@ti.com> wrote:
@@ -66,20 +65,17 @@ On 2/14/19 9:48 AM, Roger Quadros wrote:
 >>
 >> Since the INTC's internal logic allows assigning more than one event each outputs,
 >> at most all 64 events can be assigned to one output or distributed among the 8 outputs.
->>
->>> If these assertions do hold, then your design is typical of a
->>> hierarchy, for which we have countless examples in the tree (including
->>> for some TI HW).
->>
->> OK.
->> Suman, Andrew, Lokesh, thoughts?
->>
+> 
+> OK. Do you get individual masking and status bits for each input?
 
-Mark, Linus,
+Yes, we have individual enable/disable and status bits for each of the 64 events.
 
-So, I hope it is clear from Roger's responses that above assertions do
-not hold true to this INTC, and so want to confirm that we are good with
-the current non-hierarchical design.
+In addition to that it is possible to determine priority if multiple events come to the same
+output by reading a register specific to that output.
 
-regards
-Suman
+--
+cheers,
+-roger
+ 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
