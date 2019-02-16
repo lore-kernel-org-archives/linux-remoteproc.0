@@ -1,230 +1,125 @@
 Return-Path: <xiaoxiang781216@gmail.com>
-Return-Path: <xiaoxiang781216@gmail.com>
-From: Xiang Xiao <xiaoxiang781216@gmail.com>
-Subject: [PATCH V3] rpmsg: add syslog redirection driver
-Date: Sun, 17 Feb 2019 03:26:43 +0800
-Message-Id: <1550345203-25460-2-git-send-email-xiaoxiang@xiaomi.com>
-In-Reply-To: <1550345203-25460-1-git-send-email-xiaoxiang@xiaomi.com>
-References: <1550345203-25460-1-git-send-email-xiaoxiang@xiaomi.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Randy Dunlap <rdunlap@infradead.org>, Greg KH <gregkh@linuxfoundation.org>, alexander.shishkin@linux.intel.com, Ohad Ben Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, wendy.liang@xilinx.com, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Kumar Gala <kumar.gala@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Guiding Li <liguiding@pinecone.net>
+MIME-Version: 1.0
+References: <1550124158-1111-1-git-send-email-xiaoxiang@xiaomi.com>
+ <1550124158-1111-2-git-send-email-xiaoxiang@xiaomi.com> <20190214130940.GV9224@smile.fi.intel.com>
+ <CAH2Cfb8UYMLpxb5DDPxf_C0umgPgLK8FBedhcNUcYQ_gLs2dFw@mail.gmail.com> <20190215150620.GB9224@smile.fi.intel.com>
+In-Reply-To: <20190215150620.GB9224@smile.fi.intel.com>
+From: xiang xiao <xiaoxiang781216@gmail.com>
+Date: Sun, 17 Feb 2019 00:52:04 +0800
+Message-ID: <CAH2Cfb-TDnmWYLFr_MQr7Uhvsyzf80nVaSbYGoQkVQGj-uTqiw@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] rpmsg: add syslog redirection driver
+Content-Type: text/plain; charset="UTF-8"
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Greg KH <gregkh@linuxfoundation.org>, alexander.shishkin@linux.intel.com, Ohad Ben Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, wendy.liang@xilinx.com, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Kumar Gala <kumar.gala@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Guiding Li <liguiding@pinecone.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Guiding Li <liguiding@pinecone.net>
+On Fri, Feb 15, 2019 at 11:06 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Feb 15, 2019 at 12:31:17AM +0800, xiang xiao wrote:
+> > On Thu, Feb 14, 2019 at 9:09 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Feb 14, 2019 at 02:02:38PM +0800, Xiang Xiao wrote:
+>
+> > > > This driver allows the remote processor to redirect the output of
+> > > > syslog or printf into the kernel log, which is very useful to see
+> > > > what happen in the remote side.
+> > >
+> > > > +struct rpmsg_syslog_header {
+> > > > +     u32                             command;
+> > > > +     s32                             result;
+> > > > +} __packed;
+> > >
+> > > Isn't packed already?
+> > >
+> >
+> > But, I want to make it more explicitly and prepare for struct expansion later.
+>
+> How? Why it's not in this patch / patch series?
 
-This driver allows the remote processor to redirect the output of
-syslog or printf into the kernel log, which is very useful to see
-what happen in the remote side.
+Just for future, not now:).
+Since this structure is shared by the different CPU/OS, it's better to
+indicate the packed explicitly.
 
-Signed-off-by: Guiding Li <liguiding@pinecone.net>
----
- drivers/rpmsg/Kconfig        |  12 ++++
- drivers/rpmsg/Makefile       |   1 +
- drivers/rpmsg/rpmsg_syslog.c | 161 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 174 insertions(+)
- create mode 100644 drivers/rpmsg/rpmsg_syslog.c
+>
+> > > > +     /* output the message before '\n' to the kernel log */
+> > > > +     nl = memrchr(msg->data, '\n', msg->count);
+> > >
+> > > Hmm... To me it sounds somehow fragile.
+> > >
+> > > If your text contains binary data, how can you guarantee that it would be not
+> > > in the middle of two \n:s?
+> >
+> > This driver is just for log/printf redirection, so we could safely
+> > assume the data is pure text.
+>
+> Then I don't see a point to use memrchr() at all here.
+>
+> Use strchr or strrchr().
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index d0322b4..13ead55 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -15,6 +15,18 @@ config RPMSG_CHAR
- 	  in /dev. They make it possible for user-space programs to send and
- 	  receive rpmsg packets.
- 
-+config RPMSG_SYSLOG
-+	tristate "RPMSG syslog redirection"
-+	depends on RPMSG
-+	help
-+	  Say Y here to redirect the syslog/printf from remote processor into
-+	  the kernel log which is very useful to see what happened in the remote
-+	  side.
-+
-+	  If the remote processor hangs during bootup or panics during runtime,
-+	  we can even cat /sys/kernel/debug/remoteproc/remoteprocX/trace0 to
-+	  get the last log which hasn't been output yet.
-+
- config RPMSG_QCOM_GLINK_NATIVE
- 	tristate
- 	select RPMSG
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 9aa8595..bfd22df 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
- obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
-+obj-$(CONFIG_RPMSG_SYSLOG)	+= rpmsg_syslog.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
-diff --git a/drivers/rpmsg/rpmsg_syslog.c b/drivers/rpmsg/rpmsg_syslog.c
-new file mode 100644
-index 0000000..06e3f86
---- /dev/null
-+++ b/drivers/rpmsg/rpmsg_syslog.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017 Pinecone Inc.
-+ *
-+ * redirect syslog/printf from remote to the kernel.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/rpmsg.h>
-+#include <linux/slab.h>
-+
-+#define RPMSG_SYSLOG_TRANSFER		0
-+#define RPMSG_SYSLOG_TRANSFER_DONE	1
-+#define RPMSG_SYSLOG_SUSPEND		2
-+#define RPMSG_SYSLOG_RESUME		3
-+
-+struct rpmsg_syslog_header {
-+	u32				command;
-+	s32				result;
-+} __packed;
-+
-+struct rpmsg_syslog_transfer {
-+	struct rpmsg_syslog_header	header;
-+	u32				count;
-+	char				data[0];
-+} __packed;
-+
-+#define rpmsg_syslog_suspend		rpmsg_syslog_header
-+#define rpmsg_syslog_resume		rpmsg_syslog_header
-+#define rpmsg_syslog_transfer_done	rpmsg_syslog_header
-+
-+struct rpmsg_syslog {
-+	char				*buf;
-+	unsigned int			next;
-+	unsigned int			size;
-+};
-+
-+static int rpmsg_syslog_callback(struct rpmsg_device *rpdev,
-+				 void *data, int len, void *priv_, u32 src)
-+{
-+	struct rpmsg_syslog *priv = dev_get_drvdata(&rpdev->dev);
-+	struct rpmsg_syslog_transfer *msg = data;
-+	struct rpmsg_syslog_transfer_done done;
-+	char *s, *e, *nl;
-+
-+	if (msg->header.command != RPMSG_SYSLOG_TRANSFER)
-+		return -EINVAL;
-+
-+	s = msg->data;
-+	e = s + msg->count;
-+
-+	/* redirect the message to kernel log line by line */
-+	while ((nl = strnchr(s, e - s, '\n')) != NULL) {
-+		*nl = '\0';
-+		if (priv->next) {
-+			pr_info("%.*s%s\n", priv->next, priv->buf, s);
-+			priv->next = 0;
-+		} else {
-+			pr_info("%s\n", s);
-+		}
-+		s = nl + 1;
-+	}
-+
-+	/* append the remain to the buffer */
-+	if (s != e) {
-+		unsigned int size = e - s;
-+		unsigned int newsize = priv->next + size;
-+
-+		if (newsize > priv->size) {
-+			char *newbuf;
-+
-+			newbuf = krealloc(priv->buf, newsize, GFP_KERNEL);
-+			if (newbuf) {
-+				priv->buf  = newbuf;
-+				priv->size = newsize;
-+			} else {
-+				size = priv->size - priv->next;
-+			}
-+		}
-+
-+		strncpy(priv->buf + priv->next, s, size);
-+		priv->next += size;
-+		s += size;
-+	}
-+
-+	done.command = RPMSG_SYSLOG_TRANSFER_DONE;
-+	done.result  = s - msg->data;
-+	return rpmsg_send(rpdev->ept, &done, sizeof(done));
-+}
-+
-+static int rpmsg_syslog_probe(struct rpmsg_device *rpdev)
-+{
-+	struct rpmsg_syslog *priv;
-+
-+	priv = devm_kzalloc(&rpdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(&rpdev->dev, priv);
-+	return 0;
-+}
-+
-+static void rpmsg_syslog_remove(struct rpmsg_device *rpdev)
-+{
-+	struct rpmsg_syslog *priv = dev_get_drvdata(&rpdev->dev);
-+
-+	/* flush the buffered log if need */
-+	if (priv->next)
-+		pr_info("%.*s\n", priv->next, priv->buf);
-+	kfree(priv->buf);
-+}
-+
-+static int __maybe_unused rpmsg_syslog_dev_suspend(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = dev_get_drvdata(dev);
-+	struct rpmsg_syslog_suspend msg = {
-+		.command = RPMSG_SYSLOG_SUSPEND,
-+	};
-+
-+	return rpmsg_send(rpdev->ept, &msg, sizeof(msg));
-+}
-+
-+static int __maybe_unused rpmsg_syslog_dev_resume(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = dev_get_drvdata(dev);
-+	struct rpmsg_syslog_resume msg = {
-+		.command = RPMSG_SYSLOG_RESUME,
-+	};
-+
-+	return rpmsg_send(rpdev->ept, &msg, sizeof(msg));
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rpmsg_syslog_pm,
-+			rpmsg_syslog_dev_suspend,
-+			rpmsg_syslog_dev_resume);
-+
-+static const struct rpmsg_device_id rpmsg_syslog_id_table[] = {
-+	{ .name = "rpmsg-syslog" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(rpmsg, rpmsg_syslog_id_table);
-+
-+static struct rpmsg_driver rpmsg_syslog_driver = {
-+	.drv = {
-+		.name  = "rpmsg_syslog",
-+		.owner = THIS_MODULE,
-+		.pm    = &rpmsg_syslog_pm,
-+	},
-+
-+	.id_table = rpmsg_syslog_id_table,
-+	.probe    = rpmsg_syslog_probe,
-+	.callback = rpmsg_syslog_callback,
-+	.remove   = rpmsg_syslog_remove,
-+};
-+
-+module_rpmsg_driver(rpmsg_syslog_driver);
-+
-+MODULE_ALIAS("rpmsg:rpmsg_syslog");
-+MODULE_AUTHOR("Guiding Li <liguiding@pinecone.net>");
-+MODULE_DESCRIPTION("rpmsg syslog redirection driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+Yes, use strnchr is enough, I will remove memrchr in the next review.
+
+>
+> > > OTOH, if it text data, why do you need to take all strings at once?
+> >
+> > Remote side may decide to buffer more log to reduce the IPC number
+> > since IPC is a time consuming operation.
+>
+> So, you always can do something like
+>
+> p = msg->data;
+> while (...strsep(..., "\n")) {
+>         pr_info("%s\n", token);
+>         ...
+> }
+
+Can't use strsep here, since log come from remote isn't terminated by '\0'.
+
+>
+> >
+> > >  It might be worse from performance prospective (if you know how and when printk() supplies buffer to the console).
+> >
+> > Yes, it's very slow if the log send to serial console. But in
+> > production environment, printk normally just save in ram and viewed by
+> > dmesg which is very fast.
+>
+> You may not do such assumptions. For someone it would be RAM, for some
+> customers it might be a slow channel.
+
+But we need reduce the IPC number, so both fast/slow channel could get
+the benefit.
+
+>
+>
+> > > > +             strncpy(priv->buf + priv->next, msg->data + printed, copied);
+> > >
+> > > Hmm... shouldn't be memcpy()?
+> >
+> > I use memcpy initially, but found that the unaligned exception happen randomly.
+> > To avoid the cache issue, the IPC memory normally map as device memory, but
+> > ARM just allow the alignment access to this type of memory.
+>
+> So, than it's an architecture level issue. With strncpy() here you will get a
+> pretty rightful GCC warning.
+>
+
+Why GCC warning strncpy here?
+
+> > > > +     /* flush the buffered log if need */
+> > > > +     if (priv->next)
+> > > > +             pr_info("%.*s\n", priv->next, priv->buf);
+> > > > +     kfree(priv->buf);
+> > >
+> > > I don't see how it's serialized. Does rpmsg core take care of this?
+> >
+> > Yes, the callback come from a dedicated work thread.
+>
+> Please, add a comment explaining that.
+>
+Will add in the next review.
+
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
