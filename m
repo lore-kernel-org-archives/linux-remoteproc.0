@@ -1,45 +1,26 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:38155 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfBFWo3 (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Feb 2019 17:44:29 -0500
-Received: by mail-ed1-f46.google.com with SMTP id h50so7403419ede.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Feb 2019 14:44:28 -0800 (PST)
-MIME-Version: 1.0
-From: Mike <puffy.taco@gmail.com>
-Date: Wed, 6 Feb 2019 16:44:15 -0600
-Message-ID: <CAB7rCTjfQoFOQkStQFP96+44jjZJSaWxQRk8JuktVGDE19Q7MQ@mail.gmail.com>
-Subject: Rpmsg Char Driver
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc@vger.kernel.org
+Return-Path: <xiaoxiang781216@gmail.com>
+Return-Path: <xiaoxiang781216@gmail.com>
+From: Xiang Xiao <xiaoxiang781216@gmail.com>
+Subject: [PATCH V3] Add syslog redirection driver
+Date: Sun, 17 Feb 2019 03:26:42 +0800
+Message-Id: <1550345203-25460-1-git-send-email-xiaoxiang@xiaomi.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Randy Dunlap <rdunlap@infradead.org>, Greg KH <gregkh@linuxfoundation.org>, alexander.shishkin@linux.intel.com, Ohad Ben Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, wendy.liang@xilinx.com, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Kumar Gala <kumar.gala@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Xiang Xiao <xiaoxiang@xiaomi.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+Changes vs. V2:
 
-First, I think this is the right place for questions relating to
-rpmsg, but please redirect me if I'm wrong.
+ - Remove memrchr function
+ - Output message line by line
 
-I'm looking to get access to send messages from userspace to the rpmsg
-bus, but am not sure the best way.  The base of my work is a 4.9
-series kernel for NXP's i.MX7D, but I've been comparing it to mainline
-to see if there's anything I could utilize.  In particular, I was
-looking at the config option RPMSG_CHAR which states:
+Guiding Li (1):
+  rpmsg: add syslog redirection driver
 
-"Say Y here to export rpmsg endpoints as device files, usually found
-in /dev. They make it possible for user-space programs to send and
-receive rpmsg packets."
+ drivers/rpmsg/Kconfig        |  12 ++++
+ drivers/rpmsg/Makefile       |   1 +
+ drivers/rpmsg/rpmsg_syslog.c | 163 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
+ create mode 100644 drivers/rpmsg/rpmsg_syslog.c
 
-I compiled a kernel with that option but I don't see any device files
-in /dev.  Looking through the code, it seems like only the qcom_smd
-driver actually uses this driver, so I assume the Kconfig help text is
-somewhat misleading?
-
-Is there a general purpose way to open a channel from userspace?  Or
-am I best off using the name service from the remote processor to
-announce all the channels I want and write a generic driver that
-creates a char device to expose an interface to each?
-
-Thanks,
-Mike
+-- 
+2.7.4
