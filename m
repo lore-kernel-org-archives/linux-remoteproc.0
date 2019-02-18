@@ -1,170 +1,117 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 00/14] Add support for TI PRU ICSS
-Date: Mon, 4 Feb 2019 16:22:33 +0200
-Message-ID: <1549290167-876-1-git-send-email-rogerq@ti.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 18 Feb 2019 13:32:52 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 03/14] dt-binding: irqchip: Add pruss-intc-irq driver
+ for PRUSS interrupts
+Message-ID: <20190218193252.GA6313@bogus>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-4-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549290167-876-4-git-send-email-rogerq@ti.com>
+To: Roger Quadros <rogerq@ti.com>
+Cc: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+On Mon, Feb 04, 2019 at 04:22:36PM +0200, Roger Quadros wrote:
+> From: "Andrew F. Davis" <afd@ti.com>
+> 
+> The Programmable Real-Time Unit Subsystem (PRUSS) contains an
+> interrupt controller (INTC) that can handle various system input
+> events and post interrupts back to the device-level initiators.
+> The INTC can support upto 64 input events with individual control
+> configuration and hardware prioritization. These events are mapped
+> onto 10 interrupt signals through two levels of many-to-one mapping
+> support. Different interrupt signals are routed to the individual
+> PRU cores or to the host CPU.
+> 
+> The PRUSS INTC platform driver manages this PRUSS interrupt
+> controller and implements an irqchip driver to provide a Linux
+> standard way for the PRU client users to enable/disable/ack/
+> re-trigger a PRUSS system event. The system events to interrupt
+> channels and host interrupts relies on the mapping configuration
+> provided through a firmware resource table for now. This will be
+> revisited and enhanced in the future for a better interface. The
+> mappings will currently be programmed during the boot/shutdown
+> of the PRU.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+>  .../interrupt-controller/ti,pruss-intc-irq.txt     | 51 ++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
+> new file mode 100644
+> index 0000000..c70221c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
+> @@ -0,0 +1,51 @@
+> +PRU ICSS INTC on TI SoCs
+> +========================
+> +
+> +Each PRUSS has a single interrupt controller instance that is common to both
+> +the PRU cores. Each interrupt controller can detect 64 input events which are
+> +then mapped to 10 possible output interrupts through two levels of mapping. The
+> +input events can be triggered by either the PRUs and/or various other PRUSS
+> +internal and external peripherals. The first 2 output interrupts are fed
+> +exclusively to the internal PRU cores, with the remaining 8 connected to
+> +external interrupt controllers including the MPU.
+> +
+> +Required Properties:
+> +--------------------
+> +- compatible           : should be one of,
+> +                             "ti,am3356-pruss-intc" for AM335x family of SoCs
+> +                             "ti,am4376-pruss-intc" for AM437x family of SoCs
+> +                             "ti,am5728-pruss-intc" for AM57xx family of SoCs
+> +                             "ti,k2g-pruss-intc" for 66AK2G family of SoCs
+> +- reg                  : base address and size for the PRUSS INTC sub-module
+> +- reg-names            : should contain the string "intc"
 
-The Programmable Real-Time Unit and Industrial Communication Subsystem
-(PRU-ICSS) is present on various TI SoCs such as AM335x, AM437x, AM57x,
-Keystone 66AK2G, etc. A PRUSS consists of dual 32-bit RISC cores (Programmable
-Real-Time Units, or PRUs), with instruction and data memories.
+Not really useful with only 1 entry.
 
-The programmable nature of the PRUs provide flexibility to implement
-custom peripheral interfaces, fast real-time responses, or
-specialized data handling. The common peripheral modules include
-the following,
-  - Enhanced GPIO with async capture and serial support
-  - an Ethernet MII_RT module with two MII ports
-  - an MDIO port to control external Ethernet PHYs
-  - an Industrial Ethernet Peripheral (IEP) to manage/generate Industrial
-    Ethernet functions
-  - an Enhanced Capture Module (eCAP)
-  - a 16550-compatible UART to support PROFIBUS
-  - Interrupt controller with 64 input events and 10 Host interrupts.
+> +- interrupts     : all the interrupts generated towards the main host
+> +                   processor in the SoC. The format depends on the
+> +                   interrupt specifier for the particular SoC's MPU
+> +                   parent interrupt controller
+> +- interrupt-names: should use one of the following names for each interrupt,
+> +                   the name should match the corresponding host interrupt
+> +                   number,
+> +                       "host2", "host3", "host4", "host5", "host6",
+> +                       "host7", "host8" or "host9"
+> +                   NOTE: AM437x and 66AK2G SoCs do not have "host7" interrupt
+> +                         connected to MPU
+> +- interrupt-controller : mark this node as an interrupt controller
+> +- #interrupt-cells     : should be 1. Client users shall use the PRU System
+> +                         event number (the interrupt source that the client
+> +                         is interested in) as the value of the interrupts
+> +                         property in their node
+> +
+> +Example:
+> +--------
+> +		pruss_intc: intc@20000 {
 
-A typical usage scenario would be to load the application firmware into
-one or more of the PRU cores, initialize one or more of the peripherals
-and perform I/O through shared RAM (or MSMC RAM) from either a Kernel driver
-or directly from userspace.
+interrupt-controller@20000
 
-With this series we should be able to use the kernel RPMSG driver along with
-firmware and user-space examples in the pru-software-support-package [1].
-
-We will also be able to get Dual Ethernet functionality using a kernel driver
-which will be posted later.
-
-This series contains
-1) soc: pruss: This is the parent driver for the entire ICSS. Its main
-purpose is to populate the different modules and manage memories.
-(i.e. DRAM0, DRAM1 and SharedRAM) It will also kernel APIs to
-manage the common CFG module.
-
-2) irqchip: pruss-intc: This driver supports the INTC module on the ICSS.
-
-3) remoteproc: pru: This provides a remoteproc interface for the PRU cores.
-With this we can load firmware, start/stop PRU from kernel or userspace.
-It adds support for virtio RPMSG. It also provides some kernel APIs
-(e.g. pru_rproc_set_ctable()) that are PRU specific and required for
-in-kernel applications (e.g. ethernet)
-
-4) rpmsg: pru: An RPMsg driver that exposes interfaces to user space, to
-allow applications to communicate with the PRU processors.
-
-Platform data and device tree files for AM33xx and other SoCs
-will be sent as a separate series.
-
-Testing:
-All kernel patches along with AM335x (beaglebone) and AM57xx (IDK) platform
-support are at [3]
-
-To test the code with example firmware you can try the LAB5 tutorial
-http://processors.wiki.ti.com/index.php/PRU_Training:_Hands-on_Labs#LAB_5:_RPMsg_Communication_between_ARM_and_PRU
-with the pru-software-support package at [2] and the sample rpmsg-client driver.
-NOTE: you no longer need to build and run PRU_Halt example as shown in the tutorial.
-
-[1] https://git.ti.com/pru-software-support-package
-	NOTE: The repo needs update to the INTC resource data structures
-	The updates that are required are listed in the below repo with one example fixed.
-[2] https://github.com/rogerq/pru-software-support-package/commits/upstream/pruss
-
-[3] https://github.com/rogerq/linux/commits/for-v5.1/pruss-2.0
-
-Changelog:
-v2:
-- use IS_ERR() instead of IS_ERR_OR_NULL().
-- sqashed related patches to reduce patch count.
-- fixed build error at patch 11 "soc: ti: pruss: add pruss_get()/put() API".
-- incorporated rproc_da_to_va patches from David Lechner.
-- got rid of enum pruss_pru_id.
-- got rid of pre & post loaders in device specific resource handler.
-- get/set gpmux operation is now private to pru_rproc.c
-- changed pruss_cfg_gpimode() to pru_rproc_set_gpimode(struct rproc *rproc, enum pruss_gpi_mode mode).
-- moved pruss_intc.c to driver/irqchip/irq-pruss-intc.c. INTC APIs moved to include/irqchip/irq-pruss-intc.h.
-  Decoupled struct pruss from INTC code. Any device who's interrupt-parent is pruss-intc can call the INTC APIs.
-- removed device_name from pruss_private_data. use dt property for .has_no_sharedram.
-- moved DRAM0, DRAM1 and SHARED_RAM memories into PRUSS node.
-
-cheers,
--roger
-
-Andrew F. Davis (2):
-  dt-binding: irqchip: Add pruss-intc-irq driver for PRUSS interrupts
-  irqchip: pruss: Add a PRUSS irqchip driver for PRUSS interrupts
-
-David Lechner (2):
-  remoteproc: add map parameter to da_to_va
-  remoteproc: add page lookup for TI PRU to ELF loader
-
-Jason Reeder (1):
-  rpmsg: pru: add a PRU RPMsg driver
-
-Roger Quadros (1):
-  remoteproc/pru: Add pru_rproc_set_ctable() and pru_rproc_set_gpimode()
-
-Suman Anna (8):
-  dt-bindings: remoteproc: Add TI PRUSS bindings
-  soc: ti: pruss: Add a platform driver for PRUSS in TI SoCs
-  remoteproc: Add a rproc_set_firmware() API
-  remoteproc: Add support to handle device specific resource types
-  dt-binding: remoteproc: Add binding doc for PRU Cores in the PRU-ICSS
-  remoteproc/pru: Add PRU remoteproc driver
-  remoteproc/pru: Add support for virtio rpmsg stack
-  rpmsg: virtio_rpmsg_bus: move back rpmsg_hdr into a public header
-
- .../interrupt-controller/ti,pruss-intc-irq.txt     |   51 +
- .../bindings/remoteproc/ti,pru-rproc.txt           |   56 +
- .../devicetree/bindings/soc/ti/ti,pruss.txt        |  212 ++++
- drivers/irqchip/Makefile                           |    1 +
- drivers/irqchip/irq-pruss-intc.c                   |  630 +++++++++++
- drivers/remoteproc/Kconfig                         |   16 +
- drivers/remoteproc/Makefile                        |    1 +
- drivers/remoteproc/imx_rproc.c                     |    2 +-
- drivers/remoteproc/keystone_remoteproc.c           |    3 +-
- drivers/remoteproc/pru_rproc.c                     | 1141 ++++++++++++++++++++
- drivers/remoteproc/pru_rproc.h                     |   54 +
- drivers/remoteproc/qcom_q6v5_mss.c                 |    2 +-
- drivers/remoteproc/qcom_wcnss.c                    |    2 +-
- drivers/remoteproc/remoteproc_core.c               |  108 +-
- drivers/remoteproc/remoteproc_debugfs.c            |    3 +
- drivers/remoteproc/remoteproc_elf_loader.c         |  117 +-
- drivers/remoteproc/remoteproc_internal.h           |    2 +-
- drivers/remoteproc/remoteproc_sysfs.c              |   33 +-
- drivers/remoteproc/st_slim_rproc.c                 |    2 +-
- drivers/remoteproc/wkup_m3_rproc.c                 |    3 +-
- drivers/rpmsg/Kconfig                              |   14 +
- drivers/rpmsg/Makefile                             |    1 +
- drivers/rpmsg/rpmsg_pru.c                          |  360 ++++++
- drivers/rpmsg/virtio_rpmsg_bus.c                   |   21 +-
- drivers/soc/ti/Kconfig                             |   12 +
- drivers/soc/ti/Makefile                            |    1 +
- drivers/soc/ti/pruss.c                             |  347 ++++++
- include/linux/irqchip/irq-pruss-intc.h             |   94 ++
- include/linux/pruss.h                              |  211 ++++
- include/linux/remoteproc.h                         |   20 +-
- include/linux/remoteproc/pru_rproc.h               |   57 +
- include/linux/rpmsg/virtio_rpmsg.h                 |   26 +
- include/uapi/linux/elf-em.h                        |    1 +
- 33 files changed, 3533 insertions(+), 71 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
- create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
- create mode 100644 drivers/irqchip/irq-pruss-intc.c
- create mode 100644 drivers/remoteproc/pru_rproc.c
- create mode 100644 drivers/remoteproc/pru_rproc.h
- create mode 100644 drivers/rpmsg/rpmsg_pru.c
- create mode 100644 drivers/soc/ti/pruss.c
- create mode 100644 include/linux/irqchip/irq-pruss-intc.h
- create mode 100644 include/linux/pruss.h
- create mode 100644 include/linux/remoteproc/pru_rproc.h
- create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +			compatible = "ti,am3356-pruss-intc";
+> +			reg = <0x20000 0x2000>;
+> +			reg-names = "intc";
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +			interrupts = <20 21 22 23 24 25 26 27>;
+> +			interrupt-names = "host2", "host3", "host4",
+> +					  "host5", "host6", "host7",
+> +					  "host8", "host9";
+> +		};
+> +
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
