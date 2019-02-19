@@ -1,218 +1,241 @@
-Return-Path: <rogerq@ti.com>
-From: Roger Quadros <rogerq@ti.com>
-Subject: [PATCH v2 06/14] remoteproc: add page lookup for TI PRU to ELF loader
-Date: Mon, 4 Feb 2019 16:22:39 +0200
-Message-ID: <1549290167-876-7-git-send-email-rogerq@ti.com>
-In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 18 Feb 2019 22:58:03 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4 4/8] clk: qcom: Add WCSS Q6DSP clock controller for
+ QCS404
+Message-ID: <20190219065803.GF13018@tuxbook-pro>
+References: <20190202152626.1006-1-govinds@codeaurora.org>
+ <20190202152626.1006-5-govinds@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: s-anna@ti.com, david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rogerq@ti.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190202152626.1006-5-govinds@codeaurora.org>
+To: Govind Singh <govinds@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: David Lechner <david@lechnology.com>
+On Sat 02 Feb 07:26 PST 2019, Govind Singh wrote:
 
-This adds a special handler to the default remoteproc ELF firmware
-loader that looks up the memory map on TI PRU firmware files.
+> Add support for the WCSS QDSP clock control used on qcs404
+> based devices. This would allow wcss remoteproc driver to
+> control the required WCSS QDSP clock/reset controls to
+> bring the subsystem out of reset and shutdown the WCSS QDSP.
+> 
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> ---
+>  drivers/clk/qcom/Kconfig          |   8 +
+>  drivers/clk/qcom/Makefile         |   1 +
+>  drivers/clk/qcom/common.c         |  20 +++
+>  drivers/clk/qcom/common.h         |   3 +-
+>  drivers/clk/qcom/lpasscc-sdm845.c |  23 +--
+>  drivers/clk/qcom/wcsscc-qcs404.c  | 282 ++++++++++++++++++++++++++++++
+>  6 files changed, 315 insertions(+), 22 deletions(-)
+>  create mode 100644 drivers/clk/qcom/wcsscc-qcs404.c
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 23ceadc2c115..ffa240c4dd20 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -222,6 +222,14 @@ config QCS_GCC_404
+>  	  Say Y if you want to use multimedia devices or peripheral
+>  	  devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
+>  
+> +config QCS_WCSSCC_404
+> +	tristate "QCS404 WCSS Clock Controller"
 
-These processors have multiple memory maps that share the same address
-space, so we need to know the page in addition to the physical address
-in order to translate the address to a local CPU address.
+The name of this hardware block seems to be "Q6SSTOP", so I do not think
+this driver should be named "wcsscc" - even if that's what its used for.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/remoteproc/remoteproc_elf_loader.c | 117 +++++++++++++++++++++++++++--
- include/uapi/linux/elf-em.h                |   1 +
- 2 files changed, 112 insertions(+), 6 deletions(-)
+> +	select QCS_GCC_404
+> +	help
+> +	  Support for the WCSS clock controller on QCS404 devices.
+> +	  Say Y if you want to use the WCSS branch clocks of the WCSS clock
+> +	  controller to reset the WCSS subsystem.
+> +
+>  config SDM_GCC_845
+>  	tristate "SDM845 Global Clock Controller"
+>  	select QCOM_GDSC
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 8b7871a26792..264edf5a2063 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -38,6 +38,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+>  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+>  obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+>  obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
+> +obj-$(CONFIG_QCS_WCSSCC_404) += wcsscc-qcs404.o
+>  obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+>  obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
+>  obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index b8064a336d46..c76ea0de3eee 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -288,4 +288,24 @@ int qcom_cc_probe(struct platform_device *pdev, const struct qcom_cc_desc *desc)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_probe);
+>  
+> +int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
+> +			   const struct qcom_cc_desc *desc)
+> +{
+> +	struct regmap *regmap;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+> +	base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(base))
+> +		return -ENOMEM;
+> +
+> +	regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	return qcom_cc_really_probe(pdev, desc, regmap);
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
+> +
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> index 00196ee15e73..d9de4730b955 100644
+> --- a/drivers/clk/qcom/common.h
+> +++ b/drivers/clk/qcom/common.h
+> @@ -68,5 +68,6 @@ extern int qcom_cc_really_probe(struct platform_device *pdev,
+>  				struct regmap *regmap);
+>  extern int qcom_cc_probe(struct platform_device *pdev,
+>  			 const struct qcom_cc_desc *desc);
+> -
+> +extern int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
+> +				  const struct qcom_cc_desc *desc);
+>  #endif
+> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index 8888d39..79c9d39 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -32,6 +32,103 @@
- 
- #include "remoteproc_internal.h"
- 
-+#define SHT_TI_PHATTRS 0x7F000004
-+#define SHT_TI_SH_PAGE 0x7F000007
-+
-+struct elf32_ti_phattrs {
-+	Elf32_Half pha_seg_id; /* Segment id */
-+	Elf32_Half pha_tag_id; /* Attribute kind id */
-+	union {
-+		Elf32_Off pha_offset; /* byte offset within the section */
-+		Elf32_Word pha_value; /* Constant tag value */
-+	} pha_un;
-+};
-+
-+/* this struct is reverse engineered, so not sure what most of the values are */
-+struct ti_section_page {
-+	u32 unk0;
-+	u32 unk1;
-+	u32 unk2;
-+	u32 unk3;
-+	u32 unk4;
-+	u16 size;
-+	u16 unk5;
-+	u16 unk6;
-+	u8 data[0]; /* array of size */
-+};
-+
-+/**
-+ * rproc_elf_segment_to_map() - Gets memory map for segment
-+ * @id: segment id
-+ * @elf_data: pointer to ELF file data
-+ *
-+ * Returns the memory map for the segment.
-+ */
-+static int rproc_elf_segment_to_map(u32 id, const u8 *elf_data)
-+{
-+	struct elf32_hdr *ehdr;
-+	struct elf32_shdr *shdr;
-+	struct elf32_ti_phattrs *ti_attrs = NULL;
-+	int i;
-+
-+	ehdr = (struct elf32_hdr *)elf_data;
-+	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
-+
-+	if (ehdr->e_machine != EM_TI_PRU)
-+		return 0;
-+
-+	for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
-+		if (shdr->sh_type == SHT_TI_PHATTRS) {
-+			ti_attrs = (struct elf32_ti_phattrs *)(elf_data + shdr->sh_offset);
-+			break;
-+		}
-+	}
-+
-+	if (!ti_attrs)
-+		return 0;
-+
-+	/* list is terminated by tag id == 0 (PHA_NULL) */
-+	for (; ti_attrs->pha_tag_id; ti_attrs++) {
-+		if (ti_attrs->pha_tag_id == 3 && ti_attrs->pha_seg_id == id)
-+			return ti_attrs->pha_un.pha_value;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * rproc_elf_section_to_map() - Gets memory map for section
-+ * @id: segment id
-+ * @elf_data: pointer to ELF file data
-+ *
-+ * Returns the memory map for the section.
-+ */
-+static int rproc_elf_section_to_map(u32 id, const u8 *elf_data)
-+{
-+	struct elf32_hdr *ehdr;
-+	struct elf32_shdr *shdr;
-+	struct ti_section_page *map = NULL;
-+	int i;
-+
-+	ehdr = (struct elf32_hdr *)elf_data;
-+	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
-+
-+	if (ehdr->e_machine != EM_TI_PRU)
-+		return 0;
-+
-+	for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
-+		if (shdr->sh_type == SHT_TI_SH_PAGE) {
-+			map = (struct ti_section_page *)(elf_data + shdr->sh_offset);
-+			break;
-+		}
-+	}
-+
-+	if (!map || id >= map->size)
-+		return 0;
-+
-+	return map->data[id];
-+}
-+
- /**
-  * rproc_elf_sanity_check() - Sanity Check ELF firmware image
-  * @rproc: the remote processor handle
-@@ -147,7 +244,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = &rproc->dev;
- 	struct elf32_hdr *ehdr;
- 	struct elf32_phdr *phdr;
--	int i, ret = 0;
-+	int i, map, ret = 0;
- 	const u8 *elf_data = fw->data;
- 
- 	ehdr = (struct elf32_hdr *)elf_data;
-@@ -181,8 +278,10 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 			break;
- 		}
- 
-+		map = rproc_elf_segment_to_map(i, elf_data);
-+
- 		/* grab the kernel address for this device address */
--		ptr = rproc_da_to_va(rproc, da, memsz, 0);
-+		ptr = rproc_da_to_va(rproc, da, memsz, map);
- 		if (!ptr) {
- 			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
- 			ret = -EINVAL;
-@@ -209,7 +308,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- EXPORT_SYMBOL(rproc_elf_load_segments);
- 
- static struct elf32_shdr *
--find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
-+find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size, int *id)
- {
- 	struct elf32_shdr *shdr;
- 	int i;
-@@ -261,6 +360,9 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
- 			return NULL;
- 		}
- 
-+		if (id)
-+			*id = i;
-+
- 		return shdr;
- 	}
- 
-@@ -288,7 +390,7 @@ int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw)
- 
- 	ehdr = (struct elf32_hdr *)elf_data;
- 
--	shdr = find_table(dev, ehdr, fw->size);
-+	shdr = find_table(dev, ehdr, fw->size, NULL);
- 	if (!shdr)
- 		return -EINVAL;
- 
-@@ -328,11 +430,14 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
- {
- 	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
- 	struct elf32_shdr *shdr;
-+	int id, map;
- 
--	shdr = find_table(&rproc->dev, ehdr, fw->size);
-+	shdr = find_table(&rproc->dev, ehdr, fw->size, &id);
- 	if (!shdr)
- 		return NULL;
- 
--	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, 0);
-+	map = rproc_elf_section_to_map(id, fw->data);
-+
-+	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, map);
- }
- EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
-diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
-index 0c3000fa..70b487a 100644
---- a/include/uapi/linux/elf-em.h
-+++ b/include/uapi/linux/elf-em.h
-@@ -38,6 +38,7 @@
- #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
- #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
- #define EM_TI_C6000	140	/* TI C6X DSPs */
-+#define EM_TI_PRU	144	/* TI Programmable Realtime Unit */
- #define EM_AARCH64	183	/* ARM 64 bit */
- #define EM_TILEPRO	188	/* Tilera TILEPro */
- #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+The extraction of this common code is suitable to have in its own patch.
+
+[..]
+>  static const struct of_device_id lpass_cc_sdm845_match_table[] = {
+> diff --git a/drivers/clk/qcom/wcsscc-qcs404.c b/drivers/clk/qcom/wcsscc-qcs404.c
+> new file mode 100644
+> index 000000000000..20306b494b2d
+> --- /dev/null
+> +++ b/drivers/clk/qcom/wcsscc-qcs404.c
+> @@ -0,0 +1,282 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,wcss-qcs404.h>
+> +
+> +#include "clk-regmap.h"
+> +#include "clk-branch.h"
+> +#include "common.h"
+> +#include "reset.h"
+> +
+> +/* Q6SSTOP clocks. These clocks are voted
+> + * by remoteproc client when loaded from
+> + * user space, system hang is seen when CCF turns
+> + * off unused clocks. As a temp solution use
+> + * CLK_IGNORE_UNUSED flags which prevent these
+> + * clocks from being gated during bootup.
+> + */
+> +static struct clk_branch lcc_ahbfabric_cbc_clk = {
+> +	.halt_reg = 0x1b004,
+> +	.halt_check = BRANCH_VOTED,
+> +	.clkr = {
+> +		.enable_reg = 0x1b004,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "lcc_ahbfabric_cbc_clk",
+> +			.ops = &clk_branch2_ops,
+> +			.flags = CLK_IGNORE_UNUSED,
+
+I presume, from working on the Turing clock controller, that the reason
+for marking this ignore-unused is so that clk_disable_unused() won't
+try to access these registers with the necessary iface clock disabled.
+
+I think we should try to actually represent this, rather than hack
+around it. I will post the TuringCC shortly, to show what I did.
+
+> +		},
+> +	},
+> +};
+> +
+[..]
+> +
+> +/* Q6SSTOP_QDSP6SS clock */
+> +static struct clk_branch q6ss_xo_clk = {
+
+The following three things are clocks, but they are part of the hardware
+block that is the "remoteproc", so I don't think we should expose these
+through the clock framework, but rather just write them from the
+remoteproc driver directly.
+
+> +	.halt_reg = 0x38,
+> +	/* CLK_OFF would not toggle until WCSS is out of reset */
+> +	.halt_check = BRANCH_HALT_SKIP,
+> +	.clkr = {
+> +		.enable_reg = 0x38,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "q6ss_xo_clk",
+> +			.ops = &clk_branch2_ops,
+> +			.flags = CLK_IGNORE_UNUSED,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch q6ss_slp_clk = {
+> +	.halt_reg = 0x3c,
+> +	/* CLK_OFF would not toggle until WCSS is out of reset */
+> +	.halt_check = BRANCH_HALT_SKIP,
+> +	.clkr = {
+> +		.enable_reg = 0x3c,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "q6ss_slp_clk",
+> +			.ops = &clk_branch2_ops,
+> +			.flags = CLK_IGNORE_UNUSED,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch q6sstop_q6ss_gfmux_clk_src = {
+> +	.halt_reg = 0x20,
+> +	.halt_check = BRANCH_VOTED,
+> +	.clkr = {
+> +		.enable_reg = 0x20,
+> +		.enable_mask = BIT(1) | BIT(3) | BIT(8),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "q6sstop_q6ss_gfmux_clk_src",
+> +			.ops = &clk_branch2_ops,
+> +			.flags = CLK_IGNORE_UNUSED,
+> +		},
+> +	},
+> +};
+> +
+[..]
+> +static int __init wcss_cc_qcs404_init(void)
+> +{
+> +	return platform_driver_register(&wcss_cc_qcs404_driver);
+> +}
+> +subsys_initcall(wcss_cc_qcs404_init);
+> +
+> +static void __exit wcss_cc_qcs404_exit(void)
+> +{
+> +	platform_driver_unregister(&wcss_cc_qcs404_driver);
+> +}
+> +module_exit(wcss_cc_qcs404_exit);
+
+The remoteproc driver won't probe early, so module_platform_driver()
+should do the trick.
+
+Regards,
+Bjorn
