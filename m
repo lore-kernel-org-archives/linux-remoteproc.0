@@ -1,133 +1,186 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v4 5/8] remoteproc: qcom: wcss: populate hardcoded param using driver data
-Date: Sat,  2 Feb 2019 20:56:23 +0530
-Message-Id: <20190202152626.1006-6-govinds@codeaurora.org>
-In-Reply-To: <20190202152626.1006-1-govinds@codeaurora.org>
-References: <20190202152626.1006-1-govinds@codeaurora.org>
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v5 3/6] remoteproc: mt8183: add reserved memory manager API
+Date: Thu, 21 Feb 2019 16:47:26 +0800
+Message-Id: <20190221084729.101784-4-pihsun@chromium.org>
+In-Reply-To: <20190221084729.101784-1-pihsun@chromium.org>
+References: <20190221084729.101784-1-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Boichat <drinkcat@chromium.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Q6 based WiFi fw loading is supported across
-different targets, ex: IPQ8074/QCS404. In order to
-support different fw names/pas id etc, populate
-hardcoded param using driver data.
+From: Erin Lo <erin.lo@mediatek.com>
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
+Add memory table mapping API for other driver to lookup
+reserved physical and virtual memory
+
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 35 ++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 6 deletions(-)
+Changes from v4:
+ - New patch.
+---
+ drivers/remoteproc/mtk_scp.c          | 110 ++++++++++++++++++++++++++
+ include/linux/platform_data/mtk_scp.h |  20 +++++
+ 2 files changed, 130 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index f93e1e4a1cc0..f18b55227805 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -16,7 +17,6 @@
- #include "qcom_common.h"
- #include "qcom_q6v5.h"
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index a84d69ae6c531b..c689a8cc41f092 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -331,6 +331,112 @@ void *scp_mapping_dm_addr(struct platform_device *pdev, u32 mem_addr)
+ }
+ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
  
--#define WCSS_CRASH_REASON		421
- 
- /* Q6SS Register Offsets */
- #define Q6SS_RESET_REG		0x014
-@@ -70,6 +70,12 @@
- #define TCSR_WCSS_CLK_MASK	0x1F
- #define TCSR_WCSS_CLK_ENABLE	0x14
- 
-+struct wcss_data {
-+	const char *firmware_name;
-+	int crash_reason_smem;
-+	u8 version;
++#if SCP_RESERVED_MEM
++phys_addr_t scp_mem_base_phys;
++phys_addr_t scp_mem_base_virt;
++phys_addr_t scp_mem_size;
++
++static struct scp_reserve_mblock scp_reserve_mblock[] = {
++	{
++		.num = SCP_ISP_MEM_ID,
++		.start_phys = 0x0,
++		.start_virt = 0x0,
++		.size = 0x1400000,  /*20MB*/
++	},
 +};
 +
- struct q6v5_wcss {
- 	struct device *dev;
- 
-@@ -91,6 +97,9 @@ struct q6v5_wcss {
- 	phys_addr_t mem_reloc;
- 	void *mem_region;
- 	size_t mem_size;
++static int scp_reserve_mem_init(struct mtk_scp *scp)
++{
++	enum scp_reserve_mem_id_t id;
++	phys_addr_t accumlate_memory_size = 0;
 +
-+	int crash_reason_smem;
-+	u8 version;
- };
- 
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
-@@ -427,7 +436,7 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
- 				     wcss->mem_size, &wcss->mem_reloc);
- }
- 
--static const struct rproc_ops q6v5_wcss_ops = {
-+static const struct rproc_ops q6v5_wcss_ipq8074_ops = {
- 	.start = q6v5_wcss_start,
- 	.stop = q6v5_wcss_stop,
- 	.da_to_va = q6v5_wcss_da_to_va,
-@@ -527,12 +536,17 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
- 
- static int q6v5_wcss_probe(struct platform_device *pdev)
++	scp_mem_base_phys = (phys_addr_t) (scp->phys_addr + MAX_CODE_SIZE);
++	scp_mem_size = (phys_addr_t) (scp->dram_size - MAX_CODE_SIZE);
++
++	dev_info(scp->dev,
++		 "phys:0x%llx - 0x%llx (0x%llx)\n",
++		 scp_mem_base_phys,
++		 scp_mem_base_phys + scp_mem_size,
++		 scp_mem_size);
++	accumlate_memory_size = 0;
++	for (id = 0; id < SCP_NUMS_MEM_ID; id++) {
++		scp_reserve_mblock[id].start_phys =
++			scp_mem_base_phys + accumlate_memory_size;
++		accumlate_memory_size += scp_reserve_mblock[id].size;
++		dev_info(scp->dev,
++			 "[reserve_mem:%d]: phys:0x%llx - 0x%llx (0x%llx)\n",
++			 id,
++			 scp_reserve_mblock[id].start_phys,
++			 scp_reserve_mblock[id].start_phys + scp_reserve_mblock[id].size,
++			 scp_reserve_mblock[id].size);
++	}
++	return 0;
++}
++
++static int scp_reserve_memory_ioremap(struct mtk_scp *scp)
++{
++	enum scp_reserve_mem_id_t id;
++	phys_addr_t accumlate_memory_size = 0;
++
++	scp_mem_base_virt = (phys_addr_t)(size_t)ioremap_wc(scp_mem_base_phys, scp_mem_size);
++
++	dev_info(scp->dev,
++		 "virt:0x%llx - 0x%llx (0x%llx)\n",
++		(phys_addr_t)scp_mem_base_virt,
++		(phys_addr_t)scp_mem_base_virt + (phys_addr_t)scp_mem_size,
++		scp_mem_size);
++	for (id = 0; id < SCP_NUMS_MEM_ID; id++) {
++		scp_reserve_mblock[id].start_virt =
++			scp_mem_base_virt + accumlate_memory_size;
++		accumlate_memory_size += scp_reserve_mblock[id].size;
++	}
++	/* the reserved memory should be larger then expected memory
++	 * or scp_reserve_mblock does not match dts
++	 */
++	WARN_ON(accumlate_memory_size > scp_mem_size);
++#ifdef DEBUG
++	for (id = 0; id < NUMS_MEM_ID; id++) {
++		dev_info(scp->dev,
++			 "[mem_reserve-%d] phys:0x%llx,virt:0x%llx,size:0x%llx\n",
++			 id,
++			 scp_get_reserve_mem_phys(id),
++			 scp_get_reserve_mem_virt(id),
++			 scp_get_reserve_mem_size(id));
++	}
++#endif
++	return 0;
++}
++phys_addr_t scp_get_reserve_mem_phys(enum scp_reserve_mem_id_t id)
++{
++	if (id >= SCP_NUMS_MEM_ID) {
++		pr_err("[SCP] no reserve memory for %d", id);
++		return 0;
++	} else
++		return scp_reserve_mblock[id].start_phys;
++}
++EXPORT_SYMBOL_GPL(scp_get_reserve_mem_phys);
++
++phys_addr_t scp_get_reserve_mem_virt(enum scp_reserve_mem_id_t id)
++{
++	if (id >= SCP_NUMS_MEM_ID) {
++		pr_err("[SCP] no reserve memory for %d", id);
++		return 0;
++	} else
++		return scp_reserve_mblock[id].start_virt;
++}
++EXPORT_SYMBOL_GPL(scp_get_reserve_mem_virt);
++
++phys_addr_t scp_get_reserve_mem_size(enum scp_reserve_mem_id_t id)
++{
++	if (id >= SCP_NUMS_MEM_ID) {
++		pr_err("[SCP] no reserve memory for %d", id);
++		return 0;
++	} else
++		return scp_reserve_mblock[id].size;
++}
++EXPORT_SYMBOL_GPL(scp_get_reserve_mem_size);
++#endif
++
+ static int scp_map_memory_region(struct mtk_scp *scp)
  {
-+	const struct wcss_data *desc;
- 	struct q6v5_wcss *wcss;
- 	struct rproc *rproc;
- 	int ret;
+ 	struct device_node *node;
+@@ -358,6 +464,10 @@ static int scp_map_memory_region(struct mtk_scp *scp)
+ 		return -EBUSY;
+ 	}
  
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ops,
--			    "IPQ8074/q6_fw.mdt", sizeof(*wcss));
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ipq8074_ops,
-+			    desc->firmware_name, sizeof(*wcss));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
- 		return -ENOMEM;
-@@ -540,6 +554,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 
- 	wcss = rproc->priv;
- 	wcss->dev = &pdev->dev;
-+	wcss->version = desc->version;
-+	wcss->crash_reason_smem = desc->crash_reason_smem;
- 
- 	ret = q6v5_wcss_init_mmio(wcss, pdev);
- 	if (ret)
-@@ -553,7 +569,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, WCSS_CRASH_REASON, NULL);
-+	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reason_smem,
-+			     NULL);
- 	if (ret)
- 		goto free_rproc;
- 
-@@ -581,8 +598,14 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
++#if SCP_RESERVED_MEM
++	scp_reserve_mem_init(scp);
++	scp_reserve_memory_ioremap(scp);
++#endif
  	return 0;
  }
  
-+static const struct wcss_data wcss_ipq8074_res_init = {
-+	.firmware_name = "IPQ8074/q6_fw.mdt",
-+	.crash_reason_smem = 421,
+diff --git a/include/linux/platform_data/mtk_scp.h b/include/linux/platform_data/mtk_scp.h
+index dfda0505123563..7625eede2e5832 100644
+--- a/include/linux/platform_data/mtk_scp.h
++++ b/include/linux/platform_data/mtk_scp.h
+@@ -132,4 +132,24 @@ unsigned int scp_get_venc_hw_capa(struct platform_device *pdev);
+ void *scp_mapping_dm_addr(struct platform_device *pdev,
+ 			  u32 mem_addr);
+ 
++#define SCP_RESERVED_MEM	(1)
++#if SCP_RESERVED_MEM
++/* scp reserve memory ID definition*/
++enum scp_reserve_mem_id_t {
++	SCP_ISP_MEM_ID,
++	SCP_NUMS_MEM_ID,
 +};
 +
- static const struct of_device_id q6v5_wcss_of_match[] = {
--	{ .compatible = "qcom,ipq8074-wcss-pil" },
-+	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
++struct scp_reserve_mblock {
++	enum scp_reserve_mem_id_t num;
++	u64 start_phys;
++	u64 start_virt;
++	u64 size;
++};
 +
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_wcss_of_match);
++extern phys_addr_t scp_get_reserve_mem_phys(enum scp_reserve_mem_id_t id);
++extern phys_addr_t scp_get_reserve_mem_virt(enum scp_reserve_mem_id_t id);
++extern phys_addr_t scp_get_reserve_mem_size(enum scp_reserve_mem_id_t id);
++#endif
++
+ #endif /* _MTK_SCP_H */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.21.0.rc0.258.g878e2cd30e-goog
