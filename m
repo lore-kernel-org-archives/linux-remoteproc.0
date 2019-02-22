@@ -1,172 +1,163 @@
-Return-Path: <govinds@codeaurora.org>
+Return-Path: <xiaoxiang781216@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Sat, 02 Feb 2019 21:15:43 +0530
-From: Govind Singh <govinds@codeaurora.org>
-Subject: Re: [PATCH v3 2/7] clk: qcom: Add WCSS Q6DSP clock controller for
- QCS404
-In-Reply-To: <154507272487.19322.760504004108754132@swboyd.mtv.corp.google.com>
-References: <20181215103557.2748-1-govinds@codeaurora.org>
- <20181215103557.2748-3-govinds@codeaurora.org>
- <154507272487.19322.760504004108754132@swboyd.mtv.corp.google.com>
-Message-ID: <e7f94a34ff56cd008245fadf766d4c23@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org, sricharan@codeaurora.org, sibis@codeaurora.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org
+References: <1549955596-19784-1-git-send-email-xiaoxiang@xiaomi.com> <5cf04a05-938a-2dd0-d36b-e939f0c935ff@st.com>
+In-Reply-To: <5cf04a05-938a-2dd0-d36b-e939f0c935ff@st.com>
+From: xiang xiao <xiaoxiang781216@gmail.com>
+Date: Sat, 23 Feb 2019 03:36:21 +0800
+Message-ID: <CAH2Cfb9NQeZFuPexG31FR_jNUvRbh_M=5tAgfsSxsZ-UxF91DQ@mail.gmail.com>
+Subject: Re: [PATCH] rpmsg: virtio_rpmsg_bus: acknowledge the received
+ creation message
+Content-Type: text/plain; charset="UTF-8"
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Ohad Ben Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, wendy.liang@xilinx.com, Kumar Gala <kumar.gala@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, QianWenfa <qianwenfa@xiaomi.com>, Xiang Xiao <xiaoxiang@xiaomi.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Thanks for review.
 
-On 2018-12-18 00:22, Stephen Boyd wrote:
-> Quoting Govind Singh (2018-12-15 02:35:52)
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 9fe28b9ceba8..84acc7718691 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -222,6 +222,15 @@ config QCS_GCC_404
->>           Say Y if you want to use multimedia devices or peripheral
->>           devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
->> 
->> +config QCS_WCSSCC_404
->> +       tristate "QCS404 WCSS Clock Controller"
->> +       depends on COMMON_CLK_QCOM
-> 
-> This is going away, so you can drop this depends on statement soon.
-> 
+On Fri, Feb 22, 2019 at 6:44 PM Arnaud Pouliquen
+<arnaud.pouliquen@st.com> wrote:
+>
+> Hello Xiang,
+>
+>
+>
+> On 2/12/19 8:13 AM, Xiang Xiao wrote:
+> > From: QianWenfa <qianwenfa@xiaomi.com>
+> >
+> > the two phase handsake make the client could initiate the transfer
+> > immediately without the server side send any dummy message first.
+> As discussed on OpenAMP mailing list, the first point (from my pov) is
+> to figure out if this should be part of the rpmsg protocol or service
+> dependent (so managed by the rpmsg client itself)...
+>
 
-Removed in v4.
+Here is my thought:
+1.The ack message don't have any side effect except kernel send back
+the local address through NS channel directly.
+2.But without this message, remote side can't send the message first
+due to the lack of kernel address information.
+The second limitation is very strange for all developer I think.
 
->> +       select QCS_GCC_404
->> +       help
->> +         Support for the WCSS clock controller on QCS404 devices.
->> +         Say Y if you want to use the WCSS branch clocks of the WCSS 
->> clock
->> +         controller to reset the WCSS subsystem.
->> +
->>  config SDM_GCC_845
->>         tristate "SDM845 Global Clock Controller"
->>         select QCOM_GDSC
->> diff --git a/drivers/clk/qcom/wcsscc-qcs404.c 
->> b/drivers/clk/qcom/wcsscc-qcs404.c
->> new file mode 100644
->> index 000000000000..bd694ef1b6ac
->> --- /dev/null
->> +++ b/drivers/clk/qcom/wcsscc-qcs404.c
->> @@ -0,0 +1,297 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/err.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/module.h>
->> +#include <linux/of_address.h>
-> 
-> Is this used?
-> 
->> +#include <linux/clk.h>
-> 
-> Is this used?
-> 
+>
+> >
+> > Signed-off-by: Wenfa Qian <qianwenfa@xiaomi.com>
+> > Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
+> > ---
+> >  drivers/rpmsg/virtio_rpmsg_bus.c | 25 ++++++++++++++++++++-----
+> >  1 file changed, 20 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > index 664f957..e323c98 100644
+> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > @@ -71,6 +71,7 @@ struct virtproc_info {
+> >
+> >  /* The feature bitmap for virtio rpmsg */
+> >  #define VIRTIO_RPMSG_F_NS    0 /* RP supports name service notifications */
+> > +#define VIRTIO_RPMSG_F_ACK   1 /* RP supports name service acknowledge */
+> >
+> >  /**
+> >   * struct rpmsg_hdr - common header for all rpmsg messages
+> > @@ -115,10 +116,12 @@ struct rpmsg_ns_msg {
+> >   *
+> >   * @RPMSG_NS_CREATE: a new remote service was just created
+> >   * @RPMSG_NS_DESTROY: a known remote service was just destroyed
+> > + * @RPMSG_NS_ACK: acknowledge the previous creation message
+> >   */
+> >  enum rpmsg_ns_flags {
+> >       RPMSG_NS_CREATE         = 0,
+> >       RPMSG_NS_DESTROY        = 1,
+> > +     RPMSG_NS_ACK            = 2,
+> >  };
+> >
+> >  /**
+> > @@ -330,13 +333,14 @@ static int virtio_rpmsg_announce_create(struct rpmsg_device *rpdev)
+> >       int err = 0;
+> >
+> >       /* need to tell remote processor's name service about this channel ? */
+> > -     if (rpdev->announce && rpdev->ept &&
+> > +     if (rpdev->ept && (rpdev->announce ||
+> > +         virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_ACK)) &&
+> >           virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {Regarding this condition i have a concern. If rpdev->announce is false
+> but  VIRTIO_RPMSG_F_ACK feature is set, this should generate an ack message.
+> Seems that this condition can occurs depending on the rpmsg_device
+> struct provided on registration, when rpmsg_dev_probe is called.
 
-Removed unnecessary includes and cleanup suggested by you in v4.
+The ack message can't be sent before device probe success, otherwise
+the early ack make  the remote side consider kernel driver is ready
+and send the message immediately, but nobody can receive the message
+actually.
 
-> 
->> + * CLK_IGNORE_UNUSED flags which prevent these
->> + * clocks from being gated during bootup.
-> 
-> Ok.. but userspace is after CLK_IGNORE_UNUSED would process these clks?
-> So we're keeping them on from the bootloader why? Something is using
-> these clks during that operation but after that point they need to be
-> turned off?
-> 
+>
+> >               struct rpmsg_ns_msg nsm;
+> >
+> >               strncpy(nsm.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> >               nsm.addr = rpdev->ept->addr;
+> > -             nsm.flags = RPMSG_NS_CREATE;
+> > +             nsm.flags = rpdev->announce ? RPMSG_NS_CREATE : RPMSG_NS_ACK;
+> >
+> >               err = rpmsg_sendto(rpdev->ept, &nsm, sizeof(nsm), RPMSG_NS_ADDR);
+> >               if (err)
+> > @@ -820,6 +824,7 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+> >       struct rpmsg_channel_info chinfo;
+> >       struct virtproc_info *vrp = priv;
+> >       struct device *dev = &vrp->vdev->dev;
+> > +     struct device *tmp;
+> >       int ret;
+> >
+> >  #if defined(CONFIG_DYNAMIC_DEBUG)
+> > @@ -847,21 +852,30 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+> >       msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+> >
+> >       dev_info(dev, "%sing channel %s addr 0x%x\n",
+> > -              msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+> > +              msg->flags == RPMSG_NS_ACK ? "ack" :
+> > +              msg->flags == RPMSG_NS_DESTROY ? "destroy" : "creat",
+> >                msg->name, msg->addr);
+> >
+> >       strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+> >       chinfo.src = RPMSG_ADDR_ANY;
+> >       chinfo.dst = msg->addr;
+> >
+> > -     if (msg->flags & RPMSG_NS_DESTROY) {
+> > +     if (msg->flags == RPMSG_NS_DESTROY) {
+> >               ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
+> >               if (ret)
+> >                       dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+> > -     } else {
+> > +     } else if (msg->flags == RPMSG_NS_CREATE) {
+> >               newch = rpmsg_create_channel(vrp, &chinfo);
+> >               if (!newch)
+> >                       dev_err(dev, "rpmsg_create_channel failed\n");
+> > +     } else if (msg->flags == RPMSG_NS_ACK) {
+> > +             chinfo.dst = RPMSG_ADDR_ANY;
+> > +             tmp = rpmsg_find_device(&vrp->vdev->dev, &chinfo);
+> nit-picking... replace &vrp->vdev->dev by dev and change tmp by a more
+> explicit name.
 
-Yes remote proc will process this clock during rproc start. I discussed 
-this issue with Bjorn.
-I will seek his help.
-Need to root cause why these clocks are voted from bootloader.
+Ok.
 
->> + */
->> +
->> +static int wcss_clocks_qcs404_probe(struct platform_device *pdev, int 
->> index,
->> +                                   const struct qcom_cc_desc *desc)
->> +{
->> +       struct regmap *regmap;
->> +       struct resource *res;
->> +       void __iomem *base;
->> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, index);
->> +       base = devm_ioremap_resource(&pdev->dev, res);
->> +       if (IS_ERR(base))
->> +               return -ENOMEM;
->> +
->> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, 
->> desc->config);
->> +       if (IS_ERR(regmap))
->> +               return PTR_ERR(regmap);
->> +
->> +       return qcom_cc_really_probe(pdev, desc, regmap);
->> +}
-> 
-> You're the second user of this "probe on reg region" logic. Please
-> extract it out of the lpasscc driver and put it into common.c so it can
-> be reused by the two drivers.
-> 
+> > +             if (tmp) {
+> > +                     newch = to_rpmsg_device(tmp);
+> > +                     newch->dst = msg->addr;
+> > +             } else
+> typo: braces
+>
 
-I have addressed in v4.
+Ok.
 
->> +
->> +static int wcss_cc_qcs404_probe(struct platform_device *pdev)
->> +{
->> +       const struct qcom_cc_desc *desc;
->> +       int ret;
->> +
->> +       wcss_regmap_config.name = "wcss_q6sstop";
->> +       desc = &wcss_q6sstop_qcs404_desc;
->> +
->> +       ret = wcss_clocks_qcs404_probe(pdev, 0, desc);
->> +       if (ret)
->> +               return ret;
->> +
->> +       wcss_regmap_config.name = "wcnss_tcsr";
->> +       desc = &wcnss_tcsr_qcs404_desc;
->> +
->> +       ret = wcss_clocks_qcs404_probe(pdev, 1, desc);
->> +       if (ret)
->> +               return ret;
->> +
->> +       wcss_regmap_config.name = "wcss_qdsp6ss";
->> +       desc = &wcnss_qdsp6ss_qcs404_desc;
->> +
->> +       return wcss_clocks_qcs404_probe(pdev, 2, desc);
->> +}
->> +
->> +static struct platform_driver wcss_cc_qcs404_driver = {
->> +       .probe          = wcss_cc_qcs404_probe,
->> +       .driver         = {
->> +               .name   = "qcs404-wcsscc",
->> +               .of_match_table = wcss_cc_qcs404_match_table,
->> +       },
->> +};
->> +
->> +static int __init wcss_cc_qcs404_init(void)
->> +{
->> +       return platform_driver_register(&wcss_cc_qcs404_driver);
->> +}
->> +subsys_initcall(wcss_cc_qcs404_init);
-> 
-> Where is the driver removal exit function?
-> 
-
-My bad, added in v4.
-
->> +
->> +MODULE_LICENSE("GPL v2");
-> 
-> MODULE_DESCRIPTION?
-
-BR,
-Govind
+> Regards,
+> Arnaud
+> > +                     dev_err(dev, "rpmsg_find_device failed\n");
+> >       }
+> >
+> >       return 0;
+> > @@ -1028,6 +1042,7 @@ static struct virtio_device_id id_table[] = {
+> >
+> >  static unsigned int features[] = {
+> >       VIRTIO_RPMSG_F_NS,
+> > +     VIRTIO_RPMSG_F_ACK,
+> >  };
+> >
+> >  static struct virtio_driver virtio_ipc_driver = {
+> >
