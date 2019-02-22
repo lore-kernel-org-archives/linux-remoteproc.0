@@ -1,45 +1,372 @@
-Return-Path: <dianders@chromium.org>
-Return-Path: <dianders@chromium.org>
+Return-Path: <xiaoxiang781216@gmail.com>
 MIME-Version: 1.0
-References: <20190131003933.11436-1-bjorn.andersson@linaro.org> <20190131003933.11436-4-bjorn.andersson@linaro.org>
-In-Reply-To: <20190131003933.11436-4-bjorn.andersson@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 1 Feb 2019 15:54:50 -0800
-Message-ID: <CAD=FV=V068E_d-RyJdCTm4ycj+oSfe7zC8goGKhKbyELaN63GQ@mail.gmail.com>
-Subject: Re: [PATCH v5 03/10] arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
+References: <1550345867-25762-1-git-send-email-xiaoxiang@xiaomi.com> <2d174b98-fd88-cdd7-b7a6-96c544953db9@st.com>
+In-Reply-To: <2d174b98-fd88-cdd7-b7a6-96c544953db9@st.com>
+From: xiang xiao <xiaoxiang781216@gmail.com>
+Date: Fri, 22 Feb 2019 16:36:14 +0800
+Message-ID: <CAH2Cfb-d9Mn1JT8ZaSauRnFBc3KSc5E8k-8W6yVJH8XRhR1JaA@mail.gmail.com>
+Subject: Re: [PATCH] rpmsg: add clock API redirection driver
 Content-Type: text/plain; charset="UTF-8"
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-remoteproc@vger.kernel.org
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Ohad Ben Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, wendy.liang@xilinx.com, Kumar Gala <kumar.gala@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Yanlin Zhu <zhuyanlin@pinecone.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
-
-On Wed, Jan 30, 2019 at 4:40 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index d19486ba1e5e..07d9cd6fba7d 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -325,6 +325,64 @@
->                 };
->         };
+On Fri, Feb 22, 2019 at 4:19 PM Arnaud Pouliquen
+<arnaud.pouliquen@st.com> wrote:
 >
-> +       adsp_pas: remoteproc-adsp {
-> +               compatible = "qcom,sdm845-adsp-pas";
+> Hello Xiang
+>
+> On 2/16/19 8:37 PM, Xiang Xiao wrote:
+> > From: Yanlin Zhu <zhuyanlin@pinecone.net>
+> >
+> > which could redirect clk API from remote to the kernel
+> >
+> > Signed-off-by: Yanlin Zhu <zhuyanlin@pinecone.net>
+> > ---
+> >  drivers/rpmsg/Kconfig     |  10 ++
+> >  drivers/rpmsg/Makefile    |   1 +
+> >  drivers/rpmsg/rpmsg_clk.c | 284 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 295 insertions(+)
+> >  create mode 100644 drivers/rpmsg/rpmsg_clk.c
+> >
+> > diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+> > index 13ead55..ed04cb9 100644
+> > --- a/drivers/rpmsg/Kconfig
+> > +++ b/drivers/rpmsg/Kconfig
+> > @@ -15,6 +15,16 @@ config RPMSG_CHAR
+> >         in /dev. They make it possible for user-space programs to send and
+> >         receive rpmsg packets.
+> >
+> > +config RPMSG_CLK
+> > +     tristate "RPMSG clock API redirection"
+> > +     depends on COMMON_CLK
+> > +     depends on RPMSG
+> > +     help
+> > +       Say Y here to redirect clock API from the remote processor.
+> > +       With this driver, the remote processor could:
+> > +       1.Reuse the clock driver in the kernel side, or
+> > +       2.Form a hybrid(kernel plus RTOS) clock tree.
+> > +
+> >  config RPMSG_SYSLOG
+> >       tristate "RPMSG syslog redirection"
+> >       depends on RPMSG
+> > diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+> > index bfd22df..0d777b1 100644
+> > --- a/drivers/rpmsg/Makefile
+> > +++ b/drivers/rpmsg/Makefile
+> > @@ -1,6 +1,7 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >  obj-$(CONFIG_RPMSG)          += rpmsg_core.o
+> >  obj-$(CONFIG_RPMSG_CHAR)     += rpmsg_char.o
+> > +obj-$(CONFIG_RPMSG_CLK)              += rpmsg_clk.o
+> >  obj-$(CONFIG_RPMSG_SYSLOG)   += rpmsg_syslog.o
+> >  obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
+> >  obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
+> > diff --git a/drivers/rpmsg/rpmsg_clk.c b/drivers/rpmsg/rpmsg_clk.c
+> > new file mode 100644
+> > index 0000000..0ec0241
+> > --- /dev/null
+> > +++ b/drivers/rpmsg/rpmsg_clk.c
+> > @@ -0,0 +1,284 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2016 Pinecone Inc.
+> > + *
+> > + * redirect clk API from remote to the kernel.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/module.h>
+> > +#include <linux/rpmsg.h>
+> > +
+> > +#define RPMSG_CLK_ENABLE     0
+> > +#define RPMSG_CLK_DISABLE    1
+> > +#define RPMSG_CLK_SETRATE    2
+> > +#define RPMSG_CLK_SETPHASE   3
+> > +#define RPMSG_CLK_GETPHASE   4
+> > +#define RPMSG_CLK_GETRATE    5
+> > +#define RPMSG_CLK_ROUNDRATE  6
+> > +#define RPMSG_CLK_ISENABLED  7
+> > +
+> > +struct rpmsg_clk_header {
+> > +     u32                     command;
+> > +     u32                     response;
+> > +     s64                     result;
+> > +     u64                     cookie;
+> > +} __packed;
+> > +
+> > +struct rpmsg_clk_enable {
+> > +     struct rpmsg_clk_header header;
+> > +     char                    name[0];
+> > +} __packed;
+> > +
+> > +#define rpmsg_clk_disable    rpmsg_clk_enable
+> > +#define rpmsg_clk_isenabled  rpmsg_clk_enable
+> > +
+> > +struct rpmsg_clk_setrate {
+> > +     struct rpmsg_clk_header header;
+> > +     u64                     rate;
+> > +     char                    name[0];
+> > +} __packed;
+> > +
+> > +#define rpmsg_clk_getrate    rpmsg_clk_enable
+> > +#define rpmsg_clk_roundrate  rpmsg_clk_setrate
+> > +
+> > +struct rpmsg_clk_setphase {
+> > +     struct rpmsg_clk_header header;
+> > +     u32                     degrees;
+> > +     char                    name[0];
+> > +} __packed;
+> > +
+> > +#define rpmsg_clk_getphase   rpmsg_clk_enable
+> > +
+> > +struct rpmsg_clk_res {
+> > +     struct clk              *clk;
+> > +     atomic_t                count;
+> > +};
+> > +
+> > +static void rpmsg_clk_release(struct device *dev, void *res)
+> > +{
+> > +     struct rpmsg_clk_res *clkres = res;
+> > +     int count = atomic_read(&clkres->count);
+> > +
+> > +     while (count-- > 0)
+> > +             clk_disable_unprepare(clkres->clk);
+> > +
+> > +     clk_put(clkres->clk);
+> > +}
+> > +
+> > +static int rpmsg_clk_match(struct device *dev, void *res, void *data)
+> > +{
+> > +     struct rpmsg_clk_res *clkres = res;
+> > +
+> > +     return !strcmp(__clk_get_name(clkres->clk), data);
+> > +}
+> > +
+> > +static struct rpmsg_clk_res *
+> > +rpmsg_clk_get_res(struct rpmsg_device *rpdev, const char *name)
+> > +{
+> > +     struct rpmsg_clk_res *clkres;
+> > +     struct clk *clk;
+> > +
+> > +     clkres = devres_find(&rpdev->dev, rpmsg_clk_release,
+> > +                          rpmsg_clk_match, (void *)name);
+> > +     if (clkres)
+> > +             return clkres;
+> > +
+> > +     clkres = devres_alloc(rpmsg_clk_release, sizeof(*clkres), GFP_KERNEL);
+> > +     if (!clkres)
+> > +             return ERR_PTR(-ENOMEM);
+> > +
+> > +     clk = clk_get(&rpdev->dev, name);
+> > +     if (IS_ERR(clk)) {
+> > +             devres_free(clkres);
+> > +             return ERR_CAST(clk);
+> > +     }
+> > +
+> > +     clkres->clk = clk;
+> > +     devres_add(&rpdev->dev, clkres);
+> > +
+> > +     return clkres;
+> > +}
+> > +
+> > +static int rpmsg_clk_enable_handler(struct rpmsg_device *rpdev,
+> > +                                 void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_enable *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres)) {
+> > +             msg->header.result = clk_prepare_enable(clkres->clk);
+> > +             if (msg->header.result >= 0)
+> > +                     atomic_inc(&clkres->count);
+> > +     } else {
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +     }
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static int rpmsg_clk_disable_handler(struct rpmsg_device *rpdev,
+> > +                                  void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_disable *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres)) {
+> > +             msg->header.result = 0;
+> > +             if (atomic_dec_return(&clkres->count) >= 0)
+> > +                     clk_disable_unprepare(clkres->clk);
+> > +             else
+> > +                     atomic_inc(&clkres->count);
+> > +     } else {
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +     }
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static int rpmsg_clk_getrate_handler(struct rpmsg_device *rpdev,
+> > +                                  void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_getrate *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres))
+> > +             msg->header.result = clk_get_rate(clkres->clk);
+> > +     else
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static int rpmsg_clk_roundrate_handler(struct rpmsg_device *rpdev,
+> > +                                    void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_roundrate *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres))
+> > +             msg->header.result = clk_round_rate(clkres->clk, msg->rate);
+> > +     else
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static int rpmsg_clk_setrate_handler(struct rpmsg_device *rpdev,
+> > +                                  void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_setrate *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres))
+> > +             msg->header.result = clk_set_rate(clkres->clk, msg->rate);
+> > +     else
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static int rpmsg_clk_setphase_handler(struct rpmsg_device *rpdev,
+> > +                                   void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_setphase *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres))
+> > +             msg->header.result = clk_set_phase(clkres->clk, msg->degrees);
+> > +     else
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static int rpmsg_clk_getphase_handler(struct rpmsg_device *rpdev,
+> > +                                   void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_getphase *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres))
+> > +             msg->header.result = clk_get_phase(clkres->clk);
+> > +     else
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static int rpmsg_clk_isenabled_handler(struct rpmsg_device *rpdev,
+> > +                                    void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_isenabled *msg = data;
+> > +     struct rpmsg_clk_res *clkres = rpmsg_clk_get_res(rpdev, msg->name);
+> > +
+> > +     if (!IS_ERR(clkres))
+> > +             msg->header.result = __clk_is_enabled(clkres->clk);
+> > +     else
+> > +             msg->header.result = PTR_ERR(clkres);
+> > +
+> > +     return rpmsg_send(rpdev->ept, msg, sizeof(*msg));
+> > +}
+> > +
+> > +static const rpmsg_rx_cb_t rpmsg_clk_handler[] = {
+> > +     [RPMSG_CLK_ENABLE]    = rpmsg_clk_enable_handler,
+> > +     [RPMSG_CLK_DISABLE]   = rpmsg_clk_disable_handler,
+> > +     [RPMSG_CLK_SETRATE]   = rpmsg_clk_setrate_handler,
+> > +     [RPMSG_CLK_SETPHASE]  = rpmsg_clk_setphase_handler,
+> > +     [RPMSG_CLK_GETPHASE]  = rpmsg_clk_getphase_handler,
+> > +     [RPMSG_CLK_GETRATE]   = rpmsg_clk_getrate_handler,
+> > +     [RPMSG_CLK_ROUNDRATE] = rpmsg_clk_roundrate_handler,
+> > +     [RPMSG_CLK_ISENABLED] = rpmsg_clk_isenabled_handler,
+> > +};
+> > +
+> > +static int rpmsg_clk_callback(struct rpmsg_device *rpdev,
+> > +                           void *data, int len, void *priv, u32 src)
+> > +{
+> > +     struct rpmsg_clk_header *hdr = data;
+> > +     u32 cmd = hdr->command;
+> > +     int ret = -EINVAL;
+> > +
+> > +     if (cmd < ARRAY_SIZE(rpmsg_clk_handler)) {
+> > +             hdr->response = 1;
+> > +             ret = rpmsg_clk_handler[cmd](rpdev, data, len, priv, src);
+> > +     } else {
+> > +             dev_err(&rpdev->dev, "invalid command %u\n", cmd);
+> > +     }
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static int rpmsg_clk_probe(struct rpmsg_device *rpdev)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +static void rpmsg_clk_remove(struct rpmsg_device *rpdev)
+> > +{
+> > +}
+> > +
+> > +static const struct rpmsg_device_id rpmsg_clk_id_table[] = {
+> > +     { .name = "rpmsg-clk" },
+> > +     { }
+> > +};
+> > +MODULE_DEVICE_TABLE(rpmsg, rpmsg_clk_id_table);
+> > +
+> > +static struct rpmsg_driver rpmsg_clk_driver = {
+> > +     .drv = {
+> > +             .name   = "rpmsg_clk",
+> > +             .owner  = THIS_MODULE,
+> > +     },
+> > +
+> > +     .id_table       = rpmsg_clk_id_table,
+> > +     .probe          = rpmsg_clk_probe,
+> > +     .callback       = rpmsg_clk_callback,
+> > +     .remove         = rpmsg_clk_remove,
+> > +};
+> > +
+> > +module_rpmsg_driver(rpmsg_clk_driver);
+> > +
+> > +MODULE_ALIAS("rpmsg:rpmsg_clk");
+> > +MODULE_AUTHOR("Yanlin Zhu <zhuyanlin@xiaomi.com>");
+> > +MODULE_DESCRIPTION("rpmsg clock API redirection driver");
+> > +MODULE_LICENSE("GPL v2");
+> >
+>
+> This is similar to the resource manager we proposed several months ago.
+> we proposed a generic solution for the clock but also the other
+> resources managed by Linux for the remote processor (regulators, GPIO,...)
+>
+> Please have a look here
+> patch:
+> https://patchwork.kernel.org/project/linux-remoteproc/list/?submitter=92421
+> overview document:
+> http://openamp.github.io/docs/mca/remoteproc-resource-manager-overview.pdf
+>
+>
 
-After discussion with you offline I now understand why this is using
-"-pas" and not "-pil".
+Great, I will take a look at in this weekend and send the feedback.
 
-...and I understand that on my particular board (which should use
-"-pil") we'll juse leave this as status = "disabled".
-
-It would be good if something in this series updated the bindings to
-make it clearer since I can't find anything in these two files:
-
-Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
-Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-
-...explain when the "-pil" is used and when the "-pas" is used.
-
-
--Doug
+> Regards
+> Arnaud
