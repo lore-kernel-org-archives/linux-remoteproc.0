@@ -1,63 +1,54 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v4 0/8] Add non PAS wcss Q6 support for QCS404
-Date: Sat,  2 Feb 2019 20:56:18 +0530
-Message-Id: <20190202152626.1006-1-govinds@codeaurora.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from zimbra2.kalray.eu ([92.103.151.219]:49188 "EHLO
+        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728092AbfB1OQC (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 28 Feb 2019 09:16:02 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 8EC4427E03A4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 15:16:00 +0100 (CET)
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id WQpq5UZn8wXL for <linux-remoteproc@vger.kernel.org>;
+        Thu, 28 Feb 2019 15:16:00 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 57ED127E05A1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 15:16:00 +0100 (CET)
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id doc3VVmQ2SLr for <linux-remoteproc@vger.kernel.org>;
+        Thu, 28 Feb 2019 15:16:00 +0100 (CET)
+Received: from zimbra2.kalray.eu (zimbra2.kalray.eu [192.168.40.202])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id 43ADF27E03A4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Feb 2019 15:16:00 +0100 (CET)
+Date: Thu, 28 Feb 2019 15:16:00 +0100 (CET)
+From: =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
+Message-ID: <218127790.10567888.1551363360251.JavaMail.zimbra@kalray.eu>
+Subject: [PATCH] remoteproc: remove unused typedef
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, andy.gross@linaro.org, david.brown@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add non PAS(Peripheral Authentication System) WCSS remoteproc
-driver support and wcss clock/reset controls for QCS404 SOC.
-Add WCSS q6 bootup and shutdown sequence handled from
-Application Processor SubSystem(APSS).
+rproc_handle_resources_t typedef is not used anymore, remove it.
+---
+ drivers/remoteproc/remoteproc_core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-
-Changes since v3:
- dt binding cleanup.
- Fixed remoteproc recovery.
- Added remoteproc dump support.
- wcsscc cleanup/refactoring.
-
-Changes since v2:
- Removed unused properties.
- Refactored code to have common logic b/w ipq8074 and QCS404, wherever possible.
- Added compatible example.
- Removed wcss-protected bool.
-
-Changes since v1:
-  Corrected clock names as per comments in v1 patch.
-
-
-Govind Singh (8):
-  dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
-  clk: qcom: Add WCSS gcc clock control for QCS404
-  dt-bindings: clock: qcom: Introduce QCOM WCSS Q6DSP clock bindings
-  clk: qcom: Add WCSS Q6DSP clock controller for QCS404
-  remoteproc: qcom: wcss: populate hardcoded param using driver data
-  dt-binding: remoteproc: Add QTI WCSS PIL bindings
-  remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404
-  remoteproc: qcom: wcss: explicitly request exclusive reset control
-
- .../devicetree/bindings/clock/qcom,wcsscc.txt |  26 +
- .../bindings/remoteproc/qcom,q6v5.txt         |  61 ++
- drivers/clk/qcom/Kconfig                      |   8 +
- drivers/clk/qcom/Makefile                     |   1 +
- drivers/clk/qcom/common.c                     |  20 +
- drivers/clk/qcom/common.h                     |   3 +-
- drivers/clk/qcom/gcc-qcs404.c                 |  37 +-
- drivers/clk/qcom/lpasscc-sdm845.c             |  23 +-
- drivers/clk/qcom/wcsscc-qcs404.c              | 282 +++++++++
- drivers/remoteproc/qcom_q6v5_wcss.c           | 587 ++++++++++++++++--
- include/dt-bindings/clock/qcom,gcc-qcs404.h   |   3 +
- include/dt-bindings/clock/qcom,wcss-qcs404.h  |  25 +
- 12 files changed, 1013 insertions(+), 63 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,wcsscc.txt
- create mode 100644 drivers/clk/qcom/wcsscc-qcs404.c
- create mode 100644 include/dt-bindings/clock/qcom,wcss-qcs404.h
-
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 54ec38fc5dca..40d8895b7c52 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -48,8 +48,6 @@
+ static DEFINE_MUTEX(rproc_list_mutex);
+ static LIST_HEAD(rproc_list);
+ 
+-typedef int (*rproc_handle_resources_t)(struct rproc *rproc,
+-				struct resource_table *table, int len);
+ typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
+ 				 void *, int offset, int avail);
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.0.276.g89ea799
