@@ -1,116 +1,158 @@
 Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34660 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727451AbfCDIhi (ORCPT
+Received: from zimbra2.kalray.eu ([92.103.151.219]:35212 "EHLO
+        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfCDIIl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Mar 2019 03:37:38 -0500
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: dynamic vring allocation and 64 bits resources/loader
-Date: Mon, 4 Mar 2019 08:37:28 +0000
-Message-ID: <2da1af8bcc9244f9859266818b7343c6@SFHDAG7NODE2.st.com>
-References: <238022034.10402985.1551339811648.JavaMail.zimbra@kalray.eu>
- <52399a4d0bec489ba4b928b5c3fd4791@SFHDAG7NODE2.st.com>
- <1561292132.14100765.1551686918876.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <1561292132.14100765.1551686918876.JavaMail.zimbra@kalray.eu>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 4 Mar 2019 03:08:41 -0500
+Date: Mon, 4 Mar 2019 09:08:38 +0100 (CET)
+From: =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
+Message-ID: <1561292132.14100765.1551686918876.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <52399a4d0bec489ba4b928b5c3fd4791@SFHDAG7NODE2.st.com>
+References: <238022034.10402985.1551339811648.JavaMail.zimbra@kalray.eu> <52399a4d0bec489ba4b928b5c3fd4791@SFHDAG7NODE2.st.com>
+Subject: Re: dynamic vring allocation and 64 bits resources/loader
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-remoteproc-owner@vger.kernel.org
-To: =?utf-8?B?Q2zDqW1lbnQgTGVnZXI=?= <cleger@kalray.eu>
+To: Loic PALLARDY <loic.pallardy@st.com>
 Cc: linux-remoteproc <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgQ2zDqW1lbnQsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ2zD
-qW1lbnQgTGVnZXIgPGNsZWdlckBrYWxyYXkuZXU+DQo+IFNlbnQ6IGx1bmRpIDQgbWFycyAyMDE5
-IDA5OjA5DQo+IFRvOiBMb2ljIFBBTExBUkRZIDxsb2ljLnBhbGxhcmR5QHN0LmNvbT4NCj4gQ2M6
-IGxpbnV4LXJlbW90ZXByb2MgPGxpbnV4LXJlbW90ZXByb2NAdmdlci5rZXJuZWwub3JnPg0KPiBT
-dWJqZWN0OiBSZTogZHluYW1pYyB2cmluZyBhbGxvY2F0aW9uIGFuZCA2NCBiaXRzIHJlc291cmNl
-cy9sb2FkZXINCj4gDQo+IEhpIExvw69jLCB0aGFua3MgZm9yIHlvdXIgYW5zd2VyLA0KPiANCj4g
-LS0tLS0gTWFpbCBvcmlnaW5hbCAtLS0tLQ0KPiA+IERlOiAiTG9pYyBQQUxMQVJEWSIgPGxvaWMu
-cGFsbGFyZHlAc3QuY29tPg0KPiA+IMOAOiAiQ2zDqW1lbnQgTGVnZXIiIDxjbGVnZXJAa2FscmF5
-LmV1PiwgImxpbnV4LXJlbW90ZXByb2MiIDxsaW51eC0NCj4gcmVtb3RlcHJvY0B2Z2VyLmtlcm5l
-bC5vcmc+DQo+ID4gRW52b3nDqTogRGltYW5jaGUgMyBNYXJzIDIwMTkgMjE6MjI6MTYNCj4gPiBP
-YmpldDogUkU6IGR5bmFtaWMgdnJpbmcgYWxsb2NhdGlvbiBhbmQgNjQgYml0cyByZXNvdXJjZXMv
-bG9hZGVyDQo+IA0KPiA+IEhpIENsw6ltZW50LA0KPiA+DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVz
-c2FnZS0tLS0tDQo+ID4+IEZyb206IGxpbnV4LXJlbW90ZXByb2Mtb3duZXJAdmdlci5rZXJuZWwu
-b3JnIDxsaW51eC1yZW1vdGVwcm9jLQ0KPiA+PiBvd25lckB2Z2VyLmtlcm5lbC5vcmc+IE9uIEJl
-aGFsZiBPZiBDbMOpbWVudCBMZWdlcg0KPiA+PiBTZW50OiBqZXVkaSAyOCBmw6l2cmllciAyMDE5
-IDA4OjQ0DQo+ID4+IFRvOiBsaW51eC1yZW1vdGVwcm9jIDxsaW51eC1yZW1vdGVwcm9jQHZnZXIu
-a2VybmVsLm9yZz4NCj4gPj4gU3ViamVjdDogZHluYW1pYyB2cmluZyBhbGxvY2F0aW9uIGFuZCA2
-NCBiaXRzIHJlc291cmNlcy9sb2FkZXINCj4gPj4NCj4gPj4gSGksDQo+ID4+DQo+ID4+IEkgYW0g
-Y3VycmVudGx5IGltcGxlbWVudGluZyByZW1vdGUgcHJvYyBmb3Igb3VyIHByb2Nlc3NvciBhbmQg
-YWZ0ZXINCj4gc29tZQ0KPiA+PiB0ZXN0cywNCj4gPj4gSSBoYXZlIHRoZSBmb2xsb3dpbmcgcXVl
-c3Rpb25zLg0KPiA+Pg0KPiA+PiAxKSBXaGVuIGFsbG9jYXRpbmcgdnJpbmcgZHluYW1pY2FsbHkg
-KGRhID09ICgtMSkpLCB0aGUgcmVtb3RlcHJvYyBjb3JlDQo+ID4+IGFsbG9jYXRlcw0KPiA+PiBj
-YXJ2ZW91dHMgZm9yIGVhY2ggb2YgdGhlc2UgdnJpbmdzOg0KPiA+Pg0KPiA+PiBbIDM0LjQxMDAw
-MF0gcmVtb3RlcHJvYyByZW1vdGVwcm9jMDogcnNjOiB0eXBlIDMNCj4gPj4gWyAzNC40MjAwMDBd
-IHJlbW90ZXByb2MgcmVtb3RlcHJvYzA6IHZkZXYgcnNjOiBpZCA3LCBkZmVhdHVyZXMgMHgwLCBj
-ZmcNCj4gbGVuIDAsDQo+ID4+IDIgdnJpbmdzDQo+ID4+IFsgMzQuNDMwMDAwXSByZW1vdGVwcm9j
-IHJlbW90ZXByb2MwOiB2ZGV2IHJzYzogdnJpbmcwOiBkYSAweGZmZmZmZmZmLCBxc3oNCj4gMjU2
-LA0KPiA+PiBhbGlnbiA0MDk2DQo+ID4+IFsgMzQuNDMwMDAwXSByZW1vdGVwcm9jIHJlbW90ZXBy
-b2MwOiB2ZGV2IHJzYzogdnJpbmcxOiBkYSAweGZmZmZmZmZmLCBxc3oNCj4gMjU2LA0KPiA+PiBh
-bGlnbiA0MDk2DQo+ID4+IFsgMzQuNDUwMDAwXSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiBjYXJ2
-ZW91dCB2YSAoX19fX3B0cnZhbF9fX18pLA0KPiBkbWENCj4gPj4gMHgwMDAwMDAwMTFlYzg4MDAw
-LCBsZW4gMHgzMDAwDQo+ID4+IFsgMzQuNDYwMDAwXSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiBj
-YXJ2ZW91dCB2YSAoX19fX3B0cnZhbF9fX18pLA0KPiBkbWENCj4gPj4gMHgwMDAwMDAwMTFlYzhj
-MDAwLCBsZW4gMHgzMDAwDQo+ID4+IFsgMzQuNDYwMDAwXSByZW1vdGVwcm9jIHJlbW90ZXByb2Mw
-OiBkYSA9IDB4MCBsZW4gPSAweDEwNDQwIHZhID0NCj4gPj4gMHgoX19fX3B0cnZhbF9fX18pDQo+
-ID4+IFsgMzQuNDkwMDAwXSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiBkYSA9IDB4MTA0NDAgbGVu
-ID0gMHgxMCB2YSA9DQo+ID4+IDB4KF9fX19wdHJ2YWxfX19fKQ0KPiA+PiBbIDM0LjUwMDAwMF0g
-cmVtb3RlcHJvYyByZW1vdGVwcm9jMDogZGEgPSAweDEwNDUwIGxlbiA9IDB4YzRmMCB2YSA9DQo+
-ID4+IDB4KF9fX19wdHJ2YWxfX19fKQ0KPiA+PiBbIDM0LjUyMDAwMF0gcmVtb3RlcHJvYyByZW1v
-dGVwcm9jMDogZGEgPSAweGE0NjAwMCBsZW4gPSAweDJiNCB2YSA9DQo+ID4+IDB4KF9fX19wdHJ2
-YWxfX19fKQ0KPiA+PiBbIDM0LjUzMDAwMF0gcmVtb3RlcHJvYyByZW1vdGVwcm9jMDogZGEgPSAw
-eGUzZTggbGVuID0gMHg1OCB2YSA9DQo+ID4+IDB4KF9fX19wdHJ2YWxfX19fKQ0KPiA+PiBbIDM0
-LjU1MDAwMF0gcmVtb3RlcHJvYyByZW1vdGVwcm9jMDogcmVnaXN0ZXJlZCB2aXJ0aW8wICh0eXBl
-IDcpDQo+ID4+IFsgMzQuNTYwMDAwXSByZW1vdGVwcm9jIHJlbW90ZXByb2MwOiByZW1vdGUgcHJv
-Y2Vzc29yIGNsdXN0ZXIxIGlzIG5vdw0KPiB1cA0KPiA+PiBIZWxsbyB3b3JsZCBmcm9tIGNsdXN0
-ZXIxDQo+ID4+IFZSSU5HMCBkYTogMHhmZmZmZmZmZiwgcGE6IDAsIG5vdGlmeV9pZDogMA0KPiA+
-PiBWUklORzEgZGE6IDB4ZmZmZmZmZmYsIHBhOiAwLCBub3RpZnlfaWQ6IDENCj4gPj4NCj4gPj4g
-UnNjIHRhYmxlIGNvbnRhaW5zIHRoZSBmb2xsb3dpbmc6DQo+ID4+DQo+ID4+IC8qIFZpcnRpbyBk
-ZXZpY2UgZW50cnkgKi8NCj4gPj4gew0KPiA+PiBSU0NfVkRFViwgVklSVElPX0lEX1JQTVNHLCAw
-LCAwLCAwLCAwLCAwLA0KPiA+PiBOVU1fVlJJTkdTLCB7MCwgMH0sDQo+ID4+IH0sDQo+ID4+IC8q
-IFZyaW5nIHJzYyBlbnRyeSAtIHBhcnQgb2YgdmRldl9yc2MgZW50cnkgKi8NCj4gPj4gew0KPiA+
-PiAoLTEpLCBWUklOR19BTElHTiwgVlJJTkdfU0laRSwgMCwgMA0KPiA+PiB9LA0KPiA+PiB7DQo+
-ID4+ICgtMSksIFZSSU5HX0FMSUdOLCBWUklOR19TSVpFLCAwLCAwDQo+ID4+IH0sDQo+ID4+DQo+
-ID4+IEkgd2FzIGV4cGVjdGluZyByZW1vdGVwcm9jIGNvcmUgdG8gdXBkYXRlIHZyaW5nIHBhIGJ1
-dCB0aGUNCj4gPj4gcnByb2NfYWxsb2NfcmVnaXN0ZXJlZF9jYXJ2ZW91dHMgZnVuY3Rpb24gb25s
-eSB1cGRhdGUgcmVzb3VyY2VzIGZvcg0KPiA+PiBjYXJ2ZW91dHMuDQo+ID4NCj4gPiBPbmx5IGRh
-IGlzIHVzZWQgYnkgY29wcm9jZXNzb3IsIHBhIGlzIG9ubHkgZm9yIHRoZSBob3N0LiBUaGF0J3Mg
-d2h5IHBhIGlzIG5vdA0KPiA+IHVwZGF0ZWQuDQo+ID4gSnVzdCB0YWtlIGNhcmUgdGhhdCBkYSBt
-YXkgYmUgdXBkYXRlZCBhZnRlciBjb3Byb2Nlc3NvciBib290LiBZb3UgbmVlZCB0bw0KPiB3YWl0
-DQo+ID4gZm9yIGZpcnN0IG1haWxib3gga2ljayBvciB2ZGV2IHN0YXR1cyBpbiByZXNvdXJjZSB0
-YWJsZSBiZWZvcmUgYWNjZXNzaW5nIHZyaW5nDQo+ID4gaW5mb3JtYXRpb24uDQo+IA0KPiBPaywg
-SSB3YXMgZXhwZWN0aW5nIHRoZSBhZGRyZXNzIHRvIGJlIGRpcmVjdGx5IHVwZGF0ZWQuDQo+IA0K
-PiBUaGlzIGxlYWQgbWUgdG8gYW5vdGhlciBxdWVzdGlvbiByZWdhcmRpbmcgdGhlIGtpY2tpbmcg
-bWVjYW5pc20uDQo+IE91ciBpbnRlcnJ1cHRzIGFyZSB0cmlnZ2VyZWQgdXNpbmcgbWFpbGJveGVz
-LiBTaW5jZSBtYWlsYm94ZXMgYXJlIGR5bmFtaWNhbGx5DQo+IGFsbG9jYXRlZCwgdG8gYXZvaWQg
-aGFyZGNvZGluZyBpdCBpbiB0aGUgZmlybXdhcmUsIEkgd291bGQgbGlrZSB0byBiZSBhYmxlIHRv
-DQo+IHNlbmQgdGhlIG1haWxib3ggYWRkcmVzcyBpbiBzb21lIHJlc291cmNlcy4NCj4gVGhpcyBs
-ZWFkIG1lIHRvIHZlbmRvciByZXNvdXJjZXMuIEkgaGF2ZSBzZWVuIHRoYXQgdGhleSBhcmUgZGVj
-bGFyZWQgaW4NCj4gT3BlbkFNUA0KPiBhbmQgdGhhdCB0aGUgcnByb2MgYmFja2VuZHMgY2FuIGhh
-bmRsZSB0aGVtLiBIb3dldmVyLCB0aGlzIGlzIG5vdA0KPiBpbXBsZW1lbnRlZCBpbg0KPiB0aGUg
-a2VybmVsLiBJIGFkZGVkIHRoZSBzYW1lIG1lY2FuaXNtIGluIHJlbW90ZXByb2MtY29yZSB0byBh
-bGxvdyBycHJvYw0KPiBiYWNrZW5kcw0KPiB0byBoYW5kbGUgc3VjaCByZXNvdXJjZXMuDQo+IEFy
-ZSB0aGVzZSBwYXRjaGVzIG9mIGFueSBpbnRlcmVzdCA/DQoNClRoaXMgdG9waWMgaGFzIGJlZW4g
-ZGlzY3Vzc2VkIGluIE9wZW5BTVAgY29udGV4dC4gVEkgYW5kIFhpbGlueCBoYXZlIGFscmVhZHkg
-dGhlaXIgb3duIHNvbHV0aW9uLCBidXQgbm8gcHJvcG9zYWwgc2VudCBvbiBNTCB5ZXQuDQpQbGVh
-c2Ugc2VuZCBhbiBSRkMuDQoNCj4gDQo+ID4NCj4gPj4gSXMgdGhpcyB0aGUgZXhwZWN0ZWQgYmVo
-YXZpb3VyIG9yIGFtIEkgbWlzc2luZyBzb21ldGhpbmcgPyBJIHRyaWVkIGFkZGluZw0KPiB0d28N
-Cj4gPj4gY2FydmVvdXRzIG5hbWVkIGFmdGVyIHRoZSB2ZGV2JWR2cmluZyVkIHNjaGVtZSBhbmQg
-dGhlIGNhcnZlb3V0DQo+ID4+IHJlc291cmNlcyBhcmUNCj4gPj4gaW5kZWVkIGNvcnJlY3RseSB1
-cGRhdGVkIChidXQgdnJpbmcgYXJlIHN0aWxsIG5vdCB1cGRhdGVkKS4gQlRXLCBJJ20NCj4gd29y
-a2luZw0KPiA+PiBvbiBhIHY1LjAtcmM1IGtlcm5lbCBpZiBpdHMgb2YgYW55IGludGVyZXN0Lg0K
-PiA+Pg0KPiA+PiAyKSBSZWdhcmRpbmcgcmVzb3VyY2Ugc3RydWN0cyAocnNjXyopLiBUaGV5IGFy
-ZSBhbGwgZGVmaW5lZCB1c2luZyB1MzIgdHlwZXMNCj4gPj4gKGRhLCBldGMgZm9yIGluc3RhbmNl
-KS4gSSBzYXcgaXQgd2FzIHBsYW5uZWQgdG8gc3VwcG9ydCA2NCBiaXRzIHJlc291cmNlcyBpbg0K
-PiA+PiBzb21lIG1haWwgZnJvbSAyMDE4LiBIb3dldmVyLCB0aGlzIGRvZXMgbm90IHNlZW1zIHN1
-cHBvcnRlZCB5ZXQuIEFyZQ0KPiA+PiB0aGVyZQ0KPiA+PiBhbnkgbmV3IHBsYW5zIHRvIHN1cHBv
-cnQgaXQgPw0KPiA+DQo+ID4gU3RpbGwgcGxhbm5lZCwgbmVlZCBmaXJzdCB0byBpbnRyb2R1Y2Ug
-cmVzb3VyY2UgdGFibGUgdmVyc2lvbmluZw0KPiA+DQo+ID4+DQo+ID4+IDMpIFNhbWUgcXVlc3Rp
-b24gcmVnYXJkaW5nIGFuIGVsZjY0IGxvYWRlci4NCj4gPg0KPiA+IE5lZWRlZCBpbmRlZWQuLi4N
-Cj4gDQo+IFdvdWxkIHlvdSBtaW5kIGlmIEkgY29udHJpYnV0ZSBvbmUgPw0KDQpQbGVhc2UgZmVl
-bCBmcmVlIHRvIGNvbnRyaWJ1dGUgb24gc3VjaCBmZWF0dXJlLg0KDQpSZWdhcmRzLA0KTG9pYw0K
-DQo+IA0KPiA+IFJlZ2FyZHMsDQo+ID4gTG9pYw0KPiA+Pg0KPiA+PiBSZWdhcmRzLA0KPiA+Pg0K
-PiA+PiBDbMOpbWVudA0K
+Hi Lo=C3=AFc, thanks for your answer,
+
+----- Mail original -----
+> De: "Loic PALLARDY" <loic.pallardy@st.com>
+> =C3=80: "Cl=C3=A9ment Leger" <cleger@kalray.eu>, "linux-remoteproc" <linu=
+x-remoteproc@vger.kernel.org>
+> Envoy=C3=A9: Dimanche 3 Mars 2019 21:22:16
+> Objet: RE: dynamic vring allocation and 64 bits resources/loader
+
+> Hi Cl=C3=A9ment,
+>=20
+>> -----Original Message-----
+>> From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
+>> owner@vger.kernel.org> On Behalf Of Cl=C3=A9ment Leger
+>> Sent: jeudi 28 f=C3=A9vrier 2019 08:44
+>> To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+>> Subject: dynamic vring allocation and 64 bits resources/loader
+>>=20
+>> Hi,
+>>=20
+>> I am currently implementing remote proc for our processor and after some
+>> tests,
+>> I have the following questions.
+>>=20
+>> 1) When allocating vring dynamically (da =3D=3D (-1)), the remoteproc co=
+re
+>> allocates
+>> carveouts for each of these vrings:
+>>=20
+>> [ 34.410000] remoteproc remoteproc0: rsc: type 3
+>> [ 34.420000] remoteproc remoteproc0: vdev rsc: id 7, dfeatures 0x0, cfg =
+len 0,
+>> 2 vrings
+>> [ 34.430000] remoteproc remoteproc0: vdev rsc: vring0: da 0xffffffff, qs=
+z 256,
+>> align 4096
+>> [ 34.430000] remoteproc remoteproc0: vdev rsc: vring1: da 0xffffffff, qs=
+z 256,
+>> align 4096
+>> [ 34.450000] remoteproc remoteproc0: carveout va (____ptrval____), dma
+>> 0x000000011ec88000, len 0x3000
+>> [ 34.460000] remoteproc remoteproc0: carveout va (____ptrval____), dma
+>> 0x000000011ec8c000, len 0x3000
+>> [ 34.460000] remoteproc remoteproc0: da =3D 0x0 len =3D 0x10440 va =3D
+>> 0x(____ptrval____)
+>> [ 34.490000] remoteproc remoteproc0: da =3D 0x10440 len =3D 0x10 va =3D
+>> 0x(____ptrval____)
+>> [ 34.500000] remoteproc remoteproc0: da =3D 0x10450 len =3D 0xc4f0 va =
+=3D
+>> 0x(____ptrval____)
+>> [ 34.520000] remoteproc remoteproc0: da =3D 0xa46000 len =3D 0x2b4 va =
+=3D
+>> 0x(____ptrval____)
+>> [ 34.530000] remoteproc remoteproc0: da =3D 0xe3e8 len =3D 0x58 va =3D
+>> 0x(____ptrval____)
+>> [ 34.550000] remoteproc remoteproc0: registered virtio0 (type 7)
+>> [ 34.560000] remoteproc remoteproc0: remote processor cluster1 is now up
+>> Hello world from cluster1
+>> VRING0 da: 0xffffffff, pa: 0, notify_id: 0
+>> VRING1 da: 0xffffffff, pa: 0, notify_id: 1
+>>=20
+>> Rsc table contains the following:
+>>=20
+>> /* Virtio device entry */
+>> {
+>> RSC_VDEV, VIRTIO_ID_RPMSG, 0, 0, 0, 0, 0,
+>> NUM_VRINGS, {0, 0},
+>> },
+>> /* Vring rsc entry - part of vdev_rsc entry */
+>> {
+>> (-1), VRING_ALIGN, VRING_SIZE, 0, 0
+>> },
+>> {
+>> (-1), VRING_ALIGN, VRING_SIZE, 0, 0
+>> },
+>>=20
+>> I was expecting remoteproc core to update vring pa but the
+>> rproc_alloc_registered_carveouts function only update resources for
+>> carveouts.
+>=20
+> Only da is used by coprocessor, pa is only for the host. That's why pa is=
+ not
+> updated.
+> Just take care that da may be updated after coprocessor boot. You need to=
+ wait
+> for first mailbox kick or vdev status in resource table before accessing =
+vring
+> information.
+
+Ok, I was expecting the address to be directly updated.
+
+This lead me to another question regarding the kicking mecanism.
+Our interrupts are triggered using mailboxes. Since mailboxes are dynamical=
+ly
+allocated, to avoid hardcoding it in the firmware, I would like to be able =
+to
+send the mailbox address in some resources.
+This lead me to vendor resources. I have seen that they are declared in Ope=
+nAMP
+and that the rproc backends can handle them. However, this is not implement=
+ed in
+the kernel. I added the same mecanism in remoteproc-core to allow rproc bac=
+kends
+to handle such resources.
+Are these patches of any interest ?
+
+>=20
+>> Is this the expected behaviour or am I missing something ? I tried addin=
+g two
+>> carveouts named after the vdev%dvring%d scheme and the carveout
+>> resources are
+>> indeed correctly updated (but vring are still not updated). BTW, I'm wor=
+king
+>> on a v5.0-rc5 kernel if its of any interest.
+>>=20
+>> 2) Regarding resource structs (rsc_*). They are all defined using u32 ty=
+pes
+>> (da, etc for instance). I saw it was planned to support 64 bits resource=
+s in
+>> some mail from 2018. However, this does not seems supported yet. Are
+>> there
+>> any new plans to support it ?
+>=20
+> Still planned, need first to introduce resource table versioning
+>=20
+>>=20
+>> 3) Same question regarding an elf64 loader.
+>=20
+> Needed indeed...
+
+Would you mind if I contribute one ?
+
+> Regards,
+> Loic
+>>=20
+>> Regards,
+>>=20
+>> Cl=C3=A9ment
