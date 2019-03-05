@@ -1,8 +1,8 @@
 Return-Path: <fabien.dessenne@st.com>
 From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH 8/8] ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
-Date: Tue, 5 Mar 2019 15:24:09 +0100
-Message-ID: <1551795849-13672-9-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH 5/8] ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
+Date: Tue, 5 Mar 2019 15:24:06 +0100
+Message-ID: <1551795849-13672-6-git-send-email-fabien.dessenne@st.com>
 In-Reply-To: <1551795849-13672-1-git-send-email-fabien.dessenne@st.com>
 References: <1551795849-13672-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
@@ -11,35 +11,66 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxim
 Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Enable m4 coprocessor for STM32MP157a-dk1 board.
+Declare reserved memories shared by the processors for STM32MP157c-ed1
+board.
 
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- arch/arm/boot/dts/stm32mp157a-dk1.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/stm32mp157c-ed1.dts | 42 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-index 26ce8de..818a979 100644
---- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
-+++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-@@ -116,6 +116,18 @@
- 	status = "okay";
- };
+diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+index 626ceb3..acfc5cd 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+@@ -21,6 +21,48 @@
+ 		reg = <0xC0000000 0x40000000>;
+ 	};
  
-+&m4_rproc {
-+	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
-+			<&vdev0vring1>, <&vdev0buffer>;
-+	mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
-+	mbox-names = "vq0", "vq1", "shutdown";
-+	interrupt-parent = <&exti>;
-+	interrupts = <68 1>;
-+	interrupt-names = "wdg";
-+	recovery;
-+	status = "okay";
-+};
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
 +
- &rng1 {
- 	status = "okay";
- };
++		mcuram2: mcuram2@10000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10000000 0x40000>;
++			no-map;
++		};
++
++		vdev0vring0: vdev0vring0@10040000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10040000 0x1000>;
++			no-map;
++		};
++
++		vdev0vring1: vdev0vring1@10041000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10041000 0x1000>;
++			no-map;
++		};
++
++		vdev0buffer: vdev0buffer@10042000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10042000 0x4000>;
++			no-map;
++		};
++
++		mcuram: mcuram@30000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x30000000 0x40000>;
++			no-map;
++		};
++
++		retram: retram@38000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x38000000 0x10000>;
++			no-map;
++		};
++	};
++
+ 	aliases {
+ 		serial0 = &uart4;
+ 	};
 -- 
 2.7.4
