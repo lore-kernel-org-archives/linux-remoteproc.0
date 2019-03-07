@@ -1,65 +1,90 @@
 Return-Path: <fabien.dessenne@st.com>
 From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH 0/6] hwspinlock: allow sharing of hwspinlocks
-Date: Wed, 13 Mar 2019 16:50:31 +0100
-Message-ID: <1552492237-28810-1-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH 1/2] hwspinlock: document the hwspinlock 'raw' API
+Date: Thu, 7 Mar 2019 16:58:22 +0100
+Message-ID: <1551974303-24542-2-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1551974303-24542-1-git-send-email-fabien.dessenne@st.com>
+References: <1551974303-24542-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>, Alexandre Torgue <alexandre.torgue@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current implementation does not allow two different devices to use
-a common hwspinlock. This patch set proposes to have, as an option, some
-hwspinlocks shared between several users.
+Document the hwspin_lock_timeout_raw(), hwspin_trylock_raw() and
+hwspin_unlock_raw() API.
 
-Below is an example that explain the need for this:
-	exti: interrupt-controller@5000d000 {
-		compatible = "st,stm32mp1-exti", "syscon";
-		interrupt-controller;
-		#interrupt-cells = <2>;
-		reg = <0x5000d000 0x400>;
-		hwlocks = <&hsem 1>;
-	};
-The two drivers (stm32mp1-exti and syscon) refer to the same hwlock.
-With the current hwspinlock implementation, only the first driver succeeds
-in requesting (hwspin_lock_request_specific) the hwlock. The second request
-fails.
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+---
+ Documentation/hwspinlock.txt | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-
-The proposed approach does not modify the API, but extends the DT 'hwlocks'
-property with a second optional parameter (the first one identifies an
-hwlock) that specifies whether an hwlock is requested for exclusive usage
-(current behavior) or can be shared between several users.
-Examples:
-	hwlocks = <&hsem 8>;	Ref to hwlock #8 for exclusive usage
-	hwlocks = <&hsem 8 0>;	Ref to hwlock #8 for exclusive (0) usage
-	hwlocks = <&hsem 8 1>;	Ref to hwlock #8 for shared (1) usage
-
-As a constraint, the #hwlock-cells value must be 1 or 2.
-In the current implementation, this can have theorically any value but:
-- all of the exisiting drivers use the same value : 1.
-- the framework supports only one value : 1 (see implementation of
-  of_hwspin_lock_simple_xlate())
-Hence, it shall not be a problem to restrict this value to 1 or 2 since
-it won't break any driver.
-
-Fabien Dessenne (6):
-  dt-bindings: hwlock: add support of shared locks
-  hwspinlock: allow sharing of hwspinlocks
-  dt-bindings: hwlock: update STM32 #hwlock-cells value
-  ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
-  ARM: dts: stm32: Add hwlock for irqchip on stm32mp157
-  ARM: dts: stm32: hwlocks for GPIO for stm32mp157
-
- .../devicetree/bindings/hwlock/hwlock.txt          | 27 +++++--
- .../bindings/hwlock/st,stm32-hwspinlock.txt        |  6 +-
- Documentation/hwspinlock.txt                       | 10 ++-
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi          |  2 +
- arch/arm/boot/dts/stm32mp157c.dtsi                 | 10 +++
- drivers/hwspinlock/hwspinlock_core.c               | 82 +++++++++++++++++-----
- drivers/hwspinlock/hwspinlock_internal.h           |  2 +
- 7 files changed, 108 insertions(+), 31 deletions(-)
-
+diff --git a/Documentation/hwspinlock.txt b/Documentation/hwspinlock.txt
+index ed640a2..c3403f9 100644
+--- a/Documentation/hwspinlock.txt
++++ b/Documentation/hwspinlock.txt
+@@ -136,6 +136,23 @@ The function will never sleep.
+ 
+ ::
+ 
++  int hwspin_lock_timeout_raw(struct hwspinlock *hwlock, unsigned int timeout);
++
++Lock a previously-assigned hwspinlock with a timeout limit (specified in
++msecs). If the hwspinlock is already taken, the function will busy loop
++waiting for it to be released, but give up when the timeout elapses.
++
++Caution: User must protect the routine of getting hardware lock with mutex
++or spinlock to avoid dead-lock, that will let user can do some time-consuming
++or sleepable operations under the hardware lock.
++
++Returns 0 when successful and an appropriate error code otherwise (most
++notably -ETIMEDOUT if the hwspinlock is still busy after timeout msecs).
++
++The function will never sleep.
++
++::
++
+   int hwspin_trylock(struct hwspinlock *hwlock);
+ 
+ 
+@@ -186,6 +203,21 @@ The function will never sleep.
+ 
+ ::
+ 
++  int hwspin_trylock_raw(struct hwspinlock *hwlock);
++
++Attempt to lock a previously-assigned hwspinlock, but immediately fail if
++it is already taken.
++
++Caution: User must protect the routine of getting hardware lock with mutex
++or spinlock to avoid dead-lock, that will let user can do some time-consuming
++or sleepable operations under the hardware lock.
++
++Returns 0 on success and an appropriate error code otherwise (most
++notably -EBUSY if the hwspinlock was already taken).
++The function will never sleep.
++
++::
++
+   void hwspin_unlock(struct hwspinlock *hwlock);
+ 
+ Unlock a previously-locked hwspinlock. Always succeed, and can be called
+@@ -222,6 +254,16 @@ the given flags. This function will never sleep.
+ 
+ ::
+ 
++  void hwspin_unlock_raw(struct hwspinlock *hwlock);
++
++Unlock a previously-locked hwspinlock.
++
++The caller should **never** unlock an hwspinlock which is already unlocked.
++Doing so is considered a bug (there is no protection against this).
++This function will never sleep.
++
++::
++
+   int hwspin_lock_get_id(struct hwspinlock *hwlock);
+ 
+ Retrieve id number of a given hwspinlock. This is needed when an
 -- 
 2.7.4
