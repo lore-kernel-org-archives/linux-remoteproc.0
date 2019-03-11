@@ -1,59 +1,54 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH 1/8] dt-bindings: stm32: add bindings for ML-AHB interconnect
-Date: Tue, 5 Mar 2019 15:24:02 +0100
-Message-ID: <1551795849-13672-2-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1551795849-13672-1-git-send-email-fabien.dessenne@st.com>
-References: <1551795849-13672-1-git-send-email-fabien.dessenne@st.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 11 Mar 2019 17:09:53 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v6 1/7] dt-bindings: Add a binding for Mediatek SCP
+Message-ID: <20190311220953.GA8432@bogus>
+References: <20190311063458.137473-1-pihsun@chromium.org>
+ <20190311063458.137473-2-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190311063458.137473-2-pihsun@chromium.org>
+To: Pi-Hsun Shih <pihsun@chromium.org>
+Cc: Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Document the ML-AHB interconnect for stm32 SoCs.
+On Mon, 11 Mar 2019 14:34:52 +0800, Pi-Hsun Shih wrote:
+> From: Erin Lo <erin.lo@mediatek.com>
+> 
+> Add a DT binding documentation of SCP for the
+> MT8183 SoC from Mediatek.
+> 
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> ---
+> Changes from v5:
+>  - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+> 
+> Changes from v4:
+>  - Add detail of more properties.
+>  - Document the usage of mtk,rpmsg-name in subnode from the new design.
+> 
+> Changes from v3:
+>  - No change.
+> 
+> Changes from v2:
+>  - No change. I realized that for this patch series, there's no need to
+>    add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+>    the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+>    directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+>    created by SCP name service.
+> 
+> Changes from v1:
+>  - No change.
+> ---
+>  .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+> 
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
----
- .../devicetree/bindings/arm/stm32/mlahb.txt        | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/mlahb.txt b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
-new file mode 100644
-index 0000000..880cb38
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
-@@ -0,0 +1,30 @@
-+ML-AHB interconnect bindings
-+
-+These bindings describe the STM32 SoCs ML-AHB interconnect bus which connects
-+a Cortex-M subsystem with dedicated memories.
-+
-+Required properties:
-+- compatible: should be "simple-bus"
-+- ranges: describes memory addresses translation between the local CPU and the
-+	   remote Cortex-M processor. Each memory region, is declared with 3
-+	   parameters:
-+		 - param 1: device base address (Cortex-M processor address)
-+		 - param 2: physical base address (local CPU address)
-+		 - param 3: size of the memory region.
-+
-+The Cortex-M remote processor accessed via the mlahb interconnect is described
-+by a child node.
-+
-+Example:
-+mlahb: mlahb@0 {
-+	compatible = "simple-bus";
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	ranges = <0x00000000 0x38000000 0x10000>,
-+		 <0x10000000 0x10000000 0x60000>,
-+		 <0x30000000 0x30000000 0x60000>;
-+
-+	m4_rproc: m4@0 {
-+		...
-+	};
-+};
--- 
-2.7.4
+If a tag was not added on purpose, please state why and what changed.
