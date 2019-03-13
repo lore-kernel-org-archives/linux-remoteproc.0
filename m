@@ -1,93 +1,42 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Peter Shih <pihsun@chromium.org>
-Subject: [PATCH v7 1/7] dt-bindings: Add a binding for Mediatek SCP
-Date: Wed, 27 Mar 2019 13:14:43 +0800
-Message-Id: <20190327051450.16222-2-pihsun@chromium.org>
-In-Reply-To: <20190327051450.16222-1-pihsun@chromium.org>
-References: <20190327051450.16222-1-pihsun@chromium.org>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH 6/6] ARM: dts: stm32: hwlocks for GPIO for stm32mp157
+Date: Wed, 13 Mar 2019 16:50:37 +0100
+Message-ID: <1552492237-28810-7-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1552492237-28810-1-git-send-email-fabien.dessenne@st.com>
+References: <1552492237-28810-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Erin Lo <erin.lo@mediatek.com>
+Declare a shared hwlock to be used by all gpio / pin controllers.
 
-Add a DT binding documentation of SCP for the
-MT8183 SoC from Mediatek.
-
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
-Changes from v6:
- - No change.
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes from v5:
- - Remove dependency on CONFIG_RPMSG_MTK_SCP.
-
-Changes from v4:
- - Add detail of more properties.
- - Document the usage of mtk,rpmsg-name in subnode from the new design.
-
-Changes from v3:
- - No change.
-
-Changes from v2:
- - No change. I realized that for this patch series, there's no need to
-   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
-   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
-   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
-   created by SCP name service.
-
-Changes from v1:
- - No change.
----
- .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-new file mode 100644
-index 000000000000..3ba668bab14b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-@@ -0,0 +1,36 @@
-+Mediatek SCP Bindings
-+----------------------------------------
-+
-+This binding provides support for ARM Cortex M4 Co-processor found on some
-+Mediatek SoCs.
-+
-+Required properties:
-+- compatible		Should be "mediatek,mt8183-scp"
-+- reg			Should contain the address ranges for the two memory
-+			regions, SRAM and CFG.
-+- reg-names		Contains the corresponding names for the two memory
-+			regions. These should be named "sram" & "cfg".
-+- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
-+- clock-names		Contains the corresponding name for the clock. This
-+			should be named "main".
-+
-+Subnodes
-+--------
-+
-+Subnodes of the SCP represent rpmsg devices. The names of the devices are not
-+important. The properties of these nodes are defined by the individual bindings
-+for the rpmsg devices - but must contain the following property:
-+
-+- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
-+			the subnode to rpmsg device announced by SCP.
-+
-+Example:
-+
-+	scp: scp@10500000 {
-+		compatible = "mediatek,mt8183-scp";
-+		reg = <0 0x10500000 0 0x80000>,
-+		      <0 0x105c0000 0 0x5000>;
-+		reg-names = "sram", "cfg";
-+		clocks = <&infracfg CLK_INFRA_SCPSYS>;
-+		clock-names = "main";
-+	};
+diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+index 6b3a9c6..9fd562a 100644
+--- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+@@ -14,6 +14,7 @@
+ 			ranges = <0 0x50002000 0xa400>;
+ 			interrupt-parent = <&exti>;
+ 			st,syscfg = <&exti 0x60 0xff>;
++			hwlocks = <&hsem 0 1>;
+ 			pins-are-numbered;
+ 
+ 			gpioa: gpio@50002000 {
+@@ -424,6 +425,7 @@
+ 			pins-are-numbered;
+ 			interrupt-parent = <&exti>;
+ 			st,syscfg = <&exti 0x60 0xff>;
++			hwlocks = <&hsem 0 1>;
+ 
+ 			gpioz: gpio@54004000 {
+ 				gpio-controller;
 -- 
-2.21.0.392.gf8f6787159e-goog
+2.7.4
