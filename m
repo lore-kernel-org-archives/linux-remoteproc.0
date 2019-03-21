@@ -1,78 +1,142 @@
 Return-Path: <fabien.dessenne@st.com>
 From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH 1/6] dt-bindings: hwlock: add support of shared locks
-Date: Wed, 13 Mar 2019 16:50:32 +0100
-Message-ID: <1552492237-28810-2-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1552492237-28810-1-git-send-email-fabien.dessenne@st.com>
-References: <1552492237-28810-1-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH 1/2] rpmsg: core: add possibility to get message payload length
+Date: Thu, 21 Mar 2019 16:47:18 +0100
+Message-ID: <1553183239-13253-2-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1553183239-13253-1-git-send-email-fabien.dessenne@st.com>
+References: <1553183239-13253-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use #hwlock-cells value to define whether the locks can be shared
-by several users.
+Return the rpmsg buffer payload size for sending message, so rpmsg users
+can split a long message in several sub rpmsg buffers.
 
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- .../devicetree/bindings/hwlock/hwlock.txt          | 27 ++++++++++++++++------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/rpmsg/rpmsg_core.c       | 20 ++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h   |  2 ++
+ drivers/rpmsg/virtio_rpmsg_bus.c | 11 +++++++++++
+ include/linux/rpmsg.h            | 10 ++++++++++
+ 4 files changed, 43 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/hwlock/hwlock.txt b/Documentation/devicetree/bindings/hwlock/hwlock.txt
-index 085d1f5..e98088a 100644
---- a/Documentation/devicetree/bindings/hwlock/hwlock.txt
-+++ b/Documentation/devicetree/bindings/hwlock/hwlock.txt
-@@ -13,7 +13,7 @@ hwlock providers:
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 8122807..75c8c40 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -283,6 +283,26 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ }
+ EXPORT_SYMBOL(rpmsg_trysend_offchannel);
  
- Required properties:
- - #hwlock-cells:        Specifies the number of cells needed to represent a
--                        specific lock.
-+                        specific lock. Shall be 1 or 2 (see hwlocks below).
- 
- hwlock users:
- =============
-@@ -27,6 +27,11 @@ Required properties:
-                         #hwlock-cells. The list can have just a single hwlock
-                         or multiple hwlocks, with each hwlock represented by
-                         a phandle and a corresponding args specifier.
-+                        If #hwlock-cells is 1, all of the locks are exclusive
-+                        (cannot be used by several users).
-+                        If #hwlock-cells is 2, the value of the second cell
-+                        defines whether the lock is for exclusive usage (0) or
-+                        shared (1) i.e. can be used by several users.
- 
- Optional properties:
- - hwlock-names:         List of hwlock name strings defined in the same order
-@@ -46,14 +51,22 @@ of length 1.
- 		...
- 	};
- 
--2. Example of a node using multiple specific hwlocks:
-+2. Example of nodes using multiple and shared specific hwlocks:
- 
--The following example has a node requesting two hwlocks, a hwlock within
--the hwlock device node 'hwlock1' with #hwlock-cells value of 1, and another
--hwlock within the hwlock device node 'hwlock2' with #hwlock-cells value of 2.
-+The following example has a nodeA requesting two hwlocks:
-+- an exclusive one (#hwlock-cells = 1) within the hwlock device node 'hwlock1'
-+- a shared one (#hwlock-cells = 2, second cell = 1) within the hwlock device
-+  node 'hwlock2'.
-+The shared lock is also be used by nodeB.
- 
--	node {
-+	nodeA {
- 		...
--		hwlocks = <&hwlock1 2>, <&hwlock2 0 3>;
-+		hwlocks = <&hwlock1 2>, <&hwlock2 0 1>;
- 		...
- 	};
++/**
++ * rpmsg_get_buf_payload_size()
++ * This function returns buffer payload size available for sending messages.
++ *
++ * @ept: the rpmsg endpoint
++ *
++ * Returns buffer payload size on success and an appropriate error value on
++ * failure.
++ */
++int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
++{
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->get_buf_payload_size)
++		return -ENXIO;
 +
-+	nodeB {
-+		...
-+		hwlocks = <&hwlock2 0 1>;
-+		...
-+	};
-\ No newline at end of file
++	return ept->ops->get_buf_payload_size(ept);
++}
++EXPORT_SYMBOL(rpmsg_get_buf_payload_size);
++
+ /*
+  * match an rpmsg channel with a channel info struct.
+  * this is used to make sure we're not creating rpmsg devices for channels
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 0d791c3..6f733a5 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -46,6 +46,7 @@ struct rpmsg_device_ops {
+  * @trysend:		see @rpmsg_trysend(), required
+  * @trysendto:		see @rpmsg_trysendto(), optional
+  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
++ * @get_buf_payload_size: see @rpmsg_get_buf_payload_size(), optional
+  *
+  * Indirection table for the operations that a rpmsg backend should implement.
+  * In addition to @destroy_ept, the backend must at least implement @send and
+@@ -65,6 +66,7 @@ struct rpmsg_endpoint_ops {
+ 			     void *data, int len);
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
++	int (*get_buf_payload_size)(struct rpmsg_endpoint *ept);
+ };
+ 
+ int rpmsg_register_device(struct rpmsg_device *rpdev);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 5d3685b..82753e7 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+ 				  int len, u32 dst);
+ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ 					   u32 dst, void *data, int len);
++static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept);
+ 
+ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+ 	.destroy_ept = virtio_rpmsg_destroy_ept,
+@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+ 	.trysend = virtio_rpmsg_trysend,
+ 	.trysendto = virtio_rpmsg_trysendto,
+ 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
++	.get_buf_payload_size = virtio_get_buf_payload_size,
+ };
+ 
+ /**
+@@ -699,6 +701,15 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+ }
+ 
++static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept)
++{
++	struct rpmsg_device *rpdev = ept->rpdev;
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
++	int size = vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
++
++	return size < 0 ? -EMSGSIZE : size;
++}
++
+ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 			     struct rpmsg_hdr *msg, unsigned int len)
+ {
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 9fe156d..250df21 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 			poll_table *wait);
+ 
++int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept);
++
+ #else
+ 
+ static inline int register_rpmsg_device(struct rpmsg_device *dev)
+@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+ 	return 0;
+ }
+ 
++static int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
+ #endif /* IS_ENABLED(CONFIG_RPMSG) */
+ 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
 -- 
 2.7.4
