@@ -1,8 +1,8 @@
 Return-Path: <fabien.dessenne@st.com>
 From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH 1/2] rpmsg: core: add possibility to get message payload length
-Date: Thu, 21 Mar 2019 16:47:18 +0100
-Message-ID: <1553183239-13253-2-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH 2/2] tty: add rpmsg driver
+Date: Thu, 21 Mar 2019 16:47:19 +0100
+Message-ID: <1553183239-13253-3-git-send-email-fabien.dessenne@st.com>
 In-Reply-To: <1553183239-13253-1-git-send-email-fabien.dessenne@st.com>
 References: <1553183239-13253-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
@@ -11,132 +11,364 @@ To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.or
 Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Return the rpmsg buffer payload size for sending message, so rpmsg users
-can split a long message in several sub rpmsg buffers.
+This driver exposes a standard tty interface on top of the rpmsg
+framework through the "rpmsg-tty-channel" rpmsg service.
+
+This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
+per rpmsg endpoint.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- drivers/rpmsg/rpmsg_core.c       | 20 ++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   |  2 ++
- drivers/rpmsg/virtio_rpmsg_bus.c | 11 +++++++++++
- include/linux/rpmsg.h            | 10 ++++++++++
- 4 files changed, 43 insertions(+)
+ drivers/tty/Kconfig     |   9 ++
+ drivers/tty/Makefile    |   1 +
+ drivers/tty/rpmsg_tty.c | 309 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 319 insertions(+)
+ create mode 100644 drivers/tty/rpmsg_tty.c
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 8122807..75c8c40 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -283,6 +283,26 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+index 0840d27..42696e6 100644
+--- a/drivers/tty/Kconfig
++++ b/drivers/tty/Kconfig
+@@ -441,4 +441,13 @@ config VCC
+ 	depends on SUN_LDOMS
+ 	help
+ 	  Support for Sun logical domain consoles.
++
++config RPMSG_TTY
++	tristate "RPMSG tty driver"
++	depends on RPMSG
++	help
++	  Say y here to export rpmsg endpoints as tty devices, usually found
++	  in /dev/ttyRPMSGx.
++	  This makes it possible for user-space programs to send and receive
++	  rpmsg messages as a standard tty protocol.
+ endif # TTY
+diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+index c72cafd..90a98a2 100644
+--- a/drivers/tty/Makefile
++++ b/drivers/tty/Makefile
+@@ -33,5 +33,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
+ obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
+ obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
+ obj-$(CONFIG_VCC)		+= vcc.o
++obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
  
-+/**
-+ * rpmsg_get_buf_payload_size()
-+ * This function returns buffer payload size available for sending messages.
-+ *
-+ * @ept: the rpmsg endpoint
-+ *
-+ * Returns buffer payload size on success and an appropriate error value on
-+ * failure.
+ obj-y += ipwireless/
+diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+new file mode 100644
+index 0000000..9c2a629
+--- /dev/null
++++ b/drivers/tty/rpmsg_tty.c
+@@ -0,0 +1,309 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) STMicroelectronics 2019 - All Rights Reserved
++ * Authors: Arnaud Pouliquen <arnaud.pouliquen@st.com> for STMicroelectronics.
++ *          Fabien Dessenne <fabien.dessenne@st.com> for STMicroelectronics.
++ * Derived from the imx-rpmsg and omap-rpmsg implementations.
 + */
-+int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
++
++#include <linux/module.h>
++#include <linux/rpmsg.h>
++#include <linux/slab.h>
++#include <linux/tty.h>
++#include <linux/tty_flip.h>
++
++#define MAX_TTY_RPMSG		32
++
++static DEFINE_IDR(tty_idr);		/* tty instance id */
++static DEFINE_MUTEX(idr_lock);		/* protects tty_idr */
++
++static struct tty_driver *rpmsg_tty_driver;
++
++struct rpmsg_tty_port {
++	struct tty_port		port;	/* TTY port data */
++	unsigned int		id;	/* TTY rpmsg index */
++	spinlock_t		rx_lock; /* message reception lock */
++	struct rpmsg_device	*rpdev;	/* rpmsg device */
++};
++
++static int rpmsg_tty_cb(struct rpmsg_device *rpdev, void *data, int len,
++			void *priv, u32 src)
 +{
-+	if (WARN_ON(!ept))
++	int space;
++	unsigned char *cbuf;
++	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
++
++	dev_dbg(&rpdev->dev, "msg(<- src 0x%x) len %d\n", src, len);
++
++	print_hex_dump_debug(__func__, DUMP_PREFIX_NONE, 16, 1, data, len,
++			     true);
++
++	/* Flush the recv-ed none-zero data to tty node */
++	if (!len)
 +		return -EINVAL;
-+	if (!ept->ops->get_buf_payload_size)
-+		return -ENXIO;
 +
-+	return ept->ops->get_buf_payload_size(ept);
++	spin_lock(&cport->rx_lock);
++	space = tty_prepare_flip_string(&cport->port, &cbuf, len);
++	if (space <= 0) {
++		dev_err(&rpdev->dev, "No memory for tty_prepare_flip_string\n");
++		spin_unlock(&cport->rx_lock);
++		return -ENOMEM;
++	}
++
++	if (space != len)
++		dev_warn(&rpdev->dev, "Trunc buffer from %d to %d\n",
++			 len, space);
++
++	memcpy(cbuf, data, space);
++	tty_flip_buffer_push(&cport->port);
++	spin_unlock(&cport->rx_lock);
++
++	return 0;
 +}
-+EXPORT_SYMBOL(rpmsg_get_buf_payload_size);
 +
- /*
-  * match an rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 0d791c3..6f733a5 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -46,6 +46,7 @@ struct rpmsg_device_ops {
-  * @trysend:		see @rpmsg_trysend(), required
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-+ * @get_buf_payload_size: see @rpmsg_get_buf_payload_size(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -65,6 +66,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	int (*get_buf_payload_size)(struct rpmsg_endpoint *ept);
- };
- 
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 5d3685b..82753e7 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept);
- 
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.trysend = virtio_rpmsg_trysend,
- 	.trysendto = virtio_rpmsg_trysendto,
- 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
-+	.get_buf_payload_size = virtio_get_buf_payload_size,
- };
- 
- /**
-@@ -699,6 +701,15 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
- 
-+static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept)
++static int rpmsg_tty_install(struct tty_driver *driver, struct tty_struct *tty)
 +{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+	int size = vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
++	struct rpmsg_tty_port *cport = idr_find(&tty_idr, tty->index);
 +
-+	return size < 0 ? -EMSGSIZE : size;
++	if (!cport) {
++		dev_err(tty->dev, "cannot get cport\n");
++		return -ENODEV;
++	}
++
++	return tty_port_install(&cport->port, driver, tty);
 +}
 +
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
- {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d..250df21 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
- 
-+int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
- 	return 0;
- }
- 
-+static int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
++static int rpmsg_tty_open(struct tty_struct *tty, struct file *filp)
 +{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
++	return tty_port_open(tty->port, tty, filp);
 +}
 +
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
++static void rpmsg_tty_close(struct tty_struct *tty, struct file *filp)
++{
++	return tty_port_close(tty->port, tty, filp);
++}
++
++static int rpmsg_tty_write(struct tty_struct *tty, const unsigned char *buf,
++			   int total)
++{
++	int count, ret = 0;
++	const unsigned char *tbuf;
++	struct rpmsg_tty_port *cport = idr_find(&tty_idr, tty->index);
++	struct rpmsg_device *rpdev;
++	int msg_size;
++
++	if (!cport) {
++		dev_err(tty->dev, "cannot get cport\n");
++		return -ENODEV;
++	}
++
++	rpdev = cport->rpdev;
++
++	dev_dbg(&rpdev->dev, "%s: send message from tty->index = %d\n",
++		__func__, tty->index);
++
++	if (!buf) {
++		dev_err(&rpdev->dev, "buf shouldn't be null.\n");
++		return -ENOMEM;
++	}
++
++	msg_size = rpmsg_get_buf_payload_size(rpdev->ept);
++	if (msg_size < 0)
++		return msg_size;
++
++	count = total;
++	tbuf = buf;
++	do {
++		/* send a message to our remote processor */
++		ret = rpmsg_send(rpdev->ept, (void *)tbuf,
++				 min(count, msg_size));
++		if (ret) {
++			dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", ret);
++			return ret;
++		}
++
++		if (count > msg_size) {
++			count -= msg_size;
++			tbuf += msg_size;
++		} else {
++			count = 0;
++		}
++	} while (count > 0);
++
++	return total;
++}
++
++static int rpmsg_tty_write_room(struct tty_struct *tty)
++{
++	struct rpmsg_tty_port *cport = idr_find(&tty_idr, tty->index);
++
++	if (!cport) {
++		dev_err(tty->dev, "cannot get cport\n");
++		return -ENODEV;
++	}
++
++	/* report the space in the rpmsg buffer */
++	return rpmsg_get_buf_payload_size(cport->rpdev->ept);
++}
++
++static const struct tty_operations rpmsg_tty_ops = {
++	.install	= rpmsg_tty_install,
++	.open		= rpmsg_tty_open,
++	.close		= rpmsg_tty_close,
++	.write		= rpmsg_tty_write,
++	.write_room	= rpmsg_tty_write_room,
++};
++
++struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
++{
++	struct rpmsg_tty_port *cport;
++
++	cport = kzalloc(sizeof(*cport), GFP_KERNEL);
++	if (!cport)
++		return ERR_PTR(-ENOMEM);
++
++	mutex_lock(&idr_lock);
++	cport->id = idr_alloc(&tty_idr, cport, 0, MAX_TTY_RPMSG, GFP_KERNEL);
++	mutex_unlock(&idr_lock);
++
++	if (cport->id < 0) {
++		kfree(cport);
++		return ERR_PTR(-ENOSPC);
++	}
++
++	return cport;
++}
++
++static void rpmsg_tty_release_cport(struct rpmsg_tty_port *cport)
++{
++	mutex_lock(&idr_lock);
++	idr_remove(&tty_idr, cport->id);
++	mutex_unlock(&idr_lock);
++
++	kfree(cport);
++}
++
++static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
++{
++	struct rpmsg_tty_port *cport;
++	struct device *tty_dev;
++	int ret;
++
++	cport = rpmsg_tty_alloc_cport();
++	if (IS_ERR(cport)) {
++		dev_err(&rpdev->dev, "failed to alloc tty port\n");
++		return PTR_ERR(cport);
++	}
++
++	tty_port_init(&cport->port);
++	cport->port.low_latency = cport->port.flags | ASYNC_LOW_LATENCY;
++
++	tty_dev = tty_port_register_device(&cport->port, rpmsg_tty_driver,
++					   cport->id, &rpdev->dev);
++	if (IS_ERR(tty_dev)) {
++		dev_err(&rpdev->dev, "failed to register tty port\n");
++		ret = PTR_ERR(tty_dev);
++		goto err_destroy;
++	}
++
++	spin_lock_init(&cport->rx_lock);
++	cport->rpdev = rpdev;
++
++	dev_set_drvdata(&rpdev->dev, cport);
++
++	dev_info(&rpdev->dev, "new channel: 0x%x -> 0x%x : ttyRPMSG%d\n",
++		 rpdev->src, rpdev->dst, cport->id);
++
++	return 0;
++
++err_destroy:
++	tty_port_destroy(&cport->port);
++	rpmsg_tty_release_cport(cport);
++	return ret;
++}
++
++static void rpmsg_tty_remove(struct rpmsg_device *rpdev)
++{
++	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
++
++	dev_info(&rpdev->dev, "removing rpmsg tty device %d\n", cport->id);
++
++	/* User hang up to release the tty */
++	if (tty_port_initialized(&cport->port))
++		tty_port_tty_hangup(&cport->port, false);
++
++	tty_unregister_device(rpmsg_tty_driver, cport->id);
++	tty_port_destroy(&cport->port);
++
++	rpmsg_tty_release_cport(cport);
++}
++
++static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
++	{ .name	= "rpmsg-tty-channel" },
++	{ },
++};
++MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_tty_id_table);
++
++static struct rpmsg_driver rpmsg_tty_rpmsg_drv = {
++	.drv.name	= KBUILD_MODNAME,
++	.id_table	= rpmsg_driver_tty_id_table,
++	.probe		= rpmsg_tty_probe,
++	.callback	= rpmsg_tty_cb,
++	.remove		= rpmsg_tty_remove,
++};
++
++static int __init rpmsg_tty_init(void)
++{
++	int err;
++
++	rpmsg_tty_driver = tty_alloc_driver(MAX_TTY_RPMSG, TTY_DRIVER_REAL_RAW |
++					    TTY_DRIVER_DYNAMIC_DEV);
++	if (IS_ERR(rpmsg_tty_driver))
++		return PTR_ERR(rpmsg_tty_driver);
++
++	rpmsg_tty_driver->driver_name = "rpmsg_tty";
++	rpmsg_tty_driver->name = "ttyRPMSG";
++	rpmsg_tty_driver->major = 0;
++	rpmsg_tty_driver->type = TTY_DRIVER_TYPE_CONSOLE;
++	rpmsg_tty_driver->init_termios = tty_std_termios;
++
++	tty_set_operations(rpmsg_tty_driver, &rpmsg_tty_ops);
++
++	err = tty_register_driver(rpmsg_tty_driver);
++	if (err < 0) {
++		pr_err("Couldn't install rpmsg tty driver: err %d\n", err);
++		goto error_put;
++	}
++
++	err = register_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
++	if (err < 0) {
++		pr_err("Couldn't register rpmsg tty driver: err %d\n", err);
++		goto error_unregister;
++	}
++
++	return 0;
++
++error_unregister:
++	tty_unregister_driver(rpmsg_tty_driver);
++
++error_put:
++	put_tty_driver(rpmsg_tty_driver);
++
++	return err;
++}
++
++static void __exit rpmsg_tty_exit(void)
++{
++	unregister_rpmsg_driver(&rpmsg_tty_rpmsg_drv);
++	tty_unregister_driver(rpmsg_tty_driver);
++	put_tty_driver(rpmsg_tty_driver);
++	idr_destroy(&tty_idr);
++}
++
++module_init(rpmsg_tty_init);
++module_exit(rpmsg_tty_exit);
++
++MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@st.com>");
++MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
++MODULE_DESCRIPTION("virtio remote processor messaging tty driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
