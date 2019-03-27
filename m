@@ -1,128 +1,93 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from zimbra2.kalray.eu ([92.103.151.219]:52112 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfCDJlA (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Mar 2019 04:41:00 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 040BC27E039C
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2019 10:40:59 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id jTcVRJkAyar9 for <linux-remoteproc@vger.kernel.org>;
-        Mon,  4 Mar 2019 10:40:58 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 8ADA027E03D8
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2019 10:40:58 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id h2Xyf-Gf4mIu for <linux-remoteproc@vger.kernel.org>;
-        Mon,  4 Mar 2019 10:40:58 +0100 (CET)
-Received: from zimbra2.kalray.eu (zimbra2.kalray.eu [192.168.40.202])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 74EC927E039C
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Mar 2019 10:40:58 +0100 (CET)
-Date: Mon, 4 Mar 2019 10:40:58 +0100 (CET)
-From: =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-Message-ID: <2086042421.14120180.1551692458444.JavaMail.zimbra@kalray.eu>
-Subject: [RFC PATCH] remoteproc: add per rproc resource handling
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Peter Shih <pihsun@chromium.org>
+Subject: [PATCH v7 1/7] dt-bindings: Add a binding for Mediatek SCP
+Date: Wed, 27 Mar 2019 13:14:43 +0800
+Message-Id: <20190327051450.16222-2-pihsun@chromium.org>
+In-Reply-To: <20190327051450.16222-1-pihsun@chromium.org>
+References: <20190327051450.16222-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In order to allow rproc backend to handle vendor resources, add a
-handle_rsc hook. This hook allow the rproc backends to handle vendor
-resources as they like. It also allows them to parse standard RSC_*
-if needed. The hook should return RSC_HANDLED on successful resource
-handling, RSC_IGNORED if resource was ignored, or a negative value on
-error.
+From: Erin Lo <erin.lo@mediatek.com>
 
+Add a DT binding documentation of SCP for the
+MT8183 SoC from Mediatek.
+
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/remoteproc_core.c     |  7 +++++++
- drivers/remoteproc/remoteproc_internal.h | 11 +++++++++++
- include/linux/remoteproc.h               | 15 +++++++++++++++
- 3 files changed, 33 insertions(+)
+Changes from v6:
+ - No change.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 54ec38fc5dca..36a0f3c59ac1 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1009,6 +1009,13 @@ static int rproc_handle_resources(struct rproc *rproc,
- 
- 		dev_dbg(dev, "rsc: type %d\n", hdr->type);
- 
-+		ret = rproc_handle_rsc(rproc, hdr->type, rsc,
-+				       offset + sizeof(*hdr), avail);
-+		if (ret == RSC_HANDLED)
-+			continue;
-+		else if (ret < 0)
-+			break;
+Changes from v5:
+ - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+
+Changes from v4:
+ - Add detail of more properties.
+ - Document the usage of mtk,rpmsg-name in subnode from the new design.
+
+Changes from v3:
+ - No change.
+
+Changes from v2:
+ - No change. I realized that for this patch series, there's no need to
+   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+   created by SCP name service.
+
+Changes from v1:
+ - No change.
+---
+ .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+new file mode 100644
+index 000000000000..3ba668bab14b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -0,0 +1,36 @@
++Mediatek SCP Bindings
++----------------------------------------
 +
- 		if (hdr->type >= RSC_LAST) {
- 			dev_warn(dev, "unsupported resource %d\n", hdr->type);
- 			continue;
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index f6cad243d7ca..b02b15f74a5e 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -98,6 +98,17 @@ static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 	return 0;
- }
- 
-+static inline
-+int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
-+		     int avail)
-+{
-+	if (rproc->ops->handle_rsc)
-+		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
-+					      avail);
++This binding provides support for ARM Cortex M4 Co-processor found on some
++Mediatek SoCs.
 +
-+	return RSC_IGNORED;
-+}
++Required properties:
++- compatible		Should be "mediatek,mt8183-scp"
++- reg			Should contain the address ranges for the two memory
++			regions, SRAM and CFG.
++- reg-names		Contains the corresponding names for the two memory
++			regions. These should be named "sram" & "cfg".
++- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
++- clock-names		Contains the corresponding name for the clock. This
++			should be named "main".
 +
- static inline
- struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
- 						   const struct firmware *fw)
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 507a2b524208..fb9751717da7 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -339,12 +339,25 @@ struct rproc_mem_entry {
- 
- struct firmware;
- 
-+/**
-+ * enum rsc_handling_status - return status of rproc_ops handle_rsc hook
-+ * @RSC_HANDLED:	resource was handled
-+ * @RSC_IGNORED:	resource was ignored
-+ */
-+enum rsc_handling_status {
-+	RSC_HANDLED	= 0,
-+	RSC_IGNORED	= 1,
-+};
++Subnodes
++--------
 +
- /**
-  * struct rproc_ops - platform-specific device handlers
-  * @start:	power on the device and boot it
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-  * @da_to_va:	optional platform hook to perform address translations
-+ * @handle_rsc:	optional platform hook to handle vendor resources. Should return
-+ * RSC_HANDLED if resource was handled, RSC_IGNORED if not handled and a
-+ * negative value on error
-  * @load_rsc_table:	load resource table from firmware image
-  * @find_loaded_rsc_table: find the loaded resouce table
-  * @load:		load firmeware to memory, where the remote processor
-@@ -358,6 +371,8 @@ struct rproc_ops {
- 	void (*kick)(struct rproc *rproc, int vqid);
- 	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
-+	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
-+			  int offset, int avail);
- 	struct resource_table *(*find_loaded_rsc_table)(
- 				struct rproc *rproc, const struct firmware *fw);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
++Subnodes of the SCP represent rpmsg devices. The names of the devices are not
++important. The properties of these nodes are defined by the individual bindings
++for the rpmsg devices - but must contain the following property:
++
++- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
++			the subnode to rpmsg device announced by SCP.
++
++Example:
++
++	scp: scp@10500000 {
++		compatible = "mediatek,mt8183-scp";
++		reg = <0 0x10500000 0 0x80000>,
++		      <0 0x105c0000 0 0x5000>;
++		reg-names = "sram", "cfg";
++		clocks = <&infracfg CLK_INFRA_SCPSYS>;
++		clock-names = "main";
++	};
 -- 
-2.15.0.276.g89ea799
+2.21.0.392.gf8f6787159e-goog
