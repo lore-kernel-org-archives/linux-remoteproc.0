@@ -1,79 +1,62 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH v2 1/6] dt-bindings: hwlock: add support of shared locks
-Date: Thu, 25 Apr 2019 11:17:18 +0200
-Message-ID: <1556183843-28033-2-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
-References: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Return-Path: <nicoleotsuka@gmail.com>
+Date: Thu, 11 Apr 2019 18:42:20 -0700
+From: Nicolin Chen <nicoleotsuka@gmail.com>
+Subject: Re: Do we always need to reserve an iova before iommu_map?
+Message-ID: <20190412014219.GA23701@Asurada-Nvidia.nvidia.com>
+References: <20190409224718.GA3281@Asurada-Nvidia.nvidia.com>
+ <3916e00d-d3a9-11be-4107-73429f6dd8bf@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3916e00d-d3a9-11be-4107-73429f6dd8bf@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use #hwlock-cells value to define whether the locks can be shared
-by several users.
+Thanks for the reply Robin.
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/hwlock/hwlock.txt          | 27 ++++++++++++++++------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+On Wed, Apr 10, 2019 at 10:20:38AM +0100, Robin Murphy wrote:
+> On 09/04/2019 23:47, Nicolin Chen wrote:
+> > According to the routine of iommu_dma_alloc(), it allocates an iova
+> > then does iommu_map() to map the iova to a physical address of new
+> > allocated pages. However, in remoteproc_core.c, I see its code try
+> > to iommu_map() without having an alloc_iova() or alloc_iova_fast().
+> >
+> > Is it safe to do so? If an iova range is not allocated but mapped,
+> > would a later iommu_dma_alloc() happen to hit this iova range when
+> > doing its alloc_iova() and then fail to map?
+> > 
+> > And I am not very familiar with remoteproc code, so if I am missing
+> > something, please kindly educate me.
+> 
+> AFAICS that area of the remoteproc code is using its own IOMMU domain, so
+> it's free to manage that domain's address space however it wants - the
 
-diff --git a/Documentation/devicetree/bindings/hwlock/hwlock.txt b/Documentation/devicetree/bindings/hwlock/hwlock.txt
-index 085d1f5..e98088a 100644
---- a/Documentation/devicetree/bindings/hwlock/hwlock.txt
-+++ b/Documentation/devicetree/bindings/hwlock/hwlock.txt
-@@ -13,7 +13,7 @@ hwlock providers:
- 
- Required properties:
- - #hwlock-cells:        Specifies the number of cells needed to represent a
--                        specific lock.
-+                        specific lock. Shall be 1 or 2 (see hwlocks below).
- 
- hwlock users:
- =============
-@@ -27,6 +27,11 @@ Required properties:
-                         #hwlock-cells. The list can have just a single hwlock
-                         or multiple hwlocks, with each hwlock represented by
-                         a phandle and a corresponding args specifier.
-+                        If #hwlock-cells is 1, all of the locks are exclusive
-+                        (cannot be used by several users).
-+                        If #hwlock-cells is 2, the value of the second cell
-+                        defines whether the lock is for exclusive usage (0) or
-+                        shared (1) i.e. can be used by several users.
- 
- Optional properties:
- - hwlock-names:         List of hwlock name strings defined in the same order
-@@ -46,14 +51,22 @@ of length 1.
- 		...
- 	};
- 
--2. Example of a node using multiple specific hwlocks:
-+2. Example of nodes using multiple and shared specific hwlocks:
- 
--The following example has a node requesting two hwlocks, a hwlock within
--the hwlock device node 'hwlock1' with #hwlock-cells value of 1, and another
--hwlock within the hwlock device node 'hwlock2' with #hwlock-cells value of 2.
-+The following example has a nodeA requesting two hwlocks:
-+- an exclusive one (#hwlock-cells = 1) within the hwlock device node 'hwlock1'
-+- a shared one (#hwlock-cells = 2, second cell = 1) within the hwlock device
-+  node 'hwlock2'.
-+The shared lock is also be used by nodeB.
- 
--	node {
-+	nodeA {
- 		...
--		hwlocks = <&hwlock1 2>, <&hwlock2 0 3>;
-+		hwlocks = <&hwlock1 2>, <&hwlock2 0 1>;
- 		...
- 	};
-+
-+	nodeB {
-+		...
-+		hwlocks = <&hwlock2 0 1>;
-+		...
-+	};
-\ No newline at end of file
--- 
-2.7.4
+I see. So it seems that it would be safe to map to an iova without
+dealing with iova_domain, as long as the device is attached to a
+separately allocated iommu_domain; for those who use DMA API would
+need to go through iova management.
+
+> generic IOVA allocator is a good option for the DMA API where the only
+> constraint is that the address we get fits within a mask, but drivers with
+> more specific requirements may well be better off using other allocation
+> methods. See also various DRM drivers (Tegra/Rockchip/etc.) that do similar,
+> using a drm_mm to manage the address space.
+
+Yea, I am aware of DRM drivers that manage both iommu_domain and
+iova_domain manually. But it feels a bit heavy for our use case:
+
+We have a downstream driver using DMA API for iommu_dma_alloc().
+And it is happy with the API because the same API works for both
+IOMMU and non-IOMMU configurations. But it also has one single
+allocation that requires (same as remoteproc) to iommu_map to a
+hard coded iova. Although it's so far a downstream use case, we
+want to seek for a solution that could be closer to the mainline.
+
+The current solution seems to give up the API and add own IOMMU
+domain and iova management like DRM drivers. Could there be any
+way of reserving an IOVA without giving up the API?
+
+Thank you
+Nicolin
