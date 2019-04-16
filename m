@@ -1,68 +1,75 @@
 Return-Path: <fabien.dessenne@st.com>
 From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH v2 0/6] hwspinlock: allow sharing of hwspinlocks
-Date: Thu, 25 Apr 2019 11:17:17 +0200
-Message-ID: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH v2 7/8] ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
+Date: Tue, 16 Apr 2019 16:58:18 +0200
+Message-ID: <1555426699-5340-8-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1555426699-5340-1-git-send-email-fabien.dessenne@st.com>
+References: <1555426699-5340-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current implementation does not allow two different devices to use
-a common hwspinlock. This patch set proposes to have, as an option, some
-hwspinlocks shared between several users.
+Declare reserved memories shared by the processors for STM32MP157a-dk1
 
-Below is an example that explain the need for this:
-	exti: interrupt-controller@5000d000 {
-		compatible = "st,stm32mp1-exti", "syscon";
-		interrupt-controller;
-		#interrupt-cells = <2>;
-		reg = <0x5000d000 0x400>;
-		hwlocks = <&hsem 1>;
-	};
-The two drivers (stm32mp1-exti and syscon) refer to the same hwlock.
-With the current hwspinlock implementation, only the first driver succeeds
-in requesting (hwspin_lock_request_specific) the hwlock. The second request
-fails.
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+---
+ arch/arm/boot/dts/stm32mp157a-dk1.dts | 42 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-
-The proposed approach does not modify the API, but extends the DT 'hwlocks'
-property with a second optional parameter (the first one identifies an
-hwlock) that specifies whether an hwlock is requested for exclusive usage
-(current behavior) or can be shared between several users.
-Examples:
-	hwlocks = <&hsem 8>;	Ref to hwlock #8 for exclusive usage
-	hwlocks = <&hsem 8 0>;	Ref to hwlock #8 for exclusive (0) usage
-	hwlocks = <&hsem 8 1>;	Ref to hwlock #8 for shared (1) usage
-
-As a constraint, the #hwlock-cells value must be 1 or 2.
-In the current implementation, this can have theorically any value but:
-- all of the exisiting drivers use the same value : 1.
-- the framework supports only one value : 1 (see implementation of
-  of_hwspin_lock_simple_xlate())
-Hence, it shall not be a problem to restrict this value to 1 or 2 since
-it won't break any driver.
-
-Changes since v1:
-* Removed useless 'status = "okay"' from stm32mp157c.dtsi
-
-Fabien Dessenne (6):
-  dt-bindings: hwlock: add support of shared locks
-  hwspinlock: allow sharing of hwspinlocks
-  dt-bindings: hwlock: update STM32 #hwlock-cells value
-  ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
-  ARM: dts: stm32: Add hwlock for irqchip on stm32mp157
-  ARM: dts: stm32: hwlocks for GPIO for stm32mp157
-
- .../devicetree/bindings/hwlock/hwlock.txt          | 27 +++++--
- .../bindings/hwlock/st,stm32-hwspinlock.txt        |  6 +-
- Documentation/hwspinlock.txt                       | 10 ++-
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi          |  2 +
- arch/arm/boot/dts/stm32mp157c.dtsi                 |  9 +++
- drivers/hwspinlock/hwspinlock_core.c               | 82 +++++++++++++++++-----
- drivers/hwspinlock/hwspinlock_internal.h           |  2 +
- 7 files changed, 107 insertions(+), 31 deletions(-)
-
+diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+index 85a761a..26ce8de 100644
+--- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
++++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+@@ -27,6 +27,48 @@
+ 		reg = <0xc0000000 0x20000000>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		mcuram2: mcuram2@10000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10000000 0x40000>;
++			no-map;
++		};
++
++		vdev0vring0: vdev0vring0@10040000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10040000 0x1000>;
++			no-map;
++		};
++
++		vdev0vring1: vdev0vring1@10041000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10041000 0x1000>;
++			no-map;
++		};
++
++		vdev0buffer: vdev0buffer@10042000 {
++			compatible = "shared-dma-pool";
++			reg = <0x10042000 0x4000>;
++			no-map;
++		};
++
++		mcuram: mcuram@30000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x30000000 0x40000>;
++			no-map;
++		};
++
++		retram: retram@38000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x38000000 0x10000>;
++			no-map;
++		};
++	};
++
+ 	led {
+ 		compatible = "gpio-leds";
+ 		blue {
 -- 
 2.7.4
