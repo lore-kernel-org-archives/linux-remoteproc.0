@@ -1,8 +1,8 @@
 Return-Path: <fabien.dessenne@st.com>
 From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH v2 6/6] ARM: dts: stm32: hwlocks for GPIO for stm32mp157
-Date: Thu, 25 Apr 2019 11:17:23 +0200
-Message-ID: <1556183843-28033-7-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH v2 5/6] ARM: dts: stm32: Add hwlock for irqchip on stm32mp157
+Date: Thu, 25 Apr 2019 11:17:22 +0200
+Message-ID: <1556183843-28033-6-git-send-email-fabien.dessenne@st.com>
 In-Reply-To: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
 References: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
@@ -11,32 +11,25 @@ To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.or
 Cc: Fabien Dessenne <fabien.dessenne@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Declare a shared hwlock to be used by all gpio / pin controllers.
+Define a hwspinlock to be used by the irq controller driver and the
+syscon driver.
 
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index 6b3a9c6..9fd562a 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -14,6 +14,7 @@
- 			ranges = <0 0x50002000 0xa400>;
- 			interrupt-parent = <&exti>;
- 			st,syscfg = <&exti 0x60 0xff>;
-+			hwlocks = <&hsem 0 1>;
- 			pins-are-numbered;
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 824d7e1..417bdf7 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -921,6 +921,7 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 			reg = <0x5000d000 0x400>;
++			hwlocks = <&hsem 1 1>;
+ 		};
  
- 			gpioa: gpio@50002000 {
-@@ -424,6 +425,7 @@
- 			pins-are-numbered;
- 			interrupt-parent = <&exti>;
- 			st,syscfg = <&exti 0x60 0xff>;
-+			hwlocks = <&hsem 0 1>;
- 
- 			gpioz: gpio@54004000 {
- 				gpio-controller;
+ 		syscfg: syscon@50020000 {
 -- 
 2.7.4
