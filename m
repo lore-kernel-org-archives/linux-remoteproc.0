@@ -1,29 +1,60 @@
-Return-Path: <nicoleotsuka@gmail.com>
-Return-Path: <nicoleotsuka@gmail.com>
-Date: Tue, 9 Apr 2019 15:47:19 -0700
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: Do we always need to reserve an iova before iommu_map?
-Message-ID: <20190409224718.GA3281@Asurada-Nvidia.nvidia.com>
+Return-Path: <arndbergmann@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Joerg Roedel <joro@8bytes.org>
-Cc: linux-remoteproc@vger.kernel.org, iommu@lists.linux-foundation.org
+References: <20190416202013.4034148-1-arnd@arndb.de> <20190416202701.127745-1-arnd@arndb.de>
+ <20190425122153.450fc094@coco.lan> <20190425153534.GS2217@ZenIV.linux.org.uk>
+ <CAK8P3a2HmiYQJ2FV2FgLiFsD8M9UKteC9Jetx7ja06PQVZWYfA@mail.gmail.com> <5511420228cb38d08a67c0f6a614b7671d7d23d4.camel@sipsolutions.net>
+In-Reply-To: <5511420228cb38d08a67c0f6a614b7671d7d23d4.camel@sipsolutions.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 26 Apr 2019 09:46:13 +0200
+Message-ID: <CAK8P3a3CzKLvpUiVV_k__kkaZ=wg2fqnFEzWYL9qNwBfxMKZ9w@mail.gmail.com>
+Subject: Re: [PATCH v3 12/26] compat_ioctl: move more drivers to compat_ptr_ioctl
+Content-Type: text/plain; charset="UTF-8"
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, y2038 Mailman List <y2038@lists.linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@mellanox.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Sterba <dsterba@suse.com>, Darren Hart <dvhart@infradead.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, driverdevel <devel@driverdev.osuosl.org>, qat-linux@intel.com, "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" <linux-crypto@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org, "open list:HID CORE LAYER" <linux-input@vger.kernel.org>, linux-iio@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>, linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org, linux-pci <linux-pci@vger.kernel.org>, Platform Driver <platform-driver-x86@vger.kernel.org>, linux-remoteproc@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, linux-btrfs <linux-btrfs@vger.kernel.org>, ceph-devel <ceph-devel@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Sean Young <sean@mess.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi all,
+On Thu, Apr 25, 2019 at 11:25 PM Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> On Thu, 2019-04-25 at 17:55 +0200, Arnd Bergmann wrote:
+> > On Thu, Apr 25, 2019 at 5:35 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > On Thu, Apr 25, 2019 at 12:21:53PM -0300, Mauro Carvalho Chehab wrote:
+> > >
+> > > > If I understand your patch description well, using compat_ptr_ioctl
+> > > > only works if the driver is not for s390, right?
+> > >
+> > > No; s390 is where "oh, just set ->compat_ioctl same as ->unlocked_ioctl
+> > > and be done with that; compat_ptr() is a no-op anyway" breaks.  IOW,
+> > > s390 is the reason for having compat_ptr_ioctl() in the first place;
+> > > that thing works on all biarch architectures, as long as all stuff
+> > > handled by ->ioctl() takes pointer to arch-independent object as
+> > > argument.  IOW,
+> > >         argument ignored => OK
+> > >         any arithmetical type => no go, compat_ptr() would bugger it
+> > >         pointer to int => OK
+> > >         pointer to string => OK
+> > >         pointer to u64 => OK
+> > >         pointer to struct {u64 addr; char s[11];} => OK
+> >
+> > To be extra pedantic, the 'struct {u64 addr; char s[11];} '
+> > case is also broken on x86, because sizeof (obj) is smaller
+> > on i386, even though the location of the members are
+> > the same. i.e. you can copy_from_user() this
+>
+> Actually, you can't even do that because the struct might sit at the end
+> of a page and then you'd erroneously fault in this case.
+>
+> We had this a while ago with struct ifreq, see commit 98406133dd and its
+> parents.
 
-According to the routine of iommu_dma_alloc(), it allocates an iova
-then does iommu_map() to map the iova to a physical address of new
-allocated pages. However, in remoteproc_core.c, I see its code try
-to iommu_map() without having an alloc_iova() or alloc_iova_fast().
+Yes, you are right. Very rare to hit with real-life code, but easily
+reproduced by intentionally hitting it and clearly a bug.
 
-Is it safe to do so? If an iova range is not allocated but mapped,
-would a later iommu_dma_alloc() happen to hit this iova range when
-doing its alloc_iova() and then fail to map?
+As the saying goes
 
-And I am not very familiar with remoteproc code, so if I am missing
-something, please kindly educate me.
+  | the difference between "always works" and "almost always works"
+  | is called data corruption
 
-Thanks
-Nicolin
+here the difference is an -EFAULT.
+
+      Arnd
