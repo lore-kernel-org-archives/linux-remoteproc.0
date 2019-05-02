@@ -1,118 +1,53 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 7/8] arm64: dts: qcom: qcs404: Define APPS IOMMU
-Date: Thu,  9 May 2019 21:34:20 -0700
-Message-Id: <20190510043421.31393-8-bjorn.andersson@linaro.org>
-In-Reply-To: <20190510043421.31393-1-bjorn.andersson@linaro.org>
-References: <20190510043421.31393-1-bjorn.andersson@linaro.org>
-To: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH v3 0/8] stm32 m4 remoteproc on STM32MP157c
+Date: Thu, 2 May 2019 10:09:58 +0200
+Message-ID: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The APPS IOMMU provides contexts for FastRPC, MDP and WLAN, among other
-things.  Define these. We use the qcom_iommu binding because the
-firmware restrictions in incompatible with the arm-smmu.
+STMicrolectronics STM32MP157 MPU are based on a Dual Arm Cortex-A7 core and a
+Cortex-M4.
+This patchset adds the support of the stm32_rproc driver allowing to control
+the M4 remote processor.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 85 ++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+Changes since v2:
+- Clarified "reg" description
+- Change m4 unit adress to 38000000
+- Renamed "auto_boot" in "st,auto-boot"
+Changes since v1:
+- Gave details about the memory mapping (in bindings).
+- Used 'dma-ranges' instead of 'ranges'.
+- Updated the 'compatible' property.
+- Remove the 'recovery', 'reset-names' and 'interrupt-names' properties.
+- Clarified why / when mailboxes are optional.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index b213f6acad76..fcde4f0334c2 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -378,6 +378,91 @@
- 			reg = <0x01937000 0x25000>;
- 		};
- 
-+		apps_iommu: iommu@1e20000 {
-+			compatible = "qcom,qcs404-iommu", "qcom,msm-iommu-v1";
-+			clocks = <&gcc GCC_SMMU_CFG_CLK>,
-+				 <&gcc GCC_APSS_TCU_CLK>;
-+			clock-names = "iface", "bus";
-+			qcom,iommu-secure-id = <17>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			#iommu-cells = <1>;
-+
-+			/* Define ranges such that the first bank is at 0x1000 */
-+			ranges = <0 0x01e20000 0x40000>;
-+
-+			/* Bank 5: CDSP compute bank 1 */
-+			iommu-ctx@5000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x5000 0x1000>;
-+				interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 6: CDSP compute bank 2 */
-+			iommu-ctx@6000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x6000 0x1000>;
-+				interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 7: CDSP compute bank 3 */
-+			iommu-ctx@7000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x7000 0x1000>;
-+				interrupts = <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 8: CDSP compute bank 4 */
-+			iommu-ctx@8000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x8000 0x1000>;
-+				interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 9: CDSP compute bank 5 */
-+			iommu-ctx@9000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x9000 0x1000>;
-+				interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 10: MDP */
-+			iommu-ctx@a000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0xa000 0x1000>;
-+				interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 21: WLAN 0 */
-+			iommu-ctx@15000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x15000 0x1000>;
-+				interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 23: ADSP compute bank 2 */
-+			iommu-ctx@17000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x17000 0x1000>;
-+				interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 24: ADSP compute bank 3 */
-+			iommu-ctx@18000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x18000 0x1000>;
-+				interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			/* Bank 25: ADSP compute bank 4 */
-+			iommu-ctx@19000 {
-+				compatible = "qcom,msm-iommu-v1-ns";
-+				reg = <0x19000 0x1000>;
-+				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+		};
-+
- 		spmi_bus: spmi@200f000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg = <0x0200f000 0x001000>,
+Fabien Dessenne (8):
+  dt-bindings: stm32: add bindings for ML-AHB interconnect
+  dt-bindings: remoteproc: add bindings for stm32 remote processor
+    driver
+  remoteproc: stm32: add an ST stm32_rproc driver
+  ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
+
+ .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
+ .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
+ arch/arm/boot/dts/stm32mp157a-dk1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c-ed1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |  20 +
+ drivers/remoteproc/Kconfig                         |  15 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
+ 8 files changed, 868 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
+ create mode 100644 drivers/remoteproc/stm32_rproc.c
+
 -- 
-2.18.0
+2.7.4
