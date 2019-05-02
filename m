@@ -1,71 +1,66 @@
-Return-Path: <brandon.maier@rockwellcollins.com>
-From: Brandon Maier <brandon.maier@rockwellcollins.com>
-Subject: [PATCH] remoteproc: Initialize rproc_class before use
-Date: Thu, 30 May 2019 17:52:23 -0500
-Message-Id: <20190530225223.136420-1-brandon.maier@rockwellcollins.com>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH v3 1/8] dt-bindings: stm32: add bindings for ML-AHB interconnect
+Date: Thu, 2 May 2019 10:09:59 +0200
+Message-ID: <1556784606-3016-2-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
+References: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, clayton.shotwell@rockwellcollins.com, Brandon Maier <brandon.maier@rockwellcollins.com>
+Content-Type: text/plain
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The remoteproc_core and remoteproc drivers all initialize with module_init().
-However remoteproc drivers need the rproc_class during their probe. If one of
-the remoteproc drivers runs init and gets through probe before
-remoteproc_init() runs, a NULL pointer access of rproc_class's `glue_dirs`
-spinlock occurs.
+Document the ML-AHB interconnect for stm32 SoCs.
 
-> Unable to handle kernel NULL pointer dereference at virtual address 000000dc
-> pgd = c0004000
-> [000000dc] *pgd=00000000
-> Internal error: Oops: 5 [#1] PREEMPT ARM
-> Modules linked in:
-> CPU: 0 PID: 1 Comm: swapper Tainted: G        W       4.14.106-rt56 #1
-> Hardware name: Generic OMAP36xx (Flattened Device Tree)
-> task: c6050000 task.stack: c604a000
-> PC is at rt_spin_lock+0x40/0x6c
-> LR is at rt_spin_lock+0x28/0x6c
-> pc : [<c0523c90>]    lr : [<c0523c78>]    psr: 60000013
-> sp : c604bdc0  ip : 00000000  fp : 00000000
-> r10: 00000000  r9 : c61c7c10  r8 : c6269c20
-> r7 : c0905888  r6 : c6269c20  r5 : 00000000  r4 : 000000d4
-> r3 : 000000dc  r2 : c6050000  r1 : 00000002  r0 : 000000d4
-> Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-...
-> [<c0523c90>] (rt_spin_lock) from [<c03b65a4>] (get_device_parent+0x54/0x17c)
-> [<c03b65a4>] (get_device_parent) from [<c03b6bec>] (device_add+0xe0/0x5b4)
-> [<c03b6bec>] (device_add) from [<c042adf4>] (rproc_add+0x18/0xd8)
-> [<c042adf4>] (rproc_add) from [<c01110e4>] (my_rproc_probe+0x158/0x204)
-> [<c01110e4>] (my_rproc_probe) from [<c03bb6b8>] (platform_drv_probe+0x34/0x70)
-> [<c03bb6b8>] (platform_drv_probe) from [<c03b9dd4>] (driver_probe_device+0x2c8/0x420)
-> [<c03b9dd4>] (driver_probe_device) from [<c03ba02c>] (__driver_attach+0x100/0x11c)
-> [<c03ba02c>] (__driver_attach) from [<c03b7d08>] (bus_for_each_dev+0x7c/0xc0)
-> [<c03b7d08>] (bus_for_each_dev) from [<c03b910c>] (bus_add_driver+0x1cc/0x264)
-> [<c03b910c>] (bus_add_driver) from [<c03ba714>] (driver_register+0x78/0xf8)
-> [<c03ba714>] (driver_register) from [<c010181c>] (do_one_initcall+0x100/0x190)
-> [<c010181c>] (do_one_initcall) from [<c0800de8>] (kernel_init_freeable+0x130/0x1d0)
-> [<c0800de8>] (kernel_init_freeable) from [<c051eee8>] (kernel_init+0x8/0x114)
-> [<c051eee8>] (kernel_init) from [<c01175b0>] (ret_from_fork+0x14/0x24)
-> Code: e2843008 e3c2203f f5d3f000 e5922010 (e193cf9f)
-> ---[ end trace 0000000000000002 ]---
-
-Signed-off-by: Brandon Maier <brandon.maier@rockwellcollins.com>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/arm/stm32/mlahb.txt        | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 48feebd6d0a2..83986531af83 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2217,7 +2217,7 @@ static int __init remoteproc_init(void)
- 
- 	return 0;
- }
--module_init(remoteproc_init);
-+subsys_initcall(remoteproc_init);
- 
- static void __exit remoteproc_exit(void)
- {
+diff --git a/Documentation/devicetree/bindings/arm/stm32/mlahb.txt b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+new file mode 100644
+index 0000000..3f5b779
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+@@ -0,0 +1,37 @@
++ML-AHB interconnect bindings
++
++These bindings describe the STM32 SoCs ML-AHB interconnect bus which connects
++a Cortex-M subsystem with dedicated memories.
++The MCU SRAM and RETRAM memory parts can be accessed through different addresses
++(see "RAM aliases" in [1]) using different buses (see [2]) : balancing the
++Cortex-M firmware accesses among those ports allows to tune the system
++performance.
++
++[1]: https://www.st.com/resource/en/reference_manual/dm00327659.pdf
++[2]: https://wiki.st.com/stm32mpu/wiki/STM32MP15_RAM_mapping
++
++Required properties:
++- compatible: should be "simple-bus"
++- dma-ranges: describes memory addresses translation between the local CPU and
++	   the remote Cortex-M processor. Each memory region, is declared with
++	   3 parameters:
++		 - param 1: device base address (Cortex-M processor address)
++		 - param 2: physical base address (local CPU address)
++		 - param 3: size of the memory region.
++
++The Cortex-M remote processor accessed via the mlahb interconnect is described
++by a child node.
++
++Example:
++mlahb {
++	compatible = "simple-bus";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	dma-ranges = <0x00000000 0x38000000 0x10000>,
++		     <0x10000000 0x10000000 0x60000>,
++		     <0x30000000 0x30000000 0x60000>;
++
++	m4_rproc: m4@38000000 {
++		...
++	};
++};
 -- 
-2.21.0
+2.7.4
