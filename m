@@ -1,48 +1,43 @@
 Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-Subject: Re: [PATCH] hwspinlock: stm32: implement the relax() ops
-Date: Mon, 13 May 2019 09:07:28 +0000
-Message-ID: <b05fff00-2dd7-75d7-e8fe-de004b0f20da@st.com>
-References: <1551973336-23048-1-git-send-email-fabien.dessenne@st.com>
- <CA+M3ks6r_OWvit3OK0yqDDgfnVyyxPoo5aO2n9tRhhoS4=u4XQ@mail.gmail.com>
-In-Reply-To: <CA+M3ks6r_OWvit3OK0yqDDgfnVyyxPoo5aO2n9tRhhoS4=u4XQ@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3014D1D5A3EB094197DF17DF3BAA24C2@st.com>
-Content-Transfer-Encoding: base64
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH v3 8/8] ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
+Date: Thu, 2 May 2019 10:10:06 +0200
+Message-ID: <1556784606-3016-9-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
+References: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin GAIGNARD <benjamin.gaignard@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>
+Content-Type: text/plain
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkNCg0KDQpBbnkgZnVydGhlciBjb21tZW50cz8NCg0KDQpGYWJpZW4NCg0KT24gMDgvMDMvMjAx
-OSAxOjQyIFBNLCBCZW5qYW1pbiBHYWlnbmFyZCB3cm90ZToNCj4gTGUgamV1LiA3IG1hcnMgMjAx
-OSDDoCAxNjo0MiwgRmFiaWVuIERlc3Nlbm5lIDxmYWJpZW4uZGVzc2VubmVAc3QuY29tPiBhIMOp
-Y3JpdCA6DQo+PiBJbXBsZW1lbnQgdGhpcyBvcHRpb25hbCBvcHMsIGNhbGxlZCBieSBod3NwaW5s
-b2NrIGNvcmUgd2hpbGUgc3Bpbm5pbmcgb24NCj4+IGEgbG9jaywgYmV0d2VlbiB0d28gc3VjY2Vz
-c2l2ZSBpbnZvY2F0aW9ucyBvZiB0cnlsb2NrKCkuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogRmFi
-aWVuIERlc3Nlbm5lIDxmYWJpZW4uZGVzc2VubmVAc3QuY29tPg0KPiBSZXZpZXdlZC1ieTogQmVu
-amFtaW4gR2FpZ25hcmQgPGJlbmphbWluLmdhaWduYXJkQHN0LmNvbT4NCj4NCj4+IC0tLQ0KPj4g
-ICBkcml2ZXJzL2h3c3BpbmxvY2svc3RtMzJfaHdzcGlubG9jay5jIHwgNyArKysrKysrDQo+PiAg
-IDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKykNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9od3NwaW5sb2NrL3N0bTMyX2h3c3BpbmxvY2suYyBiL2RyaXZlcnMvaHdzcGlubG9jay9z
-dG0zMl9od3NwaW5sb2NrLmMNCj4+IGluZGV4IDQ0MTgzOTIuLmM4ZWFjZjQgMTAwNjQ0DQo+PiAt
-LS0gYS9kcml2ZXJzL2h3c3BpbmxvY2svc3RtMzJfaHdzcGlubG9jay5jDQo+PiArKysgYi9kcml2
-ZXJzL2h3c3BpbmxvY2svc3RtMzJfaHdzcGlubG9jay5jDQo+PiBAQCAtNSw2ICs1LDcgQEANCj4+
-ICAgICovDQo+Pg0KPj4gICAjaW5jbHVkZSA8bGludXgvY2xrLmg+DQo+PiArI2luY2x1ZGUgPGxp
-bnV4L2RlbGF5Lmg+DQo+PiAgICNpbmNsdWRlIDxsaW51eC9od3NwaW5sb2NrLmg+DQo+PiAgICNp
-bmNsdWRlIDxsaW51eC9pby5oPg0KPj4gICAjaW5jbHVkZSA8bGludXgva2VybmVsLmg+DQo+PiBA
-QCAtNDIsOSArNDMsMTUgQEAgc3RhdGljIHZvaWQgc3RtMzJfaHdzcGlubG9ja191bmxvY2soc3Ry
-dWN0IGh3c3BpbmxvY2sgKmxvY2spDQo+PiAgICAgICAgICB3cml0ZWwoU1RNMzJfTVVURVhfQ09S
-RUlELCBsb2NrX2FkZHIpOw0KPj4gICB9DQo+Pg0KPj4gK3N0YXRpYyB2b2lkIHN0bTMyX2h3c3Bp
-bmxvY2tfcmVsYXgoc3RydWN0IGh3c3BpbmxvY2sgKmxvY2spDQo+PiArew0KPj4gKyAgICAgICBu
-ZGVsYXkoNTApOw0KPj4gK30NCj4+ICsNCj4+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCBod3NwaW5s
-b2NrX29wcyBzdG0zMl9od3NwaW5sb2NrX29wcyA9IHsNCj4+ICAgICAgICAgIC50cnlsb2NrICAg
-ICAgICA9IHN0bTMyX2h3c3BpbmxvY2tfdHJ5bG9jaywNCj4+ICAgICAgICAgIC51bmxvY2sgICAg
-ICAgICA9IHN0bTMyX2h3c3BpbmxvY2tfdW5sb2NrLA0KPj4gKyAgICAgICAucmVsYXggICAgICAg
-ICAgPSBzdG0zMl9od3NwaW5sb2NrX3JlbGF4LA0KPj4gICB9Ow0KPj4NCj4+ICAgc3RhdGljIGlu
-dCBzdG0zMl9od3NwaW5sb2NrX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
-PiAtLQ0KPj4gMi43LjQNCj4+DQo+Pg0KPj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18NCj4+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0DQo+PiBs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4+IGh0dHA6Ly9saXN0cy5pbmZy
-YWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbA0KPg0KPg==
+Enable m4 coprocessor for STM32MP157a-dk1 board.
+
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+---
+ arch/arm/boot/dts/stm32mp157a-dk1.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+index 26ce8de..da64ee2 100644
+--- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
++++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+@@ -116,6 +116,16 @@
+ 	status = "okay";
+ };
+ 
++&m4_rproc {
++	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
++			<&vdev0vring1>, <&vdev0buffer>;
++	mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
++	mbox-names = "vq0", "vq1", "shutdown";
++	interrupt-parent = <&exti>;
++	interrupts = <68 1>;
++	status = "okay";
++};
++
+ &rng1 {
+ 	status = "okay";
+ };
+-- 
+2.7.4
