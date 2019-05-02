@@ -1,56 +1,43 @@
-Return-Path: <rpjday@crashcourse.ca>
-Date: Tue, 14 May 2019 07:02:54 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-Subject: [PATCH] remoteproc,rpmsg: add missing MAINTAINERS file entries
-Message-ID: <alpine.LFD.2.21.1905140700500.10964@localhost.localdomain>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH v3 6/8] ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
+Date: Thu, 2 May 2019 10:10:04 +0200
+Message-ID: <1556784606-3016-7-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
+References: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-To: linux-remoteproc@vger.kernel.org
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org
+Content-Type: text/plain
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a few missing file and directory entries related to both
-remoteproc and rpmsg.
+Enable m4 coprocessor for STM32MP157c-ed1 board.
 
-Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
-
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
+ arch/arm/boot/dts/stm32mp157c-ed1.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fb9f9d71f7a2..fa0958e23b97 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13294,9 +13294,11 @@ L:	linux-remoteproc@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/remoteproc.git
- S:	Maintained
- F:	Documentation/devicetree/bindings/remoteproc/
-+F:	Documentation/ABI/testing/sysfs-class-remoteproc
- F:	Documentation/remoteproc.txt
- F:	drivers/remoteproc/
- F:	include/linux/remoteproc.h
-+F:	include/linux/remoteproc/
-
- REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
- M:	Ohad Ben-Cohen <ohad@wizery.com>
-@@ -13306,8 +13308,11 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/rpmsg.git
- S:	Maintained
- F:	drivers/rpmsg/
- F:	Documentation/rpmsg.txt
-+F:	Documentation/ABI/testing/sysfs-bus-rpmsg
- F:	include/linux/rpmsg.h
- F:	include/linux/rpmsg/
-+F:	include/uapi/linux/rpmsg.h
-+F:	samples/rpmsg/
-
- RENESAS CLOCK DRIVERS
- M:	Geert Uytterhoeven <geert+renesas@glider.be>
-
+diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+index acfc5cd..e5a6f40 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+@@ -134,6 +134,16 @@
+ 	status = "okay";
+ };
+ 
++&m4_rproc {
++	memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
++			<&vdev0vring1>, <&vdev0buffer>;
++	mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
++	mbox-names = "vq0", "vq1", "shutdown";
++	interrupt-parent = <&exti>;
++	interrupts = <68 1>;
++	status = "okay";
++};
++
+ &rng1 {
+ 	status = "okay";
+ };
 -- 
-
-========================================================================
-Robert P. J. Day                                 Ottawa, Ontario, CANADA
-                         http://crashcourse.ca
-
-Twitter:                                       http://twitter.com/rpjday
-LinkedIn:                               http://ca.linkedin.com/in/rpjday
-========================================================================
+2.7.4
