@@ -1,33 +1,51 @@
 Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-Subject: Re: [PATCH v2] hwspinlock: ignore disabled device
-Date: Mon, 13 May 2019 09:08:32 +0000
-Message-ID: <f9baeb01-5610-8a4c-c355-20beeb6d6ec7@st.com>
-References: <1552064026-11415-1-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1552064026-11415-1-git-send-email-fabien.dessenne@st.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1557BEA9C8793C47916CB14CC25127BC@st.com>
-Content-Transfer-Encoding: base64
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH v3 4/8] ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
+Date: Thu, 2 May 2019 10:10:02 +0200
+Message-ID: <1556784606-3016-5-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
+References: <1556784606-3016-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Benjamin GAIGNARD <benjamin.gaignard@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>
+Content-Type: text/plain
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkNCg0KDQpHZW50bGUgcmVtaW5kZXINCg0KDQpGYWJpZW4NCg0KT24gMDgvMDMvMjAxOSA1OjUz
-IFBNLCBGYWJpZW4gRGVzc2VubmUgd3JvdGU6DQo+IERvIG5vdCB3YWl0IGZvciBod3NwaW5sb2Nr
-IGRldmljZSByZWdpc3RyYXRpb24gaWYgaXQgaXMgbm90IGF2YWlsYWJsZQ0KPiBmb3IgdXNlLg0K
-Pg0KPiBTaWduZWQtb2ZmLWJ5OiBGYWJpZW4gRGVzc2VubmUgPGZhYmllbi5kZXNzZW5uZUBzdC5j
-b20+DQo+IC0tLQ0KPiBWMjogdXNlICdnb3RvIG91dCcgaW5zdGVhZCBvZiAncmV0dXJuJw0KPg0K
-PiAgIGRyaXZlcnMvaHdzcGlubG9jay9od3NwaW5sb2NrX2NvcmUuYyB8IDUgKysrKysNCj4gICAx
-IGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2h3c3BpbmxvY2svaHdzcGlubG9ja19jb3JlLmMgYi9kcml2ZXJzL2h3c3BpbmxvY2svaHdzcGlu
-bG9ja19jb3JlLmMNCj4gaW5kZXggMmJhZDQwZC4uZDgwNjMwNyAxMDA2NDQNCj4gLS0tIGEvZHJp
-dmVycy9od3NwaW5sb2NrL2h3c3BpbmxvY2tfY29yZS5jDQo+ICsrKyBiL2RyaXZlcnMvaHdzcGlu
-bG9jay9od3NwaW5sb2NrX2NvcmUuYw0KPiBAQCAtMzMzLDYgKzMzMywxMSBAQCBpbnQgb2ZfaHdz
-cGluX2xvY2tfZ2V0X2lkKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsIGludCBpbmRleCkNCj4gICAJ
-aWYgKHJldCkNCj4gICAJCXJldHVybiByZXQ7DQo+ICAgDQo+ICsJaWYgKCFvZl9kZXZpY2VfaXNf
-YXZhaWxhYmxlKGFyZ3MubnApKSB7DQo+ICsJCXJldCA9IC1FTk9FTlQ7DQo+ICsJCWdvdG8gb3V0
-Ow0KPiArCX0NCj4gKw0KPiAgIAkvKiBGaW5kIHRoZSBod3NwaW5sb2NrIGRldmljZTogd2UgbmVl
-ZCBpdHMgYmFzZV9pZCAqLw0KPiAgIAlyZXQgPSAtRVBST0JFX0RFRkVSOw0KPiAgIAlyY3VfcmVh
-ZF9sb2NrKCk7
+Declare the M4 remote processor in a sub-node of the mlahb simple bus.
+
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c.dtsi | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index c664b55..e8d3b00 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -1242,4 +1242,24 @@
+ 			status = "disabled";
+ 		};
+ 	};
++
++	mlahb {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		dma-ranges = <0x00000000 0x38000000 0x10000>,
++			     <0x10000000 0x10000000 0x60000>,
++			     <0x30000000 0x30000000 0x60000>;
++
++		m4_rproc: m4@38000000 {
++			compatible = "st,stm32mp1-m4";
++			reg = <0x00000000 0x10000>,
++			      <0x10000000 0x40000>,
++			      <0x30000000 0x40000>;
++			resets = <&rcc MCU_R>;
++			st,syscfg-holdboot = <&rcc 0x10C 0x1>;
++			st,syscfg-tz = <&rcc 0x000 0x1>;
++			status = "disabled";
++		};
++	};
+ };
+-- 
+2.7.4
