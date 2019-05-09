@@ -1,55 +1,247 @@
-Return-Path: <linux-arm-kernel-bounces+bjorn.andersson=linaro.org@lists.infradead.org>
+Return-Path: <xiaoxiang781216@gmail.com>
 MIME-Version: 1.0
-References: <20190416202013.4034148-1-arnd@arndb.de>
-In-Reply-To: <20190416202013.4034148-1-arnd@arndb.de>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 6 May 2019 12:03:42 +0300
-Message-ID: <CAHp75Vc2-zzRYk0vpdPQm5duZwW+v=svEndTPV4Sr59QrGcMHg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/26] compat_ioctl: cleanups
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+bjorn.andersson=linaro.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>, linux-iio <linux-iio@vger.kernel.org>, linux-remoteproc@vger.kernel.org, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Platform Driver <platform-driver-x86@vger.kernel.org>, linux-ide@vger.kernel.org, "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>, sparclinux@vger.kernel.org, linux1394-devel@lists.sourceforge.net, devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, linux-bluetooth@vger.kernel.org, y2038@lists.linaro.org, qat-linux@intel.com, amd-gfx@lists.freedesktop.org, linux-input <linux-input@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>, ALSA Development Mailing List <alsa-devel@alsa-project.org>, "James E.J. Bottomley" <jejb@linux.ibm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, ceph-devel@vger.kernel.org, linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>, Karsten Keil <isdn@linux-pingi.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, USB <linux-usb@vger.kernel.org>, "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>, linux-crypto <linux-crypto@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, linux-integrity <linux-integrity@vger.kernel.org>, "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" <linuxppc-dev@lists.ozlabs.org>, "David S. Miller" <davem@davemloft.net>, linux-btrfs@vger.kernel.org, linux-ppp@vger.kernel.org
+References: <1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com>
+ <1548949280-31794-4-git-send-email-xiaoxiang@xiaomi.com> <bc0e287e-cadd-c61c-c6c4-28cad642b9eb@st.com>
+In-Reply-To: <bc0e287e-cadd-c61c-c6c4-28cad642b9eb@st.com>
+From: xiang xiao <xiaoxiang781216@gmail.com>
+Date: Thu, 9 May 2019 21:00:08 +0800
+Message-ID: <CAH2Cfb_kCvyYpRS8BVgkmA0W7ZHjjCXcC7nhaXji2oMOuqm76w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rpmsg: virtio_rpmsg_bus: get buffer size from config space
+Content-Type: text/plain; charset="UTF-8"
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Ohad Ben Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, wendy.liang@xilinx.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>, Loic PALLARDY <loic.pallardy@st.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, Apr 16, 2019 at 11:23 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Thu, May 9, 2019 at 8:36 PM Arnaud Pouliquen <arnaud.pouliquen@st.com> wrote:
 >
-> Hi Al,
+> Hello Xiang,
 >
-> It took me way longer than I had hoped to revisit this series, see
-> https://lore.kernel.org/lkml/20180912150142.157913-1-arnd@arndb.de/
-> for the previously posted version.
+> Similar mechanism has been proposed by Loic 2 years ago (link to the
+> series here https://lkml.org/lkml/2017/3/28/349).
 >
-> I've come to the point where all conversion handlers and most
-> COMPATIBLE_IOCTL() entries are gone from this file, but for
-> now, this series only has the parts that have either been reviewed
-> previously, or that are simple enough to include.
+> Did you see them? Regarding history, patches seem just on hold...
 >
-> The main missing piece is the SG_IO/SG_GET_REQUEST_TABLE conversion.
-> I'll post the patches I made for that later, as they need more
-> testing and review from the scsi maintainers.
->
-> I hope you can still take these for the coming merge window, unless
-> new problems come up.
 
->  drivers/platform/x86/wmi.c                  |   2 +-
+Just saw this patchset, so it's common problem hit by many vendor,
+rpmsg framework need to address it.:)
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Main differences (except interesting RX/TX size split) seems that you
+> - don't use the virtio_config_ops->get
 
--- 
-With Best Regards,
-Andy Shevchenko
+virtio_cread call virtio_config_ops->get internally, the ideal is same
+for both patch, just the implementation detail is different.
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> - define a new feature VIRTIO_RPMSG_F_NS.
+
+I add this flag to keep the compatibility with old remote peer, and
+also follow the common virito driver practice.
+
+>
+> Regards
+> Arnaud
+>
+>
+> On 1/31/19 4:41 PM, Xiang Xiao wrote:
+> > 512 bytes isn't always suitable for all case, let firmware
+> > maker decide the best value from resource table.
+> > enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
+> >
+> > Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
+> > ---
+> >  drivers/rpmsg/virtio_rpmsg_bus.c  | 50 +++++++++++++++++++++++++--------------
+> >  include/uapi/linux/virtio_rpmsg.h | 24 +++++++++++++++++++
+> >  2 files changed, 56 insertions(+), 18 deletions(-)
+> >  create mode 100644 include/uapi/linux/virtio_rpmsg.h
+> >
+> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > index 59c4554..049dd97 100644
+> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/virtio.h>
+> >  #include <linux/virtio_ids.h>
+> >  #include <linux/virtio_config.h>
+> > +#include <linux/virtio_rpmsg.h>
+> >  #include <linux/scatterlist.h>
+> >  #include <linux/dma-mapping.h>
+> >  #include <linux/slab.h>
+> > @@ -38,7 +39,8 @@
+> >   * @sbufs:   kernel address of tx buffers
+> >   * @num_rbufs:       total number of buffers for rx
+> >   * @num_sbufs:       total number of buffers for tx
+> > - * @buf_size:        size of one rx or tx buffer
+> > + * @rbuf_size:       size of one rx buffer
+> > + * @sbuf_size:       size of one tx buffer
+> >   * @last_sbuf:       index of last tx buffer used
+> >   * @rbufs_dma:       dma base addr of rx buffers
+> >   * @sbufs_dma:       dma base addr of tx buffers
+> > @@ -61,7 +63,8 @@ struct virtproc_info {
+> >       void *rbufs, *sbufs;
+> >       unsigned int num_rbufs;
+> >       unsigned int num_sbufs;
+> > -     unsigned int buf_size;
+> > +     unsigned int rbuf_size;
+> > +     unsigned int sbuf_size;
+> >       int last_sbuf;
+> >       dma_addr_t rbufs_dma;
+> >       dma_addr_t sbufs_dma;
+> > @@ -73,9 +76,6 @@ struct virtproc_info {
+> >       struct rpmsg_endpoint *ns_ept;
+> >  };
+> >
+> > -/* The feature bitmap for virtio rpmsg */
+> > -#define VIRTIO_RPMSG_F_NS    0 /* RP supports name service notifications */
+> > -
+> >  /**
+> >   * struct rpmsg_hdr - common header for all rpmsg messages
+> >   * @src: source address
+> > @@ -452,7 +452,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+> >
+> >       /* either pick the next unused tx buffer */
+> >       if (vrp->last_sbuf < vrp->num_sbufs)
+> > -             ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+> > +             ret = vrp->sbufs + vrp->sbuf_size * vrp->last_sbuf++;
+> >       /* or recycle a used one */
+> >       else
+> >               ret = virtqueue_get_buf(vrp->svq, &len);
+> > @@ -578,7 +578,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+> >        * messaging), or to improve the buffer allocator, to support
+> >        * variable-length buffer sizes.
+> >        */
+> > -     if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+> > +     if (len > vrp->sbuf_size - sizeof(struct rpmsg_hdr)) {
+> >               dev_err(dev, "message is too big (%d)\n", len);
+> >               return -EMSGSIZE;
+> >       }
+> > @@ -718,7 +718,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> >        * We currently use fixed-sized buffers, so trivially sanitize
+> >        * the reported payload length.
+> >        */
+> > -     if (len > vrp->buf_size ||
+> > +     if (len > vrp->rbuf_size ||
+> >           msg->len > (len - sizeof(struct rpmsg_hdr))) {
+> >               dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
+> >               return -EINVAL;
+> > @@ -751,7 +751,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> >               dev_warn(dev, "msg received with no recipient\n");
+> >
+> >       /* publish the real size of the buffer */
+> > -     rpmsg_sg_init(&sg, msg, vrp->buf_size);
+> > +     rpmsg_sg_init(&sg, msg, vrp->rbuf_size);
+> >
+> >       /* add the buffer back to the remote processor's virtqueue */
+> >       err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+> > @@ -907,11 +907,24 @@ static int rpmsg_probe(struct virtio_device *vdev)
+> >       else
+> >               vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
+> >
+> > -     vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+> > +     /* try to get buffer size from config space */
+> > +     if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
+> > +             /* note: virtio_rpmsg_config is defined from remote view */
+> > +             virtio_cread(vdev, struct virtio_rpmsg_config,
+> > +                          txbuf_size, &vrp->rbuf_size);
+> > +             virtio_cread(vdev, struct virtio_rpmsg_config,
+> > +                          rxbuf_size, &vrp->sbuf_size);
+> > +     }
+> > +
+> > +     /* use the default if resource table doesn't provide one */
+> > +     if (!vrp->rbuf_size)
+> > +             vrp->rbuf_size = MAX_RPMSG_BUF_SIZE;
+> > +     if (!vrp->sbuf_size)
+> > +             vrp->sbuf_size = MAX_RPMSG_BUF_SIZE;
+> >
+> >       /* allocate coherent memory for the buffers */
+> >       vrp->rbufs = dma_alloc_coherent(vdev->dev.parent->parent,
+> > -                                     vrp->num_rbufs * vrp->buf_size,
+> > +                                     vrp->num_rbufs * vrp->rbuf_size,
+> >                                       &vrp->rbufs_dma, GFP_KERNEL);
+> >       if (!vrp->rbufs) {
+> >               err = -ENOMEM;
+> > @@ -922,7 +935,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+> >               vrp->rbufs, &vrp->rbufs_dma);
+> >
+> >       vrp->sbufs = dma_alloc_coherent(vdev->dev.parent->parent,
+> > -                                     vrp->num_sbufs * vrp->buf_size,
+> > +                                     vrp->num_sbufs * vrp->sbuf_size,
+> >                                       &vrp->sbufs_dma, GFP_KERNEL);
+> >       if (!vrp->sbufs) {
+> >               err = -ENOMEM;
+> > @@ -935,9 +948,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+> >       /* set up the receive buffers */
+> >       for (i = 0; i < vrp->num_rbufs; i++) {
+> >               struct scatterlist sg;
+> > -             void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+> > +             void *cpu_addr = vrp->rbufs + i * vrp->rbuf_size;
+> >
+> > -             rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+> > +             rpmsg_sg_init(&sg, cpu_addr, vrp->rbuf_size);
+> >
+> >               err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+> >                                         GFP_KERNEL);
+> > @@ -984,11 +997,11 @@ static int rpmsg_probe(struct virtio_device *vdev)
+> >
+> >  free_sbufs:
+> >       dma_free_coherent(vdev->dev.parent->parent,
+> > -                       vrp->num_sbufs * vrp->buf_size,
+> > +                       vrp->num_sbufs * vrp->sbuf_size,
+> >                         vrp->sbufs, vrp->sbufs_dma);
+> >  free_rbufs:
+> >       dma_free_coherent(vdev->dev.parent->parent,
+> > -                       vrp->num_rbufs * vrp->buf_size,
+> > +                       vrp->num_rbufs * vrp->rbuf_size,
+> >                         vrp->rbufs, vrp->rbufs_dma);
+> >  vqs_del:
+> >       vdev->config->del_vqs(vrp->vdev);
+> > @@ -1023,10 +1036,10 @@ static void rpmsg_remove(struct virtio_device *vdev)
+> >       vdev->config->del_vqs(vrp->vdev);
+> >
+> >       dma_free_coherent(vdev->dev.parent->parent,
+> > -                       vrp->num_sbufs * vrp->buf_size,
+> > +                       vrp->num_sbufs * vrp->sbuf_size,
+> >                         vrp->sbufs, vrp->sbufs_dma);
+> >       dma_free_coherent(vdev->dev.parent->parent,
+> > -                       vrp->num_rbufs * vrp->buf_size,
+> > +                       vrp->num_rbufs * vrp->rbuf_size,
+> >                         vrp->rbufs, vrp->rbufs_dma);
+> >
+> >       kfree(vrp);
+> > @@ -1039,6 +1052,7 @@ static struct virtio_device_id id_table[] = {
+> >
+> >  static unsigned int features[] = {
+> >       VIRTIO_RPMSG_F_NS,
+> > +     VIRTIO_RPMSG_F_BUFSZ,
+> >  };
+> >
+> >  static struct virtio_driver virtio_ipc_driver = {
+> > diff --git a/include/uapi/linux/virtio_rpmsg.h b/include/uapi/linux/virtio_rpmsg.h
+> > new file mode 100644
+> > index 0000000..24fa0dd
+> > --- /dev/null
+> > +++ b/include/uapi/linux/virtio_rpmsg.h
+> > @@ -0,0 +1,24 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > +/*
+> > + * Copyright (C) Pinecone Inc. 2019
+> > + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
+> > + */
+> > +
+> > +#ifndef _UAPI_LINUX_VIRTIO_RPMSG_H
+> > +#define _UAPI_LINUX_VIRTIO_RPMSG_H
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +/* The feature bitmap for virtio rpmsg */
+> > +#define VIRTIO_RPMSG_F_NS    0 /* RP supports name service notifications */
+> > +#define VIRTIO_RPMSG_F_BUFSZ 2 /* RP get buffer size from config space */
+> > +
+> > +struct virtio_rpmsg_config {
+> > +     /* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
+> > +     __u32 txbuf_size;
+> > +     __u32 rxbuf_size;
+> > +     __u32 reserved[14]; /* Reserve for the future use */
+> > +     /* Put the customize config here */
+> > +} __attribute__((packed));
+> > +
+> > +#endif /* _UAPI_LINUX_VIRTIO_RPMSG_H */
+> >
