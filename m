@@ -1,123 +1,142 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 1/8] dt-bindings: remoteproc: Rename and amend Hexagon v56 binding
-Date: Thu,  9 May 2019 21:34:14 -0700
-Message-Id: <20190510043421.31393-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20190510043421.31393-1-bjorn.andersson@linaro.org>
-References: <20190510043421.31393-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH v2 1/2] rpmsg: core: add possibility to get message payload length
+Date: Fri, 10 May 2019 17:02:56 +0200
+Message-ID: <1557500577-22366-2-git-send-email-arnaud.pouliquen@st.com>
+In-Reply-To: <1557500577-22366-1-git-send-email-arnaud.pouliquen@st.com>
+References: <1557500577-22366-1-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, xiang xiao <xiaoxiang781216@gmail.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: arnaud.pouliquen@st.com, Fabien DESSENNE <fabien.dessenne@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The SDM845 Audio DSP peripheral image loader binding describes the
-properties needed to load and boot firmware on a Hexagon v56. Rename the
-file and add the Compute DSP (CDSP) found in QCS404 to the binding.
+Return the rpmsg buffer payload size for sending message, so rpmsg users
+can split a long message in several sub rpmsg buffers.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- ...qcom,adsp-pil.txt => qcom,hexagon-v56.txt} | 35 +++++++++++++------
- 1 file changed, 25 insertions(+), 10 deletions(-)
- rename Documentation/devicetree/bindings/remoteproc/{qcom,adsp-pil.txt => qcom,hexagon-v56.txt} (74%)
+ drivers/rpmsg/rpmsg_core.c       | 20 ++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h   |  2 ++
+ drivers/rpmsg/virtio_rpmsg_bus.c | 11 +++++++++++
+ include/linux/rpmsg.h            | 10 ++++++++++
+ 4 files changed, 43 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,hexagon-v56.txt
-similarity index 74%
-rename from Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
-rename to Documentation/devicetree/bindings/remoteproc/qcom,hexagon-v56.txt
-index 66af2c30944f..1337a3d93d35 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,hexagon-v56.txt
-@@ -1,12 +1,13 @@
--Qualcomm Technology Inc. ADSP Peripheral Image Loader
-+Qualcomm Technology Inc. Hexagon v56 Peripheral Image Loader
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 8122807db380..75c8c403ffe5 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -283,6 +283,26 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ }
+ EXPORT_SYMBOL(rpmsg_trysend_offchannel);
  
- This document defines the binding for a component that loads and boots firmware
--on the Qualcomm Technology Inc. ADSP Hexagon core.
-+on the Qualcomm Technology Inc. Hexagon v56 core.
- 
- - compatible:
- 	Usage: required
- 	Value type: <string>
- 	Definition: must be one of:
-+		    "qcom,qcs404-cdsp-pil",
- 		    "qcom,sdm845-adsp-pil"
- 
- - reg:
-@@ -28,10 +29,11 @@ on the Qualcomm Technology Inc. ADSP Hexagon core.
- - clocks:
- 	Usage: required
- 	Value type: <prop-encoded-array>
--	Definition:  List of 8 phandle and clock specifier pairs for the adsp.
-+	Definition:  List of phandles and clock specifier pairs for the Hexagon,
-+		     per clock-names below.
- 
- - clock-names:
--	Usage: required
-+	Usage: required for SDM845 ADSP
- 	Value type: <stringlist>
- 	Definition: List of clock input name strings sorted in the same
- 		    order as the clocks property. Definition must have
-@@ -39,6 +41,14 @@ on the Qualcomm Technology Inc. ADSP Hexagon core.
- 		    "lpass_ahbm_aon_cbcr", "qdsp6ss_xo", "qdsp6ss_sleep"
- 		    and "qdsp6ss_core".
- 
-+- clock-names:
-+	Usage: required for QCS404 CDSP
-+	Value type: <stringlist>
-+	Definition: List of clock input name strings sorted in the same
-+		    order as the clocks property. Definition must have
-+		    "xo", "sway", "tbu", "bimc", "ahb_aon", "q6ss_slave",
-+		    "q6ss_master", "q6_axim".
++/**
++ * rpmsg_get_buf_payload_size()
++ * This function returns buffer payload size available for sending messages.
++ *
++ * @ept: the rpmsg endpoint
++ *
++ * Returns buffer payload size on success and an appropriate error value on
++ * failure.
++ */
++int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
++{
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->get_buf_payload_size)
++		return -ENXIO;
 +
- - power-domains:
- 	Usage: required
- 	Value type: <phandle>
-@@ -47,28 +57,33 @@ on the Qualcomm Technology Inc. ADSP Hexagon core.
- - resets:
- 	Usage: required
- 	Value type: <phandle>
--	Definition: reference to the list of 2 reset-controller for the adsp.
-+	Definition: reference to the list of resets for the Hexagon.
- 
- - reset-names:
--        Usage: required
-+        Usage: required for SDM845 ADSP
-         Value type: <stringlist>
-         Definition: must be "pdc_sync" and "cc_lpass"
- 
-+- reset-names:
-+        Usage: required for QCS404 CDSP
-+        Value type: <stringlist>
-+        Definition: must be "restart"
++	return ept->ops->get_buf_payload_size(ept);
++}
++EXPORT_SYMBOL(rpmsg_get_buf_payload_size);
 +
- - qcom,halt-regs:
- 	Usage: required
- 	Value type: <prop-encoded-array>
- 	Definition: a phandle reference to a syscon representing TCSR followed
--			by the offset within syscon for lpass halt register.
-+		    by the offset within syscon for Hexagon halt register.
+ /*
+  * match an rpmsg channel with a channel info struct.
+  * this is used to make sure we're not creating rpmsg devices for channels
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 0d791c30b7ea..6f733a556139 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -46,6 +46,7 @@ struct rpmsg_device_ops {
+  * @trysend:		see @rpmsg_trysend(), required
+  * @trysendto:		see @rpmsg_trysendto(), optional
+  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
++ * @get_buf_payload_size: see @rpmsg_get_buf_payload_size(), optional
+  *
+  * Indirection table for the operations that a rpmsg backend should implement.
+  * In addition to @destroy_ept, the backend must at least implement @send and
+@@ -65,6 +66,7 @@ struct rpmsg_endpoint_ops {
+ 			     void *data, int len);
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
++	int (*get_buf_payload_size)(struct rpmsg_endpoint *ept);
+ };
  
- - memory-region:
- 	Usage: required
- 	Value type: <phandle>
--	Definition: reference to the reserved-memory for the ADSP
-+	Definition: reference to the reserved-memory for the firmware
+ int rpmsg_register_device(struct rpmsg_device *rpdev);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 5d3685bd76a2..82753e76e377 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+ 				  int len, u32 dst);
+ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ 					   u32 dst, void *data, int len);
++static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept);
  
- - qcom,smem-states:
- 	Usage: required
- 	Value type: <phandle>
--	Definition: reference to the smem state for requesting the ADSP to
-+	Definition: reference to the smem state for requesting the Hexagon to
- 		    shut down
+ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+ 	.destroy_ept = virtio_rpmsg_destroy_ept,
+@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+ 	.trysend = virtio_rpmsg_trysend,
+ 	.trysendto = virtio_rpmsg_trysendto,
+ 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
++	.get_buf_payload_size = virtio_get_buf_payload_size,
+ };
  
- - qcom,smem-state-names:
-@@ -79,7 +94,7 @@ on the Qualcomm Technology Inc. ADSP Hexagon core.
+ /**
+@@ -699,6 +701,15 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+ }
  
- = SUBNODES
- The adsp node may have an subnode named "glink-edge" that describes the
--communication edge, channels and devices related to the ADSP.
-+communication edge, channels and devices related to the Hexagon.
- See ../soc/qcom/qcom,glink.txt for details on how to describe these.
++static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept)
++{
++	struct rpmsg_device *rpdev = ept->rpdev;
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
++	int size = vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
++
++	return size < 0 ? -EMSGSIZE : size;
++}
++
+ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+ 			     struct rpmsg_hdr *msg, unsigned int len)
+ {
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 9fe156d1c018..250df2165086 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 			poll_table *wait);
  
- = EXAMPLE
++int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept);
++
+ #else
+ 
+ static inline int register_rpmsg_device(struct rpmsg_device *dev)
+@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+ 	return 0;
+ }
+ 
++static int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
+ #endif /* IS_ENABLED(CONFIG_RPMSG) */
+ 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
 -- 
-2.18.0
+2.7.4
