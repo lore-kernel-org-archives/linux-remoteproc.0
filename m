@@ -1,223 +1,196 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v9 3/7] remoteproc: mt8183: add reserved memory manager API
-Date: Fri, 31 May 2019 15:38:44 +0800
-Message-Id: <20190531073848.155444-4-pihsun@chromium.org>
-In-Reply-To: <20190531073848.155444-1-pihsun@chromium.org>
-References: <20190531073848.155444-1-pihsun@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Boichat <drinkcat@chromium.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 2/8] remoteproc: qcom: qdsp6-adsp: Add support for QCS404 CDSP
+Date: Thu,  9 May 2019 21:34:15 -0700
+Message-Id: <20190510043421.31393-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20190510043421.31393-1-bjorn.andersson@linaro.org>
+References: <20190510043421.31393-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Erin Lo <erin.lo@mediatek.com>
+Move the clock list to adsp_pil_data, make the pdc_reset optional and
+make the driver directly enable the xo, sleep and core clocks.
 
-Add memory table mapping API for other driver to lookup
-reserved physical and virtual memory
+The three clocks are previously toggled through the clock controller,
+but that means the same hardware block needs to be mapped in both
+drivers. Making the remoteproc driver enable the clocks is a nop when
+using the clock controller, but allow us to remove the clocks from the
+clock controller.
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-Changes from v8:
- - Add more reserved regions for camera ISP.
+ drivers/remoteproc/qcom_q6v5_adsp.c | 73 ++++++++++++++++++++++-------
+ 1 file changed, 55 insertions(+), 18 deletions(-)
 
-Changes from v7, v6, v5:
- - No change.
-
-Changes from v4:
- - New patch.
----
- drivers/remoteproc/mtk_scp.c          | 135 ++++++++++++++++++++++++++
- include/linux/platform_data/mtk_scp.h |  24 +++++
- 2 files changed, 159 insertions(+)
-
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index c4d900f4fe1c..bebecd470b8d 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -348,6 +348,137 @@ void *scp_mapping_dm_addr(struct platform_device *pdev, u32 mem_addr)
- }
- EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 1f3ef9ee493c..e953886b2eb7 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -46,11 +46,9 @@
+ #define LPASS_PWR_ON_REG		0x10
+ #define LPASS_HALTREQ_REG		0x0
  
-+#if SCP_RESERVED_MEM
-+phys_addr_t scp_mem_base_phys;
-+phys_addr_t scp_mem_base_virt;
-+phys_addr_t scp_mem_size;
+-/* list of clocks required by ADSP PIL */
+-static const char * const adsp_clk_id[] = {
+-	"sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+-	"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
+-};
++#define QDSP6SS_XO_CBCR		0x38
++#define QDSP6SS_CORE_CBCR	0x20
++#define QDSP6SS_SLEEP_CBCR	0x3c
+ 
+ struct adsp_pil_data {
+ 	int crash_reason_smem;
+@@ -59,6 +57,9 @@ struct adsp_pil_data {
+ 	const char *ssr_name;
+ 	const char *sysmon_name;
+ 	int ssctl_id;
 +
-+static struct scp_reserve_mblock scp_reserve_mblock[] = {
-+	{
-+		.num = SCP_ISP_MEM_ID,
-+		.start_phys = 0x0,
-+		.start_virt = 0x0,
-+		.size = 0x200000, /*2MB*/
-+	},
-+	{
-+		.num = SCP_ISP_MEM2_ID,
-+		.start_phys = 0x0,
-+		.start_virt = 0x0,
-+		.size = 0x800000, /*8MB*/
-+	},
-+	{
-+		.num = SCP_DIP_MEM_ID,
-+		.start_phys = 0x0,
-+		.start_virt = 0x0,
-+		.size = 0x900000, /*9MB*/
-+	},
-+	{
-+		.num = SCP_MDP_MEM_ID,
-+		.start_phys = 0x0,
-+		.start_virt = 0x0,
-+		.size = 0x600000, /*6MB*/
-+	},
-+	{
-+		.num = SCP_FD_MEM_ID,
-+		.start_phys = 0x0,
-+		.start_virt = 0x0,
-+		.size = 0x100000, /*1MB*/
-+	},
-+};
-+
-+static int scp_reserve_mem_init(struct mtk_scp *scp)
-+{
-+	enum scp_reserve_mem_id_t id;
-+	phys_addr_t accumlate_memory_size = 0;
-+
-+	scp_mem_base_phys = (phys_addr_t) (scp->phys_addr + MAX_CODE_SIZE);
-+	scp_mem_size = (phys_addr_t) (scp->dram_size - MAX_CODE_SIZE);
-+
-+	dev_info(scp->dev,
-+		 "phys:0x%llx - 0x%llx (0x%llx)\n",
-+		 scp_mem_base_phys,
-+		 scp_mem_base_phys + scp_mem_size,
-+		 scp_mem_size);
-+	accumlate_memory_size = 0;
-+	for (id = 0; id < SCP_NUMS_MEM_ID; id++) {
-+		scp_reserve_mblock[id].start_phys =
-+			scp_mem_base_phys + accumlate_memory_size;
-+		accumlate_memory_size += scp_reserve_mblock[id].size;
-+		dev_info(scp->dev,
-+			 "[reserve_mem:%d]: phys:0x%llx - 0x%llx (0x%llx)\n",
-+			 id, scp_reserve_mblock[id].start_phys,
-+			 scp_reserve_mblock[id].start_phys +
-+				 scp_reserve_mblock[id].size,
-+			 scp_reserve_mblock[id].size);
-+	}
-+	return 0;
-+}
-+
-+static int scp_reserve_memory_ioremap(struct mtk_scp *scp)
-+{
-+	enum scp_reserve_mem_id_t id;
-+	phys_addr_t accumlate_memory_size = 0;
-+
-+	scp_mem_base_virt = (phys_addr_t)(size_t)ioremap_wc(scp_mem_base_phys,
-+							    scp_mem_size);
-+
-+	dev_info(scp->dev,
-+		 "virt:0x%llx - 0x%llx (0x%llx)\n",
-+		(phys_addr_t)scp_mem_base_virt,
-+		(phys_addr_t)scp_mem_base_virt + (phys_addr_t)scp_mem_size,
-+		scp_mem_size);
-+	for (id = 0; id < SCP_NUMS_MEM_ID; id++) {
-+		scp_reserve_mblock[id].start_virt =
-+			scp_mem_base_virt + accumlate_memory_size;
-+		accumlate_memory_size += scp_reserve_mblock[id].size;
-+	}
-+	/* the reserved memory should be larger then expected memory
-+	 * or scp_reserve_mblock does not match dts
-+	 */
-+	WARN_ON(accumlate_memory_size > scp_mem_size);
-+#ifdef DEBUG
-+	for (id = 0; id < NUMS_MEM_ID; id++) {
-+		dev_info(scp->dev,
-+			 "[mem_reserve-%d] phys:0x%llx,virt:0x%llx,size:0x%llx\n",
-+			 id,
-+			 scp_get_reserve_mem_phys(id),
-+			 scp_get_reserve_mem_virt(id),
-+			 scp_get_reserve_mem_size(id));
-+	}
-+#endif
-+	return 0;
-+}
-+phys_addr_t scp_get_reserve_mem_phys(enum scp_reserve_mem_id_t id)
-+{
-+	if (id >= SCP_NUMS_MEM_ID) {
-+		pr_err("[SCP] no reserve memory for %d", id);
-+		return 0;
-+	} else
-+		return scp_reserve_mblock[id].start_phys;
-+}
-+EXPORT_SYMBOL_GPL(scp_get_reserve_mem_phys);
-+
-+phys_addr_t scp_get_reserve_mem_virt(enum scp_reserve_mem_id_t id)
-+{
-+	if (id >= SCP_NUMS_MEM_ID) {
-+		pr_err("[SCP] no reserve memory for %d", id);
-+		return 0;
-+	} else
-+		return scp_reserve_mblock[id].start_virt;
-+}
-+EXPORT_SYMBOL_GPL(scp_get_reserve_mem_virt);
-+
-+phys_addr_t scp_get_reserve_mem_size(enum scp_reserve_mem_id_t id)
-+{
-+	if (id >= SCP_NUMS_MEM_ID) {
-+		pr_err("[SCP] no reserve memory for %d", id);
-+		return 0;
-+	} else
-+		return scp_reserve_mblock[id].size;
-+}
-+EXPORT_SYMBOL_GPL(scp_get_reserve_mem_size);
-+#endif
-+
- static int scp_map_memory_region(struct mtk_scp *scp)
- {
- 	struct device_node *node;
-@@ -375,6 +506,10 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 		return -EBUSY;
++	const char **clk_ids;
++	int num_clks;
+ };
+ 
+ struct qcom_adsp {
+@@ -75,7 +76,7 @@ struct qcom_adsp {
+ 	void __iomem *qdsp6ss_base;
+ 
+ 	struct reset_control *pdc_sync_reset;
+-	struct reset_control *cc_lpass_restart;
++	struct reset_control *restart;
+ 
+ 	struct regmap *halt_map;
+ 	unsigned int halt_lpass;
+@@ -143,7 +144,7 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
+ 	/* Assert the LPASS PDC Reset */
+ 	reset_control_assert(adsp->pdc_sync_reset);
+ 	/* Place the LPASS processor into reset */
+-	reset_control_assert(adsp->cc_lpass_restart);
++	reset_control_assert(adsp->restart);
+ 	/* wait after asserting subsystem restart from AOSS */
+ 	usleep_range(200, 300);
+ 
+@@ -153,7 +154,7 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
+ 	/* De-assert the LPASS PDC Reset */
+ 	reset_control_deassert(adsp->pdc_sync_reset);
+ 	/* Remove the LPASS reset */
+-	reset_control_deassert(adsp->cc_lpass_restart);
++	reset_control_deassert(adsp->restart);
+ 	/* wait after de-asserting subsystem restart from AOSS */
+ 	usleep_range(200, 300);
+ 
+@@ -192,6 +193,15 @@ static int adsp_start(struct rproc *rproc)
+ 		goto disable_power_domain;
  	}
  
-+#if SCP_RESERVED_MEM
-+	scp_reserve_mem_init(scp);
-+	scp_reserve_memory_ioremap(scp);
-+#endif
- 	return 0;
++	/* Enable the XO clock */
++	writel(1, adsp->qdsp6ss_base + QDSP6SS_XO_CBCR);
++
++	/* Enable the QDSP6SS sleep clock */
++	writel(1, adsp->qdsp6ss_base + QDSP6SS_SLEEP_CBCR);
++
++	/* Enable the QDSP6 core clock */
++	writel(1, adsp->qdsp6ss_base + QDSP6SS_CORE_CBCR);
++
+ 	/* Program boot address */
+ 	writel(adsp->mem_phys >> 4, adsp->qdsp6ss_base + RST_EVB_REG);
+ 
+@@ -280,8 +290,9 @@ static const struct rproc_ops adsp_ops = {
+ 	.load = adsp_load,
+ };
+ 
+-static int adsp_init_clock(struct qcom_adsp *adsp)
++static int adsp_init_clock(struct qcom_adsp *adsp, const char **clk_ids)
+ {
++	int num_clks = 0;
+ 	int i, ret;
+ 
+ 	adsp->xo = devm_clk_get(adsp->dev, "xo");
+@@ -292,32 +303,39 @@ static int adsp_init_clock(struct qcom_adsp *adsp)
+ 		return ret;
+ 	}
+ 
+-	adsp->num_clks = ARRAY_SIZE(adsp_clk_id);
++	for (i = 0; clk_ids[i]; i++)
++		num_clks++;
++
++	adsp->num_clks = num_clks;
+ 	adsp->clks = devm_kcalloc(adsp->dev, adsp->num_clks,
+ 				sizeof(*adsp->clks), GFP_KERNEL);
+ 	if (!adsp->clks)
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < adsp->num_clks; i++)
+-		adsp->clks[i].id = adsp_clk_id[i];
++		adsp->clks[i].id = clk_ids[i];
+ 
+ 	return devm_clk_bulk_get(adsp->dev, adsp->num_clks, adsp->clks);
  }
  
-diff --git a/include/linux/platform_data/mtk_scp.h b/include/linux/platform_data/mtk_scp.h
-index b81ac5c7d320..96e56fdd0917 100644
---- a/include/linux/platform_data/mtk_scp.h
-+++ b/include/linux/platform_data/mtk_scp.h
-@@ -138,4 +138,28 @@ unsigned int scp_get_venc_hw_capa(struct platform_device *pdev);
- void *scp_mapping_dm_addr(struct platform_device *pdev,
- 			  u32 mem_addr);
+ static int adsp_init_reset(struct qcom_adsp *adsp)
+ {
+-	adsp->pdc_sync_reset = devm_reset_control_get_exclusive(adsp->dev,
++	adsp->pdc_sync_reset = devm_reset_control_get_optional_exclusive(adsp->dev,
+ 			"pdc_sync");
+ 	if (IS_ERR(adsp->pdc_sync_reset)) {
+ 		dev_err(adsp->dev, "failed to acquire pdc_sync reset\n");
+ 		return PTR_ERR(adsp->pdc_sync_reset);
+ 	}
  
-+#define SCP_RESERVED_MEM	(1)
-+#if SCP_RESERVED_MEM
-+/* scp reserve memory ID definition*/
-+enum scp_reserve_mem_id_t {
-+	SCP_ISP_MEM_ID,
-+	SCP_ISP_MEM2_ID,
-+	SCP_MDP_MEM_ID,
-+	SCP_DIP_MEM_ID,
-+	SCP_FD_MEM_ID,
-+	SCP_NUMS_MEM_ID,
+-	adsp->cc_lpass_restart = devm_reset_control_get_exclusive(adsp->dev,
+-			"cc_lpass");
+-	if (IS_ERR(adsp->cc_lpass_restart)) {
+-		dev_err(adsp->dev, "failed to acquire cc_lpass restart\n");
+-		return PTR_ERR(adsp->cc_lpass_restart);
++	adsp->restart = devm_reset_control_get_optional_exclusive(adsp->dev, "restart");
++
++	/* Fall back to the  old "cc_lpass" if "restart" is absent */
++	if (!adsp->restart)
++		adsp->restart = devm_reset_control_get_exclusive(adsp->dev, "cc_lpass");
++
++	if (IS_ERR(adsp->restart)) {
++		dev_err(adsp->dev, "failed to acquire restart\n");
++		return PTR_ERR(adsp->restart);
+ 	}
+ 
+ 	return 0;
+@@ -415,7 +433,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	ret = adsp_init_clock(adsp);
++	ret = adsp_init_clock(adsp, desc->clk_ids);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+@@ -479,9 +497,28 @@ static const struct adsp_pil_data adsp_resource_init = {
+ 	.ssr_name = "lpass",
+ 	.sysmon_name = "adsp",
+ 	.ssctl_id = 0x14,
++	.clk_ids = (const char*[]) {
++		"sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
++		"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core", NULL
++	},
++	.num_clks = 7,
 +};
 +
-+struct scp_reserve_mblock {
-+	enum scp_reserve_mem_id_t num;
-+	u64 start_phys;
-+	u64 start_virt;
-+	u64 size;
-+};
-+
-+extern phys_addr_t scp_get_reserve_mem_phys(enum scp_reserve_mem_id_t id);
-+extern phys_addr_t scp_get_reserve_mem_virt(enum scp_reserve_mem_id_t id);
-+extern phys_addr_t scp_get_reserve_mem_size(enum scp_reserve_mem_id_t id);
-+#endif
-+
- #endif /* _MTK_SCP_H */
++static const struct adsp_pil_data cdsp_resource_init = {
++	.crash_reason_smem = 601,
++	.firmware_name = "cdsp.mdt",
++	.ssr_name = "cdsp",
++	.sysmon_name = "cdsp",
++	.ssctl_id = 0x17,
++	.clk_ids = (const char*[]) {
++		"sway", "tbu", "bimc", "ahb_aon", "q6ss_slave", "q6ss_master",
++		"q6_axim", NULL
++	},
++	.num_clks = 7,
+ };
+ 
+ static const struct of_device_id adsp_of_match[] = {
++	{ .compatible = "qcom,qcs404-cdsp-pil", .data = &cdsp_resource_init },
+ 	{ .compatible = "qcom,sdm845-adsp-pil", .data = &adsp_resource_init },
+ 	{ },
+ };
 -- 
-2.22.0.rc1.257.g3120a18244-goog
+2.18.0
