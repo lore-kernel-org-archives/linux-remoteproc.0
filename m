@@ -1,53 +1,43 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/3] hwspinlock/omap: Add support for TI K3 SoCs
-Date: Thu, 30 May 2019 21:13:20 -0500
-Message-ID: <20190531021321.14025-3-s-anna@ti.com>
-In-Reply-To: <20190531021321.14025-1-s-anna@ti.com>
-References: <20190531021321.14025-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 3/8] arm64: dts: qcom: qcs404-evb: Mark CDSP clocks protected
+Date: Thu,  9 May 2019 21:34:16 -0700
+Message-Id: <20190510043421.31393-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20190510043421.31393-1-bjorn.andersson@linaro.org>
+References: <20190510043421.31393-1-bjorn.andersson@linaro.org>
+To: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-A HwSpinlock IP is also present on the newer TI K3 AM65x and J721E
-family of SoCs within the Main NavSS sub-module. Reuse the existing
-OMAP Hwspinlock driver to extend the support for this IP on K3 AM65x
-SoCs as well. The IP has slightly different bit-fields in the
-SYSCONFIG and SYSSTATUS registers.
+With the Trustzone based CDSP remoteproc driver these clocks are
+controlled elsewhere and as they are not enabled by anything in Linux
+the clock framework will turn them off during lateinit.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+This results in issues either to later start the CDSP, using the
+Trustzone interface, or if the CDSP is already running it will crash.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/hwspinlock/Kconfig           | 2 +-
- drivers/hwspinlock/omap_hwspinlock.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-index 7869c67e5b6b..37740e992cfa 100644
---- a/drivers/hwspinlock/Kconfig
-+++ b/drivers/hwspinlock/Kconfig
-@@ -9,7 +9,7 @@ menuconfig HWSPINLOCK
- config HWSPINLOCK_OMAP
- 	tristate "OMAP Hardware Spinlock device"
- 	depends on HWSPINLOCK
--	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX
-+	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX || ARCH_K3
- 	help
- 	  Say y here to support the OMAP Hardware Spinlock device (firstly
- 	  introduced in OMAP4).
-diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-index 625844e0abef..a4d7a7bc863a 100644
---- a/drivers/hwspinlock/omap_hwspinlock.c
-+++ b/drivers/hwspinlock/omap_hwspinlock.c
-@@ -171,6 +171,7 @@ static int omap_hwspinlock_remove(struct platform_device *pdev)
- 
- static const struct of_device_id omap_hwspinlock_of_match[] = {
- 	{ .compatible = "ti,omap4-hwspinlock", },
-+	{ .compatible = "ti,am654-hwspinlock", },
- 	{ /* end */ },
+diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+index 2c3127167e3c..dc1d7d5d21a4 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+@@ -56,6 +56,13 @@
+ 	qcom,controlled-remotely;
  };
- MODULE_DEVICE_TABLE(of, omap_hwspinlock_of_match);
+ 
++&gcc {
++	protected-clocks = <GCC_BIMC_CDSP_CLK>,
++			   <GCC_CDSP_CFG_AHB_CLK>,
++			   <GCC_CDSP_BIMC_CLK_SRC>,
++			   <GCC_CDSP_TBU_CLK>;
++};
++
+ &pms405_spmi_regulators {
+ 	vdd_s3-supply = <&pms405_s3>;
+ 
 -- 
-2.21.0
+2.18.0
