@@ -1,58 +1,62 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH v4 0/8] stm32 m4 remoteproc on STM32MP157c
-Date: Tue, 14 May 2019 10:26:55 +0200
-Message-ID: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 13 May 2019 11:28:53 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: qcs404: Define APPS IOMMU
+Message-ID: <20190513182853.GI2085@tuxbook-pro>
+References: <20190510043421.31393-1-bjorn.andersson@linaro.org>
+ <20190510043421.31393-8-bjorn.andersson@linaro.org>
+ <20190513045402.GA2707@vkoul-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513045402.GA2707@vkoul-mobl>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Andy Gross <agross@kernel.org>, David Brown <david.brown@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-STMicrolectronics STM32MP157 MPU are based on a Dual Arm Cortex-A7 core and a
-Cortex-M4.
-This patchset adds the support of the stm32_rproc driver allowing to control
-the M4 remote processor.
+On Sun 12 May 21:54 PDT 2019, Vinod Koul wrote:
 
-Changes since v3:
--Replaced "st,auto_boot" with "st,auto-boot"
--Update m4 reg values and align with unit-address
+> On 09-05-19, 21:34, Bjorn Andersson wrote:
+> > The APPS IOMMU provides contexts for FastRPC, MDP and WLAN, among other
+> > things.  Define these. We use the qcom_iommu binding because the
+>         ^^^
+> Double spaces crept in..
+> 
 
-Changes since v2:
-- Clarified "reg" description
-- Change m4 unit adress to 38000000
-- Renamed "auto_boot" in "st,auto-boot"
+That's to give you some breathing room while reading it - but not as
+much as a new paragraph :)
 
-Changes since v1:
-- Gave details about the memory mapping (in bindings).
-- Used 'dma-ranges' instead of 'ranges'.
-- Updated the 'compatible' property.
-- Remove the 'recovery', 'reset-names' and 'interrupt-names' properties.
-- Clarified why / when mailboxes are optional.
+> > firmware restrictions in incompatible with the arm-smmu.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/qcs404.dtsi | 85 ++++++++++++++++++++++++++++
+> >  1 file changed, 85 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> > index b213f6acad76..fcde4f0334c2 100644
+> > --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> > @@ -378,6 +378,91 @@
+> >  			reg = <0x01937000 0x25000>;
+> >  		};
+> >  
+> > +		apps_iommu: iommu@1e20000 {
+> > +			compatible = "qcom,qcs404-iommu", "qcom,msm-iommu-v1";
+> 
+> Did we define qcom,qcs404-iommu in bindings, It does not seem to be
+> there in this patch, next or integration one
+> 
 
-Fabien Dessenne (8):
-  dt-bindings: stm32: add bindings for ML-AHB interconnect
-  dt-bindings: remoteproc: add bindings for stm32 remote processor
-    driver
-  remoteproc: stm32: add an ST stm32_rproc driver
-  ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
-  ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
-  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
-  ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
-  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
+No, this was entirely intended to fall back on the generic compatible.
 
- .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
- .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
- arch/arm/boot/dts/stm32mp157a-dk1.dts              |  52 ++
- arch/arm/boot/dts/stm32mp157c-ed1.dts              |  52 ++
- arch/arm/boot/dts/stm32mp157c.dtsi                 |  20 +
- drivers/remoteproc/Kconfig                         |  15 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
- 8 files changed, 868 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
- create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
- create mode 100644 drivers/remoteproc/stm32_rproc.c
+That said, further testing of this series indicates that we have a
+cache issue related to the SMMU. In working out this I came up with a
+series of patches to the arm-smmu driver that allow us to use this with
+the standard Qualcomm bootloader.
 
--- 
-2.7.4
+So let's ignore patch 7 and 8 in this series until we know how to deal
+with the SMMU.
+
+Regards,
+Bjorn
