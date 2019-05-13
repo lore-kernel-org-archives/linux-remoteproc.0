@@ -1,39 +1,64 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 3/3] hwspinlock/omap: Add a trace during probe
-Date: Thu, 30 May 2019 21:13:21 -0500
-Message-ID: <20190531021321.14025-4-s-anna@ti.com>
-In-Reply-To: <20190531021321.14025-1-s-anna@ti.com>
-References: <20190531021321.14025-1-s-anna@ti.com>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+Subject: Re: [PATCH v2 0/6] hwspinlock: allow sharing of hwspinlocks
+Date: Mon, 13 May 2019 09:13:11 +0000
+Message-ID: <25aae4ca-0568-ccaf-0c47-4f5f4e2e8599@st.com>
+References: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D55BFC742E8B3D4FAB756D29EDD9858A@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Cc: Benjamin GAIGNARD <benjamin.gaignard@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a debug level trace statement in the OMAP HwSpinlock driver
-probe function to print the number of hwlocks on a successful
-registration.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/hwspinlock/omap_hwspinlock.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-index a4d7a7bc863a..14e1a532ebb5 100644
---- a/drivers/hwspinlock/omap_hwspinlock.c
-+++ b/drivers/hwspinlock/omap_hwspinlock.c
-@@ -140,6 +140,9 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto reg_fail;
- 
-+	dev_dbg(&pdev->dev, "Registered %d locks with HwSpinlock core\n",
-+		num_locks);
-+
- 	return 0;
- 
- reg_fail:
--- 
-2.21.0
+SGkNCg0KDQpJIEdvdCBSb2IncyBSZXZpZXdlZC1ieS4gQW55IGZ1cnRoZXIgY29tbWVudHM/DQoN
+Cg0KRmFiaWVuDQoNCg0KT24gMjUvMDQvMjAxOSAxMToxNyBBTSwgRmFiaWVuIERlc3Nlbm5lIHdy
+b3RlOg0KPiBUaGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBkb2VzIG5vdCBhbGxvdyB0d28gZGlm
+ZmVyZW50IGRldmljZXMgdG8gdXNlDQo+IGEgY29tbW9uIGh3c3BpbmxvY2suIFRoaXMgcGF0Y2gg
+c2V0IHByb3Bvc2VzIHRvIGhhdmUsIGFzIGFuIG9wdGlvbiwgc29tZQ0KPiBod3NwaW5sb2NrcyBz
+aGFyZWQgYmV0d2VlbiBzZXZlcmFsIHVzZXJzLg0KPg0KPiBCZWxvdyBpcyBhbiBleGFtcGxlIHRo
+YXQgZXhwbGFpbiB0aGUgbmVlZCBmb3IgdGhpczoNCj4gCWV4dGk6IGludGVycnVwdC1jb250cm9s
+bGVyQDUwMDBkMDAwIHsNCj4gCQljb21wYXRpYmxlID0gInN0LHN0bTMybXAxLWV4dGkiLCAic3lz
+Y29uIjsNCj4gCQlpbnRlcnJ1cHQtY29udHJvbGxlcjsNCj4gCQkjaW50ZXJydXB0LWNlbGxzID0g
+PDI+Ow0KPiAJCXJlZyA9IDwweDUwMDBkMDAwIDB4NDAwPjsNCj4gCQlod2xvY2tzID0gPCZoc2Vt
+IDE+Ow0KPiAJfTsNCj4gVGhlIHR3byBkcml2ZXJzIChzdG0zMm1wMS1leHRpIGFuZCBzeXNjb24p
+IHJlZmVyIHRvIHRoZSBzYW1lIGh3bG9jay4NCj4gV2l0aCB0aGUgY3VycmVudCBod3NwaW5sb2Nr
+IGltcGxlbWVudGF0aW9uLCBvbmx5IHRoZSBmaXJzdCBkcml2ZXIgc3VjY2VlZHMNCj4gaW4gcmVx
+dWVzdGluZyAoaHdzcGluX2xvY2tfcmVxdWVzdF9zcGVjaWZpYykgdGhlIGh3bG9jay4gVGhlIHNl
+Y29uZCByZXF1ZXN0DQo+IGZhaWxzLg0KPg0KPg0KPiBUaGUgcHJvcG9zZWQgYXBwcm9hY2ggZG9l
+cyBub3QgbW9kaWZ5IHRoZSBBUEksIGJ1dCBleHRlbmRzIHRoZSBEVCAnaHdsb2NrcycNCj4gcHJv
+cGVydHkgd2l0aCBhIHNlY29uZCBvcHRpb25hbCBwYXJhbWV0ZXIgKHRoZSBmaXJzdCBvbmUgaWRl
+bnRpZmllcyBhbg0KPiBod2xvY2spIHRoYXQgc3BlY2lmaWVzIHdoZXRoZXIgYW4gaHdsb2NrIGlz
+IHJlcXVlc3RlZCBmb3IgZXhjbHVzaXZlIHVzYWdlDQo+IChjdXJyZW50IGJlaGF2aW9yKSBvciBj
+YW4gYmUgc2hhcmVkIGJldHdlZW4gc2V2ZXJhbCB1c2Vycy4NCj4gRXhhbXBsZXM6DQo+IAlod2xv
+Y2tzID0gPCZoc2VtIDg+OwlSZWYgdG8gaHdsb2NrICM4IGZvciBleGNsdXNpdmUgdXNhZ2UNCj4g
+CWh3bG9ja3MgPSA8JmhzZW0gOCAwPjsJUmVmIHRvIGh3bG9jayAjOCBmb3IgZXhjbHVzaXZlICgw
+KSB1c2FnZQ0KPiAJaHdsb2NrcyA9IDwmaHNlbSA4IDE+OwlSZWYgdG8gaHdsb2NrICM4IGZvciBz
+aGFyZWQgKDEpIHVzYWdlDQo+DQo+IEFzIGEgY29uc3RyYWludCwgdGhlICNod2xvY2stY2VsbHMg
+dmFsdWUgbXVzdCBiZSAxIG9yIDIuDQo+IEluIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uLCB0
+aGlzIGNhbiBoYXZlIHRoZW9yaWNhbGx5IGFueSB2YWx1ZSBidXQ6DQo+IC0gYWxsIG9mIHRoZSBl
+eGlzaXRpbmcgZHJpdmVycyB1c2UgdGhlIHNhbWUgdmFsdWUgOiAxLg0KPiAtIHRoZSBmcmFtZXdv
+cmsgc3VwcG9ydHMgb25seSBvbmUgdmFsdWUgOiAxIChzZWUgaW1wbGVtZW50YXRpb24gb2YNCj4g
+ICAgb2ZfaHdzcGluX2xvY2tfc2ltcGxlX3hsYXRlKCkpDQo+IEhlbmNlLCBpdCBzaGFsbCBub3Qg
+YmUgYSBwcm9ibGVtIHRvIHJlc3RyaWN0IHRoaXMgdmFsdWUgdG8gMSBvciAyIHNpbmNlDQo+IGl0
+IHdvbid0IGJyZWFrIGFueSBkcml2ZXIuDQo+DQo+IENoYW5nZXMgc2luY2UgdjE6DQo+ICogUmVt
+b3ZlZCB1c2VsZXNzICdzdGF0dXMgPSAib2theSInIGZyb20gc3RtMzJtcDE1N2MuZHRzaQ0KPg0K
+PiBGYWJpZW4gRGVzc2VubmUgKDYpOg0KPiAgICBkdC1iaW5kaW5nczogaHdsb2NrOiBhZGQgc3Vw
+cG9ydCBvZiBzaGFyZWQgbG9ja3MNCj4gICAgaHdzcGlubG9jazogYWxsb3cgc2hhcmluZyBvZiBo
+d3NwaW5sb2Nrcw0KPiAgICBkdC1iaW5kaW5nczogaHdsb2NrOiB1cGRhdGUgU1RNMzIgI2h3bG9j
+ay1jZWxscyB2YWx1ZQ0KPiAgICBBUk06IGR0czogc3RtMzI6IEFkZCBod3NwaW5sb2NrIG5vZGUg
+Zm9yIHN0bTMybXAxNTcgU29DDQo+ICAgIEFSTTogZHRzOiBzdG0zMjogQWRkIGh3bG9jayBmb3Ig
+aXJxY2hpcCBvbiBzdG0zMm1wMTU3DQo+ICAgIEFSTTogZHRzOiBzdG0zMjogaHdsb2NrcyBmb3Ig
+R1BJTyBmb3Igc3RtMzJtcDE1Nw0KPg0KPiAgIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2h3bG9j
+ay9od2xvY2sudHh0ICAgICAgICAgIHwgMjcgKysrKystLQ0KPiAgIC4uLi9iaW5kaW5ncy9od2xv
+Y2svc3Qsc3RtMzItaHdzcGlubG9jay50eHQgICAgICAgIHwgIDYgKy0NCj4gICBEb2N1bWVudGF0
+aW9uL2h3c3BpbmxvY2sudHh0ICAgICAgICAgICAgICAgICAgICAgICB8IDEwICsrLQ0KPiAgIGFy
+Y2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTctcGluY3RybC5kdHNpICAgICAgICAgIHwgIDIgKw0K
+PiAgIGFyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTdjLmR0c2kgICAgICAgICAgICAgICAgIHwg
+IDkgKysrDQo+ICAgZHJpdmVycy9od3NwaW5sb2NrL2h3c3BpbmxvY2tfY29yZS5jICAgICAgICAg
+ICAgICAgfCA4MiArKysrKysrKysrKysrKysrKy0tLS0tDQo+ICAgZHJpdmVycy9od3NwaW5sb2Nr
+L2h3c3BpbmxvY2tfaW50ZXJuYWwuaCAgICAgICAgICAgfCAgMiArDQo+ICAgNyBmaWxlcyBjaGFu
+Z2VkLCAxMDcgaW5zZXJ0aW9ucygrKSwgMzEgZGVsZXRpb25zKC0pDQo+
