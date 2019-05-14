@@ -1,64 +1,58 @@
 Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-Subject: Re: [PATCH v2 0/6] hwspinlock: allow sharing of hwspinlocks
-Date: Mon, 13 May 2019 09:13:11 +0000
-Message-ID: <25aae4ca-0568-ccaf-0c47-4f5f4e2e8599@st.com>
-References: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1556183843-28033-1-git-send-email-fabien.dessenne@st.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D55BFC742E8B3D4FAB756D29EDD9858A@st.com>
-Content-Transfer-Encoding: base64
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH v4 0/8] stm32 m4 remoteproc on STM32MP157c
+Date: Tue, 14 May 2019 10:26:55 +0200
+Message-ID: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Cc: Benjamin GAIGNARD <benjamin.gaignard@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>
+Content-Type: text/plain
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkNCg0KDQpJIEdvdCBSb2IncyBSZXZpZXdlZC1ieS4gQW55IGZ1cnRoZXIgY29tbWVudHM/DQoN
-Cg0KRmFiaWVuDQoNCg0KT24gMjUvMDQvMjAxOSAxMToxNyBBTSwgRmFiaWVuIERlc3Nlbm5lIHdy
-b3RlOg0KPiBUaGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBkb2VzIG5vdCBhbGxvdyB0d28gZGlm
-ZmVyZW50IGRldmljZXMgdG8gdXNlDQo+IGEgY29tbW9uIGh3c3BpbmxvY2suIFRoaXMgcGF0Y2gg
-c2V0IHByb3Bvc2VzIHRvIGhhdmUsIGFzIGFuIG9wdGlvbiwgc29tZQ0KPiBod3NwaW5sb2NrcyBz
-aGFyZWQgYmV0d2VlbiBzZXZlcmFsIHVzZXJzLg0KPg0KPiBCZWxvdyBpcyBhbiBleGFtcGxlIHRo
-YXQgZXhwbGFpbiB0aGUgbmVlZCBmb3IgdGhpczoNCj4gCWV4dGk6IGludGVycnVwdC1jb250cm9s
-bGVyQDUwMDBkMDAwIHsNCj4gCQljb21wYXRpYmxlID0gInN0LHN0bTMybXAxLWV4dGkiLCAic3lz
-Y29uIjsNCj4gCQlpbnRlcnJ1cHQtY29udHJvbGxlcjsNCj4gCQkjaW50ZXJydXB0LWNlbGxzID0g
-PDI+Ow0KPiAJCXJlZyA9IDwweDUwMDBkMDAwIDB4NDAwPjsNCj4gCQlod2xvY2tzID0gPCZoc2Vt
-IDE+Ow0KPiAJfTsNCj4gVGhlIHR3byBkcml2ZXJzIChzdG0zMm1wMS1leHRpIGFuZCBzeXNjb24p
-IHJlZmVyIHRvIHRoZSBzYW1lIGh3bG9jay4NCj4gV2l0aCB0aGUgY3VycmVudCBod3NwaW5sb2Nr
-IGltcGxlbWVudGF0aW9uLCBvbmx5IHRoZSBmaXJzdCBkcml2ZXIgc3VjY2VlZHMNCj4gaW4gcmVx
-dWVzdGluZyAoaHdzcGluX2xvY2tfcmVxdWVzdF9zcGVjaWZpYykgdGhlIGh3bG9jay4gVGhlIHNl
-Y29uZCByZXF1ZXN0DQo+IGZhaWxzLg0KPg0KPg0KPiBUaGUgcHJvcG9zZWQgYXBwcm9hY2ggZG9l
-cyBub3QgbW9kaWZ5IHRoZSBBUEksIGJ1dCBleHRlbmRzIHRoZSBEVCAnaHdsb2NrcycNCj4gcHJv
-cGVydHkgd2l0aCBhIHNlY29uZCBvcHRpb25hbCBwYXJhbWV0ZXIgKHRoZSBmaXJzdCBvbmUgaWRl
-bnRpZmllcyBhbg0KPiBod2xvY2spIHRoYXQgc3BlY2lmaWVzIHdoZXRoZXIgYW4gaHdsb2NrIGlz
-IHJlcXVlc3RlZCBmb3IgZXhjbHVzaXZlIHVzYWdlDQo+IChjdXJyZW50IGJlaGF2aW9yKSBvciBj
-YW4gYmUgc2hhcmVkIGJldHdlZW4gc2V2ZXJhbCB1c2Vycy4NCj4gRXhhbXBsZXM6DQo+IAlod2xv
-Y2tzID0gPCZoc2VtIDg+OwlSZWYgdG8gaHdsb2NrICM4IGZvciBleGNsdXNpdmUgdXNhZ2UNCj4g
-CWh3bG9ja3MgPSA8JmhzZW0gOCAwPjsJUmVmIHRvIGh3bG9jayAjOCBmb3IgZXhjbHVzaXZlICgw
-KSB1c2FnZQ0KPiAJaHdsb2NrcyA9IDwmaHNlbSA4IDE+OwlSZWYgdG8gaHdsb2NrICM4IGZvciBz
-aGFyZWQgKDEpIHVzYWdlDQo+DQo+IEFzIGEgY29uc3RyYWludCwgdGhlICNod2xvY2stY2VsbHMg
-dmFsdWUgbXVzdCBiZSAxIG9yIDIuDQo+IEluIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uLCB0
-aGlzIGNhbiBoYXZlIHRoZW9yaWNhbGx5IGFueSB2YWx1ZSBidXQ6DQo+IC0gYWxsIG9mIHRoZSBl
-eGlzaXRpbmcgZHJpdmVycyB1c2UgdGhlIHNhbWUgdmFsdWUgOiAxLg0KPiAtIHRoZSBmcmFtZXdv
-cmsgc3VwcG9ydHMgb25seSBvbmUgdmFsdWUgOiAxIChzZWUgaW1wbGVtZW50YXRpb24gb2YNCj4g
-ICAgb2ZfaHdzcGluX2xvY2tfc2ltcGxlX3hsYXRlKCkpDQo+IEhlbmNlLCBpdCBzaGFsbCBub3Qg
-YmUgYSBwcm9ibGVtIHRvIHJlc3RyaWN0IHRoaXMgdmFsdWUgdG8gMSBvciAyIHNpbmNlDQo+IGl0
-IHdvbid0IGJyZWFrIGFueSBkcml2ZXIuDQo+DQo+IENoYW5nZXMgc2luY2UgdjE6DQo+ICogUmVt
-b3ZlZCB1c2VsZXNzICdzdGF0dXMgPSAib2theSInIGZyb20gc3RtMzJtcDE1N2MuZHRzaQ0KPg0K
-PiBGYWJpZW4gRGVzc2VubmUgKDYpOg0KPiAgICBkdC1iaW5kaW5nczogaHdsb2NrOiBhZGQgc3Vw
-cG9ydCBvZiBzaGFyZWQgbG9ja3MNCj4gICAgaHdzcGlubG9jazogYWxsb3cgc2hhcmluZyBvZiBo
-d3NwaW5sb2Nrcw0KPiAgICBkdC1iaW5kaW5nczogaHdsb2NrOiB1cGRhdGUgU1RNMzIgI2h3bG9j
-ay1jZWxscyB2YWx1ZQ0KPiAgICBBUk06IGR0czogc3RtMzI6IEFkZCBod3NwaW5sb2NrIG5vZGUg
-Zm9yIHN0bTMybXAxNTcgU29DDQo+ICAgIEFSTTogZHRzOiBzdG0zMjogQWRkIGh3bG9jayBmb3Ig
-aXJxY2hpcCBvbiBzdG0zMm1wMTU3DQo+ICAgIEFSTTogZHRzOiBzdG0zMjogaHdsb2NrcyBmb3Ig
-R1BJTyBmb3Igc3RtMzJtcDE1Nw0KPg0KPiAgIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2h3bG9j
-ay9od2xvY2sudHh0ICAgICAgICAgIHwgMjcgKysrKystLQ0KPiAgIC4uLi9iaW5kaW5ncy9od2xv
-Y2svc3Qsc3RtMzItaHdzcGlubG9jay50eHQgICAgICAgIHwgIDYgKy0NCj4gICBEb2N1bWVudGF0
-aW9uL2h3c3BpbmxvY2sudHh0ICAgICAgICAgICAgICAgICAgICAgICB8IDEwICsrLQ0KPiAgIGFy
-Y2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTctcGluY3RybC5kdHNpICAgICAgICAgIHwgIDIgKw0K
-PiAgIGFyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTdjLmR0c2kgICAgICAgICAgICAgICAgIHwg
-IDkgKysrDQo+ICAgZHJpdmVycy9od3NwaW5sb2NrL2h3c3BpbmxvY2tfY29yZS5jICAgICAgICAg
-ICAgICAgfCA4MiArKysrKysrKysrKysrKysrKy0tLS0tDQo+ICAgZHJpdmVycy9od3NwaW5sb2Nr
-L2h3c3BpbmxvY2tfaW50ZXJuYWwuaCAgICAgICAgICAgfCAgMiArDQo+ICAgNyBmaWxlcyBjaGFu
-Z2VkLCAxMDcgaW5zZXJ0aW9ucygrKSwgMzEgZGVsZXRpb25zKC0pDQo+
+STMicrolectronics STM32MP157 MPU are based on a Dual Arm Cortex-A7 core and a
+Cortex-M4.
+This patchset adds the support of the stm32_rproc driver allowing to control
+the M4 remote processor.
+
+Changes since v3:
+-Replaced "st,auto_boot" with "st,auto-boot"
+-Update m4 reg values and align with unit-address
+
+Changes since v2:
+- Clarified "reg" description
+- Change m4 unit adress to 38000000
+- Renamed "auto_boot" in "st,auto-boot"
+
+Changes since v1:
+- Gave details about the memory mapping (in bindings).
+- Used 'dma-ranges' instead of 'ranges'.
+- Updated the 'compatible' property.
+- Remove the 'recovery', 'reset-names' and 'interrupt-names' properties.
+- Clarified why / when mailboxes are optional.
+
+Fabien Dessenne (8):
+  dt-bindings: stm32: add bindings for ML-AHB interconnect
+  dt-bindings: remoteproc: add bindings for stm32 remote processor
+    driver
+  remoteproc: stm32: add an ST stm32_rproc driver
+  ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
+  ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
+  ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
+
+ .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
+ .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
+ arch/arm/boot/dts/stm32mp157a-dk1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c-ed1.dts              |  52 ++
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |  20 +
+ drivers/remoteproc/Kconfig                         |  15 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
+ 8 files changed, 868 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
+ create mode 100644 drivers/remoteproc/stm32_rproc.c
+
+-- 
+2.7.4
