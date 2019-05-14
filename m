@@ -1,236 +1,702 @@
-Return-Path: <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH 3/3] rpmsg: virtio_rpmsg_bus: get buffer size from config
- space
-References: <1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com>
- <1548949280-31794-4-git-send-email-xiaoxiang@xiaomi.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Message-ID: <bc0e287e-cadd-c61c-c6c4-28cad642b9eb@st.com>
-Date: Thu, 9 May 2019 14:36:00 +0200
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien Dessenne <fabien.dessenne@st.com>
+Subject: [PATCH v4 3/8] remoteproc: stm32: add an ST stm32_rproc driver
+Date: Tue, 14 May 2019 10:26:58 +0200
+Message-ID: <1557822423-22658-4-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+References: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1548949280-31794-4-git-send-email-xiaoxiang@xiaomi.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-To: Xiang Xiao <xiaoxiang781216@gmail.com>, ohad@wizery.com, bjorn.andersson@linaro.org, wendy.liang@xilinx.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Xiang Xiao <xiaoxiang@xiaomi.com>, Loic PALLARDY <loic.pallardy@st.com>, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello Xiang,
+This patch introduces a new remoteproc driver to control Cortex-M4
+co-processor of the STM32 family.
+It provides with the following features:
+- start and stop
+- dedicated co-processor memory regions registration
+- coredump and recovery
 
-Similar mechanism has been proposed by Loic 2 years ago (link to the
-series here https://lkml.org/lkml/2017/3/28/349).
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+---
+ drivers/remoteproc/Kconfig       |  15 +
+ drivers/remoteproc/Makefile      |   1 +
+ drivers/remoteproc/stm32_rproc.c | 628 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 644 insertions(+)
+ create mode 100644 drivers/remoteproc/stm32_rproc.c
 
-Did you see them? Regarding history, patches seem just on hold...
-
-Main differences (except interesting RX/TX size split) seems that you
-- don't use the virtio_config_ops->get
-- define a new feature VIRTIO_RPMSG_F_NS.
-
-Regards
-Arnaud
-
-
-On 1/31/19 4:41 PM, Xiang Xiao wrote:
-> 512 bytes isn't always suitable for all case, let firmware
-> maker decide the best value from resource table.
-> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
-> 
-> Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c  | 50 +++++++++++++++++++++++++--------------
->  include/uapi/linux/virtio_rpmsg.h | 24 +++++++++++++++++++
->  2 files changed, 56 insertions(+), 18 deletions(-)
->  create mode 100644 include/uapi/linux/virtio_rpmsg.h
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 59c4554..049dd97 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -16,6 +16,7 @@
->  #include <linux/virtio.h>
->  #include <linux/virtio_ids.h>
->  #include <linux/virtio_config.h>
-> +#include <linux/virtio_rpmsg.h>
->  #include <linux/scatterlist.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/slab.h>
-> @@ -38,7 +39,8 @@
->   * @sbufs:	kernel address of tx buffers
->   * @num_rbufs:	total number of buffers for rx
->   * @num_sbufs:	total number of buffers for tx
-> - * @buf_size:	size of one rx or tx buffer
-> + * @rbuf_size:	size of one rx buffer
-> + * @sbuf_size:	size of one tx buffer
->   * @last_sbuf:	index of last tx buffer used
->   * @rbufs_dma:	dma base addr of rx buffers
->   * @sbufs_dma:	dma base addr of tx buffers
-> @@ -61,7 +63,8 @@ struct virtproc_info {
->  	void *rbufs, *sbufs;
->  	unsigned int num_rbufs;
->  	unsigned int num_sbufs;
-> -	unsigned int buf_size;
-> +	unsigned int rbuf_size;
-> +	unsigned int sbuf_size;
->  	int last_sbuf;
->  	dma_addr_t rbufs_dma;
->  	dma_addr_t sbufs_dma;
-> @@ -73,9 +76,6 @@ struct virtproc_info {
->  	struct rpmsg_endpoint *ns_ept;
->  };
->  
-> -/* The feature bitmap for virtio rpmsg */
-> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-> -
->  /**
->   * struct rpmsg_hdr - common header for all rpmsg messages
->   * @src: source address
-> @@ -452,7 +452,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
->  
->  	/* either pick the next unused tx buffer */
->  	if (vrp->last_sbuf < vrp->num_sbufs)
-> -		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
-> +		ret = vrp->sbufs + vrp->sbuf_size * vrp->last_sbuf++;
->  	/* or recycle a used one */
->  	else
->  		ret = virtqueue_get_buf(vrp->svq, &len);
-> @@ -578,7 +578,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->  	 * messaging), or to improve the buffer allocator, to support
->  	 * variable-length buffer sizes.
->  	 */
-> -	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
-> +	if (len > vrp->sbuf_size - sizeof(struct rpmsg_hdr)) {
->  		dev_err(dev, "message is too big (%d)\n", len);
->  		return -EMSGSIZE;
->  	}
-> @@ -718,7 +718,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  	 * We currently use fixed-sized buffers, so trivially sanitize
->  	 * the reported payload length.
->  	 */
-> -	if (len > vrp->buf_size ||
-> +	if (len > vrp->rbuf_size ||
->  	    msg->len > (len - sizeof(struct rpmsg_hdr))) {
->  		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg->len);
->  		return -EINVAL;
-> @@ -751,7 +751,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  		dev_warn(dev, "msg received with no recipient\n");
->  
->  	/* publish the real size of the buffer */
-> -	rpmsg_sg_init(&sg, msg, vrp->buf_size);
-> +	rpmsg_sg_init(&sg, msg, vrp->rbuf_size);
->  
->  	/* add the buffer back to the remote processor's virtqueue */
->  	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-> @@ -907,11 +907,24 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	else
->  		vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
->  
-> -	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
-> +	/* try to get buffer size from config space */
-> +	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
-> +		/* note: virtio_rpmsg_config is defined from remote view */
-> +		virtio_cread(vdev, struct virtio_rpmsg_config,
-> +			     txbuf_size, &vrp->rbuf_size);
-> +		virtio_cread(vdev, struct virtio_rpmsg_config,
-> +			     rxbuf_size, &vrp->sbuf_size);
-> +	}
-> +
-> +	/* use the default if resource table doesn't provide one */
-> +	if (!vrp->rbuf_size)
-> +		vrp->rbuf_size = MAX_RPMSG_BUF_SIZE;
-> +	if (!vrp->sbuf_size)
-> +		vrp->sbuf_size = MAX_RPMSG_BUF_SIZE;
->  
->  	/* allocate coherent memory for the buffers */
->  	vrp->rbufs = dma_alloc_coherent(vdev->dev.parent->parent,
-> -					vrp->num_rbufs * vrp->buf_size,
-> +					vrp->num_rbufs * vrp->rbuf_size,
->  					&vrp->rbufs_dma, GFP_KERNEL);
->  	if (!vrp->rbufs) {
->  		err = -ENOMEM;
-> @@ -922,7 +935,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  		vrp->rbufs, &vrp->rbufs_dma);
->  
->  	vrp->sbufs = dma_alloc_coherent(vdev->dev.parent->parent,
-> -					vrp->num_sbufs * vrp->buf_size,
-> +					vrp->num_sbufs * vrp->sbuf_size,
->  					&vrp->sbufs_dma, GFP_KERNEL);
->  	if (!vrp->sbufs) {
->  		err = -ENOMEM;
-> @@ -935,9 +948,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	/* set up the receive buffers */
->  	for (i = 0; i < vrp->num_rbufs; i++) {
->  		struct scatterlist sg;
-> -		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
-> +		void *cpu_addr = vrp->rbufs + i * vrp->rbuf_size;
->  
-> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
-> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rbuf_size);
->  
->  		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
->  					  GFP_KERNEL);
-> @@ -984,11 +997,11 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  free_sbufs:
->  	dma_free_coherent(vdev->dev.parent->parent,
-> -			  vrp->num_sbufs * vrp->buf_size,
-> +			  vrp->num_sbufs * vrp->sbuf_size,
->  			  vrp->sbufs, vrp->sbufs_dma);
->  free_rbufs:
->  	dma_free_coherent(vdev->dev.parent->parent,
-> -			  vrp->num_rbufs * vrp->buf_size,
-> +			  vrp->num_rbufs * vrp->rbuf_size,
->  			  vrp->rbufs, vrp->rbufs_dma);
->  vqs_del:
->  	vdev->config->del_vqs(vrp->vdev);
-> @@ -1023,10 +1036,10 @@ static void rpmsg_remove(struct virtio_device *vdev)
->  	vdev->config->del_vqs(vrp->vdev);
->  
->  	dma_free_coherent(vdev->dev.parent->parent,
-> -			  vrp->num_sbufs * vrp->buf_size,
-> +			  vrp->num_sbufs * vrp->sbuf_size,
->  			  vrp->sbufs, vrp->sbufs_dma);
->  	dma_free_coherent(vdev->dev.parent->parent,
-> -			  vrp->num_rbufs * vrp->buf_size,
-> +			  vrp->num_rbufs * vrp->rbuf_size,
->  			  vrp->rbufs, vrp->rbufs_dma);
->  
->  	kfree(vrp);
-> @@ -1039,6 +1052,7 @@ static struct virtio_device_id id_table[] = {
->  
->  static unsigned int features[] = {
->  	VIRTIO_RPMSG_F_NS,
-> +	VIRTIO_RPMSG_F_BUFSZ,
->  };
->  
->  static struct virtio_driver virtio_ipc_driver = {
-> diff --git a/include/uapi/linux/virtio_rpmsg.h b/include/uapi/linux/virtio_rpmsg.h
-> new file mode 100644
-> index 0000000..24fa0dd
-> --- /dev/null
-> +++ b/include/uapi/linux/virtio_rpmsg.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * Copyright (C) Pinecone Inc. 2019
-> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
-> + */
-> +
-> +#ifndef _UAPI_LINUX_VIRTIO_RPMSG_H
-> +#define _UAPI_LINUX_VIRTIO_RPMSG_H
-> +
-> +#include <linux/types.h>
-> +
-> +/* The feature bitmap for virtio rpmsg */
-> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-> +#define VIRTIO_RPMSG_F_BUFSZ	2 /* RP get buffer size from config space */
-> +
-> +struct virtio_rpmsg_config {
-> +	/* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
-> +	__u32 txbuf_size;
-> +	__u32 rxbuf_size;
-> +	__u32 reserved[14]; /* Reserve for the future use */
-> +	/* Put the customize config here */
-> +} __attribute__((packed));
-> +
-> +#endif /* _UAPI_LINUX_VIRTIO_RPMSG_H */
-> 
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index f0abd26..0fba05a 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -197,6 +197,21 @@ config ST_REMOTEPROC
+ config ST_SLIM_REMOTEPROC
+ 	tristate
+ 
++config STM32_RPROC
++	tristate "STM32 remoteproc support"
++	depends on ARCH_STM32
++	depends on REMOTEPROC
++	select MAILBOX
++	help
++	  Say y here to support STM32 MCU processors via the
++	  remote processor framework.
++
++	  You want to say y here in order to enable AMP
++	  use-cases to run on your platform (dedicated firmware could be
++	  offloaded to remote MCU processors using this framework).
++
++	  This can be either built-in or a loadable module.
++
+ endif # REMOTEPROC
+ 
+ endmenu
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index ce5d061..00f09e6 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -26,3 +26,4 @@ qcom_wcnss_pil-y			+= qcom_wcnss.o
+ qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
+ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+ obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
++obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+new file mode 100644
+index 0000000..eb24b92c
+--- /dev/null
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -0,0 +1,628 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
++ * Authors: Ludovic Barre <ludovic.barre@st.com> for STMicroelectronics.
++ *          Fabien Dessenne <fabien.dessenne@st.com> for STMicroelectronics.
++ */
++
++#include <linux/arm-smccc.h>
++#include <linux/dma-mapping.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/mailbox_client.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/regmap.h>
++#include <linux/remoteproc.h>
++#include <linux/reset.h>
++
++#include "remoteproc_internal.h"
++
++#define HOLD_BOOT		0
++#define RELEASE_BOOT		1
++
++#define MBOX_NB_VQ		2
++#define MBOX_NB_MBX		3
++
++#define STM32_SMC_RCC		0x82001000
++#define STM32_SMC_REG_WRITE	0x1
++
++#define STM32_MBX_VQ0		"vq0"
++#define STM32_MBX_VQ1		"vq1"
++#define STM32_MBX_SHUTDOWN	"shutdown"
++
++struct stm32_syscon {
++	struct regmap *map;
++	u32 reg;
++	u32 mask;
++};
++
++struct stm32_rproc_mem {
++	char name[20];
++	void __iomem *cpu_addr;
++	phys_addr_t bus_addr;
++	u32 dev_addr;
++	size_t size;
++};
++
++struct stm32_rproc_mem_ranges {
++	u32 dev_addr;
++	u32 bus_addr;
++	u32 size;
++};
++
++struct stm32_mbox {
++	const unsigned char name[10];
++	struct mbox_chan *chan;
++	struct mbox_client client;
++	int vq_id;
++};
++
++struct stm32_rproc {
++	struct reset_control *rst;
++	struct stm32_syscon hold_boot;
++	struct stm32_syscon pdds;
++	u32 nb_rmems;
++	struct stm32_rproc_mem *rmems;
++	struct stm32_mbox mb[MBOX_NB_MBX];
++	bool secured_soc;
++};
++
++static int stm32_rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da)
++{
++	unsigned int i;
++	struct stm32_rproc *ddata = rproc->priv;
++	struct stm32_rproc_mem *p_mem;
++
++	for (i = 0; i < ddata->nb_rmems; i++) {
++		p_mem = &ddata->rmems[i];
++
++		if (pa < p_mem->bus_addr ||
++		    pa >= p_mem->bus_addr + p_mem->size)
++			continue;
++		*da = pa - p_mem->bus_addr + p_mem->dev_addr;
++		dev_dbg(rproc->dev.parent, "pa %#x to da %llx\n", pa, *da);
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static int stm32_rproc_mem_alloc(struct rproc *rproc,
++				 struct rproc_mem_entry *mem)
++{
++	struct device *dev = rproc->dev.parent;
++	void *va;
++
++	dev_dbg(dev, "map memory: %pa+%zx\n", &mem->dma, mem->len);
++	va = ioremap_wc(mem->dma, mem->len);
++	if (IS_ERR_OR_NULL(va)) {
++		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
++			&mem->dma, mem->len);
++		return -ENOMEM;
++	}
++
++	/* Update memory entry va */
++	mem->va = va;
++
++	return 0;
++}
++
++static int stm32_rproc_mem_release(struct rproc *rproc,
++				   struct rproc_mem_entry *mem)
++{
++	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
++	iounmap(mem->va);
++
++	return 0;
++}
++
++static int stm32_rproc_of_memory_translations(struct rproc *rproc)
++{
++	struct device *parent, *dev = rproc->dev.parent;
++	struct stm32_rproc *ddata = rproc->priv;
++	struct device_node *np;
++	struct stm32_rproc_mem *p_mems;
++	struct stm32_rproc_mem_ranges *mem_range;
++	int cnt, array_size, i, ret = 0;
++
++	parent = dev->parent;
++	np = parent->of_node;
++
++	cnt = of_property_count_elems_of_size(np, "dma-ranges",
++					      sizeof(*mem_range));
++	if (cnt <= 0) {
++		dev_err(dev, "%s: dma-ranges property not defined\n", __func__);
++		return -EINVAL;
++	}
++
++	p_mems = devm_kcalloc(dev, cnt, sizeof(*p_mems), GFP_KERNEL);
++	if (!p_mems)
++		return -ENOMEM;
++	mem_range = kcalloc(cnt, sizeof(*mem_range), GFP_KERNEL);
++	if (!mem_range)
++		return -ENOMEM;
++
++	array_size = cnt * sizeof(struct stm32_rproc_mem_ranges) / sizeof(u32);
++
++	ret = of_property_read_u32_array(np, "dma-ranges",
++					 (u32 *)mem_range, array_size);
++	if (ret) {
++		dev_err(dev, "error while get dma-ranges property: %x\n", ret);
++		goto free_mem;
++	}
++
++	for (i = 0; i < cnt; i++) {
++		p_mems[i].bus_addr = mem_range[i].bus_addr;
++		p_mems[i].dev_addr = mem_range[i].dev_addr;
++		p_mems[i].size     = mem_range[i].size;
++
++		dev_dbg(dev, "memory range[%i]: da %#x, pa %#x, size %#x:\n",
++			i, p_mems[i].dev_addr, p_mems[i].bus_addr,
++			p_mems[i].size);
++	}
++
++	ddata->rmems = p_mems;
++	ddata->nb_rmems = cnt;
++
++free_mem:
++	kfree(mem_range);
++	return ret;
++}
++
++static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(ddata->mb); i++) {
++		if (!strncmp(ddata->mb[i].name, name, strlen(name)))
++			return i;
++	}
++	dev_err(&rproc->dev, "mailbox %s not found\n", name);
++
++	return -EINVAL;
++}
++
++static int stm32_rproc_elf_load_rsc_table(struct rproc *rproc,
++					  const struct firmware *fw)
++{
++	if (rproc_elf_load_rsc_table(rproc, fw))
++		dev_warn(&rproc->dev, "no resource table found for this firmware\n");
++
++	return 0;
++}
++
++static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
++{
++	struct device *dev = rproc->dev.parent;
++	struct device_node *np = dev->of_node;
++	struct of_phandle_iterator it;
++	struct rproc_mem_entry *mem;
++	struct reserved_mem *rmem;
++	u64 da;
++	int index = 0;
++
++	/* Register associated reserved memory regions */
++	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
++	while (of_phandle_iterator_next(&it) == 0) {
++		rmem = of_reserved_mem_lookup(it.node);
++		if (!rmem) {
++			dev_err(dev, "unable to acquire memory-region\n");
++			return -EINVAL;
++		}
++
++		if (stm32_rproc_pa_to_da(rproc, rmem->base, &da) < 0) {
++			dev_err(dev, "memory region not valid %pa\n",
++				&rmem->base);
++			return -EINVAL;
++		}
++
++		/*  No need to map vdev buffer */
++		if (strcmp(it.node->name, "vdev0buffer")) {
++			/* Register memory region */
++			mem = rproc_mem_entry_init(dev, NULL,
++						   (dma_addr_t)rmem->base,
++						   rmem->size, da,
++						   stm32_rproc_mem_alloc,
++						   stm32_rproc_mem_release,
++						   it.node->name);
++
++			if (mem)
++				rproc_coredump_add_segment(rproc, da,
++							   rmem->size);
++		} else {
++			/* Register reserved memory for vdev buffer alloc */
++			mem = rproc_of_resm_mem_entry_init(dev, index,
++							   rmem->size,
++							   rmem->base,
++							   it.node->name);
++		}
++
++		if (!mem)
++			return -ENOMEM;
++
++		rproc_add_carveout(rproc, mem);
++		index++;
++	}
++
++	return stm32_rproc_elf_load_rsc_table(rproc, fw);
++}
++
++static irqreturn_t stm32_rproc_wdg(int irq, void *data)
++{
++	struct rproc *rproc = data;
++
++	rproc_report_crash(rproc, RPROC_WATCHDOG);
++
++	return IRQ_HANDLED;
++}
++
++static void stm32_rproc_mb_callback(struct mbox_client *cl, void *data)
++{
++	struct rproc *rproc = dev_get_drvdata(cl->dev);
++	struct stm32_mbox *mb = container_of(cl, struct stm32_mbox, client);
++
++	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
++		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
++}
++
++static void stm32_rproc_free_mbox(struct rproc *rproc)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(ddata->mb); i++) {
++		if (ddata->mb[i].chan)
++			mbox_free_channel(ddata->mb[i].chan);
++		ddata->mb[i].chan = NULL;
++	}
++}
++
++static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
++	{
++		.name = STM32_MBX_VQ0,
++		.vq_id = 0,
++		.client = {
++			.rx_callback = stm32_rproc_mb_callback,
++			.tx_block = false,
++		},
++	},
++	{
++		.name = STM32_MBX_VQ1,
++		.vq_id = 1,
++		.client = {
++			.rx_callback = stm32_rproc_mb_callback,
++			.tx_block = false,
++		},
++	},
++	{
++		.name = STM32_MBX_SHUTDOWN,
++		.vq_id = -1,
++		.client = {
++			.tx_block = true,
++			.tx_done = NULL,
++			.tx_tout = 500, /* 500 ms time out */
++		},
++	}
++};
++
++static void stm32_rproc_request_mbox(struct rproc *rproc)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	struct device *dev = &rproc->dev;
++	unsigned int i;
++	const unsigned char *name;
++	struct mbox_client *cl;
++
++	/* Initialise mailbox structure table */
++	memcpy(ddata->mb, stm32_rproc_mbox, sizeof(stm32_rproc_mbox));
++
++	for (i = 0; i < MBOX_NB_MBX; i++) {
++		name = ddata->mb[i].name;
++
++		cl = &ddata->mb[i].client;
++		cl->dev = dev->parent;
++
++		ddata->mb[i].chan = mbox_request_channel_byname(cl, name);
++		if (IS_ERR(ddata->mb[i].chan)) {
++			dev_warn(dev, "cannot get %s mbox\n", name);
++			ddata->mb[i].chan = NULL;
++		}
++	}
++}
++
++static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	struct stm32_syscon hold_boot = ddata->hold_boot;
++	struct arm_smccc_res smc_res;
++	int val, err;
++
++	val = hold ? HOLD_BOOT : RELEASE_BOOT;
++
++	if (ddata->secured_soc) {
++		arm_smccc_smc(STM32_SMC_RCC, STM32_SMC_REG_WRITE,
++			      hold_boot.reg, val, 0, 0, 0, 0, &smc_res);
++		err = smc_res.a0;
++	} else {
++		err = regmap_update_bits(hold_boot.map, hold_boot.reg,
++					 hold_boot.mask, val);
++	}
++
++	if (err)
++		dev_err(&rproc->dev, "failed to set hold boot\n");
++
++	return err;
++}
++
++static void stm32_rproc_add_coredump_trace(struct rproc *rproc)
++{
++	struct rproc_debug_trace *trace;
++	struct rproc_dump_segment *segment;
++	bool already_added;
++
++	list_for_each_entry(trace, &rproc->traces, node) {
++		already_added = false;
++
++		list_for_each_entry(segment, &rproc->dump_segments, node) {
++			if (segment->da == trace->trace_mem.da) {
++				already_added = true;
++				break;
++			}
++		}
++
++		if (!already_added)
++			rproc_coredump_add_segment(rproc, trace->trace_mem.da,
++						   trace->trace_mem.len);
++	}
++}
++
++static int stm32_rproc_start(struct rproc *rproc)
++{
++	int err;
++
++	stm32_rproc_add_coredump_trace(rproc);
++
++	err = stm32_rproc_set_hold_boot(rproc, false);
++	if (err)
++		return err;
++
++	return stm32_rproc_set_hold_boot(rproc, true);
++}
++
++static int stm32_rproc_stop(struct rproc *rproc)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	int err, dummy_data, idx;
++
++	/* request shutdown of the remote processor */
++	if (rproc->state != RPROC_OFFLINE) {
++		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
++		if (idx >= 0 && ddata->mb[idx].chan) {
++			/* a dummy data is sent to allow to block on transmit */
++			err = mbox_send_message(ddata->mb[idx].chan,
++						&dummy_data);
++			if (err < 0)
++				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
++		}
++	}
++
++	err = stm32_rproc_set_hold_boot(rproc, true);
++	if (err)
++		return err;
++
++	err = reset_control_assert(ddata->rst);
++	if (err) {
++		dev_err(&rproc->dev, "failed to assert the reset\n");
++		return err;
++	}
++
++	/* to allow platform Standby power mode, set remote proc Deep Sleep */
++	if (ddata->pdds.map) {
++		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
++					 ddata->pdds.mask, 1);
++		if (err) {
++			dev_err(&rproc->dev, "failed to set pdds\n");
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++static void stm32_rproc_kick(struct rproc *rproc, int vqid)
++{
++	struct stm32_rproc *ddata = rproc->priv;
++	unsigned int i;
++	int err;
++
++	if (WARN_ON(vqid >= MBOX_NB_VQ))
++		return;
++
++	for (i = 0; i < MBOX_NB_MBX; i++) {
++		if (vqid != ddata->mb[i].vq_id)
++			continue;
++		if (!ddata->mb[i].chan)
++			return;
++		err = mbox_send_message(ddata->mb[i].chan, (void *)vqid);
++		if (err < 0)
++			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
++				__func__, ddata->mb[i].name, err);
++		return;
++	}
++}
++
++static struct rproc_ops st_rproc_ops = {
++	.start		= stm32_rproc_start,
++	.stop		= stm32_rproc_stop,
++	.kick		= stm32_rproc_kick,
++	.load		= rproc_elf_load_segments,
++	.parse_fw	= stm32_rproc_parse_fw,
++	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
++	.sanity_check	= rproc_elf_sanity_check,
++	.get_boot_addr	= rproc_elf_get_boot_addr,
++};
++
++static const struct of_device_id stm32_rproc_match[] = {
++	{ .compatible = "st,stm32mp1-m4" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, stm32_rproc_match);
++
++static int stm32_rproc_get_syscon(struct device_node *np, const char *prop,
++				  struct stm32_syscon *syscon)
++{
++	int err = 0;
++
++	syscon->map = syscon_regmap_lookup_by_phandle(np, prop);
++	if (IS_ERR(syscon->map)) {
++		err = PTR_ERR(syscon->map);
++		syscon->map = NULL;
++		goto out;
++	}
++
++	err = of_property_read_u32_index(np, prop, 1, &syscon->reg);
++	if (err)
++		goto out;
++
++	err = of_property_read_u32_index(np, prop, 2, &syscon->mask);
++
++out:
++	return err;
++}
++
++static int stm32_rproc_parse_dt(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct stm32_rproc *ddata = rproc->priv;
++	struct stm32_syscon tz;
++	unsigned int tzen;
++	int err, irq;
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq > 0) {
++		err = devm_request_irq(dev, irq, stm32_rproc_wdg, 0,
++				       dev_name(dev), rproc);
++		if (err) {
++			dev_err(dev, "failed to request wdg irq\n");
++			return err;
++		}
++
++		dev_info(dev, "wdg irq registered\n");
++	}
++
++	ddata->rst = devm_reset_control_get_by_index(dev, 0);
++	if (IS_ERR(ddata->rst)) {
++		dev_err(dev, "failed to get mcu reset\n");
++		return PTR_ERR(ddata->rst);
++	}
++
++	/*
++	 * if platform is secured the hold boot bit must be written by
++	 * smc call and read normally.
++	 * if not secure the hold boot bit could be read/write normally
++	 */
++	err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
++	if (err) {
++		dev_err(dev, "failed to get tz syscfg\n");
++		return err;
++	}
++
++	err = regmap_read(tz.map, tz.reg, &tzen);
++	if (err) {
++		dev_err(&rproc->dev, "failed to read tzen\n");
++		return err;
++	}
++	ddata->secured_soc = tzen & tz.mask;
++
++	err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
++				     &ddata->hold_boot);
++	if (err) {
++		dev_err(dev, "failed to get hold boot\n");
++		return err;
++	}
++
++	err = stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
++	if (err)
++		dev_warn(dev, "failed to get pdds\n");
++
++	rproc->auto_boot = of_property_read_bool(np, "st,auto-boot");
++
++	return stm32_rproc_of_memory_translations(rproc);
++}
++
++static int stm32_rproc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct stm32_rproc *ddata;
++	struct device_node *np = dev->of_node;
++	struct rproc *rproc;
++	int ret;
++
++	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
++	if (ret)
++		return ret;
++
++	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
++	if (!rproc)
++		return -ENOMEM;
++
++	rproc->has_iommu = false;
++	ddata = rproc->priv;
++
++	platform_set_drvdata(pdev, rproc);
++
++	ret = stm32_rproc_parse_dt(pdev);
++	if (ret)
++		goto free_rproc;
++
++	stm32_rproc_request_mbox(rproc);
++
++	ret = rproc_add(rproc);
++	if (ret)
++		goto free_mb;
++
++	return 0;
++
++free_mb:
++	stm32_rproc_free_mbox(rproc);
++free_rproc:
++	rproc_free(rproc);
++	return ret;
++}
++
++static int stm32_rproc_remove(struct platform_device *pdev)
++{
++	struct rproc *rproc = platform_get_drvdata(pdev);
++
++	if (atomic_read(&rproc->power) > 0)
++		rproc_shutdown(rproc);
++
++	rproc_del(rproc);
++	stm32_rproc_free_mbox(rproc);
++	rproc_free(rproc);
++
++	return 0;
++}
++
++static struct platform_driver stm32_rproc_driver = {
++	.probe = stm32_rproc_probe,
++	.remove = stm32_rproc_remove,
++	.driver = {
++		.name = "stm32-rproc",
++		.of_match_table = of_match_ptr(stm32_rproc_match),
++	},
++};
++module_platform_driver(stm32_rproc_driver);
++
++MODULE_DESCRIPTION("STM32 Remote Processor Control Driver");
++MODULE_AUTHOR("Ludovic Barre <ludovic.barre@st.com>");
++MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
++MODULE_LICENSE("GPL v2");
++
+-- 
+2.7.4
