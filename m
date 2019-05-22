@@ -1,76 +1,67 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH v4 5/8] ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
-Date: Tue, 14 May 2019 10:27:00 +0200
-Message-ID: <1557822423-22658-6-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
-References: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Wed, 22 May 2019 00:10:05 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc,rpmsg: add missing MAINTAINERS file entries
+Message-ID: <20190522071005.GQ31596@builder>
+References: <alpine.LFD.2.21.1905140700500.10964@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.21.1905140700500.10964@localhost.localdomain>
+To: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Declare reserved memories shared by the processors for STM32MP157c-ed1
-board.
+On Tue 14 May 04:02 PDT 2019, Robert P. J. Day wrote:
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
----
- arch/arm/boot/dts/stm32mp157c-ed1.dts | 42 +++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+> Add a few missing file and directory entries related to both
+> remoteproc and rpmsg.
+> 
+> Signed-off-by: Robert P. J. Day <rpjday@crashcourse.ca>
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-index 626ceb3..acfc5cd 100644
---- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-@@ -21,6 +21,48 @@
- 		reg = <0xC0000000 0x40000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mcuram2: mcuram2@10000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10000000 0x40000>;
-+			no-map;
-+		};
-+
-+		vdev0vring0: vdev0vring0@10040000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10040000 0x1000>;
-+			no-map;
-+		};
-+
-+		vdev0vring1: vdev0vring1@10041000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10041000 0x1000>;
-+			no-map;
-+		};
-+
-+		vdev0buffer: vdev0buffer@10042000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10042000 0x4000>;
-+			no-map;
-+		};
-+
-+		mcuram: mcuram@30000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x30000000 0x40000>;
-+			no-map;
-+		};
-+
-+		retram: retram@38000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x38000000 0x10000>;
-+			no-map;
-+		};
-+	};
-+
- 	aliases {
- 		serial0 = &uart4;
- 	};
--- 
-2.7.4
+Applied
+
+Thanks,
+Bjorn
+
+> 
+> ---
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fb9f9d71f7a2..fa0958e23b97 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13294,9 +13294,11 @@ L:	linux-remoteproc@vger.kernel.org
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/remoteproc.git
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/remoteproc/
+> +F:	Documentation/ABI/testing/sysfs-class-remoteproc
+>  F:	Documentation/remoteproc.txt
+>  F:	drivers/remoteproc/
+>  F:	include/linux/remoteproc.h
+> +F:	include/linux/remoteproc/
+> 
+>  REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+>  M:	Ohad Ben-Cohen <ohad@wizery.com>
+> @@ -13306,8 +13308,11 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ohad/rpmsg.git
+>  S:	Maintained
+>  F:	drivers/rpmsg/
+>  F:	Documentation/rpmsg.txt
+> +F:	Documentation/ABI/testing/sysfs-bus-rpmsg
+>  F:	include/linux/rpmsg.h
+>  F:	include/linux/rpmsg/
+> +F:	include/uapi/linux/rpmsg.h
+> +F:	samples/rpmsg/
+> 
+>  RENESAS CLOCK DRIVERS
+>  M:	Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> -- 
+> 
+> ========================================================================
+> Robert P. J. Day                                 Ottawa, Ontario, CANADA
+>                          http://crashcourse.ca
+> 
+> Twitter:                                       http://twitter.com/rpjday
+> LinkedIn:                               http://ca.linkedin.com/in/rpjday
+> ========================================================================
