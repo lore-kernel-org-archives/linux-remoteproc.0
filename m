@@ -1,75 +1,53 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien Dessenne <fabien.dessenne@st.com>
-Subject: [PATCH v4 7/8] ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
-Date: Tue, 14 May 2019 10:27:02 +0200
-Message-ID: <1557822423-22658-8-git-send-email-fabien.dessenne@st.com>
-In-Reply-To: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
-References: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 2/3] hwspinlock/omap: Add support for TI K3 SoCs
+Date: Thu, 30 May 2019 21:13:20 -0500
+Message-ID: <20190531021321.14025-3-s-anna@ti.com>
+In-Reply-To: <20190531021321.14025-1-s-anna@ti.com>
+References: <20190531021321.14025-1-s-anna@ti.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: Fabien Dessenne <fabien.dessenne@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, "Ludovic Barre  <ludovic.barre@st.com>, Benjamin Gaignard" <benjamin.gaignard@st.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Declare reserved memories shared by the processors for STM32MP157a-dk1
+A HwSpinlock IP is also present on the newer TI K3 AM65x and J721E
+family of SoCs within the Main NavSS sub-module. Reuse the existing
+OMAP Hwspinlock driver to extend the support for this IP on K3 AM65x
+SoCs as well. The IP has slightly different bit-fields in the
+SYSCONFIG and SYSSTATUS registers.
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- arch/arm/boot/dts/stm32mp157a-dk1.dts | 42 +++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/hwspinlock/Kconfig           | 2 +-
+ drivers/hwspinlock/omap_hwspinlock.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-index 85a761a..26ce8de 100644
---- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
-+++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-@@ -27,6 +27,48 @@
- 		reg = <0xc0000000 0x20000000>;
- 	};
+diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+index 7869c67e5b6b..37740e992cfa 100644
+--- a/drivers/hwspinlock/Kconfig
++++ b/drivers/hwspinlock/Kconfig
+@@ -9,7 +9,7 @@ menuconfig HWSPINLOCK
+ config HWSPINLOCK_OMAP
+ 	tristate "OMAP Hardware Spinlock device"
+ 	depends on HWSPINLOCK
+-	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX
++	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX || ARCH_K3
+ 	help
+ 	  Say y here to support the OMAP Hardware Spinlock device (firstly
+ 	  introduced in OMAP4).
+diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
+index 625844e0abef..a4d7a7bc863a 100644
+--- a/drivers/hwspinlock/omap_hwspinlock.c
++++ b/drivers/hwspinlock/omap_hwspinlock.c
+@@ -171,6 +171,7 @@ static int omap_hwspinlock_remove(struct platform_device *pdev)
  
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		mcuram2: mcuram2@10000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10000000 0x40000>;
-+			no-map;
-+		};
-+
-+		vdev0vring0: vdev0vring0@10040000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10040000 0x1000>;
-+			no-map;
-+		};
-+
-+		vdev0vring1: vdev0vring1@10041000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10041000 0x1000>;
-+			no-map;
-+		};
-+
-+		vdev0buffer: vdev0buffer@10042000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x10042000 0x4000>;
-+			no-map;
-+		};
-+
-+		mcuram: mcuram@30000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x30000000 0x40000>;
-+			no-map;
-+		};
-+
-+		retram: retram@38000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x38000000 0x10000>;
-+			no-map;
-+		};
-+	};
-+
- 	led {
- 		compatible = "gpio-leds";
- 		blue {
+ static const struct of_device_id omap_hwspinlock_of_match[] = {
+ 	{ .compatible = "ti,omap4-hwspinlock", },
++	{ .compatible = "ti,am654-hwspinlock", },
+ 	{ /* end */ },
+ };
+ MODULE_DEVICE_TABLE(of, omap_hwspinlock_of_match);
 -- 
-2.7.4
+2.21.0
