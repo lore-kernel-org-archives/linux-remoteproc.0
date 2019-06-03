@@ -1,53 +1,38 @@
-Return-Path: <ore@pengutronix.de>
-Date: Tue, 4 Jun 2019 06:18:54 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH 1/2] remoteproc: imx: Broaden the Kconfig selection logic
-Message-ID: <20190604041854.55hqqt6lmykwgro2@pengutronix.de>
-References: <20190603234628.10924-1-festevam@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190603234628.10924-1-festevam@gmail.com>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Return-Path: <festevam@gmail.com>
+Return-Path: <festevam@gmail.com>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH 1/2] remoteproc: imx: Broaden the Kconfig selection logic
+Date: Mon,  3 Jun 2019 20:46:27 -0300
+Message-Id: <20190603234628.10924-1-festevam@gmail.com>
+To: bjorn.andersson@linaro.org
+Cc: ohad@wizery.com, o.rempel@pengutronix.de, linux-remoteproc@vger.kernel.org, Fabio Estevam <festevam@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Jun 03, 2019 at 08:46:27PM -0300, Fabio Estevam wrote:
-> Besides i.MX6SX and i.MX7D, there are other i.MX devices that contain
-> Cortex M4 and could make use of the imx remoteproc driver, such as
-> i.MX7ULP, i.MX8M, etc.
-> 
-> Instead of adding new SoC entries in the Kconfig logic, make it
-> broader by using the more generic ARCH_MXC, which encompasses
-> all the 32-bit and 64-bit i.MX devices.
+Besides i.MX6SX and i.MX7D, there are other i.MX devices that contain
+Cortex M4 and could make use of the imx remoteproc driver, such as
+i.MX7ULP, i.MX8M, etc.
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Instead of adding new SoC entries in the Kconfig logic, make it
+broader by using the more generic ARCH_MXC, which encompasses
+all the 32-bit and 64-bit i.MX devices.
 
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
-> ---
->  drivers/remoteproc/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 18be41b8aa7e..0df301be6d9a 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -16,7 +16,7 @@ if REMOTEPROC
->  
->  config IMX_REMOTEPROC
->  	tristate "IMX6/7 remoteproc support"
-> -	depends on SOC_IMX6SX || SOC_IMX7D
-> +	depends on ARCH_MXC
->  	help
->  	  Say y here to support iMX's remote processors (Cortex M4
->  	  on iMX7D) via the remote processor framework.
-> -- 
-> 2.17.1
-> 
-> 
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ drivers/remoteproc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 18be41b8aa7e..0df301be6d9a 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -16,7 +16,7 @@ if REMOTEPROC
+ 
+ config IMX_REMOTEPROC
+ 	tristate "IMX6/7 remoteproc support"
+-	depends on SOC_IMX6SX || SOC_IMX7D
++	depends on ARCH_MXC
+ 	help
+ 	  Say y here to support iMX's remote processors (Cortex M4
+ 	  on iMX7D) via the remote processor framework.
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.17.1
