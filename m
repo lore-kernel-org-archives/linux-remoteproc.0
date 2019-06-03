@@ -1,46 +1,128 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Sat, 29 Jun 2019 21:08:28 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 0/2] hwspinlock: add the 'in_atomic' API
-Message-ID: <20190630040828.GB1263@builder>
-References: <1551974303-24542-1-git-send-email-fabien.dessenne@st.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40892 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfFCDp6 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sun, 2 Jun 2019 23:45:58 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d30so7448690pgm.7
+        for <linux-remoteproc@vger.kernel.org>; Sun, 02 Jun 2019 20:45:58 -0700 (PDT)
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v10 0/7] Add support for mt8183 SCP.
+Date: Mon,  3 Jun 2019 11:45:05 +0800
+Message-Id: <20190603034529.154969-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1551974303-24542-1-git-send-email-fabien.dessenne@st.com>
-To: Fabien Dessenne <fabien.dessenne@st.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>, Alexandre Torgue <alexandre.torgue@st.com>
+Content-Transfer-Encoding: 8bit
+Sender: linux-remoteproc-owner@vger.kernel.org
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, "open list:OPEN FIRMWARE AND FLATTENED" <devicetree@vger.kernel.org>, DEVICE, Erin Lo <erin.lo@mediatek.com>, Guenter Roeck <groeck@chromium.org>, "moderated list:ARM/Mediatek SoC" <linux-arm-kernel@lists.infradead.org>, support, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC" <linux-mediatek@lists.infradead.org>support, "open list:REMOTE PROCESSOR" <linux-remoteproc@vger.kernel.org>, SUBSYSTEM, Nicolas Boichat <drinkcat@chromium.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 07 Mar 07:58 PST 2019, Fabien Dessenne wrote:
+Add support for controlling and communicating with mt8183's system
+control processor (SCP), using the remoteproc & rpmsg framework.
+And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
-> In its current implementation, the hwspinlock framework relies on jiffies
-> to handle the timeout of the hwspin_lock_timeout_xxx() API.
-> In an atomic context (or more precisely when irq are disabled) jiffies does not
-> increase, which prevents the timeout to reach its target value (infinite loop).
-> 
-> Note that there is already an hwspinlock user that runs in atomic context
-> (drivers/irqchip/irq-stm32-exti.c) and that has to handle by itself the
-> timeout.
-> 
-> The first patch of the series completes the Documentation (the 'raw' API
-> is not documented), and the second patch provides with the 'in_atomic' API.
-> 
+The overall structure of the series is:
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2, 3).
+* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
+  interrupt (IPI) and shared memory (Patch 2, 3).
+* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
+  device. Supports name service for SCP firmware to
+  announce channels (Patch 4).
+* platform/chrome/cros_ec_rpmsg.c: Communicates with the SCP over the
+  rpmsg framework (like what platform/chrome/cros_ec_{i2c,spi}.c does)
+  (Patch 5, 6).
+* add scp dts node to mt8183 platform (Patch 7).
 
-Applied
+This series (In particular, Patch 7) is based on
+https://patchwork.kernel.org/cover/10962385/.
 
-Thanks,
-Bjorn
+Changes from v9:
+ - Remove reserve-memory-vpu_share node.
+ - Remove change to cros_ec_commands.h (That is already in
+   https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/)
 
-> Fabien Dessenne (2):
->   hwspinlock: document the hwspinlock 'raw' API
->   hwspinlock: add the 'in_atomic' API
-> 
->  Documentation/hwspinlock.txt         | 81 ++++++++++++++++++++++++++++++++++++
->  drivers/hwspinlock/hwspinlock_core.c | 43 +++++++++++++------
->  include/linux/hwspinlock.h           | 61 +++++++++++++++++++++++++--
->  3 files changed, 169 insertions(+), 16 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+Changes from v8:
+ - Rebased onto https://patchwork.kernel.org/cover/10962385/.
+ - Drop merged cros_ec_rpmsg patch, and add scp dts node patch.
+ - Add more reserved memory region.
+
+Changes from v7:
+ - Rebase onto https://lore.kernel.org/patchwork/patch/1059196/.
+ - Fix clock enable/disable timing for SCP driver.
+ - Add more SCP IPI ID.
+
+Changes from v6:
+ - Decouple mtk_rpmsg from mtk_scp.
+ - Change data of EC response to be aligned to 4 bytes.
+
+Changes from v5:
+ - Add device tree binding document for cros_ec_rpmsg.
+ - Better document in comments for cros_ec_rpmsg.
+ - Remove dependency on CONFIG_ in binding tree document.
+
+Changes from v4:
+ - Merge patch 6 (Load ELF firmware) into patch 2, so the driver loads
+   ELF firmware by default, and no longer accept plain binary.
+ - rpmsg_device listed in device tree (as a child of the SCP node) would
+   have it's device tree node mapped to the rpmsg_device, so the rpmsg
+   driver can use the properties on device tree.
+
+Changes from v3:
+ - Make writing to SCP SRAM aligned.
+ - Add a new patch (Patch 6) to load ELF instead of bin firmware.
+ - Add host event support for EC driver.
+ - Fix some bugs found in testing (missing spin_lock_init,
+   rproc_subdev_unprepare to rproc_subdev_stop).
+ - Fix some coding style issue found by checkpatch.pl.
+
+Changes from v2:
+ - Fold patch 3 into patch 2 in v2.
+ - Move IPI id around to support cross-testing for old and new firmware.
+ - Finish more TODO items.
+
+Changes from v1:
+ - Extract functions and rename variables in mtk_scp.c.
+ - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
+   short-lived work items.
+ - Code format fix based on feedback for cros_ec_rpmsg.c.
+ - Extract feature detection for SCP into separate patch (Patch 6).
+
+Eddie Huang (1):
+  arm64: dts: mt8183: add scp node
+
+Erin Lo (3):
+  dt-bindings: Add a binding for Mediatek SCP
+  remoteproc/mediatek: add SCP support for mt8183
+  remoteproc: mt8183: add reserved memory manager API
+
+Pi-Hsun Shih (3):
+  rpmsg: add rpmsg support for mt8183 SCP.
+  dt-bindings: Add binding for cros-ec-rpmsg.
+  mfd: cros_ec: differentiate SCP from EC by feature bit.
+
+ .../devicetree/bindings/mfd/cros-ec.txt       |   5 +-
+ .../bindings/remoteproc/mtk,scp.txt           |  36 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
+ drivers/mfd/cros_ec_dev.c                     |  10 +
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  77 ++
+ drivers/remoteproc/mtk_scp.c                  | 678 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 163 +++++
+ drivers/rpmsg/Kconfig                         |   9 +
+ drivers/rpmsg/Makefile                        |   1 +
+ drivers/rpmsg/mtk_rpmsg.c                     | 396 ++++++++++
+ include/linux/mfd/cros_ec.h                   |   1 +
+ include/linux/platform_data/mtk_scp.h         | 167 +++++
+ include/linux/rpmsg/mtk_rpmsg.h               |  30 +
+ 16 files changed, 1606 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp.c
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/platform_data/mtk_scp.h
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+
+-- 
+2.22.0.rc1.257.g3120a18244-goog
