@@ -1,19 +1,18 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Mon, 3 Jun 2019 22:01:21 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <ore@pengutronix.de>
+Date: Tue, 4 Jun 2019 06:18:54 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
 Subject: Re: [PATCH 1/2] remoteproc: imx: Broaden the Kconfig selection logic
-Message-ID: <20190604050121.GA23094@builder>
+Message-ID: <20190604041854.55hqqt6lmykwgro2@pengutronix.de>
 References: <20190603234628.10924-1-festevam@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20190603234628.10924-1-festevam@gmail.com>
 To: Fabio Estevam <festevam@gmail.com>
-Cc: ohad@wizery.com, o.rempel@pengutronix.de, linux-remoteproc@vger.kernel.org
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 03 Jun 16:46 PDT 2019, Fabio Estevam wrote:
-
+On Mon, Jun 03, 2019 at 08:46:27PM -0300, Fabio Estevam wrote:
 > Besides i.MX6SX and i.MX7D, there are other i.MX devices that contain
 > Cortex M4 and could make use of the imx remoteproc driver, such as
 > i.MX7ULP, i.MX8M, etc.
@@ -21,12 +20,8 @@ On Mon 03 Jun 16:46 PDT 2019, Fabio Estevam wrote:
 > Instead of adding new SoC entries in the Kconfig logic, make it
 > broader by using the more generic ARCH_MXC, which encompasses
 > all the 32-bit and 64-bit i.MX devices.
-> 
 
-Patches applied with Oleksij's review.
-
-Thanks,
-Bjorn
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
 > Signed-off-by: Fabio Estevam <festevam@gmail.com>
 > ---
@@ -49,3 +44,10 @@ Bjorn
 > -- 
 > 2.17.1
 > 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
