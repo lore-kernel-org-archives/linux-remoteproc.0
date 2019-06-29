@@ -1,47 +1,50 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH 0/3] Add HwSpinlock support for TI K3 SoCs
-References: <20190531021321.14025-1-s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <90211f72-7ce4-94e5-aef7-bbe14266dfbb@ti.com>
-Date: Mon, 24 Jun 2019 15:38:52 -0500
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 29 Jun 2019 11:59:26 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: recopy parent dma_pfn_offset for vdev
+Message-ID: <20190629185926.GD23094@builder>
+References: <20190612095521.4703-1-cleger@kalray.eu>
 MIME-Version: 1.0
-In-Reply-To: <20190531021321.14025-1-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612095521.4703-1-cleger@kalray.eu>
+To: Clement Leger <cleger@kalray.eu>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+On Wed 12 Jun 02:55 PDT 2019, Clement Leger wrote:
 
-On 5/30/19 9:13 PM, Suman Anna wrote:
-> Hi Bjorn,
-> 
-> The following series adds the support for the HwSpinlock IP present
-> on the newer TI K3 AM65x and J721E SoCs. The first 2 patches are
-> related to the K3 support, and the last patch is a minor debug related
-> trace to see the number of locks registered on each SoC.
-> 
-> I will be posting the DT nodes once the binding is acked.
+> When preparing the subdevice for the vdev, also copy dma_pfn_offset
+> since this is used for sub device dma allocations. Without that, there
+> is incoherency between the parent dma settings and the childs one,
+> potentially leading to dma_alloc_coherent failure (due to phys_to_dma
+> using dma_pfn_offset for translation).
 
-If you do not have any comments, can you please pick up this series for
-5.3 merge window?
+Hi Clement,
 
-Thanks,
-Suman
+This looks reasonable, but I can't merge it without your Signed-off-by.
 
+Can you please resubmit the change, with the Fixes: and Loic's ack?
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> regards
-> Suman
-> 
-> Suman Anna (3):
->   dt-bindings: hwlock: Update OMAP binding for TI K3 SoCs
->   hwspinlock/omap: Add support for TI K3 SoCs
->   hwspinlock/omap: Add a trace during probe
-> 
->  .../bindings/hwlock/omap-hwspinlock.txt       | 25 +++++++++++++++----
->  drivers/hwspinlock/Kconfig                    |  2 +-
->  drivers/hwspinlock/omap_hwspinlock.c          |  4 +++
->  3 files changed, 25 insertions(+), 6 deletions(-)
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 263e9c9614a8..3b56ca043231 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -520,6 +520,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+>  	/* Initialise vdev subdevice */
+>  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+>  	rvdev->dev.parent = rproc->dev.parent;
+> +	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
+>  	rvdev->dev.release = rproc_rvdev_release;
+>  	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+>  	dev_set_drvdata(&rvdev->dev, rvdev);
+> -- 
+> 2.15.0.276.g89ea799
 > 
