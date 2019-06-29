@@ -1,51 +1,66 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Sat, 29 Jun 2019 12:05:27 -0700
+Date: Sat, 29 Jun 2019 12:04:27 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2] hwspinlock: ignore disabled device
-Message-ID: <20190629190527.GG23094@builder>
-References: <1552064026-11415-1-git-send-email-fabien.dessenne@st.com>
+Subject: Re: [PATCH] remoteproc: Use struct_size() helper
+Message-ID: <20190629190427.GF23094@builder>
+References: <20190607185314.GA15771@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1552064026-11415-1-git-send-email-fabien.dessenne@st.com>
-To: Fabien Dessenne <fabien.dessenne@st.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>
+In-Reply-To: <20190607185314.GA15771@embeddedor>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 08 Mar 08:53 PST 2019, Fabien Dessenne wrote:
+On Fri 07 Jun 11:53 PDT 2019, Gustavo A. R. Silva wrote:
 
-> Do not wait for hwspinlock device registration if it is not available
-> for use.
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 > 
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> struct resource_table {
+> 	...
+>         u32 offset[0];
+> } __packed;
+> 
+> Make use of the struct_size() helper instead of an open-coded version
+> in order to avoid any potential type mistakes.
+> 
+> So, replace the following form:
+> 
+> table->num * sizeof(table->offset[0]) + sizeof(struct resource_table)
+> 
+> with:
+> 
+> struct_size(table, offset, table->num)
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Applied with Suman's ack
+Looks good, applied
 
 Thanks,
 Bjorn
 
 > ---
-> V2: use 'goto out' instead of 'return'
+>  drivers/remoteproc/remoteproc_elf_loader.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
->  drivers/hwspinlock/hwspinlock_core.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-> index 2bad40d..d806307 100644
-> --- a/drivers/hwspinlock/hwspinlock_core.c
-> +++ b/drivers/hwspinlock/hwspinlock_core.c
-> @@ -333,6 +333,11 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
->  	if (ret)
->  		return ret;
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index 215a4400f21e..606aae166eba 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -247,8 +247,7 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
+>  		}
 >  
-> +	if (!of_device_is_available(args.np)) {
-> +		ret = -ENOENT;
-> +		goto out;
-> +	}
-> +
->  	/* Find the hwspinlock device: we need its base_id */
->  	ret = -EPROBE_DEFER;
->  	rcu_read_lock();
+>  		/* make sure the offsets array isn't truncated */
+> -		if (table->num * sizeof(table->offset[0]) +
+> -				sizeof(struct resource_table) > size) {
+> +		if (struct_size(table, offset, table->num) > size) {
+>  			dev_err(dev, "resource table incomplete\n");
+>  			return NULL;
+>  		}
 > -- 
-> 2.7.4
+> 2.21.0
 > 
