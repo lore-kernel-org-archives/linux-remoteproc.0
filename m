@@ -1,93 +1,190 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v10 1/7] dt-bindings: Add a binding for Mediatek SCP
-Date: Mon,  3 Jun 2019 11:45:06 +0800
-Message-Id: <20190603034529.154969-2-pihsun@chromium.org>
-In-Reply-To: <20190603034529.154969-1-pihsun@chromium.org>
-References: <20190603034529.154969-1-pihsun@chromium.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 29 Jun 2019 12:02:29 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: add vendor resources handling
+Message-ID: <20190629190229.GE23094@builder>
+References: <20190617125730.23688-1-cleger@kalray.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617125730.23688-1-cleger@kalray.eu>
+To: Clement Leger <cleger@kalray.eu>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Loic PALLARDY <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Erin Lo <erin.lo@mediatek.com>
+On Mon 17 Jun 05:57 PDT 2019, Clement Leger wrote:
 
-Add a DT binding documentation of SCP for the
-MT8183 SoC from Mediatek.
+> In order to allow rproc backend to handle vendor resources such as in
+> OpenAMP, add a handle_rsc hook. This hook allow the rproc backends to
+> handle vendor resources as they like. The hook will be called only for
+> vendor resources and should return RSC_HANDLED on successful resource
+> handling, RSC_IGNORED if resource was ignored, or a negative value on
+> error.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes from v9, v8, v7, v6:
- - No change.
+Applied
 
-Changes from v5:
- - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+Thanks,
+Bjorn
 
-Changes from v4:
- - Add detail of more properties.
- - Document the usage of mtk,rpmsg-name in subnode from the new design.
-
-Changes from v3:
- - No change.
-
-Changes from v2:
- - No change. I realized that for this patch series, there's no need to
-   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
-   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
-   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
-   created by SCP name service.
-
-Changes from v1:
- - No change.
----
- .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-new file mode 100644
-index 000000000000..3ba668bab14b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-@@ -0,0 +1,36 @@
-+Mediatek SCP Bindings
-+----------------------------------------
-+
-+This binding provides support for ARM Cortex M4 Co-processor found on some
-+Mediatek SoCs.
-+
-+Required properties:
-+- compatible		Should be "mediatek,mt8183-scp"
-+- reg			Should contain the address ranges for the two memory
-+			regions, SRAM and CFG.
-+- reg-names		Contains the corresponding names for the two memory
-+			regions. These should be named "sram" & "cfg".
-+- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
-+- clock-names		Contains the corresponding name for the clock. This
-+			should be named "main".
-+
-+Subnodes
-+--------
-+
-+Subnodes of the SCP represent rpmsg devices. The names of the devices are not
-+important. The properties of these nodes are defined by the individual bindings
-+for the rpmsg devices - but must contain the following property:
-+
-+- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
-+			the subnode to rpmsg device announced by SCP.
-+
-+Example:
-+
-+	scp: scp@10500000 {
-+		compatible = "mediatek,mt8183-scp";
-+		reg = <0 0x10500000 0 0x80000>,
-+		      <0 0x105c0000 0 0x5000>;
-+		reg-names = "sram", "cfg";
-+		clocks = <&infracfg CLK_INFRA_SCPSYS>;
-+		clock-names = "main";
-+	};
--- 
-2.22.0.rc1.257.g3120a18244-goog
+> ---
+>  Documentation/remoteproc.txt             | 14 +++++++++-----
+>  drivers/remoteproc/remoteproc_core.c     | 14 ++++++++++++++
+>  drivers/remoteproc/remoteproc_internal.h | 11 +++++++++++
+>  include/linux/remoteproc.h               | 32 ++++++++++++++++++++++++++------
+>  4 files changed, 60 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/remoteproc.txt b/Documentation/remoteproc.txt
+> index 77fb03acdbb4..03c3d2e568b0 100644
+> --- a/Documentation/remoteproc.txt
+> +++ b/Documentation/remoteproc.txt
+> @@ -314,6 +314,8 @@ Here are the various resource types that are currently supported::
+>     * @RSC_VDEV:       declare support for a virtio device, and serve as its
+>     *		    virtio header.
+>     * @RSC_LAST:       just keep this one at the end
+> +   * @RSC_VENDOR_START:	start of the vendor specific resource types range
+> +   * @RSC_VENDOR_END:	end of the vendor specific resource types range
+>     *
+>     * Please note that these values are used as indices to the rproc_handle_rsc
+>     * lookup table, so please keep them sane. Moreover, @RSC_LAST is used to
+> @@ -321,11 +323,13 @@ Here are the various resource types that are currently supported::
+>     * please update it as needed.
+>     */
+>    enum fw_resource_type {
+> -	RSC_CARVEOUT	= 0,
+> -	RSC_DEVMEM	= 1,
+> -	RSC_TRACE	= 2,
+> -	RSC_VDEV	= 3,
+> -	RSC_LAST	= 4,
+> +	RSC_CARVEOUT		= 0,
+> +	RSC_DEVMEM		= 1,
+> +	RSC_TRACE		= 2,
+> +	RSC_VDEV		= 3,
+> +	RSC_LAST		= 4,
+> +	RSC_VENDOR_START	= 128,
+> +	RSC_VENDOR_END		= 512,
+>    };
+>  
+>  For more details regarding a specific resource type, please see its
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 48feebd6d0a2..263e9c9614a8 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1066,6 +1066,20 @@ static int rproc_handle_resources(struct rproc *rproc,
+>  
+>  		dev_dbg(dev, "rsc: type %d\n", hdr->type);
+>  
+> +		if (hdr->type >= RSC_VENDOR_START &&
+> +		    hdr->type <= RSC_VENDOR_END) {
+> +			ret = rproc_handle_rsc(rproc, hdr->type, rsc,
+> +					       offset + sizeof(*hdr), avail);
+> +			if (ret == RSC_HANDLED)
+> +				continue;
+> +			else if (ret < 0)
+> +				break;
+> +
+> +			dev_warn(dev, "unsupported vendor resource %d\n",
+> +				 hdr->type);
+> +			continue;
+> +		}
+> +
+>  		if (hdr->type >= RSC_LAST) {
+>  			dev_warn(dev, "unsupported resource %d\n", hdr->type);
+>  			continue;
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 45ff76a06c72..4c77bdd517b9 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -106,6 +106,17 @@ static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  	return 0;
+>  }
+>  
+> +static inline
+> +int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
+> +		     int avail)
+> +{
+> +	if (rproc->ops->handle_rsc)
+> +		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
+> +					      avail);
+> +
+> +	return RSC_IGNORED;
+> +}
+> +
+>  static inline
+>  struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>  						   const struct firmware *fw)
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 04d04709f2bd..16ad66683ad0 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -100,7 +100,9 @@ struct fw_rsc_hdr {
+>   *		    the remote processor will be writing logs.
+>   * @RSC_VDEV:       declare support for a virtio device, and serve as its
+>   *		    virtio header.
+> - * @RSC_LAST:       just keep this one at the end
+> + * @RSC_LAST:       just keep this one at the end of standard resources
+> + * @RSC_VENDOR_START:	start of the vendor specific resource types range
+> + * @RSC_VENDOR_END:	end of the vendor specific resource types range
+>   *
+>   * For more details regarding a specific resource type, please see its
+>   * dedicated structure below.
+> @@ -111,11 +113,13 @@ struct fw_rsc_hdr {
+>   * please update it as needed.
+>   */
+>  enum fw_resource_type {
+> -	RSC_CARVEOUT	= 0,
+> -	RSC_DEVMEM	= 1,
+> -	RSC_TRACE	= 2,
+> -	RSC_VDEV	= 3,
+> -	RSC_LAST	= 4,
+> +	RSC_CARVEOUT		= 0,
+> +	RSC_DEVMEM		= 1,
+> +	RSC_TRACE		= 2,
+> +	RSC_VDEV		= 3,
+> +	RSC_LAST		= 4,
+> +	RSC_VENDOR_START	= 128,
+> +	RSC_VENDOR_END		= 512,
+>  };
+>  
+>  #define FW_RSC_ADDR_ANY (-1)
+> @@ -339,6 +343,16 @@ struct rproc_mem_entry {
+>  
+>  struct firmware;
+>  
+> +/**
+> + * enum rsc_handling_status - return status of rproc_ops handle_rsc hook
+> + * @RSC_HANDLED:	resource was handled
+> + * @RSC_IGNORED:	resource was ignored
+> + */
+> +enum rsc_handling_status {
+> +	RSC_HANDLED	= 0,
+> +	RSC_IGNORED	= 1,
+> +};
+> +
+>  /**
+>   * struct rproc_ops - platform-specific device handlers
+>   * @start:	power on the device and boot it
+> @@ -346,6 +360,10 @@ struct firmware;
+>   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+>   * @da_to_va:	optional platform hook to perform address translations
+>   * @parse_fw:	parse firmware to extract information (e.g. resource table)
+> + * @handle_rsc:	optional platform hook to handle vendor resources. Should return
+> + * RSC_HANDLED if resource was handled, RSC_IGNORED if not handled and a
+> + * negative value on error
+> + * @load_rsc_table:	load resource table from firmware image
+>   * @find_loaded_rsc_table: find the loaded resouce table
+>   * @load:		load firmware to memory, where the remote processor
+>   *			expects to find it
+> @@ -358,6 +376,8 @@ struct rproc_ops {
+>  	void (*kick)(struct rproc *rproc, int vqid);
+>  	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
+>  	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+> +	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
+> +			  int offset, int avail);
+>  	struct resource_table *(*find_loaded_rsc_table)(
+>  				struct rproc *rproc, const struct firmware *fw);
+>  	int (*load)(struct rproc *rproc, const struct firmware *fw);
+> -- 
+> 2.15.0.276.g89ea799
+> 
