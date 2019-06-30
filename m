@@ -1,32 +1,71 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH] remoteproc: recopy parent dma_pfn_offset for vdev
-Date: Wed, 12 Jun 2019 11:55:21 +0200
-Message-Id: <20190612095521.4703-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc <linux-remoteproc@vger.kernel.org>
-Cc: Clement Leger <cleger@kalray.eu>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Sat, 29 Jun 2019 21:03:22 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4 0/8] stm32 m4 remoteproc on STM32MP157c
+Message-ID: <20190630040322.GH23094@builder>
+References: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557822423-22658-1-git-send-email-fabien.dessenne@st.com>
+To: Fabien Dessenne <fabien.dessenne@st.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Ludovic Barre <ludovic.barre@st.com>, Benjamin Gaignard <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-When preparing the subdevice for the vdev, also copy dma_pfn_offset
-since this is used for sub device dma allocations. Without that, there
-is incoherency between the parent dma settings and the childs one,
-potentially leading to dma_alloc_coherent failure (due to phys_to_dma
-using dma_pfn_offset for translation).
----
- drivers/remoteproc/remoteproc_core.c | 1 +
- 1 file changed, 1 insertion(+)
+On Tue 14 May 01:26 PDT 2019, Fabien Dessenne wrote:
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 263e9c9614a8..3b56ca043231 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -520,6 +520,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 	/* Initialise vdev subdevice */
- 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
- 	rvdev->dev.parent = rproc->dev.parent;
-+	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
- 	rvdev->dev.release = rproc_rvdev_release;
- 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
- 	dev_set_drvdata(&rvdev->dev, rvdev);
--- 
-2.15.0.276.g89ea799
+> STMicrolectronics STM32MP157 MPU are based on a Dual Arm Cortex-A7 core and a
+> Cortex-M4.
+> This patchset adds the support of the stm32_rproc driver allowing to control
+> the M4 remote processor.
+> 
+
+Applied patches 1 through 3, with a few fixes of compile warnings on
+data types in dev_dbg, in patch 3.
+
+Thanks,
+Bjorn
+
+> Changes since v3:
+> -Replaced "st,auto_boot" with "st,auto-boot"
+> -Update m4 reg values and align with unit-address
+> 
+> Changes since v2:
+> - Clarified "reg" description
+> - Change m4 unit adress to 38000000
+> - Renamed "auto_boot" in "st,auto-boot"
+> 
+> Changes since v1:
+> - Gave details about the memory mapping (in bindings).
+> - Used 'dma-ranges' instead of 'ranges'.
+> - Updated the 'compatible' property.
+> - Remove the 'recovery', 'reset-names' and 'interrupt-names' properties.
+> - Clarified why / when mailboxes are optional.
+> 
+> Fabien Dessenne (8):
+>   dt-bindings: stm32: add bindings for ML-AHB interconnect
+>   dt-bindings: remoteproc: add bindings for stm32 remote processor
+>     driver
+>   remoteproc: stm32: add an ST stm32_rproc driver
+>   ARM: dts: stm32: add m4 remoteproc support on STM32MP157c
+>   ARM: dts: stm32: declare copro reserved memories on STM32MP157c-ed1
+>   ARM: dts: stm32: enable m4 coprocessor support on STM32MP157c-ed1
+>   ARM: dts: stm32: declare copro reserved memories on STM32MP157a-dk1
+>   ARM: dts: stm32: enable m4 coprocessor support on STM32MP157a-dk1
+> 
+>  .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
+>  .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
+>  arch/arm/boot/dts/stm32mp157a-dk1.dts              |  52 ++
+>  arch/arm/boot/dts/stm32mp157c-ed1.dts              |  52 ++
+>  arch/arm/boot/dts/stm32mp157c.dtsi                 |  20 +
+>  drivers/remoteproc/Kconfig                         |  15 +
+>  drivers/remoteproc/Makefile                        |   1 +
+>  drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
+>  8 files changed, 868 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
+>  create mode 100644 drivers/remoteproc/stm32_rproc.c
+> 
+> -- 
+> 2.7.4
+> 
