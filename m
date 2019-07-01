@@ -1,827 +1,411 @@
-Return-Path: <o.rempel@pengutronix.de>
-Subject: Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg support
+Return-Path: <hongxing.zhu@nxp.com>
+From: Richard Zhu <hongxing.zhu@nxp.com>
+Subject: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg support
+Date: Mon, 1 Jul 2019 08:34:03 +0000
+Message-ID: <1561968784-1124-3-git-send-email-hongxing.zhu@nxp.com>
 References: <1561968784-1124-1-git-send-email-hongxing.zhu@nxp.com>
- <1561968784-1124-3-git-send-email-hongxing.zhu@nxp.com>
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <3e0a061c-4f5e-ac32-031d-909a48644265@pengutronix.de>
-Date: Thu, 4 Jul 2019 11:36:19 +0200
-MIME-Version: 1.0
-In-Reply-To: <1561968784-1124-3-git-send-email-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1561968784-1124-1-git-send-email-hongxing.zhu@nxp.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Richard Zhu <hongxing.zhu@nxp.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Fabien DESSENNE <fabien.dessenne@st.com>, loic.pallardy@st.com, arnaud.pouliquen@st.com, s-anna@ti.com, elder@linaro.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Zhu <hongxing.zhu@nxp.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Richard,
-
-On 01.07.19 10:34, Richard Zhu wrote:
-> Based on "virtio_rpmsg_bus" driver, This patch-set is used to set up
-> the communication mechanism between A core and M core on i.MX AMP SOCs.
-> 
-> Add the initial imx rpmsg support glue driver and one pingpong demo,
-> demonstrated the data transactions between A core and remote M core.
-> Distributed framework is used in IMX RPMSG implementation, refer to the
-> following requirements:
->    - The CAN functions contained in M core and RTOS should be ready and
->      complete functional in 50ms after AMP system is turned on.
->    - Partition reset. System wouldn't be stalled by the exceptions (e.x
->      the reset triggered by the system hang) occurred at the other side.
->      And the RPMSG mechanism should be recovered automactilly after the
->      partition reset is completed.
-> In this scenario, the M core and RTOS would be kicked off by bootloader
-> firstly, then A core and Linux would be loaded later. Both M core/RTOS
-> and A core/Linux are running independly.
-> 
-> One physical memory region used to store the vring is mandatory required
-> to pre-reserved and well-knowned by both A core and M core
-
-I don't see any thing imx specific in this patch. We already have remoteproc which would 
-parse firmware header and create needed devices. This driver is only needed for the case 
-where firmware was stared by the bootloader.
-
-I personally would prefer to have generic driver or extend the remoteproc framework. So we 
-can notify kernel about work already done by bootloader.
-
-In general, some more issues should be solved:
-- Handle or not touch idle clocks for different node used by M core and not main system.
-- pin control
-- regulators
-
-ST devs already tried to solve this issues by creating "remoteproc: add system resource 
-manager device" patch. I don't know what is current state of it (/me adding ST devs to CC).
-
-Beside, I ported remoteproc to barebox. So same firmware used for remoteproc on linux
-can be used by bootloader (barebox):
-http://lists.infradead.org/pipermail/barebox/2019-June/038395.html
-
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->   drivers/rpmsg/Kconfig              |  24 ++
->   drivers/rpmsg/Makefile             |   2 +
->   drivers/rpmsg/imx_rpmsg.c          | 542 +++++++++++++++++++++++++++++++++++++
->   drivers/rpmsg/imx_rpmsg_pingpong.c | 100 +++++++
->   include/linux/imx_rpmsg.h          |  43 +++
->   5 files changed, 711 insertions(+)
->   create mode 100644 drivers/rpmsg/imx_rpmsg.c
->   create mode 100644 drivers/rpmsg/imx_rpmsg_pingpong.c
->   create mode 100644 include/linux/imx_rpmsg.h
-> 
-> diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-> index d0322b4..636460e 100644
-> --- a/drivers/rpmsg/Kconfig
-> +++ b/drivers/rpmsg/Kconfig
-> @@ -55,4 +55,28 @@ config RPMSG_VIRTIO
->   	select RPMSG
->   	select VIRTIO
->   
-> +config HAVE_IMX_RPMSG
-> +	bool "IMX RPMSG driver on the AMP SOCs"
-> +	default y
-> +	depends on IMX_MBOX
-> +	select RPMSG_VIRTIO
-> +	help
-> +	  Say y here to enable support for the iMX Rpmsg Driver	providing
-> +	  communication channels to remote processors in iMX asymmetric
-> +	  multiprocessing (AMP) platforms.
-> +
-> +	  Especially, it is mandatory required when the partition reset is
-> +	  required on some iMX AMP platforms.
-> +
-> +config IMX_RPMSG_PINGPONG
-> +	tristate "IMX RPMSG pingpong driver -- loadable modules only"
-> +	default m
-> +	depends on HAVE_IMX_RPMSG && m
-> +	help
-> +	  One 32bit unsigned int data transactions demoe between the A core
-> +	  and the remote M core on the iMX AMP platforms.
-> +
-> +	  Only the module mode is supported here, the demo would be kicked off
-> +	  immediately when this module is insmoded.
-> +
->   endmenu
-> diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-> index 9aa8595..9c6fce5 100644
-> --- a/drivers/rpmsg/Makefile
-> +++ b/drivers/rpmsg/Makefile
-> @@ -6,3 +6,5 @@ obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
->   obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
->   obj-$(CONFIG_RPMSG_QCOM_SMD)	+= qcom_smd.o
->   obj-$(CONFIG_RPMSG_VIRTIO)	+= virtio_rpmsg_bus.o
-> +obj-$(CONFIG_HAVE_IMX_RPMSG)	+= imx_rpmsg.o
-> +obj-$(CONFIG_IMX_RPMSG_PINGPONG)	+= imx_rpmsg_pingpong.o
-> diff --git a/drivers/rpmsg/imx_rpmsg.c b/drivers/rpmsg/imx_rpmsg.c
-> new file mode 100644
-> index 0000000..58888d1
-> --- /dev/null
-> +++ b/drivers/rpmsg/imx_rpmsg.c
-> @@ -0,0 +1,542 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2019 NXP
-> + */
-> +
-> +#include <linux/circ_buf.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/virtio_config.h>
-> +#include <linux/virtio_ids.h>
-> +#include <linux/virtio_ring.h>
-> +#include <linux/imx_rpmsg.h>
-> +#include "rpmsg_internal.h"
-> +
-> +enum imx_rpmsg_variants {
-> +	IMX8MQ,
-> +	IMX8QXP,
-> +};
-> +
-> +struct imx_virdev {
-> +	struct virtio_device vdev;
-> +	unsigned int vring[2];
-> +	struct virtqueue *vq[2];
-> +	int base_vq_id;
-> +	int num_of_vqs;
-> +	struct imx_rpmsg_vproc *rpdev;
-> +};
-> +
-> +struct imx_rpmsg_vproc {
-> +	struct mbox_client cl;
-> +	struct mbox_client cl_rxdb;
-> +	struct mbox_chan *tx_ch;
-> +	struct mbox_chan *rx_ch;
-> +	struct mbox_chan *rxdb_ch;
-> +	enum imx_rpmsg_variants variant;
-> +	int vdev_nums;
-> +	int first_notify;
-> +	u32 flags;
-> +#define MAX_VDEV_NUMS  8
-> +	struct imx_virdev *ivdev[MAX_VDEV_NUMS];
-> +	struct delayed_work rpmsg_work;
-> +	struct circ_buf rx_buffer;
-> +	spinlock_t mu_lock;
-> +	struct notifier_block proc_nb;
-> +	struct platform_device *pdev;
-> +};
-> +
-> +#define RPMSG_NUM_BUFS		(512)
-> +#define RPMSG_BUF_SIZE		(512)
-> +#define RPMSG_BUFS_SPACE	(RPMSG_NUM_BUFS * RPMSG_BUF_SIZE)
-> +#define RPMSG_VRING_ALIGN	(4096)
-> +#define RPMSG_RING_SIZE	((DIV_ROUND_UP(vring_size(RPMSG_NUM_BUFS / 2, \
-> +				RPMSG_VRING_ALIGN), PAGE_SIZE)) * PAGE_SIZE)
-> +
-> +#define to_imx_virdev(vd) container_of(vd, struct imx_virdev, vdev)
-> +
-> +/*
-> + * 1: indicated that remote processor is ready from re-initialization.
-> + * Clear this bit after the RPMSG restore is finished at master side.
-> + */
-> +#define REMOTE_IS_READY			BIT(0)
-> +/* 1: Use reserved memory region as DMA pool */
-> +#define SPECIFIC_DMA_POOL		BIT(1)
-> +
-> +struct imx_rpmsg_vq_info {
-> +	__u16 num;	/* number of entries in the virtio_ring */
-> +	__u16 vq_id;	/* a globaly unique index of this virtqueue */
-> +	void *addr;	/* address where we mapped the virtio ring */
-> +	struct imx_rpmsg_vproc *rpdev;
-> +};
-> +
-> +static u64 imx_rpmsg_get_features(struct virtio_device *vdev)
-> +{
-> +	/* VIRTIO_RPMSG_F_NS has been made private */
-> +	return 1 << 0;
-> +}
-> +
-> +static int imx_rpmsg_finalize_features(struct virtio_device *vdev)
-> +{
-> +	/* Give virtio_ring a chance to accept features */
-> +	vring_transport_features(vdev);
-> +	return 0;
-> +}
-> +
-> +/* kick the remote processor, and let it know which virtqueue to poke at */
-> +static bool imx_rpmsg_notify(struct virtqueue *vq)
-> +{
-> +	int ret;
-> +	unsigned long flags;
-> +	unsigned int mu_rpmsg = 0;
-> +	struct imx_rpmsg_vq_info *rpvq = vq->priv;
-> +	struct imx_rpmsg_vproc *rpdev = rpvq->rpdev;
-> +
-> +	mu_rpmsg = rpvq->vq_id << 16;
-> +	spin_lock_irqsave(&rpdev->mu_lock, flags);
-> +	/*
-> +	 * Send the index of the triggered virtqueue as the mu payload.
-> +	 * Use the timeout MU send message here.
-> +	 * Since that M4 core may not be loaded, and the first MSG may
-> +	 * not be handled by M4 when multi-vdev is enabled.
-> +	 * To make sure that the message wound't be discarded when M4
-> +	 * is running normally or in the suspend mode. Only use
-> +	 * the timeout mechanism by the first notify when the vdev is
-> +	 * registered.
-> +	 * ~14ms is required by M4 ready to process the MU message from
-> +	 * cold boot. Set the wait time 20ms here.
-> +	 */
-> +	if (unlikely(rpdev->first_notify > 0)) {
-> +		rpdev->first_notify--;
-> +		rpdev->cl.tx_tout = 20;
-> +		ret = mbox_send_message(rpdev->tx_ch, &mu_rpmsg);
-> +		if (ret < 0)
-> +			return false;
-> +	} else {
-> +		rpdev->cl.tx_tout = 0;
-> +		ret = mbox_send_message(rpdev->tx_ch, &mu_rpmsg);
-> +		if (ret < 0)
-> +			return false;
-> +	}
-> +	spin_unlock_irqrestore(&rpdev->mu_lock, flags);
-> +
-> +	return true;
-> +}
-> +
-> +static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
-> +				    unsigned int index,
-> +				    void (*callback)(struct virtqueue *vq),
-> +				    const char *name,
-> +				    bool ctx)
-> +{
-> +	struct imx_virdev *virdev = to_imx_virdev(vdev);
-> +	struct imx_rpmsg_vproc *rpdev = virdev->rpdev;
-> +	struct platform_device *pdev = rpdev->pdev;
-> +	struct device *dev = &pdev->dev;
-> +	struct imx_rpmsg_vq_info *rpvq;
-> +	struct virtqueue *vq;
-> +	int err;
-> +
-> +	rpvq = kmalloc(sizeof(*rpvq), GFP_KERNEL);
-> +	if (!rpvq)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	/* ioremap'ing normal memory, so we cast away sparse's complaints */
-> +	rpvq->addr = (__force void *) ioremap_nocache(virdev->vring[index],
-> +							RPMSG_RING_SIZE);
-> +	if (!rpvq->addr) {
-> +		err = -ENOMEM;
-> +		goto free_rpvq;
-> +	}
-> +
-> +	memset_io(rpvq->addr, 0, RPMSG_RING_SIZE);
-> +
-> +	dev_dbg(dev, "vring%d: phys 0x%x, virt 0x%p\n",
-> +			index, virdev->vring[index], rpvq->addr);
-> +
-> +	vq = vring_new_virtqueue(index, RPMSG_NUM_BUFS / 2, RPMSG_VRING_ALIGN,
-> +			vdev, true, ctx,
-> +			rpvq->addr,
-> +			imx_rpmsg_notify, callback,
-> +			name);
-> +	if (!vq) {
-> +		dev_err(dev, "vring_new_virtqueue failed\n");
-> +		err = -ENOMEM;
-> +		goto unmap_vring;
-> +	}
-> +
-> +	virdev->vq[index] = vq;
-> +	vq->priv = rpvq;
-> +	/* system-wide unique id for this virtqueue */
-> +	rpvq->vq_id = virdev->base_vq_id + index;
-> +	rpvq->rpdev = rpdev;
-> +
-> +	return vq;
-> +
-> +unmap_vring:
-> +	/* iounmap normal memory, so make sparse happy */
-> +	iounmap((__force void __iomem *) rpvq->addr);
-> +free_rpvq:
-> +	kfree(rpvq);
-> +	return ERR_PTR(err);
-> +}
-> +
-> +static void imx_rpmsg_del_vqs(struct virtio_device *vdev)
-> +{
-> +	struct virtqueue *vq, *n;
-> +
-> +	list_for_each_entry_safe(vq, n, &vdev->vqs, list) {
-> +		struct imx_rpmsg_vq_info *rpvq = vq->priv;
-> +
-> +		iounmap(rpvq->addr);
-> +		vring_del_virtqueue(vq);
-> +		kfree(rpvq);
-> +	}
-> +}
-> +
-> +static int imx_rpmsg_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
-> +		       struct virtqueue *vqs[],
-> +		       vq_callback_t *callbacks[],
-> +		       const char * const names[],
-> +		       const bool *ctx,
-> +		       struct irq_affinity *desc)
-> +{
-> +	struct imx_virdev *virdev = to_imx_virdev(vdev);
-> +	int i, err;
-> +
-> +	/* we maintain two virtqueues per remote processor (for RX and TX) */
-> +	if (nvqs != 2)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < nvqs; ++i) {
-> +		vqs[i] = rp_find_vq(vdev, i, callbacks[i], names[i],
-> +				ctx ? ctx[i] : false);
-> +		if (IS_ERR(vqs[i])) {
-> +			err = PTR_ERR(vqs[i]);
-> +			goto error;
-> +		}
-> +	}
-> +
-> +	virdev->num_of_vqs = nvqs;
-> +	return 0;
-> +
-> +error:
-> +	imx_rpmsg_del_vqs(vdev);
-> +	return err;
-> +}
-> +
-> +static void imx_rpmsg_reset(struct virtio_device *vdev)
-> +{
-> +	dev_dbg(&vdev->dev, "reset !\n");
-> +}
-> +
-> +static u8 imx_rpmsg_get_status(struct virtio_device *vdev)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void imx_rpmsg_set_status(struct virtio_device *vdev, u8 status)
-> +{
-> +	dev_dbg(&vdev->dev, "%s new status: %d\n", __func__, status);
-> +}
-> +
-> +static void imx_rpmsg_vproc_release(struct device *dev)
-> +{
-> +	/* this handler is provided so driver core doesn't yell at us */
-> +}
-> +
-> +static struct virtio_config_ops imx_rpmsg_config_ops = {
-> +	.get_features	= imx_rpmsg_get_features,
-> +	.finalize_features = imx_rpmsg_finalize_features,
-> +	.find_vqs	= imx_rpmsg_find_vqs,
-> +	.del_vqs	= imx_rpmsg_del_vqs,
-> +	.reset		= imx_rpmsg_reset,
-> +	.set_status	= imx_rpmsg_set_status,
-> +	.get_status	= imx_rpmsg_get_status,
-> +};
-> +
-> +static const struct of_device_id imx_rpmsg_dt_ids[] = {
-> +	{ .compatible = "fsl,imx8mq-rpmsg", .data = (void *)IMX8MQ, },
-> +	{ .compatible = "fsl,imx8qxp-rpmsg", .data = (void *)IMX8QXP, },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, imx_rpmsg_dt_ids);
-> +
-> +static int set_vring_phy_buf(struct platform_device *pdev,
-> +		       struct imx_rpmsg_vproc *rpdev, int vdev_nums)
-> +{
-> +	struct resource *res;
-> +	resource_size_t size;
-> +	unsigned int start, end;
-> +	int i, ret = 0;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (res) {
-> +		size = resource_size(res);
-> +		start = res->start;
-> +		end = res->start + size;
-> +		for (i = 0; i < vdev_nums; i++) {
-> +			rpdev->ivdev[i] = kzalloc(sizeof(struct imx_virdev),
-> +							GFP_KERNEL);
-> +			if (!rpdev->ivdev[i])
-> +				return -ENOMEM;
-> +
-> +			rpdev->ivdev[i]->vring[0] = start;
-> +			rpdev->ivdev[i]->vring[1] = start + 0x8000;
-> +			start += 0x10000;
-> +			if (start > end) {
-> +				dev_err(&pdev->dev,
-> +					"Too small memory size %x!\n",
-> +					(u32)size);
-> +				ret = -EINVAL;
-> +				break;
-> +			}
-> +		}
-> +	} else {
-> +		return -ENOMEM;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void rpmsg_work_handler(struct work_struct *work)
-> +{
-> +	u32 message;
-> +	unsigned long flags;
-> +	struct imx_virdev *virdev;
-> +	struct delayed_work *dwork = to_delayed_work(work);
-> +	struct imx_rpmsg_vproc *rpdev = container_of(dwork,
-> +			struct imx_rpmsg_vproc, rpmsg_work);
-> +	struct circ_buf *cb = &rpdev->rx_buffer;
-> +	struct platform_device *pdev = rpdev->pdev;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	spin_lock_irqsave(&rpdev->mu_lock, flags);
-> +	/* handle all incoming mu message */
-> +	while (CIRC_CNT(cb->head, cb->tail, PAGE_SIZE)) {
-> +		spin_unlock_irqrestore(&rpdev->mu_lock, flags);
-> +		message = (u32) cb->buf[cb->tail];
-> +		virdev = rpdev->ivdev[(message >> 16) / 2];
-> +
-> +		dev_dbg(dev, "%s msg: 0x%x\n", __func__, message);
-> +		message = message >> 16;
-> +		message -= virdev->base_vq_id;
-> +
-> +		/*
-> +		 * Currently both PENDING_MSG and explicit-virtqueue-index
-> +		 * messaging are supported.
-> +		 * Whatever approach is taken, at this point message contains
-> +		 * the index of the vring which was just triggered.
-> +		 */
-> +		if (message  < virdev->num_of_vqs)
-> +			vring_interrupt(message, virdev->vq[message]);
-> +		spin_lock_irqsave(&rpdev->mu_lock, flags);
-> +		cb->tail = CIRC_ADD(cb->tail, PAGE_SIZE, 4);
-> +	}
-> +	spin_unlock_irqrestore(&rpdev->mu_lock, flags);
-> +}
-> +
-> +static int imx_rpmsg_partition_notify(struct notifier_block *nb,
-> +				      unsigned long event, void *group)
-> +{
-> +	/* Reserved for the partition reset. */
-> +	return 0;
-> +}
-> +
-> +static void imx_rpmsg_rxdb_callback(struct mbox_client *c, void *msg)
-> +{
-> +	unsigned long flags;
-> +	struct imx_rpmsg_vproc *rpdev = container_of(c,
-> +			struct imx_rpmsg_vproc, cl);
-> +
-> +	spin_lock_irqsave(&rpdev->mu_lock, flags);
-> +	rpdev->flags |= REMOTE_IS_READY;
-> +	spin_unlock_irqrestore(&rpdev->mu_lock, flags);
-> +}
-> +
-> +static int imx_rpmsg_rxdb_channel_init(struct imx_rpmsg_vproc *rpdev)
-> +{
-> +	struct platform_device *pdev = rpdev->pdev;
-> +	struct device *dev = &pdev->dev;
-> +	struct mbox_client *cl;
-> +	int ret = 0;
-> +
-> +	cl = &rpdev->cl_rxdb;
-> +	cl->dev = dev;
-> +	cl->rx_callback = imx_rpmsg_rxdb_callback;
-> +
-> +	/*
-> +	 * RX door bell is used to receive the ready signal from remote
-> +	 * after the partition reset of A core.
-> +	 */
-> +	rpdev->rxdb_ch = mbox_request_channel_byname(cl, "rxdb");
-> +	if (IS_ERR(rpdev->rxdb_ch)) {
-> +		ret = PTR_ERR(rpdev->rxdb_ch);
-> +		dev_err(cl->dev, "failed to request mbox chan rxdb, ret %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void imx_rpmsg_rx_callback(struct mbox_client *c, void *msg)
-> +{
-> +	int buf_space;
-> +	unsigned long flags;
-> +	u32 *data = msg;
-> +	struct imx_rpmsg_vproc *rpdev = container_of(c,
-> +			struct imx_rpmsg_vproc, cl);
-> +	struct circ_buf *cb = &rpdev->rx_buffer;
-> +
-> +	spin_lock_irqsave(&rpdev->mu_lock, flags);
-> +	buf_space = CIRC_SPACE(cb->head, cb->tail, PAGE_SIZE);
-> +	spin_unlock_irqrestore(&rpdev->mu_lock, flags);
-> +	if (unlikely(!buf_space)) {
-> +		dev_err(c->dev, "RPMSG RX overflow!\n");
-> +		return;
-> +	}
-> +	spin_lock_irqsave(&rpdev->mu_lock, flags);
-> +	cb->buf[cb->head] = *data;
-> +	cb->head = CIRC_ADD(cb->head, PAGE_SIZE, 4);
-> +	spin_unlock_irqrestore(&rpdev->mu_lock, flags);
-> +
-> +	schedule_delayed_work(&(rpdev->rpmsg_work), 0);
-> +}
-> +
-> +static int imx_rpmsg_probe(struct platform_device *pdev)
-> +{
-> +	int j, ret = 0;
-> +	char *buf;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct imx_rpmsg_vproc *rpdev;
-> +	struct mbox_client *cl;
-> +
-> +	buf = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
-> +	if (!buf)
-> +		return -ENOMEM;
-> +
-> +	rpdev = devm_kzalloc(dev, sizeof(*rpdev), GFP_KERNEL);
-> +	if (!rpdev)
-> +		return -ENOMEM;
-> +
-> +	rpdev->proc_nb.notifier_call = imx_rpmsg_partition_notify;
-> +	rpdev->variant = (enum imx_rpmsg_variants)of_device_get_match_data(dev);
-> +	rpdev->rx_buffer.buf = buf;
-> +	rpdev->rx_buffer.head = 0;
-> +	rpdev->rx_buffer.tail = 0;
-> +
-> +	cl = &rpdev->cl;
-> +	cl->dev = dev;
-> +	cl->tx_block = false;
-> +	cl->tx_tout = 20;
-> +	cl->knows_txdone = false;
-> +	cl->rx_callback = imx_rpmsg_rx_callback;
-> +
-> +	rpdev->tx_ch = mbox_request_channel_byname(cl, "tx");
-> +	if (IS_ERR(rpdev->tx_ch)) {
-> +		ret = PTR_ERR(rpdev->tx_ch);
-> +		goto err_chl;
-> +	}
-> +	rpdev->rx_ch = mbox_request_channel_byname(cl, "rx");
-> +	if (IS_ERR(rpdev->rx_ch)) {
-> +		ret = PTR_ERR(rpdev->rx_ch);
-> +		goto err_chl;
-> +	}
-> +
-> +	spin_lock_init(&rpdev->mu_lock);
-> +	INIT_DELAYED_WORK(&(rpdev->rpmsg_work), rpmsg_work_handler);
-> +	ret = of_property_read_u32(np, "vdev-nums", &rpdev->vdev_nums);
-> +	if (ret)
-> +		rpdev->vdev_nums = 1;
-> +	if (rpdev->vdev_nums > MAX_VDEV_NUMS) {
-> +		dev_err(dev, "vdev-nums exceed the max %d\n", MAX_VDEV_NUMS);
-> +		ret = -EINVAL;
-> +		goto err_chl;
-> +	}
-> +	rpdev->first_notify = rpdev->vdev_nums;
-> +
-> +	ret = set_vring_phy_buf(pdev, rpdev, rpdev->vdev_nums);
-> +	if (ret) {
-> +		dev_err(dev, "No vring buffer.\n");
-> +		ret = -ENOMEM;
-> +		goto err_chl;
-> +	}
-> +	if (of_reserved_mem_device_init(dev)) {
-> +		dev_dbg(dev, "dev doesn't have specific DMA pool.\n");
-> +		rpdev->flags &= (~SPECIFIC_DMA_POOL);
-> +	} else {
-> +		rpdev->flags |= SPECIFIC_DMA_POOL;
-> +	}
-> +
-> +	for (j = 0; j < rpdev->vdev_nums; j++) {
-> +		dev_dbg(dev, "%s rpdev vdev%d: vring0 0x%x, vring1 0x%x\n",
-> +			 __func__, rpdev->vdev_nums,
-> +			 rpdev->ivdev[j]->vring[0],
-> +			 rpdev->ivdev[j]->vring[1]);
-> +		rpdev->ivdev[j]->vdev.id.device = VIRTIO_ID_RPMSG;
-> +		rpdev->ivdev[j]->vdev.config = &imx_rpmsg_config_ops;
-> +		rpdev->pdev = pdev;
-> +		rpdev->ivdev[j]->vdev.dev.parent = &pdev->dev;
-> +		rpdev->ivdev[j]->vdev.dev.release = imx_rpmsg_vproc_release;
-> +		rpdev->ivdev[j]->base_vq_id = j * 2;
-> +		rpdev->ivdev[j]->rpdev = rpdev;
-> +
-> +		ret = register_virtio_device(&rpdev->ivdev[j]->vdev);
-> +		if (ret) {
-> +			dev_err(dev, "%s failed to register rpdev: %d\n",
-> +					__func__, ret);
-> +			goto err_out;
-> +		}
-> +	}
-> +	/* Initialize the RX doorbell channel. */
-> +	ret = imx_rpmsg_rxdb_channel_init(rpdev);
-> +	if (ret)
-> +		goto err_out;
-> +
-> +	return ret;
-> +
-> +err_out:
-> +	if (rpdev->flags & SPECIFIC_DMA_POOL)
-> +		of_reserved_mem_device_release(dev);
-> +err_chl:
-> +	if (!IS_ERR(rpdev->rxdb_ch))
-> +		mbox_free_channel(rpdev->rxdb_ch);
-> +	if (!IS_ERR(rpdev->tx_ch))
-> +		mbox_free_channel(rpdev->tx_ch);
-> +	if (!IS_ERR(rpdev->rx_ch))
-> +		mbox_free_channel(rpdev->rx_ch);
-> +	return ret;
-> +}
-> +
-> +static struct platform_driver imx_rpmsg_driver = {
-> +	.driver = {
-> +		   .owner = THIS_MODULE,
-> +		   .name = "imx-rpmsg",
-> +		   .of_match_table = imx_rpmsg_dt_ids,
-> +		   },
-> +	.probe = imx_rpmsg_probe,
-> +};
-> +
-> +static int __init imx_rpmsg_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = platform_driver_register(&imx_rpmsg_driver);
-> +	if (ret)
-> +		pr_err("Unable to initialize rpmsg driver\n");
-> +	else
-> +		pr_info("imx rpmsg driver is registered.\n");
-> +
-> +	return ret;
-> +}
-> +
-> +MODULE_DESCRIPTION("iMX remote processor messaging virtio device");
-> +MODULE_LICENSE("GPL v2");
-> +arch_initcall(imx_rpmsg_init);
-> diff --git a/drivers/rpmsg/imx_rpmsg_pingpong.c b/drivers/rpmsg/imx_rpmsg_pingpong.c
-> new file mode 100644
-> index 0000000..b028914
-> --- /dev/null
-> +++ b/drivers/rpmsg/imx_rpmsg_pingpong.c
-> @@ -0,0 +1,100 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2019 NXP
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/virtio.h>
-> +#include <linux/rpmsg.h>
-> +
-> +#define MSG		"hello world!"
-> +static unsigned int rpmsg_pingpong;
-> +
-> +static int rpmsg_pingpong_cb(struct rpmsg_device *rpdev, void *data, int len,
-> +						void *priv, u32 src)
-> +{
-> +	int err;
-> +
-> +	/* reply */
-> +	rpmsg_pingpong = *(unsigned int *)data;
-> +	pr_info("get %d (src: 0x%x)\n", rpmsg_pingpong, src);
-> +
-> +	/* pingpongs should not live forever */
-> +	if (rpmsg_pingpong > 100) {
-> +		dev_info(&rpdev->dev, "goodbye!\n");
-> +		return 0;
-> +	}
-> +	rpmsg_pingpong++;
-> +	err = rpmsg_sendto(rpdev->ept, (void *)(&rpmsg_pingpong), 4, src);
-> +
-> +	if (err)
-> +		dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", err);
-> +
-> +	return err;
-> +}
-> +
-> +static int rpmsg_pingpong_probe(struct rpmsg_device *rpdev)
-> +{
-> +	int err;
-> +
-> +	dev_info(&rpdev->dev, "new channel: 0x%x -> 0x%x!\n",
-> +			rpdev->src, rpdev->dst);
-> +
-> +	/*
-> +	 * send a message to our remote processor, and tell remote
-> +	 * processor about this channel
-> +	 */
-> +	err = rpmsg_send(rpdev->ept, MSG, strlen(MSG));
-> +	if (err) {
-> +		dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	rpmsg_pingpong = 0;
-> +	err = rpmsg_sendto(rpdev->ept, (void *)(&rpmsg_pingpong),
-> +			   4, rpdev->dst);
-> +	if (err) {
-> +		dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void rpmsg_pingpong_remove(struct rpmsg_device *rpdev)
-> +{
-> +	dev_info(&rpdev->dev, "rpmsg pingpong driver is removed\n");
-> +}
-> +
-> +static struct rpmsg_device_id rpmsg_driver_pingpong_id_table[] = {
-> +	{ .name	= "rpmsg-openamp-demo-channel" },
-> +	{ .name	= "rpmsg-openamp-demo-channel-1" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(rpmsg, rpmsg_driver_pingpong_id_table);
-> +
-> +static struct rpmsg_driver rpmsg_pingpong_driver = {
-> +	.drv.name	= KBUILD_MODNAME,
-> +	.drv.owner	= THIS_MODULE,
-> +	.id_table	= rpmsg_driver_pingpong_id_table,
-> +	.probe		= rpmsg_pingpong_probe,
-> +	.callback	= rpmsg_pingpong_cb,
-> +	.remove		= rpmsg_pingpong_remove,
-> +};
-> +
-> +static int __init init(void)
-> +{
-> +	return register_rpmsg_driver(&rpmsg_pingpong_driver);
-> +}
-> +
-> +static void __exit fini(void)
-> +{
-> +	unregister_rpmsg_driver(&rpmsg_pingpong_driver);
-> +}
-> +module_init(init);
-> +module_exit(fini);
-> +
-> +MODULE_AUTHOR("Freescale Semiconductor, Inc.");
-> +MODULE_DESCRIPTION("iMX virtio remote processor messaging pingpong driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/imx_rpmsg.h b/include/linux/imx_rpmsg.h
-> new file mode 100644
-> index 0000000..e0d5e97
-> --- /dev/null
-> +++ b/include/linux/imx_rpmsg.h
-> @@ -0,0 +1,43 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2019 NXP.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +/*
-> + * @file linux/imx_rpmsg.h
-> + *
-> + * @brief Global header file for iMX RPMSG
-> + *
-> + * @ingroup RPMSG
-> + */
-> +#ifndef __LINUX_IMX_RPMSG_H__
-> +#define __LINUX_IMX_RPMSG_H__
-> +
-> +/* Category define */
-> +#define IMX_RMPSG_LIFECYCLE	1
-> +#define IMX_RPMSG_PMIC		2
-> +#define IMX_RPMSG_AUDIO		3
-> +#define IMX_RPMSG_KEY		4
-> +#define IMX_RPMSG_GPIO		5
-> +#define IMX_RPMSG_RTC		6
-> +#define IMX_RPMSG_SENSOR	7
-> +/* rpmsg version */
-> +#define IMX_RMPSG_MAJOR		1
-> +#define IMX_RMPSG_MINOR		0
-> +
-> +#define CIRC_ADD(idx, size, value)	(((idx) + (value)) & ((size) - 1))
-> +
-> +struct imx_rpmsg_head {
-> +	u8 cate;
-> +	u8 major;
-> +	u8 minor;
-> +	u8 type;
-> +	u8 cmd;
-> +	u8 reserved[5];
-> +} __packed;
-> +
-> +#endif /* __LINUX_IMX_RPMSG_H__ */
-> 
-
-Kind regards,
-Oleksij Rempel
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+QmFzZWQgb24gInZpcnRpb19ycG1zZ19idXMiIGRyaXZlciwgVGhpcyBwYXRjaC1zZXQgaXMgdXNl
+ZCB0byBzZXQgdXANCnRoZSBjb21tdW5pY2F0aW9uIG1lY2hhbmlzbSBiZXR3ZWVuIEEgY29yZSBh
+bmQgTSBjb3JlIG9uIGkuTVggQU1QIFNPQ3MuDQoNCkFkZCB0aGUgaW5pdGlhbCBpbXggcnBtc2cg
+c3VwcG9ydCBnbHVlIGRyaXZlciBhbmQgb25lIHBpbmdwb25nIGRlbW8sDQpkZW1vbnN0cmF0ZWQg
+dGhlIGRhdGEgdHJhbnNhY3Rpb25zIGJldHdlZW4gQSBjb3JlIGFuZCByZW1vdGUgTSBjb3JlLg0K
+RGlzdHJpYnV0ZWQgZnJhbWV3b3JrIGlzIHVzZWQgaW4gSU1YIFJQTVNHIGltcGxlbWVudGF0aW9u
+LCByZWZlciB0byB0aGUNCmZvbGxvd2luZyByZXF1aXJlbWVudHM6DQogIC0gVGhlIENBTiBmdW5j
+dGlvbnMgY29udGFpbmVkIGluIE0gY29yZSBhbmQgUlRPUyBzaG91bGQgYmUgcmVhZHkgYW5kDQog
+ICAgY29tcGxldGUgZnVuY3Rpb25hbCBpbiA1MG1zIGFmdGVyIEFNUCBzeXN0ZW0gaXMgdHVybmVk
+IG9uLg0KICAtIFBhcnRpdGlvbiByZXNldC4gU3lzdGVtIHdvdWxkbid0IGJlIHN0YWxsZWQgYnkg
+dGhlIGV4Y2VwdGlvbnMgKGUueA0KICAgIHRoZSByZXNldCB0cmlnZ2VyZWQgYnkgdGhlIHN5c3Rl
+bSBoYW5nKSBvY2N1cnJlZCBhdCB0aGUgb3RoZXIgc2lkZS4NCiAgICBBbmQgdGhlIFJQTVNHIG1l
+Y2hhbmlzbSBzaG91bGQgYmUgcmVjb3ZlcmVkIGF1dG9tYWN0aWxseSBhZnRlciB0aGUNCiAgICBw
+YXJ0aXRpb24gcmVzZXQgaXMgY29tcGxldGVkLg0KSW4gdGhpcyBzY2VuYXJpbywgdGhlIE0gY29y
+ZSBhbmQgUlRPUyB3b3VsZCBiZSBraWNrZWQgb2ZmIGJ5IGJvb3Rsb2FkZXINCmZpcnN0bHksIHRo
+ZW4gQSBjb3JlIGFuZCBMaW51eCB3b3VsZCBiZSBsb2FkZWQgbGF0ZXIuIEJvdGggTSBjb3JlL1JU
+T1MNCmFuZCBBIGNvcmUvTGludXggYXJlIHJ1bm5pbmcgaW5kZXBlbmRseS4NCg0KT25lIHBoeXNp
+Y2FsIG1lbW9yeSByZWdpb24gdXNlZCB0byBzdG9yZSB0aGUgdnJpbmcgaXMgbWFuZGF0b3J5IHJl
+cXVpcmVkDQp0byBwcmUtcmVzZXJ2ZWQgYW5kIHdlbGwta25vd25lZCBieSBib3RoIEEgY29yZSBh
+bmQgTSBjb3JlDQoNClNpZ25lZC1vZmYtYnk6IFJpY2hhcmQgWmh1IDxob25neGluZy56aHVAbnhw
+LmNvbT4NCi0tLQ0KIGRyaXZlcnMvcnBtc2cvS2NvbmZpZyAgICAgICAgICAgICAgfCAgMjQgKysN
+CiBkcml2ZXJzL3JwbXNnL01ha2VmaWxlICAgICAgICAgICAgIHwgICAyICsNCiBkcml2ZXJzL3Jw
+bXNnL2lteF9ycG1zZy5jICAgICAgICAgIHwgNTQyICsrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysNCiBkcml2ZXJzL3JwbXNnL2lteF9ycG1zZ19waW5ncG9uZy5jIHwgMTAwICsr
+KysrKysNCiBpbmNsdWRlL2xpbnV4L2lteF9ycG1zZy5oICAgICAgICAgIHwgIDQzICsrKw0KIDUg
+ZmlsZXMgY2hhbmdlZCwgNzExIGluc2VydGlvbnMoKykNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9ycG1zZy9pbXhfcnBtc2cuYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL3JwbXNn
+L2lteF9ycG1zZ19waW5ncG9uZy5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGluY2x1ZGUvbGludXgv
+aW14X3JwbXNnLmgNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvcnBtc2cvS2NvbmZpZyBiL2RyaXZl
+cnMvcnBtc2cvS2NvbmZpZw0KaW5kZXggZDAzMjJiNC4uNjM2NDYwZSAxMDA2NDQNCi0tLSBhL2Ry
+aXZlcnMvcnBtc2cvS2NvbmZpZw0KKysrIGIvZHJpdmVycy9ycG1zZy9LY29uZmlnDQpAQCAtNTUs
+NCArNTUsMjggQEAgY29uZmlnIFJQTVNHX1ZJUlRJTw0KIAlzZWxlY3QgUlBNU0cNCiAJc2VsZWN0
+IFZJUlRJTw0KIA0KK2NvbmZpZyBIQVZFX0lNWF9SUE1TRw0KKwlib29sICJJTVggUlBNU0cgZHJp
+dmVyIG9uIHRoZSBBTVAgU09DcyINCisJZGVmYXVsdCB5DQorCWRlcGVuZHMgb24gSU1YX01CT1gN
+CisJc2VsZWN0IFJQTVNHX1ZJUlRJTw0KKwloZWxwDQorCSAgU2F5IHkgaGVyZSB0byBlbmFibGUg
+c3VwcG9ydCBmb3IgdGhlIGlNWCBScG1zZyBEcml2ZXIJcHJvdmlkaW5nDQorCSAgY29tbXVuaWNh
+dGlvbiBjaGFubmVscyB0byByZW1vdGUgcHJvY2Vzc29ycyBpbiBpTVggYXN5bW1ldHJpYw0KKwkg
+IG11bHRpcHJvY2Vzc2luZyAoQU1QKSBwbGF0Zm9ybXMuDQorDQorCSAgRXNwZWNpYWxseSwgaXQg
+aXMgbWFuZGF0b3J5IHJlcXVpcmVkIHdoZW4gdGhlIHBhcnRpdGlvbiByZXNldCBpcw0KKwkgIHJl
+cXVpcmVkIG9uIHNvbWUgaU1YIEFNUCBwbGF0Zm9ybXMuDQorDQorY29uZmlnIElNWF9SUE1TR19Q
+SU5HUE9ORw0KKwl0cmlzdGF0ZSAiSU1YIFJQTVNHIHBpbmdwb25nIGRyaXZlciAtLSBsb2FkYWJs
+ZSBtb2R1bGVzIG9ubHkiDQorCWRlZmF1bHQgbQ0KKwlkZXBlbmRzIG9uIEhBVkVfSU1YX1JQTVNH
+ICYmIG0NCisJaGVscA0KKwkgIE9uZSAzMmJpdCB1bnNpZ25lZCBpbnQgZGF0YSB0cmFuc2FjdGlv
+bnMgZGVtb2UgYmV0d2VlbiB0aGUgQSBjb3JlDQorCSAgYW5kIHRoZSByZW1vdGUgTSBjb3JlIG9u
+IHRoZSBpTVggQU1QIHBsYXRmb3Jtcy4NCisNCisJICBPbmx5IHRoZSBtb2R1bGUgbW9kZSBpcyBz
+dXBwb3J0ZWQgaGVyZSwgdGhlIGRlbW8gd291bGQgYmUga2lja2VkIG9mZg0KKwkgIGltbWVkaWF0
+ZWx5IHdoZW4gdGhpcyBtb2R1bGUgaXMgaW5zbW9kZWQuDQorDQogZW5kbWVudQ0KZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvcnBtc2cvTWFrZWZpbGUgYi9kcml2ZXJzL3JwbXNnL01ha2VmaWxlDQppbmRl
+eCA5YWE4NTk1Li45YzZmY2U1IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9ycG1zZy9NYWtlZmlsZQ0K
+KysrIGIvZHJpdmVycy9ycG1zZy9NYWtlZmlsZQ0KQEAgLTYsMyArNiw1IEBAIG9iai0kKENPTkZJ
+R19SUE1TR19RQ09NX0dMSU5LX05BVElWRSkgKz0gcWNvbV9nbGlua19uYXRpdmUubw0KIG9iai0k
+KENPTkZJR19SUE1TR19RQ09NX0dMSU5LX1NNRU0pICs9IHFjb21fZ2xpbmtfc21lbS5vDQogb2Jq
+LSQoQ09ORklHX1JQTVNHX1FDT01fU01EKQkrPSBxY29tX3NtZC5vDQogb2JqLSQoQ09ORklHX1JQ
+TVNHX1ZJUlRJTykJKz0gdmlydGlvX3JwbXNnX2J1cy5vDQorb2JqLSQoQ09ORklHX0hBVkVfSU1Y
+X1JQTVNHKQkrPSBpbXhfcnBtc2cubw0KK29iai0kKENPTkZJR19JTVhfUlBNU0dfUElOR1BPTkcp
+CSs9IGlteF9ycG1zZ19waW5ncG9uZy5vDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ycG1zZy9pbXhf
+cnBtc2cuYyBiL2RyaXZlcnMvcnBtc2cvaW14X3JwbXNnLmMNCm5ldyBmaWxlIG1vZGUgMTAwNjQ0
+DQppbmRleCAwMDAwMDAwLi41ODg4OGQxDQotLS0gL2Rldi9udWxsDQorKysgYi9kcml2ZXJzL3Jw
+bXNnL2lteF9ycG1zZy5jDQpAQCAtMCwwICsxLDU0MiBAQA0KKy8vIFNQRFgtTGljZW5zZS1JZGVu
+dGlmaWVyOiBHUEwtMi4wDQorLyoNCisgKiBDb3B5cmlnaHQgMjAxOSBOWFANCisgKi8NCisNCisj
+aW5jbHVkZSA8bGludXgvY2lyY19idWYuaD4NCisjaW5jbHVkZSA8bGludXgvZXJyLmg+DQorI2lu
+Y2x1ZGUgPGxpbnV4L2luaXQuaD4NCisjaW5jbHVkZSA8bGludXgvbWFpbGJveF9jbGllbnQuaD4N
+CisjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQorI2luY2x1ZGUgPGxpbnV4L25vdGlmaWVyLmg+
+DQorI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPg0KKyNpbmNsdWRlIDxsaW51eC9vZl9yZXNl
+cnZlZF9tZW0uaD4NCisjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQorI2luY2x1
+ZGUgPGxpbnV4L3ZpcnRpb19jb25maWcuaD4NCisjaW5jbHVkZSA8bGludXgvdmlydGlvX2lkcy5o
+Pg0KKyNpbmNsdWRlIDxsaW51eC92aXJ0aW9fcmluZy5oPg0KKyNpbmNsdWRlIDxsaW51eC9pbXhf
+cnBtc2cuaD4NCisjaW5jbHVkZSAicnBtc2dfaW50ZXJuYWwuaCINCisNCitlbnVtIGlteF9ycG1z
+Z192YXJpYW50cyB7DQorCUlNWDhNUSwNCisJSU1YOFFYUCwNCit9Ow0KKw0KK3N0cnVjdCBpbXhf
+dmlyZGV2IHsNCisJc3RydWN0IHZpcnRpb19kZXZpY2UgdmRldjsNCisJdW5zaWduZWQgaW50IHZy
+aW5nWzJdOw0KKwlzdHJ1Y3QgdmlydHF1ZXVlICp2cVsyXTsNCisJaW50IGJhc2VfdnFfaWQ7DQor
+CWludCBudW1fb2ZfdnFzOw0KKwlzdHJ1Y3QgaW14X3JwbXNnX3Zwcm9jICpycGRldjsNCit9Ow0K
+Kw0KK3N0cnVjdCBpbXhfcnBtc2dfdnByb2Mgew0KKwlzdHJ1Y3QgbWJveF9jbGllbnQgY2w7DQor
+CXN0cnVjdCBtYm94X2NsaWVudCBjbF9yeGRiOw0KKwlzdHJ1Y3QgbWJveF9jaGFuICp0eF9jaDsN
+CisJc3RydWN0IG1ib3hfY2hhbiAqcnhfY2g7DQorCXN0cnVjdCBtYm94X2NoYW4gKnJ4ZGJfY2g7
+DQorCWVudW0gaW14X3JwbXNnX3ZhcmlhbnRzIHZhcmlhbnQ7DQorCWludCB2ZGV2X251bXM7DQor
+CWludCBmaXJzdF9ub3RpZnk7DQorCXUzMiBmbGFnczsNCisjZGVmaW5lIE1BWF9WREVWX05VTVMg
+IDgNCisJc3RydWN0IGlteF92aXJkZXYgKml2ZGV2W01BWF9WREVWX05VTVNdOw0KKwlzdHJ1Y3Qg
+ZGVsYXllZF93b3JrIHJwbXNnX3dvcms7DQorCXN0cnVjdCBjaXJjX2J1ZiByeF9idWZmZXI7DQor
+CXNwaW5sb2NrX3QgbXVfbG9jazsNCisJc3RydWN0IG5vdGlmaWVyX2Jsb2NrIHByb2NfbmI7DQor
+CXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXY7DQorfTsNCisNCisjZGVmaW5lIFJQTVNHX05V
+TV9CVUZTCQkoNTEyKQ0KKyNkZWZpbmUgUlBNU0dfQlVGX1NJWkUJCSg1MTIpDQorI2RlZmluZSBS
+UE1TR19CVUZTX1NQQUNFCShSUE1TR19OVU1fQlVGUyAqIFJQTVNHX0JVRl9TSVpFKQ0KKyNkZWZp
+bmUgUlBNU0dfVlJJTkdfQUxJR04JKDQwOTYpDQorI2RlZmluZSBSUE1TR19SSU5HX1NJWkUJKChE
+SVZfUk9VTkRfVVAodnJpbmdfc2l6ZShSUE1TR19OVU1fQlVGUyAvIDIsIFwNCisJCQkJUlBNU0df
+VlJJTkdfQUxJR04pLCBQQUdFX1NJWkUpKSAqIFBBR0VfU0laRSkNCisNCisjZGVmaW5lIHRvX2lt
+eF92aXJkZXYodmQpIGNvbnRhaW5lcl9vZih2ZCwgc3RydWN0IGlteF92aXJkZXYsIHZkZXYpDQor
+DQorLyoNCisgKiAxOiBpbmRpY2F0ZWQgdGhhdCByZW1vdGUgcHJvY2Vzc29yIGlzIHJlYWR5IGZy
+b20gcmUtaW5pdGlhbGl6YXRpb24uDQorICogQ2xlYXIgdGhpcyBiaXQgYWZ0ZXIgdGhlIFJQTVNH
+IHJlc3RvcmUgaXMgZmluaXNoZWQgYXQgbWFzdGVyIHNpZGUuDQorICovDQorI2RlZmluZSBSRU1P
+VEVfSVNfUkVBRFkJCQlCSVQoMCkNCisvKiAxOiBVc2UgcmVzZXJ2ZWQgbWVtb3J5IHJlZ2lvbiBh
+cyBETUEgcG9vbCAqLw0KKyNkZWZpbmUgU1BFQ0lGSUNfRE1BX1BPT0wJCUJJVCgxKQ0KKw0KK3N0
+cnVjdCBpbXhfcnBtc2dfdnFfaW5mbyB7DQorCV9fdTE2IG51bTsJLyogbnVtYmVyIG9mIGVudHJp
+ZXMgaW4gdGhlIHZpcnRpb19yaW5nICovDQorCV9fdTE2IHZxX2lkOwkvKiBhIGdsb2JhbHkgdW5p
+cXVlIGluZGV4IG9mIHRoaXMgdmlydHF1ZXVlICovDQorCXZvaWQgKmFkZHI7CS8qIGFkZHJlc3Mg
+d2hlcmUgd2UgbWFwcGVkIHRoZSB2aXJ0aW8gcmluZyAqLw0KKwlzdHJ1Y3QgaW14X3JwbXNnX3Zw
+cm9jICpycGRldjsNCit9Ow0KKw0KK3N0YXRpYyB1NjQgaW14X3JwbXNnX2dldF9mZWF0dXJlcyhz
+dHJ1Y3QgdmlydGlvX2RldmljZSAqdmRldikNCit7DQorCS8qIFZJUlRJT19SUE1TR19GX05TIGhh
+cyBiZWVuIG1hZGUgcHJpdmF0ZSAqLw0KKwlyZXR1cm4gMSA8PCAwOw0KK30NCisNCitzdGF0aWMg
+aW50IGlteF9ycG1zZ19maW5hbGl6ZV9mZWF0dXJlcyhzdHJ1Y3QgdmlydGlvX2RldmljZSAqdmRl
+dikNCit7DQorCS8qIEdpdmUgdmlydGlvX3JpbmcgYSBjaGFuY2UgdG8gYWNjZXB0IGZlYXR1cmVz
+ICovDQorCXZyaW5nX3RyYW5zcG9ydF9mZWF0dXJlcyh2ZGV2KTsNCisJcmV0dXJuIDA7DQorfQ0K
+Kw0KKy8qIGtpY2sgdGhlIHJlbW90ZSBwcm9jZXNzb3IsIGFuZCBsZXQgaXQga25vdyB3aGljaCB2
+aXJ0cXVldWUgdG8gcG9rZSBhdCAqLw0KK3N0YXRpYyBib29sIGlteF9ycG1zZ19ub3RpZnkoc3Ry
+dWN0IHZpcnRxdWV1ZSAqdnEpDQorew0KKwlpbnQgcmV0Ow0KKwl1bnNpZ25lZCBsb25nIGZsYWdz
+Ow0KKwl1bnNpZ25lZCBpbnQgbXVfcnBtc2cgPSAwOw0KKwlzdHJ1Y3QgaW14X3JwbXNnX3ZxX2lu
+Zm8gKnJwdnEgPSB2cS0+cHJpdjsNCisJc3RydWN0IGlteF9ycG1zZ192cHJvYyAqcnBkZXYgPSBy
+cHZxLT5ycGRldjsNCisNCisJbXVfcnBtc2cgPSBycHZxLT52cV9pZCA8PCAxNjsNCisJc3Bpbl9s
+b2NrX2lycXNhdmUoJnJwZGV2LT5tdV9sb2NrLCBmbGFncyk7DQorCS8qDQorCSAqIFNlbmQgdGhl
+IGluZGV4IG9mIHRoZSB0cmlnZ2VyZWQgdmlydHF1ZXVlIGFzIHRoZSBtdSBwYXlsb2FkLg0KKwkg
+KiBVc2UgdGhlIHRpbWVvdXQgTVUgc2VuZCBtZXNzYWdlIGhlcmUuDQorCSAqIFNpbmNlIHRoYXQg
+TTQgY29yZSBtYXkgbm90IGJlIGxvYWRlZCwgYW5kIHRoZSBmaXJzdCBNU0cgbWF5DQorCSAqIG5v
+dCBiZSBoYW5kbGVkIGJ5IE00IHdoZW4gbXVsdGktdmRldiBpcyBlbmFibGVkLg0KKwkgKiBUbyBt
+YWtlIHN1cmUgdGhhdCB0aGUgbWVzc2FnZSB3b3VuZCd0IGJlIGRpc2NhcmRlZCB3aGVuIE00DQor
+CSAqIGlzIHJ1bm5pbmcgbm9ybWFsbHkgb3IgaW4gdGhlIHN1c3BlbmQgbW9kZS4gT25seSB1c2UN
+CisJICogdGhlIHRpbWVvdXQgbWVjaGFuaXNtIGJ5IHRoZSBmaXJzdCBub3RpZnkgd2hlbiB0aGUg
+dmRldiBpcw0KKwkgKiByZWdpc3RlcmVkLg0KKwkgKiB+MTRtcyBpcyByZXF1aXJlZCBieSBNNCBy
+ZWFkeSB0byBwcm9jZXNzIHRoZSBNVSBtZXNzYWdlIGZyb20NCisJICogY29sZCBib290LiBTZXQg
+dGhlIHdhaXQgdGltZSAyMG1zIGhlcmUuDQorCSAqLw0KKwlpZiAodW5saWtlbHkocnBkZXYtPmZp
+cnN0X25vdGlmeSA+IDApKSB7DQorCQlycGRldi0+Zmlyc3Rfbm90aWZ5LS07DQorCQlycGRldi0+
+Y2wudHhfdG91dCA9IDIwOw0KKwkJcmV0ID0gbWJveF9zZW5kX21lc3NhZ2UocnBkZXYtPnR4X2No
+LCAmbXVfcnBtc2cpOw0KKwkJaWYgKHJldCA8IDApDQorCQkJcmV0dXJuIGZhbHNlOw0KKwl9IGVs
+c2Ugew0KKwkJcnBkZXYtPmNsLnR4X3RvdXQgPSAwOw0KKwkJcmV0ID0gbWJveF9zZW5kX21lc3Nh
+Z2UocnBkZXYtPnR4X2NoLCAmbXVfcnBtc2cpOw0KKwkJaWYgKHJldCA8IDApDQorCQkJcmV0dXJu
+IGZhbHNlOw0KKwl9DQorCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnJwZGV2LT5tdV9sb2NrLCBm
+bGFncyk7DQorDQorCXJldHVybiB0cnVlOw0KK30NCisNCitzdGF0aWMgc3RydWN0IHZpcnRxdWV1
+ZSAqcnBfZmluZF92cShzdHJ1Y3QgdmlydGlvX2RldmljZSAqdmRldiwNCisJCQkJICAgIHVuc2ln
+bmVkIGludCBpbmRleCwNCisJCQkJICAgIHZvaWQgKCpjYWxsYmFjaykoc3RydWN0IHZpcnRxdWV1
+ZSAqdnEpLA0KKwkJCQkgICAgY29uc3QgY2hhciAqbmFtZSwNCisJCQkJICAgIGJvb2wgY3R4KQ0K
+K3sNCisJc3RydWN0IGlteF92aXJkZXYgKnZpcmRldiA9IHRvX2lteF92aXJkZXYodmRldik7DQor
+CXN0cnVjdCBpbXhfcnBtc2dfdnByb2MgKnJwZGV2ID0gdmlyZGV2LT5ycGRldjsNCisJc3RydWN0
+IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IHJwZGV2LT5wZGV2Ow0KKwlzdHJ1Y3QgZGV2aWNlICpk
+ZXYgPSAmcGRldi0+ZGV2Ow0KKwlzdHJ1Y3QgaW14X3JwbXNnX3ZxX2luZm8gKnJwdnE7DQorCXN0
+cnVjdCB2aXJ0cXVldWUgKnZxOw0KKwlpbnQgZXJyOw0KKw0KKwlycHZxID0ga21hbGxvYyhzaXpl
+b2YoKnJwdnEpLCBHRlBfS0VSTkVMKTsNCisJaWYgKCFycHZxKQ0KKwkJcmV0dXJuIEVSUl9QVFIo
+LUVOT01FTSk7DQorDQorCS8qIGlvcmVtYXAnaW5nIG5vcm1hbCBtZW1vcnksIHNvIHdlIGNhc3Qg
+YXdheSBzcGFyc2UncyBjb21wbGFpbnRzICovDQorCXJwdnEtPmFkZHIgPSAoX19mb3JjZSB2b2lk
+ICopIGlvcmVtYXBfbm9jYWNoZSh2aXJkZXYtPnZyaW5nW2luZGV4XSwNCisJCQkJCQkJUlBNU0df
+UklOR19TSVpFKTsNCisJaWYgKCFycHZxLT5hZGRyKSB7DQorCQllcnIgPSAtRU5PTUVNOw0KKwkJ
+Z290byBmcmVlX3JwdnE7DQorCX0NCisNCisJbWVtc2V0X2lvKHJwdnEtPmFkZHIsIDAsIFJQTVNH
+X1JJTkdfU0laRSk7DQorDQorCWRldl9kYmcoZGV2LCAidnJpbmclZDogcGh5cyAweCV4LCB2aXJ0
+IDB4JXBcbiIsDQorCQkJaW5kZXgsIHZpcmRldi0+dnJpbmdbaW5kZXhdLCBycHZxLT5hZGRyKTsN
+CisNCisJdnEgPSB2cmluZ19uZXdfdmlydHF1ZXVlKGluZGV4LCBSUE1TR19OVU1fQlVGUyAvIDIs
+IFJQTVNHX1ZSSU5HX0FMSUdOLA0KKwkJCXZkZXYsIHRydWUsIGN0eCwNCisJCQlycHZxLT5hZGRy
+LA0KKwkJCWlteF9ycG1zZ19ub3RpZnksIGNhbGxiYWNrLA0KKwkJCW5hbWUpOw0KKwlpZiAoIXZx
+KSB7DQorCQlkZXZfZXJyKGRldiwgInZyaW5nX25ld192aXJ0cXVldWUgZmFpbGVkXG4iKTsNCisJ
+CWVyciA9IC1FTk9NRU07DQorCQlnb3RvIHVubWFwX3ZyaW5nOw0KKwl9DQorDQorCXZpcmRldi0+
+dnFbaW5kZXhdID0gdnE7DQorCXZxLT5wcml2ID0gcnB2cTsNCisJLyogc3lzdGVtLXdpZGUgdW5p
+cXVlIGlkIGZvciB0aGlzIHZpcnRxdWV1ZSAqLw0KKwlycHZxLT52cV9pZCA9IHZpcmRldi0+YmFz
+ZV92cV9pZCArIGluZGV4Ow0KKwlycHZxLT5ycGRldiA9IHJwZGV2Ow0KKw0KKwlyZXR1cm4gdnE7
+DQorDQordW5tYXBfdnJpbmc6DQorCS8qIGlvdW5tYXAgbm9ybWFsIG1lbW9yeSwgc28gbWFrZSBz
+cGFyc2UgaGFwcHkgKi8NCisJaW91bm1hcCgoX19mb3JjZSB2b2lkIF9faW9tZW0gKikgcnB2cS0+
+YWRkcik7DQorZnJlZV9ycHZxOg0KKwlrZnJlZShycHZxKTsNCisJcmV0dXJuIEVSUl9QVFIoZXJy
+KTsNCit9DQorDQorc3RhdGljIHZvaWQgaW14X3JwbXNnX2RlbF92cXMoc3RydWN0IHZpcnRpb19k
+ZXZpY2UgKnZkZXYpDQorew0KKwlzdHJ1Y3QgdmlydHF1ZXVlICp2cSwgKm47DQorDQorCWxpc3Rf
+Zm9yX2VhY2hfZW50cnlfc2FmZSh2cSwgbiwgJnZkZXYtPnZxcywgbGlzdCkgew0KKwkJc3RydWN0
+IGlteF9ycG1zZ192cV9pbmZvICpycHZxID0gdnEtPnByaXY7DQorDQorCQlpb3VubWFwKHJwdnEt
+PmFkZHIpOw0KKwkJdnJpbmdfZGVsX3ZpcnRxdWV1ZSh2cSk7DQorCQlrZnJlZShycHZxKTsNCisJ
+fQ0KK30NCisNCitzdGF0aWMgaW50IGlteF9ycG1zZ19maW5kX3ZxcyhzdHJ1Y3QgdmlydGlvX2Rl
+dmljZSAqdmRldiwgdW5zaWduZWQgaW50IG52cXMsDQorCQkgICAgICAgc3RydWN0IHZpcnRxdWV1
+ZSAqdnFzW10sDQorCQkgICAgICAgdnFfY2FsbGJhY2tfdCAqY2FsbGJhY2tzW10sDQorCQkgICAg
+ICAgY29uc3QgY2hhciAqIGNvbnN0IG5hbWVzW10sDQorCQkgICAgICAgY29uc3QgYm9vbCAqY3R4
+LA0KKwkJICAgICAgIHN0cnVjdCBpcnFfYWZmaW5pdHkgKmRlc2MpDQorew0KKwlzdHJ1Y3QgaW14
+X3ZpcmRldiAqdmlyZGV2ID0gdG9faW14X3ZpcmRldih2ZGV2KTsNCisJaW50IGksIGVycjsNCisN
+CisJLyogd2UgbWFpbnRhaW4gdHdvIHZpcnRxdWV1ZXMgcGVyIHJlbW90ZSBwcm9jZXNzb3IgKGZv
+ciBSWCBhbmQgVFgpICovDQorCWlmIChudnFzICE9IDIpDQorCQlyZXR1cm4gLUVJTlZBTDsNCisN
+CisJZm9yIChpID0gMDsgaSA8IG52cXM7ICsraSkgew0KKwkJdnFzW2ldID0gcnBfZmluZF92cSh2
+ZGV2LCBpLCBjYWxsYmFja3NbaV0sIG5hbWVzW2ldLA0KKwkJCQljdHggPyBjdHhbaV0gOiBmYWxz
+ZSk7DQorCQlpZiAoSVNfRVJSKHZxc1tpXSkpIHsNCisJCQllcnIgPSBQVFJfRVJSKHZxc1tpXSk7
+DQorCQkJZ290byBlcnJvcjsNCisJCX0NCisJfQ0KKw0KKwl2aXJkZXYtPm51bV9vZl92cXMgPSBu
+dnFzOw0KKwlyZXR1cm4gMDsNCisNCitlcnJvcjoNCisJaW14X3JwbXNnX2RlbF92cXModmRldik7
+DQorCXJldHVybiBlcnI7DQorfQ0KKw0KK3N0YXRpYyB2b2lkIGlteF9ycG1zZ19yZXNldChzdHJ1
+Y3QgdmlydGlvX2RldmljZSAqdmRldikNCit7DQorCWRldl9kYmcoJnZkZXYtPmRldiwgInJlc2V0
+ICFcbiIpOw0KK30NCisNCitzdGF0aWMgdTggaW14X3JwbXNnX2dldF9zdGF0dXMoc3RydWN0IHZp
+cnRpb19kZXZpY2UgKnZkZXYpDQorew0KKwlyZXR1cm4gMDsNCit9DQorDQorc3RhdGljIHZvaWQg
+aW14X3JwbXNnX3NldF9zdGF0dXMoc3RydWN0IHZpcnRpb19kZXZpY2UgKnZkZXYsIHU4IHN0YXR1
+cykNCit7DQorCWRldl9kYmcoJnZkZXYtPmRldiwgIiVzIG5ldyBzdGF0dXM6ICVkXG4iLCBfX2Z1
+bmNfXywgc3RhdHVzKTsNCit9DQorDQorc3RhdGljIHZvaWQgaW14X3JwbXNnX3Zwcm9jX3JlbGVh
+c2Uoc3RydWN0IGRldmljZSAqZGV2KQ0KK3sNCisJLyogdGhpcyBoYW5kbGVyIGlzIHByb3ZpZGVk
+IHNvIGRyaXZlciBjb3JlIGRvZXNuJ3QgeWVsbCBhdCB1cyAqLw0KK30NCisNCitzdGF0aWMgc3Ry
+dWN0IHZpcnRpb19jb25maWdfb3BzIGlteF9ycG1zZ19jb25maWdfb3BzID0gew0KKwkuZ2V0X2Zl
+YXR1cmVzCT0gaW14X3JwbXNnX2dldF9mZWF0dXJlcywNCisJLmZpbmFsaXplX2ZlYXR1cmVzID0g
+aW14X3JwbXNnX2ZpbmFsaXplX2ZlYXR1cmVzLA0KKwkuZmluZF92cXMJPSBpbXhfcnBtc2dfZmlu
+ZF92cXMsDQorCS5kZWxfdnFzCT0gaW14X3JwbXNnX2RlbF92cXMsDQorCS5yZXNldAkJPSBpbXhf
+cnBtc2dfcmVzZXQsDQorCS5zZXRfc3RhdHVzCT0gaW14X3JwbXNnX3NldF9zdGF0dXMsDQorCS5n
+ZXRfc3RhdHVzCT0gaW14X3JwbXNnX2dldF9zdGF0dXMsDQorfTsNCisNCitzdGF0aWMgY29uc3Qg
+c3RydWN0IG9mX2RldmljZV9pZCBpbXhfcnBtc2dfZHRfaWRzW10gPSB7DQorCXsgLmNvbXBhdGli
+bGUgPSAiZnNsLGlteDhtcS1ycG1zZyIsIC5kYXRhID0gKHZvaWQgKilJTVg4TVEsIH0sDQorCXsg
+LmNvbXBhdGlibGUgPSAiZnNsLGlteDhxeHAtcnBtc2ciLCAuZGF0YSA9ICh2b2lkICopSU1YOFFY
+UCwgfSwNCisJeyAvKiBzZW50aW5lbCAqLyB9DQorfTsNCitNT0RVTEVfREVWSUNFX1RBQkxFKG9m
+LCBpbXhfcnBtc2dfZHRfaWRzKTsNCisNCitzdGF0aWMgaW50IHNldF92cmluZ19waHlfYnVmKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsDQorCQkgICAgICAgc3RydWN0IGlteF9ycG1zZ192
+cHJvYyAqcnBkZXYsIGludCB2ZGV2X251bXMpDQorew0KKwlzdHJ1Y3QgcmVzb3VyY2UgKnJlczsN
+CisJcmVzb3VyY2Vfc2l6ZV90IHNpemU7DQorCXVuc2lnbmVkIGludCBzdGFydCwgZW5kOw0KKwlp
+bnQgaSwgcmV0ID0gMDsNCisNCisJcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIElP
+UkVTT1VSQ0VfTUVNLCAwKTsNCisJaWYgKHJlcykgew0KKwkJc2l6ZSA9IHJlc291cmNlX3NpemUo
+cmVzKTsNCisJCXN0YXJ0ID0gcmVzLT5zdGFydDsNCisJCWVuZCA9IHJlcy0+c3RhcnQgKyBzaXpl
+Ow0KKwkJZm9yIChpID0gMDsgaSA8IHZkZXZfbnVtczsgaSsrKSB7DQorCQkJcnBkZXYtPml2ZGV2
+W2ldID0ga3phbGxvYyhzaXplb2Yoc3RydWN0IGlteF92aXJkZXYpLA0KKwkJCQkJCQlHRlBfS0VS
+TkVMKTsNCisJCQlpZiAoIXJwZGV2LT5pdmRldltpXSkNCisJCQkJcmV0dXJuIC1FTk9NRU07DQor
+DQorCQkJcnBkZXYtPml2ZGV2W2ldLT52cmluZ1swXSA9IHN0YXJ0Ow0KKwkJCXJwZGV2LT5pdmRl
+dltpXS0+dnJpbmdbMV0gPSBzdGFydCArIDB4ODAwMDsNCisJCQlzdGFydCArPSAweDEwMDAwOw0K
+KwkJCWlmIChzdGFydCA+IGVuZCkgew0KKwkJCQlkZXZfZXJyKCZwZGV2LT5kZXYsDQorCQkJCQki
+VG9vIHNtYWxsIG1lbW9yeSBzaXplICV4IVxuIiwNCisJCQkJCSh1MzIpc2l6ZSk7DQorCQkJCXJl
+dCA9IC1FSU5WQUw7DQorCQkJCWJyZWFrOw0KKwkJCX0NCisJCX0NCisJfSBlbHNlIHsNCisJCXJl
+dHVybiAtRU5PTUVNOw0KKwl9DQorDQorCXJldHVybiByZXQ7DQorfQ0KKw0KK3N0YXRpYyB2b2lk
+IHJwbXNnX3dvcmtfaGFuZGxlcihzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspDQorew0KKwl1MzIg
+bWVzc2FnZTsNCisJdW5zaWduZWQgbG9uZyBmbGFnczsNCisJc3RydWN0IGlteF92aXJkZXYgKnZp
+cmRldjsNCisJc3RydWN0IGRlbGF5ZWRfd29yayAqZHdvcmsgPSB0b19kZWxheWVkX3dvcmsod29y
+ayk7DQorCXN0cnVjdCBpbXhfcnBtc2dfdnByb2MgKnJwZGV2ID0gY29udGFpbmVyX29mKGR3b3Jr
+LA0KKwkJCXN0cnVjdCBpbXhfcnBtc2dfdnByb2MsIHJwbXNnX3dvcmspOw0KKwlzdHJ1Y3QgY2ly
+Y19idWYgKmNiID0gJnJwZGV2LT5yeF9idWZmZXI7DQorCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXYgPSBycGRldi0+cGRldjsNCisJc3RydWN0IGRldmljZSAqZGV2ID0gJnBkZXYtPmRldjsN
+CisNCisJc3Bpbl9sb2NrX2lycXNhdmUoJnJwZGV2LT5tdV9sb2NrLCBmbGFncyk7DQorCS8qIGhh
+bmRsZSBhbGwgaW5jb21pbmcgbXUgbWVzc2FnZSAqLw0KKwl3aGlsZSAoQ0lSQ19DTlQoY2ItPmhl
+YWQsIGNiLT50YWlsLCBQQUdFX1NJWkUpKSB7DQorCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZy
+cGRldi0+bXVfbG9jaywgZmxhZ3MpOw0KKwkJbWVzc2FnZSA9ICh1MzIpIGNiLT5idWZbY2ItPnRh
+aWxdOw0KKwkJdmlyZGV2ID0gcnBkZXYtPml2ZGV2WyhtZXNzYWdlID4+IDE2KSAvIDJdOw0KKw0K
+KwkJZGV2X2RiZyhkZXYsICIlcyBtc2c6IDB4JXhcbiIsIF9fZnVuY19fLCBtZXNzYWdlKTsNCisJ
+CW1lc3NhZ2UgPSBtZXNzYWdlID4+IDE2Ow0KKwkJbWVzc2FnZSAtPSB2aXJkZXYtPmJhc2VfdnFf
+aWQ7DQorDQorCQkvKg0KKwkJICogQ3VycmVudGx5IGJvdGggUEVORElOR19NU0cgYW5kIGV4cGxp
+Y2l0LXZpcnRxdWV1ZS1pbmRleA0KKwkJICogbWVzc2FnaW5nIGFyZSBzdXBwb3J0ZWQuDQorCQkg
+KiBXaGF0ZXZlciBhcHByb2FjaCBpcyB0YWtlbiwgYXQgdGhpcyBwb2ludCBtZXNzYWdlIGNvbnRh
+aW5zDQorCQkgKiB0aGUgaW5kZXggb2YgdGhlIHZyaW5nIHdoaWNoIHdhcyBqdXN0IHRyaWdnZXJl
+ZC4NCisJCSAqLw0KKwkJaWYgKG1lc3NhZ2UgIDwgdmlyZGV2LT5udW1fb2ZfdnFzKQ0KKwkJCXZy
+aW5nX2ludGVycnVwdChtZXNzYWdlLCB2aXJkZXYtPnZxW21lc3NhZ2VdKTsNCisJCXNwaW5fbG9j
+a19pcnFzYXZlKCZycGRldi0+bXVfbG9jaywgZmxhZ3MpOw0KKwkJY2ItPnRhaWwgPSBDSVJDX0FE
+RChjYi0+dGFpbCwgUEFHRV9TSVpFLCA0KTsNCisJfQ0KKwlzcGluX3VubG9ja19pcnFyZXN0b3Jl
+KCZycGRldi0+bXVfbG9jaywgZmxhZ3MpOw0KK30NCisNCitzdGF0aWMgaW50IGlteF9ycG1zZ19w
+YXJ0aXRpb25fbm90aWZ5KHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIsDQorCQkJCSAgICAgIHVu
+c2lnbmVkIGxvbmcgZXZlbnQsIHZvaWQgKmdyb3VwKQ0KK3sNCisJLyogUmVzZXJ2ZWQgZm9yIHRo
+ZSBwYXJ0aXRpb24gcmVzZXQuICovDQorCXJldHVybiAwOw0KK30NCisNCitzdGF0aWMgdm9pZCBp
+bXhfcnBtc2dfcnhkYl9jYWxsYmFjayhzdHJ1Y3QgbWJveF9jbGllbnQgKmMsIHZvaWQgKm1zZykN
+Cit7DQorCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQorCXN0cnVjdCBpbXhfcnBtc2dfdnByb2MgKnJw
+ZGV2ID0gY29udGFpbmVyX29mKGMsDQorCQkJc3RydWN0IGlteF9ycG1zZ192cHJvYywgY2wpOw0K
+Kw0KKwlzcGluX2xvY2tfaXJxc2F2ZSgmcnBkZXYtPm11X2xvY2ssIGZsYWdzKTsNCisJcnBkZXYt
+PmZsYWdzIHw9IFJFTU9URV9JU19SRUFEWTsNCisJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcnBk
+ZXYtPm11X2xvY2ssIGZsYWdzKTsNCit9DQorDQorc3RhdGljIGludCBpbXhfcnBtc2dfcnhkYl9j
+aGFubmVsX2luaXQoc3RydWN0IGlteF9ycG1zZ192cHJvYyAqcnBkZXYpDQorew0KKwlzdHJ1Y3Qg
+cGxhdGZvcm1fZGV2aWNlICpwZGV2ID0gcnBkZXYtPnBkZXY7DQorCXN0cnVjdCBkZXZpY2UgKmRl
+diA9ICZwZGV2LT5kZXY7DQorCXN0cnVjdCBtYm94X2NsaWVudCAqY2w7DQorCWludCByZXQgPSAw
+Ow0KKw0KKwljbCA9ICZycGRldi0+Y2xfcnhkYjsNCisJY2wtPmRldiA9IGRldjsNCisJY2wtPnJ4
+X2NhbGxiYWNrID0gaW14X3JwbXNnX3J4ZGJfY2FsbGJhY2s7DQorDQorCS8qDQorCSAqIFJYIGRv
+b3IgYmVsbCBpcyB1c2VkIHRvIHJlY2VpdmUgdGhlIHJlYWR5IHNpZ25hbCBmcm9tIHJlbW90ZQ0K
+KwkgKiBhZnRlciB0aGUgcGFydGl0aW9uIHJlc2V0IG9mIEEgY29yZS4NCisJICovDQorCXJwZGV2
+LT5yeGRiX2NoID0gbWJveF9yZXF1ZXN0X2NoYW5uZWxfYnluYW1lKGNsLCAicnhkYiIpOw0KKwlp
+ZiAoSVNfRVJSKHJwZGV2LT5yeGRiX2NoKSkgew0KKwkJcmV0ID0gUFRSX0VSUihycGRldi0+cnhk
+Yl9jaCk7DQorCQlkZXZfZXJyKGNsLT5kZXYsICJmYWlsZWQgdG8gcmVxdWVzdCBtYm94IGNoYW4g
+cnhkYiwgcmV0ICVkXG4iLA0KKwkJCXJldCk7DQorCQlyZXR1cm4gcmV0Ow0KKwl9DQorDQorCXJl
+dHVybiByZXQ7DQorfQ0KKw0KK3N0YXRpYyB2b2lkIGlteF9ycG1zZ19yeF9jYWxsYmFjayhzdHJ1
+Y3QgbWJveF9jbGllbnQgKmMsIHZvaWQgKm1zZykNCit7DQorCWludCBidWZfc3BhY2U7DQorCXVu
+c2lnbmVkIGxvbmcgZmxhZ3M7DQorCXUzMiAqZGF0YSA9IG1zZzsNCisJc3RydWN0IGlteF9ycG1z
+Z192cHJvYyAqcnBkZXYgPSBjb250YWluZXJfb2YoYywNCisJCQlzdHJ1Y3QgaW14X3JwbXNnX3Zw
+cm9jLCBjbCk7DQorCXN0cnVjdCBjaXJjX2J1ZiAqY2IgPSAmcnBkZXYtPnJ4X2J1ZmZlcjsNCisN
+CisJc3Bpbl9sb2NrX2lycXNhdmUoJnJwZGV2LT5tdV9sb2NrLCBmbGFncyk7DQorCWJ1Zl9zcGFj
+ZSA9IENJUkNfU1BBQ0UoY2ItPmhlYWQsIGNiLT50YWlsLCBQQUdFX1NJWkUpOw0KKwlzcGluX3Vu
+bG9ja19pcnFyZXN0b3JlKCZycGRldi0+bXVfbG9jaywgZmxhZ3MpOw0KKwlpZiAodW5saWtlbHko
+IWJ1Zl9zcGFjZSkpIHsNCisJCWRldl9lcnIoYy0+ZGV2LCAiUlBNU0cgUlggb3ZlcmZsb3chXG4i
+KTsNCisJCXJldHVybjsNCisJfQ0KKwlzcGluX2xvY2tfaXJxc2F2ZSgmcnBkZXYtPm11X2xvY2ss
+IGZsYWdzKTsNCisJY2ItPmJ1ZltjYi0+aGVhZF0gPSAqZGF0YTsNCisJY2ItPmhlYWQgPSBDSVJD
+X0FERChjYi0+aGVhZCwgUEFHRV9TSVpFLCA0KTsNCisJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgm
+cnBkZXYtPm11X2xvY2ssIGZsYWdzKTsNCisNCisJc2NoZWR1bGVfZGVsYXllZF93b3JrKCYocnBk
+ZXYtPnJwbXNnX3dvcmspLCAwKTsNCit9DQorDQorc3RhdGljIGludCBpbXhfcnBtc2dfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCit7DQorCWludCBqLCByZXQgPSAwOw0KKwlj
+aGFyICpidWY7DQorCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7DQorCXN0cnVjdCBk
+ZXZpY2Vfbm9kZSAqbnAgPSBwZGV2LT5kZXYub2Zfbm9kZTsNCisJc3RydWN0IGlteF9ycG1zZ192
+cHJvYyAqcnBkZXY7DQorCXN0cnVjdCBtYm94X2NsaWVudCAqY2w7DQorDQorCWJ1ZiA9IGRldm1f
+a3phbGxvYyhkZXYsIFBBR0VfU0laRSwgR0ZQX0tFUk5FTCk7DQorCWlmICghYnVmKQ0KKwkJcmV0
+dXJuIC1FTk9NRU07DQorDQorCXJwZGV2ID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9mKCpycGRl
+diksIEdGUF9LRVJORUwpOw0KKwlpZiAoIXJwZGV2KQ0KKwkJcmV0dXJuIC1FTk9NRU07DQorDQor
+CXJwZGV2LT5wcm9jX25iLm5vdGlmaWVyX2NhbGwgPSBpbXhfcnBtc2dfcGFydGl0aW9uX25vdGlm
+eTsNCisJcnBkZXYtPnZhcmlhbnQgPSAoZW51bSBpbXhfcnBtc2dfdmFyaWFudHMpb2ZfZGV2aWNl
+X2dldF9tYXRjaF9kYXRhKGRldik7DQorCXJwZGV2LT5yeF9idWZmZXIuYnVmID0gYnVmOw0KKwly
+cGRldi0+cnhfYnVmZmVyLmhlYWQgPSAwOw0KKwlycGRldi0+cnhfYnVmZmVyLnRhaWwgPSAwOw0K
+Kw0KKwljbCA9ICZycGRldi0+Y2w7DQorCWNsLT5kZXYgPSBkZXY7DQorCWNsLT50eF9ibG9jayA9
+IGZhbHNlOw0KKwljbC0+dHhfdG91dCA9IDIwOw0KKwljbC0+a25vd3NfdHhkb25lID0gZmFsc2U7
+DQorCWNsLT5yeF9jYWxsYmFjayA9IGlteF9ycG1zZ19yeF9jYWxsYmFjazsNCisNCisJcnBkZXYt
+PnR4X2NoID0gbWJveF9yZXF1ZXN0X2NoYW5uZWxfYnluYW1lKGNsLCAidHgiKTsNCisJaWYgKElT
+X0VSUihycGRldi0+dHhfY2gpKSB7DQorCQlyZXQgPSBQVFJfRVJSKHJwZGV2LT50eF9jaCk7DQor
+CQlnb3RvIGVycl9jaGw7DQorCX0NCisJcnBkZXYtPnJ4X2NoID0gbWJveF9yZXF1ZXN0X2NoYW5u
+ZWxfYnluYW1lKGNsLCAicngiKTsNCisJaWYgKElTX0VSUihycGRldi0+cnhfY2gpKSB7DQorCQly
+ZXQgPSBQVFJfRVJSKHJwZGV2LT5yeF9jaCk7DQorCQlnb3RvIGVycl9jaGw7DQorCX0NCisNCisJ
+c3Bpbl9sb2NrX2luaXQoJnJwZGV2LT5tdV9sb2NrKTsNCisJSU5JVF9ERUxBWUVEX1dPUksoJihy
+cGRldi0+cnBtc2dfd29yayksIHJwbXNnX3dvcmtfaGFuZGxlcik7DQorCXJldCA9IG9mX3Byb3Bl
+cnR5X3JlYWRfdTMyKG5wLCAidmRldi1udW1zIiwgJnJwZGV2LT52ZGV2X251bXMpOw0KKwlpZiAo
+cmV0KQ0KKwkJcnBkZXYtPnZkZXZfbnVtcyA9IDE7DQorCWlmIChycGRldi0+dmRldl9udW1zID4g
+TUFYX1ZERVZfTlVNUykgew0KKwkJZGV2X2VycihkZXYsICJ2ZGV2LW51bXMgZXhjZWVkIHRoZSBt
+YXggJWRcbiIsIE1BWF9WREVWX05VTVMpOw0KKwkJcmV0ID0gLUVJTlZBTDsNCisJCWdvdG8gZXJy
+X2NobDsNCisJfQ0KKwlycGRldi0+Zmlyc3Rfbm90aWZ5ID0gcnBkZXYtPnZkZXZfbnVtczsNCisN
+CisJcmV0ID0gc2V0X3ZyaW5nX3BoeV9idWYocGRldiwgcnBkZXYsIHJwZGV2LT52ZGV2X251bXMp
+Ow0KKwlpZiAocmV0KSB7DQorCQlkZXZfZXJyKGRldiwgIk5vIHZyaW5nIGJ1ZmZlci5cbiIpOw0K
+KwkJcmV0ID0gLUVOT01FTTsNCisJCWdvdG8gZXJyX2NobDsNCisJfQ0KKwlpZiAob2ZfcmVzZXJ2
+ZWRfbWVtX2RldmljZV9pbml0KGRldikpIHsNCisJCWRldl9kYmcoZGV2LCAiZGV2IGRvZXNuJ3Qg
+aGF2ZSBzcGVjaWZpYyBETUEgcG9vbC5cbiIpOw0KKwkJcnBkZXYtPmZsYWdzICY9ICh+U1BFQ0lG
+SUNfRE1BX1BPT0wpOw0KKwl9IGVsc2Ugew0KKwkJcnBkZXYtPmZsYWdzIHw9IFNQRUNJRklDX0RN
+QV9QT09MOw0KKwl9DQorDQorCWZvciAoaiA9IDA7IGogPCBycGRldi0+dmRldl9udW1zOyBqKysp
+IHsNCisJCWRldl9kYmcoZGV2LCAiJXMgcnBkZXYgdmRldiVkOiB2cmluZzAgMHgleCwgdnJpbmcx
+IDB4JXhcbiIsDQorCQkJIF9fZnVuY19fLCBycGRldi0+dmRldl9udW1zLA0KKwkJCSBycGRldi0+
+aXZkZXZbal0tPnZyaW5nWzBdLA0KKwkJCSBycGRldi0+aXZkZXZbal0tPnZyaW5nWzFdKTsNCisJ
+CXJwZGV2LT5pdmRldltqXS0+dmRldi5pZC5kZXZpY2UgPSBWSVJUSU9fSURfUlBNU0c7DQorCQly
+cGRldi0+aXZkZXZbal0tPnZkZXYuY29uZmlnID0gJmlteF9ycG1zZ19jb25maWdfb3BzOw0KKwkJ
+cnBkZXYtPnBkZXYgPSBwZGV2Ow0KKwkJcnBkZXYtPml2ZGV2W2pdLT52ZGV2LmRldi5wYXJlbnQg
+PSAmcGRldi0+ZGV2Ow0KKwkJcnBkZXYtPml2ZGV2W2pdLT52ZGV2LmRldi5yZWxlYXNlID0gaW14
+X3JwbXNnX3Zwcm9jX3JlbGVhc2U7DQorCQlycGRldi0+aXZkZXZbal0tPmJhc2VfdnFfaWQgPSBq
+ICogMjsNCisJCXJwZGV2LT5pdmRldltqXS0+cnBkZXYgPSBycGRldjsNCisNCisJCXJldCA9IHJl
+Z2lzdGVyX3ZpcnRpb19kZXZpY2UoJnJwZGV2LT5pdmRldltqXS0+dmRldik7DQorCQlpZiAocmV0
+KSB7DQorCQkJZGV2X2VycihkZXYsICIlcyBmYWlsZWQgdG8gcmVnaXN0ZXIgcnBkZXY6ICVkXG4i
+LA0KKwkJCQkJX19mdW5jX18sIHJldCk7DQorCQkJZ290byBlcnJfb3V0Ow0KKwkJfQ0KKwl9DQor
+CS8qIEluaXRpYWxpemUgdGhlIFJYIGRvb3JiZWxsIGNoYW5uZWwuICovDQorCXJldCA9IGlteF9y
+cG1zZ19yeGRiX2NoYW5uZWxfaW5pdChycGRldik7DQorCWlmIChyZXQpDQorCQlnb3RvIGVycl9v
+dXQ7DQorDQorCXJldHVybiByZXQ7DQorDQorZXJyX291dDoNCisJaWYgKHJwZGV2LT5mbGFncyAm
+IFNQRUNJRklDX0RNQV9QT09MKQ0KKwkJb2ZfcmVzZXJ2ZWRfbWVtX2RldmljZV9yZWxlYXNlKGRl
+dik7DQorZXJyX2NobDoNCisJaWYgKCFJU19FUlIocnBkZXYtPnJ4ZGJfY2gpKQ0KKwkJbWJveF9m
+cmVlX2NoYW5uZWwocnBkZXYtPnJ4ZGJfY2gpOw0KKwlpZiAoIUlTX0VSUihycGRldi0+dHhfY2gp
+KQ0KKwkJbWJveF9mcmVlX2NoYW5uZWwocnBkZXYtPnR4X2NoKTsNCisJaWYgKCFJU19FUlIocnBk
+ZXYtPnJ4X2NoKSkNCisJCW1ib3hfZnJlZV9jaGFubmVsKHJwZGV2LT5yeF9jaCk7DQorCXJldHVy
+biByZXQ7DQorfQ0KKw0KK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGlteF9ycG1zZ19k
+cml2ZXIgPSB7DQorCS5kcml2ZXIgPSB7DQorCQkgICAub3duZXIgPSBUSElTX01PRFVMRSwNCisJ
+CSAgIC5uYW1lID0gImlteC1ycG1zZyIsDQorCQkgICAub2ZfbWF0Y2hfdGFibGUgPSBpbXhfcnBt
+c2dfZHRfaWRzLA0KKwkJICAgfSwNCisJLnByb2JlID0gaW14X3JwbXNnX3Byb2JlLA0KK307DQor
+DQorc3RhdGljIGludCBfX2luaXQgaW14X3JwbXNnX2luaXQodm9pZCkNCit7DQorCWludCByZXQ7
+DQorDQorCXJldCA9IHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmaW14X3JwbXNnX2RyaXZlcik7
+DQorCWlmIChyZXQpDQorCQlwcl9lcnIoIlVuYWJsZSB0byBpbml0aWFsaXplIHJwbXNnIGRyaXZl
+clxuIik7DQorCWVsc2UNCisJCXByX2luZm8oImlteCBycG1zZyBkcml2ZXIgaXMgcmVnaXN0ZXJl
+ZC5cbiIpOw0KKw0KKwlyZXR1cm4gcmV0Ow0KK30NCisNCitNT0RVTEVfREVTQ1JJUFRJT04oImlN
+WCByZW1vdGUgcHJvY2Vzc29yIG1lc3NhZ2luZyB2aXJ0aW8gZGV2aWNlIik7DQorTU9EVUxFX0xJ
+Q0VOU0UoIkdQTCB2MiIpOw0KK2FyY2hfaW5pdGNhbGwoaW14X3JwbXNnX2luaXQpOw0KZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvcnBtc2cvaW14X3JwbXNnX3Bpbmdwb25nLmMgYi9kcml2ZXJzL3JwbXNn
+L2lteF9ycG1zZ19waW5ncG9uZy5jDQpuZXcgZmlsZSBtb2RlIDEwMDY0NA0KaW5kZXggMDAwMDAw
+MC4uYjAyODkxNA0KLS0tIC9kZXYvbnVsbA0KKysrIGIvZHJpdmVycy9ycG1zZy9pbXhfcnBtc2df
+cGluZ3BvbmcuYw0KQEAgLTAsMCArMSwxMDAgQEANCisvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
+cjogR1BMLTIuMA0KKy8qDQorICogQ29weXJpZ2h0IDIwMTkgTlhQDQorICovDQorDQorI2luY2x1
+ZGUgPGxpbnV4L2tlcm5lbC5oPg0KKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCisjaW5jbHVk
+ZSA8bGludXgvdmlydGlvLmg+DQorI2luY2x1ZGUgPGxpbnV4L3JwbXNnLmg+DQorDQorI2RlZmlu
+ZSBNU0cJCSJoZWxsbyB3b3JsZCEiDQorc3RhdGljIHVuc2lnbmVkIGludCBycG1zZ19waW5ncG9u
+ZzsNCisNCitzdGF0aWMgaW50IHJwbXNnX3Bpbmdwb25nX2NiKHN0cnVjdCBycG1zZ19kZXZpY2Ug
+KnJwZGV2LCB2b2lkICpkYXRhLCBpbnQgbGVuLA0KKwkJCQkJCXZvaWQgKnByaXYsIHUzMiBzcmMp
+DQorew0KKwlpbnQgZXJyOw0KKw0KKwkvKiByZXBseSAqLw0KKwlycG1zZ19waW5ncG9uZyA9ICoo
+dW5zaWduZWQgaW50ICopZGF0YTsNCisJcHJfaW5mbygiZ2V0ICVkIChzcmM6IDB4JXgpXG4iLCBy
+cG1zZ19waW5ncG9uZywgc3JjKTsNCisNCisJLyogcGluZ3BvbmdzIHNob3VsZCBub3QgbGl2ZSBm
+b3JldmVyICovDQorCWlmIChycG1zZ19waW5ncG9uZyA+IDEwMCkgew0KKwkJZGV2X2luZm8oJnJw
+ZGV2LT5kZXYsICJnb29kYnllIVxuIik7DQorCQlyZXR1cm4gMDsNCisJfQ0KKwlycG1zZ19waW5n
+cG9uZysrOw0KKwllcnIgPSBycG1zZ19zZW5kdG8ocnBkZXYtPmVwdCwgKHZvaWQgKikoJnJwbXNn
+X3Bpbmdwb25nKSwgNCwgc3JjKTsNCisNCisJaWYgKGVycikNCisJCWRldl9lcnIoJnJwZGV2LT5k
+ZXYsICJycG1zZ19zZW5kIGZhaWxlZDogJWRcbiIsIGVycik7DQorDQorCXJldHVybiBlcnI7DQor
+fQ0KKw0KK3N0YXRpYyBpbnQgcnBtc2dfcGluZ3BvbmdfcHJvYmUoc3RydWN0IHJwbXNnX2Rldmlj
+ZSAqcnBkZXYpDQorew0KKwlpbnQgZXJyOw0KKw0KKwlkZXZfaW5mbygmcnBkZXYtPmRldiwgIm5l
+dyBjaGFubmVsOiAweCV4IC0+IDB4JXghXG4iLA0KKwkJCXJwZGV2LT5zcmMsIHJwZGV2LT5kc3Qp
+Ow0KKw0KKwkvKg0KKwkgKiBzZW5kIGEgbWVzc2FnZSB0byBvdXIgcmVtb3RlIHByb2Nlc3Nvciwg
+YW5kIHRlbGwgcmVtb3RlDQorCSAqIHByb2Nlc3NvciBhYm91dCB0aGlzIGNoYW5uZWwNCisJICov
+DQorCWVyciA9IHJwbXNnX3NlbmQocnBkZXYtPmVwdCwgTVNHLCBzdHJsZW4oTVNHKSk7DQorCWlm
+IChlcnIpIHsNCisJCWRldl9lcnIoJnJwZGV2LT5kZXYsICJycG1zZ19zZW5kIGZhaWxlZDogJWRc
+biIsIGVycik7DQorCQlyZXR1cm4gZXJyOw0KKwl9DQorDQorCXJwbXNnX3Bpbmdwb25nID0gMDsN
+CisJZXJyID0gcnBtc2dfc2VuZHRvKHJwZGV2LT5lcHQsICh2b2lkICopKCZycG1zZ19waW5ncG9u
+ZyksDQorCQkJICAgNCwgcnBkZXYtPmRzdCk7DQorCWlmIChlcnIpIHsNCisJCWRldl9lcnIoJnJw
+ZGV2LT5kZXYsICJycG1zZ19zZW5kIGZhaWxlZDogJWRcbiIsIGVycik7DQorCQlyZXR1cm4gZXJy
+Ow0KKwl9DQorDQorCXJldHVybiAwOw0KK30NCisNCitzdGF0aWMgdm9pZCBycG1zZ19waW5ncG9u
+Z19yZW1vdmUoc3RydWN0IHJwbXNnX2RldmljZSAqcnBkZXYpDQorew0KKwlkZXZfaW5mbygmcnBk
+ZXYtPmRldiwgInJwbXNnIHBpbmdwb25nIGRyaXZlciBpcyByZW1vdmVkXG4iKTsNCit9DQorDQor
+c3RhdGljIHN0cnVjdCBycG1zZ19kZXZpY2VfaWQgcnBtc2dfZHJpdmVyX3Bpbmdwb25nX2lkX3Rh
+YmxlW10gPSB7DQorCXsgLm5hbWUJPSAicnBtc2ctb3BlbmFtcC1kZW1vLWNoYW5uZWwiIH0sDQor
+CXsgLm5hbWUJPSAicnBtc2ctb3BlbmFtcC1kZW1vLWNoYW5uZWwtMSIgfSwNCisJeyB9LA0KK307
+DQorTU9EVUxFX0RFVklDRV9UQUJMRShycG1zZywgcnBtc2dfZHJpdmVyX3Bpbmdwb25nX2lkX3Rh
+YmxlKTsNCisNCitzdGF0aWMgc3RydWN0IHJwbXNnX2RyaXZlciBycG1zZ19waW5ncG9uZ19kcml2
+ZXIgPSB7DQorCS5kcnYubmFtZQk9IEtCVUlMRF9NT0ROQU1FLA0KKwkuZHJ2Lm93bmVyCT0gVEhJ
+U19NT0RVTEUsDQorCS5pZF90YWJsZQk9IHJwbXNnX2RyaXZlcl9waW5ncG9uZ19pZF90YWJsZSwN
+CisJLnByb2JlCQk9IHJwbXNnX3Bpbmdwb25nX3Byb2JlLA0KKwkuY2FsbGJhY2sJPSBycG1zZ19w
+aW5ncG9uZ19jYiwNCisJLnJlbW92ZQkJPSBycG1zZ19waW5ncG9uZ19yZW1vdmUsDQorfTsNCisN
+CitzdGF0aWMgaW50IF9faW5pdCBpbml0KHZvaWQpDQorew0KKwlyZXR1cm4gcmVnaXN0ZXJfcnBt
+c2dfZHJpdmVyKCZycG1zZ19waW5ncG9uZ19kcml2ZXIpOw0KK30NCisNCitzdGF0aWMgdm9pZCBf
+X2V4aXQgZmluaSh2b2lkKQ0KK3sNCisJdW5yZWdpc3Rlcl9ycG1zZ19kcml2ZXIoJnJwbXNnX3Bp
+bmdwb25nX2RyaXZlcik7DQorfQ0KK21vZHVsZV9pbml0KGluaXQpOw0KK21vZHVsZV9leGl0KGZp
+bmkpOw0KKw0KK01PRFVMRV9BVVRIT1IoIkZyZWVzY2FsZSBTZW1pY29uZHVjdG9yLCBJbmMuIik7
+DQorTU9EVUxFX0RFU0NSSVBUSU9OKCJpTVggdmlydGlvIHJlbW90ZSBwcm9jZXNzb3IgbWVzc2Fn
+aW5nIHBpbmdwb25nIGRyaXZlciIpOw0KK01PRFVMRV9MSUNFTlNFKCJHUEwgdjIiKTsNCmRpZmYg
+LS1naXQgYS9pbmNsdWRlL2xpbnV4L2lteF9ycG1zZy5oIGIvaW5jbHVkZS9saW51eC9pbXhfcnBt
+c2cuaA0KbmV3IGZpbGUgbW9kZSAxMDA2NDQNCmluZGV4IDAwMDAwMDAuLmUwZDVlOTcNCi0tLSAv
+ZGV2L251bGwNCisrKyBiL2luY2x1ZGUvbGludXgvaW14X3JwbXNnLmgNCkBAIC0wLDAgKzEsNDMg
+QEANCisvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCAqLw0KKy8qDQorICogQ29w
+eXJpZ2h0IChDKSAyMDE5IE5YUC4NCisgKg0KKyAqIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3
+YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3IgbW9kaWZ5DQorICogaXQgdW5kZXIg
+dGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDIgYXMN
+CisgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbi4NCisgKi8NCisN
+CisvKg0KKyAqIEBmaWxlIGxpbnV4L2lteF9ycG1zZy5oDQorICoNCisgKiBAYnJpZWYgR2xvYmFs
+IGhlYWRlciBmaWxlIGZvciBpTVggUlBNU0cNCisgKg0KKyAqIEBpbmdyb3VwIFJQTVNHDQorICov
+DQorI2lmbmRlZiBfX0xJTlVYX0lNWF9SUE1TR19IX18NCisjZGVmaW5lIF9fTElOVVhfSU1YX1JQ
+TVNHX0hfXw0KKw0KKy8qIENhdGVnb3J5IGRlZmluZSAqLw0KKyNkZWZpbmUgSU1YX1JNUFNHX0xJ
+RkVDWUNMRQkxDQorI2RlZmluZSBJTVhfUlBNU0dfUE1JQwkJMg0KKyNkZWZpbmUgSU1YX1JQTVNH
+X0FVRElPCQkzDQorI2RlZmluZSBJTVhfUlBNU0dfS0VZCQk0DQorI2RlZmluZSBJTVhfUlBNU0df
+R1BJTwkJNQ0KKyNkZWZpbmUgSU1YX1JQTVNHX1JUQwkJNg0KKyNkZWZpbmUgSU1YX1JQTVNHX1NF
+TlNPUgk3DQorLyogcnBtc2cgdmVyc2lvbiAqLw0KKyNkZWZpbmUgSU1YX1JNUFNHX01BSk9SCQkx
+DQorI2RlZmluZSBJTVhfUk1QU0dfTUlOT1IJCTANCisNCisjZGVmaW5lIENJUkNfQUREKGlkeCwg
+c2l6ZSwgdmFsdWUpCSgoKGlkeCkgKyAodmFsdWUpKSAmICgoc2l6ZSkgLSAxKSkNCisNCitzdHJ1
+Y3QgaW14X3JwbXNnX2hlYWQgew0KKwl1OCBjYXRlOw0KKwl1OCBtYWpvcjsNCisJdTggbWlub3I7
+DQorCXU4IHR5cGU7DQorCXU4IGNtZDsNCisJdTggcmVzZXJ2ZWRbNV07DQorfSBfX3BhY2tlZDsN
+CisNCisjZW5kaWYgLyogX19MSU5VWF9JTVhfUlBNU0dfSF9fICovDQotLSANCjIuNy40DQoNCg==
