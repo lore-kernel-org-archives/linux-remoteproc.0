@@ -1,160 +1,136 @@
 Return-Path: <bjorn.andersson@linaro.org>
+Date: Sun, 30 Jun 2019 23:00:39 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 1/2] soc: qcom: mdt_loader: Support loading non-split images
-Date: Fri, 21 Jun 2019 18:21:45 -0700
-Message-Id: <20190622012146.19719-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20190622012146.19719-1-bjorn.andersson@linaro.org>
-References: <20190622012146.19719-1-bjorn.andersson@linaro.org>
-To: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sibi Sankar <sibis@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] tty: add rpmsg driver
+Message-ID: <20190701060039.GD1263@builder>
+References: <1557500577-22366-1-git-send-email-arnaud.pouliquen@st.com>
+ <1557500577-22366-3-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557500577-22366-3-git-send-email-arnaud.pouliquen@st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, xiang xiao <xiaoxiang781216@gmail.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Fabien DESSENNE <fabien.dessenne@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In some software releases the firmware images are not split up with each
-loadable segment in it's own file. Check the size of the loaded firmware
-to see if it still contains each segment to be loaded, before falling
-back to the split-out segments.
+On Fri 10 May 08:02 PDT 2019, Arnaud Pouliquen wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/soc/qcom/mdt_loader.c       | 88 ++++++++++++++++++++++++++++-
- include/linux/soc/qcom/mdt_loader.h |  2 +
- 2 files changed, 87 insertions(+), 3 deletions(-)
+> This driver exposes a standard tty interface on top of the rpmsg
+> framework through the "rpmsg-tty-channel" rpmsg service.
+> 
+> This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
+> per rpmsg endpoint.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> ---
+>  Documentation/serial/tty_rpmsg.txt |  38 +++
+>  drivers/tty/Kconfig                |   9 +
+>  drivers/tty/Makefile               |   1 +
+>  drivers/tty/rpmsg_tty.c            | 479 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 527 insertions(+)
+>  create mode 100644 Documentation/serial/tty_rpmsg.txt
+>  create mode 100644 drivers/tty/rpmsg_tty.c
+> 
+> diff --git a/Documentation/serial/tty_rpmsg.txt b/Documentation/serial/tty_rpmsg.txt
+> new file mode 100644
+> index 000000000000..e069ed268a2b
+> --- /dev/null
+> +++ b/Documentation/serial/tty_rpmsg.txt
+> @@ -0,0 +1,38 @@
+> +
+> +			The rpmsg TTY
+> +
+> +The rpmsg tty driver implements a serial communication on the rpmsg bus,
+> +to communicate with a remote processor devices in asymmetric multiprocessing
+> +(AMP) configurations.
+> +
+> +The remote processor can instantiate a new tty by requesting a new "rpmsg-tty-channel" RPMsg service. Information related to the RPMsg and
+> +associated tty device is available in /sys/bus/rpmsg/devices/virtio0.rpmsg-tty-channel.-1.<X>, with
+> +<X> corresponding to the ttyRPMSG instance.
+> +
+> +RPMsg data/control structure
+> +----------------------------
+> +
+> +The RPMsg is used to send data or control messages. Differentiation between the
+> +stream and the control messages is done thanks to the first byte of the
+> +RPMsg payload:
+> +
+> +
+> +RPMSG_DATA	- rest of messages contains data
+> +
+> +RPMSG_CTRL 	- message contains control.
+> +
+> +
+> +To be compliant with this driver, the remote firmware has to respect this RPMsg
+> +payload structure. At least the RPMSG_DATA type has to be supported. The
+> +RPMSG_CTRL is optional.
+> +
 
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 9ca7d9484de0..24cd193dec55 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -66,6 +66,66 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
- }
- EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
- 
-+/**
-+ * qcom_mdt_read_metadata() - read header and metadata from mdt or mbn
-+ * @fw:		firmware of mdt header or mbn
-+ * @data_len:	length of the read metadata blob
-+ *
-+ * The mechanism that performs the authentication of the loading firmware
-+ * expects an ELF header directly followed by the segment of hashes, with no
-+ * padding inbetween. This function allocates a chunk of memory for this pair
-+ * and copy the two pieces into the buffer.
-+ *
-+ * In the case of split firmware the hash is found directly following the ELF
-+ * header, rather than at p_offset described by the second program header.
-+ *
-+ * The caller is responsible to free (kfree()) the returned pointer.
-+ *
-+ * Return: pointer to data, or ERR_PTR()
-+ */
-+void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len)
-+{
-+	const struct elf32_phdr *phdrs;
-+	const struct elf32_hdr *ehdr;
-+	size_t hash_offset;
-+	size_t hash_size;
-+	size_t ehdr_size;
-+	void *data;
-+
-+	ehdr = (struct elf32_hdr *)fw->data;
-+	phdrs = (struct elf32_phdr *)(ehdr + 1);
-+
-+	if (ehdr->e_phnum < 2)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (phdrs[0].p_type == PT_LOAD || phdrs[1].p_type == PT_LOAD)
-+		return ERR_PTR(-EINVAL);
-+
-+	if ((phdrs[1].p_flags & QCOM_MDT_TYPE_MASK) != QCOM_MDT_TYPE_HASH)
-+		return ERR_PTR(-EINVAL);
-+
-+	ehdr_size = phdrs[0].p_filesz;
-+	hash_size = phdrs[1].p_filesz;
-+
-+	data = kmalloc(ehdr_size + hash_size, GFP_KERNEL);
-+	if (!data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Is the header and hash already packed */
-+	if (ehdr_size + hash_size == fw->size)
-+		hash_offset = phdrs[0].p_filesz;
-+	else
-+		hash_offset = phdrs[1].p_offset;
-+
-+	memcpy(data, fw->data, ehdr_size);
-+	memcpy(data + ehdr_size, fw->data + hash_offset, hash_size);
-+
-+	*data_len = ehdr_size + hash_size;
-+
-+	return data;
-+}
-+EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
-+
- static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 			   const char *firmware, int pas_id, void *mem_region,
- 			   phys_addr_t mem_phys, size_t mem_size,
-@@ -78,12 +138,14 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	phys_addr_t mem_reloc;
- 	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
-+	size_t metadata_len;
- 	size_t fw_name_len;
- 	ssize_t offset;
-+	void *metadata;
- 	char *fw_name;
- 	bool relocate = false;
- 	void *ptr;
--	int ret;
-+	int ret = 0;
- 	int i;
- 
- 	if (!fw || !mem_region || !mem_phys || !mem_size)
-@@ -101,7 +163,15 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 		return -ENOMEM;
- 
- 	if (pas_init) {
--		ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);
-+		metadata = qcom_mdt_read_metadata(fw, &metadata_len);
-+		if (IS_ERR(metadata)) {
-+			ret = PTR_ERR(metadata);
-+			goto out;
-+		}
-+
-+		ret = qcom_scm_pas_init_image(pas_id, metadata, metadata_len);
-+
-+		kfree(metadata);
- 		if (ret) {
- 			dev_err(dev, "invalid firmware metadata\n");
- 			goto out;
-@@ -162,7 +232,19 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 
- 		ptr = mem_region + offset;
- 
--		if (phdr->p_filesz) {
-+		if (phdr->p_filesz && phdr->p_offset < fw->size) {
-+			/* Firmware is large enough to be non-split */
-+			if (phdr->p_offset + phdr->p_filesz > fw->size) {
-+				dev_err(dev,
-+					"failed to load segment %d from truncated file %s\n",
-+					i, firmware);
-+				ret = -EINVAL;
-+				break;
-+			}
-+
-+			memcpy(ptr, fw->data + phdr->p_offset, phdr->p_filesz);
-+		} else if (phdr->p_filesz) {
-+			/* Firmware not large enough, load split-out segments */
- 			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
- 			ret = request_firmware_into_buf(&seg_fw, fw_name, dev,
- 							ptr, phdr->p_filesz);
-diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-index 944b06aefb0f..e600baec6825 100644
---- a/include/linux/soc/qcom/mdt_loader.h
-+++ b/include/linux/soc/qcom/mdt_loader.h
-@@ -21,4 +21,6 @@ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
- 			  const char *fw_name, int pas_id, void *mem_region,
- 			  phys_addr_t mem_phys, size_t mem_size,
- 			  phys_addr_t *reloc_base);
-+void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len);
-+
- #endif
--- 
-2.18.0
+This scheme prevents us from using this driver to expose any existing
+tty-like channels without having to modify such firmware.
+
+> +Flow control type
+> +-----------------
+> +
+> +A minimum flow control can be implemented to allow/block communication with the remote processor.
+> +
+> +DATA_TERM_READY	-	one parameter:
+> +			- u8 state
+> +				Set to indicate to remote side that terminal is
+> +				ready for communication.
+> +				Reset to block communication with remote side.
+
+And as shown in discussions following Qualcomm's proposed flow-control
+addition to the rpmsg API the need for flow control is not limited to
+this custom tty like interface. 
+
+
+So I really would like to see an implementation of a side-band flow
+control mechanism in the virtio rpmsg bus.
+
+> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> index e0a04bfc873e..d7b426939f69 100644
+> --- a/drivers/tty/Kconfig
+> +++ b/drivers/tty/Kconfig
+> @@ -442,6 +442,15 @@ config VCC
+>  	help
+>  	  Support for Sun logical domain consoles.
+>  
+> +config RPMSG_TTY
+> +	tristate "RPMSG tty driver"
+> +	depends on RPMSG
+> +	help
+> +	  Say y here to export rpmsg endpoints as tty devices, usually found
+> +	  in /dev/ttyRPMSGx.
+> +	  This makes it possible for user-space programs to send and receive
+> +	  rpmsg messages as a standard tty protocol.
+> +
+>  config LDISC_AUTOLOAD
+>  	bool "Automatically load TTY Line Disciplines"
+>  	default y
+> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+> index c72cafdf32b4..90a98a20714d 100644
+> --- a/drivers/tty/Makefile
+> +++ b/drivers/tty/Makefile
+> @@ -33,5 +33,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
+>  obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
+>  obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
+>  obj-$(CONFIG_VCC)		+= vcc.o
+> +obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
+>  
+>  obj-y += ipwireless/
+> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+[..]
+> +static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
+> +	{ .name	= "rpmsg-tty-channel" },
+
+I really would like a mechanism that does not depend on a fixed channel
+name, as this required that firmware is written specifically for being
+paired with this driver.
+
+In other words this is exactly the same problem that we worked around in
+rpmsg_char.
+
+Regards,
+Bjorn
