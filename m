@@ -1,33 +1,44 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH 10/12] dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
-Date: Thu, 11 Jul 2019 21:11:06 +0530
-Message-Id: <1562859668-14209-11-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
-References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
-To: agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 1 Jul 2019 19:04:59 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 0/2] soc: qcom: mdt_loader: Support loading non-split
+ firmware
+Message-ID: <20190702020459.GF1263@builder>
+References: <20190622012146.19719-1-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190622012146.19719-1-bjorn.andersson@linaro.org>
+To: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Sibi Sankar <sibis@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add compatible for IPQ8074 support.
-This does not need clocks for scm calls.
+On Fri 21 Jun 18:21 PDT 2019, Bjorn Andersson wrote:
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- Documentation/devicetree/bindings/firmware/qcom,scm.txt | 1 +
- 1 file changed, 1 insertion(+)
+> Typically the firmware files for the various remoteprocs is split in a number
+> of files. But in some releases these files are available in their unsplit form.
+> 
+> Extend the mdt loader to detect the unsplit firmware and load it transparently.
+> 
+> Also expose the function that compose the metadata header for validation and
+> use this from the modem remoteproc driver, so that it can support unsplit files
+> as well.
+> 
 
-diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.txt b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-index 41f133a..3b153c1 100644
---- a/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-+++ b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-@@ -17,6 +17,7 @@ Required properties:
-  * "qcom,scm-msm8998"
-  * "qcom,scm-ipq4019"
-  * "qcom,scm-sdm845"
-+ * "qcom,scm-ipq8074"
-  and:
-  * "qcom,scm"
- - clocks: Specifies clocks needed by the SCM interface, if any:
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+Applied the two patches. Thanks Andy & Jeff.
+
+Regards,
+Bjorn
+
+> Bjorn Andersson (2):
+>   soc: qcom: mdt_loader: Support loading non-split images
+>   remoteproc: qcom: q6v5-mss: Support loading non-split images
+> 
+>  drivers/remoteproc/qcom_q6v5_mss.c  | 33 ++++++++---
+>  drivers/soc/qcom/mdt_loader.c       | 88 ++++++++++++++++++++++++++++-
+>  include/linux/soc/qcom/mdt_loader.h |  2 +
+>  3 files changed, 112 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 2.18.0
+> 
