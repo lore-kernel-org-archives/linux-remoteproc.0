@@ -1,557 +1,194 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 13/29] compat_ioctl: move more drivers to compat_ptr_ioctl
-Date: Tue, 30 Jul 2019 21:55:29 +0200
-Message-Id: <20190730195819.901457-1-arnd@arndb.de>
-In-Reply-To: <20190730192552.4014288-1-arnd@arndb.de>
-References: <20190730192552.4014288-1-arnd@arndb.de>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v2 1/2] rpmsg: core: add possibility to get message
+ payload length
+References: <1557500577-22366-1-git-send-email-arnaud.pouliquen@st.com>
+ <1557500577-22366-2-git-send-email-arnaud.pouliquen@st.com>
+ <20190701053137.GC1263@builder>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <47f4ade7-1f9a-664e-1b6e-3c9f16df55d0@st.com>
+Date: Tue, 2 Jul 2019 16:48:08 +0200
 MIME-Version: 1.0
+In-Reply-To: <20190701053137.GC1263@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@mellanox.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, David Sterba <dsterba@suse.com>, Darren Hart <dvhart@infradead.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, qat-linux@intel.com, linux-crypto@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, amd-gfx@lists.freedesktop.org, linux-input@vger.kernel.org, linux-iio@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org, linux-remoteproc@vger.kernel.org, sparclinux@vger.kernel.org, linux-scsi@vger.kernel.org, tee-dev@lists.linaro.org, linux-usb@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, xiang xiao <xiaoxiang781216@gmail.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Fabien DESSENNE <fabien.dessenne@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The .ioctl and .compat_ioctl file operations have the same prototype so
-they can both point to the same function, which works great almost all
-the time when all the commands are compatible.
 
-One exception is the s390 architecture, where a compat pointer is only
-31 bit wide, and converting it into a 64-bit pointer requires calling
-compat_ptr(). Most drivers here will never run in s390, but since we now
-have a generic helper for it, it's easy enough to use it consistently.
 
-I double-checked all these drivers to ensure that all ioctl arguments
-are used as pointers or are ignored, but are not interpreted as integer
-values.
+On 7/1/19 7:31 AM, Bjorn Andersson wrote:
+> On Fri 10 May 08:02 PDT 2019, Arnaud Pouliquen wrote:
+> 
+>> Return the rpmsg buffer payload size for sending message, so rpmsg users
+>> can split a long message in several sub rpmsg buffers.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> 
+> This should list each person who dealt with the patch. So the first
+> would be the author and the last would be the one that posted it on the
+> list.
+> 
+> If you both authored the patch then you should add Co-developed-by to
+> denote this.
+ok i will update it
+> 
+>> ---
+>>  drivers/rpmsg/rpmsg_core.c       | 20 ++++++++++++++++++++
+>>  drivers/rpmsg/rpmsg_internal.h   |  2 ++
+>>  drivers/rpmsg/virtio_rpmsg_bus.c | 11 +++++++++++
+>>  include/linux/rpmsg.h            | 10 ++++++++++
+>>  4 files changed, 43 insertions(+)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>> index 8122807db380..75c8c403ffe5 100644
+>> --- a/drivers/rpmsg/rpmsg_core.c
+>> +++ b/drivers/rpmsg/rpmsg_core.c
+>> @@ -283,6 +283,26 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>>  }
+>>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+>>  
+>> +/**
+>> + * rpmsg_get_buf_payload_size()
+>> + * This function returns buffer payload size available for sending messages.
+>> + *
+>> + * @ept: the rpmsg endpoint
+>> + *
+>> + * Returns buffer payload size on success and an appropriate error value on
+>> + * failure.
+>> + */
+> 
+> Please read
+> https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+oops sorry for this dirty documentation.
+> 
+>> +int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
+> 
+> payload size can have many meanings and hopefully we'll end up in a
+> situation where its dynamic. But it could be considered useful to have a
+> way to query the maximum transmission size in such a setup.
+> 
+> So please rename this rpmsg_get_mtu() or something similar.
+> 
+> And I would prefer ssize_t as return type.
 
-Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: David Sterba <dsterba@suse.com>
-Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/android/binder.c                    | 2 +-
- drivers/crypto/qat/qat_common/adf_ctl_drv.c | 2 +-
- drivers/dma-buf/dma-buf.c                   | 4 +---
- drivers/dma-buf/sw_sync.c                   | 2 +-
- drivers/dma-buf/sync_file.c                 | 2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c    | 2 +-
- drivers/hid/hidraw.c                        | 4 +---
- drivers/iio/industrialio-core.c             | 2 +-
- drivers/infiniband/core/uverbs_main.c       | 4 ++--
- drivers/media/rc/lirc_dev.c                 | 4 +---
- drivers/mfd/cros_ec_dev.c                   | 4 +---
- drivers/misc/vmw_vmci/vmci_host.c           | 2 +-
- drivers/nvdimm/bus.c                        | 4 ++--
- drivers/nvme/host/core.c                    | 2 +-
- drivers/pci/switch/switchtec.c              | 2 +-
- drivers/platform/x86/wmi.c                  | 2 +-
- drivers/rpmsg/rpmsg_char.c                  | 4 ++--
- drivers/sbus/char/display7seg.c             | 2 +-
- drivers/sbus/char/envctrl.c                 | 4 +---
- drivers/scsi/3w-xxxx.c                      | 4 +---
- drivers/scsi/cxlflash/main.c                | 2 +-
- drivers/scsi/esas2r/esas2r_main.c           | 2 +-
- drivers/scsi/pmcraid.c                      | 4 +---
- drivers/staging/android/ion/ion.c           | 4 +---
- drivers/staging/vme/devices/vme_user.c      | 2 +-
- drivers/tee/tee_core.c                      | 2 +-
- drivers/usb/class/cdc-wdm.c                 | 2 +-
- drivers/usb/class/usbtmc.c                  | 4 +---
- drivers/virt/fsl_hypervisor.c               | 2 +-
- fs/btrfs/super.c                            | 2 +-
- fs/fuse/dev.c                               | 2 +-
- fs/notify/fanotify/fanotify_user.c          | 2 +-
- fs/userfaultfd.c                            | 2 +-
- net/rfkill/core.c                           | 2 +-
- 34 files changed, 37 insertions(+), 55 deletions(-)
+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept) sounds good, ok for this
+>> +{
+>> +	if (WARN_ON(!ept))
+>> +		return -EINVAL;
+>> +	if (!ept->ops->get_buf_payload_size)
+>> +		return -ENXIO;
+>> +
+>> +	return ept->ops->get_buf_payload_size(ept);
+>> +}
+>> +EXPORT_SYMBOL(rpmsg_get_buf_payload_size);
+>> +
+>>  /*
+>>   * match an rpmsg channel with a channel info struct.
+>>   * this is used to make sure we're not creating rpmsg devices for channels
+>> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+>> index 0d791c30b7ea..6f733a556139 100644
+>> --- a/drivers/rpmsg/rpmsg_internal.h
+>> +++ b/drivers/rpmsg/rpmsg_internal.h
+>> @@ -46,6 +46,7 @@ struct rpmsg_device_ops {
+>>   * @trysend:		see @rpmsg_trysend(), required
+>>   * @trysendto:		see @rpmsg_trysendto(), optional
+>>   * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+>> + * @get_buf_payload_size: see @rpmsg_get_buf_payload_size(), optional
+>>   *
+>>   * Indirection table for the operations that a rpmsg backend should implement.
+>>   * In addition to @destroy_ept, the backend must at least implement @send and
+>> @@ -65,6 +66,7 @@ struct rpmsg_endpoint_ops {
+>>  			     void *data, int len);
+>>  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+>>  			     poll_table *wait);
+>> +	int (*get_buf_payload_size)(struct rpmsg_endpoint *ept);
+>>  };
+>>  
+>>  int rpmsg_register_device(struct rpmsg_device *rpdev);
+>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> index 5d3685bd76a2..82753e76e377 100644
+>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> @@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>>  				  int len, u32 dst);
+>>  static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+>>  					   u32 dst, void *data, int len);
+>> +static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept);
+>>  
+>>  static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>>  	.destroy_ept = virtio_rpmsg_destroy_ept,
+>> @@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>>  	.trysend = virtio_rpmsg_trysend,
+>>  	.trysendto = virtio_rpmsg_trysendto,
+>>  	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
+>> +	.get_buf_payload_size = virtio_get_buf_payload_size,
+>>  };
+>>  
+>>  /**
+>> @@ -699,6 +701,15 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+>>  	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+>>  }
+>>  
+>> +static int virtio_get_buf_payload_size(struct rpmsg_endpoint *ept)
+>> +{
+>> +	struct rpmsg_device *rpdev = ept->rpdev;
+>> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+>> +	int size = vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
+>> +
+>> +	return size < 0 ? -EMSGSIZE : size;
+> 
+> Seems that a rpmsg instance configured to not even have space for the
+> rpmsg_hdr in each message is rather broken. Shouldn't this be prohibited
+> elsewhere?
+yes seems that the are some useless check in code on buf_size, i will
+suppress the check here.
+there are some other instances in code...For time being the size is
+fixed, but good place seems to be in the rpmsg_probe probe function. i
+will propose a patch to clean this.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index dc1c83eafc22..79955e82544a 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -6043,7 +6043,7 @@ const struct file_operations binder_fops = {
- 	.owner = THIS_MODULE,
- 	.poll = binder_poll,
- 	.unlocked_ioctl = binder_ioctl,
--	.compat_ioctl = binder_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.mmap = binder_mmap,
- 	.open = binder_open,
- 	.flush = binder_flush,
-diff --git a/drivers/crypto/qat/qat_common/adf_ctl_drv.c b/drivers/crypto/qat/qat_common/adf_ctl_drv.c
-index abc7a7f64d64..ef0e482ee04f 100644
---- a/drivers/crypto/qat/qat_common/adf_ctl_drv.c
-+++ b/drivers/crypto/qat/qat_common/adf_ctl_drv.c
-@@ -68,7 +68,7 @@ static long adf_ctl_ioctl(struct file *fp, unsigned int cmd, unsigned long arg);
- static const struct file_operations adf_ctl_ops = {
- 	.owner = THIS_MODULE,
- 	.unlocked_ioctl = adf_ctl_ioctl,
--	.compat_ioctl = adf_ctl_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- struct adf_ctl_drv_info {
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index f45bfb29ef96..f6d9047b7a69 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -415,9 +415,7 @@ static const struct file_operations dma_buf_fops = {
- 	.llseek		= dma_buf_llseek,
- 	.poll		= dma_buf_poll,
- 	.unlocked_ioctl	= dma_buf_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl	= dma_buf_ioctl,
--#endif
-+	.compat_ioctl	= compat_ptr_ioctl,
- 	.show_fdinfo	= dma_buf_show_fdinfo,
- };
- 
-diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
-index 051f6c2873c7..51026cb08801 100644
---- a/drivers/dma-buf/sw_sync.c
-+++ b/drivers/dma-buf/sw_sync.c
-@@ -410,5 +410,5 @@ const struct file_operations sw_sync_debugfs_fops = {
- 	.open           = sw_sync_debugfs_open,
- 	.release        = sw_sync_debugfs_release,
- 	.unlocked_ioctl = sw_sync_ioctl,
--	.compat_ioctl	= sw_sync_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- };
-diff --git a/drivers/dma-buf/sync_file.c b/drivers/dma-buf/sync_file.c
-index ee4d1a96d779..85b96757fc76 100644
---- a/drivers/dma-buf/sync_file.c
-+++ b/drivers/dma-buf/sync_file.c
-@@ -480,5 +480,5 @@ static const struct file_operations sync_file_fops = {
- 	.release = sync_file_release,
- 	.poll = sync_file_poll,
- 	.unlocked_ioctl = sync_file_ioctl,
--	.compat_ioctl = sync_file_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-index 26b15cc56c31..ea933d2444bb 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-@@ -49,7 +49,7 @@ static const char kfd_dev_name[] = "kfd";
- static const struct file_operations kfd_fops = {
- 	.owner = THIS_MODULE,
- 	.unlocked_ioctl = kfd_ioctl,
--	.compat_ioctl = kfd_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.open = kfd_open,
- 	.mmap = kfd_mmap,
- };
-diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
-index 006bd6f4f653..923edc650f46 100644
---- a/drivers/hid/hidraw.c
-+++ b/drivers/hid/hidraw.c
-@@ -468,9 +468,7 @@ static const struct file_operations hidraw_ops = {
- 	.release =      hidraw_release,
- 	.unlocked_ioctl = hidraw_ioctl,
- 	.fasync =	hidraw_fasync,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl   = hidraw_ioctl,
--#endif
-+	.compat_ioctl   = compat_ptr_ioctl,
- 	.llseek =	noop_llseek,
- };
- 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 524a686077ca..9dd687534035 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -1610,7 +1610,7 @@ static const struct file_operations iio_buffer_fileops = {
- 	.owner = THIS_MODULE,
- 	.llseek = noop_llseek,
- 	.unlocked_ioctl = iio_ioctl,
--	.compat_ioctl = iio_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static int iio_check_unique_scan_index(struct iio_dev *indio_dev)
-diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-index 11c13c1381cf..d6d2f6c0cd01 100644
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -1135,7 +1135,7 @@ static const struct file_operations uverbs_fops = {
- 	.release = ib_uverbs_close,
- 	.llseek	 = no_llseek,
- 	.unlocked_ioctl = ib_uverbs_ioctl,
--	.compat_ioctl = ib_uverbs_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static const struct file_operations uverbs_mmap_fops = {
-@@ -1146,7 +1146,7 @@ static const struct file_operations uverbs_mmap_fops = {
- 	.release = ib_uverbs_close,
- 	.llseek	 = no_llseek,
- 	.unlocked_ioctl = ib_uverbs_ioctl,
--	.compat_ioctl = ib_uverbs_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static int ib_uverbs_get_nl_info(struct ib_device *ibdev, void *client_data,
-diff --git a/drivers/media/rc/lirc_dev.c b/drivers/media/rc/lirc_dev.c
-index f078f8a3aec8..9a8c1cf54ac4 100644
---- a/drivers/media/rc/lirc_dev.c
-+++ b/drivers/media/rc/lirc_dev.c
-@@ -720,9 +720,7 @@ static const struct file_operations lirc_fops = {
- 	.owner		= THIS_MODULE,
- 	.write		= ir_lirc_transmit_ir,
- 	.unlocked_ioctl	= ir_lirc_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl	= ir_lirc_ioctl,
--#endif
-+	.compat_ioctl	= compat_ptr_ioctl,
- 	.read		= ir_lirc_read,
- 	.poll		= ir_lirc_poll,
- 	.open		= ir_lirc_open,
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 41dccced5026..db1eefcd770b 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -239,9 +239,7 @@ static const struct file_operations fops = {
- 	.release = ec_device_release,
- 	.read = ec_device_read,
- 	.unlocked_ioctl = ec_device_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl = ec_device_ioctl,
--#endif
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static void cros_ec_class_release(struct device *dev)
-diff --git a/drivers/misc/vmw_vmci/vmci_host.c b/drivers/misc/vmw_vmci/vmci_host.c
-index 833e2bd248a5..903e321e8e87 100644
---- a/drivers/misc/vmw_vmci/vmci_host.c
-+++ b/drivers/misc/vmw_vmci/vmci_host.c
-@@ -961,7 +961,7 @@ static const struct file_operations vmuser_fops = {
- 	.release	= vmci_host_close,
- 	.poll		= vmci_host_poll,
- 	.unlocked_ioctl	= vmci_host_unlocked_ioctl,
--	.compat_ioctl	= vmci_host_unlocked_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- };
- 
- static struct miscdevice vmci_host_miscdev = {
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index 798c5c4aea9c..6ca142d833ab 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -1229,7 +1229,7 @@ static const struct file_operations nvdimm_bus_fops = {
- 	.owner = THIS_MODULE,
- 	.open = nd_open,
- 	.unlocked_ioctl = bus_ioctl,
--	.compat_ioctl = bus_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.llseek = noop_llseek,
- };
- 
-@@ -1237,7 +1237,7 @@ static const struct file_operations nvdimm_fops = {
- 	.owner = THIS_MODULE,
- 	.open = nd_open,
- 	.unlocked_ioctl = dimm_ioctl,
--	.compat_ioctl = dimm_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.llseek = noop_llseek,
- };
- 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 8f3fbe5ca937..be07bd1f6654 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2813,7 +2813,7 @@ static const struct file_operations nvme_dev_fops = {
- 	.owner		= THIS_MODULE,
- 	.open		= nvme_dev_open,
- 	.unlocked_ioctl	= nvme_dev_ioctl,
--	.compat_ioctl	= nvme_dev_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- };
- 
- static ssize_t nvme_sysfs_reset(struct device *dev,
-diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
-index 8c94cd3fd1f2..66610f04d76d 100644
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -1025,7 +1025,7 @@ static const struct file_operations switchtec_fops = {
- 	.read = switchtec_dev_read,
- 	.poll = switchtec_dev_poll,
- 	.unlocked_ioctl = switchtec_dev_ioctl,
--	.compat_ioctl = switchtec_dev_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static void link_event_work(struct work_struct *work)
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 784cea8572c2..d9a0dd94ee62 100644
---- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -913,7 +913,7 @@ static const struct file_operations wmi_fops = {
- 	.read		= wmi_char_read,
- 	.open		= wmi_char_open,
- 	.unlocked_ioctl	= wmi_ioctl,
--	.compat_ioctl	= wmi_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- };
- 
- static int wmi_dev_probe(struct device *dev)
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index eea5ebbb5119..507bfe163883 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -290,7 +290,7 @@ static const struct file_operations rpmsg_eptdev_fops = {
- 	.write_iter = rpmsg_eptdev_write_iter,
- 	.poll = rpmsg_eptdev_poll,
- 	.unlocked_ioctl = rpmsg_eptdev_ioctl,
--	.compat_ioctl = rpmsg_eptdev_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static ssize_t name_show(struct device *dev, struct device_attribute *attr,
-@@ -451,7 +451,7 @@ static const struct file_operations rpmsg_ctrldev_fops = {
- 	.open = rpmsg_ctrldev_open,
- 	.release = rpmsg_ctrldev_release,
- 	.unlocked_ioctl = rpmsg_ctrldev_ioctl,
--	.compat_ioctl = rpmsg_ctrldev_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static void rpmsg_ctrldev_release_device(struct device *dev)
-diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
-index 971fe074d7c9..fad936eb845f 100644
---- a/drivers/sbus/char/display7seg.c
-+++ b/drivers/sbus/char/display7seg.c
-@@ -156,7 +156,7 @@ static long d7s_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- static const struct file_operations d7s_fops = {
- 	.owner =		THIS_MODULE,
- 	.unlocked_ioctl =	d7s_ioctl,
--	.compat_ioctl =		d7s_ioctl,
-+	.compat_ioctl =		compat_ptr_ioctl,
- 	.open =			d7s_open,
- 	.release =		d7s_release,
- 	.llseek = noop_llseek,
-diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
-index a63d5e402ff2..12d66aa61ede 100644
---- a/drivers/sbus/char/envctrl.c
-+++ b/drivers/sbus/char/envctrl.c
-@@ -715,9 +715,7 @@ static const struct file_operations envctrl_fops = {
- 	.owner =		THIS_MODULE,
- 	.read =			envctrl_read,
- 	.unlocked_ioctl =	envctrl_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl =		envctrl_ioctl,
--#endif
-+	.compat_ioctl =		compat_ptr_ioctl,
- 	.open =			envctrl_open,
- 	.release =		envctrl_release,
- 	.llseek =		noop_llseek,
-diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-index 2b1e0d503020..fb6444d0409c 100644
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -1049,9 +1049,7 @@ static int tw_chrdev_open(struct inode *inode, struct file *file)
- static const struct file_operations tw_fops = {
- 	.owner		= THIS_MODULE,
- 	.unlocked_ioctl	= tw_chrdev_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl   = tw_chrdev_ioctl,
--#endif
-+	.compat_ioctl   = compat_ptr_ioctl,
- 	.open		= tw_chrdev_open,
- 	.release	= NULL,
- 	.llseek		= noop_llseek,
-diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-index b1f4724efde2..6927654792b0 100644
---- a/drivers/scsi/cxlflash/main.c
-+++ b/drivers/scsi/cxlflash/main.c
-@@ -3585,7 +3585,7 @@ static const struct file_operations cxlflash_chr_fops = {
- 	.owner          = THIS_MODULE,
- 	.open           = cxlflash_chr_open,
- 	.unlocked_ioctl	= cxlflash_chr_ioctl,
--	.compat_ioctl	= cxlflash_chr_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- };
- 
- /**
-diff --git a/drivers/scsi/esas2r/esas2r_main.c b/drivers/scsi/esas2r/esas2r_main.c
-index fdbda5c05aa0..80c5a235d193 100644
---- a/drivers/scsi/esas2r/esas2r_main.c
-+++ b/drivers/scsi/esas2r/esas2r_main.c
-@@ -613,7 +613,7 @@ static int __init esas2r_init(void)
- 
- /* Handle ioctl calls to "/proc/scsi/esas2r/ATTOnode" */
- static const struct file_operations esas2r_proc_fops = {
--	.compat_ioctl	= esas2r_proc_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- 	.unlocked_ioctl = esas2r_proc_ioctl,
- };
- 
-diff --git a/drivers/scsi/pmcraid.c b/drivers/scsi/pmcraid.c
-index 71ff3936da4f..12c4487cb9f6 100644
---- a/drivers/scsi/pmcraid.c
-+++ b/drivers/scsi/pmcraid.c
-@@ -3973,9 +3973,7 @@ static const struct file_operations pmcraid_fops = {
- 	.open = pmcraid_chr_open,
- 	.fasync = pmcraid_chr_fasync,
- 	.unlocked_ioctl = pmcraid_chr_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl = pmcraid_chr_ioctl,
--#endif
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.llseek = noop_llseek,
- };
- 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 92c2914239e3..1663c163edca 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -567,9 +567,7 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- static const struct file_operations ion_fops = {
- 	.owner          = THIS_MODULE,
- 	.unlocked_ioctl = ion_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl	= ion_ioctl,
--#endif
-+	.compat_ioctl	= compat_ptr_ioctl,
- };
- 
- static int debug_shrink_set(void *data, u64 val)
-diff --git a/drivers/staging/vme/devices/vme_user.c b/drivers/staging/vme/devices/vme_user.c
-index 6a33aaa1a49f..fd0ea4dbcb91 100644
---- a/drivers/staging/vme/devices/vme_user.c
-+++ b/drivers/staging/vme/devices/vme_user.c
-@@ -494,7 +494,7 @@ static const struct file_operations vme_user_fops = {
- 	.write = vme_user_write,
- 	.llseek = vme_user_llseek,
- 	.unlocked_ioctl = vme_user_unlocked_ioctl,
--	.compat_ioctl = vme_user_unlocked_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.mmap = vme_user_mmap,
- };
- 
-diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-index 0f16d9ffd8d1..37d22e39fd8d 100644
---- a/drivers/tee/tee_core.c
-+++ b/drivers/tee/tee_core.c
-@@ -675,7 +675,7 @@ static const struct file_operations tee_fops = {
- 	.open = tee_open,
- 	.release = tee_release,
- 	.unlocked_ioctl = tee_ioctl,
--	.compat_ioctl = tee_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static void tee_release_device(struct device *dev)
-diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
-index a7824a51f86d..3234dc539873 100644
---- a/drivers/usb/class/cdc-wdm.c
-+++ b/drivers/usb/class/cdc-wdm.c
-@@ -724,7 +724,7 @@ static const struct file_operations wdm_fops = {
- 	.release =	wdm_release,
- 	.poll =		wdm_poll,
- 	.unlocked_ioctl = wdm_ioctl,
--	.compat_ioctl = wdm_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.llseek =	noop_llseek,
- };
- 
-diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
-index 4942122b2346..bbd0308b13f5 100644
---- a/drivers/usb/class/usbtmc.c
-+++ b/drivers/usb/class/usbtmc.c
-@@ -2220,9 +2220,7 @@ static const struct file_operations fops = {
- 	.release	= usbtmc_release,
- 	.flush		= usbtmc_flush,
- 	.unlocked_ioctl	= usbtmc_ioctl,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl	= usbtmc_ioctl,
--#endif
-+	.compat_ioctl	= compat_ptr_ioctl,
- 	.fasync         = usbtmc_fasync,
- 	.poll           = usbtmc_poll,
- 	.llseek		= default_llseek,
-diff --git a/drivers/virt/fsl_hypervisor.c b/drivers/virt/fsl_hypervisor.c
-index 93d5bebf9572..1b0b11b55d2a 100644
---- a/drivers/virt/fsl_hypervisor.c
-+++ b/drivers/virt/fsl_hypervisor.c
-@@ -706,7 +706,7 @@ static const struct file_operations fsl_hv_fops = {
- 	.poll = fsl_hv_poll,
- 	.read = fsl_hv_read,
- 	.unlocked_ioctl = fsl_hv_ioctl,
--	.compat_ioctl = fsl_hv_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- };
- 
- static struct miscdevice fsl_hv_misc_dev = {
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 78de9d5d80c6..f4f792b7379d 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2305,7 +2305,7 @@ static const struct super_operations btrfs_super_ops = {
- static const struct file_operations btrfs_ctl_fops = {
- 	.open = btrfs_control_open,
- 	.unlocked_ioctl	 = btrfs_control_ioctl,
--	.compat_ioctl = btrfs_control_ioctl,
-+	.compat_ioctl = compat_ptr_ioctl,
- 	.owner	 = THIS_MODULE,
- 	.llseek = noop_llseek,
- };
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index ea8237513dfa..5bb93a3c397e 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2354,7 +2354,7 @@ const struct file_operations fuse_dev_operations = {
- 	.release	= fuse_dev_release,
- 	.fasync		= fuse_dev_fasync,
- 	.unlocked_ioctl = fuse_dev_ioctl,
--	.compat_ioctl   = fuse_dev_ioctl,
-+	.compat_ioctl   = compat_ptr_ioctl,
- };
- EXPORT_SYMBOL_GPL(fuse_dev_operations);
- 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 91006f47e420..3f494c8eaf2b 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -523,7 +523,7 @@ static const struct file_operations fanotify_fops = {
- 	.fasync		= NULL,
- 	.release	= fanotify_release,
- 	.unlocked_ioctl	= fanotify_ioctl,
--	.compat_ioctl	= fanotify_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- 	.llseek		= noop_llseek,
- };
- 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index ccbdbd62f0d8..6ec18e0492e6 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -1920,7 +1920,7 @@ static const struct file_operations userfaultfd_fops = {
- 	.poll		= userfaultfd_poll,
- 	.read		= userfaultfd_read,
- 	.unlocked_ioctl = userfaultfd_ioctl,
--	.compat_ioctl	= userfaultfd_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- 	.llseek		= noop_llseek,
- };
- 
-diff --git a/net/rfkill/core.c b/net/rfkill/core.c
-index f9b08a6d8dbe..c4be6a94ba97 100644
---- a/net/rfkill/core.c
-+++ b/net/rfkill/core.c
-@@ -1311,7 +1311,7 @@ static const struct file_operations rfkill_fops = {
- 	.release	= rfkill_fop_release,
- #ifdef CONFIG_RFKILL_INPUT
- 	.unlocked_ioctl	= rfkill_fop_ioctl,
--	.compat_ioctl	= rfkill_fop_ioctl,
-+	.compat_ioctl	= compat_ptr_ioctl,
- #endif
- 	.llseek		= no_llseek,
- };
--- 
-2.20.0
+Thanks,
+Arnaud
+
+> 
+> Regards,
+> Bjorn
+> 
+>> +}
+>> +
+>>  static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>>  			     struct rpmsg_hdr *msg, unsigned int len)
+>>  {
+>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>> index 9fe156d1c018..250df2165086 100644
+>> --- a/include/linux/rpmsg.h
+>> +++ b/include/linux/rpmsg.h
+>> @@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>>  __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>>  			poll_table *wait);
+>>  
+>> +int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept);
+>> +
+>>  #else
+>>  
+>>  static inline int register_rpmsg_device(struct rpmsg_device *dev)
+>> @@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+>>  	return 0;
+>>  }
+>>  
+>> +static int rpmsg_get_buf_payload_size(struct rpmsg_endpoint *ept)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return -ENXIO;
+>> +}
+>> +
+>>  #endif /* IS_ENABLED(CONFIG_RPMSG) */
+>>  
+>>  /* use a macro to avoid include chaining to get THIS_MODULE */
+>> -- 
+>> 2.7.4
+>>
