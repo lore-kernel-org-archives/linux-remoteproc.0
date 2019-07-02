@@ -1,315 +1,185 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v5 4/7] clk: qcom: Add Q6SSTOP clock controller for QCS404
-Date: Fri, 26 Jul 2019 14:53:29 +0530
-Message-Id: <20190726092332.25202-5-govinds@codeaurora.org>
-In-Reply-To: <20190726092332.25202-1-govinds@codeaurora.org>
-References: <20190726092332.25202-1-govinds@codeaurora.org>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v2 2/2] tty: add rpmsg driver
+References: <1557500577-22366-1-git-send-email-arnaud.pouliquen@st.com>
+ <1557500577-22366-3-git-send-email-arnaud.pouliquen@st.com>
+ <20190701060039.GD1263@builder>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <ed383111-01f7-21ac-4ec5-de80776394a4@st.com>
+Date: Tue, 2 Jul 2019 16:56:56 +0200
 MIME-Version: 1.0
+In-Reply-To: <20190701060039.GD1263@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: andy.gross@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, xiang xiao <xiaoxiang781216@gmail.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Fabien DESSENNE <fabien.dessenne@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for the Q6SSTOP clock control used on qcs404
-based devices. This would allow wcss remoteproc driver to
-control the required WCSS Q6SSTOP clock/reset controls to
-bring the subsystem out of reset and shutdown the WCSS Q6DSP.
+Hi Bjorn,
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- drivers/clk/qcom/Kconfig                      |   8 +
- drivers/clk/qcom/Makefile                     |   1 +
- drivers/clk/qcom/q6sstop-qcs404.c             | 223 ++++++++++++++++++
- .../dt-bindings/clock/qcom,q6sstopcc-qcs404.h |  18 ++
- 4 files changed, 250 insertions(+)
- create mode 100644 drivers/clk/qcom/q6sstop-qcs404.c
- create mode 100644 include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
+On 7/1/19 8:00 AM, Bjorn Andersson wrote:
+> On Fri 10 May 08:02 PDT 2019, Arnaud Pouliquen wrote:
+> 
+>> This driver exposes a standard tty interface on top of the rpmsg
+>> framework through the "rpmsg-tty-channel" rpmsg service.
+>>
+>> This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
+>> per rpmsg endpoint.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+>> ---
+>>  Documentation/serial/tty_rpmsg.txt |  38 +++
+>>  drivers/tty/Kconfig                |   9 +
+>>  drivers/tty/Makefile               |   1 +
+>>  drivers/tty/rpmsg_tty.c            | 479 +++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 527 insertions(+)
+>>  create mode 100644 Documentation/serial/tty_rpmsg.txt
+>>  create mode 100644 drivers/tty/rpmsg_tty.c
+>>
+>> diff --git a/Documentation/serial/tty_rpmsg.txt b/Documentation/serial/tty_rpmsg.txt
+>> new file mode 100644
+>> index 000000000000..e069ed268a2b
+>> --- /dev/null
+>> +++ b/Documentation/serial/tty_rpmsg.txt
+>> @@ -0,0 +1,38 @@
+>> +
+>> +			The rpmsg TTY
+>> +
+>> +The rpmsg tty driver implements a serial communication on the rpmsg bus,
+>> +to communicate with a remote processor devices in asymmetric multiprocessing
+>> +(AMP) configurations.
+>> +
+>> +The remote processor can instantiate a new tty by requesting a new "rpmsg-tty-channel" RPMsg service. Information related to the RPMsg and
+>> +associated tty device is available in /sys/bus/rpmsg/devices/virtio0.rpmsg-tty-channel.-1.<X>, with
+>> +<X> corresponding to the ttyRPMSG instance.
+>> +
+>> +RPMsg data/control structure
+>> +----------------------------
+>> +
+>> +The RPMsg is used to send data or control messages. Differentiation between the
+>> +stream and the control messages is done thanks to the first byte of the
+>> +RPMsg payload:
+>> +
+>> +
+>> +RPMSG_DATA	- rest of messages contains data
+>> +
+>> +RPMSG_CTRL 	- message contains control.
+>> +
+>> +
+>> +To be compliant with this driver, the remote firmware has to respect this RPMsg
+>> +payload structure. At least the RPMSG_DATA type has to be supported. The
+>> +RPMSG_CTRL is optional.
+>> +
+> 
+> This scheme prevents us from using this driver to expose any existing
+> tty-like channels without having to modify such firmware.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e1ff83cc361e..1b3c87a97521 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -250,6 +250,14 @@ config QCS_TURING_404
- 	  Support for the Turing Clock Controller on QCS404, provides clocks
- 	  and resets for the Turing subsystem.
- 
-+config QCS_Q6SSTOP_404
-+	tristate "QCS404 Q6SSTOP Clock Controller"
-+	select QCS_GCC_404
-+	help
-+	  Support for the Q6SSTOP clock controller on QCS404 devices.
-+	  Say Y if you want to use the Q6SSTOP branch clocks of the WCSS clock
-+	  controller to reset the Q6SSTOP subsystem.
-+
- config SDM_GCC_845
- 	tristate "SDM845 Global Clock Controller"
- 	select QCOM_GDSC
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index f0768fb1f037..086c053e0e03 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
- obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
-+obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
-new file mode 100644
-index 000000000000..b6281986b077
---- /dev/null
-+++ b/drivers/clk/qcom/q6sstop-qcs404.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,q6sstopcc-qcs404.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-branch.h"
-+#include "common.h"
-+#include "reset.h"
-+
-+static struct clk_branch lcc_ahbfabric_cbc_clk = {
-+	.halt_reg = 0x1b004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1b004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_ahbfabric_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_ahbs_cbc_clk = {
-+	.halt_reg = 0x22000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x22000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_ahbs_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_tcm_slave_cbc_clk = {
-+	.halt_reg = 0x1c000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x1c000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_tcm_slave_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_ahbm_cbc_clk = {
-+	.halt_reg = 0x22004,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x22004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_ahbm_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_axim_cbc_clk = {
-+	.halt_reg = 0x1c004,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x1c004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_axim_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_bcr_sleep_clk = {
-+	.halt_reg = 0x6004,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x6004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_bcr_sleep_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* TCSR clock */
-+static struct clk_branch tcsr_lcc_csr_cbcr_clk = {
-+	.halt_reg = 0x8008,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_lcc_csr_cbcr_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct regmap_config q6sstop_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.fast_io	= true,
-+};
-+
-+static struct clk_regmap *q6sstop_qcs404_clocks[] = {
-+	[LCC_AHBFABRIC_CBC_CLK] = &lcc_ahbfabric_cbc_clk.clkr,
-+	[LCC_Q6SS_AHBS_CBC_CLK] = &lcc_q6ss_ahbs_cbc_clk.clkr,
-+	[LCC_Q6SS_TCM_SLAVE_CBC_CLK] = &lcc_q6ss_tcm_slave_cbc_clk.clkr,
-+	[LCC_Q6SS_AHBM_CBC_CLK] = &lcc_q6ss_ahbm_cbc_clk.clkr,
-+	[LCC_Q6SS_AXIM_CBC_CLK] = &lcc_q6ss_axim_cbc_clk.clkr,
-+	[LCC_Q6SS_BCR_SLEEP_CLK] = &lcc_q6ss_bcr_sleep_clk.clkr,
-+};
-+
-+static const struct qcom_reset_map q6sstop_qcs404_resets[] = {
-+	[Q6SSTOP_BCR_RESET] = { 0x6000 },
-+};
-+
-+static const struct qcom_cc_desc q6sstop_qcs404_desc = {
-+	.config = &q6sstop_regmap_config,
-+	.clks = q6sstop_qcs404_clocks,
-+	.num_clks = ARRAY_SIZE(q6sstop_qcs404_clocks),
-+	.resets = q6sstop_qcs404_resets,
-+	.num_resets = ARRAY_SIZE(q6sstop_qcs404_resets),
-+};
-+
-+static struct clk_regmap *tcsr_qcs404_clocks[] = {
-+	[TCSR_Q6SS_LCC_CBCR_CLK] = &tcsr_lcc_csr_cbcr_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc tcsr_qcs404_desc = {
-+	.config = &q6sstop_regmap_config,
-+	.clks = tcsr_qcs404_clocks,
-+	.num_clks = ARRAY_SIZE(tcsr_qcs404_clocks),
-+};
-+
-+static const struct of_device_id q6sstopcc_qcs404_match_table[] = {
-+	{ .compatible = "qcom,qcs404-q6sstopcc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, q6sstopcc_qcs404_match_table);
-+
-+static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc;
-+	int ret;
-+
-+	pm_runtime_enable(&pdev->dev);
-+	ret = pm_clk_create(&pdev->dev);
-+	if (ret)
-+		goto disable_pm_runtime;
-+
-+	ret = pm_clk_add(&pdev->dev, NULL);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to acquire iface clock\n");
-+		goto destroy_pm_clk;
-+	}
-+
-+	q6sstop_regmap_config.name = "q6sstop_tcsr";
-+	desc = &tcsr_qcs404_desc;
-+
-+	ret = qcom_cc_probe_by_index(pdev, 1, desc);
-+	if (ret)
-+		goto destroy_pm_clk;
-+
-+	q6sstop_regmap_config.name = "q6sstop_cc";
-+	desc = &q6sstop_qcs404_desc;
-+
-+	ret = qcom_cc_probe_by_index(pdev, 0, desc);
-+	if (ret)
-+		goto destroy_pm_clk;
-+
-+	return 0;
-+
-+destroy_pm_clk:
-+	pm_clk_destroy(&pdev->dev);
-+
-+disable_pm_runtime:
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int q6sstopcc_qcs404_remove(struct platform_device *pdev)
-+{
-+	pm_clk_destroy(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops q6sstopcc_pm_ops = {
-+	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-+};
-+
-+static struct platform_driver q6sstopcc_qcs404_driver = {
-+	.probe		= q6sstopcc_qcs404_probe,
-+	.remove		= q6sstopcc_qcs404_remove,
-+	.driver		= {
-+		.name	= "qcs404-q6sstopcc",
-+		.of_match_table = q6sstopcc_qcs404_match_table,
-+	.pm = &q6sstopcc_pm_ops,
-+	},
-+};
-+
-+module_platform_driver(q6sstopcc_qcs404_driver);
-+
-+MODULE_DESCRIPTION("QTI QCS404 Q6SSTOP Clock Controller Driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
-new file mode 100644
-index 000000000000..c6f5290f0914
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
-+#define _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
-+
-+#define LCC_AHBFABRIC_CBC_CLK			0
-+#define LCC_Q6SS_AHBS_CBC_CLK			1
-+#define LCC_Q6SS_TCM_SLAVE_CBC_CLK		2
-+#define LCC_Q6SS_AHBM_CBC_CLK			3
-+#define LCC_Q6SS_AXIM_CBC_CLK			4
-+#define LCC_Q6SS_BCR_SLEEP_CLK			5
-+#define TCSR_Q6SS_LCC_CBCR_CLK			6
-+
-+#define Q6SSTOP_BCR_RESET			1
-+#endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+An alternative could be to define a channel for the control and another
+for the data. This would avoid to reserved the first bytes for message type.
+
+> 
+>> +Flow control type
+>> +-----------------
+>> +
+>> +A minimum flow control can be implemented to allow/block communication with the remote processor.
+>> +
+>> +DATA_TERM_READY	-	one parameter:
+>> +			- u8 state
+>> +				Set to indicate to remote side that terminal is
+>> +				ready for communication.
+>> +				Reset to block communication with remote side.
+> 
+> And as shown in discussions following Qualcomm's proposed flow-control
+> addition to the rpmsg API the need for flow control is not limited to
+> this custom tty like interface
+
+Yes i remember discussions around the flow control, how to set
+priorities, bandwidth, etc...
+Did you start something on Qualcomm side to support flow control?
+
+RPMsg flow control would also impact the remote side (a.e. OpenAMP).
+This subject can be quite extensive, so perhaps, it should be better to
+treat it in a separate thread to be sure that design integrate all
+requirements.
+
+What about integrating rpmsg tty in a first step (with flow control in
+rpmsg tty)? Then in a second step, adapt it on the rpmsg flow control,
+and so use it to validate the feature.
+This would avoid to block the rpmsg_tty integration... As you mention
+seems that several companies have already their own rpmsg tty
+implementation...
+
+> 
+> 
+> So I really would like to see an implementation of a side-band flow
+> control mechanism in the virtio rpmsg bus.
+> 
+>> diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+>> index e0a04bfc873e..d7b426939f69 100644
+>> --- a/drivers/tty/Kconfig
+>> +++ b/drivers/tty/Kconfig
+>> @@ -442,6 +442,15 @@ config VCC
+>>  	help
+>>  	  Support for Sun logical domain consoles.
+>>  
+>> +config RPMSG_TTY
+>> +	tristate "RPMSG tty driver"
+>> +	depends on RPMSG
+>> +	help
+>> +	  Say y here to export rpmsg endpoints as tty devices, usually found
+>> +	  in /dev/ttyRPMSGx.
+>> +	  This makes it possible for user-space programs to send and receive
+>> +	  rpmsg messages as a standard tty protocol.
+>> +
+>>  config LDISC_AUTOLOAD
+>>  	bool "Automatically load TTY Line Disciplines"
+>>  	default y
+>> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+>> index c72cafdf32b4..90a98a20714d 100644
+>> --- a/drivers/tty/Makefile
+>> +++ b/drivers/tty/Makefile
+>> @@ -33,5 +33,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
+>>  obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
+>>  obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
+>>  obj-$(CONFIG_VCC)		+= vcc.o
+>> +obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
+>>  
+>>  obj-y += ipwireless/
+>> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+> [..]
+>> +static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
+>> +	{ .name	= "rpmsg-tty-channel" },
+> 
+> I really would like a mechanism that does not depend on a fixed channel
+> name, as this required that firmware is written specifically for being
+> paired with this driver.
+> 
+> In other words this is exactly the same problem that we worked around in
+> rpmsg_charTo be sure... What you propose here is to implement an attribute for the
+channel (as rpmsg_eptdevd defined in rpmsg_char), allowing application
+could define the channel name?
+
+This point is similar to the one we discussed with Xiang. What should we
+consider: the tty service associated to a tty channel or the service on
+top of the tty which would be in this case based on rpmsg?
+
+I considered that the service is the tty, as we create a /dev/tty when
+service is requested by the remoteproc firmware, so that the service
+name is fixed in consequence.
+
+Using attribute for channel name would mean that user registers a
+service that will be on top of a tty. In this case, is the TTY is the
+good communication channel? why not directly use rpmsg_char?
+
+So perhaps could be better to extend the rpmsg char device for this kind
+of requirement, allowing to probe it without associate it to an existing
+rpmsg device...?
+
+Thank,
+Arnaud
+
+> 
+> Regards,
+> Bjorn
+> 
