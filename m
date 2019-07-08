@@ -1,51 +1,55 @@
 Return-Path: <bjorn.andersson@linaro.org>
-Date: Tue, 16 Jul 2019 12:01:53 -0700
+Date: Mon, 8 Jul 2019 07:07:22 -0700
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] hwspinlock updates for v5.3
-Message-ID: <20190716190153.GC8572@tuxbook-pro>
+Subject: Re: [PATCH] remoteproc: stm32: fix building without ARM SMCC
+Message-ID: <20190708140722.GI1263@builder>
+References: <20190708124311.3448056-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, Suman Anna <s-anna@ti.com>
+In-Reply-To: <20190708124311.3448056-1-arnd@arndb.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, Ludovic Barre <ludovic.barre@st.com>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+On Mon 08 Jul 05:42 PDT 2019, Arnd Bergmann wrote:
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> When compile testing this driver without SMCC support enabled,
+> we get a link error:
+> 
+> drivers/remoteproc/stm32_rproc.o: In function `stm32_rproc_start':
+> stm32_rproc.c:(.text+0x776): undefined reference to `__arm_smccc_smc'
+> drivers/remoteproc/stm32_rproc.o: In function `stm32_rproc_stop':
+> stm32_rproc.c:(.text+0x92c): undefined reference to `__arm_smccc_smc'
+> 
+> Make the actual call to arm_smccc_smc conditional on the Kconfig
+> symbol controlling its implementation.
+> 
+> Fixes: 13140de09cc2 ("remoteproc: stm32: add an ST stm32_rproc driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-are available in the Git repository at:
+Thanks Arnd, applied
 
-  git://github.com/andersson/remoteproc tags/hwlock-v5.3
+Regards,
+Bjorn
 
-for you to fetch changes up to 360aa640a59f269b784848c0b2d6d462952750d9:
-
-  hwspinlock: add the 'in_atomic' API (2019-06-29 21:08:14 -0700)
-
-----------------------------------------------------------------
-hwspinlock updates for v5.3
-
-This contains support for hardware spinlock TI K3 AM65x and J721E family
-of SoCs, support for using hwspinlocks from atomic context and better
-error reporting when dealing with hardware disabled in DeviceTree.
-
-----------------------------------------------------------------
-Fabien Dessenne (4):
-      hwspinlock: ignore disabled device
-      hwspinlock: stm32: implement the relax() ops
-      hwspinlock: document the hwspinlock 'raw' API
-      hwspinlock: add the 'in_atomic' API
-
-Suman Anna (3):
-      dt-bindings: hwlock: Update OMAP binding for TI K3 SoCs
-      hwspinlock/omap: Add support for TI K3 SoCs
-      hwspinlock/omap: Add a trace during probe
-
- .../devicetree/bindings/hwlock/omap-hwspinlock.txt | 25 +++++--
- Documentation/hwspinlock.txt                       | 81 ++++++++++++++++++++++
- drivers/hwspinlock/Kconfig                         |  2 +-
- drivers/hwspinlock/hwspinlock_core.c               | 48 +++++++++----
- drivers/hwspinlock/omap_hwspinlock.c               |  4 ++
- drivers/hwspinlock/stm32_hwspinlock.c              |  7 ++
- include/linux/hwspinlock.h                         | 61 +++++++++++++++-
- 7 files changed, 206 insertions(+), 22 deletions(-)
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index e83077b9ebf5..e2da7198b65f 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -344,7 +344,7 @@ static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
+>  
+>  	val = hold ? HOLD_BOOT : RELEASE_BOOT;
+>  
+> -	if (ddata->secured_soc) {
+> +	if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->secured_soc) {
+>  		arm_smccc_smc(STM32_SMC_RCC, STM32_SMC_REG_WRITE,
+>  			      hold_boot.reg, val, 0, 0, 0, 0, &smc_res);
+>  		err = smc_res.a0;
+> -- 
+> 2.20.0
+> 
