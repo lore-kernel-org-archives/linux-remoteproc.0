@@ -1,118 +1,170 @@
-Return-Path: <hongxing.zhu@nxp.com>
-From: Richard Zhu <hongxing.zhu@nxp.com>
-Subject: RE: [EXT] Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg support
-Date: Tue, 9 Jul 2019 07:09:07 +0000
-Message-ID: 
- <AM0PR0402MB357036066B86CF1E3E6F0C358CF10@AM0PR0402MB3570.eurprd04.prod.outlook.com>
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [EXT] Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg support
 References: <1561968784-1124-1-git-send-email-hongxing.zhu@nxp.com>
  <1561968784-1124-3-git-send-email-hongxing.zhu@nxp.com>
  <3e0a061c-4f5e-ac32-031d-909a48644265@pengutronix.de>
  <AM0PR0402MB35706FFBFD76FF81BCF5E6018CF60@AM0PR0402MB3570.eurprd04.prod.outlook.com>
  <e4629709-fbe7-6af9-3cee-309b2ec1892f@pengutronix.de>
-In-Reply-To: <e4629709-fbe7-6af9-3cee-309b2ec1892f@pengutronix.de>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <fcdd6392-75f4-716d-5dbd-1828a679b25f@st.com>
+Date: Mon, 8 Jul 2019 16:11:31 +0200
 MIME-Version: 1.0
-To: Oleksij Rempel <o.rempel@pengutronix.de>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-Cc: "loic.pallardy@st.com" <loic.pallardy@st.com>, "arnaud.pouliquen@st.com" <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "elder@linaro.org" <elder@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <e4629709-fbe7-6af9-3cee-309b2ec1892f@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: Oleksij Rempel <o.rempel@pengutronix.de>, Richard Zhu <hongxing.zhu@nxp.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+Cc: "loic.pallardy@st.com" <loic.pallardy@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "elder@linaro.org" <elder@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgT2xla3NpajoNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBPbGVr
-c2lqIFJlbXBlbCBbbWFpbHRvOm8ucmVtcGVsQHBlbmd1dHJvbml4LmRlXQ0KPiBTZW50OiAyMDE5
-5bm0N+aciDjml6UgMTk6MDMNCj4gVG86IFJpY2hhcmQgWmh1IDxob25neGluZy56aHVAbnhwLmNv
-bT47IG9oYWRAd2l6ZXJ5LmNvbTsNCj4gYmpvcm4uYW5kZXJzc29uQGxpbmFyby5vcmc7IGxpbnV4
-LXJlbW90ZXByb2NAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsb2ljLnBhbGxhcmR5QHN0LmNvbTsg
-YXJuYXVkLnBvdWxpcXVlbkBzdC5jb207IEZhYmllbiBERVNTRU5ORQ0KPiA8ZmFiaWVuLmRlc3Nl
-bm5lQHN0LmNvbT47IGVsZGVyQGxpbmFyby5vcmc7DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMu
-aW5mcmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW0VYVF0gUmU6IFtSRkMgMi8yXSBycG1zZzog
-aW14OiBhZGQgdGhlIGluaXRpYWwgaW14IHJwbXNnIHN1cHBvcnQNCj4gDQo+IENhdXRpb246IEVY
-VCBFbWFpbA0KPiANCj4gSGkgUmljaGFyZCwNCj4gDQo+IE9uIDA4LjA3LjE5IDEyOjE3LCBSaWNo
-YXJkIFpodSB3cm90ZToNCj4gPiBIaSBPbGVrc2lqOg0KPiA+IFRoYW5rcyBmb3IgeW91ciBjb21t
-ZW50cy4NCj4gPg0KPiA+DQo+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZy
-b206IE9sZWtzaWogUmVtcGVsIFttYWlsdG86by5yZW1wZWxAcGVuZ3V0cm9uaXguZGVdDQo+ID4+
-IFNlbnQ6IDIwMTnlubQ35pyINOaXpSAxNzozNg0KPiA+PiBUbzogUmljaGFyZCBaaHUgPGhvbmd4
-aW5nLnpodUBueHAuY29tPjsgb2hhZEB3aXplcnkuY29tOw0KPiA+PiBiam9ybi5hbmRlcnNzb25A
-bGluYXJvLm9yZzsgbGludXgtcmVtb3RlcHJvY0B2Z2VyLmtlcm5lbC5vcmcNCj4gPj4gQ2M6IGxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgRmFiaWVuIERFU1NFTk5FDQo+ID4+
-IDxmYWJpZW4uZGVzc2VubmVAc3QuY29tPjsgbG9pYy5wYWxsYXJkeUBzdC5jb207DQo+ID4+IGFy
-bmF1ZC5wb3VsaXF1ZW5Ac3QuY29tOyBzLWFubmFAdGkuY29tOyBlbGRlckBsaW5hcm8ub3JnDQo+
-ID4+IFN1YmplY3Q6IFtFWFRdIFJlOiBbUkZDIDIvMl0gcnBtc2c6IGlteDogYWRkIHRoZSBpbml0
-aWFsIGlteCBycG1zZw0KPiA+PiBzdXBwb3J0DQo+ID4+DQo+ID4+IENhdXRpb246IEVYVCBFbWFp
-bA0KPiA+Pg0KPiA+PiBIaSBSaWNoYXJkLA0KPiA+Pg0KPiA+PiBPbiAwMS4wNy4xOSAxMDozNCwg
-UmljaGFyZCBaaHUgd3JvdGU6DQo+ID4+PiBCYXNlZCBvbiAidmlydGlvX3JwbXNnX2J1cyIgZHJp
-dmVyLCBUaGlzIHBhdGNoLXNldCBpcyB1c2VkIHRvIHNldCB1cA0KPiA+Pj4gdGhlIGNvbW11bmlj
-YXRpb24gbWVjaGFuaXNtIGJldHdlZW4gQSBjb3JlIGFuZCBNIGNvcmUgb24gaS5NWCBBTVANCj4g
-Pj4gU09Dcy4NCj4gPj4+DQo+ID4+PiBBZGQgdGhlIGluaXRpYWwgaW14IHJwbXNnIHN1cHBvcnQg
-Z2x1ZSBkcml2ZXIgYW5kIG9uZSBwaW5ncG9uZyBkZW1vLA0KPiA+Pj4gZGVtb25zdHJhdGVkIHRo
-ZSBkYXRhIHRyYW5zYWN0aW9ucyBiZXR3ZWVuIEEgY29yZSBhbmQgcmVtb3RlIE0gY29yZS4NCj4g
-Pj4+IERpc3RyaWJ1dGVkIGZyYW1ld29yayBpcyB1c2VkIGluIElNWCBSUE1TRyBpbXBsZW1lbnRh
-dGlvbiwgcmVmZXIgdG8NCj4gPj4+IHRoZSBmb2xsb3dpbmcgcmVxdWlyZW1lbnRzOg0KPiA+Pj4g
-ICAgIC0gVGhlIENBTiBmdW5jdGlvbnMgY29udGFpbmVkIGluIE0gY29yZSBhbmQgUlRPUyBzaG91
-bGQgYmUgcmVhZHkNCj4gYW5kDQo+ID4+PiAgICAgICBjb21wbGV0ZSBmdW5jdGlvbmFsIGluIDUw
-bXMgYWZ0ZXIgQU1QIHN5c3RlbSBpcyB0dXJuZWQgb24uDQo+ID4+PiAgICAgLSBQYXJ0aXRpb24g
-cmVzZXQuIFN5c3RlbSB3b3VsZG4ndCBiZSBzdGFsbGVkIGJ5IHRoZSBleGNlcHRpb25zIChlLngN
-Cj4gPj4+ICAgICAgIHRoZSByZXNldCB0cmlnZ2VyZWQgYnkgdGhlIHN5c3RlbSBoYW5nKSBvY2N1
-cnJlZCBhdCB0aGUgb3RoZXINCj4gc2lkZS4NCj4gPj4+ICAgICAgIEFuZCB0aGUgUlBNU0cgbWVj
-aGFuaXNtIHNob3VsZCBiZSByZWNvdmVyZWQgYXV0b21hY3RpbGx5DQo+IGFmdGVyDQo+ID4+IHRo
-ZQ0KPiA+Pj4gICAgICAgcGFydGl0aW9uIHJlc2V0IGlzIGNvbXBsZXRlZC4NCj4gPj4+IEluIHRo
-aXMgc2NlbmFyaW8sIHRoZSBNIGNvcmUgYW5kIFJUT1Mgd291bGQgYmUga2lja2VkIG9mZiBieQ0K
-PiA+Pj4gYm9vdGxvYWRlciBmaXJzdGx5LCB0aGVuIEEgY29yZSBhbmQgTGludXggd291bGQgYmUg
-bG9hZGVkIGxhdGVyLg0KPiA+Pj4gQm90aCBNIGNvcmUvUlRPUyBhbmQgQSBjb3JlL0xpbnV4IGFy
-ZSBydW5uaW5nIGluZGVwZW5kbHkuDQo+ID4+Pg0KPiA+Pj4gT25lIHBoeXNpY2FsIG1lbW9yeSBy
-ZWdpb24gdXNlZCB0byBzdG9yZSB0aGUgdnJpbmcgaXMgbWFuZGF0b3J5DQo+ID4+PiByZXF1aXJl
-ZCB0byBwcmUtcmVzZXJ2ZWQgYW5kIHdlbGwta25vd25lZCBieSBib3RoIEEgY29yZSBhbmQgTSBj
-b3JlDQo+ID4+DQo+ID4+IEkgZG9uJ3Qgc2VlIGFueSB0aGluZyBpbXggc3BlY2lmaWMgaW4gdGhp
-cyBwYXRjaC4gV2UgYWxyZWFkeSBoYXZlDQo+ID4+IHJlbW90ZXByb2Mgd2hpY2ggd291bGQgcGFy
-c2UgZmlybXdhcmUgaGVhZGVyIGFuZCBjcmVhdGUgbmVlZGVkDQo+ID4+IGRldmljZXMuIFRoaXMg
-ZHJpdmVyIGlzIG9ubHkgbmVlZGVkIGZvciB0aGUgY2FzZSB3aGVyZSBmaXJtd2FyZSB3YXMgc3Rh
-cmVkDQo+IGJ5IHRoZSBib290bG9hZGVyLg0KPiA+Pg0KPiA+IFtSaWNoYXJkIFpodV0gQm9vdGxv
-YWRlciBzdGFydHMgdGhlIGZpcm13YXJlIGlzIG1hbmRhdG9yeSByZXF1aXJlZCBpbg0KPiA+IHRo
-ZXNlIHNjZW5hcmlvIHJlZmVyIHRvIHRoZSByZWFzb25zIGxpc3RlZCBpbiB0aGUgY29tbWl0Lg0K
-PiA+IFRodXMsIHRoZSBkaXN0cmlidXRlZCBmcmFtZXdvcmsgaGFzIHRvIGJlIHVzZWQsIGFuZCBi
-b3RoIEEgY29yZS9MaW51eA0KPiA+IGFuZCByZW1vdGUgY29yZS9SVE9TIHdvcmtzIGluZGVwZW5k
-ZW50bHkuDQo+ID4NCj4gPj4gSSBwZXJzb25hbGx5IHdvdWxkIHByZWZlciB0byBoYXZlIGdlbmVy
-aWMgZHJpdmVyIG9yIGV4dGVuZCB0aGUNCj4gPj4gcmVtb3RlcHJvYyBmcmFtZXdvcmsuIFNvIHdl
-IGNhbiBub3RpZnkga2VybmVsIGFib3V0IHdvcmsgYWxyZWFkeSBkb25lDQo+IGJ5IGJvb3Rsb2Fk
-ZXIuDQo+ID4+DQo+ID4gW1JpY2hhcmQgWmh1XSBUaGFua3MgZm9yIHlvdXIgc3VnZ2VzdGlvbnMu
-DQo+ID4gUmVnYXJkaW5nIHRvIG15IHVuZGVyc3RhbmQsIGl0IHNlZW1zIHRoYXQgbWFzdGVyL3Ns
-YXZlIG1vZGUgaXMgdXNlZCBpbiB0aGUNCj4gcmVtb3RlcHJvYyBjdXJyZW50bHkuDQo+ID4gQSBj
-b3JlL0xpbnV4IGFjdHMgYXMgbWFzdGVyLCB0byBjb250cm9scy9tYW5pcHVsYXRlcyByZW1vdGUg
-Y29yZS9SVE9TLg0KPiA+IEl0IGlzbid0IGFwcGxpY2FibGUgZm9yIHRoZSBzY2VuYXJpbyBkZXNj
-cmliZWQgYnkgdGhpcyBwYXRjaC1zZXQuDQo+ID4NCj4gPj4gSW4gZ2VuZXJhbCwgc29tZSBtb3Jl
-IGlzc3VlcyBzaG91bGQgYmUgc29sdmVkOg0KPiA+PiAtIEhhbmRsZSBvciBub3QgdG91Y2ggaWRs
-ZSBjbG9ja3MgZm9yIGRpZmZlcmVudCBub2RlIHVzZWQgYnkgTSBjb3JlDQo+ID4+IGFuZCBub3Qg
-bWFpbiBzeXN0ZW0uDQo+ID4+IC0gcGluIGNvbnRyb2wNCj4gPj4gLSByZWd1bGF0b3JzDQo+ID4+
-DQo+ID4+IFNUIGRldnMgYWxyZWFkeSB0cmllZCB0byBzb2x2ZSB0aGlzIGlzc3VlcyBieSBjcmVh
-dGluZyAicmVtb3RlcHJvYzoNCj4gPj4gYWRkIHN5c3RlbSByZXNvdXJjZSBtYW5hZ2VyIGRldmlj
-ZSIgcGF0Y2guIEkgZG9uJ3Qga25vdyB3aGF0IGlzDQo+ID4+IGN1cnJlbnQgc3RhdGUgb2YgaXQg
-KC9tZSBhZGRpbmcgU1QgZGV2cyB0byBDQykuDQo+ID4+DQo+ID4gW1JpY2hhcmQgWmh1XSBZZXMs
-IGl0IGlzLiBNYW55IGNvbnRyaWJ1dGlvbnMgaGF2ZSBiZWVuIG1hZGUgYnkgRmFiaWVuLg0KPiA+
-IElNSE8sIHRoZXJlIGFyZSBzb21lIGRpZmZlcmVudCBiZWhhdmlvcnMgb24gaU1YOFFYUC9RTSBw
-bGF0Zm9ybXMsIHRoZQ0KPiA+ICAgcmVzb3VyY2VzIChlLnggSVAgbW9kdWxlcykgaGFkIGJlZW4g
-YXNzaWduZWQgYW5kIG1hbmFnZWQgYnkgdGhlDQo+IFhSREMuDQo+ID4gSW4gdGhlIG90aGVyIHdv
-cmRzLCB0aGUgSFcgcmVzb3VyY2VzIHdvdWxkIGJlIGFzc2lnbmVkIGFuZCBtYW5hZ2VkDQo+IHdv
-dWxkDQo+ID4gICBiZSB0cmFuc3BhcmVudCB0byBTVy4NCj4gPg0KPiA+IFRodXMsIGJvdGggQSBj
-b3JlL0xpbnV4IGFuZCBNIGNvcmUvUlRPUyBjYW4gd29yayByZWFsIGluZGVwZW5kZW50bHkuDQo+
-ID4gU3lzdGVtIHdvdWxkbid0IGJlIHN0YWxsZWQgYnkgdGhlIGV4Y2VwdGlvbnMgKGUueCB0aGUg
-cmVzZXQgdHJpZ2dlcmVkDQo+ID4gYnkgdGhlIHN5c3RlbSBoYW5nKSBvY2N1cnJlZCBhdCB0aGUg
-b3RoZXIgc2lkZS4gQW5kIHRoZSBSUE1TRyBtZWNoYW5pc20NCj4gc2hvdWxkDQo+ID4gICBiZSBy
-ZWNvdmVyZWQgYXV0b21hdGljYWxseSBhZnRlciB0aGUgcGFydGl0aW9uIHJlc2V0IGlzIGNvbXBs
-ZXRlZC4NCj4gDQo+IEl0IGlzIGV4YWN0bHkgdGhlIHdheSBJIGRpZCB1bmRlcnN0b29kIGl0IGlu
-IHRoZSBmaXJzIG1haWwuIEFueSB3YXksIGknbSBvayB3aXRoDQo+IHRoaXMgZHJpdmVyLiBKdXN0
-IHJlbmFtZSBpbXggdG8gc29tZSB0aGluZyBnZW5lcmljLiBUaGlzIGRyaXZlciBjYW4gYW5kIHdp
-bGwgYmUNCj4gcmV1c2VkIG9uIG90aGVyIHBsYXRmb3JtcyBhcyB3ZWxsLg0KW1JpY2hhcmQgWmh1
-XSBUaGFua3MgZm9yIHlvdXIgdW5kZXJzdGFuZC4gV291bGQgY2hhbmdlIHRvIGdlbmVyaWMgbmFt
-ZSBpZiB0aGlzIHBhdGNoLXNldA0KIGlzIGFjY2VwdGFibGUuIFRoYW5rIHlvdS4NCg0KQmVzdCBS
-ZWdhcmRzDQpSaWNoYXJkIFpodQ0KPiANCj4gS2luZCByZWdhcmRzLA0KPiBPbGVrc2lqIFJlbXBl
-bA0KPiANCj4gLS0NCj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAgICAgICAgICAgICAg
-IHwNCj4gfA0KPiBJbmR1c3RyaWFsIExpbnV4IFNvbHV0aW9ucyAgICAgICAgICAgICAgICAgfA0K
-PiBodHRwczovL2V1cjAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0
-cCUzQSUyRiUyRnd3dy5wDQo+IGVuZ3V0cm9uaXguZGUlMkYmYW1wO2RhdGE9MDIlN0MwMSU3Q2hv
-bmd4aW5nLnpodSU0MG54cC5jb20lN0M4NWYNCj4gNTYzN2M4MmNlNGNlODBmMDUwOGQ3MDM5M2Q0
-OGUlN0M2ODZlYTFkM2JjMmI0YzZmYTkyY2Q5OWM1YzMwMTYzDQo+IDUlN0MwJTdDMCU3QzYzNjk4
-MTgwNTc3MzI0NTE3MSZhbXA7c2RhdGE9JTJCWnJqdmtMV0Y3YWdndU9rdksNCj4gaVdpeWFLNzQz
-b0kxVjlZbXBMY3lScmdKUSUzRCZhbXA7cmVzZXJ2ZWQ9MCAgfA0KPiBQZWluZXIgU3RyLiA2LTgs
-IDMxMTM3IEhpbGRlc2hlaW0sIEdlcm1hbnkgfCBQaG9uZTogKzQ5LTUxMjEtMjA2OTE3LTANCj4g
-fA0KPiBBbXRzZ2VyaWNodCBIaWxkZXNoZWltLCBIUkEgMjY4NiAgICAgICAgICAgfCBGYXg6DQo+
-ICs0OS01MTIxLTIwNjkxNy01NTU1IHwNCg==
+Hello Richard,
+
+On 7/8/19 1:02 PM, Oleksij Rempel wrote:
+> Hi Richard,
+> 
+> On 08.07.19 12:17, Richard Zhu wrote:
+>> Hi Oleksij:
+>> Thanks for your comments.
+>>
+>>
+>>> -----Original Message-----
+>>> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
+>>> Sent: 2019年7月4日 17:36
+>>> To: Richard Zhu <hongxing.zhu@nxp.com>; ohad@wizery.com;
+>>> bjorn.andersson@linaro.org; linux-remoteproc@vger.kernel.org
+>>> Cc: linux-arm-kernel@lists.infradead.org; Fabien DESSENNE
+>>> <fabien.dessenne@st.com>; loic.pallardy@st.com; arnaud.pouliquen@st.com;
+>>> s-anna@ti.com; elder@linaro.org
+>>> Subject: [EXT] Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg
+>>> support
+>>>
+>>> Caution: EXT Email
+>>>
+>>> Hi Richard,
+>>>
+>>> On 01.07.19 10:34, Richard Zhu wrote:
+>>>> Based on "virtio_rpmsg_bus" driver, This patch-set is used to set up
+>>>> the communication mechanism between A core and M core on i.MX AMP
+>>> SOCs.
+>>>>
+>>>> Add the initial imx rpmsg support glue driver and one pingpong demo,
+>>>> demonstrated the data transactions between A core and remote M core.
+>>>> Distributed framework is used in IMX RPMSG implementation, refer to
+>>>> the following requirements:
+>>>>     - The CAN functions contained in M core and RTOS should be ready
+>>>> and
+>>>>       complete functional in 50ms after AMP system is turned on.
+>>>>     - Partition reset. System wouldn't be stalled by the exceptions
+>>>> (e.x
+>>>>       the reset triggered by the system hang) occurred at the other
+>>>> side.
+>>>>       And the RPMSG mechanism should be recovered automactilly after
+>>> the
+>>>>       partition reset is completed.
+>>>> In this scenario, the M core and RTOS would be kicked off by
+>>>> bootloader firstly, then A core and Linux would be loaded later. Both
+>>>> M core/RTOS and A core/Linux are running independly.
+>>>>
+>>>> One physical memory region used to store the vring is mandatory
+>>>> required to pre-reserved and well-knowned by both A core and M core
+>>>
+>>> I don't see any thing imx specific in this patch. We already have
+>>> remoteproc
+>>> which would parse firmware header and create needed devices. This
+>>> driver is
+>>> only needed for the case where firmware was stared by the bootloader.
+>>>
+>> [Richard Zhu] Bootloader starts the firmware is mandatory required in
+>> these scenario
+>> refer to the reasons listed in the commit.
+>> Thus, the distributed framework has to be used, and both A core/Linux
+>> and remote core/RTOS
+>> works independently.
+>>
+>>> I personally would prefer to have generic driver or extend the
+>>> remoteproc
+>>> framework. So we can notify kernel about work already done by
+>>> bootloader.
+>>>
+>> [Richard Zhu] Thanks for your suggestions.
+>> Regarding to my understand, it seems that master/slave mode is used in
+>> the remoteproc currently.
+>> A core/Linux acts as master, to controls/manipulates remote core/RTOS.
+>> It isn't applicable for the scenario described by this patch-set.
+>>
+>>> In general, some more issues should be solved:
+>>> - Handle or not touch idle clocks for different node used by M core
+>>> and not
+>>> main system.
+>>> - pin control
+>>> - regulators
+>>>
+>>> ST devs already tried to solve this issues by creating "remoteproc:
+>>> add system
+>>> resource manager device" patch. I don't know what is current state of
+>>> it (/me
+>>> adding ST devs to CC).
+The resource manager implementation as been proposed but no real
+adhesion of the community on it... Perhaps SCMI should be a candidate...
+
+>>>
+>> [Richard Zhu] Yes, it is. Many contributions have been made by Fabien.
+>> IMHO, there are some different behaviors on iMX8QXP/QM platforms, the
+>>   resources (e.x IP modules) had been assigned and managed by the XRDC.
+>> In the other words, the HW resources would be assigned and managed would
+>>   be transparent to SW.
+>>
+>> Thus, both A core/Linux and M core/RTOS can work real independently.
+>> System wouldn't be stalled by the exceptions (e.x the reset triggered
+>> by the
+>> system hang) occurred at the other side. And the RPMSG mechanism should
+>>   be recovered automatically after the partition reset is completed.
+> 
+> It is exactly the way I did understood it in the firs mail. Any way, i'm ok
+> with this driver. Just rename imx to some thing generic. This driver can
+> and will be reused on other platforms as well.
+> 
+> Kind regards,
+> Oleksij Rempel
+> 
+
+I'm trying to figure out what is the interest of these drivers vs
+existing ones.
+Please find below a list of features i noticed in your driver (don't
+hesitate if i missed some of them), with some comments/questions.
+
+1) The coprocessor is started before the one running Linux OS.
+Have you taken a look to this set of patches proposed by Loic:
+https://lkml.org/lkml/2018/11/30/157
+with this patch you should be able to"attach" on the fly on a preloaded
+firmware.
+
+2) RPMSG recovery
+Agree with you, this feature is important in AMP systems, as cores can
+have their own live cycle.
+
+But I can not see related code, could you point out it to me?
+
+Could you explain How do you recover the rpmsg channels that has been
+already established?
+For instance what happen if your coprocessor crash during the rpmsg
+pingpong demo?
+
+3) ping-pong demo sample
+Perhaps you could re-use the rpmsg sample available here:
+https://elixir.bootlin.com/linux/v5.2/source/samples/rpmsg
+
+4) No use of the resource table
+Is there a reason to not use the resource table to declare the the
+vrings? Your implementation seems to impose the same definition in both
+firmware while resource table allow to share them.
+Furthermore the resource table could be updated by the Linux before the
+remote proc is started (in case of Linux booting first)
+
+5) slave and master mode support.
+Seems that this drivers not fully respect the virtio protocol (for
+instance status field). If you use a synchro mechanism (mailbox...) not
+sure that you really need to be virtio slave on Linux.
+
+Thanks,
+Arnaud
