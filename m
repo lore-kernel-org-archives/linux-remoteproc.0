@@ -1,86 +1,93 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Tue, 16 Jul 2019 12:01:29 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] remoteproc updates for v5.3
-Message-ID: <20190716190129.GB8572@tuxbook-pro>
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v13 1/5] dt-bindings: Add a binding for Mediatek SCP
+Date: Tue,  9 Jul 2019 15:25:25 +0800
+Message-Id: <20190709072547.217957-2-pihsun@chromium.org>
+In-Reply-To: <20190709072547.217957-1-pihsun@chromium.org>
+References: <20190709072547.217957-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Fabien Dessenne <fabien.dessenne@st.com>, Clement Leger <cleger@kalray.eu>, Fabio Estevam <festevam@gmail.com>, Arnd Bergmann <arnd@arndb.de>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, "Robert P. J. Day" <rpjday@crashcourse.ca>, YueHaibing <yuehaibing@huawei.com>
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+From: Erin Lo <erin.lo@mediatek.com>
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Add a DT binding documentation of SCP for the
+MT8183 SoC from Mediatek.
 
-are available in the Git repository at:
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes from v12, v11, v10, v9, v8, v7, v6:
+ - No change.
 
-  git://github.com/andersson/remoteproc tags/rproc-v5.3
+Changes from v5:
+ - Remove dependency on CONFIG_RPMSG_MTK_SCP.
 
-for you to fetch changes up to 93f1d3e4b59cf2e7ef31eaf1131480897b040e97:
+Changes from v4:
+ - Add detail of more properties.
+ - Document the usage of mtk,rpmsg-name in subnode from the new design.
 
-  remoteproc: stm32: fix building without ARM SMCC (2019-07-08 07:05:50 -0700)
+Changes from v3:
+ - No change.
 
-----------------------------------------------------------------
-remoteproc updates for v5.3
+Changes from v2:
+ - No change. I realized that for this patch series, there's no need to
+   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+   created by SCP name service.
 
-This adds support for the STM32 remoteproc, additional i.MX platforms
-with Cortex M4 remoteprocs and Qualcomm's QCS404 Compute DSP. Initial
-support for vendor specific resource table entries and support for
-unprocessed Qualcomm firmware files.
+Changes from v1:
+ - No change.
+---
+ .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
 
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      remoteproc: stm32: fix building without ARM SMCC
-
-Bjorn Andersson (4):
-      dt-bindings: remoteproc: Rename and amend Hexagon v56 binding
-      remoteproc: qcom: qdsp6-adsp: Add support for QCS404 CDSP
-      soc: qcom: mdt_loader: Support loading non-split images
-      remoteproc: qcom: q6v5-mss: Support loading non-split images
-
-Clement Leger (2):
-      remoteproc: add vendor resources handling
-      remoteproc: copy parent dma_pfn_offset for vdev
-
-Fabien Dessenne (3):
-      dt-bindings: stm32: add bindings for ML-AHB interconnect
-      dt-bindings: remoteproc: add bindings for stm32 remote processor driver
-      remoteproc: stm32: add an ST stm32_rproc driver
-
-Fabio Estevam (2):
-      remoteproc: imx: Broaden the Kconfig selection logic
-      remoteproc: imx: Fix typo in "failed"
-
-Gustavo A. R. Silva (1):
-      remoteproc: Use struct_size() helper
-
-Robert P. J. Day (1):
-      remoteproc,rpmsg: add missing MAINTAINERS file entries
-
-YueHaibing (1):
-      remoteproc: qcom: q6v5-mss: Fix build error without QCOM_MDT_LOADER
-
- .../devicetree/bindings/arm/stm32/mlahb.txt        |  37 ++
- .../{qcom,adsp-pil.txt => qcom,hexagon-v56.txt}    |  35 +-
- .../devicetree/bindings/remoteproc/stm32-rproc.txt |  63 +++
- Documentation/remoteproc.txt                       |  14 +-
- MAINTAINERS                                        |   5 +
- drivers/remoteproc/Kconfig                         |  18 +-
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/imx_rproc.c                     |   8 +-
- drivers/remoteproc/qcom_q6v5_adsp.c                |  73 ++-
- drivers/remoteproc/qcom_q6v5_mss.c                 |  33 +-
- drivers/remoteproc/remoteproc_core.c               |  15 +
- drivers/remoteproc/remoteproc_elf_loader.c         |   3 +-
- drivers/remoteproc/remoteproc_internal.h           |  11 +
- drivers/remoteproc/stm32_rproc.c                   | 628 +++++++++++++++++++++
- drivers/soc/qcom/mdt_loader.c                      |  88 ++-
- include/linux/remoteproc.h                         |  32 +-
- include/linux/soc/qcom/mdt_loader.h                |   2 +
- 17 files changed, 1009 insertions(+), 57 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/stm32/mlahb.txt
- rename Documentation/devicetree/bindings/remoteproc/{qcom,adsp-pil.txt => qcom,hexagon-v56.txt} (74%)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt
- create mode 100644 drivers/remoteproc/stm32_rproc.c
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+new file mode 100644
+index 000000000000..3ba668bab14b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -0,0 +1,36 @@
++Mediatek SCP Bindings
++----------------------------------------
++
++This binding provides support for ARM Cortex M4 Co-processor found on some
++Mediatek SoCs.
++
++Required properties:
++- compatible		Should be "mediatek,mt8183-scp"
++- reg			Should contain the address ranges for the two memory
++			regions, SRAM and CFG.
++- reg-names		Contains the corresponding names for the two memory
++			regions. These should be named "sram" & "cfg".
++- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
++- clock-names		Contains the corresponding name for the clock. This
++			should be named "main".
++
++Subnodes
++--------
++
++Subnodes of the SCP represent rpmsg devices. The names of the devices are not
++important. The properties of these nodes are defined by the individual bindings
++for the rpmsg devices - but must contain the following property:
++
++- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
++			the subnode to rpmsg device announced by SCP.
++
++Example:
++
++	scp: scp@10500000 {
++		compatible = "mediatek,mt8183-scp";
++		reg = <0 0x10500000 0 0x80000>,
++		      <0 0x105c0000 0 0x5000>;
++		reg-names = "sram", "cfg";
++		clocks = <&infracfg CLK_INFRA_SCPSYS>;
++		clock-names = "main";
++	};
+-- 
+2.22.0.410.gd8fdbe21b5-goog
