@@ -1,291 +1,210 @@
-Return-Path: <arnaud.pouliquen@st.com>
-Subject: Re: [EXT] Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg support
+Return-Path: <hongxing.zhu@nxp.com>
+From: Richard Zhu <hongxing.zhu@nxp.com>
+Subject: RE: [EXT] Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg support
+Date: Tue, 9 Jul 2019 07:32:22 +0000
+Message-ID: 
+ <AM0PR0402MB3570CF963122A44DF2F049E88CF10@AM0PR0402MB3570.eurprd04.prod.outlook.com>
 References: <1561968784-1124-1-git-send-email-hongxing.zhu@nxp.com>
  <1561968784-1124-3-git-send-email-hongxing.zhu@nxp.com>
  <3e0a061c-4f5e-ac32-031d-909a48644265@pengutronix.de>
  <AM0PR0402MB35706FFBFD76FF81BCF5E6018CF60@AM0PR0402MB3570.eurprd04.prod.outlook.com>
  <e4629709-fbe7-6af9-3cee-309b2ec1892f@pengutronix.de>
  <fcdd6392-75f4-716d-5dbd-1828a679b25f@st.com>
- <AM0PR0402MB3570CF963122A44DF2F049E88CF10@AM0PR0402MB3570.eurprd04.prod.outlook.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Message-ID: <81f58f8f-9050-a6be-29c6-aab803cf5520@st.com>
-Date: Tue, 9 Jul 2019 11:56:53 +0200
-MIME-Version: 1.0
-In-Reply-To: <AM0PR0402MB3570CF963122A44DF2F049E88CF10@AM0PR0402MB3570.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <fcdd6392-75f4-716d-5dbd-1828a679b25f@st.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-To: Richard Zhu <hongxing.zhu@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, Oleksij Rempel <o.rempel@pengutronix.de>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 Cc: "loic.pallardy@st.com" <loic.pallardy@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "elder@linaro.org" <elder@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-
-
-On 7/9/19 9:32 AM, Richard Zhu wrote:
-> Hi Arnaud:
-> Thanks a lot for your kindly guidance and review comments.
-> 
-> 
->> -----Original Message-----
->> From: Arnaud Pouliquen [mailto:arnaud.pouliquen@st.com]
->> Sent: 2019年7月8日 22:12
->> To: Oleksij Rempel <o.rempel@pengutronix.de>; Richard Zhu
->> <hongxing.zhu@nxp.com>; ohad@wizery.com; bjorn.andersson@linaro.org;
->> linux-remoteproc@vger.kernel.org
->> Cc: loic.pallardy@st.com; Fabien DESSENNE <fabien.dessenne@st.com>;
->> elder@linaro.org; linux-arm-kernel@lists.infradead.org
->> Subject: Re: [EXT] Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg support
->>
->>
->> Hello Richard,
->>
->> On 7/8/19 1:02 PM, Oleksij Rempel wrote:
->>> Hi Richard,
->>>
->>> On 08.07.19 12:17, Richard Zhu wrote:
->>>> Hi Oleksij:
->>>> Thanks for your comments.
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Oleksij Rempel [mailto:o.rempel@pengutronix.de]
->>>>> Sent: 2019年7月4日 17:36
->>>>> To: Richard Zhu <hongxing.zhu@nxp.com>; ohad@wizery.com;
->>>>> bjorn.andersson@linaro.org; linux-remoteproc@vger.kernel.org
->>>>> Cc: linux-arm-kernel@lists.infradead.org; Fabien DESSENNE
->>>>> <fabien.dessenne@st.com>; loic.pallardy@st.com;
->>>>> arnaud.pouliquen@st.com; s-anna@ti.com; elder@linaro.org
->>>>> Subject: [EXT] Re: [RFC 2/2] rpmsg: imx: add the initial imx rpmsg
->>>>> support
->>>>>
->>>>>
->>>>> Hi Richard,
->>>>>
->>>>> On 01.07.19 10:34, Richard Zhu wrote:
->>>>>> Based on "virtio_rpmsg_bus" driver, This patch-set is used to set
->>>>>> up the communication mechanism between A core and M core on i.MX
->>>>>> AMP
->>>>> SOCs.
->>>>>>
->>>>>> Add the initial imx rpmsg support glue driver and one pingpong
->>>>>> demo, demonstrated the data transactions between A core and remote
->> M core.
->>>>>> Distributed framework is used in IMX RPMSG implementation, refer to
->>>>>> the following requirements:
->>>>>>     - The CAN functions contained in M core and RTOS should be
->>>>>> ready and
->>>>>>       complete functional in 50ms after AMP system is turned on.
->>>>>>     - Partition reset. System wouldn't be stalled by the exceptions
->>>>>> (e.x
->>>>>>       the reset triggered by the system hang) occurred at the other
->>>>>> side.
->>>>>>       And the RPMSG mechanism should be recovered automactilly
->>>>>> after
->>>>> the
->>>>>>       partition reset is completed.
->>>>>> In this scenario, the M core and RTOS would be kicked off by
->>>>>> bootloader firstly, then A core and Linux would be loaded later.
->>>>>> Both M core/RTOS and A core/Linux are running independly.
->>>>>>
->>>>>> One physical memory region used to store the vring is mandatory
->>>>>> required to pre-reserved and well-knowned by both A core and M core
->>>>>
->>>>> I don't see any thing imx specific in this patch. We already have
->>>>> remoteproc which would parse firmware header and create needed
->>>>> devices. This driver is only needed for the case where firmware was
->>>>> stared by the bootloader.
->>>>>
->>>> [Richard Zhu] Bootloader starts the firmware is mandatory required in
->>>> these scenario refer to the reasons listed in the commit.
->>>> Thus, the distributed framework has to be used, and both A core/Linux
->>>> and remote core/RTOS works independently.
->>>>
->>>>> I personally would prefer to have generic driver or extend the
->>>>> remoteproc framework. So we can notify kernel about work already
->>>>> done by bootloader.
->>>>>
->>>> [Richard Zhu] Thanks for your suggestions.
->>>> Regarding to my understand, it seems that master/slave mode is used
->>>> in the remoteproc currently.
->>>> A core/Linux acts as master, to controls/manipulates remote core/RTOS.
->>>> It isn't applicable for the scenario described by this patch-set.
->>>>
->>>>> In general, some more issues should be solved:
->>>>> - Handle or not touch idle clocks for different node used by M core
->>>>> and not main system.
->>>>> - pin control
->>>>> - regulators
->>>>>
->>>>> ST devs already tried to solve this issues by creating "remoteproc:
->>>>> add system
->>>>> resource manager device" patch. I don't know what is current state
->>>>> of it (/me adding ST devs to CC).
->> The resource manager implementation as been proposed but no real
->> adhesion of the community on it... Perhaps SCMI should be a candidate...
->>
->>>>>
->>>> [Richard Zhu] Yes, it is. Many contributions have been made by Fabien.
->>>> IMHO, there are some different behaviors on iMX8QXP/QM platforms, the
->>>>   resources (e.x IP modules) had been assigned and managed by the
->> XRDC.
->>>> In the other words, the HW resources would be assigned and managed
->> would
->>>>   be transparent to SW.
->>>>
->>>> Thus, both A core/Linux and M core/RTOS can work real independently.
->>>> System wouldn't be stalled by the exceptions (e.x the reset triggered
->>>> by the system hang) occurred at the other side. And the RPMSG
->>>> mechanism should
->>>>   be recovered automatically after the partition reset is completed.
->>>
->>> It is exactly the way I did understood it in the firs mail. Any way,
->>> i'm ok with this driver. Just rename imx to some thing generic. This
->>> driver can and will be reused on other platforms as well.
->>>
->>> Kind regards,
->>> Oleksij Rempel
->>>
->>
->> I'm trying to figure out what is the interest of these drivers vs existing ones.
->> Please find below a list of features i noticed in your driver (don't hesitate if i
->> missed some of them), with some comments/questions.
->>
->> 1) The coprocessor is started before the one running Linux OS.
->> Have you taken a look to this set of patches proposed by Loic:
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.or
->> g%2Flkml%2F2018%2F11%2F30%2F157&amp;data=02%7C01%7Chongxing.z
->> hu%40nxp.com%7C6773999ac6394dfe37d008d703ae3475%7C686ea1d3bc2
->> b4c6fa92cd99c5c301635%7C0%7C0%7C636981919064186660&amp;sdata=
->> OUogIs2S7gLR46%2FNcAU3OqEtB4rK3sW0gRKRRSO6xpk%3D&amp;reserved
->> =0
->> with this patch you should be able to"attach" on the fly on a preloaded
->> firmware.
-> [Richard Zhu] Yes, this patch-set enable to pre-load the firmware in bootloader.
-> The most difficulties when I try to use the current master/slave mode are that
->  the remote-proc controls/management mode is not applicable to the scenario,
->  especially the iMX8QXP/QM partition reset usage.
-> Both A core/Linux and M core/RTOS are working independently.
-> HW resources(e.x: some IP modules, DDR memory region, power domains, clocks and so on)
->  would be pre-managed and pre-assigned to A core or M core by SCFW through XRDC module
-> refer to the security reasons or something else I don't know.
-If i well understand the xRDC is an IP which allows hardware isolation
-of some resources to the A or M core. So it is set by the secure part of
-the bootloader, right?
-We have an equivalence on the STM32MP1 named ETZPC.
-So we also manage this use case on stm32mp1. The bootloader configures
-resource isolation, and can load and start the Cortex-M firmware, before
-the linux firmware. That why i pointed this patch. In case of preloaded
-firmware the remote proc does not load the firmware but just parse the
-resource table (address needs to be provided by the rproc_platform
-driver). The rpmsg bus is probed according to the resource table entries.
-This part of code is not upstreamed for time being (waiting integration
-of the mentioned patch). Nevertheless You can take a look on mechanism
-we implemented, on ST github (we named it early_boot):
-https://github.com/STMicroelectronics/linux/blob/v4.19-stm32mp/drivers/remoteproc/stm32_rproc.c
-> 
-> M core/RTOS insists to run and manage its resources assigned by XRDC standalone.
-> All the interactions between A core and M core are transferred on RPMSG channels.
-> For example, the audio codec configuration and so on.
-> So, what I do here is just setup the communication RPMSG channels between A core/Linux
-> and M core/RTOS.
-> 
-> One more concern, I'm afraid that I may mess up the current solid reproc flow and framework if
->  I force this implementation into the current reproc drivers. 
-> So, I summit this patch-set in the end. Pre-reserved vring buffer, register virtio_device, establish
-> the RPMSG channels lets A core/Linux and M Core/RTOS can communicate with each other.
-> That's all.
-Your concern is valid, and as we have the same requirement, it would be
-nice to find a common solution. That's why i propose this alternative,
-which would have the advantage of reusing existing rpmsg implementation.
-
->>
->> 2) RPMSG recovery
->> Agree with you, this feature is important in AMP systems, as cores can have
->> their own live cycle.
->>
->> But I can not see related code, could you point out it to me?
->>
-> [Richard Zhu] This feature had been validated in the local repos.
-> But these codes are not contained in this patch-set, because this feature is
-> relied on the SCFW(system control firm ware) used to monitor the status of
->  both side, and trigger one irq to the other side, if one side is stall.
-> Unfortunately, it is not up streamed yet. So, these codes would be updated later
-> If the SCFW is ready.
-> 
->> Could you explain How do you recover the rpmsg channels that has been
->> already established?
->> For instance what happen if your coprocessor crash during the rpmsg
->> pingpong demo?
-> [Richard Zhu] SCFW would inform the other side, if one core/OS is crashed.
-> Then, the RPMSG stack would be re-initialized itself on the lived core/OS, and clarify that
-> It's ready to re-establish the channels again.
-> For example, M4/RTOS is crashed when pingpong demo is running.
-> 1. Pingpong demo is stopped.
-> 2. Lived A core/Linux would receive one irq from SCFW indicated that remote M4/RTOS is
->  reset, then all the virtio_device registered in A core/Linux side, would be un-registered,
->  and these virtio_devices would be registered again after receive the signal(e.x the mailbox rdb)
->  that M4/RTOS RPMSG stack is ready again.
-> 3. Thus RPMS channels can be re-established in this situation.
-> 4. Accordingly, the consumer of the rpmsg glue driver should be re-initialized too.
-> For example, remove the pingpond demo module, and insmod it again.
-
-Thanks for the clarification, i think this is no so far from the
-recovery already implemented in remoteproc. Seems you remote proc driver
-handles the recovery:
- -stop rproc on irq reception, restart it ( in preloaded mode) on
-mailbox rdb.
-On stm32MP1 we have a similar mechanism based on a Watchdog.
-
-> 
->>
->> 3) ping-pong demo sample
->> Perhaps you could re-use the rpmsg sample available here:
->> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Felixir.b
->> ootlin.com%2Flinux%2Fv5.2%2Fsource%2Fsamples%2Frpmsg&amp;data=02
->> %7C01%7Chongxing.zhu%40nxp.com%7C6773999ac6394dfe37d008d703ae3
->> 475%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C636981919064
->> 186660&amp;sdata=mSV3YsoyhAO%2FROfWX79X0woGQN3jx%2Fv4pL8LRUf
->> bHUM%3D&amp;reserved=0
-> [Richard Zhu] Thanks a lot.
-> This demo sample can be used. Sorry about that I didn't notice it before.
-> 
->>
->> 4) No use of the resource table
->> Is there a reason to not use the resource table to declare the the vrings? Your
->> implementation seems to impose the same definition in both firmware while
->> resource table allow to share them.
->> Furthermore the resource table could be updated by the Linux before the
->> remote proc is started (in case of Linux booting first)
->>
-> [Richard Zhu] Regarding to the auto industry requirements, the M core/RTOS is always
-> started firstly, because that the CAN functions should be ready in 50ms after system is
-> power up.
-> BTW, resource table is a great idea in the case when Linux is booting firstly.
-As explained before We also use it when cortex-M4 is booted firstly. A
-constraint is that the resource table address should be known by the
-remoteproc driver: either the resource table address is defined in DT,
-or provided by the bootloader which loads the firmware so parses it.
-
-> 
->> 5) slave and master mode support.
->> Seems that this drivers not fully respect the virtio protocol (for instance status
->> field). If you use a synchro mechanism (mailbox...) not sure that you really
->> need to be virtio slave on Linux.
-> [Richard Zhu] Sorry about that. I used trying to keep this driver compatible with
-> the current slave-master mode, but I'm failed to achieve that. ☹.
-> - Partition reset feature is mandatory required.
-> - M4 side insists that they should run and manage its resources standalone.
-No problem, it is an RFC.
-Anyway regarding you requirements and concerns, it seems that we have
-the same ones. I don't know if the solution we propose can fit with your
-needs, but i would be nice to have a common implementation.
-
-Best Regards,
-Arnaud
-
-> 
-> Best Regards
-> Richard Zhu
->>
->> Thanks,
->> Arnaud
+SGkgQXJuYXVkOg0KVGhhbmtzIGEgbG90IGZvciB5b3VyIGtpbmRseSBndWlkYW5jZSBhbmQgcmV2
+aWV3IGNvbW1lbnRzLg0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTog
+QXJuYXVkIFBvdWxpcXVlbiBbbWFpbHRvOmFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tXQ0KPiBTZW50
+OiAyMDE55bm0N+aciDjml6UgMjI6MTINCj4gVG86IE9sZWtzaWogUmVtcGVsIDxvLnJlbXBlbEBw
+ZW5ndXRyb25peC5kZT47IFJpY2hhcmQgWmh1DQo+IDxob25neGluZy56aHVAbnhwLmNvbT47IG9o
+YWRAd2l6ZXJ5LmNvbTsgYmpvcm4uYW5kZXJzc29uQGxpbmFyby5vcmc7DQo+IGxpbnV4LXJlbW90
+ZXByb2NAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsb2ljLnBhbGxhcmR5QHN0LmNvbTsgRmFiaWVu
+IERFU1NFTk5FIDxmYWJpZW4uZGVzc2VubmVAc3QuY29tPjsNCj4gZWxkZXJAbGluYXJvLm9yZzsg
+bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IFN1YmplY3Q6IFJlOiBbRVhU
+XSBSZTogW1JGQyAyLzJdIHJwbXNnOiBpbXg6IGFkZCB0aGUgaW5pdGlhbCBpbXggcnBtc2cgc3Vw
+cG9ydA0KPiANCj4gDQo+IEhlbGxvIFJpY2hhcmQsDQo+IA0KPiBPbiA3LzgvMTkgMTowMiBQTSwg
+T2xla3NpaiBSZW1wZWwgd3JvdGU6DQo+ID4gSGkgUmljaGFyZCwNCj4gPg0KPiA+IE9uIDA4LjA3
+LjE5IDEyOjE3LCBSaWNoYXJkIFpodSB3cm90ZToNCj4gPj4gSGkgT2xla3NpajoNCj4gPj4gVGhh
+bmtzIGZvciB5b3VyIGNvbW1lbnRzLg0KPiA+Pg0KPiA+Pg0KPiA+Pj4gLS0tLS1PcmlnaW5hbCBN
+ZXNzYWdlLS0tLS0NCj4gPj4+IEZyb206IE9sZWtzaWogUmVtcGVsIFttYWlsdG86by5yZW1wZWxA
+cGVuZ3V0cm9uaXguZGVdDQo+ID4+PiBTZW50OiAyMDE55bm0N+aciDTml6UgMTc6MzYNCj4gPj4+
+IFRvOiBSaWNoYXJkIFpodSA8aG9uZ3hpbmcuemh1QG54cC5jb20+OyBvaGFkQHdpemVyeS5jb207
+DQo+ID4+PiBiam9ybi5hbmRlcnNzb25AbGluYXJvLm9yZzsgbGludXgtcmVtb3RlcHJvY0B2Z2Vy
+Lmtlcm5lbC5vcmcNCj4gPj4+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmc7IEZhYmllbiBERVNTRU5ORQ0KPiA+Pj4gPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+OyBsb2lj
+LnBhbGxhcmR5QHN0LmNvbTsNCj4gPj4+IGFybmF1ZC5wb3VsaXF1ZW5Ac3QuY29tOyBzLWFubmFA
+dGkuY29tOyBlbGRlckBsaW5hcm8ub3JnDQo+ID4+PiBTdWJqZWN0OiBbRVhUXSBSZTogW1JGQyAy
+LzJdIHJwbXNnOiBpbXg6IGFkZCB0aGUgaW5pdGlhbCBpbXggcnBtc2cNCj4gPj4+IHN1cHBvcnQN
+Cj4gPj4+DQo+ID4+Pg0KPiA+Pj4gSGkgUmljaGFyZCwNCj4gPj4+DQo+ID4+PiBPbiAwMS4wNy4x
+OSAxMDozNCwgUmljaGFyZCBaaHUgd3JvdGU6DQo+ID4+Pj4gQmFzZWQgb24gInZpcnRpb19ycG1z
+Z19idXMiIGRyaXZlciwgVGhpcyBwYXRjaC1zZXQgaXMgdXNlZCB0byBzZXQNCj4gPj4+PiB1cCB0
+aGUgY29tbXVuaWNhdGlvbiBtZWNoYW5pc20gYmV0d2VlbiBBIGNvcmUgYW5kIE0gY29yZSBvbiBp
+Lk1YDQo+ID4+Pj4gQU1QDQo+ID4+PiBTT0NzLg0KPiA+Pj4+DQo+ID4+Pj4gQWRkIHRoZSBpbml0
+aWFsIGlteCBycG1zZyBzdXBwb3J0IGdsdWUgZHJpdmVyIGFuZCBvbmUgcGluZ3BvbmcNCj4gPj4+
+PiBkZW1vLCBkZW1vbnN0cmF0ZWQgdGhlIGRhdGEgdHJhbnNhY3Rpb25zIGJldHdlZW4gQSBjb3Jl
+IGFuZCByZW1vdGUNCj4gTSBjb3JlLg0KPiA+Pj4+IERpc3RyaWJ1dGVkIGZyYW1ld29yayBpcyB1
+c2VkIGluIElNWCBSUE1TRyBpbXBsZW1lbnRhdGlvbiwgcmVmZXIgdG8NCj4gPj4+PiB0aGUgZm9s
+bG93aW5nIHJlcXVpcmVtZW50czoNCj4gPj4+PiAgICAgLSBUaGUgQ0FOIGZ1bmN0aW9ucyBjb250
+YWluZWQgaW4gTSBjb3JlIGFuZCBSVE9TIHNob3VsZCBiZQ0KPiA+Pj4+IHJlYWR5IGFuZA0KPiA+
+Pj4+ICAgICAgIGNvbXBsZXRlIGZ1bmN0aW9uYWwgaW4gNTBtcyBhZnRlciBBTVAgc3lzdGVtIGlz
+IHR1cm5lZCBvbi4NCj4gPj4+PiAgICAgLSBQYXJ0aXRpb24gcmVzZXQuIFN5c3RlbSB3b3VsZG4n
+dCBiZSBzdGFsbGVkIGJ5IHRoZSBleGNlcHRpb25zDQo+ID4+Pj4gKGUueA0KPiA+Pj4+ICAgICAg
+IHRoZSByZXNldCB0cmlnZ2VyZWQgYnkgdGhlIHN5c3RlbSBoYW5nKSBvY2N1cnJlZCBhdCB0aGUg
+b3RoZXINCj4gPj4+PiBzaWRlLg0KPiA+Pj4+ICAgICAgIEFuZCB0aGUgUlBNU0cgbWVjaGFuaXNt
+IHNob3VsZCBiZSByZWNvdmVyZWQgYXV0b21hY3RpbGx5DQo+ID4+Pj4gYWZ0ZXINCj4gPj4+IHRo
+ZQ0KPiA+Pj4+ICAgICAgIHBhcnRpdGlvbiByZXNldCBpcyBjb21wbGV0ZWQuDQo+ID4+Pj4gSW4g
+dGhpcyBzY2VuYXJpbywgdGhlIE0gY29yZSBhbmQgUlRPUyB3b3VsZCBiZSBraWNrZWQgb2ZmIGJ5
+DQo+ID4+Pj4gYm9vdGxvYWRlciBmaXJzdGx5LCB0aGVuIEEgY29yZSBhbmQgTGludXggd291bGQg
+YmUgbG9hZGVkIGxhdGVyLg0KPiA+Pj4+IEJvdGggTSBjb3JlL1JUT1MgYW5kIEEgY29yZS9MaW51
+eCBhcmUgcnVubmluZyBpbmRlcGVuZGx5Lg0KPiA+Pj4+DQo+ID4+Pj4gT25lIHBoeXNpY2FsIG1l
+bW9yeSByZWdpb24gdXNlZCB0byBzdG9yZSB0aGUgdnJpbmcgaXMgbWFuZGF0b3J5DQo+ID4+Pj4g
+cmVxdWlyZWQgdG8gcHJlLXJlc2VydmVkIGFuZCB3ZWxsLWtub3duZWQgYnkgYm90aCBBIGNvcmUg
+YW5kIE0gY29yZQ0KPiA+Pj4NCj4gPj4+IEkgZG9uJ3Qgc2VlIGFueSB0aGluZyBpbXggc3BlY2lm
+aWMgaW4gdGhpcyBwYXRjaC4gV2UgYWxyZWFkeSBoYXZlDQo+ID4+PiByZW1vdGVwcm9jIHdoaWNo
+IHdvdWxkIHBhcnNlIGZpcm13YXJlIGhlYWRlciBhbmQgY3JlYXRlIG5lZWRlZA0KPiA+Pj4gZGV2
+aWNlcy4gVGhpcyBkcml2ZXIgaXMgb25seSBuZWVkZWQgZm9yIHRoZSBjYXNlIHdoZXJlIGZpcm13
+YXJlIHdhcw0KPiA+Pj4gc3RhcmVkIGJ5IHRoZSBib290bG9hZGVyLg0KPiA+Pj4NCj4gPj4gW1Jp
+Y2hhcmQgWmh1XSBCb290bG9hZGVyIHN0YXJ0cyB0aGUgZmlybXdhcmUgaXMgbWFuZGF0b3J5IHJl
+cXVpcmVkIGluDQo+ID4+IHRoZXNlIHNjZW5hcmlvIHJlZmVyIHRvIHRoZSByZWFzb25zIGxpc3Rl
+ZCBpbiB0aGUgY29tbWl0Lg0KPiA+PiBUaHVzLCB0aGUgZGlzdHJpYnV0ZWQgZnJhbWV3b3JrIGhh
+cyB0byBiZSB1c2VkLCBhbmQgYm90aCBBIGNvcmUvTGludXgNCj4gPj4gYW5kIHJlbW90ZSBjb3Jl
+L1JUT1Mgd29ya3MgaW5kZXBlbmRlbnRseS4NCj4gPj4NCj4gPj4+IEkgcGVyc29uYWxseSB3b3Vs
+ZCBwcmVmZXIgdG8gaGF2ZSBnZW5lcmljIGRyaXZlciBvciBleHRlbmQgdGhlDQo+ID4+PiByZW1v
+dGVwcm9jIGZyYW1ld29yay4gU28gd2UgY2FuIG5vdGlmeSBrZXJuZWwgYWJvdXQgd29yayBhbHJl
+YWR5DQo+ID4+PiBkb25lIGJ5IGJvb3Rsb2FkZXIuDQo+ID4+Pg0KPiA+PiBbUmljaGFyZCBaaHVd
+IFRoYW5rcyBmb3IgeW91ciBzdWdnZXN0aW9ucy4NCj4gPj4gUmVnYXJkaW5nIHRvIG15IHVuZGVy
+c3RhbmQsIGl0IHNlZW1zIHRoYXQgbWFzdGVyL3NsYXZlIG1vZGUgaXMgdXNlZA0KPiA+PiBpbiB0
+aGUgcmVtb3RlcHJvYyBjdXJyZW50bHkuDQo+ID4+IEEgY29yZS9MaW51eCBhY3RzIGFzIG1hc3Rl
+ciwgdG8gY29udHJvbHMvbWFuaXB1bGF0ZXMgcmVtb3RlIGNvcmUvUlRPUy4NCj4gPj4gSXQgaXNu
+J3QgYXBwbGljYWJsZSBmb3IgdGhlIHNjZW5hcmlvIGRlc2NyaWJlZCBieSB0aGlzIHBhdGNoLXNl
+dC4NCj4gPj4NCj4gPj4+IEluIGdlbmVyYWwsIHNvbWUgbW9yZSBpc3N1ZXMgc2hvdWxkIGJlIHNv
+bHZlZDoNCj4gPj4+IC0gSGFuZGxlIG9yIG5vdCB0b3VjaCBpZGxlIGNsb2NrcyBmb3IgZGlmZmVy
+ZW50IG5vZGUgdXNlZCBieSBNIGNvcmUNCj4gPj4+IGFuZCBub3QgbWFpbiBzeXN0ZW0uDQo+ID4+
+PiAtIHBpbiBjb250cm9sDQo+ID4+PiAtIHJlZ3VsYXRvcnMNCj4gPj4+DQo+ID4+PiBTVCBkZXZz
+IGFscmVhZHkgdHJpZWQgdG8gc29sdmUgdGhpcyBpc3N1ZXMgYnkgY3JlYXRpbmcgInJlbW90ZXBy
+b2M6DQo+ID4+PiBhZGQgc3lzdGVtDQo+ID4+PiByZXNvdXJjZSBtYW5hZ2VyIGRldmljZSIgcGF0
+Y2guIEkgZG9uJ3Qga25vdyB3aGF0IGlzIGN1cnJlbnQgc3RhdGUNCj4gPj4+IG9mIGl0ICgvbWUg
+YWRkaW5nIFNUIGRldnMgdG8gQ0MpLg0KPiBUaGUgcmVzb3VyY2UgbWFuYWdlciBpbXBsZW1lbnRh
+dGlvbiBhcyBiZWVuIHByb3Bvc2VkIGJ1dCBubyByZWFsDQo+IGFkaGVzaW9uIG9mIHRoZSBjb21t
+dW5pdHkgb24gaXQuLi4gUGVyaGFwcyBTQ01JIHNob3VsZCBiZSBhIGNhbmRpZGF0ZS4uLg0KPiAN
+Cj4gPj4+DQo+ID4+IFtSaWNoYXJkIFpodV0gWWVzLCBpdCBpcy4gTWFueSBjb250cmlidXRpb25z
+IGhhdmUgYmVlbiBtYWRlIGJ5IEZhYmllbi4NCj4gPj4gSU1ITywgdGhlcmUgYXJlIHNvbWUgZGlm
+ZmVyZW50IGJlaGF2aW9ycyBvbiBpTVg4UVhQL1FNIHBsYXRmb3JtcywgdGhlDQo+ID4+ICAgcmVz
+b3VyY2VzIChlLnggSVAgbW9kdWxlcykgaGFkIGJlZW4gYXNzaWduZWQgYW5kIG1hbmFnZWQgYnkg
+dGhlDQo+IFhSREMuDQo+ID4+IEluIHRoZSBvdGhlciB3b3JkcywgdGhlIEhXIHJlc291cmNlcyB3
+b3VsZCBiZSBhc3NpZ25lZCBhbmQgbWFuYWdlZA0KPiB3b3VsZA0KPiA+PiAgIGJlIHRyYW5zcGFy
+ZW50IHRvIFNXLg0KPiA+Pg0KPiA+PiBUaHVzLCBib3RoIEEgY29yZS9MaW51eCBhbmQgTSBjb3Jl
+L1JUT1MgY2FuIHdvcmsgcmVhbCBpbmRlcGVuZGVudGx5Lg0KPiA+PiBTeXN0ZW0gd291bGRuJ3Qg
+YmUgc3RhbGxlZCBieSB0aGUgZXhjZXB0aW9ucyAoZS54IHRoZSByZXNldCB0cmlnZ2VyZWQNCj4g
+Pj4gYnkgdGhlIHN5c3RlbSBoYW5nKSBvY2N1cnJlZCBhdCB0aGUgb3RoZXIgc2lkZS4gQW5kIHRo
+ZSBSUE1TRw0KPiA+PiBtZWNoYW5pc20gc2hvdWxkDQo+ID4+ICAgYmUgcmVjb3ZlcmVkIGF1dG9t
+YXRpY2FsbHkgYWZ0ZXIgdGhlIHBhcnRpdGlvbiByZXNldCBpcyBjb21wbGV0ZWQuDQo+ID4NCj4g
+PiBJdCBpcyBleGFjdGx5IHRoZSB3YXkgSSBkaWQgdW5kZXJzdG9vZCBpdCBpbiB0aGUgZmlycyBt
+YWlsLiBBbnkgd2F5LA0KPiA+IGknbSBvayB3aXRoIHRoaXMgZHJpdmVyLiBKdXN0IHJlbmFtZSBp
+bXggdG8gc29tZSB0aGluZyBnZW5lcmljLiBUaGlzDQo+ID4gZHJpdmVyIGNhbiBhbmQgd2lsbCBi
+ZSByZXVzZWQgb24gb3RoZXIgcGxhdGZvcm1zIGFzIHdlbGwuDQo+ID4NCj4gPiBLaW5kIHJlZ2Fy
+ZHMsDQo+ID4gT2xla3NpaiBSZW1wZWwNCj4gPg0KPiANCj4gSSdtIHRyeWluZyB0byBmaWd1cmUg
+b3V0IHdoYXQgaXMgdGhlIGludGVyZXN0IG9mIHRoZXNlIGRyaXZlcnMgdnMgZXhpc3Rpbmcgb25l
+cy4NCj4gUGxlYXNlIGZpbmQgYmVsb3cgYSBsaXN0IG9mIGZlYXR1cmVzIGkgbm90aWNlZCBpbiB5
+b3VyIGRyaXZlciAoZG9uJ3QgaGVzaXRhdGUgaWYgaQ0KPiBtaXNzZWQgc29tZSBvZiB0aGVtKSwg
+d2l0aCBzb21lIGNvbW1lbnRzL3F1ZXN0aW9ucy4NCj4gDQo+IDEpIFRoZSBjb3Byb2Nlc3NvciBp
+cyBzdGFydGVkIGJlZm9yZSB0aGUgb25lIHJ1bm5pbmcgTGludXggT1MuDQo+IEhhdmUgeW91IHRh
+a2VuIGEgbG9vayB0byB0aGlzIHNldCBvZiBwYXRjaGVzIHByb3Bvc2VkIGJ5IExvaWM6DQo+IGh0
+dHBzOi8vZXVyMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwcyUz
+QSUyRiUyRmxrbWwub3INCj4gZyUyRmxrbWwlMkYyMDE4JTJGMTElMkYzMCUyRjE1NyZhbXA7ZGF0
+YT0wMiU3QzAxJTdDaG9uZ3hpbmcueg0KPiBodSU0MG54cC5jb20lN0M2NzczOTk5YWM2Mzk0ZGZl
+MzdkMDA4ZDcwM2FlMzQ3NSU3QzY4NmVhMWQzYmMyDQo+IGI0YzZmYTkyY2Q5OWM1YzMwMTYzNSU3
+QzAlN0MwJTdDNjM2OTgxOTE5MDY0MTg2NjYwJmFtcDtzZGF0YT0NCj4gT1VvZ0lzMlM3Z0xSNDYl
+MkZOY0FVM09xRXRCNHJLM3NXMGdSS1JSU082eHBrJTNEJmFtcDtyZXNlcnZlZA0KPiA9MA0KPiB3
+aXRoIHRoaXMgcGF0Y2ggeW91IHNob3VsZCBiZSBhYmxlIHRvImF0dGFjaCIgb24gdGhlIGZseSBv
+biBhIHByZWxvYWRlZA0KPiBmaXJtd2FyZS4NCltSaWNoYXJkIFpodV0gWWVzLCB0aGlzIHBhdGNo
+LXNldCBlbmFibGUgdG8gcHJlLWxvYWQgdGhlIGZpcm13YXJlIGluIGJvb3Rsb2FkZXIuDQpUaGUg
+bW9zdCBkaWZmaWN1bHRpZXMgd2hlbiBJIHRyeSB0byB1c2UgdGhlIGN1cnJlbnQgbWFzdGVyL3Ns
+YXZlIG1vZGUgYXJlIHRoYXQNCiB0aGUgcmVtb3RlLXByb2MgY29udHJvbHMvbWFuYWdlbWVudCBt
+b2RlIGlzIG5vdCBhcHBsaWNhYmxlIHRvIHRoZSBzY2VuYXJpbywNCiBlc3BlY2lhbGx5IHRoZSBp
+TVg4UVhQL1FNIHBhcnRpdGlvbiByZXNldCB1c2FnZS4NCkJvdGggQSBjb3JlL0xpbnV4IGFuZCBN
+IGNvcmUvUlRPUyBhcmUgd29ya2luZyBpbmRlcGVuZGVudGx5Lg0KSFcgcmVzb3VyY2VzKGUueDog
+c29tZSBJUCBtb2R1bGVzLCBERFIgbWVtb3J5IHJlZ2lvbiwgcG93ZXIgZG9tYWlucywgY2xvY2tz
+IGFuZCBzbyBvbikNCiB3b3VsZCBiZSBwcmUtbWFuYWdlZCBhbmQgcHJlLWFzc2lnbmVkIHRvIEEg
+Y29yZSBvciBNIGNvcmUgYnkgU0NGVyB0aHJvdWdoIFhSREMgbW9kdWxlDQpyZWZlciB0byB0aGUg
+c2VjdXJpdHkgcmVhc29ucyBvciBzb21ldGhpbmcgZWxzZSBJIGRvbid0IGtub3cuDQoNCk0gY29y
+ZS9SVE9TIGluc2lzdHMgdG8gcnVuIGFuZCBtYW5hZ2UgaXRzIHJlc291cmNlcyBhc3NpZ25lZCBi
+eSBYUkRDIHN0YW5kYWxvbmUuDQpBbGwgdGhlIGludGVyYWN0aW9ucyBiZXR3ZWVuIEEgY29yZSBh
+bmQgTSBjb3JlIGFyZSB0cmFuc2ZlcnJlZCBvbiBSUE1TRyBjaGFubmVscy4NCkZvciBleGFtcGxl
+LCB0aGUgYXVkaW8gY29kZWMgY29uZmlndXJhdGlvbiBhbmQgc28gb24uDQpTbywgd2hhdCBJIGRv
+IGhlcmUgaXMganVzdCBzZXR1cCB0aGUgY29tbXVuaWNhdGlvbiBSUE1TRyBjaGFubmVscyBiZXR3
+ZWVuIEEgY29yZS9MaW51eA0KYW5kIE0gY29yZS9SVE9TLg0KDQpPbmUgbW9yZSBjb25jZXJuLCBJ
+J20gYWZyYWlkIHRoYXQgSSBtYXkgbWVzcyB1cCB0aGUgY3VycmVudCBzb2xpZCByZXByb2MgZmxv
+dyBhbmQgZnJhbWV3b3JrIGlmDQogSSBmb3JjZSB0aGlzIGltcGxlbWVudGF0aW9uIGludG8gdGhl
+IGN1cnJlbnQgcmVwcm9jIGRyaXZlcnMuIA0KU28sIEkgc3VtbWl0IHRoaXMgcGF0Y2gtc2V0IGlu
+IHRoZSBlbmQuIFByZS1yZXNlcnZlZCB2cmluZyBidWZmZXIsIHJlZ2lzdGVyIHZpcnRpb19kZXZp
+Y2UsIGVzdGFibGlzaA0KdGhlIFJQTVNHIGNoYW5uZWxzIGxldHMgQSBjb3JlL0xpbnV4IGFuZCBN
+IENvcmUvUlRPUyBjYW4gY29tbXVuaWNhdGUgd2l0aCBlYWNoIG90aGVyLg0KVGhhdCdzIGFsbC4N
+Cj4gDQo+IDIpIFJQTVNHIHJlY292ZXJ5DQo+IEFncmVlIHdpdGggeW91LCB0aGlzIGZlYXR1cmUg
+aXMgaW1wb3J0YW50IGluIEFNUCBzeXN0ZW1zLCBhcyBjb3JlcyBjYW4gaGF2ZQ0KPiB0aGVpciBv
+d24gbGl2ZSBjeWNsZS4NCj4gDQo+IEJ1dCBJIGNhbiBub3Qgc2VlIHJlbGF0ZWQgY29kZSwgY291
+bGQgeW91IHBvaW50IG91dCBpdCB0byBtZT8NCj4gDQpbUmljaGFyZCBaaHVdIFRoaXMgZmVhdHVy
+ZSBoYWQgYmVlbiB2YWxpZGF0ZWQgaW4gdGhlIGxvY2FsIHJlcG9zLg0KQnV0IHRoZXNlIGNvZGVz
+IGFyZSBub3QgY29udGFpbmVkIGluIHRoaXMgcGF0Y2gtc2V0LCBiZWNhdXNlIHRoaXMgZmVhdHVy
+ZSBpcw0KcmVsaWVkIG9uIHRoZSBTQ0ZXKHN5c3RlbSBjb250cm9sIGZpcm0gd2FyZSkgdXNlZCB0
+byBtb25pdG9yIHRoZSBzdGF0dXMgb2YNCiBib3RoIHNpZGUsIGFuZCB0cmlnZ2VyIG9uZSBpcnEg
+dG8gdGhlIG90aGVyIHNpZGUsIGlmIG9uZSBzaWRlIGlzIHN0YWxsLg0KVW5mb3J0dW5hdGVseSwg
+aXQgaXMgbm90IHVwIHN0cmVhbWVkIHlldC4gU28sIHRoZXNlIGNvZGVzIHdvdWxkIGJlIHVwZGF0
+ZWQgbGF0ZXINCklmIHRoZSBTQ0ZXIGlzIHJlYWR5Lg0KDQo+IENvdWxkIHlvdSBleHBsYWluIEhv
+dyBkbyB5b3UgcmVjb3ZlciB0aGUgcnBtc2cgY2hhbm5lbHMgdGhhdCBoYXMgYmVlbg0KPiBhbHJl
+YWR5IGVzdGFibGlzaGVkPw0KPiBGb3IgaW5zdGFuY2Ugd2hhdCBoYXBwZW4gaWYgeW91ciBjb3By
+b2Nlc3NvciBjcmFzaCBkdXJpbmcgdGhlIHJwbXNnDQo+IHBpbmdwb25nIGRlbW8/DQpbUmljaGFy
+ZCBaaHVdIFNDRlcgd291bGQgaW5mb3JtIHRoZSBvdGhlciBzaWRlLCBpZiBvbmUgY29yZS9PUyBp
+cyBjcmFzaGVkLg0KVGhlbiwgdGhlIFJQTVNHIHN0YWNrIHdvdWxkIGJlIHJlLWluaXRpYWxpemVk
+IGl0c2VsZiBvbiB0aGUgbGl2ZWQgY29yZS9PUywgYW5kIGNsYXJpZnkgdGhhdA0KSXQncyByZWFk
+eSB0byByZS1lc3RhYmxpc2ggdGhlIGNoYW5uZWxzIGFnYWluLg0KRm9yIGV4YW1wbGUsIE00L1JU
+T1MgaXMgY3Jhc2hlZCB3aGVuIHBpbmdwb25nIGRlbW8gaXMgcnVubmluZy4NCjEuIFBpbmdwb25n
+IGRlbW8gaXMgc3RvcHBlZC4NCjIuIExpdmVkIEEgY29yZS9MaW51eCB3b3VsZCByZWNlaXZlIG9u
+ZSBpcnEgZnJvbSBTQ0ZXIGluZGljYXRlZCB0aGF0IHJlbW90ZSBNNC9SVE9TIGlzDQogcmVzZXQs
+IHRoZW4gYWxsIHRoZSB2aXJ0aW9fZGV2aWNlIHJlZ2lzdGVyZWQgaW4gQSBjb3JlL0xpbnV4IHNp
+ZGUsIHdvdWxkIGJlIHVuLXJlZ2lzdGVyZWQsDQogYW5kIHRoZXNlIHZpcnRpb19kZXZpY2VzIHdv
+dWxkIGJlIHJlZ2lzdGVyZWQgYWdhaW4gYWZ0ZXIgcmVjZWl2ZSB0aGUgc2lnbmFsKGUueCB0aGUg
+bWFpbGJveCByZGIpDQogdGhhdCBNNC9SVE9TIFJQTVNHIHN0YWNrIGlzIHJlYWR5IGFnYWluLg0K
+My4gVGh1cyBSUE1TIGNoYW5uZWxzIGNhbiBiZSByZS1lc3RhYmxpc2hlZCBpbiB0aGlzIHNpdHVh
+dGlvbi4NCjQuIEFjY29yZGluZ2x5LCB0aGUgY29uc3VtZXIgb2YgdGhlIHJwbXNnIGdsdWUgZHJp
+dmVyIHNob3VsZCBiZSByZS1pbml0aWFsaXplZCB0b28uDQpGb3IgZXhhbXBsZSwgcmVtb3ZlIHRo
+ZSBwaW5ncG9uZCBkZW1vIG1vZHVsZSwgYW5kIGluc21vZCBpdCBhZ2Fpbi4NCg0KPiANCj4gMykg
+cGluZy1wb25nIGRlbW8gc2FtcGxlDQo+IFBlcmhhcHMgeW91IGNvdWxkIHJlLXVzZSB0aGUgcnBt
+c2cgc2FtcGxlIGF2YWlsYWJsZSBoZXJlOg0KPiBodHRwczovL2V1cjAxLnNhZmVsaW5rcy5wcm90
+ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cHMlM0ElMkYlMkZlbGl4aXIuYg0KPiBvb3RsaW4u
+Y29tJTJGbGludXglMkZ2NS4yJTJGc291cmNlJTJGc2FtcGxlcyUyRnJwbXNnJmFtcDtkYXRhPTAy
+DQo+ICU3QzAxJTdDaG9uZ3hpbmcuemh1JTQwbnhwLmNvbSU3QzY3NzM5OTlhYzYzOTRkZmUzN2Qw
+MDhkNzAzYWUzDQo+IDQ3NSU3QzY4NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTdDMCU3
+QzAlN0M2MzY5ODE5MTkwNjQNCj4gMTg2NjYwJmFtcDtzZGF0YT1tU1YzWXNveWhBTyUyRlJPZldY
+NzlYMHdvR1FOM2p4JTJGdjRwTDhMUlVmDQo+IGJIVU0lM0QmYW1wO3Jlc2VydmVkPTANCltSaWNo
+YXJkIFpodV0gVGhhbmtzIGEgbG90Lg0KVGhpcyBkZW1vIHNhbXBsZSBjYW4gYmUgdXNlZC4gU29y
+cnkgYWJvdXQgdGhhdCBJIGRpZG4ndCBub3RpY2UgaXQgYmVmb3JlLg0KDQo+IA0KPiA0KSBObyB1
+c2Ugb2YgdGhlIHJlc291cmNlIHRhYmxlDQo+IElzIHRoZXJlIGEgcmVhc29uIHRvIG5vdCB1c2Ug
+dGhlIHJlc291cmNlIHRhYmxlIHRvIGRlY2xhcmUgdGhlIHRoZSB2cmluZ3M/IFlvdXINCj4gaW1w
+bGVtZW50YXRpb24gc2VlbXMgdG8gaW1wb3NlIHRoZSBzYW1lIGRlZmluaXRpb24gaW4gYm90aCBm
+aXJtd2FyZSB3aGlsZQ0KPiByZXNvdXJjZSB0YWJsZSBhbGxvdyB0byBzaGFyZSB0aGVtLg0KPiBG
+dXJ0aGVybW9yZSB0aGUgcmVzb3VyY2UgdGFibGUgY291bGQgYmUgdXBkYXRlZCBieSB0aGUgTGlu
+dXggYmVmb3JlIHRoZQ0KPiByZW1vdGUgcHJvYyBpcyBzdGFydGVkIChpbiBjYXNlIG9mIExpbnV4
+IGJvb3RpbmcgZmlyc3QpDQo+IA0KW1JpY2hhcmQgWmh1XSBSZWdhcmRpbmcgdG8gdGhlIGF1dG8g
+aW5kdXN0cnkgcmVxdWlyZW1lbnRzLCB0aGUgTSBjb3JlL1JUT1MgaXMgYWx3YXlzDQpzdGFydGVk
+IGZpcnN0bHksIGJlY2F1c2UgdGhhdCB0aGUgQ0FOIGZ1bmN0aW9ucyBzaG91bGQgYmUgcmVhZHkg
+aW4gNTBtcyBhZnRlciBzeXN0ZW0gaXMNCnBvd2VyIHVwLg0KQlRXLCByZXNvdXJjZSB0YWJsZSBp
+cyBhIGdyZWF0IGlkZWEgaW4gdGhlIGNhc2Ugd2hlbiBMaW51eCBpcyBib290aW5nIGZpcnN0bHku
+DQoNCj4gNSkgc2xhdmUgYW5kIG1hc3RlciBtb2RlIHN1cHBvcnQuDQo+IFNlZW1zIHRoYXQgdGhp
+cyBkcml2ZXJzIG5vdCBmdWxseSByZXNwZWN0IHRoZSB2aXJ0aW8gcHJvdG9jb2wgKGZvciBpbnN0
+YW5jZSBzdGF0dXMNCj4gZmllbGQpLiBJZiB5b3UgdXNlIGEgc3luY2hybyBtZWNoYW5pc20gKG1h
+aWxib3guLi4pIG5vdCBzdXJlIHRoYXQgeW91IHJlYWxseQ0KPiBuZWVkIHRvIGJlIHZpcnRpbyBz
+bGF2ZSBvbiBMaW51eC4NCltSaWNoYXJkIFpodV0gU29ycnkgYWJvdXQgdGhhdC4gSSB1c2VkIHRy
+eWluZyB0byBrZWVwIHRoaXMgZHJpdmVyIGNvbXBhdGlibGUgd2l0aA0KdGhlIGN1cnJlbnQgc2xh
+dmUtbWFzdGVyIG1vZGUsIGJ1dCBJJ20gZmFpbGVkIHRvIGFjaGlldmUgdGhhdC4g4pi5Lg0KLSBQ
+YXJ0aXRpb24gcmVzZXQgZmVhdHVyZSBpcyBtYW5kYXRvcnkgcmVxdWlyZWQuDQotIE00IHNpZGUg
+aW5zaXN0cyB0aGF0IHRoZXkgc2hvdWxkIHJ1biBhbmQgbWFuYWdlIGl0cyByZXNvdXJjZXMgc3Rh
+bmRhbG9uZS4NCg0KQmVzdCBSZWdhcmRzDQpSaWNoYXJkIFpodQ0KPiANCj4gVGhhbmtzLA0KPiBB
+cm5hdWQNCg==
