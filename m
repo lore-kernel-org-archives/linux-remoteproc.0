@@ -1,146 +1,32 @@
 Return-Path: <gokulsri@qualcomm.com>
 From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH 02/12] remoteproc: qcom: Add secure PIL support
-Date: Thu, 11 Jul 2019 21:10:58 +0530
-Message-Id: <1562859668-14209-3-git-send-email-gokulsri@codeaurora.org>
+Subject: [PATCH 09/12] mailbox: qcom: Add support for IPQ8074 APCS
+Date: Thu, 11 Jul 2019 21:11:05 +0530
+Message-Id: <1562859668-14209-10-git-send-email-gokulsri@codeaurora.org>
 In-Reply-To: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
 References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
 To: agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-IPQ8074 uses secure PIL. Hence, adding the support for the same.
+Add support of IPQ8074 with IPC register offset as 8.
 
 Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index dc2bae4..8418f57 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -19,6 +19,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/qcom_scm.h>
- #include "qcom_common.h"
- #include "qcom_q6v5.h"
- 
-@@ -83,6 +84,9 @@
- #define TCSR_WCSS_CLK_ENABLE	0x14
- 
- #define MAX_HALT_REG		3
-+
-+#define WCNSS_PAS_ID		6
-+
- enum {
- 	WCSS_IPQ8074,
- 	WCSS_QCS404,
-@@ -133,6 +137,7 @@ struct q6v5_wcss {
- 	int crash_reason_smem;
- 	u8 version;
- 	bool requires_force_stop;
-+	bool need_mem_protection;
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index 705e17a..52185eb 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -119,6 +119,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
+ 	{ .compatible = "qcom,msm8998-apcs-hmss-global", .data = (void *)8 },
+ 	{ .compatible = "qcom,qcs404-apcs-apps-global", .data = (void *)8 },
+ 	{ .compatible = "qcom,sdm845-apss-shared", .data = (void *)12 },
++	{ .compatible = "qcom,ipq8074-apcs-apps-global", .data = (void *)8 },
+ 	{}
  };
- 
- struct wcss_data {
-@@ -147,6 +152,7 @@ struct wcss_data {
- 	int ssctl_id;
- 	const struct rproc_ops *ops;
- 	bool requires_force_stop;
-+	bool need_mem_protection;
- };
- 
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
-@@ -246,6 +252,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 
- 	qcom_q6v5_prepare(&wcss->q6v5);
- 
-+	if (wcss->need_mem_protection) {
-+		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
-+		if (ret) {
-+			dev_err(wcss->dev, "wcss_reset failed\n");
-+			return ret;
-+		}
-+		goto wait_for_reset;
-+	}
-+
- 	/* Release Q6 and WCSS reset */
- 	ret = reset_control_deassert(wcss->wcss_reset);
- 	if (ret) {
-@@ -280,6 +295,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 	if (ret)
- 		goto wcss_q6_reset;
- 
-+wait_for_reset:
- 	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(wcss->dev, "start timed out\n");
-@@ -688,6 +704,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 	struct q6v5_wcss *wcss = rproc->priv;
- 	int ret;
- 
-+	if (wcss->need_mem_protection) {
-+		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
-+		if (ret) {
-+			dev_err(wcss->dev, "not able to shutdown\n");
-+			return ret;
-+		}
-+		goto pas_done;
-+	}
-+
- 	/* WCSS powerdown */
- 	if (wcss->requires_force_stop) {
- 		ret = qcom_q6v5_request_stop(&wcss->q6v5);
-@@ -712,6 +737,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 			return ret;
- 	}
- 
-+pas_done:
- 	clk_disable_unprepare(wcss->prng_clk);
- 	qcom_q6v5_unprepare(&wcss->q6v5);
- 
-@@ -734,6 +760,12 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct q6v5_wcss *wcss = rproc->priv;
- 
-+	if (wcss->need_mem_protection)
-+		return qcom_mdt_load(wcss->dev, fw, rproc->firmware,
-+				     WCNSS_PAS_ID, wcss->mem_region,
-+				     wcss->mem_phys, wcss->mem_size,
-+				     &wcss->mem_reloc);
-+
- 	return qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
- 				     0, wcss->mem_region, wcss->mem_phys,
- 				     wcss->mem_size, &wcss->mem_reloc);
-@@ -1019,6 +1051,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (!desc)
- 		return -EINVAL;
- 
-+	if (desc->need_mem_protection && !qcom_scm_is_available())
-+		return -EPROBE_DEFER;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
- 			    desc->firmware_name, sizeof(*wcss));
- 	if (!rproc) {
-@@ -1032,6 +1067,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 
- 	wcss->version = desc->version;
- 	wcss->requires_force_stop = desc->requires_force_stop;
-+	wcss->need_mem_protection = desc->need_mem_protection;
- 
- 	ret = q6v5_wcss_init_mmio(wcss, pdev);
- 	if (ret)
-@@ -1099,6 +1135,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	.aon_reset_required = true,
- 	.ops = &q6v5_wcss_ipq8074_ops,
- 	.requires_force_stop = true,
-+	.need_mem_protection = true,
- };
- 
- static const struct wcss_data wcss_qcs404_res_init = {
+ MODULE_DEVICE_TABLE(of, qcom_apcs_ipc_of_match);
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
