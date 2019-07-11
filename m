@@ -1,101 +1,146 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v5 1/7] clk: qcom: Add WCSS gcc clock control for QCS404
-Date: Fri, 26 Jul 2019 14:53:26 +0530
-Message-Id: <20190726092332.25202-2-govinds@codeaurora.org>
-In-Reply-To: <20190726092332.25202-1-govinds@codeaurora.org>
-References: <20190726092332.25202-1-govinds@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: andy.gross@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH 02/12] remoteproc: qcom: Add secure PIL support
+Date: Thu, 11 Jul 2019 21:10:58 +0530
+Message-Id: <1562859668-14209-3-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
+References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
+To: agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for the WCSS QDSP gcc clock control used on qcs404
-based devices. This would allow wcss remoteproc driver to control
-the required gcc clocks to bring the subsystem out of reset.
+IPQ8074 uses secure PIL. Hence, adding the support for the same.
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 ---
- drivers/clk/qcom/gcc-qcs404.c               | 30 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-qcs404.h |  3 +++
- 2 files changed, 33 insertions(+)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index 29cf464dd2c8..e12c04c09a6a 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2604,6 +2604,32 @@ static struct clk_branch gcc_usb_hs_system_clk = {
- 	},
- };
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index dc2bae4..8418f57 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -19,6 +19,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ #include <linux/soc/qcom/mdt_loader.h>
++#include <linux/qcom_scm.h>
+ #include "qcom_common.h"
+ #include "qcom_q6v5.h"
  
-+static struct clk_branch gcc_wdsp_q6ss_ahbs_clk = {
-+	.halt_reg = 0x1e004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1e004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_wdsp_q6ss_ahbs_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
+@@ -83,6 +84,9 @@
+ #define TCSR_WCSS_CLK_ENABLE	0x14
+ 
+ #define MAX_HALT_REG		3
 +
-+static struct clk_branch gcc_wdsp_q6ss_axim_clk = {
-+	.halt_reg = 0x1e008,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1e008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_wdsp_q6ss_axim_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
++#define WCNSS_PAS_ID		6
 +
- static struct clk_hw *gcc_qcs404_hws[] = {
- 	&cxo.hw,
+ enum {
+ 	WCSS_IPQ8074,
+ 	WCSS_QCS404,
+@@ -133,6 +137,7 @@ struct q6v5_wcss {
+ 	int crash_reason_smem;
+ 	u8 version;
+ 	bool requires_force_stop;
++	bool need_mem_protection;
  };
-@@ -2749,6 +2775,9 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
- 	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
- 	[GCC_DCC_CLK] = &gcc_dcc_clk.clkr,
- 	[GCC_DCC_XO_CLK] = &gcc_dcc_xo_clk.clkr,
-+	[GCC_WCSS_Q6_AHB_CLK] = &gcc_wdsp_q6ss_ahbs_clk.clkr,
-+	[GCC_WCSS_Q6_AXIM_CLK] =  &gcc_wdsp_q6ss_axim_clk.clkr,
+ 
+ struct wcss_data {
+@@ -147,6 +152,7 @@ struct wcss_data {
+ 	int ssctl_id;
+ 	const struct rproc_ops *ops;
+ 	bool requires_force_stop;
++	bool need_mem_protection;
+ };
+ 
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+@@ -246,6 +252,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 
+ 	qcom_q6v5_prepare(&wcss->q6v5);
+ 
++	if (wcss->need_mem_protection) {
++		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
++		if (ret) {
++			dev_err(wcss->dev, "wcss_reset failed\n");
++			return ret;
++		}
++		goto wait_for_reset;
++	}
 +
+ 	/* Release Q6 and WCSS reset */
+ 	ret = reset_control_deassert(wcss->wcss_reset);
+ 	if (ret) {
+@@ -280,6 +295,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 	if (ret)
+ 		goto wcss_q6_reset;
+ 
++wait_for_reset:
+ 	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(wcss->dev, "start timed out\n");
+@@ -688,6 +704,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
+ 
++	if (wcss->need_mem_protection) {
++		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
++		if (ret) {
++			dev_err(wcss->dev, "not able to shutdown\n");
++			return ret;
++		}
++		goto pas_done;
++	}
++
+ 	/* WCSS powerdown */
+ 	if (wcss->requires_force_stop) {
+ 		ret = qcom_q6v5_request_stop(&wcss->q6v5);
+@@ -712,6 +737,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++pas_done:
+ 	clk_disable_unprepare(wcss->prng_clk);
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+@@ -734,6 +760,12 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 
++	if (wcss->need_mem_protection)
++		return qcom_mdt_load(wcss->dev, fw, rproc->firmware,
++				     WCNSS_PAS_ID, wcss->mem_region,
++				     wcss->mem_phys, wcss->mem_size,
++				     &wcss->mem_reloc);
++
+ 	return qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+ 				     0, wcss->mem_region, wcss->mem_phys,
+ 				     wcss->mem_size, &wcss->mem_reloc);
+@@ -1019,6 +1051,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (!desc)
+ 		return -EINVAL;
+ 
++	if (desc->need_mem_protection && !qcom_scm_is_available())
++		return -EPROBE_DEFER;
++
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+ 			    desc->firmware_name, sizeof(*wcss));
+ 	if (!rproc) {
+@@ -1032,6 +1067,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 
+ 	wcss->version = desc->version;
+ 	wcss->requires_force_stop = desc->requires_force_stop;
++	wcss->need_mem_protection = desc->need_mem_protection;
+ 
+ 	ret = q6v5_wcss_init_mmio(wcss, pdev);
+ 	if (ret)
+@@ -1099,6 +1135,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	.aon_reset_required = true,
+ 	.ops = &q6v5_wcss_ipq8074_ops,
+ 	.requires_force_stop = true,
++	.need_mem_protection = true,
  };
  
- static const struct qcom_reset_map gcc_qcs404_resets[] = {
-@@ -2774,6 +2803,7 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
- 	[GCC_PCIE_0_SLEEP_ARES] = { 0x3e040, 1 },
- 	[GCC_PCIE_0_PIPE_ARES] = { 0x3e040, 0 },
- 	[GCC_EMAC_BCR] = { 0x4e000 },
-+	[GCC_WDSP_RESTART] = {0x19000},
- };
- 
- static const struct regmap_config gcc_qcs404_regmap_config = {
-diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-index 2cd62c98561f..bc3051543347 100644
---- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-+++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-@@ -146,6 +146,8 @@
- #define GCC_MDP_TBU_CLK					138
- #define GCC_QDSS_DAP_CLK				139
- #define GCC_DCC_XO_CLK					140
-+#define GCC_WCSS_Q6_AHB_CLK				141
-+#define GCC_WCSS_Q6_AXIM_CLK				142
- #define GCC_CDSP_CFG_AHB_CLK				143
- #define GCC_BIMC_CDSP_CLK				144
- #define GCC_CDSP_TBU_CLK				145
-@@ -173,5 +175,6 @@
- #define GCC_PCIE_0_CORE_STICKY_ARES			19
- #define GCC_PCIE_0_SLEEP_ARES				20
- #define GCC_PCIE_0_PIPE_ARES				21
-+#define GCC_WDSP_RESTART				22
- 
- #endif
+ static const struct wcss_data wcss_qcs404_res_init = {
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
