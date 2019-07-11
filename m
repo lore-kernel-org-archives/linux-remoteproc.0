@@ -1,126 +1,110 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v13 0/5] Add support for mt8183 SCP.
-Date: Tue,  9 Jul 2019 15:25:24 +0800
-Message-Id: <20190709072547.217957-1-pihsun@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, "open list:OPEN FIRMWARE AND FLATTENED" <devicetree@vger.kernel.org>, DEVICE, Erin Lo <erin.lo@mediatek.com>, "moderated list:ARM/Mediatek SoC" <linux-arm-kernel@lists.infradead.org>, support, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC" <linux-mediatek@lists.infradead.org>support, "open list:REMOTE PROCESSOR" <linux-remoteproc@vger.kernel.org>, SUBSYSTEM, Nicolas Boichat <drinkcat@chromium.org>
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH 05/12] remoteproc: qcom: Update regmap offsets for halt register
+Date: Thu, 11 Jul 2019 21:11:01 +0530
+Message-Id: <1562859668-14209-6-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
+References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
+To: agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for controlling and communicating with mt8183's system
-control processor (SCP), using the remoteproc & rpmsg framework.
-And also add a cros_ec driver for CrOS EC host command over rpmsg.
+Fixed issue in reading halt-regs parameter from device-tree.
+Also adding a flag to check for bcr reset which is not
+required for ipq8074.
 
-The overall structure of the series is:
-* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2, 3).
-* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
-  interrupt (IPI) and shared memory (Patch 2, 3).
-* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
-  device. Supports name service for SCP firmware to
-  announce channels (Patch 4).
-* add scp dts node to mt8183 platform (Patch 5).
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-Changes from v12:
- - Initialize cache before firmware load, to avoid problem while loading
-   large firmware.
- - Disable watchdog before stopping SCP, to avoid extra warning message.
- - Fix new warnings by checkpatch.
-
-Changes from v11:
- - Fixed a bug that mtk_rpmsg_endpoint is not properly cleaned up if
-   rproc_boot fails.
- - Add missing documentation in comment.
-
-Changes from v10:
- - Drop applied cros_ec_rpmsg patches.
- - Add clock reset before loading SCP firmware.
- - Fix some type mismatch warnings when printing debug messages.
-
-Changes from v9:
- - Remove reserve-memory-vpu_share node.
- - Remove change to cros_ec_commands.h (That is already in
-   https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/)
-
-Changes from v8:
- - Rebased onto https://patchwork.kernel.org/cover/10962385/.
- - Drop merged cros_ec_rpmsg patch, and add scp dts node patch.
- - Add more reserved memory region.
-
-Changes from v7:
- - Rebase onto https://lore.kernel.org/patchwork/patch/1059196/.
- - Fix clock enable/disable timing for SCP driver.
- - Add more SCP IPI ID.
-
-Changes from v6:
- - Decouple mtk_rpmsg from mtk_scp.
- - Change data of EC response to be aligned to 4 bytes.
-
-Changes from v5:
- - Add device tree binding document for cros_ec_rpmsg.
- - Better document in comments for cros_ec_rpmsg.
- - Remove dependency on CONFIG_ in binding tree document.
-
-Changes from v4:
- - Merge patch 6 (Load ELF firmware) into patch 2, so the driver loads
-   ELF firmware by default, and no longer accept plain binary.
- - rpmsg_device listed in device tree (as a child of the SCP node) would
-   have it's device tree node mapped to the rpmsg_device, so the rpmsg
-   driver can use the properties on device tree.
-
-Changes from v3:
- - Make writing to SCP SRAM aligned.
- - Add a new patch (Patch 6) to load ELF instead of bin firmware.
- - Add host event support for EC driver.
- - Fix some bugs found in testing (missing spin_lock_init,
-   rproc_subdev_unprepare to rproc_subdev_stop).
- - Fix some coding style issue found by checkpatch.pl.
-
-Changes from v2:
- - Fold patch 3 into patch 2 in v2.
- - Move IPI id around to support cross-testing for old and new firmware.
- - Finish more TODO items.
-
-Changes from v1:
- - Extract functions and rename variables in mtk_scp.c.
- - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
-   short-lived work items.
- - Code format fix based on feedback for cros_ec_rpmsg.c.
- - Extract feature detection for SCP into separate patch (Patch 6).
-
-Eddie Huang (1):
-  arm64: dts: mt8183: add scp node
-
-Erin Lo (3):
-  dt-bindings: Add a binding for Mediatek SCP
-  remoteproc/mediatek: add SCP support for mt8183
-  remoteproc: mt8183: add reserved memory manager API
-
-Pi-Hsun Shih (1):
-  rpmsg: add rpmsg support for mt8183 SCP.
-
- .../bindings/remoteproc/mtk,scp.txt           |  36 +
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
- arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
- drivers/remoteproc/Kconfig                    |  10 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/mtk_common.h               |  82 +++
- drivers/remoteproc/mtk_scp.c                  | 689 ++++++++++++++++++
- drivers/remoteproc/mtk_scp_ipi.c              | 163 +++++
- drivers/rpmsg/Kconfig                         |   9 +
- drivers/rpmsg/Makefile                        |   1 +
- drivers/rpmsg/mtk_rpmsg.c                     | 414 +++++++++++
- include/linux/platform_data/mtk_scp.h         | 167 +++++
- include/linux/rpmsg/mtk_rpmsg.h               |  38 +
- 13 files changed, 1633 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
- create mode 100644 drivers/remoteproc/mtk_common.h
- create mode 100644 drivers/remoteproc/mtk_scp.c
- create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
- create mode 100644 drivers/rpmsg/mtk_rpmsg.c
- create mode 100644 include/linux/platform_data/mtk_scp.h
- create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
-
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 6d3ef06..b4ef5d3 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -83,7 +83,7 @@
+ #define TCSR_WCSS_CLK_MASK	0x1F
+ #define TCSR_WCSS_CLK_ENABLE	0x14
+ 
+-#define MAX_HALT_REG		3
++#define MAX_HALT_REG		4
+ 
+ #define WCNSS_PAS_ID		6
+ 
+@@ -149,6 +149,7 @@ struct wcss_data {
+ 	int crash_reason_smem;
+ 	u8 version;
+ 	bool aon_reset_required;
++	bool bcr_reset_required;
+ 	const char *ssr_name;
+ 	const char *sysmon_name;
+ 	int ssctl_id;
+@@ -810,7 +811,8 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
+ };
+ 
+ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+-				bool aon_reset_required)
++				bool aon_reset_required,
++				bool bcr_reset_required)
+ {
+ 	struct device *dev = wcss->dev;
+ 
+@@ -834,10 +836,13 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 		return PTR_ERR(wcss->wcss_q6_reset);
+ 	}
+ 
+-	wcss->wcss_q6_bcr_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_bcr_reset");
+-	if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
+-		dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
+-		return PTR_ERR(wcss->wcss_q6_reset);
++	if (bcr_reset_required) {
++		wcss->wcss_q6_bcr_reset = devm_reset_control_get_exclusive(dev,
++									   "wcss_q6_bcr_reset");
++		if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
++			dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
++			return PTR_ERR(wcss->wcss_q6_reset);
++		}
+ 	}
+ 
+ 	return 0;
+@@ -885,9 +890,9 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
+ 		return -EINVAL;
+ 	}
+ 
+-	wcss->halt_q6 = halt_reg[0];
+-	wcss->halt_wcss = halt_reg[1];
+-	wcss->halt_nc = halt_reg[2];
++	wcss->halt_q6 = halt_reg[1];
++	wcss->halt_wcss = halt_reg[2];
++	wcss->halt_nc = halt_reg[3];
+ 
+ 	return 0;
+ }
+@@ -1111,7 +1116,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 			goto free_rproc;
+ 	}
+ 
+-	ret = q6v5_wcss_init_reset(wcss, desc->aon_reset_required);
++	ret = q6v5_wcss_init_reset(wcss, desc->aon_reset_required,
++				   desc->bcr_reset_required);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+@@ -1156,6 +1162,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	.m3_firmware_name = "IPQ8074/m3_fw.mdt",
+ 	.crash_reason_smem = 421,
+ 	.aon_reset_required = true,
++	.bcr_reset_required = false,
+ 	.ssr_name = "q6wcss",
+ 	.ops = &q6v5_wcss_ipq8074_ops,
+ 	.requires_force_stop = true,
+@@ -1169,6 +1176,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	.q6_firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
+ 	.aon_reset_required = false,
++	.bcr_reset_required = true,
+ 	.ssr_name = "mpss",
+ 	.sysmon_name = "wcnss",
+ 	.ssctl_id = 0x12,
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
