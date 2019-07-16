@@ -1,23 +1,40 @@
-Return-Path: <pr-tracker-bot@kernel.org>
-Subject: Re: [GIT PULL] rpmsg updates for v5.3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20190716190057.GA8572@tuxbook-pro>
-References: <20190716190057.GA8572@tuxbook-pro>
-Message-Id: <156339361704.17916.14367426118609792845.pr-tracker-bot@kernel.org>
-Date: Wed, 17 Jul 2019 20:00:17 +0000
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Tue, 16 Jul 2019 12:00:57 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] rpmsg updates for v5.3
+Message-ID: <20190716190057.GA8572@tuxbook-pro>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The pull request you sent on Tue, 16 Jul 2019 12:00:57 -0700:
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-> git://github.com/andersson/remoteproc tags/rpmsg-v5.3
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7636b7589f81940c6d6518786f93de74495575fa
+are available in the Git repository at:
 
-Thank you!
+  git://github.com/andersson/remoteproc tags/rpmsg-v5.3
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+for you to fetch changes up to 54119bc1110dab2fa389f45c73a0787b8e037e8b:
+
+  rpmsg: core: Make remove handler for rpmsg driver optional. (2019-05-21 23:54:06 -0700)
+
+----------------------------------------------------------------
+rpmsg updates for v5.3
+
+This contains a DT binding update and a change to make the remote
+function of rpmsg_devices optional.
+
+----------------------------------------------------------------
+Pi-Hsun Shih (1):
+      rpmsg: core: Make remove handler for rpmsg driver optional.
+
+Sibi Sankar (1):
+      dt-bindings: soc: qcom: Add remote-pid binding for GLINK SMEM
+
+ Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 5 +++++
+ drivers/rpmsg/rpmsg_core.c                                | 3 ++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
