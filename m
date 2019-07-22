@@ -1,33 +1,30 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH 07/12] clk: qcom: Add WCSSAON reset
-Date: Thu, 11 Jul 2019 21:11:03 +0530
-Message-Id: <1562859668-14209-8-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
-References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
-To: agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Return-Path: <BATV+8b691fc55bcfc6b3008b+5811+infradead.org+hch@bombadil.srs.infradead.org>
+Date: Mon, 22 Jul 2019 02:24:29 -0700
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2] remoteproc: copy parent dma_pfn_offset for vdev
+Message-ID: <20190722092429.GB12167@infradead.org>
+References: <20190612095521.4703-1-cleger@kalray.eu>
+ <20190701070245.32083-1-cleger@kalray.eu>
+ <20190702132229.GA8100@infradead.org>
+ <58c8b8bd30a949678c027eb42a1b1bbb@SFHDAG7NODE2.st.com>
+ <20190708184546.GA20670@infradead.org>
+ <20190719063250.GA9545@infradead.org>
+ <3c2c98e785704969a862715ab52ce2de@SFHDAG7NODE2.st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c2c98e785704969a862715ab52ce2de@SFHDAG7NODE2.st.com>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Clement Leger <cleger@kalray.eu>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add WCSSAON reset required for Q6v5 on IPQ8074 SoC.
+On Mon, Jul 22, 2019 at 08:41:32AM +0000, Loic PALLARDY wrote:
+> Ongoing...
+> Two topics to clean up:
+> - Sub device creation and DMA ops inheritance --> need to use platform_device or device tree
+> - dma_declare_coherent_memory use --> it has been introduced to support internal memories declared via reg field.
+> I propose to migrate existing drivers on reserved memory usage and so remove dma_declare_coherent call from remoteproc core.
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq8074.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 39ade58..06092f8 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4685,6 +4685,7 @@ enum {
- 	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
- 	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
- 	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
-+	[GCC_WCSSAON_RESET] = { 0x59010, 0 },
- };
- 
- static const struct of_device_id gcc_ipq8074_match_table[] = {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+I thought this was inter-related in that you needed the additional
+field with the manual memory region for the subdevs, but I guess I
+misunderstood.  Anyway, thanks for doing the work.
