@@ -1,110 +1,66 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH 05/12] remoteproc: qcom: Update regmap offsets for halt register
-Date: Thu, 11 Jul 2019 21:11:01 +0530
-Message-Id: <1562859668-14209-6-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
-References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
-To: agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/3] dt-bindings: Document JZ47xx VPU auxiliary processor
+Date: Sun, 21 Jul 2019 22:31:38 -0400
+Message-Id: <20190722023140.14701-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, od@zcrc.me, Paul Cercueil <paul@crapouillou.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fixed issue in reading halt-regs parameter from device-tree.
-Also adding a flag to check for bcr reset which is not
-required for ipq8074.
+Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
+Ingenic is a second Xburst MIPS CPU very similar to the main core.
+This document describes the devicetree bindings for this auxiliary
+processor.
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ .../bindings/remoteproc/ingenic,vpu.txt       | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 6d3ef06..b4ef5d3 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -83,7 +83,7 @@
- #define TCSR_WCSS_CLK_MASK	0x1F
- #define TCSR_WCSS_CLK_ENABLE	0x14
- 
--#define MAX_HALT_REG		3
-+#define MAX_HALT_REG		4
- 
- #define WCNSS_PAS_ID		6
- 
-@@ -149,6 +149,7 @@ struct wcss_data {
- 	int crash_reason_smem;
- 	u8 version;
- 	bool aon_reset_required;
-+	bool bcr_reset_required;
- 	const char *ssr_name;
- 	const char *sysmon_name;
- 	int ssctl_id;
-@@ -810,7 +811,8 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
- };
- 
- static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
--				bool aon_reset_required)
-+				bool aon_reset_required,
-+				bool bcr_reset_required)
- {
- 	struct device *dev = wcss->dev;
- 
-@@ -834,10 +836,13 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
- 		return PTR_ERR(wcss->wcss_q6_reset);
- 	}
- 
--	wcss->wcss_q6_bcr_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_bcr_reset");
--	if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
--		dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
--		return PTR_ERR(wcss->wcss_q6_reset);
-+	if (bcr_reset_required) {
-+		wcss->wcss_q6_bcr_reset = devm_reset_control_get_exclusive(dev,
-+									   "wcss_q6_bcr_reset");
-+		if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
-+			dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
-+			return PTR_ERR(wcss->wcss_q6_reset);
-+		}
- 	}
- 
- 	return 0;
-@@ -885,9 +890,9 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
- 		return -EINVAL;
- 	}
- 
--	wcss->halt_q6 = halt_reg[0];
--	wcss->halt_wcss = halt_reg[1];
--	wcss->halt_nc = halt_reg[2];
-+	wcss->halt_q6 = halt_reg[1];
-+	wcss->halt_wcss = halt_reg[2];
-+	wcss->halt_nc = halt_reg[3];
- 
- 	return 0;
- }
-@@ -1111,7 +1116,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 			goto free_rproc;
- 	}
- 
--	ret = q6v5_wcss_init_reset(wcss, desc->aon_reset_required);
-+	ret = q6v5_wcss_init_reset(wcss, desc->aon_reset_required,
-+				   desc->bcr_reset_required);
- 	if (ret)
- 		goto free_rproc;
- 
-@@ -1156,6 +1162,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	.m3_firmware_name = "IPQ8074/m3_fw.mdt",
- 	.crash_reason_smem = 421,
- 	.aon_reset_required = true,
-+	.bcr_reset_required = false,
- 	.ssr_name = "q6wcss",
- 	.ops = &q6v5_wcss_ipq8074_ops,
- 	.requires_force_stop = true,
-@@ -1169,6 +1176,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	.q6_firmware_name = "wcnss.mdt",
- 	.version = WCSS_QCS404,
- 	.aon_reset_required = false,
-+	.bcr_reset_required = true,
- 	.ssr_name = "mpss",
- 	.sysmon_name = "wcnss",
- 	.ssctl_id = 0x12,
+diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
+new file mode 100644
+index 000000000000..fde86ad5a008
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
+@@ -0,0 +1,36 @@
++* Ingenic JZ47xx auxiliary processor
++
++Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from Ingenic
++is a second Xburst MIPS CPU very similar to the main core.
++This document describes the devicetree bindings for this auxiliary processor.
++
++Required properties:
++- compatible: Should be "ingenic,jz4770-vpu-rproc"
++- reg: Must contain the registers location and length for:
++  * the auxiliary processor,
++  * the Tightly Coupled Shared Memory 0 (TCSM0),
++  * the Tightly Coupled Shared Memory 1 (TCSM1),
++  * the shared SRAM.
++- reg-names: Must contain "aux", "tcsm0", "tcsm1", "sram".
++- clocks: Clock specifier for the AUX and VPU clocks.
++- clock-names: Must contain "aux", "vpu".
++- interrupts: Interrupt specifier for the VPU hardware block.
++
++Example:
++
++vpu: cpu@132a0000 {
++	compatible = "ingenic,jz4770-vpu-rproc";
++
++	reg = <0x132a0000 0x20 /* AUX */
++		   0xf4000000 0x4000 /* TCSM0 */
++		   0x132c0000 0xc000 /* TCSM1 */
++		   0x132f0000 0x7000 /* SRAM */
++	>;
++	reg-names = "aux", "tcsm0", "tcsm1", "sram";
++
++	clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
++	clock-names = "aux", "vpu";
++
++	interrupt-parent = <&cpuintc>;
++	interrupts = <3>;
++};
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.21.0.593.g511ec345e18
