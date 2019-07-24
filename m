@@ -1,45 +1,27 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH v2] remoteproc: copy parent dma_pfn_offset for vdev
-Date: Mon,  1 Jul 2019 09:02:45 +0200
-Message-Id: <20190701070245.32083-1-cleger@kalray.eu>
-In-Reply-To: <20190612095521.4703-1-cleger@kalray.eu>
-References: <20190612095521.4703-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Loic Pallardy <loic.pallardy@st.com>, Clement Leger <cleger@kalray.eu>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Wed, 24 Jul 2019 14:37:37 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 06/12] dt-bindings: clock: qcom: Add reset for WCSSAON
+Message-ID: <20190724203737.GA27783@bogus>
+References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
+ <1562859668-14209-7-git-send-email-gokulsri@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1562859668-14209-7-git-send-email-gokulsri@codeaurora.org>
+To: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Cc: agross@kernel.org, david.brown@linaro.org, mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org, jassisinghbrar@gmail.com, ohad@wizery.com, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-When preparing the subdevice for the vdev, also copy dma_pfn_offset
-since this is used for sub device dma allocations. Without that, there
-is incoherency between the parent dma settings and the childs one,
-potentially leading to dma_alloc_coherent failure (due to phys_to_dma
-using dma_pfn_offset for translation).
+On Thu, Jul 11, 2019 at 09:11:02PM +0530, Gokul Sriram Palanisamy wrote:
+> Add binding for WCSSAON reset required for Q6v5 reset on IPQ8074 SoC.
+> 
+> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
+> ---
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
+>  1 file changed, 1 insertion(+)
 
-Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-Signed-off-by: Clement Leger <cleger@kalray.eu>
-Acked-by: Loic Pallardy <loic.pallardy@st.com>
----
-Changes in v2:
- - Fix typo in commit message
- - Add "Fixes" in commit message
- - Add Signed-off
- - Add Acked-by Loic Pallardy
-
----
- drivers/remoteproc/remoteproc_core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 48feebd6d0a2..06837b1f2d60 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -520,6 +520,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 	/* Initialise vdev subdevice */
- 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
- 	rvdev->dev.parent = rproc->dev.parent;
-+	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
- 	rvdev->dev.release = rproc_rvdev_release;
- 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
- 	dev_set_drvdata(&rvdev->dev, rvdev);
--- 
-2.15.0.276.g89ea799
+Acked-by: Rob Herring <robh@kernel.org>
