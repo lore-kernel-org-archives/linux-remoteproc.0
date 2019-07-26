@@ -1,8 +1,8 @@
 Return-Path: <govinds@codeaurora.org>
 From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v5 5/7] remoteproc: qcom: wcss: populate hardcoded param using driver data
-Date: Fri, 26 Jul 2019 14:53:30 +0530
-Message-Id: <20190726092332.25202-6-govinds@codeaurora.org>
+Subject: [PATCH v5 4/7] clk: qcom: Add Q6SSTOP clock controller for QCS404
+Date: Fri, 26 Jul 2019 14:53:29 +0530
+Message-Id: <20190726092332.25202-5-govinds@codeaurora.org>
 In-Reply-To: <20190726092332.25202-1-govinds@codeaurora.org>
 References: <20190726092332.25202-1-govinds@codeaurora.org>
 MIME-Version: 1.0
@@ -11,112 +11,305 @@ To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.o
 Cc: andy.gross@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Q6 based WiFi fw loading is supported across
-different targets, ex: IPQ8074/QCS404. In order to
-support different fw names/pas id etc, populate
-hardcoded param using driver data.
+Add support for the Q6SSTOP clock control used on qcs404
+based devices. This would allow wcss remoteproc driver to
+control the required WCSS Q6SSTOP clock/reset controls to
+bring the subsystem out of reset and shutdown the WCSS Q6DSP.
 
 Signed-off-by: Govind Singh <govinds@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 31 ++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+ drivers/clk/qcom/Kconfig                      |   8 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/q6sstop-qcs404.c             | 223 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,q6sstopcc-qcs404.h |  18 ++
+ 4 files changed, 250 insertions(+)
+ create mode 100644 drivers/clk/qcom/q6sstop-qcs404.c
+ create mode 100644 include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index f93e1e4a1cc0..84accf1755e9 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -70,6 +71,11 @@
- #define TCSR_WCSS_CLK_MASK	0x1F
- #define TCSR_WCSS_CLK_ENABLE	0x14
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index e1ff83cc361e..1b3c87a97521 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -250,6 +250,14 @@ config QCS_TURING_404
+ 	  Support for the Turing Clock Controller on QCS404, provides clocks
+ 	  and resets for the Turing subsystem.
  
-+struct wcss_data {
-+	const char *firmware_name;
-+	int crash_reason_smem;
++config QCS_Q6SSTOP_404
++	tristate "QCS404 Q6SSTOP Clock Controller"
++	select QCS_GCC_404
++	help
++	  Support for the Q6SSTOP clock controller on QCS404 devices.
++	  Say Y if you want to use the Q6SSTOP branch clocks of the WCSS clock
++	  controller to reset the Q6SSTOP subsystem.
++
+ config SDM_GCC_845
+ 	tristate "SDM845 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index f0768fb1f037..086c053e0e03 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
+ obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
++obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
+ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+ obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
+diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
+new file mode 100644
+index 000000000000..b6281986b077
+--- /dev/null
++++ b/drivers/clk/qcom/q6sstop-qcs404.c
+@@ -0,0 +1,223 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/pm_clock.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,q6sstopcc-qcs404.h>
++
++#include "clk-regmap.h"
++#include "clk-branch.h"
++#include "common.h"
++#include "reset.h"
++
++static struct clk_branch lcc_ahbfabric_cbc_clk = {
++	.halt_reg = 0x1b004,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x1b004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_ahbfabric_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
 +};
 +
- struct q6v5_wcss {
- 	struct device *dev;
- 
-@@ -91,6 +97,8 @@ struct q6v5_wcss {
- 	phys_addr_t mem_reloc;
- 	void *mem_region;
- 	size_t mem_size;
-+
-+	int crash_reason_smem;
- };
- 
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
-@@ -427,7 +435,7 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
- 				     wcss->mem_size, &wcss->mem_reloc);
- }
- 
--static const struct rproc_ops q6v5_wcss_ops = {
-+static const struct rproc_ops q6v5_wcss_ipq8074_ops = {
- 	.start = q6v5_wcss_start,
- 	.stop = q6v5_wcss_stop,
- 	.da_to_va = q6v5_wcss_da_to_va,
-@@ -527,12 +535,17 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
- 
- static int q6v5_wcss_probe(struct platform_device *pdev)
- {
-+	const struct wcss_data *desc;
- 	struct q6v5_wcss *wcss;
- 	struct rproc *rproc;
- 	int ret;
- 
--	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ops,
--			    "IPQ8074/q6_fw.mdt", sizeof(*wcss));
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ipq8074_ops,
-+			    desc->firmware_name, sizeof(*wcss));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "failed to allocate rproc\n");
- 		return -ENOMEM;
-@@ -540,6 +553,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 
- 	wcss = rproc->priv;
- 	wcss->dev = &pdev->dev;
-+	wcss->crash_reason_smem = desc->crash_reason_smem;
- 
- 	ret = q6v5_wcss_init_mmio(wcss, pdev);
- 	if (ret)
-@@ -553,7 +567,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, WCSS_CRASH_REASON, NULL);
-+	ret = qcom_q6v5_init(&wcss->q6v5, pdev, rproc, desc->crash_reason_smem,
-+			     NULL);
- 	if (ret)
- 		goto free_rproc;
- 
-@@ -581,8 +596,14 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct wcss_data wcss_ipq8074_res_init = {
-+	.firmware_name = "IPQ8074/q6_fw.mdt",
-+	.crash_reason_smem = WCSS_CRASH_REASON,
++static struct clk_branch lcc_q6ss_ahbs_cbc_clk = {
++	.halt_reg = 0x22000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x22000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_ahbs_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
 +};
 +
- static const struct of_device_id q6v5_wcss_of_match[] = {
--	{ .compatible = "qcom,ipq8074-wcss-pil" },
-+	{ .compatible = "qcom,ipq8074-wcss-pil", .data = &wcss_ipq8074_res_init },
++static struct clk_branch lcc_q6ss_tcm_slave_cbc_clk = {
++	.halt_reg = 0x1c000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x1c000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_tcm_slave_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
 +
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_wcss_of_match);
++static struct clk_branch lcc_q6ss_ahbm_cbc_clk = {
++	.halt_reg = 0x22004,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x22004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_ahbm_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lcc_q6ss_axim_cbc_clk = {
++	.halt_reg = 0x1c004,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x1c004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_axim_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lcc_q6ss_bcr_sleep_clk = {
++	.halt_reg = 0x6004,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x6004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_bcr_sleep_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++/* TCSR clock */
++static struct clk_branch tcsr_lcc_csr_cbcr_clk = {
++	.halt_reg = 0x8008,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x8008,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "tcsr_lcc_csr_cbcr_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct regmap_config q6sstop_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.fast_io	= true,
++};
++
++static struct clk_regmap *q6sstop_qcs404_clocks[] = {
++	[LCC_AHBFABRIC_CBC_CLK] = &lcc_ahbfabric_cbc_clk.clkr,
++	[LCC_Q6SS_AHBS_CBC_CLK] = &lcc_q6ss_ahbs_cbc_clk.clkr,
++	[LCC_Q6SS_TCM_SLAVE_CBC_CLK] = &lcc_q6ss_tcm_slave_cbc_clk.clkr,
++	[LCC_Q6SS_AHBM_CBC_CLK] = &lcc_q6ss_ahbm_cbc_clk.clkr,
++	[LCC_Q6SS_AXIM_CBC_CLK] = &lcc_q6ss_axim_cbc_clk.clkr,
++	[LCC_Q6SS_BCR_SLEEP_CLK] = &lcc_q6ss_bcr_sleep_clk.clkr,
++};
++
++static const struct qcom_reset_map q6sstop_qcs404_resets[] = {
++	[Q6SSTOP_BCR_RESET] = { 0x6000 },
++};
++
++static const struct qcom_cc_desc q6sstop_qcs404_desc = {
++	.config = &q6sstop_regmap_config,
++	.clks = q6sstop_qcs404_clocks,
++	.num_clks = ARRAY_SIZE(q6sstop_qcs404_clocks),
++	.resets = q6sstop_qcs404_resets,
++	.num_resets = ARRAY_SIZE(q6sstop_qcs404_resets),
++};
++
++static struct clk_regmap *tcsr_qcs404_clocks[] = {
++	[TCSR_Q6SS_LCC_CBCR_CLK] = &tcsr_lcc_csr_cbcr_clk.clkr,
++};
++
++static const struct qcom_cc_desc tcsr_qcs404_desc = {
++	.config = &q6sstop_regmap_config,
++	.clks = tcsr_qcs404_clocks,
++	.num_clks = ARRAY_SIZE(tcsr_qcs404_clocks),
++};
++
++static const struct of_device_id q6sstopcc_qcs404_match_table[] = {
++	{ .compatible = "qcom,qcs404-q6sstopcc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, q6sstopcc_qcs404_match_table);
++
++static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
++{
++	const struct qcom_cc_desc *desc;
++	int ret;
++
++	pm_runtime_enable(&pdev->dev);
++	ret = pm_clk_create(&pdev->dev);
++	if (ret)
++		goto disable_pm_runtime;
++
++	ret = pm_clk_add(&pdev->dev, NULL);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to acquire iface clock\n");
++		goto destroy_pm_clk;
++	}
++
++	q6sstop_regmap_config.name = "q6sstop_tcsr";
++	desc = &tcsr_qcs404_desc;
++
++	ret = qcom_cc_probe_by_index(pdev, 1, desc);
++	if (ret)
++		goto destroy_pm_clk;
++
++	q6sstop_regmap_config.name = "q6sstop_cc";
++	desc = &q6sstop_qcs404_desc;
++
++	ret = qcom_cc_probe_by_index(pdev, 0, desc);
++	if (ret)
++		goto destroy_pm_clk;
++
++	return 0;
++
++destroy_pm_clk:
++	pm_clk_destroy(&pdev->dev);
++
++disable_pm_runtime:
++	pm_runtime_disable(&pdev->dev);
++
++	return ret;
++}
++
++static int q6sstopcc_qcs404_remove(struct platform_device *pdev)
++{
++	pm_clk_destroy(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops q6sstopcc_pm_ops = {
++	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
++};
++
++static struct platform_driver q6sstopcc_qcs404_driver = {
++	.probe		= q6sstopcc_qcs404_probe,
++	.remove		= q6sstopcc_qcs404_remove,
++	.driver		= {
++		.name	= "qcs404-q6sstopcc",
++		.of_match_table = q6sstopcc_qcs404_match_table,
++	.pm = &q6sstopcc_pm_ops,
++	},
++};
++
++module_platform_driver(q6sstopcc_qcs404_driver);
++
++MODULE_DESCRIPTION("QTI QCS404 Q6SSTOP Clock Controller Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
+new file mode 100644
+index 000000000000..c6f5290f0914
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
++#define _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
++
++#define LCC_AHBFABRIC_CBC_CLK			0
++#define LCC_Q6SS_AHBS_CBC_CLK			1
++#define LCC_Q6SS_TCM_SLAVE_CBC_CLK		2
++#define LCC_Q6SS_AHBM_CBC_CLK			3
++#define LCC_Q6SS_AXIM_CBC_CLK			4
++#define LCC_Q6SS_BCR_SLEEP_CLK			5
++#define TCSR_Q6SS_LCC_CBCR_CLK			6
++
++#define Q6SSTOP_BCR_RESET			1
++#endif
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
