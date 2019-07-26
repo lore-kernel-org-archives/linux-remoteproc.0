@@ -1,75 +1,52 @@
-Return-Path: <hongxing.zhu@nxp.com>
-From: Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [RFC 1/2] dt-binding: add imx rpmsg compatibility documentation
-Date: Mon, 1 Jul 2019 08:34:00 +0000
-Message-ID: <1561968784-1124-2-git-send-email-hongxing.zhu@nxp.com>
-References: <1561968784-1124-1-git-send-email-hongxing.zhu@nxp.com>
-In-Reply-To: <1561968784-1124-1-git-send-email-hongxing.zhu@nxp.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Return-Path: <govinds@codeaurora.org>
+From: Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v5 7/7] remoteproc: qcom: wcss: explicitly request exclusive reset control
+Date: Fri, 26 Jul 2019 14:53:32 +0530
+Message-Id: <20190726092332.25202-8-govinds@codeaurora.org>
+In-Reply-To: <20190726092332.25202-1-govinds@codeaurora.org>
+References: <20190726092332.25202-1-govinds@codeaurora.org>
 MIME-Version: 1.0
-To: "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Richard Zhu <hongxing.zhu@nxp.com>
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org, sboyd@kernel.org, linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: andy.gross@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-QWRkIGlteCBycG1zZyBjb21wYXRpYmlsaXR5IGRvY3VtZW50YXRpb24uDQoNClNpZ25lZC1vZmYt
-Ynk6IFJpY2hhcmQgWmh1IDxob25neGluZy56aHVAbnhwLmNvbT4NCi0tLQ0KIC4uLi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL3NvYy9mc2wvZnNsLHJwbXNnLnR4dCAgICAgIHwgNzUgKysrKysrKysrKysr
-KysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCA3NSBpbnNlcnRpb25zKCspDQogY3JlYXRlIG1v
-ZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb2MvZnNsL2ZzbCxy
-cG1zZy50eHQNCg0KZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9zb2MvZnNsL2ZzbCxycG1zZy50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3Mvc29jL2ZzbC9mc2wscnBtc2cudHh0DQpuZXcgZmlsZSBtb2RlIDEwMDY0NA0KaW5kZXggMDAw
-MDAwMC4uNzI2Nzc1Ng0KLS0tIC9kZXYvbnVsbA0KKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL3NvYy9mc2wvZnNsLHJwbXNnLnR4dA0KQEAgLTAsMCArMSw3NSBAQA0KK2ku
-TVggUlBNU0cgcGxhdGZvcm0gaW1wbGVtZW50YXRpb25zDQorDQorRGlzdHJpYnV0ZWQgZnJhbWV3
-b3JrIGlzIHVzZWQgaW4gSU1YIFJQTVNHIGltcGxlbWVudGF0aW9uLCByZWZlciB0byB0aGUNCitm
-b2xsb3dpbmcgcmVxdWlyZW1lbnRzOg0KKyAgLSBUaGUgQ0FOIGZ1bmN0aW9ucyBjb250YWluZWQg
-aW4gTSBjb3JlIGFuZCBSVE9TIHNob3VsZCBiZSByZWFkeSBhbmQNCisgICAgY29tcGxldGUgZnVu
-Y3Rpb25hbCBpbiA1MG1zIGFmdGVyIEFNUCBzeXN0ZW0gaXMgdHVybmVkIG9uLg0KKyAgLSBQYXJ0
-aXRpb24gcmVzZXQuIFN5c3RlbSB3b3VsZG4ndCBiZSBzdGFsbGVkIGJ5IHRoZSBleGNlcHRpb25z
-IChlLngNCisgICAgdGhlIHJlc2V0IHRyaWdnZXJlZCBieSB0aGUgc3lzdGVtIGhhbmcpIG9jY3Vy
-cmVkIGF0IHRoZSBvdGhlciBzaWRlLg0KKyAgICBBbmQgdGhlIFJQTVNHIG1lY2hhbmlzbSBzaG91
-bGQgYmUgcmVjb3ZlcmVkIGF1dG9tYWN0aWxseSBhZnRlciB0aGUNCisgICAgcGFydGl0aW9uIHJl
-c2V0IGlzIGNvbXBsZXRlZC4NCitJbiB0aGlzIHNjZW5hcmlvLCB0aGUgTSBjb3JlIGFuZCBSVE9T
-IHdvdWxkIGJlIGtpY2tlZCBvZmYgYnkgYm9vdGxvYWRlcg0KK2ZpcnN0bHksIHRoZW4gQSBjb3Jl
-IGFuZCBMaW51eCB3b3VsZCBiZSBsb2FkZWQgbGF0ZXIuIEJvdGggTSBjb3JlL1JUT1MNCithbmQg
-QSBjb3JlL0xpbnV4IGFyZSBydW5uaW5nIGluZGVwZW5kbHkuDQorT25lIHBoeXNpY2FsIG1lbW9y
-eSByZWdpb24gdXNlZCB0byBzdG9yZSB0aGUgdnJpbmcgaXMgbWFuZGF0b3J5IHJlcXVpcmVkDQor
-dG8gcHJlLXJlc2VydmVkIGFuZCB3ZWxsLWtub3duZWQgYnkgYm90aCBBIGNvcmUgYW5kIE0gY29y
-ZQ0KKw0KK1JlcXVpcmVkIHByb3BlcnRpZXM6DQorLSBjb21wYXRpYmxlOiAiZnNsLGlteDhxeHAt
-cnBtc2ciLCAiZnNsLGlteDhtcS1ycG1zZyIuDQorLSB2ZGV2LW51bXM6IFRoZSBudW1iZXIgb2Yg
-dGhlIHJlbW90ZSB2aXJ0dWFsIGRldmljZXMuDQorLSByZWc6IFRoZSByZXNlcnZlZCBwaGlzaWNh
-bCBERFIgbWVtb3J5IHVzZWQgdG8gc3RvcmUgdnJpbmcgZGVzY3JpcHRvcnMuDQorDQorT3B0aW9u
-YWwgcHJvcGVydGllczoNCistIHJwbXNnX2RtYV9yZXNlcnZlZDogVGhlIHJlc2VydmVkIHBlciBk
-ZXZpY2UgZG1hIHBvb2wsIHRoYXQgdXNlZCB0bw0KKyAgYWxsb2NhdGUgdGhlIHNoYXJlZCBtZW1v
-cnkgYnVmZmVycyBmcm9tIHRoZSBwZXIgZGV2aWNlLg0KKyAgQW5kIGl0IGlzIG9wdGlvbmFsIGZv
-ciBzb21lIHBsYXRmb3Jtcywgc2luY2UgdGhlIHN5c3RlbSBkbWEgcG9vbA0KKyAgaXMgdXNlZCB0
-byBhbGxvY2F0ZSB0aGUgc2hhcmVkIG1lbW9yeSBidWZmZXJzIGRpcmVjdGx5IG9uIHRoZW0uDQor
-LSBtdWItcGFydGl0aW9uOiBUaGUgcGFydGl0aW9uIElEIG9mIG11QiBzaWRlLCB0aGF0J3Mgb3B0
-aW9uYWwNCisgIGFuZCB1c2VkIG9uIGkubXg4cW0vOHF4cCBmb3IgcGFydGl0aW9uIHJlc2V0LiBU
-aGUgZGVmYXVsdA0KKyAgdmFsdWUgaXMgMyBpbiBkcml2ZXIgd2l0aG91dCB0aGlzIHByb3BlcnR5
-Lg0KKw0KKz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PQ0KK01haWxib3ggdXNlZCBieSBpTVggUlBNU0cNCisNCistIG1i
-b3hlczogbWFpbGJveGVzIHVzZWQgaW4gdGhlIFJQTVNHIHRyYW5zYWN0aW9ucy4NCistIG1ib3gt
-bmFtZXM6IG5hbWVzIG9mIHRoZSBtYWlsYm94ZXMgdXNlZCBpbiBSUE1TRy4NCisJLSAidHgiOlRY
-IGNoYW5uZWwgd2l0aCAzMmJpdCB0cmFuc21pdCByZWdpc3RlciBhbmQgSVJRIHRyYW5zbWl0DQor
-CS0gInJ4IjpSWCBjaGFubmVsIHdpdGggMzJiaXQgcmVjZWl2ZSByZWdpc3RlciBhbmQgSVJRIHN1
-cHBvcnQNCisJLSAicnhkYiI6UlggZG9vcmJlbGwgY2hhbm5lbC4NCisNCitFeGFtcGxlOg0KK1Jw
-bXNnIG5vZGUgaW4gYm9hcmQgZHRzIGZpbGUuDQorJnJwbXNnew0KKwkvKg0KKwkgKiA2NEsgZm9y
-IG9uZSBycG1zZyBpbnN0YW5jZToNCisJICovDQorCXZkZXYtbnVtcyA9IDwyPjsNCisJcmVnID0g
-PDB4MCAweDkwMDAwMDAwIDB4MCAweDIwMDAwPjsNCisJc3RhdHVzID0gIm9rYXkiOw0KK307DQor
-DQorU09DIGxldmVsIGR0cyBub2RlIGRlZmluaXRpb25zOg0KK3JwbXNnX3Jlc2VydmVkOiBycG1z
-Z0AweDkwMDAwMDAwIHsNCisJbm8tbWFwOw0KKwlyZWcgPSA8MCAweDkwMDAwMDAwIDAgMHg0MDAw
-MDA+Ow0KK307DQorcnBtc2dfZG1hX3Jlc2VydmVkOnJwbXNnX2RtYUAweDkwNDAwMDAwIHsNCisJ
-Y29tcGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wiOw0KKwluby1tYXA7DQorCXJlZyA9IDwwIDB4
-OTA0MDAwMDAgMCAweDFDMDAwMDA+Ow0KK307DQorcnBtc2c6IHJwbXNnew0KKwljb21wYXRpYmxl
-ID0gImZzbCxpbXg4cXhwLXJwbXNnIjsNCisJLyogdXAgdG8gbm93LCB0aGUgZm9sbG93aW5nIGNo
-YW5uZWxzIGFyZSB1c2VkIGluIGlteCBycG1zZw0KKwkgKiAtIHR4MS9yeDE6IG1lc3NhZ2VzIGNo
-YW5uZWwuDQorCSAqIC0gZ2VuZXJhbCBpbnRlcnJ1cHQxOiByZW1vdGUgcHJvYyBmaW5pc2ggcmUt
-aW5pdCBycG1zZyBzdGFjaw0KKwkgKiAgIHdoZW4gQSBjb3JlIGlzIHBhcnRpdGlvbiByZXNldC4N
-CisJICovDQorCW1ib3gtbmFtZXMgPSAidHgiLCAicngiLCAicnhkYiI7DQorCW1ib3hlcyA9IDwm
-bHNpb19tdTUgMCAxDQorCQkgICZsc2lvX211NSAxIDENCisJCSAgJmxzaW9fbXU1IDMgMT47DQor
-CW11Yi1wYXJ0aXRpb24gPSA8Mz47DQorCW1lbW9yeS1yZWdpb24gPSA8JnJwbXNnX2RtYV9yZXNl
-cnZlZD47DQorCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQorfTsNCi0tIA0KMi43LjQNCg0K
+Use request exclusive reset control for wcss reset controls.
+
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index c2e75f5b5737..a2671a19f2d0 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -781,21 +781,21 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 	struct device *dev = wcss->dev;
+ 
+ 	if (desc->aon_reset_required) {
+-		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");;
++		wcss->wcss_aon_reset = devm_reset_control_get_exclusive(dev, "wcss_aon_reset");;
+ 		if (IS_ERR(wcss->wcss_aon_reset)) {
+ 			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
+ 			return PTR_ERR(wcss->wcss_aon_reset);
+ 		}
+ 	}
+ 
+-	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
++	wcss->wcss_reset = devm_reset_control_get_exclusive(dev, "wcss_reset");
+ 	if (IS_ERR(wcss->wcss_reset)) {
+ 		dev_err(wcss->dev, "unable to acquire wcss_reset\n");
+ 		return PTR_ERR(wcss->wcss_reset);
+ 	}
+ 
+ 	if (desc->wcss_q6_reset_required) {
+-		wcss->wcss_q6_reset = devm_reset_control_get(dev, "wcss_q6_reset");
++		wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
+ 		if (IS_ERR(wcss->wcss_q6_reset)) {
+ 			dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
+ 			return PTR_ERR(wcss->wcss_q6_reset);
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
