@@ -1,96 +1,63 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 2/3] remoteproc: Add prepare/unprepare callbacks
-Date: Mon, 29 Jul 2019 14:31:08 -0400
-Message-Id: <20190729183109.18283-2-paul@crapouillou.net>
-In-Reply-To: <20190729183109.18283-1-paul@crapouillou.net>
-References: <20190729183109.18283-1-paul@crapouillou.net>
+Return-Path: <dan.j.williams@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Paul Burton <paul.burton@mips.com>, od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+References: <20190730192552.4014288-1-arnd@arndb.de> <20190730195819.901457-1-arnd@arndb.de>
+In-Reply-To: <20190730195819.901457-1-arnd@arndb.de>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 30 Jul 2019 13:14:52 -0700
+Message-ID: <CAPcyv4i_nHzV155RcgnAQ189aq2Lfd2g8pA1D5NbZqo9E_u+Dw@mail.gmail.com>
+Subject: Re: [PATCH v5 13/29] compat_ioctl: move more drivers to compat_ptr_ioctl
+Content-Type: text/plain; charset="UTF-8"
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-iio@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org, Bjorn Andersson <bjorn.andersson@linaro.org>, sparclinux@vger.kernel.org, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, linux-nvdimm <linux-nvdimm@lists.01.org>, linux-rdma <linux-rdma@vger.kernel.org>, qat-linux@intel.com, amd-gfx list <amd-gfx@lists.freedesktop.org>, Jason Gunthorpe <jgg@mellanox.com>, linux-input@vger.kernel.org, Darren Hart <dvhart@infradead.org>, "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-remoteproc@vger.kernel.org, "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>, Maling list - DRI developers <dri-devel@lists.freedesktop.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, David Sterba <dsterba@suse.com>, platform-driver-x86@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, USB list <linux-usb@vger.kernel.org>, Linux Wireless List <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, tee-dev@lists.linaro.org, linux-crypto <linux-crypto@vger.kernel.org>, Netdev <netdev@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-btrfs@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The .prepare() callback is called before the firmware is loaded to
-memory. This is useful for instance in the case where some setup is
-required for the memory to be accessible.
+On Tue, Jul 30, 2019 at 12:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The .ioctl and .compat_ioctl file operations have the same prototype so
+> they can both point to the same function, which works great almost all
+> the time when all the commands are compatible.
+>
+> One exception is the s390 architecture, where a compat pointer is only
+> 31 bit wide, and converting it into a 64-bit pointer requires calling
+> compat_ptr(). Most drivers here will never run in s390, but since we now
+> have a generic helper for it, it's easy enough to use it consistently.
+>
+> I double-checked all these drivers to ensure that all ioctl arguments
+> are used as pointers or are ignored, but are not interpreted as integer
+> values.
+>
+> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: David Sterba <dsterba@suse.com>
+> Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/nvdimm/bus.c                        | 4 ++--
+[..]
+> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
+> index 798c5c4aea9c..6ca142d833ab 100644
+> --- a/drivers/nvdimm/bus.c
+> +++ b/drivers/nvdimm/bus.c
+> @@ -1229,7 +1229,7 @@ static const struct file_operations nvdimm_bus_fops = {
+>         .owner = THIS_MODULE,
+>         .open = nd_open,
+>         .unlocked_ioctl = bus_ioctl,
+> -       .compat_ioctl = bus_ioctl,
+> +       .compat_ioctl = compat_ptr_ioctl,
+>         .llseek = noop_llseek,
+>  };
+>
+> @@ -1237,7 +1237,7 @@ static const struct file_operations nvdimm_fops = {
+>         .owner = THIS_MODULE,
+>         .open = nd_open,
+>         .unlocked_ioctl = dimm_ioctl,
+> -       .compat_ioctl = dimm_ioctl,
+> +       .compat_ioctl = compat_ptr_ioctl,
+>         .llseek = noop_llseek,
+>  };
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
-
-Notes:
-    v2: No change
-
- drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
- include/linux/remoteproc.h           |  4 ++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3c5fbbbfb0f1..68faad3ef0c1 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1300,11 +1300,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
-+	if (rproc->ops->prepare) {
-+		ret = rproc->ops->prepare(rproc);
-+		if (ret) {
-+			dev_err(dev, "Failed to prepare rproc: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
- 	if (ret) {
- 		dev_err(dev, "Failed to load program segments: %d\n", ret);
--		return ret;
-+		goto unprepare_rproc;
- 	}
- 
- 	/*
-@@ -1355,6 +1363,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	rproc_unprepare_subdevices(rproc);
- reset_table_ptr:
- 	rproc->table_ptr = rproc->cached_table;
-+unprepare_rproc:
-+	if (rproc->ops->unprepare)
-+		rproc->ops->unprepare(rproc);
- 
- 	return ret;
- }
-@@ -1484,6 +1495,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 
- 	rproc->state = RPROC_OFFLINE;
- 
-+	if (rproc->ops->unprepare)
-+		rproc->ops->unprepare(rproc);
-+
- 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
- 
- 	return 0;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..be65c2a92c58 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -355,6 +355,8 @@ enum rsc_handling_status {
- 
- /**
-  * struct rproc_ops - platform-specific device handlers
-+ * @prepare:	prepare the device for power up (before the firmware is loaded)
-+ * @unprepare:	unprepare the device after it is stopped
-  * @start:	power on the device and boot it
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-@@ -371,6 +373,8 @@ enum rsc_handling_status {
-  * @get_boot_addr:	get boot address to entry point specified in firmware
-  */
- struct rproc_ops {
-+	int (*prepare)(struct rproc *rproc);
-+	void (*unprepare)(struct rproc *rproc);
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
--- 
-2.21.0.593.g511ec345e18
+Acked-by: Dan Williams <dan.j.williams@intel.com>
