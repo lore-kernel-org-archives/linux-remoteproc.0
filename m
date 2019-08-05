@@ -1,162 +1,99 @@
-Date: Mon, 5 Aug 2019 10:47:02 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
 Subject: Re: [PATCH 0/6] hwspinlock: allow sharing of hwspinlocks
-Message-ID: <20190805174659.GA23928@tuxbook-pro>
+Date: Mon, 5 Aug 2019 08:48:44 +0000
+Message-ID: <1a057176-81ab-e302-4375-2717ceef6924@st.com>
 References: <1552492237-28810-1-git-send-email-fabien.dessenne@st.com>
  <20190801191403.GA7234@tuxbook-pro>
- <1a057176-81ab-e302-4375-2717ceef6924@st.com>
+In-Reply-To: <20190801191403.GA7234@tuxbook-pro>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FD42D37166C1054EAD8F83598A26246D@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1a057176-81ab-e302-4375-2717ceef6924@st.com>
-To: Fabien DESSENNE <fabien.dessenne@st.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Benjamin GAIGNARD <benjamin.gaignard@st.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, "Mark Rutland  <mark.rutland@arm.com>, Maxime Coquelin" <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Jonathan Corbet <corbet@lwn.net>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Benjamin GAIGNARD <benjamin.gaignard@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 05 Aug 01:48 PDT 2019, Fabien DESSENNE wrote:
-
-> 
-> On 01/08/2019 9:14 PM, Bjorn Andersson wrote:
-> > On Wed 13 Mar 08:50 PDT 2019, Fabien Dessenne wrote:
-> >
-> >> The current implementation does not allow two different devices to use
-> >> a common hwspinlock. This patch set proposes to have, as an option, some
-> >> hwspinlocks shared between several users.
-> >>
-> >> Below is an example that explain the need for this:
-> >> 	exti: interrupt-controller@5000d000 {
-> >> 		compatible = "st,stm32mp1-exti", "syscon";
-> >> 		interrupt-controller;
-> >> 		#interrupt-cells = <2>;
-> >> 		reg = <0x5000d000 0x400>;
-> >> 		hwlocks = <&hsem 1>;
-> >> 	};
-> >> The two drivers (stm32mp1-exti and syscon) refer to the same hwlock.
-> >> With the current hwspinlock implementation, only the first driver succeeds
-> >> in requesting (hwspin_lock_request_specific) the hwlock. The second request
-> >> fails.
-> >>
-> >>
-> >> The proposed approach does not modify the API, but extends the DT 'hwlocks'
-> >> property with a second optional parameter (the first one identifies an
-> >> hwlock) that specifies whether an hwlock is requested for exclusive usage
-> >> (current behavior) or can be shared between several users.
-> >> Examples:
-> >> 	hwlocks = <&hsem 8>;	Ref to hwlock #8 for exclusive usage
-> >> 	hwlocks = <&hsem 8 0>;	Ref to hwlock #8 for exclusive (0) usage
-> >> 	hwlocks = <&hsem 8 1>;	Ref to hwlock #8 for shared (1) usage
-> >>
-> >> As a constraint, the #hwlock-cells value must be 1 or 2.
-> >> In the current implementation, this can have theorically any value but:
-> >> - all of the exisiting drivers use the same value : 1.
-> >> - the framework supports only one value : 1 (see implementation of
-> >>    of_hwspin_lock_simple_xlate())
-> >> Hence, it shall not be a problem to restrict this value to 1 or 2 since
-> >> it won't break any driver.
-> >>
-> > Hi Fabien,
-> >
-> > Your series looks good, but it makes me wonder why the hardware locks
-> > should be an exclusive resource.
-> >
-> > How about just making all (specific) locks shared?
-> 
-> Hi Bjorn,
-> 
-> Making all locks shared is a possible implementation (my first 
-> implementation
-> was going this way) but there are some drawbacks we must be aware of:
-> 
-> A/ This theoretically break the legacy behavior (the legacy works with
-> exclusive (UNUSED radix tag) usage). As a consequence, an existing driver
-> that is currently failing to request a lock (already claimed by another
-> user) would now work fine. Not sure that there are such drivers, so this
-> point is probably not a real issue.
-> 
-
-Right, it's possible that a previously misconfigured system now
-successfully probes more than one device that uses a particular
-spinlock. But such system would be suffering from issues related to e.g.
-probe ordering.
-
-So I think we should ignore this issue.
-
-> B/ This would introduce some inconsistency between the two 'request' API
-> which are hwspin_lock_request() and hwspin_lock_request_specific().
-> hwspin_lock_request() looks for an unused lock, so requests for an exclusive
-> usage. On the other side, request_specific() would request shared locks.
-> Worst the following sequence can transform an exclusive usage into a shared
-> 
-
-There is already an inconsistency in between these; as with above any
-system that uses both request() and request_specific() will be suffering
-from intermittent failures due to probe ordering.
-
-> one:
->  � -hwspin_lock_request() -> returns Id#0 (exclusive)
->  � -hwspin_lock_request() -> returns Id#1 (exclusive)
->  � -hwspin_lock_request_specific(0) -> returns Id#0 and makes Id#0 shared
-> Honestly I am not sure that this is a real issue, but it's better to have it
-> in mind before we take ay decision
-
-The case where I can see a
-problem with this would be if the two clients somehow would nest their
-locking regions.
-
-But generally I think this could consider this an improvement, because
-the request_specific() would now be able to acquire its hwlock, with
-some additional contention due to the multiple use.
-
-> I could not find any driver using the hwspin_lock_request() API, we
-> may decide to remove (or to make deprecated) this API, having
-> everything 'shared without any conditions'.
-> 
-
-It would be nice to have an upstream user of this API.
-
-> 
-> I can see three options:
-> 1- Keep my initial proposition
-> 2- Have hwspin_lock_request_specific() using shared locks and
->  �� hwspin_lock_request() using unused (so 'initially' exclusive) locks.
-> 3- Have hwspin_lock_request_specific() using shared locks and
->  �� remove/make deprecated hwspin_lock_request().
-> 
-> Just let me know what is your preference.
-> 
-
-I think we should start with #2 and would like input from e.g. Suman
-regarding #3.
-
-Regards,
-Bjorn
-
-> BR
-> 
-> Fabien
-> 
-> >
-> > Regards,
-> > Bjorn
-> >
-> >> Fabien Dessenne (6):
-> >>    dt-bindings: hwlock: add support of shared locks
-> >>    hwspinlock: allow sharing of hwspinlocks
-> >>    dt-bindings: hwlock: update STM32 #hwlock-cells value
-> >>    ARM: dts: stm32: Add hwspinlock node for stm32mp157 SoC
-> >>    ARM: dts: stm32: Add hwlock for irqchip on stm32mp157
-> >>    ARM: dts: stm32: hwlocks for GPIO for stm32mp157
-> >>
-> >>   .../devicetree/bindings/hwlock/hwlock.txt          | 27 +++++--
-> >>   .../bindings/hwlock/st,stm32-hwspinlock.txt        |  6 +-
-> >>   Documentation/hwspinlock.txt                       | 10 ++-
-> >>   arch/arm/boot/dts/stm32mp157-pinctrl.dtsi          |  2 +
-> >>   arch/arm/boot/dts/stm32mp157c.dtsi                 | 10 +++
-> >>   drivers/hwspinlock/hwspinlock_core.c               | 82 +++++++++++++++++-----
-> >>   drivers/hwspinlock/hwspinlock_internal.h           |  2 +
-> >>   7 files changed, 108 insertions(+), 31 deletions(-)
-> >>
-> >> -- 
-> >> 2.7.4
-> >>
+DQpPbiAwMS8wOC8yMDE5IDk6MTQgUE0sIEJqb3JuIEFuZGVyc3NvbiB3cm90ZToNCj4gT24gV2Vk
+IDEzIE1hciAwODo1MCBQRFQgMjAxOSwgRmFiaWVuIERlc3Nlbm5lIHdyb3RlOg0KPg0KPj4gVGhl
+IGN1cnJlbnQgaW1wbGVtZW50YXRpb24gZG9lcyBub3QgYWxsb3cgdHdvIGRpZmZlcmVudCBkZXZp
+Y2VzIHRvIHVzZQ0KPj4gYSBjb21tb24gaHdzcGlubG9jay4gVGhpcyBwYXRjaCBzZXQgcHJvcG9z
+ZXMgdG8gaGF2ZSwgYXMgYW4gb3B0aW9uLCBzb21lDQo+PiBod3NwaW5sb2NrcyBzaGFyZWQgYmV0
+d2VlbiBzZXZlcmFsIHVzZXJzLg0KPj4NCj4+IEJlbG93IGlzIGFuIGV4YW1wbGUgdGhhdCBleHBs
+YWluIHRoZSBuZWVkIGZvciB0aGlzOg0KPj4gCWV4dGk6IGludGVycnVwdC1jb250cm9sbGVyQDUw
+MDBkMDAwIHsNCj4+IAkJY29tcGF0aWJsZSA9ICJzdCxzdG0zMm1wMS1leHRpIiwgInN5c2NvbiI7
+DQo+PiAJCWludGVycnVwdC1jb250cm9sbGVyOw0KPj4gCQkjaW50ZXJydXB0LWNlbGxzID0gPDI+
+Ow0KPj4gCQlyZWcgPSA8MHg1MDAwZDAwMCAweDQwMD47DQo+PiAJCWh3bG9ja3MgPSA8JmhzZW0g
+MT47DQo+PiAJfTsNCj4+IFRoZSB0d28gZHJpdmVycyAoc3RtMzJtcDEtZXh0aSBhbmQgc3lzY29u
+KSByZWZlciB0byB0aGUgc2FtZSBod2xvY2suDQo+PiBXaXRoIHRoZSBjdXJyZW50IGh3c3Bpbmxv
+Y2sgaW1wbGVtZW50YXRpb24sIG9ubHkgdGhlIGZpcnN0IGRyaXZlciBzdWNjZWVkcw0KPj4gaW4g
+cmVxdWVzdGluZyAoaHdzcGluX2xvY2tfcmVxdWVzdF9zcGVjaWZpYykgdGhlIGh3bG9jay4gVGhl
+IHNlY29uZCByZXF1ZXN0DQo+PiBmYWlscy4NCj4+DQo+Pg0KPj4gVGhlIHByb3Bvc2VkIGFwcHJv
+YWNoIGRvZXMgbm90IG1vZGlmeSB0aGUgQVBJLCBidXQgZXh0ZW5kcyB0aGUgRFQgJ2h3bG9ja3Mn
+DQo+PiBwcm9wZXJ0eSB3aXRoIGEgc2Vjb25kIG9wdGlvbmFsIHBhcmFtZXRlciAodGhlIGZpcnN0
+IG9uZSBpZGVudGlmaWVzIGFuDQo+PiBod2xvY2spIHRoYXQgc3BlY2lmaWVzIHdoZXRoZXIgYW4g
+aHdsb2NrIGlzIHJlcXVlc3RlZCBmb3IgZXhjbHVzaXZlIHVzYWdlDQo+PiAoY3VycmVudCBiZWhh
+dmlvcikgb3IgY2FuIGJlIHNoYXJlZCBiZXR3ZWVuIHNldmVyYWwgdXNlcnMuDQo+PiBFeGFtcGxl
+czoNCj4+IAlod2xvY2tzID0gPCZoc2VtIDg+OwlSZWYgdG8gaHdsb2NrICM4IGZvciBleGNsdXNp
+dmUgdXNhZ2UNCj4+IAlod2xvY2tzID0gPCZoc2VtIDggMD47CVJlZiB0byBod2xvY2sgIzggZm9y
+IGV4Y2x1c2l2ZSAoMCkgdXNhZ2UNCj4+IAlod2xvY2tzID0gPCZoc2VtIDggMT47CVJlZiB0byBo
+d2xvY2sgIzggZm9yIHNoYXJlZCAoMSkgdXNhZ2UNCj4+DQo+PiBBcyBhIGNvbnN0cmFpbnQsIHRo
+ZSAjaHdsb2NrLWNlbGxzIHZhbHVlIG11c3QgYmUgMSBvciAyLg0KPj4gSW4gdGhlIGN1cnJlbnQg
+aW1wbGVtZW50YXRpb24sIHRoaXMgY2FuIGhhdmUgdGhlb3JpY2FsbHkgYW55IHZhbHVlIGJ1dDoN
+Cj4+IC0gYWxsIG9mIHRoZSBleGlzaXRpbmcgZHJpdmVycyB1c2UgdGhlIHNhbWUgdmFsdWUgOiAx
+Lg0KPj4gLSB0aGUgZnJhbWV3b3JrIHN1cHBvcnRzIG9ubHkgb25lIHZhbHVlIDogMSAoc2VlIGlt
+cGxlbWVudGF0aW9uIG9mDQo+PiAgICBvZl9od3NwaW5fbG9ja19zaW1wbGVfeGxhdGUoKSkNCj4+
+IEhlbmNlLCBpdCBzaGFsbCBub3QgYmUgYSBwcm9ibGVtIHRvIHJlc3RyaWN0IHRoaXMgdmFsdWUg
+dG8gMSBvciAyIHNpbmNlDQo+PiBpdCB3b24ndCBicmVhayBhbnkgZHJpdmVyLg0KPj4NCj4gSGkg
+RmFiaWVuLA0KPg0KPiBZb3VyIHNlcmllcyBsb29rcyBnb29kLCBidXQgaXQgbWFrZXMgbWUgd29u
+ZGVyIHdoeSB0aGUgaGFyZHdhcmUgbG9ja3MNCj4gc2hvdWxkIGJlIGFuIGV4Y2x1c2l2ZSByZXNv
+dXJjZS4NCj4NCj4gSG93IGFib3V0IGp1c3QgbWFraW5nIGFsbCAoc3BlY2lmaWMpIGxvY2tzIHNo
+YXJlZD8NCg0KSGkgQmpvcm4sDQoNCk1ha2luZyBhbGwgbG9ja3Mgc2hhcmVkIGlzIGEgcG9zc2li
+bGUgaW1wbGVtZW50YXRpb24gKG15IGZpcnN0IA0KaW1wbGVtZW50YXRpb24NCndhcyBnb2luZyB0
+aGlzIHdheSkgYnV0IHRoZXJlIGFyZSBzb21lIGRyYXdiYWNrcyB3ZSBtdXN0IGJlIGF3YXJlIG9m
+Og0KDQpBLyBUaGlzIHRoZW9yZXRpY2FsbHkgYnJlYWsgdGhlIGxlZ2FjeSBiZWhhdmlvciAodGhl
+IGxlZ2FjeSB3b3JrcyB3aXRoDQpleGNsdXNpdmUgKFVOVVNFRCByYWRpeCB0YWcpIHVzYWdlKS4g
+QXMgYSBjb25zZXF1ZW5jZSwgYW4gZXhpc3RpbmcgZHJpdmVyDQp0aGF0IGlzIGN1cnJlbnRseSBm
+YWlsaW5nIHRvIHJlcXVlc3QgYSBsb2NrIChhbHJlYWR5IGNsYWltZWQgYnkgYW5vdGhlcg0KdXNl
+cikgd291bGQgbm93IHdvcmsgZmluZS4gTm90IHN1cmUgdGhhdCB0aGVyZSBhcmUgc3VjaCBkcml2
+ZXJzLCBzbyB0aGlzDQpwb2ludCBpcyBwcm9iYWJseSBub3QgYSByZWFsIGlzc3VlLg0KDQpCLyBU
+aGlzIHdvdWxkIGludHJvZHVjZSBzb21lIGluY29uc2lzdGVuY3kgYmV0d2VlbiB0aGUgdHdvICdy
+ZXF1ZXN0JyBBUEkNCndoaWNoIGFyZSBod3NwaW5fbG9ja19yZXF1ZXN0KCkgYW5kIGh3c3Bpbl9s
+b2NrX3JlcXVlc3Rfc3BlY2lmaWMoKS4NCmh3c3Bpbl9sb2NrX3JlcXVlc3QoKSBsb29rcyBmb3Ig
+YW4gdW51c2VkIGxvY2ssIHNvIHJlcXVlc3RzIGZvciBhbiBleGNsdXNpdmUNCnVzYWdlLiBPbiB0
+aGUgb3RoZXIgc2lkZSwgcmVxdWVzdF9zcGVjaWZpYygpIHdvdWxkIHJlcXVlc3Qgc2hhcmVkIGxv
+Y2tzLg0KV29yc3QgdGhlIGZvbGxvd2luZyBzZXF1ZW5jZSBjYW4gdHJhbnNmb3JtIGFuIGV4Y2x1
+c2l2ZSB1c2FnZSBpbnRvIGEgc2hhcmVkDQoNCm9uZToNCiDCoCAtaHdzcGluX2xvY2tfcmVxdWVz
+dCgpIC0+IHJldHVybnMgSWQjMCAoZXhjbHVzaXZlKQ0KIMKgIC1od3NwaW5fbG9ja19yZXF1ZXN0
+KCkgLT4gcmV0dXJucyBJZCMxIChleGNsdXNpdmUpDQogwqAgLWh3c3Bpbl9sb2NrX3JlcXVlc3Rf
+c3BlY2lmaWMoMCkgLT4gcmV0dXJucyBJZCMwIGFuZCBtYWtlcyBJZCMwIHNoYXJlZA0KSG9uZXN0
+bHkgSSBhbSBub3Qgc3VyZSB0aGF0IHRoaXMgaXMgYSByZWFsIGlzc3VlLCBidXQgaXQncyBiZXR0
+ZXIgdG8gaGF2ZSBpdA0KaW4gbWluZCBiZWZvcmUgd2UgdGFrZSBheSBkZWNpc2lvbg0KSSBjb3Vs
+ZCBub3QgZmluZCBhbnkgZHJpdmVyIHVzaW5nIHRoZSBod3NwaW5fbG9ja19yZXF1ZXN0KCkgQVBJ
+LCB3ZSBtYXkgDQpkZWNpZGUNCnRvIHJlbW92ZSAob3IgdG8gbWFrZSBkZXByZWNhdGVkKSB0aGlz
+IEFQSSwgaGF2aW5nIGV2ZXJ5dGhpbmcgJ3NoYXJlZCANCndpdGhvdXQNCmFueSBjb25kaXRpb25z
+Jy4NCg0KDQpJIGNhbiBzZWUgdGhyZWUgb3B0aW9uczoNCjEtIEtlZXAgbXkgaW5pdGlhbCBwcm9w
+b3NpdGlvbg0KMi0gSGF2ZSBod3NwaW5fbG9ja19yZXF1ZXN0X3NwZWNpZmljKCkgdXNpbmcgc2hh
+cmVkIGxvY2tzIGFuZA0KIMKgwqAgaHdzcGluX2xvY2tfcmVxdWVzdCgpIHVzaW5nIHVudXNlZCAo
+c28gJ2luaXRpYWxseScgZXhjbHVzaXZlKSBsb2Nrcy4NCjMtIEhhdmUgaHdzcGluX2xvY2tfcmVx
+dWVzdF9zcGVjaWZpYygpIHVzaW5nIHNoYXJlZCBsb2NrcyBhbmQNCiDCoMKgIHJlbW92ZS9tYWtl
+IGRlcHJlY2F0ZWQgaHdzcGluX2xvY2tfcmVxdWVzdCgpLg0KDQpKdXN0IGxldCBtZSBrbm93IHdo
+YXQgaXMgeW91ciBwcmVmZXJlbmNlLg0KDQpCUg0KDQpGYWJpZW4NCg0KPg0KPiBSZWdhcmRzLA0K
+PiBCam9ybg0KPg0KPj4gRmFiaWVuIERlc3Nlbm5lICg2KToNCj4+ICAgIGR0LWJpbmRpbmdzOiBo
+d2xvY2s6IGFkZCBzdXBwb3J0IG9mIHNoYXJlZCBsb2Nrcw0KPj4gICAgaHdzcGlubG9jazogYWxs
+b3cgc2hhcmluZyBvZiBod3NwaW5sb2Nrcw0KPj4gICAgZHQtYmluZGluZ3M6IGh3bG9jazogdXBk
+YXRlIFNUTTMyICNod2xvY2stY2VsbHMgdmFsdWUNCj4+ICAgIEFSTTogZHRzOiBzdG0zMjogQWRk
+IGh3c3BpbmxvY2sgbm9kZSBmb3Igc3RtMzJtcDE1NyBTb0MNCj4+ICAgIEFSTTogZHRzOiBzdG0z
+MjogQWRkIGh3bG9jayBmb3IgaXJxY2hpcCBvbiBzdG0zMm1wMTU3DQo+PiAgICBBUk06IGR0czog
+c3RtMzI6IGh3bG9ja3MgZm9yIEdQSU8gZm9yIHN0bTMybXAxNTcNCj4+DQo+PiAgIC4uLi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2h3bG9jay9od2xvY2sudHh0ICAgICAgICAgIHwgMjcgKysrKystLQ0K
+Pj4gICAuLi4vYmluZGluZ3MvaHdsb2NrL3N0LHN0bTMyLWh3c3BpbmxvY2sudHh0ICAgICAgICB8
+ICA2ICstDQo+PiAgIERvY3VtZW50YXRpb24vaHdzcGlubG9jay50eHQgICAgICAgICAgICAgICAg
+ICAgICAgIHwgMTAgKystDQo+PiAgIGFyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTctcGluY3Ry
+bC5kdHNpICAgICAgICAgIHwgIDIgKw0KPj4gICBhcmNoL2FybS9ib290L2R0cy9zdG0zMm1wMTU3
+Yy5kdHNpICAgICAgICAgICAgICAgICB8IDEwICsrKw0KPj4gICBkcml2ZXJzL2h3c3BpbmxvY2sv
+aHdzcGlubG9ja19jb3JlLmMgICAgICAgICAgICAgICB8IDgyICsrKysrKysrKysrKysrKysrLS0t
+LS0NCj4+ICAgZHJpdmVycy9od3NwaW5sb2NrL2h3c3BpbmxvY2tfaW50ZXJuYWwuaCAgICAgICAg
+ICAgfCAgMiArDQo+PiAgIDcgZmlsZXMgY2hhbmdlZCwgMTA4IGluc2VydGlvbnMoKyksIDMxIGRl
+bGV0aW9ucygtKQ0KPj4NCj4+IC0tIA0KPj4gMi43LjQNCj4+
