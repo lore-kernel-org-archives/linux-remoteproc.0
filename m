@@ -1,86 +1,93 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 7/9] remoteproc: Introduce "panic" callback in ops
-Date: Tue,  6 Aug 2019 22:39:40 -0700
-Message-Id: <20190807053942.9836-8-bjorn.andersson@linaro.org>
-In-Reply-To: <20190807053942.9836-1-bjorn.andersson@linaro.org>
-References: <20190807053942.9836-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v14 1/5] dt-bindings: Add a binding for Mediatek SCP
+Date: Mon,  5 Aug 2019 18:49:22 +0800
+Message-Id: <20190805104932.96745-2-pihsun@chromium.org>
+In-Reply-To: <20190805104932.96745-1-pihsun@chromium.org>
+References: <20190805104932.96745-1-pihsun@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce a "panic" function in the remoteproc ops table, to allow
-remoteproc instances to perform operations needed in order to aid in
-post mortem system debugging, such as flushing caches etc, when the
-kernel panics.
+From: Erin Lo <erin.lo@mediatek.com>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Add a DT binding documentation of SCP for the
+MT8183 SoC from Mediatek.
+
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 16 ++++++++++++++++
- include/linux/remoteproc.h           |  3 +++
- 2 files changed, 19 insertions(+)
+Changes from v13, v12, v11, v10, v9, v8, v7, v6:
+ - No change.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3c5fbbbfb0f1..cc47797c6496 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1833,6 +1833,16 @@ void rproc_shutdown(struct rproc *rproc)
- }
- EXPORT_SYMBOL(rproc_shutdown);
- 
-+static int rproc_panic_handler(struct notifier_block *nb, unsigned long event,
-+			       void *ptr)
-+{
-+	struct rproc *rproc = container_of(nb, struct rproc, panic_nb);
+Changes from v5:
+ - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+
+Changes from v4:
+ - Add detail of more properties.
+ - Document the usage of mtk,rpmsg-name in subnode from the new design.
+
+Changes from v3:
+ - No change.
+
+Changes from v2:
+ - No change. I realized that for this patch series, there's no need to
+   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+   created by SCP name service.
+
+Changes from v1:
+ - No change.
+---
+ .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+new file mode 100644
+index 000000000000..3ba668bab14b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -0,0 +1,36 @@
++Mediatek SCP Bindings
++----------------------------------------
 +
-+	rproc->ops->panic(rproc);
++This binding provides support for ARM Cortex M4 Co-processor found on some
++Mediatek SoCs.
 +
-+	return NOTIFY_DONE;
-+}
++Required properties:
++- compatible		Should be "mediatek,mt8183-scp"
++- reg			Should contain the address ranges for the two memory
++			regions, SRAM and CFG.
++- reg-names		Contains the corresponding names for the two memory
++			regions. These should be named "sram" & "cfg".
++- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
++- clock-names		Contains the corresponding name for the clock. This
++			should be named "main".
 +
- /**
-  * rproc_get_by_phandle() - find a remote processor by phandle
-  * @phandle: phandle to the rproc
-@@ -2058,6 +2068,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
- 	}
- 
-+	/* Register panic notifier for remoteprocs with "panic" callback */
-+	if (rproc->ops->panic) {
-+		rproc->panic_nb.notifier_call = rproc_panic_handler;
-+		atomic_notifier_chain_register(&panic_notifier_list, &rproc->panic_nb);
-+	}
++Subnodes
++--------
 +
- 	mutex_init(&rproc->lock);
- 
- 	idr_init(&rproc->notifyids);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..33553f6d8ff0 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -383,6 +383,7 @@ struct rproc_ops {
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-+	void (*panic)(struct rproc *rproc);
- };
- 
- /**
-@@ -481,6 +482,7 @@ struct rproc_dump_segment {
-  * @auto_boot: flag to indicate if remote processor should be auto-started
-  * @dump_segments: list of segments in the firmware
-  * @nb_vdev: number of vdev currently handled by rproc
-+ * @panic_nb: notifier_block for remoteproc's panic handler
-  */
- struct rproc {
- 	struct list_head node;
-@@ -514,6 +516,7 @@ struct rproc {
- 	bool auto_boot;
- 	struct list_head dump_segments;
- 	int nb_vdev;
-+	struct notifier_block panic_nb;
- };
- 
- /**
++Subnodes of the SCP represent rpmsg devices. The names of the devices are not
++important. The properties of these nodes are defined by the individual bindings
++for the rpmsg devices - but must contain the following property:
++
++- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
++			the subnode to rpmsg device announced by SCP.
++
++Example:
++
++	scp: scp@10500000 {
++		compatible = "mediatek,mt8183-scp";
++		reg = <0 0x10500000 0 0x80000>,
++		      <0 0x105c0000 0 0x5000>;
++		reg-names = "sram", "cfg";
++		clocks = <&infracfg CLK_INFRA_SCPSYS>;
++		clock-names = "main";
++	};
 -- 
-2.18.0
+2.22.0.770.g0f2c4a37fd-goog
