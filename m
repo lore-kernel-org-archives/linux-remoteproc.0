@@ -1,118 +1,97 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [RESEND 2/2] remoteproc: add support for co-processor booted before kernel
-Date: Wed, 7 Aug 2019 11:41:19 +0200
-Message-ID: <1565170879-3185-3-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1565170879-3185-1-git-send-email-loic.pallardy@st.com>
-References: <1565170879-3185-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 7/9] remoteproc: Introduce "panic" callback in ops
+References: <20190807053942.9836-1-bjorn.andersson@linaro.org>
+ <20190807053942.9836-8-bjorn.andersson@linaro.org>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <52517bd4-288b-7df6-9b7f-b1d26474d13f@ti.com>
+Date: Wed, 7 Aug 2019 14:30:57 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+In-Reply-To: <20190807053942.9836-8-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Andy Gross <agross@kernel.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remote processor could boot independently or be started before Linux
-kernel by bootloader or any firmware.
-This patch introduces a new property in rproc core, named preloaded,
-to be able to allocate resources and sub-devices like vdev and to
-synchronize with current state without loading firmware from file system.
-It is platform driver responsibility to implement the right firmware
-load ops according to HW specificities.
+On 8/7/19 12:39 AM, Bjorn Andersson wrote:
+> Introduce a "panic" function in the remoteproc ops table, to allow
+> remoteproc instances to perform operations needed in order to aid in
+> post mortem system debugging, such as flushing caches etc, when the
+> kernel panics.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 16 ++++++++++++++++
+>  include/linux/remoteproc.h           |  3 +++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 3c5fbbbfb0f1..cc47797c6496 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1833,6 +1833,16 @@ void rproc_shutdown(struct rproc *rproc)
+>  }
+>  EXPORT_SYMBOL(rproc_shutdown);
+>  
+> +static int rproc_panic_handler(struct notifier_block *nb, unsigned long event,
+> +			       void *ptr)
+> +{
+> +	struct rproc *rproc = container_of(nb, struct rproc, panic_nb);
+> +
+> +	rproc->ops->panic(rproc);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+>  /**
+>   * rproc_get_by_phandle() - find a remote processor by phandle
+>   * @phandle: phandle to the rproc
+> @@ -2058,6 +2068,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+>  	}
+>  
+> +	/* Register panic notifier for remoteprocs with "panic" callback */
+> +	if (rproc->ops->panic) {
+> +		rproc->panic_nb.notifier_call = rproc_panic_handler;
+> +		atomic_notifier_chain_register(&panic_notifier_list, &rproc->panic_nb);
+> +	}
+> +
+>  	mutex_init(&rproc->lock);
+>  
+>  	idr_init(&rproc->notifyids);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad66683ad0..33553f6d8ff0 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -383,6 +383,7 @@ struct rproc_ops {
+>  	int (*load)(struct rproc *rproc, const struct firmware *fw);
+>  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+>  	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> +	void (*panic)(struct rproc *rproc);
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 37 +++++++++++++++++++++++++++---------
- include/linux/remoteproc.h           |  2 ++
- 2 files changed, 30 insertions(+), 9 deletions(-)
+Do add the kernel doc comment for the new callback op.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3c5fbbbfb0f1..7eaf0f949afa 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	if (ret)
- 		return ret;
- 
--	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-+	if (fw)
-+		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-+			 fw->size);
-+	else
-+		dev_info(dev, "Synchronizing with preloaded co-processor\n");
- 
- 	/*
- 	 * if enabling an IOMMU isn't relevant for this rproc, this is
-@@ -1728,7 +1732,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
-  */
- int rproc_boot(struct rproc *rproc)
- {
--	const struct firmware *firmware_p;
-+	const struct firmware *firmware_p = NULL;
- 	struct device *dev;
- 	int ret;
- 
-@@ -1759,11 +1763,17 @@ int rproc_boot(struct rproc *rproc)
- 
- 	dev_info(dev, "powering up %s\n", rproc->name);
- 
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto downref_rproc;
-+	if (!rproc->preloaded) {
-+		/* load firmware */
-+		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+		if (ret < 0) {
-+			dev_err(dev, "request_firmware failed: %d\n", ret);
-+			goto downref_rproc;
-+		}
-+	} else {
-+		/* set firmware name to null as unknown */
-+		kfree(rproc->firmware);
-+		rproc->firmware = NULL;
- 	}
- 
- 	ret = rproc_fw_boot(rproc, firmware_p);
-@@ -1917,8 +1927,17 @@ int rproc_add(struct rproc *rproc)
- 	/* create debugfs entries */
- 	rproc_create_debug_dir(rproc);
- 
--	/* if rproc is marked always-on, request it to boot */
--	if (rproc->auto_boot) {
-+	if (rproc->preloaded) {
-+		/*
-+		 * If rproc is marked already booted, no need to wait
-+		 * for firmware.
-+		 * Just handle associated resources and start sub devices
-+		 */
-+		ret = rproc_boot(rproc);
-+		if (ret < 0)
-+			return ret;
-+	} else if (rproc->auto_boot) {
-+		/* if rproc is marked always-on, request it to boot */
- 		ret = rproc_trigger_auto_boot(rproc);
- 		if (ret < 0)
- 			return ret;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 8cd22fecea61..27f0dfdd3837 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -481,6 +481,7 @@ struct rproc_dump_segment {
-  * @recovery_disabled: flag that state if recovery was disabled
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  * @auto_boot: flag to indicate if remote processor should be auto-started
-+ * @preloaded: remote processor has been preloaded before start sequence
-  */
- struct rproc {
- 	struct list_head node;
-@@ -514,6 +515,7 @@ struct rproc {
- 	u8 recovery_disabled;
- 	u8 has_iommu;
- 	u8 auto_boot;
-+	u8 preloaded;
- };
- 
- /**
--- 
-2.7.4
+regards
+Suman
+
+>  };
+>  
+>  /**
+> @@ -481,6 +482,7 @@ struct rproc_dump_segment {
+>   * @auto_boot: flag to indicate if remote processor should be auto-started
+>   * @dump_segments: list of segments in the firmware
+>   * @nb_vdev: number of vdev currently handled by rproc
+> + * @panic_nb: notifier_block for remoteproc's panic handler
+>   */
+>  struct rproc {
+>  	struct list_head node;
+> @@ -514,6 +516,7 @@ struct rproc {
+>  	bool auto_boot;
+>  	struct list_head dump_segments;
+>  	int nb_vdev;
+> +	struct notifier_block panic_nb;
+>  };
+>  
+>  /**
+> 
