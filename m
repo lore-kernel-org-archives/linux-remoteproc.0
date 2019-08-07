@@ -1,78 +1,93 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 8/9] remoteproc: qcom: q6v5: Add common panic handler
-Date: Tue,  6 Aug 2019 22:39:41 -0700
-Message-Id: <20190807053942.9836-9-bjorn.andersson@linaro.org>
-In-Reply-To: <20190807053942.9836-1-bjorn.andersson@linaro.org>
-References: <20190807053942.9836-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v15 1/5] dt-bindings: Add a binding for Mediatek SCP
+Date: Wed,  7 Aug 2019 18:43:42 +0800
+Message-Id: <20190807104352.259767-2-pihsun@chromium.org>
+In-Reply-To: <20190807104352.259767-1-pihsun@chromium.org>
+References: <20190807104352.259767-1-pihsun@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a common panic handler that invokes a stop request and sleep enough
-to let the remoteproc flush it's caches etc in order to aid post mortem
-debugging.
+From: Erin Lo <erin.lo@mediatek.com>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Add a DT binding documentation of SCP for the
+MT8183 SoC from Mediatek.
+
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/qcom_q6v5.c | 19 +++++++++++++++++++
- drivers/remoteproc/qcom_q6v5.h |  1 +
- 2 files changed, 20 insertions(+)
+Changes from v14, v13, v12, v11, v10, v9, v8, v7, v6:
+ - No change.
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 0d33e3079f0d..0aebae893362 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2014 Sony Mobile Communications AB
-  * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
-  */
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
-@@ -15,6 +16,8 @@
- #include <linux/remoteproc.h>
- #include "qcom_q6v5.h"
- 
-+#define Q6V5_PANIC_DELAY_MS	200
+Changes from v5:
+ - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+
+Changes from v4:
+ - Add detail of more properties.
+ - Document the usage of mtk,rpmsg-name in subnode from the new design.
+
+Changes from v3:
+ - No change.
+
+Changes from v2:
+ - No change. I realized that for this patch series, there's no need to
+   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+   created by SCP name service.
+
+Changes from v1:
+ - No change.
+---
+ .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+new file mode 100644
+index 000000000000..3ba668bab14b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -0,0 +1,36 @@
++Mediatek SCP Bindings
++----------------------------------------
 +
- /**
-  * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
-  * @q6v5:	reference to qcom_q6v5 context to be reinitialized
-@@ -162,6 +165,22 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
- }
- EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
- 
-+/**
-+ * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
-+ * @q6v5:	reference to qcom_q6v5 context
-+ *
-+ * Set the stop bit and sleep in order to allow the remote processor to flush
-+ * its caches etc for post mortem debugging.
-+ */
-+void qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
-+{
-+	qcom_smem_state_update_bits(q6v5->state,
-+				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
++This binding provides support for ARM Cortex M4 Co-processor found on some
++Mediatek SoCs.
 +
-+	mdelay(Q6V5_PANIC_DELAY_MS);
-+}
-+EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
++Required properties:
++- compatible		Should be "mediatek,mt8183-scp"
++- reg			Should contain the address ranges for the two memory
++			regions, SRAM and CFG.
++- reg-names		Contains the corresponding names for the two memory
++			regions. These should be named "sram" & "cfg".
++- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
++- clock-names		Contains the corresponding name for the clock. This
++			should be named "main".
 +
- /**
-  * qcom_q6v5_init() - initializer of the q6v5 common struct
-  * @q6v5:	handle to be initialized
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-index 7ac92c1e0f49..c37e6fd063e4 100644
---- a/drivers/remoteproc/qcom_q6v5.h
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -42,5 +42,6 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
-+void qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
- 
- #endif
++Subnodes
++--------
++
++Subnodes of the SCP represent rpmsg devices. The names of the devices are not
++important. The properties of these nodes are defined by the individual bindings
++for the rpmsg devices - but must contain the following property:
++
++- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
++			the subnode to rpmsg device announced by SCP.
++
++Example:
++
++	scp: scp@10500000 {
++		compatible = "mediatek,mt8183-scp";
++		reg = <0 0x10500000 0 0x80000>,
++		      <0 0x105c0000 0 0x5000>;
++		reg-names = "sram", "cfg";
++		clocks = <&infracfg CLK_INFRA_SCPSYS>;
++		clock-names = "main";
++	};
 -- 
-2.18.0
+2.22.0.770.g0f2c4a37fd-goog
