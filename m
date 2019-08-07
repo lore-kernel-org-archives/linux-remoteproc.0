@@ -1,449 +1,258 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH] rproc: Add elf64 support in elf loader
-Date: Mon, 19 Aug 2019 13:45:16 +0200
-Message-Id: <20190819114516.28665-1-cleger@kalray.eu>
-In-Reply-To: <04be3345-698d-29b0-7b4b-7eed088e490d@st.com>
-References: <04be3345-698d-29b0-7b4b-7eed088e490d@st.com>
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v15 3/5] remoteproc: mt8183: add reserved memory manager API
+Date: Wed,  7 Aug 2019 18:43:44 +0800
+Message-Id: <20190807104352.259767-4-pihsun@chromium.org>
+In-Reply-To: <20190807104352.259767-1-pihsun@chromium.org>
+References: <20190807104352.259767-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Loic Pallardy <loic.pallardy@st.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, =?UTF-8?q?Cl=C3=A9ment=20Leger?= <cleger@kalray.eu>
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Cl=C3=A9ment Leger <cleger@kalray.eu>
+From: Erin Lo <erin.lo@mediatek.com>
 
-elf32 and elf64 mainly differ by their types. In order to avoid
-copy/pasting the whole loader code, generate static inline functions
-which will access values according to the elf class. It allows to keep a
-common loader basis.
-In order to accomodate both elf types sizes, the maximum size for a
-elf header member is chosen using the maximum value of both elf class.
+Add memory table mapping API for other driver to lookup
+reserved physical and virtual memory
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
-Tested-by: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 ---
- drivers/remoteproc/remoteproc_elf_loader.c | 135 ++++++++++++++++++-----=
-------
- drivers/remoteproc/remoteproc_elf_loader.h |  69 +++++++++++++++
- drivers/remoteproc/remoteproc_internal.h   |   2 +-
- drivers/remoteproc/st_remoteproc.c         |   2 +-
- include/linux/remoteproc.h                 |   4 +-
- 5 files changed, 156 insertions(+), 56 deletions(-)
- create mode 100644 drivers/remoteproc/remoteproc_elf_loader.h
+Changes from v14:
+ - Fix a typo in variable name in DEBUG section.
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remotep=
-roc/remoteproc_elf_loader.c
-index b17d72ec8603..6a2d31d6092c 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -31,6 +31,7 @@
- #include <linux/elf.h>
-=20
- #include "remoteproc_internal.h"
-+#include "remoteproc_elf_loader.h"
-=20
- /**
-  * rproc_elf_sanity_check() - Sanity Check ELF firmware image
-@@ -43,8 +44,16 @@ int rproc_elf_sanity_check(struct rproc *rproc, const =
-struct firmware *fw)
- {
- 	const char *name =3D rproc->firmware;
- 	struct device *dev =3D &rproc->dev;
-+	/*
-+	 * Elf files are beginning with the same structure. Thus, to simplify
-+	 * header parsing, we can use the elf32_hdr one for both elf64 and
-+	 * elf32.
-+	 */
- 	struct elf32_hdr *ehdr;
-+	u32 elf_shdr_size;
-+	u64 phoff, shoff;
- 	char class;
-+	u16 phnum;
-=20
- 	if (!fw) {
- 		dev_err(dev, "failed to load %s\n", name);
-@@ -58,9 +67,13 @@ int rproc_elf_sanity_check(struct rproc *rproc, const =
-struct firmware *fw)
-=20
- 	ehdr =3D (struct elf32_hdr *)fw->data;
-=20
--	/* We only support ELF32 at this point */
-+	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
-+		dev_err(dev, "Image is corrupted (bad magic)\n");
-+		return -EINVAL;
-+	}
-+
- 	class =3D ehdr->e_ident[EI_CLASS];
--	if (class !=3D ELFCLASS32) {
-+	if (class !=3D ELFCLASS32 && class !=3D ELFCLASS64) {
- 		dev_err(dev, "Unsupported class: %d\n", class);
- 		return -EINVAL;
- 	}
-@@ -75,26 +88,29 @@ int rproc_elf_sanity_check(struct rproc *rproc, const=
- struct firmware *fw)
- 		return -EINVAL;
- 	}
-=20
--	if (fw->size < ehdr->e_shoff + sizeof(struct elf32_shdr)) {
--		dev_err(dev, "Image is too small\n");
--		return -EINVAL;
--	}
-+	phoff =3D elf_hdr_e_phoff(class, fw->data);
-+	shoff =3D elf_hdr_e_shoff(class, fw->data);
-+	phnum =3D  elf_hdr_e_phnum(class, fw->data);
-+	elf_shdr_size =3D elf_size_of_shdr(class);
-=20
--	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
--		dev_err(dev, "Image is corrupted (bad magic)\n");
-+	if (fw->size < shoff + elf_shdr_size) {
-+		dev_err(dev, "Image is too small\n");
- 		return -EINVAL;
- 	}
-=20
--	if (ehdr->e_phnum =3D=3D 0) {
-+	if (phnum =3D=3D 0) {
- 		dev_err(dev, "No loadable segments\n");
- 		return -EINVAL;
- 	}
-=20
--	if (ehdr->e_phoff > fw->size) {
-+	if (phoff > fw->size) {
- 		dev_err(dev, "Firmware size is too small\n");
- 		return -EINVAL;
- 	}
-=20
-+	dev_dbg(dev, "Firmware is an elf%d file\n",
-+		class =3D=3D ELFCLASS32 ? 32 : 64);
-+
- 	return 0;
+Changes from v13:
+ - Add one more reserved region.
+ - Rename scp_get_reserve_* to scp_get_reserved_*.
+ - Minor fixes addressing comment.
+
+Changes from v12:
+ - Reformat a line to fit 80 character width.
+
+Changes from v11:
+ - No change.
+
+Changes from v10:
+ - Fix some type mismatch warnings when printing debug messages.
+
+Changes from v9:
+ - No change.
+
+Changes from v8:
+ - Add more reserved regions for camera ISP.
+
+Changes from v7, v6, v5:
+ - No change.
+
+Changes from v4:
+ - New patch.
+---
+ drivers/remoteproc/mtk_scp.c       | 145 +++++++++++++++++++++++++++++
+ include/linux/remoteproc/mtk_scp.h |  25 +++++
+ 2 files changed, 170 insertions(+)
+
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 2e4fa3e41f84..ae820a35bd52 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -366,11 +366,142 @@ void *scp_mapping_dm_addr(struct platform_device *pdev, u32 mem_addr)
  }
- EXPORT_SYMBOL(rproc_elf_sanity_check);
-@@ -110,11 +126,9 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
-  * Note that the boot address is not a configurable property of all remo=
-te
-  * processors. Some will always boot at a specific hard-coded address.
-  */
--u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *=
-fw)
-+u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *=
-fw)
- {
--	struct elf32_hdr *ehdr  =3D (struct elf32_hdr *)fw->data;
--
--	return ehdr->e_entry;
-+	return elf_hdr_e_entry(fw_elf_get_class(fw), fw->data);
- }
- EXPORT_SYMBOL(rproc_elf_get_boot_addr);
-=20
-@@ -145,37 +159,41 @@ EXPORT_SYMBOL(rproc_elf_get_boot_addr);
- int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *=
-fw)
- {
- 	struct device *dev =3D &rproc->dev;
--	struct elf32_hdr *ehdr;
--	struct elf32_phdr *phdr;
-+	const void *ehdr, *phdr;
- 	int i, ret =3D 0;
-+	u16 phnum;
- 	const u8 *elf_data =3D fw->data;
-+	u8 class =3D fw_elf_get_class(fw);
-+	u32 elf_phdr_size =3D elf_size_of_phdr(class);
-=20
--	ehdr =3D (struct elf32_hdr *)elf_data;
--	phdr =3D (struct elf32_phdr *)(elf_data + ehdr->e_phoff);
-+	ehdr =3D elf_data;
-+	phnum =3D elf_hdr_e_phnum(class, ehdr);
-+	phdr =3D elf_data + elf_hdr_e_phoff(class, ehdr);
-=20
- 	/* go through the available ELF segments */
--	for (i =3D 0; i < ehdr->e_phnum; i++, phdr++) {
--		u32 da =3D phdr->p_paddr;
--		u32 memsz =3D phdr->p_memsz;
--		u32 filesz =3D phdr->p_filesz;
--		u32 offset =3D phdr->p_offset;
-+	for (i =3D 0; i < phnum; i++, phdr +=3D elf_phdr_size) {
-+		u64 da =3D elf_phdr_p_paddr(class, phdr);
-+		u64 memsz =3D elf_phdr_p_memsz(class, phdr);
-+		u64 filesz =3D elf_phdr_p_filesz(class, phdr);
-+		u64 offset =3D elf_phdr_p_offset(class, phdr);
-+		u32 type =3D elf_phdr_p_type(class, phdr);
- 		void *ptr;
-=20
--		if (phdr->p_type !=3D PT_LOAD)
-+		if (type !=3D PT_LOAD)
- 			continue;
-=20
--		dev_dbg(dev, "phdr: type %d da 0x%x memsz 0x%x filesz 0x%x\n",
--			phdr->p_type, da, memsz, filesz);
-+		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-+			type, da, memsz, filesz);
-=20
- 		if (filesz > memsz) {
--			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
-+			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
- 				filesz, memsz);
- 			ret =3D -EINVAL;
- 			break;
- 		}
-=20
- 		if (offset + filesz > fw->size) {
--			dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
-+			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
- 				offset + filesz, fw->size);
- 			ret =3D -EINVAL;
- 			break;
-@@ -184,14 +202,15 @@ int rproc_elf_load_segments(struct rproc *rproc, co=
-nst struct firmware *fw)
- 		/* grab the kernel address for this device address */
- 		ptr =3D rproc_da_to_va(rproc, da, memsz);
- 		if (!ptr) {
--			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
-+			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-+				memsz);
- 			ret =3D -EINVAL;
- 			break;
- 		}
-=20
- 		/* put the segment where the remote processor expects it */
--		if (phdr->p_filesz)
--			memcpy(ptr, elf_data + phdr->p_offset, filesz);
-+		if (filesz)
-+			memcpy(ptr, elf_data + offset, filesz);
-=20
- 		/*
- 		 * Zero out remaining memory for this segment.
-@@ -208,24 +227,32 @@ int rproc_elf_load_segments(struct rproc *rproc, co=
-nst struct firmware *fw)
- }
- EXPORT_SYMBOL(rproc_elf_load_segments);
-=20
--static struct elf32_shdr *
--find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
-+static const void *
-+find_table(struct device *dev, const struct firmware *fw)
- {
--	struct elf32_shdr *shdr;
-+	const void *shdr, *name_table_shdr;
- 	int i;
- 	const char *name_table;
- 	struct resource_table *table =3D NULL;
--	const u8 *elf_data =3D (void *)ehdr;
-+	const u8 *elf_data =3D (void *)fw->data;
-+	u8 class =3D fw_elf_get_class(fw);
-+	size_t fw_size =3D fw->size;
-+	const void *ehdr =3D elf_data;
-+	u16 shnum =3D elf_hdr_e_shnum(class, ehdr);
-+	u32 elf_shdr_size =3D elf_size_of_shdr(class);
-+	u16 shstrndx =3D elf_hdr_e_shstrndx(class, ehdr);
-=20
- 	/* look for the resource table and handle it */
--	shdr =3D (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
--	name_table =3D elf_data + shdr[ehdr->e_shstrndx].sh_offset;
-+	shdr =3D elf_data + elf_hdr_e_shoff(class, ehdr);
-+	name_table_shdr =3D shdr + (shstrndx * elf_shdr_size);
-+	name_table =3D elf_data + elf_shdr_sh_offset(class, name_table_shdr);
-=20
--	for (i =3D 0; i < ehdr->e_shnum; i++, shdr++) {
--		u32 size =3D shdr->sh_size;
--		u32 offset =3D shdr->sh_offset;
-+	for (i =3D 0; i < shnum; i++, shdr +=3D elf_shdr_size) {
-+		u64 size =3D elf_shdr_sh_size(class, shdr);
-+		u64 offset =3D elf_shdr_sh_offset(class, shdr);
-+		u32 name =3D elf_shdr_sh_name(class, shdr);
-=20
--		if (strcmp(name_table + shdr->sh_name, ".resource_table"))
-+		if (strcmp(name_table + name, ".resource_table"))
- 			continue;
-=20
- 		table =3D (struct resource_table *)(elf_data + offset);
-@@ -279,21 +306,21 @@ find_table(struct device *dev, struct elf32_hdr *eh=
-dr, size_t fw_size)
-  */
- int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware =
-*fw)
- {
--	struct elf32_hdr *ehdr;
--	struct elf32_shdr *shdr;
-+	const void *shdr;
- 	struct device *dev =3D &rproc->dev;
- 	struct resource_table *table =3D NULL;
- 	const u8 *elf_data =3D fw->data;
- 	size_t tablesz;
-+	u8 class =3D fw_elf_get_class(fw);
-+	u64 sh_offset;
-=20
--	ehdr =3D (struct elf32_hdr *)elf_data;
--
--	shdr =3D find_table(dev, ehdr, fw->size);
-+	shdr =3D find_table(dev, fw);
- 	if (!shdr)
- 		return -EINVAL;
-=20
--	table =3D (struct resource_table *)(elf_data + shdr->sh_offset);
--	tablesz =3D shdr->sh_size;
-+	sh_offset =3D elf_shdr_sh_offset(class, shdr);
-+	table =3D (struct resource_table *)(elf_data + sh_offset);
-+	tablesz =3D elf_shdr_sh_size(class, shdr);
-=20
- 	/*
- 	 * Create a copy of the resource table. When a virtio device starts
-@@ -326,13 +353,17 @@ EXPORT_SYMBOL(rproc_elf_load_rsc_table);
- struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rpr=
-oc,
- 						       const struct firmware *fw)
- {
--	struct elf32_hdr *ehdr =3D (struct elf32_hdr *)fw->data;
--	struct elf32_shdr *shdr;
-+	const void *shdr;
-+	u64 sh_addr, sh_size;
-+	u8 class =3D fw_elf_get_class(fw);
-=20
--	shdr =3D find_table(&rproc->dev, ehdr, fw->size);
-+	shdr =3D find_table(&rproc->dev, fw);
- 	if (!shdr)
- 		return NULL;
-=20
--	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
-+	sh_addr =3D elf_shdr_sh_addr(class, shdr);
-+	sh_size =3D elf_shdr_sh_size(class, shdr);
+ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
+ 
++#if SCP_RESERVED_MEM
++static phys_addr_t scp_mem_base_phys;
++static phys_addr_t scp_mem_base_virt;
++static size_t scp_mem_size;
 +
-+	return rproc_da_to_va(rproc, sh_addr, sh_size);
- }
- EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.h b/drivers/remotep=
-roc/remoteproc_elf_loader.h
-new file mode 100644
-index 000000000000..fac3565734f9
---- /dev/null
-+++ b/drivers/remoteproc/remoteproc_elf_loader.h
-@@ -0,0 +1,69 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Remote processor elf loader defines
-+ *
-+ * Copyright (C) 2019 Kalray, Inc.
-+ */
++static struct scp_reserve_mblock scp_reserve_mblock[] = {
++	{
++		.num = SCP_ISP_MEM_ID,
++		.start_phys = 0x0,
++		.start_virt = 0x0,
++		.size = 0x200000, /*2MB*/
++	},
++	{
++		.num = SCP_ISP_MEM2_ID,
++		.start_phys = 0x0,
++		.start_virt = 0x0,
++		.size = 0x800000, /*8MB*/
++	},
++	{
++		.num = SCP_MDP_MEM_ID,
++		.start_phys = 0x0,
++		.start_virt = 0x0,
++		.size = 0x600000, /*6MB*/
++	},
++	{
++		.num = SCP_DIP_MEM_ID,
++		.start_phys = 0x0,
++		.start_virt = 0x0,
++		.size = 0x900000, /*9MB*/
++	},
++	{
++		.num = SCP_FD_MEM_ID,
++		.start_phys = 0x0,
++		.start_virt = 0x0,
++		.size = 0x100000, /*1MB*/
++	},
++	{
++		.num = SCP_FD_MEM2_ID,
++		.start_phys = 0x0,
++		.start_virt = 0x0,
++		.size = 0x100000, /*1MB*/
++	},
++};
 +
-+#ifndef REMOTEPROC_ELF_LOADER_H
-+#define REMOTEPROC_ELF_LOADER_H
-+
-+#include <linux/elf.h>
-+#include <linux/types.h>
-+
-+/**
-+ * fw_elf_get_class - Get elf class
-+ * @fw: the ELF firmware image
-+ *
-+ * Note that we use and elf32_hdr to access the class since the start of=
- the
-+ * struct is the same for both elf class
-+ *
-+ * Return: elf class of the firmware
-+ */
-+static inline u8 fw_elf_get_class(const struct firmware *fw)
++static int scp_reserve_mem_init(struct mtk_scp *scp)
 +{
-+	struct elf32_hdr *ehdr =3D (struct elf32_hdr *)fw->data;
++	enum scp_reserve_mem_id_t id;
++	phys_addr_t accumlate_memory_size = 0;
 +
-+	return ehdr->e_ident[EI_CLASS];
++	scp_mem_base_phys = (phys_addr_t) (scp->phys_addr + MAX_CODE_SIZE);
++	scp_mem_size = scp->dram_size - MAX_CODE_SIZE;
++
++	dev_info(scp->dev,
++		 "phys:0x%llx - 0x%llx (0x%llx)\n",
++		 (unsigned long long)scp_mem_base_phys,
++		 (unsigned long long)(scp_mem_base_phys + scp_mem_size),
++		 (unsigned long long)scp_mem_size);
++	accumlate_memory_size = 0;
++	for (id = 0; id < SCP_NUMS_MEM_ID; id++) {
++		scp_reserve_mblock[id].start_phys =
++			scp_mem_base_phys + accumlate_memory_size;
++		accumlate_memory_size += scp_reserve_mblock[id].size;
++		dev_info(
++			scp->dev,
++			"[reserve_mem:%d]: phys:0x%llx - 0x%llx (0x%llx)\n", id,
++			(unsigned long long)scp_reserve_mblock[id].start_phys,
++			(unsigned long long)(scp_reserve_mblock[id].start_phys +
++					     scp_reserve_mblock[id].size),
++			(unsigned long long)scp_reserve_mblock[id].size);
++	}
++	return 0;
 +}
 +
-+#define ELF_GET_FIELD(__s, __field, __type) \
-+static inline __type elf_##__s##_##__field(u8 class, const void *arg) \
-+{ \
-+	if (class =3D=3D ELFCLASS32) \
-+		return (__type) ((const struct elf32_##__s *) arg)->__field; \
-+	else \
-+		return (__type) ((const struct elf64_##__s *) arg)->__field; \
++static int scp_reserve_memory_ioremap(struct mtk_scp *scp)
++{
++	enum scp_reserve_mem_id_t id;
++	phys_addr_t accumlate_memory_size = 0;
++
++	scp_mem_base_virt = (phys_addr_t)(size_t)ioremap_wc(scp_mem_base_phys,
++							    scp_mem_size);
++
++	dev_info(scp->dev,
++		 "virt:0x%llx - 0x%llx (0x%llx)\n",
++		(unsigned long long)scp_mem_base_virt,
++		(unsigned long long)(scp_mem_base_virt + scp_mem_size),
++		(unsigned long long)scp_mem_size);
++	for (id = 0; id < SCP_NUMS_MEM_ID; id++) {
++		scp_reserve_mblock[id].start_virt =
++			scp_mem_base_virt + accumlate_memory_size;
++		accumlate_memory_size += scp_reserve_mblock[id].size;
++	}
++	/* the reserved memory should be larger then expected memory
++	 * or scp_reserve_mblock does not match dts
++	 */
++	WARN_ON(accumlate_memory_size > scp_mem_size);
++	return 0;
 +}
-+
-+ELF_GET_FIELD(hdr, e_entry, u64)
-+ELF_GET_FIELD(hdr, e_phnum, u16)
-+ELF_GET_FIELD(hdr, e_shnum, u16)
-+ELF_GET_FIELD(hdr, e_phoff, u64)
-+ELF_GET_FIELD(hdr, e_shoff, u64)
-+ELF_GET_FIELD(hdr, e_shstrndx, u16)
-+
-+ELF_GET_FIELD(phdr, p_paddr, u64)
-+ELF_GET_FIELD(phdr, p_filesz, u64)
-+ELF_GET_FIELD(phdr, p_memsz, u64)
-+ELF_GET_FIELD(phdr, p_type, u32)
-+ELF_GET_FIELD(phdr, p_offset, u64)
-+
-+ELF_GET_FIELD(shdr, sh_size, u64)
-+ELF_GET_FIELD(shdr, sh_offset, u64)
-+ELF_GET_FIELD(shdr, sh_name, u32)
-+ELF_GET_FIELD(shdr, sh_addr, u64)
-+
-+#define ELF_STRUCT_SIZE(__s) \
-+static inline unsigned long elf_size_of_##__s(u8 class) \
-+{ \
-+	if (class =3D=3D ELFCLASS32)\
-+		return sizeof(struct elf32_##__s); \
-+	else \
-+		return sizeof(struct elf64_##__s); \
++phys_addr_t scp_get_reserved_mem_phys(enum scp_reserve_mem_id_t id)
++{
++	if (id >= SCP_NUMS_MEM_ID) {
++		pr_err("[SCP] no reserve memory for %d", id);
++		return 0;
++	}
++	return scp_reserve_mblock[id].start_phys;
 +}
++EXPORT_SYMBOL_GPL(scp_get_reserved_mem_phys);
 +
-+ELF_STRUCT_SIZE(shdr)
-+ELF_STRUCT_SIZE(phdr)
++phys_addr_t scp_get_reserved_mem_virt(enum scp_reserve_mem_id_t id)
++{
++	if (id >= SCP_NUMS_MEM_ID) {
++		pr_err("[SCP] no reserve memory for %d", id);
++		return 0;
++	}
++	return scp_reserve_mblock[id].start_virt;
++}
++EXPORT_SYMBOL_GPL(scp_get_reserved_mem_virt);
 +
-+#endif /* REMOTEPROC_ELF_LOADER_H */
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remotepro=
-c/remoteproc_internal.h
-index 45ff76a06c72..4ef745e3a1bc 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -63,7 +63,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
- int rproc_trigger_recovery(struct rproc *rproc);
-=20
- int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *f=
-w);
--u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *=
-fw);
-+u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *=
-fw);
- int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *=
-fw);
- int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware =
-*fw);
- struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rpr=
-oc,
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_r=
-emoteproc.c
-index 51049d17b1e5..e23abd8a96b0 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -193,7 +193,7 @@ static int st_rproc_start(struct rproc *rproc)
- 		}
++size_t scp_get_reserved_mem_size(enum scp_reserve_mem_id_t id)
++{
++	if (id >= SCP_NUMS_MEM_ID) {
++		pr_err("[SCP] no reserve memory for %d", id);
++		return 0;
++	}
++	return scp_reserve_mblock[id].size;
++}
++EXPORT_SYMBOL_GPL(scp_get_reserved_mem_size);
++#endif
++
+ static int scp_map_memory_region(struct mtk_scp *scp)
+ {
+ 	struct device_node *node;
+ 	struct resource r;
+ 	int ret;
++#ifdef DEBUG
++	enum scp_reserve_mem_id_t id;
++#endif
+ 
+ 	node = of_parse_phandle(scp->dev->of_node, "memory-region", 0);
+ 	if (!node) {
+@@ -393,6 +524,20 @@ static int scp_map_memory_region(struct mtk_scp *scp)
+ 		return -EBUSY;
  	}
-=20
--	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-+	dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
-=20
+ 
++#if SCP_RESERVED_MEM
++	scp_reserve_mem_init(scp);
++	scp_reserve_memory_ioremap(scp);
++#ifdef DEBUG
++	for (id = 0; id < SCP_NUMS_MEM_ID; id++) {
++		dev_info(scp->dev,
++			 "[mem_reserve-%d] phys:0x%llx,virt:0x%llx,size:0x%llx\n",
++			 id,
++			 scp_get_reserved_mem_phys(id),
++			 scp_get_reserved_mem_virt(id),
++			 scp_get_reserved_mem_size(id));
++	}
++#endif
++#endif
  	return 0;
-=20
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 04d04709f2bd..512de9a2590c 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -362,7 +362,7 @@ struct rproc_ops {
- 				struct rproc *rproc, const struct firmware *fw);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
--	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-+	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
- };
-=20
- /**
-@@ -478,7 +478,7 @@ struct rproc {
- 	int num_traces;
- 	struct list_head carveouts;
- 	struct list_head mappings;
--	u32 bootaddr;
-+	u64 bootaddr;
- 	struct list_head rvdevs;
- 	struct list_head subdevs;
- 	struct idr notifyids;
---=20
-2.15.0.276.g89ea799
+ }
+ 
+diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
+index b80d8e3f7959..707556f6b899 100644
+--- a/include/linux/remoteproc/mtk_scp.h
++++ b/include/linux/remoteproc/mtk_scp.h
+@@ -138,4 +138,29 @@ unsigned int scp_get_venc_hw_capa(struct platform_device *pdev);
+ void *scp_mapping_dm_addr(struct platform_device *pdev,
+ 			  u32 mem_addr);
+ 
++#define SCP_RESERVED_MEM	(1)
++#if SCP_RESERVED_MEM
++/* scp reserve memory ID definition*/
++enum scp_reserve_mem_id_t {
++	SCP_ISP_MEM_ID,
++	SCP_ISP_MEM2_ID,
++	SCP_MDP_MEM_ID,
++	SCP_DIP_MEM_ID,
++	SCP_FD_MEM_ID,
++	SCP_FD_MEM2_ID,
++	SCP_NUMS_MEM_ID,
++};
++
++struct scp_reserve_mblock {
++	enum scp_reserve_mem_id_t num;
++	u64 start_phys;
++	u64 start_virt;
++	u64 size;
++};
++
++extern phys_addr_t scp_get_reserved_mem_phys(enum scp_reserve_mem_id_t id);
++extern phys_addr_t scp_get_reserved_mem_virt(enum scp_reserve_mem_id_t id);
++extern size_t scp_get_reserved_mem_size(enum scp_reserve_mem_id_t id);
++#endif
++
+ #endif /* _MTK_SCP_H */
+-- 
+2.22.0.770.g0f2c4a37fd-goog
