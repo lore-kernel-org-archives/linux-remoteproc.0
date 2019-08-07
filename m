@@ -1,73 +1,67 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH] remoteproc: Add a sysfs interface for name
-Date: Fri, 9 Aug 2019 17:20:57 -0500
-Message-ID: <20190809222057.13924-1-s-anna@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Matt Redfearn <matt.redfearn@mips.com>, Loic Pallardy <loic.pallardy@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 4/9] remoteproc: qcom: wcnss: Update IMEM PIL info on load
+Date: Tue,  6 Aug 2019 22:39:37 -0700
+Message-Id: <20190807053942.9836-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20190807053942.9836-1-bjorn.andersson@linaro.org>
+References: <20190807053942.9836-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Sibi Sankar <sibis@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds a sysfs interface that provides the name of the
-remote processor to userspace. This allows the userspace to identify
-a remote processor as the remoteproc devices themselves are created
-based on probe order and can change from one boot to another or
-at runtime.
+Store the relocated base address and size in the PIL relocation info
+structure in IMEM.
 
-The name is made available in debugfs originally, and is being
-retained for now. This can be cleaned up after couple of releases
-once users get familiar with the new interface.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- Documentation/ABI/testing/sysfs-class-remoteproc | 10 ++++++++++
- drivers/remoteproc/remoteproc_sysfs.c            | 11 +++++++++++
- 2 files changed, 21 insertions(+)
+ drivers/remoteproc/Kconfig      |  1 +
+ drivers/remoteproc/qcom_wcnss.c | 14 +++++++++++---
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-remoteproc b/Documentation/ABI/testing/sysfs-class-remoteproc
-index c3afe9fab646..36094fbeb974 100644
---- a/Documentation/ABI/testing/sysfs-class-remoteproc
-+++ b/Documentation/ABI/testing/sysfs-class-remoteproc
-@@ -48,3 +48,13 @@ Description:	Remote processor state
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 2aa0743fc05b..3f976ce3df3c 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -185,6 +185,7 @@ config QCOM_WCNSS_PIL
+ 	depends on QCOM_SMEM
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	select QCOM_MDT_LOADER
++	select QCOM_PIL_INFO
+ 	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index dc135754bb9c..9db9a3d25af4 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -27,6 +27,7 @@
  
- 		Writing "stop" will attempt to halt the remote processor and
- 		return it to the "offline" state.
+ #include "qcom_common.h"
+ #include "remoteproc_internal.h"
++#include "qcom_pil_info.h"
+ #include "qcom_wcnss.h"
+ 
+ #define WCNSS_CRASH_REASON_SMEM		422
+@@ -145,10 +146,17 @@ void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	int ret;
 +
-+What:		/sys/class/remoteproc/.../name
-+Date:		August 2019
-+KernelVersion:	5.4
-+Contact:	Suman Anna <s-anna@ti.com>
-+Description:	Remote processor name
++	ret = qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
++			    wcnss->mem_region, wcnss->mem_phys,
++			    wcnss->mem_size, &wcnss->mem_reloc);
++	if (ret)
++		return ret;
 +
-+		Reports the name of the remote processor. This can be used by
-+		userspace in exactly identifying a remote processor and ease
-+		up the usage in modifying the 'firmware' or 'state' files.
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index fa4131930106..7f8536b73295 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -113,9 +113,20 @@ static ssize_t state_store(struct device *dev,
++	qcom_pil_info_store("wcnss", wcnss->mem_reloc, wcnss->mem_size);
+ 
+-	return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+-			     wcnss->mem_region, wcnss->mem_phys,
+-			     wcnss->mem_size, &wcnss->mem_reloc);
++	return 0;
  }
- static DEVICE_ATTR_RW(state);
  
-+/* Expose the name of the remote processor via sysfs */
-+static ssize_t name_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct rproc *rproc = to_rproc(dev);
-+
-+	return sprintf(buf, "%s\n", rproc->name);
-+}
-+static DEVICE_ATTR_RO(name);
-+
- static struct attribute *rproc_attrs[] = {
- 	&dev_attr_firmware.attr,
- 	&dev_attr_state.attr,
-+	&dev_attr_name.attr,
- 	NULL
- };
- 
+ static void wcnss_indicate_nv_download(struct qcom_wcnss *wcnss)
 -- 
-2.22.0
+2.18.0
