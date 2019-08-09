@@ -1,36 +1,34 @@
-Return-Path: <afd@ti.com>
+Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH] rpmsg: virtio_rpmsg_bus: replace "%p" with "%pK"
 References: <20181024011909.21674-1-s-anna@ti.com>
-From: "Andrew F. Davis" <afd@ti.com>
-Message-ID: <1cc3d697-6fde-901b-2e35-2e2b53b44425@ti.com>
-Date: Mon, 12 Aug 2019 11:47:58 -0400
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <40831f80-1e36-66ca-b8e5-684d46ba167e@ti.com>
+Date: Fri, 9 Aug 2019 15:25:38 -0500
 MIME-Version: 1.0
 In-Reply-To: <20181024011909.21674-1-s-anna@ti.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-remoteproc@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 10/23/18 9:19 PM, Suman Anna wrote:
+Hi Bjorn,
+
+On 10/23/18 8:19 PM, Suman Anna wrote:
 > The virtio_rpmsg_bus driver uses the "%p" format-specifier for
 > printing the vring buffer address. This prints only a hashed
 > pointer even for previliged users. Use "%pK" instead so that
 > the address can be printed during debug using kptr_restrict
 > sysctl.
+
+Seems to have been lost among the patches, can you pick up this trivial
+patch for 5.4? Should apply cleanly on the latest HEAD as well.
+
+regards
+Suman
+
 > 
-
-
-s/previliged/privileged
-
-You describe what the code does, but not why you need this. %pK is used
-for only about 1% of pointer printing, why do you want to leak this
-address to userspace at all?
-
-Andrew
-
-
 > Signed-off-by: Suman Anna <s-anna@ti.com>
 > ---
 >  drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
