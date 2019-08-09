@@ -1,8 +1,8 @@
 Return-Path: <s-anna@ti.com>
 From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/2] samples/rpmsg: Replace print_hex_dump() with print_hex_dump_debug()
-Date: Fri, 9 Aug 2019 11:27:09 -0500
-Message-ID: <20190809162710.823-2-s-anna@ti.com>
+Subject: [PATCH 2/2] samples/rpmsg: Introduce a module parameter for message count
+Date: Fri, 9 Aug 2019 11:27:10 -0500
+Message-ID: <20190809162710.823-3-s-anna@ti.com>
 In-Reply-To: <20190809162710.823-1-s-anna@ti.com>
 References: <20190809162710.823-1-s-anna@ti.com>
 MIME-Version: 1.0
@@ -12,30 +12,39 @@ To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.co
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Replace the raw print_hex_dump() call in the rpmsg_sample_cb() function
-with the equivalent print_hex_dump_debug() better suited for dynamic
-debug. This switch allows flexibility of controlling this trace through
-dynamic debug when enabled.
+The current rpmsg_client_sample uses a fixed number of messages to
+be sent to each instance. This is currently set at 100. Introduce
+an optional module parameter 'count' so that the number of messages
+to be exchanged can be made flexible.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- samples/rpmsg/rpmsg_client_sample.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ samples/rpmsg/rpmsg_client_sample.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
-index 2a0695573b47..b9a99e621a5c 100644
+index b9a99e621a5c..ae5081662283 100644
 --- a/samples/rpmsg/rpmsg_client_sample.c
 +++ b/samples/rpmsg/rpmsg_client_sample.c
-@@ -29,8 +29,8 @@ static int rpmsg_sample_cb(struct rpmsg_device *rpdev, void *data, int len,
- 	dev_info(&rpdev->dev, "incoming msg %d (src: 0x%x)\n",
- 		 ++idata->rx_count, src);
+@@ -14,7 +14,9 @@
+ #include <linux/rpmsg.h>
  
--	print_hex_dump(KERN_DEBUG, __func__, DUMP_PREFIX_NONE, 16, 1,
--		       data, len,  true);
-+	print_hex_dump_debug(__func__, DUMP_PREFIX_NONE, 16, 1, data, len,
-+			     true);
+ #define MSG		"hello world!"
+-#define MSG_LIMIT	100
++
++static int count = 100;
++module_param(count, int, 0644);
+ 
+ struct instance_data {
+ 	int rx_count;
+@@ -33,7 +35,7 @@ static int rpmsg_sample_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 			     true);
  
  	/* samples should not live forever */
- 	if (idata->rx_count >= MSG_LIMIT) {
+-	if (idata->rx_count >= MSG_LIMIT) {
++	if (idata->rx_count >= count) {
+ 		dev_info(&rpdev->dev, "goodbye!\n");
+ 		return 0;
+ 	}
 -- 
 2.22.0
