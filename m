@@ -1,233 +1,294 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-Subject: Re: [PATCH] rpmsg: add a description field
-Date: Mon, 12 Aug 2019 13:43:48 +0000
-Message-ID: <a11da259-e111-f5a2-8913-e3572d44ce02@st.com>
-References: <20190809214005.32159-1-s-anna@ti.com>
-In-Reply-To: <20190809214005.32159-1-s-anna@ti.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A1F727B980342E46920E361853BFBBB3@st.com>
-Content-Transfer-Encoding: base64
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH] rpmsg: add a description field
+Date: Fri, 9 Aug 2019 16:40:05 -0500
+Message-ID: <20190809214005.32159-1-s-anna@ti.com>
 MIME-Version: 1.0
-To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic PALLARDY <loic.pallardy@st.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Fabien Dessenne <fabien.dessenne@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgU3VtYW4sDQoNClNlZSBteSByZW1hcmtzIGJlbG93DQoNCkJSDQoNCkZhYmllbg0KDQoNCk9u
-IDA5LzA4LzIwMTkgMTE6NDAgUE0sIFN1bWFuIEFubmEgd3JvdGU6DQo+IEZyb206IE9oYWQgQmVu
-LUNvaGVuIDxvaGFkQHdpemVyeS5jb20+DQo+DQo+IEFkZCBhIG5ldyBkZXNjcmlwdGlvbiBmaWVs
-ZCB0byB0aGUgcnBtc2cgYnVzIGluZnJhc3RydWN0dXJlDQo+IHRoYXQgY2FuIGJlIHBhc3NlZCBv
-bnRvIHRoZSBycG1zZyBjbGllbnQgZHJpdmVycyBmb3IgYWRkaXRpb25hbA0KPiBpbmZvcm1hdGlv
-bi4gVGhlIGN1cnJlbnQgcnBtc2cgYnVzIGNsaWVudCBkcml2ZXJzIG5lZWQgdG8gaGF2ZQ0KPiBh
-IGZpeGVkIGlkX3RhYmxlIGZvciBwcm9wZXIgbWF0Y2hpbmcsIHRoaXMgbmV3IGZpZWxkIGNhbiBh
-bGxvdw0KPiBmbGV4aWJpbGl0eSBmb3IgdGhlIGNsaWVudCBkcml2ZXJzIChlZzogbGlrZSBjcmVh
-dGluZyB1bmlxdWUNCj4gY2RldnMpLg0KPg0KPiBUaGUgZGVzY3JpcHRpb24gZmllbGQgaXMgcHVi
-bGlzaGVkIHRocm91Z2ggYW4gZW5oYW5jZWQgbmFtZQ0KPiBzZXJ2aWNlIGFubm91bmNlbWVudCBt
-ZXNzYWdlIHN0cnVjdHVyZS4gVGhlIG5hbWUgc2VydmljZQ0KPiBtZXNzYWdlIHByb2Nlc3Npbmcg
-bG9naWMgaXMgdXBkYXRlZCB0byBtYWludGFpbiBiYWNrd2FyZA0KPiBjb21wYXRpYmlsaXR5IHdp
-dGggdGhlIHByZXZpb3VzIG1lc3NhZ2Ugc3RydWN0dXJlLg0KPg0KPiBCYXNlZCBvbiBhbiBpbml0
-aWFsIHBhdGNoIGZyb20gT2hhZCBCZW4tQ29oZW4uDQo+DQo+IFNpZ25lZC1vZmYtYnk6IE9oYWQg
-QmVuLUNvaGVuIDxvaGFkQHdpemVyeS5jb20+DQo+IFtzLWFubmFAdGkuY29tOiBmb3J3YXJkIHBv
-cnQsIGFkZCBzeXNmcyBkb2N1bWVudGF0aW9uLCBmaXh1cCBxY29tIGRyaXZlcnNdDQo+IFNpZ25l
-ZC1vZmYtYnk6IFN1bWFuIEFubmEgPHMtYW5uYUB0aS5jb20+DQo+IFt0LWtyaXN0b0B0aS5jb206
-IHJld29ya2VkIHRvIHN1cHBvcnQgYm90aCBycG1zZyB3aXRoL3dpdGhvdXQgdGhlIGRlc2MgZmll
-bGRdDQo+IFNpZ25lZC1vZmYtYnk6IFRlcm8gS3Jpc3RvIDx0LWtyaXN0b0B0aS5jb20+DQo+IC0t
-LQ0KPiAgIERvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcvc3lzZnMtYnVzLXJwbXNnIHwgMjkgKysr
-KysrKysrKysrKysrDQo+ICAgZHJpdmVycy9ycG1zZy9xY29tX2dsaW5rX25hdGl2ZS5jICAgICAg
-ICAgfCAgMSArDQo+ICAgZHJpdmVycy9ycG1zZy9xY29tX3NtZC5jICAgICAgICAgICAgICAgICAg
-fCAgMSArDQoNCg0KU2hvdWxkIG5vdCB5b3UgZXh0ZW5kIHFjb21fZ2xpbmtfY3JlYXRlX2VwdCgp
-IGFuZCBxY29tX3NtZF9jcmVhdGVfZXB0KCkgDQpzbyB0aGV5IGNvbXBhcmUgYm90aCAnbmFtZScg
-QU5EICdkZXNjJyAoanVzdCBsaWtlIHRoaXMgaXMgcHJvcG9zZWQgaW4gDQpycG1zZ19kZXZpY2Vf
-bWF0Y2goKSkgPw0KDQoNCj4gICBkcml2ZXJzL3JwbXNnL3JwbXNnX2NoYXIuYyAgICAgICAgICAg
-ICAgICB8ICAxICsNCj4gICBkcml2ZXJzL3JwbXNnL3JwbXNnX2NvcmUuYyAgICAgICAgICAgICAg
-ICB8ICA2ICsrKysNCj4gICBkcml2ZXJzL3JwbXNnL3ZpcnRpb19ycG1zZ19idXMuYyAgICAgICAg
-ICB8IDQ0ICsrKysrKysrKysrKysrKysrKystLS0tDQo+ICAgZHJpdmVycy9zb2MvcWNvbS93Y25z
-c19jdHJsLmMgICAgICAgICAgICAgfCAgMSArDQo+ICAgaW5jbHVkZS9saW51eC9ycG1zZy5oICAg
-ICAgICAgICAgICAgICAgICAgfCAgNCArKysNCj4gICA4IGZpbGVzIGNoYW5nZWQsIDgwIGluc2Vy
-dGlvbnMoKyksIDcgZGVsZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
-L0FCSS90ZXN0aW5nL3N5c2ZzLWJ1cy1ycG1zZyBiL0RvY3VtZW50YXRpb24vQUJJL3Rlc3Rpbmcv
-c3lzZnMtYnVzLXJwbXNnDQo+IGluZGV4IDk5MGZjYzQyMDkzNS4uN2YxYjA5ZWNjNjRkIDEwMDY0
-NA0KPiAtLS0gYS9Eb2N1bWVudGF0aW9uL0FCSS90ZXN0aW5nL3N5c2ZzLWJ1cy1ycG1zZw0KPiAr
-KysgYi9Eb2N1bWVudGF0aW9uL0FCSS90ZXN0aW5nL3N5c2ZzLWJ1cy1ycG1zZw0KPiBAQCAtOTMs
-MyArOTMsMzIgQEAgRGVzY3JpcHRpb246DQo+ICAgCQlUaGlzIHN5c2ZzIGVudHJ5IGFsbG93cyB0
-aGUgcnBtc2cgZHJpdmVyIGZvciBhIHJwbXNnIGRldmljZQ0KPiAgIAkJdG8gYmUgc3BlY2lmaWVk
-IHdoaWNoIHdpbGwgb3ZlcnJpZGUgc3RhbmRhcmQgT0YsIElEIHRhYmxlDQo+ICAgCQlhbmQgbmFt
-ZSBtYXRjaGluZy4NCj4gKw0KPiArV2hhdDoJCS9zeXMvYnVzL3JwbXNnL2RldmljZXMvLi4uL2Rl
-c2MNCj4gK0RhdGU6CQlBdWd1c3QgMjAxOQ0KPiArS2VybmVsVmVyc2lvbjoJNS40DQo+ICtDb250
-YWN0OglCam9ybiBBbmRlcnNzb24gPGJqb3JuLmFuZGVyc3NvbkBsaW5hcm8ub3JnPg0KPiArRGVz
-Y3JpcHRpb246DQo+ICsJCUV2ZXJ5IHJwbXNnIGRldmljZSBpcyBhIGNvbW11bmljYXRpb24gY2hh
-bm5lbCB3aXRoIGEgcmVtb3RlDQo+ICsJCXByb2Nlc3Nvci4gQ2hhbm5lbHMgYXJlIGlkZW50aWZp
-ZWQgYnkgYSB0ZXh0dWFsIG5hbWUgKHNlZQ0KPiArCQkvc3lzL2J1cy9ycG1zZy9kZXZpY2VzLy4u
-Li9uYW1lIGFib3ZlKSBhbmQgaGF2ZSBhIGxvY2FsDQo+ICsJCSgic291cmNlIikgcnBtc2cgYWRk
-cmVzcywgYW5kIHJlbW90ZSAoImRlc3RpbmF0aW9uIikgcnBtc2cNCj4gKwkJYWRkcmVzcy4NCj4g
-Kw0KPiArCQlBIGNoYW5uZWwgaXMgZmlyc3QgY3JlYXRlZCB3aGVuIGFuIGVudGl0eSwgd2hldGhl
-ciBsb2NhbA0KPiArCQlvciByZW1vdGUsIHN0YXJ0cyBsaXN0ZW5pbmcgb24gaXQgZm9yIG1lc3Nh
-Z2VzIChhbmQgaXMgdGh1cw0KPiArCQljYWxsZWQgYW4gcnBtc2cgc2VydmVyKS4gV2hlbiB0aGF0
-IGhhcHBlbnMsIGEgIm5hbWUgc2VydmljZSINCj4gKwkJYW5ub3VuY2VtZW50IGlzIHNlbnQgdG8g
-dGhlIG90aGVyIHByb2Nlc3NvciwgaW4gb3JkZXIgdG8gbGV0DQo+ICsJCWl0IGtub3cgYWJvdXQg
-dGhlIGNyZWF0aW9uIG9mIHRoZSBjaGFubmVsICh0aGlzIHdheSByZW1vdGUNCj4gKwkJY2xpZW50
-cyBrbm93IHRoZXkgY2FuIHN0YXJ0IHNlbmRpbmcgbWVzc2FnZXMpLg0KPiArDQo+ICsJCVRoZSBs
-aXN0ZW5pbmcgZW50aXR5IChvciBjbGllbnQpIHdoaWNoIGNvbW11bmljYXRlcyB3aXRoIGENCj4g
-KwkJcmVtb3RlIHByb2Nlc3NvciBpcyByZWZlcnJlZCBhcyBycG1zZyBkcml2ZXIuIFRoZSBycG1z
-ZyBkZXZpY2UNCj4gKwkJYW5kIHJwbXNnIGRyaXZlciBhcmUgbWF0Y2hlZCBiYXNlZCBvbiBycG1z
-ZyBkZXZpY2UgbmFtZSAoc2VlDQo+ICsJCS9zeXMvYnVzL3JwbXNnL2RldmljZXMvLi4uL25hbWUg
-YWJvdmUpIGFuZCBycG1zZyBkcml2ZXIgSUQgdGFibGUuDQo+ICsNCj4gKwkJVGhpcyBzeXNmcyBl
-bnRyeSBjb250YWlucyBhbiBhZGRpdGlvbmFsIG9wdGlvbmFsIGRlc2NyaXB0aW9uIG9mDQo+ICsJ
-CXRoZSBycG1zZyBkZXZpY2UgdGhhdCBjYW4gYmUgb3B0aW9uYWxseSBpbmNsdWRlZCBhcyBwYXJ0
-IG9mIHRoZQ0KPiArCQkibmFtZSBzZXJ2aWNlIiBhbm5vdW5jZW1lbnQuIFRoaXMgZGVzY3JpcHRp
-b24gaXMgdGhlbiBwYXNzZWQgb24NCj4gKwkJdG8gdGhlIGNvcnJlc3BvbmRpbmcgcnBtc2cgZHJp
-dmVycyB0byBmdXJ0aGVyIGRpc3Rpbmd1aXNoIG11bHRpcGxlDQo+ICsJCWRldmljZXMgYXNzb2Np
-YXRlZCB3aXRoIHRoZSBzYW1lIHJwbXNnIGRyaXZlci4NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-cnBtc2cvcWNvbV9nbGlua19uYXRpdmUuYyBiL2RyaXZlcnMvcnBtc2cvcWNvbV9nbGlua19uYXRp
-dmUuYw0KPiBpbmRleCBmNDZjNzg3NzMzZTguLmNmZGFiZGRjMTVhYyAxMDA2NDQNCj4gLS0tIGEv
-ZHJpdmVycy9ycG1zZy9xY29tX2dsaW5rX25hdGl2ZS5jDQo+ICsrKyBiL2RyaXZlcnMvcnBtc2cv
-cWNvbV9nbGlua19uYXRpdmUuYw0KPiBAQCAtMTQ1Niw2ICsxNDU2LDcgQEAgc3RhdGljIHZvaWQg
-cWNvbV9nbGlua19yeF9jbG9zZShzdHJ1Y3QgcWNvbV9nbGluayAqZ2xpbmssIHVuc2lnbmVkIGlu
-dCByY2lkKQ0KPiAgIAkJc3RybmNweShjaGluZm8ubmFtZSwgY2hhbm5lbC0+bmFtZSwgc2l6ZW9m
-KGNoaW5mby5uYW1lKSk7DQo+ICAgCQljaGluZm8uc3JjID0gUlBNU0dfQUREUl9BTlk7DQo+ICAg
-CQljaGluZm8uZHN0ID0gUlBNU0dfQUREUl9BTlk7DQo+ICsJCWNoaW5mby5kZXNjWzBdID0gJ1ww
-JzsNCj4gICANCj4gICAJCXJwbXNnX3VucmVnaXN0ZXJfZGV2aWNlKGdsaW5rLT5kZXYsICZjaGlu
-Zm8pOw0KPiAgIAl9DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JwbXNnL3Fjb21fc21kLmMgYi9k
-cml2ZXJzL3JwbXNnL3Fjb21fc21kLmMNCj4gaW5kZXggNGFiYmVlYTc4MmZhLi43Y2Q2YjljNDcw
-NjUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcnBtc2cvcWNvbV9zbWQuYw0KPiArKysgYi9kcml2
-ZXJzL3JwbXNnL3Fjb21fc21kLmMNCj4gQEAgLTEzMDcsNiArMTMwNyw3IEBAIHN0YXRpYyB2b2lk
-IHFjb21fY2hhbm5lbF9zdGF0ZV93b3JrZXIoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQ0KPiAg
-IAkJc3RybmNweShjaGluZm8ubmFtZSwgY2hhbm5lbC0+bmFtZSwgc2l6ZW9mKGNoaW5mby5uYW1l
-KSk7DQo+ICAgCQljaGluZm8uc3JjID0gUlBNU0dfQUREUl9BTlk7DQo+ICAgCQljaGluZm8uZHN0
-ID0gUlBNU0dfQUREUl9BTlk7DQo+ICsJCWNoaW5mby5kZXNjWzBdID0gJ1wwJzsNCj4gICAJCXJw
-bXNnX3VucmVnaXN0ZXJfZGV2aWNlKCZlZGdlLT5kZXYsICZjaGluZm8pOw0KPiAgIAkJY2hhbm5l
-bC0+cmVnaXN0ZXJlZCA9IGZhbHNlOw0KPiAgIAkJc3Bpbl9sb2NrX2lycXNhdmUoJmVkZ2UtPmNo
-YW5uZWxzX2xvY2ssIGZsYWdzKTsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcnBtc2cvcnBtc2df
-Y2hhci5jIGIvZHJpdmVycy9ycG1zZy9ycG1zZ19jaGFyLmMNCj4gaW5kZXggZWVhNWViYmI1MTE5
-Li40YmQ5MTQ0NWEyZmQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcnBtc2cvcnBtc2dfY2hhci5j
-DQo+ICsrKyBiL2RyaXZlcnMvcnBtc2cvcnBtc2dfY2hhci5jDQo+IEBAIC00NDIsNiArNDQyLDcg
-QEAgc3RhdGljIGxvbmcgcnBtc2dfY3RybGRldl9pb2N0bChzdHJ1Y3QgZmlsZSAqZnAsIHVuc2ln
-bmVkIGludCBjbWQsDQo+ICAgCWNoaW5mby5uYW1lW1JQTVNHX05BTUVfU0laRS0xXSA9ICdcMCc7
-DQo+ICAgCWNoaW5mby5zcmMgPSBlcHRpbmZvLnNyYzsNCj4gICAJY2hpbmZvLmRzdCA9IGVwdGlu
-Zm8uZHN0Ow0KPiArCWNoaW5mby5kZXNjWzBdID0gJ1wwJzsNCj4gICANCj4gICAJcmV0dXJuIHJw
-bXNnX2VwdGRldl9jcmVhdGUoY3RybGRldiwgY2hpbmZvKTsNCj4gICB9Ow0KDQoNCkl0IHdvdWxk
-IGJlIGdvb2QgdG8gYWRkIERFVklDRV9BVFRSX1JPKGRlc2MpIC8gZGVzY19zaG93KCkNCg0KDQo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JwbXNnL3JwbXNnX2NvcmUuYyBiL2RyaXZlcnMvcnBtc2cv
-cnBtc2dfY29yZS5jDQo+IGluZGV4IGVhODhmZDRlMmE2ZS4uMzM0YTUwNDI1YjVjIDEwMDY0NA0K
-PiAtLS0gYS9kcml2ZXJzL3JwbXNnL3JwbXNnX2NvcmUuYw0KPiArKysgYi9kcml2ZXJzL3JwbXNn
-L3JwbXNnX2NvcmUuYw0KPiBAQCAtMzAyLDYgKzMwMiwxMCBAQCBzdGF0aWMgaW50IHJwbXNnX2Rl
-dmljZV9tYXRjaChzdHJ1Y3QgZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEpDQo+ICAgCWlmIChzdHJu
-Y21wKGNoaW5mby0+bmFtZSwgcnBkZXYtPmlkLm5hbWUsIFJQTVNHX05BTUVfU0laRSkpDQo+ICAg
-CQlyZXR1cm4gMDsNCj4gICANCj4gKwlpZiAoY2hpbmZvLT5kZXNjICYmIGNoaW5mby0+ZGVzYyAh
-PSBycGRldi0+ZGVzYyAmJg0KDQoNCmNoaW5mby0+ZGVzYyBpcyBkZWZpbmVkIGFzICdjaGFyIGRl
-c2NbUlBNU0dfTkFNRV9TSVpFXScsIHNvIEkgZG8gbm90IA0KdGhpbmsgdGhhdCB5b3Ugc2hhbGwg
-Y2hlY2sgY2hpbmZvLT5kZXNjIChjYW4ndCBiZSBOVUxMKQ0KDQpEaWQgeW91IHdhbnQgdG8gY2hl
-Y2sgKmNoaW5mby0+ZGVzYyA/IChkZXNjIGRpZmZlcnMgZnJvbSAnXDAnKQ0KDQpJIGNhbid0IHVu
-ZGVyc3RhbmQgdGhlICJjaGluZm8tPmRlc2MgIT0gcnBkZWMtPmRlc2MiIHRlc3QuDQoNCg0KPiAr
-CSAgICBzdHJuY21wKGNoaW5mby0+ZGVzYywgcnBkZXYtPmRlc2MsIFJQTVNHX05BTUVfU0laRSkp
-DQo+ICsJCXJldHVybiAwOw0KPiArDQo+ICAgCS8qIGZvdW5kIGEgbWF0Y2ggISAqLw0KPiAgIAly
-ZXR1cm4gMTsNCj4gICB9DQo+IEBAIC0zNjUsNiArMzY5LDcgQEAgc3RhdGljIERFVklDRV9BVFRS
-X1JXKGZpZWxkKQ0KPiAgIA0KPiAgIC8qIGZvciBtb3JlIGluZm8sIHNlZSBEb2N1bWVudGF0aW9u
-L0FCSS90ZXN0aW5nL3N5c2ZzLWJ1cy1ycG1zZyAqLw0KPiAgIHJwbXNnX3Nob3dfYXR0cihuYW1l
-LCBpZC5uYW1lLCAiJXNcbiIpOw0KPiArcnBtc2dfc2hvd19hdHRyKGRlc2MsIGRlc2MsICIlc1xu
-Iik7DQo+ICAgcnBtc2dfc2hvd19hdHRyKHNyYywgc3JjLCAiMHgleFxuIik7DQo+ICAgcnBtc2df
-c2hvd19hdHRyKGRzdCwgZHN0LCAiMHgleFxuIik7DQo+ICAgcnBtc2dfc2hvd19hdHRyKGFubm91
-bmNlLCBhbm5vdW5jZSA/ICJ0cnVlIiA6ICJmYWxzZSIsICIlc1xuIik7DQo+IEBAIC0zODYsNiAr
-MzkxLDcgQEAgc3RhdGljIERFVklDRV9BVFRSX1JPKG1vZGFsaWFzKTsNCj4gICANCj4gICBzdGF0
-aWMgc3RydWN0IGF0dHJpYnV0ZSAqcnBtc2dfZGV2X2F0dHJzW10gPSB7DQo+ICAgCSZkZXZfYXR0
-cl9uYW1lLmF0dHIsDQo+ICsJJmRldl9hdHRyX2Rlc2MuYXR0ciwNCj4gICAJJmRldl9hdHRyX21v
-ZGFsaWFzLmF0dHIsDQo+ICAgCSZkZXZfYXR0cl9kc3QuYXR0ciwNCj4gICAJJmRldl9hdHRyX3Ny
-Yy5hdHRyLA0KDQoNCldoYXQgYWJvdXQgYWRkaW5nIHN0cm5jcHkoZGVzYykgaW4gcnBtc2dfZGV2
-X3Byb2JlKCkgPw0KDQoNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNn
-X2J1cy5jIGIvZHJpdmVycy9ycG1zZy92aXJ0aW9fcnBtc2dfYnVzLmMNCj4gaW5kZXggMzc2ZWJi
-Zjg4MGQ2Li40OTkwMTU4MmZmMGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvcnBtc2cvdmlydGlv
-X3JwbXNnX2J1cy5jDQo+ICsrKyBiL2RyaXZlcnMvcnBtc2cvdmlydGlvX3JwbXNnX2J1cy5jDQo+
-IEBAIC0xMTAsNiArMTEwLDIzIEBAIHN0cnVjdCBycG1zZ19uc19tc2cgew0KPiAgIAl1MzIgZmxh
-Z3M7DQo+ICAgfSBfX3BhY2tlZDsNCj4gICANCj4gKy8qKg0KPiArICogc3RydWN0IHJwbXNnX25z
-X21zZ19leHQgLSBkeW5hbWljIG5hbWUgc2VydmljZSBhbm5vdW5jZW1lbnQgbWVzc2FnZSB2Mg0K
-PiArICogQG5hbWU6IG5hbWUgb2YgcmVtb3RlIHNlcnZpY2UgdGhhdCBpcyBwdWJsaXNoZWQNCj4g
-KyAqIEBkZXNjOiBkZXNjcmlwdGlvbiBvZiByZW1vdGUgc2VydmljZQ0KPiArICogQGFkZHI6IGFk
-ZHJlc3Mgb2YgcmVtb3RlIHNlcnZpY2UgdGhhdCBpcyBwdWJsaXNoZWQNCj4gKyAqIEBmbGFnczog
-aW5kaWNhdGVzIHdoZXRoZXIgc2VydmljZSBpcyBjcmVhdGVkIG9yIGRlc3Ryb3llZA0KPiArICoN
-Cj4gKyAqIEludGVyY2hhbmdlYWJsZSBuYW1lc2VydmljZSBtZXNzYWdlIHdpdGggcnBtc2dfbnNf
-bXNnLiBUaGlzIG9uZSBoYXMNCj4gKyAqIHRoZSBhZGRpdGlvbiBvZiB0aGUgZGVzYyBmaWVsZCBm
-b3IgZXh0cmEgZmxleGliaWxpdHkuDQo+ICsgKi8NCj4gK3N0cnVjdCBycG1zZ19uc19tc2dfZXh0
-IHsNCj4gKwljaGFyIG5hbWVbUlBNU0dfTkFNRV9TSVpFXTsNCj4gKwljaGFyIGRlc2NbUlBNU0df
-TkFNRV9TSVpFXTsNCg0KDQpJdCBtYXkgYmUgYmV0dGVyIHRvIHVzZSBhIGRlZGljYXRlZCB2YWx1
-ZSBmb3IgZGVzYyBsZW5ndGggKCNkZWZpbmUgDQpSUE1TR19ERVNDX1NJWkUpLg0KDQpJIGFsc28g
-d29uZGVyIGlmIDMyIGNoYXJzIGFyZSBlbm91Z2ggZm9yIGEgKHRleHQpIGRlc2NyaXB0aW9uLg0K
-DQoNCj4gKwl1MzIgYWRkcjsNCj4gKwl1MzIgZmxhZ3M7DQo+ICt9IF9fcGFja2VkOw0KPiArDQo+
-ICAgLyoqDQo+ICAgICogZW51bSBycG1zZ19uc19mbGFncyAtIGR5bmFtaWMgbmFtZSBzZXJ2aWNl
-IGFubm91bmNlbWVudCBmbGFncw0KPiAgICAqDQo+IEBAIC00MDIsOCArNDE5LDkgQEAgc3RhdGlj
-IHN0cnVjdCBycG1zZ19kZXZpY2UgKnJwbXNnX2NyZWF0ZV9jaGFubmVsKHN0cnVjdCB2aXJ0cHJv
-Y19pbmZvICp2cnAsDQo+ICAgCWlmICh0bXApIHsNCj4gICAJCS8qIGRlY3JlbWVudCB0aGUgbWF0
-Y2hlZCBkZXZpY2UncyByZWZjb3VudCBiYWNrICovDQo+ICAgCQlwdXRfZGV2aWNlKHRtcCk7DQo+
-IC0JCWRldl9lcnIoZGV2LCAiY2hhbm5lbCAlczoleDoleCBhbHJlYWR5IGV4aXN0XG4iLA0KPiAt
-CQkJCWNoaW5mby0+bmFtZSwgY2hpbmZvLT5zcmMsIGNoaW5mby0+ZHN0KTsNCj4gKwkJZGV2X2Vy
-cihkZXYsICJjaGFubmVsICVzOiVzOiV4OiV4IGFscmVhZHkgZXhpc3RcbiIsDQo+ICsJCQljaGlu
-Zm8tPm5hbWUsIGNoaW5mby0+ZGVzYywNCj4gKwkJCWNoaW5mby0+c3JjLCBjaGluZm8tPmRzdCk7
-DQo+ICAgCQlyZXR1cm4gTlVMTDsNCj4gICAJfQ0KPiAgIA0KPiBAQCAtNDE5LDYgKzQzNyw3IEBA
-IHN0YXRpYyBzdHJ1Y3QgcnBtc2dfZGV2aWNlICpycG1zZ19jcmVhdGVfY2hhbm5lbChzdHJ1Y3Qg
-dmlydHByb2NfaW5mbyAqdnJwLA0KPiAgIAlycGRldi0+c3JjID0gY2hpbmZvLT5zcmM7DQo+ICAg
-CXJwZGV2LT5kc3QgPSBjaGluZm8tPmRzdDsNCj4gICAJcnBkZXYtPm9wcyA9ICZ2aXJ0aW9fcnBt
-c2dfb3BzOw0KPiArCXN0cm5jcHkocnBkZXYtPmRlc2MsIGNoaW5mby0+ZGVzYywgUlBNU0dfTkFN
-RV9TSVpFKTsNCj4gICANCj4gICAJLyoNCj4gICAJICogcnBtc2cgc2VydmVyIGNoYW5uZWxzIGhh
-cyBwcmVkZWZpbmVkIGxvY2FsIGFkZHJlc3MgKGZvciBub3cpLA0KPiBAQCAtODE2LDE4ICs4MzUs
-MjkgQEAgc3RhdGljIGludCBycG1zZ19uc19jYihzdHJ1Y3QgcnBtc2dfZGV2aWNlICpycGRldiwg
-dm9pZCAqZGF0YSwgaW50IGxlbiwNCj4gICAJCSAgICAgICB2b2lkICpwcml2LCB1MzIgc3JjKQ0K
-PiAgIHsNCj4gICAJc3RydWN0IHJwbXNnX25zX21zZyAqbXNnID0gZGF0YTsNCj4gKwlzdHJ1Y3Qg
-cnBtc2dfbnNfbXNnX2V4dCAqbXNnX2V4dCA9IGRhdGE7DQo+ICAgCXN0cnVjdCBycG1zZ19kZXZp
-Y2UgKm5ld2NoOw0KPiAgIAlzdHJ1Y3QgcnBtc2dfY2hhbm5lbF9pbmZvIGNoaW5mbzsNCj4gICAJ
-c3RydWN0IHZpcnRwcm9jX2luZm8gKnZycCA9IHByaXY7DQo+ICAgCXN0cnVjdCBkZXZpY2UgKmRl
-diA9ICZ2cnAtPnZkZXYtPmRldjsNCj4gICAJaW50IHJldDsNCj4gKwl1MzIgYWRkcjsNCj4gKwl1
-MzIgZmxhZ3M7DQo+ICAgDQo+ICAgI2lmIGRlZmluZWQoQ09ORklHX0RZTkFNSUNfREVCVUcpDQo+
-ICAgCWR5bmFtaWNfaGV4X2R1bXAoIk5TIGFubm91bmNlbWVudDogIiwgRFVNUF9QUkVGSVhfTk9O
-RSwgMTYsIDEsDQo+ICAgCQkJIGRhdGEsIGxlbiwgdHJ1ZSk7DQo+ICAgI2VuZGlmDQo+ICAgDQo+
-IC0JaWYgKGxlbiAhPSBzaXplb2YoKm1zZykpIHsNCj4gKwlpZiAobGVuID09IHNpemVvZigqbXNn
-KSkgew0KPiArCQlhZGRyID0gbXNnLT5hZGRyOw0KPiArCQlmbGFncyA9IG1zZy0+ZmxhZ3M7DQo+
-ICsJCWNoaW5mby5kZXNjWzBdID0gJ1wwJzsNCj4gKwl9IGVsc2UgaWYgKGxlbiA9PSBzaXplb2Yo
-Km1zZ19leHQpKSB7DQo+ICsJCWFkZHIgPSBtc2dfZXh0LT5hZGRyOw0KPiArCQlmbGFncyA9IG1z
-Z19leHQtPmZsYWdzOw0KPiArCQlzdHJuY3B5KGNoaW5mby5kZXNjLCBtc2dfZXh0LT5kZXNjLCBz
-aXplb2YoY2hpbmZvLmRlc2MpKTsNCj4gKwl9IGVsc2UgaWYgKGxlbiAhPSBzaXplb2YoKm1zZykp
-IHsNCg0KDQpzaGFsbCBiZSAnZWxzZScsIG5vdCAnZWxzZSBpZicNCg0KDQo+ICAgCQlkZXZfZXJy
-KGRldiwgIm1hbGZvcm1lZCBucyBtc2cgKCVkKVxuIiwgbGVuKTsNCj4gICAJCXJldHVybiAtRUlO
-VkFMOw0KPiAgIAl9DQo+IEBAIC04NDcsMTQgKzg3NywxNCBAQCBzdGF0aWMgaW50IHJwbXNnX25z
-X2NiKHN0cnVjdCBycG1zZ19kZXZpY2UgKnJwZGV2LCB2b2lkICpkYXRhLCBpbnQgbGVuLA0KPiAg
-IAltc2ctPm5hbWVbUlBNU0dfTkFNRV9TSVpFIC0gMV0gPSAnXDAnOw0KPiAgIA0KPiAgIAlkZXZf
-aW5mbyhkZXYsICIlc2luZyBjaGFubmVsICVzIGFkZHIgMHgleFxuIiwNCj4gLQkJIG1zZy0+Zmxh
-Z3MgJiBSUE1TR19OU19ERVNUUk9ZID8gImRlc3Ryb3kiIDogImNyZWF0IiwNCj4gLQkJIG1zZy0+
-bmFtZSwgbXNnLT5hZGRyKTsNCj4gKwkJIGZsYWdzICYgUlBNU0dfTlNfREVTVFJPWSA/ICJkZXN0
-cm95IiA6ICJjcmVhdCIsDQo+ICsJCSBtc2ctPm5hbWUsIGFkZHIpOw0KPiAgIA0KPiAgIAlzdHJu
-Y3B5KGNoaW5mby5uYW1lLCBtc2ctPm5hbWUsIHNpemVvZihjaGluZm8ubmFtZSkpOw0KPiAgIAlj
-aGluZm8uc3JjID0gUlBNU0dfQUREUl9BTlk7DQo+IC0JY2hpbmZvLmRzdCA9IG1zZy0+YWRkcjsN
-Cj4gKwljaGluZm8uZHN0ID0gYWRkcjsNCj4gICANCj4gLQlpZiAobXNnLT5mbGFncyAmIFJQTVNH
-X05TX0RFU1RST1kpIHsNCj4gKwlpZiAoZmxhZ3MgJiBSUE1TR19OU19ERVNUUk9ZKSB7DQo+ICAg
-CQlyZXQgPSBycG1zZ191bnJlZ2lzdGVyX2RldmljZSgmdnJwLT52ZGV2LT5kZXYsICZjaGluZm8p
-Ow0KPiAgIAkJaWYgKHJldCkNCj4gICAJCQlkZXZfZXJyKGRldiwgInJwbXNnX2Rlc3Ryb3lfY2hh
-bm5lbCBmYWlsZWQ6ICVkXG4iLCByZXQpOw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvcWNv
-bS93Y25zc19jdHJsLmMgYi9kcml2ZXJzL3NvYy9xY29tL3djbnNzX2N0cmwuYw0KPiBpbmRleCBl
-NWM2ODA1MWZiMTcuLmFkOWYyOGRjMTNmMSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zb2MvcWNv
-bS93Y25zc19jdHJsLmMNCj4gKysrIGIvZHJpdmVycy9zb2MvcWNvbS93Y25zc19jdHJsLmMNCj4g
-QEAgLTI3Niw2ICsyNzYsNyBAQCBzdHJ1Y3QgcnBtc2dfZW5kcG9pbnQgKnFjb21fd2Nuc3Nfb3Bl
-bl9jaGFubmVsKHZvaWQgKndjbnNzLCBjb25zdCBjaGFyICpuYW1lLCBycA0KPiAgIAlzdHJzY3B5
-KGNoaW5mby5uYW1lLCBuYW1lLCBzaXplb2YoY2hpbmZvLm5hbWUpKTsNCj4gICAJY2hpbmZvLnNy
-YyA9IFJQTVNHX0FERFJfQU5ZOw0KPiAgIAljaGluZm8uZHN0ID0gUlBNU0dfQUREUl9BTlk7DQo+
-ICsJY2hpbmZvLmRlc2NbMF0gPSAnXDAnOw0KPiAgIA0KPiAgIAlyZXR1cm4gcnBtc2dfY3JlYXRl
-X2VwdChfd2Nuc3MtPmNoYW5uZWwtPnJwZGV2LCBjYiwgcHJpdiwgY2hpbmZvKTsNCj4gICB9DQo+
-IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3JwbXNnLmggYi9pbmNsdWRlL2xpbnV4L3JwbXNn
-LmgNCj4gaW5kZXggOWZlMTU2ZDFjMDE4Li40MzZmYWYwNGJhMWMgMTAwNjQ0DQo+IC0tLSBhL2lu
-Y2x1ZGUvbGludXgvcnBtc2cuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L3JwbXNnLmgNCj4gQEAg
-LTI4LDExICsyOCwxMyBAQCBzdHJ1Y3QgcnBtc2dfZW5kcG9pbnRfb3BzOw0KPiAgIC8qKg0KPiAg
-ICAqIHN0cnVjdCBycG1zZ19jaGFubmVsX2luZm8gLSBjaGFubmVsIGluZm8gcmVwcmVzZW50YXRp
-b24NCj4gICAgKiBAbmFtZTogbmFtZSBvZiBzZXJ2aWNlDQo+ICsgKiBAZGVzYzogZGVzY3JpcHRp
-b24gb2Ygc2VydmljZQ0KPiAgICAqIEBzcmM6IGxvY2FsIGFkZHJlc3MNCj4gICAgKiBAZHN0OiBk
-ZXN0aW5hdGlvbiBhZGRyZXNzDQo+ICAgICovDQo+ICAgc3RydWN0IHJwbXNnX2NoYW5uZWxfaW5m
-byB7DQo+ICAgCWNoYXIgbmFtZVtSUE1TR19OQU1FX1NJWkVdOw0KPiArCWNoYXIgZGVzY1tSUE1T
-R19OQU1FX1NJWkVdOw0KPiAgIAl1MzIgc3JjOw0KPiAgIAl1MzIgZHN0Ow0KPiAgIH07DQo+IEBA
-IC00Miw2ICs0NCw3IEBAIHN0cnVjdCBycG1zZ19jaGFubmVsX2luZm8gew0KPiAgICAqIEBkZXY6
-IHRoZSBkZXZpY2Ugc3RydWN0DQo+ICAgICogQGlkOiBkZXZpY2UgaWQgKHVzZWQgdG8gbWF0Y2gg
-YmV0d2VlbiBycG1zZyBkcml2ZXJzIGFuZCBkZXZpY2VzKQ0KPiAgICAqIEBkcml2ZXJfb3ZlcnJp
-ZGU6IGRyaXZlciBuYW1lIHRvIGZvcmNlIGEgbWF0Y2gNCj4gKyAqIEBkZXNjOiBkZXNjcmlwdGlv
-biBvZiByZW1vdGUgc2VydmljZQ0KPiAgICAqIEBzcmM6IGxvY2FsIGFkZHJlc3MNCj4gICAgKiBA
-ZHN0OiBkZXN0aW5hdGlvbiBhZGRyZXNzDQo+ICAgICogQGVwdDogdGhlIHJwbXNnIGVuZHBvaW50
-IG9mIHRoaXMgY2hhbm5lbA0KPiBAQCAtNTEsNiArNTQsNyBAQCBzdHJ1Y3QgcnBtc2dfZGV2aWNl
-IHsNCj4gICAJc3RydWN0IGRldmljZSBkZXY7DQo+ICAgCXN0cnVjdCBycG1zZ19kZXZpY2VfaWQg
-aWQ7DQo+ICAgCWNoYXIgKmRyaXZlcl9vdmVycmlkZTsNCj4gKwljaGFyIGRlc2NbUlBNU0dfTkFN
-RV9TSVpFXTsNCj4gICAJdTMyIHNyYzsNCj4gICAJdTMyIGRzdDsNCj4gICAJc3RydWN0IHJwbXNn
-X2VuZHBvaW50ICplcHQ7DQoNCg==
+From: Ohad Ben-Cohen <ohad@wizery.com>
+
+Add a new description field to the rpmsg bus infrastructure
+that can be passed onto the rpmsg client drivers for additional
+information. The current rpmsg bus client drivers need to have
+a fixed id_table for proper matching, this new field can allow
+flexibility for the client drivers (eg: like creating unique
+cdevs).
+
+The description field is published through an enhanced name
+service announcement message structure. The name service
+message processing logic is updated to maintain backward
+compatibility with the previous message structure.
+
+Based on an initial patch from Ohad Ben-Cohen.
+
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+[s-anna@ti.com: forward port, add sysfs documentation, fixup qcom drivers]
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: reworked to support both rpmsg with/without the desc field]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ Documentation/ABI/testing/sysfs-bus-rpmsg | 29 +++++++++++++++
+ drivers/rpmsg/qcom_glink_native.c         |  1 +
+ drivers/rpmsg/qcom_smd.c                  |  1 +
+ drivers/rpmsg/rpmsg_char.c                |  1 +
+ drivers/rpmsg/rpmsg_core.c                |  6 ++++
+ drivers/rpmsg/virtio_rpmsg_bus.c          | 44 +++++++++++++++++++----
+ drivers/soc/qcom/wcnss_ctrl.c             |  1 +
+ include/linux/rpmsg.h                     |  4 +++
+ 8 files changed, 80 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
+index 990fcc420935..7f1b09ecc64d 100644
+--- a/Documentation/ABI/testing/sysfs-bus-rpmsg
++++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
+@@ -93,3 +93,32 @@ Description:
+ 		This sysfs entry allows the rpmsg driver for a rpmsg device
+ 		to be specified which will override standard OF, ID table
+ 		and name matching.
++
++What:		/sys/bus/rpmsg/devices/.../desc
++Date:		August 2019
++KernelVersion:	5.4
++Contact:	Bjorn Andersson <bjorn.andersson@linaro.org>
++Description:
++		Every rpmsg device is a communication channel with a remote
++		processor. Channels are identified by a textual name (see
++		/sys/bus/rpmsg/devices/.../name above) and have a local
++		("source") rpmsg address, and remote ("destination") rpmsg
++		address.
++
++		A channel is first created when an entity, whether local
++		or remote, starts listening on it for messages (and is thus
++		called an rpmsg server). When that happens, a "name service"
++		announcement is sent to the other processor, in order to let
++		it know about the creation of the channel (this way remote
++		clients know they can start sending messages).
++
++		The listening entity (or client) which communicates with a
++		remote processor is referred as rpmsg driver. The rpmsg device
++		and rpmsg driver are matched based on rpmsg device name (see
++		/sys/bus/rpmsg/devices/.../name above) and rpmsg driver ID table.
++
++		This sysfs entry contains an additional optional description of
++		the rpmsg device that can be optionally included as part of the
++		"name service" announcement. This description is then passed on
++		to the corresponding rpmsg drivers to further distinguish multiple
++		devices associated with the same rpmsg driver.
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index f46c787733e8..cfdabddc15ac 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1456,6 +1456,7 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
+ 		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+ 		chinfo.src = RPMSG_ADDR_ANY;
+ 		chinfo.dst = RPMSG_ADDR_ANY;
++		chinfo.desc[0] = '\0';
+ 
+ 		rpmsg_unregister_device(glink->dev, &chinfo);
+ 	}
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 4abbeea782fa..7cd6b9c47065 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1307,6 +1307,7 @@ static void qcom_channel_state_worker(struct work_struct *work)
+ 		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+ 		chinfo.src = RPMSG_ADDR_ANY;
+ 		chinfo.dst = RPMSG_ADDR_ANY;
++		chinfo.desc[0] = '\0';
+ 		rpmsg_unregister_device(&edge->dev, &chinfo);
+ 		channel->registered = false;
+ 		spin_lock_irqsave(&edge->channels_lock, flags);
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index eea5ebbb5119..4bd91445a2fd 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -442,6 +442,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp, unsigned int cmd,
+ 	chinfo.name[RPMSG_NAME_SIZE-1] = '\0';
+ 	chinfo.src = eptinfo.src;
+ 	chinfo.dst = eptinfo.dst;
++	chinfo.desc[0] = '\0';
+ 
+ 	return rpmsg_eptdev_create(ctrldev, chinfo);
+ };
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index ea88fd4e2a6e..334a50425b5c 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -302,6 +302,10 @@ static int rpmsg_device_match(struct device *dev, void *data)
+ 	if (strncmp(chinfo->name, rpdev->id.name, RPMSG_NAME_SIZE))
+ 		return 0;
+ 
++	if (chinfo->desc && chinfo->desc != rpdev->desc &&
++	    strncmp(chinfo->desc, rpdev->desc, RPMSG_NAME_SIZE))
++		return 0;
++
+ 	/* found a match ! */
+ 	return 1;
+ }
+@@ -365,6 +369,7 @@ static DEVICE_ATTR_RW(field)
+ 
+ /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
+ rpmsg_show_attr(name, id.name, "%s\n");
++rpmsg_show_attr(desc, desc, "%s\n");
+ rpmsg_show_attr(src, src, "0x%x\n");
+ rpmsg_show_attr(dst, dst, "0x%x\n");
+ rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+@@ -386,6 +391,7 @@ static DEVICE_ATTR_RO(modalias);
+ 
+ static struct attribute *rpmsg_dev_attrs[] = {
+ 	&dev_attr_name.attr,
++	&dev_attr_desc.attr,
+ 	&dev_attr_modalias.attr,
+ 	&dev_attr_dst.attr,
+ 	&dev_attr_src.attr,
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 376ebbf880d6..49901582ff0e 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -110,6 +110,23 @@ struct rpmsg_ns_msg {
+ 	u32 flags;
+ } __packed;
+ 
++/**
++ * struct rpmsg_ns_msg_ext - dynamic name service announcement message v2
++ * @name: name of remote service that is published
++ * @desc: description of remote service
++ * @addr: address of remote service that is published
++ * @flags: indicates whether service is created or destroyed
++ *
++ * Interchangeable nameservice message with rpmsg_ns_msg. This one has
++ * the addition of the desc field for extra flexibility.
++ */
++struct rpmsg_ns_msg_ext {
++	char name[RPMSG_NAME_SIZE];
++	char desc[RPMSG_NAME_SIZE];
++	u32 addr;
++	u32 flags;
++} __packed;
++
+ /**
+  * enum rpmsg_ns_flags - dynamic name service announcement flags
+  *
+@@ -402,8 +419,9 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+ 	if (tmp) {
+ 		/* decrement the matched device's refcount back */
+ 		put_device(tmp);
+-		dev_err(dev, "channel %s:%x:%x already exist\n",
+-				chinfo->name, chinfo->src, chinfo->dst);
++		dev_err(dev, "channel %s:%s:%x:%x already exist\n",
++			chinfo->name, chinfo->desc,
++			chinfo->src, chinfo->dst);
+ 		return NULL;
+ 	}
+ 
+@@ -419,6 +437,7 @@ static struct rpmsg_device *rpmsg_create_channel(struct virtproc_info *vrp,
+ 	rpdev->src = chinfo->src;
+ 	rpdev->dst = chinfo->dst;
+ 	rpdev->ops = &virtio_rpmsg_ops;
++	strncpy(rpdev->desc, chinfo->desc, RPMSG_NAME_SIZE);
+ 
+ 	/*
+ 	 * rpmsg server channels has predefined local address (for now),
+@@ -816,18 +835,29 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 		       void *priv, u32 src)
+ {
+ 	struct rpmsg_ns_msg *msg = data;
++	struct rpmsg_ns_msg_ext *msg_ext = data;
+ 	struct rpmsg_device *newch;
+ 	struct rpmsg_channel_info chinfo;
+ 	struct virtproc_info *vrp = priv;
+ 	struct device *dev = &vrp->vdev->dev;
+ 	int ret;
++	u32 addr;
++	u32 flags;
+ 
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+ 	dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16, 1,
+ 			 data, len, true);
+ #endif
+ 
+-	if (len != sizeof(*msg)) {
++	if (len == sizeof(*msg)) {
++		addr = msg->addr;
++		flags = msg->flags;
++		chinfo.desc[0] = '\0';
++	} else if (len == sizeof(*msg_ext)) {
++		addr = msg_ext->addr;
++		flags = msg_ext->flags;
++		strncpy(chinfo.desc, msg_ext->desc, sizeof(chinfo.desc));
++	} else if (len != sizeof(*msg)) {
+ 		dev_err(dev, "malformed ns msg (%d)\n", len);
+ 		return -EINVAL;
+ 	}
+@@ -847,14 +877,14 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+ 
+ 	dev_info(dev, "%sing channel %s addr 0x%x\n",
+-		 msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+-		 msg->name, msg->addr);
++		 flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
++		 msg->name, addr);
+ 
+ 	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+ 	chinfo.src = RPMSG_ADDR_ANY;
+-	chinfo.dst = msg->addr;
++	chinfo.dst = addr;
+ 
+-	if (msg->flags & RPMSG_NS_DESTROY) {
++	if (flags & RPMSG_NS_DESTROY) {
+ 		ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
+ 		if (ret)
+ 			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+diff --git a/drivers/soc/qcom/wcnss_ctrl.c b/drivers/soc/qcom/wcnss_ctrl.c
+index e5c68051fb17..ad9f28dc13f1 100644
+--- a/drivers/soc/qcom/wcnss_ctrl.c
++++ b/drivers/soc/qcom/wcnss_ctrl.c
+@@ -276,6 +276,7 @@ struct rpmsg_endpoint *qcom_wcnss_open_channel(void *wcnss, const char *name, rp
+ 	strscpy(chinfo.name, name, sizeof(chinfo.name));
+ 	chinfo.src = RPMSG_ADDR_ANY;
+ 	chinfo.dst = RPMSG_ADDR_ANY;
++	chinfo.desc[0] = '\0';
+ 
+ 	return rpmsg_create_ept(_wcnss->channel->rpdev, cb, priv, chinfo);
+ }
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 9fe156d1c018..436faf04ba1c 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -28,11 +28,13 @@ struct rpmsg_endpoint_ops;
+ /**
+  * struct rpmsg_channel_info - channel info representation
+  * @name: name of service
++ * @desc: description of service
+  * @src: local address
+  * @dst: destination address
+  */
+ struct rpmsg_channel_info {
+ 	char name[RPMSG_NAME_SIZE];
++	char desc[RPMSG_NAME_SIZE];
+ 	u32 src;
+ 	u32 dst;
+ };
+@@ -42,6 +44,7 @@ struct rpmsg_channel_info {
+  * @dev: the device struct
+  * @id: device id (used to match between rpmsg drivers and devices)
+  * @driver_override: driver name to force a match
++ * @desc: description of remote service
+  * @src: local address
+  * @dst: destination address
+  * @ept: the rpmsg endpoint of this channel
+@@ -51,6 +54,7 @@ struct rpmsg_device {
+ 	struct device dev;
+ 	struct rpmsg_device_id id;
+ 	char *driver_override;
++	char desc[RPMSG_NAME_SIZE];
+ 	u32 src;
+ 	u32 dst;
+ 	struct rpmsg_endpoint *ept;
+-- 
+2.22.0
