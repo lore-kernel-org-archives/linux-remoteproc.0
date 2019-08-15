@@ -1,81 +1,93 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 20 Aug 2019 15:50:44 -0500
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: Document JZ47xx VPU auxiliary
- processor
-Message-ID: <20190820205044.GA1223@bogus>
-References: <20190729183109.18283-1-paul@crapouillou.net>
+Return-Path: <pihsun@chromium.org>
+Return-Path: <pihsun@chromium.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v16 1/5] dt-bindings: Add a binding for Mediatek SCP
+Date: Thu, 15 Aug 2019 15:16:25 +0800
+Message-Id: <20190815071635.168671-2-pihsun@chromium.org>
+In-Reply-To: <20190815071635.168671-1-pihsun@chromium.org>
+References: <20190815071635.168671-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729183109.18283-1-paul@crapouillou.net>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Paul Burton <paul.burton@mips.com>, od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Jul 29, 2019 at 02:31:07PM -0400, Paul Cercueil wrote:
-> Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-> Ingenic is a second Xburst MIPS CPU very similar to the main core.
-> This document describes the devicetree bindings for this auxiliary
-> processor.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->     v2: Update TCSM0 address in example
-> 
->  .../bindings/remoteproc/ingenic,vpu.txt       | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
-> new file mode 100644
-> index 000000000000..576f9e582780
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
-> @@ -0,0 +1,36 @@
-> +* Ingenic JZ47xx auxiliary processor
-> +
-> +Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from Ingenic
-> +is a second Xburst MIPS CPU very similar to the main core.
-> +This document describes the devicetree bindings for this auxiliary processor.
-> +
-> +Required properties:
-> +- compatible: Should be "ingenic,jz4770-vpu-rproc"
-> +- reg: Must contain the registers location and length for:
-> +  * the auxiliary processor,
-> +  * the Tightly Coupled Shared Memory 0 (TCSM0),
-> +  * the Tightly Coupled Shared Memory 1 (TCSM1),
-> +  * the shared SRAM.
-> +- reg-names: Must contain "aux", "tcsm0", "tcsm1", "sram".
-> +- clocks: Clock specifier for the AUX and VPU clocks.
-> +- clock-names: Must contain "aux", "vpu".
-> +- interrupts: Interrupt specifier for the VPU hardware block.
-> +
-> +Example:
-> +
-> +vpu: cpu@132a0000 {
+From: Erin Lo <erin.lo@mediatek.com>
 
-cpu is reserved for CPUs under /cpus/. Use video-codec or video-decoder 
-or ?? It's not clear what type of video processing this does.
+Add a DT binding documentation of SCP for the
+MT8183 SoC from Mediatek.
 
-> +	compatible = "ingenic,jz4770-vpu-rproc";
-> +
-> +	reg = <0x132a0000 0x20 /* AUX */
-> +		   0x132b0000 0x4000 /* TCSM0 */
-> +		   0x132c0000 0xc000 /* TCSM1 */
-> +		   0x132f0000 0x7000 /* SRAM */
-> +	>;
-> +	reg-names = "aux", "tcsm0", "tcsm1", "sram";
-> +
-> +	clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
-> +	clock-names = "aux", "vpu";
-> +
-> +	interrupt-parent = <&cpuintc>;
-> +	interrupts = <3>;
-> +};
-> -- 
-> 2.21.0.593.g511ec345e18
-> 
+Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes from v15, v14, v13, v12, v11, v10, v9, v8, v7, v6:
+ - No change.
+
+Changes from v5:
+ - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+
+Changes from v4:
+ - Add detail of more properties.
+ - Document the usage of mtk,rpmsg-name in subnode from the new design.
+
+Changes from v3:
+ - No change.
+
+Changes from v2:
+ - No change. I realized that for this patch series, there's no need to
+   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
+   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
+   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
+   created by SCP name service.
+
+Changes from v1:
+ - No change.
+---
+ .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+new file mode 100644
+index 000000000000..3ba668bab14b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+@@ -0,0 +1,36 @@
++Mediatek SCP Bindings
++----------------------------------------
++
++This binding provides support for ARM Cortex M4 Co-processor found on some
++Mediatek SoCs.
++
++Required properties:
++- compatible		Should be "mediatek,mt8183-scp"
++- reg			Should contain the address ranges for the two memory
++			regions, SRAM and CFG.
++- reg-names		Contains the corresponding names for the two memory
++			regions. These should be named "sram" & "cfg".
++- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
++- clock-names		Contains the corresponding name for the clock. This
++			should be named "main".
++
++Subnodes
++--------
++
++Subnodes of the SCP represent rpmsg devices. The names of the devices are not
++important. The properties of these nodes are defined by the individual bindings
++for the rpmsg devices - but must contain the following property:
++
++- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
++			the subnode to rpmsg device announced by SCP.
++
++Example:
++
++	scp: scp@10500000 {
++		compatible = "mediatek,mt8183-scp";
++		reg = <0 0x10500000 0 0x80000>,
++		      <0 0x105c0000 0 0x5000>;
++		reg-names = "sram", "cfg";
++		clocks = <&infracfg CLK_INFRA_SCPSYS>;
++		clock-names = "main";
++	};
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
