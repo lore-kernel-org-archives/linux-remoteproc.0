@@ -1,54 +1,36 @@
-Return-Path: <gustavo@embeddedor.com>
-Date: Thu, 29 Aug 2019 13:17:21 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] rpmsg: glink: Use struct_size() helper
-Message-ID: <20190829181721.GA22554@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] rpmsg: glink-smem: Name the edge based on parent remoteproc
+Date: Mon, 19 Aug 2019 21:16:56 -0700
+Message-Id: <20190820041656.17197-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Naming the glink edge device on the parent of_node short name causes
+collisions when multiple remoteproc instances with only different unit
+address are described on the platform_bus in DeviceTree.
 
-struct {
-	...
-	struct intent_pair intents[];
-} __packed * msg;
+Base the edge's name on the parent remoteproc's name instead, to ensure
+that it's unique.
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
-
-So, replace the following form:
-
-sizeof(*msg) + sizeof(struct intent_pair) * count
-
-with:
-
-struct_size(msg, intents, count)
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 2 +-
+ drivers/rpmsg/qcom_glink_smem.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index f46c787733e8..621f1afd4d6b 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -892,7 +892,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
- 		struct intent_pair intents[];
- 	} __packed * msg;
- 
--	const size_t msglen = sizeof(*msg) + sizeof(struct intent_pair) * count;
-+	const size_t msglen = struct_size(msg, intents, count);
- 	int ret;
- 	int i;
- 	unsigned long flags;
+diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+index 64a5ce324c7f..4238383d8685 100644
+--- a/drivers/rpmsg/qcom_glink_smem.c
++++ b/drivers/rpmsg/qcom_glink_smem.c
+@@ -201,7 +201,7 @@ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
+ 	dev->parent = parent;
+ 	dev->of_node = node;
+ 	dev->release = qcom_glink_smem_release;
+-	dev_set_name(dev, "%pOFn:%pOFn", node->parent, node);
++	dev_set_name(dev, "%s:%pOFn", dev_name(parent->parent), node);
+ 	ret = device_register(dev);
+ 	if (ret) {
+ 		pr_err("failed to register glink edge\n");
 -- 
-2.23.0
+2.18.0
