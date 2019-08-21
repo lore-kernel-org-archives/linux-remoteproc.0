@@ -1,69 +1,47 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [RESEND 1/2] remoteproc: replace bool from struct rproc by u8
-Date: Wed, 7 Aug 2019 11:41:18 +0200
-Message-ID: <1565170879-3185-2-git-send-email-loic.pallardy@st.com>
-In-Reply-To: <1565170879-3185-1-git-send-email-loic.pallardy@st.com>
-References: <1565170879-3185-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:44670 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfHUSGG (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 21 Aug 2019 14:06:06 -0400
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH] remoteproc: qcom: q6v5-mss: fixup q6v5_pds_enable error handling
+Date: Wed, 21 Aug 2019 23:35:48 +0530
+Message-Id: <20190821180548.9458-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Content-Transfer-Encoding: 8bit
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org
+Cc: agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, rnayak@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Post [1] and checkpatch tool indicate that usage of bool type
-in structure is now no more allowed/advised.
-This patch replaces bool by unsigned char (u8) and reorders
-struct rproc fields to avoid padding.
+dev_pm_domain_attach_by_name will return NULL if the requested
+power-domain is not a part device node. This could result in
+NULL pointer de-reference in q6v5_pds_enable. Fix this by
+checking for IS_ERR_OR_NULL and forward the appropriate error
+code.
 
-[1] https://lkml.org/lkml/2017/11/21/384
-
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Fixes: 4760a896be88e ("remoteproc: q6v5-mss: Vote for rpmh power domains")
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- include/linux/remoteproc.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..8cd22fecea61 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -472,15 +472,15 @@ struct rproc_dump_segment {
-  * @index: index of this rproc device
-  * @crash_handler: workqueue for handling a crash
-  * @crash_cnt: crash counter
-- * @recovery_disabled: flag that state if recovery was disabled
-  * @max_notifyid: largest allocated notify id.
-  * @table_ptr: pointer to the resource table in effect
-  * @cached_table: copy of the resource table
-  * @table_sz: size of @cached_table
-- * @has_iommu: flag to indicate if remote processor is behind an MMU
-- * @auto_boot: flag to indicate if remote processor should be auto-started
-  * @dump_segments: list of segments in the firmware
-  * @nb_vdev: number of vdev currently handled by rproc
-+ * @recovery_disabled: flag that state if recovery was disabled
-+ * @has_iommu: flag to indicate if remote processor is behind an MMU
-+ * @auto_boot: flag to indicate if remote processor should be auto-started
-  */
- struct rproc {
- 	struct list_head node;
-@@ -505,15 +505,15 @@ struct rproc {
- 	int index;
- 	struct work_struct crash_handler;
- 	unsigned int crash_cnt;
--	bool recovery_disabled;
- 	int max_notifyid;
- 	struct resource_table *table_ptr;
- 	struct resource_table *cached_table;
- 	size_t table_sz;
--	bool has_iommu;
--	bool auto_boot;
- 	struct list_head dump_segments;
- 	int nb_vdev;
-+	u8 recovery_disabled;
-+	u8 has_iommu;
-+	u8 auto_boot;
- };
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 8fcf9d28dd731..de919f2e8b949 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1282,8 +1282,8 @@ static int q6v5_pds_attach(struct device *dev, struct device **devs,
  
- /**
+ 	for (i = 0; i < num_pds; i++) {
+ 		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
+-		if (IS_ERR(devs[i])) {
+-			ret = PTR_ERR(devs[i]);
++		if (IS_ERR_OR_NULL(devs[i])) {
++			ret = PTR_ERR(devs[i]) ? : -ENODATA;
+ 			goto unroll_attach;
+ 		}
+ 	}
 -- 
-2.7.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
