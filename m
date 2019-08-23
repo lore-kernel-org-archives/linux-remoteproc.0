@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v14 0/5] Add support for mt8183 SCP.
-Date: Mon,  5 Aug 2019 18:49:21 +0800
-Message-Id: <20190805104932.96745-1-pihsun@chromium.org>
+Return-Path: <govinds@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, "open list:OPEN FIRMWARE AND FLATTENED" <devicetree@vger.kernel.org>, DEVICE, "moderated list:ARM/Mediatek SoC" <linux-arm-kernel@lists.infradead.org>, support, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC" <linux-mediatek@lists.infradead.org>support, "open list:REMOTE PROCESSOR" <linux-remoteproc@vger.kernel.org>, SUBSYSTEM
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 23 Aug 2019 18:48:57 +0530
+From: Govind Singh <govinds@codeaurora.org>
+Subject: Re: [v2 1/2] dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock
+ controller bindings
+In-Reply-To: <CAL_JsqK-GK8arfRu6sqP9UjNrwc0=aUWXymMRF5fQhg+M2TNng@mail.gmail.com>
+References: <20190813130946.16448-1-govinds@codeaurora.org>
+ <20190813130946.16448-2-govinds@codeaurora.org>
+ <CAL_JsqK-GK8arfRu6sqP9UjNrwc0=aUWXymMRF5fQhg+M2TNng@mail.gmail.com>
+Message-ID: <2454a240a165862c551b52b224ceedab@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org, "ARM/QUALCOMM SUPPORT  <linux-soc@vger.kernel.org>, Andy Gross" <andy.gross@linaro.org>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for controlling and communicating with mt8183's system
-control processor (SCP), using the remoteproc & rpmsg framework.
-And also add a cros_ec driver for CrOS EC host command over rpmsg.
+Hi Rob,
 
-The overall structure of the series is:
-* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2, 3).
-* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
-  interrupt (IPI) and shared memory (Patch 2, 3).
-* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
-  device. Supports name service for SCP firmware to
-  announce channels (Patch 4).
-* add scp dts node to mt8183 platform (Patch 5).
+On 2019-08-13 19:13, Rob Herring wrote:
+> On Tue, Aug 13, 2019 at 7:10 AM Govind Singh <govinds@codeaurora.org> 
+> wrote:
+>> 
+>> Add devicetree binding for the Q6SSTOP clock controller found in 
+>> QCS404.
+> 
+> You need to test this with 'make dt_binding_check' and fix the errors.
+> 
 
-Changes from v13:
- - Move include/linux/platform_data/mtk_scp.h to
-   include/linux/remoteproc/mtk_scp.h.
- - Rename scp_get_reserve_* to scp_get_reserved_*.
- - Add lock for access of scp->ipi_desc.
- - Lock the whole ipi_send function.
- - Move more setting of cache size from SCP firmware to kernel driver,
-   to prevent problem while loading firmware onto DRAM.
- - Minor fixes addressing comment.
+Fixed in v3.
 
-Changes from v12:
- - Initialize cache before firmware load, to avoid problem while loading
-   large firmware.
- - Disable watchdog before stopping SCP, to avoid extra warning message.
- - Fix new warnings by checkpatch.
+>> 
+>> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+>> ---
+>>  .../bindings/clock/qcom,q6sstopcc.yaml        | 45 
+>> +++++++++++++++++++
+>>  1 file changed, 45 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml 
+>> b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+>> new file mode 100644
+>> index 000000000000..861e9ba97ca3
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+>> @@ -0,0 +1,45 @@
+>> +# SPDX-License-Identifier: BSD-2-Clause
+> 
+> GPL-2.0-only OR BSD-2-Clause
+> 
 
-Changes from v11:
- - Fixed a bug that mtk_rpmsg_endpoint is not properly cleaned up if
-   rproc_boot fails.
- - Add missing documentation in comment.
+I have kept BSD-2-Clause as its new binding.
 
-Changes from v10:
- - Drop applied cros_ec_rpmsg patches.
- - Add clock reset before loading SCP firmware.
- - Fix some type mismatch warnings when printing debug messages.
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/interconnect/qcom,osm-l3.yaml#
+> 
+> needs updating
+> 
 
-Changes from v9:
- - Remove reserve-memory-vpu_share node.
- - Remove change to cros_ec_commands.h (That is already in
-   https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/)
+Fixed in V3.
 
-Changes from v8:
- - Rebased onto https://patchwork.kernel.org/cover/10962385/.
- - Drop merged cros_ec_rpmsg patch, and add scp dts node patch.
- - Add more reserved memory region.
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Q6SSTOP clock Controller
+>> +
+>> +maintainers:
+>> +  - Govind Singh <govinds@codeaurora.org>
+>> +
+>> +description:
+>> +   Q6SSTOP clock controller is used by WCSS remoteproc driver
+>> +   to bring WDSP out of reset.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: "qcom,qcs404-q6sstopcc"
+>> +
+>> +  reg:
+>> +    maxItems: 2
+>> +    description: Q6SSTOP clocks register region
+>> +    description: Q6SSTOP_TCSR register region
+> 
+> Not valid json-schema
+> 
 
-Changes from v7:
- - Rebase onto https://lore.kernel.org/patchwork/patch/1059196/.
- - Fix clock enable/disable timing for SCP driver.
- - Add more SCP IPI ID.
+Fixed in V3.
 
-Changes from v6:
- - Decouple mtk_rpmsg from mtk_scp.
- - Change data of EC response to be aligned to 4 bytes.
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: ahb clock for the q6sstopCC
+> 
+> Single item just needs 'maxItems: 1'
+> 
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - '#clock-cells'
+> 
+> Should have an 'additionalProperties: false' here.
+> 
 
-Changes from v5:
- - Add device tree binding document for cros_ec_rpmsg.
- - Better document in comments for cros_ec_rpmsg.
- - Remove dependency on CONFIG_ in binding tree document.
+Fixed in v3.
 
-Changes from v4:
- - Merge patch 6 (Load ELF firmware) into patch 2, so the driver loads
-   ELF firmware by default, and no longer accept plain binary.
- - rpmsg_device listed in device tree (as a child of the SCP node) would
-   have it's device tree node mapped to the rpmsg_device, so the rpmsg
-   driver can use the properties on device tree.
+>> +
+>> +examples:
+>> +  - |
+>> +    q6sstopcc: clock-controller@7500000 {
+>> +      compatible = "qcom,qcs404-q6sstopcc";
+>> +      reg = <0x07500000 0x4e000>, <0x07550000 0x10000>;
+>> +      clocks = <&gcc GCC_WCSS_Q6_AHB_CLK>;
+>> +      #clock-cells = <1>;
+>> +    };
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
+>> 
 
-Changes from v3:
- - Make writing to SCP SRAM aligned.
- - Add a new patch (Patch 6) to load ELF instead of bin firmware.
- - Add host event support for EC driver.
- - Fix some bugs found in testing (missing spin_lock_init,
-   rproc_subdev_unprepare to rproc_subdev_stop).
- - Fix some coding style issue found by checkpatch.pl.
-
-Changes from v2:
- - Fold patch 3 into patch 2 in v2.
- - Move IPI id around to support cross-testing for old and new firmware.
- - Finish more TODO items.
-
-Changes from v1:
- - Extract functions and rename variables in mtk_scp.c.
- - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
-   short-lived work items.
- - Code format fix based on feedback for cros_ec_rpmsg.c.
- - Extract feature detection for SCP into separate patch (Patch 6).
-
-Eddie Huang (1):
-  arm64: dts: mt8183: add scp node
-
-Erin Lo (3):
-  dt-bindings: Add a binding for Mediatek SCP
-  remoteproc/mediatek: add SCP support for mt8183
-  remoteproc: mt8183: add reserved memory manager API
-
-Pi-Hsun Shih (1):
-  rpmsg: add rpmsg support for mt8183 SCP.
-
- .../bindings/remoteproc/mtk,scp.txt           |  36 +
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
- arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
- drivers/remoteproc/Kconfig                    |  10 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/mtk_common.h               |  92 +++
- drivers/remoteproc/mtk_scp.c                  | 710 ++++++++++++++++++
- drivers/remoteproc/mtk_scp_ipi.c              | 159 ++++
- drivers/rpmsg/Kconfig                         |   9 +
- drivers/rpmsg/Makefile                        |   1 +
- drivers/rpmsg/mtk_rpmsg.c                     | 414 ++++++++++
- include/linux/remoteproc/mtk_scp.h            | 168 +++++
- include/linux/rpmsg/mtk_rpmsg.h               |  38 +
- 13 files changed, 1661 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
- create mode 100644 drivers/remoteproc/mtk_common.h
- create mode 100644 drivers/remoteproc/mtk_scp.c
- create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
- create mode 100644 drivers/rpmsg/mtk_rpmsg.c
- create mode 100644 include/linux/remoteproc/mtk_scp.h
- create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
-
--- 
-2.22.0.770.g0f2c4a37fd-goog
+BR,
+Govind
