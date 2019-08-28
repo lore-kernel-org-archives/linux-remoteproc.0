@@ -1,712 +1,397 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v15 4/5] rpmsg: add rpmsg support for mt8183 SCP.
-Date: Wed,  7 Aug 2019 18:43:45 +0800
-Message-Id: <20190807104352.259767-5-pihsun@chromium.org>
-In-Reply-To: <20190807104352.259767-1-pihsun@chromium.org>
-References: <20190807104352.259767-1-pihsun@chromium.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2] rpmsg: add a description field
+References: <20190815231448.10100-1-s-anna@ti.com>
+ <3d70ae75-4c62-f310-37fa-8c57bfc09dc1@st.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <351bbba8-e2c6-a195-93fe-d6ed87a9fe79@ti.com>
+Date: Wed, 28 Aug 2019 16:37:38 -0500
 MIME-Version: 1.0
+In-Reply-To: <3d70ae75-4c62-f310-37fa-8c57bfc09dc1@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, open list <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Fabien Dessenne <fabien.dessenne@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a simple rpmsg support for mt8183 SCP, that use IPI / IPC directly.
+Hi Arnaud,
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
----
-Changes from v14:
- - Change year on Copyright header to 2019.
+On 8/27/19 8:58 AM, Arnaud Pouliquen wrote:
+> Hi Suman,
+> 
+> On 8/16/19 1:14 AM, Suman Anna wrote:
+>> From: Ohad Ben-Cohen <ohad@wizery.com>
+>>
+>> Add a new description field to the rpmsg bus infrastructure
+>> that can be passed onto the rpmsg client drivers for additional
+>> information. The current rpmsg bus client drivers need to have
+>> a fixed id_table for proper matching, this new field can allow
+>> flexibility for the client drivers (eg: like creating unique
+>> cdevs).
+>>
+>> The description field is published through an enhanced name
+>> service announcement message structure. The name service
+>> message processing logic is updated to maintain backward
+>> compatibility with the previous message structure.
+> 
+> Could you give some concrete use cases associated with your need?.
+> I'm not sure I'm interpreting it correctly...
 
-Changes from v13:
- - No change.
+I have a generic rpmsg-rpc driver that allows userspace to execute any
+of a set of remote functions provided by a service. And we can have the
+same set of functions exported from different rprocs, or different
+services presenting different sets of functions. And the same service is
+used by multiple applications through their own fds. I use the desc
+field to differentiate between the services.
 
-Changes from v12:
- - Use strscpy instead of strncpy.
+> 
+> Your patch seems to me a way to create a kind of sub-service. Why not
+> simply concatenate this in the name services, i.e creating several name
+> services ("service-0", "service-1"...)?
 
-Changes from v11:
- - Fix a bug that when rproc_boot fails, the ns_ept won't be properly
-   destroyed, causing memory leak.
- - Add documentation for mtk_rpmsg_info.
+Every-time a new service is added, it requires a driver update adding
+the new service name to the compatible list, or a corresponding udev
+rule. It is really upto the individual rpmsg driver as to how it uses
+the desc field, so it is optional as far as a rpmsg driver is concerned
+(since this didn't exist previously, and so all existing drivers will
+continue to work as before).
 
-Changes from v10, v9, v8, v7:
- - No change.
+> 
+> Regarding your implementation, the descriptor field seems used to:
+> - instantiate a rpmsg service
+> - retrieve the instance from the userland based on the descriptor.
+> 
+> What not just use this descriptor to provide information to userland via
+> sysfs, but not use it as a criteria to find the rpmsg device?
 
-Changes from v6:
- - Decouple mtk_rpmsg from mtk_scp by putting all necessary informations
-   (name service IPI id, register/unregister/send functions) into a
-   struct, and pass it to the mtk_rpmsg_create_rproc_subdev function.
+The rpmsg device logic for actually probing a rpmsg driver still relies
+on the name field. I added the additional check against desc to just
+ensure that there are no name clashes on the desc field. Do you have any
+concerns with this check?
 
-Changes from v5:
- - CONFIG_MTK_SCP now selects CONFIG_RPMSG_MTK_SCP, and the dummy
-   implementation for mtk_rpmsg_{create,destroy}_rproc_subdev when
-   CONFIG_RPMSG_MTK_SCP is not defined is removed.
+> 
+> In this case you can use the remote endpoint address(dst addr) to
+> instantiate the service. The descriptor field could just be an
+> information to help application to retrieve the good instance of the
+> service.
+> 
+>>
+>> Based on an initial patch from Ohad Ben-Cohen.
+>>
+>> Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+>> [s-anna@ti.com: forward port, add sysfs documentation, fixup qcom
+>> drivers]
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> [t-kristo@ti.com: reworked to support both rpmsg with/without the desc
+>> field]
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>> v2:
+>>   - Localized the desc match check to virtio-rpmsg-bus
+>>   - Enforced NULL termination of desc similar to name
+>> v1: https://patchwork.kernel.org/patch/11087717/
+>>   Documentation/ABI/testing/sysfs-bus-rpmsg | 29 ++++++++++
+>>   drivers/rpmsg/qcom_glink_native.c         |  1 +
+>>   drivers/rpmsg/qcom_smd.c                  |  1 +
+>>   drivers/rpmsg/rpmsg_char.c                |  1 +
+>>   drivers/rpmsg/rpmsg_core.c                |  2 +
+>>   drivers/rpmsg/virtio_rpmsg_bus.c          | 67 +++++++++++++++++++++--
+>>   drivers/soc/qcom/wcnss_ctrl.c             |  1 +
+>>   include/linux/rpmsg.h                     |  4 ++
+>>   8 files changed, 101 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg
+>> b/Documentation/ABI/testing/sysfs-bus-rpmsg
+>> index 990fcc420935..7f1b09ecc64d 100644
+>> --- a/Documentation/ABI/testing/sysfs-bus-rpmsg
+>> +++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
+>> @@ -93,3 +93,32 @@ Description:
+>>           This sysfs entry allows the rpmsg driver for a rpmsg device
+>>           to be specified which will override standard OF, ID table
+>>           and name matching.
+>> +
+>> +What:        /sys/bus/rpmsg/devices/.../desc
+>> +Date:        August 2019
+>> +KernelVersion:    5.4
+>> +Contact:    Bjorn Andersson <bjorn.andersson@linaro.org>
+>> +Description:
+>> +        Every rpmsg device is a communication channel with a remote
+>> +        processor. Channels are identified by a textual name (see
+>> +        /sys/bus/rpmsg/devices/.../name above) and have a local
+>> +        ("source") rpmsg address, and remote ("destination") rpmsg
+>> +        address.
+>> +
+>> +        A channel is first created when an entity, whether local
+>> +        or remote, starts listening on it for messages (and is thus
+>> +        called an rpmsg server). When that happens, a "name service"
+>> +        announcement is sent to the other processor, in order to let
+>> +        it know about the creation of the channel (this way remote
+>> +        clients know they can start sending messages).
+>> +
+>> +        The listening entity (or client) which communicates with a
+>> +        remote processor is referred as rpmsg driver. The rpmsg device
+>> +        and rpmsg driver are matched based on rpmsg device name (see
+>> +        /sys/bus/rpmsg/devices/.../name above) and rpmsg driver ID
+>> table.
+>> +
+>> +        This sysfs entry contains an additional optional description of
+>> +        the rpmsg device that can be optionally included as part of the
+>> +        "name service" announcement. This description is then passed on
+>> +        to the corresponding rpmsg drivers to further distinguish
+>> multiple
+>> +        devices associated with the same rpmsg driver.
+>> diff --git a/drivers/rpmsg/qcom_glink_native.c
+>> b/drivers/rpmsg/qcom_glink_native.c
+>> index f46c787733e8..cfdabddc15ac 100644
+>> --- a/drivers/rpmsg/qcom_glink_native.c
+>> +++ b/drivers/rpmsg/qcom_glink_native.c
+>> @@ -1456,6 +1456,7 @@ static void qcom_glink_rx_close(struct
+>> qcom_glink *glink, unsigned int rcid)
+>>           strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+>>           chinfo.src = RPMSG_ADDR_ANY;
+>>           chinfo.dst = RPMSG_ADDR_ANY;
+>> +        chinfo.desc[0] = '\0';
+>>             rpmsg_unregister_device(glink->dev, &chinfo);
+>>       }
+>> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+>> index 4abbeea782fa..7cd6b9c47065 100644
+>> --- a/drivers/rpmsg/qcom_smd.c
+>> +++ b/drivers/rpmsg/qcom_smd.c
+>> @@ -1307,6 +1307,7 @@ static void qcom_channel_state_worker(struct
+>> work_struct *work)
+>>           strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+>>           chinfo.src = RPMSG_ADDR_ANY;
+>>           chinfo.dst = RPMSG_ADDR_ANY;
+>> +        chinfo.desc[0] = '\0';
+>>           rpmsg_unregister_device(&edge->dev, &chinfo);
+>>           channel->registered = false;
+>>           spin_lock_irqsave(&edge->channels_lock, flags);
+>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+>> index eea5ebbb5119..4bd91445a2fd 100644
+>> --- a/drivers/rpmsg/rpmsg_char.c
+>> +++ b/drivers/rpmsg/rpmsg_char.c
+>> @@ -442,6 +442,7 @@ static long rpmsg_ctrldev_ioctl(struct file *fp,
+>> unsigned int cmd,
+>>       chinfo.name[RPMSG_NAME_SIZE-1] = '\0';
+>>       chinfo.src = eptinfo.src;
+>>       chinfo.dst = eptinfo.dst;
+>> +    chinfo.desc[0] = '\0';
+>>         return rpmsg_eptdev_create(ctrldev, chinfo);
+>>   };
+>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>> index ea88fd4e2a6e..ba0f2c1a7fa4 100644
+>> --- a/drivers/rpmsg/rpmsg_core.c
+>> +++ b/drivers/rpmsg/rpmsg_core.c
+>> @@ -365,6 +365,7 @@ static DEVICE_ATTR_RW(field)
+>>     /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
+>>   rpmsg_show_attr(name, id.name, "%s\n");
+>> +rpmsg_show_attr(desc, desc, "%s\n");
+>>   rpmsg_show_attr(src, src, "0x%x\n");
+>>   rpmsg_show_attr(dst, dst, "0x%x\n");
+>>   rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
+>> @@ -386,6 +387,7 @@ static DEVICE_ATTR_RO(modalias);
+>>     static struct attribute *rpmsg_dev_attrs[] = {
+>>       &dev_attr_name.attr,
+>> +    &dev_attr_desc.attr,
+>>       &dev_attr_modalias.attr,
+>>       &dev_attr_dst.attr,
+>>       &dev_attr_src.attr,
+>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c
+>> b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> index 5d3685bd76a2..b42277cd7759 100644
+>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> @@ -110,6 +110,23 @@ struct rpmsg_ns_msg {
+>>       u32 flags;
+>>   } __packed;
+>>   +/**
+>> + * struct rpmsg_ns_msg_ext - dynamic name service announcement
+>> message v2
+>> + * @name: name of remote service that is published
+>> + * @desc: description of remote service
+>> + * @addr: address of remote service that is published
+>> + * @flags: indicates whether service is created or destroyed
+>> + *
+>> + * Interchangeable nameservice message with rpmsg_ns_msg. This one has
+>> + * the addition of the desc field for extra flexibility.
+>> + */
+>> +struct rpmsg_ns_msg_ext {
+>> +    char name[RPMSG_NAME_SIZE];
+>> +    char desc[RPMSG_NAME_SIZE];
+>> +    u32 addr;
+>> +    u32 flags;
+>> +} __packed;
+>> +
+>>   /**
+>>    * enum rpmsg_ns_flags - dynamic name service announcement flags
+>>    *
+>> @@ -384,6 +401,24 @@ static void virtio_rpmsg_release_device(struct
+>> device *dev)
+>>       kfree(vch);
+>>   }
+>>   +static int virtio_rpmsg_desc_match(struct device *dev, void *data)
+>> +{
+>> +    struct rpmsg_channel_info *chinfo = data;
+>> +    struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+>> +
+>> +    if (!*chinfo->desc)
+>> +        return 0;
+>> +
+>> +    if (strncmp(chinfo->name, rpdev->id.name, RPMSG_NAME_SIZE))
+>> +        return 0;
+>> +
+>> +    if (strncmp(chinfo->desc, rpdev->desc, RPMSG_NAME_SIZE))
+>> +        return 0;
+>> +
+>> +    /* found a match ! */
+>> +    return 1;
+>> +}
+>> +
+>>   /*
+>>    * create an rpmsg channel using its name and address info.
+>>    * this function will be used to create both static and dynamic
+>> @@ -407,6 +442,15 @@ static struct rpmsg_device
+>> *rpmsg_create_channel(struct virtproc_info *vrp,
+>>           return NULL;
+>>       }
+>>   +    tmp = device_find_child(dev, chinfo, virtio_rpmsg_desc_match);
+>> +    if (tmp) {
+>> +        /* decrement the matched device's refcount back */
+>> +        put_device(tmp);
+>> +        dev_err(dev, "channel %s:%x:%x failed, desc '%s' already
+>> exists\n",
+>> +            chinfo->name, chinfo->src, chinfo->dst, chinfo->desc);
+>> +        return NULL;
+>> +    }
+>> +
+>>       vch = kzalloc(sizeof(*vch), GFP_KERNEL);
+>>       if (!vch)
+>>           return NULL;
+>> @@ -419,6 +463,7 @@ static struct rpmsg_device
+>> *rpmsg_create_channel(struct virtproc_info *vrp,
+>>       rpdev->src = chinfo->src;
+>>       rpdev->dst = chinfo->dst;
+>>       rpdev->ops = &virtio_rpmsg_ops;
+>> +    strncpy(rpdev->desc, chinfo->desc, RPMSG_NAME_SIZE);
+>>         /*
+>>        * rpmsg server channels has predefined local address (for now),
+>> @@ -816,18 +861,30 @@ static int rpmsg_ns_cb(struct rpmsg_device
+>> *rpdev, void *data, int len,
+>>                  void *priv, u32 src)
+>>   {
+>>       struct rpmsg_ns_msg *msg = data;
+>> +    struct rpmsg_ns_msg_ext *msg_ext = data;
+>>       struct rpmsg_device *newch;
+>>       struct rpmsg_channel_info chinfo;
+>>       struct virtproc_info *vrp = priv;
+>>       struct device *dev = &vrp->vdev->dev;
+>>       int ret;
+>> +    u32 addr;
+>> +    u32 flags;
+>>     #if defined(CONFIG_DYNAMIC_DEBUG)
+>>       dynamic_hex_dump("NS announcement: ", DUMP_PREFIX_NONE, 16, 1,
+>>                data, len, true);
+>>   #endif
+>>   -    if (len != sizeof(*msg)) {
+>> +    if (len == sizeof(*msg)) {
+>> +        addr = msg->addr;
+>> +        flags = msg->flags;
+>> +        chinfo.desc[0] = '\0';
+>> +    } else if (len == sizeof(*msg_ext)) {
+>> +        addr = msg_ext->addr;
+>> +        flags = msg_ext->flags;
+>> +        msg_ext->desc[RPMSG_NAME_SIZE - 1] = '\0';
+>> +        strncpy(chinfo.desc, msg_ext->desc, sizeof(chinfo.desc));
+>> +    } else {
+>>           dev_err(dev, "malformed ns msg (%d)\n", len);
+>>           return -EINVAL;
+>>       }
+>> @@ -847,14 +904,14 @@ static int rpmsg_ns_cb(struct rpmsg_device
+>> *rpdev, void *data, int len,
+>>       msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+>>         dev_info(dev, "%sing channel %s addr 0x%x\n",
+>> -         msg->flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+>> -         msg->name, msg->addr);
+>> +         flags & RPMSG_NS_DESTROY ? "destroy" : "creat",
+>> +         msg->name, addr);
+>>         strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
+>>       chinfo.src = RPMSG_ADDR_ANY;
+>> -    chinfo.dst = msg->addr;
+>> +    chinfo.dst = addr;
+>>   -    if (msg->flags & RPMSG_NS_DESTROY) {
+>> +    if (flags & RPMSG_NS_DESTROY) {
+>>           ret = rpmsg_unregister_device(&vrp->vdev->dev, &chinfo);
+>>           if (ret)
+>>               dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+>> diff --git a/drivers/soc/qcom/wcnss_ctrl.c
+>> b/drivers/soc/qcom/wcnss_ctrl.c
+>> index e5c68051fb17..ad9f28dc13f1 100644
+>> --- a/drivers/soc/qcom/wcnss_ctrl.c
+>> +++ b/drivers/soc/qcom/wcnss_ctrl.c
+>> @@ -276,6 +276,7 @@ struct rpmsg_endpoint
+>> *qcom_wcnss_open_channel(void *wcnss, const char *name, rp
+>>       strscpy(chinfo.name, name, sizeof(chinfo.name));
+>>       chinfo.src = RPMSG_ADDR_ANY;
+>>       chinfo.dst = RPMSG_ADDR_ANY;
+>> +    chinfo.desc[0] = '\0';
+>>         return rpmsg_create_ept(_wcnss->channel->rpdev, cb, priv,
+>> chinfo);
 
-Changes from v4:
- - Match and fill the device tree node to the created rpmsg subdevice,
-   so the rpmsg subdevice can utilize the properties and subnodes on
-   device tree (This is similar to what drivers/rpmsg/qcom_smd.c does).
+> There is another way to create a service, by registering an RPMsg
+> drivers (e.g.
+> https://elixir.bootlin.com/linux/v5.3-rc6/source/samples/rpmsg/rpmsg_client_sample.c)
 
-Changes from v3:
- - Change from unprepare to stop, to stop the rpmsg driver before the
-   rproc is stopped, avoiding problem that some rpmsg would fail after
-   rproc is stopped.
- - Add missing spin_lock_init, and use destroy_ept instead of kref_put.
+I am not sure I understand, you obviously need a rpmsg driver for a
+rpmsg device to probe.
 
-Changes from v2:
- - Unregiser IPI handler on unprepare.
- - Lock the channel list on operations.
- - Move SCP_IPI_NS_SERVICE to 0xFF.
+> 
+> In this case the descriptor can not be used, right?
+> To be compliant probably need to extend the rpmsg_device_id struct...
 
-Changes from v1:
- - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
-   short-lived work items.
- - Fix several issues checkpatch found.
----
- drivers/remoteproc/Kconfig         |   1 +
- drivers/remoteproc/mtk_common.h    |   2 +
- drivers/remoteproc/mtk_scp.c       |  38 ++-
- drivers/remoteproc/mtk_scp_ipi.c   |   1 +
- drivers/rpmsg/Kconfig              |   9 +
- drivers/rpmsg/Makefile             |   1 +
- drivers/rpmsg/mtk_rpmsg.c          | 414 +++++++++++++++++++++++++++++
- include/linux/remoteproc/mtk_scp.h |   4 +-
- include/linux/rpmsg/mtk_rpmsg.h    |  38 +++
- 9 files changed, 503 insertions(+), 5 deletions(-)
- create mode 100644 drivers/rpmsg/mtk_rpmsg.c
- create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+As I mentioned above, it is optional for backward compatibility, and the
+rpmsg client sample doesn't have any use for it atm, even if a firmware
+publishes a desc field alongside the "rpmsg-client-sample" name. That is
+why, I haven't extended the rpmsg_device_id.
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index ea71cad399f7..cff3a9fa817b 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -26,6 +26,7 @@ config IMX_REMOTEPROC
- config MTK_SCP
- 	tristate "Mediatek SCP support"
- 	depends on ARCH_MEDIATEK
-+	select RPMSG_MTK_SCP
- 	help
- 	  Say y here to support Mediatek's System Companion Processor (SCP) via
- 	  the remote processor framework.
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index e213039543ec..dbf9b339a0b7 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -69,6 +69,8 @@ struct mtk_scp {
- 	void __iomem *cpu_addr;
- 	phys_addr_t phys_addr;
- 	size_t dram_size;
-+
-+	struct rproc_subdev *rpmsg_subdev;
- };
- 
- /**
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index ae820a35bd52..33d98903c195 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -13,6 +13,7 @@
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
- #include <linux/remoteproc/mtk_scp.h>
-+#include <linux/rpmsg/mtk_rpmsg.h>
- 
- #include "mtk_common.h"
- #include "remoteproc_internal.h"
-@@ -541,6 +542,31 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 	return 0;
- }
- 
-+static struct mtk_rpmsg_info mtk_scp_rpmsg_info = {
-+	.send_ipi = scp_ipi_send,
-+	.register_ipi = scp_ipi_register,
-+	.unregister_ipi = scp_ipi_unregister,
-+	.ns_ipi_id = SCP_IPI_NS_SERVICE,
-+};
-+
-+static void scp_add_rpmsg_subdev(struct mtk_scp *scp)
-+{
-+	scp->rpmsg_subdev =
-+		mtk_rpmsg_create_rproc_subdev(to_platform_device(scp->dev),
-+					      &mtk_scp_rpmsg_info);
-+	if (scp->rpmsg_subdev)
-+		rproc_add_subdev(scp->rproc, scp->rpmsg_subdev);
-+}
-+
-+static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
-+{
-+	if (scp->rpmsg_subdev) {
-+		rproc_remove_subdev(scp->rproc, scp->rpmsg_subdev);
-+		mtk_rpmsg_destroy_rproc_subdev(scp->rpmsg_subdev);
-+		scp->rpmsg_subdev = NULL;
-+	}
-+}
-+
- static int scp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -623,22 +649,25 @@ static int scp_probe(struct platform_device *pdev)
- 	init_waitqueue_head(&scp->run.wq);
- 	init_waitqueue_head(&scp->ack_wq);
- 
-+	scp_add_rpmsg_subdev(scp);
-+
- 	ret = devm_request_threaded_irq(dev, platform_get_irq(pdev, 0), NULL,
- 					scp_irq_handler, IRQF_ONESHOT,
- 					pdev->name, scp);
- 
- 	if (ret) {
- 		dev_err(dev, "failed to request irq\n");
--		goto destroy_mutex;
-+		goto remove_subdev;
- 	}
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto destroy_mutex;
-+		goto remove_subdev;
- 
--	return ret;
-+	return 0;
- 
--destroy_mutex:
-+remove_subdev:
-+	scp_remove_rpmsg_subdev(scp);
- 	mutex_destroy(&scp->desc_lock);
- 	mutex_destroy(&scp->send_lock);
- free_rproc:
-@@ -651,6 +680,7 @@ static int scp_remove(struct platform_device *pdev)
- {
- 	struct mtk_scp *scp = platform_get_drvdata(pdev);
- 
-+	scp_remove_rpmsg_subdev(scp);
- 	mutex_destroy(&scp->desc_lock);
- 	mutex_destroy(&scp->send_lock);
- 	rproc_del(scp->rproc);
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index 59f797f9f007..a39458a0b788 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -99,6 +99,7 @@ int scp_ipi_send(struct platform_device *pdev,
- 	int ret;
- 
- 	if (WARN_ON(id <= SCP_IPI_INIT) || WARN_ON(id >= SCP_IPI_MAX) ||
-+	    WARN_ON(id == SCP_IPI_NS_SERVICE) ||
- 	    WARN_ON(len > sizeof(send_obj->share_buf)) || WARN_ON(!buf))
- 		return -EINVAL;
- 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index d0322b41eca5..85e3cc075cb4 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -15,6 +15,15 @@ config RPMSG_CHAR
- 	  in /dev. They make it possible for user-space programs to send and
- 	  receive rpmsg packets.
- 
-+config RPMSG_MTK_SCP
-+	tristate "MediaTek SCP"
-+	depends on MTK_SCP
-+	select RPMSG
-+	help
-+	  Say y here to enable support providing communication channels to
-+	  remote processors in MediaTek platforms.
-+	  This use IPI and IPC to communicate with remote processors.
-+
- config RPMSG_QCOM_GLINK_NATIVE
- 	tristate
- 	select RPMSG
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 9aa859502d27..ae92a7fb08f6 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
- obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
-+obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
-diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-new file mode 100644
-index 000000000000..ebe52c302734
---- /dev/null
-+++ b/drivers/rpmsg/mtk_rpmsg.c
-@@ -0,0 +1,414 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright 2019 Google LLC.
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+#include <linux/rpmsg/mtk_rpmsg.h>
-+#include <linux/workqueue.h>
-+
-+#include "rpmsg_internal.h"
-+
-+struct mtk_rpmsg_rproc_subdev {
-+	struct platform_device *pdev;
-+	struct mtk_rpmsg_info *info;
-+	struct rpmsg_endpoint *ns_ept;
-+	struct rproc_subdev subdev;
-+
-+	struct work_struct register_work;
-+	struct list_head channels;
-+	struct mutex channels_lock;
-+};
-+
-+#define to_mtk_subdev(d) container_of(d, struct mtk_rpmsg_rproc_subdev, subdev)
-+
-+struct mtk_rpmsg_channel_info {
-+	struct rpmsg_channel_info info;
-+	bool registered;
-+	struct list_head list;
-+};
-+
-+/**
-+ * struct rpmsg_ns_msg - dynamic name service announcement message
-+ * @name: name of remote service that is published
-+ * @addr: address of remote service that is published
-+ *
-+ * This message is sent across to publish a new service. When we receive these
-+ * messages, an appropriate rpmsg channel (i.e device) is created. In turn, the
-+ * ->probe() handler of the appropriate rpmsg driver will be invoked
-+ *  (if/as-soon-as one is registered).
-+ */
-+struct rpmsg_ns_msg {
-+	char name[RPMSG_NAME_SIZE];
-+	u32 addr;
-+} __packed;
-+
-+struct mtk_rpmsg_device {
-+	struct rpmsg_device rpdev;
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
-+};
-+
-+struct mtk_rpmsg_endpoint {
-+	struct rpmsg_endpoint ept;
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
-+};
-+
-+#define to_mtk_rpmsg_device(r) container_of(r, struct mtk_rpmsg_device, rpdev)
-+#define to_mtk_rpmsg_endpoint(r) container_of(r, struct mtk_rpmsg_endpoint, ept)
-+
-+static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops;
-+
-+static void __ept_release(struct kref *kref)
-+{
-+	struct rpmsg_endpoint *ept = container_of(kref, struct rpmsg_endpoint,
-+						  refcount);
-+	kfree(to_mtk_rpmsg_endpoint(ept));
-+}
-+
-+static void mtk_rpmsg_ipi_handler(void *data, unsigned int len, void *priv)
-+{
-+	struct mtk_rpmsg_endpoint *mept = priv;
-+	struct rpmsg_endpoint *ept = &mept->ept;
-+	int ret;
-+
-+	ret = (*ept->cb)(ept->rpdev, data, len, ept->priv, ept->addr);
-+	if (ret)
-+		dev_warn(&ept->rpdev->dev, "rpmsg handler return error = %d",
-+			 ret);
-+}
-+
-+static struct rpmsg_endpoint *
-+__rpmsg_create_ept(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
-+		   struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
-+		   u32 id)
-+{
-+	struct mtk_rpmsg_endpoint *mept;
-+	struct rpmsg_endpoint *ept;
-+	struct platform_device *pdev = mtk_subdev->pdev;
-+	int ret;
-+
-+	mept = kzalloc(sizeof(*mept), GFP_KERNEL);
-+	if (!mept)
-+		return NULL;
-+	mept->mtk_subdev = mtk_subdev;
-+
-+	ept = &mept->ept;
-+	kref_init(&ept->refcount);
-+
-+	ept->rpdev = rpdev;
-+	ept->cb = cb;
-+	ept->priv = priv;
-+	ept->ops = &mtk_rpmsg_endpoint_ops;
-+	ept->addr = id;
-+
-+	ret = mtk_subdev->info->register_ipi(pdev, id, mtk_rpmsg_ipi_handler,
-+					     mept);
-+	if (ret) {
-+		dev_err(&pdev->dev, "IPI register failed, id = %d", id);
-+		kref_put(&ept->refcount, __ept_release);
-+		return NULL;
-+	}
-+
-+	return ept;
-+}
-+
-+static struct rpmsg_endpoint *
-+mtk_rpmsg_create_ept(struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
-+		     struct rpmsg_channel_info chinfo)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev =
-+		to_mtk_rpmsg_device(rpdev)->mtk_subdev;
-+
-+	return __rpmsg_create_ept(mtk_subdev, rpdev, cb, priv, chinfo.src);
-+}
-+
-+static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev =
-+		to_mtk_rpmsg_endpoint(ept)->mtk_subdev;
-+
-+	mtk_subdev->info->unregister_ipi(mtk_subdev->pdev, ept->addr);
-+	kref_put(&ept->refcount, __ept_release);
-+}
-+
-+static int mtk_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev =
-+		to_mtk_rpmsg_endpoint(ept)->mtk_subdev;
-+
-+	return mtk_subdev->info->send_ipi(mtk_subdev->pdev, ept->addr, data,
-+					  len, 0);
-+}
-+
-+static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev =
-+		to_mtk_rpmsg_endpoint(ept)->mtk_subdev;
-+
-+	/*
-+	 * TODO: This currently is same as mtk_rpmsg_send, and wait until SCP
-+	 * received the last command.
-+	 */
-+	return mtk_subdev->info->send_ipi(mtk_subdev->pdev, ept->addr, data,
-+					  len, 0);
-+}
-+
-+static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops = {
-+	.destroy_ept = mtk_rpmsg_destroy_ept,
-+	.send = mtk_rpmsg_send,
-+	.trysend = mtk_rpmsg_trysend,
-+};
-+
-+static void mtk_rpmsg_release_device(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct mtk_rpmsg_device *mdev = to_mtk_rpmsg_device(rpdev);
-+
-+	kfree(mdev);
-+}
-+
-+static const struct rpmsg_device_ops mtk_rpmsg_device_ops = {
-+	.create_ept = mtk_rpmsg_create_ept,
-+};
-+
-+static struct device_node *
-+mtk_rpmsg_match_device_subnode(struct device_node *node, const char *channel)
-+{
-+	struct device_node *child;
-+	const char *name;
-+	int ret;
-+
-+	for_each_available_child_of_node(node, child) {
-+		ret = of_property_read_string(child, "mtk,rpmsg-name", &name);
-+		if (ret)
-+			continue;
-+
-+		if (strcmp(name, channel) == 0)
-+			return child;
-+	}
-+
-+	return NULL;
-+}
-+
-+static int mtk_rpmsg_register_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
-+				     struct rpmsg_channel_info *info)
-+{
-+	struct rpmsg_device *rpdev;
-+	struct mtk_rpmsg_device *mdev;
-+	struct platform_device *pdev = mtk_subdev->pdev;
-+	int ret;
-+
-+	mdev = kzalloc(sizeof(*mdev), GFP_KERNEL);
-+	if (!mdev)
-+		return -ENOMEM;
-+
-+	mdev->mtk_subdev = mtk_subdev;
-+
-+	rpdev = &mdev->rpdev;
-+	rpdev->ops = &mtk_rpmsg_device_ops;
-+	rpdev->src = info->src;
-+	rpdev->dst = info->dst;
-+	strscpy(rpdev->id.name, info->name, RPMSG_NAME_SIZE);
-+
-+	rpdev->dev.of_node =
-+		mtk_rpmsg_match_device_subnode(pdev->dev.of_node, info->name);
-+	rpdev->dev.parent = &pdev->dev;
-+	rpdev->dev.release = mtk_rpmsg_release_device;
-+
-+	ret = rpmsg_register_device(rpdev);
-+	if (ret) {
-+		kfree(mdev);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void mtk_register_device_work_function(struct work_struct *register_work)
-+{
-+	struct mtk_rpmsg_rproc_subdev *subdev = container_of(
-+		register_work, struct mtk_rpmsg_rproc_subdev, register_work);
-+	struct platform_device *pdev = subdev->pdev;
-+	struct mtk_rpmsg_channel_info *info;
-+	int ret;
-+
-+	mutex_lock(&subdev->channels_lock);
-+	list_for_each_entry(info, &subdev->channels, list) {
-+		if (info->registered)
-+			continue;
-+
-+		ret = mtk_rpmsg_register_device(subdev, &info->info);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Can't create rpmsg_device\n");
-+			continue;
-+		}
-+
-+		info->registered = true;
-+	}
-+	mutex_unlock(&subdev->channels_lock);
-+}
-+
-+static int mtk_rpmsg_create_device(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
-+				   char *name, u32 addr)
-+{
-+	struct mtk_rpmsg_channel_info *info;
-+
-+	info = kzalloc(sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	strscpy(info->info.name, name, RPMSG_NAME_SIZE);
-+	info->info.src = addr;
-+	info->info.dst = RPMSG_ADDR_ANY;
-+	mutex_lock(&mtk_subdev->channels_lock);
-+	list_add(&info->list, &mtk_subdev->channels);
-+	mutex_unlock(&mtk_subdev->channels_lock);
-+
-+	schedule_work(&mtk_subdev->register_work);
-+	return 0;
-+}
-+
-+static int mtk_rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
-+			   void *priv, u32 src)
-+{
-+	struct rpmsg_ns_msg *msg = data;
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = priv;
-+	struct device *dev = &mtk_subdev->pdev->dev;
-+
-+	int ret;
-+
-+	if (len != sizeof(*msg)) {
-+		dev_err(dev, "malformed ns msg (%d)\n", len);
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * the name service ept does _not_ belong to a real rpmsg channel,
-+	 * and is handled by the rpmsg bus itself.
-+	 * for sanity reasons, make sure a valid rpdev has _not_ sneaked
-+	 * in somehow.
-+	 */
-+	if (rpdev) {
-+		dev_err(dev, "anomaly: ns ept has an rpdev handle\n");
-+		return -EINVAL;
-+	}
-+
-+	/* don't trust the remote processor for null terminating the name */
-+	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
-+
-+	dev_info(dev, "creating channel %s addr 0x%x\n", msg->name, msg->addr);
-+
-+	ret = mtk_rpmsg_create_device(mtk_subdev, msg->name, msg->addr);
-+	if (ret) {
-+		dev_err(dev, "create rpmsg device failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+int mtk_rpmsg_prepare(struct rproc_subdev *subdev)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+
-+	/* a dedicated endpoint handles the name service msgs */
-+	if (mtk_subdev->info->ns_ipi_id >= 0) {
-+		mtk_subdev->ns_ept =
-+			__rpmsg_create_ept(mtk_subdev, NULL, mtk_rpmsg_ns_cb,
-+					   mtk_subdev,
-+					   mtk_subdev->info->ns_ipi_id);
-+		if (!mtk_subdev->ns_ept) {
-+			dev_err(&mtk_subdev->pdev->dev,
-+				"failed to create name service endpoint\n");
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+void mtk_rpmsg_unprepare(struct rproc_subdev *subdev)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+
-+	if (mtk_subdev->ns_ept) {
-+		mtk_rpmsg_destroy_ept(mtk_subdev->ns_ept);
-+		mtk_subdev->ns_ept = NULL;
-+	}
-+}
-+
-+void mtk_rpmsg_stop(struct rproc_subdev *subdev, bool crashed)
-+{
-+	struct mtk_rpmsg_channel_info *info, *next;
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+	struct device *dev = &mtk_subdev->pdev->dev;
-+
-+	/*
-+	 * Destroy the name service endpoint here, to avoid new channel being
-+	 * created after the rpmsg_unregister_device loop below.
-+	 */
-+	if (mtk_subdev->ns_ept) {
-+		mtk_rpmsg_destroy_ept(mtk_subdev->ns_ept);
-+		mtk_subdev->ns_ept = NULL;
-+	}
-+
-+	cancel_work_sync(&mtk_subdev->register_work);
-+
-+	mutex_lock(&mtk_subdev->channels_lock);
-+	list_for_each_entry(info, &mtk_subdev->channels, list) {
-+		if (!info->registered)
-+			continue;
-+		if (rpmsg_unregister_device(dev, &info->info)) {
-+			dev_warn(
-+				dev,
-+				"rpmsg_unregister_device failed for %s.%d.%d\n",
-+				info->info.name, info->info.src,
-+				info->info.dst);
-+		}
-+	}
-+
-+	list_for_each_entry_safe(info, next,
-+				 &mtk_subdev->channels, list) {
-+		list_del(&info->list);
-+		kfree(info);
-+	}
-+	mutex_unlock(&mtk_subdev->channels_lock);
-+}
-+
-+struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *pdev,
-+			      struct mtk_rpmsg_info *info)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev;
-+
-+	mtk_subdev = kzalloc(sizeof(*mtk_subdev), GFP_KERNEL);
-+	if (!mtk_subdev)
-+		return NULL;
-+
-+	mtk_subdev->pdev = pdev;
-+	mtk_subdev->subdev.prepare = mtk_rpmsg_prepare;
-+	mtk_subdev->subdev.stop = mtk_rpmsg_stop;
-+	mtk_subdev->subdev.unprepare = mtk_rpmsg_unprepare;
-+	mtk_subdev->info = info;
-+	INIT_LIST_HEAD(&mtk_subdev->channels);
-+	INIT_WORK(&mtk_subdev->register_work,
-+		  mtk_register_device_work_function);
-+	mutex_init(&mtk_subdev->channels_lock);
-+
-+	return &mtk_subdev->subdev;
-+}
-+EXPORT_SYMBOL_GPL(mtk_rpmsg_create_rproc_subdev);
-+
-+void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev)
-+{
-+	struct mtk_rpmsg_rproc_subdev *mtk_subdev = to_mtk_subdev(subdev);
-+
-+	kfree(mtk_subdev);
-+}
-+EXPORT_SYMBOL_GPL(mtk_rpmsg_destroy_rproc_subdev);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MediaTek scp rpmsg driver");
-diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
-index 707556f6b899..67ae6674397b 100644
---- a/include/linux/remoteproc/mtk_scp.h
-+++ b/include/linux/remoteproc/mtk_scp.h
-@@ -40,9 +40,11 @@ enum scp_ipi_id {
- 	SCP_IPI_ISP_FRAME,
- 	SCP_IPI_FD_CMD,
- 	SCP_IPI_CROS_HOST_CMD,
--	SCP_IPI_MAX,
-+	SCP_IPI_NS_SERVICE = 0xFF,
-+	SCP_IPI_MAX = 0x100,
- };
- 
-+
- /**
-  * scp_ipi_register - register an ipi function
-  *
-diff --git a/include/linux/rpmsg/mtk_rpmsg.h b/include/linux/rpmsg/mtk_rpmsg.h
-new file mode 100644
-index 000000000000..861c1cbea523
---- /dev/null
-+++ b/include/linux/rpmsg/mtk_rpmsg.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2018 Google LLC.
-+ */
-+
-+#ifndef __LINUX_RPMSG_MTK_RPMSG_H
-+#define __LINUX_RPMSG_MTK_RPMSG_H
-+
-+#include <linux/device.h>
-+#include <linux/remoteproc.h>
-+
-+typedef void (*ipi_handler_t)(void *data, unsigned int len, void *priv);
-+
-+/*
-+ * struct mtk_rpmsg_info - IPI functions tied to the rpmsg device.
-+ * @register_ipi: register IPI handler for an IPI id.
-+ * @unregister_ipi: unregister IPI handler for a registered IPI id.
-+ * @send_ipi: send IPI to an IPI id. wait is the timeout (in msecs) to wait
-+ *            until response, or 0 if there's no timeout.
-+ * @ns_ipi_id: the IPI id used for name service, or -1 if name service isn't
-+ *             supported.
-+ */
-+struct mtk_rpmsg_info {
-+	int (*register_ipi)(struct platform_device *pdev, u32 id,
-+			    ipi_handler_t handler, void *priv);
-+	void (*unregister_ipi)(struct platform_device *pdev, u32 id);
-+	int (*send_ipi)(struct platform_device *pdev, u32 id,
-+			void *buf, unsigned int len, unsigned int wait);
-+	int ns_ipi_id;
-+};
-+
-+struct rproc_subdev *
-+mtk_rpmsg_create_rproc_subdev(struct platform_device *pdev,
-+			      struct mtk_rpmsg_info *info);
-+
-+void mtk_rpmsg_destroy_rproc_subdev(struct rproc_subdev *subdev);
-+
-+#endif
--- 
-2.22.0.770.g0f2c4a37fd-goog
+regards
+Suman
+
+> 
+> Regards,
+> Arnaud
+>>   }
+>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>> index 9fe156d1c018..436faf04ba1c 100644
+>> --- a/include/linux/rpmsg.h
+>> +++ b/include/linux/rpmsg.h
+>> @@ -28,11 +28,13 @@ struct rpmsg_endpoint_ops;
+>>   /**
+>>    * struct rpmsg_channel_info - channel info representation
+>>    * @name: name of service
+>> + * @desc: description of service
+>>    * @src: local address
+>>    * @dst: destination address
+>>    */
+>>   struct rpmsg_channel_info {
+>>       char name[RPMSG_NAME_SIZE];
+>> +    char desc[RPMSG_NAME_SIZE];
+>>       u32 src;
+>>       u32 dst;
+>>   };
+>> @@ -42,6 +44,7 @@ struct rpmsg_channel_info {
+>>    * @dev: the device struct
+>>    * @id: device id (used to match between rpmsg drivers and devices)
+>>    * @driver_override: driver name to force a match
+>> + * @desc: description of remote service
+>>    * @src: local address
+>>    * @dst: destination address
+>>    * @ept: the rpmsg endpoint of this channel
+>> @@ -51,6 +54,7 @@ struct rpmsg_device {
+>>       struct device dev;
+>>       struct rpmsg_device_id id;
+>>       char *driver_override;
+>> +    char desc[RPMSG_NAME_SIZE];
+>>       u32 src;
+>>       u32 dst;
+>>       struct rpmsg_endpoint *ept;
+>>
