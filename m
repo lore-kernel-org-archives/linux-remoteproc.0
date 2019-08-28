@@ -1,93 +1,82 @@
-Return-Path: <pihsun@chromium.org>
-Return-Path: <pihsun@chromium.org>
-From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v15 1/5] dt-bindings: Add a binding for Mediatek SCP
-Date: Wed,  7 Aug 2019 18:43:42 +0800
-Message-Id: <20190807104352.259767-2-pihsun@chromium.org>
-In-Reply-To: <20190807104352.259767-1-pihsun@chromium.org>
-References: <20190807104352.259767-1-pihsun@chromium.org>
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH v5 0/2] TTY: add rpmsg tty driver
+Date: Wed, 28 Aug 2019 17:19:24 +0200
+Message-ID: <1567005566-10986-1-git-send-email-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Rob Herring <robh@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, xiang xiao <xiaoxiang781216@gmail.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Alan
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Erin Lo <erin.lo@mediatek.com>
+This patch set introduces a TTY console on top of the RPMsg framework which
+enables the following use cases:
+- Provide a console to communicate easily with the remote processor
+  application.
+- Provide an interface to get the remote processor log traces without
+  ring buffer limitation.
+- Ease the migration from MPU + MCU processors to multi core processors
+  (MPU and MCU integrated in one processor)
 
-Add a DT binding documentation of SCP for the
-MT8183 SoC from Mediatek.
+An alternative of this proposed solution would consist in using the virtio
+console:
+The drawback with that solution is that it requires a specific virtio buffer
+(in addition to the one already used for RPMsg) which does not fit with remote
+processors with little memory. The proposed solution allows to multiplex the
+console with the other rpmsg services, optimizing the memory.
 
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes from v14, v13, v12, v11, v10, v9, v8, v7, v6:
- - No change.
+The first patch adds an API to the rpmsg framework ('get max transmission unit') and the
+second one is the rpmsg tty driver itself.
 
-Changes from v5:
- - Remove dependency on CONFIG_RPMSG_MTK_SCP.
+History:
+-V4 to V5: 
+	rework RPMSG channels to offer 2 modes: with and without flow control
+	  - remove the use of the first message byte to differentiate data and control
+	  - allow communication without flow control using a single RPMsg channel
+	  - implement flow control with creating of 2 endpoints
+		- default one for the control
+		- second one for the data
+	  - data endpoint address is transmitted to the remote side trougnt the control channel
 
-Changes from v4:
- - Add detail of more properties.
- - Document the usage of mtk,rpmsg-name in subnode from the new design.
+-V3 to V4: 
+	- reformat documentation in rst format
+	- use tty_insert_flip_string_fixed_flag helper
+	- suppress some poinrter check (overprotection)
+	- move low_latency set from probe to activate ops. 
+	- various corrections and improvements relative to Jiri's comments 
 
-Changes from v3:
- - No change.
+-V2 to V3:
+	- suppress error return on rpmsg callback as not tested in rpmsg framework
+	- change some flow messages level to debug
+	- add missing out of memory checks
 
-Changes from v2:
- - No change. I realized that for this patch series, there's no need to
-   add anything under the mt8183-scp node (neither the mt8183-rpmsg or
-   the cros-ec-rpmsg) for them to work, since mt8183-rpmsg is added
-   directly as a rproc_subdev by code, and cros-ec-rpmsg is dynamically
-   created by SCP name service.
+-V1 to V2:
+	- modify message structure to allow to data transmission but also
+	flow control
+	- add documentation file to describe message structure for remote
+	  implementation
+	- add dtr/rts management
+	- disable termios modes that generates non optimized behavior on RPMsg
+	  transfers
+	- replace rpmsg_send by rpmsg_trysend to not block the write
+	- suppress useless spinlock on read
+	- miscellaneous fixes to improve robustness
 
-Changes from v1:
- - No change.
----
- .../bindings/remoteproc/mtk,scp.txt           | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+Arnaud Pouliquen (2):
+  rpmsg: core: add API to get message length
+  tty: add rpmsg driver
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-new file mode 100644
-index 000000000000..3ba668bab14b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
-@@ -0,0 +1,36 @@
-+Mediatek SCP Bindings
-+----------------------------------------
-+
-+This binding provides support for ARM Cortex M4 Co-processor found on some
-+Mediatek SoCs.
-+
-+Required properties:
-+- compatible		Should be "mediatek,mt8183-scp"
-+- reg			Should contain the address ranges for the two memory
-+			regions, SRAM and CFG.
-+- reg-names		Contains the corresponding names for the two memory
-+			regions. These should be named "sram" & "cfg".
-+- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
-+- clock-names		Contains the corresponding name for the clock. This
-+			should be named "main".
-+
-+Subnodes
-+--------
-+
-+Subnodes of the SCP represent rpmsg devices. The names of the devices are not
-+important. The properties of these nodes are defined by the individual bindings
-+for the rpmsg devices - but must contain the following property:
-+
-+- mtk,rpmsg-name	Contains the name for the rpmsg device. Used to match
-+			the subnode to rpmsg device announced by SCP.
-+
-+Example:
-+
-+	scp: scp@10500000 {
-+		compatible = "mediatek,mt8183-scp";
-+		reg = <0 0x10500000 0 0x80000>,
-+		      <0 0x105c0000 0 0x5000>;
-+		reg-names = "sram", "cfg";
-+		clocks = <&infracfg CLK_INFRA_SCPSYS>;
-+		clock-names = "main";
-+	};
+ Documentation/serial/tty_rpmsg.rst |  45 ++++
+ drivers/rpmsg/rpmsg_core.c         |  21 ++
+ drivers/rpmsg/rpmsg_internal.h     |   2 +
+ drivers/rpmsg/virtio_rpmsg_bus.c   |  10 +
+ drivers/tty/Kconfig                |   9 +
+ drivers/tty/Makefile               |   1 +
+ drivers/tty/rpmsg_tty.c            | 418 +++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg.h              |  10 +
+ 8 files changed, 516 insertions(+)
+ create mode 100644 Documentation/serial/tty_rpmsg.rst
+ create mode 100644 drivers/tty/rpmsg_tty.c
+
 -- 
-2.22.0.770.g0f2c4a37fd-goog
+2.7.4
