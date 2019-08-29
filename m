@@ -1,42 +1,53 @@
-Return-Path: <sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <gustavo@embeddedor.com>
+Subject: Re: [PATCH] rpmsg: glink: Use struct_size() helper
+References: <20190829181721.GA22554@embeddedor>
+ <20190829190955.GP6167@minitux>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <09987035-9768-f6dd-c668-5b04caf61e31@embeddedor.com>
+Date: Thu, 29 Aug 2019 14:15:42 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190726092332.25202-5-govinds@codeaurora.org>
-References: <20190726092332.25202-1-govinds@codeaurora.org> <20190726092332.25202-5-govinds@codeaurora.org>
-Subject: Re: [PATCH v5 4/7] clk: qcom: Add Q6SSTOP clock controller for QCS404
-From: Stephen Boyd <sboyd@kernel.org>
-Date: Thu, 08 Aug 2019 08:09:00 -0700
-Message-Id: <20190808150901.D6C932184E@mail.kernel.org>
-To: bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: andy.gross@linaro.org, linux-soc@vger.kernel.org, devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+In-Reply-To: <20190829190955.GP6167@minitux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Quoting Govind Singh (2019-07-26 02:23:29)
-> diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop=
--qcs404.c
-> new file mode 100644
-> index 000000000000..b6281986b077
-> --- /dev/null
-> +++ b/drivers/clk/qcom/q6sstop-qcs404.c
-> @@ -0,0 +1,223 @@
-[...]
-> +};
-> +
-> +static struct platform_driver q6sstopcc_qcs404_driver =3D {
-> +       .probe          =3D q6sstopcc_qcs404_probe,
-> +       .remove         =3D q6sstopcc_qcs404_remove,
-> +       .driver         =3D {
-> +               .name   =3D "qcs404-q6sstopcc",
-> +               .of_match_table =3D q6sstopcc_qcs404_match_table,
-> +       .pm =3D &q6sstopcc_pm_ops,
 
-This got some weird indent.
 
-> +       },
-> +};
-> +
-> +module_platform_driver(q6sstopcc_qcs404_driver);
-> +
-> +MODULE_DESCRIPTION("QTI QCS404 Q6SSTOP Clock Controller Driver");
-> +MODULE_LICENSE("GPL v2");
+On 8/29/19 2:09 PM, Bjorn Andersson wrote:
+> On Thu 29 Aug 11:17 PDT 2019, Gustavo A. R. Silva wrote:
+> 
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct {
+>> 	...
+>> 	struct intent_pair intents[];
+>> } __packed * msg;
+>>
+>> Make use of the struct_size() helper instead of an open-coded version
+>> in order to avoid any potential type mistakes.
+>>
+>> So, replace the following form:
+>>
+>> sizeof(*msg) + sizeof(struct intent_pair) * count
+>>
+>> with:
+>>
+>> struct_size(msg, intents, count)
+>>
+>> This code was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied, thanks!
+> 
+
+Awesome. :)
+
+Thanks!
+--
+Gustavo
