@@ -1,67 +1,37 @@
-Date: Sat, 21 Sep 2019 09:58:50 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [GIT PULL] remoteproc updates for v5.4
-Message-ID: <20190921165845.GA6693@tuxbook-pro>
+Return-Path: <BATV+8d7e6b8ef813b711cfc0+5853+infradead.org+hch@bombadil.srs.infradead.org>
+From: Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4/4] dma-mapping: remove the dma_declare_coherent_memory export
+Date: Mon,  2 Sep 2019 22:07:46 +0200
+Message-Id: <20190902200746.16185-5-hch@lst.de>
+In-Reply-To: <20190902200746.16185-1-hch@lst.de>
+References: <20190902200746.16185-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Fabien Dessenne <fabien.dessenne@st.com>, Sibi Sankar <sibis@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>, Suman Anna <s-anna@ti.com>
+Content-Transfer-Encoding: 8bit
+To: iommu@lists.linux-foundation.org, Loic Pallardy <loic.pallardy@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Linus,
+dma_declare_coherent_memory is something that the platform setup code
+(which pretty much means the device tree these days) need to do so that
+drivers can use the memory as declared by the platform.  Drivers
+themselves have no business calling this function.
 
-I've finally moved my trees to kernel.org, please pull this and the
-coming rpmsg request from their new location.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ kernel/dma/coherent.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Regards,
-Bjorn
-
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
-
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc tags/rproc-v5.4
-
-for you to fetch changes up to 150997fac770c37b12459ec52fdf67a5dc1366f5:
-
-  MAINTAINERS: remoteproc: update git tree location (2019-08-26 23:16:44 -0700)
-
-----------------------------------------------------------------
-remoteproc updates for v5.4
-
-This exposes the remoteproc's name in sysfs, allows stm32 to enter
-platform standby and provides bug fixes for stm32 and Qualcomm's modem
-remoteproc drivers. Finally it updates MAINTAINERS to reflect the move
-to kernel.org.
-
-----------------------------------------------------------------
-Bjorn Andersson (2):
-      remoteproc: qcom: Move glink_ssr notification after stop
-      MAINTAINERS: remoteproc: update git tree location
-
-Fabien Dessenne (2):
-      remoteproc: stm32: clear MCU PDDS at firmware start
-      remoteproc: stm32: manage the get_irq probe defer case
-
-Sibi Sankar (1):
-      remoteproc: qcom: q6v5-mss: fixup q6v5_pds_enable error handling
-
-Stephen Boyd (1):
-      remoteproc: Remove dev_err() usage after platform_get_irq()
-
-Suman Anna (1):
-      remoteproc: Add a sysfs interface for name
-
- Documentation/ABI/testing/sysfs-class-remoteproc | 10 +++++++
- MAINTAINERS                                      |  2 +-
- drivers/remoteproc/da8xx_remoteproc.c            |  4 +--
- drivers/remoteproc/keystone_remoteproc.c         |  4 ---
- drivers/remoteproc/qcom_common.c                 |  4 +--
- drivers/remoteproc/qcom_q6v5.c                   | 35 ++++--------------------
- drivers/remoteproc/qcom_q6v5_mss.c               |  4 +--
- drivers/remoteproc/remoteproc_sysfs.c            | 11 ++++++++
- drivers/remoteproc/stm32_rproc.c                 | 14 ++++++++++
- 9 files changed, 46 insertions(+), 42 deletions(-)
+diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
+index 7cafe1affdc9..545e3869b0e3 100644
+--- a/kernel/dma/coherent.c
++++ b/kernel/dma/coherent.c
+@@ -122,7 +122,6 @@ int dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
+ 		dma_release_coherent_memory(mem);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(dma_declare_coherent_memory);
+ 
+ static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
+ 		ssize_t size, dma_addr_t *dma_handle)
+-- 
+2.20.1
