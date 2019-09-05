@@ -1,18 +1,11 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45746 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731142AbfIEGTw (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 5 Sep 2019 02:19:52 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y72so1005979pfb.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Sep 2019 23:19:52 -0700 (PDT)
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v19 0/4] Add support for mt8183 SCP.
-Date: Thu,  5 Sep 2019 14:19:33 +0800
-Message-Id: <20190905061943.242729-1-pihsun@chromium.org>
+Subject: [PATCH v18 0/5] Add support for mt8183 SCP.
+Date: Thu,  5 Sep 2019 12:44:21 +0800
+Message-Id: <20190905044432.150131-1-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 Cc: Pi-Hsun Shih <pihsun@chromium.org>, "open list:OPEN FIRMWARE AND FLATTENED" <devicetree@vger.kernel.org>, DEVICE, "moderated list:ARM/Mediatek SoC" <linux-arm-kernel@lists.infradead.org>, support, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC" <linux-mediatek@lists.infradead.org>support, "open list:REMOTE PROCESSOR" <linux-remoteproc@vger.kernel.org>, SUBSYSTEM
 List-ID: <linux-remoteproc@vger.kernel.org>
 
@@ -21,16 +14,13 @@ control processor (SCP), using the remoteproc & rpmsg framework.
 And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
 The overall structure of the series is:
-* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2).
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2, 3).
 * remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
-  interrupt (IPI) and shared memory (Patch 2).
+  interrupt (IPI) and shared memory (Patch 2, 3).
 * rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
   device. Supports name service for SCP firmware to
-  announce channels (Patch 3).
-* add scp dts node to mt8183 platform (Patch 4).
-
-Changes from v18:
- - Change the way shared memory is handled, and drop patch 3.
+  announce channels (Patch 4).
+* add scp dts node to mt8183 platform (Patch 5).
 
 Changes from v17:
  - Fix mixture use of __iomem found by sparse.
@@ -129,27 +119,28 @@ Changes from v1:
 Eddie Huang (1):
   arm64: dts: mt8183: add scp node
 
-Erin Lo (2):
+Erin Lo (3):
   dt-bindings: Add a binding for Mediatek SCP
   remoteproc/mediatek: add SCP support for mt8183
+  remoteproc: mt8183: add reserved memory manager API
 
 Pi-Hsun Shih (1):
   rpmsg: add rpmsg support for mt8183 SCP.
 
- .../bindings/remoteproc/mtk,scp.txt           |  36 ++
+ .../bindings/remoteproc/mtk,scp.txt           |  36 +
  arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
  arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
  drivers/remoteproc/Kconfig                    |  10 +
  drivers/remoteproc/Makefile                   |   1 +
  drivers/remoteproc/mtk_common.h               |  94 +++
- drivers/remoteproc/mtk_scp.c                  | 583 ++++++++++++++++++
- drivers/remoteproc/mtk_scp_ipi.c              | 176 ++++++
+ drivers/remoteproc/mtk_scp.c                  | 723 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 176 +++++
  drivers/rpmsg/Kconfig                         |   9 +
  drivers/rpmsg/Makefile                        |   1 +
- drivers/rpmsg/mtk_rpmsg.c                     | 414 +++++++++++++
- include/linux/remoteproc/mtk_scp.h            | 143 +++++
- include/linux/rpmsg/mtk_rpmsg.h               |  38 ++
- 13 files changed, 1528 insertions(+)
+ drivers/rpmsg/mtk_rpmsg.c                     | 414 ++++++++++
+ include/linux/remoteproc/mtk_scp.h            | 168 ++++
+ include/linux/rpmsg/mtk_rpmsg.h               |  38 +
+ 13 files changed, 1693 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
  create mode 100644 drivers/remoteproc/mtk_common.h
  create mode 100644 drivers/remoteproc/mtk_scp.c
