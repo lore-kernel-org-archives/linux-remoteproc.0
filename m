@@ -1,10 +1,10 @@
 Return-Path: <niklas.cassel@linaro.org>
 Return-Path: <niklas.cassel@linaro.org>
-Date: Thu, 5 Sep 2019 15:14:56 +0200
+Date: Thu, 5 Sep 2019 13:13:53 +0200
 From: Niklas Cassel <niklas.cassel@linaro.org>
 Subject: Re: [PATCH] rpmsg: glink-smem: Name the edge based on parent
  remoteproc
-Message-ID: <20190905131456.GA26674@centauri>
+Message-ID: <20190905111353.GA1936@centauri>
 References: <20190820041656.17197-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -44,4 +44,11 @@ On Mon, Aug 19, 2019 at 09:16:56PM -0700, Bjorn Andersson wrote:
 > 2.18.0
 > 
 
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+This was sent 19 of August, then again (unchanged) on 29 of August.
+
+Yet it is still not in linux-next.
+It fixes a real issue on qcs404, so please merge :)
+
+
+Kind regards,
+Niklas
