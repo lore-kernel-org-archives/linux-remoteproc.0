@@ -1,182 +1,65 @@
 Return-Path: <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH v5 1/2] rpmsg: core: add API to get message length
-References: <1567005566-10986-1-git-send-email-arnaud.pouliquen@st.com>
- <1567005566-10986-2-git-send-email-arnaud.pouliquen@st.com>
- <7dc4d1cf-4f15-19ab-b8dd-424175f2a11a@ti.com>
 From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Message-ID: <f6f2ad3e-123a-268b-2586-544752c54db7@st.com>
-Date: Tue, 3 Sep 2019 11:49:26 +0200
+Subject: [PATCH 2/3] rpmsg: glink: implement get_mtu ops
+Date: Thu, 5 Sep 2019 16:27:09 +0200
+Message-ID: <1567693630-27544-3-git-send-email-arnaud.pouliquen@st.com>
+In-Reply-To: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
+References: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-In-Reply-To: <7dc4d1cf-4f15-19ab-b8dd-424175f2a11a@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Suman Anna <s-anna@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, xiang xiao <xiaoxiang781216@gmail.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-hi Suman
+Implement the get_mtu ops to return the maximum size of
+the message that can be sent.
 
-On 8/29/19 12:34 AM, Suman Anna wrote:
-> Hi Arnaud,
-> 
-> On 8/28/19 10:19 AM, Arnaud Pouliquen wrote:
->> Return the rpmsg buffer size for sending message, so rpmsg users
->> can split a long message in several sub rpmsg buffers.
-> 
-> Thanks for the patch, I also have a need for the same to be able to
-> compute permissible payload size. Minor comments below.
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+---
+ drivers/rpmsg/qcom_glink_native.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Thanks for your review. i will update it ASAP. Then if you need it and 
-ack it, i suppose that we could request Bjorn to integrate it in a first 
-step, if the rpmsg tty driver has not a level of quality sufficient to 
-be accepted...
-
-Regards
-Arnaud
-> 
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
->> ---
->> V4 to V5 :
->>    - rename rpmsg_get_buf_payload_size to rpmsg_get_mtu
->>
->>   drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
->>   drivers/rpmsg/rpmsg_internal.h   |  2 ++
->>   drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
->>   include/linux/rpmsg.h            | 10 ++++++++++
->>   4 files changed, 43 insertions(+)
->>
->> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
->> index 8122807db380..daca2e24fc71 100644
->> --- a/drivers/rpmsg/rpmsg_core.c
->> +++ b/drivers/rpmsg/rpmsg_core.c
->> @@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->>   }
->>   EXPORT_SYMBOL(rpmsg_trysend_offchannel);
->>   
->> +/**
->> + * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
->> + * @ept: the rpmsg endpoint
->> + *
->> + * This function returns maximum buffer size available for a single message.
->> + *
->> + * Return: the maximum transmission size on success and an appropriate error
->> + * value on failure.
->> + */
->> +
->> +ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->> +{
->> +	if (WARN_ON(!ept))
->> +		return -EINVAL;
->> +	if (!ept->ops->get_buf_mtu)
-> 
-> How about calling the ops just get_mtu or rename the function to follow
-> the ops name, like all the others.
-> 
->> +		return -ENXIO;
-> 
-> Perhaps ENOTSUPP or EOPNOTSUPP.
-> 
->> +
->> +	return ept->ops->get_buf_mtu(ept);
->> +}
->> +EXPORT_SYMBOL(rpmsg_get_mtu);
->> +
->>   /*
->>    * match an rpmsg channel with a channel info struct.
->>    * this is used to make sure we're not creating rpmsg devices for channels
->> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
->> index 0d791c30b7ea..645c402569ac 100644
->> --- a/drivers/rpmsg/rpmsg_internal.h
->> +++ b/drivers/rpmsg/rpmsg_internal.h
->> @@ -46,6 +46,7 @@ struct rpmsg_device_ops {
->>    * @trysend:		see @rpmsg_trysend(), required
->>    * @trysendto:		see @rpmsg_trysendto(), optional
->>    * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
->> + * @get_buf_payload_size: see @rpmsg_get_buf_payload_size(), optional
-> 
-> Missed updating the kerneldoc to the new name.
-> 
->>    *
->>    * Indirection table for the operations that a rpmsg backend should implement.
->>    * In addition to @destroy_ept, the backend must at least implement @send and
->> @@ -65,6 +66,7 @@ struct rpmsg_endpoint_ops {
->>   			     void *data, int len);
->>   	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
->>   			     poll_table *wait);
->> +	ssize_t (*get_buf_mtu)(struct rpmsg_endpoint *ept);
->>   };
->>   
->>   int rpmsg_register_device(struct rpmsg_device *rpdev);
->> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
->> index e757f0038a1c..f80b1ad23e7e 100644
->> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->> @@ -178,6 +178,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
->>   				  int len, u32 dst);
->>   static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
->>   					   u32 dst, void *data, int len);
->> +static ssize_t virtio_get_buf_mtu(struct rpmsg_endpoint *ept);
-> 
-> Minor nit, virtio_rpmsg_ prefix similar to all the other ops.
-> 
-> regards
-> Suman
-> 
->>   
->>   static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
->>   	.destroy_ept = virtio_rpmsg_destroy_ept,
->> @@ -187,6 +188,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
->>   	.trysend = virtio_rpmsg_trysend,
->>   	.trysendto = virtio_rpmsg_trysendto,
->>   	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
->> +	.get_buf_mtu = virtio_get_buf_mtu,
->>   };
->>   
->>   /**
->> @@ -702,6 +704,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
->>   	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
->>   }
->>   
->> +static ssize_t virtio_get_buf_mtu(struct rpmsg_endpoint *ept)
->> +{
->> +	struct rpmsg_device *rpdev = ept->rpdev;
->> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
->> +
->> +	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
->> +}
->> +
->>   static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->>   			     struct rpmsg_hdr *msg, unsigned int len)
->>   {
->> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
->> index 9fe156d1c018..9d638bf2bdce 100644
->> --- a/include/linux/rpmsg.h
->> +++ b/include/linux/rpmsg.h
->> @@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->>   __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
->>   			poll_table *wait);
->>   
->> +ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
->> +
->>   #else
->>   
->>   static inline int register_rpmsg_device(struct rpmsg_device *dev)
->> @@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
->>   	return 0;
->>   }
->>   
->> +static ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->> +{
->> +	/* This shouldn't be possible */
->> +	WARN_ON(1);
->> +
->> +	return -ENXIO;
->> +}
->> +
->>   #endif /* IS_ENABLED(CONFIG_RPMSG) */
->>   
->>   /* use a macro to avoid include chaining to get THIS_MODULE */
->>
-> 
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 621f1afd4d6b..8a477416a38a 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1312,6 +1312,29 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return __qcom_glink_send(channel, data, len, false);
+ }
+ 
++static ssize_t qcom_glink_get_mtu(struct rpmsg_endpoint *ept)
++{
++	struct glink_channel *channel = to_glink_channel(ept);
++	size_t mtu_size = 0;
++	struct qcom_glink *glink = channel->glink;
++	struct glink_core_rx_intent *tmp;
++	unsigned long flags;
++	int iid = 0;
++
++	if (!glink->intentless) {
++		spin_lock_irqsave(&channel->intent_lock, flags);
++		idr_for_each_entry(&channel->riids, tmp, iid) {
++			if (tmp->size > mtu_size && !tmp->in_use)
++				mtu_size = tmp->size;
++		}
++		spin_unlock_irqrestore(&channel->intent_lock, flags);
++
++		return mtu_size;
++	} else {
++		return qcom_glink_tx_avail(glink);
++	}
++}
++
+ /*
+  * Finds the device_node for the glink child interested in this channel.
+  */
+@@ -1345,6 +1368,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+ 	.destroy_ept = qcom_glink_destroy_ept,
+ 	.send = qcom_glink_send,
+ 	.trysend = qcom_glink_trysend,
++	.get_mtu = qcom_glink_get_mtu,
+ };
+ 
+ static void qcom_glink_rpdev_release(struct device *dev)
+-- 
+2.7.4
