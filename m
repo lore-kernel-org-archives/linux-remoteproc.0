@@ -1,55 +1,41 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 6/6] rpmsg: glink: Free pending deferred work on remove
-Date: Wed, 18 Sep 2019 10:19:16 -0700
-Message-Id: <20190918171916.4039-7-bjorn.andersson@linaro.org>
-In-Reply-To: <20190918171916.4039-1-bjorn.andersson@linaro.org>
-References: <20190918171916.4039-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH 0/3] Add API to get rpmsg message max length
+Date: Thu, 5 Sep 2019 16:27:07 +0200
+Message-ID: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-By just cancelling the deferred rx worker during GLINK instance teardown
-any pending deferred commands are leaked, so free them.
+As introduction on the get_mtu api can impacts some rpmsg drivers,
+i propose to discuss it separately.
+The "rpmsg: core: add API to get message length" patch is extracted from
+https://lkml.org/lkml/2019/9/4/556
+In addition 2 patches implement the API for impacted rpmsg drivers.
+The rpmsg tty client driver will be resent in a second step.
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_glink_native.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+In this patchset the get_mpu is considered mandatory. The main reason is
+that the rpmsg clients do not have access to the mtu information that is
+platform dependent.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 0d7518a6ebf0..5920432e697a 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1562,6 +1562,18 @@ static void qcom_glink_work(struct work_struct *work)
- 	}
- }
- 
-+static void qcom_glink_cancel_rx_work(struct qcom_glink *glink)
-+{
-+	struct glink_defer_cmd *dcmd;
-+	struct glink_defer_cmd *tmp;
-+
-+	/* cancel any pending deferred rx_work */
-+	cancel_work_sync(&glink->rx_work);
-+
-+	list_for_each_entry_safe(dcmd, tmp, &glink->rx_queue, node)
-+		kfree(dcmd);
-+}
-+
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
-@@ -1640,7 +1652,7 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
- 	unsigned long flags;
- 
- 	disable_irq(glink->irq);
--	cancel_work_sync(&glink->rx_work);
-+	qcom_glink_cancel_rx_work(glink);
- 
- 	ret = device_for_each_child(glink->dev, NULL, qcom_glink_remove_device);
- 	if (ret)
+Notice that the GLINK and and SMD drivers have to be validated on target,
+I don't have device to validate by myself...
+Only a compilation check has been executed.
+
+Arnaud Pouliquen (3):
+  rpmsg: core: add API to get message length
+  rpmsg: glink: implement get_mtu ops
+  rpmsg: smd: implement get_mtu ops
+
+ drivers/rpmsg/qcom_glink_native.c | 24 ++++++++++++++++++++++++
+ drivers/rpmsg/qcom_smd.c          |  8 ++++++++
+ drivers/rpmsg/rpmsg_core.c        | 21 +++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h    |  2 ++
+ drivers/rpmsg/virtio_rpmsg_bus.c  | 10 ++++++++++
+ include/linux/rpmsg.h             | 10 ++++++++++
+ 6 files changed, 75 insertions(+)
+
 -- 
-2.18.0
+2.7.4
