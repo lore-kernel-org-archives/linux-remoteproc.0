@@ -1,11 +1,11 @@
 Return-Path: <pihsun@chromium.org>
 Return-Path: <pihsun@chromium.org>
 From: Pi-Hsun Shih <pihsun@chromium.org>
-Subject: [PATCH v17 3/5] remoteproc: mt8183: add reserved memory manager API
-Date: Wed,  4 Sep 2019 14:16:41 +0800
-Message-Id: <20190904061649.69099-4-pihsun@chromium.org>
-In-Reply-To: <20190904061649.69099-1-pihsun@chromium.org>
-References: <20190904061649.69099-1-pihsun@chromium.org>
+Subject: [PATCH v18 3/5] remoteproc: mt8183: add reserved memory manager API
+Date: Thu,  5 Sep 2019 12:44:24 +0800
+Message-Id: <20190905044432.150131-4-pihsun@chromium.org>
+In-Reply-To: <20190905044432.150131-1-pihsun@chromium.org>
+References: <20190905044432.150131-1-pihsun@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Cc: Pi-Hsun Shih <pihsun@chromium.org>, Erin Lo <erin.lo@mediatek.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, "open list:REMOTE PROCESSOR REMOTEPROC SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, "moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
@@ -19,7 +19,7 @@ reserved physical and virtual memory
 Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
 ---
-Changes from v16, v15:
+Changes from v17, v16, v15:
  - No change.
 
 Changes from v14:
@@ -56,10 +56,10 @@ Changes from v4:
  2 files changed, 170 insertions(+)
 
 diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 99e226f38ca4..ce4acffbb115 100644
+index c7dcc385d6a7..abfcbdd0dd4d 100644
 --- a/drivers/remoteproc/mtk_scp.c
 +++ b/drivers/remoteproc/mtk_scp.c
-@@ -374,11 +374,142 @@ void *scp_mapping_dm_addr(struct platform_device *pdev, u32 mem_addr)
+@@ -375,11 +375,142 @@ void *scp_mapping_dm_addr(struct platform_device *pdev, u32 mem_addr)
  }
  EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
  
@@ -202,7 +202,7 @@ index 99e226f38ca4..ce4acffbb115 100644
  
  	node = of_parse_phandle(scp->dev->of_node, "memory-region", 0);
  	if (!node) {
-@@ -401,6 +532,20 @@ static int scp_map_memory_region(struct mtk_scp *scp)
+@@ -402,6 +533,20 @@ static int scp_map_memory_region(struct mtk_scp *scp)
  		return -EBUSY;
  	}
  
@@ -224,7 +224,7 @@ index 99e226f38ca4..ce4acffbb115 100644
  }
  
 diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
-index b80d8e3f7959..707556f6b899 100644
+index 535a51ce3233..4e037af2b126 100644
 --- a/include/linux/remoteproc/mtk_scp.h
 +++ b/include/linux/remoteproc/mtk_scp.h
 @@ -138,4 +138,29 @@ unsigned int scp_get_venc_hw_capa(struct platform_device *pdev);
