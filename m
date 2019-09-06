@@ -1,32 +1,40 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V2 08/12] dt-bindings: mailbox: qom: Add ipq8074 APPS compatible
-Date: Fri, 13 Sep 2019 17:26:07 +0530
-Message-Id: <1568375771-22933-9-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
-References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAL_JsqLpVDJBh5qZwudncB8sggb85f3efqs1z9EA+zbVPWX++g@mail.gmail.com>
+References: <20190823131401.4011-1-govinds@codeaurora.org> <20190823131401.4011-2-govinds@codeaurora.org> <CAL_JsqLpVDJBh5qZwudncB8sggb85f3efqs1z9EA+zbVPWX++g@mail.gmail.com>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH_v3 1/2] dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock controller bindings
+Date: Fri, 06 Sep 2019 13:31:30 -0700
+Message-Id: <20190906203131.936A22070C@mail.kernel.org>
+To: Govind Singh <govinds@codeaurora.org>, Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org, "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add mailbox support required in IPQ8074 SoCs.
+Quoting Rob Herring (2019-08-27 05:27:19)
+> On Fri, Aug 23, 2019 at 8:14 AM Govind Singh <govinds@codeaurora.org> wro=
+te:
+> >
+> > Add devicetree binding for the Q6SSTOP clock controller found in QCS404.
+> >
+> > Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> > ---
+> >  .../bindings/clock/qcom,q6sstopcc.yaml        | 47 +++++++++++++++++++
+> >  1 file changed, 47 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,q6ssto=
+pcc.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yam=
+l b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+> > new file mode 100644
+> > index 000000000000..39621e2e2f4e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+> > @@ -0,0 +1,47 @@
+> > +# SPDX-License-Identifier: BSD-2-Clause
+>=20
+> Dual license please.
+>=20
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-index 1232fc9..389c6ce 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-+++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
-@@ -13,6 +13,7 @@ platforms.
- 		    "qcom,msm8998-apcs-hmss-global"
- 		    "qcom,qcs404-apcs-apps-global"
- 		    "qcom,sdm845-apss-shared"
-+		    "qcom,ipq8074-apcs-apps-global"
- 
- - reg:
- 	Usage: required
--- 
-1.9.1
+Yes, please fix the binding.
