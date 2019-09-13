@@ -1,47 +1,146 @@
-Return-Path: <sashal@kernel.org>
-From: Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 008/167] remoteproc: qcom: q6v5-mss: add SCM probe dependency
-Date: Tue,  3 Sep 2019 12:22:40 -0400
-Message-Id: <20190903162519.7136-8-sashal@kernel.org>
-In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
-References: <20190903162519.7136-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: Brian Norris <briannorris@chromium.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V2 02/12] remoteproc: qcom: Add secure PIL support
+Date: Fri, 13 Sep 2019 17:26:01 +0530
+Message-Id: <1568375771-22933-3-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Brian Norris <briannorris@chromium.org>
+IPQ8074 uses secure PIL. Hence, adding the support for the same.
 
-[ Upstream commit bbcda30271752bb7490f2e2aef5411dbcae69116 ]
-
-The memory ownership transfer request is performed using SCM, ensure
-that SCM is available before we probe the driver if memory protection is
-needed by the subsystem.
-
-Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
-Cc: stable@vger.kernel.org
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-[bjorn: Added condition for need_mem_protection, updated commit message]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 ---
- drivers/remoteproc/qcom_q6v5_pil.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index d7a4b9eca5d25..6a84b6372897d 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -1132,6 +1132,9 @@ static int q6v5_probe(struct platform_device *pdev)
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index dc2bae4..8418f57 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -19,6 +19,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ #include <linux/soc/qcom/mdt_loader.h>
++#include <linux/qcom_scm.h>
+ #include "qcom_common.h"
+ #include "qcom_q6v5.h"
+ 
+@@ -83,6 +84,9 @@
+ #define TCSR_WCSS_CLK_ENABLE	0x14
+ 
+ #define MAX_HALT_REG		3
++
++#define WCNSS_PAS_ID		6
++
+ enum {
+ 	WCSS_IPQ8074,
+ 	WCSS_QCS404,
+@@ -133,6 +137,7 @@ struct q6v5_wcss {
+ 	int crash_reason_smem;
+ 	u8 version;
+ 	bool requires_force_stop;
++	bool need_mem_protection;
+ };
+ 
+ struct wcss_data {
+@@ -147,6 +152,7 @@ struct wcss_data {
+ 	int ssctl_id;
+ 	const struct rproc_ops *ops;
+ 	bool requires_force_stop;
++	bool need_mem_protection;
+ };
+ 
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+@@ -246,6 +252,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 
+ 	qcom_q6v5_prepare(&wcss->q6v5);
+ 
++	if (wcss->need_mem_protection) {
++		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
++		if (ret) {
++			dev_err(wcss->dev, "wcss_reset failed\n");
++			return ret;
++		}
++		goto wait_for_reset;
++	}
++
+ 	/* Release Q6 and WCSS reset */
+ 	ret = reset_control_deassert(wcss->wcss_reset);
+ 	if (ret) {
+@@ -280,6 +295,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 	if (ret)
+ 		goto wcss_q6_reset;
+ 
++wait_for_reset:
+ 	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
+ 	if (ret == -ETIMEDOUT)
+ 		dev_err(wcss->dev, "start timed out\n");
+@@ -688,6 +704,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
+ 
++	if (wcss->need_mem_protection) {
++		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
++		if (ret) {
++			dev_err(wcss->dev, "not able to shutdown\n");
++			return ret;
++		}
++		goto pas_done;
++	}
++
+ 	/* WCSS powerdown */
+ 	if (wcss->requires_force_stop) {
+ 		ret = qcom_q6v5_request_stop(&wcss->q6v5);
+@@ -712,6 +737,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++pas_done:
+ 	clk_disable_unprepare(wcss->prng_clk);
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+@@ -734,6 +760,12 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 
++	if (wcss->need_mem_protection)
++		return qcom_mdt_load(wcss->dev, fw, rproc->firmware,
++				     WCNSS_PAS_ID, wcss->mem_region,
++				     wcss->mem_phys, wcss->mem_size,
++				     &wcss->mem_reloc);
++
+ 	return qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
+ 				     0, wcss->mem_region, wcss->mem_phys,
+ 				     wcss->mem_size, &wcss->mem_reloc);
+@@ -1019,6 +1051,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
  	if (!desc)
  		return -EINVAL;
  
 +	if (desc->need_mem_protection && !qcom_scm_is_available())
 +		return -EPROBE_DEFER;
 +
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
- 			    desc->hexagon_mba_image, sizeof(*qproc));
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+ 			    desc->firmware_name, sizeof(*wcss));
  	if (!rproc) {
+@@ -1032,6 +1067,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 
+ 	wcss->version = desc->version;
+ 	wcss->requires_force_stop = desc->requires_force_stop;
++	wcss->need_mem_protection = desc->need_mem_protection;
+ 
+ 	ret = q6v5_wcss_init_mmio(wcss, pdev);
+ 	if (ret)
+@@ -1099,6 +1135,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	.aon_reset_required = true,
+ 	.ops = &q6v5_wcss_ipq8074_ops,
+ 	.requires_force_stop = true,
++	.need_mem_protection = true,
+ };
+ 
+ static const struct wcss_data wcss_qcs404_res_init = {
 -- 
-2.20.1
+1.9.1
