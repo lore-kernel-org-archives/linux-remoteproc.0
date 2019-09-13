@@ -1,65 +1,108 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH 2/3] rpmsg: glink: implement get_mtu ops
-Date: Thu, 5 Sep 2019 16:27:09 +0200
-Message-ID: <1567693630-27544-3-git-send-email-arnaud.pouliquen@st.com>
-In-Reply-To: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
-References: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V2 05/12] remoteproc: qcom: Update regmap offsets for halt register
+Date: Fri, 13 Sep 2019 17:26:04 +0530
+Message-Id: <1568375771-22933-6-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Implement the get_mtu ops to return the maximum size of
-the message that can be sent.
+Fixed issue in reading halt-regs parameter from device-tree.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 621f1afd4d6b..8a477416a38a 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1312,6 +1312,29 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
- 	return __qcom_glink_send(channel, data, len, false);
- }
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 6d3ef06..b4ef5d3 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -83,7 +83,7 @@
+ #define TCSR_WCSS_CLK_MASK	0x1F
+ #define TCSR_WCSS_CLK_ENABLE	0x14
  
-+static ssize_t qcom_glink_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+	size_t mtu_size = 0;
-+	struct qcom_glink *glink = channel->glink;
-+	struct glink_core_rx_intent *tmp;
-+	unsigned long flags;
-+	int iid = 0;
-+
-+	if (!glink->intentless) {
-+		spin_lock_irqsave(&channel->intent_lock, flags);
-+		idr_for_each_entry(&channel->riids, tmp, iid) {
-+			if (tmp->size > mtu_size && !tmp->in_use)
-+				mtu_size = tmp->size;
-+		}
-+		spin_unlock_irqrestore(&channel->intent_lock, flags);
-+
-+		return mtu_size;
-+	} else {
-+		return qcom_glink_tx_avail(glink);
-+	}
-+}
-+
- /*
-  * Finds the device_node for the glink child interested in this channel.
-  */
-@@ -1345,6 +1368,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
- 	.destroy_ept = qcom_glink_destroy_ept,
- 	.send = qcom_glink_send,
- 	.trysend = qcom_glink_trysend,
-+	.get_mtu = qcom_glink_get_mtu,
+-#define MAX_HALT_REG		3
++#define MAX_HALT_REG		4
+ 
+ #define WCNSS_PAS_ID		6
+ 
+@@ -149,6 +149,7 @@ struct wcss_data {
+ 	int crash_reason_smem;
+ 	u8 version;
+ 	bool aon_reset_required;
++	bool bcr_reset_required;
+ 	const char *ssr_name;
+ 	const char *sysmon_name;
+ 	int ssctl_id;
+@@ -810,7 +811,8 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
  };
  
- static void qcom_glink_rpdev_release(struct device *dev)
+ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+-				bool aon_reset_required)
++				bool aon_reset_required,
++				bool bcr_reset_required)
+ {
+ 	struct device *dev = wcss->dev;
+ 
+@@ -834,10 +836,13 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 		return PTR_ERR(wcss->wcss_q6_reset);
+ 	}
+ 
+-	wcss->wcss_q6_bcr_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_bcr_reset");
+-	if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
+-		dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
+-		return PTR_ERR(wcss->wcss_q6_reset);
++	if (bcr_reset_required) {
++		wcss->wcss_q6_bcr_reset = devm_reset_control_get_exclusive(dev,
++									   "wcss_q6_bcr_reset");
++		if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
++			dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
++			return PTR_ERR(wcss->wcss_q6_reset);
++		}
+ 	}
+ 
+ 	return 0;
+@@ -885,9 +890,9 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
+ 		return -EINVAL;
+ 	}
+ 
+-	wcss->halt_q6 = halt_reg[0];
+-	wcss->halt_wcss = halt_reg[1];
+-	wcss->halt_nc = halt_reg[2];
++	wcss->halt_q6 = halt_reg[1];
++	wcss->halt_wcss = halt_reg[2];
++	wcss->halt_nc = halt_reg[3];
+ 
+ 	return 0;
+ }
+@@ -1111,7 +1116,8 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 			goto free_rproc;
+ 	}
+ 
+-	ret = q6v5_wcss_init_reset(wcss, desc->aon_reset_required);
++	ret = q6v5_wcss_init_reset(wcss, desc->aon_reset_required,
++				   desc->bcr_reset_required);
+ 	if (ret)
+ 		goto free_rproc;
+ 
+@@ -1156,6 +1162,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	.m3_firmware_name = "IPQ8074/m3_fw.mdt",
+ 	.crash_reason_smem = 421,
+ 	.aon_reset_required = true,
++	.bcr_reset_required = false,
+ 	.ssr_name = "q6wcss",
+ 	.ops = &q6v5_wcss_ipq8074_ops,
+ 	.requires_force_stop = true,
+@@ -1169,6 +1176,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	.q6_firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
+ 	.aon_reset_required = false,
++	.bcr_reset_required = true,
+ 	.ssr_name = "mpss",
+ 	.sysmon_name = "wcnss",
+ 	.ssctl_id = 0x12,
 -- 
-2.7.4
+1.9.1
