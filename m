@@ -1,93 +1,162 @@
-Return-Path: <BATV+8d7e6b8ef813b711cfc0+5853+infradead.org+hch@bombadil.srs.infradead.org>
-From: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 1/4] dma-mapping: remove dma_release_declared_memory
-Date: Mon,  2 Sep 2019 22:07:43 +0200
-Message-Id: <20190902200746.16185-2-hch@lst.de>
-In-Reply-To: <20190902200746.16185-1-hch@lst.de>
-References: <20190902200746.16185-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: iommu@lists.linux-foundation.org, Loic Pallardy <loic.pallardy@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V2 01/12] remoteproc: qcom: Add PRNG proxy clock
+Date: Fri, 13 Sep 2019 17:26:00 +0530
+Message-Id: <1568375771-22933-2-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This function is entirely unused given that declared memory is
-generally provided by platform setup code.
+PRNG clock is needed by the secure PIL, support for the same
+is added in subsequent patches.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 ---
- Documentation/DMA-API.txt   | 11 -----------
- include/linux/dma-mapping.h |  6 ------
- kernel/dma/coherent.c       | 11 -----------
- 3 files changed, 28 deletions(-)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 63 +++++++++++++++++++++++++++----------
+ 1 file changed, 46 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-index e47c63bd4887..c0865ca664b8 100644
---- a/Documentation/DMA-API.txt
-+++ b/Documentation/DMA-API.txt
-@@ -595,17 +595,6 @@ For reasons of efficiency, most platforms choose to track the declared
- region only at the granularity of a page.  For smaller allocations,
- you should use the dma_pool() API.
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 0821c94..dc2bae4 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -88,18 +88,6 @@ enum {
+ 	WCSS_QCS404,
+ };
  
--::
+-struct wcss_data {
+-	const char *firmware_name;
+-	int crash_reason_smem;
+-	u8 version;
+-	bool aon_reset_required;
+-	const char *ssr_name;
+-	const char *sysmon_name;
+-	int ssctl_id;
+-	const struct rproc_ops *ops;
+-	bool requires_force_stop;
+-};
 -
--	void
--	dma_release_declared_memory(struct device *dev)
--
--Remove the memory region previously declared from the system.  This
--API performs *no* in-use checking for this region and will return
--unconditionally having removed all the required structures.  It is the
--driver's job to ensure that no parts of this memory region are
--currently in use.
--
- Part III - Debug drivers use of the DMA-API
- -------------------------------------------
+ struct q6v5_wcss {
+ 	struct device *dev;
  
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 48ebe8295987..165cd61f1c6e 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -753,7 +753,6 @@ static inline int dma_get_cache_alignment(void)
- #ifdef CONFIG_DMA_DECLARE_COHERENT
- int dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
- 				dma_addr_t device_addr, size_t size);
--void dma_release_declared_memory(struct device *dev);
- #else
- static inline int
- dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
-@@ -761,11 +760,6 @@ dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
+@@ -124,6 +112,7 @@ struct q6v5_wcss {
+ 	struct clk *qdsp6ss_xo_cbcr;
+ 	struct clk *qdsp6ss_core_gfmux;
+ 	struct clk *wcss_bcr_cbcr;
++	struct clk *prng_clk;
+ 	struct regulator *cx_supply;
+ 
+ 	struct qcom_rproc_glink glink_subdev;
+@@ -146,6 +135,20 @@ struct q6v5_wcss {
+ 	bool requires_force_stop;
+ };
+ 
++struct wcss_data {
++	int (*init_clock)(struct q6v5_wcss *wcss);
++	int (*init_regulator)(struct q6v5_wcss *wcss);
++	const char *firmware_name;
++	int crash_reason_smem;
++	u8 version;
++	bool aon_reset_required;
++	const char *ssr_name;
++	const char *sysmon_name;
++	int ssctl_id;
++	const struct rproc_ops *ops;
++	bool requires_force_stop;
++};
++
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
  {
- 	return -ENOSYS;
- }
--
--static inline void
--dma_release_declared_memory(struct device *dev)
--{
--}
- #endif /* CONFIG_DMA_DECLARE_COHERENT */
+ 	int ret;
+@@ -235,6 +238,12 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
  
- static inline void *dmam_alloc_coherent(struct device *dev, size_t size,
-diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
-index 29fd6590dc1e..7271cda86a37 100644
---- a/kernel/dma/coherent.c
-+++ b/kernel/dma/coherent.c
-@@ -124,17 +124,6 @@ int dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
- }
- EXPORT_SYMBOL(dma_declare_coherent_memory);
++	ret = clk_prepare_enable(wcss->prng_clk);
++	if (ret) {
++		dev_err(wcss->dev, "prng clock enable failed\n");
++		return ret;
++	}
++
+ 	qcom_q6v5_prepare(&wcss->q6v5);
  
--void dma_release_declared_memory(struct device *dev)
--{
--	struct dma_coherent_mem *mem = dev->dma_mem;
--
--	if (!mem)
--		return;
--	dma_release_coherent_memory(mem);
--	dev->dma_mem = NULL;
--}
--EXPORT_SYMBOL(dma_release_declared_memory);
--
- static void *__dma_alloc_from_coherent(struct dma_coherent_mem *mem,
- 		ssize_t size, dma_addr_t *dma_handle)
+ 	/* Release Q6 and WCSS reset */
+@@ -703,6 +712,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++	clk_disable_unprepare(wcss->prng_clk);
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+ 	return 0;
+@@ -858,7 +868,21 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
+ 	return 0;
+ }
+ 
+-static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
++static int ipq8074_init_clock(struct q6v5_wcss *wcss)
++{
++	int ret;
++
++	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
++	if (IS_ERR(wcss->prng_clk)) {
++		ret = PTR_ERR(wcss->prng_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "Failed to get prng clock\n");
++		return ret;
++	}
++	return 0;
++}
++
++static int qcs404_init_clock(struct q6v5_wcss *wcss)
  {
+ 	int ret;
+ 
+@@ -973,7 +997,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 	return 0;
+ }
+ 
+-static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
++static int qcs404_init_regulator(struct q6v5_wcss *wcss)
+ {
+ 	wcss->cx_supply = devm_regulator_get(wcss->dev, "cx");
+ 	if (IS_ERR(wcss->cx_supply))
+@@ -1017,12 +1041,14 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	if (wcss->version == WCSS_QCS404) {
+-		ret = q6v5_wcss_init_clock(wcss);
++	if (desc->init_clock) {
++		ret = desc->init_clock(wcss);
+ 		if (ret)
+ 			goto free_rproc;
++	}
+ 
+-		ret = q6v5_wcss_init_regulator(wcss);
++	if (desc->init_regulator) {
++		ret = desc->init_regulator(wcss);
+ 		if (ret)
+ 			goto free_rproc;
+ 	}
+@@ -1067,6 +1093,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct wcss_data wcss_ipq8074_res_init = {
++	.init_clock = ipq8074_init_clock,
+ 	.firmware_name = "IPQ8074/q6_fw.mdt",
+ 	.crash_reason_smem = 421,
+ 	.aon_reset_required = true,
+@@ -1075,6 +1102,8 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ };
+ 
+ static const struct wcss_data wcss_qcs404_res_init = {
++	.init_clock = qcs404_init_clock,
++	.init_regulator = qcs404_init_regulator,
+ 	.crash_reason_smem = 421,
+ 	.firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
 -- 
-2.20.1
+1.9.1
