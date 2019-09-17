@@ -1,49 +1,48 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH 3/3] rpmsg: smd: implement get_mtu ops
-Date: Thu, 5 Sep 2019 16:27:10 +0200
-Message-ID: <1567693630-27544-4-git-send-email-arnaud.pouliquen@st.com>
-In-Reply-To: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
-References: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1568375771-22933-13-git-send-email-gokulsri@codeaurora.org>
+References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org> <1568375771-22933-13-git-send-email-gokulsri@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH V2 12/12] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+Date: Tue, 17 Sep 2019 09:15:56 -0700
+Message-Id: <20190917161557.164C320665@mail.kernel.org>
+To: agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, gokulsri@codeaurora.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, nprakash@codeaurora.org, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Implement the get_mtu ops to return the maximum size of
-the message that can be sent.
+Quoting Gokul Sriram Palanisamy (2019-09-13 04:56:11)
+> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/=
+qcom/ipq8074.dtsi
+> index 6a61a63..0ea026e 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+> @@ -431,6 +485,78 @@
+>                                       "axi_m_sticky";
+>                         status =3D "disabled";
+>                 };
+> +
+> +               apcs: syscon@b111000 {
+> +                       compatible =3D "syscon";
+> +                       reg =3D <0x0b111000 0x1000>;
+> +               };
+> +
+> +               tcsr_q6: syscon@1945000 {
+> +                       compatible =3D "syscon";
+> +                       reg =3D <0x01945000 0xe000>;
+> +               };
+> +
+> +               tcsr_mutex_regs: syscon@193d000 {
+> +                       compatible =3D "syscon";
+> +                       reg =3D <0x01905000 0x8000>;
+> +               };
+> +
+> +               apcs_glb: mailbox@b111000 {
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/rpmsg/qcom_smd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This is the same as the syscon above. What's going on?
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 4abbeea782fa..f233f8d85062 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -989,6 +989,13 @@ static __poll_t qcom_smd_poll(struct rpmsg_endpoint *ept,
- 	return mask;
- }
- 
-+static ssize_t qcom_smd_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-+
-+	return qcom_smd_get_tx_avail(qsept->qsch);
-+}
-+
- /*
-  * Finds the device_node for the smd child interested in this channel.
-  */
-@@ -1040,6 +1047,7 @@ static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
- 	.send = qcom_smd_send,
- 	.trysend = qcom_smd_trysend,
- 	.poll = qcom_smd_poll,
-+	.get_mtu = qcom_smd_get_mtu,
- };
- 
- static void qcom_smd_release_device(struct device *dev)
--- 
-2.7.4
+> +                       compatible =3D "qcom,ipq8074-apcs-apps-global";
+> +                       reg =3D <0x0b111000 0x1000>;
+> +
+> +                       #mbox-cells =3D <1>;
+> +               };
