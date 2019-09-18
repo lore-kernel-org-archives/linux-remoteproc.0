@@ -1,27 +1,49 @@
-Return-Path: <baolin.wang@linaro.org>
-Return-Path: <baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 0/4] Some optimization for Spreadtrum hwlock controller
-Date: Fri, 27 Sep 2019 15:10:43 +0800
-Message-Id: <cover.1569567749.git.baolin.wang@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 2/6] rpmsg: glink: Fix use after free in open_ack TIMEOUT case
+Date: Wed, 18 Sep 2019 10:19:12 -0700
+Message-Id: <20190918171916.4039-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+References: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch set did some optimization for Spreadtrum hwlock controller,
-including using some devm_xxx APIs to simplify code and validating the
-return value when enabling clock.
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 
-Baolin Wang (4):
-  hwspinlock: sprd: Change to use devm_platform_ioremap_resource()
-  hwspinlock: sprd: Check the return value of clk_prepare_enable()
-  hwspinlock: sprd: Use devm_add_action_or_reset() for calls to
-    clk_disable_unprepare()
-  hwspinlock: sprd: Use devm_hwspin_lock_register() to register hwlock
-    controller
+Extra channel reference put when remote sending OPEN_ACK after timeout
+causes use-after-free while handling next remote CLOSE command.
 
- drivers/hwspinlock/sprd_hwspinlock.c |   33 ++++++++++++++++++++++-----------
- 1 file changed, 22 insertions(+), 11 deletions(-)
+Remove extra reference put in timeout case to avoid use-after-free.
 
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 9355ce26fd98..72ed671f5dcd 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1103,13 +1103,12 @@ static int qcom_glink_create_remote(struct qcom_glink *glink,
+ close_link:
+ 	/*
+ 	 * Send a close request to "undo" our open-ack. The close-ack will
+-	 * release the last reference.
++	 * release qcom_glink_send_open_req() reference and the last reference
++	 * will be relesed after receiving remote_close or transport unregister
++	 * by calling qcom_glink_native_remove().
+ 	 */
+ 	qcom_glink_send_close_req(glink, channel);
+ 
+-	/* Release qcom_glink_send_open_req() reference */
+-	kref_put(&channel->refcount, qcom_glink_channel_release);
+-
+ 	return ret;
+ }
+ 
 -- 
-1.7.9.5
+2.18.0
