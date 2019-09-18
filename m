@@ -1,28 +1,55 @@
 Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 0/6] rpmsg: glink stability fixes
-Date: Wed, 18 Sep 2019 10:19:10 -0700
-Message-Id: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+Subject: [PATCH 6/6] rpmsg: glink: Free pending deferred work on remove
+Date: Wed, 18 Sep 2019 10:19:16 -0700
+Message-Id: <20190918171916.4039-7-bjorn.andersson@linaro.org>
+In-Reply-To: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+References: <20190918171916.4039-1-bjorn.andersson@linaro.org>
 To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fixes for issues found in GLINK during reboot testing of a remoteproc.
+By just cancelling the deferred rx worker during GLINK instance teardown
+any pending deferred commands are leaked, so free them.
 
-Arun Kumar Neelakantam (2):
-  rpmsg: glink: Fix reuse intents memory leak issue
-  rpmsg: glink: Fix use after free in open_ack TIMEOUT case
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Bjorn Andersson (2):
-  rpmsg: glink: Don't send pending rx_done during remove
-  rpmsg: glink: Free pending deferred work on remove
-
-Chris Lew (2):
-  rpmsg: glink: Put an extra reference during cleanup
-  rpmsg: glink: Fix rpmsg_register_device err handling
-
- drivers/rpmsg/qcom_glink_native.c | 50 ++++++++++++++++++++++++++-----
- 1 file changed, 42 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 0d7518a6ebf0..5920432e697a 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1562,6 +1562,18 @@ static void qcom_glink_work(struct work_struct *work)
+ 	}
+ }
+ 
++static void qcom_glink_cancel_rx_work(struct qcom_glink *glink)
++{
++	struct glink_defer_cmd *dcmd;
++	struct glink_defer_cmd *tmp;
++
++	/* cancel any pending deferred rx_work */
++	cancel_work_sync(&glink->rx_work);
++
++	list_for_each_entry_safe(dcmd, tmp, &glink->rx_queue, node)
++		kfree(dcmd);
++}
++
+ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 					   unsigned long features,
+ 					   struct qcom_glink_pipe *rx,
+@@ -1640,7 +1652,7 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
+ 	unsigned long flags;
+ 
+ 	disable_irq(glink->irq);
+-	cancel_work_sync(&glink->rx_work);
++	qcom_glink_cancel_rx_work(glink);
+ 
+ 	ret = device_for_each_child(glink->dev, NULL, qcom_glink_remove_device);
+ 	if (ret)
 -- 
 2.18.0
