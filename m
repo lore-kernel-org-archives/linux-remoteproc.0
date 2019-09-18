@@ -1,141 +1,49 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH 1/3] rpmsg: core: add API to get message length
-Date: Thu, 5 Sep 2019 16:27:08 +0200
-Message-ID: <1567693630-27544-2-git-send-email-arnaud.pouliquen@st.com>
-In-Reply-To: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
-References: <1567693630-27544-1-git-send-email-arnaud.pouliquen@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 4/6] rpmsg: glink: Fix rpmsg_register_device err handling
+Date: Wed, 18 Sep 2019 10:19:14 -0700
+Message-Id: <20190918171916.4039-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+References: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Return the rpmsg buffer size for sending message, so rpmsg users
-can split a long message in several sub rpmsg buffers.
+From: Chris Lew <clew@codeaurora.org>
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+The device release function is set before registering with rpmsg. If
+rpmsg registration fails, the framework will call device_put(), which
+invokes the release function. The channel create logic does not need to
+free rpdev if rpmsg_register_device() fails and release is called.
+
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   |  2 ++
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
- include/linux/rpmsg.h            | 10 ++++++++++
- 4 files changed, 43 insertions(+)
+ drivers/rpmsg/qcom_glink_native.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index e330ec4dfc33..a6ef54c4779a 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 21fd2ae5f7f1..89e02baea2d0 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1423,15 +1423,13 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
  
-+/**
-+ * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
-+ * @ept: the rpmsg endpoint
-+ *
-+ * This function returns maximum buffer size available for a single message.
-+ *
-+ * Return: the maximum transmission size on success and an appropriate error
-+ * value on failure.
-+ */
-+
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->get_mtu)
-+		return -ENOTSUPP;
-+
-+	return ept->ops->get_mtu(ept);
-+}
-+EXPORT_SYMBOL(rpmsg_get_mtu);
-+
- /*
-  * match an rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd50e98..12b9e72adc75 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -47,6 +47,7 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @get_mtu:		see @get_mpu(), required
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -66,6 +67,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
- };
+ 		ret = rpmsg_register_device(rpdev);
+ 		if (ret)
+-			goto free_rpdev;
++			goto rcid_remove;
  
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 376ebbf880d6..6e48fdf24555 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+ 		channel->rpdev = rpdev;
+ 	}
  
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.trysend = virtio_rpmsg_trysend,
- 	.trysendto = virtio_rpmsg_trysendto,
- 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
-+	.get_mtu = virtio_rpmsg_get_mtu,
- };
- 
- /**
-@@ -699,6 +701,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
- 
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+
-+	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-+}
-+
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
- {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d1c018..88d7892ca93d 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
- 
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
  	return 0;
- }
  
-+static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
+-free_rpdev:
+-	kfree(rpdev);
+ rcid_remove:
+ 	spin_lock_irqsave(&glink->idr_lock, flags);
+ 	idr_remove(&glink->rcids, channel->rcid);
 -- 
-2.7.4
+2.18.0
