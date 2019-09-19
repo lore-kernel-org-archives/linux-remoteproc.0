@@ -1,33 +1,43 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V2 07/12] clk: qcom: Add WCSSAON reset
-Date: Fri, 13 Sep 2019 17:26:06 +0530
-Message-Id: <1568375771-22933-8-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
-References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <srinivas.kandagatla@linaro.org>
+Return-Path: <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 0/6] rpmsg: glink stability fixes
+References: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <74b3d165-b1ea-e4e3-df50-98bda8691d5c@linaro.org>
+Date: Thu, 19 Sep 2019 17:50:07 +0100
+MIME-Version: 1.0
+In-Reply-To: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add WCSSAON reset required for Q6v5 on IPQ8074 SoC.
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
----
- drivers/clk/qcom/gcc-ipq8074.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index 39ade58..06092f8 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4685,6 +4685,7 @@ enum {
- 	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
- 	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
- 	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
-+	[GCC_WCSSAON_RESET] = { 0x59010, 0 },
- };
- 
- static const struct of_device_id gcc_ipq8074_match_table[] = {
--- 
-1.9.1
+On 18/09/2019 18:19, Bjorn Andersson wrote:
+> Fixes for issues found in GLINK during reboot testing of a remoteproc.
+> 
+> Arun Kumar Neelakantam (2):
+>    rpmsg: glink: Fix reuse intents memory leak issue
+>    rpmsg: glink: Fix use after free in open_ack TIMEOUT case
+> 
+> Bjorn Andersson (2):
+>    rpmsg: glink: Don't send pending rx_done during remove
+>    rpmsg: glink: Free pending deferred work on remove
+> 
+> Chris Lew (2):
+>    rpmsg: glink: Put an extra reference during cleanup
+>    rpmsg: glink: Fix rpmsg_register_device err handling
+> 
+>   drivers/rpmsg/qcom_glink_native.c | 50 ++++++++++++++++++++++++++-----
+>   1 file changed, 42 insertions(+), 8 deletions(-)
+> 
+
+Thanks for the fixes.
+
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+
+--srini
