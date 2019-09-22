@@ -1,41 +1,23 @@
-Return-Path: <BATV+8d7e6b8ef813b711cfc0+5853+infradead.org+hch@bombadil.srs.infradead.org>
-From: Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 3/4] remoteproc: don't allow modular build
-Date: Mon,  2 Sep 2019 22:07:45 +0200
-Message-Id: <20190902200746.16185-4-hch@lst.de>
-In-Reply-To: <20190902200746.16185-1-hch@lst.de>
-References: <20190902200746.16185-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: iommu@lists.linux-foundation.org, Loic Pallardy <loic.pallardy@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <pr-tracker-bot@kernel.org>
+Subject: Re: [GIT PULL] remoteproc updates for v5.4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20190921165845.GA6693@tuxbook-pro>
+References: <20190921165845.GA6693@tuxbook-pro>
+Message-Id: <156917912677.24588.10977042119425435480.pr-tracker-bot@kernel.org>
+Date: Sun, 22 Sep 2019 19:05:26 +0000
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Fabien Dessenne <fabien.dessenne@st.com>, Sibi Sankar <sibis@codeaurora.org>, Stephen Boyd <swboyd@chromium.org>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remoteproc started using dma_declare_coherent_memory recently, which is
-a bad idea from drivers, and the maintainers agreed to fix that.  But
-until that is fixed only allow building the driver built in so that we
-can remove the dma_declare_coherent_memory export and prevent other
-drivers from "accidentally" using it like remoteproc.  Note that the
-driver would also leak the declared coherent memory on unload if it
-actually was built as a module at the moment.
+The pull request you sent on Sat, 21 Sep 2019 09:58:45 -0700:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/remoteproc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc tags/rproc-v5.4
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 28ed306982f7..94afdde4bc9f 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -2,7 +2,7 @@
- menu "Remoteproc drivers"
- 
- config REMOTEPROC
--	tristate "Support for Remote Processor subsystem"
-+	bool "Support for Remote Processor subsystem"
- 	depends on HAS_DMA
- 	select CRC32
- 	select FW_LOADER
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/28de978ba346f4d5baee4e59841b473a7ff38f0d
+
+Thank you!
+
 -- 
-2.20.1
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
