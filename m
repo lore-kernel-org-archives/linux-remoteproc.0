@@ -1,50 +1,23 @@
-Return-Path: <baolin.wang@linaro.org>
-Return-Path: <baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 4/4] hwspinlock: sprd: Use devm_hwspin_lock_register() to register hwlock controller
-Date: Fri, 27 Sep 2019 15:10:47 +0800
-Message-Id: <e8f1db04571f62298c7a4f72be803b9b9974d12d.1569567749.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1569567749.git.baolin.wang@linaro.org>
-References: <cover.1569567749.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1569567749.git.baolin.wang@linaro.org>
-References: <cover.1569567749.git.baolin.wang@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <pr-tracker-bot@kernel.org>
+Subject: Re: [GIT PULL] rpmsg updates for v5.4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20190921165912.GB6693@tuxbook-pro>
+References: <20190921165912.GB6693@tuxbook-pro>
+Message-Id: <156917912820.24588.8130624863228290812.pr-tracker-bot@kernel.org>
+Date: Sun, 22 Sep 2019 19:05:28 +0000
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use devm_hwspin_lock_register() to register the hwlock controller instead of
-unregistering the hwlock controller explicitly when removing the device.
+The pull request you sent on Sat, 21 Sep 2019 09:59:12 -0700:
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/hwspinlock/sprd_hwspinlock.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc tags/rpmsg-v5.4
 
-diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-index e76c702..44d69db 100644
---- a/drivers/hwspinlock/sprd_hwspinlock.c
-+++ b/drivers/hwspinlock/sprd_hwspinlock.c
-@@ -135,8 +135,9 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, sprd_hwlock);
- 	pm_runtime_enable(&pdev->dev);
- 
--	ret = hwspin_lock_register(&sprd_hwlock->bank, &pdev->dev,
--				   &sprd_hwspinlock_ops, 0, SPRD_HWLOCKS_NUM);
-+	ret = devm_hwspin_lock_register(&pdev->dev, &sprd_hwlock->bank,
-+					&sprd_hwspinlock_ops, 0,
-+					SPRD_HWLOCKS_NUM);
- 	if (ret) {
- 		pm_runtime_disable(&pdev->dev);
- 		return ret;
-@@ -147,9 +148,6 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
- 
- static int sprd_hwspinlock_remove(struct platform_device *pdev)
- {
--	struct sprd_hwspinlock_dev *sprd_hwlock = platform_get_drvdata(pdev);
--
--	hwspin_lock_unregister(&sprd_hwlock->bank);
- 	pm_runtime_disable(&pdev->dev);
- 	return 0;
- }
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/379bb045171dea3e2ee01b32fe88f2afe1fe2fa8
+
+Thank you!
+
 -- 
-1.7.9.5
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
