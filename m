@@ -1,141 +1,83 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH v6 1/2] rpmsg: core: add API to get message length
-Date: Wed, 4 Sep 2019 15:09:53 +0200
-Message-ID: <1567602594-2913-2-git-send-email-arnaud.pouliquen@st.com>
-In-Reply-To: <1567602594-2913-1-git-send-email-arnaud.pouliquen@st.com>
-References: <1567602594-2913-1-git-send-email-arnaud.pouliquen@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, xiang xiao <xiaoxiang781216@gmail.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Alan
+Return-Path: <baolin.wang@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 1/3] hwspinlock: u8500_hsem: Change to use devm_platform_ioremap_resource()
+Date: Fri, 27 Sep 2019 16:27:41 +0800
+Message-Id: <e991666ead56cac30a7ef9cec85e802b57d47458.1569572448.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1569572448.git.baolin.wang@linaro.org>
+References: <cover.1569572448.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1569572448.git.baolin.wang@linaro.org>
+References: <cover.1569572448.git.baolin.wang@linaro.org>
+To: linus.walleij@linaro.org, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: baolin.wang@linaro.org, linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Return the rpmsg buffer size for sending message, so rpmsg users
-can split a long message in several sub rpmsg buffers.
+Use the new helper that wraps the calls to platform_get_resource()
+and devm_ioremap_resource() together, which can simpify the code.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   |  2 ++
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
- include/linux/rpmsg.h            | 10 ++++++++++
- 4 files changed, 43 insertions(+)
+ drivers/hwspinlock/u8500_hsem.c |   20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index e330ec4dfc33..a6ef54c4779a 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+diff --git a/drivers/hwspinlock/u8500_hsem.c b/drivers/hwspinlock/u8500_hsem.c
+index 572ca79..c247a87 100644
+--- a/drivers/hwspinlock/u8500_hsem.c
++++ b/drivers/hwspinlock/u8500_hsem.c
+@@ -88,7 +88,6 @@ static int u8500_hsem_probe(struct platform_device *pdev)
+ 	struct hwspinlock_pdata *pdata = pdev->dev.platform_data;
+ 	struct hwspinlock_device *bank;
+ 	struct hwspinlock *hwlock;
+-	struct resource *res;
+ 	void __iomem *io_base;
+ 	int i, ret, num_locks = U8500_MAX_SEMAPHORE;
+ 	ulong val;
+@@ -96,13 +95,9 @@ static int u8500_hsem_probe(struct platform_device *pdev)
+ 	if (!pdata)
+ 		return -ENODEV;
  
-+/**
-+ * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
-+ * @ept: the rpmsg endpoint
-+ *
-+ * This function returns maximum buffer size available for a single message.
-+ *
-+ * Return: the maximum transmission size on success and an appropriate error
-+ * value on failure.
-+ */
-+
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->get_mtu)
-+		return -ENOTSUPP;
-+
-+	return ept->ops->get_mtu(ept);
-+}
-+EXPORT_SYMBOL(rpmsg_get_mtu);
-+
- /*
-  * match an rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd50e98..12b9e72adc75 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -47,6 +47,7 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @get_mtu:		see @get_mpu(), required
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -66,6 +67,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
- };
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+-
+-	io_base = ioremap(res->start, resource_size(res));
+-	if (!io_base)
+-		return -ENOMEM;
++	io_base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(io_base))
++		return PTR_ERR(io_base);
  
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 376ebbf880d6..fab01b67a550 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static ssize_t virtio_rpmsg_get_buf_mtu(struct rpmsg_endpoint *ept);
+ 	/* make sure protocol 1 is selected */
+ 	val = readl(io_base + HSEM_CTRL_REG);
+@@ -112,10 +107,8 @@ static int u8500_hsem_probe(struct platform_device *pdev)
+ 	writel(0xFFFF, io_base + HSEM_ICRALL);
  
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.trysend = virtio_rpmsg_trysend,
- 	.trysendto = virtio_rpmsg_trysendto,
- 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
-+	.get_mtu = virtio_rpmsg_get_buf_mtu,
- };
+ 	bank = kzalloc(struct_size(bank, lock, num_locks), GFP_KERNEL);
+-	if (!bank) {
+-		ret = -ENOMEM;
+-		goto iounmap_base;
+-	}
++	if (!bank)
++		return -ENOMEM;
  
- /**
-@@ -699,6 +701,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+ 	platform_set_drvdata(pdev, bank);
+ 
+@@ -135,8 +128,6 @@ static int u8500_hsem_probe(struct platform_device *pdev)
+ reg_fail:
+ 	pm_runtime_disable(&pdev->dev);
+ 	kfree(bank);
+-iounmap_base:
+-	iounmap(io_base);
+ 	return ret;
  }
  
-+static ssize_t virtio_rpmsg_get_buf_mtu(struct rpmsg_endpoint *ept)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+
-+	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-+}
-+
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
- {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d1c018..9d638bf2bdce 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
+@@ -156,7 +147,6 @@ static int u8500_hsem_remove(struct platform_device *pdev)
+ 	}
  
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
-+
- #else
+ 	pm_runtime_disable(&pdev->dev);
+-	iounmap(io_base);
+ 	kfree(bank);
  
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
  	return 0;
- }
- 
-+static ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
 -- 
-2.7.4
+1.7.9.5
