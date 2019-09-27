@@ -1,58 +1,57 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-Return-Path: <srinivas.kandagatla@linaro.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] rpmsg: glink: Fix channel memory leak
-Date: Thu, 19 Sep 2019 11:05:40 +0100
-Message-Id: <20190919100540.28159-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 3/3] hwspinlock: u8500_hsem: Use devm_hwspin_lock_register() to register hwlock controller
+Date: Fri, 27 Sep 2019 16:27:43 +0800
+Message-Id: <a6b18f17b995bceaf2fc0129866301dd8f46bee4.1569572448.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1569572448.git.baolin.wang@linaro.org>
+References: <cover.1569572448.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1569572448.git.baolin.wang@linaro.org>
+References: <cover.1569572448.git.baolin.wang@linaro.org>
+To: linus.walleij@linaro.org, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: baolin.wang@linaro.org, linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-If we stop and start the dsp while channel is open then there is a leak
-in the driver as the refcount is not accounted for the open.
+Use devm_hwspin_lock_register() to register the hwlock controller instead of
+unregistering the hwlock controller explicitly when removing the device.
 
-This patch checks if the channel is open while running cleanup code
-and does an extra kref_put to account for open which would ensure
-that channel does not leak.
-
-Originally detected by kmemleak:
-  backtrace:
-    [<ffffff80088b74d8>] kmemleak_alloc+0x50/0x84
-    [<ffffff80081ddbc8>] kmem_cache_alloc_trace+0xd4/0x178
-    [<ffffff80086b8bd0>] qcom_glink_alloc_channel+0x34/0x148
-    [<ffffff80086b8038>] qcom_glink_work+0x3b0/0x664
-    [<ffffff80080c3da8>] process_one_work+0x160/0x2f8
-    [<ffffff80080c4198>] worker_thread+0x1e8/0x2d4
-    [<ffffff80080c8b24>] kthread+0x128/0x138
-    [<ffffff80080845b4>] ret_from_fork+0x10/0x18
-    [<ffffffffffffffff>] 0xffffffffffffffff
-unreferenced object 0xffffffc02cf5ed80 (size 128):
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/hwspinlock/u8500_hsem.c |   11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index dc7d3d098fd3..38a10dcc2029 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1660,8 +1660,13 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
+diff --git a/drivers/hwspinlock/u8500_hsem.c b/drivers/hwspinlock/u8500_hsem.c
+index 0e8d4ff..b31141a 100644
+--- a/drivers/hwspinlock/u8500_hsem.c
++++ b/drivers/hwspinlock/u8500_hsem.c
+@@ -119,8 +119,8 @@ static int u8500_hsem_probe(struct platform_device *pdev)
+ 	/* no pm needed for HSem but required to comply with hwspilock core */
+ 	pm_runtime_enable(&pdev->dev);
  
- 	spin_lock_irqsave(&glink->idr_lock, flags);
- 	/* Release any defunct local channels, waiting for close-ack */
--	idr_for_each_entry(&glink->lcids, channel, cid)
-+	idr_for_each_entry(&glink->lcids, channel, cid) {
-+		if (channel->rcid)
-+			kref_put(&channel->refcount,
-+				 qcom_glink_channel_release);
-+
- 		kref_put(&channel->refcount, qcom_glink_channel_release);
-+	}
+-	ret = hwspin_lock_register(bank, &pdev->dev, &u8500_hwspinlock_ops,
+-						pdata->base_id, num_locks);
++	ret = devm_hwspin_lock_register(&pdev->dev, bank, &u8500_hwspinlock_ops,
++					pdata->base_id, num_locks);
+ 	if (ret) {
+ 		pm_runtime_disable(&pdev->dev);
+ 		return ret;
+@@ -133,17 +133,10 @@ static int u8500_hsem_remove(struct platform_device *pdev)
+ {
+ 	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
+ 	void __iomem *io_base = bank->lock[0].priv - HSEM_REGISTER_OFFSET;
+-	int ret;
  
- 	/* Release any defunct local channels, waiting for close-req */
- 	idr_for_each_entry(&glink->rcids, channel, cid)
+ 	/* clear all interrupts */
+ 	writel(0xFFFF, io_base + HSEM_ICRALL);
+ 
+-	ret = hwspin_lock_unregister(bank);
+-	if (ret) {
+-		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
+-		return ret;
+-	}
+-
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	return 0;
 -- 
-2.21.0
+1.7.9.5
