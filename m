@@ -1,33 +1,29 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V2 10/12] dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
-Date: Fri, 13 Sep 2019 17:26:09 +0530
-Message-Id: <1568375771-22933-11-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
-References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Mon, 30 Sep 2019 11:00:57 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] docs: use flexible array members, not zero-length
+Message-ID: <20190930110057.1b11d798@lwn.net>
+In-Reply-To: <20190928105557.221fb119@heffalump.sk2.org>
+References: <20190927142927.27968-1-steve@sk2.org>
+        <20190928011639.7c983e77@lwn.net>
+        <20190928105557.221fb119@heffalump.sk2.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Kitt <steve@sk2.org>
+Cc: linux-doc@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-can@vger.kernel.org, linux-afs@lists.infradead.org, kvm@vger.kernel.org, "Gustavo A . R . Silva" <gustavo@embeddedor.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add compatible for IPQ8074 support.
-This does not need clocks for scm calls.
+On Sat, 28 Sep 2019 10:55:57 +0200
+Stephen Kitt <steve@sk2.org> wrote:
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- Documentation/devicetree/bindings/firmware/qcom,scm.txt | 1 +
- 1 file changed, 1 insertion(+)
+> Wouldn’t it be better to update the docs simultaneously in each patch which
+> fixes a structure? Or is that unworkable with current development practices?
 
-diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.txt b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-index 41f133a..3b153c1 100644
---- a/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-+++ b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-@@ -17,6 +17,7 @@ Required properties:
-  * "qcom,scm-msm8998"
-  * "qcom,scm-ipq4019"
-  * "qcom,scm-sdm845"
-+ * "qcom,scm-ipq8074"
-  and:
-  * "qcom,scm"
- - clocks: Specifies clocks needed by the SCM interface, if any:
--- 
-1.9.1
+Definitely update the two together.  The doc fix should just go through
+the appropriate maintainer with the code change.
+
+Thanks,
+
+jon
