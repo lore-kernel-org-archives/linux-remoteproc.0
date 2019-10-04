@@ -1,49 +1,34 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 3/6] rpmsg: glink: Put an extra reference during cleanup
-Date: Fri,  4 Oct 2019 15:26:59 -0700
-Message-Id: <20191004222702.8632-4-bjorn.andersson@linaro.org>
-In-Reply-To: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Return-Path: <cleger@kalray.eu>
+From: Clement Leger <cleger@kalray.eu>
+Subject: [PATCH] remoteproc: Fix wrong rvring index computation
+Date: Fri,  4 Oct 2019 09:37:36 +0200
+Message-Id: <20191004073736.8327-1-cleger@kalray.eu>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Clement Leger <cleger@kalray.eu>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+Index of rvring is computed using pointer arithmetic. However, since
+rvring->rvdev->vring is the base of the vring array, computation
+of rvring idx should be reversed. It previously lead to writing at negative
+indices in the resource table.
 
-In a remote processor crash scenario, there is no guarantee the remote
-processor sent close requests before it went into a bad state. Remove
-the reference that is normally handled by the close command in the
-so channel resources can be released.
-
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Cc: stable@vger.kernel.org
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Clement Leger <cleger@kalray.eu>
 ---
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v1:
-- None
-
- drivers/rpmsg/qcom_glink_native.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 72ed671f5dcd..21fd2ae5f7f1 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1641,6 +1641,10 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
- 	idr_for_each_entry(&glink->lcids, channel, cid)
- 		kref_put(&channel->refcount, qcom_glink_channel_release);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3c5fbbbfb0f1..ab7443874635 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -400,7 +400,7 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
+ void rproc_free_vring(struct rproc_vring *rvring)
+ {
+ 	struct rproc *rproc = rvring->rvdev->rproc;
+-	int idx = rvring->rvdev->vring - rvring;
++	int idx = rvring - rvring->rvdev->vring;
+ 	struct fw_rsc_vdev *rsc;
  
-+	/* Release any defunct local channels, waiting for close-req */
-+	idr_for_each_entry(&glink->rcids, channel, cid)
-+		kref_put(&channel->refcount, qcom_glink_channel_release);
-+
- 	idr_destroy(&glink->lcids);
- 	idr_destroy(&glink->rcids);
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+ 	idr_remove(&rproc->notifyids, rvring->notifyid);
 -- 
-2.18.0
+2.15.0.276.g89ea799
