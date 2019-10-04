@@ -1,39 +1,54 @@
-Return-Path: <clew@codeaurora.org>
-Subject: Re: [PATCH v2 2/6] rpmsg: glink: Fix use after free in open_ack
- TIMEOUT case
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 2/6] rpmsg: glink: Fix use after free in open_ack TIMEOUT case
+Date: Fri,  4 Oct 2019 15:26:58 -0700
+Message-Id: <20191004222702.8632-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20191004222702.8632-1-bjorn.andersson@linaro.org>
 References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
- <20191004222702.8632-3-bjorn.andersson@linaro.org>
-From: Chris Lew <clew@codeaurora.org>
-Message-ID: <3db040ee-6b0f-be45-0e23-ab65f16329b6@codeaurora.org>
-Date: Tue, 8 Oct 2019 17:51:05 -0700
-MIME-Version: 1.0
-In-Reply-To: <20191004222702.8632-3-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 
+Extra channel reference put when remote sending OPEN_ACK after timeout
+causes use-after-free while handling next remote CLOSE command.
 
-On 10/4/2019 3:26 PM, Bjorn Andersson wrote:
-> From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-> 
-> Extra channel reference put when remote sending OPEN_ACK after timeout
-> causes use-after-free while handling next remote CLOSE command.
-> 
-> Remove extra reference put in timeout case to avoid use-after-free.
-> 
-> Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-> Cc: stable@vger.kernel.org
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
+Remove extra reference put in timeout case to avoid use-after-free.
 
-Acked-By: Chris Lew <clew@codeaurora.org>
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Cc: stable@vger.kernel.org
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
+Changes since v1:
+- None
+
+ drivers/rpmsg/qcom_glink_native.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 9355ce26fd98..72ed671f5dcd 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1103,13 +1103,12 @@ static int qcom_glink_create_remote(struct qcom_glink *glink,
+ close_link:
+ 	/*
+ 	 * Send a close request to "undo" our open-ack. The close-ack will
+-	 * release the last reference.
++	 * release qcom_glink_send_open_req() reference and the last reference
++	 * will be relesed after receiving remote_close or transport unregister
++	 * by calling qcom_glink_native_remove().
+ 	 */
+ 	qcom_glink_send_close_req(glink, channel);
+ 
+-	/* Release qcom_glink_send_open_req() reference */
+-	kref_put(&channel->refcount, qcom_glink_channel_release);
+-
+ 	return ret;
+ }
+ 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.18.0
