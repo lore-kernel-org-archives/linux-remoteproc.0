@@ -1,32 +1,49 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 00/17] remoteproc: omap changes on top of v5.4-rc1
-Date: Mon, 28 Oct 2019 14:42:21 +0200
-Message-ID: <20191028124238.19224-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 3/6] rpmsg: glink: Put an extra reference during cleanup
+Date: Fri,  4 Oct 2019 15:26:59 -0700
+Message-Id: <20191004222702.8632-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20191004222702.8632-1-bjorn.andersson@linaro.org>
+References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+From: Chris Lew <clew@codeaurora.org>
 
-Mostly this is a facelift of the pretty old OMAP remoteproc code base,
-supporting now DT, runtime PM, ti-sysc, and dropping legacy omap hwmod
-support. Also timer + watchdog support is added, and couple of bugfixes.
+In a remote processor crash scenario, there is no guarantee the remote
+processor sent close requests before it went into a bad state. Remove
+the reference that is normally handled by the close command in the
+so channel resources can be released.
 
-The series hasn't been posted before mostly due to missing OMAP reset
-support, which has just been lately posted out and is getting merged to
-5.5.
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Cc: stable@vger.kernel.org
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-For proper functionality, this series depends at least on the clock [1]
-and reset [2] series sent out by me, but to compile, it only needs [1].
+Changes since v1:
+- None
 
--Tero
+ drivers/rpmsg/qcom_glink_native.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-[1] TI Clock series: https://patchwork.kernel.org/cover/11143025/
-[2] TI Reset series: https://patchwork.kernel.org/cover/11179573/
-
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 72ed671f5dcd..21fd2ae5f7f1 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1641,6 +1641,10 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
+ 	idr_for_each_entry(&glink->lcids, channel, cid)
+ 		kref_put(&channel->refcount, qcom_glink_channel_release);
+ 
++	/* Release any defunct local channels, waiting for close-req */
++	idr_for_each_entry(&glink->rcids, channel, cid)
++		kref_put(&channel->refcount, qcom_glink_channel_release);
++
+ 	idr_destroy(&glink->lcids);
+ 	idr_destroy(&glink->rcids);
+ 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+-- 
+2.18.0
