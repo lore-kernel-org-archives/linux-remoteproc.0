@@ -1,44 +1,25 @@
-Return-Path: <christophe.jaillet@wanadoo.fr>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] rpmsg: char: Simplify 'rpmsg_eptdev_release()'
-Date: Tue, 29 Oct 2019 07:09:14 +0100
-Message-Id: <20191029060915.3650-1-christophe.jaillet@wanadoo.fr>
+Return-Path: <linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <cover.1569572448.git.baolin.wang@linaro.org> <a6b18f17b995bceaf2fc0129866301dd8f46bee4.1569572448.git.baolin.wang@linaro.org>
+In-Reply-To: <a6b18f17b995bceaf2fc0129866301dd8f46bee4.1569572448.git.baolin.wang@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 4 Oct 2019 23:38:12 +0200
+Message-ID: <CACRpkdYF3hPit5EgWCXuM1exoWMFn_7k=OyM99ojS9WeJeMRFw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] hwspinlock: u8500_hsem: Use devm_hwspin_lock_register()
+ to register hwlock controller
+Content-Type: text/plain; charset="UTF-8"
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use 'skb_queue_purge()' instead of re-implementing it.
+On Fri, Sep 27, 2019 at 10:28 AM Baolin Wang <baolin.wang@linaro.org> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/rpmsg/rpmsg_char.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+> Use devm_hwspin_lock_register() to register the hwlock controller instead of
+> unregistering the hwlock controller explicitly when removing the device.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 507bfe163883..0c3a340db7d1 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -146,7 +146,6 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- {
- 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
- 	struct device *dev = &eptdev->dev;
--	struct sk_buff *skb;
- 
- 	/* Close the endpoint, if it's not already destroyed by the parent */
- 	mutex_lock(&eptdev->ept_lock);
-@@ -157,10 +156,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- 	mutex_unlock(&eptdev->ept_lock);
- 
- 	/* Discard all SKBs */
--	while (!skb_queue_empty(&eptdev->queue)) {
--		skb = skb_dequeue(&eptdev->queue);
--		kfree_skb(skb);
--	}
-+	skb_queue_purge(&eptdev->queue);
- 
- 	put_device(dev);
- 
--- 
-2.20.1
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
