@@ -1,72 +1,54 @@
-Return-Path: <baolin.wang@linaro.org>
-Return-Path: <baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 3/4] hwspinlock: sprd: Remove redundant PM runtime implementation
-Date: Mon, 14 Oct 2019 15:07:45 +0800
-Message-Id: <8fb54e417ee5833e09103fd1c286c4cf2f41ce69.1571036463.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1571036463.git.baolin.wang@linaro.org>
-References: <cover.1571036463.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1571036463.git.baolin.wang@linaro.org>
-References: <cover.1571036463.git.baolin.wang@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linus.walleij@linaro.org, orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org, linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 4/6] rpmsg: glink: Fix rpmsg_register_device err handling
+Date: Fri,  4 Oct 2019 15:27:00 -0700
+Message-Id: <20191004222702.8632-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20191004222702.8632-1-bjorn.andersson@linaro.org>
+References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Since the hwspinlock core has changed the PM runtime to be optional, thus
-remove the redundant PM runtime implementation in the Spreadtrum hwlock
-driver.
+From: Chris Lew <clew@codeaurora.org>
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+The device release function is set before registering with rpmsg. If
+rpmsg registration fails, the framework will call device_put(), which
+invokes the release function. The channel create logic does not need to
+free rpdev if rpmsg_register_device() fails and release is called.
+
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Cc: stable@vger.kernel.org
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/hwspinlock/sprd_hwspinlock.c |   21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-index 44d69db..36dc803 100644
---- a/drivers/hwspinlock/sprd_hwspinlock.c
-+++ b/drivers/hwspinlock/sprd_hwspinlock.c
-@@ -15,7 +15,6 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
--#include <linux/pm_runtime.h>
- #include <linux/slab.h>
+Changes since v1:
+- None
+
+ drivers/rpmsg/qcom_glink_native.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 21fd2ae5f7f1..89e02baea2d0 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1423,15 +1423,13 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
  
- #include "hwspinlock_internal.h"
-@@ -133,23 +132,10 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
+ 		ret = rpmsg_register_device(rpdev);
+ 		if (ret)
+-			goto free_rpdev;
++			goto rcid_remove;
+ 
+ 		channel->rpdev = rpdev;
  	}
  
- 	platform_set_drvdata(pdev, sprd_hwlock);
--	pm_runtime_enable(&pdev->dev);
+ 	return 0;
  
--	ret = devm_hwspin_lock_register(&pdev->dev, &sprd_hwlock->bank,
--					&sprd_hwspinlock_ops, 0,
--					SPRD_HWLOCKS_NUM);
--	if (ret) {
--		pm_runtime_disable(&pdev->dev);
--		return ret;
--	}
--
--	return 0;
--}
--
--static int sprd_hwspinlock_remove(struct platform_device *pdev)
--{
--	pm_runtime_disable(&pdev->dev);
--	return 0;
-+	return devm_hwspin_lock_register(&pdev->dev, &sprd_hwlock->bank,
-+					 &sprd_hwspinlock_ops, 0,
-+					 SPRD_HWLOCKS_NUM);
- }
- 
- static const struct of_device_id sprd_hwspinlock_of_match[] = {
-@@ -160,7 +146,6 @@ static int sprd_hwspinlock_remove(struct platform_device *pdev)
- 
- static struct platform_driver sprd_hwspinlock_driver = {
- 	.probe = sprd_hwspinlock_probe,
--	.remove = sprd_hwspinlock_remove,
- 	.driver = {
- 		.name = "sprd_hwspinlock",
- 		.of_match_table = of_match_ptr(sprd_hwspinlock_of_match),
+-free_rpdev:
+-	kfree(rpdev);
+ rcid_remove:
+ 	spin_lock_irqsave(&glink->idr_lock, flags);
+ 	idr_remove(&glink->rcids, channel->rcid);
 -- 
-1.7.9.5
+2.18.0
