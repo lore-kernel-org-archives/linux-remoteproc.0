@@ -1,84 +1,75 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 07/17] remoteproc/omap: Initialize and assign reserved memory node
-Date: Mon, 28 Oct 2019 14:42:28 +0200
-Message-ID: <20191028124238.19224-8-t-kristo@ti.com>
-In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
-References: <20191028124238.19224-1-t-kristo@ti.com>
+Date: Fri, 4 Oct 2019 21:03:29 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: stm32: fix probe error case
+Message-ID: <20191005040326.GB5189@tuxbook-pro>
+References: <1570190555-12465-1-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570190555-12465-1-git-send-email-fabien.dessenne@st.com>
+To: Fabien Dessenne <fabien.dessenne@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On Fri 04 Oct 05:02 PDT 2019, Fabien Dessenne wrote:
 
-The reserved memory nodes are not assigned to platform devices by
-default in the driver core to avoid the lookup for every platform
-device and incur a penalty as the real users are expected to be
-only a few devices.
+> If the rproc driver is probed before the mailbox driver and if the rproc
+> Device Tree node has some mailbox properties, the rproc driver probe
+> shall be deferred instead of being probed without mailbox support.
+> 
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 2cf4b29..410b794 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -310,7 +310,7 @@ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
+>  	}
+>  };
+>  
+> -static void stm32_rproc_request_mbox(struct rproc *rproc)
+> +static int stm32_rproc_request_mbox(struct rproc *rproc)
+>  {
+>  	struct stm32_rproc *ddata = rproc->priv;
+>  	struct device *dev = &rproc->dev;
+> @@ -328,11 +328,15 @@ static void stm32_rproc_request_mbox(struct rproc *rproc)
+>  		cl->dev = dev->parent;
+>  
+>  		ddata->mb[i].chan = mbox_request_channel_byname(cl, name);
+> -		if (IS_ERR(ddata->mb[i].chan)) {
+> +		if (PTR_ERR(ddata->mb[i].chan) == -EPROBE_DEFER) {
 
-OMAP remoteproc devices fall into the above category and the OMAP
-remoteproc driver _requires_ specific CMA pools to be assigned
-for each device at the moment to align on the location of the
-vrings and vring buffers in the RTOS-side firmware images. So,
-use the of_reserved_mem_device_init/release() API appropriately
-to assign the corresponding reserved memory region to the OMAP
-remoteproc device. Note that only one region per device is
-allowed by the framework.
+You may not use PTR_ERR() without first checking IS_ERR(), apart from
+that your patch looks good.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Regards,
+Bjorn
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 0524f7e0ffa4..0b80570effee 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/of_device.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/remoteproc.h>
-@@ -454,14 +455,22 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
-+	ret = of_reserved_mem_device_init(&pdev->dev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-+		goto free_rproc;
-+	}
-+
- 	platform_set_drvdata(pdev, rproc);
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto free_rproc;
-+		goto release_mem;
- 
- 	return 0;
- 
-+release_mem:
-+	of_reserved_mem_device_release(&pdev->dev);
- free_rproc:
- 	rproc_free(rproc);
- 	return ret;
-@@ -473,6 +482,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
- 
- 	rproc_del(rproc);
- 	rproc_free(rproc);
-+	of_reserved_mem_device_release(&pdev->dev);
- 
- 	return 0;
- }
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +			return -EPROBE_DEFER;
+> +		} else if (IS_ERR(ddata->mb[i].chan)) {
+>  			dev_warn(dev, "cannot get %s mbox\n", name);
+>  			ddata->mb[i].chan = NULL;
+>  		}
+>  	}
+> +
+> +	return 0;
+>  }
+>  
+>  static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
+> @@ -596,7 +600,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto free_rproc;
+>  
+> -	stm32_rproc_request_mbox(rproc);
+> +	ret = stm32_rproc_request_mbox(rproc);
+> +	if (ret)
+> +		goto free_rproc;
+>  
+>  	ret = rproc_add(rproc);
+>  	if (ret)
+> -- 
+> 2.7.4
+> 
