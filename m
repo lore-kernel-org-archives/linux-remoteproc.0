@@ -1,22 +1,44 @@
-Return-Path: <jeffrey.l.hugo@gmail.com>
-Return-Path: <jeffrey.l.hugo@gmail.com>
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH 0/2] Support for MSM8998 mss
-Date: Thu, 31 Oct 2019 19:43:01 -0700
-Message-Id: <20191101024301.21919-1-jeffrey.l.hugo@gmail.com>
-Cc: agross@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date: Fri, 4 Oct 2019 21:04:17 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] remoteproc: remove useless typedef
+Message-ID: <20191005040415.GC5189@tuxbook-pro>
+References: <20191004174424.21898-1-cleger@kalray.eu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191004174424.21898-1-cleger@kalray.eu>
+To: Clement Leger <cleger@kalray.eu>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Booting mss on MSM8998 is a critical step to getting wifi functional - a
-rather useful feature for the MSM8998 based laptops.
+On Fri 04 Oct 10:44 PDT 2019, Clement Leger wrote:
 
-Jeffrey Hugo (2):
-  dt-bindings: remoteproc: qcom: Add Q6v5 Modem PIL binding for MSM8998
-  remoteproc: qcom_q6v5_mss: Add support for MSM8998
+> rproc_handle_resources_t is not used anymore, remove it.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
 
- .../bindings/remoteproc/qcom,q6v5.txt         |  6 +++
- drivers/remoteproc/qcom_q6v5_mss.c            | 52 ++++++++++++++++---
- 2 files changed, 52 insertions(+), 6 deletions(-)
+Applied
 
--- 
-2.17.1
+Thanks,
+Bjorn
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 48feebd6d0a2..78e00194e72f 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -52,8 +52,6 @@
+>  static DEFINE_MUTEX(rproc_list_mutex);
+>  static LIST_HEAD(rproc_list);
+>  
+> -typedef int (*rproc_handle_resources_t)(struct rproc *rproc,
+> -				struct resource_table *table, int len);
+>  typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
+>  				 void *, int offset, int avail);
+>  
+> -- 
+> 2.15.0.276.g89ea799
+> 
