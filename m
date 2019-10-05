@@ -1,34 +1,37 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH] remoteproc: Fix wrong rvring index computation
-Date: Fri,  4 Oct 2019 09:37:36 +0200
-Message-Id: <20191004073736.8327-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Clement Leger <cleger@kalray.eu>
+Date: Fri, 4 Oct 2019 21:01:42 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 0/3] Optimize the u8500_hsem hwlock driver
+Message-ID: <20191005040139.GA5189@tuxbook-pro>
+References: <cover.1569572448.git.baolin.wang@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1569572448.git.baolin.wang@linaro.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: linus.walleij@linaro.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Index of rvring is computed using pointer arithmetic. However, since
-rvring->rvdev->vring is the base of the vring array, computation
-of rvring idx should be reversed. It previously lead to writing at negative
-indices in the resource table.
+On Fri 27 Sep 01:27 PDT 2019, Baolin Wang wrote:
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
----
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch set did some Optimization with changing to use devm_xxx()
+> APIs to simplify the code and make code more readable.
+> 
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3c5fbbbfb0f1..ab7443874635 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -400,7 +400,7 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
- void rproc_free_vring(struct rproc_vring *rvring)
- {
- 	struct rproc *rproc = rvring->rvdev->rproc;
--	int idx = rvring->rvdev->vring - rvring;
-+	int idx = rvring - rvring->rvdev->vring;
- 	struct fw_rsc_vdev *rsc;
- 
- 	idr_remove(&rproc->notifyids, rvring->notifyid);
--- 
-2.15.0.276.g89ea799
+Applied, with Linus' r-b
+
+Thanks,
+Bjorn
+
+> Baolin Wang (3):
+>   hwspinlock: u8500_hsem: Change to use
+>     devm_platform_ioremap_resource()
+>   hwspinlock: u8500_hsem: Use devm_kzalloc() to allocate memory
+>   hwspinlock: u8500_hsem: Use devm_hwspin_lock_register() to register
+>     hwlock controller
+> 
+>  drivers/hwspinlock/u8500_hsem.c |   46 +++++++++++----------------------------
+>  1 file changed, 13 insertions(+), 33 deletions(-)
+> 
+> -- 
+> 1.7.9.5
+> 
