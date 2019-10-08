@@ -1,25 +1,44 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <colin.king@canonical.com>
+From: Colin King <colin.king@canonical.com>
+Subject: [PATCH] rpmsg: char: fix resource leak on kbuf on copy_from_iter_full failure
+Date: Tue,  8 Oct 2019 13:00:18 +0100
+Message-Id: <20191008120018.12439-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <cover.1569572448.git.baolin.wang@linaro.org> <a6b18f17b995bceaf2fc0129866301dd8f46bee4.1569572448.git.baolin.wang@linaro.org>
-In-Reply-To: <a6b18f17b995bceaf2fc0129866301dd8f46bee4.1569572448.git.baolin.wang@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 4 Oct 2019 23:38:12 +0200
-Message-ID: <CACRpkdYF3hPit5EgWCXuM1exoWMFn_7k=OyM99ojS9WeJeMRFw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] hwspinlock: u8500_hsem: Use devm_hwspin_lock_register()
- to register hwlock controller
-Content-Type: text/plain; charset="UTF-8"
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Sep 27, 2019 at 10:28 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Use devm_hwspin_lock_register() to register the hwlock controller instead of
-> unregistering the hwlock controller explicitly when removing the device.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Currently when copy_from_iter_full fails the kbuf is not free'd on the
+error return path. Fix this by setting the error return code and exiting
+via the free_kbuf path.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Addresses-Coverity: ("Resource leak")
+Fixes: ccf45b18ce89 ("rpmsg: char: Migrate to iter versions of read and write")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rpmsg/rpmsg_char.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 507bfe163883..7db28643db43 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -227,8 +227,10 @@ static ssize_t rpmsg_eptdev_write_iter(struct kiocb *iocb,
+ 	if (!kbuf)
+ 		return -ENOMEM;
+ 
+-	if (!copy_from_iter_full(kbuf, len, from))
+-		return -EFAULT;
++	if (!copy_from_iter_full(kbuf, len, from)) {
++		ret = -EFAULT;
++		goto free_kbuf;
++	}
+ 
+ 	if (mutex_lock_interruptible(&eptdev->ept_lock)) {
+ 		ret = -ERESTARTSYS;
+-- 
+2.20.1
