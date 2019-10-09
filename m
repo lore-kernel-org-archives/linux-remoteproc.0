@@ -1,48 +1,39 @@
-Date: Fri, 4 Oct 2019 21:12:11 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] remoteproc: debug: Remove unneeded NULL check
-Message-ID: <20191005041208.GE5189@tuxbook-pro>
-References: <1569293934-31451-1-git-send-email-dingxiang@cmss.chinamobile.com>
+Return-Path: <clew@codeaurora.org>
+Subject: Re: [PATCH v2 2/6] rpmsg: glink: Fix use after free in open_ack
+ TIMEOUT case
+References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
+ <20191004222702.8632-3-bjorn.andersson@linaro.org>
+From: Chris Lew <clew@codeaurora.org>
+Message-ID: <3db040ee-6b0f-be45-0e23-ab65f16329b6@codeaurora.org>
+Date: Tue, 8 Oct 2019 17:51:05 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1569293934-31451-1-git-send-email-dingxiang@cmss.chinamobile.com>
-To: Ding Xiang <dingxiang@cmss.chinamobile.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20191004222702.8632-3-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 23 Sep 19:58 PDT 2019, Ding Xiang wrote:
 
-> debugfs_remove_recursive will do NULL check, so remove
-> the redundant null check
+
+On 10/4/2019 3:26 PM, Bjorn Andersson wrote:
+> From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 > 
-
-Nice, applied.
-
-Regards,
-Bjorn
-
-> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+> Extra channel reference put when remote sending OPEN_ACK after timeout
+> causes use-after-free while handling next remote CLOSE command.
+> 
+> Remove extra reference put in timeout case to avoid use-after-free.
+> 
+> Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+> Cc: stable@vger.kernel.org
+> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  drivers/remoteproc/remoteproc_debugfs.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index 8cd4a0a..dd93cf0 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -333,9 +333,6 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
->  
->  void rproc_delete_debug_dir(struct rproc *rproc)
->  {
-> -	if (!rproc->dbg_dir)
-> -		return;
-> -
->  	debugfs_remove_recursive(rproc->dbg_dir);
->  }
->  
-> -- 
-> 1.9.1
-> 
-> 
-> 
+
+Acked-By: Chris Lew <clew@codeaurora.org>
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
