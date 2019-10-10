@@ -1,70 +1,56 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 02/17] remoteproc/omap: Switch to SPDX license identifiers
-Date: Mon, 28 Oct 2019 14:42:23 +0200
-Message-ID: <20191028124238.19224-3-t-kristo@ti.com>
-In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
-References: <20191028124238.19224-1-t-kristo@ti.com>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+Subject: RE: [PATCH 0/2] remoteproc: stm32: allow wdg irq to be a wakeup
+ source
+Date: Thu, 10 Oct 2019 15:16:19 +0000
+Message-ID: <1bef12295e864dfa90edfa495803167f@SFHDAG5NODE3.st.com>
+References: <1566833923-16718-1-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1566833923-16718-1-git-send-email-fabien.dessenne@st.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+Cc: Loic PALLARDY <loic.pallardy@st.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hi
 
-Use the appropriate SPDX license identifiers in various OMAP remoteproc
-source files and drop the previous boilerplate license text.
+I Got Rob's Reviewed-by for the bindings. Any further comments for the driv=
+er part?
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
- 1 file changed, 1 insertion(+), 26 deletions(-)
+Fabien
 
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index f6d2036d383d..1e6fef753c4f 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -1,35 +1,10 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
- /*
-  * Remote processor messaging
-  *
-  * Copyright (C) 2011 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- * * Redistributions of source code must retain the above copyright
-- *   notice, this list of conditions and the following disclaimer.
-- * * Redistributions in binary form must reproduce the above copyright
-- *   notice, this list of conditions and the following disclaimer in
-- *   the documentation and/or other materials provided with the
-- *   distribution.
-- * * Neither the name Texas Instruments nor the names of its
-- *   contributors may be used to endorse or promote products derived
-- *   from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- #ifndef _OMAP_RPMSG_H
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> -----Original Message-----
+> From: Fabien DESSENNE <fabien.dessenne@st.com>
+> Sent: lundi 26 ao=FBt 2019 17:39
+> To: Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>=
+;
+> Maxime Coquelin <mcoquelin.stm32@gmail.com>; Alexandre TORGUE
+> <alexandre.torgue@st.com>; Ohad Ben-Cohen <ohad@wizery.com>; Bjorn
+> Andersson <bjorn.andersson@linaro.org>; devicetree@vger.kernel.org; linux=
+-
+> stm32@st-md-mailman.stormreply.com; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org; linux-remoteproc@vger.kernel.org
+> Cc: Fabien DESSENNE <fabien.dessenne@st.com>; Loic PALLARDY
+> <loic.pallardy@st.com>; Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+> Subject: [PATCH 0/2] remoteproc: stm32: allow wdg irq to be a wakeup sour=
+ce
+>=20
+> The watchdog IRQ which notifies the remote processor crash is used by the
+> remoteproc framework to perform a recovery procedure.
+> Since this IRQ may be fired when the Linux system is suspended, this IRQ =
+may
+> be configured to wake up the system.
+>=20
+> Fabien Dessenne (2):
+>   dt-bindings: remoteproc: stm32: add wakeup-source
+>   remoteproc: stm32: wakeup the system by wdg irq
+>=20
+>  .../devicetree/bindings/remoteproc/stm32-rproc.txt |  3 ++
+>  drivers/remoteproc/stm32_rproc.c                   | 47 ++++++++++++++++=
+++++++
+>  2 files changed, 50 insertions(+)
+>=20
+> --
+> 2.7.4
