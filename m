@@ -1,314 +1,363 @@
-Return-Path: <govinds@codeaurora.org>
-From: Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v4 2/2] clk: qcom: Add Q6SSTOP clock controller for QCS404
-Date: Fri, 11 Oct 2019 18:59:28 +0530
-Message-Id: <20191011132928.9388-3-govinds@codeaurora.org>
-In-Reply-To: <20191011132928.9388-1-govinds@codeaurora.org>
-References: <20191011132928.9388-1-govinds@codeaurora.org>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+Subject: RE: [PATCH v3] hwspinlock: allow sharing of hwspinlocks
+Date: Thu, 10 Oct 2019 15:19:43 +0000
+Message-ID: <cacef63490014605b5eb8015c4002df2@SFHDAG5NODE3.st.com>
+References: <1568210227-32135-1-git-send-email-fabien.dessenne@st.com>
+In-Reply-To: <1568210227-32135-1-git-send-email-fabien.dessenne@st.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: robh@kernel.org, sboyd@kernel.org
-Cc: bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Suman Anna <s-anna@ti.com>, Jonathan Corbet <corbet@lwn.net>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for the Q6SSTOP clock control used on qcs404
-based devices. This would allow wcss remoteproc driver to
-control the required WCSS Q6SSTOP clock/reset controls to
-bring the subsystem out of reset and shutdown the WCSS Q6DSP.
+Hi Bjorn, Suman, and others
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
+Do you have any comments regarding this patch?
+
+BR
+Fabien
+
+
+> -----Original Message-----
+> From: Fabien DESSENNE <fabien.dessenne@st.com>
+> Sent: mercredi 11 septembre 2019 15:57
+> To: Ohad Ben-Cohen <ohad@wizery.com>; Bjorn Andersson
+> <bjorn.andersson@linaro.org>; Suman Anna <s-anna@ti.com>; Jonathan Corbet
+> <corbet@lwn.net>; linux-remoteproc@vger.kernel.org; linux-
+> doc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Cc: Fabien DESSENNE <fabien.dessenne@st.com>; linux-stm32@st-md-
+> mailman.stormreply.com
+> Subject: [PATCH v3] hwspinlock: allow sharing of hwspinlocks
+>=20
+> Allow several clients to request (hwspin_lock_request_specific()) the sam=
+e lock.
+> In addition to that, protect a given lock from being locked
+> (hwspin_trylock{_...}()) by more that one client at a time.
+>=20
+> Since the RAW and IN_ATOMIC modes do not implement that protection (unlik=
+e
+> the default, IRQ and IRQSTATE modes that make use of spin_lock{_irq,
+> _irqsave}), protect __hwspin_trylock with the atomic bitop test_and_set_b=
+it().
+> This bitop is atomic (SMP-safe), does not disable neither preemption nor
+> interrupts, hence it preserves the RAW and IN_ATOMIC modes constraints.
+>=20
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> ---
+> Changes since v2:
+> - Drop the DeviceTree-based implementation.
+> - Do not let the choice between exclusive and shared usage : locks are
+>   always shared.
+> - Add a protection (atomic bitop) working in any modes to allow safe
+>   sharing between clients.
+>=20
+> Changes since v1:
+> - Removed useless 'status =3D "okay"' from stm32mp157c.dtsi
+> ---
+>  Documentation/hwspinlock.txt             |  9 ++-
+>  drivers/hwspinlock/hwspinlock_core.c     | 98 +++++++++++++++++++++++---=
 ---
- drivers/clk/qcom/Kconfig                      |   8 +
- drivers/clk/qcom/Makefile                     |   1 +
- drivers/clk/qcom/q6sstop-qcs404.c             | 223 ++++++++++++++++++
- .../dt-bindings/clock/qcom,q6sstopcc-qcs404.h |  18 ++
- 4 files changed, 250 insertions(+)
- create mode 100644 drivers/clk/qcom/q6sstop-qcs404.c
- create mode 100644 include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e1ff83cc361e..1b3c87a97521 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -250,6 +250,14 @@ config QCS_TURING_404
- 	  Support for the Turing Clock Controller on QCS404, provides clocks
- 	  and resets for the Turing subsystem.
- 
-+config QCS_Q6SSTOP_404
-+	tristate "QCS404 Q6SSTOP Clock Controller"
-+	select QCS_GCC_404
-+	help
-+	  Support for the Q6SSTOP clock controller on QCS404 devices.
-+	  Say Y if you want to use the Q6SSTOP branch clocks of the WCSS clock
-+	  controller to reset the Q6SSTOP subsystem.
-+
- config SDM_GCC_845
- 	tristate "SDM845 Global Clock Controller"
- 	select QCOM_GDSC
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index f0768fb1f037..086c053e0e03 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
- obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
-+obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
-new file mode 100644
-index 000000000000..723f932fbf7d
---- /dev/null
-+++ b/drivers/clk/qcom/q6sstop-qcs404.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,q6sstopcc-qcs404.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-branch.h"
-+#include "common.h"
-+#include "reset.h"
-+
-+static struct clk_branch lcc_ahbfabric_cbc_clk = {
-+	.halt_reg = 0x1b004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1b004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_ahbfabric_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_ahbs_cbc_clk = {
-+	.halt_reg = 0x22000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x22000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_ahbs_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_tcm_slave_cbc_clk = {
-+	.halt_reg = 0x1c000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x1c000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_tcm_slave_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_ahbm_cbc_clk = {
-+	.halt_reg = 0x22004,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x22004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_ahbm_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_axim_cbc_clk = {
-+	.halt_reg = 0x1c004,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x1c004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_axim_cbc_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lcc_q6ss_bcr_sleep_clk = {
-+	.halt_reg = 0x6004,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x6004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lcc_q6ss_bcr_sleep_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+/* TCSR clock */
-+static struct clk_branch tcsr_lcc_csr_cbcr_clk = {
-+	.halt_reg = 0x8008,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "tcsr_lcc_csr_cbcr_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct regmap_config q6sstop_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.fast_io	= true,
-+};
-+
-+static struct clk_regmap *q6sstop_qcs404_clocks[] = {
-+	[LCC_AHBFABRIC_CBC_CLK] = &lcc_ahbfabric_cbc_clk.clkr,
-+	[LCC_Q6SS_AHBS_CBC_CLK] = &lcc_q6ss_ahbs_cbc_clk.clkr,
-+	[LCC_Q6SS_TCM_SLAVE_CBC_CLK] = &lcc_q6ss_tcm_slave_cbc_clk.clkr,
-+	[LCC_Q6SS_AHBM_CBC_CLK] = &lcc_q6ss_ahbm_cbc_clk.clkr,
-+	[LCC_Q6SS_AXIM_CBC_CLK] = &lcc_q6ss_axim_cbc_clk.clkr,
-+	[LCC_Q6SS_BCR_SLEEP_CLK] = &lcc_q6ss_bcr_sleep_clk.clkr,
-+};
-+
-+static const struct qcom_reset_map q6sstop_qcs404_resets[] = {
-+	[Q6SSTOP_BCR_RESET] = { 0x6000 },
-+};
-+
-+static const struct qcom_cc_desc q6sstop_qcs404_desc = {
-+	.config = &q6sstop_regmap_config,
-+	.clks = q6sstop_qcs404_clocks,
-+	.num_clks = ARRAY_SIZE(q6sstop_qcs404_clocks),
-+	.resets = q6sstop_qcs404_resets,
-+	.num_resets = ARRAY_SIZE(q6sstop_qcs404_resets),
-+};
-+
-+static struct clk_regmap *tcsr_qcs404_clocks[] = {
-+	[TCSR_Q6SS_LCC_CBCR_CLK] = &tcsr_lcc_csr_cbcr_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc tcsr_qcs404_desc = {
-+	.config = &q6sstop_regmap_config,
-+	.clks = tcsr_qcs404_clocks,
-+	.num_clks = ARRAY_SIZE(tcsr_qcs404_clocks),
-+};
-+
-+static const struct of_device_id q6sstopcc_qcs404_match_table[] = {
-+	{ .compatible = "qcom,qcs404-q6sstopcc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, q6sstopcc_qcs404_match_table);
-+
-+static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc;
-+	int ret;
-+
-+	pm_runtime_enable(&pdev->dev);
-+	ret = pm_clk_create(&pdev->dev);
-+	if (ret)
-+		goto disable_pm_runtime;
-+
-+	ret = pm_clk_add(&pdev->dev, NULL);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to acquire iface clock\n");
-+		goto destroy_pm_clk;
-+	}
-+
-+	q6sstop_regmap_config.name = "q6sstop_tcsr";
-+	desc = &tcsr_qcs404_desc;
-+
-+	ret = qcom_cc_probe_by_index(pdev, 1, desc);
-+	if (ret)
-+		goto destroy_pm_clk;
-+
-+	q6sstop_regmap_config.name = "q6sstop_cc";
-+	desc = &q6sstop_qcs404_desc;
-+
-+	ret = qcom_cc_probe_by_index(pdev, 0, desc);
-+	if (ret)
-+		goto destroy_pm_clk;
-+
-+	return 0;
-+
-+destroy_pm_clk:
-+	pm_clk_destroy(&pdev->dev);
-+
-+disable_pm_runtime:
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int q6sstopcc_qcs404_remove(struct platform_device *pdev)
-+{
-+	pm_clk_destroy(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops q6sstopcc_pm_ops = {
-+	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-+};
-+
-+static struct platform_driver q6sstopcc_qcs404_driver = {
-+	.probe		= q6sstopcc_qcs404_probe,
-+	.remove		= q6sstopcc_qcs404_remove,
-+	.driver		= {
-+		.name	= "qcs404-q6sstopcc",
-+		.of_match_table = q6sstopcc_qcs404_match_table,
-+		.pm = &q6sstopcc_pm_ops,
-+	},
-+};
-+
-+module_platform_driver(q6sstopcc_qcs404_driver);
-+
-+MODULE_DESCRIPTION("QTI QCS404 Q6SSTOP Clock Controller Driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
-new file mode 100644
-index 000000000000..c6f5290f0914
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
-+#define _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
-+
-+#define LCC_AHBFABRIC_CBC_CLK			0
-+#define LCC_Q6SS_AHBS_CBC_CLK			1
-+#define LCC_Q6SS_TCM_SLAVE_CBC_CLK		2
-+#define LCC_Q6SS_AHBM_CBC_CLK			3
-+#define LCC_Q6SS_AXIM_CBC_CLK			4
-+#define LCC_Q6SS_BCR_SLEEP_CLK			5
-+#define TCSR_Q6SS_LCC_CBCR_CLK			6
-+
-+#define Q6SSTOP_BCR_RESET			1
-+#endif
--- 
-2.22.0
+> ---
+>  drivers/hwspinlock/hwspinlock_internal.h |  4 ++
+>  3 files changed, 81 insertions(+), 30 deletions(-)
+>=20
+> diff --git a/Documentation/hwspinlock.txt b/Documentation/hwspinlock.txt =
+index
+> 6f03713..5f6f660 100644
+> --- a/Documentation/hwspinlock.txt
+> +++ b/Documentation/hwspinlock.txt
+> @@ -53,9 +53,8 @@ Should be called from a process context (might sleep).
+>=20
+>    struct hwspinlock *hwspin_lock_request_specific(unsigned int id);
+>=20
+> -Assign a specific hwspinlock id and return its address, or NULL -if that
+> hwspinlock is already in use. Usually board code will -be calling this fu=
+nction in
+> order to reserve specific hwspinlock
+> +Assign a specific hwspinlock id and return its address. Usually board
+> +code will be calling this function in order to reserve specific
+> +hwspinlock
+>  ids for predefined purposes.
+>=20
+>  Should be called from a process context (might sleep).
+> @@ -449,11 +448,15 @@ of which represents a single hardware lock::
+>  	* struct hwspinlock - this struct represents a single hwspinlock instan=
+ce
+>  	* @bank: the hwspinlock_device structure which owns this lock
+>  	* @lock: initialized and used by hwspinlock core
+> +	* @is_locked: whether this lock is currently locked
+> +	* @reqcount: number of users having requested this lock
+>  	* @priv: private data, owned by the underlying platform-specific
+> hwspinlock drv
+>  	*/
+>  	struct hwspinlock {
+>  		struct hwspinlock_device *bank;
+>  		spinlock_t lock;
+> +		unsigned long is_locked;
+> +		unsigned int reqcount;
+>  		void *priv;
+>  	};
+>=20
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c
+> b/drivers/hwspinlock/hwspinlock_core.c
+> index 8862445..e9d3de10 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -29,6 +29,7 @@
+>=20
+>  /* radix tree tags */
+>  #define HWSPINLOCK_UNUSED	(0) /* tags an hwspinlock as unused */
+> +#define HWSPINLOCK_DYN_ASSIGN	(1) /* dynamically assigned
+> hwspinlock */
+>=20
+>  /*
+>   * A radix tree is used to maintain the available hwspinlock instances.
+> @@ -96,14 +97,25 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int
+> mode, unsigned long *flags)
+>  	BUG_ON(!flags && mode =3D=3D HWLOCK_IRQSTATE);
+>=20
+>  	/*
+> +	 * Check if the lock is already taken by another context on the local
+> +	 * cpu.
+> +	 * Calling atomic test_and_set_bit_lock() ensures that hwspinlock is
+> +	 * SMP-safe (so we can take it from additional contexts on the local
+> +	 * host) in any mode, even those where we do not make use of the local
+> +	 * spinlock.
+> +	 */
+> +
+> +	if (test_and_set_bit_lock(0, &hwlock->is_locked))
+> +		return -EBUSY;
+> +
+> +	/*
+>  	 * This spin_lock{_irq, _irqsave} serves three purposes:
+>  	 *
+>  	 * 1. Disable preemption, in order to minimize the period of time
+>  	 *    in which the hwspinlock is taken. This is important in order
+>  	 *    to minimize the possible polling on the hardware interconnect
+>  	 *    by a remote user of this lock.
+> -	 * 2. Make the hwspinlock SMP-safe (so we can take it from
+> -	 *    additional contexts on the local host).
+> +	 * 2. Make the hwspinlock SMP-safe.
+>  	 * 3. Ensure that in_atomic/might_sleep checks catch potential
+>  	 *    problems with hwspinlock usage (e.g. scheduler checks like
+>  	 *    'scheduling while atomic' etc.)
+> @@ -124,9 +136,9 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int
+> mode, unsigned long *flags)
+>  		break;
+>  	}
+>=20
+> -	/* is lock already taken by another context on the local cpu ? */
+> +	/* sanity check (this shouldn't happen) */
+>  	if (!ret)
+> -		return -EBUSY;
+> +		goto clear;
+>=20
+>  	/* try to take the hwspinlock device */
+>  	ret =3D hwlock->bank->ops->trylock(hwlock);
+> @@ -149,7 +161,7 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int
+> mode, unsigned long *flags)
+>  			break;
+>  		}
+>=20
+> -		return -EBUSY;
+> +		goto clear;
+>  	}
+>=20
+>  	/*
+> @@ -165,6 +177,11 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int
+> mode, unsigned long *flags)
+>  	mb();
+>=20
+>  	return 0;
+> +
+> +clear:
+> +	/* Clear is_locked */
+> +	clear_bit_unlock(0, &hwlock->is_locked);
+> +	return -EBUSY;
+>  }
+>  EXPORT_SYMBOL_GPL(__hwspin_trylock);
+>=20
+> @@ -299,6 +316,9 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int
+> mode, unsigned long *flags)
+>  		spin_unlock(&hwlock->lock);
+>  		break;
+>  	}
+> +
+> +	/* Clear is_locked set while locking */
+> +	clear_bit_unlock(0, &hwlock->is_locked);
+>  }
+>  EXPORT_SYMBOL_GPL(__hwspin_unlock);
+>=20
+> @@ -504,7 +524,9 @@ int hwspin_lock_register(struct hwspinlock_device *ba=
+nk,
+> struct device *dev,
+>  		hwlock =3D &bank->lock[i];
+>=20
+>  		spin_lock_init(&hwlock->lock);
+> +		clear_bit(0, &hwlock->is_locked);
+>  		hwlock->bank =3D bank;
+> +		hwlock->reqcount =3D 0;
+>=20
+>  		ret =3D hwspin_lock_register_single(hwlock, base_id + i);
+>  		if (ret)
+> @@ -664,12 +686,16 @@ static int __hwspin_lock_request(struct hwspinlock
+> *hwlock)
+>  		return ret;
+>  	}
+>=20
+> -	/* mark hwspinlock as used, should not fail */
+> -	tmp =3D radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
+> -							HWSPINLOCK_UNUSED);
+> +	/* update reqcount */
+> +	if (!hwlock->reqcount++) {
+> +		/* first request, mark hwspinlock as used, should not fail */
+> +		tmp =3D radix_tree_tag_clear(&hwspinlock_tree,
+> +					   hwlock_to_id(hwlock),
+> +					   HWSPINLOCK_UNUSED);
+>=20
+> -	/* self-sanity check that should never fail */
+> -	WARN_ON(tmp !=3D hwlock);
+> +		/* self-sanity check that should never fail */
+> +		WARN_ON(tmp !=3D hwlock);
+> +	}
+>=20
+>  	return ret;
+>  }
+> @@ -706,7 +732,7 @@ EXPORT_SYMBOL_GPL(hwspin_lock_get_id);
+>   */
+>  struct hwspinlock *hwspin_lock_request(void)  {
+> -	struct hwspinlock *hwlock;
+> +	struct hwspinlock *hwlock, *tmp;
+>  	int ret;
+>=20
+>  	mutex_lock(&hwspinlock_tree_lock);
+> @@ -728,6 +754,13 @@ struct hwspinlock *hwspin_lock_request(void)
+>  	if (ret < 0)
+>  		hwlock =3D NULL;
+>=20
+> +	/* mark this hwspinlock as dynamically assigned */
+> +	tmp =3D radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+> +				 HWSPINLOCK_DYN_ASSIGN);
+> +
+> +	/* self-sanity check which should never fail */
+> +	WARN_ON(tmp !=3D hwlock);
+> +
+>  out:
+>  	mutex_unlock(&hwspinlock_tree_lock);
+>  	return hwlock;
+> @@ -764,18 +797,19 @@ struct hwspinlock
+> *hwspin_lock_request_specific(unsigned int id)
+>  	/* sanity check (this shouldn't happen) */
+>  	WARN_ON(hwlock_to_id(hwlock) !=3D id);
+>=20
+> -	/* make sure this hwspinlock is unused */
+> -	ret =3D radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+> -	if (ret =3D=3D 0) {
+> -		pr_warn("hwspinlock %u is already in use\n", id);
+> +	/* mark as used and power up */
+> +	ret =3D __hwspin_lock_request(hwlock);
+> +	if (ret < 0) {
+>  		hwlock =3D NULL;
+>  		goto out;
+>  	}
+>=20
+> -	/* mark as used and power up */
+> -	ret =3D __hwspin_lock_request(hwlock);
+> -	if (ret < 0)
+> -		hwlock =3D NULL;
+> +	/*
+> +	 * warn if this lock is also used by another client which got this lock
+> +	 * with dynamic assignment using the hwspin_lock_request() API
+> +	 */
+> +	if (radix_tree_tag_get(&hwspinlock_tree, id,
+> HWSPINLOCK_DYN_ASSIGN))
+> +		pr_warn("hwspinlock %u is shared with a 'dynamic' user\n", id);
+>=20
+>  out:
+>  	mutex_unlock(&hwspinlock_tree_lock);
+> @@ -799,7 +833,7 @@ int hwspin_lock_free(struct hwspinlock *hwlock)  {
+>  	struct device *dev;
+>  	struct hwspinlock *tmp;
+> -	int ret;
+> +	int ret, id;
+>=20
+>  	if (!hwlock) {
+>  		pr_err("invalid hwlock\n");
+> @@ -810,30 +844,40 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+>  	mutex_lock(&hwspinlock_tree_lock);
+>=20
+>  	/* make sure the hwspinlock is used */
+> -	ret =3D radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
+> -							HWSPINLOCK_UNUSED);
+> +	id =3D hwlock_to_id(hwlock);
+> +	ret =3D radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+>  	if (ret =3D=3D 1) {
+>  		dev_err(dev, "%s: hwlock is already free\n", __func__);
+>  		dump_stack();
+>  		ret =3D -EINVAL;
+> -		goto out;
+> +		goto out_unlock;
+>  	}
+>=20
+>  	/* notify the underlying device that power is not needed */
+>  	ret =3D pm_runtime_put(dev);
+>  	if (ret < 0)
+> -		goto out;
+> +		goto out_unlock;
+> +
+> +	/* update reqcount */
+> +	if (--hwlock->reqcount)
+> +		goto out_put;
+>=20
+>  	/* mark this hwspinlock as available */
+> -	tmp =3D radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+> -							HWSPINLOCK_UNUSED);
+> +	tmp =3D radix_tree_tag_set(&hwspinlock_tree, id,
+> HWSPINLOCK_UNUSED);
+>=20
+>  	/* sanity check (this shouldn't happen) */
+>  	WARN_ON(tmp !=3D hwlock);
+>=20
+> +	/* clear the dynamically assigned tag */
+> +	tmp =3D radix_tree_tag_clear(&hwspinlock_tree, id,
+> +HWSPINLOCK_DYN_ASSIGN);
+> +
+> +	/* self-sanity check which should never fail */
+> +	WARN_ON(tmp !=3D hwlock);
+> +
+> +out_put:
+>  	module_put(dev->driver->owner);
+>=20
+> -out:
+> +out_unlock:
+>  	mutex_unlock(&hwspinlock_tree_lock);
+>  	return ret;
+>  }
+> diff --git a/drivers/hwspinlock/hwspinlock_internal.h
+> b/drivers/hwspinlock/hwspinlock_internal.h
+> index 9eb6bd0..a3aae55 100644
+> --- a/drivers/hwspinlock/hwspinlock_internal.h
+> +++ b/drivers/hwspinlock/hwspinlock_internal.h
+> @@ -35,11 +35,15 @@ struct hwspinlock_ops {
+>   * struct hwspinlock - this struct represents a single hwspinlock instan=
+ce
+>   * @bank: the hwspinlock_device structure which owns this lock
+>   * @lock: initialized and used by hwspinlock core
+> + * @is_locked: whether this lock is currently locked
+> + * @reqcount: number of users having requested this lock
+>   * @priv: private data, owned by the underlying platform-specific hwspin=
+lock drv
+>   */
+>  struct hwspinlock {
+>  	struct hwspinlock_device *bank;
+>  	spinlock_t lock;
+> +	unsigned long is_locked;
+> +	unsigned int reqcount;
+>  	void *priv;
+>  };
+>=20
+> --
+> 2.7.4
