@@ -1,116 +1,159 @@
-Return-Path: <benjamin.gaignard@st.com>
-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v3] dt-bindings: hwlock: Convert stm32 hwspinlock bindings to json-schema
-Date: Mon, 14 Oct 2019 11:17:56 +0200
-Message-ID: <20191014091756.23763-1-benjamin.gaignard@st.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v20 0/4] Add support for mt8183 SCP.
+Date: Mon, 14 Oct 2019 15:58:05 +0800
+Message-Id: <20191014075812.181942-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, "open list:OPEN FIRMWARE AND FLATTENED" <devicetree@vger.kernel.org>, DEVICE, "moderated list:ARM/Mediatek SoC" <linux-arm-kernel@lists.infradead.org>, support, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC" <linux-mediatek@lists.infradead.org>support, "open list:REMOTE PROCESSOR" <linux-remoteproc@vger.kernel.org>, SUBSYSTEM
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Convert the STM32 hwspinlock binding to DT schema format using json-schema
+Add support for controlling and communicating with mt8183's system
+control processor (SCP), using the remoteproc & rpmsg framework.
+And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
-change in v3:
-- use (GPL-2.0-only OR BSD-2-Clause)
+The overall structure of the series is:
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2).
+* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
+  interrupt (IPI) and shared memory (Patch 2).
+* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
+  device. Supports name service for SCP firmware to
+  announce channels (Patch 3).
+* add scp dts node to mt8183 platform (Patch 4).
 
-change in v2:
-- use BSD-2-Clause license
-- use const for #hwlock-cells
-- add additionalProperties: false
+Changes from v19:
+ - Fix an incorrect include in mtk_rpmsg.h (linux/device.h ->
+   linux/platform_device.h)
 
- .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ----------
- .../bindings/hwlock/st,stm32-hwspinlock.yaml       | 50 ++++++++++++++++++++++
- 2 files changed, 50 insertions(+), 23 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
- create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
+Changes from v18:
+ - Change the way shared memory is handled, and drop patch 3.
 
-diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-deleted file mode 100644
-index adf4f000ea3d..000000000000
---- a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--STM32 Hardware Spinlock Device Binding
---------------------------------------
--
--Required properties :
--- compatible : should be "st,stm32-hwspinlock".
--- reg : the register address of hwspinlock.
--- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
--	hwlock, so the number of cells should be <1> here.
--- clock-names : Must contain "hsem".
--- clocks : Must contain a phandle entry for the clock in clock-names, see the
--	common clock bindings.
--
--Please look at the generic hwlock binding for usage information for consumers,
--"Documentation/devicetree/bindings/hwlock/hwlock.txt"
--
--Example of hwlock provider:
--	hwspinlock@4c000000 {
--		compatible = "st,stm32-hwspinlock";
--		#hwlock-cells = <1>;
--		reg = <0x4c000000 0x400>;
--		clocks = <&rcc HSEM>;
--		clock-names = "hsem";
--	};
-diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
-new file mode 100644
-index 000000000000..47cf9c8d97e9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwlock/st,stm32-hwspinlock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STM32 Hardware Spinlock bindings
-+
-+maintainers:
-+  - Benjamin Gaignard <benjamin.gaignard@st.com>
-+  - Fabien Dessenne <fabien.dessenne@st.com>
-+
-+properties:
-+  "#hwlock-cells":
-+    const: 1
-+
-+  compatible:
-+    const: st,stm32-hwspinlock
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: hsem
-+
-+required:
-+  - "#hwlock-cells"
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+    hwspinlock@4c000000 {
-+        compatible = "st,stm32-hwspinlock";
-+        #hwlock-cells = <1>;
-+        reg = <0x4c000000 0x400>;
-+        clocks = <&rcc HSEM>;
-+        clock-names = "hsem";
-+    };
-+
-+...
+Changes from v17:
+ - Fix mixture use of __iomem found by sparse.
+ - Change the ipi handler to take a u32 instead of enum scp_ipi_id.
+ - Mark mtk_rpmsg_{prepare,unprepare,stop} as static.
+
+Changes from v16:
+ - Change the desc_lock mutex to be a per-id lock.
+ - Put the execution of handler inside the per-id lock, to prevent race
+   between scp_ipi_unregister and handler being run.
+ - Move the initialization of mutex to before scp_ipi_register.
+
+Changes from v15:
+ - Fix a bug on incorrect usage of wait_event_timeout return value.
+
+Changes from v14:
+ - Fix a typo on variable in DEBUG section.
+
+Changes from v13:
+ - Move include/linux/platform_data/mtk_scp.h to
+   include/linux/remoteproc/mtk_scp.h.
+ - Rename scp_get_reserve_* to scp_get_reserved_*.
+ - Add lock for access of scp->ipi_desc.
+ - Lock the whole ipi_send function.
+ - Move more setting of cache size from SCP firmware to kernel driver,
+   to prevent problem while loading firmware onto DRAM.
+ - Minor fixes addressing comment.
+
+Changes from v12:
+ - Initialize cache before firmware load, to avoid problem while loading
+   large firmware.
+ - Disable watchdog before stopping SCP, to avoid extra warning message.
+ - Fix new warnings by checkpatch.
+
+Changes from v11:
+ - Fixed a bug that mtk_rpmsg_endpoint is not properly cleaned up if
+   rproc_boot fails.
+ - Add missing documentation in comment.
+
+Changes from v10:
+ - Drop applied cros_ec_rpmsg patches.
+ - Add clock reset before loading SCP firmware.
+ - Fix some type mismatch warnings when printing debug messages.
+
+Changes from v9:
+ - Remove reserve-memory-vpu_share node.
+ - Remove change to cros_ec_commands.h (That is already in
+   https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/)
+
+Changes from v8:
+ - Rebased onto https://patchwork.kernel.org/cover/10962385/.
+ - Drop merged cros_ec_rpmsg patch, and add scp dts node patch.
+ - Add more reserved memory region.
+
+Changes from v7:
+ - Rebase onto https://lore.kernel.org/patchwork/patch/1059196/.
+ - Fix clock enable/disable timing for SCP driver.
+ - Add more SCP IPI ID.
+
+Changes from v6:
+ - Decouple mtk_rpmsg from mtk_scp.
+ - Change data of EC response to be aligned to 4 bytes.
+
+Changes from v5:
+ - Add device tree binding document for cros_ec_rpmsg.
+ - Better document in comments for cros_ec_rpmsg.
+ - Remove dependency on CONFIG_ in binding tree document.
+
+Changes from v4:
+ - Merge patch 6 (Load ELF firmware) into patch 2, so the driver loads
+   ELF firmware by default, and no longer accept plain binary.
+ - rpmsg_device listed in device tree (as a child of the SCP node) would
+   have it's device tree node mapped to the rpmsg_device, so the rpmsg
+   driver can use the properties on device tree.
+
+Changes from v3:
+ - Make writing to SCP SRAM aligned.
+ - Add a new patch (Patch 6) to load ELF instead of bin firmware.
+ - Add host event support for EC driver.
+ - Fix some bugs found in testing (missing spin_lock_init,
+   rproc_subdev_unprepare to rproc_subdev_stop).
+ - Fix some coding style issue found by checkpatch.pl.
+
+Changes from v2:
+ - Fold patch 3 into patch 2 in v2.
+ - Move IPI id around to support cross-testing for old and new firmware.
+ - Finish more TODO items.
+
+Changes from v1:
+ - Extract functions and rename variables in mtk_scp.c.
+ - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
+   short-lived work items.
+ - Code format fix based on feedback for cros_ec_rpmsg.c.
+ - Extract feature detection for SCP into separate patch (Patch 6).
+
+Eddie Huang (1):
+  arm64: dts: mt8183: add scp node
+
+Erin Lo (2):
+  dt-bindings: Add a binding for Mediatek SCP
+  remoteproc/mediatek: add SCP support for mt8183
+
+Pi-Hsun Shih (1):
+  rpmsg: add rpmsg support for mt8183 SCP.
+
+ .../bindings/remoteproc/mtk,scp.txt           |  36 ++
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  94 +++
+ drivers/remoteproc/mtk_scp.c                  | 583 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 176 ++++++
+ drivers/rpmsg/Kconfig                         |   9 +
+ drivers/rpmsg/Makefile                        |   1 +
+ drivers/rpmsg/mtk_rpmsg.c                     | 414 +++++++++++++
+ include/linux/remoteproc/mtk_scp.h            | 143 +++++
+ include/linux/rpmsg/mtk_rpmsg.h               |  38 ++
+ 13 files changed, 1528 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp.c
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/remoteproc/mtk_scp.h
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+
 -- 
-2.15.0
+2.23.0.700.g56cf767bdb-goog
