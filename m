@@ -1,37 +1,62 @@
-Date: Fri, 4 Oct 2019 21:01:42 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 0/3] Optimize the u8500_hsem hwlock driver
-Message-ID: <20191005040139.GA5189@tuxbook-pro>
-References: <cover.1569572448.git.baolin.wang@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1569572448.git.baolin.wang@linaro.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: linus.walleij@linaro.org, ohad@wizery.com, linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <baolin.wang@linaro.org>
+Return-Path: <baolin.wang@linaro.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 2/4] hwspinlock: Let the PM runtime can be optional
+Date: Mon, 14 Oct 2019 15:07:44 +0800
+Message-Id: <6c03ca84b19f0e3a4bd60b4d5ea70fd801ed7555.1571036463.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1571036463.git.baolin.wang@linaro.org>
+References: <cover.1571036463.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1571036463.git.baolin.wang@linaro.org>
+References: <cover.1571036463.git.baolin.wang@linaro.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linus.walleij@linaro.org, orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org, linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri 27 Sep 01:27 PDT 2019, Baolin Wang wrote:
+Now some hwspinlock controllers did not have the requirement to implement
+the PM runtime, but drivers must enable the PM runtime to comply with the
+hwspinlock core.
 
-> This patch set did some Optimization with changing to use devm_xxx()
-> APIs to simplify the code and make code more readable.
-> 
+Thus we can change the PM runtime support to be optional by validating
+the -EACCES error number which means the PM runtime is not enabled, and
+removing the return value validating of pm_runtime_put(). So that we
+can remove some redundant PM runtime code in drivers.
 
-Applied, with Linus' r-b
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/hwspinlock/hwspinlock_core.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
-Bjorn
-
-> Baolin Wang (3):
->   hwspinlock: u8500_hsem: Change to use
->     devm_platform_ioremap_resource()
->   hwspinlock: u8500_hsem: Use devm_kzalloc() to allocate memory
->   hwspinlock: u8500_hsem: Use devm_hwspin_lock_register() to register
->     hwlock controller
-> 
->  drivers/hwspinlock/u8500_hsem.c |   46 +++++++++++----------------------------
->  1 file changed, 13 insertions(+), 33 deletions(-)
-> 
-> -- 
-> 1.7.9.5
-> 
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index a22e252c..fd5f5c5 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -657,13 +657,15 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+ 
+ 	/* notify PM core that power is now needed */
+ 	ret = pm_runtime_get_sync(dev);
+-	if (ret < 0) {
++	if (ret < 0 && ret != -EACCES) {
+ 		dev_err(dev, "%s: can't power on device\n", __func__);
+ 		pm_runtime_put_noidle(dev);
+ 		module_put(dev->driver->owner);
+ 		return ret;
+ 	}
+ 
++	ret = 0;
++
+ 	/* mark hwspinlock as used, should not fail */
+ 	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
+ 							HWSPINLOCK_UNUSED);
+@@ -820,9 +822,7 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ 	}
+ 
+ 	/* notify the underlying device that power is not needed */
+-	ret = pm_runtime_put(dev);
+-	if (ret < 0)
+-		goto out;
++	pm_runtime_put(dev);
+ 
+ 	/* mark this hwspinlock as available */
+ 	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+-- 
+1.7.9.5
