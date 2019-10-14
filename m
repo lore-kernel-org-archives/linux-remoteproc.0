@@ -1,54 +1,28 @@
-Return-Path: <ben@codethink.co.uk>
-From: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-Subject: [PATCH] remoteproc: fix argument 2 of rproc_mem_entry_init
-Date: Thu, 17 Oct 2019 12:59:52 +0100
-Message-Id: <20191017115952.13935-1-ben.dooks@codethink.co.uk>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 14 Oct 2019 09:40:46 -0500
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock
+ controller bindings
+Message-ID: <20191014144046.GA23210@bogus>
+References: <20191011132928.9388-1-govinds@codeaurora.org>
+ <20191011132928.9388-2-govinds@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: linux-kernel@lists.codethink.co.uk
-Cc: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191011132928.9388-2-govinds@codeaurora.org>
+To: Govind Singh <govinds@codeaurora.org>
+Cc: robh@kernel.org, sboyd@kernel.org, bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The rproc_mem_entry_init() call takes a pointer to a vm
-as the second argument. The code is currently using a
-plain 0 as "NULL". Change to using NULL to fix the
-following sparse warnings:
+On Fri, 11 Oct 2019 18:59:27 +0530, Govind Singh wrote:
+> Add devicetree binding for the Q6SSTOP clock controller found in QCS404.
+> 
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> ---
+>  .../bindings/clock/qcom,q6sstopcc.yaml        | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+> 
 
-drivers/remoteproc/remoteproc_core.c:339:49: warning: Using plain integer as NULL pointer
-drivers/remoteproc/remoteproc_core.c:916:46: warning: Using plain integer as NULL pointer
-
-Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
----
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/remoteproc/remoteproc_core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3c5fbbbfb0f1..943af836fa0f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -336,7 +336,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 			return -ENOMEM;
- 	} else {
- 		/* Register carveout in in list */
--		mem = rproc_mem_entry_init(dev, 0, 0, size, rsc->vring[i].da,
-+		mem = rproc_mem_entry_init(dev, NULL, 0,
-+					   size, rsc->vring[i].da,
- 					   rproc_alloc_carveout,
- 					   rproc_release_carveout,
- 					   "vdev%dvring%d",
-@@ -913,7 +914,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
- 	}
- 
- 	/* Register carveout in in list */
--	carveout = rproc_mem_entry_init(dev, 0, 0, rsc->len, rsc->da,
-+	carveout = rproc_mem_entry_init(dev, NULL, 0, rsc->len, rsc->da,
- 					rproc_alloc_carveout,
- 					rproc_release_carveout, rsc->name);
- 	if (!carveout) {
--- 
-2.23.0
+Reviewed-by: Rob Herring <robh@kernel.org>
