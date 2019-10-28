@@ -1,54 +1,155 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 2/6] rpmsg: glink: Fix use after free in open_ack TIMEOUT case
-Date: Fri,  4 Oct 2019 15:26:58 -0700
-Message-Id: <20191004222702.8632-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 05/17] remoteproc/omap: Add support to parse internal memories from DT
+Date: Mon, 28 Oct 2019 14:42:26 +0200
+Message-ID: <20191028124238.19224-6-t-kristo@ti.com>
+In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
+References: <20191028124238.19224-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+From: Suman Anna <s-anna@ti.com>
 
-Extra channel reference put when remote sending OPEN_ACK after timeout
-causes use-after-free while handling next remote CLOSE command.
+The OMAP remoteproc driver has been enhanced to parse and store
+the kernel mappings for different internal RAM memories that may
+be present within each remote processor IP subsystem. Different
+devices have varying memories present on current SoCs. The current
+support handles the L2RAM for all IPU devices on OMAP4+ SoCs. The
+DSPs on OMAP4/OMAP5 only have Unicaches and do not have any L1 or
+L2 RAM memories.
 
-Remove extra reference put in timeout case to avoid use-after-free.
+IPUs are expected to have the L2RAM at a fixed device address of
+0x20000000, based on the current limitations on Attribute MMU
+configurations.
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Cc: stable@vger.kernel.org
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+NOTE:
+The current logic doesn't handle the parsing of memories for DRA7
+remoteproc devices, and will be added alongside the DRA7 support.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
+ drivers/remoteproc/omap_remoteproc.c | 69 ++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-Changes since v1:
-- None
-
- drivers/rpmsg/qcom_glink_native.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 9355ce26fd98..72ed671f5dcd 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1103,13 +1103,12 @@ static int qcom_glink_create_remote(struct qcom_glink *glink,
- close_link:
- 	/*
- 	 * Send a close request to "undo" our open-ack. The close-ack will
--	 * release the last reference.
-+	 * release qcom_glink_send_open_req() reference and the last reference
-+	 * will be relesed after receiving remote_close or transport unregister
-+	 * by calling qcom_glink_native_remove().
- 	 */
- 	qcom_glink_send_close_req(glink, channel);
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index a10377547533..bbd6ff360e10 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -29,6 +29,8 @@
+ #include "omap_remoteproc.h"
+ #include "remoteproc_internal.h"
  
--	/* Release qcom_glink_send_open_req() reference */
--	kref_put(&channel->refcount, qcom_glink_channel_release);
--
- 	return ret;
++#define OMAP_RPROC_IPU_L2RAM_DEV_ADDR		(0x20000000)
++
+ /**
+  * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
+  * @syscon: regmap handle for the system control configuration module
+@@ -39,11 +41,27 @@ struct omap_rproc_boot_data {
+ 	unsigned int boot_reg;
+ };
+ 
++/*
++ * struct omap_rproc_mem - internal memory structure
++ * @cpu_addr: MPU virtual address of the memory region
++ * @bus_addr: bus address used to access the memory region
++ * @dev_addr: device address of the memory region from DSP view
++ * @size: size of the memory region
++ */
++struct omap_rproc_mem {
++	void __iomem *cpu_addr;
++	phys_addr_t bus_addr;
++	u32 dev_addr;
++	size_t size;
++};
++
+ /**
+  * struct omap_rproc - omap remote processor state
+  * @mbox: mailbox channel handle
+  * @client: mailbox client to request the mailbox channel
+  * @boot_data: boot data structure for setting processor boot address
++ * @mem: internal memory regions data
++ * @num_mems: number of internal memory regions
+  * @rproc: rproc handle
+  * @reset: reset handle
+  */
+@@ -51,6 +69,8 @@ struct omap_rproc {
+ 	struct mbox_chan *mbox;
+ 	struct mbox_client client;
+ 	struct omap_rproc_boot_data *boot_data;
++	struct omap_rproc_mem *mem;
++	int num_mems;
+ 	struct rproc *rproc;
+ 	struct reset_control *reset;
+ };
+@@ -307,6 +327,51 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+ 	return 0;
  }
  
++static int omap_rproc_of_get_internal_memories(struct platform_device *pdev,
++					       struct rproc *rproc)
++{
++	static const char * const mem_names[] = {"l2ram"};
++	struct device_node *np = pdev->dev.of_node;
++	struct omap_rproc *oproc = rproc->priv;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	int num_mems;
++	int i;
++
++	/* OMAP4 and OMAP5 DSPs do not have support for flat SRAM */
++	if (of_device_is_compatible(np, "ti,omap4-dsp") ||
++	    of_device_is_compatible(np, "ti,omap5-dsp"))
++		return 0;
++
++	num_mems = ARRAY_SIZE(mem_names);
++	oproc->mem = devm_kcalloc(dev, num_mems, sizeof(*oproc->mem),
++				  GFP_KERNEL);
++	if (!oproc->mem)
++		return -ENOMEM;
++
++	for (i = 0; i < num_mems; i++) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   mem_names[i]);
++		oproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
++		if (IS_ERR(oproc->mem[i].cpu_addr)) {
++			dev_err(dev, "failed to parse and map %s memory\n",
++				mem_names[i]);
++			return PTR_ERR(oproc->mem[i].cpu_addr);
++		}
++		oproc->mem[i].bus_addr = res->start;
++		oproc->mem[i].dev_addr = OMAP_RPROC_IPU_L2RAM_DEV_ADDR;
++		oproc->mem[i].size = resource_size(res);
++
++		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
++			mem_names[i], &oproc->mem[i].bus_addr,
++			oproc->mem[i].size, oproc->mem[i].cpu_addr,
++			oproc->mem[i].dev_addr);
++	}
++	oproc->num_mems = num_mems;
++
++	return 0;
++}
++
+ static int omap_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -346,6 +411,10 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 	/* All existing OMAP IPU and DSP processors have an MMU */
+ 	rproc->has_iommu = true;
+ 
++	ret = omap_rproc_of_get_internal_memories(pdev, rproc);
++	if (ret)
++		goto free_rproc;
++
+ 	ret = omap_rproc_get_boot_data(pdev, rproc);
+ 	if (ret)
+ 		goto free_rproc;
 -- 
-2.18.0
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
