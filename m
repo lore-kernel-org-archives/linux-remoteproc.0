@@ -1,24 +1,54 @@
-Return-Path: <linus.walleij@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 15/17] remoteproc/omap: report device exceptions and trigger recovery
+Date: Mon, 28 Oct 2019 14:42:36 +0200
+Message-ID: <20191028124238.19224-16-t-kristo@ti.com>
+In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
+References: <20191028124238.19224-1-t-kristo@ti.com>
 MIME-Version: 1.0
-References: <cover.1569572448.git.baolin.wang@linaro.org> <c3070351e137bffd2b4b639fb14b1baa19df5641.1569572448.git.baolin.wang@linaro.org>
-In-Reply-To: <c3070351e137bffd2b4b639fb14b1baa19df5641.1569572448.git.baolin.wang@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 4 Oct 2019 23:36:48 +0200
-Message-ID: <CACRpkdYNXcL3StU4sX2Yyvz5zH1RFr5E6mvAm+1dJFOC5ophxg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] hwspinlock: u8500_hsem: Use devm_kzalloc() to
- allocate memory
-Content-Type: text/plain; charset="UTF-8"
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-remoteproc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Sep 27, 2019 at 10:28 AM Baolin Wang <baolin.wang@linaro.org> wrote:
+From: Suman Anna <s-anna@ti.com>
 
-> Use devm_kzalloc() to allocate memory.
->
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+The OMAP remote processors send a special mailbox message
+(RP_MBOX_CRASH) when they crash and detect an internal device
+exception.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Add support to the mailbox handling function upon detection of
+this special message to report this crash to the remoteproc core.
+The remoteproc core can trigger a recovery using the prevailing
+recovery mechanism, already in use for MMU Fault recovery.
 
-Yours,
-Linus Walleij
+Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/remoteproc/omap_remoteproc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 8bd415c8fc86..6f797025bb6b 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -360,8 +360,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 
+ 	switch (msg) {
+ 	case RP_MBOX_CRASH:
+-		/* just log this for now. later, we'll also do recovery */
++		/*
++		 * remoteproc detected an exception, notify the rproc core.
++		 * The remoteproc core will handle the recovery.
++		 */
+ 		dev_err(dev, "omap rproc %s crashed\n", name);
++		rproc_report_crash(oproc->rproc, RPROC_FATAL_ERROR);
+ 		break;
+ 	case RP_MBOX_ECHO_REPLY:
+ 		dev_info(dev, "received echo reply from %s\n", name);
+-- 
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
