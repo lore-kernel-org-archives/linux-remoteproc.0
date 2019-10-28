@@ -1,62 +1,78 @@
-Return-Path: <baolin.wang@linaro.org>
-Return-Path: <baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 2/4] hwspinlock: Let the PM runtime can be optional
-Date: Mon, 14 Oct 2019 15:07:44 +0800
-Message-Id: <6c03ca84b19f0e3a4bd60b4d5ea70fd801ed7555.1571036463.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1571036463.git.baolin.wang@linaro.org>
-References: <cover.1571036463.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1571036463.git.baolin.wang@linaro.org>
-References: <cover.1571036463.git.baolin.wang@linaro.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linus.walleij@linaro.org, orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org, linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 04/17] remoteproc/omap: Add a sanity check for DSP boot address alignment
+Date: Mon, 28 Oct 2019 14:42:25 +0200
+Message-ID: <20191028124238.19224-5-t-kristo@ti.com>
+In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
+References: <20191028124238.19224-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Now some hwspinlock controllers did not have the requirement to implement
-the PM runtime, but drivers must enable the PM runtime to comply with the
-hwspinlock core.
+From: Suman Anna <s-anna@ti.com>
 
-Thus we can change the PM runtime support to be optional by validating
-the -EACCES error number which means the PM runtime is not enabled, and
-removing the return value validating of pm_runtime_put(). So that we
-can remove some redundant PM runtime code in drivers.
+The DSP remote processors on OMAP SoCs require a boot register to
+be programmed with a boot address, and this boot address needs to
+be on a 1KB boundary. The current code is simply masking the boot
+address appropriately without performing any sanity checks before
+releasing the resets. An unaligned boot address results in an
+undefined execution behavior and can result in various bus errors
+like MMU Faults or L3 NoC errors. Such errors are hard to debug and
+can be easily avoided by adding a sanity check for the alignment
+before booting a DSP remote processor.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/hwspinlock/hwspinlock_core.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/remoteproc/omap_remoteproc.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index a22e252c..fd5f5c5 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -657,13 +657,15 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index cd776189d20b..a10377547533 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -124,13 +124,22 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+  *
+  * Set boot address for a supported DSP remote processor.
+  */
+-static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ {
++	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
  
- 	/* notify PM core that power is now needed */
- 	ret = pm_runtime_get_sync(dev);
--	if (ret < 0) {
-+	if (ret < 0 && ret != -EACCES) {
- 		dev_err(dev, "%s: can't power on device\n", __func__);
- 		pm_runtime_put_noidle(dev);
- 		module_put(dev->driver->owner);
- 		return ret;
- 	}
- 
-+	ret = 0;
++	if (rproc->bootaddr & (SZ_1K - 1)) {
++		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
++			rproc->bootaddr);
++		return -EINVAL;
++	}
 +
- 	/* mark hwspinlock as used, should not fail */
- 	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
- 							HWSPINLOCK_UNUSED);
-@@ -820,9 +822,7 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- 	}
+ 	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++
++	return 0;
+ }
  
- 	/* notify the underlying device that power is not needed */
--	ret = pm_runtime_put(dev);
--	if (ret < 0)
--		goto out;
-+	pm_runtime_put(dev);
+ /*
+@@ -147,8 +156,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	int ret;
+ 	struct mbox_client *client = &oproc->client;
  
- 	/* mark this hwspinlock as available */
- 	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+-	if (oproc->boot_data)
+-		omap_rproc_write_dsp_boot_addr(rproc);
++	if (oproc->boot_data) {
++		ret = omap_rproc_write_dsp_boot_addr(rproc);
++		if (ret)
++			return ret;
++	}
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
 -- 
-1.7.9.5
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
