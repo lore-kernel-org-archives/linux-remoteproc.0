@@ -1,28 +1,32 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 0/6] rpmsg: glink stability fixes
-Date: Fri,  4 Oct 2019 15:26:56 -0700
-Message-Id: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 00/17] remoteproc: omap changes on top of v5.4-rc1
+Date: Mon, 28 Oct 2019 14:42:21 +0200
+Message-ID: <20191028124238.19224-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Fixes for issues found in GLINK during reboot testing of a remoteproc.
+Hi,
 
-Arun Kumar Neelakantam (2):
-  rpmsg: glink: Fix reuse intents memory leak issue
-  rpmsg: glink: Fix use after free in open_ack TIMEOUT case
+Mostly this is a facelift of the pretty old OMAP remoteproc code base,
+supporting now DT, runtime PM, ti-sysc, and dropping legacy omap hwmod
+support. Also timer + watchdog support is added, and couple of bugfixes.
 
-Bjorn Andersson (2):
-  rpmsg: glink: Don't send pending rx_done during remove
-  rpmsg: glink: Free pending deferred work on remove
+The series hasn't been posted before mostly due to missing OMAP reset
+support, which has just been lately posted out and is getting merged to
+5.5.
 
-Chris Lew (2):
-  rpmsg: glink: Put an extra reference during cleanup
-  rpmsg: glink: Fix rpmsg_register_device err handling
+For proper functionality, this series depends at least on the clock [1]
+and reset [2] series sent out by me, but to compile, it only needs [1].
 
- drivers/rpmsg/qcom_glink_native.c | 52 +++++++++++++++++++++++++------
- 1 file changed, 42 insertions(+), 10 deletions(-)
+-Tero
 
--- 
-2.18.0
+[1] TI Clock series: https://patchwork.kernel.org/cover/11143025/
+[2] TI Reset series: https://patchwork.kernel.org/cover/11179573/
+
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
