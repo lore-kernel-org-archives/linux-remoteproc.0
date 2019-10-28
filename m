@@ -1,60 +1,87 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 6/6] rpmsg: glink: Free pending deferred work on remove
-Date: Fri,  4 Oct 2019 15:27:02 -0700
-Message-Id: <20191004222702.8632-7-bjorn.andersson@linaro.org>
-In-Reply-To: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH 06/17] remoteproc/omap: Add the rproc ops .da_to_va() implementation
+Date: Mon, 28 Oct 2019 14:42:27 +0200
+Message-ID: <20191028124238.19224-7-t-kristo@ti.com>
+In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
+References: <20191028124238.19224-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-By just cancelling the deferred rx worker during GLINK instance teardown
-any pending deferred commands are leaked, so free them.
+From: Suman Anna <s-anna@ti.com>
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Cc: stable@vger.kernel.org
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+An implementation for the rproc ops .da_to_va() has been added
+that provides the address translation between device addresses
+to kernel virtual addresses for internal RAMs present on that
+particular remote processor device. The implementation provides
+the translations based on the addresses parsed and stored during
+the probe.
+
+This ops gets invoked by the exported rproc_da_to_va() function
+and allows the remoteproc core's ELF loader to be able to load
+program data directly into the internal memories.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
+ drivers/remoteproc/omap_remoteproc.c | 35 ++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Changes since v1:
-- None
-
- drivers/rpmsg/qcom_glink_native.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 4117818db6a1..862f89c128a0 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1562,6 +1562,18 @@ static void qcom_glink_work(struct work_struct *work)
- 	}
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index bbd6ff360e10..0524f7e0ffa4 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -230,10 +230,45 @@ static int omap_rproc_stop(struct rproc *rproc)
+ 	return 0;
  }
  
-+static void qcom_glink_cancel_rx_work(struct qcom_glink *glink)
++/*
++ * Internal Memory translation helper
++ *
++ * Custom function implementing the rproc .da_to_va ops to provide address
++ * translation (device address to kernel virtual address) for internal RAMs
++ * present in a DSP or IPU device). The translated addresses can be used
++ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
++ */
++static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
 +{
-+	struct glink_defer_cmd *dcmd;
-+	struct glink_defer_cmd *tmp;
++	struct omap_rproc *oproc = rproc->priv;
++	void *va = NULL;
++	int i;
++	u32 offset;
 +
-+	/* cancel any pending deferred rx_work */
-+	cancel_work_sync(&glink->rx_work);
++	if (len <= 0)
++		return NULL;
 +
-+	list_for_each_entry_safe(dcmd, tmp, &glink->rx_queue, node)
-+		kfree(dcmd);
++	if (!oproc->num_mems)
++		return NULL;
++
++	for (i = 0; i < oproc->num_mems; i++) {
++		if (da >= oproc->mem[i].dev_addr && da + len <=
++		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
++			offset = da -  oproc->mem[i].dev_addr;
++			/* __force to make sparse happy with type conversion */
++			va = (__force void *)(oproc->mem[i].cpu_addr + offset);
++			break;
++		}
++	}
++
++	return va;
 +}
 +
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
-@@ -1640,7 +1652,7 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
- 	unsigned long flags;
+ static const struct rproc_ops omap_rproc_ops = {
+ 	.start		= omap_rproc_start,
+ 	.stop		= omap_rproc_stop,
+ 	.kick		= omap_rproc_kick,
++	.da_to_va	= omap_rproc_da_to_va,
+ };
  
- 	disable_irq(glink->irq);
--	cancel_work_sync(&glink->rx_work);
-+	qcom_glink_cancel_rx_work(glink);
- 
- 	ret = device_for_each_child(glink->dev, NULL, qcom_glink_remove_device);
- 	if (ret)
+ static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
 -- 
-2.18.0
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
