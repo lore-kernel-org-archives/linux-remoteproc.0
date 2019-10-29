@@ -1,113 +1,44 @@
-Return-Path: <benjamin.gaignard@st.com>
-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v2] dt-bindings: hwlock: Convert stm32 hwspinlock bindings to json-schema
-Date: Fri, 11 Oct 2019 15:10:18 +0200
-Message-ID: <20191011131018.24035-1-benjamin.gaignard@st.com>
+Return-Path: <christophe.jaillet@wanadoo.fr>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] rpmsg: char: Simplify 'rpmsg_eptdev_release()'
+Date: Tue, 29 Oct 2019 07:09:14 +0100
+Message-Id: <20191029060915.3650-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@st.com>
+Content-Transfer-Encoding: 8bit
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Convert the STM32 hwspinlock binding to DT schema format using json-schema
+Use 'skb_queue_purge()' instead of re-implementing it.
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-change in v2:
-- use BSD-2-Clause license
-- use const for #hwlock-cells
-- add additionalProperties: false
+ drivers/rpmsg/rpmsg_char.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
- .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ----------
- .../bindings/hwlock/st,stm32-hwspinlock.yaml       | 50 ++++++++++++++++++++++
- 2 files changed, 50 insertions(+), 23 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
- create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
-
-diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-deleted file mode 100644
-index adf4f000ea3d..000000000000
---- a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--STM32 Hardware Spinlock Device Binding
---------------------------------------
--
--Required properties :
--- compatible : should be "st,stm32-hwspinlock".
--- reg : the register address of hwspinlock.
--- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
--	hwlock, so the number of cells should be <1> here.
--- clock-names : Must contain "hsem".
--- clocks : Must contain a phandle entry for the clock in clock-names, see the
--	common clock bindings.
--
--Please look at the generic hwlock binding for usage information for consumers,
--"Documentation/devicetree/bindings/hwlock/hwlock.txt"
--
--Example of hwlock provider:
--	hwspinlock@4c000000 {
--		compatible = "st,stm32-hwspinlock";
--		#hwlock-cells = <1>;
--		reg = <0x4c000000 0x400>;
--		clocks = <&rcc HSEM>;
--		clock-names = "hsem";
--	};
-diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
-new file mode 100644
-index 000000000000..da4722bb8c38
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwlock/st,stm32-hwspinlock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: STMicroelectronics STM32 Hardware Spinlock bindings
-+
-+maintainers:
-+  - Benjamin Gaignard <benjamin.gaignard@st.com>
-+  - Fabien Dessenne <fabien.dessenne@st.com>
-+
-+properties:
-+  "#hwlock-cells":
-+    const: 1
-+
-+  compatible:
-+    const: st,stm32-hwspinlock
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: hsem
-+
-+required:
-+  - "#hwlock-cells"
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/stm32mp1-clks.h>
-+    hwspinlock@4c000000 {
-+        compatible = "st,stm32-hwspinlock";
-+        #hwlock-cells = <1>;
-+        reg = <0x4c000000 0x400>;
-+        clocks = <&rcc HSEM>;
-+        clock-names = "hsem";
-+    };
-+
-+...
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 507bfe163883..0c3a340db7d1 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -146,7 +146,6 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ {
+ 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+ 	struct device *dev = &eptdev->dev;
+-	struct sk_buff *skb;
+ 
+ 	/* Close the endpoint, if it's not already destroyed by the parent */
+ 	mutex_lock(&eptdev->ept_lock);
+@@ -157,10 +156,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 	mutex_unlock(&eptdev->ept_lock);
+ 
+ 	/* Discard all SKBs */
+-	while (!skb_queue_empty(&eptdev->queue)) {
+-		skb = skb_dequeue(&eptdev->queue);
+-		kfree_skb(skb);
+-	}
++	skb_queue_purge(&eptdev->queue);
+ 
+ 	put_device(dev);
+ 
 -- 
-2.15.0
+2.20.1
