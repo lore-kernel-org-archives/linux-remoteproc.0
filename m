@@ -1,87 +1,28 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCH 06/17] remoteproc/omap: Add the rproc ops .da_to_va() implementation
-Date: Mon, 28 Oct 2019 14:42:27 +0200
-Message-ID: <20191028124238.19224-7-t-kristo@ti.com>
-In-Reply-To: <20191028124238.19224-1-t-kristo@ti.com>
-References: <20191028124238.19224-1-t-kristo@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 0/2] remoteproc: mss: Improve memory assignment
+Date: Thu, 31 Oct 2019 11:46:30 -0700
+Message-Id: <20191031184632.2938295-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Two things came up in the effort of figuring out why the modem crashed the
+entire system when being restarted; the first one solves the actual problem, in
+that it's not possible to reclaim the main modem firmware region unless the
+modem subsystem is running - causing the crash.
 
-An implementation for the rproc ops .da_to_va() has been added
-that provides the address translation between device addresses
-to kernel virtual addresses for internal RAMs present on that
-particular remote processor device. The implementation provides
-the translations based on the addresses parsed and stored during
-the probe.
+The second patch aligns the firmware loading process to that of the downstream
+driver, which seems to be a requirement in 8974 as well.
 
-This ops gets invoked by the exported rproc_da_to_va() function
-and allows the remoteproc core's ELF loader to be able to load
-program data directly into the internal memories.
+Bjorn Andersson (2):
+  remoteproc: qcom_q6v5_mss: Don't reassign mpss region on shutdown
+  remoteproc: qcom_q6v5_mss: Validate each segment during loading
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/remoteproc/omap_remoteproc.c | 35 ++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ drivers/remoteproc/qcom_q6v5_mss.c | 85 +++++++++++++++++++-----------
+ 1 file changed, 53 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index bbd6ff360e10..0524f7e0ffa4 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -230,10 +230,45 @@ static int omap_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
- 
-+/*
-+ * Internal Memory translation helper
-+ *
-+ * Custom function implementing the rproc .da_to_va ops to provide address
-+ * translation (device address to kernel virtual address) for internal RAMs
-+ * present in a DSP or IPU device). The translated addresses can be used
-+ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-+ */
-+static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct omap_rproc *oproc = rproc->priv;
-+	void *va = NULL;
-+	int i;
-+	u32 offset;
-+
-+	if (len <= 0)
-+		return NULL;
-+
-+	if (!oproc->num_mems)
-+		return NULL;
-+
-+	for (i = 0; i < oproc->num_mems; i++) {
-+		if (da >= oproc->mem[i].dev_addr && da + len <=
-+		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
-+			offset = da -  oproc->mem[i].dev_addr;
-+			/* __force to make sparse happy with type conversion */
-+			va = (__force void *)(oproc->mem[i].cpu_addr + offset);
-+			break;
-+		}
-+	}
-+
-+	return va;
-+}
-+
- static const struct rproc_ops omap_rproc_ops = {
- 	.start		= omap_rproc_start,
- 	.stop		= omap_rproc_stop,
- 	.kick		= omap_rproc_kick,
-+	.da_to_va	= omap_rproc_da_to_va,
- };
- 
- static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.23.0
