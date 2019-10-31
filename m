@@ -1,58 +1,47 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 1/6] rpmsg: glink: Fix reuse intents memory leak issue
-Date: Fri,  4 Oct 2019 15:26:57 -0700
-Message-Id: <20191004222702.8632-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-References: <20191004222702.8632-1-bjorn.andersson@linaro.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Return-Path: <jeffrey.l.hugo@gmail.com>
+MIME-Version: 1.0
+References: <20191031184632.2938295-1-bjorn.andersson@linaro.org>
+ <20191031184632.2938295-2-bjorn.andersson@linaro.org> <CAOCk7Noq8dvKsWzAfAXRGhmoMG4_tHD0kw8_KVEBvyjm_fGc5A@mail.gmail.com>
+ <20191031194347.GO1929@tuxbook-pro>
+In-Reply-To: <20191031194347.GO1929@tuxbook-pro>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date: Thu, 31 Oct 2019 16:02:43 -0600
+Message-ID: <CAOCk7NoC+BmB7UH=-=g7ufmGUAfrc9JcPxwnVh9ytb9Xuq4FTQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] remoteproc: qcom_q6v5_mss: Don't reassign mpss region
+ on shutdown
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+On Thu, Oct 31, 2019 at 1:43 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Thu 31 Oct 12:36 PDT 2019, Jeffrey Hugo wrote:
+>
+> > On Thu, Oct 31, 2019 at 12:48 PM Bjorn Andersson
+> > <bjorn.andersson@linaro.org> wrote:
+> > >
+> > > Trying to reclaim mpss memory while the mba is not running causes the
+> > > system to crash on devices with security fuses blown, so leave it
+> > > assigned to the remote on shutdown and recover it on a subsequent boot.
+> > >
+> > > Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > ---
+> >
+> > Excellent.  This addresses the issue I was seeing with the Lenovo Miix 630
+> >
+>
+> Sweet!
+>
+> > Reviewed-by: Jeffrey Hugo<jeffrey.l.hugo@gmail.com>
+> > Tested-by: Jeffrey Hugo<jeffrey.l.hugo@gmail.com>
+>
+> Thanks!
 
-Memory allocated for re-usable intents are not freed during channel
-cleanup which causes memory leak in system.
-
-Check and free all re-usable memory to avoid memory leak.
-
-Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
-Cc: stable@vger.kernel.org
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-
-Changes since v1:
-- None
-
- drivers/rpmsg/qcom_glink_native.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 621f1afd4d6b..9355ce26fd98 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -241,10 +241,19 @@ static void qcom_glink_channel_release(struct kref *ref)
- {
- 	struct glink_channel *channel = container_of(ref, struct glink_channel,
- 						     refcount);
-+	struct glink_core_rx_intent *tmp;
- 	unsigned long flags;
-+	int iid;
- 
- 	spin_lock_irqsave(&channel->intent_lock, flags);
-+	idr_for_each_entry(&channel->liids, tmp, iid) {
-+		kfree(tmp->data);
-+		kfree(tmp);
-+	}
- 	idr_destroy(&channel->liids);
-+
-+	idr_for_each_entry(&channel->riids, tmp, iid)
-+		kfree(tmp);
- 	idr_destroy(&channel->riids);
- 	spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
--- 
-2.18.0
+As we talked offline, it appears we both missed the crashdump
+scenario, so please spin a v2 that reclaims the memory just before
+trying to access it in the crashdump scenario.  I'll be happy to
+re-review and re-test.
