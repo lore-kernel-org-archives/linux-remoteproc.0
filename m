@@ -1,192 +1,127 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/2] remoteproc: qcom_q6v5_mss: Validate each segment during loading
-Date: Thu, 31 Oct 2019 11:46:32 -0700
-Message-Id: <20191031184632.2938295-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20191031184632.2938295-1-bjorn.andersson@linaro.org>
-References: <20191031184632.2938295-1-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <jeffrey.l.hugo@gmail.com>
+Return-Path: <jeffrey.l.hugo@gmail.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH 2/2] remoteproc: qcom_q6v5_mss: Add support for MSM8998
+Date: Thu, 31 Oct 2019 19:45:01 -0700
+Message-Id: <20191101024501.22026-1-jeffrey.l.hugo@gmail.com>
+In-Reply-To: <20191101024301.21919-1-jeffrey.l.hugo@gmail.com>
+References: <20191101024301.21919-1-jeffrey.l.hugo@gmail.com>
+To: agross@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The code used to sync with the MBA after each segment loaded and this is
-still what's done downstream. So reduce the delta towards downstream by
-switching to a model where the content is iteratively validated.
+MSM8998 sits between MSM8996 and SDM845 in terms of functionality needed to
+boot the modem subsystem.  Booting mss allows for servicing the traditional
+cellular usecases along with the wireless usecases such as wifi.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 74 ++++++++++++++++++++----------
- 1 file changed, 50 insertions(+), 24 deletions(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 52 ++++++++++++++++++++++++++----
+ 1 file changed, 46 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index f4a02105d539..bdf1dd00b89b 100644
+index bdf1dd00b89b..685182368aa7 100644
 --- a/drivers/remoteproc/qcom_q6v5_mss.c
 +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -358,23 +358,29 @@ static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
- }
+@@ -61,6 +61,7 @@
+ #define QDSP6SS_GFMUX_CTL_REG		0x020
+ #define QDSP6SS_PWR_CTL_REG		0x030
+ #define QDSP6SS_MEM_PWR_CTL		0x0B0
++#define QDSP6V6SS_MEM_PWR_CTL		0x034
+ #define QDSP6SS_STRAP_ACC		0x110
  
- static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
--				   bool remote_owner, phys_addr_t addr,
-+				   bool local, bool remote, phys_addr_t addr,
- 				   size_t size)
- {
--	struct qcom_scm_vmperm next;
-+	struct qcom_scm_vmperm next[2];
-+	int perms = 0;
+ /* AXI Halt Register Offsets */
+@@ -196,6 +197,7 @@ enum {
+ 	MSS_MSM8916,
+ 	MSS_MSM8974,
+ 	MSS_MSM8996,
++	MSS_MSM8998,
+ 	MSS_SDM845,
+ };
  
- 	if (!qproc->need_mem_protection)
- 		return 0;
--	if (remote_owner && *current_perm == BIT(QCOM_SCM_VMID_MSS_MSA))
--		return 0;
--	if (!remote_owner && *current_perm == BIT(QCOM_SCM_VMID_HLOS))
--		return 0;
- 
--	next.vmid = remote_owner ? QCOM_SCM_VMID_MSS_MSA : QCOM_SCM_VMID_HLOS;
--	next.perm = remote_owner ? QCOM_SCM_PERM_RW : QCOM_SCM_PERM_RWX;
-+	if (local) {
-+		next[perms].vmid = QCOM_SCM_VMID_HLOS;
-+		next[perms].perm = QCOM_SCM_PERM_RWX;
-+		perms++;
-+	}
-+
-+	if (remote) {
-+		next[perms].vmid = QCOM_SCM_VMID_MSS_MSA;
-+		next[perms].perm = QCOM_SCM_PERM_RW;
-+		perms++;
-+	}
- 
- 	return qcom_scm_assign_mem(addr, ALIGN(size, SZ_4K),
--				   current_perm, &next, 1);
-+				   current_perm, next, perms);
- }
- 
- static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
-@@ -681,7 +687,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- 
- 	/* Hypervisor mapping to access metadata by modem */
- 	mdata_perm = BIT(QCOM_SCM_VMID_HLOS);
--	ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, true, phys, size);
-+	ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, false, true, phys, size);
- 	if (ret) {
- 		dev_err(qproc->dev,
- 			"assigning Q6 access to metadata failed: %d\n", ret);
-@@ -699,7 +705,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- 		dev_err(qproc->dev, "MPSS header authentication failed: %d\n", ret);
- 
- 	/* Metadata authentication done, remove modem access */
--	xferop_ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, false, phys, size);
-+	xferop_ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, true, false, phys, size);
- 	if (xferop_ret)
- 		dev_warn(qproc->dev,
- 			 "mdt buffer not reclaimed system may become unstable\n");
-@@ -786,7 +792,7 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 	}
- 
- 	/* Assign MBA image access in DDR to q6 */
--	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false, true,
- 				      qproc->mba_phys, qproc->mba_size);
- 	if (ret) {
- 		dev_err(qproc->dev,
-@@ -820,8 +826,8 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
- 
- reclaim_mba:
--	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
--						qproc->mba_phys,
-+	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
-+						false, qproc->mba_phys,
- 						qproc->mba_size);
- 	if (xfermemop_ret) {
- 		dev_err(qproc->dev,
-@@ -888,7 +894,7 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 	/* In case of failure or coredump scenario where reclaiming MBA memory
- 	 * could not happen reclaim it here.
- 	 */
--	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true, false,
- 				      qproc->mba_phys,
- 				      qproc->mba_size);
- 	WARN_ON(ret);
-@@ -915,6 +921,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	phys_addr_t boot_addr;
- 	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
-+	u32 code_length;
- 	bool relocate = false;
- 	char *fw_name;
- 	size_t fw_name_len;
-@@ -965,9 +972,19 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	}
- 
- 	/* Try to reset ownership back to Linux */
--	q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
-+	q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, true, false,
- 				qproc->mpss_phys, qproc->mpss_size);
- 
-+	/* Share ownership between Linux and MSS, during segment loading */
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, true, true,
-+				      qproc->mpss_phys, qproc->mpss_size);
-+	if (ret) {
-+		dev_err(qproc->dev,
-+			"assigning Q6 access to mpss memory failed: %d\n", ret);
-+		ret = -EAGAIN;
-+		goto release_firmware;
-+	}
-+
- 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
- 	qproc->mpss_reloc = mpss_reloc;
- 	/* Load firmware segments */
-@@ -1016,10 +1033,24 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			       phdr->p_memsz - phdr->p_filesz);
+@@ -504,7 +506,10 @@ static int q6v5proc_reset(struct q6v5 *qproc)
  		}
- 		size += phdr->p_memsz;
+ 
+ 		goto pbl_wait;
+-	} else if (qproc->version == MSS_MSM8996) {
++	} else if (qproc->version == MSS_MSM8996 ||
++		   qproc->version == MSS_MSM8998) {
++		int mem_pwr_ctl;
 +
-+		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-+		if (!code_length) {
-+			boot_addr = relocate ? qproc->mpss_phys : min_addr;
-+			writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
-+			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
+ 		/* Override the ACC value if required */
+ 		writel(QDSP6SS_ACC_OVERRIDE_VAL,
+ 		       qproc->reg_base + QDSP6SS_STRAP_ACC);
+@@ -549,17 +554,24 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+ 
+ 		/* Turn on L1, L2, ETB and JU memories 1 at a time */
+-		val = readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
+-		for (i = 19; i >= 0; i--) {
++		if (qproc->version == MSS_MSM8996) {
++			mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
++			i = 19;
++		} else {
++			/* MSS_MSM8998 */
++			mem_pwr_ctl = QDSP6V6SS_MEM_PWR_CTL;
++			i = 28;
 +		}
-+		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
++		val = readl(qproc->reg_base + mem_pwr_ctl);
++		for (; i >= 0; i--) {
+ 			val |= BIT(i);
+-			writel(val, qproc->reg_base +
+-						QDSP6SS_MEM_PWR_CTL);
++			writel(val, qproc->reg_base + mem_pwr_ctl);
+ 			/*
+ 			 * Read back value to ensure the write is done then
+ 			 * wait for 1us for both memory peripheral and data
+ 			 * array to turn on.
+ 			 */
+-			val |= readl(qproc->reg_base + QDSP6SS_MEM_PWR_CTL);
++			val |= readl(qproc->reg_base + mem_pwr_ctl);
+ 			udelay(1);
+ 		}
+ 		/* Remove word line clamp */
+@@ -1592,6 +1604,33 @@ static const struct rproc_hexagon_res sdm845_mss = {
+ 	.version = MSS_SDM845,
+ };
+ 
++static const struct rproc_hexagon_res msm8998_mss = {
++	.hexagon_mba_image = "mba.mbn",
++	.proxy_clk_names = (char*[]){
++			"xo",
++			"qdss",
++			"mem",
++			NULL
++	},
++	.active_clk_names = (char*[]){
++			"iface",
++			"bus",
++			"mem",
++			"gpll0_mss",
++			"mnoc_axi",
++			"snoc_axi",
++			NULL
++	},
++	.proxy_pd_names = (char*[]){
++			"cx",
++			"mx",
++			NULL
++	},
++	.need_mem_protection = true,
++	.has_alt_reset = false,
++	.version = MSS_MSM8998,
++};
 +
-+		ret = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
-+		if (ret < 0) {
-+			dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
-+			goto release_firmware;
-+		}
- 	}
- 
- 	/* Transfer ownership of modem ddr region to q6 */
--	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, true,
-+	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false, true,
- 				      qproc->mpss_phys, qproc->mpss_size);
- 	if (ret) {
- 		dev_err(qproc->dev,
-@@ -1028,11 +1059,6 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 		goto release_firmware;
- 	}
- 
--	boot_addr = relocate ? qproc->mpss_phys : min_addr;
--	writel(boot_addr, qproc->rmb_base + RMB_PMI_CODE_START_REG);
--	writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
--	writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
--
- 	ret = q6v5_rmb_mba_wait(qproc, RMB_MBA_AUTH_COMPLETE, 10000);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(qproc->dev, "MPSS authentication timed out\n");
-@@ -1096,8 +1122,8 @@ static int q6v5_start(struct rproc *rproc)
- 		goto reclaim_mpss;
- 	}
- 
--	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, false,
--						qproc->mba_phys,
-+	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mba_perm, true,
-+						false, qproc->mba_phys,
- 						qproc->mba_size);
- 	if (xfermemop_ret)
- 		dev_err(qproc->dev,
+ static const struct rproc_hexagon_res msm8996_mss = {
+ 	.hexagon_mba_image = "mba.mbn",
+ 	.proxy_supply = (struct qcom_mss_reg_res[]) {
+@@ -1698,6 +1737,7 @@ static const struct of_device_id q6v5_of_match[] = {
+ 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
+ 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
+ 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
++	{ .compatible = "qcom,msm8998-mss-pil", .data = &msm8998_mss},
+ 	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
+ 	{ },
+ };
 -- 
-2.23.0
+2.17.1
