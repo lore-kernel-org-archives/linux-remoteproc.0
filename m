@@ -1,37 +1,21 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V3 09/10] arm64: dts: Add support for scm on IPQ8074 SoCs
-Date: Wed, 27 Nov 2019 20:42:53 +0530
-Message-Id: <1574867574-2216-10-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
-References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191011132928.9388-2-govinds@codeaurora.org>
+References: <20191011132928.9388-1-govinds@codeaurora.org> <20191011132928.9388-2-govinds@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock controller bindings
+Date: Thu, 07 Nov 2019 11:32:27 -0800
+Message-Id: <20191107193228.38A8F2087E@mail.kernel.org>
+To: Govind Singh <govinds@codeaurora.org>, robh@kernel.org
+Cc: bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Enables scm support, clock is not needed for enabling scm interface.
+Quoting Govind Singh (2019-10-11 06:29:27)
+> Add devicetree binding for the Q6SSTOP clock controller found in QCS404.
+>=20
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> ---
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index 67ee5f5..6a61a63 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -10,6 +10,12 @@
- 	model = "Qualcomm Technologies, Inc. IPQ8074";
- 	compatible = "qcom,ipq8074";
- 
-+	firmware {
-+		scm {
-+			compatible = "qcom,scm-ipq8074", "qcom,scm";
-+		};
-+	};
-+
- 	soc: soc {
- 		#address-cells = <0x1>;
- 		#size-cells = <0x1>;
--- 
-1.9.1
+Applied to clk-next
