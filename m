@@ -1,57 +1,28 @@
-Return-Path: <0101016e9292d0a3-de25a223-d828-4797-8971-c68bb57937b6-000000@us-west-2.amazonses.com>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V5 5/5] rpmsg: glink: unregister rpmsg device during endpoint destroy
-Date: Fri, 22 Nov 2019 10:05:25 +0000
-Message-ID: <0101016e9292d0a3-de25a223-d828-4797-8971-c68bb57937b6-000000@us-west-2.amazonses.com>
-In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 0/2] remoteproc: mss: Improve mem_assign and firmware load
+Date: Fri,  8 Nov 2019 16:40:31 -0800
+Message-Id: <20191109004033.1496871-1-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rpmsg device unregister is not happening if channel close is triggered
-from local side and causing re-registration of device failures.
+Two things came up in the effort of figuring out why the modem crashed the
+entire system when being restarted; the first one solves the actual problem, in
+that it's not possible to reclaim the main modem firmware region unless the
+modem subsystem is running - causing the crash.
 
-Unregister rpmsg device for local close in endpoint destroy path.
+The second patch aligns the firmware loading process to that of the downstream
+driver, which seems to be a requirement in 8974 as well.
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Bjorn Andersson (2):
+  remoteproc: qcom_q6v5_mss: Don't reassign mpss region on shutdown
+  remoteproc: qcom_q6v5_mss: Validate each segment during loading
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 3732fc6..0ff4cbe 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1187,6 +1187,7 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
- {
- 	struct glink_channel *channel = to_glink_channel(ept);
- 	struct qcom_glink *glink = channel->glink;
-+	struct rpmsg_channel_info chinfo;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&channel->recv_lock, flags);
-@@ -1194,6 +1195,13 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
- 	spin_unlock_irqrestore(&channel->recv_lock, flags);
- 
- 	/* Decouple the potential rpdev from the channel */
-+	if (channel->rpdev) {
-+		strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
-+		chinfo.src = RPMSG_ADDR_ANY;
-+		chinfo.dst = RPMSG_ADDR_ANY;
-+
-+		rpmsg_unregister_device(glink->dev, &chinfo);
-+	}
- 	channel->rpdev = NULL;
- 
- 	qcom_glink_send_close_req(glink, channel);
-@@ -1459,6 +1467,7 @@ static void qcom_glink_rx_close(struct qcom_glink *glink, unsigned int rcid)
- 
- 		rpmsg_unregister_device(glink->dev, &chinfo);
- 	}
-+	channel->rpdev = NULL;
- 
- 	qcom_glink_send_close_ack(glink, channel->rcid);
- 
+ drivers/remoteproc/qcom_q6v5_mss.c | 92 +++++++++++++++++++-----------
+ 1 file changed, 59 insertions(+), 33 deletions(-)
+
 -- 
-1.9.1
+2.23.0
