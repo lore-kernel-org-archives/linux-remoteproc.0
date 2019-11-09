@@ -1,90 +1,62 @@
-Date: Mon, 11 Nov 2019 15:39:22 -0800
+Date: Fri, 8 Nov 2019 17:21:08 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 11/17] remoteproc/omap: Check for undefined mailbox
- messages
-Message-ID: <20191111233919.GM3108315@builder>
-References: <20191028124238.19224-1-t-kristo@ti.com>
- <20191028124238.19224-12-t-kristo@ti.com>
+Subject: Re: [PATCH] remoteproc: fix argument 2 of rproc_mem_entry_init
+Message-ID: <20191109012105.GD5662@tuxbook-pro>
+References: <20191017115952.13935-1-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191028124238.19224-12-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com
+In-Reply-To: <20191017115952.13935-1-ben.dooks@codethink.co.uk>
+To: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
+On Thu 17 Oct 04:59 PDT 2019, Ben Dooks (Codethink) wrote:
 
-> From: Suman Anna <s-anna@ti.com>
+> The rproc_mem_entry_init() call takes a pointer to a vm
+> as the second argument. The code is currently using a
+> plain 0 as "NULL". Change to using NULL to fix the
+> following sparse warnings:
 > 
-> Add some checks in the mailbox callback function to limit
-> any processing in the mailbox callback function to only
-> certain currently valid messages, and drop all the remaining
-> messages. A debug message is added to print any such invalid
-> messages when the appropriate trace control is enabled.
+> drivers/remoteproc/remoteproc_core.c:339:49: warning: Using plain integer as NULL pointer
+> drivers/remoteproc/remoteproc_core.c:916:46: warning: Using plain integer as NULL pointer
 > 
-> Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
 
-This should either have a "Co-developed-by" or Suman should be the first
-one.
+Applied, thanks
 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
 > ---
->  drivers/remoteproc/omap_remoteproc.c | 6 ++++++
->  drivers/remoteproc/omap_remoteproc.h | 7 +++++++
->  2 files changed, 13 insertions(+)
+> Cc: Ohad Ben-Cohen <ohad@wizery.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index e46bb4c790d7..016d5beda195 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -124,6 +124,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
->  		dev_info(dev, "received echo reply from %s\n", name);
->  		break;
->  	default:
-> +		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
-> +			return;
-> +		if (msg > oproc->rproc->max_notifyid) {
-> +			dev_dbg(dev, "dropping unknown message 0x%x", msg);
-> +			return;
-> +		}
->  		/* msg contains the index of the triggered vring */
->  		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
->  			dev_dbg(dev, "no message was found in vqid %d\n", msg);
-> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-> index 1e6fef753c4f..18f522617683 100644
-> --- a/drivers/remoteproc/omap_remoteproc.h
-> +++ b/drivers/remoteproc/omap_remoteproc.h
-> @@ -31,6 +31,12 @@
->   *
->   * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
->   * recovery mechanism (to some extent).
-> + *
-> + * Introduce new message definitions if any here.
-> + *
-> + * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-> + * This should be the last definition.
-> + *
->   */
->  enum omap_rp_mbox_messages {
->  	RP_MBOX_READY		= 0xFFFFFF00,
-> @@ -39,6 +45,7 @@ enum omap_rp_mbox_messages {
->  	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
->  	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
->  	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
-> +	RP_MBOX_END_MSG		= 0xFFFFFF06,
->  };
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 3c5fbbbfb0f1..943af836fa0f 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -336,7 +336,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+>  			return -ENOMEM;
+>  	} else {
+>  		/* Register carveout in in list */
+> -		mem = rproc_mem_entry_init(dev, 0, 0, size, rsc->vring[i].da,
+> +		mem = rproc_mem_entry_init(dev, NULL, 0,
+> +					   size, rsc->vring[i].da,
+>  					   rproc_alloc_carveout,
+>  					   rproc_release_carveout,
+>  					   "vdev%dvring%d",
+> @@ -913,7 +914,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  	}
 >  
->  #endif /* _OMAP_RPMSG_H */
+>  	/* Register carveout in in list */
+> -	carveout = rproc_mem_entry_init(dev, 0, 0, rsc->len, rsc->da,
+> +	carveout = rproc_mem_entry_init(dev, NULL, 0, rsc->len, rsc->da,
+>  					rproc_alloc_carveout,
+>  					rproc_release_carveout, rsc->name);
+>  	if (!carveout) {
 > -- 
-> 2.17.1
+> 2.23.0
 > 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
