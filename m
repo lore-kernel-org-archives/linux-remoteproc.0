@@ -1,199 +1,147 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v2 1/1] remoteproc: add support for co-processor booted
+Date: Fri, 8 Nov 2019 17:20:31 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/1] remoteproc: add support for co-processor booted
  before kernel
-Date: Tue, 12 Nov 2019 08:40:01 +0000
-Message-ID: <9879473e5b91499eb3d6ddd11584af16@SFHDAG7NODE2.st.com>
+Message-ID: <20191109012027.GC5662@tuxbook-pro>
 References: <1572864570-10131-1-git-send-email-loic.pallardy@st.com>
- <20191109012027.GC5662@tuxbook-pro>
-In-Reply-To: <20191109012027.GC5662@tuxbook-pro>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, "Fabien DESSENNE  <fabien.dessenne@st.com>, s-anna@ti.com" <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572864570-10131-1-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+On Mon 04 Nov 02:49 PST 2019, Loic Pallardy wrote:
 
-Thanks for your review.
+> Remote processor could boot independently or be started before Linux
+> kernel by bootloader or any firmware.
+> This patch introduces a new property in rproc core, named preloaded,
+> to be able to allocate resources and sub-devices like vdev and to
+> synchronize with current state without loading firmware from file system.
+> It is platform driver responsibility to implement the right firmware
+> load ops according to HW specificities.
+> 
 
-> -----Original Message-----
-> From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Sent: samedi 9 novembre 2019 02:20
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org; Fabien DESSENNE
-> <fabien.dessenne@st.com>; s-anna@ti.com
-> Subject: Re: [PATCH v2 1/1] remoteproc: add support for co-processor
-> booted before kernel
->=20
-> On Mon 04 Nov 02:49 PST 2019, Loic Pallardy wrote:
->=20
-> > Remote processor could boot independently or be started before Linux
-> > kernel by bootloader or any firmware.
-> > This patch introduces a new property in rproc core, named preloaded,
-> > to be able to allocate resources and sub-devices like vdev and to
-> > synchronize with current state without loading firmware from file syste=
-m.
-> > It is platform driver responsibility to implement the right firmware
-> > load ops according to HW specificities.
-> >
->=20
-> Is it just preloaded or already started?
-At the beginning, this properties was indeed to support an already started =
-coprocessor, but discussing with Suman few months ago, we detected some cas=
-es for which firmware may be loaded before kernel start (firmware located i=
-n embedded flash or loaded by bootloaders) or may be loaded by a dedicated =
-driver interface before rproc framework be called.
-As rproc framework is mainly responsible for firmware loading and resource =
-allocation, I named this property preloaded to cover as much as possible al=
-l cases.
->=20
-> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> >
-> > ---
-> > Change from v1:
-> > - Keep bool in struct rproc
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 37
-> +++++++++++++++++++++++++++---------
-> >  include/linux/remoteproc.h           |  2 ++
-> >  2 files changed, 30 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> > index 3c5fbbbfb0f1..7eaf0f949afa 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc,
-> const struct firmware *fw)
-> >  	if (ret)
-> >  		return ret;
-> >
-> > -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-> > +	if (fw)
-> > +		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-> > +			 fw->size);
-> > +	else
-> > +		dev_info(dev, "Synchronizing with preloaded co-
-> processor\n");
-> >
-> >  	/*
-> >  	 * if enabling an IOMMU isn't relevant for this rproc, this is
-> > @@ -1728,7 +1732,7 @@ static void rproc_crash_handler_work(struct
-> work_struct *work)
-> >   */
-> >  int rproc_boot(struct rproc *rproc)
-> >  {
-> > -	const struct firmware *firmware_p;
-> > +	const struct firmware *firmware_p =3D NULL;
-> >  	struct device *dev;
-> >  	int ret;
-> >
-> > @@ -1759,11 +1763,17 @@ int rproc_boot(struct rproc *rproc)
-> >
-> >  	dev_info(dev, "powering up %s\n", rproc->name);
-> >
-> > -	/* load firmware */
-> > -	ret =3D request_firmware(&firmware_p, rproc->firmware, dev);
-> > -	if (ret < 0) {
-> > -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> > -		goto downref_rproc;
-> > +	if (!rproc->preloaded) {
-> > +		/* load firmware */
-> > +		ret =3D request_firmware(&firmware_p, rproc->firmware,
-> dev);
-> > +		if (ret < 0) {
-> > +			dev_err(dev, "request_firmware failed: %d\n", ret);
-> > +			goto downref_rproc;
-> > +		}
-> > +	} else {
-> > +		/* set firmware name to null as unknown */
-> > +		kfree(rproc->firmware);
-> > +		rproc->firmware =3D NULL;
->=20
-> What happens when the remoteproc crashes? What happens if I stop it and
-> try to start it again?
-Exactly, it should be stopped, then firmware should be provided and coproce=
-ssor restarted thanks to sysfs interface
+Is it just preloaded or already started?
 
->=20
-> >  	}
-> >
-> >  	ret =3D rproc_fw_boot(rproc, firmware_p);
-> > @@ -1917,8 +1927,17 @@ int rproc_add(struct rproc *rproc)
-> >  	/* create debugfs entries */
-> >  	rproc_create_debug_dir(rproc);
-> >
-> > -	/* if rproc is marked always-on, request it to boot */
-> > -	if (rproc->auto_boot) {
-> > +	if (rproc->preloaded) {
-> > +		/*
-> > +		 * If rproc is marked already booted, no need to wait
-> > +		 * for firmware.
-> > +		 * Just handle associated resources and start sub devices
-> > +		 */
-> > +		ret =3D rproc_boot(rproc);
->=20
-> This will trickle down to your remoteproc driver's start() callback. If
-> you really mean that "preloaded" means "already started", then I presume
-> you're having some logic in your start() to turn it into a nop?
-Yes it is the responsibility of the driver to know in which state coprocess=
-or is.
-Depending on the use case, driver could:
-- do nothing if coprocessor already running
-- boot coprocessor, if only firmware was preloaded
-- reboot coprocessor to restart its execution on the preloaded firmware
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> 
+> ---
+> Change from v1:
+> - Keep bool in struct rproc
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 37 +++++++++++++++++++++++++++---------
+>  include/linux/remoteproc.h           |  2 ++
+>  2 files changed, 30 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 3c5fbbbfb0f1..7eaf0f949afa 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	if (ret)
+>  		return ret;
+>  
+> -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+> +	if (fw)
+> +		dev_info(dev, "Booting fw image %s, size %zd\n", name,
+> +			 fw->size);
+> +	else
+> +		dev_info(dev, "Synchronizing with preloaded co-processor\n");
+>  
+>  	/*
+>  	 * if enabling an IOMMU isn't relevant for this rproc, this is
+> @@ -1728,7 +1732,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>   */
+>  int rproc_boot(struct rproc *rproc)
+>  {
+> -	const struct firmware *firmware_p;
+> +	const struct firmware *firmware_p = NULL;
+>  	struct device *dev;
+>  	int ret;
+>  
+> @@ -1759,11 +1763,17 @@ int rproc_boot(struct rproc *rproc)
+>  
+>  	dev_info(dev, "powering up %s\n", rproc->name);
+>  
+> -	/* load firmware */
+> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> -		goto downref_rproc;
+> +	if (!rproc->preloaded) {
+> +		/* load firmware */
+> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "request_firmware failed: %d\n", ret);
+> +			goto downref_rproc;
+> +		}
+> +	} else {
+> +		/* set firmware name to null as unknown */
+> +		kfree(rproc->firmware);
+> +		rproc->firmware = NULL;
 
->=20
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	} else if (rproc->auto_boot) {
-> > +		/* if rproc is marked always-on, request it to boot */
-> >  		ret =3D rproc_trigger_auto_boot(rproc);
-> >  		if (ret < 0)
-> >  			return ret;
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index 16ad66683ad0..b68fbd576a77 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -479,6 +479,7 @@ struct rproc_dump_segment {
-> >   * @table_sz: size of @cached_table
-> >   * @has_iommu: flag to indicate if remote processor is behind an MMU
-> >   * @auto_boot: flag to indicate if remote processor should be auto-sta=
-rted
-> > + * @preloaded: remote processor has been preloaded before start
-> sequence
->=20
-> I think this should be "skip_firmware_load", or if you really mean that
-> the bootloader started the remote process perhaps this should be
-> "@fw_booted: remote processor was booted by firmware" (or something
-> similar).
-I'm fine with "skip_firmware_load" or "skip_fw_load" to have a shorter name=
-.
-I'll also add "preload" in patch title.
+What happens when the remoteproc crashes? What happens if I stop it and
+try to start it again?
+
+>  	}
+>  
+>  	ret = rproc_fw_boot(rproc, firmware_p);
+> @@ -1917,8 +1927,17 @@ int rproc_add(struct rproc *rproc)
+>  	/* create debugfs entries */
+>  	rproc_create_debug_dir(rproc);
+>  
+> -	/* if rproc is marked always-on, request it to boot */
+> -	if (rproc->auto_boot) {
+> +	if (rproc->preloaded) {
+> +		/*
+> +		 * If rproc is marked already booted, no need to wait
+> +		 * for firmware.
+> +		 * Just handle associated resources and start sub devices
+> +		 */
+> +		ret = rproc_boot(rproc);
+
+This will trickle down to your remoteproc driver's start() callback. If
+you really mean that "preloaded" means "already started", then I presume
+you're having some logic in your start() to turn it into a nop?
+
+> +		if (ret < 0)
+> +			return ret;
+> +	} else if (rproc->auto_boot) {
+> +		/* if rproc is marked always-on, request it to boot */
+>  		ret = rproc_trigger_auto_boot(rproc);
+>  		if (ret < 0)
+>  			return ret;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad66683ad0..b68fbd576a77 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -479,6 +479,7 @@ struct rproc_dump_segment {
+>   * @table_sz: size of @cached_table
+>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>   * @auto_boot: flag to indicate if remote processor should be auto-started
+> + * @preloaded: remote processor has been preloaded before start sequence
+
+I think this should be "skip_firmware_load", or if you really mean that
+the bootloader started the remote process perhaps this should be
+"@fw_booted: remote processor was booted by firmware" (or something
+similar).
 
 Regards,
-Loic
+Bjorn
 
->=20
-> Regards,
-> Bjorn
->=20
-> >   * @dump_segments: list of segments in the firmware
-> >   * @nb_vdev: number of vdev currently handled by rproc
-> >   */
-> > @@ -512,6 +513,7 @@ struct rproc {
-> >  	size_t table_sz;
-> >  	bool has_iommu;
-> >  	bool auto_boot;
-> > +	bool preloaded;
-> >  	struct list_head dump_segments;
-> >  	int nb_vdev;
-> >  };
-> > --
-> > 2.7.4
-> >
+>   * @dump_segments: list of segments in the firmware
+>   * @nb_vdev: number of vdev currently handled by rproc
+>   */
+> @@ -512,6 +513,7 @@ struct rproc {
+>  	size_t table_sz;
+>  	bool has_iommu;
+>  	bool auto_boot;
+> +	bool preloaded;
+>  	struct list_head dump_segments;
+>  	int nb_vdev;
+>  };
+> -- 
+> 2.7.4
+> 
