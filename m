@@ -1,61 +1,75 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
+Date: Mon, 11 Nov 2019 14:04:20 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v2] remoteproc: stm32: fix probe error case
-Date: Tue, 12 Nov 2019 14:09:40 +0000
-Message-ID: <392808fa-1504-233f-234b-0cca21886c17@st.com>
+Message-ID: <20191111220416.GB3108315@builder>
 References: <1570433991-16353-1-git-send-email-fabien.dessenne@st.com>
- <20191111220416.GB3108315@builder>
-In-Reply-To: <20191111220416.GB3108315@builder>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <95ED63541F302C428DC02C0FF61927C7@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, "linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, Loic PALLARDY <loic.pallardy@st.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1570433991-16353-1-git-send-email-fabien.dessenne@st.com>
+To: Fabien Dessenne <fabien.dessenne@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgQmpvcm4sDQoNCg0KT24gMTEvMTEvMjAxOSAxMTowNCBQTSwgQmpvcm4gQW5kZXJzc29uIHdy
-b3RlOg0KPiBPbiBNb24gMDcgT2N0IDAwOjM5IFBEVCAyMDE5LCBGYWJpZW4gRGVzc2VubmUgd3Jv
-dGU6DQo+DQo+PiBJZiB0aGUgcnByb2MgZHJpdmVyIGlzIHByb2JlZCBiZWZvcmUgdGhlIG1haWxi
-b3ggZHJpdmVyIGFuZCBpZiB0aGUgcnByb2MNCj4+IERldmljZSBUcmVlIG5vZGUgaGFzIHNvbWUg
-bWFpbGJveCBwcm9wZXJ0aWVzLCB0aGUgcnByb2MgZHJpdmVyIHByb2JlDQo+PiBzaGFsbCBiZSBk
-ZWZlcnJlZCBpbnN0ZWFkIG9mIGJlaW5nIHByb2JlZCB3aXRob3V0IG1haWxib3ggc3VwcG9ydC4N
-Cj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBGYWJpZW4gRGVzc2VubmUgPGZhYmllbi5kZXNzZW5uZUBz
-dC5jb20+DQo+PiAtLS0NCj4+IENoYW5nZXMgc2luY2UgdjE6IHRlc3QgSVNfRVJSKCkgYmVmb3Jl
-IGNoZWNraW5nIFBUUl9FUlIoKQ0KPj4gLS0tDQo+PiAgIGRyaXZlcnMvcmVtb3RlcHJvYy9zdG0z
-Ml9ycHJvYy5jIHwgMTAgKysrKysrKystLQ0KPj4gICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRp
-b25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3JlbW90
-ZXByb2Mvc3RtMzJfcnByb2MuYyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9zdG0zMl9ycHJvYy5jDQo+
-PiBpbmRleCAyY2Y0YjI5Li5hNTA3MzMyIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9yZW1vdGVw
-cm9jL3N0bTMyX3Jwcm9jLmMNCj4+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9zdG0zMl9ycHJv
-Yy5jDQo+PiBAQCAtMzEwLDcgKzMxMCw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3RtMzJfbWJv
-eCBzdG0zMl9ycHJvY19tYm94W01CT1hfTkJfTUJYXSA9IHsNCj4+ICAgCX0NCj4+ICAgfTsNCj4+
-ICAgDQo+PiAtc3RhdGljIHZvaWQgc3RtMzJfcnByb2NfcmVxdWVzdF9tYm94KHN0cnVjdCBycHJv
-YyAqcnByb2MpDQo+PiArc3RhdGljIGludCBzdG0zMl9ycHJvY19yZXF1ZXN0X21ib3goc3RydWN0
-IHJwcm9jICpycHJvYykNCj4+ICAgew0KPj4gICAJc3RydWN0IHN0bTMyX3Jwcm9jICpkZGF0YSA9
-IHJwcm9jLT5wcml2Ow0KPj4gICAJc3RydWN0IGRldmljZSAqZGV2ID0gJnJwcm9jLT5kZXY7DQo+
-PiBAQCAtMzI5LDEwICszMjksMTQgQEAgc3RhdGljIHZvaWQgc3RtMzJfcnByb2NfcmVxdWVzdF9t
-Ym94KHN0cnVjdCBycHJvYyAqcnByb2MpDQo+PiAgIA0KPj4gICAJCWRkYXRhLT5tYltpXS5jaGFu
-ID0gbWJveF9yZXF1ZXN0X2NoYW5uZWxfYnluYW1lKGNsLCBuYW1lKTsNCj4+ICAgCQlpZiAoSVNf
-RVJSKGRkYXRhLT5tYltpXS5jaGFuKSkgew0KPj4gKwkJCWlmIChQVFJfRVJSKGRkYXRhLT5tYltp
-XS5jaGFuKSA9PSAtRVBST0JFX0RFRkVSKQ0KPj4gKwkJCQlyZXR1cm4gLUVQUk9CRV9ERUZFUjsN
-Cj4gSWYgZm9yIHNvbWUgcmVhc29uIHlvdSBnZXQgRVBST0JFX0RFRkVSIHdoZW4gaSA+IDAgeW91
-IG5lZWQgdG8NCj4gbWJveF9mcmVlX2NoYW5uZWwoKSBjaGFubmVscyBbMC4uaSkgYmVmb3JlIHJl
-dHVybmluZy4NCg0KVGhlIG1haWxib3ggZnJhbWV3b3JrIHJldHVybnMgRVBST0JFX0RJRkZFUiB0
-byBpbmZvcm0gdGhhdCB0aGUgbWFpbGJveCANCnByb3ZpZGVyIGhhcyBub3QgcmVnaXN0ZXJlZCB5
-ZXQuIEkgZG8gbm90IGV4cGVjdGVkIHRvIGhhdmUgYSBzdWNjZXNzIA0KZm9sbG93ZWQgYnkgYSBF
-UFJPQkVfREVGRVIgZXJyb3IuDQoNCkJ1dCBpbiB0aGUgdmVyeSBzcGVjaWFsIGNhc2Ugd2hlcmUg
-d2UgdXNlIHR3byBkaWZmZXJlbnQgbWFpbGJveCANCnByb3ZpZGVycyB0aGlzIG1heSBoYXBwZW4u
-DQoNCkkgd2lsbCBzZW5kIGFuIHVwZGF0ZWQgdmVyc2lvbiwgdGhhbmtzIGZvciBwb2ludGluZyB0
-aGlzLg0KDQpCUg0KDQpGYWJpZW4NCg0KPg0KPiBSZWdhcmRzLA0KPiBCam9ybg0KPg0KPj4gICAJ
-CQlkZXZfd2FybihkZXYsICJjYW5ub3QgZ2V0ICVzIG1ib3hcbiIsIG5hbWUpOw0KPj4gICAJCQlk
-ZGF0YS0+bWJbaV0uY2hhbiA9IE5VTEw7DQo+PiAgIAkJfQ0KPj4gICAJfQ0KPj4gKw0KPj4gKwly
-ZXR1cm4gMDsNCj4+ICAgfQ0KPj4gICANCj4+ICAgc3RhdGljIGludCBzdG0zMl9ycHJvY19zZXRf
-aG9sZF9ib290KHN0cnVjdCBycHJvYyAqcnByb2MsIGJvb2wgaG9sZCkNCj4+IEBAIC01OTYsNyAr
-NjAwLDkgQEAgc3RhdGljIGludCBzdG0zMl9ycHJvY19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQ0KPj4gICAJaWYgKHJldCkNCj4+ICAgCQlnb3RvIGZyZWVfcnByb2M7DQo+PiAg
-IA0KPj4gLQlzdG0zMl9ycHJvY19yZXF1ZXN0X21ib3gocnByb2MpOw0KPj4gKwlyZXQgPSBzdG0z
-Ml9ycHJvY19yZXF1ZXN0X21ib3gocnByb2MpOw0KPj4gKwlpZiAocmV0KQ0KPj4gKwkJZ290byBm
-cmVlX3Jwcm9jOw0KPj4gICANCj4+ICAgCXJldCA9IHJwcm9jX2FkZChycHJvYyk7DQo+PiAgIAlp
-ZiAocmV0KQ0KPj4gLS0gDQo+PiAyLjcuNA0KPj4=
+On Mon 07 Oct 00:39 PDT 2019, Fabien Dessenne wrote:
+
+> If the rproc driver is probed before the mailbox driver and if the rproc
+> Device Tree node has some mailbox properties, the rproc driver probe
+> shall be deferred instead of being probed without mailbox support.
+> 
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+> ---
+> Changes since v1: test IS_ERR() before checking PTR_ERR()
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 2cf4b29..a507332 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -310,7 +310,7 @@ static const struct stm32_mbox stm32_rproc_mbox[MBOX_NB_MBX] = {
+>  	}
+>  };
+>  
+> -static void stm32_rproc_request_mbox(struct rproc *rproc)
+> +static int stm32_rproc_request_mbox(struct rproc *rproc)
+>  {
+>  	struct stm32_rproc *ddata = rproc->priv;
+>  	struct device *dev = &rproc->dev;
+> @@ -329,10 +329,14 @@ static void stm32_rproc_request_mbox(struct rproc *rproc)
+>  
+>  		ddata->mb[i].chan = mbox_request_channel_byname(cl, name);
+>  		if (IS_ERR(ddata->mb[i].chan)) {
+> +			if (PTR_ERR(ddata->mb[i].chan) == -EPROBE_DEFER)
+> +				return -EPROBE_DEFER;
+
+If for some reason you get EPROBE_DEFER when i > 0 you need to
+mbox_free_channel() channels [0..i) before returning.
+
+Regards,
+Bjorn
+
+>  			dev_warn(dev, "cannot get %s mbox\n", name);
+>  			ddata->mb[i].chan = NULL;
+>  		}
+>  	}
+> +
+> +	return 0;
+>  }
+>  
+>  static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
+> @@ -596,7 +600,9 @@ static int stm32_rproc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto free_rproc;
+>  
+> -	stm32_rproc_request_mbox(rproc);
+> +	ret = stm32_rproc_request_mbox(rproc);
+> +	if (ret)
+> +		goto free_rproc;
+>  
+>  	ret = rproc_add(rproc);
+>  	if (ret)
+> -- 
+> 2.7.4
+> 
