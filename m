@@ -1,11 +1,10 @@
 Return-Path: <jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-References: <20191109004033.1496871-1-bjorn.andersson@linaro.org>
- <20191109004033.1496871-2-bjorn.andersson@linaro.org> <CAOCk7NrkpwyuZnq7C3CgLDBHoCXM=SMxvt_iv+nQzS9atT3B9A@mail.gmail.com>
-In-Reply-To: <CAOCk7NrkpwyuZnq7C3CgLDBHoCXM=SMxvt_iv+nQzS9atT3B9A@mail.gmail.com>
+References: <20191109004033.1496871-1-bjorn.andersson@linaro.org> <20191109004033.1496871-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20191109004033.1496871-2-bjorn.andersson@linaro.org>
 From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date: Wed, 13 Nov 2019 11:02:57 -0700
-Message-ID: <CAOCk7Nq4MgZ1ai6vu+hq3H8qu7P924JCsy1_ru7=5MCF2Z2nwg@mail.gmail.com>
+Date: Tue, 12 Nov 2019 10:01:38 -0700
+Message-ID: <CAOCk7NrkpwyuZnq7C3CgLDBHoCXM=SMxvt_iv+nQzS9atT3B9A@mail.gmail.com>
 Subject: Re: [PATCH v2 1/2] remoteproc: qcom_q6v5_mss: Don't reassign mpss
  region on shutdown
 Content-Type: text/plain; charset="UTF-8"
@@ -13,96 +12,85 @@ To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: Ohad Ben-Cohen <ohad@wizery.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Sibi Sankar <sibis@codeaurora.org>, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, Nov 12, 2019 at 10:01 AM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+On Fri, Nov 8, 2019 at 5:40 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 >
-> On Fri, Nov 8, 2019 at 5:40 PM Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> >
-> > Trying to reclaim mpss memory while the mba is not running causes the
-> > system to crash on devices with security fuses blown, so leave it
-> > assigned to the remote on shutdown and recover it on a subsequent boot.
-> >
-> > Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Trying to reclaim mpss memory while the mba is not running causes the
+> system to crash on devices with security fuses blown, so leave it
+> assigned to the remote on shutdown and recover it on a subsequent boot.
 >
-> Stuff still works on the laptop, and I don't hit the access violation
-> with the crash dump scenario on the mtp.
+> Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Stuff still works on the laptop, and I don't hit the access violation
+with the crash dump scenario on the mtp.
+
+Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Tested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+
+> ---
 >
-> Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> Tested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-
-Actually, nack that.  See comment below.
-
+> Changes since v1:
+> - Assign memory back to Linux in coredump case
 >
-> > ---
-> >
-> > Changes since v1:
-> > - Assign memory back to Linux in coredump case
-> >
-> >  drivers/remoteproc/qcom_q6v5_mss.c | 20 ++++++++++----------
-> >  1 file changed, 10 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> > index de919f2e8b94..efab574b2e12 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> > @@ -875,11 +875,6 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
-> >                 writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-> >         }
-> >
-> > -       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-> > -                                     false, qproc->mpss_phys,
-> > -                                     qproc->mpss_size);
-> > -       WARN_ON(ret);
-> > -
-> >         q6v5_reset_assert(qproc);
-> >
-> >         q6v5_clk_disable(qproc->dev, qproc->reset_clks,
-> > @@ -969,6 +964,10 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
-> >                         max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
-> >         }
-> >
-> > +       /* Try to reset ownership back to Linux */
-> > +       q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
-> > +                               qproc->mpss_phys, qproc->mpss_size);
-> > +
-> >         mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
-> >         qproc->mpss_reloc = mpss_reloc;
-> >         /* Load firmware segments */
-> > @@ -1058,9 +1057,14 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
-> >         void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
-> >
-> >         /* Unlock mba before copying segments */
-> > -       if (!qproc->dump_mba_loaded)
-> > +       if (!qproc->dump_mba_loaded) {
-> >                 ret = q6v5_mba_load(qproc);
-> >
-> > +               /* Try to reset ownership back to Linux */
-> > +               q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
-> > +                                       qproc->mpss_phys, qproc->mpss_size);
-
-If the load fails, we can't pull the memory otherwise we'll hit the
-access violation (serror).  I happened to see this on a production
-device, where I think the load fails because crashdumps are not
-enabled.
-
-> > +       }
-> > +
-> >         if (!ptr || ret)
-> >                 memset(dest, 0xff, segment->size);
-> >         else
-> > @@ -1111,10 +1115,6 @@ static int q6v5_start(struct rproc *rproc)
-> >         return 0;
-> >
-> >  reclaim_mpss:
-> > -       xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-> > -                                               false, qproc->mpss_phys,
-> > -                                               qproc->mpss_size);
-> > -       WARN_ON(xfermemop_ret);
-> >         q6v5_mba_reclaim(qproc);
-> >
-> >         return ret;
-> > --
-> > 2.23.0
-> >
+>  drivers/remoteproc/qcom_q6v5_mss.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index de919f2e8b94..efab574b2e12 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -875,11 +875,6 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+>                 writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>         }
+>
+> -       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
+> -                                     false, qproc->mpss_phys,
+> -                                     qproc->mpss_size);
+> -       WARN_ON(ret);
+> -
+>         q6v5_reset_assert(qproc);
+>
+>         q6v5_clk_disable(qproc->dev, qproc->reset_clks,
+> @@ -969,6 +964,10 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>                         max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
+>         }
+>
+> +       /* Try to reset ownership back to Linux */
+> +       q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
+> +                               qproc->mpss_phys, qproc->mpss_size);
+> +
+>         mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+>         qproc->mpss_reloc = mpss_reloc;
+>         /* Load firmware segments */
+> @@ -1058,9 +1057,14 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+>         void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+>
+>         /* Unlock mba before copying segments */
+> -       if (!qproc->dump_mba_loaded)
+> +       if (!qproc->dump_mba_loaded) {
+>                 ret = q6v5_mba_load(qproc);
+>
+> +               /* Try to reset ownership back to Linux */
+> +               q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
+> +                                       qproc->mpss_phys, qproc->mpss_size);
+> +       }
+> +
+>         if (!ptr || ret)
+>                 memset(dest, 0xff, segment->size);
+>         else
+> @@ -1111,10 +1115,6 @@ static int q6v5_start(struct rproc *rproc)
+>         return 0;
+>
+>  reclaim_mpss:
+> -       xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
+> -                                               false, qproc->mpss_phys,
+> -                                               qproc->mpss_size);
+> -       WARN_ON(xfermemop_ret);
+>         q6v5_mba_reclaim(qproc);
+>
+>         return ret;
+> --
+> 2.23.0
+>
