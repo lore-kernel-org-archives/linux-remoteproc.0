@@ -1,47 +1,100 @@
-Return-Path: <0101016e92929b3a-14353ea8-4c40-4a89-90fd-3a88aa3297c6-000000@us-west-2.amazonses.com>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V5 1/5] rpmsg: glink: Use complete_all for open states
-Date: Fri, 22 Nov 2019 10:05:11 +0000
-Message-ID: <0101016e92929b3a-14353ea8-4c40-4a89-90fd-3a88aa3297c6-000000@us-west-2.amazonses.com>
-In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 11/17] remoteproc/omap: Check for undefined mailbox
+ messages
+References: <20191028124238.19224-1-t-kristo@ti.com>
+ <20191028124238.19224-12-t-kristo@ti.com> <20191111233919.GM3108315@builder>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <a66c1ed4-5a97-22bf-e58c-4a458b3104cd@ti.com>
+Date: Tue, 12 Nov 2019 10:38:47 +0200
+MIME-Version: 1.0
+In-Reply-To: <20191111233919.GM3108315@builder>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+On 12/11/2019 01:39, Bjorn Andersson wrote:
+> On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
+> 
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> Add some checks in the mailbox callback function to limit
+>> any processing in the mailbox callback function to only
+>> certain currently valid messages, and drop all the remaining
+>> messages. A debug message is added to print any such invalid
+>> messages when the appropriate trace control is enabled.
+>>
+>> Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+> 
+> This should either have a "Co-developed-by" or Suman should be the first
+> one.
 
-The open_req and open_ack completion variables are the state variables
-to represet a remote channel as open. Use complete_all so there are no
-races with waiters and using completion_done.
+Let me swap that.
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/qcom_glink_native.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-Tero
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 621f1af..609a150f 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -949,7 +949,7 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 		return -EINVAL;
- 	}
- 
--	complete(&channel->open_ack);
-+	complete_all(&channel->open_ack);
- 
- 	return 0;
- }
-@@ -1393,7 +1393,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
- 	channel->rcid = ret;
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
- 
--	complete(&channel->open_req);
-+	complete_all(&channel->open_req);
- 
- 	if (create_device) {
- 		rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
--- 
-1.9.1
+> 
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Regards,
+> Bjorn
+> 
+>> ---
+>>   drivers/remoteproc/omap_remoteproc.c | 6 ++++++
+>>   drivers/remoteproc/omap_remoteproc.h | 7 +++++++
+>>   2 files changed, 13 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>> index e46bb4c790d7..016d5beda195 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.c
+>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>> @@ -124,6 +124,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+>>   		dev_info(dev, "received echo reply from %s\n", name);
+>>   		break;
+>>   	default:
+>> +		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
+>> +			return;
+>> +		if (msg > oproc->rproc->max_notifyid) {
+>> +			dev_dbg(dev, "dropping unknown message 0x%x", msg);
+>> +			return;
+>> +		}
+>>   		/* msg contains the index of the triggered vring */
+>>   		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
+>>   			dev_dbg(dev, "no message was found in vqid %d\n", msg);
+>> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+>> index 1e6fef753c4f..18f522617683 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.h
+>> +++ b/drivers/remoteproc/omap_remoteproc.h
+>> @@ -31,6 +31,12 @@
+>>    *
+>>    * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
+>>    * recovery mechanism (to some extent).
+>> + *
+>> + * Introduce new message definitions if any here.
+>> + *
+>> + * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
+>> + * This should be the last definition.
+>> + *
+>>    */
+>>   enum omap_rp_mbox_messages {
+>>   	RP_MBOX_READY		= 0xFFFFFF00,
+>> @@ -39,6 +45,7 @@ enum omap_rp_mbox_messages {
+>>   	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
+>>   	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
+>>   	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
+>> +	RP_MBOX_END_MSG		= 0xFFFFFF06,
+>>   };
+>>   
+>>   #endif /* _OMAP_RPMSG_H */
+>> -- 
+>> 2.17.1
+>>
+>> --
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
