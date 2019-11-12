@@ -1,85 +1,168 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv2 06/15] remoteproc/omap: Initialize and assign reserved memory node
-Date: Tue, 19 Nov 2019 16:16:36 +0200
-Message-ID: <20191119141645.19777-7-t-kristo@ti.com>
-In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
-References: <20191119141645.19777-1-t-kristo@ti.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+From: Pi-Hsun Shih <pihsun@chromium.org>
+Subject: [PATCH v21 0/4] Add support for mt8183 SCP.
+Date: Tue, 12 Nov 2019 19:03:23 +0800
+Message-Id: <20191112110330.179649-1-pihsun@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+Sender: linux-kernel-owner@vger.kernel.org
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, "open list:OPEN FIRMWARE AND FLATTENED" <devicetree@vger.kernel.org>, DEVICE, "moderated list:ARM/Mediatek SoC" <linux-arm-kernel@lists.infradead.org>, support, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/Mediatek SoC" <linux-mediatek@lists.infradead.org>support, "open list:REMOTE PROCESSOR" <linux-remoteproc@vger.kernel.org>, SUBSYSTEM
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Add support for controlling and communicating with mt8183's system
+control processor (SCP), using the remoteproc & rpmsg framework.
+And also add a cros_ec driver for CrOS EC host command over rpmsg.
 
-The reserved memory nodes are not assigned to platform devices by
-default in the driver core to avoid the lookup for every platform
-device and incur a penalty as the real users are expected to be
-only a few devices.
+The overall structure of the series is:
+* remoteproc/mtk_scp.c: Control the start / stop of SCP (Patch 2).
+* remoteproc/mtk_scp_ipi.c: Communicates to SCP using inter-processor
+  interrupt (IPI) and shared memory (Patch 2).
+* rpmsg/mtk_rpmsg.c: Wrapper to wrap the IPI communication into a rpmsg
+  device. Supports name service for SCP firmware to
+  announce channels (Patch 3).
+* add scp dts node to mt8183 platform (Patch 4).
 
-OMAP remoteproc devices fall into the above category and the OMAP
-remoteproc driver _requires_ specific CMA pools to be assigned
-for each device at the moment to align on the location of the
-vrings and vring buffers in the RTOS-side firmware images. So,
-use the of_reserved_mem_device_init/release() API appropriately
-to assign the corresponding reserved memory region to the OMAP
-remoteproc device. Note that only one region per device is
-allowed by the framework.
+Changes from v20:
+ - Change all public API usage of (struct platform_device *) to (struct
+   mtk_scp *).
+ - Rename some variables and functions to be more specific.
+ - Move docs to implementation, and improve docs.
+ - Address review comments.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Changes from v19:
+ - Fix an incorrect include in mtk_rpmsg.h (linux/device.h ->
+   linux/platform_device.h)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 28f14e24b389..3ad74c4b4071 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/of_device.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/remoteproc.h>
-@@ -479,14 +480,22 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
-+	ret = of_reserved_mem_device_init(&pdev->dev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-+		goto free_rproc;
-+	}
-+
- 	platform_set_drvdata(pdev, rproc);
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto free_rproc;
-+		goto release_mem;
- 
- 	return 0;
- 
-+release_mem:
-+	of_reserved_mem_device_release(&pdev->dev);
- free_rproc:
- 	rproc_free(rproc);
- 	return ret;
-@@ -498,6 +507,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
- 
- 	rproc_del(rproc);
- 	rproc_free(rproc);
-+	of_reserved_mem_device_release(&pdev->dev);
- 
- 	return 0;
- }
+Changes from v18:
+ - Change the way shared memory is handled, and drop patch 3.
+
+Changes from v17:
+ - Fix mixture use of __iomem found by sparse.
+ - Change the ipi handler to take a u32 instead of enum scp_ipi_id.
+ - Mark mtk_rpmsg_{prepare,unprepare,stop} as static.
+
+Changes from v16:
+ - Change the desc_lock mutex to be a per-id lock.
+ - Put the execution of handler inside the per-id lock, to prevent race
+   between scp_ipi_unregister and handler being run.
+ - Move the initialization of mutex to before scp_ipi_register.
+
+Changes from v15:
+ - Fix a bug on incorrect usage of wait_event_timeout return value.
+
+Changes from v14:
+ - Fix a typo on variable in DEBUG section.
+
+Changes from v13:
+ - Move include/linux/platform_data/mtk_scp.h to
+   include/linux/remoteproc/mtk_scp.h.
+ - Rename scp_get_reserve_* to scp_get_reserved_*.
+ - Add lock for access of scp->ipi_desc.
+ - Lock the whole ipi_send function.
+ - Move more setting of cache size from SCP firmware to kernel driver,
+   to prevent problem while loading firmware onto DRAM.
+ - Minor fixes addressing comment.
+
+Changes from v12:
+ - Initialize cache before firmware load, to avoid problem while loading
+   large firmware.
+ - Disable watchdog before stopping SCP, to avoid extra warning message.
+ - Fix new warnings by checkpatch.
+
+Changes from v11:
+ - Fixed a bug that mtk_rpmsg_endpoint is not properly cleaned up if
+   rproc_boot fails.
+ - Add missing documentation in comment.
+
+Changes from v10:
+ - Drop applied cros_ec_rpmsg patches.
+ - Add clock reset before loading SCP firmware.
+ - Fix some type mismatch warnings when printing debug messages.
+
+Changes from v9:
+ - Remove reserve-memory-vpu_share node.
+ - Remove change to cros_ec_commands.h (That is already in
+   https://lore.kernel.org/lkml/20190518063949.GY4319@dell/T/)
+
+Changes from v8:
+ - Rebased onto https://patchwork.kernel.org/cover/10962385/.
+ - Drop merged cros_ec_rpmsg patch, and add scp dts node patch.
+ - Add more reserved memory region.
+
+Changes from v7:
+ - Rebase onto https://lore.kernel.org/patchwork/patch/1059196/.
+ - Fix clock enable/disable timing for SCP driver.
+ - Add more SCP IPI ID.
+
+Changes from v6:
+ - Decouple mtk_rpmsg from mtk_scp.
+ - Change data of EC response to be aligned to 4 bytes.
+
+Changes from v5:
+ - Add device tree binding document for cros_ec_rpmsg.
+ - Better document in comments for cros_ec_rpmsg.
+ - Remove dependency on CONFIG_ in binding tree document.
+
+Changes from v4:
+ - Merge patch 6 (Load ELF firmware) into patch 2, so the driver loads
+   ELF firmware by default, and no longer accept plain binary.
+ - rpmsg_device listed in device tree (as a child of the SCP node) would
+   have it's device tree node mapped to the rpmsg_device, so the rpmsg
+   driver can use the properties on device tree.
+
+Changes from v3:
+ - Make writing to SCP SRAM aligned.
+ - Add a new patch (Patch 6) to load ELF instead of bin firmware.
+ - Add host event support for EC driver.
+ - Fix some bugs found in testing (missing spin_lock_init,
+   rproc_subdev_unprepare to rproc_subdev_stop).
+ - Fix some coding style issue found by checkpatch.pl.
+
+Changes from v2:
+ - Fold patch 3 into patch 2 in v2.
+ - Move IPI id around to support cross-testing for old and new firmware.
+ - Finish more TODO items.
+
+Changes from v1:
+ - Extract functions and rename variables in mtk_scp.c.
+ - Do cleanup properly in mtk_rpmsg.c, which also removes the problem of
+   short-lived work items.
+ - Code format fix based on feedback for cros_ec_rpmsg.c.
+ - Extract feature detection for SCP into separate patch (Patch 6).
+
+Eddie Huang (1):
+  arm64: dts: mt8183: add scp node
+
+Erin Lo (2):
+  dt-bindings: Add a binding for Mediatek SCP
+  remoteproc/mediatek: add SCP support for mt8183
+
+Pi-Hsun Shih (1):
+  rpmsg: add rpmsg support for mt8183 SCP.
+
+ .../bindings/remoteproc/mtk,scp.txt           |  36 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts   |  11 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      |  12 +
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  94 +++
+ drivers/remoteproc/mtk_scp.c                  | 663 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_ipi.c              | 219 ++++++
+ drivers/rpmsg/Kconfig                         |   9 +
+ drivers/rpmsg/Makefile                        |   1 +
+ drivers/rpmsg/mtk_rpmsg.c                     | 414 +++++++++++
+ include/linux/remoteproc/mtk_scp.h            |  66 ++
+ include/linux/rpmsg/mtk_rpmsg.h               |  38 +
+ 13 files changed, 1574 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mtk,scp.txt
+ create mode 100644 drivers/remoteproc/mtk_common.h
+ create mode 100644 drivers/remoteproc/mtk_scp.c
+ create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+ create mode 100644 drivers/rpmsg/mtk_rpmsg.c
+ create mode 100644 include/linux/remoteproc/mtk_scp.h
+ create mode 100644 include/linux/rpmsg/mtk_rpmsg.h
+
+
+base-commit: fc6d6db1df2cb11bbecc542d67885742e75b4b07
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.24.0.rc1.363.gb1bccd3e3d-goog
