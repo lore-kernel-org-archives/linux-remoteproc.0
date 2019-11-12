@@ -1,95 +1,96 @@
-Return-Path: <0101016e929453d3-e223d307-2fa7-4cce-9f1d-51a7fd222a35-000000@us-west-2.amazonses.com>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [RESEND PATCH V4 4/4] rpmsg: char: Add signal callback and POLLPRI support
-Date: Fri, 22 Nov 2019 10:07:04 +0000
-Message-ID: <0101016e929453d3-e223d307-2fa7-4cce-9f1d-51a7fd222a35-000000@us-west-2.amazonses.com>
-In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 06/17] remoteproc/omap: Add the rproc ops .da_to_va()
+ implementation
+References: <20191028124238.19224-1-t-kristo@ti.com>
+ <20191028124238.19224-7-t-kristo@ti.com> <20191111232251.GH3108315@builder>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <9670e8ad-4c36-2ad1-5967-931b0fc97343@ti.com>
+Date: Tue, 12 Nov 2019 10:22:39 +0200
+MIME-Version: 1.0
+In-Reply-To: <20191111232251.GH3108315@builder>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Register a callback to get the signal notifications from rpmsg and
-send POLLPRI mask to indicate the signal change in POLL system call.
+On 12/11/2019 01:22, Bjorn Andersson wrote:
+> On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
+> 
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> An implementation for the rproc ops .da_to_va() has been added
+>> that provides the address translation between device addresses
+>> to kernel virtual addresses for internal RAMs present on that
+>> particular remote processor device. The implementation provides
+>> the translations based on the addresses parsed and stored during
+>> the probe.
+>>
+>> This ops gets invoked by the exported rproc_da_to_va() function
+>> and allows the remoteproc core's ELF loader to be able to load
+>> program data directly into the internal memories.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>   drivers/remoteproc/omap_remoteproc.c | 35 ++++++++++++++++++++++++++++
+>>   1 file changed, 35 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>> index bbd6ff360e10..0524f7e0ffa4 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.c
+>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>> @@ -230,10 +230,45 @@ static int omap_rproc_stop(struct rproc *rproc)
+>>   	return 0;
+>>   }
+>>   
+>> +/*
+>> + * Internal Memory translation helper
+> 
+> Please format this as kerneldoc.
+> 
+>> + *
+>> + * Custom function implementing the rproc .da_to_va ops to provide address
+>> + * translation (device address to kernel virtual address) for internal RAMs
+>> + * present in a DSP or IPU device). The translated addresses can be used
+>> + * either by the remoteproc core for loading, or by any rpmsg bus drivers.
+>> + */
+>> +static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>> +{
+>> +	struct omap_rproc *oproc = rproc->priv;
+>> +	void *va = NULL;
+>> +	int i;
+>> +	u32 offset;
+>> +
+>> +	if (len <= 0)
+>> +		return NULL;
+>> +
+>> +	if (!oproc->num_mems)
+>> +		return NULL;
+>> +
+>> +	for (i = 0; i < oproc->num_mems; i++) {
+>> +		if (da >= oproc->mem[i].dev_addr && da + len <=
+>> +		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
+>> +			offset = da -  oproc->mem[i].dev_addr;
+>> +			/* __force to make sparse happy with type conversion */
+>> +			va = (__force void *)(oproc->mem[i].cpu_addr + offset);
+> 
+> Replace va = and break; with just a return here.
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/rpmsg_char.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Right, va seems to be completely redundant local variable.
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 07bce51..8446c0b 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -64,6 +64,7 @@ struct rpmsg_ctrldev {
-  * @queue_lock:	synchronization of @queue operations
-  * @queue:	incoming message queue
-  * @readq:	wait object for incoming queue
-+ * @sig_pending:state of signal notification
-  */
- struct rpmsg_eptdev {
- 	struct device dev;
-@@ -78,6 +79,8 @@ struct rpmsg_eptdev {
- 	spinlock_t queue_lock;
- 	struct sk_buff_head queue;
- 	wait_queue_head_t readq;
-+
-+	bool sig_pending;
- };
- 
- static int rpmsg_eptdev_destroy(struct device *dev, void *data)
-@@ -122,6 +125,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
- 	return 0;
- }
- 
-+static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv,
-+			 u32 old, u32 new)
-+{
-+	struct rpmsg_eptdev *eptdev = priv;
-+
-+	eptdev->sig_pending = true;
-+
-+	/* wake up any blocking processes, waiting for signal notification */
-+	wake_up_interruptible(&eptdev->readq);
-+	return 0;
-+}
-+
- static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- {
- 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-@@ -138,6 +153,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- 		return -EINVAL;
- 	}
- 
-+	ept->sig_cb = rpmsg_sigs_cb;
- 	eptdev->ept = ept;
- 	filp->private_data = eptdev;
- 
-@@ -157,6 +173,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- 		eptdev->ept = NULL;
- 	}
- 	mutex_unlock(&eptdev->ept_lock);
-+	eptdev->sig_pending = false;
- 
- 	/* Discard all SKBs */
- 	while (!skb_queue_empty(&eptdev->queue)) {
-@@ -268,6 +285,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
- 	if (!skb_queue_empty(&eptdev->queue))
- 		mask |= EPOLLIN | EPOLLRDNORM;
- 
-+	if (eptdev->sig_pending)
-+		mask |= POLLPRI;
-+
- 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
- 
- 	return mask;
-@@ -311,6 +331,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 
- 	switch (cmd) {
- 	case TIOCMGET:
-+		eptdev->sig_pending = false;
- 		ret = rpmsg_get_signals(eptdev->ept);
- 		if (ret >= 0)
- 			ret = put_user(ret, (int __user *)arg);
--- 
-1.9.1
+> 
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	return va;
+> 
+> return NULL here.
+
+Yep will do.
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
