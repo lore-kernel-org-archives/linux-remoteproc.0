@@ -1,183 +1,220 @@
-Return-Path: <0101016e80792f2e-199c4cbb-599a-4ba9-b21a-ce034573deb2-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 14/16] arm64: dts: qcom: msm8998: Add ADSP, MPSS and SLPI nodes
-Date: Mon, 18 Nov 2019 21:44:15 +0000
-Message-ID: <0101016e80792f2e-199c4cbb-599a-4ba9-b21a-ce034573deb2-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Date: Tue, 12 Nov 2019 09:32:44 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/1] remoteproc: add support for co-processor booted
+ before kernel
+Message-ID: <20191112173241.GG3797@yoga>
+References: <1572864570-10131-1-git-send-email-loic.pallardy@st.com>
+ <20191109012027.GC5662@tuxbook-pro>
+ <9879473e5b91499eb3d6ddd11584af16@SFHDAG7NODE2.st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9879473e5b91499eb3d6ddd11584af16@SFHDAG7NODE2.st.com>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, Fabien DESSENNE <fabien.dessenne@st.com>, "s-anna@ti.com" <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds ADSP, MPSS and SLPI nodes for MSM8998 SoCs.
+On Tue 12 Nov 00:40 PST 2019, Loic PALLARDY wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi |   8 ++
- arch/arm64/boot/dts/qcom/msm8998.dtsi     | 122 ++++++++++++++++++++++
- 2 files changed, 130 insertions(+)
+> Hi Bjorn,
+> 
+> Thanks for your review.
+> 
+> > -----Original Message-----
+> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Sent: samedi 9 novembre 2019 02:20
+> > To: Loic PALLARDY <loic.pallardy@st.com>
+> > Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> > benjamin.gaignard@linaro.org; Fabien DESSENNE
+> > <fabien.dessenne@st.com>; s-anna@ti.com
+> > Subject: Re: [PATCH v2 1/1] remoteproc: add support for co-processor
+> > booted before kernel
+> > 
+> > On Mon 04 Nov 02:49 PST 2019, Loic Pallardy wrote:
+> > 
+> > > Remote processor could boot independently or be started before Linux
+> > > kernel by bootloader or any firmware.
+> > > This patch introduces a new property in rproc core, named preloaded,
+> > > to be able to allocate resources and sub-devices like vdev and to
+> > > synchronize with current state without loading firmware from file system.
+> > > It is platform driver responsibility to implement the right firmware
+> > > load ops according to HW specificities.
+> > >
+> > 
+> > Is it just preloaded or already started?
+> At the beginning, this properties was indeed to support an already
+> started coprocessor, but discussing with Suman few months ago, we
+> detected some cases for which firmware may be loaded before kernel
+> start (firmware located in embedded flash or loaded by bootloaders) or
+> may be loaded by a dedicated driver interface before rproc framework
+> be called.
+> As rproc framework is mainly responsible for firmware loading and
+> resource allocation, I named this property preloaded to cover as much
+> as possible all cases.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-index 5f101a20a20a2..29e0c2e988e4b 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -23,6 +23,14 @@
- 	};
- };
- 
-+&adsp_pas {
-+	status = "okay";
-+};
-+
-+&slpi_pas {
-+	status = "okay";
-+};
-+
- &blsp1_uart3 {
- 	status = "okay";
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 707673e3cf28a..dd1dc35e87b63 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -337,6 +337,73 @@
- 		};
- 	};
- 
-+	adsp_pas: remoteproc-adsp {
-+		compatible = "qcom,msm8998-adsp-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&xo>;
-+		clock-names = "xo";
-+
-+		memory-region = <&adsp_mem>;
-+
-+		qcom,smem-states = <&adsp_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		power-domains = <&rpmpd MSM8998_VDDCX>;
-+		power-domain-names = "cx";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>;
-+			label = "lpass";
-+			qcom,remote-pid = <2>;
-+			mboxes = <&apcs_glb 9>;
-+		};
-+	};
-+
-+	slpi_pas: remoteproc-slpi {
-+		compatible = "qcom,msm8998-slpi-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 390 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		px-supply = <&vreg_lvs2a_1p8>;
-+
-+		clocks = <&xo>,
-+			 <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-+		clock-names = "xo", "aggre2";
-+
-+		memory-region = <&slpi_mem>;
-+
-+		qcom,smem-states = <&slpi_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		power-domains = <&rpmpd MSM8998_SSCCX>;
-+		power-domain-names = "ssc_cx";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
-+			label = "dsps";
-+			qcom,remote-pid = <3>;
-+			mboxes = <&apcs_glb 27>;
-+		};
-+	};
-+
- 	tcsr_mutex: hwlock {
- 		compatible = "qcom,tcsr-mutex";
- 		syscon = <&tcsr_mutex_regs 0 0x1000>;
-@@ -1048,6 +1115,61 @@
- 			#interrupt-cells = <0x2>;
- 		};
- 
-+		mss_pil: remoteproc@4080000 {
-+			compatible = "qcom,msm8998-mss-pil";
-+			reg = <0x04080000 0x100>, <0x04180000 0x20>;
-+			reg-names = "qdsp6", "rmb";
-+
-+			interrupts-extended =
-+				<&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&xo>,
-+				 <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_BIMC_MSS_Q6_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
-+				 <&rpmcc RPM_SMD_QDSS_CLK>;
-+			clock-names = "xo", "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "qdss";
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			resets = <&gcc GCC_MSS_RESTART>;
-+			reset-names = "mss_restart";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+
-+			power-domains = <&rpmpd MSM8998_VDDCX>,
-+					<&rpmpd MSM8998_VDDMX>;
-+			power-domain-names = "cx", "mx";
-+
-+			mba {
-+				memory-region = <&mba_mem>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_mem>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 15>;
-+			};
-+		};
-+
- 		stm: stm@6002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x06002000 0x1000>,
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Cool, then I like this patch :)
+
+> > 
+> > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > >
+> > > ---
+> > > Change from v1:
+> > > - Keep bool in struct rproc
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 37
+> > +++++++++++++++++++++++++++---------
+> > >  include/linux/remoteproc.h           |  2 ++
+> > >  2 files changed, 30 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c
+> > b/drivers/remoteproc/remoteproc_core.c
+> > > index 3c5fbbbfb0f1..7eaf0f949afa 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc,
+> > const struct firmware *fw)
+> > >  	if (ret)
+> > >  		return ret;
+> > >
+> > > -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+> > > +	if (fw)
+> > > +		dev_info(dev, "Booting fw image %s, size %zd\n", name,
+> > > +			 fw->size);
+> > > +	else
+> > > +		dev_info(dev, "Synchronizing with preloaded co-
+> > processor\n");
+> > >
+> > >  	/*
+> > >  	 * if enabling an IOMMU isn't relevant for this rproc, this is
+> > > @@ -1728,7 +1732,7 @@ static void rproc_crash_handler_work(struct
+> > work_struct *work)
+> > >   */
+> > >  int rproc_boot(struct rproc *rproc)
+> > >  {
+> > > -	const struct firmware *firmware_p;
+> > > +	const struct firmware *firmware_p = NULL;
+> > >  	struct device *dev;
+> > >  	int ret;
+> > >
+> > > @@ -1759,11 +1763,17 @@ int rproc_boot(struct rproc *rproc)
+> > >
+> > >  	dev_info(dev, "powering up %s\n", rproc->name);
+> > >
+> > > -	/* load firmware */
+> > > -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> > > -	if (ret < 0) {
+> > > -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> > > -		goto downref_rproc;
+> > > +	if (!rproc->preloaded) {
+> > > +		/* load firmware */
+> > > +		ret = request_firmware(&firmware_p, rproc->firmware,
+> > dev);
+> > > +		if (ret < 0) {
+> > > +			dev_err(dev, "request_firmware failed: %d\n", ret);
+> > > +			goto downref_rproc;
+> > > +		}
+> > > +	} else {
+> > > +		/* set firmware name to null as unknown */
+> > > +		kfree(rproc->firmware);
+> > > +		rproc->firmware = NULL;
+> > 
+> > What happens when the remoteproc crashes? What happens if I stop it and
+> > try to start it again?
+> Exactly, it should be stopped, then firmware should be provided and
+> coprocessor restarted thanks to sysfs interface
+> 
+
+But in both these cases you rely on the firmware being persistent in
+some memory - be it some protected portion of RAM or some ROM?
+
+I.e. with this patch, and not setting "firmware" the remote is expected
+to just boot again on the same firmware.
+
+> > 
+> > >  	}
+> > >
+> > >  	ret = rproc_fw_boot(rproc, firmware_p);
+> > > @@ -1917,8 +1927,17 @@ int rproc_add(struct rproc *rproc)
+> > >  	/* create debugfs entries */
+> > >  	rproc_create_debug_dir(rproc);
+> > >
+> > > -	/* if rproc is marked always-on, request it to boot */
+> > > -	if (rproc->auto_boot) {
+> > > +	if (rproc->preloaded) {
+> > > +		/*
+> > > +		 * If rproc is marked already booted, no need to wait
+> > > +		 * for firmware.
+> > > +		 * Just handle associated resources and start sub devices
+> > > +		 */
+> > > +		ret = rproc_boot(rproc);
+> > 
+> > This will trickle down to your remoteproc driver's start() callback. If
+> > you really mean that "preloaded" means "already started", then I presume
+> > you're having some logic in your start() to turn it into a nop?
+> Yes it is the responsibility of the driver to know in which state coprocessor is.
+> Depending on the use case, driver could:
+> - do nothing if coprocessor already running
+> - boot coprocessor, if only firmware was preloaded
+> - reboot coprocessor to restart its execution on the preloaded firmware
+> 
+
+I'm slightly worried about the cases of finding an already booted
+coprocessor, as this often means that we have to make assumptions about
+clock states etc.
+
+But with the focus of supporting persistent firmware, I like this.
+
+> > 
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +	} else if (rproc->auto_boot) {
+> > > +		/* if rproc is marked always-on, request it to boot */
+> > >  		ret = rproc_trigger_auto_boot(rproc);
+> > >  		if (ret < 0)
+> > >  			return ret;
+> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> > > index 16ad66683ad0..b68fbd576a77 100644
+> > > --- a/include/linux/remoteproc.h
+> > > +++ b/include/linux/remoteproc.h
+> > > @@ -479,6 +479,7 @@ struct rproc_dump_segment {
+> > >   * @table_sz: size of @cached_table
+> > >   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> > >   * @auto_boot: flag to indicate if remote processor should be auto-started
+> > > + * @preloaded: remote processor has been preloaded before start
+> > sequence
+> > 
+> > I think this should be "skip_firmware_load", or if you really mean that
+> > the bootloader started the remote process perhaps this should be
+> > "@fw_booted: remote processor was booted by firmware" (or something
+> > similar).
+> I'm fine with "skip_firmware_load" or "skip_fw_load" to have a shorter name.
+> I'll also add "preload" in patch title.
+> 
+
+skip_fw_load sounds good.
+
+Thanks,
+Bjorn
+
+> Regards,
+> Loic
+> 
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > >   * @dump_segments: list of segments in the firmware
+> > >   * @nb_vdev: number of vdev currently handled by rproc
+> > >   */
+> > > @@ -512,6 +513,7 @@ struct rproc {
+> > >  	size_t table_sz;
+> > >  	bool has_iommu;
+> > >  	bool auto_boot;
+> > > +	bool preloaded;
+> > >  	struct list_head dump_segments;
+> > >  	int nb_vdev;
+> > >  };
+> > > --
+> > > 2.7.4
+> > >
