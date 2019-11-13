@@ -1,200 +1,108 @@
-Return-Path: <0101016e80795472-d16b3612-641f-44be-a7d3-e22ea898b7e2-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 16/16] arm64: dts: qcom: sm8150: Add ADSP, CDSP, MPSS and SLPI remoteprocs
-Date: Mon, 18 Nov 2019 21:44:25 +0000
-Message-ID: <0101016e80795472-d16b3612-641f-44be-a7d3-e22ea898b7e2-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Return-Path: <jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+References: <20191109004033.1496871-1-bjorn.andersson@linaro.org>
+ <20191109004033.1496871-2-bjorn.andersson@linaro.org> <CAOCk7NrkpwyuZnq7C3CgLDBHoCXM=SMxvt_iv+nQzS9atT3B9A@mail.gmail.com>
+In-Reply-To: <CAOCk7NrkpwyuZnq7C3CgLDBHoCXM=SMxvt_iv+nQzS9atT3B9A@mail.gmail.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date: Wed, 13 Nov 2019 11:02:57 -0700
+Message-ID: <CAOCk7Nq4MgZ1ai6vu+hq3H8qu7P924JCsy1_ru7=5MCF2Z2nwg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] remoteproc: qcom_q6v5_mss: Don't reassign mpss
+ region on shutdown
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Sibi Sankar <sibis@codeaurora.org>, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add ADSP, CDSP, MPSS and SLPI device tree nodes for SM8150 SoC.
+On Tue, Nov 12, 2019 at 10:01 AM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+>
+> On Fri, Nov 8, 2019 at 5:40 PM Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> >
+> > Trying to reclaim mpss memory while the mba is not running causes the
+> > system to crash on devices with security fuses blown, so leave it
+> > assigned to the remote on shutdown and recover it on a subsequent boot.
+> >
+> > Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>
+> Stuff still works on the laptop, and I don't hit the access violation
+> with the crash dump scenario on the mtp.
+>
+> Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> Tested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sm8150-mtp.dts |  12 +++
- arch/arm64/boot/dts/qcom/sm8150.dtsi    | 135 ++++++++++++++++++++++++
- 2 files changed, 147 insertions(+)
+Actually, nack that.  See comment below.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-index aa5de42fcae45..4d9bb8145dbba 100644
---- a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-@@ -348,6 +348,18 @@
- 	};
- };
- 
-+&adsp_pas {
-+	status = "okay";
-+};
-+
-+&cdsp_pas {
-+	status = "okay";
-+};
-+
-+&slpi_pas {
-+	status = "okay";
-+};
-+
- &qupv3_id_1 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index 98a96fd1d6117..58f4ce95bd966 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -5,6 +5,8 @@
-  */
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/qcom,gcc-sm8150.h>
-+#include <dt-bindings/power/qcom-aoss-qmp.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-@@ -278,6 +280,139 @@
- 		};
- 	};
- 
-+	adsp_pas: remoteproc-adsp {
-+		compatible = "qcom,sm8150-adsp-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&rpmhcc RPMH_CXO_CLK>;
-+		clock-names = "xo";
-+
-+		power-domains = <&aoss_qmp AOSS_QMP_LS_LPASS>,
-+				<&rpmhpd SM8150_CX>;
-+		power-domain-names = "load_state", "cx";
-+
-+		memory-region = <&adsp_mem>;
-+
-+		qcom,smem-states = <&adsp_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-+			label = "lpass";
-+			qcom,remote-pid = <2>;
-+			mboxes = <&apss_shared 8>;
-+		};
-+	};
-+
-+	cdsp_pas: remoteproc-cdsp {
-+		compatible = "qcom,sm8150-cdsp-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 578 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&rpmhcc RPMH_CXO_CLK>;
-+		clock-names = "xo";
-+
-+		power-domains = <&aoss_qmp AOSS_QMP_LS_CDSP>,
-+				<&rpmhpd SM8150_CX>;
-+		power-domain-names = "load_state", "cx";
-+
-+		memory-region = <&cdsp_mem>;
-+
-+		qcom,smem-states = <&cdsp_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 574 IRQ_TYPE_EDGE_RISING>;
-+			label = "cdsp";
-+			qcom,remote-pid = <5>;
-+			mboxes = <&apss_shared 4>;
-+		};
-+	};
-+
-+	mpss_pas: remoteproc-mpss {
-+		compatible = "qcom,sm8150-mpss-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
-+				      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				      <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready", "handover",
-+				  "stop-ack", "shutdown-ack";
-+
-+		clocks = <&rpmhcc RPMH_CXO_CLK>;
-+		clock-names = "xo";
-+
-+		power-domains = <&aoss_qmp AOSS_QMP_LS_MODEM>,
-+				<&rpmhpd SM8150_CX>,
-+				<&rpmhpd SM8150_MSS>;
-+		power-domain-names = "load_state", "cx", "mss";
-+
-+		memory-region = <&mpss_mem>;
-+
-+		qcom,smem-states = <&modem_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+			label = "modem";
-+			qcom,remote-pid = <1>;
-+			mboxes = <&apss_shared 12>;
-+		};
-+	};
-+
-+	slpi_pas: remoteproc-slpi {
-+		compatible = "qcom,sm8150-slpi-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 494 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&rpmhcc RPMH_CXO_CLK>;
-+		clock-names = "xo";
-+
-+		power-domains = <&aoss_qmp AOSS_QMP_LS_SLPI>,
-+				<&rpmhpd SM8150_LCX>,
-+				<&rpmhpd SM8150_LMX>;
-+		power-domain-names = "load_state", "lcx", "lmx";
-+
-+		memory-region = <&slpi_mem>;
-+
-+		qcom,smem-states = <&slpi_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>;
-+			label = "dsps";
-+			qcom,remote-pid = <3>;
-+			mboxes = <&apss_shared 24>;
-+		};
-+	};
-+
- 	smem {
- 		compatible = "qcom,smem";
- 		memory-region = <&smem_mem>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+> > ---
+> >
+> > Changes since v1:
+> > - Assign memory back to Linux in coredump case
+> >
+> >  drivers/remoteproc/qcom_q6v5_mss.c | 20 ++++++++++----------
+> >  1 file changed, 10 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> > index de919f2e8b94..efab574b2e12 100644
+> > --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> > +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> > @@ -875,11 +875,6 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+> >                 writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> >         }
+> >
+> > -       ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
+> > -                                     false, qproc->mpss_phys,
+> > -                                     qproc->mpss_size);
+> > -       WARN_ON(ret);
+> > -
+> >         q6v5_reset_assert(qproc);
+> >
+> >         q6v5_clk_disable(qproc->dev, qproc->reset_clks,
+> > @@ -969,6 +964,10 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+> >                         max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
+> >         }
+> >
+> > +       /* Try to reset ownership back to Linux */
+> > +       q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
+> > +                               qproc->mpss_phys, qproc->mpss_size);
+> > +
+> >         mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
+> >         qproc->mpss_reloc = mpss_reloc;
+> >         /* Load firmware segments */
+> > @@ -1058,9 +1057,14 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+> >         void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+> >
+> >         /* Unlock mba before copying segments */
+> > -       if (!qproc->dump_mba_loaded)
+> > +       if (!qproc->dump_mba_loaded) {
+> >                 ret = q6v5_mba_load(qproc);
+> >
+> > +               /* Try to reset ownership back to Linux */
+> > +               q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
+> > +                                       qproc->mpss_phys, qproc->mpss_size);
+
+If the load fails, we can't pull the memory otherwise we'll hit the
+access violation (serror).  I happened to see this on a production
+device, where I think the load fails because crashdumps are not
+enabled.
+
+> > +       }
+> > +
+> >         if (!ptr || ret)
+> >                 memset(dest, 0xff, segment->size);
+> >         else
+> > @@ -1111,10 +1115,6 @@ static int q6v5_start(struct rproc *rproc)
+> >         return 0;
+> >
+> >  reclaim_mpss:
+> > -       xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
+> > -                                               false, qproc->mpss_phys,
+> > -                                               qproc->mpss_size);
+> > -       WARN_ON(xfermemop_ret);
+> >         q6v5_mba_reclaim(qproc);
+> >
+> >         return ret;
+> > --
+> > 2.23.0
+> >
