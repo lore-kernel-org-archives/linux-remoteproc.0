@@ -1,250 +1,185 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic PALLARDY <loic.pallardy@st.com>
-Subject: RE: [PATCH v3 1/1] remoteproc: add support for co-processor loaded
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Thu, 14 Nov 2019 11:19:09 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 1/1] remoteproc: add support for co-processor loaded
  and booted before kernel
-Date: Fri, 15 Nov 2019 15:27:24 +0000
-Message-ID: <27c9d23478cf410481285182f9e42172@SFHDAG7NODE2.st.com>
+Message-ID: <20191114181909.GA21402@xps15>
 References: <1573680543-39086-1-git-send-email-loic.pallardy@st.com>
- <20191114181909.GA21402@xps15>
-In-Reply-To: <20191114181909.GA21402@xps15>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, "Fabien DESSENNE  <fabien.dessenne@st.com>, s-anna@ti.com" <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573680543-39086-1-git-send-email-loic.pallardy@st.com>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Mathieu,
+Hi Loic,
 
-> -----Original Message-----
-> From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Sent: jeudi 14 novembre 2019 19:19
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: bjorn.andersson@linaro.org; ohad@wizery.com; linux-
-> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
-> POULIQUEN <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org;
-> Fabien DESSENNE <fabien.dessenne@st.com>; s-anna@ti.com
-> Subject: Re: [PATCH v3 1/1] remoteproc: add support for co-processor
-> loaded and booted before kernel
->=20
-> Hi Loic,
->=20
-> On Wed, Nov 13, 2019 at 10:29:03PM +0100, Loic Pallardy wrote:
-> > Remote processor could boot independently or be loaded/started before
-> > Linux kernel by bootloader or any firmware.
-> > This patch introduces a new property in rproc core, named skip_fw_load,
-> > to be able to allocate resources and sub-devices like vdev and to
-> > synchronize with current state without loading firmware from file syste=
-m.
-> > It is platform driver responsibility to implement the right firmware
-> > load ops according to HW specificities.
-> >
-> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> >
-> > ---
-> > Change from v2:
-> > - rename property into skip_fw_load
-> > - update rproc_boot and rproc_fw_boot description
-> > - update commit message
-> > Change from v1:
-> > - Keep bool in struct rproc
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 51
-> +++++++++++++++++++++++++++---------
-> >  include/linux/remoteproc.h           |  2 ++
-> >  2 files changed, 40 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> > index 3c5fbbbfb0f1..585cdca8b241 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1360,7 +1360,7 @@ static int rproc_start(struct rproc *rproc, const
-> struct firmware *fw)
-> >  }
-> >
-> >  /*
-> > - * take a firmware and boot a remote processor with it.
-> > + * Handle resources defined in resource table and start a remote
-> processor.
-> >   */
-> >  static int rproc_fw_boot(struct rproc *rproc, const struct firmware *f=
-w)
-> >  {
-> > @@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc,
-> const struct firmware *fw)
-> >  	if (ret)
-> >  		return ret;
-> >
-> > -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-> > +	if (fw)
-> > +		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-> > +			 fw->size);
-> > +	else
-> > +		dev_info(dev, "Synchronizing with preloaded co-
-> processor\n");
->=20
-> Here we assume that if @fw is NULL then the image is already loaded.  The
-> first
-> question that comes to mind is if that means the ELF image has already be=
-en
-> copied to the coprocessor's boot address.  If that is the case it would b=
-e nice
-> to make it explicit with a comment in the code.
+On Wed, Nov 13, 2019 at 10:29:03PM +0100, Loic Pallardy wrote:
+> Remote processor could boot independently or be loaded/started before
+> Linux kernel by bootloader or any firmware.
+> This patch introduces a new property in rproc core, named skip_fw_load,
+> to be able to allocate resources and sub-devices like vdev and to
+> synchronize with current state without loading firmware from file system.
+> It is platform driver responsibility to implement the right firmware
+> load ops according to HW specificities.
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> 
+> ---
+> Change from v2:
+> - rename property into skip_fw_load
+> - update rproc_boot and rproc_fw_boot description
+> - update commit message
+> Change from v1:
+> - Keep bool in struct rproc
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 51 +++++++++++++++++++++++++++---------
+>  include/linux/remoteproc.h           |  2 ++
+>  2 files changed, 40 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 3c5fbbbfb0f1..585cdca8b241 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1360,7 +1360,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>  }
+>  
+>  /*
+> - * take a firmware and boot a remote processor with it.
+> + * Handle resources defined in resource table and start a remote processor.
+>   */
+>  static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  {
+> @@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	if (ret)
+>  		return ret;
+>  
+> -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+> +	if (fw)
+> +		dev_info(dev, "Booting fw image %s, size %zd\n", name,
+> +			 fw->size);
+> +	else
+> +		dev_info(dev, "Synchronizing with preloaded co-processor\n");
 
-Yes, but will be better to test "skip_fw_load" properties to change display=
- info message.
-Anyway, agree to mention that if @fw is NULL that means fw considered as al=
-ready loaded.
->=20
-> Following the earlier comments made on the thread for this serie, I
-> understand
-> the rproc_ops fed to the core should provision for @fw being NULL.  In
-> this case though st_rproc_ops[1] reference a number of core operations th=
-at
-> aren't tailored to handled a NULL @fw parameter.
+Here we assume that if @fw is NULL then the image is already loaded.  The first
+question that comes to mind is if that means the ELF image has already been
+copied to the coprocessor's boot address.  If that is the case it would be nice
+to make it explicit with a comment in the code.
 
-True, some patches will follow
+Following the earlier comments made on the thread for this serie, I understand
+the rproc_ops fed to the core should provision for @fw being NULL.  In
+this case though st_rproc_ops[1] reference a number of core operations that
+aren't tailored to handled a NULL @fw parameter. 
 
->=20
-> I am pretty sure you're well aware of this and you have more patches to g=
-o
-> with
-> this one or said patches have already been published and I'm looking at t=
-he
-> wrong tree. If that is the case would you mind making those patches publi=
-c or
-> pointing me to a repository somewhere?
+I am pretty sure you're well aware of this and you have more patches to go with
+this one or said patches have already been published and I'm looking at the
+wrong tree. If that is the case would you mind making those patches public or
+pointing me to a repository somewhere?
 
-Please have a look here [1].
-The properties is named preloaded instead of skip_fw_load, but that's the s=
-ame.
-Impacted ops are working differently according to preloaded status.
-
-When skip_fw_load is true, no ELF image is used. Platform driver is in char=
-ge of providing resource table location somewhere in memory.
-Somewhere is platform dependent.
+I have other concerns about the specifics shared between the application and co
+processors using the ELF image but I'll wait for your reply to the above before
+addressing those.
 
 Regards,
-Loic
-[1] https://github.com/STMicroelectronics/linux/blob/v4.19-stm32mp/drivers/=
-remoteproc/stm32_rproc.c
+Mathieu
 
->=20
-> I have other concerns about the specifics shared between the application
-> and co
-> processors using the ELF image but I'll wait for your reply to the above =
-before
-> addressing those.
->=20
-> Regards,
-> Mathieu
->=20
-> [1]. https://elixir.bootlin.com/linux/v5.4-
-> rc7/source/drivers/remoteproc/stm32_rproc.c#L470
->=20
-> >
-> >  	/*
-> >  	 * if enabling an IOMMU isn't relevant for this rproc, this is
-> > @@ -1719,16 +1723,22 @@ static void rproc_crash_handler_work(struct
-> work_struct *work)
-> >   * rproc_boot() - boot a remote processor
-> >   * @rproc: handle of a remote processor
-> >   *
-> > - * Boot a remote processor (i.e. load its firmware, power it on, ...).
-> > + * Boot a remote processor (i.e. load its firmware, power it on, ...) =
-from
-> > + * different contexts:
-> > + * - power off
-> > + * - preloaded firmware
-> > + * - started before kernel execution
-> > + * The different operations are selected thanks to properties defined =
-by
-> > + * platform driver.
-> >   *
-> > - * If the remote processor is already powered on, this function
-> immediately
-> > - * returns (successfully).
-> > + * If the remote processor is already powered on at rproc level, this
-> function
-> > + * immediately returns (successfully).
-> >   *
-> >   * Returns 0 on success, and an appropriate error value otherwise.
-> >   */
-> >  int rproc_boot(struct rproc *rproc)
-> >  {
-> > -	const struct firmware *firmware_p;
-> > +	const struct firmware *firmware_p =3D NULL;
-> >  	struct device *dev;
-> >  	int ret;
-> >
-> > @@ -1759,11 +1769,17 @@ int rproc_boot(struct rproc *rproc)
-> >
-> >  	dev_info(dev, "powering up %s\n", rproc->name);
-> >
-> > -	/* load firmware */
-> > -	ret =3D request_firmware(&firmware_p, rproc->firmware, dev);
-> > -	if (ret < 0) {
-> > -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> > -		goto downref_rproc;
-> > +	if (!rproc->skip_fw_load) {
-> > +		/* load firmware */
-> > +		ret =3D request_firmware(&firmware_p, rproc->firmware,
-> dev);
-> > +		if (ret < 0) {
-> > +			dev_err(dev, "request_firmware failed: %d\n", ret);
-> > +			goto downref_rproc;
-> > +		}
-> > +	} else {
-> > +		/* set firmware name to null as unknown */
-> > +		kfree(rproc->firmware);
-> > +		rproc->firmware =3D NULL;
-> >  	}
-> >
-> >  	ret =3D rproc_fw_boot(rproc, firmware_p);
-> > @@ -1917,8 +1933,17 @@ int rproc_add(struct rproc *rproc)
-> >  	/* create debugfs entries */
-> >  	rproc_create_debug_dir(rproc);
-> >
-> > -	/* if rproc is marked always-on, request it to boot */
-> > -	if (rproc->auto_boot) {
-> > +	if (rproc->skip_fw_load) {
-> > +		/*
-> > +		 * If rproc is marked already booted, no need to wait
-> > +		 * for firmware.
-> > +		 * Just handle associated resources and start sub devices
-> > +		 */
-> > +		ret =3D rproc_boot(rproc);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	} else if (rproc->auto_boot) {
-> > +		/* if rproc is marked always-on, request it to boot */
-> >  		ret =3D rproc_trigger_auto_boot(rproc);
-> >  		if (ret < 0)
-> >  			return ret;
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index 16ad66683ad0..4fd5bedab4fa 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -479,6 +479,7 @@ struct rproc_dump_segment {
-> >   * @table_sz: size of @cached_table
-> >   * @has_iommu: flag to indicate if remote processor is behind an MMU
-> >   * @auto_boot: flag to indicate if remote processor should be auto-sta=
-rted
-> > + * @skip_fw_load: remote processor has been preloaded before start
-> sequence
-> >   * @dump_segments: list of segments in the firmware
-> >   * @nb_vdev: number of vdev currently handled by rproc
-> >   */
-> > @@ -512,6 +513,7 @@ struct rproc {
-> >  	size_t table_sz;
-> >  	bool has_iommu;
-> >  	bool auto_boot;
-> > +	bool skip_fw_load;
-> >  	struct list_head dump_segments;
-> >  	int nb_vdev;
-> >  };
-> > --
-> > 2.7.4
-> >
+[1]. https://elixir.bootlin.com/linux/v5.4-rc7/source/drivers/remoteproc/stm32_rproc.c#L470 
+
+>  
+>  	/*
+>  	 * if enabling an IOMMU isn't relevant for this rproc, this is
+> @@ -1719,16 +1723,22 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>   * rproc_boot() - boot a remote processor
+>   * @rproc: handle of a remote processor
+>   *
+> - * Boot a remote processor (i.e. load its firmware, power it on, ...).
+> + * Boot a remote processor (i.e. load its firmware, power it on, ...) from
+> + * different contexts:
+> + * - power off
+> + * - preloaded firmware
+> + * - started before kernel execution
+> + * The different operations are selected thanks to properties defined by
+> + * platform driver.
+>   *
+> - * If the remote processor is already powered on, this function immediately
+> - * returns (successfully).
+> + * If the remote processor is already powered on at rproc level, this function
+> + * immediately returns (successfully).
+>   *
+>   * Returns 0 on success, and an appropriate error value otherwise.
+>   */
+>  int rproc_boot(struct rproc *rproc)
+>  {
+> -	const struct firmware *firmware_p;
+> +	const struct firmware *firmware_p = NULL;
+>  	struct device *dev;
+>  	int ret;
+>  
+> @@ -1759,11 +1769,17 @@ int rproc_boot(struct rproc *rproc)
+>  
+>  	dev_info(dev, "powering up %s\n", rproc->name);
+>  
+> -	/* load firmware */
+> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> -		goto downref_rproc;
+> +	if (!rproc->skip_fw_load) {
+> +		/* load firmware */
+> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "request_firmware failed: %d\n", ret);
+> +			goto downref_rproc;
+> +		}
+> +	} else {
+> +		/* set firmware name to null as unknown */
+> +		kfree(rproc->firmware);
+> +		rproc->firmware = NULL;
+>  	}
+>  
+>  	ret = rproc_fw_boot(rproc, firmware_p);
+> @@ -1917,8 +1933,17 @@ int rproc_add(struct rproc *rproc)
+>  	/* create debugfs entries */
+>  	rproc_create_debug_dir(rproc);
+>  
+> -	/* if rproc is marked always-on, request it to boot */
+> -	if (rproc->auto_boot) {
+> +	if (rproc->skip_fw_load) {
+> +		/*
+> +		 * If rproc is marked already booted, no need to wait
+> +		 * for firmware.
+> +		 * Just handle associated resources and start sub devices
+> +		 */
+> +		ret = rproc_boot(rproc);
+> +		if (ret < 0)
+> +			return ret;
+> +	} else if (rproc->auto_boot) {
+> +		/* if rproc is marked always-on, request it to boot */
+>  		ret = rproc_trigger_auto_boot(rproc);
+>  		if (ret < 0)
+>  			return ret;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad66683ad0..4fd5bedab4fa 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -479,6 +479,7 @@ struct rproc_dump_segment {
+>   * @table_sz: size of @cached_table
+>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>   * @auto_boot: flag to indicate if remote processor should be auto-started
+> + * @skip_fw_load: remote processor has been preloaded before start sequence
+>   * @dump_segments: list of segments in the firmware
+>   * @nb_vdev: number of vdev currently handled by rproc
+>   */
+> @@ -512,6 +513,7 @@ struct rproc {
+>  	size_t table_sz;
+>  	bool has_iommu;
+>  	bool auto_boot;
+> +	bool skip_fw_load;
+>  	struct list_head dump_segments;
+>  	int nb_vdev;
+>  };
+> -- 
+> 2.7.4
+> 
