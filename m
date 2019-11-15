@@ -1,167 +1,252 @@
-Return-Path: <0101016e80784018-5462e69d-8c5f-43e9-96a2-354d7d091a10-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 02/16] remoteproc: q6v5-mss: Streamline the MSS out of reset sequence
-Date: Mon, 18 Nov 2019 21:43:14 +0000
-Message-ID: <0101016e80784018-5462e69d-8c5f-43e9-96a2-354d7d091a10-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Return-Path: <mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+References: <1573680543-39086-1-git-send-email-loic.pallardy@st.com>
+ <20191114181909.GA21402@xps15> <27c9d23478cf410481285182f9e42172@SFHDAG7NODE2.st.com>
+In-Reply-To: <27c9d23478cf410481285182f9e42172@SFHDAG7NODE2.st.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 15 Nov 2019 14:12:49 -0700
+Message-ID: <CANLsYkyahM0nfvb8B__TP_yNe1eNywpqf7tuBJGdmYBt4iS8aQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] remoteproc: add support for co-processor loaded
+ and booted before kernel
+Content-Type: text/plain; charset="UTF-8"
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>, Fabien DESSENNE <fabien.dessenne@st.com>, "s-anna@ti.com" <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Streamline the MSS out of reset sequence to reuse common code across
-MSM8998/MSM8996/MSM8974/MSM8916 SoCs.
+On Fri, 15 Nov 2019 at 08:27, Loic PALLARDY <loic.pallardy@st.com> wrote:
+>
+> Hi Mathieu,
+>
+> > -----Original Message-----
+> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Sent: jeudi 14 novembre 2019 19:19
+> > To: Loic PALLARDY <loic.pallardy@st.com>
+> > Cc: bjorn.andersson@linaro.org; ohad@wizery.com; linux-
+> > remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Arnaud
+> > POULIQUEN <arnaud.pouliquen@st.com>; benjamin.gaignard@linaro.org;
+> > Fabien DESSENNE <fabien.dessenne@st.com>; s-anna@ti.com
+> > Subject: Re: [PATCH v3 1/1] remoteproc: add support for co-processor
+> > loaded and booted before kernel
+> >
+> > Hi Loic,
+> >
+> > On Wed, Nov 13, 2019 at 10:29:03PM +0100, Loic Pallardy wrote:
+> > > Remote processor could boot independently or be loaded/started before
+> > > Linux kernel by bootloader or any firmware.
+> > > This patch introduces a new property in rproc core, named skip_fw_load,
+> > > to be able to allocate resources and sub-devices like vdev and to
+> > > synchronize with current state without loading firmware from file system.
+> > > It is platform driver responsibility to implement the right firmware
+> > > load ops according to HW specificities.
+> > >
+> > > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > >
+> > > ---
+> > > Change from v2:
+> > > - rename property into skip_fw_load
+> > > - update rproc_boot and rproc_fw_boot description
+> > > - update commit message
+> > > Change from v1:
+> > > - Keep bool in struct rproc
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 51
+> > +++++++++++++++++++++++++++---------
+> > >  include/linux/remoteproc.h           |  2 ++
+> > >  2 files changed, 40 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c
+> > b/drivers/remoteproc/remoteproc_core.c
+> > > index 3c5fbbbfb0f1..585cdca8b241 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -1360,7 +1360,7 @@ static int rproc_start(struct rproc *rproc, const
+> > struct firmware *fw)
+> > >  }
+> > >
+> > >  /*
+> > > - * take a firmware and boot a remote processor with it.
+> > > + * Handle resources defined in resource table and start a remote
+> > processor.
+> > >   */
+> > >  static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+> > >  {
+> > > @@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc,
+> > const struct firmware *fw)
+> > >     if (ret)
+> > >             return ret;
+> > >
+> > > -   dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+> > > +   if (fw)
+> > > +           dev_info(dev, "Booting fw image %s, size %zd\n", name,
+> > > +                    fw->size);
+> > > +   else
+> > > +           dev_info(dev, "Synchronizing with preloaded co-
+> > processor\n");
+> >
+> > Here we assume that if @fw is NULL then the image is already loaded.  The
+> > first
+> > question that comes to mind is if that means the ELF image has already been
+> > copied to the coprocessor's boot address.  If that is the case it would be nice
+> > to make it explicit with a comment in the code.
+>
+> Yes, but will be better to test "skip_fw_load" properties to change display info message.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 94 ++++++++++++++++--------------
- 1 file changed, 51 insertions(+), 43 deletions(-)
+I am good with the different dev_info() based on the value of @fw.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 2becf6dade936..06a57db3238db 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -505,21 +505,21 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 		}
- 
- 		goto pbl_wait;
--	} else if (qproc->version == MSS_MSM8996 ||
--		   qproc->version == MSS_MSM8998) {
--		int mem_pwr_ctl;
-+	}
- 
--		/* Override the ACC value if required */
--		if (qproc->version == MSS_MSM8996)
--			writel(QDSP6SS_ACC_OVERRIDE_VAL,
--			       qproc->reg_base + QDSP6SS_STRAP_ACC);
-+	/* Override the ACC value if required */
-+	if (qproc->version == MSS_MSM8996)
-+		writel(QDSP6SS_ACC_OVERRIDE_VAL,
-+		       qproc->reg_base + QDSP6SS_STRAP_ACC);
- 
--		/* Assert resets, stop core */
--		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
--		val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
--		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
-+	/* Assert resets, stop core */
-+	val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-+	val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
-+	writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
- 
--		/* BHS require xo cbcr to be enabled */
-+	/* BHS require xo cbcr to be enabled */
-+	if (qproc->version == MSS_MSM8996 ||
-+	    qproc->version == MSS_MSM8998) {
- 		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
- 		val |= 0x1;
- 		writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
-@@ -533,26 +533,35 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 				"xo cbcr enabling timed out (rc:%d)\n", ret);
- 			return ret;
- 		}
--		/* Enable power block headswitch and wait for it to stabilize */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	}
-+
-+	/* Enable power block headswitch and wait for it to stabilize */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	if (qproc->version == MSS_MSM8996 ||
-+	    qproc->version == MSS_MSM8998)
- 		val |= QDSP6v56_BHS_ON;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		udelay(1);
--
--		/* wait for BHS_EN_REST_ACK to be set */
--		if (qproc->version == MSS_MSM8998) {
--			ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BHS_STATUS,
--						 val, (val & QDSP6SS_BHS_EN_REST_ACK),
--						 1, BHS_CHECK_MAX_LOOPS);
--			if (ret) {
--				dev_err(qproc->dev,
--					"QDSP6SS_BHS_EN_REST_ACK timedout\n");
--				return -ETIMEDOUT;
--			}
-+	else
-+		val |= QDSS_BHS_ON | QDSS_LDO_BYP;
-+	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	udelay(1);
-+
-+	/* wait for BHS_EN_REST_ACK to be set */
-+	if (qproc->version == MSS_MSM8998) {
-+		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BHS_STATUS,
-+					 val, (val & QDSP6SS_BHS_EN_REST_ACK),
-+					 1, BHS_CHECK_MAX_LOOPS);
-+		if (ret) {
-+			dev_err(qproc->dev,
-+				"QDSP6SS_BHS_EN_REST_ACK timedout\n");
-+			return -ETIMEDOUT;
- 		}
-+	}
- 
-+	if (qproc->version == MSS_MSM8996 ||
-+	    qproc->version == MSS_MSM8998) {
- 		/* Put LDO in bypass mode */
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 		val |= QDSP6v56_LDO_BYP;
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
-@@ -564,7 +573,11 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 		/* Deassert memory peripheral sleep and L2 memory standby */
- 		val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	}
- 
-+	/* Turn on memories */
-+	if (qproc->version == MSS_MSM8996 || qproc->version == MSS_MSM8998) {
-+		int mem_pwr_ctl;
- 		/* Turn on L1, L2, ETB and JU memories 1 at a time */
- 		if (qproc->version == MSS_MSM8996) {
- 			mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
-@@ -586,22 +599,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 			val |= readl(qproc->reg_base + mem_pwr_ctl);
- 			udelay(1);
- 		}
--		/* Remove word line clamp */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val &= ~QDSP6v56_CLAMP_WL;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 	} else {
--		/* Assert resets, stop core */
--		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
--		val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
--		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
--
--		/* Enable power block headswitch and wait for it to stabilize */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val |= QDSS_BHS_ON | QDSS_LDO_BYP;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		udelay(1);
- 		/*
- 		 * Turn on memories. L2 banks should be done individually
- 		 * to minimize inrush current.
-@@ -617,7 +615,17 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 		val |= Q6SS_L2DATA_SLP_NRET_N_0;
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 	}
-+
-+	/* Remove word line clamp */
-+	if (qproc->version == MSS_MSM8996 ||
-+	    qproc->version == MSS_MSM8998) {
-+		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+		val &= ~QDSP6v56_CLAMP_WL;
-+		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+	}
-+
- 	/* Remove IO clamp */
-+	val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 	val &= ~Q6SS_CLAMP_IO;
- 	writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> Anyway, agree to mention that if @fw is NULL that means fw considered as already loaded.
+
+If you have to do a respin then a clear explanation would be
+appreciated, especially since this is core code.  If you don't go for
+a 4th iteration then leave it as is.
+
+> >
+> > Following the earlier comments made on the thread for this serie, I
+> > understand
+> > the rproc_ops fed to the core should provision for @fw being NULL.  In
+> > this case though st_rproc_ops[1] reference a number of core operations that
+> > aren't tailored to handled a NULL @fw parameter.
+>
+> True, some patches will follow
+>
+> >
+> > I am pretty sure you're well aware of this and you have more patches to go
+> > with
+> > this one or said patches have already been published and I'm looking at the
+> > wrong tree. If that is the case would you mind making those patches public or
+> > pointing me to a repository somewhere?
+>
+> Please have a look here [1].
+> The properties is named preloaded instead of skip_fw_load, but that's the same.
+
+I saw rproc::early_boot but the end result is indeed the same.
+
+> Impacted ops are working differently according to preloaded status.
+>
+> When skip_fw_load is true, no ELF image is used. Platform driver is in charge of providing resource table location somewhere in memory.
+> Somewhere is platform dependent.
+
+Thanks for letting me in on the bigger picture - things are much
+clearer now and I see where you're going.  How the resource table is
+handled in stm32_rproc_elf_load_rsc_table() also answers my questions
+in that area.
+
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>
+> Regards,
+> Loic
+> [1] https://github.com/STMicroelectronics/linux/blob/v4.19-stm32mp/drivers/remoteproc/stm32_rproc.c
+>
+> >
+> > I have other concerns about the specifics shared between the application
+> > and co
+> > processors using the ELF image but I'll wait for your reply to the above before
+> > addressing those.
+> >
+> > Regards,
+> > Mathieu
+> >
+> > [1]. https://elixir.bootlin.com/linux/v5.4-
+> > rc7/source/drivers/remoteproc/stm32_rproc.c#L470
+> >
+> > >
+> > >     /*
+> > >      * if enabling an IOMMU isn't relevant for this rproc, this is
+> > > @@ -1719,16 +1723,22 @@ static void rproc_crash_handler_work(struct
+> > work_struct *work)
+> > >   * rproc_boot() - boot a remote processor
+> > >   * @rproc: handle of a remote processor
+> > >   *
+> > > - * Boot a remote processor (i.e. load its firmware, power it on, ...).
+> > > + * Boot a remote processor (i.e. load its firmware, power it on, ...) from
+> > > + * different contexts:
+> > > + * - power off
+> > > + * - preloaded firmware
+> > > + * - started before kernel execution
+> > > + * The different operations are selected thanks to properties defined by
+> > > + * platform driver.
+> > >   *
+> > > - * If the remote processor is already powered on, this function
+> > immediately
+> > > - * returns (successfully).
+> > > + * If the remote processor is already powered on at rproc level, this
+> > function
+> > > + * immediately returns (successfully).
+> > >   *
+> > >   * Returns 0 on success, and an appropriate error value otherwise.
+> > >   */
+> > >  int rproc_boot(struct rproc *rproc)
+> > >  {
+> > > -   const struct firmware *firmware_p;
+> > > +   const struct firmware *firmware_p = NULL;
+> > >     struct device *dev;
+> > >     int ret;
+> > >
+> > > @@ -1759,11 +1769,17 @@ int rproc_boot(struct rproc *rproc)
+> > >
+> > >     dev_info(dev, "powering up %s\n", rproc->name);
+> > >
+> > > -   /* load firmware */
+> > > -   ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> > > -   if (ret < 0) {
+> > > -           dev_err(dev, "request_firmware failed: %d\n", ret);
+> > > -           goto downref_rproc;
+> > > +   if (!rproc->skip_fw_load) {
+> > > +           /* load firmware */
+> > > +           ret = request_firmware(&firmware_p, rproc->firmware,
+> > dev);
+> > > +           if (ret < 0) {
+> > > +                   dev_err(dev, "request_firmware failed: %d\n", ret);
+> > > +                   goto downref_rproc;
+> > > +           }
+> > > +   } else {
+> > > +           /* set firmware name to null as unknown */
+> > > +           kfree(rproc->firmware);
+> > > +           rproc->firmware = NULL;
+> > >     }
+> > >
+> > >     ret = rproc_fw_boot(rproc, firmware_p);
+> > > @@ -1917,8 +1933,17 @@ int rproc_add(struct rproc *rproc)
+> > >     /* create debugfs entries */
+> > >     rproc_create_debug_dir(rproc);
+> > >
+> > > -   /* if rproc is marked always-on, request it to boot */
+> > > -   if (rproc->auto_boot) {
+> > > +   if (rproc->skip_fw_load) {
+> > > +           /*
+> > > +            * If rproc is marked already booted, no need to wait
+> > > +            * for firmware.
+> > > +            * Just handle associated resources and start sub devices
+> > > +            */
+> > > +           ret = rproc_boot(rproc);
+> > > +           if (ret < 0)
+> > > +                   return ret;
+> > > +   } else if (rproc->auto_boot) {
+> > > +           /* if rproc is marked always-on, request it to boot */
+> > >             ret = rproc_trigger_auto_boot(rproc);
+> > >             if (ret < 0)
+> > >                     return ret;
+> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> > > index 16ad66683ad0..4fd5bedab4fa 100644
+> > > --- a/include/linux/remoteproc.h
+> > > +++ b/include/linux/remoteproc.h
+> > > @@ -479,6 +479,7 @@ struct rproc_dump_segment {
+> > >   * @table_sz: size of @cached_table
+> > >   * @has_iommu: flag to indicate if remote processor is behind an MMU
+> > >   * @auto_boot: flag to indicate if remote processor should be auto-started
+> > > + * @skip_fw_load: remote processor has been preloaded before start
+> > sequence
+> > >   * @dump_segments: list of segments in the firmware
+> > >   * @nb_vdev: number of vdev currently handled by rproc
+> > >   */
+> > > @@ -512,6 +513,7 @@ struct rproc {
+> > >     size_t table_sz;
+> > >     bool has_iommu;
+> > >     bool auto_boot;
+> > > +   bool skip_fw_load;
+> > >     struct list_head dump_segments;
+> > >     int nb_vdev;
+> > >  };
+> > > --
+> > > 2.7.4
+> > >
