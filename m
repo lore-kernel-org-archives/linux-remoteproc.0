@@ -1,79 +1,130 @@
-Return-Path: <0101016e8078c9b6-49063fbf-db1c-40be-b471-54247e17cca0-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 09/16] remoteproc: qcom: pas: Add MSM8998 ADSP and SLPI support
-Date: Mon, 18 Nov 2019 21:43:50 +0000
-Message-ID: <0101016e8078c9b6-49063fbf-db1c-40be-b471-54247e17cca0-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 2/4] remoteproc: Add device-managed variants of rproc_alloc/rproc_add
+Date: Sat, 16 Nov 2019 18:08:44 +0100
+Message-Id: <20191116170846.67220-2-paul@crapouillou.net>
+In-Reply-To: <20191116170846.67220-1-paul@crapouillou.net>
+References: <20191116170846.67220-1-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for booting the Audio and Sensor DSPs found in
-Qualcomm's MSM8998 SoCs.
+Add API functions devm_rproc_alloc() and devm_rproc_add(), which behave
+like rproc_alloc() and rproc_add() respectively, but register their
+respective cleanup function to be called on driver detach.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index b60cca093400a..2dd693d443ca8 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -476,6 +476,20 @@ static const struct adsp_data adsp_resource_init = {
- 		.ssctl_id = 0x14,
- };
+Notes:
+    v3: New patch
+
+ drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  5 +++
+ 2 files changed, 72 insertions(+)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3c5fbbbfb0f1..d3787c94f451 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1933,6 +1933,33 @@ int rproc_add(struct rproc *rproc)
+ }
+ EXPORT_SYMBOL(rproc_add);
  
-+static const struct adsp_data msm8998_adsp_resource = {
-+		.crash_reason_smem = 423,
-+		.firmware_name = "adsp.mdt",
-+		.pas_id = 1,
-+		.has_aggre2_clk = false,
-+		.proxy_pd_names = (char*[]){
-+			"cx",
-+			NULL
-+		},
-+		.ssr_name = "lpass",
-+		.sysmon_name = "adsp",
-+		.ssctl_id = 0x14,
-+};
++static void devm_rproc_remove(void *rproc)
++{
++	rproc_del(rproc);
++}
 +
- static const struct adsp_data cdsp_resource_init = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
-@@ -496,6 +510,20 @@ static const struct adsp_data slpi_resource_init = {
- 		.ssctl_id = 0x16,
- };
++/**
++ * devm_rproc_add() - resource managed rproc_add()
++ * @dev: the underlying device
++ * @rproc: the remote processor handle to register
++ *
++ * This function performs like rproc_add() but the registered rproc device will
++ * automatically be removed on driver detach.
++ *
++ * Returns 0 on success and an appropriate error code otherwise.
++ */
++int devm_rproc_add(struct device *dev, struct rproc *rproc)
++{
++	int err;
++
++	err = rproc_add(rproc);
++	if (err)
++		return err;
++
++	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
++}
++EXPORT_SYMBOL(devm_rproc_add);
++
+ /**
+  * rproc_type_release() - release a remote processor instance
+  * @dev: the rproc's device
+@@ -2150,6 +2177,46 @@ int rproc_del(struct rproc *rproc)
+ }
+ EXPORT_SYMBOL(rproc_del);
  
-+static const struct adsp_data msm8998_slpi_resource = {
-+		.crash_reason_smem = 424,
-+		.firmware_name = "slpi.mdt",
-+		.pas_id = 12,
-+		.has_aggre2_clk = true,
-+		.proxy_pd_names = (char*[]){
-+			"ssc_cx",
-+			NULL
-+		},
-+		.ssr_name = "dsps",
-+		.sysmon_name = "slpi",
-+		.ssctl_id = 0x16,
-+};
++static void devm_rproc_free(struct device *dev, void *res)
++{
++	rproc_free(*(struct rproc **)res);
++}
 +
- static const struct adsp_data wcss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "wcnss.mdt",
-@@ -509,6 +537,8 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
-+	{ .compatible = "qcom,msm8998-adsp-pas", .data = &msm8998_adsp_resource},
-+	{ .compatible = "qcom,msm8998-slpi-pas", .data = &msm8998_slpi_resource},
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
++/**
++ * devm_rproc_alloc() - resource managed rproc_alloc()
++ * @dev: the underlying device
++ * @name: name of this remote processor
++ * @ops: platform-specific handlers (mainly start/stop)
++ * @firmware: name of firmware file to load, can be NULL
++ * @len: length of private data needed by the rproc driver (in bytes)
++ *
++ * This function performs like rproc_alloc() but the acuired rproc device will
++ * automatically be released on driver detach.
++ *
++ * On success the new rproc is returned, and on failure, NULL.
++ */
++struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
++			       const struct rproc_ops *ops,
++			       const char *firmware, int len)
++{
++	struct rproc **ptr, *rproc;
++
++	ptr = devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	rproc = rproc_alloc(dev, name, ops, firmware, len);
++	if (rproc) {
++		*ptr = rproc;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return rproc;
++}
++EXPORT_SYMBOL(devm_rproc_alloc);
++
+ /**
+  * rproc_add_subdev() - add a subdevice to a remoteproc
+  * @rproc: rproc handle to add the subdevice to
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad66683ad0..5f201f0c86c3 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -595,6 +595,11 @@ int rproc_add(struct rproc *rproc);
+ int rproc_del(struct rproc *rproc);
+ void rproc_free(struct rproc *rproc);
+ 
++struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
++			       const struct rproc_ops *ops,
++			       const char *firmware, int len);
++int devm_rproc_add(struct device *dev, struct rproc *rproc);
++
+ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+ 
+ struct rproc_mem_entry *
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.24.0
