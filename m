@@ -1,87 +1,97 @@
-Date: Mon, 11 Nov 2019 15:22:54 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 06/17] remoteproc/omap: Add the rproc ops .da_to_va()
- implementation
-Message-ID: <20191111232251.GH3108315@builder>
-References: <20191028124238.19224-1-t-kristo@ti.com>
- <20191028124238.19224-7-t-kristo@ti.com>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 3/4] remoteproc: Add prepare/unprepare callbacks
+Date: Sat, 16 Nov 2019 18:08:45 +0100
+Message-Id: <20191116170846.67220-3-paul@crapouillou.net>
+In-Reply-To: <20191116170846.67220-1-paul@crapouillou.net>
+References: <20191116170846.67220-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028124238.19224-7-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
+The .prepare() callback is called before the firmware is loaded to
+memory. This is useful for instance in the case where some setup is
+required for the memory to be accessible.
 
-> From: Suman Anna <s-anna@ti.com>
-> 
-> An implementation for the rproc ops .da_to_va() has been added
-> that provides the address translation between device addresses
-> to kernel virtual addresses for internal RAMs present on that
-> particular remote processor device. The implementation provides
-> the translations based on the addresses parsed and stored during
-> the probe.
-> 
-> This ops gets invoked by the exported rproc_da_to_va() function
-> and allows the remoteproc core's ELF loader to be able to load
-> program data directly into the internal memories.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
->  drivers/remoteproc/omap_remoteproc.c | 35 ++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index bbd6ff360e10..0524f7e0ffa4 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -230,10 +230,45 @@ static int omap_rproc_stop(struct rproc *rproc)
->  	return 0;
->  }
->  
-> +/*
-> + * Internal Memory translation helper
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-Please format this as kerneldoc.
+Notes:
+    v2: No change
+    v3: No change
 
-> + *
-> + * Custom function implementing the rproc .da_to_va ops to provide address
-> + * translation (device address to kernel virtual address) for internal RAMs
-> + * present in a DSP or IPU device). The translated addresses can be used
-> + * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-> + */
-> +static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-> +{
-> +	struct omap_rproc *oproc = rproc->priv;
-> +	void *va = NULL;
-> +	int i;
-> +	u32 offset;
-> +
-> +	if (len <= 0)
-> +		return NULL;
-> +
-> +	if (!oproc->num_mems)
-> +		return NULL;
-> +
-> +	for (i = 0; i < oproc->num_mems; i++) {
-> +		if (da >= oproc->mem[i].dev_addr && da + len <=
-> +		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
-> +			offset = da -  oproc->mem[i].dev_addr;
-> +			/* __force to make sparse happy with type conversion */
-> +			va = (__force void *)(oproc->mem[i].cpu_addr + offset);
+ drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
+ include/linux/remoteproc.h           |  4 ++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-Replace va = and break; with just a return here.
-
-> +			break;
-> +		}
-> +	}
-> +
-> +	return va;
-
-return NULL here.
-
-Regards,
-Bjorn
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index d3787c94f451..7f61ab8b7da5 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1300,11 +1300,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+ 
++	if (rproc->ops->prepare) {
++		ret = rproc->ops->prepare(rproc);
++		if (ret) {
++			dev_err(dev, "Failed to prepare rproc: %d\n", ret);
++			return ret;
++		}
++	}
++
+ 	/* load the ELF segments to memory */
+ 	ret = rproc_load_segments(rproc, fw);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to load program segments: %d\n", ret);
+-		return ret;
++		goto unprepare_rproc;
+ 	}
+ 
+ 	/*
+@@ -1355,6 +1363,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	rproc_unprepare_subdevices(rproc);
+ reset_table_ptr:
+ 	rproc->table_ptr = rproc->cached_table;
++unprepare_rproc:
++	if (rproc->ops->unprepare)
++		rproc->ops->unprepare(rproc);
+ 
+ 	return ret;
+ }
+@@ -1484,6 +1495,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+ 
+ 	rproc->state = RPROC_OFFLINE;
+ 
++	if (rproc->ops->unprepare)
++		rproc->ops->unprepare(rproc);
++
+ 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
+ 
+ 	return 0;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 5f201f0c86c3..a6272d1ba384 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -355,6 +355,8 @@ enum rsc_handling_status {
+ 
+ /**
+  * struct rproc_ops - platform-specific device handlers
++ * @prepare:	prepare the device for power up (before the firmware is loaded)
++ * @unprepare:	unprepare the device after it is stopped
+  * @start:	power on the device and boot it
+  * @stop:	power off the device
+  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+@@ -371,6 +373,8 @@ enum rsc_handling_status {
+  * @get_boot_addr:	get boot address to entry point specified in firmware
+  */
+ struct rproc_ops {
++	int (*prepare)(struct rproc *rproc);
++	void (*unprepare)(struct rproc *rproc);
+ 	int (*start)(struct rproc *rproc);
+ 	int (*stop)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+-- 
+2.24.0
