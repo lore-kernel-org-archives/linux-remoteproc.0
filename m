@@ -1,11 +1,10 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <0101016e80781cd6-e94dd0a1-f7cc-4495-a7a6-023c6d8d80dd-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 00/16] Add missing remoteprocs on MSM8998/SC7180/SM8150 SoCs
-Date: Mon, 18 Nov 2019 21:43:04 +0000
-Message-ID: <0101016e80781930-69ece8d5-deda-4950-8cfc-da44d5955ac8-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:43:05 +0000
+Message-ID: <0101016e80781cd6-e94dd0a1-f7cc-4495-a7a6-023c6d8d80dd-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
