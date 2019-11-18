@@ -1,18 +1,12 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-18.smtp-out.us-west-2.amazonses.com ([54.240.27.18]:43032
-        "EHLO a27-18.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726739AbfKRVoJ (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:44:09 -0500
+Return-Path: <0101016e80790f6a-98fb016c-9639-4124-b6ee-fe7639af734f-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 12/16] remoteproc: qcom: pas: Add auto_boot flag
-Date: Mon, 18 Nov 2019 21:44:08 +0000
-Message-ID: <0101016e8079129e-50ebd142-fc69-4652-99fd-6abf3cd186af-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:44:07 +0000
+Message-ID: <0101016e80790f6a-98fb016c-9639-4124-b6ee-fe7639af734f-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
