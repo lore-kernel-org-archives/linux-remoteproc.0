@@ -1,13 +1,12 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <0101016e7ee9c786-fcf80f4e-9b57-4d6b-8806-9ca408e21b55-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
 Date: Mon, 18 Nov 2019 14:28:00 +0000
-Message-ID: <0101016e7ee9c5b2-94a0dc24-2f52-4cc3-acd9-0f44f2c7e118-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e7ee9c786-fcf80f4e-9b57-4d6b-8806-9ca408e21b55-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118142728.30187-1-sibis@codeaurora.org>
 References: <20191118142728.30187-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
 Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
