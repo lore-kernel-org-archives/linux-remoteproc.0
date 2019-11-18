@@ -1,13 +1,12 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e80793b72-6aa5dd63-15ef-48e7-a1a6-0836ac53b03d-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 15/16] arm64: dts: qcom: sm8150: Add ADSP, CDSP, MPSS and SLPI smp2p
 Date: Mon, 18 Nov 2019 21:44:19 +0000
-Message-ID: <0101016e80793dfa-9d0f6e93-01db-4c95-a226-d64bb50238cb-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e80793b72-6aa5dd63-15ef-48e7-a1a6-0836ac53b03d-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
