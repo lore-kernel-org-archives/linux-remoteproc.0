@@ -1,18 +1,12 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-187.smtp-out.us-west-2.amazonses.com ([54.240.27.187]:45744
-        "EHLO a27-187.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726647AbfKRVnV (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:43:21 -0500
+Return-Path: <0101016e807856ae-faa669ed-5a8b-4850-b2a4-434659202a12-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 03/16] dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL binding for SC7180
 Date: Mon, 18 Nov 2019 21:43:20 +0000
-Message-ID: <0101016e807856d0-14dc2e21-4406-4150-8ffb-6982e37fc3cb-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e807856ae-faa669ed-5a8b-4850-b2a4-434659202a12-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
