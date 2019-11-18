@@ -1,13 +1,12 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <0101016e80791b96-58c1f2f0-312c-4a84-b536-9ad88f3d6f29-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 13/16] arm64: dts: qcom: msm8998: Update reserved memory map
-Date: Mon, 18 Nov 2019 21:44:09 +0000
-Message-ID: <0101016e807915dc-5f8701fd-5c4a-45a5-a9ee-9e4d8700a3fa-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:44:11 +0000
+Message-ID: <0101016e80791b96-58c1f2f0-312c-4a84-b536-9ad88f3d6f29-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
