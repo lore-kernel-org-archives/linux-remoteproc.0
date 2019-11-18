@@ -1,18 +1,12 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-11.smtp-out.us-west-2.amazonses.com ([54.240.27.11]:43230
-        "EHLO a27-11.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726647AbfKRVnb (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:43:31 -0500
+Return-Path: <0101016e80788059-c70b217b-2f5a-4a6e-b5ed-a22e7a774552-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 05/16] remoteproc: qcom: pas: Disable interrupt on clock enable failure
-Date: Mon, 18 Nov 2019 21:43:30 +0000
-Message-ID: <0101016e80787f5e-e7b2e8af-a398-4fb4-ae27-a5f251d1f9cc-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:43:31 +0000
+Message-ID: <0101016e80788059-c70b217b-2f5a-4a6e-b5ed-a22e7a774552-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
