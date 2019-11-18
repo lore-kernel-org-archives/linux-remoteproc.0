@@ -1,11 +1,10 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e7ee9a02d-b6d3cc6c-c005-4451-aa52-8646d2a0af01-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 0/3] Introduce Protection Domain Restart (PDR) Helpers
 Date: Mon, 18 Nov 2019 14:27:50 +0000
-Message-ID: <0101016e7ee9a027-e6223a1b-eafb-4b4e-a69c-75f7586a4a71-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e7ee9a02d-b6d3cc6c-c005-4451-aa52-8646d2a0af01-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
 Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
