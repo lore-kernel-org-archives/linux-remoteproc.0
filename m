@@ -1,58 +1,51 @@
-Return-Path: <0101016ead63d2c8-6dcef370-5ee6-4ced-b025-6807578274c9-000000@us-west-2.amazonses.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from a27-11.smtp-out.us-west-2.amazonses.com ([54.240.27.11]:43230
+        "EHLO a27-11.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726647AbfKRVnb (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 18 Nov 2019 16:43:31 -0500
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH 05/16] remoteproc: qcom: pas: Disable interrupt on clock enable failure
+Date: Mon, 18 Nov 2019 21:43:30 +0000
+Message-ID: <0101016e80787f5e-e7b2e8af-a398-4fb4-ae27-a5f251d1f9cc-000000@us-west-2.amazonses.com>
+In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
+References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 27 Nov 2019 15:03:50 +0000
-From: gokulsri@codeaurora.org
-Subject: Re: [PATCH V2 12/12] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074
- SoC
-In-Reply-To: <20190917161557.164C320665@mail.kernel.org>
-References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
- <1568375771-22933-13-git-send-email-gokulsri@codeaurora.org>
- <20190917161557.164C320665@mail.kernel.org>
-Message-ID: <0101016ead63d2c8-6dcef370-5ee6-4ced-b025-6807578274c9-000000@us-west-2.amazonses.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, nprakash@codeaurora.org, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org
+Content-Transfer-Encoding: 8bit
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
+Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 2019-09-17 21:45, Stephen Boyd wrote:
-> Quoting Gokul Sriram Palanisamy (2019-09-13 04:56:11)
->> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi 
->> b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> index 6a61a63..0ea026e 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
->> @@ -431,6 +485,78 @@
->>                                       "axi_m_sticky";
->>                         status = "disabled";
->>                 };
->> +
->> +               apcs: syscon@b111000 {
->> +                       compatible = "syscon";
->> +                       reg = <0x0b111000 0x1000>;
->> +               };
->> +
->> +               tcsr_q6: syscon@1945000 {
->> +                       compatible = "syscon";
->> +                       reg = <0x01945000 0xe000>;
->> +               };
->> +
->> +               tcsr_mutex_regs: syscon@193d000 {
->> +                       compatible = "syscon";
->> +                       reg = <0x01905000 0x8000>;
->> +               };
->> +
->> +               apcs_glb: mailbox@b111000 {
-> 
-> This is the same as the syscon above. What's going on?
-> 
->> +                       compatible = "qcom,ipq8074-apcs-apps-global";
->> +                       reg = <0x0b111000 0x1000>;
->> +
->> +                       #mbox-cells = <1>;
->> +               };
-  Sorry for the delayed response. Will have this addressed and post a v3.
+Disable handover smp2p interrupt on "xo" clock prepare enable failure.
 
-  Regards,
-  Gokul
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index db4b3c4bacd77..0fdd3748398aa 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -86,7 +86,7 @@ static int adsp_start(struct rproc *rproc)
+ 
+ 	ret = clk_prepare_enable(adsp->xo);
+ 	if (ret)
+-		return ret;
++		goto disable_irqs;
+ 
+ 	ret = clk_prepare_enable(adsp->aggre2_clk);
+ 	if (ret)
+@@ -124,6 +124,8 @@ static int adsp_start(struct rproc *rproc)
+ 	clk_disable_unprepare(adsp->aggre2_clk);
+ disable_xo_clk:
+ 	clk_disable_unprepare(adsp->xo);
++disable_irqs:
++	qcom_q6v5_unprepare(&adsp->q6v5);
+ 
+ 	return ret;
+ }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
