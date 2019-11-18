@@ -1,13 +1,12 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e8078b309-6ab39a5e-84a6-4383-960b-8dd56a4b68c3-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 08/16] dt-bindings: remoteproc: qcom: Add ADSP and SLPI support for MSM8998 SoC
-Date: Mon, 18 Nov 2019 21:43:45 +0000
-Message-ID: <0101016e8078b957-e3cf34ad-0bd0-41b0-9d92-ec1d86df352c-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:43:44 +0000
+Message-ID: <0101016e8078b309-6ab39a5e-84a6-4383-960b-8dd56a4b68c3-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
