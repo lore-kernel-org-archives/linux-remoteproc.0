@@ -1,90 +1,256 @@
-Return-Path: <0101016e9292b563-1744c327-8e21-4e61-8f26-51f89c3f04aa-000000@us-west-2.amazonses.com>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [PATCH V5 3/5] rpmsg: glink: Add support for rpmsg glink chrdev
-Date: Fri, 22 Nov 2019 10:05:18 +0000
-Message-ID: <0101016e9292b563-1744c327-8e21-4e61-8f26-51f89c3f04aa-000000@us-west-2.amazonses.com>
-In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
+Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH 07/16] remoteproc: qcom: pas: Vote for active/proxy power domains
+Date: Mon, 18 Nov 2019 21:43:41 +0000
+Message-ID: <0101016e8078a71a-9ae99638-9e15-49a5-b769-85552526ae89-000000@us-west-2.amazonses.com>
+In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
+References: <20191118214250.14002-1-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
+Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Chris Lew <clew@codeaurora.org>
+On SM8150 SoCs ADSP, CDSP and MPSS need to proxy vote on multiple
+rpmh ARC resources and active vote on QMP AOSS Power domains. Add
+support to vote for multiple active and proxy power domains.
 
-RPMSG provides a char device interface to userspace. Probe the rpmsg
-chrdev channel to enable the rpmsg_ctrl device creation on glink
-transports.
-
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 40 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 39 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_pas.c | 137 ++++++++++++++++++++++++++++-
+ 1 file changed, 133 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 609a150f..c838c19 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1158,7 +1158,7 @@ static int qcom_glink_announce_create(struct rpmsg_device *rpdev)
- 	__be32 *val = defaults;
- 	int size;
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 0fdd3748398aa..b60cca093400a 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -15,6 +15,8 @@
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
+ #include <linux/qcom_scm.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/remoteproc.h>
+@@ -32,6 +34,9 @@ struct adsp_data {
+ 	int pas_id;
+ 	bool has_aggre2_clk;
  
--	if (glink->intentless)
-+	if (glink->intentless || !completion_done(&channel->open_ack))
- 		return 0;
++	char **active_pd_names;
++	char **proxy_pd_names;
++
+ 	const char *ssr_name;
+ 	const char *sysmon_name;
+ 	int ssctl_id;
+@@ -49,6 +54,12 @@ struct qcom_adsp {
+ 	struct regulator *cx_supply;
+ 	struct regulator *px_supply;
  
- 	prop = of_find_property(np, "qcom,intents", NULL);
-@@ -1544,6 +1544,40 @@ static void qcom_glink_work(struct work_struct *work)
- 	}
- }
++	struct device *active_pds[1];
++	struct device *proxy_pds[3];
++
++	int active_pd_count;
++	int proxy_pd_count;
++
+ 	int pas_id;
+ 	int crash_reason_smem;
+ 	bool has_aggre2_clk;
+@@ -67,6 +78,41 @@ struct qcom_adsp {
+ 	struct qcom_sysmon *sysmon;
+ };
  
-+static void qcom_glink_device_release(struct device *dev)
++static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
++			   size_t pd_count)
 +{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	struct glink_channel *channel = to_glink_channel(rpdev->ept);
++	int ret;
++	int i;
 +
-+	/* Release qcom_glink_alloc_channel() reference */
-+	kref_put(&channel->refcount, qcom_glink_channel_release);
-+	kfree(rpdev);
-+}
-+
-+static int qcom_glink_create_chrdev(struct qcom_glink *glink)
-+{
-+	struct rpmsg_device *rpdev;
-+	struct glink_channel *channel;
-+
-+	rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
-+	if (!rpdev)
-+		return -ENOMEM;
-+
-+	channel = qcom_glink_alloc_channel(glink, "rpmsg_chrdev");
-+	if (IS_ERR(channel)) {
-+		kfree(rpdev);
-+		return PTR_ERR(channel);
++	for (i = 0; i < pd_count; i++) {
++		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
++		ret = pm_runtime_get_sync(pds[i]);
++		if (ret < 0)
++			goto unroll_pd_votes;
 +	}
-+	channel->rpdev = rpdev;
 +
-+	rpdev->ept = &channel->ept;
-+	rpdev->ops = &glink_device_ops;
-+	rpdev->dev.parent = glink->dev;
-+	rpdev->dev.release = qcom_glink_device_release;
++	return 0;
 +
-+	return rpmsg_chrdev_register_device(rpdev);
++unroll_pd_votes:
++	for (i--; i >= 0; i--) {
++		dev_pm_genpd_set_performance_state(pds[i], 0);
++		pm_runtime_put(pds[i]);
++	}
++
++	return ret;
++};
++
++static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
++			     size_t pd_count)
++{
++	int i;
++
++	for (i = 0; i < pd_count; i++) {
++		dev_pm_genpd_set_performance_state(pds[i], 0);
++		pm_runtime_put(pds[i]);
++	}
 +}
 +
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
-@@ -1603,6 +1637,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	if (ret)
- 		return ERR_PTR(ret);
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+@@ -84,9 +130,17 @@ static int adsp_start(struct rproc *rproc)
  
-+	ret = qcom_glink_create_chrdev(glink);
-+	if (ret)
-+		dev_err(glink->dev, "failed to register chrdev\n");
+ 	qcom_q6v5_prepare(&adsp->q6v5);
+ 
++	ret = adsp_pds_enable(adsp, adsp->active_pds, adsp->active_pd_count);
++	if (ret < 0)
++		goto disable_irqs;
 +
- 	return glink;
++	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
++	if (ret < 0)
++		goto disable_active_pds;
++
+ 	ret = clk_prepare_enable(adsp->xo);
+ 	if (ret)
+-		goto disable_irqs;
++		goto disable_proxy_pds;
+ 
+ 	ret = clk_prepare_enable(adsp->aggre2_clk);
+ 	if (ret)
+@@ -124,6 +178,10 @@ static int adsp_start(struct rproc *rproc)
+ 	clk_disable_unprepare(adsp->aggre2_clk);
+ disable_xo_clk:
+ 	clk_disable_unprepare(adsp->xo);
++disable_proxy_pds:
++	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
++disable_active_pds:
++	adsp_pds_disable(adsp, adsp->active_pds, adsp->active_pd_count);
+ disable_irqs:
+ 	qcom_q6v5_unprepare(&adsp->q6v5);
+ 
+@@ -138,6 +196,7 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
+ 	regulator_disable(adsp->cx_supply);
+ 	clk_disable_unprepare(adsp->aggre2_clk);
+ 	clk_disable_unprepare(adsp->xo);
++	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
  }
- EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
+ 
+ static int adsp_stop(struct rproc *rproc)
+@@ -154,6 +213,7 @@ static int adsp_stop(struct rproc *rproc)
+ 	if (ret)
+ 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
+ 
++	adsp_pds_disable(adsp, adsp->active_pds, adsp->active_pd_count);
+ 	handover = qcom_q6v5_unprepare(&adsp->q6v5);
+ 	if (handover)
+ 		qcom_pas_handover(&adsp->q6v5);
+@@ -219,6 +279,59 @@ static int adsp_init_regulator(struct qcom_adsp *adsp)
+ 	return PTR_ERR_OR_ZERO(adsp->px_supply);
+ }
+ 
++static int adsp_pds_attach(struct device *dev, struct device **devs,
++			   char **pd_names)
++{
++	size_t num_pds = 0;
++	int ret;
++	int i;
++
++	if (!pd_names)
++		return 0;
++
++	/* Handle single power domain */
++	if (dev->pm_domain) {
++		devs[0] = dev;
++		pm_runtime_enable(dev);
++		return 1;
++	}
++
++	while (pd_names[num_pds])
++		num_pds++;
++
++	for (i = 0; i < num_pds; i++) {
++		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
++		if (IS_ERR_OR_NULL(devs[i])) {
++			ret = PTR_ERR(devs[i]) ? : -ENODATA;
++			goto unroll_attach;
++		}
++	}
++
++	return num_pds;
++
++unroll_attach:
++	for (i--; i >= 0; i--)
++		dev_pm_domain_detach(devs[i], false);
++
++	return ret;
++};
++
++static void adsp_pds_detach(struct qcom_adsp *adsp, struct device **pds,
++			    size_t pd_count)
++{
++	struct device *dev = adsp->dev;
++	int i;
++
++	/* Handle single power domain */
++	if (dev->pm_domain && pd_count) {
++		pm_runtime_disable(dev);
++		return;
++	}
++
++	for (i = 0; i < pd_count; i++)
++		dev_pm_domain_detach(pds[i], false);
++}
++
+ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
+ {
+ 	struct device_node *node;
+@@ -294,10 +407,22 @@ static int adsp_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
++	ret = adsp_pds_attach(&pdev->dev, adsp->active_pds,
++			      desc->active_pd_names);
++	if (ret < 0)
++		goto free_rproc;
++	adsp->active_pd_count = ret;
++
++	ret = adsp_pds_attach(&pdev->dev, adsp->proxy_pds,
++			      desc->proxy_pd_names);
++	if (ret < 0)
++		goto detach_active_pds;
++	adsp->proxy_pd_count = ret;
++
+ 	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
+ 			     qcom_pas_handover);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
+ 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
+@@ -307,15 +432,19 @@ static int adsp_probe(struct platform_device *pdev)
+ 					      desc->ssctl_id);
+ 	if (IS_ERR(adsp->sysmon)) {
+ 		ret = PTR_ERR(adsp->sysmon);
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 	}
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto detach_proxy_pds;
+ 
+ 	return 0;
+ 
++detach_proxy_pds:
++	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
++detach_active_pds:
++	adsp_pds_detach(adsp, adsp->active_pds, adsp->active_pd_count);
+ free_rproc:
+ 	rproc_free(rproc);
+ 
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
