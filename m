@@ -1,13 +1,12 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e8078a60a-58ae053e-1a6d-4708-ab33-6f6b68e3133a-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 07/16] remoteproc: qcom: pas: Vote for active/proxy power domains
-Date: Mon, 18 Nov 2019 21:43:41 +0000
-Message-ID: <0101016e8078a71a-9ae99638-9e15-49a5-b769-85552526ae89-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:43:40 +0000
+Message-ID: <0101016e8078a60a-58ae053e-1a6d-4708-ab33-6f6b68e3133a-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
