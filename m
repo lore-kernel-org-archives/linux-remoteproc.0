@@ -1,18 +1,12 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-186.smtp-out.us-west-2.amazonses.com ([54.240.27.186]:56620
-        "EHLO a27-186.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726739AbfKRVn7 (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:43:59 -0500
+Return-Path: <0101016e8078ecaa-5ec3bf83-d23a-4ebe-a9a4-a5d08c357ae3-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 11/16] remoteproc: qcom: pas: Add SM8150 ADSP, CDSP, Modem and SLPI support
 Date: Mon, 18 Nov 2019 21:43:58 +0000
-Message-ID: <0101016e8078ec52-c0334821-91e3-4542-a451-997041c5b292-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e8078ecaa-5ec3bf83-d23a-4ebe-a9a4-a5d08c357ae3-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
