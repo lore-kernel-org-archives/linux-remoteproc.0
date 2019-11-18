@@ -1,18 +1,12 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-18.smtp-out.us-west-2.amazonses.com ([54.240.27.18]:43032
-        "EHLO a27-18.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727415AbfKRVoS (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Nov 2019 16:44:18 -0500
+Return-Path: <0101016e80792f2e-199c4cbb-599a-4ba9-b21a-ce034573deb2-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 14/16] arm64: dts: qcom: msm8998: Add ADSP, MPSS and SLPI nodes
-Date: Mon, 18 Nov 2019 21:44:17 +0000
-Message-ID: <0101016e807934fa-4da223fb-1854-4a1e-a8ee-e088129c4812-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:44:15 +0000
+Message-ID: <0101016e80792f2e-199c4cbb-599a-4ba9-b21a-ce034573deb2-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
