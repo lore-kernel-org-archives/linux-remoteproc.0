@@ -1,13 +1,12 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <0101016e8078c9b6-49063fbf-db1c-40be-b471-54247e17cca0-000000@us-west-2.amazonses.com>
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: [PATCH 09/16] remoteproc: qcom: pas: Add MSM8998 ADSP and SLPI support
-Date: Mon, 18 Nov 2019 21:43:48 +0000
-Message-ID: <0101016e8078c4e7-9951b93c-8b27-46d2-a411-dc76c13c8d4e-000000@us-west-2.amazonses.com>
+Date: Mon, 18 Nov 2019 21:43:50 +0000
+Message-ID: <0101016e8078c9b6-49063fbf-db1c-40be-b471-54247e17cca0-000000@us-west-2.amazonses.com>
 In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
 References: <20191118214250.14002-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
 To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
 Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
