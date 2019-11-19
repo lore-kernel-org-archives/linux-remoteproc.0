@@ -1,9 +1,9 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e83a2b4c6-04e6d336-13fa-47c8-b178-2be8bdd57249-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Tue, 19 Nov 2019 12:28:29 +0000
+Date: Tue, 19 Nov 2019 12:28:28 +0000
 From: sibis@codeaurora.org
 Subject: Re: [PATCH 13/16] arm64: dts: qcom: msm8998: Update reserved memory
  map
@@ -11,8 +11,7 @@ In-Reply-To: <CAOCk7NogQY3Vjo+cL5_0anVO=K1LfTqG69b8AGi9HQsTMEsCug@mail.gmail.com
 References: <20191118214250.14002-1-sibis@codeaurora.org>
  <0101016e807915dc-5f8701fd-5c4a-45a5-a9ee-9e4d8700a3fa-000000@us-west-2.amazonses.com>
  <CAOCk7NogQY3Vjo+cL5_0anVO=K1LfTqG69b8AGi9HQsTMEsCug@mail.gmail.com>
-Message-ID: <0101016e83a2b64f-7d9f9170-7720-4198-adae-7f39a846c432-000000@us-west-2.amazonses.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
+Message-ID: <0101016e83a2b4c6-04e6d336-13fa-47c8-b178-2be8bdd57249-000000@us-west-2.amazonses.com>
 To: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, p.zabel@pengutronix.de, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, DTML <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>, linux-remoteproc-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
