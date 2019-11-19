@@ -1,134 +1,79 @@
-Return-Path: <0101016e8078ecaa-5ec3bf83-d23a-4ebe-a9a4-a5d08c357ae3-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 11/16] remoteproc: qcom: pas: Add SM8150 ADSP, CDSP, Modem and SLPI support
-Date: Mon, 18 Nov 2019 21:43:58 +0000
-Message-ID: <0101016e8078ecaa-5ec3bf83-d23a-4ebe-a9a4-a5d08c357ae3-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv2 03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
+Date: Tue, 19 Nov 2019 16:16:33 +0200
+Message-ID: <20191119141645.19777-4-t-kristo@ti.com>
+In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
+References: <20191119141645.19777-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add support for booting the Modem, Audio, Compute and Sensor DSPs found on
-Qualcomm's SM8150 SoCs.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+The DSP remote processors on OMAP SoCs require a boot register to
+be programmed with a boot address, and this boot address needs to
+be on a 1KB boundary. The current code is simply masking the boot
+address appropriately without performing any sanity checks before
+releasing the resets. An unaligned boot address results in an
+undefined execution behavior and can result in various bus errors
+like MMU Faults or L3 NoC errors. Such errors are hard to debug and
+can be easily avoided by adding a sanity check for the alignment
+before booting a DSP remote processor.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 78 ++++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+ drivers/remoteproc/omap_remoteproc.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 2dd693d443ca8..98e9336302844 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -490,6 +490,24 @@ static const struct adsp_data msm8998_adsp_resource = {
- 		.ssctl_id = 0x14,
- };
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 558634624590..d80f5d7b5931 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -124,13 +124,22 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+  *
+  * Set boot address for a supported DSP remote processor.
+  */
+-static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ {
++	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
  
-+static const struct adsp_data sm8150_adsp_resource = {
-+		.crash_reason_smem = 423,
-+		.firmware_name = "adsp.mdt",
-+		.pas_id = 1,
-+		.has_aggre2_clk = false,
-+		.active_pd_names = (char*[]){
-+			"load_state",
-+			NULL
-+		},
-+		.proxy_pd_names = (char*[]){
-+			"cx",
-+			NULL
-+		},
-+		.ssr_name = "lpass",
-+		.sysmon_name = "adsp",
-+		.ssctl_id = 0x14,
-+};
++	if (rproc->bootaddr & (SZ_1K - 1)) {
++		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
++			rproc->bootaddr);
++		return -EINVAL;
++	}
 +
- static const struct adsp_data cdsp_resource_init = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
-@@ -500,6 +518,43 @@ static const struct adsp_data cdsp_resource_init = {
- 	.ssctl_id = 0x17,
- };
+ 	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++
++	return 0;
+ }
  
-+static const struct adsp_data sm8150_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mdt",
-+	.pas_id = 18,
-+	.has_aggre2_clk = false,
-+	.active_pd_names = (char*[]){
-+		"load_state",
-+		NULL
-+	},
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		NULL
-+	},
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
-+
-+static const struct adsp_data mpss_resource_init = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.pas_id = 4,
-+	.has_aggre2_clk = false,
-+	.active_pd_names = (char*[]){
-+		"load_state",
-+		NULL
-+	},
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+};
-+
- static const struct adsp_data slpi_resource_init = {
- 		.crash_reason_smem = 424,
- 		.firmware_name = "slpi.mdt",
-@@ -524,6 +579,25 @@ static const struct adsp_data msm8998_slpi_resource = {
- 		.ssctl_id = 0x16,
- };
+ /*
+@@ -147,8 +156,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	int ret;
+ 	struct mbox_client *client = &oproc->client;
  
-+static const struct adsp_data sm8150_slpi_resource = {
-+		.crash_reason_smem = 424,
-+		.firmware_name = "slpi.mdt",
-+		.pas_id = 12,
-+		.has_aggre2_clk = false,
-+		.active_pd_names = (char*[]){
-+			"load_state",
-+			NULL
-+		},
-+		.proxy_pd_names = (char*[]){
-+			"lcx",
-+			"lmx",
-+			NULL
-+		},
-+		.ssr_name = "dsps",
-+		.sysmon_name = "slpi",
-+		.ssctl_id = 0x16,
-+};
-+
- static const struct adsp_data wcss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "wcnss.mdt",
-@@ -544,6 +618,10 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
- 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
-+	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
-+	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
-+	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
-+	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sm8150_slpi_resource},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, adsp_of_match);
+-	if (oproc->boot_data)
+-		omap_rproc_write_dsp_boot_addr(rproc);
++	if (oproc->boot_data) {
++		ret = omap_rproc_write_dsp_boot_addr(rproc);
++		if (ret)
++			return ret;
++	}
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
