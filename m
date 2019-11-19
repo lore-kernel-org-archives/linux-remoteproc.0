@@ -1,9 +1,9 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e83a3b119-7f0ad9f3-4fd9-46f7-b683-d776eeb0bcd0-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Tue, 19 Nov 2019 12:29:31 +0000
+Date: Tue, 19 Nov 2019 12:29:33 +0000
 From: sibis@codeaurora.org
 Subject: Re: [PATCH 14/16] arm64: dts: qcom: msm8998: Add ADSP, MPSS and SLPI
  nodes
@@ -11,8 +11,7 @@ In-Reply-To: <CAOCk7Nr=Up1LP+-XB7tnoM=XwK+YysDMq8EqyhCLx=WA+eW9PA@mail.gmail.com
 References: <20191118214250.14002-1-sibis@codeaurora.org>
  <0101016e807934fa-4da223fb-1854-4a1e-a8ee-e088129c4812-000000@us-west-2.amazonses.com>
  <CAOCk7Nr=Up1LP+-XB7tnoM=XwK+YysDMq8EqyhCLx=WA+eW9PA@mail.gmail.com>
-Message-ID: <0101016e83a3aae0-2f25d2f3-6014-4992-9b40-d8716962215b-000000@us-west-2.amazonses.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
+Message-ID: <0101016e83a3b119-7f0ad9f3-4fd9-46f7-b683-d776eeb0bcd0-000000@us-west-2.amazonses.com>
 To: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, p.zabel@pengutronix.de, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, DTML <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
