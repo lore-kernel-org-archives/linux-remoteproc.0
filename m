@@ -1,255 +1,186 @@
-Return-Path: <0101016e8078a60a-58ae053e-1a6d-4708-ab33-6f6b68e3133a-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 07/16] remoteproc: qcom: pas: Vote for active/proxy power domains
-Date: Mon, 18 Nov 2019 21:43:40 +0000
-Message-ID: <0101016e8078a60a-58ae053e-1a6d-4708-ab33-6f6b68e3133a-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv2 07/15] remoteproc/omap: Add support for DRA7xx remote processors
+Date: Tue, 19 Nov 2019 16:16:37 +0200
+Message-ID: <20191119141645.19777-8-t-kristo@ti.com>
+In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
+References: <20191119141645.19777-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On SM8150 SoCs ADSP, CDSP and MPSS need to proxy vote on multiple
-rpmh ARC resources and active vote on QMP AOSS Power domains. Add
-support to vote for multiple active and proxy power domains.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+DRA7xx/AM57xx SoCs have two IPU and up to two DSP processor subsystems
+for offloading different computation algorithms. The IPU processor
+subsystem contains dual-core ARM Cortex-M4 processors, and is very
+similar to those on OMAP5. The DSP processor subsystem is based on
+the TI's standard TMS320C66x DSP CorePac core.
+
+Support has been added to the OMAP remoteproc driver through new
+DRA7xx specific compatibles for properly probing and booting all
+the different processor subsystem instances on DRA7xx/AM57xx
+SoCs - IPU1, IPU2, DSP1 & DSP2. A build dependency with SOC_DRA7XX
+is added to enable the driver to be built in DRA7xx-only configuration.
+
+The DSP boot address programming needed enhancement for DRA7xx as the
+boot register fields are different on DRA7 compared to OMAP4 and OMAP5
+SoCs. The register on DRA7xx contains additional fields within the
+register and the boot address bit-field is right-shifted by 10 bits.
+The internal memory parsing logic has also been updated to compute
+the device addresses for the L2 RAM for DSP devices using relative
+addressing logic, and to parse two additional RAMs at L1 level - L1P
+and L1D. This allows the remoteproc driver to support loading into
+these regions for a small subset of firmware images requiring as
+such. The most common usage would be to use the L1 programmable
+RAMs as L1 Caches.
+
+The firmware lookup logic also has to be adjusted for DRA7xx as
+there are (can be) more than one instance of both the IPU and DSP
+remote processors for the first time in OMAP4+ SoCs.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: moved address translation quirks to pdata]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 137 ++++++++++++++++++++++++++++-
- 1 file changed, 133 insertions(+), 4 deletions(-)
+v2:
+ - moved address translation quirks to pdata
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 0fdd3748398aa..b60cca093400a 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -15,6 +15,8 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/qcom_scm.h>
- #include <linux/regulator/consumer.h>
- #include <linux/remoteproc.h>
-@@ -32,6 +34,9 @@ struct adsp_data {
- 	int pas_id;
- 	bool has_aggre2_clk;
+ drivers/remoteproc/Kconfig           |  2 +-
+ drivers/remoteproc/omap_remoteproc.c | 45 +++++++++++++++++++++++++++-
+ 2 files changed, 45 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 94afdde4bc9f..d6450d7fcf92 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -25,7 +25,7 @@ config IMX_REMOTEPROC
  
-+	char **active_pd_names;
-+	char **proxy_pd_names;
-+
- 	const char *ssr_name;
- 	const char *sysmon_name;
- 	int ssctl_id;
-@@ -49,6 +54,12 @@ struct qcom_adsp {
- 	struct regulator *cx_supply;
- 	struct regulator *px_supply;
- 
-+	struct device *active_pds[1];
-+	struct device *proxy_pds[3];
-+
-+	int active_pd_count;
-+	int proxy_pd_count;
-+
- 	int pas_id;
- 	int crash_reason_smem;
- 	bool has_aggre2_clk;
-@@ -67,6 +78,41 @@ struct qcom_adsp {
- 	struct qcom_sysmon *sysmon;
+ config OMAP_REMOTEPROC
+ 	tristate "OMAP remoteproc support"
+-	depends on ARCH_OMAP4 || SOC_OMAP5
++	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
+ 	depends on OMAP_IOMMU
+ 	select MAILBOX
+ 	select OMAP2PLUS_MBOX
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 3ad74c4b4071..4af55d1f2702 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -34,10 +34,13 @@
+  * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
+  * @syscon: regmap handle for the system control configuration module
+  * @boot_reg: boot register offset within the @syscon regmap
++ * @boot_reg_shift: bit-field shift required for the boot address value in
++ *		    @boot_reg
+  */
+ struct omap_rproc_boot_data {
+ 	struct regmap *syscon;
+ 	unsigned int boot_reg;
++	unsigned int boot_reg_shift;
  };
  
-+static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
-+			   size_t pd_count)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < pd_count; i++) {
-+		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
-+		ret = pm_runtime_get_sync(pds[i]);
-+		if (ret < 0)
-+			goto unroll_pd_votes;
-+	}
-+
-+	return 0;
-+
-+unroll_pd_votes:
-+	for (i--; i >= 0; i--) {
-+		dev_pm_genpd_set_performance_state(pds[i], 0);
-+		pm_runtime_put(pds[i]);
-+	}
-+
-+	return ret;
-+};
-+
-+static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
-+			     size_t pd_count)
-+{
-+	int i;
-+
-+	for (i = 0; i < pd_count; i++) {
-+		dev_pm_genpd_set_performance_state(pds[i], 0);
-+		pm_runtime_put(pds[i]);
-+	}
-+}
-+
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-@@ -84,9 +130,17 @@ static int adsp_start(struct rproc *rproc)
+ /*
+@@ -78,12 +82,14 @@ struct omap_rproc {
+  * struct omap_rproc_dev_data - device data for the omap remote processor
+  * @device_name: device name of the remote processor
+  * @has_bootreg: true if this remote processor has boot register
++ * @boot_reg_shift: bit shift for the boot register mask
+  * @mem_names: memory names for this remote processor
+  * @dev_addrs: device addresses corresponding to the memory names
+  */
+ struct omap_rproc_dev_data {
+ 	const char *device_name;
+ 	bool has_bootreg;
++	int boot_reg_shift;
+ 	const char * const *mem_names;
+ 	const u32 *dev_addrs;
+ };
+@@ -153,6 +159,8 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
++	u32 value;
++	u32 mask;
  
- 	qcom_q6v5_prepare(&adsp->q6v5);
- 
-+	ret = adsp_pds_enable(adsp, adsp->active_pds, adsp->active_pd_count);
-+	if (ret < 0)
-+		goto disable_irqs;
-+
-+	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+	if (ret < 0)
-+		goto disable_active_pds;
-+
- 	ret = clk_prepare_enable(adsp->xo);
- 	if (ret)
--		goto disable_irqs;
-+		goto disable_proxy_pds;
- 
- 	ret = clk_prepare_enable(adsp->aggre2_clk);
- 	if (ret)
-@@ -124,6 +178,10 @@ static int adsp_start(struct rproc *rproc)
- 	clk_disable_unprepare(adsp->aggre2_clk);
- disable_xo_clk:
- 	clk_disable_unprepare(adsp->xo);
-+disable_proxy_pds:
-+	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+disable_active_pds:
-+	adsp_pds_disable(adsp, adsp->active_pds, adsp->active_pd_count);
- disable_irqs:
- 	qcom_q6v5_unprepare(&adsp->q6v5);
- 
-@@ -138,6 +196,7 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
- 	regulator_disable(adsp->cx_supply);
- 	clk_disable_unprepare(adsp->aggre2_clk);
- 	clk_disable_unprepare(adsp->xo);
-+	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
- }
- 
- static int adsp_stop(struct rproc *rproc)
-@@ -154,6 +213,7 @@ static int adsp_stop(struct rproc *rproc)
- 	if (ret)
- 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
- 
-+	adsp_pds_disable(adsp, adsp->active_pds, adsp->active_pd_count);
- 	handover = qcom_q6v5_unprepare(&adsp->q6v5);
- 	if (handover)
- 		qcom_pas_handover(&adsp->q6v5);
-@@ -219,6 +279,59 @@ static int adsp_init_regulator(struct qcom_adsp *adsp)
- 	return PTR_ERR_OR_ZERO(adsp->px_supply);
- }
- 
-+static int adsp_pds_attach(struct device *dev, struct device **devs,
-+			   char **pd_names)
-+{
-+	size_t num_pds = 0;
-+	int ret;
-+	int i;
-+
-+	if (!pd_names)
-+		return 0;
-+
-+	/* Handle single power domain */
-+	if (dev->pm_domain) {
-+		devs[0] = dev;
-+		pm_runtime_enable(dev);
-+		return 1;
-+	}
-+
-+	while (pd_names[num_pds])
-+		num_pds++;
-+
-+	for (i = 0; i < num_pds; i++) {
-+		devs[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
-+		if (IS_ERR_OR_NULL(devs[i])) {
-+			ret = PTR_ERR(devs[i]) ? : -ENODATA;
-+			goto unroll_attach;
-+		}
-+	}
-+
-+	return num_pds;
-+
-+unroll_attach:
-+	for (i--; i >= 0; i--)
-+		dev_pm_domain_detach(devs[i], false);
-+
-+	return ret;
-+};
-+
-+static void adsp_pds_detach(struct qcom_adsp *adsp, struct device **pds,
-+			    size_t pd_count)
-+{
-+	struct device *dev = adsp->dev;
-+	int i;
-+
-+	/* Handle single power domain */
-+	if (dev->pm_domain && pd_count) {
-+		pm_runtime_disable(dev);
-+		return;
-+	}
-+
-+	for (i = 0; i < pd_count; i++)
-+		dev_pm_domain_detach(pds[i], false);
-+}
-+
- static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
- {
- 	struct device_node *node;
-@@ -294,10 +407,22 @@ static int adsp_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
-+	ret = adsp_pds_attach(&pdev->dev, adsp->active_pds,
-+			      desc->active_pd_names);
-+	if (ret < 0)
-+		goto free_rproc;
-+	adsp->active_pd_count = ret;
-+
-+	ret = adsp_pds_attach(&pdev->dev, adsp->proxy_pds,
-+			      desc->proxy_pd_names);
-+	if (ret < 0)
-+		goto detach_active_pds;
-+	adsp->proxy_pd_count = ret;
-+
- 	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
- 			     qcom_pas_handover);
- 	if (ret)
--		goto free_rproc;
-+		goto detach_proxy_pds;
- 
- 	qcom_add_glink_subdev(rproc, &adsp->glink_subdev);
- 	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
-@@ -307,15 +432,19 @@ static int adsp_probe(struct platform_device *pdev)
- 					      desc->ssctl_id);
- 	if (IS_ERR(adsp->sysmon)) {
- 		ret = PTR_ERR(adsp->sysmon);
--		goto free_rproc;
-+		goto detach_proxy_pds;
+ 	if (rproc->bootaddr & (SZ_1K - 1)) {
+ 		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
+@@ -160,7 +168,10 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ 		return -EINVAL;
  	}
  
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto free_rproc;
-+		goto detach_proxy_pds;
+-	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++	value = rproc->bootaddr >> bdata->boot_reg_shift;
++	mask = ~(SZ_1K - 1) >> bdata->boot_reg_shift;
++
++	regmap_update_bits(bdata->syscon, offset, mask, value);
  
  	return 0;
+ }
+@@ -286,6 +297,14 @@ static const u32 ipu_dev_addrs[] = {
+ 	0x20000000,
+ };
  
-+detach_proxy_pds:
-+	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-+detach_active_pds:
-+	adsp_pds_detach(adsp, adsp->active_pds, adsp->active_pd_count);
- free_rproc:
- 	rproc_free(rproc);
++static const char * const dra7_dsp_mem_names[] = {
++	"l2ram", "l1pram", "l1dram", NULL
++};
++
++static const u32 dra7_dsp_dev_addrs[] = {
++	0x800000, 0xe00000, 0xf00000,
++};
++
+ static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+ 	.device_name	= "dsp",
+ 	.has_bootreg	= true,
+@@ -308,6 +327,20 @@ static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+ 	.dev_addrs	= ipu_dev_addrs,
+ };
+ 
++static const struct omap_rproc_dev_data dra7_dsp_dev_data = {
++	.device_name	= "dsp",
++	.has_bootreg	= true,
++	.boot_reg_shift	= 10,
++	.mem_names	= dra7_dsp_mem_names,
++	.dev_addrs	= dra7_dsp_dev_addrs,
++};
++
++static const struct omap_rproc_dev_data dra7_ipu_dev_data = {
++	.device_name	= "ipu",
++	.mem_names	= ipu_mem_names,
++	.dev_addrs	= ipu_dev_addrs,
++};
++
+ static const struct of_device_id omap_rproc_of_match[] = {
+ 	{
+ 		.compatible     = "ti,omap4-dsp",
+@@ -325,6 +358,14 @@ static const struct of_device_id omap_rproc_of_match[] = {
+ 		.compatible     = "ti,omap5-ipu",
+ 		.data           = &omap5_ipu_dev_data,
+ 	},
++	{
++		.compatible     = "ti,dra7-dsp",
++		.data           = &dra7_dsp_dev_data,
++	},
++	{
++		.compatible     = "ti,dra7-ipu",
++		.data           = &dra7_ipu_dev_data,
++	},
+ 	{
+ 		/* end */
+ 	},
+@@ -382,6 +423,8 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+ 		return -EINVAL;
+ 	}
+ 
++	oproc->boot_data->boot_reg_shift = data->boot_reg_shift;
++
+ 	return 0;
+ }
  
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
