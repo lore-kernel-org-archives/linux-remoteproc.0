@@ -1,22 +1,16 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-10.smtp-out.us-west-2.amazonses.com ([54.240.27.10]:45794
-        "EHLO a27-10.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726000AbfKSKZm (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Nov 2019 05:25:42 -0500
+Return-Path: <0101016e83324621-6aac98a7-bc7c-4354-8c35-d6b09928df09-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Tue, 19 Nov 2019 10:25:41 +0000
+Date: Tue, 19 Nov 2019 10:25:40 +0000
 From: sibis@codeaurora.org
 Subject: Re: [PATCH 3/3] soc: qcom: apr: Add avs/audio tracking functionality
 In-Reply-To: <20191119065325.GF18024@yoga>
 References: <20191118142728.30187-1-sibis@codeaurora.org>
  <0101016e7ee9d8b5-9759d0ba-4acf-4fc4-a863-fac9c738397f-000000@us-west-2.amazonses.com>
  <20191119065325.GF18024@yoga>
-Message-ID: <0101016e83324a05-f96f3ec6-445f-413e-b67e-20a226b54673-000000@us-west-2.amazonses.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
+Message-ID: <0101016e83324621-6aac98a7-bc7c-4354-8c35-d6b09928df09-000000@us-west-2.amazonses.com>
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
