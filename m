@@ -1,91 +1,103 @@
-Date: Mon, 11 Nov 2019 15:23:32 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 07/17] remoteproc/omap: Initialize and assign reserved
- memory node
-Message-ID: <20191111232329.GI3108315@builder>
-References: <20191028124238.19224-1-t-kristo@ti.com>
- <20191028124238.19224-8-t-kristo@ti.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv2 08/15] remoteproc/omap: Remove the unused fields from platform data
+Date: Tue, 19 Nov 2019 16:16:38 +0200
+Message-ID: <20191119141645.19777-9-t-kristo@ti.com>
+In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
+References: <20191119141645.19777-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028124238.19224-8-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
+From: Suman Anna <s-anna@ti.com>
 
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The reserved memory nodes are not assigned to platform devices by
-> default in the driver core to avoid the lookup for every platform
-> device and incur a penalty as the real users are expected to be
-> only a few devices.
-> 
-> OMAP remoteproc devices fall into the above category and the OMAP
-> remoteproc driver _requires_ specific CMA pools to be assigned
-> for each device at the moment to align on the location of the
-> vrings and vring buffers in the RTOS-side firmware images. So,
-> use the of_reserved_mem_device_init/release() API appropriately
-> to assign the corresponding reserved memory region to the OMAP
-> remoteproc device. Note that only one region per device is
-> allowed by the framework.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+The following fields: .name, .oh_name, .oh_name_opt, .mbox_name,
+.firmware, .ops and .set_bootaddr, are removed from the platform data,
+as these are no longer needed after the addition of DT support to the
+OMAP remoteproc driver.
 
+The .name field was used to give a name to the remoteproc, and this
+is replaced with the device name. The .ops field was never used by
+the OMAP remoteproc driver. The .mbox_name was used to define the
+sub-mailbox node used for communication with the remote processor,
+and is retrieved using the 'mboxes' property in the DT node. The
+.firmware field is encoded directly in the OMAP remoteproc driver and
+is retrieved using driver match data. The .set_bootaddr ops was used
+for using a OMAP Control Module API to configure the boot address for
+the processor, and is now implemented within the driver using a
+syscon property.
+
+The .oh_name field is used to define the primary hwmod for the processor
+node, and is represented using the 'ti,hwmods' property in the DT node.
+The .oh_name_opt field was primarily defined to identify the hwmod for
+the second cpu in a dual Cortex-M3/M4 IPU processor sub-system. This
+hwmod entry is no longer defined usually, but rather a single hwmod
+representing both the processors in the IPU sub-system is defined.
+A single firmware image (either in SMP-mode or a combined image for
+non-SMP mode) is used, with both the resets released together always
+as part of the device management. Any power management and recovery
+aspects require that both the processors be managed as one entity due
+to the presence of shared MMU and unicache within the IPU sub-system.
+
+The OMAP remoteproc platform data structure is eventually expected
+to be removed completely once the other dependencies with the
+mach-omap layer are met.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ include/linux/platform_data/remoteproc-omap.h | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
-> ---
->  drivers/remoteproc/omap_remoteproc.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 0524f7e0ffa4..0b80570effee 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -17,6 +17,7 @@
->  #include <linux/module.h>
->  #include <linux/err.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/remoteproc.h>
-> @@ -454,14 +455,22 @@ static int omap_rproc_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto free_rproc;
->  
-> +	ret = of_reserved_mem_device_init(&pdev->dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-> +		goto free_rproc;
-> +	}
-> +
->  	platform_set_drvdata(pdev, rproc);
->  
->  	ret = rproc_add(rproc);
->  	if (ret)
-> -		goto free_rproc;
-> +		goto release_mem;
->  
->  	return 0;
->  
-> +release_mem:
-> +	of_reserved_mem_device_release(&pdev->dev);
->  free_rproc:
->  	rproc_free(rproc);
->  	return ret;
-> @@ -473,6 +482,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
->  
->  	rproc_del(rproc);
->  	rproc_free(rproc);
-> +	of_reserved_mem_device_release(&pdev->dev);
->  
->  	return 0;
->  }
-> -- 
-> 2.17.1
-> 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+index 7e3a16097672..6bea01e199fe 100644
+--- a/include/linux/platform_data/remoteproc-omap.h
++++ b/include/linux/platform_data/remoteproc-omap.h
+@@ -2,38 +2,23 @@
+ /*
+  * Remote Processor - omap-specific bits
+  *
+- * Copyright (C) 2011 Texas Instruments, Inc.
++ * Copyright (C) 2011-2018 Texas Instruments Incorporated - http://www.ti.com/
+  * Copyright (C) 2011 Google, Inc.
+  */
+ 
+ #ifndef _PLAT_REMOTEPROC_H
+ #define _PLAT_REMOTEPROC_H
+ 
+-struct rproc_ops;
+ struct platform_device;
+ 
+ /*
+  * struct omap_rproc_pdata - omap remoteproc's platform data
+- * @name: the remoteproc's name
+- * @oh_name: omap hwmod device
+- * @oh_name_opt: optional, secondary omap hwmod device
+- * @firmware: name of firmware file to load
+- * @mbox_name: name of omap mailbox device to use with this rproc
+- * @ops: start/stop rproc handlers
+  * @device_enable: omap-specific handler for enabling a device
+  * @device_shutdown: omap-specific handler for shutting down a device
+- * @set_bootaddr: omap-specific handler for setting the rproc boot address
+  */
+ struct omap_rproc_pdata {
+-	const char *name;
+-	const char *oh_name;
+-	const char *oh_name_opt;
+-	const char *firmware;
+-	const char *mbox_name;
+-	const struct rproc_ops *ops;
+ 	int (*device_enable)(struct platform_device *pdev);
+ 	int (*device_shutdown)(struct platform_device *pdev);
+-	void (*set_bootaddr)(u32);
+ };
+ 
+ #if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+-- 
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
