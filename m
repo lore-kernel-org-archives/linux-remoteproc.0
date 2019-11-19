@@ -1,114 +1,107 @@
-Return-Path: <0101016e80791b96-58c1f2f0-312c-4a84-b536-9ad88f3d6f29-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 13/16] arm64: dts: qcom: msm8998: Update reserved memory map
-Date: Mon, 18 Nov 2019 21:44:11 +0000
-Message-ID: <0101016e80791b96-58c1f2f0-312c-4a84-b536-9ad88f3d6f29-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Date: Mon, 18 Nov 2019 21:49:04 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 2/3] dt-bindings: soc: qcom: apr: Add protection domain
+ bindings
+Message-ID: <20191119054900.GD18024@yoga>
+References: <20191118142728.30187-1-sibis@codeaurora.org>
+ <0101016e7ee9c786-fcf80f4e-9b57-4d6b-8806-9ca408e21b55-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0101016e7ee9c786-fcf80f4e-9b57-4d6b-8806-9ca408e21b55-000000@us-west-2.amazonses.com>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Update existing and add missing regions to the reserved memory map, as
-described in version 7.1
+On Mon 18 Nov 06:28 PST 2019, Sibi Sankar wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 62 ++++++++++++++++++++++++---
- 1 file changed, 55 insertions(+), 7 deletions(-)
+> Add optional "qcom,protection-domain" bindings for APR services. This
+> helps to capture the dependencies between APR services and the PD on
+> which each apr service run.
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index fc7838ea9a010..707673e3cf28a 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -28,8 +28,13 @@
- 		#size-cells = <2>;
- 		ranges;
- 
--		memory@85800000 {
--			reg = <0x0 0x85800000 0x0 0x800000>;
-+		hyp_mem: memory@85800000 {
-+			reg = <0x0 0x85800000 0x0 0x600000>;
-+			no-map;
-+		};
-+
-+		xbl_mem: memory@85e00000 {
-+			reg = <0x0 0x85e00000 0x0 0x100000>;
- 			no-map;
- 		};
- 
-@@ -38,21 +43,64 @@
- 			no-map;
- 		};
- 
--		memory@86200000 {
-+		tz_mem: memory@86200000 {
- 			reg = <0x0 0x86200000 0x0 0x2d00000>;
- 			no-map;
- 		};
- 
--		rmtfs {
-+		rmtfs_mem: memory@88f00000 {
- 			compatible = "qcom,rmtfs-mem";
--
--			size = <0x0 0x200000>;
--			alloc-ranges = <0x0 0xa0000000 0x0 0x2000000>;
-+			reg = <0x0 0x88f00000 0x0 0x200000>;
- 			no-map;
- 
- 			qcom,client-id = <1>;
- 			qcom,vmid = <15>;
- 		};
-+
-+		spss_mem: memory@8ab00000 {
-+			reg = <0x0 0x8ab00000 0x0 0x700000>;
-+			no-map;
-+		};
-+
-+		adsp_mem: memory@8b200000 {
-+			reg = <0x0 0x8b200000 0x0 0x1a00000>;
-+			no-map;
-+		};
-+
-+		mpss_mem: memory@8cc00000 {
-+			reg = <0x0 0x8cc00000 0x0 0x7000000>;
-+			no-map;
-+		};
-+
-+		venus_mem: memory@93c00000 {
-+			reg = <0x0 0x93c00000 0x0 0x500000>;
-+			no-map;
-+		};
-+
-+		mba_mem: memory@94100000 {
-+			reg = <0x0 0x94100000 0x0 0x200000>;
-+			no-map;
-+		};
-+
-+		slpi_mem: memory@94300000 {
-+			reg = <0x0 0x94300000 0x0 0xf00000>;
-+			no-map;
-+		};
-+
-+		ipa_fw_mem: memory@95200000 {
-+			reg = <0x0 0x95200000 0x0 0x10000>;
-+			no-map;
-+		};
-+
-+		ipa_gsi_mem: memory@95210000 {
-+			reg = <0x0 0x95210000 0x0 0x5000>;
-+			no-map;
-+		};
-+
-+		gpu_mem: memory@95215000 {
-+			reg = <0x0 0x95215000 0x0 0x1000>;
-+			no-map;
-+		};
- 	};
- 
- 	clocks {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> index db501269f47b8..f87c0b2a48de4 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> @@ -45,6 +45,12 @@ by the individual bindings for the specific service
+>  			12 - Ultrasound stream manager.
+>  			13 - Listen stream manager.
+>  
+> +- qcom,protection-domain
+> +	Usage: optional
+> +	Value type: <stringlist>
+> +	Definition: Must list the protection domain service name and path
+> +		    that the particular apr service has a dependency on.
+> +
+>  = EXAMPLE
+>  The following example represents a QDSP based sound card on a MSM8996 device
+>  which uses apr as communication between Apps and QDSP.
+> @@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
+>  			...
+>  		};
+>  	};
+> +
+> += EXAMPLE 2
+> +The following example represents a QDSP based sound card on SDM845 device.
+> +Here the apr services are dependent on "avs/audio" service running on AUDIO
+> +Protection Domain hosted on ADSP remote processor.
+> +
+> +	apr {
+> +		compatible = "qcom,apr-v2";
+> +		qcom,glink-channels = "apr_audio_svc";
+> +		qcom,apr-domain = <APR_DOMAIN_ADSP>;
+> +
+> +		q6core {
+> +			compatible = "qcom,q6core";
+> +			reg = <APR_SVC_ADSP_CORE>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +		};
+> +
+> +		q6afe: q6afe {
+> +			compatible = "qcom,q6afe";
+> +			reg = <APR_SVC_AFE>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +			q6afedai: dais {
+> +				compatible = "qcom,q6afe-dais";
+> +				#sound-dai-cells = <1>;
+> +
+> +				qi2s@22 {
+> +					reg = <22>;
+> +					qcom,sd-lines = <3>;
+> +				};
+> +			};
+> +		};
+> +
+> +		q6asm: q6asm {
+> +			compatible = "qcom,q6asm";
+> +			reg = <APR_SVC_ASM>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +			q6asmdai: dais {
+> +				compatible = "qcom,q6asm-dais";
+> +				#sound-dai-cells = <1>;
+> +				iommus = <&apps_smmu 0x1821 0x0>;
+> +			};
+> +		};
+> +
+> +		q6adm: q6adm {
+> +			compatible = "qcom,q6adm";
+> +			reg = <APR_SVC_ADM>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +			q6routing: routing {
+> +				compatible = "qcom,q6adm-routing";
+> +				#sound-dai-cells = <0>;
+> +			};
+> +		};
+> +	};
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
