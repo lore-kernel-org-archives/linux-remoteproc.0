@@ -1,14 +1,9 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-11.smtp-out.us-west-2.amazonses.com ([54.240.27.11]:42210
-        "EHLO a27-11.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725798AbfKSKSl (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Nov 2019 05:18:41 -0500
+Return-Path: <0101016e832bd54d-453473ee-c0fa-44f5-a873-55b97dff4a9a-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Tue, 19 Nov 2019 10:18:39 +0000
+Date: Tue, 19 Nov 2019 10:18:38 +0000
 From: sibis@codeaurora.org
 Subject: Re: [PATCH 1/3] soc: qcom: Introduce Protection Domain Restart
  helpers
@@ -16,8 +11,7 @@ In-Reply-To: <20191119064026.GE18024@yoga>
 References: <20191118142728.30187-1-sibis@codeaurora.org>
  <0101016e7ee9be5e-1d6bbe06-4bab-434d-9040-ebfa3918b213-000000@us-west-2.amazonses.com>
  <20191119064026.GE18024@yoga>
-Message-ID: <0101016e832bd805-a23a4f93-58ea-4a5f-94f7-d2d1d32b9d25-000000@us-west-2.amazonses.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
+Message-ID: <0101016e832bd54d-453473ee-c0fa-44f5-a873-55b97dff4a9a-000000@us-west-2.amazonses.com>
 To: Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc: srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
