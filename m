@@ -1,215 +1,503 @@
-Return-Path: <0101016e7ee9d8b5-9759d0ba-4acf-4fc4-a863-fac9c738397f-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 3/3] soc: qcom: apr: Add avs/audio tracking functionality
-Date: Mon, 18 Nov 2019 14:28:05 +0000
-Message-ID: <0101016e7ee9d8b5-9759d0ba-4acf-4fc4-a863-fac9c738397f-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118142728.30187-1-sibis@codeaurora.org>
-References: <20191118142728.30187-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv2 13/15] remoteproc/omap: add support for runtime auto-suspend/resume
+Date: Tue, 19 Nov 2019 16:16:43 +0200
+Message-ID: <20191119141645.19777-14-t-kristo@ti.com>
+In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
+References: <20191119141645.19777-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
-Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use PDR helper functions to track the protection domains that the apr
-services are dependent upon on SDM845 SoC, specifically the "avs/audio"
-service running on ADSP Q6.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+This patch enhances the PM support in the OMAP remoteproc driver to
+support the runtime auto-suspend. A remoteproc may not be required to
+be running all the time, and typically will need to be active only
+during certain usecases. As such, to save power, it should be turned
+off during potential long periods of inactivity between usecases.
+This suspend and resume of the device is a relatively heavy process
+in terms of latencies, so a remoteproc should be suspended only after
+a certain period of prolonged inactivity. The OMAP remoteproc driver
+leverages the runtime pm framework's auto_suspend feature to accomplish
+this functionality. This feature is automatically enabled when a remote
+processor has successfully booted. The 'autosuspend_delay_ms' for each
+device dictates the inactivity period/time to wait for before
+suspending the device.
+
+The runtime auto-suspend design relies on marking the last busy time
+on every communication (virtqueue kick) to and from the remote processor.
+When there has been no activity for 'autosuspend_delay_ms' time, the
+runtime PM framework invokes the driver's runtime pm suspend callback
+to suspend the device. The remote processor will be woken up on the
+initiation of the next communication message through the runtime pm
+resume callback. The current auto-suspend design also allows a remote
+processor to deny a auto-suspend attempt, if it wishes to, by sending a
+NACK response to the initial suspend request message sent to the remote
+processor as part of the suspend process. The auto-suspend request is
+also only attempted if the remote processor is idled and in standby at
+the time of inactivity timer expiry. This choice is made to avoid
+unnecessary messaging, and the auto-suspend is simply rescheduled to
+be attempted again after a further lapse of autosuspend_delay_ms.
+
+The runtime pm callbacks functionality in this patch reuses most of the
+core logic from the suspend/resume support code, and make use of an
+additional auto_suspend flag to differentiate the logic in common code
+from system suspend. The system suspend/resume sequences are also updated
+to reflect the proper pm_runtime statuses, and also to really perform a
+suspend/resume only if the remoteproc has not been auto-suspended at the
+time of request. The remote processor is left in suspended state on a
+system resume if it has been auto-suspended before, and will be woken up
+only when a usecase needs to run. The other significant change in this
+patch is to reset the remoteproc device's pm_domain so as to avoid
+conflicts with the ordering sequences in the device pm_domain's runtime
+callbacks and the reset management and clock management implemented
+within the runtime callbacks in the driver.
+
+The OMAP remoteproc driver currently uses a default value of 10 seconds
+for all OMAP remoteprocs, and a different value can be chosen either by
+choosing a positive value for the 'autosuspend_delay' in the device's
+omap_rproc_fw_data in the driver match data or by updating the
+'autosuspend_delay_ms' field at runtime through the sysfs interface.
+    Eg: To use 25 seconds for IPU2 on DRA7xx,
+      echo 25000 > /sys/bus/platform/devices/55020000.ipu/power/autosuspend_delay_ms
+
+The runtime suspend feature can also be similarly enabled or disabled by
+writing 'auto' or 'on' to the device's 'control' power field. The default
+is enabled.
+    Eg: To disable auto-suspend for IPU2 on DRA7xx SoC,
+      echo on > /sys/bus/platform/devices/55020000.ipu/power/control
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: converted to use ti-sysc instead of hwmod]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/soc/qcom/Kconfig     |   1 +
- drivers/soc/qcom/apr.c       | 100 +++++++++++++++++++++++++++++++----
- include/linux/soc/qcom/apr.h |   1 +
- 3 files changed, 91 insertions(+), 11 deletions(-)
+v2:
+ - squashed in the separate error handling patch
+ - remove the of_device_is_compatible checks from autosuspend delay get
+   logic
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 5c4e76837f59b..cacfed945b275 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -202,6 +202,7 @@ config QCOM_APR
- 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
-+	select QCOM_PDR_HELPERS
- 	help
-           Enable APR IPC protocol support between
-           application processor and QDSP6. APR is
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-index 4fcc32420c474..193cee77a9a09 100644
---- a/drivers/soc/qcom/apr.c
-+++ b/drivers/soc/qcom/apr.c
-@@ -11,6 +11,7 @@
- #include <linux/workqueue.h>
+ drivers/remoteproc/omap_remoteproc.c | 220 ++++++++++++++++++++++++++-
+ 1 file changed, 214 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 0cf96f8024f8..81642bf30423 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -20,6 +20,7 @@
  #include <linux/of_device.h>
- #include <linux/soc/qcom/apr.h>
-+#include <linux/soc/qcom/pdr.h>
- #include <linux/rpmsg.h>
- #include <linux/of.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/remoteproc.h>
+ #include <linux/mailbox_client.h>
+@@ -37,6 +38,9 @@
+ #include "omap_remoteproc.h"
+ #include "remoteproc_internal.h"
  
-@@ -21,6 +22,7 @@ struct apr {
- 	spinlock_t rx_lock;
- 	struct idr svcs_idr;
- 	int dest_domain_id;
-+	struct pdr_handle pdr;
- 	struct workqueue_struct *rxwq;
- 	struct work_struct rx_work;
- 	struct list_head rx_list;
-@@ -289,6 +291,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 		  id->svc_id + 1, GFP_ATOMIC);
- 	spin_unlock(&apr->svcs_lock);
- 
-+	of_property_read_string_index(np, "qcom,protection-domain",
-+				      1, &adev->service_path);
++/* default auto-suspend delay (ms) */
++#define DEFAULT_AUTOSUSPEND_DELAY		10000
 +
- 	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
+ /**
+  * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
+  * @syscon: regmap handle for the system control configuration module
+@@ -84,6 +88,8 @@ struct omap_rproc_timer {
+  * @num_mems: number of internal memory regions
+  * @num_timers: number of rproc timer(s)
+  * @timers: timer(s) info used by rproc
++ * @autosuspend_delay: auto-suspend delay value to be used for runtime pm
++ * @need_resume: if true a resume is needed in the system resume callback
+  * @rproc: rproc handle
+  * @reset: reset handle
+  * @pm_comp: completion primitive to sync for suspend response
+@@ -98,6 +104,8 @@ struct omap_rproc {
+ 	int num_mems;
+ 	int num_timers;
+ 	struct omap_rproc_timer *timers;
++	int autosuspend_delay;
++	bool need_resume;
+ 	struct rproc *rproc;
+ 	struct reset_control *reset;
+ 	struct completion pm_comp;
+@@ -112,6 +120,7 @@ struct omap_rproc {
+  * @boot_reg_shift: bit shift for the boot register mask
+  * @mem_names: memory names for this remote processor
+  * @dev_addrs: device addresses corresponding to the memory names
++ * @autosuspend_delay: custom auto-suspend delay value in milliseconds
+  */
+ struct omap_rproc_dev_data {
+ 	const char *device_name;
+@@ -119,6 +128,7 @@ struct omap_rproc_dev_data {
+ 	int boot_reg_shift;
+ 	const char * const *mem_names;
+ 	const u32 *dev_addrs;
++	int autosuspend_delay;
+ };
  
- 	ret = device_register(&adev->dev);
-@@ -300,14 +305,56 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 	return ret;
+ /**
+@@ -385,11 +395,23 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+ 	struct device *dev = rproc->dev.parent;
+ 	int ret;
+ 
++	/* wake up the rproc before kicking it */
++	ret = pm_runtime_get_sync(dev);
++	if (WARN_ON(ret < 0)) {
++		dev_err(dev, "pm_runtime_get_sync() failed during kick, ret = %d\n",
++			ret);
++		pm_runtime_put_noidle(dev);
++		return;
++	}
++
+ 	/* send the index of the triggered virtqueue in the mailbox payload */
+ 	ret = mbox_send_message(oproc->mbox, (void *)vqid);
+ 	if (ret < 0)
+ 		dev_err(dev, "failed to send mailbox message, status = %d\n",
+ 			ret);
++
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
  }
  
--static void of_register_apr_devices(struct device *dev)
-+static void of_apr_add_pd_lookups(struct device *dev)
-+{
-+	const char *service_name, *service_path;
-+	struct apr *apr = dev_get_drvdata(dev);
-+	struct device_node *node;
-+	int ret;
-+
-+	for_each_child_of_node(dev->of_node, node) {
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    0, &service_name);
-+		if (ret < 0)
-+			continue;
-+
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (ret < 0)
-+			continue;
-+
-+		ret = pdr_add_lookup(&apr->pdr, service_name, service_path);
-+		if (ret && ret != -EALREADY)
-+			dev_err(dev, "pdr add lookup failed: %d\n", ret);
-+	}
-+}
-+
-+static void of_register_apr_devices(struct device *dev, const char *svc_path)
- {
- 	struct apr *apr = dev_get_drvdata(dev);
- 	struct device_node *node;
-+	const char *service_path;
-+	int ret;
- 
- 	for_each_child_of_node(dev->of_node, node) {
- 		struct apr_device_id id = { {0} };
- 
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (svc_path) {
-+			/* skip APR services that are PD independent */
-+			if (ret)
-+				continue;
-+
-+			/* skip APR services whose PD paths don't match */
-+			if (strcmp(service_path, svc_path))
-+				continue;
-+		} else {
-+			/* skip APR services whose PD lookups are registered*/
-+			if (ret == 0)
-+				continue;
-+		}
-+
- 		if (of_property_read_u32(node, "reg", &id.svc_id))
- 			continue;
- 
-@@ -318,6 +365,37 @@ static void of_register_apr_devices(struct device *dev)
+ /**
+@@ -474,6 +496,19 @@ static int omap_rproc_start(struct rproc *rproc)
+ 		goto put_mbox;
  	}
- }
  
-+static int apr_remove_device(struct device *dev, void *svc_path)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
++	/*
++	 * remote processor is up, so update the runtime pm status and
++	 * enable the auto-suspend. The device usage count is incremented
++	 * manually for balancing it for auto-suspend
++	 */
++	pm_runtime_set_active(dev);
++	pm_runtime_set_autosuspend_delay(dev, oproc->autosuspend_delay);
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_get(dev);
++	pm_runtime_enable(dev);
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
 +
-+	if (svc_path) {
-+		if (!strcmp(adev->service_path, (char *)svc_path))
-+			device_unregister(&adev->dev);
-+	} else {
-+		device_unregister(&adev->dev);
-+	}
-+
-+	return 0;
-+}
-+
-+static int apr_pd_status(struct pdr_handle *pdr, struct pdr_service *pds)
-+{
-+	struct apr *apr = container_of(pdr, struct apr, pdr);
-+
-+	switch (pds->state) {
-+	case SERVREG_SERVICE_STATE_UP:
-+		of_register_apr_devices(apr->dev, pds->service_path);
-+		break;
-+	case SERVREG_SERVICE_STATE_DOWN:
-+		device_for_each_child(apr->dev, pds->service_path,
-+				      apr_remove_device);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
- static int apr_probe(struct rpmsg_device *rpdev)
+ 	reset_control_deassert(oproc->reset);
+ 
+ 	return 0;
+@@ -486,9 +521,26 @@ static int omap_rproc_start(struct rproc *rproc)
+ /* power off the remote processor */
+ static int omap_rproc_stop(struct rproc *rproc)
  {
- 	struct device *dev = &rpdev->dev;
-@@ -343,20 +421,19 @@ static int apr_probe(struct rpmsg_device *rpdev)
- 		return -ENOMEM;
- 	}
- 	INIT_WORK(&apr->rx_work, apr_rxwq);
-+
-+	ret = pdr_handle_init(&apr->pdr, apr_pd_status);
-+	if (ret) {
-+		dev_err(dev, "Failed to init PDR handle\n");
++	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	int ret;
+ 
++	/*
++	 * cancel any possible scheduled runtime suspend by incrementing
++	 * the device usage count, and resuming the device. The remoteproc
++	 * also needs to be woken up if suspended, to avoid the remoteproc
++	 * OS to continue to remember any context that it has saved, and
++	 * avoid potential issues in misindentifying a subsequent device
++	 * reboot as a power restore boot
++	 */
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0) {
++		pm_runtime_put_noidle(dev);
 +		return ret;
 +	}
 +
- 	INIT_LIST_HEAD(&apr->rx_list);
- 	spin_lock_init(&apr->rx_lock);
- 	spin_lock_init(&apr->svcs_lock);
- 	idr_init(&apr->svcs_idr);
--	of_register_apr_devices(dev);
--
--	return 0;
--}
--
--static int apr_remove_device(struct device *dev, void *null)
--{
--	struct apr_device *adev = to_apr_device(dev);
--
--	device_unregister(&adev->dev);
-+	of_apr_add_pd_lookups(dev);
-+	of_register_apr_devices(dev, NULL);
++	pm_runtime_put_sync(dev);
++
+ 	reset_control_assert(oproc->reset);
  
+ 	ret = omap_rproc_disable_timers(rproc, true);
+@@ -497,6 +549,15 @@ static int omap_rproc_stop(struct rproc *rproc)
+ 
+ 	mbox_free_channel(oproc->mbox);
+ 
++	/*
++	 * update the runtime pm states and status now that the remoteproc
++	 * has stopped
++	 */
++	pm_runtime_disable(dev);
++	pm_runtime_dont_use_autosuspend(dev);
++	pm_runtime_put_noidle(dev);
++	pm_runtime_set_suspended(dev);
++
  	return 0;
  }
-@@ -365,6 +442,7 @@ static void apr_remove(struct rpmsg_device *rpdev)
- {
- 	struct apr *apr = dev_get_drvdata(&rpdev->dev);
  
-+	pdr_handle_release(&apr->pdr);
- 	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
- 	flush_workqueue(apr->rxwq);
- 	destroy_workqueue(apr->rxwq);
-diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
-index c5d52e2cb275f..7f0bc3cf4d610 100644
---- a/include/linux/soc/qcom/apr.h
-+++ b/include/linux/soc/qcom/apr.h
-@@ -85,6 +85,7 @@ struct apr_device {
- 	uint16_t	domain_id;
- 	uint32_t	version;
- 	char name[APR_NAME_SIZE];
-+	const char *service_path;
- 	spinlock_t	lock;
- 	struct list_head node;
+@@ -553,17 +614,19 @@ static bool _is_rproc_in_standby(struct omap_rproc *oproc)
+ 
+ /* 1 sec is long enough time to let the remoteproc side suspend the device */
+ #define DEF_SUSPEND_TIMEOUT 1000
+-static int _omap_rproc_suspend(struct rproc *rproc)
++static int _omap_rproc_suspend(struct rproc *rproc, bool auto_suspend)
+ {
+ 	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	unsigned long to = msecs_to_jiffies(DEF_SUSPEND_TIMEOUT);
+ 	unsigned long ta = jiffies + to;
++	u32 suspend_msg = auto_suspend ?
++				RP_MBOX_SUSPEND_AUTO : RP_MBOX_SUSPEND_SYSTEM;
+ 	int ret;
+ 
+ 	reinit_completion(&oproc->pm_comp);
+ 	oproc->suspend_acked = false;
+-	ret = mbox_send_message(oproc->mbox, (void *)RP_MBOX_SUSPEND_SYSTEM);
++	ret = mbox_send_message(oproc->mbox, (void *)suspend_msg);
+ 	if (ret < 0) {
+ 		dev_err(dev, "PM mbox_send_message failed: %d\n", ret);
+ 		return ret;
+@@ -603,25 +666,55 @@ static int _omap_rproc_suspend(struct rproc *rproc)
+ 		goto enable_device;
+ 	}
+ 
++	/*
++	 * IOMMUs would have to be disabled specifically for runtime suspend.
++	 * They are handled automatically through System PM callbacks for
++	 * regular system suspend
++	 */
++	if (auto_suspend) {
++		ret = omap_iommu_domain_deactivate(rproc->domain);
++		if (ret) {
++			dev_err(dev, "iommu domain deactivate failed %d\n",
++				ret);
++			goto enable_timers;
++		}
++	}
++
+ 	return 0;
++enable_timers:
++	/* ignore errors on re-enabling code */
++	omap_rproc_enable_timers(rproc, false);
+ 
+ enable_device:
+ 	reset_control_deassert(oproc->reset);
+ 	return ret;
+ }
+ 
+-static int _omap_rproc_resume(struct rproc *rproc)
++static int _omap_rproc_resume(struct rproc *rproc, bool auto_suspend)
+ {
+ 	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	int ret;
+ 
++	/*
++	 * IOMMUs would have to be enabled specifically for runtime resume.
++	 * They would have been already enabled automatically through System
++	 * PM callbacks for regular system resume
++	 */
++	if (auto_suspend) {
++		ret = omap_iommu_domain_activate(rproc->domain);
++		if (ret) {
++			dev_err(dev, "omap_iommu activate failed %d\n", ret);
++			goto out;
++		}
++	}
++
+ 	/* boot address could be lost after suspend, so restore it */
+ 	if (oproc->boot_data) {
+ 		ret = omap_rproc_write_dsp_boot_addr(rproc);
+ 		if (ret) {
+ 			dev_err(dev, "boot address restore failed %d\n", ret);
+-			goto out;
++			goto suspend_iommu;
+ 		}
+ 	}
+ 
+@@ -634,6 +727,12 @@ static int _omap_rproc_resume(struct rproc *rproc)
+ 
+ 	reset_control_deassert(oproc->reset);
+ 
++	return 0;
++
++suspend_iommu:
++	if (auto_suspend)
++		omap_iommu_domain_deactivate(rproc->domain);
++
+ out:
+ 	return ret;
+ }
+@@ -642,6 +741,7 @@ static int __maybe_unused omap_rproc_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct omap_rproc *oproc = rproc->priv;
+ 	int ret = 0;
+ 
+ 	mutex_lock(&rproc->lock);
+@@ -656,13 +756,25 @@ static int __maybe_unused omap_rproc_suspend(struct device *dev)
+ 		goto out;
+ 	}
+ 
+-	ret = _omap_rproc_suspend(rproc);
++	ret = _omap_rproc_suspend(rproc, false);
+ 	if (ret) {
+ 		dev_err(dev, "suspend failed %d\n", ret);
+ 		goto out;
+ 	}
+ 
++	/*
++	 * remoteproc is running at the time of system suspend, so remember
++	 * it so as to wake it up during system resume
++	 */
++	oproc->need_resume = 1;
+ 	rproc->state = RPROC_SUSPENDED;
++
++	/*
++	 * update the runtime pm status to be suspended, without decrementing
++	 * the device usage count
++	 */
++	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
+@@ -672,6 +784,7 @@ static int __maybe_unused omap_rproc_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct omap_rproc *oproc = rproc->priv;
+ 	int ret = 0;
+ 
+ 	mutex_lock(&rproc->lock);
+@@ -683,17 +796,91 @@ static int __maybe_unused omap_rproc_resume(struct device *dev)
+ 		goto out;
+ 	}
+ 
+-	ret = _omap_rproc_resume(rproc);
++	/*
++	 * remoteproc was auto-suspended at the time of system suspend,
++	 * so no need to wake-up the processor (leave it in suspended
++	 * state, will be woken up during a subsequent runtime_resume)
++	 */
++	if (!oproc->need_resume)
++		goto out;
++
++	ret = _omap_rproc_resume(rproc, false);
+ 	if (ret) {
+ 		dev_err(dev, "resume failed %d\n", ret);
+ 		goto out;
+ 	}
++	oproc->need_resume = false;
+ 
+ 	rproc->state = RPROC_RUNNING;
++
++	/*
++	 * update the runtime pm status to be active, without incrementing
++	 * the device usage count
++	 */
++	pm_runtime_set_active(dev);
++	pm_runtime_enable(dev);
++	pm_runtime_mark_last_busy(dev);
+ out:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
+ }
++
++static int omap_rproc_runtime_suspend(struct device *dev)
++{
++	struct rproc *rproc = dev_get_drvdata(dev);
++	struct omap_rproc *oproc = rproc->priv;
++	int ret;
++
++	if (rproc->state == RPROC_CRASHED) {
++		dev_dbg(dev, "rproc cannot be runtime suspended when crashed!\n");
++		return -EBUSY;
++	}
++
++	if (WARN_ON(rproc->state != RPROC_RUNNING)) {
++		dev_err(dev, "rproc cannot be runtime suspended when not running!\n");
++		return -EBUSY;
++	}
++
++	/*
++	 * do not even attempt suspend if the remote processor is not
++	 * idled for runtime auto-suspend
++	 */
++	if (!_is_rproc_in_standby(oproc)) {
++		ret = -EBUSY;
++		goto abort;
++	}
++
++	ret = _omap_rproc_suspend(rproc, true);
++	if (ret)
++		goto abort;
++
++	rproc->state = RPROC_SUSPENDED;
++	return 0;
++
++abort:
++	pm_runtime_mark_last_busy(dev);
++	return ret;
++}
++
++static int omap_rproc_runtime_resume(struct device *dev)
++{
++	struct rproc *rproc = dev_get_drvdata(dev);
++	int ret;
++
++	if (WARN_ON(rproc->state != RPROC_SUSPENDED)) {
++		dev_err(dev, "rproc cannot be runtime resumed if not suspended!\n");
++		return -EBUSY;
++	}
++
++	ret = _omap_rproc_resume(rproc, true);
++	if (ret) {
++		dev_err(dev, "runtime resume failed %d\n", ret);
++		return ret;
++	}
++
++	rproc->state = RPROC_RUNNING;
++	return 0;
++}
+ #endif /* CONFIG_PM */
+ 
+ static const char * const ipu_mem_names[] = {
+@@ -779,6 +966,20 @@ static const struct of_device_id omap_rproc_of_match[] = {
  };
+ MODULE_DEVICE_TABLE(of, omap_rproc_of_match);
+ 
++static int omap_rproc_get_autosuspend_delay(struct platform_device *pdev)
++{
++	const struct omap_rproc_dev_data *data;
++	int delay;
++
++	data = of_device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
++
++	delay = data->autosuspend_delay;
++
++	return (delay > 0) ? delay : DEFAULT_AUTOSUSPEND_DELAY;
++}
++
+ static const char *omap_rproc_get_firmware(struct platform_device *pdev)
+ {
+ 	const char *fw_name;
+@@ -954,6 +1155,11 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	init_completion(&oproc->pm_comp);
++	oproc->autosuspend_delay = omap_rproc_get_autosuspend_delay(pdev);
++	if (oproc->autosuspend_delay < 0) {
++		ret = oproc->autosuspend_delay;
++		goto free_rproc;
++	}
+ 
+ 	oproc->fck = devm_clk_get(&pdev->dev, 0);
+ 	if (IS_ERR(oproc->fck)) {
+@@ -996,6 +1202,8 @@ static int omap_rproc_remove(struct platform_device *pdev)
+ 
+ static const struct dev_pm_ops omap_rproc_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(omap_rproc_suspend, omap_rproc_resume)
++	SET_RUNTIME_PM_OPS(omap_rproc_runtime_suspend,
++			   omap_rproc_runtime_resume, NULL)
+ };
+ 
+ static struct platform_driver omap_rproc_driver = {
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
