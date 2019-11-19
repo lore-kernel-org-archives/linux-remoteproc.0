@@ -1,23 +1,17 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-10.smtp-out.us-west-2.amazonses.com ([54.240.27.10]:34286
-        "EHLO a27-10.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727505AbfKSPZs (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Nov 2019 10:25:48 -0500
+Return-Path: <0101016e844505fc-d9fc6291-d0bd-4e5d-82d4-681a80188ad8-000000@us-west-2.amazonses.com>
 Subject: Re: [PATCH 01/16] remoteproc: q6v5-mss: fixup MSM8998 MSS out of
  reset sequence
 References: <20191118214250.14002-1-sibis@codeaurora.org>
  <0101016e80782dd7-2617455b-7d73-4e68-8a9a-b63c29e9ad76-000000@us-west-2.amazonses.com>
  <CAOCk7Nou94bxk_48JArrXhQw2KR+3bKanLe+hb2=d7_j6y3VbQ@mail.gmail.com>
 From: Sibi Sankar <sibis@codeaurora.org>
-Message-ID: <0101016e844507bb-3be95e27-404d-48bb-a251-e5edf8731d67-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e844505fc-d9fc6291-d0bd-4e5d-82d4-681a80188ad8-000000@us-west-2.amazonses.com>
 Date: Tue, 19 Nov 2019 15:25:46 +0000
 MIME-Version: 1.0
 In-Reply-To: <CAOCk7Nou94bxk_48JArrXhQw2KR+3bKanLe+hb2=d7_j6y3VbQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, p.zabel@pengutronix.de, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, DTML <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
