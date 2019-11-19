@@ -1,62 +1,95 @@
-Date: Fri, 8 Nov 2019 17:21:08 -0800
+Date: Tue, 19 Nov 2019 15:17:43 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH] remoteproc: fix argument 2 of rproc_mem_entry_init
-Message-ID: <20191109012105.GD5662@tuxbook-pro>
-References: <20191017115952.13935-1-ben.dooks@codethink.co.uk>
+Subject: Re: [PATCH 1/3] soc: qcom: Introduce Protection Domain Restart
+ helpers
+Message-ID: <20191119231740.GJ18024@yoga>
+References: <20191118142728.30187-1-sibis@codeaurora.org>
+ <0101016e7ee9be5e-1d6bbe06-4bab-434d-9040-ebfa3918b213-000000@us-west-2.amazonses.com>
+ <20191119064026.GE18024@yoga>
+ <0101016e832bd54d-453473ee-c0fa-44f5-a873-55b97dff4a9a-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191017115952.13935-1-ben.dooks@codethink.co.uk>
-To: "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <0101016e832bd54d-453473ee-c0fa-44f5-a873-55b97dff4a9a-000000@us-west-2.amazonses.com>
+To: sibis@codeaurora.org
+Cc: srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 17 Oct 04:59 PDT 2019, Ben Dooks (Codethink) wrote:
+On Tue 19 Nov 02:18 PST 2019, sibis@codeaurora.org wrote:
 
-> The rproc_mem_entry_init() call takes a pointer to a vm
-> as the second argument. The code is currently using a
-> plain 0 as "NULL". Change to using NULL to fix the
-> following sparse warnings:
+> Hey Bjorn,
+> Thanks for taking the time to
+> review the series :)
 > 
-> drivers/remoteproc/remoteproc_core.c:339:49: warning: Using plain integer as NULL pointer
-> drivers/remoteproc/remoteproc_core.c:916:46: warning: Using plain integer as NULL pointer
+> On 2019-11-19 12:10, Bjorn Andersson wrote:
+> > On Mon 18 Nov 06:27 PST 2019, Sibi Sankar wrote:
+> > > diff --git a/drivers/soc/qcom/pdr_interface.c
+> > > b/drivers/soc/qcom/pdr_interface.c
+> > [..]
+> > > +static void pdr_indack_work(struct work_struct *work)
+> > > +{
+> > > +	struct pdr_handle *pdr = container_of(work, struct pdr_handle,
+> > > +					      indack_work);
+> > > +	struct pdr_list_node *ind, *tmp;
+> > > +	struct pdr_service *pds;
+> > > +
+> > > +	list_for_each_entry_safe(ind, tmp, &pdr->indack_list, node) {
+> > > +		pds = ind->pds;
+> > > +		pdr_send_indack_msg(pdr, pds, ind->transaction_id);
+> > 
+> > So when we et a ind_cb with the new status, we need to send an ack
+> > request, which will result in a response, just to confirm that we got
+> > the event?
+> > 
+> > Seems like we should fix the qmi code to make it possible to send a
+> > request from the indication handler and then we could simply ignore the
+> 
+> yeah maybe having a provision to send custom requests back on
+> indication would be the way to go. Not all indication need to be
+> services with requests.
 > 
 
-Applied, thanks
+Let's put this on the todo list.
 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/remoteproc/remoteproc_core.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> > response. Or do we need to not pdr->status() until we get the response
+> > for some reason?
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 3c5fbbbfb0f1..943af836fa0f 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -336,7 +336,8 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  			return -ENOMEM;
->  	} else {
->  		/* Register carveout in in list */
-> -		mem = rproc_mem_entry_init(dev, 0, 0, size, rsc->vring[i].da,
-> +		mem = rproc_mem_entry_init(dev, NULL, 0,
-> +					   size, rsc->vring[i].da,
->  					   rproc_alloc_carveout,
->  					   rproc_release_carveout,
->  					   "vdev%dvring%d",
-> @@ -913,7 +914,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	}
->  
->  	/* Register carveout in in list */
-> -	carveout = rproc_mem_entry_init(dev, 0, 0, rsc->len, rsc->da,
-> +	carveout = rproc_mem_entry_init(dev, NULL, 0, rsc->len, rsc->da,
->  					rproc_alloc_carveout,
->  					rproc_release_carveout, rsc->name);
->  	if (!carveout) {
-> -- 
-> 2.23.0
+> adsp waits on the ack response for a fixed duration and seems to throw
+> a fatal err is the ack is not serviced. Hence holding back pd->status
+> till we service the ack here.
 > 
+
+You mean to ensure that someone sleeping in pd->status() doesn't delay
+that until its too late?
+
+[..]
+> > > +int pdr_handle_init(struct pdr_handle *pdr,
+> > > +		    int (*status)(struct pdr_handle *pdr,
+> > > +				  struct pdr_service *pds))
+> > > +{
+> > [..]
+> > > +	pdr->servreg_wq = create_singlethread_workqueue("pdr_servreg_wq");
+> > > +	if (!pdr->servreg_wq)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	pdr->indack_wq = alloc_ordered_workqueue("pdr_indack_wq",
+> > > WQ_HIGHPRI);
+> > 
+> > The two workqueues means that we should be able to call pdr->status()
+> > rom two concurrent contexts, I don't think our clients will expect that.
+> > 
+> 
+> would creating another ordered wq to relay all the pd->status make
+> sense?
+> 
+
+I would prefer less work queues ;) But I presume you split out the
+indack_wq in order to improve the likelihood of meeting the latency
+requirements of the remote side.
+
+Perhaps just wrap the status() calls with a status-mutex and then remove
+that by reworking the QMI interface to allow us to remove the indack
+work?
+
+Regards,
+Bjorn
