@@ -1,65 +1,112 @@
-Return-Path: <0101016e8078df31-38bc803b-bc34-400c-9ba5-78bccb7ecea7-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 10/16] dt-bindings: remoteproc: qcom: SM8150 Add ADSP, CDSP, MPSS and SLPI support
-Date: Mon, 18 Nov 2019 21:43:55 +0000
-Message-ID: <0101016e8078df31-38bc803b-bc34-400c-9ba5-78bccb7ecea7-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Date: Mon, 18 Nov 2019 22:53:28 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 3/3] soc: qcom: apr: Add avs/audio tracking functionality
+Message-ID: <20191119065325.GF18024@yoga>
+References: <20191118142728.30187-1-sibis@codeaurora.org>
+ <0101016e7ee9d8b5-9759d0ba-4acf-4fc4-a863-fac9c738397f-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0101016e7ee9d8b5-9759d0ba-4acf-4fc4-a863-fac9c738397f-000000@us-west-2.amazonses.com>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, rnayak@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add ADSP, CDSP, MPSS and SLPI compatibles for SM8150 SoC.
+On Mon 18 Nov 06:28 PST 2019, Sibi Sankar wrote:
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+[..]
+> +static void of_register_apr_devices(struct device *dev, const char *svc_path)
+>  {
+>  	struct apr *apr = dev_get_drvdata(dev);
+>  	struct device_node *node;
+> +	const char *service_path;
+> +	int ret;
+>  
+>  	for_each_child_of_node(dev->of_node, node) {
+>  		struct apr_device_id id = { {0} };
+>  
+> +		ret = of_property_read_string_index(node, "qcom,protection-domain",
+> +						    1, &service_path);
+> +		if (svc_path) {
+> +			/* skip APR services that are PD independent */
+> +			if (ret)
+> +				continue;
+> +
+> +			/* skip APR services whose PD paths don't match */
+> +			if (strcmp(service_path, svc_path))
+> +				continue;
+> +		} else {
+> +			/* skip APR services whose PD lookups are registered*/
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- .../devicetree/bindings/remoteproc/qcom,adsp.txt   | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Missing space before */
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index 34dc1d94a78c7..9938918b2fea3 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -17,6 +17,10 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,qcs404-wcss-pas"
- 		    "qcom,sdm845-adsp-pas"
- 		    "qcom,sdm845-cdsp-pas"
-+		    "qcom,sm8150-adsp-pas"
-+		    "qcom,sm8150-cdsp-pas"
-+		    "qcom,sm8150-mpss-pas"
-+		    "qcom,sm8150-slpi-pas"
- 
- - interrupts-extended:
- 	Usage: required
-@@ -37,8 +41,12 @@ on the Qualcomm ADSP Hexagon core.
- 	qcom,qcs404-cdsp-pas:
- 	qcom,sdm845-adsp-pas:
- 	qcom,sdm845-cdsp-pas:
-+	qcom,sm8150-adsp-pas:
-+	qcom,sm8150-cdsp-pas:
-+	qcom,sm8150-slpi-pas:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
- 	qcom,qcs404-wcss-pas:
-+	qcom,sm8150-mpss-pas:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
- 		    "shutdown-ack"
- 
-@@ -95,7 +103,13 @@ on the Qualcomm ADSP Hexagon core.
- 		    must be "mx"
- 	qcom,sdm845-adsp-pas:
- 	qcom,sdm845-cdsp-pas:
-+	qcom,sm8150-adsp-pas:
-+	qcom,sm8150-cdsp-pas:
- 		    must be "cx", "load_state"
-+	qcom,sm8150-mpss-pas:
-+		    must be "cx", "load_state", "mss"
-+	qcom,sm8150-slpi-pas:
-+		    must be "lcx", "lmx", "load_state"
- 
- - memory-region:
- 	Usage: required
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +			if (ret == 0)
+> +				continue;
+> +		}
+> +
+>  		if (of_property_read_u32(node, "reg", &id.svc_id))
+>  			continue;
+>  
+> @@ -318,6 +365,37 @@ static void of_register_apr_devices(struct device *dev)
+>  	}
+>  }
+>  
+> +static int apr_remove_device(struct device *dev, void *svc_path)
+> +{
+> +	struct apr_device *adev = to_apr_device(dev);
+> +
+> +	if (svc_path) {
+> +		if (!strcmp(adev->service_path, (char *)svc_path))
+> +			device_unregister(&adev->dev);
+> +	} else {
+> +		device_unregister(&adev->dev);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int apr_pd_status(struct pdr_handle *pdr, struct pdr_service *pds)
+
+Why is the pdr status function returning an int?
+
+> +{
+> +	struct apr *apr = container_of(pdr, struct apr, pdr);
+> +
+> +	switch (pds->state) {
+> +	case SERVREG_SERVICE_STATE_UP:
+> +		of_register_apr_devices(apr->dev, pds->service_path);
+> +		break;
+> +	case SERVREG_SERVICE_STATE_DOWN:
+> +		device_for_each_child(apr->dev, pds->service_path,
+> +				      apr_remove_device);
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+[..]
+> @@ -343,20 +421,19 @@ static int apr_probe(struct rpmsg_device *rpdev)
+>  		return -ENOMEM;
+>  	}
+>  	INIT_WORK(&apr->rx_work, apr_rxwq);
+> +
+> +	ret = pdr_handle_init(&apr->pdr, apr_pd_status);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to init PDR handle\n");
+
+You need to destroy apr->rxwq here as well.
+
+> +		return ret;
+> +	}
+> +
+>  	INIT_LIST_HEAD(&apr->rx_list);
+>  	spin_lock_init(&apr->rx_lock);
+>  	spin_lock_init(&apr->svcs_lock);
+>  	idr_init(&apr->svcs_idr);
+> -	of_register_apr_devices(dev);
+> -
+> -	return 0;
+> -}
+
+Regards,
+Bjorn
