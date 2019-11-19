@@ -1,58 +1,94 @@
-Return-Path: <0101016e8078b309-6ab39a5e-84a6-4383-960b-8dd56a4b68c3-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 08/16] dt-bindings: remoteproc: qcom: Add ADSP and SLPI support for MSM8998 SoC
-Date: Mon, 18 Nov 2019 21:43:44 +0000
-Message-ID: <0101016e8078b309-6ab39a5e-84a6-4383-960b-8dd56a4b68c3-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv2 05/15] remoteproc/omap: Add the rproc ops .da_to_va() implementation
+Date: Tue, 19 Nov 2019 16:16:35 +0200
+Message-ID: <20191119141645.19777-6-t-kristo@ti.com>
+In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
+References: <20191119141645.19777-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add ADSP and SLPI compatibles for MSM8998 SoC.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+An implementation for the rproc ops .da_to_va() has been added
+that provides the address translation between device addresses
+to kernel virtual addresses for internal RAMs present on that
+particular remote processor device. The implementation provides
+the translations based on the addresses parsed and stored during
+the probe.
+
+This ops gets invoked by the exported rproc_da_to_va() function
+and allows the remoteproc core's ELF loader to be able to load
+program data directly into the internal memories.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+v2:
+ - minor cleanups of code, fixed kerneldoc comments
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-index fea25b8b050ed..34dc1d94a78c7 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-@@ -10,6 +10,8 @@ on the Qualcomm ADSP Hexagon core.
- 		    "qcom,msm8974-adsp-pil"
- 		    "qcom,msm8996-adsp-pil"
- 		    "qcom,msm8996-slpi-pil"
-+		    "qcom,msm8998-adsp-pas"
-+		    "qcom,msm8998-slpi-pas"
- 		    "qcom,qcs404-adsp-pas"
- 		    "qcom,qcs404-cdsp-pas"
- 		    "qcom,qcs404-wcss-pas"
-@@ -29,6 +31,8 @@ on the Qualcomm ADSP Hexagon core.
- 	qcom,msm8974-adsp-pil:
- 	qcom,msm8996-adsp-pil:
- 	qcom,msm8996-slpi-pil:
-+	qcom,msm8998-adsp-pas:
-+	qcom,msm8998-slpi-pas:
- 	qcom,qcs404-adsp-pas:
- 	qcom,qcs404-cdsp-pas:
- 	qcom,sdm845-adsp-pas:
-@@ -78,9 +82,12 @@ on the Qualcomm ADSP Hexagon core.
- 	Definition: The power-domains needed depend on the compatible string:
- 	qcom,msm8974-adsp-pil:
- 	qcom,msm8996-adsp-pil:
-+	qcom,msm8998-adsp-pas:
- 		    must be "cx"
- 	qcom,msm8996-slpi-pil:
- 		    must be "ss_cx"
-+	qcom,msm8998-slpi-pas:
-+		    must be "ssc_cx"
- 	qcom,qcs404-adsp-pas:
- 		    must be "lpi_cx"
- 	qcom,qcs404-cdsp-pas:
+ drivers/remoteproc/omap_remoteproc.c | 39 ++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 844703507a74..28f14e24b389 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -232,10 +232,49 @@ static int omap_rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++/**
++ * omap_rproc_da_to_va() - internal memory translation helper
++ * @rproc: remote processor to apply the address translation for
++ * @da: device address to translate
++ * @len: length of the memory buffer
++ *
++ * Custom function implementing the rproc .da_to_va ops to provide address
++ * translation (device address to kernel virtual address) for internal RAMs
++ * present in a DSP or IPU device). The translated addresses can be used
++ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
++ * Returns the translated virtual address in kernel memory space, or NULL
++ * in failure.
++ */
++static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct omap_rproc *oproc = rproc->priv;
++	int i;
++	u32 offset;
++
++	if (len <= 0)
++		return NULL;
++
++	if (!oproc->num_mems)
++		return NULL;
++
++	for (i = 0; i < oproc->num_mems; i++) {
++		if (da >= oproc->mem[i].dev_addr && da + len <=
++		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
++			offset = da -  oproc->mem[i].dev_addr;
++			/* __force to make sparse happy with type conversion */
++			return (__force void *)(oproc->mem[i].cpu_addr +
++						offset);
++		}
++	}
++
++	return NULL;
++}
++
+ static const struct rproc_ops omap_rproc_ops = {
+ 	.start		= omap_rproc_start,
+ 	.stop		= omap_rproc_stop,
+ 	.kick		= omap_rproc_kick,
++	.da_to_va	= omap_rproc_da_to_va,
+ };
+ 
+ static const char * const ipu_mem_names[] = {
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
