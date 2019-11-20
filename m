@@ -1,9 +1,9 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <0101016e88b06344-e725e6a9-b09e-4db2-aeeb-cd2d9b66c3e5-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Wed, 20 Nov 2019 12:01:32 +0000
+Date: Wed, 20 Nov 2019 12:01:31 +0000
 From: Sibi Sankar <sibis@codeaurora.org>
 Subject: Re: [PATCH 01/16] remoteproc: q6v5-mss: fixup MSM8998 MSS out of
  reset sequence
@@ -13,8 +13,7 @@ References: <20191118214250.14002-1-sibis@codeaurora.org>
  <CAOCk7Nou94bxk_48JArrXhQw2KR+3bKanLe+hb2=d7_j6y3VbQ@mail.gmail.com>
  <0101016e844504f1-d8bd27a5-c0bf-4b0b-8301-7bd8a890be80-000000@us-west-2.amazonses.com>
  <CAOCk7NpVDNRxkPUTHbsG_WC4MrjU8_JcdgiuyYbb36RPTMrOWQ@mail.gmail.com>
-Message-ID: <0101016e88b065a2-7d2941bb-711f-460e-a7cd-84fdff7ba181-000000@us-west-2.amazonses.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <0101016e88b06344-e725e6a9-b09e-4db2-aeeb-cd2d9b66c3e5-000000@us-west-2.amazonses.com>
 To: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, p.zabel@pengutronix.de, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, DTML <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>, linux-remoteproc-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
