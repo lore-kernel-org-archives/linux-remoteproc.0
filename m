@@ -1,45 +1,96 @@
-Return-Path: <0101016e80788059-c70b217b-2f5a-4a6e-b5ed-a22e7a774552-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 05/16] remoteproc: qcom: pas: Disable interrupt on clock enable failure
-Date: Mon, 18 Nov 2019 21:43:31 +0000
-Message-ID: <0101016e80788059-c70b217b-2f5a-4a6e-b5ed-a22e7a774552-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv2 00/15] Remoteproc: updates for OMAP remoteproc support
+References: <20191119141645.19777-1-t-kristo@ti.com>
+ <CANLsYkwyLMHzKkm-6X+OgQ+khRYJshMJsxdst7+c7n+hX4nLpQ@mail.gmail.com>
+ <CANLsYkwcWDOPx_rpL5RkzsNLyw+ccPE0bNhar6xv1SZ1=R5xmA@mail.gmail.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <46a3bfb0-6bf1-b3d9-14a6-d2ed5b91c930@ti.com>
+Date: Wed, 20 Nov 2019 13:28:06 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+In-Reply-To: <CANLsYkwcWDOPx_rpL5RkzsNLyw+ccPE0bNhar6xv1SZ1=R5xmA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Disable handover smp2p interrupt on "xo" clock prepare enable failure.
+On 19/11/2019 20:07, Mathieu Poirier wrote:
+> On Tue, 19 Nov 2019 at 10:31, Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+>>
+>> On Tue, 19 Nov 2019 at 07:17, Tero Kristo <t-kristo@ti.com> wrote:
+>>>
+>>> Hi,
+>>>
+>>> This is v2 of the series [1], addressing comments from Bjorn and Rob.
+>>> Bindings patch is funnily v2.5, as I posted v2 already and wanted to
+>>> keep this somehow in sync. Individual patches contain comments about the
+>>> changes, or Reviewed-by tags provided if there are no changes.
+>>>
+>>> I also dropped the conversion patch to SPDX licensing until I can
+>>> confirm the license we want to use. Lets just keep the existing in place
+>>> until that.
+>>>
+>>> This series still depends on the reset + clock patches posted earlier,
+>>> but both of those dependencies are in linux-next now.
+>>
+>> I tried to apply your set to today's linux-next (next-20191119) but it
+>> fails at patch 13.
+> 
+> Digging further into this patch 12 is causing problem on next-20191119 (not 13):
+> 
+> mpoirier@xps15:~/work/remoteproc/kernel-review$ git apply --reject
+> 0012-remoteproc-omap-add-support-for-system-suspend-resum.patch
+> Checking patch drivers/remoteproc/omap_remoteproc.c...
+> Hunk #3 succeeded at 85 (offset -1 lines).
+> Hunk #4 succeeded at 99 (offset -1 lines).
+> Hunk #5 succeeded at 359 (offset -1 lines).
+> Hunk #6 succeeded at 544 (offset -1 lines).
+> Hunk #7 succeeded at 952 (offset -1 lines).
+> Hunk #8 succeeded at 992 (offset -2 lines).
+> Checking patch drivers/remoteproc/omap_remoteproc.h...
+> error: while searching for:
+> /*
+>   * Remote processor messaging
+>   *
+>   * Copyright (C) 2011 Texas Instruments, Inc.
+>   * Copyright (C) 2011 Google, Inc.
+>   * All rights reserved.
+>   */
+> 
+> error: patch failed: drivers/remoteproc/omap_remoteproc.h:2
+> Hunk #2 succeeded at 57 (offset 25 lines).
+> Hunk #3 succeeded at 80 (offset 25 lines).
+> Applied patch drivers/remoteproc/omap_remoteproc.c cleanly.
+> Applying patch drivers/remoteproc/omap_remoteproc.h with 1 reject...
+> Rejected hunk #1.
+> Hunk #2 applied cleanly.
+> Hunk #3 applied cleanly.
+> 
+> Your patch expects the last line of the first hunk to be '*/' but it
+> is '*' in linux-next.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Hmm right, this seems my bad. This is caused by me dropping the SPDX 
+license conversion patch from the series, if that is applied, it goes 
+cleanly.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index db4b3c4bacd77..0fdd3748398aa 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -86,7 +86,7 @@ static int adsp_start(struct rproc *rproc)
- 
- 	ret = clk_prepare_enable(adsp->xo);
- 	if (ret)
--		return ret;
-+		goto disable_irqs;
- 
- 	ret = clk_prepare_enable(adsp->aggre2_clk);
- 	if (ret)
-@@ -124,6 +124,8 @@ static int adsp_start(struct rproc *rproc)
- 	clk_disable_unprepare(adsp->aggre2_clk);
- disable_xo_clk:
- 	clk_disable_unprepare(adsp->xo);
-+disable_irqs:
-+	qcom_q6v5_unprepare(&adsp->q6v5);
- 
- 	return ret;
- }
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Simple rebase of patch 12 is going to fix that though.
+
+-Tero
+
+> 
+>>
+>> Mathieu
+>>
+>>>
+>>> -Tero
+>>>
+>>> [1] https://patchwork.kernel.org/cover/11215421/
+>>>
+>>>
+>>>
+>>> --
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
