@@ -1,168 +1,133 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V3 10/10] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-Date: Wed, 27 Nov 2019 20:42:54 +0530
-Message-Id: <1574867574-2216-11-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
-References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 20 Nov 2019 12:01:32 +0000
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH 01/16] remoteproc: q6v5-mss: fixup MSM8998 MSS out of
+ reset sequence
+In-Reply-To: <CAOCk7NpVDNRxkPUTHbsG_WC4MrjU8_JcdgiuyYbb36RPTMrOWQ@mail.gmail.com>
+References: <20191118214250.14002-1-sibis@codeaurora.org>
+ <0101016e80782dd7-2617455b-7d73-4e68-8a9a-b63c29e9ad76-000000@us-west-2.amazonses.com>
+ <CAOCk7Nou94bxk_48JArrXhQw2KR+3bKanLe+hb2=d7_j6y3VbQ@mail.gmail.com>
+ <0101016e844504f1-d8bd27a5-c0bf-4b0b-8301-7bd8a890be80-000000@us-west-2.amazonses.com>
+ <CAOCk7NpVDNRxkPUTHbsG_WC4MrjU8_JcdgiuyYbb36RPTMrOWQ@mail.gmail.com>
+Message-ID: <0101016e88b065a2-7d2941bb-711f-460e-a7cd-84fdff7ba181-000000@us-west-2.amazonses.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Jeffrey Hugo <jhugo@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, Jonathan Marek <jonathan@marek.ca>, Ohad Ben-Cohen <ohad@wizery.com>, Mark Rutland <mark.rutland@arm.com>, p.zabel@pengutronix.de, MSM <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, DTML <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>, linux-remoteproc-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Enable remoteproc WCSS PIL driver with glink
-and ssr subdevices. Also configures shared memory
-and enables smp2p and mailboxes required for IPC.
+On 2019-11-19 21:13, Jeffrey Hugo wrote:
+> On Tue, Nov 19, 2019 at 8:25 AM Sibi Sankar <sibis@codeaurora.org> 
+> wrote:
+>> 
+>> Hey Jeff,
+>> 
+>> On 11/19/19 3:24 AM, Jeffrey Hugo wrote:
+>> > On Mon, Nov 18, 2019 at 2:43 PM Sibi Sankar <sibis@codeaurora.org> wrote:
+>> >>
+>> >> Fixup the following in the MSS out of reset sequence on MSM8998:
+>> >> * skip ACC override on MSM8998.
+>> >> * wait for BHS_EN_REST_ACK to be set before setting the LDO to bypass.
+>> >> * remove "mem" clock from the active pool.
+>> >
+>> > Why any of this is necessary isn't explained.
+>> 
+>> Honestly the above two fixes didn't seem to have any impact when I
+>> tested it on MSM8998 MTP just making sure that we allign with the
+>> out of reset sequence found on msm-4.4.
+> 
+> That should be mentioned in the commit text then.
+> 
+>> 
+>> > Seems like it should be 3 separate patches.
+>> > Regarding the mem clock change, wouldn't it be an issue if we don't
+>> > vote for that?
+>> 
+>> we already proxy vote for it though.
+> 
+> Ah, so we do.  That should be mentioned in the commit text.
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 121 ++++++++++++++++++++++++++++++++++
- 1 file changed, 121 insertions(+)
+okay I'll add more details in the
+in the next-respin :)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index 6a61a63..da66533 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -10,12 +10,66 @@
- 	model = "Qualcomm Technologies, Inc. IPQ8074";
- 	compatible = "qcom,ipq8074";
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		smem_region: memory@4ab00000 {
-+			no-map;
-+			reg = <0x0 0x4ab00000 0x0 0x00100000>;
-+		};
-+
-+		q6_region: memory@4b000000 {
-+			no-map;
-+			reg = <0x0 0x4b000000 0x0 0x05f00000>;
-+		};
-+	};
-+
- 	firmware {
- 		scm {
- 			compatible = "qcom,scm-ipq8074", "qcom,scm";
- 		};
- 	};
- 
-+	tcsr_mutex: hwlock@193d000 {
-+		compatible = "qcom,tcsr-mutex";
-+		syscon = <&tcsr_mutex_regs 0 0x80>;
-+		#hwlock-cells = <1>;
-+	};
-+
-+	smem {
-+		compatible = "qcom,smem";
-+		memory-region = <&smem_region>;
-+		hwlocks = <&tcsr_mutex 0>;
-+	};
-+
-+	wcss: smp2p-wcss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <0 322 1>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			qcom,smp2p-feature-ssr-ack;
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	soc: soc {
- 		#address-cells = <0x1>;
- 		#size-cells = <0x1>;
-@@ -431,6 +485,73 @@
- 				      "axi_m_sticky";
- 			status = "disabled";
- 		};
-+
-+		tcsr_q6: syscon@1945000 {
-+			compatible = "syscon";
-+			reg = <0x01945000 0xe000>;
-+		};
-+
-+		tcsr_mutex_regs: syscon@193d000 {
-+			compatible = "syscon";
-+			reg = <0x01905000 0x8000>;
-+		};
-+
-+		apcs_glb: mailbox@b111000 {
-+			compatible = "qcom,ipq8074-apcs-apps-global";
-+			reg = <0x0b111000 0x1000>;
-+
-+			#mbox-cells = <1>;
-+		};
-+
-+		q6v5_wcss: q6v5_wcss@cd00000 {
-+			compatible = "qcom,ipq8074-wcss-pil";
-+			reg = <0x0cd00000 0x4040>,
-+			      <0x004ab000 0x20>;
-+			reg-names = "qdsp6",
-+				    "rmb";
-+			qca,auto-restart;
-+			qca,extended-intc;
-+			interrupts-extended = <&intc 0 325 1>,
-+					      <&wcss_smp2p_in 0 0>,
-+					      <&wcss_smp2p_in 1 0>,
-+					      <&wcss_smp2p_in 2 0>,
-+					      <&wcss_smp2p_in 3 0>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			resets = <&gcc GCC_WCSSAON_RESET>,
-+				 <&gcc GCC_WCSS_BCR>,
-+				 <&gcc GCC_WCSS_Q6_BCR>;
-+
-+			reset-names = "wcss_aon_reset",
-+				      "wcss_reset",
-+				      "wcss_q6_reset";
-+
-+			clocks = <&gcc GCC_PRNG_AHB_CLK>;
-+			clock-names = "prng";
-+
-+			qcom,halt-regs = <&tcsr_q6 0xa000 0xd000 0x0>;
-+
-+			qcom,smem-states = <&wcss_smp2p_out 0>,
-+					   <&wcss_smp2p_out 1>;
-+			qcom,smem-state-names = "shutdown",
-+						"stop";
-+
-+			memory-region = <&q6_region>;
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+
-+				rpm_requests {
-+					qcom,glink-channels = "IPCRTR";
-+				};
-+			};
-+		};
- 	};
- 
- 	cpus {
+> 
+>> 
+>> >
+>> >>
+>> >> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> >> ---
+>> >>   drivers/remoteproc/qcom_q6v5_mss.c | 23 ++++++++++++++++++++---
+>> >>   1 file changed, 20 insertions(+), 3 deletions(-)
+>> >>
+>> >> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+>> >> index 471128a2e7239..2becf6dade936 100644
+>> >> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> >> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> >> @@ -100,6 +100,11 @@
+>> >>   #define QDSP6SS_XO_CBCR                0x0038
+>> >>   #define QDSP6SS_ACC_OVERRIDE_VAL               0x20
+>> >>
+>> >> +/* QDSP6v62 parameters */
+>> >> +#define QDSP6SS_BHS_EN_REST_ACK                BIT(0)
+>> >> +#define BHS_CHECK_MAX_LOOPS            200
+>> >> +#define QDSP6SS_BHS_STATUS             0x0C4
+>> >> +
+>> >>   /* QDSP6v65 parameters */
+>> >>   #define QDSP6SS_SLEEP                   0x3C
+>> >>   #define QDSP6SS_BOOT_CORE_START         0x400
+>> >> @@ -505,8 +510,9 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>> >>                  int mem_pwr_ctl;
+>> >>
+>> >>                  /* Override the ACC value if required */
+>> >> -               writel(QDSP6SS_ACC_OVERRIDE_VAL,
+>> >> -                      qproc->reg_base + QDSP6SS_STRAP_ACC);
+>> >> +               if (qproc->version == MSS_MSM8996)
+>> >> +                       writel(QDSP6SS_ACC_OVERRIDE_VAL,
+>> >> +                              qproc->reg_base + QDSP6SS_STRAP_ACC);
+>> >>
+>> >>                  /* Assert resets, stop core */
+>> >>                  val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+>> >> @@ -534,6 +540,18 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>> >>                  val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> >>                  udelay(1);
+>> >>
+>> >> +               /* wait for BHS_EN_REST_ACK to be set */
+>> >> +               if (qproc->version == MSS_MSM8998) {
+>> >> +                       ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BHS_STATUS,
+>> >> +                                                val, (val & QDSP6SS_BHS_EN_REST_ACK),
+>> >> +                                                1, BHS_CHECK_MAX_LOOPS);
+>> >> +                       if (ret) {
+>> >> +                               dev_err(qproc->dev,
+>> >> +                                       "QDSP6SS_BHS_EN_REST_ACK timedout\n");
+>> >> +                               return -ETIMEDOUT;
+>> >> +                       }
+>> >> +               }
+>> >> +
+>> >>                  /* Put LDO in bypass mode */
+>> >>                  val |= QDSP6v56_LDO_BYP;
+>> >>                  writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>> >> @@ -1594,7 +1612,6 @@ static const struct rproc_hexagon_res msm8998_mss = {
+>> >>          .active_clk_names = (char*[]){
+>> >>                          "iface",
+>> >>                          "bus",
+>> >> -                       "mem",
+>> >>                          "gpll0_mss",
+>> >>                          "mnoc_axi",
+>> >>                          "snoc_axi",
+>> >> --
+>> >> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> >> a Linux Foundation Collaborative Project
+>> >>
+>> >
+>> 
+>> --
+>> Qualcomm Innovation Center, Inc.
+>> Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+
 -- 
-1.9.1
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
