@@ -1,168 +1,44 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V3 01/10] remoteproc: qcom: Add PRNG proxy clock
-Date: Wed, 27 Nov 2019 20:42:45 +0530
-Message-Id: <1574867574-2216-2-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
-References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:57810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727156AbfKUSUE (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 21 Nov 2019 13:20:04 -0500
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] rpmsg: Fix Kconfig indentation
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <157436040403.16867.9406941033394425417.git-patchwork-notify@kernel.org>
+Date: Thu, 21 Nov 2019 18:20:04 +0000
+References: <20191120133945.13938-1-krzk@kernel.org>
+In-Reply-To: <20191120133945.13938-1-krzk@kernel.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-PRNG clock is needed by the secure PIL, support for the same
-is added in subsequent patches.
+Hello:
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 69 ++++++++++++++++++++++++++-----------
- 1 file changed, 49 insertions(+), 20 deletions(-)
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index a2671a1..e5cc064 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -91,19 +91,6 @@ enum {
- 	WCSS_QCS404,
- };
- 
--struct wcss_data {
--	const char *firmware_name;
--	int crash_reason_smem;
--	u32 version;
--	bool aon_reset_required;
--	bool wcss_q6_reset_required;
--	const char *ssr_name;
--	const char *sysmon_name;
--	int ssctl_id;
--	const struct rproc_ops *ops;
--	bool requires_force_stop;
--};
--
- struct q6v5_wcss {
- 	struct device *dev;
- 
-@@ -128,6 +115,7 @@ struct q6v5_wcss {
- 	struct clk *qdsp6ss_xo_cbcr;
- 	struct clk *qdsp6ss_core_gfmux;
- 	struct clk *lcc_bcr_sleep;
-+	struct clk *prng_clk;
- 	struct regulator *cx_supply;
- 
- 	struct qcom_rproc_glink glink_subdev;
-@@ -151,6 +139,21 @@ struct q6v5_wcss {
- 	bool requires_force_stop;
- };
- 
-+struct wcss_data {
-+	int (*init_clock)(struct q6v5_wcss *wcss);
-+	int (*init_regulator)(struct q6v5_wcss *wcss);
-+	const char *firmware_name;
-+	int crash_reason_smem;
-+	u32 version;
-+	bool aon_reset_required;
-+	bool wcss_q6_reset_required;
-+	const char *ssr_name;
-+	const char *sysmon_name;
-+	int ssctl_id;
-+	const struct rproc_ops *ops;
-+	bool requires_force_stop;
-+};
-+
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
- {
- 	int ret;
-@@ -240,6 +243,12 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 	struct q6v5_wcss *wcss = rproc->priv;
- 	int ret;
- 
-+	ret = clk_prepare_enable(wcss->prng_clk);
-+	if (ret) {
-+		dev_err(wcss->dev, "prng clock enable failed\n");
-+		return ret;
-+	}
-+
- 	qcom_q6v5_prepare(&wcss->q6v5);
- 
- 	/* Release Q6 and WCSS reset */
-@@ -732,6 +741,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 			return ret;
- 	}
- 
-+	clk_disable_unprepare(wcss->prng_clk);
- 	qcom_q6v5_unprepare(&wcss->q6v5);
- 
- 	return 0;
-@@ -889,7 +899,21 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
--static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
-+static int ipq8074_init_clock(struct q6v5_wcss *wcss)
-+{
-+	int ret;
-+
-+	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
-+	if (IS_ERR(wcss->prng_clk)) {
-+		ret = PTR_ERR(wcss->prng_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(wcss->dev, "Failed to get prng clock\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int qcs404_init_clock(struct q6v5_wcss *wcss)
- {
- 	int ret;
- 
-@@ -979,7 +1003,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
- 	return 0;
- }
- 
--static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
-+static int qcs404_init_regulator(struct q6v5_wcss *wcss)
- {
- 	wcss->cx_supply = devm_regulator_get(wcss->dev, "cx");
- 	if (IS_ERR(wcss->cx_supply))
-@@ -1023,14 +1047,16 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
--	if (wcss->version == WCSS_QCS404) {
--		ret = q6v5_wcss_init_clock(wcss);
-+	if (desc->init_clock) {
-+		ret = desc->init_clock(wcss);
- 		if (ret)
- 			goto free_rproc;
- 
--		ret = q6v5_wcss_init_regulator(wcss);
--		if (ret)
--			goto free_rproc;
-+		if (desc->init_regulator) {
-+			ret = desc->init_regulator(wcss);
-+			if (ret)
-+				goto free_rproc;
-+		}
- 	}
- 
- 	ret = q6v5_wcss_init_reset(wcss, desc);
-@@ -1073,6 +1099,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- }
- 
- static const struct wcss_data wcss_ipq8074_res_init = {
-+	.init_clock = ipq8074_init_clock,
- 	.firmware_name = "IPQ8074/q6_fw.mdt",
- 	.crash_reason_smem = WCSS_CRASH_REASON,
- 	.aon_reset_required = true,
-@@ -1082,6 +1109,8 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- };
- 
- static const struct wcss_data wcss_qcs404_res_init = {
-+	.init_clock = qcs404_init_clock,
-+	.init_regulator = qcs404_init_regulator,
- 	.crash_reason_smem = WCSS_CRASH_REASON,
- 	.firmware_name = "wcnss.mdt",
- 	.version = WCSS_QCS404,
+On Wed, 20 Nov 2019 21:39:44 +0800 you wrote:
+> Adjust indentation from spaces to tab (+optional two spaces) as in
+> coding style with command like:
+> 	$ sed -e 's/^        /\t/' -i */Kconfig
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/rpmsg/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+Here is a summary with links:
+  - rpmsg: Fix Kconfig indentation
+    https://git.kernel.org/andersson/remoteproc/c/8cf9b615653e40debdcf3b6f1d69e6b580d71173
+
+You are awesome, thank you!
+
 -- 
-1.9.1
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
