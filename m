@@ -1,126 +1,66 @@
-Return-Path: <0101016e80790f6a-98fb016c-9639-4124-b6ee-fe7639af734f-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 12/16] remoteproc: qcom: pas: Add auto_boot flag
-Date: Mon, 18 Nov 2019 21:44:07 +0000
-Message-ID: <0101016e80790f6a-98fb016c-9639-4124-b6ee-fe7639af734f-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Date: Thu, 21 Nov 2019 15:35:38 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH] rpmsg: char: release allocated memory
+Message-ID: <20191121233535.GW18024@yoga>
+References: <20190917033124.1077-1-navid.emamdoost@gmail.com>
+ <CAEkB2EQTO3wtCrZgLv068xGpxJYwir_SuMUBK0jGaTU6KdCRNg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEkB2EQTO3wtCrZgLv068xGpxJYwir_SuMUBK0jGaTU6KdCRNg@mail.gmail.com>
+To: Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, Navid Emamdoost <emamd001@umn.edu>, LKML <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add auto_boot flag and set it to false for modem. This allows for
-the delayed boot up of modem after the dependencies are met in
-userspace.
+On Thu 21 Nov 10:20 PST 2019, Navid Emamdoost wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> On Mon, Sep 16, 2019 at 10:31 PM Navid Emamdoost
+> <navid.emamdoost@gmail.com> wrote:
+> >
+> > In rpmsg_eptdev_write_iter, if copy_from_iter_full fails the allocated
+> > buffer needs to be released.
+> >
+> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> 
+> Would you please review this patch?
+> 
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 98e9336302844..b5b6aee6e54a3 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -33,6 +33,7 @@ struct adsp_data {
- 	const char *firmware_name;
- 	int pas_id;
- 	bool has_aggre2_clk;
-+	bool auto_boot;
- 
- 	char **active_pd_names;
- 	char **proxy_pd_names;
-@@ -388,6 +389,8 @@ static int adsp_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	rproc->auto_boot = desc->auto_boot;
-+
- 	adsp = (struct qcom_adsp *)rproc->priv;
- 	adsp->dev = &pdev->dev;
- 	adsp->rproc = rproc;
-@@ -471,6 +474,7 @@ static const struct adsp_data adsp_resource_init = {
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
-+		.auto_boot = true,
- 		.ssr_name = "lpass",
- 		.sysmon_name = "adsp",
- 		.ssctl_id = 0x14,
-@@ -481,6 +485,7 @@ static const struct adsp_data msm8998_adsp_resource = {
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
-+		.auto_boot = true,
- 		.proxy_pd_names = (char*[]){
- 			"cx",
- 			NULL
-@@ -495,6 +500,7 @@ static const struct adsp_data sm8150_adsp_resource = {
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
-+		.auto_boot = true,
- 		.active_pd_names = (char*[]){
- 			"load_state",
- 			NULL
-@@ -513,6 +519,7 @@ static const struct adsp_data cdsp_resource_init = {
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
-+	.auto_boot = true,
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-@@ -523,6 +530,7 @@ static const struct adsp_data sm8150_cdsp_resource = {
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
-+	.auto_boot = true,
- 	.active_pd_names = (char*[]){
- 		"load_state",
- 		NULL
-@@ -541,6 +549,7 @@ static const struct adsp_data mpss_resource_init = {
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
- 	.has_aggre2_clk = false,
-+	.auto_boot = false,
- 	.active_pd_names = (char*[]){
- 		"load_state",
- 		NULL
-@@ -560,6 +569,7 @@ static const struct adsp_data slpi_resource_init = {
- 		.firmware_name = "slpi.mdt",
- 		.pas_id = 12,
- 		.has_aggre2_clk = true,
-+		.auto_boot = true,
- 		.ssr_name = "dsps",
- 		.sysmon_name = "slpi",
- 		.ssctl_id = 0x16,
-@@ -570,6 +580,7 @@ static const struct adsp_data msm8998_slpi_resource = {
- 		.firmware_name = "slpi.mdt",
- 		.pas_id = 12,
- 		.has_aggre2_clk = true,
-+		.auto_boot = true,
- 		.proxy_pd_names = (char*[]){
- 			"ssc_cx",
- 			NULL
-@@ -584,6 +595,7 @@ static const struct adsp_data sm8150_slpi_resource = {
- 		.firmware_name = "slpi.mdt",
- 		.pas_id = 12,
- 		.has_aggre2_clk = false,
-+		.auto_boot = true,
- 		.active_pd_names = (char*[]){
- 			"load_state",
- 			NULL
-@@ -602,6 +614,7 @@ static const struct adsp_data wcss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "wcnss.mdt",
- 	.pas_id = 6,
-+	.auto_boot = true,
- 	.ssr_name = "mpss",
- 	.sysmon_name = "wcnss",
- 	.ssctl_id = 0x12,
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I'm sorry, I must have missed to reply as I applied the patch. You can
+find it in the rpmsg-next branch [1] and it will be part of the pull
+request for v5.5
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git/log/?h=rpmsg-next
+
+Regards,
+Bjorn
+
+> Thank you,
+> 
+> > ---
+> >  drivers/rpmsg/rpmsg_char.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> > index eea5ebbb5119..c655074c07c2 100644
+> > --- a/drivers/rpmsg/rpmsg_char.c
+> > +++ b/drivers/rpmsg/rpmsg_char.c
+> > @@ -227,8 +227,10 @@ static ssize_t rpmsg_eptdev_write_iter(struct kiocb *iocb,
+> >         if (!kbuf)
+> >                 return -ENOMEM;
+> >
+> > -       if (!copy_from_iter_full(kbuf, len, from))
+> > -               return -EFAULT;
+> > +       if (!copy_from_iter_full(kbuf, len, from)) {
+> > +               ret = -EFAULT;
+> > +               goto free_kbuf;
+> > +       }
+> >
+> >         if (mutex_lock_interruptible(&eptdev->ept_lock)) {
+> >                 ret = -ERESTARTSYS;
+> > --
+> > 2.17.1
+> >
+> 
+> 
+> -- 
+> Navid.
