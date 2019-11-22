@@ -1,11 +1,10 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e92943ba5-58510af0-a0d4-4db7-a2fc-5a9240c8d34f-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [RESEND PATCH V4 2/4] rpmsg: glink: Add support to handle signals command
 Date: Fri, 22 Nov 2019 10:06:58 +0000
-Message-ID: <0101016e92943c97-f6bb9eb4-8db9-4cc1-b1a0-29e99ec4579d-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e92943ba5-58510af0-a0d4-4db7-a2fc-5a9240c8d34f-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
 References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
