@@ -1,14 +1,8 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-188.smtp-out.us-west-2.amazonses.com ([54.240.27.188]:58930
-        "EHLO a27-188.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726417AbfKVKFF (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:05:05 -0500
+Return-Path: <0101016e92927e11-e74197e4-b72e-4eda-82e6-f311088a4ec1-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [PATCH V5 0/5] Add chrdev and name query support for GLINK
 Date: Fri, 22 Nov 2019 10:05:04 +0000
-Message-ID: <0101016e92927c3a-ca9dda3b-35da-4104-bf52-d2839f18b8d5-000000@us-west-2.amazonses.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
+Message-ID: <0101016e92927e11-e74197e4-b72e-4eda-82e6-f311088a4ec1-000000@us-west-2.amazonses.com>
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
