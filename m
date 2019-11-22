@@ -1,16 +1,10 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:45892
-        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726568AbfKVKHG (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:07:06 -0500
+Return-Path: <0101016e929453d3-e223d307-2fa7-4cce-9f1d-51a7fd222a35-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [RESEND PATCH V4 4/4] rpmsg: char: Add signal callback and POLLPRI support
-Date: Fri, 22 Nov 2019 10:07:05 +0000
-Message-ID: <0101016e92945567-e776b6a7-b9c4-4ccb-8737-dd9a56bc8e07-000000@us-west-2.amazonses.com>
+Date: Fri, 22 Nov 2019 10:07:04 +0000
+Message-ID: <0101016e929453d3-e223d307-2fa7-4cce-9f1d-51a7fd222a35-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
 References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
