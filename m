@@ -1,103 +1,220 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv2 08/15] remoteproc/omap: Remove the unused fields from platform data
-Date: Tue, 19 Nov 2019 16:16:38 +0200
-Message-ID: <20191119141645.19777-9-t-kristo@ti.com>
-In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
-References: <20191119141645.19777-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [RESEND PATCH V4 2/4] rpmsg: glink: Add support to handle signals command
+Date: Fri, 22 Nov 2019 10:06:58 +0000
+Message-ID: <0101016e92943c97-f6bb9eb4-8db9-4cc1-b1a0-29e99ec4579d-000000@us-west-2.amazonses.com>
+In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
+References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Remote peripherals send signal notifications over glink with commandID 15.
 
-The following fields: .name, .oh_name, .oh_name_opt, .mbox_name,
-.firmware, .ops and .set_bootaddr, are removed from the platform data,
-as these are no longer needed after the addition of DT support to the
-OMAP remoteproc driver.
+Add support to send and receive the signal command and convert the signals
+from NATIVE to TIOCM while receiving and vice versa while sending.
 
-The .name field was used to give a name to the remoteproc, and this
-is replaced with the device name. The .ops field was never used by
-the OMAP remoteproc driver. The .mbox_name was used to define the
-sub-mailbox node used for communication with the remote processor,
-and is retrieved using the 'mboxes' property in the DT node. The
-.firmware field is encoded directly in the OMAP remoteproc driver and
-is retrieved using driver match data. The .set_bootaddr ops was used
-for using a OMAP Control Module API to configure the boot address for
-the processor, and is now implemented within the driver using a
-syscon property.
-
-The .oh_name field is used to define the primary hwmod for the processor
-node, and is represented using the 'ti,hwmods' property in the DT node.
-The .oh_name_opt field was primarily defined to identify the hwmod for
-the second cpu in a dual Cortex-M3/M4 IPU processor sub-system. This
-hwmod entry is no longer defined usually, but rather a single hwmod
-representing both the processors in the IPU sub-system is defined.
-A single firmware image (either in SMP-mode or a combined image for
-non-SMP mode) is used, with both the resets released together always
-as part of the device management. Any power management and recovery
-aspects require that both the processors be managed as one entity due
-to the presence of shared MMU and unicache within the IPU sub-system.
-
-The OMAP remoteproc platform data structure is eventually expected
-to be removed completely once the other dependencies with the
-mach-omap layer are met.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
- include/linux/platform_data/remoteproc-omap.h | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+ drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
-index 7e3a16097672..6bea01e199fe 100644
---- a/include/linux/platform_data/remoteproc-omap.h
-+++ b/include/linux/platform_data/remoteproc-omap.h
-@@ -2,38 +2,23 @@
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 0ff4cbe..59c80f9 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
  /*
-  * Remote Processor - omap-specific bits
-  *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-+ * Copyright (C) 2011-2018 Texas Instruments Incorporated - http://www.ti.com/
-  * Copyright (C) 2011 Google, Inc.
++ * Copyright (c) 2018, The Linux Foundation.
+  * Copyright (c) 2016-2017, Linaro Ltd
   */
  
- #ifndef _PLAT_REMOTEPROC_H
- #define _PLAT_REMOTEPROC_H
+@@ -17,6 +18,7 @@
+ #include <linux/rpmsg.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
++#include <linux/termios.h>
+ #include <linux/workqueue.h>
+ #include <linux/mailbox_client.h>
  
--struct rproc_ops;
- struct platform_device;
- 
- /*
-  * struct omap_rproc_pdata - omap remoteproc's platform data
-- * @name: the remoteproc's name
-- * @oh_name: omap hwmod device
-- * @oh_name_opt: optional, secondary omap hwmod device
-- * @firmware: name of firmware file to load
-- * @mbox_name: name of omap mailbox device to use with this rproc
-- * @ops: start/stop rproc handlers
-  * @device_enable: omap-specific handler for enabling a device
-  * @device_shutdown: omap-specific handler for shutting down a device
-- * @set_bootaddr: omap-specific handler for setting the rproc boot address
+@@ -150,6 +152,8 @@ enum {
+  * @intent_req_lock: Synchronises multiple intent requests
+  * @intent_req_result: Result of intent request
+  * @intent_req_comp: Completion for intent_req signalling
++ * @lsigs:	local side signals
++ * @rsigs:	remote side signals
   */
- struct omap_rproc_pdata {
--	const char *name;
--	const char *oh_name;
--	const char *oh_name_opt;
--	const char *firmware;
--	const char *mbox_name;
--	const struct rproc_ops *ops;
- 	int (*device_enable)(struct platform_device *pdev);
- 	int (*device_shutdown)(struct platform_device *pdev);
--	void (*set_bootaddr)(u32);
+ struct glink_channel {
+ 	struct rpmsg_endpoint ept;
+@@ -181,6 +185,10 @@ struct glink_channel {
+ 	struct mutex intent_req_lock;
+ 	bool intent_req_result;
+ 	struct completion intent_req_comp;
++
++	unsigned int lsigs;
++	unsigned int rsigs;
++
  };
  
- #if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+ #define to_glink_channel(_ept) container_of(_ept, struct glink_channel, ept)
+@@ -201,9 +209,15 @@ struct glink_channel {
+ #define RPM_CMD_TX_DATA_CONT		12
+ #define RPM_CMD_READ_NOTIF		13
+ #define RPM_CMD_RX_DONE_W_REUSE		14
++#define RPM_CMD_SIGNALS			15
+ 
+ #define GLINK_FEATURE_INTENTLESS	BIT(1)
+ 
++#define NATIVE_DTR_SIG	BIT(31)
++#define NATIVE_CTS_SIG	BIT(30)
++#define NATIVE_CD_SIG	BIT(29)
++#define NATIVE_RI_SIG	BIT(28)
++
+ static void qcom_glink_rx_done_work(struct work_struct *work);
+ 
+ static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
+@@ -954,6 +968,76 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
+ 	return 0;
+ }
+ 
++/**
++ * qcom_glink_send_signals() - convert a signal  cmd to wire format and transmit
++ * @glink:	The transport to transmit on.
++ * @channel:	The glink channel
++ * @sigs:	The signals to encode.
++ *
++ * Return: 0 on success or standard Linux error code.
++ */
++static int qcom_glink_send_signals(struct qcom_glink *glink,
++				   struct glink_channel *channel,
++				   u32 sigs)
++{
++	struct glink_msg msg;
++
++	/* convert signals from TIOCM to NATIVE */
++	sigs &= 0x0fff;
++	if (sigs & TIOCM_DTR)
++		sigs |= NATIVE_DTR_SIG;
++	if (sigs & TIOCM_RTS)
++		sigs |= NATIVE_CTS_SIG;
++	if (sigs & TIOCM_CD)
++		sigs |= NATIVE_CD_SIG;
++	if (sigs & TIOCM_RI)
++		sigs |= NATIVE_RI_SIG;
++
++	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
++	msg.param1 = cpu_to_le16(channel->lcid);
++	msg.param2 = cpu_to_le32(sigs);
++
++	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
++}
++
++static int qcom_glink_handle_signals(struct qcom_glink *glink,
++				     unsigned int rcid, unsigned int signals)
++{
++	struct glink_channel *channel;
++	unsigned long flags;
++	u32 old;
++
++	spin_lock_irqsave(&glink->idr_lock, flags);
++	channel = idr_find(&glink->rcids, rcid);
++	spin_unlock_irqrestore(&glink->idr_lock, flags);
++	if (!channel) {
++		dev_err(glink->dev, "signal for non-existing channel\n");
++		return -EINVAL;
++	}
++
++	old = channel->rsigs;
++
++	/* convert signals from NATIVE to TIOCM */
++	if (signals & NATIVE_DTR_SIG)
++		signals |= TIOCM_DSR;
++	if (signals & NATIVE_CTS_SIG)
++		signals |= TIOCM_CTS;
++	if (signals & NATIVE_CD_SIG)
++		signals |= TIOCM_CD;
++	if (signals & NATIVE_RI_SIG)
++		signals |= TIOCM_RI;
++	signals &= 0x0fff;
++
++	channel->rsigs = signals;
++
++	if (channel->ept.sig_cb) {
++		channel->ept.sig_cb(channel->ept.rpdev, channel->ept.priv,
++				    old, channel->rsigs);
++	}
++
++	return 0;
++}
++
+ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ {
+ 	struct qcom_glink *glink = data;
+@@ -1015,6 +1099,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
+ 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+ 			break;
++		case RPM_CMD_SIGNALS:
++			qcom_glink_handle_signals(glink, param1, param2);
++			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
++			break;
+ 		default:
+ 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
+ 			ret = -EINVAL;
+@@ -1320,6 +1408,42 @@ static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return __qcom_glink_send(channel, data, len, false);
+ }
+ 
++static int qcom_glink_get_sigs(struct rpmsg_endpoint *ept)
++{
++	struct glink_channel *channel = to_glink_channel(ept);
++
++	return channel->rsigs;
++}
++
++static int qcom_glink_set_sigs(struct rpmsg_endpoint *ept, u32 set, u32 clear)
++{
++	struct glink_channel *channel = to_glink_channel(ept);
++	struct qcom_glink *glink = channel->glink;
++	u32 sigs = channel->lsigs;
++
++	if (set & TIOCM_DTR)
++		sigs |= TIOCM_DTR;
++	if (set & TIOCM_RTS)
++		sigs |= TIOCM_RTS;
++	if (set & TIOCM_CD)
++		sigs |= TIOCM_CD;
++	if (set & TIOCM_RI)
++		sigs |= TIOCM_RI;
++
++	if (clear & TIOCM_DTR)
++		sigs &= ~TIOCM_DTR;
++	if (clear & TIOCM_RTS)
++		sigs &= ~TIOCM_RTS;
++	if (clear & TIOCM_CD)
++		sigs &= ~TIOCM_CD;
++	if (clear & TIOCM_RI)
++		sigs &= ~TIOCM_RI;
++
++	channel->lsigs = sigs;
++
++	return qcom_glink_send_signals(glink, channel, sigs);
++}
++
+ /*
+  * Finds the device_node for the glink child interested in this channel.
+  */
+@@ -1353,6 +1477,8 @@ static struct device_node *qcom_glink_match_channel(struct device_node *node,
+ 	.destroy_ept = qcom_glink_destroy_ept,
+ 	.send = qcom_glink_send,
+ 	.trysend = qcom_glink_trysend,
++	.get_signals = qcom_glink_get_sigs,
++	.set_signals = qcom_glink_set_sigs,
+ };
+ 
+ static void qcom_glink_rpdev_release(struct device *dev)
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.9.1
