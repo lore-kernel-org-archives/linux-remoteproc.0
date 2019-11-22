@@ -1,206 +1,55 @@
-Return-Path: <0101016e92943066-c63e4130-c014-4bb7-821b-4e9c69d8936e-000000@us-west-2.amazonses.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from a27-188.smtp-out.us-west-2.amazonses.com ([54.240.27.188]:58930
+        "EHLO a27-188.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726417AbfKVKFF (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:05:05 -0500
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [RESEND PATCH V4 1/4] rpmsg: core: Add signal API support
-Date: Fri, 22 Nov 2019 10:06:55 +0000
-Message-ID: <0101016e92943066-c63e4130-c014-4bb7-821b-4e9c69d8936e-000000@us-west-2.amazonses.com>
-In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
+Subject: [PATCH V5 0/5] Add chrdev and name query support for GLINK
+Date: Fri, 22 Nov 2019 10:05:04 +0000
+Message-ID: <0101016e92927c3a-ca9dda3b-35da-4104-bf52-d2839f18b8d5-000000@us-west-2.amazonses.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Some transports like Glink support the state notifications between
-clients using signals similar to serial protocol signals.
+Add support for the GLINK rpmsg transport to register a rpmsg chrdev.
+This will create the rpmsg_ctrl nodes for userspace clients to open 
+rpmsg epts. The rpmsg chrdev allocation is done by allocating a local
+channel which also allocates an ept. We need to add some guards against
+edge cases for this chrdev because it will never fully open.
 
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
----
- drivers/rpmsg/rpmsg_core.c     | 41 +++++++++++++++++++++++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h |  5 +++++
- include/linux/rpmsg.h          | 26 ++++++++++++++++++++++++++
- 3 files changed, 72 insertions(+)
+Changes since v4:
+- Resending by removing approved patches
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index d6c3275..453790b 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -2,6 +2,7 @@
- /*
-  * remote processor messaging bus
-  *
-+ * Copyright (c) 2018, The Linux Foundation.
-  * Copyright (C) 2011 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  *
-@@ -283,6 +284,42 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
- 
-+/**
-+ * rpmsg_get_signals() - get the signals for this endpoint
-+ * @ept:	the rpmsg endpoint
-+ *
-+ * Returns signal bits on success and an appropriate error value on failure.
-+ */
-+int rpmsg_get_signals(struct rpmsg_endpoint *ept)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->get_signals)
-+		return -EOPNOTSUPP;
-+
-+	return ept->ops->get_signals(ept);
-+}
-+EXPORT_SYMBOL(rpmsg_get_signals);
-+
-+/**
-+ * rpmsg_set_signals() - set the remote signals for this endpoint
-+ * @ept:	the rpmsg endpoint
-+ * @set:	set mask for signals
-+ * @clear:	clear mask for signals
-+ *
-+ * Returns 0 on success and an appropriate error value on failure.
-+ */
-+int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->set_signals)
-+		return -EOPNOTSUPP;
-+
-+	return ept->ops->set_signals(ept, set, clear);
-+}
-+EXPORT_SYMBOL(rpmsg_set_signals);
-+
- /*
-  * match an rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-@@ -468,6 +505,10 @@ static int rpmsg_dev_probe(struct device *dev)
- 
- 		rpdev->ept = ept;
- 		rpdev->src = ept->addr;
-+
-+		if (rpdrv->signals)
-+			ept->sig_cb = rpdrv->signals;
-+
- 	}
- 
- 	err = rpdrv->probe(rpdev);
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd..8958d6c 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -2,6 +2,7 @@
- /*
-  * remote processor messaging bus internals
-  *
-+ * Copyright (c) 2018, The Linux Foundation.
-  * Copyright (C) 2011 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  *
-@@ -47,6 +48,8 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @get_signals:	see @rpmsg_get_signals(), optional
-+ * @set_signals:	see @rpmsg_set_signals(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -66,6 +69,8 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	int (*get_signals)(struct rpmsg_endpoint *ept);
-+	int (*set_signals)(struct rpmsg_endpoint *ept, u32 set, u32 clear);
- };
- 
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d..48c8ae3 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -2,6 +2,7 @@
- /*
-  * Remote processor messaging
-  *
-+ * Copyright (c) 2018 The Linux Foundation.
-  * Copyright (C) 2011 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-@@ -60,6 +61,7 @@ struct rpmsg_device {
- };
- 
- typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-+typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32, u32);
- 
- /**
-  * struct rpmsg_endpoint - binds a local rpmsg address to its user
-@@ -67,6 +69,7 @@ struct rpmsg_device {
-  * @refcount: when this drops to zero, the ept is deallocated
-  * @cb: rx callback handler
-  * @cb_lock: must be taken before accessing/changing @cb
-+ * @sig_cb: rx serial signal handler
-  * @addr: local rpmsg address
-  * @priv: private data for the driver's use
-  *
-@@ -89,6 +92,7 @@ struct rpmsg_endpoint {
- 	struct kref refcount;
- 	rpmsg_rx_cb_t cb;
- 	struct mutex cb_lock;
-+	rpmsg_rx_sig_t sig_cb;
- 	u32 addr;
- 	void *priv;
- 
-@@ -102,6 +106,7 @@ struct rpmsg_endpoint {
-  * @probe: invoked when a matching rpmsg channel (i.e. device) is found
-  * @remove: invoked when the rpmsg channel is removed
-  * @callback: invoked when an inbound message is received on the channel
-+ * @signals: invoked when a serial signal change is received on the channel
-  */
- struct rpmsg_driver {
- 	struct device_driver drv;
-@@ -109,6 +114,7 @@ struct rpmsg_driver {
- 	int (*probe)(struct rpmsg_device *dev);
- 	void (*remove)(struct rpmsg_device *dev);
- 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-+	int (*signals)(struct rpmsg_device *, void *, u32, u32);
- };
- 
- #if IS_ENABLED(CONFIG_RPMSG)
-@@ -135,6 +141,9 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
- 
-+int rpmsg_get_signals(struct rpmsg_endpoint *ept);
-+int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +251,23 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
- 	return 0;
- }
- 
-+static inline int rpmsg_get_signals(struct rpmsg_endpoint *ept)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
-+static inline int rpmsg_set_signals(struct rpmsg_endpoint *ept,
-+				    u32 set, u32 clear)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
+Changes since v3:
+- Change to device_add_group for rpmsg name attr
+- Add patch to unregister the rpmsg device
+- Add patch to support compat ioctl for rpmsg char driver
+
+Changes since v2:
+- Revert change to make glink attribute table const
+
+Changes since v1:
+- Add explanation to dt-bindings commit message
+- Add patch complete_all the open_req/ack variables
+- Add patch to prevent null pointer dereference in chrdev channel release
+- Change chrdev allocation to use glink channel allocation
+- Change glink attr struct to const
+
+
+Arun Kumar Neelakantam (1):
+  rpmsg: glink: unregister rpmsg device during endpoint destroy
+
+Chris Lew (4):
+  rpmsg: glink: Use complete_all for open states
+  rpmsg: Guard against null endpoint ops in destroy
+  rpmsg: glink: Add support for rpmsg glink chrdev
+  rpmsg: glink: Expose rpmsg name attr for glink
+
+ drivers/rpmsg/qcom_glink_native.c | 79 +++++++++++++++++++++++++++++++++++++--
+ drivers/rpmsg/rpmsg_core.c        |  2 +-
+ 2 files changed, 77 insertions(+), 4 deletions(-)
+
 -- 
 1.9.1
