@@ -1,11 +1,10 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e9292c7f5-f46c3ee9-55b5-4032-8b88-200ae91c8059-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [PATCH V5 4/5] rpmsg: glink: Expose rpmsg name attr for glink
 Date: Fri, 22 Nov 2019 10:05:23 +0000
-Message-ID: <0101016e9292c98a-af06223f-e23c-46ed-8479-8c388051e279-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e9292c7f5-f46c3ee9-55b5-4032-8b88-200ae91c8059-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
 References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
