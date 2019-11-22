@@ -1,44 +1,28 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:57802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbfKUSUE (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Nov 2019 13:20:04 -0500
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 22 Nov 2019 17:15:03 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 06/16] dt-bindings: remoteproc: qcom: Add power-domain
+ bindings for Q6V5 PAS
+Message-ID: <20191122231503.GA13027@bogus>
+References: <20191118214250.14002-1-sibis@codeaurora.org>
+ <0101016e80788d28-7370e0e3-7380-4cc7-9233-40b9fd76e8f3-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: Fix wrong rvring index computation
-From: patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <157436040385.16867.4327217983966443610.git-patchwork-notify@kernel.org>
-Date: Thu, 21 Nov 2019 18:20:03 +0000
-References: <20191004073736.8327-1-cleger@kalray.eu>
-In-Reply-To: <20191004073736.8327-1-cleger@kalray.eu>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Clement Leger <cleger@kalray.eu>
-Cc: linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0101016e80788d28-7370e0e3-7380-4cc7-9233-40b9fd76e8f3-000000@us-west-2.amazonses.com>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca, ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello:
-
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
-
-On Fri,  4 Oct 2019 09:37:36 +0200 you wrote:
-> Index of rvring is computed using pointer arithmetic. However, since
-> rvring->rvdev->vring is the base of the vring array, computation
-> of rvring idx should be reversed. It previously lead to writing at negative
-> indices in the resource table.
+On Mon, 18 Nov 2019 21:43:34 +0000, Sibi Sankar wrote:
+> Add power-domain bindings for Q6V5 PAS on MSM8974/MSM8996/QCS404/SDM845
+> SoCs.
 > 
-> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../bindings/remoteproc/qcom,adsp.txt         | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
-> [...]
 
-
-Here is a summary with links:
-  - remoteproc: Fix wrong rvring index computation
-    https://git.kernel.org/andersson/remoteproc/c/00a0eec59ddbb1ce966b19097d8a8d2f777e726a
-
-You are awesome, thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Reviewed-by: Rob Herring <robh@kernel.org>
