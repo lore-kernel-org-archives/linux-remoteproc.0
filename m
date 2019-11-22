@@ -1,11 +1,10 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e92929b3a-14353ea8-4c40-4a89-90fd-3a88aa3297c6-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [PATCH V5 1/5] rpmsg: glink: Use complete_all for open states
-Date: Fri, 22 Nov 2019 10:05:12 +0000
-Message-ID: <0101016e92929ca4-d99d10e1-9b60-46d2-a0fd-9eb6bc3c7b09-000000@us-west-2.amazonses.com>
+Date: Fri, 22 Nov 2019 10:05:11 +0000
+Message-ID: <0101016e92929b3a-14353ea8-4c40-4a89-90fd-3a88aa3297c6-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
 References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
