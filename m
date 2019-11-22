@@ -1,353 +1,212 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv2 02/15] remoteproc/omap: Add device tree support
-Date: Tue, 19 Nov 2019 16:16:32 +0200
-Message-ID: <20191119141645.19777-3-t-kristo@ti.com>
-In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
-References: <20191119141645.19777-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from a27-186.smtp-out.us-west-2.amazonses.com ([54.240.27.186]:44274
+        "EHLO a27-186.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726568AbfKVKG4 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:06:56 -0500
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [RESEND PATCH V4 1/4] rpmsg: core: Add signal API support
+Date: Fri, 22 Nov 2019 10:06:54 +0000
+Message-ID: <0101016e92942d16-9c3095c2-c336-4c23-aed3-709ad4136ad3-000000@us-west-2.amazonses.com>
+In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
+References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Some transports like Glink support the state notifications between
+clients using signals similar to serial protocol signals.
 
-OMAP4+ SoCs support device tree boot only. The OMAP remoteproc
-driver is enhanced to support remoteproc devices created through
-Device Tree, support for legacy platform devices has been
-deprecated. The current DT support handles the IPU and DSP
-processor subsystems on OMAP4 and OMAP5 SoCs.
-
-The OMAP remoteproc driver relies on the ti-sysc, reset, and
-syscon layers for performing clock, reset and boot vector
-management (DSP remoteprocs only) of the devices, but some of
-these are limited only to the machine-specific layers
-in arch/arm. The dependency against control module API for boot
-vector management of the DSP remoteprocs has now been removed
-with added logic to parse the boot register from the DT node
-and program it appropriately directly within the driver.
-
-The OMAP remoteproc driver expects the firmware names to be
-provided via device tree entries (firmware-name.) These are used
-to load the proper firmware during boot of the remote processor.
-
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-[t-kristo@ti.com: converted to use ti-sysc framework]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
-v2:
- - read firmware name from DT entry (firmware-name) rather than hardcode
-   it in driver
+ drivers/rpmsg/rpmsg_core.c     | 41 +++++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h |  5 +++++
+ include/linux/rpmsg.h          | 26 ++++++++++++++++++++++++++
+ 3 files changed, 72 insertions(+)
 
- drivers/remoteproc/omap_remoteproc.c | 191 +++++++++++++++++++++++----
- 1 file changed, 168 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 6398194075aa..558634624590 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -2,7 +2,7 @@
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index d6c3275..453790b 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -2,6 +2,7 @@
  /*
-  * OMAP Remote Processor driver
+  * remote processor messaging bus
   *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-+ * Copyright (C) 2011-2019 Texas Instruments Incorporated - http://www.ti.com/
++ * Copyright (c) 2018, The Linux Foundation.
+  * Copyright (C) 2011 Texas Instruments, Inc.
   * Copyright (C) 2011 Google, Inc.
   *
-  * Ohad Ben-Cohen <ohad@wizery.com>
-@@ -16,27 +16,53 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/err.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/remoteproc.h>
- #include <linux/mailbox_client.h>
- #include <linux/omap-mailbox.h>
--
--#include <linux/platform_data/remoteproc-omap.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/reset.h>
- 
- #include "omap_remoteproc.h"
- #include "remoteproc_internal.h"
- 
-+/**
-+ * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
-+ * @syscon: regmap handle for the system control configuration module
-+ * @boot_reg: boot register offset within the @syscon regmap
-+ */
-+struct omap_rproc_boot_data {
-+	struct regmap *syscon;
-+	unsigned int boot_reg;
-+};
-+
- /**
-  * struct omap_rproc - omap remote processor state
-  * @mbox: mailbox channel handle
-  * @client: mailbox client to request the mailbox channel
-+ * @boot_data: boot data structure for setting processor boot address
-  * @rproc: rproc handle
-+ * @reset: reset handle
-  */
- struct omap_rproc {
- 	struct mbox_chan *mbox;
- 	struct mbox_client client;
-+	struct omap_rproc_boot_data *boot_data;
- 	struct rproc *rproc;
-+	struct reset_control *reset;
-+};
-+
-+/**
-+ * struct omap_rproc_dev_data - device data for the omap remote processor
-+ * @device_name: device name of the remote processor
-+ * @has_bootreg: true if this remote processor has boot register
-+ */
-+struct omap_rproc_dev_data {
-+	const char *device_name;
-+	bool has_bootreg;
- };
- 
- /**
-@@ -92,6 +118,21 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
- 			ret);
+@@ -283,6 +284,42 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
  }
+ EXPORT_SYMBOL(rpmsg_trysend_offchannel);
  
 +/**
-+ * omap_rproc_write_dsp_boot_addr - set boot address for a DSP remote processor
-+ * @rproc: handle of a remote processor
++ * rpmsg_get_signals() - get the signals for this endpoint
++ * @ept:	the rpmsg endpoint
 + *
-+ * Set boot address for a supported DSP remote processor.
++ * Returns signal bits on success and an appropriate error value on failure.
 + */
-+static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++int rpmsg_get_signals(struct rpmsg_endpoint *ept)
 +{
-+	struct omap_rproc *oproc = rproc->priv;
-+	struct omap_rproc_boot_data *bdata = oproc->boot_data;
-+	u32 offset = bdata->boot_reg;
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->get_signals)
++		return -EOPNOTSUPP;
 +
-+	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++	return ept->ops->get_signals(ept);
 +}
++EXPORT_SYMBOL(rpmsg_get_signals);
++
++/**
++ * rpmsg_set_signals() - set the remote signals for this endpoint
++ * @ept:	the rpmsg endpoint
++ * @set:	set mask for signals
++ * @clear:	clear mask for signals
++ *
++ * Returns 0 on success and an appropriate error value on failure.
++ */
++int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear)
++{
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->set_signals)
++		return -EOPNOTSUPP;
++
++	return ept->ops->set_signals(ept, set, clear);
++}
++EXPORT_SYMBOL(rpmsg_set_signals);
 +
  /*
-  * Power up the remote processor.
+  * match an rpmsg channel with a channel info struct.
+  * this is used to make sure we're not creating rpmsg devices for channels
+@@ -468,6 +505,10 @@ static int rpmsg_dev_probe(struct device *dev)
+ 
+ 		rpdev->ept = ept;
+ 		rpdev->src = ept->addr;
++
++		if (rpdrv->signals)
++			ept->sig_cb = rpdrv->signals;
++
+ 	}
+ 
+ 	err = rpdrv->probe(rpdev);
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 3fc83cd..8958d6c 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -2,6 +2,7 @@
+ /*
+  * remote processor messaging bus internals
   *
-@@ -103,13 +144,11 @@ static int omap_rproc_start(struct rproc *rproc)
- {
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct device *dev = rproc->dev.parent;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
- 	int ret;
- 	struct mbox_client *client = &oproc->client;
++ * Copyright (c) 2018, The Linux Foundation.
+  * Copyright (C) 2011 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  *
+@@ -47,6 +48,8 @@ struct rpmsg_device_ops {
+  * @trysendto:		see @rpmsg_trysendto(), optional
+  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+  * @poll:		see @rpmsg_poll(), optional
++ * @get_signals:	see @rpmsg_get_signals(), optional
++ * @set_signals:	see @rpmsg_set_signals(), optional
+  *
+  * Indirection table for the operations that a rpmsg backend should implement.
+  * In addition to @destroy_ept, the backend must at least implement @send and
+@@ -66,6 +69,8 @@ struct rpmsg_endpoint_ops {
+ 			     void *data, int len);
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
++	int (*get_signals)(struct rpmsg_endpoint *ept);
++	int (*set_signals)(struct rpmsg_endpoint *ept, u32 set, u32 clear);
+ };
  
--	if (pdata->set_bootaddr)
--		pdata->set_bootaddr(rproc->bootaddr);
-+	if (oproc->boot_data)
-+		omap_rproc_write_dsp_boot_addr(rproc);
+ int rpmsg_register_device(struct rpmsg_device *rpdev);
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 9fe156d..48c8ae3 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -2,6 +2,7 @@
+ /*
+  * Remote processor messaging
+  *
++ * Copyright (c) 2018 The Linux Foundation.
+  * Copyright (C) 2011 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  * All rights reserved.
+@@ -60,6 +61,7 @@ struct rpmsg_device {
+ };
  
- 	client->dev = dev;
- 	client->tx_done = NULL;
-@@ -117,7 +156,7 @@ static int omap_rproc_start(struct rproc *rproc)
- 	client->tx_block = false;
- 	client->knows_txdone = false;
+ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
++typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32, u32);
  
--	oproc->mbox = omap_mbox_request_channel(client, pdata->mbox_name);
-+	oproc->mbox = mbox_request_channel(client, 0);
- 	if (IS_ERR(oproc->mbox)) {
- 		ret = -EBUSY;
- 		dev_err(dev, "mbox_request_channel failed: %ld\n",
-@@ -138,11 +177,7 @@ static int omap_rproc_start(struct rproc *rproc)
- 		goto put_mbox;
- 	}
+ /**
+  * struct rpmsg_endpoint - binds a local rpmsg address to its user
+@@ -67,6 +69,7 @@ struct rpmsg_device {
+  * @refcount: when this drops to zero, the ept is deallocated
+  * @cb: rx callback handler
+  * @cb_lock: must be taken before accessing/changing @cb
++ * @sig_cb: rx serial signal handler
+  * @addr: local rpmsg address
+  * @priv: private data for the driver's use
+  *
+@@ -89,6 +92,7 @@ struct rpmsg_endpoint {
+ 	struct kref refcount;
+ 	rpmsg_rx_cb_t cb;
+ 	struct mutex cb_lock;
++	rpmsg_rx_sig_t sig_cb;
+ 	u32 addr;
+ 	void *priv;
  
--	ret = pdata->device_enable(pdev);
--	if (ret) {
--		dev_err(dev, "omap_device_enable failed: %d\n", ret);
--		goto put_mbox;
--	}
-+	reset_control_deassert(oproc->reset);
+@@ -102,6 +106,7 @@ struct rpmsg_endpoint {
+  * @probe: invoked when a matching rpmsg channel (i.e. device) is found
+  * @remove: invoked when the rpmsg channel is removed
+  * @callback: invoked when an inbound message is received on the channel
++ * @signals: invoked when a serial signal change is received on the channel
+  */
+ struct rpmsg_driver {
+ 	struct device_driver drv;
+@@ -109,6 +114,7 @@ struct rpmsg_driver {
+ 	int (*probe)(struct rpmsg_device *dev);
+ 	void (*remove)(struct rpmsg_device *dev);
+ 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
++	int (*signals)(struct rpmsg_device *, void *, u32, u32);
+ };
  
+ #if IS_ENABLED(CONFIG_RPMSG)
+@@ -135,6 +141,9 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 			poll_table *wait);
+ 
++int rpmsg_get_signals(struct rpmsg_endpoint *ept);
++int rpmsg_set_signals(struct rpmsg_endpoint *ept, u32 set, u32 clear);
++
+ #else
+ 
+ static inline int register_rpmsg_device(struct rpmsg_device *dev)
+@@ -242,6 +251,23 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
  	return 0;
+ }
  
-@@ -154,15 +189,9 @@ static int omap_rproc_start(struct rproc *rproc)
- /* power off the remote processor */
- static int omap_rproc_stop(struct rproc *rproc)
- {
--	struct device *dev = rproc->dev.parent;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
- 	struct omap_rproc *oproc = rproc->priv;
--	int ret;
- 
--	ret = pdata->device_shutdown(pdev);
--	if (ret)
--		return ret;
-+	reset_control_assert(oproc->reset);
- 
- 	mbox_free_channel(oproc->mbox);
- 
-@@ -175,12 +204,122 @@ static const struct rproc_ops omap_rproc_ops = {
- 	.kick		= omap_rproc_kick,
- };
- 
-+static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
-+	.device_name	= "dsp",
-+	.has_bootreg	= true,
-+};
-+
-+static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
-+	.device_name	= "ipu",
-+};
-+
-+static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
-+	.device_name	= "dsp",
-+	.has_bootreg	= true,
-+};
-+
-+static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
-+	.device_name	= "ipu",
-+};
-+
-+static const struct of_device_id omap_rproc_of_match[] = {
-+	{
-+		.compatible     = "ti,omap4-dsp",
-+		.data           = &omap4_dsp_dev_data,
-+	},
-+	{
-+		.compatible     = "ti,omap4-ipu",
-+		.data           = &omap4_ipu_dev_data,
-+	},
-+	{
-+		.compatible     = "ti,omap5-dsp",
-+		.data           = &omap5_dsp_dev_data,
-+	},
-+	{
-+		.compatible     = "ti,omap5-ipu",
-+		.data           = &omap5_ipu_dev_data,
-+	},
-+	{
-+		/* end */
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, omap_rproc_of_match);
-+
-+static const char *omap_rproc_get_firmware(struct platform_device *pdev)
++static inline int rpmsg_get_signals(struct rpmsg_endpoint *ept)
 +{
-+	const char *fw_name;
-+	int ret;
++	/* This shouldn't be possible */
++	WARN_ON(1);
 +
-+	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-+				      &fw_name);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return fw_name;
++	return -ENXIO;
 +}
 +
-+static int omap_rproc_get_boot_data(struct platform_device *pdev,
-+				    struct rproc *rproc)
++static inline int rpmsg_set_signals(struct rpmsg_endpoint *ept,
++				    u32 set, u32 clear)
 +{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct omap_rproc *oproc = rproc->priv;
-+	const struct omap_rproc_dev_data *data;
-+	int ret;
++	/* This shouldn't be possible */
++	WARN_ON(1);
 +
-+	data = of_device_get_match_data(&pdev->dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	if (!data->has_bootreg)
-+		return 0;
-+
-+	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
-+					GFP_KERNEL);
-+	if (!oproc->boot_data)
-+		return -ENOMEM;
-+
-+	if (!of_property_read_bool(np, "ti,bootreg")) {
-+		dev_err(&pdev->dev, "ti,bootreg property is missing\n");
-+		return -EINVAL;
-+	}
-+
-+	oproc->boot_data->syscon =
-+			syscon_regmap_lookup_by_phandle(np, "ti,bootreg");
-+	if (IS_ERR(oproc->boot_data->syscon)) {
-+		ret = PTR_ERR(oproc->boot_data->syscon);
-+		return ret;
-+	}
-+
-+	if (of_property_read_u32_index(np, "ti,bootreg", 1,
-+				       &oproc->boot_data->boot_reg)) {
-+		dev_err(&pdev->dev, "couldn't get the boot register\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
++	return -ENXIO;
 +}
 +
- static int omap_rproc_probe(struct platform_device *pdev)
- {
--	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
-+	struct device_node *np = pdev->dev.of_node;
- 	struct omap_rproc *oproc;
- 	struct rproc *rproc;
-+	const char *firmware;
- 	int ret;
-+	struct reset_control *reset;
-+
-+	if (!np) {
-+		dev_err(&pdev->dev, "only DT-based devices are supported\n");
-+		return -ENODEV;
-+	}
-+
-+	reset = devm_reset_control_array_get_optional_exclusive(&pdev->dev);
-+	if (IS_ERR(reset))
-+		return PTR_ERR(reset);
-+
-+	firmware = omap_rproc_get_firmware(pdev);
-+	if (IS_ERR(firmware))
-+		return PTR_ERR(firmware);
+ #endif /* IS_ENABLED(CONFIG_RPMSG) */
  
- 	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
-@@ -188,16 +327,21 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	rproc = rproc_alloc(&pdev->dev, pdata->name, &omap_rproc_ops,
--			    pdata->firmware, sizeof(*oproc));
-+	rproc = rproc_alloc(&pdev->dev, dev_name(&pdev->dev), &omap_rproc_ops,
-+			    firmware, sizeof(*oproc));
- 	if (!rproc)
- 		return -ENOMEM;
- 
- 	oproc = rproc->priv;
- 	oproc->rproc = rproc;
-+	oproc->reset = reset;
- 	/* All existing OMAP IPU and DSP processors have an MMU */
- 	rproc->has_iommu = true;
- 
-+	ret = omap_rproc_get_boot_data(pdev, rproc);
-+	if (ret)
-+		goto free_rproc;
-+
- 	platform_set_drvdata(pdev, rproc);
- 
- 	ret = rproc_add(rproc);
-@@ -226,6 +370,7 @@ static struct platform_driver omap_rproc_driver = {
- 	.remove = omap_rproc_remove,
- 	.driver = {
- 		.name = "omap-rproc",
-+		.of_match_table = omap_rproc_of_match,
- 	},
- };
- 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.9.1
