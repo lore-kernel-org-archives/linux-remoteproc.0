@@ -1,16 +1,10 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-21.smtp-out.us-west-2.amazonses.com ([54.240.27.21]:59840
-        "EHLO a27-21.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726962AbfKVKFU (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:05:20 -0500
+Return-Path: <0101016e9292b563-1744c327-8e21-4e61-8f26-51f89c3f04aa-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [PATCH V5 3/5] rpmsg: glink: Add support for rpmsg glink chrdev
-Date: Fri, 22 Nov 2019 10:05:19 +0000
-Message-ID: <0101016e9292b923-a011a502-1986-4cc7-8b3f-05119cd27c90-000000@us-west-2.amazonses.com>
+Date: Fri, 22 Nov 2019 10:05:18 +0000
+Message-ID: <0101016e9292b563-1744c327-8e21-4e61-8f26-51f89c3f04aa-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
 References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
