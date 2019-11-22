@@ -1,11 +1,10 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <0101016e9292a2ed-c13639c4-8c1b-41fe-b749-9ce8f14dfd41-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [PATCH V5 2/5] rpmsg: Guard against null endpoint ops in destroy
 Date: Fri, 22 Nov 2019 10:05:13 +0000
-Message-ID: <0101016e9292a1af-f408df27-58cd-44b1-8258-a7090ec77c30-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e9292a2ed-c13639c4-8c1b-41fe-b749-9ce8f14dfd41-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
 References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
