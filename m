@@ -1,151 +1,96 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v3 1/1] remoteproc: add support for co-processor loaded and booted before kernel
-Date: Wed, 13 Nov 2019 22:29:03 +0100
-Message-ID: <1573680543-39086-1-git-send-email-loic.pallardy@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from a27-21.smtp-out.us-west-2.amazonses.com ([54.240.27.21]:59840
+        "EHLO a27-21.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726962AbfKVKFU (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:05:20 -0500
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [PATCH V5 3/5] rpmsg: glink: Add support for rpmsg glink chrdev
+Date: Fri, 22 Nov 2019 10:05:19 +0000
+Message-ID: <0101016e9292b923-a011a502-1986-4cc7-8b3f-05119cd27c90-000000@us-west-2.amazonses.com>
+In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
+References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remote processor could boot independently or be loaded/started before
-Linux kernel by bootloader or any firmware.
-This patch introduces a new property in rproc core, named skip_fw_load,
-to be able to allocate resources and sub-devices like vdev and to
-synchronize with current state without loading firmware from file system.
-It is platform driver responsibility to implement the right firmware
-load ops according to HW specificities.
+From: Chris Lew <clew@codeaurora.org>
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+RPMSG provides a char device interface to userspace. Probe the rpmsg
+chrdev channel to enable the rpmsg_ctrl device creation on glink
+transports.
 
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
 ---
-Change from v2:
-- rename property into skip_fw_load
-- update rproc_boot and rproc_fw_boot description
-- update commit message
-Change from v1:
-- Keep bool in struct rproc
----
- drivers/remoteproc/remoteproc_core.c | 51 +++++++++++++++++++++++++++---------
- include/linux/remoteproc.h           |  2 ++
- 2 files changed, 40 insertions(+), 13 deletions(-)
+ drivers/rpmsg/qcom_glink_native.c | 40 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 3c5fbbbfb0f1..585cdca8b241 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1360,7 +1360,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 609a150f..c838c19 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1158,7 +1158,7 @@ static int qcom_glink_announce_create(struct rpmsg_device *rpdev)
+ 	__be32 *val = defaults;
+ 	int size;
+ 
+-	if (glink->intentless)
++	if (glink->intentless || !completion_done(&channel->open_ack))
+ 		return 0;
+ 
+ 	prop = of_find_property(np, "qcom,intents", NULL);
+@@ -1544,6 +1544,40 @@ static void qcom_glink_work(struct work_struct *work)
+ 	}
  }
  
- /*
-- * take a firmware and boot a remote processor with it.
-+ * Handle resources defined in resource table and start a remote processor.
-  */
- static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- {
-@@ -1372,7 +1372,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
++static void qcom_glink_device_release(struct device *dev)
++{
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
++	struct glink_channel *channel = to_glink_channel(rpdev->ept);
++
++	/* Release qcom_glink_alloc_channel() reference */
++	kref_put(&channel->refcount, qcom_glink_channel_release);
++	kfree(rpdev);
++}
++
++static int qcom_glink_create_chrdev(struct qcom_glink *glink)
++{
++	struct rpmsg_device *rpdev;
++	struct glink_channel *channel;
++
++	rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
++	if (!rpdev)
++		return -ENOMEM;
++
++	channel = qcom_glink_alloc_channel(glink, "rpmsg_chrdev");
++	if (IS_ERR(channel)) {
++		kfree(rpdev);
++		return PTR_ERR(channel);
++	}
++	channel->rpdev = rpdev;
++
++	rpdev->ept = &channel->ept;
++	rpdev->ops = &glink_device_ops;
++	rpdev->dev.parent = glink->dev;
++	rpdev->dev.release = qcom_glink_device_release;
++
++	return rpmsg_chrdev_register_device(rpdev);
++}
++
+ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 					   unsigned long features,
+ 					   struct qcom_glink_pipe *rx,
+@@ -1603,6 +1637,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
  	if (ret)
- 		return ret;
+ 		return ERR_PTR(ret);
  
--	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-+	if (fw)
-+		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-+			 fw->size);
-+	else
-+		dev_info(dev, "Synchronizing with preloaded co-processor\n");
- 
- 	/*
- 	 * if enabling an IOMMU isn't relevant for this rproc, this is
-@@ -1719,16 +1723,22 @@ static void rproc_crash_handler_work(struct work_struct *work)
-  * rproc_boot() - boot a remote processor
-  * @rproc: handle of a remote processor
-  *
-- * Boot a remote processor (i.e. load its firmware, power it on, ...).
-+ * Boot a remote processor (i.e. load its firmware, power it on, ...) from
-+ * different contexts:
-+ * - power off
-+ * - preloaded firmware
-+ * - started before kernel execution
-+ * The different operations are selected thanks to properties defined by
-+ * platform driver.
-  *
-- * If the remote processor is already powered on, this function immediately
-- * returns (successfully).
-+ * If the remote processor is already powered on at rproc level, this function
-+ * immediately returns (successfully).
-  *
-  * Returns 0 on success, and an appropriate error value otherwise.
-  */
- int rproc_boot(struct rproc *rproc)
- {
--	const struct firmware *firmware_p;
-+	const struct firmware *firmware_p = NULL;
- 	struct device *dev;
- 	int ret;
- 
-@@ -1759,11 +1769,17 @@ int rproc_boot(struct rproc *rproc)
- 
- 	dev_info(dev, "powering up %s\n", rproc->name);
- 
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto downref_rproc;
-+	if (!rproc->skip_fw_load) {
-+		/* load firmware */
-+		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+		if (ret < 0) {
-+			dev_err(dev, "request_firmware failed: %d\n", ret);
-+			goto downref_rproc;
-+		}
-+	} else {
-+		/* set firmware name to null as unknown */
-+		kfree(rproc->firmware);
-+		rproc->firmware = NULL;
- 	}
- 
- 	ret = rproc_fw_boot(rproc, firmware_p);
-@@ -1917,8 +1933,17 @@ int rproc_add(struct rproc *rproc)
- 	/* create debugfs entries */
- 	rproc_create_debug_dir(rproc);
- 
--	/* if rproc is marked always-on, request it to boot */
--	if (rproc->auto_boot) {
-+	if (rproc->skip_fw_load) {
-+		/*
-+		 * If rproc is marked already booted, no need to wait
-+		 * for firmware.
-+		 * Just handle associated resources and start sub devices
-+		 */
-+		ret = rproc_boot(rproc);
-+		if (ret < 0)
-+			return ret;
-+	} else if (rproc->auto_boot) {
-+		/* if rproc is marked always-on, request it to boot */
- 		ret = rproc_trigger_auto_boot(rproc);
- 		if (ret < 0)
- 			return ret;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..4fd5bedab4fa 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -479,6 +479,7 @@ struct rproc_dump_segment {
-  * @table_sz: size of @cached_table
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  * @auto_boot: flag to indicate if remote processor should be auto-started
-+ * @skip_fw_load: remote processor has been preloaded before start sequence
-  * @dump_segments: list of segments in the firmware
-  * @nb_vdev: number of vdev currently handled by rproc
-  */
-@@ -512,6 +513,7 @@ struct rproc {
- 	size_t table_sz;
- 	bool has_iommu;
- 	bool auto_boot;
-+	bool skip_fw_load;
- 	struct list_head dump_segments;
- 	int nb_vdev;
- };
++	ret = qcom_glink_create_chrdev(glink);
++	if (ret)
++		dev_err(glink->dev, "failed to register chrdev\n");
++
+ 	return glink;
+ }
+ EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
 -- 
-2.7.4
+1.9.1
