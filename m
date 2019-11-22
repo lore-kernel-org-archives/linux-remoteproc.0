@@ -1,97 +1,46 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 3/4] remoteproc: Add prepare/unprepare callbacks
-Date: Sat, 16 Nov 2019 18:08:45 +0100
-Message-Id: <20191116170846.67220-3-paul@crapouillou.net>
-In-Reply-To: <20191116170846.67220-1-paul@crapouillou.net>
-References: <20191116170846.67220-1-paul@crapouillou.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from a27-188.smtp-out.us-west-2.amazonses.com ([54.240.27.188]:59618
+        "EHLO a27-188.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726568AbfKVKGv (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Fri, 22 Nov 2019 05:06:51 -0500
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Subject: [RESEND PATCH V4 0/4] Add TIOCM Signals support for RPMSG char devices
+Date: Fri, 22 Nov 2019 10:06:50 +0000
+Message-ID: <0101016e92941bcc-36d9920e-39c3-49b0-87fc-74ff3d4203e4-000000@us-west-2.amazonses.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The .prepare() callback is called before the firmware is loaded to
-memory. This is useful for instance in the case where some setup is
-required for the memory to be accessible.
+Glink transport support signals to exchange state notification between
+local and remote side clients. Adding support to send/receive the signal
+command and notify the clients through callback and POLL notification.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+Changes since v3:
+- Correct the TICOMGET case handling as per new rpmsg_get_signals prototype
+- Update the rpmsg_get_signals function header
 
-Notes:
-    v2: No change
-    v3: No change
+Changes since v2:
+- Modify the rpmsg_get_signals function prototype
 
- drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
- include/linux/remoteproc.h           |  4 ++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
+Changes since v1:
+- Split the patches as per functional areas like core, char, glink
+- Add set, clear mask for TIOCMSET
+- Merge the char signal callback and POLLPRI patches
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index d3787c94f451..7f61ab8b7da5 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1300,11 +1300,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
-+	if (rproc->ops->prepare) {
-+		ret = rproc->ops->prepare(rproc);
-+		if (ret) {
-+			dev_err(dev, "Failed to prepare rproc: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
- 	if (ret) {
- 		dev_err(dev, "Failed to load program segments: %d\n", ret);
--		return ret;
-+		goto unprepare_rproc;
- 	}
- 
- 	/*
-@@ -1355,6 +1363,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	rproc_unprepare_subdevices(rproc);
- reset_table_ptr:
- 	rproc->table_ptr = rproc->cached_table;
-+unprepare_rproc:
-+	if (rproc->ops->unprepare)
-+		rproc->ops->unprepare(rproc);
- 
- 	return ret;
- }
-@@ -1484,6 +1495,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 
- 	rproc->state = RPROC_OFFLINE;
- 
-+	if (rproc->ops->unprepare)
-+		rproc->ops->unprepare(rproc);
-+
- 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
- 
- 	return 0;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 5f201f0c86c3..a6272d1ba384 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -355,6 +355,8 @@ enum rsc_handling_status {
- 
- /**
-  * struct rproc_ops - platform-specific device handlers
-+ * @prepare:	prepare the device for power up (before the firmware is loaded)
-+ * @unprepare:	unprepare the device after it is stopped
-  * @start:	power on the device and boot it
-  * @stop:	power off the device
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-@@ -371,6 +373,8 @@ enum rsc_handling_status {
-  * @get_boot_addr:	get boot address to entry point specified in firmware
-  */
- struct rproc_ops {
-+	int (*prepare)(struct rproc *rproc);
-+	void (*unprepare)(struct rproc *rproc);
- 	int (*start)(struct rproc *rproc);
- 	int (*stop)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
+Arun Kumar Neelakantam (4):
+  rpmsg: core: Add signal API support
+  rpmsg: glink: Add support to handle signals command
+  rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+  rpmsg: char: Add signal callback and POLLPRI support
+
+ drivers/rpmsg/qcom_glink_native.c | 126 ++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_char.c        |  74 +++++++++++++++++++++-
+ drivers/rpmsg/rpmsg_core.c        |  41 +++++++++++++
+ drivers/rpmsg/rpmsg_internal.h    |   5 ++
+ include/linux/rpmsg.h             |  26 ++++++++
+ 5 files changed, 269 insertions(+), 3 deletions(-)
+
 -- 
-2.24.0
+1.9.1
