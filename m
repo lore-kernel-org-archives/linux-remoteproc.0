@@ -1,11 +1,10 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+Return-Path: <0101016e9292d0a3-de25a223-d828-4797-8971-c68bb57937b6-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [PATCH V5 5/5] rpmsg: glink: unregister rpmsg device during endpoint destroy
-Date: Fri, 22 Nov 2019 10:05:24 +0000
-Message-ID: <0101016e9292cd9d-ebab0468-29d4-4c8f-b2f8-58f2a4a5e65e-000000@us-west-2.amazonses.com>
+Date: Fri, 22 Nov 2019 10:05:25 +0000
+Message-ID: <0101016e9292d0a3-de25a223-d828-4797-8971-c68bb57937b6-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
 References: <1574417087-27594-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>, Andy Gross <agross@kernel.org>, "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
