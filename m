@@ -1,16 +1,10 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-186.smtp-out.us-west-2.amazonses.com ([54.240.27.186]:44274
-        "EHLO a27-186.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726568AbfKVKG4 (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:06:56 -0500
+Return-Path: <0101016e92943066-c63e4130-c014-4bb7-821b-4e9c69d8936e-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [RESEND PATCH V4 1/4] rpmsg: core: Add signal API support
-Date: Fri, 22 Nov 2019 10:06:54 +0000
-Message-ID: <0101016e92942d16-9c3095c2-c336-4c23-aed3-709ad4136ad3-000000@us-west-2.amazonses.com>
+Date: Fri, 22 Nov 2019 10:06:55 +0000
+Message-ID: <0101016e92943066-c63e4130-c014-4bb7-821b-4e9c69d8936e-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
 References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
