@@ -1,14 +1,8 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-188.smtp-out.us-west-2.amazonses.com ([54.240.27.188]:59618
-        "EHLO a27-188.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726568AbfKVKGv (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:06:51 -0500
+Return-Path: <0101016e92941e7c-10557a2b-9d6b-4690-9e85-e63a34c69181-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [RESEND PATCH V4 0/4] Add TIOCM Signals support for RPMSG char devices
-Date: Fri, 22 Nov 2019 10:06:50 +0000
-Message-ID: <0101016e92941bcc-36d9920e-39c3-49b0-87fc-74ff3d4203e4-000000@us-west-2.amazonses.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
+Date: Fri, 22 Nov 2019 10:06:51 +0000
+Message-ID: <0101016e92941e7c-10557a2b-9d6b-4690-9e85-e63a34c69181-000000@us-west-2.amazonses.com>
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
