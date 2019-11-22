@@ -1,16 +1,10 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from a27-188.smtp-out.us-west-2.amazonses.com ([54.240.27.188]:59618
-        "EHLO a27-188.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726568AbfKVKHC (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Nov 2019 05:07:02 -0500
+Return-Path: <0101016e929446dc-4156b8d1-dd34-44e8-840c-0dfcce0efdf6-000000@us-west-2.amazonses.com>
 From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 Subject: [RESEND PATCH V4 3/4] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
 Date: Fri, 22 Nov 2019 10:07:01 +0000
-Message-ID: <0101016e929447ec-0bd67225-9152-4bcd-945e-ebd39a0110d5-000000@us-west-2.amazonses.com>
+Message-ID: <0101016e929446dc-4156b8d1-dd34-44e8-840c-0dfcce0efdf6-000000@us-west-2.amazonses.com>
 In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
 References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
 To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
 Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
