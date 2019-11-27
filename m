@@ -1,147 +1,168 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH v2] rpmsg: core: add API to get MTU
-Date: Wed, 13 Nov 2019 18:22:49 +0100
-Message-ID: <20191113172249.32412-1-arnaud.pouliquen@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V3 01/10] remoteproc: qcom: Add PRNG proxy clock
+Date: Wed, 27 Nov 2019 20:42:45 +0530
+Message-Id: <1574867574-2216-2-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Return the rpmsg buffer MTU for sending message, so rpmsg users
-can split a long message in several sub rpmsg buffers.
+PRNG clock is needed by the secure PIL, support for the same
+is added in subsequent patches.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 ---
- V1 to V2
+ drivers/remoteproc/qcom_q6v5_wcss.c | 69 ++++++++++++++++++++++++++-----------
+ 1 file changed, 49 insertions(+), 20 deletions(-)
 
-  V1 patch:https://lore.kernel.org/patchwork/patch/1124684/
-  - Change patch title,
-  - as not solution today to support MTU on GLINK make ops optional,
-    RPMsg client API returns -ENOTSUPP in this case,
-  - suppress smd and glink patches.
----
- drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   |  2 ++
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
- include/linux/rpmsg.h            | 10 ++++++++++
- 4 files changed, 43 insertions(+)
-
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index e330ec4dfc33..a6ef54c4779a 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
- 
-+/**
-+ * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
-+ * @ept: the rpmsg endpoint
-+ *
-+ * This function returns maximum buffer size available for a single message.
-+ *
-+ * Return: the maximum transmission size on success and an appropriate error
-+ * value on failure.
-+ */
-+
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->get_mtu)
-+		return -ENOTSUPP;
-+
-+	return ept->ops->get_mtu(ept);
-+}
-+EXPORT_SYMBOL(rpmsg_get_mtu);
-+
- /*
-  * match an rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd50e98..0e56e046f5c6 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -47,6 +47,7 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @get_mtu:		see @get_mpu(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -66,6 +67,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index a2671a1..e5cc064 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -91,19 +91,6 @@ enum {
+ 	WCSS_QCS404,
  };
  
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 376ebbf880d6..6e48fdf24555 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+-struct wcss_data {
+-	const char *firmware_name;
+-	int crash_reason_smem;
+-	u32 version;
+-	bool aon_reset_required;
+-	bool wcss_q6_reset_required;
+-	const char *ssr_name;
+-	const char *sysmon_name;
+-	int ssctl_id;
+-	const struct rproc_ops *ops;
+-	bool requires_force_stop;
+-};
+-
+ struct q6v5_wcss {
+ 	struct device *dev;
  
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.trysend = virtio_rpmsg_trysend,
- 	.trysendto = virtio_rpmsg_trysendto,
- 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
-+	.get_mtu = virtio_rpmsg_get_mtu,
+@@ -128,6 +115,7 @@ struct q6v5_wcss {
+ 	struct clk *qdsp6ss_xo_cbcr;
+ 	struct clk *qdsp6ss_core_gfmux;
+ 	struct clk *lcc_bcr_sleep;
++	struct clk *prng_clk;
+ 	struct regulator *cx_supply;
+ 
+ 	struct qcom_rproc_glink glink_subdev;
+@@ -151,6 +139,21 @@ struct q6v5_wcss {
+ 	bool requires_force_stop;
  };
  
- /**
-@@ -699,6 +701,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
- 
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
++struct wcss_data {
++	int (*init_clock)(struct q6v5_wcss *wcss);
++	int (*init_regulator)(struct q6v5_wcss *wcss);
++	const char *firmware_name;
++	int crash_reason_smem;
++	u32 version;
++	bool aon_reset_required;
++	bool wcss_q6_reset_required;
++	const char *ssr_name;
++	const char *sysmon_name;
++	int ssctl_id;
++	const struct rproc_ops *ops;
++	bool requires_force_stop;
++};
 +
-+	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-+}
-+
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
  {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d1c018..88d7892ca93d 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
+ 	int ret;
+@@ -240,6 +243,12 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
  
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
++	ret = clk_prepare_enable(wcss->prng_clk);
++	if (ret) {
++		dev_err(wcss->dev, "prng clock enable failed\n");
++		return ret;
++	}
 +
- #else
+ 	qcom_q6v5_prepare(&wcss->q6v5);
  
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+ 	/* Release Q6 and WCSS reset */
+@@ -732,6 +741,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++	clk_disable_unprepare(wcss->prng_clk);
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+ 	return 0;
+@@ -889,7 +899,21 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
  	return 0;
  }
  
-+static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+-static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
++static int ipq8074_init_clock(struct q6v5_wcss *wcss)
 +{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
++	int ret;
 +
-+	return -ENXIO;
++	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
++	if (IS_ERR(wcss->prng_clk)) {
++		ret = PTR_ERR(wcss->prng_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "Failed to get prng clock\n");
++		return ret;
++	}
++	return 0;
 +}
 +
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
++static int qcs404_init_clock(struct q6v5_wcss *wcss)
+ {
+ 	int ret;
  
- /* use a macro to avoid include chaining to get THIS_MODULE */
+@@ -979,7 +1003,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 	return 0;
+ }
+ 
+-static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
++static int qcs404_init_regulator(struct q6v5_wcss *wcss)
+ {
+ 	wcss->cx_supply = devm_regulator_get(wcss->dev, "cx");
+ 	if (IS_ERR(wcss->cx_supply))
+@@ -1023,14 +1047,16 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	if (wcss->version == WCSS_QCS404) {
+-		ret = q6v5_wcss_init_clock(wcss);
++	if (desc->init_clock) {
++		ret = desc->init_clock(wcss);
+ 		if (ret)
+ 			goto free_rproc;
+ 
+-		ret = q6v5_wcss_init_regulator(wcss);
+-		if (ret)
+-			goto free_rproc;
++		if (desc->init_regulator) {
++			ret = desc->init_regulator(wcss);
++			if (ret)
++				goto free_rproc;
++		}
+ 	}
+ 
+ 	ret = q6v5_wcss_init_reset(wcss, desc);
+@@ -1073,6 +1099,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct wcss_data wcss_ipq8074_res_init = {
++	.init_clock = ipq8074_init_clock,
+ 	.firmware_name = "IPQ8074/q6_fw.mdt",
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.aon_reset_required = true,
+@@ -1082,6 +1109,8 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ };
+ 
+ static const struct wcss_data wcss_qcs404_res_init = {
++	.init_clock = qcs404_init_clock,
++	.init_regulator = qcs404_init_regulator,
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
 -- 
-2.17.1
+1.9.1
