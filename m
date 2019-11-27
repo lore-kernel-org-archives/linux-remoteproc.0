@@ -1,171 +1,59 @@
-Return-Path: <loic.pallardy@st.com>
-From: Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH v4 1/1] remoteproc: add support for co-processor loaded and booted before kernel
-Date: Thu, 28 Nov 2019 12:33:51 +0100
-Message-ID: <1574940831-7433-1-git-send-email-loic.pallardy@st.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com, Loic Pallardy <loic.pallardy@st.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 27 Nov 2019 15:03:50 +0000
+From: gokulsri@codeaurora.org
+Subject: Re: [PATCH V2 12/12] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074
+ SoC
+In-Reply-To: <20190917161557.164C320665@mail.kernel.org>
+References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+ <1568375771-22933-13-git-send-email-gokulsri@codeaurora.org>
+ <20190917161557.164C320665@mail.kernel.org>
+Message-ID: <0101016ead63d338-79f23ad8-8186-4f6e-bda4-b078441d55f2-000000@us-west-2.amazonses.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, nprakash@codeaurora.org, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remote processor could boot independently or be loaded/started before
-Linux kernel by bootloader or any firmware.
-This patch introduces a new property in rproc core, named skip_fw_load,
-to be able to allocate resources and sub-devices like vdev and to
-synchronize with current state without loading firmware from file system.
-It is platform driver responsibility to implement the right firmware
-load ops according to HW specificities.
+On 2019-09-17 21:45, Stephen Boyd wrote:
+> Quoting Gokul Sriram Palanisamy (2019-09-13 04:56:11)
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi 
+>> b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> index 6a61a63..0ea026e 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+>> @@ -431,6 +485,78 @@
+>>                                       "axi_m_sticky";
+>>                         status = "disabled";
+>>                 };
+>> +
+>> +               apcs: syscon@b111000 {
+>> +                       compatible = "syscon";
+>> +                       reg = <0x0b111000 0x1000>;
+>> +               };
+>> +
+>> +               tcsr_q6: syscon@1945000 {
+>> +                       compatible = "syscon";
+>> +                       reg = <0x01945000 0xe000>;
+>> +               };
+>> +
+>> +               tcsr_mutex_regs: syscon@193d000 {
+>> +                       compatible = "syscon";
+>> +                       reg = <0x01905000 0x8000>;
+>> +               };
+>> +
+>> +               apcs_glb: mailbox@b111000 {
+> 
+> This is the same as the syscon above. What's going on?
+> 
+>> +                       compatible = "qcom,ipq8074-apcs-apps-global";
+>> +                       reg = <0x0b111000 0x1000>;
+>> +
+>> +                       #mbox-cells = <1>;
+>> +               };
+  Sorry for the delayed response. Will have this addressed and post a v3.
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
----
-Change from v3:
-- add comment about firmware NULL pointer
-- add Mathieu Poirier Ack
-Change from v2:
-- rename property into skip_fw_load
-- update rproc_boot and rproc_fw_boot description
-- update commit message
-Change from v1:
-- Keep bool in struct rproc
----
- drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++--------
- include/linux/remoteproc.h           |  2 ++
- 2 files changed, 55 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 307df98347ba..367a7929b7a0 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1358,8 +1358,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	return ret;
- }
- 
--/*
-- * take a firmware and boot a remote processor with it.
-+/**
-+ * rproc_fw_boot() - boot specified remote processor according to specified
-+ * firmware
-+ * @rproc: handle of a remote processor
-+ * @fw: pointer on firmware to handle
-+ *
-+ * Handle resources defined in resource table, load firmware and
-+ * start remote processor.
-+ *
-+ * If firmware pointer fw is NULL, firmware is not handled by remoteproc
-+ * core, but under the responsibility of platform driver.
-+ *
-+ * Returns 0 on success, and an appropriate error value otherwise.
-  */
- static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- {
-@@ -1371,7 +1382,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	if (ret)
- 		return ret;
- 
--	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-+	if (fw)
-+		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-+			 fw->size);
-+	else
-+		dev_info(dev, "Synchronizing with preloaded co-processor\n");
- 
- 	/*
- 	 * if enabling an IOMMU isn't relevant for this rproc, this is
-@@ -1718,16 +1733,22 @@ static void rproc_crash_handler_work(struct work_struct *work)
-  * rproc_boot() - boot a remote processor
-  * @rproc: handle of a remote processor
-  *
-- * Boot a remote processor (i.e. load its firmware, power it on, ...).
-+ * Boot a remote processor (i.e. load its firmware, power it on, ...) from
-+ * different contexts:
-+ * - power off
-+ * - preloaded firmware
-+ * - started before kernel execution
-+ * The different operations are selected thanks to properties defined by
-+ * platform driver.
-  *
-- * If the remote processor is already powered on, this function immediately
-- * returns (successfully).
-+ * If the remote processor is already powered on at rproc level, this function
-+ * immediately returns (successfully).
-  *
-  * Returns 0 on success, and an appropriate error value otherwise.
-  */
- int rproc_boot(struct rproc *rproc)
- {
--	const struct firmware *firmware_p;
-+	const struct firmware *firmware_p = NULL;
- 	struct device *dev;
- 	int ret;
- 
-@@ -1758,11 +1779,20 @@ int rproc_boot(struct rproc *rproc)
- 
- 	dev_info(dev, "powering up %s\n", rproc->name);
- 
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto downref_rproc;
-+	if (!rproc->skip_fw_load) {
-+		/* load firmware */
-+		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+		if (ret < 0) {
-+			dev_err(dev, "request_firmware failed: %d\n", ret);
-+			goto downref_rproc;
-+		}
-+	} else {
-+		/*
-+		 * Set firmware name pointer to null as remoteproc core is not
-+		 * in charge of firmware loading
-+		 */
-+		kfree(rproc->firmware);
-+		rproc->firmware = NULL;
- 	}
- 
- 	ret = rproc_fw_boot(rproc, firmware_p);
-@@ -1916,8 +1946,17 @@ int rproc_add(struct rproc *rproc)
- 	/* create debugfs entries */
- 	rproc_create_debug_dir(rproc);
- 
--	/* if rproc is marked always-on, request it to boot */
--	if (rproc->auto_boot) {
-+	if (rproc->skip_fw_load) {
-+		/*
-+		 * If rproc is marked already booted, no need to wait
-+		 * for firmware.
-+		 * Just handle associated resources and start sub devices
-+		 */
-+		ret = rproc_boot(rproc);
-+		if (ret < 0)
-+			return ret;
-+	} else if (rproc->auto_boot) {
-+		/* if rproc is marked always-on, request it to boot */
- 		ret = rproc_trigger_auto_boot(rproc);
- 		if (ret < 0)
- 			return ret;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..4fd5bedab4fa 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -479,6 +479,7 @@ struct rproc_dump_segment {
-  * @table_sz: size of @cached_table
-  * @has_iommu: flag to indicate if remote processor is behind an MMU
-  * @auto_boot: flag to indicate if remote processor should be auto-started
-+ * @skip_fw_load: remote processor has been preloaded before start sequence
-  * @dump_segments: list of segments in the firmware
-  * @nb_vdev: number of vdev currently handled by rproc
-  */
-@@ -512,6 +513,7 @@ struct rproc {
- 	size_t table_sz;
- 	bool has_iommu;
- 	bool auto_boot;
-+	bool skip_fw_load;
- 	struct list_head dump_segments;
- 	int nb_vdev;
- };
--- 
-2.7.4
+  Regards,
+  Gokul
