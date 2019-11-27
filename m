@@ -1,4 +1,4 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
+Return-Path: <0101016ead63d2c8-6dcef370-5ee6-4ced-b025-6807578274c9-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
@@ -11,8 +11,7 @@ In-Reply-To: <20190917161557.164C320665@mail.kernel.org>
 References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
  <1568375771-22933-13-git-send-email-gokulsri@codeaurora.org>
  <20190917161557.164C320665@mail.kernel.org>
-Message-ID: <0101016ead63d338-79f23ad8-8186-4f6e-bda4-b078441d55f2-000000@us-west-2.amazonses.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Message-ID: <0101016ead63d2c8-6dcef370-5ee6-4ced-b025-6807578274c9-000000@us-west-2.amazonses.com>
 To: Stephen Boyd <sboyd@kernel.org>
 Cc: agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, nprakash@codeaurora.org, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
