@@ -1,104 +1,107 @@
-Return-Path: <0101016e929446dc-4156b8d1-dd34-44e8-840c-0dfcce0efdf6-000000@us-west-2.amazonses.com>
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Subject: [RESEND PATCH V4 3/4] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-Date: Fri, 22 Nov 2019 10:07:01 +0000
-Message-ID: <0101016e929446dc-4156b8d1-dd34-44e8-840c-0dfcce0efdf6-000000@us-west-2.amazonses.com>
-In-Reply-To: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-References: <1574417197-27817-1-git-send-email-aneela@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, clew@codeaurora.org, sricharan@codeaurora.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Kumar Neelakantam <aneela@codeaurora.org>
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V3 03/10] remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+Date: Wed, 27 Nov 2019 20:42:47 +0530
+Message-Id: <1574867574-2216-4-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
-to get/set the low level transport signals.
+IPQ8074 supports split firmware for q6 and m3 as well.
+So add support for loading the m3 firmware before q6.
+Now the drivers works fine for both split and unified
+firmwares.
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 ---
- drivers/rpmsg/rpmsg_char.c | 53 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 3 deletions(-)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index eea5ebb..07bce51 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-+ * Copyright (c) 2018, The Linux Foundation.
-  * Copyright (c) 2016, Linaro Ltd.
-  * Copyright (c) 2012, Michal Simek <monstr@monstr.eu>
-  * Copyright (c) 2012, PetaLogix
-@@ -19,6 +20,7 @@
- #include <linux/rpmsg.h>
- #include <linux/skbuff.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/uaccess.h>
- #include <uapi/linux/rpmsg.h>
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 49d98d3..fcb1956 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -142,12 +142,14 @@ struct q6v5_wcss {
+ 	u32 version;
+ 	bool requires_force_stop;
+ 	bool need_mem_protection;
++	const char *m3_firmware_name;
+ };
  
-@@ -271,15 +273,60 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
- 	return mask;
- }
- 
-+static int rpmsg_eptdev_tiocmset(struct file *fp, unsigned int cmd,
-+				 int __user *arg)
-+{
-+	struct rpmsg_eptdev *eptdev = fp->private_data;
-+	u32 set, clear, val;
-+	int ret;
-+
-+	ret = get_user(val, arg);
-+	if (ret)
-+		return ret;
-+	set = clear = 0;
-+	switch (cmd) {
-+	case TIOCMBIS:
-+		set = val;
-+		break;
-+	case TIOCMBIC:
-+		clear = val;
-+		break;
-+	case TIOCMSET:
-+		set = val;
-+		clear = ~val;
-+		break;
-+	}
-+
-+	set &= TIOCM_DTR | TIOCM_RTS | TIOCM_CD | TIOCM_RI;
-+	clear &= TIOCM_DTR | TIOCM_RTS | TIOCM_CD | TIOCM_RI;
-+
-+	return rpmsg_set_signals(eptdev->ept, set, clear);
-+}
-+
- static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 			       unsigned long arg)
+ struct wcss_data {
+ 	int (*init_clock)(struct q6v5_wcss *wcss);
+ 	int (*init_regulator)(struct q6v5_wcss *wcss);
+-	const char *firmware_name;
++	const char *q6_firmware_name;
++	const char *m3_firmware_name;
+ 	int crash_reason_smem;
+ 	u32 version;
+ 	bool aon_reset_required;
+@@ -788,7 +790,26 @@ static void *q6v5_wcss_da_to_va(struct rproc *rproc, u64 da, int len)
+ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
  {
- 	struct rpmsg_eptdev *eptdev = fp->private_data;
+ 	struct q6v5_wcss *wcss = rproc->priv;
++	const struct firmware *m3_fw;
 +	int ret;
- 
--	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
--		return -EINVAL;
-+	switch (cmd) {
-+	case TIOCMGET:
-+		ret = rpmsg_get_signals(eptdev->ept);
-+		if (ret >= 0)
-+			ret = put_user(ret, (int __user *)arg);
-+		break;
-+	case TIOCMSET:
-+	case TIOCMBIS:
-+	case TIOCMBIC:
-+		ret = rpmsg_eptdev_tiocmset(fp, cmd, (int __user *)arg);
-+		break;
-+	case RPMSG_DESTROY_EPT_IOCTL:
-+		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-+	default:
-+		ret = -EINVAL;
++
++	if (wcss->m3_firmware_name) {
++		ret = request_firmware(&m3_fw, wcss->m3_firmware_name,
++				wcss->dev);
++		if (ret)
++			goto skip_m3;
++
++		ret = qcom_mdt_load_no_init(wcss->dev, m3_fw,
++					    wcss->m3_firmware_name, 0,
++					    wcss->mem_region, wcss->mem_phys,
++					    wcss->mem_size, &wcss->mem_reloc);
++		if (ret) {
++			dev_err(wcss->dev, "can't load m3_fw.bXX\n");
++			return ret;
++		}
 +	}
  
--	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-+	return ret;
- }
++skip_m3:
+ 	if (wcss->need_mem_protection)
+ 		return qcom_mdt_load(wcss->dev, fw, rproc->firmware,
+ 				     WCNSS_PAS_ID, wcss->mem_region,
+@@ -1058,7 +1079,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  
- static const struct file_operations rpmsg_eptdev_fops = {
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
+-			    desc->firmware_name, sizeof(*wcss));
++			    desc->q6_firmware_name, sizeof(*wcss));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+ 		return -ENOMEM;
+@@ -1071,6 +1092,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	wcss->version = desc->version;
+ 	wcss->requires_force_stop = desc->requires_force_stop;
+ 	wcss->need_mem_protection = desc->need_mem_protection;
++	wcss->m3_firmware_name = desc->m3_firmware_name;
+ 
+ 	ret = q6v5_wcss_init_mmio(wcss, pdev);
+ 	if (ret)
+@@ -1133,7 +1155,8 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 
+ static const struct wcss_data wcss_ipq8074_res_init = {
+ 	.init_clock = ipq8074_init_clock,
+-	.firmware_name = "IPQ8074/q6_fw.mdt",
++	.q6_firmware_name = "IPQ8074/q6_fw.mdt",
++	.m3_firmware_name = "IPQ8074/m3_fw.mdt",
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.aon_reset_required = true,
+ 	.wcss_q6_reset_required = true,
+@@ -1146,7 +1169,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ 	.init_clock = qcs404_init_clock,
+ 	.init_regulator = qcs404_init_regulator,
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+-	.firmware_name = "wcnss.mdt",
++	.q6_firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
+ 	.aon_reset_required = false,
+ 	.wcss_q6_reset_required = false,
 -- 
 1.9.1
