@@ -1,58 +1,37 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv2 09/15] remoteproc/omap: Remove the omap_rproc_reserve_cma declaration
-Date: Tue, 19 Nov 2019 16:16:39 +0200
-Message-ID: <20191119141645.19777-10-t-kristo@ti.com>
-In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
-References: <20191119141645.19777-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V3 09/10] arm64: dts: Add support for scm on IPQ8074 SoCs
+Date: Wed, 27 Nov 2019 20:42:53 +0530
+Message-Id: <1574867574-2216-10-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Enables scm support, clock is not needed for enabling scm interface.
 
-The omap_rproc_reserve_cma() function is not defined at the moment.
-This prototype was to be used to define a function to declare a
-remoteproc device-specific CMA pool.
-
-The remoteproc devices will be defined through DT going forward. A
-device specific CMA pool will be defined under the reserved-memory
-node, and will be associated with the appropriate remoteproc device
-node. This function prototype will no longer be needed and has
-therefore been cleaned up.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- include/linux/platform_data/remoteproc-omap.h | 12 ------------
- 1 file changed, 12 deletions(-)
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
-index 6bea01e199fe..49c78805916f 100644
---- a/include/linux/platform_data/remoteproc-omap.h
-+++ b/include/linux/platform_data/remoteproc-omap.h
-@@ -21,16 +21,4 @@ struct omap_rproc_pdata {
- 	int (*device_shutdown)(struct platform_device *pdev);
- };
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+index 67ee5f5..6a61a63 100644
+--- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -10,6 +10,12 @@
+ 	model = "Qualcomm Technologies, Inc. IPQ8074";
+ 	compatible = "qcom,ipq8074";
  
--#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
--
--void __init omap_rproc_reserve_cma(void);
--
--#else
--
--static inline void __init omap_rproc_reserve_cma(void)
--{
--}
--
--#endif
--
- #endif /* _PLAT_REMOTEPROC_H */
++	firmware {
++		scm {
++			compatible = "qcom,scm-ipq8074", "qcom,scm";
++		};
++	};
++
+ 	soc: soc {
+ 		#address-cells = <0x1>;
+ 		#size-cells = <0x1>;
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.9.1
