@@ -1,27 +1,34 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Mon, 4 Nov 2019 16:35:58 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: Add Q6v5 Modem PIL
- binding for MSM8998
-Message-ID: <20191104223558.GA17515@bogus>
-References: <20191101024301.21919-1-jeffrey.l.hugo@gmail.com>
- <20191101024435.21975-1-jeffrey.l.hugo@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191101024435.21975-1-jeffrey.l.hugo@gmail.com>
-To: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc: agross@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V3 07/10] clk: qcom: Add WCSSAON reset
+Date: Wed, 27 Nov 2019 20:42:51 +0530
+Message-Id: <1574867574-2216-8-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu, 31 Oct 2019 19:44:35 -0700, Jeffrey Hugo wrote:
-> Add new compatible string for Qualcomm MSM8998 SoCs.
-> 
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+Add WCSSAON reset required for Q6v5 on IPQ8074 SoC.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index e01f5f5..1e5758f 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -4685,6 +4685,7 @@ enum {
+ 	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
+ 	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
+ 	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
++	[GCC_WCSSAON_RESET] = { 0x59010, 0 },
+ };
+ 
+ static const struct of_device_id gcc_ipq8074_match_table[] = {
+-- 
+1.9.1
