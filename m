@@ -1,366 +1,58 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv2 12/15] remoteproc/omap: add support for system suspend/resume
-Date: Tue, 19 Nov 2019 16:16:42 +0200
-Message-ID: <20191119141645.19777-13-t-kristo@ti.com>
-In-Reply-To: <20191119141645.19777-1-t-kristo@ti.com>
-References: <20191119141645.19777-1-t-kristo@ti.com>
+Date: Sat, 30 Nov 2019 11:14:27 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] rpmsg updates for v5.5
+Message-ID: <20191130191423.GB151303@yoga>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Lew <clew@codeaurora.org>, Arun Kumar Neelakantam <aneela@codeaurora.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski <krzk@kernel.org>, Navid Emamdoost <navid.emamdoost@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-This patch adds the support for system suspend/resume to the
-OMAP remoteproc driver so that the OMAP remoteproc devices can
-be suspended/resumed during a system suspend/resume. The support
-is added through the driver PM .suspend/.resume callbacks, and
-requires appropriate support from the OS running on the remote
-processors.
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
 
-The IPU & DSP remote processors typically have their own private
-modules like registers, internal memories, caches etc. The context
-of these modules need to be saved and restored properly for a
-suspend/resume to work. These are in general not accessible from
-the MPU, so the remote processors themselves have to implement
-the logic for the context save & restore of these modules.
+are available in the Git repository at:
 
-The OMAP remoteproc driver initiates a suspend by sending a mailbox
-message requesting the remote processor to save its context and
-enter into an idle/standby state. The remote processor should
-usually stop whatever processing it is doing to switch to a context
-save mode. The OMAP remoteproc driver detects the completion of
-the context save by checking the module standby status for the
-remoteproc device. It also stops any resources used by the remote
-processors like the timers. The timers need to be running only
-when the processor is active and executing, and need to be stopped
-otherwise to allow the timer driver to reach low-power states. The
-IOMMUs are automatically suspended by the PM core during the late
-suspend stage, after the remoteproc suspend process is completed by
-putting the remote processor cores into reset. Thereafter, the Linux
-kernel can put the domain into further lower power states as possible.
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/rpmsg-v5.5
 
-The resume sequence undoes the operations performed in the PM suspend
-callback, by starting the timers and finally releasing the processors
-from reset. This requires that the remote processor side OS be able to
-distinguish a power-resume boot from a power-on/cold boot, restore the
-context of its private modules saved during the suspend phase, and
-resume executing code from where it was suspended. The IOMMUs would
-have been resumed by the PM core during early resume, so they are
-already enabled by the time remoteproc resume callback gets invoked.
+for you to fetch changes up to 8cf9b615653e40debdcf3b6f1d69e6b580d71173:
 
-The remote processors should save their context into System RAM (DDR),
-as any internal memories are not guaranteed to retain context as it
-depends on the lowest power domain that the remote processor device
-is put into. The management of the DDR contents will be managed by
-the Linux kernel.
+  rpmsg: Fix Kconfig indentation (2019-11-21 10:04:49 -0800)
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-[t-kristo@ti.com: converted to use ti-sysc instead of hwmod]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
-v2:
- - changed to use devm_clk_get instead of of_clk_get
+----------------------------------------------------------------
+rpmsg updates for v5.5
 
- drivers/remoteproc/omap_remoteproc.c | 180 +++++++++++++++++++++++++++
- drivers/remoteproc/omap_remoteproc.h |  18 ++-
- 2 files changed, 196 insertions(+), 2 deletions(-)
+This contains a number of bug fixes to the GLINK transport driver, an
+off-by-one in the GLINK smem driver and a memory leak fix in the rpmsg
+char driver.
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 287d0856f4ba..0cf96f8024f8 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -16,6 +16,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/err.h>
-+#include <linux/io.h>
- #include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
-@@ -23,10 +24,13 @@
- #include <linux/remoteproc.h>
- #include <linux/mailbox_client.h>
- #include <linux/omap-mailbox.h>
-+#include <linux/omap-iommu.h>
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
- #include <linux/reset.h>
- #include <clocksource/timer-ti-dm.h>
-+#include <linux/clk.h>
-+#include <linux/clk/ti.h>
- 
- #include <linux/platform_data/dmtimer-omap.h>
- 
-@@ -82,6 +86,9 @@ struct omap_rproc_timer {
-  * @timers: timer(s) info used by rproc
-  * @rproc: rproc handle
-  * @reset: reset handle
-+ * @pm_comp: completion primitive to sync for suspend response
-+ * @fck: functional clock for the remoteproc
-+ * @suspend_acked: state machine flag to store the suspend request ack
-  */
- struct omap_rproc {
- 	struct mbox_chan *mbox;
-@@ -93,6 +100,9 @@ struct omap_rproc {
- 	struct omap_rproc_timer *timers;
- 	struct rproc *rproc;
- 	struct reset_control *reset;
-+	struct completion pm_comp;
-+	struct clk *fck;
-+	bool suspend_acked;
- };
- 
- /**
-@@ -350,6 +360,11 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
- 	case RP_MBOX_ECHO_REPLY:
- 		dev_info(dev, "received echo reply from %s\n", name);
- 		break;
-+	case RP_MBOX_SUSPEND_ACK:
-+	case RP_MBOX_SUSPEND_CANCEL:
-+		oproc->suspend_acked = msg == RP_MBOX_SUSPEND_ACK;
-+		complete(&oproc->pm_comp);
-+		break;
- 	default:
- 		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
- 			return;
-@@ -530,6 +545,157 @@ static const struct rproc_ops omap_rproc_ops = {
- 	.da_to_va	= omap_rproc_da_to_va,
- };
- 
-+#ifdef CONFIG_PM
-+static bool _is_rproc_in_standby(struct omap_rproc *oproc)
-+{
-+	return ti_clk_is_in_standby(oproc->fck);
-+}
-+
-+/* 1 sec is long enough time to let the remoteproc side suspend the device */
-+#define DEF_SUSPEND_TIMEOUT 1000
-+static int _omap_rproc_suspend(struct rproc *rproc)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	struct omap_rproc *oproc = rproc->priv;
-+	unsigned long to = msecs_to_jiffies(DEF_SUSPEND_TIMEOUT);
-+	unsigned long ta = jiffies + to;
-+	int ret;
-+
-+	reinit_completion(&oproc->pm_comp);
-+	oproc->suspend_acked = false;
-+	ret = mbox_send_message(oproc->mbox, (void *)RP_MBOX_SUSPEND_SYSTEM);
-+	if (ret < 0) {
-+		dev_err(dev, "PM mbox_send_message failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = wait_for_completion_timeout(&oproc->pm_comp, to);
-+	if (!oproc->suspend_acked)
-+		return -EBUSY;
-+
-+	/*
-+	 * The remoteproc side is returning the ACK message before saving the
-+	 * context, because the context saving is performed within a SYS/BIOS
-+	 * function, and it cannot have any inter-dependencies against the IPC
-+	 * layer. Also, as the SYS/BIOS needs to preserve properly the processor
-+	 * register set, sending this ACK or signalling the completion of the
-+	 * context save through a shared memory variable can never be the
-+	 * absolute last thing to be executed on the remoteproc side, and the
-+	 * MPU cannot use the ACK message as a sync point to put the remoteproc
-+	 * into reset. The only way to ensure that the remote processor has
-+	 * completed saving the context is to check that the module has reached
-+	 * STANDBY state (after saving the context, the SYS/BIOS executes the
-+	 * appropriate target-specific WFI instruction causing the module to
-+	 * enter STANDBY).
-+	 */
-+	while (!_is_rproc_in_standby(oproc)) {
-+		if (time_after(jiffies, ta))
-+			return -ETIME;
-+		schedule();
-+	}
-+
-+	reset_control_assert(oproc->reset);
-+
-+	ret = omap_rproc_disable_timers(rproc, false);
-+	if (ret) {
-+		dev_err(dev, "disabling timers during suspend failed %d\n",
-+			ret);
-+		goto enable_device;
-+	}
-+
-+	return 0;
-+
-+enable_device:
-+	reset_control_deassert(oproc->reset);
-+	return ret;
-+}
-+
-+static int _omap_rproc_resume(struct rproc *rproc)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	struct omap_rproc *oproc = rproc->priv;
-+	int ret;
-+
-+	/* boot address could be lost after suspend, so restore it */
-+	if (oproc->boot_data) {
-+		ret = omap_rproc_write_dsp_boot_addr(rproc);
-+		if (ret) {
-+			dev_err(dev, "boot address restore failed %d\n", ret);
-+			goto out;
-+		}
-+	}
-+
-+	ret = omap_rproc_enable_timers(rproc, false);
-+	if (ret) {
-+		dev_err(dev, "enabling timers during resume failed %d\n",
-+			ret);
-+		goto out;
-+	}
-+
-+	reset_control_deassert(oproc->reset);
-+
-+out:
-+	return ret;
-+}
-+
-+static int __maybe_unused omap_rproc_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rproc *rproc = platform_get_drvdata(pdev);
-+	int ret = 0;
-+
-+	mutex_lock(&rproc->lock);
-+	if (rproc->state == RPROC_OFFLINE)
-+		goto out;
-+
-+	if (rproc->state == RPROC_SUSPENDED)
-+		goto out;
-+
-+	if (rproc->state != RPROC_RUNNING) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	ret = _omap_rproc_suspend(rproc);
-+	if (ret) {
-+		dev_err(dev, "suspend failed %d\n", ret);
-+		goto out;
-+	}
-+
-+	rproc->state = RPROC_SUSPENDED;
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+
-+static int __maybe_unused omap_rproc_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rproc *rproc = platform_get_drvdata(pdev);
-+	int ret = 0;
-+
-+	mutex_lock(&rproc->lock);
-+	if (rproc->state == RPROC_OFFLINE)
-+		goto out;
-+
-+	if (rproc->state != RPROC_SUSPENDED) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	ret = _omap_rproc_resume(rproc);
-+	if (ret) {
-+		dev_err(dev, "resume failed %d\n", ret);
-+		goto out;
-+	}
-+
-+	rproc->state = RPROC_RUNNING;
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+#endif /* CONFIG_PM */
-+
- static const char * const ipu_mem_names[] = {
- 	"l2ram", NULL
- };
-@@ -787,6 +953,14 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 			oproc->num_timers);
- 	}
- 
-+	init_completion(&oproc->pm_comp);
-+
-+	oproc->fck = devm_clk_get(&pdev->dev, 0);
-+	if (IS_ERR(oproc->fck)) {
-+		ret = PTR_ERR(oproc->fck);
-+		goto free_rproc;
-+	}
-+
- 	ret = of_reserved_mem_device_init(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-@@ -819,11 +994,16 @@ static int omap_rproc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct dev_pm_ops omap_rproc_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(omap_rproc_suspend, omap_rproc_resume)
-+};
-+
- static struct platform_driver omap_rproc_driver = {
- 	.probe = omap_rproc_probe,
- 	.remove = omap_rproc_remove,
- 	.driver = {
- 		.name = "omap-rproc",
-+		.pm = &omap_rproc_pm_ops,
- 		.of_match_table = omap_rproc_of_match,
- 	},
- };
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index 18f522617683..e44458634608 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -2,7 +2,7 @@
- /*
-  * Remote processor messaging
-  *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-+ * Copyright (C) 2011-2018 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-  */
-@@ -32,6 +32,16 @@
-  * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
-  * recovery mechanism (to some extent).
-  *
-+ * @RP_MBOX_SUSPEND_AUTO: auto suspend request for the remote processor
-+ *
-+ * @RP_MBOX_SUSPEND_SYSTEM: system suspend request for the remote processor
-+ *
-+ * @RP_MBOX_SUSPEND_ACK: successful response from remote processor for a
-+ * suspend request
-+ *
-+ * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
-+ * on a suspend request
-+ *
-  * Introduce new message definitions if any here.
-  *
-  * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-@@ -45,7 +55,11 @@ enum omap_rp_mbox_messages {
- 	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
- 	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
- 	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
--	RP_MBOX_END_MSG		= 0xFFFFFF06,
-+	RP_MBOX_SUSPEND_AUTO	= 0xFFFFFF10,
-+	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
-+	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
-+	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
-+	RP_MBOX_END_MSG		= 0xFFFFFF14,
- };
- 
- #endif /* _OMAP_RPMSG_H */
--- 
-2.17.1
+----------------------------------------------------------------
+Arun Kumar Neelakantam (2):
+      rpmsg: glink: Fix reuse intents memory leak issue
+      rpmsg: glink: Fix use after free in open_ack TIMEOUT case
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Bjorn Andersson (2):
+      rpmsg: glink: Don't send pending rx_done during remove
+      rpmsg: glink: Free pending deferred work on remove
+
+Chris Lew (3):
+      rpmsg: glink: Set tail pointer to 0 at end of FIFO
+      rpmsg: glink: Put an extra reference during cleanup
+      rpmsg: glink: Fix rpmsg_register_device err handling
+
+Christophe JAILLET (1):
+      rpmsg: char: Simplify 'rpmsg_eptdev_release()'
+
+Krzysztof Kozlowski (1):
+      rpmsg: Fix Kconfig indentation
+
+Navid Emamdoost (1):
+      rpmsg: char: release allocated memory
+
+ drivers/rpmsg/Kconfig             |  2 +-
+ drivers/rpmsg/qcom_glink_native.c | 53 +++++++++++++++++++++++++++++++--------
+ drivers/rpmsg/qcom_glink_smem.c   |  2 +-
+ drivers/rpmsg/rpmsg_char.c        | 12 ++++-----
+ 4 files changed, 49 insertions(+), 20 deletions(-)
