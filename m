@@ -1,131 +1,53 @@
-Return-Path: <0101016e80793b72-6aa5dd63-15ef-48e7-a1a6-0836ac53b03d-000000@us-west-2.amazonses.com>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 15/16] arm64: dts: qcom: sm8150: Add ADSP, CDSP, MPSS and SLPI smp2p
-Date: Mon, 18 Nov 2019 21:44:19 +0000
-Message-ID: <0101016e80793b72-6aa5dd63-15ef-48e7-a1a6-0836ac53b03d-000000@us-west-2.amazonses.com>
-In-Reply-To: <20191118214250.14002-1-sibis@codeaurora.org>
-References: <20191118214250.14002-1-sibis@codeaurora.org>
+Date: Sat, 30 Nov 2019 11:14:51 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [GIT PULL] hwspinlock updates for v5.5
+Message-ID: <20191130191448.GC151303@yoga>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca
-Cc: ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add the SMP2P nodes for the remoteproc states for ADSP, CDSP, MPSS and
-SLPI remoteprocs.
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sm8150.dtsi | 96 ++++++++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index 0ac257637c2af..98a96fd1d6117 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -284,6 +284,102 @@
- 		hwlocks = <&tcsr_mutex 3>;
- 	};
- 
-+	smp2p-cdsp {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <94>, <432>;
-+
-+		interrupts = <GIC_SPI 576 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apss_shared 6>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <5>;
-+
-+		cdsp_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		cdsp_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-lpass {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <443>, <429>;
-+
-+		interrupts = <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apss_shared 10>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <2>;
-+
-+		adsp_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		adsp_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-mpss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupts = <GIC_SPI 451 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apss_shared 14>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		modem_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		modem_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-slpi {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <481>, <430>;
-+
-+		interrupts = <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apss_shared 26>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <3>;
-+
-+		slpi_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		slpi_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	soc: soc@0 {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.5
+
+for you to fetch changes up to 9d399f0c52951c1acf972bf98ea55ba8798fea7a:
+
+  hwspinlock: u8500_hsem: Remove redundant PM runtime implementation (2019-11-08 16:42:26 -0800)
+
+----------------------------------------------------------------
+hwspinlock updates for v5.5
+
+This contains a number of cleanups to the core and several drivers, in
+particular removing the requirement for drivers to implement pm_runtime.
+
+It also udpates the location of the git tree in MAINTAINERS.
+
+----------------------------------------------------------------
+Baolin Wang (11):
+      hwspinlock: u8500_hsem: Change to use devm_platform_ioremap_resource()
+      hwspinlock: u8500_hsem: Use devm_kzalloc() to allocate memory
+      hwspinlock: u8500_hsem: Use devm_hwspin_lock_register() to register hwlock controller
+      hwspinlock: sprd: Change to use devm_platform_ioremap_resource()
+      hwspinlock: sprd: Check the return value of clk_prepare_enable()
+      hwspinlock: sprd: Use devm_add_action_or_reset() for calls to clk_disable_unprepare()
+      hwspinlock: sprd: Use devm_hwspin_lock_register() to register hwlock controller
+      hwspinlock: Remove BUG_ON() from the hwspinlock core
+      hwspinlock: Let the PM runtime can be optional
+      hwspinlock: sprd: Remove redundant PM runtime implementation
+      hwspinlock: u8500_hsem: Remove redundant PM runtime implementation
+
+Bjorn Andersson (1):
+      MAINTAINERS: hwspinlock: update git tree location
+
+ MAINTAINERS                          |  2 +-
+ drivers/hwspinlock/hwspinlock_core.c | 16 +++++------
+ drivers/hwspinlock/sprd_hwspinlock.c | 48 +++++++++++++++-----------------
+ drivers/hwspinlock/u8500_hsem.c      | 53 ++++++++----------------------------
+ 4 files changed, 42 insertions(+), 77 deletions(-)
