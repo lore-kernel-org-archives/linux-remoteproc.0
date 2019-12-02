@@ -1,37 +1,23 @@
-Return-Path: <tiny.windzz@gmail.com>
-Return-Path: <tiny.windzz@gmail.com>
-From: Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] hwspinlock: stm32: convert to devm_platform_ioremap_resource
-Date: Sat, 28 Dec 2019 19:15:41 +0000
-Message-Id: <20191228191541.26999-1-tiny.windzz@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, mcoquelin.stm32@gmail.com, alexandre.torgue@st.com, linux-remoteproc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Yangtao Li <tiny.windzz@gmail.com>
+Return-Path: <pr-tracker-bot@kernel.org>
+Subject: Re: [GIT PULL] hwspinlock updates for v5.5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20191130191448.GC151303@yoga>
+References: <20191130191448.GC151303@yoga>
+Message-Id: <157525502547.1709.7511129762810124596.pr-tracker-bot@kernel.org>
+Date: Mon, 02 Dec 2019 02:50:25 +0000
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use devm_platform_ioremap_resource() to simplify code.
+The pull request you sent on Sat, 30 Nov 2019 11:14:48 -0800:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/hwspinlock/stm32_hwspinlock.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.5
 
-diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
-index c8eacf4f9692..3ad0ce0da4d9 100644
---- a/drivers/hwspinlock/stm32_hwspinlock.c
-+++ b/drivers/hwspinlock/stm32_hwspinlock.c
-@@ -58,12 +58,10 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
- {
- 	struct stm32_hwspinlock *hw;
- 	void __iomem *io_base;
--	struct resource *res;
- 	size_t array_size;
- 	int i, ret;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	io_base = devm_ioremap_resource(&pdev->dev, res);
-+	io_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(io_base))
- 		return PTR_ERR(io_base);
- 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/454d9c4aa7d54fd4f15c1427fc4f51347f300262
+
+Thank you!
+
 -- 
-2.17.1
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
