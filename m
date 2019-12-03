@@ -1,103 +1,149 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL binding for SC7180
-Date: Thu, 19 Dec 2019 11:15:05 +0530
-Message-Id: <20191219054506.20565-2-sibis@codeaurora.org>
-In-Reply-To: <20191219054506.20565-1-sibis@codeaurora.org>
-References: <20191219054506.20565-1-sibis@codeaurora.org>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
+Subject: Re: [RFC 2/5] hwspinlock: Add Realtek RTD1195 SB2
+Date: Tue, 3 Dec 2019 09:50:01 +0000
+Message-ID: <78d19596-2f10-2403-25fd-a2be4b5dd0f4@st.com>
+References: <20191202220535.6208-1-afaerber@suse.de>
+ <20191202220535.6208-3-afaerber@suse.de>
+ <14b79ade-e1ae-388f-37de-07d67837de2f@st.com>
+ <037384de-90b4-a4b0-d761-ffb3353cdbae@suse.de>
+In-Reply-To: <037384de-90b4-a4b0-d761-ffb3353cdbae@suse.de>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9970BDDB70657C479CDB64055A66B1E9@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rob Herring <robh@kernel.org>
+To: =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Cc: "linux-realtek-soc@lists.infradead.org" <linux-realtek-soc@lists.infradead.org>, Cheng-Yu Lee <cylee12@realtek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, "Bjorn Andersson  <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a new modem compatible string for Qualcomm SC7180 SoCs and introduce
-the "qcom,halt-nav-regs" bindings needed by the modem sub-system running
-on SC7180 SoCs.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- .../bindings/remoteproc/qcom,q6v5.txt         | 23 +++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index c416746f93cfd..88dfa3fc15f78 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -13,6 +13,7 @@ on the Qualcomm Hexagon core.
- 		    "qcom,msm8974-mss-pil"
- 		    "qcom,msm8996-mss-pil"
- 		    "qcom,msm8998-mss-pil"
-+		    "qcom,sc7180-mss-pil"
- 		    "qcom,sdm845-mss-pil"
- 
- - reg:
-@@ -43,6 +44,7 @@ on the Qualcomm Hexagon core.
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
- 	qcom,msm8996-mss-pil:
- 	qcom,msm8998-mss-pil:
-+	qcom,sc7180-mss-pil:
- 	qcom,sdm845-mss-pil:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
- 		    "shutdown-ack"
-@@ -75,6 +77,9 @@ on the Qualcomm Hexagon core.
- 	qcom,msm8998-mss-pil:
- 		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
- 		    "snoc_axi", "mnoc_axi", "qdss"
-+	qcom,sc7180-mss-pil:
-+		    must be "iface", "bus", "xo", "snoc_axi", "mnoc_axi",
-+		    "mss_crypto", "mss_nav", "nav"
- 	qcom,sdm845-mss-pil:
- 		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
- 		    "snoc_axi", "mnoc_axi", "prng"
-@@ -86,7 +91,7 @@ on the Qualcomm Hexagon core.
- 		    reference to the list of 3 reset-controllers for the
- 		    wcss sub-system
- 		    reference to the list of 2 reset-controllers for the modem
--		    sub-system on SDM845 SoCs
-+		    sub-system on SC7180, SDM845 SoCs
- 
- - reset-names:
- 	Usage: required
-@@ -95,7 +100,7 @@ on the Qualcomm Hexagon core.
- 		    must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
- 		    for the wcss sub-system
- 		    must be "mss_restart", "pdc_reset" for the modem
--		    sub-system on SDM845 SoCs
-+		    sub-system on SC7180, SDM845 SoCs
- 
- For the compatible strings below the following supplies are required:
-   "qcom,q6v5-pil"
-@@ -144,6 +149,7 @@ For the compatible string below the following supplies are required:
- 	qcom,msm8996-mss-pil:
- 	qcom,msm8998-mss-pil:
- 		    must be "cx", "mx"
-+	qcom,sc7180-mss-pil:
- 	qcom,sdm845-mss-pil:
- 		    must be "cx", "mx", "mss", "load_state"
- 
-@@ -165,6 +171,19 @@ For the compatible string below the following supplies are required:
- 		    by the three offsets within syscon for q6, modem and nc
- 		    halt registers.
- 
-+For the compatible strings below the following phandle references are required:
-+  "qcom,sc7180-mss-pil"
-+- qcom,halt-nav-regs:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to a list of 2 phandles with one offset each for
-+		    the modem sub-system running on SC7180 SoC. The first
-+		    phandle reference is to the mss clock node followed by the
-+		    offset within register space for nav halt register. The
-+		    second phandle reference is to a syscon representing TCSR
-+		    followed by the offset within syscon for conn_box_spare0
-+		    register.
-+
- = SUBNODES:
- The Hexagon node must contain two subnodes, named "mba" and "mpss" representing
- the memory regions used by the Hexagon firmware. Each sub-node must contain:
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+SGkgQW5kcmVhcw0KDQoNCk9uIDAzLzEyLzIwMTkgOTo1OCBBTSwgQW5kcmVhcyBGw6RyYmVyIHdy
+b3RlOg0KPiBIaSBGYWJpZW4sDQo+DQo+IEFtIDAzLjEyLjE5IHVtIDA5OjQ2IHNjaHJpZWIgRmFi
+aWVuIERFU1NFTk5FOg0KPj4gT24gMDIvMTIvMjAxOSAxMTowNSBQTSwgQW5kcmVhcyBGw6RyYmVy
+IHdyb3RlOg0KPj4+IEltcGxlbWVudCBhIGRyaXZlciBmb3IgaGFyZHdhcmUgc2VtYXBob3JlcyBm
+b3VuZCBpbiBSVEQxMTk1IFNvQy4NCj4+PiBJdCBhbGxvd3MgZm9yIGJvdGggcGVyLXJlZ2lzdGVy
+IGluc3RhbmNlcyAoU0IyX0hEX1NFTSkgYXMgd2VsbCBhcw0KPj4+IGNvbnRpZ3VvdXMgcmVnaXN0
+ZXIgcmFuZ2VzIChTQjJfSERfU0VNX05FV1swLTddKS4NCj4+Pg0KPj4+IFdoaWxlIHRoZXNlIHJl
+Z2lzdGVycyBhcmUgcGFydCBvZiB0aGUgU0IyIHN5c2NvbiwgdGhpcyBpbXBsZW1lbnRhdGlvbg0K
+Pj4+IGRvZXMgbm90IHVzZSBzeXNjb24sIHRvIGFsbG93IGFzc2lnbmluZyBvbmUgYXMgU0IyIHN5
+c2NvbidzIGh3bG9jay4NCj4+Pg0KPj4+IENjOiBDaGVuZy1ZdSBMZWUgPGN5bGVlMTJAcmVhbHRl
+ay5jb20+DQo+Pj4gU2lnbmVkLW9mZi1ieTogQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNl
+LmRlPg0KPj4+IC0tLQ0KPj4+ICAgIGRyaXZlcnMvaHdzcGlubG9jay9LY29uZmlnICAgICAgICAg
+ICB8ICAxMSArKysrDQo+Pj4gICAgZHJpdmVycy9od3NwaW5sb2NrL01ha2VmaWxlICAgICAgICAg
+IHwgICAxICsNCj4+PiAgICBkcml2ZXJzL2h3c3BpbmxvY2svcnRkMTE5NV9zYjJfc2VtLmMgfCAx
+MDEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4+PiAgICAzIGZpbGVzIGNo
+YW5nZWQsIDExMyBpbnNlcnRpb25zKCspDQo+Pj4gICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvaHdzcGlubG9jay9ydGQxMTk1X3NiMl9zZW0uYw0KPj4+DQo+Pj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvaHdzcGlubG9jay9LY29uZmlnIGIvZHJpdmVycy9od3NwaW5sb2NrL0tjb25maWcNCj4+
+PiBpbmRleCAzNzc0MGU5OTJjZmEuLjljMjZjNDM2ZDM5OSAxMDA2NDQNCj4+PiAtLS0gYS9kcml2
+ZXJzL2h3c3BpbmxvY2svS2NvbmZpZw0KPj4+ICsrKyBiL2RyaXZlcnMvaHdzcGlubG9jay9LY29u
+ZmlnDQo+Pj4gQEAgLTI4LDYgKzI4LDE3IEBAIGNvbmZpZyBIV1NQSU5MT0NLX1FDT00NCj4+PiAg
+ICANCj4+PiAgICAJICBJZiB1bnN1cmUsIHNheSBOLg0KPj4+ICAgIA0KPj4+ICtjb25maWcgSFdT
+UElOTE9DS19SVEQxMTk1X1NCMg0KPj4+ICsJdHJpc3RhdGUgIlJlYWx0ZWsgUlREMTE5NSBTQjIg
+SGFyZHdhcmUgU3BpbmxvY2sgZGV2aWNlIg0KPj4+ICsJZGVwZW5kcyBvbiBIV1NQSU5MT0NLDQo+
+Pj4gKwlkZXBlbmRzIG9uIEFSQ0hfUkVBTFRFSyB8fCBDT01QSUxFX1RFU1QNCj4+PiArCWRlZmF1
+bHQgQVJDSF9SRUFMVEVLDQo+Pj4gKwloZWxwDQo+Pj4gKwkgIFNheSB5IGhlcmUgdG8gc3VwcG9y
+dCB0aGUgUmVhbHRlayBIYXJkd2FyZSBTZW1hcGhvcmUgZnVuY3Rpb25hbGl0eSwNCj4+PiArCSAg
+Zm91bmQgb24gdGhlIFJURDExOTUgYW5kIGxhdGVyIFNvQyBmYW1pbGllcy4NCj4+PiArDQo+Pj4g
+KwkgIElmIHVuc3VyZSwgc2F5IE4uDQo+Pj4gKw0KPj4+ICAgIGNvbmZpZyBIV1NQSU5MT0NLX1NJ
+UkYNCj4+PiAgICAJdHJpc3RhdGUgIlNJUkYgSGFyZHdhcmUgU3BpbmxvY2sgZGV2aWNlIg0KPj4+
+ICAgIAlkZXBlbmRzIG9uIEhXU1BJTkxPQ0sNCj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9od3Nw
+aW5sb2NrL01ha2VmaWxlIGIvZHJpdmVycy9od3NwaW5sb2NrL01ha2VmaWxlDQo+Pj4gaW5kZXgg
+ZWQwNTNlM2YwMmJlLi5kNWJkNTk0MTI0NjggMTAwNjQ0DQo+Pj4gLS0tIGEvZHJpdmVycy9od3Nw
+aW5sb2NrL01ha2VmaWxlDQo+Pj4gKysrIGIvZHJpdmVycy9od3NwaW5sb2NrL01ha2VmaWxlDQo+
+Pj4gQEAgLTYsNiArNiw3IEBADQo+Pj4gICAgb2JqLSQoQ09ORklHX0hXU1BJTkxPQ0spCQkrPSBo
+d3NwaW5sb2NrX2NvcmUubw0KPj4+ICAgIG9iai0kKENPTkZJR19IV1NQSU5MT0NLX09NQVApCQkr
+PSBvbWFwX2h3c3BpbmxvY2subw0KPj4+ICAgIG9iai0kKENPTkZJR19IV1NQSU5MT0NLX1FDT00p
+CQkrPSBxY29tX2h3c3BpbmxvY2subw0KPj4+ICtvYmotJChDT05GSUdfSFdTUElOTE9DS19SVEQx
+MTk1X1NCMikJKz0gcnRkMTE5NV9zYjJfc2VtLm8NCj4+PiAgICBvYmotJChDT05GSUdfSFdTUElO
+TE9DS19TSVJGKQkJKz0gc2lyZl9od3NwaW5sb2NrLm8NCj4+PiAgICBvYmotJChDT05GSUdfSFdT
+UElOTE9DS19TUFJEKQkJKz0gc3ByZF9od3NwaW5sb2NrLm8NCj4+PiAgICBvYmotJChDT05GSUdf
+SFdTUElOTE9DS19TVE0zMikJCSs9IHN0bTMyX2h3c3BpbmxvY2subw0KPj4+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2h3c3BpbmxvY2svcnRkMTE5NV9zYjJfc2VtLmMgYi9kcml2ZXJzL2h3c3Bpbmxv
+Y2svcnRkMTE5NV9zYjJfc2VtLmMNCj4+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4+IGluZGV4
+IDAwMDAwMDAwMDAwMC4uYWU5MjVkMDU3ODc0DQo+Pj4gLS0tIC9kZXYvbnVsbA0KPj4+ICsrKyBi
+L2RyaXZlcnMvaHdzcGlubG9jay9ydGQxMTk1X3NiMl9zZW0uYw0KPj4+IEBAIC0wLDAgKzEsMTAx
+IEBADQo+Pj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9yLWxhdGVyDQo+
+Pj4gKy8qDQo+Pj4gKyAqIFJURDExOTUgU0IyIGhhcmR3YXJlIHNlbWFwaG9yZQ0KPj4+ICsgKg0K
+Pj4+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTkgQW5kcmVhcyBGw6RyYmVyDQo+Pj4gKyAqLw0KPj4+
+ICsNCj4+PiArI2luY2x1ZGUgPGxpbnV4L2JpdG9wcy5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgv
+aHdzcGlubG9jay5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgvaWRyLmg+DQo+Pj4gKyNpbmNsdWRl
+IDxsaW51eC9pby5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQo+Pj4gKyNpbmNs
+dWRlIDxsaW51eC9vZi5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPj4+
+ICsjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQo+Pj4gKw0KPj4+ICsjaW5jbHVk
+ZSAiaHdzcGlubG9ja19pbnRlcm5hbC5oIg0KPj4+ICsNCj4+PiArc3RydWN0IHJ0ZDExOTVfc2Iy
+X3NlbSB7DQo+Pj4gKwlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2Ow0KPj4+ICsJdm9pZCBf
+X2lvbWVtICpiYXNlOw0KPj4+ICsJaW50IGJhc2VfaWQ7DQo+PiBUaGUgcGRldiwgYmFzZSBhbmQg
+YmFzZV9pZCBtZW1iZXJzIG9mIHRoaXMgc3RydWN0IGFyZSBzZXQgaW4gLnByb2JlKCkNCj4+IGJ1
+dCBuZXZlciByZWFkIGFueXdoZXJlOiB5b3UgbWF5IHJlbW92ZSB0aGVtIGFuZCBrZWVwIG9ubHkg
+bG9ja2Rldg0KPiBIbW0sIHRoaXMgbW9kdWxlIGRyaXZlciBpcyBzdGlsbCBtaXNzaW5nIGEgcmVt
+b3ZlIGhvb2sgdGhhdCBtaWdodCBuZWVkDQo+IHRoZW0uIEkgd2FzIG9yaWdpbmFsbHkgcGxhbm5p
+bmcgdG8gcGFzcyB0aGlzIHN0cnVjdCBhcyBwcml2IHRvIHRoZQ0KPiBpbml0aWFsIGxvY2tzLCBi
+dXQgdGhhdCBkaWRuJ3Qgd29yayBvdXQgZm9yIG1vcmUgdGhhbiBvbmUgbG9jay4NCg0KDQpJIGRv
+IG5vdCB0aGluayB0aGF0IHlvdSBuZWVkIHRvIHJlYWQgdGhlc2UgcGFyYW1ldGVycyBiYWNrIGlu
+IC5yZW1vdmUoKS4NCg0KSW4gdG9wIG9mIHRoYXQsIGlmIHlvdSB1c2UgZGV2bV94eHgoKSBldmVy
+eXdoZXJlIGluIC5wcm9iZSgpLCB0aGVuIA0KLnJlbW92ZSgpIHdvdWxkIHByb2JhYmx5IGJlIGVt
+cHR5LiBBcGFydCBtYXliZSBhIGNhbGwgdG8gaWRyX3JlbW92ZSgpIG9yIA0KaWRyX2Rlc3Ryb3ko
+KS4NCg0KDQo+DQo+IEFsc28sIGhhdmUgeW91IGV2ZXIgaGFkIHRoZSBjYXNlIHdoZXJlIGFuIGh3
+c3BpbmxvY2sgZHJpdmVyIHdlcmUgdXNpbmcgYQ0KPiBzeXNjb24gaW5zdGVhZCBvZiBfX2lvbWVt
+IHBvaW50ZXIsIGFuZCBwb3RlbnRpYWxseSBiZSB1c2VkIGFzIGh3bG9jayBmb3INCj4gdGhhdCBz
+YW1lIHN5c2Nvbj8gSSBhc3N1bWVkIHRoYXQgd291bGQgY2F1c2UgY2lyY3VsYXIgcHJvYmluZyBw
+cm9ibGVtcywNCj4gYnV0IEkgZGlkbid0IGFjdHVhbGx5IHRlc3QgaXQgYW5kIGNvbnNpZGVyZWQg
+aXQgYSBiYWQgZGVzaWduIGlkZWE/IElmIGl0DQo+IGlzIHN1cHBvcnRlZCwgYSByZWdtYXAgd291
+bGQgYmUgdGhlIGFsdGVybmF0aXZlIHRvIGJhc2UgYWJvdmUuDQoNCg0KSSBkbyBub3QgaGF2ZSBh
+bnkgZXhwZXJpZW5jZSBvbiB0aGlzIHBhcnRpY3VsYXIgcG9pbnQuIEJ1dCBub3RlIHRoYXQgDQoi
+c3lzY29uIiBkcml2ZXJzIGNhbiBkZWNsYXJlIGFuwqAgJ2h3bG9ja3MnIHByb3BlcnR5IGl0IHRo
+ZWlyIERUIG5vZGUuIEluIA0KdGhhdCBjYXNlLCBldmVyeSBjYWxsIHRvIHN5c2NvbiBpcyBwcm90
+ZWN0ZWQgYnkgdGhlIGh3bG9jayAoc2VlIFsxXSkuIA0KWW91IHNoYWxsIHRha2UgY2FyZSBvZiB0
+aGlzIHRvby4NCg0KWzFdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC84
+NzI4MTIvDQoNCg0KPg0KPj4+ICsJc3RydWN0IGh3c3BpbmxvY2tfZGV2aWNlIGxvY2tkZXY7DQo+
+Pj4gK307DQo+Pj4gKw0KPj4+ICtzdGF0aWMgREVGSU5FX0lEUihydGQxMTk1X3NiMl9zZW1faWRy
+KTsNCj4+PiArDQo+Pj4gK3N0YXRpYyBpbnQgcnRkMTE5NV9zYjJfc2VtX3RyeWxvY2soc3RydWN0
+IGh3c3BpbmxvY2sgKmxvY2spDQo+Pj4gK3sNCj4+PiArCXZvaWQgX19pb21lbSAqcmVnID0gKHZv
+aWQgX19pb21lbSAqKWxvY2stPnByaXY7DQo+Pj4gKw0KPj4+ICsJcmV0dXJuIHJlYWRsX3JlbGF4
+ZWQocmVnKSAmIEJJVCgwKTsNCj4+PiArfQ0KPj4+ICsNCj4+PiArc3RhdGljIHZvaWQgcnRkMTE5
+NV9zYjJfc2VtX3VubG9jayhzdHJ1Y3QgaHdzcGlubG9jayAqbG9jaykNCj4+PiArew0KPj4+ICsJ
+dm9pZCBfX2lvbWVtICpyZWcgPSAodm9pZCBfX2lvbWVtICopbG9jay0+cHJpdjsNCj4+PiArDQo+
+Pj4gKwl3cml0ZWxfcmVsYXhlZCgwLCByZWcpOw0KPj4+ICt9DQo+Pj4gKw0KPj4+ICtzdGF0aWMg
+Y29uc3Qgc3RydWN0IGh3c3BpbmxvY2tfb3BzIHJ0ZDExOTVfc2IyX3NlbV9od3NwaW5sb2NrX29w
+cyA9IHsNCj4+PiArCS50cnlsb2NrCT0gcnRkMTE5NV9zYjJfc2VtX3RyeWxvY2ssDQo+Pj4gKwku
+dW5sb2NrCQk9IHJ0ZDExOTVfc2IyX3NlbV91bmxvY2ssDQo+Pj4gK307DQo+Pj4gKw0KPj4+ICtz
+dGF0aWMgaW50IHJ0ZDExOTVfc2IyX3NlbV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
+ZGV2KQ0KPj4+ICt7DQo+Pj4gKwlzdHJ1Y3QgcnRkMTE5NV9zYjJfc2VtICpzZW07DQo+Pj4gKwlz
+dHJ1Y3QgaHdzcGlubG9jayAqbG9jazsNCj4+PiArCXN0cnVjdCByZXNvdXJjZSAqcmVzOw0KPj4+
+ICsJaW50IGksIG51bTsNCj4+PiArDQo+Pj4gKwlyZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2Uo
+cGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0KPj4+ICsJaWYgKCFyZXMpDQo+Pj4gKwkJcmV0dXJu
+IC1FTk9NRU07DQo+Pj4gKw0KPj4+ICsJbnVtID0gcmVzb3VyY2Vfc2l6ZShyZXMpIC8gNDsNCj4+
+PiArDQo+Pj4gKwlzZW0gPSBkZXZtX2t6YWxsb2MoJnBkZXYtPmRldiwgc2l6ZW9mKCpzZW0pICsg
+bnVtICogc2l6ZW9mKCpsb2NrKSwNCj4+PiArCQkJICAgR0ZQX0tFUk5FTCk7DQo+Pj4gKwlpZiAo
+IXNlbSkNCj4+PiArCQlyZXR1cm4gLUVOT01FTTsNCj4+PiArDQo+Pj4gKwlzZW0tPnBkZXYgPSBw
+ZGV2Ow0KPj4+ICsNCj4+PiArCXNlbS0+YmFzZSA9IG9mX2lvbWFwKHBkZXYtPmRldi5vZl9ub2Rl
+LCAwKTsNCj4+IFlvdSBtYXkgdXNlIGRldm1faW9yZW1hcF9yZXNvdXJjZSgpIGhlcmUuDQo+IFdv
+dWxkbid0IHRoYXQgYWxzbyByZXNlcnZlIHRoaXMgbWVtb3J5IGFuZCB0aHVzIGNhdXNlIGNvbmZs
+aWN0cz8NCg0KDQpNeSBzdWdnZXN0aW9uIGNvbnNpc3RzIGluIHVzaW5nIHRoZSBkZXZtXyB2ZXJz
+aW9uLiBJIGRvIG5vdCB0aGluayB0aGF0IA0KaXQgY2FuIGNhdXNlIGFueSB0cm91YmxlLg0KDQoN
+Cj4NCj4gSSBoYXZlIGFub3RoZXIgdW5wb3N0ZWQgZHJpdmVyIG9uIHRoZSBzYW1lIHN5c2NvbiAo
+cmVhc29uIGZvciBiYXNpbmcNCj4gdGhpcyBvbiB0aGUgc3lzY29uIHNlcmllcyBbMV0pLCB3aGlj
+aCBjdXJyZW50bHkgb3ZlcmxhcHMgaXQgLSB0byBiZQ0KPiB1cGRhdGVkIHRvIHN5c2Nvbi4NCj4N
+Cj4gVGhhbmtzIGZvciBpbml0aWFsIHJldmlldywNCj4gQW5kcmVhcw0KPg0KPiBbMV0gaHR0cHM6
+Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9jb3Zlci8xMTI2OTk3MS8NCj4NCj4+PiArCWlmICghc2Vt
+LT5iYXNlKQ0KPj4+ICsJCXJldHVybiAtRU5PTUVNOw0KPj4+ICsNCj4+PiArCWZvciAoaSA9IDA7
+IGkgPCBudW07IGkrKykgew0KPj4+ICsJCWxvY2sgPSAmc2VtLT5sb2NrZGV2LmxvY2tbaV07DQo+
+Pj4gKwkJbG9jay0+cHJpdiA9IHNlbS0+YmFzZSArIGkgKiA0Ow0KPj4+ICsJfQ0KPj4+ICsNCj4+
+PiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHNlbSk7DQo+Pj4gKw0KPj4+ICsJc2VtLT5i
+YXNlX2lkID0gaWRyX2FsbG9jKCZydGQxMTk1X3NiMl9zZW1faWRyLCBzZW0sIDAsIDAsIEdGUF9L
+RVJORUwpOw0KPj4+ICsNCj4+PiArCXJldHVybiBkZXZtX2h3c3Bpbl9sb2NrX3JlZ2lzdGVyKCZw
+ZGV2LT5kZXYsICZzZW0tPmxvY2tkZXYsDQo+Pj4gKwkJJnJ0ZDExOTVfc2IyX3NlbV9od3NwaW5s
+b2NrX29wcywgc2VtLT5iYXNlX2lkLCBudW0pOw0KPj4+ICt9DQo+Pj4gKw0KPj4+ICtzdGF0aWMg
+Y29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBydGQxMTk1X3NiMl9zZW1fZHRfaWRzW10gPSB7DQo+
+Pj4gKwl7IC5jb21wYXRpYmxlID0gInJlYWx0ZWsscnRkMTE5NS1zYjItc2VtIiB9LA0KPj4+ICsJ
+eyB9DQo+Pj4gK307DQo+Pj4gK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHJ0ZDExOTVfc2IyX3Nl
+bV9kdF9pZHMpOw0KPj4+ICsNCj4+PiArc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgcnRk
+MTE5NV9zYjJfc2VtX3BsYXRmb3JtX2RyaXZlciA9IHsNCj4+PiArCS5kcml2ZXIgPSB7DQo+Pj4g
+KwkJLm5hbWUgPSAicnRkMTE5NS1zYjItc2VtIiwNCj4+PiArCQkub2ZfbWF0Y2hfdGFibGUgPSBy
+dGQxMTk1X3NiMl9zZW1fZHRfaWRzLA0KPj4+ICsJfSwNCj4+PiArCS5wcm9iZSA9IHJ0ZDExOTVf
+c2IyX3NlbV9wcm9iZSwNCj4+PiArfTsNCj4+PiArbW9kdWxlX3BsYXRmb3JtX2RyaXZlcihydGQx
+MTk1X3NiMl9zZW1fcGxhdGZvcm1fZHJpdmVyKTsNCj4+PiArDQo+Pj4gK01PRFVMRV9MSUNFTlNF
+KCJHUEwiKTsNCj4+PiArTU9EVUxFX0RFU0NSSVBUSU9OKCJIYXJkd2FyZSBzcGlubG9jayBkcml2
+ZXIgZm9yIFJlYWx0ZWsgUlREMTE5NSBTQjIiKTsNCj4+PiArTU9EVUxFX0FVVEhPUigiQW5kcmVh
+cyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPiIpOw0KPg==
