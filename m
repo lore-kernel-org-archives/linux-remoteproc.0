@@ -1,149 +1,211 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
+Return-Path: <afaerber@suse.de>
 Subject: Re: [RFC 2/5] hwspinlock: Add Realtek RTD1195 SB2
-Date: Tue, 3 Dec 2019 09:50:01 +0000
-Message-ID: <78d19596-2f10-2403-25fd-a2be4b5dd0f4@st.com>
 References: <20191202220535.6208-1-afaerber@suse.de>
  <20191202220535.6208-3-afaerber@suse.de>
  <14b79ade-e1ae-388f-37de-07d67837de2f@st.com>
- <037384de-90b4-a4b0-d761-ffb3353cdbae@suse.de>
-In-Reply-To: <037384de-90b4-a4b0-d761-ffb3353cdbae@suse.de>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9970BDDB70657C479CDB64055A66B1E9@st.com>
-Content-Transfer-Encoding: base64
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Message-ID: <037384de-90b4-a4b0-d761-ffb3353cdbae@suse.de>
+Date: Tue, 3 Dec 2019 09:58:39 +0100
 MIME-Version: 1.0
-To: =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Cc: "linux-realtek-soc@lists.infradead.org" <linux-realtek-soc@lists.infradead.org>, Cheng-Yu Lee <cylee12@realtek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, "Bjorn Andersson  <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+In-Reply-To: <14b79ade-e1ae-388f-37de-07d67837de2f@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: Fabien DESSENNE <fabien.dessenne@st.com>
+Cc: "linux-realtek-soc@lists.infradead.org" <linux-realtek-soc@lists.infradead.org>, Cheng-Yu Lee <cylee12@realtek.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgQW5kcmVhcw0KDQoNCk9uIDAzLzEyLzIwMTkgOTo1OCBBTSwgQW5kcmVhcyBGw6RyYmVyIHdy
-b3RlOg0KPiBIaSBGYWJpZW4sDQo+DQo+IEFtIDAzLjEyLjE5IHVtIDA5OjQ2IHNjaHJpZWIgRmFi
-aWVuIERFU1NFTk5FOg0KPj4gT24gMDIvMTIvMjAxOSAxMTowNSBQTSwgQW5kcmVhcyBGw6RyYmVy
-IHdyb3RlOg0KPj4+IEltcGxlbWVudCBhIGRyaXZlciBmb3IgaGFyZHdhcmUgc2VtYXBob3JlcyBm
-b3VuZCBpbiBSVEQxMTk1IFNvQy4NCj4+PiBJdCBhbGxvd3MgZm9yIGJvdGggcGVyLXJlZ2lzdGVy
-IGluc3RhbmNlcyAoU0IyX0hEX1NFTSkgYXMgd2VsbCBhcw0KPj4+IGNvbnRpZ3VvdXMgcmVnaXN0
-ZXIgcmFuZ2VzIChTQjJfSERfU0VNX05FV1swLTddKS4NCj4+Pg0KPj4+IFdoaWxlIHRoZXNlIHJl
-Z2lzdGVycyBhcmUgcGFydCBvZiB0aGUgU0IyIHN5c2NvbiwgdGhpcyBpbXBsZW1lbnRhdGlvbg0K
-Pj4+IGRvZXMgbm90IHVzZSBzeXNjb24sIHRvIGFsbG93IGFzc2lnbmluZyBvbmUgYXMgU0IyIHN5
-c2NvbidzIGh3bG9jay4NCj4+Pg0KPj4+IENjOiBDaGVuZy1ZdSBMZWUgPGN5bGVlMTJAcmVhbHRl
-ay5jb20+DQo+Pj4gU2lnbmVkLW9mZi1ieTogQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNl
-LmRlPg0KPj4+IC0tLQ0KPj4+ICAgIGRyaXZlcnMvaHdzcGlubG9jay9LY29uZmlnICAgICAgICAg
-ICB8ICAxMSArKysrDQo+Pj4gICAgZHJpdmVycy9od3NwaW5sb2NrL01ha2VmaWxlICAgICAgICAg
-IHwgICAxICsNCj4+PiAgICBkcml2ZXJzL2h3c3BpbmxvY2svcnRkMTE5NV9zYjJfc2VtLmMgfCAx
-MDEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4+PiAgICAzIGZpbGVzIGNo
-YW5nZWQsIDExMyBpbnNlcnRpb25zKCspDQo+Pj4gICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
-cnMvaHdzcGlubG9jay9ydGQxMTk1X3NiMl9zZW0uYw0KPj4+DQo+Pj4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvaHdzcGlubG9jay9LY29uZmlnIGIvZHJpdmVycy9od3NwaW5sb2NrL0tjb25maWcNCj4+
-PiBpbmRleCAzNzc0MGU5OTJjZmEuLjljMjZjNDM2ZDM5OSAxMDA2NDQNCj4+PiAtLS0gYS9kcml2
-ZXJzL2h3c3BpbmxvY2svS2NvbmZpZw0KPj4+ICsrKyBiL2RyaXZlcnMvaHdzcGlubG9jay9LY29u
-ZmlnDQo+Pj4gQEAgLTI4LDYgKzI4LDE3IEBAIGNvbmZpZyBIV1NQSU5MT0NLX1FDT00NCj4+PiAg
-ICANCj4+PiAgICAJICBJZiB1bnN1cmUsIHNheSBOLg0KPj4+ICAgIA0KPj4+ICtjb25maWcgSFdT
-UElOTE9DS19SVEQxMTk1X1NCMg0KPj4+ICsJdHJpc3RhdGUgIlJlYWx0ZWsgUlREMTE5NSBTQjIg
-SGFyZHdhcmUgU3BpbmxvY2sgZGV2aWNlIg0KPj4+ICsJZGVwZW5kcyBvbiBIV1NQSU5MT0NLDQo+
-Pj4gKwlkZXBlbmRzIG9uIEFSQ0hfUkVBTFRFSyB8fCBDT01QSUxFX1RFU1QNCj4+PiArCWRlZmF1
-bHQgQVJDSF9SRUFMVEVLDQo+Pj4gKwloZWxwDQo+Pj4gKwkgIFNheSB5IGhlcmUgdG8gc3VwcG9y
-dCB0aGUgUmVhbHRlayBIYXJkd2FyZSBTZW1hcGhvcmUgZnVuY3Rpb25hbGl0eSwNCj4+PiArCSAg
-Zm91bmQgb24gdGhlIFJURDExOTUgYW5kIGxhdGVyIFNvQyBmYW1pbGllcy4NCj4+PiArDQo+Pj4g
-KwkgIElmIHVuc3VyZSwgc2F5IE4uDQo+Pj4gKw0KPj4+ICAgIGNvbmZpZyBIV1NQSU5MT0NLX1NJ
-UkYNCj4+PiAgICAJdHJpc3RhdGUgIlNJUkYgSGFyZHdhcmUgU3BpbmxvY2sgZGV2aWNlIg0KPj4+
-ICAgIAlkZXBlbmRzIG9uIEhXU1BJTkxPQ0sNCj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9od3Nw
-aW5sb2NrL01ha2VmaWxlIGIvZHJpdmVycy9od3NwaW5sb2NrL01ha2VmaWxlDQo+Pj4gaW5kZXgg
-ZWQwNTNlM2YwMmJlLi5kNWJkNTk0MTI0NjggMTAwNjQ0DQo+Pj4gLS0tIGEvZHJpdmVycy9od3Nw
-aW5sb2NrL01ha2VmaWxlDQo+Pj4gKysrIGIvZHJpdmVycy9od3NwaW5sb2NrL01ha2VmaWxlDQo+
-Pj4gQEAgLTYsNiArNiw3IEBADQo+Pj4gICAgb2JqLSQoQ09ORklHX0hXU1BJTkxPQ0spCQkrPSBo
-d3NwaW5sb2NrX2NvcmUubw0KPj4+ICAgIG9iai0kKENPTkZJR19IV1NQSU5MT0NLX09NQVApCQkr
-PSBvbWFwX2h3c3BpbmxvY2subw0KPj4+ICAgIG9iai0kKENPTkZJR19IV1NQSU5MT0NLX1FDT00p
-CQkrPSBxY29tX2h3c3BpbmxvY2subw0KPj4+ICtvYmotJChDT05GSUdfSFdTUElOTE9DS19SVEQx
-MTk1X1NCMikJKz0gcnRkMTE5NV9zYjJfc2VtLm8NCj4+PiAgICBvYmotJChDT05GSUdfSFdTUElO
-TE9DS19TSVJGKQkJKz0gc2lyZl9od3NwaW5sb2NrLm8NCj4+PiAgICBvYmotJChDT05GSUdfSFdT
-UElOTE9DS19TUFJEKQkJKz0gc3ByZF9od3NwaW5sb2NrLm8NCj4+PiAgICBvYmotJChDT05GSUdf
-SFdTUElOTE9DS19TVE0zMikJCSs9IHN0bTMyX2h3c3BpbmxvY2subw0KPj4+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2h3c3BpbmxvY2svcnRkMTE5NV9zYjJfc2VtLmMgYi9kcml2ZXJzL2h3c3Bpbmxv
-Y2svcnRkMTE5NV9zYjJfc2VtLmMNCj4+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4+IGluZGV4
-IDAwMDAwMDAwMDAwMC4uYWU5MjVkMDU3ODc0DQo+Pj4gLS0tIC9kZXYvbnVsbA0KPj4+ICsrKyBi
-L2RyaXZlcnMvaHdzcGlubG9jay9ydGQxMTk1X3NiMl9zZW0uYw0KPj4+IEBAIC0wLDAgKzEsMTAx
-IEBADQo+Pj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9yLWxhdGVyDQo+
-Pj4gKy8qDQo+Pj4gKyAqIFJURDExOTUgU0IyIGhhcmR3YXJlIHNlbWFwaG9yZQ0KPj4+ICsgKg0K
-Pj4+ICsgKiBDb3B5cmlnaHQgKGMpIDIwMTkgQW5kcmVhcyBGw6RyYmVyDQo+Pj4gKyAqLw0KPj4+
-ICsNCj4+PiArI2luY2x1ZGUgPGxpbnV4L2JpdG9wcy5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgv
-aHdzcGlubG9jay5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgvaWRyLmg+DQo+Pj4gKyNpbmNsdWRl
-IDxsaW51eC9pby5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgvbW9kdWxlLmg+DQo+Pj4gKyNpbmNs
-dWRlIDxsaW51eC9vZi5oPg0KPj4+ICsjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPj4+
-ICsjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQo+Pj4gKw0KPj4+ICsjaW5jbHVk
-ZSAiaHdzcGlubG9ja19pbnRlcm5hbC5oIg0KPj4+ICsNCj4+PiArc3RydWN0IHJ0ZDExOTVfc2Iy
-X3NlbSB7DQo+Pj4gKwlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2Ow0KPj4+ICsJdm9pZCBf
-X2lvbWVtICpiYXNlOw0KPj4+ICsJaW50IGJhc2VfaWQ7DQo+PiBUaGUgcGRldiwgYmFzZSBhbmQg
-YmFzZV9pZCBtZW1iZXJzIG9mIHRoaXMgc3RydWN0IGFyZSBzZXQgaW4gLnByb2JlKCkNCj4+IGJ1
-dCBuZXZlciByZWFkIGFueXdoZXJlOiB5b3UgbWF5IHJlbW92ZSB0aGVtIGFuZCBrZWVwIG9ubHkg
-bG9ja2Rldg0KPiBIbW0sIHRoaXMgbW9kdWxlIGRyaXZlciBpcyBzdGlsbCBtaXNzaW5nIGEgcmVt
-b3ZlIGhvb2sgdGhhdCBtaWdodCBuZWVkDQo+IHRoZW0uIEkgd2FzIG9yaWdpbmFsbHkgcGxhbm5p
-bmcgdG8gcGFzcyB0aGlzIHN0cnVjdCBhcyBwcml2IHRvIHRoZQ0KPiBpbml0aWFsIGxvY2tzLCBi
-dXQgdGhhdCBkaWRuJ3Qgd29yayBvdXQgZm9yIG1vcmUgdGhhbiBvbmUgbG9jay4NCg0KDQpJIGRv
-IG5vdCB0aGluayB0aGF0IHlvdSBuZWVkIHRvIHJlYWQgdGhlc2UgcGFyYW1ldGVycyBiYWNrIGlu
-IC5yZW1vdmUoKS4NCg0KSW4gdG9wIG9mIHRoYXQsIGlmIHlvdSB1c2UgZGV2bV94eHgoKSBldmVy
-eXdoZXJlIGluIC5wcm9iZSgpLCB0aGVuIA0KLnJlbW92ZSgpIHdvdWxkIHByb2JhYmx5IGJlIGVt
-cHR5LiBBcGFydCBtYXliZSBhIGNhbGwgdG8gaWRyX3JlbW92ZSgpIG9yIA0KaWRyX2Rlc3Ryb3ko
-KS4NCg0KDQo+DQo+IEFsc28sIGhhdmUgeW91IGV2ZXIgaGFkIHRoZSBjYXNlIHdoZXJlIGFuIGh3
-c3BpbmxvY2sgZHJpdmVyIHdlcmUgdXNpbmcgYQ0KPiBzeXNjb24gaW5zdGVhZCBvZiBfX2lvbWVt
-IHBvaW50ZXIsIGFuZCBwb3RlbnRpYWxseSBiZSB1c2VkIGFzIGh3bG9jayBmb3INCj4gdGhhdCBz
-YW1lIHN5c2Nvbj8gSSBhc3N1bWVkIHRoYXQgd291bGQgY2F1c2UgY2lyY3VsYXIgcHJvYmluZyBw
-cm9ibGVtcywNCj4gYnV0IEkgZGlkbid0IGFjdHVhbGx5IHRlc3QgaXQgYW5kIGNvbnNpZGVyZWQg
-aXQgYSBiYWQgZGVzaWduIGlkZWE/IElmIGl0DQo+IGlzIHN1cHBvcnRlZCwgYSByZWdtYXAgd291
-bGQgYmUgdGhlIGFsdGVybmF0aXZlIHRvIGJhc2UgYWJvdmUuDQoNCg0KSSBkbyBub3QgaGF2ZSBh
-bnkgZXhwZXJpZW5jZSBvbiB0aGlzIHBhcnRpY3VsYXIgcG9pbnQuIEJ1dCBub3RlIHRoYXQgDQoi
-c3lzY29uIiBkcml2ZXJzIGNhbiBkZWNsYXJlIGFuwqAgJ2h3bG9ja3MnIHByb3BlcnR5IGl0IHRo
-ZWlyIERUIG5vZGUuIEluIA0KdGhhdCBjYXNlLCBldmVyeSBjYWxsIHRvIHN5c2NvbiBpcyBwcm90
-ZWN0ZWQgYnkgdGhlIGh3bG9jayAoc2VlIFsxXSkuIA0KWW91IHNoYWxsIHRha2UgY2FyZSBvZiB0
-aGlzIHRvby4NCg0KWzFdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3BhdGNod29yay9wYXRjaC84
-NzI4MTIvDQoNCg0KPg0KPj4+ICsJc3RydWN0IGh3c3BpbmxvY2tfZGV2aWNlIGxvY2tkZXY7DQo+
-Pj4gK307DQo+Pj4gKw0KPj4+ICtzdGF0aWMgREVGSU5FX0lEUihydGQxMTk1X3NiMl9zZW1faWRy
-KTsNCj4+PiArDQo+Pj4gK3N0YXRpYyBpbnQgcnRkMTE5NV9zYjJfc2VtX3RyeWxvY2soc3RydWN0
-IGh3c3BpbmxvY2sgKmxvY2spDQo+Pj4gK3sNCj4+PiArCXZvaWQgX19pb21lbSAqcmVnID0gKHZv
-aWQgX19pb21lbSAqKWxvY2stPnByaXY7DQo+Pj4gKw0KPj4+ICsJcmV0dXJuIHJlYWRsX3JlbGF4
-ZWQocmVnKSAmIEJJVCgwKTsNCj4+PiArfQ0KPj4+ICsNCj4+PiArc3RhdGljIHZvaWQgcnRkMTE5
-NV9zYjJfc2VtX3VubG9jayhzdHJ1Y3QgaHdzcGlubG9jayAqbG9jaykNCj4+PiArew0KPj4+ICsJ
-dm9pZCBfX2lvbWVtICpyZWcgPSAodm9pZCBfX2lvbWVtICopbG9jay0+cHJpdjsNCj4+PiArDQo+
-Pj4gKwl3cml0ZWxfcmVsYXhlZCgwLCByZWcpOw0KPj4+ICt9DQo+Pj4gKw0KPj4+ICtzdGF0aWMg
-Y29uc3Qgc3RydWN0IGh3c3BpbmxvY2tfb3BzIHJ0ZDExOTVfc2IyX3NlbV9od3NwaW5sb2NrX29w
-cyA9IHsNCj4+PiArCS50cnlsb2NrCT0gcnRkMTE5NV9zYjJfc2VtX3RyeWxvY2ssDQo+Pj4gKwku
-dW5sb2NrCQk9IHJ0ZDExOTVfc2IyX3NlbV91bmxvY2ssDQo+Pj4gK307DQo+Pj4gKw0KPj4+ICtz
-dGF0aWMgaW50IHJ0ZDExOTVfc2IyX3NlbV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpw
-ZGV2KQ0KPj4+ICt7DQo+Pj4gKwlzdHJ1Y3QgcnRkMTE5NV9zYjJfc2VtICpzZW07DQo+Pj4gKwlz
-dHJ1Y3QgaHdzcGlubG9jayAqbG9jazsNCj4+PiArCXN0cnVjdCByZXNvdXJjZSAqcmVzOw0KPj4+
-ICsJaW50IGksIG51bTsNCj4+PiArDQo+Pj4gKwlyZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2Uo
-cGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0KPj4+ICsJaWYgKCFyZXMpDQo+Pj4gKwkJcmV0dXJu
-IC1FTk9NRU07DQo+Pj4gKw0KPj4+ICsJbnVtID0gcmVzb3VyY2Vfc2l6ZShyZXMpIC8gNDsNCj4+
-PiArDQo+Pj4gKwlzZW0gPSBkZXZtX2t6YWxsb2MoJnBkZXYtPmRldiwgc2l6ZW9mKCpzZW0pICsg
-bnVtICogc2l6ZW9mKCpsb2NrKSwNCj4+PiArCQkJICAgR0ZQX0tFUk5FTCk7DQo+Pj4gKwlpZiAo
-IXNlbSkNCj4+PiArCQlyZXR1cm4gLUVOT01FTTsNCj4+PiArDQo+Pj4gKwlzZW0tPnBkZXYgPSBw
-ZGV2Ow0KPj4+ICsNCj4+PiArCXNlbS0+YmFzZSA9IG9mX2lvbWFwKHBkZXYtPmRldi5vZl9ub2Rl
-LCAwKTsNCj4+IFlvdSBtYXkgdXNlIGRldm1faW9yZW1hcF9yZXNvdXJjZSgpIGhlcmUuDQo+IFdv
-dWxkbid0IHRoYXQgYWxzbyByZXNlcnZlIHRoaXMgbWVtb3J5IGFuZCB0aHVzIGNhdXNlIGNvbmZs
-aWN0cz8NCg0KDQpNeSBzdWdnZXN0aW9uIGNvbnNpc3RzIGluIHVzaW5nIHRoZSBkZXZtXyB2ZXJz
-aW9uLiBJIGRvIG5vdCB0aGluayB0aGF0IA0KaXQgY2FuIGNhdXNlIGFueSB0cm91YmxlLg0KDQoN
-Cj4NCj4gSSBoYXZlIGFub3RoZXIgdW5wb3N0ZWQgZHJpdmVyIG9uIHRoZSBzYW1lIHN5c2NvbiAo
-cmVhc29uIGZvciBiYXNpbmcNCj4gdGhpcyBvbiB0aGUgc3lzY29uIHNlcmllcyBbMV0pLCB3aGlj
-aCBjdXJyZW50bHkgb3ZlcmxhcHMgaXQgLSB0byBiZQ0KPiB1cGRhdGVkIHRvIHN5c2Nvbi4NCj4N
-Cj4gVGhhbmtzIGZvciBpbml0aWFsIHJldmlldywNCj4gQW5kcmVhcw0KPg0KPiBbMV0gaHR0cHM6
-Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9jb3Zlci8xMTI2OTk3MS8NCj4NCj4+PiArCWlmICghc2Vt
-LT5iYXNlKQ0KPj4+ICsJCXJldHVybiAtRU5PTUVNOw0KPj4+ICsNCj4+PiArCWZvciAoaSA9IDA7
-IGkgPCBudW07IGkrKykgew0KPj4+ICsJCWxvY2sgPSAmc2VtLT5sb2NrZGV2LmxvY2tbaV07DQo+
-Pj4gKwkJbG9jay0+cHJpdiA9IHNlbS0+YmFzZSArIGkgKiA0Ow0KPj4+ICsJfQ0KPj4+ICsNCj4+
-PiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHNlbSk7DQo+Pj4gKw0KPj4+ICsJc2VtLT5i
-YXNlX2lkID0gaWRyX2FsbG9jKCZydGQxMTk1X3NiMl9zZW1faWRyLCBzZW0sIDAsIDAsIEdGUF9L
-RVJORUwpOw0KPj4+ICsNCj4+PiArCXJldHVybiBkZXZtX2h3c3Bpbl9sb2NrX3JlZ2lzdGVyKCZw
-ZGV2LT5kZXYsICZzZW0tPmxvY2tkZXYsDQo+Pj4gKwkJJnJ0ZDExOTVfc2IyX3NlbV9od3NwaW5s
-b2NrX29wcywgc2VtLT5iYXNlX2lkLCBudW0pOw0KPj4+ICt9DQo+Pj4gKw0KPj4+ICtzdGF0aWMg
-Y29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBydGQxMTk1X3NiMl9zZW1fZHRfaWRzW10gPSB7DQo+
-Pj4gKwl7IC5jb21wYXRpYmxlID0gInJlYWx0ZWsscnRkMTE5NS1zYjItc2VtIiB9LA0KPj4+ICsJ
-eyB9DQo+Pj4gK307DQo+Pj4gK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIHJ0ZDExOTVfc2IyX3Nl
-bV9kdF9pZHMpOw0KPj4+ICsNCj4+PiArc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgcnRk
-MTE5NV9zYjJfc2VtX3BsYXRmb3JtX2RyaXZlciA9IHsNCj4+PiArCS5kcml2ZXIgPSB7DQo+Pj4g
-KwkJLm5hbWUgPSAicnRkMTE5NS1zYjItc2VtIiwNCj4+PiArCQkub2ZfbWF0Y2hfdGFibGUgPSBy
-dGQxMTk1X3NiMl9zZW1fZHRfaWRzLA0KPj4+ICsJfSwNCj4+PiArCS5wcm9iZSA9IHJ0ZDExOTVf
-c2IyX3NlbV9wcm9iZSwNCj4+PiArfTsNCj4+PiArbW9kdWxlX3BsYXRmb3JtX2RyaXZlcihydGQx
-MTk1X3NiMl9zZW1fcGxhdGZvcm1fZHJpdmVyKTsNCj4+PiArDQo+Pj4gK01PRFVMRV9MSUNFTlNF
-KCJHUEwiKTsNCj4+PiArTU9EVUxFX0RFU0NSSVBUSU9OKCJIYXJkd2FyZSBzcGlubG9jayBkcml2
-ZXIgZm9yIFJlYWx0ZWsgUlREMTE5NSBTQjIiKTsNCj4+PiArTU9EVUxFX0FVVEhPUigiQW5kcmVh
-cyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPiIpOw0KPg==
+Hi Fabien,
+
+Am 03.12.19 um 09:46 schrieb Fabien DESSENNE:
+> On 02/12/2019 11:05 PM, Andreas Färber wrote:
+>> Implement a driver for hardware semaphores found in RTD1195 SoC.
+>> It allows for both per-register instances (SB2_HD_SEM) as well as
+>> contiguous register ranges (SB2_HD_SEM_NEW[0-7]).
+>>
+>> While these registers are part of the SB2 syscon, this implementation
+>> does not use syscon, to allow assigning one as SB2 syscon's hwlock.
+>>
+>> Cc: Cheng-Yu Lee <cylee12@realtek.com>
+>> Signed-off-by: Andreas Färber <afaerber@suse.de>
+>> ---
+>>   drivers/hwspinlock/Kconfig           |  11 ++++
+>>   drivers/hwspinlock/Makefile          |   1 +
+>>   drivers/hwspinlock/rtd1195_sb2_sem.c | 101 +++++++++++++++++++++++++++++++++++
+>>   3 files changed, 113 insertions(+)
+>>   create mode 100644 drivers/hwspinlock/rtd1195_sb2_sem.c
+>>
+>> diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+>> index 37740e992cfa..9c26c436d399 100644
+>> --- a/drivers/hwspinlock/Kconfig
+>> +++ b/drivers/hwspinlock/Kconfig
+>> @@ -28,6 +28,17 @@ config HWSPINLOCK_QCOM
+>>   
+>>   	  If unsure, say N.
+>>   
+>> +config HWSPINLOCK_RTD1195_SB2
+>> +	tristate "Realtek RTD1195 SB2 Hardware Spinlock device"
+>> +	depends on HWSPINLOCK
+>> +	depends on ARCH_REALTEK || COMPILE_TEST
+>> +	default ARCH_REALTEK
+>> +	help
+>> +	  Say y here to support the Realtek Hardware Semaphore functionality,
+>> +	  found on the RTD1195 and later SoC families.
+>> +
+>> +	  If unsure, say N.
+>> +
+>>   config HWSPINLOCK_SIRF
+>>   	tristate "SIRF Hardware Spinlock device"
+>>   	depends on HWSPINLOCK
+>> diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
+>> index ed053e3f02be..d5bd59412468 100644
+>> --- a/drivers/hwspinlock/Makefile
+>> +++ b/drivers/hwspinlock/Makefile
+>> @@ -6,6 +6,7 @@
+>>   obj-$(CONFIG_HWSPINLOCK)		+= hwspinlock_core.o
+>>   obj-$(CONFIG_HWSPINLOCK_OMAP)		+= omap_hwspinlock.o
+>>   obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
+>> +obj-$(CONFIG_HWSPINLOCK_RTD1195_SB2)	+= rtd1195_sb2_sem.o
+>>   obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
+>>   obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
+>>   obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
+>> diff --git a/drivers/hwspinlock/rtd1195_sb2_sem.c b/drivers/hwspinlock/rtd1195_sb2_sem.c
+>> new file mode 100644
+>> index 000000000000..ae925d057874
+>> --- /dev/null
+>> +++ b/drivers/hwspinlock/rtd1195_sb2_sem.c
+>> @@ -0,0 +1,101 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * RTD1195 SB2 hardware semaphore
+>> + *
+>> + * Copyright (c) 2019 Andreas Färber
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+>> +#include <linux/hwspinlock.h>
+>> +#include <linux/idr.h>
+>> +#include <linux/io.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include "hwspinlock_internal.h"
+>> +
+>> +struct rtd1195_sb2_sem {
+>> +	struct platform_device *pdev;
+>> +	void __iomem *base;
+>> +	int base_id;
+> The pdev, base and base_id members of this struct are set in .probe() 
+> but never read anywhere: you may remove them and keep only lockdev
+
+Hmm, this module driver is still missing a remove hook that might need
+them. I was originally planning to pass this struct as priv to the
+initial locks, but that didn't work out for more than one lock.
+
+Also, have you ever had the case where an hwspinlock driver were using a
+syscon instead of __iomem pointer, and potentially be used as hwlock for
+that same syscon? I assumed that would cause circular probing problems,
+but I didn't actually test it and considered it a bad design idea? If it
+is supported, a regmap would be the alternative to base above.
+
+>> +	struct hwspinlock_device lockdev;
+>> +};
+>> +
+>> +static DEFINE_IDR(rtd1195_sb2_sem_idr);
+>> +
+>> +static int rtd1195_sb2_sem_trylock(struct hwspinlock *lock)
+>> +{
+>> +	void __iomem *reg = (void __iomem *)lock->priv;
+>> +
+>> +	return readl_relaxed(reg) & BIT(0);
+>> +}
+>> +
+>> +static void rtd1195_sb2_sem_unlock(struct hwspinlock *lock)
+>> +{
+>> +	void __iomem *reg = (void __iomem *)lock->priv;
+>> +
+>> +	writel_relaxed(0, reg);
+>> +}
+>> +
+>> +static const struct hwspinlock_ops rtd1195_sb2_sem_hwspinlock_ops = {
+>> +	.trylock	= rtd1195_sb2_sem_trylock,
+>> +	.unlock		= rtd1195_sb2_sem_unlock,
+>> +};
+>> +
+>> +static int rtd1195_sb2_sem_probe(struct platform_device *pdev)
+>> +{
+>> +	struct rtd1195_sb2_sem *sem;
+>> +	struct hwspinlock *lock;
+>> +	struct resource *res;
+>> +	int i, num;
+>> +
+>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	if (!res)
+>> +		return -ENOMEM;
+>> +
+>> +	num = resource_size(res) / 4;
+>> +
+>> +	sem = devm_kzalloc(&pdev->dev, sizeof(*sem) + num * sizeof(*lock),
+>> +			   GFP_KERNEL);
+>> +	if (!sem)
+>> +		return -ENOMEM;
+>> +
+>> +	sem->pdev = pdev;
+>> +
+>> +	sem->base = of_iomap(pdev->dev.of_node, 0);
+> You may use devm_ioremap_resource() here.
+
+Wouldn't that also reserve this memory and thus cause conflicts?
+
+I have another unposted driver on the same syscon (reason for basing
+this on the syscon series [1]), which currently overlaps it - to be
+updated to syscon.
+
+Thanks for initial review,
+Andreas
+
+[1] https://patchwork.kernel.org/cover/11269971/
+
+>> +	if (!sem->base)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < num; i++) {
+>> +		lock = &sem->lockdev.lock[i];
+>> +		lock->priv = sem->base + i * 4;
+>> +	}
+>> +
+>> +	platform_set_drvdata(pdev, sem);
+>> +
+>> +	sem->base_id = idr_alloc(&rtd1195_sb2_sem_idr, sem, 0, 0, GFP_KERNEL);
+>> +
+>> +	return devm_hwspin_lock_register(&pdev->dev, &sem->lockdev,
+>> +		&rtd1195_sb2_sem_hwspinlock_ops, sem->base_id, num);
+>> +}
+>> +
+>> +static const struct of_device_id rtd1195_sb2_sem_dt_ids[] = {
+>> +	{ .compatible = "realtek,rtd1195-sb2-sem" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rtd1195_sb2_sem_dt_ids);
+>> +
+>> +static struct platform_driver rtd1195_sb2_sem_platform_driver = {
+>> +	.driver = {
+>> +		.name = "rtd1195-sb2-sem",
+>> +		.of_match_table = rtd1195_sb2_sem_dt_ids,
+>> +	},
+>> +	.probe = rtd1195_sb2_sem_probe,
+>> +};
+>> +module_platform_driver(rtd1195_sb2_sem_platform_driver);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DESCRIPTION("Hardware spinlock driver for Realtek RTD1195 SB2");
+>> +MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
+
+
+-- 
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer
+HRB 36809 (AG Nürnberg)
