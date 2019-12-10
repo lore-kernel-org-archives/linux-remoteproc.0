@@ -1,74 +1,96 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
-Subject: Re: [PATCH v4 3/5] remoteproc: Add prepare/unprepare callbacks
-Date: Thu, 12 Dec 2019 10:03:29 +0000
-Message-ID: <f25180f2-7c6d-0022-12b2-cd9c202f39d3@st.com>
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v4 3/5] remoteproc: Add prepare/unprepare callbacks
+Date: Tue, 10 Dec 2019 17:40:12 +0100
+Message-Id: <20191210164014.50739-3-paul@crapouillou.net>
+In-Reply-To: <20191210164014.50739-1-paul@crapouillou.net>
 References: <20191210164014.50739-1-paul@crapouillou.net>
- <20191210164014.50739-3-paul@crapouillou.net>
-In-Reply-To: <20191210164014.50739-3-paul@crapouillou.net>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CD804467A68AAF4AB0507174BC5F24AC@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-To: Paul Cercueil <paul@crapouillou.net>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: "od@zcrc.me" <od@zcrc.me>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgUGF1bA0KDQoNCk9uIDEwLzEyLzIwMTkgNTo0MCBQTSwgUGF1bCBDZXJjdWVpbCB3cm90ZToN
-Cj4gVGhlIC5wcmVwYXJlKCkgY2FsbGJhY2sgaXMgY2FsbGVkIGJlZm9yZSB0aGUgZmlybXdhcmUg
-aXMgbG9hZGVkIHRvDQo+IG1lbW9yeS4gVGhpcyBpcyB1c2VmdWwgZm9yIGluc3RhbmNlIGluIHRo
-ZSBjYXNlIHdoZXJlIHNvbWUgc2V0dXAgaXMNCj4gcmVxdWlyZWQgZm9yIHRoZSBtZW1vcnkgdG8g
-YmUgYWNjZXNzaWJsZS4NCg0KDQpJIGFtIHRyeWluZyB0byBmaWd1cmUgb3V0IHdoYXQga2luZyBv
-ZiAnc2V0dXAnIG1heSBiZSByZXF1aXJlZC4gRnJvbSB0aGUgDQppbmdlbmljIGRyaXZlciBJIHVu
-ZGVyc3RhbmQgdGhhdCB5b3UgbmVlZCB0byBlbmFibGUgY2xvY2tzIHRvIGFsbG93IHNvbWUgDQpt
-ZW1vcnkgYWNjZXNzLg0KDQpJbnN0ZWFkIG9mIGFkZGluZyB0aGlzIG5ldyBvcHMsIHdoeSBub3Qg
-ZW5hYmxpbmcgY2xvY2tzIGluIHByb2JlKCk/DQoNCkJSDQoNCkZhYmllbg0KDQoNCj4NCj4gU2ln
-bmVkLW9mZi1ieTogUGF1bCBDZXJjdWVpbCA8cGF1bEBjcmFwb3VpbGxvdS5uZXQ+DQo+IC0tLQ0K
-Pg0KPiBOb3RlczoNCj4gICAgICB2Mi12NDogTm8gY2hhbmdlDQo+DQo+ICAgZHJpdmVycy9yZW1v
-dGVwcm9jL3JlbW90ZXByb2NfY29yZS5jIHwgMTYgKysrKysrKysrKysrKysrLQ0KPiAgIGluY2x1
-ZGUvbGludXgvcmVtb3RlcHJvYy5oICAgICAgICAgICB8ICA0ICsrKysNCj4gICAyIGZpbGVzIGNo
-YW5nZWQsIDE5IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4NCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyBiL2RyaXZlcnMvcmVtb3RlcHJv
-Yy9yZW1vdGVwcm9jX2NvcmUuYw0KPiBpbmRleCAwYTlmYzdmZGQxYzMuLjNlYTVmNjc1YTE0OCAx
-MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2NfY29yZS5jDQo+ICsr
-KyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiBAQCAtMTI5OSwxMSAr
-MTI5OSwxOSBAQCBzdGF0aWMgaW50IHJwcm9jX3N0YXJ0KHN0cnVjdCBycHJvYyAqcnByb2MsIGNv
-bnN0IHN0cnVjdCBmaXJtd2FyZSAqZncpDQo+ICAgCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZycHJv
-Yy0+ZGV2Ow0KPiAgIAlpbnQgcmV0Ow0KPiAgIA0KPiArCWlmIChycHJvYy0+b3BzLT5wcmVwYXJl
-KSB7DQo+ICsJCXJldCA9IHJwcm9jLT5vcHMtPnByZXBhcmUocnByb2MpOw0KPiArCQlpZiAocmV0
-KSB7DQo+ICsJCQlkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBwcmVwYXJlIHJwcm9jOiAlZFxuIiwg
-cmV0KTsNCj4gKwkJCXJldHVybiByZXQ7DQo+ICsJCX0NCj4gKwl9DQo+ICsNCj4gICAJLyogbG9h
-ZCB0aGUgRUxGIHNlZ21lbnRzIHRvIG1lbW9yeSAqLw0KPiAgIAlyZXQgPSBycHJvY19sb2FkX3Nl
-Z21lbnRzKHJwcm9jLCBmdyk7DQo+ICAgCWlmIChyZXQpIHsNCj4gICAJCWRldl9lcnIoZGV2LCAi
-RmFpbGVkIHRvIGxvYWQgcHJvZ3JhbSBzZWdtZW50czogJWRcbiIsIHJldCk7DQo+IC0JCXJldHVy
-biByZXQ7DQo+ICsJCWdvdG8gdW5wcmVwYXJlX3Jwcm9jOw0KPiAgIAl9DQo+ICAgDQo+ICAgCS8q
-DQo+IEBAIC0xMzU0LDYgKzEzNjIsOSBAQCBzdGF0aWMgaW50IHJwcm9jX3N0YXJ0KHN0cnVjdCBy
-cHJvYyAqcnByb2MsIGNvbnN0IHN0cnVjdCBmaXJtd2FyZSAqZncpDQo+ICAgCXJwcm9jX3VucHJl
-cGFyZV9zdWJkZXZpY2VzKHJwcm9jKTsNCj4gICByZXNldF90YWJsZV9wdHI6DQo+ICAgCXJwcm9j
-LT50YWJsZV9wdHIgPSBycHJvYy0+Y2FjaGVkX3RhYmxlOw0KPiArdW5wcmVwYXJlX3Jwcm9jOg0K
-PiArCWlmIChycHJvYy0+b3BzLT51bnByZXBhcmUpDQo+ICsJCXJwcm9jLT5vcHMtPnVucHJlcGFy
-ZShycHJvYyk7DQo+ICAgDQo+ICAgCXJldHVybiByZXQ7DQo+ICAgfQ0KPiBAQCAtMTQ4Myw2ICsx
-NDk0LDkgQEAgc3RhdGljIGludCBycHJvY19zdG9wKHN0cnVjdCBycHJvYyAqcnByb2MsIGJvb2wg
-Y3Jhc2hlZCkNCj4gICANCj4gICAJcnByb2MtPnN0YXRlID0gUlBST0NfT0ZGTElORTsNCj4gICAN
-Cj4gKwlpZiAocnByb2MtPm9wcy0+dW5wcmVwYXJlKQ0KPiArCQlycHJvYy0+b3BzLT51bnByZXBh
-cmUocnByb2MpOw0KPiArDQo+ICAgCWRldl9pbmZvKGRldiwgInN0b3BwZWQgcmVtb3RlIHByb2Nl
-c3NvciAlc1xuIiwgcnByb2MtPm5hbWUpOw0KPiAgIA0KPiAgIAlyZXR1cm4gMDsNCj4gZGlmZiAt
-LWdpdCBhL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oIGIvaW5jbHVkZS9saW51eC9yZW1vdGVw
-cm9jLmgNCj4gaW5kZXggNWYyMDFmMGM4NmMzLi5hNjI3MmQxYmEzODQgMTAwNjQ0DQo+IC0tLSBh
-L2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvcmVtb3Rl
-cHJvYy5oDQo+IEBAIC0zNTUsNiArMzU1LDggQEAgZW51bSByc2NfaGFuZGxpbmdfc3RhdHVzIHsN
-Cj4gICANCj4gICAvKioNCj4gICAgKiBzdHJ1Y3QgcnByb2Nfb3BzIC0gcGxhdGZvcm0tc3BlY2lm
-aWMgZGV2aWNlIGhhbmRsZXJzDQo+ICsgKiBAcHJlcGFyZToJcHJlcGFyZSB0aGUgZGV2aWNlIGZv
-ciBwb3dlciB1cCAoYmVmb3JlIHRoZSBmaXJtd2FyZSBpcyBsb2FkZWQpDQo+ICsgKiBAdW5wcmVw
-YXJlOgl1bnByZXBhcmUgdGhlIGRldmljZSBhZnRlciBpdCBpcyBzdG9wcGVkDQo+ICAgICogQHN0
-YXJ0Oglwb3dlciBvbiB0aGUgZGV2aWNlIGFuZCBib290IGl0DQo+ICAgICogQHN0b3A6CXBvd2Vy
-IG9mZiB0aGUgZGV2aWNlDQo+ICAgICogQGtpY2s6CWtpY2sgYSB2aXJ0cXVldWUgKHZpcnRxdWV1
-ZSBpZCBnaXZlbiBhcyBhIHBhcmFtZXRlcikNCj4gQEAgLTM3MSw2ICszNzMsOCBAQCBlbnVtIHJz
-Y19oYW5kbGluZ19zdGF0dXMgew0KPiAgICAqIEBnZXRfYm9vdF9hZGRyOglnZXQgYm9vdCBhZGRy
-ZXNzIHRvIGVudHJ5IHBvaW50IHNwZWNpZmllZCBpbiBmaXJtd2FyZQ0KPiAgICAqLw0KPiAgIHN0
-cnVjdCBycHJvY19vcHMgew0KPiArCWludCAoKnByZXBhcmUpKHN0cnVjdCBycHJvYyAqcnByb2Mp
-Ow0KPiArCXZvaWQgKCp1bnByZXBhcmUpKHN0cnVjdCBycHJvYyAqcnByb2MpOw0KPiAgIAlpbnQg
-KCpzdGFydCkoc3RydWN0IHJwcm9jICpycHJvYyk7DQo+ICAgCWludCAoKnN0b3ApKHN0cnVjdCBy
-cHJvYyAqcnByb2MpOw0KPiAgIAl2b2lkICgqa2ljaykoc3RydWN0IHJwcm9jICpycHJvYywgaW50
-IHZxaWQpOw==
+The .prepare() callback is called before the firmware is loaded to
+memory. This is useful for instance in the case where some setup is
+required for the memory to be accessible.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+
+Notes:
+    v2-v4: No change
+
+ drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
+ include/linux/remoteproc.h           |  4 ++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 0a9fc7fdd1c3..3ea5f675a148 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1299,11 +1299,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+ 
++	if (rproc->ops->prepare) {
++		ret = rproc->ops->prepare(rproc);
++		if (ret) {
++			dev_err(dev, "Failed to prepare rproc: %d\n", ret);
++			return ret;
++		}
++	}
++
+ 	/* load the ELF segments to memory */
+ 	ret = rproc_load_segments(rproc, fw);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to load program segments: %d\n", ret);
+-		return ret;
++		goto unprepare_rproc;
+ 	}
+ 
+ 	/*
+@@ -1354,6 +1362,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+ 	rproc_unprepare_subdevices(rproc);
+ reset_table_ptr:
+ 	rproc->table_ptr = rproc->cached_table;
++unprepare_rproc:
++	if (rproc->ops->unprepare)
++		rproc->ops->unprepare(rproc);
+ 
+ 	return ret;
+ }
+@@ -1483,6 +1494,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+ 
+ 	rproc->state = RPROC_OFFLINE;
+ 
++	if (rproc->ops->unprepare)
++		rproc->ops->unprepare(rproc);
++
+ 	dev_info(dev, "stopped remote processor %s\n", rproc->name);
+ 
+ 	return 0;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 5f201f0c86c3..a6272d1ba384 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -355,6 +355,8 @@ enum rsc_handling_status {
+ 
+ /**
+  * struct rproc_ops - platform-specific device handlers
++ * @prepare:	prepare the device for power up (before the firmware is loaded)
++ * @unprepare:	unprepare the device after it is stopped
+  * @start:	power on the device and boot it
+  * @stop:	power off the device
+  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+@@ -371,6 +373,8 @@ enum rsc_handling_status {
+  * @get_boot_addr:	get boot address to entry point specified in firmware
+  */
+ struct rproc_ops {
++	int (*prepare)(struct rproc *rproc);
++	void (*unprepare)(struct rproc *rproc);
+ 	int (*start)(struct rproc *rproc);
+ 	int (*stop)(struct rproc *rproc);
+ 	void (*kick)(struct rproc *rproc, int vqid);
+-- 
+2.24.0
