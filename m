@@ -1,189 +1,93 @@
-Return-Path: <paul@crapouillou.net>
-Date: Sat, 14 Dec 2019 23:27:58 +0100
-From: Paul Cercueil <paul@crapouillou.net>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
 Subject: Re: [PATCH v4 2/5] remoteproc: Add device-managed variants of
  rproc_alloc/rproc_add
-Message-Id: <1576362478.3.4@crapouillou.net>
-In-Reply-To: <6fff431f-dd3f-a67e-e40b-8cee4060c37a@st.com>
+Date: Thu, 12 Dec 2019 09:43:13 +0000
+Message-ID: <6fff431f-dd3f-a67e-e40b-8cee4060c37a@st.com>
 References: <20191210164014.50739-1-paul@crapouillou.net>
-	<20191210164014.50739-2-paul@crapouillou.net>
-	<6fff431f-dd3f-a67e-e40b-8cee4060c37a@st.com>
+ <20191210164014.50739-2-paul@crapouillou.net>
+In-Reply-To: <20191210164014.50739-2-paul@crapouillou.net>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E47CC4E35B31C94CA71149C4F5BFCD46@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-To: Fabien DESSENNE <fabien.dessenne@st.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Cercueil <paul@crapouillou.net>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: "od@zcrc.me" <od@zcrc.me>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Fabien,
-
-
-Le jeu., d=E9c. 12, 2019 at 09:43, Fabien DESSENNE=20
-<fabien.dessenne@st.com> a =E9crit :
-> Hi Paul,
->=20
->=20
-> Good initiative! See me remarks below.
->=20
->=20
-> On 10/12/2019 5:40 PM, Paul Cercueil wrote:
->>  Add API functions devm_rproc_alloc() and devm_rproc_add(), which=20
->> behave
->>  like rproc_alloc() and rproc_add() respectively, but register their
->>  respective cleanup function to be called on driver detach.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->>=20
->>  Notes:
->>       v3: New patch
->>       v4: No change
->>=20
->>    drivers/remoteproc/remoteproc_core.c | 67=20
->> ++++++++++++++++++++++++++++
->>    include/linux/remoteproc.h           |  5 +++
->>    2 files changed, 72 insertions(+)
->>=20
->>  diff --git a/drivers/remoteproc/remoteproc_core.c=20
->> b/drivers/remoteproc/remoteproc_core.c
->>  index 307df98347ba..0a9fc7fdd1c3 100644
->>  --- a/drivers/remoteproc/remoteproc_core.c
->>  +++ b/drivers/remoteproc/remoteproc_core.c
->=20
->=20
-> Maybe these devm function shall be defined in a new=20
-> remoteproc/devres.c
-> file. Although it seems to be a common usage I don't know if there is=20
-> a
-> rule for that.
-
-It's not a rule, more like a good practice. I'll do that.
-
-
->=20
->>  @@ -1932,6 +1932,33 @@ int rproc_add(struct rproc *rproc)
->>    }
->>    EXPORT_SYMBOL(rproc_add);
->>=20
->>  +static void devm_rproc_remove(void *rproc)
->>  +{
->>  +	rproc_del(rproc);
->>  +}
->>  +
->>  +/**
->>  + * devm_rproc_add() - resource managed rproc_add()
->>  + * @dev: the underlying device
->>  + * @rproc: the remote processor handle to register
->>  + *
->>  + * This function performs like rproc_add() but the registered=20
->> rproc device will
->>  + * automatically be removed on driver detach.
->>  + *
->>  + * Returns 0 on success and an appropriate error code otherwise.
->>  + */
->>  +int devm_rproc_add(struct device *dev, struct rproc *rproc)
->>  +{
->>  +	int err;
->>  +
->>  +	err =3D rproc_add(rproc);
->>  +	if (err)
->>  +		return err;
->>  +
->>  +	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
->>  +}
->>  +EXPORT_SYMBOL(devm_rproc_add);
->>  +
->>    /**
->>     * rproc_type_release() - release a remote processor instance
->>     * @dev: the rproc's device
->>  @@ -2149,6 +2176,46 @@ int rproc_del(struct rproc *rproc)
->>    }
->>    EXPORT_SYMBOL(rproc_del);
->>=20
->>  +static void devm_rproc_free(struct device *dev, void *res)
->>  +{
->>  +	rproc_free(*(struct rproc **)res);
->>  +}
->>  +
->>  +/**
->>  + * devm_rproc_alloc() - resource managed rproc_alloc()
->>  + * @dev: the underlying device
->>  + * @name: name of this remote processor
->>  + * @ops: platform-specific handlers (mainly start/stop)
->>  + * @firmware: name of firmware file to load, can be NULL
->>  + * @len: length of private data needed by the rproc driver (in=20
->> bytes)
->>  + *
->>  + * This function performs like rproc_alloc() but the acuired rproc=20
->> device will
->=20
->=20
-> typo: s/acuired/acquired
->=20
->=20
->>  + * automatically be released on driver detach.
->>  + *
->>  + * On success the new rproc is returned, and on failure, NULL.
->>  + */
->>  +struct rproc *devm_rproc_alloc(struct device *dev, const char=20
->> *name,
->>  +			       const struct rproc_ops *ops,
->>  +			       const char *firmware, int len)
->>  +{
->>  +	struct rproc **ptr, *rproc;
->>  +
->>  +	ptr =3D devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
->>  +	if (!ptr)
->>  +		return ERR_PTR(-ENOMEM);
->>  +
->>  +	rproc =3D rproc_alloc(dev, name, ops, firmware, len);
->>  +	if (rproc) {
->>  +		*ptr =3D rproc;
->>  +		devres_add(dev, ptr);
->>  +	} else {
->>  +		devres_free(ptr);
->>  +	}
->>  +
->>  +	return rproc;
->=20
->=20
-> Can't you use devm_add_action_or_reset() here too?
-
-Yes, I guess that will make things simpler.
-
-Thanks,
--Paul
-
-
->=20
->>  +}
->>  +EXPORT_SYMBOL(devm_rproc_alloc);
->>  +
->>    /**
->>     * rproc_add_subdev() - add a subdevice to a remoteproc
->>     * @rproc: rproc handle to add the subdevice to
->>  diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>  index 16ad66683ad0..5f201f0c86c3 100644
->>  --- a/include/linux/remoteproc.h
->>  +++ b/include/linux/remoteproc.h
->>  @@ -595,6 +595,11 @@ int rproc_add(struct rproc *rproc);
->>    int rproc_del(struct rproc *rproc);
->>    void rproc_free(struct rproc *rproc);
->>=20
->>  +struct rproc *devm_rproc_alloc(struct device *dev, const char=20
->> *name,
->>  +			       const struct rproc_ops *ops,
->>  +			       const char *firmware, int len);
->>  +int devm_rproc_add(struct device *dev, struct rproc *rproc);
->>  +
->>    void rproc_add_carveout(struct rproc *rproc, struct=20
->> rproc_mem_entry *mem);
->>=20
->>    struct rproc_mem_entry *
->=20
->=20
-> BR
->=20
-> Fabien
-
-=
+SGkgUGF1bCwNCg0KDQpHb29kIGluaXRpYXRpdmUhIFNlZSBtZSByZW1hcmtzIGJlbG93Lg0KDQoN
+Ck9uIDEwLzEyLzIwMTkgNTo0MCBQTSwgUGF1bCBDZXJjdWVpbCB3cm90ZToNCj4gQWRkIEFQSSBm
+dW5jdGlvbnMgZGV2bV9ycHJvY19hbGxvYygpIGFuZCBkZXZtX3Jwcm9jX2FkZCgpLCB3aGljaCBi
+ZWhhdmUNCj4gbGlrZSBycHJvY19hbGxvYygpIGFuZCBycHJvY19hZGQoKSByZXNwZWN0aXZlbHks
+IGJ1dCByZWdpc3RlciB0aGVpcg0KPiByZXNwZWN0aXZlIGNsZWFudXAgZnVuY3Rpb24gdG8gYmUg
+Y2FsbGVkIG9uIGRyaXZlciBkZXRhY2guDQo+DQo+IFNpZ25lZC1vZmYtYnk6IFBhdWwgQ2VyY3Vl
+aWwgPHBhdWxAY3JhcG91aWxsb3UubmV0Pg0KPiAtLS0NCj4NCj4gTm90ZXM6DQo+ICAgICAgdjM6
+IE5ldyBwYXRjaA0KPiAgICAgIHY0OiBObyBjaGFuZ2UNCj4NCj4gICBkcml2ZXJzL3JlbW90ZXBy
+b2MvcmVtb3RlcHJvY19jb3JlLmMgfCA2NyArKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+
+ICAgaW5jbHVkZS9saW51eC9yZW1vdGVwcm9jLmggICAgICAgICAgIHwgIDUgKysrDQo+ICAgMiBm
+aWxlcyBjaGFuZ2VkLCA3MiBpbnNlcnRpb25zKCspDQo+DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMgYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3Rl
+cHJvY19jb3JlLmMNCj4gaW5kZXggMzA3ZGY5ODM0N2JhLi4wYTlmYzdmZGQxYzMgMTAwNjQ0DQo+
+IC0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiArKysgYi9kcml2
+ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCg0KDQpNYXliZSB0aGVzZSBkZXZtIGZ1
+bmN0aW9uIHNoYWxsIGJlIGRlZmluZWQgaW4gYSBuZXcgcmVtb3RlcHJvYy9kZXZyZXMuYyANCmZp
+bGUuIEFsdGhvdWdoIGl0IHNlZW1zIHRvIGJlIGEgY29tbW9uIHVzYWdlIEkgZG9uJ3Qga25vdyBp
+ZiB0aGVyZSBpcyBhIA0KcnVsZSBmb3IgdGhhdC4NCg0KDQo+IEBAIC0xOTMyLDYgKzE5MzIsMzMg
+QEAgaW50IHJwcm9jX2FkZChzdHJ1Y3QgcnByb2MgKnJwcm9jKQ0KPiAgIH0NCj4gICBFWFBPUlRf
+U1lNQk9MKHJwcm9jX2FkZCk7DQo+ICAgDQo+ICtzdGF0aWMgdm9pZCBkZXZtX3Jwcm9jX3JlbW92
+ZSh2b2lkICpycHJvYykNCj4gK3sNCj4gKwlycHJvY19kZWwocnByb2MpOw0KPiArfQ0KPiArDQo+
+ICsvKioNCj4gKyAqIGRldm1fcnByb2NfYWRkKCkgLSByZXNvdXJjZSBtYW5hZ2VkIHJwcm9jX2Fk
+ZCgpDQo+ICsgKiBAZGV2OiB0aGUgdW5kZXJseWluZyBkZXZpY2UNCj4gKyAqIEBycHJvYzogdGhl
+IHJlbW90ZSBwcm9jZXNzb3IgaGFuZGxlIHRvIHJlZ2lzdGVyDQo+ICsgKg0KPiArICogVGhpcyBm
+dW5jdGlvbiBwZXJmb3JtcyBsaWtlIHJwcm9jX2FkZCgpIGJ1dCB0aGUgcmVnaXN0ZXJlZCBycHJv
+YyBkZXZpY2Ugd2lsbA0KPiArICogYXV0b21hdGljYWxseSBiZSByZW1vdmVkIG9uIGRyaXZlciBk
+ZXRhY2guDQo+ICsgKg0KPiArICogUmV0dXJucyAwIG9uIHN1Y2Nlc3MgYW5kIGFuIGFwcHJvcHJp
+YXRlIGVycm9yIGNvZGUgb3RoZXJ3aXNlLg0KPiArICovDQo+ICtpbnQgZGV2bV9ycHJvY19hZGQo
+c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgcnByb2MgKnJwcm9jKQ0KPiArew0KPiArCWludCBl
+cnI7DQo+ICsNCj4gKwllcnIgPSBycHJvY19hZGQocnByb2MpOw0KPiArCWlmIChlcnIpDQo+ICsJ
+CXJldHVybiBlcnI7DQo+ICsNCj4gKwlyZXR1cm4gZGV2bV9hZGRfYWN0aW9uX29yX3Jlc2V0KGRl
+diwgZGV2bV9ycHJvY19yZW1vdmUsIHJwcm9jKTsNCj4gK30NCj4gK0VYUE9SVF9TWU1CT0woZGV2
+bV9ycHJvY19hZGQpOw0KPiArDQo+ICAgLyoqDQo+ICAgICogcnByb2NfdHlwZV9yZWxlYXNlKCkg
+LSByZWxlYXNlIGEgcmVtb3RlIHByb2Nlc3NvciBpbnN0YW5jZQ0KPiAgICAqIEBkZXY6IHRoZSBy
+cHJvYydzIGRldmljZQ0KPiBAQCAtMjE0OSw2ICsyMTc2LDQ2IEBAIGludCBycHJvY19kZWwoc3Ry
+dWN0IHJwcm9jICpycHJvYykNCj4gICB9DQo+ICAgRVhQT1JUX1NZTUJPTChycHJvY19kZWwpOw0K
+PiAgIA0KPiArc3RhdGljIHZvaWQgZGV2bV9ycHJvY19mcmVlKHN0cnVjdCBkZXZpY2UgKmRldiwg
+dm9pZCAqcmVzKQ0KPiArew0KPiArCXJwcm9jX2ZyZWUoKihzdHJ1Y3QgcnByb2MgKiopcmVzKTsN
+Cj4gK30NCj4gKw0KPiArLyoqDQo+ICsgKiBkZXZtX3Jwcm9jX2FsbG9jKCkgLSByZXNvdXJjZSBt
+YW5hZ2VkIHJwcm9jX2FsbG9jKCkNCj4gKyAqIEBkZXY6IHRoZSB1bmRlcmx5aW5nIGRldmljZQ0K
+PiArICogQG5hbWU6IG5hbWUgb2YgdGhpcyByZW1vdGUgcHJvY2Vzc29yDQo+ICsgKiBAb3BzOiBw
+bGF0Zm9ybS1zcGVjaWZpYyBoYW5kbGVycyAobWFpbmx5IHN0YXJ0L3N0b3ApDQo+ICsgKiBAZmly
+bXdhcmU6IG5hbWUgb2YgZmlybXdhcmUgZmlsZSB0byBsb2FkLCBjYW4gYmUgTlVMTA0KPiArICog
+QGxlbjogbGVuZ3RoIG9mIHByaXZhdGUgZGF0YSBuZWVkZWQgYnkgdGhlIHJwcm9jIGRyaXZlciAo
+aW4gYnl0ZXMpDQo+ICsgKg0KPiArICogVGhpcyBmdW5jdGlvbiBwZXJmb3JtcyBsaWtlIHJwcm9j
+X2FsbG9jKCkgYnV0IHRoZSBhY3VpcmVkIHJwcm9jIGRldmljZSB3aWxsDQoNCg0KdHlwbzogcy9h
+Y3VpcmVkL2FjcXVpcmVkDQoNCg0KPiArICogYXV0b21hdGljYWxseSBiZSByZWxlYXNlZCBvbiBk
+cml2ZXIgZGV0YWNoLg0KPiArICoNCj4gKyAqIE9uIHN1Y2Nlc3MgdGhlIG5ldyBycHJvYyBpcyBy
+ZXR1cm5lZCwgYW5kIG9uIGZhaWx1cmUsIE5VTEwuDQo+ICsgKi8NCj4gK3N0cnVjdCBycHJvYyAq
+ZGV2bV9ycHJvY19hbGxvYyhzdHJ1Y3QgZGV2aWNlICpkZXYsIGNvbnN0IGNoYXIgKm5hbWUsDQo+
+ICsJCQkgICAgICAgY29uc3Qgc3RydWN0IHJwcm9jX29wcyAqb3BzLA0KPiArCQkJICAgICAgIGNv
+bnN0IGNoYXIgKmZpcm13YXJlLCBpbnQgbGVuKQ0KPiArew0KPiArCXN0cnVjdCBycHJvYyAqKnB0
+ciwgKnJwcm9jOw0KPiArDQo+ICsJcHRyID0gZGV2cmVzX2FsbG9jKGRldm1fcnByb2NfZnJlZSwg
+c2l6ZW9mKCpwdHIpLCBHRlBfS0VSTkVMKTsNCj4gKwlpZiAoIXB0cikNCj4gKwkJcmV0dXJuIEVS
+Ul9QVFIoLUVOT01FTSk7DQo+ICsNCj4gKwlycHJvYyA9IHJwcm9jX2FsbG9jKGRldiwgbmFtZSwg
+b3BzLCBmaXJtd2FyZSwgbGVuKTsNCj4gKwlpZiAocnByb2MpIHsNCj4gKwkJKnB0ciA9IHJwcm9j
+Ow0KPiArCQlkZXZyZXNfYWRkKGRldiwgcHRyKTsNCj4gKwl9IGVsc2Ugew0KPiArCQlkZXZyZXNf
+ZnJlZShwdHIpOw0KPiArCX0NCj4gKw0KPiArCXJldHVybiBycHJvYzsNCg0KDQpDYW4ndCB5b3Ug
+dXNlIGRldm1fYWRkX2FjdGlvbl9vcl9yZXNldCgpIGhlcmUgdG9vPw0KDQoNCj4gK30NCj4gK0VY
+UE9SVF9TWU1CT0woZGV2bV9ycHJvY19hbGxvYyk7DQo+ICsNCj4gICAvKioNCj4gICAgKiBycHJv
+Y19hZGRfc3ViZGV2KCkgLSBhZGQgYSBzdWJkZXZpY2UgdG8gYSByZW1vdGVwcm9jDQo+ICAgICog
+QHJwcm9jOiBycHJvYyBoYW5kbGUgdG8gYWRkIHRoZSBzdWJkZXZpY2UgdG8NCj4gZGlmZiAtLWdp
+dCBhL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oIGIvaW5jbHVkZS9saW51eC9yZW1vdGVwcm9j
+LmgNCj4gaW5kZXggMTZhZDY2NjgzYWQwLi41ZjIwMWYwYzg2YzMgMTAwNjQ0DQo+IC0tLSBhL2lu
+Y2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvcmVtb3RlcHJv
+Yy5oDQo+IEBAIC01OTUsNiArNTk1LDExIEBAIGludCBycHJvY19hZGQoc3RydWN0IHJwcm9jICpy
+cHJvYyk7DQo+ICAgaW50IHJwcm9jX2RlbChzdHJ1Y3QgcnByb2MgKnJwcm9jKTsNCj4gICB2b2lk
+IHJwcm9jX2ZyZWUoc3RydWN0IHJwcm9jICpycHJvYyk7DQo+ICAgDQo+ICtzdHJ1Y3QgcnByb2Mg
+KmRldm1fcnByb2NfYWxsb2Moc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpuYW1lLA0K
+PiArCQkJICAgICAgIGNvbnN0IHN0cnVjdCBycHJvY19vcHMgKm9wcywNCj4gKwkJCSAgICAgICBj
+b25zdCBjaGFyICpmaXJtd2FyZSwgaW50IGxlbik7DQo+ICtpbnQgZGV2bV9ycHJvY19hZGQoc3Ry
+dWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgcnByb2MgKnJwcm9jKTsNCj4gKw0KPiAgIHZvaWQgcnBy
+b2NfYWRkX2NhcnZlb3V0KHN0cnVjdCBycHJvYyAqcnByb2MsIHN0cnVjdCBycHJvY19tZW1fZW50
+cnkgKm1lbSk7DQo+ICAgDQo+ICAgc3RydWN0IHJwcm9jX21lbV9lbnRyeSAqDQoNCg0KQlINCg0K
+RmFiaWVuDQo=
