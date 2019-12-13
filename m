@@ -1,193 +1,78 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 5/5] arm64: dts: qcom: msm8998: Add ADSP, MPSS and SLPI nodes
-Date: Wed, 18 Dec 2019 18:52:17 +0530
-Message-Id: <20191218132217.28141-6-sibis@codeaurora.org>
-In-Reply-To: <20191218132217.28141-1-sibis@codeaurora.org>
-References: <20191218132217.28141-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv3 10/15] remoteproc/omap: Check for undefined mailbox messages
+Date: Fri, 13 Dec 2019 14:55:32 +0200
+Message-ID: <20191213125537.11509-11-t-kristo@ti.com>
+In-Reply-To: <20191213125537.11509-1-t-kristo@ti.com>
+References: <20191213125537.11509-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org
-Cc: ohad@wizery.com, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds ADSP, MPSS and SLPI nodes for MSM8998 SoCs.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Add some checks in the mailbox callback function to limit
+any processing in the mailbox callback function to only
+certain currently valid messages, and drop all the remaining
+messages. A debug message is added to print any such invalid
+messages when the appropriate trace control is enabled.
+
+Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi |   8 ++
- arch/arm64/boot/dts/qcom/msm8998.dtsi     | 124 ++++++++++++++++++++++
- 2 files changed, 132 insertions(+)
+ drivers/remoteproc/omap_remoteproc.c | 6 ++++++
+ drivers/remoteproc/omap_remoteproc.h | 7 +++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-index 6db3f9e0344d1..e87094665c52c 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -312,6 +312,14 @@
- 	};
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 6cf7f0a9ba9a..841981c50d8d 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -126,6 +126,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 		dev_info(dev, "received echo reply from %s\n", name);
+ 		break;
+ 	default:
++		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
++			return;
++		if (msg > oproc->rproc->max_notifyid) {
++			dev_dbg(dev, "dropping unknown message 0x%x", msg);
++			return;
++		}
+ 		/* msg contains the index of the triggered vring */
+ 		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
+ 			dev_dbg(dev, "no message was found in vqid %d\n", msg);
+diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+index f6d2036d383d..72f656c93caa 100644
+--- a/drivers/remoteproc/omap_remoteproc.h
++++ b/drivers/remoteproc/omap_remoteproc.h
+@@ -56,6 +56,12 @@
+  *
+  * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
+  * recovery mechanism (to some extent).
++ *
++ * Introduce new message definitions if any here.
++ *
++ * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
++ * This should be the last definition.
++ *
+  */
+ enum omap_rp_mbox_messages {
+ 	RP_MBOX_READY		= 0xFFFFFF00,
+@@ -64,6 +70,7 @@ enum omap_rp_mbox_messages {
+ 	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
+ 	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
+ 	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
++	RP_MBOX_END_MSG		= 0xFFFFFF06,
  };
  
-+&remoteproc_adsp {
-+	status = "okay";
-+};
-+
-+&remoteproc_slpi {
-+	status = "okay";
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <0 4>, <81 4>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 8d799e868a5d3..014127700afb0 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -1075,6 +1075,61 @@
- 			#interrupt-cells = <0x2>;
- 		};
- 
-+		remoteproc_mss: remoteproc@4080000 {
-+			compatible = "qcom,msm8998-mss-pil";
-+			reg = <0x04080000 0x100>, <0x04180000 0x20>;
-+			reg-names = "qdsp6", "rmb";
-+
-+			interrupts-extended =
-+				<&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_BIMC_MSS_Q6_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
-+				 <&rpmcc RPM_SMD_QDSS_CLK>,
-+				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "qdss", "xo";
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			resets = <&gcc GCC_MSS_RESTART>;
-+			reset-names = "mss_restart";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+
-+			power-domains = <&rpmpd MSM8998_VDDCX>,
-+					<&rpmpd MSM8998_VDDMX>;
-+			power-domain-names = "cx", "mx";
-+
-+			mba {
-+				memory-region = <&mba_mem>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_mem>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 15>;
-+			};
-+		};
-+
- 		gpucc: clock-controller@5065000 {
- 			compatible = "qcom,msm8998-gpucc";
- 			#clock-cells = <1>;
-@@ -1088,6 +1143,42 @@
- 				      "gpll0";
- 		};
- 
-+		remoteproc_slpi: remoteproc@5800000 {
-+			compatible = "qcom,msm8998-slpi-pas";
-+			reg = <0x05800000 0x4040>;
-+
-+			interrupts-extended = <&intc GIC_SPI 390 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			px-supply = <&vreg_lvs2a_1p8>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-+			clock-names = "xo", "aggre2";
-+
-+			memory-region = <&slpi_mem>;
-+
-+			qcom,smem-states = <&slpi_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			power-domains = <&rpmpd MSM8998_SSCCX>;
-+			power-domain-names = "ssc_cx";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
-+				label = "dsps";
-+				qcom,remote-pid = <3>;
-+				mboxes = <&apcs_glb 27>;
-+			};
-+		};
-+
- 		stm: stm@6002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x06002000 0x1000>,
-@@ -1880,6 +1971,39 @@
- 			#size-cells = <0>;
- 		};
- 
-+		remoteproc_adsp: remoteproc@17300000 {
-+			compatible = "qcom,msm8998-adsp-pas";
-+			reg = <0x17300000 0x4040>;
-+
-+			interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
-+			clock-names = "xo";
-+
-+			memory-region = <&adsp_mem>;
-+
-+			qcom,smem-states = <&adsp_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			power-domains = <&rpmpd MSM8998_VDDCX>;
-+			power-domain-names = "cx";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>;
-+				label = "lpass";
-+				qcom,remote-pid = <2>;
-+				mboxes = <&apcs_glb 9>;
-+			};
-+		};
-+
- 		apcs_glb: mailbox@17911000 {
- 			compatible = "qcom,msm8998-apcs-hmss-global";
- 			reg = <0x17911000 0x1000>;
+ #endif /* _OMAP_RPMSG_H */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
