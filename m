@@ -1,175 +1,79 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V4 10/10] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-Date: Wed, 18 Dec 2019 21:35:46 +0530
-Message-Id: <1576685146-17135-11-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
-References: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv3 03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
+Date: Fri, 13 Dec 2019 14:55:25 +0200
+Message-ID: <20191213125537.11509-4-t-kristo@ti.com>
+In-Reply-To: <20191213125537.11509-1-t-kristo@ti.com>
+References: <20191213125537.11509-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Enable remoteproc WCSS PIL driver with glink
-and ssr subdevices. Also configures shared memory
-and enables smp2p and mailboxes required for IPC.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
----
-changes since v3:
- - Added release_firmware to free up memory requested for m3 firmware.
-changes since v2:
- - Removed syscon implementation to use mailbox framework to access APCS IPC
-Changes since v1:
- - Addressed minor review comments.
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 121 ++++++++++++++++++++++++++++++++++
- 1 file changed, 121 insertions(+)
+The DSP remote processors on OMAP SoCs require a boot register to
+be programmed with a boot address, and this boot address needs to
+be on a 1KB boundary. The current code is simply masking the boot
+address appropriately without performing any sanity checks before
+releasing the resets. An unaligned boot address results in an
+undefined execution behavior and can result in various bus errors
+like MMU Faults or L3 NoC errors. Such errors are hard to debug and
+can be easily avoided by adding a sanity check for the alignment
+before booting a DSP remote processor.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index 6a61a63..da66533 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -10,12 +10,66 @@
- 	model = "Qualcomm Technologies, Inc. IPQ8074";
- 	compatible = "qcom,ipq8074";
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/omap_remoteproc.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 558634624590..d80f5d7b5931 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -124,13 +124,22 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+  *
+  * Set boot address for a supported DSP remote processor.
+  */
+-static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ {
++	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
  
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
++	if (rproc->bootaddr & (SZ_1K - 1)) {
++		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
++			rproc->bootaddr);
++		return -EINVAL;
++	}
 +
-+		smem_region: memory@4ab00000 {
-+			no-map;
-+			reg = <0x0 0x4ab00000 0x0 0x00100000>;
-+		};
+ 	regmap_write(bdata->syscon, offset, rproc->bootaddr);
 +
-+		q6_region: memory@4b000000 {
-+			no-map;
-+			reg = <0x0 0x4b000000 0x0 0x05f00000>;
-+		};
-+	};
-+
- 	firmware {
- 		scm {
- 			compatible = "qcom,scm-ipq8074", "qcom,scm";
- 		};
- 	};
++	return 0;
+ }
  
-+	tcsr_mutex: hwlock@193d000 {
-+		compatible = "qcom,tcsr-mutex";
-+		syscon = <&tcsr_mutex_regs 0 0x80>;
-+		#hwlock-cells = <1>;
-+	};
-+
-+	smem {
-+		compatible = "qcom,smem";
-+		memory-region = <&smem_region>;
-+		hwlocks = <&tcsr_mutex 0>;
-+	};
-+
-+	wcss: smp2p-wcss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <0 322 1>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			qcom,smp2p-feature-ssr-ack;
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
- 	soc: soc {
- 		#address-cells = <0x1>;
- 		#size-cells = <0x1>;
-@@ -431,6 +485,73 @@
- 				      "axi_m_sticky";
- 			status = "disabled";
- 		};
-+
-+		tcsr_q6: syscon@1945000 {
-+			compatible = "syscon";
-+			reg = <0x01945000 0xe000>;
-+		};
-+
-+		tcsr_mutex_regs: syscon@193d000 {
-+			compatible = "syscon";
-+			reg = <0x01905000 0x8000>;
-+		};
-+
-+		apcs_glb: mailbox@b111000 {
-+			compatible = "qcom,ipq8074-apcs-apps-global";
-+			reg = <0x0b111000 0x1000>;
-+
-+			#mbox-cells = <1>;
-+		};
-+
-+		q6v5_wcss: q6v5_wcss@cd00000 {
-+			compatible = "qcom,ipq8074-wcss-pil";
-+			reg = <0x0cd00000 0x4040>,
-+			      <0x004ab000 0x20>;
-+			reg-names = "qdsp6",
-+				    "rmb";
-+			qca,auto-restart;
-+			qca,extended-intc;
-+			interrupts-extended = <&intc 0 325 1>,
-+					      <&wcss_smp2p_in 0 0>,
-+					      <&wcss_smp2p_in 1 0>,
-+					      <&wcss_smp2p_in 2 0>,
-+					      <&wcss_smp2p_in 3 0>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			resets = <&gcc GCC_WCSSAON_RESET>,
-+				 <&gcc GCC_WCSS_BCR>,
-+				 <&gcc GCC_WCSS_Q6_BCR>;
-+
-+			reset-names = "wcss_aon_reset",
-+				      "wcss_reset",
-+				      "wcss_q6_reset";
-+
-+			clocks = <&gcc GCC_PRNG_AHB_CLK>;
-+			clock-names = "prng";
-+
-+			qcom,halt-regs = <&tcsr_q6 0xa000 0xd000 0x0>;
-+
-+			qcom,smem-states = <&wcss_smp2p_out 0>,
-+					   <&wcss_smp2p_out 1>;
-+			qcom,smem-state-names = "shutdown",
-+						"stop";
-+
-+			memory-region = <&q6_region>;
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+
-+				rpm_requests {
-+					qcom,glink-channels = "IPCRTR";
-+				};
-+			};
-+		};
- 	};
+ /*
+@@ -147,8 +156,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	int ret;
+ 	struct mbox_client *client = &oproc->client;
  
- 	cpus {
+-	if (oproc->boot_data)
+-		omap_rproc_write_dsp_boot_addr(rproc);
++	if (oproc->boot_data) {
++		ret = omap_rproc_write_dsp_boot_addr(rproc);
++		if (ret)
++			return ret;
++	}
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
 -- 
-1.9.1
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
