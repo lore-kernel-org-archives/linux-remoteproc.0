@@ -1,105 +1,91 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Tue, 17 Dec 2019 17:38:15 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCHv3 05/15] remoteproc/omap: Add the rproc ops .da_to_va()
- implementation
-Message-ID: <20191218003815.GC16271@xps15>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv3 05/15] remoteproc/omap: Add the rproc ops .da_to_va() implementation
+Date: Fri, 13 Dec 2019 14:55:27 +0200
+Message-ID: <20191213125537.11509-6-t-kristo@ti.com>
+In-Reply-To: <20191213125537.11509-1-t-kristo@ti.com>
 References: <20191213125537.11509-1-t-kristo@ti.com>
- <20191213125537.11509-6-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213125537.11509-6-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Dec 13, 2019 at 02:55:27PM +0200, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> An implementation for the rproc ops .da_to_va() has been added
-> that provides the address translation between device addresses
-> to kernel virtual addresses for internal RAMs present on that
-> particular remote processor device. The implementation provides
-> the translations based on the addresses parsed and stored during
-> the probe.
-> 
-> This ops gets invoked by the exported rproc_da_to_va() function
-> and allows the remoteproc core's ELF loader to be able to load
-> program data directly into the internal memories.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
->  drivers/remoteproc/omap_remoteproc.c | 39 ++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 844703507a74..28f14e24b389 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -232,10 +232,49 @@ static int omap_rproc_stop(struct rproc *rproc)
->  	return 0;
->  }
->  
-> +/**
-> + * omap_rproc_da_to_va() - internal memory translation helper
-> + * @rproc: remote processor to apply the address translation for
-> + * @da: device address to translate
-> + * @len: length of the memory buffer
-> + *
-> + * Custom function implementing the rproc .da_to_va ops to provide address
-> + * translation (device address to kernel virtual address) for internal RAMs
-> + * present in a DSP or IPU device). The translated addresses can be used
-> + * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-> + * Returns the translated virtual address in kernel memory space, or NULL
-> + * in failure.
-> + */
-> +static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-> +{
-> +	struct omap_rproc *oproc = rproc->priv;
-> +	int i;
-> +	u32 offset;
-> +
-> +	if (len <= 0)
-> +		return NULL;
-> +
-> +	if (!oproc->num_mems)
-> +		return NULL;
-> +
-> +	for (i = 0; i < oproc->num_mems; i++) {
-> +		if (da >= oproc->mem[i].dev_addr && da + len <=
+From: Suman Anna <s-anna@ti.com>
 
-Shouldn't this be '<' rather than '<=' ?
+An implementation for the rproc ops .da_to_va() has been added
+that provides the address translation between device addresses
+to kernel virtual addresses for internal RAMs present on that
+particular remote processor device. The implementation provides
+the translations based on the addresses parsed and stored during
+the probe.
 
-> +		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
+This ops gets invoked by the exported rproc_da_to_va() function
+and allows the remoteproc core's ELF loader to be able to load
+program data directly into the internal memories.
 
-One space too many after the '+' .
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/remoteproc/omap_remoteproc.c | 39 ++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-> +			offset = da -  oproc->mem[i].dev_addr;
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 844703507a74..28f14e24b389 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -232,10 +232,49 @@ static int omap_rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++/**
++ * omap_rproc_da_to_va() - internal memory translation helper
++ * @rproc: remote processor to apply the address translation for
++ * @da: device address to translate
++ * @len: length of the memory buffer
++ *
++ * Custom function implementing the rproc .da_to_va ops to provide address
++ * translation (device address to kernel virtual address) for internal RAMs
++ * present in a DSP or IPU device). The translated addresses can be used
++ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
++ * Returns the translated virtual address in kernel memory space, or NULL
++ * in failure.
++ */
++static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct omap_rproc *oproc = rproc->priv;
++	int i;
++	u32 offset;
++
++	if (len <= 0)
++		return NULL;
++
++	if (!oproc->num_mems)
++		return NULL;
++
++	for (i = 0; i < oproc->num_mems; i++) {
++		if (da >= oproc->mem[i].dev_addr && da + len <=
++		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
++			offset = da -  oproc->mem[i].dev_addr;
++			/* __force to make sparse happy with type conversion */
++			return (__force void *)(oproc->mem[i].cpu_addr +
++						offset);
++		}
++	}
++
++	return NULL;
++}
++
+ static const struct rproc_ops omap_rproc_ops = {
+ 	.start		= omap_rproc_start,
+ 	.stop		= omap_rproc_stop,
+ 	.kick		= omap_rproc_kick,
++	.da_to_va	= omap_rproc_da_to_va,
+ };
+ 
+ static const char * const ipu_mem_names[] = {
+-- 
+2.17.1
 
-One space too many after then '-' .
-
-> +			/* __force to make sparse happy with type conversion */
-> +			return (__force void *)(oproc->mem[i].cpu_addr +
-> +						offset);
-> +		}
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  static const struct rproc_ops omap_rproc_ops = {
->  	.start		= omap_rproc_start,
->  	.stop		= omap_rproc_stop,
->  	.kick		= omap_rproc_kick,
-> +	.da_to_va	= omap_rproc_da_to_va,
->  };
->  
->  static const char * const ipu_mem_names[] = {
-> -- 
-> 2.17.1
-> 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
