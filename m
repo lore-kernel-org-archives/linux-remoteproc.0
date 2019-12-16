@@ -1,104 +1,172 @@
-Return-Path: <fabien.dessenne@st.com>
-From: Fabien DESSENNE <fabien.dessenne@st.com>
+Return-Path: <cleger@kalray.eu>
+Date: Mon, 16 Dec 2019 17:16:48 +0100 (CET)
+From: =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
+Message-ID: <1421722418.96878492.1576513008758.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <1428337657.96784882.1576485771590.JavaMail.zimbra@kalray.eu>
+References: <20191210164014.50739-1-paul@crapouillou.net> <20191210164014.50739-3-paul@crapouillou.net> <f25180f2-7c6d-0022-12b2-cd9c202f39d3@st.com> <1576362603.3.5@crapouillou.net> <1428337657.96784882.1576485771590.JavaMail.zimbra@kalray.eu>
 Subject: Re: [PATCH v4 3/5] remoteproc: Add prepare/unprepare callbacks
-Date: Tue, 17 Dec 2019 10:21:57 +0000
-Message-ID: <ac16c0ee-0dd1-d383-14ed-13b360e3e79d@st.com>
-References: <20191210164014.50739-1-paul@crapouillou.net>
- <20191210164014.50739-3-paul@crapouillou.net>
- <f25180f2-7c6d-0022-12b2-cd9c202f39d3@st.com>
- <1576362603.3.5@crapouillou.net>
-In-Reply-To: <1576362603.3.5@crapouillou.net>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <908073462757134794BFB627F5122D0F@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "od@zcrc.me" <od@zcrc.me>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Fabien DESSENNE <fabien.dessenne@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, od <od@zcrc.me>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgUGF1bA0KDQoNCk9uIDE0LzEyLzIwMTkgMTE6MzAgUE0sIFBhdWwgQ2VyY3VlaWwgd3JvdGU6
-DQo+IEhpIEZhYmllbiwNCj4NCj4NCj4gTGUgamV1LiwgZMOpYy4gMTIsIDIwMTkgYXQgMTA6MDMs
-IEZhYmllbiBERVNTRU5ORSANCj4gPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+IGEgw6ljcml0IDoN
-Cj4+IEhpIFBhdWwNCj4+DQo+Pg0KPj4gT24gMTAvMTIvMjAxOSA1OjQwIFBNLCBQYXVsIENlcmN1
-ZWlsIHdyb3RlOg0KPj4+IMKgVGhlIC5wcmVwYXJlKCkgY2FsbGJhY2sgaXMgY2FsbGVkIGJlZm9y
-ZSB0aGUgZmlybXdhcmUgaXMgbG9hZGVkIHRvDQo+Pj4gwqBtZW1vcnkuIFRoaXMgaXMgdXNlZnVs
-IGZvciBpbnN0YW5jZSBpbiB0aGUgY2FzZSB3aGVyZSBzb21lIHNldHVwIGlzDQo+Pj4gwqByZXF1
-aXJlZCBmb3IgdGhlIG1lbW9yeSB0byBiZSBhY2Nlc3NpYmxlLg0KPj4NCj4+DQo+PiBJIGFtIHRy
-eWluZyB0byBmaWd1cmUgb3V0IHdoYXQga2luZyBvZiAnc2V0dXAnIG1heSBiZSByZXF1aXJlZC4g
-RnJvbSB0aGUNCj4+IGluZ2VuaWMgZHJpdmVyIEkgdW5kZXJzdGFuZCB0aGF0IHlvdSBuZWVkIHRv
-IGVuYWJsZSBjbG9ja3MgdG8gYWxsb3cgc29tZQ0KPj4gbWVtb3J5IGFjY2Vzcy4NCj4+DQo+PiBJ
-bnN0ZWFkIG9mIGFkZGluZyB0aGlzIG5ldyBvcHMsIHdoeSBub3QgZW5hYmxpbmcgY2xvY2tzIGlu
-IHByb2JlKCk/DQo+DQo+IEVuYWJsaW5nIHRoZSBjbG9ja3MgaW4gdGhlIHByb2JlIG1lYW5zIHRo
-YXQgdGhlIGNsb2NrcyB3aWxsIGJlIA0KPiB1bmNvbmRpdGlvbmFsbHkgZW5hYmxlZCB1bnRpbCB0
-aGUgZHJpdmVyIGlzIHJlbW92ZWQsIGV2ZW4gaWYgdGhlIA0KPiByZW1vdGUgcHJvY2Vzc29yIGVu
-ZCB1cCBiZWluZyB1bnVzZWQuIFRoYXQgd291bGQgYmUgYSB3YXN0ZSBvZiBwb3dlci4NCg0KDQpP
-SyBJIHVuZGVyc3RhbmQuDQoNCk5ldmVydGhlbGVzcyBJIHRoaW5rIHRoYXQgeW91IG1heSBuZWVk
-IHRvIGNhbGwgLnByZXBhcmUoKSBmcm9tIA0KcnByb2NfZndfYm9vdCgpIHNpbmNlIHlvdSBtYXkg
-bmVlZCB0byBhY2Nlc3Mgc29tZSBtZW1vcmllcyBmcm9tIHRoZSANCnBvaW50IHJwcm9jX2hhbmRs
-ZV9yZXNvdXJjZXMoKSBpcyBjYWxsZWQgKHRoaXMgc2V0cyB1cCB2aXJ0aW8gd2hpY2ggaXMgDQp1
-c2VkIGlmIHlvdSBoYXZlIGEgcmVzb3VyY2UgdGFibGUgZGVmaW5pbmcgdmRldikuDQoNCkFuZCBy
-cHJvY19md19ib290KCkgY2FsbHMgcnByb2NfZW5hYmxlX2lvbW11KCksIHdoaWNoIHNvdW5kcyBs
-aWtlIA0KInByZXBhcmUgbWVtb3J5Iiwgc28gdGhpcyBtYXkgYmUgdGhlIHJpZ2h0IHBsYWNlIHRv
-IGNhbGwgLnByZXBhcmUoKQ0KDQoNCkJSDQoNCkZhYmllbg0KDQoNCj4NCj4gQ2hlZXJzLA0KPiAt
-UGF1bA0KPg0KPg0KPj4NCj4+IEJSDQo+Pg0KPj4gRmFiaWVuDQo+Pg0KPj4NCj4+Pg0KPj4+IMKg
-U2lnbmVkLW9mZi1ieTogUGF1bCBDZXJjdWVpbCA8cGF1bEBjcmFwb3VpbGxvdS5uZXQ+DQo+Pj4g
-wqAtLS0NCj4+Pg0KPj4+IMKgTm90ZXM6DQo+Pj4gwqDCoMKgwqDCoCB2Mi12NDogTm8gY2hhbmdl
-DQo+Pj4NCj4+PiDCoMKgIGRyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyB8IDE2
-ICsrKysrKysrKysrKysrKy0NCj4+PiDCoMKgIGluY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5owqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfMKgIDQgKysrKw0KPj4+IMKgwqAgMiBmaWxlcyBjaGFuZ2VkLCAx
-OSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+Pj4NCj4+PiDCoGRpZmYgLS1naXQgYS9k
-cml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMgDQo+Pj4gYi9kcml2ZXJzL3JlbW90
-ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4+PiDCoGluZGV4IDBhOWZjN2ZkZDFjMy4uM2VhNWY2
-NzVhMTQ4IDEwMDY0NA0KPj4+IMKgLS0tIGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2Nf
-Y29yZS5jDQo+Pj4gwqArKysgYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMN
-Cj4+PiDCoEBAIC0xMjk5LDExICsxMjk5LDE5IEBAIHN0YXRpYyBpbnQgcnByb2Nfc3RhcnQoc3Ry
-dWN0IHJwcm9jICpycHJvYywgDQo+Pj4gY29uc3Qgc3RydWN0IGZpcm13YXJlICpmdykNCj4+PiDC
-oMKgwqDCoMKgwqAgc3RydWN0IGRldmljZSAqZGV2ID0gJnJwcm9jLT5kZXY7DQo+Pj4gwqDCoMKg
-wqDCoMKgIGludCByZXQ7DQo+Pj4NCj4+PiDCoCvCoMKgwqAgaWYgKHJwcm9jLT5vcHMtPnByZXBh
-cmUpIHsNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoCByZXQgPSBycHJvYy0+b3BzLT5wcmVwYXJlKHJw
-cm9jKTsNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoCBpZiAocmV0KSB7DQo+Pj4gwqArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCBkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBwcmVwYXJlIHJwcm9jOiAlZFxu
-IiwgcmV0KTsNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiByZXQ7DQo+Pj4g
-wqArwqDCoMKgwqDCoMKgwqAgfQ0KPj4+IMKgK8KgwqDCoCB9DQo+Pj4gwqArDQo+Pj4gwqDCoMKg
-wqDCoMKgIC8qIGxvYWQgdGhlIEVMRiBzZWdtZW50cyB0byBtZW1vcnkgKi8NCj4+PiDCoMKgwqDC
-oMKgwqAgcmV0ID0gcnByb2NfbG9hZF9zZWdtZW50cyhycHJvYywgZncpOw0KPj4+IMKgwqDCoMKg
-wqDCoCBpZiAocmV0KSB7DQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGV2X2VycihkZXYsICJG
-YWlsZWQgdG8gbG9hZCBwcm9ncmFtIHNlZ21lbnRzOiAlZFxuIiwgcmV0KTsNCj4+PiDCoC3CoMKg
-wqDCoMKgwqDCoCByZXR1cm4gcmV0Ow0KPj4+IMKgK8KgwqDCoMKgwqDCoMKgIGdvdG8gdW5wcmVw
-YXJlX3Jwcm9jOw0KPj4+IMKgwqDCoMKgwqDCoCB9DQo+Pj4NCj4+PiDCoMKgwqDCoMKgwqAgLyoN
-Cj4+PiDCoEBAIC0xMzU0LDYgKzEzNjIsOSBAQCBzdGF0aWMgaW50IHJwcm9jX3N0YXJ0KHN0cnVj
-dCBycHJvYyAqcnByb2MsIA0KPj4+IGNvbnN0IHN0cnVjdCBmaXJtd2FyZSAqZncpDQo+Pj4gwqDC
-oMKgwqDCoMKgIHJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHJwcm9jKTsNCj4+PiDCoMKgIHJl
-c2V0X3RhYmxlX3B0cjoNCj4+PiDCoMKgwqDCoMKgwqAgcnByb2MtPnRhYmxlX3B0ciA9IHJwcm9j
-LT5jYWNoZWRfdGFibGU7DQo+Pj4gwqArdW5wcmVwYXJlX3Jwcm9jOg0KPj4+IMKgK8KgwqDCoCBp
-ZiAocnByb2MtPm9wcy0+dW5wcmVwYXJlKQ0KPj4+IMKgK8KgwqDCoMKgwqDCoMKgIHJwcm9jLT5v
-cHMtPnVucHJlcGFyZShycHJvYyk7DQo+Pj4NCj4+PiDCoMKgwqDCoMKgwqAgcmV0dXJuIHJldDsN
-Cj4+PiDCoMKgIH0NCj4+PiDCoEBAIC0xNDgzLDYgKzE0OTQsOSBAQCBzdGF0aWMgaW50IHJwcm9j
-X3N0b3Aoc3RydWN0IHJwcm9jICpycHJvYywgDQo+Pj4gYm9vbCBjcmFzaGVkKQ0KPj4+DQo+Pj4g
-wqDCoMKgwqDCoMKgIHJwcm9jLT5zdGF0ZSA9IFJQUk9DX09GRkxJTkU7DQo+Pj4NCj4+PiDCoCvC
-oMKgwqAgaWYgKHJwcm9jLT5vcHMtPnVucHJlcGFyZSkNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoCBy
-cHJvYy0+b3BzLT51bnByZXBhcmUocnByb2MpOw0KPj4+IMKgKw0KPj4+IMKgwqDCoMKgwqDCoCBk
-ZXZfaW5mbyhkZXYsICJzdG9wcGVkIHJlbW90ZSBwcm9jZXNzb3IgJXNcbiIsIHJwcm9jLT5uYW1l
-KTsNCj4+Pg0KPj4+IMKgwqDCoMKgwqDCoCByZXR1cm4gMDsNCj4+PiDCoGRpZmYgLS1naXQgYS9p
-bmNsdWRlL2xpbnV4L3JlbW90ZXByb2MuaCBiL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+
-Pj4gwqBpbmRleCA1ZjIwMWYwYzg2YzMuLmE2MjcyZDFiYTM4NCAxMDA2NDQNCj4+PiDCoC0tLSBh
-L2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+Pj4gwqArKysgYi9pbmNsdWRlL2xpbnV4L3Jl
-bW90ZXByb2MuaA0KPj4+IMKgQEAgLTM1NSw2ICszNTUsOCBAQCBlbnVtIHJzY19oYW5kbGluZ19z
-dGF0dXMgew0KPj4+DQo+Pj4gwqDCoCAvKioNCj4+PiDCoMKgwqAgKiBzdHJ1Y3QgcnByb2Nfb3Bz
-IC0gcGxhdGZvcm0tc3BlY2lmaWMgZGV2aWNlIGhhbmRsZXJzDQo+Pj4gwqArICogQHByZXBhcmU6
-wqDCoMKgIHByZXBhcmUgdGhlIGRldmljZSBmb3IgcG93ZXIgdXAgKGJlZm9yZSB0aGUgDQo+Pj4g
-ZmlybXdhcmUgaXMgbG9hZGVkKQ0KPj4+IMKgKyAqIEB1bnByZXBhcmU6wqDCoMKgIHVucHJlcGFy
-ZSB0aGUgZGV2aWNlIGFmdGVyIGl0IGlzIHN0b3BwZWQNCj4+PiDCoMKgwqAgKiBAc3RhcnQ6wqDC
-oMKgIHBvd2VyIG9uIHRoZSBkZXZpY2UgYW5kIGJvb3QgaXQNCj4+PiDCoMKgwqAgKiBAc3RvcDrC
-oMKgwqAgcG93ZXIgb2ZmIHRoZSBkZXZpY2UNCj4+PiDCoMKgwqAgKiBAa2ljazrCoMKgwqAga2lj
-ayBhIHZpcnRxdWV1ZSAodmlydHF1ZXVlIGlkIGdpdmVuIGFzIGEgcGFyYW1ldGVyKQ0KPj4+IMKg
-QEAgLTM3MSw2ICszNzMsOCBAQCBlbnVtIHJzY19oYW5kbGluZ19zdGF0dXMgew0KPj4+IMKgwqDC
-oCAqIEBnZXRfYm9vdF9hZGRyOsKgwqDCoCBnZXQgYm9vdCBhZGRyZXNzIHRvIGVudHJ5IHBvaW50
-IHNwZWNpZmllZCANCj4+PiBpbiBmaXJtd2FyZQ0KPj4+IMKgwqDCoCAqLw0KPj4+IMKgwqAgc3Ry
-dWN0IHJwcm9jX29wcyB7DQo+Pj4gwqArwqDCoMKgIGludCAoKnByZXBhcmUpKHN0cnVjdCBycHJv
-YyAqcnByb2MpOw0KPj4+IMKgK8KgwqDCoCB2b2lkICgqdW5wcmVwYXJlKShzdHJ1Y3QgcnByb2Mg
-KnJwcm9jKTsNCj4+PiDCoMKgwqDCoMKgwqAgaW50ICgqc3RhcnQpKHN0cnVjdCBycHJvYyAqcnBy
-b2MpOw0KPj4+IMKgwqDCoMKgwqDCoCBpbnQgKCpzdG9wKShzdHJ1Y3QgcnByb2MgKnJwcm9jKTsN
-Cj4+PiDCoMKgwqDCoMKgwqAgdm9pZCAoKmtpY2spKHN0cnVjdCBycHJvYyAqcnByb2MsIGludCB2
-cWlkKTsNCj4NCj4=
+Hi Paul,
+
+I tested your patch and implemented the prepare callback only.
+This is working correctly and the callback is correctly called
+to enable clocks right before loading code into memory.
+
+Regarding unprepare, I have no usecase for this since clocks
+disabling and resetting is done in rproc_stop. Thus, I did not
+tested this part. Did you add it to be called after the subdevices
+unprepare call ? If not, what is the use case for this ?
+ie, what are you doing in unprepare that you don't do in stop ?
+
+Obviously it should work but I can't say I tested it completely !
+
+Regards,
+
+Cl=C3=A9ment
+
+
+----- On 16 Dec, 2019, at 09:42, Cl=C3=A9ment Leger cleger@kalray.eu wrote:
+
+> Hi Paul
+>=20
+> ----- On 14 Dec, 2019, at 23:30, Paul Cercueil paul@crapouillou.net wrote=
+:
+>=20
+>> Hi Fabien,
+>>=20
+>>=20
+>> Le jeu., d=C3=A9c. 12, 2019 at 10:03, Fabien DESSENNE
+>> <fabien.dessenne@st.com> a =C3=A9crit :
+>>> Hi Paul
+>>>=20
+>>>=20
+>>> On 10/12/2019 5:40 PM, Paul Cercueil wrote:
+>>>>  The .prepare() callback is called before the firmware is loaded to
+>>>>  memory. This is useful for instance in the case where some setup is
+>>>>  required for the memory to be accessible.
+>>>=20
+>>>=20
+>>> I am trying to figure out what king of 'setup' may be required. From
+>>> the
+>>> ingenic driver I understand that you need to enable clocks to allow
+>>> some
+>>> memory access.
+>>>=20
+>>> Instead of adding this new ops, why not enabling clocks in probe()?
+>>=20
+>> Enabling the clocks in the probe means that the clocks will be
+>> unconditionally enabled until the driver is removed, even if the remote
+>> processor end up being unused. That would be a waste of power.
+>=20
+> We have the same kind of "problem" for k1c remoteproc driver (not yet
+> upstream, depends on new arch). We need to enable clocks to load code
+> into remote processor memory and currently we do that in probe.
+> However, as you stated, we would like to enable them as late as possible
+> (just before loading code) to avoid wasting power unnecessarily. So the
+> "prepare" callback totally makes sense.
+>=20
+> Regards,
+>=20
+> Cl=C3=A9ment
+>=20
+>>=20
+>> Cheers,
+>> -Paul
+>>=20
+>>=20
+>>>=20
+>>> BR
+>>>=20
+>>> Fabien
+>>>=20
+>>>=20
+>>>>=20
+>>>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>>>  ---
+>>>>=20
+>>>>  Notes:
+>>>>       v2-v4: No change
+>>>>=20
+>>>>    drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
+>>>>    include/linux/remoteproc.h           |  4 ++++
+>>>>    2 files changed, 19 insertions(+), 1 deletion(-)
+>>>>=20
+>>>>  diff --git a/drivers/remoteproc/remoteproc_core.c
+>>>> b/drivers/remoteproc/remoteproc_core.c
+>>>>  index 0a9fc7fdd1c3..3ea5f675a148 100644
+>>>>  --- a/drivers/remoteproc/remoteproc_core.c
+>>>>  +++ b/drivers/remoteproc/remoteproc_core.c
+>>>>  @@ -1299,11 +1299,19 @@ static int rproc_start(struct rproc *rproc,
+>>>> const struct firmware *fw)
+>>>>    =09struct device *dev =3D &rproc->dev;
+>>>>    =09int ret;
+>>>>=20
+>>>>  +=09if (rproc->ops->prepare) {
+>>>>  +=09=09ret =3D rproc->ops->prepare(rproc);
+>>>>  +=09=09if (ret) {
+>>>>  +=09=09=09dev_err(dev, "Failed to prepare rproc: %d\n", ret);
+>>>>  +=09=09=09return ret;
+>>>>  +=09=09}
+>>>>  +=09}
+>>>>  +
+>>>>    =09/* load the ELF segments to memory */
+>>>>    =09ret =3D rproc_load_segments(rproc, fw);
+>>>>    =09if (ret) {
+>>>>    =09=09dev_err(dev, "Failed to load program segments: %d\n", ret);
+>>>>  -=09=09return ret;
+>>>>  +=09=09goto unprepare_rproc;
+>>>>    =09}
+>>>>=20
+>>>>    =09/*
+>>>>  @@ -1354,6 +1362,9 @@ static int rproc_start(struct rproc *rproc,
+>>>> const struct firmware *fw)
+>>>>    =09rproc_unprepare_subdevices(rproc);
+>>>>    reset_table_ptr:
+>>>>    =09rproc->table_ptr =3D rproc->cached_table;
+>>>>  +unprepare_rproc:
+>>>>  +=09if (rproc->ops->unprepare)
+>>>>  +=09=09rproc->ops->unprepare(rproc);
+>>>>=20
+>>>>    =09return ret;
+>>>>    }
+>>>>  @@ -1483,6 +1494,9 @@ static int rproc_stop(struct rproc *rproc,
+>>>> bool crashed)
+>>>>=20
+>>>>    =09rproc->state =3D RPROC_OFFLINE;
+>>>>=20
+>>>>  +=09if (rproc->ops->unprepare)
+>>>>  +=09=09rproc->ops->unprepare(rproc);
+>>>>  +
+>>>>    =09dev_info(dev, "stopped remote processor %s\n", rproc->name);
+>>>>=20
+>>>>    =09return 0;
+>>>>  diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>>>  index 5f201f0c86c3..a6272d1ba384 100644
+>>>>  --- a/include/linux/remoteproc.h
+>>>>  +++ b/include/linux/remoteproc.h
+>>>>  @@ -355,6 +355,8 @@ enum rsc_handling_status {
+>>>>=20
+>>>>    /**
+>>>>     * struct rproc_ops - platform-specific device handlers
+>>>>  + * @prepare:=09prepare the device for power up (before the firmware
+>>>> is loaded)
+>>>>  + * @unprepare:=09unprepare the device after it is stopped
+>>>>     * @start:=09power on the device and boot it
+>>>>     * @stop:=09power off the device
+>>>>     * @kick:=09kick a virtqueue (virtqueue id given as a parameter)
+>>>>  @@ -371,6 +373,8 @@ enum rsc_handling_status {
+>>>>     * @get_boot_addr:=09get boot address to entry point specified in
+>>>> firmware
+>>>>     */
+>>>>    struct rproc_ops {
+>>>>  +=09int (*prepare)(struct rproc *rproc);
+>>>>  +=09void (*unprepare)(struct rproc *rproc);
+>>>>    =09int (*start)(struct rproc *rproc);
+>>>>    =09int (*stop)(struct rproc *rproc);
+> > >>    =09void (*kick)(struct rproc *rproc, int vqid);
