@@ -1,107 +1,104 @@
-Date: Sat, 21 Dec 2019 12:20:42 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <fabien.dessenne@st.com>
+From: Fabien DESSENNE <fabien.dessenne@st.com>
 Subject: Re: [PATCH v4 3/5] remoteproc: Add prepare/unprepare callbacks
-Message-ID: <20191221202039.GG549437@yoga>
+Date: Tue, 17 Dec 2019 10:21:57 +0000
+Message-ID: <ac16c0ee-0dd1-d383-14ed-13b360e3e79d@st.com>
 References: <20191210164014.50739-1-paul@crapouillou.net>
  <20191210164014.50739-3-paul@crapouillou.net>
+ <f25180f2-7c6d-0022-12b2-cd9c202f39d3@st.com>
+ <1576362603.3.5@crapouillou.net>
+In-Reply-To: <1576362603.3.5@crapouillou.net>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <908073462757134794BFB627F5122D0F@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210164014.50739-3-paul@crapouillou.net>
 To: Paul Cercueil <paul@crapouillou.net>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "od@zcrc.me" <od@zcrc.me>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue 10 Dec 08:40 PST 2019, Paul Cercueil wrote:
-
-> The .prepare() callback is called before the firmware is loaded to
-> memory. This is useful for instance in the case where some setup is
-> required for the memory to be accessible.
-> 
-
-Would it make sense to somehow tie this prepare/unprepare to the actual
-struct rproc_mem_entry that needs the resource enabled?
-
-Regards,
-Bjorn
-
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Notes:
->     v2-v4: No change
-> 
->  drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
->  include/linux/remoteproc.h           |  4 ++++
->  2 files changed, 19 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 0a9fc7fdd1c3..3ea5f675a148 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1299,11 +1299,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	struct device *dev = &rproc->dev;
->  	int ret;
->  
-> +	if (rproc->ops->prepare) {
-> +		ret = rproc->ops->prepare(rproc);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to prepare rproc: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
->  	/* load the ELF segments to memory */
->  	ret = rproc_load_segments(rproc, fw);
->  	if (ret) {
->  		dev_err(dev, "Failed to load program segments: %d\n", ret);
-> -		return ret;
-> +		goto unprepare_rproc;
->  	}
->  
->  	/*
-> @@ -1354,6 +1362,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	rproc_unprepare_subdevices(rproc);
->  reset_table_ptr:
->  	rproc->table_ptr = rproc->cached_table;
-> +unprepare_rproc:
-> +	if (rproc->ops->unprepare)
-> +		rproc->ops->unprepare(rproc);
->  
->  	return ret;
->  }
-> @@ -1483,6 +1494,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
->  
->  	rproc->state = RPROC_OFFLINE;
->  
-> +	if (rproc->ops->unprepare)
-> +		rproc->ops->unprepare(rproc);
-> +
->  	dev_info(dev, "stopped remote processor %s\n", rproc->name);
->  
->  	return 0;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 5f201f0c86c3..a6272d1ba384 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -355,6 +355,8 @@ enum rsc_handling_status {
->  
->  /**
->   * struct rproc_ops - platform-specific device handlers
-> + * @prepare:	prepare the device for power up (before the firmware is loaded)
-> + * @unprepare:	unprepare the device after it is stopped
->   * @start:	power on the device and boot it
->   * @stop:	power off the device
->   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-> @@ -371,6 +373,8 @@ enum rsc_handling_status {
->   * @get_boot_addr:	get boot address to entry point specified in firmware
->   */
->  struct rproc_ops {
-> +	int (*prepare)(struct rproc *rproc);
-> +	void (*unprepare)(struct rproc *rproc);
->  	int (*start)(struct rproc *rproc);
->  	int (*stop)(struct rproc *rproc);
->  	void (*kick)(struct rproc *rproc, int vqid);
-> -- 
-> 2.24.0
-> 
+SGkgUGF1bA0KDQoNCk9uIDE0LzEyLzIwMTkgMTE6MzAgUE0sIFBhdWwgQ2VyY3VlaWwgd3JvdGU6
+DQo+IEhpIEZhYmllbiwNCj4NCj4NCj4gTGUgamV1LiwgZMOpYy4gMTIsIDIwMTkgYXQgMTA6MDMs
+IEZhYmllbiBERVNTRU5ORSANCj4gPGZhYmllbi5kZXNzZW5uZUBzdC5jb20+IGEgw6ljcml0IDoN
+Cj4+IEhpIFBhdWwNCj4+DQo+Pg0KPj4gT24gMTAvMTIvMjAxOSA1OjQwIFBNLCBQYXVsIENlcmN1
+ZWlsIHdyb3RlOg0KPj4+IMKgVGhlIC5wcmVwYXJlKCkgY2FsbGJhY2sgaXMgY2FsbGVkIGJlZm9y
+ZSB0aGUgZmlybXdhcmUgaXMgbG9hZGVkIHRvDQo+Pj4gwqBtZW1vcnkuIFRoaXMgaXMgdXNlZnVs
+IGZvciBpbnN0YW5jZSBpbiB0aGUgY2FzZSB3aGVyZSBzb21lIHNldHVwIGlzDQo+Pj4gwqByZXF1
+aXJlZCBmb3IgdGhlIG1lbW9yeSB0byBiZSBhY2Nlc3NpYmxlLg0KPj4NCj4+DQo+PiBJIGFtIHRy
+eWluZyB0byBmaWd1cmUgb3V0IHdoYXQga2luZyBvZiAnc2V0dXAnIG1heSBiZSByZXF1aXJlZC4g
+RnJvbSB0aGUNCj4+IGluZ2VuaWMgZHJpdmVyIEkgdW5kZXJzdGFuZCB0aGF0IHlvdSBuZWVkIHRv
+IGVuYWJsZSBjbG9ja3MgdG8gYWxsb3cgc29tZQ0KPj4gbWVtb3J5IGFjY2Vzcy4NCj4+DQo+PiBJ
+bnN0ZWFkIG9mIGFkZGluZyB0aGlzIG5ldyBvcHMsIHdoeSBub3QgZW5hYmxpbmcgY2xvY2tzIGlu
+IHByb2JlKCk/DQo+DQo+IEVuYWJsaW5nIHRoZSBjbG9ja3MgaW4gdGhlIHByb2JlIG1lYW5zIHRo
+YXQgdGhlIGNsb2NrcyB3aWxsIGJlIA0KPiB1bmNvbmRpdGlvbmFsbHkgZW5hYmxlZCB1bnRpbCB0
+aGUgZHJpdmVyIGlzIHJlbW92ZWQsIGV2ZW4gaWYgdGhlIA0KPiByZW1vdGUgcHJvY2Vzc29yIGVu
+ZCB1cCBiZWluZyB1bnVzZWQuIFRoYXQgd291bGQgYmUgYSB3YXN0ZSBvZiBwb3dlci4NCg0KDQpP
+SyBJIHVuZGVyc3RhbmQuDQoNCk5ldmVydGhlbGVzcyBJIHRoaW5rIHRoYXQgeW91IG1heSBuZWVk
+IHRvIGNhbGwgLnByZXBhcmUoKSBmcm9tIA0KcnByb2NfZndfYm9vdCgpIHNpbmNlIHlvdSBtYXkg
+bmVlZCB0byBhY2Nlc3Mgc29tZSBtZW1vcmllcyBmcm9tIHRoZSANCnBvaW50IHJwcm9jX2hhbmRs
+ZV9yZXNvdXJjZXMoKSBpcyBjYWxsZWQgKHRoaXMgc2V0cyB1cCB2aXJ0aW8gd2hpY2ggaXMgDQp1
+c2VkIGlmIHlvdSBoYXZlIGEgcmVzb3VyY2UgdGFibGUgZGVmaW5pbmcgdmRldikuDQoNCkFuZCBy
+cHJvY19md19ib290KCkgY2FsbHMgcnByb2NfZW5hYmxlX2lvbW11KCksIHdoaWNoIHNvdW5kcyBs
+aWtlIA0KInByZXBhcmUgbWVtb3J5Iiwgc28gdGhpcyBtYXkgYmUgdGhlIHJpZ2h0IHBsYWNlIHRv
+IGNhbGwgLnByZXBhcmUoKQ0KDQoNCkJSDQoNCkZhYmllbg0KDQoNCj4NCj4gQ2hlZXJzLA0KPiAt
+UGF1bA0KPg0KPg0KPj4NCj4+IEJSDQo+Pg0KPj4gRmFiaWVuDQo+Pg0KPj4NCj4+Pg0KPj4+IMKg
+U2lnbmVkLW9mZi1ieTogUGF1bCBDZXJjdWVpbCA8cGF1bEBjcmFwb3VpbGxvdS5uZXQ+DQo+Pj4g
+wqAtLS0NCj4+Pg0KPj4+IMKgTm90ZXM6DQo+Pj4gwqDCoMKgwqDCoCB2Mi12NDogTm8gY2hhbmdl
+DQo+Pj4NCj4+PiDCoMKgIGRyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyB8IDE2
+ICsrKysrKysrKysrKysrKy0NCj4+PiDCoMKgIGluY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5owqDC
+oMKgwqDCoMKgwqDCoMKgwqAgfMKgIDQgKysrKw0KPj4+IMKgwqAgMiBmaWxlcyBjaGFuZ2VkLCAx
+OSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+Pj4NCj4+PiDCoGRpZmYgLS1naXQgYS9k
+cml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMgDQo+Pj4gYi9kcml2ZXJzL3JlbW90
+ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4+PiDCoGluZGV4IDBhOWZjN2ZkZDFjMy4uM2VhNWY2
+NzVhMTQ4IDEwMDY0NA0KPj4+IMKgLS0tIGEvZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2Nf
+Y29yZS5jDQo+Pj4gwqArKysgYi9kcml2ZXJzL3JlbW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMN
+Cj4+PiDCoEBAIC0xMjk5LDExICsxMjk5LDE5IEBAIHN0YXRpYyBpbnQgcnByb2Nfc3RhcnQoc3Ry
+dWN0IHJwcm9jICpycHJvYywgDQo+Pj4gY29uc3Qgc3RydWN0IGZpcm13YXJlICpmdykNCj4+PiDC
+oMKgwqDCoMKgwqAgc3RydWN0IGRldmljZSAqZGV2ID0gJnJwcm9jLT5kZXY7DQo+Pj4gwqDCoMKg
+wqDCoMKgIGludCByZXQ7DQo+Pj4NCj4+PiDCoCvCoMKgwqAgaWYgKHJwcm9jLT5vcHMtPnByZXBh
+cmUpIHsNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoCByZXQgPSBycHJvYy0+b3BzLT5wcmVwYXJlKHJw
+cm9jKTsNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoCBpZiAocmV0KSB7DQo+Pj4gwqArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBkZXZfZXJyKGRldiwgIkZhaWxlZCB0byBwcmVwYXJlIHJwcm9jOiAlZFxu
+IiwgcmV0KTsNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiByZXQ7DQo+Pj4g
+wqArwqDCoMKgwqDCoMKgwqAgfQ0KPj4+IMKgK8KgwqDCoCB9DQo+Pj4gwqArDQo+Pj4gwqDCoMKg
+wqDCoMKgIC8qIGxvYWQgdGhlIEVMRiBzZWdtZW50cyB0byBtZW1vcnkgKi8NCj4+PiDCoMKgwqDC
+oMKgwqAgcmV0ID0gcnByb2NfbG9hZF9zZWdtZW50cyhycHJvYywgZncpOw0KPj4+IMKgwqDCoMKg
+wqDCoCBpZiAocmV0KSB7DQo+Pj4gwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGV2X2VycihkZXYsICJG
+YWlsZWQgdG8gbG9hZCBwcm9ncmFtIHNlZ21lbnRzOiAlZFxuIiwgcmV0KTsNCj4+PiDCoC3CoMKg
+wqDCoMKgwqDCoCByZXR1cm4gcmV0Ow0KPj4+IMKgK8KgwqDCoMKgwqDCoMKgIGdvdG8gdW5wcmVw
+YXJlX3Jwcm9jOw0KPj4+IMKgwqDCoMKgwqDCoCB9DQo+Pj4NCj4+PiDCoMKgwqDCoMKgwqAgLyoN
+Cj4+PiDCoEBAIC0xMzU0LDYgKzEzNjIsOSBAQCBzdGF0aWMgaW50IHJwcm9jX3N0YXJ0KHN0cnVj
+dCBycHJvYyAqcnByb2MsIA0KPj4+IGNvbnN0IHN0cnVjdCBmaXJtd2FyZSAqZncpDQo+Pj4gwqDC
+oMKgwqDCoMKgIHJwcm9jX3VucHJlcGFyZV9zdWJkZXZpY2VzKHJwcm9jKTsNCj4+PiDCoMKgIHJl
+c2V0X3RhYmxlX3B0cjoNCj4+PiDCoMKgwqDCoMKgwqAgcnByb2MtPnRhYmxlX3B0ciA9IHJwcm9j
+LT5jYWNoZWRfdGFibGU7DQo+Pj4gwqArdW5wcmVwYXJlX3Jwcm9jOg0KPj4+IMKgK8KgwqDCoCBp
+ZiAocnByb2MtPm9wcy0+dW5wcmVwYXJlKQ0KPj4+IMKgK8KgwqDCoMKgwqDCoMKgIHJwcm9jLT5v
+cHMtPnVucHJlcGFyZShycHJvYyk7DQo+Pj4NCj4+PiDCoMKgwqDCoMKgwqAgcmV0dXJuIHJldDsN
+Cj4+PiDCoMKgIH0NCj4+PiDCoEBAIC0xNDgzLDYgKzE0OTQsOSBAQCBzdGF0aWMgaW50IHJwcm9j
+X3N0b3Aoc3RydWN0IHJwcm9jICpycHJvYywgDQo+Pj4gYm9vbCBjcmFzaGVkKQ0KPj4+DQo+Pj4g
+wqDCoMKgwqDCoMKgIHJwcm9jLT5zdGF0ZSA9IFJQUk9DX09GRkxJTkU7DQo+Pj4NCj4+PiDCoCvC
+oMKgwqAgaWYgKHJwcm9jLT5vcHMtPnVucHJlcGFyZSkNCj4+PiDCoCvCoMKgwqDCoMKgwqDCoCBy
+cHJvYy0+b3BzLT51bnByZXBhcmUocnByb2MpOw0KPj4+IMKgKw0KPj4+IMKgwqDCoMKgwqDCoCBk
+ZXZfaW5mbyhkZXYsICJzdG9wcGVkIHJlbW90ZSBwcm9jZXNzb3IgJXNcbiIsIHJwcm9jLT5uYW1l
+KTsNCj4+Pg0KPj4+IMKgwqDCoMKgwqDCoCByZXR1cm4gMDsNCj4+PiDCoGRpZmYgLS1naXQgYS9p
+bmNsdWRlL2xpbnV4L3JlbW90ZXByb2MuaCBiL2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+
+Pj4gwqBpbmRleCA1ZjIwMWYwYzg2YzMuLmE2MjcyZDFiYTM4NCAxMDA2NDQNCj4+PiDCoC0tLSBh
+L2luY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oDQo+Pj4gwqArKysgYi9pbmNsdWRlL2xpbnV4L3Jl
+bW90ZXByb2MuaA0KPj4+IMKgQEAgLTM1NSw2ICszNTUsOCBAQCBlbnVtIHJzY19oYW5kbGluZ19z
+dGF0dXMgew0KPj4+DQo+Pj4gwqDCoCAvKioNCj4+PiDCoMKgwqAgKiBzdHJ1Y3QgcnByb2Nfb3Bz
+IC0gcGxhdGZvcm0tc3BlY2lmaWMgZGV2aWNlIGhhbmRsZXJzDQo+Pj4gwqArICogQHByZXBhcmU6
+wqDCoMKgIHByZXBhcmUgdGhlIGRldmljZSBmb3IgcG93ZXIgdXAgKGJlZm9yZSB0aGUgDQo+Pj4g
+ZmlybXdhcmUgaXMgbG9hZGVkKQ0KPj4+IMKgKyAqIEB1bnByZXBhcmU6wqDCoMKgIHVucHJlcGFy
+ZSB0aGUgZGV2aWNlIGFmdGVyIGl0IGlzIHN0b3BwZWQNCj4+PiDCoMKgwqAgKiBAc3RhcnQ6wqDC
+oMKgIHBvd2VyIG9uIHRoZSBkZXZpY2UgYW5kIGJvb3QgaXQNCj4+PiDCoMKgwqAgKiBAc3RvcDrC
+oMKgwqAgcG93ZXIgb2ZmIHRoZSBkZXZpY2UNCj4+PiDCoMKgwqAgKiBAa2ljazrCoMKgwqAga2lj
+ayBhIHZpcnRxdWV1ZSAodmlydHF1ZXVlIGlkIGdpdmVuIGFzIGEgcGFyYW1ldGVyKQ0KPj4+IMKg
+QEAgLTM3MSw2ICszNzMsOCBAQCBlbnVtIHJzY19oYW5kbGluZ19zdGF0dXMgew0KPj4+IMKgwqDC
+oCAqIEBnZXRfYm9vdF9hZGRyOsKgwqDCoCBnZXQgYm9vdCBhZGRyZXNzIHRvIGVudHJ5IHBvaW50
+IHNwZWNpZmllZCANCj4+PiBpbiBmaXJtd2FyZQ0KPj4+IMKgwqDCoCAqLw0KPj4+IMKgwqAgc3Ry
+dWN0IHJwcm9jX29wcyB7DQo+Pj4gwqArwqDCoMKgIGludCAoKnByZXBhcmUpKHN0cnVjdCBycHJv
+YyAqcnByb2MpOw0KPj4+IMKgK8KgwqDCoCB2b2lkICgqdW5wcmVwYXJlKShzdHJ1Y3QgcnByb2Mg
+KnJwcm9jKTsNCj4+PiDCoMKgwqDCoMKgwqAgaW50ICgqc3RhcnQpKHN0cnVjdCBycHJvYyAqcnBy
+b2MpOw0KPj4+IMKgwqDCoMKgwqDCoCBpbnQgKCpzdG9wKShzdHJ1Y3QgcnByb2MgKnJwcm9jKTsN
+Cj4+PiDCoMKgwqDCoMKgwqAgdm9pZCAoKmtpY2spKHN0cnVjdCBycHJvYyAqcnByb2MsIGludCB2
+cWlkKTsNCj4NCj4=
