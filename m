@@ -1,79 +1,74 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv3 03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
-Date: Fri, 13 Dec 2019 14:55:25 +0200
-Message-ID: <20191213125537.11509-4-t-kristo@ti.com>
-In-Reply-To: <20191213125537.11509-1-t-kristo@ti.com>
-References: <20191213125537.11509-1-t-kristo@ti.com>
+Date: Mon, 16 Dec 2019 16:19:38 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 16/16] arm64: dts: qcom: sm8150: Add ADSP, CDSP, MPSS and
+ SLPI remoteprocs
+Message-ID: <20191217001934.GT3143381@builder>
+References: <20191118214250.14002-1-sibis@codeaurora.org>
+ <0101016e80794e1d-7c9ce825-6ba5-479e-bc98-f5d56ce6933f-000000@us-west-2.amazonses.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0101016e80794e1d-7c9ce825-6ba5-479e-bc98-f5d56ce6933f-000000@us-west-2.amazonses.com>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: jhugo@codeaurora.org, robh+dt@kernel.org, jonathan@marek.ca, ohad@wizery.com, mark.rutland@arm.com, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On Mon 18 Nov 13:44 PST 2019, Sibi Sankar wrote:
 
-The DSP remote processors on OMAP SoCs require a boot register to
-be programmed with a boot address, and this boot address needs to
-be on a 1KB boundary. The current code is simply masking the boot
-address appropriately without performing any sanity checks before
-releasing the resets. An unaligned boot address results in an
-undefined execution behavior and can result in various bus errors
-like MMU Faults or L3 NoC errors. Such errors are hard to debug and
-can be easily avoided by adding a sanity check for the alignment
-before booting a DSP remote processor.
+> Add ADSP, CDSP, MPSS and SLPI device tree nodes for SM8150 SoC.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8150-mtp.dts |  12 +++
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi    | 135 ++++++++++++++++++++++++
+>  2 files changed, 147 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> index aa5de42fcae45..4d9bb8145dbba 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> @@ -348,6 +348,18 @@
+>  	};
+>  };
+>  
+> +&adsp_pas {
+> +	status = "okay";
+> +};
+> +
+> +&cdsp_pas {
+> +	status = "okay";
+> +};
+> +
+> +&slpi_pas {
+> +	status = "okay";
+> +};
+> +
+>  &qupv3_id_1 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> index 98a96fd1d6117..58f4ce95bd966 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> @@ -5,6 +5,8 @@
+>   */
+>  
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/qcom,gcc-sm8150.h>
+> +#include <dt-bindings/power/qcom-aoss-qmp.h>
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+>  #include <dt-bindings/clock/qcom,rpmh.h>
+> @@ -278,6 +280,139 @@
+>  		};
+>  	};
+>  
+> +	adsp_pas: remoteproc-adsp {
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/omap_remoteproc.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Please move this in under /soc, name it "remoteproc" and slap a reg = <>
+on it. Even if qcom,*-pas doesn't use the information I find it look
+better in the DT and it becomes more consistent between PAS and non-PAS
+targets.
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 558634624590..d80f5d7b5931 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -124,13 +124,22 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
-  *
-  * Set boot address for a supported DSP remote processor.
-  */
--static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
-+static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
- {
-+	struct device *dev = rproc->dev.parent;
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
- 	u32 offset = bdata->boot_reg;
- 
-+	if (rproc->bootaddr & (SZ_1K - 1)) {
-+		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
-+			rproc->bootaddr);
-+		return -EINVAL;
-+	}
-+
- 	regmap_write(bdata->syscon, offset, rproc->bootaddr);
-+
-+	return 0;
- }
- 
- /*
-@@ -147,8 +156,11 @@ static int omap_rproc_start(struct rproc *rproc)
- 	int ret;
- 	struct mbox_client *client = &oproc->client;
- 
--	if (oproc->boot_data)
--		omap_rproc_write_dsp_boot_addr(rproc);
-+	if (oproc->boot_data) {
-+		ret = omap_rproc_write_dsp_boot_addr(rproc);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	client->dev = dev;
- 	client->tx_done = NULL;
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards,
+Bjorn
