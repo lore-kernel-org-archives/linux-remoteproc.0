@@ -1,36 +1,44 @@
-Return-Path: <gokulsri@qualcomm.com>
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V4 07/10] clk: qcom: Add WCSSAON reset
-Date: Wed, 18 Dec 2019 21:35:43 +0530
-Message-Id: <1576685146-17135-8-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
-References: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail25.static.mailgun.info ([104.130.122.25]:47284 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726902AbfLRNWi (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 18 Dec 2019 08:22:38 -0500
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 1/5] remoteproc: q6v5-mss: Remove mem clk from the active pool
+Date: Wed, 18 Dec 2019 18:52:13 +0530
+Message-Id: <20191218132217.28141-2-sibis@codeaurora.org>
+In-Reply-To: <20191218132217.28141-1-sibis@codeaurora.org>
+References: <20191218132217.28141-1-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org
+Cc: ohad@wizery.com, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add WCSSAON reset required for Q6v5 on IPQ8074 SoC.
+Currently the mem clk is voted upon from both the active and proxy pool on
+MSM8998 SoCs where only a proxy vote should suffice. Fix this by removing
+mem clk from the active pool.
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 1665cbd5731fa ("remoteproc: qcom_q6v5_mss: Add support for MSM8998")
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
-changes since v1: none
----
- drivers/clk/qcom/gcc-ipq8074.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/remoteproc/qcom_q6v5_mss.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-index e01f5f5..1e5758f 100644
---- a/drivers/clk/qcom/gcc-ipq8074.c
-+++ b/drivers/clk/qcom/gcc-ipq8074.c
-@@ -4685,6 +4685,7 @@ enum {
- 	[GCC_PCIE1_AXI_SLAVE_ARES] = { 0x76040, 4 },
- 	[GCC_PCIE1_AHB_ARES] = { 0x76040, 5 },
- 	[GCC_PCIE1_AXI_MASTER_STICKY_ARES] = { 0x76040, 6 },
-+	[GCC_WCSSAON_RESET] = { 0x59010, 0 },
- };
- 
- static const struct of_device_id gcc_ipq8074_match_table[] = {
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 471128a2e7239..164fc2a53ef11 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1594,7 +1594,6 @@ static const struct rproc_hexagon_res msm8998_mss = {
+ 	.active_clk_names = (char*[]){
+ 			"iface",
+ 			"bus",
+-			"mem",
+ 			"gpll0_mss",
+ 			"mnoc_axi",
+ 			"snoc_axi",
 -- 
-1.9.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
