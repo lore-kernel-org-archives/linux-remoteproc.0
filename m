@@ -1,173 +1,60 @@
-Return-Path: <afaerber@suse.de>
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC 2/5] hwspinlock: Add Realtek RTD1195 SB2
-Date: Mon,  2 Dec 2019 23:05:32 +0100
-Message-Id: <20191202220535.6208-3-afaerber@suse.de>
-In-Reply-To: <20191202220535.6208-1-afaerber@suse.de>
-References: <20191202220535.6208-1-afaerber@suse.de>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 2/5] dt-bindings: remoteproc: qcom: Add ADSP and SLPI support for MSM8998 SoC
+Date: Wed, 18 Dec 2019 18:52:14 +0530
+Message-Id: <20191218132217.28141-3-sibis@codeaurora.org>
+In-Reply-To: <20191218132217.28141-1-sibis@codeaurora.org>
+References: <20191218132217.28141-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To: linux-realtek-soc@lists.infradead.org
-Cc: Cheng-Yu Lee <cylee12@realtek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
+To: bjorn.andersson@linaro.org, jhugo@codeaurora.org, robh+dt@kernel.org
+Cc: ohad@wizery.com, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rob Herring <robh@kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Implement a driver for hardware semaphores found in RTD1195 SoC.
-It allows for both per-register instances (SB2_HD_SEM) as well as
-contiguous register ranges (SB2_HD_SEM_NEW[0-7]).
+Add ADSP and SLPI compatibles for MSM8998 SoC.
 
-While these registers are part of the SB2 syscon, this implementation
-does not use syscon, to allow assigning one as SB2 syscon's hwlock.
-
-Cc: Cheng-Yu Lee <cylee12@realtek.com>
-Signed-off-by: Andreas Färber <afaerber@suse.de>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/hwspinlock/Kconfig           |  11 ++++
- drivers/hwspinlock/Makefile          |   1 +
- drivers/hwspinlock/rtd1195_sb2_sem.c | 101 +++++++++++++++++++++++++++++++++++
- 3 files changed, 113 insertions(+)
- create mode 100644 drivers/hwspinlock/rtd1195_sb2_sem.c
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-index 37740e992cfa..9c26c436d399 100644
---- a/drivers/hwspinlock/Kconfig
-+++ b/drivers/hwspinlock/Kconfig
-@@ -28,6 +28,17 @@ config HWSPINLOCK_QCOM
- 
- 	  If unsure, say N.
- 
-+config HWSPINLOCK_RTD1195_SB2
-+	tristate "Realtek RTD1195 SB2 Hardware Spinlock device"
-+	depends on HWSPINLOCK
-+	depends on ARCH_REALTEK || COMPILE_TEST
-+	default ARCH_REALTEK
-+	help
-+	  Say y here to support the Realtek Hardware Semaphore functionality,
-+	  found on the RTD1195 and later SoC families.
-+
-+	  If unsure, say N.
-+
- config HWSPINLOCK_SIRF
- 	tristate "SIRF Hardware Spinlock device"
- 	depends on HWSPINLOCK
-diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
-index ed053e3f02be..d5bd59412468 100644
---- a/drivers/hwspinlock/Makefile
-+++ b/drivers/hwspinlock/Makefile
-@@ -6,6 +6,7 @@
- obj-$(CONFIG_HWSPINLOCK)		+= hwspinlock_core.o
- obj-$(CONFIG_HWSPINLOCK_OMAP)		+= omap_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
-+obj-$(CONFIG_HWSPINLOCK_RTD1195_SB2)	+= rtd1195_sb2_sem.o
- obj-$(CONFIG_HWSPINLOCK_SIRF)		+= sirf_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
-diff --git a/drivers/hwspinlock/rtd1195_sb2_sem.c b/drivers/hwspinlock/rtd1195_sb2_sem.c
-new file mode 100644
-index 000000000000..ae925d057874
---- /dev/null
-+++ b/drivers/hwspinlock/rtd1195_sb2_sem.c
-@@ -0,0 +1,101 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * RTD1195 SB2 hardware semaphore
-+ *
-+ * Copyright (c) 2019 Andreas Färber
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/hwspinlock.h>
-+#include <linux/idr.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+
-+#include "hwspinlock_internal.h"
-+
-+struct rtd1195_sb2_sem {
-+	struct platform_device *pdev;
-+	void __iomem *base;
-+	int base_id;
-+	struct hwspinlock_device lockdev;
-+};
-+
-+static DEFINE_IDR(rtd1195_sb2_sem_idr);
-+
-+static int rtd1195_sb2_sem_trylock(struct hwspinlock *lock)
-+{
-+	void __iomem *reg = (void __iomem *)lock->priv;
-+
-+	return readl_relaxed(reg) & BIT(0);
-+}
-+
-+static void rtd1195_sb2_sem_unlock(struct hwspinlock *lock)
-+{
-+	void __iomem *reg = (void __iomem *)lock->priv;
-+
-+	writel_relaxed(0, reg);
-+}
-+
-+static const struct hwspinlock_ops rtd1195_sb2_sem_hwspinlock_ops = {
-+	.trylock	= rtd1195_sb2_sem_trylock,
-+	.unlock		= rtd1195_sb2_sem_unlock,
-+};
-+
-+static int rtd1195_sb2_sem_probe(struct platform_device *pdev)
-+{
-+	struct rtd1195_sb2_sem *sem;
-+	struct hwspinlock *lock;
-+	struct resource *res;
-+	int i, num;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -ENOMEM;
-+
-+	num = resource_size(res) / 4;
-+
-+	sem = devm_kzalloc(&pdev->dev, sizeof(*sem) + num * sizeof(*lock),
-+			   GFP_KERNEL);
-+	if (!sem)
-+		return -ENOMEM;
-+
-+	sem->pdev = pdev;
-+
-+	sem->base = of_iomap(pdev->dev.of_node, 0);
-+	if (!sem->base)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num; i++) {
-+		lock = &sem->lockdev.lock[i];
-+		lock->priv = sem->base + i * 4;
-+	}
-+
-+	platform_set_drvdata(pdev, sem);
-+
-+	sem->base_id = idr_alloc(&rtd1195_sb2_sem_idr, sem, 0, 0, GFP_KERNEL);
-+
-+	return devm_hwspin_lock_register(&pdev->dev, &sem->lockdev,
-+		&rtd1195_sb2_sem_hwspinlock_ops, sem->base_id, num);
-+}
-+
-+static const struct of_device_id rtd1195_sb2_sem_dt_ids[] = {
-+	{ .compatible = "realtek,rtd1195-sb2-sem" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rtd1195_sb2_sem_dt_ids);
-+
-+static struct platform_driver rtd1195_sb2_sem_platform_driver = {
-+	.driver = {
-+		.name = "rtd1195-sb2-sem",
-+		.of_match_table = rtd1195_sb2_sem_dt_ids,
-+	},
-+	.probe = rtd1195_sb2_sem_probe,
-+};
-+module_platform_driver(rtd1195_sb2_sem_platform_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Hardware spinlock driver for Realtek RTD1195 SB2");
-+MODULE_AUTHOR("Andreas Färber <afaerber@suse.de>");
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+index a54465d938f64..9938918b2fea3 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+@@ -10,6 +10,8 @@ on the Qualcomm ADSP Hexagon core.
+ 		    "qcom,msm8974-adsp-pil"
+ 		    "qcom,msm8996-adsp-pil"
+ 		    "qcom,msm8996-slpi-pil"
++		    "qcom,msm8998-adsp-pas"
++		    "qcom,msm8998-slpi-pas"
+ 		    "qcom,qcs404-adsp-pas"
+ 		    "qcom,qcs404-cdsp-pas"
+ 		    "qcom,qcs404-wcss-pas"
+@@ -33,6 +35,8 @@ on the Qualcomm ADSP Hexagon core.
+ 	qcom,msm8974-adsp-pil:
+ 	qcom,msm8996-adsp-pil:
+ 	qcom,msm8996-slpi-pil:
++	qcom,msm8998-adsp-pas:
++	qcom,msm8998-slpi-pas:
+ 	qcom,qcs404-adsp-pas:
+ 	qcom,qcs404-cdsp-pas:
+ 	qcom,sdm845-adsp-pas:
+@@ -86,9 +90,12 @@ on the Qualcomm ADSP Hexagon core.
+ 	Definition: The power-domains needed depend on the compatible string:
+ 	qcom,msm8974-adsp-pil:
+ 	qcom,msm8996-adsp-pil:
++	qcom,msm8998-adsp-pas:
+ 		    must be "cx"
+ 	qcom,msm8996-slpi-pil:
+ 		    must be "ss_cx"
++	qcom,msm8998-slpi-pas:
++		    must be "ssc_cx"
+ 	qcom,qcs404-adsp-pas:
+ 		    must be "lpi_cx"
+ 	qcom,qcs404-cdsp-pas:
 -- 
-2.16.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
