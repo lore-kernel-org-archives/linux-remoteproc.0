@@ -1,349 +1,166 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv3 02/15] remoteproc/omap: Add device tree support
-Date: Fri, 13 Dec 2019 14:55:24 +0200
-Message-ID: <20191213125537.11509-3-t-kristo@ti.com>
-In-Reply-To: <20191213125537.11509-1-t-kristo@ti.com>
-References: <20191213125537.11509-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
+Return-Path: <gokulsri@qualcomm.com>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V4 01/10] remoteproc: qcom: Add PRNG proxy clock
+Date: Wed, 18 Dec 2019 21:35:37 +0530
+Message-Id: <1576685146-17135-2-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
+References: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+PRNG clock is needed by the secure PIL, support for the same
+is added in subsequent patches.
 
-OMAP4+ SoCs support device tree boot only. The OMAP remoteproc
-driver is enhanced to support remoteproc devices created through
-Device Tree, support for legacy platform devices has been
-deprecated. The current DT support handles the IPU and DSP
-processor subsystems on OMAP4 and OMAP5 SoCs.
-
-The OMAP remoteproc driver relies on the ti-sysc, reset, and
-syscon layers for performing clock, reset and boot vector
-management (DSP remoteprocs only) of the devices, but some of
-these are limited only to the machine-specific layers
-in arch/arm. The dependency against control module API for boot
-vector management of the DSP remoteprocs has now been removed
-with added logic to parse the boot register from the DT node
-and program it appropriately directly within the driver.
-
-The OMAP remoteproc driver expects the firmware names to be
-provided via device tree entries (firmware-name.) These are used
-to load the proper firmware during boot of the remote processor.
-
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-[t-kristo@ti.com: converted to use ti-sysc framework]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 ---
- drivers/remoteproc/omap_remoteproc.c | 191 +++++++++++++++++++++++----
- 1 file changed, 168 insertions(+), 23 deletions(-)
+changes since v1: none
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++++++++----------
+ 1 file changed, 47 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 6398194075aa..558634624590 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -2,7 +2,7 @@
- /*
-  * OMAP Remote Processor driver
-  *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-+ * Copyright (C) 2011-2019 Texas Instruments Incorporated - http://www.ti.com/
-  * Copyright (C) 2011 Google, Inc.
-  *
-  * Ohad Ben-Cohen <ohad@wizery.com>
-@@ -16,27 +16,53 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/err.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/remoteproc.h>
- #include <linux/mailbox_client.h>
- #include <linux/omap-mailbox.h>
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index a2671a1..eddc05b 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -91,19 +91,6 @@ enum {
+ 	WCSS_QCS404,
+ };
+ 
+-struct wcss_data {
+-	const char *firmware_name;
+-	int crash_reason_smem;
+-	u32 version;
+-	bool aon_reset_required;
+-	bool wcss_q6_reset_required;
+-	const char *ssr_name;
+-	const char *sysmon_name;
+-	int ssctl_id;
+-	const struct rproc_ops *ops;
+-	bool requires_force_stop;
+-};
 -
--#include <linux/platform_data/remoteproc-omap.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/reset.h>
+ struct q6v5_wcss {
+ 	struct device *dev;
  
- #include "omap_remoteproc.h"
- #include "remoteproc_internal.h"
+@@ -128,6 +115,7 @@ struct q6v5_wcss {
+ 	struct clk *qdsp6ss_xo_cbcr;
+ 	struct clk *qdsp6ss_core_gfmux;
+ 	struct clk *lcc_bcr_sleep;
++	struct clk *prng_clk;
+ 	struct regulator *cx_supply;
  
-+/**
-+ * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
-+ * @syscon: regmap handle for the system control configuration module
-+ * @boot_reg: boot register offset within the @syscon regmap
-+ */
-+struct omap_rproc_boot_data {
-+	struct regmap *syscon;
-+	unsigned int boot_reg;
-+};
-+
- /**
-  * struct omap_rproc - omap remote processor state
-  * @mbox: mailbox channel handle
-  * @client: mailbox client to request the mailbox channel
-+ * @boot_data: boot data structure for setting processor boot address
-  * @rproc: rproc handle
-+ * @reset: reset handle
-  */
- struct omap_rproc {
- 	struct mbox_chan *mbox;
- 	struct mbox_client client;
-+	struct omap_rproc_boot_data *boot_data;
- 	struct rproc *rproc;
-+	struct reset_control *reset;
-+};
-+
-+/**
-+ * struct omap_rproc_dev_data - device data for the omap remote processor
-+ * @device_name: device name of the remote processor
-+ * @has_bootreg: true if this remote processor has boot register
-+ */
-+struct omap_rproc_dev_data {
-+	const char *device_name;
-+	bool has_bootreg;
+ 	struct qcom_rproc_glink glink_subdev;
+@@ -151,6 +139,21 @@ struct q6v5_wcss {
+ 	bool requires_force_stop;
  };
  
- /**
-@@ -92,6 +118,21 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
- 			ret);
- }
- 
-+/**
-+ * omap_rproc_write_dsp_boot_addr - set boot address for a DSP remote processor
-+ * @rproc: handle of a remote processor
-+ *
-+ * Set boot address for a supported DSP remote processor.
-+ */
-+static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
-+{
-+	struct omap_rproc *oproc = rproc->priv;
-+	struct omap_rproc_boot_data *bdata = oproc->boot_data;
-+	u32 offset = bdata->boot_reg;
++struct wcss_data {
++	int (*init_clock)(struct q6v5_wcss *wcss);
++	int (*init_regulator)(struct q6v5_wcss *wcss);
++	const char *firmware_name;
++	int crash_reason_smem;
++	u32 version;
++	bool aon_reset_required;
++	bool wcss_q6_reset_required;
++	const char *ssr_name;
++	const char *sysmon_name;
++	int ssctl_id;
++	const struct rproc_ops *ops;
++	bool requires_force_stop;
++};
 +
-+	regmap_write(bdata->syscon, offset, rproc->bootaddr);
-+}
-+
- /*
-  * Power up the remote processor.
-  *
-@@ -103,13 +144,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
  {
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct device *dev = rproc->dev.parent;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
  	int ret;
- 	struct mbox_client *client = &oproc->client;
+@@ -240,6 +243,12 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
  
--	if (pdata->set_bootaddr)
--		pdata->set_bootaddr(rproc->bootaddr);
-+	if (oproc->boot_data)
-+		omap_rproc_write_dsp_boot_addr(rproc);
- 
- 	client->dev = dev;
- 	client->tx_done = NULL;
-@@ -117,7 +156,7 @@ static int omap_rproc_start(struct rproc *rproc)
- 	client->tx_block = false;
- 	client->knows_txdone = false;
- 
--	oproc->mbox = omap_mbox_request_channel(client, pdata->mbox_name);
-+	oproc->mbox = mbox_request_channel(client, 0);
- 	if (IS_ERR(oproc->mbox)) {
- 		ret = -EBUSY;
- 		dev_err(dev, "mbox_request_channel failed: %ld\n",
-@@ -138,11 +177,7 @@ static int omap_rproc_start(struct rproc *rproc)
- 		goto put_mbox;
- 	}
- 
--	ret = pdata->device_enable(pdev);
--	if (ret) {
--		dev_err(dev, "omap_device_enable failed: %d\n", ret);
--		goto put_mbox;
--	}
-+	reset_control_deassert(oproc->reset);
- 
- 	return 0;
- 
-@@ -154,15 +189,9 @@ static int omap_rproc_start(struct rproc *rproc)
- /* power off the remote processor */
- static int omap_rproc_stop(struct rproc *rproc)
- {
--	struct device *dev = rproc->dev.parent;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
- 	struct omap_rproc *oproc = rproc->priv;
--	int ret;
- 
--	ret = pdata->device_shutdown(pdev);
--	if (ret)
--		return ret;
-+	reset_control_assert(oproc->reset);
- 
- 	mbox_free_channel(oproc->mbox);
- 
-@@ -175,12 +204,122 @@ static const struct rproc_ops omap_rproc_ops = {
- 	.kick		= omap_rproc_kick,
- };
- 
-+static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
-+	.device_name	= "dsp",
-+	.has_bootreg	= true,
-+};
-+
-+static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
-+	.device_name	= "ipu",
-+};
-+
-+static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
-+	.device_name	= "dsp",
-+	.has_bootreg	= true,
-+};
-+
-+static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
-+	.device_name	= "ipu",
-+};
-+
-+static const struct of_device_id omap_rproc_of_match[] = {
-+	{
-+		.compatible     = "ti,omap4-dsp",
-+		.data           = &omap4_dsp_dev_data,
-+	},
-+	{
-+		.compatible     = "ti,omap4-ipu",
-+		.data           = &omap4_ipu_dev_data,
-+	},
-+	{
-+		.compatible     = "ti,omap5-dsp",
-+		.data           = &omap5_dsp_dev_data,
-+	},
-+	{
-+		.compatible     = "ti,omap5-ipu",
-+		.data           = &omap5_ipu_dev_data,
-+	},
-+	{
-+		/* end */
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, omap_rproc_of_match);
-+
-+static const char *omap_rproc_get_firmware(struct platform_device *pdev)
-+{
-+	const char *fw_name;
-+	int ret;
-+
-+	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-+				      &fw_name);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return fw_name;
-+}
-+
-+static int omap_rproc_get_boot_data(struct platform_device *pdev,
-+				    struct rproc *rproc)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct omap_rproc *oproc = rproc->priv;
-+	const struct omap_rproc_dev_data *data;
-+	int ret;
-+
-+	data = of_device_get_match_data(&pdev->dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	if (!data->has_bootreg)
-+		return 0;
-+
-+	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
-+					GFP_KERNEL);
-+	if (!oproc->boot_data)
-+		return -ENOMEM;
-+
-+	if (!of_property_read_bool(np, "ti,bootreg")) {
-+		dev_err(&pdev->dev, "ti,bootreg property is missing\n");
-+		return -EINVAL;
-+	}
-+
-+	oproc->boot_data->syscon =
-+			syscon_regmap_lookup_by_phandle(np, "ti,bootreg");
-+	if (IS_ERR(oproc->boot_data->syscon)) {
-+		ret = PTR_ERR(oproc->boot_data->syscon);
++	ret = clk_prepare_enable(wcss->prng_clk);
++	if (ret) {
++		dev_err(wcss->dev, "prng clock enable failed\n");
 +		return ret;
 +	}
 +
-+	if (of_property_read_u32_index(np, "ti,bootreg", 1,
-+				       &oproc->boot_data->boot_reg)) {
-+		dev_err(&pdev->dev, "couldn't get the boot register\n");
-+		return -EINVAL;
-+	}
+ 	qcom_q6v5_prepare(&wcss->q6v5);
+ 
+ 	/* Release Q6 and WCSS reset */
+@@ -732,6 +741,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++	clk_disable_unprepare(wcss->prng_clk);
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+ 	return 0;
+@@ -889,7 +899,21 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
+ 	return 0;
+ }
+ 
+-static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
++static int ipq8074_init_clock(struct q6v5_wcss *wcss)
++{
++	int ret;
 +
++	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
++	if (IS_ERR(wcss->prng_clk)) {
++		ret = PTR_ERR(wcss->prng_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "Failed to get prng clock\n");
++		return ret;
++	}
 +	return 0;
 +}
 +
- static int omap_rproc_probe(struct platform_device *pdev)
++static int qcs404_init_clock(struct q6v5_wcss *wcss)
  {
--	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
-+	struct device_node *np = pdev->dev.of_node;
- 	struct omap_rproc *oproc;
- 	struct rproc *rproc;
-+	const char *firmware;
  	int ret;
-+	struct reset_control *reset;
-+
-+	if (!np) {
-+		dev_err(&pdev->dev, "only DT-based devices are supported\n");
-+		return -ENODEV;
+ 
+@@ -979,7 +1003,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 	return 0;
+ }
+ 
+-static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
++static int qcs404_init_regulator(struct q6v5_wcss *wcss)
+ {
+ 	wcss->cx_supply = devm_regulator_get(wcss->dev, "cx");
+ 	if (IS_ERR(wcss->cx_supply))
+@@ -1023,12 +1047,14 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	if (wcss->version == WCSS_QCS404) {
+-		ret = q6v5_wcss_init_clock(wcss);
++	if (desc->init_clock) {
++		ret = desc->init_clock(wcss);
+ 		if (ret)
+ 			goto free_rproc;
 +	}
-+
-+	reset = devm_reset_control_array_get_optional_exclusive(&pdev->dev);
-+	if (IS_ERR(reset))
-+		return PTR_ERR(reset);
-+
-+	firmware = omap_rproc_get_firmware(pdev);
-+	if (IS_ERR(firmware))
-+		return PTR_ERR(firmware);
  
- 	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
-@@ -188,16 +327,21 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 		return ret;
+-		ret = q6v5_wcss_init_regulator(wcss);
++	if (desc->init_regulator) {
++		ret = desc->init_regulator(wcss);
+ 		if (ret)
+ 			goto free_rproc;
  	}
+@@ -1073,6 +1099,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ }
  
--	rproc = rproc_alloc(&pdev->dev, pdata->name, &omap_rproc_ops,
--			    pdata->firmware, sizeof(*oproc));
-+	rproc = rproc_alloc(&pdev->dev, dev_name(&pdev->dev), &omap_rproc_ops,
-+			    firmware, sizeof(*oproc));
- 	if (!rproc)
- 		return -ENOMEM;
- 
- 	oproc = rproc->priv;
- 	oproc->rproc = rproc;
-+	oproc->reset = reset;
- 	/* All existing OMAP IPU and DSP processors have an MMU */
- 	rproc->has_iommu = true;
- 
-+	ret = omap_rproc_get_boot_data(pdev, rproc);
-+	if (ret)
-+		goto free_rproc;
-+
- 	platform_set_drvdata(pdev, rproc);
- 
- 	ret = rproc_add(rproc);
-@@ -226,6 +370,7 @@ static struct platform_driver omap_rproc_driver = {
- 	.remove = omap_rproc_remove,
- 	.driver = {
- 		.name = "omap-rproc",
-+		.of_match_table = omap_rproc_of_match,
- 	},
+ static const struct wcss_data wcss_ipq8074_res_init = {
++	.init_clock = ipq8074_init_clock,
+ 	.firmware_name = "IPQ8074/q6_fw.mdt",
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.aon_reset_required = true,
+@@ -1082,6 +1109,8 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
  };
  
+ static const struct wcss_data wcss_qcs404_res_init = {
++	.init_clock = qcs404_init_clock,
++	.init_regulator = qcs404_init_regulator,
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.9.1
