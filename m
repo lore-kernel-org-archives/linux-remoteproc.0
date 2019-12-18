@@ -1,31 +1,51 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 0/2] Add Modem support on SC7180 SoCs
-Date: Thu, 19 Dec 2019 11:15:04 +0530
-Message-Id: <20191219054506.20565-1-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Subject: [PATCH V4 00/10] remoteproc: qcom: q6v5-wcss: Add support for secure pil
+Date: Wed, 18 Dec 2019 21:35:36 +0530
+Message-Id: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch series adds support for booting the Modem Q6 DSP found in
-Qualcomm's SC7180 SoCs.
+IPQ8074 needs support for secure pil as well.
+Also, currently only unified firmware is supported.
+IPQ8074 supports split firmware for q6 and m3, so
+adding support for that.
 
-V2:
- * split the series according to SoC
- * Duplicate code across q6v5proc_reset
- * add Rob's 'Reviewed-by' tag
+This series is based on Govind's
+"[v5] Add non PAS wcss Q6 support for QCS404"
 
-Sibi Sankar (2):
-  dt-bindings: remoteproc: qcom: Add Q6V5 Modem PIL binding for SC7180
-  remoteproc: mss: q6v5-mss: Add modem support on SC7180
+changes since v3:
+ - In patch 10, Added release_firmware to free up
+   memory requested for m3 firmware.
 
- .../bindings/remoteproc/qcom,q6v5.txt         |  23 +-
- drivers/remoteproc/qcom_q6v5_mss.c            | 199 +++++++++++++++++-
- 2 files changed, 219 insertions(+), 3 deletions(-)
+changes since v2:
+ - In patch 5, Added a driver data 'bcr_reset_required'
+   to select if bcr reset is required
+ - In patch 10, Removed syscon implementation and moved
+   to mailbox framework to access APCS IPC
+
+changes since v1:
+ - In patch 10, Addressed minor review comments.
+
+Gokul Sriram Palanisamy (10):
+  remoteproc: qcom: Add PRNG proxy clock
+  remoteproc: qcom: Add secure PIL support
+  remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+  remoteproc: qcom: Add ssr subdevice identifier
+  remoteproc: qcom: Update regmap offsets for halt register
+  dt-bindings: clock: qcom: Add reset for WCSSAON
+  clk: qcom: Add WCSSAON reset
+  dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
+  arm64: dts: Add support for scm on IPQ8074 SoCs
+  arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+
+ .../devicetree/bindings/firmware/qcom,scm.txt      |   1 +
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 127 +++++++++++++++++
+ drivers/clk/qcom/gcc-ipq8074.c                     |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss.c                | 157 +++++++++++++++++----
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h       |   1 +
+ 5 files changed, 258 insertions(+), 29 deletions(-)
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.9.1
