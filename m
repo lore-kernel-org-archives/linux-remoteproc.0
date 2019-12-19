@@ -1,363 +1,205 @@
 Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv3 12/15] remoteproc/omap: add support for system suspend/resume
-Date: Fri, 13 Dec 2019 14:55:34 +0200
-Message-ID: <20191213125537.11509-13-t-kristo@ti.com>
-In-Reply-To: <20191213125537.11509-1-t-kristo@ti.com>
+Subject: Re: [PATCHv3 07/15] remoteproc/omap: Add support for DRA7xx remote
+ processors
 References: <20191213125537.11509-1-t-kristo@ti.com>
+ <20191213125537.11509-8-t-kristo@ti.com> <20191218213152.GD16271@xps15>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <0c817542-b4b8-9dde-3efd-a7878ab19f79@ti.com>
+Date: Thu, 19 Dec 2019 15:29:14 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+In-Reply-To: <20191218213152.GD16271@xps15>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On 18/12/2019 23:31, Mathieu Poirier wrote:
+> On Fri, Dec 13, 2019 at 02:55:29PM +0200, Tero Kristo wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> DRA7xx/AM57xx SoCs have two IPU and up to two DSP processor subsystems
+>> for offloading different computation algorithms. The IPU processor
+>> subsystem contains dual-core ARM Cortex-M4 processors, and is very
+>> similar to those on OMAP5. The DSP processor subsystem is based on
+>> the TI's standard TMS320C66x DSP CorePac core.
+>>
+>> Support has been added to the OMAP remoteproc driver through new
+>> DRA7xx specific compatibles for properly probing and booting all
+>> the different processor subsystem instances on DRA7xx/AM57xx
+>> SoCs - IPU1, IPU2, DSP1 & DSP2. A build dependency with SOC_DRA7XX
+>> is added to enable the driver to be built in DRA7xx-only configuration.
+>>
+>> The DSP boot address programming needed enhancement for DRA7xx as the
+>> boot register fields are different on DRA7 compared to OMAP4 and OMAP5
+>> SoCs. The register on DRA7xx contains additional fields within the
+>> register and the boot address bit-field is right-shifted by 10 bits.
+>> The internal memory parsing logic has also been updated to compute
+>> the device addresses for the L2 RAM for DSP devices using relative
+>> addressing logic, and to parse two additional RAMs at L1 level - L1P
+>> and L1D. This allows the remoteproc driver to support loading into
+>> these regions for a small subset of firmware images requiring as
+>> such. The most common usage would be to use the L1 programmable
+>> RAMs as L1 Caches.
+>>
+>> The firmware lookup logic also has to be adjusted for DRA7xx as
+>> there are (can be) more than one instance of both the IPU and DSP
+>> remote processors for the first time in OMAP4+ SoCs.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> [t-kristo@ti.com: moved address translation quirks to pdata]
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>   drivers/remoteproc/Kconfig           |  2 +-
+>>   drivers/remoteproc/omap_remoteproc.c | 44 +++++++++++++++++++++++++++-
+>>   2 files changed, 44 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index 94afdde4bc9f..d6450d7fcf92 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -25,7 +25,7 @@ config IMX_REMOTEPROC
+>>   
+>>   config OMAP_REMOTEPROC
+>>   	tristate "OMAP remoteproc support"
+>> -	depends on ARCH_OMAP4 || SOC_OMAP5
+>> +	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
+>>   	depends on OMAP_IOMMU
+>>   	select MAILBOX
+>>   	select OMAP2PLUS_MBOX
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>> index 3ad74c4b4071..6cf7f0a9ba9a 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.c
+>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>> @@ -34,10 +34,13 @@
+>>    * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
+>>    * @syscon: regmap handle for the system control configuration module
+>>    * @boot_reg: boot register offset within the @syscon regmap
+>> + * @boot_reg_shift: bit-field shift required for the boot address value in
+>> + *		    @boot_reg
+>>    */
+>>   struct omap_rproc_boot_data {
+>>   	struct regmap *syscon;
+>>   	unsigned int boot_reg;
+>> +	unsigned int boot_reg_shift;
+>>   };
+>>   
+>>   /*
+>> @@ -78,12 +81,14 @@ struct omap_rproc {
+>>    * struct omap_rproc_dev_data - device data for the omap remote processor
+>>    * @device_name: device name of the remote processor
+>>    * @has_bootreg: true if this remote processor has boot register
+>> + * @boot_reg_shift: bit shift for the boot register mask
+>>    * @mem_names: memory names for this remote processor
+>>    * @dev_addrs: device addresses corresponding to the memory names
+>>    */
+>>   struct omap_rproc_dev_data {
+>>   	const char *device_name;
+>>   	bool has_bootreg;
+>> +	int boot_reg_shift;
+>>   	const char * const *mem_names;
+>>   	const u32 *dev_addrs;
+>>   };
+>> @@ -153,6 +158,8 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+>>   	struct omap_rproc *oproc = rproc->priv;
+>>   	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+>>   	u32 offset = bdata->boot_reg;
+>> +	u32 value;
+>> +	u32 mask;
+>>   
+>>   	if (rproc->bootaddr & (SZ_1K - 1)) {
+>>   		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
+>> @@ -160,7 +167,10 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> -	regmap_write(bdata->syscon, offset, rproc->bootaddr);
+>> +	value = rproc->bootaddr >> bdata->boot_reg_shift;
+>> +	mask = ~(SZ_1K - 1) >> bdata->boot_reg_shift;
+>> +
+>> +	regmap_update_bits(bdata->syscon, offset, mask, value);
+>>   
+>>   	return 0;
+>>   }
+>> @@ -286,6 +296,14 @@ static const u32 ipu_dev_addrs[] = {
+>>   	0x20000000,
+>>   };
+>>   
+>> +static const char * const dra7_dsp_mem_names[] = {
+>> +	"l2ram", "l1pram", "l1dram", NULL
+>> +};
+>> +
+>> +static const u32 dra7_dsp_dev_addrs[] = {
+>> +	0x800000, 0xe00000, 0xf00000,
+>> +};
+>> +
+>>   static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+>>   	.device_name	= "dsp",
+>>   	.has_bootreg	= true,
+>> @@ -308,6 +326,20 @@ static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+>>   	.dev_addrs	= ipu_dev_addrs,
+>>   };
+>>   
+>> +static const struct omap_rproc_dev_data dra7_dsp_dev_data = {
+>> +	.device_name	= "dsp",
+>> +	.has_bootreg	= true,
+> 
+> Shouldn't this be solely driven from the DT?  If the "ti,bootreg" is specified
+> then we can count on omap_rproc::boot_data to provide the same functionality.
+> 
+> 
+>> +	.boot_reg_shift	= 10,
+> 
+> I also think this should be driven from the DT.  Otherwise some information is
+> from the DT and other is hard coded in the omap_rproc_dev_data.
 
-This patch adds the support for system suspend/resume to the
-OMAP remoteproc driver so that the OMAP remoteproc devices can
-be suspended/resumed during a system suspend/resume. The support
-is added through the driver PM .suspend/.resume callbacks, and
-requires appropriate support from the OS running on the remote
-processors.
+Hmm right I believe this is a fair point. Let me fix that for next rev.
 
-The IPU & DSP remote processors typically have their own private
-modules like registers, internal memories, caches etc. The context
-of these modules need to be saved and restored properly for a
-suspend/resume to work. These are in general not accessible from
-the MPU, so the remote processors themselves have to implement
-the logic for the context save & restore of these modules.
+-Tero
 
-The OMAP remoteproc driver initiates a suspend by sending a mailbox
-message requesting the remote processor to save its context and
-enter into an idle/standby state. The remote processor should
-usually stop whatever processing it is doing to switch to a context
-save mode. The OMAP remoteproc driver detects the completion of
-the context save by checking the module standby status for the
-remoteproc device. It also stops any resources used by the remote
-processors like the timers. The timers need to be running only
-when the processor is active and executing, and need to be stopped
-otherwise to allow the timer driver to reach low-power states. The
-IOMMUs are automatically suspended by the PM core during the late
-suspend stage, after the remoteproc suspend process is completed by
-putting the remote processor cores into reset. Thereafter, the Linux
-kernel can put the domain into further lower power states as possible.
-
-The resume sequence undoes the operations performed in the PM suspend
-callback, by starting the timers and finally releasing the processors
-from reset. This requires that the remote processor side OS be able to
-distinguish a power-resume boot from a power-on/cold boot, restore the
-context of its private modules saved during the suspend phase, and
-resume executing code from where it was suspended. The IOMMUs would
-have been resumed by the PM core during early resume, so they are
-already enabled by the time remoteproc resume callback gets invoked.
-
-The remote processors should save their context into System RAM (DDR),
-as any internal memories are not guaranteed to retain context as it
-depends on the lowest power domain that the remote processor device
-is put into. The management of the DDR contents will be managed by
-the Linux kernel.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-[t-kristo@ti.com: converted to use ti-sysc instead of hwmod]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/remoteproc/omap_remoteproc.c | 179 +++++++++++++++++++++++++++
- drivers/remoteproc/omap_remoteproc.h |  18 ++-
- 2 files changed, 195 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 9c750c2ab29d..0a9b9f7d20da 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -16,6 +16,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/err.h>
-+#include <linux/io.h>
- #include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
-@@ -23,10 +24,13 @@
- #include <linux/remoteproc.h>
- #include <linux/mailbox_client.h>
- #include <linux/omap-mailbox.h>
-+#include <linux/omap-iommu.h>
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
- #include <linux/reset.h>
- #include <clocksource/timer-ti-dm.h>
-+#include <linux/clk.h>
-+#include <linux/clk/ti.h>
- 
- #include <linux/platform_data/dmtimer-omap.h>
- 
-@@ -81,6 +85,9 @@ struct omap_rproc_timer {
-  * @timers: timer(s) info used by rproc
-  * @rproc: rproc handle
-  * @reset: reset handle
-+ * @pm_comp: completion primitive to sync for suspend response
-+ * @fck: functional clock for the remoteproc
-+ * @suspend_acked: state machine flag to store the suspend request ack
-  */
- struct omap_rproc {
- 	struct mbox_chan *mbox;
-@@ -92,6 +99,9 @@ struct omap_rproc {
- 	struct omap_rproc_timer *timers;
- 	struct rproc *rproc;
- 	struct reset_control *reset;
-+	struct completion pm_comp;
-+	struct clk *fck;
-+	bool suspend_acked;
- };
- 
- /**
-@@ -349,6 +359,11 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
- 	case RP_MBOX_ECHO_REPLY:
- 		dev_info(dev, "received echo reply from %s\n", name);
- 		break;
-+	case RP_MBOX_SUSPEND_ACK:
-+	case RP_MBOX_SUSPEND_CANCEL:
-+		oproc->suspend_acked = msg == RP_MBOX_SUSPEND_ACK;
-+		complete(&oproc->pm_comp);
-+		break;
- 	default:
- 		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
- 			return;
-@@ -529,6 +544,157 @@ static const struct rproc_ops omap_rproc_ops = {
- 	.da_to_va	= omap_rproc_da_to_va,
- };
- 
-+#ifdef CONFIG_PM
-+static bool _is_rproc_in_standby(struct omap_rproc *oproc)
-+{
-+	return ti_clk_is_in_standby(oproc->fck);
-+}
-+
-+/* 1 sec is long enough time to let the remoteproc side suspend the device */
-+#define DEF_SUSPEND_TIMEOUT 1000
-+static int _omap_rproc_suspend(struct rproc *rproc)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	struct omap_rproc *oproc = rproc->priv;
-+	unsigned long to = msecs_to_jiffies(DEF_SUSPEND_TIMEOUT);
-+	unsigned long ta = jiffies + to;
-+	int ret;
-+
-+	reinit_completion(&oproc->pm_comp);
-+	oproc->suspend_acked = false;
-+	ret = mbox_send_message(oproc->mbox, (void *)RP_MBOX_SUSPEND_SYSTEM);
-+	if (ret < 0) {
-+		dev_err(dev, "PM mbox_send_message failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = wait_for_completion_timeout(&oproc->pm_comp, to);
-+	if (!oproc->suspend_acked)
-+		return -EBUSY;
-+
-+	/*
-+	 * The remoteproc side is returning the ACK message before saving the
-+	 * context, because the context saving is performed within a SYS/BIOS
-+	 * function, and it cannot have any inter-dependencies against the IPC
-+	 * layer. Also, as the SYS/BIOS needs to preserve properly the processor
-+	 * register set, sending this ACK or signalling the completion of the
-+	 * context save through a shared memory variable can never be the
-+	 * absolute last thing to be executed on the remoteproc side, and the
-+	 * MPU cannot use the ACK message as a sync point to put the remoteproc
-+	 * into reset. The only way to ensure that the remote processor has
-+	 * completed saving the context is to check that the module has reached
-+	 * STANDBY state (after saving the context, the SYS/BIOS executes the
-+	 * appropriate target-specific WFI instruction causing the module to
-+	 * enter STANDBY).
-+	 */
-+	while (!_is_rproc_in_standby(oproc)) {
-+		if (time_after(jiffies, ta))
-+			return -ETIME;
-+		schedule();
-+	}
-+
-+	reset_control_assert(oproc->reset);
-+
-+	ret = omap_rproc_disable_timers(rproc, false);
-+	if (ret) {
-+		dev_err(dev, "disabling timers during suspend failed %d\n",
-+			ret);
-+		goto enable_device;
-+	}
-+
-+	return 0;
-+
-+enable_device:
-+	reset_control_deassert(oproc->reset);
-+	return ret;
-+}
-+
-+static int _omap_rproc_resume(struct rproc *rproc)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	struct omap_rproc *oproc = rproc->priv;
-+	int ret;
-+
-+	/* boot address could be lost after suspend, so restore it */
-+	if (oproc->boot_data) {
-+		ret = omap_rproc_write_dsp_boot_addr(rproc);
-+		if (ret) {
-+			dev_err(dev, "boot address restore failed %d\n", ret);
-+			goto out;
-+		}
-+	}
-+
-+	ret = omap_rproc_enable_timers(rproc, false);
-+	if (ret) {
-+		dev_err(dev, "enabling timers during resume failed %d\n",
-+			ret);
-+		goto out;
-+	}
-+
-+	reset_control_deassert(oproc->reset);
-+
-+out:
-+	return ret;
-+}
-+
-+static int __maybe_unused omap_rproc_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rproc *rproc = platform_get_drvdata(pdev);
-+	int ret = 0;
-+
-+	mutex_lock(&rproc->lock);
-+	if (rproc->state == RPROC_OFFLINE)
-+		goto out;
-+
-+	if (rproc->state == RPROC_SUSPENDED)
-+		goto out;
-+
-+	if (rproc->state != RPROC_RUNNING) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	ret = _omap_rproc_suspend(rproc);
-+	if (ret) {
-+		dev_err(dev, "suspend failed %d\n", ret);
-+		goto out;
-+	}
-+
-+	rproc->state = RPROC_SUSPENDED;
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+
-+static int __maybe_unused omap_rproc_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct rproc *rproc = platform_get_drvdata(pdev);
-+	int ret = 0;
-+
-+	mutex_lock(&rproc->lock);
-+	if (rproc->state == RPROC_OFFLINE)
-+		goto out;
-+
-+	if (rproc->state != RPROC_SUSPENDED) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	ret = _omap_rproc_resume(rproc);
-+	if (ret) {
-+		dev_err(dev, "resume failed %d\n", ret);
-+		goto out;
-+	}
-+
-+	rproc->state = RPROC_RUNNING;
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+#endif /* CONFIG_PM */
-+
- static const char * const ipu_mem_names[] = {
- 	"l2ram", NULL
- };
-@@ -786,6 +952,14 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 			oproc->num_timers);
- 	}
- 
-+	init_completion(&oproc->pm_comp);
-+
-+	oproc->fck = devm_clk_get(&pdev->dev, 0);
-+	if (IS_ERR(oproc->fck)) {
-+		ret = PTR_ERR(oproc->fck);
-+		goto free_rproc;
-+	}
-+
- 	ret = of_reserved_mem_device_init(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-@@ -818,11 +992,16 @@ static int omap_rproc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct dev_pm_ops omap_rproc_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(omap_rproc_suspend, omap_rproc_resume)
-+};
-+
- static struct platform_driver omap_rproc_driver = {
- 	.probe = omap_rproc_probe,
- 	.remove = omap_rproc_remove,
- 	.driver = {
- 		.name = "omap-rproc",
-+		.pm = &omap_rproc_pm_ops,
- 		.of_match_table = omap_rproc_of_match,
- 	},
- };
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index 72f656c93caa..c73383e707c7 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -1,7 +1,7 @@
- /*
-  * Remote processor messaging
-  *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-+ * Copyright (C) 2011-2018 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-  *
-@@ -57,6 +57,16 @@
-  * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
-  * recovery mechanism (to some extent).
-  *
-+ * @RP_MBOX_SUSPEND_AUTO: auto suspend request for the remote processor
-+ *
-+ * @RP_MBOX_SUSPEND_SYSTEM: system suspend request for the remote processor
-+ *
-+ * @RP_MBOX_SUSPEND_ACK: successful response from remote processor for a
-+ * suspend request
-+ *
-+ * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
-+ * on a suspend request
-+ *
-  * Introduce new message definitions if any here.
-  *
-  * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-@@ -70,7 +80,11 @@ enum omap_rp_mbox_messages {
- 	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
- 	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
- 	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
--	RP_MBOX_END_MSG		= 0xFFFFFF06,
-+	RP_MBOX_SUSPEND_AUTO	= 0xFFFFFF10,
-+	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
-+	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
-+	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
-+	RP_MBOX_END_MSG		= 0xFFFFFF14,
- };
- 
- #endif /* _OMAP_RPMSG_H */
--- 
-2.17.1
+> 
+>> +	.mem_names	= dra7_dsp_mem_names,
+>> +	.dev_addrs	= dra7_dsp_dev_addrs,
+>> +};
+>> +
+>> +static const struct omap_rproc_dev_data dra7_ipu_dev_data = {
+>> +	.device_name	= "ipu",
+>> +	.mem_names	= ipu_mem_names,
+>> +	.dev_addrs	= ipu_dev_addrs,
+>> +};
+>> +
+>>   static const struct of_device_id omap_rproc_of_match[] = {
+>>   	{
+>>   		.compatible     = "ti,omap4-dsp",
+>> @@ -325,6 +357,14 @@ static const struct of_device_id omap_rproc_of_match[] = {
+>>   		.compatible     = "ti,omap5-ipu",
+>>   		.data           = &omap5_ipu_dev_data,
+>>   	},
+>> +	{
+>> +		.compatible     = "ti,dra7-dsp",
+>> +		.data           = &dra7_dsp_dev_data,
+>> +	},
+>> +	{
+>> +		.compatible     = "ti,dra7-ipu",
+>> +		.data           = &dra7_ipu_dev_data,
+>> +	},
+>>   	{
+>>   		/* end */
+>>   	},
+>> @@ -382,6 +422,8 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+>>   		return -EINVAL;
+>>   	}
+>>   
+>> +	oproc->boot_data->boot_reg_shift = data->boot_reg_shift;
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> -- 
+>> 2.17.1
+>>
+>> --
 
 --
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
