@@ -1,38 +1,222 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v4 5/5] MAINTAINERS: Add myself as reviewer for Ingenic rproc driver
-Date: Tue, 10 Dec 2019 17:40:14 +0100
-Message-Id: <20191210164014.50739-5-paul@crapouillou.net>
-In-Reply-To: <20191210164014.50739-1-paul@crapouillou.net>
-References: <20191210164014.50739-1-paul@crapouillou.net>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 3/3] soc: qcom: apr: Add avs/audio tracking functionality
+Date: Fri, 20 Dec 2019 22:50:19 +0530
+Message-Id: <20191220172019.11774-4-sibis@codeaurora.org>
+In-Reply-To: <20191220172019.11774-1-sibis@codeaurora.org>
+References: <20191220172019.11774-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
+Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add myself as the reviewer for the Ingenic VPU remoteproc driver.
+Use PDR helper functions to track the protection domains that the apr
+services are dependent upon on SDM845 SoC, specifically the "avs/audio"
+service running on ADSP Q6.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
+ drivers/soc/qcom/Kconfig     |   1 +
+ drivers/soc/qcom/apr.c       | 100 +++++++++++++++++++++++++++++++----
+ include/linux/soc/qcom/apr.h |   1 +
+ 3 files changed, 91 insertions(+), 11 deletions(-)
 
-Notes:
-    v4: New patch
-
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bd5847e802de..d82814ef2bee 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8197,6 +8197,7 @@ F:	drivers/mtd/nand/raw/ingenic/
- F:	drivers/pinctrl/pinctrl-ingenic.c
- F:	drivers/power/supply/ingenic-battery.c
- F:	drivers/pwm/pwm-jz4740.c
-+F:	drivers/remoteproc/ingenic_rproc.c
- F:	drivers/rtc/rtc-jz4740.c
- F:	drivers/tty/serial/8250/8250_ingenic.c
- F:	drivers/usb/musb/jz4740.c
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 5c4e76837f59b..cacfed945b275 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -202,6 +202,7 @@ config QCOM_APR
+ 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+ 	depends on RPMSG
++	select QCOM_PDR_HELPERS
+ 	help
+           Enable APR IPC protocol support between
+           application processor and QDSP6. APR is
+diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+index 4fcc32420c474..5234426718e88 100644
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@ -11,6 +11,7 @@
+ #include <linux/workqueue.h>
+ #include <linux/of_device.h>
+ #include <linux/soc/qcom/apr.h>
++#include <linux/soc/qcom/pdr.h>
+ #include <linux/rpmsg.h>
+ #include <linux/of.h>
+ 
+@@ -21,6 +22,7 @@ struct apr {
+ 	spinlock_t rx_lock;
+ 	struct idr svcs_idr;
+ 	int dest_domain_id;
++	struct pdr_handle pdr;
+ 	struct workqueue_struct *rxwq;
+ 	struct work_struct rx_work;
+ 	struct list_head rx_list;
+@@ -289,6 +291,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+ 		  id->svc_id + 1, GFP_ATOMIC);
+ 	spin_unlock(&apr->svcs_lock);
+ 
++	of_property_read_string_index(np, "qcom,protection-domain",
++				      1, &adev->service_path);
++
+ 	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
+ 
+ 	ret = device_register(&adev->dev);
+@@ -300,14 +305,56 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+ 	return ret;
+ }
+ 
+-static void of_register_apr_devices(struct device *dev)
++static void of_apr_add_pd_lookups(struct device *dev)
+ {
++	const char *service_name, *service_path;
+ 	struct apr *apr = dev_get_drvdata(dev);
+ 	struct device_node *node;
++	int ret;
++
++	for_each_child_of_node(dev->of_node, node) {
++		ret = of_property_read_string_index(node, "qcom,protection-domain",
++						    0, &service_name);
++		if (ret < 0)
++			continue;
++
++		ret = of_property_read_string_index(node, "qcom,protection-domain",
++						    1, &service_path);
++		if (ret < 0)
++			continue;
++
++		ret = pdr_add_lookup(&apr->pdr, service_name, service_path);
++		if (ret && ret != -EALREADY)
++			dev_err(dev, "pdr add lookup failed: %d\n", ret);
++	}
++}
++
++static void of_register_apr_devices(struct device *dev, const char *svc_path)
++{
++	struct apr *apr = dev_get_drvdata(dev);
++	struct device_node *node;
++	const char *service_path;
++	int ret;
+ 
+ 	for_each_child_of_node(dev->of_node, node) {
+ 		struct apr_device_id id = { {0} };
+ 
++		ret = of_property_read_string_index(node, "qcom,protection-domain",
++						    1, &service_path);
++		if (svc_path) {
++			/* skip APR services that are PD independent */
++			if (ret)
++				continue;
++
++			/* skip APR services whose PD paths don't match */
++			if (strcmp(service_path, svc_path))
++				continue;
++		} else {
++			/* skip APR services whose PD lookups are registered */
++			if (ret == 0)
++				continue;
++		}
++
+ 		if (of_property_read_u32(node, "reg", &id.svc_id))
+ 			continue;
+ 
+@@ -318,6 +365,35 @@ static void of_register_apr_devices(struct device *dev)
+ 	}
+ }
+ 
++static int apr_remove_device(struct device *dev, void *svc_path)
++{
++	struct apr_device *adev = to_apr_device(dev);
++
++	if (svc_path) {
++		if (!strcmp(adev->service_path, (char *)svc_path))
++			device_unregister(&adev->dev);
++	} else {
++		device_unregister(&adev->dev);
++	}
++
++	return 0;
++}
++
++static void apr_pd_status(struct pdr_handle *pdr, struct pdr_service *pds)
++{
++	struct apr *apr = container_of(pdr, struct apr, pdr);
++
++	switch (pds->state) {
++	case SERVREG_SERVICE_STATE_UP:
++		of_register_apr_devices(apr->dev, pds->service_path);
++		break;
++	case SERVREG_SERVICE_STATE_DOWN:
++		device_for_each_child(apr->dev, pds->service_path,
++				      apr_remove_device);
++		break;
++	}
++}
++
+ static int apr_probe(struct rpmsg_device *rpdev)
+ {
+ 	struct device *dev = &rpdev->dev;
+@@ -337,26 +413,27 @@ static int apr_probe(struct rpmsg_device *rpdev)
+ 	dev_set_drvdata(dev, apr);
+ 	apr->ch = rpdev->ept;
+ 	apr->dev = dev;
++
+ 	apr->rxwq = create_singlethread_workqueue("qcom_apr_rx");
+ 	if (!apr->rxwq) {
+ 		dev_err(apr->dev, "Failed to start Rx WQ\n");
+ 		return -ENOMEM;
+ 	}
+ 	INIT_WORK(&apr->rx_work, apr_rxwq);
++
++	ret = pdr_handle_init(&apr->pdr, apr_pd_status);
++	if (ret) {
++		dev_err(dev, "Failed to init PDR handle\n");
++		destroy_workqueue(apr->rxwq);
++		return ret;
++	}
++
+ 	INIT_LIST_HEAD(&apr->rx_list);
+ 	spin_lock_init(&apr->rx_lock);
+ 	spin_lock_init(&apr->svcs_lock);
+ 	idr_init(&apr->svcs_idr);
+-	of_register_apr_devices(dev);
+-
+-	return 0;
+-}
+-
+-static int apr_remove_device(struct device *dev, void *null)
+-{
+-	struct apr_device *adev = to_apr_device(dev);
+-
+-	device_unregister(&adev->dev);
++	of_apr_add_pd_lookups(dev);
++	of_register_apr_devices(dev, NULL);
+ 
+ 	return 0;
+ }
+@@ -365,6 +442,7 @@ static void apr_remove(struct rpmsg_device *rpdev)
+ {
+ 	struct apr *apr = dev_get_drvdata(&rpdev->dev);
+ 
++	pdr_handle_release(&apr->pdr);
+ 	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
+ 	flush_workqueue(apr->rxwq);
+ 	destroy_workqueue(apr->rxwq);
+diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
+index c5d52e2cb275f..7f0bc3cf4d610 100644
+--- a/include/linux/soc/qcom/apr.h
++++ b/include/linux/soc/qcom/apr.h
+@@ -85,6 +85,7 @@ struct apr_device {
+ 	uint16_t	domain_id;
+ 	uint32_t	version;
+ 	char name[APR_NAME_SIZE];
++	const char *service_path;
+ 	spinlock_t	lock;
+ 	struct list_head node;
+ };
 -- 
-2.24.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
