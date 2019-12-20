@@ -1,389 +1,359 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 2/2] remoteproc: mss: q6v5-mss: Add modem support on SC7180
-Date: Thu, 19 Dec 2019 11:15:06 +0530
-Message-Id: <20191219054506.20565-3-sibis@codeaurora.org>
-In-Reply-To: <20191219054506.20565-1-sibis@codeaurora.org>
-References: <20191219054506.20565-1-sibis@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCHv3 01/15] dt-bindings: remoteproc: Add OMAP remoteproc
+ bindings
+References: <20191213125537.11509-1-t-kristo@ti.com>
+ <20191213125537.11509-2-t-kristo@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <883310e6-8703-3cbc-9f08-54bad365d31d@ti.com>
+Date: Thu, 19 Dec 2019 21:38:18 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+In-Reply-To: <20191213125537.11509-2-t-kristo@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Tero Kristo <t-kristo@ti.com>, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add the out of reset sequence support for modem sub-system on SC7180
-SoCs. It requires access to an additional halt nav register to put
-the modem back into reset.
+On 12/13/19 6:55 AM, Tero Kristo wrote:
+> From: Suman Anna <s-anna@ti.com>
+> 
+> Add the device tree bindings document for the IPU and DSP
+> remote processor devices on OMAP4+ SoCs.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> [t-kristo@ti.com: converted to schema]
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+>  .../remoteproc/ti,omap-remoteproc.yaml        | 315 ++++++++++++++++++
+>  1 file changed, 315 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+> new file mode 100644
+> index 000000000000..c87dda0a6559
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+> @@ -0,0 +1,315 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/ti,omap-remoteproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: OMAP4+ Remoteproc Devices
+> +
+> +maintainers:
+> +  - Suman Anna <s-anna@ti.com>
+> +
+> +description:
+> +  The OMAP family of SoCs usually have one or more slave processor sub-systems
+> +  that are used to offload some of the processor-intensive tasks, or to manage
+> +  other hardware accelerators, for achieving various system level goals.
+> +
+> +  The processor cores in the sub-system are usually behind an IOMMU, and may
+> +  contain additional sub-modules like Internal RAM and/or ROMs, L1 and/or L2
+> +  caches, an Interrupt Controller, a Cache Controller etc.
+> +
+> +  The OMAP SoCs usually have a DSP processor sub-system and/or an IPU processor
+> +  sub-system. The DSP processor sub-system can contain any of the TI's C64x,
+> +  C66x or C67x family of DSP cores as the main execution unit. The IPU processor
+> +  sub-system usually contains either a Dual-Core Cortex-M3 or Dual-Core
+> +  Cortex-M4 processors.
+> +
+> +  Each remote processor sub-system is represented as a single DT node. Each node
+> +  has a number of required or optional properties that enable the OS running on
+> +  the host processor (MPU) to perform the device management of the remote
+> +  processor and to communicate with the remote processor. The various properties
+> +  can be classified as constant or variable. The constant properties are
+> +  dictated by the SoC and does not change from one board to another having the
+> +  same SoC. Examples of constant properties include 'iommus', 'reg'. The
+> +  variable properties are dictated by the system integration aspects such as
+> +  memory on the board, or configuration used within the corresponding firmware
+> +  image. Examples of variable properties include 'mboxes', 'memory-region',
+> +  'timers', 'watchdog-timers' etc.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,omap4-dsp
+> +      - ti,omap5-dsp
+> +      - ti,dra7-dsp
+> +      - ti,omap4-ipu
+> +      - ti,omap5-ipu
+> +      - ti,dra7-ipu
+> +
+> +  iommus:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description: |
+> +      phandles to OMAP IOMMU nodes, that need to be programmed
+> +      for this remote processor to access any external RAM memory or
+> +      other peripheral device address spaces. This property usually
+> +      has only a single phandle. Multiple phandles are used only in
+> +      cases where the sub-system has different ports for different
+> +      sub-modules within the processor sub-system (eg: DRA7 DSPs),
+> +      and need the same programming in both the MMUs.
+> +
+> +  mboxes:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description: |
+> +      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+> +      communication with the remote processor. The specifier format is
+> +      as per the bindings,
+> +      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
+> +      This property should match with the sub-mailbox node used in
+> +      the firmware image.
+> +
+> +  clocks:
+> +    description: |
+> +      Main functional clock for the remote processor
+> +
+> +  resets:
+> +    description: |
+> +      Reset handles for the remote processor
+> +
+> +  memory-region:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to the reserved memory node to be associated
+> +      with the remoteproc device. The reserved memory node
+> +      can be a CMA memory node, and should be defined as
+> +      per the bindings,
+> +      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+> +
+> +  firmware-name:
+> +    description: |
+> +      Default name of the firmware to load to the remote processor.
+> +
+> +# Optional properties:
+> +# --------------------
+> +# Some of these properties are mandatory on some SoCs, and some are optional
+> +# depending on the configuration of the firmware image to be executed on the
+> +# remote processor. The conditions are mentioned for each property.
+> +#
+> +# The following are the optional properties:
+> +
+> +  reg:
+> +    description: |
+> +      Address space for any remoteproc memories present on
+> +      the SoC. Should contain an entry for each value in
+> +      'reg-names'. These are mandatory for all DSP and IPU
+> +      processors that have them (OMAP4/OMAP5 DSPs do not have
+> +      any RAMs)
+> +
+> +  reg-names:
+> +    description: |
+> +      Required names for each of the address spaces defined in
+> +      the 'reg' property. Should contain a string from among
+> +      the following names, each representing the corresponding
+> +      internal RAM memory region.
+> +    minItems: 1
+> +    maxItems: 3
+> +    items:
+> +      - const: l2ram
+> +      - const: l1pram
+> +      - const: l1dram
+> +
+> +  ti,bootreg:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      Should be a pair of the phandle to the System Control
+> +      Configuration region that contains the boot address
+> +      register, and the register offset of the boot address
+> +      register within the System Control module. This property
+> +      is required for all the DSP instances on OMAP4, OMAP5
+> +      and DRA7xx SoCs.
+> +
+> +  ti,timers:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      One or more phandles to OMAP DMTimer nodes, that serve
+> +      as System/Tick timers for the OS running on the remote
+> +      processors. This will usually be a single timer if the
+> +      processor sub-system is running in SMP mode, or one per
+> +      core in the processor sub-system. This can also be used
+> +      to reserve specific timers to be dedicated to the
+> +      remote processors.
+> +
+> +      This property is mandatory on remote processors requiring
+> +      external tick wakeup, and to support Power Management
+> +      features. The timers to be used should match with the
+> +      timers used in the firmware image.
+> +
+> +  ti,watchdog-timers:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      One or more phandles to OMAP DMTimer nodes, used to
+> +      serve as Watchdog timers for the processor cores. This
+> +      will usually be one per executing processor core, even
+> +      if the processor sub-system is running a SMP OS.
+> +
+> +      The timers to be used should match with the watchdog
+> +      timers used in the firmware image.
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      enum:
+> +        - ti,dra7-dsp
+> +then:
+> +  properties:
+> +    reg:
+> +      minItems: 3
+> +      maxItems: 3
+> +    ti,bootreg:
+> +      minItems: 1
+> +      maxItems: 1
+> +
+> +else:
+> +  if:
+> +    properties:
+> +      compatible:
+> +        enum:
+> +          - ti,omap4-ipu
+> +          - ti,omap5-ipu
+> +          - ti,dra7-ipu
+> +  then:
+> +    properties:
+> +      reg:
+> +        minItems: 1
+> +        maxItems: 1
+> +
+> +  else:
+> +    properties:
+> +      reg:
+> +        maxItems: 0
+> +      ti,bootreg:
+> +        minItems: 1
+> +        maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - iommus
+> +  - mboxes
+> +  - memory-region
+> +  - clocks
+> +  - resets
+> +  - firmware-name
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    //Example 1: OMAP4 DSP
+> +
+> +    /* DSP Reserved Memory node */
+> +    #include <dt-bindings/clock/omap4.h>
+> +    reserved-memory {
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +
+> +        dsp_memory_region: dsp-memory@98000000 {
+> +            compatible = "shared-dma-pool";
+> +            reg = <0x98000000 0x800000>;
+> +            reusable;
+> +        };
+> +    };
+> +
+> +    /* DSP node */
+> +    ocp {
+> +        dsp: dsp {
+> +            compatible = "ti,omap4-dsp";
+> +            ti,bootreg = <&scm_conf 0x304>;
+> +            iommus = <&mmu_dsp>;
+> +            mboxes = <&mailbox &mbox_dsp>;
+> +            memory-region = <&dsp_memory_region>;
+> +            ti,timers = <&timer5>;
+> +            ti,watchdog-timers = <&timer6>;
+> +            clocks = <&tesla_clkctrl OMAP4_DSP_CLKCTRL 0>;
+> +            resets = <&prm_tesla 0>, <&prm_tesla 1>;
+> +            firmware-name = "omap4-dsp-fw.xe64T";
+> +        };
+> +    };
+> +
+> +  - |+
+> +
+> +    //Example 2: OMAP5 IPU
+> +
+> +    /* IPU Reserved Memory node */
+> +    #include <dt-bindings/clock/omap5.h>
+> +    reserved-memory {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        ipu_memory_region: ipu-memory@95800000 {
+> +            compatible = "shared-dma-pool";
+> +            reg = <0 0x95800000 0 0x3800000>;
+> +            reusable;
+> +        };
+> +    };
+> +
+> +    /* IPU node */
+> +    ocp {
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +
+> +        ipu: ipu@55020000 {
+> +            compatible = "ti,omap5-ipu";
+> +            reg = <0x55020000 0x10000>;
+> +            reg-names = "l2ram";
+> +            iommus = <&mmu_ipu>;
+> +            mboxes = <&mailbox &mbox_ipu>;
+> +            memory-region = <&ipu_memory_region>;
+> +            ti,timers = <&timer3>, <&timer4>;
+> +            ti,watchdog-timers = <&timer9>, <&timer11>;
+> +            clocks = <&ipu_clkctrl OMAP5_MMU_IPU_CLKCTRL 0>;
+> +            resets = <&prm_core 2>;
+> +            firmware-name = "omap5-ipu-fw.xem";
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 199 ++++++++++++++++++++++++++++-
- 1 file changed, 198 insertions(+), 1 deletion(-)
+Minor typo here, compared to the actual name we use.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 164fc2a53ef11..51f451311f5fc 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -68,6 +68,9 @@
- #define AXI_HALTREQ_REG			0x0
- #define AXI_HALTACK_REG			0x4
- #define AXI_IDLE_REG			0x8
-+#define NAV_AXI_HALTREQ_BIT		BIT(0)
-+#define NAV_AXI_HALTACK_BIT		BIT(1)
-+#define NAV_AXI_IDLE_BIT		BIT(2)
- 
- #define HALT_ACK_TIMEOUT_MS		100
- 
-@@ -101,9 +104,11 @@
- #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
- 
- /* QDSP6v65 parameters */
-+#define QDSP6SS_CORE_CBCR		0x20
- #define QDSP6SS_SLEEP                   0x3C
- #define QDSP6SS_BOOT_CORE_START         0x400
- #define QDSP6SS_BOOT_CMD                0x404
-+#define QDSP6SS_BOOT_STATUS		0x408
- #define SLEEP_CHECK_MAX_LOOPS           200
- #define BOOT_FSM_TIMEOUT                10000
- 
-@@ -131,6 +136,7 @@ struct rproc_hexagon_res {
- 	int version;
- 	bool need_mem_protection;
- 	bool has_alt_reset;
-+	bool has_halt_nav;
- };
- 
- struct q6v5 {
-@@ -141,9 +147,14 @@ struct q6v5 {
- 	void __iomem *rmb_base;
- 
- 	struct regmap *halt_map;
-+	struct regmap *halt_nav_map;
-+	struct regmap *conn_map;
-+
- 	u32 halt_q6;
- 	u32 halt_modem;
- 	u32 halt_nc;
-+	u32 halt_nav;
-+	u32 conn_box;
- 
- 	struct reset_control *mss_restart;
- 	struct reset_control *pdc_reset;
-@@ -187,6 +198,7 @@ struct q6v5 {
- 	struct qcom_sysmon *sysmon;
- 	bool need_mem_protection;
- 	bool has_alt_reset;
-+	bool has_halt_nav;
- 	int mpss_perm;
- 	int mba_perm;
- 	const char *hexagon_mdt_image;
-@@ -198,6 +210,7 @@ enum {
- 	MSS_MSM8974,
- 	MSS_MSM8996,
- 	MSS_MSM8998,
-+	MSS_SC7180,
- 	MSS_SDM845,
- };
- 
-@@ -396,6 +409,18 @@ static int q6v5_reset_assert(struct q6v5 *qproc)
- 		reset_control_assert(qproc->pdc_reset);
- 		ret = reset_control_reset(qproc->mss_restart);
- 		reset_control_deassert(qproc->pdc_reset);
-+	} else if (qproc->has_halt_nav) {
-+		/* SWAR using CONN_BOX_SPARE_0 for pipeline glitch issue */
-+		reset_control_assert(qproc->pdc_reset);
-+		regmap_update_bits(qproc->conn_map, qproc->conn_box,
-+				   BIT(0), BIT(0));
-+		regmap_update_bits(qproc->halt_nav_map, qproc->halt_nav,
-+				   NAV_AXI_HALTREQ_BIT, 0);
-+		reset_control_assert(qproc->mss_restart);
-+		reset_control_deassert(qproc->pdc_reset);
-+		regmap_update_bits(qproc->conn_map, qproc->conn_box,
-+				   BIT(0), 0);
-+		ret = reset_control_deassert(qproc->mss_restart);
- 	} else {
- 		ret = reset_control_assert(qproc->mss_restart);
- 	}
-@@ -413,6 +438,8 @@ static int q6v5_reset_deassert(struct q6v5 *qproc)
- 		ret = reset_control_reset(qproc->mss_restart);
- 		writel(0, qproc->rmb_base + RMB_MBA_ALT_RESET);
- 		reset_control_deassert(qproc->pdc_reset);
-+	} else if (qproc->has_halt_nav) {
-+		ret = reset_control_reset(qproc->mss_restart);
- 	} else {
- 		ret = reset_control_deassert(qproc->mss_restart);
- 	}
-@@ -499,6 +526,54 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 			return ret;
- 		}
- 
-+		goto pbl_wait;
-+	} else if (qproc->version == MSS_SC7180) {
-+		val = readl(qproc->reg_base + QDSP6SS_SLEEP);
-+		val |= 0x1;
-+		writel(val, qproc->reg_base + QDSP6SS_SLEEP);
-+
-+		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_SLEEP,
-+					 val, !(val & BIT(31)), 1,
-+					 SLEEP_CHECK_MAX_LOOPS);
-+		if (ret) {
-+			dev_err(qproc->dev, "QDSP6SS Sleep clock timed out\n");
-+			return -ETIMEDOUT;
-+		}
-+
-+		/* Turn on the XO clock needed for PLL setup */
-+		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
-+		val |= 0x1;
-+		writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
-+
-+		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_XO_CBCR,
-+					 val, !(val & BIT(31)), 1,
-+					 SLEEP_CHECK_MAX_LOOPS);
-+		if (ret) {
-+			dev_err(qproc->dev, "QDSP6SS XO clock timed out\n");
-+			return -ETIMEDOUT;
-+		}
-+
-+		/* Configure Q6 core CBCR to auto-enable after reset sequence */
-+		val = readl(qproc->reg_base + QDSP6SS_CORE_CBCR);
-+		val |= 0x1;
-+		writel(val, qproc->reg_base + QDSP6SS_CORE_CBCR);
-+
-+		/* De-assert the Q6 stop core signal */
-+		writel(1, qproc->reg_base + QDSP6SS_BOOT_CORE_START);
-+
-+		/* Trigger the boot FSM to start the Q6 out-of-reset sequence */
-+		writel(1, qproc->reg_base + QDSP6SS_BOOT_CMD);
-+
-+		/* Poll the QDSP6SS_BOOT_STATUS for FSM completion */
-+		ret = readl_poll_timeout(qproc->reg_base + QDSP6SS_BOOT_STATUS,
-+					 val, (val & BIT(0)) != 0, 1,
-+					 SLEEP_CHECK_MAX_LOOPS);
-+		if (ret) {
-+			dev_err(qproc->dev, "Boot FSM failed to complete.\n");
-+			/* Reset the modem so that boot FSM is in reset state */
-+			q6v5_reset_deassert(qproc);
-+			return ret;
-+		}
- 		goto pbl_wait;
- 	} else if (qproc->version == MSS_MSM8996 ||
- 		   qproc->version == MSS_MSM8998) {
-@@ -667,6 +742,39 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
- 	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 0);
- }
- 
-+static void q6v5proc_halt_nav_axi_port(struct q6v5 *qproc,
-+				       struct regmap *halt_map,
-+				       u32 offset)
-+{
-+	unsigned long timeout;
-+	unsigned int val;
-+	int ret;
-+
-+	/* Check if we're already idle */
-+	ret = regmap_read(halt_map, offset, &val);
-+	if (!ret && (val & NAV_AXI_IDLE_BIT))
-+		return;
-+
-+	/* Assert halt request */
-+	regmap_update_bits(halt_map, offset, NAV_AXI_HALTREQ_BIT,
-+			   NAV_AXI_HALTREQ_BIT);
-+
-+	/* Wait for halt ack*/
-+	timeout = jiffies + msecs_to_jiffies(HALT_ACK_TIMEOUT_MS);
-+	for (;;) {
-+		ret = regmap_read(halt_map, offset, &val);
-+		if (ret || (val & NAV_AXI_HALTACK_BIT) ||
-+		    time_after(jiffies, timeout))
-+			break;
-+
-+		udelay(5);
-+	}
-+
-+	ret = regmap_read(halt_map, offset, &val);
-+	if (ret || !(val & NAV_AXI_IDLE_BIT))
-+		dev_err(qproc->dev, "port failed halt\n");
-+}
-+
- static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw)
- {
- 	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
-@@ -829,6 +937,9 @@ static int q6v5_mba_load(struct q6v5 *qproc)
- halt_axi_ports:
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+	if (qproc->has_halt_nav)
-+		q6v5proc_halt_nav_axi_port(qproc, qproc->halt_nav_map,
-+					   qproc->halt_nav);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
- 
- reclaim_mba:
-@@ -876,6 +987,9 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_q6);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_modem);
-+	if (qproc->has_halt_nav)
-+		q6v5proc_halt_nav_axi_port(qproc, qproc->halt_nav_map,
-+					   qproc->halt_nav);
- 	q6v5proc_halt_axi_port(qproc, qproc->halt_map, qproc->halt_nc);
- 	if (qproc->version == MSS_MSM8996) {
- 		/*
-@@ -1253,6 +1367,47 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
- 	qproc->halt_modem = args.args[1];
- 	qproc->halt_nc = args.args[2];
- 
-+	if (qproc->has_halt_nav) {
-+		struct platform_device *nav_pdev;
-+
-+		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-+						       "qcom,halt-nav-regs",
-+						       1, 0, &args);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to parse halt-nav-regs\n");
-+			return -EINVAL;
-+		}
-+
-+		nav_pdev = of_find_device_by_node(args.np);
-+		of_node_put(args.np);
-+		if (!nav_pdev) {
-+			dev_err(&pdev->dev, "failed to get mss clock device\n");
-+			return -EPROBE_DEFER;
-+		}
-+
-+		qproc->halt_nav_map = dev_get_regmap(&nav_pdev->dev, NULL);
-+		if (!qproc->halt_nav_map) {
-+			dev_err(&pdev->dev, "failed to get map from device\n");
-+			return -EINVAL;
-+		}
-+		qproc->halt_nav = args.args[0];
-+
-+		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-+						       "qcom,halt-nav-regs",
-+						       1, 1, &args);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to parse halt-nav-regs\n");
-+			return -EINVAL;
-+		}
-+
-+		qproc->conn_map = syscon_node_to_regmap(args.np);
-+		of_node_put(args.np);
-+		if (IS_ERR(qproc->conn_map))
-+			return PTR_ERR(qproc->conn_map);
-+
-+		qproc->conn_box = args.args[0];
-+	}
-+
- 	return 0;
- }
- 
-@@ -1327,7 +1482,7 @@ static int q6v5_init_reset(struct q6v5 *qproc)
- 		return PTR_ERR(qproc->mss_restart);
- 	}
- 
--	if (qproc->has_alt_reset) {
-+	if (qproc->has_alt_reset || qproc->has_halt_nav) {
- 		qproc->pdc_reset = devm_reset_control_get_exclusive(qproc->dev,
- 								    "pdc_reset");
- 		if (IS_ERR(qproc->pdc_reset)) {
-@@ -1426,6 +1581,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, qproc);
- 
-+	qproc->has_halt_nav = desc->has_halt_nav;
- 	ret = q6v5_init_mem(qproc, pdev);
- 	if (ret)
- 		goto free_rproc;
-@@ -1549,6 +1705,41 @@ static int q6v5_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct rproc_hexagon_res sc7180_mss = {
-+	.hexagon_mba_image = "mba.mbn",
-+	.proxy_clk_names = (char*[]){
-+		"xo",
-+		NULL
-+	},
-+	.reset_clk_names = (char*[]){
-+		"iface",
-+		"bus",
-+		"snoc_axi",
-+		NULL
-+	},
-+	.active_clk_names = (char*[]){
-+		"mnoc_axi",
-+		"nav",
-+		"mss_nav",
-+		"mss_crypto",
-+		NULL
-+	},
-+	.active_pd_names = (char*[]){
-+		"load_state",
-+		NULL
-+	},
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mx",
-+		"mss",
-+		NULL
-+	},
-+	.need_mem_protection = true,
-+	.has_alt_reset = false,
-+	.has_halt_nav = true,
-+	.version = MSS_SC7180,
-+};
-+
- static const struct rproc_hexagon_res sdm845_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_clk_names = (char*[]){
-@@ -1580,6 +1771,7 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 	},
- 	.need_mem_protection = true,
- 	.has_alt_reset = true,
-+	.has_halt_nav = false,
- 	.version = MSS_SDM845,
- };
- 
-@@ -1606,6 +1798,7 @@ static const struct rproc_hexagon_res msm8998_mss = {
- 	},
- 	.need_mem_protection = true,
- 	.has_alt_reset = false,
-+	.has_halt_nav = false,
- 	.version = MSS_MSM8998,
- };
- 
-@@ -1635,6 +1828,7 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 	},
- 	.need_mem_protection = true,
- 	.has_alt_reset = false,
-+	.has_halt_nav = false,
- 	.version = MSS_MSM8996,
- };
- 
-@@ -1667,6 +1861,7 @@ static const struct rproc_hexagon_res msm8916_mss = {
- 	},
- 	.need_mem_protection = false,
- 	.has_alt_reset = false,
-+	.has_halt_nav = false,
- 	.version = MSS_MSM8916,
- };
- 
-@@ -1707,6 +1902,7 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 	},
- 	.need_mem_protection = false,
- 	.has_alt_reset = false,
-+	.has_halt_nav = false,
- 	.version = MSS_MSM8974,
- };
- 
-@@ -1716,6 +1912,7 @@ static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
- 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
- 	{ .compatible = "qcom,msm8998-mss-pil", .data = &msm8998_mss},
-+	{ .compatible = "qcom,sc7180-mss-pil", .data = &sc7180_mss},
- 	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
- 	{ },
- };
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+regards
+Suman
+
+> +        };
+> +    };
+> +
+> +  - |+
+> +
+> +    //Example 3: DRA7xx/AM57xx DSP
+> +
+> +    /* DSP1 Reserved Memory node */
+> +    #include <dt-bindings/clock/dra7.h>
+> +    reserved-memory {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        dsp1_memory_region: dsp1-memory@99000000 {
+> +            compatible = "shared-dma-pool";
+> +            reg = <0x0 0x99000000 0x0 0x4000000>;
+> +            reusable;
+> +        };
+> +    };
+> +
+> +    /* DSP1 node */
+> +    ocp {
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +
+> +        dsp1: dsp@40800000 {
+> +            compatible = "ti,dra7-dsp";
+> +            reg = <0x40800000 0x48000>,
+> +                  <0x40e00000 0x8000>,
+> +                  <0x40f00000 0x8000>;
+> +            reg-names = "l2ram", "l1pram", "l1dram";
+> +            ti,bootreg = <&scm_conf 0x55c>;
+> +            iommus = <&mmu0_dsp1>, <&mmu1_dsp1>;
+> +            mboxes = <&mailbox5 &mbox_dsp1_ipc3x>;
+> +            memory-region = <&dsp1_memory_region>;
+> +            ti,timers = <&timer5>;
+> +            ti,watchdog-timers = <&timer10>;
+> +            resets = <&prm_dsp1 0>;
+> +            clocks = <&dsp1_clkctrl DRA7_DSP1_MMU0_DSP1_CLKCTRL 0>;
+> +            firmware-name = "dra7-dsp1-fw.xe66";
+> +        };
+> +    };
+> 
