@@ -1,102 +1,101 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
-Date: Fri, 20 Dec 2019 22:50:18 +0530
-Message-Id: <20191220172019.11774-3-sibis@codeaurora.org>
-In-Reply-To: <20191220172019.11774-1-sibis@codeaurora.org>
-References: <20191220172019.11774-1-sibis@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 6/8] remoteproc: Introduce "panic" callback in ops
+Date: Thu, 26 Dec 2019 21:32:13 -0800
+Message-Id: <20191227053215.423811-7-bjorn.andersson@linaro.org>
+In-Reply-To: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
-Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add optional "qcom,protection-domain" bindings for APR services. This
-helps to capture the dependencies between APR services and the PD on
-which each apr service run.
+Introduce a "panic" function in the remoteproc ops table, to allow
+remoteproc instances to perform operations needed in order to aid in
+post mortem system debugging, such as flushing caches etc, when the
+kernel panics.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
- 1 file changed, 59 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-index db501269f47b8..f87c0b2a48de4 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-@@ -45,6 +45,12 @@ by the individual bindings for the specific service
- 			12 - Ultrasound stream manager.
- 			13 - Listen stream manager.
+Changes since v1:
+- None
+
+ drivers/remoteproc/remoteproc_core.c | 17 +++++++++++++++++
+ include/linux/remoteproc.h           |  4 ++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 307df98347ba..779f19d6d8e7 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1832,6 +1832,17 @@ void rproc_shutdown(struct rproc *rproc)
+ }
+ EXPORT_SYMBOL(rproc_shutdown);
  
-+- qcom,protection-domain
-+	Usage: optional
-+	Value type: <stringlist>
-+	Definition: Must list the protection domain service name and path
-+		    that the particular apr service has a dependency on.
++static int rproc_panic_handler(struct notifier_block *nb, unsigned long event,
++			       void *ptr)
++{
++	struct rproc *rproc = container_of(nb, struct rproc, panic_nb);
 +
- = EXAMPLE
- The following example represents a QDSP based sound card on a MSM8996 device
- which uses apr as communication between Apps and QDSP.
-@@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
- 			...
- 		};
- 	};
++	if (rproc->state == RPROC_RUNNING)
++		rproc->ops->panic(rproc);
 +
-+= EXAMPLE 2
-+The following example represents a QDSP based sound card on SDM845 device.
-+Here the apr services are dependent on "avs/audio" service running on AUDIO
-+Protection Domain hosted on ADSP remote processor.
++	return NOTIFY_DONE;
++}
 +
-+	apr {
-+		compatible = "qcom,apr-v2";
-+		qcom,glink-channels = "apr_audio_svc";
-+		qcom,apr-domain = <APR_DOMAIN_ADSP>;
+ /**
+  * rproc_get_by_phandle() - find a remote processor by phandle
+  * @phandle: phandle to the rproc
+@@ -2057,6 +2068,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+ 	}
+ 
++	/* Register panic notifier for remoteprocs with "panic" callback */
++	if (rproc->ops->panic) {
++		rproc->panic_nb.notifier_call = rproc_panic_handler;
++		atomic_notifier_chain_register(&panic_notifier_list, &rproc->panic_nb);
++	}
 +
-+		q6core {
-+			compatible = "qcom,q6core";
-+			reg = <APR_SVC_ADSP_CORE>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+		};
-+
-+		q6afe: q6afe {
-+			compatible = "qcom,q6afe";
-+			reg = <APR_SVC_AFE>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			q6afedai: dais {
-+				compatible = "qcom,q6afe-dais";
-+				#sound-dai-cells = <1>;
-+
-+				qi2s@22 {
-+					reg = <22>;
-+					qcom,sd-lines = <3>;
-+				};
-+			};
-+		};
-+
-+		q6asm: q6asm {
-+			compatible = "qcom,q6asm";
-+			reg = <APR_SVC_ASM>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			q6asmdai: dais {
-+				compatible = "qcom,q6asm-dais";
-+				#sound-dai-cells = <1>;
-+				iommus = <&apps_smmu 0x1821 0x0>;
-+			};
-+		};
-+
-+		q6adm: q6adm {
-+			compatible = "qcom,q6adm";
-+			reg = <APR_SVC_ADM>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			q6routing: routing {
-+				compatible = "qcom,q6adm-routing";
-+				#sound-dai-cells = <0>;
-+			};
-+		};
-+	};
+ 	mutex_init(&rproc->lock);
+ 
+ 	idr_init(&rproc->notifyids);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad66683ad0..7836c528d309 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -369,6 +369,7 @@ enum rsc_handling_status {
+  *			expects to find it
+  * @sanity_check:	sanity check the fw image
+  * @get_boot_addr:	get boot address to entry point specified in firmware
++ * @panic:	optional callback to react to system panic
+  */
+ struct rproc_ops {
+ 	int (*start)(struct rproc *rproc);
+@@ -383,6 +384,7 @@ struct rproc_ops {
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
++	void (*panic)(struct rproc *rproc);
+ };
+ 
+ /**
+@@ -481,6 +483,7 @@ struct rproc_dump_segment {
+  * @auto_boot: flag to indicate if remote processor should be auto-started
+  * @dump_segments: list of segments in the firmware
+  * @nb_vdev: number of vdev currently handled by rproc
++ * @panic_nb: notifier_block for remoteproc's panic handler
+  */
+ struct rproc {
+ 	struct list_head node;
+@@ -514,6 +517,7 @@ struct rproc {
+ 	bool auto_boot;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
++	struct notifier_block panic_nb;
+ };
+ 
+ /**
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.24.0
