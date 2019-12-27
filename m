@@ -1,41 +1,84 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:19917 "EHLO
-        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727345AbfLRQHQ (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:07:16 -0500
-From: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Subject: [PATCH V4 04/10] remoteproc: qcom: Add ssr subdevice identifier
-Date: Wed, 18 Dec 2019 21:35:40 +0530
-Message-Id: <1576685146-17135-5-git-send-email-gokulsri@codeaurora.org>
-In-Reply-To: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
-References: <1576685146-17135-1-git-send-email-gokulsri@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org, sricharan@codeaurora.org, nprakash@codeaurora.org
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 7/8] remoteproc: qcom: q6v5: Add common panic handler
+Date: Thu, 26 Dec 2019 21:32:14 -0800
+Message-Id: <20191227053215.423811-8-bjorn.andersson@linaro.org>
+In-Reply-To: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add name for ssr subdevice on IPQ8074 SoC.
+Add a common panic handler that invokes a stop request and sleep enough
+to let the remoteproc flush it's caches etc in order to aid post mortem
+debugging.
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-changes since v1: none
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index da0ce97..70f7f41 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -1166,6 +1166,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	.crash_reason_smem = WCSS_CRASH_REASON,
- 	.aon_reset_required = true,
- 	.wcss_q6_reset_required = true,
-+	.ssr_name = "q6wcss",
- 	.ops = &q6v5_wcss_ipq8074_ops,
- 	.requires_force_stop = true,
- 	.need_mem_protection = true,
+Changes since v1:
+- None
+
+ drivers/remoteproc/qcom_q6v5.c | 19 +++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5.h |  1 +
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index cb0f4a0be032..17167c980e02 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -6,6 +6,7 @@
+  * Copyright (C) 2014 Sony Mobile Communications AB
+  * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+  */
++#include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
+@@ -15,6 +16,8 @@
+ #include <linux/remoteproc.h>
+ #include "qcom_q6v5.h"
+ 
++#define Q6V5_PANIC_DELAY_MS	200
++
+ /**
+  * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
+  * @q6v5:	reference to qcom_q6v5 context to be reinitialized
+@@ -162,6 +165,22 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
+ }
+ EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
+ 
++/**
++ * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
++ * @q6v5:	reference to qcom_q6v5 context
++ *
++ * Set the stop bit and sleep in order to allow the remote processor to flush
++ * its caches etc for post mortem debugging.
++ */
++void qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
++{
++	qcom_smem_state_update_bits(q6v5->state,
++				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
++
++	mdelay(Q6V5_PANIC_DELAY_MS);
++}
++EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
++
+ /**
+  * qcom_q6v5_init() - initializer of the q6v5 common struct
+  * @q6v5:	handle to be initialized
+diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+index 7ac92c1e0f49..c37e6fd063e4 100644
+--- a/drivers/remoteproc/qcom_q6v5.h
++++ b/drivers/remoteproc/qcom_q6v5.h
+@@ -42,5 +42,6 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
+ int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
++void qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+ 
+ #endif
 -- 
-1.9.1
+2.24.0
