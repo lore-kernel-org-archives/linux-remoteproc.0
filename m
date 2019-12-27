@@ -1,108 +1,79 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH 02/17] remoteproc/omap: Switch to SPDX license identifiers
-References: <20191028124238.19224-1-t-kristo@ti.com>
- <20191028124238.19224-3-t-kristo@ti.com> <20191109010348.GB5662@tuxbook-pro>
- <bed42f27-3a67-bfa7-fdcc-bf333233828f@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <bd4fc14d-ce63-93d5-6f52-7a1def7c57c3@ti.com>
-Date: Thu, 19 Dec 2019 21:30:31 -0600
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 8/8] remoteproc: qcom: Introduce panic handler for PAS and ADSP
+Date: Thu, 26 Dec 2019 21:32:15 -0800
+Message-Id: <20191227053215.423811-9-bjorn.andersson@linaro.org>
+In-Reply-To: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <bed42f27-3a67-bfa7-fdcc-bf333233828f@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To: Tero Kristo <t-kristo@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 11/12/19 2:16 AM, Tero Kristo wrote:
-> On 09/11/2019 03:03, Bjorn Andersson wrote:
->> On Mon 28 Oct 05:42 PDT 2019, Tero Kristo wrote:
->>
->>> From: Suman Anna <s-anna@ti.com>
->>>
->>> Use the appropriate SPDX license identifiers in various OMAP remoteproc
->>> source files and drop the previous boilerplate license text.
->>>
->>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>> ---
->>>   drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
->>>   1 file changed, 1 insertion(+), 26 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/omap_remoteproc.h
->>> b/drivers/remoteproc/omap_remoteproc.h
->>> index f6d2036d383d..1e6fef753c4f 100644
->>> --- a/drivers/remoteproc/omap_remoteproc.h
->>> +++ b/drivers/remoteproc/omap_remoteproc.h
->>> @@ -1,35 +1,10 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
->>
->> Please confirm that you actually intend to change the license from BSD
->> to dual here.
-> 
-> That is a very good point. Let me try to get clarification to this
-> internally, this series is anyways too late for 5.5 so there is no rush
-> to get this done anytime soon. Worst case I just drop this patch and
-> keep the existing license in place.
+Make the PAS and ADSP/CDSP remoteproc drivers implement the panic
+handler that will invoke a stop to prepare the remoteprocs for post
+mortem debugging.
 
-He he, even I can't seem to recall the reason why I used dual here.
-Let's stick with BSD-3-Clause which is the original license text below.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-regards
-Suman
+Changes since v1:
+- None
 
-> 
-> -Tero
-> 
->>
->> Regards,
->> Bjorn
->>
->>>   /*
->>>    * Remote processor messaging
->>>    *
->>>    * Copyright (C) 2011 Texas Instruments, Inc.
->>>    * Copyright (C) 2011 Google, Inc.
->>>    * All rights reserved.
->>> - *
->>> - * Redistribution and use in source and binary forms, with or without
->>> - * modification, are permitted provided that the following conditions
->>> - * are met:
->>> - *
->>> - * * Redistributions of source code must retain the above copyright
->>> - *   notice, this list of conditions and the following disclaimer.
->>> - * * Redistributions in binary form must reproduce the above copyright
->>> - *   notice, this list of conditions and the following disclaimer in
->>> - *   the documentation and/or other materials provided with the
->>> - *   distribution.
->>> - * * Neither the name Texas Instruments nor the names of its
->>> - *   contributors may be used to endorse or promote products derived
->>> - *   from this software without specific prior written permission.
->>> - *
->>> - * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
->>> - * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
->>> - * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
->>> FOR
->>> - * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
->>> - * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
->>> INCIDENTAL,
->>> - * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
->>> - * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
->>> USE,
->>> - * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
->>> ANY
->>> - * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
->>> - * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
->>> USE
->>> - * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
->>>    */
->>>     #ifndef _OMAP_RPMSG_H
->>> -- 
->>> 2.17.1
->>>
->>> -- 
-> 
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+ drivers/remoteproc/qcom_q6v5_adsp.c | 8 ++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c  | 8 ++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 1a942c92d974..4189d22531f4 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -291,12 +291,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	return adsp->mem_region + offset;
+ }
+ 
++static void adsp_panic(struct rproc *rproc)
++{
++	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++
++	qcom_q6v5_panic(&adsp->q6v5);
++}
++
+ static const struct rproc_ops adsp_ops = {
+ 	.start = adsp_start,
+ 	.stop = adsp_stop,
+ 	.da_to_va = adsp_da_to_va,
+ 	.parse_fw = qcom_register_dump_segments,
+ 	.load = adsp_load,
++	.panic = adsp_panic,
+ };
+ 
+ static int adsp_init_clock(struct qcom_adsp *adsp, const char **clk_ids)
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 4dcdf1301e50..547d012cf2db 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -242,12 +242,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
+ 	return adsp->mem_region + offset;
+ }
+ 
++static void adsp_panic(struct rproc *rproc)
++{
++	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++
++	qcom_q6v5_panic(&adsp->q6v5);
++}
++
+ static const struct rproc_ops adsp_ops = {
+ 	.start = adsp_start,
+ 	.stop = adsp_stop,
+ 	.da_to_va = adsp_da_to_va,
+ 	.parse_fw = qcom_register_dump_segments,
+ 	.load = adsp_load,
++	.panic = adsp_panic,
+ };
+ 
+ static int adsp_init_clock(struct qcom_adsp *adsp)
+-- 
+2.24.0
