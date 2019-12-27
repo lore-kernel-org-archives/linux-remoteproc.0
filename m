@@ -1,59 +1,252 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 0/3] Introduce Protection Domain Restart (PDR) Helpers
-Date: Fri, 20 Dec 2019 22:50:16 +0530
-Message-Id: <20191220172019.11774-1-sibis@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v2 3/8] remoteproc: qcom: Update IMEM PIL info on load
+Date: Thu, 26 Dec 2019 21:32:10 -0800
+Message-Id: <20191227053215.423811-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
-Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Qualcomm SoCs (starting with MSM8998) allow for multiple protection
-domains (PDs) to run on the same Q6 sub-system. This allows for
-services like AVS AUDIO to have their own separate address space and
-crash/recover without disrupting the other PDs running on the same Q6
-ADSP. This patch series introduces pdr helper library and adds PD
-tracking functionality for "avs/audio" allowing apr services to register
-themselves asynchronously once the dependent PDs are up.
+Update the PIL info region structure in IMEM with information about
+where the firmware for various remoteprocs are loaded.
 
-V2:
- * fixup pd_status callback to return void.
- * return 0 from pdr_get_domain_list on success.
- * introduce status_lock to linearize the pd_status reported back
-   to the clients.
- * use the correct service name length across various string operations
-   performed.
- * service locator will now schedule the pending lookups registered
-   when it comes up.
- * other minor cleanups that Bjorn suggested.
- * use pr_warn to indicate that the wait for service locator timed
-   out.
- * add Bjorn/Srini's "Reviewed-by" for the dt-bindings.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-To Do:
- * Add support for pd tracking in fastrpc driver.
+Changes since v1:
+- Squashed patches for the individual drivers into one
+- Probe defer on qcom_pil_info_available()
 
-Sibi Sankar (3):
-  soc: qcom: Introduce Protection Domain Restart helpers
-  dt-bindings: soc: qcom: apr: Add protection domain bindings
-  soc: qcom: apr: Add avs/audio tracking functionality
+ drivers/remoteproc/Kconfig          |  3 +++
+ drivers/remoteproc/qcom_q6v5_adsp.c | 19 ++++++++++++++++---
+ drivers/remoteproc/qcom_q6v5_mss.c  |  6 ++++++
+ drivers/remoteproc/qcom_q6v5_pas.c  | 18 +++++++++++++++---
+ drivers/remoteproc/qcom_wcnss.c     | 17 ++++++++++++++---
+ 5 files changed, 54 insertions(+), 9 deletions(-)
 
- .../devicetree/bindings/soc/qcom/qcom,apr.txt |  59 ++
- drivers/soc/qcom/Kconfig                      |   6 +
- drivers/soc/qcom/Makefile                     |   1 +
- drivers/soc/qcom/apr.c                        | 100 ++-
- drivers/soc/qcom/pdr_interface.c              | 691 ++++++++++++++++++
- drivers/soc/qcom/pdr_internal.h               | 375 ++++++++++
- include/linux/soc/qcom/apr.h                  |   1 +
- include/linux/soc/qcom/pdr.h                  | 105 +++
- include/linux/soc/qcom/qmi.h                  |   1 +
- 9 files changed, 1328 insertions(+), 11 deletions(-)
- create mode 100644 drivers/soc/qcom/pdr_interface.c
- create mode 100644 drivers/soc/qcom/pdr_internal.h
- create mode 100644 include/linux/soc/qcom/pdr.h
-
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 0798602e355a..84922bb922e0 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -135,6 +135,7 @@ config QCOM_Q6V5_PAS
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	select MFD_SYSCON
++	select QCOM_PIL_INFO
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_Q6V5_COMMON
+ 	select QCOM_RPROC_COMMON
+@@ -152,6 +153,7 @@ config QCOM_Q6V5_WCSS
+ 	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	select MFD_SYSCON
++	select QCOM_PIL_INFO
+ 	select QCOM_MDT_LOADER
+ 	select QCOM_Q6V5_COMMON
+ 	select QCOM_RPROC_COMMON
+@@ -183,6 +185,7 @@ config QCOM_WCNSS_PIL
+ 	depends on QCOM_SMEM
+ 	depends on QCOM_SYSMON || QCOM_SYSMON=n
+ 	select QCOM_MDT_LOADER
++	select QCOM_PIL_INFO
+ 	select QCOM_RPROC_COMMON
+ 	select QCOM_SCM
+ 	help
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index e953886b2eb7..1a942c92d974 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -26,6 +26,7 @@
+ #include <linux/soc/qcom/smem_state.h>
+ 
+ #include "qcom_common.h"
++#include "qcom_pil_info.h"
+ #include "qcom_q6v5.h"
+ #include "remoteproc_internal.h"
+ 
+@@ -82,6 +83,7 @@ struct qcom_adsp {
+ 	unsigned int halt_lpass;
+ 
+ 	int crash_reason_smem;
++	const char *info_name;
+ 
+ 	struct completion start_done;
+ 	struct completion stop_done;
+@@ -164,10 +166,17 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	int ret;
++
++	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
++				    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
++				    &adsp->mem_reloc);
++	if (ret)
++		return ret;
+ 
+-	return qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
+-			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+-			     &adsp->mem_reloc);
++	qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, adsp->mem_size);
++
++	return 0;
+ }
+ 
+ static int adsp_start(struct rproc *rproc)
+@@ -413,6 +422,9 @@ static int adsp_probe(struct platform_device *pdev)
+ 	struct rproc *rproc;
+ 	int ret;
+ 
++	if (!qcom_pil_info_available())
++		return -EPROBE_DEFER;
++
+ 	desc = of_device_get_match_data(&pdev->dev);
+ 	if (!desc)
+ 		return -EINVAL;
+@@ -427,6 +439,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp = (struct qcom_adsp *)rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
++	adsp->info_name = desc->sysmon_name;
+ 	platform_set_drvdata(pdev, adsp);
+ 
+ 	ret = adsp_alloc_memory_region(adsp);
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 471128a2e723..6360e69b54e4 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -28,6 +28,7 @@
+ 
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
++#include "qcom_pil_info.h"
+ #include "qcom_q6v5.h"
+ 
+ #include <linux/qcom_scm.h>
+@@ -1052,6 +1053,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	else if (ret < 0)
+ 		dev_err(qproc->dev, "MPSS authentication failed: %d\n", ret);
+ 
++	qcom_pil_info_store("modem", mpss_reloc, qproc->mpss_size);
++
+ release_firmware:
+ 	release_firmware(fw);
+ out:
+@@ -1400,6 +1403,9 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (desc->need_mem_protection && !qcom_scm_is_available())
+ 		return -EPROBE_DEFER;
+ 
++	if (!qcom_pil_info_available())
++		return -EPROBE_DEFER;
++
+ 	mba_image = desc->hexagon_mba_image;
+ 	ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
+ 					    0, &mba_image);
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index b890e6e305f3..4dcdf1301e50 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -25,6 +25,7 @@
+ #include <linux/soc/qcom/smem_state.h>
+ 
+ #include "qcom_common.h"
++#include "qcom_pil_info.h"
+ #include "qcom_q6v5.h"
+ #include "remoteproc_internal.h"
+ 
+@@ -64,6 +65,7 @@ struct qcom_adsp {
+ 	int pas_id;
+ 	int crash_reason_smem;
+ 	bool has_aggre2_clk;
++	const char *info_name;
+ 
+ 	struct completion start_done;
+ 	struct completion stop_done;
+@@ -117,11 +119,17 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	int ret;
++
++	ret = qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
++			    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
++			    &adsp->mem_reloc);
++	if (ret)
++		return ret;
+ 
+-	return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+-			     adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+-			     &adsp->mem_reloc);
++	qcom_pil_info_store(adsp->info_name, adsp->mem_reloc, adsp->mem_size);
+ 
++	return 0;
+ }
+ 
+ static int adsp_start(struct rproc *rproc)
+@@ -376,6 +384,9 @@ static int adsp_probe(struct platform_device *pdev)
+ 	if (!qcom_scm_is_available())
+ 		return -EPROBE_DEFER;
+ 
++	if (!qcom_pil_info_available())
++		return -EPROBE_DEFER;
++
+ 	fw_name = desc->firmware_name;
+ 	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
+ 				      &fw_name);
+@@ -396,6 +407,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->rproc = rproc;
+ 	adsp->pas_id = desc->pas_id;
+ 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
++	adsp->info_name = desc->sysmon_name;
+ 	platform_set_drvdata(pdev, adsp);
+ 
+ 	ret = adsp_alloc_memory_region(adsp);
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index dc135754bb9c..2c1cefeacf97 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -27,6 +27,7 @@
+ 
+ #include "qcom_common.h"
+ #include "remoteproc_internal.h"
++#include "qcom_pil_info.h"
+ #include "qcom_wcnss.h"
+ 
+ #define WCNSS_CRASH_REASON_SMEM		422
+@@ -145,10 +146,17 @@ void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	int ret;
++
++	ret = qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
++			    wcnss->mem_region, wcnss->mem_phys,
++			    wcnss->mem_size, &wcnss->mem_reloc);
++	if (ret)
++		return ret;
+ 
+-	return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+-			     wcnss->mem_region, wcnss->mem_phys,
+-			     wcnss->mem_size, &wcnss->mem_reloc);
++	qcom_pil_info_store("wcnss", wcnss->mem_reloc, wcnss->mem_size);
++
++	return 0;
+ }
+ 
+ static void wcnss_indicate_nv_download(struct qcom_wcnss *wcnss)
+@@ -469,6 +477,9 @@ static int wcnss_probe(struct platform_device *pdev)
+ 	if (!qcom_scm_is_available())
+ 		return -EPROBE_DEFER;
+ 
++	if (!qcom_pil_info_available())
++		return -EPROBE_DEFER;
++
+ 	if (!qcom_scm_pas_supported(WCNSS_PAS_ID)) {
+ 		dev_err(&pdev->dev, "PAS is not available for WCNSS\n");
+ 		return -ENXIO;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.24.0
