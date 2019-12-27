@@ -1,200 +1,69 @@
-Date: Sat, 28 Dec 2019 21:30:40 -0800
+Return-Path: <bjorn.andersson@linaro.org>
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 1/1] remoteproc: add support for co-processor loaded
- and booted before kernel
-Message-ID: <20191229053037.GU3108315@builder>
-References: <1574940831-7433-1-git-send-email-loic.pallardy@st.com>
+Subject: [PATCH v2 1/8] dt-bindings: remoteproc: Add Qualcomm PIL info binding
+Date: Thu, 26 Dec 2019 21:32:08 -0800
+Message-Id: <20191227053215.423811-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574940831-7433-1-git-send-email-loic.pallardy@st.com>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com
+Content-Transfer-Encoding: 8bit
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 28 Nov 03:33 PST 2019, Loic Pallardy wrote:
+Add a devicetree binding for the Qualcomm periperal image loader
+relocation info region found in the IMEM.
 
-> Remote processor could boot independently or be loaded/started before
-> Linux kernel by bootloader or any firmware.
-> This patch introduces a new property in rproc core, named skip_fw_load,
-> to be able to allocate resources and sub-devices like vdev and to
-> synchronize with current state without loading firmware from file system.
-> It is platform driver responsibility to implement the right firmware
-> load ops according to HW specificities.
-> 
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-I was going to apply the patch, as I like what it actually does. But I'm
-concerned about how you're going to use it (which you fail to show in
-this single patch). Just two things below.
+Changes since v1:
+- New patch
 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> ---
-> Change from v3:
-> - add comment about firmware NULL pointer
-> - add Mathieu Poirier Ack
-> Change from v2:
-> - rename property into skip_fw_load
-> - update rproc_boot and rproc_fw_boot description
-> - update commit message
-> Change from v1:
-> - Keep bool in struct rproc
-> ---
->  drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++--------
->  include/linux/remoteproc.h           |  2 ++
->  2 files changed, 55 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 307df98347ba..367a7929b7a0 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1358,8 +1358,19 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> -/*
-> - * take a firmware and boot a remote processor with it.
-> +/**
-> + * rproc_fw_boot() - boot specified remote processor according to specified
-> + * firmware
-> + * @rproc: handle of a remote processor
-> + * @fw: pointer on firmware to handle
-> + *
-> + * Handle resources defined in resource table, load firmware and
-> + * start remote processor.
-> + *
-> + * If firmware pointer fw is NULL, firmware is not handled by remoteproc
-> + * core, but under the responsibility of platform driver.
-> + *
-> + * Returns 0 on success, and an appropriate error value otherwise.
->   */
->  static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  {
-> @@ -1371,7 +1382,11 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	if (ret)
->  		return ret;
->  
-> -	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-> +	if (fw)
-> +		dev_info(dev, "Booting fw image %s, size %zd\n", name,
-> +			 fw->size);
-> +	else
-> +		dev_info(dev, "Synchronizing with preloaded co-processor\n");
+ .../bindings/remoteproc/qcom,pil-info.yaml    | 35 +++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
 
-This log line implies that ops->start() doesn't actually start the
-remoteproc, but it sounds like a remote proc with skip_fw_load actually
-would boot the remote processor, but with some pre-existing firmware.
-
-As such it makes more sense, in this patch, to print "Booting\n" here.
-
-
-But I presume you have a platform driver with a nop start()
-implementation and no ability to reload the firmware on a crash?
-
->  
->  	/*
->  	 * if enabling an IOMMU isn't relevant for this rproc, this is
-> @@ -1718,16 +1733,22 @@ static void rproc_crash_handler_work(struct work_struct *work)
->   * rproc_boot() - boot a remote processor
->   * @rproc: handle of a remote processor
->   *
-> - * Boot a remote processor (i.e. load its firmware, power it on, ...).
-> + * Boot a remote processor (i.e. load its firmware, power it on, ...) from
-> + * different contexts:
-> + * - power off
-> + * - preloaded firmware
-> + * - started before kernel execution
-> + * The different operations are selected thanks to properties defined by
-> + * platform driver.
->   *
-> - * If the remote processor is already powered on, this function immediately
-> - * returns (successfully).
-> + * If the remote processor is already powered on at rproc level, this function
-> + * immediately returns (successfully).
->   *
->   * Returns 0 on success, and an appropriate error value otherwise.
->   */
->  int rproc_boot(struct rproc *rproc)
->  {
-> -	const struct firmware *firmware_p;
-> +	const struct firmware *firmware_p = NULL;
->  	struct device *dev;
->  	int ret;
->  
-> @@ -1758,11 +1779,20 @@ int rproc_boot(struct rproc *rproc)
->  
->  	dev_info(dev, "powering up %s\n", rproc->name);
->  
-> -	/* load firmware */
-> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> -	if (ret < 0) {
-> -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> -		goto downref_rproc;
-> +	if (!rproc->skip_fw_load) {
-> +		/* load firmware */
-> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> +		if (ret < 0) {
-> +			dev_err(dev, "request_firmware failed: %d\n", ret);
-> +			goto downref_rproc;
-> +		}
-> +	} else {
-> +		/*
-> +		 * Set firmware name pointer to null as remoteproc core is not
-> +		 * in charge of firmware loading
-> +		 */
-> +		kfree(rproc->firmware);
-> +		rproc->firmware = NULL;
-
-Why do this on every boot? Why don't you change rproc_alloc() to never
-populate rproc->firmware?
-
-Regards,
-Bjorn
-
->  	}
->  
->  	ret = rproc_fw_boot(rproc, firmware_p);
-> @@ -1916,8 +1946,17 @@ int rproc_add(struct rproc *rproc)
->  	/* create debugfs entries */
->  	rproc_create_debug_dir(rproc);
->  
-> -	/* if rproc is marked always-on, request it to boot */
-> -	if (rproc->auto_boot) {
-> +	if (rproc->skip_fw_load) {
-> +		/*
-> +		 * If rproc is marked already booted, no need to wait
-> +		 * for firmware.
-> +		 * Just handle associated resources and start sub devices
-> +		 */
-> +		ret = rproc_boot(rproc);
-> +		if (ret < 0)
-> +			return ret;
-> +	} else if (rproc->auto_boot) {
-> +		/* if rproc is marked always-on, request it to boot */
->  		ret = rproc_trigger_auto_boot(rproc);
->  		if (ret < 0)
->  			return ret;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 16ad66683ad0..4fd5bedab4fa 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -479,6 +479,7 @@ struct rproc_dump_segment {
->   * @table_sz: size of @cached_table
->   * @has_iommu: flag to indicate if remote processor is behind an MMU
->   * @auto_boot: flag to indicate if remote processor should be auto-started
-> + * @skip_fw_load: remote processor has been preloaded before start sequence
->   * @dump_segments: list of segments in the firmware
->   * @nb_vdev: number of vdev currently handled by rproc
->   */
-> @@ -512,6 +513,7 @@ struct rproc {
->  	size_t table_sz;
->  	bool has_iommu;
->  	bool auto_boot;
-> +	bool skip_fw_load;
->  	struct list_head dump_segments;
->  	int nb_vdev;
->  };
-> -- 
-> 2.7.4
-> 
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+new file mode 100644
+index 000000000000..715945c683ed
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+@@ -0,0 +1,35 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/remoteproc/qcom,pil-info.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Qualcomm peripheral image loader relocation info binding
++
++description:
++  This document defines the binding for describing the Qualcomm peripheral
++  image loader relocation memory region, in IMEM, which is used for post mortem
++  debugging of remoteprocs.
++
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
++
++properties:
++  compatible:
++    const: qcom,pil-reloc-info
++
++  offset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Offset in the register map for the memory region
++
++examples:
++  - |
++    imem@146bf000 {
++      compatible = "syscon", "simple-mfd";
++      reg = <0 0x146bf000 0 0x1000>;
++
++      pil-reloc {
++        compatible ="qcom,pil-reloc-info";
++        offset = <0x94c>;
++      };
++    };
+-- 
+2.24.0
