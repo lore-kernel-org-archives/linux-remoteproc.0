@@ -1,49 +1,42 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v2 4/8] arm64: dts: qcom: qcs404: Add IMEM and PIL info region
-Date: Thu, 26 Dec 2019 21:32:11 -0800
-Message-Id: <20191227053215.423811-5-bjorn.andersson@linaro.org>
-In-Reply-To: <20191227053215.423811-1-bjorn.andersson@linaro.org>
-References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:46884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725768AbfL2FkE (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sun, 29 Dec 2019 00:40:04 -0500
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: Re: [PATCH] hwspinlock: stm32: convert to devm_platform_ioremap_resource
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <157759800404.15003.6371683197257428610.git-patchwork-notify@kernel.org>
+Date: Sun, 29 Dec 2019 05:40:04 +0000
+References: <20191228191541.26999-1-tiny.windzz@gmail.com>
+In-Reply-To: <20191228191541.26999-1-tiny.windzz@gmail.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Yangtao Li <tiny.windzz@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a simple-mfd representing IMEM on QCS404 and define the PIL
-relocation info region, so that post mortem tools will be able to locate
-the loaded remoteprocs.
+Hello:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-Changes since v1:
-- None
+On Sat, 28 Dec 2019 19:15:41 +0000 you wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/hwspinlock/stm32_hwspinlock.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index f5f0c4c9cb16..9d2a2b1c64dd 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -890,6 +890,16 @@ blsp2_spi0: spi@7af5000 {
- 			status = "disabled";
- 		};
- 
-+		imem@8600000 {
-+			compatible = "syscon", "simple-mfd";
-+			reg = <0x08600000 0x1000>;
-+
-+			pil-reloc {
-+				compatible ="qcom,pil-reloc-info";
-+				offset = <0x94c>;
-+			};
-+		};
-+
- 		intc: interrupt-controller@b000000 {
- 			compatible = "qcom,msm-qgic2";
- 			interrupt-controller;
+Here is a summary with links:
+  - hwspinlock: stm32: convert to devm_platform_ioremap_resource
+    https://git.kernel.org/andersson/remoteproc/c/d4824486b676ef87071081bdb77a6de2a5a341c7
+
+You are awesome, thank you!
+
 -- 
-2.24.0
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
