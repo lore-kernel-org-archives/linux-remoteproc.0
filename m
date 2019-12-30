@@ -1,72 +1,102 @@
-Return-Path: <afaerber@suse.de>
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [RFC 1/5] dt-bindings: hwlock: Add Realtek RTD1195 SB2
-Date: Mon,  2 Dec 2019 23:05:31 +0100
-Message-Id: <20191202220535.6208-2-afaerber@suse.de>
-In-Reply-To: <20191202220535.6208-1-afaerber@suse.de>
-References: <20191202220535.6208-1-afaerber@suse.de>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3 2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
+Date: Mon, 30 Dec 2019 10:30:07 +0530
+Message-Id: <20191230050008.8143-3-sibis@codeaurora.org>
+In-Reply-To: <20191230050008.8143-1-sibis@codeaurora.org>
+References: <20191230050008.8143-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-To: linux-realtek-soc@lists.infradead.org
-Cc: Cheng-Yu Lee <cylee12@realtek.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
+Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Define a binding for Realtek RTD1195 SoC's SB2 hardware semaphore.
+Add optional "qcom,protection-domain" bindings for APR services. This
+helps to capture the dependencies between APR services and the PD on
+which each apr service run.
 
-Signed-off-by: Andreas Färber <afaerber@suse.de>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- .../bindings/hwlock/realtek,rtd1195-sb2-sem.yaml   | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/realtek,rtd1195-sb2-sem.yaml
+ .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/hwlock/realtek,rtd1195-sb2-sem.yaml b/Documentation/devicetree/bindings/hwlock/realtek,rtd1195-sb2-sem.yaml
-new file mode 100644
-index 000000000000..8035af02c667
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/realtek,rtd1195-sb2-sem.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwlock/realtek,rtd1195-sb2-sem.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+index db501269f47b8..f87c0b2a48de4 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+@@ -45,6 +45,12 @@ by the individual bindings for the specific service
+ 			12 - Ultrasound stream manager.
+ 			13 - Listen stream manager.
+ 
++- qcom,protection-domain
++	Usage: optional
++	Value type: <stringlist>
++	Definition: Must list the protection domain service name and path
++		    that the particular apr service has a dependency on.
 +
-+title: Realtek RTD1195 SB2 hardware semaphore device tree binding
+ = EXAMPLE
+ The following example represents a QDSP based sound card on a MSM8996 device
+ which uses apr as communication between Apps and QDSP.
+@@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
+ 			...
+ 		};
+ 	};
 +
-+maintainers:
-+  - Andreas Färber <afaerber@suse.de>
++= EXAMPLE 2
++The following example represents a QDSP based sound card on SDM845 device.
++Here the apr services are dependent on "avs/audio" service running on AUDIO
++Protection Domain hosted on ADSP remote processor.
 +
-+properties:
-+  compatible:
-+    const: realtek,rtd1195-sb2-sem
++	apr {
++		compatible = "qcom,apr-v2";
++		qcom,glink-channels = "apr_audio_svc";
++		qcom,apr-domain = <APR_DOMAIN_ADSP>;
 +
-+  reg:
-+    maxItems: 1
++		q6core {
++			compatible = "qcom,q6core";
++			reg = <APR_SVC_ADSP_CORE>;
++			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++		};
 +
-+  "#hwlock-cells":
-+    enum: [ 0, 1 ]
++		q6afe: q6afe {
++			compatible = "qcom,q6afe";
++			reg = <APR_SVC_AFE>;
++			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++			q6afedai: dais {
++				compatible = "qcom,q6afe-dais";
++				#sound-dai-cells = <1>;
 +
-+required:
-+  - compatible
-+  - reg
-+  - "#hwlock-cells"
++				qi2s@22 {
++					reg = <22>;
++					qcom,sd-lines = <3>;
++				};
++			};
++		};
 +
-+additionalProperties: false
++		q6asm: q6asm {
++			compatible = "qcom,q6asm";
++			reg = <APR_SVC_ASM>;
++			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++			q6asmdai: dais {
++				compatible = "qcom,q6asm-dais";
++				#sound-dai-cells = <1>;
++				iommus = <&apps_smmu 0x1821 0x0>;
++			};
++		};
 +
-+examples:
-+  - |
-+    hwspinlock@9801a000 {
-+      compatible = "realtek,rtd1195-sb2-sem";
-+      reg = <0x9801a000 0x4>;
-+      #hwlock-cells = <0>;
-+    };
-+  - |
-+    hwspinlock@9801a620 {
-+      compatible = "realtek,rtd1195-sb2-sem";
-+      reg = <0x9801a620 0x20>;
-+      #hwlock-cells = <1>;
-+    };
-+...
++		q6adm: q6adm {
++			compatible = "qcom,q6adm";
++			reg = <APR_SVC_ADM>;
++			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++			q6routing: routing {
++				compatible = "qcom,q6adm-routing";
++				#sound-dai-cells = <0>;
++			};
++		};
++	};
 -- 
-2.16.4
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
