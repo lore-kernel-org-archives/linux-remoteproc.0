@@ -1,77 +1,222 @@
 Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 0/3] Introduce Protection Domain Restart (PDR) Helpers
-Date: Mon, 30 Dec 2019 10:30:05 +0530
-Message-Id: <20191230050008.8143-1-sibis@codeaurora.org>
+Subject: [PATCH v3 3/3] soc: qcom: apr: Add avs/audio tracking functionality
+Date: Mon, 30 Dec 2019 10:30:08 +0530
+Message-Id: <20191230050008.8143-4-sibis@codeaurora.org>
+In-Reply-To: <20191230050008.8143-1-sibis@codeaurora.org>
+References: <20191230050008.8143-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
 Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Qualcomm SoCs (starting with MSM8998) allow for multiple protection
-domains (PDs) to run on the same Q6 sub-system. This allows for
-services like AVS AUDIO to have their own separate address space and
-crash/recover without disrupting the other PDs running on the same Q6
-ADSP. This patch series introduces pdr helper library and adds PD
-tracking functionality for "avs/audio" allowing apr services to register
-themselves asynchronously once the dependent PDs are up.
+Use PDR helper functions to track the protection domains that the apr
+services are dependent upon on SDM845 SoC, specifically the "avs/audio"
+service running on ADSP Q6.
 
-V3:
- * patches 2 and 3 remain unchanged.
- * reset servloc_addr/servreg_addr.
- * fixup the helpers to handle servloc_work/servreg_work asynchronously.
- * fixup useage of list_lock across traversals, insertions and deletions.
- * fixup the helpers to use a single lookup list.
- * skip waiting for response on ind_ack send.
- * introduce pdr_servreg_link_create to re-use existing qmi connection to
-   servreg instances. This helps tracking PDs running on the same remote
-   processor.
- * have a per node curr_state in pdr_list_node to preserve all state
-   updates during indack_cb.
- * introduce additional servreg_service_state values to help the client
-   distinguish between a fatal and non-fatal pdr_lookup errors.
- * re-order pdr_handle_release sequence.
- * fixup "!ind_msg->service_path returns true always" warning.
- * fixup comments.
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ drivers/soc/qcom/Kconfig     |   1 +
+ drivers/soc/qcom/apr.c       | 100 +++++++++++++++++++++++++++++++----
+ include/linux/soc/qcom/apr.h |   1 +
+ 3 files changed, 91 insertions(+), 11 deletions(-)
 
-V2:
- * fixup pd_status callback to return void.
- * return 0 from pdr_get_domain_list on success.
- * introduce status_lock to linearize the pd_status reported back
-   to the clients.
- * use the correct service name length across various string operations
-   performed.
- * service locator will now schedule the pending lookups registered
-   when it comes up.
- * other minor cleanups that Bjorn suggested.
- * use pr_warn to indicate that the wait for service locator timed
-   out.
- * add Bjorn/Srini's "Reviewed-by" for the dt-bindings.
-
-To Do:
- * Add support for pd tracking in fastrpc driver.
-
-Sibi Sankar (3):
-  soc: qcom: Introduce Protection Domain Restart helpers
-  dt-bindings: soc: qcom: apr: Add protection domain bindings
-  soc: qcom: apr: Add avs/audio tracking functionality
-
- .../devicetree/bindings/soc/qcom/qcom,apr.txt |  59 ++
- drivers/soc/qcom/Kconfig                      |   6 +
- drivers/soc/qcom/Makefile                     |   1 +
- drivers/soc/qcom/apr.c                        | 100 ++-
- drivers/soc/qcom/pdr_interface.c              | 709 ++++++++++++++++++
- drivers/soc/qcom/pdr_internal.h               | 375 +++++++++
- include/linux/soc/qcom/apr.h                  |   1 +
- include/linux/soc/qcom/pdr.h                  | 109 +++
- include/linux/soc/qcom/qmi.h                  |   1 +
- 9 files changed, 1350 insertions(+), 11 deletions(-)
- create mode 100644 drivers/soc/qcom/pdr_interface.c
- create mode 100644 drivers/soc/qcom/pdr_internal.h
- create mode 100644 include/linux/soc/qcom/pdr.h
-
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 5c4e76837f59b..cacfed945b275 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -202,6 +202,7 @@ config QCOM_APR
+ 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+ 	depends on RPMSG
++	select QCOM_PDR_HELPERS
+ 	help
+           Enable APR IPC protocol support between
+           application processor and QDSP6. APR is
+diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+index 4fcc32420c474..5234426718e88 100644
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@ -11,6 +11,7 @@
+ #include <linux/workqueue.h>
+ #include <linux/of_device.h>
+ #include <linux/soc/qcom/apr.h>
++#include <linux/soc/qcom/pdr.h>
+ #include <linux/rpmsg.h>
+ #include <linux/of.h>
+ 
+@@ -21,6 +22,7 @@ struct apr {
+ 	spinlock_t rx_lock;
+ 	struct idr svcs_idr;
+ 	int dest_domain_id;
++	struct pdr_handle pdr;
+ 	struct workqueue_struct *rxwq;
+ 	struct work_struct rx_work;
+ 	struct list_head rx_list;
+@@ -289,6 +291,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+ 		  id->svc_id + 1, GFP_ATOMIC);
+ 	spin_unlock(&apr->svcs_lock);
+ 
++	of_property_read_string_index(np, "qcom,protection-domain",
++				      1, &adev->service_path);
++
+ 	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
+ 
+ 	ret = device_register(&adev->dev);
+@@ -300,14 +305,56 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+ 	return ret;
+ }
+ 
+-static void of_register_apr_devices(struct device *dev)
++static void of_apr_add_pd_lookups(struct device *dev)
+ {
++	const char *service_name, *service_path;
+ 	struct apr *apr = dev_get_drvdata(dev);
+ 	struct device_node *node;
++	int ret;
++
++	for_each_child_of_node(dev->of_node, node) {
++		ret = of_property_read_string_index(node, "qcom,protection-domain",
++						    0, &service_name);
++		if (ret < 0)
++			continue;
++
++		ret = of_property_read_string_index(node, "qcom,protection-domain",
++						    1, &service_path);
++		if (ret < 0)
++			continue;
++
++		ret = pdr_add_lookup(&apr->pdr, service_name, service_path);
++		if (ret && ret != -EALREADY)
++			dev_err(dev, "pdr add lookup failed: %d\n", ret);
++	}
++}
++
++static void of_register_apr_devices(struct device *dev, const char *svc_path)
++{
++	struct apr *apr = dev_get_drvdata(dev);
++	struct device_node *node;
++	const char *service_path;
++	int ret;
+ 
+ 	for_each_child_of_node(dev->of_node, node) {
+ 		struct apr_device_id id = { {0} };
+ 
++		ret = of_property_read_string_index(node, "qcom,protection-domain",
++						    1, &service_path);
++		if (svc_path) {
++			/* skip APR services that are PD independent */
++			if (ret)
++				continue;
++
++			/* skip APR services whose PD paths don't match */
++			if (strcmp(service_path, svc_path))
++				continue;
++		} else {
++			/* skip APR services whose PD lookups are registered */
++			if (ret == 0)
++				continue;
++		}
++
+ 		if (of_property_read_u32(node, "reg", &id.svc_id))
+ 			continue;
+ 
+@@ -318,6 +365,35 @@ static void of_register_apr_devices(struct device *dev)
+ 	}
+ }
+ 
++static int apr_remove_device(struct device *dev, void *svc_path)
++{
++	struct apr_device *adev = to_apr_device(dev);
++
++	if (svc_path) {
++		if (!strcmp(adev->service_path, (char *)svc_path))
++			device_unregister(&adev->dev);
++	} else {
++		device_unregister(&adev->dev);
++	}
++
++	return 0;
++}
++
++static void apr_pd_status(struct pdr_handle *pdr, struct pdr_service *pds)
++{
++	struct apr *apr = container_of(pdr, struct apr, pdr);
++
++	switch (pds->state) {
++	case SERVREG_SERVICE_STATE_UP:
++		of_register_apr_devices(apr->dev, pds->service_path);
++		break;
++	case SERVREG_SERVICE_STATE_DOWN:
++		device_for_each_child(apr->dev, pds->service_path,
++				      apr_remove_device);
++		break;
++	}
++}
++
+ static int apr_probe(struct rpmsg_device *rpdev)
+ {
+ 	struct device *dev = &rpdev->dev;
+@@ -337,26 +413,27 @@ static int apr_probe(struct rpmsg_device *rpdev)
+ 	dev_set_drvdata(dev, apr);
+ 	apr->ch = rpdev->ept;
+ 	apr->dev = dev;
++
+ 	apr->rxwq = create_singlethread_workqueue("qcom_apr_rx");
+ 	if (!apr->rxwq) {
+ 		dev_err(apr->dev, "Failed to start Rx WQ\n");
+ 		return -ENOMEM;
+ 	}
+ 	INIT_WORK(&apr->rx_work, apr_rxwq);
++
++	ret = pdr_handle_init(&apr->pdr, apr_pd_status);
++	if (ret) {
++		dev_err(dev, "Failed to init PDR handle\n");
++		destroy_workqueue(apr->rxwq);
++		return ret;
++	}
++
+ 	INIT_LIST_HEAD(&apr->rx_list);
+ 	spin_lock_init(&apr->rx_lock);
+ 	spin_lock_init(&apr->svcs_lock);
+ 	idr_init(&apr->svcs_idr);
+-	of_register_apr_devices(dev);
+-
+-	return 0;
+-}
+-
+-static int apr_remove_device(struct device *dev, void *null)
+-{
+-	struct apr_device *adev = to_apr_device(dev);
+-
+-	device_unregister(&adev->dev);
++	of_apr_add_pd_lookups(dev);
++	of_register_apr_devices(dev, NULL);
+ 
+ 	return 0;
+ }
+@@ -365,6 +442,7 @@ static void apr_remove(struct rpmsg_device *rpdev)
+ {
+ 	struct apr *apr = dev_get_drvdata(&rpdev->dev);
+ 
++	pdr_handle_release(&apr->pdr);
+ 	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
+ 	flush_workqueue(apr->rxwq);
+ 	destroy_workqueue(apr->rxwq);
+diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
+index c5d52e2cb275f..7f0bc3cf4d610 100644
+--- a/include/linux/soc/qcom/apr.h
++++ b/include/linux/soc/qcom/apr.h
+@@ -85,6 +85,7 @@ struct apr_device {
+ 	uint16_t	domain_id;
+ 	uint32_t	version;
+ 	char name[APR_NAME_SIZE];
++	const char *service_path;
+ 	spinlock_t	lock;
+ 	struct list_head node;
+ };
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
