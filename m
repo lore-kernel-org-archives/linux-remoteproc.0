@@ -1,37 +1,40 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 3 Jan 2020 16:38:55 -0700
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [RESEND PATCHv4 01/14] dt-bindings: remoteproc: Add OMAP
- remoteproc bindings
-Message-ID: <20200103233855.GA19897@bogus>
-References: <20200102131845.12992-2-t-kristo@ti.com>
- <20200102132512.13248-1-t-kristo@ti.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv4 01/14] dt-bindings: remoteproc: Add OMAP remoteproc
+ bindings
+References: <20200102131845.12992-1-t-kristo@ti.com>
+ <20200102131845.12992-2-t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <0b9c2a59-7e12-93ef-f0f0-16558c4581c2@ti.com>
+Date: Thu, 2 Jan 2020 15:26:11 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200102132512.13248-1-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, s-anna@ti.com, devicetree@vger.kernel.org
+In-Reply-To: <20200102131845.12992-2-t-kristo@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu, Jan 02, 2020 at 03:25:12PM +0200, Tero Kristo wrote:
+On 02/01/2020 15:18, Tero Kristo wrote:
 > From: Suman Anna <s-anna@ti.com>
 > 
 > Add the device tree bindings document for the IPU and DSP
 > remote processor devices on OMAP4+ SoCs.
 > 
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
 > Signed-off-by: Suman Anna <s-anna@ti.com>
 > [t-kristo@ti.com: converted to schema]
 > Signed-off-by: Tero Kristo <t-kristo@ti.com>
 > ---
 > v4: added ti,bootreg-shift and ti,autosuspend-delay properties
+
+Rob + devicetree list was missed out on this, so resending this patch only.
+
+-Tero
+
 > 
->  .../remoteproc/ti,omap-remoteproc.yaml        | 329 ++++++++++++++++++
->  1 file changed, 329 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+>   .../remoteproc/ti,omap-remoteproc.yaml        | 329 ++++++++++++++++++
+>   1 file changed, 329 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
 > 
 > diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
 > new file mode 100644
@@ -153,10 +156,6 @@ On Thu, Jan 02, 2020 at 03:25:12PM +0200, Tero Kristo wrote:
 > +      the 'reg' property. Should contain a string from among
 > +      the following names, each representing the corresponding
 > +      internal RAM memory region.
-
-The schema is more constrained than 'a string from among the following 
-names'. 'l2ram' is the only valid 1st entry for example.
-
 > +    minItems: 1
 > +    maxItems: 3
 > +    items:
@@ -179,18 +178,11 @@ names'. 'l2ram' is the only valid 1st entry for example.
 > +    description: |
 > +      Describes the bit position of the boot address field within
 > +      the ti,bootreg.
-
-Just make this a 2nd cell value for ti,bootreg. There's nothing to gain 
-with 2 properties.
-
 > +
 > +  ti,autosuspend-delay:
 > +    $ref: /schemas/types.yaml#/definitions/uint32
 > +    description: |
 > +      Custom autosuspend delay for the remoteproc in milliseconds.
-
-Needs a standard unit suffix and then you can drop the type.
-
 > +
 > +  ti,timers:
 > +    $ref: /schemas/types.yaml#/definitions/phandle-array
@@ -232,11 +224,6 @@ Needs a standard unit suffix and then you can drop the type.
 > +    ti,bootreg:
 > +      minItems: 1
 > +      maxItems: 1
-
-What are you trying to express here? That ti,bootreg is only 1 
-phandle+args or it's only a phandle (with no arg cells)? This does the 
-former (I think), but I'm not clear when it would be more than 1.
-
 > +    ti,bootreg-shift:
 > +      minItems: 1
 > +      maxItems: 1
@@ -259,11 +246,6 @@ former (I think), but I'm not clear when it would be more than 1.
 > +    properties:
 > +      reg:
 > +        maxItems: 0
-
-This is not how you express 'reg' is not present. You want 'reg: false'. 
-Also, I assume for some compatibles, 'reg' is required which you haven't 
-expressed.
-
 > +      ti,bootreg:
 > +        minItems: 1
 > +        maxItems: 1
@@ -389,8 +371,7 @@ expressed.
 > +            firmware-name = "dra7-dsp1-fw.xe66";
 > +        };
 > +    };
-> -- 
-> 2.17.1
 > 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
