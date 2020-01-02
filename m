@@ -1,14 +1,14 @@
 Return-Path: <t-kristo@ti.com>
 From: Tero Kristo <t-kristo@ti.com>
-Subject: [RESEND PATCHv4 01/14] dt-bindings: remoteproc: Add OMAP remoteproc bindings
-Date: Thu, 2 Jan 2020 15:25:12 +0200
-Message-ID: <20200102132512.13248-1-t-kristo@ti.com>
-In-Reply-To: <20200102131845.12992-2-t-kristo@ti.com>
-References: <20200102131845.12992-2-t-kristo@ti.com>
+Subject: [PATCHv4 01/14] dt-bindings: remoteproc: Add OMAP remoteproc bindings
+Date: Thu, 2 Jan 2020 15:18:32 +0200
+Message-ID: <20200102131845.12992-2-t-kristo@ti.com>
+In-Reply-To: <20200102131845.12992-1-t-kristo@ti.com>
+References: <20200102131845.12992-1-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, s-anna@ti.com, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 From: Suman Anna <s-anna@ti.com>
@@ -16,8 +16,6 @@ From: Suman Anna <s-anna@ti.com>
 Add the device tree bindings document for the IPU and DSP
 remote processor devices on OMAP4+ SoCs.
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Suman Anna <s-anna@ti.com>
 [t-kristo@ti.com: converted to schema]
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
