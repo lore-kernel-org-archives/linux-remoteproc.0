@@ -1,176 +1,56 @@
-Date: Mon, 20 Jan 2020 11:45:04 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v4 2/5] remoteproc: Add device-managed variants of
- rproc_alloc/rproc_add
-Message-ID: <20200120194500.GM1511@yoga>
-References: <20191210164014.50739-1-paul@crapouillou.net>
- <20191210164014.50739-2-paul@crapouillou.net>
- <6fff431f-dd3f-a67e-e40b-8cee4060c37a@st.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv4 13/14] remoteproc/omap: report device exceptions and trigger recovery
+Date: Thu, 2 Jan 2020 15:18:44 +0200
+Message-ID: <20200102131845.12992-14-t-kristo@ti.com>
+In-Reply-To: <20200102131845.12992-1-t-kristo@ti.com>
+References: <20200102131845.12992-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6fff431f-dd3f-a67e-e40b-8cee4060c37a@st.com>
-To: Fabien DESSENNE <fabien.dessenne@st.com>
-Cc: Paul Cercueil <paul@crapouillou.net>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "od@zcrc.me" <od@zcrc.me>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 12 Dec 01:43 PST 2019, Fabien DESSENNE wrote:
+From: Suman Anna <s-anna@ti.com>
 
-> Hi Paul,
-> 
-> 
-> Good initiative! See me remarks below.
-> 
+The OMAP remote processors send a special mailbox message
+(RP_MBOX_CRASH) when they crash and detect an internal device
+exception.
 
-I concur!
+Add support to the mailbox handling function upon detection of
+this special message to report this crash to the remoteproc core.
+The remoteproc core can trigger a recovery using the prevailing
+recovery mechanism, already in use for MMU Fault recovery.
 
-> 
-> On 10/12/2019 5:40 PM, Paul Cercueil wrote:
-> > Add API functions devm_rproc_alloc() and devm_rproc_add(), which behave
-> > like rproc_alloc() and rproc_add() respectively, but register their
-> > respective cleanup function to be called on driver detach.
-> >
-> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > ---
-> >
-> > Notes:
-> >      v3: New patch
-> >      v4: No change
-> >
-> >   drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++
-> >   include/linux/remoteproc.h           |  5 +++
-> >   2 files changed, 72 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index 307df98347ba..0a9fc7fdd1c3 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> 
-> 
-> Maybe these devm function shall be defined in a new remoteproc/devres.c 
-> file. Although it seems to be a common usage I don't know if there is a 
-> rule for that.
-> 
+Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/remoteproc/omap_remoteproc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Let's keep it in this same file, the devres.c would be tiny.
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 06e269983ea1..0318cde3d1fb 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -378,8 +378,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 
+ 	switch (msg) {
+ 	case RP_MBOX_CRASH:
+-		/* just log this for now. later, we'll also do recovery */
++		/*
++		 * remoteproc detected an exception, notify the rproc core.
++		 * The remoteproc core will handle the recovery.
++		 */
+ 		dev_err(dev, "omap rproc %s crashed\n", name);
++		rproc_report_crash(oproc->rproc, RPROC_FATAL_ERROR);
+ 		break;
+ 	case RP_MBOX_ECHO_REPLY:
+ 		dev_info(dev, "received echo reply from %s\n", name);
+-- 
+2.17.1
 
-> 
-> > @@ -1932,6 +1932,33 @@ int rproc_add(struct rproc *rproc)
-> >   }
-> >   EXPORT_SYMBOL(rproc_add);
-> >   
-> > +static void devm_rproc_remove(void *rproc)
-> > +{
-> > +	rproc_del(rproc);
-> > +}
-> > +
-> > +/**
-> > + * devm_rproc_add() - resource managed rproc_add()
-> > + * @dev: the underlying device
-> > + * @rproc: the remote processor handle to register
-> > + *
-> > + * This function performs like rproc_add() but the registered rproc device will
-> > + * automatically be removed on driver detach.
-> > + *
-> > + * Returns 0 on success and an appropriate error code otherwise.
-> > + */
-> > +int devm_rproc_add(struct device *dev, struct rproc *rproc)
-> > +{
-> > +	int err;
-> > +
-> > +	err = rproc_add(rproc);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
-> > +}
-> > +EXPORT_SYMBOL(devm_rproc_add);
-> > +
-> >   /**
-> >    * rproc_type_release() - release a remote processor instance
-> >    * @dev: the rproc's device
-> > @@ -2149,6 +2176,46 @@ int rproc_del(struct rproc *rproc)
-> >   }
-> >   EXPORT_SYMBOL(rproc_del);
-> >   
-> > +static void devm_rproc_free(struct device *dev, void *res)
-> > +{
-> > +	rproc_free(*(struct rproc **)res);
-> > +}
-> > +
-> > +/**
-> > + * devm_rproc_alloc() - resource managed rproc_alloc()
-> > + * @dev: the underlying device
-> > + * @name: name of this remote processor
-> > + * @ops: platform-specific handlers (mainly start/stop)
-> > + * @firmware: name of firmware file to load, can be NULL
-> > + * @len: length of private data needed by the rproc driver (in bytes)
-> > + *
-> > + * This function performs like rproc_alloc() but the acuired rproc device will
-> 
-> 
-> typo: s/acuired/acquired
-> 
-> 
-> > + * automatically be released on driver detach.
-> > + *
-> > + * On success the new rproc is returned, and on failure, NULL.
-> > + */
-> > +struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
-> > +			       const struct rproc_ops *ops,
-> > +			       const char *firmware, int len)
-> > +{
-> > +	struct rproc **ptr, *rproc;
-> > +
-> > +	ptr = devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
-> > +	if (!ptr)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	rproc = rproc_alloc(dev, name, ops, firmware, len);
-> > +	if (rproc) {
-> > +		*ptr = rproc;
-> > +		devres_add(dev, ptr);
-> > +	} else {
-> > +		devres_free(ptr);
-> > +	}
-> > +
-> > +	return rproc;
-> 
-> 
-> Can't you use devm_add_action_or_reset() here too?
-> 
-
-The proposed function matches how everyone else is doing devm_*_alloc(),
-so I would like to keep it as is.
-
-Regards,
-Bjorn
-
-> 
-> > +}
-> > +EXPORT_SYMBOL(devm_rproc_alloc);
-> > +
-> >   /**
-> >    * rproc_add_subdev() - add a subdevice to a remoteproc
-> >    * @rproc: rproc handle to add the subdevice to
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index 16ad66683ad0..5f201f0c86c3 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -595,6 +595,11 @@ int rproc_add(struct rproc *rproc);
-> >   int rproc_del(struct rproc *rproc);
-> >   void rproc_free(struct rproc *rproc);
-> >   
-> > +struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
-> > +			       const struct rproc_ops *ops,
-> > +			       const char *firmware, int len);
-> > +int devm_rproc_add(struct device *dev, struct rproc *rproc);
-> > +
-> >   void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
-> >   
-> >   struct rproc_mem_entry *
-> 
-> 
-> BR
-> 
-> Fabien
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
