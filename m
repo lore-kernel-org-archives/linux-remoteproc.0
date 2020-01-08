@@ -1,65 +1,58 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 1/4] remoteproc: qcom: q6v5-mss: Use regmap_read_poll_timeout
-Date: Fri, 17 Jan 2020 19:21:27 +0530
-Message-Id: <20200117135130.3605-2-sibis@codeaurora.org>
-In-Reply-To: <20200117135130.3605-1-sibis@codeaurora.org>
-References: <20200117135130.3605-1-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, evgreen@chromium.org, p.zabel@pengutronix.de
-Cc: ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <baolin.wang7@gmail.com>
+Return-Path: <baolin.wang7@gmail.com>
+From: Baolin Wang <baolin.wang7@gmail.com>
+Subject: [PATCH RESEND 2/2] hwspinlock: qcom: Use devm_hwspin_lock_register() to register hwlock controller
+Date: Wed,  8 Jan 2020 11:09:11 +0800
+Message-Id: <d69ad8611a68b0cac3c927d19901f3c113c5435c.1578452735.git.baolin.wang7@gmail.com>
+In-Reply-To: <cover.1578452735.git.baolin.wang7@gmail.com>
+References: <cover.1578452735.git.baolin.wang7@gmail.com>
+In-Reply-To: <cover.1578452735.git.baolin.wang7@gmail.com>
+References: <cover.1578452735.git.baolin.wang7@gmail.com>
+To: agross@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: baolin.wang7@gmail.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Replace the loop for HALT_ACK detection with regmap_read_poll_timeout.
+Use devm_hwspin_lock_register() to register the hwlock controller instead of
+unregistering the hwlock controller explicitly when removing the device.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/hwspinlock/qcom_hwspinlock.c |   19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 51f451311f5fc..f20b39c6ff0ed 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -73,6 +73,7 @@
- #define NAV_AXI_IDLE_BIT		BIT(2)
+diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
+index 5a736b0..f0da544 100644
+--- a/drivers/hwspinlock/qcom_hwspinlock.c
++++ b/drivers/hwspinlock/qcom_hwspinlock.c
+@@ -121,27 +121,12 @@ static int qcom_hwspinlock_probe(struct platform_device *pdev)
+ 							     regmap, field);
+ 	}
  
- #define HALT_ACK_TIMEOUT_MS		100
-+#define NAV_HALT_ACK_TIMEOUT_US		200
- 
- /* QDSP6SS_RESET */
- #define Q6SS_STOP_CORE			BIT(0)
-@@ -746,7 +747,6 @@ static void q6v5proc_halt_nav_axi_port(struct q6v5 *qproc,
- 				       struct regmap *halt_map,
- 				       u32 offset)
- {
--	unsigned long timeout;
- 	unsigned int val;
- 	int ret;
- 
-@@ -760,15 +760,11 @@ static void q6v5proc_halt_nav_axi_port(struct q6v5 *qproc,
- 			   NAV_AXI_HALTREQ_BIT);
- 
- 	/* Wait for halt ack*/
--	timeout = jiffies + msecs_to_jiffies(HALT_ACK_TIMEOUT_MS);
--	for (;;) {
--		ret = regmap_read(halt_map, offset, &val);
--		if (ret || (val & NAV_AXI_HALTACK_BIT) ||
--		    time_after(jiffies, timeout))
--			break;
+-	return hwspin_lock_register(bank, &pdev->dev, &qcom_hwspinlock_ops,
+-				    0, QCOM_MUTEX_NUM_LOCKS);
+-}
 -
--		udelay(5);
+-static int qcom_hwspinlock_remove(struct platform_device *pdev)
+-{
+-	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
+-	int ret;
+-
+-	ret = hwspin_lock_unregister(bank);
+-	if (ret) {
+-		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
+-		return ret;
 -	}
-+	ret = regmap_read_poll_timeout(halt_map, offset, val,
-+				       (val & NAV_AXI_HALTACK_BIT),
-+				       5, NAV_HALT_ACK_TIMEOUT_US);
-+	if (ret)
-+		dev_err(qproc->dev, "nav halt ack timeout\n");
+-
+-	return 0;
++	return devm_hwspin_lock_register(&pdev->dev, bank, &qcom_hwspinlock_ops,
++					 0, QCOM_MUTEX_NUM_LOCKS);
+ }
  
- 	ret = regmap_read(halt_map, offset, &val);
- 	if (ret || !(val & NAV_AXI_IDLE_BIT))
+ static struct platform_driver qcom_hwspinlock_driver = {
+ 	.probe		= qcom_hwspinlock_probe,
+-	.remove		= qcom_hwspinlock_remove,
+ 	.driver		= {
+ 		.name	= "qcom_hwspinlock",
+ 		.of_match_table = qcom_hwspinlock_of_match,
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+1.7.9.5
