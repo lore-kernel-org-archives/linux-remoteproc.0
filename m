@@ -1,83 +1,63 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH] remoteproc: Add support for predefined notifyids
-Date: Wed, 15 Jan 2020 11:21:42 +0100
-Message-Id: <20200115102142.11229-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Clement Leger <cleger@kalray.eu>
+Return-Path: <baolin.wang7@gmail.com>
+Return-Path: <baolin.wang7@gmail.com>
+From: Baolin Wang <baolin.wang7@gmail.com>
+Subject: [PATCH RESEND 3/3] hwspinlock: sirf: Use devm_hwspin_lock_register() to register hwlock controller
+Date: Wed,  8 Jan 2020 11:23:46 +0800
+Message-Id: <8f94e67b5f9af20a93418a2fc9cc71b194f1285c.1578453662.git.baolin.wang7@gmail.com>
+In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
+References: <cover.1578453662.git.baolin.wang7@gmail.com>
+In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
+References: <cover.1578453662.git.baolin.wang7@gmail.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, baohua@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, baolin.wang7@gmail.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In order to support preallocated notify ids, if their value is
-equal to FW_RSC_NOTIFY_ID_ANY, then do no allocate a notify id
-dynamically but try to allocate the requested one. This is useful when
-using custom ids to bind them to custom vendor resources. For instance,
-it allow to assign a group of queues to a specific interrupti in order
-to dispatch notifications.
+Use devm_hwspin_lock_register() to register the hwlock controller instead of
+unregistering the hwlock controller explicitly when removing the device.
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 27 +++++++++++++++++++--------
- include/linux/remoteproc.h           |  1 +
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ drivers/hwspinlock/sirf_hwspinlock.c |   21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 307df98347ba..b1485fcd0f11 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -351,14 +351,27 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	/*
- 	 * Assign an rproc-wide unique index for this vring
- 	 * TODO: assign a notifyid for rvdev updates as well
--	 * TODO: support predefined notifyids (via resource table)
- 	 */
--	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
--	if (ret < 0) {
--		dev_err(dev, "idr_alloc failed: %d\n", ret);
+diff --git a/drivers/hwspinlock/sirf_hwspinlock.c b/drivers/hwspinlock/sirf_hwspinlock.c
+index d62462e..823d3c4 100644
+--- a/drivers/hwspinlock/sirf_hwspinlock.c
++++ b/drivers/hwspinlock/sirf_hwspinlock.c
+@@ -79,23 +79,9 @@ static int sirf_hwspinlock_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, hwspin);
+ 
+-	return hwspin_lock_register(&hwspin->bank, &pdev->dev,
+-				    &sirf_hwspinlock_ops, 0,
+-				    HW_SPINLOCK_NUMBER);
+-}
+-
+-static int sirf_hwspinlock_remove(struct platform_device *pdev)
+-{
+-	struct sirf_hwspinlock *hwspin = platform_get_drvdata(pdev);
+-	int ret;
+-
+-	ret = hwspin_lock_unregister(&hwspin->bank);
+-	if (ret) {
+-		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
 -		return ret;
-+	if (rsc->vring[i].notifyid == FW_RSC_NOTIFY_ID_ANY) {
-+		ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
-+		if (ret < 0) {
-+			dev_err(dev, "idr_alloc failed: %d\n", ret);
-+			return ret;
-+		}
-+		notifyid = ret;
-+
-+		/* Let the rproc know the notifyid of this vring.*/
-+		rsc->vring[i].notifyid = notifyid;
-+	} else {
-+		/* Reserve requested notify_id */
-+		notifyid = rsc->vring[i].notifyid;
-+		ret = idr_alloc(&rproc->notifyids, rvring, notifyid,
-+				notifyid + 1, GFP_KERNEL);
-+		if (ret < 0) {
-+			dev_err(dev, "idr_alloc failed: %d\n", ret);
-+			return ret;
-+		}
- 	}
--	notifyid = ret;
- 
- 	/* Potentially bump max_notifyid */
- 	if (notifyid > rproc->max_notifyid)
-@@ -366,8 +379,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 
- 	rvring->notifyid = notifyid;
- 
--	/* Let the rproc know the notifyid of this vring.*/
--	rsc->vring[i].notifyid = notifyid;
- 	return 0;
+-	}
+-
+-	return 0;
++	return devm_hwspin_lock_register(&pdev->dev, &hwspin->bank,
++					 &sirf_hwspinlock_ops, 0,
++					 HW_SPINLOCK_NUMBER);
  }
  
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..dcae3394243e 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -123,6 +123,7 @@ enum fw_resource_type {
- };
+ static const struct of_device_id sirf_hwpinlock_ids[] = {
+@@ -106,7 +92,6 @@ static int sirf_hwspinlock_remove(struct platform_device *pdev)
  
- #define FW_RSC_ADDR_ANY (-1)
-+#define FW_RSC_NOTIFY_ID_ANY (-1)
- 
- /**
-  * struct fw_rsc_carveout - physically contiguous memory request
+ static struct platform_driver sirf_hwspinlock_driver = {
+ 	.probe = sirf_hwspinlock_probe,
+-	.remove = sirf_hwspinlock_remove,
+ 	.driver = {
+ 		.name = "atlas7_hwspinlock",
+ 		.of_match_table = of_match_ptr(sirf_hwpinlock_ids),
 -- 
-2.15.0.276.g89ea799
+1.7.9.5
