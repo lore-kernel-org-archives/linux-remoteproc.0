@@ -1,80 +1,79 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv5 09/14] remoteproc/omap: Check for undefined mailbox messages
-Date: Thu, 16 Jan 2020 15:53:27 +0200
-Message-ID: <20200116135332.7819-10-t-kristo@ti.com>
-In-Reply-To: <20200116135332.7819-1-t-kristo@ti.com>
-References: <20200116135332.7819-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Return-Path: <baolin.wang7@gmail.com>
+Return-Path: <baolin.wang7@gmail.com>
+From: Baolin Wang <baolin.wang7@gmail.com>
+Subject: [PATCH RESEND 2/3] hwspinlock: sirf: Remove redundant PM runtime functions
+Date: Wed,  8 Jan 2020 11:23:45 +0800
+Message-Id: <c921e391aa2a652d8d6ae0e4041202cec9d917e7.1578453662.git.baolin.wang7@gmail.com>
+In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
+References: <cover.1578453662.git.baolin.wang7@gmail.com>
+In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
+References: <cover.1578453662.git.baolin.wang7@gmail.com>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, baohua@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, baolin.wang7@gmail.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Since the hwspinlock core has changed the PM runtime to be optional, and
+the SIRF hardware spinlock has no pm runtime requirement, thus remove
+these redundant PM runtime functions.
 
-Add some checks in the mailbox callback function to limit
-any processing in the mailbox callback function to only
-certain currently valid messages, and drop all the remaining
-messages. A debug message is added to print any such invalid
-messages when the appropriate trace control is enabled.
-
-Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
 ---
-v5: no changes
+ drivers/hwspinlock/sirf_hwspinlock.c |   22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
 
- drivers/remoteproc/omap_remoteproc.c | 6 ++++++
- drivers/remoteproc/omap_remoteproc.h | 7 +++++++
- 2 files changed, 13 insertions(+)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 27e145181ef4..777231ce2bae 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -130,6 +130,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
- 		dev_info(dev, "received echo reply from %s\n", name);
- 		break;
- 	default:
-+		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
-+			return;
-+		if (msg > oproc->rproc->max_notifyid) {
-+			dev_dbg(dev, "dropping unknown message 0x%x", msg);
-+			return;
-+		}
- 		/* msg contains the index of the triggered vring */
- 		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
- 			dev_dbg(dev, "no message was found in vqid %d\n", msg);
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index f6d2036d383d..72f656c93caa 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -56,6 +56,12 @@
-  *
-  * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
-  * recovery mechanism (to some extent).
-+ *
-+ * Introduce new message definitions if any here.
-+ *
-+ * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-+ * This should be the last definition.
-+ *
-  */
- enum omap_rp_mbox_messages {
- 	RP_MBOX_READY		= 0xFFFFFF00,
-@@ -64,6 +70,7 @@ enum omap_rp_mbox_messages {
- 	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
- 	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
- 	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
-+	RP_MBOX_END_MSG		= 0xFFFFFF06,
- };
+diff --git a/drivers/hwspinlock/sirf_hwspinlock.c b/drivers/hwspinlock/sirf_hwspinlock.c
+index 8cb5fd4..d62462e 100644
+--- a/drivers/hwspinlock/sirf_hwspinlock.c
++++ b/drivers/hwspinlock/sirf_hwspinlock.c
+@@ -9,7 +9,6 @@
+ #include <linux/module.h>
+ #include <linux/device.h>
+ #include <linux/io.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/hwspinlock.h>
+@@ -56,7 +55,7 @@ static int sirf_hwspinlock_probe(struct platform_device *pdev)
+ {
+ 	struct sirf_hwspinlock *hwspin;
+ 	struct hwspinlock *hwlock;
+-	int idx, ret;
++	int idx;
  
- #endif /* _OMAP_RPMSG_H */
+ 	if (!pdev->dev.of_node)
+ 		return -ENODEV;
+@@ -80,20 +79,9 @@ static int sirf_hwspinlock_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, hwspin);
+ 
+-	pm_runtime_enable(&pdev->dev);
+-
+-	ret = hwspin_lock_register(&hwspin->bank, &pdev->dev,
+-				   &sirf_hwspinlock_ops, 0,
+-				   HW_SPINLOCK_NUMBER);
+-	if (ret)
+-		goto reg_failed;
+-
+-	return 0;
+-
+-reg_failed:
+-	pm_runtime_disable(&pdev->dev);
+-
+-	return ret;
++	return hwspin_lock_register(&hwspin->bank, &pdev->dev,
++				    &sirf_hwspinlock_ops, 0,
++				    HW_SPINLOCK_NUMBER);
+ }
+ 
+ static int sirf_hwspinlock_remove(struct platform_device *pdev)
+@@ -107,8 +95,6 @@ static int sirf_hwspinlock_remove(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	pm_runtime_disable(&pdev->dev);
+-
+ 	return 0;
+ }
+ 
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.7.9.5
