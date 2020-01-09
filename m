@@ -1,368 +1,238 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv4 01/14] dt-bindings: remoteproc: Add OMAP remoteproc bindings
-Date: Thu, 2 Jan 2020 15:18:32 +0200
-Message-ID: <20200102131845.12992-2-t-kristo@ti.com>
-In-Reply-To: <20200102131845.12992-1-t-kristo@ti.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCHv4 04/14] remoteproc/omap: Add support to parse internal
+ memories from DT
 References: <20200102131845.12992-1-t-kristo@ti.com>
+ <20200102131845.12992-5-t-kristo@ti.com>
+ <b9690449-5edc-e8f0-2c26-5da6900e23e3@ti.com>
+ <aef3436a-4491-e900-97cf-ac0c57e032a3@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <9ecb6cc1-affa-f998-f986-a3667ffc1f3c@ti.com>
+Date: Thu, 9 Jan 2020 11:19:40 -0600
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+In-Reply-To: <aef3436a-4491-e900-97cf-ac0c57e032a3@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+To: Tero Kristo <t-kristo@ti.com>, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On 1/9/20 3:12 AM, Tero Kristo wrote:
+> On 08/01/2020 20:05, Suman Anna wrote:
+>> Hi Tero,
+>>
+>> On 1/2/20 7:18 AM, Tero Kristo wrote:
+>>> From: Suman Anna <s-anna@ti.com>
+>>>
+>>> The OMAP remoteproc driver has been enhanced to parse and store
+>>> the kernel mappings for different internal RAM memories that may
+>>> be present within each remote processor IP subsystem. Different
+>>> devices have varying memories present on current SoCs. The current
+>>> support handles the L2RAM for all IPU devices on OMAP4+ SoCs. The
+>>> DSPs on OMAP4/OMAP5 only have Unicaches and do not have any L1 or
+>>> L2 RAM memories.
+>>>
+>>> IPUs are expected to have the L2RAM at a fixed device address of
+>>> 0x20000000, based on the current limitations on Attribute MMU
+>>> configurations.
+>>>
+>>> NOTE:
+>>> The current logic doesn't handle the parsing of memories for DRA7
+>>> remoteproc devices, and will be added alongside the DRA7 support.
+>>>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> [t-kristo: converted to parse mem names / device addresses from pdata]
+>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>> ---
+>>> v4:
+>>>    - moved device data mem definitions under single struct
+>>>
+>>>   drivers/remoteproc/omap_remoteproc.c | 89 ++++++++++++++++++++++++++++
+>>>   1 file changed, 89 insertions(+)
+>>>
+>>> diff --git a/drivers/remoteproc/omap_remoteproc.c
+>>> b/drivers/remoteproc/omap_remoteproc.c
+>>> index 557c439571c1..e429b2296d7a 100644
+>>> --- a/drivers/remoteproc/omap_remoteproc.c
+>>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>>> @@ -39,11 +39,27 @@ struct omap_rproc_boot_data {
+>>>       unsigned int boot_reg;
+>>>   };
+>>>   +/**
+>>> + * struct omap_rproc_mem - internal memory structure
+>>> + * @cpu_addr: MPU virtual address of the memory region
+>>> + * @bus_addr: bus address used to access the memory region
+>>> + * @dev_addr: device address of the memory region from DSP view
+>>> + * @size: size of the memory region
+>>> + */
+>>> +struct omap_rproc_mem {
+>>> +    void __iomem *cpu_addr;
+>>> +    phys_addr_t bus_addr;
+>>> +    u32 dev_addr;
+>>> +    size_t size;
+>>> +};
+>>> +
+>>>   /**
+>>>    * struct omap_rproc - omap remote processor state
+>>>    * @mbox: mailbox channel handle
+>>>    * @client: mailbox client to request the mailbox channel
+>>>    * @boot_data: boot data structure for setting processor boot address
+>>> + * @mem: internal memory regions data
+>>> + * @num_mems: number of internal memory regions
+>>>    * @rproc: rproc handle
+>>>    * @reset: reset handle
+>>>    */
+>>> @@ -51,16 +67,30 @@ struct omap_rproc {
+>>>       struct mbox_chan *mbox;
+>>>       struct mbox_client client;
+>>>       struct omap_rproc_boot_data *boot_data;
+>>> +    struct omap_rproc_mem *mem;
+>>> +    int num_mems;
+>>>       struct rproc *rproc;
+>>>       struct reset_control *reset;
+>>>   };
+>>>   +/**
+>>> + * struct omap_rproc_mem_data - memory definitions for an omap
+>>> remote processor
+>>> + * @mem_name: name for this memory entry
+>>> + * @dev_addr: device address for the memory entry
+>>> + */
+>>> +struct omap_rproc_mem_data {
+>>> +    const char *name;
+>>> +    const u32 dev_addr;
+>>> +};
+>>> +
+>>>   /**
+>>>    * struct omap_rproc_dev_data - device data for the omap remote
+>>> processor
+>>>    * @device_name: device name of the remote processor
+>>> + * @mems: memory definitions for this remote processor
+>>>    */
+>>>   struct omap_rproc_dev_data {
+>>>       const char *device_name;
+>>> +    const struct omap_rproc_mem_data *mems;
+>>>   };
+>>>     /**
+>>> @@ -221,12 +251,18 @@ static const struct rproc_ops omap_rproc_ops = {
+>>>       .kick        = omap_rproc_kick,
+>>>   };
+>>>   +static const struct omap_rproc_mem_data ipu_mems[] = {
+>>> +    { .name = "l2ram", .dev_addr = 0x20000000 },
+>>> +    { },
+>>> +};
+>>> +
+>>>   static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+>>>       .device_name    = "dsp",
+>>>   };
+>>>     static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
+>>>       .device_name    = "ipu",
+>>> +    .mems        = ipu_mems,
+>>>   };
+>>>     static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+>>> @@ -235,6 +271,7 @@ static const struct omap_rproc_dev_data
+>>> omap5_dsp_dev_data = {
+>>>     static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+>>>       .device_name    = "ipu",
+>>> +    .mems        = ipu_mems,
+>>>   };
+>>>     static const struct of_device_id omap_rproc_of_match[] = {
+>>> @@ -309,6 +346,54 @@ static int omap_rproc_get_boot_data(struct
+>>> platform_device *pdev,
+>>>       return 0;
+>>>   }
+>>>   +static int omap_rproc_of_get_internal_memories(struct
+>>> platform_device *pdev,
+>>> +                           struct rproc *rproc)
+>>> +{
+>>> +    struct omap_rproc *oproc = rproc->priv;
+>>> +    struct device *dev = &pdev->dev;
+>>> +    const struct omap_rproc_dev_data *data;
+>>> +    struct resource *res;
+>>> +    int num_mems;
+>>> +    int i;
+>>> +
+>>> +    data = of_device_get_match_data(&pdev->dev);
+>>> +    if (!data)
+>>> +        return -ENODEV;
+>>> +
+>>> +    if (!data->mems)
+>>> +        return 0;
+>>> +
+>>> +    for (num_mems = 0; data->mems[num_mems].name; num_mems++)
+>>> +        ;
+>>
+>> Think you can restore back the ARRAY_SIZE here? Don't think you need the
+>> sentinel in the names either.
+> 
+> Can't do that. There is nothing to use the ARRAY_SIZE against here. I
+> either need to have the ARRAY_SIZE embedded in the device data, or have
+> the sentinel. Having the sentinel is cleaner.
 
-Add the device tree bindings document for the IPU and DSP
-remote processor devices on OMAP4+ SoCs.
+Yeah, ok.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-[t-kristo@ti.com: converted to schema]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
-v4: added ti,bootreg-shift and ti,autosuspend-delay properties
+regards
+Suman
 
- .../remoteproc/ti,omap-remoteproc.yaml        | 329 ++++++++++++++++++
- 1 file changed, 329 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-new file mode 100644
-index 000000000000..f53d58efaae3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-@@ -0,0 +1,329 @@
-+# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/ti,omap-remoteproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: OMAP4+ Remoteproc Devices
-+
-+maintainers:
-+  - Suman Anna <s-anna@ti.com>
-+
-+description:
-+  The OMAP family of SoCs usually have one or more slave processor sub-systems
-+  that are used to offload some of the processor-intensive tasks, or to manage
-+  other hardware accelerators, for achieving various system level goals.
-+
-+  The processor cores in the sub-system are usually behind an IOMMU, and may
-+  contain additional sub-modules like Internal RAM and/or ROMs, L1 and/or L2
-+  caches, an Interrupt Controller, a Cache Controller etc.
-+
-+  The OMAP SoCs usually have a DSP processor sub-system and/or an IPU processor
-+  sub-system. The DSP processor sub-system can contain any of the TI's C64x,
-+  C66x or C67x family of DSP cores as the main execution unit. The IPU processor
-+  sub-system usually contains either a Dual-Core Cortex-M3 or Dual-Core
-+  Cortex-M4 processors.
-+
-+  Each remote processor sub-system is represented as a single DT node. Each node
-+  has a number of required or optional properties that enable the OS running on
-+  the host processor (MPU) to perform the device management of the remote
-+  processor and to communicate with the remote processor. The various properties
-+  can be classified as constant or variable. The constant properties are
-+  dictated by the SoC and does not change from one board to another having the
-+  same SoC. Examples of constant properties include 'iommus', 'reg'. The
-+  variable properties are dictated by the system integration aspects such as
-+  memory on the board, or configuration used within the corresponding firmware
-+  image. Examples of variable properties include 'mboxes', 'memory-region',
-+  'timers', 'watchdog-timers' etc.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,omap4-dsp
-+      - ti,omap5-dsp
-+      - ti,dra7-dsp
-+      - ti,omap4-ipu
-+      - ti,omap5-ipu
-+      - ti,dra7-ipu
-+
-+  iommus:
-+    minItems: 1
-+    maxItems: 2
-+    description: |
-+      phandles to OMAP IOMMU nodes, that need to be programmed
-+      for this remote processor to access any external RAM memory or
-+      other peripheral device address spaces. This property usually
-+      has only a single phandle. Multiple phandles are used only in
-+      cases where the sub-system has different ports for different
-+      sub-modules within the processor sub-system (eg: DRA7 DSPs),
-+      and need the same programming in both the MMUs.
-+
-+  mboxes:
-+    minItems: 1
-+    maxItems: 2
-+    description: |
-+      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-+      communication with the remote processor. The specifier format is
-+      as per the bindings,
-+      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
-+      This property should match with the sub-mailbox node used in
-+      the firmware image.
-+
-+  clocks:
-+    description: |
-+      Main functional clock for the remote processor
-+
-+  resets:
-+    description: |
-+      Reset handles for the remote processor
-+
-+  memory-region:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: |
-+      phandle to the reserved memory node to be associated
-+      with the remoteproc device. The reserved memory node
-+      can be a CMA memory node, and should be defined as
-+      per the bindings,
-+      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+
-+  firmware-name:
-+    description: |
-+      Default name of the firmware to load to the remote processor.
-+
-+# Optional properties:
-+# --------------------
-+# Some of these properties are mandatory on some SoCs, and some are optional
-+# depending on the configuration of the firmware image to be executed on the
-+# remote processor. The conditions are mentioned for each property.
-+#
-+# The following are the optional properties:
-+
-+  reg:
-+    description: |
-+      Address space for any remoteproc memories present on
-+      the SoC. Should contain an entry for each value in
-+      'reg-names'. These are mandatory for all DSP and IPU
-+      processors that have them (OMAP4/OMAP5 DSPs do not have
-+      any RAMs)
-+
-+  reg-names:
-+    description: |
-+      Required names for each of the address spaces defined in
-+      the 'reg' property. Should contain a string from among
-+      the following names, each representing the corresponding
-+      internal RAM memory region.
-+    minItems: 1
-+    maxItems: 3
-+    items:
-+      - const: l2ram
-+      - const: l1pram
-+      - const: l1dram
-+
-+  ti,bootreg:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      Should be a pair of the phandle to the System Control
-+      Configuration region that contains the boot address
-+      register, and the register offset of the boot address
-+      register within the System Control module. This property
-+      is required for all the DSP instances on OMAP4, OMAP5
-+      and DRA7xx SoCs.
-+
-+  ti,bootreg-shift:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Describes the bit position of the boot address field within
-+      the ti,bootreg.
-+
-+  ti,autosuspend-delay:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Custom autosuspend delay for the remoteproc in milliseconds.
-+
-+  ti,timers:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      One or more phandles to OMAP DMTimer nodes, that serve
-+      as System/Tick timers for the OS running on the remote
-+      processors. This will usually be a single timer if the
-+      processor sub-system is running in SMP mode, or one per
-+      core in the processor sub-system. This can also be used
-+      to reserve specific timers to be dedicated to the
-+      remote processors.
-+
-+      This property is mandatory on remote processors requiring
-+      external tick wakeup, and to support Power Management
-+      features. The timers to be used should match with the
-+      timers used in the firmware image.
-+
-+  ti,watchdog-timers:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      One or more phandles to OMAP DMTimer nodes, used to
-+      serve as Watchdog timers for the processor cores. This
-+      will usually be one per executing processor core, even
-+      if the processor sub-system is running a SMP OS.
-+
-+      The timers to be used should match with the watchdog
-+      timers used in the firmware image.
-+
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - ti,dra7-dsp
-+then:
-+  properties:
-+    reg:
-+      minItems: 3
-+      maxItems: 3
-+    ti,bootreg:
-+      minItems: 1
-+      maxItems: 1
-+    ti,bootreg-shift:
-+      minItems: 1
-+      maxItems: 1
-+
-+else:
-+  if:
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,omap4-ipu
-+          - ti,omap5-ipu
-+          - ti,dra7-ipu
-+  then:
-+    properties:
-+      reg:
-+        minItems: 1
-+        maxItems: 1
-+
-+  else:
-+    properties:
-+      reg:
-+        maxItems: 0
-+      ti,bootreg:
-+        minItems: 1
-+        maxItems: 1
-+
-+required:
-+  - compatible
-+  - iommus
-+  - mboxes
-+  - memory-region
-+  - clocks
-+  - resets
-+  - firmware-name
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    //Example 1: OMAP4 DSP
-+
-+    /* DSP Reserved Memory node */
-+    #include <dt-bindings/clock/omap4.h>
-+    reserved-memory {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        dsp_memory_region: dsp-memory@98000000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x98000000 0x800000>;
-+            reusable;
-+        };
-+    };
-+
-+    /* DSP node */
-+    ocp {
-+        dsp: dsp {
-+            compatible = "ti,omap4-dsp";
-+            ti,bootreg = <&scm_conf 0x304>;
-+            iommus = <&mmu_dsp>;
-+            mboxes = <&mailbox &mbox_dsp>;
-+            memory-region = <&dsp_memory_region>;
-+            ti,timers = <&timer5>;
-+            ti,watchdog-timers = <&timer6>;
-+            clocks = <&tesla_clkctrl OMAP4_DSP_CLKCTRL 0>;
-+            resets = <&prm_tesla 0>, <&prm_tesla 1>;
-+            firmware-name = "omap4-dsp-fw.xe64T";
-+        };
-+    };
-+
-+  - |+
-+
-+    //Example 2: OMAP5 IPU
-+
-+    /* IPU Reserved Memory node */
-+    #include <dt-bindings/clock/omap5.h>
-+    reserved-memory {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        ipu_memory_region: ipu-memory@95800000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0 0x95800000 0 0x3800000>;
-+            reusable;
-+        };
-+    };
-+
-+    /* IPU node */
-+    ocp {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        ipu: ipu@55020000 {
-+            compatible = "ti,omap5-ipu";
-+            reg = <0x55020000 0x10000>;
-+            reg-names = "l2ram";
-+            iommus = <&mmu_ipu>;
-+            mboxes = <&mailbox &mbox_ipu>;
-+            memory-region = <&ipu_memory_region>;
-+            ti,timers = <&timer3>, <&timer4>;
-+            ti,watchdog-timers = <&timer9>, <&timer11>;
-+            clocks = <&ipu_clkctrl OMAP5_MMU_IPU_CLKCTRL 0>;
-+            resets = <&prm_core 2>;
-+            firmware-name = "omap5-ipu-fw.xem";
-+        };
-+    };
-+
-+  - |+
-+
-+    //Example 3: DRA7xx/AM57xx DSP
-+
-+    /* DSP1 Reserved Memory node */
-+    #include <dt-bindings/clock/dra7.h>
-+    reserved-memory {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        dsp1_memory_region: dsp1-memory@99000000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x0 0x99000000 0x0 0x4000000>;
-+            reusable;
-+        };
-+    };
-+
-+    /* DSP1 node */
-+    ocp {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        dsp1: dsp@40800000 {
-+            compatible = "ti,dra7-dsp";
-+            reg = <0x40800000 0x48000>,
-+                  <0x40e00000 0x8000>,
-+                  <0x40f00000 0x8000>;
-+            reg-names = "l2ram", "l1pram", "l1dram";
-+            ti,bootreg = <&scm_conf 0x55c>;
-+            iommus = <&mmu0_dsp1>, <&mmu1_dsp1>;
-+            mboxes = <&mailbox5 &mbox_dsp1_ipc3x>;
-+            memory-region = <&dsp1_memory_region>;
-+            ti,timers = <&timer5>;
-+            ti,watchdog-timers = <&timer10>;
-+            resets = <&prm_dsp1 0>;
-+            clocks = <&dsp1_clkctrl DRA7_DSP1_MMU0_DSP1_CLKCTRL 0>;
-+            firmware-name = "dra7-dsp1-fw.xe66";
-+        };
-+    };
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+>>
+>>> +
+>>> +    oproc->mem = devm_kcalloc(dev, num_mems, sizeof(*oproc->mem),
+>>> +                  GFP_KERNEL);
+>>> +    if (!oproc->mem)
+>>> +        return -ENOMEM;
+>>> +
+>>> +    for (i = 0; i < num_mems; i++) {
+>>> +        res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>>> +                           data->mems[i].name);
+>>> +        oproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
+>>> +        if (IS_ERR(oproc->mem[i].cpu_addr)) {
+>>> +            dev_err(dev, "failed to parse and map %s memory\n",
+>>> +                data->mems[i].name);
+>>> +            return PTR_ERR(oproc->mem[i].cpu_addr);
+>>> +        }
+>>> +        oproc->mem[i].bus_addr = res->start;
+>>> +        oproc->mem[i].dev_addr = data->mems[i].dev_addr;
+>>> +        oproc->mem[i].size = resource_size(res);
+>>> +
+>>> +        dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da
+>>> 0x%x\n",
+>>
+>> Would appreciate if you can fix up to use %pK here.
+> 
+> Ok, can change those.
+> 
+> -Tero
+> 
+>>
+>> regards
+>> Suman
+>>
+>>> +            data->mems[i].name, &oproc->mem[i].bus_addr,
+>>> +            oproc->mem[i].size, oproc->mem[i].cpu_addr,
+>>> +            oproc->mem[i].dev_addr);
+>>> +    }
+>>> +    oproc->num_mems = num_mems;
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>>   static int omap_rproc_probe(struct platform_device *pdev)
+>>>   {
+>>>       struct device_node *np = pdev->dev.of_node;
+>>> @@ -348,6 +433,10 @@ static int omap_rproc_probe(struct
+>>> platform_device *pdev)
+>>>       /* All existing OMAP IPU and DSP processors have an MMU */
+>>>       rproc->has_iommu = true;
+>>>   +    ret = omap_rproc_of_get_internal_memories(pdev, rproc);
+>>> +    if (ret)
+>>> +        goto free_rproc;
+>>> +
+>>>       ret = omap_rproc_get_boot_data(pdev, rproc);
+>>>       if (ret)
+>>>           goto free_rproc;
+>>>
+>>
+> 
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
