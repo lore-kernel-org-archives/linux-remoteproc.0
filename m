@@ -1,25 +1,30 @@
-Date: Mon, 13 Jan 2020 09:24:57 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
 Subject: Re: [PATCH v2] rpmsg: core: add API to get MTU
-Message-ID: <20200113172453.GQ738324@yoga>
 References: <20191113172249.32412-1-arnaud.pouliquen@st.com>
+From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <f0419672-f1a5-b909-2dff-c611f852919b@st.com>
+Date: Mon, 13 Jan 2020 14:19:00 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20191113172249.32412-1-arnaud.pouliquen@st.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Cc: Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 13 Nov 09:22 PST 2019, Arnaud Pouliquen wrote:
+Hi Bjorn, Suman,
 
+Gentleman reminder :)
+
+Thank in advance,
+
+Arnaud
+
+On 11/13/19 6:22 PM, Arnaud Pouliquen wrote:
 > Return the rpmsg buffer MTU for sending message, so rpmsg users
 > can split a long message in several sub rpmsg buffers.
 > 
-
-I won't merge this new api without a client, and I'm still concerned
-about the details.
-
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 > ---
 >  V1 to V2
@@ -29,9 +34,6 @@ about the details.
 >   - as not solution today to support MTU on GLINK make ops optional,
 >     RPMsg client API returns -ENOTSUPP in this case,
 >   - suppress smd and glink patches.
-
-That's ok.
-
 > ---
 >  drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
 >  drivers/rpmsg/rpmsg_internal.h   |  2 ++
@@ -55,25 +57,103 @@ That's ok.
 > + *
 > + * Return: the maximum transmission size on success and an appropriate error
 > + * value on failure.
-
-Is the expectation that a call to rpmsg_send() with this size will
-eventually succeed?
-
 > + */
-[..]
+> +
+> +ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+> +{
+> +	if (WARN_ON(!ept))
+> +		return -EINVAL;
+> +	if (!ept->ops->get_mtu)
+> +		return -ENOTSUPP;
+> +
+> +	return ept->ops->get_mtu(ept);
+> +}
+> +EXPORT_SYMBOL(rpmsg_get_mtu);
+> +
+>  /*
+>   * match an rpmsg channel with a channel info struct.
+>   * this is used to make sure we're not creating rpmsg devices for channels
+> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> index 3fc83cd50e98..0e56e046f5c6 100644
+> --- a/drivers/rpmsg/rpmsg_internal.h
+> +++ b/drivers/rpmsg/rpmsg_internal.h
+> @@ -47,6 +47,7 @@ struct rpmsg_device_ops {
+>   * @trysendto:		see @rpmsg_trysendto(), optional
+>   * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+>   * @poll:		see @rpmsg_poll(), optional
+> + * @get_mtu:		see @get_mpu(), optional
+>   *
+>   * Indirection table for the operations that a rpmsg backend should implement.
+>   * In addition to @destroy_ept, the backend must at least implement @send and
+> @@ -66,6 +67,7 @@ struct rpmsg_endpoint_ops {
+>  			     void *data, int len);
+>  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+>  			     poll_table *wait);
+> +	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
+>  };
+>  
+>  int rpmsg_register_device(struct rpmsg_device *rpdev);
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 376ebbf880d6..6e48fdf24555 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>  				  int len, u32 dst);
+>  static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+>  					   u32 dst, void *data, int len);
+> +static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+>  
+>  static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>  	.destroy_ept = virtio_rpmsg_destroy_ept,
+> @@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>  	.trysend = virtio_rpmsg_trysend,
+>  	.trysendto = virtio_rpmsg_trysendto,
+>  	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
+> +	.get_mtu = virtio_rpmsg_get_mtu,
+>  };
+>  
+>  /**
+> @@ -699,6 +701,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+>  	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+>  }
+>  
 > +static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
 > +{
 > +	struct rpmsg_device *rpdev = ept->rpdev;
 > +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
 > +
 > +	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-
-I'm still under the impression that the rpmsg protocol doesn't have to
-operate on fixed size messages. Would this then return vrp->num_bufs *
-vrp->buf_size / 2 - sizeof(rpmsg_hdr)?
-
 > +}
 > +
-
-Regards,
-Bjorn
+>  static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  			     struct rpmsg_hdr *msg, unsigned int len)
+>  {
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index 9fe156d1c018..88d7892ca93d 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>  __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>  			poll_table *wait);
+>  
+> +ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+> +
+>  #else
+>  
+>  static inline int register_rpmsg_device(struct rpmsg_device *dev)
+> @@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+>  	return 0;
+>  }
+>  
+> +static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+> +{
+> +	/* This shouldn't be possible */
+> +	WARN_ON(1);
+> +
+> +	return -ENXIO;
+> +}
+> +
+>  #endif /* IS_ENABLED(CONFIG_RPMSG) */
+>  
+>  /* use a macro to avoid include chaining to get THIS_MODULE */
+> 
