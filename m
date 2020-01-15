@@ -1,58 +1,109 @@
-Return-Path: <baolin.wang7@gmail.com>
-Return-Path: <baolin.wang7@gmail.com>
-From: Baolin Wang <baolin.wang7@gmail.com>
-Subject: [PATCH RESEND 2/2] hwspinlock: qcom: Use devm_hwspin_lock_register() to register hwlock controller
-Date: Wed,  8 Jan 2020 11:09:11 +0800
-Message-Id: <d69ad8611a68b0cac3c927d19901f3c113c5435c.1578452735.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578452735.git.baolin.wang7@gmail.com>
-References: <cover.1578452735.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578452735.git.baolin.wang7@gmail.com>
-References: <cover.1578452735.git.baolin.wang7@gmail.com>
-To: agross@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: baolin.wang7@gmail.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv4 08/14] remoteproc/omap: remove the platform_data header
+References: <20200102131845.12992-1-t-kristo@ti.com>
+ <20200102131845.12992-9-t-kristo@ti.com>
+ <4391856a-d956-751e-6d38-02f8306bb691@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <4a5d7320-1950-4ea8-19ee-3d09caeb3f80@ti.com>
+Date: Wed, 15 Jan 2020 14:58:46 +0200
+MIME-Version: 1.0
+In-Reply-To: <4391856a-d956-751e-6d38-02f8306bb691@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Suman Anna <s-anna@ti.com>, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use devm_hwspin_lock_register() to register the hwlock controller instead of
-unregistering the hwlock controller explicitly when removing the device.
+On 08/01/2020 21:44, Suman Anna wrote:
+> On 1/2/20 7:18 AM, Tero Kristo wrote:
+>> The platform data header for OMAP remoteproc is no longer used for
+>> anything post ti-sysc conversion, so just remove it completely.
+> 
+> Thanks for removing the header now altogether,
+> %s/ti-sysc/ti-sysc and DT/ to be more accurate.
+> 
+> With that,
+> Acked-by: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/hwspinlock/qcom_hwspinlock.c |   19 ++-----------------
- 1 file changed, 2 insertions(+), 17 deletions(-)
+Ok, will change that.
 
-diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-index 5a736b0..f0da544 100644
---- a/drivers/hwspinlock/qcom_hwspinlock.c
-+++ b/drivers/hwspinlock/qcom_hwspinlock.c
-@@ -121,27 +121,12 @@ static int qcom_hwspinlock_probe(struct platform_device *pdev)
- 							     regmap, field);
- 	}
- 
--	return hwspin_lock_register(bank, &pdev->dev, &qcom_hwspinlock_ops,
--				    0, QCOM_MUTEX_NUM_LOCKS);
--}
--
--static int qcom_hwspinlock_remove(struct platform_device *pdev)
--{
--	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
--	int ret;
--
--	ret = hwspin_lock_unregister(bank);
--	if (ret) {
--		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
--		return ret;
--	}
--
--	return 0;
-+	return devm_hwspin_lock_register(&pdev->dev, bank, &qcom_hwspinlock_ops,
-+					 0, QCOM_MUTEX_NUM_LOCKS);
- }
- 
- static struct platform_driver qcom_hwspinlock_driver = {
- 	.probe		= qcom_hwspinlock_probe,
--	.remove		= qcom_hwspinlock_remove,
- 	.driver		= {
- 		.name	= "qcom_hwspinlock",
- 		.of_match_table = qcom_hwspinlock_of_match,
--- 
-1.7.9.5
+-Tero
+
+> 
+> regards
+> Suman
+> 
+>>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>> v4:
+>>    - new patch, to remove the platform data file completely compared to
+>>      patches #8 / #9 in previous version of the series
+>>
+>>   include/linux/platform_data/remoteproc-omap.h | 51 -------------------
+>>   1 file changed, 51 deletions(-)
+>>   delete mode 100644 include/linux/platform_data/remoteproc-omap.h
+>>
+>> diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+>> deleted file mode 100644
+>> index 7e3a16097672..000000000000
+>> --- a/include/linux/platform_data/remoteproc-omap.h
+>> +++ /dev/null
+>> @@ -1,51 +0,0 @@
+>> -/* SPDX-License-Identifier: GPL-2.0-only */
+>> -/*
+>> - * Remote Processor - omap-specific bits
+>> - *
+>> - * Copyright (C) 2011 Texas Instruments, Inc.
+>> - * Copyright (C) 2011 Google, Inc.
+>> - */
+>> -
+>> -#ifndef _PLAT_REMOTEPROC_H
+>> -#define _PLAT_REMOTEPROC_H
+>> -
+>> -struct rproc_ops;
+>> -struct platform_device;
+>> -
+>> -/*
+>> - * struct omap_rproc_pdata - omap remoteproc's platform data
+>> - * @name: the remoteproc's name
+>> - * @oh_name: omap hwmod device
+>> - * @oh_name_opt: optional, secondary omap hwmod device
+>> - * @firmware: name of firmware file to load
+>> - * @mbox_name: name of omap mailbox device to use with this rproc
+>> - * @ops: start/stop rproc handlers
+>> - * @device_enable: omap-specific handler for enabling a device
+>> - * @device_shutdown: omap-specific handler for shutting down a device
+>> - * @set_bootaddr: omap-specific handler for setting the rproc boot address
+>> - */
+>> -struct omap_rproc_pdata {
+>> -	const char *name;
+>> -	const char *oh_name;
+>> -	const char *oh_name_opt;
+>> -	const char *firmware;
+>> -	const char *mbox_name;
+>> -	const struct rproc_ops *ops;
+>> -	int (*device_enable)(struct platform_device *pdev);
+>> -	int (*device_shutdown)(struct platform_device *pdev);
+>> -	void (*set_bootaddr)(u32);
+>> -};
+>> -
+>> -#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+>> -
+>> -void __init omap_rproc_reserve_cma(void);
+>> -
+>> -#else
+>> -
+>> -static inline void __init omap_rproc_reserve_cma(void)
+>> -{
+>> -}
+>> -
+>> -#endif
+>> -
+>> -#endif /* _PLAT_REMOTEPROC_H */
+>>
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
