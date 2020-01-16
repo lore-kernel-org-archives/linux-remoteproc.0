@@ -1,117 +1,88 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 31 Jan 2020 08:34:36 -0600
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: soc: qcom: apr: Add protection
- domain bindings
-Message-ID: <20200131143436.GA14822@bogus>
-References: <20191230050008.8143-1-sibis@codeaurora.org>
- <20191230050008.8143-3-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv5 08/14] remoteproc/omap: remove the platform_data header
+Date: Thu, 16 Jan 2020 15:53:26 +0200
+Message-ID: <20200116135332.7819-9-t-kristo@ti.com>
+In-Reply-To: <20200116135332.7819-1-t-kristo@ti.com>
+References: <20200116135332.7819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230050008.8143-3-sibis@codeaurora.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Dec 30, 2019 at 10:30:07AM +0530, Sibi Sankar wrote:
-> Add optional "qcom,protection-domain" bindings for APR services. This
-> helps to capture the dependencies between APR services and the PD on
-> which each apr service run.
+The platform data header for OMAP remoteproc is no longer used for
+anything post ti-sysc and DT conversion, so just remove it completely.
 
-This is meaningless to me...
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Suman Anna <s-anna@ti.com>
+---
+v5:
+  - cosmetic changes in patch desc only
 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-> index db501269f47b8..f87c0b2a48de4 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-> @@ -45,6 +45,12 @@ by the individual bindings for the specific service
->  			12 - Ultrasound stream manager.
->  			13 - Listen stream manager.
->  
-> +- qcom,protection-domain
-> +	Usage: optional
-> +	Value type: <stringlist>
-> +	Definition: Must list the protection domain service name and path
-> +		    that the particular apr service has a dependency on.
+ include/linux/platform_data/remoteproc-omap.h | 51 -------------------
+ 1 file changed, 51 deletions(-)
+ delete mode 100644 include/linux/platform_data/remoteproc-omap.h
 
-How many strings can there be and can you enumerate the possible 
-strings?
+diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+deleted file mode 100644
+index 7e3a16097672..000000000000
+--- a/include/linux/platform_data/remoteproc-omap.h
++++ /dev/null
+@@ -1,51 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Remote Processor - omap-specific bits
+- *
+- * Copyright (C) 2011 Texas Instruments, Inc.
+- * Copyright (C) 2011 Google, Inc.
+- */
+-
+-#ifndef _PLAT_REMOTEPROC_H
+-#define _PLAT_REMOTEPROC_H
+-
+-struct rproc_ops;
+-struct platform_device;
+-
+-/*
+- * struct omap_rproc_pdata - omap remoteproc's platform data
+- * @name: the remoteproc's name
+- * @oh_name: omap hwmod device
+- * @oh_name_opt: optional, secondary omap hwmod device
+- * @firmware: name of firmware file to load
+- * @mbox_name: name of omap mailbox device to use with this rproc
+- * @ops: start/stop rproc handlers
+- * @device_enable: omap-specific handler for enabling a device
+- * @device_shutdown: omap-specific handler for shutting down a device
+- * @set_bootaddr: omap-specific handler for setting the rproc boot address
+- */
+-struct omap_rproc_pdata {
+-	const char *name;
+-	const char *oh_name;
+-	const char *oh_name_opt;
+-	const char *firmware;
+-	const char *mbox_name;
+-	const struct rproc_ops *ops;
+-	int (*device_enable)(struct platform_device *pdev);
+-	int (*device_shutdown)(struct platform_device *pdev);
+-	void (*set_bootaddr)(u32);
+-};
+-
+-#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+-
+-void __init omap_rproc_reserve_cma(void);
+-
+-#else
+-
+-static inline void __init omap_rproc_reserve_cma(void)
+-{
+-}
+-
+-#endif
+-
+-#endif /* _PLAT_REMOTEPROC_H */
+-- 
+2.17.1
 
-> +
->  = EXAMPLE
->  The following example represents a QDSP based sound card on a MSM8996 device
->  which uses apr as communication between Apps and QDSP.
-> @@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
->  			...
->  		};
->  	};
-> +
-> += EXAMPLE 2
-> +The following example represents a QDSP based sound card on SDM845 device.
-> +Here the apr services are dependent on "avs/audio" service running on AUDIO
-> +Protection Domain hosted on ADSP remote processor.
-> +
-> +	apr {
-> +		compatible = "qcom,apr-v2";
-> +		qcom,glink-channels = "apr_audio_svc";
-> +		qcom,apr-domain = <APR_DOMAIN_ADSP>;
-> +
-> +		q6core {
-> +			compatible = "qcom,q6core";
-> +			reg = <APR_SVC_ADSP_CORE>;
-> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-> +		};
-> +
-> +		q6afe: q6afe {
-> +			compatible = "qcom,q6afe";
-> +			reg = <APR_SVC_AFE>;
-> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-> +			q6afedai: dais {
-> +				compatible = "qcom,q6afe-dais";
-> +				#sound-dai-cells = <1>;
-> +
-> +				qi2s@22 {
-> +					reg = <22>;
-> +					qcom,sd-lines = <3>;
-> +				};
-> +			};
-> +		};
-> +
-> +		q6asm: q6asm {
-> +			compatible = "qcom,q6asm";
-> +			reg = <APR_SVC_ASM>;
-> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-> +			q6asmdai: dais {
-> +				compatible = "qcom,q6asm-dais";
-> +				#sound-dai-cells = <1>;
-> +				iommus = <&apps_smmu 0x1821 0x0>;
-> +			};
-> +		};
-> +
-> +		q6adm: q6adm {
-> +			compatible = "qcom,q6adm";
-> +			reg = <APR_SVC_ADM>;
-> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-
-Perhaps an example where not everything is the same. The example shows 
-me this isn't needed in DT.
-
-> +			q6routing: routing {
-> +				compatible = "qcom,q6adm-routing";
-> +				#sound-dai-cells = <0>;
-> +			};
-> +		};
-> +	};
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
