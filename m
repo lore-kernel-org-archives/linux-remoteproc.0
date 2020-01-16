@@ -1,25 +1,81 @@
-Return-Path: <baolin.wang7@gmail.com>
-Return-Path: <baolin.wang7@gmail.com>
-From: Baolin Wang <baolin.wang7@gmail.com>
-Subject: [PATCH RESEND 0/3] Some improvements for SIRF hwspinlock
-Date: Wed,  8 Jan 2020 11:23:43 +0800
-Message-Id: <cover.1578453662.git.baolin.wang7@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, baohua@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, baolin.wang7@gmail.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv5 03/14] remoteproc/omap: Add a sanity check for DSP boot address alignment
+Date: Thu, 16 Jan 2020 15:53:21 +0200
+Message-ID: <20200116135332.7819-4-t-kristo@ti.com>
+In-Reply-To: <20200116135332.7819-1-t-kristo@ti.com>
+References: <20200116135332.7819-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch set did some improvements for the SIRF hwspinlock driver,
-including changing to use devm_xxx APIs and removing some redundant
-pm runtime functions.
+From: Suman Anna <s-anna@ti.com>
 
-Baolin Wang (3):
-  hwspinlock: sirf: Change to use devm_platform_ioremap_resource()
-  hwspinlock: sirf: Remove redundant PM runtime functions
-  hwspinlock: sirf: Use devm_hwspin_lock_register() to register hwlock
-    controller
+The DSP remote processors on OMAP SoCs require a boot register to
+be programmed with a boot address, and this boot address needs to
+be on a 1KB boundary. The current code is simply masking the boot
+address appropriately without performing any sanity checks before
+releasing the resets. An unaligned boot address results in an
+undefined execution behavior and can result in various bus errors
+like MMU Faults or L3 NoC errors. Such errors are hard to debug and
+can be easily avoided by adding a sanity check for the alignment
+before booting a DSP remote processor.
 
- drivers/hwspinlock/sirf_hwspinlock.c |   46 ++++++----------------------------
- 1 file changed, 7 insertions(+), 39 deletions(-)
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+v5: no changes
 
+ drivers/remoteproc/omap_remoteproc.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 6c603c2cd895..2935a8edb3a6 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -122,13 +122,22 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+  *
+  * Set boot address for a supported DSP remote processor.
+  */
+-static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ {
++	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
+ 
++	if (rproc->bootaddr & (SZ_1K - 1)) {
++		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
++			rproc->bootaddr);
++		return -EINVAL;
++	}
++
+ 	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++
++	return 0;
+ }
+ 
+ /*
+@@ -145,8 +154,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	int ret;
+ 	struct mbox_client *client = &oproc->client;
+ 
+-	if (oproc->boot_data)
+-		omap_rproc_write_dsp_boot_addr(rproc);
++	if (oproc->boot_data) {
++		ret = omap_rproc_write_dsp_boot_addr(rproc);
++		if (ret)
++			return ret;
++	}
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
 -- 
-1.7.9.5
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
