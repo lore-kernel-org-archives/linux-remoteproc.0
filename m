@@ -1,58 +1,80 @@
-Return-Path: <baolin.wang7@gmail.com>
-Return-Path: <baolin.wang7@gmail.com>
-From: Baolin Wang <baolin.wang7@gmail.com>
-Subject: [PATCH RESEND 1/3] hwspinlock: sirf: Change to use devm_platform_ioremap_resource()
-Date: Wed,  8 Jan 2020 11:23:44 +0800
-Message-Id: <dfa043f317c609a6172468ac11598968dd751bce.1578453662.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
-References: <cover.1578453662.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578453662.git.baolin.wang7@gmail.com>
-References: <cover.1578453662.git.baolin.wang7@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org, baohua@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, baolin.wang7@gmail.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv5 09/14] remoteproc/omap: Check for undefined mailbox messages
+Date: Thu, 16 Jan 2020 15:53:27 +0200
+Message-ID: <20200116135332.7819-10-t-kristo@ti.com>
+In-Reply-To: <20200116135332.7819-1-t-kristo@ti.com>
+References: <20200116135332.7819-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use the new helper that wraps the calls to platform_get_resource()
-and devm_ioremap_resource() together, which can simpify the code.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+Add some checks in the mailbox callback function to limit
+any processing in the mailbox callback function to only
+certain currently valid messages, and drop all the remaining
+messages. A debug message is added to print any such invalid
+messages when the appropriate trace control is enabled.
+
+Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/hwspinlock/sirf_hwspinlock.c |    9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+v5: no changes
 
-diff --git a/drivers/hwspinlock/sirf_hwspinlock.c b/drivers/hwspinlock/sirf_hwspinlock.c
-index 1f625cd..8cb5fd4 100644
---- a/drivers/hwspinlock/sirf_hwspinlock.c
-+++ b/drivers/hwspinlock/sirf_hwspinlock.c
-@@ -69,9 +69,9 @@ static int sirf_hwspinlock_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+ drivers/remoteproc/omap_remoteproc.c | 6 ++++++
+ drivers/remoteproc/omap_remoteproc.h | 7 +++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 27e145181ef4..777231ce2bae 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -130,6 +130,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 		dev_info(dev, "received echo reply from %s\n", name);
+ 		break;
+ 	default:
++		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
++			return;
++		if (msg > oproc->rproc->max_notifyid) {
++			dev_dbg(dev, "dropping unknown message 0x%x", msg);
++			return;
++		}
+ 		/* msg contains the index of the triggered vring */
+ 		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
+ 			dev_dbg(dev, "no message was found in vqid %d\n", msg);
+diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+index f6d2036d383d..72f656c93caa 100644
+--- a/drivers/remoteproc/omap_remoteproc.h
++++ b/drivers/remoteproc/omap_remoteproc.h
+@@ -56,6 +56,12 @@
+  *
+  * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
+  * recovery mechanism (to some extent).
++ *
++ * Introduce new message definitions if any here.
++ *
++ * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
++ * This should be the last definition.
++ *
+  */
+ enum omap_rp_mbox_messages {
+ 	RP_MBOX_READY		= 0xFFFFFF00,
+@@ -64,6 +70,7 @@ enum omap_rp_mbox_messages {
+ 	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
+ 	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
+ 	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
++	RP_MBOX_END_MSG		= 0xFFFFFF06,
+ };
  
- 	/* retrieve io base */
--	hwspin->io_base = of_iomap(pdev->dev.of_node, 0);
--	if (!hwspin->io_base)
--		return -ENOMEM;
-+	hwspin->io_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(hwspin->io_base))
-+		return PTR_ERR(hwspin->io_base);
- 
- 	for (idx = 0; idx < HW_SPINLOCK_NUMBER; idx++) {
- 		hwlock = &hwspin->bank.lock[idx];
-@@ -92,7 +92,6 @@ static int sirf_hwspinlock_probe(struct platform_device *pdev)
- 
- reg_failed:
- 	pm_runtime_disable(&pdev->dev);
--	iounmap(hwspin->io_base);
- 
- 	return ret;
- }
-@@ -110,8 +109,6 @@ static int sirf_hwspinlock_remove(struct platform_device *pdev)
- 
- 	pm_runtime_disable(&pdev->dev);
- 
--	iounmap(hwspin->io_base);
--
- 	return 0;
- }
- 
+ #endif /* _OMAP_RPMSG_H */
 -- 
-1.7.9.5
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
