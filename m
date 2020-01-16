@@ -1,63 +1,93 @@
-Return-Path: <baolin.wang7@gmail.com>
-Return-Path: <baolin.wang7@gmail.com>
-From: Baolin Wang <baolin.wang7@gmail.com>
-Subject: [PATCH RESEND 1/2] hwspinlock: qcom: Remove redundant PM runtime functions
-Date: Wed,  8 Jan 2020 11:09:10 +0800
-Message-Id: <e0bb751feb7af709f92e52a07d0e8ebcf1ee44ff.1578452735.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578452735.git.baolin.wang7@gmail.com>
-References: <cover.1578452735.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578452735.git.baolin.wang7@gmail.com>
-References: <cover.1578452735.git.baolin.wang7@gmail.com>
-To: agross@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: baolin.wang7@gmail.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv5 05/14] remoteproc/omap: Add the rproc ops .da_to_va() implementation
+Date: Thu, 16 Jan 2020 15:53:23 +0200
+Message-ID: <20200116135332.7819-6-t-kristo@ti.com>
+In-Reply-To: <20200116135332.7819-1-t-kristo@ti.com>
+References: <20200116135332.7819-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Since the hwspinlock core has changed the PM runtime to be optional, and
-the Qualcomm hardware spinlock has no pm runtime requirement, thus remove
-these redundant PM runtime functions.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+An implementation for the rproc ops .da_to_va() has been added
+that provides the address translation between device addresses
+to kernel virtual addresses for internal RAMs present on that
+particular remote processor device. The implementation provides
+the translations based on the addresses parsed and stored during
+the probe.
+
+This ops gets invoked by the exported rproc_da_to_va() function
+and allows the remoteproc core's ELF loader to be able to load
+program data directly into the internal memories.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/hwspinlock/qcom_hwspinlock.c |   13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+v5: no changes
 
-diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-index 6da7447..5a736b0 100644
---- a/drivers/hwspinlock/qcom_hwspinlock.c
-+++ b/drivers/hwspinlock/qcom_hwspinlock.c
-@@ -12,7 +12,6 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
--#include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- 
- #include "hwspinlock_internal.h"
-@@ -122,14 +121,8 @@ static int qcom_hwspinlock_probe(struct platform_device *pdev)
- 							     regmap, field);
- 	}
- 
--	pm_runtime_enable(&pdev->dev);
--
--	ret = hwspin_lock_register(bank, &pdev->dev, &qcom_hwspinlock_ops,
--				   0, QCOM_MUTEX_NUM_LOCKS);
--	if (ret)
--		pm_runtime_disable(&pdev->dev);
--
--	return ret;
-+	return hwspin_lock_register(bank, &pdev->dev, &qcom_hwspinlock_ops,
-+				    0, QCOM_MUTEX_NUM_LOCKS);
- }
- 
- static int qcom_hwspinlock_remove(struct platform_device *pdev)
-@@ -143,8 +136,6 @@ static int qcom_hwspinlock_remove(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	pm_runtime_disable(&pdev->dev);
--
+ drivers/remoteproc/omap_remoteproc.c | 39 ++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index a99e542da364..0846839b2c97 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -245,10 +245,49 @@ static int omap_rproc_stop(struct rproc *rproc)
  	return 0;
  }
  
++/**
++ * omap_rproc_da_to_va() - internal memory translation helper
++ * @rproc: remote processor to apply the address translation for
++ * @da: device address to translate
++ * @len: length of the memory buffer
++ *
++ * Custom function implementing the rproc .da_to_va ops to provide address
++ * translation (device address to kernel virtual address) for internal RAMs
++ * present in a DSP or IPU device). The translated addresses can be used
++ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
++ * Returns the translated virtual address in kernel memory space, or NULL
++ * in failure.
++ */
++static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct omap_rproc *oproc = rproc->priv;
++	int i;
++	u32 offset;
++
++	if (len <= 0)
++		return NULL;
++
++	if (!oproc->num_mems)
++		return NULL;
++
++	for (i = 0; i < oproc->num_mems; i++) {
++		if (da >= oproc->mem[i].dev_addr && da + len <=
++		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
++			offset = da - oproc->mem[i].dev_addr;
++			/* __force to make sparse happy with type conversion */
++			return (__force void *)(oproc->mem[i].cpu_addr +
++						offset);
++		}
++	}
++
++	return NULL;
++}
++
+ static const struct rproc_ops omap_rproc_ops = {
+ 	.start		= omap_rproc_start,
+ 	.stop		= omap_rproc_stop,
+ 	.kick		= omap_rproc_kick,
++	.da_to_va	= omap_rproc_da_to_va,
+ };
+ 
+ static const struct omap_rproc_mem_data ipu_mems[] = {
 -- 
-1.7.9.5
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
