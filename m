@@ -1,90 +1,90 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 1/2] remoteproc: qcom: q6v5-mss: Use regmap_read_poll_timeout
-Date: Thu, 23 Jan 2020 18:42:35 +0530
-Message-Id: <20200123131236.1078-2-sibis@codeaurora.org>
-In-Reply-To: <20200123131236.1078-1-sibis@codeaurora.org>
-References: <20200123131236.1078-1-sibis@codeaurora.org>
+Date: Mon, 20 Jan 2020 11:36:41 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 4/4] remoteproc: qcom: q6v5-mss: Improve readability of
+ reset_assert
+Message-ID: <20200120193638.GK1511@yoga>
+References: <20200117135130.3605-1-sibis@codeaurora.org>
+ <20200117135130.3605-5-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, evgreen@chromium.org, p.zabel@pengutronix.de
-Cc: ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200117135130.3605-5-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: evgreen@chromium.org, p.zabel@pengutronix.de, ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Replace the loop for HALT_ACK detection with regmap_read_poll_timeout.
+On Fri 17 Jan 05:51 PST 2020, Sibi Sankar wrote:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 27 +++++++--------------------
- 1 file changed, 7 insertions(+), 20 deletions(-)
+> Define CONN_BOX_SPARE_0_EN and fixup comments to improve readability of
+> Q6 modem reset_assert sequence on SC7180 SoCs.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 6a98e9029c70b..8c9cfc213d5ff 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -71,6 +71,7 @@
+>  #define NAV_AXI_HALTREQ_BIT		BIT(0)
+>  #define NAV_AXI_HALTACK_BIT		BIT(1)
+>  #define NAV_AXI_IDLE_BIT		BIT(2)
+> +#define CONN_BOX_SPARE_0_EN		BIT(0)
+>  
+>  #define HALT_ACK_TIMEOUT_MS		100
+>  #define NAV_HALT_ACK_TIMEOUT_US		200
+> @@ -415,16 +416,26 @@ static int q6v5_reset_assert(struct q6v5 *qproc)
+>  		ret = reset_control_reset(qproc->mss_restart);
+>  		reset_control_deassert(qproc->pdc_reset);
+>  	} else if (qproc->has_halt_nav) {
+> -		/* SWAR using CONN_BOX_SPARE_0 for pipeline glitch issue */
+> +		/*
+> +		 * SWWA for the pipeline glitch issue seen while
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 899ed769a343b..89ab96c21a44a 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -72,7 +72,8 @@
- #define NAV_AXI_HALTACK_BIT		BIT(1)
- #define NAV_AXI_IDLE_BIT		BIT(2)
- 
--#define HALT_ACK_TIMEOUT_MS		100
-+#define HALT_ACK_TIMEOUT_US		100000
-+#define NAV_HALT_ACK_TIMEOUT_US		200
- 
- /* QDSP6SS_RESET */
- #define Q6SS_STOP_CORE			BIT(0)
-@@ -716,7 +717,6 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
- 				   struct regmap *halt_map,
- 				   u32 offset)
- {
--	unsigned long timeout;
- 	unsigned int val;
- 	int ret;
- 
-@@ -729,14 +729,8 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
- 	regmap_write(halt_map, offset + AXI_HALTREQ_REG, 1);
- 
- 	/* Wait for halt */
--	timeout = jiffies + msecs_to_jiffies(HALT_ACK_TIMEOUT_MS);
--	for (;;) {
--		ret = regmap_read(halt_map, offset + AXI_HALTACK_REG, &val);
--		if (ret || val || time_after(jiffies, timeout))
--			break;
--
--		msleep(1);
--	}
-+	regmap_read_poll_timeout(halt_map, offset + AXI_HALTACK_REG, val,
-+				 val, 1000, HALT_ACK_TIMEOUT_US);
- 
- 	ret = regmap_read(halt_map, offset + AXI_IDLE_REG, &val);
- 	if (ret || !val)
-@@ -750,7 +744,6 @@ static void q6v5proc_halt_nav_axi_port(struct q6v5 *qproc,
- 				       struct regmap *halt_map,
- 				       u32 offset)
- {
--	unsigned long timeout;
- 	unsigned int val;
- 	int ret;
- 
-@@ -764,15 +757,9 @@ static void q6v5proc_halt_nav_axi_port(struct q6v5 *qproc,
- 			   NAV_AXI_HALTREQ_BIT);
- 
- 	/* Wait for halt ack*/
--	timeout = jiffies + msecs_to_jiffies(HALT_ACK_TIMEOUT_MS);
--	for (;;) {
--		ret = regmap_read(halt_map, offset, &val);
--		if (ret || (val & NAV_AXI_HALTACK_BIT) ||
--		    time_after(jiffies, timeout))
--			break;
--
--		udelay(5);
--	}
-+	regmap_read_poll_timeout(halt_map, offset, val,
-+				 (val & NAV_AXI_HALTACK_BIT),
-+				 5, NAV_HALT_ACK_TIMEOUT_US);
- 
- 	ret = regmap_read(halt_map, offset, &val);
- 	if (ret || !(val & NAV_AXI_IDLE_BIT))
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Is SWWA an abbreviation for SoftWare WorkAround?
+
+> +		 * putting the Q6 modem on SC7180 into reset:
+> +		 * 1 - Assert PDC reset
+> +		 * 2 - Set CONN_BOX_SPARE_0_EN
+> +		 * 3 - Withdraw the halt requests
+> +		 * 4 - Assert MSS reset
+> +		 * 5 - Deassert PDC reset
+> +		 * 6 - Clear CONN_BOX_SPARE_0_EN
+> +		 * 7 - Deassert MSS reset
+
+This pretty much outlines what's written below. How about making this
+something like:
+
+/* 
+ * Work around a pipeline glitch seen when putting the Q6 modem in
+ * SC7180 into reset by also toggling CONN_BOX_SPARE_0_EN, while holding
+ * the PDC reset.
+ */
+
+
+Although, it would be even better if it indicated what you mean with
+"pipeline glitch"...
+
+Regards,
+Bjorn
+
+> +		 */
+>  		reset_control_assert(qproc->pdc_reset);
+>  		regmap_update_bits(qproc->conn_map, qproc->conn_box,
+> -				   BIT(0), BIT(0));
+> +				   CONN_BOX_SPARE_0_EN, 1);
+>  		regmap_update_bits(qproc->halt_nav_map, qproc->halt_nav,
+>  				   NAV_AXI_HALTREQ_BIT, 0);
+>  		reset_control_assert(qproc->mss_restart);
+>  		reset_control_deassert(qproc->pdc_reset);
+>  		regmap_update_bits(qproc->conn_map, qproc->conn_box,
+> -				   BIT(0), 0);
+> +				   CONN_BOX_SPARE_0_EN, 0);
+>  		ret = reset_control_deassert(qproc->mss_restart);
+>  	} else {
+>  		ret = reset_control_assert(qproc->mss_restart);
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
