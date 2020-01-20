@@ -1,67 +1,36 @@
-Return-Path: <bjorn.andersson@linaro.org>
+Date: Mon, 20 Jan 2020 11:37:40 -0800
 From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] remoteproc: qcom: wcnss: Allow specifying firmware-name
-Date: Tue,  7 Jan 2020 21:52:52 -0800
-Message-Id: <20200108055252.639791-1-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 0/4] Improve general readability of MSS on SC7180
+Message-ID: <20200120193737.GL1511@yoga>
+References: <20200117135130.3605-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200117135130.3605-1-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: evgreen@chromium.org, p.zabel@pengutronix.de, ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce a firmware-name property, in order to be able to support
-device/platform specific firmware for the wireless connectivity
-subsystem; in line with other Qualcomm remoteproc drivers.
+On Fri 17 Jan 05:51 PST 2020, Sibi Sankar wrote:
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- .../devicetree/bindings/remoteproc/qcom,wcnss-pil.txt     | 6 ++++++
- drivers/remoteproc/qcom_wcnss.c                           | 8 +++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+> This series aims to improve the general readability of the mss reset
+> sequence on SC7180 SoCs. No functional change intended.
+> 
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-index d420f84ddfb0..00844a5d2ccf 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
-@@ -34,6 +34,12 @@ on the Qualcomm WCNSS core.
- 	Definition: should be "wdog", "fatal", optionally followed by "ready",
- 		    "handover", "stop-ack"
- 
-+- firmware-name:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: must list the relative firmware image path for the
-+		    WCNSS core.
-+
- - vddmx-supply:
- - vddcx-supply:
- - vddpx-supply:
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index dc135754bb9c..a0468b3cc76f 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -457,6 +457,7 @@ static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
- 
- static int wcnss_probe(struct platform_device *pdev)
- {
-+	const char *fw_name = WCNSS_FIRMWARE_NAME;
- 	const struct wcnss_data *data;
- 	struct qcom_wcnss *wcnss;
- 	struct resource *res;
-@@ -474,8 +475,13 @@ static int wcnss_probe(struct platform_device *pdev)
- 		return -ENXIO;
- 	}
- 
-+	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-+				      &fw_name);
-+	if (ret < 0 && ret != -EINVAL)
-+		return ret;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, &wcnss_ops,
--			    WCNSS_FIRMWARE_NAME, sizeof(*wcnss));
-+			    fw_name, sizeof(*wcnss));
- 	if (!rproc) {
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
--- 
-2.24.0
+Thanks Sibi, I picked up patch 2 and 3 for now.
+
+Regards,
+Bjorn
+
+> Sibi Sankar (4):
+>   remoteproc: qcom: q6v5-mss: Use regmap_read_poll_timeout
+>   remoteproc: qcom: q6v5-mss: Improve readability across clk handling
+>   remoteproc: qcom: q6v5-mss: Rename boot status timeout
+>   remoteproc: qcom: q6v5-mss: Improve readability of reset_assert
+> 
+>  drivers/remoteproc/qcom_q6v5_mss.c | 69 +++++++++++++++++-------------
+>  1 file changed, 40 insertions(+), 29 deletions(-)
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
