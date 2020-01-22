@@ -1,222 +1,60 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 3/3] soc: qcom: apr: Add avs/audio tracking functionality
-Date: Mon, 30 Dec 2019 10:30:08 +0530
-Message-Id: <20191230050008.8143-4-sibis@codeaurora.org>
-In-Reply-To: <20191230050008.8143-1-sibis@codeaurora.org>
-References: <20191230050008.8143-1-sibis@codeaurora.org>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org, tsoni@codeaurora.org
-Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 22 Jan 2020 12:08:13 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH 2/4] remoteproc: qcom: q6v5-mss: Improve readability
+ across clk handling
+In-Reply-To: <CAE=gft4Erwjgvj18DuiJaTEUz=1DwzSBtiCTU0QuoGO1+kzsNg@mail.gmail.com>
+References: <20200117135130.3605-1-sibis@codeaurora.org>
+ <20200117135130.3605-3-sibis@codeaurora.org>
+ <CAE=gft4Erwjgvj18DuiJaTEUz=1DwzSBtiCTU0QuoGO1+kzsNg@mail.gmail.com>
+Message-ID: <4663ec41c6e8dec0a2504aa1ddcf838d@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Evan Green <evgreen@chromium.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Ohad Ben Cohen <ohad@wizery.com>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-remoteproc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andy Gross <agross@kernel.org>, linux-remoteproc-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use PDR helper functions to track the protection domains that the apr
-services are dependent upon on SDM845 SoC, specifically the "avs/audio"
-service running on ADSP Q6.
+Hey Evan,
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/soc/qcom/Kconfig     |   1 +
- drivers/soc/qcom/apr.c       | 100 +++++++++++++++++++++++++++++++----
- include/linux/soc/qcom/apr.h |   1 +
- 3 files changed, 91 insertions(+), 11 deletions(-)
+Thanks for the review!
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 5c4e76837f59b..cacfed945b275 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -202,6 +202,7 @@ config QCOM_APR
- 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
-+	select QCOM_PDR_HELPERS
- 	help
-           Enable APR IPC protocol support between
-           application processor and QDSP6. APR is
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-index 4fcc32420c474..5234426718e88 100644
---- a/drivers/soc/qcom/apr.c
-+++ b/drivers/soc/qcom/apr.c
-@@ -11,6 +11,7 @@
- #include <linux/workqueue.h>
- #include <linux/of_device.h>
- #include <linux/soc/qcom/apr.h>
-+#include <linux/soc/qcom/pdr.h>
- #include <linux/rpmsg.h>
- #include <linux/of.h>
- 
-@@ -21,6 +22,7 @@ struct apr {
- 	spinlock_t rx_lock;
- 	struct idr svcs_idr;
- 	int dest_domain_id;
-+	struct pdr_handle pdr;
- 	struct workqueue_struct *rxwq;
- 	struct work_struct rx_work;
- 	struct list_head rx_list;
-@@ -289,6 +291,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 		  id->svc_id + 1, GFP_ATOMIC);
- 	spin_unlock(&apr->svcs_lock);
- 
-+	of_property_read_string_index(np, "qcom,protection-domain",
-+				      1, &adev->service_path);
-+
- 	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
- 
- 	ret = device_register(&adev->dev);
-@@ -300,14 +305,56 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 	return ret;
- }
- 
--static void of_register_apr_devices(struct device *dev)
-+static void of_apr_add_pd_lookups(struct device *dev)
- {
-+	const char *service_name, *service_path;
- 	struct apr *apr = dev_get_drvdata(dev);
- 	struct device_node *node;
-+	int ret;
-+
-+	for_each_child_of_node(dev->of_node, node) {
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    0, &service_name);
-+		if (ret < 0)
-+			continue;
-+
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (ret < 0)
-+			continue;
-+
-+		ret = pdr_add_lookup(&apr->pdr, service_name, service_path);
-+		if (ret && ret != -EALREADY)
-+			dev_err(dev, "pdr add lookup failed: %d\n", ret);
-+	}
-+}
-+
-+static void of_register_apr_devices(struct device *dev, const char *svc_path)
-+{
-+	struct apr *apr = dev_get_drvdata(dev);
-+	struct device_node *node;
-+	const char *service_path;
-+	int ret;
- 
- 	for_each_child_of_node(dev->of_node, node) {
- 		struct apr_device_id id = { {0} };
- 
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (svc_path) {
-+			/* skip APR services that are PD independent */
-+			if (ret)
-+				continue;
-+
-+			/* skip APR services whose PD paths don't match */
-+			if (strcmp(service_path, svc_path))
-+				continue;
-+		} else {
-+			/* skip APR services whose PD lookups are registered */
-+			if (ret == 0)
-+				continue;
-+		}
-+
- 		if (of_property_read_u32(node, "reg", &id.svc_id))
- 			continue;
- 
-@@ -318,6 +365,35 @@ static void of_register_apr_devices(struct device *dev)
- 	}
- }
- 
-+static int apr_remove_device(struct device *dev, void *svc_path)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
-+
-+	if (svc_path) {
-+		if (!strcmp(adev->service_path, (char *)svc_path))
-+			device_unregister(&adev->dev);
-+	} else {
-+		device_unregister(&adev->dev);
-+	}
-+
-+	return 0;
-+}
-+
-+static void apr_pd_status(struct pdr_handle *pdr, struct pdr_service *pds)
-+{
-+	struct apr *apr = container_of(pdr, struct apr, pdr);
-+
-+	switch (pds->state) {
-+	case SERVREG_SERVICE_STATE_UP:
-+		of_register_apr_devices(apr->dev, pds->service_path);
-+		break;
-+	case SERVREG_SERVICE_STATE_DOWN:
-+		device_for_each_child(apr->dev, pds->service_path,
-+				      apr_remove_device);
-+		break;
-+	}
-+}
-+
- static int apr_probe(struct rpmsg_device *rpdev)
- {
- 	struct device *dev = &rpdev->dev;
-@@ -337,26 +413,27 @@ static int apr_probe(struct rpmsg_device *rpdev)
- 	dev_set_drvdata(dev, apr);
- 	apr->ch = rpdev->ept;
- 	apr->dev = dev;
-+
- 	apr->rxwq = create_singlethread_workqueue("qcom_apr_rx");
- 	if (!apr->rxwq) {
- 		dev_err(apr->dev, "Failed to start Rx WQ\n");
- 		return -ENOMEM;
- 	}
- 	INIT_WORK(&apr->rx_work, apr_rxwq);
-+
-+	ret = pdr_handle_init(&apr->pdr, apr_pd_status);
-+	if (ret) {
-+		dev_err(dev, "Failed to init PDR handle\n");
-+		destroy_workqueue(apr->rxwq);
-+		return ret;
-+	}
-+
- 	INIT_LIST_HEAD(&apr->rx_list);
- 	spin_lock_init(&apr->rx_lock);
- 	spin_lock_init(&apr->svcs_lock);
- 	idr_init(&apr->svcs_idr);
--	of_register_apr_devices(dev);
--
--	return 0;
--}
--
--static int apr_remove_device(struct device *dev, void *null)
--{
--	struct apr_device *adev = to_apr_device(dev);
--
--	device_unregister(&adev->dev);
-+	of_apr_add_pd_lookups(dev);
-+	of_register_apr_devices(dev, NULL);
- 
- 	return 0;
- }
-@@ -365,6 +442,7 @@ static void apr_remove(struct rpmsg_device *rpdev)
- {
- 	struct apr *apr = dev_get_drvdata(&rpdev->dev);
- 
-+	pdr_handle_release(&apr->pdr);
- 	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
- 	flush_workqueue(apr->rxwq);
- 	destroy_workqueue(apr->rxwq);
-diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
-index c5d52e2cb275f..7f0bc3cf4d610 100644
---- a/include/linux/soc/qcom/apr.h
-+++ b/include/linux/soc/qcom/apr.h
-@@ -85,6 +85,7 @@ struct apr_device {
- 	uint16_t	domain_id;
- 	uint32_t	version;
- 	char name[APR_NAME_SIZE];
-+	const char *service_path;
- 	spinlock_t	lock;
- 	struct list_head node;
- };
+On 2020-01-22 00:52, Evan Green wrote:
+> On Fri, Jan 17, 2020 at 5:51 AM Sibi Sankar <sibis@codeaurora.org> 
+> wrote:
+>> 
+>> Define CLKEN and CLKOFF for improving readability of Q6SS clock
+>> handling.
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> 
+> It took me awhile to wrap my head around how this new define,
+> Q6SS_CBCR_TIMEOUT_US, sometimes replaces HALT_CHECK_MAX_LOOPS and
+> sometimes replaces SLEEP_CHECK_MAX_LOOPS. I guess they're conceptually
+> different but set to the same value for now? And you've fixed up a
+> place where the wrong one was used? If you thought the distinction was
+> meaningless I'd also be fine merging these two defines into one.
+
+They really aren't that different
+both are Clks with the same timeout
+the previous naming was just plain
+bad.
+
+SLEEP_CHECK_MAX_LOOPS was used
+probably because it was referring
+to QDSP6SS_SLEEP CBCRs timeout.
+HALT_CHECK_MAX_LOOOPS seems to
+taken directly from CAF code. So
+we should be fine with merging
+the two defines into one.
+
+> Either way, assuming the above is intentional, this looks ok to me.
+> Thanks for renaming that define.
+> 
+> Reviewed-by: Evan Green <evgreen@chromium.org>
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
