@@ -1,79 +1,48 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv4 03/14] remoteproc/omap: Add a sanity check for DSP boot address alignment
-Date: Thu, 2 Jan 2020 15:18:34 +0200
-Message-ID: <20200102131845.12992-4-t-kristo@ti.com>
-In-Reply-To: <20200102131845.12992-1-t-kristo@ti.com>
-References: <20200102131845.12992-1-t-kristo@ti.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:50380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729009AbgAVAkI (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 21 Jan 2020 19:40:08 -0500
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, s-anna@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH RESEND 0/2] Some improvements for Qualcomm hwspinlock
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <157965360800.2917.12141240213132498058.git-patchwork-notify@kernel.org>
+Date: Wed, 22 Jan 2020 00:40:08 +0000
+References: <cover.1578452735.git.baolin.wang7@gmail.com>
+In-Reply-To: <cover.1578452735.git.baolin.wang7@gmail.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Baolin Wang <baolin.wang7@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hello:
 
-The DSP remote processors on OMAP SoCs require a boot register to
-be programmed with a boot address, and this boot address needs to
-be on a 1KB boundary. The current code is simply masking the boot
-address appropriately without performing any sanity checks before
-releasing the resets. An unaligned boot address results in an
-undefined execution behavior and can result in various bus errors
-like MMU Faults or L3 NoC errors. Such errors are hard to debug and
-can be easily avoided by adding a sanity check for the alignment
-before booting a DSP remote processor.
+This series was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/omap_remoteproc.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+On Wed,  8 Jan 2020 11:09:09 +0800 you wrote:
+> This patch set did some optimization for Qualcomm hwlock controller,
+> including using devm_hwspin_lock_register() API to simplify code and
+> removing redundant pm runtime functions.
+> 
+> Baolin Wang (2):
+>   hwspinlock: qcom: Remove redundant PM runtime functions
+>   hwspinlock: qcom: Use devm_hwspin_lock_register() to register hwlock
+>     controller
+> 
+> [...]
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index fb4902e4dacf..557c439571c1 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -122,13 +122,22 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
-  *
-  * Set boot address for a supported DSP remote processor.
-  */
--static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
-+static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
- {
-+	struct device *dev = rproc->dev.parent;
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
- 	u32 offset = bdata->boot_reg;
- 
-+	if (rproc->bootaddr & (SZ_1K - 1)) {
-+		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
-+			rproc->bootaddr);
-+		return -EINVAL;
-+	}
-+
- 	regmap_write(bdata->syscon, offset, rproc->bootaddr);
-+
-+	return 0;
- }
- 
- /*
-@@ -145,8 +154,11 @@ static int omap_rproc_start(struct rproc *rproc)
- 	int ret;
- 	struct mbox_client *client = &oproc->client;
- 
--	if (oproc->boot_data)
--		omap_rproc_write_dsp_boot_addr(rproc);
-+	if (oproc->boot_data) {
-+		ret = omap_rproc_write_dsp_boot_addr(rproc);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	client->dev = dev;
- 	client->tx_done = NULL;
+
+Here is a summary with links:
+  - [RESEND,1/2] hwspinlock: qcom: Remove redundant PM runtime functions
+    https://git.kernel.org/andersson/remoteproc/c/98ec52ad814013042e0ed386dcfb0c571782e844
+  - [RESEND,2/2] hwspinlock: qcom: Use devm_hwspin_lock_register() to register hwlock controller
+    https://git.kernel.org/andersson/remoteproc/c/ed0611a604297a642c3fbec86d3482d580b4f764
+
+You are awesome, thank you!
+
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
