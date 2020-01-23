@@ -1,63 +1,31 @@
-Return-Path: <baolin.wang7@gmail.com>
-Return-Path: <baolin.wang7@gmail.com>
-From: Baolin Wang <baolin.wang7@gmail.com>
-Subject: [PATCH RESEND 2/3] hwspinlock: omap: Use devm_kzalloc() to allocate memory
-Date: Wed,  8 Jan 2020 11:14:00 +0800
-Message-Id: <c066ad704c1a5fd52c3002cac80ddd59b3901b01.1578453062.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578453062.git.baolin.wang7@gmail.com>
-References: <cover.1578453062.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578453062.git.baolin.wang7@gmail.com>
-References: <cover.1578453062.git.baolin.wang7@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: baolin.wang7@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 0/2] Improve general readability of MSS on SC7180
+Date: Thu, 23 Jan 2020 18:42:34 +0530
+Message-Id: <20200123131236.1078-1-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, evgreen@chromium.org, p.zabel@pengutronix.de
+Cc: ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use devm_kzalloc() to allocate memory, which can simplify the error
-handling.
+This series aims to improve the general readability of the mss reset
+sequence on SC7180 SoCs. No functional change intended.
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/hwspinlock/omap_hwspinlock.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+v2:
+ * Use regmap_read_poll_timeout for halt_nav and halt_axi
+ * Redefine CONN_BOX_SPARE_0 to AXI_GATING_VALID_OVERRIDE
+ * Update more details about pipeline glitch issue
+ * Drop 2,3 patches from v1
 
-diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-index dbb1a4c..3b05560 100644
---- a/drivers/hwspinlock/omap_hwspinlock.c
-+++ b/drivers/hwspinlock/omap_hwspinlock.c
-@@ -119,7 +119,8 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 
- 	num_locks = i * 32; /* actual number of locks in this device */
- 
--	bank = kzalloc(struct_size(bank, lock, num_locks), GFP_KERNEL);
-+	bank = devm_kzalloc(&pdev->dev, struct_size(bank, lock, num_locks),
-+			    GFP_KERNEL);
- 	if (!bank) {
- 		ret = -ENOMEM;
- 		goto runtime_err;
-@@ -133,15 +134,13 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	ret = hwspin_lock_register(bank, &pdev->dev, &omap_hwspinlock_ops,
- 						base_id, num_locks);
- 	if (ret)
--		goto reg_fail;
-+		goto runtime_err;
- 
- 	dev_dbg(&pdev->dev, "Registered %d locks with HwSpinlock core\n",
- 		num_locks);
- 
- 	return 0;
- 
--reg_fail:
--	kfree(bank);
- runtime_err:
- 	pm_runtime_disable(&pdev->dev);
- 	return ret;
-@@ -159,7 +158,6 @@ static int omap_hwspinlock_remove(struct platform_device *pdev)
- 	}
- 
- 	pm_runtime_disable(&pdev->dev);
--	kfree(bank);
- 
- 	return 0;
- }
+Sibi Sankar (2):
+  remoteproc: qcom: q6v5-mss: Use regmap_read_poll_timeout
+  remoteproc: qcom: q6v5-mss: Improve readability of reset_assert
+
+ drivers/remoteproc/qcom_q6v5_mss.c | 42 ++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 23 deletions(-)
+
 -- 
-1.7.9.5
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
