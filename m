@@ -1,114 +1,73 @@
-Return-Path: <baolin.wang7@gmail.com>
-Return-Path: <baolin.wang7@gmail.com>
-From: Baolin Wang <baolin.wang7@gmail.com>
-Subject: [PATCH RESEND 1/3] hwspinlock: omap: Change to use devm_platform_ioremap_resource()
-Date: Wed,  8 Jan 2020 11:13:59 +0800
-Message-Id: <6c09c5034a7e68fdfc22d2cb5daa375bccb33a66.1578453062.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578453062.git.baolin.wang7@gmail.com>
-References: <cover.1578453062.git.baolin.wang7@gmail.com>
-In-Reply-To: <cover.1578453062.git.baolin.wang7@gmail.com>
-References: <cover.1578453062.git.baolin.wang7@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: baolin.wang7@gmail.com, linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-Path: <robh@kernel.org>
+MIME-Version: 1.0
+References: <20191227053215.423811-1-bjorn.andersson@linaro.org>
+ <20191227053215.423811-2-bjorn.andersson@linaro.org> <20200104213804.GA30385@bogus>
+ <20200104221752.GW549437@yoga>
+In-Reply-To: <20200104221752.GW549437@yoga>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 23 Jan 2020 16:07:38 -0600
+Message-ID: <CAL_JsqJEq-eX-LoRiHHot8De4RbRS4-Np+hisTk4TWpehqsRwg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: remoteproc: Add Qualcomm PIL info binding
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, devicetree@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use the new helper that wraps the calls to platform_get_resource()
-and devm_ioremap_resource() together, which can simpify the code.
-Meanwhile renaming the error label to make more sense after removing
-iounmap().
+On Sat, Jan 4, 2020 at 3:17 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Sat 04 Jan 13:38 PST 2020, Rob Herring wrote:
+>
+> > On Thu, Dec 26, 2019 at 09:32:08PM -0800, Bjorn Andersson wrote:
+> > > Add a devicetree binding for the Qualcomm periperal image loader
+> > > relocation info region found in the IMEM.
+> > >
+> > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > ---
+> > >
+> > > Changes since v1:
+> > > - New patch
+> > >
+> > >  .../bindings/remoteproc/qcom,pil-info.yaml    | 35 +++++++++++++++++++
+> > >  1 file changed, 35 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> > > new file mode 100644
+> > > index 000000000000..715945c683ed
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> > > @@ -0,0 +1,35 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: "http://devicetree.org/schemas/remoteproc/qcom,pil-info.yaml#"
+> > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > > +
+> > > +title: Qualcomm peripheral image loader relocation info binding
+> > > +
+> > > +description:
+> > > +  This document defines the binding for describing the Qualcomm peripheral
+> > > +  image loader relocation memory region, in IMEM, which is used for post mortem
+> > > +  debugging of remoteprocs.
+> > > +
+> > > +maintainers:
+> > > +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: qcom,pil-reloc-info
+> > > +
+> > > +  offset:
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    description: Offset in the register map for the memory region
+> >
+> > Why not use 'reg' instead?
+> >
+>
+> Because we have one prior example of subdevice of "imem", which is
+> compatible "syscon-reboot-mode" and that binding uses "offset".
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
----
- drivers/hwspinlock/omap_hwspinlock.c |   24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+Not that I'm proposing this, but nothing should prevent both from coexisting.
 
-diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-index 14e1a53..dbb1a4c 100644
---- a/drivers/hwspinlock/omap_hwspinlock.c
-+++ b/drivers/hwspinlock/omap_hwspinlock.c
-@@ -76,7 +76,6 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	struct device_node *node = pdev->dev.of_node;
- 	struct hwspinlock_device *bank;
- 	struct hwspinlock *hwlock;
--	struct resource *res;
- 	void __iomem *io_base;
- 	int num_locks, i, ret;
- 	/* Only a single hwspinlock block device is supported */
-@@ -85,13 +84,9 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	if (!node)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -ENODEV;
--
--	io_base = ioremap(res->start, resource_size(res));
--	if (!io_base)
--		return -ENOMEM;
-+	io_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(io_base))
-+		return PTR_ERR(io_base);
- 
- 	/*
- 	 * make sure the module is enabled and clocked before reading
-@@ -101,7 +96,7 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	ret = pm_runtime_get_sync(&pdev->dev);
- 	if (ret < 0) {
- 		pm_runtime_put_noidle(&pdev->dev);
--		goto iounmap_base;
-+		goto runtime_err;
- 	}
- 
- 	/* Determine number of locks */
-@@ -114,12 +109,12 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	 */
- 	ret = pm_runtime_put(&pdev->dev);
- 	if (ret < 0)
--		goto iounmap_base;
-+		goto runtime_err;
- 
- 	/* one of the four lsb's must be set, and nothing else */
- 	if (hweight_long(i & 0xf) != 1 || i > 8) {
- 		ret = -EINVAL;
--		goto iounmap_base;
-+		goto runtime_err;
- 	}
- 
- 	num_locks = i * 32; /* actual number of locks in this device */
-@@ -127,7 +122,7 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	bank = kzalloc(struct_size(bank, lock, num_locks), GFP_KERNEL);
- 	if (!bank) {
- 		ret = -ENOMEM;
--		goto iounmap_base;
-+		goto runtime_err;
- 	}
- 
- 	platform_set_drvdata(pdev, bank);
-@@ -147,16 +142,14 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 
- reg_fail:
- 	kfree(bank);
--iounmap_base:
-+runtime_err:
- 	pm_runtime_disable(&pdev->dev);
--	iounmap(io_base);
- 	return ret;
- }
- 
- static int omap_hwspinlock_remove(struct platform_device *pdev)
- {
- 	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
--	void __iomem *io_base = bank->lock[0].priv - LOCK_BASE_OFFSET;
- 	int ret;
- 
- 	ret = hwspin_lock_unregister(bank);
-@@ -166,7 +159,6 @@ static int omap_hwspinlock_remove(struct platform_device *pdev)
- 	}
- 
- 	pm_runtime_disable(&pdev->dev);
--	iounmap(io_base);
- 	kfree(bank);
- 
- 	return 0;
--- 
-1.7.9.5
+Rob
