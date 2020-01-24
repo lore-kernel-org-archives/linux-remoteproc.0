@@ -1,9 +1,9 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Fri, 24 Jan 2020 14:58:41 -0700
+Date: Fri, 24 Jan 2020 11:10:54 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2] remoteproc: Add elf64 support in elf loader
-Message-ID: <20200124215841.GA29774@xps15>
+Message-ID: <20200124181054.GA18626@xps15>
 References: <20190819114516.28665-1-cleger@kalray.eu>
  <20191004184220.24817-1-cleger@kalray.eu>
  <20200124005309.GA30148@xps15>
@@ -14,7 +14,7 @@ Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <416367983.521160.1579854256209.JavaMail.zimbra@kalray.eu>
 To: =?iso-8859-1?Q?Cl=E9ment?= Leger <cleger@kalray.eu>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna@ti.com
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 On Fri, Jan 24, 2020 at 09:24:16AM +0100, Cl�ment Leger wrote:
@@ -46,6 +46,9 @@ On Fri, Jan 24, 2020 at 09:24:16AM +0100, Cl�ment Leger wrote:
 > unfortunately not possible since I'm generating inline functions.
 > 
 > Did you have any other one ?
+
+No
+
 > 
 > > 
 > >> ---
@@ -113,11 +116,32 @@ On Fri, Jan 24, 2020 at 09:24:16AM +0100, Cl�ment Leger wrote:
 > there to ensure that we have at least a minimal elf header (elf32).
 > And since the class is derived from the header, you better have to check the
 > header size before accessing it.
+
+This is a chicken-and-egg issue... We can't derive the class from the header if
+we don't check the header and we can't check the header if we don't have the
+class.  Since ehdr->e_ident[] is the same for both, it is probably safe to
+access e_ident[EI_CLASS] without further checks.  
+
 > 
 > To be more clear, I could compare it to min(sizeof(struct elf32_hdr),
 > sizeof(struct elf64_hdr)) or add a comment at least stating that since
 > elf header contains the same fields for identification, we can use the 
 > elf32 one.
+
+I am concerned about cases where we deal with an elf64 and fw->size is >=
+sizeof(struct elf32_hdr) and < sizeof(struct elf64_hdr).  With the current code
+we won't catch the error.  It might be that we do something like this:
+
+        size_t header_size;
+
+        header_size = (fw_elf_get_class(fw) == ELFCLASS32 ?
+                       sizeof(structelf32_hdr):
+                       sizeof(structelf64_hdr);
+
+        if (fw->size < header_size ) {
+                ...
+        }
+
 > 
 > > 
 > > [1]
@@ -543,27 +567,6 @@ On Fri, Jan 24, 2020 at 09:24:16AM +0100, Cl�ment Leger wrote:
 > Ok,
 > 
 > Thanks for your review,
-
-As promised I looked at what Suman had done on his side [1] to support 64-bit ELF
-files. His approach to offer the same functionality but for 64 bit in a new file
-is quick, simple and flexible.  On the flip side it introduces code duplication,
-something that is seriously frowned upon upstream.  
-
-I did some soul searching in the kernel code and found very little in terms of
-implementation that deals with both 32 and 64 bit ELF format.  The most
-convincing approach was set forth by the MIPS guys [2].  They too have decided
-to support both types in the same functions, but I don't see us adding an if()
-statement (and the code duplication that comes with it) every time we need to
-deal with file types.
-
-Given the above I'm in favour of moving forward with your approach.  One could
-rightly argue the macros make the code harder to read but given the
-alternatives, it seems to be the best solution.
-
-Mathieu   
-
-[1]. https://bit.ly/2Rpmb4E
-[2]. https://elixir.bootlin.com/linux/v5.5-rc6/source/arch/mips/kernel/elf.c#L75
 > 
 > Cl�ment
 > 
