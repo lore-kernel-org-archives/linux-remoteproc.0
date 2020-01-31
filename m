@@ -1,93 +1,117 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv5 05/14] remoteproc/omap: Add the rproc ops .da_to_va() implementation
-Date: Thu, 16 Jan 2020 15:53:23 +0200
-Message-ID: <20200116135332.7819-6-t-kristo@ti.com>
-In-Reply-To: <20200116135332.7819-1-t-kristo@ti.com>
-References: <20200116135332.7819-1-t-kristo@ti.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Fri, 31 Jan 2020 08:34:36 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: soc: qcom: apr: Add protection
+ domain bindings
+Message-ID: <20200131143436.GA14822@bogus>
+References: <20191230050008.8143-1-sibis@codeaurora.org>
+ <20191230050008.8143-3-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191230050008.8143-3-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On Mon, Dec 30, 2019 at 10:30:07AM +0530, Sibi Sankar wrote:
+> Add optional "qcom,protection-domain" bindings for APR services. This
+> helps to capture the dependencies between APR services and the PD on
+> which each apr service run.
 
-An implementation for the rproc ops .da_to_va() has been added
-that provides the address translation between device addresses
-to kernel virtual addresses for internal RAMs present on that
-particular remote processor device. The implementation provides
-the translations based on the addresses parsed and stored during
-the probe.
+This is meaningless to me...
 
-This ops gets invoked by the exported rproc_da_to_va() function
-and allows the remoteproc core's ELF loader to be able to load
-program data directly into the internal memories.
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> index db501269f47b8..f87c0b2a48de4 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+> @@ -45,6 +45,12 @@ by the individual bindings for the specific service
+>  			12 - Ultrasound stream manager.
+>  			13 - Listen stream manager.
+>  
+> +- qcom,protection-domain
+> +	Usage: optional
+> +	Value type: <stringlist>
+> +	Definition: Must list the protection domain service name and path
+> +		    that the particular apr service has a dependency on.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
-v5: no changes
+How many strings can there be and can you enumerate the possible 
+strings?
 
- drivers/remoteproc/omap_remoteproc.c | 39 ++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+> +
+>  = EXAMPLE
+>  The following example represents a QDSP based sound card on a MSM8996 device
+>  which uses apr as communication between Apps and QDSP.
+> @@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
+>  			...
+>  		};
+>  	};
+> +
+> += EXAMPLE 2
+> +The following example represents a QDSP based sound card on SDM845 device.
+> +Here the apr services are dependent on "avs/audio" service running on AUDIO
+> +Protection Domain hosted on ADSP remote processor.
+> +
+> +	apr {
+> +		compatible = "qcom,apr-v2";
+> +		qcom,glink-channels = "apr_audio_svc";
+> +		qcom,apr-domain = <APR_DOMAIN_ADSP>;
+> +
+> +		q6core {
+> +			compatible = "qcom,q6core";
+> +			reg = <APR_SVC_ADSP_CORE>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +		};
+> +
+> +		q6afe: q6afe {
+> +			compatible = "qcom,q6afe";
+> +			reg = <APR_SVC_AFE>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +			q6afedai: dais {
+> +				compatible = "qcom,q6afe-dais";
+> +				#sound-dai-cells = <1>;
+> +
+> +				qi2s@22 {
+> +					reg = <22>;
+> +					qcom,sd-lines = <3>;
+> +				};
+> +			};
+> +		};
+> +
+> +		q6asm: q6asm {
+> +			compatible = "qcom,q6asm";
+> +			reg = <APR_SVC_ASM>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+> +			q6asmdai: dais {
+> +				compatible = "qcom,q6asm-dais";
+> +				#sound-dai-cells = <1>;
+> +				iommus = <&apps_smmu 0x1821 0x0>;
+> +			};
+> +		};
+> +
+> +		q6adm: q6adm {
+> +			compatible = "qcom,q6adm";
+> +			reg = <APR_SVC_ADM>;
+> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index a99e542da364..0846839b2c97 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -245,10 +245,49 @@ static int omap_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
- 
-+/**
-+ * omap_rproc_da_to_va() - internal memory translation helper
-+ * @rproc: remote processor to apply the address translation for
-+ * @da: device address to translate
-+ * @len: length of the memory buffer
-+ *
-+ * Custom function implementing the rproc .da_to_va ops to provide address
-+ * translation (device address to kernel virtual address) for internal RAMs
-+ * present in a DSP or IPU device). The translated addresses can be used
-+ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-+ * Returns the translated virtual address in kernel memory space, or NULL
-+ * in failure.
-+ */
-+static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct omap_rproc *oproc = rproc->priv;
-+	int i;
-+	u32 offset;
-+
-+	if (len <= 0)
-+		return NULL;
-+
-+	if (!oproc->num_mems)
-+		return NULL;
-+
-+	for (i = 0; i < oproc->num_mems; i++) {
-+		if (da >= oproc->mem[i].dev_addr && da + len <=
-+		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
-+			offset = da - oproc->mem[i].dev_addr;
-+			/* __force to make sparse happy with type conversion */
-+			return (__force void *)(oproc->mem[i].cpu_addr +
-+						offset);
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
- static const struct rproc_ops omap_rproc_ops = {
- 	.start		= omap_rproc_start,
- 	.stop		= omap_rproc_stop,
- 	.kick		= omap_rproc_kick,
-+	.da_to_va	= omap_rproc_da_to_va,
- };
- 
- static const struct omap_rproc_mem_data ipu_mems[] = {
--- 
-2.17.1
+Perhaps an example where not everything is the same. The example shows 
+me this isn't needed in DT.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +			q6routing: routing {
+> +				compatible = "qcom,q6adm-routing";
+> +				#sound-dai-cells = <0>;
+> +			};
+> +		};
+> +	};
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
