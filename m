@@ -1,39 +1,48 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-From: Siddharth Gupta <sidgup@codeaurora.org>
-Subject: [PATCH 0/6] remoteproc: qcom: Add callbacks for remoteproc events
-Date: Wed, 19 Feb 2020 18:57:39 -0800
-Message-Id: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
-To: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: Siddharth Gupta <sidgup@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:36942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725379AbgBDFAF (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 4 Feb 2020 00:00:05 -0500
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/2] Improve general readability of MSS on SC7180
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158079240449.22181.11242000476784871582.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Feb 2020 05:00:04 +0000
+References: <20200123131236.1078-1-sibis@codeaurora.org>
+In-Reply-To: <20200123131236.1078-1-sibis@codeaurora.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch series adds the usecases for SSR and Sysmon subdevices which are
-used by remoteprocs and kernel client drivers relying on those remoteprocs.
+Hello:
 
-Patch 1-3 adds callbacks for prepare, start and unprepare events, and also type
-          of sysmon notification.
-Patch 4-6 adds a per subsystem notifier chain, callbacks for prepare, start
-          and stop events for ssr subdevice.
+This series was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-Rishabh Bhatnagar (1):
-  drivers: remoteproc: Add name field for every subdevice
+On Thu, 23 Jan 2020 18:42:34 +0530 you wrote:
+> This series aims to improve the general readability of the mss reset
+> sequence on SC7180 SoCs. No functional change intended.
+> 
+> v2:
+>  * Use regmap_read_poll_timeout for halt_nav and halt_axi
+>  * Redefine CONN_BOX_SPARE_0 to AXI_GATING_VALID_OVERRIDE
+>  * Update more details about pipeline glitch issue
+>  * Drop 2,3 patches from v1
+> 
+> [...]
 
-Siddharth Gupta (5):
-  remoteproc: sysmon: Add ability to send type of notification
-  remoteproc: sysmon: Add notifications for events
-  remoteproc: sysmon: Inform current rproc about all active rprocs
-  remoteproc: qcom: Add per subsystem SSR notification
-  remoteproc: qcom: Add notification types to SSR
 
- drivers/remoteproc/qcom_common.c      |  86 ++++++++++++++++++++++++----
- drivers/remoteproc/qcom_common.h      |   1 +
- drivers/remoteproc/qcom_sysmon.c      | 103 ++++++++++++++++++++++++++++------
- drivers/soc/qcom/glink_ssr.c          |  20 ++++++-
- include/linux/remoteproc.h            |  17 ++++++
- include/linux/remoteproc/qcom_rproc.h |  17 ++++--
- 6 files changed, 209 insertions(+), 35 deletions(-)
+Here is a summary with links:
+  - [v2,1/2] remoteproc: qcom: q6v5-mss: Use regmap_read_poll_timeout
+    https://git.kernel.org/andersson/remoteproc/c/01bf3fec38e9188846f6755cd29da515f5852bc5
+  - [v2,2/2] remoteproc: qcom: q6v5-mss: Improve readability of reset_assert
+    https://git.kernel.org/andersson/remoteproc/c/600c39b34369e2a1bf78eb67afb99ce550f271cc
+
+You are awesome, thank you!
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
