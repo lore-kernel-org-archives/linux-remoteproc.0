@@ -1,56 +1,28 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv6 13/14] remoteproc/omap: report device exceptions and trigger recovery
-Date: Tue, 11 Feb 2020 17:21:24 +0200
-Message-ID: <20200211152125.23819-14-t-kristo@ti.com>
-In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
-References: <20200211152125.23819-1-t-kristo@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 0/2] remoteproc: mss: Improve mem_assign and firmware load
+Date: Mon,  3 Feb 2020 22:26:39 -0800
+Message-Id: <20200204062641.393949-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Two things came up in the effort of figuring out why the modem crashed the
+entire system when being restarted; the first one solves the actual problem, in
+that it's not possible to reclaim the main modem firmware region unless the
+modem subsystem is running - causing the crash.
 
-The OMAP remote processors send a special mailbox message
-(RP_MBOX_CRASH) when they crash and detect an internal device
-exception.
+The second patch aligns the firmware loading process to that of the downstream
+driver, which seems to be a requirement in 8974 as well.
 
-Add support to the mailbox handling function upon detection of
-this special message to report this crash to the remoteproc core.
-The remoteproc core can trigger a recovery using the prevailing
-recovery mechanism, already in use for MMU Fault recovery.
+Bjorn Andersson (2):
+  remoteproc: qcom_q6v5_mss: Don't reassign mpss region on shutdown
+  remoteproc: qcom_q6v5_mss: Validate each segment during loading
 
-Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/omap_remoteproc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 95 +++++++++++++++++++-----------
+ 1 file changed, 62 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 490a242130f9..2cc87af0c582 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -381,8 +381,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
- 
- 	switch (msg) {
- 	case RP_MBOX_CRASH:
--		/* just log this for now. later, we'll also do recovery */
-+		/*
-+		 * remoteproc detected an exception, notify the rproc core.
-+		 * The remoteproc core will handle the recovery.
-+		 */
- 		dev_err(dev, "omap rproc %s crashed\n", name);
-+		rproc_report_crash(oproc->rproc, RPROC_FATAL_ERROR);
- 		break;
- 	case RP_MBOX_ECHO_REPLY:
- 		dev_info(dev, "received echo reply from %s\n", name);
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.23.0
