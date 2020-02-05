@@ -1,156 +1,246 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail27.static.mailgun.info ([104.130.122.27]:53654 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727980AbgBTC6N (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Feb 2020 21:58:13 -0500
-From: Siddharth Gupta <sidgup@codeaurora.org>
-Subject: [PATCH 1/6] remoteproc: sysmon: Add ability to send type of notification
-Date: Wed, 19 Feb 2020 18:57:40 -0800
-Message-Id: <1582167465-2549-2-git-send-email-sidgup@codeaurora.org>
-In-Reply-To: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
-References: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: Siddharth Gupta <sidgup@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Wed, 5 Feb 2020 14:06:55 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 1/2] remoteproc: Use u64 len for da_to_va
+Message-ID: <20200205210655.GA25901@xps15>
+References: <20200129163013.GA16538@xps15>
+ <20200204174412.16814-1-cleger@kalray.eu>
+ <20200204174412.16814-2-cleger@kalray.eu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200204174412.16814-2-cleger@kalray.eu>
+To: Clement Leger <cleger@kalray.eu>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Current implementation of the sysmon driver does not support adding
-notifications for other remoteproc events - prepare, start, unprepare.
-Clients on the remoteproc side might be interested in knowing when a
-remoteproc boots up. This change adds the ability to send the notification
-type along with the name. For example, audio DSP is interested in knowing
-when modem has crashed so that it can perform cleanup and wait for modem to
-boot up before it starts processing data again.
+Hi Clement,
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/qcom_sysmon.c | 54 +++++++++++++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 17 deletions(-)
+On Tue, Feb 04, 2020 at 06:44:11PM +0100, Clement Leger wrote:
+> With upcoming changes in elf loader for elf64 support, section size will
+> be a u64. When used with da_to_va, this will potentially lead to
+> overflow if using the current "int" type for len argument. Change
+> da_to_va prototype to use a u64 for len and fix all users of this
+> function.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> ---
+>  drivers/remoteproc/imx_rproc.c           | 9 +++++----
+>  drivers/remoteproc/keystone_remoteproc.c | 2 +-
+>  drivers/remoteproc/qcom_q6v5_adsp.c      | 2 +-
+>  drivers/remoteproc/qcom_q6v5_mss.c       | 2 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c       | 2 +-
+>  drivers/remoteproc/qcom_q6v5_wcss.c      | 2 +-
+>  drivers/remoteproc/qcom_wcnss.c          | 2 +-
+>  drivers/remoteproc/remoteproc_core.c     | 2 +-
+>  drivers/remoteproc/remoteproc_internal.h | 2 +-
+>  drivers/remoteproc/st_slim_rproc.c       | 4 ++--
+>  drivers/remoteproc/wkup_m3_rproc.c       | 2 +-
+>  include/linux/remoteproc.h               | 2 +-
+>  12 files changed, 17 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 3e72b6f38d4b..1e895d5cf918 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -186,7 +186,7 @@ static int imx_rproc_stop(struct rproc *rproc)
+>  }
+>  
+>  static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+> -			       int len, u64 *sys)
+> +			       u64 len, u64 *sys)
+>  {
+>  	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+>  	int i;
+> @@ -203,12 +203,12 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+>  		}
+>  	}
+>  
+> -	dev_warn(priv->dev, "Translation failed: da = 0x%llx len = 0x%x\n",
+> +	dev_warn(priv->dev, "Translation failed: da = 0x%llx len = 0x%llx\n",
+>  		 da, len);
+>  	return -ENOENT;
+>  }
+>  
+> -static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct imx_rproc *priv = rproc->priv;
+>  	void *va = NULL;
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index faf3822..1366050 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -46,6 +46,25 @@ struct qcom_sysmon {
- 	struct sockaddr_qrtr ssctl;
- };
- 
-+enum {
-+	SSCTL_SSR_EVENT_BEFORE_POWERUP,
-+	SSCTL_SSR_EVENT_AFTER_POWERUP,
-+	SSCTL_SSR_EVENT_BEFORE_SHUTDOWN,
-+	SSCTL_SSR_EVENT_AFTER_SHUTDOWN,
-+};
-+
-+static const char * const sysmon_state_string[] = {
-+	[SSCTL_SSR_EVENT_BEFORE_POWERUP]	= "before_powerup",
-+	[SSCTL_SSR_EVENT_AFTER_POWERUP]		= "after_powerup",
-+	[SSCTL_SSR_EVENT_BEFORE_SHUTDOWN]	= "before_shutdown",
-+	[SSCTL_SSR_EVENT_AFTER_SHUTDOWN]	= "after_shutdown",
-+};
-+
-+struct sysmon_event {
-+	const char *subsys_name;
-+	u32 ssr_event;
-+};
-+
- static DEFINE_MUTEX(sysmon_lock);
- static LIST_HEAD(sysmon_list);
- 
-@@ -54,13 +73,15 @@ static LIST_HEAD(sysmon_list);
-  * @sysmon:	sysmon context
-  * @name:	other remote's name
-  */
--static void sysmon_send_event(struct qcom_sysmon *sysmon, const char *name)
-+static void sysmon_send_event(struct qcom_sysmon *sysmon,
-+			      const struct sysmon_event *event)
- {
- 	char req[50];
- 	int len;
- 	int ret;
- 
--	len = snprintf(req, sizeof(req), "ssr:%s:before_shutdown", name);
-+	len = snprintf(req, sizeof(req), "ssr:%s:%s", event->subsys_name,
-+		       sysmon_state_string[event->ssr_event]);
- 	if (len >= sizeof(req))
- 		return;
- 
-@@ -149,13 +170,6 @@ static int sysmon_callback(struct rpmsg_device *rpdev, void *data, int count,
- #define SSCTL_SUBSYS_NAME_LENGTH	15
- 
- enum {
--	SSCTL_SSR_EVENT_BEFORE_POWERUP,
--	SSCTL_SSR_EVENT_AFTER_POWERUP,
--	SSCTL_SSR_EVENT_BEFORE_SHUTDOWN,
--	SSCTL_SSR_EVENT_AFTER_SHUTDOWN,
--};
--
--enum {
- 	SSCTL_SSR_EVENT_FORCED,
- 	SSCTL_SSR_EVENT_GRACEFUL,
- };
-@@ -331,7 +345,8 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
-  * @sysmon:	sysmon context
-  * @name:	other remote's name
-  */
--static void ssctl_send_event(struct qcom_sysmon *sysmon, const char *name)
-+static void ssctl_send_event(struct qcom_sysmon *sysmon,
-+			     const struct sysmon_event *event)
- {
- 	struct ssctl_subsys_event_resp resp;
- 	struct ssctl_subsys_event_req req;
-@@ -346,9 +361,9 @@ static void ssctl_send_event(struct qcom_sysmon *sysmon, const char *name)
- 	}
- 
- 	memset(&req, 0, sizeof(req));
--	strlcpy(req.subsys_name, name, sizeof(req.subsys_name));
-+	strlcpy(req.subsys_name, event->subsys_name, sizeof(req.subsys_name));
- 	req.subsys_name_len = strlen(req.subsys_name);
--	req.event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN;
-+	req.event = event->ssr_event;
- 	req.evt_driven_valid = true;
- 	req.evt_driven = SSCTL_SSR_EVENT_FORCED;
- 
-@@ -432,8 +447,12 @@ static int sysmon_start(struct rproc_subdev *subdev)
- static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct qcom_sysmon *sysmon = container_of(subdev, struct qcom_sysmon, subdev);
-+	struct sysmon_event event = {
-+		.subsys_name = sysmon->name,
-+		.ssr_event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN
-+	};
- 
--	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)sysmon->name);
-+	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
- 
- 	/* Don't request graceful shutdown if we've crashed */
- 	if (crashed)
-@@ -456,19 +475,20 @@ static int sysmon_notify(struct notifier_block *nb, unsigned long event,
- {
- 	struct qcom_sysmon *sysmon = container_of(nb, struct qcom_sysmon, nb);
- 	struct rproc *rproc = sysmon->rproc;
--	const char *ssr_name = data;
-+	struct sysmon_event *sysmon_event = data;
- 
- 	/* Skip non-running rprocs and the originating instance */
--	if (rproc->state != RPROC_RUNNING || !strcmp(data, sysmon->name)) {
-+	if (rproc->state != RPROC_RUNNING ||
-+	    !strcmp(sysmon_event->subsys_name, sysmon->name)) {
- 		dev_dbg(sysmon->dev, "not notifying %s\n", sysmon->name);
- 		return NOTIFY_DONE;
- 	}
- 
- 	/* Only SSCTL version 2 supports SSR events */
- 	if (sysmon->ssctl_version == 2)
--		ssctl_send_event(sysmon, ssr_name);
-+		ssctl_send_event(sysmon, sysmon_event);
- 	else if (sysmon->ept)
--		sysmon_send_event(sysmon, ssr_name);
-+		sysmon_send_event(sysmon, sysmon_event);
- 
- 	return NOTIFY_DONE;
- }
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The condition "if (len <= 0)" at the beginning of the function needs to be
+fixed.  
+
+
+> @@ -235,7 +235,8 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  		}
+>  	}
+>  
+> -	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%x va = 0x%p\n", da, len, va);
+> +	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%llx va = 0x%p\n",
+> +		da, len, va);
+>  
+>  	return va;
+>  }
+> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+> index 5c4658f00b3d..25c01df47eba 100644
+> --- a/drivers/remoteproc/keystone_remoteproc.c
+> +++ b/drivers/remoteproc/keystone_remoteproc.c
+> @@ -246,7 +246,7 @@ static void keystone_rproc_kick(struct rproc *rproc, int vqid)
+>   * can be used either by the remoteproc core for loading (when using kernel
+>   * remoteproc loader), or by any rpmsg bus drivers.
+>   */
+> -static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *keystone_rproc_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+
+Same comment as above.
+
+>  	struct keystone_rproc *ksproc = rproc->priv;
+>  	void __iomem *va = NULL;
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index e953886b2eb7..7518e67a49e5 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -270,7 +270,7 @@ static int adsp_stop(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> -static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *adsp_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 471128a2e723..248febde6fc1 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1148,7 +1148,7 @@ static int q6v5_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *q6v5_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *q6v5_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct q6v5 *qproc = rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index db4b3c4bacd7..cf2cd609c90d 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -159,7 +159,7 @@ static int adsp_stop(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> -static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *adsp_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+> index f93e1e4a1cc0..3a6b82a16961 100644
+> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+> @@ -406,7 +406,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *q6v5_wcss_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *q6v5_wcss_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct q6v5_wcss *wcss = rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index dc135754bb9c..f893219e45a8 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -287,7 +287,7 @@ static int wcnss_stop(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> -static void *wcnss_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *wcnss_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+>  	int offset;
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 307df98347ba..9e6d3c6a60ee 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -185,7 +185,7 @@ EXPORT_SYMBOL(rproc_va_to_pa);
+>   * here the output of the DMA API for the carveouts, which should be more
+>   * correct.
+>   */
+> -void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +void *rproc_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct rproc_mem_entry *carveout;
+>  	void *ptr = NULL;
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 493ef9262411..004867061721 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -50,7 +50,7 @@ void rproc_exit_sysfs(void);
+>  void rproc_free_vring(struct rproc_vring *rvring);
+>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+>  
+> -void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
+> +void *rproc_da_to_va(struct rproc *rproc, u64 da, u64 len);
+>  phys_addr_t rproc_va_to_pa(void *cpu_addr);
+>  int rproc_trigger_recovery(struct rproc *rproc);
+>  
+> diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
+> index 04492fead3c8..fc01cd879b60 100644
+> --- a/drivers/remoteproc/st_slim_rproc.c
+> +++ b/drivers/remoteproc/st_slim_rproc.c
+> @@ -174,7 +174,7 @@ static int slim_rproc_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+>  	struct st_slim_rproc *slim_rproc = rproc->priv;
+>  	void *va = NULL;
+> @@ -191,7 +191,7 @@ static void *slim_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  		}
+>  	}
+>  
+> -	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%x va = 0x%pK\n",
+> +	dev_dbg(&rproc->dev, "da = 0x%llx len = 0x%llx va = 0x%pK\n",
+>  		da, len, va);
+>  
+>  	return va;
+> diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
+> index 3984e585c847..0e8082948489 100644
+> --- a/drivers/remoteproc/wkup_m3_rproc.c
+> +++ b/drivers/remoteproc/wkup_m3_rproc.c
+> @@ -80,7 +80,7 @@ static int wkup_m3_rproc_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +static void *wkup_m3_rproc_da_to_va(struct rproc *rproc, u64 da, u64 len)
+>  {
+
+Same comment as above.
+
+>  	struct wkup_m3_rproc *wkupm3 = rproc->priv;
+>  	void *va = NULL;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad66683ad0..f84bd5fe0211 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -374,7 +374,7 @@ struct rproc_ops {
+>  	int (*start)(struct rproc *rproc);
+>  	int (*stop)(struct rproc *rproc);
+>  	void (*kick)(struct rproc *rproc, int vqid);
+> -	void * (*da_to_va)(struct rproc *rproc, u64 da, int len);
+> +	void * (*da_to_va)(struct rproc *rproc, u64 da, u64 len);
+>  	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+>  	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
+>  			  int offset, int avail);
+> -- 
+> 2.15.0.276.g89ea799
+> 
