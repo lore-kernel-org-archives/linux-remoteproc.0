@@ -1,79 +1,70 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 8/8] remoteproc: qcom: Introduce panic handler for PAS and ADSP
-Date: Mon, 10 Feb 2020 16:50:59 -0800
-Message-Id: <20200211005059.1377279-9-bjorn.andersson@linaro.org>
-In-Reply-To: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
-References: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from wsip-184-185-158-229.sd.sd.cox.net ([184.185.158.229]:46199
+        "EHLO s0-postfix.allcaps.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727170AbgBFBQt (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 5 Feb 2020 20:16:49 -0500
+Subject: Re: How to get src and dst for pru_rpmsg_send?
+References: <f22d9305-326f-f584-4480-9509c5f903fb@allcaps.org>
+ <20200205232148.GC25901@xps15>
+From: "Andrew P. Lentvorski" <bsder@allcaps.org>
+Message-ID: <49d5fcdb-e51e-f289-15fb-eea2efdcf477@allcaps.org>
+Date: Wed, 5 Feb 2020 17:16:47 -0800
 MIME-Version: 1.0
+In-Reply-To: <20200205232148.GC25901@xps15>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Make the PAS and ADSP/CDSP remoteproc drivers implement the panic
-handler that will invoke a stop to prepare the remoteprocs for post
-mortem debugging.
+Hi, Mathieu,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+On 2/5/20 3:21 PM, Mathieu Poirier wrote:
+> Hi Andrew,
+> 
+> On Wed, Feb 05, 2020 at 02:24:07AM -0800, Andrew P. Lentvorski wrote:
+>> I seem to be missing something obvious: Where do I get the values for
+>> src and dst in the pru_rpmsg_send() function?
+>>
+>> The TI examples do a pru_rpmsg_receive() first and then echo back to the
+>> same src and dst.  That seems ... odd.  What's the point of having a
+>> variable src and dst if they are effectively hardwired to a single
+>> communication channel?
+> 
+> Since pru_rpmsg_send/receive() don't exist in the mainline kernel you will have
+> to be more specific... What TI examples are you referring to?  Where can we find
+> them? 
 
-Changes since v2:
-- Update return type and pass the return value through
+TI keeps the examples here:
+https://git.ti.com/cgit/pru-software-support-package/pru-software-support-package/
 
- drivers/remoteproc/qcom_q6v5_adsp.c | 8 ++++++++
- drivers/remoteproc/qcom_q6v5_pas.c  | 8 ++++++++
- 2 files changed, 16 insertions(+)
+This is a good example of the rpmsg system being used with the echo I
+talked about:
+https://git.ti.com/cgit/pru-software-support-package/pru-software-support-package/tree/examples/am335x/PRU_RPMsg_Echo_Interrupt1
 
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 19f784adf91c..822881534d37 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -291,12 +291,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return adsp->mem_region + offset;
- }
- 
-+static unsigned int adsp_panic(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+
-+	return qcom_q6v5_panic(&adsp->q6v5);
-+}
-+
- static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
- 	.parse_fw = qcom_register_dump_segments,
- 	.load = adsp_load,
-+	.panic = adsp_panic,
- };
- 
- static int adsp_init_clock(struct qcom_adsp *adsp, const char **clk_ids)
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index d20ce3c62256..ac38624fb14d 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -242,12 +242,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, int len)
- 	return adsp->mem_region + offset;
- }
- 
-+static unsigned int adsp_panic(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+
-+	return qcom_q6v5_panic(&adsp->q6v5);
-+}
-+
- static const struct rproc_ops adsp_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
- 	.parse_fw = qcom_register_dump_segments,
- 	.load = adsp_load,
-+	.panic = adsp_panic,
- };
- 
- static int adsp_init_clock(struct qcom_adsp *adsp)
--- 
-2.24.0
+That example works on the Beaglebone Black (an am3359 based Linux board).
+
+> There are other rpmsg_sendxyz() functions that allow you to send messages to
+> different addresses[1].  Given the amount of information, I'm afraid there isn't
+> much else I can add at this time.
+> 
+> Thanks,
+> Mathieu  
+> 
+> [1]. https://elixir.bootlin.com/linux/latest/source/include/linux/rpmsg.h#L125
+
+Thanks for the pointers.
+
+It looks like I need to drag the src/dst out of the rpmsg_device or
+rpmsg_channel_info on the Linux side and then pass it to the PRU side by
+some method.  An initial message is as good as any and better than most.
+
+I completely flaked that this wouldn't be in mainline.  Even a simple
+thought about the name "*pru*_rpmsg_send" should have set off alarm
+bells.  Sorry about that.
+
+Thanks for the help,
+-a
