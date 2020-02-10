@@ -1,348 +1,314 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv7 14/15] remoteproc/omap: Add watchdog functionality for remote processors
-Date: Fri, 21 Feb 2020 12:19:35 +0200
-Message-ID: <20200221101936.16833-15-t-kristo@ti.com>
-In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
-References: <20200221101936.16833-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Return-Path: <cleger@kalray.eu>
+From: Clement Leger <cleger@kalray.eu>
+Subject: [PATCH v4 4/5] remoteproc: Add elf64 support in elf loader
+Date: Mon, 10 Feb 2020 17:22:08 +0100
+Message-Id: <20200210162209.23149-5-cleger@kalray.eu>
+In-Reply-To: <20200210162209.23149-1-cleger@kalray.eu>
+References: <527785289.2852303.1581062223707.JavaMail.zimbra@kalray.eu>
+ <20200210162209.23149-1-cleger@kalray.eu>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Clement Leger <cleger@kalray.eu>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+In order to support elf64, use macros from remoteproc_elf_helpers.h
+to access elf headers depending on elf class.
 
-Remote processors can be stuck in a loop, and may not be recoverable
-if they do not have a built-in watchdog. The watchdog implementation
-for OMAP remote processors uses external gptimers that can be used
-to interrupt both the Linux host as well as the remote processor.
-
-Each remote processor is responsible for refreshing the timer during
-normal behavior - during OS task scheduling or entering the idle loop
-properly. During a watchdog condition (executing a tight loop causing
-no scheduling), the host processor gets interrupts and schedules a
-recovery for the corresponding remote processor. The remote processor
-may also get interrupted to be able to print a back trace.
-
-A menuconfig option has also been added to enable/disable the Watchdog
-functionality, with the default as disabled.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Clement Leger <cleger@kalray.eu>
+Tested-by: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
 ---
-v7:
-  - minor kerneldoc updates
+ Documentation/remoteproc.txt               |   2 +-
+ drivers/remoteproc/remoteproc_elf_loader.c | 145 ++++++++++++++++++-----------
+ 2 files changed, 93 insertions(+), 54 deletions(-)
 
- drivers/remoteproc/Kconfig           |  12 +++
- drivers/remoteproc/omap_remoteproc.c | 153 ++++++++++++++++++++++++---
- 2 files changed, 153 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index b52abc2268cc..5f33358eb2f1 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -52,6 +52,18 @@ config OMAP_REMOTEPROC
- 	  It's safe to say N here if you're not interested in multimedia
- 	  offloading or just want a bare minimum kernel.
+diff --git a/Documentation/remoteproc.txt b/Documentation/remoteproc.txt
+index 03c3d2e568b0..2be1147256e0 100644
+--- a/Documentation/remoteproc.txt
++++ b/Documentation/remoteproc.txt
+@@ -230,7 +230,7 @@ in the used rings.
+ Binary Firmware Structure
+ =========================
  
-+config OMAP_REMOTEPROC_WATCHDOG
-+	bool "OMAP remoteproc watchdog timer"
-+	depends on OMAP_REMOTEPROC
-+	default n
-+	help
-+	  Say Y here to enable watchdog timer for remote processors.
-+
-+	  This option controls the watchdog functionality for the remote
-+	  processors in OMAP. Dedicated OMAP DMTimers are used by the remote
-+	  processors and triggers the timer interrupt upon a watchdog
-+	  detection.
-+
- config WKUP_M3_RPROC
- 	tristate "AMx3xx Wakeup M3 remoteproc support"
- 	depends on SOC_AM33XX || SOC_AM43XX
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 7dcb5da0d940..bae01a9f8afc 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/dma-mapping.h>
-+#include <linux/interrupt.h>
- #include <linux/remoteproc.h>
- #include <linux/mailbox_client.h>
- #include <linux/omap-iommu.h>
-@@ -72,10 +73,12 @@ struct omap_rproc_mem {
-  * struct omap_rproc_timer - data structure for a timer used by a omap rproc
-  * @odt: timer pointer
-  * @timer_ops: OMAP dmtimer ops for @odt timer
-+ * @irq: timer irq
-  */
- struct omap_rproc_timer {
- 	struct omap_dm_timer *odt;
- 	const struct omap_dm_timer_ops *timer_ops;
-+	int irq;
- };
+-At this point remoteproc only supports ELF32 firmware binaries. However,
++At this point remoteproc supports ELF32 and ELF64 firmware binaries. However,
+ it is quite expected that other platforms/devices which we'd want to
+ support with this framework will be based on different binary formats.
+ 
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index c2a9783cfb9a..2ffb02a2ee36 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -23,6 +23,7 @@
+ #include <linux/elf.h>
+ 
+ #include "remoteproc_internal.h"
++#include "remoteproc_elf_helpers.h"
  
  /**
-@@ -86,6 +89,7 @@ struct omap_rproc_timer {
-  * @mem: internal memory regions data
-  * @num_mems: number of internal memory regions
-  * @num_timers: number of rproc timer(s)
-+ * @num_wd_timers: number of rproc watchdog timers
-  * @timers: timer(s) info used by rproc
-  * @autosuspend_delay: auto-suspend delay value to be used for runtime pm
-  * @need_resume: if true a resume is needed in the system resume callback
-@@ -102,6 +106,7 @@ struct omap_rproc {
- 	struct omap_rproc_mem *mem;
- 	int num_mems;
- 	int num_timers;
-+	int num_wd_timers;
- 	struct omap_rproc_timer *timers;
- 	int autosuspend_delay;
- 	bool need_resume;
-@@ -219,6 +224,79 @@ static inline int omap_rproc_release_timer(struct omap_rproc_timer *timer)
- 	return timer->timer_ops->free(timer->odt);
+  * rproc_elf_sanity_check() - Sanity Check ELF firmware image
+@@ -35,8 +36,16 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	const char *name = rproc->firmware;
+ 	struct device *dev = &rproc->dev;
++	/*
++	 * Elf files are beginning with the same structure. Thus, to simplify
++	 * header parsing, we can use the elf32_hdr one for both elf64 and
++	 * elf32.
++	 */
+ 	struct elf32_hdr *ehdr;
++	u32 elf_shdr_get_size;
++	u64 phoff, shoff;
+ 	char class;
++	u16 phnum;
+ 
+ 	if (!fw) {
+ 		dev_err(dev, "failed to load %s\n", name);
+@@ -50,13 +59,22 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ 
+ 	ehdr = (struct elf32_hdr *)fw->data;
+ 
+-	/* We only support ELF32 at this point */
++	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
++		dev_err(dev, "Image is corrupted (bad magic)\n");
++		return -EINVAL;
++	}
++
+ 	class = ehdr->e_ident[EI_CLASS];
+-	if (class != ELFCLASS32) {
++	if (class != ELFCLASS32 && class != ELFCLASS64) {
+ 		dev_err(dev, "Unsupported class: %d\n", class);
+ 		return -EINVAL;
+ 	}
+ 
++	if (class == ELFCLASS64 && fw->size < sizeof(struct elf64_hdr)) {
++		dev_err(dev, "elf64 header is too small\n");
++		return -EINVAL;
++	}
++
+ 	/* We assume the firmware has the same endianness as the host */
+ # ifdef __LITTLE_ENDIAN
+ 	if (ehdr->e_ident[EI_DATA] != ELFDATA2LSB) {
+@@ -67,26 +85,29 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (fw->size < ehdr->e_shoff + sizeof(struct elf32_shdr)) {
+-		dev_err(dev, "Image is too small\n");
+-		return -EINVAL;
+-	}
++	phoff = elf_hdr_get_e_phoff(class, fw->data);
++	shoff = elf_hdr_get_e_shoff(class, fw->data);
++	phnum =  elf_hdr_get_e_phnum(class, fw->data);
++	elf_shdr_get_size = elf_size_of_shdr(class);
+ 
+-	if (memcmp(ehdr->e_ident, ELFMAG, SELFMAG)) {
+-		dev_err(dev, "Image is corrupted (bad magic)\n");
++	if (fw->size < shoff + elf_shdr_get_size) {
++		dev_err(dev, "Image is too small\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	if (ehdr->e_phnum == 0) {
++	if (phnum == 0) {
+ 		dev_err(dev, "No loadable segments\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	if (ehdr->e_phoff > fw->size) {
++	if (phoff > fw->size) {
+ 		dev_err(dev, "Firmware size is too small\n");
+ 		return -EINVAL;
+ 	}
+ 
++	dev_dbg(dev, "Firmware is an elf%d file\n",
++		class == ELFCLASS32 ? 32 : 64);
++
+ 	return 0;
  }
+ EXPORT_SYMBOL(rproc_elf_sanity_check);
+@@ -104,9 +125,7 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
+  */
+ u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
+-
+-	return ehdr->e_entry;
++	return elf_hdr_get_e_entry(fw_elf_get_class(fw), fw->data);
+ }
+ EXPORT_SYMBOL(rproc_elf_get_boot_addr);
  
-+/**
-+ * omap_rproc_get_timer_irq() - get the irq for a timer
-+ * @timer: handle to a OMAP rproc timer
-+ *
-+ * This function is used to get the irq associated with a watchdog timer. The
-+ * function is called by the OMAP remoteproc driver to register a interrupt
-+ * handler to handle watchdog events on the remote processor.
-+ *
-+ * Return: irq id on success, otherwise a failure as returned by DMTimer ops
-+ */
-+static inline int omap_rproc_get_timer_irq(struct omap_rproc_timer *timer)
-+{
-+	return timer->timer_ops->get_irq(timer->odt);
-+}
-+
-+/**
-+ * omap_rproc_ack_timer_irq() - acknowledge a timer irq
-+ * @timer: handle to a OMAP rproc timer
-+ *
-+ * This function is used to clear the irq associated with a watchdog timer. The
-+ * The function is called by the OMAP remoteproc upon a watchdog event on the
-+ * remote processor to clear the interrupt status of the watchdog timer.
-+ */
-+static inline void omap_rproc_ack_timer_irq(struct omap_rproc_timer *timer)
-+{
-+	timer->timer_ops->write_status(timer->odt, OMAP_TIMER_INT_OVERFLOW);
-+}
-+
-+/**
-+ * omap_rproc_watchdog_isr() - Watchdog ISR handler for remoteproc device
-+ * @irq: IRQ number associated with a watchdog timer
-+ * @data: IRQ handler data
-+ *
-+ * This ISR routine executes the required necessary low-level code to
-+ * acknowledge a watchdog timer interrupt. There can be multiple watchdog
-+ * timers associated with a rproc (like IPUs which have 2 watchdog timers,
-+ * one per Cortex M3/M4 core), so a lookup has to be performed to identify
-+ * the timer to acknowledge its interrupt.
-+ *
-+ * The function also invokes rproc_report_crash to report the watchdog event
-+ * to the remoteproc driver core, to trigger a recovery.
-+ *
-+ * Return: IRQ_HANDLED on success, otherwise IRQ_NONE
-+ */
-+static irqreturn_t omap_rproc_watchdog_isr(int irq, void *data)
-+{
-+	struct rproc *rproc = data;
-+	struct omap_rproc *oproc = rproc->priv;
-+	struct device *dev = rproc->dev.parent;
-+	struct omap_rproc_timer *timers = oproc->timers;
-+	struct omap_rproc_timer *wd_timer = NULL;
-+	int num_timers = oproc->num_timers + oproc->num_wd_timers;
-+	int i;
-+
-+	for (i = oproc->num_timers; i < num_timers; i++) {
-+		if (timers[i].irq > 0 && irq == timers[i].irq) {
-+			wd_timer = &timers[i];
-+			break;
-+		}
-+	}
-+
-+	if (!wd_timer) {
-+		dev_err(dev, "invalid timer\n");
-+		return IRQ_NONE;
-+	}
-+
-+	omap_rproc_ack_timer_irq(wd_timer);
-+
-+	rproc_report_crash(rproc, RPROC_WATCHDOG);
-+
-+	return IRQ_HANDLED;
-+}
-+
- /**
-  * omap_rproc_enable_timers() - enable the timers for a remoteproc
-  * @rproc: handle of a remote processor
-@@ -242,19 +320,26 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 	struct omap_rproc_timer *timers = oproc->timers;
- 	struct device *dev = rproc->dev.parent;
- 	struct device_node *np = NULL;
-+	int num_timers = oproc->num_timers + oproc->num_wd_timers;
+@@ -137,37 +156,41 @@ EXPORT_SYMBOL(rproc_elf_get_boot_addr);
+ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct device *dev = &rproc->dev;
+-	struct elf32_hdr *ehdr;
+-	struct elf32_phdr *phdr;
++	const void *ehdr, *phdr;
+ 	int i, ret = 0;
++	u16 phnum;
+ 	const u8 *elf_data = fw->data;
++	u8 class = fw_elf_get_class(fw);
++	u32 elf_phdr_get_size = elf_size_of_phdr(class);
  
--	if (!oproc->num_timers)
-+	if (!num_timers)
- 		return 0;
+-	ehdr = (struct elf32_hdr *)elf_data;
+-	phdr = (struct elf32_phdr *)(elf_data + ehdr->e_phoff);
++	ehdr = elf_data;
++	phnum = elf_hdr_get_e_phnum(class, ehdr);
++	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
  
- 	if (!configure)
- 		goto start_timers;
+ 	/* go through the available ELF segments */
+-	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
+-		u32 da = phdr->p_paddr;
+-		u32 memsz = phdr->p_memsz;
+-		u32 filesz = phdr->p_filesz;
+-		u32 offset = phdr->p_offset;
++	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
++		u64 da = elf_phdr_get_p_paddr(class, phdr);
++		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
++		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
++		u64 offset = elf_phdr_get_p_offset(class, phdr);
++		u32 type = elf_phdr_get_p_type(class, phdr);
+ 		void *ptr;
  
--	for (i = 0; i < oproc->num_timers; i++) {
--		np = of_parse_phandle(dev->of_node, "ti,timers", i);
-+	for (i = 0; i < num_timers; i++) {
-+		if (i < oproc->num_timers)
-+			np = of_parse_phandle(dev->of_node, "ti,timers", i);
-+		else
-+			np = of_parse_phandle(dev->of_node,
-+					      "ti,watchdog-timers",
-+					      (i - oproc->num_timers));
- 		if (!np) {
- 			ret = -ENXIO;
- 			dev_err(dev, "device node lookup for timer at index %d failed: %d\n",
--				i, ret);
-+				i < oproc->num_timers ? i :
-+				i - oproc->num_timers, ret);
- 			goto free_timers;
- 		}
+-		if (phdr->p_type != PT_LOAD)
++		if (type != PT_LOAD)
+ 			continue;
  
-@@ -277,12 +362,14 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 		if (!timer_ops || !timer_ops->request_by_node ||
- 		    !timer_ops->set_source || !timer_ops->set_load ||
- 		    !timer_ops->free || !timer_ops->start ||
--		    !timer_ops->stop) {
-+		    !timer_ops->stop || !timer_ops->get_irq ||
-+		    !timer_ops->write_status) {
+-		dev_dbg(dev, "phdr: type %d da 0x%x memsz 0x%x filesz 0x%x\n",
+-			phdr->p_type, da, memsz, filesz);
++		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
++			type, da, memsz, filesz);
+ 
+ 		if (filesz > memsz) {
+-			dev_err(dev, "bad phdr filesz 0x%x memsz 0x%x\n",
++			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
+ 				filesz, memsz);
  			ret = -EINVAL;
- 			dev_err(dev, "device does not have required timer ops\n");
- 			goto put_node;
+ 			break;
  		}
  
-+		timers[i].irq = -1;
- 		timers[i].timer_ops = timer_ops;
- 		ret = omap_rproc_request_timer(dev, np, &timers[i]);
- 		if (ret) {
-@@ -291,10 +378,33 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 			goto put_node;
+ 		if (offset + filesz > fw->size) {
+-			dev_err(dev, "truncated fw: need 0x%x avail 0x%zx\n",
++			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
+ 				offset + filesz, fw->size);
+ 			ret = -EINVAL;
+ 			break;
+@@ -176,14 +199,15 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ 		/* grab the kernel address for this device address */
+ 		ptr = rproc_da_to_va(rproc, da, memsz);
+ 		if (!ptr) {
+-			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
++			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
++				memsz);
+ 			ret = -EINVAL;
+ 			break;
  		}
- 		of_node_put(np);
-+
-+		if (i >= oproc->num_timers) {
-+			timers[i].irq = omap_rproc_get_timer_irq(&timers[i]);
-+			if (timers[i].irq < 0) {
-+				dev_err(dev, "get_irq for timer %p failed: %d\n",
-+					np, timers[i].irq);
-+				ret = -EBUSY;
-+				goto free_timers;
-+			}
-+
-+			ret = request_irq(timers[i].irq,
-+					  omap_rproc_watchdog_isr, IRQF_SHARED,
-+					  "rproc-wdt", rproc);
-+			if (ret) {
-+				dev_err(dev, "error requesting irq for timer %p\n",
-+					np);
-+				omap_rproc_release_timer(&timers[i]);
-+				timers[i].odt = NULL;
-+				timers[i].timer_ops = NULL;
-+				timers[i].irq = -1;
-+				goto free_timers;
-+			}
-+		}
- 	}
  
- start_timers:
--	for (i = 0; i < oproc->num_timers; i++) {
-+	for (i = 0; i < num_timers; i++) {
- 		ret = omap_rproc_start_timer(&timers[i]);
- 		if (ret) {
- 			dev_err(dev, "start timer %p failed failed: %d\n", np,
-@@ -316,9 +426,12 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 		of_node_put(np);
- free_timers:
- 	while (i--) {
-+		if (i >= oproc->num_timers)
-+			free_irq(timers[i].irq, rproc);
- 		omap_rproc_release_timer(&timers[i]);
- 		timers[i].odt = NULL;
- 		timers[i].timer_ops = NULL;
-+		timers[i].irq = -1;
- 	}
+ 		/* put the segment where the remote processor expects it */
+-		if (phdr->p_filesz)
+-			memcpy(ptr, elf_data + phdr->p_offset, filesz);
++		if (filesz)
++			memcpy(ptr, elf_data + offset, filesz);
  
- 	return ret;
-@@ -341,16 +454,20 @@ static int omap_rproc_disable_timers(struct rproc *rproc, bool configure)
+ 		/*
+ 		 * Zero out remaining memory for this segment.
+@@ -200,24 +224,35 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+ }
+ EXPORT_SYMBOL(rproc_elf_load_segments);
+ 
+-static struct elf32_shdr *
+-find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
++static const void *
++find_table(struct device *dev, const struct firmware *fw)
+ {
+-	struct elf32_shdr *shdr;
++	const void *shdr, *name_table_shdr;
  	int i;
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct omap_rproc_timer *timers = oproc->timers;
-+	int num_timers = oproc->num_timers + oproc->num_wd_timers;
+ 	const char *name_table;
+ 	struct resource_table *table = NULL;
+-	const u8 *elf_data = (void *)ehdr;
++	const u8 *elf_data = (void *)fw->data;
++	u8 class = fw_elf_get_class(fw);
++	size_t fw_size = fw->size;
++	const void *ehdr = elf_data;
++	u16 shnum = elf_hdr_get_e_shnum(class, ehdr);
++	u32 elf_shdr_get_size = elf_size_of_shdr(class);
++	u16 shstrndx = elf_hdr_get_e_shstrndx(class, ehdr);
  
--	if (!oproc->num_timers)
-+	if (!num_timers)
- 		return 0;
- 
--	for (i = 0; i < oproc->num_timers; i++) {
-+	for (i = 0; i < num_timers; i++) {
- 		omap_rproc_stop_timer(&timers[i]);
- 		if (configure) {
-+			if (i >= oproc->num_timers)
-+				free_irq(timers[i].irq, rproc);
- 			omap_rproc_release_timer(&timers[i]);
- 			timers[i].odt = NULL;
- 			timers[i].timer_ops = NULL;
-+			timers[i].irq = -1;
- 		}
- 	}
- 
-@@ -1097,6 +1214,7 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 	struct omap_rproc *oproc;
- 	struct rproc *rproc;
- 	const char *firmware;
-+	int num_timers;
- 	int ret;
- 	struct reset_control *reset;
- 
-@@ -1149,8 +1267,19 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 		oproc->num_timers = 0;
- 	}
- 
--	if (oproc->num_timers) {
--		oproc->timers = devm_kcalloc(&pdev->dev, oproc->num_timers,
-+#ifdef CONFIG_OMAP_REMOTEPROC_WATCHDOG
-+	oproc->num_wd_timers =
-+		of_count_phandle_with_args(np, "ti,watchdog-timers", NULL);
-+	if (oproc->num_wd_timers <= 0) {
-+		dev_dbg(&pdev->dev, "device does not have watchdog timers, status = %d\n",
-+			oproc->num_wd_timers);
-+		oproc->num_wd_timers = 0;
-+	}
-+#endif
+ 	/* look for the resource table and handle it */
+-	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
+-	name_table = elf_data + shdr[ehdr->e_shstrndx].sh_offset;
+-
+-	for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
+-		u32 size = shdr->sh_size;
+-		u32 offset = shdr->sh_offset;
+-
+-		if (strcmp(name_table + shdr->sh_name, ".resource_table"))
++	/* First, get the section header according to the elf class */
++	shdr = elf_data + elf_hdr_get_e_shoff(class, ehdr);
++	/* Compute name table section header entry in shdr array */
++	name_table_shdr = shdr + (shstrndx * elf_shdr_get_size);
++	/* Finally, compute the name table section address in elf */
++	name_table = elf_data + elf_shdr_get_sh_offset(class, name_table_shdr);
 +
-+	if (oproc->num_timers || oproc->num_wd_timers) {
-+		num_timers = oproc->num_timers + oproc->num_wd_timers;
-+		oproc->timers = devm_kcalloc(&pdev->dev, num_timers,
- 					     sizeof(*oproc->timers),
- 					     GFP_KERNEL);
- 		if (!oproc->timers) {
-@@ -1158,8 +1287,8 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 			goto free_rproc;
- 		}
++	for (i = 0; i < shnum; i++, shdr += elf_shdr_get_size) {
++		u64 size = elf_shdr_get_sh_size(class, shdr);
++		u64 offset = elf_shdr_get_sh_offset(class, shdr);
++		u32 name = elf_shdr_get_sh_name(class, shdr);
++
++		if (strcmp(name_table + name, ".resource_table"))
+ 			continue;
  
--		dev_dbg(&pdev->dev, "device has %d tick timers\n",
--			oproc->num_timers);
-+		dev_dbg(&pdev->dev, "device has %d tick timers and %d watchdog timers\n",
-+			oproc->num_timers, oproc->num_wd_timers);
- 	}
+ 		table = (struct resource_table *)(elf_data + offset);
+@@ -270,21 +305,21 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
+  */
+ int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct elf32_hdr *ehdr;
+-	struct elf32_shdr *shdr;
++	const void *shdr;
+ 	struct device *dev = &rproc->dev;
+ 	struct resource_table *table = NULL;
+ 	const u8 *elf_data = fw->data;
+ 	size_t tablesz;
++	u8 class = fw_elf_get_class(fw);
++	u64 sh_offset;
  
- 	init_completion(&oproc->pm_comp);
+-	ehdr = (struct elf32_hdr *)elf_data;
+-
+-	shdr = find_table(dev, ehdr, fw->size);
++	shdr = find_table(dev, fw);
+ 	if (!shdr)
+ 		return -EINVAL;
+ 
+-	table = (struct resource_table *)(elf_data + shdr->sh_offset);
+-	tablesz = shdr->sh_size;
++	sh_offset = elf_shdr_get_sh_offset(class, shdr);
++	table = (struct resource_table *)(elf_data + sh_offset);
++	tablesz = elf_shdr_get_sh_size(class, shdr);
+ 
+ 	/*
+ 	 * Create a copy of the resource table. When a virtio device starts
+@@ -317,13 +352,17 @@ EXPORT_SYMBOL(rproc_elf_load_rsc_table);
+ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+ 						       const struct firmware *fw)
+ {
+-	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
+-	struct elf32_shdr *shdr;
++	const void *shdr;
++	u64 sh_addr, sh_size;
++	u8 class = fw_elf_get_class(fw);
+ 
+-	shdr = find_table(&rproc->dev, ehdr, fw->size);
++	shdr = find_table(&rproc->dev, fw);
+ 	if (!shdr)
+ 		return NULL;
+ 
+-	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size);
++	sh_addr = elf_shdr_get_sh_addr(class, shdr);
++	sh_size = elf_shdr_get_sh_size(class, shdr);
++
++	return rproc_da_to_va(rproc, sh_addr, sh_size);
+ }
+ EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.15.0.276.g89ea799
