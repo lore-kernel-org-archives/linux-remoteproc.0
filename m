@@ -1,133 +1,368 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v5 2/5] remoteproc: Add device-managed variants of rproc_alloc/rproc_add
-Date: Tue, 11 Feb 2020 11:26:10 -0300
-Message-Id: <20200211142614.13567-2-paul@crapouillou.net>
-In-Reply-To: <20200211142614.13567-1-paul@crapouillou.net>
-References: <20200211142614.13567-1-paul@crapouillou.net>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 11/14] remoteproc/omap: add support for system suspend/resume
+Date: Tue, 11 Feb 2020 17:21:22 +0200
+Message-ID: <20200211152125.23819-12-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add API functions devm_rproc_alloc() and devm_rproc_add(), which behave
-like rproc_alloc() and rproc_add() respectively, but register their
-respective cleanup function to be called on driver detach.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+This patch adds the support for system suspend/resume to the
+OMAP remoteproc driver so that the OMAP remoteproc devices can
+be suspended/resumed during a system suspend/resume. The support
+is added through the driver PM .suspend/.resume callbacks, and
+requires appropriate support from the OS running on the remote
+processors.
+
+The IPU & DSP remote processors typically have their own private
+modules like registers, internal memories, caches etc. The context
+of these modules need to be saved and restored properly for a
+suspend/resume to work. These are in general not accessible from
+the MPU, so the remote processors themselves have to implement
+the logic for the context save & restore of these modules.
+
+The OMAP remoteproc driver initiates a suspend by sending a mailbox
+message requesting the remote processor to save its context and
+enter into an idle/standby state. The remote processor should
+usually stop whatever processing it is doing to switch to a context
+save mode. The OMAP remoteproc driver detects the completion of
+the context save by checking the module standby status for the
+remoteproc device. It also stops any resources used by the remote
+processors like the timers. The timers need to be running only
+when the processor is active and executing, and need to be stopped
+otherwise to allow the timer driver to reach low-power states. The
+IOMMUs are automatically suspended by the PM core during the late
+suspend stage, after the remoteproc suspend process is completed by
+putting the remote processor cores into reset. Thereafter, the Linux
+kernel can put the domain into further lower power states as possible.
+
+The resume sequence undoes the operations performed in the PM suspend
+callback, by starting the timers and finally releasing the processors
+from reset. This requires that the remote processor side OS be able to
+distinguish a power-resume boot from a power-on/cold boot, restore the
+context of its private modules saved during the suspend phase, and
+resume executing code from where it was suspended. The IOMMUs would
+have been resumed by the PM core during early resume, so they are
+already enabled by the time remoteproc resume callback gets invoked.
+
+The remote processors should save their context into System RAM (DDR),
+as any internal memories are not guaranteed to retain context as it
+depends on the lowest power domain that the remote processor device
+is put into. The management of the DDR contents will be managed by
+the Linux kernel.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: converted to use ti-sysc instead of hwmod]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
+ drivers/remoteproc/omap_remoteproc.c | 188 +++++++++++++++++++++++++++
+ drivers/remoteproc/omap_remoteproc.h |  18 ++-
+ 2 files changed, 204 insertions(+), 2 deletions(-)
 
-Notes:
-    v3: New patch
-    v4: No change
-    v5: - Fix return value documentation
-        - Fix typo in documentation
-
- drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  5 +++
- 2 files changed, 72 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 097f33e4f1f3..fe5c7a2f9767 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1932,6 +1932,33 @@ int rproc_add(struct rproc *rproc)
- }
- EXPORT_SYMBOL(rproc_add);
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 2ca2adc5f638..e8d3520493e1 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -15,13 +15,17 @@
  
-+static void devm_rproc_remove(void *rproc)
-+{
-+	rproc_del(rproc);
-+}
-+
-+/**
-+ * devm_rproc_add() - resource managed rproc_add()
-+ * @dev: the underlying device
-+ * @rproc: the remote processor handle to register
-+ *
-+ * This function performs like rproc_add() but the registered rproc device will
-+ * automatically be removed on driver detach.
-+ *
-+ * Returns: 0 on success, negative errno on failure
-+ */
-+int devm_rproc_add(struct device *dev, struct rproc *rproc)
-+{
-+	int err;
-+
-+	err = rproc_add(rproc);
-+	if (err)
-+		return err;
-+
-+	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
-+}
-+EXPORT_SYMBOL(devm_rproc_add);
-+
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/clk.h>
++#include <linux/clk/ti.h>
+ #include <linux/err.h>
++#include <linux/io.h>
+ #include <linux/of_device.h>
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/remoteproc.h>
+ #include <linux/mailbox_client.h>
++#include <linux/omap-iommu.h>
+ #include <linux/omap-mailbox.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
+@@ -81,6 +85,9 @@ struct omap_rproc_timer {
+  * @timers: timer(s) info used by rproc
+  * @rproc: rproc handle
+  * @reset: reset handle
++ * @pm_comp: completion primitive to sync for suspend response
++ * @fck: functional clock for the remoteproc
++ * @suspend_acked: state machine flag to store the suspend request ack
+  */
+ struct omap_rproc {
+ 	struct mbox_chan *mbox;
+@@ -92,6 +99,9 @@ struct omap_rproc {
+ 	struct omap_rproc_timer *timers;
+ 	struct rproc *rproc;
+ 	struct reset_control *reset;
++	struct completion pm_comp;
++	struct clk *fck;
++	bool suspend_acked;
+ };
+ 
  /**
-  * rproc_type_release() - release a remote processor instance
-  * @dev: the rproc's device
-@@ -2149,6 +2176,46 @@ int rproc_del(struct rproc *rproc)
- }
- EXPORT_SYMBOL(rproc_del);
+@@ -367,6 +377,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 	case RP_MBOX_ECHO_REPLY:
+ 		dev_info(dev, "received echo reply from %s\n", name);
+ 		break;
++	case RP_MBOX_SUSPEND_ACK:
++		/* Fall through */
++	case RP_MBOX_SUSPEND_CANCEL:
++		oproc->suspend_acked = msg == RP_MBOX_SUSPEND_ACK;
++		complete(&oproc->pm_comp);
++		break;
+ 	default:
+ 		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
+ 			return;
+@@ -555,6 +571,165 @@ static const struct rproc_ops omap_rproc_ops = {
+ 	.da_to_va	= omap_rproc_da_to_va,
+ };
  
-+static void devm_rproc_free(struct device *dev, void *res)
++#ifdef CONFIG_PM
++static bool _is_rproc_in_standby(struct omap_rproc *oproc)
 +{
-+	rproc_free(*(struct rproc **)res);
++	return ti_clk_is_in_standby(oproc->fck);
 +}
 +
-+/**
-+ * devm_rproc_alloc() - resource managed rproc_alloc()
-+ * @dev: the underlying device
-+ * @name: name of this remote processor
-+ * @ops: platform-specific handlers (mainly start/stop)
-+ * @firmware: name of firmware file to load, can be NULL
-+ * @len: length of private data needed by the rproc driver (in bytes)
-+ *
-+ * This function performs like rproc_alloc() but the acquired rproc device will
-+ * automatically be released on driver detach.
-+ *
-+ * Returns: new rproc instance, or NULL on failure
-+ */
-+struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
-+			       const struct rproc_ops *ops,
-+			       const char *firmware, int len)
++/* 1 sec is long enough time to let the remoteproc side suspend the device */
++#define DEF_SUSPEND_TIMEOUT 1000
++static int _omap_rproc_suspend(struct rproc *rproc)
 +{
-+	struct rproc **ptr, *rproc;
++	struct device *dev = rproc->dev.parent;
++	struct omap_rproc *oproc = rproc->priv;
++	unsigned long to = msecs_to_jiffies(DEF_SUSPEND_TIMEOUT);
++	unsigned long ta = jiffies + to;
++	int ret;
 +
-+	ptr = devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rproc = rproc_alloc(dev, name, ops, firmware, len);
-+	if (rproc) {
-+		*ptr = rproc;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
++	reinit_completion(&oproc->pm_comp);
++	oproc->suspend_acked = false;
++	ret = mbox_send_message(oproc->mbox, (void *)RP_MBOX_SUSPEND_SYSTEM);
++	if (ret < 0) {
++		dev_err(dev, "PM mbox_send_message failed: %d\n", ret);
++		return ret;
 +	}
 +
-+	return rproc;
++	ret = wait_for_completion_timeout(&oproc->pm_comp, to);
++	if (!oproc->suspend_acked)
++		return -EBUSY;
++
++	/*
++	 * The remoteproc side is returning the ACK message before saving the
++	 * context, because the context saving is performed within a SYS/BIOS
++	 * function, and it cannot have any inter-dependencies against the IPC
++	 * layer. Also, as the SYS/BIOS needs to preserve properly the processor
++	 * register set, sending this ACK or signalling the completion of the
++	 * context save through a shared memory variable can never be the
++	 * absolute last thing to be executed on the remoteproc side, and the
++	 * MPU cannot use the ACK message as a sync point to put the remoteproc
++	 * into reset. The only way to ensure that the remote processor has
++	 * completed saving the context is to check that the module has reached
++	 * STANDBY state (after saving the context, the SYS/BIOS executes the
++	 * appropriate target-specific WFI instruction causing the module to
++	 * enter STANDBY).
++	 */
++	while (!_is_rproc_in_standby(oproc)) {
++		if (time_after(jiffies, ta))
++			return -ETIME;
++		schedule();
++	}
++
++	reset_control_assert(oproc->reset);
++
++	ret = omap_rproc_disable_timers(rproc, false);
++	if (ret) {
++		dev_err(dev, "disabling timers during suspend failed %d\n",
++			ret);
++		goto enable_device;
++	}
++
++	return 0;
++
++enable_device:
++	reset_control_deassert(oproc->reset);
++	return ret;
 +}
-+EXPORT_SYMBOL(devm_rproc_alloc);
 +
- /**
-  * rproc_add_subdev() - add a subdevice to a remoteproc
-  * @rproc: rproc handle to add the subdevice to
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..5f201f0c86c3 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -595,6 +595,11 @@ int rproc_add(struct rproc *rproc);
- int rproc_del(struct rproc *rproc);
- void rproc_free(struct rproc *rproc);
- 
-+struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
-+			       const struct rproc_ops *ops,
-+			       const char *firmware, int len);
-+int devm_rproc_add(struct device *dev, struct rproc *rproc);
++static int _omap_rproc_resume(struct rproc *rproc)
++{
++	struct device *dev = rproc->dev.parent;
++	struct omap_rproc *oproc = rproc->priv;
++	int ret;
 +
- void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
++	/* boot address could be lost after suspend, so restore it */
++	if (oproc->boot_data) {
++		ret = omap_rproc_write_dsp_boot_addr(rproc);
++		if (ret) {
++			dev_err(dev, "boot address restore failed %d\n", ret);
++			goto out;
++		}
++	}
++
++	ret = omap_rproc_enable_timers(rproc, false);
++	if (ret) {
++		dev_err(dev, "enabling timers during resume failed %d\n", ret);
++		goto out;
++	}
++
++	ret = reset_control_deassert(oproc->reset);
++	if (ret) {
++		dev_err(dev, "reset deassert failed %d\n", ret);
++		goto disable_timers;
++	}
++
++	return 0;
++
++disable_timers:
++	omap_rproc_disable_timers(rproc, false);
++
++out:
++	return ret;
++}
++
++static int __maybe_unused omap_rproc_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rproc *rproc = platform_get_drvdata(pdev);
++	int ret = 0;
++
++	mutex_lock(&rproc->lock);
++	if (rproc->state == RPROC_OFFLINE)
++		goto out;
++
++	if (rproc->state == RPROC_SUSPENDED)
++		goto out;
++
++	if (rproc->state != RPROC_RUNNING) {
++		ret = -EBUSY;
++		goto out;
++	}
++
++	ret = _omap_rproc_suspend(rproc);
++	if (ret) {
++		dev_err(dev, "suspend failed %d\n", ret);
++		goto out;
++	}
++
++	rproc->state = RPROC_SUSPENDED;
++out:
++	mutex_unlock(&rproc->lock);
++	return ret;
++}
++
++static int __maybe_unused omap_rproc_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct rproc *rproc = platform_get_drvdata(pdev);
++	int ret = 0;
++
++	mutex_lock(&rproc->lock);
++	if (rproc->state == RPROC_OFFLINE)
++		goto out;
++
++	if (rproc->state != RPROC_SUSPENDED) {
++		ret = -EBUSY;
++		goto out;
++	}
++
++	ret = _omap_rproc_resume(rproc);
++	if (ret) {
++		dev_err(dev, "resume failed %d\n", ret);
++		goto out;
++	}
++
++	rproc->state = RPROC_RUNNING;
++out:
++	mutex_unlock(&rproc->lock);
++	return ret;
++}
++#endif /* CONFIG_PM */
++
+ static const struct omap_rproc_mem_data ipu_mems[] = {
+ 	{ .name = "l2ram", .dev_addr = 0x20000000 },
+ 	{ },
+@@ -797,6 +972,14 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 			oproc->num_timers);
+ 	}
  
- struct rproc_mem_entry *
++	init_completion(&oproc->pm_comp);
++
++	oproc->fck = devm_clk_get(&pdev->dev, 0);
++	if (IS_ERR(oproc->fck)) {
++		ret = PTR_ERR(oproc->fck);
++		goto free_rproc;
++	}
++
+ 	ret = of_reserved_mem_device_init(&pdev->dev);
+ 	if (ret) {
+ 		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
+@@ -830,11 +1013,16 @@ static int omap_rproc_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static const struct dev_pm_ops omap_rproc_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(omap_rproc_suspend, omap_rproc_resume)
++};
++
+ static struct platform_driver omap_rproc_driver = {
+ 	.probe = omap_rproc_probe,
+ 	.remove = omap_rproc_remove,
+ 	.driver = {
+ 		.name = "omap-rproc",
++		.pm = &omap_rproc_pm_ops,
+ 		.of_match_table = omap_rproc_of_match,
+ 	},
+ };
+diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+index 72f656c93caa..13f17d9135c0 100644
+--- a/drivers/remoteproc/omap_remoteproc.h
++++ b/drivers/remoteproc/omap_remoteproc.h
+@@ -1,7 +1,7 @@
+ /*
+  * Remote processor messaging
+  *
+- * Copyright (C) 2011 Texas Instruments, Inc.
++ * Copyright (C) 2011-2020 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  * All rights reserved.
+  *
+@@ -57,6 +57,16 @@
+  * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
+  * recovery mechanism (to some extent).
+  *
++ * @RP_MBOX_SUSPEND_AUTO: auto suspend request for the remote processor
++ *
++ * @RP_MBOX_SUSPEND_SYSTEM: system suspend request for the remote processor
++ *
++ * @RP_MBOX_SUSPEND_ACK: successful response from remote processor for a
++ * suspend request
++ *
++ * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
++ * on a suspend request
++ *
+  * Introduce new message definitions if any here.
+  *
+  * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
+@@ -70,7 +80,11 @@ enum omap_rp_mbox_messages {
+ 	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
+ 	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
+ 	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
+-	RP_MBOX_END_MSG		= 0xFFFFFF06,
++	RP_MBOX_SUSPEND_AUTO	= 0xFFFFFF10,
++	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
++	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
++	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
++	RP_MBOX_END_MSG		= 0xFFFFFF14,
+ };
+ 
+ #endif /* _OMAP_RPMSG_H */
 -- 
-2.25.0
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
