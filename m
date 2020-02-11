@@ -1,135 +1,199 @@
-Return-Path: <peng.fan@nxp.com>
-From: peng.fan@nxp.com
-Subject: [PATCH 1/9] dt-bindings: remoteproc: Convert imx-rproc to json-schema
-Date: Wed, 19 Feb 2020 15:27:37 +0800
-Message-Id: <1582097265-20170-2-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-Return-Path: peng.fan@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 04/14] remoteproc/omap: Add support to parse internal memories from DT
+Date: Tue, 11 Feb 2020 17:21:15 +0200
+Message-ID: <20200211152125.23819-5-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Peng Fan <peng.fan@nxp.com>
+From: Suman Anna <s-anna@ti.com>
 
-Convert the i.MX remoteproc binding to DT schema format
-using json-schema
+The OMAP remoteproc driver has been enhanced to parse and store
+the kernel mappings for different internal RAM memories that may
+be present within each remote processor IP subsystem. Different
+devices have varying memories present on current SoCs. The current
+support handles the L2RAM for all IPU devices on OMAP4+ SoCs. The
+DSPs on OMAP4/OMAP5 only have Unicaches and do not have any L1 or
+L2 RAM memories.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+IPUs are expected to have the L2RAM at a fixed device address of
+0x20000000, based on the current limitations on Attribute MMU
+configurations.
+
+NOTE:
+The current logic doesn't handle the parsing of memories for DRA7
+remoteproc devices, and will be added alongside the DRA7 support.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo: converted to parse mem names / device addresses from pdata]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- .../devicetree/bindings/remoteproc/imx-rproc.txt   | 33 ------------
- .../devicetree/bindings/remoteproc/imx-rproc.yaml  | 61 ++++++++++++++++++++++
- 2 files changed, 61 insertions(+), 33 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
- create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
+ drivers/remoteproc/omap_remoteproc.c | 89 ++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt b/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-deleted file mode 100644
-index fbcefd965dc4..000000000000
---- a/Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--NXP iMX6SX/iMX7D Co-Processor Bindings
------------------------------------------
--
--This binding provides support for ARM Cortex M4 Co-processor found on some
--NXP iMX SoCs.
--
--Required properties:
--- compatible		Should be one of:
--				"fsl,imx7d-cm4"
--				"fsl,imx6sx-cm4"
--- clocks		Clock for co-processor (See: ../clock/clock-bindings.txt)
--- syscon		Phandle to syscon block which provide access to
--			System Reset Controller
--
--Optional properties:
--- memory-region		list of phandels to the reserved memory regions.
--			(See: ../reserved-memory/reserved-memory.txt)
--
--Example:
--	m4_reserved_sysmem1: cm4@80000000 {
--		reg = <0x80000000 0x80000>;
--	};
--
--	m4_reserved_sysmem2: cm4@81000000 {
--		reg = <0x81000000 0x80000>;
--	};
--
--	imx7d-cm4 {
--		compatible	= "fsl,imx7d-cm4";
--		memory-region	= <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
--		syscon		= <&src>;
--		clocks		= <&clks IMX7D_ARM_M4_ROOT_CLK>;
--	};
-diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
-new file mode 100644
-index 000000000000..12a5f3de38fb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/remoteproc/imx-rproc.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 2935a8edb3a6..a99e542da364 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -39,11 +39,27 @@ struct omap_rproc_boot_data {
+ 	unsigned int boot_reg;
+ };
+ 
++/**
++ * struct omap_rproc_mem - internal memory structure
++ * @cpu_addr: MPU virtual address of the memory region
++ * @bus_addr: bus address used to access the memory region
++ * @dev_addr: device address of the memory region from DSP view
++ * @size: size of the memory region
++ */
++struct omap_rproc_mem {
++	void __iomem *cpu_addr;
++	phys_addr_t bus_addr;
++	u32 dev_addr;
++	size_t size;
++};
 +
-+title: NXP iMX6SX/iMX7D Co-Processor Bindings
+ /**
+  * struct omap_rproc - omap remote processor state
+  * @mbox: mailbox channel handle
+  * @client: mailbox client to request the mailbox channel
+  * @boot_data: boot data structure for setting processor boot address
++ * @mem: internal memory regions data
++ * @num_mems: number of internal memory regions
+  * @rproc: rproc handle
+  * @reset: reset handle
+  */
+@@ -51,16 +67,30 @@ struct omap_rproc {
+ 	struct mbox_chan *mbox;
+ 	struct mbox_client client;
+ 	struct omap_rproc_boot_data *boot_data;
++	struct omap_rproc_mem *mem;
++	int num_mems;
+ 	struct rproc *rproc;
+ 	struct reset_control *reset;
+ };
+ 
++/**
++ * struct omap_rproc_mem_data - memory definitions for an omap remote processor
++ * @mem_name: name for this memory entry
++ * @dev_addr: device address for the memory entry
++ */
++struct omap_rproc_mem_data {
++	const char *name;
++	const u32 dev_addr;
++};
 +
-+description:
-+  This binding provides support for ARM Cortex M4 Co-processor found on
-+  some NXP iMX SoCs.
+ /**
+  * struct omap_rproc_dev_data - device data for the omap remote processor
+  * @device_name: device name of the remote processor
++ * @mems: memory definitions for this remote processor
+  */
+ struct omap_rproc_dev_data {
+ 	const char *device_name;
++	const struct omap_rproc_mem_data *mems;
+ };
+ 
+ /**
+@@ -221,12 +251,18 @@ static const struct rproc_ops omap_rproc_ops = {
+ 	.kick		= omap_rproc_kick,
+ };
+ 
++static const struct omap_rproc_mem_data ipu_mems[] = {
++	{ .name = "l2ram", .dev_addr = 0x20000000 },
++	{ },
++};
 +
-+maintainers:
-+  - Oleksij Rempel <o.rempel@pengutronix.de>
-+  - Peng Fan <peng.fan@nxp.com>
+ static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+ 	.device_name	= "dsp",
+ };
+ 
+ static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
+ 	.device_name	= "ipu",
++	.mems		= ipu_mems,
+ };
+ 
+ static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+@@ -235,6 +271,7 @@ static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+ 
+ static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+ 	.device_name	= "ipu",
++	.mems		= ipu_mems,
+ };
+ 
+ static const struct of_device_id omap_rproc_of_match[] = {
+@@ -309,6 +346,54 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static int omap_rproc_of_get_internal_memories(struct platform_device *pdev,
++					       struct rproc *rproc)
++{
++	struct omap_rproc *oproc = rproc->priv;
++	struct device *dev = &pdev->dev;
++	const struct omap_rproc_dev_data *data;
++	struct resource *res;
++	int num_mems;
++	int i;
 +
-+properties:
-+  compatible:
-+      enum:
-+        - "fsl,imx7d-cm4"
-+        - "fsl,imx6sx-cm4"
++	data = of_device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
 +
-+  clocks:
-+    items:
-+      Clock for co-processor (See: ../clock/clock-bindings.txt)
++	if (!data->mems)
++		return 0;
 +
-+  syscon:
-+     description:
-+       Phandle to syscon block which provide access to System Reset Controller
-+     allOf:
-+       - $ref: "/schemas/types.yaml#/definitions/phandle"
++	for (num_mems = 0; data->mems[num_mems].name; num_mems++)
++		;
 +
-+  memory-region:
-+    description:
-+      List of phandles to the reserved memory regions.
-+      (see ../reserved-memory/reserved-memory.txt)
++	oproc->mem = devm_kcalloc(dev, num_mems, sizeof(*oproc->mem),
++				  GFP_KERNEL);
++	if (!oproc->mem)
++		return -ENOMEM;
 +
-+required:
-+  - compatible
-+  - clocks
-+  - syscon
++	for (i = 0; i < num_mems; i++) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   data->mems[i].name);
++		oproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
++		if (IS_ERR(oproc->mem[i].cpu_addr)) {
++			dev_err(dev, "failed to parse and map %s memory\n",
++				data->mems[i].name);
++			return PTR_ERR(oproc->mem[i].cpu_addr);
++		}
++		oproc->mem[i].bus_addr = res->start;
++		oproc->mem[i].dev_addr = data->mems[i].dev_addr;
++		oproc->mem[i].size = resource_size(res);
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/imx7d-clock.h>
-+    m4_reserved_sysmem1: cm4@80000000 {
-+        reg = <0x80000000 0x80000>;
-+    };
++		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
++			data->mems[i].name, &oproc->mem[i].bus_addr,
++			oproc->mem[i].size, oproc->mem[i].cpu_addr,
++			oproc->mem[i].dev_addr);
++	}
++	oproc->num_mems = num_mems;
 +
-+    m4_reserved_sysmem2: cm4@81000000 {
-+        reg = <0x81000000 0x80000>;
-+    };
++	return 0;
++}
 +
-+    imx7d-cm4 {
-+        compatible  = "fsl,imx7d-cm4";
-+        memory-region = <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
-+        syscon = <&src>;
-+        clocks = <&clks IMX7D_ARM_M4_ROOT_CLK>;
-+    };
+ static int omap_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -348,6 +433,10 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 	/* All existing OMAP IPU and DSP processors have an MMU */
+ 	rproc->has_iommu = true;
+ 
++	ret = omap_rproc_of_get_internal_memories(pdev, rproc);
++	if (ret)
++		goto free_rproc;
 +
-+...
+ 	ret = omap_rproc_get_boot_data(pdev, rproc);
+ 	if (ret)
+ 		goto free_rproc;
 -- 
-2.16.4
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
