@@ -1,85 +1,50 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv6 08/14] remoteproc/omap: remove the platform_data header
-Date: Tue, 11 Feb 2020 17:21:19 +0200
-Message-ID: <20200211152125.23819-9-t-kristo@ti.com>
-In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
-References: <20200211152125.23819-1-t-kristo@ti.com>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v3 0/8] remoteproc: qcom: post mortem debug support
+Date: Mon, 10 Feb 2020 16:50:51 -0800
+Message-Id: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The platform data header for OMAP remoteproc is no longer used for
-anything post ti-sysc and DT conversion, so just remove it completely.
+The following series introduces two components that aids in post mortem
+debugging of Qualcomm systems. The first part is used to store information
+about loaded images in IMEM, for post mortem tools to know where the kernel
+loaded the remoteproc firmware. The second part invokes a stop operation on the
+remoteprocs during a kernel panic, in order to trigger them to flush caches
+etc.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Suman Anna <s-anna@ti.com>
----
- include/linux/platform_data/remoteproc-omap.h | 51 -------------------
- 1 file changed, 51 deletions(-)
- delete mode 100644 include/linux/platform_data/remoteproc-omap.h
+Bjorn Andersson (8):
+  dt-bindings: remoteproc: Add Qualcomm PIL info binding
+  remoteproc: qcom: Introduce driver to store pil info in IMEM
+  remoteproc: qcom: Update IMEM PIL info on load
+  arm64: dts: qcom: qcs404: Add IMEM and PIL info region
+  arm64: dts: qcom: sdm845: Add IMEM and PIL info region
+  remoteproc: Introduce "panic" callback in ops
+  remoteproc: qcom: q6v5: Add common panic handler
+  remoteproc: qcom: Introduce panic handler for PAS and ADSP
 
-diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
-deleted file mode 100644
-index 7e3a16097672..000000000000
---- a/include/linux/platform_data/remoteproc-omap.h
-+++ /dev/null
-@@ -1,51 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Remote Processor - omap-specific bits
-- *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-- * Copyright (C) 2011 Google, Inc.
-- */
--
--#ifndef _PLAT_REMOTEPROC_H
--#define _PLAT_REMOTEPROC_H
--
--struct rproc_ops;
--struct platform_device;
--
--/*
-- * struct omap_rproc_pdata - omap remoteproc's platform data
-- * @name: the remoteproc's name
-- * @oh_name: omap hwmod device
-- * @oh_name_opt: optional, secondary omap hwmod device
-- * @firmware: name of firmware file to load
-- * @mbox_name: name of omap mailbox device to use with this rproc
-- * @ops: start/stop rproc handlers
-- * @device_enable: omap-specific handler for enabling a device
-- * @device_shutdown: omap-specific handler for shutting down a device
-- * @set_bootaddr: omap-specific handler for setting the rproc boot address
-- */
--struct omap_rproc_pdata {
--	const char *name;
--	const char *oh_name;
--	const char *oh_name_opt;
--	const char *firmware;
--	const char *mbox_name;
--	const struct rproc_ops *ops;
--	int (*device_enable)(struct platform_device *pdev);
--	int (*device_shutdown)(struct platform_device *pdev);
--	void (*set_bootaddr)(u32);
--};
--
--#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
--
--void __init omap_rproc_reserve_cma(void);
--
--#else
--
--static inline void __init omap_rproc_reserve_cma(void)
--{
--}
--
--#endif
--
--#endif /* _PLAT_REMOTEPROC_H */
+ .../bindings/remoteproc/qcom,pil-info.yaml    |  42 +++++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  13 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  13 ++
+ drivers/remoteproc/Kconfig                    |   6 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_pil_info.c            | 168 ++++++++++++++++++
+ drivers/remoteproc/qcom_pil_info.h            |   8 +
+ drivers/remoteproc/qcom_q6v5.c                |  20 +++
+ drivers/remoteproc/qcom_q6v5.h                |   1 +
+ drivers/remoteproc/qcom_q6v5_adsp.c           |  27 ++-
+ drivers/remoteproc/qcom_q6v5_mss.c            |   6 +
+ drivers/remoteproc/qcom_q6v5_pas.c            |  26 ++-
+ drivers/remoteproc/qcom_wcnss.c               |  17 +-
+ drivers/remoteproc/remoteproc_core.c          |  46 +++++
+ include/linux/remoteproc.h                    |   3 +
+ 15 files changed, 388 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+ create mode 100644 drivers/remoteproc/qcom_pil_info.c
+ create mode 100644 drivers/remoteproc/qcom_pil_info.h
+
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.24.0
