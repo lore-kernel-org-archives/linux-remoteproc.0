@@ -1,106 +1,337 @@
-Return-Path: <BLEVINSK@xilinx.com>
-Return-Path: ben.levinsky@xilinx.com
-From: Ben Levinsky <ben.levinsky@xilinx.com>
-Subject: [PATCH 3/5] firmware: xilinx: Add zynqmp_get_node_status API
-Date: Mon, 24 Feb 2020 09:52:29 -0800
-Message-Id: <1582566751-13118-4-git-send-email-ben.levinsky@xilinx.com>
-In-Reply-To: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
-References: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 02/14] remoteproc/omap: Add device tree support
+Date: Tue, 11 Feb 2020 17:21:13 +0200
+Message-ID: <20200211152125.23819-3-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch adds a new API to provide access to the
-current power state of a sub-system on Zynqmp sub-system.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+OMAP4+ SoCs support device tree boot only. The OMAP remoteproc
+driver is enhanced to support remoteproc devices created through
+Device Tree, support for legacy platform devices has been
+deprecated. The current DT support handles the IPU and DSP
+processor subsystems on OMAP4 and OMAP5 SoCs.
+
+The OMAP remoteproc driver relies on the ti-sysc, reset, and
+syscon layers for performing clock, reset and boot vector
+management (DSP remoteprocs only) of the devices, but some of
+these are limited only to the machine-specific layers
+in arch/arm. The dependency against control module API for boot
+vector management of the DSP remoteprocs has now been removed
+with added logic to parse the boot register from the DT node
+and program it appropriately directly within the driver.
+
+The OMAP remoteproc driver expects the firmware names to be
+provided via device tree entries (firmware-name.) These are used
+to load the proper firmware during boot of the remote processor.
+
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: converted to use ti-sysc framework]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/firmware/xilinx/zynqmp.c     | 42 ++++++++++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h |  3 +++
- 2 files changed, 45 insertions(+)
+ drivers/remoteproc/omap_remoteproc.c | 177 ++++++++++++++++++++++++---
+ 1 file changed, 160 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 486dcb1..98e35d4 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -725,6 +725,47 @@ static int zynqmp_pm_request_wakeup(const u32 node,
- }
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 6398194075aa..6c603c2cd895 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -2,7 +2,7 @@
+ /*
+  * OMAP Remote Processor driver
+  *
+- * Copyright (C) 2011 Texas Instruments, Inc.
++ * Copyright (C) 2011-2020 Texas Instruments Incorporated - http://www.ti.com/
+  * Copyright (C) 2011 Google, Inc.
+  *
+  * Ohad Ben-Cohen <ohad@wizery.com>
+@@ -16,27 +16,51 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/err.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/remoteproc.h>
+ #include <linux/mailbox_client.h>
+ #include <linux/omap-mailbox.h>
+-
+-#include <linux/platform_data/remoteproc-omap.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++#include <linux/reset.h>
  
- /**
-+ * zynqmp_pm_get_node_status - PM call to request a node's current power state
-+ * @node:		ID of the component or sub-system in question
-+ * @status:		Current operating state of the requested node
-+ * @requirements:	Current requirements asserted on the node,
-+ *			used for slave nodes only.
-+ * @usage:		Usage information, used for slave nodes only:
-+ *			PM_USAGE_NO_MASTER	- No master is currently using
-+ *						  the node
-+ *			PM_USAGE_CURRENT_MASTER	- Only requesting master is
-+ *						  currently using the node
-+ *			PM_USAGE_OTHER_MASTER	- Only other masters are
-+ *						  currently using the node
-+ *			PM_USAGE_BOTH_MASTERS	- Both the current and at least
-+ *						  one other master is currently
-+ *						  using the node
-+ *
-+ * Return:		Returns status, either success or error+reason
+ #include "omap_remoteproc.h"
+ #include "remoteproc_internal.h"
+ 
++/**
++ * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
++ * @syscon: regmap handle for the system control configuration module
++ * @boot_reg: boot register offset within the @syscon regmap
 + */
-+static int zynqmp_pm_get_node_status(const u32 node, u32 *const status,
-+				     u32 *const requirements, u32 *const usage)
-+{
-+	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
++struct omap_rproc_boot_data {
++	struct regmap *syscon;
++	unsigned int boot_reg;
++};
 +
-+	if (!status)
-+		return -EINVAL;
-+
-+	ret = zynqmp_pm_invoke_fn(PM_GET_NODE_STATUS, node, 0, 0,
-+				  0, ret_payload);
-+	if (ret_payload[0] == XST_PM_SUCCESS) {
-+		*status = ret_payload[1];
-+		if (requirements)
-+			*requirements = ret_payload[2];
-+		if (usage)
-+			*usage = ret_payload[3];
-+	}
-+
-+	return ret;
-+}
+ /**
+  * struct omap_rproc - omap remote processor state
+  * @mbox: mailbox channel handle
+  * @client: mailbox client to request the mailbox channel
++ * @boot_data: boot data structure for setting processor boot address
+  * @rproc: rproc handle
++ * @reset: reset handle
+  */
+ struct omap_rproc {
+ 	struct mbox_chan *mbox;
+ 	struct mbox_client client;
++	struct omap_rproc_boot_data *boot_data;
+ 	struct rproc *rproc;
++	struct reset_control *reset;
++};
 +
 +/**
-  * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
-  * @node:		Node ID of the slave
-  * @capabilities:	Requested capabilities of the slave
-@@ -769,6 +810,7 @@ static const struct zynqmp_eemi_ops eemi_ops = {
- 	.set_requirement = zynqmp_pm_set_requirement,
- 	.fpga_load = zynqmp_pm_fpga_load,
- 	.fpga_get_status = zynqmp_pm_fpga_get_status,
-+	.get_node_status = zynqmp_pm_get_node_status,
++ * struct omap_rproc_dev_data - device data for the omap remote processor
++ * @device_name: device name of the remote processor
++ */
++struct omap_rproc_dev_data {
++	const char *device_name;
  };
  
  /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 0a68849..fb4efc9 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -62,6 +62,7 @@
+@@ -92,6 +116,21 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+ 			ret);
+ }
  
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
-+	PM_GET_NODE_STATUS = 3,
- 	PM_REQUEST_NODE = 13,
- 	PM_RELEASE_NODE,
- 	PM_SET_REQUIREMENT,
-@@ -309,6 +310,8 @@ struct zynqmp_pm_query_data {
- struct zynqmp_eemi_ops {
- 	int (*get_api_version)(u32 *version);
- 	int (*get_chipid)(u32 *idcode, u32 *version);
-+	int (*get_node_status)(const u32 node, u32 *const status,
-+			       u32 *const requirements, u32 *const usage);
- 	int (*fpga_load)(const u64 address, const u32 size, const u32 flags);
- 	int (*fpga_get_status)(u32 *value);
- 	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
++/**
++ * omap_rproc_write_dsp_boot_addr - set boot address for a DSP remote processor
++ * @rproc: handle of a remote processor
++ *
++ * Set boot address for a supported DSP remote processor.
++ */
++static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++{
++	struct omap_rproc *oproc = rproc->priv;
++	struct omap_rproc_boot_data *bdata = oproc->boot_data;
++	u32 offset = bdata->boot_reg;
++
++	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++}
++
+ /*
+  * Power up the remote processor.
+  *
+@@ -103,13 +142,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ {
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct device *dev = rproc->dev.parent;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
+ 	int ret;
+ 	struct mbox_client *client = &oproc->client;
+ 
+-	if (pdata->set_bootaddr)
+-		pdata->set_bootaddr(rproc->bootaddr);
++	if (oproc->boot_data)
++		omap_rproc_write_dsp_boot_addr(rproc);
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
+@@ -117,7 +154,7 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	client->tx_block = false;
+ 	client->knows_txdone = false;
+ 
+-	oproc->mbox = omap_mbox_request_channel(client, pdata->mbox_name);
++	oproc->mbox = mbox_request_channel(client, 0);
+ 	if (IS_ERR(oproc->mbox)) {
+ 		ret = -EBUSY;
+ 		dev_err(dev, "mbox_request_channel failed: %ld\n",
+@@ -138,9 +175,9 @@ static int omap_rproc_start(struct rproc *rproc)
+ 		goto put_mbox;
+ 	}
+ 
+-	ret = pdata->device_enable(pdev);
++	ret = reset_control_deassert(oproc->reset);
+ 	if (ret) {
+-		dev_err(dev, "omap_device_enable failed: %d\n", ret);
++		dev_err(dev, "reset control deassert failed: %d\n", ret);
+ 		goto put_mbox;
+ 	}
+ 
+@@ -154,13 +191,10 @@ static int omap_rproc_start(struct rproc *rproc)
+ /* power off the remote processor */
+ static int omap_rproc_stop(struct rproc *rproc)
+ {
+-	struct device *dev = rproc->dev.parent;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	int ret;
+ 
+-	ret = pdata->device_shutdown(pdev);
++	ret = reset_control_assert(oproc->reset);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -175,12 +209,115 @@ static const struct rproc_ops omap_rproc_ops = {
+ 	.kick		= omap_rproc_kick,
+ };
+ 
++static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
++	.device_name	= "dsp",
++};
++
++static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
++	.device_name	= "ipu",
++};
++
++static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
++	.device_name	= "dsp",
++};
++
++static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
++	.device_name	= "ipu",
++};
++
++static const struct of_device_id omap_rproc_of_match[] = {
++	{
++		.compatible     = "ti,omap4-dsp",
++		.data           = &omap4_dsp_dev_data,
++	},
++	{
++		.compatible     = "ti,omap4-ipu",
++		.data           = &omap4_ipu_dev_data,
++	},
++	{
++		.compatible     = "ti,omap5-dsp",
++		.data           = &omap5_dsp_dev_data,
++	},
++	{
++		.compatible     = "ti,omap5-ipu",
++		.data           = &omap5_ipu_dev_data,
++	},
++	{
++		/* end */
++	},
++};
++MODULE_DEVICE_TABLE(of, omap_rproc_of_match);
++
++static const char *omap_rproc_get_firmware(struct platform_device *pdev)
++{
++	const char *fw_name;
++	int ret;
++
++	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
++				      &fw_name);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return fw_name;
++}
++
++static int omap_rproc_get_boot_data(struct platform_device *pdev,
++				    struct rproc *rproc)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct omap_rproc *oproc = rproc->priv;
++	const struct omap_rproc_dev_data *data;
++	int ret;
++
++	data = of_device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
++
++	if (!of_property_read_bool(np, "ti,bootreg"))
++		return 0;
++
++	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
++					GFP_KERNEL);
++	if (!oproc->boot_data)
++		return -ENOMEM;
++
++	oproc->boot_data->syscon =
++			syscon_regmap_lookup_by_phandle(np, "ti,bootreg");
++	if (IS_ERR(oproc->boot_data->syscon)) {
++		ret = PTR_ERR(oproc->boot_data->syscon);
++		return ret;
++	}
++
++	if (of_property_read_u32_index(np, "ti,bootreg", 1,
++				       &oproc->boot_data->boot_reg)) {
++		dev_err(&pdev->dev, "couldn't get the boot register\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int omap_rproc_probe(struct platform_device *pdev)
+ {
+-	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
++	struct device_node *np = pdev->dev.of_node;
+ 	struct omap_rproc *oproc;
+ 	struct rproc *rproc;
++	const char *firmware;
+ 	int ret;
++	struct reset_control *reset;
++
++	if (!np) {
++		dev_err(&pdev->dev, "only DT-based devices are supported\n");
++		return -ENODEV;
++	}
++
++	reset = devm_reset_control_array_get_exclusive(&pdev->dev);
++	if (IS_ERR(reset))
++		return PTR_ERR(reset);
++
++	firmware = omap_rproc_get_firmware(pdev);
++	if (IS_ERR(firmware))
++		return PTR_ERR(firmware);
+ 
+ 	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret) {
+@@ -188,16 +325,21 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	rproc = rproc_alloc(&pdev->dev, pdata->name, &omap_rproc_ops,
+-			    pdata->firmware, sizeof(*oproc));
++	rproc = rproc_alloc(&pdev->dev, dev_name(&pdev->dev), &omap_rproc_ops,
++			    firmware, sizeof(*oproc));
+ 	if (!rproc)
+ 		return -ENOMEM;
+ 
+ 	oproc = rproc->priv;
+ 	oproc->rproc = rproc;
++	oproc->reset = reset;
+ 	/* All existing OMAP IPU and DSP processors have an MMU */
+ 	rproc->has_iommu = true;
+ 
++	ret = omap_rproc_get_boot_data(pdev, rproc);
++	if (ret)
++		goto free_rproc;
++
+ 	platform_set_drvdata(pdev, rproc);
+ 
+ 	ret = rproc_add(rproc);
+@@ -226,6 +368,7 @@ static struct platform_driver omap_rproc_driver = {
+ 	.remove = omap_rproc_remove,
+ 	.driver = {
+ 		.name = "omap-rproc",
++		.of_match_table = omap_rproc_of_match,
+ 	},
+ };
+ 
 -- 
-2.7.4
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
