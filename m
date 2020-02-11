@@ -1,79 +1,85 @@
-Return-Path: <peng.fan@nxp.com>
-From: peng.fan@nxp.com
-Subject: [PATCH 3/9] remoteproc: add support to skip firmware load when recovery
-Date: Wed, 19 Feb 2020 15:27:39 +0800
-Message-Id: <1582097265-20170-4-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-Return-Path: peng.fan@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 08/14] remoteproc/omap: remove the platform_data header
+Date: Tue, 11 Feb 2020 17:21:19 +0200
+Message-ID: <20200211152125.23819-9-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Peng Fan <peng.fan@nxp.com>
+The platform data header for OMAP remoteproc is no longer used for
+anything post ti-sysc and DT conversion, so just remove it completely.
 
-Remote processor such as M4 inside i.MX8QXP is not handled by Linux
-when it is configured to run inside its own hardware partition by
-system control unit(SCU). So even remote processor crash reset, it is
-handled by SCU, not linux. To such case, firmware load should be
-ignored, So introduce skip_fw_load_recovery and platform driver
-should set it if needed.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 19 +++++++++++--------
- include/linux/remoteproc.h           |  1 +
- 2 files changed, 12 insertions(+), 8 deletions(-)
+ include/linux/platform_data/remoteproc-omap.h | 51 -------------------
+ 1 file changed, 51 deletions(-)
+ delete mode 100644 include/linux/platform_data/remoteproc-omap.h
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 876b5420a32b..ca310e3582bf 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1678,20 +1678,23 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	if (ret)
- 		goto unlock_mutex;
- 
--	/* generate coredump */
--	rproc_coredump(rproc);
-+	if (!rproc->skip_fw_load_recovery) {
-+		/* generate coredump */
-+		rproc_coredump(rproc);
- 
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto unlock_mutex;
-+		/* load firmware */
-+		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+		if (ret < 0) {
-+			dev_err(dev, "request_firmware failed: %d\n", ret);
-+			goto unlock_mutex;
-+		}
- 	}
- 
- 	/* boot the remote processor up again */
- 	ret = rproc_start(rproc, firmware_p);
- 
--	release_firmware(firmware_p);
-+	if (!rproc->skip_fw_load_recovery)
-+		release_firmware(firmware_p);
- 
- unlock_mutex:
- 	mutex_unlock(&rproc->lock);
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 4fd5bedab4fa..fe6ee253b385 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -514,6 +514,7 @@ struct rproc {
- 	bool has_iommu;
- 	bool auto_boot;
- 	bool skip_fw_load;
-+	bool skip_fw_load_recovery;
- 	struct list_head dump_segments;
- 	int nb_vdev;
- };
+diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+deleted file mode 100644
+index 7e3a16097672..000000000000
+--- a/include/linux/platform_data/remoteproc-omap.h
++++ /dev/null
+@@ -1,51 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Remote Processor - omap-specific bits
+- *
+- * Copyright (C) 2011 Texas Instruments, Inc.
+- * Copyright (C) 2011 Google, Inc.
+- */
+-
+-#ifndef _PLAT_REMOTEPROC_H
+-#define _PLAT_REMOTEPROC_H
+-
+-struct rproc_ops;
+-struct platform_device;
+-
+-/*
+- * struct omap_rproc_pdata - omap remoteproc's platform data
+- * @name: the remoteproc's name
+- * @oh_name: omap hwmod device
+- * @oh_name_opt: optional, secondary omap hwmod device
+- * @firmware: name of firmware file to load
+- * @mbox_name: name of omap mailbox device to use with this rproc
+- * @ops: start/stop rproc handlers
+- * @device_enable: omap-specific handler for enabling a device
+- * @device_shutdown: omap-specific handler for shutting down a device
+- * @set_bootaddr: omap-specific handler for setting the rproc boot address
+- */
+-struct omap_rproc_pdata {
+-	const char *name;
+-	const char *oh_name;
+-	const char *oh_name_opt;
+-	const char *firmware;
+-	const char *mbox_name;
+-	const struct rproc_ops *ops;
+-	int (*device_enable)(struct platform_device *pdev);
+-	int (*device_shutdown)(struct platform_device *pdev);
+-	void (*set_bootaddr)(u32);
+-};
+-
+-#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+-
+-void __init omap_rproc_reserve_cma(void);
+-
+-#else
+-
+-static inline void __init omap_rproc_reserve_cma(void)
+-{
+-}
+-
+-#endif
+-
+-#endif /* _PLAT_REMOTEPROC_H */
 -- 
-2.16.4
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
