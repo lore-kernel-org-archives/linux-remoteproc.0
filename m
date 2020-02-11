@@ -1,65 +1,79 @@
-Return-Path: <peng.fan@nxp.com>
-From: peng.fan@nxp.com
-Subject: [PATCH 5/9] remoteproc: imx_rproc: parse early-booted property
-Date: Wed, 19 Feb 2020 15:27:41 +0800
-Message-Id: <1582097265-20170-6-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-Return-Path: peng.fan@nxp.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 03/14] remoteproc/omap: Add a sanity check for DSP boot address alignment
+Date: Tue, 11 Feb 2020 17:21:14 +0200
+Message-ID: <20200211152125.23819-4-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Peng Fan <peng.fan@nxp.com>
+From: Suman Anna <s-anna@ti.com>
 
-If early-property exists, there is no need to check syscon.
-Just mark early_boot as true.
+The DSP remote processors on OMAP SoCs require a boot register to
+be programmed with a boot address, and this boot address needs to
+be on a 1KB boundary. The current code is simply masking the boot
+address appropriately without performing any sanity checks before
+releasing the resets. An unaligned boot address results in an
+undefined execution behavior and can result in various bus errors
+like MMU Faults or L3 NoC errors. Such errors are hard to debug and
+can be easily avoided by adding a sanity check for the alignment
+before booting a DSP remote processor.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/imx_rproc.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/remoteproc/omap_remoteproc.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index b9fabe269fd2..e31ea1090cf3 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -483,7 +483,9 @@ static int imx_rproc_configure_mode(struct imx_rproc *priv)
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 6c603c2cd895..2935a8edb3a6 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -122,13 +122,22 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+  *
+  * Set boot address for a supported DSP remote processor.
+  */
+-static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ {
++	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
+ 
++	if (rproc->bootaddr & (SZ_1K - 1)) {
++		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
++			rproc->bootaddr);
++		return -EINVAL;
++	}
++
+ 	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++
++	return 0;
+ }
+ 
+ /*
+@@ -145,8 +154,11 @@ static int omap_rproc_start(struct rproc *rproc)
  	int ret;
- 	u32 val;
+ 	struct mbox_client *client = &oproc->client;
  
--	if (of_get_property(dev->of_node, "early-booted", NULL)) {
-+	if (dcfg->variants == IMX7ULP) {
-+		priv->early_boot = true;
-+	} else if (of_get_property(dev->of_node, "early-booted", NULL)) {
- 		priv->early_boot = true;
- 	} else {
- 		ret = regmap_read(priv->regmap, dcfg->src_reg, &val);
-@@ -509,15 +511,17 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	struct rproc *rproc;
- 	struct regmap_config config = { .name = "imx-rproc" };
- 	const struct imx_rproc_dcfg *dcfg;
--	struct regmap *regmap;
-+	struct regmap *regmap = NULL;
- 	int ret;
+-	if (oproc->boot_data)
+-		omap_rproc_write_dsp_boot_addr(rproc);
++	if (oproc->boot_data) {
++		ret = omap_rproc_write_dsp_boot_addr(rproc);
++		if (ret)
++			return ret;
++	}
  
--	regmap = syscon_regmap_lookup_by_phandle(np, "syscon");
--	if (IS_ERR(regmap)) {
--		dev_err(dev, "failed to find syscon\n");
--		return PTR_ERR(regmap);
-+	if (!of_get_property(np, "early-booted", NULL)) {
-+		regmap = syscon_regmap_lookup_by_phandle(np, "syscon");
-+		if (IS_ERR(regmap)) {
-+			dev_err(dev, "failed to find syscon\n");
-+			return PTR_ERR(regmap);
-+		}
-+		regmap_attach_dev(dev, regmap, &config);
- 	}
--	regmap_attach_dev(dev, regmap, &config);
- 
- 	/* set some other name then imx */
- 	rproc = rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
 -- 
-2.16.4
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
