@@ -1,87 +1,56 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH v4 2/5] remoteproc: Use u64 type for boot_addr
-Date: Mon, 10 Feb 2020 17:22:06 +0100
-Message-Id: <20200210162209.23149-3-cleger@kalray.eu>
-In-Reply-To: <20200210162209.23149-1-cleger@kalray.eu>
-References: <527785289.2852303.1581062223707.JavaMail.zimbra@kalray.eu>
- <20200210162209.23149-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Clement Leger <cleger@kalray.eu>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 13/14] remoteproc/omap: report device exceptions and trigger recovery
+Date: Tue, 11 Feb 2020 17:21:24 +0200
+Message-ID: <20200211152125.23819-14-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-elf64 entry is defined as a u64. Since boot_addr is used to store the
-elf entry point, change boot_addr type to u64 to support both elf32
-and elf64. In the same time, fix users that were using this variable.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
+The OMAP remote processors send a special mailbox message
+(RP_MBOX_CRASH) when they crash and detect an internal device
+exception.
+
+Add support to the mailbox handling function upon detection of
+this special message to report this crash to the remoteproc core.
+The remoteproc core can trigger a recovery using the prevailing
+recovery mechanism, already in use for MMU Fault recovery.
+
+Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
- drivers/remoteproc/remoteproc_internal.h   | 2 +-
- drivers/remoteproc/st_remoteproc.c         | 2 +-
- include/linux/remoteproc.h                 | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/remoteproc/omap_remoteproc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index 606aae166eba..c2a9783cfb9a 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -102,7 +102,7 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
-  * Note that the boot address is not a configurable property of all remote
-  * processors. Some will always boot at a specific hard-coded address.
-  */
--u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-+u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 490a242130f9..2cc87af0c582 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -381,8 +381,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
  
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 004867061721..eeb26434220e 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -55,7 +55,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
- int rproc_trigger_recovery(struct rproc *rproc);
- 
- int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
--u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
-+u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
- int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
- int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
- struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index ee13d23b43a9..a3268d95a50e 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -190,7 +190,7 @@ static int st_rproc_start(struct rproc *rproc)
- 		}
- 	}
- 
--	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-+	dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
- 
- 	return 0;
- 
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index f84bd5fe0211..82cebca9344c 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -382,7 +382,7 @@ struct rproc_ops {
- 				struct rproc *rproc, const struct firmware *fw);
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
--	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-+	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
- };
- 
- /**
-@@ -498,7 +498,7 @@ struct rproc {
- 	int num_traces;
- 	struct list_head carveouts;
- 	struct list_head mappings;
--	u32 bootaddr;
-+	u64 bootaddr;
- 	struct list_head rvdevs;
- 	struct list_head subdevs;
- 	struct idr notifyids;
+ 	switch (msg) {
+ 	case RP_MBOX_CRASH:
+-		/* just log this for now. later, we'll also do recovery */
++		/*
++		 * remoteproc detected an exception, notify the rproc core.
++		 * The remoteproc core will handle the recovery.
++		 */
+ 		dev_err(dev, "omap rproc %s crashed\n", name);
++		rproc_report_crash(oproc->rproc, RPROC_FATAL_ERROR);
+ 		break;
+ 	case RP_MBOX_ECHO_REPLY:
+ 		dev_info(dev, "received echo reply from %s\n", name);
 -- 
-2.15.0.276.g89ea799
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
