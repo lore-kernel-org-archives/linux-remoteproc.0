@@ -1,48 +1,89 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:36942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725379AbgBDFAF (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Feb 2020 00:00:05 -0500
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 06/14] remoteproc/omap: Initialize and assign reserved memory node
+Date: Tue, 11 Feb 2020 17:21:17 +0200
+Message-ID: <20200211152125.23819-7-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/2] Improve general readability of MSS on SC7180
-From: patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158079240449.22181.11242000476784871582.git-patchwork-notify@kernel.org>
-Date: Tue, 04 Feb 2020 05:00:04 +0000
-References: <20200123131236.1078-1-sibis@codeaurora.org>
-In-Reply-To: <20200123131236.1078-1-sibis@codeaurora.org>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello:
+From: Suman Anna <s-anna@ti.com>
 
-This series was applied to andersson/remoteproc.git (refs/heads/for-next).
+The reserved memory nodes are not assigned to platform devices by
+default in the driver core to avoid the lookup for every platform
+device and incur a penalty as the real users are expected to be
+only a few devices.
 
-On Thu, 23 Jan 2020 18:42:34 +0530 you wrote:
-> This series aims to improve the general readability of the mss reset
-> sequence on SC7180 SoCs. No functional change intended.
-> 
-> v2:
->  * Use regmap_read_poll_timeout for halt_nav and halt_axi
->  * Redefine CONN_BOX_SPARE_0 to AXI_GATING_VALID_OVERRIDE
->  * Update more details about pipeline glitch issue
->  * Drop 2,3 patches from v1
-> 
-> [...]
+OMAP remoteproc devices fall into the above category and the OMAP
+remoteproc driver _requires_ specific CMA pools to be assigned
+for each device at the moment to align on the location of the
+vrings and vring buffers in the RTOS-side firmware images. So,
+use the of_reserved_mem_device_init/release() API appropriately
+to assign the corresponding reserved memory region to the OMAP
+remoteproc device. Note that only one region per device is
+allowed by the framework.
 
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+v6:
+  - made memory-regions optional
+  - added multi-line warning if memory-regions are not provided
 
-Here is a summary with links:
-  - [v2,1/2] remoteproc: qcom: q6v5-mss: Use regmap_read_poll_timeout
-    https://git.kernel.org/andersson/remoteproc/c/01bf3fec38e9188846f6755cd29da515f5852bc5
-  - [v2,2/2] remoteproc: qcom: q6v5-mss: Improve readability of reset_assert
-    https://git.kernel.org/andersson/remoteproc/c/600c39b34369e2a1bf78eb67afb99ce550f271cc
+ drivers/remoteproc/omap_remoteproc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-You are awesome, thank you!
-
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 0846839b2c97..a0711c1035d3 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/of_device.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/remoteproc.h>
+@@ -480,14 +481,23 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
++	ret = of_reserved_mem_device_init(&pdev->dev);
++	if (ret) {
++		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
++		dev_warn(&pdev->dev, "Typically this should be provided,\n");
++		dev_warn(&pdev->dev, "only omit if you know what you are doing.\n");
++	}
++
+ 	platform_set_drvdata(pdev, rproc);
+ 
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto release_mem;
+ 
+ 	return 0;
+ 
++release_mem:
++	of_reserved_mem_device_release(&pdev->dev);
+ free_rproc:
+ 	rproc_free(rproc);
+ 	return ret;
+@@ -499,6 +509,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
+ 
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
++	of_reserved_mem_device_release(&pdev->dev);
+ 
+ 	return 0;
+ }
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
