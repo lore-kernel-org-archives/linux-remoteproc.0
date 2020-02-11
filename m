@@ -1,115 +1,91 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v5 1/5] dt-bindings: Document JZ47xx VPU auxiliary processor
-Date: Tue, 11 Feb 2020 11:26:09 -0300
-Message-Id: <20200211142614.13567-1-paul@crapouillou.net>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 05/14] remoteproc/omap: Add the rproc ops .da_to_va() implementation
+Date: Tue, 11 Feb 2020 17:21:16 +0200
+Message-ID: <20200211152125.23819-6-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-Ingenic is a second Xburst MIPS CPU very similar to the main core.
-This document describes the devicetree bindings for this auxiliary
-processor.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+An implementation for the rproc ops .da_to_va() has been added
+that provides the address translation between device addresses
+to kernel virtual addresses for internal RAMs present on that
+particular remote processor device. The implementation provides
+the translations based on the addresses parsed and stored during
+the probe.
+
+This ops gets invoked by the exported rproc_da_to_va() function
+and allows the remoteproc core's ELF loader to be able to load
+program data directly into the internal memories.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
+ drivers/remoteproc/omap_remoteproc.c | 39 ++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-Notes:
-    v2: Update TCSM0 address in example
-    v3: Change node name to 'video-decoder'
-    v4: Convert to YAML. I didn't add Rob's Ack on v3 because of that (sorry Rob)
-    v5: - Fix 'reg' not in <addr, len> pairs
-        - Add missing include to devicetree example
-
- .../bindings/remoteproc/ingenic,vpu.yaml      | 77 +++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-new file mode 100644
-index 000000000000..c019f9fbe916
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/remoteproc/ingenic,vpu.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index a99e542da364..0846839b2c97 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -245,10 +245,49 @@ static int omap_rproc_stop(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++/**
++ * omap_rproc_da_to_va() - internal memory translation helper
++ * @rproc: remote processor to apply the address translation for
++ * @da: device address to translate
++ * @len: length of the memory buffer
++ *
++ * Custom function implementing the rproc .da_to_va ops to provide address
++ * translation (device address to kernel virtual address) for internal RAMs
++ * present in a DSP or IPU device). The translated addresses can be used
++ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
++ * Returns the translated virtual address in kernel memory space, or NULL
++ * in failure.
++ */
++static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
++{
++	struct omap_rproc *oproc = rproc->priv;
++	int i;
++	u32 offset;
 +
-+title: Ingenic Video Processing Unit bindings
++	if (len <= 0)
++		return NULL;
 +
-+description:
-+  Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-+  Ingenic is a second Xburst MIPS CPU very similar to the main core.
-+  This document describes the devicetree bindings for this auxiliary
-+  processor.
++	if (!oproc->num_mems)
++		return NULL;
 +
-+maintainers:
-+  - Paul Cercueil <paul@crapouillou.net>
++	for (i = 0; i < oproc->num_mems; i++) {
++		if (da >= oproc->mem[i].dev_addr && da + len <=
++		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
++			offset = da - oproc->mem[i].dev_addr;
++			/* __force to make sparse happy with type conversion */
++			return (__force void *)(oproc->mem[i].cpu_addr +
++						offset);
++		}
++	}
 +
-+properties:
-+  compatible:
-+    const: ingenic,jz4770-vpu-rproc
++	return NULL;
++}
 +
-+  reg:
-+    items:
-+      - description: aux registers
-+      - description: tcsm0 registers
-+      - description: tcsm1 registers
-+      - description: sram registers
-+
-+  reg-names:
-+    items:
-+      - const: aux
-+      - const: tcsm0
-+      - const: tcsm1
-+      - const: sram
-+
-+  clocks:
-+    items:
-+      - description: aux clock
-+      - description: vpu clock
-+
-+  clock-names:
-+    items:
-+      - const: aux
-+      - const: vpu
-+
-+  interrupts:
-+    description: VPU hardware interrupt
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - clocks
-+  - clock-names
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/jz4770-cgu.h>
-+
-+    vpu: video-decoder@132a0000 {
-+      compatible = "ingenic,jz4770-vpu-rproc";
-+
-+      reg = <0x132a0000 0x20>, /* AUX */
-+            <0x132b0000 0x4000>, /* TCSM0 */
-+            <0x132c0000 0xc000>, /* TCSM1 */
-+            <0x132f0000 0x7000>; /* SRAM */
-+      reg-names = "aux", "tcsm0", "tcsm1", "sram";
-+
-+      clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
-+      clock-names = "aux", "vpu";
-+
-+      interrupt-parent = <&cpuintc>;
-+      interrupts = <3>;
-+    };
+ static const struct rproc_ops omap_rproc_ops = {
+ 	.start		= omap_rproc_start,
+ 	.stop		= omap_rproc_stop,
+ 	.kick		= omap_rproc_kick,
++	.da_to_va	= omap_rproc_da_to_va,
+ };
+ 
+ static const struct omap_rproc_mem_data ipu_mems[] = {
 -- 
-2.25.0
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
