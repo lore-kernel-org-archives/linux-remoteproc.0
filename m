@@ -1,94 +1,347 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
-Date: Wed, 26 Feb 2020 22:30:00 +0530
-Message-Id: <20200226170001.24234-3-sibis@codeaurora.org>
-In-Reply-To: <20200226170001.24234-1-sibis@codeaurora.org>
-References: <20200226170001.24234-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv6 14/14] remoteproc/omap: add watchdog functionality for remote processors
+Date: Tue, 11 Feb 2020 17:21:25 +0200
+Message-ID: <20200211152125.23819-15-t-kristo@ti.com>
+In-Reply-To: <20200211152125.23819-1-t-kristo@ti.com>
+References: <20200211152125.23819-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, robh+dt@kernel.org
-Cc: agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tsoni@codeaurora.org, vnkgutta@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Qualcomm SoCs (starting with MSM8998) allow for multiple protection
-domains (PDs) to run on the same Q6 sub-system. This allows for
-services like AVS AUDIO to have their own separate address space and
-crash/recover without disrupting the other PDs running on the same Q6
-ADSP. Add "qcom,protection-domain" bindings to capture the dependencies
-between the APR service and the PD on which the apr service runs.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Remote processors can be stuck in a loop, and may not be recoverable
+if they do not have a built-in watchdog. The watchdog implementation
+for OMAP remote processors uses external gptimers that can be used
+to interrupt both the Linux host as well as the remote processor.
+
+Each remote processor is responsible for refreshing the timer during
+normal behavior - during OS task scheduling or entering the idle loop
+properly. During a watchdog condition (executing a tight loop causing
+no scheduling), the host processor gets interrupts and schedules a
+recovery for the corresponding remote processor. The remote processor
+may also get interrupted to be able to print a back trace.
+
+A menuconfig option has also been added to enable/disable the Watchdog
+functionality, with the default as disabled.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- .../devicetree/bindings/soc/qcom/qcom,apr.txt | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/remoteproc/Kconfig           |  12 +++
+ drivers/remoteproc/omap_remoteproc.c | 155 ++++++++++++++++++++++++---
+ 2 files changed, 155 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-index db501269f47b8..f8fa71f5d84ba 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-@@ -45,6 +45,18 @@ by the individual bindings for the specific service
- 			12 - Ultrasound stream manager.
- 			13 - Listen stream manager.
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index b52abc2268cc..5f33358eb2f1 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -52,6 +52,18 @@ config OMAP_REMOTEPROC
+ 	  It's safe to say N here if you're not interested in multimedia
+ 	  offloading or just want a bare minimum kernel.
  
-+- qcom,protection-domain
-+	Usage: optional
-+	Value type: <stringlist>
-+	Definition: Must list the protection domain service name and path
-+		    that the particular apr service has a dependency on.
-+	Possible values are :
-+			"avs/audio", "msm/adsp/audio_pd".
-+			"kernel/elf_loader", "msm/modem/wlan_pd".
-+			"tms/servreg", "msm/adsp/audio_pd".
-+			"tms/servreg", "msm/modem/wlan_pd".
-+			"tms/servreg", "msm/slpi/sensor_pd".
++config OMAP_REMOTEPROC_WATCHDOG
++	bool "OMAP remoteproc watchdog timer"
++	depends on OMAP_REMOTEPROC
++	default n
++	help
++	  Say Y here to enable watchdog timer for remote processors.
 +
- = EXAMPLE
- The following example represents a QDSP based sound card on a MSM8996 device
- which uses apr as communication between Apps and QDSP.
-@@ -82,3 +94,41 @@ which uses apr as communication between Apps and QDSP.
- 			...
- 		};
- 	};
++	  This option controls the watchdog functionality for the remote
++	  processors in OMAP. Dedicated OMAP DMTimers are used by the remote
++	  processors and triggers the timer interrupt upon a watchdog
++	  detection.
 +
-+= EXAMPLE 2
-+The following example represents a QDSP based sound card with protection domain
-+dependencies specified. Here some of the apr services are dependent on services
-+running on protection domain hosted on ADSP/SLPI remote processors while others
-+have no such dependency.
+ config WKUP_M3_RPROC
+ 	tristate "AMx3xx Wakeup M3 remoteproc support"
+ 	depends on SOC_AM33XX || SOC_AM43XX
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 2cc87af0c582..36060cdf2e8a 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -24,6 +24,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/dma-mapping.h>
++#include <linux/interrupt.h>
+ #include <linux/remoteproc.h>
+ #include <linux/mailbox_client.h>
+ #include <linux/omap-iommu.h>
+@@ -72,10 +73,12 @@ struct omap_rproc_mem {
+  * struct omap_rproc_timer - data structure for a timer used by a omap rproc
+  * @odt: timer pointer
+  * @timer_ops: OMAP dmtimer ops for @odt timer
++ * @irq: timer irq
+  */
+ struct omap_rproc_timer {
+ 	struct omap_dm_timer *odt;
+ 	const struct omap_dm_timer_ops *timer_ops;
++	int irq;
+ };
+ 
+ /**
+@@ -86,6 +89,7 @@ struct omap_rproc_timer {
+  * @mem: internal memory regions data
+  * @num_mems: number of internal memory regions
+  * @num_timers: number of rproc timer(s)
++ * @num_wd_timers: number of rproc watchdog timers
+  * @timers: timer(s) info used by rproc
+  * @autosuspend_delay: auto-suspend delay value to be used for runtime pm
+  * @need_resume: if true a resume is needed in the system resume callback
+@@ -103,6 +107,7 @@ struct omap_rproc {
+ 	struct omap_rproc_mem *mem;
+ 	int num_mems;
+ 	int num_timers;
++	int num_wd_timers;
+ 	struct omap_rproc_timer *timers;
+ 	int autosuspend_delay;
+ 	bool need_resume;
+@@ -221,6 +226,81 @@ static inline int omap_rproc_release_timer(struct omap_rproc_timer *timer)
+ 	return timer->timer_ops->free(timer->odt);
+ }
+ 
++/**
++ * omap_rproc_get_timer_irq - get the irq for a timer
++ * @timer - handle to a OMAP rproc timer
++ *
++ * This function is used to get the irq associated with a watchdog timer. The
++ * function is called by the OMAP remoteproc driver to register a interrupt
++ * handler to handle watchdog events on the remote processor.
++ *
++ * Returns the irq id on success, otherwise a failure as returned by DMTimer ops
++ */
++static inline int omap_rproc_get_timer_irq(struct omap_rproc_timer *timer)
++{
++	return timer->timer_ops->get_irq(timer->odt);
++}
 +
-+	apr {
-+		compatible = "qcom,apr-v2";
-+		qcom,glink-channels = "apr_audio_svc";
-+		qcom,apr-domain = <APR_DOMAIN_ADSP>;
++/**
++ * omap_rproc_ack_timer_irq - acknowledge a timer irq
++ * @timer: handle to a OMAP rproc timer
++ *
++ * This function is used to clear the irq associated with a watchdog timer. The
++ * The function is called by the OMAP remoteproc upon a watchdog event on the
++ * remote processor to clear the interrupt status of the watchdog timer.
++ *
++ * Returns the irq id on success, otherwise a failure as returned by DMTimer ops
++ */
++static inline void omap_rproc_ack_timer_irq(struct omap_rproc_timer *timer)
++{
++	timer->timer_ops->write_status(timer->odt, OMAP_TIMER_INT_OVERFLOW);
++}
 +
-+		q6core {
-+			compatible = "qcom,q6core";
-+			reg = <APR_SVC_ADSP_CORE>;
-+		};
++/**
++ * omap_rproc_watchdog_isr - Watchdog ISR handler for remoteproc device
++ * @irq: IRQ number associated with a watchdog timer
++ * @data: IRQ handler data
++ *
++ * This ISR routine executes the required necessary low-level code to
++ * acknowledge a watchdog timer interrupt. There can be multiple watchdog
++ * timers associated with a rproc (like IPUs which have 2 watchdog timers,
++ * one per Cortex M3/M4 core), so a lookup has to be performed to identify
++ * the timer to acknowledge its interrupt.
++ *
++ * The function also invokes rproc_report_crash to report the watchdog event
++ * to the remoteproc driver core, to trigger a recovery.
++ *
++ * Return: IRQ_HANDLED or IRQ_NONE
++ */
++static irqreturn_t omap_rproc_watchdog_isr(int irq, void *data)
++{
++	struct rproc *rproc = data;
++	struct omap_rproc *oproc = rproc->priv;
++	struct device *dev = rproc->dev.parent;
++	struct omap_rproc_timer *timers = oproc->timers;
++	struct omap_rproc_timer *wd_timer = NULL;
++	int num_timers = oproc->num_timers + oproc->num_wd_timers;
++	int i;
 +
-+		q6afe: q6afe {
-+			compatible = "qcom,q6afe";
-+			reg = <APR_SVC_AFE>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			...
-+		};
++	for (i = oproc->num_timers; i < num_timers; i++) {
++		if (timers[i].irq > 0 && irq == timers[i].irq) {
++			wd_timer = &timers[i];
++			break;
++		}
++	}
 +
-+		q6asm: q6asm {
-+			compatible = "qcom,q6asm";
-+			reg = <APR_SVC_ASM>;
-+			qcom,protection-domain = "tms/servreg", "msm/slpi/sensor_pd";
-+			...
-+		};
++	if (!wd_timer) {
++		dev_err(dev, "invalid timer\n");
++		return IRQ_NONE;
++	}
 +
-+		q6adm: q6adm {
-+			compatible = "qcom,q6adm";
-+			reg = <APR_SVC_ADM>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			...
-+		};
-+	};
++	omap_rproc_ack_timer_irq(wd_timer);
++
++	rproc_report_crash(rproc, RPROC_WATCHDOG);
++
++	return IRQ_HANDLED;
++}
++
+ /**
+  * omap_rproc_enable_timers - enable the timers for a remoteproc
+  * @rproc: handle of a remote processor
+@@ -242,19 +322,26 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
+ 	struct omap_rproc_timer *timers = oproc->timers;
+ 	struct device *dev = rproc->dev.parent;
+ 	struct device_node *np = NULL;
++	int num_timers = oproc->num_timers + oproc->num_wd_timers;
+ 
+-	if (!oproc->num_timers)
++	if (!num_timers)
+ 		return 0;
+ 
+ 	if (!configure)
+ 		goto start_timers;
+ 
+-	for (i = 0; i < oproc->num_timers; i++) {
+-		np = of_parse_phandle(dev->of_node, "ti,timers", i);
++	for (i = 0; i < num_timers; i++) {
++		if (i < oproc->num_timers)
++			np = of_parse_phandle(dev->of_node, "ti,timers", i);
++		else
++			np = of_parse_phandle(dev->of_node,
++					      "ti,watchdog-timers",
++					      (i - oproc->num_timers));
+ 		if (!np) {
+ 			ret = -ENXIO;
+ 			dev_err(dev, "device node lookup for timer at index %d failed: %d\n",
+-				i, ret);
++				i < oproc->num_timers ? i :
++				i - oproc->num_timers, ret);
+ 			goto free_timers;
+ 		}
+ 
+@@ -277,12 +364,14 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
+ 		if (!timer_ops || !timer_ops->request_by_node ||
+ 		    !timer_ops->set_source || !timer_ops->set_load ||
+ 		    !timer_ops->free || !timer_ops->start ||
+-		    !timer_ops->stop) {
++		    !timer_ops->stop || !timer_ops->get_irq ||
++		    !timer_ops->write_status) {
+ 			ret = -EINVAL;
+ 			dev_err(dev, "device does not have required timer ops\n");
+ 			goto put_node;
+ 		}
+ 
++		timers[i].irq = -1;
+ 		timers[i].timer_ops = timer_ops;
+ 		ret = omap_rproc_request_timer(dev, np, &timers[i]);
+ 		if (ret) {
+@@ -291,10 +380,33 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
+ 			goto put_node;
+ 		}
+ 		of_node_put(np);
++
++		if (i >= oproc->num_timers) {
++			timers[i].irq = omap_rproc_get_timer_irq(&timers[i]);
++			if (timers[i].irq < 0) {
++				dev_err(dev, "get_irq for timer %p failed: %d\n",
++					np, timers[i].irq);
++				ret = -EBUSY;
++				goto free_timers;
++			}
++
++			ret = request_irq(timers[i].irq,
++					  omap_rproc_watchdog_isr, IRQF_SHARED,
++					  "rproc-wdt", rproc);
++			if (ret) {
++				dev_err(dev, "error requesting irq for timer %p\n",
++					np);
++				omap_rproc_release_timer(&timers[i]);
++				timers[i].odt = NULL;
++				timers[i].timer_ops = NULL;
++				timers[i].irq = -1;
++				goto free_timers;
++			}
++		}
+ 	}
+ 
+ start_timers:
+-	for (i = 0; i < oproc->num_timers; i++) {
++	for (i = 0; i < num_timers; i++) {
+ 		ret = omap_rproc_start_timer(&timers[i]);
+ 		if (ret) {
+ 			dev_err(dev, "start timer %p failed failed: %d\n", np,
+@@ -316,9 +428,12 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
+ 		of_node_put(np);
+ free_timers:
+ 	while (i--) {
++		if (i >= oproc->num_timers)
++			free_irq(timers[i].irq, rproc);
+ 		omap_rproc_release_timer(&timers[i]);
+ 		timers[i].odt = NULL;
+ 		timers[i].timer_ops = NULL;
++		timers[i].irq = -1;
+ 	}
+ 
+ 	return ret;
+@@ -339,16 +454,20 @@ static int omap_rproc_disable_timers(struct rproc *rproc, bool configure)
+ 	int i;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_timer *timers = oproc->timers;
++	int num_timers = oproc->num_timers + oproc->num_wd_timers;
+ 
+-	if (!oproc->num_timers)
++	if (!num_timers)
+ 		return 0;
+ 
+-	for (i = 0; i < oproc->num_timers; i++) {
++	for (i = 0; i < num_timers; i++) {
+ 		omap_rproc_stop_timer(&timers[i]);
+ 		if (configure) {
++			if (i >= oproc->num_timers)
++				free_irq(timers[i].irq, rproc);
+ 			omap_rproc_release_timer(&timers[i]);
+ 			timers[i].odt = NULL;
+ 			timers[i].timer_ops = NULL;
++			timers[i].irq = -1;
+ 		}
+ 	}
+ 
+@@ -1067,6 +1186,7 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 	struct omap_rproc *oproc;
+ 	struct rproc *rproc;
+ 	const char *firmware;
++	int num_timers;
+ 	int ret;
+ 	struct reset_control *reset;
+ 
+@@ -1119,8 +1239,19 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 		oproc->num_timers = 0;
+ 	}
+ 
+-	if (oproc->num_timers) {
+-		oproc->timers = devm_kcalloc(&pdev->dev, oproc->num_timers,
++#ifdef CONFIG_OMAP_REMOTEPROC_WATCHDOG
++	oproc->num_wd_timers =
++		of_count_phandle_with_args(np, "ti,watchdog-timers", NULL);
++	if (oproc->num_wd_timers <= 0) {
++		dev_dbg(&pdev->dev, "device does not have watchdog timers, status = %d\n",
++			oproc->num_wd_timers);
++		oproc->num_wd_timers = 0;
++	}
++#endif
++
++	if (oproc->num_timers || oproc->num_wd_timers) {
++		num_timers = oproc->num_timers + oproc->num_wd_timers;
++		oproc->timers = devm_kcalloc(&pdev->dev, num_timers,
+ 					     sizeof(*oproc->timers),
+ 					     GFP_KERNEL);
+ 		if (!oproc->timers) {
+@@ -1128,8 +1259,8 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 			goto free_rproc;
+ 		}
+ 
+-		dev_dbg(&pdev->dev, "device has %d tick timers\n",
+-			oproc->num_timers);
++		dev_dbg(&pdev->dev, "device has %d tick timers and %d watchdog timers\n",
++			oproc->num_timers, oproc->num_wd_timers);
+ 	}
+ 
+ 	init_completion(&oproc->pm_comp);
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
