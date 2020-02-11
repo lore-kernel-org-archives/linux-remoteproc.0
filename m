@@ -1,54 +1,133 @@
-Return-Path: <NShubin@topcon.com>
-From: Nikita Shubin <NShubin@topcon.com>
-Subject: [PATCH] remoteproc: warn on kick missing
-Date: Thu,  6 Feb 2020 08:54:19 +0300
-Message-Id: <20200206055419.15897-1-NShubin@topcon.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-Return-Path: NShubin@topcon.com
+Return-Path: <paul@crapouillou.net>
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 2/5] remoteproc: Add device-managed variants of rproc_alloc/rproc_add
+Date: Tue, 11 Feb 2020 11:26:10 -0300
+Message-Id: <20200211142614.13567-2-paul@crapouillou.net>
+In-Reply-To: <20200211142614.13567-1-paul@crapouillou.net>
+References: <20200211142614.13567-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Cc: NShubin@topcon.com, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-.kick method not set in rproc_ops will result in:
+Add API functions devm_rproc_alloc() and devm_rproc_add(), which behave
+like rproc_alloc() and rproc_add() respectively, but register their
+respective cleanup function to be called on driver detach.
 
-8<--- cut here ---
-Unable to handle kernel NULL pointer dereference
-
-in rproc_virtio_notify, after firmware loading.
-
-At least a warning needed on attempt to call missing method.
-
-Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/remoteproc/remoteproc_virtio.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/re=
-moteproc_virtio.c
-index 8c07cb2ca8ba..77a81f331e3f 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -32,6 +32,12 @@ static bool rproc_virtio_notify(struct virtqueue *vq)
+Notes:
+    v3: New patch
+    v4: No change
+    v5: - Fix return value documentation
+        - Fix typo in documentation
 
-        dev_dbg(&rproc->dev, "kicking vq index: %d\n", notifyid);
+ drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  5 +++
+ 2 files changed, 72 insertions(+)
 
-+       if (unlikely(rproc->ops->kick =3D=3D NULL)) {
-+               WARN_ONCE(rproc->ops->kick =3D=3D NULL, ".kick method not d=
-efined for %s",
-+                       rproc->name);
-+               return false;
-+       }
-+
-        rproc->ops->kick(rproc, notifyid);
-        return true;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 097f33e4f1f3..fe5c7a2f9767 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1932,6 +1932,33 @@ int rproc_add(struct rproc *rproc)
  }
---
-2.24.1
-
-Confidentiality Notice: This message (including attachments) is a private c=
-ommunication solely for use of the intended recipient(s). If you are not th=
-e intended recipient(s) or believe you received this message in error, noti=
-fy the sender immediately and then delete this message. Any other use, rete=
-ntion, dissemination or copying is prohibited and may be a violation of law=
-, including the Electronic Communication Privacy Act of 1986.   =AD=AD
+ EXPORT_SYMBOL(rproc_add);
+ 
++static void devm_rproc_remove(void *rproc)
++{
++	rproc_del(rproc);
++}
++
++/**
++ * devm_rproc_add() - resource managed rproc_add()
++ * @dev: the underlying device
++ * @rproc: the remote processor handle to register
++ *
++ * This function performs like rproc_add() but the registered rproc device will
++ * automatically be removed on driver detach.
++ *
++ * Returns: 0 on success, negative errno on failure
++ */
++int devm_rproc_add(struct device *dev, struct rproc *rproc)
++{
++	int err;
++
++	err = rproc_add(rproc);
++	if (err)
++		return err;
++
++	return devm_add_action_or_reset(dev, devm_rproc_remove, rproc);
++}
++EXPORT_SYMBOL(devm_rproc_add);
++
+ /**
+  * rproc_type_release() - release a remote processor instance
+  * @dev: the rproc's device
+@@ -2149,6 +2176,46 @@ int rproc_del(struct rproc *rproc)
+ }
+ EXPORT_SYMBOL(rproc_del);
+ 
++static void devm_rproc_free(struct device *dev, void *res)
++{
++	rproc_free(*(struct rproc **)res);
++}
++
++/**
++ * devm_rproc_alloc() - resource managed rproc_alloc()
++ * @dev: the underlying device
++ * @name: name of this remote processor
++ * @ops: platform-specific handlers (mainly start/stop)
++ * @firmware: name of firmware file to load, can be NULL
++ * @len: length of private data needed by the rproc driver (in bytes)
++ *
++ * This function performs like rproc_alloc() but the acquired rproc device will
++ * automatically be released on driver detach.
++ *
++ * Returns: new rproc instance, or NULL on failure
++ */
++struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
++			       const struct rproc_ops *ops,
++			       const char *firmware, int len)
++{
++	struct rproc **ptr, *rproc;
++
++	ptr = devres_alloc(devm_rproc_free, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	rproc = rproc_alloc(dev, name, ops, firmware, len);
++	if (rproc) {
++		*ptr = rproc;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return rproc;
++}
++EXPORT_SYMBOL(devm_rproc_alloc);
++
+ /**
+  * rproc_add_subdev() - add a subdevice to a remoteproc
+  * @rproc: rproc handle to add the subdevice to
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad66683ad0..5f201f0c86c3 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -595,6 +595,11 @@ int rproc_add(struct rproc *rproc);
+ int rproc_del(struct rproc *rproc);
+ void rproc_free(struct rproc *rproc);
+ 
++struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
++			       const struct rproc_ops *ops,
++			       const char *firmware, int len);
++int devm_rproc_add(struct device *dev, struct rproc *rproc);
++
+ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+ 
+ struct rproc_mem_entry *
+-- 
+2.25.0
