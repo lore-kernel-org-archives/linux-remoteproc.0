@@ -1,97 +1,53 @@
-Return-Path: <peng.fan@nxp.com>
-From: peng.fan@nxp.com
-Subject: [PATCH 8/9] remoteproc: imx_rproc: support i.MX7ULP
-Date: Wed, 19 Feb 2020 15:27:44 +0800
-Message-Id: <1582097265-20170-9-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-Return-Path: peng.fan@nxp.com
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([198.137.202.133]:52776 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbgBLQWH (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:22:07 -0500
+Subject: Re: [PATCH v2] remoteproc: fix kernel-doc warnings
+References: <20200212161956.10358-1-arnaud.pouliquen@st.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <90b9f2de-bdde-f464-1985-fbd4d9a8dcf9@infradead.org>
+Date: Wed, 12 Feb 2020 08:22:05 -0800
 MIME-Version: 1.0
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <20200212161956.10358-1-arnaud.pouliquen@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Peng Fan <peng.fan@nxp.com>
+On 2/12/20 8:19 AM, Arnaud Pouliquen wrote:
+> Fix the following warnings when documentation is built:
+> drivers/remoteproc/remoteproc_virtio.c:330: warning: Function parameter
+> or member 'id' not described in 'rproc_add_virtio_dev'
+> drivers/remoteproc/remoteproc_core.c:243: warning: Function parameter
+> or member 'name' not described in 'rproc_find_carveout_by_name'
+> drivers/remoteproc/remoteproc_core.c:473: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_vdev'
+> drivers/remoteproc/remoteproc_core.c:604: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_trace'
+> drivers/remoteproc/remoteproc_core.c:678: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_devmem'
+> drivers/remoteproc/remoteproc_core.c:873: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_carveout'
+> drivers/remoteproc/remoteproc_core.c:1029: warning: cannot understand function
+> prototype: 'rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = '
+> drivers/remoteproc/remoteproc_core.c:1693: warning: Function parameter
+> or member 'work' not described in 'rproc_crash_handler_work'
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c   | 10 ++++++++--
+>  drivers/remoteproc/remoteproc_virtio.c |  1 +
+>  2 files changed, 9 insertions(+), 2 deletions(-)
 
-To i.MX7ULP, M4 is booted before Linux and it's in charge of
-the whole system. So M4 is surely have early_boot set.
+Looks good.  Thanks.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/imx_rproc.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 003f9e5c2b0c..fc2a504bc350 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -56,6 +56,7 @@
- enum imx_rproc_variants {
- 	IMX8QM,
- 	IMX8QXP,
-+	IMX7ULP,
- 	IMX7D,
- 	IMX6SX,
- };
-@@ -181,6 +182,10 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx6sx = {
- 	.att_size	= ARRAY_SIZE(imx_rproc_att_imx6sx),
- };
- 
-+static const struct imx_rproc_dcfg imx_rproc_cfg_imx7ulp = {
-+	.variant	= IMX7ULP,
-+};
-+
- static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
- 	.variant	= IMX8QXP,
- };
-@@ -529,7 +534,9 @@ static int imx_rproc_configure_mode(struct imx_rproc *priv)
- 	int ret;
- 	u32 val;
- 
--	if (of_get_property(dev->of_node, "early-booted", NULL)) {
-+	if (dcfg->variant == IMX7ULP) {
-+		priv->early_boot = true;
-+	} else if (of_get_property(dev->of_node, "early-booted", NULL)) {
- 		priv->early_boot = true;
- 	} else {
- 		ret = regmap_read(priv->regmap, dcfg->src_reg, &val);
-@@ -638,7 +645,14 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	struct regmap *regmap = NULL;
- 	int ret;
- 
--	if (!of_get_property(np, "early-booted", NULL)) {
-+	dcfg = of_device_get_match_data(dev);
-+	if (!dcfg) {
-+		ret = -EINVAL;
-+		return ret;
-+	}
-+
-+	if (!of_get_property(np, "early-booted", NULL) &&
-+	    !(dcfg->variant == IMX7ULP)) {
- 		regmap = syscon_regmap_lookup_by_phandle(np, "syscon");
- 		if (IS_ERR(regmap)) {
- 			dev_err(dev, "failed to find syscon\n");
-@@ -653,12 +667,6 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 	if (!rproc)
- 		return -ENOMEM;
- 
--	dcfg = of_device_get_match_data(dev);
--	if (!dcfg) {
--		ret = -EINVAL;
--		goto err_put_rproc;
--	}
--
- 	priv = rproc->priv;
- 	priv->rproc = rproc;
- 	priv->regmap = regmap;
-@@ -775,6 +783,7 @@ static int imx_rproc_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id imx_rproc_of_match[] = {
-+	{ .compatible = "fsl,imx7ulp-cm4", .data = &imx_rproc_cfg_imx7ulp },
- 	{ .compatible = "fsl,imx7d-cm4", .data = &imx_rproc_cfg_imx7d },
- 	{ .compatible = "fsl,imx6sx-cm4", .data = &imx_rproc_cfg_imx6sx },
- 	{ .compatible = "fsl,imx8qxp-cm4", .data = &imx_rproc_cfg_imx8qxp },
+
 -- 
-2.16.4
+~Randy
