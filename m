@@ -1,41 +1,196 @@
-Date: Thu, 13 Feb 2020 20:57:28 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 2/8] remoteproc: qcom: Introduce driver to store pil
- info in IMEM
-Message-ID: <20200214045725.GT3948@builder>
-References: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
- <20200211005059.1377279-3-bjorn.andersson@linaro.org>
- <158164774404.184098.8855626264878132058@swboyd.mtv.corp.google.com>
+Return-Path: <swboyd@chromium.org>
+Return-Path: <swboyd@chromium.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158164774404.184098.8855626264878132058@swboyd.mtv.corp.google.com>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200211005059.1377279-3-bjorn.andersson@linaro.org>
+References: <20200211005059.1377279-1-bjorn.andersson@linaro.org> <20200211005059.1377279-3-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v3 2/8] remoteproc: qcom: Introduce driver to store pil info in IMEM
+From: Stephen Boyd <swboyd@chromium.org>
+Date: Thu, 13 Feb 2020 18:35:44 -0800
+Message-ID: <158164774404.184098.8855626264878132058@swboyd.mtv.corp.google.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu 13 Feb 18:35 PST 2020, Stephen Boyd wrote:
-> Quoting Bjorn Andersson (2020-02-10 16:50:53)
-> > diff --git a/drivers/remoteproc/qcom_pil_info.c b/drivers/remoteproc/qcom_pil_info.c
-[..]
-> > +       mutex_lock(&reloc_mutex);
-> > +       _reloc = reloc;
-> > +       mutex_unlock(&reloc_mutex);
-> 
-> Ah ok, I see that mutex is protecting the pointer used for everything.
-> Ignore the comment above. But also, why not have every remoteproc device
-> point at some imem and then search through the imem for the name? Then
-> we don't need this driver or a lock that synchronizes these things.
-> Ideally we could dedicate a place in imem for each remoteproc and not
-> even have to search it for the string to update. Is that possible? Then
-> it becomes even simpler because the DT binding can point directly at the
-> address to write. It's not like the various images are changing that
-> much to the point where this location in imem is actually changing,
-> right?
-> 
+Quoting Bjorn Andersson (2020-02-10 16:50:53)
+> diff --git a/drivers/remoteproc/qcom_pil_info.c b/drivers/remoteproc/qcom=
+_pil_info.c
+> new file mode 100644
+> index 000000000000..398aeb957f3c
+> --- /dev/null
+> +++ b/drivers/remoteproc/qcom_pil_info.c
+> @@ -0,0 +1,168 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2019-2020 Linaro Ltd.
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +
+> +#define PIL_RELOC_NAME_LEN     8
+> +
+> +struct pil_reloc_entry {
+> +       char name[PIL_RELOC_NAME_LEN];
+> +       __le64 base;
+> +       __le32 size;
+> +} __packed;
 
-I will check to see if these entries needs to be packed in the beginning
-of the array, otherwise this sounds like a good idea to simplify things.
+Does this need __packed? Isn't it naturally aligned?
 
-Regards,
-Bjorn
+> +
+> +struct pil_reloc {
+> +       struct device *dev;
+> +       struct regmap *map;
+> +       size_t offset;
+> +       size_t num_entries;
+> +       int val_bytes;
+
+unsigned int?
+
+> +
+> +       struct pil_reloc_entry entries[];
+> +};
+> +
+> +static struct pil_reloc *_reloc;
+
+Can this be const? Or marked __read_mostly?
+
+> +static DEFINE_MUTEX(reloc_mutex);
+> +
+> +/**
+> + * qcom_pil_info_store() - store PIL information of image in IMEM
+> + * @image:     name of the image
+> + * @base:      base address of the loaded image
+> + * @size:      size of the loaded image
+> + *
+> + * Return: 0 on success, negative errno on failure
+> + */
+> +int qcom_pil_info_store(const char *image, phys_addr_t base, size_t size)
+> +{
+> +       struct pil_reloc_entry *entry;
+> +       int idx =3D -1;
+> +       int ret;
+> +       int i;
+> +
+> +       mutex_lock(&reloc_mutex);
+> +       for (i =3D 0; i < _reloc->num_entries; i++) {
+> +               if (!_reloc->entries[i].name[0]) {
+> +                       if (idx =3D=3D -1)
+> +                               idx =3D i;
+> +                       continue;
+> +               }
+> +
+> +               if (!strncmp(_reloc->entries[i].name, image, 8)) {
+> +                       idx =3D i;
+> +                       goto found;
+> +               }
+> +       }
+> +
+> +       if (idx =3D=3D -1) {
+
+Maybe it would be better to use a pointer and set it to NULL when it
+isn't found. Then do some pointer math on the 'entry' to find the
+address to regmap_bulk_write() below.
+
+> +               dev_warn(_reloc->dev, "insufficient PIL info slots\n");
+> +               ret =3D -ENOMEM;
+> +               goto unlock;
+> +       }
+> +
+> +found:
+> +       entry =3D &_reloc->entries[idx];
+> +       strscpy(entry->name, image, ARRAY_SIZE(entry->name));
+> +       entry->base =3D base;
+> +       entry->size =3D size;
+> +
+> +       ret =3D regmap_bulk_write(_reloc->map,
+> +                               _reloc->offset + idx * sizeof(*entry),
+> +                               entry, sizeof(*entry) / _reloc->val_bytes=
+);
+> +unlock:
+> +       mutex_unlock(&reloc_mutex);
+
+Does the mutex need to be held until here? Why can't we release it once
+we find the entry?
+
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pil_info_store);
+> +
+> +/**
+> + * qcom_pil_info_available() - query if the pil info is probed
+> + *
+> + * Return: boolean indicating if the pil info device is probed
+> + */
+> +bool qcom_pil_info_available(void)
+> +{
+> +       return !!_reloc;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pil_info_available);
+> +
+> +static int pil_reloc_probe(struct platform_device *pdev)
+> +{
+> +       unsigned int num_entries;
+> +       struct pil_reloc *reloc;
+> +       struct resource *res;
+> +       int ret;
+> +
+> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!res)
+> +               return -EINVAL;
+> +
+> +       num_entries =3D resource_size(res) / sizeof(struct pil_reloc_entr=
+y);
+> +
+> +       reloc =3D devm_kzalloc(&pdev->dev,
+> +                            struct_size(reloc, entries, num_entries),
+> +                            GFP_KERNEL);
+> +       if (!reloc)
+> +               return -ENOMEM;
+> +
+> +       reloc->dev =3D &pdev->dev;
+> +       reloc->map =3D syscon_node_to_regmap(pdev->dev.parent->of_node);
+> +       if (IS_ERR(reloc->map))
+> +               return PTR_ERR(reloc->map);
+> +
+> +       reloc->offset =3D res->start;
+> +       reloc->num_entries =3D num_entries;
+> +
+> +       reloc->val_bytes =3D regmap_get_val_bytes(reloc->map);
+> +       if (reloc->val_bytes < 0)
+> +               return -EINVAL;
+> +
+> +       ret =3D regmap_bulk_write(reloc->map, reloc->offset, reloc->entri=
+es,
+> +                               reloc->num_entries *
+> +                               sizeof(struct pil_reloc_entry) /
+> +                               reloc->val_bytes);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       mutex_lock(&reloc_mutex);
+> +       _reloc =3D reloc;
+> +       mutex_unlock(&reloc_mutex);
+
+Ah ok, I see that mutex is protecting the pointer used for everything.
+Ignore the comment above. But also, why not have every remoteproc device
+point at some imem and then search through the imem for the name? Then
+we don't need this driver or a lock that synchronizes these things.
+Ideally we could dedicate a place in imem for each remoteproc and not
+even have to search it for the string to update. Is that possible? Then
+it becomes even simpler because the DT binding can point directly at the
+address to write. It's not like the various images are changing that
+much to the point where this location in imem is actually changing,
+right?
+
+> +
+> +       return 0;
+> +}
