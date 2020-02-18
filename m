@@ -1,46 +1,28 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-From: Siddharth Gupta <sidgup@codeaurora.org>
-Subject: [PATCH 2/2] remoteproc: core: Prevent sleep when rproc crashes
-Date: Wed, 19 Feb 2020 18:11:53 -0800
-Message-Id: <1582164713-6413-3-git-send-email-sidgup@codeaurora.org>
-In-Reply-To: <1582164713-6413-1-git-send-email-sidgup@codeaurora.org>
-References: <1582164713-6413-1-git-send-email-sidgup@codeaurora.org>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: Siddharth Gupta <sidgup@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 18 Feb 2020 15:00:07 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v5 3/3] dt-bindings: remoteproc: stm32: add syscon
+ bindings preloaded fw support
+Message-ID: <20200218210007.GA27448@bogus>
+References: <20200211174205.22247-1-arnaud.pouliquen@st.com>
+ <20200211174205.22247-4-arnaud.pouliquen@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211174205.22247-4-arnaud.pouliquen@st.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remoteproc recovery should be fast and any delay will have an impact on the
-user-experience. Use power management APIs (pm_stay_awake and pm_relax) to
-ensure that the system does not go to sleep.
+On Tue, 11 Feb 2020 18:42:05 +0100, Arnaud Pouliquen wrote:
+> Add the optional syscon property that points to the resource table
+> address and the state of the Cortex-M4 firmware loaded by the bootloader.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> ---
+>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/remoteproc_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 5ab65a4..52e318c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1712,6 +1712,8 @@ static void rproc_crash_handler_work(struct work_struct *work)
- 
- 	if (!rproc->recovery_disabled)
- 		rproc_trigger_recovery(rproc);
-+
-+	pm_relax(&rproc->dev);
- }
- 
- /**
-@@ -2242,6 +2244,8 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
- 		return;
- 	}
- 
-+	pm_stay_awake(&rproc->dev);
-+
- 	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
- 		rproc->name, rproc_crash_to_string(type));
- 
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Rob Herring <robh@kernel.org>
