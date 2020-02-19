@@ -1,52 +1,97 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 5/8] arm64: dts: qcom: sdm845: Add IMEM and PIL info region
-Date: Mon, 10 Feb 2020 16:50:56 -0800
-Message-Id: <20200211005059.1377279-6-bjorn.andersson@linaro.org>
-In-Reply-To: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
-References: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
+Return-Path: <peng.fan@nxp.com>
+From: peng.fan@nxp.com
+Subject: [PATCH 8/9] remoteproc: imx_rproc: support i.MX7ULP
+Date: Wed, 19 Feb 2020 15:27:44 +0800
+Message-Id: <1582097265-20170-9-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+Content-Type: text/plain
+Return-Path: peng.fan@nxp.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a simple-mfd representing IMEM on SDM845 and define the PIL
-relocation info region, so that post mortem tools will be able to locate
-the loaded remoteprocs.
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+To i.MX7ULP, M4 is booted before Linux and it's in charge of
+the whole system. So M4 is surely have early_boot set.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
+ drivers/remoteproc/imx_rproc.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
-Changes since v2:
-- Replace offset with reg
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index d42302b8889b..3443d989976c 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -3018,6 +3018,19 @@ spmi_bus: spmi@c440000 {
- 			cell-index = <0>;
- 		};
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 003f9e5c2b0c..fc2a504bc350 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -56,6 +56,7 @@
+ enum imx_rproc_variants {
+ 	IMX8QM,
+ 	IMX8QXP,
++	IMX7ULP,
+ 	IMX7D,
+ 	IMX6SX,
+ };
+@@ -181,6 +182,10 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx6sx = {
+ 	.att_size	= ARRAY_SIZE(imx_rproc_att_imx6sx),
+ };
  
-+		imem@146bf000 {
-+			compatible = "syscon", "simple-mfd";
-+			reg = <0 0x146bf000 0 0x1000>;
++static const struct imx_rproc_dcfg imx_rproc_cfg_imx7ulp = {
++	.variant	= IMX7ULP,
++};
 +
-+			#address-cells = <1>;
-+			#size-cells = <1>;
+ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
+ 	.variant	= IMX8QXP,
+ };
+@@ -529,7 +534,9 @@ static int imx_rproc_configure_mode(struct imx_rproc *priv)
+ 	int ret;
+ 	u32 val;
+ 
+-	if (of_get_property(dev->of_node, "early-booted", NULL)) {
++	if (dcfg->variant == IMX7ULP) {
++		priv->early_boot = true;
++	} else if (of_get_property(dev->of_node, "early-booted", NULL)) {
+ 		priv->early_boot = true;
+ 	} else {
+ 		ret = regmap_read(priv->regmap, dcfg->src_reg, &val);
+@@ -638,7 +645,14 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	struct regmap *regmap = NULL;
+ 	int ret;
+ 
+-	if (!of_get_property(np, "early-booted", NULL)) {
++	dcfg = of_device_get_match_data(dev);
++	if (!dcfg) {
++		ret = -EINVAL;
++		return ret;
++	}
 +
-+			pil-reloc@94c {
-+				compatible ="qcom,pil-reloc-info";
-+				reg = <0x94c 200>;
-+			};
-+		};
-+
- 		apps_smmu: iommu@15000000 {
- 			compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
- 			reg = <0 0x15000000 0 0x80000>;
++	if (!of_get_property(np, "early-booted", NULL) &&
++	    !(dcfg->variant == IMX7ULP)) {
+ 		regmap = syscon_regmap_lookup_by_phandle(np, "syscon");
+ 		if (IS_ERR(regmap)) {
+ 			dev_err(dev, "failed to find syscon\n");
+@@ -653,12 +667,6 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 	if (!rproc)
+ 		return -ENOMEM;
+ 
+-	dcfg = of_device_get_match_data(dev);
+-	if (!dcfg) {
+-		ret = -EINVAL;
+-		goto err_put_rproc;
+-	}
+-
+ 	priv = rproc->priv;
+ 	priv->rproc = rproc;
+ 	priv->regmap = regmap;
+@@ -775,6 +783,7 @@ static int imx_rproc_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id imx_rproc_of_match[] = {
++	{ .compatible = "fsl,imx7ulp-cm4", .data = &imx_rproc_cfg_imx7ulp },
+ 	{ .compatible = "fsl,imx7d-cm4", .data = &imx_rproc_cfg_imx7d },
+ 	{ .compatible = "fsl,imx6sx-cm4", .data = &imx_rproc_cfg_imx6sx },
+ 	{ .compatible = "fsl,imx8qxp-cm4", .data = &imx_rproc_cfg_imx8qxp },
 -- 
-2.24.0
+2.16.4
