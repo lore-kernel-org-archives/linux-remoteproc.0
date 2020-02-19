@@ -1,241 +1,521 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Siddharth Gupta <sidgup@codeaurora.org>
-Subject: [PATCH 5/6] remoteproc: qcom: Add per subsystem SSR notification
-Date: Wed, 19 Feb 2020 18:57:44 -0800
-Message-Id: <1582167465-2549-6-git-send-email-sidgup@codeaurora.org>
-In-Reply-To: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
-References: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: Siddharth Gupta <sidgup@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv6 12/14] remoteproc/omap: add support for runtime
+ auto-suspend/resume
+References: <20200211152125.23819-1-t-kristo@ti.com>
+ <20200211152125.23819-13-t-kristo@ti.com>
+ <d1c9c28d-c35f-1011-4938-6f42977a090f@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <5f2dbcac-2f6f-b8ed-dced-a2a64fceb75a@ti.com>
+Date: Wed, 19 Feb 2020 21:07:30 +0200
+MIME-Version: 1.0
+In-Reply-To: <d1c9c28d-c35f-1011-4938-6f42977a090f@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Suman Anna <s-anna@ti.com>, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Currently there is a global notification chain which is called whenever any
-remoteproc shuts down. This leads to all the listeners being notified, and
-is not an optimal design as kernel drivers might only be interested in
-listening to notifications from a particular remoteproc. Create an
-individual notifier chain for every SSR subdevice, and modify the
-notification registration API to include the remoteproc struct as an
-argument. Update the existing user of the registration API to get the
-phandle of the remoteproc dt node to register for SSR notifications.
+On 18/02/2020 00:18, Suman Anna wrote:
+> Hi Tero,
+> 
+> On 2/11/20 9:21 AM, Tero Kristo wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> This patch enhances the PM support in the OMAP remoteproc driver to
+>> support the runtime auto-suspend. A remoteproc may not be required to
+>> be running all the time, and typically will need to be active only
+>> during certain usecases. As such, to save power, it should be turned
+>> off during potential long periods of inactivity between usecases.
+>> This suspend and resume of the device is a relatively heavy process
+>> in terms of latencies, so a remoteproc should be suspended only after
+>> a certain period of prolonged inactivity. The OMAP remoteproc driver
+>> leverages the runtime pm framework's auto_suspend feature to accomplish
+>> this functionality. This feature is automatically enabled when a remote
+>> processor has successfully booted. The 'autosuspend_delay_ms' for each
+>> device dictates the inactivity period/time to wait for before
+>> suspending the device.
+>>
+>> The runtime auto-suspend design relies on marking the last busy time
+>> on every communication (virtqueue kick) to and from the remote processor.
+>> When there has been no activity for 'autosuspend_delay_ms' time, the
+>> runtime PM framework invokes the driver's runtime pm suspend callback
+>> to suspend the device. The remote processor will be woken up on the
+>> initiation of the next communication message through the runtime pm
+>> resume callback. The current auto-suspend design also allows a remote
+>> processor to deny a auto-suspend attempt, if it wishes to, by sending a
+>> NACK response to the initial suspend request message sent to the remote
+>> processor as part of the suspend process. The auto-suspend request is
+>> also only attempted if the remote processor is idled and in standby at
+>> the time of inactivity timer expiry. This choice is made to avoid
+>> unnecessary messaging, and the auto-suspend is simply rescheduled to
+>> be attempted again after a further lapse of autosuspend_delay_ms.
+>>
+>> The runtime pm callbacks functionality in this patch reuses most of the
+>> core logic from the suspend/resume support code, and make use of an
+>> additional auto_suspend flag to differentiate the logic in common code
+>> from system suspend. The system suspend/resume sequences are also updated
+>> to reflect the proper pm_runtime statuses, and also to really perform a
+>> suspend/resume only if the remoteproc has not been auto-suspended at the
+>> time of request. The remote processor is left in suspended state on a
+>> system resume if it has been auto-suspended before, and will be woken up
+>> only when a usecase needs to run.
+>>
+>> The OMAP remoteproc driver currently uses a default value of 10 seconds
+>> for all OMAP remoteprocs, and a different value can be chosen either by
+>> choosing a positive value for the 'ti,autosuspend-delay' under DT or by
+> 
+> This is now ti,autosuspend-delay-ms.
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/qcom_common.c      | 49 +++++++++++++++++++++++++++--------
- drivers/remoteproc/qcom_common.h      |  1 +
- drivers/soc/qcom/glink_ssr.c          | 20 ++++++++++++--
- include/linux/remoteproc/qcom_rproc.h | 17 ++++++++----
- 4 files changed, 69 insertions(+), 18 deletions(-)
+Right, can update that one.
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 5d59538..6714f27 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -23,8 +23,6 @@
- #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
- #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
- 
--static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
--
- static int glink_subdev_start(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
-@@ -180,27 +178,52 @@ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
- 
- /**
-  * qcom_register_ssr_notifier() - register SSR notification handler
-+ * @rproc:	pointer to the remoteproc structure
-  * @nb:		notifier_block to notify for restart notifications
-  *
-- * Returns 0 on success, negative errno on failure.
-+ * Returns pointer to srcu notifier head on success, ERR_PTR on failure.
-  *
-- * This register the @notify function as handler for restart notifications. As
-- * remote processors are stopped this function will be called, with the SSR
-- * name passed as a parameter.
-+ * This registers the @notify function as handler for restart notifications. As
-+ * remote processors are stopped this function will be called, with the rproc
-+ * pointer passed as a parameter.
-  */
--int qcom_register_ssr_notifier(struct notifier_block *nb)
-+void *qcom_register_ssr_notifier(struct rproc *rproc, struct notifier_block *nb)
- {
--	return blocking_notifier_chain_register(&ssr_notifiers, nb);
-+	struct rproc_subdev *subdev;
-+	struct qcom_rproc_ssr *ssr;
-+	int ret;
-+
-+	if (!rproc)
-+		return ERR_PTR(-EINVAL);
-+
-+	mutex_lock(&rproc->lock);
-+	list_for_each_entry(subdev, &rproc->subdevs, node) {
-+		ret = strcmp(subdev->name, "ssr_notifs");
-+		if (!ret)
-+			break;
-+	}
-+	mutex_unlock(&rproc->lock);
-+	if (ret)
-+		return ERR_PTR(-ENOENT);
-+
-+	ssr = to_ssr_subdev(subdev);
-+	srcu_notifier_chain_register(ssr->rproc_notif_list, nb);
-+
-+	return ssr->rproc_notif_list;
- }
- EXPORT_SYMBOL_GPL(qcom_register_ssr_notifier);
- 
- /**
-  * qcom_unregister_ssr_notifier() - unregister SSR notification handler
-+ * @notify:	pointer to srcu notifier head
-  * @nb:		notifier_block to unregister
-  */
--void qcom_unregister_ssr_notifier(struct notifier_block *nb)
-+int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb)
- {
--	blocking_notifier_chain_unregister(&ssr_notifiers, nb);
-+	if (!notify)
-+		return -EINVAL;
-+
-+	return srcu_notifier_chain_unregister(notify, nb);
- }
- EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
- 
-@@ -208,7 +231,7 @@ static void ssr_notify_unprepare(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
- 
--	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr->name);
-+	srcu_notifier_call_chain(ssr->rproc_notif_list, 0, (void *)ssr->name);
- }
- 
- /**
-@@ -226,6 +249,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
- 	ssr->name = ssr_name;
- 	ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
- 	ssr->subdev.unprepare = ssr_notify_unprepare;
-+	ssr->rproc_notif_list = kzalloc(sizeof(struct srcu_notifier_head),
-+								GFP_KERNEL);
-+	srcu_init_notifier_head(ssr->rproc_notif_list);
- 
- 	rproc_add_subdev(rproc, &ssr->subdev);
- }
-@@ -239,6 +265,7 @@ EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
- void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
- {
- 	kfree(ssr->subdev.name);
-+	kfree(ssr->rproc_notif_list);
- 	rproc_remove_subdev(rproc, &ssr->subdev);
- }
- EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
-diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
-index 58de71e..7792691 100644
---- a/drivers/remoteproc/qcom_common.h
-+++ b/drivers/remoteproc/qcom_common.h
-@@ -27,6 +27,7 @@ struct qcom_rproc_subdev {
- struct qcom_rproc_ssr {
- 	struct rproc_subdev subdev;
- 
-+	struct srcu_notifier_head *rproc_notif_list;
- 	const char *name;
- };
- 
-diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/soc/qcom/glink_ssr.c
-index d7babe3..2b39683 100644
---- a/drivers/soc/qcom/glink_ssr.c
-+++ b/drivers/soc/qcom/glink_ssr.c
-@@ -7,6 +7,7 @@
- #include <linux/completion.h>
- #include <linux/module.h>
- #include <linux/notifier.h>
-+#include <linux/remoteproc.h>
- #include <linux/rpmsg.h>
- #include <linux/remoteproc/qcom_rproc.h>
- 
-@@ -49,6 +50,7 @@ struct glink_ssr {
- 	struct rpmsg_endpoint *ept;
- 
- 	struct notifier_block nb;
-+	void *notifier_head;
- 
- 	u32 seq_num;
- 	struct completion completion;
-@@ -112,6 +114,7 @@ static int qcom_glink_ssr_notify(struct notifier_block *nb, unsigned long event,
- static int qcom_glink_ssr_probe(struct rpmsg_device *rpdev)
- {
- 	struct glink_ssr *ssr;
-+	struct rproc *rproc;
- 
- 	ssr = devm_kzalloc(&rpdev->dev, sizeof(*ssr), GFP_KERNEL);
- 	if (!ssr)
-@@ -125,14 +128,27 @@ static int qcom_glink_ssr_probe(struct rpmsg_device *rpdev)
- 
- 	dev_set_drvdata(&rpdev->dev, ssr);
- 
--	return qcom_register_ssr_notifier(&ssr->nb);
-+	rproc = rproc_get_by_child(&rpdev->dev);
-+	if (!rproc) {
-+		dev_err(&rpdev->dev, "glink device not child of rproc\n");
-+		return -EINVAL;
-+	}
-+
-+	ssr->notifier_head = qcom_register_ssr_notifier(rproc, &ssr->nb);
-+	if (IS_ERR(ssr->notifier_head)) {
-+		dev_err(&rpdev->dev,
-+			"failed to register for ssr notifications\n");
-+		return PTR_ERR(ssr->notifier_head);
-+	}
-+
-+	return 0;
- }
- 
- static void qcom_glink_ssr_remove(struct rpmsg_device *rpdev)
- {
- 	struct glink_ssr *ssr = dev_get_drvdata(&rpdev->dev);
- 
--	qcom_unregister_ssr_notifier(&ssr->nb);
-+	qcom_unregister_ssr_notifier(ssr->notifier_head, &ssr->nb);
- }
- 
- static const struct rpmsg_device_id qcom_glink_ssr_match[] = {
-diff --git a/include/linux/remoteproc/qcom_rproc.h b/include/linux/remoteproc/qcom_rproc.h
-index fa8e386..89e830a 100644
---- a/include/linux/remoteproc/qcom_rproc.h
-+++ b/include/linux/remoteproc/qcom_rproc.h
-@@ -2,20 +2,27 @@
- #define __QCOM_RPROC_H__
- 
- struct notifier_block;
-+struct rproc;
- 
- #if IS_ENABLED(CONFIG_QCOM_RPROC_COMMON)
- 
--int qcom_register_ssr_notifier(struct notifier_block *nb);
--void qcom_unregister_ssr_notifier(struct notifier_block *nb);
-+void *qcom_register_ssr_notifier(struct rproc *rproc,
-+				 struct notifier_block *nb);
-+int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb);
- 
- #else
- 
--static inline int qcom_register_ssr_notifier(struct notifier_block *nb)
-+static inline void *qcom_register_ssr_notifier(struct rproc *rproc,
-+					       struct notifier_block *nb)
- {
--	return 0;
-+	return NULL;
- }
- 
--static inline void qcom_unregister_ssr_notifier(struct notifier_block *nb) {}
-+static inline int qcom_unregister_ssr_notifier(void *notify,
-+					       struct notifier_block *nb)
-+{
-+	return 0;
-+}
- 
- #endif
- 
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> 
+>> updating the 'autosuspend_delay_ms' field at runtime through the sysfs
+>> interface.
+>>      Eg: To use 25 seconds for IPU2 on DRA7xx,
+>>        echo 25000 > /sys/bus/platform/devices/55020000.ipu/power/autosuspend_delay_ms
+>>
+>> The runtime suspend feature can also be similarly enabled or disabled by
+>> writing 'auto' or 'on' to the device's 'control' power field. The default
+>> is enabled.
+>>      Eg: To disable auto-suspend for IPU2 on DRA7xx SoC,
+>>        echo on > /sys/bus/platform/devices/55020000.ipu/power/control
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> [t-kristo@ti.com: converted to use ti-sysc instead of hwmod]
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>   drivers/remoteproc/omap_remoteproc.c | 189 +++++++++++++++++++++++++--
+>>   1 file changed, 178 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>> index e8d3520493e1..490a242130f9 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.c
+>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>> @@ -22,6 +22,7 @@
+>>   #include <linux/of_device.h>
+>>   #include <linux/of_reserved_mem.h>
+>>   #include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>>   #include <linux/dma-mapping.h>
+>>   #include <linux/remoteproc.h>
+>>   #include <linux/mailbox_client.h>
+>> @@ -37,6 +38,9 @@
+>>   #include "omap_remoteproc.h"
+>>   #include "remoteproc_internal.h"
+>>   
+>> +/* default auto-suspend delay (ms) */
+>> +#define DEFAULT_AUTOSUSPEND_DELAY		10000
+>> +
+>>   /**
+>>    * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
+>>    * @syscon: regmap handle for the system control configuration module
+>> @@ -83,11 +87,14 @@ struct omap_rproc_timer {
+>>    * @num_mems: number of internal memory regions
+>>    * @num_timers: number of rproc timer(s)
+>>    * @timers: timer(s) info used by rproc
+>> + * @autosuspend_delay: auto-suspend delay value to be used for runtime pm
+>> + * @need_resume: if true a resume is needed in the system resume callback
+>>    * @rproc: rproc handle
+>>    * @reset: reset handle
+>>    * @pm_comp: completion primitive to sync for suspend response
+>>    * @fck: functional clock for the remoteproc
+>>    * @suspend_acked: state machine flag to store the suspend request ack
+>> + * @in_reset: if remoteproc is in reset or not
+>>    */
+>>   struct omap_rproc {
+>>   	struct mbox_chan *mbox;
+>> @@ -97,11 +104,14 @@ struct omap_rproc {
+>>   	int num_mems;
+>>   	int num_timers;
+>>   	struct omap_rproc_timer *timers;
+>> +	int autosuspend_delay;
+>> +	bool need_resume;
+>>   	struct rproc *rproc;
+>>   	struct reset_control *reset;
+>>   	struct completion pm_comp;
+>>   	struct clk *fck;
+>>   	bool suspend_acked;
+>> +	bool in_reset;
+>>   };
+>>   
+>>   /**
+>> @@ -403,11 +413,23 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+>>   	struct device *dev = rproc->dev.parent;
+>>   	int ret;
+>>   
+>> +	/* wake up the rproc before kicking it */
+>> +	ret = pm_runtime_get_sync(dev);
+>> +	if (WARN_ON(ret < 0)) {
+>> +		dev_err(dev, "pm_runtime_get_sync() failed during kick, ret = %d\n",
+>> +			ret);
+>> +		pm_runtime_put_noidle(dev);
+>> +		return;
+>> +	}
+>> +
+>>   	/* send the index of the triggered virtqueue in the mailbox payload */
+>>   	ret = mbox_send_message(oproc->mbox, (void *)vqid);
+>>   	if (ret < 0)
+>>   		dev_err(dev, "failed to send mailbox message, status = %d\n",
+>>   			ret);
+>> +
+>> +	pm_runtime_mark_last_busy(dev);
+>> +	pm_runtime_put_autosuspend(dev);
+>>   }
+>>   
+>>   /**
+>> @@ -498,6 +520,12 @@ static int omap_rproc_start(struct rproc *rproc)
+>>   		goto disable_timers;
+>>   	}
+>>   
+>> +	oproc->in_reset = false;
+>> +
+>> +	pm_runtime_get_sync(dev);
+> 
+> There are still some issues with this patch, namely the timers are not
+> shut down cleanly. I also prefer to keep the pm_runtime API usage
+> symmetric between start() and stop() and not use two different styles
+> (essentially follow the style from the downstream version). This should
+> help us in eliminating the in_reset variable
+
+For timers, I did craft the internal patch fixing the runtime handling 
+couple of days back, so I can squash that into this one and post v7.
+
+I don't quite get what you mean by the different styles / symmetricity 
+of the pm_runtime API usage, but it seems impossible to get rid of the 
+in_reset variable. Reset core does not have usecounting if the 
+reset_control_*_get_*_exclusive() variant is used, so we must handle the 
+usecounting of it internally within driver; otherwise we get timeouts. 
+Also, another issue is that driver removal calls pm_runtime_get() and 
+that causes a crash with omap_rproc_remove (rproc keep running while we 
+kill iommu etc.)
+
+> 
+>> +	pm_runtime_mark_last_busy(dev);
+>> +	pm_runtime_put_autosuspend(dev);
+>> +
+>>   	return 0;
+>>   
+>>   disable_timers:
+>> @@ -510,6 +538,7 @@ static int omap_rproc_start(struct rproc *rproc)
+>>   /* power off the remote processor */
+>>   static int omap_rproc_stop(struct rproc *rproc)
+>>   {
+>> +	struct device *dev = rproc->dev.parent;
+>>   	struct omap_rproc *oproc = rproc->priv;
+>>   	int ret;
+>>   
+>> @@ -517,12 +546,20 @@ static int omap_rproc_stop(struct rproc *rproc)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> +	oproc->in_reset = true;
+>> +
+>>   	ret = omap_rproc_disable_timers(rproc, true);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>>   	mbox_free_channel(oproc->mbox);
+>>   
+>> +	/*
+>> +	 * update the runtime pm states and status now that the remoteproc
+>> +	 * has stopped
+>> +	 */
+>> +	pm_runtime_put_noidle(dev);
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> @@ -579,17 +616,19 @@ static bool _is_rproc_in_standby(struct omap_rproc *oproc)
+>>   
+>>   /* 1 sec is long enough time to let the remoteproc side suspend the device */
+>>   #define DEF_SUSPEND_TIMEOUT 1000
+>> -static int _omap_rproc_suspend(struct rproc *rproc)
+>> +static int _omap_rproc_suspend(struct rproc *rproc, bool auto_suspend)
+>>   {
+>>   	struct device *dev = rproc->dev.parent;
+>>   	struct omap_rproc *oproc = rproc->priv;
+>>   	unsigned long to = msecs_to_jiffies(DEF_SUSPEND_TIMEOUT);
+>>   	unsigned long ta = jiffies + to;
+>> +	u32 suspend_msg = auto_suspend ?
+>> +				RP_MBOX_SUSPEND_AUTO : RP_MBOX_SUSPEND_SYSTEM;
+>>   	int ret;
+>>   
+>>   	reinit_completion(&oproc->pm_comp);
+>>   	oproc->suspend_acked = false;
+>> -	ret = mbox_send_message(oproc->mbox, (void *)RP_MBOX_SUSPEND_SYSTEM);
+>> +	ret = mbox_send_message(oproc->mbox, (void *)suspend_msg);
+>>   	if (ret < 0) {
+>>   		dev_err(dev, "PM mbox_send_message failed: %d\n", ret);
+>>   		return ret;
+>> @@ -622,6 +661,8 @@ static int _omap_rproc_suspend(struct rproc *rproc)
+>>   
+>>   	reset_control_assert(oproc->reset);
+>>   
+>> +	oproc->in_reset = true;
+>> +
+>>   	ret = omap_rproc_disable_timers(rproc, false);
+>>   	if (ret) {
+>>   		dev_err(dev, "disabling timers during suspend failed %d\n",
+>> @@ -629,42 +670,79 @@ static int _omap_rproc_suspend(struct rproc *rproc)
+>>   		goto enable_device;
+>>   	}
+>>   
+>> +	/*
+>> +	 * IOMMUs would have to be disabled specifically for runtime suspend.
+>> +	 * They are handled automatically through System PM callbacks for
+>> +	 * regular system suspend
+>> +	 */
+>> +	if (auto_suspend) {
+>> +		ret = omap_iommu_domain_deactivate(rproc->domain);
+>> +		if (ret) {
+>> +			dev_err(dev, "iommu domain deactivate failed %d\n",
+>> +				ret);
+>> +			goto enable_timers;
+>> +		}
+>> +	}
+>> +
+>>   	return 0;
+>>   
+>> +enable_timers:
+>> +	/* ignore errors on re-enabling code */
+>> +	omap_rproc_enable_timers(rproc, false);
+>>   enable_device:
+>>   	reset_control_deassert(oproc->reset);
+>>   	return ret;
+>>   }
+>>   
+>> -static int _omap_rproc_resume(struct rproc *rproc)
+>> +static int _omap_rproc_resume(struct rproc *rproc, bool auto_suspend)
+>>   {
+>>   	struct device *dev = rproc->dev.parent;
+>>   	struct omap_rproc *oproc = rproc->priv;
+>>   	int ret;
+>>   
+>> +	/*
+>> +	 * IOMMUs would have to be enabled specifically for runtime resume.
+>> +	 * They would have been already enabled automatically through System
+>> +	 * PM callbacks for regular system resume
+>> +	 */
+>> +	if (auto_suspend) {
+>> +		ret = omap_iommu_domain_activate(rproc->domain);
+>> +		if (ret) {
+>> +			dev_err(dev, "omap_iommu activate failed %d\n", ret);
+>> +			goto out;
+>> +		}
+>> +	}
+>> +
+>>   	/* boot address could be lost after suspend, so restore it */
+>>   	if (oproc->boot_data) {
+>>   		ret = omap_rproc_write_dsp_boot_addr(rproc);
+>>   		if (ret) {
+>>   			dev_err(dev, "boot address restore failed %d\n", ret);
+>> -			goto out;
+>> +			goto suspend_iommu;
+>>   		}
+>>   	}
+>>   
+>>   	ret = omap_rproc_enable_timers(rproc, false);
+>>   	if (ret) {
+>>   		dev_err(dev, "enabling timers during resume failed %d\n", ret);
+>> -		goto out;
+>> +		goto suspend_iommu;
+>>   	}
+>>   
+>> -	ret = reset_control_deassert(oproc->reset);
+>> -	if (ret) {
+>> -		dev_err(dev, "reset deassert failed %d\n", ret);
+>> -		goto disable_timers;
+>> +	if (oproc->in_reset) {
+>> +		ret = reset_control_deassert(oproc->reset);
+>> +		if (ret) {
+>> +			dev_err(dev, "reset deassert failed %d\n", ret);
+>> +			goto disable_timers;
+>> +		}
+>> +
+>> +		oproc->in_reset = false;
+>>   	}
+>>   
+>>   	return 0;
+>>   
+>> +suspend_iommu:
+>> +	if (auto_suspend)
+>> +		omap_iommu_domain_deactivate(rproc->domain);
+>>   disable_timers:
+>>   	omap_rproc_disable_timers(rproc, false);
+>>   
+>> @@ -676,6 +754,7 @@ static int __maybe_unused omap_rproc_suspend(struct device *dev)
+>>   {
+>>   	struct platform_device *pdev = to_platform_device(dev);
+>>   	struct rproc *rproc = platform_get_drvdata(pdev);
+>> +	struct omap_rproc *oproc = rproc->priv;
+>>   	int ret = 0;
+>>   
+>>   	mutex_lock(&rproc->lock);
+>> @@ -690,13 +769,19 @@ static int __maybe_unused omap_rproc_suspend(struct device *dev)
+>>   		goto out;
+>>   	}
+>>   
+>> -	ret = _omap_rproc_suspend(rproc);
+>> +	ret = _omap_rproc_suspend(rproc, false);
+>>   	if (ret) {
+>>   		dev_err(dev, "suspend failed %d\n", ret);
+>>   		goto out;
+>>   	}
+>>   
+>> +	/*
+>> +	 * remoteproc is running at the time of system suspend, so remember
+>> +	 * it so as to wake it up during system resume
+>> +	 */
+>> +	oproc->need_resume = true;
+>>   	rproc->state = RPROC_SUSPENDED;
+>> +
+>>   out:
+>>   	mutex_unlock(&rproc->lock);
+>>   	return ret;
+>> @@ -706,6 +791,7 @@ static int __maybe_unused omap_rproc_resume(struct device *dev)
+>>   {
+>>   	struct platform_device *pdev = to_platform_device(dev);
+>>   	struct rproc *rproc = platform_get_drvdata(pdev);
+>> +	struct omap_rproc *oproc = rproc->priv;
+>>   	int ret = 0;
+>>   
+>>   	mutex_lock(&rproc->lock);
+>> @@ -717,17 +803,87 @@ static int __maybe_unused omap_rproc_resume(struct device *dev)
+>>   		goto out;
+>>   	}
+>>   
+>> -	ret = _omap_rproc_resume(rproc);
+>> +	/*
+>> +	 * remoteproc was auto-suspended at the time of system suspend,
+>> +	 * so no need to wake-up the processor (leave it in suspended
+>> +	 * state, will be woken up during a subsequent runtime_resume)
+>> +	 */
+>> +	if (!oproc->need_resume)
+>> +		goto out;
+>> +
+>> +	ret = _omap_rproc_resume(rproc, false);
+>>   	if (ret) {
+>>   		dev_err(dev, "resume failed %d\n", ret);
+>>   		goto out;
+>>   	}
+>>   
+>> +	oproc->need_resume = false;
+>>   	rproc->state = RPROC_RUNNING;
+>> +
+>> +	pm_runtime_mark_last_busy(dev);
+>>   out:
+>>   	mutex_unlock(&rproc->lock);
+>>   	return ret;
+>>   }
+>> +
+>> +static int omap_rproc_runtime_suspend(struct device *dev)
+>> +{
+>> +	struct rproc *rproc = dev_get_drvdata(dev);
+>> +	struct omap_rproc *oproc = rproc->priv;
+>> +	int ret;
+>> +
+>> +	if (rproc->state == RPROC_CRASHED) {
+>> +		dev_dbg(dev, "rproc cannot be runtime suspended when crashed!\n");
+>> +		return -EBUSY;
+>> +	}
+>> +
+>> +	if (WARN_ON(rproc->state != RPROC_RUNNING)) {
+>> +		dev_err(dev, "rproc cannot be runtime suspended when not running!\n");
+>> +		return -EBUSY;
+>> +	}
+>> +
+>> +	/*
+>> +	 * do not even attempt suspend if the remote processor is not
+>> +	 * idled for runtime auto-suspend
+>> +	 */
+>> +	if (!_is_rproc_in_standby(oproc)) {
+>> +		ret = -EBUSY;
+>> +		goto abort;
+>> +	}
+>> +
+>> +	ret = _omap_rproc_suspend(rproc, true);
+>> +	if (ret)
+>> +		goto abort;
+>> +
+>> +	rproc->state = RPROC_SUSPENDED;
+>> +	return 0;
+>> +
+>> +abort:
+>> +	pm_runtime_mark_last_busy(dev);
+>> +	return ret;
+>> +}
+>> +
+>> +static int omap_rproc_runtime_resume(struct device *dev)
+>> +{
+>> +	struct rproc *rproc = dev_get_drvdata(dev);
+>> +	int ret;
+>> +
+>> +	if (WARN_ON(rproc->state != RPROC_SUSPENDED &&
+>> +		    rproc->state != RPROC_OFFLINE)) {
+>> +		dev_err(dev, "rproc cannot be runtime resumed if not suspended! state=%d\n", rproc->state);
+>> +		return -EBUSY;
+>> +	}
+>> +
+>> +	ret = _omap_rproc_resume(rproc, rproc->state == RPROC_SUSPENDED);
+>> +	if (ret) {
+>> +		dev_err(dev, "runtime resume failed %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	rproc->state = RPROC_RUNNING;
+>> +
+>> +	return 0;
+>> +}
+>>   #endif /* CONFIG_PM */
+>>   
+>>   static const struct omap_rproc_mem_data ipu_mems[] = {
+>> @@ -973,6 +1129,14 @@ static int omap_rproc_probe(struct platform_device *pdev)
+>>   	}
+>>   
+>>   	init_completion(&oproc->pm_comp);
+>> +	oproc->autosuspend_delay = DEFAULT_AUTOSUSPEND_DELAY;
+>> +
+>> +	of_property_read_u32(pdev->dev.of_node, "ti,autosuspend-delay-ms",
+>> +			     &oproc->autosuspend_delay);
+>> +
+>> +	pm_runtime_set_autosuspend_delay(&pdev->dev, oproc->autosuspend_delay);
+>> +	pm_runtime_use_autosuspend(&pdev->dev);
+>> +	pm_runtime_enable(&pdev->dev);
+> 
+> These are not unwound if there were failures in the code paths below.
+> Also, this gives a false status in sysfs as "suspended" in the case
+> where firmware is missing from the FS, and the device is never started.
+
+This should be possible to fix.
+
+-Tero
+
+> 
+> regards
+> Suman
+> 
+>>   
+>>   	oproc->fck = devm_clk_get(&pdev->dev, 0);
+>>   	if (IS_ERR(oproc->fck)) {
+>> @@ -1009,12 +1173,15 @@ static int omap_rproc_remove(struct platform_device *pdev)
+>>   	rproc_del(rproc);
+>>   	rproc_free(rproc);
+>>   	of_reserved_mem_device_release(&pdev->dev);
+>> +	pm_runtime_disable(&pdev->dev);
+>>   
+>>   	return 0;
+>>   }
+>>   
+>>   static const struct dev_pm_ops omap_rproc_pm_ops = {
+>>   	SET_SYSTEM_SLEEP_PM_OPS(omap_rproc_suspend, omap_rproc_resume)
+>> +	SET_RUNTIME_PM_OPS(omap_rproc_runtime_suspend,
+>> +			   omap_rproc_runtime_resume, NULL)
+>>   };
+>>   
+>>   static struct platform_driver omap_rproc_driver = {
+>>
+> 
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
