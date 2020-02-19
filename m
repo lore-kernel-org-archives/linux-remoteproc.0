@@ -1,129 +1,86 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH v4 3/5] remoteproc: Add elf helpers to access elf64 and elf32 fields
-Date: Mon, 10 Feb 2020 17:22:07 +0100
-Message-Id: <20200210162209.23149-4-cleger@kalray.eu>
-In-Reply-To: <20200210162209.23149-1-cleger@kalray.eu>
-References: <527785289.2852303.1581062223707.JavaMail.zimbra@kalray.eu>
- <20200210162209.23149-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Clement Leger <cleger@kalray.eu>
+Return-Path: <peng.fan@nxp.com>
+From: peng.fan@nxp.com
+Subject: [PATCH 2/9] dt-bindings: remoteproc: imx-rproc: support i.MX[8,8M,7ULP]
+Date: Wed, 19 Feb 2020 15:27:38 +0800
+Message-Id: <1582097265-20170-3-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+Content-Type: text/plain
+Return-Path: peng.fan@nxp.com
+MIME-Version: 1.0
+To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-elf32 and elf64 mainly differ by their types. In order to avoid
-copy/pasting the whole loader code, generate static inline functions
-which will access values according to the elf class. It allows to
-keep a common loader basis.
-In order to accommodate both elf types sizes, the maximum size for a
-elf header member is chosen using the maximum value of the field for
-both elf class.
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
+Support i.MX8/8M/7ULP:
+ - Introduce early-booted property for M4 booted before Linux
+ - Introduce mboxes for rpmsg/virtio to communicate with M4
+ - Introduce mub-partition for hardware partition supported by i.MX8
+ - Introduce rsrc-table which hold the resource table
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/remoteproc/remoteproc_elf_helpers.h | 95 +++++++++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
- create mode 100644 drivers/remoteproc/remoteproc_elf_helpers.h
+ .../devicetree/bindings/remoteproc/imx-rproc.yaml  | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
-new file mode 100644
-index 000000000000..a29c17aaedb7
---- /dev/null
-+++ b/drivers/remoteproc/remoteproc_elf_helpers.h
-@@ -0,0 +1,95 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Remote processor elf helpers defines
-+ *
-+ * Copyright (C) 2020 Kalray, Inc.
-+ */
+diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
+index 12a5f3de38fb..be708130d5c0 100644
+--- a/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
+@@ -19,6 +19,12 @@ properties:
+       enum:
+         - "fsl,imx7d-cm4"
+         - "fsl,imx6sx-cm4"
++        - "fsl,imx7ulp-cm4"
++        - "fsl,imx8mm-cm4"
++        - "fsl,imx8qm-cm4"
++        - "fsl,imx8qxp-cm4"
 +
-+#ifndef REMOTEPROC_ELF_LOADER_H
-+#define REMOTEPROC_ELF_LOADER_H
++  early-booted: true
+ 
+   clocks:
+     items:
+@@ -30,11 +36,39 @@ properties:
+      allOf:
+        - $ref: "/schemas/types.yaml#/definitions/phandle"
+ 
++  mboxes:
++    description:
++      This property is required only if the rpmsg/virtio functionality is used.
++      List of <&phandle type channel> - 1 channel for TX, 1 channel for RX,
++      1 channel for RXDB.
++      (see mailbox/fsl,mu.txt)
++    maxItems: 3
 +
-+#include <linux/elf.h>
-+#include <linux/types.h>
++  mbox-names:
++    items:
++      - const: tx
++      - const: rx
++      - const: rxdb
++    maxItems: 3
 +
-+/**
-+ * fw_elf_get_class - Get elf class
-+ * @fw: the ELF firmware image
-+ *
-+ * Note that we use and elf32_hdr to access the class since the start of the
-+ * struct is the same for both elf class
-+ *
-+ * Return: elf class of the firmware
-+ */
-+static inline u8 fw_elf_get_class(const struct firmware *fw)
-+{
-+	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
+   memory-region:
+     description:
+       List of phandles to the reserved memory regions.
+       (see ../reserved-memory/reserved-memory.txt)
+ 
++  mub-partition:
++    description:
++      The remote Co-processor hardware partition which is only valid for
++      i.MX SoCs with hardware partition feature.
++    $ref: /schemas/types.yaml#/definitions/uint32
 +
-+	return ehdr->e_ident[EI_CLASS];
-+}
++  rsrc-table:
++    description:
++      Resource table array is required only if the rpmsg/virtio
++      functionality is used.
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32-array
 +
-+static inline void elf_hdr_init_ident(struct elf32_hdr *hdr, u8 class)
-+{
-+	memcpy(hdr->e_ident, ELFMAG, SELFMAG);
-+	hdr->e_ident[EI_CLASS] = class;
-+	hdr->e_ident[EI_DATA] = ELFDATA2LSB;
-+	hdr->e_ident[EI_VERSION] = EV_CURRENT;
-+	hdr->e_ident[EI_OSABI] = ELFOSABI_NONE;
-+}
-+
-+/* Generate getter and setter for a specific elf struct/field */
-+#define ELF_GEN_FIELD_GET_SET(__s, __field, __type) \
-+static inline __type elf_##__s##_get_##__field(u8 class, const void *arg) \
-+{ \
-+	if (class == ELFCLASS32) \
-+		return (__type) ((const struct elf32_##__s *) arg)->__field; \
-+	else \
-+		return (__type) ((const struct elf64_##__s *) arg)->__field; \
-+} \
-+static inline void elf_##__s##_set_##__field(u8 class, void *arg, __type value) \
-+{ \
-+	if (class == ELFCLASS32) \
-+		((struct elf32_##__s *) arg)->__field = (__type) value; \
-+	else \
-+		((struct elf64_##__s *) arg)->__field = (__type) value; \
-+}
-+
-+ELF_GEN_FIELD_GET_SET(hdr, e_entry, u64)
-+ELF_GEN_FIELD_GET_SET(hdr, e_phnum, u16)
-+ELF_GEN_FIELD_GET_SET(hdr, e_shnum, u16)
-+ELF_GEN_FIELD_GET_SET(hdr, e_phoff, u64)
-+ELF_GEN_FIELD_GET_SET(hdr, e_shoff, u64)
-+ELF_GEN_FIELD_GET_SET(hdr, e_shstrndx, u16)
-+ELF_GEN_FIELD_GET_SET(hdr, e_machine, u16)
-+ELF_GEN_FIELD_GET_SET(hdr, e_type, u16)
-+ELF_GEN_FIELD_GET_SET(hdr, e_version, u32)
-+ELF_GEN_FIELD_GET_SET(hdr, e_ehsize, u32)
-+ELF_GEN_FIELD_GET_SET(hdr, e_phentsize, u16)
-+
-+ELF_GEN_FIELD_GET_SET(phdr, p_paddr, u64)
-+ELF_GEN_FIELD_GET_SET(phdr, p_vaddr, u64)
-+ELF_GEN_FIELD_GET_SET(phdr, p_filesz, u64)
-+ELF_GEN_FIELD_GET_SET(phdr, p_memsz, u64)
-+ELF_GEN_FIELD_GET_SET(phdr, p_type, u32)
-+ELF_GEN_FIELD_GET_SET(phdr, p_offset, u64)
-+ELF_GEN_FIELD_GET_SET(phdr, p_flags, u32)
-+ELF_GEN_FIELD_GET_SET(phdr, p_align, u64)
-+
-+ELF_GEN_FIELD_GET_SET(shdr, sh_size, u64)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_offset, u64)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_name, u32)
-+ELF_GEN_FIELD_GET_SET(shdr, sh_addr, u64)
-+
-+#define ELF_STRUCT_SIZE(__s) \
-+static inline unsigned long elf_size_of_##__s(u8 class) \
-+{ \
-+	if (class == ELFCLASS32)\
-+		return sizeof(struct elf32_##__s); \
-+	else \
-+		return sizeof(struct elf64_##__s); \
-+}
-+
-+ELF_STRUCT_SIZE(shdr)
-+ELF_STRUCT_SIZE(phdr)
-+ELF_STRUCT_SIZE(hdr)
-+
-+#endif /* REMOTEPROC_ELF_LOADER_H */
+ required:
+   - compatible
+   - clocks
 -- 
-2.15.0.276.g89ea799
+2.16.4
