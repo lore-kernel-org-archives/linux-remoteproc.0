@@ -1,127 +1,139 @@
-Return-Path: <peng.fan@nxp.com>
-From: Peng Fan <peng.fan@nxp.com>
-Subject: RE: [PATCH 0/9] remoteproc: imx_rproc: support i.MX8/8M/7ULP
-Date: Thu, 20 Feb 2020 01:36:08 +0000
-Message-ID: 
- <AM0PR04MB448114DF702180D0CF0553A688130@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
- <CANLsYkzeAyGhYqewGaHfd-myW5EzE83WUOwAbKwTP-34pbUR-w@mail.gmail.com>
-In-Reply-To: 
- <CANLsYkzeAyGhYqewGaHfd-myW5EzE83WUOwAbKwTP-34pbUR-w@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Return-Path: <mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 19 Feb 2020 11:24:30 -0700
+Message-ID: <CANLsYkzeAyGhYqewGaHfd-myW5EzE83WUOwAbKwTP-34pbUR-w@mail.gmail.com>
+Subject: Re: [PATCH 0/9] remoteproc: imx_rproc: support i.MX8/8M/7ULP
+Content-Type: text/plain; charset="UTF-8"
+To: peng.fan@nxp.com
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-SGkgTWF0aGlldSwNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAvOV0gcmVtb3RlcHJvYzogaW14
-X3Jwcm9jOiBzdXBwb3J0IGkuTVg4LzhNLzdVTFANCj4gDQo+IEhpIFBlbmcsDQo+IA0KPiBPbiBX
-ZWQsIDE5IEZlYiAyMDIwIGF0IDAwOjMzLCA8cGVuZy5mYW5AbnhwLmNvbT4gd3JvdGU6DQo+ID4N
-Cj4gPiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gPg0KPiA+IFRoaXMgcGF0
-Y2hzZXQgYWltIHRvIHJlcGxhY2UgTlhQIHZlbmRvciBpbXhfcnBtc2cuYyBkcml2ZXIuDQo+IA0K
-PiBZb3UgbWVhbiByZW1vdGVwcm9jL2lteF9ycHJvYy5jID8gIFVwc3RyZWFtIHJwbXNnL2lteF9y
-cG1zZy5jIGRvZXNuJ3QNCj4gZXhpc3QuDQoNCmlteF9ycG1zZy5jIG9ubHkgaW4gTlhQIHZlbmRv
-ciB0cmVlLiBUaGlzIHBhY2hzZXQgaXMgdG8gdXNlIGlteF9ycHJvYy5jIGZvcg0KcnBtc2cvdmly
-dGlvIGZ1bmN0aW9ucyBmb3IgaS5NWCBTb0MuDQoNCj4gDQo+ID4NCj4gPiBUaGlzIHBhdGNoc2V0
-IGlzIHRlc3RlZCB3aXRoIExvaWMgUEFMTEFSRFkncyBwYXRjaA0KPiA+ICJyZW1vdGVwcm9jOiBh
-ZGQgc3VwcG9ydCBmb3IgY28tcHJvY2Vzc29yIGxvYWRlZCBhbmQgYm9vdGVkIGJlZm9yZQ0KPiBr
-ZXJuZWwiDQo+ID4gaHR0cHM6Ly9ldXIwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNv
-bS8/dXJsPWh0dHBzJTNBJTJGJTJGcGF0Yw0KPiA+DQo+IGh3b3JrLmtlcm5lbC5vcmclMkZwYXRj
-aCUyRjExMjY1ODY5JTJGJmFtcDtkYXRhPTAyJTdDMDElN0NwZW5nLmYNCj4gYW4lNDBuDQo+ID4N
-Cj4geHAuY29tJTdDZTFjYjE5ZTUzNWExNGI2M2QwZGEwOGQ3YjU2OGZkNTYlN0M2ODZlYTFkM2Jj
-MmI0YzZmYTkNCj4gMmNkOTljNWMNCj4gPg0KPiAzMDE2MzUlN0MwJTdDMCU3QzYzNzE3NzMzNDgz
-OTQ5NzgzMiZhbXA7c2RhdGE9YUtRJTJCdWxjbzYzYmENCj4gWVQlMkJEWkRrMA0KPiA+IFZMdDFO
-cGtOdWhyWTNzc3hpUkNPY3JNJTNEJmFtcDtyZXNlcnZlZD0wLA0KPiA+IGFuZCBpbnNwcmllZCBm
-cm9tIHN0J3MgcmVtb3RlcHJvYyBlYXJseSBib290IHN1cHBvcnQuDQo+ID4gU2luY2UgTG9pYydz
-IHBhdGNoIGlzIHN0aWxsIHVuZGVyIHJldmlldywganVzdCBleHBlY3QgeW91ciBjb21tZW50cyA6
-KQ0KPiANCj4gRGlkIHlvdSBiYXNlIHlvdXIgd29yayBvbiB0b3Agb2YgTG9pYydzIGJlY2F1c2Ug
-eW91ciBNQ1UgZmlybXdhcmUgaXMgYWx3YXlzDQo+IGxvYWRlZCBieSB0aGUgYm9vdGxvYWRlcj8g
-DQoNCkkgb25seSB0b29rIExvaWMncyBlYXJseS1ib290IHBhdGNoIGFzIGJhc2UgYW5kIGFwcGx5
-IG15IHBhdGNoc2V0Lg0KDQpUaGUgbWN1IGZpcm13YXJlIGN1cnJlbnRseSBvbmx5IGxvYWRlZCBi
-eSBib290bG9hZGVyIG9yIHN5c3RlbSBjb250cm9sbGVyIGZpcm13YXJlLg0KTlhQIHJlbGVhc2Vk
-IG1jdSBmaXJtd2FyZSBub3Qgc3VwcG9ydCBiZWluZyBsb2FkZWQgYnkgTGludXggcmVtb3RlcHJv
-Yy4NCg0KIElmIG5vdCBwbGVhc2Ugc2VuZCBhbm90aGVyIHJldmlzaW9uIG9mIHlvdXIgd29yaw0K
-PiB3aXRob3V0IGVhcmx5IGJvb3Qgc3VwcG9ydC4gIFdoZW4gd2UgaGF2ZSBhIGNsZWFyIHZpZXcg
-b24gaG93IHRvIHByb2NlZWQNCj4gd2l0aCB0aGUgZWFybHkgYm9vdCBzdXBwb3J0IHlvdSBjYW4g
-c2VuZCBhbm90aGVyIHNldCB0byBlbmFibGUgdGhhdC4NCg0KSSdsbCB3YWl0IHlvdXIgbmV3IHBh
-dGNoIGZvciBlYXJseSBib290IGluIHJlbW90ZXByb2MtY29yZS4gVGhlbiBJJ2xsIHJlYmFzZQ0K
-YW5kIHNlbmQgYSBuZXcgdmVyc2lvbi4gU2luY2UgSSBpbnRyb2R1Y2UgYmlnIGNoYW5nZXMgdG8g
-aW14X3Jwcm9jLmMsIHNvDQpJJ2xsIHNlZSB3aGV0aGVyIGFueSBjb21tZW50cyB0aGVyZS4NCg0K
-VGhhbmtzLA0KUGVuZy4NCg0KPiANCj4gVGhhbmtzLA0KPiBNYXRoaWV1DQo+IA0KPiA+DQo+ID4g
-UGF0Y2ggWzEsMl0vOTogZHQtYmluZGluZ3MgY29udmVydCB0byBqc29uIGFuZCBuZXcgU29DIHN1
-cHBvcnQgUGF0Y2gNCj4gPiAzLzk6IHNraXAgZmlybXdhcmUgbG9hZCB3aGVuIHJlY292ZXJ5LiBU
-byBpLk1YOCwgZmlybXdhcmUgaXMgbm90DQo+ID4gICAgICAgICAgICBoYW5kbGVkIGJ5IExpbnV4
-Lg0KPiA+DQo+ID4gUGF0Y2ggWzQtOV0vOTogaS5NWCBzcGVjaWZpYyBwYXJ0IHRvIHN1cHBvcnQg
-cnBtc2cvdmlydGlvIHdpdGggbWJveC4NCj4gPiAgICAgICBiZWNhdXNlIE5YUCByZWxlYXNlIGlt
-YWdlIG5vdCBoYXZlIHJlc291cmUgdGFibGUsIHNvIGFkZCByZXNvdXJjZQ0KPiA+ICAgICAgIHRh
-YmxlIGluIGR0cw0KPiA+DQo+ID4gTXkgdGVzdCBkdHMgZGlmZiBmb3IgaS5NWDhRWFAgTUVLLCBi
-dXQgSSBoYXZlIHRlc3RlZCB0aGlzIHBhdGNoc2V0IGZvcg0KPiA+IGkuTVg4UVhQIE1FSywgaS5N
-WDhNTSBFVkssIGkuTVg3VUxQIEVWSzoNCj4gPg0KPiA+ICsNCj4gPiArICAgICAgIGlteDh4LWNt
-NCB7DQo+ID4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAiZnNsLGlteDhxeHAtY200IjsN
-Cj4gPiArICAgICAgICAgICAgICAgcnNyYy10YWJsZSA9IDwNCj4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICAweDEgMHgyIDB4MCAweDAgMHgxOCAweDVjDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgMw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIC8qZndfcnNjX3ZkZXYqLw0KPiA+
-ICsgICAgICAgICAgICAgICAgICAgICAgIDcgMCAxIDAgMCAweDIwMA0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIC8qZndfcnNjX3ZkZXZfdnJpbmcqLw0KPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgIDB4OTAwMDAwMDAgNDA5NiAyNTYgMSAwDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgMHg5MDAwODAwMCA0MDk2IDI1NiAyIDANCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAz
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgLypmd19yc2NfdmRldiovDQo+ID4gKyAgICAg
-ICAgICAgICAgICAgICAgICAgNyAxIDEgMCAwIDB4MjAwDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgLypmd19yc2NfdmRldl92cmluZyovDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-MHg5MDAxMDAwMCA0MDk2IDI1NiAxIDANCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAweDkw
-MDE4MDAwIDQwOTYgMjU2IDIgMA0KPiA+ICsgICAgICAgICAgICAgICA+Ow0KPiA+ICsgICAgICAg
-ICAgICAgICBlYXJseS1ib290ZWQ7DQo+ID4gKyAgICAgICAgICAgICAgIG1ib3gtbmFtZXMgPSAi
-dHgiLCAicngiLCAicnhkYiI7DQo+ID4gKyAgICAgICAgICAgICAgIG1ib3hlcyA9IDwmbHNpb19t
-dTUgMCAxDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAmbHNpb19tdTUgMSAxDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAmbHNpb19tdTUgMyAxPjsNCj4gPiArICAgICAgICAg
-ICAgICAgbXViLXBhcnRpdGlvbiA9IDwzPjsNCj4gPiArICAgICAgICAgICAgICAgbWVtb3J5LXJl
-Z2lvbiA9IDwmdmRldjB2cmluZzA+LCA8JnZkZXYwdnJpbmcxPiwNCj4gPCZ2ZGV2MGJ1ZmZlcj4s
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JnZkZXYxdnJpbmcwPiwgPCZ2
-ZGV2MXZyaW5nMT4sDQo+IDwmdmRldjBidWZmZXI+Ow0KPiA+ICsgICAgICAgfTsNCj4gPiArDQo+
-ID4gKyAgICAgICByZXNlcnZlZC1tZW1vcnkgew0KPiA+ICsgICAgICAgICAgICAgICAjYWRkcmVz
-cy1jZWxscyA9IDwyPjsNCj4gPiArICAgICAgICAgICAgICAgI3NpemUtY2VsbHMgPSA8Mj47DQo+
-ID4gKyAgICAgICAgICAgICAgIHJhbmdlczsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIHZk
-ZXYwdnJpbmcwOiB2ZGV2MHZyaW5nMEA5MDAwMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgY29tcGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wiOw0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIHJlZyA9IDwwIDB4OTAwMDAwMDAgMCAweDgwMDA+Ow0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIG5vLW1hcDsNCj4gPiArICAgICAgICAgICAgICAgfTsNCj4gPiArDQo+ID4g
-KyAgICAgICAgICAgICAgIHZkZXYwdnJpbmcxOiB2ZGV2MHZyaW5nMUA5MDAwODAwMCB7DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wiOw0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwwIDB4OTAwMDgwMDAgMCAweDgwMDA+
-Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIG5vLW1hcDsNCj4gPiArICAgICAgICAgICAg
-ICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIHZkZXYxdnJpbmcwOiB2ZGV2MXZyaW5n
-MEA5MDAxMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJz
-aGFyZWQtZG1hLXBvb2wiOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwwIDB4
-OTAwMTAwMDAgMCAweDgwMDA+Ow0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIG5vLW1hcDsN
-Cj4gPiArICAgICAgICAgICAgICAgfTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIHZkZXYx
-dnJpbmcxOiB2ZGV2MXZyaW5nMUA5MDAxODAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgY29tcGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wiOw0KPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgIHJlZyA9IDwwIDB4OTAwMTgwMDAgMCAweDgwMDA+Ow0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIG5vLW1hcDsNCj4gPiArICAgICAgICAgICAgICAgfTsNCj4gPiArDQo+ID4gKyAg
-ICAgICAgICAgICAgIHZkZXYwYnVmZmVyOiB2ZGV2MGJ1ZmZlciB7DQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wiOw0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIHJlZyA9IDwwIDB4OTA0MDAwMDAgMCAweDEwMDAwMD47DQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgbm8tbWFwOw0KPiA+ICsgICAgICAgICAgICAgICB9Ow0KPiA+
-ICsgICAgICAgfTsNCj4gPiArDQo+ID4NCj4gPiBQZW5nIEZhbiAoOSk6DQo+ID4gICBkdC1iaW5k
-aW5nczogcmVtb3RlcHJvYzogQ29udmVydCBpbXgtcnByb2MgdG8ganNvbi1zY2hlbWENCj4gPiAg
-IGR0LWJpbmRpbmdzOiByZW1vdGVwcm9jOiBpbXgtcnByb2M6IHN1cHBvcnQgaS5NWFs4LDhNLDdV
-TFBdDQo+ID4gICByZW1vdGVwcm9jOiBhZGQgc3VwcG9ydCB0byBza2lwIGZpcm13YXJlIGxvYWQg
-d2hlbiByZWNvdmVyeQ0KPiA+ICAgcmVtb3RlcHJvYzogaW14X3Jwcm9jOiBzdXJwb3J0IGVhcmx5
-IGJvb3RlZCByZW1vdGUgcHJvY2Vzc29yDQo+ID4gICByZW1vdGVwcm9jOiBpbXhfcnByb2M6IHBh
-cnNlIGVhcmx5LWJvb3RlZCBwcm9wZXJ0eQ0KPiA+ICAgcmVtb3RlcHJvYzogaW14X3Byb2M6IGVu
-YWJsZSB2aXJ0aW8vbWFpbGJveA0KPiA+ICAgcmVtb3RlcHJvYzogaW14X3Jwcm9jOiBhZGQgaS5N
-WDhRTS9RWFANCj4gPiAgIHJlbW90ZXByb2M6IGlteF9ycHJvYzogc3VwcG9ydCBpLk1YN1VMUA0K
-PiA+ICAgcmVtb3RlcHJvYzogaW14X3Jwcm9jOiBhZGQgaS5NWDhNTSBzdXBwb3J0DQo+ID4NCj4g
-PiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvcmVtb3RlcHJvYy9pbXgtcnByb2MudHh0ICAgfCAg
-MzMgLS0NCj4gPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvcmVtb3RlcHJvYy9pbXgtcnByb2Mu
-eWFtbCAgfCAgOTUgKysrKysNCj4gPiAgZHJpdmVycy9yZW1vdGVwcm9jL2lteF9ycHJvYy5jICAg
-ICAgICAgICAgICAgICAgICAgfCA0NTUNCj4gKysrKysrKysrKysrKysrKysrKy0tDQo+ID4gIGRy
-aXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYyAgICAgICAgICAgICAgIHwgIDE5ICst
-DQo+ID4gIGluY2x1ZGUvbGludXgvcmVtb3RlcHJvYy5oICAgICAgICAgICAgICAgICAgICAgICAg
-IHwgICAxICsNCj4gPiAgNSBmaWxlcyBjaGFuZ2VkLCA1MzEgaW5zZXJ0aW9ucygrKSwgNzIgZGVs
-ZXRpb25zKC0pICBkZWxldGUgbW9kZQ0KPiA+IDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvcmVtb3RlcHJvYy9pbXgtcnByb2MudHh0DQo+ID4gIGNyZWF0ZSBtb2RlIDEw
-MDY0NA0KPiA+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZW1vdGVwcm9jL2lt
-eC1ycHJvYy55YW1sDQo+ID4NCj4gPiAtLQ0KPiA+IDIuMTYuNA0KPiA+DQo=
+Hi Peng,
+
+On Wed, 19 Feb 2020 at 00:33, <peng.fan@nxp.com> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> This patchset aim to replace NXP vendor imx_rpmsg.c driver.
+
+You mean remoteproc/imx_rproc.c ?  Upstream rpmsg/imx_rpmsg.c doesn't exist.
+
+>
+> This patchset is tested with Loic PALLARDY's patch
+> "remoteproc: add support for co-processor loaded and booted before kernel"
+> https://patchwork.kernel.org/patch/11265869/,
+> and inspried from st's remoteproc early boot support.
+> Since Loic's patch is still under review, just expect your comments :)
+
+Did you base your work on top of Loic's because your MCU firmware is
+always loaded by the bootloader?  If not please send another revision
+of your work without early boot support.  When we have a clear view on
+how to proceed with the early boot support you can send another set to
+enable that.
+
+Thanks,
+Mathieu
+
+>
+> Patch [1,2]/9: dt-bindings convert to json and new SoC support
+> Patch 3/9: skip firmware load when recovery. To i.MX8, firmware is not
+>            handled by Linux.
+>
+> Patch [4-9]/9: i.MX specific part to support rpmsg/virtio with mbox.
+>       because NXP release image not have resoure table, so add resource
+>       table in dts
+>
+> My test dts diff for i.MX8QXP MEK, but I have tested this patchset
+> for i.MX8QXP MEK, i.MX8MM EVK, i.MX7ULP EVK:
+>
+> +
+> +       imx8x-cm4 {
+> +               compatible = "fsl,imx8qxp-cm4";
+> +               rsrc-table = <
+> +                       0x1 0x2 0x0 0x0 0x18 0x5c
+> +                       3
+> +                       /*fw_rsc_vdev*/
+> +                       7 0 1 0 0 0x200
+> +                       /*fw_rsc_vdev_vring*/
+> +                       0x90000000 4096 256 1 0
+> +                       0x90008000 4096 256 2 0
+> +                       3
+> +                       /*fw_rsc_vdev*/
+> +                       7 1 1 0 0 0x200
+> +                       /*fw_rsc_vdev_vring*/
+> +                       0x90010000 4096 256 1 0
+> +                       0x90018000 4096 256 2 0
+> +               >;
+> +               early-booted;
+> +               mbox-names = "tx", "rx", "rxdb";
+> +               mboxes = <&lsio_mu5 0 1
+> +                         &lsio_mu5 1 1
+> +                         &lsio_mu5 3 1>;
+> +               mub-partition = <3>;
+> +               memory-region = <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>,
+> +                               <&vdev1vring0>, <&vdev1vring1>, <&vdev0buffer>;
+> +       };
+> +
+> +       reserved-memory {
+> +               #address-cells = <2>;
+> +               #size-cells = <2>;
+> +               ranges;
+> +
+> +               vdev0vring0: vdev0vring0@90000000 {
+> +                       compatible = "shared-dma-pool";
+> +                       reg = <0 0x90000000 0 0x8000>;
+> +                       no-map;
+> +               };
+> +
+> +               vdev0vring1: vdev0vring1@90008000 {
+> +                       compatible = "shared-dma-pool";
+> +                       reg = <0 0x90008000 0 0x8000>;
+> +                       no-map;
+> +               };
+> +
+> +               vdev1vring0: vdev1vring0@90010000 {
+> +                       compatible = "shared-dma-pool";
+> +                       reg = <0 0x90010000 0 0x8000>;
+> +                       no-map;
+> +               };
+> +
+> +               vdev1vring1: vdev1vring1@90018000 {
+> +                       compatible = "shared-dma-pool";
+> +                       reg = <0 0x90018000 0 0x8000>;
+> +                       no-map;
+> +               };
+> +
+> +               vdev0buffer: vdev0buffer {
+> +                       compatible = "shared-dma-pool";
+> +                       reg = <0 0x90400000 0 0x100000>;
+> +                       no-map;
+> +               };
+> +       };
+> +
+>
+> Peng Fan (9):
+>   dt-bindings: remoteproc: Convert imx-rproc to json-schema
+>   dt-bindings: remoteproc: imx-rproc: support i.MX[8,8M,7ULP]
+>   remoteproc: add support to skip firmware load when recovery
+>   remoteproc: imx_rproc: surport early booted remote processor
+>   remoteproc: imx_rproc: parse early-booted property
+>   remoteproc: imx_proc: enable virtio/mailbox
+>   remoteproc: imx_rproc: add i.MX8QM/QXP
+>   remoteproc: imx_rproc: support i.MX7ULP
+>   remoteproc: imx_rproc: add i.MX8MM support
+>
+>  .../devicetree/bindings/remoteproc/imx-rproc.txt   |  33 --
+>  .../devicetree/bindings/remoteproc/imx-rproc.yaml  |  95 +++++
+>  drivers/remoteproc/imx_rproc.c                     | 455 +++++++++++++++++++--
+>  drivers/remoteproc/remoteproc_core.c               |  19 +-
+>  include/linux/remoteproc.h                         |   1 +
+>  5 files changed, 531 insertions(+), 72 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.txt
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
+>
+> --
+> 2.16.4
+>
