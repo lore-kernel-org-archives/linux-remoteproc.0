@@ -1,74 +1,91 @@
-Return-Path: <peng.fan@nxp.com>
-From: Peng Fan <peng.fan@nxp.com>
-Subject: RE: [PATCH 3/9] remoteproc: add support to skip firmware load when
+Return-Path: <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH 3/9] remoteproc: add support to skip firmware load when
  recovery
-Date: Wed, 19 Feb 2020 15:40:46 +0000
-Message-ID: 
- <AM0PR04MB4481F7E58E9D09F1779E279988100@AM0PR04MB4481.eurprd04.prod.outlook.com>
 References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
  <1582097265-20170-4-git-send-email-peng.fan@nxp.com>
- <0d90b2c2-cb02-d052-57cb-b11c5f815f07@st.com>
-In-Reply-To: <0d90b2c2-cb02-d052-57cb-b11c5f815f07@st.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <0d90b2c2-cb02-d052-57cb-b11c5f815f07@st.com>
+Date: Wed, 19 Feb 2020 15:39:42 +0100
 MIME-Version: 1.0
-To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>
-Cc: dl-linux-imx <linux-imx@nxp.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <1582097265-20170-4-git-send-email-peng.fan@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: peng.fan@nxp.com, ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMy85XSByZW1vdGVwcm9jOiBhZGQgc3VwcG9ydCB0byBz
-a2lwIGZpcm13YXJlIGxvYWQgd2hlbg0KPiByZWNvdmVyeQ0KPiANCj4gSGksDQo+IA0KPiBPbiAy
-LzE5LzIwIDg6MjcgQU0sIHBlbmcuZmFuQG54cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogUGVuZyBG
-YW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4NCj4gPiBSZW1vdGUgcHJvY2Vzc29yIHN1Y2ggYXMg
-TTQgaW5zaWRlIGkuTVg4UVhQIGlzIG5vdCBoYW5kbGVkIGJ5IExpbnV4DQo+ID4gd2hlbiBpdCBp
-cyBjb25maWd1cmVkIHRvIHJ1biBpbnNpZGUgaXRzIG93biBoYXJkd2FyZSBwYXJ0aXRpb24gYnkN
-Cj4gPiBzeXN0ZW0gY29udHJvbCB1bml0KFNDVSkuIFNvIGV2ZW4gcmVtb3RlIHByb2Nlc3NvciBj
-cmFzaCByZXNldCwgaXQgaXMNCj4gPiBoYW5kbGVkIGJ5IFNDVSwgbm90IGxpbnV4LiBUbyBzdWNo
-IGNhc2UsIGZpcm13YXJlIGxvYWQgc2hvdWxkIGJlDQo+ID4gaWdub3JlZCwgU28gaW50cm9kdWNl
-IHNraXBfZndfbG9hZF9yZWNvdmVyeSBhbmQgcGxhdGZvcm0gZHJpdmVyIHNob3VsZA0KPiA+IHNl
-dCBpdCBpZiBuZWVkZWQuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQZW5nIEZhbiA8cGVuZy5m
-YW5AbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9yZW1vdGVwcm9jL3JlbW90ZXByb2Nf
-Y29yZS5jIHwgMTkgKysrKysrKysrKystLS0tLS0tLQ0KPiA+ICBpbmNsdWRlL2xpbnV4L3JlbW90
-ZXByb2MuaCAgICAgICAgICAgfCAgMSArDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTIgaW5zZXJ0
-aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Jl
-bW90ZXByb2MvcmVtb3RlcHJvY19jb3JlLmMNCj4gPiBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1v
-dGVwcm9jX2NvcmUuYw0KPiA+IGluZGV4IDg3NmI1NDIwYTMyYi4uY2EzMTBlMzU4MmJmIDEwMDY0
-NA0KPiA+IC0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+ICsr
-KyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9yZW1vdGVwcm9jX2NvcmUuYw0KPiA+IEBAIC0xNjc4LDIw
-ICsxNjc4LDIzIEBAIGludCBycHJvY190cmlnZ2VyX3JlY292ZXJ5KHN0cnVjdCBycHJvYyAqcnBy
-b2MpDQo+ID4gIAlpZiAocmV0KQ0KPiA+ICAJCWdvdG8gdW5sb2NrX211dGV4Ow0KPiA+DQo+ID4g
-LQkvKiBnZW5lcmF0ZSBjb3JlZHVtcCAqLw0KPiA+IC0JcnByb2NfY29yZWR1bXAocnByb2MpOw0K
-PiA+ICsJaWYgKCFycHJvYy0+c2tpcF9md19sb2FkX3JlY292ZXJ5KSB7DQo+ID4gKwkJLyogZ2Vu
-ZXJhdGUgY29yZWR1bXAgKi8NCj4gPiArCQlycHJvY19jb3JlZHVtcChycHJvYyk7DQo+ID4NCj4g
-PiAtCS8qIGxvYWQgZmlybXdhcmUgKi8NCj4gPiAtCXJldCA9IHJlcXVlc3RfZmlybXdhcmUoJmZp
-cm13YXJlX3AsIHJwcm9jLT5maXJtd2FyZSwgZGV2KTsNCj4gPiAtCWlmIChyZXQgPCAwKSB7DQo+
-ID4gLQkJZGV2X2VycihkZXYsICJyZXF1ZXN0X2Zpcm13YXJlIGZhaWxlZDogJWRcbiIsIHJldCk7
-DQo+ID4gLQkJZ290byB1bmxvY2tfbXV0ZXg7DQo+ID4gKwkJLyogbG9hZCBmaXJtd2FyZSAqLw0K
-PiA+ICsJCXJldCA9IHJlcXVlc3RfZmlybXdhcmUoJmZpcm13YXJlX3AsIHJwcm9jLT5maXJtd2Fy
-ZSwgZGV2KTsNCj4gPiArCQlpZiAocmV0IDwgMCkgew0KPiA+ICsJCQlkZXZfZXJyKGRldiwgInJl
-cXVlc3RfZmlybXdhcmUgZmFpbGVkOiAlZFxuIiwgcmV0KTsNCj4gPiArCQkJZ290byB1bmxvY2tf
-bXV0ZXg7DQo+ID4gKwkJfQ0KPiANCj4gQW55IHNwZWNpZmljIHJlYXNvbiB0byBub3QgcmV1c2Ug
-c2tpcF9md19sb2FkIGhlcmU/DQoNCkp1c3QgdGhvdWdodCBmaXJtd2FyZSBuZWVkcyB0byBiZSBs
-b2FkZWQgYnkgTGludXggd2hlbiByZW1vdGUNCnByb2Nlc3NvciBjcmFzaCwgZXZlbiBpZiBpdCBp
-bml0aWFsbHkgYm9vdGVkIGVhbHkuDQoNCnNraXBfZndfbG9hZCBqdXN0IGhhbmRsZXMgZmlyc3Qg
-Ym9vdCB3aGljaCBubyBuZWVkIGZpcm13YXJlLg0KQnV0IGlmIHJlY292ZXJ5IGJvb3QgbmVlZHMg
-Zmlyd2FyZW0sIHNraXBfZndfbG9hZCB3aWxsIG5vdCBoYW5kbGUuDQoNClNvIEkgYWRkIHRoaXMg
-bmV3IGJvb2wuDQoNCkFjdHVhbGx5IHRvIG15IHBsYXRmb3JtLCBza2lwX2Z3X2xvYWQgY291bGQg
-d29yayB3aGVuIHJlY292ZXJ5LA0KSSBqdXN0IHRoaW5rIG90aGVyIHBsYXRmb3JtcyBtaWdodCBu
-ZWVkIGZpcndhcmUgbG9hZCB3aGVuIHJlY292ZXJ5Lg0KDQpSZWdhcmRzLA0KUGVuZy4gDQoNCj4g
-RllJIGknbSByZXdvcmtpbmcgdGhlIExvaWMncyBwYXRjaCBhbmQgaSBwbGFuIHRvIGltcGxlbWVu
-dCB0aGUgcmVjb3ZlcnkgcGFydA0KPiB1c2luZyBza2lwX2Z3X2xvYWQuLi4NCg0KDQoNCj4gDQo+
-IFJlZ2FyZHMNCj4gQXJuYXVkDQo+IA0KPiA+ICAJfQ0KPiA+DQo+ID4gIAkvKiBib290IHRoZSBy
-ZW1vdGUgcHJvY2Vzc29yIHVwIGFnYWluICovDQo+ID4gIAlyZXQgPSBycHJvY19zdGFydChycHJv
-YywgZmlybXdhcmVfcCk7DQo+ID4NCj4gPiAtCXJlbGVhc2VfZmlybXdhcmUoZmlybXdhcmVfcCk7
-DQo+ID4gKwlpZiAoIXJwcm9jLT5za2lwX2Z3X2xvYWRfcmVjb3ZlcnkpDQo+ID4gKwkJcmVsZWFz
-ZV9maXJtd2FyZShmaXJtd2FyZV9wKTsNCj4gPg0KPiA+ICB1bmxvY2tfbXV0ZXg6DQo+ID4gIAlt
-dXRleF91bmxvY2soJnJwcm9jLT5sb2NrKTsNCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51
-eC9yZW1vdGVwcm9jLmggYi9pbmNsdWRlL2xpbnV4L3JlbW90ZXByb2MuaA0KPiA+IGluZGV4IDRm
-ZDViZWRhYjRmYS4uZmU2ZWUyNTNiMzg1IDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvbGludXgv
-cmVtb3RlcHJvYy5oDQo+ID4gKysrIGIvaW5jbHVkZS9saW51eC9yZW1vdGVwcm9jLmgNCj4gPiBA
-QCAtNTE0LDYgKzUxNCw3IEBAIHN0cnVjdCBycHJvYyB7DQo+ID4gIAlib29sIGhhc19pb21tdTsN
-Cj4gPiAgCWJvb2wgYXV0b19ib290Ow0KPiA+ICAJYm9vbCBza2lwX2Z3X2xvYWQ7DQo+ID4gKwli
-b29sIHNraXBfZndfbG9hZF9yZWNvdmVyeTsNCj4gPiAgCXN0cnVjdCBsaXN0X2hlYWQgZHVtcF9z
-ZWdtZW50czsNCj4gPiAgCWludCBuYl92ZGV2Ow0KPiA+ICB9Ow0KPiA+DQo=
+Hi,
+
+On 2/19/20 8:27 AM, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Remote processor such as M4 inside i.MX8QXP is not handled by Linux
+> when it is configured to run inside its own hardware partition by
+> system control unit(SCU). So even remote processor crash reset, it is
+> handled by SCU, not linux. To such case, firmware load should be
+> ignored, So introduce skip_fw_load_recovery and platform driver
+> should set it if needed.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 19 +++++++++++--------
+>  include/linux/remoteproc.h           |  1 +
+>  2 files changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 876b5420a32b..ca310e3582bf 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1678,20 +1678,23 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  	if (ret)
+>  		goto unlock_mutex;
+>  
+> -	/* generate coredump */
+> -	rproc_coredump(rproc);
+> +	if (!rproc->skip_fw_load_recovery) {
+> +		/* generate coredump */
+> +		rproc_coredump(rproc);
+>  
+> -	/* load firmware */
+> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> -		goto unlock_mutex;
+> +		/* load firmware */
+> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> +		if (ret < 0) {
+> +			dev_err(dev, "request_firmware failed: %d\n", ret);
+> +			goto unlock_mutex;
+> +		}
+
+Any specific reason to not reuse skip_fw_load here?
+FYI i'm reworking the Loic's patch and i plan to implement the recovery part using skip_fw_load...
+
+Regards
+Arnaud
+
+>  	}
+>  
+>  	/* boot the remote processor up again */
+>  	ret = rproc_start(rproc, firmware_p);
+>  
+> -	release_firmware(firmware_p);
+> +	if (!rproc->skip_fw_load_recovery)
+> +		release_firmware(firmware_p);
+>  
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 4fd5bedab4fa..fe6ee253b385 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -514,6 +514,7 @@ struct rproc {
+>  	bool has_iommu;
+>  	bool auto_boot;
+>  	bool skip_fw_load;
+> +	bool skip_fw_load_recovery;
+>  	struct list_head dump_segments;
+>  	int nb_vdev;
+>  };
+> 
