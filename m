@@ -1,33 +1,28 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH] remoteproc: Replace trailing commas with semicolons
-Date: Tue,  4 Feb 2020 15:58:53 +0100
-Message-Id: <20200204145853.29056-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Clement Leger <cleger@kalray.eu>
+Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+From: Siddharth Gupta <sidgup@codeaurora.org>
+Subject: [PATCH 0/2] remoteproc: core: Add core functionality to the remoteproc framework
+Date: Wed, 19 Feb 2020 18:11:51 -0800
+Message-Id: <1582164713-6413-1-git-send-email-sidgup@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: ohad@wizery.com, bjorn.andersson@linaro.org
+Cc: Siddharth Gupta <sidgup@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Replace two misplaced trailing commas by semicolons.
+This patch series adds core functionality to the remoteproc framework.
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
----
- drivers/remoteproc/remoteproc_virtio.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Patch 1 adds a new API to the framework which allows kernel clients to update
+        the firmware name for the specified remoteproc.
+Patch 2 intends to improve the user experience by preventing the system from
+        going to sleep while the remoteproc is recovering from a crash.
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 8c07cb2ca8ba..d58c6565f51d 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -376,8 +376,8 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	vdev->id.device	= id,
--	vdev->config = &rproc_virtio_config_ops,
-+	vdev->id.device	= id;
-+	vdev->config = &rproc_virtio_config_ops;
- 	vdev->dev.parent = dev;
- 	vdev->dev.release = rproc_virtio_dev_release;
- 
+Siddharth Gupta (2):
+  remoteproc: core: Add an API for booting with firmware name
+  remoteproc: core: Prevent sleep when rproc crashes
+
+ drivers/remoteproc/remoteproc_core.c | 38 ++++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 39 insertions(+)
+
 -- 
-2.15.0.276.g89ea799
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
