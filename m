@@ -1,95 +1,61 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv7 05/15] remoteproc/omap: Add the rproc ops .da_to_va() implementation
-Date: Fri, 21 Feb 2020 12:19:26 +0200
-Message-ID: <20200221101936.16833-6-t-kristo@ti.com>
-In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
-References: <20200221101936.16833-1-t-kristo@ti.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Thu, 20 Feb 2020 13:48:15 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 5/8] arm64: dts: qcom: sdm845: Add IMEM and PIL info
+ region
+Message-ID: <20200220204815.GE19352@xps15>
+References: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
+ <20200211005059.1377279-6-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211005059.1377279-6-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On Mon, Feb 10, 2020 at 04:50:56PM -0800, Bjorn Andersson wrote:
+> Add a simple-mfd representing IMEM on SDM845 and define the PIL
+> relocation info region, so that post mortem tools will be able to locate
+> the loaded remoteprocs.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Changes since v2:
+> - Replace offset with reg
+> 
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index d42302b8889b..3443d989976c 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -3018,6 +3018,19 @@ spmi_bus: spmi@c440000 {
+>  			cell-index = <0>;
+>  		};
+>  
+> +		imem@146bf000 {
+> +			compatible = "syscon", "simple-mfd";
+> +			reg = <0 0x146bf000 0 0x1000>;
+> +
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +
+> +			pil-reloc@94c {
+> +				compatible ="qcom,pil-reloc-info";
 
-An implementation for the rproc ops .da_to_va() has been added
-that provides the address translation between device addresses
-to kernel virtual addresses for internal RAMs present on that
-particular remote processor device. The implementation provides
-the translations based on the addresses parsed and stored during
-the probe.
+s/="/= "
 
-This ops gets invoked by the exported rproc_da_to_va() function
-and allows the remoteproc core's ELF loader to be able to load
-program data directly into the internal memories.
-
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
-v7:
-  - minor kerneldoc updates
-
- drivers/remoteproc/omap_remoteproc.c | 40 ++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 4f92b069f5d0..89084dd919ba 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -247,10 +247,50 @@ static int omap_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
- 
-+/**
-+ * omap_rproc_da_to_va() - internal memory translation helper
-+ * @rproc: remote processor to apply the address translation for
-+ * @da: device address to translate
-+ * @len: length of the memory buffer
-+ *
-+ * Custom function implementing the rproc .da_to_va ops to provide address
-+ * translation (device address to kernel virtual address) for internal RAMs
-+ * present in a DSP or IPU device). The translated addresses can be used
-+ * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-+ *
-+ * Return: translated virtual address in kernel memory space on success,
-+ *         or NULL on failure.
-+ */
-+static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-+{
-+	struct omap_rproc *oproc = rproc->priv;
-+	int i;
-+	u32 offset;
-+
-+	if (len <= 0)
-+		return NULL;
-+
-+	if (!oproc->num_mems)
-+		return NULL;
-+
-+	for (i = 0; i < oproc->num_mems; i++) {
-+		if (da >= oproc->mem[i].dev_addr && da + len <=
-+		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
-+			offset = da - oproc->mem[i].dev_addr;
-+			/* __force to make sparse happy with type conversion */
-+			return (__force void *)(oproc->mem[i].cpu_addr +
-+						offset);
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
- static const struct rproc_ops omap_rproc_ops = {
- 	.start		= omap_rproc_start,
- 	.stop		= omap_rproc_stop,
- 	.kick		= omap_rproc_kick,
-+	.da_to_va	= omap_rproc_da_to_va,
- };
- 
- static const struct omap_rproc_mem_data ipu_mems[] = {
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +				reg = <0x94c 200>;
+> +			};
+> +		};
+> +
+>  		apps_smmu: iommu@15000000 {
+>  			compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
+>  			reg = <0 0x15000000 0 0x80000>;
+> -- 
+> 2.24.0
+> 
