@@ -1,86 +1,91 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv7 06/15] remoteproc/omap: Initialize and assign reserved memory node
-Date: Fri, 21 Feb 2020 12:19:27 +0200
-Message-ID: <20200221101936.16833-7-t-kristo@ti.com>
-In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
-References: <20200221101936.16833-1-t-kristo@ti.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Thu, 20 Feb 2020 10:59:11 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 1/8] dt-bindings: remoteproc: Add Qualcomm PIL info
+ binding
+Message-ID: <20200220175911.GA19352@xps15>
+References: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
+ <20200211005059.1377279-2-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211005059.1377279-2-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On Mon, Feb 10, 2020 at 04:50:52PM -0800, Bjorn Andersson wrote:
+> Add a devicetree binding for the Qualcomm periperal image loader
 
-The reserved memory nodes are not assigned to platform devices by
-default in the driver core to avoid the lookup for every platform
-device and incur a penalty as the real users are expected to be
-only a few devices.
+s/periperal/peripheral
 
-OMAP remoteproc devices fall into the above category and the OMAP
-remoteproc driver _requires_ specific CMA pools to be assigned
-for each device at the moment to align on the location of the
-vrings and vring buffers in the RTOS-side firmware images. So,
-use the of_reserved_mem_device_init/release() API appropriately
-to assign the corresponding reserved memory region to the OMAP
-remoteproc device. Note that only one region per device is
-allowed by the framework.
+> relocation info region found in the IMEM.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/remoteproc/omap_remoteproc.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+s/info/information
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 89084dd919ba..872cd0df342b 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/of_device.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/remoteproc.h>
-@@ -483,14 +484,23 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
- 
-+	ret = of_reserved_mem_device_init(&pdev->dev);
-+	if (ret) {
-+		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
-+		dev_warn(&pdev->dev, "Typically this should be provided,\n");
-+		dev_warn(&pdev->dev, "only omit if you know what you are doing.\n");
-+	}
-+
- 	platform_set_drvdata(pdev, rproc);
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto free_rproc;
-+		goto release_mem;
- 
- 	return 0;
- 
-+release_mem:
-+	of_reserved_mem_device_release(&pdev->dev);
- free_rproc:
- 	rproc_free(rproc);
- 	return ret;
-@@ -502,6 +512,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
- 
- 	rproc_del(rproc);
- 	rproc_free(rproc);
-+	of_reserved_mem_device_release(&pdev->dev);
- 
- 	return 0;
- }
--- 
-2.17.1
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Changes since v2:
+> - Replaced offset with reg to describe the region of IMEM used for the entries
+> 
+>  .../bindings/remoteproc/qcom,pil-info.yaml    | 42 +++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> new file mode 100644
+> index 000000000000..8386a4da6030
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,pil-info.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm peripheral image loader relocation info binding
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +
+> +description:
+> +  This document defines the binding for describing the Qualcomm peripheral
+> +  image loader relocation memory region, in IMEM, which is used for post mortem
+> +  debugging of remoteprocs.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,pil-reloc-info
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    imem@146bf000 {
+> +      compatible = "syscon", "simple-mfd";
+> +      reg = <0 0x146bf000 0 0x1000>;
+> +
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +
+> +      pil-reloc {
+> +        compatible ="qcom,pil-reloc-info";
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+s/="/= "
+
+> +        reg = <0x94c 200>;
+> +      };
+> +    };
+> +...
+> -- 
+> 2.24.0
+> 
