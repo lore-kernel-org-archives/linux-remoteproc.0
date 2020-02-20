@@ -1,27 +1,39 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv6 00/14] remoteproc: updates for omap remoteproc support
-Date: Tue, 11 Feb 2020 17:21:11 +0200
-Message-ID: <20200211152125.23819-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sidgup=codeaurora.org@mg.codeaurora.org
+From: Siddharth Gupta <sidgup@codeaurora.org>
+Subject: [PATCH 0/6] remoteproc: qcom: Add callbacks for remoteproc events
+Date: Wed, 19 Feb 2020 18:57:39 -0800
+Message-Id: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
+To: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: Siddharth Gupta <sidgup@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi,
+This patch series adds the usecases for SSR and Sysmon subdevices which are
+used by remoteprocs and kernel client drivers relying on those remoteprocs.
 
-Couple of minor changes on this one, other than that just a rebase to
-5.6-rc1:
+Patch 1-3 adds callbacks for prepare, start and unprepare events, and also type
+          of sysmon notification.
+Patch 4-6 adds a per subsystem notifier chain, callbacks for prepare, start
+          and stop events for ssr subdevice.
 
-- converted memory-regions to be an optional property both in the
-  binding + driver
-- added a warning in the driver if memory-regions are not provided in DT
+Rishabh Bhatnagar (1):
+  drivers: remoteproc: Add name field for every subdevice
 
-The above changes only impact patch #1 and #6
+Siddharth Gupta (5):
+  remoteproc: sysmon: Add ability to send type of notification
+  remoteproc: sysmon: Add notifications for events
+  remoteproc: sysmon: Inform current rproc about all active rprocs
+  remoteproc: qcom: Add per subsystem SSR notification
+  remoteproc: qcom: Add notification types to SSR
 
--Tero
+ drivers/remoteproc/qcom_common.c      |  86 ++++++++++++++++++++++++----
+ drivers/remoteproc/qcom_common.h      |   1 +
+ drivers/remoteproc/qcom_sysmon.c      | 103 ++++++++++++++++++++++++++++------
+ drivers/soc/qcom/glink_ssr.c          |  20 ++++++-
+ include/linux/remoteproc.h            |  17 ++++++
+ include/linux/remoteproc/qcom_rproc.h |  17 ++++--
+ 6 files changed, 209 insertions(+), 35 deletions(-)
 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+-- 
+Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
