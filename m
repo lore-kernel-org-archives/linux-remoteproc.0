@@ -1,41 +1,70 @@
-Return-Path: <BLEVINSK@xilinx.com>
-Return-Path: ben.levinsky@xilinx.com
-From: Ben Levinsky <ben.levinsky@xilinx.com>
-Subject: [PATCH 0/5] remoteproc: Add zynqmp_r5 driver
-Date: Mon, 24 Feb 2020 09:52:26 -0800
-Message-Id: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv7 15/15] remoteproc/omap: Switch to SPDX license identifiers
+Date: Fri, 21 Feb 2020 12:19:36 +0200
+Message-ID: <20200221101936.16833-16-t-kristo@ti.com>
+In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
+References: <20200221101936.16833-1-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There are Cortex-R5 processors on Xilinx ZynqMP UltraScale+
-MPSoC.
-This patch is to add an Xilinx ZynqMP R5 remoteproc driver to
-enable Linux kernel to bringup R5, and enable communication
-between Linux kernel and R5.
+From: Suman Anna <s-anna@ti.com>
 
-Ben Levinsky (3):
-  firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
-    configuration.
-  firmware: xilinx: Add shutdown/wakeup APIs
-  firmware: xilinx: Add zynqmp_get_node_status API
+Use the appropriate SPDX license identifiers in various OMAP remoteproc
+source files and drop the previous boilerplate license text.
 
-Jason Wu (2):
-  dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc
-    bindings
-  remoteproc: Add initial zynqmp R5 remoteproc driver
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
+ 1 file changed, 1 insertion(+), 26 deletions(-)
 
- .../remoteproc/xilinx,zynqmp-r5-remoteproc.txt     | 135 +++
- drivers/firmware/xilinx/zynqmp.c                   |  81 ++
- drivers/remoteproc/Kconfig                         |  10 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/zynqmp_r5_remoteproc.c          | 913 +++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h               |  30 +
- 6 files changed, 1170 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.txt
- create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
-
+diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+index 13f17d9135c0..828e13256c02 100644
+--- a/drivers/remoteproc/omap_remoteproc.h
++++ b/drivers/remoteproc/omap_remoteproc.h
+@@ -1,35 +1,10 @@
++/* SPDX-License-Identifier: BSD-3-Clause */
+ /*
+  * Remote processor messaging
+  *
+  * Copyright (C) 2011-2020 Texas Instruments, Inc.
+  * Copyright (C) 2011 Google, Inc.
+  * All rights reserved.
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions
+- * are met:
+- *
+- * * Redistributions of source code must retain the above copyright
+- *   notice, this list of conditions and the following disclaimer.
+- * * Redistributions in binary form must reproduce the above copyright
+- *   notice, this list of conditions and the following disclaimer in
+- *   the documentation and/or other materials provided with the
+- *   distribution.
+- * * Neither the name Texas Instruments nor the names of its
+- *   contributors may be used to endorse or promote products derived
+- *   from this software without specific prior written permission.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+ #ifndef _OMAP_RPMSG_H
 -- 
-2.7.4
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
