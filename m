@@ -1,77 +1,78 @@
-Return-Path: <baolin.wang7@gmail.com>
-Return-Path: <baolin.wang7@gmail.com>
-From: Baolin Wang <baolin.wang7@gmail.com>
-Subject: [RESEND PATCH] hwspinlock: Allow drivers to be built with COMPILE_TEST
-Date: Mon, 10 Feb 2020 17:01:07 +0800
-Message-Id: <5a95c3de07ef020a4e2f2776fa5adb00637ee387.1581324976.git.baolin.wang7@gmail.com>
-To: ohad@wizery.com, bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, baolin.wang7@gmail.com
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv7 09/15] remoteproc/omap: Check for undefined mailbox messages
+Date: Fri, 21 Feb 2020 12:19:30 +0200
+Message-ID: <20200221101936.16833-10-t-kristo@ti.com>
+In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
+References: <20200221101936.16833-1-t-kristo@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Allow drivers to be built with COMPILE_TEST.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
+Add some checks in the mailbox callback function to limit
+any processing in the mailbox callback function to only
+certain currently valid messages, and drop all the remaining
+messages. A debug message is added to print any such invalid
+messages when the appropriate trace control is enabled.
+
+Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/hwspinlock/Kconfig |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/remoteproc/omap_remoteproc.c | 6 ++++++
+ drivers/remoteproc/omap_remoteproc.h | 7 +++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-index 37740e9..826a105 100644
---- a/drivers/hwspinlock/Kconfig
-+++ b/drivers/hwspinlock/Kconfig
-@@ -9,7 +9,7 @@ menuconfig HWSPINLOCK
- config HWSPINLOCK_OMAP
- 	tristate "OMAP Hardware Spinlock device"
- 	depends on HWSPINLOCK
--	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX || ARCH_K3
-+	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX || ARCH_K3 || COMPILE_TEST
- 	help
- 	  Say y here to support the OMAP Hardware Spinlock device (firstly
- 	  introduced in OMAP4).
-@@ -19,7 +19,7 @@ config HWSPINLOCK_OMAP
- config HWSPINLOCK_QCOM
- 	tristate "Qualcomm Hardware Spinlock device"
- 	depends on HWSPINLOCK
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	select MFD_SYSCON
- 	help
- 	  Say y here to support the Qualcomm Hardware Mutex functionality, which
-@@ -31,7 +31,7 @@ config HWSPINLOCK_QCOM
- config HWSPINLOCK_SIRF
- 	tristate "SIRF Hardware Spinlock device"
- 	depends on HWSPINLOCK
--	depends on ARCH_SIRF
-+	depends on ARCH_SIRF || COMPILE_TEST
- 	help
- 	  Say y here to support the SIRF Hardware Spinlock device, which
- 	  provides a synchronisation mechanism for the various processors
-@@ -42,7 +42,7 @@ config HWSPINLOCK_SIRF
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 8c3dc0edae95..5d6f32974aa3 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -130,6 +130,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 		dev_info(dev, "received echo reply from %s\n", name);
+ 		break;
+ 	default:
++		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
++			return;
++		if (msg > oproc->rproc->max_notifyid) {
++			dev_dbg(dev, "dropping unknown message 0x%x", msg);
++			return;
++		}
+ 		/* msg contains the index of the triggered vring */
+ 		if (rproc_vq_interrupt(oproc->rproc, msg) == IRQ_NONE)
+ 			dev_dbg(dev, "no message was found in vqid %d\n", msg);
+diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+index f6d2036d383d..72f656c93caa 100644
+--- a/drivers/remoteproc/omap_remoteproc.h
++++ b/drivers/remoteproc/omap_remoteproc.h
+@@ -56,6 +56,12 @@
+  *
+  * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
+  * recovery mechanism (to some extent).
++ *
++ * Introduce new message definitions if any here.
++ *
++ * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
++ * This should be the last definition.
++ *
+  */
+ enum omap_rp_mbox_messages {
+ 	RP_MBOX_READY		= 0xFFFFFF00,
+@@ -64,6 +70,7 @@ enum omap_rp_mbox_messages {
+ 	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
+ 	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
+ 	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
++	RP_MBOX_END_MSG		= 0xFFFFFF06,
+ };
  
- config HWSPINLOCK_SPRD
- 	tristate "SPRD Hardware Spinlock device"
--	depends on ARCH_SPRD
-+	depends on ARCH_SPRD || COMPILE_TEST
- 	depends on HWSPINLOCK
- 	help
- 	  Say y here to support the SPRD Hardware Spinlock device.
-@@ -51,7 +51,7 @@ config HWSPINLOCK_SPRD
- 
- config HWSPINLOCK_STM32
- 	tristate "STM32 Hardware Spinlock device"
--	depends on MACH_STM32MP157
-+	depends on MACH_STM32MP157 || COMPILE_TEST
- 	depends on HWSPINLOCK
- 	help
- 	  Say y here to support the STM32 Hardware Spinlock device.
-@@ -61,7 +61,7 @@ config HWSPINLOCK_STM32
- config HSEM_U8500
- 	tristate "STE Hardware Semaphore functionality"
- 	depends on HWSPINLOCK
--	depends on ARCH_U8500
-+	depends on ARCH_U8500 || COMPILE_TEST
- 	help
- 	  Say y here to support the STE Hardware Semaphore functionality, which
- 	  provides a synchronisation mechanism for the various processor on the
+ #endif /* _OMAP_RPMSG_H */
 -- 
-1.7.9.5
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
