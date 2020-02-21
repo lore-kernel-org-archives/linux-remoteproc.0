@@ -1,66 +1,85 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH 1/4] remoteproc: re-check state in rproc_trigger_recovery()
-Date: Fri, 28 Feb 2020 12:33:56 -0600
-Message-Id: <20200228183359.16229-2-elder@linaro.org>
-In-Reply-To: <20200228183359.16229-1-elder@linaro.org>
-References: <20200228183359.16229-1-elder@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv7 08/15] remoteproc/omap: Remove the platform_data header
+Date: Fri, 21 Feb 2020 12:19:29 +0200
+Message-ID: <20200221101936.16833-9-t-kristo@ti.com>
+In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
+References: <20200221101936.16833-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <agross@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Two places call rproc_trigger_recovery():
-  - rproc_crash_handler_work() sets rproc->state to CRASHED under
-    protection of the mutex, then calls it if recovery is not
-    disabled.  This function is called in workqueue context when
-    scheduled in rproc_report_crash().
-  - rproc_recovery_write() calls it in two spots, both of which
-    the only call it if the rproc->state is CRASHED.
+The platform data header for OMAP remoteproc is no longer used for
+anything post ti-sysc and DT conversion, so just remove it completely.
 
-The mutex is taken right away in rproc_trigger_recovery().  However,
-by the time the mutex is acquired, something else might have changed
-rproc->state to something other than CRASHED.
-
-The work that follows that is only appropriate for a remoteproc in
-CRASHED state.  So check the state after acquiring the mutex, and
-only proceed with the recovery work if the remoteproc is still in
-CRASHED state.
-
-Delay reporting that recovering has begun until after we hold the
-mutex and we know the remote processor is in CRASHED state.
-
-Signed-off-by: Alex Elder <elder@linaro.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ include/linux/platform_data/remoteproc-omap.h | 51 -------------------
+ 1 file changed, 51 deletions(-)
+ delete mode 100644 include/linux/platform_data/remoteproc-omap.h
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 097f33e4f1f3..d327cb31d5c8 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1653,12 +1653,16 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret)
-+		return ret;
-+
-+	/* State could have changed before we got the mutex */
-+	if (rproc->state != RPROC_CRASHED)
-+		goto unlock_mutex;
-+
- 	dev_err(dev, "recovering %s\n", rproc->name);
- 
--	ret = mutex_lock_interruptible(&rproc->lock);
--	if (ret)
--		return ret;
+diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+deleted file mode 100644
+index 7e3a16097672..000000000000
+--- a/include/linux/platform_data/remoteproc-omap.h
++++ /dev/null
+@@ -1,51 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Remote Processor - omap-specific bits
+- *
+- * Copyright (C) 2011 Texas Instruments, Inc.
+- * Copyright (C) 2011 Google, Inc.
+- */
 -
- 	ret = rproc_stop(rproc, true);
- 	if (ret)
- 		goto unlock_mutex;
+-#ifndef _PLAT_REMOTEPROC_H
+-#define _PLAT_REMOTEPROC_H
+-
+-struct rproc_ops;
+-struct platform_device;
+-
+-/*
+- * struct omap_rproc_pdata - omap remoteproc's platform data
+- * @name: the remoteproc's name
+- * @oh_name: omap hwmod device
+- * @oh_name_opt: optional, secondary omap hwmod device
+- * @firmware: name of firmware file to load
+- * @mbox_name: name of omap mailbox device to use with this rproc
+- * @ops: start/stop rproc handlers
+- * @device_enable: omap-specific handler for enabling a device
+- * @device_shutdown: omap-specific handler for shutting down a device
+- * @set_bootaddr: omap-specific handler for setting the rproc boot address
+- */
+-struct omap_rproc_pdata {
+-	const char *name;
+-	const char *oh_name;
+-	const char *oh_name_opt;
+-	const char *firmware;
+-	const char *mbox_name;
+-	const struct rproc_ops *ops;
+-	int (*device_enable)(struct platform_device *pdev);
+-	int (*device_shutdown)(struct platform_device *pdev);
+-	void (*set_bootaddr)(u32);
+-};
+-
+-#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+-
+-void __init omap_rproc_reserve_cma(void);
+-
+-#else
+-
+-static inline void __init omap_rproc_reserve_cma(void)
+-{
+-}
+-
+-#endif
+-
+-#endif /* _PLAT_REMOTEPROC_H */
 -- 
-2.20.1
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
