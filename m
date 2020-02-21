@@ -1,36 +1,101 @@
-Return-Path: <ukl@pengutronix.de>
-Date: Fri, 21 Feb 2020 08:03:03 +0100
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 0/9] remoteproc: imx_rproc: support i.MX8/8M/7ULP
-Message-ID: <20200221070303.kndekskjj6cvwtkb@pengutronix.de>
+Return-Path: <peng.fan@nxp.com>
+From: Peng Fan <peng.fan@nxp.com>
+Subject: RE: [PATCH 0/9] remoteproc: imx_rproc: support i.MX8/8M/7ULP
+Date: Fri, 21 Feb 2020 06:56:02 +0000
+Message-ID: 
+ <AM0PR04MB4481C4C811F139665AB1C54088120@AM0PR04MB4481.eurprd04.prod.outlook.com>
 References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
  <20200221065140.mn4wxk5c2xayqwan@pengutronix.de>
- <AM0PR04MB4481C4C811F139665AB1C54088120@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <20200221065140.mn4wxk5c2xayqwan@pengutronix.de>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM0PR04MB4481C4C811F139665AB1C54088120@AM0PR04MB4481.eurprd04.prod.outlook.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "ohad@wizery.com" <ohad@wizery.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "festevam@gmail.com" <festevam@gmail.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello,
-
-On Fri, Feb 21, 2020 at 06:56:02AM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH 0/9] remoteproc: imx_rproc: support i.MX8/8M/7ULP
-> > i can't apply your patches on kernel master HEAD. Do I need some extras?
-> 
-> The patchset is based on Shawn's for-next branch. With Loic' V4 patch
-> applied as showed in cover-letter.
-
-BTW, the generic approach to formalize that is using --base to
-git-format-patch (or git-send-email). See
-https://people.kernel.org/monsieuricon/all-patches-must-include-base-commit-info
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+SGkgT2xla3NpaiwNCg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAvOV0gcmVtb3RlcHJvYzogaW14
+X3Jwcm9jOiBzdXBwb3J0IGkuTVg4LzhNLzdVTFANCj4gDQo+IEhpIFBlbmcsDQo+IA0KPiBpIGNh
+bid0IGFwcGx5IHlvdXIgcGF0Y2hlcyBvbiBrZXJuZWwgbWFzdGVyIEhFQUQuIERvIEkgbmVlZCBz
+b21lIGV4dHJhcz8NCg0KVGhlIHBhdGNoc2V0IGlzIGJhc2VkIG9uIFNoYXduJ3MgZm9yLW5leHQg
+YnJhbmNoLiBXaXRoIExvaWMnIFY0IHBhdGNoDQphcHBsaWVkIGFzIHNob3dlZCBpbiBjb3Zlci1s
+ZXR0ZXIuDQoNCj4gDQo+IFBsZWFzZSBhZGQgbWUgdG8gQ0MgZm9yIHRoaXMgZHJpdmVyIG5leHQg
+dGltZS4NCg0KSSB1c2VkIGdldF9tYWludGFpbmVyLnBsIHRvIGdldCB0aGUgdG8vY2MgbGlzdC4g
+V2lsbCBhZGQgeW91IGluIHYyLCBidXQgbWF5DQpkZWxheSBmb3IgYSB3aGlsZSwgc2luZSBlYXJs
+eSBib290IHN0dWZmIG5vdCBzZXR0bGUgZG93biB1bnRpbCBub3cuDQoNClRoYW5rcywNClBlbmcu
+DQoNCj4gDQo+IE9uIFdlZCwgRmViIDE5LCAyMDIwIGF0IDAzOjI3OjM2UE0gKzA4MDAsIHBlbmcu
+ZmFuQG54cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+
+DQo+ID4NCj4gPiBUaGlzIHBhdGNoc2V0IGFpbSB0byByZXBsYWNlIE5YUCB2ZW5kb3IgaW14X3Jw
+bXNnLmMgZHJpdmVyLg0KPiA+DQo+ID4gVGhpcyBwYXRjaHNldCBpcyB0ZXN0ZWQgd2l0aCBMb2lj
+IFBBTExBUkRZJ3MgcGF0Y2gNCj4gPiAicmVtb3RlcHJvYzogYWRkIHN1cHBvcnQgZm9yIGNvLXBy
+b2Nlc3NvciBsb2FkZWQgYW5kIGJvb3RlZCBiZWZvcmUNCj4ga2VybmVsIg0KPiA+IGh0dHBzOi8v
+cGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvMTEyNjU4NjkvLA0KPiA+IGFuZCBpbnNwcmllZCBm
+cm9tIHN0J3MgcmVtb3RlcHJvYyBlYXJseSBib290IHN1cHBvcnQuDQo+ID4gU2luY2UgTG9pYydz
+IHBhdGNoIGlzIHN0aWxsIHVuZGVyIHJldmlldywganVzdCBleHBlY3QgeW91ciBjb21tZW50cyA6
+KQ0KPiA+DQo+ID4gUGF0Y2ggWzEsMl0vOTogZHQtYmluZGluZ3MgY29udmVydCB0byBqc29uIGFu
+ZCBuZXcgU29DIHN1cHBvcnQgUGF0Y2gNCj4gPiAzLzk6IHNraXAgZmlybXdhcmUgbG9hZCB3aGVu
+IHJlY292ZXJ5LiBUbyBpLk1YOCwgZmlybXdhcmUgaXMgbm90DQo+ID4gICAgICAgICAgICBoYW5k
+bGVkIGJ5IExpbnV4Lg0KPiA+DQo+ID4gUGF0Y2ggWzQtOV0vOTogaS5NWCBzcGVjaWZpYyBwYXJ0
+IHRvIHN1cHBvcnQgcnBtc2cvdmlydGlvIHdpdGggbWJveC4NCj4gPiAgICAgICBiZWNhdXNlIE5Y
+UCByZWxlYXNlIGltYWdlIG5vdCBoYXZlIHJlc291cmUgdGFibGUsIHNvIGFkZCByZXNvdXJjZQ0K
+PiA+ICAgICAgIHRhYmxlIGluIGR0cw0KPiA+DQo+ID4gTXkgdGVzdCBkdHMgZGlmZiBmb3IgaS5N
+WDhRWFAgTUVLLCBidXQgSSBoYXZlIHRlc3RlZCB0aGlzIHBhdGNoc2V0IGZvcg0KPiA+IGkuTVg4
+UVhQIE1FSywgaS5NWDhNTSBFVkssIGkuTVg3VUxQIEVWSzoNCj4gPg0KPiA+ICsNCj4gPiArCWlt
+eDh4LWNtNCB7DQo+ID4gKwkJY29tcGF0aWJsZSA9ICJmc2wsaW14OHF4cC1jbTQiOw0KPiA+ICsJ
+CXJzcmMtdGFibGUgPSA8DQo+ID4gKwkJCTB4MSAweDIgMHgwIDB4MCAweDE4IDB4NWMNCj4gPiAr
+CQkJMw0KPiA+ICsJCQkvKmZ3X3JzY192ZGV2Ki8NCj4gPiArCQkJNyAwIDEgMCAwIDB4MjAwDQo+
+ID4gKwkJCS8qZndfcnNjX3ZkZXZfdnJpbmcqLw0KPiA+ICsJCQkweDkwMDAwMDAwIDQwOTYgMjU2
+IDEgMA0KPiA+ICsJCQkweDkwMDA4MDAwIDQwOTYgMjU2IDIgMA0KPiA+ICsJCQkzDQo+ID4gKwkJ
+CS8qZndfcnNjX3ZkZXYqLw0KPiA+ICsJCQk3IDEgMSAwIDAgMHgyMDANCj4gPiArCQkJLypmd19y
+c2NfdmRldl92cmluZyovDQo+ID4gKwkJCTB4OTAwMTAwMDAgNDA5NiAyNTYgMSAwDQo+ID4gKwkJ
+CTB4OTAwMTgwMDAgNDA5NiAyNTYgMiAwDQo+ID4gKwkJPjsNCj4gPiArCQllYXJseS1ib290ZWQ7
+DQo+ID4gKwkJbWJveC1uYW1lcyA9ICJ0eCIsICJyeCIsICJyeGRiIjsNCj4gPiArCQltYm94ZXMg
+PSA8JmxzaW9fbXU1IDAgMQ0KPiA+ICsJCQkgICZsc2lvX211NSAxIDENCj4gPiArCQkJICAmbHNp
+b19tdTUgMyAxPjsNCj4gPiArCQltdWItcGFydGl0aW9uID0gPDM+Ow0KPiA+ICsJCW1lbW9yeS1y
+ZWdpb24gPSA8JnZkZXYwdnJpbmcwPiwgPCZ2ZGV2MHZyaW5nMT4sDQo+IDwmdmRldjBidWZmZXI+
+LA0KPiA+ICsJCQkJPCZ2ZGV2MXZyaW5nMD4sIDwmdmRldjF2cmluZzE+LCA8JnZkZXYwYnVmZmVy
+PjsNCj4gPiArCX07DQo+ID4gKw0KPiA+ICsJcmVzZXJ2ZWQtbWVtb3J5IHsNCj4gPiArCQkjYWRk
+cmVzcy1jZWxscyA9IDwyPjsNCj4gPiArCQkjc2l6ZS1jZWxscyA9IDwyPjsNCj4gPiArCQlyYW5n
+ZXM7DQo+ID4gKw0KPiA+ICsJCXZkZXYwdnJpbmcwOiB2ZGV2MHZyaW5nMEA5MDAwMDAwMCB7DQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wi
+Ow0KPiA+ICsJCQlyZWcgPSA8MCAweDkwMDAwMDAwIDAgMHg4MDAwPjsNCj4gPiArCQkJbm8tbWFw
+Ow0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCXZkZXYwdnJpbmcxOiB2ZGV2MHZyaW5nMUA5MDAw
+ODAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzaGFyZWQt
+ZG1hLXBvb2wiOw0KPiA+ICsJCQlyZWcgPSA8MCAweDkwMDA4MDAwIDAgMHg4MDAwPjsNCj4gPiAr
+CQkJbm8tbWFwOw0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCXZkZXYxdnJpbmcwOiB2ZGV2MXZy
+aW5nMEA5MDAxMDAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9
+ICJzaGFyZWQtZG1hLXBvb2wiOw0KPiA+ICsJCQlyZWcgPSA8MCAweDkwMDEwMDAwIDAgMHg4MDAw
+PjsNCj4gPiArCQkJbm8tbWFwOw0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCXZkZXYxdnJpbmcx
+OiB2ZGV2MXZyaW5nMUA5MDAxODAwMCB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29t
+cGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wiOw0KPiA+ICsJCQlyZWcgPSA8MCAweDkwMDE4MDAw
+IDAgMHg4MDAwPjsNCj4gPiArCQkJbm8tbWFwOw0KPiA+ICsJCX07DQo+ID4gKw0KPiA+ICsJCXZk
+ZXYwYnVmZmVyOiB2ZGV2MGJ1ZmZlciB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29t
+cGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBvb2wiOw0KPiA+ICsJCQlyZWcgPSA8MCAweDkwNDAwMDAw
+IDAgMHgxMDAwMDA+Ow0KPiA+ICsJCQluby1tYXA7DQo+ID4gKwkJfTsNCj4gPiArCX07DQo+ID4g
+Kw0KPiA+DQo+ID4gUGVuZyBGYW4gKDkpOg0KPiA+ICAgZHQtYmluZGluZ3M6IHJlbW90ZXByb2M6
+IENvbnZlcnQgaW14LXJwcm9jIHRvIGpzb24tc2NoZW1hDQo+ID4gICBkdC1iaW5kaW5nczogcmVt
+b3RlcHJvYzogaW14LXJwcm9jOiBzdXBwb3J0IGkuTVhbOCw4TSw3VUxQXQ0KPiA+ICAgcmVtb3Rl
+cHJvYzogYWRkIHN1cHBvcnQgdG8gc2tpcCBmaXJtd2FyZSBsb2FkIHdoZW4gcmVjb3ZlcnkNCj4g
+PiAgIHJlbW90ZXByb2M6IGlteF9ycHJvYzogc3VycG9ydCBlYXJseSBib290ZWQgcmVtb3RlIHBy
+b2Nlc3Nvcg0KPiA+ICAgcmVtb3RlcHJvYzogaW14X3Jwcm9jOiBwYXJzZSBlYXJseS1ib290ZWQg
+cHJvcGVydHkNCj4gPiAgIHJlbW90ZXByb2M6IGlteF9wcm9jOiBlbmFibGUgdmlydGlvL21haWxi
+b3gNCj4gPiAgIHJlbW90ZXByb2M6IGlteF9ycHJvYzogYWRkIGkuTVg4UU0vUVhQDQo+ID4gICBy
+ZW1vdGVwcm9jOiBpbXhfcnByb2M6IHN1cHBvcnQgaS5NWDdVTFANCj4gPiAgIHJlbW90ZXByb2M6
+IGlteF9ycHJvYzogYWRkIGkuTVg4TU0gc3VwcG9ydA0KPiA+DQo+ID4gIC4uLi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL3JlbW90ZXByb2MvaW14LXJwcm9jLnR4dCAgIHwgIDMzIC0tDQo+ID4gIC4uLi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL3JlbW90ZXByb2MvaW14LXJwcm9jLnlhbWwgIHwgIDk1ICsrKysr
+DQo+ID4gIGRyaXZlcnMvcmVtb3RlcHJvYy9pbXhfcnByb2MuYyAgICAgICAgICAgICAgICAgICAg
+IHwgNDU1DQo+ICsrKysrKysrKysrKysrKysrKystLQ0KPiA+ICBkcml2ZXJzL3JlbW90ZXByb2Mv
+cmVtb3RlcHJvY19jb3JlLmMgICAgICAgICAgICAgICB8ICAxOSArLQ0KPiA+ICBpbmNsdWRlL2xp
+bnV4L3JlbW90ZXByb2MuaCAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArDQo+ID4gIDUg
+ZmlsZXMgY2hhbmdlZCwgNTMxIGluc2VydGlvbnMoKyksIDcyIGRlbGV0aW9ucygtKSAgZGVsZXRl
+IG1vZGUNCj4gPiAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3JlbW90
+ZXByb2MvaW14LXJwcm9jLnR4dA0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcmVtb3RlcHJvYy9pbXgtcnByb2MueWFtbA0KPiA+
+DQo+ID4gLS0NCj4gPiAyLjE2LjQNCj4gPg0KPiA+DQo+ID4NCj4gDQo+IC0tDQo+IFBlbmd1dHJv
+bml4IGUuSy4gICAgICAgICAgICAgICAgICAgICAgICAgICB8DQo+IHwNCj4gU3RldWVyd2FsZGVy
+IFN0ci4gMjEgICAgICAgICAgICAgICAgICAgICAgIHwNCj4gaHR0cDovL3d3dy5wZW5ndXRyb25p
+eC5kZS8gIHwNCj4gMzExMzcgSGlsZGVzaGVpbSwgR2VybWFueSAgICAgICAgICAgICAgICAgIHwg
+UGhvbmU6DQo+ICs0OS01MTIxLTIwNjkxNy0wICAgIHwNCj4gQW10c2dlcmljaHQgSGlsZGVzaGVp
+bSwgSFJBIDI2ODYgICAgICAgICAgIHwgRmF4Og0KPiArNDktNTEyMS0yMDY5MTctNTU1NSB8DQo=
