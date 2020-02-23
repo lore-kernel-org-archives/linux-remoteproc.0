@@ -1,151 +1,92 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: soc: qcom: apr: Add protection domain
- bindings
-References: <20191230050008.8143-1-sibis@codeaurora.org>
- <20191230050008.8143-3-sibis@codeaurora.org> <20200131143436.GA14822@bogus>
-From: Sibi Sankar <sibis@codeaurora.org>
-Message-ID: <d94fa6ad-c5f9-fa5a-6a23-0bf773f105da@codeaurora.org>
-Date: Sat, 1 Feb 2020 19:14:37 +0530
-MIME-Version: 1.0
-In-Reply-To: <20200131143436.GA14822@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Return-Path: <peng.fan@nxp.com>
+From: Peng Fan <peng.fan@nxp.com>
+Subject: RE: [PATCH 5/9] remoteproc: imx_rproc: parse early-booted property
+Date: Sun, 23 Feb 2020 00:11:51 +0000
+Message-ID: 
+ <AM0PR04MB4481882E603D1C83C637183788EF0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
+ <1582097265-20170-6-git-send-email-peng.fan@nxp.com>
+ <20200221215605.GC10368@xps15>
+In-Reply-To: <20200221215605.GC10368@xps15>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Rob Herring <robh@kernel.org>
-Cc: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org, tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, dl-linux-imx <linux-imx@nxp.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hey Rob,
-Thanks for the review!
+> Subject: Re: [PATCH 5/9] remoteproc: imx_rproc: parse early-booted proper=
+ty
+>=20
+> On Wed, Feb 19, 2020 at 03:27:41PM +0800, peng.fan@nxp.com wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > If early-property exists, there is no need to check syscon.
+> > Just mark early_boot as true.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 18 +++++++++++-------
+> >  1 file changed, 11 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c index b9fabe269fd2..e31ea1090cf3
+> > 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -483,7 +483,9 @@ static int imx_rproc_configure_mode(struct
+> imx_rproc *priv)
+> >  	int ret;
+> >  	u32 val;
+> >
+> > -	if (of_get_property(dev->of_node, "early-booted", NULL)) {
+> > +	if (dcfg->variants =3D=3D IMX7ULP) {
+>=20
+> Where does dcfg->variants comes from?
+>=20
+> This patch doesn't compile, nor does the one before it.  I will not revie=
+w
+> another patchset like that.
 
-On 1/31/20 8:04 PM, Rob Herring wrote:
-> On Mon, Dec 30, 2019 at 10:30:07AM +0530, Sibi Sankar wrote:
->> Add optional "qcom,protection-domain" bindings for APR services. This
->> helps to capture the dependencies between APR services and the PD on
->> which each apr service run.
-> 
-> This is meaningless to me...
+Ah. Weird. variants should be variant.=20
+See https://patchwork.kernel.org/patch/11390559/
 
-Qualcomm SoCs (starting with MSM8998) allow for multiple protection
-domains (PDs) to run on the same Q6 sub-system. This allows for
-services like AVS AUDIO to have their own separate address space and
-crash/recover without disrupting the other PDs running on the same Q6
-ADSP. Add "qcom,protection-domain" bindings to capture the dependencies
-between the APR service and the PD on which the apr service runs.
+I need wait early boot related functions in
+remoteproc-core.c ready, then post v2.
 
-Is ^^ better?
-
-> 
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>   .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
->>   1 file changed, 59 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->> index db501269f47b8..f87c0b2a48de4 100644
->> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
->> @@ -45,6 +45,12 @@ by the individual bindings for the specific service
->>   			12 - Ultrasound stream manager.
->>   			13 - Listen stream manager.
->>   
->> +- qcom,protection-domain
->> +	Usage: optional
->> +	Value type: <stringlist>
->> +	Definition: Must list the protection domain service name and path
->> +		    that the particular apr service has a dependency on.
-> 
-> How many strings can there be and can you enumerate the possible
-> strings?
-
-https://lore.kernel.org/lkml/a19623d4-ab33-d87e-5925-d0411d7479dd@codeaurora.org/
-
-Like I explained in ^^ avs/audio is the only service
-that the apr device depends on and is known to run only
-in "msm/adsp/audio_pd" service path.
-
-However there are other service:service_path pairs
-which will get documented when I add support for more
-clients like fastrpc and ath10k.
-
-> 
->> +
->>   = EXAMPLE
->>   The following example represents a QDSP based sound card on a MSM8996 device
->>   which uses apr as communication between Apps and QDSP.
->> @@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
->>   			...
->>   		};
->>   	};
->> +
->> += EXAMPLE 2
->> +The following example represents a QDSP based sound card on SDM845 device.
->> +Here the apr services are dependent on "avs/audio" service running on AUDIO
->> +Protection Domain hosted on ADSP remote processor.
->> +
->> +	apr {
->> +		compatible = "qcom,apr-v2";
->> +		qcom,glink-channels = "apr_audio_svc";
->> +		qcom,apr-domain = <APR_DOMAIN_ADSP>;
->> +
->> +		q6core {
->> +			compatible = "qcom,q6core";
->> +			reg = <APR_SVC_ADSP_CORE>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +		};
->> +
->> +		q6afe: q6afe {
->> +			compatible = "qcom,q6afe";
->> +			reg = <APR_SVC_AFE>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +			q6afedai: dais {
->> +				compatible = "qcom,q6afe-dais";
->> +				#sound-dai-cells = <1>;
->> +
->> +				qi2s@22 {
->> +					reg = <22>;
->> +					qcom,sd-lines = <3>;
->> +				};
->> +			};
->> +		};
->> +
->> +		q6asm: q6asm {
->> +			compatible = "qcom,q6asm";
->> +			reg = <APR_SVC_ASM>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
->> +			q6asmdai: dais {
->> +				compatible = "qcom,q6asm-dais";
->> +				#sound-dai-cells = <1>;
->> +				iommus = <&apps_smmu 0x1821 0x0>;
->> +			};
->> +		};
->> +
->> +		q6adm: q6adm {
->> +			compatible = "qcom,q6adm";
->> +			reg = <APR_SVC_ADM>;
->> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-> 
-> Perhaps an example where not everything is the same. The example shows
-> me this isn't needed in DT.
-
-yes will update the example.
-
-> 
->> +			q6routing: routing {
->> +				compatible = "qcom,q6adm-routing";
->> +				#sound-dai-cells = <0>;
->> +			};
->> +		};
->> +	};
->> -- 
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->> a Linux Foundation Collaborative Project
->>
-
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks,
+Peng.
+>=20
+> > +		priv->early_boot =3D true;
+> > +	} else if (of_get_property(dev->of_node, "early-booted", NULL)) {
+> >  		priv->early_boot =3D true;
+> >  	} else {
+> >  		ret =3D regmap_read(priv->regmap, dcfg->src_reg, &val); @@ -509,15
+> > +511,17 @@ static int imx_rproc_probe(struct platform_device *pdev)
+> >  	struct rproc *rproc;
+> >  	struct regmap_config config =3D { .name =3D "imx-rproc" };
+> >  	const struct imx_rproc_dcfg *dcfg;
+> > -	struct regmap *regmap;
+> > +	struct regmap *regmap =3D NULL;
+> >  	int ret;
+> >
+> > -	regmap =3D syscon_regmap_lookup_by_phandle(np, "syscon");
+> > -	if (IS_ERR(regmap)) {
+> > -		dev_err(dev, "failed to find syscon\n");
+> > -		return PTR_ERR(regmap);
+> > +	if (!of_get_property(np, "early-booted", NULL)) {
+> > +		regmap =3D syscon_regmap_lookup_by_phandle(np, "syscon");
+> > +		if (IS_ERR(regmap)) {
+> > +			dev_err(dev, "failed to find syscon\n");
+> > +			return PTR_ERR(regmap);
+> > +		}
+> > +		regmap_attach_dev(dev, regmap, &config);
+> >  	}
+> > -	regmap_attach_dev(dev, regmap, &config);
+> >
+> >  	/* set some other name then imx */
+> >  	rproc =3D rproc_alloc(dev, "imx-rproc", &imx_rproc_ops,
+> > --
+> > 2.16.4
+> >
