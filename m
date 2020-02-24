@@ -1,50 +1,41 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v3 0/8] remoteproc: qcom: post mortem debug support
-Date: Mon, 10 Feb 2020 16:50:51 -0800
-Message-Id: <20200211005059.1377279-1-bjorn.andersson@linaro.org>
+Return-Path: <BLEVINSK@xilinx.com>
+Return-Path: ben.levinsky@xilinx.com
+From: Ben Levinsky <ben.levinsky@xilinx.com>
+Subject: [PATCH 0/5] remoteproc: Add zynqmp_r5 driver
+Date: Mon, 24 Feb 2020 09:52:26 -0800
+Message-Id: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The following series introduces two components that aids in post mortem
-debugging of Qualcomm systems. The first part is used to store information
-about loaded images in IMEM, for post mortem tools to know where the kernel
-loaded the remoteproc firmware. The second part invokes a stop operation on the
-remoteprocs during a kernel panic, in order to trigger them to flush caches
-etc.
+There are Cortex-R5 processors on Xilinx ZynqMP UltraScale+
+MPSoC.
+This patch is to add an Xilinx ZynqMP R5 remoteproc driver to
+enable Linux kernel to bringup R5, and enable communication
+between Linux kernel and R5.
 
-Bjorn Andersson (8):
-  dt-bindings: remoteproc: Add Qualcomm PIL info binding
-  remoteproc: qcom: Introduce driver to store pil info in IMEM
-  remoteproc: qcom: Update IMEM PIL info on load
-  arm64: dts: qcom: qcs404: Add IMEM and PIL info region
-  arm64: dts: qcom: sdm845: Add IMEM and PIL info region
-  remoteproc: Introduce "panic" callback in ops
-  remoteproc: qcom: q6v5: Add common panic handler
-  remoteproc: qcom: Introduce panic handler for PAS and ADSP
+Ben Levinsky (3):
+  firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+    configuration.
+  firmware: xilinx: Add shutdown/wakeup APIs
+  firmware: xilinx: Add zynqmp_get_node_status API
 
- .../bindings/remoteproc/qcom,pil-info.yaml    |  42 +++++
- arch/arm64/boot/dts/qcom/qcs404.dtsi          |  13 ++
- arch/arm64/boot/dts/qcom/sdm845.dtsi          |  13 ++
- drivers/remoteproc/Kconfig                    |   6 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/qcom_pil_info.c            | 168 ++++++++++++++++++
- drivers/remoteproc/qcom_pil_info.h            |   8 +
- drivers/remoteproc/qcom_q6v5.c                |  20 +++
- drivers/remoteproc/qcom_q6v5.h                |   1 +
- drivers/remoteproc/qcom_q6v5_adsp.c           |  27 ++-
- drivers/remoteproc/qcom_q6v5_mss.c            |   6 +
- drivers/remoteproc/qcom_q6v5_pas.c            |  26 ++-
- drivers/remoteproc/qcom_wcnss.c               |  17 +-
- drivers/remoteproc/remoteproc_core.c          |  46 +++++
- include/linux/remoteproc.h                    |   3 +
- 15 files changed, 388 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
- create mode 100644 drivers/remoteproc/qcom_pil_info.c
- create mode 100644 drivers/remoteproc/qcom_pil_info.h
+Jason Wu (2):
+  dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc
+    bindings
+  remoteproc: Add initial zynqmp R5 remoteproc driver
+
+ .../remoteproc/xilinx,zynqmp-r5-remoteproc.txt     | 135 +++
+ drivers/firmware/xilinx/zynqmp.c                   |  81 ++
+ drivers/remoteproc/Kconfig                         |  10 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/zynqmp_r5_remoteproc.c          | 913 +++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h               |  30 +
+ 6 files changed, 1170 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.txt
+ create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
 
 -- 
-2.24.0
+2.7.4
