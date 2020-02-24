@@ -1,70 +1,106 @@
-Return-Path: <loic.poulain@linaro.org>
-Return-Path: <loic.poulain@linaro.org>
-From: Loic Poulain <loic.poulain@linaro.org>
-Subject: [PATCH] remoteproc: qcom: wcnss: Add iris completion barrier
-Date: Wed, 12 Feb 2020 18:54:03 +0100
-Message-Id: <1581530043-12112-1-git-send-email-loic.poulain@linaro.org>
-To: bjorn.andersson@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, anibal.limon@linaro.org, Loic Poulain <loic.poulain@linaro.org>
+Return-Path: <BLEVINSK@xilinx.com>
+Return-Path: ben.levinsky@xilinx.com
+From: Ben Levinsky <ben.levinsky@xilinx.com>
+Subject: [PATCH 3/5] firmware: xilinx: Add zynqmp_get_node_status API
+Date: Mon, 24 Feb 2020 09:52:29 -0800
+Message-Id: <1582566751-13118-4-git-send-email-ben.levinsky@xilinx.com>
+In-Reply-To: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
+References: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There is no guarantee that the iris pointer will be assigned before
-remoteproc subsystem starts the wcnss rproc, actually it depends how
-fast rproc subsystem is able to get the firmware to trigger the start.
+This patch adds a new API to provide access to the
+current power state of a sub-system on Zynqmp sub-system.
 
-This leads to sporadic wifi/bluetooth initialization issue on db410c
-with the following output:
- remoteproc remoteproc1: powering up a204000.wcnss
- remoteproc remoteproc1: Booting fw image qcom/msm8916/wcnss.mdt...
- qcom-wcnss-pil a204000.wcnss: no iris registered
- remoteproc remoteproc1: can't start rproc a204000.wcnss: -22
-
-This patch introduces a 'iris_assigned' completion barrier to fix
-this issue. Maybe not the most elegant way, but it does the trick.
-
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
 ---
- drivers/remoteproc/qcom_wcnss.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/firmware/xilinx/zynqmp.c     | 42 ++++++++++++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  3 +++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index a0468b3..c888282 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -84,6 +84,7 @@ struct qcom_wcnss {
- 
- 	struct completion start_done;
- 	struct completion stop_done;
-+	struct completion iris_assigned;
- 
- 	phys_addr_t mem_phys;
- 	phys_addr_t mem_reloc;
-@@ -138,6 +139,7 @@ void qcom_wcnss_assign_iris(struct qcom_wcnss *wcnss,
- 
- 	wcnss->iris = iris;
- 	wcnss->use_48mhz_xo = use_48mhz_xo;
-+	complete(&wcnss->iris_assigned);
- 
- 	mutex_unlock(&wcnss->iris_lock);
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 486dcb1..98e35d4 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -725,6 +725,47 @@ static int zynqmp_pm_request_wakeup(const u32 node,
  }
-@@ -213,6 +215,10 @@ static int wcnss_start(struct rproc *rproc)
- 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
- 	int ret;
  
-+	/* Grant some time for iris registration */
-+	wait_for_completion_timeout(&wcnss->iris_assigned,
-+				    msecs_to_jiffies(5000));
+ /**
++ * zynqmp_pm_get_node_status - PM call to request a node's current power state
++ * @node:		ID of the component or sub-system in question
++ * @status:		Current operating state of the requested node
++ * @requirements:	Current requirements asserted on the node,
++ *			used for slave nodes only.
++ * @usage:		Usage information, used for slave nodes only:
++ *			PM_USAGE_NO_MASTER	- No master is currently using
++ *						  the node
++ *			PM_USAGE_CURRENT_MASTER	- Only requesting master is
++ *						  currently using the node
++ *			PM_USAGE_OTHER_MASTER	- Only other masters are
++ *						  currently using the node
++ *			PM_USAGE_BOTH_MASTERS	- Both the current and at least
++ *						  one other master is currently
++ *						  using the node
++ *
++ * Return:		Returns status, either success or error+reason
++ */
++static int zynqmp_pm_get_node_status(const u32 node, u32 *const status,
++				     u32 *const requirements, u32 *const usage)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
 +
- 	mutex_lock(&wcnss->iris_lock);
- 	if (!wcnss->iris) {
- 		dev_err(wcnss->dev, "no iris registered\n");
-@@ -494,6 +500,7 @@ static int wcnss_probe(struct platform_device *pdev)
++	if (!status)
++		return -EINVAL;
++
++	ret = zynqmp_pm_invoke_fn(PM_GET_NODE_STATUS, node, 0, 0,
++				  0, ret_payload);
++	if (ret_payload[0] == XST_PM_SUCCESS) {
++		*status = ret_payload[1];
++		if (requirements)
++			*requirements = ret_payload[2];
++		if (usage)
++			*usage = ret_payload[3];
++	}
++
++	return ret;
++}
++
++/**
+  * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
+  * @node:		Node ID of the slave
+  * @capabilities:	Requested capabilities of the slave
+@@ -769,6 +810,7 @@ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.set_requirement = zynqmp_pm_set_requirement,
+ 	.fpga_load = zynqmp_pm_fpga_load,
+ 	.fpga_get_status = zynqmp_pm_fpga_get_status,
++	.get_node_status = zynqmp_pm_get_node_status,
+ };
  
- 	init_completion(&wcnss->start_done);
- 	init_completion(&wcnss->stop_done);
-+	init_completion(&wcnss->iris_assigned);
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 0a68849..fb4efc9 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -62,6 +62,7 @@
  
- 	mutex_init(&wcnss->iris_lock);
- 
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_GET_NODE_STATUS = 3,
+ 	PM_REQUEST_NODE = 13,
+ 	PM_RELEASE_NODE,
+ 	PM_SET_REQUIREMENT,
+@@ -309,6 +310,8 @@ struct zynqmp_pm_query_data {
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*get_chipid)(u32 *idcode, u32 *version);
++	int (*get_node_status)(const u32 node, u32 *const status,
++			       u32 *const requirements, u32 *const usage);
+ 	int (*fpga_load)(const u64 address, const u32 size, const u32 flags);
+ 	int (*fpga_get_status)(u32 *value);
+ 	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
 -- 
 2.7.4
