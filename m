@@ -1,70 +1,136 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv7 15/15] remoteproc/omap: Switch to SPDX license identifiers
-Date: Fri, 21 Feb 2020 12:19:36 +0200
-Message-ID: <20200221101936.16833-16-t-kristo@ti.com>
-In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
-References: <20200221101936.16833-1-t-kristo@ti.com>
+Return-Path: <paul@crapouillou.net>
+Date: Mon, 24 Feb 2020 12:25:14 -0300
+From: Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v5 3/5] remoteproc: Add prepare/unprepare callbacks
+Message-Id: <1582557914.3.1@crapouillou.net>
+In-Reply-To: <daf58c35-c240-e50a-da50-48b14c0e097c@st.com>
+References: <20200211142614.13567-1-paul@crapouillou.net>
+	<20200211142614.13567-3-paul@crapouillou.net>
+	<daf58c35-c240-e50a-da50-48b14c0e097c@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
+To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hi Arnaud,
 
-Use the appropriate SPDX license identifiers in various OMAP remoteproc
-source files and drop the previous boilerplate license text.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
- 1 file changed, 1 insertion(+), 26 deletions(-)
+Le mar., f=E9vr. 18, 2020 at 17:31, Arnaud POULIQUEN=20
+<arnaud.pouliquen@st.com> a =E9crit :
+> Hi Paul,
+>=20
+> I still wonder about the use of pm_runtime mechanism as a more=20
+> generic alternative...
 
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index 13f17d9135c0..828e13256c02 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -1,35 +1,10 @@
-+/* SPDX-License-Identifier: BSD-3-Clause */
- /*
-  * Remote processor messaging
-  *
-  * Copyright (C) 2011-2020 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- * * Redistributions of source code must retain the above copyright
-- *   notice, this list of conditions and the following disclaimer.
-- * * Redistributions in binary form must reproduce the above copyright
-- *   notice, this list of conditions and the following disclaimer in
-- *   the documentation and/or other materials provided with the
-- *   distribution.
-- * * Neither the name Texas Instruments nor the names of its
-- *   contributors may be used to endorse or promote products derived
-- *   from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- #ifndef _OMAP_RPMSG_H
--- 
-2.17.1
+The use of pm_runtime is perfect if CONFIG_PM is enabled, but otherwise=20
+it's a bit cumbersome, as the clocks must be enabled in the probe.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+-Paul
+
+> Else just a minor remark inline.
+>=20
+> On 2/11/20 3:26 PM, Paul Cercueil wrote:
+>>  The .prepare() callback is called before the firmware is loaded to
+>>  memory. This is useful for instance in the case where some setup is
+>>  required for the memory to be accessible.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>=20
+>>  Notes:
+>>      v2-v4: No change
+>>      v5: Move calls to prepare/unprepare to=20
+>> rproc_fw_boot/rproc_shutdown
+>>=20
+>>   drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
+>>   include/linux/remoteproc.h           |  4 ++++
+>>   2 files changed, 19 insertions(+), 1 deletion(-)
+>>=20
+>>  diff --git a/drivers/remoteproc/remoteproc_core.c=20
+>> b/drivers/remoteproc/remoteproc_core.c
+>>  index fe5c7a2f9767..022b927e176b 100644
+>>  --- a/drivers/remoteproc/remoteproc_core.c
+>>  +++ b/drivers/remoteproc/remoteproc_core.c
+>>  @@ -1373,6 +1373,14 @@ static int rproc_fw_boot(struct rproc=20
+>> *rproc, const struct firmware *fw)
+>>=20
+>>   	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
+>>=20
+>>  +	if (rproc->ops->prepare) {
+>>  +		ret =3D rproc->ops->prepare(rproc);
+>>  +		if (ret) {
+>>  +			dev_err(dev, "Failed to prepare rproc: %d\n", ret);
+>>  +			return ret;
+>>  +		}
+>>  +	}
+>>  +
+>>   	/*
+>>   	 * if enabling an IOMMU isn't relevant for this rproc, this is
+>>   	 * just a nop
+>>  @@ -1380,7 +1388,7 @@ static int rproc_fw_boot(struct rproc *rproc,=20
+>> const struct firmware *fw)
+>>   	ret =3D rproc_enable_iommu(rproc);
+>>   	if (ret) {
+>>   		dev_err(dev, "can't enable iommu: %d\n", ret);
+>>  -		return ret;
+>>  +		goto unprepare_rproc;
+>>   	}
+>>=20
+>>   	rproc->bootaddr =3D rproc_get_boot_addr(rproc, fw);
+>>  @@ -1424,6 +1432,9 @@ static int rproc_fw_boot(struct rproc *rproc,=20
+>> const struct firmware *fw)
+>>   	rproc->table_ptr =3D NULL;
+>>   disable_iommu:
+>>   	rproc_disable_iommu(rproc);
+>>  +unprepare_rproc:
+>>  +	if (rproc->ops->unprepare)
+>>  +		rproc->ops->unprepare(rproc);
+>>   	return ret;
+>>   }
+>>=20
+>>  @@ -1823,6 +1834,9 @@ void rproc_shutdown(struct rproc *rproc)
+>>=20
+>>   	rproc_disable_iommu(rproc);
+>>=20
+>>  +	if (rproc->ops->unprepare)
+>>  +		rproc->ops->unprepare(rproc);
+>>  +
+>>   	/* Free the copy of the resource table */
+>>   	kfree(rproc->cached_table);
+>>   	rproc->cached_table =3D NULL;
+>>  diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>  index 5f201f0c86c3..a6272d1ba384 100644
+>>  --- a/include/linux/remoteproc.h
+>>  +++ b/include/linux/remoteproc.h
+>>  @@ -355,6 +355,8 @@ enum rsc_handling_status {
+>>=20
+>>   /**
+>>    * struct rproc_ops - platform-specific device handlers
+>>  + * @prepare:	prepare the device for power up (before the firmware=20
+>> is loaded)
+>>  + * @unprepare:	unprepare the device after it is stopped
+>=20
+> Would be nice here to precise that these functions are optional
+> you can look at rproc_ops struct for example.
+>=20
+> Regards,
+> Arnaud
+>=20
+>>    * @start:	power on the device and boot it
+>>    * @stop:	power off the device
+>>    * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+>>  @@ -371,6 +373,8 @@ enum rsc_handling_status {
+>>    * @get_boot_addr:	get boot address to entry point specified in=20
+>> firmware
+>>    */
+>>   struct rproc_ops {
+>>  +	int (*prepare)(struct rproc *rproc);
+>>  +	void (*unprepare)(struct rproc *rproc);
+>>   	int (*start)(struct rproc *rproc);
+>>   	int (*stop)(struct rproc *rproc);
+>>   	void (*kick)(struct rproc *rproc, int vqid);
+>>=20
+
+=
