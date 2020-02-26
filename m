@@ -1,86 +1,247 @@
-Return-Path: <peng.fan@nxp.com>
-From: peng.fan@nxp.com
-Subject: [PATCH 2/9] dt-bindings: remoteproc: imx-rproc: support i.MX[8,8M,7ULP]
-Date: Wed, 19 Feb 2020 15:27:38 +0800
-Message-Id: <1582097265-20170-3-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-References: <1582097265-20170-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-Return-Path: peng.fan@nxp.com
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCHv7 04/15] remoteproc/omap: Add support to parse internal
+ memories from DT
+References: <20200221101936.16833-1-t-kristo@ti.com>
+ <20200221101936.16833-5-t-kristo@ti.com>
+ <7de4914a-a5c6-b108-af10-45283aabddc7@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <64429c91-cb80-52ce-0906-180ad109d5fb@ti.com>
+Date: Wed, 26 Feb 2020 09:48:45 +0200
 MIME-Version: 1.0
-To: ohad@wizery.com, bjorn.andersson@linaro.org, robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
-Cc: linux-imx@nxp.com, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <7de4914a-a5c6-b108-af10-45283aabddc7@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: "Andrew F. Davis" <afd@ti.com>, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, s-anna@ti.com
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Peng Fan <peng.fan@nxp.com>
+On 24/02/2020 16:15, Andrew F. Davis wrote:
+> On 2/21/20 5:19 AM, Tero Kristo wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> The OMAP remoteproc driver has been enhanced to parse and store
+>> the kernel mappings for different internal RAM memories that may
+>> be present within each remote processor IP subsystem. Different
+>> devices have varying memories present on current SoCs. The current
+>> support handles the L2RAM for all IPU devices on OMAP4+ SoCs. The
+>> DSPs on OMAP4/OMAP5 only have Unicaches and do not have any L1 or
+>> L2 RAM memories.
+>>
+>> IPUs are expected to have the L2RAM at a fixed device address of
+>> 0x20000000, based on the current limitations on Attribute MMU
+>> configurations.
+>>
+>> NOTE:
+>> The current logic doesn't handle the parsing of memories for DRA7
+>> remoteproc devices, and will be added alongside the DRA7 support.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> [t-kristo: converted to parse mem names / device addresses from pdata]
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>   drivers/remoteproc/omap_remoteproc.c | 89 ++++++++++++++++++++++++++++
+>>   1 file changed, 89 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>> index 64b559caadff..4f92b069f5d0 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.c
+>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>> @@ -39,11 +39,27 @@ struct omap_rproc_boot_data {
+>>   	unsigned int boot_reg;
+>>   };
+>>   
+>> +/**
+>> + * struct omap_rproc_mem - internal memory structure
+>> + * @cpu_addr: MPU virtual address of the memory region
+>> + * @bus_addr: bus address used to access the memory region
+>> + * @dev_addr: device address of the memory region from DSP view
+>> + * @size: size of the memory region
+>> + */
+>> +struct omap_rproc_mem {
+>> +	void __iomem *cpu_addr;
+>> +	phys_addr_t bus_addr;
+>> +	u32 dev_addr;
+>> +	size_t size;
+>> +};
+>> +
+>>   /**
+>>    * struct omap_rproc - omap remote processor state
+>>    * @mbox: mailbox channel handle
+>>    * @client: mailbox client to request the mailbox channel
+>>    * @boot_data: boot data structure for setting processor boot address
+>> + * @mem: internal memory regions data
+>> + * @num_mems: number of internal memory regions
+>>    * @rproc: rproc handle
+>>    * @reset: reset handle
+>>    */
+>> @@ -51,16 +67,30 @@ struct omap_rproc {
+>>   	struct mbox_chan *mbox;
+>>   	struct mbox_client client;
+>>   	struct omap_rproc_boot_data *boot_data;
+>> +	struct omap_rproc_mem *mem;
+>> +	int num_mems;
+>>   	struct rproc *rproc;
+>>   	struct reset_control *reset;
+>>   };
+>>   
+>> +/**
+>> + * struct omap_rproc_mem_data - memory definitions for an omap remote processor
+>> + * @name: name for this memory entry
+>> + * @dev_addr: device address for the memory entry
+>> + */
+>> +struct omap_rproc_mem_data {
+>> +	const char *name;
+>> +	const u32 dev_addr;
+>> +};
+>> +
+>>   /**
+>>    * struct omap_rproc_dev_data - device data for the omap remote processor
+>>    * @device_name: device name of the remote processor
+>> + * @mems: memory definitions for this remote processor
+>>    */
+>>   struct omap_rproc_dev_data {
+>>   	const char *device_name;
+>> +	const struct omap_rproc_mem_data *mems;
+>>   };
+>>   
+>>   /**
+>> @@ -223,12 +253,18 @@ static const struct rproc_ops omap_rproc_ops = {
+>>   	.kick		= omap_rproc_kick,
+>>   };
+>>   
+>> +static const struct omap_rproc_mem_data ipu_mems[] = {
+>> +	{ .name = "l2ram", .dev_addr = 0x20000000 },
+>> +	{ },
+>> +};
+>> +
+>>   static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+>>   	.device_name	= "dsp",
+>>   };
+>>   
+>>   static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
+>>   	.device_name	= "ipu",
+>> +	.mems		= ipu_mems,
+>>   };
+>>   
+>>   static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+>> @@ -237,6 +273,7 @@ static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+>>   
+>>   static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+>>   	.device_name	= "ipu",
+>> +	.mems		= ipu_mems,
+>>   };
+>>   
+>>   static const struct of_device_id omap_rproc_of_match[] = {
+>> @@ -311,6 +348,54 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+>>   	return 0;
+>>   }
+>>   
+>> +static int omap_rproc_of_get_internal_memories(struct platform_device *pdev,
+>> +					       struct rproc *rproc)
+>> +{
+>> +	struct omap_rproc *oproc = rproc->priv;
+> 
+> 
+> 'rproc' is only used to get 'oproc', why not just pass in 'oproc'?
 
-Support i.MX8/8M/7ULP:
- - Introduce early-booted property for M4 booted before Linux
- - Introduce mboxes for rpmsg/virtio to communicate with M4
- - Introduce mub-partition for hardware partition supported by i.MX8
- - Introduce rsrc-table which hold the resource table
+This is mostly to keep the driver internal APIs homogenous, nothing much 
+else passes oproc directly (just the standby status API.) If you pass 
+oproc in some and rproc in others, you get confused really easily.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- .../devicetree/bindings/remoteproc/imx-rproc.yaml  | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+> 
+> 
+>> +	struct device *dev = &pdev->dev;
+>> +	const struct omap_rproc_dev_data *data;
+>> +	struct resource *res;
+>> +	int num_mems;
+>> +	int i;
+>> +
+>> +	data = of_device_get_match_data(&pdev->dev);
+> 
+> 
+> just use 'dev'
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
-index 12a5f3de38fb..be708130d5c0 100644
---- a/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/imx-rproc.yaml
-@@ -19,6 +19,12 @@ properties:
-       enum:
-         - "fsl,imx7d-cm4"
-         - "fsl,imx6sx-cm4"
-+        - "fsl,imx7ulp-cm4"
-+        - "fsl,imx8mm-cm4"
-+        - "fsl,imx8qm-cm4"
-+        - "fsl,imx8qxp-cm4"
-+
-+  early-booted: true
- 
-   clocks:
-     items:
-@@ -30,11 +36,39 @@ properties:
-      allOf:
-        - $ref: "/schemas/types.yaml#/definitions/phandle"
- 
-+  mboxes:
-+    description:
-+      This property is required only if the rpmsg/virtio functionality is used.
-+      List of <&phandle type channel> - 1 channel for TX, 1 channel for RX,
-+      1 channel for RXDB.
-+      (see mailbox/fsl,mu.txt)
-+    maxItems: 3
-+
-+  mbox-names:
-+    items:
-+      - const: tx
-+      - const: rx
-+      - const: rxdb
-+    maxItems: 3
-+
-   memory-region:
-     description:
-       List of phandles to the reserved memory regions.
-       (see ../reserved-memory/reserved-memory.txt)
- 
-+  mub-partition:
-+    description:
-+      The remote Co-processor hardware partition which is only valid for
-+      i.MX SoCs with hardware partition feature.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  rsrc-table:
-+    description:
-+      Resource table array is required only if the rpmsg/virtio
-+      functionality is used.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+
- required:
-   - compatible
-   - clocks
--- 
-2.16.4
+Heh, valid cosmetic change, I would not want to re-post the patch just 
+because of this though.
+
+> 
+>> +	if (!data)
+>> +		return -ENODEV;
+>> +
+>> +	if (!data->mems)
+>> +		return 0;
+>> +
+>> +	for (num_mems = 0; data->mems[num_mems].name; num_mems++)
+>> +		;
+>> +
+>> +	oproc->mem = devm_kcalloc(dev, num_mems, sizeof(*oproc->mem),
+>> +				  GFP_KERNEL);
+>> +	if (!oproc->mem)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < num_mems; i++) {
+>> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>> +						   data->mems[i].name);
+>> +		oproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
+>> +		if (IS_ERR(oproc->mem[i].cpu_addr)) {
+>> +			dev_err(dev, "failed to parse and map %s memory\n",
+>> +				data->mems[i].name);
+>> +			return PTR_ERR(oproc->mem[i].cpu_addr);
+>> +		}
+>> +		oproc->mem[i].bus_addr = res->start;
+>> +		oproc->mem[i].dev_addr = data->mems[i].dev_addr;
+>> +		oproc->mem[i].size = resource_size(res);
+>> +
+>> +		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %pK da 0x%x\n",
+>> +			data->mems[i].name, &oproc->mem[i].bus_addr,
+>> +			oproc->mem[i].size, oproc->mem[i].cpu_addr,
+> 
+> 
+> I'm not a fan of printing kernel virtual addresses, but not a blocker.
+> 
+> 
+>> +			oproc->mem[i].dev_addr);
+>> +	}
+>> +	oproc->num_mems = num_mems;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   static int omap_rproc_probe(struct platform_device *pdev)
+>>   {
+>>   	struct device_node *np = pdev->dev.of_node;
+>> @@ -350,6 +435,10 @@ static int omap_rproc_probe(struct platform_device *pdev)
+>>   	/* All existing OMAP IPU and DSP processors have an MMU */
+>>   	rproc->has_iommu = true;
+>>   
+>> +	ret = omap_rproc_of_get_internal_memories(pdev, rproc);
+> 
+> 
+> This only looks to be used for the da_to_va() in the next patch, could
+> these be combined?
+
+Well, they are kinda separate entities, but potentially could be 
+squashed if someone really wants it done.
+
+> 
+> As above not a big deal, so for this patch and the whole series:
+> 
+> Reviewed-by: Andrew F. Davis <afd@ti.com>
+
+Thanks Andrew.
+
+-Tero
+
+> 
+> 
+>> +	if (ret)
+>> +		goto free_rproc;
+>> +
+>>   	ret = omap_rproc_get_boot_data(pdev, rproc);
+>>   	if (ret)
+>>   		goto free_rproc;
+>>
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
