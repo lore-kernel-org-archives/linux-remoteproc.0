@@ -1,56 +1,47 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv7 13/15] remoteproc/omap: Report device exceptions and trigger recovery
-Date: Fri, 21 Feb 2020 12:19:34 +0200
-Message-ID: <20200221101936.16833-14-t-kristo@ti.com>
-In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
-References: <20200221101936.16833-1-t-kristo@ti.com>
+Return-Path: <nikita.shubin@maquefel.me>
+From: nikita.shubin@maquefel.me
+Subject: [PATCH] remoteproc: error on kick missing
+Date: Fri, 28 Feb 2020 14:08:04 +0300
+Message-Id: <20200228110804.25822-1-nikita.shubin@maquefel.me>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+Cc: nikita.shubin@maquefel.me, Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+From: Nikita Shubin <NShubin@topcon.com>
 
-The OMAP remote processors send a special mailbox message
-(RP_MBOX_CRASH) when they crash and detect an internal device
-exception.
+.kick method not set in rproc_ops will result in:
 
-Add support to the mailbox handling function upon detection of
-this special message to report this crash to the remoteproc core.
-The remoteproc core can trigger a recovery using the prevailing
-recovery mechanism, already in use for MMU Fault recovery.
+8<--- cut here ---
+Unable to handle kernel NULL pointer dereference
 
-Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+in rproc_virtio_notify, after firmware loading.
+
+refuse to register an rproc-induced virtio device if no kick method was
+defined for rproc.
+
+Signed-off-by: Nikita Shubin <NShubin@topcon.com>
 ---
- drivers/remoteproc/omap_remoteproc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_virtio.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 1ac270df4d66..7dcb5da0d940 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -383,8 +383,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index 8c07cb2ca8ba..31a62a0b470e 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -334,6 +334,13 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+ 	struct rproc_mem_entry *mem;
+ 	int ret;
  
- 	switch (msg) {
- 	case RP_MBOX_CRASH:
--		/* just log this for now. later, we'll also do recovery */
-+		/*
-+		 * remoteproc detected an exception, notify the rproc core.
-+		 * The remoteproc core will handle the recovery.
-+		 */
- 		dev_err(dev, "omap rproc %s crashed\n", name);
-+		rproc_report_crash(oproc->rproc, RPROC_FATAL_ERROR);
- 		break;
- 	case RP_MBOX_ECHO_REPLY:
- 		dev_info(dev, "received echo reply from %s\n", name);
++	if (rproc->ops->kick == NULL) {
++		ret = -EINVAL;
++		dev_err(dev, ".kick method not defined for %s",
++				rproc->name);
++		goto out;
++	}
++
+ 	/* Try to find dedicated vdev buffer carveout */
+ 	mem = rproc_find_carveout_by_name(rproc, "vdev%dbuffer", rvdev->index);
+ 	if (mem) {
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.24.1
