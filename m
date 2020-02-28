@@ -1,55 +1,83 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH v5 3/3] dt-bindings: remoteproc: stm32: add syscon bindings preloaded fw support
-Date: Tue, 11 Feb 2020 18:42:05 +0100
-Message-ID: <20200211174205.22247-4-arnaud.pouliquen@st.com>
-In-Reply-To: <20200211174205.22247-1-arnaud.pouliquen@st.com>
-References: <20200211174205.22247-1-arnaud.pouliquen@st.com>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
+From: Alex Elder <elder@linaro.org>
+Subject: [PATCH 3/4] remoteproc: qcom: fix q6v5 probe error paths
+Date: Fri, 28 Feb 2020 12:33:58 -0600
+Message-Id: <20200228183359.16229-4-elder@linaro.org>
+In-Reply-To: <20200228183359.16229-1-elder@linaro.org>
+References: <20200228183359.16229-1-elder@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>, arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+Content-Transfer-Encoding: 8bit
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <agross@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add the optional syscon property that points to the resource table
-address and the state of the Cortex-M4 firmware loaded by the bootloader.
+Remove the remoteproc subdevices if an error occurs after they have
+been added.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Have cleanup activity done in q6v5_remove() be done in the reverse
+order they are set up in q6v5_probe() (and the same order they're
+done in the q6v5_probe() error path).  Use a local variable for
+the remoteproc pointer, which is used repeatedly.
+
+Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- .../bindings/remoteproc/st,stm32-rproc.yaml   | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/remoteproc/qcom_q6v5_mss.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index c0d83865e933..3947ddaca891 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -46,6 +46,27 @@ properties:
-       - The field mask of the RCC trust zone mode.
-     maxItems: 1
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index a1cc9cbe038f..97093f4f58e1 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1667,15 +1667,21 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	qproc->sysmon = qcom_add_sysmon_subdev(rproc, "modem", 0x12);
+ 	if (IS_ERR(qproc->sysmon)) {
+ 		ret = PTR_ERR(qproc->sysmon);
+-		goto detach_proxy_pds;
++		goto remove_ssr_subdev;
+ 	}
  
-+  st,syscfg-copro-state:
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    description:
-+      Reference to the system configuration which returns the coprocessor state.
-+      - Phandle of syscon block.
-+      - The offset containing the coprocessor state.
-+      - The field mask of bitmask for the coprocessor state.
-+    maxItems: 1
-+
-+  st,syscfg-rsc-tbl:
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    description:
-+      Reference to the system configuration controlling the
-+      resource table address loaded by the bootloader
-+      - Phandle to syscon block.
-+      - The offset of the register containing the resource table address.
-+      - The field mask for the resource table address.
-+    maxItems: 1
-+
-   interrupts:
-     description: Should contain the WWDG1 watchdog reset interrupt
-     maxItems: 1
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto detach_proxy_pds;
++		goto remove_sysmon_subdev;
+ 
+ 	return 0;
+ 
++remove_sysmon_subdev:
++	qcom_remove_sysmon_subdev(qproc->sysmon);
++remove_ssr_subdev:
++	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
++	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
++	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+ detach_proxy_pds:
+ 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ detach_active_pds:
+@@ -1689,18 +1695,19 @@ static int q6v5_probe(struct platform_device *pdev)
+ static int q6v5_remove(struct platform_device *pdev)
+ {
+ 	struct q6v5 *qproc = platform_get_drvdata(pdev);
++	struct rproc *rproc = qproc->rproc;
+ 
+-	rproc_del(qproc->rproc);
++	rproc_del(rproc);
+ 
+ 	qcom_remove_sysmon_subdev(qproc->sysmon);
+-	qcom_remove_glink_subdev(qproc->rproc, &qproc->glink_subdev);
+-	qcom_remove_smd_subdev(qproc->rproc, &qproc->smd_subdev);
+-	qcom_remove_ssr_subdev(qproc->rproc, &qproc->ssr_subdev);
++	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
++	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
++	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
+ 
+-	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
+ 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
++	q6v5_pds_detach(qproc, qproc->active_pds, qproc->active_pd_count);
+ 
+-	rproc_free(qproc->rproc);
++	rproc_free(rproc);
+ 
+ 	return 0;
+ }
 -- 
-2.17.1
+2.20.1
