@@ -1,371 +1,129 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv7 01/15] dt-bindings: remoteproc: Add OMAP remoteproc bindings
-Date: Fri, 21 Feb 2020 12:19:22 +0200
-Message-ID: <20200221101936.16833-2-t-kristo@ti.com>
-In-Reply-To: <20200221101936.16833-1-t-kristo@ti.com>
-References: <20200221101936.16833-1-t-kristo@ti.com>
+Return-Path: <enric.balletbo@collabora.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_rpmsg: Fix race with host event.
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+References: <20200214082638.92070-1-pihsun@chromium.org>
+ <83b03af1-5518-599a-3f82-ee204992edbf@collabora.com>
+ <CANdKZ0fuK1Nm_fPNKAss29pqghCcwjN3acYHi6Ez5==envgKgA@mail.gmail.com>
+ <84a66ac1-c36a-fa72-a406-9c3396c1bdf2@collabora.com>
+Message-ID: <6c78727d-8a65-097d-224d-48d93f6ceaa7@collabora.com>
+Date: Fri, 28 Feb 2020 09:52:20 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, linux-omap@vger.kernel.org, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+In-Reply-To: <84a66ac1-c36a-fa72-a406-9c3396c1bdf2@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Pi-Hsun Shih <pihsun@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, open list <linux-kernel@vger.kernel.org>, ohad@wizery.com, Bjorn Andersson <bjorn.andersson@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hi Pi-Hsun,
 
-Add the device tree bindings document for the IPU and DSP
-remote processor devices on OMAP4+ SoCs.
+On 17/2/20 16:55, Enric Balletbo i Serra wrote:
+> Dear remoteproc experts,
+> 
+> cc'ing you for if we can have your feedback on this change.
+> 
+> Thanks Pi-Hsun, for your quick answer, makes sense but I'm still feeling that I
+> miss something (probably because I'm not a remoteproc expert), so I added the
+> Remoteproc people for if they can comment this patch. We have time as we're in
+> rc2 only, so I'd like to wait a bit in case they can take a look.
+> 
+> If no answer is received I'll take a second look and apply the patch.
+> 
 
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Suman Anna <s-anna@ti.com>
-[t-kristo@ti.com: converted to schema]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-v7:
- - Added Rob's Reviewed-by
- - Added extra comment about recommended delay/effect of negative value
-   under ti,autosuspend-delay-ms
- - Fixed typo in the omap5 example for firmware file extension (xem4 instead
-   of xem)
+I'll pick this patch, just I want to request a minor change.
 
- .../remoteproc/ti,omap-remoteproc.yaml        | 324 ++++++++++++++++++
- 1 file changed, 324 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+> Thanks,
+>  Enric
+> 
+> On 15/2/20 4:56, Pi-Hsun Shih wrote:
+>> Hi Enric,
+>>
+>> On Fri, Feb 14, 2020 at 11:10 PM Enric Balletbo i Serra
+>> <enric.balletbo@collabora.com> wrote:
+>>>
+>>> Hi Pi-Hsun,
+>>>
+>>> On 14/2/20 9:26, Pi-Hsun Shih wrote:
+>>>> Host event can be sent by remoteproc by any time, and
+>>>> cros_ec_rpmsg_callback would be called after cros_ec_rpmsg_create_ept.
+>>>> But the cros_ec_device is initialized after that, which cause host event
+>>>> handler to use cros_ec_device that are not initialized properly yet.
+>>>>
+>>>
+>>> I don't have the hardware to test but, can't we call first cros_ec_register and
+>>> then cros_ec_rpmsg_create_ept?
+>>>
+>>> Start receiving driver callbacks before finishing to probe the drivers itself
+>>> sounds weird to me.
+>>>
+>>> Thanks,
+>>>  Enric
+>>
+>> Since cros_ec_register calls cros_ec_query_all, which sends message to
+>> remoteproc using cros_ec_pkt_xfer_rpmsg (to query protocol version),
+>> the ec_rpmsg->ept need to be ready before calling cros_ec_register.
+>>
+>>>
+>>>> Fix this by don't schedule host event handler before cros_ec_register
+>>>> returns. Instead, remember that we have a pending host event, and
+>>>> schedule host event handler after cros_ec_register.
+>>>>
+>>>> Fixes: 71cddb7097e2 ("platform/chrome: cros_ec_rpmsg: Fix race with host command when probe failed.")
+>>>> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
+>>>> ---
+>>>>  drivers/platform/chrome/cros_ec_rpmsg.c | 16 +++++++++++++++-
+>>>>  1 file changed, 15 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+>>>> index dbc3f5523b83..7e8629e3db74 100644
+>>>> --- a/drivers/platform/chrome/cros_ec_rpmsg.c
+>>>> +++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+>>>> @@ -44,6 +44,8 @@ struct cros_ec_rpmsg {
+>>>>       struct completion xfer_ack;
+>>>>       struct work_struct host_event_work;
+>>>>       struct rpmsg_endpoint *ept;
+>>>> +     bool has_pending_host_event;
+>>>> +     bool probe_done;
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-new file mode 100644
-index 000000000000..084960a8f17a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
-@@ -0,0 +1,324 @@
-+# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/ti,omap-remoteproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: OMAP4+ Remoteproc Devices
-+
-+maintainers:
-+  - Suman Anna <s-anna@ti.com>
-+
-+description:
-+  The OMAP family of SoCs usually have one or more slave processor sub-systems
-+  that are used to offload some of the processor-intensive tasks, or to manage
-+  other hardware accelerators, for achieving various system level goals.
-+
-+  The processor cores in the sub-system are usually behind an IOMMU, and may
-+  contain additional sub-modules like Internal RAM and/or ROMs, L1 and/or L2
-+  caches, an Interrupt Controller, a Cache Controller etc.
-+
-+  The OMAP SoCs usually have a DSP processor sub-system and/or an IPU processor
-+  sub-system. The DSP processor sub-system can contain any of the TI's C64x,
-+  C66x or C67x family of DSP cores as the main execution unit. The IPU processor
-+  sub-system usually contains either a Dual-Core Cortex-M3 or Dual-Core
-+  Cortex-M4 processors.
-+
-+  Each remote processor sub-system is represented as a single DT node. Each node
-+  has a number of required or optional properties that enable the OS running on
-+  the host processor (MPU) to perform the device management of the remote
-+  processor and to communicate with the remote processor. The various properties
-+  can be classified as constant or variable. The constant properties are
-+  dictated by the SoC and does not change from one board to another having the
-+  same SoC. Examples of constant properties include 'iommus', 'reg'. The
-+  variable properties are dictated by the system integration aspects such as
-+  memory on the board, or configuration used within the corresponding firmware
-+  image. Examples of variable properties include 'mboxes', 'memory-region',
-+  'timers', 'watchdog-timers' etc.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,omap4-dsp
-+      - ti,omap5-dsp
-+      - ti,dra7-dsp
-+      - ti,omap4-ipu
-+      - ti,omap5-ipu
-+      - ti,dra7-ipu
-+
-+  iommus:
-+    minItems: 1
-+    maxItems: 2
-+    description: |
-+      phandles to OMAP IOMMU nodes, that need to be programmed
-+      for this remote processor to access any external RAM memory or
-+      other peripheral device address spaces. This property usually
-+      has only a single phandle. Multiple phandles are used only in
-+      cases where the sub-system has different ports for different
-+      sub-modules within the processor sub-system (eg: DRA7 DSPs),
-+      and need the same programming in both the MMUs.
-+
-+  mboxes:
-+    minItems: 1
-+    maxItems: 2
-+    description: |
-+      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-+      communication with the remote processor. The specifier format is
-+      as per the bindings,
-+      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
-+      This property should match with the sub-mailbox node used in
-+      the firmware image.
-+
-+  clocks:
-+    description: |
-+      Main functional clock for the remote processor
-+
-+  resets:
-+    description: |
-+      Reset handles for the remote processor
-+
-+  firmware-name:
-+    description: |
-+      Default name of the firmware to load to the remote processor.
-+
-+# Optional properties:
-+# --------------------
-+# Some of these properties are mandatory on some SoCs, and some are optional
-+# depending on the configuration of the firmware image to be executed on the
-+# remote processor. The conditions are mentioned for each property.
-+#
-+# The following are the optional properties:
-+
-+  memory-region:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: |
-+      phandle to the reserved memory node to be associated
-+      with the remoteproc device. The reserved memory node
-+      can be a CMA memory node, and should be defined as
-+      per the bindings,
-+      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+
-+  reg:
-+    description: |
-+      Address space for any remoteproc memories present on
-+      the SoC. Should contain an entry for each value in
-+      'reg-names'. These are mandatory for all DSP and IPU
-+      processors that have them (OMAP4/OMAP5 DSPs do not have
-+      any RAMs)
-+
-+  reg-names:
-+    description: |
-+      Required names for each of the address spaces defined in
-+      the 'reg' property. Expects the names from the following
-+      list, in the specified order, each representing the corresponding
-+      internal RAM memory region.
-+    minItems: 1
-+    maxItems: 3
-+    items:
-+      - const: l2ram
-+      - const: l1pram
-+      - const: l1dram
-+
-+  ti,bootreg:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      Should be a triple of the phandle to the System Control
-+      Configuration region that contains the boot address
-+      register, the register offset of the boot address
-+      register within the System Control module, and the bit
-+      shift within the register. This property is required for
-+      all the DSP instances on OMAP4, OMAP5 and DRA7xx SoCs.
-+
-+  ti,autosuspend-delay-ms:
-+    description: |
-+      Custom autosuspend delay for the remoteproc in milliseconds.
-+      Recommended values is preferable to be in the order of couple
-+      of seconds. A negative value can also be used to disable the
-+      autosuspend behavior.
-+
-+  ti,timers:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      One or more phandles to OMAP DMTimer nodes, that serve
-+      as System/Tick timers for the OS running on the remote
-+      processors. This will usually be a single timer if the
-+      processor sub-system is running in SMP mode, or one per
-+      core in the processor sub-system. This can also be used
-+      to reserve specific timers to be dedicated to the
-+      remote processors.
-+
-+      This property is mandatory on remote processors requiring
-+      external tick wakeup, and to support Power Management
-+      features. The timers to be used should match with the
-+      timers used in the firmware image.
-+
-+  ti,watchdog-timers:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      One or more phandles to OMAP DMTimer nodes, used to
-+      serve as Watchdog timers for the processor cores. This
-+      will usually be one per executing processor core, even
-+      if the processor sub-system is running a SMP OS.
-+
-+      The timers to be used should match with the watchdog
-+      timers used in the firmware image.
-+
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - ti,dra7-dsp
-+then:
-+  properties:
-+    reg:
-+      minItems: 3
-+      maxItems: 3
-+  required:
-+    - reg
-+    - reg-names
-+    - ti,bootreg
-+
-+else:
-+  if:
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,omap4-ipu
-+          - ti,omap5-ipu
-+          - ti,dra7-ipu
-+  then:
-+    properties:
-+      reg:
-+        minItems: 1
-+        maxItems: 1
-+      ti,bootreg: false
-+    required:
-+      - reg
-+      - reg-names
-+
-+  else:
-+    properties:
-+      reg: false
-+    required:
-+      - ti,bootreg
-+
-+required:
-+  - compatible
-+  - iommus
-+  - mboxes
-+  - clocks
-+  - resets
-+  - firmware-name
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    //Example 1: OMAP4 DSP
-+
-+    /* DSP Reserved Memory node */
-+    #include <dt-bindings/clock/omap4.h>
-+    reserved-memory {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        dsp_memory_region: dsp-memory@98000000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x98000000 0x800000>;
-+            reusable;
-+        };
-+    };
-+
-+    /* DSP node */
-+    ocp {
-+        dsp: dsp {
-+            compatible = "ti,omap4-dsp";
-+            ti,bootreg = <&scm_conf 0x304 0>;
-+            iommus = <&mmu_dsp>;
-+            mboxes = <&mailbox &mbox_dsp>;
-+            memory-region = <&dsp_memory_region>;
-+            ti,timers = <&timer5>;
-+            ti,watchdog-timers = <&timer6>;
-+            clocks = <&tesla_clkctrl OMAP4_DSP_CLKCTRL 0>;
-+            resets = <&prm_tesla 0>, <&prm_tesla 1>;
-+            firmware-name = "omap4-dsp-fw.xe64T";
-+        };
-+    };
-+
-+  - |+
-+
-+    //Example 2: OMAP5 IPU
-+
-+    /* IPU Reserved Memory node */
-+    #include <dt-bindings/clock/omap5.h>
-+    reserved-memory {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        ipu_memory_region: ipu-memory@95800000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0 0x95800000 0 0x3800000>;
-+            reusable;
-+        };
-+    };
-+
-+    /* IPU node */
-+    ocp {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        ipu: ipu@55020000 {
-+            compatible = "ti,omap5-ipu";
-+            reg = <0x55020000 0x10000>;
-+            reg-names = "l2ram";
-+            iommus = <&mmu_ipu>;
-+            mboxes = <&mailbox &mbox_ipu>;
-+            memory-region = <&ipu_memory_region>;
-+            ti,timers = <&timer3>, <&timer4>;
-+            ti,watchdog-timers = <&timer9>, <&timer11>;
-+            clocks = <&ipu_clkctrl OMAP5_MMU_IPU_CLKCTRL 0>;
-+            resets = <&prm_core 2>;
-+            firmware-name = "omap5-ipu-fw.xem4";
-+        };
-+    };
-+
-+  - |+
-+
-+    //Example 3: DRA7xx/AM57xx DSP
-+
-+    /* DSP1 Reserved Memory node */
-+    #include <dt-bindings/clock/dra7.h>
-+    reserved-memory {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        dsp1_memory_region: dsp1-memory@99000000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x0 0x99000000 0x0 0x4000000>;
-+            reusable;
-+        };
-+    };
-+
-+    /* DSP1 node */
-+    ocp {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        dsp1: dsp@40800000 {
-+            compatible = "ti,dra7-dsp";
-+            reg = <0x40800000 0x48000>,
-+                  <0x40e00000 0x8000>,
-+                  <0x40f00000 0x8000>;
-+            reg-names = "l2ram", "l1pram", "l1dram";
-+            ti,bootreg = <&scm_conf 0x55c 0>;
-+            iommus = <&mmu0_dsp1>, <&mmu1_dsp1>;
-+            mboxes = <&mailbox5 &mbox_dsp1_ipc3x>;
-+            memory-region = <&dsp1_memory_region>;
-+            ti,timers = <&timer5>;
-+            ti,watchdog-timers = <&timer10>;
-+            resets = <&prm_dsp1 0>;
-+            clocks = <&dsp1_clkctrl DRA7_DSP1_MMU0_DSP1_CLKCTRL 0>;
-+            firmware-name = "dra7-dsp1-fw.xe66";
-+        };
-+    };
--- 
-2.17.1
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Could you try if just calling driver_probe_done() when needed works, so we don't
+need to add a new boolean flag for this?
+
+Thanks,
+ Enric
+
+>>>>  };
+>>>>
+>>>>  /**
+>>>> @@ -177,7 +179,14 @@ static int cros_ec_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
+>>>>               memcpy(ec_dev->din, resp->data, len);
+>>>>               complete(&ec_rpmsg->xfer_ack);
+>>>>       } else if (resp->type == HOST_EVENT_MARK) {
+>>>> -             schedule_work(&ec_rpmsg->host_event_work);
+>>>> +             /*
+>>>> +              * If the host event is sent before cros_ec_register is
+>>>> +              * finished, queue the host event.
+>>>> +              */
+>>>> +             if (ec_rpmsg->probe_done)
+>>>> +                     schedule_work(&ec_rpmsg->host_event_work);
+>>>> +             else
+>>>> +                     ec_rpmsg->has_pending_host_event = true;
+>>>>       } else {
+>>>>               dev_warn(ec_dev->dev, "rpmsg received invalid type = %d",
+>>>>                        resp->type);
+>>>> @@ -240,6 +249,11 @@ static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
+>>>>               return ret;
+>>>>       }
+>>>>
+>>>> +     ec_rpmsg->probe_done = true;
+>>>> +
+>>>> +     if (ec_rpmsg->has_pending_host_event)
+>>>> +             schedule_work(&ec_rpmsg->host_event_work);
+>>>> +
+>>>>       return 0;
+>>>>  }
+>>>>
+>>>>
+>>>> base-commit: b19e8c68470385dd2c5440876591fddb02c8c402
+>>>>
