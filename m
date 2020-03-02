@@ -1,10 +1,8 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Mon, 9 Mar 2020 13:21:15 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 2 Mar 2020 15:07:57 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v5 2/8] remoteproc: Use size_t instead of int for
  rproc_mem_entry len
-Message-ID: <20200309192115.GB1399@xps15>
+Message-ID: <20200302230753.GB262924@yoga>
 References: <20200210162209.23149-1-cleger@kalray.eu>
  <20200302093902.27849-1-cleger@kalray.eu>
  <20200302093902.27849-3-cleger@kalray.eu>
@@ -13,19 +11,18 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200302093902.27849-3-cleger@kalray.eu>
 To: Clement Leger <cleger@kalray.eu>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Mar 02, 2020 at 10:38:56AM +0100, Clement Leger wrote:
+On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
+
 > Now that rproc_da_to_va uses a size_t for length, use a size_t for len field
 > of rproc_mem_entry. Function used to create such structures now takes
 > a size_t instead of int to allow full size range to be handled.
 > 
 > Signed-off-by: Clement Leger <cleger@kalray.eu>
 
-With the checkpatch warning fixed:
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 > ---
 >  drivers/remoteproc/remoteproc_core.c    | 14 ++++++++------
