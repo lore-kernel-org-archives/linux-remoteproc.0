@@ -1,9 +1,7 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Mon, 9 Mar 2020 11:52:31 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 2 Mar 2020 15:06:27 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v5 1/8] remoteproc: Use size_t type for len in da_to_va
-Message-ID: <20200309175231.GA1399@xps15>
+Message-ID: <20200302230624.GA262924@yoga>
 References: <20200210162209.23149-1-cleger@kalray.eu>
  <20200302093902.27849-1-cleger@kalray.eu>
  <20200302093902.27849-2-cleger@kalray.eu>
@@ -12,10 +10,11 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200302093902.27849-2-cleger@kalray.eu>
 To: Clement Leger <cleger@kalray.eu>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Mar 02, 2020 at 10:38:55AM +0100, Clement Leger wrote:
+On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
+
 > With upcoming changes in elf loader for elf64 support, section size will
 > be a u64. When used with da_to_va, this will potentially lead to
 > overflow if using the current "int" type for len argument. Change
@@ -24,7 +23,7 @@ On Mon, Mar 02, 2020 at 10:38:55AM +0100, Clement Leger wrote:
 > 
 > Signed-off-by: Clement Leger <cleger@kalray.eu>
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 > ---
 >  drivers/remoteproc/imx_rproc.c           | 11 ++++++-----
