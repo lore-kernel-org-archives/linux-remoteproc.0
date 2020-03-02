@@ -1,96 +1,87 @@
-Date: Mon, 2 Mar 2020 15:08:17 -0800
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v5 3/8] remoteproc: Use u64 type for boot_addr
-Message-ID: <20200302230814.GC262924@yoga>
+Return-Path: <cleger@kalray.eu>
+From: Clement Leger <cleger@kalray.eu>
+Subject: [PATCH v5 3/8] remoteproc: Use u64 type for boot_addr
+Date: Mon,  2 Mar 2020 10:38:57 +0100
+Message-Id: <20200302093902.27849-4-cleger@kalray.eu>
+In-Reply-To: <20200302093902.27849-1-cleger@kalray.eu>
 References: <20200210162209.23149-1-cleger@kalray.eu>
  <20200302093902.27849-1-cleger@kalray.eu>
- <20200302093902.27849-4-cleger@kalray.eu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200302093902.27849-4-cleger@kalray.eu>
-To: Clement Leger <cleger@kalray.eu>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Clement Leger <cleger@kalray.eu>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
+elf64 entry is defined as a u64. Since boot_addr is used to store the
+elf entry point, change boot_addr type to u64 to support both elf32
+and elf64. In the same time, fix users that were using this variable.
 
-> elf64 entry is defined as a u64. Since boot_addr is used to store the
-> elf entry point, change boot_addr type to u64 to support both elf32
-> and elf64. In the same time, fix users that were using this variable.
-> 
-> Signed-off-by: Clement Leger <cleger@kalray.eu>
+Signed-off-by: Clement Leger <cleger@kalray.eu>
+---
+ drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+ drivers/remoteproc/remoteproc_internal.h   | 2 +-
+ drivers/remoteproc/st_remoteproc.c         | 2 +-
+ include/linux/remoteproc.h                 | 4 ++--
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-> ---
->  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
->  drivers/remoteproc/remoteproc_internal.h   | 2 +-
->  drivers/remoteproc/st_remoteproc.c         | 2 +-
->  include/linux/remoteproc.h                 | 4 ++--
->  4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index 606aae166eba..c2a9783cfb9a 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -102,7 +102,7 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
->   * Note that the boot address is not a configurable property of all remote
->   * processors. Some will always boot at a specific hard-coded address.
->   */
-> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
-> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
->  {
->  	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
->  
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 58580210575c..0deae5f237b8 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -55,7 +55,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
->  int rproc_trigger_recovery(struct rproc *rproc);
->  
->  int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
-> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
->  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
->  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index ee13d23b43a9..a3268d95a50e 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -190,7 +190,7 @@ static int st_rproc_start(struct rproc *rproc)
->  		}
->  	}
->  
-> -	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-> +	dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
->  
->  	return 0;
->  
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index bee559330204..1683d6c386a6 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -382,7 +382,7 @@ struct rproc_ops {
->  				struct rproc *rproc, const struct firmware *fw);
->  	int (*load)(struct rproc *rproc, const struct firmware *fw);
->  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
-> -	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> +	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->  };
->  
->  /**
-> @@ -498,7 +498,7 @@ struct rproc {
->  	int num_traces;
->  	struct list_head carveouts;
->  	struct list_head mappings;
-> -	u32 bootaddr;
-> +	u64 bootaddr;
->  	struct list_head rvdevs;
->  	struct list_head subdevs;
->  	struct idr notifyids;
-> -- 
-> 2.15.0.276.g89ea799
-> 
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index 606aae166eba..c2a9783cfb9a 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -102,7 +102,7 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
+  * Note that the boot address is not a configurable property of all remote
+  * processors. Some will always boot at a specific hard-coded address.
+  */
+-u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
++u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
+ 
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 58580210575c..0deae5f237b8 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -55,7 +55,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
+ int rproc_trigger_recovery(struct rproc *rproc);
+ 
+ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+-u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
++u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
+ int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
+ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+index ee13d23b43a9..a3268d95a50e 100644
+--- a/drivers/remoteproc/st_remoteproc.c
++++ b/drivers/remoteproc/st_remoteproc.c
+@@ -190,7 +190,7 @@ static int st_rproc_start(struct rproc *rproc)
+ 		}
+ 	}
+ 
+-	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
++	dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
+ 
+ 	return 0;
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index bee559330204..1683d6c386a6 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -382,7 +382,7 @@ struct rproc_ops {
+ 				struct rproc *rproc, const struct firmware *fw);
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+-	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
++	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+ };
+ 
+ /**
+@@ -498,7 +498,7 @@ struct rproc {
+ 	int num_traces;
+ 	struct list_head carveouts;
+ 	struct list_head mappings;
+-	u32 bootaddr;
++	u64 bootaddr;
+ 	struct list_head rvdevs;
+ 	struct list_head subdevs;
+ 	struct idr notifyids;
+-- 
+2.15.0.276.g89ea799
