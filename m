@@ -1,202 +1,350 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 7/7] remoteproc/k3-r5: Add loading support for on-chip SRAM regions
-Date: Tue, 24 Mar 2020 15:18:19 -0500
-Message-ID: <20200324201819.23095-8-s-anna@ti.com>
-In-Reply-To: <20200324201819.23095-1-s-anna@ti.com>
-References: <20200324201819.23095-1-s-anna@ti.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Tue, 3 Mar 2020 15:53:38 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCHv7 02/15] remoteproc/omap: Add device tree support
+Message-ID: <20200303225338.GA8197@xps15>
+References: <20200221101936.16833-1-t-kristo@ti.com>
+ <20200221101936.16833-3-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221101936.16833-3-t-kristo@ti.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The K3 SoCs has various internal on-chip SRAM memories like the SRAM
-within the MCU domain or the shared MSMC RAM within NavSS that can be
-used for multiple purposes. One such purpose is to have the R5F cores
-use a portion of such on-chip SRAM for fast-access data or to directly
-execute code.
+On Fri, Feb 21, 2020 at 12:19:23PM +0200, Tero Kristo wrote:
+> From: Suman Anna <s-anna@ti.com>
+> 
+> OMAP4+ SoCs support device tree boot only. The OMAP remoteproc
+> driver is enhanced to support remoteproc devices created through
+> Device Tree, support for legacy platform devices has been
+> deprecated. The current DT support handles the IPU and DSP
+> processor subsystems on OMAP4 and OMAP5 SoCs.
+> 
+> The OMAP remoteproc driver relies on the ti-sysc, reset, and
+> syscon layers for performing clock, reset and boot vector
+> management (DSP remoteprocs only) of the devices, but some of
+> these are limited only to the machine-specific layers
+> in arch/arm. The dependency against control module API for boot
+> vector management of the DSP remoteprocs has now been removed
+> with added logic to parse the boot register from the DT node
+> and program it appropriately directly within the driver.
+> 
+> The OMAP remoteproc driver expects the firmware names to be
+> provided via device tree entries (firmware-name.) These are used
+> to load the proper firmware during boot of the remote processor.
+> 
+> Cc: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> [t-kristo@ti.com: converted to use ti-sysc framework]
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+> v7:
+>   - some minor kerneldoc updates
+> 
+>  drivers/remoteproc/omap_remoteproc.c | 177 ++++++++++++++++++++++++---
+>  1 file changed, 160 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+> index 6398194075aa..d47d5ded651a 100644
+> --- a/drivers/remoteproc/omap_remoteproc.c
+> +++ b/drivers/remoteproc/omap_remoteproc.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * OMAP Remote Processor driver
+>   *
+> - * Copyright (C) 2011 Texas Instruments, Inc.
+> + * Copyright (C) 2011-2020 Texas Instruments Incorporated - http://www.ti.com/
+>   * Copyright (C) 2011 Google, Inc.
+>   *
+>   * Ohad Ben-Cohen <ohad@wizery.com>
+> @@ -16,27 +16,51 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/err.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/remoteproc.h>
+>  #include <linux/mailbox_client.h>
+>  #include <linux/omap-mailbox.h>
+> -
+> -#include <linux/platform_data/remoteproc-omap.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/reset.h>
+>  
+>  #include "omap_remoteproc.h"
+>  #include "remoteproc_internal.h"
+>  
+> +/**
+> + * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
+> + * @syscon: regmap handle for the system control configuration module
+> + * @boot_reg: boot register offset within the @syscon regmap
+> + */
+> +struct omap_rproc_boot_data {
+> +	struct regmap *syscon;
+> +	unsigned int boot_reg;
+> +};
+> +
+>  /**
+>   * struct omap_rproc - omap remote processor state
+>   * @mbox: mailbox channel handle
+>   * @client: mailbox client to request the mailbox channel
+> + * @boot_data: boot data structure for setting processor boot address
+>   * @rproc: rproc handle
+> + * @reset: reset handle
+>   */
+>  struct omap_rproc {
+>  	struct mbox_chan *mbox;
+>  	struct mbox_client client;
+> +	struct omap_rproc_boot_data *boot_data;
+>  	struct rproc *rproc;
+> +	struct reset_control *reset;
+> +};
+> +
+> +/**
+> + * struct omap_rproc_dev_data - device data for the omap remote processor
+> + * @device_name: device name of the remote processor
+> + */
+> +struct omap_rproc_dev_data {
+> +	const char *device_name;
+>  };
+>  
+>  /**
+> @@ -92,6 +116,21 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+>  			ret);
+>  }
+>  
+> +/**
+> + * omap_rproc_write_dsp_boot_addr() - set boot address for DSP remote processor
+> + * @rproc: handle of a remote processor
+> + *
+> + * Set boot address for a supported DSP remote processor.
+> + */
+> +static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+> +{
+> +	struct omap_rproc *oproc = rproc->priv;
+> +	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+> +	u32 offset = bdata->boot_reg;
+> +
+> +	regmap_write(bdata->syscon, offset, rproc->bootaddr);
 
-Add support to the K3 R5 remoteproc driver to parse and support
-loading into such memories. The SRAM regions need to be mapped as
-normal non-cacheable memory to avoid kernel crashes when the remoteproc
-loader code uses the Arm64 memset library function (the "DC ZVA"
-instruction throws a alignment fault on device type memory).
+I always get wary when a return code is ignored but it's being added in the next
+patch.  As such:
 
-These SRAM regions are completely optional as not all firmware images
-require these memories, and any such memory has to be reserved as such
-in the DTS files.
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 106 ++++++++++++++++++++++-
- 1 file changed, 105 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 8c9b7ae5d8b7..0ae0b66ec9eb 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -85,7 +85,9 @@ struct k3_r5_cluster {
-  * @dev: cached device pointer
-  * @rproc: rproc handle representing this core
-  * @mem: internal memory regions data
-+ * @sram: on-chip SRAM memory regions data
-  * @num_mems: number of internal memory regions
-+ * @num_sram: number of on-chip SRAM memory regions
-  * @reset: reset control handle
-  * @tsp: TI-SCI processor control handle
-  * @ti_sci: TI-SCI handle
-@@ -99,7 +101,9 @@ struct k3_r5_core {
- 	struct device *dev;
- 	struct rproc *rproc;
- 	struct k3_r5_mem *mem;
-+	struct k3_r5_mem *sram;
- 	int num_mems;
-+	int num_sram;
- 	struct reset_control *reset;
- 	struct ti_sci_proc *tsp;
- 	const struct ti_sci_handle *ti_sci;
-@@ -585,6 +589,18 @@ static void *k3_r5_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 		}
- 	}
- 
-+	/* handle any SRAM regions using SoC-view addresses */
-+	for (i = 0; i < core->num_sram; i++) {
-+		dev_addr = core->sram[i].dev_addr;
-+		size = core->sram[i].size;
-+
-+		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
-+			offset = da - dev_addr;
-+			va = core->sram[i].cpu_addr + offset;
-+			return (__force void *)va;
-+		}
-+	}
-+
- 	/* handle static DDR reserved memory regions */
- 	for (i = 0; i < kproc->num_rmems; i++) {
- 		dev_addr = kproc->rmem[i].dev_addr;
-@@ -1017,6 +1033,77 @@ static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
- 	return ret;
- }
- 
-+static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
-+					   struct k3_r5_core *core)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *sram_np;
-+	struct resource res;
-+	int num_sram;
-+	int i, ret;
-+
-+	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
-+	if (num_sram <= 0) {
-+		dev_dbg(dev, "device does not use reserved on-chip memories, num_sram = %d\n",
-+			num_sram);
-+		return 0;
-+	}
-+
-+	core->sram = kcalloc(num_sram, sizeof(*core->sram), GFP_KERNEL);
-+	if (!core->sram)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < num_sram; i++) {
-+		sram_np = of_parse_phandle(np, "sram", i);
-+		if (!sram_np) {
-+			ret = -EINVAL;
-+			goto fail;
-+		}
-+
-+		if (!of_device_is_available(sram_np)) {
-+			of_node_put(sram_np);
-+			ret = -EINVAL;
-+			goto fail;
-+		}
-+
-+		ret = of_address_to_resource(sram_np, 0, &res);
-+		of_node_put(sram_np);
-+		if (ret) {
-+			ret = -EINVAL;
-+			goto fail;
-+		}
-+		core->sram[i].bus_addr = res.start;
-+		core->sram[i].dev_addr = res.start;
-+		core->sram[i].size = resource_size(&res);
-+		core->sram[i].cpu_addr = ioremap_wc(res.start,
-+						    resource_size(&res));
-+		if (!core->sram[i].cpu_addr) {
-+			dev_err(dev, "failed to parse and map sram%d memory at %pad\n",
-+				i, &res.start);
-+			ret = -ENOMEM;
-+			goto fail;
-+		}
-+
-+		dev_dbg(dev, "memory    sram%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
-+			i, &core->sram[i].bus_addr,
-+			core->sram[i].size, core->sram[i].cpu_addr,
-+			core->sram[i].dev_addr);
-+	}
-+	core->num_sram = num_sram;
-+
-+	return 0;
-+
-+fail:
-+	for (i--; i >= 0; i--) {
-+		if (core->sram[i].cpu_addr)
-+			iounmap(core->sram[i].cpu_addr);
-+	}
-+	kfree(core->sram);
-+
-+	return ret;
-+}
-+
- static
- struct ti_sci_proc *k3_r5_core_of_get_tsp(struct device *dev,
- 					  const struct ti_sci_handle *sci)
-@@ -1048,7 +1135,7 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct k3_r5_core *core;
--	int ret, ret1;
-+	int ret, ret1, i;
- 
- 	core = devm_kzalloc(dev, sizeof(*core), GFP_KERNEL);
- 	if (!core)
-@@ -1125,10 +1212,23 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
- 		goto err_intmem;
- 	}
- 
-+	ret = k3_r5_core_of_get_sram_memories(pdev, core);
-+	if (ret) {
-+		dev_err(dev, "failed to get sram memories, ret = %d\n", ret);
-+		goto err_sram;
-+	}
-+
- 	platform_set_drvdata(pdev, core);
- 
- 	return 0;
- 
-+err_sram:
-+	for (i = 0; i < core->num_mems; i++) {
-+		devm_iounmap(dev, core->mem[i].cpu_addr);
-+		devm_release_mem_region(dev, core->mem[i].bus_addr,
-+					core->mem[i].size);
-+	}
-+	devm_kfree(dev, core->mem);
- err_intmem:
- 	ret1 = ti_sci_proc_release(core->tsp);
- 	if (ret1)
-@@ -1156,6 +1256,10 @@ static int k3_r5_core_of_exit(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int i, ret;
- 
-+	for (i = 0; i < core->num_sram; i++)
-+		iounmap(core->sram[i].cpu_addr);
-+	kfree(core->sram);
-+
- 	for (i = 0; i < core->num_mems; i++) {
- 		devm_release_mem_region(dev, core->mem[i].bus_addr,
- 					core->mem[i].size);
--- 
-2.23.0
+> +}
+> +
+>  /*
+>   * Power up the remote processor.
+>   *
+> @@ -103,13 +142,11 @@ static int omap_rproc_start(struct rproc *rproc)
+>  {
+>  	struct omap_rproc *oproc = rproc->priv;
+>  	struct device *dev = rproc->dev.parent;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
+>  	int ret;
+>  	struct mbox_client *client = &oproc->client;
+>  
+> -	if (pdata->set_bootaddr)
+> -		pdata->set_bootaddr(rproc->bootaddr);
+> +	if (oproc->boot_data)
+> +		omap_rproc_write_dsp_boot_addr(rproc);
+>  
+>  	client->dev = dev;
+>  	client->tx_done = NULL;
+> @@ -117,7 +154,7 @@ static int omap_rproc_start(struct rproc *rproc)
+>  	client->tx_block = false;
+>  	client->knows_txdone = false;
+>  
+> -	oproc->mbox = omap_mbox_request_channel(client, pdata->mbox_name);
+> +	oproc->mbox = mbox_request_channel(client, 0);
+>  	if (IS_ERR(oproc->mbox)) {
+>  		ret = -EBUSY;
+>  		dev_err(dev, "mbox_request_channel failed: %ld\n",
+> @@ -138,9 +175,9 @@ static int omap_rproc_start(struct rproc *rproc)
+>  		goto put_mbox;
+>  	}
+>  
+> -	ret = pdata->device_enable(pdev);
+> +	ret = reset_control_deassert(oproc->reset);
+>  	if (ret) {
+> -		dev_err(dev, "omap_device_enable failed: %d\n", ret);
+> +		dev_err(dev, "reset control deassert failed: %d\n", ret);
+>  		goto put_mbox;
+>  	}
+>  
+> @@ -154,13 +191,10 @@ static int omap_rproc_start(struct rproc *rproc)
+>  /* power off the remote processor */
+>  static int omap_rproc_stop(struct rproc *rproc)
+>  {
+> -	struct device *dev = rproc->dev.parent;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
+>  	struct omap_rproc *oproc = rproc->priv;
+>  	int ret;
+>  
+> -	ret = pdata->device_shutdown(pdev);
+> +	ret = reset_control_assert(oproc->reset);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -175,12 +209,115 @@ static const struct rproc_ops omap_rproc_ops = {
+>  	.kick		= omap_rproc_kick,
+>  };
+>  
+> +static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+> +	.device_name	= "dsp",
+> +};
+> +
+> +static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
+> +	.device_name	= "ipu",
+> +};
+> +
+> +static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+> +	.device_name	= "dsp",
+> +};
+> +
+> +static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+> +	.device_name	= "ipu",
+> +};
+> +
+> +static const struct of_device_id omap_rproc_of_match[] = {
+> +	{
+> +		.compatible     = "ti,omap4-dsp",
+> +		.data           = &omap4_dsp_dev_data,
+> +	},
+> +	{
+> +		.compatible     = "ti,omap4-ipu",
+> +		.data           = &omap4_ipu_dev_data,
+> +	},
+> +	{
+> +		.compatible     = "ti,omap5-dsp",
+> +		.data           = &omap5_dsp_dev_data,
+> +	},
+> +	{
+> +		.compatible     = "ti,omap5-ipu",
+> +		.data           = &omap5_ipu_dev_data,
+> +	},
+> +	{
+> +		/* end */
+> +	},
+> +};
+> +MODULE_DEVICE_TABLE(of, omap_rproc_of_match);
+> +
+> +static const char *omap_rproc_get_firmware(struct platform_device *pdev)
+> +{
+> +	const char *fw_name;
+> +	int ret;
+> +
+> +	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
+> +				      &fw_name);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return fw_name;
+> +}
+> +
+> +static int omap_rproc_get_boot_data(struct platform_device *pdev,
+> +				    struct rproc *rproc)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct omap_rproc *oproc = rproc->priv;
+> +	const struct omap_rproc_dev_data *data;
+> +	int ret;
+> +
+> +	data = of_device_get_match_data(&pdev->dev);
+> +	if (!data)
+> +		return -ENODEV;
+> +
+> +	if (!of_property_read_bool(np, "ti,bootreg"))
+> +		return 0;
+> +
+> +	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
+> +					GFP_KERNEL);
+> +	if (!oproc->boot_data)
+> +		return -ENOMEM;
+> +
+> +	oproc->boot_data->syscon =
+> +			syscon_regmap_lookup_by_phandle(np, "ti,bootreg");
+> +	if (IS_ERR(oproc->boot_data->syscon)) {
+> +		ret = PTR_ERR(oproc->boot_data->syscon);
+> +		return ret;
+> +	}
+> +
+> +	if (of_property_read_u32_index(np, "ti,bootreg", 1,
+> +				       &oproc->boot_data->boot_reg)) {
+> +		dev_err(&pdev->dev, "couldn't get the boot register\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int omap_rproc_probe(struct platform_device *pdev)
+>  {
+> -	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
+> +	struct device_node *np = pdev->dev.of_node;
+>  	struct omap_rproc *oproc;
+>  	struct rproc *rproc;
+> +	const char *firmware;
+>  	int ret;
+> +	struct reset_control *reset;
+> +
+> +	if (!np) {
+> +		dev_err(&pdev->dev, "only DT-based devices are supported\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	reset = devm_reset_control_array_get_exclusive(&pdev->dev);
+> +	if (IS_ERR(reset))
+> +		return PTR_ERR(reset);
+> +
+> +	firmware = omap_rproc_get_firmware(pdev);
+> +	if (IS_ERR(firmware))
+> +		return PTR_ERR(firmware);
+>  
+>  	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+>  	if (ret) {
+> @@ -188,16 +325,21 @@ static int omap_rproc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	rproc = rproc_alloc(&pdev->dev, pdata->name, &omap_rproc_ops,
+> -			    pdata->firmware, sizeof(*oproc));
+> +	rproc = rproc_alloc(&pdev->dev, dev_name(&pdev->dev), &omap_rproc_ops,
+> +			    firmware, sizeof(*oproc));
+>  	if (!rproc)
+>  		return -ENOMEM;
+>  
+>  	oproc = rproc->priv;
+>  	oproc->rproc = rproc;
+> +	oproc->reset = reset;
+>  	/* All existing OMAP IPU and DSP processors have an MMU */
+>  	rproc->has_iommu = true;
+>  
+> +	ret = omap_rproc_get_boot_data(pdev, rproc);
+> +	if (ret)
+> +		goto free_rproc;
+> +
+>  	platform_set_drvdata(pdev, rproc);
+>  
+>  	ret = rproc_add(rproc);
+> @@ -226,6 +368,7 @@ static struct platform_driver omap_rproc_driver = {
+>  	.remove = omap_rproc_remove,
+>  	.driver = {
+>  		.name = "omap-rproc",
+> +		.of_match_table = omap_rproc_of_match,
+>  	},
+>  };
+>  
+> -- 
+> 2.17.1
+> 
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
