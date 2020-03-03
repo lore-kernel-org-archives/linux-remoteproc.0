@@ -1,10 +1,8 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Mon, 9 Mar 2020 14:32:23 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 3 Mar 2020 14:01:46 -0800
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v5 8/8] remoteproc: Adapt coredump to generate correct
  elf type
-Message-ID: <20200309203223.GE1399@xps15>
+Message-ID: <20200303220142.GU1214176@minitux>
 References: <20200210162209.23149-1-cleger@kalray.eu>
  <20200302093902.27849-1-cleger@kalray.eu>
  <20200302093902.27849-9-cleger@kalray.eu>
@@ -13,10 +11,11 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200302093902.27849-9-cleger@kalray.eu>
 To: Clement Leger <cleger@kalray.eu>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Mar 02, 2020 at 10:39:02AM +0100, Clement Leger wrote:
+On Mon 02 Mar 01:39 PST 2020, Clement Leger wrote:
+
 > Now that remoteproc can load an elf64, coredump elf class should be
 > the same as the loaded elf class. In order to do that, add a
 > elf_class field to rproc with default values. If an elf is loaded
@@ -25,6 +24,9 @@ On Mon, Mar 02, 2020 at 10:39:02AM +0100, Clement Leger wrote:
 > macro in order to create an elf file with correct class.
 > 
 > Signed-off-by: Clement Leger <cleger@kalray.eu>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
 > ---
 >  drivers/remoteproc/remoteproc_core.c       | 67 ++++++++++++++++--------------
 >  drivers/remoteproc/remoteproc_elf_loader.c |  3 ++
@@ -145,19 +147,6 @@ On Mon, Mar 02, 2020 at 10:39:02AM +0100, Clement Leger wrote:
 >  	rproc->priv = &rproc[1];
 >  	rproc->auto_boot = true;
 > +	rproc->elf_class = ELFCLASS32;
-
-I would initialise this to ELFCLASSNONE to make sure that if a platform driver
-overwrites rproc_elf_load_segments or doesn't provide one, we don't falsely
-deduce the elf type.  It goes without saying that if elf_class == ELFCLASSNONE,
-a coredump is not generated. 
-
-Unless you think this is a seriously bad idea or Bjorn over rules me,
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
-Thanks,
-Mathieu
-
 >  
 >  	device_initialize(&rproc->dev);
 >  	rproc->dev.parent = dev;
