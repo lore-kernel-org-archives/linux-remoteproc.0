@@ -1,79 +1,87 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 3/4] remoteproc: qcom: q6v5: Add common panic handler
-Date: Mon,  9 Mar 2020 23:38:16 -0700
-Message-Id: <20200310063817.3344712-4-bjorn.andersson@linaro.org>
-In-Reply-To: <20200310063817.3344712-1-bjorn.andersson@linaro.org>
-References: <20200310063817.3344712-1-bjorn.andersson@linaro.org>
+Return-Path: <nikita.shubin@maquefel.me>
+From: Nikita Shubin <NShubin@topcon.com>
+Subject: [PATCH 2/2] remoteproc: imx_rproc: set pc on start
+Date: Wed,  4 Mar 2020 17:26:28 +0300
+Message-Id: <20200304142628.8471-2-NShubin@topcon.com>
+In-Reply-To: <20200304142628.8471-1-NShubin@topcon.com>
+References: <20200304142628.8471-1-NShubin@topcon.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a common panic handler that invokes a stop request and sleep enough
-to let the remoteproc flush it's caches etc in order to aid post mortem
-debugging. For now a hard coded 200ms is returned to the remoteproc
-core, this value is taken from the downstream kernel.
+In case elf file interrupt vector is not supposed to be at OCRAM_S,
+it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
+firmware.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Otherwise firmware located anywhere besides OCRAM_S won't boot.
+
+The firmware must set stack poiner as first instruction:
+
+Reset_Handler:
+    ldr   sp, = __stack      /* set stack pointer */
+
+Signed-off-by: Nikita Shubin <NShubin@topcon.com>
 ---
+ drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Change since v3:
- - Change return type to unsigned long
-
- drivers/remoteproc/qcom_q6v5.c | 20 ++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5.h |  1 +
- 2 files changed, 21 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index cb0f4a0be032..111a442c993c 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -15,6 +15,8 @@
- #include <linux/remoteproc.h>
- #include "qcom_q6v5.h"
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 796b6b86550a..d02007f05ebd 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -45,6 +45,8 @@
  
-+#define Q6V5_PANIC_DELAY_MS	200
+ #define IMX7D_RPROC_MEM_MAX		8
+ 
++#define IMX_BOOT_PC			0x4
 +
  /**
-  * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
-  * @q6v5:	reference to qcom_q6v5 context to be reinitialized
-@@ -162,6 +164,24 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
+  * struct imx_rproc_mem - slim internal memory structure
+  * @cpu_addr: MPU virtual address of the memory region
+@@ -85,6 +87,7 @@ struct imx_rproc {
+ 	const struct imx_rproc_dcfg	*dcfg;
+ 	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
+ 	struct clk			*clk;
++	void __iomem			*bootreg;
+ };
+ 
+ static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
+@@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc *rproc)
+ 	struct device *dev = priv->dev;
+ 	int ret;
+ 
++	/* write entry point to program counter */
++	writel(rproc->bootaddr, priv->bootreg);
++
+ 	ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
+ 				 dcfg->src_mask, dcfg->src_start);
+ 	if (ret)
+ 		dev_err(dev, "Failed to enable M4!\n");
+ 
++	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
++
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
  
-+/**
-+ * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
-+ * @q6v5:	reference to qcom_q6v5 context
-+ *
-+ * Set the stop bit and sleep in order to allow the remote processor to flush
-+ * its caches etc for post mortem debugging.
-+ *
-+ * Return: 200ms
-+ */
-+unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
-+{
-+	qcom_smem_state_update_bits(q6v5->state,
-+				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
-+
-+	return Q6V5_PANIC_DELAY_MS;
-+}
-+EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
-+
- /**
-  * qcom_q6v5_init() - initializer of the q6v5 common struct
-  * @q6v5:	handle to be initialized
-diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-index 7ac92c1e0f49..c4ed887c1499 100644
---- a/drivers/remoteproc/qcom_q6v5.h
-+++ b/drivers/remoteproc/qcom_q6v5.h
-@@ -42,5 +42,6 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
- int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
-+unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+@@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
+ 	if (ret)
+ 		dev_err(dev, "Failed to stop M4!\n");
  
- #endif
++	/* clear entry points */
++	writel(0, priv->bootreg);
++
+ 	return ret;
+ }
+ 
+@@ -366,6 +377,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
+ 		goto err_put_rproc;
+ 	}
+ 
++	priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC, sizeof(u32));
++
+ 	/*
+ 	 * clk for M4 block including memory. Should be
+ 	 * enabled before .start for FW transfer.
 -- 
-2.24.0
+2.24.1
