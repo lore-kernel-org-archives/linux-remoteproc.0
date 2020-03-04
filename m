@@ -1,92 +1,101 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Tue, 3 Mar 2020 15:56:38 -0700
+Date: Wed, 4 Mar 2020 10:36:10 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCHv7 03/15] remoteproc/omap: Add a sanity check for DSP boot
- address alignment
-Message-ID: <20200303225638.GB8197@xps15>
+Subject: Re: [PATCHv7 05/15] remoteproc/omap: Add the rproc ops .da_to_va()
+ implementation
+Message-ID: <20200304173610.GD8197@xps15>
 References: <20200221101936.16833-1-t-kristo@ti.com>
- <20200221101936.16833-4-t-kristo@ti.com>
+ <20200221101936.16833-6-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200221101936.16833-4-t-kristo@ti.com>
+In-Reply-To: <20200221101936.16833-6-t-kristo@ti.com>
 To: Tero Kristo <t-kristo@ti.com>
 Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Feb 21, 2020 at 12:19:24PM +0200, Tero Kristo wrote:
+On Fri, Feb 21, 2020 at 12:19:26PM +0200, Tero Kristo wrote:
 > From: Suman Anna <s-anna@ti.com>
 > 
-> The DSP remote processors on OMAP SoCs require a boot register to
-> be programmed with a boot address, and this boot address needs to
-> be on a 1KB boundary. The current code is simply masking the boot
-> address appropriately without performing any sanity checks before
-> releasing the resets. An unaligned boot address results in an
-> undefined execution behavior and can result in various bus errors
-> like MMU Faults or L3 NoC errors. Such errors are hard to debug and
-> can be easily avoided by adding a sanity check for the alignment
-> before booting a DSP remote processor.
+> An implementation for the rproc ops .da_to_va() has been added
+> that provides the address translation between device addresses
+> to kernel virtual addresses for internal RAMs present on that
+> particular remote processor device. The implementation provides
+> the translations based on the addresses parsed and stored during
+> the probe.
+> 
+> This ops gets invoked by the exported rproc_da_to_va() function
+> and allows the remoteproc core's ELF loader to be able to load
+> program data directly into the internal memories.
 > 
 > Signed-off-by: Suman Anna <s-anna@ti.com>
 > Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
 > ---
 > v7:
->   - minor kerneldoc update (added return value details for
->     omap_rproc_write_dsp_boot_addr)
+>   - minor kerneldoc updates
 > 
->  drivers/remoteproc/omap_remoteproc.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
+>  drivers/remoteproc/omap_remoteproc.c | 40 ++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
 > 
 > diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index d47d5ded651a..64b559caadff 100644
+> index 4f92b069f5d0..89084dd919ba 100644
 > --- a/drivers/remoteproc/omap_remoteproc.c
 > +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -121,14 +121,25 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
->   * @rproc: handle of a remote processor
->   *
->   * Set boot address for a supported DSP remote processor.
-> + *
-> + * Return: 0 on success, or -EINVAL if boot address is not aligned properly
->   */
-> -static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
-> +static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
->  {
-> +	struct device *dev = rproc->dev.parent;
->  	struct omap_rproc *oproc = rproc->priv;
->  	struct omap_rproc_boot_data *bdata = oproc->boot_data;
->  	u32 offset = bdata->boot_reg;
->  
-> +	if (rproc->bootaddr & (SZ_1K - 1)) {
-> +		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
-> +			rproc->bootaddr);
-> +		return -EINVAL;
-> +	}
-> +
->  	regmap_write(bdata->syscon, offset, rproc->bootaddr);
-> +
-> +	return 0;
+> @@ -247,10 +247,50 @@ static int omap_rproc_stop(struct rproc *rproc)
+>  	return 0;
 >  }
 >  
->  /*
-> @@ -145,8 +156,11 @@ static int omap_rproc_start(struct rproc *rproc)
->  	int ret;
->  	struct mbox_client *client = &oproc->client;
->  
-> -	if (oproc->boot_data)
-> -		omap_rproc_write_dsp_boot_addr(rproc);
-> +	if (oproc->boot_data) {
-> +		ret = omap_rproc_write_dsp_boot_addr(rproc);
-> +		if (ret)
-> +			return ret;
+> +/**
+> + * omap_rproc_da_to_va() - internal memory translation helper
+> + * @rproc: remote processor to apply the address translation for
+> + * @da: device address to translate
+> + * @len: length of the memory buffer
+> + *
+> + * Custom function implementing the rproc .da_to_va ops to provide address
+> + * translation (device address to kernel virtual address) for internal RAMs
+> + * present in a DSP or IPU device). The translated addresses can be used
+> + * either by the remoteproc core for loading, or by any rpmsg bus drivers.
+> + *
+> + * Return: translated virtual address in kernel memory space on success,
+> + *         or NULL on failure.
+> + */
+> +static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+> +{
+> +	struct omap_rproc *oproc = rproc->priv;
+> +	int i;
+> +	u32 offset;
+> +
+> +	if (len <= 0)
+> +		return NULL;
+> +
+> +	if (!oproc->num_mems)
+> +		return NULL;
+> +
+> +	for (i = 0; i < oproc->num_mems; i++) {
+> +		if (da >= oproc->mem[i].dev_addr && da + len <=
+> +		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
+> +			offset = da - oproc->mem[i].dev_addr;
+> +			/* __force to make sparse happy with type conversion */
+> +			return (__force void *)(oproc->mem[i].cpu_addr +
+> +						offset);
+> +		}
 > +	}
+> +
+> +	return NULL;
+> +}
+> +
+>  static const struct rproc_ops omap_rproc_ops = {
+>  	.start		= omap_rproc_start,
+>  	.stop		= omap_rproc_stop,
+>  	.kick		= omap_rproc_kick,
+> +	.da_to_va	= omap_rproc_da_to_va,
+>  };
 >  
->  	client->dev = dev;
->  	client->tx_done = NULL;
+>  static const struct omap_rproc_mem_data ipu_mems[] = {
 > -- 
 > 2.17.1
 > 
