@@ -1,80 +1,72 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 02/18] remoteproc: Introduce function rproc_set_mcu_sync_state()
-Date: Thu, 12 Mar 2020 16:11:42 -0600
-Message-Id: <20200312221158.3613-3-mathieu.poirier@linaro.org>
-In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v4 3/3] remoteproc: qcom_q6v5_mss: Reload the mba region on coredump
+Date: Thu,  5 Mar 2020 01:17:29 +0530
+Message-Id: <20200304194729.27979-4-sibis@codeaurora.org>
+In-Reply-To: <20200304194729.27979-1-sibis@codeaurora.org>
+References: <20200304194729.27979-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
+To: bjorn.andersson@linaro.org, mathieu.poirier@linaro.org, jeffrey.l.hugo@gmail.com, luca@z3ntu.xyz
+Cc: agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>, stable@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce function rproc_set_mcu_sync_state() to set the synchronisation
-state of the MCU at various stages of the lifecycle process.
+On secure devices after a wdog/fatal interrupt, the mba region has to be
+refreshed in order to prevent the following errors during mba load.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Err Logs:
+remoteproc remoteproc2: stopped remote processor 4080000.remoteproc
+qcom-q6v5-mss 4080000.remoteproc: PBL returned unexpected status -284031232
+qcom-q6v5-mss 4080000.remoteproc: PBL returned unexpected status -284031232
+....
+qcom-q6v5-mss 4080000.remoteproc: PBL returned unexpected status -284031232
+qcom-q6v5-mss 4080000.remoteproc: MBA booted, loading mpss
+
+Fixes: 7dd8ade24dc2a ("remoteproc: qcom: q6v5-mss: Add custom dump function for modem")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/remoteproc_internal.h | 38 ++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/remoteproc/qcom_q6v5_mss.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 5c93de5e00bb..73ea32df0156 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -24,6 +24,26 @@ struct rproc_debug_trace {
- 	struct rproc_mem_entry trace_mem;
- };
- 
-+/*
-+ * enum rproc_sync_states - remote processsor sync states
-+ * @RPROC_SYNC_STATE_INIT	state to use when the remoteproc core
-+ *				is initialising.
-+ * @RPROC_SYNC_STATE_SHUTDOWN	state to use after the remoteproc core
-+ *				has shutdown (rproc_shutdown()) the MCU.
-+ * @RPROC_SYNC_STATE_CRASHED	state to use after the MCU has crashed but
-+ *				has not been recovered by the remoteproc
-+ *				core yet.
-+ *
-+ * Keeping these separate from the enum rproc_state in order to avoid
-+ * introducing coupling between the state of the MCU and the synchronisation
-+ * operation to use.
-+ */
-+enum rproc_mcu_sync_states {
-+	RPROC_SYNC_STATE_INIT,
-+	RPROC_SYNC_STATE_SHUTDOWN,
-+	RPROC_SYNC_STATE_CRASHED,
-+};
-+
- /* from remoteproc_core.c */
- void rproc_release(struct kref *kref);
- irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-@@ -68,6 +88,24 @@ static inline bool rproc_sync_with_mcu(struct rproc *rproc)
- 	return rproc->sync_with_mcu;
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index b8a922181de8a..d7667418a62f4 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1042,6 +1042,23 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
+ 	}
  }
  
-+static inline void rproc_set_mcu_sync_state(struct rproc *rproc,
-+					    unsigned int state)
++static int q6v5_reload_mba(struct rproc *rproc)
 +{
-+	switch (state) {
-+	case RPROC_SYNC_STATE_INIT:
-+		rproc->sync_with_mcu = rproc->sync_states->on_init;
-+		break;
-+	case RPROC_SYNC_STATE_SHUTDOWN:
-+		rproc->sync_with_mcu = rproc->sync_states->after_stop;
-+		break;
-+	case RPROC_SYNC_STATE_CRASHED:
-+		rproc->sync_with_mcu = rproc->sync_states->after_crash;
-+		break;
-+	default:
-+		break;
-+	}
++	struct q6v5 *qproc = rproc->priv;
++	const struct firmware *fw;
++	int ret;
++
++	ret = request_firmware(&fw, rproc->firmware, qproc->dev);
++	if (ret < 0)
++		return ret;
++
++	q6v5_load(rproc, fw);
++	ret = q6v5_mba_load(qproc);
++	release_firmware(fw);
++
++	return ret;
 +}
 +
- static inline
- int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ static int q6v5_mpss_load(struct q6v5 *qproc)
  {
+ 	const struct elf32_phdr *phdrs;
+@@ -1221,7 +1238,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 
+ 	/* Unlock mba before copying segments */
+ 	if (!qproc->dump_mba_loaded) {
+-		ret = q6v5_mba_load(qproc);
++		ret = q6v5_reload_mba(rproc);
+ 		if (!ret) {
+ 			/* Reset ownership back to Linux to copy segments */
+ 			ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
 -- 
-2.20.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
