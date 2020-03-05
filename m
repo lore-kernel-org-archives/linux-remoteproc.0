@@ -1,142 +1,237 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH v7 1/2] rpmsg: core: add API to get MTU
-Date: Tue, 24 Mar 2020 18:04:06 +0100
-Message-ID: <20200324170407.16470-2-arnaud.pouliquen@st.com>
-In-Reply-To: <20200324170407.16470-1-arnaud.pouliquen@st.com>
-References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Thu, 5 Mar 2020 09:56:39 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCHv7 04/15] remoteproc/omap: Add support to parse internal
+ memories from DT
+Message-ID: <20200305165639.GA13914@xps15>
+References: <20200221101936.16833-1-t-kristo@ti.com>
+ <20200221101936.16833-5-t-kristo@ti.com>
+ <20200304173207.GC8197@xps15>
+ <12cfb0db-f86e-3cd8-5010-d96daa91c184@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Alan Cox <gnomes@lxorguk.ukuu.org.uk>, xiang xiao <xiaoxiang781216@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12cfb0db-f86e-3cd8-5010-d96daa91c184@ti.com>
+To: Tero Kristo <t-kristo@ti.com>
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Return the rpmsg buffer MTU for sending message, so rpmsg users
-can split a long message in several sub rpmsg buffers.
+On Wed, Mar 04, 2020 at 09:08:07PM +0200, Tero Kristo wrote:
+> On 04/03/2020 19:32, Mathieu Poirier wrote:
+> > On Fri, Feb 21, 2020 at 12:19:25PM +0200, Tero Kristo wrote:
+> > > From: Suman Anna <s-anna@ti.com>
+> > > 
+> > > The OMAP remoteproc driver has been enhanced to parse and store
+> > > the kernel mappings for different internal RAM memories that may
+> > > be present within each remote processor IP subsystem. Different
+> > > devices have varying memories present on current SoCs. The current
+> > > support handles the L2RAM for all IPU devices on OMAP4+ SoCs. The
+> > > DSPs on OMAP4/OMAP5 only have Unicaches and do not have any L1 or
+> > > L2 RAM memories.
+> > > 
+> > > IPUs are expected to have the L2RAM at a fixed device address of
+> > > 0x20000000, based on the current limitations on Attribute MMU
+> > > configurations.
+> > > 
+> > > NOTE:
+> > > The current logic doesn't handle the parsing of memories for DRA7
+> > > remoteproc devices, and will be added alongside the DRA7 support.
+> > > 
+> > > Signed-off-by: Suman Anna <s-anna@ti.com>
+> > > [t-kristo: converted to parse mem names / device addresses from pdata]
+> > > Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> > > ---
+> > >   drivers/remoteproc/omap_remoteproc.c | 89 ++++++++++++++++++++++++++++
+> > >   1 file changed, 89 insertions(+)
+> > > 
+> > > diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+> > > index 64b559caadff..4f92b069f5d0 100644
+> > > --- a/drivers/remoteproc/omap_remoteproc.c
+> > > +++ b/drivers/remoteproc/omap_remoteproc.c
+> > > @@ -39,11 +39,27 @@ struct omap_rproc_boot_data {
+> > >   	unsigned int boot_reg;
+> > >   };
+> > > +/**
+> > > + * struct omap_rproc_mem - internal memory structure
+> > > + * @cpu_addr: MPU virtual address of the memory region
+> > > + * @bus_addr: bus address used to access the memory region
+> > > + * @dev_addr: device address of the memory region from DSP view
+> > > + * @size: size of the memory region
+> > > + */
+> > > +struct omap_rproc_mem {
+> > > +	void __iomem *cpu_addr;
+> > > +	phys_addr_t bus_addr;
+> > > +	u32 dev_addr;
+> > > +	size_t size;
+> > > +};
+> > > +
+> > >   /**
+> > >    * struct omap_rproc - omap remote processor state
+> > >    * @mbox: mailbox channel handle
+> > >    * @client: mailbox client to request the mailbox channel
+> > >    * @boot_data: boot data structure for setting processor boot address
+> > > + * @mem: internal memory regions data
+> > > + * @num_mems: number of internal memory regions
+> > >    * @rproc: rproc handle
+> > >    * @reset: reset handle
+> > >    */
+> > > @@ -51,16 +67,30 @@ struct omap_rproc {
+> > >   	struct mbox_chan *mbox;
+> > >   	struct mbox_client client;
+> > >   	struct omap_rproc_boot_data *boot_data;
+> > > +	struct omap_rproc_mem *mem;
+> > > +	int num_mems;
+> > >   	struct rproc *rproc;
+> > >   	struct reset_control *reset;
+> > >   };
+> > > +/**
+> > > + * struct omap_rproc_mem_data - memory definitions for an omap remote processor
+> > > + * @name: name for this memory entry
+> > > + * @dev_addr: device address for the memory entry
+> > > + */
+> > > +struct omap_rproc_mem_data {
+> > > +	const char *name;
+> > > +	const u32 dev_addr;
+> > > +};
+> > > +
+> > >   /**
+> > >    * struct omap_rproc_dev_data - device data for the omap remote processor
+> > >    * @device_name: device name of the remote processor
+> > > + * @mems: memory definitions for this remote processor
+> > >    */
+> > >   struct omap_rproc_dev_data {
+> > >   	const char *device_name;
+> > > +	const struct omap_rproc_mem_data *mems;
+> > >   };
+> > >   /**
+> > > @@ -223,12 +253,18 @@ static const struct rproc_ops omap_rproc_ops = {
+> > >   	.kick		= omap_rproc_kick,
+> > >   };
+> > > +static const struct omap_rproc_mem_data ipu_mems[] = {
+> > > +	{ .name = "l2ram", .dev_addr = 0x20000000 },
+> > > +	{ },
+> > > +};
+> > > +
+> > >   static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+> > >   	.device_name	= "dsp",
+> > >   };
+> > >   static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
+> > >   	.device_name	= "ipu",
+> > > +	.mems		= ipu_mems,
+> > >   };
+> > >   static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+> > > @@ -237,6 +273,7 @@ static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+> > >   static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+> > >   	.device_name	= "ipu",
+> > > +	.mems		= ipu_mems,
+> > >   };
+> > >   static const struct of_device_id omap_rproc_of_match[] = {
+> > > @@ -311,6 +348,54 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+> > >   	return 0;
+> > >   }
+> > > +static int omap_rproc_of_get_internal_memories(struct platform_device *pdev,
+> > > +					       struct rproc *rproc)
+> > > +{
+> > > +	struct omap_rproc *oproc = rproc->priv;
+> > > +	struct device *dev = &pdev->dev;
+> > > +	const struct omap_rproc_dev_data *data;
+> > > +	struct resource *res;
+> > > +	int num_mems;
+> > > +	int i;
+> > > +
+> > > +	data = of_device_get_match_data(&pdev->dev);
+> > > +	if (!data)
+> > > +		return -ENODEV;
+> > > +
+> > > +	if (!data->mems)
+> > > +		return 0;
+> > > +
+> > > +	for (num_mems = 0; data->mems[num_mems].name; num_mems++)
+> > > +		;
+> > 
+> > Please use of_property_count_elems_of_size() as it was done in omap_hwmod.c [1]
+> 
+> There is reason why it was not done like that here. We want to make sure all
+> the memories required for the remoteproc are in place, missing any one of
+> them is a fatal error as you see in the code few lines below (my comment.)
+> 
+> > 
+> > [1]. https://elixir.bootlin.com/linux/v5.6-rc4/source/arch/arm/mach-omap2/omap_hwmod.c#L717
+> > 
+> > With the above:
+> > 
+> > Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > 
+> > 
+> > > +
+> > > +	oproc->mem = devm_kcalloc(dev, num_mems, sizeof(*oproc->mem),
+> > > +				  GFP_KERNEL);
+> > > +	if (!oproc->mem)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	for (i = 0; i < num_mems; i++) {
+> > > +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> > > +						   data->mems[i].name);
+> > > +		oproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
+> > > +		if (IS_ERR(oproc->mem[i].cpu_addr)) {
+> > > +			dev_err(dev, "failed to parse and map %s memory\n",
+> > > +				data->mems[i].name);
+> > > +			return PTR_ERR(oproc->mem[i].cpu_addr);
+> > > +		}
+> 
+> We check here that all the memories required are defined for the remoteproc.
+> If we use of_property_count_elems_of_size, we only get the number of
+> memories defined in DT.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Acked-by: Suman Anna <s-anna@ti.com>
----
- drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h   |  2 ++
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
- include/linux/rpmsg.h            | 10 ++++++++++
- 4 files changed, 43 insertions(+)
+To make sure all memories are accounted for use data->mem[] in the loop:
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index e330ec4dfc33..a6ef54c4779a 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
- 
-+/**
-+ * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
-+ * @ept: the rpmsg endpoint
-+ *
-+ * This function returns maximum buffer size available for a single message.
-+ *
-+ * Return: the maximum transmission size on success and an appropriate error
-+ * value on failure.
-+ */
-+
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->get_mtu)
-+		return -ENOTSUPP;
-+
-+	return ept->ops->get_mtu(ept);
-+}
-+EXPORT_SYMBOL(rpmsg_get_mtu);
-+
- /*
-  * match an rpmsg channel with a channel info struct.
-  * this is used to make sure we're not creating rpmsg devices for channels
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd50e98..e6f88ee90ff6 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -47,6 +47,7 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @get_mtu:		see @rpmsg_get_mtu(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-  * In addition to @destroy_ept, the backend must at least implement @send and
-@@ -66,6 +67,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
- };
- 
- int rpmsg_register_device(struct rpmsg_device *rpdev);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 376ebbf880d6..6e48fdf24555 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -175,6 +175,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
- 				  int len, u32 dst);
- static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 					   u32 dst, void *data, int len);
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- 
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -184,6 +185,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.trysend = virtio_rpmsg_trysend,
- 	.trysendto = virtio_rpmsg_trysendto,
- 	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
-+	.get_mtu = virtio_rpmsg_get_mtu,
- };
- 
- /**
-@@ -699,6 +701,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
- 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
- }
- 
-+static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	struct rpmsg_device *rpdev = ept->rpdev;
-+	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-+
-+	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-+}
-+
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
- {
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 9fe156d1c018..88d7892ca93d 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 			poll_table *wait);
- 
-+ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
-+
- #else
- 
- static inline int register_rpmsg_device(struct rpmsg_device *dev)
-@@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
- 	return 0;
- }
- 
-+static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
--- 
-2.17.1
+
+        num_mems = of_property_count_elems_of_size();
+        oproc->mem = devm_kcalloc();
+
+        for (i = 0; data->mem[i]; i++) {
+                res = platform_get_resource_byname(pdev, IORESOURCES_MEM,
+                                                   data->mems[i].name);
+                oproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
+                ...
+                ...
+        }  
+
+> 
+> -Tero
+> 
+> > > +		oproc->mem[i].bus_addr = res->start;
+> > > +		oproc->mem[i].dev_addr = data->mems[i].dev_addr;
+> > > +		oproc->mem[i].size = resource_size(res);
+> > > +
+> > > +		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %pK da 0x%x\n",
+> > > +			data->mems[i].name, &oproc->mem[i].bus_addr,
+> > > +			oproc->mem[i].size, oproc->mem[i].cpu_addr,
+> > > +			oproc->mem[i].dev_addr);
+> > > +	}
+> > > +	oproc->num_mems = num_mems;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >   static int omap_rproc_probe(struct platform_device *pdev)
+> > >   {
+> > >   	struct device_node *np = pdev->dev.of_node;
+> > > @@ -350,6 +435,10 @@ static int omap_rproc_probe(struct platform_device *pdev)
+> > >   	/* All existing OMAP IPU and DSP processors have an MMU */
+> > >   	rproc->has_iommu = true;
+> > > +	ret = omap_rproc_of_get_internal_memories(pdev, rproc);
+> > > +	if (ret)
+> > > +		goto free_rproc;
+> > > +
+> > >   	ret = omap_rproc_get_boot_data(pdev, rproc);
+> > >   	if (ret)
+> > >   		goto free_rproc;
+> > > -- 
+> > > 2.17.1
+> > > 
+> > > --
+> 
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
