@@ -1,58 +1,90 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH v7 0/2] Add rpmsg tty driver
-Date: Tue, 24 Mar 2020 18:04:05 +0100
-Message-ID: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+Return-Path: <nikita.shubin@maquefel.me>
+From: nikita.shubin@maquefel.me
+In-Reply-To: <CANLsYkyHaZFrCYFxWZVGqy=QwU86i2E2o9ENZ7k2mv70jU9pqg@mail.gmail.com>
+References: <20200304142628.8471-1-NShubin@topcon.com> <CANLsYkzPROdphvmtpZ6YiajZ2dYLrojC-rGYkq4jK2yzTnAJ5A@mail.gmail.com>
+	 <264561583429111@sas1-438a02fc058e.qloud-c.yandex.net> <CANLsYkxj=1o8Y0V0WedbVirj9seZSArWeCvQvwk+N7wZa2_hPQ@mail.gmail.com>
+	 <266371583430956@iva3-67f911cb3a01.qloud-c.yandex.net> <CANLsYkyHaZFrCYFxWZVGqy=QwU86i2E2o9ENZ7k2mv70jU9pqg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] remoteproc: imx_rproc: dummy kick method
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Alan Cox <gnomes@lxorguk.ukuu.org.uk>, xiang xiao <xiaoxiang781216@gmail.com>
+Date: Thu, 05 Mar 2020 21:46:26 +0300
+Message-Id: <272401583433950@myt4-c14277df27e9.qloud-c.yandex.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Nikita Shubin <nshubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch set introduces a TTY console on top of the RPMsg framework which
-enables the following use cases:
-- Provide a console to communicate easily with the remote processor application.
-- Provide an interface to get the remote processor log traces without ring
-  buffer limitation.
-- Ease the migration from MPU + MCU processors to multi core processors
-  (MPU and MCU integrated in one processor) by offering a virtual serial link.
+That's totally okay - thank you for review.
 
-An alternative of this proposed solution would consist in using the virtio
-console:
-The drawback with that solution is that it requires a specific virtio buffer
-(in addition to the one already used for RPMsg) which does not fit with remote
-processors with little memory. The proposed solution allows to multiplex the
-console with the other rpmsg services, optimizing the memory.
-
-The first patch adds an API to the rpmsg framework ('get max transmission unit')
-and the second one is the rpmsg tty driver itself.
-
-Previous revision:
-- the patch 1/2 ("rpmsg: core: add API to get MTU) has been discussed in a
-  separate thread on remoteproc mailing list:
-    https://patchwork.kernel.org/patch/11333509/
-- Previous version of the patch 2/2 (tty: add rpmsg driver) available here:
-    https://patchwork.kernel.org/cover/11130213/
-
-Main delta vs v6:
- - Pack the rpmsg_tty_ctrl struct.
- - MTU API acked by Suman Anna from Texas Intruments company. 
-
-Arnaud Pouliquen (2):
-  rpmsg: core: add API to get MTU
-  tty: add rpmsg driver
-
- Documentation/serial/tty_rpmsg.rst |  45 ++++
- drivers/rpmsg/rpmsg_core.c         |  21 ++
- drivers/rpmsg/rpmsg_internal.h     |   2 +
- drivers/rpmsg/virtio_rpmsg_bus.c   |  10 +
- drivers/tty/Kconfig                |   9 +
- drivers/tty/Makefile               |   1 +
- drivers/tty/rpmsg_tty.c            | 417 +++++++++++++++++++++++++++++
- include/linux/rpmsg.h              |  10 +
- 8 files changed, 515 insertions(+)
- create mode 100644 Documentation/serial/tty_rpmsg.rst
- create mode 100644 drivers/tty/rpmsg_tty.c
-
--- 
-2.17.1
+05.03.2020, 21:36, "Mathieu Poirier" <mathieu.poirier@linaro.org>:
+> On Thu, 5 Mar 2020 at 11:07, <nikita.shubin@maquefel.me> wrote:
+>>  05.03.2020, 20:54, "Mathieu Poirier" <mathieu.poirier@linaro.org>:
+>>  > On Thu, 5 Mar 2020 at 10:29, <nikita.shubin@maquefel.me> wrote:
+>>  >> 05.03.2020, 19:17, "Mathieu Poirier" <mathieu.poirier@linaro.org>:
+>>  >> > On Wed, 4 Mar 2020 at 07:25, Nikita Shubin <NShubin@topcon.com> wrote:
+>>  >> >> add kick method that does nothing, to avoid errors in rproc_virtio_notify.
+>>  >> >>
+>>  >> >> Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+>>  >> >> ---
+>>  >> >> drivers/remoteproc/imx_rproc.c | 6 ++++++
+>>  >> >> 1 file changed, 6 insertions(+)
+>>  >> >>
+>>  >> >> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+>>  >> >> index 3e72b6f38d4b..796b6b86550a 100644
+>>  >> >> --- a/drivers/remoteproc/imx_rproc.c
+>>  >> >> +++ b/drivers/remoteproc/imx_rproc.c
+>>  >> >> @@ -240,9 +240,15 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>>  >> >> return va;
+>>  >> >> }
+>>  >> >>
+>>  >> >> +static void imx_rproc_kick(struct rproc *rproc, int vqid)
+>>  >> >> +{
+>>  >> >> +
+>>  >> >> +}
+>>  >> >> +
+>>  >> >
+>>  >> > If rproc::kick() is empty, how does the MCU know there is packets to
+>>  >> > fetch in the virtio queues?
+>>  >>
+>>  >> Well, of course it doesn't i understand this perfectly - just following documentation citing:
+>>  >>
+>>  >> | Every remoteproc implementation should at least provide the ->start and ->stop
+>>  >> | handlers. If rpmsg/virtio functionality is also desired, then the ->kick handler
+>>  >> | should be provided as well.
+>>  >>
+>>  >> But i as i mentioned in "remoteproc: Fix NULL pointer dereference in rproc_virtio_notify" kick method will be called if
+>>  >> "resource_table exists in firmware and has "Virtio device entry" defined" anyway, the imx_rproc is not in control of what
+>>  >> exactly it is booting, so such situation can occur.
+>>  >
+>>  > If I understand correctly, the MCU can boot images that have a virtio
+>>  > device in its resource table and still do useful work even if the
+>>  > virtio device/rpmsg bus can't be setup - is this correct?
+>>
+>>  Yes, this assumption is correct.
+>>
+>>  Despite this situation is not i desire at all - such thing can happen.
+>>  I am currently using co-proc as a realtime part of UGV control,
+>>  so it must immediately stop the engines, if not provided with navigational information.
+>>
+>>  The imx7d MCU have access to the most periphery that have the main processor.
+>>
+>>  Of course the kick method should do real work, but i decided to submit step by step if i am allowed to do so.
+>
+> Ok, the situation is clearer now and I have put your patches back in
+> my queue. I am seriously back-logged at this time so it will take a
+> little while before I get to them.
+>
+>>  >
+>>  > Thanks,
+>>  > Mathieu
+>>  >
+>>  >> >
+>>  >> >> static const struct rproc_ops imx_rproc_ops = {
+>>  >> >> .start = imx_rproc_start,
+>>  >> >> .stop = imx_rproc_stop,
+>>  >> >> + .kick = imx_rproc_kick,
+>>  >> >> .da_to_va = imx_rproc_da_to_va,
+>>  >> >> };
+>>  >> >>
+>>  >> >> --
+>>  >> >> 2.24.1
