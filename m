@@ -1,18 +1,21 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 11 Mar 2020 11:38:18 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Return-Path: <prvs=63338c6bc1=michael.auchter@ni.com>
+Date: Thu, 5 Mar 2020 17:12:23 -0600
+From: Michael Auchter <michael.auchter@ni.com>
 Subject: Re: [PATCH 5/5] remoteproc: Add initial zynqmp R5 remoteproc driver
-Message-ID: <20200311173818.GC32395@xps15>
+Message-ID: <20200305231223.GA197334@xaphan.ni.corp.natinst.com>
 References: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
  <1582566751-13118-6-git-send-email-ben.levinsky@xilinx.com>
-MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1582566751-13118-6-git-send-email-ben.levinsky@xilinx.com>
+MIME-Version: 1.0
 To: Ben Levinsky <ben.levinsky@xilinx.com>
 Cc: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wu <j.wu@xilinx.com>, Wendy Liang <wendy.liang@xilinx.com>, Ed Mooring <ed.mooring@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
+
+Hello Ben,
+
+I hope to give this a try soon! I've added some comments inline.
 
 On Mon, Feb 24, 2020 at 09:52:31AM -0800, Ben Levinsky wrote:
 > From: Jason Wu <j.wu@xilinx.com>
@@ -194,21 +197,6 @@ On Mon, Feb 24, 2020 at 09:52:31AM -0800, Ben Levinsky wrote:
 > +	struct zynqmp_r5_pdata rpus[MAX_RPROCS];
 > +	enum rpu_oper_mode rpu_mode;
 > +};
-
-To me this "domain" adds a fair amount of complexity to the driver.  Would it be
-possible to do something like [1] where a global node wraps up all the remote
-processors in the system?  That would offer the advantage that each MCU becomes
-its own independent platform driver, which falls in line with the implementation
-done for other architectures.
-
-I have taken a look at the implementation below but there is really no need to
-expand on that while we haven't sorted out the core structure of this driver.
-
-Thanks,
-Mathieu
-
-[1]. https://elixir.bootlin.com/linux/v5.6-rc4/source/arch/arm/boot/dts/stm32mp151.dtsi#L1672
-
 > +
 > +/*
 > + * r5_set_mode - set RPU operation mode
@@ -400,6 +388,12 @@ Mathieu
 > +			char name[16];
 > +
 > +			id = node->name[8] - 48;
+
+Hm, so the node name is significant? This doesn't look to be documented
+in the binding, and seems a bit weird to me...
+
+node->name[8] - '0' might also make the intent more obvious.
+
 > +			snprintf(name, sizeof(name), "vdev%dbuffer", id);
 > +			/* Register DMA region */
 > +			mem = rproc_mem_entry_init(dev, NULL,
@@ -415,6 +409,11 @@ Mathieu
 > +
 > +			rproc_add_carveout(rproc, mem);
 > +			continue;
+
+If the intent of the "continue" is to skip the "non-DMA" case below,
+why not drop the "continue" and instead move the "non-DMA" case into the
+body of the "else" below?
+
 > +		} else {
 > +			mem = rproc_of_resm_mem_entry_init(dev, i,
 > +							rmem->size,
@@ -437,6 +436,9 @@ Mathieu
 > +		}
 > +		if (!mem)
 > +			return -ENOMEM;
+
+It doesn't seem like this is reachable.
+
 > +
 > +
 > +		/*
@@ -454,6 +456,9 @@ Mathieu
 > +		list_add_tail(&zynqmp_mem->node, &pdata->mems);
 > +		dev_dbg(dev, "%s, non-dma mem %s\n",
 > +			__func__, of_node_full_name(node));
+
+Use %pOF instead?
+
 > +	}
 > +
 > +	/* map TCM memories */
@@ -499,6 +504,9 @@ Mathieu
 > +	/* wipe high bits as RPU only sees relative addr from 0x0 to 0x20000 */
 > +					rsc.start -= TCM_BANK1_HIGHBIT_BITMASK;
 > +		}
+
+Indentation above looks wrong...
+
 > +
 > +		dma = (dma_addr_t)rsc.start;
 > +		mem = rproc_mem_entry_init(dev, va, dma, (int)size, rsc.start,
@@ -506,6 +514,9 @@ Mathieu
 > +						 rsc.name);
 > +		if (!mem)
 > +			return NULL;
+
+return -ENOMEM?
+
 > +		rproc_add_carveout(rproc, mem);
 > +	}
 > +
@@ -597,6 +608,9 @@ Mathieu
 > +	if (ret < 0) {
 > +		dev_err(dev, "failed to get resource of memory %s",
 > +			of_node_full_name(node));
+
+Use %pOF instead?
+
 > +		return -EINVAL;
 > +	}
 > +
@@ -817,7 +831,7 @@ Mathieu
 > +
 > +	/* Allocate remoteproc instance */
 > +	rproc = rproc_alloc(dev, dev_name(dev), &zynqmp_r5_rproc_ops, NULL, 0);
-> +	if (!rproc) {
+> +	if (!rproc) {.
 > +		dev_err(dev, "rproc allocation failed.\n");
 > +		ret = -ENOMEM;
 > +		goto error;
@@ -842,6 +856,9 @@ Mathieu
 > +		if (ret) {
 > +			dev_err(dev, "failed to probe memory %s.\n",
 > +				of_node_full_name(nc));
+
+Use %pOF instead?
+
 > +			goto error;
 > +		}
 > +	}
@@ -928,6 +945,10 @@ Mathieu
 > +		dev_err(dev,
 > +			"Invalid core_conf mode provided - %s , %d\n",
 > +			prop, (int)local->rpu_mode);
+
+local->rpu_mode will always be 0 here, so it doesn't seem worthwhile to
+trace it.
+
 > +		return -EINVAL;
 > +	}
 > +
@@ -942,6 +963,9 @@ Mathieu
 > +		if (ret) {
 > +			dev_err(dev, "failed to probe rpu %s.\n",
 > +				of_node_full_name(nc));
+
+Use %pOF instead?
+
 > +			return ret;
 > +		}
 > +		i++;
