@@ -1,52 +1,99 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 0/3] Request direct mapping for modem device
-Date: Tue, 17 Mar 2020 20:39:07 +0530
-Message-Id: <20200317150910.26053-1-sibis@codeaurora.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24471 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726038AbgCHH6O (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Sun, 8 Mar 2020 03:58:14 -0400
+Received: by mail-qv1-f72.google.com with SMTP id u5so4620297qvj.10
+        for <linux-remoteproc@vger.kernel.org>; Sat, 07 Mar 2020 23:58:11 -0800 (PST)
+Date: Sun, 8 Mar 2020 03:58:05 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [PATCH] virtio_ring: Fix mem leak with vring_new_virtqueue()
+Message-ID: <20200308035751-mutt-send-email-mst@kernel.org>
+References: <20200224212643.30672-1-s-anna@ti.com>
+ <b622c831-9adb-b9af-dd4a-21605bc124a8@redhat.com>
+ <0ace3a3b-cf2f-7977-5337-f74f530afbe1@ti.com>
+ <1ce2bee4-64ed-f630-2695-8e8b9b8e27c1@redhat.com>
+ <a4335428-e29e-d567-b18b-3c144020a726@ti.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org, robin.murphy@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com, agross@kernel.org, dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
+In-Reply-To: <a4335428-e29e-d567-b18b-3c144020a726@ti.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Suman Anna <s-anna@ti.com>
+Cc: Jason Wang <jasowang@redhat.com>, Tiwei Bie <tiwei.bie@intel.com>, "David S. Miller" <davem@davemloft.net>, virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The Q6 modem sub-system has direct access to DDR through memnoc and
-an indirect access routed through a SMMU which MSS CE (crypto engine
-sub-component of MSS) uses during out of reset sequence. Request direct
-mapping for the modem device since smmu is not expected to provide access
-control/translation for these SIDs (sandboxing of the modem is achieved
-through XPUs engaged using SMC calls). This is done on platforms which
-don't have TrustZone (which programs the modem SIDs) to prevent the
-following global faults seen on Cheza/Trogdor:
+On Thu, Mar 05, 2020 at 06:27:53PM -0600, Suman Anna wrote:
+> On 2/25/20 9:13 PM, Jason Wang wrote:
+> > 
+> > On 2020/2/26 上午12:51, Suman Anna wrote:
+> >> Hi Jason,
+> >>
+> >> On 2/24/20 11:39 PM, Jason Wang wrote:
+> >>> On 2020/2/25 上午5:26, Suman Anna wrote:
+> >>>> The functions vring_new_virtqueue() and __vring_new_virtqueue() are
+> >>>> used
+> >>>> with split rings, and any allocations within these functions are
+> >>>> managed
+> >>>> outside of the .we_own_ring flag. The commit cbeedb72b97a
+> >>>> ("virtio_ring:
+> >>>> allocate desc state for split ring separately") allocates the desc
+> >>>> state
+> >>>> within the __vring_new_virtqueue() but frees it only when the
+> >>>> .we_own_ring
+> >>>> flag is set. This leads to a memory leak when freeing such allocated
+> >>>> virtqueues with the vring_del_virtqueue() function.
+> >>>>
+> >>>> Fix this by moving the desc_state free code outside the flag and only
+> >>>> for split rings. Issue was discovered during testing with remoteproc
+> >>>> and virtio_rpmsg.
+> >>>>
+> >>>> Fixes: cbeedb72b97a ("virtio_ring: allocate desc state for split ring
+> >>>> separately")
+> >>>> Signed-off-by: Suman Anna<s-anna@ti.com>
+> >>>> ---
+> >>>>    drivers/virtio/virtio_ring.c | 4 ++--
+> >>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/virtio/virtio_ring.c
+> >>>> b/drivers/virtio/virtio_ring.c
+> >>>> index 867c7ebd3f10..58b96baa8d48 100644
+> >>>> --- a/drivers/virtio/virtio_ring.c
+> >>>> +++ b/drivers/virtio/virtio_ring.c
+> >>>> @@ -2203,10 +2203,10 @@ void vring_del_virtqueue(struct virtqueue *_vq)
+> >>>>                         vq->split.queue_size_in_bytes,
+> >>>>                         vq->split.vring.desc,
+> >>>>                         vq->split.queue_dma_addr);
+> >>>> -
+> >>>> -            kfree(vq->split.desc_state);
+> >>>>            }
+> >>>>        }
+> >>>> +    if (!vq->packed_ring)
+> >>>> +        kfree(vq->split.desc_state);
+> >>> Nitpick, it looks to me it would be more clear if we just free
+> >>> desc_state unconditionally here (and remove the kfree for packed above).
+> >> OK, are you sure you want that to be folded into this patch? It looks to
+> >> me a separate cleanup/consolidation patch, and packed desc_state does
+> >> not suffer this memleak, and need not be backported into stable kernels.
+> >>
+> >> regards
+> >> Suman
+> > 
+> > 
+> > Though it's just a small tweak, I'm fine for leaving it for future.
+> > 
+> > So
+> > 
+> > Acked-by: Jason Wang <jasowang@redhat.com>
+> > 
+> 
+> Mike,
+> Ping on this. I don't see the patch in -next yet. Can we get this into
+> the current -rc please?
+> 
+> regards
+> Suman
 
-Cheza:
-arm-smmu 15000000.iommu: Unexpected global fault, this could be serious
-arm-smmu 15000000.iommu: GFSR 0x80000002, GFSYNR0 0x00000000,
-			 GFSYNR1 0x00000781, GFSYNR2 0x00000000
-
-Trogdor:
-arm-smmu 15000000.iommu: Unexpected global fault, this could be serious
-arm-smmu 15000000.iommu: GFSR 0x80000002, GFSYNR0 0x00000000,
-			 GFSYNR1 0x00000461, GFSYNR2 0x00000000
-
-V2:
- * Request direct mapping from SoC-specific corner of the SMMU
-   driver [Robin]
- * Add iommu property to remoteproc modem node on Cheza
-
-Depends on:
-https://lore.kernel.org/patchwork/cover/1183528/
-
-Sibi Sankar (3):
-  dt-bindings: remoteproc: qcom: Add iommus property
-  remoteproc: qcom_q6v5_mss: Request direct mapping for modem device
-  arm64: dts: qcom: sdm845-cheza: Add iommus property
-
- Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 3 +++
- arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi                 | 4 ++++
- drivers/iommu/arm-smmu-qcom.c                              | 6 ++++++
- 3 files changed, 13 insertions(+)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Yes will queue it shortly, thanks!
