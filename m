@@ -1,210 +1,49 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 3/4] remoteproc: add support for a new 64-bit trace version
-Date: Wed, 25 Mar 2020 15:47:00 -0500
-Message-ID: <20200325204701.16862-4-s-anna@ti.com>
-In-Reply-To: <20200325204701.16862-1-s-anna@ti.com>
-References: <20200325204701.16862-1-s-anna@ti.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:44364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727370AbgCIXkG (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 9 Mar 2020 19:40:06 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Clement Leger <cleger@kalray.eu>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH v4 0/3] remoteproc: mss: Improve mem_assign and firmware load
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158379720632.7411.14831620251171101042.git-patchwork-notify@kernel.org>
+Date: Mon, 09 Mar 2020 23:40:06 +0000
+References: <20200304194729.27979-1-sibis@codeaurora.org>
+In-Reply-To: <20200304194729.27979-1-sibis@codeaurora.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce a new trace entry resource structure that accommodates
-a 64-bit device address to support 64-bit processors. This is to
-be used using an overloaded version value of 1 in the upper 32-bits
-of the previous resource type field. The new resource still uses
-32-bits for the length field (followed by a 32-bit reserved field,
-so can be updated in the future), which is a sufficiently large
-trace buffer size. A 32-bit padding field also had to be added
-to align the device address on a 64-bit boundary, and match the
-usage on the firmware side.
+Hello:
 
-The remoteproc debugfs logic also has been adjusted accordingly.
+This series was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/remoteproc_core.c    | 40 ++++++++++++++++++++-----
- drivers/remoteproc/remoteproc_debugfs.c | 37 ++++++++++++++++++-----
- include/linux/remoteproc.h              | 26 ++++++++++++++++
- 3 files changed, 87 insertions(+), 16 deletions(-)
+On Thu,  5 Mar 2020 01:17:26 +0530 you wrote:
+> Two things came up in the effort of figuring out why the modem crashed the
+> entire system when being restarted; the first one solves the actual problem, in
+> that it's not possible to reclaim the main modem firmware region unless the
+> modem subsystem is running - causing the crash.
+> 
+> The second patch aligns the firmware loading process to that of the downstream
+> driver, which seems to be a requirement in 8974 as well.
+> 
+> [...]
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 53bc37c508c6..b9a097990862 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -609,21 +609,45 @@ void rproc_vdev_release(struct kref *ref)
-  *
-  * Returns 0 on success, or an appropriate error code otherwise
-  */
--static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
-+static int rproc_handle_trace(struct rproc *rproc, void *rsc,
- 			      int offset, int avail, u16 ver)
- {
- 	struct rproc_debug_trace *trace;
- 	struct device *dev = &rproc->dev;
-+	struct fw_rsc_trace *rsc1;
-+	struct fw_rsc_trace2 *rsc2;
- 	char name[15];
-+	size_t rsc_size;
-+	u32 reserved;
-+	u64 da;
-+	u32 len;
-+
-+	if (!ver) {
-+		rsc1 = (struct fw_rsc_trace *)rsc;
-+		rsc_size = sizeof(*rsc1);
-+		reserved = rsc1->reserved;
-+		da = rsc1->da;
-+		len = rsc1->len;
-+	} else if (ver == 1) {
-+		rsc2 = (struct fw_rsc_trace2 *)rsc;
-+		rsc_size = sizeof(*rsc2);
-+		reserved = rsc2->reserved;
-+		da = rsc2->da;
-+		len = rsc2->len;
-+	} else {
-+		dev_err(dev, "unsupported trace rsc version %d\n", ver);
-+		return -EINVAL;
-+	}
- 
--	if (sizeof(*rsc) > avail) {
-+	if (rsc_size > avail) {
- 		dev_err(dev, "trace rsc is truncated\n");
- 		return -EINVAL;
- 	}
- 
- 	/* make sure reserved bytes are zeroes */
--	if (rsc->reserved) {
--		dev_err(dev, "trace rsc has non zero reserved bytes\n");
-+	if (reserved) {
-+		dev_err(dev, "trace rsc has non zero reserved bytes, value = 0x%x\n",
-+			reserved);
- 		return -EINVAL;
- 	}
- 
-@@ -632,8 +656,8 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
- 		return -ENOMEM;
- 
- 	/* set the trace buffer dma properties */
--	trace->trace_mem.len = rsc->len;
--	trace->trace_mem.da = rsc->da;
-+	trace->trace_mem.len = len;
-+	trace->trace_mem.da = da;
- 
- 	/* set pointer on rproc device */
- 	trace->rproc = rproc;
-@@ -652,8 +676,8 @@ static int rproc_handle_trace(struct rproc *rproc, struct fw_rsc_trace *rsc,
- 
- 	rproc->num_traces++;
- 
--	dev_dbg(dev, "%s added: da 0x%x, len 0x%x\n",
--		name, rsc->da, rsc->len);
-+	dev_dbg(dev, "%s added: da 0x%llx, len 0x%x\n",
-+		name, da, len);
- 
- 	return 0;
- }
-diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-index 3560eed7a360..ff43736db45a 100644
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -192,7 +192,8 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 	struct resource_table *table = rproc->table_ptr;
- 	struct fw_rsc_carveout *c;
- 	struct fw_rsc_devmem *d;
--	struct fw_rsc_trace *t;
-+	struct fw_rsc_trace *t1;
-+	struct fw_rsc_trace2 *t2;
- 	struct fw_rsc_vdev *v;
- 	int i, j;
- 
-@@ -205,6 +206,7 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 		int offset = table->offset[i];
- 		struct fw_rsc_hdr *hdr = (void *)table + offset;
- 		void *rsc = (void *)hdr + sizeof(*hdr);
-+		u16 ver = hdr->st.v;
- 
- 		switch (hdr->st.t) {
- 		case RSC_CARVEOUT:
-@@ -230,13 +232,32 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
- 			seq_printf(seq, "  Name %s\n\n", d->name);
- 			break;
- 		case RSC_TRACE:
--			t = rsc;
--			seq_printf(seq, "Entry %d is of type %s\n",
--				   i, types[hdr->st.t]);
--			seq_printf(seq, "  Device Address 0x%x\n", t->da);
--			seq_printf(seq, "  Length 0x%x Bytes\n", t->len);
--			seq_printf(seq, "  Reserved (should be zero) [%d]\n", t->reserved);
--			seq_printf(seq, "  Name %s\n\n", t->name);
-+			if (ver == 0) {
-+				t1 = rsc;
-+				seq_printf(seq, "Entry %d is version %d of type %s\n",
-+					   i, ver, types[hdr->st.t]);
-+				seq_printf(seq, "  Device Address 0x%x\n",
-+					   t1->da);
-+				seq_printf(seq, "  Length 0x%x Bytes\n",
-+					   t1->len);
-+				seq_printf(seq, "  Reserved (should be zero) [%d]\n",
-+					   t1->reserved);
-+				seq_printf(seq, "  Name %s\n\n", t1->name);
-+			} else if (ver == 1) {
-+				t2 = rsc;
-+				seq_printf(seq, "Entry %d is version %d of type %s\n",
-+					   i, ver, types[hdr->st.t]);
-+				seq_printf(seq, "  Device Address 0x%llx\n",
-+					   t2->da);
-+				seq_printf(seq, "  Length 0x%x Bytes\n",
-+					   t2->len);
-+				seq_printf(seq, "  Reserved (should be zero) [%d]\n",
-+					   t2->reserved);
-+				seq_printf(seq, "  Name %s\n\n", t2->name);
-+			} else {
-+				seq_printf(seq, "Entry %d is an unsupported version %d of type %s\n",
-+					   i, ver, types[hdr->st.t]);
-+			}
- 			break;
- 		case RSC_VDEV:
- 			v = rsc;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 526d3cb45e37..3b3bea42f8b1 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -243,6 +243,32 @@ struct fw_rsc_trace {
- 	u8 name[32];
- } __packed;
- 
-+/**
-+ * struct fw_rsc_trace2 - trace buffer declaration supporting 64-bits
-+ * @padding: initial padding after type field for aligned 64-bit access
-+ * @da: device address (64-bit)
-+ * @len: length (in bytes)
-+ * @reserved: reserved (must be zero)
-+ * @name: human-readable name of the trace buffer
-+ *
-+ * This resource entry is an enhanced version of the fw_rsc_trace resourec entry
-+ * and the provides equivalent functionality but designed for 64-bit remote
-+ * processors.
-+ *
-+ * @da specifies the device address of the buffer, @len specifies
-+ * its size, and @name may contain a human readable name of the trace buffer.
-+ *
-+ * After booting the remote processor, the trace buffers are exposed to the
-+ * user via debugfs entries (called trace0, trace1, etc..).
-+ */
-+struct fw_rsc_trace2 {
-+	u32 padding;
-+	u64 da;
-+	u32 len;
-+	u32 reserved;
-+	u8 name[32];
-+} __packed;
-+
- /**
-  * struct fw_rsc_vdev_vring - vring descriptor entry
-  * @da: device address
+
+Here is a summary with links:
+  - [v4,1/3] remoteproc: qcom_q6v5_mss: Don't reassign mpss region on shutdown
+    https://git.kernel.org/andersson/remoteproc/c/0d20e3d606b084dbaa9f62885f9edf97c2a37c0e
+  - [v4,2/3] remoteproc: qcom_q6v5_mss: Validate each segment during loading
+    https://git.kernel.org/andersson/remoteproc/c/02b82b2e521407ed502850104fb40dad65b22329
+  - [v4,3/3] remoteproc: qcom_q6v5_mss: Reload the mba region on coredump
+    https://git.kernel.org/andersson/remoteproc/c/1a40eb61fe11e97ed0a69cf50dd6c0a79b32985a
+
+You are awesome, thank you!
+
 -- 
-2.23.0
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
