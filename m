@@ -1,74 +1,141 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 2/7] remoteproc: use a local copy for the name field
-Date: Tue, 24 Mar 2020 15:18:14 -0500
-Message-ID: <20200324201819.23095-3-s-anna@ti.com>
-In-Reply-To: <20200324201819.23095-1-s-anna@ti.com>
-References: <20200324201819.23095-1-s-anna@ti.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Mon, 9 Mar 2020 13:56:53 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v5 4/8] remoteproc: Add elf helpers to access elf64 and
+ elf32 fields
+Message-ID: <20200309195653.GD1399@xps15>
+References: <20200210162209.23149-1-cleger@kalray.eu>
+ <20200302093902.27849-1-cleger@kalray.eu>
+ <20200302093902.27849-5-cleger@kalray.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200302093902.27849-5-cleger@kalray.eu>
+To: Clement Leger <cleger@kalray.eu>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current name field used in the remoteproc structure is simply
-a pointer to a name field supplied during the rproc_alloc() call.
-The pointer passed in by remoteproc drivers during registration is
-typically a dev_name pointer, but it is possible that the pointer
-will no longer remain valid if the devices themselves were created
-at runtime like in the case of of_platform_populate(), and were
-deleted upon any failures within the respective remoteproc driver
-probe function.
+On Mon, Mar 02, 2020 at 10:38:58AM +0100, Clement Leger wrote:
+> elf32 and elf64 mainly differ by their types. In order to avoid
+> copy/pasting the whole loader code, generate static inline functions
+> which will access values according to the elf class. It allows to
+> keep a common loader basis.
+> In order to accommodate both elf types sizes, the maximum size for a
+> elf header member is chosen using the maximum value of the field for
+> both elf class.
+> 
+> Signed-off-by: Clement Leger <cleger@kalray.eu>
 
-So, allocate and maintain a local copy for this name field to
-keep it agnostic of the logic used in the remoteproc drivers.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
- include/linux/remoteproc.h           | 2 +-
- 2 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index aca6d022901a..6e0b91fa6f11 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1989,6 +1989,7 @@ static void rproc_type_release(struct device *dev)
- 
- 	kfree(rproc->firmware);
- 	kfree(rproc->ops);
-+	kfree(rproc->name);
- 	kfree(rproc);
- }
- 
-@@ -2061,7 +2062,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	}
- 
- 	rproc->firmware = p;
--	rproc->name = name;
-+	rproc->name = kstrdup(name, GFP_KERNEL);
-+	if (!rproc->name) {
-+		kfree(p);
-+		kfree(rproc->ops);
-+		kfree(rproc);
-+		return NULL;
-+	}
- 	rproc->priv = &rproc[1];
- 	rproc->auto_boot = true;
- 	rproc->elf_class = ELFCLASS32;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index ddce7a7775d1..77788a4bb94e 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -490,7 +490,7 @@ struct rproc_dump_segment {
- struct rproc {
- 	struct list_head node;
- 	struct iommu_domain *domain;
--	const char *name;
-+	char *name;
- 	char *firmware;
- 	void *priv;
- 	struct rproc_ops *ops;
--- 
-2.23.0
+> ---
+>  drivers/remoteproc/remoteproc_elf_helpers.h | 96 +++++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>  create mode 100644 drivers/remoteproc/remoteproc_elf_helpers.h
+> 
+> diff --git a/drivers/remoteproc/remoteproc_elf_helpers.h b/drivers/remoteproc/remoteproc_elf_helpers.h
+> new file mode 100644
+> index 000000000000..4b6be7b6bf4d
+> --- /dev/null
+> +++ b/drivers/remoteproc/remoteproc_elf_helpers.h
+> @@ -0,0 +1,96 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Remote processor elf helpers defines
+> + *
+> + * Copyright (C) 2020 Kalray, Inc.
+> + */
+> +
+> +#ifndef REMOTEPROC_ELF_LOADER_H
+> +#define REMOTEPROC_ELF_LOADER_H
+> +
+> +#include <linux/elf.h>
+> +#include <linux/types.h>
+> +
+> +/**
+> + * fw_elf_get_class - Get elf class
+> + * @fw: the ELF firmware image
+> + *
+> + * Note that we use and elf32_hdr to access the class since the start of the
+> + * struct is the same for both elf class
+> + *
+> + * Return: elf class of the firmware
+> + */
+> +static inline u8 fw_elf_get_class(const struct firmware *fw)
+> +{
+> +	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
+> +
+> +	return ehdr->e_ident[EI_CLASS];
+> +}
+> +
+> +static inline void elf_hdr_init_ident(struct elf32_hdr *hdr, u8 class)
+> +{
+> +	memcpy(hdr->e_ident, ELFMAG, SELFMAG);
+> +	hdr->e_ident[EI_CLASS] = class;
+> +	hdr->e_ident[EI_DATA] = ELFDATA2LSB;
+> +	hdr->e_ident[EI_VERSION] = EV_CURRENT;
+> +	hdr->e_ident[EI_OSABI] = ELFOSABI_NONE;
+> +}
+> +
+> +/* Generate getter and setter for a specific elf struct/field */
+> +#define ELF_GEN_FIELD_GET_SET(__s, __field, __type) \
+> +static inline __type elf_##__s##_get_##__field(u8 class, const void *arg) \
+> +{ \
+> +	if (class == ELFCLASS32) \
+> +		return (__type) ((const struct elf32_##__s *) arg)->__field; \
+> +	else \
+> +		return (__type) ((const struct elf64_##__s *) arg)->__field; \
+> +} \
+> +static inline void elf_##__s##_set_##__field(u8 class, void *arg, \
+> +					     __type value) \
+> +{ \
+> +	if (class == ELFCLASS32) \
+> +		((struct elf32_##__s *) arg)->__field = (__type) value; \
+> +	else \
+> +		((struct elf64_##__s *) arg)->__field = (__type) value; \
+> +}
+> +
+> +ELF_GEN_FIELD_GET_SET(hdr, e_entry, u64)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_phnum, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_shnum, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_phoff, u64)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_shoff, u64)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_shstrndx, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_machine, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_type, u16)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_version, u32)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_ehsize, u32)
+> +ELF_GEN_FIELD_GET_SET(hdr, e_phentsize, u16)
+> +
+> +ELF_GEN_FIELD_GET_SET(phdr, p_paddr, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_vaddr, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_filesz, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_memsz, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_type, u32)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_offset, u64)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_flags, u32)
+> +ELF_GEN_FIELD_GET_SET(phdr, p_align, u64)
+> +
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_size, u64)
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_offset, u64)
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_name, u32)
+> +ELF_GEN_FIELD_GET_SET(shdr, sh_addr, u64)
+> +
+> +#define ELF_STRUCT_SIZE(__s) \
+> +static inline unsigned long elf_size_of_##__s(u8 class) \
+> +{ \
+> +	if (class == ELFCLASS32)\
+> +		return sizeof(struct elf32_##__s); \
+> +	else \
+> +		return sizeof(struct elf64_##__s); \
+> +}
+> +
+> +ELF_STRUCT_SIZE(shdr)
+> +ELF_STRUCT_SIZE(phdr)
+> +ELF_STRUCT_SIZE(hdr)
+> +
+> +#endif /* REMOTEPROC_ELF_LOADER_H */
+> -- 
+> 2.15.0.276.g89ea799
+> 
