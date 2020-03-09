@@ -1,17 +1,18 @@
-Return-Path: <ore@pengutronix.de>
-Date: Fri, 27 Mar 2020 08:37:38 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Mon, 9 Mar 2020 11:52:31 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v5 1/8] remoteproc: Use size_t type for len in da_to_va
-Message-ID: <20200327073738.o633jukxpmue4aeg@pengutronix.de>
+Message-ID: <20200309175231.GA1399@xps15>
 References: <20200210162209.23149-1-cleger@kalray.eu>
  <20200302093902.27849-1-cleger@kalray.eu>
  <20200302093902.27849-2-cleger@kalray.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200302093902.27849-2-cleger@kalray.eu>
 To: Clement Leger <cleger@kalray.eu>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>, linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Patrice Chotard <patrice.chotard@st.com>, linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>, NXP Linux Team <linux-imx@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, s-anna <s-anna@ti.com>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
 On Mon, Mar 02, 2020 at 10:38:55AM +0100, Clement Leger wrote:
@@ -22,11 +23,11 @@ On Mon, Mar 02, 2020 at 10:38:55AM +0100, Clement Leger wrote:
 > function.
 > 
 > Signed-off-by: Clement Leger <cleger@kalray.eu>
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
 > ---
 >  drivers/remoteproc/imx_rproc.c           | 11 ++++++-----
-
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-
 >  drivers/remoteproc/keystone_remoteproc.c |  4 ++--
 >  drivers/remoteproc/qcom_q6v5_adsp.c      |  2 +-
 >  drivers/remoteproc/qcom_q6v5_mss.c       |  2 +-
@@ -258,11 +259,3 @@ Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > -- 
 > 2.15.0.276.g89ea799
 > 
-> 
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
