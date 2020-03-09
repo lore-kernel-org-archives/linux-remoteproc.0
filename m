@@ -1,69 +1,55 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v2 06/17] remoteproc: Introduce function rproc_alloc_internals()
-Date: Tue, 24 Mar 2020 15:45:52 -0600
-Message-Id: <20200324214603.14979-7-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324214603.14979-1-mathieu.poirier@linaro.org>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727143AbgCIXkG (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Mon, 9 Mar 2020 19:40:06 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: fix kernel-doc warnings
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158379720595.7411.17212679414987470499.git-patchwork-notify@kernel.org>
+Date: Mon, 09 Mar 2020 23:40:05 +0000
+References: <20200212161956.10358-1-arnaud.pouliquen@st.com>
+In-Reply-To: <20200212161956.10358-1-arnaud.pouliquen@st.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In preparation to allocate the synchronisation operation and state
-machine, spin off a new function in order to keep rproc_alloc() as
-clean as possible.
+Hello:
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 26 ++++++++++++++++++++++----
- 1 file changed, 22 insertions(+), 4 deletions(-)
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ee277bc5556c..9da245734db6 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2018,6 +2018,26 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
- 	return 0;
- }
- 
-+static int rproc_alloc_internals(struct rproc *rproc, const char *name,
-+				 const struct rproc_ops *boot_ops,
-+				 const char *firmware, int len)
-+{
-+	int ret;
-+
-+	/* We have a boot_ops so allocate firmware name and operations */
-+	if (boot_ops) {
-+		ret = rproc_alloc_firmware(rproc, name, firmware);
-+		if (ret)
-+			return ret;
-+
-+		ret = rproc_alloc_ops(rproc, boot_ops);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * rproc_alloc() - allocate a remote processor handle
-  * @dev: the underlying device
-@@ -2064,10 +2084,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->dev.class = &rproc_class;
- 	rproc->dev.driver_data = rproc;
- 
--	if (rproc_alloc_firmware(rproc, name, firmware))
--		goto out;
--
--	if (rproc_alloc_ops(rproc, ops))
-+	if (rproc_alloc_internals(rproc, name, ops,
-+				  firmware, len))
- 		goto out;
- 
- 	/* Assign a unique device index and name */
+On Wed, 12 Feb 2020 17:19:56 +0100 you wrote:
+> Fix the following warnings when documentation is built:
+> drivers/remoteproc/remoteproc_virtio.c:330: warning: Function parameter
+> or member 'id' not described in 'rproc_add_virtio_dev'
+> drivers/remoteproc/remoteproc_core.c:243: warning: Function parameter
+> or member 'name' not described in 'rproc_find_carveout_by_name'
+> drivers/remoteproc/remoteproc_core.c:473: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_vdev'
+> drivers/remoteproc/remoteproc_core.c:604: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_trace'
+> drivers/remoteproc/remoteproc_core.c:678: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_devmem'
+> drivers/remoteproc/remoteproc_core.c:873: warning: Function parameter
+> or member 'offset' not described in 'rproc_handle_carveout'
+> drivers/remoteproc/remoteproc_core.c:1029: warning: cannot understand function
+> prototype: 'rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = '
+> drivers/remoteproc/remoteproc_core.c:1693: warning: Function parameter
+> or member 'work' not described in 'rproc_crash_handler_work'
+> 
+> [...]
+
+
+Here is a summary with links:
+  - [v2] remoteproc: fix kernel-doc warnings
+    https://git.kernel.org/andersson/remoteproc/c/9307a1578aea8ff949b20cf896c46d7020f7b639
+
+You are awesome, thank you!
+
 -- 
-2.20.1
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
