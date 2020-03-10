@@ -1,56 +1,24 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 10/11] remoteproc: stm32: Introduce new loaded rsc ops for synchronisation
-Date: Tue, 24 Mar 2020 16:03:28 -0600
-Message-Id: <20200324220329.15523-11-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324220329.15523-1-mathieu.poirier@linaro.org>
-References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+Return-Path: <swboyd@chromium.org>
+Return-Path: <swboyd@chromium.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200310063338.3344582-6-bjorn.andersson@linaro.org>
+References: <20200310063338.3344582-1-bjorn.andersson@linaro.org> <20200310063338.3344582-6-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4 5/5] arm64: dts: qcom: sdm845: Add IMEM and PIL info region
+From: Stephen Boyd <swboyd@chromium.org>
+Date: Tue, 10 Mar 2020 11:11:38 -0700
+Message-ID: <158386389888.149997.14127685932598676242@swboyd.mtv.corp.google.com>
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce new elf find loaded resource table rproc_ops functions to be
-used when synchonising with an MCU.
+Quoting Bjorn Andersson (2020-03-09 23:33:38)
+> Add a simple-mfd representing IMEM on SDM845 and define the PIL
+> relocation info region, so that post mortem tools will be able to locate
+> the loaded remoteprocs.
+>=20
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-Mainly based on the work published by Arnaud Pouliquen [1].
-
-[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
-
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/stm32_rproc.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 4268d71f191d..07be306c0fb1 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -317,6 +317,15 @@ static int stm32_rproc_sync_parse_fw(struct rproc *rproc,
- 	return stm32_rproc_sync_elf_load_rsc_table(rproc, fw);
- }
- 
-+static struct resource_table *
-+stm32_rproc_sync_elf_find_loaded_rsc_table(struct rproc *rproc,
-+					   const struct firmware *fw)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+
-+	return (struct resource_table *)ddata->rsc_va;
-+}
-+
- static irqreturn_t stm32_rproc_wdg(int irq, void *data)
- {
- 	struct platform_device *pdev = data;
-@@ -604,6 +613,7 @@ static __maybe_unused struct rproc_ops st_rproc_sync_ops = {
- 	.stop		= stm32_rproc_sync_stop,
- 	.kick		= stm32_rproc_kick,
- 	.parse_fw	= stm32_rproc_sync_parse_fw,
-+	.find_loaded_rsc_table = stm32_rproc_sync_elf_find_loaded_rsc_table,
- };
- 
- static const struct of_device_id stm32_rproc_match[] = {
--- 
-2.20.1
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
