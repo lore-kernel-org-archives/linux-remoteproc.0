@@ -1,89 +1,40 @@
-Return-Path: <elder@linaro.org>
-Return-Path: <elder@linaro.org>
-From: Alex Elder <elder@linaro.org>
-Subject: [PATCH v2] remoteproc: clean up notification config
-Date: Mon, 16 Mar 2020 17:51:21 -0500
-Message-Id: <20200316225121.29905-1-elder@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v4 0/5] remoteproc: qcom: PIL info support
+Date: Mon,  9 Mar 2020 23:33:33 -0700
+Message-Id: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: "David S . Miller" <davem@davemloft.net>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org, netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Stephen Boyd <swboyd@chromium.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rearrange the config files for remoteproc and IPA to fix their
-interdependencies.
+Introduce support for filling out the relocation information in IMEM, to aid
+post mortem debug tools to locate the various remoteprocs.
 
-First, have CONFIG_QCOM_Q6V5_MSS select QCOM_Q6V5_IPA_NOTIFY so the
-notification code is built regardless of whether IPA needs it.
+Bjorn Andersson (5):
+  dt-bindings: remoteproc: Add Qualcomm PIL info binding
+  remoteproc: qcom: Introduce driver to store pil info in IMEM
+  remoteproc: qcom: Update PIL relocation info on load
+  arm64: dts: qcom: qcs404: Add IMEM and PIL info region
+  arm64: dts: qcom: sdm845: Add IMEM and PIL info region
 
-Next, represent QCOM_IPA as being dependent on QCOM_Q6V5_MSS rather
-than setting its value to match QCOM_Q6V5_COMMON (which is selected
-by QCOM_Q6V5_MSS).
+ .../bindings/remoteproc/qcom,pil-info.yaml    |  44 +++++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  15 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  15 ++
+ drivers/remoteproc/Kconfig                    |   6 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_pil_info.c            | 180 ++++++++++++++++++
+ drivers/remoteproc/qcom_pil_info.h            |   8 +
+ drivers/remoteproc/qcom_q6v5_adsp.c           |  20 +-
+ drivers/remoteproc/qcom_q6v5_mss.c            |   7 +
+ drivers/remoteproc/qcom_q6v5_pas.c            |  19 +-
+ drivers/remoteproc/qcom_q6v5_wcss.c           |  14 +-
+ drivers/remoteproc/qcom_wcnss.c               |  18 +-
+ 12 files changed, 335 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
+ create mode 100644 drivers/remoteproc/qcom_pil_info.c
+ create mode 100644 drivers/remoteproc/qcom_pil_info.h
 
-Drop all dependencies from QCOM_Q6V5_IPA_NOTIFY.  The notification
-code will be built whenever QCOM_Q6V5_MSS is set, and it has no other
-dependencies.
-
-Signed-off-by: Alex Elder <elder@linaro.org>
----
-v2: - Fix subject line
-    - Incorporate a change I thought I had already squashed
-
-Dave,
-    I noticed some problems with the interaction between the IPA and
-    remoteproc configs, and after some discussion with Bjorn we came
-    up with this, which simplifies things a bit.  Both Kconfig files
-    are in net-next now, so I'm sending this to you.
-
-    Two other things:
-    - I will *not* be implementing the COMPILE_TEST suggestion until
-      after the next merge window.
-    - I learned of another issue that arises when ARM64 is built
-      with PAGE_SIZE > 4096.  I intend to fix that in the next day
-      or so.
-
-      					-Alex
-
- drivers/net/ipa/Kconfig    | 2 +-
- drivers/remoteproc/Kconfig | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ipa/Kconfig b/drivers/net/ipa/Kconfig
-index b8cb7cadbf75..9f0d2a93379c 100644
---- a/drivers/net/ipa/Kconfig
-+++ b/drivers/net/ipa/Kconfig
-@@ -1,9 +1,9 @@
- config QCOM_IPA
- 	tristate "Qualcomm IPA support"
- 	depends on ARCH_QCOM && 64BIT && NET
-+	depends on QCOM_Q6V5_MSS
- 	select QCOM_QMI_HELPERS
- 	select QCOM_MDT_LOADER
--	default QCOM_Q6V5_COMMON
- 	help
- 	  Choose Y or M here to include support for the Qualcomm
- 	  IP Accelerator (IPA), a hardware block present in some
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 56084635dd63..ffdb5bc25d6d 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -128,6 +128,7 @@ config QCOM_Q6V5_MSS
- 	select MFD_SYSCON
- 	select QCOM_MDT_LOADER
- 	select QCOM_Q6V5_COMMON
-+	select QCOM_Q6V5_IPA_NOTIFY
- 	select QCOM_RPROC_COMMON
- 	select QCOM_SCM
- 	help
-@@ -169,9 +170,6 @@ config QCOM_Q6V5_WCSS
- 
- config QCOM_Q6V5_IPA_NOTIFY
- 	tristate
--	depends on QCOM_IPA
--	depends on QCOM_Q6V5_MSS
--	default QCOM_IPA
- 
- config QCOM_SYSMON
- 	tristate "Qualcomm sysmon driver"
 -- 
-2.20.1
+2.24.0
