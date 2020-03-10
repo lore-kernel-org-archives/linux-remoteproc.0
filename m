@@ -1,39 +1,24 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH v2 0/2] Misc. rproc fixes around fixed memory region support
-Date: Thu, 19 Mar 2020 11:23:19 -0500
-Message-ID: <20200319162321.20632-1-s-anna@ti.com>
+Return-Path: <swboyd@chromium.org>
+Return-Path: <swboyd@chromium.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200310063338.3344582-5-bjorn.andersson@linaro.org>
+References: <20200310063338.3344582-1-bjorn.andersson@linaro.org> <20200310063338.3344582-5-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4 4/5] arm64: dts: qcom: qcs404: Add IMEM and PIL info region
+From: Stephen Boyd <swboyd@chromium.org>
+Date: Tue, 10 Mar 2020 11:11:23 -0700
+Message-ID: <158386388355.149997.17460216194595657584@swboyd.mtv.corp.google.com>
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi All,
+Quoting Bjorn Andersson (2020-03-09 23:33:37)
+> Add a simple-mfd representing IMEM on QCS404 and define the PIL
+> relocation info region, so that post mortem tools will be able to locate
+> the loaded remoteprocs.
+>=20
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-This is a minor revised version of the fixes around fixed memory region
-support [1]. Patch 1 is updated to address Arnaud's review comments about 
-the hard-coded memory region.
-
-Please see the v1 cover-letter [1] for the details on the issues.
-
-regards
-Suman
-
-[1] https://patchwork.kernel.org/cover/11422723/
-
-Suman Anna (1):
-  remoteproc: Fix and restore the parenting hierarchy for vdev
-
-Tero Kristo (1):
-  remoteproc: fall back to using parent memory pool if no dedicated
-    available
-
- drivers/remoteproc/remoteproc_core.c   |  2 +-
- drivers/remoteproc/remoteproc_virtio.c | 15 +++++++++++++++
- include/linux/remoteproc.h             |  2 ++
- 3 files changed, 18 insertions(+), 1 deletion(-)
-
--- 
-2.23.0
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
