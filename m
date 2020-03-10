@@ -1,41 +1,23 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Tue, 10 Mar 2020 13:37:19 -0500
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 1/5] dt-bindings: remoteproc: Add Qualcomm PIL info
- binding
-Message-ID: <20200310183719.GA23977@bogus>
-References: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
- <20200310063338.3344582-2-bjorn.andersson@linaro.org>
+Return-Path: <swboyd@chromium.org>
+Return-Path: <swboyd@chromium.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 In-Reply-To: <20200310063338.3344582-2-bjorn.andersson@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Stephen Boyd <swboyd@chromium.org>
+References: <20200310063338.3344582-1-bjorn.andersson@linaro.org> <20200310063338.3344582-2-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v4 1/5] dt-bindings: remoteproc: Add Qualcomm PIL info binding
+From: Stephen Boyd <swboyd@chromium.org>
+Date: Tue, 10 Mar 2020 10:54:19 -0700
+Message-ID: <158386285904.149997.9749528768955800249@swboyd.mtv.corp.google.com>
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon,  9 Mar 2020 23:33:34 -0700, Bjorn Andersson wrote:
+Quoting Bjorn Andersson (2020-03-09 23:33:34)
 > Add a devicetree binding for the Qualcomm peripheral image loader
 > relocation information region found in the IMEM.
-> 
+>=20
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
-> 
-> Change since v3:
-> - Fixed spelling mistakes pointed out by Mathieu
-> - Fixed description as requested by Stephen
-> - Specify unit address in example
-> - Add missing ranges in example
-> 
->  .../bindings/remoteproc/qcom,pil-info.yaml    | 44 +++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-Documentation/devicetree/bindings/remoteproc/qcom,pil-info.example.dts:24.11-44: Warning (ranges_format): /example-0/imem@146bf000:ranges: "ranges" property has invalid length (16 bytes) (parent #address-cells == 1, child #address-cells == 1, #size-cells == 1)
-
-See https://patchwork.ozlabs.org/patch/1251981
-Please check and re-submit.
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
