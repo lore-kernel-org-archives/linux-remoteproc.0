@@ -1,54 +1,85 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/2] remoteproc: fall back to using parent memory pool if no dedicated available
-Date: Thu, 5 Mar 2020 16:41:07 -0600
-Message-ID: <20200305224108.21351-2-s-anna@ti.com>
-In-Reply-To: <20200305224108.21351-1-s-anna@ti.com>
-References: <20200305224108.21351-1-s-anna@ti.com>
+Date: Tue, 10 Mar 2020 12:30:46 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 5/8] remoteproc: Rename rproc_elf_sanity_check for
+ elf32
+Message-ID: <20200310193042.GK264362@yoga>
+References: <20200210162209.23149-1-cleger@kalray.eu>
+ <20200302093902.27849-1-cleger@kalray.eu>
+ <20200302093902.27849-6-cleger@kalray.eu>
+ <20200302231342.GE262924@yoga>
+ <482678048.7666348.1583222551942.JavaMail.zimbra@kalray.eu>
+ <20200310000005.GF14744@builder>
+ <20200310152031.GA25781@xps15>
+ <371773363.9138477.1583854699708.JavaMail.zimbra@kalray.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <371773363.9138477.1583854699708.JavaMail.zimbra@kalray.eu>
+To: Cl?ment Leger <cleger@kalrayinc.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc <linux-doc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Tero Kristo <t-kristo@ti.com>
+On Tue 10 Mar 08:38 PDT 2020, Cl?ment Leger wrote:
 
-In some cases, like with OMAP remoteproc, we are not creating dedicated
-memory pool for the virtio device. Instead, we use the same memory pool
-for all shared memories. The current virtio memory pool handling forces
-a split between these two, as a separate device is created for it,
-causing memory to be allocated from bad location if the dedicated pool
-is not available. Fix this by falling back to using the parent device
-memory pool if dedicated is not available.
+> Hi Mathieu,
+> 
+> ----- On 10 Mar, 2020, at 16:20, Mathieu Poirier mathieu.poirier@linaro.org wrote:
+> 
+> > On Mon, Mar 09, 2020 at 05:00:05PM -0700, Bjorn Andersson wrote:
+> >> On Tue 03 Mar 00:02 PST 2020, Cl?ment Leger wrote:
+> >> 
+> >> > Hi Bjorn,
+> >> > 
+> >> > ----- On 3 Mar, 2020, at 00:13, Bjorn Andersson bjorn.andersson@linaro.org
+> >> > wrote:
+> >> > 
+> >> > > On Mon 02 Mar 01:38 PST 2020, Clement Leger wrote:
+> >> > > 
+> >> > >> Since this function will be modified to support both elf32 and elf64,
+> >> > >> rename the existing one to elf32 (which is the only supported format
+> >> > >> at the moment). This will allow not to introduce possible side effect
+> >> > >> when adding elf64 support (ie: all backends will still support only
+> >> > >> elf32 if not requested explicitely using rproc_elf_sanity_check).
+> >> > >> 
+> >> > > 
+> >> > > Is there a reason for preventing ELF64 binaries be loaded?
+> >> > 
+> >> > I decided to go this way to let driver maintainer decide if they want
+> >> > to support elf64 to avoid problems with 64bits addresses/sizes which do
+> >> > not fit in their native type (size_t for instance). This is probably
+> >> > not going to happen and there are additionnal checks before calling
+> >> > rproc_da_to_va. And addresses should be filtered by rproc_da_to_va.
+> >> > So, actually it seems there is no reason to forbid supporting elf32/64
+> >> > for all drivers.
+> >> > 
+> >> 
+> >> I was hoping to hear some additional feedback on this from others.
+> > 
+> > I didn't follow up on this one because I agreed with your assesment and didn't
+> > think it was needed.
+> > 
+> > Simply put I would rather see rproc_elf_sanity_check() gain support for elf64
+> > and let the platform code decide what to do with format they don't support
+> > rather than spinning a new function.
+> > 
+> >> 
+> >> I've merge the patch as is, but think it would be nice to clean this up
+> >> and just have the driver ignore if fed a 32 or 64-elf.
+> > 
+> > It would be really nice to see this cleaned up in time for the coming merge
+> > window...
+> 
+> I could have sent a V7, but Bjorn was faster than my comment ;)
 
-Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- drivers/remoteproc/remoteproc_virtio.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I figured it had been maturing on the list long enough and expected the
+cleanup to be a nice incremental patch.
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 8c07cb2ca8ba..4723ebe574b8 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -368,6 +368,16 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 				goto out;
- 			}
- 		}
-+	} else {
-+		struct device_node *np = rproc->dev.parent->of_node;
-+
-+		/*
-+		 * If we don't have dedicated buffer, just attempt to
-+		 * re-assign the reserved memory from our parent.
-+		 * Failure is non-critical so don't check return value
-+		 * either.
-+		 */
-+		of_reserved_mem_device_init_by_idx(dev, np, 0);
- 	}
- 
- 	/* Allocate virtio device */
--- 
-2.23.0
+> Bjorn, Is there any way to revert that or it's already pushed ?
+> I already have a clean V7.
+> 
+
+Please base your changes on what's in rproc-next (and today's
+linux-next).
+
+Thank you,
+Bjorn
