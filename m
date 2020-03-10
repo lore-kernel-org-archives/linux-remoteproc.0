@@ -1,80 +1,120 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 16/18] remoteproc: Correctly deal with MCU synchronisation when changing state
-Date: Thu, 12 Mar 2020 16:11:56 -0600
-Message-Id: <20200312221158.3613-17-mathieu.poirier@linaro.org>
-In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+Date: Tue, 10 Mar 2020 12:32:57 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v5 3/8] remoteproc: Use u64 type for boot_addr
+Message-ID: <20200310193253.GL264362@yoga>
+References: <20200210162209.23149-1-cleger@kalray.eu>
+ <20200302093902.27849-1-cleger@kalray.eu>
+ <20200302093902.27849-4-cleger@kalray.eu>
+ <20200309195247.GC1399@xps15>
+ <1297722115.9030349.1583827151221.JavaMail.zimbra@kalray.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1297722115.9030349.1583827151221.JavaMail.zimbra@kalray.eu>
+To: Cl?ment Leger <cleger@kalrayinc.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc <linux-doc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch deals with state changes when synchronising with an MCU. More
-specifically it prevents the MCU from being started if it already has been
-started by another entity.  Similarly it prevents the AP from stopping the
-MCU if it hasn't been given the capability by platform firmware.
+On Tue 10 Mar 00:59 PDT 2020, Cl?ment Leger wrote:
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/remoteproc_sysfs.c | 32 ++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+> 
+> 
+> ----- On 9 Mar, 2020, at 20:52, Mathieu Poirier mathieu.poirier@linaro.org wrote:
+> 
+> > On Mon, Mar 02, 2020 at 10:38:57AM +0100, Clement Leger wrote:
+> >> elf64 entry is defined as a u64. Since boot_addr is used to store the
+> >> elf entry point, change boot_addr type to u64 to support both elf32
+> >> and elf64. In the same time, fix users that were using this variable.
+> >> 
+> >> Signed-off-by: Clement Leger <cleger@kalray.eu>
+> >> ---
+> >>  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+> >>  drivers/remoteproc/remoteproc_internal.h   | 2 +-
+> >>  drivers/remoteproc/st_remoteproc.c         | 2 +-
+> >>  include/linux/remoteproc.h                 | 4 ++--
+> >>  4 files changed, 5 insertions(+), 5 deletions(-)
+> >> 
+> >> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+> >> b/drivers/remoteproc/remoteproc_elf_loader.c
+> >> index 606aae166eba..c2a9783cfb9a 100644
+> >> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> >> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> >> @@ -102,7 +102,7 @@ EXPORT_SYMBOL(rproc_elf_sanity_check);
+> >>   * Note that the boot address is not a configurable property of all remote
+> >>   * processors. Some will always boot at a specific hard-coded address.
+> >>   */
+> >> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+> >> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+> >>  {
+> >>  	struct elf32_hdr *ehdr  = (struct elf32_hdr *)fw->data;
+> >>  
+> >> diff --git a/drivers/remoteproc/remoteproc_internal.h
+> >> b/drivers/remoteproc/remoteproc_internal.h
+> >> index 58580210575c..0deae5f237b8 100644
+> >> --- a/drivers/remoteproc/remoteproc_internal.h
+> >> +++ b/drivers/remoteproc/remoteproc_internal.h
+> >> @@ -55,7 +55,7 @@ phys_addr_t rproc_va_to_pa(void *cpu_addr);
+> >>  int rproc_trigger_recovery(struct rproc *rproc);
+> >>  
+> >>  int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
+> >> -u32 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+> >> +u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
+> >>  int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
+> >>  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
+> >>  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+> > 
+> > The return type of function rproc_get_boot_addr() should also be changed from
+> > u32 to u64.  Or perhaps this is intentional to make sure rproc->bootaddr never
+> > occupies more than 32bit?
+> 
+> No, this is a mistake clearly. I haven't been able to test with a 64 bit
+> boot address since our remote processors always boot in the 32 bits
+> space. But since the elf64 boot address is on 64 bitsn this was a logical
+> modification. I will fix that.
+> 
 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 4956577ad4b4..741a3c152b82 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -108,6 +108,29 @@ static ssize_t state_show(struct device *dev, struct device_attribute *attr,
- 	return sprintf(buf, "%s\n", rproc_state_string[state]);
- }
- 
-+static int rproc_can_shutdown(struct rproc *rproc)
-+{
-+	/* The MCU is not running, obviously an invalid operation. */
-+	if (rproc->state != RPROC_RUNNING)
-+		return false;
-+
-+	/*
-+	 * The MCU is not running (see above) and the remoteproc core is the
-+	 * lifecycle manager, no problem calling for a shutdown.
-+	 */
-+	if (!rproc_sync_with_mcu(rproc))
-+		return true;
-+
-+	/*
-+	 * The MCU has been loaded by another entity (see above) and the
-+	 * platform code has _not_ given us the capability of stopping it.
-+	 */
-+	if (!rproc->sync_ops->stop)
-+		return false;
-+
-+	return true;
-+}
-+
- /* Change remote processor state via sysfs */
- static ssize_t state_store(struct device *dev,
- 			      struct device_attribute *attr,
-@@ -120,11 +143,18 @@ static ssize_t state_store(struct device *dev,
- 		if (rproc->state == RPROC_RUNNING)
- 			return -EBUSY;
- 
-+		/*
-+		 * In synchronisation mode, booting the MCU is the
-+		 * responsibility of an external entity.
-+		 */
-+		if (rproc_sync_with_mcu(rproc))
-+			return -EINVAL;
-+
- 		ret = rproc_boot(rproc);
- 		if (ret)
- 			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
- 	} else if (sysfs_streq(buf, "stop")) {
--		if (rproc->state != RPROC_RUNNING)
-+		if (!rproc_can_shutdown(rproc))
- 			return -EINVAL;
- 
- 		rproc_shutdown(rproc);
--- 
-2.20.1
+Sorry, I forgot to reply to this one. I fixed it up while applying the
+patch.
+
+Thanks,
+Bjorn
+
+> > 
+> >> diff --git a/drivers/remoteproc/st_remoteproc.c
+> >> b/drivers/remoteproc/st_remoteproc.c
+> >> index ee13d23b43a9..a3268d95a50e 100644
+> >> --- a/drivers/remoteproc/st_remoteproc.c
+> >> +++ b/drivers/remoteproc/st_remoteproc.c
+> >> @@ -190,7 +190,7 @@ static int st_rproc_start(struct rproc *rproc)
+> >>  		}
+> >>  	}
+> >>  
+> >> -	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
+> >> +	dev_info(&rproc->dev, "Started from 0x%llx\n", rproc->bootaddr);
+> >>  
+> >>  	return 0;
+> >>  
+> >> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> >> index bee559330204..1683d6c386a6 100644
+> >> --- a/include/linux/remoteproc.h
+> >> +++ b/include/linux/remoteproc.h
+> >> @@ -382,7 +382,7 @@ struct rproc_ops {
+> >>  				struct rproc *rproc, const struct firmware *fw);
+> >>  	int (*load)(struct rproc *rproc, const struct firmware *fw);
+> >>  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+> >> -	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> >> +	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> >>  };
+> >>  
+> >>  /**
+> >> @@ -498,7 +498,7 @@ struct rproc {
+> >>  	int num_traces;
+> >>  	struct list_head carveouts;
+> >>  	struct list_head mappings;
+> >> -	u32 bootaddr;
+> >> +	u64 bootaddr;
+> >>  	struct list_head rvdevs;
+> >>  	struct list_head subdevs;
+> >>  	struct idr notifyids;
+> >> --
+> >> 2.15.0.276.g89ea799
