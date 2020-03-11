@@ -1,8 +1,10 @@
-Date: Wed, 11 Mar 2020 16:27:10 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Wed, 11 Mar 2020 15:45:04 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [RFC 1/2] remoteproc: sysfs: authorize rproc shutdown when rproc
  is crashed
-Message-ID: <20200311232707.GA1214176@minitux>
+Message-ID: <20200311214504.GA32471@xps15>
 References: <1583924072-20648-1-git-send-email-loic.pallardy@st.com>
  <1583924072-20648-2-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
@@ -10,11 +12,12 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1583924072-20648-2-git-send-email-loic.pallardy@st.com>
 To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com
+Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com, benjamin.gaignard@linaro.org, fabien.dessenne@st.com, s-anna@ti.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 11 Mar 03:54 PDT 2020, Loic Pallardy wrote:
+Hi Loic,
 
+On Wed, Mar 11, 2020 at 11:54:31AM +0100, Loic Pallardy wrote:
 > When remoteproc recovery is disabled and rproc crashed, user space
 > client has no way to reboot co-processor except by a complete platform
 > reboot.
@@ -24,13 +27,13 @@ On Wed 11 Mar 03:54 PDT 2020, Loic Pallardy wrote:
 > This patch offers the possibility to shutdown the co-processor if
 > it is in RPROC_CRASHED state and so to restart properly co-processor
 > from sysfs interface.
+
+And it is not possible to use the debugfs interface [1] to restart the MCU?
+
+[1]. https://elixir.bootlin.com/linux/v5.6-rc2/source/drivers/remoteproc/remoteproc_debugfs.c#L147
+
+
 > 
-
-I did recently run into a similar problem when I fed my remoteproc
-faulty firmware, which lead to it recovering immediately upon boot. The
-amount of time spent in !CRASHED state was minimal, so I didn't have any
-way to stop the remoteproc.
-
 > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 > ---
 >  drivers/remoteproc/remoteproc_core.c  | 2 +-
@@ -47,10 +50,6 @@ way to stop the remoteproc.
 >  
 > -	ret = rproc_stop(rproc, false);
 > +	ret = rproc_stop(rproc, rproc->state == RPROC_CRASHED);
-
-Afaict this is unrelated to the problem you're describing in the commit
-message.
-
 >  	if (ret) {
 >  		atomic_inc(&rproc->power);
 >  		goto out;
@@ -64,20 +63,6 @@ message.
 >  	} else if (sysfs_streq(buf, "stop")) {
 > -		if (rproc->state != RPROC_RUNNING)
 > +		if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_CRASHED)
-
-Analogous to the problem reported by Alex here
-https://patchwork.kernel.org/patch/11413161/ the handling of stop seems
-racy.
-
-In particular, I believe you're failing to protect against a race
-with a just scheduled rproc_crash_handler_work() being executed after
-the mutex_unlock() in rproc_shutdown()...
-
-With Alex fix that should be less of a problem though...
-
-Regards,
-Bjorn
-
 >  			return -EINVAL;
 >  
 >  		rproc_shutdown(rproc);
