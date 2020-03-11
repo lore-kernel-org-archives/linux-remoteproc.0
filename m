@@ -1,13 +1,13 @@
 Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mailgw02.mediatek.com ([210.61.82.184]:3655 "EHLO
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55453 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727648AbgCKDke (ORCPT
+        with ESMTP id S1727693AbgCKDgW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 Mar 2020 23:40:34 -0400
+        Tue, 10 Mar 2020 23:36:22 -0400
 From: Erin Lo <erin.lo@mediatek.com>
 Subject: pull request: linux-firmware: Create Mediatek MT8183 SCP firmware 
-Date: Wed, 11 Mar 2020 11:39:07 +0800
-Message-ID: <20200311033908.31960-1-erin.lo@mediatek.com>
+Date: Wed, 11 Mar 2020 11:36:01 +0800
+Message-ID: <20200311033602.31905-1-erin.lo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: base64
