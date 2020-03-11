@@ -1,90 +1,196 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv9 08/15] remoteproc/omap: Remove the platform_data header
-Date: Tue, 24 Mar 2020 13:00:28 +0200
-Message-ID: <20200324110035.29907-9-t-kristo@ti.com>
-In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
-References: <20200324110035.29907-1-t-kristo@ti.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Wed, 11 Mar 2020 10:55:00 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 4/5] dt-bindings: remoteproc: Add documentation for
+ ZynqMP R5 rproc bindings
+Message-ID: <20200311165500.GB32395@xps15>
+References: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
+ <1582566751-13118-5-git-send-email-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582566751-13118-5-git-send-email-ben.levinsky@xilinx.com>
+To: Ben Levinsky <ben.levinsky@xilinx.com>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wu <j.wu@xilinx.com>, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The platform data header for OMAP remoteproc is no longer used for
-anything post ti-sysc and DT conversion, so just remove it completely.
+On Mon, Feb 24, 2020 at 09:52:30AM -0800, Ben Levinsky wrote:
+> From: Jason Wu <j.wu@xilinx.com>
+> 
+> Add binding for ZynqMP R5 OpenAMP.
+> 
+> Represent the RPU domain resources in one device node. Each RPU
+> processor is a subnode of the top RPU domain node.
+> 
+> Signed-off-by: Jason Wu <j.wu@xilinx.com>
+> Signed-off-by: Wendy Liang <jliang@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
-v9:
-  * no changes
+Other than the yaml format that you've already taken care of, I have the
+following comments:
 
- include/linux/platform_data/remoteproc-omap.h | 51 -------------------
- 1 file changed, 51 deletions(-)
- delete mode 100644 include/linux/platform_data/remoteproc-omap.h
+> ---
+>  .../remoteproc/xilinx,zynqmp-r5-remoteproc.txt     | 135 +++++++++++++++++++++
+>  1 file changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.txt b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.txt
+> new file mode 100644
+> index 0000000..ee7a515
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.txt
+> @@ -0,0 +1,135 @@
+> +Xilinx ARM Cortex A53-R5 remoteproc driver
+> +==========================================
+> +
+> +ZynqMP family of devices use two Cortex R5 processors to help with various
+> +low power / real time tasks.
+> +
+> +This driver requires specific ZynqMP hardware design.
+> +
+> +ZynqMP R5 Device Node:
+> +=================================
+> +A ZynqMP R5 device node is used to represent RPU domain
+> +within ZynqMP SoC. This device node contains RPU processor
+> +subnodes.
+> +
+> +Required Properties:
+> +--------------------
+> + - compatible : Should be "xlnx,zynqmp-r5-remoteproc-1.0"
+> + - core_conf : R5 core configuration (valid string - split or lock-step)
 
-diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
-deleted file mode 100644
-index 7e3a16097672..000000000000
---- a/include/linux/platform_data/remoteproc-omap.h
-+++ /dev/null
-@@ -1,51 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Remote Processor - omap-specific bits
-- *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-- * Copyright (C) 2011 Google, Inc.
-- */
--
--#ifndef _PLAT_REMOTEPROC_H
--#define _PLAT_REMOTEPROC_H
--
--struct rproc_ops;
--struct platform_device;
--
--/*
-- * struct omap_rproc_pdata - omap remoteproc's platform data
-- * @name: the remoteproc's name
-- * @oh_name: omap hwmod device
-- * @oh_name_opt: optional, secondary omap hwmod device
-- * @firmware: name of firmware file to load
-- * @mbox_name: name of omap mailbox device to use with this rproc
-- * @ops: start/stop rproc handlers
-- * @device_enable: omap-specific handler for enabling a device
-- * @device_shutdown: omap-specific handler for shutting down a device
-- * @set_bootaddr: omap-specific handler for setting the rproc boot address
-- */
--struct omap_rproc_pdata {
--	const char *name;
--	const char *oh_name;
--	const char *oh_name_opt;
--	const char *firmware;
--	const char *mbox_name;
--	const struct rproc_ops *ops;
--	int (*device_enable)(struct platform_device *pdev);
--	int (*device_shutdown)(struct platform_device *pdev);
--	void (*set_bootaddr)(u32);
--};
--
--#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
--
--void __init omap_rproc_reserve_cma(void);
--
--#else
--
--static inline void __init omap_rproc_reserve_cma(void)
--{
--}
--
--#endif
--
--#endif /* _PLAT_REMOTEPROC_H */
--- 
-2.17.1
+Please describe "split" and "lock-step".  I am guessing that split means
+core run independently from one another while lock-step is an smp configuration.
+But event that is not clear from the implementation in patch 5.  I also assume
+the property has no relevance when there is only one core.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> + - interrupts : Interrupt mapping for remoteproc IPI. It is required if the
+> +                user uses the remoteproc driver with the RPMsg kernel driver.
+> + - interrupt-parent : Phandle for the interrupt controller. It is required if
+> +                      the user uses the remoteproc driver with the RPMsg kernel
+> +                      kernel driver.
+
+I can't find the interrupts and interrupts-parent properties under the
+zynqmp-r5-remoteproc node.  But I do see them under the zynqmp_ipi node.  As
+such there is a discrepancy between the above and the example.
+
+> +
+> +ZynqMP R5 Remoteproc Device Node:
+> +=================================
+> +A ZynqMP R5 Remoteproc device node is used to represent a RPU processor.
+> +It is a subnode to the ZynqMP R5 device node. It also contains tightly
+> +coupled memory subnodes.
+> +
+> +Required Properties:
+> +--------------------
+> + - pnode-id:	ZynqMP R5 processor power domain ID which will be used by
+> +		ZynqMP power management unit to idetify the processor.
+> +
+> +Optional Properties:
+> +--------------------
+> + - memory-region: reserved memory which will be used by R5 processor
+> +
+> +
+> +ZynqMP R5 Remoteproc Device Node:
+> +=================================
+> +A ZynqMP R5 Remoteproc device node is used to represent a RPU processor.
+> +It is a subnode to the ZynqMP R5 device node.
+> +
+> +Required Properties:
+> +--------------------
+> + - pnode-id:	ZynqMP R5 processor power domain ID which will be used by
+> +		ZynqMP power management unit to idetify the processor.
+> +
+> +Optional Properties:
+> +--------------------
+> + - memory-region:	reserved memory which will be used by R5 processor
+> + - mboxes:		Specify tx and rx mailboxes
+> + - mbox-names:		List of identifier strings for tx/rx mailbox channel.
+
+This section is already laid out above, but this (other) one
+has mboxes and mbox-names.  Please reorganise. 
+
+> +
+> +ZynqMP R5 TCM Device Node:
+> +=================================
+> +The ZynqMP R5 TCM device node is used to represent the TCM memory.
+> +It is a subnode to the ZynqMP R5 processor.
+> +
+> +Required Properties:
+> +--------------------
+> + - reg:		TCM address range
+> + - pnode-id:	TCM power domain ID
+> +
+> +
+> +Example:
+> +--------
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		/* R5 0 firmware memory in DDR */
+> +		rproc_0_fw_reserved: rproc@3ed000000 {
+> +			no-map;
+> +			reg = <0x0 0x3ed00000 0x0 0x40000>;
+> +		};
+> +		/* DMA shared memory between APU and RPU */
+> +		rpu0vdev0buffer: rpu0vdev0buffer@3ed400000 {
+> +			compatible = "shared-dma-pool";
+> +			no-map;
+> +			reg = <0x0 0x3ed40000 0x0 0x100000>;
+> +		};
+> +	};
+> +
+> +	zynqmp-r5-remoteproc@0 {
+> +		compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
+> +		core_conf = "split";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +		r5-0: r5@0 {
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +			memory-region = <&rproc_0_fw_reserved>,
+> +					<&rpu0vdev0buffer>;
+> +			pnode-id = <0x7>;
+> +			mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
+> +			mbox-names = "tx", "rx";
+> +			tcm-a: tcm@0 {
+> +				reg = <0x0 0xFFE00000 0x0 0x10000>,
+> +				pnode-id = <0xf>;
+> +			};
+> +			tcm-b: tcm@1 {
+> +				reg = <0x0 0xFFE20000 0x0 0x10000>,
+> +				pnode-id = <0x10>;
+> +			};
+> +		};
+> +	} ;
+> +
+> +	zynqmp_ipi {
+> +		compatible = "xlnx,zynqmp-ipi-mailbox";
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 29 4>;
+> +		xlnx,ipi-id = <7>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		/* APU<->RPU0 IPI mailbox controller */
+> +		ipi_mailbox_rpu0: mailbox@ff90600 {
+> +			reg = <0xff990600 0x20>,
+> +			      <0xff990620 0x20>,
+> +			      <0xff9900c0 0x20>,
+> +			      <0xff9900e0 0x20>;
+> +			reg-names = "local_request_region",
+> +				    "local_response_region",
+> +				    "remote_request_region",
+> +				    "remote_response_region";
+> +			#mbox-cells = <1>;
+> +			xlnx,ipi-id = <1>;
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
