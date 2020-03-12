@@ -1,78 +1,58 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v2 13/17] remoteproc: Introducting new functions to start and stop an MCU
-Date: Tue, 24 Mar 2020 15:45:59 -0600
-Message-Id: <20200324214603.14979-14-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324214603.14979-1-mathieu.poirier@linaro.org>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+Subject: [PATCH 17/18] remoteproc: Make MCU synchronisation state changes on stop and crashed
+Date: Thu, 12 Mar 2020 16:11:57 -0600
+Message-Id: <20200312221158.3613-18-mathieu.poirier@linaro.org>
+In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add new functions to replace direct calling of rproc->ops->start() and
-rproc->ops->stop().  That way different behaviour can be played out
-when booting an MCU or synchronising with it.
+Call on the MCU synchronisation state machine to determine the
+synchronisation status to enact when the MCU is either stop from sysfs
+or has crashed.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c     |  6 +++---
- drivers/remoteproc/remoteproc_internal.h | 12 ++++++++++++
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 488723fcb142..d3c4d7e6ca25 100644
+index 7ea4397a9004..f776a474da97 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1330,7 +1330,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	}
+@@ -1720,6 +1720,14 @@ static void rproc_crash_handler_work(struct work_struct *work)
+ 	dev_err(dev, "handling crash #%u in %s\n", ++rproc->crash_cnt,
+ 		rproc->name);
  
- 	/* power up the remote processor */
--	ret = rproc->ops->start(rproc);
-+	ret = rproc_start_hw(rproc);
- 	if (ret) {
- 		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
- 		goto unprepare_subdevices;
-@@ -1351,7 +1351,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 	return 0;
++	/*
++	 * The MCU has crashed - tell the core what operation to
++	 * use from hereon, i.e whether an external entity will
++	 * reboot the MCU or it is now the remoteproc core's
++	 * responsability.
++	 */
++	rproc_set_mcu_sync_state(rproc, RPROC_SYNC_STATE_CRASHED);
++
+ 	mutex_unlock(&rproc->lock);
  
- stop_rproc:
--	rproc->ops->stop(rproc);
-+	rproc_stop_hw(rproc);
- unprepare_subdevices:
- 	rproc_unprepare_subdevices(rproc);
- reset_table_ptr:
-@@ -1485,7 +1485,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 	rproc->table_ptr = rproc->cached_table;
- 
- 	/* power off the remote processor */
--	ret = rproc->ops->stop(rproc);
-+	ret = rproc_stop_hw(rproc);
- 	if (ret) {
- 		dev_err(dev, "can't stop rproc: %d\n", ret);
- 		return ret;
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 5f711ceb97ba..7ca23d46dfd4 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -160,4 +160,16 @@ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
- 	return NULL;
+ 	if (!rproc->recovery_disabled)
+@@ -1854,6 +1862,13 @@ void rproc_shutdown(struct rproc *rproc)
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+ 	rproc->table_ptr = NULL;
++
++	/*
++	 * The MCU has been switched off - tell the core what operation to
++	 * use from hereon, i.e whether an external entity will reboot the
++	 * MCU or it is now the remoteproc core's responsability.
++	 */
++	rproc_set_mcu_sync_state(rproc, RPROC_SYNC_STATE_SHUTDOWN);
+ out:
+ 	mutex_unlock(&rproc->lock);
  }
- 
-+static inline int rproc_start_hw(struct rproc *rproc)
-+{
-+	RPROC_OPS_HELPER(start, rproc);
-+	return -EINVAL;
-+}
-+
-+static inline int rproc_stop_hw(struct rproc *rproc)
-+{
-+	RPROC_OPS_HELPER(stop, rproc);
-+	return -EINVAL;
-+}
-+
- #endif /* REMOTEPROC_INTERNAL_H */
 -- 
 2.20.1
