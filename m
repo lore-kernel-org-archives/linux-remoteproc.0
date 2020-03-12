@@ -1,9 +1,9 @@
 Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
 Sender: sibis=codeaurora.org@mg.codeaurora.org
 From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v6 0/3] Introduce Protection Domain Restart (PDR) Helpers
-Date: Thu,  5 Mar 2020 01:39:08 +0530
-Message-Id: <20200304200911.15415-1-sibis@codeaurora.org>
+Subject: [PATCH v7 0/3] Introduce Protection Domain Restart (PDR) Helpers
+Date: Thu, 12 Mar 2020 17:38:39 +0530
+Message-Id: <20200312120842.21991-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org
@@ -17,6 +17,23 @@ crash/recover without disrupting the other PDs running on the same Q6
 ADSP. This patch series introduces pdr helper library and adds PD
 tracking functionality for "avs/audio" allowing apr services to register
 themselves asynchronously once the dependent PDs are up.
+
+Userspace Links:
+pd-mapper: https://github.com/andersson/pd-mapper/tree/json
+diag-router: https://github.com/andersson/diag
+
+Testing PDR with APR on SDM845 SoCs:
+pd-mapper adspua.jsn &
+diag-router &
+send_data 75 37 03 144 00
+
+V7:
+ * Address Bjorn's comments on exiting early in pdr_locator_work 
+ * SERVREG_LOCATOR_UNKNOWN_SERVICE is no longer propagated to
+   clients allowing for lookups to recover on restarting pd-mapper
+   with the proper database.
+ * Non-recoverable SERVREG_LOCATOR_ERR errors are still communicated
+   to the clients.
 
 V6:
  * Fix minor compilation error introduced in V5
@@ -82,9 +99,6 @@ V2:
    out.
  * add Bjorn/Srini's "Reviewed-by" for the dt-bindings.
 
-Depends on in-kernel ns fixes:
-https://patchwork.kernel.org/cover/11414841/
-
 Sibi Sankar (3):
   soc: qcom: Introduce Protection Domain Restart helpers
   dt-bindings: soc: qcom: apr: Add protection domain bindings
@@ -94,12 +108,12 @@ Sibi Sankar (3):
  drivers/soc/qcom/Kconfig                      |   5 +
  drivers/soc/qcom/Makefile                     |   1 +
  drivers/soc/qcom/apr.c                        | 123 ++-
- drivers/soc/qcom/pdr_interface.c              | 754 ++++++++++++++++++
+ drivers/soc/qcom/pdr_interface.c              | 757 ++++++++++++++++++
  drivers/soc/qcom/pdr_internal.h               | 379 +++++++++
  include/linux/soc/qcom/apr.h                  |   1 +
- include/linux/soc/qcom/pdr.h                  |  30 +
+ include/linux/soc/qcom/pdr.h                  |  29 +
  include/linux/soc/qcom/qmi.h                  |   1 +
- 9 files changed, 1335 insertions(+), 9 deletions(-)
+ 9 files changed, 1337 insertions(+), 9 deletions(-)
  create mode 100644 drivers/soc/qcom/pdr_interface.c
  create mode 100644 drivers/soc/qcom/pdr_internal.h
  create mode 100644 include/linux/soc/qcom/pdr.h
