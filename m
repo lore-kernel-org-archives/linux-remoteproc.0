@@ -1,87 +1,69 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv8 08/15] remoteproc/omap: Remove the platform_data header
-Date: Fri, 13 Mar 2020 10:17:11 +0200
-Message-ID: <20200313081718.30612-9-t-kristo@ti.com>
-In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
-References: <20200313081718.30612-1-t-kristo@ti.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH 06/18] remoteproc: Introduce function rproc_alloc_internals()
+Date: Thu, 12 Mar 2020 16:11:46 -0600
+Message-Id: <20200312221158.3613-7-mathieu.poirier@linaro.org>
+In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The platform data header for OMAP remoteproc is no longer used for
-anything post ti-sysc and DT conversion, so just remove it completely.
+In preparation to allocate the synchronisation operation and state
+machine, spin off a new function in order to keep rproc_alloc() as
+clean as possible.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Acked-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- include/linux/platform_data/remoteproc-omap.h | 51 -------------------
- 1 file changed, 51 deletions(-)
- delete mode 100644 include/linux/platform_data/remoteproc-omap.h
+ drivers/remoteproc/remoteproc_core.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
-deleted file mode 100644
-index 7e3a16097672..000000000000
---- a/include/linux/platform_data/remoteproc-omap.h
-+++ /dev/null
-@@ -1,51 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Remote Processor - omap-specific bits
-- *
-- * Copyright (C) 2011 Texas Instruments, Inc.
-- * Copyright (C) 2011 Google, Inc.
-- */
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index ee277bc5556c..9da245734db6 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2018,6 +2018,26 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+ 	return 0;
+ }
+ 
++static int rproc_alloc_internals(struct rproc *rproc, const char *name,
++				 const struct rproc_ops *boot_ops,
++				 const char *firmware, int len)
++{
++	int ret;
++
++	/* We have a boot_ops so allocate firmware name and operations */
++	if (boot_ops) {
++		ret = rproc_alloc_firmware(rproc, name, firmware);
++		if (ret)
++			return ret;
++
++		ret = rproc_alloc_ops(rproc, boot_ops);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ /**
+  * rproc_alloc() - allocate a remote processor handle
+  * @dev: the underlying device
+@@ -2064,10 +2084,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	rproc->dev.class = &rproc_class;
+ 	rproc->dev.driver_data = rproc;
+ 
+-	if (rproc_alloc_firmware(rproc, name, firmware))
+-		goto out;
 -
--#ifndef _PLAT_REMOTEPROC_H
--#define _PLAT_REMOTEPROC_H
--
--struct rproc_ops;
--struct platform_device;
--
--/*
-- * struct omap_rproc_pdata - omap remoteproc's platform data
-- * @name: the remoteproc's name
-- * @oh_name: omap hwmod device
-- * @oh_name_opt: optional, secondary omap hwmod device
-- * @firmware: name of firmware file to load
-- * @mbox_name: name of omap mailbox device to use with this rproc
-- * @ops: start/stop rproc handlers
-- * @device_enable: omap-specific handler for enabling a device
-- * @device_shutdown: omap-specific handler for shutting down a device
-- * @set_bootaddr: omap-specific handler for setting the rproc boot address
-- */
--struct omap_rproc_pdata {
--	const char *name;
--	const char *oh_name;
--	const char *oh_name_opt;
--	const char *firmware;
--	const char *mbox_name;
--	const struct rproc_ops *ops;
--	int (*device_enable)(struct platform_device *pdev);
--	int (*device_shutdown)(struct platform_device *pdev);
--	void (*set_bootaddr)(u32);
--};
--
--#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
--
--void __init omap_rproc_reserve_cma(void);
--
--#else
--
--static inline void __init omap_rproc_reserve_cma(void)
--{
--}
--
--#endif
--
--#endif /* _PLAT_REMOTEPROC_H */
+-	if (rproc_alloc_ops(rproc, ops))
++	if (rproc_alloc_internals(rproc, name, ops,
++				  firmware, len))
+ 		goto out;
+ 
+ 	/* Assign a unique device index and name */
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.20.1
