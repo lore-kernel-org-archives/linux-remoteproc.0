@@ -1,103 +1,101 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 4 Mar 2020 10:36:10 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCHv7 05/15] remoteproc/omap: Add the rproc ops .da_to_va()
- implementation
-Message-ID: <20200304173610.GD8197@xps15>
-References: <20200221101936.16833-1-t-kristo@ti.com>
- <20200221101936.16833-6-t-kristo@ti.com>
+Subject: [PATCH 04/18] remoteproc: Split rproc_ops allocation from rproc_alloc()
+Date: Thu, 12 Mar 2020 16:11:44 -0600
+Message-Id: <20200312221158.3613-5-mathieu.poirier@linaro.org>
+In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221101936.16833-6-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Feb 21, 2020 at 12:19:26PM +0200, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> An implementation for the rproc ops .da_to_va() has been added
-> that provides the address translation between device addresses
-> to kernel virtual addresses for internal RAMs present on that
-> particular remote processor device. The implementation provides
-> the translations based on the addresses parsed and stored during
-> the probe.
-> 
-> This ops gets invoked by the exported rproc_da_to_va() function
-> and allows the remoteproc core's ELF loader to be able to load
-> program data directly into the internal memories.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Make the rproc_ops allocation a function on its own in order to
+introduce more flexibility to function rproc_alloc().
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 45 ++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 15 deletions(-)
 
-> ---
-> v7:
->   - minor kerneldoc updates
-> 
->  drivers/remoteproc/omap_remoteproc.c | 40 ++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 4f92b069f5d0..89084dd919ba 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -247,10 +247,50 @@ static int omap_rproc_stop(struct rproc *rproc)
->  	return 0;
->  }
->  
-> +/**
-> + * omap_rproc_da_to_va() - internal memory translation helper
-> + * @rproc: remote processor to apply the address translation for
-> + * @da: device address to translate
-> + * @len: length of the memory buffer
-> + *
-> + * Custom function implementing the rproc .da_to_va ops to provide address
-> + * translation (device address to kernel virtual address) for internal RAMs
-> + * present in a DSP or IPU device). The translated addresses can be used
-> + * either by the remoteproc core for loading, or by any rpmsg bus drivers.
-> + *
-> + * Return: translated virtual address in kernel memory space on success,
-> + *         or NULL on failure.
-> + */
-> +static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
-> +{
-> +	struct omap_rproc *oproc = rproc->priv;
-> +	int i;
-> +	u32 offset;
-> +
-> +	if (len <= 0)
-> +		return NULL;
-> +
-> +	if (!oproc->num_mems)
-> +		return NULL;
-> +
-> +	for (i = 0; i < oproc->num_mems; i++) {
-> +		if (da >= oproc->mem[i].dev_addr && da + len <=
-> +		    oproc->mem[i].dev_addr + oproc->mem[i].size) {
-> +			offset = da - oproc->mem[i].dev_addr;
-> +			/* __force to make sparse happy with type conversion */
-> +			return (__force void *)(oproc->mem[i].cpu_addr +
-> +						offset);
-> +		}
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
->  static const struct rproc_ops omap_rproc_ops = {
->  	.start		= omap_rproc_start,
->  	.stop		= omap_rproc_stop,
->  	.kick		= omap_rproc_kick,
-> +	.da_to_va	= omap_rproc_da_to_va,
->  };
->  
->  static const struct omap_rproc_mem_data ipu_mems[] = {
-> -- 
-> 2.17.1
-> 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c0871f69929b..d22e557f27ed 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1992,6 +1992,32 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+ 	return 0;
+ }
+ 
++static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
++{
++	if (!rproc)
++		return -EINVAL;
++
++	/* Nothing to do if there isn't and ops to work with */
++	if (!ops)
++		return 0;
++
++	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
++	if (!rproc->ops)
++		return -ENOMEM;
++
++	/* Default to ELF loader if no load function is specified */
++	if (!rproc->ops->load) {
++		rproc->ops->load = rproc_elf_load_segments;
++		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
++		rproc->ops->find_loaded_rsc_table =
++						rproc_elf_find_loaded_rsc_table;
++		rproc->ops->sanity_check = rproc_elf_sanity_check;
++		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
++	}
++
++	return 0;
++}
++
+ /**
+  * rproc_alloc() - allocate a remote processor handle
+  * @dev: the underlying device
+@@ -2031,12 +2057,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	if (rproc_alloc_firmware(rproc, name, firmware))
+ 		goto free_rproc;
+ 
+-	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+-	if (!rproc->ops) {
+-		kfree(rproc->firmware);
+-		kfree(rproc);
+-		return NULL;
+-	}
++	if (rproc_alloc_ops(rproc, ops))
++		goto free_firmware;
+ 
+ 	rproc->name = name;
+ 	rproc->priv = &rproc[1];
+@@ -2060,15 +2082,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 
+ 	atomic_set(&rproc->power, 0);
+ 
+-	/* Default to ELF loader if no load function is specified */
+-	if (!rproc->ops->load) {
+-		rproc->ops->load = rproc_elf_load_segments;
+-		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
+-		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
+-		rproc->ops->sanity_check = rproc_elf_sanity_check;
+-		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
+-	}
+-
+ 	mutex_init(&rproc->lock);
+ 
+ 	idr_init(&rproc->notifyids);
+@@ -2086,6 +2099,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 
+ 	return rproc;
+ 
++free_firmware:
++	kfree(rproc->firmware);
+ free_rproc:
+ 	kfree(rproc);
+ 	return NULL;
+-- 
+2.20.1
