@@ -1,88 +1,103 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 06/11] remoteproc: stm32: Get coprocessor state
-Date: Tue, 24 Mar 2020 16:03:24 -0600
-Message-Id: <20200324220329.15523-7-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324220329.15523-1-mathieu.poirier@linaro.org>
-References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v7 2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
+Date: Thu, 12 Mar 2020 17:38:41 +0530
+Message-Id: <20200312120842.21991-3-sibis@codeaurora.org>
+In-Reply-To: <20200312120842.21991-1-sibis@codeaurora.org>
+References: <20200312120842.21991-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org
+Cc: agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tsoni@codeaurora.org, vnkgutta@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>, Rob Herring <robh@kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce the required mechanic to get the state of the M4 when the
-remoteproc core is initialising.
+Qualcomm SoCs (starting with MSM8998) allow for multiple protection
+domains (PDs) to run on the same Q6 sub-system. This allows for
+services like AVS AUDIO to have their own separate address space and
+crash/recover without disrupting the other PDs running on the same Q6
+ADSP. Add "qcom,protection-domain" bindings to capture the dependencies
+between the APR service and the PD on which the apr service runs.
 
-Mainly based on the work published by Arnaud Pouliquen [1].
-
-[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
-
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/stm32_rproc.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 7d5d4a7dbb04..b8af15dd0510 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -38,6 +38,15 @@
- #define STM32_MBX_VQ1_ID	1
- #define STM32_MBX_SHUTDOWN	"shutdown"
+V7:
+ * No change
+
+V6:
+ * Picked up Rob's R-b
+
+ .../devicetree/bindings/soc/qcom/qcom,apr.txt | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+index db501269f47b8..f8fa71f5d84ba 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+@@ -45,6 +45,18 @@ by the individual bindings for the specific service
+ 			12 - Ultrasound stream manager.
+ 			13 - Listen stream manager.
  
-+#define RSC_TBL_SIZE		(1024)
++- qcom,protection-domain
++	Usage: optional
++	Value type: <stringlist>
++	Definition: Must list the protection domain service name and path
++		    that the particular apr service has a dependency on.
++	Possible values are :
++			"avs/audio", "msm/adsp/audio_pd".
++			"kernel/elf_loader", "msm/modem/wlan_pd".
++			"tms/servreg", "msm/adsp/audio_pd".
++			"tms/servreg", "msm/modem/wlan_pd".
++			"tms/servreg", "msm/slpi/sensor_pd".
 +
-+#define M4_STATE_OFF		0
-+#define M4_STATE_INI		1
-+#define M4_STATE_CRUN		2
-+#define M4_STATE_CSTOP		3
-+#define M4_STATE_STANDBY	4
-+#define M4_STATE_CRASH		5
+ = EXAMPLE
+ The following example represents a QDSP based sound card on a MSM8996 device
+ which uses apr as communication between Apps and QDSP.
+@@ -82,3 +94,41 @@ which uses apr as communication between Apps and QDSP.
+ 			...
+ 		};
+ 	};
 +
- struct stm32_syscon {
- 	struct regmap *map;
- 	u32 reg;
-@@ -635,12 +644,23 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static int stm32_rproc_get_m4_status(struct stm32_rproc *ddata,
-+				     unsigned int *state)
-+{
-+	/* See stm32_rproc_parse_dt() */
-+	if (!ddata->m4_state.map)
-+		return -EINVAL;
++= EXAMPLE 2
++The following example represents a QDSP based sound card with protection domain
++dependencies specified. Here some of the apr services are dependent on services
++running on protection domain hosted on ADSP/SLPI remote processors while others
++have no such dependency.
 +
-+	return regmap_read(ddata->m4_state.map, ddata->m4_state.reg, state);
-+}
++	apr {
++		compatible = "qcom,apr-v2";
++		qcom,glink-channels = "apr_audio_svc";
++		qcom,apr-domain = <APR_DOMAIN_ADSP>;
 +
- static int stm32_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct stm32_rproc *ddata;
- 	struct device_node *np = dev->of_node;
- 	struct rproc *rproc;
-+	unsigned int state;
- 	bool auto_boot = false;
- 	int ret;
- 
-@@ -660,6 +680,15 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_ddata;
- 
-+	ret = stm32_rproc_get_m4_status(ddata, &state);
-+	if (ret) {
-+		/*
-+		 * We couldn't get the coprocessor's state, assume
-+		 * it is not running.
-+		 */
-+		state = M4_STATE_OFF;
-+	}
++		q6core {
++			compatible = "qcom,q6core";
++			reg = <APR_SVC_ADSP_CORE>;
++		};
 +
- 	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
- 	if (!rproc) {
- 		ret = -ENOMEM;
++		q6afe: q6afe {
++			compatible = "qcom,q6afe";
++			reg = <APR_SVC_AFE>;
++			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++			...
++		};
++
++		q6asm: q6asm {
++			compatible = "qcom,q6asm";
++			reg = <APR_SVC_ASM>;
++			qcom,protection-domain = "tms/servreg", "msm/slpi/sensor_pd";
++			...
++		};
++
++		q6adm: q6adm {
++			compatible = "qcom,q6adm";
++			reg = <APR_SVC_ADM>;
++			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
++			...
++		};
++	};
 -- 
-2.20.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
