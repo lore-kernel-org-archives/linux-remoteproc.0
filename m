@@ -1,103 +1,109 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v7 2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
-Date: Thu, 12 Mar 2020 17:38:41 +0530
-Message-Id: <20200312120842.21991-3-sibis@codeaurora.org>
-In-Reply-To: <20200312120842.21991-1-sibis@codeaurora.org>
-References: <20200312120842.21991-1-sibis@codeaurora.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH 08/18] remoteproc: Allocate synchronisation state machine
+Date: Thu, 12 Mar 2020 16:11:48 -0600
+Message-Id: <20200312221158.3613-9-mathieu.poirier@linaro.org>
+In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org
-Cc: agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tsoni@codeaurora.org, vnkgutta@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>, Rob Herring <robh@kernel.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Qualcomm SoCs (starting with MSM8998) allow for multiple protection
-domains (PDs) to run on the same Q6 sub-system. This allows for
-services like AVS AUDIO to have their own separate address space and
-crash/recover without disrupting the other PDs running on the same Q6
-ADSP. Add "qcom,protection-domain" bindings to capture the dependencies
-between the APR service and the PD on which the apr service runs.
+This patch allocates a synchronisation state machine, either provided or
+not by users, in order to enact the proper behavior requested by the
+platform or specific scenarios.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
+ drivers/remoteproc/remoteproc_core.c | 59 +++++++++++++++++++++++++++-
+ 1 file changed, 58 insertions(+), 1 deletion(-)
 
-V7:
- * No change
-
-V6:
- * Picked up Rob's R-b
-
- .../devicetree/bindings/soc/qcom/qcom,apr.txt | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-index db501269f47b8..f8fa71f5d84ba 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-@@ -45,6 +45,18 @@ by the individual bindings for the specific service
- 			12 - Ultrasound stream manager.
- 			13 - Listen stream manager.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 02dbb826aa29..1578a9c70422 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1955,6 +1955,7 @@ static void rproc_type_release(struct device *dev)
+ 	kfree(rproc->firmware);
+ 	kfree(rproc->ops);
+ 	kfree(rproc->sync_ops);
++	kfree(rproc->sync_states);
+ 	kfree(rproc);
+ }
  
-+- qcom,protection-domain
-+	Usage: optional
-+	Value type: <stringlist>
-+	Definition: Must list the protection domain service name and path
-+		    that the particular apr service has a dependency on.
-+	Possible values are :
-+			"avs/audio", "msm/adsp/audio_pd".
-+			"kernel/elf_loader", "msm/modem/wlan_pd".
-+			"tms/servreg", "msm/adsp/audio_pd".
-+			"tms/servreg", "msm/modem/wlan_pd".
-+			"tms/servreg", "msm/slpi/sensor_pd".
+@@ -2035,6 +2036,59 @@ static int rproc_alloc_sync_ops(struct rproc *rproc,
+ 	return 0;
+ }
+ 
++static int rproc_alloc_sync_states(struct rproc *rproc,
++				   const struct rproc_ops *boot_ops,
++				   const struct rproc_ops *sync_ops,
++				   struct rproc_sync_states *sync_states)
++{
++	struct rproc_sync_states *st;
 +
- = EXAMPLE
- The following example represents a QDSP based sound card on a MSM8996 device
- which uses apr as communication between Apps and QDSP.
-@@ -82,3 +94,41 @@ which uses apr as communication between Apps and QDSP.
- 			...
- 		};
- 	};
++	/* At least one set of operation is needed */
++	if (!boot_ops && !sync_ops)
++		return -EINVAL;
 +
-+= EXAMPLE 2
-+The following example represents a QDSP based sound card with protection domain
-+dependencies specified. Here some of the apr services are dependent on services
-+running on protection domain hosted on ADSP/SLPI remote processors while others
-+have no such dependency.
++	/* We have a synchronisation state machine, no need to build one */
++	if (sync_states) {
++		st = kmemdup(sync_states, sizeof(*st), GFP_KERNEL);
++		if (!st)
++			return -ENOMEM;
 +
-+	apr {
-+		compatible = "qcom,apr-v2";
-+		qcom,glink-channels = "apr_audio_svc";
-+		qcom,apr-domain = <APR_DOMAIN_ADSP>;
++		/* Nothing else to do */
++		goto out;
++	}
 +
-+		q6core {
-+			compatible = "qcom,q6core";
-+			reg = <APR_SVC_ADSP_CORE>;
-+		};
++	/* Allocate synchronisation state machine */
++	st = kzalloc(sizeof(*st), GFP_KERNEL);
++	if (!st)
++		return -ENOMEM;
 +
-+		q6afe: q6afe {
-+			compatible = "qcom,q6afe";
-+			reg = <APR_SVC_AFE>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			...
-+		};
++	/*
++	 * We have a boot_ops and no sync_ops - build a state machine that
++	 * does _not_ synchronise with an MCU.
++	 */
++	if (boot_ops && !sync_ops) {
++		st->on_init = st->after_stop = st->after_crash = false;
++		goto out;
++	}
 +
-+		q6asm: q6asm {
-+			compatible = "qcom,q6asm";
-+			reg = <APR_SVC_ASM>;
-+			qcom,protection-domain = "tms/servreg", "msm/slpi/sensor_pd";
-+			...
-+		};
++	/*
++	 * We have a sync_ops and an no boot_ops - build a state machine that
++	 * _only_ synchronises with an MCU.
++	 */
++	if (sync_ops && !boot_ops) {
++		st->on_init = st->after_stop = st->after_crash = true;
++		goto out;
++	}
 +
-+		q6adm: q6adm {
-+			compatible = "qcom,q6adm";
-+			reg = <APR_SVC_ADM>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			...
-+		};
-+	};
++out:
++	rproc->sync_with_mcu = st->on_init;
++	/* And the synchronisation state machine to use */
++	rproc->sync_states = st;
++	/* Tell the core what to do when initialising */
++	rproc_set_mcu_sync_state(rproc, RPROC_SYNC_STATE_INIT);
++	return 0;
++}
++
+ static int rproc_alloc_internals(struct rproc *rproc, const char *name,
+ 				 const struct rproc_ops *boot_ops,
+ 				 const struct rproc_ops *sync_ops,
+@@ -2065,7 +2119,10 @@ static int rproc_alloc_internals(struct rproc *rproc, const char *name,
+ 			return ret;
+ 	}
+ 
+-	return 0;
++	/* Finally allocate the synchronisation state machine */
++	ret = rproc_alloc_sync_states(rproc, boot_ops, sync_ops, sync_states);
++
++	return ret;
+ }
+ 
+ /**
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.20.1
