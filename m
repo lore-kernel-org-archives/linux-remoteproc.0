@@ -1,78 +1,339 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34837 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbgCLWMR (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:12:17 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 7so3762162pgr.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Mar 2020 15:12:17 -0700 (PDT)
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 15/18] remoteproc: Correctly deal with MCU synchronisation when changing FW image
-Date: Thu, 12 Mar 2020 16:11:55 -0600
-Message-Id: <20200312221158.3613-16-mathieu.poirier@linaro.org>
-In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv8 02/15] remoteproc/omap: Add device tree support
+Date: Fri, 13 Mar 2020 10:17:05 +0200
+Message-ID: <20200313081718.30612-3-t-kristo@ti.com>
+In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
+References: <20200313081718.30612-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch prevents the firmware image from being displayed or changed when
-the remoteproc core is synchronising with an MCU. This is needed since
-there is no guarantee about the nature of the firmware image that is loaded
-by the external entity.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+OMAP4+ SoCs support device tree boot only. The OMAP remoteproc
+driver is enhanced to support remoteproc devices created through
+Device Tree, support for legacy platform devices has been
+deprecated. The current DT support handles the IPU and DSP
+processor subsystems on OMAP4 and OMAP5 SoCs.
+
+The OMAP remoteproc driver relies on the ti-sysc, reset, and
+syscon layers for performing clock, reset and boot vector
+management (DSP remoteprocs only) of the devices, but some of
+these are limited only to the machine-specific layers
+in arch/arm. The dependency against control module API for boot
+vector management of the DSP remoteprocs has now been removed
+with added logic to parse the boot register from the DT node
+and program it appropriately directly within the driver.
+
+The OMAP remoteproc driver expects the firmware names to be
+provided via device tree entries (firmware-name.) These are used
+to load the proper firmware during boot of the remote processor.
+
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: converted to use ti-sysc framework]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Andrew F. Davis <afd@ti.com>
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/remoteproc_sysfs.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ drivers/remoteproc/omap_remoteproc.c | 177 ++++++++++++++++++++++++---
+ 1 file changed, 160 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 7f8536b73295..4956577ad4b4 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -13,9 +13,20 @@
- static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
- 			  char *buf)
- {
-+	ssize_t ret;
- 	struct rproc *rproc = to_rproc(dev);
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 6398194075aa..d47d5ded651a 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -2,7 +2,7 @@
+ /*
+  * OMAP Remote Processor driver
+  *
+- * Copyright (C) 2011 Texas Instruments, Inc.
++ * Copyright (C) 2011-2020 Texas Instruments Incorporated - http://www.ti.com/
+  * Copyright (C) 2011 Google, Inc.
+  *
+  * Ohad Ben-Cohen <ohad@wizery.com>
+@@ -16,27 +16,51 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/err.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/remoteproc.h>
+ #include <linux/mailbox_client.h>
+ #include <linux/omap-mailbox.h>
+-
+-#include <linux/platform_data/remoteproc-omap.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
++#include <linux/reset.h>
  
--	return sprintf(buf, "%s\n", rproc->firmware);
-+	/*
-+	 * In most instances there is no guarantee about the firmware
-+	 * that was loaded by the external entity.  As such simply don't
-+	 * print anything.
-+	 */
-+	if (rproc_sync_with_mcu(rproc))
-+		ret = sprintf(buf, "\n");
-+	else
-+		ret = sprintf(buf, "%s\n", rproc->firmware);
+ #include "omap_remoteproc.h"
+ #include "remoteproc_internal.h"
+ 
++/**
++ * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
++ * @syscon: regmap handle for the system control configuration module
++ * @boot_reg: boot register offset within the @syscon regmap
++ */
++struct omap_rproc_boot_data {
++	struct regmap *syscon;
++	unsigned int boot_reg;
++};
 +
-+	return ret;
+ /**
+  * struct omap_rproc - omap remote processor state
+  * @mbox: mailbox channel handle
+  * @client: mailbox client to request the mailbox channel
++ * @boot_data: boot data structure for setting processor boot address
+  * @rproc: rproc handle
++ * @reset: reset handle
+  */
+ struct omap_rproc {
+ 	struct mbox_chan *mbox;
+ 	struct mbox_client client;
++	struct omap_rproc_boot_data *boot_data;
+ 	struct rproc *rproc;
++	struct reset_control *reset;
++};
++
++/**
++ * struct omap_rproc_dev_data - device data for the omap remote processor
++ * @device_name: device name of the remote processor
++ */
++struct omap_rproc_dev_data {
++	const char *device_name;
+ };
+ 
+ /**
+@@ -92,6 +116,21 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+ 			ret);
  }
  
- /* Change firmware name via sysfs */
-@@ -33,6 +44,18 @@ static ssize_t firmware_store(struct device *dev,
- 		return -EINVAL;
++/**
++ * omap_rproc_write_dsp_boot_addr() - set boot address for DSP remote processor
++ * @rproc: handle of a remote processor
++ *
++ * Set boot address for a supported DSP remote processor.
++ */
++static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++{
++	struct omap_rproc *oproc = rproc->priv;
++	struct omap_rproc_boot_data *bdata = oproc->boot_data;
++	u32 offset = bdata->boot_reg;
++
++	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++}
++
+ /*
+  * Power up the remote processor.
+  *
+@@ -103,13 +142,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ {
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct device *dev = rproc->dev.parent;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
+ 	int ret;
+ 	struct mbox_client *client = &oproc->client;
+ 
+-	if (pdata->set_bootaddr)
+-		pdata->set_bootaddr(rproc->bootaddr);
++	if (oproc->boot_data)
++		omap_rproc_write_dsp_boot_addr(rproc);
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
+@@ -117,7 +154,7 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	client->tx_block = false;
+ 	client->knows_txdone = false;
+ 
+-	oproc->mbox = omap_mbox_request_channel(client, pdata->mbox_name);
++	oproc->mbox = mbox_request_channel(client, 0);
+ 	if (IS_ERR(oproc->mbox)) {
+ 		ret = -EBUSY;
+ 		dev_err(dev, "mbox_request_channel failed: %ld\n",
+@@ -138,9 +175,9 @@ static int omap_rproc_start(struct rproc *rproc)
+ 		goto put_mbox;
  	}
  
-+	/*
-+	 * There is no point in trying to change the firmware if the MCU
-+	 * is currently running or if loading of the image is done by
-+	 * another entity.
-+	 */
-+	if (rproc_sync_with_mcu(rproc)) {
-+		dev_err(dev,
-+			"can't change firmware while synchronising with MCU\n");
-+		err = -EBUSY;
-+		goto out;
+-	ret = pdata->device_enable(pdev);
++	ret = reset_control_deassert(oproc->reset);
+ 	if (ret) {
+-		dev_err(dev, "omap_device_enable failed: %d\n", ret);
++		dev_err(dev, "reset control deassert failed: %d\n", ret);
+ 		goto put_mbox;
+ 	}
+ 
+@@ -154,13 +191,10 @@ static int omap_rproc_start(struct rproc *rproc)
+ /* power off the remote processor */
+ static int omap_rproc_stop(struct rproc *rproc)
+ {
+-	struct device *dev = rproc->dev.parent;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	int ret;
+ 
+-	ret = pdata->device_shutdown(pdev);
++	ret = reset_control_assert(oproc->reset);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -175,12 +209,115 @@ static const struct rproc_ops omap_rproc_ops = {
+ 	.kick		= omap_rproc_kick,
+ };
+ 
++static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
++	.device_name	= "dsp",
++};
++
++static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
++	.device_name	= "ipu",
++};
++
++static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
++	.device_name	= "dsp",
++};
++
++static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
++	.device_name	= "ipu",
++};
++
++static const struct of_device_id omap_rproc_of_match[] = {
++	{
++		.compatible     = "ti,omap4-dsp",
++		.data           = &omap4_dsp_dev_data,
++	},
++	{
++		.compatible     = "ti,omap4-ipu",
++		.data           = &omap4_ipu_dev_data,
++	},
++	{
++		.compatible     = "ti,omap5-dsp",
++		.data           = &omap5_dsp_dev_data,
++	},
++	{
++		.compatible     = "ti,omap5-ipu",
++		.data           = &omap5_ipu_dev_data,
++	},
++	{
++		/* end */
++	},
++};
++MODULE_DEVICE_TABLE(of, omap_rproc_of_match);
++
++static const char *omap_rproc_get_firmware(struct platform_device *pdev)
++{
++	const char *fw_name;
++	int ret;
++
++	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
++				      &fw_name);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return fw_name;
++}
++
++static int omap_rproc_get_boot_data(struct platform_device *pdev,
++				    struct rproc *rproc)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct omap_rproc *oproc = rproc->priv;
++	const struct omap_rproc_dev_data *data;
++	int ret;
++
++	data = of_device_get_match_data(&pdev->dev);
++	if (!data)
++		return -ENODEV;
++
++	if (!of_property_read_bool(np, "ti,bootreg"))
++		return 0;
++
++	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
++					GFP_KERNEL);
++	if (!oproc->boot_data)
++		return -ENOMEM;
++
++	oproc->boot_data->syscon =
++			syscon_regmap_lookup_by_phandle(np, "ti,bootreg");
++	if (IS_ERR(oproc->boot_data->syscon)) {
++		ret = PTR_ERR(oproc->boot_data->syscon);
++		return ret;
 +	}
 +
- 	if (rproc->state != RPROC_OFFLINE) {
- 		dev_err(dev, "can't change firmware while running\n");
- 		err = -EBUSY;
++	if (of_property_read_u32_index(np, "ti,bootreg", 1,
++				       &oproc->boot_data->boot_reg)) {
++		dev_err(&pdev->dev, "couldn't get the boot register\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int omap_rproc_probe(struct platform_device *pdev)
+ {
+-	struct omap_rproc_pdata *pdata = pdev->dev.platform_data;
++	struct device_node *np = pdev->dev.of_node;
+ 	struct omap_rproc *oproc;
+ 	struct rproc *rproc;
++	const char *firmware;
+ 	int ret;
++	struct reset_control *reset;
++
++	if (!np) {
++		dev_err(&pdev->dev, "only DT-based devices are supported\n");
++		return -ENODEV;
++	}
++
++	reset = devm_reset_control_array_get_exclusive(&pdev->dev);
++	if (IS_ERR(reset))
++		return PTR_ERR(reset);
++
++	firmware = omap_rproc_get_firmware(pdev);
++	if (IS_ERR(firmware))
++		return PTR_ERR(firmware);
+ 
+ 	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret) {
+@@ -188,16 +325,21 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	rproc = rproc_alloc(&pdev->dev, pdata->name, &omap_rproc_ops,
+-			    pdata->firmware, sizeof(*oproc));
++	rproc = rproc_alloc(&pdev->dev, dev_name(&pdev->dev), &omap_rproc_ops,
++			    firmware, sizeof(*oproc));
+ 	if (!rproc)
+ 		return -ENOMEM;
+ 
+ 	oproc = rproc->priv;
+ 	oproc->rproc = rproc;
++	oproc->reset = reset;
+ 	/* All existing OMAP IPU and DSP processors have an MMU */
+ 	rproc->has_iommu = true;
+ 
++	ret = omap_rproc_get_boot_data(pdev, rproc);
++	if (ret)
++		goto free_rproc;
++
+ 	platform_set_drvdata(pdev, rproc);
+ 
+ 	ret = rproc_add(rproc);
+@@ -226,6 +368,7 @@ static struct platform_driver omap_rproc_driver = {
+ 	.remove = omap_rproc_remove,
+ 	.driver = {
+ 		.name = "omap-rproc",
++		.of_match_table = omap_rproc_of_match,
+ 	},
+ };
+ 
 -- 
-2.20.1
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
