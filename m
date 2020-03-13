@@ -1,127 +1,365 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 10/18] remoteproc: Decouple firmware load and remoteproc booting
-Date: Thu, 12 Mar 2020 16:11:50 -0600
-Message-Id: <20200312221158.3613-11-mathieu.poirier@linaro.org>
-In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv8 01/15] dt-bindings: remoteproc: Add OMAP remoteproc bindings
+Date: Fri, 13 Mar 2020 10:17:04 +0200
+Message-ID: <20200313081718.30612-2-t-kristo@ti.com>
+In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
+References: <20200313081718.30612-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In preparation to support scenarios where MCU firmware is loaded and
-the MCU itself booted by another entity, split function rproc_boot()
-to decouple the functions of loading the firwmare and starting the
-initialisation process.  That way we can reuse the functionality
-provided by the current implementation without invariably dealing
-with firmware loading.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Add the device tree bindings document for the IPU and DSP
+remote processor devices on OMAP4+ SoCs.
+
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: converted to schema]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Andrew F. Davis <afd@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 63 +++++++++++++++++-----------
- 1 file changed, 39 insertions(+), 24 deletions(-)
+ .../remoteproc/ti,omap-remoteproc.yaml        | 324 ++++++++++++++++++
+ 1 file changed, 324 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 1578a9c70422..7faee1396ef7 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1714,21 +1714,10 @@ static void rproc_crash_handler_work(struct work_struct *work)
- 		rproc_trigger_recovery(rproc);
- }
- 
--/**
-- * rproc_boot() - boot a remote processor
-- * @rproc: handle of a remote processor
-- *
-- * Boot a remote processor (i.e. load its firmware, power it on, ...).
-- *
-- * If the remote processor is already powered on, this function immediately
-- * returns (successfully).
-- *
-- * Returns 0 on success, and an appropriate error value otherwise.
-- */
--int rproc_boot(struct rproc *rproc)
-+static int rproc_actuate(struct rproc *rproc,
-+			 const struct firmware *firmware_p)
- {
--	const struct firmware *firmware_p;
--	struct device *dev;
-+	struct device *dev = &rproc->dev;
- 	int ret;
- 
- 	if (!rproc) {
-@@ -1736,8 +1725,6 @@ int rproc_boot(struct rproc *rproc)
- 		return -EINVAL;
- 	}
- 
--	dev = &rproc->dev;
--
- 	ret = mutex_lock_interruptible(&rproc->lock);
- 	if (ret) {
- 		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-@@ -1756,24 +1743,52 @@ int rproc_boot(struct rproc *rproc)
- 		goto unlock_mutex;
- 	}
- 
--	dev_info(dev, "powering up %s\n", rproc->name);
-+	dev_info(dev, "%s %s\n",
-+		 firmware_p ? "powering up" : "syncing with",
-+		 rproc->name);
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+new file mode 100644
+index 000000000000..084960a8f17a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+@@ -0,0 +1,324 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/ti,omap-remoteproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	ret = rproc_fw_boot(rproc, firmware_p);
-+	if (ret)
-+		atomic_dec(&rproc->power);
++title: OMAP4+ Remoteproc Devices
 +
-+unlock_mutex:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
++maintainers:
++  - Suman Anna <s-anna@ti.com>
 +
-+/**
-+ * rproc_boot() - boot a remote processor
-+ * @rproc: handle of a remote processor
-+ *
-+ * Boot a remote processor (i.e. load its firmware, power it on, ...).
-+ *
-+ * If the remote processor is already powered on, this function immediately
-+ * returns (successfully).
-+ *
-+ * Returns 0 on success, and an appropriate error value otherwise.
-+ */
-+int rproc_boot(struct rproc *rproc)
-+{
-+	const struct firmware *firmware_p;
-+	struct device *dev = &rproc->dev;
-+	int ret;
++description:
++  The OMAP family of SoCs usually have one or more slave processor sub-systems
++  that are used to offload some of the processor-intensive tasks, or to manage
++  other hardware accelerators, for achieving various system level goals.
 +
-+	if (!rproc) {
-+		pr_err("invalid rproc handle\n");
-+		return -EINVAL;
-+	}
- 
- 	/* load firmware */
- 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
- 	if (ret < 0) {
- 		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto downref_rproc;
-+		return ret;
- 	}
- 
--	ret = rproc_fw_boot(rproc, firmware_p);
-+	ret = rproc_actuate(rproc, firmware_p);
- 
- 	release_firmware(firmware_p);
- 
--downref_rproc:
--	if (ret)
--		atomic_dec(&rproc->power);
--unlock_mutex:
--	mutex_unlock(&rproc->lock);
- 	return ret;
- }
- EXPORT_SYMBOL(rproc_boot);
++  The processor cores in the sub-system are usually behind an IOMMU, and may
++  contain additional sub-modules like Internal RAM and/or ROMs, L1 and/or L2
++  caches, an Interrupt Controller, a Cache Controller etc.
++
++  The OMAP SoCs usually have a DSP processor sub-system and/or an IPU processor
++  sub-system. The DSP processor sub-system can contain any of the TI's C64x,
++  C66x or C67x family of DSP cores as the main execution unit. The IPU processor
++  sub-system usually contains either a Dual-Core Cortex-M3 or Dual-Core
++  Cortex-M4 processors.
++
++  Each remote processor sub-system is represented as a single DT node. Each node
++  has a number of required or optional properties that enable the OS running on
++  the host processor (MPU) to perform the device management of the remote
++  processor and to communicate with the remote processor. The various properties
++  can be classified as constant or variable. The constant properties are
++  dictated by the SoC and does not change from one board to another having the
++  same SoC. Examples of constant properties include 'iommus', 'reg'. The
++  variable properties are dictated by the system integration aspects such as
++  memory on the board, or configuration used within the corresponding firmware
++  image. Examples of variable properties include 'mboxes', 'memory-region',
++  'timers', 'watchdog-timers' etc.
++
++properties:
++  compatible:
++    enum:
++      - ti,omap4-dsp
++      - ti,omap5-dsp
++      - ti,dra7-dsp
++      - ti,omap4-ipu
++      - ti,omap5-ipu
++      - ti,dra7-ipu
++
++  iommus:
++    minItems: 1
++    maxItems: 2
++    description: |
++      phandles to OMAP IOMMU nodes, that need to be programmed
++      for this remote processor to access any external RAM memory or
++      other peripheral device address spaces. This property usually
++      has only a single phandle. Multiple phandles are used only in
++      cases where the sub-system has different ports for different
++      sub-modules within the processor sub-system (eg: DRA7 DSPs),
++      and need the same programming in both the MMUs.
++
++  mboxes:
++    minItems: 1
++    maxItems: 2
++    description: |
++      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
++      communication with the remote processor. The specifier format is
++      as per the bindings,
++      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
++      This property should match with the sub-mailbox node used in
++      the firmware image.
++
++  clocks:
++    description: |
++      Main functional clock for the remote processor
++
++  resets:
++    description: |
++      Reset handles for the remote processor
++
++  firmware-name:
++    description: |
++      Default name of the firmware to load to the remote processor.
++
++# Optional properties:
++# --------------------
++# Some of these properties are mandatory on some SoCs, and some are optional
++# depending on the configuration of the firmware image to be executed on the
++# remote processor. The conditions are mentioned for each property.
++#
++# The following are the optional properties:
++
++  memory-region:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      phandle to the reserved memory node to be associated
++      with the remoteproc device. The reserved memory node
++      can be a CMA memory node, and should be defined as
++      per the bindings,
++      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++
++  reg:
++    description: |
++      Address space for any remoteproc memories present on
++      the SoC. Should contain an entry for each value in
++      'reg-names'. These are mandatory for all DSP and IPU
++      processors that have them (OMAP4/OMAP5 DSPs do not have
++      any RAMs)
++
++  reg-names:
++    description: |
++      Required names for each of the address spaces defined in
++      the 'reg' property. Expects the names from the following
++      list, in the specified order, each representing the corresponding
++      internal RAM memory region.
++    minItems: 1
++    maxItems: 3
++    items:
++      - const: l2ram
++      - const: l1pram
++      - const: l1dram
++
++  ti,bootreg:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: |
++      Should be a triple of the phandle to the System Control
++      Configuration region that contains the boot address
++      register, the register offset of the boot address
++      register within the System Control module, and the bit
++      shift within the register. This property is required for
++      all the DSP instances on OMAP4, OMAP5 and DRA7xx SoCs.
++
++  ti,autosuspend-delay-ms:
++    description: |
++      Custom autosuspend delay for the remoteproc in milliseconds.
++      Recommended values is preferable to be in the order of couple
++      of seconds. A negative value can also be used to disable the
++      autosuspend behavior.
++
++  ti,timers:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: |
++      One or more phandles to OMAP DMTimer nodes, that serve
++      as System/Tick timers for the OS running on the remote
++      processors. This will usually be a single timer if the
++      processor sub-system is running in SMP mode, or one per
++      core in the processor sub-system. This can also be used
++      to reserve specific timers to be dedicated to the
++      remote processors.
++
++      This property is mandatory on remote processors requiring
++      external tick wakeup, and to support Power Management
++      features. The timers to be used should match with the
++      timers used in the firmware image.
++
++  ti,watchdog-timers:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: |
++      One or more phandles to OMAP DMTimer nodes, used to
++      serve as Watchdog timers for the processor cores. This
++      will usually be one per executing processor core, even
++      if the processor sub-system is running a SMP OS.
++
++      The timers to be used should match with the watchdog
++      timers used in the firmware image.
++
++if:
++  properties:
++    compatible:
++      enum:
++        - ti,dra7-dsp
++then:
++  properties:
++    reg:
++      minItems: 3
++      maxItems: 3
++  required:
++    - reg
++    - reg-names
++    - ti,bootreg
++
++else:
++  if:
++    properties:
++      compatible:
++        enum:
++          - ti,omap4-ipu
++          - ti,omap5-ipu
++          - ti,dra7-ipu
++  then:
++    properties:
++      reg:
++        minItems: 1
++        maxItems: 1
++      ti,bootreg: false
++    required:
++      - reg
++      - reg-names
++
++  else:
++    properties:
++      reg: false
++    required:
++      - ti,bootreg
++
++required:
++  - compatible
++  - iommus
++  - mboxes
++  - clocks
++  - resets
++  - firmware-name
++
++additionalProperties: false
++
++examples:
++  - |
++
++    //Example 1: OMAP4 DSP
++
++    /* DSP Reserved Memory node */
++    #include <dt-bindings/clock/omap4.h>
++    reserved-memory {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        dsp_memory_region: dsp-memory@98000000 {
++            compatible = "shared-dma-pool";
++            reg = <0x98000000 0x800000>;
++            reusable;
++        };
++    };
++
++    /* DSP node */
++    ocp {
++        dsp: dsp {
++            compatible = "ti,omap4-dsp";
++            ti,bootreg = <&scm_conf 0x304 0>;
++            iommus = <&mmu_dsp>;
++            mboxes = <&mailbox &mbox_dsp>;
++            memory-region = <&dsp_memory_region>;
++            ti,timers = <&timer5>;
++            ti,watchdog-timers = <&timer6>;
++            clocks = <&tesla_clkctrl OMAP4_DSP_CLKCTRL 0>;
++            resets = <&prm_tesla 0>, <&prm_tesla 1>;
++            firmware-name = "omap4-dsp-fw.xe64T";
++        };
++    };
++
++  - |+
++
++    //Example 2: OMAP5 IPU
++
++    /* IPU Reserved Memory node */
++    #include <dt-bindings/clock/omap5.h>
++    reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        ipu_memory_region: ipu-memory@95800000 {
++            compatible = "shared-dma-pool";
++            reg = <0 0x95800000 0 0x3800000>;
++            reusable;
++        };
++    };
++
++    /* IPU node */
++    ocp {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        ipu: ipu@55020000 {
++            compatible = "ti,omap5-ipu";
++            reg = <0x55020000 0x10000>;
++            reg-names = "l2ram";
++            iommus = <&mmu_ipu>;
++            mboxes = <&mailbox &mbox_ipu>;
++            memory-region = <&ipu_memory_region>;
++            ti,timers = <&timer3>, <&timer4>;
++            ti,watchdog-timers = <&timer9>, <&timer11>;
++            clocks = <&ipu_clkctrl OMAP5_MMU_IPU_CLKCTRL 0>;
++            resets = <&prm_core 2>;
++            firmware-name = "omap5-ipu-fw.xem4";
++        };
++    };
++
++  - |+
++
++    //Example 3: DRA7xx/AM57xx DSP
++
++    /* DSP1 Reserved Memory node */
++    #include <dt-bindings/clock/dra7.h>
++    reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        dsp1_memory_region: dsp1-memory@99000000 {
++            compatible = "shared-dma-pool";
++            reg = <0x0 0x99000000 0x0 0x4000000>;
++            reusable;
++        };
++    };
++
++    /* DSP1 node */
++    ocp {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        dsp1: dsp@40800000 {
++            compatible = "ti,dra7-dsp";
++            reg = <0x40800000 0x48000>,
++                  <0x40e00000 0x8000>,
++                  <0x40f00000 0x8000>;
++            reg-names = "l2ram", "l1pram", "l1dram";
++            ti,bootreg = <&scm_conf 0x55c 0>;
++            iommus = <&mmu0_dsp1>, <&mmu1_dsp1>;
++            mboxes = <&mailbox5 &mbox_dsp1_ipc3x>;
++            memory-region = <&dsp1_memory_region>;
++            ti,timers = <&timer5>;
++            ti,watchdog-timers = <&timer10>;
++            resets = <&prm_dsp1 0>;
++            clocks = <&dsp1_clkctrl DRA7_DSP1_MMU0_DSP1_CLKCTRL 0>;
++            firmware-name = "dra7-dsp1-fw.xe66";
++        };
++    };
 -- 
-2.20.1
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
