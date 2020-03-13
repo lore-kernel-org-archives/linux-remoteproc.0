@@ -1,16 +1,17 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCHv8 RESEND 03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
-Date: Fri, 13 Mar 2020 19:43:34 -0500
-Message-ID: <20200314004334.26509-1-s-anna@ti.com>
-In-Reply-To: <20200313081718.30612-4-t-kristo@ti.com>
-References: <20200313081718.30612-4-t-kristo@ti.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv8 03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
+Date: Fri, 13 Mar 2020 10:17:06 +0200
+Message-ID: <20200313081718.30612-4-t-kristo@ti.com>
+In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
+References: <20200313081718.30612-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Tero Kristo <t-kristo@ti.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
+
+From: Suman Anna <s-anna@ti.com>
 
 The DSP remote processors on OMAP SoCs require a boot register to
 be programmed with a boot address, and this boot address needs to
@@ -28,13 +29,15 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Reviewed-by: Andrew F. Davis <afd@ti.com>
 Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
-v8-Resend: Updated to fix compilation issues against rproc-next
+v8:
+  - Fixed return value of omap_rproc_write_dsp_boot_addr to properly
+    return the status of the regmap write
 
  drivers/remoteproc/omap_remoteproc.c | 20 ++++++++++++++++----
  1 file changed, 16 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index d47d5ded651a..fe11cb709770 100644
+index d47d5ded651a..2020d4e3264d 100644
 --- a/drivers/remoteproc/omap_remoteproc.c
 +++ b/drivers/remoteproc/omap_remoteproc.c
 @@ -121,14 +121,23 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
@@ -54,7 +57,7 @@ index d47d5ded651a..fe11cb709770 100644
  
 -	regmap_write(bdata->syscon, offset, rproc->bootaddr);
 +	if (rproc->bootaddr & (SZ_1K - 1)) {
-+		dev_err(dev, "invalid boot address 0x%llx, must be aligned on a 1KB boundary\n",
++		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
 +			rproc->bootaddr);
 +		return -EINVAL;
 +	}
@@ -78,4 +81,7 @@ index d47d5ded651a..fe11cb709770 100644
  	client->dev = dev;
  	client->tx_done = NULL;
 -- 
-2.23.0
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
