@@ -1,16 +1,17 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCHv8 RESEND 05/15] remoteproc/omap: Add the rproc ops .da_to_va() implementation
-Date: Fri, 13 Mar 2020 19:43:37 -0500
-Message-ID: <20200314004337.26556-1-s-anna@ti.com>
-In-Reply-To: <20200313081718.30612-6-t-kristo@ti.com>
-References: <20200313081718.30612-6-t-kristo@ti.com>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv8 05/15] remoteproc/omap: Add the rproc ops .da_to_va() implementation
+Date: Fri, 13 Mar 2020 10:17:08 +0200
+Message-ID: <20200313081718.30612-6-t-kristo@ti.com>
+In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
+References: <20200313081718.30612-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, "Andrew F. Davis" <afd@ti.com>, Tero Kristo <t-kristo@ti.com>
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
+
+From: Suman Anna <s-anna@ti.com>
 
 An implementation for the rproc ops .da_to_va() has been added
 that provides the address translation between device addresses
@@ -28,13 +29,11 @@ Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Reviewed-by: Andrew F. Davis <afd@ti.com>
 Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
-v8-Resend: Updated to fix compilation issues against rproc-next
-
  drivers/remoteproc/omap_remoteproc.c | 40 ++++++++++++++++++++++++++++
  1 file changed, 40 insertions(+)
 
 diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index cdcc9c227b96..6091666697ed 100644
+index 251db31c74a9..9a82d5c4a06b 100644
 --- a/drivers/remoteproc/omap_remoteproc.c
 +++ b/drivers/remoteproc/omap_remoteproc.c
 @@ -245,10 +245,50 @@ static int omap_rproc_stop(struct rproc *rproc)
@@ -55,13 +54,13 @@ index cdcc9c227b96..6091666697ed 100644
 + * Return: translated virtual address in kernel memory space on success,
 + *         or NULL on failure.
 + */
-+static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
++static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
 +{
 +	struct omap_rproc *oproc = rproc->priv;
 +	int i;
 +	u32 offset;
 +
-+	if (len == 0)
++	if (len <= 0)
 +		return NULL;
 +
 +	if (!oproc->num_mems)
@@ -89,4 +88,7 @@ index cdcc9c227b96..6091666697ed 100644
  
  static const struct omap_rproc_mem_data ipu_mems[] = {
 -- 
-2.23.0
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
