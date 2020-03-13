@@ -1,33 +1,87 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 0/3] Request direct mapping for modem firmware subdevice
-Date: Mon,  9 Mar 2020 23:52:52 +0530
-Message-Id: <20200309182255.20142-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv8 08/15] remoteproc/omap: Remove the platform_data header
+Date: Fri, 13 Mar 2020 10:17:11 +0200
+Message-ID: <20200313081718.30612-9-t-kristo@ti.com>
+In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
+References: <20200313081718.30612-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-kernel-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The Q6 modem sub-system has direct access to DDR through memnoc and
-an indirect access routed through a SMMU which MSS CE (crypto engine
-sub-component of MSS) uses during out of reset sequence. Request direct
-mapping for the modem-firmware subdevice since smmu is not expected
-to provide access control/translation for these SIDs (sandboxing of the
-modem is achieved through XPUs engaged using SMC calls).
+The platform data header for OMAP remoteproc is no longer used for
+anything post ti-sysc and DT conversion, so just remove it completely.
 
-Sibi Sankar (3):
-  iommu: Export "iommu_request_dm_for_dev"
-  dt-bindings: remoteproc: qcom: Add modem-firmware bindings
-  remoteproc: qcom_q6v5_mss: Request direct mapping for firmware
-    subdevice
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Acked-by: Suman Anna <s-anna@ti.com>
+Reviewed-by: Andrew F. Davis <afd@ti.com>
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ include/linux/platform_data/remoteproc-omap.h | 51 -------------------
+ 1 file changed, 51 deletions(-)
+ delete mode 100644 include/linux/platform_data/remoteproc-omap.h
 
- .../bindings/remoteproc/qcom,q6v5.txt         |  4 ++
- drivers/iommu/iommu.c                         |  1 +
- drivers/remoteproc/qcom_q6v5_mss.c            | 68 +++++++++++++++++++
- 3 files changed, 73 insertions(+)
-
+diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+deleted file mode 100644
+index 7e3a16097672..000000000000
+--- a/include/linux/platform_data/remoteproc-omap.h
++++ /dev/null
+@@ -1,51 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Remote Processor - omap-specific bits
+- *
+- * Copyright (C) 2011 Texas Instruments, Inc.
+- * Copyright (C) 2011 Google, Inc.
+- */
+-
+-#ifndef _PLAT_REMOTEPROC_H
+-#define _PLAT_REMOTEPROC_H
+-
+-struct rproc_ops;
+-struct platform_device;
+-
+-/*
+- * struct omap_rproc_pdata - omap remoteproc's platform data
+- * @name: the remoteproc's name
+- * @oh_name: omap hwmod device
+- * @oh_name_opt: optional, secondary omap hwmod device
+- * @firmware: name of firmware file to load
+- * @mbox_name: name of omap mailbox device to use with this rproc
+- * @ops: start/stop rproc handlers
+- * @device_enable: omap-specific handler for enabling a device
+- * @device_shutdown: omap-specific handler for shutting down a device
+- * @set_bootaddr: omap-specific handler for setting the rproc boot address
+- */
+-struct omap_rproc_pdata {
+-	const char *name;
+-	const char *oh_name;
+-	const char *oh_name_opt;
+-	const char *firmware;
+-	const char *mbox_name;
+-	const struct rproc_ops *ops;
+-	int (*device_enable)(struct platform_device *pdev);
+-	int (*device_shutdown)(struct platform_device *pdev);
+-	void (*set_bootaddr)(u32);
+-};
+-
+-#if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
+-
+-void __init omap_rproc_reserve_cma(void);
+-
+-#else
+-
+-static inline void __init omap_rproc_reserve_cma(void)
+-{
+-}
+-
+-#endif
+-
+-#endif /* _PLAT_REMOTEPROC_H */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
