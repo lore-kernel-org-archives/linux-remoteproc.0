@@ -1,82 +1,169 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45241 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728343AbgCXWDq (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 24 Mar 2020 18:03:46 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j10so10011726pfi.12
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2020 15:03:46 -0700 (PDT)
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 11/11] remoteproc: stm32: Allocate rproc for synchronisation with MCU
-Date: Tue, 24 Mar 2020 16:03:29 -0600
-Message-Id: <20200324220329.15523-12-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324220329.15523-1-mathieu.poirier@linaro.org>
-References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv8 07/15] remoteproc/omap: Add support for DRA7xx remote processors
+Date: Fri, 13 Mar 2020 10:17:10 +0200
+Message-ID: <20200313081718.30612-8-t-kristo@ti.com>
+In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
+References: <20200313081718.30612-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Allocate remote processor structure with state machine if the MCU
-has already been started by an external entity.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+DRA7xx/AM57xx SoCs have two IPU and up to two DSP processor subsystems
+for offloading different computation algorithms. The IPU processor
+subsystem contains dual-core ARM Cortex-M4 processors, and is very
+similar to those on OMAP5. The DSP processor subsystem is based on
+the TI's standard TMS320C66x DSP CorePac core.
+
+Support has been added to the OMAP remoteproc driver through new
+DRA7xx specific compatibles for properly probing and booting all
+the different processor subsystem instances on DRA7xx/AM57xx
+SoCs - IPU1, IPU2, DSP1 & DSP2. A build dependency with SOC_DRA7XX
+is added to enable the driver to be built in DRA7xx-only configuration.
+
+The DSP boot address programming needed enhancement for DRA7xx as the
+boot register fields are different on DRA7 compared to OMAP4 and OMAP5
+SoCs. The register on DRA7xx contains additional fields within the
+register and the boot address bit-field is right-shifted by 10 bits.
+The internal memory parsing logic has also been updated to compute
+the device addresses for the L2 RAM for DSP devices using relative
+addressing logic, and to parse two additional RAMs at L1 level - L1P
+and L1D. This allows the remoteproc driver to support loading into
+these regions for a small subset of firmware images requiring as
+such. The most common usage would be to use the L1 programmable
+RAMs as L1 Caches.
+
+The firmware lookup logic also has to be adjusted for DRA7xx as
+there are (can be) more than one instance of both the IPU and DSP
+remote processors for the first time in OMAP4+ SoCs.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: moved address translation quirks to pdata]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Andrew F. Davis <afd@ti.com>
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/stm32_rproc.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+v8:
+  - return the result of regmap update from omap_rproc_write_dsp_boot_addr
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 07be306c0fb1..f320ef9ee286 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -608,7 +608,7 @@ static struct rproc_ops st_rproc_ops = {
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
+ drivers/remoteproc/Kconfig           |  2 +-
+ drivers/remoteproc/omap_remoteproc.c | 38 +++++++++++++++++++++++++++-
+ 2 files changed, 38 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index de3862c15fcc..b52abc2268cc 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -35,7 +35,7 @@ config MTK_SCP
+ 
+ config OMAP_REMOTEPROC
+ 	tristate "OMAP remoteproc support"
+-	depends on ARCH_OMAP4 || SOC_OMAP5
++	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
+ 	depends on OMAP_IOMMU
+ 	select MAILBOX
+ 	select OMAP2PLUS_MBOX
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index b010e0607d5f..09eae548a691 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -34,10 +34,13 @@
+  * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
+  * @syscon: regmap handle for the system control configuration module
+  * @boot_reg: boot register offset within the @syscon regmap
++ * @boot_reg_shift: bit-field shift required for the boot address value in
++ *		    @boot_reg
+  */
+ struct omap_rproc_boot_data {
+ 	struct regmap *syscon;
+ 	unsigned int boot_reg;
++	unsigned int boot_reg_shift;
  };
  
--static __maybe_unused struct rproc_ops st_rproc_sync_ops = {
-+static struct rproc_ops st_rproc_sync_ops = {
- 	.start		= stm32_rproc_sync_start,
- 	.stop		= stm32_rproc_sync_stop,
- 	.kick		= stm32_rproc_kick,
-@@ -616,6 +616,12 @@ static __maybe_unused struct rproc_ops st_rproc_sync_ops = {
- 	.find_loaded_rsc_table = stm32_rproc_sync_elf_find_loaded_rsc_table,
+ /**
+@@ -161,6 +164,8 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
++	u32 value;
++	u32 mask;
+ 
+ 	if (rproc->bootaddr & (SZ_1K - 1)) {
+ 		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
+@@ -168,7 +173,10 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ 		return -EINVAL;
+ 	}
+ 
+-	return regmap_write(bdata->syscon, offset, rproc->bootaddr);
++	value = rproc->bootaddr >> bdata->boot_reg_shift;
++	mask = ~(SZ_1K - 1) >> bdata->boot_reg_shift;
++
++	return regmap_update_bits(bdata->syscon, offset, mask, value);
+ }
+ 
+ /*
+@@ -297,6 +305,13 @@ static const struct omap_rproc_mem_data ipu_mems[] = {
+ 	{ },
  };
  
-+static struct rproc_sync_states st_sync_states = {
-+	.on_init = true, /* sync with MCU when the kernel boots */
-+	.after_stop = false, /* don't resync with MCU if stopped from sysfs */
-+	.after_crash = false, /* don't resync with MCU after a crash */
++static const struct omap_rproc_mem_data dra7_dsp_mems[] = {
++	{ .name = "l2ram", .dev_addr = 0x800000 },
++	{ .name = "l1pram", .dev_addr = 0xe00000 },
++	{ .name = "l1dram", .dev_addr = 0xf00000 },
++	{ },
 +};
 +
- static const struct of_device_id stm32_rproc_match[] = {
- 	{ .compatible = "st,stm32mp1-m4" },
- 	{},
-@@ -847,15 +853,22 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 		ret = stm32_rproc_get_loaded_rsc_table(pdev, ddata);
- 		if (ret)
- 			goto free_ddata;
+ static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+ 	.device_name	= "dsp",
+ };
+@@ -315,6 +330,16 @@ static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+ 	.mems		= ipu_mems,
+ };
+ 
++static const struct omap_rproc_dev_data dra7_dsp_dev_data = {
++	.device_name	= "dsp",
++	.mems		= dra7_dsp_mems,
++};
 +
-+		rproc = rproc_alloc_state_machine(dev, np->name, &st_rproc_ops,
-+						  &st_rproc_sync_ops,
-+						  &st_sync_states, NULL,
-+						  sizeof(*ddata));
-+	} else {
-+		rproc = rproc_alloc(dev, np->name, &st_rproc_ops,
-+				    NULL, sizeof(*ddata));
-+		rproc->auto_boot = auto_boot;
++static const struct omap_rproc_dev_data dra7_ipu_dev_data = {
++	.device_name	= "ipu",
++	.mems		= ipu_mems,
++};
++
+ static const struct of_device_id omap_rproc_of_match[] = {
+ 	{
+ 		.compatible     = "ti,omap4-dsp",
+@@ -332,6 +357,14 @@ static const struct of_device_id omap_rproc_of_match[] = {
+ 		.compatible     = "ti,omap5-ipu",
+ 		.data           = &omap5_ipu_dev_data,
+ 	},
++	{
++		.compatible     = "ti,dra7-dsp",
++		.data           = &dra7_dsp_dev_data,
++	},
++	{
++		.compatible     = "ti,dra7-ipu",
++		.data           = &dra7_ipu_dev_data,
++	},
+ 	{
+ 		/* end */
+ 	},
+@@ -384,6 +417,9 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+ 		return -EINVAL;
  	}
  
--	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
- 	if (!rproc) {
- 		ret = -ENOMEM;
- 		goto free_ddata;
- 	}
++	of_property_read_u32_index(np, "ti,bootreg", 2,
++				   &oproc->boot_data->boot_reg_shift);
++
+ 	return 0;
+ }
  
--	rproc->auto_boot = auto_boot;
- 	rproc->has_iommu = false;
- 	ddata->workqueue = create_workqueue(dev_name(dev));
- 	if (!ddata->workqueue) {
 -- 
-2.20.1
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
