@@ -1,150 +1,95 @@
-Return-Path: <t-kristo@ti.com>
-Subject: Re: [PATCH 1/2] remoteproc: fall back to using parent memory pool if
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Subject: RE: [PATCH 1/2] remoteproc: fall back to using parent memory pool if
  no dedicated available
+Date: Fri, 13 Mar 2020 16:52:52 +0000
+Message-ID: <ce37072d2f304214aa920e66fa3b30b1@SFHDAG3NODE1.st.com>
 References: <20200305224108.21351-1-s-anna@ti.com>
  <20200305224108.21351-2-s-anna@ti.com>
- <ce37072d2f304214aa920e66fa3b30b1@SFHDAG3NODE1.st.com>
-From: Tero Kristo <t-kristo@ti.com>
-Message-ID: <d71d6061-2bfe-e8be-857b-67b22493aeab@ti.com>
-Date: Wed, 18 Mar 2020 11:37:24 +0200
-MIME-Version: 1.0
-In-Reply-To: <ce37072d2f304214aa920e66fa3b30b1@SFHDAG3NODE1.st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20200305224108.21351-2-s-anna@ti.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Tero Kristo <t-kristo@ti.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 13/03/2020 18:52, Arnaud POULIQUEN wrote:
-> Hi Suman,
-> 
->> -----Original Message-----
->> From: Suman Anna <s-anna@ti.com>
->> Sent: jeudi 5 mars 2020 23:41
->> To: Bjorn Andersson <bjorn.andersson@linaro.org>; Loic PALLARDY
->> <loic.pallardy@st.com>
->> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>; Arnaud POULIQUEN
->> <arnaud.pouliquen@st.com>; Tero Kristo <t-kristo@ti.com>; linux-
->> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Suman Anna
->> <s-anna@ti.com>
->> Subject: [PATCH 1/2] remoteproc: fall back to using parent memory pool if no
->> dedicated available
->>
->> From: Tero Kristo <t-kristo@ti.com>
->>
->> In some cases, like with OMAP remoteproc, we are not creating dedicated
->> memory pool for the virtio device. Instead, we use the same memory pool
->> for all shared memories. The current virtio memory pool handling forces a
->> split between these two, as a separate device is created for it, causing
->> memory to be allocated from bad location if the dedicated pool is not
->> available. Fix this by falling back to using the parent device memory pool if
->> dedicated is not available.
->>
->> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma
->> memory pool")
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>   drivers/remoteproc/remoteproc_virtio.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/drivers/remoteproc/remoteproc_virtio.c
->> b/drivers/remoteproc/remoteproc_virtio.c
->> index 8c07cb2ca8ba..4723ebe574b8 100644
->> --- a/drivers/remoteproc/remoteproc_virtio.c
->> +++ b/drivers/remoteproc/remoteproc_virtio.c
->> @@ -368,6 +368,16 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev,
->> int id)
->>   				goto out;
->>   			}
->>   		}
->> +	} else {
->> +		struct device_node *np = rproc->dev.parent->of_node;
->> +
->> +		/*
->> +		 * If we don't have dedicated buffer, just attempt to
->> +		 * re-assign the reserved memory from our parent.
->> +		 * Failure is non-critical so don't check return value
->> +		 * either.
->> +		 */
->> +		of_reserved_mem_device_init_by_idx(dev, np, 0);
->>   	}
-> I aven't tested your patchset yet, but reviewing you code,  I wonder if you cannot declare your  memory pool
-> in your platform driver using  rproc_of_resm_mem_entry_init. Something like:
-> 	struct device_node *mem_node;
-> 	struct reserved_mem *rmem;
-> 
-> 	mem_node = of_parse_phandle(dev->of_node, "memory-region", 0);
-> 	rmem = of_reserved_mem_lookup(mem_node);
-> 	mem = rproc_of_resm_mem_entry_init(dev, 0,
-> 							   rmem->size,
-> 							   rmem->base,
-> 							   " vdev0buffer");
-> 
-> A main advantage of this implementation would be that the index of the memory region would not be hard coded to 0.
+Hi Suman,
 
-It seems like that would work for us also, and thus this patch can be 
-dropped. See the following patch. Suman, any comments on this? If this 
-seems acceptable, I can send this as a proper patch to the list.
+> -----Original Message-----
+> From: Suman Anna <s-anna@ti.com>
+> Sent: jeudi 5 mars 2020 23:41
+> To: Bjorn Andersson <bjorn.andersson@linaro.org>; Loic PALLARDY
+> <loic.pallardy@st.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>; Arnaud POULIQUEN
+> <arnaud.pouliquen@st.com>; Tero Kristo <t-kristo@ti.com>; linux-
+> remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; Suman Anna
+> <s-anna@ti.com>
+> Subject: [PATCH 1/2] remoteproc: fall back to using parent memory pool if=
+ no
+> dedicated available
+>=20
+> From: Tero Kristo <t-kristo@ti.com>
+>=20
+> In some cases, like with OMAP remoteproc, we are not creating dedicated
+> memory pool for the virtio device. Instead, we use the same memory pool
+> for all shared memories. The current virtio memory pool handling forces a
+> split between these two, as a separate device is created for it, causing
+> memory to be allocated from bad location if the dedicated pool is not
+> available. Fix this by falling back to using the parent device memory poo=
+l if
+> dedicated is not available.
+>=20
+> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma
+> memory pool")
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  drivers/remoteproc/remoteproc_virtio.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c
+> b/drivers/remoteproc/remoteproc_virtio.c
+> index 8c07cb2ca8ba..4723ebe574b8 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -368,6 +368,16 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev,
+> int id)
+>  				goto out;
+>  			}
+>  		}
+> +	} else {
+> +		struct device_node *np =3D rproc->dev.parent->of_node;
+> +
+> +		/*
+> +		 * If we don't have dedicated buffer, just attempt to
+> +		 * re-assign the reserved memory from our parent.
+> +		 * Failure is non-critical so don't check return value
+> +		 * either.
+> +		 */
+> +		of_reserved_mem_device_init_by_idx(dev, np, 0);
+>  	}
+I aven't tested your patchset yet, but reviewing you code,  I wonder if you=
+ cannot declare your  memory pool
+in your platform driver using  rproc_of_resm_mem_entry_init. Something like=
+:
+	struct device_node *mem_node;
+	struct reserved_mem *rmem;
 
-------
+	mem_node =3D of_parse_phandle(dev->of_node, "memory-region", 0);
+	rmem =3D of_reserved_mem_lookup(mem_node);
+	mem =3D rproc_of_resm_mem_entry_init(dev, 0,
+							   rmem->size,
+							   rmem->base,
+							   " vdev0buffer");
 
-From: Tero Kristo <t-kristo@ti.com>
-Date: Wed, 18 Mar 2020 11:22:58 +0200
-Subject: [PATCH] remoteproc/omap: Allocate vdev0buffer memory from
-  reserved memory pool
+A main advantage of this implementation would be that the index of the memo=
+ry region would not be hard coded to 0.
 
-Since 086d08725d34 ("remoteproc: create vdev subdevice with specific dma
-memory pool"), remoteprocs must allocate separate vdev memory buffer. As
-OMAP remoteproc does not do this yet, the memory gets allocated from
-default DMA pool, and this memory is not suitable for the use. To fix
-the issue, map the vdev0buffer to use the same device reserved memory
-pool as the rest of the remoteproc.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
-  drivers/remoteproc/omap_remoteproc.c | 16 ++++++++++++++++
-  1 file changed, 16 insertions(+)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.c 
-b/drivers/remoteproc/omap_remoteproc.c
-index 29d19a608af8..024330e31a9e 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -1273,6 +1273,9 @@ static int omap_rproc_probe(struct platform_device 
-*pdev)
-  	const char *firmware;
-  	int ret;
-  	struct reset_control *reset;
-+	struct device_node *mem_node;
-+	struct reserved_mem *rmem;
-+	struct rproc_mem_entry *mem;
-
-  	if (!np) {
-  		dev_err(&pdev->dev, "only DT-based devices are supported\n");
-@@ -1335,6 +1338,19 @@ static int omap_rproc_probe(struct 
-platform_device *pdev)
-  		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
-  		dev_warn(&pdev->dev, "Typically this should be provided,\n");
-  		dev_warn(&pdev->dev, "only omit if you know what you are doing.\n");
-+	} else {
-+		mem_node = of_parse_phandle(pdev->dev.of_node, "memory-region",
-+					    0);
-+		rmem = of_reserved_mem_lookup(mem_node);
-+		mem = rproc_of_resm_mem_entry_init(&pdev->dev, 0, rmem->size,
-+						   rmem->base, "vdev0buffer");
-+
-+		if (!mem) {
-+			ret = -ENOMEM;
-+			goto release_mem;
-+		}
-+
-+		rproc_add_carveout(rproc, mem);
-  	}
-
-  	platform_set_drvdata(pdev, rproc);
--- 
-2.17.1
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Regards,
+Arnaud
+>=20
+>  	/* Allocate virtio device */
+> --
+> 2.23.0
