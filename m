@@ -1,48 +1,68 @@
 Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: saiprakash.ranjan=codeaurora.org@mg.codeaurora.org
+Sender: sibis=codeaurora.org@mg.codeaurora.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Mon, 23 Mar 2020 15:13:20 +0530
-From: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Date: Mon, 16 Mar 2020 22:07:04 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
 Subject: Re: [PATCH 0/3] Request direct mapping for modem firmware subdevice
-In-Reply-To: <497e40b8-300f-1b83-4312-93a58c459d1d@arm.com>
+In-Reply-To: <20200316155028.GB18704@infradead.org>
 References: <20200309182255.20142-1-sibis@codeaurora.org>
- <20200310112332.GG3794@8bytes.org>
- <4ed6ddd667a3e6f670084a443d141474@codeaurora.org>
- <20200310162320.GL3794@8bytes.org>
- <a50040a9-54fe-f682-dd7e-b2991b48d633@arm.com>
- <ff805c5c647326c5edaddf2efec5cb87@codeaurora.org>
- <497e40b8-300f-1b83-4312-93a58c459d1d@arm.com>
-Message-ID: <defd76aa8551858eb568e0ca644d4f4f@codeaurora.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: ohad@wizery.com, devicetree@vger.kernel.org, linux-kernel-owner@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org, iommu@lists.linux-foundation.org, robh+dt@kernel.org, Sibi Sankar <sibis@codeaurora.org>, agross@kernel.org, linux-arm-msm-owner@vger.kernel.org
+ <20200316155028.GB18704@infradead.org>
+Message-ID: <8cfddb6cbc424b131c9ab823c0c0f3f1@codeaurora.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org, ohad@wizery.com, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, agross@kernel.org, linux-arm-msm-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Robin,
+Hey Christoph,
+Thanks for taking time to review
+the series.
 
-On 2020-03-12 17:35, Robin Murphy wrote:
-> On 2020-03-12 6:28 am, Sai Prakash Ranjan wrote:
->> Hi Robin,
->> 
->> 
->> Are you talking about this one for SoC specific change - 
->> https://lore.kernel.org/patchwork/patch/1183530/
+On 2020-03-16 21:20, Christoph Hellwig wrote:
+> On Mon, Mar 09, 2020 at 11:52:52PM +0530, Sibi Sankar wrote:
+>> The Q6 modem sub-system has direct access to DDR through memnoc and
+>> an indirect access routed through a SMMU which MSS CE (crypto engine
+>> sub-component of MSS) uses during out of reset sequence. Request 
+>> direct
+>> mapping for the modem-firmware subdevice since smmu is not expected
+>> to provide access control/translation for these SIDs (sandboxing of 
+>> the
+>> modem is achieved through XPUs engaged using SMC calls).
 > 
-> Exactly - this particular wheel needs no reinventing at all.
-> 
-> [ I guess I should go review those patches properly... :) ]
-> 
+> Please fix your device tree so that the device isn't bound to an
+> IOMMU.
 
-It would be great if you could review the patch - 
-https://lore.kernel.org/patchwork/patch/1183530/
-Sibi has posted a v2 of this series based on that patch.
+the bindings proposed in the series
+would add a sub-device with an iommu
+property.
 
-Thanks,
-Sai
+modem_pil: remoteproc@xxxxx {
+...
+    modem-firmware {
+         iommus = <&apps_smmu 0x460 0x1>;
+    };
+...
+};
+
+Remoteproc device will not have a iommu
+property but modem-firmware sub-device
+will.
+
+With ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT y,
+we would want to configure the SID either
+in direct mapping or bypass (either will
+do since protection is achieved through
+other means)
+
+https://lore.kernel.org/lkml/497e40b8-300f-1b83-4312-93a58c459d1d@arm.com/
+
+Currently the restructuring is trending
+towards whats discussed in the ^^ thread.
+i.e either direct mapping/bypass will be
+done in the SoC specific corner of the
+SMMU driver.
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
