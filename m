@@ -1,215 +1,39 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/3] dt-bindings: remoteproc: Add bindings for C66x DSPs on TI K3 SoCs
-Date: Wed, 25 Mar 2020 15:18:37 -0500
-Message-ID: <20200325201839.15896-2-s-anna@ti.com>
-In-Reply-To: <20200325201839.15896-1-s-anna@ti.com>
-References: <20200325201839.15896-1-s-anna@ti.com>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 3/3] arm64: dts: qcom: sdm845-cheza: Add iommus property
+Date: Tue, 17 Mar 2020 20:39:10 +0530
+Message-Id: <20200317150910.26053-4-sibis@codeaurora.org>
+In-Reply-To: <20200317150910.26053-1-sibis@codeaurora.org>
+References: <20200317150910.26053-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org, robin.murphy@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com, agross@kernel.org, dianders@chromium.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Some Texas Instruments K3 family of SoCs have one of more Digital Signal
-Processor (DSP) subsystems that are comprised of either a TMS320C66x
-CorePac and/or a next-generation TMS320C71x CorePac processor subsystem.
-Add the device tree bindings document for the C66x DSP devices on these
-SoCs. The added example illustrates the DT nodes for the first C66x DSP
-device present on the K3 J721E family of SoCs.
+Add iommus property to remoteproc modem node.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 180 ++++++++++++++++++
- 1 file changed, 180 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-new file mode 100644
-index 000000000000..416e3abe7937
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -0,0 +1,180 @@
-+# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/ti,k3-dsp-rproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+index 8d16d016efec1..01c7d7cc95c2d 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+@@ -626,6 +626,10 @@ &mdss_mdp {
+ 	status = "okay";
+ };
+ 
++&mss_pil {
++	iommus = <&apps_smmu 0x780 0x1>;
++};
 +
-+title: TI K3 DSP devices
-+
-+maintainers:
-+  - Suman Anna <s-anna@ti.com>
-+
-+description: |
-+  The TI K3 family of SoCs usually have one or more TI DSP Core sub-systems
-+  that are used to offload some of the processor-intensive tasks or algorithms,
-+  for achieving various system level goals.
-+
-+  These processor sub-systems usually contain additional sub-modules like
-+  L1 and/or L2 caches/SRAMs, an Interrupt Controller, an external memory
-+  controller, a dedicated local power/sleep controller etc. The DSP processor
-+  cores in the K3 SoCs are usually either a TMS320C66x CorePac processor or a
-+  TMS320C71x CorePac processor.
-+
-+  Each DSP Core sub-system is represented as a single DT node. Each node has a
-+  number of required or optional properties that enable the OS running on the
-+  host processor (Arm CorePac) to perform the device management of the remote
-+  processor and to communicate with the remote processor.
-+
-+properties:
-+  compatible:
-+    const: ti,j721e-c66-dsp
-+    description:
-+      Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
-+
-+  reg:
-+    description: |
-+      Should contain an entry for each value in 'reg-names'.
-+      Each entry should have the memory region's start address
-+      and the size of the region, the representation matching
-+      the parent node's '#address-cells' and '#size-cells' values.
-+    minItems: 3
-+    maxItems: 3
-+
-+  reg-names:
-+    description: |
-+      Should contain strings with the names of the specific internal
-+      internal memory regions, and should be defined in this order
-+    maxItems: 3
-+    items:
-+      - const: l2sram
-+      - const: l1pram
-+      - const: l1dram
-+
-+  ti,sci:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Should be a phandle to the TI-SCI System Controller node
-+
-+  ti,sci-dev-id:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      Should contain the TI-SCI device id corresponding to the DSP core.
-+      Please refer to the corresponding System Controller documentation
-+      for valid values for the DSP cores.
-+
-+  ti,sci-proc-ids:
-+    description: Should contain a single tuple of <proc_id host_id>.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+      - maxItems: 1
-+        items:
-+          items:
-+            - description: TI-SCI processor id for the DSP core device
-+            - description: TI-SCI host id to which processor control
-+                           ownership should be transferred to
-+
-+  resets:
-+    description: |
-+      Should contain the phandle to the reset controller node
-+      managing the resets for this device, and a reset
-+      specifier. Please refer to the following reset bindings
-+      for the reset argument specifier,
-+      Documentation/devicetree/bindings/reset/ti,sci-reset.txt
-+
-+  firmware-name:
-+    description: |
-+      Should contain the name of the default firmware image
-+      file located on the firmware search path
-+
-+  mboxes:
-+    description: |
-+      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-+      communication with the remote processor. This property should match
-+      with the sub-mailbox node used in the firmware image. The specifier
-+      format is as per the bindings,
-+      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
-+
-+  memory-region:
-+    minItems: 2
-+    description: |
-+      phandle to the reserved memory nodes to be associated with the remoteproc
-+      device. There should be atleast two reserved memory nodes defined - the
-+      first one would be used for dynamic DMA allocations like vrings and vring
-+      buffers, and the remaining ones used for the firmware image sections. The
-+      reserved memory nodes should be carveout nodes, and should be defined as
-+      per the bindings in
-+      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+
-+# Optional properties:
-+# --------------------
-+
-+  sram:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    minItems: 1
-+    description: |
-+      pHandles to one or more reserved on-chip SRAM regions. The regions
-+      should be defined as child nodes of the respective SRAM node, and
-+      should be defined as per the generic bindings in,
-+      Documentation/devicetree/bindings/sram/sram.yaml
-+
-+required:
-+ - compatible
-+ - reg
-+ - reg-names
-+ - ti,sci
-+ - ti,sci-dev-id
-+ - ti,sci-proc-ids
-+ - resets
-+ - firmware-name
-+ - mboxes
-+ - memory-region
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    //Example: J721E SoC
-+    /* DSP Carveout reserved memory nodes */
-+    reserved-memory {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+        ranges;
-+
-+        c66_0_dma_memory_region: c66-dma-memory@a6000000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0xa6000000 0x00 0x100000>;
-+            no-map;
-+        };
-+
-+        c66_0_memory_region: c66-memory@a6100000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0xa6100000 0x00 0xf00000>;
-+            no-map;
-+        };
-+    };
-+
-+    cbass_main: interconnect@100000 {
-+        compatible = "simple-bus";
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+        ranges = <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
-+                 <0x4d 0x81800000 0x4d 0x81800000 0x00 0x00800000>; /* C66_1 */
-+
-+        /* J721E C66_0 DSP node */
-+        c66_0: dsp@4d80800000 {
-+            compatible = "ti,j721e-c66-dsp";
-+            reg = <0x4d 0x80800000 0x00 0x00048000>,
-+                  <0x4d 0x80e00000 0x00 0x00008000>,
-+                  <0x4d 0x80f00000 0x00 0x00008000>;
-+            reg-names = "l2sram", "l1pram", "l1dram";
-+            ti,sci = <&dmsc>;
-+            ti,sci-dev-id = <142>;
-+            ti,sci-proc-ids = <0x03 0xFF>;
-+            resets = <&k3_reset 142 1>;
-+            firmware-name = "j7-c66_0-fw";
-+            memory-region = <&c66_0_dma_memory_region>,
-+                            <&c66_0_memory_region>;
-+            mboxes = <&mailbox0_cluster3 &mbox_c66_0>;
-+        };
-+    };
+ &pm8998_pwrkey {
+ 	status = "disabled";
+ };
 -- 
-2.23.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
