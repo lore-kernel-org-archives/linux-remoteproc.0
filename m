@@ -1,91 +1,53 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv9 06/15] remoteproc/omap: Initialize and assign reserved memory node
-Date: Tue, 24 Mar 2020 13:00:26 +0200
-Message-ID: <20200324110035.29907-7-t-kristo@ti.com>
-In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
-References: <20200324110035.29907-1-t-kristo@ti.com>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH v2 2/2] remoteproc: Fix and restore the parenting hierarchy for vdev
+Date: Thu, 19 Mar 2020 11:23:21 -0500
+Message-ID: <20200319162321.20632-3-s-anna@ti.com>
+In-Reply-To: <20200319162321.20632-1-s-anna@ti.com>
+References: <20200319162321.20632-1-s-anna@ti.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
+dma memory pool") has introduced a new vdev subdevice for each vdev
+declared in the firmware resource table and made it as the parent for the
+created virtio rpmsg devices instead of the previous remoteproc device.
+This changed the overall parenting hierarchy for the rpmsg devices, which
+were children of virtio devices, and does not allow the corresponding
+rpmsg drivers to retrieve the parent rproc device through the
+rproc_get_by_child() API.
 
-The reserved memory nodes are not assigned to platform devices by
-default in the driver core to avoid the lookup for every platform
-device and incur a penalty as the real users are expected to be
-only a few devices.
+Fix this by restoring the remoteproc device as the parent. The new vdev
+subdevice can continue to inherit the DMA attributes from the remoteproc's
+parent device (actual platform device).
 
-OMAP remoteproc devices fall into the above category and the OMAP
-remoteproc driver _requires_ specific CMA pools to be assigned
-for each device at the moment to align on the location of the
-vrings and vring buffers in the RTOS-side firmware images. So,
-use the of_reserved_mem_device_init/release() API appropriately
-to assign the corresponding reserved memory region to the OMAP
-remoteproc device. Note that only one region per device is
-allowed by the framework.
-
+Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
 Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
 ---
-v9:
-  * no changes
+v2: No code changes, picked up review tags
+v1: https://patchwork.kernel.org/patch/11422725/
 
- drivers/remoteproc/omap_remoteproc.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index fecc68e6d3a8..473d7e3cdef8 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/err.h>
- #include <linux/of_device.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/remoteproc.h>
-@@ -486,14 +487,23 @@ static int omap_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_rproc;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index a9ac1d01e09b..0962855f27fc 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -514,7 +514,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
  
-+	ret = of_reserved_mem_device_init(&pdev->dev);
-+	if (ret) {
-+		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
-+		dev_warn(&pdev->dev, "Typically this should be provided,\n");
-+		dev_warn(&pdev->dev, "only omit if you know what you are doing.\n");
-+	}
-+
- 	platform_set_drvdata(pdev, rproc);
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
--		goto free_rproc;
-+		goto release_mem;
- 
- 	return 0;
- 
-+release_mem:
-+	of_reserved_mem_device_release(&pdev->dev);
- free_rproc:
- 	rproc_free(rproc);
- 	return ret;
-@@ -505,6 +515,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
- 
- 	rproc_del(rproc);
- 	rproc_free(rproc);
-+	of_reserved_mem_device_release(&pdev->dev);
- 
- 	return 0;
- }
+ 	/* Initialise vdev subdevice */
+ 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+-	rvdev->dev.parent = rproc->dev.parent;
++	rvdev->dev.parent = &rproc->dev;
+ 	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
+ 	rvdev->dev.release = rproc_rvdev_release;
+ 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.23.0
