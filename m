@@ -1,21 +1,23 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 25 Mar 2020 14:38:12 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
 Subject: Re: [PATCH v2 1/2] remoteproc: fall back to using parent memory pool
  if no dedicated available
-Message-ID: <20200325203812.GA9384@xps15>
 References: <20200319162321.20632-1-s-anna@ti.com>
  <20200319162321.20632-2-s-anna@ti.com>
+From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <4fa1d2a9-c4a0-28f6-fd7a-5f54ee12531a@st.com>
+Date: Fri, 20 Mar 2020 09:39:54 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20200319162321.20632-2-s-anna@ti.com>
-To: Suman Anna <s-anna@ti.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Suman Anna <s-anna@ti.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu, Mar 19, 2020 at 11:23:20AM -0500, Suman Anna wrote:
+Hi Suman,
+
+On 3/19/20 5:23 PM, Suman Anna wrote:
 > From: Tero Kristo <t-kristo@ti.com>
 > 
 > In some cases, like with OMAP remoteproc, we are not creating dedicated
@@ -59,32 +61,9 @@ On Thu, Mar 19, 2020 at 11:23:20AM -0500, Suman Anna wrote:
 > +		 * desired. Failure is non-critical and the allocations will
 > +		 * fall back to global pools, so don't check return value
 > +		 * either.
-
-I'm perplex...  In the changelog it is indicated that if a memory pool is
-not dedicated allocation happens from a bad location but here failure of
-getting a hold of a dedicated memory pool is not critical. 
-
 > +		 */
 > +		of_reserved_mem_device_init_by_idx(dev, np,
 > +						   rproc->vdevbuf_mem_id);
-
-I wonder if using an index setup by platform code is really the best way
-forward when we already have the carveout mechanic available to us.  I see the
-platform code adding a carveout that would have the same name as rproc->name.
->From there in rproc_add_virtio_dev() we could have something like:
-
-        mem = rproc_find_carveout_by_name(rproc, "%s", rproc->name);
-
-
-That would be very flexible, the location of the reserved memory withing the
-memory-region could change without fear of breaking things and no need to add to
-struct rproc.
-
-Let me know what you think.
-
-Thanks,
-Mathieu
-
 >  	}
 >  
 >  	/* Allocate virtio device */
@@ -107,7 +86,13 @@ Mathieu
 > +	u8 vdevbuf_mem_id;
 >  	u8 elf_class;
 >  };
->  
-> -- 
-> 2.23.0
-> 
+>
+
+LGTM, just a minor remark concerning the name. As this memory region could be used for
+different allocations (e.g rpmsg device allocation, vrings...) i would suggest you to rename
+it with a more generic name such as shared_mem_id or default_shmem_id.
+Anyway, first let's wait for further feedback on your solution. 
+
+Thanks,
+Arnaud
+ 
