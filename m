@@ -1,37 +1,143 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 1/3] iommu: Export "iommu_request_dm_for_dev"
-Date: Mon,  9 Mar 2020 23:52:53 +0530
-Message-Id: <20200309182255.20142-2-sibis@codeaurora.org>
-In-Reply-To: <20200309182255.20142-1-sibis@codeaurora.org>
-References: <20200309182255.20142-1-sibis@codeaurora.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Mon, 23 Mar 2020 16:33:02 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v4 2/4] remoteproc: Introduce "panic" callback in ops
+Message-ID: <20200323223302.GC30464@xps15>
+References: <20200310063817.3344712-1-bjorn.andersson@linaro.org>
+ <20200310063817.3344712-3-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com, agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310063817.3344712-3-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Export "iommu_request_dm_for_dev" to allow for modular builds of
-drivers requesting for direct mapping.
+On Mon, Mar 09, 2020 at 11:38:15PM -0700, Bjorn Andersson wrote:
+> Introduce generic support for handling kernel panics in remoteproc
+> drivers, in order to allow operations needed for aiding in post mortem
+> system debugging, such as flushing caches etc.
+> 
+> The function can return a number of milliseconds needed by the remote to
+> "settle" and the core will wait the longest returned duration before
+> returning from the panic handler.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Change since v3:
+> - Migrate from mutex_trylock() to using RCU
+> - Turned the timeout to unsigned long
+> 
+>  drivers/remoteproc/remoteproc_core.c | 44 ++++++++++++++++++++++++++++
+>  include/linux/remoteproc.h           |  3 ++
+>  2 files changed, 47 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index f0a77c30c6b1..2024a98930bf 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -16,6 +16,7 @@
+>  
+>  #define pr_fmt(fmt)    "%s: " fmt, __func__
+>  
+> +#include <linux/delay.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/device.h>
+> @@ -43,6 +44,7 @@
+>  
+>  static DEFINE_MUTEX(rproc_list_mutex);
+>  static LIST_HEAD(rproc_list);
+> +static struct notifier_block rproc_panic_nb;
+>  
+>  typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
+>  				 void *, int offset, int avail);
+> @@ -2219,10 +2221,51 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+>  }
+>  EXPORT_SYMBOL(rproc_report_crash);
+>  
+> +static int rproc_panic_handler(struct notifier_block *nb, unsigned long event,
+> +			       void *ptr)
+> +{
+> +	unsigned int longest = 0;
+> +	struct rproc *rproc;
+> +	unsigned int d;
+> +
+> +	rcu_read_lock();
+> +	list_for_each_entry_rcu(rproc, &rproc_list, node) {
+> +		if (!rproc->ops->panic || rproc->state != RPROC_RUNNING)
+> +			continue;
+> +
+> +		d = rproc->ops->panic(rproc);
+> +		longest = max(longest, d);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	/*
+> +	 * Delay for the longest requested duration before returning.
+> +	 * This can be used by the remoteproc drivers to give the remote
+> +	 * processor time to perform any requested operations (such as flush
+> +	 * caches), where means for signalling the Linux side isn't available
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/iommu/iommu.c | 1 +
- 1 file changed, 1 insertion(+)
+There is a problem with the above sentence.
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 3e3528436e0b2..06a36230fe22d 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2353,6 +2353,7 @@ int iommu_request_dm_for_dev(struct device *dev)
- {
- 	return request_default_domain_for_dev(dev, IOMMU_DOMAIN_IDENTITY);
- }
-+EXPORT_SYMBOL_GPL(iommu_request_dm_for_dev);
- 
- /* Request that a device can't be direct mapped by the IOMMU */
- int iommu_request_dma_domain_for_dev(struct device *dev)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> +	 * while in panic.
+> +	 */
+> +	mdelay(longest);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static void __init rproc_init_panic(void)
+> +{
+> +	rproc_panic_nb.notifier_call = rproc_panic_handler;
+> +	atomic_notifier_chain_register(&panic_notifier_list, &rproc_panic_nb);
+> +}
+> +
+> +static void __exit rproc_exit_panic(void)
+> +{
+> +	atomic_notifier_chain_unregister(&panic_notifier_list, &rproc_panic_nb);
+> +}
+> +
+>  static int __init remoteproc_init(void)
+>  {
+>  	rproc_init_sysfs();
+>  	rproc_init_debugfs();
+> +	rproc_init_panic();
+>  
+>  	return 0;
+>  }
+> @@ -2232,6 +2275,7 @@ static void __exit remoteproc_exit(void)
+>  {
+>  	ida_destroy(&rproc_dev_index);
+>  
+> +	rproc_exit_panic();
+>  	rproc_exit_debugfs();
+>  	rproc_exit_sysfs();
+>  }
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 16ad66683ad0..5959d6247dc0 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -369,6 +369,8 @@ enum rsc_handling_status {
+>   *			expects to find it
+>   * @sanity_check:	sanity check the fw image
+>   * @get_boot_addr:	get boot address to entry point specified in firmware
+> + * @panic:	optional callback to react to system panic, core will delay
+> + *		panic at least the returned number of milliseconds
+>   */
+>  struct rproc_ops {
+>  	int (*start)(struct rproc *rproc);
+> @@ -383,6 +385,7 @@ struct rproc_ops {
+>  	int (*load)(struct rproc *rproc, const struct firmware *fw);
+>  	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+>  	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+> +	unsigned long (*panic)(struct rproc *rproc);
+>  };
+>  
+>  /**
+> -- 
+> 2.24.0
+> 
