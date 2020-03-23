@@ -1,9 +1,9 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Mon, 23 Mar 2020 16:33:02 -0600
+Date: Mon, 23 Mar 2020 16:29:14 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v4 2/4] remoteproc: Introduce "panic" callback in ops
-Message-ID: <20200323223302.GC30464@xps15>
+Message-ID: <20200323222914.GB30464@xps15>
 References: <20200310063817.3344712-1-bjorn.andersson@linaro.org>
  <20200310063817.3344712-3-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
@@ -69,6 +69,17 @@ On Mon, Mar 09, 2020 at 11:38:15PM -0700, Bjorn Andersson wrote:
 > +	list_for_each_entry_rcu(rproc, &rproc_list, node) {
 > +		if (!rproc->ops->panic || rproc->state != RPROC_RUNNING)
 > +			continue;
+
+To do things correctly rproc->state would need to be protected by the
+rproc->mutex, which would violate RCU's rule of not blocking inside a read-side
+critical section.  And going back to using the rproc_list_mutex as in your
+previous version would likely set off the lockdep mechanic quickly.   
+
+I don't have a solution, just noting that a potential race does exist.  On the
+flip side consequences are minimal.
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
 > +
 > +		d = rproc->ops->panic(rproc);
 > +		longest = max(longest, d);
@@ -80,9 +91,6 @@ On Mon, Mar 09, 2020 at 11:38:15PM -0700, Bjorn Andersson wrote:
 > +	 * This can be used by the remoteproc drivers to give the remote
 > +	 * processor time to perform any requested operations (such as flush
 > +	 * caches), where means for signalling the Linux side isn't available
-
-There is a problem with the above sentence.
-
 > +	 * while in panic.
 > +	 */
 > +	mdelay(longest);
