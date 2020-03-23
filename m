@@ -1,109 +1,87 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
+Date: Mon, 23 Mar 2020 16:36:24 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 08/18] remoteproc: Allocate synchronisation state machine
-Date: Thu, 12 Mar 2020 16:11:48 -0600
-Message-Id: <20200312221158.3613-9-mathieu.poirier@linaro.org>
-In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v4 3/4] remoteproc: qcom: q6v5: Add common panic handler
+Message-ID: <20200323223624.GD30464@xps15>
+References: <20200310063817.3344712-1-bjorn.andersson@linaro.org>
+ <20200310063817.3344712-4-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310063817.3344712-4-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This patch allocates a synchronisation state machine, either provided or
-not by users, in order to enact the proper behavior requested by the
-platform or specific scenarios.
+On Mon, Mar 09, 2020 at 11:38:16PM -0700, Bjorn Andersson wrote:
+> Add a common panic handler that invokes a stop request and sleep enough
+> to let the remoteproc flush it's caches etc in order to aid post mortem
+> debugging. For now a hard coded 200ms is returned to the remoteproc
+> core, this value is taken from the downstream kernel.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Change since v3:
+>  - Change return type to unsigned long
+> 
+>  drivers/remoteproc/qcom_q6v5.c | 20 ++++++++++++++++++++
+>  drivers/remoteproc/qcom_q6v5.h |  1 +
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> index cb0f4a0be032..111a442c993c 100644
+> --- a/drivers/remoteproc/qcom_q6v5.c
+> +++ b/drivers/remoteproc/qcom_q6v5.c
+> @@ -15,6 +15,8 @@
+>  #include <linux/remoteproc.h>
+>  #include "qcom_q6v5.h"
+>  
+> +#define Q6V5_PANIC_DELAY_MS	200
+> +
+>  /**
+>   * qcom_q6v5_prepare() - reinitialize the qcom_q6v5 context before start
+>   * @q6v5:	reference to qcom_q6v5 context to be reinitialized
+> @@ -162,6 +164,24 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
+>  
+> +/**
+> + * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
+> + * @q6v5:	reference to qcom_q6v5 context
+> + *
+> + * Set the stop bit and sleep in order to allow the remote processor to flush
+> + * its caches etc for post mortem debugging.
+> + *
+> + * Return: 200ms
+> + */
+> +unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
+> +{
+> +	qcom_smem_state_update_bits(q6v5->state,
+> +				    BIT(q6v5->stop_bit), BIT(q6v5->stop_bit));
+> +
+> +	return Q6V5_PANIC_DELAY_MS;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+> +
+>  /**
+>   * qcom_q6v5_init() - initializer of the q6v5 common struct
+>   * @q6v5:	handle to be initialized
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 7ac92c1e0f49..c4ed887c1499 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -42,5 +42,6 @@ int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+>  int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+>  int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5);
+>  int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+> +unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 59 +++++++++++++++++++++++++++-
- 1 file changed, 58 insertions(+), 1 deletion(-)
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 02dbb826aa29..1578a9c70422 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1955,6 +1955,7 @@ static void rproc_type_release(struct device *dev)
- 	kfree(rproc->firmware);
- 	kfree(rproc->ops);
- 	kfree(rproc->sync_ops);
-+	kfree(rproc->sync_states);
- 	kfree(rproc);
- }
- 
-@@ -2035,6 +2036,59 @@ static int rproc_alloc_sync_ops(struct rproc *rproc,
- 	return 0;
- }
- 
-+static int rproc_alloc_sync_states(struct rproc *rproc,
-+				   const struct rproc_ops *boot_ops,
-+				   const struct rproc_ops *sync_ops,
-+				   struct rproc_sync_states *sync_states)
-+{
-+	struct rproc_sync_states *st;
-+
-+	/* At least one set of operation is needed */
-+	if (!boot_ops && !sync_ops)
-+		return -EINVAL;
-+
-+	/* We have a synchronisation state machine, no need to build one */
-+	if (sync_states) {
-+		st = kmemdup(sync_states, sizeof(*st), GFP_KERNEL);
-+		if (!st)
-+			return -ENOMEM;
-+
-+		/* Nothing else to do */
-+		goto out;
-+	}
-+
-+	/* Allocate synchronisation state machine */
-+	st = kzalloc(sizeof(*st), GFP_KERNEL);
-+	if (!st)
-+		return -ENOMEM;
-+
-+	/*
-+	 * We have a boot_ops and no sync_ops - build a state machine that
-+	 * does _not_ synchronise with an MCU.
-+	 */
-+	if (boot_ops && !sync_ops) {
-+		st->on_init = st->after_stop = st->after_crash = false;
-+		goto out;
-+	}
-+
-+	/*
-+	 * We have a sync_ops and an no boot_ops - build a state machine that
-+	 * _only_ synchronises with an MCU.
-+	 */
-+	if (sync_ops && !boot_ops) {
-+		st->on_init = st->after_stop = st->after_crash = true;
-+		goto out;
-+	}
-+
-+out:
-+	rproc->sync_with_mcu = st->on_init;
-+	/* And the synchronisation state machine to use */
-+	rproc->sync_states = st;
-+	/* Tell the core what to do when initialising */
-+	rproc_set_mcu_sync_state(rproc, RPROC_SYNC_STATE_INIT);
-+	return 0;
-+}
-+
- static int rproc_alloc_internals(struct rproc *rproc, const char *name,
- 				 const struct rproc_ops *boot_ops,
- 				 const struct rproc_ops *sync_ops,
-@@ -2065,7 +2119,10 @@ static int rproc_alloc_internals(struct rproc *rproc, const char *name,
- 			return ret;
- 	}
- 
--	return 0;
-+	/* Finally allocate the synchronisation state machine */
-+	ret = rproc_alloc_sync_states(rproc, boot_ops, sync_ops, sync_states);
-+
-+	return ret;
- }
- 
- /**
--- 
-2.20.1
+>  
+>  #endif
+> -- 
+> 2.24.0
+> 
