@@ -1,44 +1,80 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:44898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731423AbgCLAAE (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 Mar 2020 20:00:04 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v5 4/4] remoteproc: qcom: Introduce panic handler for PAS and ADSP
+Date: Mon, 23 Mar 2020 22:29:04 -0700
+Message-Id: <20200324052904.738594-5-bjorn.andersson@linaro.org>
+In-Reply-To: <20200324052904.738594-1-bjorn.andersson@linaro.org>
+References: <20200324052904.738594-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] remoteproc: stm32: demote warning about optional property absence
-From: patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158397120404.18219.13294090237976627276.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Mar 2020 00:00:04 +0000
-References: <20200224172519.15315-1-a.fatoum@pengutronix.de>
-In-Reply-To: <20200224172519.15315-1-a.fatoum@pengutronix.de>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc: linux-remoteproc@vger.kernel.org
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello:
+Make the PAS and ADSP/CDSP remoteproc drivers implement the panic
+handler that will invoke a stop to prepare the remoteprocs for post
+mortem debugging.
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-On Mon, 24 Feb 2020 18:25:19 +0100 you wrote:
-> The mainline device trees lack the "st,syscfg-pdds", so probing the
-> driver always throws the warning. As the property is optional per binding
-> and the driver can deal with its absence, demote the warning to info log
-> level.
-> 
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> 
-> [...]
+Changes since v4:
+- Picked up Mathieu's r-b
 
+ drivers/remoteproc/qcom_q6v5_adsp.c | 8 ++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c  | 8 ++++++++
+ 2 files changed, 16 insertions(+)
 
-Here is a summary with links:
-  - remoteproc: stm32: demote warning about optional property absence
-    https://git.kernel.org/andersson/remoteproc/c/93b2c0b30c355cc33d8946fa0f835b38435d604a
-
-You are awesome, thank you!
-
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 2b01f2282062..24a3db961d5e 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -282,12 +282,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+ 	return adsp->mem_region + offset;
+ }
+ 
++static unsigned long adsp_panic(struct rproc *rproc)
++{
++	struct qcom_adsp *adsp = rproc->priv;
++
++	return qcom_q6v5_panic(&adsp->q6v5);
++}
++
+ static const struct rproc_ops adsp_ops = {
+ 	.start = adsp_start,
+ 	.stop = adsp_stop,
+ 	.da_to_va = adsp_da_to_va,
+ 	.parse_fw = qcom_register_dump_segments,
+ 	.load = adsp_load,
++	.panic = adsp_panic,
+ };
+ 
+ static int adsp_init_clock(struct qcom_adsp *adsp, const char **clk_ids)
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index a41860d2243a..7a63efb85405 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -234,12 +234,20 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len)
+ 	return adsp->mem_region + offset;
+ }
+ 
++static unsigned long adsp_panic(struct rproc *rproc)
++{
++	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++
++	return qcom_q6v5_panic(&adsp->q6v5);
++}
++
+ static const struct rproc_ops adsp_ops = {
+ 	.start = adsp_start,
+ 	.stop = adsp_stop,
+ 	.da_to_va = adsp_da_to_va,
+ 	.parse_fw = qcom_register_dump_segments,
+ 	.load = adsp_load,
++	.panic = adsp_panic,
+ };
+ 
+ static int adsp_init_clock(struct qcom_adsp *adsp)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.24.0
