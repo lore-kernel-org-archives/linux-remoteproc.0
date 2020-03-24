@@ -1,74 +1,91 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 11/18] remoteproc: Repurpose function rproc_trigger_auto_boot()
-Date: Thu, 12 Mar 2020 16:11:51 -0600
-Message-Id: <20200312221158.3613-12-mathieu.poirier@linaro.org>
-In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv9 06/15] remoteproc/omap: Initialize and assign reserved memory node
+Date: Tue, 24 Mar 2020 13:00:26 +0200
+Message-ID: <20200324110035.29907-7-t-kristo@ti.com>
+In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
+References: <20200324110035.29907-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Repurpose function rproc_trigger_auto_boot() so that it can deal with
-scenarios where the MCU is already running.  As such give it a new name
-to better represent the capabilities and add a call to rproc_actuate()
-if instructed by the platform code to synchronise with the MCU rather
-than boot it from scratch.
+From: Suman Anna <s-anna@ti.com>
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+The reserved memory nodes are not assigned to platform devices by
+default in the driver core to avoid the lookup for every platform
+device and incur a penalty as the real users are expected to be
+only a few devices.
+
+OMAP remoteproc devices fall into the above category and the OMAP
+remoteproc driver _requires_ specific CMA pools to be assigned
+for each device at the moment to align on the location of the
+vrings and vring buffers in the RTOS-side firmware images. So,
+use the of_reserved_mem_device_init/release() API appropriately
+to assign the corresponding reserved memory region to the OMAP
+remoteproc device. Note that only one region per device is
+allowed by the framework.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Andrew F. Davis <afd@ti.com>
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+v9:
+  * no changes
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 7faee1396ef7..d57b47b0d6be 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -51,6 +51,8 @@ static int rproc_alloc_carveout(struct rproc *rproc,
- 				struct rproc_mem_entry *mem);
- static int rproc_release_carveout(struct rproc *rproc,
- 				  struct rproc_mem_entry *mem);
-+static int rproc_actuate(struct rproc *rproc,
-+			 const struct firmware *firmware_p);
+ drivers/remoteproc/omap_remoteproc.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index fecc68e6d3a8..473d7e3cdef8 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/err.h>
+ #include <linux/of_device.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/remoteproc.h>
+@@ -486,14 +487,23 @@ static int omap_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
  
- /* Unique indices for remoteproc devices */
- static DEFINE_IDA(rproc_dev_index);
-@@ -1444,10 +1446,17 @@ static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
- 	release_firmware(fw);
- }
- 
--static int rproc_trigger_auto_boot(struct rproc *rproc)
-+static int rproc_trigger_auto_initiate(struct rproc *rproc)
- {
- 	int ret;
- 
-+	/*
-+	 * The MCU is already booted, all we need to do is synchronise with it.
-+	 * No point dealing with a firmware image.
-+	 */
-+	if (rproc_sync_with_mcu(rproc))
-+		return rproc_actuate(rproc, NULL);
++	ret = of_reserved_mem_device_init(&pdev->dev);
++	if (ret) {
++		dev_warn(&pdev->dev, "device does not have specific CMA pool.\n");
++		dev_warn(&pdev->dev, "Typically this should be provided,\n");
++		dev_warn(&pdev->dev, "only omit if you know what you are doing.\n");
++	}
 +
- 	/*
- 	 * We're initiating an asynchronous firmware loading, so we can
- 	 * be built-in kernel code, without hanging the boot process.
-@@ -1931,9 +1940,12 @@ int rproc_add(struct rproc *rproc)
- 	/* create debugfs entries */
- 	rproc_create_debug_dir(rproc);
+ 	platform_set_drvdata(pdev, rproc);
  
--	/* if rproc is marked always-on, request it to boot */
-+	/*
-+	 * if rproc is marked always-on, request it to boot or synchronise
-+	 * with it.
-+	 */
- 	if (rproc->auto_boot) {
--		ret = rproc_trigger_auto_boot(rproc);
-+		ret = rproc_trigger_auto_initiate(rproc);
- 		if (ret < 0)
- 			return ret;
- 	}
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto release_mem;
+ 
+ 	return 0;
+ 
++release_mem:
++	of_reserved_mem_device_release(&pdev->dev);
+ free_rproc:
+ 	rproc_free(rproc);
+ 	return ret;
+@@ -505,6 +515,7 @@ static int omap_rproc_remove(struct platform_device *pdev)
+ 
+ 	rproc_del(rproc);
+ 	rproc_free(rproc);
++	of_reserved_mem_device_release(&pdev->dev);
+ 
+ 	return 0;
+ }
 -- 
-2.20.1
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
