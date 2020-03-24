@@ -1,135 +1,58 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 2/4] remoteproc: Introduce "panic" callback in ops
-Date: Mon,  9 Mar 2020 23:38:15 -0700
-Message-Id: <20200310063817.3344712-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20200310063817.3344712-1-bjorn.andersson@linaro.org>
-References: <20200310063817.3344712-1-bjorn.andersson@linaro.org>
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH v7 0/2] Add rpmsg tty driver
+Date: Tue, 24 Mar 2020 18:04:05 +0100
+Message-ID: <20200324170407.16470-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+Content-Type: text/plain
+To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: arnaud.pouliquen@st.com, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Alan Cox <gnomes@lxorguk.ukuu.org.uk>, xiang xiao <xiaoxiang781216@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Introduce generic support for handling kernel panics in remoteproc
-drivers, in order to allow operations needed for aiding in post mortem
-system debugging, such as flushing caches etc.
+This patch set introduces a TTY console on top of the RPMsg framework which
+enables the following use cases:
+- Provide a console to communicate easily with the remote processor application.
+- Provide an interface to get the remote processor log traces without ring
+  buffer limitation.
+- Ease the migration from MPU + MCU processors to multi core processors
+  (MPU and MCU integrated in one processor) by offering a virtual serial link.
 
-The function can return a number of milliseconds needed by the remote to
-"settle" and the core will wait the longest returned duration before
-returning from the panic handler.
+An alternative of this proposed solution would consist in using the virtio
+console:
+The drawback with that solution is that it requires a specific virtio buffer
+(in addition to the one already used for RPMsg) which does not fit with remote
+processors with little memory. The proposed solution allows to multiplex the
+console with the other rpmsg services, optimizing the memory.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+The first patch adds an API to the rpmsg framework ('get max transmission unit')
+and the second one is the rpmsg tty driver itself.
 
-Change since v3:
-- Migrate from mutex_trylock() to using RCU
-- Turned the timeout to unsigned long
+Previous revision:
+- the patch 1/2 ("rpmsg: core: add API to get MTU) has been discussed in a
+  separate thread on remoteproc mailing list:
+    https://patchwork.kernel.org/patch/11333509/
+- Previous version of the patch 2/2 (tty: add rpmsg driver) available here:
+    https://patchwork.kernel.org/cover/11130213/
 
- drivers/remoteproc/remoteproc_core.c | 44 ++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  3 ++
- 2 files changed, 47 insertions(+)
+Main delta vs v6:
+ - Pack the rpmsg_tty_ctrl struct.
+ - MTU API acked by Suman Anna from Texas Intruments company. 
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f0a77c30c6b1..2024a98930bf 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -16,6 +16,7 @@
- 
- #define pr_fmt(fmt)    "%s: " fmt, __func__
- 
-+#include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/device.h>
-@@ -43,6 +44,7 @@
- 
- static DEFINE_MUTEX(rproc_list_mutex);
- static LIST_HEAD(rproc_list);
-+static struct notifier_block rproc_panic_nb;
- 
- typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
- 				 void *, int offset, int avail);
-@@ -2219,10 +2221,51 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
- }
- EXPORT_SYMBOL(rproc_report_crash);
- 
-+static int rproc_panic_handler(struct notifier_block *nb, unsigned long event,
-+			       void *ptr)
-+{
-+	unsigned int longest = 0;
-+	struct rproc *rproc;
-+	unsigned int d;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(rproc, &rproc_list, node) {
-+		if (!rproc->ops->panic || rproc->state != RPROC_RUNNING)
-+			continue;
-+
-+		d = rproc->ops->panic(rproc);
-+		longest = max(longest, d);
-+	}
-+	rcu_read_unlock();
-+
-+	/*
-+	 * Delay for the longest requested duration before returning.
-+	 * This can be used by the remoteproc drivers to give the remote
-+	 * processor time to perform any requested operations (such as flush
-+	 * caches), where means for signalling the Linux side isn't available
-+	 * while in panic.
-+	 */
-+	mdelay(longest);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static void __init rproc_init_panic(void)
-+{
-+	rproc_panic_nb.notifier_call = rproc_panic_handler;
-+	atomic_notifier_chain_register(&panic_notifier_list, &rproc_panic_nb);
-+}
-+
-+static void __exit rproc_exit_panic(void)
-+{
-+	atomic_notifier_chain_unregister(&panic_notifier_list, &rproc_panic_nb);
-+}
-+
- static int __init remoteproc_init(void)
- {
- 	rproc_init_sysfs();
- 	rproc_init_debugfs();
-+	rproc_init_panic();
- 
- 	return 0;
- }
-@@ -2232,6 +2275,7 @@ static void __exit remoteproc_exit(void)
- {
- 	ida_destroy(&rproc_dev_index);
- 
-+	rproc_exit_panic();
- 	rproc_exit_debugfs();
- 	rproc_exit_sysfs();
- }
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..5959d6247dc0 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -369,6 +369,8 @@ enum rsc_handling_status {
-  *			expects to find it
-  * @sanity_check:	sanity check the fw image
-  * @get_boot_addr:	get boot address to entry point specified in firmware
-+ * @panic:	optional callback to react to system panic, core will delay
-+ *		panic at least the returned number of milliseconds
-  */
- struct rproc_ops {
- 	int (*start)(struct rproc *rproc);
-@@ -383,6 +385,7 @@ struct rproc_ops {
- 	int (*load)(struct rproc *rproc, const struct firmware *fw);
- 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
- 	u32 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-+	unsigned long (*panic)(struct rproc *rproc);
- };
- 
- /**
+Arnaud Pouliquen (2):
+  rpmsg: core: add API to get MTU
+  tty: add rpmsg driver
+
+ Documentation/serial/tty_rpmsg.rst |  45 ++++
+ drivers/rpmsg/rpmsg_core.c         |  21 ++
+ drivers/rpmsg/rpmsg_internal.h     |   2 +
+ drivers/rpmsg/virtio_rpmsg_bus.c   |  10 +
+ drivers/tty/Kconfig                |   9 +
+ drivers/tty/Makefile               |   1 +
+ drivers/tty/rpmsg_tty.c            | 417 +++++++++++++++++++++++++++++
+ include/linux/rpmsg.h              |  10 +
+ 8 files changed, 515 insertions(+)
+ create mode 100644 Documentation/serial/tty_rpmsg.rst
+ create mode 100644 drivers/tty/rpmsg_tty.c
+
 -- 
-2.24.0
+2.17.1
