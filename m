@@ -1,59 +1,60 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v2 12/17] remoteproc: Rename function rproc_fw_boot()
-Date: Tue, 24 Mar 2020 15:45:58 -0600
-Message-Id: <20200324214603.14979-13-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324214603.14979-1-mathieu.poirier@linaro.org>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 6/7] remoteproc/k3-r5: Initialize TCM memories for ECC
+Date: Tue, 24 Mar 2020 15:18:18 -0500
+Message-ID: <20200324201819.23095-7-s-anna@ti.com>
+In-Reply-To: <20200324201819.23095-1-s-anna@ti.com>
+References: <20200324201819.23095-1-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Renaming function rproc_fw_boot() in order to better reflect the work
-that is done when supporting scenarios where the remoteproc core is
-synchronising with an MCU.
+The R5F processors on K3 SoCs all have two TCMs (ATCM and BTCM) that
+support 32-bit ECC. The TCMs are typically loaded with some boot-up
+code to initialize the R5 MPUs to further execute code out of DDR.
+The ECC for the TCMs is enabled by default on K3 SoCs due to internal
+default tie-off values, but the TCM memories are not initialized on
+device power up. Any read access without the corresponding TCM memory
+location initialized will generate an ECC error, and any such access
+from a A72 or A53 core will trigger a SError.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+So, zero initialize both the TCM memories before loading any firmware
+onto a R5F in remoteproc mode. Any R5F booted from U-Boot/SPL would
+require a similar initialization in the bootloader. Note that both
+the TCMs are initialized unconditionally as the TCM enable config bits
+only manage the access and visibility from R5. The Core1 TCMs are not
+used and accessible in LockStep mode, so they are only initialized
+in Split-mode.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index d57b47b0d6be..488723fcb142 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1363,7 +1363,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- /*
-  * take a firmware and boot a remote processor with it.
-  */
--static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
-+static int rproc_actuate_platform(struct rproc *rproc,
-+				  const struct firmware *fw)
- {
- 	struct device *dev = &rproc->dev;
- 	const char *name = rproc->firmware;
-@@ -1373,7 +1374,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 655f8f14c37d..8c9b7ae5d8b7 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -366,6 +366,17 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+ 		dev_err(dev, "unable to enable cores for TCM loading, ret = %d\n",
+ 			ret);
  
--	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
-+	if (!rproc_sync_with_mcu(rproc))
-+		dev_info(dev, "Booting fw image %s, size %zd\n",
-+			 name, fw->size);
- 
- 	/*
- 	 * if enabling an IOMMU isn't relevant for this rproc, this is
-@@ -1756,7 +1759,7 @@ static int rproc_actuate(struct rproc *rproc,
- 		 firmware_p ? "powering up" : "syncing with",
- 		 rproc->name);
- 
--	ret = rproc_fw_boot(rproc, firmware_p);
-+	ret = rproc_actuate_platform(rproc, firmware_p);
- 	if (ret)
- 		atomic_dec(&rproc->power);
++	/*
++	 * Zero out both TCMs unconditionally (access from v8 Arm core is not
++	 * affected by ATCM & BTCM enable configuration values) so that ECC
++	 * can be effective on all TCM addresses.
++	 */
++	dev_dbg(dev, "zeroing out ATCM memory\n");
++	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
++
++	dev_dbg(dev, "zeroing out BTCM memory\n");
++	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
++
+ 	return ret;
+ }
  
 -- 
-2.20.1
+2.23.0
