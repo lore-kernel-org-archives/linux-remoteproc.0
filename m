@@ -1,255 +1,368 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail26.static.mailgun.info ([104.130.122.26]:31558 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727835AbgCDUJx (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Mar 2020 15:09:53 -0500
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v6 3/3] soc: qcom: apr: Add avs/audio tracking functionality
-Date: Thu,  5 Mar 2020 01:39:11 +0530
-Message-Id: <20200304200911.15415-4-sibis@codeaurora.org>
-In-Reply-To: <20200304200911.15415-1-sibis@codeaurora.org>
-References: <20200304200911.15415-1-sibis@codeaurora.org>
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv9 01/15] dt-bindings: remoteproc: Add OMAP remoteproc bindings
+Date: Tue, 24 Mar 2020 13:00:21 +0200
+Message-ID: <20200324110035.29907-2-t-kristo@ti.com>
+In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
+References: <20200324110035.29907-1-t-kristo@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org
-Cc: agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tsoni@codeaurora.org, vnkgutta@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Use PDR helper functions to track the protection domains that the apr
-services are dependent upon on SDM845 SoC, specifically the "avs/audio"
-service running on ADSP Q6.
+From: Suman Anna <s-anna@ti.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Add the device tree bindings document for the IPU and DSP
+remote processor devices on OMAP4+ SoCs.
+
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Suman Anna <s-anna@ti.com>
+[t-kristo@ti.com: converted to schema]
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Andrew F. Davis <afd@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
+v9:
+  * no changes
 
-V6:
- * No change
+ .../remoteproc/ti,omap-remoteproc.yaml        | 324 ++++++++++++++++++
+ 1 file changed, 324 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
 
-V5:
- * Picked up Bjorn's R-b
-
- drivers/soc/qcom/Kconfig     |   1 +
- drivers/soc/qcom/apr.c       | 123 ++++++++++++++++++++++++++++++++---
- include/linux/soc/qcom/apr.h |   1 +
- 3 files changed, 116 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 945609005cedd..e2c364d86a838 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -201,6 +201,7 @@ config QCOM_APR
- 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
-+	select QCOM_PDR_HELPERS
- 	help
- 	  Enable APR IPC protocol support between
- 	  application processor and QDSP6. APR is
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-index 4fcc32420c474..1f35b097c6356 100644
---- a/drivers/soc/qcom/apr.c
-+++ b/drivers/soc/qcom/apr.c
-@@ -11,6 +11,7 @@
- #include <linux/workqueue.h>
- #include <linux/of_device.h>
- #include <linux/soc/qcom/apr.h>
-+#include <linux/soc/qcom/pdr.h>
- #include <linux/rpmsg.h>
- #include <linux/of.h>
- 
-@@ -21,6 +22,7 @@ struct apr {
- 	spinlock_t rx_lock;
- 	struct idr svcs_idr;
- 	int dest_domain_id;
-+	struct pdr_handle *pdr;
- 	struct workqueue_struct *rxwq;
- 	struct work_struct rx_work;
- 	struct list_head rx_list;
-@@ -289,6 +291,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 		  id->svc_id + 1, GFP_ATOMIC);
- 	spin_unlock(&apr->svcs_lock);
- 
-+	of_property_read_string_index(np, "qcom,protection-domain",
-+				      1, &adev->service_path);
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+new file mode 100644
+index 000000000000..084960a8f17a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,omap-remoteproc.yaml
+@@ -0,0 +1,324 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/ti,omap-remoteproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
- 
- 	ret = device_register(&adev->dev);
-@@ -300,14 +305,75 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 	return ret;
- }
- 
--static void of_register_apr_devices(struct device *dev)
-+static int of_apr_add_pd_lookups(struct device *dev)
-+{
-+	const char *service_name, *service_path;
-+	struct apr *apr = dev_get_drvdata(dev);
-+	struct device_node *node;
-+	struct pdr_service *pds;
-+	int ret;
++title: OMAP4+ Remoteproc Devices
 +
-+	for_each_child_of_node(dev->of_node, node) {
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    0, &service_name);
-+		if (ret < 0)
-+			continue;
++maintainers:
++  - Suman Anna <s-anna@ti.com>
 +
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (ret < 0) {
-+			dev_err(dev, "pdr service path missing: %d\n", ret);
-+			return ret;
-+		}
++description:
++  The OMAP family of SoCs usually have one or more slave processor sub-systems
++  that are used to offload some of the processor-intensive tasks, or to manage
++  other hardware accelerators, for achieving various system level goals.
 +
-+		pds = pdr_add_lookup(apr->pdr, service_name, service_path);
-+		if (IS_ERR(pds) && PTR_ERR(pds) != -EALREADY) {
-+			dev_err(dev, "pdr add lookup failed: %d\n", ret);
-+			return PTR_ERR(pds);
-+		}
-+	}
++  The processor cores in the sub-system are usually behind an IOMMU, and may
++  contain additional sub-modules like Internal RAM and/or ROMs, L1 and/or L2
++  caches, an Interrupt Controller, a Cache Controller etc.
 +
-+	return 0;
-+}
++  The OMAP SoCs usually have a DSP processor sub-system and/or an IPU processor
++  sub-system. The DSP processor sub-system can contain any of the TI's C64x,
++  C66x or C67x family of DSP cores as the main execution unit. The IPU processor
++  sub-system usually contains either a Dual-Core Cortex-M3 or Dual-Core
++  Cortex-M4 processors.
 +
-+static void of_register_apr_devices(struct device *dev, const char *svc_path)
- {
- 	struct apr *apr = dev_get_drvdata(dev);
- 	struct device_node *node;
-+	const char *service_path;
-+	int ret;
- 
- 	for_each_child_of_node(dev->of_node, node) {
- 		struct apr_device_id id = { {0} };
- 
-+		/*
-+		 * This function is called with svc_path NULL during
-+		 * apr_probe(), in which case we register any apr devices
-+		 * without a qcom,protection-domain specified.
-+		 *
-+		 * Then as the protection domains becomes available
-+		 * (if applicable) this function is again called, but with
-+		 * svc_path representing the service becoming available. In
-+		 * this case we register any apr devices with a matching
-+		 * qcom,protection-domain.
-+		 */
++  Each remote processor sub-system is represented as a single DT node. Each node
++  has a number of required or optional properties that enable the OS running on
++  the host processor (MPU) to perform the device management of the remote
++  processor and to communicate with the remote processor. The various properties
++  can be classified as constant or variable. The constant properties are
++  dictated by the SoC and does not change from one board to another having the
++  same SoC. Examples of constant properties include 'iommus', 'reg'. The
++  variable properties are dictated by the system integration aspects such as
++  memory on the board, or configuration used within the corresponding firmware
++  image. Examples of variable properties include 'mboxes', 'memory-region',
++  'timers', 'watchdog-timers' etc.
 +
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (svc_path) {
-+			/* skip APR services that are PD independent */
-+			if (ret)
-+				continue;
++properties:
++  compatible:
++    enum:
++      - ti,omap4-dsp
++      - ti,omap5-dsp
++      - ti,dra7-dsp
++      - ti,omap4-ipu
++      - ti,omap5-ipu
++      - ti,dra7-ipu
 +
-+			/* skip APR services whose PD paths don't match */
-+			if (strcmp(service_path, svc_path))
-+				continue;
-+		} else {
-+			/* skip APR services whose PD lookups are registered */
-+			if (ret == 0)
-+				continue;
-+		}
++  iommus:
++    minItems: 1
++    maxItems: 2
++    description: |
++      phandles to OMAP IOMMU nodes, that need to be programmed
++      for this remote processor to access any external RAM memory or
++      other peripheral device address spaces. This property usually
++      has only a single phandle. Multiple phandles are used only in
++      cases where the sub-system has different ports for different
++      sub-modules within the processor sub-system (eg: DRA7 DSPs),
++      and need the same programming in both the MMUs.
 +
- 		if (of_property_read_u32(node, "reg", &id.svc_id))
- 			continue;
- 
-@@ -318,6 +384,34 @@ static void of_register_apr_devices(struct device *dev)
- 	}
- }
- 
-+static int apr_remove_device(struct device *dev, void *svc_path)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
++  mboxes:
++    minItems: 1
++    maxItems: 2
++    description: |
++      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
++      communication with the remote processor. The specifier format is
++      as per the bindings,
++      Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
++      This property should match with the sub-mailbox node used in
++      the firmware image.
 +
-+	if (svc_path && adev->service_path) {
-+		if (!strcmp(adev->service_path, (char *)svc_path))
-+			device_unregister(&adev->dev);
-+	} else {
-+		device_unregister(&adev->dev);
-+	}
++  clocks:
++    description: |
++      Main functional clock for the remote processor
 +
-+	return 0;
-+}
++  resets:
++    description: |
++      Reset handles for the remote processor
 +
-+static void apr_pd_status(int state, char *svc_path, void *priv)
-+{
-+	struct apr *apr = (struct apr *)priv;
++  firmware-name:
++    description: |
++      Default name of the firmware to load to the remote processor.
 +
-+	switch (state) {
-+	case SERVREG_SERVICE_STATE_UP:
-+		of_register_apr_devices(apr->dev, svc_path);
-+		break;
-+	case SERVREG_SERVICE_STATE_DOWN:
-+		device_for_each_child(apr->dev, svc_path, apr_remove_device);
-+		break;
-+	}
-+}
++# Optional properties:
++# --------------------
++# Some of these properties are mandatory on some SoCs, and some are optional
++# depending on the configuration of the firmware image to be executed on the
++# remote processor. The conditions are mentioned for each property.
++#
++# The following are the optional properties:
 +
- static int apr_probe(struct rpmsg_device *rpdev)
- {
- 	struct device *dev = &rpdev->dev;
-@@ -343,28 +437,39 @@ static int apr_probe(struct rpmsg_device *rpdev)
- 		return -ENOMEM;
- 	}
- 	INIT_WORK(&apr->rx_work, apr_rxwq);
++  memory-region:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: |
++      phandle to the reserved memory node to be associated
++      with the remoteproc device. The reserved memory node
++      can be a CMA memory node, and should be defined as
++      per the bindings,
++      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
 +
-+	apr->pdr = pdr_handle_alloc(apr_pd_status, apr);
-+	if (IS_ERR(apr->pdr)) {
-+		dev_err(dev, "Failed to init PDR handle\n");
-+		ret = PTR_ERR(apr->pdr);
-+		goto destroy_wq;
-+	}
++  reg:
++    description: |
++      Address space for any remoteproc memories present on
++      the SoC. Should contain an entry for each value in
++      'reg-names'. These are mandatory for all DSP and IPU
++      processors that have them (OMAP4/OMAP5 DSPs do not have
++      any RAMs)
 +
- 	INIT_LIST_HEAD(&apr->rx_list);
- 	spin_lock_init(&apr->rx_lock);
- 	spin_lock_init(&apr->svcs_lock);
- 	idr_init(&apr->svcs_idr);
--	of_register_apr_devices(dev);
--
--	return 0;
--}
- 
--static int apr_remove_device(struct device *dev, void *null)
--{
--	struct apr_device *adev = to_apr_device(dev);
-+	ret = of_apr_add_pd_lookups(dev);
-+	if (ret)
-+		goto handle_release;
- 
--	device_unregister(&adev->dev);
-+	of_register_apr_devices(dev, NULL);
- 
- 	return 0;
++  reg-names:
++    description: |
++      Required names for each of the address spaces defined in
++      the 'reg' property. Expects the names from the following
++      list, in the specified order, each representing the corresponding
++      internal RAM memory region.
++    minItems: 1
++    maxItems: 3
++    items:
++      - const: l2ram
++      - const: l1pram
++      - const: l1dram
 +
-+handle_release:
-+	pdr_handle_release(apr->pdr);
-+destroy_wq:
-+	destroy_workqueue(apr->rxwq);
-+	return ret;
- }
- 
- static void apr_remove(struct rpmsg_device *rpdev)
- {
- 	struct apr *apr = dev_get_drvdata(&rpdev->dev);
- 
-+	pdr_handle_release(apr->pdr);
- 	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
- 	flush_workqueue(apr->rxwq);
- 	destroy_workqueue(apr->rxwq);
-diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
-index c5d52e2cb275f..7f0bc3cf4d610 100644
---- a/include/linux/soc/qcom/apr.h
-+++ b/include/linux/soc/qcom/apr.h
-@@ -85,6 +85,7 @@ struct apr_device {
- 	uint16_t	domain_id;
- 	uint32_t	version;
- 	char name[APR_NAME_SIZE];
-+	const char *service_path;
- 	spinlock_t	lock;
- 	struct list_head node;
- };
++  ti,bootreg:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: |
++      Should be a triple of the phandle to the System Control
++      Configuration region that contains the boot address
++      register, the register offset of the boot address
++      register within the System Control module, and the bit
++      shift within the register. This property is required for
++      all the DSP instances on OMAP4, OMAP5 and DRA7xx SoCs.
++
++  ti,autosuspend-delay-ms:
++    description: |
++      Custom autosuspend delay for the remoteproc in milliseconds.
++      Recommended values is preferable to be in the order of couple
++      of seconds. A negative value can also be used to disable the
++      autosuspend behavior.
++
++  ti,timers:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: |
++      One or more phandles to OMAP DMTimer nodes, that serve
++      as System/Tick timers for the OS running on the remote
++      processors. This will usually be a single timer if the
++      processor sub-system is running in SMP mode, or one per
++      core in the processor sub-system. This can also be used
++      to reserve specific timers to be dedicated to the
++      remote processors.
++
++      This property is mandatory on remote processors requiring
++      external tick wakeup, and to support Power Management
++      features. The timers to be used should match with the
++      timers used in the firmware image.
++
++  ti,watchdog-timers:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: |
++      One or more phandles to OMAP DMTimer nodes, used to
++      serve as Watchdog timers for the processor cores. This
++      will usually be one per executing processor core, even
++      if the processor sub-system is running a SMP OS.
++
++      The timers to be used should match with the watchdog
++      timers used in the firmware image.
++
++if:
++  properties:
++    compatible:
++      enum:
++        - ti,dra7-dsp
++then:
++  properties:
++    reg:
++      minItems: 3
++      maxItems: 3
++  required:
++    - reg
++    - reg-names
++    - ti,bootreg
++
++else:
++  if:
++    properties:
++      compatible:
++        enum:
++          - ti,omap4-ipu
++          - ti,omap5-ipu
++          - ti,dra7-ipu
++  then:
++    properties:
++      reg:
++        minItems: 1
++        maxItems: 1
++      ti,bootreg: false
++    required:
++      - reg
++      - reg-names
++
++  else:
++    properties:
++      reg: false
++    required:
++      - ti,bootreg
++
++required:
++  - compatible
++  - iommus
++  - mboxes
++  - clocks
++  - resets
++  - firmware-name
++
++additionalProperties: false
++
++examples:
++  - |
++
++    //Example 1: OMAP4 DSP
++
++    /* DSP Reserved Memory node */
++    #include <dt-bindings/clock/omap4.h>
++    reserved-memory {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        dsp_memory_region: dsp-memory@98000000 {
++            compatible = "shared-dma-pool";
++            reg = <0x98000000 0x800000>;
++            reusable;
++        };
++    };
++
++    /* DSP node */
++    ocp {
++        dsp: dsp {
++            compatible = "ti,omap4-dsp";
++            ti,bootreg = <&scm_conf 0x304 0>;
++            iommus = <&mmu_dsp>;
++            mboxes = <&mailbox &mbox_dsp>;
++            memory-region = <&dsp_memory_region>;
++            ti,timers = <&timer5>;
++            ti,watchdog-timers = <&timer6>;
++            clocks = <&tesla_clkctrl OMAP4_DSP_CLKCTRL 0>;
++            resets = <&prm_tesla 0>, <&prm_tesla 1>;
++            firmware-name = "omap4-dsp-fw.xe64T";
++        };
++    };
++
++  - |+
++
++    //Example 2: OMAP5 IPU
++
++    /* IPU Reserved Memory node */
++    #include <dt-bindings/clock/omap5.h>
++    reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        ipu_memory_region: ipu-memory@95800000 {
++            compatible = "shared-dma-pool";
++            reg = <0 0x95800000 0 0x3800000>;
++            reusable;
++        };
++    };
++
++    /* IPU node */
++    ocp {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        ipu: ipu@55020000 {
++            compatible = "ti,omap5-ipu";
++            reg = <0x55020000 0x10000>;
++            reg-names = "l2ram";
++            iommus = <&mmu_ipu>;
++            mboxes = <&mailbox &mbox_ipu>;
++            memory-region = <&ipu_memory_region>;
++            ti,timers = <&timer3>, <&timer4>;
++            ti,watchdog-timers = <&timer9>, <&timer11>;
++            clocks = <&ipu_clkctrl OMAP5_MMU_IPU_CLKCTRL 0>;
++            resets = <&prm_core 2>;
++            firmware-name = "omap5-ipu-fw.xem4";
++        };
++    };
++
++  - |+
++
++    //Example 3: DRA7xx/AM57xx DSP
++
++    /* DSP1 Reserved Memory node */
++    #include <dt-bindings/clock/dra7.h>
++    reserved-memory {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        dsp1_memory_region: dsp1-memory@99000000 {
++            compatible = "shared-dma-pool";
++            reg = <0x0 0x99000000 0x0 0x4000000>;
++            reusable;
++        };
++    };
++
++    /* DSP1 node */
++    ocp {
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        dsp1: dsp@40800000 {
++            compatible = "ti,dra7-dsp";
++            reg = <0x40800000 0x48000>,
++                  <0x40e00000 0x8000>,
++                  <0x40f00000 0x8000>;
++            reg-names = "l2ram", "l1pram", "l1dram";
++            ti,bootreg = <&scm_conf 0x55c 0>;
++            iommus = <&mmu0_dsp1>, <&mmu1_dsp1>;
++            mboxes = <&mailbox5 &mbox_dsp1_ipc3x>;
++            memory-region = <&dsp1_memory_region>;
++            ti,timers = <&timer5>;
++            ti,watchdog-timers = <&timer10>;
++            resets = <&prm_dsp1 0>;
++            clocks = <&dsp1_clkctrl DRA7_DSP1_MMU0_DSP1_CLKCTRL 0>;
++            firmware-name = "dra7-dsp1-fw.xe66";
++        };
++    };
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
