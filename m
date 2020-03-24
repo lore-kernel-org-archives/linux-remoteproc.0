@@ -1,51 +1,88 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 01/11] remoteproc: stm32: Decouple rproc from memory translation
-Date: Tue, 24 Mar 2020 16:03:19 -0600
-Message-Id: <20200324220329.15523-2-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324220329.15523-1-mathieu.poirier@linaro.org>
-References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH v5 1/4] remoteproc: Traverse rproc_list under RCU read lock
+Date: Mon, 23 Mar 2020 22:29:01 -0700
+Message-Id: <20200324052904.738594-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20200324052904.738594-1-bjorn.andersson@linaro.org>
+References: <20200324052904.738594-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove the remote processor from the process of parsing the memory
-ranges since there is no correlation between them.
+In order to be able to traverse the mostly read-only rproc_list without
+locking during panic migrate traversal to be done under rcu_read_lock().
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Mutual exclusion for modifications of the list continues to be handled
+by the rproc_list_mutex and a synchronization point is added before
+releasing objects that are popped from the list.
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/stm32_rproc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index a18f88044111..cde4b1a56381 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -127,10 +127,10 @@ static int stm32_rproc_mem_release(struct rproc *rproc,
+Changes since v4:
+- Added rculist include
+- Picked up Mathieu's r-b
+
+ drivers/remoteproc/remoteproc_core.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index a9ac1d01e09b..7ee976ee2044 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -26,6 +26,7 @@
+ #include <linux/string.h>
+ #include <linux/debugfs.h>
+ #include <linux/devcoredump.h>
++#include <linux/rculist.h>
+ #include <linux/remoteproc.h>
+ #include <linux/iommu.h>
+ #include <linux/idr.h>
+@@ -1868,8 +1869,8 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+ 	if (!np)
+ 		return NULL;
+ 
+-	mutex_lock(&rproc_list_mutex);
+-	list_for_each_entry(r, &rproc_list, node) {
++	rcu_read_lock();
++	list_for_each_entry_rcu(r, &rproc_list, node) {
+ 		if (r->dev.parent && r->dev.parent->of_node == np) {
+ 			/* prevent underlying implementation from being removed */
+ 			if (!try_module_get(r->dev.parent->driver->owner)) {
+@@ -1882,7 +1883,7 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+ 			break;
+ 		}
+ 	}
+-	mutex_unlock(&rproc_list_mutex);
++	rcu_read_unlock();
+ 
+ 	of_node_put(np);
+ 
+@@ -1939,7 +1940,7 @@ int rproc_add(struct rproc *rproc)
+ 
+ 	/* expose to rproc_get_by_phandle users */
+ 	mutex_lock(&rproc_list_mutex);
+-	list_add(&rproc->node, &rproc_list);
++	list_add_rcu(&rproc->node, &rproc_list);
+ 	mutex_unlock(&rproc_list_mutex);
+ 
  	return 0;
- }
+@@ -2156,9 +2157,12 @@ int rproc_del(struct rproc *rproc)
  
--static int stm32_rproc_of_memory_translations(struct rproc *rproc)
-+static int stm32_rproc_of_memory_translations(struct platform_device *pdev,
-+					      struct stm32_rproc *ddata)
- {
--	struct device *parent, *dev = rproc->dev.parent;
--	struct stm32_rproc *ddata = rproc->priv;
-+	struct device *parent, *dev = &pdev->dev;
- 	struct device_node *np;
- 	struct stm32_rproc_mem *p_mems;
- 	struct stm32_rproc_mem_ranges *mem_range;
-@@ -606,7 +606,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
+ 	/* the rproc is downref'ed as soon as it's removed from the klist */
+ 	mutex_lock(&rproc_list_mutex);
+-	list_del(&rproc->node);
++	list_del_rcu(&rproc->node);
+ 	mutex_unlock(&rproc_list_mutex);
  
- 	rproc->auto_boot = of_property_read_bool(np, "st,auto-boot");
++	/* Ensure that no readers of rproc_list are still active */
++	synchronize_rcu();
++
+ 	device_del(&rproc->dev);
  
--	return stm32_rproc_of_memory_translations(rproc);
-+	return stm32_rproc_of_memory_translations(pdev, ddata);
- }
- 
- static int stm32_rproc_probe(struct platform_device *pdev)
+ 	return 0;
 -- 
-2.20.1
+2.24.0
