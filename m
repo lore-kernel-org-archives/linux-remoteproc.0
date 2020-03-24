@@ -1,179 +1,202 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 4 Mar 2020 10:48:27 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCHv7 07/15] remoteproc/omap: Add support for DRA7xx remote
- processors
-Message-ID: <20200304174827.GF8197@xps15>
-References: <20200221101936.16833-1-t-kristo@ti.com>
- <20200221101936.16833-8-t-kristo@ti.com>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 7/7] remoteproc/k3-r5: Add loading support for on-chip SRAM regions
+Date: Tue, 24 Mar 2020 15:18:19 -0500
+Message-ID: <20200324201819.23095-8-s-anna@ti.com>
+In-Reply-To: <20200324201819.23095-1-s-anna@ti.com>
+References: <20200324201819.23095-1-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221101936.16833-8-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh+dt@kernel.org>
+Cc: Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Feb 21, 2020 at 12:19:28PM +0200, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> DRA7xx/AM57xx SoCs have two IPU and up to two DSP processor subsystems
-> for offloading different computation algorithms. The IPU processor
-> subsystem contains dual-core ARM Cortex-M4 processors, and is very
-> similar to those on OMAP5. The DSP processor subsystem is based on
-> the TI's standard TMS320C66x DSP CorePac core.
-> 
-> Support has been added to the OMAP remoteproc driver through new
-> DRA7xx specific compatibles for properly probing and booting all
-> the different processor subsystem instances on DRA7xx/AM57xx
-> SoCs - IPU1, IPU2, DSP1 & DSP2. A build dependency with SOC_DRA7XX
-> is added to enable the driver to be built in DRA7xx-only configuration.
-> 
-> The DSP boot address programming needed enhancement for DRA7xx as the
-> boot register fields are different on DRA7 compared to OMAP4 and OMAP5
-> SoCs. The register on DRA7xx contains additional fields within the
-> register and the boot address bit-field is right-shifted by 10 bits.
-> The internal memory parsing logic has also been updated to compute
-> the device addresses for the L2 RAM for DSP devices using relative
-> addressing logic, and to parse two additional RAMs at L1 level - L1P
-> and L1D. This allows the remoteproc driver to support loading into
-> these regions for a small subset of firmware images requiring as
-> such. The most common usage would be to use the L1 programmable
-> RAMs as L1 Caches.
-> 
-> The firmware lookup logic also has to be adjusted for DRA7xx as
-> there are (can be) more than one instance of both the IPU and DSP
-> remote processors for the first time in OMAP4+ SoCs.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> [t-kristo@ti.com: moved address translation quirks to pdata]
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
->  drivers/remoteproc/Kconfig           |  2 +-
->  drivers/remoteproc/omap_remoteproc.c | 38 +++++++++++++++++++++++++++-
->  2 files changed, 38 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index de3862c15fcc..b52abc2268cc 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -35,7 +35,7 @@ config MTK_SCP
->  
->  config OMAP_REMOTEPROC
->  	tristate "OMAP remoteproc support"
-> -	depends on ARCH_OMAP4 || SOC_OMAP5
-> +	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
->  	depends on OMAP_IOMMU
->  	select MAILBOX
->  	select OMAP2PLUS_MBOX
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 872cd0df342b..8c3dc0edae95 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -34,10 +34,13 @@
->   * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
->   * @syscon: regmap handle for the system control configuration module
->   * @boot_reg: boot register offset within the @syscon regmap
-> + * @boot_reg_shift: bit-field shift required for the boot address value in
-> + *		    @boot_reg
->   */
->  struct omap_rproc_boot_data {
->  	struct regmap *syscon;
->  	unsigned int boot_reg;
-> +	unsigned int boot_reg_shift;
->  };
->  
->  /**
-> @@ -161,6 +164,8 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
->  	struct omap_rproc *oproc = rproc->priv;
->  	struct omap_rproc_boot_data *bdata = oproc->boot_data;
->  	u32 offset = bdata->boot_reg;
-> +	u32 value;
-> +	u32 mask;
->  
->  	if (rproc->bootaddr & (SZ_1K - 1)) {
->  		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
-> @@ -168,7 +173,10 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
->  		return -EINVAL;
->  	}
->  
-> -	regmap_write(bdata->syscon, offset, rproc->bootaddr);
-> +	value = rproc->bootaddr >> bdata->boot_reg_shift;
-> +	mask = ~(SZ_1K - 1) >> bdata->boot_reg_shift;
-> +
-> +	regmap_update_bits(bdata->syscon, offset, mask, value);
+The K3 SoCs has various internal on-chip SRAM memories like the SRAM
+within the MCU domain or the shared MSMC RAM within NavSS that can be
+used for multiple purposes. One such purpose is to have the R5F cores
+use a portion of such on-chip SRAM for fast-access data or to directly
+execute code.
 
-Please handle the return value.  We can either do it now or in 3 months when
-someone with an automated tools sends a patch.  Besides, omap_rproc_start() is
-already expecting an error from omap_rproc_write_dsp_boot_addr() so it's even
-easier.
+Add support to the K3 R5 remoteproc driver to parse and support
+loading into such memories. The SRAM regions need to be mapped as
+normal non-cacheable memory to avoid kernel crashes when the remoteproc
+loader code uses the Arm64 memset library function (the "DC ZVA"
+instruction throws a alignment fault on device type memory).
 
-With the above:
+These SRAM regions are completely optional as not all firmware images
+require these memories, and any such memory has to be reserved as such
+in the DTS files.
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+---
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 106 ++++++++++++++++++++++-
+ 1 file changed, 105 insertions(+), 1 deletion(-)
 
->  
->  	return 0;
->  }
-> @@ -299,6 +307,13 @@ static const struct omap_rproc_mem_data ipu_mems[] = {
->  	{ },
->  };
->  
-> +static const struct omap_rproc_mem_data dra7_dsp_mems[] = {
-> +	{ .name = "l2ram", .dev_addr = 0x800000 },
-> +	{ .name = "l1pram", .dev_addr = 0xe00000 },
-> +	{ .name = "l1dram", .dev_addr = 0xf00000 },
-> +	{ },
-> +};
-> +
->  static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
->  	.device_name	= "dsp",
->  };
-> @@ -317,6 +332,16 @@ static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
->  	.mems		= ipu_mems,
->  };
->  
-> +static const struct omap_rproc_dev_data dra7_dsp_dev_data = {
-> +	.device_name	= "dsp",
-> +	.mems		= dra7_dsp_mems,
-> +};
-> +
-> +static const struct omap_rproc_dev_data dra7_ipu_dev_data = {
-> +	.device_name	= "ipu",
-> +	.mems		= ipu_mems,
-> +};
-> +
->  static const struct of_device_id omap_rproc_of_match[] = {
->  	{
->  		.compatible     = "ti,omap4-dsp",
-> @@ -334,6 +359,14 @@ static const struct of_device_id omap_rproc_of_match[] = {
->  		.compatible     = "ti,omap5-ipu",
->  		.data           = &omap5_ipu_dev_data,
->  	},
-> +	{
-> +		.compatible     = "ti,dra7-dsp",
-> +		.data           = &dra7_dsp_dev_data,
-> +	},
-> +	{
-> +		.compatible     = "ti,dra7-ipu",
-> +		.data           = &dra7_ipu_dev_data,
-> +	},
->  	{
->  		/* end */
->  	},
-> @@ -386,6 +419,9 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
->  		return -EINVAL;
->  	}
->  
-> +	of_property_read_u32_index(np, "ti,bootreg", 2,
-> +				   &oproc->boot_data->boot_reg_shift);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.17.1
-> 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 8c9b7ae5d8b7..0ae0b66ec9eb 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -85,7 +85,9 @@ struct k3_r5_cluster {
+  * @dev: cached device pointer
+  * @rproc: rproc handle representing this core
+  * @mem: internal memory regions data
++ * @sram: on-chip SRAM memory regions data
+  * @num_mems: number of internal memory regions
++ * @num_sram: number of on-chip SRAM memory regions
+  * @reset: reset control handle
+  * @tsp: TI-SCI processor control handle
+  * @ti_sci: TI-SCI handle
+@@ -99,7 +101,9 @@ struct k3_r5_core {
+ 	struct device *dev;
+ 	struct rproc *rproc;
+ 	struct k3_r5_mem *mem;
++	struct k3_r5_mem *sram;
+ 	int num_mems;
++	int num_sram;
+ 	struct reset_control *reset;
+ 	struct ti_sci_proc *tsp;
+ 	const struct ti_sci_handle *ti_sci;
+@@ -585,6 +589,18 @@ static void *k3_r5_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+ 		}
+ 	}
+ 
++	/* handle any SRAM regions using SoC-view addresses */
++	for (i = 0; i < core->num_sram; i++) {
++		dev_addr = core->sram[i].dev_addr;
++		size = core->sram[i].size;
++
++		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
++			offset = da - dev_addr;
++			va = core->sram[i].cpu_addr + offset;
++			return (__force void *)va;
++		}
++	}
++
+ 	/* handle static DDR reserved memory regions */
+ 	for (i = 0; i < kproc->num_rmems; i++) {
+ 		dev_addr = kproc->rmem[i].dev_addr;
+@@ -1017,6 +1033,77 @@ static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
+ 	return ret;
+ }
+ 
++static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
++					   struct k3_r5_core *core)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct device *dev = &pdev->dev;
++	struct device_node *sram_np;
++	struct resource res;
++	int num_sram;
++	int i, ret;
++
++	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
++	if (num_sram <= 0) {
++		dev_dbg(dev, "device does not use reserved on-chip memories, num_sram = %d\n",
++			num_sram);
++		return 0;
++	}
++
++	core->sram = kcalloc(num_sram, sizeof(*core->sram), GFP_KERNEL);
++	if (!core->sram)
++		return -ENOMEM;
++
++	for (i = 0; i < num_sram; i++) {
++		sram_np = of_parse_phandle(np, "sram", i);
++		if (!sram_np) {
++			ret = -EINVAL;
++			goto fail;
++		}
++
++		if (!of_device_is_available(sram_np)) {
++			of_node_put(sram_np);
++			ret = -EINVAL;
++			goto fail;
++		}
++
++		ret = of_address_to_resource(sram_np, 0, &res);
++		of_node_put(sram_np);
++		if (ret) {
++			ret = -EINVAL;
++			goto fail;
++		}
++		core->sram[i].bus_addr = res.start;
++		core->sram[i].dev_addr = res.start;
++		core->sram[i].size = resource_size(&res);
++		core->sram[i].cpu_addr = ioremap_wc(res.start,
++						    resource_size(&res));
++		if (!core->sram[i].cpu_addr) {
++			dev_err(dev, "failed to parse and map sram%d memory at %pad\n",
++				i, &res.start);
++			ret = -ENOMEM;
++			goto fail;
++		}
++
++		dev_dbg(dev, "memory    sram%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
++			i, &core->sram[i].bus_addr,
++			core->sram[i].size, core->sram[i].cpu_addr,
++			core->sram[i].dev_addr);
++	}
++	core->num_sram = num_sram;
++
++	return 0;
++
++fail:
++	for (i--; i >= 0; i--) {
++		if (core->sram[i].cpu_addr)
++			iounmap(core->sram[i].cpu_addr);
++	}
++	kfree(core->sram);
++
++	return ret;
++}
++
+ static
+ struct ti_sci_proc *k3_r5_core_of_get_tsp(struct device *dev,
+ 					  const struct ti_sci_handle *sci)
+@@ -1048,7 +1135,7 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct k3_r5_core *core;
+-	int ret, ret1;
++	int ret, ret1, i;
+ 
+ 	core = devm_kzalloc(dev, sizeof(*core), GFP_KERNEL);
+ 	if (!core)
+@@ -1125,10 +1212,23 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+ 		goto err_intmem;
+ 	}
+ 
++	ret = k3_r5_core_of_get_sram_memories(pdev, core);
++	if (ret) {
++		dev_err(dev, "failed to get sram memories, ret = %d\n", ret);
++		goto err_sram;
++	}
++
+ 	platform_set_drvdata(pdev, core);
+ 
+ 	return 0;
+ 
++err_sram:
++	for (i = 0; i < core->num_mems; i++) {
++		devm_iounmap(dev, core->mem[i].cpu_addr);
++		devm_release_mem_region(dev, core->mem[i].bus_addr,
++					core->mem[i].size);
++	}
++	devm_kfree(dev, core->mem);
+ err_intmem:
+ 	ret1 = ti_sci_proc_release(core->tsp);
+ 	if (ret1)
+@@ -1156,6 +1256,10 @@ static int k3_r5_core_of_exit(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	int i, ret;
+ 
++	for (i = 0; i < core->num_sram; i++)
++		iounmap(core->sram[i].cpu_addr);
++	kfree(core->sram);
++
+ 	for (i = 0; i < core->num_mems; i++) {
+ 		devm_release_mem_region(dev, core->mem[i].bus_addr,
+ 					core->mem[i].size);
+-- 
+2.23.0
