@@ -1,84 +1,86 @@
-Return-Path: <michals@xilinx.com>
-Return-Path: michal.simek@xilinx.com
-Subject: Re: [PATCH 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for
- RPU configuration.
-References: <1582566751-13118-1-git-send-email-ben.levinsky@xilinx.com>
- <1582566751-13118-2-git-send-email-ben.levinsky@xilinx.com>
-From: Michal Simek <michal.simek@xilinx.com>
-Message-ID: <4d95f021-c3cc-3238-665d-8d5825c6a123@xilinx.com>
-Date: Thu, 12 Mar 2020 08:32:01 +0100
+Return-Path: <t-kristo@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
+Subject: [PATCHv9 03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
+Date: Tue, 24 Mar 2020 13:00:23 +0200
+Message-ID: <20200324110035.29907-4-t-kristo@ti.com>
+In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
+References: <20200324110035.29907-1-t-kristo@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1582566751-13118-2-git-send-email-ben.levinsky@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Ben Levinsky <ben.levinsky@xilinx.com>, ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 24. 02. 20 18:52, Ben Levinsky wrote:
-> Add ZynqMP firmware ioctl enums for RPU configuration.
-> 
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> ---
->  drivers/firmware/xilinx/zynqmp.c     |  4 ++++
->  include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
->  2 files changed, 23 insertions(+)
-> 
-> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-> index ecc339d..20e4574 100644
-> --- a/drivers/firmware/xilinx/zynqmp.c
-> +++ b/drivers/firmware/xilinx/zynqmp.c
-> @@ -512,6 +512,10 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
->  static inline int zynqmp_is_valid_ioctl(u32 ioctl_id)
->  {
->  	switch (ioctl_id) {
-> +	case IOCTL_GET_RPU_OPER_MODE:
-> +	case IOCTL_SET_RPU_OPER_MODE:
-> +	case IOCTL_RPU_BOOT_ADDR_CONFIG:
-> +	case IOCTL_TCM_COMB_CONFIG:
->  	case IOCTL_SET_PLL_FRAC_MODE:
->  	case IOCTL_GET_PLL_FRAC_MODE:
->  	case IOCTL_SET_PLL_FRAC_DATA:
-> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-> index 2cd12eb..b8ca118 100644
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@ -100,6 +100,10 @@ enum pm_ret_status {
->  };
->  
->  enum pm_ioctl_id {
-> +	IOCTL_GET_RPU_OPER_MODE = 0,
-> +	IOCTL_SET_RPU_OPER_MODE,
-> +	IOCTL_RPU_BOOT_ADDR_CONFIG,
-> +	IOCTL_TCM_COMB_CONFIG,
->  	IOCTL_SET_SD_TAPDELAY = 7,
->  	IOCTL_SET_PLL_FRAC_MODE,
->  	IOCTL_GET_PLL_FRAC_MODE,
-> @@ -118,6 +122,21 @@ enum pm_query_id {
->  	PM_QID_CLOCK_GET_MAX_DIVISOR,
->  };
->  
-> +enum rpu_oper_mode {
-> +	PM_RPU_MODE_LOCKSTEP,
-> +	PM_RPU_MODE_SPLIT,
-> +};
-> +
-> +enum rpu_boot_mem {
-> +	PM_RPU_BOOTMEM_LOVEC,
-> +	PM_RPU_BOOTMEM_HIVEC,
-> +};
-> +
-> +enum rpu_tcm_comb {
-> +	PM_RPU_TCM_SPLIT,
-> +	PM_RPU_TCM_COMB,
-> +};
-> +
->  enum zynqmp_pm_reset_action {
->  	PM_RESET_ACTION_RELEASE,
->  	PM_RESET_ACTION_ASSERT,
-> 
+From: Suman Anna <s-anna@ti.com>
 
-This is fine.
+The DSP remote processors on OMAP SoCs require a boot register to
+be programmed with a boot address, and this boot address needs to
+be on a 1KB boundary. The current code is simply masking the boot
+address appropriately without performing any sanity checks before
+releasing the resets. An unaligned boot address results in an
+undefined execution behavior and can result in various bus errors
+like MMU Faults or L3 NoC errors. Such errors are hard to debug and
+can be easily avoided by adding a sanity check for the alignment
+before booting a DSP remote processor.
 
-M
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Andrew F. Davis <afd@ti.com>
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+v9:
+  * compiler warning fix on top of rproc-next
+
+ drivers/remoteproc/omap_remoteproc.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index d47d5ded651a..fe11cb709770 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -121,14 +121,23 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
+  * @rproc: handle of a remote processor
+  *
+  * Set boot address for a supported DSP remote processor.
++ *
++ * Return: 0 on success, or -EINVAL if boot address is not aligned properly
+  */
+-static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
++static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
+ {
++	struct device *dev = rproc->dev.parent;
+ 	struct omap_rproc *oproc = rproc->priv;
+ 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
+ 	u32 offset = bdata->boot_reg;
+ 
+-	regmap_write(bdata->syscon, offset, rproc->bootaddr);
++	if (rproc->bootaddr & (SZ_1K - 1)) {
++		dev_err(dev, "invalid boot address 0x%llx, must be aligned on a 1KB boundary\n",
++			rproc->bootaddr);
++		return -EINVAL;
++	}
++
++	return regmap_write(bdata->syscon, offset, rproc->bootaddr);
+ }
+ 
+ /*
+@@ -145,8 +154,11 @@ static int omap_rproc_start(struct rproc *rproc)
+ 	int ret;
+ 	struct mbox_client *client = &oproc->client;
+ 
+-	if (oproc->boot_data)
+-		omap_rproc_write_dsp_boot_addr(rproc);
++	if (oproc->boot_data) {
++		ret = omap_rproc_write_dsp_boot_addr(rproc);
++		if (ret)
++			return ret;
++	}
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
+-- 
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
