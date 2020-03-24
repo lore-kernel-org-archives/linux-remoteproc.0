@@ -1,117 +1,65 @@
 Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail26.static.mailgun.info ([104.130.122.26]:62764 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729008AbgCDTr7 (ORCPT
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:55106 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbgCXVqZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:47:59 -0500
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 1/3] remoteproc: qcom_q6v5_mss: Don't reassign mpss region on shutdown
-Date: Thu,  5 Mar 2020 01:17:27 +0530
-Message-Id: <20200304194729.27979-2-sibis@codeaurora.org>
-In-Reply-To: <20200304194729.27979-1-sibis@codeaurora.org>
-References: <20200304194729.27979-1-sibis@codeaurora.org>
+        Tue, 24 Mar 2020 17:46:25 -0400
+Received: by mail-pj1-f67.google.com with SMTP id np9so112426pjb.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2020 14:46:24 -0700 (PDT)
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH v2 17/17] remoteproc: Make MCU synchronisation state changes on stop and crashed
+Date: Tue, 24 Mar 2020 15:46:03 -0600
+Message-Id: <20200324214603.14979-18-mathieu.poirier@linaro.org>
+In-Reply-To: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, mathieu.poirier@linaro.org, jeffrey.l.hugo@gmail.com, luca@z3ntu.xyz
-Cc: agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Call on the MCU synchronisation state machine to determine the
+synchronisation status to enact when the MCU is either stop from sysfs
+or has crashed.
 
-Trying to reclaim mpss memory while the mba is not running causes the
-system to crash on devices with security fuses blown, so leave it
-assigned to the remote on shutdown and recover it on a subsequent boot.
-
-Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
+ drivers/remoteproc/remoteproc_core.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-V4:
- * Add required comments to mpss_load [Mathieu]
- * Reassign mpss to q6 after coredump collection
-
- drivers/remoteproc/qcom_q6v5_mss.c | 35 ++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index a1cc9cbe038f1..9fed1b1c203d3 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1001,11 +1001,6 @@ static void q6v5_mba_reclaim(struct q6v5 *qproc)
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 	}
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index dbb0a8467205..0608593cccc6 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1722,6 +1722,14 @@ static void rproc_crash_handler_work(struct work_struct *work)
+ 	dev_err(dev, "handling crash #%u in %s\n", ++rproc->crash_cnt,
+ 		rproc->name);
  
--	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
--				      false, qproc->mpss_phys,
--				      qproc->mpss_size);
--	WARN_ON(ret);
--
- 	q6v5_reset_assert(qproc);
- 
- 	q6v5_clk_disable(qproc->dev, qproc->reset_clks,
-@@ -1095,6 +1090,14 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
- 	}
- 
-+	/**
-+	 * In case of a modem subsystem restart on secure devices, the modem
-+	 * memory can be reclaimed only after MBA is loaded. For modem cold
-+	 * boot this will be a nop
++	/*
++	 * The MCU has crashed - tell the core what operation to
++	 * use from hereon, i.e whether an external entity will
++	 * reboot the MCU or it is now the remoteproc core's
++	 * responsability.
 +	 */
-+	q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false,
-+				qproc->mpss_phys, qproc->mpss_size);
++	rproc_set_mcu_sync_state(rproc, RPROC_SYNC_STATE_CRASHED);
 +
- 	mpss_reloc = relocate ? min_addr : qproc->mpss_phys;
- 	qproc->mpss_reloc = mpss_reloc;
- 	/* Load firmware segments */
-@@ -1184,8 +1187,16 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- 	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+ 	mutex_unlock(&rproc->lock);
  
- 	/* Unlock mba before copying segments */
--	if (!qproc->dump_mba_loaded)
-+	if (!qproc->dump_mba_loaded) {
- 		ret = q6v5_mba_load(qproc);
-+		if (!ret) {
-+			/* Reset ownership back to Linux to copy segments */
-+			ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-+						      false,
-+						      qproc->mpss_phys,
-+						      qproc->mpss_size);
-+		}
-+	}
- 
- 	if (!ptr || ret)
- 		memset(dest, 0xff, segment->size);
-@@ -1196,8 +1207,14 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- 
- 	/* Reclaim mba after copying segments */
- 	if (qproc->dump_segment_mask == qproc->dump_complete_mask) {
--		if (qproc->dump_mba_loaded)
-+		if (qproc->dump_mba_loaded) {
-+			/* Try to reset ownership back to Q6 */
-+			q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
-+						true,
-+						qproc->mpss_phys,
-+						qproc->mpss_size);
- 			q6v5_mba_reclaim(qproc);
-+		}
- 	}
+ 	if (!rproc->recovery_disabled)
+@@ -1856,6 +1864,13 @@ void rproc_shutdown(struct rproc *rproc)
+ 	kfree(rproc->cached_table);
+ 	rproc->cached_table = NULL;
+ 	rproc->table_ptr = NULL;
++
++	/*
++	 * The MCU has been switched off - tell the core what operation to
++	 * use from hereon, i.e whether an external entity will reboot the
++	 * MCU or it is now the remoteproc core's responsability.
++	 */
++	rproc_set_mcu_sync_state(rproc, RPROC_SYNC_STATE_SHUTDOWN);
+ out:
+ 	mutex_unlock(&rproc->lock);
  }
- 
-@@ -1237,10 +1254,6 @@ static int q6v5_start(struct rproc *rproc)
- 	return 0;
- 
- reclaim_mpss:
--	xfermemop_ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm,
--						false, qproc->mpss_phys,
--						qproc->mpss_size);
--	WARN_ON(xfermemop_ret);
- 	q6v5_mba_reclaim(qproc);
- 
- 	return ret;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.20.1
