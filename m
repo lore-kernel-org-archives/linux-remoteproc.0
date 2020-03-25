@@ -1,577 +1,837 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: rishabhb=codeaurora.org@mg.codeaurora.org
-From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH 1/2] remoteproc: qcom: Add PAS based SPSS PIL driver
-Date: Fri,  6 Mar 2020 11:21:06 -0800
-Message-Id: <1583522467-3499-2-git-send-email-rishabhb@codeaurora.org>
-In-Reply-To: <1583522467-3499-1-git-send-email-rishabhb@codeaurora.org>
-References: <1583522467-3499-1-git-send-email-rishabhb@codeaurora.org>
-To: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org
-Cc: tsoni@codeaurora.org, psodagud@codeaurora.org, sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 2/3] remoteproc/k3-dsp: Add a remoteproc driver of K3 C66x DSPs
+Date: Wed, 25 Mar 2020 15:18:38 -0500
+Message-ID: <20200325201839.15896-3-s-anna@ti.com>
+In-Reply-To: <20200325201839.15896-1-s-anna@ti.com>
+References: <20200325201839.15896-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-This adds Peripheral Authentication System (PAS) based SPSS PIL
-driver for loading SPSS firmware and booting. The firmware is
-verified and booted with the help of the PAS in TrustZone.
-This driver also adds functionality to handle late
-attach feature for a remote processor. The driver queries
-the initial state of remote processor and is capable of handling
-successful bootup and crash scenarios.
+The Texas Instrument's K3 J721E SoCs have two C66x DSP Subsystems in MAIN
+voltage domain that are based on the TI's standard TMS320C66x DSP CorePac
+module. Each subsystem has a Fixed/Floating-Point DSP CPU, with 32 KB each
+of L1P & L1D SRAMs that can be configured and partitioned as either RAM
+and/or Cache, and 288 KB of L2 SRAM with 256 KB of memory configurable as
+either RAM and/or Cache. The CorePac also includes an Internal DMA (IDMA),
+External Memory Controller (EMC), Extended Memory Controller (XMC) with a
+Region Address Translator (RAT) unit for 32-bit to 48-bit address
+extension/translations, an Interrupt Controller (INTC) and a Powerdown
+Controller (PDC).
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+A new remoteproc module is added to perform the device management of
+these DSP devices. The support is limited to images using only external
+DDR memory at the moment, the loading support to internal memories and
+any on-chip RAM memories will be added in a subsequent patch. RAT support
+is also left for a future patch, and as such the reserved memory carveout
+regions are all expected to be using memory regions within the first 2 GB.
+Error Recovery and Power Management features are not currently supported.
+
+The C66x remote processors do not have an MMU, and so require fixed memory
+carveout regions matching the firmware image addresses. Support for this
+is provided by mandating multiple memory regions to be attached to the
+remoteproc device. The first memory region will be used to serve as the
+DMA pool for all dynamic allocations like the vrings and vring buffers.
+The remaining memory regions are mapped into the kernel at device probe
+time, and are used to provide address translations for firmware image
+segments without the need for any RSC_CARVEOUT entries. Any firmware
+image using memory outside of the supplied reserved memory carveout
+regions will be errored out.
+
+The driver uses various TI-SCI interfaces to talk to the System Controller
+(DMSC) for managing configuration, power and reset management of these
+cores. IPC between the A72 cores and the DSP cores is supported through
+the virtio rpmsg stack using shared memory and OMAP Mailboxes.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- drivers/remoteproc/Kconfig     |  17 ++
- drivers/remoteproc/Makefile    |   1 +
- drivers/remoteproc/qcom_spss.c | 500 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 518 insertions(+)
- create mode 100644 drivers/remoteproc/qcom_spss.c
+ drivers/remoteproc/Kconfig                |  16 +
+ drivers/remoteproc/Makefile               |   1 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 736 ++++++++++++++++++++++
+ 3 files changed, 753 insertions(+)
+ create mode 100644 drivers/remoteproc/ti_k3_dsp_remoteproc.c
 
 diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index de3862c..ab3e89a 100644
+index 073048b4c0fb..66a76acb15b6 100644
 --- a/drivers/remoteproc/Kconfig
 +++ b/drivers/remoteproc/Kconfig
-@@ -151,6 +151,23 @@ config QCOM_Q6V5_PAS
- 	  for the Qualcomm Hexagon v5 based remote processors. This is commonly
- 	  used to control subsystems such as ADSP, Compute and Sensor.
+@@ -240,6 +240,22 @@ config TI_K3_R5_REMOTEPROC
+ 	  It's safe to say N here if you're not interested in utilizing
+ 	  a slave processor
  
-+config QCOM_SPSS
-+	tristate "Qualcomm secure subsystem Peripheral loading support"
-+	depends on OF && ARCH_QCOM
-+	depends on QCOM_SMEM
-+	depends on RPMSG_QCOM_SMD || (COMPILE_TEST && RPMSG_QCOM_SMD=n)
-+	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
-+	depends on QCOM_SYSMON || QCOM_SYSMON=n
-+	select MFD_SYSCON
-+	select QCOM_MDT_LOADER
-+	select QCOM_Q6V5_COMMON
-+	select QCOM_RPROC_COMMON
-+	select QCOM_SCM
++config TI_K3_DSP_REMOTEPROC
++	tristate "TI K3 DSP remoteproc support"
++	depends on ARCH_K3
++	select MAILBOX
++	select OMAP2PLUS_MBOX
 +	help
-+	  Say y here to support the TrustZone based Peripheral Image Loader
-+	  for the Qualcomm secure subsystem remote processor. This also supports
-+	  remote processors that are booted before kernel comes up.
++	  Say y here to support TI's C66x and C71x DSP remote processor
++	  subsystems on various TI K3 family of SoCs through the remote
++	  processor framework.
 +
- config QCOM_Q6V5_WCSS
- 	tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
- 	depends on OF && ARCH_QCOM
++	  You want to say m here in order to offload some processing
++	  tasks to these processors.
++
++	  It's safe to say N here if you're not interested in utilizing
++	  the DSP slave processors.
++
+ endif # REMOTEPROC
+ 
+ endmenu
 diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index e30a1b1..e781552 100644
+index 00ba826818af..eb51cc09e47b 100644
 --- a/drivers/remoteproc/Makefile
 +++ b/drivers/remoteproc/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
- obj-$(CONFIG_DA8XX_REMOTEPROC)		+= da8xx_remoteproc.o
- obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
-+obj-$(CONFIG_QCOM_SPSS)			+= qcom_spss.o
- obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
- obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
- obj-$(CONFIG_QCOM_Q6V5_ADSP)		+= qcom_q6v5_adsp.o
-diff --git a/drivers/remoteproc/qcom_spss.c b/drivers/remoteproc/qcom_spss.c
+@@ -29,3 +29,4 @@ obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
+ obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
+ obj-$(CONFIG_STM32_RPROC)		+= stm32_rproc.o
+ obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o
++obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 new file mode 100644
-index 0000000..7be7b2b
+index 000000000000..fd0d84f46f90
 --- /dev/null
-+++ b/drivers/remoteproc/qcom_spss.c
-@@ -0,0 +1,500 @@
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -0,0 +1,736 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-+ * Qualcomm SPSS Peripheral Image Loader for SM8250
++ * TI K3 DSP Remote Processor(s) driver
 + *
++ * Copyright (C) 2018-2020 Texas Instruments Incorporated - http://www.ti.com/
++ *	Suman Anna <s-anna@ti.com>
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/firmware.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
++#include <linux/io.h>
 +#include <linux/module.h>
-+#include <linux/of_address.h>
 +#include <linux/of_device.h>
++#include <linux/of_reserved_mem.h>
 +#include <linux/platform_device.h>
-+#include <linux/qcom_scm.h>
-+#include <linux/regulator/consumer.h>
++#include <linux/pm_runtime.h>
 +#include <linux/remoteproc.h>
-+#include <linux/soc/qcom/mdt_loader.h>
++#include <linux/mailbox_client.h>
++#include <linux/omap-mailbox.h>
++#include <linux/reset.h>
++#include <linux/soc/ti/ti_sci_protocol.h>
 +
-+#include "qcom_common.h"
++#include "omap_remoteproc.h"
 +#include "remoteproc_internal.h"
++#include "ti_sci_proc.h"
 +
-+#define ERR_READY	0
-+#define PBL_DONE	1
++#define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
 +
-+struct spss_data {
-+	const char *firmware_name;
-+	int pas_id;
-+	const char *ssr_name;
-+	bool skip_fw_load;
++/**
++ * struct k3_dsp_rproc_mem - internal memory structure
++ * @cpu_addr: MPU virtual address of the memory region
++ * @bus_addr: Bus address used to access the memory region
++ * @dev_addr: Device address of the memory region from DSP view
++ * @size: Size of the memory region
++ */
++struct k3_dsp_rproc_mem {
++	void __iomem *cpu_addr;
++	phys_addr_t bus_addr;
++	u32 dev_addr;
++	size_t size;
 +};
 +
-+struct qcom_spss {
++/**
++ * struct k3_dsp_mem_data - memory definitions for a DSP
++ * @name: name for this memory entry
++ * @dev_addr: device address for the memory entry
++ */
++struct k3_dsp_mem_data {
++	const char *name;
++	const u32 dev_addr;
++};
++
++/**
++ * struct k3_dsp_dev_data - device data structure for a DSP
++ * @mems: pointer to memory definitions for a DSP
++ * @num_mems: number of memory regions in @mems
++ * @boot_align_addr: boot vector address alignment granularity
++ * @uses_lreset: flag to denote the need for local reset management
++ */
++struct k3_dsp_dev_data {
++	const struct k3_dsp_mem_data *mems;
++	u32 num_mems;
++	u32 boot_align_addr;
++	bool uses_lreset;
++};
++
++/**
++ * struct k3_dsp_rproc - k3 DSP remote processor driver structure
++ * @dev: cached device pointer
++ * @rproc: remoteproc device handle
++ * @mem: internal memory regions data
++ * @num_mems: number of internal memory regions
++ * @rmem: reserved memory regions data
++ * @num_rmems: number of reserved memory regions
++ * @reset: reset control handle
++ * @data: pointer to DSP-specific device data
++ * @tsp: TI-SCI processor control handle
++ * @ti_sci: TI-SCI handle
++ * @ti_sci_id: TI-SCI device identifier
++ * @mbox: mailbox channel handle
++ * @client: mailbox client to request the mailbox channel
++ */
++struct k3_dsp_rproc {
 +	struct device *dev;
 +	struct rproc *rproc;
-+
-+	struct clk *xo;
-+
-+	struct regulator *cx_supply;
-+	struct regulator *px_supply;
-+
-+	int pas_id;
-+
-+	struct completion start_done;
-+
-+	phys_addr_t mem_phys;
-+	phys_addr_t mem_reloc;
-+	void *mem_region;
-+	size_t mem_size;
-+	int generic_irq;
-+
-+	struct qcom_rproc_glink glink_subdev;
-+	struct qcom_rproc_ssr ssr_subdev;
-+	void __iomem *irq_status;
-+	void __iomem *irq_clr;
-+	void __iomem *irq_mask;
-+	void __iomem *err_status;
-+	void __iomem *err_status_spare;
-+	u32 bits_arr[2];
++	struct k3_dsp_rproc_mem *mem;
++	int num_mems;
++	struct k3_dsp_rproc_mem *rmem;
++	int num_rmems;
++	struct reset_control *reset;
++	const struct k3_dsp_dev_data *data;
++	struct ti_sci_proc *tsp;
++	const struct ti_sci_handle *ti_sci;
++	u32 ti_sci_id;
++	struct mbox_chan *mbox;
++	struct mbox_client client;
 +};
 +
-+static void clear_pbl_done(struct qcom_spss *spss)
++/**
++ * k3_dsp_rproc_mbox_callback() - inbound mailbox message handler
++ * @client: mailbox client pointer used for requesting the mailbox channel
++ * @data: mailbox payload
++ *
++ * This handler is invoked by the OMAP mailbox driver whenever a mailbox
++ * message is received. Usually, the mailbox payload simply contains
++ * the index of the virtqueue that is kicked by the remote processor,
++ * and we let remoteproc core handle it.
++ *
++ * In addition to virtqueue indices, we also have some out-of-band values
++ * that indicate different events. Those values are deliberately very
++ * large so they don't coincide with virtqueue indices.
++ */
++static void k3_dsp_rproc_mbox_callback(struct mbox_client *client, void *data)
 +{
-+	uint32_t err_value, rmb_err_spare0, rmb_err_spare1, rmb_err_spare2;
++	struct k3_dsp_rproc *kproc = container_of(client, struct k3_dsp_rproc,
++						client);
++	struct device *dev = kproc->rproc->dev.parent;
++	const char *name = kproc->rproc->name;
++	u32 msg = omap_mbox_message(data);
 +
-+	err_value =  __raw_readl(spss->err_status);
-+	rmb_err_spare2 =  __raw_readl(spss->err_status_spare);
-+	rmb_err_spare1 =  __raw_readl(spss->err_status_spare-4);
-+	rmb_err_spare0 =  __raw_readl(spss->err_status_spare-8);
++	dev_dbg(dev, "mbox msg: 0x%x\n", msg);
 +
-+	if (err_value) {
-+		dev_err(spss->dev, "PBL error status register: 0x%08x,\
-+			spare0 register: 0x%08x, spare1 register: 0x%08x,\
-+			spare2 register: 0x%08x\n", err_value, rmb_err_spare0,
-+					rmb_err_spare1, rmb_err_spare2);
-+	} else
-+		dev_info(spss->dev, "PBL_DONE - 1st phase loading [%s] \
-+					completed ok\n", spss->rproc->name);
-+
-+	__raw_writel(BIT(spss->bits_arr[PBL_DONE]), spss->irq_clr);
-+}
-+
-+static void clear_err_ready(struct qcom_spss *spss)
-+{
-+	dev_info(spss->dev, "SW_INIT_DONE - 2nd phase loading [%s] \
-+					completed ok\n", spss->rproc->name);
-+
-+	__raw_writel(BIT(spss->bits_arr[ERR_READY]), spss->irq_clr);
-+	complete(&spss->start_done);
-+}
-+
-+static void clear_sw_init_done_error(struct qcom_spss *spss, int err)
-+{
-+	uint32_t rmb_err_spare0;
-+	uint32_t rmb_err_spare1;
-+	uint32_t rmb_err_spare2;
-+
-+	dev_info(spss->dev, "SW_INIT_DONE - ERROR [%s] [0x%x].\n",
-+						spss->rproc->name, err);
-+
-+	rmb_err_spare2 =  __raw_readl(spss->err_status_spare);
-+	rmb_err_spare1 =  __raw_readl(spss->err_status_spare-4);
-+	rmb_err_spare0 =  __raw_readl(spss->err_status_spare-8);
-+
-+	dev_err(spss->dev, "spare0 register: 0x%08x, spare1 register: 0x%08x,\
-+		spare2 register: 0x%08x\n", rmb_err_spare0, rmb_err_spare1,
-+							rmb_err_spare2);
-+
-+	/* Clear the interrupt source */
-+	__raw_writel(BIT(spss->bits_arr[ERR_READY]), spss->irq_clr);
-+}
-+
-+
-+
-+static void clear_wdog(struct qcom_spss *spss)
-+{
-+	/* Check crash status to know if device is restarting*/
-+	if (spss->rproc->state == RPROC_RUNNING) {
-+		dev_err(spss->dev, "wdog bite received from %s!\n",
-+							spss->rproc->name);
-+		__raw_writel(BIT(spss->bits_arr[ERR_READY]), spss->irq_clr);
-+		rproc_report_crash(spss->rproc, RPROC_WATCHDOG);
++	switch (msg) {
++	case RP_MBOX_CRASH:
++		/*
++		 * remoteproc detected an exception, but error recovery is not
++		 * supported. So, just log this for now
++		 */
++		dev_err(dev, "K3 DSP rproc %s crashed\n", name);
++		break;
++	case RP_MBOX_ECHO_REPLY:
++		dev_info(dev, "received echo reply from %s\n", name);
++		break;
++	default:
++		/* silently handle all other valid messages */
++		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
++			return;
++		if (msg > kproc->rproc->max_notifyid) {
++			dev_dbg(dev, "dropping unknown message 0x%x", msg);
++			return;
++		}
++		/* msg contains the index of the triggered vring */
++		if (rproc_vq_interrupt(kproc->rproc, msg) == IRQ_NONE)
++			dev_dbg(dev, "no message was found in vqid %d\n", msg);
 +	}
 +}
 +
-+static irqreturn_t spss_generic_handler(int irq, void *dev_id)
++/*
++ * Kick the remote processor to notify about pending unprocessed messages.
++ * The vqid usage is not used and is inconsequential, as the kick is performed
++ * through a simulated GPIO (a bit in an IPC interrupt-triggering register),
++ * the remote processor is expected to process both its Tx and Rx virtqueues.
++ */
++static void k3_dsp_rproc_kick(struct rproc *rproc, int vqid)
 +{
-+	struct qcom_spss *spss = dev_id;
-+	uint32_t status_val, err_value;
-+
-+	err_value =  __raw_readl(spss->err_status_spare);
-+	status_val = __raw_readl(spss->irq_status);
-+
-+	if (status_val & BIT(spss->bits_arr[ERR_READY])) {
-+		if (!err_value)
-+			clear_err_ready(spss);
-+		else if (err_value == 0x44554d50)
-+			clear_wdog(spss);
-+		else
-+			clear_sw_init_done_error(spss, err_value);
-+	}
-+
-+	if (status_val & BIT(spss->bits_arr[PBL_DONE]))
-+		clear_pbl_done(spss);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void mask_scsr_irqs(struct qcom_spss *spss)
-+{
-+	uint32_t mask_val;
-+
-+	/* Masking all interrupts */
-+	mask_val = ~0;
-+	__raw_writel(mask_val,  spss->irq_mask);
-+}
-+
-+static void unmask_scsr_irqs(struct qcom_spss *spss)
-+{
-+	uint32_t mask_val;
-+
-+	/* unmasking interrupts handled by HLOS */
-+	mask_val = ~0;
-+	__raw_writel(mask_val & ~BIT(spss->bits_arr[ERR_READY]) &
-+			~BIT(spss->bits_arr[PBL_DONE]), spss->irq_mask);
-+}
-+
-+static bool check_status(struct qcom_spss *spss)
-+{
-+	uint32_t status_val, err_value;
-+
-+	err_value =  __raw_readl(spss->err_status_spare);
-+	status_val = __raw_readl(spss->irq_status);
-+
-+	if ((status_val & BIT(spss->bits_arr[ERR_READY])) && err_value) {
-+		dev_err(spss->dev, "SPSS crashed before booting\n");
-+		return true;
-+	}
-+	return false;
-+}
-+
-+static int spss_load(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct qcom_spss *spss = (struct qcom_spss *)rproc->priv;
-+
-+	if (rproc->skip_fw_load)
-+		return 0;
-+
-+	return qcom_mdt_load(spss->dev, fw, rproc->firmware, spss->pas_id,
-+			     spss->mem_region, spss->mem_phys, spss->mem_size,
-+			     &spss->mem_reloc);
-+
-+}
-+
-+static int spss_stop(struct rproc *rproc)
-+{
-+	struct qcom_spss *spss = (struct qcom_spss *)rproc->priv;
++	struct k3_dsp_rproc *kproc = rproc->priv;
++	struct device *dev = rproc->dev.parent;
++	mbox_msg_t msg = (mbox_msg_t)vqid;
 +	int ret;
 +
-+	ret = qcom_scm_pas_shutdown(spss->pas_id);
-+	if (ret)
-+		dev_err(spss->dev, "failed to shutdown: %d\n", ret);
-+
-+	mask_scsr_irqs(spss);
-+	/* Negate skip fw load if already set */
-+	if (rproc->skip_fw_load)
-+		rproc->skip_fw_load = false;
-+
-+	return ret;
++	/* send the index of the triggered virtqueue in the mailbox payload */
++	ret = mbox_send_message(kproc->mbox, (void *)msg);
++	if (ret < 0)
++		dev_err(dev, "failed to send mailbox message, status = %d\n",
++			ret);
 +}
 +
-+static int spss_start(struct rproc *rproc)
++/* Put the DSP processor into reset */
++static int k3_dsp_rproc_reset(struct k3_dsp_rproc *kproc)
 +{
-+	struct qcom_spss *spss = (struct qcom_spss *)rproc->priv;
-+	int ret = 0;
++	struct device *dev = kproc->dev;
++	int ret;
 +
-+	if (rproc->skip_fw_load) {
-+		/* If rproc already crashed stop it and retry boot*/
-+		if (check_status(spss)) {
-+			spss_stop(rproc);
-+			return -EAGAIN;
-+		}
-+		/* If booted successfully then wait for init_done*/
-+		else
-+			goto wait_for_init;
-+	}
-+
-+	ret = clk_prepare_enable(spss->xo);
-+	if (ret)
-+		return ret;
-+
-+	ret = regulator_enable(spss->cx_supply);
-+	if (ret)
-+		goto disable_xo_clk;
-+
-+	ret = regulator_enable(spss->px_supply);
-+	if (ret)
-+		goto disable_cx_supply;
-+
-+	ret = qcom_scm_pas_auth_and_reset(spss->pas_id);
++	ret = reset_control_assert(kproc->reset);
 +	if (ret) {
-+		dev_err(spss->dev,
-+			"failed to authenticate image and release reset\n");
-+		goto disable_px_supply;
++		dev_err(dev, "local-reset assert failed, ret = %d\n", ret);
++		return ret;
 +	}
 +
-+wait_for_init:
-+	unmask_scsr_irqs(spss);
-+
-+	ret = wait_for_completion_timeout(&spss->start_done,
-+						msecs_to_jiffies(5000));
-+	if (!ret) {
-+		dev_err(spss->dev, "start timed out\n");
-+		spss_stop(rproc);
++	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
++						    kproc->ti_sci_id);
++	if (ret) {
++		dev_err(dev, "module-reset assert failed, ret = %d\n", ret);
++		if (reset_control_deassert(kproc->reset))
++			dev_warn(dev, "local-reset deassert back failed\n");
 +	}
-+	ret = ret ? 0 : -ETIMEDOUT;
 +
-+disable_px_supply:
-+	regulator_disable(spss->px_supply);
-+disable_cx_supply:
-+	regulator_disable(spss->cx_supply);
-+disable_xo_clk:
-+	clk_disable_unprepare(spss->xo);
 +	return ret;
 +}
 +
-+static void *spss_da_to_va(struct rproc *rproc, u64 da, int len)
++/* Release the DSP processor from reset */
++static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
 +{
-+	struct qcom_spss *spss = (struct qcom_spss *)rproc->priv;
-+	int offset;
++	struct device *dev = kproc->dev;
++	int ret;
 +
-+	offset = da - spss->mem_reloc;
-+	if (offset < 0 || offset + len > spss->mem_size)
++	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
++						   kproc->ti_sci_id);
++	if (ret) {
++		dev_err(dev, "module-reset deassert failed, ret = %d\n", ret);
++		return ret;
++	}
++
++	ret = reset_control_deassert(kproc->reset);
++	if (ret) {
++		dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
++		if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
++							  kproc->ti_sci_id))
++			dev_warn(dev, "module-reset assert back failed\n");
++	}
++
++	return ret;
++}
++
++/*
++ * Power up the DSP remote processor.
++ *
++ * This function will be invoked only after the firmware for this rproc
++ * was loaded, parsed successfully, and all of its resource requirements
++ * were met.
++ */
++static int k3_dsp_rproc_start(struct rproc *rproc)
++{
++	struct k3_dsp_rproc *kproc = rproc->priv;
++	struct mbox_client *client = &kproc->client;
++	struct device *dev = kproc->dev;
++	u32 boot_addr;
++	int ret;
++
++	client->dev = dev;
++	client->tx_done = NULL;
++	client->rx_callback = k3_dsp_rproc_mbox_callback;
++	client->tx_block = false;
++	client->knows_txdone = false;
++
++	kproc->mbox = mbox_request_channel(client, 0);
++	if (IS_ERR(kproc->mbox)) {
++		ret = -EBUSY;
++		dev_err(dev, "mbox_request_channel failed: %ld\n",
++			PTR_ERR(kproc->mbox));
++		return ret;
++	}
++
++	/*
++	 * Ping the remote processor, this is only for sanity-sake for now;
++	 * there is no functional effect whatsoever.
++	 *
++	 * Note that the reply will _not_ arrive immediately: this message
++	 * will wait in the mailbox fifo until the remote processor is booted.
++	 */
++	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
++	if (ret < 0) {
++		dev_err(dev, "mbox_send_message failed: %d\n", ret);
++		goto put_mbox;
++	}
++
++	boot_addr = rproc->bootaddr;
++	if (boot_addr & (kproc->data->boot_align_addr - 1)) {
++		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 0x%x boundary\n",
++			boot_addr, kproc->data->boot_align_addr);
++		ret = -EINVAL;
++		goto put_mbox;
++	}
++
++	dev_err(dev, "booting DSP core using boot addr = 0x%x\n", boot_addr);
++	ret = ti_sci_proc_set_config(kproc->tsp, boot_addr, 0, 0);
++	if (ret)
++		goto put_mbox;
++
++	ret = k3_dsp_rproc_release(kproc);
++	if (ret)
++		goto put_mbox;
++
++	return 0;
++
++put_mbox:
++	mbox_free_channel(kproc->mbox);
++	return ret;
++}
++
++/*
++ * Stop the DSP remote processor.
++ *
++ * This function puts the DSP processor into reset, and finishes processing
++ * of any pending messages.
++ */
++static int k3_dsp_rproc_stop(struct rproc *rproc)
++{
++	struct k3_dsp_rproc *kproc = rproc->priv;
++
++	mbox_free_channel(kproc->mbox);
++
++	k3_dsp_rproc_reset(kproc);
++
++	return 0;
++}
++
++/*
++ * Custom function to translate a DSP device address (internal RAMs only) to a
++ * kernel virtual address.  The DSPs can access their RAMs at either an internal
++ * address visible only from a DSP, or at the SoC-level bus address. Both these
++ * addresses need to be looked through for translation. The translated addresses
++ * can be used either by the remoteproc core for loading (when using kernel
++ * remoteproc loader), or by any rpmsg bus drivers.
++ */
++static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
++{
++	struct k3_dsp_rproc *kproc = rproc->priv;
++	void __iomem *va = NULL;
++	phys_addr_t bus_addr;
++	u32 dev_addr, offset;
++	size_t size;
++	int i;
++
++	if (len == 0)
 +		return NULL;
 +
-+	return spss->mem_region + offset;
++	for (i = 0; i < kproc->num_mems; i++) {
++		bus_addr = kproc->mem[i].bus_addr;
++		dev_addr = kproc->mem[i].dev_addr;
++		size = kproc->mem[i].size;
++
++		if (da < KEYSTONE_RPROC_LOCAL_ADDRESS_MASK) {
++			/* handle DSP-view addresses */
++			if (da >= dev_addr &&
++			    ((da + len) <= (dev_addr + size))) {
++				offset = da - dev_addr;
++				va = kproc->mem[i].cpu_addr + offset;
++				return (__force void *)va;
++			}
++		} else {
++			/* handle SoC-view addresses */
++			if (da >= bus_addr &&
++			    (da + len) <= (bus_addr + size)) {
++				offset = da - bus_addr;
++				va = kproc->mem[i].cpu_addr + offset;
++				return (__force void *)va;
++			}
++		}
++	}
++
++	/* handle static DDR reserved memory regions */
++	for (i = 0; i < kproc->num_rmems; i++) {
++		dev_addr = kproc->rmem[i].dev_addr;
++		size = kproc->rmem[i].size;
++
++		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
++			offset = da - dev_addr;
++			va = kproc->rmem[i].cpu_addr + offset;
++			return (__force void *)va;
++		}
++	}
++
++	return NULL;
 +}
 +
-+static const struct rproc_ops spss_ops = {
-+	.start = spss_start,
-+	.stop = spss_stop,
-+	.da_to_va = spss_da_to_va,
-+	.load = spss_load,
++static const struct rproc_ops k3_dsp_rproc_ops = {
++	.start		= k3_dsp_rproc_start,
++	.stop		= k3_dsp_rproc_stop,
++	.kick		= k3_dsp_rproc_kick,
++	.da_to_va	= k3_dsp_rproc_da_to_va,
 +};
 +
-+static int spss_init_clock(struct qcom_spss *spss)
++static const char *k3_dsp_rproc_get_firmware(struct device *dev)
 +{
-+	int ret;
-+
-+	spss->xo = devm_clk_get(spss->dev, "xo");
-+	if (IS_ERR(spss->xo)) {
-+		ret = PTR_ERR(spss->xo);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(spss->dev, "failed to get xo clock");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int spss_init_regulator(struct qcom_spss *spss)
-+{
-+	spss->cx_supply = devm_regulator_get(spss->dev, "cx");
-+	if (IS_ERR(spss->cx_supply))
-+		return PTR_ERR(spss->cx_supply);
-+	regulator_set_load(spss->cx_supply, 100000);
-+
-+	spss->px_supply = devm_regulator_get(spss->dev, "px");
-+	if (IS_ERR(spss->px_supply))
-+		return PTR_ERR(spss->px_supply);
-+	regulator_set_load(spss->px_supply, 100000);
-+
-+	return 0;
-+}
-+
-+static int spss_alloc_memory_region(struct qcom_spss *spss)
-+{
-+	struct device_node *node;
-+	struct resource r;
-+	int ret;
-+
-+	node = of_parse_phandle(spss->dev->of_node, "memory-region", 0);
-+	if (!node) {
-+		dev_err(spss->dev, "no memory-region specified\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_address_to_resource(node, 0, &r);
-+	if (ret)
-+		return ret;
-+
-+	spss->mem_phys = spss->mem_reloc = r.start;
-+	spss->mem_size = resource_size(&r);
-+	spss->mem_region = devm_ioremap_wc(spss->dev, spss->mem_phys,
-+								spss->mem_size);
-+	if (!spss->mem_region) {
-+		dev_err(spss->dev, "unable to map memory region: %pa+%zx\n",
-+			&r.start, spss->mem_size);
-+		return -EBUSY;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qcom_spss_init_mmio(struct platform_device *pdev, struct qcom_spss *spss)
-+{
-+	struct resource *res;
-+	int ret;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						"sp2soc_irq_status");
-+	spss->irq_status = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(spss->irq_status))
-+		return PTR_ERR(spss->irq_status);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						"sp2soc_irq_clr");
-+	spss->irq_clr = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(spss->irq_clr))
-+		return PTR_ERR(spss->irq_clr);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						"sp2soc_irq_mask");
-+	spss->irq_mask = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(spss->irq_mask))
-+		return PTR_ERR(spss->irq_mask);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						"rmb_err");
-+	spss->err_status = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(spss->err_status))
-+		return PTR_ERR(spss->err_status);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						"rmb_err_spare2");
-+	spss->err_status_spare = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(spss->err_status_spare))
-+		return PTR_ERR(spss->err_status_spare);
-+
-+	ret = of_property_read_u32_array(pdev->dev.of_node,
-+			       "qcom,spss-scsr-bits", spss->bits_arr,
-+				ARRAY_SIZE(spss->bits_arr));
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+
-+}
-+
-+static int qcom_spss_probe(struct platform_device *pdev)
-+{
-+	const struct spss_data *desc;
-+	struct qcom_spss *spss;
-+	struct rproc *rproc;
 +	const char *fw_name;
-+
 +	int ret;
 +
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	if (!qcom_scm_is_available())
-+		return -EPROBE_DEFER;
-+
-+	rproc = rproc_alloc(&pdev->dev, pdev->name, &spss_ops,
-+			    fw_name, sizeof(*spss));
-+	if (!rproc) {
-+		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
-+		return -ENOMEM;
-+	}
-+
-+	rproc->skip_fw_load = desc->skip_fw_load;
-+
-+	spss = (struct qcom_spss *)rproc->priv;
-+	spss->dev = &pdev->dev;
-+	spss->rproc = rproc;
-+	spss->pas_id = desc->pas_id;
-+	init_completion(&spss->start_done);
-+	platform_set_drvdata(pdev, spss);
-+
-+	ret = qcom_spss_init_mmio(pdev, spss);
-+	if (ret)
-+		goto free_rproc;
-+
-+	ret = spss_alloc_memory_region(spss);
-+	if (ret)
-+		goto free_rproc;
-+
-+	ret = spss_init_clock(spss);
-+	if (ret)
-+		goto free_rproc;
-+
-+	ret = spss_init_regulator(spss);
-+	if (ret)
-+		goto free_rproc;
-+
-+	qcom_add_glink_subdev(rproc, &spss->glink_subdev);
-+	qcom_add_ssr_subdev(rproc, &spss->ssr_subdev, desc->ssr_name);
-+
-+	ret = rproc_add(rproc);
-+	if (ret)
-+		goto free_rproc;
-+
-+	mask_scsr_irqs(spss);
-+	spss->generic_irq = platform_get_irq(pdev, 0);
-+	ret = devm_request_threaded_irq(&pdev->dev, spss->generic_irq, NULL,
-+		spss_generic_handler, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+							"generic-irq", spss);
++	ret = of_property_read_string(dev->of_node, "firmware-name",
++				      &fw_name);
 +	if (ret) {
-+		dev_err(&pdev->dev, "failed to acquire generic IRQ\n");
-+		goto free_rproc;
++		dev_err(dev, "failed to parse firmware-name property, ret = %d\n",
++			ret);
++		return ERR_PTR(ret);
 +	}
++
++	return fw_name;
++}
++
++static int k3_dsp_rproc_of_get_memories(struct platform_device *pdev,
++					struct k3_dsp_rproc *kproc)
++{
++	const struct k3_dsp_dev_data *data = kproc->data;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	int num_mems = 0;
++	int i;
++
++	num_mems = kproc->data->num_mems;
++	kproc->mem = devm_kcalloc(kproc->dev, num_mems,
++				  sizeof(*kproc->mem), GFP_KERNEL);
++	if (!kproc->mem)
++		return -ENOMEM;
++
++	for (i = 0; i < num_mems; i++) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   data->mems[i].name);
++		if (!res) {
++			dev_err(dev, "found no memory resource for %s\n",
++				data->mems[i].name);
++			return -EINVAL;
++		}
++		if (!devm_request_mem_region(dev, res->start,
++					     resource_size(res),
++					     dev_name(dev))) {
++			dev_err(dev, "could not request %s region for resource\n",
++				data->mems[i].name);
++			return -EBUSY;
++		}
++
++		kproc->mem[i].cpu_addr = devm_ioremap_wc(dev, res->start,
++							 resource_size(res));
++		if (IS_ERR(kproc->mem[i].cpu_addr)) {
++			dev_err(dev, "failed to map %s memory\n",
++				data->mems[i].name);
++			return PTR_ERR(kproc->mem[i].cpu_addr);
++		}
++		kproc->mem[i].bus_addr = res->start;
++		kproc->mem[i].dev_addr = data->mems[i].dev_addr;
++		kproc->mem[i].size = resource_size(res);
++
++		dev_dbg(dev, "memory %8s: bus addr %pa size 0x%zx va %pK da 0x%x\n",
++			data->mems[i].name, &kproc->mem[i].bus_addr,
++			kproc->mem[i].size, kproc->mem[i].cpu_addr,
++			kproc->mem[i].dev_addr);
++
++		/* zero out memories to start in a pristine state */
++		/*
++		 * FIXME: comment out until kernel crash is fixed, possible
++		 * issue with local resets.
++		 * memset((__force void *)kproc->mem[i].cpu_addr, 0,
++		 *      kproc->mem[i].size);
++		 */
++	}
++	kproc->num_mems = num_mems;
++
++	return 0;
++}
++
++static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
++{
++	struct device *dev = kproc->dev;
++	struct device_node *np = dev->of_node;
++	struct device_node *rmem_np;
++	struct reserved_mem *rmem;
++	int num_rmems;
++	int ret, i;
++
++	num_rmems = of_property_count_elems_of_size(np, "memory-region",
++						    sizeof(phandle));
++	if (num_rmems <= 0) {
++		dev_err(dev, "device does not reserved memory regions, ret = %d\n",
++			num_rmems);
++		return -EINVAL;
++	}
++	if (num_rmems < 2) {
++		dev_err(dev, "device needs atleast two memory regions to be defined, num = %d\n",
++			num_rmems);
++		return -EINVAL;
++	}
++
++	/* use reserved memory region 0 for vring DMA allocations */
++	ret = of_reserved_mem_device_init_by_idx(dev, np, 0);
++	if (ret) {
++		dev_err(dev, "device cannot initialize DMA pool, ret = %d\n",
++			ret);
++		return ret;
++	}
++
++	num_rmems--;
++	kproc->rmem = kcalloc(num_rmems, sizeof(*kproc->rmem), GFP_KERNEL);
++	if (!kproc->rmem) {
++		ret = -ENOMEM;
++		goto release_rmem;
++	}
++
++	/* use remaining reserved memory regions for static carveouts */
++	for (i = 0; i < num_rmems; i++) {
++		rmem_np = of_parse_phandle(np, "memory-region", i + 1);
++		if (!rmem_np) {
++			ret = -EINVAL;
++			goto unmap_rmem;
++		}
++
++		rmem = of_reserved_mem_lookup(rmem_np);
++		if (!rmem) {
++			of_node_put(rmem_np);
++			ret = -EINVAL;
++			goto unmap_rmem;
++		}
++		of_node_put(rmem_np);
++
++		kproc->rmem[i].bus_addr = rmem->base;
++		/* 64-bit address regions currently not supported */
++		kproc->rmem[i].dev_addr = (u32)rmem->base;
++		kproc->rmem[i].size = rmem->size;
++		kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
++		if (!kproc->rmem[i].cpu_addr) {
++			dev_err(dev, "failed to map reserved memory#%d at %pa of size %pa\n",
++				i + 1, &rmem->base, &rmem->size);
++			ret = -ENOMEM;
++			goto unmap_rmem;
++		}
++
++		dev_dbg(dev, "reserved memory%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
++			i + 1, &kproc->rmem[i].bus_addr,
++			kproc->rmem[i].size, kproc->rmem[i].cpu_addr,
++			kproc->rmem[i].dev_addr);
++	}
++	kproc->num_rmems = num_rmems;
 +
 +	return 0;
 +
-+free_rproc:
-+	rproc_free(rproc);
-+
++unmap_rmem:
++	for (i--; i >= 0; i--) {
++		if (kproc->rmem[i].cpu_addr)
++			iounmap(kproc->rmem[i].cpu_addr);
++	}
++	kfree(kproc->rmem);
++release_rmem:
++	of_reserved_mem_device_release(kproc->dev);
 +	return ret;
 +}
 +
-+static int qcom_spss_remove(struct platform_device *pdev)
++static void k3_dsp_reserved_mem_exit(struct k3_dsp_rproc *kproc)
 +{
-+	struct qcom_spss *spss = platform_get_drvdata(pdev);
++	int i;
 +
-+	rproc_del(spss->rproc);
-+	qcom_remove_glink_subdev(spss->rproc, &spss->glink_subdev);
-+	qcom_remove_ssr_subdev(spss->rproc, &spss->ssr_subdev);
-+	rproc_free(spss->rproc);
++	for (i = 0; i < kproc->num_rmems; i++)
++		iounmap(kproc->rmem[i].cpu_addr);
++	kfree(kproc->rmem);
++
++	of_reserved_mem_device_release(kproc->dev);
++}
++
++static
++struct ti_sci_proc *k3_dsp_rproc_of_get_tsp(struct device *dev,
++					    const struct ti_sci_handle *sci)
++{
++	struct ti_sci_proc *tsp;
++	u32 temp[2];
++	int ret;
++
++	ret = of_property_read_u32_array(dev->of_node, "ti,sci-proc-ids",
++					 temp, 2);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	tsp = kzalloc(sizeof(*tsp), GFP_KERNEL);
++	if (!tsp)
++		return ERR_PTR(-ENOMEM);
++
++	tsp->dev = dev;
++	tsp->sci = sci;
++	tsp->ops = &sci->ops.proc_ops;
++	tsp->proc_id = temp[0];
++	tsp->host_id = temp[1];
++
++	return tsp;
++}
++
++static int k3_dsp_rproc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	const struct k3_dsp_dev_data *data;
++	struct k3_dsp_rproc *kproc;
++	struct rproc *rproc;
++	const char *fw_name;
++	int ret = 0;
++	int ret1;
++
++	data = of_device_get_match_data(dev);
++	if (!data)
++		return -ENODEV;
++
++	fw_name = k3_dsp_rproc_get_firmware(dev);
++	if (IS_ERR(fw_name))
++		return PTR_ERR(fw_name);
++
++	rproc = rproc_alloc(dev, dev_name(dev), &k3_dsp_rproc_ops, fw_name,
++			    sizeof(*kproc));
++	if (!rproc)
++		return -ENOMEM;
++
++	rproc->has_iommu = false;
++	rproc->recovery_disabled = true;
++	kproc = rproc->priv;
++	kproc->rproc = rproc;
++	kproc->dev = dev;
++	kproc->data = data;
++
++	kproc->ti_sci = ti_sci_get_by_phandle(np, "ti,sci");
++	if (IS_ERR(kproc->ti_sci)) {
++		ret = PTR_ERR(kproc->ti_sci);
++		if (ret != -EPROBE_DEFER) {
++			dev_err(dev, "failed to get ti-sci handle, ret = %d\n",
++				ret);
++		}
++		kproc->ti_sci = NULL;
++		goto free_rproc;
++	}
++
++	ret = of_property_read_u32(np, "ti,sci-dev-id", &kproc->ti_sci_id);
++	if (ret) {
++		dev_err(dev, "missing 'ti,sci-dev-id' property\n");
++		goto put_sci;
++	}
++
++	kproc->reset = devm_reset_control_get_exclusive(dev, NULL);
++	if (IS_ERR(kproc->reset)) {
++		ret = PTR_ERR(kproc->reset);
++		dev_err(dev, "failed to get reset, status = %d\n", ret);
++		goto put_sci;
++	}
++
++	kproc->tsp = k3_dsp_rproc_of_get_tsp(dev, kproc->ti_sci);
++	if (IS_ERR(kproc->tsp)) {
++		dev_err(dev, "failed to construct ti-sci proc control, ret = %d\n",
++			ret);
++		ret = PTR_ERR(kproc->tsp);
++		goto put_sci;
++	}
++
++	ret = ti_sci_proc_request(kproc->tsp);
++	if (ret < 0) {
++		dev_err(dev, "ti_sci_proc_request failed, ret = %d\n", ret);
++		goto free_tsp;
++	}
++
++	pm_runtime_enable(dev);
++	ret = pm_runtime_get_sync(dev);
++	if (ret < 0) {
++		dev_err(dev, "failed to enable clock, status = %d\n", ret);
++		pm_runtime_put_noidle(dev);
++		goto disable_rpm;
++	}
++
++	ret = k3_dsp_rproc_of_get_memories(pdev, kproc);
++	if (ret)
++		goto disable_clk;
++
++	ret = k3_dsp_reserved_mem_init(kproc);
++	if (ret) {
++		dev_err(dev, "reserved memory init failed, ret = %d\n", ret);
++		goto disable_clk;
++	}
++
++	ret = rproc_add(rproc);
++	if (ret) {
++		dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
++			ret);
++		goto release_mem;
++	}
++
++	platform_set_drvdata(pdev, kproc);
++
++	return 0;
++
++release_mem:
++	k3_dsp_reserved_mem_exit(kproc);
++disable_clk:
++	pm_runtime_put_sync(dev);
++disable_rpm:
++	pm_runtime_disable(dev);
++	ret1 = ti_sci_proc_release(kproc->tsp);
++	if (ret1)
++		dev_err(dev, "failed to release proc, ret = %d\n", ret1);
++free_tsp:
++	kfree(kproc->tsp);
++put_sci:
++	ret1 = ti_sci_put_handle(kproc->ti_sci);
++	if (ret1)
++		dev_err(dev, "failed to put ti_sci handle, ret = %d\n", ret1);
++free_rproc:
++	rproc_free(rproc);
++	return ret;
++}
++
++static int k3_dsp_rproc_remove(struct platform_device *pdev)
++{
++	struct k3_dsp_rproc *kproc = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	rproc_del(kproc->rproc);
++	pm_runtime_put_sync(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	ret = ti_sci_proc_release(kproc->tsp);
++	if (ret)
++		dev_err(dev, "failed to release proc, ret = %d\n", ret);
++
++	kfree(kproc->tsp);
++
++	ret = ti_sci_put_handle(kproc->ti_sci);
++	if (ret)
++		dev_err(dev, "failed to put ti_sci handle, ret = %d\n", ret);
++
++	k3_dsp_reserved_mem_exit(kproc);
++	rproc_free(kproc->rproc);
 +
 +	return 0;
 +}
 +
-+static const struct spss_data spss_resource_init = {
-+		.firmware_name = "spss.mdt",
-+		.pas_id = 14,
-+		.ssr_name = "spss",
-+		.skip_fw_load = true,
++static const struct k3_dsp_mem_data c66_mems[] = {
++	{ .name = "l2sram", .dev_addr = 0x800000 },
++	{ .name = "l1pram", .dev_addr = 0xe00000 },
++	{ .name = "l1dram", .dev_addr = 0xf00000 },
 +};
 +
-+static const struct of_device_id spss_of_match[] = {
-+	{ .compatible = "qcom,sm8250-spss-pas", .data = &spss_resource_init},
-+	{ },
++static const struct k3_dsp_dev_data c66_data = {
++	.mems = c66_mems,
++	.num_mems = ARRAY_SIZE(c66_mems),
++	.boot_align_addr = SZ_1K,
++	.uses_lreset = true,
 +};
-+MODULE_DEVICE_TABLE(of, spss_of_match);
 +
-+static struct platform_driver spss_driver = {
-+	.probe = qcom_spss_probe,
-+	.remove = qcom_spss_remove,
-+	.driver = {
-+		.name = "qcom_spss",
-+		.of_match_table = spss_of_match,
++static const struct of_device_id k3_dsp_of_match[] = {
++	{ .compatible = "ti,j721e-c66-dsp", .data = &c66_data, },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, k3_dsp_of_match);
++
++static struct platform_driver k3_dsp_rproc_driver = {
++	.probe	= k3_dsp_rproc_probe,
++	.remove	= k3_dsp_rproc_remove,
++	.driver	= {
++		.name = "k3-dsp-rproc",
++		.of_match_table = k3_dsp_of_match,
 +	},
 +};
 +
-+module_platform_driver(spss_driver);
-+MODULE_DESCRIPTION("Qualcomm Peripheral Image Loader for secure subsystem");
++module_platform_driver(k3_dsp_rproc_driver);
++
++MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
 +MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("TI K3 DSP Remoteproc driver");
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.23.0
