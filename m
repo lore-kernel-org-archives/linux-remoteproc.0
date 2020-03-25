@@ -1,145 +1,166 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: rishabhb=codeaurora.org@mg.codeaurora.org
-From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH 2/2] dt-bindings: remoteproc: Add documentation for SPSS remoteproc
-Date: Fri,  6 Mar 2020 11:21:07 -0800
-Message-Id: <1583522467-3499-3-git-send-email-rishabhb@codeaurora.org>
-In-Reply-To: <1583522467-3499-1-git-send-email-rishabhb@codeaurora.org>
-References: <1583522467-3499-1-git-send-email-rishabhb@codeaurora.org>
-To: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org
-Cc: tsoni@codeaurora.org, psodagud@codeaurora.org, sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Return-Path: <s-anna@ti.com>
+From: Suman Anna <s-anna@ti.com>
+Subject: [PATCH 3/3] remoteproc/k3-dsp: Add support for L2RAM loading on C66x DSPs
+Date: Wed, 25 Mar 2020 15:18:39 -0500
+Message-ID: <20200325201839.15896-4-s-anna@ti.com>
+In-Reply-To: <20200325201839.15896-1-s-anna@ti.com>
+References: <20200325201839.15896-1-s-anna@ti.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add devicetree binding for Secure Subsystem remote processor
-support in remoteproc framework. This describes all the resources
-needed by SPSS to boot and handle crash and shutdown scenarios.
+The resets for the DSP processors on K3 SoCs are managed through the
+Power and Sleep Controller (PSC) module. Each DSP typically has two
+resets - a global module reset for powering on the device, and a local
+reset that affects only the CPU while allowing access to the other
+sub-modules within the DSP processor sub-systems.
 
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+The C66x DSPs have two levels of internal RAMs that can be used to
+boot from, and the firmware loading into these RAMs require the
+local reset to be asserted with the device powered on/enabled using
+the module reset. Enhance the K3 DSP remoteproc driver to add support
+for loading into the internal RAMs. The local reset is deasserted on
+SoC power-on-reset, so logic has to be added in probe in remoteproc
+mode to balance the remoteproc state-machine.
+
+Note that the local resets are a no-op on C71x cores, and the hardware
+does not supporting loading into its internal RAMs.
+
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- .../devicetree/bindings/remoteproc/qcom,spss.txt   | 114 +++++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,spss.txt
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 82 +++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,spss.txt b/Documentation/devicetree/bindings/remoteproc/qcom,spss.txt
-new file mode 100644
-index 0000000..79d6258
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,spss.txt
-@@ -0,0 +1,114 @@
-+Qualcomm SPSS Peripheral Image Loader
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index fd0d84f46f90..7b712ef74611 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -175,6 +175,9 @@ static int k3_dsp_rproc_reset(struct k3_dsp_rproc *kproc)
+ 		return ret;
+ 	}
+ 
++	if (kproc->data->uses_lreset)
++		return ret;
 +
-+This document defines the binding for a component that loads and boots firmware
-+on the Qualcomm Secure Peripheral Processor. This processor is booted in the
-+bootloader stage and it attaches itself to linux later on in the boot process.
+ 	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
+ 						    kproc->ti_sci_id);
+ 	if (ret) {
+@@ -192,6 +195,9 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
+ 	struct device *dev = kproc->dev;
+ 	int ret;
+ 
++	if (kproc->data->uses_lreset)
++		goto lreset;
 +
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be one of:
-+		    "qcom,sm8250-spss-pas"
+ 	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
+ 						   kproc->ti_sci_id);
+ 	if (ret) {
+@@ -199,6 +205,7 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
+ 		return ret;
+ 	}
+ 
++lreset:
+ 	ret = reset_control_deassert(kproc->reset);
+ 	if (ret) {
+ 		dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
+@@ -210,6 +217,63 @@ static int k3_dsp_rproc_release(struct k3_dsp_rproc *kproc)
+ 	return ret;
+ }
+ 
++/*
++ * The C66x DSP cores have a local reset that affects only the CPU, and a
++ * generic module reset that powers on the device and allows the DSP internal
++ * memories to be accessed while the local reset is asserted. This function is
++ * used to release the global reset on C66x DSPs to allow loading into the DSP
++ * internal RAMs. The .prepare() ops is invoked by remoteproc core before any
++ * firmware loading, and is followed by the .start() ops after loading to
++ * actually let the C66x DSP cores run. The local reset on C71x cores is a
++ * no-op and the global reset cannot be released on C71x cores until after
++ * the firmware images are loaded, so this function does nothing for C71x cores.
++ */
++static int k3_dsp_rproc_prepare(struct rproc *rproc)
++{
++	struct k3_dsp_rproc *kproc = rproc->priv;
++	struct device *dev = kproc->dev;
++	int ret;
 +
-+- reg:
-+	Should contain an entry for each value in 'reg-names'. Each entry
-+	have memory region's start address and size of the region.
++	/* local reset is no-op on C71x processors */
++	if (!kproc->data->uses_lreset)
++		return 0;
 +
-+- reg-names:
-+	Should contain strings with the following names each representing
-+	a specific region in memory.
-+	"sp2soc_irq_status", "sp2soc_irq_clr", "sp2soc_irq_mask", "rmb_err",
-+	"rmb_err_spare2"
++	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
++						    kproc->ti_sci_id);
++	if (ret)
++		dev_err(dev, "module-reset deassert failed, cannot enable internal RAM loading, ret = %d\n",
++			ret);
 +
-+- interrupts:
-+	Should contain the generic interrupt assigned to remote processor.
-+	The values should follow the interrupt-specifier format as dictated
-+	by the 'interrupt-parent' node.
++	return ret;
++}
 +
-+- clocks:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: reference to the xo clock and optionally aggre2 clock to be
-+		    held on behalf of the booting Hexagon core
++/*
++ * This function implements the .unprepare() ops and performs the complimentary
++ * operations to that of the .prepare() ops. The function is used to assert the
++ * global reset on applicable C66x cores. This completes the second portion of
++ * powering down the C66x DSP cores. The cores themselves are only halted in the
++ * .stop() callback through the local reset, and the .unprepare() ops is invoked
++ * by the remoteproc core after the remoteproc is stopped to balance the global
++ * reset.
++ */
++static int k3_dsp_rproc_unprepare(struct rproc *rproc)
++{
++	struct k3_dsp_rproc *kproc = rproc->priv;
++	struct device *dev = kproc->dev;
++	int ret;
 +
-+- clock-names:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "xo" and optionally include "aggre2"
++	/* local reset is no-op on C71x processors */
++	if (!kproc->data->uses_lreset)
++		return 0;
 +
-+- cx-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the regulator to be held on behalf of the
-+		    booting Hexagon core
++	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
++						    kproc->ti_sci_id);
++	if (ret)
++		dev_err(dev, "module-reset assert failed, ret = %d\n", ret);
 +
-+- px-supply:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the px regulator to be held on behalf of the
-+		    booting Hexagon core
++	return ret;
++}
 +
-+- memory-region:
-+	Usage: required
-+	Value type: <phandle>
-+	Definition: reference to the reserved-memory for the SPSS
+ /*
+  * Power up the DSP remote processor.
+  *
+@@ -353,6 +417,8 @@ static void *k3_dsp_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+ }
+ 
+ static const struct rproc_ops k3_dsp_rproc_ops = {
++	.prepare	= k3_dsp_rproc_prepare,
++	.unprepare	= k3_dsp_rproc_unprepare,
+ 	.start		= k3_dsp_rproc_start,
+ 	.stop		= k3_dsp_rproc_stop,
+ 	.kick		= k3_dsp_rproc_kick,
+@@ -644,6 +710,22 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 		goto disable_clk;
+ 	}
+ 
++	/*
++	 * ensure the DSP local reset is asserted to ensure the DSP doesn't
++	 * execute bogus code in .prepare() when the module reset is released.
++	 */
++	if (data->uses_lreset) {
++		ret = reset_control_status(kproc->reset);
++		if (ret < 0) {
++			dev_err(dev, "failed to get reset status, status = %d\n",
++				ret);
++			goto release_mem;
++		} else if (ret == 0) {
++			dev_warn(dev, "local reset is deasserted for device\n");
++			k3_dsp_rproc_reset(kproc);
++		}
++	}
 +
-+- qcom,spss-scsr-bits:
-+	Usage: required
-+	Value type: <array>
-+	Definition: Bits that are set by remote processor in the irq status
-+		    register region to represent different states during
-+		    boot process
-+
-+= SUBNODES
-+The spss node may have an subnode named either "smd-edge" or "glink-edge" that
-+describes the communication edge, channels and devices related to the SPSS.
-+See ../soc/qcom/qcom,smd.txt and ../soc/qcom/qcom,glink.txt for details on how
-+to describe these.
-+
-+= EXAMPLE
-+The following example describes the resources needed to boot the
-+Secure Processor, as it is found on SM8250 boards.
-+
-+	spss {
-+		compatible = "qcom,sm8250-spss-pil";
-+		reg = <0x188101c 0x4>,
-+                      <0x1881024 0x4>,
-+                      <0x1881028 0x4>,
-+                      <0x188103c 0x4>,
-+                      <0x1882014 0x4>;
-+                reg-names = "sp2soc_irq_status", "sp2soc_irq_clr",
-+                            "sp2soc_irq_mask", "rmb_err", "rmb_err_spare2";
-+                interrupts = <0 352 1>;
-+
-+                cx-supply = <&VDD_CX_LEVEL>;
-+                cx-uV-uA = <RPMH_REGULATOR_LEVEL_TURBO 100000>;
-+                px-supply = <&VDD_MX_LEVEL>;
-+                px-uV = <RPMH_REGULATOR_LEVEL_TURBO 100000>;
-+
-+                clocks = <&clock_rpmh RPMH_CXO_CLK>;
-+                clock-names = "xo";
-+                qcom,proxy-clock-names = "xo";
-+                status = "ok";
-+
-+                memory-region = <&pil_spss_mem>;
-+                qcom,spss-scsr-bits = <24 25>;
-+
-+                glink-edge {
-+                        qcom,remote-pid = <8>;
-+                        transport = "spss";
-+                        mboxes = <&sp_scsr 0>;
-+                        mbox-names = "spss_spss";
-+                        interrupt-parent = <&intsp>;
-+                        interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH>;
-+
-+                        reg = <0x1885008 0x8>,
-+                              <0x1885010 0x4>;
-+                        reg-names = "qcom,spss-addr",
-+                                    "qcom,spss-size";
-+
-+                        label = "spss";
-+                        qcom,glink-label = "spss";
-+                };
-+	};
-+
+ 	ret = rproc_add(rproc);
+ 	if (ret) {
+ 		dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.23.0
