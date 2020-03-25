@@ -1,126 +1,109 @@
-Return-Path: <arnaud.pouliquen@st.com>
+Return-Path: <jslaby@suse.cz>
 Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
 References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
  <20200324170407.16470-3-arnaud.pouliquen@st.com>
- <20200324205210.GE119913@minitux>
-From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <4f5e6dd0-5deb-8036-0a94-eb7055744f35@st.com>
-Date: Wed, 25 Mar 2020 17:57:26 +0100
+ <e458f805-c746-c88e-98f4-d874a7552933@suse.cz>
+ <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
+From: Jiri Slaby <jslaby@suse.cz>
+Message-ID: <ec061c30-eace-1df9-fa7b-71a61e5710a2@suse.cz>
+Date: Wed, 25 Mar 2020 14:31:36 +0100
 MIME-Version: 1.0
-In-Reply-To: <20200324205210.GE119913@minitux>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
+Content-Type: text/plain; charset=iso-8859-2
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, xiang xiao <xiaoxiang781216@gmail.com>
+To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, xiang xiao <xiaoxiang781216@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
-
-On 3/24/20 9:52 PM, Bjorn Andersson wrote:
-> On Tue 24 Mar 10:04 PDT 2020, Arnaud Pouliquen wrote:
-> [..]
->> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
->> index 020b1cd9294f..c2465e7ebc2a 100644
->> --- a/drivers/tty/Makefile
->> +++ b/drivers/tty/Makefile
->> @@ -34,5 +34,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
->>  obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
->>  obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
->>  obj-$(CONFIG_VCC)		+= vcc.o
->> +obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
->>  
->>  obj-y += ipwireless/
->> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
-> [..]
->> +static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
->> +	{ .name	= TTY_CH_NAME_RAW },
->> +	{ .name	= TTY_CH_NAME_WITH_CTS},
+On 25. 03. 20, 14:15, Arnaud POULIQUEN wrote:
+>>> +		if (copied != len)
+>>> +			dev_dbg(&rpdev->dev, "trunc buffer: available space is %d\n",
+>>> +				copied);
+>>> +		tty_flip_buffer_push(&cport->port);
+>>> +	} else {
+>>> +		/* control message */
+>>> +		struct rpmsg_tty_ctrl *msg = data;
+>>> +
+>>> +		if (len != sizeof(*msg))
+>>> +			return -EINVAL;
+>>> +
+>>> +		cport->data_dst = msg->d_ept_addr;
+>>> +
+>>> +		/* Update remote cts state */
+>>> +		cport->cts = msg->cts ? 1 : 0;
+>>
+>> Number to bool implicit conversion needs no magic, just do:
+>> cport->cts = msg->cts;
 > 
-> I still don't like the idea that the tty devices are tied to channels by
-> fixed names.
+> In this case i would prefer  cport->cts = (msg->cts != 1);
+> for the conversion
 
-This point has been discussed with Xiang, he has the same kind of requirement. 
-My proposal here is to do this in two steps. First a fixed name, then
-in a second step we can extend the naming using the implementation proposed
-by Mathieu Poirier:
+That still looks confusing. In the ternary operator above, you used
+msg->cts as a bool implicitly and now you are trying to artificially
+create one :)?
 
-[1]https://lkml.org/lkml/2020/2/12/1083
+IOW in a bool context, "msg->cts ? 1 : 0" is the same as "msg->cts".
 
-Is this patch could answer to your requirement?
-
-if requested i can I can integrate the Mathieu's patch in this patchset.
- 
+>>> +	/*
+>>> +	 * Try to send the message to remote processor, if failed return 0 as
+>>> +	 * no data sent
+>>> +	 */
+>>> +	ret = rpmsg_trysendto(cport->d_ept, tmpbuf, msg_size, cport->data_dst);
+>>
+>> data of rpmsg_trysendto is not const. OK, you seem you need to change
+>> that first, I see no blocker for that.
 > 
-> This makes the driver unusable for communicating with any firmware out
-> there that provides tty-like data over a channel with a different name -
-> such as modems with channels providing an AT command interface (they are
-> not named "rpmsg-tty-raw").
+> I created a temporary buffer to ensure that buffer to sent does not exceed the 
+> MTU size.
+> But perhaps this is an useless protection as the rpmsg_tty_write_room already
+> return the MTU value, and so the 'len' variable can not be higher that value
+> returned by the write_room?
 
-I'm not fixed on the naming, any proposal is welcome.
-If we use the patch [1], could be renamed 
-"rpmsg-tty". then for AT command could be something like "rpmsg-tty-at"
+You still can limit it by msg_size without cloning the buffer, right?
 
-But here seems we are speaking about service over TTY and not over RPMsg.
-
+>>> +static int rpmsg_tty_port_activate(struct tty_port *p, struct tty_struct *tty)
+>>> +{
+>>> +	p->low_latency = (p->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
+>>> +
+>>> +	/* Allocate the buffer we use for writing data */
+>>
+>> Where exactly -- am I missing something?
 > 
-> I also fail to see how you would distinguish ttys when the firmware
-> provides more than a single tty - e.g. say you have a modem-like device
-> that provides an AT command channel and a NMEA stream.
+> in tty_port_alloc_xmit_buf. it's a copy past from mips_ejtag_fdc.c,
+> I will clean this line if it's confusing.
 
-Today it is a limitation. In fact this limitation is the same for all RPMsg
-devices with multi instance.
-The patch [1] will allow to retrieve the instance by identifying
-the service device name in /sys/class/tty/ttyRPMSG<X>/device/name
+No, I mean where do you use the allocated buffer? mips_ejtag_fdc.c uses it.
 
+>>> +static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
+>>> +{
+>>> +	struct rpmsg_tty_port *cport;
+>>> +	struct device *dev = &rpdev->dev;
+>>> +	struct rpmsg_channel_info chinfo;
+>>> +	struct device *tty_dev;
+>>> +	int ret;
+>>> +
+>>> +	cport = rpmsg_tty_alloc_cport();
+>>> +	if (IS_ERR(cport)) {
+>>> +		dev_err(dev, "failed to alloc tty port\n");
+>>> +		return PTR_ERR(cport);
+>>> +	}
+>>> +
+>>> +	if (!strncmp(rpdev->id.name, TTY_CH_NAME_WITH_CTS,
+>>> +		     sizeof(TTY_CH_NAME_WITH_CTS))) {
+>>
+>> sizeof of a string feels unnatural, but will work in this case. Can a
+>> compiler optimize strlen of a static string?
 > 
-> 
-> These are the reasons why drivers/rpmsg/rpmsg_char registers a "control
-> device", from which you can spawn new char devices. As I've said before,
-> I really think the same approach should be taken for ttys - perhaps by
-> just extending the rpmsg_char to allow it to create tty devices in
-> addition to the "packet based" char device?
-> 
-I'm not very familiar with the rpmsg_char so please correct me if i'm wrong:
+> I don't know if a compiler can do this...
+> what about replacing sizeof by strlen function? 
+> i saw some code example that use strlen with static string...
+> (e.g  https://elixir.bootlin.com/linux/latest/source/drivers/edac/edac_mc.c#L1193)
 
-The rpmsg_char exposes to userland an interface to manage rpmsg channels
-(relying on a char device). This interface offers the  possibility to create
-new channels/endpoints and send/received related messages. 
- 
-Thus, the application declares the RPMsg channels which is bound if they matches
-with the remote processor channel (similar behavior than a kernel rpmsg driver).
-There is no constrain on the service once same service is advertised by remote
-firmware.
+The question was exactly about that: can a compiler optimize it to a
+bare number or will strlen call remain there?
 
-In addition, a limitation of the rpmsg_char device is that it needs to be
-associated with an existing device, as example the implementation in qcom_smd
-driver.
-
-If i try to figure out how to implement TTY using the rpmsg_char:
-I should create a rpmsg_char dev in the rpmsg tty driver. Then application
-will create channels related to its service. But in this case
-how to ensure that channels created are related to the TTY service?  
-
-
-I would also expect to manage RPMsg TTY such as a generic TTY: without
-extra interface and auto mounted as an USB TTY. this means that the
-/dev/ttyRMPSGx are created automatically at remote firmware startup
-(without any application action). For instance a generic application 
-(e.g. minicom) could control an internal remote processor such as
-an external processor through a TTY link. 
-
-Then we have also similar RPMsg driver for I2C and SPI virtual link. So extend
-the rpmsg_char to support TTY seems not a good solution for long terms. 
-
-For these reasons i would prefer to have a specific driver. And found a solution
-to allow user to differentiate the TTY instances.
-
-Anyway I am very interesting in having more details of an implementation relying
-on rpmsg_char if you still thinking that is the good approach here.
-
-Thanks for your comments, 
-Arnaud
-
-> Regards,
-> Bjorn
-> 
+thanks,
+-- 
+js
+suse labs
