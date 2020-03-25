@@ -2,325 +2,114 @@ Return-Path: <arnaud.pouliquen@st.com>
 Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
 References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
  <20200324170407.16470-3-arnaud.pouliquen@st.com>
- <e458f805-c746-c88e-98f4-d874a7552933@suse.cz>
+ <8821448b-3c6e-6277-06d2-9be7f81de9e9@infradead.org>
 From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
-Date: Wed, 25 Mar 2020 14:15:36 +0100
+Message-ID: <a10069d7-e495-5dc2-7b0f-c8aed0f9e279@st.com>
+Date: Wed, 25 Mar 2020 12:39:03 +0100
 MIME-Version: 1.0
-In-Reply-To: <e458f805-c746-c88e-98f4-d874a7552933@suse.cz>
-Content-Type: text/plain; charset="iso-8859-2"
+In-Reply-To: <8821448b-3c6e-6277-06d2-9be7f81de9e9@infradead.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: Jiri Slaby <jslaby@suse.cz>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, xiang xiao <xiaoxiang781216@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, Alan Cox <gnomes@lxorguk.ukuu.org.uk>, xiang xiao <xiaoxiang781216@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
+Hi,
 
-On 3/25/20 9:45 AM, Jiri Slaby wrote:
-> On 24. 03. 20, 18:04, Arnaud Pouliquen wrote:
+On 3/24/20 6:44 PM, Randy Dunlap wrote:
+> Hi,
+> 
+> On 3/24/20 10:04 AM, Arnaud Pouliquen wrote:
+>> This driver exposes a standard TTY interface on top of the rpmsg
+>> framework through a rpmsg service.
+>>
+>> This driver supports multi-instances, offering a /dev/ttyRPMSGx entry
+>> per rpmsg endpoint.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>> ---
+>>  Documentation/serial/tty_rpmsg.rst |  45 ++++
+>>  drivers/tty/Kconfig                |   9 +
+>>  drivers/tty/Makefile               |   1 +
+>>  drivers/tty/rpmsg_tty.c            | 417 +++++++++++++++++++++++++++++
+>>  4 files changed, 472 insertions(+)
+>>  create mode 100644 Documentation/serial/tty_rpmsg.rst
+>>  create mode 100644 drivers/tty/rpmsg_tty.c
+>>
+>> diff --git a/Documentation/serial/tty_rpmsg.rst b/Documentation/serial/tty_rpmsg.rst
+>> new file mode 100644
+>> index 000000000000..fc1d3fba73c5
 >> --- /dev/null
->> +++ b/drivers/tty/rpmsg_tty.c
->> @@ -0,0 +1,417 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
->> + * Authors: Arnaud Pouliquen <arnaud.pouliquen@st.com> for STMicroelectronics.
->> + */
-> ...
->> +typedef void (*rpmsg_tty_rx_cb_t)(struct rpmsg_device *, void *, int, void *,
->> +				  u32);
-> 
-> Unused, it seems?
-> 
->> +static int rpmsg_tty_cb(struct rpmsg_device *rpdev, void *data, int len,
->> +			void *priv, u32 src)
->> +{
->> +	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
->> +	int copied;
+>> +++ b/Documentation/serial/tty_rpmsg.rst
+>> @@ -0,0 +1,45 @@
+>> +.. SPDX-License-Identifier: GPL-2.0
 >> +
->> +	if (src == cport->data_dst) {
->> +		/* data message */
->> +		if (!len)
->> +			return -EINVAL;
->> +		copied = tty_insert_flip_string_fixed_flag(&cport->port, data,
->> +							   TTY_NORMAL, len);
+>> +=============
+>> +The rpmsg TTY
+>> +=============
+>> +
+>> +The rpmsg tty driver implements serial communication on the RPMsg bus to makes possible for user-space programs to send and receive rpmsg messages as a standard tty protocol.
 > 
-> Provided you always pass TTY_NORMAL, why not simply call
-> tty_insert_flip_string instead?
+>                                                                          to make it possible
 > 
->> +		if (copied != len)
->> +			dev_dbg(&rpdev->dev, "trunc buffer: available space is %d\n",
->> +				copied);
->> +		tty_flip_buffer_push(&cport->port);
->> +	} else {
->> +		/* control message */
->> +		struct rpmsg_tty_ctrl *msg = data;
 >> +
->> +		if (len != sizeof(*msg))
->> +			return -EINVAL;
+>> +The remote processor can instantiate a new tty by requesting:
+>> +- a "rpmsg-tty-raw" RPMsg service, for TTY raw data support without flow control
+>> +- a "rpmsg-tty-ctrl" RPMSg service, for TTY support with flow control.
 >> +
->> +		cport->data_dst = msg->d_ept_addr;
+>> +Information related to the RPMsg and associated tty device is available in
+>> +/sys/bus/rpmsg/devices/.
 >> +
->> +		/* Update remote cts state */
->> +		cport->cts = msg->cts ? 1 : 0;
+>> +RPMsg TTY without control
+>> +---------------------
 > 
-> Number to bool implicit conversion needs no magic, just do:
-> cport->cts = msg->cts;
-
-In this case i would prefer  cport->cts = (msg->cts != 1);
-for the conversion
-
+> extend underline under "control"
 > 
->> +		if (cport->cts)
->> +			tty_port_tty_wakeup(&cport->port);
->> +	}
 >> +
->> +	return 0;
->> +}
+>> +The default end point associated with the "rpmsg-tty-raw" service is directly
+>> +used for data exchange. No flow control is available.
 >> +
->> +static void rpmsg_tty_send_term_ready(struct tty_struct *tty, u8 state)
+>> +To be compliant with this driver, the remote firmware must create its data end point associated with the "rpmsg-tty-raw" service.
+>> +
+>> +RPMsg TTY with control
+>> +---------------------
 > 
-> Should the state be bool? Should it be named "ready" instead?
+> extend underline length.
 > 
->> +{
->> +	struct rpmsg_tty_port *cport = tty->driver_data;
->> +	struct rpmsg_tty_ctrl m_ctrl;
->> +	int ret;
 >> +
->> +	m_ctrl.cts = state;
->> +	m_ctrl.d_ept_addr = cport->d_ept->addr;
+>> +The default end point associated with the "rpmsg-tty-ctrl" service is reserved for
+>> +the control. A second endpoint must be created for data exchange.
 >> +
->> +	ret = rpmsg_trysend(cport->cs_ept, &m_ctrl, sizeof(m_ctrl));
->> +	if (ret < 0)
->> +		dev_dbg(tty->dev, "cannot send control (%d)\n", ret);
+>> +The control channel is used to transmit to the remote processor the CTS status,
+>> +as well as the end point address for data transfer.
+>> +
+>> +To be compatible with this driver, the remote firmware must create or use its end point associated with "rpmsg-tty-ctrl" service, plus a second endpoint for the data flow.
+>> +On Linux rpmsg_tty probes, the data endpoint address and the CTS (set to disable)
+>> +is sent to the remote processor.
+>> +The remote processor has to respect following rules:
+> 
+>                                respect the following rules:
+> 
+>> +- It only transmits data when Linux remote cts is enable, otherwise message
+> 
+>                                               CTS is enabled,
+> 
+>> +  could be lost.
+>> +- It can pause/resume reception by sending a control message (rely on CTS state).
+>> +
+>> +Control message structure:
+>> +struct rpmsg_tty_ctrl {
+>> +	u8 cts;			/* remote reception status */
+>> +	u16 d_ept_addr;		/* data endpoint address */
 >> +};
->> +
->> +static void rpmsg_tty_throttle(struct tty_struct *tty)
->> +{
->> +	struct rpmsg_tty_port *cport = tty->driver_data;
->> +
->> +	/* Disable remote transmission */
->> +	if (cport->cs_ept)
->> +		rpmsg_tty_send_term_ready(tty, 0);
 > 
-> then s/0/false/;
-> 
->> +};
->> +
->> +static void rpmsg_tty_unthrottle(struct tty_struct *tty)
->> +{
->> +	struct rpmsg_tty_port *cport = tty->driver_data;
->> +
->> +	/* Enable remote transmission */
->> +	if (cport->cs_ept)
->> +		rpmsg_tty_send_term_ready(tty, 1);
-> 
-> and s/1/true/> 
->> +};
-> ...
->> +static int rpmsg_tty_write(struct tty_struct *tty, const u8 *buf, int len)
->> +{
->> +	struct rpmsg_tty_port *cport = tty->driver_data;
->> +	struct rpmsg_device *rpdev;
->> +	int msg_max_size, msg_size;
->> +	int ret;
->> +	u8 *tmpbuf;
->> +
->> +	/* If cts not set, the message is not sent*/
->> +	if (!cport->cts)
->> +		return 0;
->> +
->> +	rpdev = cport->rpdev;
->> +
->> +	dev_dbg(&rpdev->dev, "%s: send msg from tty->index = %d, len = %d\n",
->> +		__func__, tty->index, len);
->> +
->> +	msg_max_size = rpmsg_get_mtu(rpdev->ept);
->> +
->> +	msg_size = min(len, msg_max_size);
->> +	tmpbuf = kzalloc(msg_size, GFP_KERNEL);
->> +	if (!tmpbuf)
->> +		return -ENOMEM;
->> +
->> +	memcpy(tmpbuf, buf, msg_size);
-> 
-> This is kmemdup, but why do you do that in the first place?
-> 
->> +	/*
->> +	 * Try to send the message to remote processor, if failed return 0 as
->> +	 * no data sent
->> +	 */
->> +	ret = rpmsg_trysendto(cport->d_ept, tmpbuf, msg_size, cport->data_dst);
-> 
-> data of rpmsg_trysendto is not const. OK, you seem you need to change
-> that first, I see no blocker for that.
+> Is that struct packed or padded?
 
-I created a temporary buffer to ensure that buffer to sent does not exceed the 
-MTU size.
-But perhaps this is an useless protection as the rpmsg_tty_write_room already
-return the MTU value, and so the 'len' variable can not be higher that value
-returned by the write_room?
+It's packed as payload of the RP message and so define is global size.
+This struct is misaligned with the code.
 
-> 
->> +	kfree(tmpbuf);
->> +	if (ret) {
->> +		dev_dbg(&rpdev->dev, "rpmsg_send failed: %d\n", ret);
->> +		return 0;
->> +	}
->> +
->> +	return msg_size;
->> +}
->> +
->> +static int rpmsg_tty_write_room(struct tty_struct *tty)
->> +{
->> +	struct rpmsg_tty_port *cport = tty->driver_data;
->> +
->> +	return cport->cts ? rpmsg_get_mtu(cport->rpdev->ept) : 0;
-> 
-> With if, this would be more readable, IMO.
-> 
->> +}
-> ...> +static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
->> +{
->> +	struct rpmsg_tty_port *cport;
->> +
->> +	cport = kzalloc(sizeof(*cport), GFP_KERNEL);
->> +	if (!cport)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	mutex_lock(&idr_lock);
->> +	cport->id = idr_alloc(&tty_idr, cport, 0, MAX_TTY_RPMSG, GFP_KERNEL);
->> +	mutex_unlock(&idr_lock);
->> +
->> +	if (cport->id < 0) {
->> +		kfree(cport);
->> +		return ERR_PTR(-ENOSPC);
-> 
-> You should return ERR_PTR(cport->id) instead. It might be ENOMEM too.
-> 
->> +	}
->> +
->> +	return cport;
->> +}
-> ...
->> +static int rpmsg_tty_port_activate(struct tty_port *p, struct tty_struct *tty)
->> +{
->> +	p->low_latency = (p->flags & ASYNC_LOW_LATENCY) ? 1 : 0;
->> +
->> +	/* Allocate the buffer we use for writing data */
-> 
-> Where exactly -- am I missing something?
-
-in tty_port_alloc_xmit_buf. it's a copy past from mips_ejtag_fdc.c,
-I will clean this line if it's confusing.
- 
-> 
->> +	return tty_port_alloc_xmit_buf(p);
->> +}
->> +
->> +static void rpmsg_tty_port_shutdown(struct tty_port *p)
->> +{
->> +	/* Free the write buffer */
->> +	tty_port_free_xmit_buf(p);
->> +}
-> ...
->> +static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
->> +{
->> +	struct rpmsg_tty_port *cport;
->> +	struct device *dev = &rpdev->dev;
->> +	struct rpmsg_channel_info chinfo;
->> +	struct device *tty_dev;
->> +	int ret;
->> +
->> +	cport = rpmsg_tty_alloc_cport();
->> +	if (IS_ERR(cport)) {
->> +		dev_err(dev, "failed to alloc tty port\n");
->> +		return PTR_ERR(cport);
->> +	}
->> +
->> +	if (!strncmp(rpdev->id.name, TTY_CH_NAME_WITH_CTS,
->> +		     sizeof(TTY_CH_NAME_WITH_CTS))) {
-> 
-> sizeof of a string feels unnatural, but will work in this case. Can a
-> compiler optimize strlen of a static string?
-
-I don't know if a compiler can do this...
-what about replacing sizeof by strlen function? 
-i saw some code example that use strlen with static string...
-(e.g  https://elixir.bootlin.com/linux/latest/source/drivers/edac/edac_mc.c#L1193)
-
-
-I will take into account all your other comments in may next version.
+I will take into account your comments in next version.
 
 Thanks for the review,
 Arnaud
-
-> 
->> +		/*
->> +		 * the default endpoint is used for control. Create a second
->> +		 * endpoint for the data that would be exchanges trough control
->> +		 * endpoint. address of the data endpoint will be provided with
->> +		 * the cts state
->> +		 */
->> +		cport->cs_ept = rpdev->ept;
->> +		cport->data_dst = RPMSG_ADDR_ANY;
->> +
->> +		strscpy(chinfo.name, TTY_CH_NAME_WITH_CTS, sizeof(chinfo.name));
->> +		chinfo.src = RPMSG_ADDR_ANY;
->> +		chinfo.dst = RPMSG_ADDR_ANY;
->> +
->> +		cport->d_ept = rpmsg_create_ept(rpdev, rpmsg_tty_cb, cport,
->> +						chinfo);
->> +		if (!cport->d_ept) {
->> +			dev_err(dev, "failed to create tty control channel\n");
->> +			ret = -ENOMEM;
->> +			goto err_r_cport;
->> +		}
->> +		dev_dbg(dev, "%s: creating data endpoint with address %#x\n",
->> +			__func__, cport->d_ept->addr);
->> +	} else {
->> +		/*
->> +		 * TTY over rpmsg without CTS management the default endpoint
->> +		 * is use for raw data transmission.
->> +		 */
->> +		cport->cs_ept = NULL;
->> +		cport->cts = 1;
->> +		cport->d_ept = rpdev->ept;
->> +		cport->data_dst = rpdev->dst;
->> +	}
->> +
->> +	tty_port_init(&cport->port);
->> +	cport->port.ops = &rpmsg_tty_port_ops;
-> 
-> I expected these two in rpmsg_tty_alloc_cport
-> 
->> +
->> +	tty_dev = tty_port_register_device(&cport->port, rpmsg_tty_driver,
->> +					   cport->id, dev);
->> +	if (IS_ERR(tty_dev)) {
->> +		dev_err(dev, "failed to register tty port\n");
->> +		ret = PTR_ERR(tty_dev);
->> +		goto  err_destroy;
->> +	}
->> +
->> +	cport->rpdev = rpdev;
->> +
->> +	dev_set_drvdata(dev, cport);
->> +
->> +	dev_dbg(dev, "new channel: 0x%x -> 0x%x : ttyRPMSG%d\n",
->> +		rpdev->src, rpdev->dst, cport->id);
->> +
->> +	return 0;
->> +
->> +err_destroy:
->> +	tty_port_destroy(&cport->port);
->> +	if (cport->cs_ept)
->> +		rpmsg_destroy_ept(cport->d_ept);
->> +err_r_cport:
->> +	rpmsg_tty_release_cport(cport);
->> +
->> +	return ret;
->> +}
-> 
-> thanks,
-> 
