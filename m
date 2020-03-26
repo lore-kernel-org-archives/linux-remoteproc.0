@@ -1,131 +1,73 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 03/11] remoteproc: stm32: Decouple rproc from DT parsing
-Date: Tue, 24 Mar 2020 16:03:21 -0600
-Message-Id: <20200324220329.15523-4-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324220329.15523-1-mathieu.poirier@linaro.org>
-References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:44428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbgCZFrA (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 26 Mar 2020 01:47:00 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCHv9 00/15] remoteproc: updates for omap remoteproc support
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158520161938.22016.7368699440369806392.git-patchwork-notify@kernel.org>
+Date: Thu, 26 Mar 2020 05:46:59 +0000
+References: <20200324110035.29907-1-t-kristo@ti.com>
+In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Tero Kristo <t-kristo@ti.com>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Remove the remote processor from the process of parsing the device tree
-since (1) there is no correlation between them and (2) to use the
-information that was gathered to make a decision on whether to
-synchronise with the MCU or not.
+Hello:
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/stm32_rproc.c | 38 +++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 13 deletions(-)
+This series was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 0c1f0b84e057..ca60c917e218 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -538,12 +538,11 @@ static int stm32_rproc_get_syscon(struct device_node *np, const char *prop,
- 	return err;
- }
- 
--static int stm32_rproc_parse_dt(struct platform_device *pdev)
-+static int stm32_rproc_parse_dt(struct platform_device *pdev,
-+				struct stm32_rproc *ddata, bool *auto_boot)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct rproc *rproc = platform_get_drvdata(pdev);
--	struct stm32_rproc *ddata = rproc->priv;
- 	struct stm32_syscon tz;
- 	unsigned int tzen;
- 	int err, irq;
-@@ -589,7 +588,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
- 
- 	err = regmap_read(tz.map, tz.reg, &tzen);
- 	if (err) {
--		dev_err(&rproc->dev, "failed to read tzen\n");
-+		dev_err(dev, "failed to read tzen\n");
- 		return err;
- 	}
- 	ddata->secured_soc = tzen & tz.mask;
-@@ -605,7 +604,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
- 	if (err)
- 		dev_warn(dev, "failed to get pdds\n");
- 
--	rproc->auto_boot = of_property_read_bool(np, "st,auto-boot");
-+	*auto_boot = of_property_read_bool(np, "st,auto-boot");
- 
- 	return stm32_rproc_of_memory_translations(pdev, ddata);
- }
-@@ -616,18 +615,29 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	struct stm32_rproc *ddata;
- 	struct device_node *np = dev->of_node;
- 	struct rproc *rproc;
-+	bool auto_boot = false;
- 	int ret;
- 
- 	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
- 	if (ret)
- 		return ret;
- 
--	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
--	if (!rproc)
-+	ddata = kzalloc(sizeof(*ddata), GFP_KERNEL);
-+	if (!ddata)
- 		return -ENOMEM;
- 
-+	ret = stm32_rproc_parse_dt(pdev, ddata, &auto_boot);
-+	if (ret)
-+		goto free_ddata;
-+
-+	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-+	if (!rproc) {
-+		ret = -ENOMEM;
-+		goto free_ddata;
-+	}
-+
-+	rproc->auto_boot = auto_boot;
- 	rproc->has_iommu = false;
--	ddata = rproc->priv;
- 	ddata->workqueue = create_workqueue(dev_name(dev));
- 	if (!ddata->workqueue) {
- 		dev_err(dev, "cannot create workqueue\n");
-@@ -635,20 +645,20 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 		goto free_rproc;
- 	}
- 
--	platform_set_drvdata(pdev, rproc);
-+	memcpy(rproc->priv, ddata, sizeof(*ddata));
- 
--	ret = stm32_rproc_parse_dt(pdev);
--	if (ret)
--		goto free_wkq;
-+	platform_set_drvdata(pdev, rproc);
- 
- 	ret = stm32_rproc_request_mbox(rproc);
- 	if (ret)
--		goto free_rproc;
-+		goto free_wkq;
- 
- 	ret = rproc_add(rproc);
- 	if (ret)
- 		goto free_mb;
- 
-+	kfree(ddata);
-+
- 	return 0;
- 
- free_mb:
-@@ -661,6 +671,8 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 		device_init_wakeup(dev, false);
- 	}
- 	rproc_free(rproc);
-+free_ddata:
-+	kfree(ddata);
- 	return ret;
- }
- 
+On Tue, 24 Mar 2020 13:00:20 +0200 you wrote:
+> Hi,
+> 
+> v9 is just a rebase on top of rproc-next (I am optimistic here still
+> assuming that maintainers would pick this up for 5.7), and fixing one
+> final comment from Mathieu on patch #14. Rebase on top of rproc-next
+> causes a couple of minor changes to fix compile breakages compared to v8
+> of this series (some APIs have changed slightly, see patch #3, #5 and #7.)
+> 
+> [...]
+
+
+Here is a summary with links:
+  - [PATCHv9,01/15] dt-bindings: remoteproc: Add OMAP remoteproc bindings
+    https://git.kernel.org/andersson/remoteproc/c/c8f70f80b0afd4ef484bbd4e720f14a8403ba613
+  - [PATCHv9,02/15] remoteproc/omap: Add device tree support
+    https://git.kernel.org/andersson/remoteproc/c/75242927014f532b9a04c4c2fb74566e2b0da70a
+  - [PATCHv9,03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
+    https://git.kernel.org/andersson/remoteproc/c/feae0300536a9220d2d696798ef3952d612ac73d
+  - [PATCHv9,04/15] remoteproc/omap: Add support to parse internal memories from DT
+    https://git.kernel.org/andersson/remoteproc/c/4a032199d3f7c59e450ed78aa5306a12226987a7
+  - [PATCHv9,05/15] remoteproc/omap: Add the rproc ops .da_to_va() implementation
+    https://git.kernel.org/andersson/remoteproc/c/530a1b57e8590f2ebbb6a35effa0efa988aabf6c
+  - [PATCHv9,06/15] remoteproc/omap: Initialize and assign reserved memory node
+    https://git.kernel.org/andersson/remoteproc/c/f4af5bd233657d741ebb317e9abee893dd78a4a0
+  - [PATCHv9,07/15] remoteproc/omap: Add support for DRA7xx remote processors
+    https://git.kernel.org/andersson/remoteproc/c/0aaf19130262059591be51bb745b59788a18c24c
+  - [PATCHv9,08/15] remoteproc/omap: Remove the platform_data header
+    https://git.kernel.org/andersson/remoteproc/c/1070f24d4ae90420db342fe54c1ed90ef1129bb5
+  - [PATCHv9,09/15] remoteproc/omap: Check for undefined mailbox messages
+    https://git.kernel.org/andersson/remoteproc/c/8135d1d28173a7d62c9180a58d37f12f0d69b1c0
+  - [PATCHv9,10/15] remoteproc/omap: Request a timer(s) for remoteproc usage
+    https://git.kernel.org/andersson/remoteproc/c/e28edc571925ffe0e77aa4ab6082a829690c79f2
+  - [PATCHv9,11/15] remoteproc/omap: Add support for system suspend/resume
+    https://git.kernel.org/andersson/remoteproc/c/9077ac1ab14be8b91ee9b18bbb654a4c27b7b10c
+  - [PATCHv9,12/15] remoteproc/omap: Add support for runtime auto-suspend/resume
+    https://git.kernel.org/andersson/remoteproc/c/5f31b232c67434199558fd236e7644b432636b76
+  - [PATCHv9,13/15] remoteproc/omap: Report device exceptions and trigger recovery
+    https://git.kernel.org/andersson/remoteproc/c/232ba6ca007c9585ea666ad083f510b9666259dd
+  - [PATCHv9,14/15] remoteproc/omap: Add watchdog functionality for remote processors
+    https://git.kernel.org/andersson/remoteproc/c/69591e4a0e173e9a19c54c172cdb2febd151dda6
+  - [PATCHv9,15/15] remoteproc/omap: Switch to SPDX license identifiers
+    https://git.kernel.org/andersson/remoteproc/c/a7084c3d47c4aaedcca217ce87b7b5b5fe3cfa35
+
+You are awesome, thank you!
+
 -- 
-2.20.1
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
