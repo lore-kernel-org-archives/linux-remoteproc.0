@@ -1,51 +1,74 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 04/11] remoteproc: stm32: Remove memory translation from DT parsing
-Date: Tue, 24 Mar 2020 16:03:22 -0600
-Message-Id: <20200324220329.15523-5-mathieu.poirier@linaro.org>
-In-Reply-To: <20200324220329.15523-1-mathieu.poirier@linaro.org>
-References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+Return-Path: <jslaby@suse.cz>
+Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
+References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+ <20200324170407.16470-3-arnaud.pouliquen@st.com>
+ <e458f805-c746-c88e-98f4-d874a7552933@suse.cz>
+ <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
+ <ec061c30-eace-1df9-fa7b-71a61e5710a2@suse.cz>
+ <f97d9dc54178e4344512bc7986265f101f4639c6.camel@perches.com>
+ <54d9b379-ba51-b29c-db58-6e305773ee96@st.com>
+From: Jiri Slaby <jslaby@suse.cz>
+Message-ID: <7329d7bb-c9cd-8eb2-12c2-0b6d5cc2accf@suse.cz>
+Date: Thu, 26 Mar 2020 13:31:44 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
+In-Reply-To: <54d9b379-ba51-b29c-db58-6e305773ee96@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Joe Perches <joe@perches.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, xiang xiao <xiaoxiang781216@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Other than one has to be done after the other, there is no correlation
-between memory translation and DT parsing.  As move function
-stm32_rproc_of_memory_translations() to stm32_rproc_probe() so that
-stm32_rproc_parse_dt() can be extended to look for synchronisation
-related binding in a clean way.
+On 26. 03. 20, 11:59, Arnaud POULIQUEN wrote:
+> 
+> 
+> On 3/26/20 1:01 AM, Joe Perches wrote:
+>> On Wed, 2020-03-25 at 14:31 +0100, Jiri Slaby wrote:
+>>> The question was exactly about that: can a compiler optimize it to a
+>>> bare number or will strlen call remain there?
+>>
+>> $ cat str.c
+>> #include <string.h>
+>>
+>> int foo(void)
+>> {
+>> 	return strlen("abc");
+>> }
+>>
+>> $ gcc -c -O2 str.c
+>> $ objdump -d str.o
+>> str.o:     file format elf64-x86-64
+>>
+>>
+>> Disassembly of section .text:
+>>
+>> 0000000000000000 <foo>:
+>>    0:	f3 0f 1e fa          	endbr64 
+>>    4:	b8 03 00 00 00       	mov    $0x3,%eax
+>>    9:	c3                   	retq   
+>>
+>>
+> same result with  arm gcc using  -O1 or -Og:
+> 
+> str.o:     file format elf32-littlearm
+> 
+> 
+> Disassembly of section .text:
+> 
+> 00000000 <foo>:
+>    0:	e3a00003 	mov	r0, #3
+>    4:	e12fff1e 	bx	lr
+> 
+> So in conclusion replacing sizeof by srlen even if not optimized in -o0, right?
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/stm32_rproc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Right, gcc guys just confirmed, that it's constant-folded during parsing
+already. I asked them as I tried to dump the tree.original and the
+constant was already there.
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index ca60c917e218..a3e278490bb4 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -606,7 +606,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
- 
- 	*auto_boot = of_property_read_bool(np, "st,auto-boot");
- 
--	return stm32_rproc_of_memory_translations(pdev, ddata);
-+	return 0;
- }
- 
- static int stm32_rproc_probe(struct platform_device *pdev)
-@@ -630,6 +630,10 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto free_ddata;
- 
-+	ret = stm32_rproc_of_memory_translations(pdev, ddata);
-+	if (ret)
-+		goto free_ddata;
-+
- 	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
- 	if (!rproc) {
- 		ret = -ENOMEM;
+So we are safe to use strlen, at least for gcc :P. Others should adapt
+if they don't follow.
+
+thanks,
 -- 
-2.20.1
+js
+suse labs
