@@ -1,64 +1,44 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 4 Mar 2020 14:38:52 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCHv7 13/15] remoteproc/omap: Report device exceptions and
- trigger recovery
-Message-ID: <20200304213852.GA2799@xps15>
-References: <20200221101936.16833-1-t-kristo@ti.com>
- <20200221101936.16833-14-t-kristo@ti.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:44468 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726038AbgCZFrA (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 26 Mar 2020 01:47:00 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221101936.16833-14-t-kristo@ti.com>
-To: Tero Kristo <t-kristo@ti.com>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, afd@ti.com, s-anna@ti.com, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] remoteproc: error on kick missing
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158520162008.22016.336406441463178075.git-patchwork-notify@kernel.org>
+Date: Thu, 26 Mar 2020 05:47:00 +0000
+References: <20200228110804.25822-1-nikita.shubin@maquefel.me>
+In-Reply-To: <20200228110804.25822-1-nikita.shubin@maquefel.me>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Feb 21, 2020 at 12:19:34PM +0200, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The OMAP remote processors send a special mailbox message
-> (RP_MBOX_CRASH) when they crash and detect an internal device
-> exception.
-> 
-> Add support to the mailbox handling function upon detection of
-> this special message to report this crash to the remoteproc core.
-> The remoteproc core can trigger a recovery using the prevailing
-> recovery mechanism, already in use for MMU Fault recovery.
-> 
-> Co-developed-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-> Signed-off-by: Subramaniam Chanderashekarapuram <subramaniam.ca@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hello:
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-> ---
->  drivers/remoteproc/omap_remoteproc.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+On Fri, 28 Feb 2020 14:08:04 +0300 you wrote:
+> From: Nikita Shubin <NShubin@topcon.com>
 > 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 1ac270df4d66..7dcb5da0d940 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -383,8 +383,12 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
->  
->  	switch (msg) {
->  	case RP_MBOX_CRASH:
-> -		/* just log this for now. later, we'll also do recovery */
-> +		/*
-> +		 * remoteproc detected an exception, notify the rproc core.
-> +		 * The remoteproc core will handle the recovery.
-> +		 */
->  		dev_err(dev, "omap rproc %s crashed\n", name);
-> +		rproc_report_crash(oproc->rproc, RPROC_FATAL_ERROR);
->  		break;
->  	case RP_MBOX_ECHO_REPLY:
->  		dev_info(dev, "received echo reply from %s\n", name);
-> -- 
-> 2.17.1
+> .kick method not set in rproc_ops will result in:
 > 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 8<--- cut here ---
+> Unable to handle kernel NULL pointer dereference
+> 
+> [...]
+
+
+Here is a summary with links:
+  - remoteproc: error on kick missing
+    https://git.kernel.org/andersson/remoteproc/c/791c13b709dd51eb37330f2a5837434e90c87c27
+
+You are awesome, thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
