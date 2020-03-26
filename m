@@ -1,169 +1,47 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv8 07/15] remoteproc/omap: Add support for DRA7xx remote processors
-Date: Fri, 13 Mar 2020 10:17:10 +0200
-Message-ID: <20200313081718.30612-8-t-kristo@ti.com>
-In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
-References: <20200313081718.30612-1-t-kristo@ti.com>
+Return-Path: <patchwork-bot+linux-remoteproc@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v5 0/4] remoteproc: Panic handling
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158520161973.22016.9379591268245001299.git-patchwork-notify@kernel.org>
+Date: Thu, 26 Mar 2020 05:46:59 +0000
+References: <20200324052904.738594-1-bjorn.andersson@linaro.org>
+In-Reply-To: <20200324052904.738594-1-bjorn.andersson@linaro.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hello:
 
-DRA7xx/AM57xx SoCs have two IPU and up to two DSP processor subsystems
-for offloading different computation algorithms. The IPU processor
-subsystem contains dual-core ARM Cortex-M4 processors, and is very
-similar to those on OMAP5. The DSP processor subsystem is based on
-the TI's standard TMS320C66x DSP CorePac core.
+This series was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-Support has been added to the OMAP remoteproc driver through new
-DRA7xx specific compatibles for properly probing and booting all
-the different processor subsystem instances on DRA7xx/AM57xx
-SoCs - IPU1, IPU2, DSP1 & DSP2. A build dependency with SOC_DRA7XX
-is added to enable the driver to be built in DRA7xx-only configuration.
+On Mon, 23 Mar 2020 22:29:00 -0700 you wrote:
+> Add support for invoking a panic handler in remoteproc drivers, to allow them
+> to invoke e.g. cache flushing on the remote processors in response to a kernel
+> panic - to aid in post mortem debugging of system issues.
+> 
+> Bjorn Andersson (4):
+>   remoteproc: Traverse rproc_list under RCU read lock
+>   remoteproc: Introduce "panic" callback in ops
+>   remoteproc: qcom: q6v5: Add common panic handler
+>   remoteproc: qcom: Introduce panic handler for PAS and ADSP
+> 
+> [...]
 
-The DSP boot address programming needed enhancement for DRA7xx as the
-boot register fields are different on DRA7 compared to OMAP4 and OMAP5
-SoCs. The register on DRA7xx contains additional fields within the
-register and the boot address bit-field is right-shifted by 10 bits.
-The internal memory parsing logic has also been updated to compute
-the device addresses for the L2 RAM for DSP devices using relative
-addressing logic, and to parse two additional RAMs at L1 level - L1P
-and L1D. This allows the remoteproc driver to support loading into
-these regions for a small subset of firmware images requiring as
-such. The most common usage would be to use the L1 programmable
-RAMs as L1 Caches.
 
-The firmware lookup logic also has to be adjusted for DRA7xx as
-there are (can be) more than one instance of both the IPU and DSP
-remote processors for the first time in OMAP4+ SoCs.
+Here is a summary with links:
+  - [v5,1/4] remoteproc: Traverse rproc_list under RCU read lock
+    https://git.kernel.org/andersson/remoteproc/c/c0abe2ca3605e4c4fb25bf69d0218c63baf71d2b
+  - [v5,2/4] remoteproc: Introduce "panic" callback in ops
+    https://git.kernel.org/andersson/remoteproc/c/dc5192c449368eed3385f4405670aa3ed21d6270
+  - [v5,3/4] remoteproc: qcom: q6v5: Add common panic handler
+    https://git.kernel.org/andersson/remoteproc/c/e9142f5c28e997ab45fac23bc27a3bc01725bb49
+  - [v5,4/4] remoteproc: qcom: Introduce panic handler for PAS and ADSP
+    https://git.kernel.org/andersson/remoteproc/c/717c21bad161dd7127f6e6acf86a3571e1102254
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-[t-kristo@ti.com: moved address translation quirks to pdata]
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
-v8:
-  - return the result of regmap update from omap_rproc_write_dsp_boot_addr
+You are awesome, thank you!
 
- drivers/remoteproc/Kconfig           |  2 +-
- drivers/remoteproc/omap_remoteproc.c | 38 +++++++++++++++++++++++++++-
- 2 files changed, 38 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index de3862c15fcc..b52abc2268cc 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -35,7 +35,7 @@ config MTK_SCP
- 
- config OMAP_REMOTEPROC
- 	tristate "OMAP remoteproc support"
--	depends on ARCH_OMAP4 || SOC_OMAP5
-+	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
- 	depends on OMAP_IOMMU
- 	select MAILBOX
- 	select OMAP2PLUS_MBOX
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index b010e0607d5f..09eae548a691 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -34,10 +34,13 @@
-  * struct omap_rproc_boot_data - boot data structure for the DSP omap rprocs
-  * @syscon: regmap handle for the system control configuration module
-  * @boot_reg: boot register offset within the @syscon regmap
-+ * @boot_reg_shift: bit-field shift required for the boot address value in
-+ *		    @boot_reg
-  */
- struct omap_rproc_boot_data {
- 	struct regmap *syscon;
- 	unsigned int boot_reg;
-+	unsigned int boot_reg_shift;
- };
- 
- /**
-@@ -161,6 +164,8 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
- 	u32 offset = bdata->boot_reg;
-+	u32 value;
-+	u32 mask;
- 
- 	if (rproc->bootaddr & (SZ_1K - 1)) {
- 		dev_err(dev, "invalid boot address 0x%x, must be aligned on a 1KB boundary\n",
-@@ -168,7 +173,10 @@ static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
- 		return -EINVAL;
- 	}
- 
--	return regmap_write(bdata->syscon, offset, rproc->bootaddr);
-+	value = rproc->bootaddr >> bdata->boot_reg_shift;
-+	mask = ~(SZ_1K - 1) >> bdata->boot_reg_shift;
-+
-+	return regmap_update_bits(bdata->syscon, offset, mask, value);
- }
- 
- /*
-@@ -297,6 +305,13 @@ static const struct omap_rproc_mem_data ipu_mems[] = {
- 	{ },
- };
- 
-+static const struct omap_rproc_mem_data dra7_dsp_mems[] = {
-+	{ .name = "l2ram", .dev_addr = 0x800000 },
-+	{ .name = "l1pram", .dev_addr = 0xe00000 },
-+	{ .name = "l1dram", .dev_addr = 0xf00000 },
-+	{ },
-+};
-+
- static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
- 	.device_name	= "dsp",
- };
-@@ -315,6 +330,16 @@ static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
- 	.mems		= ipu_mems,
- };
- 
-+static const struct omap_rproc_dev_data dra7_dsp_dev_data = {
-+	.device_name	= "dsp",
-+	.mems		= dra7_dsp_mems,
-+};
-+
-+static const struct omap_rproc_dev_data dra7_ipu_dev_data = {
-+	.device_name	= "ipu",
-+	.mems		= ipu_mems,
-+};
-+
- static const struct of_device_id omap_rproc_of_match[] = {
- 	{
- 		.compatible     = "ti,omap4-dsp",
-@@ -332,6 +357,14 @@ static const struct of_device_id omap_rproc_of_match[] = {
- 		.compatible     = "ti,omap5-ipu",
- 		.data           = &omap5_ipu_dev_data,
- 	},
-+	{
-+		.compatible     = "ti,dra7-dsp",
-+		.data           = &dra7_dsp_dev_data,
-+	},
-+	{
-+		.compatible     = "ti,dra7-ipu",
-+		.data           = &dra7_ipu_dev_data,
-+	},
- 	{
- 		/* end */
- 	},
-@@ -384,6 +417,9 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
- 		return -EINVAL;
- 	}
- 
-+	of_property_read_u32_index(np, "ti,bootreg", 2,
-+				   &oproc->boot_data->boot_reg_shift);
-+
- 	return 0;
- }
- 
 -- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
