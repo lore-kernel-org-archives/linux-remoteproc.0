@@ -5,68 +5,46 @@ References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
  <e458f805-c746-c88e-98f4-d874a7552933@suse.cz>
  <1e4ce821-dd9b-bb04-774b-58a255834cf5@st.com>
  <ec061c30-eace-1df9-fa7b-71a61e5710a2@suse.cz>
- <f97d9dc54178e4344512bc7986265f101f4639c6.camel@perches.com>
- <54d9b379-ba51-b29c-db58-6e305773ee96@st.com>
+ <2512639d-424f-9647-4dbd-3b3459465888@st.com>
 From: Jiri Slaby <jslaby@suse.cz>
-Message-ID: <7329d7bb-c9cd-8eb2-12c2-0b6d5cc2accf@suse.cz>
-Date: Thu, 26 Mar 2020 13:31:44 +0100
+Message-ID: <3e666fa0-2f4d-9958-887e-8830049ccbe8@suse.cz>
+Date: Thu, 26 Mar 2020 12:45:57 +0100
 MIME-Version: 1.0
-In-Reply-To: <54d9b379-ba51-b29c-db58-6e305773ee96@st.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <2512639d-424f-9647-4dbd-3b3459465888@st.com>
+Content-Type: text/plain; charset=iso-8859-2
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Joe Perches <joe@perches.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, xiang xiao <xiaoxiang781216@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 26. 03. 20, 11:59, Arnaud POULIQUEN wrote:
-> 
-> 
-> On 3/26/20 1:01 AM, Joe Perches wrote:
->> On Wed, 2020-03-25 at 14:31 +0100, Jiri Slaby wrote:
->>> The question was exactly about that: can a compiler optimize it to a
->>> bare number or will strlen call remain there?
+On 26. 03. 20, 12:40, Arnaud POULIQUEN wrote:
+>>>>> +	/*
+>>>>> +	 * Try to send the message to remote processor, if failed return 0 as
+>>>>> +	 * no data sent
+>>>>> +	 */
+>>>>> +	ret = rpmsg_trysendto(cport->d_ept, tmpbuf, msg_size, cport->data_dst);
+>>>>
+>>>> data of rpmsg_trysendto is not const. OK, you seem you need to change
+>>>> that first, I see no blocker for that.
+>>>
+>>> I created a temporary buffer to ensure that buffer to sent does not exceed the 
+>>> MTU size.
+>>> But perhaps this is an useless protection as the rpmsg_tty_write_room already
+>>> return the MTU value, and so the 'len' variable can not be higher that value
+>>> returned by the write_room?
 >>
->> $ cat str.c
->> #include <string.h>
->>
->> int foo(void)
->> {
->> 	return strlen("abc");
->> }
->>
->> $ gcc -c -O2 str.c
->> $ objdump -d str.o
->> str.o:     file format elf64-x86-64
->>
->>
->> Disassembly of section .text:
->>
->> 0000000000000000 <foo>:
->>    0:	f3 0f 1e fa          	endbr64 
->>    4:	b8 03 00 00 00       	mov    $0x3,%eax
->>    9:	c3                   	retq   
->>
->>
-> same result with  arm gcc using  -O1 or -Og:
-> 
-> str.o:     file format elf32-littlearm
-> 
-> 
-> Disassembly of section .text:
-> 
-> 00000000 <foo>:
->    0:	e3a00003 	mov	r0, #3
->    4:	e12fff1e 	bx	lr
-> 
-> So in conclusion replacing sizeof by srlen even if not optimized in -o0, right?
+>> You still can limit it by msg_size without cloning the buffer, right?
+> you are right, but in this case i need to cast the buff to suppress compilation
+> warning on const and I don't know if all compilers will accept this...
+>  
+> pbuf = (u8 *)buf;
+> ret = rpmsg_trysendto(cport->d_ept, pbuf, msg_size, cport->data_dst);
 
-Right, gcc guys just confirmed, that it's constant-folded during parsing
-already. I asked them as I tried to dump the tree.original and the
-constant was already there.
+No, don't do that. Read my first message again; in particular:
 
-So we are safe to use strlen, at least for gcc :P. Others should adapt
-if they don't follow.
+> data of rpmsg_trysendto is not const. OK, you seem you need to change
+> that first, I see no blocker for that.
 
 thanks,
 -- 
