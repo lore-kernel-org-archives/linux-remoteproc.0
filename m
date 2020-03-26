@@ -1,109 +1,91 @@
-Return-Path: <s-anna@ti.com>
+Date: Wed, 25 Mar 2020 22:42:37 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH 2/7] remoteproc: use a local copy for the name field
+Message-ID: <20200326054234.GA59436@builder>
 References: <20200324201819.23095-1-s-anna@ti.com>
- <20200324201819.23095-3-s-anna@ti.com> <20200326054234.GA59436@builder>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <2089a4a8-d5e4-e4f5-e7bc-7d053f654204@ti.com>
-Date: Thu, 26 Mar 2020 09:01:34 -0500
+ <20200324201819.23095-3-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20200326054234.GA59436@builder>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324201819.23095-3-s-anna@ti.com>
+To: Suman Anna <s-anna@ti.com>
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh+dt@kernel.org>, Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+On Tue 24 Mar 13:18 PDT 2020, Suman Anna wrote:
 
-On 3/26/20 12:42 AM, Bjorn Andersson wrote:
-> On Tue 24 Mar 13:18 PDT 2020, Suman Anna wrote:
+> The current name field used in the remoteproc structure is simply
+> a pointer to a name field supplied during the rproc_alloc() call.
+> The pointer passed in by remoteproc drivers during registration is
+> typically a dev_name pointer, but it is possible that the pointer
+> will no longer remain valid if the devices themselves were created
+> at runtime like in the case of of_platform_populate(), and were
+> deleted upon any failures within the respective remoteproc driver
+> probe function.
 > 
->> The current name field used in the remoteproc structure is simply
->> a pointer to a name field supplied during the rproc_alloc() call.
->> The pointer passed in by remoteproc drivers during registration is
->> typically a dev_name pointer, but it is possible that the pointer
->> will no longer remain valid if the devices themselves were created
->> at runtime like in the case of of_platform_populate(), and were
->> deleted upon any failures within the respective remoteproc driver
->> probe function.
->>
->> So, allocate and maintain a local copy for this name field to
->> keep it agnostic of the logic used in the remoteproc drivers.
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>  drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
->>  include/linux/remoteproc.h           | 2 +-
->>  2 files changed, 9 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index aca6d022901a..6e0b91fa6f11 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1989,6 +1989,7 @@ static void rproc_type_release(struct device *dev)
->>  
->>  	kfree(rproc->firmware);
->>  	kfree(rproc->ops);
->> +	kfree(rproc->name);
->>  	kfree(rproc);
->>  }
->>  
->> @@ -2061,7 +2062,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->>  	}
->>  
->>  	rproc->firmware = p;
->> -	rproc->name = name;
->> +	rproc->name = kstrdup(name, GFP_KERNEL);
+> So, allocate and maintain a local copy for this name field to
+> keep it agnostic of the logic used in the remoteproc drivers.
 > 
-> Let's use kstrdup_const() instead here (and kfree_const() instead of
-> kfree()), so that the cases where we are passed a constant we won't
-> create a duplicate on the heap.
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
+>  include/linux/remoteproc.h           | 2 +-
+>  2 files changed, 9 insertions(+), 2 deletions(-)
 > 
-> And the "name" in struct rproc can remain const.
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index aca6d022901a..6e0b91fa6f11 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1989,6 +1989,7 @@ static void rproc_type_release(struct device *dev)
+>  
+>  	kfree(rproc->firmware);
+>  	kfree(rproc->ops);
+> +	kfree(rproc->name);
+>  	kfree(rproc);
+>  }
+>  
+> @@ -2061,7 +2062,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	}
+>  
+>  	rproc->firmware = p;
+> -	rproc->name = name;
+> +	rproc->name = kstrdup(name, GFP_KERNEL);
 
-Agreed, that's better functions to use for this.
+Let's use kstrdup_const() instead here (and kfree_const() instead of
+kfree()), so that the cases where we are passed a constant we won't
+create a duplicate on the heap.
 
+And the "name" in struct rproc can remain const.
+
+> +	if (!rproc->name) {
+> +		kfree(p);
+> +		kfree(rproc->ops);
+> +		kfree(rproc);
+> +		return NULL;
+
+Perhaps we can rearrange the hunks here slightly and get to a point
+where we can rely on the release function earlier?
+
+Regards,
+Bjorn
+
+> +	}
+>  	rproc->priv = &rproc[1];
+>  	rproc->auto_boot = true;
+>  	rproc->elf_class = ELFCLASS32;
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index ddce7a7775d1..77788a4bb94e 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -490,7 +490,7 @@ struct rproc_dump_segment {
+>  struct rproc {
+>  	struct list_head node;
+>  	struct iommu_domain *domain;
+> -	const char *name;
+> +	char *name;
+>  	char *firmware;
+>  	void *priv;
+>  	struct rproc_ops *ops;
+> -- 
+> 2.23.0
 > 
->> +	if (!rproc->name) {
->> +		kfree(p);
->> +		kfree(rproc->ops);
->> +		kfree(rproc);
->> +		return NULL;
-> 
-> Perhaps we can rearrange the hunks here slightly and get to a point
-> where we can rely on the release function earlier?
-
-Not sure I understand. I don't see any release function, all failure
-paths in rproc_alloc() directly unwind the previous operations. You mean
-move this to before the alloc for rproc structure, something similar to
-what we are doing with firmware?
-
-regards
-Suman
-
-
-> 
-> Regards,
-> Bjorn
-> 
->> +	}
->>  	rproc->priv = &rproc[1];
->>  	rproc->auto_boot = true;
->>  	rproc->elf_class = ELFCLASS32;
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index ddce7a7775d1..77788a4bb94e 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -490,7 +490,7 @@ struct rproc_dump_segment {
->>  struct rproc {
->>  	struct list_head node;
->>  	struct iommu_domain *domain;
->> -	const char *name;
->> +	char *name;
->>  	char *firmware;
->>  	void *priv;
->>  	struct rproc_ops *ops;
->> -- 
->> 2.23.0
->>
