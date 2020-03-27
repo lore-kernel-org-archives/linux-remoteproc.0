@@ -1,157 +1,158 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH 1/4] dt-bindings: remoteproc: k3-dsp: Update bindings for C71x DSPs
-Date: Wed, 25 Mar 2020 15:46:58 -0500
-Message-ID: <20200325204701.16862-2-s-anna@ti.com>
-In-Reply-To: <20200325204701.16862-1-s-anna@ti.com>
-References: <20200325204701.16862-1-s-anna@ti.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 03/11] remoteproc: stm32: Decouple rproc from DT parsing
+Date: Fri, 27 Mar 2020 16:55:05 +0000
+Message-ID: <a50f5a353dc74718b30c9cda861e1854@SFHDAG7NODE2.st.com>
+References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+ <20200324220329.15523-4-mathieu.poirier@linaro.org>
+In-Reply-To: <20200324220329.15523-4-mathieu.poirier@linaro.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Clement Leger <cleger@kalray.eu>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "s-anna@ti.com" <s-anna@ti.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Some Texas Instruments K3 family of SoCs have one of more newer
-generation TMS320C71x CorePac processor subsystem in addition to
-the existing TMS320C66x CorePac processor subsystems. Update the
-device tree bindings document for the C71x DSP devices.
 
-The example is also updated to show the single C71 DSP present
-on J721E SoCs.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
----
- .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 78 ++++++++++++++++---
- 1 file changed, 69 insertions(+), 9 deletions(-)
+> -----Original Message-----
+> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Sent: mardi 24 mars 2020 23:03
+> To: bjorn.andersson@linaro.org
+> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
+> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
+> <arnaud.pouliquen@st.com>; Fabien DESSENNE
+> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
+> Subject: [PATCH 03/11] remoteproc: stm32: Decouple rproc from DT parsing
+>=20
+> Remove the remote processor from the process of parsing the device tree
+> since (1) there is no correlation between them and (2) to use the
+> information that was gathered to make a decision on whether to
+> synchronise with the MCU or not.
+>=20
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Thanks Mathieu
+=20
+Reviewed-by: Loic Pallardy <loic.pallardy@st.com> =20
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-index 416e3abe7937..6b1536509c39 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -27,9 +27,12 @@ description: |
- 
- properties:
-   compatible:
--    const: ti,j721e-c66-dsp
-+    enum:
-+      - ti,j721e-c66-dsp
-+      - ti,j721e-c71-dsp
-     description:
-       Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
-+      Use "ti,j721e-c71-dsp" for C71x DSPs on K3 J721E SoCs
- 
-   reg:
-     description: |
-@@ -37,18 +40,11 @@ properties:
-       Each entry should have the memory region's start address
-       and the size of the region, the representation matching
-       the parent node's '#address-cells' and '#size-cells' values.
--    minItems: 3
--    maxItems: 3
- 
-   reg-names:
-     description: |
-       Should contain strings with the names of the specific internal
-       internal memory regions, and should be defined in this order
--    maxItems: 3
--    items:
--      - const: l2sram
--      - const: l1pram
--      - const: l1dram
- 
-   ti,sci:
-     $ref: /schemas/types.yaml#/definitions/phandle
-@@ -117,6 +113,41 @@ properties:
-       should be defined as per the generic bindings in,
-       Documentation/devicetree/bindings/sram/sram.yaml
- 
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - ti,j721e-c66-dsp
-+then:
-+  properties:
-+    reg:
-+      minItems: 3
-+      maxItems: 3
-+    reg-names:
-+      minItems: 3
-+      maxItems: 3
-+      items:
-+        - const: l2sram
-+        - const: l1pram
-+        - const: l1dram
-+else:
-+  if:
-+    properties:
-+      compatible:
-+        enum:
-+          - ti,j721e-c71-dsp
-+  then:
-+    properties:
-+      reg:
-+        minItems: 2
-+        maxItems: 2
-+      reg-names:
-+        minItems: 2
-+        maxItems: 2
-+        items:
-+          - const: l2sram
-+          - const: l1dram
-+
- required:
-  - compatible
-  - reg
-@@ -152,13 +183,26 @@ examples:
-             reg = <0x00 0xa6100000 0x00 0xf00000>;
-             no-map;
-         };
-+
-+        c71_0_dma_memory_region: c71-dma-memory@a8000000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0xa8000000 0x00 0x100000>;
-+            no-map;
-+        };
-+
-+        c71_0_memory_region: c71-memory@a8100000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0xa8100000 0x00 0xf00000>;
-+            no-map;
-+        };
-     };
- 
-     cbass_main: interconnect@100000 {
-         compatible = "simple-bus";
-         #address-cells = <2>;
-         #size-cells = <2>;
--        ranges = <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
-+        ranges = <0x00 0x64800000 0x00 0x64800000 0x00 0x00800000>, /* C71_0 */
-+                 <0x4d 0x80800000 0x4d 0x80800000 0x00 0x00800000>, /* C66_0 */
-                  <0x4d 0x81800000 0x4d 0x81800000 0x00 0x00800000>; /* C66_1 */
- 
-         /* J721E C66_0 DSP node */
-@@ -177,4 +221,20 @@ examples:
-                             <&c66_0_memory_region>;
-             mboxes = <&mailbox0_cluster3 &mbox_c66_0>;
-         };
-+
-+        /* J721E C71_0 DSP node */
-+        c71_0: dsp@64800000 {
-+            compatible = "ti,j721e-c71-dsp";
-+            reg = <0x00 0x64800000 0x00 0x00080000>,
-+                  <0x00 0x64e00000 0x00 0x0000c000>;
-+            reg-names = "l2sram", "l1dram";
-+            ti,sci = <&dmsc>;
-+            ti,sci-dev-id = <15>;
-+            ti,sci-proc-ids = <0x30 0xFF>;
-+            resets = <&k3_reset 15 1>;
-+            firmware-name = "j7-c71_0-fw";
-+            memory-region = <&c71_0_dma_memory_region>,
-+                            <&c71_0_memory_region>;
-+            mboxes = <&mailbox0_cluster4 &mbox_c71_0>;
-+        };
-     };
--- 
-2.23.0
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 38 +++++++++++++++++++++-----------
+>  1 file changed, 25 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/remoteproc/stm32_rproc.c
+> b/drivers/remoteproc/stm32_rproc.c
+> index 0c1f0b84e057..ca60c917e218 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -538,12 +538,11 @@ static int stm32_rproc_get_syscon(struct
+> device_node *np, const char *prop,
+>  	return err;
+>  }
+>=20
+> -static int stm32_rproc_parse_dt(struct platform_device *pdev)
+> +static int stm32_rproc_parse_dt(struct platform_device *pdev,
+> +				struct stm32_rproc *ddata, bool *auto_boot)
+>  {
+>  	struct device *dev =3D &pdev->dev;
+>  	struct device_node *np =3D dev->of_node;
+> -	struct rproc *rproc =3D platform_get_drvdata(pdev);
+> -	struct stm32_rproc *ddata =3D rproc->priv;
+>  	struct stm32_syscon tz;
+>  	unsigned int tzen;
+>  	int err, irq;
+> @@ -589,7 +588,7 @@ static int stm32_rproc_parse_dt(struct
+> platform_device *pdev)
+>=20
+>  	err =3D regmap_read(tz.map, tz.reg, &tzen);
+>  	if (err) {
+> -		dev_err(&rproc->dev, "failed to read tzen\n");
+> +		dev_err(dev, "failed to read tzen\n");
+>  		return err;
+>  	}
+>  	ddata->secured_soc =3D tzen & tz.mask;
+> @@ -605,7 +604,7 @@ static int stm32_rproc_parse_dt(struct
+> platform_device *pdev)
+>  	if (err)
+>  		dev_warn(dev, "failed to get pdds\n");
+>=20
+> -	rproc->auto_boot =3D of_property_read_bool(np, "st,auto-boot");
+> +	*auto_boot =3D of_property_read_bool(np, "st,auto-boot");
+>=20
+>  	return stm32_rproc_of_memory_translations(pdev, ddata);
+>  }
+> @@ -616,18 +615,29 @@ static int stm32_rproc_probe(struct
+> platform_device *pdev)
+>  	struct stm32_rproc *ddata;
+>  	struct device_node *np =3D dev->of_node;
+>  	struct rproc *rproc;
+> +	bool auto_boot =3D false;
+>  	int ret;
+>=20
+>  	ret =3D dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+>  	if (ret)
+>  		return ret;
+>=20
+> -	rproc =3D rproc_alloc(dev, np->name, &st_rproc_ops, NULL,
+> sizeof(*ddata));
+> -	if (!rproc)
+> +	ddata =3D kzalloc(sizeof(*ddata), GFP_KERNEL);
+> +	if (!ddata)
+>  		return -ENOMEM;
+>=20
+> +	ret =3D stm32_rproc_parse_dt(pdev, ddata, &auto_boot);
+> +	if (ret)
+> +		goto free_ddata;
+> +
+> +	rproc =3D rproc_alloc(dev, np->name, &st_rproc_ops, NULL,
+> sizeof(*ddata));
+> +	if (!rproc) {
+> +		ret =3D -ENOMEM;
+> +		goto free_ddata;
+> +	}
+> +
+> +	rproc->auto_boot =3D auto_boot;
+>  	rproc->has_iommu =3D false;
+> -	ddata =3D rproc->priv;
+>  	ddata->workqueue =3D create_workqueue(dev_name(dev));
+>  	if (!ddata->workqueue) {
+>  		dev_err(dev, "cannot create workqueue\n");
+> @@ -635,20 +645,20 @@ static int stm32_rproc_probe(struct
+> platform_device *pdev)
+>  		goto free_rproc;
+>  	}
+>=20
+> -	platform_set_drvdata(pdev, rproc);
+> +	memcpy(rproc->priv, ddata, sizeof(*ddata));
+>=20
+> -	ret =3D stm32_rproc_parse_dt(pdev);
+> -	if (ret)
+> -		goto free_wkq;
+> +	platform_set_drvdata(pdev, rproc);
+>=20
+>  	ret =3D stm32_rproc_request_mbox(rproc);
+>  	if (ret)
+> -		goto free_rproc;
+> +		goto free_wkq;
+>=20
+>  	ret =3D rproc_add(rproc);
+>  	if (ret)
+>  		goto free_mb;
+>=20
+> +	kfree(ddata);
+> +
+>  	return 0;
+>=20
+>  free_mb:
+> @@ -661,6 +671,8 @@ static int stm32_rproc_probe(struct platform_device
+> *pdev)
+>  		device_init_wakeup(dev, false);
+>  	}
+>  	rproc_free(rproc);
+> +free_ddata:
+> +	kfree(ddata);
+>  	return ret;
+>  }
+>=20
+> --
+> 2.20.1
