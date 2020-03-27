@@ -1,103 +1,75 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v6 2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
-Date: Thu,  5 Mar 2020 01:39:10 +0530
-Message-Id: <20200304200911.15415-3-sibis@codeaurora.org>
-In-Reply-To: <20200304200911.15415-1-sibis@codeaurora.org>
-References: <20200304200911.15415-1-sibis@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 01/11] remoteproc: stm32: Decouple rproc from memory
+ translation
+Date: Fri, 27 Mar 2020 16:51:46 +0000
+Message-ID: <e4a31d5675104d01b002df61c362a626@SFHDAG7NODE2.st.com>
+References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+ <20200324220329.15523-2-mathieu.poirier@linaro.org>
+In-Reply-To: <20200324220329.15523-2-mathieu.poirier@linaro.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org
-Cc: agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, tsoni@codeaurora.org, vnkgutta@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>, Rob Herring <robh@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "s-anna@ti.com" <s-anna@ti.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Qualcomm SoCs (starting with MSM8998) allow for multiple protection
-domains (PDs) to run on the same Q6 sub-system. This allows for
-services like AVS AUDIO to have their own separate address space and
-crash/recover without disrupting the other PDs running on the same Q6
-ADSP. Add "qcom,protection-domain" bindings to capture the dependencies
-between the APR service and the PD on which the apr service runs.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
 
-V6:
- * Picked up Rob's R-b
+> -----Original Message-----
+> From: linux-remoteproc-owner@vger.kernel.org <linux-remoteproc-
+> owner@vger.kernel.org> On Behalf Of Mathieu Poirier
+> Sent: mardi 24 mars 2020 23:03
+> To: bjorn.andersson@linaro.org
+> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
+> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
+> <arnaud.pouliquen@st.com>; Fabien DESSENNE
+> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
+> Subject: [PATCH 01/11] remoteproc: stm32: Decouple rproc from memory
+> translation
+>=20
+> Remove the remote processor from the process of parsing the memory
+> ranges since there is no correlation between them.
+>=20
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Thanks Mathieu
 
-V5:
- * Picked up Bjorn's R-b
-
- .../devicetree/bindings/soc/qcom/qcom,apr.txt | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-index db501269f47b8..f8fa71f5d84ba 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
-@@ -45,6 +45,18 @@ by the individual bindings for the specific service
- 			12 - Ultrasound stream manager.
- 			13 - Listen stream manager.
- 
-+- qcom,protection-domain
-+	Usage: optional
-+	Value type: <stringlist>
-+	Definition: Must list the protection domain service name and path
-+		    that the particular apr service has a dependency on.
-+	Possible values are :
-+			"avs/audio", "msm/adsp/audio_pd".
-+			"kernel/elf_loader", "msm/modem/wlan_pd".
-+			"tms/servreg", "msm/adsp/audio_pd".
-+			"tms/servreg", "msm/modem/wlan_pd".
-+			"tms/servreg", "msm/slpi/sensor_pd".
-+
- = EXAMPLE
- The following example represents a QDSP based sound card on a MSM8996 device
- which uses apr as communication between Apps and QDSP.
-@@ -82,3 +94,41 @@ which uses apr as communication between Apps and QDSP.
- 			...
- 		};
- 	};
-+
-+= EXAMPLE 2
-+The following example represents a QDSP based sound card with protection domain
-+dependencies specified. Here some of the apr services are dependent on services
-+running on protection domain hosted on ADSP/SLPI remote processors while others
-+have no such dependency.
-+
-+	apr {
-+		compatible = "qcom,apr-v2";
-+		qcom,glink-channels = "apr_audio_svc";
-+		qcom,apr-domain = <APR_DOMAIN_ADSP>;
-+
-+		q6core {
-+			compatible = "qcom,q6core";
-+			reg = <APR_SVC_ADSP_CORE>;
-+		};
-+
-+		q6afe: q6afe {
-+			compatible = "qcom,q6afe";
-+			reg = <APR_SVC_AFE>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			...
-+		};
-+
-+		q6asm: q6asm {
-+			compatible = "qcom,q6asm";
-+			reg = <APR_SVC_ASM>;
-+			qcom,protection-domain = "tms/servreg", "msm/slpi/sensor_pd";
-+			...
-+		};
-+
-+		q6adm: q6adm {
-+			compatible = "qcom,q6adm";
-+			reg = <APR_SVC_ADM>;
-+			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
-+			...
-+		};
-+	};
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/remoteproc/stm32_rproc.c
+> b/drivers/remoteproc/stm32_rproc.c
+> index a18f88044111..cde4b1a56381 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -127,10 +127,10 @@ static int stm32_rproc_mem_release(struct rproc
+> *rproc,
+>  	return 0;
+>  }
+>=20
+> -static int stm32_rproc_of_memory_translations(struct rproc *rproc)
+> +static int stm32_rproc_of_memory_translations(struct platform_device
+> *pdev,
+> +					      struct stm32_rproc *ddata)
+>  {
+> -	struct device *parent, *dev =3D rproc->dev.parent;
+> -	struct stm32_rproc *ddata =3D rproc->priv;
+> +	struct device *parent, *dev =3D &pdev->dev;
+>  	struct device_node *np;
+>  	struct stm32_rproc_mem *p_mems;
+>  	struct stm32_rproc_mem_ranges *mem_range;
+> @@ -606,7 +606,7 @@ static int stm32_rproc_parse_dt(struct
+> platform_device *pdev)
+>=20
+>  	rproc->auto_boot =3D of_property_read_bool(np, "st,auto-boot");
+>=20
+> -	return stm32_rproc_of_memory_translations(rproc);
+> +	return stm32_rproc_of_memory_translations(pdev, ddata);
+>  }
+>=20
+>  static int stm32_rproc_probe(struct platform_device *pdev)
+> --
+> 2.20.1
