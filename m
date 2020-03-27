@@ -1,41 +1,136 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail26.static.mailgun.info ([104.130.122.26]:62764 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728946AbgCDTrw (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:47:52 -0500
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4 0/3] remoteproc: mss: Improve mem_assign and firmware load
-Date: Thu,  5 Mar 2020 01:17:26 +0530
-Message-Id: <20200304194729.27979-1-sibis@codeaurora.org>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 09/11] remoteproc: stm32: Introduce new parse fw ops for
+ synchronisation
+Date: Fri, 27 Mar 2020 17:05:00 +0000
+Message-ID: <4a653bbeb4b14c41ad2fa9eae9cb140b@SFHDAG7NODE2.st.com>
+References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+ <20200324220329.15523-10-mathieu.poirier@linaro.org>
+In-Reply-To: <20200324220329.15523-10-mathieu.poirier@linaro.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: bjorn.andersson@linaro.org, mathieu.poirier@linaro.org, jeffrey.l.hugo@gmail.com, luca@z3ntu.xyz
-Cc: agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "s-anna@ti.com" <s-anna@ti.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Two things came up in the effort of figuring out why the modem crashed the
-entire system when being restarted; the first one solves the actual problem, in
-that it's not possible to reclaim the main modem firmware region unless the
-modem subsystem is running - causing the crash.
 
-The second patch aligns the firmware loading process to that of the downstream
-driver, which seems to be a requirement in 8974 as well.
 
-The third patch aligns the mpss coredump sequence to that of the downstream
-driver, which is expected to fix mba load failure during coredump.
-
-Bjorn Andersson (2):
-  remoteproc: qcom_q6v5_mss: Don't reassign mpss region on shutdown
-  remoteproc: qcom_q6v5_mss: Validate each segment during loading
-
-Sibi Sankar (1):
-  remoteproc: qcom_q6v5_mss: Reload the mba region on coredump
-
- drivers/remoteproc/qcom_q6v5_mss.c | 131 +++++++++++++++++++++--------
- 1 file changed, 97 insertions(+), 34 deletions(-)
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> -----Original Message-----
+> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Sent: mardi 24 mars 2020 23:03
+> To: bjorn.andersson@linaro.org
+> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
+> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
+> <arnaud.pouliquen@st.com>; Fabien DESSENNE
+> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
+> Subject: [PATCH 09/11] remoteproc: stm32: Introduce new parse fw ops for
+> synchronisation
+>=20
+> Introduce new parse firmware rproc_ops functions to be used when
+> synchonising with an MCU.
+>=20
+> Mainly based on the work published by Arnaud Pouliquen [1].
+>=20
+> [1]. https://patchwork.kernel.org/project/linux-
+> remoteproc/list/?series=3D239877
+>=20
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Thanks Mathieu
+=20
+Reviewed-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 49
+> +++++++++++++++++++++++++++++++-
+>  1 file changed, 48 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/remoteproc/stm32_rproc.c
+> b/drivers/remoteproc/stm32_rproc.c
+> index 734605a9223e..4268d71f191d 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -215,7 +215,34 @@ static int stm32_rproc_elf_load_rsc_table(struct
+> rproc *rproc,
+>  	return 0;
+>  }
+>=20
+> -static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmwa=
+re
+> *fw)
+> +static int stm32_rproc_sync_elf_load_rsc_table(struct rproc *rproc,
+> +					       const struct firmware *fw)
+> +{
+> +	struct resource_table *table =3D NULL;
+> +	struct stm32_rproc *ddata =3D rproc->priv;
+> +
+> +	if (ddata->rsc_va) {
+> +		table =3D (struct resource_table *)ddata->rsc_va;
+> +		/* Assuming that the resource table fits in 1kB is fair */
+> +		rproc->cached_table =3D kmemdup(table, RSC_TBL_SIZE,
+> GFP_KERNEL);
+> +		if (!rproc->cached_table)
+> +			return -ENOMEM;
+> +
+> +		rproc->table_ptr =3D rproc->cached_table;
+> +		rproc->table_sz =3D RSC_TBL_SIZE;
+> +		return 0;
+> +	}
+> +
+> +	rproc->cached_table =3D NULL;
+> +	rproc->table_ptr =3D NULL;
+> +	rproc->table_sz =3D 0;
+> +
+> +	dev_warn(&rproc->dev, "no resource table found for this
+> firmware\n");
+> +	return 0;
+> +}
+> +
+> +static int stm32_rproc_parse_memory_regions(struct rproc *rproc,
+> +					    const struct firmware *fw)
+>  {
+>  	struct device *dev =3D rproc->dev.parent;
+>  	struct device_node *np =3D dev->of_node;
+> @@ -268,9 +295,28 @@ static int stm32_rproc_parse_fw(struct rproc *rproc,
+> const struct firmware *fw)
+>  		index++;
+>  	}
+>=20
+> +	return 0;
+> +}
+> +
+> +static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmwa=
+re
+> *fw)
+> +{
+> +	int ret =3D stm32_rproc_parse_memory_regions(rproc, fw);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return stm32_rproc_elf_load_rsc_table(rproc, fw);
+>  }
+>=20
+> +static int stm32_rproc_sync_parse_fw(struct rproc *rproc,
+> +				     const struct firmware *fw)
+> +{
+> +	int ret =3D stm32_rproc_parse_memory_regions(rproc, fw);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return stm32_rproc_sync_elf_load_rsc_table(rproc, fw);
+> +}
+> +
+>  static irqreturn_t stm32_rproc_wdg(int irq, void *data)
+>  {
+>  	struct platform_device *pdev =3D data;
+> @@ -557,6 +603,7 @@ static __maybe_unused struct rproc_ops
+> st_rproc_sync_ops =3D {
+>  	.start		=3D stm32_rproc_sync_start,
+>  	.stop		=3D stm32_rproc_sync_stop,
+>  	.kick		=3D stm32_rproc_kick,
+> +	.parse_fw	=3D stm32_rproc_sync_parse_fw,
+>  };
+>=20
+>  static const struct of_device_id stm32_rproc_match[] =3D {
+> --
+> 2.20.1
