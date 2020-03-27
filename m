@@ -1,61 +1,75 @@
-Return-Path: <gustavo@embeddedor.com>
-Date: Thu, 19 Mar 2020 16:38:39 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] hwspinlock: hwspinlock_internal.h: Replace zero-length
- array with flexible-array member
-Message-ID: <20200319213839.GA10669@embeddedor.com>
+Return-Path: <loic.pallardy@st.com>
+From: Loic PALLARDY <loic.pallardy@st.com>
+Subject: RE: [PATCH 04/11] remoteproc: stm32: Remove memory translation from
+ DT parsing
+Date: Fri, 27 Mar 2020 16:55:22 +0000
+Message-ID: <b6e237a293464b85b6591c23cde20cb7@SFHDAG7NODE2.st.com>
+References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+ <20200324220329.15523-5-mathieu.poirier@linaro.org>
+In-Reply-To: <20200324220329.15523-5-mathieu.poirier@linaro.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Baolin Wang <baolin.wang7@gmail.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>
+Cc: "ohad@wizery.com" <ohad@wizery.com>, "s-anna@ti.com" <s-anna@ti.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The current codebase makes use of the zero-length array language
-extension to the C90 standard, but the preferred mechanism to declare
-variable-length types such as these ones is a flexible array member[1][2],
-introduced in C99:
 
-struct foo {
-        int stuff;
-        struct boo array[];
-};
 
-By making use of the mechanism above, we will get a compiler warning
-in case the flexible array does not occur last in the structure, which
-will help us prevent some kind of undefined behavior bugs from being
-inadvertently introduced[3] to the codebase from now on.
+> -----Original Message-----
+> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Sent: mardi 24 mars 2020 23:03
+> To: bjorn.andersson@linaro.org
+> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
+> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
+> <arnaud.pouliquen@st.com>; Fabien DESSENNE
+> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
+> Subject: [PATCH 04/11] remoteproc: stm32: Remove memory translation
+> from DT parsing
+>=20
+> Other than one has to be done after the other, there is no correlation
+> between memory translation and DT parsing.  As move function
+> stm32_rproc_of_memory_translations() to stm32_rproc_probe() so that
+> stm32_rproc_parse_dt() can be extended to look for synchronisation
+> related binding in a clean way.
+>=20
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Thanks Mathieu
+=20
+Reviewed-by: Loic Pallardy <loic.pallardy@st.com>
 
-Also, notice that, dynamic memory allocations won't be affected by
-this change:
-
-"Flexible array members have incomplete type, and so the sizeof operator
-may not be applied. As a quirk of the original implementation of
-zero-length arrays, sizeof evaluates to zero."[1]
-
-This issue was found with the help of Coccinelle.
-
-[1] https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-[2] https://github.com/KSPP/linux/issues/21
-[3] commit 76497732932f ("cxgb3/l2t: Fix undefined behaviour")
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/hwspinlock/hwspinlock_internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
-index 9eb6bd020dc7..29892767bb7a 100644
---- a/drivers/hwspinlock/hwspinlock_internal.h
-+++ b/drivers/hwspinlock/hwspinlock_internal.h
-@@ -56,7 +56,7 @@ struct hwspinlock_device {
- 	const struct hwspinlock_ops *ops;
- 	int base_id;
- 	int num_locks;
--	struct hwspinlock lock[0];
-+	struct hwspinlock lock[];
- };
- 
- static inline int hwlock_to_id(struct hwspinlock *hwlock)
--- 
-2.23.0
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/remoteproc/stm32_rproc.c
+> b/drivers/remoteproc/stm32_rproc.c
+> index ca60c917e218..a3e278490bb4 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -606,7 +606,7 @@ static int stm32_rproc_parse_dt(struct
+> platform_device *pdev,
+>=20
+>  	*auto_boot =3D of_property_read_bool(np, "st,auto-boot");
+>=20
+> -	return stm32_rproc_of_memory_translations(pdev, ddata);
+> +	return 0;
+>  }
+>=20
+>  static int stm32_rproc_probe(struct platform_device *pdev)
+> @@ -630,6 +630,10 @@ static int stm32_rproc_probe(struct platform_device
+> *pdev)
+>  	if (ret)
+>  		goto free_ddata;
+>=20
+> +	ret =3D stm32_rproc_of_memory_translations(pdev, ddata);
+> +	if (ret)
+> +		goto free_ddata;
+> +
+>  	rproc =3D rproc_alloc(dev, np->name, &st_rproc_ops, NULL,
+> sizeof(*ddata));
+>  	if (!rproc) {
+>  		ret =3D -ENOMEM;
+> --
+> 2.20.1
