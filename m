@@ -1,81 +1,27 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH v4 1/5] dt-bindings: remoteproc: Add Qualcomm PIL info binding
-Date: Mon,  9 Mar 2020 23:33:34 -0700
-Message-Id: <20200310063338.3344582-2-bjorn.andersson@linaro.org>
-In-Reply-To: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
-References: <20200310063338.3344582-1-bjorn.andersson@linaro.org>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Mon, 30 Mar 2020 16:11:06 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: remoteproc: qcom: Add iommus property
+Message-ID: <20200330221106.GA17769@bogus>
+References: <20200317150910.26053-1-sibis@codeaurora.org>
+ <20200317150910.26053-2-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200317150910.26053-2-sibis@codeaurora.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, robh+dt@kernel.org, joro@8bytes.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, iommu@lists.linux-foundation.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com, agross@kernel.org, dianders@chromium.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add a devicetree binding for the Qualcomm peripheral image loader
-relocation information region found in the IMEM.
+On Tue, 17 Mar 2020 20:39:08 +0530, Sibi Sankar wrote:
+> Add iommus property to allow Q6 modem to boot on platforms which do
+> not have trustZone.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
-
-Change since v3:
-- Fixed spelling mistakes pointed out by Mathieu
-- Fixed description as requested by Stephen
-- Specify unit address in example
-- Add missing ranges in example
-
- .../bindings/remoteproc/qcom,pil-info.yaml    | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
-new file mode 100644
-index 000000000000..44d87fd2a07e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,pil-info.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,pil-info.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm peripheral image loader relocation info binding
-+
-+maintainers:
-+  - Bjorn Andersson <bjorn.andersson@linaro.org>
-+
-+description:
-+  The Qualcomm peripheral image loader relocation memory region, in IMEM, is
-+  used for communicating remoteproc relocation information to post mortem
-+  debugging tools.
-+
-+properties:
-+  compatible:
-+    const: qcom,pil-reloc-info
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    imem@146bf000 {
-+      compatible = "syscon", "simple-mfd";
-+      reg = <0 0x146bf000 0 0x1000>;
-+
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      ranges = <0 0 0x146bf000 0x1000>;
-+
-+      pil-reloc@94c {
-+        compatible = "qcom,pil-reloc-info";
-+        reg = <0x94c 0xc8>;
-+      };
-+    };
-+...
--- 
-2.24.0
+Acked-by: Rob Herring <robh@kernel.org>
