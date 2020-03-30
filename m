@@ -1,55 +1,124 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727143AbgCIXkG (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Mar 2020 19:40:06 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Mon, 30 Mar 2020 16:56:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 08/11] remoteproc: stm32: Introduce new start and stop
+ ops for synchronisation
+Message-ID: <20200330225633.GB31331@xps15>
+References: <20200324220329.15523-1-mathieu.poirier@linaro.org>
+ <20200324220329.15523-9-mathieu.poirier@linaro.org>
+ <cf76679a1a7248df9620aeb2ca659062@SFHDAG7NODE2.st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] remoteproc: fix kernel-doc warnings
-From: patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158379720595.7411.17212679414987470499.git-patchwork-notify@kernel.org>
-Date: Mon, 09 Mar 2020 23:40:05 +0000
-References: <20200212161956.10358-1-arnaud.pouliquen@st.com>
-In-Reply-To: <20200212161956.10358-1-arnaud.pouliquen@st.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Cc: linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf76679a1a7248df9620aeb2ca659062@SFHDAG7NODE2.st.com>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "s-anna@ti.com" <s-anna@ti.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello:
-
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
-
-On Wed, 12 Feb 2020 17:19:56 +0100 you wrote:
-> Fix the following warnings when documentation is built:
-> drivers/remoteproc/remoteproc_virtio.c:330: warning: Function parameter
-> or member 'id' not described in 'rproc_add_virtio_dev'
-> drivers/remoteproc/remoteproc_core.c:243: warning: Function parameter
-> or member 'name' not described in 'rproc_find_carveout_by_name'
-> drivers/remoteproc/remoteproc_core.c:473: warning: Function parameter
-> or member 'offset' not described in 'rproc_handle_vdev'
-> drivers/remoteproc/remoteproc_core.c:604: warning: Function parameter
-> or member 'offset' not described in 'rproc_handle_trace'
-> drivers/remoteproc/remoteproc_core.c:678: warning: Function parameter
-> or member 'offset' not described in 'rproc_handle_devmem'
-> drivers/remoteproc/remoteproc_core.c:873: warning: Function parameter
-> or member 'offset' not described in 'rproc_handle_carveout'
-> drivers/remoteproc/remoteproc_core.c:1029: warning: cannot understand function
-> prototype: 'rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = '
-> drivers/remoteproc/remoteproc_core.c:1693: warning: Function parameter
-> or member 'work' not described in 'rproc_crash_handler_work'
+On Fri, Mar 27, 2020 at 05:04:34PM +0000, Loic PALLARDY wrote:
+> Hi Mathieu,
 > 
-> [...]
+> > -----Original Message-----
+> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Sent: mardi 24 mars 2020 23:03
+> > To: bjorn.andersson@linaro.org
+> > Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
+> > anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
+> > <arnaud.pouliquen@st.com>; Fabien DESSENNE
+> > <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
+> > Subject: [PATCH 08/11] remoteproc: stm32: Introduce new start and stop ops
+> > for synchronisation
+> > 
+> > Introduce new start and stop rproc_ops functions to be used when
+> > synchonising with an MCU.
+> > 
+> > Mainly based on the work published by Arnaud Pouliquen [1].
+> > 
+> > [1]. https://patchwork.kernel.org/project/linux-
+> > remoteproc/list/?series=239877
+> > 
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> >  drivers/remoteproc/stm32_rproc.c | 37
+> > ++++++++++++++++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> > 
+> > diff --git a/drivers/remoteproc/stm32_rproc.c
+> > b/drivers/remoteproc/stm32_rproc.c
+> > index 5bac0baf8f4c..734605a9223e 100644
+> > --- a/drivers/remoteproc/stm32_rproc.c
+> > +++ b/drivers/remoteproc/stm32_rproc.c
+> > @@ -449,6 +449,13 @@ static int stm32_rproc_start(struct rproc *rproc)
+> >  	return stm32_rproc_set_hold_boot(rproc, true);
+> >  }
+> > 
+> > +static int stm32_rproc_sync_start(struct rproc *rproc)
+> > +{
+> > +	stm32_rproc_add_coredump_trace(rproc);
+> > +
+> > +	return stm32_rproc_set_hold_boot(rproc, true);
+> > +}
+> > +
+> >  static int stm32_rproc_stop(struct rproc *rproc)
+> >  {
+> >  	struct stm32_rproc *ddata = rproc->priv;
+> > @@ -489,6 +496,30 @@ static int stm32_rproc_stop(struct rproc *rproc)
+> >  	return 0;
+> >  }
+> > 
+> > +static int stm32_rproc_sync_stop(struct rproc *rproc)
+> > +{
+> > +	struct stm32_rproc *ddata = rproc->priv;
+> > +	int err;
+> > +
+> > +	err = stm32_rproc_stop(rproc);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	/* update copro state to OFF */
+> > +	if (ddata->m4_state.map) {
+> > +		err = regmap_update_bits(ddata->m4_state.map,
+> > +					 ddata->m4_state.reg,
+> > +					 ddata->m4_state.mask,
+> > +					 M4_STATE_OFF);
+> > +		if (err) {
+> > +			dev_err(&rproc->dev, "failed to set copro state\n");
+> > +			return err;
+> > +		}
+> > +	}
+> In fact m4_state is updated in following way:
+> - it is set by Linux when M4 is guarantee, that means only when Linux is stopping the M4.
+> in that case M4 is under reset and m4_state could be updated to M4_STATE_OFF
+> - for all other states, it is M4 responsibility to update m4_state when running
+> That means the code above is common to both stm32_rproc_stop() and stm32_rproc_sync_stop().
+> Only one function is required.
 
+Very well, I'll get it fixed.
 
-Here is a summary with links:
-  - [v2] remoteproc: fix kernel-doc warnings
-    https://git.kernel.org/andersson/remoteproc/c/9307a1578aea8ff949b20cf896c46d7020f7b639
-
-You are awesome, thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+> 
+> Regards,
+> Loic
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static void stm32_rproc_kick(struct rproc *rproc, int vqid)
+> >  {
+> >  	struct stm32_rproc *ddata = rproc->priv;
+> > @@ -522,6 +553,12 @@ static struct rproc_ops st_rproc_ops = {
+> >  	.get_boot_addr	= rproc_elf_get_boot_addr,
+> >  };
+> > 
+> > +static __maybe_unused struct rproc_ops st_rproc_sync_ops = {
+> > +	.start		= stm32_rproc_sync_start,
+> > +	.stop		= stm32_rproc_sync_stop,
+> > +	.kick		= stm32_rproc_kick,
+> > +};
+> > +
+> >  static const struct of_device_id stm32_rproc_match[] = {
+> >  	{ .compatible = "st,stm32mp1-m4" },
+> >  	{},
+> > --
+> > 2.20.1
+> 
