@@ -1,124 +1,185 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH v5 5/8] remoteproc: Rename rproc_elf_sanity_check for elf32
-Date: Mon,  2 Mar 2020 10:38:59 +0100
-Message-Id: <20200302093902.27849-6-cleger@kalray.eu>
-In-Reply-To: <20200302093902.27849-1-cleger@kalray.eu>
-References: <20200210162209.23149-1-cleger@kalray.eu>
- <20200302093902.27849-1-cleger@kalray.eu>
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, linux-remoteproc@vger.kernel.org
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, Andy Gross <agross@kernel.org>, Patrice Chotard <patrice.chotard@st.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic PALLARDY <loic.pallardy@st.com>, s-anna <s-anna@ti.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, Clement Leger <cleger@kalray.eu>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 01/18] remoteproc: Add new operation and state machine for
+ MCU synchronisation
+References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
+ <20200312221158.3613-2-mathieu.poirier@linaro.org>
+ <CAH2Cfb8jkMtdJ0oUNWQ4Bbsybrkb4z_0kP8UH6tYkEB6peZ56g@mail.gmail.com>
+ <CANLsYkx2La2G_L0Cq7JB+SQYeueufcMvyHG4AZQQ3p-1AzFpoA@mail.gmail.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <6ff5e60a-a48d-1783-eb98-57ec568f7683@ti.com>
+Date: Mon, 30 Mar 2020 14:24:19 -0500
+MIME-Version: 1.0
+In-Reply-To: <CANLsYkx2La2G_L0Cq7JB+SQYeueufcMvyHG4AZQQ3p-1AzFpoA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Xiang Xiao <xiaoxiang781216@gmail.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Ohad Ben Cohen <ohad@wizery.com>, Loic Pallardy <loic.pallardy@st.com>, Peng Fan <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien Dessenne <fabien.dessenne@st.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Since this function will be modified to support both elf32 and elf64,
-rename the existing one to elf32 (which is the only supported format
-at the moment). This will allow not to introduce possible side effect
-when adding elf64 support (ie: all backends will still support only
-elf32 if not requested explicitely using rproc_elf_sanity_check).
+On 3/13/20 10:01 AM, Mathieu Poirier wrote:
+> Hi Xiao,
+> 
+> On Thu, 12 Mar 2020 at 20:04, Xiang Xiao <xiaoxiang781216@gmail.com> wrote:
+>>
+>> On Fri, Mar 13, 2020 at 6:12 AM Mathieu Poirier
+>> <mathieu.poirier@linaro.org> wrote:
+>>>
+>>> Add a new rproc_ops sync_ops to support use cases where the remoteproc
+>>> core is synchronisting with the MCU.  When exactly to use the sync_ops is
+>>> directed by the states in struct rproc_sync_states.
+>>>
+>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> ---
+>>>  drivers/remoteproc/remoteproc_debugfs.c  | 31 ++++++++++++++++++++++++
+>>>  drivers/remoteproc/remoteproc_internal.h |  5 ++++
+>>>  include/linux/remoteproc.h               | 23 +++++++++++++++++-
+>>>  3 files changed, 58 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+>>> index dd93cf04e17f..187bcc67f997 100644
+>>> --- a/drivers/remoteproc/remoteproc_debugfs.c
+>>> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+>>> @@ -311,6 +311,35 @@ static const struct file_operations rproc_carveouts_ops = {
+>>>         .release        = single_release,
+>>>  };
+>>>
+>>> +/* Expose synchronisation states via debugfs */
+>>> +static int rproc_sync_states_show(struct seq_file *seq, void *p)
+>>> +{
+>>> +       struct rproc *rproc = seq->private;
+>>> +
+>>> +       seq_printf(seq, "Sync with MCU: %s\n",
+>>> +                  rproc->sync_with_mcu ? "true" : "false");
+>>> +       seq_printf(seq, "On init: %s\n",
+>>> +                  rproc->sync_states->on_init ? "true" : "false");
+>>> +       seq_printf(seq, "After stop: %s\n",
+>>> +                  rproc->sync_states->after_stop ? "true" : "false");
+>>> +       seq_printf(seq, "After crash: %s\n",
+>>> +                  rproc->sync_states->after_crash ? "true" : "false");
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
+>>> +static int rproc_sync_states_open(struct inode *inode, struct file *file)
+>>> +{
+>>> +       return single_open(file, rproc_sync_states_show, inode->i_private);
+>>> +}
+>>> +
+>>> +static const struct file_operations rproc_sync_states_ops = {
+>>> +       .open           = rproc_sync_states_open,
+>>> +       .read           = seq_read,
+>>> +       .llseek         = seq_lseek,
+>>> +       .release        = single_release,
+>>> +};
+>>> +
+>>>  void rproc_remove_trace_file(struct dentry *tfile)
+>>>  {
+>>>         debugfs_remove(tfile);
+>>> @@ -357,6 +386,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+>>>                             rproc, &rproc_rsc_table_ops);
+>>>         debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
+>>>                             rproc, &rproc_carveouts_ops);
+>>> +       debugfs_create_file("sync_states", 0400, rproc->dbg_dir,
+>>> +                           rproc, &rproc_sync_states_ops);
+>>>  }
+>>>
+>>>  void __init rproc_init_debugfs(void)
+>>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>>> index 493ef9262411..5c93de5e00bb 100644
+>>> --- a/drivers/remoteproc/remoteproc_internal.h
+>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>>> @@ -63,6 +63,11 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+>>>  struct rproc_mem_entry *
+>>>  rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+>>>
+>>> +static inline bool rproc_sync_with_mcu(struct rproc *rproc)
+>>> +{
+>>> +       return rproc->sync_with_mcu;
+>>> +}
+>>> +
+>>>  static inline
+>>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>>>  {
+>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>> index 16ad66683ad0..d115e47d702d 100644
+>>> --- a/include/linux/remoteproc.h
+>>> +++ b/include/linux/remoteproc.h
+>>> @@ -353,6 +353,21 @@ enum rsc_handling_status {
+>>>         RSC_IGNORED     = 1,
+>>>  };
+>>>
+>>> +/**
+>>> + * struct rproc_sync_states - platform specific states indicating which
+>>> + *                           rproc_ops to use at specific times during
+>>> + *                           the MCU lifecycle.
+>>> + * @on_init: true if synchronising with MCU at system initialisation time
+>>> + * @after_stop: true if synchronising with MCU after stopped from the
+>>> + *             command line
+>>> + * @after_crash: true if synchonising with MCU after the MCU has crashed
+>>> + */
+>>> +struct rproc_sync_states {
+>>> +       bool on_init;
+>>> +       bool after_stop;
+>>> +       bool after_crash;
+>>> +};
+>>> +
+>>>  /**
+>>>   * struct rproc_ops - platform-specific device handlers
+>>>   * @start:     power on the device and boot it
+>>> @@ -456,6 +471,9 @@ struct rproc_dump_segment {
+>>>   * @firmware: name of firmware file to be loaded
+>>>   * @priv: private data which belongs to the platform-specific rproc module
+>>>   * @ops: platform-specific start/stop rproc handlers
+>>> + * @sync_ops: paltform-specific start/stop rproc handlers when
+>>> + *           synchronising with a remote processor.
+>>> + * @sync_states: Determine the rproc_ops to choose in specific states.
+>>>   * @dev: virtual device for refcounting and common remoteproc behavior
+>>>   * @power: refcount of users who need this rproc powered up
+>>>   * @state: state of the device
+>>> @@ -479,6 +497,7 @@ struct rproc_dump_segment {
+>>>   * @table_sz: size of @cached_table
+>>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>>>   * @auto_boot: flag to indicate if remote processor should be auto-started
+>>> + * @sync_with_mcu: true if currently synchronising with MCU
+>>>   * @dump_segments: list of segments in the firmware
+>>>   * @nb_vdev: number of vdev currently handled by rproc
+>>>   */
+>>> @@ -488,7 +507,8 @@ struct rproc {
+>>>         const char *name;
+>>>         char *firmware;
+>>>         void *priv;
+>>> -       struct rproc_ops *ops;
+>>> +       struct rproc_ops *ops, *sync_ops;
+>>> +       struct rproc_sync_states *sync_states;
+>>>         struct device dev;
+>>>         atomic_t power;
+>>>         unsigned int state;
+>>> @@ -512,6 +532,7 @@ struct rproc {
+>>>         size_t table_sz;
+>>>         bool has_iommu;
+>>>         bool auto_boot;
+>>> +       bool sync_with_mcu;
+>>
+>> mcu isn't good suffix here, why DSP/VSP can't start before kernel?
+> 
+> The term MCU is used in a generic sense throughout the patchset - it
+> can reflect anything that can be a remote processor.  I can easily
+> change it to "rproc", but I'll wait to hear from other people though.
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
----
- drivers/remoteproc/remoteproc_core.c       | 2 +-
- drivers/remoteproc/remoteproc_elf_loader.c | 6 +++---
- drivers/remoteproc/remoteproc_internal.h   | 2 +-
- drivers/remoteproc/st_remoteproc.c         | 2 +-
- drivers/remoteproc/st_slim_rproc.c         | 2 +-
- drivers/remoteproc/stm32_rproc.c           | 2 +-
- 6 files changed, 8 insertions(+), 8 deletions(-)
+Yeah, let's not introduce another term for rproc and cause the code to fork.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4bfaf4a3c4a3..99f0b796fbc7 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2055,7 +2055,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 		rproc->ops->load = rproc_elf_load_segments;
- 		rproc->ops->parse_fw = rproc_elf_load_rsc_table;
- 		rproc->ops->find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table;
--		rproc->ops->sanity_check = rproc_elf_sanity_check;
-+		rproc->ops->sanity_check = rproc_elf32_sanity_check;
- 		rproc->ops->get_boot_addr = rproc_elf_get_boot_addr;
- 	}
- 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index c2a9783cfb9a..5a67745f2638 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -25,13 +25,13 @@
- #include "remoteproc_internal.h"
- 
- /**
-- * rproc_elf_sanity_check() - Sanity Check ELF firmware image
-+ * rproc_elf_sanity_check() - Sanity Check ELF32 firmware image
-  * @rproc: the remote processor handle
-  * @fw: the ELF firmware image
-  *
-  * Make sure this fw image is sane.
-  */
--int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
-+int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw)
- {
- 	const char *name = rproc->firmware;
- 	struct device *dev = &rproc->dev;
-@@ -89,7 +89,7 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
- 
- 	return 0;
- }
--EXPORT_SYMBOL(rproc_elf_sanity_check);
-+EXPORT_SYMBOL(rproc_elf32_sanity_check);
- 
- /**
-  * rproc_elf_get_boot_addr() - Get rproc's boot address.
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 0deae5f237b8..28639c588d58 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -54,7 +54,7 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len);
- phys_addr_t rproc_va_to_pa(void *cpu_addr);
- int rproc_trigger_recovery(struct rproc *rproc);
- 
--int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw);
-+int rproc_elf32_sanity_check(struct rproc *rproc, const struct firmware *fw);
- u64 rproc_elf_get_boot_addr(struct rproc *rproc, const struct firmware *fw);
- int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw);
- int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index a3268d95a50e..a6cbfa452764 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -233,7 +233,7 @@ static const struct rproc_ops st_rproc_ops = {
- 	.parse_fw		= st_rproc_parse_fw,
- 	.load			= rproc_elf_load_segments,
- 	.find_loaded_rsc_table	= rproc_elf_find_loaded_rsc_table,
--	.sanity_check		= rproc_elf_sanity_check,
-+	.sanity_check		= rproc_elf32_sanity_check,
- 	.get_boot_addr		= rproc_elf_get_boot_addr,
- };
- 
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index 09bcb4d8b9e0..3cca8b65a8db 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -203,7 +203,7 @@ static const struct rproc_ops slim_rproc_ops = {
- 	.da_to_va       = slim_rproc_da_to_va,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- 	.load		= rproc_elf_load_segments,
--	.sanity_check	= rproc_elf_sanity_check,
-+	.sanity_check	= rproc_elf32_sanity_check,
- };
- 
- /**
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index a18f88044111..9a8b5f5e2572 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -505,7 +505,7 @@ static struct rproc_ops st_rproc_ops = {
- 	.load		= rproc_elf_load_segments,
- 	.parse_fw	= stm32_rproc_parse_fw,
- 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
--	.sanity_check	= rproc_elf_sanity_check,
-+	.sanity_check	= rproc_elf32_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- };
- 
--- 
-2.15.0.276.g89ea799
+regards
+Suman
+
+> 
+> Thanks,
+> Mathieu
+> 
+>>
+>>>         struct list_head dump_segments;
+>>>         int nb_vdev;
+>>>  };
+>>> --
+>>> 2.20.1
+>>>
