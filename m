@@ -1,53 +1,114 @@
 Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 15/17] remoteproc: Correctly deal with MCU
+ synchronisation when changing FW image
+References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+ <20200324214603.14979-16-mathieu.poirier@linaro.org>
+ <91d38ff6a39f4e07838d1e85c392eb8f@SFHDAG7NODE2.st.com>
+ <20200330232139.GF31331@xps15>
 From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH v2 2/2] remoteproc: Fix and restore the parenting hierarchy for vdev
-Date: Thu, 19 Mar 2020 11:23:21 -0500
-Message-ID: <20200319162321.20632-3-s-anna@ti.com>
-In-Reply-To: <20200319162321.20632-1-s-anna@ti.com>
-References: <20200319162321.20632-1-s-anna@ti.com>
+Message-ID: <f08ca2c3-d2de-2b3c-4134-950ef0107029@ti.com>
+Date: Tue, 31 Mar 2020 17:14:18 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+In-Reply-To: <20200330232139.GF31331@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Loic PALLARDY <loic.pallardy@st.com>
+Cc: "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-The commit 086d08725d34 ("remoteproc: create vdev subdevice with specific
-dma memory pool") has introduced a new vdev subdevice for each vdev
-declared in the firmware resource table and made it as the parent for the
-created virtio rpmsg devices instead of the previous remoteproc device.
-This changed the overall parenting hierarchy for the rpmsg devices, which
-were children of virtio devices, and does not allow the corresponding
-rpmsg drivers to retrieve the parent rproc device through the
-rproc_get_by_child() API.
+Hi Mathieu,
 
-Fix this by restoring the remoteproc device as the parent. The new vdev
-subdevice can continue to inherit the DMA attributes from the remoteproc's
-parent device (actual platform device).
+On 3/30/20 6:21 PM, Mathieu Poirier wrote:
+> On Fri, Mar 27, 2020 at 01:50:18PM +0000, Loic PALLARDY wrote:
+>>
+>>> This patch prevents the firmware image from being displayed or changed
+>>> when
+>>> the remoteproc core is synchronising with an MCU. This is needed since
+>>> there is no guarantee about the nature of the firmware image that is loaded
+>>> by the external entity.
+>>>
+>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> ---
+>>>  drivers/remoteproc/remoteproc_sysfs.c | 25
+>>> ++++++++++++++++++++++++-
+>>>  1 file changed, 24 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
+>>> b/drivers/remoteproc/remoteproc_sysfs.c
+>>> index 7f8536b73295..4956577ad4b4 100644
+>>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>>> @@ -13,9 +13,20 @@
+>>>  static ssize_t firmware_show(struct device *dev, struct device_attribute
+>>> *attr,
+>>>  			  char *buf)
+>>>  {
+>>> +	ssize_t ret;
+>>>  	struct rproc *rproc = to_rproc(dev);
+>>>
+>>> -	return sprintf(buf, "%s\n", rproc->firmware);
+>>> +	/*
+>>> +	 * In most instances there is no guarantee about the firmware
+>>> +	 * that was loaded by the external entity.  As such simply don't
+>>> +	 * print anything.
+>>> +	 */
+>>> +	if (rproc_sync_with_mcu(rproc))
+>>> +		ret = sprintf(buf, "\n");
+>> Is it enough to provide empty name, or should we add a message to indicate that's name is unkown/undefined ?
+>>
+> 
+> Don't know... It is easy to find plenty of cases in sysfs where null values are
+> represented with a "\n", and just as many where "unknown", "undefined" or "-1"
+> are used. I know GKH prefers the least amount of information as possible, hence
+> going with a "\n".
+> 
+> Again, no strong opinion...
+> 
+>> Regards,
+>> Loic
+>>> +	else
+>>> +		ret = sprintf(buf, "%s\n", rproc->firmware);
+>>> +
+>>> +	return ret;
+>>>  }
+>>>
+>>>  /* Change firmware name via sysfs */
+>>> @@ -33,6 +44,18 @@ static ssize_t firmware_store(struct device *dev,
+>>>  		return -EINVAL;
+>>>  	}
+>>>
+>>> +	/*
+>>> +	 * There is no point in trying to change the firmware if the MCU
+>>> +	 * is currently running or if loading of the image is done by
+>>> +	 * another entity.
+>>> +	 */
+>>> +	if (rproc_sync_with_mcu(rproc)) {
+>>> +		dev_err(dev,
+>>> +			"can't change firmware while synchronising with
+>>> MCU\n");
+>>> +		err = -EBUSY;
+>>> +		goto out;
+>>> +	}
+>>> +
 
-Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
-v2: No code changes, picked up review tags
-v1: https://patchwork.kernel.org/patch/11422725/
+So, I have done a patch sometime back to deny sysfs operations [1] (the
+primary usecase is for a rproc-client driver driven boot where auto-boot
+is not set) which is still a need for me. Do you see that as orthogonal
+to that, or can we leverage that here somehow. I cannot use the sync_
+conditions for my cases since they are not already booted before.
 
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Also, any reason why you want to do this check before the rproc->state
+unlike the logic around the 'state' file in the next patch?
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a9ac1d01e09b..0962855f27fc 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -514,7 +514,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	/* Initialise vdev subdevice */
- 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
--	rvdev->dev.parent = rproc->dev.parent;
-+	rvdev->dev.parent = &rproc->dev;
- 	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
- 	rvdev->dev.release = rproc_rvdev_release;
- 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
--- 
-2.23.0
+[1] https://patchwork.kernel.org/patch/10601325/
+
+regards
+Suman
+
+>>>  	if (rproc->state != RPROC_OFFLINE) {
+>>>  		dev_err(dev, "can't change firmware while running\n");
+>>>  		err = -EBUSY;
+>>> --
+>>> 2.20.1
+>>
