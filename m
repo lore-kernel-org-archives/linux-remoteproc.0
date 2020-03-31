@@ -1,87 +1,33 @@
-Return-Path: <nikita.shubin@maquefel.me>
-From: Nikita Shubin <NShubin@topcon.com>
-Subject: [PATCH 2/2] remoteproc: imx_rproc: set pc on start
-Date: Wed,  4 Mar 2020 17:26:28 +0300
-Message-Id: <20200304142628.8471-2-NShubin@topcon.com>
-In-Reply-To: <20200304142628.8471-1-NShubin@topcon.com>
-References: <20200304142628.8471-1-NShubin@topcon.com>
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 31 Mar 2020 15:56:52 -0600
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: k3-dsp: Update bindings for
+ C71x DSPs
+Message-ID: <20200331215652.GA10923@bogus>
+References: <20200325204701.16862-1-s-anna@ti.com>
+ <20200325204701.16862-2-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325204701.16862-2-s-anna@ti.com>
+To: Suman Anna <s-anna@ti.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Clement Leger <cleger@kalray.eu>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In case elf file interrupt vector is not supposed to be at OCRAM_S,
-it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
-firmware.
+On Wed, 25 Mar 2020 15:46:58 -0500, Suman Anna wrote:
+> Some Texas Instruments K3 family of SoCs have one of more newer
+> generation TMS320C71x CorePac processor subsystem in addition to
+> the existing TMS320C66x CorePac processor subsystems. Update the
+> device tree bindings document for the C71x DSP devices.
+> 
+> The example is also updated to show the single C71 DSP present
+> on J721E SoCs.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  | 78 ++++++++++++++++---
+>  1 file changed, 69 insertions(+), 9 deletions(-)
+> 
 
-Otherwise firmware located anywhere besides OCRAM_S won't boot.
-
-The firmware must set stack poiner as first instruction:
-
-Reset_Handler:
-    ldr   sp, = __stack      /* set stack pointer */
-
-Signed-off-by: Nikita Shubin <NShubin@topcon.com>
----
- drivers/remoteproc/imx_rproc.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 796b6b86550a..d02007f05ebd 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -45,6 +45,8 @@
- 
- #define IMX7D_RPROC_MEM_MAX		8
- 
-+#define IMX_BOOT_PC			0x4
-+
- /**
-  * struct imx_rproc_mem - slim internal memory structure
-  * @cpu_addr: MPU virtual address of the memory region
-@@ -85,6 +87,7 @@ struct imx_rproc {
- 	const struct imx_rproc_dcfg	*dcfg;
- 	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
- 	struct clk			*clk;
-+	void __iomem			*bootreg;
- };
- 
- static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-@@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc *rproc)
- 	struct device *dev = priv->dev;
- 	int ret;
- 
-+	/* write entry point to program counter */
-+	writel(rproc->bootaddr, priv->bootreg);
-+
- 	ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
- 				 dcfg->src_mask, dcfg->src_start);
- 	if (ret)
- 		dev_err(dev, "Failed to enable M4!\n");
- 
-+	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-+
- 	return ret;
- }
- 
-@@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
- 	if (ret)
- 		dev_err(dev, "Failed to stop M4!\n");
- 
-+	/* clear entry points */
-+	writel(0, priv->bootreg);
-+
- 	return ret;
- }
- 
-@@ -366,6 +377,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 		goto err_put_rproc;
- 	}
- 
-+	priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC, sizeof(u32));
-+
- 	/*
- 	 * clk for M4 block including memory. Should be
- 	 * enabled before .start for FW transfer.
--- 
-2.24.1
+Reviewed-by: Rob Herring <robh@kernel.org>
