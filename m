@@ -1,72 +1,97 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv8 15/15] remoteproc/omap: Switch to SPDX license identifiers
-Date: Fri, 13 Mar 2020 10:17:18 +0200
-Message-ID: <20200313081718.30612-16-t-kristo@ti.com>
-In-Reply-To: <20200313081718.30612-1-t-kristo@ti.com>
-References: <20200313081718.30612-1-t-kristo@ti.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 13/17] remoteproc: Introducting new functions to start
+ and stop an MCU
+From: Suman Anna <s-anna@ti.com>
+References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+ <20200324214603.14979-14-mathieu.poirier@linaro.org>
+ <160253ad-1be1-f8ea-573d-5a73af25b0c7@ti.com>
+Message-ID: <1a3ca6eb-df01-6c54-e3ef-dad2f49d1b05@ti.com>
+Date: Tue, 31 Mar 2020 16:46:32 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
+In-Reply-To: <160253ad-1be1-f8ea-573d-5a73af25b0c7@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, bjorn.andersson@linaro.org
+Cc: ohad@wizery.com, loic.pallardy@st.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+On 3/31/20 1:08 PM, Suman Anna wrote:
+> Hi Mathieu,
+> 
+> On 3/24/20 4:45 PM, Mathieu Poirier wrote:
+>> Add new functions to replace direct calling of rproc->ops->start() and
+>> rproc->ops->stop().  That way different behaviour can be played out
+>> when booting an MCU or synchronising with it.
+>>
+>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c     |  6 +++---
+>>  drivers/remoteproc/remoteproc_internal.h | 12 ++++++++++++
+>>  2 files changed, 15 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 488723fcb142..d3c4d7e6ca25 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1330,7 +1330,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>  	}
+>>  
+>>  	/* power up the remote processor */
+>> -	ret = rproc->ops->start(rproc);
+>> +	ret = rproc_start_hw(rproc);
+>>  	if (ret) {
+>>  		dev_err(dev, "can't start rproc %s: %d\n", rproc->name, ret);
+>>  		goto unprepare_subdevices;
+>> @@ -1351,7 +1351,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>  	return 0;
+>>  
+>>  stop_rproc:
+>> -	rproc->ops->stop(rproc);
+>> +	rproc_stop_hw(rproc);
+>>  unprepare_subdevices:
+>>  	rproc_unprepare_subdevices(rproc);
+>>  reset_table_ptr:
+>> @@ -1485,7 +1485,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+>>  	rproc->table_ptr = rproc->cached_table;
+>>  
+>>  	/* power off the remote processor */
+>> -	ret = rproc->ops->stop(rproc);
+>> +	ret = rproc_stop_hw(rproc);
+>>  	if (ret) {
+>>  		dev_err(dev, "can't stop rproc: %d\n", ret);
+>>  		return ret;
+>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>> index 5f711ceb97ba..7ca23d46dfd4 100644
+>> --- a/drivers/remoteproc/remoteproc_internal.h
+>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>> @@ -160,4 +160,16 @@ struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>>  	return NULL;
+>>  }
+>>  
+>> +static inline int rproc_start_hw(struct rproc *rproc)
+>> +{
+>> +	RPROC_OPS_HELPER(start, rproc);
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +static inline int rproc_stop_hw(struct rproc *rproc)
+>> +{
+>> +	RPROC_OPS_HELPER(stop, rproc);
+>> +	return -EINVAL;
+>> +}
+> 
+> Since we already have the concept of subdevices, how about we call these
+> rproc_{start/stop}_device?
 
-Use the appropriate SPDX license identifiers in various OMAP remoteproc
-source files and drop the previous boilerplate license text.
+Actually, does this patch needs to be moved up in the order atleast
+prior to patch 11, may be after patch 9?
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/omap_remoteproc.h | 27 +--------------------------
- 1 file changed, 1 insertion(+), 26 deletions(-)
+regards
+Suman
 
-diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-index 13f17d9135c0..828e13256c02 100644
---- a/drivers/remoteproc/omap_remoteproc.h
-+++ b/drivers/remoteproc/omap_remoteproc.h
-@@ -1,35 +1,10 @@
-+/* SPDX-License-Identifier: BSD-3-Clause */
- /*
-  * Remote processor messaging
-  *
-  * Copyright (C) 2011-2020 Texas Instruments, Inc.
-  * Copyright (C) 2011 Google, Inc.
-  * All rights reserved.
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- *
-- * * Redistributions of source code must retain the above copyright
-- *   notice, this list of conditions and the following disclaimer.
-- * * Redistributions in binary form must reproduce the above copyright
-- *   notice, this list of conditions and the following disclaimer in
-- *   the documentation and/or other materials provided with the
-- *   distribution.
-- * * Neither the name Texas Instruments nor the names of its
-- *   contributors may be used to endorse or promote products derived
-- *   from this software without specific prior written permission.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
- #ifndef _OMAP_RPMSG_H
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+>> +
+>>  #endif /* REMOTEPROC_INTERNAL_H */
+>>
+> 
