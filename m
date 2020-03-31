@@ -1,86 +1,126 @@
-Return-Path: <t-kristo@ti.com>
-From: Tero Kristo <t-kristo@ti.com>
-Subject: [PATCHv9 03/15] remoteproc/omap: Add a sanity check for DSP boot address alignment
-Date: Tue, 24 Mar 2020 13:00:23 +0200
-Message-ID: <20200324110035.29907-4-t-kristo@ti.com>
-In-Reply-To: <20200324110035.29907-1-t-kristo@ti.com>
-References: <20200324110035.29907-1-t-kristo@ti.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 09/17] remoteproc: Call the right core function based
+ on synchronisation state
+References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+ <20200324214603.14979-10-mathieu.poirier@linaro.org>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <006ab94d-daf3-0e28-7098-982d473c00d5@ti.com>
+Date: Tue, 31 Mar 2020 10:10:50 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-To: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org, s-anna@ti.com, afd@ti.com, Tero Kristo <t-kristo@ti.com>
+In-Reply-To: <20200324214603.14979-10-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, bjorn.andersson@linaro.org
+Cc: ohad@wizery.com, loic.pallardy@st.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Suman Anna <s-anna@ti.com>
+Hi Mathieu,
 
-The DSP remote processors on OMAP SoCs require a boot register to
-be programmed with a boot address, and this boot address needs to
-be on a 1KB boundary. The current code is simply masking the boot
-address appropriately without performing any sanity checks before
-releasing the resets. An unaligned boot address results in an
-undefined execution behavior and can result in various bus errors
-like MMU Faults or L3 NoC errors. Such errors are hard to debug and
-can be easily avoided by adding a sanity check for the alignment
-before booting a DSP remote processor.
+On 3/24/20 4:45 PM, Mathieu Poirier wrote:
+> Call the right core function based on whether we should synchronise
+> with an MCU or boot it from scratch.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Andrew F. Davis <afd@ti.com>
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
-v9:
-  * compiler warning fix on top of rproc-next
+This patch does generate some checkpatch warnings.
 
- drivers/remoteproc/omap_remoteproc.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_internal.h | 36 +++++++++++-------------
+>  1 file changed, 17 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 73ea32df0156..5f711ceb97ba 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -106,38 +106,41 @@ static inline void rproc_set_mcu_sync_state(struct rproc *rproc,
+>  	}
+>  }
+>  
+> +#define RPROC_OPS_HELPER(__operation, ...)				\
+> +	do {								\
+> +		if (rproc_sync_with_mcu(rproc)) {			\
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index d47d5ded651a..fe11cb709770 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -121,14 +121,23 @@ static void omap_rproc_kick(struct rproc *rproc, int vqid)
-  * @rproc: handle of a remote processor
-  *
-  * Set boot address for a supported DSP remote processor.
-+ *
-+ * Return: 0 on success, or -EINVAL if boot address is not aligned properly
-  */
--static void omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
-+static int omap_rproc_write_dsp_boot_addr(struct rproc *rproc)
- {
-+	struct device *dev = rproc->dev.parent;
- 	struct omap_rproc *oproc = rproc->priv;
- 	struct omap_rproc_boot_data *bdata = oproc->boot_data;
- 	u32 offset = bdata->boot_reg;
- 
--	regmap_write(bdata->syscon, offset, rproc->bootaddr);
-+	if (rproc->bootaddr & (SZ_1K - 1)) {
-+		dev_err(dev, "invalid boot address 0x%llx, must be aligned on a 1KB boundary\n",
-+			rproc->bootaddr);
-+		return -EINVAL;
-+	}
-+
-+	return regmap_write(bdata->syscon, offset, rproc->bootaddr);
- }
- 
- /*
-@@ -145,8 +154,11 @@ static int omap_rproc_start(struct rproc *rproc)
- 	int ret;
- 	struct mbox_client *client = &oproc->client;
- 
--	if (oproc->boot_data)
--		omap_rproc_write_dsp_boot_addr(rproc);
-+	if (oproc->boot_data) {
-+		ret = omap_rproc_write_dsp_boot_addr(rproc);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	client->dev = dev;
- 	client->tx_done = NULL;
--- 
-2.17.1
+So this does make the logic a bit convoluted, since you have three
+different flags for rproc_sync_with_mcu, and you apply them in common
+for all the ops. This is what I meant in my comment on Patch 1.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> +			if (!rproc->sync_ops ||				\
+> +			    !rproc->sync_ops->__operation)		\
+> +				return 0;				\
+> +			return rproc->sync_ops->__operation(__VA_ARGS__); \
+
+Use the same semantics as the regular ops instead of two return
+statements, the code should fallback to the common return 0 after the
+RPROC_OPS_HELPER when neither of them are present.
+
+regards
+Suman
+
+> +		} else if (rproc->ops && rproc->ops->__operation)	\
+> +			return rproc->ops->__operation(__VA_ARGS__);	\
+> +	} while (0)							\
+> +
+>  static inline
+>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->sanity_check)
+> -		return rproc->ops->sanity_check(rproc, fw);
+> -
+> +	RPROC_OPS_HELPER(sanity_check, rproc, fw);
+>  	return 0;
+>  }
+>  
+>  static inline
+>  u32 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->get_boot_addr)
+> -		return rproc->ops->get_boot_addr(rproc, fw);
+> -
+> +	RPROC_OPS_HELPER(get_boot_addr, rproc, fw);
+>  	return 0;
+>  }
+>  
+>  static inline
+>  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->load)
+> -		return rproc->ops->load(rproc, fw);
+> -
+> +	RPROC_OPS_HELPER(load, rproc, fw);
+>  	return -EINVAL;
+>  }
+>  
+>  static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->parse_fw)
+> -		return rproc->ops->parse_fw(rproc, fw);
+> -
+> +	RPROC_OPS_HELPER(parse_fw, rproc, fw);
+>  	return 0;
+>  }
+>  
+> @@ -145,10 +148,7 @@ static inline
+>  int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
+>  		     int avail)
+>  {
+> -	if (rproc->ops->handle_rsc)
+> -		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
+> -					      avail);
+> -
+> +	RPROC_OPS_HELPER(handle_rsc, rproc, rsc_type, rsc, offset, avail);
+>  	return RSC_IGNORED;
+>  }
+>  
+> @@ -156,9 +156,7 @@ static inline
+>  struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>  						   const struct firmware *fw)
+>  {
+> -	if (rproc->ops->find_loaded_rsc_table)
+> -		return rproc->ops->find_loaded_rsc_table(rproc, fw);
+> -
+> +	RPROC_OPS_HELPER(find_loaded_rsc_table, rproc, fw);
+>  	return NULL;
+>  }
+>  
+> 
