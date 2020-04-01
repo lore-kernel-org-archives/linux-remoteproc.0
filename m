@@ -1,10 +1,10 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Thu, 2 Apr 2020 14:42:31 -0600
+Date: Wed, 1 Apr 2020 15:29:10 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2 16/17] remoteproc: Correctly deal with MCU
  synchronisation when changing state
-Message-ID: <20200402204231.GC9160@xps15>
+Message-ID: <20200401212910.GE17383@xps15>
 References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
  <20200324214603.14979-17-mathieu.poirier@linaro.org>
  <c9fb2f50e93b4f8dad43392bf61f736a@SFHDAG7NODE2.st.com>
@@ -17,8 +17,6 @@ In-Reply-To: <5223cca7-5409-a113-8a7f-9f6923231353@ti.com>
 To: Suman Anna <s-anna@ti.com>
 Cc: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
-
-Hi Suman,
 
 On Tue, Mar 31, 2020 at 05:35:58PM -0500, Suman Anna wrote:
 > Hi Mathieu,
@@ -112,6 +110,10 @@ On Tue, Mar 31, 2020 at 05:35:58PM -0500, Suman Anna wrote:
 > 
 > There's actually one more scenario even without "stop". If auto_boot is
 > set to false, then rproc_actuate will never get called.
+
+I fail to fully understand the situation you are describing - can you give me
+more information?
+
 > 
 > >> In the following configuration which can be configuration for coprocessor with romed/flashed
 > >> firmware (no reload needed):
@@ -150,13 +152,6 @@ On Tue, Mar 31, 2020 at 05:35:58PM -0500, Suman Anna wrote:
 > I guess this is what the original skip_fw_load was doing. And with the
 > current series, the userspace loading support usecase I have cannot be
 > achieved. If this is added back, I can try if that works for my usecases.
-
-I didn't notice this comment upon first read... Can you give me more details on
-what your usecase is order to see how best to deal with it?
-
-Thanks,
-Mathieu
-
 > 
 > >> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
 > >> +		if (ret < 0) {
@@ -193,6 +188,13 @@ Mathieu
 > > rproc_can_shutdown() in rproc_shutdown().
 > 
 > I am assuming only the new conditions, right?
+
+Once again I fail to grasp the extent of your comment.  Can you be more specific
+about the "new conditions"?
+
+Thanks
+Mathieu
+
 > 
 > regards
 > Suman
