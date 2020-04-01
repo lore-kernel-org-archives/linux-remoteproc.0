@@ -1,328 +1,240 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 18/18] remoteproc: stm32: add support for co-processor booted before kernel
-Date: Thu, 12 Mar 2020 16:11:58 -0600
-Message-Id: <20200312221158.3613-19-mathieu.poirier@linaro.org>
-In-Reply-To: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-References: <20200312221158.3613-1-mathieu.poirier@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, ohad@wizery.com, loic.pallardy@st.com, s-anna@ti.com, peng.fan@nxp.com, arnaud.pouliquen@st.com, fabien.dessenne@st.com
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail27.static.mailgun.info ([104.130.122.27]:40643 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729514AbgDAAEM (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Tue, 31 Mar 2020 20:04:12 -0400
+From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v2 1/2] remoteproc: Add character device interface
+Date: Tue, 31 Mar 2020 17:03:57 -0700
+Message-Id: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org
+Cc: psodagud@codeaurora.org, tsoni@codeaurora.org, sidgup@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-From: Fabien Dessenne <fabien.dessenne@st.com>
+Add the character device interface for userspace applications.
+This interface can be used in order to boot up and shutdown
+remote subsystems. Currently there is only a sysfs interface
+which the userspace clients can use. If a usersapce application
+crashes after booting the remote processor does not get any
+indication about the crash. It might still assume that the
+application is running. For example modem uses remotefs service
+to fetch data from disk/flash memory. If the remotefs service
+crashes, modem keeps on requesting data which might lead to a
+crash. Adding a character device interface makes the remote
+processor tightly coupled with the user space application.
+A crash of the application leads to a close on the file descriptors
+therefore shutting down the remoteproc.
 
-Refactoring of the work from Fabien Dessenne and Arnaud Pouliquen
-originally published here [1].  Provided as an example only.
-
-Compiled tested but will likely crash horribly.
-
-[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=239877
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 ---
- drivers/remoteproc/stm32_rproc.c | 207 ++++++++++++++++++++++++++++++-
- 1 file changed, 201 insertions(+), 6 deletions(-)
+ drivers/remoteproc/Kconfig               |   9 +++
+ drivers/remoteproc/Makefile              |   1 +
+ drivers/remoteproc/remoteproc_cdev.c     | 100 +++++++++++++++++++++++++++++++
+ drivers/remoteproc/remoteproc_internal.h |  22 +++++++
+ include/linux/remoteproc.h               |   2 +
+ 5 files changed, 134 insertions(+)
+ create mode 100644 drivers/remoteproc/remoteproc_cdev.c
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index a18f88044111..c3d5bb214ea7 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -38,6 +38,15 @@
- #define STM32_MBX_VQ1_ID	1
- #define STM32_MBX_SHUTDOWN	"shutdown"
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index de3862c..6374b79 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -14,6 +14,15 @@ config REMOTEPROC
  
-+#define RSC_TBL_SIZE		(1024)
+ if REMOTEPROC
+ 
++config REMOTEPROC_CDEV
++	bool "Remoteproc character device interface"
++	help
++	  Say y here to have a character device interface for Remoteproc
++	  framework. Userspace can boot/shutdown remote processors through
++	  this interface.
 +
-+#define COPRO_STATE_OFF		0
-+#define COPRO_STATE_INIT	1
-+#define COPRO_STATE_CRUN	2
-+#define COPRO_STATE_CSTOP	3
-+#define COPRO_STATE_STANDBY	4
-+#define COPRO_STATE_CRASH	5
++	  It's safe to say N if you don't want to use this interface.
 +
- struct stm32_syscon {
- 	struct regmap *map;
- 	u32 reg;
-@@ -70,12 +79,14 @@ struct stm32_rproc {
- 	struct reset_control *rst;
- 	struct stm32_syscon hold_boot;
- 	struct stm32_syscon pdds;
-+	struct stm32_syscon copro_state;
- 	int wdg_irq;
- 	u32 nb_rmems;
- 	struct stm32_rproc_mem *rmems;
- 	struct stm32_mbox mb[MBOX_NB_MBX];
- 	struct workqueue_struct *workqueue;
- 	bool secured_soc;
-+	void __iomem *rsc_va;
+ config IMX_REMOTEPROC
+ 	tristate "IMX6/7 remoteproc support"
+ 	depends on ARCH_MXC
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index e30a1b1..b7d4f77 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -9,6 +9,7 @@ remoteproc-y				+= remoteproc_debugfs.o
+ remoteproc-y				+= remoteproc_sysfs.o
+ remoteproc-y				+= remoteproc_virtio.o
+ remoteproc-y				+= remoteproc_elf_loader.o
++obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+ obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+ obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+ obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+new file mode 100644
+index 0000000..8182bd1
+--- /dev/null
++++ b/drivers/remoteproc/remoteproc_cdev.c
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Character device interface driver for Remoteproc framework.
++ *
++ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/cdev.h>
++#include <linux/fs.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/remoteproc.h>
++
++#include "remoteproc_internal.h"
++
++#define NUM_RPROC_DEVICES	64
++static dev_t rproc_cdev;
++static DEFINE_IDA(cdev_minor_ida);
++
++static int rproc_cdev_open(struct inode *inode, struct file *file)
++{
++	struct rproc *rproc;
++
++	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
++
++	if (!rproc)
++		return -EINVAL;
++
++	if (rproc->state == RPROC_RUNNING)
++		return -EBUSY;
++
++	return rproc_boot(rproc);
++}
++
++static int rproc_cdev_release(struct inode *inode, struct file *file)
++{
++	struct rproc *rproc;
++
++	rproc = container_of(inode->i_cdev, struct rproc, char_dev);
++
++	if (!rproc || rproc->state != RPROC_RUNNING)
++		return -EINVAL;
++
++	rproc_shutdown(rproc);
++
++	return 0;
++}
++
++static const struct file_operations rproc_fops = {
++	.open = rproc_cdev_open,
++	.release = rproc_cdev_release,
++};
++
++int rproc_char_device_add(struct rproc *rproc)
++{
++	int ret, minor;
++	dev_t cdevt;
++
++	minor = ida_simple_get(&cdev_minor_ida, 0, NUM_RPROC_DEVICES,
++			       GFP_KERNEL);
++	if (minor < 0) {
++		dev_err(&rproc->dev, "%s: No more minor numbers left! rc:%d\n",
++			__func__, minor);
++		return -ENODEV;
++	}
++
++	cdev_init(&rproc->char_dev, &rproc_fops);
++	rproc->char_dev.owner = THIS_MODULE;
++
++	cdevt = MKDEV(MAJOR(rproc_cdev), minor);
++	ret = cdev_add(&rproc->char_dev, cdevt, 1);
++	if (ret < 0)
++		ida_simple_remove(&cdev_minor_ida, minor);
++
++	rproc->dev.devt = cdevt;
++	return ret;
++}
++
++void rproc_char_device_remove(struct rproc *rproc)
++{
++	__unregister_chrdev(MAJOR(rproc->dev.devt), MINOR(rproc->dev.devt), 1,
++			    "rproc");
++	ida_simple_remove(&cdev_minor_ida, MINOR(rproc->dev.devt));
++}
++
++void __init rproc_init_cdev(void)
++{
++	int ret;
++
++	ret = alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICES, "rproc");
++	if (ret < 0) {
++		pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
++		return;
++	}
++}
++
++void __exit rproc_exit_cdev(void)
++{
++	__unregister_chrdev(MAJOR(rproc_cdev), 0, NUM_RPROC_DEVICES, "rproc");
++}
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index 493ef92..28d61a1 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+ int rproc_init_sysfs(void);
+ void rproc_exit_sysfs(void);
+ 
++#ifdef CONFIG_REMOTEPROC_CDEV
++void rproc_init_cdev(void);
++void rproc_exit_cdev(void);
++int rproc_char_device_add(struct rproc *rproc);
++void rproc_char_device_remove(struct rproc *rproc);
++#else
++static inline void rproc_init_cdev(void)
++{
++}
++static inline void rproc_exit_cdev(void)
++{
++}
++static inline int rproc_char_device_add(struct rproc *rproc)
++{
++	return 0;
++}
++static inline void  rproc_char_device_remove(struct rproc *rproc)
++{
++}
++#endif
++
+ void rproc_free_vring(struct rproc_vring *rvring);
+ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+ 
+@@ -63,6 +84,7 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+ struct rproc_mem_entry *
+ rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+ 
++
+ static inline
+ int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ {
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 16ad666..c4ca796 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -37,6 +37,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/mutex.h>
++#include <linux/cdev.h>
+ #include <linux/virtio.h>
+ #include <linux/completion.h>
+ #include <linux/idr.h>
+@@ -514,6 +515,7 @@ struct rproc {
+ 	bool auto_boot;
+ 	struct list_head dump_segments;
+ 	int nb_vdev;
++	struct cdev char_dev;
  };
  
- static int stm32_rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da)
-@@ -98,6 +109,28 @@ static int stm32_rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da)
- 	return -EINVAL;
- }
- 
-+static int stm32_rproc_da_to_pa(struct rproc *rproc, u64 da, phys_addr_t *pa)
-+{
-+	unsigned int i;
-+	struct stm32_rproc *ddata = rproc->priv;
-+	struct stm32_rproc_mem *p_mem;
-+
-+	for (i = 0; i < ddata->nb_rmems; i++) {
-+		p_mem = &ddata->rmems[i];
-+
-+		if (da < p_mem->dev_addr ||
-+		    da >= p_mem->dev_addr + p_mem->size)
-+			continue;
-+		*pa = da - p_mem->dev_addr + p_mem->bus_addr;
-+		dev_dbg(rproc->dev.parent, "da %llx to pa %#x\n", da, *pa);
-+		return 0;
-+	}
-+
-+	dev_err(rproc->dev.parent, "can't translate da %llx\n", da);
-+
-+	return -EINVAL;
-+}
-+
- static int stm32_rproc_mem_alloc(struct rproc *rproc,
- 				 struct rproc_mem_entry *mem)
- {
-@@ -203,7 +236,17 @@ static int stm32_rproc_elf_load_rsc_table(struct rproc *rproc,
- 	return 0;
- }
- 
--static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-+static struct resource_table *
-+stm32_rproc_elf_find_loaded_rsc_table_sync_mcu(struct rproc *rproc,
-+					       const struct firmware *fw)
-+{
-+       struct stm32_rproc *ddata = rproc->priv;
-+
-+       return (struct resource_table *)ddata->rsc_va;
-+}
-+
-+static int __stm32_rproc_parse_fw(struct rproc *rproc,
-+				  const struct firmware *fw)
- {
- 	struct device *dev = rproc->dev.parent;
- 	struct device_node *np = dev->of_node;
-@@ -256,9 +299,48 @@ static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 		index++;
- 	}
- 
-+	return 0;
-+}
-+
-+static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-+{
-+	int ret;
-+
-+	ret = __stm32_rproc_parse_fw(rproc, fw);
-+
- 	return stm32_rproc_elf_load_rsc_table(rproc, fw);
- }
- 
-+static int stm32_rproc_parse_fw_sync_mcu(struct rproc *rproc,
-+					 const struct firmware *fw)
-+{
-+	struct resource_table *table = NULL;
-+	struct stm32_rproc *ddata = rproc->priv;
-+	int ret;
-+
-+	ret = __stm32_rproc_parse_fw(rproc, fw);
-+
-+	if (ddata->rsc_va) {
-+		table = (struct resource_table *)ddata->rsc_va;
-+		/* Assuming that the resource table fits in 1kB is fair */
-+		rproc->cached_table = kmemdup(table, RSC_TBL_SIZE, GFP_KERNEL);
-+		if (!rproc->cached_table)
-+			return -ENOMEM;
-+
-+		rproc->table_ptr = rproc->cached_table;
-+		rproc->table_sz = RSC_TBL_SIZE;
-+		return 0;
-+	}
-+
-+	rproc->cached_table = NULL;
-+	rproc->table_ptr = NULL;
-+	rproc->table_sz = 0;
-+
-+	dev_warn(&rproc->dev, "no resource table found for this firmware\n");
-+	return 0;
-+}
-+
-+
- static irqreturn_t stm32_rproc_wdg(int irq, void *data)
- {
- 	struct rproc *rproc = data;
-@@ -429,6 +511,19 @@ static int stm32_rproc_start(struct rproc *rproc)
- 		}
- 	}
- 
-+	return stm32_rproc_set_hold_boot(rproc, true);
-+}
-+
-+static int stm32_rproc_start_sync_mcu(struct rproc *rproc)
-+{
-+	int err;
-+
-+	stm32_rproc_add_coredump_trace(rproc);
-+
-+	/*
-+	 * If M4 previously started by bootloader, just guarantee holdboot
-+	 * is set to catch any crash.
-+	 */
- 	err = stm32_rproc_set_hold_boot(rproc, false);
- 	if (err)
- 		return err;
-@@ -476,6 +571,28 @@ static int stm32_rproc_stop(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int stm32_rproc_stop_sync_mcu(struct rproc *rproc)
-+{
-+	struct stm32_rproc *ddata = rproc->priv;
-+	int err;
-+
-+	err = stm32_rproc_stop(rproc);
-+	if (err)
-+		return err;
-+
-+	/* update copro state to OFF */
-+	err = regmap_update_bits(ddata->copro_state.map,
-+				 ddata->copro_state.reg,
-+				 ddata->copro_state.mask,
-+				 COPRO_STATE_OFF);
-+	if (err) {
-+		dev_err(&rproc->dev, "failed to set copro state\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
- static void stm32_rproc_kick(struct rproc *rproc, int vqid)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
-@@ -498,6 +615,14 @@ static void stm32_rproc_kick(struct rproc *rproc, int vqid)
- 	}
- }
- 
-+static struct rproc_ops st_rproc_ops_sync_mcu = {
-+	.start		= stm32_rproc_start_sync_mcu,
-+	.stop		= stm32_rproc_stop_sync_mcu,
-+	.kick		= stm32_rproc_kick,
-+	.parse_fw	= stm32_rproc_parse_fw_sync_mcu,
-+	.find_loaded_rsc_table = stm32_rproc_elf_find_loaded_rsc_table_sync_mcu,
-+};
-+
- static struct rproc_ops st_rproc_ops = {
- 	.start		= stm32_rproc_start,
- 	.stop		= stm32_rproc_stop,
-@@ -543,8 +668,10 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct rproc *rproc = platform_get_drvdata(pdev);
- 	struct stm32_rproc *ddata = rproc->priv;
--	struct stm32_syscon tz;
--	unsigned int tzen;
-+	struct stm32_syscon tz, rsctbl;
-+	phys_addr_t rsc_pa;
-+	u32 rsc_da;
-+	unsigned int tzen, state;
- 	int err, irq;
- 
- 	irq = platform_get_irq(pdev, 0);
-@@ -602,11 +729,72 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
- 
- 	err = stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
- 	if (err)
--		dev_warn(dev, "failed to get pdds\n");
-+		dev_warn(dev, "pdds not supported\n");
- 
- 	rproc->auto_boot = of_property_read_bool(np, "st,auto-boot");
- 
--	return stm32_rproc_of_memory_translations(rproc);
-+	err = stm32_rproc_of_memory_translations(rproc);
-+	if (err)
-+		return err;
-+
-+	/* check if the coprocessor has been started from the bootloader */
-+	err = stm32_rproc_get_syscon(np, "st,syscfg-copro-state",
-+				     &ddata->copro_state);
-+	if (err) {
-+		/* no copro_state syscon (optional) */
-+		dev_warn(dev, "copro_state not supported\n");
-+		goto bail;
-+	}
-+
-+	err = regmap_read(ddata->copro_state.map, ddata->copro_state.reg,
-+			  &state);
-+	if (err) {
-+		dev_err(&rproc->dev, "failed to read copro state\n");
-+		return err;
-+	}
-+
-+	if (state == COPRO_STATE_CRUN) {
-+		if (stm32_rproc_get_syscon(np, "st,syscfg-rsc-tbl", &rsctbl)) {
-+			/* no rsc table syscon (optional) */
-+			dev_warn(dev, "rsc tbl syscon not supported\n");
-+			goto bail;
-+		}
-+
-+		err = regmap_read(rsctbl.map, rsctbl.reg, &rsc_da);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to read rsc tbl addr\n");
-+			return err;
-+		}
-+		if (!rsc_da)
-+			/* no rsc table */
-+			goto bail;
-+
-+		err = stm32_rproc_da_to_pa(rproc, rsc_da, &rsc_pa);
-+		if (err)
-+			return err;
-+
-+		ddata->rsc_va = devm_ioremap_wc(dev, rsc_pa, RSC_TBL_SIZE);
-+		if (IS_ERR_OR_NULL(ddata->rsc_va)) {
-+			dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-+				&rsc_pa, RSC_TBL_SIZE);
-+			ddata->rsc_va = NULL;
-+			return -ENOMEM;
-+		}
-+	}
-+bail:
-+	return 0;
-+}
-+
-+static struct rproc_sync_states stm32_sync_states = {
-+	.on_init = true, /* sync with MCU when the kernel boots */
-+	.after_stop = false, /* don't sync with MCU if stopped from sysfs */
-+	.after_crash = false,/* don't sync with MCU after a crash */
-+};
-+
-+static bool stm32_sync_with_mcu(struct platform_device *pdev)
-+{
-+	/* Find something platform specific here */
-+	return true;
- }
- 
- static int stm32_rproc_probe(struct platform_device *pdev)
-@@ -621,7 +809,14 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	rproc = rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-+	if (stm32_sync_with_mcu(pdev))
-+		rproc = rproc_alloc(dev, np->name, &st_rproc_ops,
-+				    NULL, sizeof(*ddata));
-+	else
-+		rproc = rproc_alloc_state_machine(dev, np->name, &st_rproc_ops,
-+						  &st_rproc_ops_sync_mcu,
-+						  &stm32_sync_states, NULL,
-+						  sizeof(*ddata));
- 	if (!rproc)
- 		return -ENOMEM;
- 
+ /**
 -- 
-2.20.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
