@@ -1,65 +1,23 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sibis=codeaurora.org@mg.codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 4/7] remoteproc: qcom_q6v5_mss: Extract mba/mpss from memory-region
-Date: Tue, 21 Apr 2020 20:02:25 +0530
-Message-Id: <20200421143228.8981-5-sibis@codeaurora.org>
-In-Reply-To: <20200421143228.8981-1-sibis@codeaurora.org>
-References: <20200421143228.8981-1-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, robh+dt@kernel.org
-Cc: agross@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, mka@chromium.org, dianders@chromium.org, devicetree@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
+Return-Path: <pr-tracker-bot@kernel.org>
+Subject: Re: [GIT PULL] hwspinlock updates for v5.7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20200402010837.GB751391@yoga>
+References: <20200402010837.GB751391@yoga>
+Message-Id: <158587441546.31624.17775444987242154271.pr-tracker-bot@kernel.org>
+Date: Fri, 03 Apr 2020 00:40:15 +0000
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In the absence of mba and mpss sub-child extract the mba/mpss regions
-from the memory-region property.
+The pull request you sent on Wed, 1 Apr 2020 18:08:37 -0700:
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git tags/hwlock-v5.7
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 3a7352776a319..5c8d04c51af71 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1503,8 +1503,17 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- 	struct resource r;
- 	int ret;
- 
-+	/*
-+	 * In the absence of mba/mpss sub-child, extract the mba and mpss
-+	 * reserved memory regions from device's memory-region property.
-+	 */
- 	child = of_get_child_by_name(qproc->dev->of_node, "mba");
--	node = of_parse_phandle(child, "memory-region", 0);
-+	if (!child)
-+		node = of_parse_phandle(qproc->dev->of_node,
-+					"memory-region", 0);
-+	else
-+		node = of_parse_phandle(child, "memory-region", 0);
-+
- 	ret = of_address_to_resource(node, 0, &r);
- 	if (ret) {
- 		dev_err(qproc->dev, "unable to resolve mba region\n");
-@@ -1521,8 +1530,14 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- 		return -EBUSY;
- 	}
- 
--	child = of_get_child_by_name(qproc->dev->of_node, "mpss");
--	node = of_parse_phandle(child, "memory-region", 0);
-+	if (!child) {
-+		node = of_parse_phandle(qproc->dev->of_node,
-+					"memory-region", 1);
-+	} else {
-+		child = of_get_child_by_name(qproc->dev->of_node, "mpss");
-+		node = of_parse_phandle(child, "memory-region", 0);
-+	}
-+
- 	ret = of_address_to_resource(node, 0, &r);
- 	if (ret) {
- 		dev_err(qproc->dev, "unable to resolve mpss region\n");
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/11786191e2d946410cf5fde482b10cdd5356e76c
+
+Thank you!
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
