@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A85BC43331
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE055C2BA12
 	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Apr 2020 17:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3284E207FF
+	by mail.kernel.org (Postfix) with ESMTP id 711562077D
 	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Apr 2020 17:50:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iVNXp3/4"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WjEZli5Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404324AbgDCRuY (ORCPT
+        id S2403912AbgDCRuO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Apr 2020 13:50:24 -0400
-Received: from mail-qv1-f68.google.com ([209.85.219.68]:39346 "EHLO
-        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404187AbgDCRuP (ORCPT
+        Fri, 3 Apr 2020 13:50:14 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44308 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404158AbgDCRuN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Apr 2020 13:50:15 -0400
-Received: by mail-qv1-f68.google.com with SMTP id v38so4022303qvf.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Apr 2020 10:50:14 -0700 (PDT)
+        Fri, 3 Apr 2020 13:50:13 -0400
+Received: by mail-qk1-f195.google.com with SMTP id j4so8857703qkc.11
+        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Apr 2020 10:50:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wAONRYcVO4RfP3C96vLmeLLooX/mPDYTON30vhuD5cY=;
-        b=iVNXp3/43clmRsJeacYyRlYtzqzS5AZhSQ+jH/korT8/ktSvyrD0uBudRLip/aSzbx
-         i3fJFMr+zBwDbnWF746bGQS1W+f+TGbLCuvbuOXaXJ7ewQ7lMgSeG3Ssyee9mXg+uzVS
-         Rbu0gz0chlxDH3WByItA3qxFkhkTQV85EHb3nchE3AKLKGqXg8XLT3BVF6iSXkScPZ6I
-         GMlPFqHdj346kWYJfx5lGdmdWN/KtzwrrgutCoguh4oAwvmNkyu3lFIYXare2g/obs1W
-         DbsJZD8F4GEDNnS/+ggh7rbgTZHuuJmelaPmCCxAVtJO4yFwtDbDtXoH01+qbqmngOAN
-         j1bg==
+        bh=+oLntqojuWdUH12fyW0ncnBZUNvUMEl0ST479v3SavI=;
+        b=WjEZli5Y2ZbsGjbFRuKXBBPa3y4gFEAzTwatQ2IXdzW+4mBALDH3CECyepTjQmyzck
+         8JlCht3lbpb7d41uQlzpVDj81/Ln3rHLB81SJNxZ3M+Up+aLyA9UEfvA+QQqdRIB1kJO
+         0pl4vBdS21KLE8SK3DxXqs1t+iVJOgl++mQl2Z6vJVzfrUi7nX0n3487sv+cjzQVdPm5
+         /tcwo0NG+w25yzkjM0Aedf4IrMwAI77dwAGekhIu5mV/rVgJMrwXcDjKaLxmhBOgBsNr
+         9EjjTy/+OX4H1N2HGBgAjzg9cGembmRbKgloXYpfw3gsdJbnRH01JDgrXofUh7DGudNB
+         T72w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wAONRYcVO4RfP3C96vLmeLLooX/mPDYTON30vhuD5cY=;
-        b=BXqAaHy7/iz6hH45wJ27BRfOK1iHNfxJOgR8mJKKlVIMHj2Fzoe58Ssosze3flkYqS
-         q0Y1LWwWBC8GfIXHFROymIVtQYhkbezwdXxHTffWEHQEkGk47rDm83DlDI7/7p5qQR2Q
-         scJXlZiB9HBOdb2WeMT0ILRcOa73hpcYjd17hy5D6hIFg90JRlDvwRc/OeYhwBAPJDYq
-         dWS377MqYFKNJyqREY49za7HdzVkTAIRqKRVC1cnJXB+4I6lW7ze4Ou23MZ9Mu3Y/q6v
-         /NifkCZAnKBejWek6Wqd4XvKuh4pKg1F7VSrhJi/A6I7UumsFyv7ByWczWbICyqC3CxV
-         OrmA==
-X-Gm-Message-State: AGi0PuazUhfJX3SsgSBd8B3dTnQYN2JIJPxjQeZb3dmjHCF5ku7qcXaO
-        KlQw6S0bUbcPmozMdBq8y10KtA==
-X-Google-Smtp-Source: APiQypJ8RDEp8OGf/STkumxgjzcqkfiVAr1Uw4MNFcGtFAkjN8HqNzwHWoaFlOk7r8uDk/0Zf+QGkw==
-X-Received: by 2002:a05:6214:1583:: with SMTP id m3mr9622282qvw.215.1585936213887;
-        Fri, 03 Apr 2020 10:50:13 -0700 (PDT)
+        bh=+oLntqojuWdUH12fyW0ncnBZUNvUMEl0ST479v3SavI=;
+        b=kJFlBqPFilyRjdSzjMOiTjpxXZm3axdJOpKRzNfcYkgn6pY1Fq9Hil8us8xPKJkLDX
+         OGSKg5xr+FFnrz2Ov7mkhDYimkks8jzl2fpwvYOODDRD1R5ji7EZX/ZuezThvZU73zUh
+         5WTmCU1Xiphv3jrmvm64NVXbLsj9UOx6HMQsLfdXFNvYvtioMV7Y3BOo89m9Pa4q5aEZ
+         AMLiiqOm6Yq19U9fMP2SCfChhaCn1uVcyeplRkzLjIRZ+ZPxec/QuXXsb47K0kWGXH83
+         T83Kp9PY3aa2Sj44t3Zp0i7sR9sPiP4rkJ0CO3wUz+j2iSaR+QoQUH/8h8lsIdZFiUQ+
+         cIFw==
+X-Gm-Message-State: AGi0PuYAmDUmX+mThcMdpNQWe9ndjIL/JDLi8x9qdLIXpf1Y7aTLxJ74
+        /75Dx0gYTYnDReHFYqayhBoVYg==
+X-Google-Smtp-Source: APiQypIJYUesBNolCLhwv6B5eaa/K0FLECq529AU39kc1RoB8T/W83qqfbTOjo1T94kludYx50eMcQ==
+X-Received: by 2002:a37:e115:: with SMTP id c21mr9366907qkm.249.1585936212649;
+        Fri, 03 Apr 2020 10:50:12 -0700 (PDT)
 Received: from presto.localdomain (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.gmail.com with ESMTPSA id 77sm6821225qkh.26.2020.04.03.10.50.12
+        by smtp.gmail.com with ESMTPSA id 77sm6821225qkh.26.2020.04.03.10.50.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2020 10:50:13 -0700 (PDT)
+        Fri, 03 Apr 2020 10:50:12 -0700 (PDT)
 From:   Alex Elder <elder@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Andy Gross <agross@kernel.org>
 Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] remoteproc: qcom_q6v5_mss: fix a bug in q6v5_probe()
-Date:   Fri,  3 Apr 2020 12:50:04 -0500
-Message-Id: <20200403175005.17130-3-elder@linaro.org>
+Subject: [PATCH 1/3] remoteproc: fix a bug in rproc_alloc()
+Date:   Fri,  3 Apr 2020 12:50:03 -0500
+Message-Id: <20200403175005.17130-2-elder@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200403175005.17130-1-elder@linaro.org>
 References: <20200403175005.17130-1-elder@linaro.org>
@@ -74,31 +74,50 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200403175004.v2y1rAbpn7GhXBy6CSVhQSIEzKrSAPO5iDlzDfCPIFs@z>
+Message-ID: <20200403175003.Qj-edOPascnLo3AraoVaE3ieksAvy2A6B4vU0dVkq5k@z>
 
-If looking up the DT "firmware-name" property fails in q6v6_probe(),
-the function returns without freeing the remoteproc structure
-that has been allocated.  Fix this by jumping to the free_rproc
-label, which takes care of this.
+If ida_simple_get() returns an error when called in rproc_alloc(),
+put_device() is called to clean things up.  By this time the rproc
+device type has been assigned, with rproc_type_release() as the
+release function.
+
+The first thing rproc_type_release() does is call:
+    idr_destroy(&rproc->notifyids);
+
+But at the time the ida_simple_get() call is made, the notifyids
+field in the remoteproc structure has not been initialized.
+
+I'm not actually sure this case causes an observable problem, but
+it's incorrect.  Fix this by initializing the notifyids field before
+calling ida_simple_get() in rproc_alloc().
 
 Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index ce49c3236ff7..60cdf699ea80 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1675,7 +1675,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
- 					    1, &qproc->hexagon_mdt_image);
- 	if (ret < 0 && ret != -EINVAL)
--		return ret;
-+		goto free_rproc;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e12a54e67588..59b6eb22f01c 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2054,6 +2054,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	rproc->dev.class = &rproc_class;
+ 	rproc->dev.driver_data = rproc;
  
- 	platform_set_drvdata(pdev, qproc);
++	idr_init(&rproc->notifyids);
++
+ 	/* Assign a unique device index and name */
+ 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+ 	if (rproc->index < 0) {
+@@ -2078,8 +2080,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
  
+ 	mutex_init(&rproc->lock);
+ 
+-	idr_init(&rproc->notifyids);
+-
+ 	INIT_LIST_HEAD(&rproc->carveouts);
+ 	INIT_LIST_HEAD(&rproc->mappings);
+ 	INIT_LIST_HEAD(&rproc->traces);
 -- 
 2.20.1
 
