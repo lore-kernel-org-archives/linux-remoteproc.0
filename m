@@ -2,123 +2,101 @@ Return-Path: <SRS0=9kKd=5T=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3D8C43331
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Apr 2020 13:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3C3C2BA15
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Apr 2020 17:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7F420721
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Apr 2020 13:45:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nislDfeN"
+	by mail.kernel.org (Postfix) with ESMTP id 24738206F6
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Apr 2020 17:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585936109;
+	bh=18GHNOBVkEj7vvORr2+RoP8PDn87EfmttlpKTzZy46Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=sqiTofrWdO2o2NF+JQBEGoP5fwa9DNA29lwznGs6im8O9Z1QDC1gtCPdHRg4Kmxdu
+	 eP90W98xT16OmuvWwape24R8kGfV3XeVNq9jN85eRqINEpfdsKs7jXmcGsN65NuiYb
+	 aSLDpdo9vdHV/wMA9Hgq8qBrKEaUT4GbvkjXGWDg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbgDCNpu (ORCPT
+        id S1728235AbgDCRs2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Apr 2020 09:45:50 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:48740 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728173AbgDCNpu (ORCPT
+        Fri, 3 Apr 2020 13:48:28 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37375 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727882AbgDCRs1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Apr 2020 09:45:50 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 033DjiLq038397;
-        Fri, 3 Apr 2020 08:45:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1585921544;
-        bh=msl3CK4yocxq+NPxeZVavwswcpbyBOYVu1q6mld4hnI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=nislDfeNmEpcTKretzQiMIbl9Sz3dyRFj3ZatP/L0WdQaLVfaoYMRoGNsOAxs0ipl
-         bT0eFNk3ZJyg0ZZu62IipOZCGxL1D91QYWT207yVXOjJgkBe/VMChjZakjxlov6GoF
-         /yH5h3DLO/GtviybfOEm5o+d5kS24vuI2Os7VA7E=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 033Dji6t010095
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 3 Apr 2020 08:45:44 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 3 Apr
- 2020 08:45:43 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 3 Apr 2020 08:45:43 -0500
-Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 033DjhLE028601;
-        Fri, 3 Apr 2020 08:45:43 -0500
-Subject: Re: [PATCH] remoteproc/omap: Fix set_load call in
- omap_rproc_request_timer
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-References: <20200402010812.GA751391@yoga>
- <20200403013134.11407-1-natechancellor@gmail.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <4a2b5227-a251-bc90-7177-a75224da4623@ti.com>
-Date:   Fri, 3 Apr 2020 08:45:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 3 Apr 2020 13:48:27 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r24so7836973ljd.4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Apr 2020 10:48:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3THBIeg1DeeQfa1qWYP5fMgyz8PG9WZarWEKIAjybzc=;
+        b=N9neCI5Qjc956nHzpT6Wv66wmcCPHy18i498AuxWNSpHcXpezXTuTKm2OG1vKqL42o
+         JtGfih0oxhGl0Bq1LQLwJPruvqzhW2QlyHd3ffmbTf6kYcGwiNvs1B3JlPdeCUi9ce4q
+         vhAhfkqRxPVn0NCUVrvl0tZmhQSEnzqjCiCsM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3THBIeg1DeeQfa1qWYP5fMgyz8PG9WZarWEKIAjybzc=;
+        b=UiGv8ceqIXOn1hNQAgGbr7MZ3JfejrFHelZll+JoSa3uufcbLY3+NUlZmImi679v5m
+         gRmhThYtUgoV9tdw6GyApxnjmAUzrWIbzuwz+Xsul/HIn6mnfQPkTfU7NaMKoHxpLxrf
+         c0r5N/h7/B8oclsIiWGgAWiJj7UVmp0c8daw5UiUI22ITPc44N4i4CBNttm/r+m/xX4U
+         S/nClyLktf7MHFwNbz+I7+L2dzTii8mdH0foUOop6s2GdIl+D66XJkEt1V9gGaa9zYZ+
+         /fa+Wlt2/kc+0bLyZepP5ScL1MnRHYljXOltYhVfDofZC0fV4kyBwQhW2NpTZpo5ZN8a
+         Oo9A==
+X-Gm-Message-State: AGi0PuYWVHoRqgbpRksnWmNfXUZ+MdJH3TKVt5K4lQebgdhvb8kT4qF4
+        D0aWPAETGtxyM3FEoeRN+0nkSZb5wEc=
+X-Google-Smtp-Source: APiQypJ4sntj5ONjhMBpOEdafTIshBrShw6Y0hOkjEm4gjEUMBmhvmJJ74Q3BGQC0Hq9XfZbcdjYig==
+X-Received: by 2002:a2e:9d85:: with SMTP id c5mr5442445ljj.168.1585936104240;
+        Fri, 03 Apr 2020 10:48:24 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id a22sm5287808ljm.28.2020.04.03.10.48.23
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Apr 2020 10:48:23 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id c5so6529464lfp.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Apr 2020 10:48:23 -0700 (PDT)
+X-Received: by 2002:ac2:46d3:: with SMTP id p19mr6173851lfo.125.1585936102736;
+ Fri, 03 Apr 2020 10:48:22 -0700 (PDT)
 MIME-Version: 1.0
+References: <20200402010812.GA751391@yoga> <20200403013134.11407-1-natechancellor@gmail.com>
 In-Reply-To: <20200403013134.11407-1-natechancellor@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Apr 2020 10:48:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whG84d5bGHU5HLOMgR59BqUcuawPTxGgVDm3JWiWJHi6A@mail.gmail.com>
+Message-ID:
+ <CAHk-=whG84d5bGHU5HLOMgR59BqUcuawPTxGgVDm3JWiWJHi6A@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc/omap: Fix set_load call in omap_rproc_request_timer
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200403134543.DAY0mI-x4vjhGlmwA6KjcVoeFq9p-S4dAla42zieEn4@z>
+Message-ID: <20200403174806.Jx-L-WgKebv2e-4BukeFPd7fxT2WmQuAWLbnvNHxGpg@z>
 
-On 4/2/20 8:31 PM, Nathan Chancellor wrote:
-> When building arm allyesconfig:
-
-Thanks, Nathan. Also throws up with omap2plus_defconfig.
-
-> 
-> drivers/remoteproc/omap_remoteproc.c:174:44: error: too many arguments
-> to function call, expected 2, have 3
->         timer->timer_ops->set_load(timer->odt, 0, 0);
->         ~~~~~~~~~~~~~~~~~~~~~~~~~~                ^
-> 1 error generated.
-> 
+On Thu, Apr 2, 2020 at 6:32 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
 > This is due to commit 02e6d546e3bd ("clocksource/drivers/timer-ti-dm:
 > Enable autoreload in set_pwm") in the clockevents tree interacting with
 > commit e28edc571925 ("remoteproc/omap: Request a timer(s) for remoteproc
 > usage") from the rpmsg tree.
-> 
+>
 > This should have been fixed during the merge of the remoteproc tree
 > since it happened after the clockevents tree merge; however, it does not
 > look like my email was noticed by either maintainer and I did not pay
 > attention when the pull was sent since I was on CC.
-> 
-> Fixes: c6570114316f ("Merge tag 'rproc-v5.7' of git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc")
-> Link: https://lore.kernel.org/lkml/20200327185055.GA22438@ubuntu-m2-xlarge-x86/
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Acked-by: Suman Anna <s-anna@ti.com>
+Thanks, I've taken this patch directly into my tree since it was my
+merge that screwed up.
 
-> ---
->  drivers/remoteproc/omap_remoteproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index cdb546f7232e..6955fab0a78b 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -171,7 +171,7 @@ static int omap_rproc_request_timer(struct device *dev, struct device_node *np,
->  	}
->  
->  	/* clean counter, remoteproc code will set the value */
-> -	timer->timer_ops->set_load(timer->odt, 0, 0);
-> +	timer->timer_ops->set_load(timer->odt, 0);
->  
->  	return 0;
->  }
-> 
-
+                   Linus
