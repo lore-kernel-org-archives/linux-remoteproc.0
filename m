@@ -1,46 +1,36 @@
-Return-Path: <linux-remoteproc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:51318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728322AbgDPXHa (ORCPT
-        <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Apr 2020 19:07:30 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 3 Apr 2020 14:18:40 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH] remoteproc/omap: Fix set_load call in
  omap_rproc_request_timer
-From: patchwork-bot+linux-remoteproc@kernel.org
-Message-Id: <158707844983.17838.7154296955803704839.git-patchwork-notify@kernel.org>
-Date: Thu, 16 Apr 2020 23:07:29 +0000
-References: <20200403013134.11407-1-natechancellor@gmail.com>
-In-Reply-To: <20200403013134.11407-1-natechancellor@gmail.com>
-Sender: linux-remoteproc-owner@vger.kernel.org
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: linux-remoteproc@vger.kernel.org
+Message-ID: <20200403211837.GC20625@builder.lan>
+References: <20200402010812.GA751391@yoga>
+ <20200403013134.11407-1-natechancellor@gmail.com>
+ <CAHk-=whG84d5bGHU5HLOMgR59BqUcuawPTxGgVDm3JWiWJHi6A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whG84d5bGHU5HLOMgR59BqUcuawPTxGgVDm3JWiWJHi6A@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nathan Chancellor <natechancellor@gmail.com>, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hello:
+On Fri 03 Apr 10:48 PDT 2020, Linus Torvalds wrote:
 
-This patch was applied to andersson/remoteproc.git (refs/heads/for-next).
-
-On Thu,  2 Apr 2020 18:31:35 -0700 you wrote:
-> When building arm allyesconfig:
+> On Thu, Apr 2, 2020 at 6:32 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > This is due to commit 02e6d546e3bd ("clocksource/drivers/timer-ti-dm:
+> > Enable autoreload in set_pwm") in the clockevents tree interacting with
+> > commit e28edc571925 ("remoteproc/omap: Request a timer(s) for remoteproc
+> > usage") from the rpmsg tree.
+> >
+> > This should have been fixed during the merge of the remoteproc tree
+> > since it happened after the clockevents tree merge; however, it does not
+> > look like my email was noticed by either maintainer and I did not pay
+> > attention when the pull was sent since I was on CC.
 > 
-> drivers/remoteproc/omap_remoteproc.c:174:44: error: too many arguments
-> to function call, expected 2, have 3
->         timer->timer_ops->set_load(timer->odt, 0, 0);
->         ~~~~~~~~~~~~~~~~~~~~~~~~~~                ^
-> 1 error generated.
+> Thanks, I've taken this patch directly into my tree since it was my
+> merge that screwed up.
 > 
-> [...]
 
-
-Here is a summary with links:
-  - remoteproc/omap: Fix set_load call in omap_rproc_request_timer
-    https://git.kernel.org/andersson/remoteproc/c/e6d05acd57013114977ec77a131fe79d2f542774
-
-You are awesome, thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Thanks Nathan, Suman and Linus.
