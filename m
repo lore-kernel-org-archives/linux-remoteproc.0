@@ -1,30 +1,29 @@
-Return-Path: <johnstul.lkml@gmail.com>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
+From: Alex Elder <elder@linaro.org>
+Subject: [PATCH 0/3] remoteproc: bug fixes
+Date: Fri,  3 Apr 2020 12:50:02 -0500
+Message-Id: <20200403175005.17130-1-elder@linaro.org>
 MIME-Version: 1.0
-References: <20200403175005.17130-1-elder@linaro.org>
-In-Reply-To: <20200403175005.17130-1-elder@linaro.org>
-From: John Stultz <john.stultz@linaro.org>
-Date: Thu, 16 Apr 2020 22:51:24 -0700
-Message-ID: <CANcMJZDH=3vU0pj+Az2YMJbTP7ku0dqhbR65DETmXM6Az0U=1A@mail.gmail.com>
-Subject: Re: [PATCH 0/3] remoteproc: bug fixes
-Content-Type: text/plain; charset="UTF-8"
-To: Alex Elder <elder@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <agross@kernel.org>, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Andy Gross <agross@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Apr 3, 2020 at 11:19 AM Alex Elder <elder@linaro.org> wrote:
->
-> This series fixes some bugs in remoteproc error paths.  The last
-> patch is derived from something I posted before, but has been
-> updated to based on Linus' current master branch.
->
+This series fixes some bugs in remoteproc error paths.  The last
+patch is derived from something I posted before, but has been
+updated to based on Linus' current master branch.
 
-Oof. Apparently I didn't hit reply all but only sent my tested-by to
-just Alex (now 10 days ago)
+					-Alex
 
-Tested-by: John Stultz <john.stultz@linaro.org>
+Alex Elder (3):
+  remoteproc: fix a bug in rproc_alloc()
+  remoteproc: qcom_q6v5_mss: fix a bug in q6v5_probe()
+  remoteproc: qcom_q6v5_mss: fix q6v5_probe() error paths
 
-This set resolves regressions we've seen with 5.7-rc1 on db845c, and
-it would be really nice to see them land in 5.7-rc2.
+ drivers/remoteproc/qcom_q6v5_mss.c   | 33 +++++++++++++++++-----------
+ drivers/remoteproc/remoteproc_core.c |  4 ++--
+ 2 files changed, 22 insertions(+), 15 deletions(-)
 
-thanks
--john
+-- 
+2.20.1
