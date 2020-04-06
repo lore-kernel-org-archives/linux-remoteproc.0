@@ -1,76 +1,60 @@
-Return-Path: <BLEVINSK@xilinx.com>
-Return-Path: ben.levinsky@xilinx.com
-From: Ben Levinsky <ben.levinsky@xilinx.com>
-Subject: [PATCH v2 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
-Date: Thu, 16 Apr 2020 14:54:38 -0700
-Message-Id: <1587074082-14836-2-git-send-email-ben.levinsky@xilinx.com>
-In-Reply-To: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
-References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+Return-Path: <mst@redhat.com>
+Return-Path: <mst@redhat.com>
+Date: Mon, 6 Apr 2020 18:26:50 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH v6 11/12] remoteproc: switch to virtio_legacy_init/size
+Message-ID: <20200406222507.281867-12-mst@redhat.com>
+References: <20200406222507.281867-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20200406222507.281867-1-mst@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+To: linux-kernel@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add ZynqMP firmware ioctl enums for RPU configuration.
+These are used for legacy ring format, switch to APIs that make this
+explicit.
 
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- drivers/firmware/xilinx/zynqmp.c     |  4 ++++
- include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
- 2 files changed, 23 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 41b6516..7978065 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -512,6 +512,10 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
- static inline int zynqmp_is_valid_ioctl(u32 ioctl_id)
- {
- 	switch (ioctl_id) {
-+	case IOCTL_GET_RPU_OPER_MODE:
-+	case IOCTL_SET_RPU_OPER_MODE:
-+	case IOCTL_RPU_BOOT_ADDR_CONFIG:
-+	case IOCTL_TCM_COMB_CONFIG:
- 	case IOCTL_SD_DLL_RESET:
- 	case IOCTL_SET_SD_TAPDELAY:
- 	case IOCTL_SET_PLL_FRAC_MODE:
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 8efa5ac..ddc996de 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -101,6 +101,10 @@ enum pm_ret_status {
- };
- 
- enum pm_ioctl_id {
-+	IOCTL_GET_RPU_OPER_MODE = 0,
-+	IOCTL_SET_RPU_OPER_MODE,
-+	IOCTL_RPU_BOOT_ADDR_CONFIG,
-+	IOCTL_TCM_COMB_CONFIG,
- 	IOCTL_SD_DLL_RESET = 6,
- 	IOCTL_SET_SD_TAPDELAY,
- 	IOCTL_SET_PLL_FRAC_MODE,
-@@ -120,6 +124,21 @@ enum pm_query_id {
- 	PM_QID_CLOCK_GET_MAX_DIVISOR,
- };
- 
-+enum rpu_oper_mode {
-+	PM_RPU_MODE_LOCKSTEP,
-+	PM_RPU_MODE_SPLIT,
-+};
-+
-+enum rpu_boot_mem {
-+	PM_RPU_BOOTMEM_LOVEC,
-+	PM_RPU_BOOTMEM_HIVEC,
-+};
-+
-+enum rpu_tcm_comb {
-+	PM_RPU_TCM_SPLIT,
-+	PM_RPU_TCM_COMB,
-+};
-+
- enum zynqmp_pm_reset_action {
- 	PM_RESET_ACTION_RELEASE,
- 	PM_RESET_ACTION_ASSERT,
--- 
-2.7.4
+maintainers, pls ack merging this through virtio tree due to dependency
+on previous patches in the patchset.
+
+ drivers/remoteproc/remoteproc_core.c   | 2 +-
+ drivers/remoteproc/remoteproc_virtio.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remo=
+teproc_core.c
+index 097f33e4f1f3..c350a01e6c4e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -322,7 +322,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+ =09struct rproc_mem_entry *mem;
+=20
+ =09/* actual size of vring (in bytes) */
+-=09size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
++=09size =3D PAGE_ALIGN(vring_legacy_size(rvring->len, rvring->align));
+=20
+ =09rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
+=20
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/re=
+moteproc_virtio.c
+index 8c07cb2ca8ba..35b02468197a 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -95,7 +95,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device =
+*vdev,
+ =09len =3D rvring->len;
+=20
+ =09/* zero vring */
+-=09size =3D vring_size(len, rvring->align);
++=09size =3D vring_legacy_size(len, rvring->align);
+ =09memset(addr, 0, size);
+=20
+ =09dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
+--=20
+MST
