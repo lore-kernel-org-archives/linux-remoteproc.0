@@ -1,56 +1,44 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 11/18] remoteproc: Add child node component in rproc match list
-Date: Thu, 16 Apr 2020 18:13:24 +0200
-Message-ID: <20200416161331.7606-12-arnaud.pouliquen@st.com>
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+Return-Path: <mst@redhat.com>
+Return-Path: <mst@redhat.com>
+Date: Mon, 6 Apr 2020 17:35:15 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH v5 11/12] remoteproc: switch to virtio_legacy_init/size
+Message-ID: <20200406213314.248038-12-mst@redhat.com>
+References: <20200406213314.248038-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
+In-Reply-To: <20200406213314.248038-1-mst@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+To: linux-kernel@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add the components, associated to the child devices populated, in
-the match list for synchronization relying on bind/unbind mechanism.
+These are used for legacy ring format, switch to APIs that make this
+explicit.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 75f84fd3bd60..ecb36f64b1a0 100644
+maintainers, pls ack merging this through virtio tree due to dependency
+on previous patches in the patchset.
+
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remo=
+teproc_core.c
+index 097f33e4f1f3..c350a01e6c4e 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1608,6 +1608,8 @@ static void rproc_crash_handler_work(struct work_struct *work)
- static int rproc_platform_populate(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-+	struct device_node *node = dev->of_node;
-+	struct device_node *child_np;
- 	int ret;
- 
- 	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-@@ -1617,6 +1619,19 @@ static int rproc_platform_populate(struct rproc *rproc)
- 		goto depopulate;
- 	}
- 
-+	child_np = of_get_next_available_child(node, NULL);
-+
-+	while (child_np) {
-+		of_node_get(node);
-+		component_match_add_release(dev, &rproc->match,
-+					    rproc_release_of, rproc_compare_of,
-+					    child_np);
-+		child_np = of_get_next_available_child(node, child_np);
-+	}
-+
-+	if (!rproc->match)
-+		dev_dbg(dev, "No available child\n");
-+
- 	return 0;
- 
- depopulate:
--- 
-2.17.1
+@@ -322,7 +322,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+ =09struct rproc_mem_entry *mem;
+=20
+ =09/* actual size of vring (in bytes) */
+-=09size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
++=09size =3D PAGE_ALIGN(vring_legacy_size(rvring->len, rvring->align));
+=20
+ =09rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
+=20
+--=20
+MST
