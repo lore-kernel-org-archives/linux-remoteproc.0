@@ -2,373 +2,189 @@ Return-Path: <SRS0=mwZV=5W=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D57C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 09:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FB6C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 11:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B473206F8
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 09:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 710262076C
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 11:32:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="faxwMOnM"
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="NWDNe4BA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbgDFJBT (ORCPT
+        id S1727181AbgDFLcE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Apr 2020 05:01:19 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9644 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726533AbgDFJBS (ORCPT
+        Mon, 6 Apr 2020 07:32:04 -0400
+Received: from forward102p.mail.yandex.net ([77.88.28.102]:36093 "EHLO
+        forward102p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726858AbgDFLcD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Apr 2020 05:01:18 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0368weOD009790;
-        Mon, 6 Apr 2020 11:01:10 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=6QHhTjFxtxkp8tj/LjsrGruU3oxIic4Teunk0HCLW6Q=;
- b=faxwMOnMsSPI8jQ/dAKkTCPgmfJRQDlmqqeo99eGNqhsznpEIAm8oq+OBHEjCHt+RhTP
- E2wrWzDZzS1G5wzCgEfeN5rGSNcgO0XthS7EWMQF0Tnugpz8nvhltu/zA6RMk9Mk4XEa
- UrgL3s/bFny66DgZtcYSlWVPCesjQDX0P/sGFTv6hvjb6IurJC4wZr8biWX0cEiYMNfV
- 0SgEZV/evhft0StI5L8L0t24JJX5sjlWhTUOSIINzDrH4NyXblkggCl7ks394O7iKQnb
- vgVCnY5xL6QxdhRH/7FFVTfgadZtB/jsR8Dni+1mryJaAiVFgDyWbThQKolPU3Fn0PD0 Ww== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 306g0w0vtt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Apr 2020 11:01:10 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 50962100034;
-        Mon,  6 Apr 2020 11:01:06 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 14F992AE6CD;
-        Mon,  6 Apr 2020 11:01:06 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.45) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 6 Apr
- 2020 11:01:04 +0200
-Subject: Re: [PATCH v2 1/2] remoteproc: Add character device interface
-To:     <rishabhb@codeaurora.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <bjorn.andersson@linaro.org>, <psodagud@codeaurora.org>,
-        <tsoni@codeaurora.org>, <sidgup@codeaurora.org>
-References: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
- <5b1c8287-0077-87e7-9364-b1f5a104c9e3@st.com>
- <6261646b2e0c4d9c8a30900b2f475890@codeaurora.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <730c75c9-15e2-19c5-d97a-190bf1e6ffaa@st.com>
-Date:   Mon, 6 Apr 2020 11:01:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 6 Apr 2020 07:32:03 -0400
+Received: from mxback23o.mail.yandex.net (mxback23o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::74])
+        by forward102p.mail.yandex.net (Yandex) with ESMTP id 903CC1D4152D;
+        Mon,  6 Apr 2020 14:31:59 +0300 (MSK)
+Received: from iva6-add863d6e49c.qloud-c.yandex.net (iva6-add863d6e49c.qloud-c.yandex.net [2a02:6b8:c0c:7ea0:0:640:add8:63d6])
+        by mxback23o.mail.yandex.net (mxback/Yandex) with ESMTP id SMJG203rq6-VwWK3xuJ;
+        Mon, 06 Apr 2020 14:31:59 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1586172719;
+        bh=RDUAFe3f0Pl/5Waa4JTNUJMtP9y9ClfoXrhn8tYttKE=;
+        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
+        b=NWDNe4BAGdlpzE4iLTVf9FtKBLQrtp+rN9UPdVDcrPs2SMFNpkAKtuMKGkksya1+H
+         rO1Uw9dDeD12/1CH+ci4B1AnO18EXFe4j9e102mwZxvNcPvTIT1icRoxrVRsSrFUVF
+         +qJGd2XsBgPTODrJBwIHZqvXpLKq4/rnLiBNwnqE=
+Authentication-Results: mxback23o.mail.yandex.net; dkim=pass header.i=@maquefel.me
+Received: by iva6-add863d6e49c.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id CHTIIrjdik-Vv2uo65k;
+        Mon, 06 Apr 2020 14:31:57 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   nikita.shubin@maquefel.me
+To:     nikita.shubin@maquefel.me
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
+Date:   Mon,  6 Apr 2020 14:33:07 +0300
+Message-Id: <20200406113310.3041-1-nikita.shubin@maquefel.me>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200304142628.8471-1-NShubin@topcon.com>
+References: <20200304142628.8471-1-NShubin@topcon.com>
 MIME-Version: 1.0
-In-Reply-To: <6261646b2e0c4d9c8a30900b2f475890@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-06_05:2020-04-03,2020-04-06 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200406090103.4sduOkUoRSetB9YVOYj3u7JVJU9tr1MdjwZ57ZNes8Y@z>
+Message-ID: <20200406113307.WMOPIcf7bskzriLmg-UPBq0ar1lK0i9IIv5wOmZbpjA@z>
 
+This patch set introduces virtio support for imx7d-m4 communication:
 
+- support booting loaded vim imx-rproc firmware
+- implement .kick method support using mailbox in imx-processor
+- parse vdev0vring0, vdev0vring1, vdev0buffer memory regions required
+for virtio_rpmsg_bus initialization
 
-On 4/3/20 9:13 PM, rishabhb@codeaurora.org wrote:
-> On 2020-04-02 10:28, Arnaud POULIQUEN wrote:
->> Hi
->>
->> On 4/1/20 2:03 AM, Rishabh Bhatnagar wrote:
->>> Add the character device interface for userspace applications.
->>> This interface can be used in order to boot up and shutdown
->>> remote subsystems. Currently there is only a sysfs interface
->>> which the userspace clients can use. If a usersapce application
->>> crashes after booting the remote processor does not get any
->>> indication about the crash. It might still assume that the
->>> application is running. For example modem uses remotefs service
->>> to fetch data from disk/flash memory. If the remotefs service
->>> crashes, modem keeps on requesting data which might lead to a
->>> crash. Adding a character device interface makes the remote
->>> processor tightly coupled with the user space application.
->>> A crash of the application leads to a close on the file descriptors
->>> therefore shutting down the remoteproc.
->>
->> Sorry I'm late in the discussion, I hope I've gone through the whole
->> discussion so I don't reopen a closed point...
->>
->> Something here is not crystal clear to me so I'd rather share it...
->>
->> I suppose that you the automatic restart of the application is not possible to
->> stop and restart the remote processor...
-> Yes correct, while we wait for the application to restart we might observe a
-> fatal crash.
->>
->> Why this use case can not be solved by a process monitor or a service
->> in userland that detects the application crash and stop the remote
->> firmware using
->> the sysfs interface?
->>
-> What happens in the case where the process monitor itself crashes? This is
-> actually the approach we follow in our downstream code. We have a central entity
-> in userspace that controls bootup/shutdown of some remote processors based on the
-> votes from userspace clients. We have observed cases where this entity
-> itself crashes and remote processors are left hanging.
+Regarding imx7d-m4 boot proccess
 
-Your description makes me feel like this patch is only a workaround of something that
-should be fixed in the userland, even if i understand that hanging is one of the most
-critical problem and have to be fixed.
-For instance, how to handle several applications that interact with the remote processor
-( e.g. rpmsg service applications) how to stop and restart everything. Using the char
-device would probaly resolve only a part of the issue...
+Citing ARM documentation:
 
-I'm not aware about your environment and i'm not a userland expert. But what i still not
-understand why a parent process can not do the job...
-I just test a simple script on my side that treat the kill -9 of an application
-("cat" in my case).
+At Reset, Cortex-M3 and Cortex-M4 processors always boot from a vector table at address zero.
 
-#start the remote firmware
-cp  $1 /lib/firmware/
-echo $1> /sys/class/remoteproc/remoteproc0/firmware
-echo start >/sys/class/remoteproc/remoteproc0/state
-#your binary
-cat /dev/kmsg
-# stop the remote firmware in case of crash (and potentially some other apps)
-echo stop >/sys/class/remoteproc/remoteproc0/state
+"With uninitialized memory at address zero (for example, unprogrammed Flash or uninitialized RAM),
+the processor will read a spurious initial Main Stack Pointer value from address zero and a spurious
+code entry point (Reset vector) from address 0x4, possibly containing an illegal instruction
+set state specifier (ESPR.T bit) in bit[0]."
 
-Anyway, it's just my feeling, let other people give their feedback.
+So to successfully boot m4 coproc we need to write Stack Pointer and Program counter, i see no
+obvious to get Stack Pointer value, so two ways exist ethier form a special elf section:
 
->> I just want to be sure that there is no alternative to this, because
->> having two ways
->> for application to shutdown the firmware seems to me confusing...
-> Does making this interface optional/configurable helps?
->>
->> What about the opposite service, mean inform the application that the remote
->> processor is crashed?
->> Do you identify such need? or the "auto" crash recovery is sufficient?
-> Auto recovery works perfectly for us. Although there is a mechanism in
-> place using QMI(Qualcomm MSM interface) that can notify clients about remote
-> processor crash.
+"
+.loader :
+  {
+    LONG(__StackTop);
+    LONG(Reset_Handler + 1);
+  } > m_start
+"
 
-Thanks for the information.
+and put it at 0x0 address:
 
-Regards
-Arnaud
+"
+m_start               (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00008000
+"
 
->>
->> Thanks,
->> Arnaud
->>>
->>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->>> ---
->>>  drivers/remoteproc/Kconfig               |   9 +++
->>>  drivers/remoteproc/Makefile              |   1 +
->>>  drivers/remoteproc/remoteproc_cdev.c     | 100 +++++++++++++++++++++++++++++++
->>>  drivers/remoteproc/remoteproc_internal.h |  22 +++++++
->>>  include/linux/remoteproc.h               |   2 +
->>>  5 files changed, 134 insertions(+)
->>>  create mode 100644 drivers/remoteproc/remoteproc_cdev.c
->>>
->>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->>> index de3862c..6374b79 100644
->>> --- a/drivers/remoteproc/Kconfig
->>> +++ b/drivers/remoteproc/Kconfig
->>> @@ -14,6 +14,15 @@ config REMOTEPROC
->>>
->>>  if REMOTEPROC
->>>
->>> +config REMOTEPROC_CDEV
->>> +    bool "Remoteproc character device interface"
->>> +    help
->>> +      Say y here to have a character device interface for Remoteproc
->>> +      framework. Userspace can boot/shutdown remote processors through
->>> +      this interface.
->>> +
->>> +      It's safe to say N if you don't want to use this interface.
->>> +
->>>  config IMX_REMOTEPROC
->>>      tristate "IMX6/7 remoteproc support"
->>>      depends on ARCH_MXC
->>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
->>> index e30a1b1..b7d4f77 100644
->>> --- a/drivers/remoteproc/Makefile
->>> +++ b/drivers/remoteproc/Makefile
->>> @@ -9,6 +9,7 @@ remoteproc-y                += remoteproc_debugfs.o
->>>  remoteproc-y                += remoteproc_sysfs.o
->>>  remoteproc-y                += remoteproc_virtio.o
->>>  remoteproc-y                += remoteproc_elf_loader.o
->>> +obj-$(CONFIG_REMOTEPROC_CDEV)        += remoteproc_cdev.o
->>>  obj-$(CONFIG_IMX_REMOTEPROC)        += imx_rproc.o
->>>  obj-$(CONFIG_MTK_SCP)            += mtk_scp.o mtk_scp_ipi.o
->>>  obj-$(CONFIG_OMAP_REMOTEPROC)        += omap_remoteproc.o
->>> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
->>> new file mode 100644
->>> index 0000000..8182bd1
->>> --- /dev/null
->>> +++ b/drivers/remoteproc/remoteproc_cdev.c
->>> @@ -0,0 +1,100 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Character device interface driver for Remoteproc framework.
->>> + *
->>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
->>> + */
->>> +
->>> +#include <linux/cdev.h>
->>> +#include <linux/fs.h>
->>> +#include <linux/module.h>
->>> +#include <linux/mutex.h>
->>> +#include <linux/remoteproc.h>
->>> +
->>> +#include "remoteproc_internal.h"
->>> +
->>> +#define NUM_RPROC_DEVICES    64
->>> +static dev_t rproc_cdev;
->>> +static DEFINE_IDA(cdev_minor_ida);
->>> +
->>> +static int rproc_cdev_open(struct inode *inode, struct file *file)
->>> +{
->>> +    struct rproc *rproc;
->>> +
->>> +    rproc = container_of(inode->i_cdev, struct rproc, char_dev);
->>> +
->>> +    if (!rproc)
->>> +        return -EINVAL;
->>> +
->>> +    if (rproc->state == RPROC_RUNNING)
->>> +        return -EBUSY;
->>> +
->>> +    return rproc_boot(rproc);
->>> +}
->>> +
->>> +static int rproc_cdev_release(struct inode *inode, struct file *file)
->>> +{
->>> +    struct rproc *rproc;
->>> +
->>> +    rproc = container_of(inode->i_cdev, struct rproc, char_dev);
->>> +
->>> +    if (!rproc || rproc->state != RPROC_RUNNING)
->>> +        return -EINVAL;
->>> +
->>> +    rproc_shutdown(rproc);
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static const struct file_operations rproc_fops = {
->>> +    .open = rproc_cdev_open,
->>> +    .release = rproc_cdev_release,
->>> +};
->>> +
->>> +int rproc_char_device_add(struct rproc *rproc)
->>> +{
->>> +    int ret, minor;
->>> +    dev_t cdevt;
->>> +
->>> +    minor = ida_simple_get(&cdev_minor_ida, 0, NUM_RPROC_DEVICES,
->>> +                   GFP_KERNEL);
->>> +    if (minor < 0) {
->>> +        dev_err(&rproc->dev, "%s: No more minor numbers left! rc:%d\n",
->>> +            __func__, minor);
->>> +        return -ENODEV;
->>> +    }
->>> +
->>> +    cdev_init(&rproc->char_dev, &rproc_fops);
->>> +    rproc->char_dev.owner = THIS_MODULE;
->>> +
->>> +    cdevt = MKDEV(MAJOR(rproc_cdev), minor);
->>> +    ret = cdev_add(&rproc->char_dev, cdevt, 1);
->>> +    if (ret < 0)
->>> +        ida_simple_remove(&cdev_minor_ida, minor);
->>> +
->>> +    rproc->dev.devt = cdevt;
->>> +    return ret;
->>> +}
->>> +
->>> +void rproc_char_device_remove(struct rproc *rproc)
->>> +{
->>> +    __unregister_chrdev(MAJOR(rproc->dev.devt), MINOR(rproc->dev.devt), 1,
->>> +                "rproc");
->>> +    ida_simple_remove(&cdev_minor_ida, MINOR(rproc->dev.devt));
->>> +}
->>> +
->>> +void __init rproc_init_cdev(void)
->>> +{
->>> +    int ret;
->>> +
->>> +    ret = alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICES, "rproc");
->>> +    if (ret < 0) {
->>> +        pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
->>> +        return;
->>> +    }
->>> +}
->>> +
->>> +void __exit rproc_exit_cdev(void)
->>> +{
->>> +    __unregister_chrdev(MAJOR(rproc_cdev), 0, NUM_RPROC_DEVICES, "rproc");
->>> +}
->>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
->>> index 493ef92..28d61a1 100644
->>> --- a/drivers/remoteproc/remoteproc_internal.h
->>> +++ b/drivers/remoteproc/remoteproc_internal.h
->>> @@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
->>>  int rproc_init_sysfs(void);
->>>  void rproc_exit_sysfs(void);
->>>
->>> +#ifdef CONFIG_REMOTEPROC_CDEV
->>> +void rproc_init_cdev(void);
->>> +void rproc_exit_cdev(void);
->>> +int rproc_char_device_add(struct rproc *rproc);
->>> +void rproc_char_device_remove(struct rproc *rproc);
->>> +#else
->>> +static inline void rproc_init_cdev(void)
->>> +{
->>> +}
->>> +static inline void rproc_exit_cdev(void)
->>> +{
->>> +}
->>> +static inline int rproc_char_device_add(struct rproc *rproc)
->>> +{
->>> +    return 0;
->>> +}
->>> +static inline void  rproc_char_device_remove(struct rproc *rproc)
->>> +{
->>> +}
->>> +#endif
->>> +
->>>  void rproc_free_vring(struct rproc_vring *rvring);
->>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
->>>
->>> @@ -63,6 +84,7 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
->>>  struct rproc_mem_entry *
->>>  rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
->>>
->>> +
->>>  static inline
->>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
->>>  {
->>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>> index 16ad666..c4ca796 100644
->>> --- a/include/linux/remoteproc.h
->>> +++ b/include/linux/remoteproc.h
->>> @@ -37,6 +37,7 @@
->>>
->>>  #include <linux/types.h>
->>>  #include <linux/mutex.h>
->>> +#include <linux/cdev.h>
->>>  #include <linux/virtio.h>
->>>  #include <linux/completion.h>
->>>  #include <linux/idr.h>
->>> @@ -514,6 +515,7 @@ struct rproc {
->>>      bool auto_boot;
->>>      struct list_head dump_segments;
->>>      int nb_vdev;
->>> +    struct cdev char_dev;
->>>  };
->>>
->>>  /**
->>>
+Or (the way i've chosen) only put Entry Point at 0x04 and set stack as first instruction:
+
+"
+Reset_Handler:
+	ldr   sp, =__stack      /* set stack pointer */
+"
+
+Regarding mailboxes and memory regions :
+
+This code is heavily derived from stm32-rproc (i.e. copy pasted) and this fact needs to
+reflected in commits, please tell me how to emphasize this fact.
+
+Attaching succesful trace booting m4 (with Add rpmsg tty driver applied) :
+
+[  143.240616] remoteproc remoteproc0: powering up imx-rproc
+[  143.251768] remoteproc remoteproc0: Booting fw image huginn.elf, size 466876
+[  143.251786] imx-rproc imx7d-cm4: iommu not present
+[  143.251825] remoteproc remoteproc0: rsc: type 3
+[  143.251837] remoteproc remoteproc0: vdev rsc: id 7, dfeatures 0x1, cfg len 0, 2 vrings
+[  143.251924] remoteproc remoteproc0: vdev rsc: vring0: da 0xffffffff, qsz 16, align 16
+[  143.251935] remoteproc remoteproc0: vdev rsc: vring1: da 0xffffffff, qsz 16, align 16
+[  143.251955] imx-rproc imx7d-cm4: map memory: 0x00900000+20000
+[  143.251987] imx-rproc imx7d-cm4: map memory: 0x00920000+2000
+[  143.252003] imx-rproc imx7d-cm4: map memory: 0x00922000+2000
+[  143.252020] remoteproc remoteproc0: phdr: type 1 da 0x20200000 memsz 0x240 filesz 0x240
+[  143.252032] remoteproc remoteproc0: da = 0x20200000 len = 0x240 va = 0x(ptrval)
+[  143.252043] remoteproc remoteproc0: phdr: type 1 da 0x20200240 memsz 0x5b38 filesz 0x5b38
+[  143.252053] remoteproc remoteproc0: da = 0x20200240 len = 0x5b38 va = 0x(ptrval)
+[  143.252105] remoteproc remoteproc0: phdr: type 1 da 0x20205d78 memsz 0x4b58 filesz 0x758
+[  143.252115] remoteproc remoteproc0: da = 0x20205d78 len = 0x4b58 va = 0x(ptrval)
+[  143.252159] remoteproc remoteproc0: da = 0x200006cc len = 0x8c va = 0x(ptrval)
+[  143.252176] remoteproc remoteproc0: Started from 0x202002f5
+[  143.252211]  imx7d-cm4#vdev0buffer: assigned reserved memory node vdev0buffer@00924000
+[  143.252232] virtio virtio0: reset !
+[  143.252241] virtio virtio0: status: 1
+[  143.260567] virtio_rpmsg_bus virtio0: status: 3
+[  143.260598] remoteproc remoteproc0: vring0: va c083c000 qsz 16 notifyid 0
+[  143.260614] remoteproc remoteproc0: vring1: va c0872000 qsz 16 notifyid 1
+[  143.260651] virtio_rpmsg_bus virtio0: buffers: va c0894000, dma 0x00924000
+[  143.260666] Added buffer head 0 to (ptrval)
+[  143.260674] Added buffer head 1 to (ptrval)
+[  143.260680] Added buffer head 2 to (ptrval)
+[  143.260686] Added buffer head 3 to (ptrval)
+[  143.260692] Added buffer head 4 to (ptrval)
+[  143.260697] Added buffer head 5 to (ptrval)
+[  143.260703] Added buffer head 6 to (ptrval)
+[  143.260709] Added buffer head 7 to (ptrval)
+[  143.260715] Added buffer head 8 to (ptrval)
+[  143.260721] Added buffer head 9 to (ptrval)
+[  143.260727] Added buffer head 10 to (ptrval)
+[  143.260733] Added buffer head 11 to (ptrval)
+[  143.260738] Added buffer head 12 to (ptrval)
+[  143.260744] Added buffer head 13 to (ptrval)
+[  143.260750] Added buffer head 14 to (ptrval)
+[  143.260756] Added buffer head 15 to (ptrval)
+[  143.260771] virtio_rpmsg_bus virtio0: status: 7
+[  143.260779] remoteproc remoteproc0: kicking vq index: 0
+[  143.260788] remoteproc remoteproc0: sending message : vqid = 0
+[  143.260802] imx_mu 30aa0000.mailbox: Send data on wrong channel type: 1
+[  143.260810] virtio_rpmsg_bus virtio0: rpmsg host is online
+[  143.261680]  imx7d-cm4#vdev0buffer: registered virtio0 (type 7)
+[  143.261694] remoteproc remoteproc0: remote processor imx-rproc is now up
+[  143.354880] remoteproc remoteproc0: vq index 0 is interrupted
+[  143.354895] virtqueue callback for (ptrval) ((ptrval))
+[  143.354912] virtio_rpmsg_bus virtio0: From: 0x0, To: 0x35, Len: 40, Flags: 0, Reserved: 0
+[  143.354924] rpmsg_virtio RX: 00 00 00 00 35 00 00 00 00 00 00 00 28 00 00 00  ....5.......(...
+[  143.354932] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00 00 00  rpmsg-tty-raw...
+[  143.354939] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+[  143.354945] rpmsg_virtio RX: 00 00 00 00 00 00 00 00                          ........
+[  143.354956] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00 00 00  rpmsg-tty-raw...
+[  143.354963] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+[  143.354969] NS announcement: 00 00 00 00 00 00 00 00                          ........
+[  143.354980] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw addr 0x0
+[  143.356584] rpmsg_tty virtio0.rpmsg-tty-raw.-1.0: new channel: 0x400 -> 0x0 : ttyRPMSG0
+[  143.356651] Added buffer head 0 to (ptrval)
+[  143.356658] No more buffers in queue
+[  143.356667] virtio_rpmsg_bus virtio0: Received 1 messages
+[  143.404302] remoteproc remoteproc0: vq index 0 is interrupted
+[  143.404319] virtqueue callback for (ptrval) ((ptrval))
+[  143.404337] virtio_rpmsg_bus virtio0: From: 0x1, To: 0x35, Len: 40, Flags: 0, Reserved: 0
+[  143.404350] rpmsg_virtio RX: 01 00 00 00 35 00 00 00 00 00 00 00 28 00 00 00  ....5.......(...
+[  143.404391] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00 00 00  rpmsg-tty-raw...
+[  143.404399] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+[  143.404405] rpmsg_virtio RX: 01 00 00 00 00 00 00 00                          ........
+[  143.404417] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00 00 00  rpmsg-tty-raw...
+[  143.404424] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+[  143.404430] NS announcement: 01 00 00 00 00 00 00 00                          ........
+[  143.404441] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw addr 0x1
+[  143.411114] rpmsg_tty virtio0.rpmsg-tty-raw.-1.1: new channel: 0x401 -> 0x1 : ttyRPMSG1
