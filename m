@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 327DAC2BA80
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 21:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3C0C2BA2B
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 21:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C5AD206B8
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 21:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD48A20787
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 21:34:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ekE3m8Zu"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LozRsEuS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbgDFVCV (ORCPT
+        id S1726287AbgDFVex (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Apr 2020 17:02:21 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:53305 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726628AbgDFVCV (ORCPT
+        Mon, 6 Apr 2020 17:34:53 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:35604 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726634AbgDFVex (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Apr 2020 17:02:21 -0400
+        Mon, 6 Apr 2020 17:34:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586206940;
+        s=mimecast20190719; t=1586208892;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
         bh=g21Qo7QtPcOJEghRPDvMQfA4S9QNIdU3sAG/Fw2UsOU=;
-        b=ekE3m8ZuDHiek0ku2b1wxaR/Z/+aFhprJDF/1Jkro3yE3POgzSemylOtjr/CIzpESMmquN
-        WXl+PG+KT413udDiz/9qbNNegsbMNIw7k/A2P+3fWhV+tQJMFnD4JyOGiHKFq8buuUCc82
-        k5TTua8+1faGLc604sAAC31u1XTCgms=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-159-pZGSTPoNNiCWLj9lefoTsw-1; Mon, 06 Apr 2020 17:02:18 -0400
-X-MC-Unique: pZGSTPoNNiCWLj9lefoTsw-1
-Received: by mail-wr1-f71.google.com with SMTP id h14so525254wrr.12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Apr 2020 14:02:18 -0700 (PDT)
+        b=LozRsEuSwMwDN/cAWmI+3A9Grhvo2u2KzBQXDPAgPo0Bk4a5zSqgXj4sn6qDU1veZm2e6o
+        GBnxr/YH6LT4q+i6/QWsmnZ3pPgLGej+h0z7Yvt5tmTePG6rbrJoAEm1VuhTjyvdUHZDN/
+        jEOS71fXt1k6ymyILUCNgXm5+wGvV9E=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-2-TJTIxqaONWGN-DtFzVli8A-1; Mon, 06 Apr 2020 17:34:51 -0400
+X-MC-Unique: TJTIxqaONWGN-DtFzVli8A-1
+Received: by mail-wr1-f70.google.com with SMTP id o10so577443wrj.7
+        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Apr 2020 14:34:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
         bh=g21Qo7QtPcOJEghRPDvMQfA4S9QNIdU3sAG/Fw2UsOU=;
-        b=Rf+8oCio9X+B+MSb1ytCSBQ3NNJ5MMHa+uRaIJj26U+J6to4QJvmBjjjNEpc+mhjAu
-         Tkf1JWfRc+pNKdjoiSKsS636fRkNe0fqkB6KADh3GHyordrhiwXUYTayhyNqL/0D9f5R
-         enCV1UsIXi+fxuKTNy0UtFihy5pq8UunRyj7jHuk8cVTsR9FK50ssEmp2n25fiVdrITJ
-         yI5Hzh5sewUtAW0d4sCMFyllgqQIpmUOdnxHUkI2fD6iXrXnGtvB7kk+LSEgdU7aJZdI
-         lF68++VeVsdl6rPq1fP4+gB0IyvAbSc++un2YIXiV55NbbFi764Cz7fZC3DZB6jnPKaI
-         IlwA==
-X-Gm-Message-State: AGi0PuYFRA6Cl8YrYj7366L7X/dOgGxRO+ORIVQlhag7XNEggZ8/TtEV
-        QEEDUXdP2FaWFwGwiPxG21SMFNfSFX/lEp0FzbBZlrZ0c7mq0y8fNQrVq80UhouVi2n93Eqr1Zm
-        Icuu/MT28pqlGd9SSBARzLcpIY1VikA==
-X-Received: by 2002:a1c:6503:: with SMTP id z3mr1333580wmb.92.1586206936901;
-        Mon, 06 Apr 2020 14:02:16 -0700 (PDT)
-X-Google-Smtp-Source: APiQypI5XZ+o0zl+Xjii6R2ZxpTo8wJSgUW9OoxrS+ssp1PhHsSDSD9x+AsUIKw9dscJ9d5JnCrL9A==
-X-Received: by 2002:a1c:6503:: with SMTP id z3mr1333570wmb.92.1586206936739;
-        Mon, 06 Apr 2020 14:02:16 -0700 (PDT)
+        b=iaX0o53uFCg/8kesPBA6WuIUM7I4WAw7IjK50aoMGN4n/E9CLu7Q/H5VCj3X9CMUb8
+         2Fw6W+dD3p9ftABSob80AyrdxNxcjsamSEQl6CKpO0p0aLvwGifbxzEesX0cLL9gT1Z+
+         3ALchKly/lWo7dC3riVCn4nNkZf29MT9roSOEs+SkQ0MBVfgzB4/a8tTdEZsEVwzQ3RJ
+         FeiLPQCSxw38kw1sywNGjIslxMQaJkwiSA00LhsGmLt/juiORt1fGff5sOAYeEnK1rNl
+         3oBfpG5IlEuY7McEKmeicP5MZJ1rr72b4EsUMbcScw2Ai7vNKcqIcEoHXOgN57WTl5NY
+         roPQ==
+X-Gm-Message-State: AGi0PuaMwN9jPNIher6PgbENx3w0qCav3lj3uDcoRD6gMB1XhTdwOu/V
+        g1iGBsWwM4r23eQburpnk96161L6bnElD4hAtqwYShYjFPF9bbaZ0M2+O7K1gz8unvWvoEzHfU+
+        58FSKzzuAzHeLZOY3SJHWt+F+uJz5ew==
+X-Received: by 2002:a7b:cd89:: with SMTP id y9mr1437681wmj.102.1586208890217;
+        Mon, 06 Apr 2020 14:34:50 -0700 (PDT)
+X-Google-Smtp-Source: APiQypKAZJhwUAhdJ4atiej6VK/mv8hk/1Y5ETF7CybO37bXvAJPTN+IEMIUppA3nQ+/F7Q27F9Y9g==
+X-Received: by 2002:a7b:cd89:: with SMTP id y9mr1437667wmj.102.1586208890008;
+        Mon, 06 Apr 2020 14:34:50 -0700 (PDT)
 Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
-        by smtp.gmail.com with ESMTPSA id u22sm905456wmu.43.2020.04.06.14.02.15
+        by smtp.gmail.com with ESMTPSA id t16sm29149843wra.17.2020.04.06.14.34.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2020 14:02:16 -0700 (PDT)
-Date:   Mon, 6 Apr 2020 17:02:14 -0400
+        Mon, 06 Apr 2020 14:34:49 -0700 (PDT)
+Date:   Mon, 6 Apr 2020 17:34:48 -0400
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
@@ -80,7 +80,7 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200406210214.du-zAakOJMOBBPzQ1f_O-EIeOFYo8pAazNk1yQkHalw@z>
+Message-ID: <20200406213448.vG-QWEmQpEkDpZkf7PJmE9criSifTJfT3qOMknwzlnI@z>
 
 These are used for legacy ring format, switch to APIs that make this
 explicit.
