@@ -7,188 +7,486 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFACC2BA17
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 17:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80CAC2BA1A
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 19:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21E120769
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 17:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6149C2072A
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 19:59:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Et3Rwsnx"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OnJvbwcm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbgDFRUW (ORCPT
+        id S1725928AbgDFT7U (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Apr 2020 13:20:22 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33811 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728557AbgDFRUW (ORCPT
+        Mon, 6 Apr 2020 15:59:20 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51137 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbgDFT7U (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Apr 2020 13:20:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id l14so280025pgb.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Apr 2020 10:20:21 -0700 (PDT)
+        Mon, 6 Apr 2020 15:59:20 -0400
+Received: by mail-pj1-f65.google.com with SMTP id v13so334639pjb.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Apr 2020 12:59:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=9ufQQaWgpQ1ovP51hpWZYakegE3ep+d8csbsVkQT9hw=;
-        b=Et3RwsnxoUZxcWoJKthjdlVbl8BWY6TSt1ZTTvJhDPEOAlyjOUKBjPC2+paORR2YZl
-         X+pSasZgIQ2s9oegTIX+8ZSJ8QGetfnMJfw+Vz0HI51C/bPHRzI+OdKukXOOMMkqJk2u
-         GOZKEiIIaQjY/AxAUBmbf06xYizlv8wkWZwHd9w9sKqIubPJs/XFQqIkDKg6ljIdCiWe
-         Ye3zOHnqH77YRPMJrIGGrzvBcbBB837ESdTdAF/VCrZqITdLan1s0Oe1rH6DQsY/+xv2
-         k9YMRYaC0z00/I1sUFGIZCF1IW4u0pzBwdTvaRLBvJLinrn+Eg3aAN67aTKoonLrMwtG
-         Yk1g==
+        bh=E7QY7pXlGy+jqNVfN8zs1x8pk4wyzR53SWCmw/IulpQ=;
+        b=OnJvbwcmp/xdIUf2kjtQ+rv+mzamnbM+Jg9l129jfvPj1SXcCdryIYNWBb+2mgC2zg
+         aanzBShBRW3Nlst543fY0W6MJ8BfYKCv1Fg/gwhgoorDyZYYKDlYvqEBBpbF9maSkasu
+         EdUz6deR/NRwQAgGrMhVpqzYPIkKnjxhonifpDOSwQkEI47Yb1Gs0aFdeAlL9F+cBKZM
+         Q/NBxCWGTXlfCyj/cv1oz2ih5jer/tRfNoqQ64BA6F0MmlMsHrFdUcNmFB38YSVklY5r
+         SofhUmvOtLogaqxE41uXwowy2+aGN6GdBLDx7DC1RZP1Sgac0jH2F0googU2pmjC7cw3
+         xt/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9ufQQaWgpQ1ovP51hpWZYakegE3ep+d8csbsVkQT9hw=;
-        b=MKVBSs1pzfnV24kNM5/rFWrwgCQvSz+cGSXjCRCQrhbGWEpTMp1siRBRRuU7Fhw3+H
-         eRFR0g1sOoOXy3BQRwUjCPHdaDkN4ZIjsM69GO0duFrMMRDP+nUXbNNhNCfTz55g/yPZ
-         piRVz1z2VFM4kHQn4su0nlI+tcds447YqwhbFvv5n/2KsNEN0yqcU5BDgacGI5jd4q8e
-         D85S2RD8fjHTcTJAsW2vKEEwxY4cs14fcUf7rwf+1H9gjcOkiZIe+c93NI8fKFxaK7NX
-         wAmwkxX/1tav1l40z6AmTaCa1tNKbMSLKVNLguUSoGHnGxN9Nu2PyCJ1uCDMsqBtIGJ1
-         fcGA==
-X-Gm-Message-State: AGi0PuazbkUbJBjFdqsJLtdKzQXrbyXkrXHi5QfeiXOUmfTyv37dgZYy
-        z8FZV/MWQZFsbkOo//5xH28IyA==
-X-Google-Smtp-Source: APiQypKD14oDwdXQWKCZ1Qi/4No9nWpitsw/lHB15XdP4NiRpWom5ngC86uzh7fy2A17q3MwbegH+A==
-X-Received: by 2002:aa7:8f29:: with SMTP id y9mr515086pfr.19.1586193620938;
-        Mon, 06 Apr 2020 10:20:20 -0700 (PDT)
+        bh=E7QY7pXlGy+jqNVfN8zs1x8pk4wyzR53SWCmw/IulpQ=;
+        b=Ekj67xgaR4FFrwsOt5WTLjKnEPZKX3PRvdOQwQvwgEOxcMtPItBoAbClYMjjdc1u/G
+         OVjX6ySa0fB4gcN2/4BU5ULhfnQ6SyvJopPzJ5GpM4WPrWuORvS6UUviWRiHJG15PcfF
+         q6X+fXzTlGtGhOn3dFPd3TBfXVGDXxff5SebkJjFNrkRP+KqNFSf4ylQLV5If1LKibUz
+         2kOHiDtqoUbbQDXr1ligNR4rEzaccHB/Z9i/Dk/h9CQHb7fqaZf3Tlu/X7t2NAUpRHkG
+         FMxqp1C6sHCDFgokArrmwsxUjPQebzxo1KL6VJKBxBaLY7UVJZ5me/0JDtgpmyD4md4I
+         ZYAQ==
+X-Gm-Message-State: AGi0PuZd1lZOh5J664z3qT7eD8qt67UDDVK1J4OzUPe4SyGZB6lRz5yq
+        C4UVeljTcCVki+j2jU+bcdWgDA==
+X-Google-Smtp-Source: APiQypL7cFU1hSU7+qLXSpXGz3Q+V+lYL3g+H9DsPNQWRZEMG+qUMJm1RQhpmZXQ8v3vWqRD6JZkVg==
+X-Received: by 2002:a17:902:a706:: with SMTP id w6mr22444142plq.79.1586203158400;
+        Mon, 06 Apr 2020 12:59:18 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id r189sm11456723pgr.31.2020.04.06.10.20.19
+        by smtp.gmail.com with ESMTPSA id i4sm12091324pfq.82.2020.04.06.12.59.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2020 10:20:20 -0700 (PDT)
-Date:   Mon, 6 Apr 2020 11:20:18 -0600
+        Mon, 06 Apr 2020 12:59:17 -0700 (PDT)
+Date:   Mon, 6 Apr 2020 13:59:15 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Suman Anna <s-anna@ti.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Lokesh Vutla <lokeshvutla@ti.com>,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Loic Pallardy <loic.pallardy@st.com>
-Subject: Re: [PATCH 1/7] remoteproc: add prepare and unprepare ops
-Message-ID: <20200406172018.GA11572@xps15>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] dt-bindings: remoteproc: Add bindings for R5F
+ subsystem on TI K3 SoCs
+Message-ID: <20200406195915.GB11572@xps15>
 References: <20200324201819.23095-1-s-anna@ti.com>
- <20200324201819.23095-2-s-anna@ti.com>
+ <20200324201819.23095-4-s-anna@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200324201819.23095-2-s-anna@ti.com>
+In-Reply-To: <20200324201819.23095-4-s-anna@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200406172018.8wmG2TcZhDmMdZgK1dUfuUoUfgEx3smC7YwaBn5AerQ@z>
+Message-ID: <20200406195915.9xqCVuLr-kFU2ayZiwRarHJBRzVTvlLOw3DEijZRgPY@z>
 
-Good morning Suman,
-
-I have started to work on this set - comments will come in over the next few
-days...
-
-On Tue, Mar 24, 2020 at 03:18:13PM -0500, Suman Anna wrote:
-> From: Loic Pallardy <loic.pallardy@st.com>
+On Tue, Mar 24, 2020 at 03:18:15PM -0500, Suman Anna wrote:
+> The Texas Instruments K3 family of SoCs have one or more dual-core
+> Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
+> can be split between multiple voltage domains as well. Add the device
+> tree bindings document for these R5F subsystem devices. These R5F
+> processors do not have an MMU, and so require fixed memory carveout
+> regions matching the firmware image addresses. The nodes require more
+> than one memory region, with the first memory region used for DMA
+> allocations at runtime. The remaining memory regions are reserved
+> and are used for the loading and running of the R5F remote processors.
+> The R5F processors can also optionally use any internal on-chip SRAM
+> memories either for executing code or using it as fast-access data.
 > 
-> On some SoC architecture, it is needed to enable HW like
-> clock, bus, regulator, memory region... before loading
-> co-processor firmware.
+> The added example illustrates the DT nodes for the single R5FSS device
+> present on K3 AM65x family of SoCs.
 > 
-> This patch introduces prepare and unprepare ops to execute
-> platform specific function before firmware loading and after
-> stop execution.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
 > Signed-off-by: Suman Anna <s-anna@ti.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 20 +++++++++++++++++++-
->  include/linux/remoteproc.h           |  4 ++++
->  2 files changed, 23 insertions(+), 1 deletion(-)
+> Hi Rob,
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 26f6947267d2..aca6d022901a 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1394,12 +1394,22 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  		return ret;
->  	}
->  
-> +	/* Prepare rproc for firmware loading if needed */
-> +	if (rproc->ops->prepare) {
-> +		ret = rproc->ops->prepare(rproc);
+> The dt_bindings_check seems to throw couple of warnings around the
+> usage of ranges because the tooling is adding the #address-cells
+> and #size-cells of 1 by default, whereas our actual code uses 2.
+> No issues are found with dtbs_check.
+> 
+> regards
+> Suman
+> 
+>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 338 ++++++++++++++++++
+>  1 file changed, 338 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> new file mode 100644
+> index 000000000000..bbfc1e6ae884
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> @@ -0,0 +1,338 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-r5f-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI K3 R5F processor subsystems
+> +
+> +maintainers:
+> +  - Suman Anna <s-anna@ti.com>
+> +
+> +description: |
+> +  The TI K3 family of SoCs usually have one or more dual-core Arm Cortex R5F
+> +  processor subsystems/clusters (R5FSS). The dual core cluster can be used
+> +  either in a LockStep mode providing safety/fault tolerance features or in a
+> +  Split mode providing two individual compute cores for doubling the compute
+> +  capacity. These are used together with other processors present on the SoC
+> +  to achieve various system level goals.
+> +
+> +  Each Dual-Core R5F sub-system is represented as a single DTS node
+> +  representing the cluster, with a pair of child DT nodes representing
+> +  the individual R5F cores. Each node has a number of required or optional
+> +  properties that enable the OS running on the host processor to perform
+> +  the device management of the remote processor and to communicate with the
+> +  remote processor.
+> +
+> +# Required properties:
+> +# --------------------
+> +# The following are the mandatory properties:
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^r5fss(@.*)?"
+> +
+> +  compatible:
+> +    enum:
+> +      - ti,am654-r5fss
+> +      - ti,j721e-r5fss
+> +
+> +  power-domains:
+> +    description: |
+> +      Should contain a phandle to a PM domain provider node and an args
+> +      specifier containing the R5FSS device id value. This property is
+> +      as per the binding,
+> +      Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    description: |
+> +      Standard ranges definition providing address translations for
+> +      local R5F TCM address spaces to bus addresses.
+> +
+> +# Optional properties:
+> +# --------------------
+> +
+> +  lockstep-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1]
+> +    description: |
+> +      Configuration Mode for the Dual R5F cores within the R5F
+> +      cluster. Should be either a value of 1 (LockStep mode) or
+> +      0 (Split mode), default is LockStep mode if omitted.
 
-In my patchset on MCU synchronisation I have moved ops->{start/stop} to
-remoteproc_internal.h and called them rproc_start/stop_device() (after Loic's
-suggestion).  In order to be consistent and remove boiler plate code in the core
-we could do the same, i.e have rproc_prepare/unprepare_device() in
-remoteproc_internal.h .
+Should I deduce lockstep means SMP and split mode two processors running in UP
+mode?
 
-With the above:
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> +
+> +# R5F Processor Child Nodes:
+> +# ==========================
+> +
+> +patternProperties:
+> +  "^r5f@[a-f0-9]+$":
+> +    type: object
+> +    description: |
+> +        The R5F Sub-System device node should define two R5F child nodes, each
+> +        node representing a TI instantiation of the Arm Cortex R5F core. There
+> +        are some specific integration differences for the IP like the usage of
+> +        a Region Address Translator (RAT) for translating the larger SoC bus
+> +        addresses into a 32-bit address space for the processor.
+> +
+> +# Required properties:
+> +# --------------------
+> +# The following are the mandatory properties:
+> +
+> +    properties:
+> +      compatible:
+> +        enum:
+> +          - ti,am654-r5f
+> +          - ti,j721e-r5f
+> +
+> +      reg:
+> +        description: |
+> +          Should contain an entry for each value in 'reg-names'.
+> +          Each entry should have the memory region's start address
+> +          and the size of the region, the representation matching
+> +          the parent node's '#address-cells' and '#size-cells' values.
+> +        maxItems: 2
+> +
+> +      reg-names:
+> +        description: |
+> +          Should contain strings with the names of the specific internal
+> +          internal memory regions, and should be defined in this order
+
+There is two "internal" in a row.
+
+> +        maxItems: 2
+> +        items:
+> +          - const: atcm
+> +          - const: btcm
+> +
+> +      ti,sci:
+> +        $ref: /schemas/types.yaml#/definitions/phandle
+> +        description:
+> +          Should be a phandle to the TI-SCI System Controller node
+> +
+> +      ti,sci-dev-id:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: |
+> +          Should contain the TI-SCI device id corresponding to the R5F core.
+> +          Please refer to the corresponding System Controller documentation
+> +          for valid values for the R5F cores.
+> +
+> +      ti,sci-proc-ids:
+> +        description: Should contain a single tuple of <proc_id host_id>.
+> +        allOf:
+> +          - $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> +          - maxItems: 1
+> +            items:
+> +              items:
+> +                - description: TI-SCI processor id for the R5F core device
+> +                - description: TI-SCI host id to which processor control
+> +                               ownership should be transferred to
+> +
+> +      resets:
+> +        description: |
+> +          Should contain the phandle to the reset controller node
+> +          managing the resets for this device, and a reset
+> +          specifier. Please refer to the following reset bindings
+> +          for the reset argument specifier,
+> +          Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+> +            for AM65x and J721E SoCs
+> +
+> +      firmware-name:
+> +        description: |
+> +          Should contain the name of the default firmware image
+> +          file located on the firmware search path
+> +
+> +# The following properties are mandatory for R5F Core0 in both LockStep and Split
+> +# modes, and are mandatory for R5F Core1 _only_ in Split mode. They are unused for
+> +# R5F Core1 in LockStep mode:
+> +
+> +      mboxes:
+> +        description: |
+> +          OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+> +          communication with the remote processor. This property should match
+> +          with the sub-mailbox node used in the firmware image. The specifier
+> +          format is as per the bindings,
+> +          Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
+
+In the example below node "mcu_r5f1" has a "mboxes" property despite being in lockstep mode.  I
+haven't delved in the code yet, perharps I'll find an answer in there.
+
+> +
+> +      memory-region:
+> +        minItems: 2
+> +        description: |
+> +          phandle to the reserved memory nodes to be associated with the remoteproc
+> +          device. There should be atleast two reserved memory nodes defined - the
+
+s/atleast/at least
+
+> +          first one would be used for dynamic DMA allocations like vrings and vring
+> +          buffers, and the remaining ones used for the firmware image sections. The
+> +          reserved memory nodes should be carveout nodes, and should be defined as
+> +          per the bindings in
+> +          Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+> +
+> +# Optional properties:
+> +# --------------------
+> +# The following properties are optional properties for each of the R5F cores:
+> +
+> +      atcm-enable:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 1]
+> +        description: |
+> +          R5F core configuration mode dictating if ATCM should be enabled. R5F
+> +          view of ATCM dictated by loczrama property. Should be either a value
+> +          of 1 (enabled) or 0 (disabled), default is disabled if omitted.
+
+What is ATCM and why would one want to enable the feature?
+
+> +
+> +      btcm-enable:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 1]
+> +        description: |
+> +          R5F core configuration mode dictating if BTCM should be enabled. R5F
+> +          view of BTCM dictated by loczrama property. Should be either a value
+> +          of 1 (enabled) or 0 (disabled), default is enabled if omitted.
+
+Same here, there is no way to tell what BTCM is.
+
+> +
+> +      loczrama:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [0, 1]
+> +        description: |
+> +          R5F core configuration mode dictating which TCM should appear at
+> +          address 0 (from core's view). Should be either a value of 1 (ATCM
+> +          at 0x0) or 0 (BTCM at 0x0), default value is 1 if omitted.
+
+loczrama: Location Zero Ram Address?  Can both core show up at the address 0x0?
+In the example below both cores have the same setting for atcm, btcm and
+loczrama.
+
+> +
+> +      sram:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        minItems: 1
+> +        description: |
+> +          pHandles to one or more reserved on-chip SRAM region. The regions
+> +          should be defined as child nodes of the respective SRAM node, and
+> +          should be defined as per the generic bindings in,
+> +          Documentation/devicetree/bindings/sram/sram.yaml
+
+Is the behaviour the same whether operating in locksetup mode and split mode? 
 
 Thanks,
 Mathieu
 
-> +		if (ret) {
-> +			dev_err(dev, "can't prepare rproc %s: %d\n",
-> +				rproc->name, ret);
-> +			goto disable_iommu;
-> +		}
-> +	}
 > +
->  	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
->  
->  	/* Load resource table, core dump segment list etc from the firmware */
->  	ret = rproc_parse_fw(rproc, fw);
->  	if (ret)
-> -		goto disable_iommu;
-> +		goto unprepare_rproc;
->  
->  	/* reset max_notifyid */
->  	rproc->max_notifyid = -1;
-> @@ -1433,6 +1443,10 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	kfree(rproc->cached_table);
->  	rproc->cached_table = NULL;
->  	rproc->table_ptr = NULL;
-> +unprepare_rproc:
-> +	/* release HW resources if needed */
-> +	if (rproc->ops->unprepare)
-> +		rproc->ops->unprepare(rproc);
->  disable_iommu:
->  	rproc_disable_iommu(rproc);
->  	return ret;
-> @@ -1838,6 +1852,10 @@ void rproc_shutdown(struct rproc *rproc)
->  	/* clean up all acquired resources */
->  	rproc_resource_cleanup(rproc);
->  
-> +	/* release HW resources if needed */
-> +	if (rproc->ops->unprepare)
-> +		rproc->ops->unprepare(rproc);
+> +    required:
+> +     - compatible
+> +     - reg
+> +     - reg-names
+> +     - ti,sci
+> +     - ti,sci-dev-id
+> +     - ti,sci-proc-ids
+> +     - resets
+> +     - firmware-name
 > +
->  	rproc_disable_iommu(rproc);
->  
->  	/* Free the copy of the resource table */
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 07bd73a6d72a..ddce7a7775d1 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -355,6 +355,8 @@ enum rsc_handling_status {
->  
->  /**
->   * struct rproc_ops - platform-specific device handlers
-> + * @prepare:	prepare device for code loading
-> + * @unprepare:	unprepare device after stop
->   * @start:	power on the device and boot it
->   * @stop:	power off the device
->   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-> @@ -371,6 +373,8 @@ enum rsc_handling_status {
->   * @get_boot_addr:	get boot address to entry point specified in firmware
->   */
->  struct rproc_ops {
-> +	int (*prepare)(struct rproc *rproc);
-> +	int (*unprepare)(struct rproc *rproc);
->  	int (*start)(struct rproc *rproc);
->  	int (*stop)(struct rproc *rproc);
->  	void (*kick)(struct rproc *rproc, int vqid);
+> +    additionalProperties: false
+> +
+> +required:
+> + - compatible
+> + - power-domains
+> + - "#address-cells"
+> + - "#size-cells"
+> + - ranges
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    //Example: AM654 SoC
+> +    /* R5F DDR Carveout reserved memory nodes */
+> +    reserved-memory {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        ranges;
+> +
+> +        mcu_r5fss0_core1_dma_memory_region: r5f-dma-memory@9b000000 {
+> +            compatible = "shared-dma-pool";
+> +            reg = <0x00 0x9b000000 0x00 0x100000>;
+> +            no-map;
+> +        };
+> +
+> +        mcu_r5fss0_core1_memory_region: r5f-memory@9b100000 {
+> +            compatible = "shared-dma-pool";
+> +            reg = <0x00 0x9b100000 0x00 0xf00000>;
+> +            no-map;
+> +        };
+> +
+> +        mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c000000 {
+> +            compatible = "shared-dma-pool";
+> +            reg = <0x00 0x9c000000 0x00 0x100000>;
+> +            no-map;
+> +        };
+> +
+> +        mcu_r5fss0_core0_memory_region: r5f-memory@9c100000 {
+> +            compatible = "shared-dma-pool";
+> +            reg = <0x00 0x9c100000 0x00 0x700000>;
+> +            no-map;
+> +        };
+> +    };
+> +
+> +    cbass_main: interconnect@100000 {
+> +        compatible = "simple-bus";
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        ranges = <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>,
+> +                 <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>,
+> +                 <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>;
+> +
+> +        cbass_mcu: interconnect@28380000 {
+> +            compatible = "simple-bus";
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +            ranges = <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>, /* MCU R5F Core0 */
+> +                     <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>, /* MCU R5F Core1 */
+> +                     <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>; /* MCU SRAM */
+> +
+> +            /* MCU domain SRAM node */
+> +            mcu_ram: mcu-ram@41c00000 {
+> +                compatible = "mmio-sram";
+> +                reg = <0x00 0x41c00000 0x00 0x80000>;
+> +                ranges = <0x0 0x00 0x41c00000 0x80000>;
+> +                #address-cells = <1>;
+> +                #size-cells = <1>;
+> +
+> +                mcu_r5fss0_core0_sram: r5f-sram@0 {
+> +                    reg = <0x0 0x40000>;
+> +                };
+> +            };
+> +
+> +            /* AM65x MCU R5FSS node */
+> +            mcu_r5fss0: r5fss@41000000 {
+> +                compatible = "ti,am654-r5fss";
+> +                power-domains = <&k3_pds 129>;
+> +                lockstep-mode = <1>;
+> +                #address-cells = <1>;
+> +                #size-cells = <1>;
+> +                ranges = <0x41000000 0x00 0x41000000 0x20000>,
+> +                         <0x41400000 0x00 0x41400000 0x20000>;
+> +
+> +                mcu_r5f0: r5f@41000000 {
+> +                    compatible = "ti,am654-r5f";
+> +                    reg = <0x41000000 0x00008000>,
+> +                          <0x41010000 0x00008000>;
+> +                    reg-names = "atcm", "btcm";
+> +                    ti,sci = <&dmsc>;
+> +                    ti,sci-dev-id = <159>;
+> +                    ti,sci-proc-ids = <0x01 0xFF>;
+> +                    resets = <&k3_reset 159 1>;
+> +                    firmware-name = "am65x-mcu-r5f0_0-fw";
+> +                    atcm-enable = <1>;
+> +                    btcm-enable = <1>;
+> +                    loczrama = <1>;
+> +                    mboxes = <&mailbox0 &mbox_mcu_r5fss0_core0>;
+> +                    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+> +                                    <&mcu_r5fss0_core0_memory_region>;
+> +                    sram = <&mcu_r5fss0_core0_sram>;
+> +                };
+> +
+> +                mcu_r5f1: r5f@41400000 {
+> +                    compatible = "ti,am654-r5f";
+> +                    reg = <0x41400000 0x00008000>,
+> +                          <0x41410000 0x00008000>;
+> +                    reg-names = "atcm", "btcm";
+> +                    ti,sci = <&dmsc>;
+> +                    ti,sci-dev-id = <245>;
+> +                    ti,sci-proc-ids = <0x02 0xFF>;
+> +                    resets = <&k3_reset 245 1>;
+> +                    firmware-name = "am65x-mcu-r5f0_1-fw";
+> +                    atcm-enable = <1>;
+> +                    btcm-enable = <1>;
+> +                    loczrama = <1>;
+> +                    mboxes = <&mailbox1 &mbox_mcu_r5fss0_core1>;
+> +               };
+> +           };
+> +        };
+> +    };
 > -- 
 > 2.23.0
 > 
-
