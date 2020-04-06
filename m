@@ -1,98 +1,139 @@
-Return-Path: <paul@crapouillou.net>
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v6 3/5] remoteproc: Add support for runtime PM
-Date: Fri, 17 Apr 2020 19:00:38 +0200
-Message-Id: <20200417170040.174319-3-paul@crapouillou.net>
-In-Reply-To: <20200417170040.174319-1-paul@crapouillou.net>
-References: <20200417170040.174319-1-paul@crapouillou.net>
+Return-Path: <arnaud.pouliquen@st.com>
+From: Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH v7 2/2] tty: add rpmsg driver
+References: <20200324170407.16470-1-arnaud.pouliquen@st.com>
+ <20200324170407.16470-3-arnaud.pouliquen@st.com>
+ <20200324205210.GE119913@minitux>
+ <4f5e6dd0-5deb-8036-0a94-eb7055744f35@st.com>
+Message-ID: <c0eed724-78b7-f8b6-cab4-de06e426d7d1@st.com>
+Date: Mon, 6 Apr 2020 16:18:58 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: od@zcrc.me, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+In-Reply-To: <4f5e6dd0-5deb-8036-0a94-eb7055744f35@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, Fabien DESSENNE <fabien.dessenne@st.com>, linux-stm32@st-md-mailman.stormreply.com, xiang xiao <xiaoxiang781216@gmail.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Call pm_runtime_get_sync() before the firmware is loaded, and
-pm_runtime_put() after the remote processor has been stopped.
+Hi Bjorn,
 
-Even though the remoteproc device has no PM callbacks, this allows the
-parent device's PM callbacks to be properly called.
+On 3/25/20 5:57 PM, Arnaud POULIQUEN wrote:
+> Hi Bjorn,
+> 
+> On 3/24/20 9:52 PM, Bjorn Andersson wrote:
+>> On Tue 24 Mar 10:04 PDT 2020, Arnaud Pouliquen wrote:
+>> [..]
+>>> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+>>> index 020b1cd9294f..c2465e7ebc2a 100644
+>>> --- a/drivers/tty/Makefile
+>>> +++ b/drivers/tty/Makefile
+>>> @@ -34,5 +34,6 @@ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
+>>>  obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
+>>>  obj-$(CONFIG_MIPS_EJTAG_FDC_TTY) += mips_ejtag_fdc.o
+>>>  obj-$(CONFIG_VCC)		+= vcc.o
+>>> +obj-$(CONFIG_RPMSG_TTY)		+= rpmsg_tty.o
+>>>  
+>>>  obj-y += ipwireless/
+>>> diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+>> [..]
+>>> +static struct rpmsg_device_id rpmsg_driver_tty_id_table[] = {
+>>> +	{ .name	= TTY_CH_NAME_RAW },
+>>> +	{ .name	= TTY_CH_NAME_WITH_CTS},
+>>
+>> I still don't like the idea that the tty devices are tied to channels by
+>> fixed names.
+> 
+> This point has been discussed with Xiang, he has the same kind of requirement. 
+> My proposal here is to do this in two steps. First a fixed name, then
+> in a second step we can extend the naming using the implementation proposed
+> by Mathieu Poirier:
+> 
+> [1]https://lkml.org/lkml/2020/2/12/1083
+> 
+> Is this patch could answer to your requirement?
+> 
+> if requested i can I can integrate the Mathieu's patch in this patchset.
+>  
+>>
+>> This makes the driver unusable for communicating with any firmware out
+>> there that provides tty-like data over a channel with a different name -
+>> such as modems with channels providing an AT command interface (they are
+>> not named "rpmsg-tty-raw").
+> 
+> I'm not fixed on the naming, any proposal is welcome.
+> If we use the patch [1], could be renamed 
+> "rpmsg-tty". then for AT command could be something like "rpmsg-tty-at"
+> 
+> But here seems we are speaking about service over TTY and not over RPMsg.
+> 
+>>
+>> I also fail to see how you would distinguish ttys when the firmware
+>> provides more than a single tty - e.g. say you have a modem-like device
+>> that provides an AT command channel and a NMEA stream.
+> 
+> Today it is a limitation. In fact this limitation is the same for all RPMsg
+> devices with multi instance.
+> The patch [1] will allow to retrieve the instance by identifying
+> the service device name in /sys/class/tty/ttyRPMSG<X>/device/name
+> 
+>>
+>>
+>> These are the reasons why drivers/rpmsg/rpmsg_char registers a "control
+>> device", from which you can spawn new char devices. As I've said before,
+>> I really think the same approach should be taken for ttys - perhaps by
+>> just extending the rpmsg_char to allow it to create tty devices in
+>> addition to the "packet based" char device?
+>>
+> I'm not very familiar with the rpmsg_char so please correct me if i'm wrong:
+> 
+> The rpmsg_char exposes to userland an interface to manage rpmsg channels
+> (relying on a char device). This interface offers the  possibility to create
+> new channels/endpoints and send/received related messages. 
+>  
+> Thus, the application declares the RPMsg channels which is bound if they matches
+> with the remote processor channel (similar behavior than a kernel rpmsg driver).
+> There is no constrain on the service once same service is advertised by remote
+> firmware.
+> 
+> In addition, a limitation of the rpmsg_char device is that it needs to be
+> associated with an existing device, as example the implementation in qcom_smd
+> driver.
+> 
+> If i try to figure out how to implement TTY using the rpmsg_char:
+> I should create a rpmsg_char dev in the rpmsg tty driver. Then application
+> will create channels related to its service. But in this case
+> how to ensure that channels created are related to the TTY service?  
+> 
+> 
+> I would also expect to manage RPMsg TTY such as a generic TTY: without
+> extra interface and auto mounted as an USB TTY. this means that the
+> /dev/ttyRMPSGx are created automatically at remote firmware startup
+> (without any application action). For instance a generic application 
+> (e.g. minicom) could control an internal remote processor such as
+> an external processor through a TTY link. 
+> 
+> Then we have also similar RPMsg driver for I2C and SPI virtual link. So extend
+> the rpmsg_char to support TTY seems not a good solution for long terms. 
+> 
+> For these reasons i would prefer to have a specific driver. And found a solution
+> to allow user to differentiate the TTY instances.
+> 
+> Anyway I am very interesting in having more details of an implementation relying
+> on rpmsg_char if you still thinking that is the good approach here.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
+Do you think you would find time to move forward with this discussion?
+I would like to prepare a v8 to fix issue reported on v7, but as your comments
+challenges the driver itself, i would prefer that we first find solutions
+that address your concerns.
 
-Notes:
-    v2-v4: No change
-    v5: Move calls to prepare/unprepare to rproc_fw_boot/rproc_shutdown
-    v6: Instead of prepare/unprepare callbacks, use PM runtime callbacks
+Thanks,
+Arnaud
 
- drivers/remoteproc/remoteproc_core.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a7f96bc98406..d391b054efd8 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -29,6 +29,7 @@
- #include <linux/devcoredump.h>
- #include <linux/rculist.h>
- #include <linux/remoteproc.h>
-+#include <linux/pm_runtime.h>
- #include <linux/iommu.h>
- #include <linux/idr.h>
- #include <linux/elf.h>
-@@ -1384,6 +1385,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 
- 	dev_info(dev, "Booting fw image %s, size %zd\n", name, fw->size);
- 
-+	pm_runtime_get_sync(dev);
-+
- 	/*
- 	 * if enabling an IOMMU isn't relevant for this rproc, this is
- 	 * just a nop
-@@ -1391,7 +1394,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	ret = rproc_enable_iommu(rproc);
- 	if (ret) {
- 		dev_err(dev, "can't enable iommu: %d\n", ret);
--		return ret;
-+		goto put_pm_runtime;
- 	}
- 
- 	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
-@@ -1435,6 +1438,8 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
- 	rproc->table_ptr = NULL;
- disable_iommu:
- 	rproc_disable_iommu(rproc);
-+put_pm_runtime:
-+	pm_runtime_put(dev);
- 	return ret;
- }
- 
-@@ -1840,6 +1845,8 @@ void rproc_shutdown(struct rproc *rproc)
- 
- 	rproc_disable_iommu(rproc);
- 
-+	pm_runtime_put(dev);
-+
- 	/* Free the copy of the resource table */
- 	kfree(rproc->cached_table);
- 	rproc->cached_table = NULL;
-@@ -2118,6 +2125,9 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 
- 	rproc->state = RPROC_OFFLINE;
- 
-+	pm_runtime_no_callbacks(&rproc->dev);
-+	pm_runtime_enable(&rproc->dev);
-+
- 	return rproc;
- }
- EXPORT_SYMBOL(rproc_alloc);
-@@ -2133,6 +2143,7 @@ EXPORT_SYMBOL(rproc_alloc);
-  */
- void rproc_free(struct rproc *rproc)
- {
-+	pm_runtime_disable(&rproc->dev);
- 	put_device(&rproc->dev);
- }
- EXPORT_SYMBOL(rproc_free);
--- 
-2.25.1
+> 
+> Thanks for your comments, 
+> Arnaud
+> 
+>> Regards,
+>> Bjorn
+>>
