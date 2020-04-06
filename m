@@ -2,261 +2,391 @@ Return-Path: <SRS0=mwZV=5W=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E17C2BA2B
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 11:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05660C2BA1E
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 12:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D28DB206C3
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 11:32:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="nkjpfeD1"
+	by mail.kernel.org (Postfix) with ESMTP id C6A2120BED
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Apr 2020 12:06:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbgDFLcV (ORCPT
+        id S1727884AbgDFMGE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Apr 2020 07:32:21 -0400
-Received: from forward100p.mail.yandex.net ([77.88.28.100]:40284 "EHLO
-        forward100p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727481AbgDFLcV (ORCPT
+        Mon, 6 Apr 2020 08:06:04 -0400
+Received: from zimbra2.kalray.eu ([92.103.151.219]:37152 "EHLO
+        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727878AbgDFMGE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Apr 2020 07:32:21 -0400
-Received: from mxback18j.mail.yandex.net (mxback18j.mail.yandex.net [IPv6:2a02:6b8:0:1619::94])
-        by forward100p.mail.yandex.net (Yandex) with ESMTP id 8EFA959802A0;
-        Mon,  6 Apr 2020 14:32:17 +0300 (MSK)
-Received: from iva6-add863d6e49c.qloud-c.yandex.net (iva6-add863d6e49c.qloud-c.yandex.net [2a02:6b8:c0c:7ea0:0:640:add8:63d6])
-        by mxback18j.mail.yandex.net (mxback/Yandex) with ESMTP id fq58GT5zVa-WGOSMI2V;
-        Mon, 06 Apr 2020 14:32:17 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail; t=1586172737;
-        bh=ucsdRRT+zZSKCrcUo+bbn9vGVT94WMNFHwYtuQ4aOdo=;
-        h=In-Reply-To:Subject:To:From:Cc:References:Date:Message-Id;
-        b=nkjpfeD1NrlyznWG1s4dpWYU0knd/9uazEY/jrjGtdM0jdYIc61Xhbag4hEliGnyI
-         STJL8HAK46Z6jVb3nKduhgGd/FzatvD1mTX3A8e2+tatR+0SWnYswGIS+8w1dqrdOH
-         TILdnV2QXTcgHDkX2GVeQnMO9sT2zcOejFbPOzVU=
-Authentication-Results: mxback18j.mail.yandex.net; dkim=pass header.i=@maquefel.me
-Received: by iva6-add863d6e49c.qloud-c.yandex.net (smtp/Yandex) with ESMTPSA id CHTIIrjdik-WF2uGgoU;
-        Mon, 06 Apr 2020 14:32:15 +0300
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client certificate not present)
-From:   nikita.shubin@maquefel.me
-To:     nikita.shubin@maquefel.me
-Cc:     Nikita Shubin <NShubin@topcon.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Mon, 6 Apr 2020 08:06:04 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id AE97327E0456;
+        Mon,  6 Apr 2020 14:06:02 +0200 (CEST)
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id TGEQGX26-dUG; Mon,  6 Apr 2020 14:06:01 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id D18CB27E08CF;
+        Mon,  6 Apr 2020 14:06:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
+Received: from zimbra2.kalray.eu ([127.0.0.1])
+        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id peAjCYORDKTX; Mon,  6 Apr 2020 14:06:01 +0200 (CEST)
+Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
+        by zimbra2.kalray.eu (Postfix) with ESMTP id B673027E0456;
+        Mon,  6 Apr 2020 14:06:01 +0200 (CEST)
+Date:   Mon, 6 Apr 2020 14:06:01 +0200 (CEST)
+From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalrayinc.com>
+To:     Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Cc:     Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] remoteproc: imx_rproc: memory regions
-Date:   Mon,  6 Apr 2020 14:33:10 +0300
-Message-Id: <20200406113310.3041-4-nikita.shubin@maquefel.me>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200406113310.3041-1-nikita.shubin@maquefel.me>
-References: <20200304142628.8471-1-NShubin@topcon.com>
- <20200406113310.3041-1-nikita.shubin@maquefel.me>
+        psodagud <psodagud@codeaurora.org>, tsoni <tsoni@codeaurora.org>,
+        sidgup <sidgup@codeaurora.org>
+Message-ID: <634144036.14036712.1586174761552.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <730c75c9-15e2-19c5-d97a-190bf1e6ffaa@st.com>
+References: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org> <5b1c8287-0077-87e7-9364-b1f5a104c9e3@st.com> <6261646b2e0c4d9c8a30900b2f475890@codeaurora.org> <730c75c9-15e2-19c5-d97a-190bf1e6ffaa@st.com>
+Subject: Re: [PATCH v2 1/2] remoteproc: Add character device interface
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [192.168.40.202]
+X-Mailer: Zimbra 8.8.15_GA_3895 (ZimbraWebClient - GC80 (Linux)/8.8.15_GA_3895)
+Thread-Topic: remoteproc: Add character device interface
+Thread-Index: ksfbnUgo6xvpb68JoDnDY0Vjuu4HFQ==
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200406113310.VL47uydcFCxWMpHnWqr5xtdjn53sttNvDlEbYSytwiE@z>
+Message-ID: <20200406120601.7RrDez5g28HcZcoRxidQYqQaCMYUSls9tjoVTcLWCyU@z>
 
-Add support for carveout memory regions required for vdev vring's and
-buffer.
+Hi Arnaud,
 
-Search in device tree and allocate memory regions like for ocram:
+----- On 6 Apr, 2020, at 11:01, Arnaud Pouliquen arnaud.pouliquen@st.com wrote:
 
-vdev0vring0: vdev0vring0@00920000 {
-	compatible = "shared-dma-pool";
-        reg = <0x00920000 0x2000>;
-        no-map;
-};
+> On 4/3/20 9:13 PM, rishabhb@codeaurora.org wrote:
+>> On 2020-04-02 10:28, Arnaud POULIQUEN wrote:
+>>> Hi
+>>>
+>>> On 4/1/20 2:03 AM, Rishabh Bhatnagar wrote:
+>>>> Add the character device interface for userspace applications.
+>>>> This interface can be used in order to boot up and shutdown
+>>>> remote subsystems. Currently there is only a sysfs interface
+>>>> which the userspace clients can use. If a usersapce application
+>>>> crashes after booting the remote processor does not get any
+>>>> indication about the crash. It might still assume that the
+>>>> application is running. For example modem uses remotefs service
+>>>> to fetch data from disk/flash memory. If the remotefs service
+>>>> crashes, modem keeps on requesting data which might lead to a
+>>>> crash. Adding a character device interface makes the remote
+>>>> processor tightly coupled with the user space application.
+>>>> A crash of the application leads to a close on the file descriptors
+>>>> therefore shutting down the remoteproc.
+>>>
+>>> Sorry I'm late in the discussion, I hope I've gone through the whole
+>>> discussion so I don't reopen a closed point...
+>>>
+>>> Something here is not crystal clear to me so I'd rather share it...
+>>>
+>>> I suppose that you the automatic restart of the application is not possible to
+>>> stop and restart the remote processor...
+>> Yes correct, while we wait for the application to restart we might observe a
+>> fatal crash.
+>>>
+>>> Why this use case can not be solved by a process monitor or a service
+>>> in userland that detects the application crash and stop the remote
+>>> firmware using
+>>> the sysfs interface?
+>>>
+>> What happens in the case where the process monitor itself crashes? This is
+>> actually the approach we follow in our downstream code. We have a central entity
+>> in userspace that controls bootup/shutdown of some remote processors based on
+>> the
+>> votes from userspace clients. We have observed cases where this entity
+>> itself crashes and remote processors are left hanging.
+> 
+> Your description makes me feel like this patch is only a workaround of something
+> that
+> should be fixed in the userland, even if i understand that hanging is one of the
+> most
+> critical problem and have to be fixed.
+> For instance, how to handle several applications that interact with the remote
+> processor
+> ( e.g. rpmsg service applications) how to stop and restart everything. Using the
+> char
+> device would probaly resolve only a part of the issue...
+> 
+> I'm not aware about your environment and i'm not a userland expert. But what i
+> still not
+> understand why a parent process can not do the job...
+> I just test a simple script on my side that treat the kill -9 of an application
+> ("cat" in my case).
 
-vdev0vring1: vdev0vring1@00922000 {
-	compatible = "shared-dma-pool";
-	reg = <0x00922000 0x2000>;
-	no-map;
-};
+This is not entirely true, if the parent process is killed with a SIGKILL, then
+the process will not be able to handle anything and the remoteproc will still
+be running.
 
-vdev0buffer: vdev0buffer@00924000 {
-	compatible = "shared-dma-pool";
-	reg = <0x00924000 0x4000>;
-	no-map;
-};
+What I understood from Rishabh patch is a way to allow a single process handling
+the rproc state. We have the same kind of need and currently, if the
+user application crashes, then the rproc is still running (which happens).
 
-imx7d-cm4 {
-	compatible = "fsl,imx7d-cm4";
-	memory-region = <&ocram>, <&vdev0vring0>, <&vdev0vring1>, \
-		<&vdev0buffer>;
-}
+> 
+> #start the remote firmware
+> cp  $1 /lib/firmware/
+> echo $1> /sys/class/remoteproc/remoteproc0/firmware
+> echo start >/sys/class/remoteproc/remoteproc0/state
+> #your binary
+> cat /dev/kmsg
+> # stop the remote firmware in case of crash (and potentially some other apps)
+> echo stop >/sys/class/remoteproc/remoteproc0/state
+> 
 
-vdev0vring0, vdev0vring1, vdev0buffer are required for virtio
-functioning.
+This is not really "production proof" and what happens if the application is
+responsible of setting the firmware which might be jitted ? 
+And if the script receives the SIGKILL, then we are back to the same problem.
 
-Signed-off-by: Nikita Shubin <NShubin@topcon.com>
----
- drivers/remoteproc/imx_rproc.c | 119 ++++++++++++++++++++++++++++++++-
- 1 file changed, 118 insertions(+), 1 deletion(-)
+I really think, this is a step forward an easier and reliable use of the remoteproc
+on userland to guarantee a coherent rproc state even if host application
+crashes.
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index d2bede4ccb70..cdcff2bd2867 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -11,6 +11,7 @@
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-+#include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-@@ -238,6 +239,29 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
- 	return -ENOENT;
- }
- 
-+static int imx_rproc_sys_to_da(struct imx_rproc *priv, u64 sys,
-+				int len, u64 *da)
-+{
-+	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
-+	int i;
-+
-+	/* parse address translation table */
-+	for (i = 0; i < dcfg->att_size; i++) {
-+		const struct imx_rproc_att *att = &dcfg->att[i];
-+
-+		if (sys >= att->sa && sys + len <= att->sa + att->size) {
-+			unsigned int offset = sys - att->sa;
-+
-+			*da = att->da + offset;
-+			return 0;
-+		}
-+	}
-+
-+	dev_warn(priv->dev, "Translation failed: sys = 0x%llx len = 0x%x\n",
-+			 sys, len);
-+	return -ENOENT;
-+}
-+
- static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- {
- 	struct imx_rproc *priv = rproc->priv;
-@@ -372,16 +396,109 @@ static void imx_rproc_kick(struct rproc *rproc, int vqid)
- 		err = mbox_send_message(ddata->mb[i].chan, &vqid);
- 		if (err < 0)
- 			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
--					__func__, ddata->mb[i].name, err);
-+				__func__, ddata->mb[i].name, err);
- 			return;
- 	}
- }
- 
-+static int imx_rproc_mem_alloc(struct rproc *rproc,
-+				struct rproc_mem_entry *mem)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	void *va;
-+
-+	dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
-+	va = ioremap_wc(mem->dma, mem->len);
-+	if (IS_ERR_OR_NULL(va)) {
-+		dev_err(dev, "Unable to map memory region: %pa+%x\n",
-+				&mem->dma, mem->len);
-+		return -ENOMEM;
-+	}
-+
-+	/* Update memory entry va */
-+	mem->va = va;
-+
-+	return 0;
-+}
-+
-+static int imx_rproc_mem_release(struct rproc *rproc,
-+				struct rproc_mem_entry *mem)
-+{
-+	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
-+	iounmap(mem->va);
-+
-+	return 0;
-+}
-+
-+static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct imx_rproc *priv = rproc->priv;
-+	struct device *dev = rproc->dev.parent;
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_iterator it;
-+	struct rproc_mem_entry *mem = 0;
-+	struct reserved_mem *rmem;
-+	u64 da;
-+	int index = 0;
-+
-+	/* Register associated reserved memory regions */
-+	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-+	while (of_phandle_iterator_next(&it) == 0) {
-+		rmem = of_reserved_mem_lookup(it.node);
-+		if (!rmem) {
-+			dev_err(dev, "unable to acquire memory-region\n");
-+			return -EINVAL;
-+		}
-+
-+		/*
-+		 * Let's assume all data in device tree is from
-+		 * CPU A7 point of view then we should translate
-+		 * rmem->base into M4 da
-+		 */
-+		if (imx_rproc_sys_to_da(priv, rmem->base, rmem->size, &da)) {
-+			dev_err(dev, "memory region not valid %pa\n",
-+				&rmem->base);
-+			return -EINVAL;
-+		}
-+
-+		if (strcmp(it.node->name, "vdev0buffer")) {
-+			/* Register memory region */
-+			mem = rproc_mem_entry_init(dev, NULL,
-+						(dma_addr_t)rmem->base,
-+						rmem->size, da,
-+						imx_rproc_mem_alloc,
-+						imx_rproc_mem_release,
-+						it.node->name);
-+
-+			if (mem)
-+				rproc_coredump_add_segment(rproc, da,
-+							rmem->size);
-+		} else {
-+			mem = rproc_of_resm_mem_entry_init(dev, index,
-+							rmem->size,
-+							rmem->base,
-+							it.node->name);
-+		}
-+
-+		if (!mem)
-+			return -ENOMEM;
-+
-+		rproc_add_carveout(rproc, mem);
-+		index++;
-+	}
-+
-+	return rproc_elf_load_rsc_table(rproc, fw);
-+}
-+
- static const struct rproc_ops imx_rproc_ops = {
- 	.start		= imx_rproc_start,
- 	.stop		= imx_rproc_stop,
- 	.da_to_va	= imx_rproc_da_to_va,
- 	.kick		= imx_rproc_kick,
-+	.load		= rproc_elf_load_segments,
-+	.parse_fw	= imx_rproc_parse_fw,
-+	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-+	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- };
- 
--- 
-2.25.1
+Regards,
 
+Clément
+
+> Anyway, it's just my feeling, let other people give their feedback.
+> 
+>>> I just want to be sure that there is no alternative to this, because
+>>> having two ways
+>>> for application to shutdown the firmware seems to me confusing...
+>> Does making this interface optional/configurable helps?
+>>>
+>>> What about the opposite service, mean inform the application that the remote
+>>> processor is crashed?
+>>> Do you identify such need? or the "auto" crash recovery is sufficient?
+>> Auto recovery works perfectly for us. Although there is a mechanism in
+>> place using QMI(Qualcomm MSM interface) that can notify clients about remote
+>> processor crash.
+> 
+> Thanks for the information.
+> 
+> Regards
+> Arnaud
+> 
+>>>
+>>> Thanks,
+>>> Arnaud
+>>>>
+>>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>>>> ---
+>>>>  drivers/remoteproc/Kconfig               |   9 +++
+>>>>  drivers/remoteproc/Makefile              |   1 +
+>>>>  drivers/remoteproc/remoteproc_cdev.c     | 100 +++++++++++++++++++++++++++++++
+>>>>  drivers/remoteproc/remoteproc_internal.h |  22 +++++++
+>>>>  include/linux/remoteproc.h               |   2 +
+>>>>  5 files changed, 134 insertions(+)
+>>>>  create mode 100644 drivers/remoteproc/remoteproc_cdev.c
+>>>>
+>>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>>> index de3862c..6374b79 100644
+>>>> --- a/drivers/remoteproc/Kconfig
+>>>> +++ b/drivers/remoteproc/Kconfig
+>>>> @@ -14,6 +14,15 @@ config REMOTEPROC
+>>>>
+>>>>  if REMOTEPROC
+>>>>
+>>>> +config REMOTEPROC_CDEV
+>>>> +    bool "Remoteproc character device interface"
+>>>> +    help
+>>>> +      Say y here to have a character device interface for Remoteproc
+>>>> +      framework. Userspace can boot/shutdown remote processors through
+>>>> +      this interface.
+>>>> +
+>>>> +      It's safe to say N if you don't want to use this interface.
+>>>> +
+>>>>  config IMX_REMOTEPROC
+>>>>      tristate "IMX6/7 remoteproc support"
+>>>>      depends on ARCH_MXC
+>>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>>>> index e30a1b1..b7d4f77 100644
+>>>> --- a/drivers/remoteproc/Makefile
+>>>> +++ b/drivers/remoteproc/Makefile
+>>>> @@ -9,6 +9,7 @@ remoteproc-y                += remoteproc_debugfs.o
+>>>>  remoteproc-y                += remoteproc_sysfs.o
+>>>>  remoteproc-y                += remoteproc_virtio.o
+>>>>  remoteproc-y                += remoteproc_elf_loader.o
+>>>> +obj-$(CONFIG_REMOTEPROC_CDEV)        += remoteproc_cdev.o
+>>>>  obj-$(CONFIG_IMX_REMOTEPROC)        += imx_rproc.o
+>>>>  obj-$(CONFIG_MTK_SCP)            += mtk_scp.o mtk_scp_ipi.o
+>>>>  obj-$(CONFIG_OMAP_REMOTEPROC)        += omap_remoteproc.o
+>>>> diff --git a/drivers/remoteproc/remoteproc_cdev.c
+>>>> b/drivers/remoteproc/remoteproc_cdev.c
+>>>> new file mode 100644
+>>>> index 0000000..8182bd1
+>>>> --- /dev/null
+>>>> +++ b/drivers/remoteproc/remoteproc_cdev.c
+>>>> @@ -0,0 +1,100 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>> +/*
+>>>> + * Character device interface driver for Remoteproc framework.
+>>>> + *
+>>>> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +#include <linux/cdev.h>
+>>>> +#include <linux/fs.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/mutex.h>
+>>>> +#include <linux/remoteproc.h>
+>>>> +
+>>>> +#include "remoteproc_internal.h"
+>>>> +
+>>>> +#define NUM_RPROC_DEVICES    64
+>>>> +static dev_t rproc_cdev;
+>>>> +static DEFINE_IDA(cdev_minor_ida);
+>>>> +
+>>>> +static int rproc_cdev_open(struct inode *inode, struct file *file)
+>>>> +{
+>>>> +    struct rproc *rproc;
+>>>> +
+>>>> +    rproc = container_of(inode->i_cdev, struct rproc, char_dev);
+>>>> +
+>>>> +    if (!rproc)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (rproc->state == RPROC_RUNNING)
+>>>> +        return -EBUSY;
+>>>> +
+>>>> +    return rproc_boot(rproc);
+>>>> +}
+>>>> +
+>>>> +static int rproc_cdev_release(struct inode *inode, struct file *file)
+>>>> +{
+>>>> +    struct rproc *rproc;
+>>>> +
+>>>> +    rproc = container_of(inode->i_cdev, struct rproc, char_dev);
+>>>> +
+>>>> +    if (!rproc || rproc->state != RPROC_RUNNING)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    rproc_shutdown(rproc);
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static const struct file_operations rproc_fops = {
+>>>> +    .open = rproc_cdev_open,
+>>>> +    .release = rproc_cdev_release,
+>>>> +};
+>>>> +
+>>>> +int rproc_char_device_add(struct rproc *rproc)
+>>>> +{
+>>>> +    int ret, minor;
+>>>> +    dev_t cdevt;
+>>>> +
+>>>> +    minor = ida_simple_get(&cdev_minor_ida, 0, NUM_RPROC_DEVICES,
+>>>> +                   GFP_KERNEL);
+>>>> +    if (minor < 0) {
+>>>> +        dev_err(&rproc->dev, "%s: No more minor numbers left! rc:%d\n",
+>>>> +            __func__, minor);
+>>>> +        return -ENODEV;
+>>>> +    }
+>>>> +
+>>>> +    cdev_init(&rproc->char_dev, &rproc_fops);
+>>>> +    rproc->char_dev.owner = THIS_MODULE;
+>>>> +
+>>>> +    cdevt = MKDEV(MAJOR(rproc_cdev), minor);
+>>>> +    ret = cdev_add(&rproc->char_dev, cdevt, 1);
+>>>> +    if (ret < 0)
+>>>> +        ida_simple_remove(&cdev_minor_ida, minor);
+>>>> +
+>>>> +    rproc->dev.devt = cdevt;
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +void rproc_char_device_remove(struct rproc *rproc)
+>>>> +{
+>>>> +    __unregister_chrdev(MAJOR(rproc->dev.devt), MINOR(rproc->dev.devt), 1,
+>>>> +                "rproc");
+>>>> +    ida_simple_remove(&cdev_minor_ida, MINOR(rproc->dev.devt));
+>>>> +}
+>>>> +
+>>>> +void __init rproc_init_cdev(void)
+>>>> +{
+>>>> +    int ret;
+>>>> +
+>>>> +    ret = alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICES, "rproc");
+>>>> +    if (ret < 0) {
+>>>> +        pr_err("Failed to alloc rproc_cdev region, err %d\n", ret);
+>>>> +        return;
+>>>> +    }
+>>>> +}
+>>>> +
+>>>> +void __exit rproc_exit_cdev(void)
+>>>> +{
+>>>> +    __unregister_chrdev(MAJOR(rproc_cdev), 0, NUM_RPROC_DEVICES, "rproc");
+>>>> +}
+>>>> diff --git a/drivers/remoteproc/remoteproc_internal.h
+>>>> b/drivers/remoteproc/remoteproc_internal.h
+>>>> index 493ef92..28d61a1 100644
+>>>> --- a/drivers/remoteproc/remoteproc_internal.h
+>>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>>>> @@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const char *name,
+>>>> struct rproc *rproc,
+>>>>  int rproc_init_sysfs(void);
+>>>>  void rproc_exit_sysfs(void);
+>>>>
+>>>> +#ifdef CONFIG_REMOTEPROC_CDEV
+>>>> +void rproc_init_cdev(void);
+>>>> +void rproc_exit_cdev(void);
+>>>> +int rproc_char_device_add(struct rproc *rproc);
+>>>> +void rproc_char_device_remove(struct rproc *rproc);
+>>>> +#else
+>>>> +static inline void rproc_init_cdev(void)
+>>>> +{
+>>>> +}
+>>>> +static inline void rproc_exit_cdev(void)
+>>>> +{
+>>>> +}
+>>>> +static inline int rproc_char_device_add(struct rproc *rproc)
+>>>> +{
+>>>> +    return 0;
+>>>> +}
+>>>> +static inline void  rproc_char_device_remove(struct rproc *rproc)
+>>>> +{
+>>>> +}
+>>>> +#endif
+>>>> +
+>>>>  void rproc_free_vring(struct rproc_vring *rvring);
+>>>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+>>>>
+>>>> @@ -63,6 +84,7 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct
+>>>> rproc *rproc,
+>>>>  struct rproc_mem_entry *
+>>>>  rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+>>>>
+>>>> +
+>>>>  static inline
+>>>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>>>>  {
+>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>>> index 16ad666..c4ca796 100644
+>>>> --- a/include/linux/remoteproc.h
+>>>> +++ b/include/linux/remoteproc.h
+>>>> @@ -37,6 +37,7 @@
+>>>>
+>>>>  #include <linux/types.h>
+>>>>  #include <linux/mutex.h>
+>>>> +#include <linux/cdev.h>
+>>>>  #include <linux/virtio.h>
+>>>>  #include <linux/completion.h>
+>>>>  #include <linux/idr.h>
+>>>> @@ -514,6 +515,7 @@ struct rproc {
+>>>>      bool auto_boot;
+>>>>      struct list_head dump_segments;
+>>>>      int nb_vdev;
+>>>> +    struct cdev char_dev;
+>>>>  };
+>>>>
+>>>>  /**
