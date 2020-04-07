@@ -1,10 +1,10 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 8 Apr 2020 13:38:18 -0600
+Date: Tue, 7 Apr 2020 12:08:18 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH 5/7] remoteproc/k3-r5: Add a remoteproc driver for R5F
  subsystem
-Message-ID: <20200408193818.GA3504@xps15>
+Message-ID: <20200407180818.GA19685@xps15>
 References: <20200324201819.23095-1-s-anna@ti.com>
  <20200324201819.23095-6-s-anna@ti.com>
 MIME-Version: 1.0
@@ -66,7 +66,14 @@ On Tue, Mar 24, 2020 at 03:18:17PM -0500, Suman Anna wrote:
 > and regular module load/unload flows.
 > 
 > The subsystem is represented as a single remoteproc in LockStep mode, and
-> as two remoteprocs in Split mode. The driver uses various TI-SCI interfaces
+> as two remoteprocs in Split mode.
+
+Thank you for the detailed explanation, it really helps understand what is going
+on.  From the above the assumption I made in the previous patch about lockstep
+and split mode is wrong.  On the flip side it does highlight the need to add
+more details to the bindings.
+
+> The driver uses various TI-SCI interfaces
 > to talk to the System Controller (DMSC) for managing configuration, power
 > and reset management of these cores. IPC between the A53 cores and the R5
 > cores is supported through the virtio rpmsg stack using shared memory and
@@ -151,6 +158,9 @@ On Tue, Mar 24, 2020 at 03:18:17PM -0500, Suman Anna wrote:
 > +#include <linux/pm_runtime.h>
 > +#include <linux/remoteproc.h>
 > +#include <linux/omap-mailbox.h>
+
+Please move this up after of_reserved_mem.h
+
 > +#include <linux/reset.h>
 > +#include <linux/soc/ti/ti_sci_protocol.h>
 > +
@@ -759,10 +769,6 @@ On Tue, Mar 24, 2020 at 03:18:17PM -0500, Suman Anna wrote:
 > +
 > +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
 > +	core = cluster->mode ? core0 : kproc->core;
-
-The above two lines generated interesting mental gymnastic - please sprinkle
-with comments in order to disambiguate what is going on.
-
 > +
 > +	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
 > +				     &stat);
@@ -814,16 +820,6 @@ with comments in order to disambiguate what is going on.
 > +		 */
 > +		list_for_each_entry(temp, &cluster->cores, elem) {
 > +			ret = k3_r5_core_halt(core);
-
-When I first read this I thought this was an error and what was really needed
-was k3_r5_core_halt(temp)... But no, this is correct because
-k3_r5_rproc_configure() is called for each core in the cluster in function
-k3_r5_cluster_rproc_init().  But then again why halting the same for each of the
-cores found in the system?
-
-So something seems wrong here.  Either call k3_r5_core_halt(temp) or move
-k3_r5_core_halt(core) outside of the if (cluster->mode) to avoid more confusion.
-
 > +			if (ret)
 > +				goto out;
 > +
@@ -1011,12 +1007,6 @@ k3_r5_core_halt(core) outside of the if (cluster->mode) to avoid more confusion.
 > +
 > +		/* create only one rproc in lockstep mode */
 > +		if (cluster->mode)
-
-Here and throughout the file, please use the cluster mode enumeration in order
-to improve readability, i.e 
-
-                if (cluster->mode == CLUSTER_MODE_LOCKSTEP)
-
 > +			break;
 > +	}
 > +
@@ -1155,10 +1145,6 @@ to improve readability, i.e
 > +	}
 > +	if (core->mem)
 > +		devm_kfree(dev, core->mem);
-
-Since the devm_ API has been used for memory allocation all this should be
-called automatically when of_platform_depopulate() is called. 
-
 > +	return ret;
 > +}
 > +
@@ -1176,10 +1162,6 @@ called automatically when of_platform_depopulate() is called.
 > +		return ERR_PTR(ret);
 > +
 > +	tsp = kzalloc(sizeof(*tsp), GFP_KERNEL);
-
-Here @dev is available, I would just call devm_kzalloc() and get rid of the
-kfree() in the error path of k3_r5_core_of_init() and k3_r5_core_of_exit().  
-
 > +	if (!tsp)
 > +		return ERR_PTR(-ENOMEM);
 > +
@@ -1207,10 +1189,6 @@ kfree() in the error path of k3_r5_core_of_init() and k3_r5_core_of_exit().
 > +	core->atcm_enable = 0;
 > +	core->btcm_enable = 1;
 > +	core->loczrama = 1;
-
-Please add a comment that justifies the selection of default value.  Otherwise
-this looks very esoteric. 
-
 > +
 > +	ret = of_property_read_u32(np, "atcm-enable", &core->atcm_enable);
 > +	if (ret < 0 && ret != -EINVAL) {
@@ -1263,6 +1241,15 @@ this looks very esoteric.
 > +			ret);
 > +		ret = PTR_ERR(core->tsp);
 > +		goto err_sci_proc;
+
+Why not calling the label "err_reset"?  I don't see what how "err_sci_proc"
+relates to what the code is doing... 
+
+I'll continue reviewing this patch tomorrow.
+
+Thanks,
+Mathieu
+
 > +	}
 > +
 > +	ret = ti_sci_proc_request(core->tsp);
@@ -1294,14 +1281,8 @@ this looks very esoteric.
 > +	ret1 = ti_sci_put_handle(core->ti_sci);
 > +	if (ret1)
 > +		dev_err(dev, "failed to put ti_sci handle, ret = %d\n", ret1);
-
-s/"ret = %d"/"ret1 = %d"
-
 > +err_of:
 > +	devm_kfree(dev, core);
-
-Same comment as above, this should be called automatically.
-
 > +	return ret;
 > +}
 > +
@@ -1336,12 +1317,6 @@ Same comment as above, this should be called automatically.
 > +
 > +	platform_set_drvdata(pdev, NULL);
 > +	devm_kfree(dev, core);
-
-Same comment regarding the devm_ API, this should be called automatically.
-
-I will continue tomorrow,
-Mathieu
-
 > +
 > +	return ret;
 > +}
@@ -1385,6 +1360,10 @@ Mathieu
 > +		cpdev = to_platform_device(core->dev);
 > +		if (k3_r5_core_of_exit(cpdev))
 > +			dev_err(dev, "k3_r5_core_of_exit cleanup failed\n");
+
+I would move k3_r5_cluster_of_exit() just above k3_r5_cluster_of_init() and
+reuse the former here instead of repeating the same code.
+
 > +	}
 > +	return ret;
 > +}
@@ -1405,6 +1384,10 @@ Mathieu
 > +			dev_err(dev, "k3_r5_core_of_exit failed, ret = %d\n",
 > +				ret);
 > +			break;
+
+So why stopping when encountering an error?  Since this is the exit path I think
+it is better to call k3_r5_core_of_exit() on as many core as possible.
+
 > +		}
 > +	}
 > +
