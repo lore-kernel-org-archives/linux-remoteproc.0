@@ -1,62 +1,56 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v2 3/7] remoteproc: Simplify default name allocation
-Date: Wed, 15 Apr 2020 14:48:54 -0600
-Message-Id: <20200415204858.2448-4-mathieu.poirier@linaro.org>
-In-Reply-To: <20200415204858.2448-1-mathieu.poirier@linaro.org>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+Return-Path: <mst@redhat.com>
+Return-Path: <mst@redhat.com>
+Date: Mon, 6 Apr 2020 21:08:01 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH v7 15/19] remoteproc: switch to virtio_legacy_init/size
+Message-ID: <20200407010700.446571-16-mst@redhat.com>
+References: <20200407010700.446571-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20200407010700.446571-1-mst@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+To: linux-kernel@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In an effort to cleanup firmware name allocation, replace the
-cumbersome mechanic used to allocate a default firmware name with
-function kasprintf().
+These are used for legacy ring format, switch to APIs that make this
+explicit.
 
-Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ drivers/remoteproc/remoteproc_core.c   | 2 +-
+ drivers/remoteproc/remoteproc_virtio.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4dee63f319ba..9899467fa1cf 100644
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remo=
+teproc_core.c
+index 097f33e4f1f3..c350a01e6c4e 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1982,24 +1982,19 @@ static const struct device_type rproc_type = {
- static int rproc_alloc_firmware(struct rproc *rproc,
- 				const char *name, const char *firmware)
- {
--	char *p, *template = "rproc-%s-fw";
--	int name_len;
-+	char *p;
- 
--	if (!firmware) {
-+	if (!firmware)
- 		/*
- 		 * If the caller didn't pass in a firmware name then
- 		 * construct a default name.
- 		 */
--		name_len = strlen(name) + strlen(template) - 2 + 1;
--		p = kmalloc(name_len, GFP_KERNEL);
--		if (!p)
--			return -ENOMEM;
--		snprintf(p, name_len, template, name);
--	} else {
-+		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
-+	else
- 		p = kstrdup(firmware, GFP_KERNEL);
--		if (!p)
--			return -ENOMEM;
--	}
-+
-+	if (!p)
-+		return -ENOMEM;
- 
- 	rproc->firmware = p;
- 
--- 
-2.20.1
+@@ -322,7 +322,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+ =09struct rproc_mem_entry *mem;
+=20
+ =09/* actual size of vring (in bytes) */
+-=09size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
++=09size =3D PAGE_ALIGN(vring_legacy_size(rvring->len, rvring->align));
+=20
+ =09rsc =3D (void *)rproc->table_ptr + rvdev->rsc_offset;
+=20
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/re=
+moteproc_virtio.c
+index 8c07cb2ca8ba..35b02468197a 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -95,7 +95,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device =
+*vdev,
+ =09len =3D rvring->len;
+=20
+ =09/* zero vring */
+-=09size =3D vring_size(len, rvring->align);
++=09size =3D vring_legacy_size(len, rvring->align);
+ =09memset(addr, 0, size);
+=20
+ =09dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
+--=20
+MST
