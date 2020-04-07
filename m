@@ -1,47 +1,60 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v2 5/7] remoteproc: Restructure firmware name allocation
-Date: Wed, 15 Apr 2020 14:48:56 -0600
-Message-Id: <20200415204858.2448-6-mathieu.poirier@linaro.org>
-In-Reply-To: <20200415204858.2448-1-mathieu.poirier@linaro.org>
-References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
+Date: Mon, 6 Apr 2020 22:30:43 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v8 15/19] remoteproc: switch to virtio_legacy_init/size
+Message-ID: <20200407053041.GH20625@builder.lan>
+References: <20200407011612.478226-1-mst@redhat.com>
+ <20200407011612.478226-16-mst@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200407011612.478226-16-mst@redhat.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Improve the readability of function rproc_alloc_firmware() by using
-a non-negated condition.
+On Mon 06 Apr 18:16 PDT 2020, Michael S. Tsirkin wrote:
 
-Suggested-by: Alex Elder <elder@linaro.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> These are used for legacy ring format, switch to APIs that make this
+> explicit.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ebaff496ef81..0bfa6998705d 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1984,14 +1984,14 @@ static int rproc_alloc_firmware(struct rproc *rproc,
- {
- 	const char *p;
- 
--	if (!firmware)
-+	if (firmware)
-+		p = kstrdup_const(firmware, GFP_KERNEL);
-+	else
- 		/*
- 		 * If the caller didn't pass in a firmware name then
- 		 * construct a default name.
- 		 */
- 		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
--	else
--		p = kstrdup_const(firmware, GFP_KERNEL);
- 
- 	if (!p)
- 		return -ENOMEM;
--- 
-2.20.1
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/remoteproc/remoteproc_core.c   | 2 +-
+>  drivers/remoteproc/remoteproc_virtio.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 097f33e4f1f3..c350a01e6c4e 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -322,7 +322,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
+>  	struct rproc_mem_entry *mem;
+>  
+>  	/* actual size of vring (in bytes) */
+> -	size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
+> +	size = PAGE_ALIGN(vring_legacy_size(rvring->len, rvring->align));
+>  
+>  	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
+>  
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index 8c07cb2ca8ba..35b02468197a 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -95,7 +95,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
+>  	len = rvring->len;
+>  
+>  	/* zero vring */
+> -	size = vring_size(len, rvring->align);
+> +	size = vring_legacy_size(len, rvring->align);
+>  	memset(addr, 0, size);
+>  
+>  	dev_dbg(dev, "vring%d: va %pK qsz %d notifyid %d\n",
+> -- 
+> MST
+> 
