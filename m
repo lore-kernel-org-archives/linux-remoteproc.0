@@ -2,218 +2,156 @@ Return-Path: <SRS0=8QH8=5X=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD57C2D0EC
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Apr 2020 23:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 379EEC2D0EC
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Apr 2020 23:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A229A20730
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Apr 2020 23:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CC5720730
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Apr 2020 23:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cIPb3Ap3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NmOHvzsw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbgDGXHQ (ORCPT
+        id S1726453AbgDGX0z (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Apr 2020 19:07:16 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47582 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbgDGXHQ (ORCPT
+        Tue, 7 Apr 2020 19:26:55 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43164 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbgDGX0z (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Apr 2020 19:07:16 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 037N7C3c114713;
-        Tue, 7 Apr 2020 18:07:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586300832;
-        bh=6WKZgInaT9hjUwbTam8NpZ66/XTRdie92DX6qrCz+Uk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cIPb3Ap3sGSTSqZPdSvuArxAfXrssWPHSgwQzJ5KtrBKi6hIvZQlQMlBttniN8hUI
-         2MwdZveunG5NkyUBmtCrjxD64pTKnrs+yNgY9eQeBBzf5/rfPme+jA+Tt9ekh3/jNF
-         1or4q235qln9sShyQUcvYxbszkUgnqOvVg33e+kI=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 037N7Ct2066448
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Apr 2020 18:07:12 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 7 Apr
- 2020 18:07:12 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 7 Apr 2020 18:07:11 -0500
-Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 037N7Bhh098908;
-        Tue, 7 Apr 2020 18:07:11 -0500
-Subject: Re: [PATCH v2] rpmsg: core: Add wildcard match for name service
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200310155058.1607-1-mathieu.poirier@linaro.org>
- <591bd727-32af-9ea2-8c46-98f46ee3711e@ti.com>
- <CANLsYkyv+4cSCY27kA6qfo2XMzXy_h+DmXTe0nVZuUkC0kyRUQ@mail.gmail.com>
- <ca77fe73-3baf-64ff-c9e2-b2f35f96ffe3@ti.com>
- <CANLsYkz8iqiperjdQVcwAC3YGT5cmEvJcu8fPFGF5-X6eKVUDQ@mail.gmail.com>
- <34d1277f-c35e-5df8-7d0c-ea1e961a127f@st.com> <20200327193602.GA22939@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <77cba22f-5911-e88a-ec25-50cbe9b8fbbe@ti.com>
-Date:   Tue, 7 Apr 2020 18:07:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 7 Apr 2020 19:26:55 -0400
+Received: by mail-pl1-f196.google.com with SMTP id z6so326778plk.10
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Apr 2020 16:26:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=y5LS3MU2ajrGhRzRJXtmecDXDze15/f8wGbcQHqh5n4=;
+        b=NmOHvzswUt9XYTE1FH4pjMmmWuJs4RiOc30XXNe/xawQjAVjxF4k/O55uZbflAP5xM
+         Cp6qLKTEtUR08ztRXxhoxXQwdkviEYF6dxtYh3Wsj+o+3nZYQ7xU8rFfKOhcZk+Bhpi4
+         HP77kgIUYAYgSknWgI4gvHP0DUvuUf7JCBS8hsEq7nffrAmL0nVkPQaYeiOygFEkzl5N
+         Xr+erFsD2lXoxBmsReXKP0EOl2MT2F927ooDWplLYCf2yJeovnK18pDwJ9cmht2aFcQ9
+         X5+ayPRdsmUfBW4r2RobojK4RPdw7PUgVsjP2Sa/7mBENcUociKnoa7TEd1ltawkCZDl
+         0T3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y5LS3MU2ajrGhRzRJXtmecDXDze15/f8wGbcQHqh5n4=;
+        b=Ysr0pe0z4BUDhEcqT6regunQhWo2BURRLeLrnoLpYOjwv8FAosRl4VQ16V6ZWud5zE
+         Zm9TVWXBZd2q8LzfvMUIFhw21hS6GS8HnQ0ywnS8j10kjk1Pg0r+6hlIwbT1LQVhlyyF
+         0s4k4YXPaXLsbTdw7l66YT4XpvrJfeQk8GlHT7Kzf35HHjhQgfCJb9vxNPBcyAkMLIaL
+         kf+HKYFRB25s2jlE9LUHcd2DxmFHN1ZCLlVhQns9Ocg3wIsB0G1UhuLPJTF28k83yq0w
+         7jcwNWKJtXPs3ZK8vfWKwD+PyfAPALPRXAB7+V6oNROa9jVX6h+JK+dz95HsYpjkZE9J
+         QTmw==
+X-Gm-Message-State: AGi0PuYMDJaKULOy/B9lgkk4HaTJ89vvWvMDBjfgCD9lFadH0RbYPp8o
+        ek1pyo9z178czxAOws9Hvexajg==
+X-Google-Smtp-Source: APiQypKoPhJDW9jWO0if0qrlkO0oFu9JmnbT7a7/ETHNk4nvDKag6Odi3YwvY66/1Ba6oswXw3zGYA==
+X-Received: by 2002:a17:90a:be0b:: with SMTP id a11mr1977543pjs.56.1586302014257;
+        Tue, 07 Apr 2020 16:26:54 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id q12sm14143932pgi.86.2020.04.07.16.26.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Apr 2020 16:26:53 -0700 (PDT)
+Date:   Tue, 7 Apr 2020 16:26:59 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     rishabhb@codeaurora.org
+Cc:     Siddharth Gupta <sidgup@codeaurora.org>, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, linux-remoteproc-owner@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: core: Prevent sleep when rproc crashes
+Message-ID: <20200407232659.GM20625@builder.lan>
+References: <1582164713-6413-1-git-send-email-sidgup@codeaurora.org>
+ <1582164713-6413-3-git-send-email-sidgup@codeaurora.org>
+ <20200407222958.GL20625@builder.lan>
+ <c98b9b02c49b41c6e2493407f11c5eac@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20200327193602.GA22939@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c98b9b02c49b41c6e2493407f11c5eac@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200407230711.Wy_54g00oIAGehJCHOhLZiWmZjAJkPyX5PBmZ-fNYmg@z>
+Message-ID: <20200407232659.n8wZf3ARh7p-U-DrcC3ns77rgYb2fgq3lzKSy3TIhdo@z>
 
-Hi Mathieu, Arnaud,
+On Tue 07 Apr 15:59 PDT 2020, rishabhb@codeaurora.org wrote:
 
-On 3/27/20 2:36 PM, Mathieu Poirier wrote:
-> On Fri, Mar 27, 2020 at 10:35:34AM +0100, Arnaud POULIQUEN wrote:
->> Hi
->>
->> On 3/26/20 11:01 PM, Mathieu Poirier wrote:
->>> On Thu, 26 Mar 2020 at 14:42, Suman Anna <s-anna@ti.com> wrote:
->>>>
->>>> On 3/26/20 3:21 PM, Mathieu Poirier wrote:
->>>>> On Thu, 26 Mar 2020 at 09:06, Suman Anna <s-anna@ti.com> wrote:
->>>>>>
->>>>>> Hi Mathieu,
->>>>>>
->>>>>> On 3/10/20 10:50 AM, Mathieu Poirier wrote:
->>>>>>> Adding the capability to supplement the base definition published
->>>>>>> by an rpmsg_driver with a postfix description so that it is possible
->>>>>>> for several entity to use the same service.
->>>>>>>
->>>>>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>>>>> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
->>>>>>
->>>>>> So, the concern I have here is that we are retrofitting this into the
->>>>>> existing 32-byte name field, and the question is if it is going to be
->>>>>> enough in general. That's the reason I went with the additional 32-byte
->>>>>> field with the "rpmsg: add a description field" patch.
->>>>>>
->>>>>
->>>>> That's a valid concern.
->>>>>
->>>>> Did you consider increasing the size of RPMSG_NAME_SIZE to 64? Have
->>>>> you found cases where that wouldn't work?  I did a survey of all the
->>>>> places the #define is used and all destination buffers are also using
->>>>> the same #define in their definition.  It would also be backward
->>>>> compatible with firmware implementations that use 32 byte.
->>>>
->>>> You can't directly bump the size without breaking the compatibility on
->>>> the existing rpmsg_ns_msg in firmwares right? All the Linux-side drivers
->>>> will be ok since they use the same macro but rpmsg_ns_msg has presence
->>>> on both kernel and firmware-sides.
->>>
->>> Ah yes yes... The amount of bytes coming out of the pipe won't match.
->>> Let me think a little...
->>
->> +1 for Suman's concern.
->>
->> Anyway i would like to challenge the need of more than 32 bytes to
->> differentiate service instances.
->> "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", seems to me enough if we only need
->> to differentiate the instances.
+> On 2020-04-07 15:29, Bjorn Andersson wrote:
+> > On Wed 19 Feb 18:11 PST 2020, Siddharth Gupta wrote:
+> > 
+> > > Remoteproc recovery should be fast and any delay will have an impact
+> > > on the
+> > > user-experience. Use power management APIs (pm_stay_awake and
+> > > pm_relax) to
+> > > ensure that the system does not go to sleep.
+> > > 
+> > > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c
+> > > b/drivers/remoteproc/remoteproc_core.c
+> > > index 5ab65a4..52e318c 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -1712,6 +1712,8 @@ static void rproc_crash_handler_work(struct
+> > > work_struct *work)
+> > > 
+> > >  	if (!rproc->recovery_disabled)
+> > >  		rproc_trigger_recovery(rproc);
+> > > +
+> > > +	pm_relax(&rproc->dev);
+> > >  }
+> > > 
+> > >  /**
+> > > @@ -2242,6 +2244,8 @@ void rproc_report_crash(struct rproc *rproc,
+> > > enum rproc_crash_type type)
+> > >  		return;
+> > >  	}
+> > > 
+> > > +	pm_stay_awake(&rproc->dev);
+> > 
+> > Following Mathieu's question I was expecting you to do this on
+> > rproc->dev.parent.
+> > 
+> > But looking at the implementation of pm_stay_awake(), it ends up being a
+> > nop if dev->power.wakeup isn't specified. This in turn seems to come
+> > from device_wakeup_enable(), which will bail if dev->power.can_wakeup is
+> > not set. But I don't see where this would be set for either the platform
+> > driver or the remoteproc's struct device - and neither one of them have
+> > a "wakeup" attribute in sysfs.
+> > 
+> > Is there some additional plumbing needed for this?
+> We should be able to create a standalone wakeup source using
+> wakeup_source_init.
+> Then we can use _pm_stay_awake and _pm_relax on it.
 
-Remember that the rpmsg_device_id name takes some space within here. So,
-the shorter the rpmsg_device_id table name, the more room you have.
+Afaict the way to do this would be to call device_wakeup_enable() on
+either the remoteproc or platform driver's struct device.
 
->>
->> But perhaps the need is also to provide a short description of the service?
+Given that the resources related to waking up the system are associated
+with the platform driver I think this should be done on the platform
+driver's struct device and these calls should operate on the rproc's
+parent.
 
-I am mostly using it to provide a unique instantiation name. In anycase,
-I have cross-checked against my current firmwares, and so far all of
-them happen to have the name + desc < 31 bytes.
+Regards,
+Bjorn
 
-
->>
->> Suman, could you share some examples of your need?
-> 
-> Looking at things further it is possible to extend the name of the service to
-> 64 byte while keeping backward compatibility by looking up the size of @len
-> in function rpmsg_ns_cb().  From there work with an rpmsg_ns_msg or a new
-> rpmsg_ns_msg64, pretty much the way you did in your patch[1].  In fact the
-> approach is the same except you are using 2 arrays of 32 byte and I'm using one
-> of 64. 
-> 
-> As Arnaud mentioned, is there an immediate need to support a 64-byte name?  If
-> not than I suggest to move forward with this patch and address the issue when we
-> get there - at least we know there is room for extention. Otherwise I'll spin
-> off another revision but it will be bigger and more complex.
-
-Yeah ok. I have managed to get my downstream drivers that use the desc
-field working with this patch after modifying the firmwares to publish
-using combined name, and adding logic in probe to get the trailing
-portion of the name.
-
-So, the only thing that is missing or content for another patch is if we
-need to add some tooling/helper stuff for giving the trailing stuff to
-rpmsg drivers?
-
-regards
-Suman
-
-> 
-> Thanks,
-> Mathieu
-> 
-> [1]. https://patchwork.kernel.org/patch/11096599/
-> 
->>>>>>
->>>>>>> ---
->>>>>>> Changes for V2:
->>>>>>> - Added Arnaud's Acked-by.
->>>>>>> - Rebased to latest rproc-next.
->>>>>>>
->>>>>>>  drivers/rpmsg/rpmsg_core.c | 20 +++++++++++++++++++-
->>>>>>>  1 file changed, 19 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
->>>>>>> index e330ec4dfc33..bfd25978fa35 100644
->>>>>>> --- a/drivers/rpmsg/rpmsg_core.c
->>>>>>> +++ b/drivers/rpmsg/rpmsg_core.c
->>>>>>> @@ -399,7 +399,25 @@ ATTRIBUTE_GROUPS(rpmsg_dev);
->>>>>>>  static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
->>>>>>>                                 const struct rpmsg_device_id *id)
->>>>>>>  {
->>>>>>> -     return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
->>>>>>> +     size_t len = min_t(size_t, strlen(id->name), RPMSG_NAME_SIZE);
->>>>>>> +
->>>>>>> +     /*
->>>>>>> +      * Allow for wildcard matches.  For example if rpmsg_driver::id_table
->>>>>>> +      * is:
->>>>>>> +      *
->>>>>>> +      * static struct rpmsg_device_id rpmsg_driver_sample_id_table[] = {
->>>>>>> +      *      { .name = "rpmsg-client-sample" },
->>>>>>> +      *      { },
->>>>>>> +      * }
->>>>>>> +      *
->>>>>>> +      * Then it is possible to support "rpmsg-client-sample*", i.e:
->>>>>>> +      *      rpmsg-client-sample
->>>>>>> +      *      rpmsg-client-sample_instance0
->>>>>>> +      *      rpmsg-client-sample_instance1
->>>>>>> +      *      ...
->>>>>>> +      *      rpmsg-client-sample_instanceX
->>>>>>> +      */
->>>>>>> +     return strncmp(id->name, rpdev->id.name, len) == 0;
->>>>>>>  }
->>>>>>>
->>>>>>>  /* match rpmsg channel and rpmsg driver */
->>>>>>>
->>>>>>
->>>>
-
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > +
+> > >  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+> > >  		rproc->name, rproc_crash_to_string(type));
+> > > 
+> > > --
+> > > Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> > > a Linux Foundation Collaborative Project
