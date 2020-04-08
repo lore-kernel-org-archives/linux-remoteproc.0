@@ -2,146 +2,151 @@ Return-Path: <SRS0=kNAc=5Y=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E25FBC2BB1D
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94AEC2BA16
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7FDC2087E
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:19:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFDA206C0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:19:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="XQ+j2Ts1"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g2AO+xIk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbgDHWTD (ORCPT
+        id S1726534AbgDHWT2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Apr 2020 18:19:03 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:33513 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726467AbgDHWSw (ORCPT
+        Wed, 8 Apr 2020 18:19:28 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:44759 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgDHWT2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Apr 2020 18:18:52 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1586384332; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=nxckJHsYlH6PpUyv1QAJtQ0NRWLvH1oUQd2EinXVQSg=; b=XQ+j2Ts1YMk9DBu4mt1cMYmvApJ5ZcRWsa+iuFPnHfADNYmYuRY5OCuZIjgCeGUjqrPicsuA
- w+CvrJLxeQPGf7wP2vzwuJi9e0rlOiZ507qHXVCKBDCkfSDCMlNPyUrouyk2cbIztM1vUc8u
- GCnPQAP8sdABNq2/GE1ZGMPOuHQ=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e8e4dcb.7fcf59ae6260-smtp-out-n04;
- Wed, 08 Apr 2020 22:18:51 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7CA9EC433D2; Wed,  8 Apr 2020 22:18:51 +0000 (UTC)
-Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C7EDCC433BA;
-        Wed,  8 Apr 2020 22:18:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7EDCC433BA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sidgup@codeaurora.org
-From:   Siddharth Gupta <sidgup@codeaurora.org>
-To:     bjorn.andersson@linaro.org, ohad@wizery.com
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org
-Subject: [PATCH v2 1/2] remoteproc: core: Add an API for changing firmware name
-Date:   Wed,  8 Apr 2020 15:18:24 -0700
-Message-Id: <1586384305-7825-2-git-send-email-sidgup@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1586384305-7825-1-git-send-email-sidgup@codeaurora.org>
-References: <1586384305-7825-1-git-send-email-sidgup@codeaurora.org>
+        Wed, 8 Apr 2020 18:19:28 -0400
+Received: by mail-il1-f194.google.com with SMTP id i14so3274398ilr.11
+        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Apr 2020 15:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qniumfFvLliMhVFnxnrnB7Q2WNhjy7ZRmIrlX3T4sxk=;
+        b=g2AO+xIkAkescIVWRA2GPbu6jSL6GUSozW16kCmcsLWRJYzFSv2OkLIX9SMR0nz6B9
+         FiO5toadCf87F3YSjodNMUwO1DRG8iBbBQYFOPf1rGwzK14fKlPGqhA5JFonTHjdjjbR
+         p3GvJT4dQKxEzlSzshcRqzcqaTyvCqZ1jDfkh+DO0hH7osrAYDUj7br8bFRy9nod6I4Y
+         9jIEEXq5pQljiu/OH0vDK86GcEp249O6WuFiyBUqPts8oiktmGC2C6rMnzq9/uk2Arc6
+         niRlCsxH/FSjqRhNieNzimE2XSN3kMykP9ZGodOQ6tBsSP8i8UYCzoC0BeRz8QBjOtOB
+         JzsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qniumfFvLliMhVFnxnrnB7Q2WNhjy7ZRmIrlX3T4sxk=;
+        b=by4JTmeXdBUx0yf/t4sWKpkdd5SvCyR3FDaD4D4Uj484mBI8ktutIET9uNj0fNtje/
+         nt+V5mc8z8SdHFAK1mTbRDpe1TuEdeOv6VJjQRdom7IGjQ81p7fQpJynaQHabeh43rCX
+         ZaK8oacbf6MSbsnssEiZjvCuczHc9glAggSt9G2Ha6c78MdIzfW2ml8AtB1Ea0KIW/CL
+         nYXU/O/NuNPb1dlkyUMQDZS66bWrQnTyph725eZrXd2VsspLWlDlyVzaLB1lN9mJ1KdF
+         vuoJksTz4ZWCeuQPYjtou6Z+yyYdlgiQL3rCLmm8l5TaQTu24SGS1Mr+hltp8LMCTICV
+         FFBw==
+X-Gm-Message-State: AGi0PuajgDzrNjGpcLH18HoE2r72bG7rA4LZu0MJ7VXAZbQ8rzymSqYP
+        F3X4cLhOWzCbCjo165VBNhTQfg==
+X-Google-Smtp-Source: APiQypJlQ4pCg3c6kRw4kbM5us3jsIhB7uNITvlnj8wNX6hNeoZOozNjSRwRazJUGvIwcGLTHcYMjw==
+X-Received: by 2002:a92:9edc:: with SMTP id s89mr10655671ilk.229.1586384366878;
+        Wed, 08 Apr 2020 15:19:26 -0700 (PDT)
+Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id w7sm5153940ior.51.2020.04.08.15.19.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Apr 2020 15:19:26 -0700 (PDT)
+Subject: Re: [PATCH 1/3] remoteproc: fix a bug in rproc_alloc()
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Andy Gross <agross@kernel.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200403175005.17130-1-elder@linaro.org>
+ <20200403175005.17130-2-elder@linaro.org>
+ <CANLsYkx4pSs+j83ewJpOkQmY7=q=k71xg7N9A=sDWrDZKzzQTA@mail.gmail.com>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <9695b13b-77e1-6a5f-9cff-e4c15c46f311@linaro.org>
+Date:   Wed, 8 Apr 2020 17:18:47 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <CANLsYkx4pSs+j83ewJpOkQmY7=q=k71xg7N9A=sDWrDZKzzQTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200408221824.rJUvQHFIOZGyemr6uUaKh-E5y6zcJz-7EnxYaw963xw@z>
+Message-ID: <20200408221847._sqOgEmC5hrEQjPTqXU2DSR0VPACkLoyeevDnioC5wk@z>
 
-Add an API which allows to change the name of the firmware to be booted on
-the specified rproc. This change gives us the flixibility to change the
-firmware at run-time depending on the usecase. Some remoteprocs might use
-a different firmware for testing, production and development purposes,
-which may be selected based on the fuse settings during bootup.
+On 4/8/20 5:16 PM, Mathieu Poirier wrote:
+> Hi Alex,
+> 
+> On Fri, 3 Apr 2020 at 11:50, Alex Elder <elder@linaro.org> wrote:
+>>
+>> If ida_simple_get() returns an error when called in rproc_alloc(),
+>> put_device() is called to clean things up.  By this time the rproc
+>> device type has been assigned, with rproc_type_release() as the
+>> release function.
+>>
+>> The first thing rproc_type_release() does is call:
+>>     idr_destroy(&rproc->notifyids);
+>>
+>> But at the time the ida_simple_get() call is made, the notifyids
+>> field in the remoteproc structure has not been initialized.
+>>
+>> I'm not actually sure this case causes an observable problem, but
+>> it's incorrect.  Fix this by initializing the notifyids field before
+>> calling ida_simple_get() in rproc_alloc().
+>>
+> 
+> Both Suman and I are meddling in function rproc_alloc() for our
+> respective work [1][2].  I will add this patch to a set that refactors
+> rproc_alloc() as soon as v5.7-rc1 comes out.  That way we can all base
+> our work on the same foundation and Bjorn doesn't have to fix 3
+> different merge conflicts.
+> 
+> Thanks,
+> Mathieu
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/remoteproc_core.c | 43 ++++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  1 +
- 2 files changed, 44 insertions(+)
+Fine with me.  Thanks a lot.	-Alex
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index fb9c813..9f99fe2 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1796,6 +1796,49 @@ int rproc_boot(struct rproc *rproc)
- EXPORT_SYMBOL(rproc_boot);
- 
- /**
-+ * rproc_set_firmware_name() - change the firmware name for specified remoteproc
-+ * @rproc: handle of a remote processor
-+ * @firmware: name of the firmware to boot with
-+ *
-+ * Change the name of the firmware to be loaded to @firmware in the rproc
-+ * structure. We should ensure that the remoteproc is not running.
-+ *
-+ * Returns 0 on success, and an appropriate error value otherwise.
-+ */
-+int rproc_set_firmware_name(struct rproc *rproc, const char *firmware)
-+{
-+	int len, ret = 0;
-+	char *p;
-+
-+	if (!rproc || !firmware)
-+		return -EINVAL;
-+
-+	len = strcspn(firmware, "\n");
-+	if (!len)
-+		return -EINVAL;
-+
-+	mutex_lock(&rproc->lock);
-+
-+	if (rproc->state != RPROC_OFFLINE) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	p = kstrndup(firmware, len, GFP_KERNEL);
-+	if (!p) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	kfree(rproc->firmware);
-+	rproc->firmware = p;
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL(rproc_set_firmware_name);
-+
-+/**
-  * rproc_shutdown() - power off the remote processor
-  * @rproc: the remote processor
-  *
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 9c07d79..c5d36e6 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -613,6 +613,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, size_t len,
- 			     u32 da, const char *name, ...);
- 
- int rproc_boot(struct rproc *rproc);
-+int rproc_set_firmware_name(struct rproc *rproc, const char *firmware);
- void rproc_shutdown(struct rproc *rproc);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
- int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> [1]. https://patchwork.kernel.org/patch/11456385/
+> [2]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=261069
+> 
+>> Signed-off-by: Alex Elder <elder@linaro.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index e12a54e67588..59b6eb22f01c 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -2054,6 +2054,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>>         rproc->dev.class = &rproc_class;
+>>         rproc->dev.driver_data = rproc;
+>>
+>> +       idr_init(&rproc->notifyids);
+>> +
+>>         /* Assign a unique device index and name */
+>>         rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+>>         if (rproc->index < 0) {
+>> @@ -2078,8 +2080,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>>
+>>         mutex_init(&rproc->lock);
+>>
+>> -       idr_init(&rproc->notifyids);
+>> -
+>>         INIT_LIST_HEAD(&rproc->carveouts);
+>>         INIT_LIST_HEAD(&rproc->mappings);
+>>         INIT_LIST_HEAD(&rproc->traces);
+>> --
+>> 2.20.1
+>>
+
