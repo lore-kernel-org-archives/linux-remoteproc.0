@@ -2,138 +2,226 @@ Return-Path: <SRS0=kNAc=5Y=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E60C2BA1A
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 15:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A6CC2D0EA
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 16:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC6A2076D
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 15:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A4472082F
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 16:00:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rxcnFhtx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbgDHPzG (ORCPT
+        id S1730096AbgDHQAK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Apr 2020 11:55:06 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:35939 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729171AbgDHPzG (ORCPT
+        Wed, 8 Apr 2020 12:00:10 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36960 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729755AbgDHQAK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Apr 2020 11:55:06 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MFL8J-1jWtE512Xx-00FjXx; Wed, 08 Apr 2020 17:54:52 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Erin Lo <erin.lo@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: mtk_scp: use dma_addr_t for DMA API
-Date:   Wed,  8 Apr 2020 17:54:29 +0200
-Message-Id: <20200408155450.2186471-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.26.0
+        Wed, 8 Apr 2020 12:00:10 -0400
+Received: by mail-io1-f66.google.com with SMTP id n20so604428ioa.4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Apr 2020 09:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aBgudGsrLZ+TDScEKcorJpGh0gEkG8ZAnpRrRFDsG38=;
+        b=rxcnFhtxDIt8Py8z0ni7LEk9HIXreuu8sDgwnsMq0QQpb9Eyctal58xsa1R2NR6Ybp
+         PXkQPtnFlJpuoGhXmcbBpy8GGwUXBoerGdQvMFLvHZQ2PVF2CICMN5QbxSyF1k57y1CF
+         FXXIqCeuVmkzFhJOU+OHSFjZgjH+9UVYGBRse870CyNHNeMExFE2eeOyyz0161m85uyi
+         ARsNc9aTOTiy68zr282xOEY5qRYjzxLGPf/ievoqEd7kr9aqD3m18bYE7E1oN4a4JYi4
+         5+JNZB1g8ka0CujXw6zDn7BRo5Efh/TFLDz+kjqyq1a9JvVQx4d4gR8bTkVKqmuxC5DK
+         ir4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aBgudGsrLZ+TDScEKcorJpGh0gEkG8ZAnpRrRFDsG38=;
+        b=K14MbVq3msP2ycX4ORkrsyX0K4YZbBmWSXO5peA+HIzxBauU0AD3jbr81vBFAHiE6R
+         OM5RUAJWSr984BOD0zKCxIXlXtQ/Cr0ruZc6Y/CRJi7oHq/zwdRP7TSBUGmVl1c3pjBd
+         4o/JV0HZz+ra5TB1m6eWkgcQ3WOlPGBKxjpHYnjJggjT2DE8ckCOR9ZF/VOPDbecfRkv
+         0ECHFSuiTKCNXLq1j3yiHuhnaB6LCpqNiNi9I5AH2E74Y4dOJjviKGsaB7L/MD/LF+uX
+         P/5b2PPULdviv4gdVwulA/90znLcJB4LWD+tqiIluzRTg6krImL+S4q+RkF32faQ2wDm
+         6tnw==
+X-Gm-Message-State: AGi0Pub0Jsrg5LMAY5miv1i7pkrPiCmvahIiClMmS1LUfaQRryezrUA3
+        781Ton1Xn/fHRNEQwQVOcxuJc3xWc6c+OScfQK0e2qlQ
+X-Google-Smtp-Source: APiQypLxgVDOFKmALnYEXFlwsYIboWx3KPvL9/CwCdQ/v/NGeUfm3pUVWeG9CxNiC/aD2avNcl6gqUSSpj130cXuLAI=
+X-Received: by 2002:a05:6638:186:: with SMTP id a6mr7273559jaq.36.1586361608649;
+ Wed, 08 Apr 2020 09:00:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ZXUS0WnSgpDrLDUPXUv4WC9aMIcDFvE3FAcQZyRtm4Fcfz/PImX
- YbWkCxd19WeDTGPPYTgd612QtlZrf+VzZzOOCH0pmwqI038hD+0qc+LvVJdMPjMhgM1pVhu
- go5ASoaJNzp5rdg5N+pmgTNW3g41CDoPdsEkpZtV+L3XewxdrTSjHqU22VZ0PWae5Kwq3Pw
- h3o9mR8BPo8jgPE5vh0FA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5giCQrLFcdI=:WP8aJCXVXjHUf1G2MYPuKx
- yJgLARtxvOSu8qnX/bKwmAycVMI9Ku5uj0yyzrVB9nW58PfVRJs65pUuF0H9Qo2W2ZTAEq49k
- 3y699LxloIhuwMoS6hVUlgwvGGnSJzmojo9Mf02Mhy3Z+xOEIQguuikvibM7y/s/PCWwZ8spK
- IPwHZh1MMY9ecU2slK/xFv8VpyAzGsc/1Sjg7JstBxpCj02136j2qruVF12gi7icZ9SGMaCeX
- 0KX1sJJ3RYI7c2NsBZ3/fuTmMT9temdtJY6QJykBNzjUuelBIzv5uQ57q0kTi5GjZcZ40sos+
- /Prhow+ydB2cQ6XADUXKMdqf7mdWQKxwV6DJnWXnd4uePBWjc/Z6izEFm/qzemKPwMuuKl7/E
- kfvGKCgV2uytBJtiywdWD6YckByPYzdVMoB6NM9rhjF4h7gAAxcsTM1off2NJSezjna6g8wBO
- JFZe//nrHSIdXnsDvQnwAgxoGrg8FsRDQbACxTKdrl2dyUr46J+GjPKfTyshbml4gTpmhFWEj
- fyooy45R9craWPeDTRYesoJojzRqOXKxUEfeNqG8oslev52UPYKWNfq516U34lK624xThg12j
- GCXZi9chpCTIKNkY/yTUtqdpwQA4Cqj+T0WtAStWR8d02WOYb7ddNRZSTYzJJUsBMsG4WCexW
- 7dklVzWRJBNxwLvFhT3WBCHwhRJ7YeXv5YaCatUgzDssoQxxCl4kWjlIsHoWE870RHmlFNRdh
- qiYH1+2a1wdf9Ig4cFndjwm+df8zZFPPNKnyZYtbGEl3BUrY85gfILecuR9g5HEvkdtYtGz2e
- 8Mkud02TZqOwHPqE1+pvDbza+thSWuOz71bUxIf99neDgi6ZCY=
+References: <20200310155058.1607-1-mathieu.poirier@linaro.org>
+ <591bd727-32af-9ea2-8c46-98f46ee3711e@ti.com> <CANLsYkyv+4cSCY27kA6qfo2XMzXy_h+DmXTe0nVZuUkC0kyRUQ@mail.gmail.com>
+ <ca77fe73-3baf-64ff-c9e2-b2f35f96ffe3@ti.com> <CANLsYkz8iqiperjdQVcwAC3YGT5cmEvJcu8fPFGF5-X6eKVUDQ@mail.gmail.com>
+ <34d1277f-c35e-5df8-7d0c-ea1e961a127f@st.com> <20200327193602.GA22939@xps15> <77cba22f-5911-e88a-ec25-50cbe9b8fbbe@ti.com>
+In-Reply-To: <77cba22f-5911-e88a-ec25-50cbe9b8fbbe@ti.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 8 Apr 2020 09:59:57 -0600
+Message-ID:
+ <CANLsYkxWSQNA0SqP5p1d_EK6am5rV-ONrvou1UyuNMnMjGW71Q@mail.gmail.com>
+Subject: Re: [PATCH v2] rpmsg: core: Add wildcard match for name service
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200408155429.24yV-6biXDETy0Xrjubnb2TiRMkC8mZwkX_7A5xtfVI@z>
+Message-ID: <20200408155957.eXLQdt5RDz7qQ1RUIrgdG9NlV2tJZ-bvZEIJnyfaetA@z>
 
-dma_addr_t and phys_addr_t are distinct types and must not be
-mixed, as both the values and the size of the type may be
-different depending on what the remote device uses.
+On Tue, 7 Apr 2020 at 17:07, Suman Anna <s-anna@ti.com> wrote:
+>
+> Hi Mathieu, Arnaud,
+>
+> On 3/27/20 2:36 PM, Mathieu Poirier wrote:
+> > On Fri, Mar 27, 2020 at 10:35:34AM +0100, Arnaud POULIQUEN wrote:
+> >> Hi
+> >>
+> >> On 3/26/20 11:01 PM, Mathieu Poirier wrote:
+> >>> On Thu, 26 Mar 2020 at 14:42, Suman Anna <s-anna@ti.com> wrote:
+> >>>>
+> >>>> On 3/26/20 3:21 PM, Mathieu Poirier wrote:
+> >>>>> On Thu, 26 Mar 2020 at 09:06, Suman Anna <s-anna@ti.com> wrote:
+> >>>>>>
+> >>>>>> Hi Mathieu,
+> >>>>>>
+> >>>>>> On 3/10/20 10:50 AM, Mathieu Poirier wrote:
+> >>>>>>> Adding the capability to supplement the base definition published
+> >>>>>>> by an rpmsg_driver with a postfix description so that it is possible
+> >>>>>>> for several entity to use the same service.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >>>>>>> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+> >>>>>>
+> >>>>>> So, the concern I have here is that we are retrofitting this into the
+> >>>>>> existing 32-byte name field, and the question is if it is going to be
+> >>>>>> enough in general. That's the reason I went with the additional 32-byte
+> >>>>>> field with the "rpmsg: add a description field" patch.
+> >>>>>>
+> >>>>>
+> >>>>> That's a valid concern.
+> >>>>>
+> >>>>> Did you consider increasing the size of RPMSG_NAME_SIZE to 64? Have
+> >>>>> you found cases where that wouldn't work?  I did a survey of all the
+> >>>>> places the #define is used and all destination buffers are also using
+> >>>>> the same #define in their definition.  It would also be backward
+> >>>>> compatible with firmware implementations that use 32 byte.
+> >>>>
+> >>>> You can't directly bump the size without breaking the compatibility on
+> >>>> the existing rpmsg_ns_msg in firmwares right? All the Linux-side drivers
+> >>>> will be ok since they use the same macro but rpmsg_ns_msg has presence
+> >>>> on both kernel and firmware-sides.
+> >>>
+> >>> Ah yes yes... The amount of bytes coming out of the pipe won't match.
+> >>> Let me think a little...
+> >>
+> >> +1 for Suman's concern.
+> >>
+> >> Anyway i would like to challenge the need of more than 32 bytes to
+> >> differentiate service instances.
+> >> "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", seems to me enough if we only need
+> >> to differentiate the instances.
+>
+> Remember that the rpmsg_device_id name takes some space within here. So,
+> the shorter the rpmsg_device_id table name, the more room you have.
+>
+> >>
+> >> But perhaps the need is also to provide a short description of the service?
+>
+> I am mostly using it to provide a unique instantiation name. In anycase,
+> I have cross-checked against my current firmwares, and so far all of
+> them happen to have the name + desc < 31 bytes.
+>
+>
+> >>
+> >> Suman, could you share some examples of your need?
+> >
+> > Looking at things further it is possible to extend the name of the service to
+> > 64 byte while keeping backward compatibility by looking up the size of @len
+> > in function rpmsg_ns_cb().  From there work with an rpmsg_ns_msg or a new
+> > rpmsg_ns_msg64, pretty much the way you did in your patch[1].  In fact the
+> > approach is the same except you are using 2 arrays of 32 byte and I'm using one
+> > of 64.
+> >
+> > As Arnaud mentioned, is there an immediate need to support a 64-byte name?  If
+> > not than I suggest to move forward with this patch and address the issue when we
+> > get there - at least we know there is room for extention. Otherwise I'll spin
+> > off another revision but it will be bigger and more complex.
+>
+> Yeah ok. I have managed to get my downstream drivers that use the desc
+> field working with this patch after modifying the firmwares to publish
+> using combined name, and adding logic in probe to get the trailing
+> portion of the name.
 
-In this driver the compiler warns when the two types are different:
+Perfect
 
-drivers/remoteproc/mtk_scp.c: In function 'scp_map_memory_region':
-drivers/remoteproc/mtk_scp.c:454:9: error: passing argument 3 of 'dma_alloc_coherent' from incompatible pointer type [-Werror=incompatible-pointer-types]
-  454 |         &scp->phys_addr, GFP_KERNEL);
-      |         ^~~~~~~~~~~~~~~
-      |         |
-      |         phys_addr_t * {aka unsigned int *}
-In file included from drivers/remoteproc/mtk_scp.c:7:
-include/linux/dma-mapping.h:642:15: note: expected 'dma_addr_t *' {aka 'long long unsigned int *'} but argument is of type 'phys_addr_t *' {aka 'unsigned int *'}
-  642 |   dma_addr_t *dma_handle, gfp_t gfp)
+>
+> So, the only thing that is missing or content for another patch is if we
+> need to add some tooling/helper stuff for giving the trailing stuff to
+> rpmsg drivers?
 
-Change the phys_addr member to be typed and named according
-to how it is allocated.
+So that all rpmsg drivers don't come up with their own parsing that
+ends up doing the same thing.  Let me think about that - I may have to
+get back to you...
 
-Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/remoteproc/mtk_common.h | 2 +-
- drivers/remoteproc/mtk_scp.c    | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index deb20096146a..0066c83636d0 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -68,7 +68,7 @@ struct mtk_scp {
- 	wait_queue_head_t ack_wq;
- 
- 	void __iomem *cpu_addr;
--	phys_addr_t phys_addr;
-+	dma_addr_t dma_addr;
- 	size_t dram_size;
- 
- 	struct rproc_subdev *rpmsg_subdev;
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index ea3743e7e794..2bead57c9cf9 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -330,7 +330,7 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 		if (offset >= 0 && (offset + len) < scp->sram_size)
- 			return (void __force *)scp->sram_base + offset;
- 	} else {
--		offset = da - scp->phys_addr;
-+		offset = da - scp->dma_addr;
- 		if (offset >= 0 && (offset + len) < scp->dram_size)
- 			return (void __force *)scp->cpu_addr + offset;
- 	}
-@@ -451,7 +451,7 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 	/* Reserved SCP code size */
- 	scp->dram_size = MAX_CODE_SIZE;
- 	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp->dram_size,
--					   &scp->phys_addr, GFP_KERNEL);
-+					   &scp->dma_addr, GFP_KERNEL);
- 	if (!scp->cpu_addr)
- 		return -ENOMEM;
- 
-@@ -461,7 +461,7 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- static void scp_unmap_memory_region(struct mtk_scp *scp)
- {
- 	dma_free_coherent(scp->dev, scp->dram_size, scp->cpu_addr,
--			  scp->phys_addr);
-+			  scp->dma_addr);
- 	of_reserved_mem_device_release(scp->dev);
- }
- 
--- 
-2.26.0
-
+>
+> regards
+> Suman
+>
+> >
+> > Thanks,
+> > Mathieu
+> >
+> > [1]. https://patchwork.kernel.org/patch/11096599/
+> >
+> >>>>>>
+> >>>>>>> ---
+> >>>>>>> Changes for V2:
+> >>>>>>> - Added Arnaud's Acked-by.
+> >>>>>>> - Rebased to latest rproc-next.
+> >>>>>>>
+> >>>>>>>  drivers/rpmsg/rpmsg_core.c | 20 +++++++++++++++++++-
+> >>>>>>>  1 file changed, 19 insertions(+), 1 deletion(-)
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> >>>>>>> index e330ec4dfc33..bfd25978fa35 100644
+> >>>>>>> --- a/drivers/rpmsg/rpmsg_core.c
+> >>>>>>> +++ b/drivers/rpmsg/rpmsg_core.c
+> >>>>>>> @@ -399,7 +399,25 @@ ATTRIBUTE_GROUPS(rpmsg_dev);
+> >>>>>>>  static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
+> >>>>>>>                                 const struct rpmsg_device_id *id)
+> >>>>>>>  {
+> >>>>>>> -     return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+> >>>>>>> +     size_t len = min_t(size_t, strlen(id->name), RPMSG_NAME_SIZE);
+> >>>>>>> +
+> >>>>>>> +     /*
+> >>>>>>> +      * Allow for wildcard matches.  For example if rpmsg_driver::id_table
+> >>>>>>> +      * is:
+> >>>>>>> +      *
+> >>>>>>> +      * static struct rpmsg_device_id rpmsg_driver_sample_id_table[] = {
+> >>>>>>> +      *      { .name = "rpmsg-client-sample" },
+> >>>>>>> +      *      { },
+> >>>>>>> +      * }
+> >>>>>>> +      *
+> >>>>>>> +      * Then it is possible to support "rpmsg-client-sample*", i.e:
+> >>>>>>> +      *      rpmsg-client-sample
+> >>>>>>> +      *      rpmsg-client-sample_instance0
+> >>>>>>> +      *      rpmsg-client-sample_instance1
+> >>>>>>> +      *      ...
+> >>>>>>> +      *      rpmsg-client-sample_instanceX
+> >>>>>>> +      */
+> >>>>>>> +     return strncmp(id->name, rpdev->id.name, len) == 0;
+> >>>>>>>  }
+> >>>>>>>
+> >>>>>>>  /* match rpmsg channel and rpmsg driver */
+> >>>>>>>
+> >>>>>>
+> >>>>
+>
