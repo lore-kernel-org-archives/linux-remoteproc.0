@@ -1,205 +1,231 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 1 Apr 2020 15:29:10 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v2 16/17] remoteproc: Correctly deal with MCU
- synchronisation when changing state
-Message-ID: <20200401212910.GE17383@xps15>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
- <20200324214603.14979-17-mathieu.poirier@linaro.org>
- <c9fb2f50e93b4f8dad43392bf61f736a@SFHDAG7NODE2.st.com>
- <20200330234934.GH31331@xps15>
- <5223cca7-5409-a113-8a7f-9f6923231353@ti.com>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5223cca7-5409-a113-8a7f-9f6923231353@ti.com>
-To: Suman Anna <s-anna@ti.com>
-Cc: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 08 Apr 2020 17:50:14 +0530
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: map/unmap mpss region
+ before/after use
+In-Reply-To: <20200408021026.GP20625@builder.lan>
+References: <20200317191918.4123-1-sibis@codeaurora.org>
+ <20200408021026.GP20625@builder.lan>
+Message-ID: <940b74388c744ef5bbfcf15709c4ae05@codeaurora.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, linux-arm-msm-owner@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Tue, Mar 31, 2020 at 05:35:58PM -0500, Suman Anna wrote:
-> Hi Mathieu,
-> 
-> On 3/30/20 6:49 PM, Mathieu Poirier wrote:
-> > On Fri, Mar 27, 2020 at 02:04:36PM +0000, Loic PALLARDY wrote:
-> >>
-> >>
-> >>> -----Original Message-----
-> >>> From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >>> Sent: mardi 24 mars 2020 22:46
-> >>> To: bjorn.andersson@linaro.org
-> >>> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
-> >>> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
-> >>> <arnaud.pouliquen@st.com>; Fabien DESSENNE
-> >>> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
-> >>> Subject: [PATCH v2 16/17] remoteproc: Correctly deal with MCU
-> >>> synchronisation when changing state
-> >>>
-> >>> This patch deals with state changes when synchronising with an MCU. More
-> >>> specifically it prevents the MCU from being started if it already has been
-> >>> started by another entity.  Similarly it prevents the AP from stopping the
-> >>> MCU if it hasn't been given the capability by platform firmware.
-> >>>
-> >>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >>> ---
-> >>>  drivers/remoteproc/remoteproc_sysfs.c | 32
-> >>> ++++++++++++++++++++++++++-
-> >>>  1 file changed, 31 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
-> >>> b/drivers/remoteproc/remoteproc_sysfs.c
-> >>> index 4956577ad4b4..741a3c152b82 100644
-> >>> --- a/drivers/remoteproc/remoteproc_sysfs.c
-> >>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
-> >>> @@ -108,6 +108,29 @@ static ssize_t state_show(struct device *dev, struct
-> >>> device_attribute *attr,
-> >>>  	return sprintf(buf, "%s\n", rproc_state_string[state]);
-> >>>  }
-> >>>
-> >>> +static int rproc_can_shutdown(struct rproc *rproc)
-> >>> +{
-> >>> +	/* The MCU is not running, obviously an invalid operation. */
-> >>> +	if (rproc->state != RPROC_RUNNING)
-> >>> +		return false;
-> >>> +
-> >>> +	/*
-> >>> +	 * The MCU is not running (see above) and the remoteproc core is
-> >>> the
-> >>> +	 * lifecycle manager, no problem calling for a shutdown.
-> >>> +	 */
-> >>> +	if (!rproc_sync_with_mcu(rproc))
-> >>> +		return true;
-> >>> +
-> >>> +	/*
-> >>> +	 * The MCU has been loaded by another entity (see above) and the
-> >>> +	 * platform code has _not_ given us the capability of stopping it.
-> >>> +	 */
-> >>> +	if (!rproc->sync_ops->stop)
-> >>> +		return false;
-> >>
-> >> Test could be simplified
-> >> if (rproc_sync_with_mcu(rproc)) && !rproc->sync_ops->stop)
-> >> 	return false;
-> > 
-> > I laid out the test individually on purpose.  That way there is no coupling
-> > between conditions, it is plane to see what is going on and remains maintainable
-> > as we add new tests.
-> > 
-> >>
-> >>> +
-> >>> +	return true;
-> >>> +}
-> >>> +
-> >>>  /* Change remote processor state via sysfs */
-> >>>  static ssize_t state_store(struct device *dev,
-> >>>  			      struct device_attribute *attr,
-> >>> @@ -120,11 +143,18 @@ static ssize_t state_store(struct device *dev,
-> >>>  		if (rproc->state == RPROC_RUNNING)
-> >>>  			return -EBUSY;
-> >>>
-> >>> +		/*
-> >>> +		 * In synchronisation mode, booting the MCU is the
-> >>> +		 * responsibility of an external entity.
-> >>> +		 */
-> >>> +		if (rproc_sync_with_mcu(rproc))
-> >>> +			return -EINVAL;
-> >>> +
-> >> I don't understand this restriction, simply because it is preventing to resynchronize with a
-> >> coprocessor after a "stop".
-> 
-> There's actually one more scenario even without "stop". If auto_boot is
-> set to false, then rproc_actuate will never get called.
+Hey Bjorn,
+Thanks for review!
 
-I fail to fully understand the situation you are describing - can you give me
-more information?
+On 2020-04-08 07:40, Bjorn Andersson wrote:
+> On Tue 17 Mar 12:19 PDT 2020, Sibi Sankar wrote:
+> 
+>> The application processor accessing the mpss region when the Q6 modem
+>> is running will lead to an XPU violation. Fix this by un-mapping the
+>> mpss region post copy during processor out of reset sequence and
+>> coredumps.
+>> 
+> 
+> Does this problem not apply to the "mba" region?
+
+For mba region, memcpy is expected
+to be completed before bringing
+the Q6 out of reset. Downstream they
+seem to use a wmb() to accomplish
+this. Since we havn't observed any
+issues until now, we can defer adding
+any fixes related to mba region.
 
 > 
-> >> In the following configuration which can be configuration for coprocessor with romed/flashed
-> >> firmware (no reload needed):
-> >> on_init = true
-> >> after_stop = true
-> >> after_crash = true
-> >> Once you stop it via sysfs interface, you can't anymore restart/resync to it.
-> > 
-> > Very true.  The MCU will get restarted by another entity but the AP won't
-> > synchronise with it.  I need more time to think about the best way to deal with
-> > this and may have to get back to you for further discussions.
-> > 
-> >>
-> >> I think it will be better to modify rproc_boot() to take into account rproc_sync_with_mcu()
-> >> as below:
-> >>
-> >> int rproc_boot(struct rproc *rproc)
-> >>  {
-> >> -	const struct firmware *firmware_p;
-> >> +	const struct firmware *firmware_p = NULL;
-> >>  	struct device *dev = &rproc->dev;
-> >>  	int ret;
-> >>  
-> >>  	if (!rproc) {
-> >>  		pr_err("invalid rproc handle\n");
-> >>  		return -EINVAL;
-> >>  	}
-> >>  
-> >>  	/* load firmware */
-> >> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> >> -	if (ret < 0) {
-> >> -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> >> -		return ret;
-> >> +	if (!rproc_sync_with_mcu(rproc)) {
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  drivers/remoteproc/qcom_q6v5_mss.c | 53 
+>> ++++++++++++++++--------------
+>>  1 file changed, 29 insertions(+), 24 deletions(-)
+>> 
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
+>> b/drivers/remoteproc/qcom_q6v5_mss.c
+>> index ce49c3236ff7c..b1ad4de179019 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> @@ -196,7 +196,6 @@ struct q6v5 {
+>> 
+>>  	phys_addr_t mpss_phys;
+>>  	phys_addr_t mpss_reloc;
+>> -	void *mpss_region;
+>>  	size_t mpss_size;
+>> 
+>>  	struct qcom_rproc_glink glink_subdev;
+>> @@ -1061,6 +1060,18 @@ static int q6v5_reload_mba(struct rproc *rproc)
+>>  	return ret;
+>>  }
+>> 
+>> +static void *q6v5_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>> +{
+>> +	struct q6v5 *qproc = rproc->priv;
+>> +	int offset;
+>> +
+>> +	offset = da - qproc->mpss_reloc;
+>> +	if (offset < 0 || offset + len > qproc->mpss_size)
+>> +		return NULL;
+>> +
+>> +	return devm_ioremap_wc(qproc->dev, qproc->mpss_phys + offset, len);
 > 
-> I guess this is what the original skip_fw_load was doing. And with the
-> current series, the userspace loading support usecase I have cannot be
-> achieved. If this is added back, I can try if that works for my usecases.
-> 
-> >> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> >> +		if (ret < 0) {
-> >> +			dev_err(dev, "request_firmware failed: %d\n", ret);
-> >> +			return ret;
-> >> +		}
-> >>  	}
-> >>  
-> >>  	ret = rproc_actuate(rproc, firmware_p);
-> >>  
-> >> -	release_firmware(firmware_p);
-> >> +	if (firmware_p)
-> >> +		release_firmware(firmware_p);
-> >>  
-> >>  	return ret;
-> >>  }
-> >>  
-> >> Thanks to these modifications, I'm able to resync after a stop with coprocessor without reloading firmware.
-> >>
-> >>>  		ret = rproc_boot(rproc);
-> >>>  		if (ret)
-> >>>  			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
-> >>>  	} else if (sysfs_streq(buf, "stop")) {
-> >>> -		if (rproc->state != RPROC_RUNNING)
-> >>> +		if (!rproc_can_shutdown(rproc))
-> >>>  			return -EINVAL;
-> >>>
-> >>>  		rproc_shutdown(rproc);
-> >> As rproc shutdown is also accessible as kernel API, I propose to move
-> >> rproc_can_shutdown() check inside rproc_shutdown() and to test
-> >> returned error
-> > 
-> > Ah yes, it is public...  As you point out, I think we'll need to move
-> > rproc_can_shutdown() in rproc_shutdown().
-> 
-> I am assuming only the new conditions, right?
+> This function isn't expected to have side effects.
 
-Once again I fail to grasp the extent of your comment.  Can you be more specific
-about the "new conditions"?
+unfortunately doing ioremap/iounmap
+for the entire region isn't sufficient,
+while testing I found per region remap
+/unmap was required i.e after we moved to
+away from the validating the entire blog
+in a single pass.
 
-Thanks
-Mathieu
+Now with the mpss_region out of the picture
+da_to_va really made no sense without having
+ioremap function in it. Let me know what you
+think.
 
 > 
-> regards
-> Suman
+> So I think you should add the ioremap/iounmap to the beginning/end of
+> mpss_load and the dump_segment directly instead.
 > 
-> > 
-> > Thank you for taking the time to review this set,
-> > Mathieu
-> > 
+>> +}
+>> +
+>>  static int q6v5_mpss_load(struct q6v5 *qproc)
+>>  {
+>>  	const struct elf32_phdr *phdrs;
+>> @@ -1156,7 +1167,11 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>  			goto release_firmware;
+>>  		}
+>> 
+>> -		ptr = qproc->mpss_region + offset;
+>> +		ptr = q6v5_da_to_va(qproc->rproc, phdr->p_paddr, phdr->p_memsz);
+> 
+> rproc_da_to_va() here.
+
+sure
+
+> 
+>> +		if (!ptr) {
+>> +			dev_err(qproc->dev, "failed to map memory\n");
+> 
+> Now this will be able to fail, so you should add this error handling
+> snippet, just with a slightly different message.
+
+sure
+
+> 
+>> +			goto release_firmware;
+>> +		}
+>> 
+>>  		if (phdr->p_filesz && phdr->p_offset < fw->size) {
+>>  			/* Firmware is large enough to be non-split */
+>> @@ -1165,6 +1180,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>  					"failed to load segment %d from truncated file %s\n",
+>>  					i, fw_name);
+>>  				ret = -EINVAL;
+>> +				devm_iounmap(qproc->dev, ptr);
+>>  				goto release_firmware;
+>>  			}
+>> 
+>> @@ -1175,6 +1191,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>  			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
+>>  			if (ret) {
+>>  				dev_err(qproc->dev, "failed to load %s\n", fw_name);
+>> +				devm_iounmap(qproc->dev, ptr);
+>>  				goto release_firmware;
+>>  			}
+>> 
+>> @@ -1187,6 +1204,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>>  			memset(ptr + phdr->p_filesz, 0,
+>>  			       phdr->p_memsz - phdr->p_filesz);
+>>  		}
+>> +		devm_iounmap(qproc->dev, ptr);
+> 
+> Move this to the end an unmap the entire thing.
+> 
+> And generally, please avoid devm for things where you manually unmap.
+
+will take care of ^^ in the next re-spin.
+
+> 
+> Regards,
+> Bjorn
+> 
+>>  		size += phdr->p_memsz;
+>> 
+>>  		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+>> @@ -1236,7 +1254,7 @@ static void qcom_q6v5_dump_segment(struct rproc 
+>> *rproc,
+>>  	int ret = 0;
+>>  	struct q6v5 *qproc = rproc->priv;
+>>  	unsigned long mask = BIT((unsigned long)segment->priv);
+>> -	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+>> +	void *ptr = NULL;
+>> 
+>>  	/* Unlock mba before copying segments */
+>>  	if (!qproc->dump_mba_loaded) {
+>> @@ -1250,10 +1268,15 @@ static void qcom_q6v5_dump_segment(struct 
+>> rproc *rproc,
+>>  		}
+>>  	}
+>> 
+>> -	if (!ptr || ret)
+>> -		memset(dest, 0xff, segment->size);
+>> -	else
+>> +	if (!ret)
+>> +		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+>> +
+>> +	if (ptr) {
+>>  		memcpy(dest, ptr, segment->size);
+>> +		devm_iounmap(qproc->dev, ptr);
+>> +	} else {
+>> +		memset(dest, 0xff, segment->size);
+>> +	}
+>> 
+>>  	qproc->dump_segment_mask |= mask;
+>> 
+>> @@ -1327,18 +1350,6 @@ static int q6v5_stop(struct rproc *rproc)
+>>  	return 0;
+>>  }
+>> 
+>> -static void *q6v5_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>> -{
+>> -	struct q6v5 *qproc = rproc->priv;
+>> -	int offset;
+>> -
+>> -	offset = da - qproc->mpss_reloc;
+>> -	if (offset < 0 || offset + len > qproc->mpss_size)
+>> -		return NULL;
+>> -
+>> -	return qproc->mpss_region + offset;
+>> -}
+>> -
+>>  static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>>  					    const struct firmware *mba_fw)
+>>  {
+>> @@ -1595,12 +1606,6 @@ static int q6v5_alloc_memory_region(struct q6v5 
+>> *qproc)
+>> 
+>>  	qproc->mpss_phys = qproc->mpss_reloc = r.start;
+>>  	qproc->mpss_size = resource_size(&r);
+>> -	qproc->mpss_region = devm_ioremap_wc(qproc->dev, qproc->mpss_phys, 
+>> qproc->mpss_size);
+>> -	if (!qproc->mpss_region) {
+>> -		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n",
+>> -			&r.start, qproc->mpss_size);
+>> -		return -EBUSY;
+>> -	}
+>> 
+>>  	return 0;
+>>  }
+>> --
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>> Forum,
+>> a Linux Foundation Collaborative Project
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
