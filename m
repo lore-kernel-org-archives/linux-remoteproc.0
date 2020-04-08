@@ -1,4 +1,4 @@
-Return-Path: <SRS0=8QH8=5X=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=kNAc=5Y=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,151 +7,239 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379EEC2D0EC
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Apr 2020 23:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDFDC2D0EC
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 02:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CC5720730
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Apr 2020 23:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 454B620748
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 02:10:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NmOHvzsw"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ujB3FST3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbgDGX0z (ORCPT
+        id S1726481AbgDHCKW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Apr 2020 19:26:55 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43164 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbgDGX0z (ORCPT
+        Tue, 7 Apr 2020 22:10:22 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36746 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbgDHCKW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Apr 2020 19:26:55 -0400
-Received: by mail-pl1-f196.google.com with SMTP id z6so326778plk.10
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Apr 2020 16:26:54 -0700 (PDT)
+        Tue, 7 Apr 2020 22:10:22 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g2so1960867plo.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Apr 2020 19:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=y5LS3MU2ajrGhRzRJXtmecDXDze15/f8wGbcQHqh5n4=;
-        b=NmOHvzswUt9XYTE1FH4pjMmmWuJs4RiOc30XXNe/xawQjAVjxF4k/O55uZbflAP5xM
-         Cp6qLKTEtUR08ztRXxhoxXQwdkviEYF6dxtYh3Wsj+o+3nZYQ7xU8rFfKOhcZk+Bhpi4
-         HP77kgIUYAYgSknWgI4gvHP0DUvuUf7JCBS8hsEq7nffrAmL0nVkPQaYeiOygFEkzl5N
-         Xr+erFsD2lXoxBmsReXKP0EOl2MT2F927ooDWplLYCf2yJeovnK18pDwJ9cmht2aFcQ9
-         X5+ayPRdsmUfBW4r2RobojK4RPdw7PUgVsjP2Sa/7mBENcUociKnoa7TEd1ltawkCZDl
-         0T3A==
+        bh=llZYQXXqU5Is0VJnRXNm129Q3H4mwJYv5x9pxHU6sEU=;
+        b=ujB3FST3/btwcbtEiVAW8jmd/Tsxe4kw8U4PXl31okBUQlWLYlXCdNzaK1/wikMOF2
+         86gFD9SC08AM9+d1r8p//Y8eZql33WXFo9nqmx25c++1UT+4f9uT6HAiQzgU6Oiw1h50
+         vnJqpJ96hVR1NZmgndeEI3y7O2taKXrEuiwfiGCGZW+puaFlViRTjDy7zgBnAD1kfrRm
+         4cfbQRWO1MWzGwiHKCI2AFS3QFqDkkdTJHvz+AsY3oUy9YOpUjbuQJ9fVW1vxyxAp6ei
+         rzWb15r/3RkEIN4kdLZ9689qDi6mrTBB2BZvpBnm8XUFRQbUajrjP4TeVH2lnY0l+5hW
+         B6Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=y5LS3MU2ajrGhRzRJXtmecDXDze15/f8wGbcQHqh5n4=;
-        b=Ysr0pe0z4BUDhEcqT6regunQhWo2BURRLeLrnoLpYOjwv8FAosRl4VQ16V6ZWud5zE
-         Zm9TVWXBZd2q8LzfvMUIFhw21hS6GS8HnQ0ywnS8j10kjk1Pg0r+6hlIwbT1LQVhlyyF
-         0s4k4YXPaXLsbTdw7l66YT4XpvrJfeQk8GlHT7Kzf35HHjhQgfCJb9vxNPBcyAkMLIaL
-         kf+HKYFRB25s2jlE9LUHcd2DxmFHN1ZCLlVhQns9Ocg3wIsB0G1UhuLPJTF28k83yq0w
-         7jcwNWKJtXPs3ZK8vfWKwD+PyfAPALPRXAB7+V6oNROa9jVX6h+JK+dz95HsYpjkZE9J
-         QTmw==
-X-Gm-Message-State: AGi0PuYMDJaKULOy/B9lgkk4HaTJ89vvWvMDBjfgCD9lFadH0RbYPp8o
-        ek1pyo9z178czxAOws9Hvexajg==
-X-Google-Smtp-Source: APiQypKoPhJDW9jWO0if0qrlkO0oFu9JmnbT7a7/ETHNk4nvDKag6Odi3YwvY66/1Ba6oswXw3zGYA==
-X-Received: by 2002:a17:90a:be0b:: with SMTP id a11mr1977543pjs.56.1586302014257;
-        Tue, 07 Apr 2020 16:26:54 -0700 (PDT)
+        bh=llZYQXXqU5Is0VJnRXNm129Q3H4mwJYv5x9pxHU6sEU=;
+        b=JZ10+4na5ZhoU/S08GTDHZqkgwkmaYgOkCdKVMuKI+U0vBwHu3zPQuH7jovGjCGaup
+         HaImXbqFIh/sdVPkIUY6O6z+FOzXgiABhANObSAPF62d0rELjx55F7v1nKr+c3Sbp/c0
+         exSXf7Sb1IVEYfZamqA4oKzhd1n64WbPxf2VYJ8m8Z8F+6GK1q4Grg066i3edeNs6WKz
+         qn9UOostbrkSGt18k2CLoT4gcaxgbBHkggp3SY0BghOEA2uENhjaQA6XXpXIzN1PA64J
+         DB9pXGfGaJE77dX75wy+AEUQF4X2nMdpoNo9jszXPGBgVfdFyiZDwQTSuGN+rAMPCEsv
+         iPiQ==
+X-Gm-Message-State: AGi0PuYGzJ+Tkr1hzNAg0Y6kPJ1UJ92NYHXzF4oPhrCVImtYAHFBBril
+        sAVZMiTm9qOaDbmrUTsq2EVB8A==
+X-Google-Smtp-Source: APiQypJQ3iDNyu385MVVkdL+enzXHH2dgzHabPfKEdhdX8ju7kzJ9igc7s+KIm4A36x2QVrraViTPg==
+X-Received: by 2002:a17:90a:fa17:: with SMTP id cm23mr2574173pjb.121.1586311821434;
+        Tue, 07 Apr 2020 19:10:21 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q12sm14143932pgi.86.2020.04.07.16.26.52
+        by smtp.gmail.com with ESMTPSA id d14sm15208899pfq.29.2020.04.07.19.10.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2020 16:26:53 -0700 (PDT)
-Date:   Tue, 7 Apr 2020 16:26:59 -0700
+        Tue, 07 Apr 2020 19:10:20 -0700 (PDT)
+Date:   Tue, 7 Apr 2020 19:10:26 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     rishabhb@codeaurora.org
-Cc:     Siddharth Gupta <sidgup@codeaurora.org>, ohad@wizery.com,
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     agross@kernel.org, ohad@wizery.com, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, linux-remoteproc-owner@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: core: Prevent sleep when rproc crashes
-Message-ID: <20200407232659.GM20625@builder.lan>
-References: <1582164713-6413-1-git-send-email-sidgup@codeaurora.org>
- <1582164713-6413-3-git-send-email-sidgup@codeaurora.org>
- <20200407222958.GL20625@builder.lan>
- <c98b9b02c49b41c6e2493407f11c5eac@codeaurora.org>
+        evgreen@chromium.org
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: map/unmap mpss region
+ before/after use
+Message-ID: <20200408021026.GP20625@builder.lan>
+References: <20200317191918.4123-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c98b9b02c49b41c6e2493407f11c5eac@codeaurora.org>
+In-Reply-To: <20200317191918.4123-1-sibis@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200407232659.n8wZf3ARh7p-U-DrcC3ns77rgYb2fgq3lzKSy3TIhdo@z>
+Message-ID: <20200408021026.u8kwrF9Y8vf3Pg14Gw1cSiWQicKJLntWfM5N-XH4t8E@z>
 
-On Tue 07 Apr 15:59 PDT 2020, rishabhb@codeaurora.org wrote:
+On Tue 17 Mar 12:19 PDT 2020, Sibi Sankar wrote:
 
-> On 2020-04-07 15:29, Bjorn Andersson wrote:
-> > On Wed 19 Feb 18:11 PST 2020, Siddharth Gupta wrote:
-> > 
-> > > Remoteproc recovery should be fast and any delay will have an impact
-> > > on the
-> > > user-experience. Use power management APIs (pm_stay_awake and
-> > > pm_relax) to
-> > > ensure that the system does not go to sleep.
-> > > 
-> > > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-> > > ---
-> > >  drivers/remoteproc/remoteproc_core.c | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c
-> > > b/drivers/remoteproc/remoteproc_core.c
-> > > index 5ab65a4..52e318c 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -1712,6 +1712,8 @@ static void rproc_crash_handler_work(struct
-> > > work_struct *work)
-> > > 
-> > >  	if (!rproc->recovery_disabled)
-> > >  		rproc_trigger_recovery(rproc);
-> > > +
-> > > +	pm_relax(&rproc->dev);
-> > >  }
-> > > 
-> > >  /**
-> > > @@ -2242,6 +2244,8 @@ void rproc_report_crash(struct rproc *rproc,
-> > > enum rproc_crash_type type)
-> > >  		return;
-> > >  	}
-> > > 
-> > > +	pm_stay_awake(&rproc->dev);
-> > 
-> > Following Mathieu's question I was expecting you to do this on
-> > rproc->dev.parent.
-> > 
-> > But looking at the implementation of pm_stay_awake(), it ends up being a
-> > nop if dev->power.wakeup isn't specified. This in turn seems to come
-> > from device_wakeup_enable(), which will bail if dev->power.can_wakeup is
-> > not set. But I don't see where this would be set for either the platform
-> > driver or the remoteproc's struct device - and neither one of them have
-> > a "wakeup" attribute in sysfs.
-> > 
-> > Is there some additional plumbing needed for this?
-> We should be able to create a standalone wakeup source using
-> wakeup_source_init.
-> Then we can use _pm_stay_awake and _pm_relax on it.
+> The application processor accessing the mpss region when the Q6 modem
+> is running will lead to an XPU violation. Fix this by un-mapping the
+> mpss region post copy during processor out of reset sequence and
+> coredumps.
+> 
 
-Afaict the way to do this would be to call device_wakeup_enable() on
-either the remoteproc or platform driver's struct device.
+Does this problem not apply to the "mba" region?
 
-Given that the resources related to waking up the system are associated
-with the platform driver I think this should be done on the platform
-driver's struct device and these calls should operate on the rproc's
-parent.
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 53 ++++++++++++++++--------------
+>  1 file changed, 29 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index ce49c3236ff7c..b1ad4de179019 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -196,7 +196,6 @@ struct q6v5 {
+>  
+>  	phys_addr_t mpss_phys;
+>  	phys_addr_t mpss_reloc;
+> -	void *mpss_region;
+>  	size_t mpss_size;
+>  
+>  	struct qcom_rproc_glink glink_subdev;
+> @@ -1061,6 +1060,18 @@ static int q6v5_reload_mba(struct rproc *rproc)
+>  	return ret;
+>  }
+>  
+> +static void *q6v5_da_to_va(struct rproc *rproc, u64 da, size_t len)
+> +{
+> +	struct q6v5 *qproc = rproc->priv;
+> +	int offset;
+> +
+> +	offset = da - qproc->mpss_reloc;
+> +	if (offset < 0 || offset + len > qproc->mpss_size)
+> +		return NULL;
+> +
+> +	return devm_ioremap_wc(qproc->dev, qproc->mpss_phys + offset, len);
+
+This function isn't expected to have side effects.
+
+So I think you should add the ioremap/iounmap to the beginning/end of
+mpss_load and the dump_segment directly instead.
+
+> +}
+> +
+>  static int q6v5_mpss_load(struct q6v5 *qproc)
+>  {
+>  	const struct elf32_phdr *phdrs;
+> @@ -1156,7 +1167,11 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  			goto release_firmware;
+>  		}
+>  
+> -		ptr = qproc->mpss_region + offset;
+> +		ptr = q6v5_da_to_va(qproc->rproc, phdr->p_paddr, phdr->p_memsz);
+
+rproc_da_to_va() here.
+
+> +		if (!ptr) {
+> +			dev_err(qproc->dev, "failed to map memory\n");
+
+Now this will be able to fail, so you should add this error handling
+snippet, just with a slightly different message.
+
+> +			goto release_firmware;
+> +		}
+>  
+>  		if (phdr->p_filesz && phdr->p_offset < fw->size) {
+>  			/* Firmware is large enough to be non-split */
+> @@ -1165,6 +1180,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  					"failed to load segment %d from truncated file %s\n",
+>  					i, fw_name);
+>  				ret = -EINVAL;
+> +				devm_iounmap(qproc->dev, ptr);
+>  				goto release_firmware;
+>  			}
+>  
+> @@ -1175,6 +1191,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
+>  			if (ret) {
+>  				dev_err(qproc->dev, "failed to load %s\n", fw_name);
+> +				devm_iounmap(qproc->dev, ptr);
+>  				goto release_firmware;
+>  			}
+>  
+> @@ -1187,6 +1204,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  			memset(ptr + phdr->p_filesz, 0,
+>  			       phdr->p_memsz - phdr->p_filesz);
+>  		}
+> +		devm_iounmap(qproc->dev, ptr);
+
+Move this to the end an unmap the entire thing.
+
+And generally, please avoid devm for things where you manually unmap.
 
 Regards,
 Bjorn
 
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > +
-> > >  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
-> > >  		rproc->name, rproc_crash_to_string(type));
-> > > 
-> > > --
-> > > Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> > > a Linux Foundation Collaborative Project
+>  		size += phdr->p_memsz;
+>  
+>  		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+> @@ -1236,7 +1254,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+>  	int ret = 0;
+>  	struct q6v5 *qproc = rproc->priv;
+>  	unsigned long mask = BIT((unsigned long)segment->priv);
+> -	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+> +	void *ptr = NULL;
+>  
+>  	/* Unlock mba before copying segments */
+>  	if (!qproc->dump_mba_loaded) {
+> @@ -1250,10 +1268,15 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+>  		}
+>  	}
+>  
+> -	if (!ptr || ret)
+> -		memset(dest, 0xff, segment->size);
+> -	else
+> +	if (!ret)
+> +		ptr = rproc_da_to_va(rproc, segment->da, segment->size);
+> +
+> +	if (ptr) {
+>  		memcpy(dest, ptr, segment->size);
+> +		devm_iounmap(qproc->dev, ptr);
+> +	} else {
+> +		memset(dest, 0xff, segment->size);
+> +	}
+>  
+>  	qproc->dump_segment_mask |= mask;
+>  
+> @@ -1327,18 +1350,6 @@ static int q6v5_stop(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> -static void *q6v5_da_to_va(struct rproc *rproc, u64 da, size_t len)
+> -{
+> -	struct q6v5 *qproc = rproc->priv;
+> -	int offset;
+> -
+> -	offset = da - qproc->mpss_reloc;
+> -	if (offset < 0 || offset + len > qproc->mpss_size)
+> -		return NULL;
+> -
+> -	return qproc->mpss_region + offset;
+> -}
+> -
+>  static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+>  					    const struct firmware *mba_fw)
+>  {
+> @@ -1595,12 +1606,6 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+>  
+>  	qproc->mpss_phys = qproc->mpss_reloc = r.start;
+>  	qproc->mpss_size = resource_size(&r);
+> -	qproc->mpss_region = devm_ioremap_wc(qproc->dev, qproc->mpss_phys, qproc->mpss_size);
+> -	if (!qproc->mpss_region) {
+> -		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n",
+> -			&r.start, qproc->mpss_size);
+> -		return -EBUSY;
+> -	}
+>  
+>  	return 0;
+>  }
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
