@@ -2,45 +2,47 @@ Return-Path: <SRS0=kNAc=5Y=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0236EC2D0F4
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5F2C2BA80
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B656E206C0
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC3E206C0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Apr 2020 22:18:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="d+PkCEg4"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="HLGJXgav"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgDHWSw (ORCPT
+        id S1726534AbgDHWS4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Apr 2020 18:18:52 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:30920 "EHLO
+        Wed, 8 Apr 2020 18:18:56 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:44902 "EHLO
         mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726467AbgDHWSw (ORCPT
+        by vger.kernel.org with ESMTP id S1726494AbgDHWSy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Apr 2020 18:18:52 -0400
+        Wed, 8 Apr 2020 18:18:54 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1586384331; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=RH35X7vF6ho+C78nwQjbPIiSWT7T/WnEcvFZbvUDnVc=; b=d+PkCEg45fqLfhWnbjDpiFEoSlaVTpEd82BQbyEvAFcQ/TmZJ7XE8I/cufC+sKlaqPkx5f0U
- nAoz8BjknkmakTZ1VFV8aCiMHZzev21PXJlzB6wUTRnPMhhOyRowSj2KJXWyUgtV+l+Zwzdf
- htLbCrk9fhkwOUMOwH8WKCXg6TI=
+ s=smtp; t=1586384333; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=hb1eX7bss06mePS2zUQBRyjgMYc604+/EGTk9RLwCGk=; b=HLGJXgaveMgQ98aE/FT9s4kJOAdJCgj6Cb6/G0/2SzDO5uotA38Kpef66JimggG1eQYYgIgG
+ 0CWX69Z6hZ1S152654G+l1iYM2Vhe6DwYgX7YzMksK9kNgCS+QvG0XDSy2LCxTsxVtpsw/Bs
+ sAMwyZip+Uqa2p/eiQoutnKfPxY=
 X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e8e4dca.7f8674fca420-smtp-out-n01;
- Wed, 08 Apr 2020 22:18:50 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e8e4dcb.7f4fdbf7df80-smtp-out-n03;
+ Wed, 08 Apr 2020 22:18:51 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1873CC43637; Wed,  8 Apr 2020 22:18:50 +0000 (UTC)
+        id 53ACCC43636; Wed,  8 Apr 2020 22:18:51 +0000 (UTC)
 Received: from sidgup-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sidgup)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2F236C433D2;
-        Wed,  8 Apr 2020 22:18:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2F236C433D2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6335DC4478F;
+        Wed,  8 Apr 2020 22:18:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6335DC4478F
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sidgup@codeaurora.org
 From:   Siddharth Gupta <sidgup@codeaurora.org>
@@ -50,43 +52,63 @@ Cc:     Siddharth Gupta <sidgup@codeaurora.org>,
         linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
         psodagud@codeaurora.org, rishabhb@codeaurora.org
-Subject: [PATCH v2 0/2] remoteproc: core: Add core functionality to the remoteproc framework
-Date:   Wed,  8 Apr 2020 15:18:23 -0700
-Message-Id: <1586384305-7825-1-git-send-email-sidgup@codeaurora.org>
+Subject: [PATCH v2 2/2] remoteproc: core: Prevent sleep when rproc crashes
+Date:   Wed,  8 Apr 2020 15:18:25 -0700
+Message-Id: <1586384305-7825-3-git-send-email-sidgup@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1586384305-7825-1-git-send-email-sidgup@codeaurora.org>
+References: <1586384305-7825-1-git-send-email-sidgup@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200408221823.OmAlTFD3XXsVi_X9p3KlQcMe-lHbGyl5Q79rd45TbFg@z>
+Message-ID: <20200408221825.3bAULaoVXmPJFhDBmPqIE0Y8kedsquQtA9TEjgYlNUo@z>
 
-This patch series adds core functionality to the remoteproc framework.
+Remoteproc recovery should be fast and any delay will have an impact on the
+user-experience. Add a wakeup source to remoteproc which ensures that the
+system does not go into idle state while a remoteproc is recovering, thus
+prevent any delays that might occur during system resume.
 
-Patch 1 adds a new API to the framework which allows kernel clients to update
-        the firmware name for the specified remoteproc.
-Patch 2 intends to improve the user experience by preventing the system from
-        going to sleep while the remoteproc is recovering from a crash.
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c   | 1 +
+ drivers/remoteproc/remoteproc_core.c | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-Changes since v1:
-- The API in patch 1 has been modified based on comments by Mathieu [1]. Since
-  this patch cannot be merged in without a user this is more of a RFC for
-  merging in later once a user is upstreamed.
-- In patch 2 updated the device being used to the parent device of the rproc,
-  based on comments from Mathieu [2] and Bjorn [3].
-
-[1]: https://lore.kernel.org/linux-arm-msm/1582164713-6413-1-git-send-email-sidgup@codeaurora.org/T/#mc36cf66598238a67d1a3e77ab8362b90bd56882e
-[2]: https://lore.kernel.org/linux-arm-msm/1582164713-6413-1-git-send-email-sidgup@codeaurora.org/T/#mbafae326ff7e0e5dd1ba5370355affe042a4e21f
-[3]: https://lore.kernel.org/linux-arm-msm/1582164713-6413-1-git-send-email-sidgup@codeaurora.org/T/#m4694a60c2c6c720ff6eb3c83008373dfe18ea06b
-
-Siddharth Gupta (2):
-  remoteproc: core: Add an API for changing firmware name
-  remoteproc: core: Prevent sleep when rproc crashes
-
- drivers/remoteproc/qcom_q6v5_pas.c   |  1 +
- drivers/remoteproc/remoteproc_core.c | 47 ++++++++++++++++++++++++++++++++++++
- include/linux/remoteproc.h           |  1 +
- 3 files changed, 49 insertions(+)
-
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 7a63efb..6bb2c7d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -401,6 +401,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 
+ 	adsp = (struct qcom_adsp *)rproc->priv;
+ 	adsp->dev = &pdev->dev;
++	device_wakeup_enable(adsp->dev);
+ 	adsp->rproc = rproc;
+ 	adsp->pas_id = desc->pas_id;
+ 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 9f99fe2..19a360d 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1729,6 +1729,8 @@ static void rproc_crash_handler_work(struct work_struct *work)
+ 
+ 	if (!rproc->recovery_disabled)
+ 		rproc_trigger_recovery(rproc);
++
++	pm_relax(rproc->dev.parent);
+ }
+ 
+ /**
+@@ -2273,6 +2275,8 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+ 		return;
+ 	}
+ 
++	pm_stay_awake(rproc->dev.parent);
++
+ 	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+ 		rproc->name, rproc_crash_to_string(type));
+ 
 -- 
 Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
