@@ -5,12 +5,12 @@ References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
  <20200324214603.14979-17-mathieu.poirier@linaro.org>
  <c9fb2f50e93b4f8dad43392bf61f736a@SFHDAG7NODE2.st.com>
  <20200330234934.GH31331@xps15> <5223cca7-5409-a113-8a7f-9f6923231353@ti.com>
- <20200401212910.GE17383@xps15>
+ <20200402204231.GC9160@xps15>
 From: Suman Anna <s-anna@ti.com>
-Message-ID: <22ad887a-5758-8733-0afc-78dec913827d@ti.com>
-Date: Thu, 9 Apr 2020 15:55:35 -0500
+Message-ID: <3240a2b3-094d-fb05-e8e9-500f9fe8466d@ti.com>
+Date: Thu, 9 Apr 2020 15:40:20 -0500
 MIME-Version: 1.0
-In-Reply-To: <20200401212910.GE17383@xps15>
+In-Reply-To: <20200402204231.GC9160@xps15>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -18,7 +18,9 @@ To: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 4/1/20 4:29 PM, Mathieu Poirier wrote:
+On 4/2/20 3:42 PM, Mathieu Poirier wrote:
+> Hi Suman,
+> 
 > On Tue, Mar 31, 2020 at 05:35:58PM -0500, Suman Anna wrote:
 >> Hi Mathieu,
 >>
@@ -111,16 +113,6 @@ On 4/1/20 4:29 PM, Mathieu Poirier wrote:
 >>
 >> There's actually one more scenario even without "stop". If auto_boot is
 >> set to false, then rproc_actuate will never get called.
-> 
-> I fail to fully understand the situation you are describing - can you give me
-> more information?
-
-The platform driver has auto_boot set to false and sync_states set, so
-rproc_trigger_auto_initiate() never gets called in rproc_add(), and
-rproc_actuate() doesn't happen either. rproc->state is not RUNNING, and
-you will bail out here, and there is no way to start it either.
-
-> 
 >>
 >>>> In the following configuration which can be configuration for coprocessor with romed/flashed
 >>>> firmware (no reload needed):
@@ -159,6 +151,27 @@ you will bail out here, and there is no way to start it either.
 >> I guess this is what the original skip_fw_load was doing. And with the
 >> current series, the userspace loading support usecase I have cannot be
 >> achieved. If this is added back, I can try if that works for my usecases.
+> 
+> I didn't notice this comment upon first read... Can you give me more details on
+> what your usecase is order to see how best to deal with it?
+
+We have a userspace loader usecase, where we use a daemon/server that
+does the loading, and talks to the keystone remoteproc driver over a
+character driver to publish the resource table and boot vectors, and to
+start/stop the processor. You can find more details on the downstream
+commit [1] we have. We exercise the regular kernel rproc state-machine
+and suppress the firmware segment loading portion of it.
+
+regards
+Suman
+
+[1]
+https://git.ti.com/gitweb?p=rpmsg/remoteproc.git;a=commit;h=c41f591ccaaeef66bd4ccbb883ae72f6b0d173d7
+
+> 
+> Thanks,
+> Mathieu
+> 
 >>
 >>>> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
 >>>> +		if (ret < 0) {
@@ -195,21 +208,6 @@ you will bail out here, and there is no way to start it either.
 >>> rproc_can_shutdown() in rproc_shutdown().
 >>
 >> I am assuming only the new conditions, right?
-> 
-> Once again I fail to grasp the extent of your comment.  Can you be more specific
-> about the "new conditions"?
-
-rproc_can_shutdown() has three checks, where the first check is existing
-check that got moved, and the other 2 are the new checks that deal with
-the sync states. So, I meant these 2 new sync checks.
-
-regards
-Suman
-
-> 
-> Thanks
-> Mathieu
-> 
 >>
 >> regards
 >> Suman
