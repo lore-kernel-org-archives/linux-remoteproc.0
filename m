@@ -7,68 +7,64 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3BEC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 18:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D04C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 18:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8884206F7
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 18:35:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 644CC20757
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 18:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LGpZfPl/"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RZ6kN0zS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbgDISf6 (ORCPT
+        id S1726595AbgDISso (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 14:35:58 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:44344 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbgDISf6 (ORCPT
+        Thu, 9 Apr 2020 14:48:44 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60134 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbgDISso (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 14:35:58 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039IZpvg105934;
-        Thu, 9 Apr 2020 13:35:51 -0500
+        Thu, 9 Apr 2020 14:48:44 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039ImbOF078380;
+        Thu, 9 Apr 2020 13:48:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586457351;
-        bh=vglUASXYkRKmYRrWJ1IxqYirAItLGfxFzqHcqIOBhNk=;
+        s=ti-com-17Q1; t=1586458117;
+        bh=diXm0hCzdJ5gSjwD8grkUCdZOduFBzpxdSIHY2srCvQ=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=LGpZfPl//j6wTW/bWNcYaVaJEyrg0SswJrQiZhxhX2cEcLBPMPaDygVN20pMn9Ryl
-         /I2O+oZ4ToI5wXMrklVLf1rj/uqMcNiOpQleOBH3Wj4FUfZ1SRGvJUqyQ7B/4LZP1A
-         If3/yuVhTUBU3mfQYeL1MbNKDVKY8NYhVfX0JKWI=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 039IZpcB104359
+        b=RZ6kN0zS8yZPZNQa99lyG/JJn5RBO8voYl5CV26jB6n0lfBB2qS8D0eror8viOwWZ
+         kEUHCCNK6CP3pJdi/aYajM1nkPiKiOq5jLj/8gv9mcZSNMbMtwE3hYLDc1pzT4SDOq
+         IQgHKilD4KtTc2dRHNJAiMKZMRsdUA7Nrb3PaQPw=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 039ImbpE102530
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Apr 2020 13:35:51 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 9 Apr 2020 13:48:37 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Apr
- 2020 13:35:50 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 13:48:37 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 9 Apr 2020 13:35:50 -0500
+ Frontend Transport; Thu, 9 Apr 2020 13:48:37 -0500
 Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039IZoLC097053;
-        Thu, 9 Apr 2020 13:35:50 -0500
-Subject: Re: [PATCH v2 07/17] remoteproc: Introduce function
- rproc_alloc_state_machine()
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039Ima6P114124;
+        Thu, 9 Apr 2020 13:48:36 -0500
+Subject: Re: [PATCH v2 09/17] remoteproc: Call the right core function based
+ on synchronisation state
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Loic PALLARDY <loic.pallardy@st.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "peng.fan@nxp.com" <peng.fan@nxp.com>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <loic.pallardy@st.com>, <peng.fan@nxp.com>,
+        <arnaud.pouliquen@st.com>, <fabien.dessenne@st.com>,
+        <linux-remoteproc@vger.kernel.org>
 References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
- <20200324214603.14979-8-mathieu.poirier@linaro.org>
- <6c7225848da94bca8df85cbf6beb4255@SFHDAG7NODE2.st.com>
- <dc22cdaf-a70d-b27e-2971-5497188ba089@ti.com> <20200401204152.GB17383@xps15>
+ <20200324214603.14979-10-mathieu.poirier@linaro.org>
+ <006ab94d-daf3-0e28-7098-982d473c00d5@ti.com> <20200402201642.GA9160@xps15>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <7c234cbd-0187-12ca-977c-cbd294d538e7@ti.com>
-Date:   Thu, 9 Apr 2020 13:35:50 -0500
+Message-ID: <b3d01aec-280f-4ca1-e725-affbeff8def0@ti.com>
+Date:   Thu, 9 Apr 2020 13:48:36 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20200401204152.GB17383@xps15>
+In-Reply-To: <20200402201642.GA9160@xps15>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,278 +73,150 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409183550.1lXXwBuKCsMXOSXM2K9kCZ3ZU7Fiu3Z24seXoGXxYFc@z>
+Message-ID: <20200409184836.nQPTtF8rHvNf8trVrhD3VWzpccIDyY6fTTDNV_EZPzI@z>
 
-On 4/1/20 3:41 PM, Mathieu Poirier wrote:
-> On Mon, Mar 30, 2020 at 06:10:51PM -0500, Suman Anna wrote:
+On 4/2/20 3:16 PM, Mathieu Poirier wrote:
+> On Tue, Mar 31, 2020 at 10:10:50AM -0500, Suman Anna wrote:
 >> Hi Mathieu,
->>>
->>>> -----Original Message-----
->>>> From: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>> Sent: mardi 24 mars 2020 22:46
->>>> To: bjorn.andersson@linaro.org
->>>> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
->>>> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
->>>> <arnaud.pouliquen@st.com>; Fabien DESSENNE
->>>> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
->>>> Subject: [PATCH v2 07/17] remoteproc: Introduce function
->>>> rproc_alloc_state_machine()
->>>>
->>>> Introducing new function rproc_alloc_state_machine() to allocate
->>>> the MCU synchronisation operations and position it as the central
->>>> remoteproc core allocation function.
->>>>
->>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>> ---
->>>>  drivers/remoteproc/remoteproc_core.c | 84
->>>> +++++++++++++++++++++++++---
->>>>  include/linux/remoteproc.h           |  5 ++
->>>>  2 files changed, 81 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/remoteproc_core.c
->>>> b/drivers/remoteproc/remoteproc_core.c
->>>> index 9da245734db6..02dbb826aa29 100644
->>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>> @@ -1954,6 +1954,7 @@ static void rproc_type_release(struct device *dev)
->>>>
->>>>  	kfree(rproc->firmware);
->>>>  	kfree(rproc->ops);
->>>> +	kfree(rproc->sync_ops);
->>>>  	kfree(rproc);
->>>>  }
->>>>
->>>> @@ -2018,12 +2019,34 @@ static int rproc_alloc_ops(struct rproc *rproc,
->>>> const struct rproc_ops *ops)
->>>>  	return 0;
->>>>  }
->>>>
->>>> +static int rproc_alloc_sync_ops(struct rproc *rproc,
->>>> +				const struct rproc_ops *sync_ops)
->>>> +{
->>>> +	/*
->>>> +	 * Given the unlimited amount of possibilities when
->>>> +	 * synchronising with an MCU, no constraints are imposed
->>>> +	 * on sync_ops.
->>>> +	 */
->>>> +	rproc->sync_ops = kmemdup(sync_ops,
->>>> +				  sizeof(*sync_ops), GFP_KERNEL);
->>>> +	if (!rproc->sync_ops)
->>>> +		return -ENOMEM;
->>> Should we check a minimal set of functions in sync_ops to be required?
->>> Or we should consider all pointers at NULL is ok ?
->>>
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>>  static int rproc_alloc_internals(struct rproc *rproc, const char *name,
->>>>  				 const struct rproc_ops *boot_ops,
->>>> +				 const struct rproc_ops *sync_ops,
->>>> +				 struct rproc_sync_states *sync_states,
->>> sync_states not used in this patch, should be introduced in patch 8
 >>
->> +1
+>> On 3/24/20 4:45 PM, Mathieu Poirier wrote:
+>>> Call the right core function based on whether we should synchronise
+>>> with an MCU or boot it from scratch.
+>>
+>> This patch does generate some checkpatch warnings.
 > 
-> I will do that.
+> Right, checkpatch is complaining but other than duplicating the same code for
+> all functions, I don't see another way to do this.
 > 
 >>
 >>>
->>> Regards,
->>> Loic
+>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> ---
+>>>  drivers/remoteproc/remoteproc_internal.h | 36 +++++++++++-------------
+>>>  1 file changed, 17 insertions(+), 19 deletions(-)
 >>>
->>>>  				 const char *firmware, int len)
->>>>  {
->>>>  	int ret;
->>>>
->>>> +	/* We need at least a boot or a sync ops. */
->>>> +	if (!boot_ops && !sync_ops)
->>>> +		return -EINVAL;
->>>> +
->>>>  	/* We have a boot_ops so allocate firmware name and operations */
->>>>  	if (boot_ops) {
->>>>  		ret = rproc_alloc_firmware(rproc, name, firmware);
->>>> @@ -2035,14 +2058,23 @@ static int rproc_alloc_internals(struct rproc
->>>> *rproc, const char *name,
->>>>  			return ret;
->>>>  	}
->>>>
->>>> +	/* Allocate a sync_ops if need be */
->>>> +	if (sync_ops) {
->>>> +		ret = rproc_alloc_sync_ops(rproc, sync_ops);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
->>>> +
->>>>  	return 0;
->>>>  }
->>>>
->>>>  /**
->>>> - * rproc_alloc() - allocate a remote processor handle
->>>> + * rproc_alloc_state_machine() - allocate a remote processor handle
->>>>   * @dev: the underlying device
->>>>   * @name: name of this remote processor
->>>>   * @ops: platform-specific handlers (mainly start/stop)
->>>> + * @sync_ops: platform-specific handlers for synchronising with MCU
->>>> + * @sync_states: states in which @ops and @sync_ops are to be used
->>>>   * @firmware: name of firmware file to load, can be NULL
->>>>   * @len: length of private data needed by the rproc driver (in bytes)
->>>>   *
->>>> @@ -2061,13 +2093,15 @@ static int rproc_alloc_internals(struct rproc
->>>> *rproc, const char *name,
->>>>   * Note: _never_ directly deallocate @rproc, even if it was not registered
->>>>   * yet. Instead, when you need to unroll rproc_alloc(), use rproc_free().
->>>>   */
->>>> -struct rproc *rproc_alloc(struct device *dev, const char *name,
->>>> -			  const struct rproc_ops *ops,
->>>> -			  const char *firmware, int len)
->>>> +struct rproc *rproc_alloc_state_machine(struct device *dev, const char
->>>> *name,
->>>> +					const struct rproc_ops *ops,
->>>> +					const struct rproc_ops *sync_ops,
->>>> +					struct rproc_sync_states
->>>> *sync_states,
->>>> +					const char *firmware, int len)
+>>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>>> index 73ea32df0156..5f711ceb97ba 100644
+>>> --- a/drivers/remoteproc/remoteproc_internal.h
+>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>>> @@ -106,38 +106,41 @@ static inline void rproc_set_mcu_sync_state(struct rproc *rproc,
+>>>  	}
+>>>  }
+>>>  
+>>> +#define RPROC_OPS_HELPER(__operation, ...)				\
+>>> +	do {								\
+>>> +		if (rproc_sync_with_mcu(rproc)) {			\
 >>
->> Do you foresee the need for sync_ops to be present as long as the rproc
->> is registered? I am wondering if it is better to introduce an API where
->> you can set the ops at runtime rather than allocate it upfront, so that
->> once the initial handling is done, you can reset both the sync_states
->> and ops.
+>> So this does make the logic a bit convoluted, since you have three
+>> different flags for rproc_sync_with_mcu, and you apply them in common
+>> for all the ops. This is what I meant in my comment on Patch 1.
 > 
-> That is something I spent a fair amount of time thinking about.  I decided to
-> proceed with an upfront allocation scheme and see if people would come up
-> with needs that would mandate a runtime allocation.  I am willing to provide the
-> API if there is a need for it but would rather not if someone "may" need it. 
+> There is indeed 3 different flags but they are only valid in a specific state.
+> What "ops" are you referring to here?
 
-I think you will have a need of a variant of this atleast as you rework
-the series for the comments on the cover-letter [1]
+All the rproc_ops callbacks, since only a subset of each might be valid
+at each of the three different states. Granted this provides the maximum
+flexibility for platform drivers, but it's a bit convoluted. Kinda goes
+with Loic's comment on Patch 7 [1].
 
-[1] https://patchwork.kernel.org/comment/23260081/
+[1] https://patchwork.kernel.org/comment/23249975/
 
-> 
->>
->>
->>>>  {
->>>>  	struct rproc *rproc;
->>>>
->>>> -	if (!dev || !name || !ops)
->>>> +	if (!dev || !name)
->>>>  		return NULL;
->>>>
->>>>  	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
->>>> @@ -2084,8 +2118,8 @@ struct rproc *rproc_alloc(struct device *dev, const
->>>> char *name,
->>>>  	rproc->dev.class = &rproc_class;
->>>>  	rproc->dev.driver_data = rproc;
->>>>
->>>> -	if (rproc_alloc_internals(rproc, name, ops,
->>>> -				  firmware, len))
->>>> +	if (rproc_alloc_internals(rproc, name, ops, sync_ops,
->>>> +				  sync_states, firmware, len))
->>>>  		goto out;
->>>>
->>>>  	/* Assign a unique device index and name */
->>>> @@ -2119,7 +2153,41 @@ struct rproc *rproc_alloc(struct device *dev, const
->>>> char *name,
->>>>  	put_device(&rproc->dev);
->>>>  	return NULL;
->>>>  }
->>>> -EXPORT_SYMBOL(rproc_alloc);
->>>> +EXPORT_SYMBOL(rproc_alloc_state_machine);
->>>> +
->>>> +/**
->>>> + * rproc_alloc() - allocate a remote processor handle
->>>> + * @dev: the underlying device
->>>> + * @name: name of this remote processor
->>>> + * @ops: platform-specific handlers (mainly start/stop)
->>>> + * @firmware: name of firmware file to load, can be NULL
->>>> + * @len: length of private data needed by the rproc driver (in bytes)
->>>> + *
->>>> + * Allocates a new remote processor handle, but does not register
->>>> + * it yet. if @firmware is NULL, a default name is used.
->>>> + *
->>>> + * This function should be used by rproc implementations during
->>>> initialization
->>>> + * of the remote processor.
->>>> + *
->>>> + * After creating an rproc handle using this function, and when ready,
->>>> + * implementations should then call rproc_add() to complete
->>>> + * the registration of the remote processor.
->>>> + *
->>>> + * On success the new rproc is returned, and on failure, NULL.
->>>> + *
->>>> + * Note: _never_ directly deallocate @rproc, even if it was not registered
->>>> + * yet. Instead, when you need to unroll rproc_alloc(), use rproc_free().
->>>> + */
->>>> +struct rproc *rproc_alloc(struct device *dev, const char *name,
->>>> +			  const struct rproc_ops *ops,
->>>> +			  const char *firmware, int len)
->>>> +{
->>>> +	if (!name && !firmware)
->>
->> Retain the original checks on dev, name and ops from the previous
->> rproc_alloc(). A NULL firmware was perfectly valid before, and the name
->> is allocated using the default template.
-> 
-> Here firmware can be NULL, but we need a name in order to construct the default
-> one.  On the flip side ops can be NULL for scenarios where the remoteproc core
-> is never in charge of the MCU lifecycle.  As for dev, it is checked in
-> rproc_alloc_state_machine().
 
-So, rproc_alloc() continues to be the API for normal use-cases, and
-anyone needing the sync lifecycle would be using
-rproc_alloc_state_machine(). rproc_alloc() was originally checking for
-dev, name, ops. You are checking for the first two at the beginning of
-the new function. The ops check is now not done until
-rproc_alloc_internals(). I don't see the advantage of the additional
-conditional check here, it will just be simpler to check for NULL ops
-here, or retain the original checks as they were for better readability
-on the mandatory stuff on this function.
+I'm also not sure about the comment in
+> "patch 1" - which one would that be and how does it relate to the current block
+> of code.  Apologies, I need more clarifications.  
+
+I meant the following comment,
+"And I am wondering if it is actually better to introduce the sync state
+to check against here, rather than using the stored sync state and
+return. The current way makes it confusing to read the state machine."
 
 regards
 Suman
 
 > 
 >>
->>>> +		return NULL;
->>>> +
->>>> +	return rproc_alloc_state_machine(dev, name, ops, NULL, NULL,
->>>> +					 firmware, len);
->>>> +}
+>>> +			if (!rproc->sync_ops ||				\
+>>> +			    !rproc->sync_ops->__operation)		\
+>>> +				return 0;				\
+>>> +			return rproc->sync_ops->__operation(__VA_ARGS__); \
 >>
->> Missing the EXPORT_SYMBOL on rproc_alloc() -> it is an API used by modules.
+>> Use the same semantics as the regular ops instead of two return
+>> statements, the code should fallback to the common return 0 after the
+>> RPROC_OPS_HELPER when neither of them are present.
 > 
-> Of course yes, good catch.
+> Yes the tests are exactly the same, no reason to proceed differently.
 > 
 >>
 >> regards
 >> Suman
 >>
->>>>
->>>>  /**
->>>>   * rproc_free() - unroll rproc_alloc()
->>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>> index d115e47d702d..d1214487daac 100644
->>>> --- a/include/linux/remoteproc.h
->>>> +++ b/include/linux/remoteproc.h
->>>> @@ -611,6 +611,11 @@ struct rproc *rproc_get_by_child(struct device
->>>> *dev);
->>>>  struct rproc *rproc_alloc(struct device *dev, const char *name,
->>>>  			  const struct rproc_ops *ops,
->>>>  			  const char *firmware, int len);
->>>> +struct rproc *rproc_alloc_state_machine(struct device *dev, const char
->>>> *name,
->>>> +					const struct rproc_ops *ops,
->>>> +					const struct rproc_ops *sync_ops,
->>>> +					struct rproc_sync_states
->>>> *sync_states,
->>>> +					const char *firmware, int len);
->>>>  void rproc_put(struct rproc *rproc);
->>>>  int rproc_add(struct rproc *rproc);
->>>>  int rproc_del(struct rproc *rproc);
->>>> --
->>>> 2.20.1
+>>> +		} else if (rproc->ops && rproc->ops->__operation)	\
+>>> +			return rproc->ops->__operation(__VA_ARGS__);	\
+>>> +	} while (0)							\
+>>> +
+>>>  static inline
+>>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>>>  {
+>>> -	if (rproc->ops->sanity_check)
+>>> -		return rproc->ops->sanity_check(rproc, fw);
+>>> -
+>>> +	RPROC_OPS_HELPER(sanity_check, rproc, fw);
+>>>  	return 0;
+>>>  }
+>>>  
+>>>  static inline
+>>>  u32 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>>>  {
+>>> -	if (rproc->ops->get_boot_addr)
+>>> -		return rproc->ops->get_boot_addr(rproc, fw);
+>>> -
+>>> +	RPROC_OPS_HELPER(get_boot_addr, rproc, fw);
+>>>  	return 0;
+>>>  }
+>>>  
+>>>  static inline
+>>>  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>>>  {
+>>> -	if (rproc->ops->load)
+>>> -		return rproc->ops->load(rproc, fw);
+>>> -
+>>> +	RPROC_OPS_HELPER(load, rproc, fw);
+>>>  	return -EINVAL;
+>>>  }
+>>>  
+>>>  static inline int rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>>>  {
+>>> -	if (rproc->ops->parse_fw)
+>>> -		return rproc->ops->parse_fw(rproc, fw);
+>>> -
+>>> +	RPROC_OPS_HELPER(parse_fw, rproc, fw);
+>>>  	return 0;
+>>>  }
+>>>  
+>>> @@ -145,10 +148,7 @@ static inline
+>>>  int rproc_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc, int offset,
+>>>  		     int avail)
+>>>  {
+>>> -	if (rproc->ops->handle_rsc)
+>>> -		return rproc->ops->handle_rsc(rproc, rsc_type, rsc, offset,
+>>> -					      avail);
+>>> -
+>>> +	RPROC_OPS_HELPER(handle_rsc, rproc, rsc_type, rsc, offset, avail);
+>>>  	return RSC_IGNORED;
+>>>  }
+>>>  
+>>> @@ -156,9 +156,7 @@ static inline
+>>>  struct resource_table *rproc_find_loaded_rsc_table(struct rproc *rproc,
+>>>  						   const struct firmware *fw)
+>>>  {
+>>> -	if (rproc->ops->find_loaded_rsc_table)
+>>> -		return rproc->ops->find_loaded_rsc_table(rproc, fw);
+>>> -
+>>> +	RPROC_OPS_HELPER(find_loaded_rsc_table, rproc, fw);
+>>>  	return NULL;
+>>>  }
+>>>  
 >>>
 >>
 
