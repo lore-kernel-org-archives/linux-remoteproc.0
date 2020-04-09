@@ -2,396 +2,570 @@ Return-Path: <SRS0=Vkxm=5Z=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3BEC2BA2B
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 13:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF67C2BB55
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 17:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D0F2082D
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 13:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622E0206F7
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 17:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gIk108vh"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gRH8Kx3N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbgDINUl (ORCPT
+        id S1726922AbgDIROt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 09:20:41 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:54884 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbgDINUl (ORCPT
+        Thu, 9 Apr 2020 13:14:49 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:37368 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbgDIROt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 09:20:41 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039DKbnp114373;
-        Thu, 9 Apr 2020 08:20:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586438437;
-        bh=12hGot8slQOG+VptbBjZjU8BCybYkYHXC0EtKc7c22E=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=gIk108vhaHki+YpPCctalf1kr56/fP7Rzx6ap2hfZx7MPDTNBZtajW8pa/4SikSty
-         A08RRzEXi9YKjsPuVIUE17NvVZWN12kvd84rmZIW6TZZFtZPt0ODDUNjr3qOL/HrZ9
-         wuzslkpvkR9NQO2y+Q4QYdqRUIUsMUt7Rbf2GzPw=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 039DKb05083796
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Apr 2020 08:20:37 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Apr
- 2020 08:20:37 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 9 Apr 2020 08:20:37 -0500
-Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039DKaig039152;
-        Thu, 9 Apr 2020 08:20:36 -0500
-Subject: Re: [PATCH v2 1/2] remoteproc: fall back to using parent memory pool
- if no dedicated available
-To:     Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     Loic Pallardy <loic.pallardy@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200319162321.20632-1-s-anna@ti.com>
- <20200319162321.20632-2-s-anna@ti.com> <20200325203812.GA9384@xps15>
- <207036a8-b34e-6311-5ad6-3289eb9f7a06@ti.com>
- <CANLsYkzU79LDVWO=wtoOY-=iW0a4EUf5sruwWicyj+2EAFZ4rg@mail.gmail.com>
- <592f2ed1-7833-d4f1-2894-d2300b9cc9dc@st.com>
- <6287a462-6261-8b79-ae30-762c30487bb5@ti.com>
- <b8d0b19f-b5d9-e614-f5a7-56337144ed3e@st.com>
- <00ed98b4-6f1d-b2cf-16d1-3bbbe82b9e55@ti.com>
- <c4bba965-b15a-6b13-3cb5-2741d626ae9b@st.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <f8b35e8e-4394-b394-de4f-9e42fd8110b7@ti.com>
-Date:   Thu, 9 Apr 2020 08:20:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 9 Apr 2020 13:14:49 -0400
+Received: by mail-il1-f196.google.com with SMTP id a6so417904ilr.4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Apr 2020 10:14:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZjMqDEe5P9f6jKMo9mtqxgJCOTt+on7M9ePnonKgpnI=;
+        b=gRH8Kx3NhPjIDUwl3Z9lbv9MpEJ1i35W7JFvDXuSZ7Wu7aKoLnbzXx9xZujsgX3Ztg
+         6B+rUDjszlWT1dt3zK+bNEkPSwBSTLBHHZoqa4r3w93pPsyIIlpZH3vCGeUq0w4IpPgt
+         O6nIKV19scMDlkDNPyxwAJ3OVJtYGQiRVMsZp+Er3zvR/Z5Is3V+cdrMXUxTAW6VBteG
+         RIj2OUSugwhsirC6L9FTQ79+i1m3rdJydpCFnhJv0K8tEhILHm5l8UV5WxR8+lu1ZGcs
+         mXmWt54zTF5eyF3qTEcz10HIqZkn/rOIcmnRD8IAVxIUpxoJmcy1zq5ILL2RRygMS2S6
+         +huw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZjMqDEe5P9f6jKMo9mtqxgJCOTt+on7M9ePnonKgpnI=;
+        b=l+MUeS6EfaewG6jZlfd8UCl2LhhG8Nt1jvRsrAQQ1aen8wNp5zMe6AiW2pgx/6VxiB
+         Ngl6IymzseburbKi7a+/tSoGQeh8qB768qFi56xEuydhMHmxn+Ob8Dxt7nCGSDi2QiCh
+         52HCDycMs45TGo6+OtleCyfxg0mtuXCaeTpaYizj7iU5Asmg36WK3qPwucfyHbhPNLnu
+         Zk+NNGZqQEiC1bPg9k0PJLEH2rPvWC7RwMlkDWDUb32jcechdW0V2YDmPlJcC6oi+cir
+         EpCbTnRViE/GbQe9KIROn4aOrt9WYkyIb7MlMl00+LJ6bqoKNb/WgCiEiyPKLthoUveu
+         2CAw==
+X-Gm-Message-State: AGi0PuYBnjYdOlxD6uraggiZN2JKqzS/V5IAOM85jPNTFjPq3CnOL4LC
+        fwoxd0zXCwBYuAdrQWZPpER/8jmi4gfBncd1Qh4SKQ==
+X-Google-Smtp-Source: APiQypITClMe6ajFxSWrPyatM77vaXcbAnqBm7NBFLS2wcq6eMNk5S51PqjR6OSKbf6siFoJQB9MXVIz/4g0KwGd8A4=
+X-Received: by 2002:a92:8352:: with SMTP id f79mr798504ild.58.1586452486448;
+ Thu, 09 Apr 2020 10:14:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <c4bba965-b15a-6b13-3cb5-2741d626ae9b@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
+ <5b1c8287-0077-87e7-9364-b1f5a104c9e3@st.com> <6261646b2e0c4d9c8a30900b2f475890@codeaurora.org>
+ <730c75c9-15e2-19c5-d97a-190bf1e6ffaa@st.com> <634144036.14036712.1586174761552.JavaMail.zimbra@kalray.eu>
+ <8379238a-a9e0-da4e-330a-18dffba5f841@st.com> <1331212923.14096350.1586188737626.JavaMail.zimbra@kalray.eu>
+ <877ed3c91c8f140a08a743f03cafc633@codeaurora.org>
+In-Reply-To: <877ed3c91c8f140a08a743f03cafc633@codeaurora.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 9 Apr 2020 11:14:35 -0600
+Message-ID:
+ <CANLsYkwdBi-2BxG43aU3titxdgbX3HtijuUYwrBR80Jukj6pEw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] remoteproc: Add character device interface
+To:     Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc:     =?UTF-8?Q?Cl=C3=A9ment_Leger?= <cleger@kalrayinc.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        psodagud <psodagud@codeaurora.org>, tsoni <tsoni@codeaurora.org>,
+        sidgup <sidgup@codeaurora.org>,
+        linux-remoteproc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409132036.Jsgpv3QrSMOCxbb-JQuPcf8BkkGHOZHsYaQIJEdBk6c@z>
+Message-ID: <20200409171435.fuGQdZFaW1qlGHuHQr5unip4zDTU87Y-m4JzBL35UuQ@z>
 
-On 4/9/20 4:58 AM, Arnaud POULIQUEN wrote:
-> 
-> On 4/9/20 1:36 AM, Suman Anna wrote:
->> Hi Arnaud,
->>
->>>>
->>>> On 3/30/20 7:29 AM, Arnaud POULIQUEN wrote:
->>>>>
->>>>>
->>>>> On 3/27/20 10:09 PM, Mathieu Poirier wrote:
->>>>>> On Wed, 25 Mar 2020 at 17:39, Suman Anna <s-anna@ti.com> wrote:
->>>>>>>
->>>>>>> Hi Mathieu,
->>>>>>>
->>>>>>> On 3/25/20 3:38 PM, Mathieu Poirier wrote:
->>>>>>>> On Thu, Mar 19, 2020 at 11:23:20AM -0500, Suman Anna wrote:
->>>>>>>>> From: Tero Kristo <t-kristo@ti.com>
->>>>>>>>>
->>>>>>>>> In some cases, like with OMAP remoteproc, we are not creating dedicated
->>>>>>>>> memory pool for the virtio device. Instead, we use the same memory pool
->>>>>>>>> for all shared memories. The current virtio memory pool handling forces
->>>>>>>>> a split between these two, as a separate device is created for it,
->>>>>>>>> causing memory to be allocated from bad location if the dedicated pool
->>>>>>>>> is not available. Fix this by falling back to using the parent device
->>>>>>>>> memory pool if dedicated is not available.
->>>>>>>>>
->>>>>>>>> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
->>>>>>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>>>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>>>>>> ---
->>>>>>>>> v2:
->>>>>>>>>  - Address Arnaud's concerns about hard-coded memory-region index 0
->>>>>>>>>  - Update the comment around the new code addition
->>>>>>>>> v1: https://patchwork.kernel.org/patch/11422721/
->>>>>>>>>
->>>>>>>>>  drivers/remoteproc/remoteproc_virtio.c | 15 +++++++++++++++
->>>>>>>>>  include/linux/remoteproc.h             |  2 ++
->>>>>>>>>  2 files changed, 17 insertions(+)
->>>>>>>>>
->>>>>>>>> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
->>>>>>>>> index eb817132bc5f..b687715cdf4b 100644
->>>>>>>>> --- a/drivers/remoteproc/remoteproc_virtio.c
->>>>>>>>> +++ b/drivers/remoteproc/remoteproc_virtio.c
->>>>>>>>> @@ -369,6 +369,21 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->>>>>>>>>                              goto out;
->>>>>>>>>                      }
->>>>>>>>>              }
->>>>>>>>> +    } else {
->>>>>>>>> +            struct device_node *np = rproc->dev.parent->of_node;
->>>>>>>>> +
->>>>>>>>> +            /*
->>>>>>>>> +             * If we don't have dedicated buffer, just attempt to re-assign
->>>>>>>>> +             * the reserved memory from our parent. A default memory-region
->>>>>>>>> +             * at index 0 from the parent's memory-regions is assigned for
->>>>>>>>> +             * the rvdev dev to allocate from, and this can be customized
->>>>>>>>> +             * by updating the vdevbuf_mem_id in platform drivers if
->>>>>>>>> +             * desired. Failure is non-critical and the allocations will
->>>>>>>>> +             * fall back to global pools, so don't check return value
->>>>>>>>> +             * either.
->>>>>>>>
->>>>>>>> I'm perplex...  In the changelog it is indicated that if a memory pool is
->>>>>>>> not dedicated allocation happens from a bad location but here failure of
->>>>>>>> getting a hold of a dedicated memory pool is not critical.
->>>>>>>
->>>>>>> So, the comment here is a generic one while the bad location part in the
->>>>>>> commit description is actually from OMAP remoteproc usage perspective
->>>>>>> (if you remember the dev_warn messages we added to the memory-region
->>>>>>> parse logic in the driver).
->>>>>>
->>>>>> I can't tell... Are you referring to the comment lines after
->>>>>> of_reserved_mem_device_init() in omap_rproc_probe()?
->>>>>>
->>>>>>>
->>>>>>> Before the fixed-memory carveout support, all the DMA allocations in
->>>>>>> remoteproc core were made from the rproc platform device's DMA pool (
->>>>>>> which can be NULL). That is lost after the fixed-memory support, and
->>>>>>> they were always allocated from global DMA pools if no dedicated pools
->>>>>>> are used. After this patch, that continues to be case for drivers that
->>>>>>> still do not use any dedicated pools, while it does restore the usage of
->>>>>>> the platform device's DMA pool if a driver uses one (OMAP remoteproc
->>>>>>> falls into the latter).
->>>>>>>
->>>>>>>>
->>>>>>>>> +             */
->>>>>>>>> +            of_reserved_mem_device_init_by_idx(dev, np,
->>>>>>>>> +                                               rproc->vdevbuf_mem_id);
->>>>>>>>
->>>>>>>> I wonder if using an index setup by platform code is really the best way
->>>>>>>> forward when we already have the carveout mechanic available to us.  I see the
->>>>>>>> platform code adding a carveout that would have the same name as rproc->name.
->>>>>>>> From there in rproc_add_virtio_dev() we could have something like:
->>>>>>>>
->>>>>>>>         mem = rproc_find_carveout_by_name(rproc, "%s", rproc->name);
->>>>>>>>
->>>>>>>>
->>>>>>>> That would be very flexible, the location of the reserved memory withing the
->>>>>>>> memory-region could change without fear of breaking things and no need to add to
->>>>>>>> struct rproc.
->>>>>>>>
->>>>>>>> Let me know what you think.
->>>>>>>
->>>>>>> I think that can work as well but I feel it is lot more cumbersome. It
->>>>>>> does require every platform driver to add code adding/registering that
->>>>>>> carveout, and parse the reserved memory region etc. End of the day, we
->>>>>>> rely on DMA API and we just have to assign the region to the newly
->>>>>>> created device. The DMA pool assignment for devices using
->>>>>>> reserved-memory nodes has simply been the of_reserved_mem_device_init()
->>>>>>> function.
->>>>>>
->>>>>> Given all the things happening in the platform drivers adding and
->>>>>> registering a single carveout doesn't seem that onerous to me.   I
->>>>>> also expect setting rproc->vdevbuf_mem_id would involve some form of
->>>>>> parsing.  Lastly if a couple of platforms end up doing the same thing
->>>>>> might as well bring the code in the core, hence choosing a generic
->>>>>> name such as rproc->name for the memory region.
->>>>>>
->>>>>> At the very least I would use of_reserved_mem_device_init_by_idx(dev,
->>>>>> np, 0).  I agree it is not flexible but I'll take that over adding a
->>>>>> new field to structure rproc.
->>>>>
->>>>> I wonder whether this would not introduce side effect for some legacy
->>>>> drivers. Some rproc platforms can have a memory region defined but not
->>>>> used for the virtio buffers which is allocated in the Linux default
->>>>> memory pool.
->>>>
->>>> I am actually trying to restore the behavior before the separate vdev
->>>> device creation. All allocations were coming from the rproc platform
->>>> device's DMA pool (if assigned, otherwise will fall back to global pool).
->>>
->>> Yes deprecated dma_declare_coherent_memory was used to declare the rproc
->>> platform pool for vdev if i well remember).
->>
->> Right, the dma_declare_coherent_memory() usage was introduced only in
->> v5.1 as part of vdev subdevice creation. Prior to that, the allocations
->> used the rproc dev DMA pool which would have been initialized in the
->> platform drivers.
->>
->>>
->>>>
->>>> You have a valid point though, but are there any drivers relying on this
->>>> today? All the usage I saw were only using of_reserved_mem_device_init()
->>>> which is 0-indexed region by default. If this is really an issue, we can
->>>> use -1 as a means to conditionally follow this path.
->>>
->>> Up-streamed driver seems using nothing but address 0 for time being. 
->>> I don't know for non-up-streamed drivers...
->>> But if you have a look to the stm32 platform driver, we also define the
->>> memory regions for the code. 
->>
->> ST drivers are already using the "vdev0buffer" on latest kernels, so
->> they will not be entering the fallback path anyway right. Looking at
->> 4.19 kernel, I see that you guys were also using a single
->> reserved-memory region (didn't have DT nodes though), so all allocations
->> would have come from that region. The patch is for fixing the
->> allocations for drivers that were defining a DMA rproc pool, and still
->> using them (so not having to force the drivers to add code to fix the
->> issue).
-> 
-> Right, but today the limitation with our implementation is the support of
-> additional shared buffers(big data). The possibility to add a single DMA pool
-> would help to solve this issue. Furthermore we have a DT generator tools that
-> should support the shared memory regions tuning. Having an unique shared memory
-> region could simplify this tool usage.
+On Wed, 8 Apr 2020 at 12:35, <rishabhb@codeaurora.org> wrote:
+>
+> On 2020-04-06 08:58, Cl=C3=A9ment Leger wrote:
+> > Hi Arnaud,
+> >
+> > ----- On 6 Apr, 2020, at 16:17, Arnaud Pouliquen
+> > arnaud.pouliquen@st.com wrote:
+> >
+> >> Hi Cl=C3=A9ment,
+> >>
+> >> On 4/6/20 2:06 PM, Cl=C3=A9ment Leger wrote:
+> >>> Hi Arnaud,
+> >>>
+> >>> ----- On 6 Apr, 2020, at 11:01, Arnaud Pouliquen
+> >>> arnaud.pouliquen@st.com wrote:
+> >>>
+> >>>> On 4/3/20 9:13 PM, rishabhb@codeaurora.org wrote:
+> >>>>> On 2020-04-02 10:28, Arnaud POULIQUEN wrote:
+> >>>>>> Hi
+> >>>>>>
+> >>>>>> On 4/1/20 2:03 AM, Rishabh Bhatnagar wrote:
+> >>>>>>> Add the character device interface for userspace applications.
+> >>>>>>> This interface can be used in order to boot up and shutdown
+> >>>>>>> remote subsystems. Currently there is only a sysfs interface
+> >>>>>>> which the userspace clients can use. If a usersapce application
+> >>>>>>> crashes after booting the remote processor does not get any
+> >>>>>>> indication about the crash. It might still assume that the
+> >>>>>>> application is running. For example modem uses remotefs service
+> >>>>>>> to fetch data from disk/flash memory. If the remotefs service
+> >>>>>>> crashes, modem keeps on requesting data which might lead to a
+> >>>>>>> crash. Adding a character device interface makes the remote
+> >>>>>>> processor tightly coupled with the user space application.
+> >>>>>>> A crash of the application leads to a close on the file
+> >>>>>>> descriptors
+> >>>>>>> therefore shutting down the remoteproc.
+> >>>>>>
+> >>>>>> Sorry I'm late in the discussion, I hope I've gone through the
+> >>>>>> whole
+> >>>>>> discussion so I don't reopen a closed point...
+> >>>>>>
+> >>>>>> Something here is not crystal clear to me so I'd rather share
+> >>>>>> it...
+> >>>>>>
+> >>>>>> I suppose that you the automatic restart of the application is not
+> >>>>>> possible to
+> >>>>>> stop and restart the remote processor...
+> >>>>> Yes correct, while we wait for the application to restart we might
+> >>>>> observe a
+> >>>>> fatal crash.
+> >>>>>>
+> >>>>>> Why this use case can not be solved by a process monitor or a
+> >>>>>> service
+> >>>>>> in userland that detects the application crash and stop the remote
+> >>>>>> firmware using
+> >>>>>> the sysfs interface?
+> >>>>>>
+> >>>>> What happens in the case where the process monitor itself crashes?
+> >>>>> This is
+> >>>>> actually the approach we follow in our downstream code. We have a
+> >>>>> central entity
+> >>>>> in userspace that controls bootup/shutdown of some remote
+> >>>>> processors based on
+> >>>>> the
+> >>>>> votes from userspace clients. We have observed cases where this
+> >>>>> entity
+> >>>>> itself crashes and remote processors are left hanging.
+> >>>>
+> >>>> Your description makes me feel like this patch is only a workaround
+> >>>> of something
+> >>>> that
+> >>>> should be fixed in the userland, even if i understand that hanging
+> >>>> is one of the
+> >>>> most
+> >>>> critical problem and have to be fixed.
+> >>>> For instance, how to handle several applications that interact with
+> >>>> the remote
+> >>>> processor
+> >>>> ( e.g. rpmsg service applications) how to stop and restart
+> >>>> everything. Using the
+> >>>> char
+> >>>> device would probaly resolve only a part of the issue...
+> >>>>
+> >>>> I'm not aware about your environment and i'm not a userland expert.
+> >>>> But what i
+> >>>> still not
+> >>>> understand why a parent process can not do the job...
+> >>>> I just test a simple script on my side that treat the kill -9 of an
+> >>>> application
+> >>>> ("cat" in my case).
+> >>>
+> >>> This is not entirely true, if the parent process is killed with a
+> >>> SIGKILL, then
+> >>> the process will not be able to handle anything and the remoteproc
+> >>> will still
+> >>> be running.
+> >>>
+> >>> What I understood from Rishabh patch is a way to allow a single
+> >>> process handling
+> >>> the rproc state. We have the same kind of need and currently, if the
+> >>> user application crashes, then the rproc is still running (which
+> >>> happens).
+> >>>
+> >>>>
+> >>>> #start the remote firmware
+> >>>> cp  $1 /lib/firmware/
+> >>>> echo $1> /sys/class/remoteproc/remoteproc0/firmware
+> >>>> echo start >/sys/class/remoteproc/remoteproc0/state
+> >>>> #your binary
+> >>>> cat /dev/kmsg
+> >>>> # stop the remote firmware in case of crash (and potentially some
+> >>>> other apps)
+> >>>> echo stop >/sys/class/remoteproc/remoteproc0/state
+> >>>>
+> >>>
+> >>> This is not really "production proof" and what happens if the
+> >>> application is
+> >>> responsible of setting the firmware which might be jitted ?
+> >>> And if the script receives the SIGKILL, then we are back to the same
+> >>> problem.
+> >> Yes this is just a basic example, not an implementation which would
+> >> depend on
+> >> the
+> >> environment. i'm just trying here to  put forward a multi-process
+> >> solution...and
+> >> that I'm not an userland expert :).
+> >>
+> >>>
+> >>> I really think, this is a step forward an easier and reliable use of
+> >>> the
+> >>> remoteproc
+> >>> on userland to guarantee a coherent rproc state even if host
+> >>> application
+> >>> crashes.
+> Yes what we want is simple mechanism where a single userspace process
+> can boot/
+> shutdown the remote processor in all scenarios. Adding more processes to
+> monitor
+> the already existing process might have 2 issues. One is there might be
+> a delay
+> between the application crash and process monitor getting to know about
+> it and taking
+> action. This might prove to be fatal in our case. Second, possibly the
+> monitor can hang
+> or get killed and is not deterministic.
+> >>
+> >> I can see 3 ways of handling an application crash:
+> >> - just shutdown the firmware
+> >> =3D> can be done through char device
+> >> - stop some other related processes and/or generate a remote proc
+> >> crash dump for
+> >> debug
+> >> =3D> /sysfs and/or debugfs
+> >> - do nothing as you want a silence application reboot and re-attach to
+> >> the
+> >> running firmware
+> >> =3D> use sysfs
+> >>
+> >> I'm challenging the solution because splitting the API seems to me not
+> >> a good
+> >> solution.
+> >
+> > Completely ok with that, we have to fully understand the targeted
+> > usecase to
+> > avoid implemented a flawed interface.
+> >
+> >> Now i wonder how it works for the other applications that are relying
+> >> on some
+> >> other
+> >> kernel frameworks...
+> >
+> > For some other device, there is a chardev. The watchdog for intance
+> > uses a
+> > /dev/watchdog. Regarding the gpio, it seems they are also using a
+> > chardev
+> > and the sysfs interface is deprecated.
+> >
+> >> Perhaps the answer is that these frameworks don't use sysfs but char
+> >> device.
+> >> That would means that the sysfs solution is not the more adapted
+> >> solution and
+> >> perhaps we should migrate to a char device.
+> >> But in this case, i think that it should implement the whole API and
+> >> be
+> >> exclusive with
+> >> the syfs legacy API (so no sysfs or sysfs in read-only).
+> >
+> > I agree with that, if another interface must be defined, then it should
+> > implement everything that is supported right now with the sysfs.
+> >
+> The other fields that sysfs exposes right now are firmware_name,
+> name(rproc name),
+> state. The targeted usecase was that these are configuration parameters
+> specific
+> to the remoteproc and should stay in the sysfs interface. Whereas char
+> device
+> should provide direct access to remoteproc device.
+> It would make sense to use this interface in conjunction with sysfs
+> interface, where you use /dev/remoteproc0 to boot/shutdown the remote
+> processor
+> sysfs entries to fine tune the parameters.
+> Adding ioctls to implement all sysfs functionality seems like overkill
+> to me. Let
+> me know what you guys think.
 
-big data is always interesting, and you probably need some more tooling
-around it than just the DMA pool in rproc especially if you were to
-share it with other kernel subsystems. You would want to keep that
-separate from the firmware regions. Our solution has been to use the
-in-kernel buffer allocators/dma-buf exporters. We had our own
-out-of-tree solution before, and now converging on to use the recently
-added dma-buf heaps (drivers/dma-buf/heaps). You would want to know the
-pool especially on non-MMU rprocs given that you would have to configure
-certain Cache settings for the regions.
+Hi Rishabh,
 
-> For these reasons i would be interested in finding a more scalable solution.  
-> 
->>
->>> Even if we are also interesting by the possibility of having a default pool,
->>> it is no simple to implement for our driver using index 0.
->>> We will have to declare it first in DT. But we would also have to determine
->>> if the first memory pool declaration is a default pool or not vs the other
->>> memory region declarations.
->>
->> Yeah, if we used the hard-coded 0 and you were adapting to use a default
->> pool. Otherwise, you could technically update or define the new generic
->> name (which has to be added to remoteproc core as well).
->>
->>>
->>>>
->>>>> If the aim is to minimize impact in the core part, the solution i proposed
->>>>> in V1 using rproc_of_resm_mem_entry_init seems a good default candidate too.
->>>>> The constraint would be that the platform driver has to pre-register
->>>>> vdev<X>buffer reserved memory associated for a max number of vdev.
->>>>> This max would limit the number of vdev that a remote firmware can request.
->>>>> Also not very flexible more that the index 0, as managed at platform level.
->>>>>
->>>>> Having a default name or a default index seems to me a good compromise...
->>>>> One advantage of the default name (in this case not rproc->name) is the 
->>>>> ability to define the memory region in a resource table carveout, instead
->>>>> of a static definition in DT.
->>>>
->>>> Hmm, regarding the default name, vdev rings and vdev buffers are already
->>>> looking for specific names, right? So, what resource type are you
->>>> envisioning for this - RSC_CARVEOUT? Wouldn't that become a separate
->>>> allocation by itself?
->>>
->>> After checking, I think my point on the carveout is not valid. As we should no
->>> longer use dma_declare_coherent_memory which seems obsolete since the
->>> introduction of the devicetree. Thus, even if a carveout is defined, we will
->>> have to declare an associated memory region in DT.
->>>
->>> Anyway as a name is used today for other memory regions, i would be in flavor
->>> of using the same method to declare a default memory pool in remote proc.
->>> relying on the rproc_of_resm_mem_entry_init function.
->>
->> This could definitely be an enhancement and conversion of existing
->> drivers, but at this point, the idea is to restore the allocations to
->> how they were for drivers defining a DMA pool and without having to
->> modify them.
+The sysfs interface is not going away - it is part of the API and that
+can't be changed anymore.  I suggest the new character device
+interface strictly implement what is currently needed and leave what
+is not for future implementation.
 
-> ok, in this case the fix would be your V1 patch and the question is do we take
-> the opportunity to implement something more scalable as existing is already broken?
-> or only first fix the issue with the associated limitations?
-
-I am fine with going back to v1 (and ok with either of the versions :)).
-I can post a v3 going back if we all agree that is what we want to merge.
-
-Bjorn,
-Your thoughts on this patch, and what's your preference?
-
-The improvements can be follow-up patches. The first thing we should get
-to is to get rid of the dma_declare_coherent_memory() before anything
-else. We do not want any users of rproc_of_resm_mem_entry_init() to
-exercise that path.
-
->  
->>
->>> If an index is preferred in core, platform drivers that declare more that
->>> one memory region will probably have to implement code based on a default
->>> memory region name to retrieve the associated index.
->>
->> So, if we were to get rid of the dma_declare_coherent_memory() usage
->> from remoteproc core, then I actually don't see need for the other args
->> in rproc_of_resm_mem_entry_init(), just the name and id. 
-> 
-> yes probably.
-> 
->> And even that
->> you would only need if you are going to have to deal with multiple
->> devices to assign the DMA pool for, for which you would need the name.
-> 
-> Here i was speaking about you V2 implementation. As consequence i would
-> implement a function in the stm32_rproc platform that would set the vdevbuf_mem_id,
-> depending on a default memory region name, i would define in stm32 bindings.
-
-Yep, that was the idea. It would have fixed the existing drivers, and if
-one wanted to customize, the platform drivers can choose the right id.
-The name + id registration would also entail the platform drivers
-knowing the id anyways. And today, the only other device where we are
-registering a DMA pool is the vdev subdevice.
-
-regards
-Suman
-
-> 
-> Regards
-> Arnaud
-> 
->>
->> regards
->> Suman
->>
->>>
->>> Regards,
->>> Arnaud 
->>>
->>>
->>>>
->>>> regards
->>>> Suman
->>>>
->>>>>>>>
->>>>>>>>>      }
->>>>>>>>>
->>>>>>>>>      /* Allocate virtio device */
->>>>>>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>>>>>>> index ed127b2d35ca..07bd73a6d72a 100644
->>>>>>>>> --- a/include/linux/remoteproc.h
->>>>>>>>> +++ b/include/linux/remoteproc.h
->>>>>>>>> @@ -481,6 +481,7 @@ struct rproc_dump_segment {
->>>>>>>>>   * @auto_boot: flag to indicate if remote processor should be auto-started
->>>>>>>>>   * @dump_segments: list of segments in the firmware
->>>>>>>>>   * @nb_vdev: number of vdev currently handled by rproc
->>>>>>>>> + * @vdevbuf_mem_id: default memory-region index for allocating vdev buffers
->>>>>>>>>   */
->>>>>>>>>  struct rproc {
->>>>>>>>>      struct list_head node;
->>>>>>>>> @@ -514,6 +515,7 @@ struct rproc {
->>>>>>>>>      bool auto_boot;
->>>>>>>>>      struct list_head dump_segments;
->>>>>>>>>      int nb_vdev;
->>>>>>>>> +    u8 vdevbuf_mem_id;
->>>>>>>>>      u8 elf_class;
->>>>>>>>>  };
->>>>>>>>>
->>>>>>>>> --
->>>>>>>>> 2.23.0
->>>>>>>>>
->>>>>>>
->>>>
->>
-
+> >
+> > Cl=C3=A9ment
+> >
+> >>
+> >> Regards,
+> >> Arnaud
+> >>
+> >>>
+> >>> Regards,
+> >>>
+> >>> Cl=C3=A9ment
+> >>>
+> >>>> Anyway, it's just my feeling, let other people give their feedback.
+> >>>>
+> >>>>>> I just want to be sure that there is no alternative to this,
+> >>>>>> because
+> >>>>>> having two ways
+> >>>>>> for application to shutdown the firmware seems to me confusing...
+> >>>>> Does making this interface optional/configurable helps?
+> >>>>>>
+> >>>>>> What about the opposite service, mean inform the application that
+> >>>>>> the remote
+> >>>>>> processor is crashed?
+> >>>>>> Do you identify such need? or the "auto" crash recovery is
+> >>>>>> sufficient?
+> >>>>> Auto recovery works perfectly for us. Although there is a mechanism
+> >>>>> in
+> >>>>> place using QMI(Qualcomm MSM interface) that can notify clients
+> >>>>> about remote
+> >>>>> processor crash.
+> >>>>
+> >>>> Thanks for the information.
+> >>>>
+> >>>> Regards
+> >>>> Arnaud
+> >>>>
+> >>>>>>
+> >>>>>> Thanks,
+> >>>>>> Arnaud
+> >>>>>>>
+> >>>>>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> >>>>>>> ---
+> >>>>>>>  drivers/remoteproc/Kconfig               |   9 +++
+> >>>>>>>  drivers/remoteproc/Makefile              |   1 +
+> >>>>>>>  drivers/remoteproc/remoteproc_cdev.c     | 100
+> >>>>>>> +++++++++++++++++++++++++++++++
+> >>>>>>>  drivers/remoteproc/remoteproc_internal.h |  22 +++++++
+> >>>>>>>  include/linux/remoteproc.h               |   2 +
+> >>>>>>>  5 files changed, 134 insertions(+)
+> >>>>>>>  create mode 100644 drivers/remoteproc/remoteproc_cdev.c
+> >>>>>>>
+> >>>>>>> diff --git a/drivers/remoteproc/Kconfig
+> >>>>>>> b/drivers/remoteproc/Kconfig
+> >>>>>>> index de3862c..6374b79 100644
+> >>>>>>> --- a/drivers/remoteproc/Kconfig
+> >>>>>>> +++ b/drivers/remoteproc/Kconfig
+> >>>>>>> @@ -14,6 +14,15 @@ config REMOTEPROC
+> >>>>>>>
+> >>>>>>>  if REMOTEPROC
+> >>>>>>>
+> >>>>>>> +config REMOTEPROC_CDEV
+> >>>>>>> +    bool "Remoteproc character device interface"
+> >>>>>>> +    help
+> >>>>>>> +      Say y here to have a character device interface for
+> >>>>>>> Remoteproc
+> >>>>>>> +      framework. Userspace can boot/shutdown remote processors
+> >>>>>>> through
+> >>>>>>> +      this interface.
+> >>>>>>> +
+> >>>>>>> +      It's safe to say N if you don't want to use this
+> >>>>>>> interface.
+> >>>>>>> +
+> >>>>>>>  config IMX_REMOTEPROC
+> >>>>>>>      tristate "IMX6/7 remoteproc support"
+> >>>>>>>      depends on ARCH_MXC
+> >>>>>>> diff --git a/drivers/remoteproc/Makefile
+> >>>>>>> b/drivers/remoteproc/Makefile
+> >>>>>>> index e30a1b1..b7d4f77 100644
+> >>>>>>> --- a/drivers/remoteproc/Makefile
+> >>>>>>> +++ b/drivers/remoteproc/Makefile
+> >>>>>>> @@ -9,6 +9,7 @@ remoteproc-y                +=3D
+> >>>>>>> remoteproc_debugfs.o
+> >>>>>>>  remoteproc-y                +=3D remoteproc_sysfs.o
+> >>>>>>>  remoteproc-y                +=3D remoteproc_virtio.o
+> >>>>>>>  remoteproc-y                +=3D remoteproc_elf_loader.o
+> >>>>>>> +obj-$(CONFIG_REMOTEPROC_CDEV)        +=3D remoteproc_cdev.o
+> >>>>>>>  obj-$(CONFIG_IMX_REMOTEPROC)        +=3D imx_rproc.o
+> >>>>>>>  obj-$(CONFIG_MTK_SCP)            +=3D mtk_scp.o mtk_scp_ipi.o
+> >>>>>>>  obj-$(CONFIG_OMAP_REMOTEPROC)        +=3D omap_remoteproc.o
+> >>>>>>> diff --git a/drivers/remoteproc/remoteproc_cdev.c
+> >>>>>>> b/drivers/remoteproc/remoteproc_cdev.c
+> >>>>>>> new file mode 100644
+> >>>>>>> index 0000000..8182bd1
+> >>>>>>> --- /dev/null
+> >>>>>>> +++ b/drivers/remoteproc/remoteproc_cdev.c
+> >>>>>>> @@ -0,0 +1,100 @@
+> >>>>>>> +// SPDX-License-Identifier: GPL-2.0-only
+> >>>>>>> +/*
+> >>>>>>> + * Character device interface driver for Remoteproc framework.
+> >>>>>>> + *
+> >>>>>>> + * Copyright (c) 2020, The Linux Foundation. All rights
+> >>>>>>> reserved.
+> >>>>>>> + */
+> >>>>>>> +
+> >>>>>>> +#include <linux/cdev.h>
+> >>>>>>> +#include <linux/fs.h>
+> >>>>>>> +#include <linux/module.h>
+> >>>>>>> +#include <linux/mutex.h>
+> >>>>>>> +#include <linux/remoteproc.h>
+> >>>>>>> +
+> >>>>>>> +#include "remoteproc_internal.h"
+> >>>>>>> +
+> >>>>>>> +#define NUM_RPROC_DEVICES    64
+> >>>>>>> +static dev_t rproc_cdev;
+> >>>>>>> +static DEFINE_IDA(cdev_minor_ida);
+> >>>>>>> +
+> >>>>>>> +static int rproc_cdev_open(struct inode *inode, struct file
+> >>>>>>> *file)
+> >>>>>>> +{
+> >>>>>>> +    struct rproc *rproc;
+> >>>>>>> +
+> >>>>>>> +    rproc =3D container_of(inode->i_cdev, struct rproc, char_dev=
+);
+> >>>>>>> +
+> >>>>>>> +    if (!rproc)
+> >>>>>>> +        return -EINVAL;
+> >>>>>>> +
+> >>>>>>> +    if (rproc->state =3D=3D RPROC_RUNNING)
+> >>>>>>> +        return -EBUSY;
+> >>>>>>> +
+> >>>>>>> +    return rproc_boot(rproc);
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>>> +static int rproc_cdev_release(struct inode *inode, struct file
+> >>>>>>> *file)
+> >>>>>>> +{
+> >>>>>>> +    struct rproc *rproc;
+> >>>>>>> +
+> >>>>>>> +    rproc =3D container_of(inode->i_cdev, struct rproc, char_dev=
+);
+> >>>>>>> +
+> >>>>>>> +    if (!rproc || rproc->state !=3D RPROC_RUNNING)
+> >>>>>>> +        return -EINVAL;
+> >>>>>>> +
+> >>>>>>> +    rproc_shutdown(rproc);
+> >>>>>>> +
+> >>>>>>> +    return 0;
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>>> +static const struct file_operations rproc_fops =3D {
+> >>>>>>> +    .open =3D rproc_cdev_open,
+> >>>>>>> +    .release =3D rproc_cdev_release,
+> >>>>>>> +};
+> >>>>>>> +
+> >>>>>>> +int rproc_char_device_add(struct rproc *rproc)
+> >>>>>>> +{
+> >>>>>>> +    int ret, minor;
+> >>>>>>> +    dev_t cdevt;
+> >>>>>>> +
+> >>>>>>> +    minor =3D ida_simple_get(&cdev_minor_ida, 0,
+> >>>>>>> NUM_RPROC_DEVICES,
+> >>>>>>> +                   GFP_KERNEL);
+> >>>>>>> +    if (minor < 0) {
+> >>>>>>> +        dev_err(&rproc->dev, "%s: No more minor numbers left!
+> >>>>>>> rc:%d\n",
+> >>>>>>> +            __func__, minor);
+> >>>>>>> +        return -ENODEV;
+> >>>>>>> +    }
+> >>>>>>> +
+> >>>>>>> +    cdev_init(&rproc->char_dev, &rproc_fops);
+> >>>>>>> +    rproc->char_dev.owner =3D THIS_MODULE;
+> >>>>>>> +
+> >>>>>>> +    cdevt =3D MKDEV(MAJOR(rproc_cdev), minor);
+> >>>>>>> +    ret =3D cdev_add(&rproc->char_dev, cdevt, 1);
+> >>>>>>> +    if (ret < 0)
+> >>>>>>> +        ida_simple_remove(&cdev_minor_ida, minor);
+> >>>>>>> +
+> >>>>>>> +    rproc->dev.devt =3D cdevt;
+> >>>>>>> +    return ret;
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>>> +void rproc_char_device_remove(struct rproc *rproc)
+> >>>>>>> +{
+> >>>>>>> +    __unregister_chrdev(MAJOR(rproc->dev.devt),
+> >>>>>>> MINOR(rproc->dev.devt), 1,
+> >>>>>>> +                "rproc");
+> >>>>>>> +    ida_simple_remove(&cdev_minor_ida, MINOR(rproc->dev.devt));
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>>> +void __init rproc_init_cdev(void)
+> >>>>>>> +{
+> >>>>>>> +    int ret;
+> >>>>>>> +
+> >>>>>>> +    ret =3D alloc_chrdev_region(&rproc_cdev, 0, NUM_RPROC_DEVICE=
+S,
+> >>>>>>> "rproc");
+> >>>>>>> +    if (ret < 0) {
+> >>>>>>> +        pr_err("Failed to alloc rproc_cdev region, err %d\n",
+> >>>>>>> ret);
+> >>>>>>> +        return;
+> >>>>>>> +    }
+> >>>>>>> +}
+> >>>>>>> +
+> >>>>>>> +void __exit rproc_exit_cdev(void)
+> >>>>>>> +{
+> >>>>>>> +    __unregister_chrdev(MAJOR(rproc_cdev), 0, NUM_RPROC_DEVICES,
+> >>>>>>> "rproc");
+> >>>>>>> +}
+> >>>>>>> diff --git a/drivers/remoteproc/remoteproc_internal.h
+> >>>>>>> b/drivers/remoteproc/remoteproc_internal.h
+> >>>>>>> index 493ef92..28d61a1 100644
+> >>>>>>> --- a/drivers/remoteproc/remoteproc_internal.h
+> >>>>>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+> >>>>>>> @@ -47,6 +47,27 @@ struct dentry *rproc_create_trace_file(const
+> >>>>>>> char *name,
+> >>>>>>> struct rproc *rproc,
+> >>>>>>>  int rproc_init_sysfs(void);
+> >>>>>>>  void rproc_exit_sysfs(void);
+> >>>>>>>
+> >>>>>>> +#ifdef CONFIG_REMOTEPROC_CDEV
+> >>>>>>> +void rproc_init_cdev(void);
+> >>>>>>> +void rproc_exit_cdev(void);
+> >>>>>>> +int rproc_char_device_add(struct rproc *rproc);
+> >>>>>>> +void rproc_char_device_remove(struct rproc *rproc);
+> >>>>>>> +#else
+> >>>>>>> +static inline void rproc_init_cdev(void)
+> >>>>>>> +{
+> >>>>>>> +}
+> >>>>>>> +static inline void rproc_exit_cdev(void)
+> >>>>>>> +{
+> >>>>>>> +}
+> >>>>>>> +static inline int rproc_char_device_add(struct rproc *rproc)
+> >>>>>>> +{
+> >>>>>>> +    return 0;
+> >>>>>>> +}
+> >>>>>>> +static inline void  rproc_char_device_remove(struct rproc
+> >>>>>>> *rproc)
+> >>>>>>> +{
+> >>>>>>> +}
+> >>>>>>> +#endif
+> >>>>>>> +
+> >>>>>>>  void rproc_free_vring(struct rproc_vring *rvring);
+> >>>>>>>  int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
+> >>>>>>>
+> >>>>>>> @@ -63,6 +84,7 @@ struct resource_table
+> >>>>>>> *rproc_elf_find_loaded_rsc_table(struct
+> >>>>>>> rproc *rproc,
+> >>>>>>>  struct rproc_mem_entry *
+> >>>>>>>  rproc_find_carveout_by_name(struct rproc *rproc, const char
+> >>>>>>> *name, ...);
+> >>>>>>>
+> >>>>>>> +
+> >>>>>>>  static inline
+> >>>>>>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct
+> >>>>>>> firmware *fw)
+> >>>>>>>  {
+> >>>>>>> diff --git a/include/linux/remoteproc.h
+> >>>>>>> b/include/linux/remoteproc.h
+> >>>>>>> index 16ad666..c4ca796 100644
+> >>>>>>> --- a/include/linux/remoteproc.h
+> >>>>>>> +++ b/include/linux/remoteproc.h
+> >>>>>>> @@ -37,6 +37,7 @@
+> >>>>>>>
+> >>>>>>>  #include <linux/types.h>
+> >>>>>>>  #include <linux/mutex.h>
+> >>>>>>> +#include <linux/cdev.h>
+> >>>>>>>  #include <linux/virtio.h>
+> >>>>>>>  #include <linux/completion.h>
+> >>>>>>>  #include <linux/idr.h>
+> >>>>>>> @@ -514,6 +515,7 @@ struct rproc {
+> >>>>>>>      bool auto_boot;
+> >>>>>>>      struct list_head dump_segments;
+> >>>>>>>      int nb_vdev;
+> >>>>>>> +    struct cdev char_dev;
+> >>>>>>>  };
+> >>>>>>>
+> >> >>>>>  /**
