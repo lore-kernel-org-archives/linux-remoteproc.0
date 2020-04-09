@@ -7,70 +7,71 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F07C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA62C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DAA82087E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F62C2072F
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:11:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EVa4ckVb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFB1UIkF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbgDIVK5 (ORCPT
+        id S1727526AbgDIVLD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 17:10:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28025 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727001AbgDIVK5 (ORCPT
+        Thu, 9 Apr 2020 17:11:03 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:34080 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727001AbgDIVLD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 17:10:57 -0400
+        Thu, 9 Apr 2020 17:11:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586466656;
+        s=mimecast20190719; t=1586466662;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=77s3qEqZUXwYYItZCoNg0WQiFcIAKlBUF4mxWQL3Gog=;
-        b=EVa4ckVbB/EyyUtshFDvrV2HC6d4324bq8phTl0VUquJv+RHjzpR/KfCg2/gGybS7lxzGx
-        46tO5C8vt6aHtUIhz/mLhlUMVEae0W/GruxPjyUd1UB1kecNzIZS8ilcU3alxk3Sl7RhXy
-        kPKlP77siYyHcnSxtLpnaOSqi7MiMf4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-276-Jh1Gd7D9Oh6D8g_iScxilQ-1; Thu, 09 Apr 2020 17:10:52 -0400
-X-MC-Unique: Jh1Gd7D9Oh6D8g_iScxilQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 2so71843wmf.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Apr 2020 14:10:52 -0700 (PDT)
+        bh=RtBDKwbJtd92jp7E6LtBd9yu+eRXqfVPRMTN3swQKxo=;
+        b=QFB1UIkFbxcY4nktaOyKhTCnu1faqjo9nO+7+yOceW9ocSaKOlTvXezi3bRsh/dqjxzeWq
+        PcExdp1HiRUl9V/JJVgaDrSV5MLhFvQAkc7AG2AJVrPaW8Kmeuz9k9ajb7W99bKtnM6KM1
+        TI4pdnnKREntu/BfNZ1qwm20o2xgpUA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-359-Ikk1ydJJN52bvj_8O9PWTA-1; Thu, 09 Apr 2020 17:11:00 -0400
+X-MC-Unique: Ikk1ydJJN52bvj_8O9PWTA-1
+Received: by mail-wr1-f70.google.com with SMTP id 91so9774wro.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Apr 2020 14:11:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=77s3qEqZUXwYYItZCoNg0WQiFcIAKlBUF4mxWQL3Gog=;
-        b=sZjFTSpNIXwaUJyMCWknfAZgptwhnEtIQ0+dsE21Yyr++Yf/Q5lyaiCijXtlpmHW8a
-         RUmXKLN2LPkhnjN7hAGc4D971ODvdFOVwujYWtnd0ufF9QuhWgnub+T0tU0ZZ501fDSS
-         3Hi4QzSYmuLng4xYb3Rr8Gykx4qdu7ot7Ocjpf5GIW7nNh0IBGVVJjCqEtcH0LPumYD4
-         CZQSC1QW+vGxWNJadhNWcXHNMOIExz5Ize439j7fA6yrPQxK23jOUjVbNAcwyHBII+qY
-         mL5lRc6fX0A4KdOXhjvlwh8w3Bq+0vlMP4K/kGy4htZhkkI7jvrNg0jvAsqGHP8EiBiA
-         A+CA==
-X-Gm-Message-State: AGi0PuYHMZ7ydQk5mtxYGAMC8pIfvZZKPGC9cbS6JPM2bGej3C1m+jbO
-        +2PTN05djSEV/m+6lA9E941VQFF6bA2yd1max+FQT9v/uOTBS+RBdsIU1Tm7BSHvfCif5Z/kWP2
-        SGKFg9HyKbjcUgXbcMDk45motcdmL9w==
-X-Received: by 2002:adf:e409:: with SMTP id g9mr1046822wrm.51.1586466651230;
-        Thu, 09 Apr 2020 14:10:51 -0700 (PDT)
-X-Google-Smtp-Source: APiQypLy4PXbKq8mbP7kwgtN1Q+giosGvjsros8EbCALYN5EyYBQyGeYWvZCX+ftIrPSN/+taBS7uA==
-X-Received: by 2002:adf:e409:: with SMTP id g9mr1046809wrm.51.1586466651031;
-        Thu, 09 Apr 2020 14:10:51 -0700 (PDT)
+        bh=RtBDKwbJtd92jp7E6LtBd9yu+eRXqfVPRMTN3swQKxo=;
+        b=FeliDL4Roc1rbbS6t1MUOqCFNXnGUH6ssGK7Ub1aIFk5OVeL9c4aziHKItwW28uBec
+         eVZT0jdDSVY89LRAnpst4Uwu75UfC39z5ltGkHLZGUEtqsUXtV/k2boJSmtx3C0MXBzn
+         dI2jl0F4PO9xgIesWSr6avK3AcjABhy1rehL+rHUajwQOg73qlElB6xbjeJ5Gpw0eMdX
+         3GvXEuTmhbx75Ioe0b8MeBnOz+nn9g59+aDcAxhz1ommaID8EUJ2kJngtQW4uKwGovoQ
+         bho4t+jmm5Yzr4oW5jPyEUOpkxalaOUULR47QdOHAnGi5v1hjcufLQBnNoatdxA7i6pD
+         W98g==
+X-Gm-Message-State: AGi0PuaNB9I1x9gIHwkDTDpj0nsZOxpC8S55L9PunnJ1tHvGZjsBRACj
+        jUZcnjsROd49CkqZc1WEDN3witzQbE13uuuULmfwW99tLyRW4VgbDaNMsC+VC9yrIhG+QsaGqQg
+        /ZPxzH9vaia6JDU4F3eHeiWODDXR+sg==
+X-Received: by 2002:a5d:4011:: with SMTP id n17mr1132444wrp.104.1586466658690;
+        Thu, 09 Apr 2020 14:10:58 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJabTxDz0WDx3biZbaja84PLZF34ZKZYgpYhxA8C4IQqw2wzmtgimWKqtv+yfhnsaBo2HvboA==
+X-Received: by 2002:a5d:4011:: with SMTP id n17mr1132435wrp.104.1586466658564;
+        Thu, 09 Apr 2020 14:10:58 -0700 (PDT)
 Received: from redhat.com (bzq-109-67-97-76.red.bezeqint.net. [109.67.97.76])
-        by smtp.gmail.com with ESMTPSA id f2sm6047650wro.59.2020.04.09.14.10.49
+        by smtp.gmail.com with ESMTPSA id o67sm5411345wmo.5.2020.04.09.14.10.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Apr 2020 14:10:50 -0700 (PDT)
-Date:   Thu, 9 Apr 2020 17:10:48 -0400
+        Thu, 09 Apr 2020 14:10:58 -0700 (PDT)
+Date:   Thu, 9 Apr 2020 17:10:56 -0400
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] rpmsg: pull in slab.h
-Message-ID: <20200409211045.12025-1-mst@redhat.com>
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] remoteproc: pull in slab.h
+Message-ID: <20200409211054.12091-1-mst@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -80,28 +81,28 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409211048.wTGYamRYEKgy9KPd5adjb78ebtQcIDXfK39Mxex28x8@z>
+Message-ID: <20200409211056.vAlauhkdvx6twldQesCRcXMj21sPAKUNGbYodNEeCAk@z>
 
 In preparation to virtio header changes, include slab.h directly as
 this module is using it.
 
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- drivers/rpmsg/mtk_rpmsg.c | 1 +
+ drivers/remoteproc/stm32_rproc.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-index 232aa4e40133..83f2b8804ee9 100644
---- a/drivers/rpmsg/mtk_rpmsg.c
-+++ b/drivers/rpmsg/mtk_rpmsg.c
-@@ -8,6 +8,7 @@
- #include <linux/platform_device.h>
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index a18f88044111..7ef931e9605c 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -19,6 +19,7 @@
+ #include <linux/regmap.h>
  #include <linux/remoteproc.h>
- #include <linux/rpmsg/mtk_rpmsg.h>
+ #include <linux/reset.h>
 +#include <linux/slab.h>
  #include <linux/workqueue.h>
  
- #include "rpmsg_internal.h"
+ #include "remoteproc_internal.h"
 -- 
 MST
 
