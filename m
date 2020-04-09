@@ -1,257 +1,540 @@
-Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
-Sender: sidgup=codeaurora.org@mg.codeaurora.org
-Subject: Re: [PATCH 6/6] remoteproc: qcom: Add notification types to SSR
-References: <1582167465-2549-1-git-send-email-sidgup@codeaurora.org>
- <1582167465-2549-7-git-send-email-sidgup@codeaurora.org>
- <20200227215940.GC20116@xps15>
- <1a615fcd5a5c435d1d8babe8d5c3f8c3@codeaurora.org>
- <20200228183832.GA23026@xps15>
- <cac45f2726a272ccd0ce82e12e46756f@codeaurora.org>
- <CANLsYkzUh_BRjapX_jDZZ00Lj8MMgMPM12+otYHDKqad1s-qHQ@mail.gmail.com>
- <050a8613cd00a84678b4478ef3387465@codeaurora.org>
- <CANLsYkyrzNPUymuJzehEOAA2FV+WDohUpgCYTNdbGCJBoat2cg@mail.gmail.com>
-From: Siddharth Gupta <sidgup@codeaurora.org>
-Message-ID: <64310efc-00f3-f8d8-3058-19dfbe1aa578@codeaurora.org>
-Date: Wed, 1 Apr 2020 18:01:16 -0700
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 3/7] dt-bindings: remoteproc: Add bindings for R5F
+ subsystem on TI K3 SoCs
+From: Suman Anna <s-anna@ti.com>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-4-s-anna@ti.com>
+ <CAL_JsqKpC=W-y3OdeqSROhiKLbQKf3sGyCXzQH__Wr-O=QS4Tg@mail.gmail.com>
+ <30cb4bee-fe79-8683-8225-fad174e0d630@ti.com>
+Message-ID: <5eafcf26-edfe-a8a3-f0eb-90def3eafa4c@ti.com>
+Date: Wed, 8 Apr 2020 19:15:40 -0500
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkyrzNPUymuJzehEOAA2FV+WDohUpgCYTNdbGCJBoat2cg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <30cb4bee-fe79-8683-8225-fad174e0d630@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, tsoni@codeaurora.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <agross@kernel.org>, psodagud@codeaurora.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-remoteproc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Lokesh Vutla <lokeshvutla@ti.com>, "REMOTE PROCESSOR SUBSYSTEM  (REMOTEPROC)" <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org, ARM/FREESCALE IMX / MXC ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 3/9/2020 10:34 AM, Mathieu Poirier wrote:
-
-> On Tue, 3 Mar 2020 at 16:30, <rishabhb@codeaurora.org> wrote:
->> On 2020-03-03 10:05, Mathieu Poirier wrote:
->>> On Mon, 2 Mar 2020 at 13:54, <rishabhb@codeaurora.org> wrote:
->>>> On 2020-02-28 10:38, Mathieu Poirier wrote:
->>>>> On Thu, Feb 27, 2020 at 04:00:21PM -0800, rishabhb@codeaurora.org
->>>>> wrote:
->>>>>> On 2020-02-27 13:59, Mathieu Poirier wrote:
->>>>>>> On Wed, Feb 19, 2020 at 06:57:45PM -0800, Siddharth Gupta wrote:
->>>>>>>> The SSR subdevice only adds callback for the unprepare event. Add
->>>>>>>> callbacks
->>>>>>>> for unprepare, start and prepare events. The client driver for a
->>>>>>>> particular
->>>>>>>> remoteproc might be interested in knowing the status of the remoteproc
->>>>>>>> while undergoing SSR, not just when the remoteproc has finished
->>>>>>>> shutting
->>>>>>>> down.
->>>>>>>>
->>>>>>>> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
->>>>>>>> ---
->>>>>>>>   drivers/remoteproc/qcom_common.c | 39
->>>>>>>> +++++++++++++++++++++++++++++++++++----
->>>>>>>>   include/linux/remoteproc.h       | 15 +++++++++++++++
->>>>>>>>   2 files changed, 50 insertions(+), 4 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/remoteproc/qcom_common.c
->>>>>>>> b/drivers/remoteproc/qcom_common.c
->>>>>>>> index 6714f27..6f04a5b 100644
->>>>>>>> --- a/drivers/remoteproc/qcom_common.c
->>>>>>>> +++ b/drivers/remoteproc/qcom_common.c
->>>>>>>> @@ -183,9 +183,9 @@ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
->>>>>>>>    *
->>>>>>>>    * Returns pointer to srcu notifier head on success, ERR_PTR on
->>>>>>>> failure.
->>>>>>>>    *
->>>>>>>> - * This registers the @notify function as handler for restart
->>>>>>>> notifications. As
->>>>>>>> - * remote processors are stopped this function will be called, with
->>>>>>>> the rproc
->>>>>>>> - * pointer passed as a parameter.
->>>>>>>> + * This registers the @notify function as handler for
->>>>>>>> powerup/shutdown
->>>>>>>> + * notifications. This function will be invoked inside the
->>>>>>>> callbacks registered
->>>>>>>> + * for the ssr subdevice, with the rproc pointer passed as a
->>>>>>>> parameter.
->>>>>>>>    */
->>>>>>>>   void *qcom_register_ssr_notifier(struct rproc *rproc, struct
->>>>>>>> notifier_block *nb)
->>>>>>>>   {
->>>>>>>> @@ -227,11 +227,39 @@ int qcom_unregister_ssr_notifier(void *notify,
->>>>>>>> struct notifier_block *nb)
->>>>>>>>   }
->>>>>>>>   EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
->>>>>>>>
->>>>>>>> +static int ssr_notify_prepare(struct rproc_subdev *subdev)
->>>>>>>> +{
->>>>>>>> +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
->>>>>>>> +
->>>>>>>> +        srcu_notifier_call_chain(ssr->rproc_notif_list,
->>>>>>>> +                                 RPROC_BEFORE_POWERUP, (void *)ssr->name);
->>>>>>>> +        return 0;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int ssr_notify_start(struct rproc_subdev *subdev)
->>>>>>>> +{
->>>>>>>> +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
->>>>>>>> +
->>>>>>>> +        srcu_notifier_call_chain(ssr->rproc_notif_list,
->>>>>>>> +                                 RPROC_AFTER_POWERUP, (void *)ssr->name);
->>>>>>>> +        return 0;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static void ssr_notify_stop(struct rproc_subdev *subdev, bool
->>>>>>>> crashed)
->>>>>>>> +{
->>>>>>>> +        struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
->>>>>>>> +
->>>>>>>> +        srcu_notifier_call_chain(ssr->rproc_notif_list,
->>>>>>>> +                                 RPROC_BEFORE_SHUTDOWN, (void *)ssr->name);
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +
->>>>>>>>   static void ssr_notify_unprepare(struct rproc_subdev *subdev)
->>>>>>>>   {
->>>>>>>>           struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
->>>>>>>>
->>>>>>>> -        srcu_notifier_call_chain(ssr->rproc_notif_list, 0, (void
->>>>>>>> *)ssr->name);
->>>>>>>> +        srcu_notifier_call_chain(ssr->rproc_notif_list,
->>>>>>>> +                                 RPROC_AFTER_SHUTDOWN, (void *)ssr->name);
->>>>>>>>   }
->>>>>>>>
->>>>>>>>   /**
->>>>>>>> @@ -248,6 +276,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc,
->>>>>>>> struct qcom_rproc_ssr *ssr,
->>>>>>>>   {
->>>>>>>>           ssr->name = ssr_name;
->>>>>>>>           ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
->>>>>>>> +        ssr->subdev.prepare = ssr_notify_prepare;
->>>>>>>> +        ssr->subdev.start = ssr_notify_start;
->>>>>>>> +        ssr->subdev.stop = ssr_notify_stop;
->>>>>>> Now that I have a better understanding of what this patchset is doing, I
->>>>>>> realise
->>>>>>> my comments in patch 04 won't work.  To differentiate the subdevs of an
->>>>>>> rproc I
->>>>>>> suggest to wrap them in a generic structure with a type and an enum.
->>>>>>> That way
->>>>>>> you can differenciate between subdevices without having to add to the
->>>>>>> core.
-
-While creating a new revision of the patchset we tried to implement 
-this, but a similar issue comes
-up. If at a later point we wish to utilize the functionality of some 
-common subdevice (not the case
-right now, but potentially), we might run into a similar problem of 
-accessing illegal memory using
-container_of. I think it might be a better idea to introduce the name in 
-the subdevice structure over
-having a potential security bug. What do you think?
-
-Thanks,
-Siddharth
-
->>>>>> Ok. I can try that.
->>>>>>> That being said, I don't understand what patches 5 and 6 are doing...
->>>>>>> Registering with the global ssr_notifiers allowed to gracefully shutdown
->>>>>>> all the
->>>>>>> MCUs in the system when one of them would go down.  But now that we are
->>>>>>> using
->>>>>>> the notifier on a per MCU, I really don't see why each subdev couldn't
->>>>>>> implement
->>>>>>> the right prepare/start/stop functions.
->>>>>>>
->>>>>>> Am I missing something here?
->>>>>> We only want kernel clients to be notified when the Remoteproc they
->>>>>> are
->>>>>> interested
->>>>>> in changes state. For e.g. audio kernel driver should be notified when
->>>>>> audio
->>>>>> processor goes down but it does not care about any other remoteproc.
->>>>>> If you are suggesting that these kernel clients be added as subdevices
->>>>>> then
->>>>>> we will end up having many subdevices registered to each remoteproc.
->>>>>> So we
->>>>>> implemented a notifier chain per Remoteproc. This keeps the SSR
->>>>>> notifications as
->>>>>> the subdevice per remoteproc, and all interested clients can register
->>>>>> to it.
->>>>> It seems like I am missing information...  Your are referring to
->>>>> "kernel
->>>>> clients" and as such I must assume some drivers that are not part of
->>>>> the
->>>>> remoteproc/rpmsg subsystems are calling qcom_register_ssr_notifier().
->>>>> I must
->>>> Yes these are not part of remoteproc framework and they will register
->>>> for notifications.
->>>>> also assume these drivers (or that functionality) are not yet upsream
->>>>> because
->>>>> all I can see calling qcom_register_ssr_notifier() is
->>>>> qcom_glink_ssr_probe().
->>>> Correct.These are not upstreamed.
->>> Ok, things are starting to make sense.
+On 4/8/20 7:02 PM, Suman Anna wrote:
+> Hi Rob,
+> 
+> On 3/26/20 11:53 AM, Rob Herring wrote:
+>> On Tue, Mar 24, 2020 at 2:18 PM Suman Anna <s-anna@ti.com> wrote:
 >>>
->>>>> Speaking of which, what is the role of the qcom_glink_ssr_driver?  Is
->>>>> the glink
->>>>> device that driver is handling the same as the glink device registed in
->>>>> adsp_probe() and q6v5_probe()?
->>>> glink ssr driver will send out notifications to remoteprocs that have
->>>> opened the
->>>> "glink_ssr" channel that some subsystem has gone down or booted up.
->>>> This
->>>> helps notify
->>>> neighboring subsystems about change in state of any other subsystem.
->>> I am still looking for an answer to my second question.
->> Yes its the subdevice of the glink device that is registered in
->> adsp_probe.
->> It uses the "glink_ssr" glink channel.
-> Since this is confining events to a single MCU, I was mostly worried
-> about opening the "glink_ssr" channel for nothing but taking a step
-> back and thinking further on this, there might be other purposes for
-> the channel than only receiving notifications of other MCUs in the
-> system going down.
->
-> Please spin off a new revision of this set and I will take another look.
->
-> Thanks,
-> Mathieu
->
->>>>>>>
->>>>>>>>           ssr->subdev.unprepare = ssr_notify_unprepare;
->>>>>>>>           ssr->rproc_notif_list = kzalloc(sizeof(struct srcu_notifier_head),
->>>>>>>>                                                                   GFP_KERNEL);
->>>>>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>>>>>> index e2f60cc..4be4478 100644
->>>>>>>> --- a/include/linux/remoteproc.h
->>>>>>>> +++ b/include/linux/remoteproc.h
->>>>>>>> @@ -449,6 +449,21 @@ struct rproc_dump_segment {
->>>>>>>>   };
->>>>>>>>
->>>>>>>>   /**
->>>>>>>> + * enum rproc_notif_type - Different stages of remoteproc
->>>>>>>> notifications
->>>>>>>> + * @RPROC_BEFORE_SHUTDOWN:      unprepare stage of  remoteproc
->>>>>>>> + * @RPROC_AFTER_SHUTDOWN:       stop stage of  remoteproc
->>>>>>>> + * @RPROC_BEFORE_POWERUP:       prepare stage of  remoteproc
->>>>>>>> + * @RPROC_AFTER_POWERUP:        start stage of  remoteproc
->>>>>>>> + */
->>>>>>>> +enum rproc_notif_type {
->>>>>>>> +        RPROC_BEFORE_SHUTDOWN,
->>>>>>>> +        RPROC_AFTER_SHUTDOWN,
->>>>>>>> +        RPROC_BEFORE_POWERUP,
->>>>>>>> +        RPROC_AFTER_POWERUP,
->>>>>>>> +        RPROC_MAX
->>>>>>>> +};
->>>>>>>> +
->>>>>>>> +/**
->>>>>>>>    * struct rproc - represents a physical remote processor device
->>>>>>>>    * @node: list node of this rproc object
->>>>>>>>    * @domain: iommu domain
->>>>>>>> --
->>>>>>>> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->>>>>>>> a Linux Foundation Collaborative Project
->>>>>>>>
->>>>>>>> _______________________________________________
->>>>>>>> linux-arm-kernel mailing list
->>>>>>>> linux-arm-kernel@lists.infradead.org
->>>>>>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>>> _______________________________________________
->>>> linux-arm-kernel mailing list
->>>> linux-arm-kernel@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>> The Texas Instruments K3 family of SoCs have one or more dual-core
+>>> Arm Cortex R5F processor subsystems/clusters (R5FSS). The clusters
+>>> can be split between multiple voltage domains as well. Add the device
+>>> tree bindings document for these R5F subsystem devices. These R5F
+>>> processors do not have an MMU, and so require fixed memory carveout
+>>> regions matching the firmware image addresses. The nodes require more
+>>> than one memory region, with the first memory region used for DMA
+>>> allocations at runtime. The remaining memory regions are reserved
+>>> and are used for the loading and running of the R5F remote processors.
+>>> The R5F processors can also optionally use any internal on-chip SRAM
+>>> memories either for executing code or using it as fast-access data.
+>>
+>> I'm inclined to say the system DT stuff should be sorted out before
+>> accepting this. Is the system DT stuff going to be useful for your R5
+>> cores? Do you really want to be stuck with this binding?
+> 
+> Hmm, I am not dependent on System DT and prefer to be not gated by that.
+> This is still all from the Linux host perspective, and we don't have any
+> plans to use DT on the firmware-side.
+> 
+>>
+>>> The added example illustrates the DT nodes for the single R5FSS device
+>>> present on K3 AM65x family of SoCs.
+>>>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> ---
+>>> Hi Rob,
+>>>
+>>> The dt_bindings_check seems to throw couple of warnings around the
+>>> usage of ranges because the tooling is adding the #address-cells
+>>> and #size-cells of 1 by default, whereas our actual code uses 2.
+>>
+>> Then change the default by specifying what you want. Or change the
+>> example to be 1 cell. It is *just* an example.
+> 
+> OK, was using the actual dts nodes as how they would be added in our dts
+> files. The only way to get rid of the warnings is to use 1 cell. I can
+> do that for the R5F bindings, but cannot really do that for the DSPs
+> since the addresses need 2 cells.
+> 
+>>
+>>> No issues are found with dtbs_check.
+>>
+>> I doubt that if your dts matches the example.
+> 
+> The top-level cells value is 2 in our dts files (See either of
+> arm64/dts/ti/k3-am65.dtsi or k3-j721e.dtsi).
+> 
+>>
+>>>
+>>> regards
+>>> Suman
+>>>
+>>>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 338 ++++++++++++++++++
+>>>  1 file changed, 338 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> new file mode 100644
+>>> index 000000000000..bbfc1e6ae884
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> @@ -0,0 +1,338 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-r5f-rproc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: TI K3 R5F processor subsystems
+>>> +
+>>> +maintainers:
+>>> +  - Suman Anna <s-anna@ti.com>
+>>> +
+>>> +description: |
+>>> +  The TI K3 family of SoCs usually have one or more dual-core Arm Cortex R5F
+>>> +  processor subsystems/clusters (R5FSS). The dual core cluster can be used
+>>> +  either in a LockStep mode providing safety/fault tolerance features or in a
+>>> +  Split mode providing two individual compute cores for doubling the compute
+>>> +  capacity. These are used together with other processors present on the SoC
+>>> +  to achieve various system level goals.
+>>> +
+>>> +  Each Dual-Core R5F sub-system is represented as a single DTS node
+>>> +  representing the cluster, with a pair of child DT nodes representing
+>>> +  the individual R5F cores. Each node has a number of required or optional
+>>> +  properties that enable the OS running on the host processor to perform
+>>> +  the device management of the remote processor and to communicate with the
+>>> +  remote processor.
+>>> +
+>>> +# Required properties:
+>>> +# --------------------
+>>> +# The following are the mandatory properties:
+>>> +
+>>> +properties:
+>>> +  $nodename:
+>>> +    pattern: "^r5fss(@.*)?"
+>>> +
+>>> +  compatible:
+>>> +    enum:
+>>> +      - ti,am654-r5fss
+>>> +      - ti,j721e-r5fss
+>>> +
+>>> +  power-domains:
+>>> +    description: |
+>>> +      Should contain a phandle to a PM domain provider node and an args
+>>> +      specifier containing the R5FSS device id value. This property is
+>>> +      as per the binding,
+>>> +      Documentation/devicetree/bindings/soc/ti/sci-pm-domain.txt
+>>
+>> What implementation of power domains is used is outside the scope of
+>> this binding. I'd just drop the whole description as it is pretty
+>> generic.
+> 
+> OK.
+> 
+>>
+>>> +    maxItems: 1
+>>> +
+>>> +  "#address-cells":
+>>> +    const: 1
+>>> +
+>>> +  "#size-cells":
+>>> +    const: 1
+>>> +
+>>> +  ranges:
+>>> +    description: |
+>>> +      Standard ranges definition providing address translations for
+>>> +      local R5F TCM address spaces to bus addresses.
+>>> +
+>>> +# Optional properties:
+>>> +# --------------------
+>>> +
+>>> +  lockstep-mode:
+>>
+>> Needs a vendor prefix.
+> 
+> Yep, will fix this one and all the others below.
+> 
+>>
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    enum: [0, 1]
+>>> +    description: |
+>>> +      Configuration Mode for the Dual R5F cores within the R5F
+>>> +      cluster. Should be either a value of 1 (LockStep mode) or
+>>> +      0 (Split mode), default is LockStep mode if omitted.
+>>> +
+>>> +# R5F Processor Child Nodes:
+>>> +# ==========================
+>>> +
+>>> +patternProperties:
+>>> +  "^r5f@[a-f0-9]+$":
+>>> +    type: object
+>>> +    description: |
+>>> +        The R5F Sub-System device node should define two R5F child nodes, each
+>>> +        node representing a TI instantiation of the Arm Cortex R5F core. There
+>>> +        are some specific integration differences for the IP like the usage of
+>>> +        a Region Address Translator (RAT) for translating the larger SoC bus
+>>> +        addresses into a 32-bit address space for the processor.
+>>> +
+>>> +# Required properties:
+>>> +# --------------------
+>>> +# The following are the mandatory properties:
+>>> +
+>>> +    properties:
+>>> +      compatible:
+>>> +        enum:
+>>> +          - ti,am654-r5f
+>>> +          - ti,j721e-r5f
+>>> +
+>>> +      reg:
+>>> +        description: |
+>>> +          Should contain an entry for each value in 'reg-names'.
+>>> +          Each entry should have the memory region's start address
+>>> +          and the size of the region, the representation matching
+>>> +          the parent node's '#address-cells' and '#size-cells' values.
+>>
+>> That's every 'reg' property.
+>>
+>>> +        maxItems: 2
+>>
+>> You need to define what each one is:
+>>
+>> items:
+>>   - description: ...
+>>   - description: ...
+> 
+> OK, will fix.
+> 
+>>
+>>> +
+>>> +      reg-names:
+>>> +        description: |
+>>> +          Should contain strings with the names of the specific internal
+>>> +          internal memory regions, and should be defined in this order
+>>> +        maxItems: 2
+>>> +        items:
+>>> +          - const: atcm
+>>> +          - const: btcm
+>>> +
+>>> +      ti,sci:
+>>> +        $ref: /schemas/types.yaml#/definitions/phandle
+>>> +        description:
+>>> +          Should be a phandle to the TI-SCI System Controller node
+>>> +
+>>> +      ti,sci-dev-id:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description: |
+>>> +          Should contain the TI-SCI device id corresponding to the R5F core.
+>>> +          Please refer to the corresponding System Controller documentation
+>>> +          for valid values for the R5F cores.
+>>> +
+>>> +      ti,sci-proc-ids:
+>>> +        description: Should contain a single tuple of <proc_id host_id>.
+>>> +        allOf:
+>>> +          - $ref: /schemas/types.yaml#/definitions/uint32-matrix
+>>
+>> Sounds more like an array.
+> 
+> OK, I can modify this. Went with this originally to reflect the tuple,
+> but guess both translate similarly for my usage.
+> 
+>>
+>>> +          - maxItems: 1
+>>> +            items:
+>>> +              items:
+>>> +                - description: TI-SCI processor id for the R5F core device
+>>> +                - description: TI-SCI host id to which processor control
+>>> +                               ownership should be transferred to
+>>> +
+>>> +      resets:
+>>> +        description: |
+>>> +          Should contain the phandle to the reset controller node
+>>> +          managing the resets for this device, and a reset
+>>> +          specifier. Please refer to the following reset bindings
+>>> +          for the reset argument specifier,
+>>> +          Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+>>> +            for AM65x and J721E SoCs
+>>
+>> Drop. How many resets (maxItems or items list)?
+> 
+> Yeah, this is 1, will update. Do you want me to drop just the specifier
+> link or the entire description?
+> 
+>>
+>>> +
+>>> +      firmware-name:
+>>> +        description: |
+>>> +          Should contain the name of the default firmware image
+>>> +          file located on the firmware search path
+>>> +
+>>> +# The following properties are mandatory for R5F Core0 in both LockStep and Split
+>>> +# modes, and are mandatory for R5F Core1 _only_ in Split mode. They are unused for
+>>> +# R5F Core1 in LockStep mode:
+
+Rob,
+
+If I were to actually encode this in YAML, I need to distinguish Core0
+from Core1. I have currently followed the DT generic node name
+convention when defining the two nodes and interpret in the driver based
+on addresses. What is the preferred mechanism for this - define node
+names as r5f0 and r5f1 or introduce a ti,core-id or ti,cpu-id property?
+
+regards
+Suman
+
+>>> +
+>>> +      mboxes:
+>>> +        description: |
+>>> +          OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+>>> +          communication with the remote processor. This property should match
+>>> +          with the sub-mailbox node used in the firmware image. The specifier
+>>> +          format is as per the bindings,
+>>> +          Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
+>>
+>> How many?
+> 
+> OK, will fix.
+> 
+>>
+>>> +
+>>> +      memory-region:
+>>> +        minItems: 2
+>>> +        description: |
+>>> +          phandle to the reserved memory nodes to be associated with the remoteproc
+>>> +          device. There should be atleast two reserved memory nodes defined - the
+>>
+>> What's the max number? As is, it will be 2.
+> 
+> Aah, I misinterpreted that not having would be open-ended. OK, I will
+> have to give an arbitrary number here (maybe 4 or 8). Can we update this
+> later on if a usecase really needs more?
+> 
+>>
+>>> +          first one would be used for dynamic DMA allocations like vrings and vring
+>>> +          buffers, and the remaining ones used for the firmware image sections. The
+>>> +          reserved memory nodes should be carveout nodes, and should be defined as
+>>> +          per the bindings in
+>>> +          Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+>>> +
+>>> +# Optional properties:
+>>> +# --------------------
+>>> +# The following properties are optional properties for each of the R5F cores:
+>>> +
+>>> +      atcm-enable:
+>>
+>> Vendor prefix needed.
+>>
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        enum: [0, 1]
+>>> +        description: |
+>>> +          R5F core configuration mode dictating if ATCM should be enabled. R5F
+>>> +          view of ATCM dictated by loczrama property. Should be either a value
+>>> +          of 1 (enabled) or 0 (disabled), default is disabled if omitted.
+>>> +
+>>> +      btcm-enable:
+>>
+>> ditto
+>>
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        enum: [0, 1]
+>>> +        description: |
+>>> +          R5F core configuration mode dictating if BTCM should be enabled. R5F
+>>> +          view of BTCM dictated by loczrama property. Should be either a value
+>>> +          of 1 (enabled) or 0 (disabled), default is enabled if omitted.
+>>> +
+>>> +      loczrama:
+>>
+>> ditto
+>>
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        enum: [0, 1]
+>>> +        description: |
+>>> +          R5F core configuration mode dictating which TCM should appear at
+>>> +          address 0 (from core's view). Should be either a value of 1 (ATCM
+>>> +          at 0x0) or 0 (BTCM at 0x0), default value is 1 if omitted.
+>>
+>> I can't decipher how you came up with 'loczrama' based on the description.
+> 
+> That's actually the signal name from the Arm R5 specs.
+> 
+>>
+>>> +
+>>> +      sram:
+>>> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +        minItems: 1
+>>> +        description: |
+>>> +          pHandles to one or more reserved on-chip SRAM region. The regions
+>>> +          should be defined as child nodes of the respective SRAM node, and
+>>> +          should be defined as per the generic bindings in,
+>>> +          Documentation/devicetree/bindings/sram/sram.yaml
+>>> +
+>>> +    required:
+>>> +     - compatible
+>>> +     - reg
+>>> +     - reg-names
+>>> +     - ti,sci
+>>> +     - ti,sci-dev-id
+>>> +     - ti,sci-proc-ids
+>>> +     - resets
+>>> +     - firmware-name
+>>> +
+>>> +    additionalProperties: false
+>>> +
+>>> +required:
+>>> + - compatible
+>>> + - power-domains
+>>> + - "#address-cells"
+>>> + - "#size-cells"
+>>> + - ranges
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +
+>>> +    //Example: AM654 SoC
+>>> +    /* R5F DDR Carveout reserved memory nodes */
+>>> +    reserved-memory {
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>> +        ranges;
+>>> +
+>>> +        mcu_r5fss0_core1_dma_memory_region: r5f-dma-memory@9b000000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9b000000 0x00 0x100000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        mcu_r5fss0_core1_memory_region: r5f-memory@9b100000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9b100000 0x00 0xf00000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        mcu_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c000000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9c000000 0x00 0x100000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>> +        mcu_r5fss0_core0_memory_region: r5f-memory@9c100000 {
+>>> +            compatible = "shared-dma-pool";
+>>> +            reg = <0x00 0x9c100000 0x00 0x700000>;
+>>> +            no-map;
+>>> +        };
+>>> +    };
+>>> +
+>>> +    cbass_main: interconnect@100000 {
+>>
+>> bus@...
+> 
+> Yeah, will update the example to use bus. The DTS nodes in the kernel
+> are already using the interconnect name.
+> 
+>>
+>> Doesn't look like the right address either.
+> 
+> Yeah, I skipped the actual first entry from the ranges, and only
+> mentioned the ones that I am using in the nodes. Will fix this.
+> 
+>>
+>>> +        compatible = "simple-bus";
+>>> +        #address-cells = <2>;
+>>> +        #size-cells = <2>;
+>>> +        ranges = <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>,
+>>> +                 <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>,
+>>> +                 <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>;
+>>> +
+>>> +        cbass_mcu: interconnect@28380000 {
+>>
+>> Doesn't look like the right address.
+> 
+> Same as above.
+> 
+>>
+>>> +            compatible = "simple-bus";
+>>> +            #address-cells = <2>;
+>>> +            #size-cells = <2>;
+>>> +            ranges = <0x00 0x41000000 0x00 0x41000000 0x00 0x00020000>, /* MCU R5F Core0 */
+>>> +                     <0x00 0x41400000 0x00 0x41400000 0x00 0x00020000>, /* MCU R5F Core1 */
+>>> +                     <0x00 0x41c00000 0x00 0x41c00000 0x00 0x00080000>; /* MCU SRAM */
+>>> +
+>>> +            /* MCU domain SRAM node */
+>>> +            mcu_ram: mcu-ram@41c00000 {
+>>
+>> I would omit this node from the example. Nothing special here really.
+> 
+> Showcasing the optional sram property usage from the mcu_r5f0 node.
+> 
+> regards
+> Suman
+> 
+>>
+>>> +                compatible = "mmio-sram";
+>>> +                reg = <0x00 0x41c00000 0x00 0x80000>;
+>>> +                ranges = <0x0 0x00 0x41c00000 0x80000>;
+>>> +                #address-cells = <1>;
+>>> +                #size-cells = <1>;
+>>> +
+>>> +                mcu_r5fss0_core0_sram: r5f-sram@0 {
+>>> +                    reg = <0x0 0x40000>;
+>>> +                };
+>>> +            };
+>>> +
+>>> +            /* AM65x MCU R5FSS node */
+>>> +            mcu_r5fss0: r5fss@41000000 {
+>>> +                compatible = "ti,am654-r5fss";
+>>> +                power-domains = <&k3_pds 129>;
+>>> +                lockstep-mode = <1>;
+>>> +                #address-cells = <1>;
+>>> +                #size-cells = <1>;
+>>> +                ranges = <0x41000000 0x00 0x41000000 0x20000>,
+>>> +                         <0x41400000 0x00 0x41400000 0x20000>;
+>>> +
+>>> +                mcu_r5f0: r5f@41000000 {
+>>> +                    compatible = "ti,am654-r5f";
+>>> +                    reg = <0x41000000 0x00008000>,
+>>> +                          <0x41010000 0x00008000>;
+>>> +                    reg-names = "atcm", "btcm";
+>>> +                    ti,sci = <&dmsc>;
+>>> +                    ti,sci-dev-id = <159>;
+>>> +                    ti,sci-proc-ids = <0x01 0xFF>;
+>>> +                    resets = <&k3_reset 159 1>;
+>>> +                    firmware-name = "am65x-mcu-r5f0_0-fw";
+>>> +                    atcm-enable = <1>;
+>>> +                    btcm-enable = <1>;
+>>> +                    loczrama = <1>;
+>>> +                    mboxes = <&mailbox0 &mbox_mcu_r5fss0_core0>;
+>>> +                    memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+>>> +                                    <&mcu_r5fss0_core0_memory_region>;
+>>> +                    sram = <&mcu_r5fss0_core0_sram>;
+>>> +                };
+>>> +
+>>> +                mcu_r5f1: r5f@41400000 {
+>>> +                    compatible = "ti,am654-r5f";
+>>> +                    reg = <0x41400000 0x00008000>,
+>>> +                          <0x41410000 0x00008000>;
+>>> +                    reg-names = "atcm", "btcm";
+>>> +                    ti,sci = <&dmsc>;
+>>> +                    ti,sci-dev-id = <245>;
+>>> +                    ti,sci-proc-ids = <0x02 0xFF>;
+>>> +                    resets = <&k3_reset 245 1>;
+>>> +                    firmware-name = "am65x-mcu-r5f0_1-fw";
+>>> +                    atcm-enable = <1>;
+>>> +                    btcm-enable = <1>;
+>>> +                    loczrama = <1>;
+>>> +                    mboxes = <&mailbox1 &mbox_mcu_r5fss0_core1>;
+>>> +               };
+>>> +           };
+>>> +        };
+>>> +    };
+>>> --
+>>> 2.23.0
+>>>
+> 
