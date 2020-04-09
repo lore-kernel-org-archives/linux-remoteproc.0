@@ -1,421 +1,220 @@
-Return-Path: <wenhu.wang@vivo.com>
-From: Wang Wenhu <wenhu.wang@vivo.com>
-Subject: [PATCH v3,2/3] driver: rpmon: qmi message version 01
-Date: Mon, 13 Apr 2020 20:59:48 -0700
-Message-Id: <20200414035949.107225-3-wenhu.wang@vivo.com>
-In-Reply-To: <20200414035949.107225-1-wenhu.wang@vivo.com>
-References: <20200412112405.24116-1-wenhu.wang@vivo.com>
- <20200414035949.107225-1-wenhu.wang@vivo.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc: rdunlap@infradead.org, kernel@vivo.com, agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Wang Wenhu <wenhu.wang@vivo.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH v2 16/17] remoteproc: Correctly deal with MCU
+ synchronisation when changing state
+References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+ <20200324214603.14979-17-mathieu.poirier@linaro.org>
+ <c9fb2f50e93b4f8dad43392bf61f736a@SFHDAG7NODE2.st.com>
+ <20200330234934.GH31331@xps15> <5223cca7-5409-a113-8a7f-9f6923231353@ti.com>
+ <20200401212910.GE17383@xps15>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <22ad887a-5758-8733-0afc-78dec913827d@ti.com>
+Date: Thu, 9 Apr 2020 15:55:35 -0500
+MIME-Version: 1.0
+In-Reply-To: <20200401212910.GE17383@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Implements a RPMON_QMI message set for connection checking service.
-RPMON_QMI defines its message types modularly. Each rpmon service
-binds to a message set and introduced as a module. This version 1.0
-message set could be used for connection checking of remote processors.
+On 4/1/20 4:29 PM, Mathieu Poirier wrote:
+> On Tue, Mar 31, 2020 at 05:35:58PM -0500, Suman Anna wrote:
+>> Hi Mathieu,
+>>
+>> On 3/30/20 6:49 PM, Mathieu Poirier wrote:
+>>> On Fri, Mar 27, 2020 at 02:04:36PM +0000, Loic PALLARDY wrote:
+>>>>
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>>> Sent: mardi 24 mars 2020 22:46
+>>>>> To: bjorn.andersson@linaro.org
+>>>>> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
+>>>>> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
+>>>>> <arnaud.pouliquen@st.com>; Fabien DESSENNE
+>>>>> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
+>>>>> Subject: [PATCH v2 16/17] remoteproc: Correctly deal with MCU
+>>>>> synchronisation when changing state
+>>>>>
+>>>>> This patch deals with state changes when synchronising with an MCU. More
+>>>>> specifically it prevents the MCU from being started if it already has been
+>>>>> started by another entity.  Similarly it prevents the AP from stopping the
+>>>>> MCU if it hasn't been given the capability by platform firmware.
+>>>>>
+>>>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>>> ---
+>>>>>  drivers/remoteproc/remoteproc_sysfs.c | 32
+>>>>> ++++++++++++++++++++++++++-
+>>>>>  1 file changed, 31 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/remoteproc_sysfs.c
+>>>>> b/drivers/remoteproc/remoteproc_sysfs.c
+>>>>> index 4956577ad4b4..741a3c152b82 100644
+>>>>> --- a/drivers/remoteproc/remoteproc_sysfs.c
+>>>>> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+>>>>> @@ -108,6 +108,29 @@ static ssize_t state_show(struct device *dev, struct
+>>>>> device_attribute *attr,
+>>>>>  	return sprintf(buf, "%s\n", rproc_state_string[state]);
+>>>>>  }
+>>>>>
+>>>>> +static int rproc_can_shutdown(struct rproc *rproc)
+>>>>> +{
+>>>>> +	/* The MCU is not running, obviously an invalid operation. */
+>>>>> +	if (rproc->state != RPROC_RUNNING)
+>>>>> +		return false;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * The MCU is not running (see above) and the remoteproc core is
+>>>>> the
+>>>>> +	 * lifecycle manager, no problem calling for a shutdown.
+>>>>> +	 */
+>>>>> +	if (!rproc_sync_with_mcu(rproc))
+>>>>> +		return true;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * The MCU has been loaded by another entity (see above) and the
+>>>>> +	 * platform code has _not_ given us the capability of stopping it.
+>>>>> +	 */
+>>>>> +	if (!rproc->sync_ops->stop)
+>>>>> +		return false;
+>>>>
+>>>> Test could be simplified
+>>>> if (rproc_sync_with_mcu(rproc)) && !rproc->sync_ops->stop)
+>>>> 	return false;
+>>>
+>>> I laid out the test individually on purpose.  That way there is no coupling
+>>> between conditions, it is plane to see what is going on and remains maintainable
+>>> as we add new tests.
+>>>
+>>>>
+>>>>> +
+>>>>> +	return true;
+>>>>> +}
+>>>>> +
+>>>>>  /* Change remote processor state via sysfs */
+>>>>>  static ssize_t state_store(struct device *dev,
+>>>>>  			      struct device_attribute *attr,
+>>>>> @@ -120,11 +143,18 @@ static ssize_t state_store(struct device *dev,
+>>>>>  		if (rproc->state == RPROC_RUNNING)
+>>>>>  			return -EBUSY;
+>>>>>
+>>>>> +		/*
+>>>>> +		 * In synchronisation mode, booting the MCU is the
+>>>>> +		 * responsibility of an external entity.
+>>>>> +		 */
+>>>>> +		if (rproc_sync_with_mcu(rproc))
+>>>>> +			return -EINVAL;
+>>>>> +
+>>>> I don't understand this restriction, simply because it is preventing to resynchronize with a
+>>>> coprocessor after a "stop".
+>>
+>> There's actually one more scenario even without "stop". If auto_boot is
+>> set to false, then rproc_actuate will never get called.
+> 
+> I fail to fully understand the situation you are describing - can you give me
+> more information?
 
-RPMON_QMI messages depend on QCOM_QMI_HELPERS and should be updated
-together with QMI related modules, and if so, RPMON_QMI_MAG_V2 would
-be introduced as a new module, in parallel with RPMON_QMI_MAG_V1.
+The platform driver has auto_boot set to false and sync_states set, so
+rproc_trigger_auto_initiate() never gets called in rproc_add(), and
+rproc_actuate() doesn't happen either. rproc->state is not RUNNING, and
+you will bail out here, and there is no way to start it either.
 
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
----
-Changes since v1:
- - Addressed review comments from Randy
-Changes since v2:
- - Use micros for tlv_type fields, and another patch would be helpful:
-   * [PATCH] soc: qmi: move tlv-micros to header file
-   * Link: https://lore.kernel.org/linux-arm-msm/20200413035758.60238-1-wenhu.wang@vivo.com/
- - Added Cc list
----
- drivers/rpmon/Kconfig            |  13 ++
- drivers/rpmon/Makefile           |   1 +
- drivers/rpmon/rpmon_qmi.h        |  76 +++++++++
- drivers/rpmon/rpmon_qmi_msg_v1.c | 258 +++++++++++++++++++++++++++++++
- 4 files changed, 348 insertions(+)
- create mode 100644 drivers/rpmon/rpmon_qmi.h
- create mode 100644 drivers/rpmon/rpmon_qmi_msg_v1.c
+> 
+>>
+>>>> In the following configuration which can be configuration for coprocessor with romed/flashed
+>>>> firmware (no reload needed):
+>>>> on_init = true
+>>>> after_stop = true
+>>>> after_crash = true
+>>>> Once you stop it via sysfs interface, you can't anymore restart/resync to it.
+>>>
+>>> Very true.  The MCU will get restarted by another entity but the AP won't
+>>> synchronise with it.  I need more time to think about the best way to deal with
+>>> this and may have to get back to you for further discussions.
+>>>
+>>>>
+>>>> I think it will be better to modify rproc_boot() to take into account rproc_sync_with_mcu()
+>>>> as below:
+>>>>
+>>>> int rproc_boot(struct rproc *rproc)
+>>>>  {
+>>>> -	const struct firmware *firmware_p;
+>>>> +	const struct firmware *firmware_p = NULL;
+>>>>  	struct device *dev = &rproc->dev;
+>>>>  	int ret;
+>>>>  
+>>>>  	if (!rproc) {
+>>>>  		pr_err("invalid rproc handle\n");
+>>>>  		return -EINVAL;
+>>>>  	}
+>>>>  
+>>>>  	/* load firmware */
+>>>> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+>>>> -	if (ret < 0) {
+>>>> -		dev_err(dev, "request_firmware failed: %d\n", ret);
+>>>> -		return ret;
+>>>> +	if (!rproc_sync_with_mcu(rproc)) {
+>>
+>> I guess this is what the original skip_fw_load was doing. And with the
+>> current series, the userspace loading support usecase I have cannot be
+>> achieved. If this is added back, I can try if that works for my usecases.
+>>
+>>>> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
+>>>> +		if (ret < 0) {
+>>>> +			dev_err(dev, "request_firmware failed: %d\n", ret);
+>>>> +			return ret;
+>>>> +		}
+>>>>  	}
+>>>>  
+>>>>  	ret = rproc_actuate(rproc, firmware_p);
+>>>>  
+>>>> -	release_firmware(firmware_p);
+>>>> +	if (firmware_p)
+>>>> +		release_firmware(firmware_p);
+>>>>  
+>>>>  	return ret;
+>>>>  }
+>>>>  
+>>>> Thanks to these modifications, I'm able to resync after a stop with coprocessor without reloading firmware.
+>>>>
+>>>>>  		ret = rproc_boot(rproc);
+>>>>>  		if (ret)
+>>>>>  			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+>>>>>  	} else if (sysfs_streq(buf, "stop")) {
+>>>>> -		if (rproc->state != RPROC_RUNNING)
+>>>>> +		if (!rproc_can_shutdown(rproc))
+>>>>>  			return -EINVAL;
+>>>>>
+>>>>>  		rproc_shutdown(rproc);
+>>>> As rproc shutdown is also accessible as kernel API, I propose to move
+>>>> rproc_can_shutdown() check inside rproc_shutdown() and to test
+>>>> returned error
+>>>
+>>> Ah yes, it is public...  As you point out, I think we'll need to move
+>>> rproc_can_shutdown() in rproc_shutdown().
+>>
+>> I am assuming only the new conditions, right?
+> 
+> Once again I fail to grasp the extent of your comment.  Can you be more specific
+> about the "new conditions"?
 
-diff --git a/drivers/rpmon/Kconfig b/drivers/rpmon/Kconfig
-index ad0e6d6561ca..0b80236ad186 100644
---- a/drivers/rpmon/Kconfig
-+++ b/drivers/rpmon/Kconfig
-@@ -23,4 +23,17 @@ config RPMON
- 	  Currently RPMON_QMI is available which uses QMI infrastructures
- 	  on Qualcomm SoC Platforms.
- 
-+config RPMON_QMI_MSG_V1
-+	tristate "RPMON QMI Message Version 1.0"
-+	depends on RPMON
-+	depends on QCOM_QMI_HELPERS
-+	help
-+	  Implements a RPMON_QMI message set for a certain rpmon service.
-+	  RPMON_QMI defines its message types modularly. Each rpmon service
-+	  binds to a message set and introduced as a module. This version 1.0
-+	  message set could be used for connection checking of remote processors.
-+
-+	  RPMON_QMI messages depend on QCOM_QMI_HELPERS and should be updated
-+	  together with QMI related modules.
-+
- endmenu
-diff --git a/drivers/rpmon/Makefile b/drivers/rpmon/Makefile
-index b0f0ec4ecc30..25f468a73a20 100644
---- a/drivers/rpmon/Makefile
-+++ b/drivers/rpmon/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_RPMON) += rpmon.o
-+obj-$(CONFIG_RPMON_QMI_MSG_V1)	+= rpmon_qmi_msg_v1.o
-diff --git a/drivers/rpmon/rpmon_qmi.h b/drivers/rpmon/rpmon_qmi.h
-new file mode 100644
-index 000000000000..191405140a5c
---- /dev/null
-+++ b/drivers/rpmon/rpmon_qmi.h
-@@ -0,0 +1,76 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2020 Vivo Communication Technology Co. Ltd.
-+ * Copyright (C) 2020 Wang Wenhu <wenhu.wang@vivo.com>
-+ * All rights reserved.
-+ */
-+
-+#ifndef RPMON_QMI_INTERFACE_H
-+#define RPMON_QMI_INTERFACE_H
-+
-+#define RP_NAME_LEN 255
-+#define RPQMI_BUF_SIZE	4096
-+
-+enum rpmon_exec_result {
-+	RPMON_EXEC_SUCCESS = 0,
-+	RPMON_EXEC_FAILURE = 1,
-+};
-+
-+struct rpmon_register_req {
-+	uint8_t name_valid;
-+	char name[RP_NAME_LEN + 1];
-+	uint8_t timeout_valid;
-+	u32 timeout;
-+};
-+
-+struct rpmon_conn_indication {
-+	char placeholder;
-+};
-+
-+struct rpmon_conn_check_resp {
-+	uint8_t result_valid;
-+	struct qmi_response_type_v01 result;
-+};
-+
-+struct rpmon_response {
-+	struct qmi_response_type_v01 resp;
-+};
-+
-+struct rpmon_qmi_device {
-+	struct list_head	list;
-+	struct sockaddr_qrtr	addr;
-+	u32			timeout;
-+	u32			flag;
-+	struct ratelimit_state	ratelimit;
-+
-+	atomic_t		checks;
-+	atomic_t		reports;
-+
-+	struct rpmon_info *info;
-+	struct rpmon_qmi  *rqmi;
-+};
-+
-+struct rpmon_qmi {
-+	struct rpmon_info		*info;
-+	struct qmi_handle		qmi;
-+	struct qmi_service		*svc;
-+	struct qmi_ops			*ops;
-+	struct qmi_msg_handler		*handlers;
-+	int (*sendmsg)(const struct rpmon_qmi_device *rdev,
-+			const void *data,
-+			u32 len);
-+};
-+
-+/* rpqmi message types currently supported. */
-+enum rpmon_qmi_msg_type {
-+	RPQMI_MSG_REGISTER = 0,
-+	RPQMI_MSG_CONNCHK_RESP,
-+	RPQMI_MSG_MAX,
-+};
-+
-+int rpmon_qmi_handle_init(struct rpmon_qmi *rqmi,
-+		void (*cb)(enum rpmon_qmi_msg_type type,
-+			struct sockaddr_qrtr *sq,
-+			const void *msg));
-+
-+#endif /* RPMON_QMI_INTERFACE_H */
-diff --git a/drivers/rpmon/rpmon_qmi_msg_v1.c b/drivers/rpmon/rpmon_qmi_msg_v1.c
-new file mode 100644
-index 000000000000..7e786d0c245a
---- /dev/null
-+++ b/drivers/rpmon/rpmon_qmi_msg_v1.c
-@@ -0,0 +1,258 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020 Vivo Communication Technology Co. Ltd.
-+ * Copyright (C) 2020 Wang Wenhu <wenhu.wang@vivo.com>
-+ * All rights reserved.
-+ *
-+ * RPMON: An implementation of remote processor monitor framework
-+ * for modern SoCs that typically have heterogeneous remote processor
-+ * devices in asymmetric multiprocessing configurations. It is
-+ * implemented with chardev and sysfs class, which act as interfaces
-+ * to communicate with user level. It supports different communication
-+ * interfaces added modularly to communicate with remote processors.
-+ * Currently QMI implementation, named RPMON_QMI, is available.
-+ *
-+ * RPMON could be used to detect the stabilities of remote processors,
-+ * collect any kinds of information you are interested in, take
-+ * actions like connection status check, and so on. Enhancements
-+ * can be made upon current implementation.
-+ *
-+ * RPMON_QMI_MSG_V1 is specifically implemented as a set of messages
-+ * for RPMON_QMI to support connection checking of remote processors.
-+ */
-+
-+#include <linux/soc/qcom/qmi.h>
-+#include <linux/rpmon.h>
-+#include "rpmon_qmi.h"
-+
-+#define RPMON_SVC_ID_V01	0x3c
-+#define RPMON_SVC_VER_V01	0x01
-+#define RPMON_SVC_INS_V01	0x00
-+
-+#define RPMON_CONN_REQ_MSG_ID_VO1		0x20
-+#define RPMON_CONN_RESP_MSG_ID_VO1		0x20
-+#define RPMON_CONN_IND_MSG_ID_V01		0x21
-+#define RPMON_EXEC_COMP_REQ_MSG_ID_V01		0x22
-+#define RPMON_EXEC_COMP_RESP_MSG_ID_V01		0x22
-+
-+#define QMI_COMMON_TLV_TYPE_1ST		(QMI_COMMON_TLV_TYPE + 1)
-+
-+#define QMI_OPTIONAL_TLV_TYPE_START	0x10
-+#define QMI_OPTIONAL_TLV_TYPE_1ST	QMI_OPTIONAL_TLV_TYPE_START
-+#define QMI_OPTIONAL_TLV_TYPE_2ND	(QMI_OPTIONAL_TLV_TYPE_START + 0x01)
-+#define QMI_OPTIONAL_TLV_TYPE_END	QMI_OPTIONAL_TLV_TYPE_2ND
-+
-+#define TLV_TYPE_REG_REQ_NAME		QMI_OPTIONAL_TLV_TYPE_1ST
-+#define TLV_TYPE_REG_REQ_TIMEOUT	QMI_OPTIONAL_TLV_TYPE_2ND
-+
-+#define TLV_TYPE_CONN_CHK_RESP_RESULT	QMI_OPTIONAL_TLV_TYPE_1ST
-+
-+#define QMI_TLV_LEN_SIZE sizeof(u16)
-+#define QMI_TLV_TYPE_SIZE sizeof(u8)
-+#define QMI_TLV_TL_SIZE (QMI_TLV_LEN_SIZE + QMI_TLV_TYPE_SIZE)
-+
-+static struct qmi_elem_info register_req_v01_ei[] = {
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(uint8_t),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = 0x10,
-+		.offset         = offsetof(struct rpmon_register_req,
-+					   name_valid),
-+	},
-+	{
-+		.data_type      = QMI_STRING,
-+		.elem_len       = RP_NAME_LEN,
-+		.elem_size      = sizeof(char),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = TLV_TYPE_REG_REQ_NAME,
-+		.offset         = offsetof(struct rpmon_register_req,
-+					   name),
-+	},
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(uint8_t),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = TLV_TYPE_REG_REQ_TIMEOUT,
-+		.offset         = offsetof(struct rpmon_register_req,
-+					   timeout_valid),
-+	},
-+	{
-+		.data_type      = QMI_UNSIGNED_4_BYTE,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(u32),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = TLV_TYPE_REG_REQ_TIMEOUT,
-+		.offset         = offsetof(struct rpmon_register_req,
-+					   timeout),
-+	},
-+	{
-+		.data_type      = QMI_EOTI,
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = QMI_COMMON_TLV_TYPE,
-+	},
-+};
-+
-+static struct qmi_elem_info conn_check_resp_v01_ei[] = {
-+	{
-+		.data_type      = QMI_OPT_FLAG,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(uint8_t),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = TLV_TYPE_CONN_CHK_RESP_RESULT,
-+		.offset         = offsetof(struct rpmon_conn_check_resp,
-+					   result_valid),
-+	},
-+	{
-+		.data_type      = QMI_SIGNED_4_BYTE_ENUM,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(enum rpmon_exec_result),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = TLV_TYPE_CONN_CHK_RESP_RESULT,
-+		.offset         = offsetof(struct rpmon_conn_check_resp,
-+					   result),
-+	},
-+	{
-+		.data_type      = QMI_EOTI,
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = QMI_COMMON_TLV_TYPE,
-+	},
-+};
-+
-+static struct qmi_elem_info conn_indication_v01_ei[] = {
-+	{
-+		.data_type      = QMI_EOTI,
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = QMI_COMMON_TLV_TYPE,
-+	},
-+};
-+
-+static struct qmi_elem_info response_v01_ei[] = {
-+	{
-+		.data_type      = QMI_STRUCT,
-+		.elem_len       = 1,
-+		.elem_size      = sizeof(struct qmi_response_type_v01),
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = QMI_COMMON_TLV_TYPE_1ST,
-+		.offset         = offsetof(struct rpmon_response, resp),
-+		.ei_array       = qmi_response_type_v01_ei,
-+	},
-+	{
-+		.data_type      = QMI_EOTI,
-+		.array_type     = NO_ARRAY,
-+		.tlv_type       = QMI_COMMON_TLV_TYPE,
-+	},
-+};
-+
-+static void (*msg_callback)(enum rpmon_qmi_msg_type type,
-+			    struct sockaddr_qrtr *sq,
-+			    const void *msg);
-+
-+static int rpmon_qmi_sendmsg_v1(const struct rpmon_qmi_device *rdev,
-+				const void *data,
-+				u32 len)
-+{
-+	int ret;
-+	struct sockaddr_qrtr sq;
-+
-+	memcpy(&sq, &rdev->addr, sizeof(sq));
-+
-+	ret = qmi_send_indication(&rdev->rqmi->qmi, &sq,
-+				  RPMON_CONN_IND_MSG_ID_V01,
-+				  QMI_TLV_TL_SIZE,
-+				  conn_indication_v01_ei, NULL);
-+	if (ret < 0)
-+		pr_err("Error %d send indication failed", ret);
-+
-+	return ret;
-+}
-+
-+static void rpmon_qmi_recv_register_req_v1(struct qmi_handle *qmi,
-+			struct sockaddr_qrtr *sq,
-+			struct qmi_txn *txn,
-+			const void *msg)
-+{
-+	struct rpmon_response resp;
-+	int ret;
-+
-+	resp.resp.result = QMI_RESULT_SUCCESS_V01;
-+	resp.resp.error = QMI_ERR_NONE_V01;
-+	ret = qmi_send_response(qmi, sq, txn,
-+				RPMON_CONN_RESP_MSG_ID_VO1,
-+				sizeof(resp.resp) + QMI_TLV_TL_SIZE * 2,
-+				response_v01_ei,
-+				&resp.resp);
-+	if (ret < 0)
-+		pr_err("Error %d send response failed", ret);
-+
-+	if (msg_callback)
-+		msg_callback(RPQMI_MSG_REGISTER, sq, msg);
-+}
-+
-+void rpmon_qmi_recv_conn_check_resp_v1(struct qmi_handle *qmi,
-+	struct sockaddr_qrtr *sq,
-+	struct qmi_txn *txn,
-+	const void *msg)
-+{
-+	struct rpmon_response resp;
-+	int ret;
-+
-+	resp.resp.result = QMI_RESULT_SUCCESS_V01;
-+	resp.resp.error = QMI_ERR_NONE_V01;
-+	ret = qmi_send_response(qmi, sq, txn,
-+				RPMON_EXEC_COMP_REQ_MSG_ID_V01,
-+				sizeof(resp.resp) + QMI_TLV_TL_SIZE * 2,
-+				response_v01_ei,
-+				&resp.resp);
-+	if (ret < 0)
-+		pr_err("Error %d send response failed", ret);
-+
-+	if (msg_callback)
-+		msg_callback(RPQMI_MSG_CONNCHK_RESP, sq, msg);
-+}
-+
-+static struct qmi_msg_handler rpmon_qmi_msg_handlers_v01[] = {
-+	{
-+		.type = QMI_REQUEST,
-+		.msg_id = RPMON_CONN_REQ_MSG_ID_VO1,
-+		.ei = register_req_v01_ei,
-+		.decoded_size = sizeof(struct rpmon_register_req),
-+		.fn = rpmon_qmi_recv_register_req_v1,
-+	},
-+	{
-+		.type = QMI_REQUEST,
-+		.msg_id = RPMON_EXEC_COMP_REQ_MSG_ID_V01,
-+		.ei = conn_check_resp_v01_ei,
-+		.decoded_size = sizeof(struct rpmon_conn_check_resp),
-+		.fn = rpmon_qmi_recv_conn_check_resp_v1,
-+	},
-+};
-+
-+static struct qmi_service rpmon_qmi_svc = {
-+	.service = RPMON_SVC_ID_V01,
-+	.version = RPMON_SVC_VER_V01,
-+	.instance = RPMON_SVC_INS_V01,
-+};
-+
-+int rpmon_qmi_handle_init(struct rpmon_qmi *rqmi,
-+		void (*cb)(enum rpmon_qmi_msg_type type,
-+			   struct sockaddr_qrtr *sq,
-+			   const void *msg))
-+{
-+	rqmi->svc = &rpmon_qmi_svc;
-+	rqmi->handlers = rpmon_qmi_msg_handlers_v01;
-+	rqmi->sendmsg = rpmon_qmi_sendmsg_v1;
-+
-+	if (cb)
-+		msg_callback = cb;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(rpmon_qmi_handle_init);
-+
-+MODULE_AUTHOR("Wang Wenhu <wenhu.wang@vivo.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+rproc_can_shutdown() has three checks, where the first check is existing
+check that got moved, and the other 2 are the new checks that deal with
+the sync states. So, I meant these 2 new sync checks.
+
+regards
+Suman
+
+> 
+> Thanks
+> Mathieu
+> 
+>>
+>> regards
+>> Suman
+>>
+>>>
+>>> Thank you for taking the time to review this set,
+>>> Mathieu
+>>>
