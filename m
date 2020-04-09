@@ -1,79 +1,86 @@
-Return-Path: <wenhu.wang@vivo.com>
-From: Wang Wenhu <wenhu.wang@vivo.com>
-Subject: [PATCH v3,0/3] drivers: rpmon: new driver Remote Processor Monitor
-Date: Mon, 13 Apr 2020 20:59:46 -0700
-Message-Id: <20200414035949.107225-1-wenhu.wang@vivo.com>
-In-Reply-To: <20200412112405.24116-1-wenhu.wang@vivo.com>
-References: <20200412112405.24116-1-wenhu.wang@vivo.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc: rdunlap@infradead.org, kernel@vivo.com, agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, Wang Wenhu <wenhu.wang@vivo.com>
+Return-Path: <s-anna@ti.com>
+Subject: Re: [PATCH 6/7] remoteproc/k3-r5: Initialize TCM memories for ECC
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-7-s-anna@ti.com> <20200409213633.GB32029@xps15>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <b7dfa5d6-53cc-362d-dd76-941639dfbf29@ti.com>
+Date: Thu, 9 Apr 2020 17:01:02 -0500
+MIME-Version: 1.0
+In-Reply-To: <20200409213633.GB32029@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-RPMON is a driver framework. It supports remote processor monitor
-from user level. The basic components are a character device
-with sysfs interfaces for user space communication and different
-kinds of message drivers introduced modularly, which are used to
-communicate with remote processors.
+On 4/9/20 4:36 PM, Mathieu Poirier wrote:
+> On Tue, Mar 24, 2020 at 03:18:18PM -0500, Suman Anna wrote:
+>> The R5F processors on K3 SoCs all have two TCMs (ATCM and BTCM) that
+>> support 32-bit ECC. The TCMs are typically loaded with some boot-up
+>> code to initialize the R5 MPUs to further execute code out of DDR.
+>> The ECC for the TCMs is enabled by default on K3 SoCs due to internal
+>> default tie-off values, but the TCM memories are not initialized on
+>> device power up. Any read access without the corresponding TCM memory
+>> location initialized will generate an ECC error, and any such access
+>> from a A72 or A53 core will trigger a SError.
+>>
+>> So, zero initialize both the TCM memories before loading any firmware
+>> onto a R5F in remoteproc mode. Any R5F booted from U-Boot/SPL would
+>> require a similar initialization in the bootloader. Note that both
+>> the TCMs are initialized unconditionally as the TCM enable config bits
+>> only manage the access and visibility from R5. The Core1 TCMs are not
+>> used and accessible in LockStep mode, so they are only initialized
+>> in Split-mode.
+> 
+> Everything was going well with this changelog until the last sentence.
+> Intuitively one is looking for the code that avoids the initialisation for
+> "Core1" in the patch but it is not there, and rightly so.  In locksetup mode the
+> second core is not registered with the remoteproc core and as such the
+> associated TCMs won't be initialised.
+> 
+> Simply put, I would just remove the last sentence as all it does (at least for
+> me) is add confusion.
 
-As for user space, one can get notifications of different events
-of remote processors, like their registrations, through standard
-file read operation of the file descriptors related to the exported
-character devices. Actions can also be taken into account via
-standard write operations to the devices. Besides, the sysfs class
-attributes could be accessed conveniently.
+Yep, that was more of a "NOTE: " type comment on overall behavior. I
+will drop the sentence for v2.
 
-Message drivers act as engines to communicate with remote processors.
-Currently RPMON_QMI is available which uses QMI infrastructures
-on Qualcomm SoC Platforms.
+regards
+Suman
 
-RPMON_QMI implements a kind of communication routine for RPMON to
-communicate with remote processors through QMI infrastructure.
-RPMON_QMI itself is designed as a modular framework that would
-introduce different kind of message sets which are binding to
-different services.
-
-RPMON_QMI creates a device of rpmon_device type for each remote
-processor endpoint. All the endpoint devices share an unique set
-of QMI suite.
-
-RPMON_QMI_MSG_V01 implements a RPMON_QMI message set for connection check.
-RPMON_QMI defines its message types modularly. Each rpmon service
-binds to a message set and introduced as a module. This version 1.0
-message set could be used for connection checking of remote processors.
-
-RPMON_QMI messages depend on QCOM_QMI_HELPERS and should be updated
-together with QMI related modules.
-
-Changes since v1:
- - Addressed review comments from Randy
-Changes since v2:
- - Added Cc list
- - Commit log typo fixing
- - Use the ARRAY_SIZE instead of calculations of multiple sizeof()
- - Use micros for qmi message tly_type fields
-
-Wang Wenhu (3):
-  driver: rpmon: new driver Remote Processor Monitor
-  driver: rpmon: qmi message version 01
-  driver: rpmon: add rpmon_qmi driver
-
- drivers/Kconfig                  |   2 +
- drivers/Makefile                 |   1 +
- drivers/rpmon/Kconfig            |  54 ++++
- drivers/rpmon/Makefile           |   3 +
- drivers/rpmon/rpmon.c            | 506 +++++++++++++++++++++++++++++++
- drivers/rpmon/rpmon_qmi.c        | 431 ++++++++++++++++++++++++++
- drivers/rpmon/rpmon_qmi.h        |  76 +++++
- drivers/rpmon/rpmon_qmi_msg_v1.c | 258 ++++++++++++++++
- include/linux/rpmon.h            |  68 +++++
- 9 files changed, 1399 insertions(+)
- create mode 100644 drivers/rpmon/Kconfig
- create mode 100644 drivers/rpmon/Makefile
- create mode 100644 drivers/rpmon/rpmon.c
- create mode 100644 drivers/rpmon/rpmon_qmi.c
- create mode 100644 drivers/rpmon/rpmon_qmi.h
- create mode 100644 drivers/rpmon/rpmon_qmi_msg_v1.c
- create mode 100644 include/linux/rpmon.h
-
--- 
-2.17.1
+> 
+> With that:
+> 
+> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index 655f8f14c37d..8c9b7ae5d8b7 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -366,6 +366,17 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>>  		dev_err(dev, "unable to enable cores for TCM loading, ret = %d\n",
+>>  			ret);
+>>  
+>> +	/*
+>> +	 * Zero out both TCMs unconditionally (access from v8 Arm core is not
+>> +	 * affected by ATCM & BTCM enable configuration values) so that ECC
+>> +	 * can be effective on all TCM addresses.
+>> +	 */
+>> +	dev_dbg(dev, "zeroing out ATCM memory\n");
+>> +	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+>> +
+>> +	dev_dbg(dev, "zeroing out BTCM memory\n");
+>> +	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> -- 
+>> 2.23.0
+>>
