@@ -2,133 +2,270 @@ Return-Path: <SRS0=Vkxm=5Z=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19564C2BB54
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 08:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE14DC2BB86
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 08:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D161720784
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 08:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0C402075E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 08:54:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MirtrZrC"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="qqnLh2JL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726082AbgDIIa4 (ORCPT
+        id S1726681AbgDIIyT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 04:30:56 -0400
-Received: from mail-eopbgr40060.outbound.protection.outlook.com ([40.107.4.60]:15185
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726595AbgDIIay (ORCPT
+        Thu, 9 Apr 2020 04:54:19 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50388 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725972AbgDIIyT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 04:30:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jMYsn/wbtahym03kJhldnQS6Jo6M9jjDCHww2SQeJboGSv5MY7SUFRox9UpawXP9PLgjD910q35g2qHcTu4qV4nSuSpVCKli19FZqCmVd/4gAxbaOrLR6tgvZJFA3a7zAWx5JbbvYs+HBcklkqwcxAfGeySzF68gKuKDF1hNL9EPjxa/r3XqvxEl1e2qgrl7uA3IDLsBC9UfKdxYB6cccZAZMe6FqUtorm8znPuKDVbQZKxcrmRd2tBqeCl+N1/owxTtq+JfYwoJ3set1k2WRSxb8EKdrI9sgcp2BjP2PceriwdFdO+Ub0Z9QIkxuYAhk6L/t67Akbm+Aq1VyGPewQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6azocKQaryjCgl7bacQy7gAlThzCAyLJBD0cymiy+n4=;
- b=bjOjrFj1IxjPXQDLx+on3W8ePd29Yjn0zxRLDloHL3HVsdj8TZACr/cqUdgyjd0hXh1jgdgLJqBoNsP9Q+03RYa1lGPgUJWuowfFeYLx4GXJ3zXisZVygCDY2XQebzXbLIHA39J1klb915mvTDT+draIyTVcivPhnWN1+c23kYYadX9hZ6WnweAAqz1JElO+F0xH6Xh0+Kj6jEgrIIBKQ8AkTSdPeR18NTU/DzdtJ17MOkDJYJ6KgA+ZFub9FIpbryhv4XK57V8BTMVpSC/UEGNwPGnnmVCxfijish5cNH79o8YCoW/2XP/B+mRCJ/q5Q12LYoA7O+bLJKC532Bavw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6azocKQaryjCgl7bacQy7gAlThzCAyLJBD0cymiy+n4=;
- b=MirtrZrC2imQHAgJcy2+f8950rKxGIaALNpEei2Ww5Ww9JNWOdA3+TZOJfkcFZLgLSUyAKysfEaYfH/D7u/mmEfklFIokaYLtzGCF8dyrwZnR7Z2ig6TqMgUXEdSrZYooRpeCxCgZDQFIsSKVImCST1ftSEu/btNrV8uiIwIP1Y=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (2603:10a6:208:70::15)
- by AM0PR04MB6626.eurprd04.prod.outlook.com (2603:10a6:208:176::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.15; Thu, 9 Apr
- 2020 08:30:52 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2900.015; Thu, 9 Apr 2020
- 08:30:51 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     bjorn.andersson@linaro.org, ohad@wizery.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 2/2] remoteproc: use filesz as backup when translate memsz fail
-Date:   Thu,  9 Apr 2020 16:22:52 +0800
-Message-Id: <1586420572-28353-2-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
-References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0133.apcprd01.prod.exchangelabs.com
- (2603:1096:4:8f::13) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        Thu, 9 Apr 2020 04:54:19 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0398s6wD028951;
+        Thu, 9 Apr 2020 10:54:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=CmoutC0W8WZlASEipmjSnN2qdkVdCXVJOAEJkp9FQOg=;
+ b=qqnLh2JLoNbSlDythMFLuO+XTtJmamANLPiFnC/MWniwACpJhwJ5bKRG42OjSz5NjJiw
+ bCcb49XNg/e+zYq4TcfSW2OZ4KxVnCQ8JNKbJFC51/qAIFCGwXw2oQQacckQGPC8wKBH
+ u5B0V96vwwrMbr+M9gmDQAttA6U62C6OI3jnrgdsscNdhwHS9K7BLNY21/L87pODaIFX
+ nx2Gir27O+dZ+gLef2Oox3tcv/2RdytIa98VvpeXYtLUDilEzqpj/hmUx9OQnuRAJMA4
+ GWnVPDORCF0fK5+io5OQdso/jzgFOc3KiWOAo77kSPhRa3n74BLy10AnP9IuBnV091bH lg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 309vr98qkw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Apr 2020 10:54:12 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A440C10004F;
+        Thu,  9 Apr 2020 10:54:11 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8EC2721FE9D;
+        Thu,  9 Apr 2020 10:54:11 +0200 (CEST)
+Received: from lmecxl0889.tpe.st.com (10.75.127.44) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Apr
+ 2020 10:54:10 +0200
+Subject: Re: [PATCH v2] rpmsg: core: Add wildcard match for name service
+To:     Suman Anna <s-anna@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200310155058.1607-1-mathieu.poirier@linaro.org>
+ <591bd727-32af-9ea2-8c46-98f46ee3711e@ti.com>
+ <CANLsYkyv+4cSCY27kA6qfo2XMzXy_h+DmXTe0nVZuUkC0kyRUQ@mail.gmail.com>
+ <ca77fe73-3baf-64ff-c9e2-b2f35f96ffe3@ti.com>
+ <CANLsYkz8iqiperjdQVcwAC3YGT5cmEvJcu8fPFGF5-X6eKVUDQ@mail.gmail.com>
+ <34d1277f-c35e-5df8-7d0c-ea1e961a127f@st.com> <20200327193602.GA22939@xps15>
+ <77cba22f-5911-e88a-ec25-50cbe9b8fbbe@ti.com>
+ <CANLsYkxWSQNA0SqP5p1d_EK6am5rV-ONrvou1UyuNMnMjGW71Q@mail.gmail.com>
+ <56a34534-f005-1e1c-a8c5-8bef02664eac@ti.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
+Message-ID: <e618244f-905b-9796-4e0e-c9d2a2c2341f@st.com>
+Date:   Thu, 9 Apr 2020 10:54:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0133.apcprd01.prod.exchangelabs.com (2603:1096:4:8f::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2900.15 via Frontend Transport; Thu, 9 Apr 2020 08:30:49 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: bb80e521-3435-423a-6afa-08d7dc605010
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6626:|AM0PR04MB6626:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB6626362ACA98B2CF268F613488C10@AM0PR04MB6626.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-Forefront-PRVS: 0368E78B5B
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB4481.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(346002)(376002)(396003)(136003)(366004)(39860400002)(6486002)(86362001)(478600001)(44832011)(316002)(2906002)(6666004)(36756003)(4744005)(6506007)(66946007)(66556008)(52116002)(66476007)(16526019)(81156014)(26005)(186003)(8936002)(8676002)(956004)(5660300002)(6512007)(81166007)(4326008)(2616005)(69590400007);DIR:OUT;SFP:1101;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MQ/gxFV95QEIqqEVp4/syRHekkw+Ihuj9K09DisMsSu3iqi0gtE4CH9q/NsiA05rzRqE/ayl73owZ18+dqJepTL0VhIy3wNS6a9IaqqpprS1zV0b5OOT+jxHBt9KReJ7X+sYNgu9uzFOFQzOicQ7dLuXvDxOcsqz5J0AEBFYaUWdlYUDHIi+n7YU/zZhJ/vDzR0Dgd3Kz5TrIbNgTD58kjuTrQqHPynjJRnWPk3PbpYxHyUE0LbqDxaEC7081eU8PHG66RAVhZ0WmD9fSHb3Wsz4LoEHfJqi2/fmonLNj3mEAn1+1qNivsBb/7Y9gr83/TSBwu6g3Z3pXOs2g0AoMeuOr+YHTpNzRoRwCJTdKKlrA2NeIt86pvPBG8hbfsNjMv3t67/BMWWzijcxv/0Qm67HSelh1xH2UiTLnlc2bZrt2fbYpsdUMUyibYnXZTw2GqNvVY0Zw2R3V6ZZF6FeVI5i8s/y/f6KovBKnrgdseo4gX59pdvt/Mu3YGpd9Uo/
-X-MS-Exchange-AntiSpam-MessageData: oeBW26BXhJs3NSoTUt9hAWLO/aHd1w4KaF8vd4LXLTF4fbjU/NkxFiyxw6hCCk56ImvbZ2cio/hr4apuABod8+s7pkcfYCGewmDP/rgJOwOXpNnUKezLqSxJcN9rtWaJIOIyvTnw9mLpox/uWszIhw==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb80e521-3435-423a-6afa-08d7dc605010
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2020 08:30:51.8136
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aoZz+DkwyUBmuDviKHKQf2F8j3qyDvINIs1VmzxnWwou9mlm8fG+Da7mNFQpMzcKylqYygn/LjkkzQaZUmNlQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6626
+In-Reply-To: <56a34534-f005-1e1c-a8c5-8bef02664eac@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-08_09:2020-04-07,2020-04-08 signatures=0
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409082252.K7UbD8Lr-HjapDMk-9UBAiG4URtc2a8G_hw38z_gJZU@z>
+Message-ID: <20200409085409.QwGc8Yz8icooI6FJIgV0Uwx9WQeKoN_PoL_-GQGlKoA@z>
 
-Since we no need memset if memsz is larger than filesz, we could
-use filesz for the da to va translation when memsz translation fail.
+Hi Suman,
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+On 4/8/20 10:52 PM, Suman Anna wrote:
+> On 4/8/20 10:59 AM, Mathieu Poirier wrote:
+>> On Tue, 7 Apr 2020 at 17:07, Suman Anna <s-anna@ti.com> wrote:
+>>>
+>>> Hi Mathieu, Arnaud,
+>>>
+>>> On 3/27/20 2:36 PM, Mathieu Poirier wrote:
+>>>> On Fri, Mar 27, 2020 at 10:35:34AM +0100, Arnaud POULIQUEN wrote:
+>>>>> Hi
+>>>>>
+>>>>> On 3/26/20 11:01 PM, Mathieu Poirier wrote:
+>>>>>> On Thu, 26 Mar 2020 at 14:42, Suman Anna <s-anna@ti.com> wrote:
+>>>>>>>
+>>>>>>> On 3/26/20 3:21 PM, Mathieu Poirier wrote:
+>>>>>>>> On Thu, 26 Mar 2020 at 09:06, Suman Anna <s-anna@ti.com> wrote:
+>>>>>>>>>
+>>>>>>>>> Hi Mathieu,
+>>>>>>>>>
+>>>>>>>>> On 3/10/20 10:50 AM, Mathieu Poirier wrote:
+>>>>>>>>>> Adding the capability to supplement the base definition published
+>>>>>>>>>> by an rpmsg_driver with a postfix description so that it is possible
+>>>>>>>>>> for several entity to use the same service.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>>>>>>>> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>>>>>>>>>
+>>>>>>>>> So, the concern I have here is that we are retrofitting this into the
+>>>>>>>>> existing 32-byte name field, and the question is if it is going to be
+>>>>>>>>> enough in general. That's the reason I went with the additional 32-byte
+>>>>>>>>> field with the "rpmsg: add a description field" patch.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> That's a valid concern.
+>>>>>>>>
+>>>>>>>> Did you consider increasing the size of RPMSG_NAME_SIZE to 64? Have
+>>>>>>>> you found cases where that wouldn't work?  I did a survey of all the
+>>>>>>>> places the #define is used and all destination buffers are also using
+>>>>>>>> the same #define in their definition.  It would also be backward
+>>>>>>>> compatible with firmware implementations that use 32 byte.
+>>>>>>>
+>>>>>>> You can't directly bump the size without breaking the compatibility on
+>>>>>>> the existing rpmsg_ns_msg in firmwares right? All the Linux-side drivers
+>>>>>>> will be ok since they use the same macro but rpmsg_ns_msg has presence
+>>>>>>> on both kernel and firmware-sides.
+>>>>>>
+>>>>>> Ah yes yes... The amount of bytes coming out of the pipe won't match.
+>>>>>> Let me think a little...
+>>>>>
+>>>>> +1 for Suman's concern.
+>>>>>
+>>>>> Anyway i would like to challenge the need of more than 32 bytes to
+>>>>> differentiate service instances.
+>>>>> "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", seems to me enough if we only need
+>>>>> to differentiate the instances.
+>>>
+>>> Remember that the rpmsg_device_id name takes some space within here. So,
+>>> the shorter the rpmsg_device_id table name, the more room you have.
+>>>
+>>>>>
+>>>>> But perhaps the need is also to provide a short description of the service?
+>>>
+>>> I am mostly using it to provide a unique instantiation name. In anycase,
+>>> I have cross-checked against my current firmwares, and so far all of
+>>> them happen to have the name + desc < 31 bytes.
+>>>
+>>>
+>>>>>
+>>>>> Suman, could you share some examples of your need?
+>>>>
+>>>> Looking at things further it is possible to extend the name of the service to
+>>>> 64 byte while keeping backward compatibility by looking up the size of @len
+>>>> in function rpmsg_ns_cb().  From there work with an rpmsg_ns_msg or a new
+>>>> rpmsg_ns_msg64, pretty much the way you did in your patch[1].  In fact the
+>>>> approach is the same except you are using 2 arrays of 32 byte and I'm using one
+>>>> of 64.
+>>>>
+>>>> As Arnaud mentioned, is there an immediate need to support a 64-byte name?  If
+>>>> not than I suggest to move forward with this patch and address the issue when we
+>>>> get there - at least we know there is room for extention. Otherwise I'll spin
+>>>> off another revision but it will be bigger and more complex.
+>>>
+>>> Yeah ok. I have managed to get my downstream drivers that use the desc
+>>> field working with this patch after modifying the firmwares to publish
+>>> using combined name, and adding logic in probe to get the trailing
+>>> portion of the name.
+>>
+>> Perfect
+>>
+>>>
+>>> So, the only thing that is missing or content for another patch is if we
+>>> need to add some tooling/helper stuff for giving the trailing stuff to
+>>> rpmsg drivers?
+>>
+>> So that all rpmsg drivers don't come up with their own parsing that
+>> ends up doing the same thing.  Let me think about that - I may have to
+>> get back to you...
+> 
+> Yep. Sure no problem. It can be a patch on top of this as well.
+> 
+> Arnaud,
+> Do you have immediate need for the tooling stuff for the rpmsg-tty driver?
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index cc50fe70d50c..74d425a4b34c 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -229,8 +229,16 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 		if (!ptr) {
- 			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
- 				memsz);
--			ret = -EINVAL;
--			break;
-+
-+			ptr = rproc_da_to_va(rproc, da, filesz);
-+			if (!ptr) {
-+				dev_err(dev,
-+					"bad phdr da 0x%llx mem 0x%llx\n",
-+					da, filesz);
-+				ret = -EINVAL;
-+				break;
-+			}
-+
- 		}
- 
- 		/* put the segment where the remote processor expects it */
--- 
-2.16.4
+Before moving forward on rpmsg_tty i would prefer that we are aligned with Bjorn
+on the implementation of the rpmsg_tty itself and the evolution of the service name...
+Then rpmsg_tty could be a good threadfor a first implementation...
 
+
+Concerning the name service, having a discussion around the name service skeleton would
+be nice. This could be an good input for the helpers function definition.
+
+Propositions in rpmsg_tty thread are
+
+<service_name>-<feature>
+or
+<service_name>-<feature>-<sub_service>
+
+don't hesitate to comment and/or propose alternatives
+
+Regards,
+Arnaud
+
+> 
+> regards
+> Suman
+> 
+> 
+>>
+>>>
+>>> regards
+>>> Suman
+>>>
+>>>>
+>>>> Thanks,
+>>>> Mathieu
+>>>>
+>>>> [1]. https://patchwork.kernel.org/patch/11096599/
+>>>>
+>>>>>>>>>
+>>>>>>>>>> ---
+>>>>>>>>>> Changes for V2:
+>>>>>>>>>> - Added Arnaud's Acked-by.
+>>>>>>>>>> - Rebased to latest rproc-next.
+>>>>>>>>>>
+>>>>>>>>>>  drivers/rpmsg/rpmsg_core.c | 20 +++++++++++++++++++-
+>>>>>>>>>>  1 file changed, 19 insertions(+), 1 deletion(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>>>>>>>>>> index e330ec4dfc33..bfd25978fa35 100644
+>>>>>>>>>> --- a/drivers/rpmsg/rpmsg_core.c
+>>>>>>>>>> +++ b/drivers/rpmsg/rpmsg_core.c
+>>>>>>>>>> @@ -399,7 +399,25 @@ ATTRIBUTE_GROUPS(rpmsg_dev);
+>>>>>>>>>>  static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
+>>>>>>>>>>                                 const struct rpmsg_device_id *id)
+>>>>>>>>>>  {
+>>>>>>>>>> -     return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+>>>>>>>>>> +     size_t len = min_t(size_t, strlen(id->name), RPMSG_NAME_SIZE);
+>>>>>>>>>> +
+>>>>>>>>>> +     /*
+>>>>>>>>>> +      * Allow for wildcard matches.  For example if rpmsg_driver::id_table
+>>>>>>>>>> +      * is:
+>>>>>>>>>> +      *
+>>>>>>>>>> +      * static struct rpmsg_device_id rpmsg_driver_sample_id_table[] = {
+>>>>>>>>>> +      *      { .name = "rpmsg-client-sample" },
+>>>>>>>>>> +      *      { },
+>>>>>>>>>> +      * }
+>>>>>>>>>> +      *
+>>>>>>>>>> +      * Then it is possible to support "rpmsg-client-sample*", i.e:
+>>>>>>>>>> +      *      rpmsg-client-sample
+>>>>>>>>>> +      *      rpmsg-client-sample_instance0
+>>>>>>>>>> +      *      rpmsg-client-sample_instance1
+>>>>>>>>>> +      *      ...
+>>>>>>>>>> +      *      rpmsg-client-sample_instanceX
+>>>>>>>>>> +      */
+>>>>>>>>>> +     return strncmp(id->name, rpdev->id.name, len) == 0;
+>>>>>>>>>>  }
+>>>>>>>>>>
+>>>>>>>>>>  /* match rpmsg channel and rpmsg driver */
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>
+>>>
+> 
