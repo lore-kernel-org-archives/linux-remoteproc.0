@@ -2,142 +2,299 @@ Return-Path: <SRS0=Vkxm=5Z=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1F0C2BB55
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588FDC2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63ADA206F7
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17B5B2084D
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:38:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OgYeFYtz"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KmEVvK1Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbgDIVgi (ORCPT
+        id S1726681AbgDIViO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 17:36:38 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44048 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbgDIVgi (ORCPT
+        Thu, 9 Apr 2020 17:38:14 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60870 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgDIViN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 17:36:38 -0400
-Received: by mail-pl1-f196.google.com with SMTP id h11so4303210plr.11
-        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Apr 2020 14:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CKSH66DRpSKDttW0HoIJ+Q7V/JrDgmsRLWNjAkPoZvs=;
-        b=OgYeFYtz9TG5T5+OQ5HdreAp7UJvnomOdemJ2ZanB1NbWyQdpKatCBGGj9201dn3RE
-         FF8XRBH/yJeSte8EZ+hYYArAFlXsD0Vq29xTsILMMytu0Gp4Ml+mWC/4UZXcHFl4NRu0
-         tpr4AwAAIMIewL1kAwI+GwStxQj+LcbqXPGzZonSVmkcwuVC+NBCleuUUTU92XmljVXT
-         BSjZrcLCoPZVBlWSXCYnFKBRPtYcDmaVtRVR8SvI6IrxIDUqKrY8QJflivLUUhl1Wsyi
-         c0sQfB/wEZpmvdX6haHiJtufdMgKcjD5hQQsWVyY0dvsdYPPoy1KKkpS+wL3pCXy1uzJ
-         X95A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CKSH66DRpSKDttW0HoIJ+Q7V/JrDgmsRLWNjAkPoZvs=;
-        b=Ne2xBVTr6wNNegxVHwoPfjuDAd/pxUzUh2iad4ZoK4Krh8TV/eCyEayq8ong2pnNlP
-         6VvxWdDjwxWkHWMIA0eGE9yX4qfUBxtJBsOBneVo5F92s+skPpxI8kjRd8j66Kpq8YEc
-         hgCpXw3+gAkpVY9DuHlUPlJLMkpHRtmaHC3RgJnkarLcD49odIUPt9AbfklnCCSczNyS
-         RqMXlsFP8NHk2O79HewOXYDvZAW1nCG/t5EAjvqJ/ph4J0kiTMEMamRlKC3HpyQAKDSF
-         hHujThLoMX0UGpwpZmzYkemYaLAByp/NtOza0nwxYeHy9RYGpGJKPkY9+AtgnIfEeI0g
-         rO/g==
-X-Gm-Message-State: AGi0PubX+nUX0msl61jha4vBOkTvIcA+MGkkbnpr+vy50pSWrv/6jx2Q
-        KmyIK0qQTrspFyqUUw9a3oVyUw==
-X-Google-Smtp-Source: APiQypLaCPRkZGps/eMNdIh0y5VzobKlrdqJ7muVqbtpELbjLw8rCU9TWBniqmpH8PoKINDrrdRABQ==
-X-Received: by 2002:a17:902:7c8f:: with SMTP id y15mr1555480pll.202.1586468195817;
-        Thu, 09 Apr 2020 14:36:35 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id f8sm58901pgc.75.2020.04.09.14.36.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Apr 2020 14:36:35 -0700 (PDT)
-Date:   Thu, 9 Apr 2020 15:36:33 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] remoteproc/k3-r5: Initialize TCM memories for ECC
-Message-ID: <20200409213633.GB32029@xps15>
-References: <20200324201819.23095-1-s-anna@ti.com>
- <20200324201819.23095-7-s-anna@ti.com>
+        Thu, 9 Apr 2020 17:38:13 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039Lc7ur022324;
+        Thu, 9 Apr 2020 16:38:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1586468287;
+        bh=7KgS7Z9Rgcs5cJQvDkFG/13SochztTV3WFyz/qUPamA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KmEVvK1Q1kaRyQUSKEjeZn4Sn7znZCPAfoioCz2kEjQOv3ZRg6yBoK3VFzCEXMRqg
+         g2YBTQs/r13daLbsf8KP2R7HUhNyt0pmXXFcrgKFJgUJ6otAim2/ue2tsCi/03ang/
+         Ww29Cv829c1b9UCvxXOm0wlx/MRPa9i/3sWnnEJ0=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 039Lc7mE107842
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Apr 2020 16:38:07 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Apr
+ 2020 16:38:07 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 9 Apr 2020 16:38:06 -0500
+Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039Lc6vD046256;
+        Thu, 9 Apr 2020 16:38:06 -0500
+Subject: Re: [PATCH v2 01/17] remoteproc: Add new operation and state machine
+ for MCU synchronisation
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <loic.pallardy@st.com>, <peng.fan@nxp.com>,
+        <arnaud.pouliquen@st.com>, <fabien.dessenne@st.com>,
+        <linux-remoteproc@vger.kernel.org>
+References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
+ <20200324214603.14979-2-mathieu.poirier@linaro.org>
+ <3eaede13-533d-f2ba-fc14-96b135479b7e@ti.com>
+ <aff2d75d-9480-385f-c089-c0f8cb982feb@ti.com> <20200401215255.GG17383@xps15>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <f683849b-75f5-ef7d-2389-72c9829692b9@ti.com>
+Date:   Thu, 9 Apr 2020 16:38:06 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200324201819.23095-7-s-anna@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200401215255.GG17383@xps15>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409213633.F-7O-96D3tJzjNoBqsQmmbJ326d3xm5pLDyPNDbs8oQ@z>
+Message-ID: <20200409213806.MdQlajrjjOHNDIsCV1MmjKd4rABzNEt2kocRIH0vncY@z>
 
-On Tue, Mar 24, 2020 at 03:18:18PM -0500, Suman Anna wrote:
-> The R5F processors on K3 SoCs all have two TCMs (ATCM and BTCM) that
-> support 32-bit ECC. The TCMs are typically loaded with some boot-up
-> code to initialize the R5 MPUs to further execute code out of DDR.
-> The ECC for the TCMs is enabled by default on K3 SoCs due to internal
-> default tie-off values, but the TCM memories are not initialized on
-> device power up. Any read access without the corresponding TCM memory
-> location initialized will generate an ECC error, and any such access
-> from a A72 or A53 core will trigger a SError.
+On 4/1/20 4:53 PM, Mathieu Poirier wrote:
+> On Mon, Mar 30, 2020 at 05:49:11PM -0500, Suman Anna wrote:
+>> On 3/30/20 5:46 PM, Suman Anna wrote:
+>>> Hi Mathieu,
+>>>
+>>> On 3/24/20 4:45 PM, Mathieu Poirier wrote:
+>>>> Add a new rproc_ops sync_ops to support use cases where the remoteproc
+>>>> core is synchronisting with the MCU.  When exactly to use the sync_ops is
+>>>
+>>> typo on syschronisting..
+>>>
+>>>> directed by the states in struct rproc_sync_states.
+>>>>
+>>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>> ---
+>>>>  drivers/remoteproc/remoteproc_debugfs.c  | 31 ++++++++++++++++++++++++
+>>>>  drivers/remoteproc/remoteproc_internal.h |  5 ++++
+>>>>  include/linux/remoteproc.h               | 23 +++++++++++++++++-
+>>>>  3 files changed, 58 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+>>>> index dd93cf04e17f..187bcc67f997 100644
+>>>> --- a/drivers/remoteproc/remoteproc_debugfs.c
+>>>> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+>>>> @@ -311,6 +311,35 @@ static const struct file_operations rproc_carveouts_ops = {
+>>>>  	.release	= single_release,
+>>>>  };
+>>>>  
+>>>> +/* Expose synchronisation states via debugfs */
+>>>> +static int rproc_sync_states_show(struct seq_file *seq, void *p)
+>>>> +{
+>>>> +	struct rproc *rproc = seq->private;
+>>>> +
+>>>> +	seq_printf(seq, "Sync with MCU: %s\n",
+>>>> +		   rproc->sync_with_mcu ? "true" : "false");
+>>>> +	seq_printf(seq, "On init: %s\n",
+>>>> +		   rproc->sync_states->on_init ? "true" : "false");
+>>>> +	seq_printf(seq, "After stop: %s\n",
+>>>> +		   rproc->sync_states->after_stop ? "true" : "false");
+>>>> +	seq_printf(seq, "After crash: %s\n",
+>>>> +		   rproc->sync_states->after_crash ? "true" : "false");
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int rproc_sync_states_open(struct inode *inode, struct file *file)
+>>>> +{
+>>>> +	return single_open(file, rproc_sync_states_show, inode->i_private);
+>>>> +}
+>>>> +
+>>>> +static const struct file_operations rproc_sync_states_ops = {
+>>>> +	.open		= rproc_sync_states_open,
+>>>> +	.read		= seq_read,
+>>>> +	.llseek		= seq_lseek,
+>>>> +	.release	= single_release,
+>>>> +};
+>>>> +
+>>>>  void rproc_remove_trace_file(struct dentry *tfile)
+>>>>  {
+>>>>  	debugfs_remove(tfile);
+>>>> @@ -357,6 +386,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+>>>>  			    rproc, &rproc_rsc_table_ops);
+>>>>  	debugfs_create_file("carveout_memories", 0400, rproc->dbg_dir,
+>>>>  			    rproc, &rproc_carveouts_ops);
+>>>> +	debugfs_create_file("sync_states", 0400, rproc->dbg_dir,
+>>>> +			    rproc, &rproc_sync_states_ops);
+>>>>  }
+>>>>  
+>>>>  void __init rproc_init_debugfs(void)
+>>>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>>>> index 493ef9262411..5c93de5e00bb 100644
+>>>> --- a/drivers/remoteproc/remoteproc_internal.h
+>>>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>>>> @@ -63,6 +63,11 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+>>>>  struct rproc_mem_entry *
+>>>>  rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+>>>>  
+>>>> +static inline bool rproc_sync_with_mcu(struct rproc *rproc)
+>>>> +{
+>>>> +	return rproc->sync_with_mcu;
+>>>> +}
+>>>> +
+>>>
+>>> Since you are using this mostly for checking and as a boolean, I suggest
+>>> you rename this appropriately, something like rproc_needs_sync,
+>>> rproc_has_sync or rproc_uses_sync().
 > 
-> So, zero initialize both the TCM memories before loading any firmware
-> onto a R5F in remoteproc mode. Any R5F booted from U-Boot/SPL would
-> require a similar initialization in the bootloader. Note that both
-> the TCMs are initialized unconditionally as the TCM enable config bits
-> only manage the access and visibility from R5. The Core1 TCMs are not
-> used and accessible in LockStep mode, so they are only initialized
-> in Split-mode.
+> I will rename to rproc_syncing_with_rproc()
 
-Everything was going well with this changelog until the last sentence.
-Intuitively one is looking for the code that avoids the initialisation for
-"Core1" in the patch but it is not there, and rightly so.  In locksetup mode the
-second core is not registered with the remoteproc core and as such the
-associated TCMs won't be initialised.
-
-Simply put, I would just remove the last sentence as all it does (at least for
-me) is add confusion.
-
-With that:
-
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Hmm, I want this to reflect a boolean answer for better code
+flow/readability.
 
 > 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
->  drivers/remoteproc/ti_k3_r5_remoteproc.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 655f8f14c37d..8c9b7ae5d8b7 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -366,6 +366,17 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->  		dev_err(dev, "unable to enable cores for TCM loading, ret = %d\n",
->  			ret);
->  
-> +	/*
-> +	 * Zero out both TCMs unconditionally (access from v8 Arm core is not
-> +	 * affected by ATCM & BTCM enable configuration values) so that ECC
-> +	 * can be effective on all TCM addresses.
-> +	 */
-> +	dev_dbg(dev, "zeroing out ATCM memory\n");
-> +	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
-> +
-> +	dev_dbg(dev, "zeroing out BTCM memory\n");
-> +	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
-> +
->  	return ret;
->  }
->  
-> -- 
-> 2.23.0
+>>>
+>>> And I am wondering if it is actually better to introduce the sync state
+>>> to check against here, rather than using the stored sync state and
+>>> return. The current way makes it confusing to read the state machine.
 > 
+> I decided to proceed this way because there may not be a direct correlation
+> between the current synchronisation state and the location of the check itself.
+> for instance, in firmware_show(), what sync state should be key on?
+
+Yeah OK. Its the combinations of ops (11 callbacks) plus sync states (3)
+that kinda makes it hard to read the state-machine.
+
+> 
+>>>
+>>>>  static inline
+>>>>  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>>>>  {
+>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>>> index 16ad66683ad0..d115e47d702d 100644
+>>>> --- a/include/linux/remoteproc.h
+>>>> +++ b/include/linux/remoteproc.h
+>>>> @@ -353,6 +353,21 @@ enum rsc_handling_status {
+>>>>  	RSC_IGNORED	= 1,
+>>>>  };
+>>>>  
+>>>> +/**
+>>>> + * struct rproc_sync_states - platform specific states indicating which
+>>>> + *			      rproc_ops to use at specific times during
+>>>> + *			      the MCU lifecycle.
+>>>> + * @on_init: true if synchronising with MCU at system initialisation time
+>>>> + * @after_stop: true if synchronising with MCU after stopped from the
+>>>> + *		command line
+>>>> + * @after_crash: true if synchonising with MCU after the MCU has crashed
+>>>> + */
+>>>> +struct rproc_sync_states {
+>>>> +	bool on_init;
+>>>> +	bool after_stop;
+>>>> +	bool after_crash;
+>>>> +};
+>>>> +
+>>>
+>>> Overall, this patch can move down the order, and better to add it in
+>>> the patches where you actually introduce these code. And the debugfs
+>>> pieces can be added as a separate patch by itself.
+>>
+>> Also, actually sounds more like flags than states..
+> 
+> I thought about this in terms of "states" in which a decision should be made.
+> I'm not sure those are flags...
+
+I see them as just decision flags for sync, it is not reflecting a state
+like rproc->state. The rproc structure variable holds the current sync
+flag state though.
+
+> 
+>>
+>> regards
+>> Suman
+>>
+>>>
+>>>>  /**
+>>>>   * struct rproc_ops - platform-specific device handlers
+>>>>   * @start:	power on the device and boot it
+>>>> @@ -456,6 +471,9 @@ struct rproc_dump_segment {
+>>>>   * @firmware: name of firmware file to be loaded
+>>>>   * @priv: private data which belongs to the platform-specific rproc module
+>>>>   * @ops: platform-specific start/stop rproc handlers
+>>>> + * @sync_ops: paltform-specific start/stop rproc handlers when
+>>>
+>>> typo on platform
+> 
+> No matter how many times you read your own code, there's always something like
+> this that escapes...
+
+he he, indeed :)
+
+> 
+>>>
+>>>> + *	      synchronising with a remote processor.
+>>>> + * @sync_states: Determine the rproc_ops to choose in specific states.
+>>>>   * @dev: virtual device for refcounting and common remoteproc behavior
+>>>>   * @power: refcount of users who need this rproc powered up
+>>>>   * @state: state of the device
+>>>> @@ -479,6 +497,7 @@ struct rproc_dump_segment {
+>>>>   * @table_sz: size of @cached_table
+>>>>   * @has_iommu: flag to indicate if remote processor is behind an MMU
+>>>>   * @auto_boot: flag to indicate if remote processor should be auto-started
+>>>> + * @sync_with_mcu: true if currently synchronising with MCU
+>>>>   * @dump_segments: list of segments in the firmware
+>>>>   * @nb_vdev: number of vdev currently handled by rproc
+>>>>   */
+>>>> @@ -488,7 +507,8 @@ struct rproc {
+>>>>  	const char *name;
+>>>>  	char *firmware;
+>>>>  	void *priv;
+>>>> -	struct rproc_ops *ops;
+>>>> +	struct rproc_ops *ops, *sync_ops;
+>>>
+>>> Nothing wrong with this, but prefer to have the new variable in a new
+>>> line for better readability.
+> 
+> Sure thing.
+
+Thanks,
+Suman
+
+
+> 
+>>>
+>>> regards
+>>> Suman
+>>>
+>>>> +	struct rproc_sync_states *sync_states;
+>>>>  	struct device dev;
+>>>>  	atomic_t power;
+>>>>  	unsigned int state;
+>>>> @@ -512,6 +532,7 @@ struct rproc {
+>>>>  	size_t table_sz;
+>>>>  	bool has_iommu;
+>>>>  	bool auto_boot;
+>>>> +	bool sync_with_mcu;
+>>>>  	struct list_head dump_segments;
+>>>>  	int nb_vdev;
+>>>>  };
+>>>>
+>>>
+>>
+
