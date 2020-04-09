@@ -5,69 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C9EC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683AEC2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 22:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1D22072F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 21:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3126D2083E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 22:01:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rBoQXvnu"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ovvSPpNc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbgDIVxn (ORCPT
+        id S1726701AbgDIWBK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 17:53:43 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:40552 "EHLO
+        Thu, 9 Apr 2020 18:01:10 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41208 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbgDIVxm (ORCPT
+        with ESMTP id S1726632AbgDIWBK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 17:53:42 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039LrVi5028565;
-        Thu, 9 Apr 2020 16:53:31 -0500
+        Thu, 9 Apr 2020 18:01:10 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039M13xW030654;
+        Thu, 9 Apr 2020 17:01:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586469211;
-        bh=tPU56uNiAAL+gf/V/aX4CynehtFz+YGCX4eHOyWKjzc=;
+        s=ti-com-17Q1; t=1586469663;
+        bh=1M+jwazQX4BDpMZKdqu/6bX8vsrM9v22p6tALsFhTxo=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rBoQXvnuj5xT8rF+EjiLUaVqVBoB8C/6lJfTb/R4oeuIcgoWc2ybzIIjjz+hB19m7
-         oxbe83DeC/+tuHunjAuSrUCH5q/2Rl5wEOcVmf6rAjBW7ixj5AK3RjuekSzLwPf7kK
-         LOoGRtszkHx+7KHU8pDCMOQnn9s42qq10aa65ujg=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039LrVVk045866;
-        Thu, 9 Apr 2020 16:53:31 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        b=ovvSPpNcKyvxXg82NJUPUvrdqfAySOrq32XSWMJAs6XmnocP6RYdWcVLlNoWlAb+B
+         LbN3BgvVPbcmHKIEJRshorcFvq0Qm9HOd42XvaRgshF/tG7biFlg1RhDGJcsYFc9kd
+         DeYp9OM3QfLHkuOEHyMxmFzmG//8Pe6Zt/Xw6src=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 039M12UF067248
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Apr 2020 17:01:02 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Apr
- 2020 16:53:31 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 17:01:02 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 9 Apr 2020 16:53:31 -0500
+ Frontend Transport; Thu, 9 Apr 2020 17:01:02 -0500
 Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039LrVLF072663;
-        Thu, 9 Apr 2020 16:53:31 -0500
-Subject: Re: [PATCH v2 06/17] remoteproc: Introduce function
- rproc_alloc_internals()
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039M12ax068082;
+        Thu, 9 Apr 2020 17:01:02 -0500
+Subject: Re: [PATCH 6/7] remoteproc/k3-r5: Initialize TCM memories for ECC
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Loic PALLARDY <loic.pallardy@st.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "ohad@wizery.com" <ohad@wizery.com>,
-        "peng.fan@nxp.com" <peng.fan@nxp.com>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Fabien DESSENNE <fabien.dessenne@st.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
- <20200324214603.14979-7-mathieu.poirier@linaro.org>
- <064cda96467f4ab39b494d543198fa7e@SFHDAG7NODE2.st.com>
- <88f56a4e-dccb-0d50-4656-82380a2e57aa@ti.com> <20200401202950.GA17383@xps15>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-7-s-anna@ti.com> <20200409213633.GB32029@xps15>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <35ddd269-f6a6-2eb7-ebc8-1adc68466493@ti.com>
-Date:   Thu, 9 Apr 2020 16:53:31 -0500
+Message-ID: <b7dfa5d6-53cc-362d-dd76-941639dfbf29@ti.com>
+Date:   Thu, 9 Apr 2020 17:01:02 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20200401202950.GA17383@xps15>
+In-Reply-To: <20200409213633.GB32029@xps15>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,114 +73,76 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409215331.Ffid0tvWYXuBm7V8qE847yqPz8UPlLkYYg8rQ7EqqV4@z>
+Message-ID: <20200409220102.vRAxUDAoncl3KhQSHKDeuFhJe9xBKgjbphs7wAN1NiY@z>
 
-On 4/1/20 3:29 PM, Mathieu Poirier wrote:
-> Hi Suman,
+On 4/9/20 4:36 PM, Mathieu Poirier wrote:
+> On Tue, Mar 24, 2020 at 03:18:18PM -0500, Suman Anna wrote:
+>> The R5F processors on K3 SoCs all have two TCMs (ATCM and BTCM) that
+>> support 32-bit ECC. The TCMs are typically loaded with some boot-up
+>> code to initialize the R5 MPUs to further execute code out of DDR.
+>> The ECC for the TCMs is enabled by default on K3 SoCs due to internal
+>> default tie-off values, but the TCM memories are not initialized on
+>> device power up. Any read access without the corresponding TCM memory
+>> location initialized will generate an ECC error, and any such access
+>> from a A72 or A53 core will trigger a SError.
+>>
+>> So, zero initialize both the TCM memories before loading any firmware
+>> onto a R5F in remoteproc mode. Any R5F booted from U-Boot/SPL would
+>> require a similar initialization in the bootloader. Note that both
+>> the TCMs are initialized unconditionally as the TCM enable config bits
+>> only manage the access and visibility from R5. The Core1 TCMs are not
+>> used and accessible in LockStep mode, so they are only initialized
+>> in Split-mode.
 > 
-> On Mon, Mar 30, 2020 at 03:38:14PM -0500, Suman Anna wrote:
->> Hi Mathieu,
->>
->> On 3/27/20 6:10 AM, Loic PALLARDY wrote:
->>> Hi Mathieu,
->>>
->>>>
->>>> In preparation to allocate the synchronisation operation and state
->>>> machine, spin off a new function in order to keep rproc_alloc() as
->>>> clean as possible.
->>>>
->>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>> ---
->>>>  drivers/remoteproc/remoteproc_core.c | 26 ++++++++++++++++++++++---
->>>> -
->>>>  1 file changed, 22 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/remoteproc/remoteproc_core.c
->>>> b/drivers/remoteproc/remoteproc_core.c
->>>> index ee277bc5556c..9da245734db6 100644
->>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>> @@ -2018,6 +2018,26 @@ static int rproc_alloc_ops(struct rproc *rproc,
->>>> const struct rproc_ops *ops)
->>>>  	return 0;
->>>>  }
->>>>
->>>> +static int rproc_alloc_internals(struct rproc *rproc, const char *name,
->>>> +				 const struct rproc_ops *boot_ops,
->>>> +				 const char *firmware, int len)
->>>
->>> len argument is not used in the patch nor in the following, maybe removed from my pov.
->>
->> Indeed.
->>
->>>
->>> Regards,
->>> Loic
->>
->>>> +{
->>>> +	int ret;
->>>> +
->>>> +	/* We have a boot_ops so allocate firmware name and operations */
->>>> +	if (boot_ops) {
->>>> +		ret = rproc_alloc_firmware(rproc, name, firmware);
->>>> +		if (ret)
->>>> +			return ret;
->>
->> So, can you explain why firmware allocation now becomes conditional on
->> this boot_ops?
+> Everything was going well with this changelog until the last sentence.
+> Intuitively one is looking for the code that avoids the initialisation for
+> "Core1" in the patch but it is not there, and rightly so.  In locksetup mode the
+> second core is not registered with the remoteproc core and as such the
+> associated TCMs won't be initialised.
 > 
-> There is no point in allocating a firmware name in a scenario where the
-> remoteproc core is only synchronising with the MCU.  As soon as a boot_ops (to
-> be renamed ops as per your comment below) is present I assume firmware loading
-> will be involved at some point.   Do you see a scenario where that wouldn't be
-> be case?
+> Simply put, I would just remove the last sentence as all it does (at least for
+> me) is add confusion.
 
-No. But that isn't until the whole sync stuff is introduced. As of this
-patch, it it still code refactoring. And I would think that the cases
-where only sync_ops will be used will be the minority.
+Yep, that was more of a "NOTE: " type comment on overall behavior. I
+will drop the sentence for v2.
 
 regards
 Suman
 
 > 
->>
->> Perhaps, continue to call this as ops following the field name in struct
->> rproc.
+> With that:
 > 
-> Ok
+> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > 
 >>
->> regards
->> Suman
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> ---
+>>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
 >>
->>>> +
->>>> +		ret = rproc_alloc_ops(rproc, boot_ops);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>>  /**
->>>>   * rproc_alloc() - allocate a remote processor handle
->>>>   * @dev: the underlying device
->>>> @@ -2064,10 +2084,8 @@ struct rproc *rproc_alloc(struct device *dev, const
->>>> char *name,
->>>>  	rproc->dev.class = &rproc_class;
->>>>  	rproc->dev.driver_data = rproc;
->>>>
->>>> -	if (rproc_alloc_firmware(rproc, name, firmware))
->>>> -		goto out;
->>>> -
->>>> -	if (rproc_alloc_ops(rproc, ops))
->>>> +	if (rproc_alloc_internals(rproc, name, ops,
->>>> +				  firmware, len))
->>>>  		goto out;
->>>>
->>>>  	/* Assign a unique device index and name */
->>>> --
->>>> 2.20.1
->>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index 655f8f14c37d..8c9b7ae5d8b7 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -366,6 +366,17 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>>  		dev_err(dev, "unable to enable cores for TCM loading, ret = %d\n",
+>>  			ret);
+>>  
+>> +	/*
+>> +	 * Zero out both TCMs unconditionally (access from v8 Arm core is not
+>> +	 * affected by ATCM & BTCM enable configuration values) so that ECC
+>> +	 * can be effective on all TCM addresses.
+>> +	 */
+>> +	dev_dbg(dev, "zeroing out ATCM memory\n");
+>> +	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+>> +
+>> +	dev_dbg(dev, "zeroing out BTCM memory\n");
+>> +	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> -- 
+>> 2.23.0
 >>
 
