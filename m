@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F225AC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 20:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65199C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 20:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A926D20753
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 20:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BDA320730
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 20:55:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EnyTchwk"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NN9m6UmF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbgDIUkd (ORCPT
+        id S1726714AbgDIUzm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 16:40:33 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33830 "EHLO
+        Thu, 9 Apr 2020 16:55:42 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:35116 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbgDIUkd (ORCPT
+        with ESMTP id S1726650AbgDIUzm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 16:40:33 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039KeLjR010093;
-        Thu, 9 Apr 2020 15:40:21 -0500
+        Thu, 9 Apr 2020 16:55:42 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039KtauM013660;
+        Thu, 9 Apr 2020 15:55:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586464821;
-        bh=re+azQQ3kywqYx/PMgrtj36ad9tNre5/xryIjFlrNiI=;
+        s=ti-com-17Q1; t=1586465736;
+        bh=l7GkzXRl+IQScYfIGZmCkkbK4ZjccMGxRwdQJDTaLcc=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=EnyTchwkwDccwOzs9RB+oyXvfmCOIAJ2yIA4IOCPAvOVeRMbYmBYfE16zZ4GxueM0
-         MOrx4gH6ynbxgnWx5bIQd0zE+60RJN9ovq70+nmyAoMH6hItLLAkReLCI2PgeffLIK
-         UdO5eeDl3t5aFRmHVgDM4835gtR+qVd2k5IzHrQ0=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 039KeLJF002083
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Apr 2020 15:40:21 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+        b=NN9m6UmFrvo6wvL/Hg6M+IC64F2HkF9EMuStR1BeDR9ApPC6gDiV/fFNY44QjAerj
+         B/V3jj2CHVk7fNz/R54CLHDdNhlAVrsodIjKjDpg9D+FE0TWk31wclwFXuaPjI+TQB
+         8JnEnK72zGnpBmQGFe1KiM47xSYmWZWkNfb9ONcA=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039KtaxJ096541;
+        Thu, 9 Apr 2020 15:55:36 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Apr
- 2020 15:40:20 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ 2020 15:55:36 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 9 Apr 2020 15:40:20 -0500
+ Frontend Transport; Thu, 9 Apr 2020 15:55:36 -0500
 Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039KeKhS073139;
-        Thu, 9 Apr 2020 15:40:20 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039KtZDe102151;
+        Thu, 9 Apr 2020 15:55:35 -0500
 Subject: Re: [PATCH v2 16/17] remoteproc: Correctly deal with MCU
  synchronisation when changing state
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -62,14 +61,14 @@ References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
  <20200324214603.14979-17-mathieu.poirier@linaro.org>
  <c9fb2f50e93b4f8dad43392bf61f736a@SFHDAG7NODE2.st.com>
  <20200330234934.GH31331@xps15> <5223cca7-5409-a113-8a7f-9f6923231353@ti.com>
- <20200402204231.GC9160@xps15>
+ <20200401212910.GE17383@xps15>
 From:   Suman Anna <s-anna@ti.com>
-Message-ID: <3240a2b3-094d-fb05-e8e9-500f9fe8466d@ti.com>
-Date:   Thu, 9 Apr 2020 15:40:20 -0500
+Message-ID: <22ad887a-5758-8733-0afc-78dec913827d@ti.com>
+Date:   Thu, 9 Apr 2020 15:55:35 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20200402204231.GC9160@xps15>
+In-Reply-To: <20200401212910.GE17383@xps15>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,11 +77,9 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409204020.w_sOqYNGFNbGlwwXgXNSJaX3_E1MNkIOBfcUlEQgAaw@z>
+Message-ID: <20200409205535.wbigy6xKy-cCAVhS8JjMHJHc0E8SDZuykTjaIXk_qWo@z>
 
-On 4/2/20 3:42 PM, Mathieu Poirier wrote:
-> Hi Suman,
-> 
+On 4/1/20 4:29 PM, Mathieu Poirier wrote:
 > On Tue, Mar 31, 2020 at 05:35:58PM -0500, Suman Anna wrote:
 >> Hi Mathieu,
 >>
@@ -175,6 +172,16 @@ On 4/2/20 3:42 PM, Mathieu Poirier wrote:
 >>
 >> There's actually one more scenario even without "stop". If auto_boot is
 >> set to false, then rproc_actuate will never get called.
+> 
+> I fail to fully understand the situation you are describing - can you give me
+> more information?
+
+The platform driver has auto_boot set to false and sync_states set, so
+rproc_trigger_auto_initiate() never gets called in rproc_add(), and
+rproc_actuate() doesn't happen either. rproc->state is not RUNNING, and
+you will bail out here, and there is no way to start it either.
+
+> 
 >>
 >>>> In the following configuration which can be configuration for coprocessor with romed/flashed
 >>>> firmware (no reload needed):
@@ -213,27 +220,6 @@ On 4/2/20 3:42 PM, Mathieu Poirier wrote:
 >> I guess this is what the original skip_fw_load was doing. And with the
 >> current series, the userspace loading support usecase I have cannot be
 >> achieved. If this is added back, I can try if that works for my usecases.
-> 
-> I didn't notice this comment upon first read... Can you give me more details on
-> what your usecase is order to see how best to deal with it?
-
-We have a userspace loader usecase, where we use a daemon/server that
-does the loading, and talks to the keystone remoteproc driver over a
-character driver to publish the resource table and boot vectors, and to
-start/stop the processor. You can find more details on the downstream
-commit [1] we have. We exercise the regular kernel rproc state-machine
-and suppress the firmware segment loading portion of it.
-
-regards
-Suman
-
-[1]
-https://git.ti.com/gitweb?p=rpmsg/remoteproc.git;a=commit;h=c41f591ccaaeef66bd4ccbb883ae72f6b0d173d7
-
-> 
-> Thanks,
-> Mathieu
-> 
 >>
 >>>> +		ret = request_firmware(&firmware_p, rproc->firmware, dev);
 >>>> +		if (ret < 0) {
@@ -270,6 +256,21 @@ https://git.ti.com/gitweb?p=rpmsg/remoteproc.git;a=commit;h=c41f591ccaaeef66bd4c
 >>> rproc_can_shutdown() in rproc_shutdown().
 >>
 >> I am assuming only the new conditions, right?
+> 
+> Once again I fail to grasp the extent of your comment.  Can you be more specific
+> about the "new conditions"?
+
+rproc_can_shutdown() has three checks, where the first check is existing
+check that got moved, and the other 2 are the new checks that deal with
+the sync states. So, I meant these 2 new sync checks.
+
+regards
+Suman
+
+> 
+> Thanks
+> Mathieu
+> 
 >>
 >> regards
 >> Suman
