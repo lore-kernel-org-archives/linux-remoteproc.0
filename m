@@ -7,61 +7,64 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07337C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 01:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F89C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 01:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC8520769
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 01:30:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A2F20936
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 01:32:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hNTGdcYI"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RRcSMSWq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgDJBaD (ORCPT
+        id S1726523AbgDJBcJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 21:30:03 -0400
-Received: from mail-eopbgr150074.outbound.protection.outlook.com ([40.107.15.74]:58790
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        Thu, 9 Apr 2020 21:32:09 -0400
+Received: from mail-eopbgr60087.outbound.protection.outlook.com ([40.107.6.87]:58179
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726327AbgDJBaD (ORCPT
+        id S1726327AbgDJBcJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 21:30:03 -0400
+        Thu, 9 Apr 2020 21:32:09 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iXy+0kDsD/v97xv6FjpT7si+ajVaIt9GJzwi8f5B1YaBUisisIHmHNVYNE1AdPsNJTnBW0UPpheJanqIu3rqkQfgpZD/WO9kTutfTXTuKVJ1EJ46C4YOpWMyso7kgGRUJ6t+s4QnaiwjHC1M/aY1lR6eLUwBpvGs5yDKTV43v0uXNz1oi4JhjFmGV1mYejmaUBUJXvE6mLO/cPrJhQLsZepRWz46hzXbo4lQDa2kQ/UMZTxbdV2ZfB6zi/u1tvwVQFSx6pMb6oGPYxVujA2NqmJh8Tl0+AlGuVV3GudtubHzLXfhINh3R6raNGPKfKQngRThn0YbxkeC4zaO0Zju3w==
+ b=FkW7crIIbhObwEdZUXyd5BaUiLF+sCjp0qc0DA9RV3iQKuqY/c3yr0iKqfH0johChyV7UJ1q8jjDAp6DsMxQwEprI2VwKpLWM25qN3zq1BfLm78/ZsmXZh+NK95D1NO52FHtQiI2oTK8FI3B7D1nZzdBnOCp1NNIefjRLZRwbtvmyYk2QpFgF9Pg7XZ/KFbZdElLk4WdAqHaf1LSWOkdraFd/26FbULDbnCifj/Zg0j9ZagTiCZP4XFrInKCjxPpVgR4BeWW82cZE83K3paablNrrlmz9mD24vPLRhx6Kzd1sQzeO9RV/LURH3MjkpF+uB//4S9j8dNb2Qvsfxn76Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2dURG8zsqU2ZJe/vFBXp5gBH+vXZB9DQvt2K6ZKfXsk=;
- b=VRihnBxcQahBFwm517DzSEQuZ0YepUpl4paUFzIkpVCzAIwlxm683HUcBDwRq4cIOxDllF98i5JF5+AAQ9Akh3A6C9oHS11g7l06GHEtVHXKrBXFvXkShgzK6+Zeomk09I1Toq5ZI7cSJCFheDXEYEXlUSRZehXEfNY7/aSMmD7xcPFZ0/da+s4nLa61zJDl9UGSm/HtFkCRxYQYTGViWcCiErJIY9yq7dck3Xq0j/2RK+42nXyWUWmck4jQUopxfHvYGiqiqJLqHh2aQfNYFImAWh9DGQqbuTtgnzrg22gi0ybmyWeHIyqjUsLtw1LnXhjq/TCObBL8j16truNW+Q==
+ bh=BthebZYLasqzsmPBQOfk9TUGY2ED9oEi8m32hPjddKU=;
+ b=M6JjLWogLNLYG7KCwP9DcxsYjiSJ6/salfFh1J32fYSR5ErdyKexCrecVaItWIHNpuZf2WkdrLm0XyseqhQk2hOiUg0WJq3kNjFZ7wwt4aVT0pDtUopEqoCkaUOxP1stJCPW7aCXastJYhH9N2HVtSPSGcl6QPwl5vquEMXLl09idcr0u3LgQWiELrGoLEhsxnndHWZIbJQszqhlf9SApAMp0+fbzL3i5TmbMH/h53VuZK6cSJH3po04qt/H69cUM+bshnDAjU8piTKHQ18jsP/w2i6Kuh/elLGXRq29pOewPVvuE8k8skIVAcoQ+C281VejKprPynU+fgJTZInujA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2dURG8zsqU2ZJe/vFBXp5gBH+vXZB9DQvt2K6ZKfXsk=;
- b=hNTGdcYI3CSIIKI8ETbp3A2uNUpZRWsNsT36anQHtLZxafrjg4TgVETlosdlhprPGhDhv2as0H9wFkCBaLKomIddjJv/6WdfNn3fB/KnmwvenN9pIQV5wlDp+JwAowTSFBQwZ63VQ6yGe3TlgLDlxgW5qZ2ByNtewkicfKRHTqw=
+ bh=BthebZYLasqzsmPBQOfk9TUGY2ED9oEi8m32hPjddKU=;
+ b=RRcSMSWqyWBs6bw+MNzezpidR+NqLi6ENvEtxrem7P+Stm0hxPHQhqSRSIzDWmTm5wAIFklDLaKkdlgS5Lcr/FKDZ2KQijOJ9K3lkiLVWbcC1U23F02TMJj9yPLxqfnRxLeAwlwF10Tktpbr8Ci7iukm8uwnF8LT89o87zj7zPc=
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (2603:10a6:208:70::15)
- by AM0PR04MB5907.eurprd04.prod.outlook.com (2603:10a6:208:12f::32) with
+ by AM0PR04MB4065.eurprd04.prod.outlook.com (2603:10a6:208:57::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.17; Fri, 10 Apr
- 2020 01:29:59 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.15; Fri, 10 Apr
+ 2020 01:32:02 +0000
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2900.015; Fri, 10 Apr 2020
- 01:29:59 +0000
+ 01:32:02 +0000
 From:   Peng Fan <peng.fan@nxp.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 CC:     "ohad@wizery.com" <ohad@wizery.com>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 1/2] remoteproc: drop memset when loading elf segments
-Thread-Topic: [PATCH 1/2] remoteproc: drop memset when loading elf segments
-Thread-Index: AQHWDkksD911aIjfYEmeF50HneT1dahxj+QAgAAA5uA=
-Date:   Fri, 10 Apr 2020 01:29:59 +0000
+Subject: RE: [PATCH 2/2] remoteproc: use filesz as backup when translate memsz
+ fail
+Thread-Topic: [PATCH 2/2] remoteproc: use filesz as backup when translate
+ memsz fail
+Thread-Index: AQHWDkktpZBH/gJE+EqHoCmC5/cfIahxkGoAgAACJtA=
+Date:   Fri, 10 Apr 2020 01:32:02 +0000
 Message-ID:
- <AM0PR04MB44816C59A9BE84465AC8F2C388DE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <AM0PR04MB4481B8AA8ADB836ED8398ADF88DE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
 References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
- <20200410012034.GU20625@builder.lan>
-In-Reply-To: <20200410012034.GU20625@builder.lan>
+ <1586420572-28353-2-git-send-email-peng.fan@nxp.com>
+ <20200410012226.GV20625@builder.lan>
+In-Reply-To: <20200410012226.GV20625@builder.lan>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -71,146 +74,58 @@ authentication-results: spf=none (sender IP is )
 x-originating-ip: [119.31.174.71]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 2d503d0e-b512-49f8-63a8-08d7dceeaf4b
-x-ms-traffictypediagnostic: AM0PR04MB5907:|AM0PR04MB5907:
+x-ms-office365-filtering-correlation-id: 89264a48-70b8-43c0-e623-08d7dceef853
+x-ms-traffictypediagnostic: AM0PR04MB4065:|AM0PR04MB4065:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB59078B9B5DEADBC09408304F88DE0@AM0PR04MB5907.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR04MB4065137A53D19C26D0540F5088DE0@AM0PR04MB4065.eurprd04.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 0369E8196C
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB4481.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(376002)(346002)(396003)(136003)(366004)(39860400002)(81156014)(8936002)(5660300002)(6506007)(71200400001)(8676002)(186003)(26005)(33656002)(2906002)(44832011)(478600001)(66556008)(52536014)(9686003)(7696005)(6916009)(64756008)(66446008)(66476007)(55016002)(316002)(81166007)(86362001)(76116006)(4326008)(54906003)(66946007);DIR:OUT;SFP:1101;
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB4481.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(136003)(39860400002)(396003)(366004)(346002)(376002)(5660300002)(52536014)(64756008)(66946007)(66446008)(66556008)(66476007)(76116006)(81166007)(71200400001)(478600001)(6506007)(2906002)(7696005)(9686003)(26005)(186003)(55016002)(86362001)(4326008)(316002)(44832011)(8936002)(54906003)(6916009)(81156014)(8676002)(33656002);DIR:OUT;SFP:1101;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: tJisyu0j17Mdyf0lMywGamQGOVNvBhgQPAhl0to/eK6SHQE0i3Zgt7PhsmXuqPTB6A4vox+SXxAgAXFPjnhM8vIO6EoKfr/V/NK5zVUO7H3ttAiOfWcz9SS02zuP+/UM2sFsII1nvPMLknYEmBvlsCSyY3icCJuAmepV7NgbdFopEH66luukIgYDyrbA+H8vy1UyPvvPFe/2YCMkBiodFP1+lXQQZ2rgM2OiF6WuyRlZbgWFru/WvDHUtFGChdA54vVIJfFzMLiGihN9mDgPCImMhUJno6niXBRomRW9qN0KXzNumkYRhTf84hLFy/t1EnvFc6WSAYOV17+R1LRq66IEeEwVikjD9p1s2uaC99S9HbA+VMOooTLiqN2IkgatdYDI8PwGfPMRL+BwvgDvjrn8s6kRx0mrqxvclWwpgVr4pLHXfK/+DgekoyapE2H0
-x-ms-exchange-antispam-messagedata: eDHEGkTcPKc7Fj6/0LoS0qmGbbNatiMHy1y4aIou4pU+5jzXYjaaMDpyqBE9kojIF4dwEtLwI5dWqKXiNtyzOo7YuMGSoKPD3kcv6S/yLNgu/Clk4iQngFUvxUxb2S5VakF6jMKJDXKGo5kOJ4izNg==
+x-microsoft-antispam-message-info: QEE3ucW9rkJogsmSJ5fQkzmElKMqrVSWNnf/rPoX4ymFtQpsJyUQzTqEudz/KaoWb5IQDxLKbIE47MKwpSPBrFHb7HPbNsogGiApeIf5LNr+h+Ahv5MQwxwuaF5aOGEmlHfAx3943FdmmoWJYLf5hvpckCfqg5r730vsXmamVzat8WV3cidBkLgkPxO5HiNQ56H6gNhUQekTQfv4XnmFCP71jub4cMyPvWDgZvQuNQNATWI55U0WLzjBFSnUrDabYgzyyRIZTpYP54OBkAH4iQUvVq+3gBu8OJtJTcng+J+IvwfyyzRWuI4g1eVvyB+1y2CD9082VMAnXUIZjWlQSDl81PGRPDqTPXBG4+9JG7X6EM0BqQyZQY48isfp9EM/9sJj03pOD/H2QOY55vRoKxeqwZGseGb6plpv/JzbWblBygw3jDpkrWbTkU+Xa5H/
+x-ms-exchange-antispam-messagedata: ycywC0YQlNgWSBN2aMc9lh9HDuHQ0GnZxa1MIIbABjvaUMJSEKGF46rXHIYfrtxP2vq4TqTy/G0LlFLqORInXb36QC6ELzNQVDbqz64wUG9LD5Xbu2zc6SVr3CpZpHjbgLQ5R0wF8oGmdeZ7bfQM2w==
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d503d0e-b512-49f8-63a8-08d7dceeaf4b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2020 01:29:59.5766
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89264a48-70b8-43c0-e623-08d7dceef853
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2020 01:32:02.2160
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zxh9/13TGd0sw6wwWcsMvyDsc3rnVhFKO0JB3GaIxWFHPH274yoUcHZvlRlNSCaWzl+sokdmgK5YLtoVClrdZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5907
+X-MS-Exchange-CrossTenant-userprincipalname: u88Djsx5171xmtmTviOCwOdI6kKGzj3mRmW9GGFyTdsr5FboZNj9hCWe+r7vm2jgEKEp8HDrMgez3MlfhCaqxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4065
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200410012959.g7ScMdmBBW8dtG0f_T5fYoGihrFnbxdKlr02_G7FsFQ@z>
+Message-ID: <20200410013202.sNFg9Q9NkuATaWLpG6fNvB4NCTF1hzC4OHWv9vk4o_I@z>
 
 Hi Bjorn,
 
-> Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf
-> segments
+> Subject: Re: [PATCH 2/2] remoteproc: use filesz as backup when translate
+> memsz fail
 >=20
 > On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
 >=20
-> > To arm64, "dc      zva, dst" is used in memset.
-> > Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
-> >
-> > "If the memory region being zeroed is any type of Device memory, this
-> > instruction can give an alignment fault which is prioritized in the
-> > same way as other alignment faults that are determined by the memory
-> > type."
-> >
-> > On i.MX platforms, when elf is loaded to onchip TCM area, the region
-> > is ioremapped, so "dc zva, dst" will trigger abort.
-> >
-> > Since memset is not strictly required, let's drop it.
+> > Since we no need memset if memsz is larger than filesz, we could use
+> > filesz for the da to va translation when memsz translation fail.
 > >
 >=20
-> This would imply that we trust that the firmware doesn't expect remotepro=
-c
-> to zero out the memory, which we've always done. So I don't think we can =
-say
-> that it's not required.
+> To me this implies that the firmware has a segment that's larger than the
+> memory that it's going to run in. I think even if we're not writing to th=
+e entire
+> memsz, asking da_to_va for the entire memsz provides a valuable sanity
+> check.
 
-Saying an image runs on a remote core needs Linux to help zero out BSS sect=
-ion,
-this not make sense to me. My case is as following, I need to load section =
-7 data.
-I no need to let remoteproc to memset section 8/9/10/11/12, the firmware it=
-self
-could handle that. Just because the memsz is larger than filesz, remoreproc=
- must
-memset?
-Section Headers:
-  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk I=
-nf Al
-  [ 0]                   NULL            00000000 000000 000000 00      0  =
- 0  0
-  [ 1] .interrupts       PROGBITS        1ffe0000 010000 000240 00   A  0  =
- 0  4
-  [ 2] .resource_table   PROGBITS        1ffe0240 010240 000058 00   A  0  =
- 0  1
-  [ 3] .text             PROGBITS        1ffe02a0 0102a0 009ccc 00  AX  0  =
- 0 16
-  [ 4] .ARM              ARM_EXIDX       1ffe9f6c 019f6c 000008 00  AL  3  =
- 0  4
-  [ 5] .init_array       INIT_ARRAY      1ffe9f74 019f74 000004 04  WA  0  =
- 0  4
-  [ 6] .fini_array       FINI_ARRAY      1ffe9f78 019f78 000004 04  WA  0  =
- 0  4
-  [ 7] .data             PROGBITS        1fff9240 029240 000084 00  WA  0  =
- 0  4
-  [ 8] .ncache.init      PROGBITS        1fff92c4 0292c4 000000 00   W  0  =
- 0  1
-  [ 9] .ncache           NOBITS          1fff92c4 0292c4 000a80 00  WA  0  =
- 0  4
-  [10] .bss              NOBITS          1fff9d44 0292c4 01f5c0 00  WA  0  =
- 0  4
-  [11] .heap             NOBITS          20019304 0292c4 000404 00  WA  0  =
- 0  1
-  [12] .stack            NOBITS          20019708 0292c4 000400 00  WA  0  =
- 0  1
-
->=20
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_elf_loader.c | 7 ++-----
-> >  1 file changed, 2 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
-> > b/drivers/remoteproc/remoteproc_elf_loader.c
-> > index 16e2c496fd45..cc50fe70d50c 100644
-> > --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> > @@ -238,14 +238,11 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> const struct firmware *fw)
-> >  			memcpy(ptr, elf_data + offset, filesz);
-> >
-> >  		/*
-> > -		 * Zero out remaining memory for this segment.
-> > +		 * No need zero out remaining memory for this segment.
-> >  		 *
-> >  		 * This isn't strictly required since dma_alloc_coherent already
-> > -		 * did this for us. albeit harmless, we may consider removing
-> > -		 * this.
-> > +		 * did this for us.
->=20
-> In the case of recovery this comment is wrong, we do not
-> dma_alloc_coherent() the carveout during a recovery.
-
-Isn't the it the firmware's job to memset the region?
-
->=20
-> And in your case you ioremapped existing TCM, so it's never true.
->=20
-> >  		 */
-> > -		if (memsz > filesz)
-> > -			memset(ptr + filesz, 0, memsz - filesz);
->=20
-> So I think you do want to zero out this region. Question is how we do it.=
-..
-
-I have contacted our M4 owners, we no need clear it from Linux side.
-We also support booting m4 before booting Linux, at that case, Linux has
-noting to do with memset. It is just I try loading m4 image with Linux,
-and met the issue that memset trigger abort.
+da_to_va implies that Linux should have the va map to da. However
+that will be case that Linux is not able to touch all da, it only able touc=
+h
+half. Then Linux should also map all da?
 
 Thanks,
 Peng.
@@ -219,9 +134,36 @@ Peng.
 > Regards,
 > Bjorn
 >=20
-> >  	}
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
 > >
-> >  	if (ret =3D=3D 0)
+> > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
+> > b/drivers/remoteproc/remoteproc_elf_loader.c
+> > index cc50fe70d50c..74d425a4b34c 100644
+> > --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> > @@ -229,8 +229,16 @@ int rproc_elf_load_segments(struct rproc *rproc,
+> const struct firmware *fw)
+> >  		if (!ptr) {
+> >  			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
+> >  				memsz);
+> > -			ret =3D -EINVAL;
+> > -			break;
+> > +
+> > +			ptr =3D rproc_da_to_va(rproc, da, filesz);
+> > +			if (!ptr) {
+> > +				dev_err(dev,
+> > +					"bad phdr da 0x%llx mem 0x%llx\n",
+> > +					da, filesz);
+> > +				ret =3D -EINVAL;
+> > +				break;
+> > +			}
+> > +
+> >  		}
+> >
+> >  		/* put the segment where the remote processor expects it */
 > > --
 > > 2.16.4
 > >
