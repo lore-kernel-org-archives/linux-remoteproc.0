@@ -2,323 +2,284 @@ Return-Path: <SRS0=Skgh=52=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D322C2BA2B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 14:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E38C2D0EC
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 20:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D964220A8B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 14:51:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1C0F20732
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 20:30:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="g2khOrPE"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BJOWgcJr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbgDJOvh (ORCPT
+        id S1726626AbgDJUaK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Apr 2020 10:51:37 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:34372 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726009AbgDJOvg (ORCPT
+        Fri, 10 Apr 2020 16:30:10 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40590 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgDJUaK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Apr 2020 10:51:36 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03AElMPO031008;
-        Fri, 10 Apr 2020 16:51:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=JG4ggwAOInAaaLwQnOLLQb7wIvHrZssGt6cM8gL6As4=;
- b=g2khOrPEW9SV32ZRwNQEVtKl9rFy53QAfsod6e1fR77Snt412upXOFgqFr1LDpfwZu8Y
- UyZZXPfBaOq7yn/ZoCInN+yyUyiCkTZT+C65Ty5kTVqa7ToVK3TM0aF6emIeMJ/m4vSZ
- ooKAlqpOtmKm4iCj/DsYnZ0byfe+2mgScnc5l20b5SFajc8wIsmm13GqBS7Z5HMSLbZS
- eLob+emRzQRVy5zXp/nCLuq2giqtPkh2ci+TKPzSbzpH0Mt9NERuM9xq1Y8N+W/ZNyFT
- xVnpmn8LgXQVfVEjdgvuVo6AvR6KbypSbhYeRhZw4CnOWEeVkTkhm1hfSVQcT6YSyY1e HA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 309vr9dumc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Apr 2020 16:51:22 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C518A10002A;
-        Fri, 10 Apr 2020 16:51:17 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AC5802AE6DC;
-        Fri, 10 Apr 2020 16:51:17 +0200 (CEST)
-Received: from lmecxl0889.tpe.st.com (10.75.127.44) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 10 Apr
- 2020 16:51:16 +0200
-Subject: Re: [PATCH v2 1/2] remoteproc: Add character device interface
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <rishabhb@codeaurora.org>, Cl?ment Leger <cleger@kalrayinc.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        psodagud <psodagud@codeaurora.org>, tsoni <tsoni@codeaurora.org>,
-        sidgup <sidgup@codeaurora.org>,
-        <linux-remoteproc-owner@vger.kernel.org>
-References: <1585699438-14394-1-git-send-email-rishabhb@codeaurora.org>
- <5b1c8287-0077-87e7-9364-b1f5a104c9e3@st.com>
- <6261646b2e0c4d9c8a30900b2f475890@codeaurora.org>
- <730c75c9-15e2-19c5-d97a-190bf1e6ffaa@st.com>
- <634144036.14036712.1586174761552.JavaMail.zimbra@kalray.eu>
- <8379238a-a9e0-da4e-330a-18dffba5f841@st.com>
- <1331212923.14096350.1586188737626.JavaMail.zimbra@kalray.eu>
- <877ed3c91c8f140a08a743f03cafc633@codeaurora.org>
- <d1ccddc1-c97b-7573-74eb-ff0f09337cce@st.com>
- <20200410020035.GX20625@builder.lan>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@st.com>
-Message-ID: <9ce02bc3-0203-aa07-b29f-97f4fea718c4@st.com>
-Date:   Fri, 10 Apr 2020 16:51:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 10 Apr 2020 16:30:10 -0400
+Received: by mail-pl1-f194.google.com with SMTP id h11so1002729plk.7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 10 Apr 2020 13:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wm2I/9l0ZSUtMU6eFNvpKjwD13hR3fJP0erslNTJ0Rg=;
+        b=BJOWgcJrTwuu4yNHFjFMhQ5w2wbQTBX7TzJS6iJpWfMTmQNbTDG0bi0tcJ1aX1qIp8
+         ILfrFF8WrCxWwSiiOSquAOwGijGqfrgSiwZmu2mb7K5It0Pf8ENWd6UHYjqAbQXb+aDl
+         lyVguT9UGyfrsTxyvySlBfwwOTxE7Xp8wi+fCc/DOxfduwXyY2jbpVcx18WklFPiUFT9
+         dnaXzRj/kb9CneXKVz62cNHYGfuG5fnNMA8oU5m96Q6zU24DC5Td7pdm/S/x8JAlDrIF
+         VyUp+ZljwzyoJC5QS62DDju6HX1USH7RBD6VlWi4KnET+xfQ4iaHguoX/6YOJ5z52oAk
+         Qukw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wm2I/9l0ZSUtMU6eFNvpKjwD13hR3fJP0erslNTJ0Rg=;
+        b=Byo1nMRLge6A2wgN4T84G4MHGTt+H4u/tZIAcN/aZPVSRDFZMADEQGd6BSkj28y/cU
+         52zAtvf+pdlaBHFlZjcWBeRjjmzTS4lWK2/0Bjfzx1DHe63EtsKSOtGSfJ65i7Ug8i9L
+         RmIyoRUywG/DuvAXE/bwIiADQxC+cenC0fYQYmXsY7rdmn7cGcftyKjRDRhzAmTiZbzc
+         4P2BbSVYFsXpw4rQk6vBfbaXnTlVNUknLwpXWK8iupKIjOhXjkxZF3rlJo2VZRz4wVKo
+         mLd9wPpmHf+NncAfSV+HFogxGlF4k6bvZDcZ8tbkX2O37GOsXUsrp3aXtMB5hGrpyFRJ
+         TR6A==
+X-Gm-Message-State: AGi0PubaqkIsMiW97FGPzlu0LeHP2H9eA6INr+LfMgl2mWc5sXbxwaWu
+        7EpoMwrnyvKN8IvHCkP8pb4qqg==
+X-Google-Smtp-Source: APiQypK69YgPl3Ql4HrQ0ELNvGRN1zb1pV0YmESscULM4GxocFCj0uNA8hsUMMwivEMYpP4RG6Bphw==
+X-Received: by 2002:a17:90b:1b05:: with SMTP id nu5mr7416590pjb.110.1586550609349;
+        Fri, 10 Apr 2020 13:30:09 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id i14sm2267175pgh.47.2020.04.10.13.30.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Apr 2020 13:30:08 -0700 (PDT)
+Date:   Fri, 10 Apr 2020 14:30:06 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Suman Anna <s-anna@ti.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] remoteproc/k3-r5: Add loading support for on-chip
+ SRAM regions
+Message-ID: <20200410203006.GA9146@xps15>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-8-s-anna@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20200410020035.GX20625@builder.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-10_05:2020-04-09,2020-04-10 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324201819.23095-8-s-anna@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200410145115.v_WvORemjYSRMKCzOQhtmFbje9Ya_Tx19O0On3xrpcs@z>
+Message-ID: <20200410203006.QiT10D1-7xAJf37X4Z1b0C6hAC00Fv6WjZk-bVoyPAM@z>
 
-
-
-On 4/10/20 4:00 AM, Bjorn Andersson wrote:
-> On Thu 09 Apr 01:29 PDT 2020, Arnaud POULIQUEN wrote:
+On Tue, Mar 24, 2020 at 03:18:19PM -0500, Suman Anna wrote:
+> The K3 SoCs has various internal on-chip SRAM memories like the SRAM
+> within the MCU domain or the shared MSMC RAM within NavSS that can be
+> used for multiple purposes. One such purpose is to have the R5F cores
+> use a portion of such on-chip SRAM for fast-access data or to directly
+> execute code.
 > 
->>
->> On 4/8/20 8:34 PM, rishabhb@codeaurora.org wrote:
->>> On 2020-04-06 08:58, Clément Leger wrote:
->>>> Hi Arnaud,
->>>>
->>>> ----- On 6 Apr, 2020, at 16:17, Arnaud Pouliquen arnaud.pouliquen@st.com wrote:
->>>>
->>>>> Hi Clément,
->>>>>
->>>>> On 4/6/20 2:06 PM, Clément Leger wrote:
->>>>>> Hi Arnaud,
->>>>>>
->>>>>> ----- On 6 Apr, 2020, at 11:01, Arnaud Pouliquen arnaud.pouliquen@st.com wrote:
->>>>>>
->>>>>>> On 4/3/20 9:13 PM, rishabhb@codeaurora.org wrote:
->>>>>>>> On 2020-04-02 10:28, Arnaud POULIQUEN wrote:
->>>>>>>>> Hi
->>>>>>>>>
->>>>>>>>> On 4/1/20 2:03 AM, Rishabh Bhatnagar wrote:
->>>>>>>>>> Add the character device interface for userspace applications.
->>>>>>>>>> This interface can be used in order to boot up and shutdown
->>>>>>>>>> remote subsystems. Currently there is only a sysfs interface
->>>>>>>>>> which the userspace clients can use. If a usersapce application
->>>>>>>>>> crashes after booting the remote processor does not get any
->>>>>>>>>> indication about the crash. It might still assume that the
->>>>>>>>>> application is running. For example modem uses remotefs service
->>>>>>>>>> to fetch data from disk/flash memory. If the remotefs service
->>>>>>>>>> crashes, modem keeps on requesting data which might lead to a
->>>>>>>>>> crash. Adding a character device interface makes the remote
->>>>>>>>>> processor tightly coupled with the user space application.
->>>>>>>>>> A crash of the application leads to a close on the file descriptors
->>>>>>>>>> therefore shutting down the remoteproc.
->>>>>>>>>
->>>>>>>>> Sorry I'm late in the discussion, I hope I've gone through the whole
->>>>>>>>> discussion so I don't reopen a closed point...
->>>>>>>>>
->>>>>>>>> Something here is not crystal clear to me so I'd rather share it...
->>>>>>>>>
->>>>>>>>> I suppose that you the automatic restart of the application is not possible to
->>>>>>>>> stop and restart the remote processor...
->>>>>>>> Yes correct, while we wait for the application to restart we might observe a
->>>>>>>> fatal crash.
->>>>>>>>>
->>>>>>>>> Why this use case can not be solved by a process monitor or a service
->>>>>>>>> in userland that detects the application crash and stop the remote
->>>>>>>>> firmware using
->>>>>>>>> the sysfs interface?
->>>>>>>>>
->>>>>>>> What happens in the case where the process monitor itself crashes? This is
->>>>>>>> actually the approach we follow in our downstream code. We have a central entity
->>>>>>>> in userspace that controls bootup/shutdown of some remote processors based on
->>>>>>>> the
->>>>>>>> votes from userspace clients. We have observed cases where this entity
->>>>>>>> itself crashes and remote processors are left hanging.
->>>>>>>
->>>>>>> Your description makes me feel like this patch is only a workaround of something
->>>>>>> that
->>>>>>> should be fixed in the userland, even if i understand that hanging is one of the
->>>>>>> most
->>>>>>> critical problem and have to be fixed.
->>>>>>> For instance, how to handle several applications that interact with the remote
->>>>>>> processor
->>>>>>> ( e.g. rpmsg service applications) how to stop and restart everything. Using the
->>>>>>> char
->>>>>>> device would probaly resolve only a part of the issue...
->>>>>>>
->>>>>>> I'm not aware about your environment and i'm not a userland expert. But what i
->>>>>>> still not
->>>>>>> understand why a parent process can not do the job...
->>>>>>> I just test a simple script on my side that treat the kill -9 of an application
->>>>>>> ("cat" in my case).
->>>>>>
->>>>>> This is not entirely true, if the parent process is killed with a SIGKILL, then
->>>>>> the process will not be able to handle anything and the remoteproc will still
->>>>>> be running.
->>>>>>
->>>>>> What I understood from Rishabh patch is a way to allow a single process handling
->>>>>> the rproc state. We have the same kind of need and currently, if the
->>>>>> user application crashes, then the rproc is still running (which happens).
->>>>>>
->>>>>>>
->>>>>>> #start the remote firmware
->>>>>>> cp  $1 /lib/firmware/
->>>>>>> echo $1> /sys/class/remoteproc/remoteproc0/firmware
->>>>>>> echo start >/sys/class/remoteproc/remoteproc0/state
->>>>>>> #your binary
->>>>>>> cat /dev/kmsg
->>>>>>> # stop the remote firmware in case of crash (and potentially some other apps)
->>>>>>> echo stop >/sys/class/remoteproc/remoteproc0/state
->>>>>>>
->>>>>>
->>>>>> This is not really "production proof" and what happens if the application is
->>>>>> responsible of setting the firmware which might be jitted ?
->>>>>> And if the script receives the SIGKILL, then we are back to the same problem.
->>>>> Yes this is just a basic example, not an implementation which would depend on
->>>>> the
->>>>> environment. i'm just trying here to  put forward a multi-process solution...and
->>>>> that I'm not an userland expert :).
->>>>>
->>>>>>
->>>>>> I really think, this is a step forward an easier and reliable use of the
->>>>>> remoteproc
->>>>>> on userland to guarantee a coherent rproc state even if host application
->>>>>> crashes.
->>> Yes what we want is simple mechanism where a single userspace process can boot/
->>> shutdown the remote processor in all scenarios. Adding more processes to monitor
->>> the already existing process might have 2 issues. One is there might be a delay
->>> between the application crash and process monitor getting to know about it and taking
->>> action. This might prove to be fatal in our case. Second, possibly the monitor can hang
->>> or get killed and is not deterministic.
->>>>>
->>>>> I can see 3 ways of handling an application crash:
->>>>> - just shutdown the firmware
->>>>> => can be done through char device
->>>>> - stop some other related processes and/or generate a remote proc crash dump for
->>>>> debug
->>>>> => /sysfs and/or debugfs
->>>>> - do nothing as you want a silence application reboot and re-attach to the
->>>>> running firmware
->>>>> => use sysfs
->>>>>
->>>>> I'm challenging the solution because splitting the API seems to me not a good
->>>>> solution.
->>>>
->>>> Completely ok with that, we have to fully understand the targeted usecase to
->>>> avoid implemented a flawed interface.
->>>>
->>>>> Now i wonder how it works for the other applications that are relying on some
->>>>> other
->>>>> kernel frameworks...
->>>>
->>>> For some other device, there is a chardev. The watchdog for intance uses a
->>>> /dev/watchdog. Regarding the gpio, it seems they are also using a chardev
->>>> and the sysfs interface is deprecated.
->>>>
->>>>> Perhaps the answer is that these frameworks don't use sysfs but char device.
->>>>> That would means that the sysfs solution is not the more adapted solution and
->>>>> perhaps we should migrate to a char device.
->>>>> But in this case, i think that it should implement the whole API and be
->>>>> exclusive with
->>>>> the syfs legacy API (so no sysfs or sysfs in read-only).
->>>>
->>>> I agree with that, if another interface must be defined, then it should
->>>> implement everything that is supported right now with the sysfs.
->>>>
->>> The other fields that sysfs exposes right now are firmware_name, name(rproc name),
->>> state. The targeted usecase was that these are configuration parameters specific
->>> to the remoteproc and should stay in the sysfs interface. Whereas char device
->>> should provide direct access to remoteproc device.
->>> It would make sense to use this interface in conjunction with sysfs
->>> interface, where you use /dev/remoteproc0 to boot/shutdown the remote processor
->>> sysfs entries to fine tune the parameters.
->>> Adding ioctls to implement all sysfs functionality seems like overkill to me. Let
->>> me know what you guys think.
->>
->> In my opinion if we open the possibility of accessing to remoteproc through a char
->> device, we should move torwards a solution that would replace the sysfs. 
->> In this case sysfs fields could be read-only, and the char devices would have to
->> support the different shutdown modes. This means that the auto shutdown should be
->> configurable (IOCTL?).
->> But I assume that the minimum could be to only disable write access on the "state" field
->> and handle the "auto shutdown" as an option of the char device.
->>
->> Anyway it only my opinion, let Bjorn an Mathieu comment and decide :)
->>
+> Add support to the K3 R5 remoteproc driver to parse and support
+> loading into such memories. The SRAM regions need to be mapped as
+> normal non-cacheable memory to avoid kernel crashes when the remoteproc
+> loader code uses the Arm64 memset library function (the "DC ZVA"
+> instruction throws a alignment fault on device type memory).
 > 
-> I have two concerns with migrating things to a character device:
+> These SRAM regions are completely optional as not all firmware images
+> require these memories, and any such memory has to be reserved as such
+> in the DTS files.
 > 
-> 1) Operating an ioctl based interface requires specialized tooling. E.g.
-> today whatever your installation is you can change firmware name and
-> start a core with the user space tools you have. Further more allowing
-> you to change firmware name before powering on the core would imply that
-> both of these would have to be ioctls (we can't just boot the core on
-> open) - so we would end up duplicating all parts of the sysfs interface
-> in ioctls.
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 106 ++++++++++++++++++++++-
+>  1 file changed, 105 insertions(+), 1 deletion(-)
 > 
-> 2) Reducing the functionality of the sysfs interface would break
-> compatibility with existing user space, which is verboten. So we would
-> at best duplicate the existing features.
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 8c9b7ae5d8b7..0ae0b66ec9eb 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -85,7 +85,9 @@ struct k3_r5_cluster {
+>   * @dev: cached device pointer
+>   * @rproc: rproc handle representing this core
+>   * @mem: internal memory regions data
+> + * @sram: on-chip SRAM memory regions data
+>   * @num_mems: number of internal memory regions
+> + * @num_sram: number of on-chip SRAM memory regions
+>   * @reset: reset control handle
+>   * @tsp: TI-SCI processor control handle
+>   * @ti_sci: TI-SCI handle
+> @@ -99,7 +101,9 @@ struct k3_r5_core {
+>  	struct device *dev;
+>  	struct rproc *rproc;
+>  	struct k3_r5_mem *mem;
+> +	struct k3_r5_mem *sram;
+>  	int num_mems;
+> +	int num_sram;
+>  	struct reset_control *reset;
+>  	struct ti_sci_proc *tsp;
+>  	const struct ti_sci_handle *ti_sci;
+> @@ -585,6 +589,18 @@ static void *k3_r5_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  		}
+>  	}
+>  
+> +	/* handle any SRAM regions using SoC-view addresses */
+> +	for (i = 0; i < core->num_sram; i++) {
+> +		dev_addr = core->sram[i].dev_addr;
+> +		size = core->sram[i].size;
+> +
+> +		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
+> +			offset = da - dev_addr;
+> +			va = core->sram[i].cpu_addr + offset;
+> +			return (__force void *)va;
+> +		}
+> +	}
+> +
+>  	/* handle static DDR reserved memory regions */
+>  	for (i = 0; i < kproc->num_rmems; i++) {
+>  		dev_addr = kproc->rmem[i].dev_addr;
+> @@ -1017,6 +1033,77 @@ static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
+>  	return ret;
+>  }
+>  
+> +static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+> +					   struct k3_r5_core *core)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *sram_np;
+> +	struct resource res;
+> +	int num_sram;
+> +	int i, ret;
+> +
+> +	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
+> +	if (num_sram <= 0) {
+> +		dev_dbg(dev, "device does not use reserved on-chip memories, num_sram = %d\n",
+> +			num_sram);
+> +		return 0;
+> +	}
+> +
+> +	core->sram = kcalloc(num_sram, sizeof(*core->sram), GFP_KERNEL);
+> +	if (!core->sram)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < num_sram; i++) {
+> +		sram_np = of_parse_phandle(np, "sram", i);
+> +		if (!sram_np) {
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +
+> +		if (!of_device_is_available(sram_np)) {
+> +			of_node_put(sram_np);
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +
+> +		ret = of_address_to_resource(sram_np, 0, &res);
+> +		of_node_put(sram_np);
+> +		if (ret) {
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +		core->sram[i].bus_addr = res.start;
+> +		core->sram[i].dev_addr = res.start;
+> +		core->sram[i].size = resource_size(&res);
+> +		core->sram[i].cpu_addr = ioremap_wc(res.start,
+> +						    resource_size(&res));
+> +		if (!core->sram[i].cpu_addr) {
+> +			dev_err(dev, "failed to parse and map sram%d memory at %pad\n",
+> +				i, &res.start);
+> +			ret = -ENOMEM;
+> +			goto fail;
+> +		}
+> +
+> +		dev_dbg(dev, "memory    sram%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
 
-Agree with your concerns.
-But could we consider that an application using this char dev, is no more
-compatible with existing interface? 
-And it would make sense that it requests exclusivity on
-the remote firmware lice cycle. In this case the sysfs state should be
-read only to protect from an unexpected shutdown.
+s/"memory    sram%d:..."/"memory sram%d:..."
 
-> 
-> 
-> That said, per the same argument I don't really like duplicating the
-> state controls in a character device (i.e. Rishabh's patch), but this
-> really does provide something that we can't do with the current
-> interface.
+With the above:
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Yes, that why it could be nice to make it scalable to integrate
-future extension that can not be implemented using sysfs.
+I am done reviewing this set.  Despite the significant amount of material to
+process and the comments here and there, I haven't found anything to really
+complain about.
 
-One of my main concern is that forcing the boot on open and shutdown on
-close limits the usage of this device for some other future purposes. 
-Coming back in the future to a generic solution will be not possible
-as case of impact on the open close behaviour.
-Using ioctls would avoid this limitation...
-Ioctl could be used to enable the boot/shutdown on open/close
+Thanks,
+Mathieu
 
-Then this char device could be also used to generate an event for application
-on crash.
-In this case the char device could be used only for the event, and sysfs
-state would be used to manage the remoteproc firmware. So sysfs state should
-be in read write access...
-
-Concerning the firmware name, today sysfs interface imposes only one firmware
-what's happen if more that one firmware loading is requested (for instance 
-a core firmware with of some processing or rpc modules...).
-In this case the sysfs firmware field could not be used.
-
-These examples make me think that sysfs could be to manage through
-remoteproc_cdev instead of directly calling core function.
-This would help to define dynamic rules for the sysfs access. 
-
-To sum up, nothing against opening interface with the char device.
-I'm just wondering if this device should not be designed to allow some future
-extensions of the API, and not only for this use case.  
-
-Regards
-Arnaud
-
-> 
-> Regards,
-> Bjorn
+> +			i, &core->sram[i].bus_addr,
+> +			core->sram[i].size, core->sram[i].cpu_addr,
+> +			core->sram[i].dev_addr);
+> +	}
+> +	core->num_sram = num_sram;
+> +
+> +	return 0;
+> +
+> +fail:
+> +	for (i--; i >= 0; i--) {
+> +		if (core->sram[i].cpu_addr)
+> +			iounmap(core->sram[i].cpu_addr);
+> +	}
+> +	kfree(core->sram);
+> +
+> +	return ret;
+> +}
+> +
+>  static
+>  struct ti_sci_proc *k3_r5_core_of_get_tsp(struct device *dev,
+>  					  const struct ti_sci_handle *sci)
+> @@ -1048,7 +1135,7 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+>  	struct k3_r5_core *core;
+> -	int ret, ret1;
+> +	int ret, ret1, i;
+>  
+>  	core = devm_kzalloc(dev, sizeof(*core), GFP_KERNEL);
+>  	if (!core)
+> @@ -1125,10 +1212,23 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+>  		goto err_intmem;
+>  	}
+>  
+> +	ret = k3_r5_core_of_get_sram_memories(pdev, core);
+> +	if (ret) {
+> +		dev_err(dev, "failed to get sram memories, ret = %d\n", ret);
+> +		goto err_sram;
+> +	}
+> +
+>  	platform_set_drvdata(pdev, core);
+>  
+>  	return 0;
+>  
+> +err_sram:
+> +	for (i = 0; i < core->num_mems; i++) {
+> +		devm_iounmap(dev, core->mem[i].cpu_addr);
+> +		devm_release_mem_region(dev, core->mem[i].bus_addr,
+> +					core->mem[i].size);
+> +	}
+> +	devm_kfree(dev, core->mem);
+>  err_intmem:
+>  	ret1 = ti_sci_proc_release(core->tsp);
+>  	if (ret1)
+> @@ -1156,6 +1256,10 @@ static int k3_r5_core_of_exit(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	int i, ret;
+>  
+> +	for (i = 0; i < core->num_sram; i++)
+> +		iounmap(core->sram[i].cpu_addr);
+> +	kfree(core->sram);
+> +
+>  	for (i = 0; i < core->num_mems; i++) {
+>  		devm_release_mem_region(dev, core->mem[i].bus_addr,
+>  					core->mem[i].size);
+> -- 
+> 2.23.0
 > 
