@@ -1,148 +1,138 @@
-Return-Path: <SRS0=Vkxm=5Z=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=Skgh=52=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 683AEC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 22:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 202B2C2BB1D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 01:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3126D2083E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Apr 2020 22:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7D6A20730
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Apr 2020 01:20:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ovvSPpNc"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BM8HZBDi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgDIWBK (ORCPT
+        id S1726671AbgDJBU3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 18:01:10 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41208 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbgDIWBK (ORCPT
+        Thu, 9 Apr 2020 21:20:29 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36419 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbgDJBU3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Apr 2020 18:01:10 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 039M13xW030654;
-        Thu, 9 Apr 2020 17:01:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586469663;
-        bh=1M+jwazQX4BDpMZKdqu/6bX8vsrM9v22p6tALsFhTxo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ovvSPpNcKyvxXg82NJUPUvrdqfAySOrq32XSWMJAs6XmnocP6RYdWcVLlNoWlAb+B
-         LbN3BgvVPbcmHKIEJRshorcFvq0Qm9HOd42XvaRgshF/tG7biFlg1RhDGJcsYFc9kd
-         DeYp9OM3QfLHkuOEHyMxmFzmG//8Pe6Zt/Xw6src=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 039M12UF067248
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 9 Apr 2020 17:01:02 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 9 Apr
- 2020 17:01:02 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 9 Apr 2020 17:01:02 -0500
-Received: from [10.250.86.212] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 039M12ax068082;
-        Thu, 9 Apr 2020 17:01:02 -0500
-Subject: Re: [PATCH 6/7] remoteproc/k3-r5: Initialize TCM memories for ECC
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20200324201819.23095-1-s-anna@ti.com>
- <20200324201819.23095-7-s-anna@ti.com> <20200409213633.GB32029@xps15>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <b7dfa5d6-53cc-362d-dd76-941639dfbf29@ti.com>
-Date:   Thu, 9 Apr 2020 17:01:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 9 Apr 2020 21:20:29 -0400
+Received: by mail-pf1-f194.google.com with SMTP id n10so400837pff.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Apr 2020 18:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Se150hiWquIt6SCF9Ml3hopQBuNGZRuaatmKyZ4D96Q=;
+        b=BM8HZBDiTR8VA1t/ImCY3ODYEL5MfbnNFgbWkxxhgcE7K468DD/Qul6d/YBRwrEugb
+         1Ft/5X1HW3yh9GVR6OLl8kGmz5uHuSNUfp5oSuFySe0akBkMBt1HHTzWYAEbZCj+B3f9
+         lmA48WHpmT0Z5AzrJWfZV5bh/gxeiC/fUoTiwNgZa67vxDfMbLgJMNFoI2wuDT0MRx0w
+         cusdL6BVntZcfnxgO55pOc6pYsuf5rutX53r4A6yzU904URmDv8uW0flWCZ1bivLJnIy
+         mhzI0uIHxvpBNlo6pStJOQZvsfVb2umBMXnXvxi8t4WUJjk0ajNQUi0ZHD+9qeAG4fIF
+         A3LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Se150hiWquIt6SCF9Ml3hopQBuNGZRuaatmKyZ4D96Q=;
+        b=Da9XukTduHsbKKFOFvdQe7TSxuGPBJtgFuDOMOZbqdtijA2PH1uT35wPiIF1E58k4T
+         76rjZmc2uCa9ljfS5IzH8NbU+sfPGMFk/UpHjr6TOXgO8DJOSKJpAKFH/vfqBMCXCK5e
+         W5OVlj5Qig9X4xMWNT+eo7eTApTY2BQ9iSkRG7vBpJNaUSjQL6Sy0+Oz9TthyKaQ+Vrk
+         I4ZGK4cQo4HL5cMK7+cL7w/somYjql9Ss5YNuqnOKD8qCeawzF4fSZjJSf74uZTZgzBz
+         YpD5xmHqppWVbzUtdGxIP1OfpDPW8asgkYYmad5FInF01v0kdODo6bTixxgEfibG87qo
+         1Cig==
+X-Gm-Message-State: AGi0PuZ+1qq87NAVCy6RjZ7WqvD5hbfH7nce/oXxmaZ+svj6B8gqdw8J
+        Kp0P0hkwQtG/GQofKY+B5gxIdQ==
+X-Google-Smtp-Source: APiQypIUx0ejv6KHG5NNwU/7MFHaj3uJKApTKGer6Hzadc9PbSsk4YjGxx6GdQZp8VpaXPdWSTCggQ==
+X-Received: by 2002:a63:3d04:: with SMTP id k4mr2198376pga.115.1586481626752;
+        Thu, 09 Apr 2020 18:20:26 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id g11sm330131pfm.4.2020.04.09.18.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Apr 2020 18:20:26 -0700 (PDT)
+Date:   Thu, 9 Apr 2020 18:20:34 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH 1/2] remoteproc: drop memset when loading elf segments
+Message-ID: <20200410012034.GU20625@builder.lan>
+References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20200409213633.GB32029@xps15>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200409220102.vRAxUDAoncl3KhQSHKDeuFhJe9xBKgjbphs7wAN1NiY@z>
+Message-ID: <20200410012034.odwthBqUmGyYLdPJPW5Wbj6oJSe-4eK-j3Xjk9c4-uc@z>
 
-On 4/9/20 4:36 PM, Mathieu Poirier wrote:
-> On Tue, Mar 24, 2020 at 03:18:18PM -0500, Suman Anna wrote:
->> The R5F processors on K3 SoCs all have two TCMs (ATCM and BTCM) that
->> support 32-bit ECC. The TCMs are typically loaded with some boot-up
->> code to initialize the R5 MPUs to further execute code out of DDR.
->> The ECC for the TCMs is enabled by default on K3 SoCs due to internal
->> default tie-off values, but the TCM memories are not initialized on
->> device power up. Any read access without the corresponding TCM memory
->> location initialized will generate an ECC error, and any such access
->> from a A72 or A53 core will trigger a SError.
->>
->> So, zero initialize both the TCM memories before loading any firmware
->> onto a R5F in remoteproc mode. Any R5F booted from U-Boot/SPL would
->> require a similar initialization in the bootloader. Note that both
->> the TCMs are initialized unconditionally as the TCM enable config bits
->> only manage the access and visibility from R5. The Core1 TCMs are not
->> used and accessible in LockStep mode, so they are only initialized
->> in Split-mode.
-> 
-> Everything was going well with this changelog until the last sentence.
-> Intuitively one is looking for the code that avoids the initialisation for
-> "Core1" in the patch but it is not there, and rightly so.  In locksetup mode the
-> second core is not registered with the remoteproc core and as such the
-> associated TCMs won't be initialised.
-> 
-> Simply put, I would just remove the last sentence as all it does (at least for
-> me) is add confusion.
+On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
 
-Yep, that was more of a "NOTE: " type comment on overall behavior. I
-will drop the sentence for v2.
-
-regards
-Suman
-
+> To arm64, "dc      zva, dst" is used in memset.
+> Per ARM DDI 0487A.j, chapter C5.3.8 DC ZVA, Data Cache Zero by VA,
 > 
-> With that:
+> "If the memory region being zeroed is any type of Device memory,
+> this instruction can give an alignment fault which is prioritized
+> in the same way as other alignment faults that are determined
+> by the memory type."
 > 
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> On i.MX platforms, when elf is loaded to onchip TCM area, the region
+> is ioremapped, so "dc zva, dst" will trigger abort.
 > 
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> ---
->>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index 655f8f14c37d..8c9b7ae5d8b7 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -366,6 +366,17 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
->>  		dev_err(dev, "unable to enable cores for TCM loading, ret = %d\n",
->>  			ret);
->>  
->> +	/*
->> +	 * Zero out both TCMs unconditionally (access from v8 Arm core is not
->> +	 * affected by ATCM & BTCM enable configuration values) so that ECC
->> +	 * can be effective on all TCM addresses.
->> +	 */
->> +	dev_dbg(dev, "zeroing out ATCM memory\n");
->> +	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
->> +
->> +	dev_dbg(dev, "zeroing out BTCM memory\n");
->> +	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
->> +
->>  	return ret;
->>  }
->>  
->> -- 
->> 2.23.0
->>
+> Since memset is not strictly required, let's drop it.
+> 
 
+This would imply that we trust that the firmware doesn't expect
+remoteproc to zero out the memory, which we've always done. So I don't
+think we can say that it's not required.
+
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/remoteproc_elf_loader.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index 16e2c496fd45..cc50fe70d50c 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -238,14 +238,11 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  			memcpy(ptr, elf_data + offset, filesz);
+>  
+>  		/*
+> -		 * Zero out remaining memory for this segment.
+> +		 * No need zero out remaining memory for this segment.
+>  		 *
+>  		 * This isn't strictly required since dma_alloc_coherent already
+> -		 * did this for us. albeit harmless, we may consider removing
+> -		 * this.
+> +		 * did this for us.
+
+In the case of recovery this comment is wrong, we do not
+dma_alloc_coherent() the carveout during a recovery.
+
+And in your case you ioremapped existing TCM, so it's never true.
+
+>  		 */
+> -		if (memsz > filesz)
+> -			memset(ptr + filesz, 0, memsz - filesz);
+
+So I think you do want to zero out this region. Question is how we do
+it...
+
+Regards,
+Bjorn
+
+>  	}
+>  
+>  	if (ret == 0)
+> -- 
+> 2.16.4
+> 
