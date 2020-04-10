@@ -1,382 +1,220 @@
-Return-Path: <arnaud.pouliquen@st.com>
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [RFC 03/18] remoteproc: Move rvdev management in rproc_virtio
-Date: Thu, 16 Apr 2020 18:13:16 +0200
-Message-ID: <20200416161331.7606-4-arnaud.pouliquen@st.com>
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Fri, 10 Apr 2020 14:30:06 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 7/7] remoteproc/k3-r5: Add loading support for on-chip
+ SRAM regions
+Message-ID: <20200410203006.GA9146@xps15>
+References: <20200324201819.23095-1-s-anna@ti.com>
+ <20200324201819.23095-8-s-anna@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, arnaud.pouliquen@st.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200324201819.23095-8-s-anna@ti.com>
+To: Suman Anna <s-anna@ti.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Migrate the management of the rvdev device and subdev from core
-to virtio, to prepare the rpmsg virtio platform device creation.
+On Tue, Mar 24, 2020 at 03:18:19PM -0500, Suman Anna wrote:
+> The K3 SoCs has various internal on-chip SRAM memories like the SRAM
+> within the MCU domain or the shared MSMC RAM within NavSS that can be
+> used for multiple purposes. One such purpose is to have the R5F cores
+> use a portion of such on-chip SRAM for fast-access data or to directly
+> execute code.
+> 
+> Add support to the K3 R5 remoteproc driver to parse and support
+> loading into such memories. The SRAM regions need to be mapped as
+> normal non-cacheable memory to avoid kernel crashes when the remoteproc
+> loader code uses the Arm64 memset library function (the "DC ZVA"
+> instruction throws a alignment fault on device type memory).
+> 
+> These SRAM regions are completely optional as not all firmware images
+> require these memories, and any such memory has to be reserved as such
+> in the DTS files.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 106 ++++++++++++++++++++++-
+>  1 file changed, 105 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 8c9b7ae5d8b7..0ae0b66ec9eb 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -85,7 +85,9 @@ struct k3_r5_cluster {
+>   * @dev: cached device pointer
+>   * @rproc: rproc handle representing this core
+>   * @mem: internal memory regions data
+> + * @sram: on-chip SRAM memory regions data
+>   * @num_mems: number of internal memory regions
+> + * @num_sram: number of on-chip SRAM memory regions
+>   * @reset: reset control handle
+>   * @tsp: TI-SCI processor control handle
+>   * @ti_sci: TI-SCI handle
+> @@ -99,7 +101,9 @@ struct k3_r5_core {
+>  	struct device *dev;
+>  	struct rproc *rproc;
+>  	struct k3_r5_mem *mem;
+> +	struct k3_r5_mem *sram;
+>  	int num_mems;
+> +	int num_sram;
+>  	struct reset_control *reset;
+>  	struct ti_sci_proc *tsp;
+>  	const struct ti_sci_handle *ti_sci;
+> @@ -585,6 +589,18 @@ static void *k3_r5_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len)
+>  		}
+>  	}
+>  
+> +	/* handle any SRAM regions using SoC-view addresses */
+> +	for (i = 0; i < core->num_sram; i++) {
+> +		dev_addr = core->sram[i].dev_addr;
+> +		size = core->sram[i].size;
+> +
+> +		if (da >= dev_addr && ((da + len) <= (dev_addr + size))) {
+> +			offset = da - dev_addr;
+> +			va = core->sram[i].cpu_addr + offset;
+> +			return (__force void *)va;
+> +		}
+> +	}
+> +
+>  	/* handle static DDR reserved memory regions */
+>  	for (i = 0; i < kproc->num_rmems; i++) {
+>  		dev_addr = kproc->rmem[i].dev_addr;
+> @@ -1017,6 +1033,77 @@ static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
+>  	return ret;
+>  }
+>  
+> +static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+> +					   struct k3_r5_core *core)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *sram_np;
+> +	struct resource res;
+> +	int num_sram;
+> +	int i, ret;
+> +
+> +	num_sram = of_property_count_elems_of_size(np, "sram", sizeof(phandle));
+> +	if (num_sram <= 0) {
+> +		dev_dbg(dev, "device does not use reserved on-chip memories, num_sram = %d\n",
+> +			num_sram);
+> +		return 0;
+> +	}
+> +
+> +	core->sram = kcalloc(num_sram, sizeof(*core->sram), GFP_KERNEL);
+> +	if (!core->sram)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < num_sram; i++) {
+> +		sram_np = of_parse_phandle(np, "sram", i);
+> +		if (!sram_np) {
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +
+> +		if (!of_device_is_available(sram_np)) {
+> +			of_node_put(sram_np);
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +
+> +		ret = of_address_to_resource(sram_np, 0, &res);
+> +		of_node_put(sram_np);
+> +		if (ret) {
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +		core->sram[i].bus_addr = res.start;
+> +		core->sram[i].dev_addr = res.start;
+> +		core->sram[i].size = resource_size(&res);
+> +		core->sram[i].cpu_addr = ioremap_wc(res.start,
+> +						    resource_size(&res));
+> +		if (!core->sram[i].cpu_addr) {
+> +			dev_err(dev, "failed to parse and map sram%d memory at %pad\n",
+> +				i, &res.start);
+> +			ret = -ENOMEM;
+> +			goto fail;
+> +		}
+> +
+> +		dev_dbg(dev, "memory    sram%d: bus addr %pa size 0x%zx va %pK da 0x%x\n",
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_core.c     | 118 +-------------------
- drivers/remoteproc/remoteproc_internal.h |   5 +-
- drivers/remoteproc/remoteproc_virtio.c   | 136 +++++++++++++++++++++--
- 3 files changed, 131 insertions(+), 128 deletions(-)
+s/"memory    sram%d:..."/"memory sram%d:..."
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 5c90d569c0f7..4fcd685cbfd8 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -371,8 +371,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	return 0;
- }
- 
--static int
--rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
-+int rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
- {
- 	struct rproc *rproc = rvdev->rproc;
- 	struct device *dev = &rproc->dev;
-@@ -410,117 +409,6 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	rsc->vring[idx].notifyid = -1;
- }
- 
--static int rproc_vdev_do_start(struct rproc_subdev *subdev)
--{
--	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
--
--	return rproc_add_virtio_dev(rvdev, rvdev->id);
--}
--
--static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
--{
--	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
--	int ret;
--
--	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
--	if (ret)
--		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n", ret);
--}
--
--/**
-- * rproc_rvdev_release() - release the existence of a rvdev
-- *
-- * @dev: the subdevice's dev
-- */
--static void rproc_rvdev_release(struct device *dev)
--{
--	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
--
--	of_reserved_mem_device_release(dev);
--
--	kfree(rvdev);
--}
--
--static int rproc_rvdev_add_device(struct rproc_vdev *rvdev)
--{
--	struct rproc *rproc = rvdev->rproc;
--	struct fw_rsc_vdev *rsc = rvdev->rsc;
--	char name[16];
--	int ret, i;
--
--	/* Initialise vdev subdevice */
--	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
--	rvdev->dev.parent = &rproc->dev;
--	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
--	rvdev->dev.release = rproc_rvdev_release;
--	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
--	dev_set_drvdata(&rvdev->dev, rvdev);
--
--	ret = device_register(&rvdev->dev);
--	if (ret) {
--		put_device(&rvdev->dev);
--		return ret;
--	}
--	/* Make device dma capable by inheriting from parent's capabilities */
--	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
--
--	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
--					   dma_get_mask(rproc->dev.parent));
--	if (ret) {
--		dev_warn(&rvdev->dev,
--			 "Failed to set DMA mask %llx. Trying to continue... %x\n",
--			 dma_get_mask(rproc->dev.parent), ret);
--	}
--
--	/* parse the vrings */
--	for (i = 0; i < rsc->num_of_vrings; i++) {
--		ret = rproc_parse_vring(rvdev, rsc, i);
--		if (ret)
--			goto free_rvdev;
--	}
--
--	/* allocate the vring resources */
--	for (i = 0; i < rsc->num_of_vrings; i++) {
--		ret = rproc_alloc_vring(rvdev, i);
--		if (ret)
--			goto free_vg;
--	}
--
--	rvdev->subdev.start = rproc_vdev_do_start;
--	rvdev->subdev.stop = rproc_vdev_do_stop;
--
--	rproc_add_subdev(rproc, &rvdev->subdev);
--
--	return 0;
--
--free_vg:
--	for (i--; i >= 0; i--) {
--		struct rproc_vring *rvring = &rvdev->vring[i];
--
--		rproc_free_vring(rvring);
--	}
--
--free_rvdev:
--	device_unregister(&rvdev->dev);
--
--	return ret;
--}
--
--static void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
--{
--	struct rproc *rproc = rvdev->rproc;
--	struct rproc_vring *rvring;
--	int id;
--
--	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
--		rvring = &rvdev->vring[id];
--		rproc_free_vring(rvring);
--	}
--
--	rproc_remove_subdev(rproc, &rvdev->subdev);
--	device_unregister(&rvdev->dev);
--}
--
- /**
-  * rproc_handle_vdev() - handle a vdev fw resource
-  * @rproc: the remote processor
-@@ -590,14 +478,14 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
- 
- 	list_add_tail(&rvdev->node, &rproc->rvdevs);
- 
--	return rproc_rvdev_add_device(rvdev);
-+	return rproc_virtio_device_add(rvdev);
- }
- 
- void rproc_vdev_release(struct kref *ref)
- {
- 	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
- 
--	rproc_rvdev_remove_device(rvdev);
-+	rproc_virtio_device_remove(rvdev);
- 	list_del(&rvdev->node);
- }
- 
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 493ef9262411..fad95f1a50c1 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -30,8 +30,8 @@ irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
- void rproc_vdev_release(struct kref *ref);
- 
- /* from remoteproc_virtio.c */
--int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id);
--int rproc_remove_virtio_dev(struct device *dev, void *data);
-+int rproc_virtio_device_add(struct rproc_vdev *rvdev);
-+void rproc_virtio_device_remove(struct rproc_vdev *rvdev);
- 
- /* from remoteproc_debugfs.c */
- void rproc_remove_trace_file(struct dentry *tfile);
-@@ -47,6 +47,7 @@ extern struct class rproc_class;
- int rproc_init_sysfs(void);
- void rproc_exit_sysfs(void);
- 
-+int rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i);
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
- 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 8c07cb2ca8ba..0f7efac7d4f3 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -296,6 +296,20 @@ static const struct virtio_config_ops rproc_virtio_config_ops = {
- 	.set		= rproc_virtio_set,
- };
- 
-+/**
-+ * rproc_rvdev_release() - release the existence of a rvdev
-+ *
-+ * @dev: the subdevice's dev
-+ */
-+static void rproc_virtio_rvdev_release(struct device *dev)
-+{
-+	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
-+
-+	of_reserved_mem_device_release(dev);
-+
-+	kfree(rvdev);
-+}
-+
- /*
-  * This function is called whenever vdev is released, and is responsible
-  * to decrement the remote processor's refcount which was taken when vdev was
-@@ -318,16 +332,18 @@ static void rproc_virtio_dev_release(struct device *dev)
- }
- 
- /**
-- * rproc_add_virtio_dev() - register an rproc-induced virtio device
-- * @rvdev: the remote vdev
-+ * rproc_vdev_start() - register an rproc-induced virtio device
-+ * @subdev: the rproc virtio subdevice
-  *
-  * This function registers a virtio device. This vdev's partent is
-  * the rproc device.
-  *
-  * Returns 0 on success or an appropriate error value otherwise.
-  */
--int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
-+static int rproc_vitio_start(struct rproc_subdev *subdev)
- {
-+	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev,
-+						subdev);
- 	struct rproc *rproc = rvdev->rproc;
- 	struct device *dev = &rvdev->dev;
- 	struct virtio_device *vdev;
-@@ -376,7 +392,7 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	vdev->id.device	= id,
-+	vdev->id.device	= rvdev->id,
- 	vdev->config = &rproc_virtio_config_ops,
- 	vdev->dev.parent = dev;
- 	vdev->dev.release = rproc_virtio_dev_release;
-@@ -401,23 +417,121 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- 		goto out;
- 	}
- 
--	dev_info(dev, "registered %s (type %d)\n", dev_name(&vdev->dev), id);
-+	dev_info(dev, "registered %s (type %d)\n", dev_name(&vdev->dev),
-+		 rvdev->id);
- 
- out:
- 	return ret;
- }
- 
-+static int rproc_remove_virtio_dev(struct device *dev, void *data)
-+{
-+	struct virtio_device *vdev = dev_to_virtio(dev);
-+	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
-+	struct rproc_vring *rvring;
-+	int id;
-+
-+	unregister_virtio_device(vdev);
-+
-+	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-+		rvring = &rvdev->vring[id];
-+		rproc_free_vring(rvring);
-+	}
-+
-+	return 0;
-+}
- /**
-  * rproc_remove_virtio_dev() - remove an rproc-induced virtio device
-- * @dev: the virtio device
-- * @data: must be null
-+ * @subdev: the rproc virtio subdevice
-+ * @crashed: indicate if the stop is the result of a crash
-  *
-- * This function unregisters an existing virtio device.
-+ * This function unregisters existing virtio devices.
-  */
--int rproc_remove_virtio_dev(struct device *dev, void *data)
-+static void rproc_vitio_stop(struct rproc_subdev *subdev, bool crashed)
- {
--	struct virtio_device *vdev = dev_to_virtio(dev);
-+	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev,
-+						subdev);
-+	int ret;
-+
-+	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
-+	if (ret)
-+		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n",
-+			 ret);
-+}
-+
-+static const struct rproc_subdev rproc_virtio_subdev = {
-+	.start		= rproc_vitio_start,
-+	.stop		= rproc_vitio_stop
-+};
-+
-+int rproc_virtio_device_add(struct rproc_vdev *rvdev)
-+{
-+	struct rproc *rproc = rvdev->rproc;
-+	struct fw_rsc_vdev *rsc = rvdev->rsc;
-+	char name[16];
-+	int ret, i;
-+
-+	/* Initialise vdev subdevice */
-+	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-+	rvdev->dev.parent = &rproc->dev;
-+	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
-+	rvdev->dev.release = rproc_virtio_rvdev_release;
-+	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-+	dev_set_drvdata(&rvdev->dev, rvdev);
-+
-+	ret = device_register(&rvdev->dev);
-+	if (ret) {
-+		put_device(&rvdev->dev);
-+		return ret;
-+	}
-+	/* Make device dma capable by inheriting from parent's capabilities */
-+	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
-+
-+	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
-+					   dma_get_mask(rproc->dev.parent));
-+	if (ret) {
-+		dev_warn(&rvdev->dev,
-+			 "Failed to set DMA mask %llx. Trying to continue... %x\n",
-+			 dma_get_mask(rproc->dev.parent), ret);
-+	}
-+
-+	/* parse the vrings */
-+	for (i = 0; i < rsc->num_of_vrings; i++) {
-+		ret = rproc_parse_vring(rvdev, rsc, i);
-+		if (ret)
-+			goto free_rvdev;
-+	}
-+
-+	/* allocate the vring resources */
-+	for (i = 0; i < rsc->num_of_vrings; i++) {
-+		ret = rproc_alloc_vring(rvdev, i);
-+		if (ret)
-+			goto free_vg;
-+	}
-+
-+	rvdev->subdev = rproc_virtio_subdev;
-+
-+	rproc_add_subdev(rproc, &rvdev->subdev);
- 
--	unregister_virtio_device(vdev);
- 	return 0;
-+
-+free_vg:
-+	for (i--; i >= 0; i--) {
-+		struct rproc_vring *rvring = &rvdev->vring[i];
-+
-+		rproc_free_vring(rvring);
-+	}
-+
-+free_rvdev:
-+	device_unregister(&rvdev->dev);
-+
-+	return ret;
-+}
-+
-+void rproc_virtio_device_remove(struct rproc_vdev *rvdev)
-+{
-+	struct rproc *rproc = rvdev->rproc;
-+
-+	rproc_remove_subdev(rproc, &rvdev->subdev);
-+	device_unregister(&rvdev->dev);
- }
--- 
-2.17.1
+With the above:
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+I am done reviewing this set.  Despite the significant amount of material to
+process and the comments here and there, I haven't found anything to really
+complain about.
+
+Thanks,
+Mathieu
+
+> +			i, &core->sram[i].bus_addr,
+> +			core->sram[i].size, core->sram[i].cpu_addr,
+> +			core->sram[i].dev_addr);
+> +	}
+> +	core->num_sram = num_sram;
+> +
+> +	return 0;
+> +
+> +fail:
+> +	for (i--; i >= 0; i--) {
+> +		if (core->sram[i].cpu_addr)
+> +			iounmap(core->sram[i].cpu_addr);
+> +	}
+> +	kfree(core->sram);
+> +
+> +	return ret;
+> +}
+> +
+>  static
+>  struct ti_sci_proc *k3_r5_core_of_get_tsp(struct device *dev,
+>  					  const struct ti_sci_handle *sci)
+> @@ -1048,7 +1135,7 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+>  	struct k3_r5_core *core;
+> -	int ret, ret1;
+> +	int ret, ret1, i;
+>  
+>  	core = devm_kzalloc(dev, sizeof(*core), GFP_KERNEL);
+>  	if (!core)
+> @@ -1125,10 +1212,23 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+>  		goto err_intmem;
+>  	}
+>  
+> +	ret = k3_r5_core_of_get_sram_memories(pdev, core);
+> +	if (ret) {
+> +		dev_err(dev, "failed to get sram memories, ret = %d\n", ret);
+> +		goto err_sram;
+> +	}
+> +
+>  	platform_set_drvdata(pdev, core);
+>  
+>  	return 0;
+>  
+> +err_sram:
+> +	for (i = 0; i < core->num_mems; i++) {
+> +		devm_iounmap(dev, core->mem[i].cpu_addr);
+> +		devm_release_mem_region(dev, core->mem[i].bus_addr,
+> +					core->mem[i].size);
+> +	}
+> +	devm_kfree(dev, core->mem);
+>  err_intmem:
+>  	ret1 = ti_sci_proc_release(core->tsp);
+>  	if (ret1)
+> @@ -1156,6 +1256,10 @@ static int k3_r5_core_of_exit(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	int i, ret;
+>  
+> +	for (i = 0; i < core->num_sram; i++)
+> +		iounmap(core->sram[i].cpu_addr);
+> +	kfree(core->sram);
+> +
+>  	for (i = 0; i < core->num_mems; i++) {
+>  		devm_release_mem_region(dev, core->mem[i].bus_addr,
+>  					core->mem[i].size);
+> -- 
+> 2.23.0
+> 
