@@ -1,9 +1,7 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Thu, 16 Apr 2020 13:41:44 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 10 Apr 2020 19:26:30 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH v2 2/2] remoteproc: core: Prevent sleep when rproc crashes
-Message-ID: <20200416194144.GA30314@xps15>
+Message-ID: <20200411022627.GA826227@builder.lan>
 References: <1586384305-7825-1-git-send-email-sidgup@codeaurora.org>
  <1586384305-7825-3-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
@@ -11,15 +9,21 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1586384305-7825-3-git-send-email-sidgup@codeaurora.org>
 To: Siddharth Gupta <sidgup@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed, Apr 08, 2020 at 03:18:25PM -0700, Siddharth Gupta wrote:
+On Wed 08 Apr 15:18 PDT 2020, Siddharth Gupta wrote:
+
 > Remoteproc recovery should be fast and any delay will have an impact on the
 > user-experience. Add a wakeup source to remoteproc which ensures that the
 > system does not go into idle state while a remoteproc is recovering, thus
 > prevent any delays that might occur during system resume.
 > 
+
+This is better, but I think it can be reworded further to show that it's
+not a matter of making it "fast", it's a matter of preventing suspend
+from interrupting the recovery of a remoteproc.
+
 > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 > ---
 >  drivers/remoteproc/qcom_q6v5_pas.c   | 1 +
@@ -35,6 +39,9 @@ On Wed, Apr 08, 2020 at 03:18:25PM -0700, Siddharth Gupta wrote:
 >  	adsp = (struct qcom_adsp *)rproc->priv;
 >  	adsp->dev = &pdev->dev;
 > +	device_wakeup_enable(adsp->dev);
+
+Move this 5 lines down and give it an empty line before and after.
+
 >  	adsp->rproc = rproc;
 >  	adsp->pas_id = desc->pas_id;
 >  	adsp->has_aggre2_clk = desc->has_aggre2_clk;
@@ -55,13 +62,18 @@ On Wed, Apr 08, 2020 at 03:18:25PM -0700, Siddharth Gupta wrote:
 >  		return;
 >  	}
 >  
+
+	/* Prevent suspend while the remoteproc is being recovered */
+
+
+PS. This patch is unrelated to patch 1/2, so please resubmit it
+separately.
+
+Regards,
+Bjorn
+
 > +	pm_stay_awake(rproc->dev.parent);
 > +
-
-Much better:
-
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
 >  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
 >  		rproc->name, rproc_crash_to_string(type));
 >  
