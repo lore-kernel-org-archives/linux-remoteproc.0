@@ -7,148 +7,141 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A944C2D0EC
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 11 Apr 2020 01:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D57C2D0EC
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 11 Apr 2020 02:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 322B82082D
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 11 Apr 2020 01:55:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6346206A1
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 11 Apr 2020 02:26:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m4puwzcB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gwGyNDkE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbgDKBzP (ORCPT
+        id S1726657AbgDKC0S (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Apr 2020 21:55:15 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33491 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbgDKBzP (ORCPT
+        Fri, 10 Apr 2020 22:26:18 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:50686 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbgDKC0S (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Apr 2020 21:55:15 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d17so1733485pgo.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 10 Apr 2020 18:55:13 -0700 (PDT)
+        Fri, 10 Apr 2020 22:26:18 -0400
+Received: by mail-pj1-f66.google.com with SMTP id b7so1435314pju.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 10 Apr 2020 19:26:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=E2bgb+oAffEcAeqUQQsolpBF7Sog6SMgq/QFxjAFZ7E=;
-        b=m4puwzcBIV/VTFWnJGyENhqTPmhh4XIOMy47RIuxV3TKzVlyumWFjMN9HtMR74j2f2
-         +j8ruJBuoZ0lLzLmd9NxBi9pF4uNP+PD+d4mnP3TwvGQ5ElZ7lvJ/HDm5dfPKTz0do70
-         dIpHKSiAG8+AwMyNZY1ttFNPS7rGbeicOe20eIBQOVGifuXE/qlSfZZpIr6UMgYQZIYj
-         EHGn+jkROhii88gOcXrQoTbb6Pp4/2zcfW5+wosyvg04Vk77na1lBARiI++l9oLnBMNo
-         h84Jx3Q4m9J2sDA0/szn6lX+oiUtqH0cZtoHdCrL7NG8jOjElCbm5DbCRTzUr64xt6ew
-         gqNw==
+        bh=9QWTHRRLu2SNoXMVr8er30dtVtDUkqmUu8dqdXp0zBo=;
+        b=gwGyNDkE+v0753EJpooO71QpVYwsLyrGTVnJYTW7Yzj6M0xU/QZj76chLAuTLZWSAG
+         9lHH/MJUJLj4kFuBpNvzcZQPf1j9fZu7O9hvQENB7QVNK+S/54ggxGTxL1m6I0ymfRWV
+         rkO3WVrqJECAUj5XBVaZWIG3U2bVUfy0yY0NskrWVbSysKwt+Dp3bPHtrllJ3u2ZurMS
+         D4XSSm4pjVrZ8kVJNSQeFuijeEjqdnYSePe1hz44i2MzsEbSyi1fTzVdIgOkKodgYmFB
+         5Q6p6aABytM5dpS+g2IPPItTlH0qU5SRAFRvv5uh5UNah6tRqWX/igx5ZsvwukX5xUX/
+         IvVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=E2bgb+oAffEcAeqUQQsolpBF7Sog6SMgq/QFxjAFZ7E=;
-        b=W6mtW+gMiqJnnQaL5nVRqLZHFzIDfWQrx4thjKhdzz6NxqO6A/5bToQmm7SE2y7Nxv
-         CNtzJbAn4Nw6U/wikl3mgt9j2M3skYhweVC14g/VlBulQPiMsL9338y05sZ1G284EV+x
-         aEGfoygAnd5ANqhBXBcANCzlab1DdVihIxJ+OrYCjmwUuLt5g86sx5jR/5xMcYiWvgQA
-         7DXaXjy25Dxb2bz9CP2zLab9DUMccLGemDM6aYcV3E1YxHY2aDCBlnYHqEoq79tP3TW9
-         fFyMiZmDKHHWax6DJlpPjT+mpky1ae3OFWUbF+3YTY/lL7N+yCK6gPItT9RgYn3Fum06
-         gqgQ==
-X-Gm-Message-State: AGi0PubiS6R3GASsWBrQeM6ftlykoIEOWq8fHk8NaP0DTU6urnm7RB00
-        1Uoau80Dc+BRTgFDw+Ru9LrpOA==
-X-Google-Smtp-Source: APiQypIgjtE6PdNfV7oGEV7Cgn7+5O3AAkZ7ITrRrIrJTS4dpVhLJsBaF7xVSidhIcDKmzrrwznL5w==
-X-Received: by 2002:a63:4625:: with SMTP id t37mr6712802pga.83.1586570113100;
-        Fri, 10 Apr 2020 18:55:13 -0700 (PDT)
+        bh=9QWTHRRLu2SNoXMVr8er30dtVtDUkqmUu8dqdXp0zBo=;
+        b=DEITvLaAgSBEev/H9aWEUoWtKBvFR/LC15BWaBgo+SWsmqb2DIeIJbo0lFbJHD/R4h
+         +lMWxCQ6zDFpfrzfVhPIpJfGDtRNZwKrqPg+LZ/x+/AkEQ1edUAl0KqtW5Z8PuSnD4vI
+         bqLcJUxH6AeOTpcj4/NDomlbwopjGk6fHtZoHotFC73JsWOxawW1po4fSCM2UPryuW/Q
+         2FhjYqggb3RoEjPoRAzA5Ti1xtP6Pyc9Pyj8iNpGN6oBlCvCV7XnUN6moS0Y8b0KDCPs
+         D3Usms6AlwNAqhbKsbER2SRxHnh/k6uBccgD7QaeB0dQZKX/Wgi6uFXMOmbJ18uz/Dx5
+         zf9A==
+X-Gm-Message-State: AGi0PuZ+soVzEAAqYWYQxjG28q1N8VYTO6vxVD7YjzuHJ6EuRqaB0oB3
+        rt/WpGr07HrIgHNZPr6eRiI3PQ==
+X-Google-Smtp-Source: APiQypIAUsk9JXZ4eZ7z5c+24lbiiLbP6zb1dK3BsKgHpLxi25S9VapHngUiDqP0Qg9FgGN/gX1gkg==
+X-Received: by 2002:a17:90a:de0e:: with SMTP id m14mr8702041pjv.54.1586571977804;
+        Fri, 10 Apr 2020 19:26:17 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m11sm2830542pfh.57.2020.04.10.18.55.11
+        by smtp.gmail.com with ESMTPSA id g14sm2895868pjd.15.2020.04.10.19.26.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2020 18:55:12 -0700 (PDT)
-Date:   Fri, 10 Apr 2020 18:55:22 -0700
+        Fri, 10 Apr 2020 19:26:17 -0700 (PDT)
+Date:   Fri, 10 Apr 2020 19:26:27 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "ohad@wizery.com" <ohad@wizery.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 2/2] remoteproc: use filesz as backup when translate
- memsz fail
-Message-ID: <20200411015522.GK576963@builder.lan>
-References: <1586420572-28353-1-git-send-email-peng.fan@nxp.com>
- <1586420572-28353-2-git-send-email-peng.fan@nxp.com>
- <20200410012226.GV20625@builder.lan>
- <AM0PR04MB4481B8AA8ADB836ED8398ADF88DE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+To:     Siddharth Gupta <sidgup@codeaurora.org>
+Cc:     ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, rishabhb@codeaurora.org
+Subject: Re: [PATCH v2 2/2] remoteproc: core: Prevent sleep when rproc crashes
+Message-ID: <20200411022627.GA826227@builder.lan>
+References: <1586384305-7825-1-git-send-email-sidgup@codeaurora.org>
+ <1586384305-7825-3-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM0PR04MB4481B8AA8ADB836ED8398ADF88DE0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <1586384305-7825-3-git-send-email-sidgup@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200411015522.IO0PjAMyXhal0Qx4HfHS-wbI5vHrT_FdbqqltgAZ7l4@z>
+Message-ID: <20200411022627.B8gBDbQOkmFK7wDaKkQNY20gR0qKH73mc9bU-98Y7Ag@z>
 
-On Thu 09 Apr 18:32 PDT 2020, Peng Fan wrote:
+On Wed 08 Apr 15:18 PDT 2020, Siddharth Gupta wrote:
 
-> Hi Bjorn,
-> 
-> > Subject: Re: [PATCH 2/2] remoteproc: use filesz as backup when translate
-> > memsz fail
-> > 
-> > On Thu 09 Apr 01:22 PDT 2020, Peng Fan wrote:
-> > 
-> > > Since we no need memset if memsz is larger than filesz, we could use
-> > > filesz for the da to va translation when memsz translation fail.
-> > >
-> > 
-> > To me this implies that the firmware has a segment that's larger than the
-> > memory that it's going to run in. I think even if we're not writing to the entire
-> > memsz, asking da_to_va for the entire memsz provides a valuable sanity
-> > check.
-> 
-> da_to_va implies that Linux should have the va map to da. However
-> that will be case that Linux is not able to touch all da, it only able touch
-> half. Then Linux should also map all da?
+> Remoteproc recovery should be fast and any delay will have an impact on the
+> user-experience. Add a wakeup source to remoteproc which ensures that the
+> system does not go into idle state while a remoteproc is recovering, thus
+> prevent any delays that might occur during system resume.
 > 
 
-So you have memory described in your ELF that can only be accessed by
-the remoteproc? And this memory is covered by segments of type PT_LOAD?
+This is better, but I think it can be reworded further to show that it's
+not a matter of making it "fast", it's a matter of preventing suspend
+from interrupting the recovery of a remoteproc.
 
-What's your strategy for making sure that filesz stays within the
-boundaries that the ELF loader is allowed to touch?
+> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c   | 1 +
+>  drivers/remoteproc/remoteproc_core.c | 4 ++++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 7a63efb..6bb2c7d 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -401,6 +401,7 @@ static int adsp_probe(struct platform_device *pdev)
+>  
+>  	adsp = (struct qcom_adsp *)rproc->priv;
+>  	adsp->dev = &pdev->dev;
+> +	device_wakeup_enable(adsp->dev);
+
+Move this 5 lines down and give it an empty line before and after.
+
+>  	adsp->rproc = rproc;
+>  	adsp->pas_id = desc->pas_id;
+>  	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 9f99fe2..19a360d 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1729,6 +1729,8 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>  
+>  	if (!rproc->recovery_disabled)
+>  		rproc_trigger_recovery(rproc);
+> +
+> +	pm_relax(rproc->dev.parent);
+>  }
+>  
+>  /**
+> @@ -2273,6 +2275,8 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+>  		return;
+>  	}
+>  
+
+	/* Prevent suspend while the remoteproc is being recovered */
+
+
+PS. This patch is unrelated to patch 1/2, so please resubmit it
+separately.
 
 Regards,
 Bjorn
 
-> Thanks,
-> Peng.
-> 
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  drivers/remoteproc/remoteproc_elf_loader.c | 12 ++++++++++--
-> > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c
-> > > b/drivers/remoteproc/remoteproc_elf_loader.c
-> > > index cc50fe70d50c..74d425a4b34c 100644
-> > > --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> > > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> > > @@ -229,8 +229,16 @@ int rproc_elf_load_segments(struct rproc *rproc,
-> > const struct firmware *fw)
-> > >  		if (!ptr) {
-> > >  			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> > >  				memsz);
-> > > -			ret = -EINVAL;
-> > > -			break;
-> > > +
-> > > +			ptr = rproc_da_to_va(rproc, da, filesz);
-> > > +			if (!ptr) {
-> > > +				dev_err(dev,
-> > > +					"bad phdr da 0x%llx mem 0x%llx\n",
-> > > +					da, filesz);
-> > > +				ret = -EINVAL;
-> > > +				break;
-> > > +			}
-> > > +
-> > >  		}
-> > >
-> > >  		/* put the segment where the remote processor expects it */
-> > > --
-> > > 2.16.4
-> > >
+> +	pm_stay_awake(rproc->dev.parent);
+> +
+>  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+>  		rproc->name, rproc_crash_to_string(type));
+>  
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
