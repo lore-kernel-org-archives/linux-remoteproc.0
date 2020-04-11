@@ -1,10 +1,8 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Fri, 17 Apr 2020 13:39:57 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 10 Apr 2020 18:30:04 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH 2/2] remoteproc: use rproc_coredump_set_elf_info in
  drivers
-Message-ID: <20200417193957.GC6797@xps15>
+Message-ID: <20200411013001.GG576963@builder.lan>
 References: <20200410102433.2672-1-cleger@kalray.eu>
  <20200410102433.2672-3-cleger@kalray.eu>
 MIME-Version: 1.0
@@ -12,17 +10,18 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200410102433.2672-3-cleger@kalray.eu>
 To: Clement Leger <cleger@kalray.eu>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Cc: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Apr 10, 2020 at 12:24:33PM +0200, Clement Leger wrote:
+On Fri 10 Apr 03:24 PDT 2020, Clement Leger wrote:
+
 > Modify drivers which are using remoteproc coredump functionnality to use
-
-s/functionnality/functionality
-
 > rproc_coredump_set_elf_info in order to create correct elf coredump
 > format.
 > 
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
 > Signed-off-by: Clement Leger <cleger@kalray.eu>
 > ---
 >  drivers/remoteproc/qcom_q6v5_adsp.c | 1 +
@@ -98,11 +97,6 @@ s/functionnality/functionality
 >  		return -ENOMEM;
 >  
 > +	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
-
-With the above:
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
 >  	rproc->has_iommu = false;
 >  	ddata = rproc->priv;
 >  	ddata->workqueue = create_workqueue(dev_name(dev));
