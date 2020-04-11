@@ -1,9 +1,7 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Fri, 17 Apr 2020 13:38:37 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 10 Apr 2020 18:29:45 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 Subject: Re: [PATCH 1/2] remoteproc: add rproc_coredump_set_elf_info
-Message-ID: <20200417193837.GB6797@xps15>
+Message-ID: <20200411012942.GF576963@builder.lan>
 References: <20200410102433.2672-1-cleger@kalray.eu>
  <20200410102433.2672-2-cleger@kalray.eu>
 MIME-Version: 1.0
@@ -11,14 +9,18 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200410102433.2672-2-cleger@kalray.eu>
 To: Clement Leger <cleger@kalray.eu>
-Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
+Cc: Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Fri, Apr 10, 2020 at 12:24:32PM +0200, Clement Leger wrote:
+On Fri 10 Apr 03:24 PDT 2020, Clement Leger wrote:
+
 > This function allows drivers to correctly setup the coredump output
 > elf information.
 > 
 > Signed-off-by: Clement Leger <cleger@kalray.eu>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
 > ---
 >  drivers/remoteproc/remoteproc_core.c       | 32 ++++++++++++++++++++--
 >  drivers/remoteproc/remoteproc_elf_loader.c |  3 --
@@ -113,9 +115,6 @@ On Fri, Apr 10, 2020 at 12:24:32PM +0200, Clement Leger wrote:
 >  	u8 elf_class;
 > +	u16 elf_machine;
 >  };
-
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-
 >  
 >  /**
 > @@ -619,6 +620,7 @@ int rproc_coredump_add_custom_segment(struct rproc *rproc,
