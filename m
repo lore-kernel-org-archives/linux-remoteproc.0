@@ -4,8 +4,8 @@ Subject: Re: [PATCH 4/4] remoteproc: Get rid of tedious error path
 References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
  <20200413193401.27234-5-mathieu.poirier@linaro.org>
 From: Alex Elder <elder@linaro.org>
-Message-ID: <7e1d808b-b4ae-72c6-266b-684894e41731@linaro.org>
-Date: Mon, 13 Apr 2020 15:56:55 -0500
+Message-ID: <9944bc97-a32a-94f6-7796-174a20ad4182@linaro.org>
+Date: Mon, 13 Apr 2020 15:56:50 -0500
 MIME-Version: 1.0
 In-Reply-To: <20200413193401.27234-5-mathieu.poirier@linaro.org>
 Content-Type: text/plain; charset=utf-8
