@@ -1,27 +1,60 @@
-Return-Path: <Markus.Elfring@web.de>
-Subject: Re: [PATCH 1/4] remoteproc: Fix a bug in rproc_alloc()
-From: Markus Elfring <Markus.Elfring@web.de>
-Message-ID: <e459f807-4c61-257b-b7b5-dd767202c435@web.de>
-Date: Tue, 14 Apr 2020 10:24:26 +0200
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH 1/4] remoteproc: Fix a bug in rproc_alloc()
+Date: Mon, 13 Apr 2020 13:33:58 -0600
+Message-Id: <20200413193401.27234-2-mathieu.poirier@linaro.org>
+In-Reply-To: <20200413193401.27234-1-mathieu.poirier@linaro.org>
+References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Alex Elder <elder@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: s-anna@ti.com, elder@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-> I'm not actually sure this case causes an observable problem, but
-> it's incorrect.  Fix this by initializing the notifyids field before
-> calling ida_simple_get() in rproc_alloc().
+From: Alex Elder <elder@linaro.org>
 
-I suggest to improve the commit message.
+If ida_simple_get() returns an error when called in rproc_alloc(),
+put_device() is called to clean things up.  By this time the rproc
+device type has been assigned, with rproc_type_release() as the
+release function.
 
-* Can the information =E2=80=9Cfield initialisation=E2=80=9D be more helpf=
-ul than =E2=80=9Cbug=E2=80=9D
-  in the patch subject?
+The first thing rproc_type_release() does is call:
+    idr_destroy(&rproc->notifyids);
 
-* Will the tag =E2=80=9CFixes=E2=80=9D become relevant?
+But at the time the ida_simple_get() call is made, the notifyids
+field in the remoteproc structure has not been initialized.
 
-Regards,
-Markus
+I'm not actually sure this case causes an observable problem, but
+it's incorrect.  Fix this by initializing the notifyids field before
+calling ida_simple_get() in rproc_alloc().
+
+Signed-off-by: Alex Elder <elder@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e12a54e67588..80056513ae71 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2053,6 +2053,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	rproc->dev.type = &rproc_type;
+ 	rproc->dev.class = &rproc_class;
+ 	rproc->dev.driver_data = rproc;
++	idr_init(&rproc->notifyids);
+ 
+ 	/* Assign a unique device index and name */
+ 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+@@ -2078,8 +2079,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 
+ 	mutex_init(&rproc->lock);
+ 
+-	idr_init(&rproc->notifyids);
+-
+ 	INIT_LIST_HEAD(&rproc->carveouts);
+ 	INIT_LIST_HEAD(&rproc->mappings);
+ 	INIT_LIST_HEAD(&rproc->traces);
+-- 
+2.20.1
