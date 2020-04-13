@@ -1,43 +1,45 @@
-Return-Path: <BLEVINSK@xilinx.com>
-Return-Path: ben.levinsky@xilinx.com
-From: Ben Levinsky <ben.levinsky@xilinx.com>
-Subject: [PATCH v2 0/5] remoteproc: Add zynqmp_r5 driver
-Date: Thu, 16 Apr 2020 14:54:37 -0700
-Message-Id: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH 0/4] remoteproc: Refactor function rproc_alloc() 
+Date: Mon, 13 Apr 2020 13:33:57 -0600
+Message-Id: <20200413193401.27234-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+To: bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: s-anna@ti.com, elder@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-There are Cortex-R5 processors on Xilinx ZynqMP UltraScale+
-MPSoC.
-This patch is to add an Xilinx ZynqMP R5 remoteproc driver to
-enable Linux kernel to bringup R5, and enable communication
-between Linux kernel and R5.
+Hi Bjorn,
 
-Ben Levinsky (5):
-  firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
-    configuration.
-  firmware: xilinx: Add shutdown/wakeup APIs
-  firmware: xilinx: Add zynqmp_get_node_status API
-  dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc
-    bindings
-  remoteproc: Add initial zynqmp R5 remoteproc driver
+Function rproc_alloc() had to be reworked as part of my work on MCU
+synchronisation[1].  Concurrent to that Suman [2] and Alex [3] also did
+some work on the same function.  
 
+In order to provide a clean foundation for everyone to work from and avoid
+unpleasant merge conflicts this set gathers the work that both Alex and I
+did.  That way Suman and I can move forward with our respective patchsets
+without too much headache.   
 
-Changes since v1:
-- remove domain struct as per review from Mathieu
+Applies cleanly on v5.7-rc1.
 
- .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 119 +++
- drivers/firmware/xilinx/zynqmp.c                   |  81 ++
- drivers/remoteproc/Kconfig                         |  10 +
- drivers/remoteproc/Makefile                        |   1 +
- drivers/remoteproc/zynqmp_r5_remoteproc.c          | 911 +++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h               |  30 +
- 6 files changed, 1152 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
- create mode 100644 drivers/remoteproc/zynqmp_r5_remoteproc.c
+Thanks,
+Mathieu
+
+[1]. https://patchwork.kernel.org/project/linux-remoteproc/list/?series=261069
+[2]. https://patchwork.kernel.org/patch/11456385/
+[3]. https://patchwork.kernel.org/patch/11473241/ 
+
+Alex Elder (1):
+  remoteproc: Fix a bug in rproc_alloc()
+
+Mathieu Poirier (3):
+  remoteproc: Split firmware name allocation from rproc_alloc()
+  remoteproc: Split rproc_ops allocation from rproc_alloc()
+  remoteproc: Get rid of tedious error path
+
+ drivers/remoteproc/remoteproc_core.c | 101 +++++++++++++++------------
+ 1 file changed, 58 insertions(+), 43 deletions(-)
 
 -- 
-2.7.4
+2.20.1
