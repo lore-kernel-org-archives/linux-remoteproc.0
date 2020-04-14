@@ -2,745 +2,136 @@ Return-Path: <SRS0=6AeO=56=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD2EC2BB1D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 04:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F2EC2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 08:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9D3F20737
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 04:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF6CD20578
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 08:24:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="OCiuS6MD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405122AbgDNEKL (ORCPT
+        id S2436705AbgDNIYj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 00:10:11 -0400
-Received: from m17618.mail.qiye.163.com ([59.111.176.18]:11213 "EHLO
-        m17618.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405116AbgDNEKJ (ORCPT
+        Tue, 14 Apr 2020 04:24:39 -0400
+Received: from mout.web.de ([217.72.192.78]:41197 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436695AbgDNIYe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Apr 2020 00:10:09 -0400
-Received: from ubuntu.localdomain (unknown [58.251.74.227])
-        by m17618.mail.qiye.163.com (Hmail) with ESMTPA id 419AD4E1583;
-        Tue, 14 Apr 2020 12:00:26 +0800 (CST)
-From:   Wang Wenhu <wenhu.wang@vivo.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-Cc:     rdunlap@infradead.org, kernel@vivo.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Wang Wenhu <wenhu.wang@vivo.com>
-Subject: [PATCH v3,1/3] driver: rpmon: new driver Remote Processor Monitor
-Date:   Mon, 13 Apr 2020 20:59:47 -0700
-Message-Id: <20200414035949.107225-2-wenhu.wang@vivo.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200414035949.107225-1-wenhu.wang@vivo.com>
-References: <20200412112405.24116-1-wenhu.wang@vivo.com>
- <20200414035949.107225-1-wenhu.wang@vivo.com>
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSVVCTEtCQkJCTk1KSEtCQ1lXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MjI6Khw*TTg#KAoaPTxKPhQO
-        TAswC0pVSlVKTkNNQ0hNQ0lNQ09MVTMWGhIXVQweFRMOVQwaFRw7DRINFFUYFBZFWVdZEgtZQVlO
-        Q1VJTkpVTE9VSUlMWVdZCAFZQUpCT0NMNwY+
-X-HM-Tid: 0a7176d869f09376kuws419ad4e1583
+        Tue, 14 Apr 2020 04:24:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1586852667;
+        bh=xYmpjD3b4g0+uRWfz6ZucD+8z8VMXMdEU294FPLBGDw=;
+        h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
+        b=OCiuS6MDsv9C7UUT7Q0JZyw17KAsUJDdSnwsGfZZhlAwpkVZIbx5Hj9QJEhyoSVrR
+         l+nLv4u3axnO8pdnqr/TMQTP2gs4ywi0lX8/B/bjoE3us/BERe0Muea3j5/siNMq5t
+         6309TORDTwKMbju1S4rsJKndEZsV9AjsevQ+abn4=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.49.66.171]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MGzjq-1jTAPA3hZa-00DpHE; Tue, 14
+ Apr 2020 10:24:27 +0200
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alex Elder <elder@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH 1/4] remoteproc: Fix a bug in rproc_alloc()
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <e459f807-4c61-257b-b7b5-dd767202c435@web.de>
+Date:   Tue, 14 Apr 2020 10:24:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:x3pdaU8T+pJDvPTFMHeaGE4NFDXjx/oIl5bqFFTbxRwj1inj0Ds
+ tccARXNh0XLP+iqXBZqa+oYIL6Qp0SXzOCdzwQgA7zkMhgU9/gD2LJtlRLewApYYY5A5neR
+ OtsauIzyL5k75EJYnHwuMXdWFPi5uJSSensDTfI4G8vewDnWX0hwshX8b5QwtiwbHijL8LP
+ OeQDDOaLbYd5qCsa/Xs6w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8YkSqLQf2Ng=:eO37U/FXPCWPJUy/sX82K7
+ 0K8+vQULu9iyydiGNH51uxY/ezTzK8AuUuZ5DyOXRCFqd4D/ZTJrDESvDbkEvVMpgMcKxE1oT
+ ooMD/ZGf3US8iZruJHIvZEI0tGLBc3s/89gEfQ+C4nx17z6wazfqNQvkncXIgeVDf33y+LAJQ
+ 1V69d6Wj6BHq8PeRlxfk9vf5i8WLuRkLtWpgF/CEVA1iwf2OwNW9yoEqa40LPoCI0Ukfnvylr
+ uiR8q2FQht1LiPUNS6UoAe/GjpnBeIxaFAAZLTDste45NI3UhcN7a06lODlgq9EG5g9VzmBJH
+ FmAoke6FpPRM1Yp60emMFgCb0eoYFrHmsDfXWgV3oQnVFjX5IVtSPGqV51E6LBT7UQx5iMOrH
+ 35a3IK4PQz4aI5XxR/I7VhqyABlDjHeKUT8HWyPWuoyCYUMAvhdDxgNdYxkVFXu70VflKS+sa
+ gmTjTI96pYt3HDpEawk3AqeqJbIiLwr4PeQPyejEDmnyRAJRr7s+8eE45JrbbVitpAHgdXSc4
+ v+9bNtpQ3Sa6qC3UYNg8qpk/vS82t3rcEH49yXAfsY6iOb9MnLdaZJ5szWDJUCEgvbiwTB2Fr
+ j6NCTUYr7gupaB8oYeKcxpG3EvtuLiAWUjbsHCIXPskWO7e/Y9uAD1n5d4tciZn6LYFPfI/bR
+ mjbuuSaZPVsG01ZZGwCU5L3+6P3DnufEXWhKr3UH4dsJAJgxd9M+eQvgy9MvsRgQuWb9RMUvS
+ +p/DjN/4cuJ9d9CkJQYJgoR+zmDSk9et3WS0QbCiF1KgJJzFlBkoMjfKaxSzSPK2QfFnEzR/F
+ lpbNVeFfvghx+BdJ20Qw70Q3JzznW+bO0YHYbYx/dkLk8xw5UMAH4vW4CzNCmQ3RogoN3R0/6
+ wkEqbZ9dCVlJ9iG4+FlvRC1gnuB2wmisTlnULg5Dwn956aDliwLxEapNvc+hhhIrl7foxqp5n
+ ZrbUrrkJqZXiUOOcMsOSOFBhk4k5YikgBqmOExDvW6u58vgtqaFSetj49DdN2cld46PNnMZAI
+ a6fystAJe2FkPGCO27xOcPicAzDbAw5fijtbveDe1u33BBORhfcn03Z6RRr8B7FK8OfwsQY+k
+ Ug4/wL58vdVpdjZ0kIs1JN5+egCPEKr0MC3bbr5WVUpuu/branPjPa3c0zRlc5X+r1IF7OQjV
+ kblWrjkFesJkND+qCGpIt6tpGMJwiq/tOT6M87LTZkSvdqYnA3I+vPKq/RnWufHZCPqdBghap
+ kGZbmDN5IIXq27gtN
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200414035947.nu5QVodPGpUXE7sB9bJ3Ko2x04Qxx6UurjUfqgp7dVQ@z>
+Message-ID: <20200414082426.sAKMyapkrH-oWOl5pkkrvki3eqPCwrh1kbchJ88Lj2Y@z>
 
-RPMON is a driver framework. It supports remote processor monitor
-from user level. The basic components are a character device
-with sysfs interfaces for user space communication and different
-kinds of message drivers introduced modularly, which are used to
-communicate with remote processors.
+> I'm not actually sure this case causes an observable problem, but
+> it's incorrect.  Fix this by initializing the notifyids field before
+> calling ida_simple_get() in rproc_alloc().
 
-As for user space, one can get notifications of different events
-of remote processors, like their registrations, through standard
-file read operation of the file descriptors related to the exported
-character devices. Actions can also be taken into account via
-standard write operations to the devices. Besides, the sysfs class
-attributes could be accessed conveniently.
+I suggest to improve the commit message.
 
-Message drivers act as engines to communicate with remote processors.
-Currently RPMON_QMI is available which uses QMI infrastructures
-on Qualcomm SoC Platforms.
+* Can the information =E2=80=9Cfield initialisation=E2=80=9D be more helpf=
+ul than =E2=80=9Cbug=E2=80=9D
+  in the patch subject?
 
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-remoteproc@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
----
-Changes since v1:
- - Addressed review comments from Randy
-Changes since v2:
- - Log message typo
- - Added Cc list
----
- drivers/Kconfig        |   2 +
- drivers/Makefile       |   1 +
- drivers/rpmon/Kconfig  |  26 +++
- drivers/rpmon/Makefile |   1 +
- drivers/rpmon/rpmon.c  | 506 +++++++++++++++++++++++++++++++++++++++++
- include/linux/rpmon.h  |  68 ++++++
- 6 files changed, 604 insertions(+)
- create mode 100644 drivers/rpmon/Kconfig
- create mode 100644 drivers/rpmon/Makefile
- create mode 100644 drivers/rpmon/rpmon.c
- create mode 100644 include/linux/rpmon.h
+* Will the tag =E2=80=9CFixes=E2=80=9D become relevant?
 
-diff --git a/drivers/Kconfig b/drivers/Kconfig
-index dcecc9f6e33f..40409d8a87b3 100644
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@ -166,6 +166,8 @@ source "drivers/remoteproc/Kconfig"
- 
- source "drivers/rpmsg/Kconfig"
- 
-+source "drivers/rpmon/Kconfig"
-+
- source "drivers/soundwire/Kconfig"
- 
- source "drivers/soc/Kconfig"
-diff --git a/drivers/Makefile b/drivers/Makefile
-index c0cd1b9075e3..75d215cd9136 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -155,6 +155,7 @@ obj-$(CONFIG_MAILBOX)		+= mailbox/
- obj-$(CONFIG_HWSPINLOCK)	+= hwspinlock/
- obj-$(CONFIG_REMOTEPROC)	+= remoteproc/
- obj-$(CONFIG_RPMSG)		+= rpmsg/
-+obj-$(CONFIG_RPMON)		+= rpmon/
- obj-$(CONFIG_SOUNDWIRE)		+= soundwire/
- 
- # Virtualization drivers
-diff --git a/drivers/rpmon/Kconfig b/drivers/rpmon/Kconfig
-new file mode 100644
-index 000000000000..ad0e6d6561ca
---- /dev/null
-+++ b/drivers/rpmon/Kconfig
-@@ -0,0 +1,26 @@
-+#
-+# Remote Processor Monitor Drivers
-+#
-+menu "Remote Processor Monitor Drivers"
-+
-+config RPMON
-+	tristate "Remote Processor Monitor Core Framework"
-+	help
-+	  RPMON is a driver framework. It supports remote processor monitor
-+	  from user level. The basic components are a character device
-+	  with sysfs interfaces for user space communication and different
-+	  kinds of message drivers introduced modularly, which are used to
-+	  communicate with remote processors.
-+
-+	  As for user space, one can get notifications of different events
-+	  of remote processors, like their registrations, through standard
-+	  file read operation of the file descriptors related to the exported
-+	  character devices. Actions can also be taken into account via
-+	  standard write operations to the devices. Besides, the sysfs class
-+	  attributes could be accessed conveniently.
-+
-+	  Message drivers act as engines to communicate with remote processors.
-+	  Currently RPMON_QMI is available which uses QMI infrastructures
-+	  on Qualcomm SoC Platforms.
-+
-+endmenu
-diff --git a/drivers/rpmon/Makefile b/drivers/rpmon/Makefile
-new file mode 100644
-index 000000000000..b0f0ec4ecc30
---- /dev/null
-+++ b/drivers/rpmon/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_RPMON) += rpmon.o
-diff --git a/drivers/rpmon/rpmon.c b/drivers/rpmon/rpmon.c
-new file mode 100644
-index 000000000000..72262b010a68
---- /dev/null
-+++ b/drivers/rpmon/rpmon.c
-@@ -0,0 +1,506 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2020 Vivo Communication Technology Co. Ltd.
-+ * Copyright (C) 2020 Wang Wenhu <wenhu.wang@vivo.com>
-+ * All rights reserved.
-+ *
-+ * RPMON: An implementation of remote processor monitor framework
-+ * for modern SoCs that typically have heterogeneous remote processor
-+ * devices in asymmetric multiprocessing configurations. It is
-+ * implemented with chardev and sysfs class, which act as interfaces
-+ * to communicate with user level. It supports different communication
-+ * interfaces added modularly to communicate with remote processors.
-+ * Currently QMI implementation, named RPMON_QMI, is available.
-+ *
-+ * RPMON could be used to detect the stabilities of remote processors,
-+ * collect any kinds of information you are interested in, take
-+ * actions like connection status check, and so on. Enhancements
-+ * can be made upon current implementation.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/cdev.h>
-+#include <linux/rpmon.h>
-+
-+#define RPMON_MAX_DEVICES	(1U << MINORBITS)
-+#define RPMON_NAME			"rpmon"
-+
-+static int rpmon_major;
-+static struct cdev *rpmon_cdev;
-+static DEFINE_IDR(rpmon_idr);
-+static const struct file_operations rpmon_fops;
-+
-+/* Protect idr accesses */
-+static DEFINE_MUTEX(minor_lock);
-+
-+static ssize_t name_show(struct device *dev,
-+			 struct device_attribute *attr, char *buf)
-+{
-+	struct rpmon_device *rpmondev = dev_get_drvdata(dev);
-+	int ret;
-+
-+	mutex_lock(&rpmondev->info_lock);
-+	if (!rpmondev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", rpmondev->info->name);
-+
-+out:
-+	mutex_unlock(&rpmondev->info_lock);
-+	return ret;
-+}
-+static DEVICE_ATTR_RO(name);
-+
-+static ssize_t version_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	struct rpmon_device *rpmondev = dev_get_drvdata(dev);
-+	int ret;
-+
-+	mutex_lock(&rpmondev->info_lock);
-+	if (!rpmondev->info) {
-+		ret = -EINVAL;
-+		dev_err(dev, "the device has been unregistered\n");
-+		goto out;
-+	}
-+
-+	ret = sprintf(buf, "%s\n", rpmondev->info->version);
-+
-+out:
-+	mutex_unlock(&rpmondev->info_lock);
-+	return ret;
-+}
-+static DEVICE_ATTR_RO(version);
-+
-+static struct attribute *rpmon_attrs[] = {
-+	&dev_attr_name.attr,
-+	&dev_attr_version.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(rpmon);
-+
-+/* RPMON class infrastructure */
-+static struct class rpmon_class = {
-+	.name = RPMON_NAME,
-+	.dev_groups = rpmon_groups,
-+};
-+
-+static bool rpmon_class_registered;
-+
-+static int rpmon_get_minor(struct rpmon_device *rpmondev)
-+{
-+	int ret = -ENOMEM;
-+
-+	mutex_lock(&minor_lock);
-+	ret = idr_alloc(&rpmon_idr, rpmondev, 0, RPMON_MAX_DEVICES, GFP_KERNEL);
-+	if (ret >= 0) {
-+		rpmondev->minor = ret;
-+		ret = 0;
-+	} else if (ret == -ENOSPC) {
-+		dev_err(&rpmondev->dev, "too many rpmon devices\n");
-+		ret = -EINVAL;
-+	}
-+	mutex_unlock(&minor_lock);
-+	return ret;
-+}
-+
-+static void rpmon_free_minor(struct rpmon_device *rpmondev)
-+{
-+	mutex_lock(&minor_lock);
-+	idr_remove(&rpmon_idr, rpmondev->minor);
-+	mutex_unlock(&minor_lock);
-+}
-+
-+/**
-+ * rpmon_event_notify - trigger an notify event
-+ * @info:  RPMON device capabilities
-+ * @event: RPMON event to be triggered
-+ */
-+void rpmon_event_notify(struct rpmon_info *info, u32 event)
-+{
-+	struct rpmon_device *rpmondev = info->rpmon_dev;
-+
-+	if (event >= RPMON_EVENT_MAX) {
-+		pr_err("Error unsupported rpmon event %d", event);
-+		return;
-+	}
-+
-+	atomic_set(&rpmondev->event, RPMON_EVENT(event));
-+	wake_up_interruptible(&rpmondev->wait);
-+	kill_fasync(&rpmondev->async_queue, SIGIO, POLL_IN);
-+}
-+EXPORT_SYMBOL_GPL(rpmon_event_notify);
-+
-+static int rpmon_open(struct inode *inode, struct file *filep)
-+{
-+	struct rpmon_device *rpmondev;
-+	int ret = 0;
-+
-+	mutex_lock(&minor_lock);
-+	rpmondev = idr_find(&rpmon_idr, iminor(inode));
-+	mutex_unlock(&minor_lock);
-+	if (!rpmondev) {
-+		ret = -ENODEV;
-+		goto err_out;
-+	}
-+
-+	get_device(&rpmondev->dev);
-+
-+	if (!try_module_get(rpmondev->owner)) {
-+		ret = -ENODEV;
-+		goto err_module_get;
-+	}
-+
-+	filep->private_data = rpmondev;
-+
-+	mutex_lock(&rpmondev->info_lock);
-+	if (!rpmondev->info) {
-+		mutex_unlock(&rpmondev->info_lock);
-+		ret = -EINVAL;
-+		goto err_module_get;
-+	}
-+
-+	if (rpmondev->info->open)
-+		ret = rpmondev->info->open(rpmondev->info, inode);
-+	mutex_unlock(&rpmondev->info_lock);
-+	if (ret)
-+		goto err_module_get;
-+
-+	return ret;
-+
-+err_module_get:
-+	put_device(&rpmondev->dev);
-+
-+err_out:
-+	return ret;
-+}
-+
-+static int rpmon_release(struct inode *inode, struct file *filep)
-+{
-+	struct rpmon_device *rpmondev = filep->private_data;
-+	int ret = 0;
-+
-+	mutex_lock(&rpmondev->info_lock);
-+	if (rpmondev->info && rpmondev->info->release)
-+		ret = rpmondev->info->release(rpmondev->info, inode);
-+	mutex_unlock(&rpmondev->info_lock);
-+
-+	module_put(rpmondev->owner);
-+	put_device(&rpmondev->dev);
-+	return ret;
-+}
-+
-+static __poll_t rpmon_poll(struct file *filep, poll_table *wait)
-+{
-+	struct rpmon_device *rpmondev = filep->private_data;
-+
-+	mutex_lock(&rpmondev->info_lock);
-+	if (!rpmondev->info) {
-+		mutex_unlock(&rpmondev->info_lock);
-+		return -EIO;
-+	}
-+	mutex_unlock(&rpmondev->info_lock);
-+
-+	poll_wait(filep, &rpmondev->wait, wait);
-+	if (!atomic_read(&rpmondev->event))
-+		return EPOLLIN | EPOLLRDNORM;
-+	return 0;
-+}
-+
-+static ssize_t rpmon_read(struct file *filep, char __user *buf,
-+			  size_t count, loff_t *ppos)
-+{
-+	struct rpmon_device *rpmondev = filep->private_data;
-+	DECLARE_WAITQUEUE(wait, current);
-+	ssize_t ret = 0;
-+	u32 event;
-+
-+	if (count != sizeof(u32))
-+		return -EINVAL;
-+
-+	add_wait_queue(&rpmondev->wait, &wait);
-+
-+	do {
-+		mutex_lock(&rpmondev->info_lock);
-+		if (!rpmondev->info) {
-+			ret = -EIO;
-+			mutex_unlock(&rpmondev->info_lock);
-+			break;
-+		}
-+		mutex_unlock(&rpmondev->info_lock);
-+
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		event = atomic_read(&rpmondev->event);
-+		if (event) {
-+			__set_current_state(TASK_RUNNING);
-+			if (copy_to_user(buf, &event, count))
-+				ret = -EFAULT;
-+			else {
-+				atomic_set(&rpmondev->event, 0);
-+				ret = count;
-+			}
-+			break;
-+		}
-+
-+		if (filep->f_flags & O_NONBLOCK) {
-+			ret = -EAGAIN;
-+			break;
-+		}
-+
-+		if (signal_pending(current)) {
-+			ret = -ERESTARTSYS;
-+			break;
-+		}
-+		schedule();
-+	} while (1);
-+
-+	__set_current_state(TASK_RUNNING);
-+	remove_wait_queue(&rpmondev->wait, &wait);
-+
-+	return ret;
-+}
-+
-+static ssize_t rpmon_write(struct file *filep, const char __user *buf,
-+			   size_t count, loff_t *ppos)
-+{
-+	struct rpmon_device *rpmondev = filep->private_data;
-+	ssize_t ret;
-+	u32 action;
-+
-+	if (count != sizeof(u32))
-+		return -EINVAL;
-+
-+	if (copy_from_user(&action, buf, count))
-+		return -EFAULT;
-+
-+	mutex_lock(&rpmondev->info_lock);
-+	if (!rpmondev->info) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (!rpmondev->info->monitor) {
-+		ret = -ENOTSUPP;
-+		goto out;
-+	}
-+
-+	if (rpmondev->info->monitor)
-+		ret = rpmondev->info->monitor(rpmondev->info, action);
-+out:
-+	mutex_unlock(&rpmondev->info_lock);
-+	return ret ? ret : sizeof(u32);
-+}
-+
-+static const struct file_operations rpmon_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= rpmon_open,
-+	.read		= rpmon_read,
-+	.write		= rpmon_write,
-+	.poll		= rpmon_poll,
-+	.release	= rpmon_release,
-+};
-+
-+static int rpmon_major_init(void)
-+{
-+	static const char name[] = RPMON_NAME;
-+	struct cdev *cdev = NULL;
-+	dev_t rpmon_dev = 0;
-+	int ret;
-+
-+	ret = alloc_chrdev_region(&rpmon_dev, 0, RPMON_MAX_DEVICES, name);
-+	if (ret)
-+		goto out;
-+
-+	ret = -ENOMEM;
-+	cdev = cdev_alloc();
-+	if (!cdev)
-+		goto out_unregister;
-+
-+	cdev->owner = THIS_MODULE;
-+	cdev->ops = &rpmon_fops;
-+	kobject_set_name(&cdev->kobj, "%s", name);
-+
-+	ret = cdev_add(cdev, rpmon_dev, RPMON_MAX_DEVICES);
-+	if (ret)
-+		goto out_put;
-+
-+	rpmon_major = MAJOR(rpmon_dev);
-+	rpmon_cdev = cdev;
-+	return 0;
-+out_put:
-+	kobject_put(&cdev->kobj);
-+out_unregister:
-+	unregister_chrdev_region(rpmon_dev, RPMON_MAX_DEVICES);
-+out:
-+	return ret;
-+}
-+
-+
-+static void rpmon_major_cleanup(void)
-+{
-+	unregister_chrdev_region(MKDEV(rpmon_major, 0), RPMON_MAX_DEVICES);
-+	cdev_del(rpmon_cdev);
-+}
-+
-+static int init_rpmon_class(void)
-+{
-+	int ret;
-+
-+	/* Allocate and add char device to the system. */
-+	ret = rpmon_major_init();
-+	if (ret)
-+		goto exit;
-+
-+	ret = class_register(&rpmon_class);
-+	if (ret) {
-+		pr_err("class_register failed for rpmon\n");
-+		goto err_class_register;
-+	}
-+
-+	rpmon_class_registered = true;
-+
-+	return 0;
-+
-+err_class_register:
-+	rpmon_major_cleanup();
-+exit:
-+	return ret;
-+}
-+
-+static void release_rpmon_class(void)
-+{
-+	rpmon_class_registered = false;
-+	class_unregister(&rpmon_class);
-+	rpmon_major_cleanup();
-+}
-+
-+static void rpmon_device_release(struct device *dev)
-+{
-+	struct rpmon_device *rpmondev = dev_get_drvdata(dev);
-+
-+	kfree(rpmondev);
-+}
-+
-+/**
-+ * rpmon_register_device - register a new rpmon interface device
-+ * @owner:	module that creates the new device
-+ * @parent:	parent device
-+ * @info:	rpmon device capabilities
-+ *
-+ * return:	zero on success or a negative error code.
-+ */
-+int __rpmon_register_device(struct module *owner,
-+			    struct device *parent,
-+			    struct rpmon_info *info)
-+{
-+	struct rpmon_device *rpmondev;
-+	int ret = 0;
-+
-+	if (!rpmon_class_registered)
-+		return -EPROBE_DEFER;
-+
-+	if (!parent || !info || !info->name || !info->version)
-+		return -EINVAL;
-+
-+	info->rpmon_dev = NULL;
-+
-+	rpmondev = kzalloc(sizeof(*rpmondev), GFP_KERNEL);
-+	if (!rpmondev)
-+		return -ENOMEM;
-+
-+	rpmondev->owner = owner;
-+	rpmondev->info = info;
-+	mutex_init(&rpmondev->info_lock);
-+	init_waitqueue_head(&rpmondev->wait);
-+	atomic_set(&rpmondev->event, 0);
-+
-+	ret = rpmon_get_minor(rpmondev);
-+	if (ret) {
-+		kfree(rpmondev);
-+		return ret;
-+	}
-+
-+	device_initialize(&rpmondev->dev);
-+	rpmondev->dev.devt = MKDEV(rpmon_major, rpmondev->minor);
-+	rpmondev->dev.class = &rpmon_class;
-+	rpmondev->dev.parent = parent;
-+	rpmondev->dev.release = rpmon_device_release;
-+	dev_set_drvdata(&rpmondev->dev, rpmondev);
-+
-+	ret = dev_set_name(&rpmondev->dev, RPMON_NAME"%d", rpmondev->minor);
-+	if (ret)
-+		goto err_device_create;
-+
-+	ret = device_add(&rpmondev->dev);
-+	if (ret)
-+		goto err_device_create;
-+
-+	if (rpmondev->info->rpmon_dev_add_attrs) {
-+		ret = rpmondev->info->rpmon_dev_add_attrs(rpmondev);
-+		if (ret)
-+			goto err_dev_add_attrs;
-+	}
-+
-+	info->rpmon_dev = rpmondev;
-+
-+	return 0;
-+
-+err_dev_add_attrs:
-+	device_del(&rpmondev->dev);
-+err_device_create:
-+	rpmon_free_minor(rpmondev);
-+	put_device(&rpmondev->dev);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(__rpmon_register_device);
-+
-+/**
-+ * rpmon_unregister_device - unregister a rpmon interface device
-+ * @info:	rpmon device capabilities
-+ */
-+void rpmon_unregister_device(struct rpmon_info *info)
-+{
-+	struct rpmon_device *rpmondev;
-+
-+	if (!info || !info->rpmon_dev)
-+		return;
-+
-+	rpmondev = info->rpmon_dev;
-+
-+	rpmon_free_minor(rpmondev);
-+
-+	mutex_lock(&rpmondev->info_lock);
-+
-+	if (rpmondev->info->rpmon_dev_add_attrs)
-+		rpmondev->info->rpmon_dev_del_attrs(rpmondev);
-+
-+	rpmondev->info = NULL;
-+	mutex_unlock(&rpmondev->info_lock);
-+
-+	wake_up_interruptible(&rpmondev->wait);
-+	kill_fasync(&rpmondev->async_queue, SIGIO, POLL_IN);
-+
-+	device_unregister(&rpmondev->dev);
-+}
-+EXPORT_SYMBOL_GPL(rpmon_unregister_device);
-+
-+static int __init rpmon_init(void)
-+{
-+	return init_rpmon_class();
-+}
-+subsys_initcall(rpmon_init);
-+
-+static void rpmon_exit(void)
-+{
-+	release_rpmon_class();
-+	idr_destroy(&rpmon_idr);
-+}
-+module_exit(rpmon_exit);
-+
-+MODULE_AUTHOR("Wang Wenhu <wenhu.wang@vivo.com>");
-+MODULE_DESCRIPTION("Remote Processor Monitor Core Framework");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/rpmon.h b/include/linux/rpmon.h
-new file mode 100644
-index 000000000000..4bbcdeefebee
---- /dev/null
-+++ b/include/linux/rpmon.h
-@@ -0,0 +1,68 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2020 Vivo Communication Technology Co. Ltd.
-+ * Copyright (C) 2020 Wang Wenhu <wenhu.wang@vivo.com>
-+ * All rights reserved.
-+ */
-+
-+#ifndef RPMON_H
-+#define RPMON_H
-+
-+#include <net/sock.h>
-+
-+/* RPMON action would be taken */
-+enum rpmon_exec {
-+	RPMON_EXEC_CHECK_CONN = 0,
-+	RPMON_EXEC_MAX,
-+};
-+
-+/* RPMON events that may be notified */
-+enum rpmon_event {
-+	RPMON_EVENT_CHKCONN_FAIL = 0,
-+	RPMON_EVENT_REGISTER,
-+	RPMON_EVENT_MAX,
-+};
-+
-+#define RPMON_EVENT(x)		(0x1 << (x))
-+#define RPMON_ACTION(x)		(0x1 << (x))
-+
-+struct rpmon_device {
-+	struct module		*owner;
-+	struct device		dev;
-+	int			minor;
-+	atomic_t		event;
-+	struct fasync_struct	*async_queue;
-+	wait_queue_head_t	wait;
-+	struct rpmon_info	*info;
-+	struct mutex		info_lock;
-+	struct kobject		*map_dir;
-+};
-+
-+struct rpmon_info {
-+	struct rpmon_device	*rpmon_dev;
-+	const char		*name;
-+	const char		*version;
-+	void			*priv;
-+	u32			event;
-+
-+	int (*open)(struct rpmon_info *info, struct inode *inode);
-+	int (*release)(struct rpmon_info *info, struct inode *inode);
-+	int (*monitor)(struct rpmon_info *info, u32 event);
-+	int (*rpmon_dev_add_attrs)(struct rpmon_device *rpmondev);
-+	void (*rpmon_dev_del_attrs)(struct rpmon_device *rpmondev);
-+};
-+
-+extern int __must_check
-+	__rpmon_register_device(struct module *owner,
-+				struct device *parent,
-+				struct rpmon_info *info);
-+
-+/* Use a define to avoid include chaining to get THIS_MODULE */
-+#define rpmon_register_device(parent, info) \
-+	__rpmon_register_device(THIS_MODULE, parent, info)
-+
-+extern void rpmon_unregister_device(struct rpmon_info *info);
-+
-+extern void rpmon_event_notify(struct rpmon_info *info, u32 event);
-+
-+#endif /* RPMON_H */
--- 
-2.17.1
-
+Regards,
+Markus
