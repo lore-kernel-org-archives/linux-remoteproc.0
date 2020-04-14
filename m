@@ -6,74 +6,74 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18480C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 12:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 631DBC2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 12:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0D3F2076D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 12:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40FA420787
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 12:27:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VOfdVdO0"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L8rBoWwi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501937AbgDNM1W (ORCPT
+        id S2501943AbgDNM1p (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 08:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47566 "EHLO
+        Tue, 14 Apr 2020 08:27:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2501927AbgDNM1N (ORCPT
+        by vger.kernel.org with ESMTP id S2501927AbgDNM1i (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Apr 2020 08:27:13 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5F0C061A0F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 05:27:13 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id f19so12978873iog.5
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 05:27:13 -0700 (PDT)
+        Tue, 14 Apr 2020 08:27:38 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0CFC061A0C
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 05:27:38 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id y17so12939785iow.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 05:27:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lZl+SzAixlt/zspP8CIXqhi3WqXdw0DhseejXVx44uY=;
-        b=VOfdVdO0snAnBN6PceKWVDGj0o/mgGh/ur/Um8PrvA7IfdIXAgOxCId+c3VbdU5mV5
-         PFRg/STwB6ik9vzkbJ1cfkSgux3Ytvw8HeqrbGldySqfVxRhLOyviptUgCrE6qB7s44A
-         WI3zG5XJsIrZQkFxy2sWjMIXWvSBe9KF3i7D1FyEQwDGIFDhnDnYS1vi+ZMmnMeK6hpt
-         55M+qVYhnht8fgNf/bd8pkPuOivNm70zrAxljHbubeT0+envN4hB0KhMoQr5oNnZW+tg
-         3s/pTW9bP0CGd6IbHWc9Z0HJwiCDyG6HTQw2WCbtSc21Rl2MhGwbTmr7bIcT85soZpfz
-         7okw==
+        bh=Xn8/ZRFExSMKU2UJG3B6HUEv5uOUwoceNajhHRuX6V0=;
+        b=L8rBoWwiY/GOC81qGixrT5zatrTvrh+T0u2I/lyH02NoT6c5clc8grzAYBiIUZ1Toc
+         HUZ2sL7IK7OFmqIPG2nCDan618rLX1ERrpB0179fm/1uoX+XpZm5VdPnkJenUo9YubHm
+         hogsN7DydnqEAXT9SAEmHVJ+jNfuQUPbn5Y5VutJVmd4RgY+iwt6QZJYRA6t0yt7ZhQj
+         EYkn+r/q1J3RWoTJ37KdklxA2G2dWYGZnY3G7wWjdaLzw/M5/9OQO6Zwr/sMuhPPHRLB
+         neanrnVNGNoEIG34PFeVmiq0s9SxP0hBDXVo2eUvvGOzRnL/C3ttJggh4psN7YIHNQDO
+         LVlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lZl+SzAixlt/zspP8CIXqhi3WqXdw0DhseejXVx44uY=;
-        b=s66qXwB7DbDZPy5g3b7+lUTXd1pTRI4RUyzEDkukV/sbgBkvfxczxSuzeMV32BGCwl
-         Xt7TORxXEvMdzRaeQO8D98VPuBaFGdiZM2nFpzNr0WSIxtv6h+hLEIMv5f17F2Xvw6IX
-         Zd4behRxiSrkelB0n202ddxkHFpA+7cVIbrf1fysEXEkfVGMjlpTgq6oa4VdufExDG+B
-         XjRzJRxWDlzjgF9kE5n0eMN0f2wf7XoWyTsf97+qJWvobhlsFKJlbM0fTdi4UmAYT26t
-         nXSO8XJb2H+smK/L2hfe5XL9nXT7InMwNTMaq+wU392z4BeYJLd9iAv20gu2eaiO3oVE
-         rtAA==
-X-Gm-Message-State: AGi0PuaiUGNiASKv/bQpJLNLRy/Dk+nzpnBz62SubIRMr6yXSylk4wXo
-        gwG7XOGS1un8dORLdhTI+cKX9A==
-X-Google-Smtp-Source: APiQypLg83FQI9KhxvuPMipPhJMLS+L2BK8ZKU8Cd24vD3HTM/7oNStucxBWjFmryrVSK6IH9K5u6A==
-X-Received: by 2002:a05:6602:1302:: with SMTP id h2mr21094447iov.186.1586867233023;
-        Tue, 14 Apr 2020 05:27:13 -0700 (PDT)
+        bh=Xn8/ZRFExSMKU2UJG3B6HUEv5uOUwoceNajhHRuX6V0=;
+        b=FgYeYCb+83VfceNShCKR/DOdWEyKjLBu/5p6QV5wD7ooH6JnE825uu9qCzomXN89Ne
+         liy4YlbrIyqI/0ON9A9yFUc9xX306R+rhyXgtxKCVDNlXR/uHmgtILOSXLYjVCI/BBKO
+         Ec1FQDCObhO4Q1HKLu12jzDRSy6FNPQ/Yui+cnMTZ9kM7uOhapF4nJvvmEyVTsEAB3WR
+         Xg1ghhYrqVho88NGse2Hnu9VNCFHc8tDsG1ok9d2BjIexzU4vDReZ5qBg+piQnha0YK+
+         FHTB7gE2txbMzJ/yzV96QhHUh438tBidX/5QE4rpLtwZC/2GgayZws63pmJ6vsKLh9BW
+         UlYw==
+X-Gm-Message-State: AGi0PuZ1H3uEEnBT39WJLITopD/6RsNJVgqd94EesK6mstiQuEO0EC+l
+        5C4I73imy6UtSqU8FeIkv9+uZ11I9o6S1Q==
+X-Google-Smtp-Source: APiQypJPkNYzInmS2MYdSfh5zb7ZMT1+nhzriatmUZIlwuRMjkmgVtkGbSJHY7hD/WGF+tS+04xaYA==
+X-Received: by 2002:a6b:fc0d:: with SMTP id r13mr20547117ioh.89.1586867257797;
+        Tue, 14 Apr 2020 05:27:37 -0700 (PDT)
 Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id s22sm1069084iow.40.2020.04.14.05.27.11
+        by smtp.googlemail.com with ESMTPSA id r10sm4346744iom.42.2020.04.14.05.27.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Apr 2020 05:27:12 -0700 (PDT)
-Subject: Re: [PATCH 1/4] remoteproc: Fix a bug in rproc_alloc()
+        Tue, 14 Apr 2020 05:27:37 -0700 (PDT)
+Subject: Re: [PATCH 4/4] remoteproc: Get rid of tedious error path
 To:     Markus Elfring <Markus.Elfring@web.de>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-remoteproc@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>
-References: <e459f807-4c61-257b-b7b5-dd767202c435@web.de>
+References: <e5e03d6b-46bd-5ece-a7f6-3cb557c3b0b0@web.de>
 From:   Alex Elder <elder@linaro.org>
-Message-ID: <4b05d794-095b-7efe-c71c-42dca785ca49@linaro.org>
-Date:   Tue, 14 Apr 2020 07:27:14 -0500
+Message-ID: <3c2ea363-e60f-b3ef-e66f-df8d558972bf@linaro.org>
+Date:   Tue, 14 Apr 2020 07:27:39 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <e459f807-4c61-257b-b7b5-dd767202c435@web.de>
+In-Reply-To: <e5e03d6b-46bd-5ece-a7f6-3cb557c3b0b0@web.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -81,31 +81,22 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200414122714.HyGAIb0EltGfPMI8qLM8VYb6qtFamGN-8Ci5dthzCAE@z>
+Message-ID: <20200414122739.A4LMt5WtX1b-UT1cBK2JS8WTKx8GkC5G9rz9F-XK7r8@z>
 
-On 4/14/20 3:24 AM, Markus Elfring wrote:
->> I'm not actually sure this case causes an observable problem, but
->> it's incorrect.  Fix this by initializing the notifyids field before
->> calling ida_simple_get() in rproc_alloc().
+On 4/14/20 3:53 AM, Markus Elfring wrote:
+> …
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+> …
+>> @@ -2105,11 +2104,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+> …
+>> +out:
+>> +	put_device(&rproc->dev);
 > 
-> I suggest to improve the commit message.
+> How do you think about to use the label “put_device”?
+
++1
+
 > 
-> * Can the information “field initialisation” be more helpful than “bug”
->   in the patch subject?
-
-No objection, though I personally would have spelled it
-differently :)
-
-> * Will the tag “Fixes” become relevant?
-
-This bug was present when this code was first added.
-Fixes: b5ab5e24e960 ("remoteproc: maintain a generic child device for each rproc")
-
-Mathiew, feel free to add that.
-
-					-Alex
-
-
 > Regards,
 > Markus
 > 
