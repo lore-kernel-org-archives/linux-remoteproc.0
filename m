@@ -2,113 +2,264 @@ Return-Path: <SRS0=6AeO=56=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E17EBC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 18:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AD4C2BB1D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 19:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B22BC2074D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 18:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40F74206E9
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 19:44:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rA2N9Wzm"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="olJdbZJQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504206AbgDNSnU (ORCPT
+        id S2505160AbgDNTow (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 14:43:20 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47704 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730222AbgDNSnS (ORCPT
+        Tue, 14 Apr 2020 15:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59926 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2505156AbgDNTos (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Apr 2020 14:43:18 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03EIhCkm062470;
-        Tue, 14 Apr 2020 13:43:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1586889792;
-        bh=6CljWIoXWSxwxXZenC1pQJ7+o0R3BPNiiWr1BNk8S4c=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rA2N9WzmWP9JIdVJDHEaFx/9x0EJbx6le6nY8QWJO9JnRvalnnAagpQY0rQmjZi63
-         MSeN8isom4q9xqL0mYSMWgHWV8/f1JLcrYmat6QvVC4WE580GZEn4KDcgKTqDN/BJv
-         d7hDxftD4rne4Sl3mEFQeLxp6SpclKc/ZrVv5Jbk=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03EIhCBj051149
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 14 Apr 2020 13:43:12 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 14
- Apr 2020 13:43:11 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 14 Apr 2020 13:43:11 -0500
-Received: from [10.250.70.56] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03EIhBV0037834;
-        Tue, 14 Apr 2020 13:43:11 -0500
-Subject: Re: [PATCH v2 0/2] Misc. rproc fixes around fixed memory region
- support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Loic Pallardy <loic.pallardy@st.com>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200319162321.20632-1-s-anna@ti.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <b2f0a057-adac-dd98-2e5d-f3f4ad9fb4bf@ti.com>
-Date:   Tue, 14 Apr 2020 13:43:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Tue, 14 Apr 2020 15:44:48 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691F1C061A0C
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 12:44:44 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id ng8so5750571pjb.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 12:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Y8n+fCXbMWC1iI3wANy/sDKv9uXTY3yXiMXRA/S7MQo=;
+        b=olJdbZJQB+gw4nBNzS0uf5tHqL6Rp1Vmc82avBY4KcDI+pB6WRolI9q33KwGrjkBhc
+         d+4tXdgzDt3QLaFZEoYdncx8iH8pCiE8txFdp751P59XTi0j+2k8e5LDpCK0fTyCEjxK
+         VVJnXXeeY2tHvYPdWeaiggBzIRv71hR4nYaqdGNi9vrmYBNZuTLY47Skgj0leooZLBli
+         ZBUbmjvSMTg8UyGwY7iB/te7DsjdSv3gaHsoadexI7yXoAhhrf+QEZoBAhMqAswUWurZ
+         08wavDsYCdHA6/MwRmPwjEHx15x2earJUCIhCWQVh9G5U+effwNtOjRJqoM1mCRrMD1s
+         HXDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y8n+fCXbMWC1iI3wANy/sDKv9uXTY3yXiMXRA/S7MQo=;
+        b=G0ZeGhYjF+75D4ov609LTeXnKVmBVumkrU+Jh1ouxgFDsOlWn+1vQm4uXo0edIrKrw
+         qowGo7Xh4Fz4AWX+E2PUyYvyiaTuokH3qCsWJbc88YxImd5YaLmdy0k5ZdPp327aiJ+N
+         32Zj5bIRH6GDZCEkZo6DFcYOYBX9gEgOXGTjmMCOow4Ins6OaWzQwzNlYWm5LCdk3hTY
+         +BBtXiNJ8nqNia27UQzYTT3It4bMCzCgqly4s4rqGeZ+wUtxqyOAM4kgLhGOyQUSOBeM
+         P6oH/Y+5IMpNABoIFgW95ikofxAoYm/4dit3jWK8ZMkUOyhv8lo4B9tkA3g95xPrchUb
+         brxw==
+X-Gm-Message-State: AGi0PuZnflYbWO5NcVh3zkypEmgpkbOQDwhIr47yXn3vmc1asdA45ex0
+        J7w++gdPNvDTA82KmK9ktlrj2g==
+X-Google-Smtp-Source: APiQypKwVO3YYKnkeKBmDcieDhffhfreynXiumXxdiwadgN/nIlVyTtU0cUoHi5CZGca7Q5NeKJ0hA==
+X-Received: by 2002:a17:902:7897:: with SMTP id q23mr1482603pll.312.1586893483817;
+        Tue, 14 Apr 2020 12:44:43 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id 198sm12041371pfa.87.2020.04.14.12.44.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2020 12:44:43 -0700 (PDT)
+Date:   Tue, 14 Apr 2020 13:44:41 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Alex Elder <elder@linaro.org>, ohad@wizery.com, s-anna@ti.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] remoteproc: Split firmware name allocation from
+ rproc_alloc()
+Message-ID: <20200414194441.GA25931@xps15>
+References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
+ <20200413193401.27234-3-mathieu.poirier@linaro.org>
+ <bd8cc8d5-94c1-5767-d089-535731fc1055@linaro.org>
+ <20200414005506.GG20625@builder.lan>
 MIME-Version: 1.0
-In-Reply-To: <20200319162321.20632-1-s-anna@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200414005506.GG20625@builder.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200414184311.ycjBRV79qYwDWV8ql3wXPIl8l1bs3LXiKhAfsxYRudE@z>
+Message-ID: <20200414194441.vQfqDIcdfKd6alcb9fZgasn1D3hTsHh8OWK6WpjfBeQ@z>
 
-Hi Bjorn,
+Hey Bjorn,
 
-On 3/19/20 11:23 AM, Suman Anna wrote:
-> Hi All,
+On Mon, Apr 13, 2020 at 05:55:06PM -0700, Bjorn Andersson wrote:
+> On Mon 13 Apr 13:56 PDT 2020, Alex Elder wrote:
 > 
-> This is a minor revised version of the fixes around fixed memory region
-> support [1]. Patch 1 is updated to address Arnaud's review comments about
-> the hard-coded memory region.
+> > On 4/13/20 2:33 PM, Mathieu Poirier wrote:
+> > > Make the firmware name allocation a function on its own in order to
+> > > introduce more flexibility to function rproc_alloc().
+> > > 
+> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > 
+> > I didn't look at the larger context (MCU series); I'm only looking
+> > at this (and the others in this series) in isolation.  I like
+> > that you're encapsulating this stuff into functions but doing so
+> > doesn't really add any flexibility.
+> > 
+> > Two small suggestions for you to consider but they're truly
+> > more about style so it's entirely up to you.  Outside of that
+> > this looks straightforward to me, and the result of the series
+> > is an improvement.
+> > 
+> > I'll let you comment on my suggestions before offering my
+> > "reviewed-by" indication.
+> > 
+> > 					-Alex
+> > 
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
+> > >  1 file changed, 39 insertions(+), 27 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > index 80056513ae71..4dee63f319ba 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
+> > >  	.release	= rproc_type_release,
+> > >  };
+> > >  
+> > > +static int rproc_alloc_firmware(struct rproc *rproc,
+> > > +				const char *name, const char *firmware)
+> > > +{
+> > > +	char *p, *template = "rproc-%s-fw";
+> > > +	int name_len;
+> > 
+> > Not a big deal (and maybe it's not consistent with other nearby
+> > style) but template and name_len could be defined inside the
+> > "if (!firmware)" block.
+> > 
+> 
+> I prefer variables declared in the beginning of the function, so I'm
+> happy with this.
+> 
+> > > +	if (!firmware) {
+> > > +		/*
+> > > +		 * If the caller didn't pass in a firmware name then
+> > > +		 * construct a default name.
+> > > +		 */
+> > > +		name_len = strlen(name) + strlen(template) - 2 + 1;
+> > > +		p = kmalloc(name_len, GFP_KERNEL);
+> > 
+> > 
+> > I don't know if it would be an improvement, but you could
+> > check for a null p value below for both cases.  I.e.:
+> > 
+> > 		if (p)
+> > 			snprintf(p, ...);
+> > 
+> 
+> Moving the common NULL check and return out seems nice, but given that
+> we then have to have this positive conditional I think the end result is
+> more complex.
+> 
+> That said, if we're not just doing a verbatim copy from rproc_alloc() I
+> think we should make this function:
+> 
+> 	if (!firmware)
+> 		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+> 	else
+> 		p = kstrdup_const(firmware, GFP_KERNEL);
 
-I would like to get these patches into the current -rc's. There is some 
-discussion on patch 1 whether we should go back to the v1 version 
-instead. Can you give me your preference between the two, so that I can 
-post a v3 on top of 5.7-rc1.
+If you really want to use kstrdup_const() the return value has to be casted to a
+"char *".  Variable 'p' can't be declared const "char *" because rproc->firmware is not
+a "const".  Simply put somewhere the "const" will need to be dropped or casted out.
 
-regards
-Suman
+Mathieu
 
 > 
-> Please see the v1 cover-letter [1] for the details on the issues.
+> 	rproc->firmware = p;
 > 
-> regards
-> Suman
+> 	return p ? 0 : -ENOMEM;
 > 
-> [1] https://patchwork.kernel.org/cover/11422723/
+> Regards,
+> Bjorn
 > 
-> Suman Anna (1):
->    remoteproc: Fix and restore the parenting hierarchy for vdev
-> 
-> Tero Kristo (1):
->    remoteproc: fall back to using parent memory pool if no dedicated
->      available
-> 
->   drivers/remoteproc/remoteproc_core.c   |  2 +-
->   drivers/remoteproc/remoteproc_virtio.c | 15 +++++++++++++++
->   include/linux/remoteproc.h             |  2 ++
->   3 files changed, 18 insertions(+), 1 deletion(-)
-> 
-
+> > (more below)
+> > 
+> > > +		if (!p)
+> > > +			return -ENOMEM;
+> > > +		snprintf(p, name_len, template, name);
+> > > +	} else {
+> > > +		p = kstrdup(firmware, GFP_KERNEL);
+> > > +		if (!p)
+> > > +			return -ENOMEM;
+> > > +	}
+> > > +
+> > 
+> > 	if (!p)
+> > 		return -ENOMEM;
+> > 	
+> > > +	rproc->firmware = p;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  /**
+> > >   * rproc_alloc() - allocate a remote processor handle
+> > >   * @dev: the underlying device
+> > > @@ -2007,42 +2034,21 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+> > >  			  const char *firmware, int len)
+> > >  {
+> > >  	struct rproc *rproc;
+> > > -	char *p, *template = "rproc-%s-fw";
+> > > -	int name_len;
+> > >  
+> > >  	if (!dev || !name || !ops)
+> > >  		return NULL;
+> > >  
+> > > -	if (!firmware) {
+> > > -		/*
+> > > -		 * If the caller didn't pass in a firmware name then
+> > > -		 * construct a default name.
+> > > -		 */
+> > > -		name_len = strlen(name) + strlen(template) - 2 + 1;
+> > > -		p = kmalloc(name_len, GFP_KERNEL);
+> > > -		if (!p)
+> > > -			return NULL;
+> > > -		snprintf(p, name_len, template, name);
+> > > -	} else {
+> > > -		p = kstrdup(firmware, GFP_KERNEL);
+> > > -		if (!p)
+> > > -			return NULL;
+> > > -	}
+> > > -
+> > >  	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
+> > > -	if (!rproc) {
+> > > -		kfree(p);
+> > > +	if (!rproc)
+> > >  		return NULL;
+> > > -	}
+> > > +
+> > > +	if (rproc_alloc_firmware(rproc, name, firmware))
+> > > +		goto free_rproc;
+> > >  
+> > >  	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+> > > -	if (!rproc->ops) {
+> > > -		kfree(p);
+> > > -		kfree(rproc);
+> > > -		return NULL;
+> > > -	}
+> > > +	if (!rproc->ops)
+> > > +		goto free_firmware;
+> > >  
+> > > -	rproc->firmware = p;
+> > >  	rproc->name = name;
+> > >  	rproc->priv = &rproc[1];
+> > >  	rproc->auto_boot = true;
+> > > @@ -2091,6 +2097,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+> > >  	rproc->state = RPROC_OFFLINE;
+> > >  
+> > >  	return rproc;
+> > > +
+> > > +free_firmware:
+> > > +	kfree(rproc->firmware);
+> > > +free_rproc:
+> > > +	kfree(rproc);
+> > > +	return NULL;
+> > >  }
+> > >  EXPORT_SYMBOL(rproc_alloc);
+> > >  
+> > > 
+> > 
