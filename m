@@ -1,77 +1,42 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 4/4] remoteproc: Get rid of tedious error path
-Date: Mon, 13 Apr 2020 13:34:01 -0600
-Message-Id: <20200413193401.27234-5-mathieu.poirier@linaro.org>
-In-Reply-To: <20200413193401.27234-1-mathieu.poirier@linaro.org>
-References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
+Subject: Re: [PATCH 1/4] remoteproc: Fix a bug in rproc_alloc()
+References: <e459f807-4c61-257b-b7b5-dd767202c435@web.de>
+From: Alex Elder <elder@linaro.org>
+Message-ID: <4b05d794-095b-7efe-c71c-42dca785ca49@linaro.org>
+Date: Tue, 14 Apr 2020 07:27:14 -0500
 MIME-Version: 1.0
+In-Reply-To: <e459f807-4c61-257b-b7b5-dd767202c435@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To: bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: s-anna@ti.com, elder@linaro.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Markus Elfring <Markus.Elfring@web.de>, Mathieu Poirier <mathieu.poirier@linaro.org>, linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Get rid of tedious error management by moving firmware and operation
-allocation after calling device_initialize().  That way we take advantage
-of the automatic call to rproc_type_release() to cleanup after ourselves
-when put_device() is called.
+On 4/14/20 3:24 AM, Markus Elfring wrote:
+>> I'm not actually sure this case causes an observable problem, but
+>> it's incorrect.  Fix this by initializing the notifyids field before
+>> calling ida_simple_get() in rproc_alloc().
+> 
+> I suggest to improve the commit message.
+> 
+> * Can the information “field initialisation” be more helpful than “bug”
+>   in the patch subject?
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+No objection, though I personally would have spelled it
+differently :)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c272d78f07e8..10009b95867a 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2061,12 +2061,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	if (!rproc)
- 		return NULL;
- 
--	if (rproc_alloc_firmware(rproc, name, firmware))
--		goto free_rproc;
--
--	if (rproc_alloc_ops(rproc, ops))
--		goto free_firmware;
--
- 	rproc->name = name;
- 	rproc->priv = &rproc[1];
- 	rproc->auto_boot = true;
-@@ -2079,12 +2073,17 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->dev.driver_data = rproc;
- 	idr_init(&rproc->notifyids);
- 
-+	if (rproc_alloc_firmware(rproc, name, firmware))
-+		goto out;
-+
-+	if (rproc_alloc_ops(rproc, ops))
-+		goto out;
-+
- 	/* Assign a unique device index and name */
- 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
- 	if (rproc->index < 0) {
- 		dev_err(dev, "ida_simple_get failed: %d\n", rproc->index);
--		put_device(&rproc->dev);
--		return NULL;
-+		goto out;
- 	}
- 
- 	dev_set_name(&rproc->dev, "remoteproc%d", rproc->index);
-@@ -2105,11 +2104,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->state = RPROC_OFFLINE;
- 
- 	return rproc;
--
--free_firmware:
--	kfree(rproc->firmware);
--free_rproc:
--	kfree(rproc);
-+out:
-+	put_device(&rproc->dev);
- 	return NULL;
- }
- EXPORT_SYMBOL(rproc_alloc);
--- 
-2.20.1
+> * Will the tag “Fixes” become relevant?
+
+This bug was present when this code was first added.
+Fixes: b5ab5e24e960 ("remoteproc: maintain a generic child device for each rproc")
+
+Mathiew, feel free to add that.
+
+					-Alex
+
+
+> Regards,
+> Markus
+> 
