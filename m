@@ -2,170 +2,198 @@ Return-Path: <mathieu.poirier@linaro.org>
 MIME-Version: 1.0
 References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
  <20200413193401.27234-3-mathieu.poirier@linaro.org> <bd8cc8d5-94c1-5767-d089-535731fc1055@linaro.org>
-In-Reply-To: <bd8cc8d5-94c1-5767-d089-535731fc1055@linaro.org>
+ <20200414005506.GG20625@builder.lan>
+In-Reply-To: <20200414005506.GG20625@builder.lan>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 14 Apr 2020 10:11:27 -0600
-Message-ID: <CANLsYkxHiEzxEDC-r-iEtT_W9MnW2wC-ePwshiqaM2Vgc8VDiQ@mail.gmail.com>
+Date: Tue, 14 Apr 2020 09:43:22 -0600
+Message-ID: <CANLsYkx69cZotLUrt170XYiYxpkTGKBNC8FUioBD=OSnDYm46Q@mail.gmail.com>
 Subject: Re: [PATCH 2/4] remoteproc: Split firmware name allocation from rproc_alloc()
 Content-Type: text/plain; charset="UTF-8"
-To: Alex Elder <elder@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Alex Elder <elder@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, 13 Apr 2020 at 14:56, Alex Elder <elder@linaro.org> wrote:
->
-> On 4/13/20 2:33 PM, Mathieu Poirier wrote:
-> > Make the firmware name allocation a function on its own in order to
-> > introduce more flexibility to function rproc_alloc().
-> >
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->
-> I didn't look at the larger context (MCU series); I'm only looking
-> at this (and the others in this series) in isolation.  I like
-> that you're encapsulating this stuff into functions but doing so
-> doesn't really add any flexibility.
+Hi guys,
 
-You are correct.  I wrote the changelog with the MCU synchronisation
-series in mind but this specific part of the work has nothing to do
-with flexibility - it is a plane cleanup exercise.  I will address
-that in the next revision.
+On Mon, 13 Apr 2020 at 18:54, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Mon 13 Apr 13:56 PDT 2020, Alex Elder wrote:
+>
+> > On 4/13/20 2:33 PM, Mathieu Poirier wrote:
+> > > Make the firmware name allocation a function on its own in order to
+> > > introduce more flexibility to function rproc_alloc().
+> > >
+> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >
+> > I didn't look at the larger context (MCU series); I'm only looking
+> > at this (and the others in this series) in isolation.  I like
+> > that you're encapsulating this stuff into functions but doing so
+> > doesn't really add any flexibility.
+> >
+> > Two small suggestions for you to consider but they're truly
+> > more about style so it's entirely up to you.  Outside of that
+> > this looks straightforward to me, and the result of the series
+> > is an improvement.
+> >
+> > I'll let you comment on my suggestions before offering my
+> > "reviewed-by" indication.
+> >
+> >                                       -Alex
+> >
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
+> > >  1 file changed, 39 insertions(+), 27 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > index 80056513ae71..4dee63f319ba 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
+> > >     .release        = rproc_type_release,
+> > >  };
+> > >
+> > > +static int rproc_alloc_firmware(struct rproc *rproc,
+> > > +                           const char *name, const char *firmware)
+> > > +{
+> > > +   char *p, *template = "rproc-%s-fw";
+> > > +   int name_len;
+> >
+> > Not a big deal (and maybe it's not consistent with other nearby
+> > style) but template and name_len could be defined inside the
+> > "if (!firmware)" block.
+> >
+>
+> I prefer variables declared in the beginning of the function, so I'm
+> happy with this.
+>
+> > > +   if (!firmware) {
+> > > +           /*
+> > > +            * If the caller didn't pass in a firmware name then
+> > > +            * construct a default name.
+> > > +            */
+> > > +           name_len = strlen(name) + strlen(template) - 2 + 1;
+> > > +           p = kmalloc(name_len, GFP_KERNEL);
+> >
+> >
+> > I don't know if it would be an improvement, but you could
+> > check for a null p value below for both cases.  I.e.:
+> >
+> >               if (p)
+> >                       snprintf(p, ...);
+> >
+>
+> Moving the common NULL check and return out seems nice, but given that
+> we then have to have this positive conditional I think the end result is
+> more complex.
+>
+> That said, if we're not just doing a verbatim copy from rproc_alloc() I
+> think we should make this function:
+>
+>         if (!firmware)
+>                 p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+>         else
+>                 p = kstrdup_const(firmware, GFP_KERNEL);
+>
+>         rproc->firmware = p;
+>
+>         return p ? 0 : -ENOMEM;
+
+At this time I was going for a pure re-arrangement of the code and
+avoiding further improvement.  This is simple enough that it can be
+rolled-in the next revision.
 
 Thanks,
 Mathieu
 
-
 >
-> Two small suggestions for you to consider but they're truly
-> more about style so it's entirely up to you.  Outside of that
-> this looks straightforward to me, and the result of the series
-> is an improvement.
+> Regards,
+> Bjorn
 >
-> I'll let you comment on my suggestions before offering my
-> "reviewed-by" indication.
->
->                                         -Alex
->
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
-> >  1 file changed, 39 insertions(+), 27 deletions(-)
+> > (more below)
 > >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index 80056513ae71..4dee63f319ba 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
-> >       .release        = rproc_type_release,
-> >  };
+> > > +           if (!p)
+> > > +                   return -ENOMEM;
+> > > +           snprintf(p, name_len, template, name);
+> > > +   } else {
+> > > +           p = kstrdup(firmware, GFP_KERNEL);
+> > > +           if (!p)
+> > > +                   return -ENOMEM;
+> > > +   }
+> > > +
 > >
-> > +static int rproc_alloc_firmware(struct rproc *rproc,
-> > +                             const char *name, const char *firmware)
-> > +{
-> > +     char *p, *template = "rproc-%s-fw";
-> > +     int name_len;
->
-> Not a big deal (and maybe it's not consistent with other nearby
-> style) but template and name_len could be defined inside the
-> "if (!firmware)" block.
->
-> > +     if (!firmware) {
-> > +             /*
-> > +              * If the caller didn't pass in a firmware name then
-> > +              * construct a default name.
-> > +              */
-> > +             name_len = strlen(name) + strlen(template) - 2 + 1;
-> > +             p = kmalloc(name_len, GFP_KERNEL);
->
->
-> I don't know if it would be an improvement, but you could
-> check for a null p value below for both cases.  I.e.:
->
->                 if (p)
->                         snprintf(p, ...);
->
-> (more below)
->
-> > +             if (!p)
-> > +                     return -ENOMEM;
-> > +             snprintf(p, name_len, template, name);
-> > +     } else {
-> > +             p = kstrdup(firmware, GFP_KERNEL);
-> > +             if (!p)
-> > +                     return -ENOMEM;
-> > +     }
-> > +
->
->         if (!p)
->                 return -ENOMEM;
->
-> > +     rproc->firmware = p;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  /**
-> >   * rproc_alloc() - allocate a remote processor handle
-> >   * @dev: the underlying device
-> > @@ -2007,42 +2034,21 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
-> >                         const char *firmware, int len)
-> >  {
-> >       struct rproc *rproc;
-> > -     char *p, *template = "rproc-%s-fw";
-> > -     int name_len;
+> >       if (!p)
+> >               return -ENOMEM;
 > >
-> >       if (!dev || !name || !ops)
-> >               return NULL;
+> > > +   rproc->firmware = p;
+> > > +
+> > > +   return 0;
+> > > +}
+> > > +
+> > >  /**
+> > >   * rproc_alloc() - allocate a remote processor handle
+> > >   * @dev: the underlying device
+> > > @@ -2007,42 +2034,21 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+> > >                       const char *firmware, int len)
+> > >  {
+> > >     struct rproc *rproc;
+> > > -   char *p, *template = "rproc-%s-fw";
+> > > -   int name_len;
+> > >
+> > >     if (!dev || !name || !ops)
+> > >             return NULL;
+> > >
+> > > -   if (!firmware) {
+> > > -           /*
+> > > -            * If the caller didn't pass in a firmware name then
+> > > -            * construct a default name.
+> > > -            */
+> > > -           name_len = strlen(name) + strlen(template) - 2 + 1;
+> > > -           p = kmalloc(name_len, GFP_KERNEL);
+> > > -           if (!p)
+> > > -                   return NULL;
+> > > -           snprintf(p, name_len, template, name);
+> > > -   } else {
+> > > -           p = kstrdup(firmware, GFP_KERNEL);
+> > > -           if (!p)
+> > > -                   return NULL;
+> > > -   }
+> > > -
+> > >     rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
+> > > -   if (!rproc) {
+> > > -           kfree(p);
+> > > +   if (!rproc)
+> > >             return NULL;
+> > > -   }
+> > > +
+> > > +   if (rproc_alloc_firmware(rproc, name, firmware))
+> > > +           goto free_rproc;
+> > >
+> > >     rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
+> > > -   if (!rproc->ops) {
+> > > -           kfree(p);
+> > > -           kfree(rproc);
+> > > -           return NULL;
+> > > -   }
+> > > +   if (!rproc->ops)
+> > > +           goto free_firmware;
+> > >
+> > > -   rproc->firmware = p;
+> > >     rproc->name = name;
+> > >     rproc->priv = &rproc[1];
+> > >     rproc->auto_boot = true;
+> > > @@ -2091,6 +2097,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+> > >     rproc->state = RPROC_OFFLINE;
+> > >
+> > >     return rproc;
+> > > +
+> > > +free_firmware:
+> > > +   kfree(rproc->firmware);
+> > > +free_rproc:
+> > > +   kfree(rproc);
+> > > +   return NULL;
+> > >  }
+> > >  EXPORT_SYMBOL(rproc_alloc);
+> > >
+> > >
 > >
-> > -     if (!firmware) {
-> > -             /*
-> > -              * If the caller didn't pass in a firmware name then
-> > -              * construct a default name.
-> > -              */
-> > -             name_len = strlen(name) + strlen(template) - 2 + 1;
-> > -             p = kmalloc(name_len, GFP_KERNEL);
-> > -             if (!p)
-> > -                     return NULL;
-> > -             snprintf(p, name_len, template, name);
-> > -     } else {
-> > -             p = kstrdup(firmware, GFP_KERNEL);
-> > -             if (!p)
-> > -                     return NULL;
-> > -     }
-> > -
-> >       rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
-> > -     if (!rproc) {
-> > -             kfree(p);
-> > +     if (!rproc)
-> >               return NULL;
-> > -     }
-> > +
-> > +     if (rproc_alloc_firmware(rproc, name, firmware))
-> > +             goto free_rproc;
-> >
-> >       rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
-> > -     if (!rproc->ops) {
-> > -             kfree(p);
-> > -             kfree(rproc);
-> > -             return NULL;
-> > -     }
-> > +     if (!rproc->ops)
-> > +             goto free_firmware;
-> >
-> > -     rproc->firmware = p;
-> >       rproc->name = name;
-> >       rproc->priv = &rproc[1];
-> >       rproc->auto_boot = true;
-> > @@ -2091,6 +2097,12 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
-> >       rproc->state = RPROC_OFFLINE;
-> >
-> >       return rproc;
-> > +
-> > +free_firmware:
-> > +     kfree(rproc->firmware);
-> > +free_rproc:
-> > +     kfree(rproc);
-> > +     return NULL;
-> >  }
-> >  EXPORT_SYMBOL(rproc_alloc);
-> >
-> >
->
