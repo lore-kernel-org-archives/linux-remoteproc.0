@@ -1,197 +1,220 @@
-Return-Path: <s-anna@ti.com>
-Subject: Re: [PATCH v2 1/2] remoteproc: fall back to using parent memory pool
- if no dedicated available
-References: <20200319162321.20632-1-s-anna@ti.com>
- <20200319162321.20632-2-s-anna@ti.com> <20200325203812.GA9384@xps15>
- <207036a8-b34e-6311-5ad6-3289eb9f7a06@ti.com>
- <CANLsYkzU79LDVWO=wtoOY-=iW0a4EUf5sruwWicyj+2EAFZ4rg@mail.gmail.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <31e64312-c80c-a1a8-a8cb-c87e54233d4f@ti.com>
-Date: Tue, 7 Apr 2020 14:36:36 -0500
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Tue, 14 Apr 2020 11:46:44 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v2 3/3] remoteproc: imx_rproc: memory regions
+Message-ID: <20200414174644.GD24061@xps15>
+References: <20200304142628.8471-1-NShubin@topcon.com>
+ <20200406113310.3041-1-nikita.shubin@maquefel.me>
+ <20200406113310.3041-4-nikita.shubin@maquefel.me>
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkzU79LDVWO=wtoOY-=iW0a4EUf5sruwWicyj+2EAFZ4rg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Loic Pallardy <loic.pallardy@st.com>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200406113310.3041-4-nikita.shubin@maquefel.me>
+To: nikita.shubin@maquefel.me
+Cc: Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Mathieu,
-
-On 3/27/20 4:09 PM, Mathieu Poirier wrote:
-> On Wed, 25 Mar 2020 at 17:39, Suman Anna <s-anna@ti.com> wrote:
->>
->> Hi Mathieu,
->>
->> On 3/25/20 3:38 PM, Mathieu Poirier wrote:
->>> On Thu, Mar 19, 2020 at 11:23:20AM -0500, Suman Anna wrote:
->>>> From: Tero Kristo <t-kristo@ti.com>
->>>>
->>>> In some cases, like with OMAP remoteproc, we are not creating dedicated
->>>> memory pool for the virtio device. Instead, we use the same memory pool
->>>> for all shared memories. The current virtio memory pool handling forces
->>>> a split between these two, as a separate device is created for it,
->>>> causing memory to be allocated from bad location if the dedicated pool
->>>> is not available. Fix this by falling back to using the parent device
->>>> memory pool if dedicated is not available.
->>>>
->>>> Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
->>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>> ---
->>>> v2:
->>>>  - Address Arnaud's concerns about hard-coded memory-region index 0
->>>>  - Update the comment around the new code addition
->>>> v1: https://patchwork.kernel.org/patch/11422721/
->>>>
->>>>  drivers/remoteproc/remoteproc_virtio.c | 15 +++++++++++++++
->>>>  include/linux/remoteproc.h             |  2 ++
->>>>  2 files changed, 17 insertions(+)
->>>>
->>>> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
->>>> index eb817132bc5f..b687715cdf4b 100644
->>>> --- a/drivers/remoteproc/remoteproc_virtio.c
->>>> +++ b/drivers/remoteproc/remoteproc_virtio.c
->>>> @@ -369,6 +369,21 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->>>>                              goto out;
->>>>                      }
->>>>              }
->>>> +    } else {
->>>> +            struct device_node *np = rproc->dev.parent->of_node;
->>>> +
->>>> +            /*
->>>> +             * If we don't have dedicated buffer, just attempt to re-assign
->>>> +             * the reserved memory from our parent. A default memory-region
->>>> +             * at index 0 from the parent's memory-regions is assigned for
->>>> +             * the rvdev dev to allocate from, and this can be customized
->>>> +             * by updating the vdevbuf_mem_id in platform drivers if
->>>> +             * desired. Failure is non-critical and the allocations will
->>>> +             * fall back to global pools, so don't check return value
->>>> +             * either.
->>>
->>> I'm perplex...  In the changelog it is indicated that if a memory pool is
->>> not dedicated allocation happens from a bad location but here failure of
->>> getting a hold of a dedicated memory pool is not critical.
->>
->> So, the comment here is a generic one while the bad location part in the
->> commit description is actually from OMAP remoteproc usage perspective
->> (if you remember the dev_warn messages we added to the memory-region
->> parse logic in the driver).
+On Mon, Apr 06, 2020 at 02:33:10PM +0300, nikita.shubin@maquefel.me wrote:
+> Add support for carveout memory regions required for vdev vring's and
+> buffer.
 > 
-> I can't tell... Are you referring to the comment lines after
-> of_reserved_mem_device_init() in omap_rproc_probe()?
-
-Yes indeed, the dev_warn traces after of_reserved_mem_device_init().
-
+> Search in device tree and allocate memory regions like for ocram:
 > 
->>
->> Before the fixed-memory carveout support, all the DMA allocations in
->> remoteproc core were made from the rproc platform device's DMA pool (
->> which can be NULL). That is lost after the fixed-memory support, and
->> they were always allocated from global DMA pools if no dedicated pools
->> are used. After this patch, that continues to be case for drivers that
->> still do not use any dedicated pools, while it does restore the usage of
->> the platform device's DMA pool if a driver uses one (OMAP remoteproc
->> falls into the latter).
->>
->>>
->>>> +             */
->>>> +            of_reserved_mem_device_init_by_idx(dev, np,
->>>> +                                               rproc->vdevbuf_mem_id);
->>>
->>> I wonder if using an index setup by platform code is really the best way
->>> forward when we already have the carveout mechanic available to us.  I see the
->>> platform code adding a carveout that would have the same name as rproc->name.
->>> From there in rproc_add_virtio_dev() we could have something like:
->>>
->>>         mem = rproc_find_carveout_by_name(rproc, "%s", rproc->name);
->>>
->>>
->>> That would be very flexible, the location of the reserved memory withing the
->>> memory-region could change without fear of breaking things and no need to add to
->>> struct rproc.
->>>
->>> Let me know what you think.
->>
->> I think that can work as well but I feel it is lot more cumbersome. It
->> does require every platform driver to add code adding/registering that
->> carveout, and parse the reserved memory region etc. End of the day, we
->> rely on DMA API and we just have to assign the region to the newly
->> created device. The DMA pool assignment for devices using
->> reserved-memory nodes has simply been the of_reserved_mem_device_init()
->> function.
+> vdev0vring0: vdev0vring0@00920000 {
+> 	compatible = "shared-dma-pool";
+>         reg = <0x00920000 0x2000>;
+>         no-map;
+> };
 > 
-> Given all the things happening in the platform drivers adding and
-> registering a single carveout doesn't seem that onerous to me.   I
-> also expect setting rproc->vdevbuf_mem_id would involve some form of
-> parsing.  
-
-So, no additional parsing other than to know which id if you have
-multiple regions. A device can only be assigned one default DMA/CMA pool
-to use with the DMA API. One would need to add the assignment statement
-only if region 0 is not being used as the device DMA-API pool.
-
-Lastly if a couple of platforms end up doing the same thing
-> might as well bring the code in the core, hence choosing a generic
-> name such as rproc->name for the memory region.
-
-That is actually lot more code than the current code. First you would
-need to lookup and parse the reserved mem to get the address and size to
-initialize the rproc mem structure, and then use the filled in values to
-declare the DMA pool.
-
+> vdev0vring1: vdev0vring1@00922000 {
+> 	compatible = "shared-dma-pool";
+> 	reg = <0x00922000 0x2000>;
+> 	no-map;
+> };
 > 
-> At the very least I would use of_reserved_mem_device_init_by_idx(dev,
-> np, 0).  I agree it is not flexible but I'll take that over adding a
-> new field to structure rproc.
-
-Yep, I started out indeed with exactly that code in v1, and only
-introduced the new field to address Arnaud's comments. Even the new
-field is intrinsically initialized to 0, so the code is equivalent, and
-supports the cases in case you need to use a different reserved-memory
-region than at index 0.
-
-regards
-Suman
-
-
+> vdev0buffer: vdev0buffer@00924000 {
+> 	compatible = "shared-dma-pool";
+> 	reg = <0x00924000 0x4000>;
+> 	no-map;
+> };
 > 
-> Thanks,
-> Mathieu
+> imx7d-cm4 {
+> 	compatible = "fsl,imx7d-cm4";
+> 	memory-region = <&ocram>, <&vdev0vring0>, <&vdev0vring1>, \
+> 		<&vdev0buffer>;
+> }
 > 
->>
->> regards
->> Suman
->>
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>>      }
->>>>
->>>>      /* Allocate virtio device */
->>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>> index ed127b2d35ca..07bd73a6d72a 100644
->>>> --- a/include/linux/remoteproc.h
->>>> +++ b/include/linux/remoteproc.h
->>>> @@ -481,6 +481,7 @@ struct rproc_dump_segment {
->>>>   * @auto_boot: flag to indicate if remote processor should be auto-started
->>>>   * @dump_segments: list of segments in the firmware
->>>>   * @nb_vdev: number of vdev currently handled by rproc
->>>> + * @vdevbuf_mem_id: default memory-region index for allocating vdev buffers
->>>>   */
->>>>  struct rproc {
->>>>      struct list_head node;
->>>> @@ -514,6 +515,7 @@ struct rproc {
->>>>      bool auto_boot;
->>>>      struct list_head dump_segments;
->>>>      int nb_vdev;
->>>> +    u8 vdevbuf_mem_id;
->>>>      u8 elf_class;
->>>>  };
->>>>
->>>> --
->>>> 2.23.0
->>>>
->>
+> vdev0vring0, vdev0vring1, vdev0buffer are required for virtio
+> functioning.
+> 
+> Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 119 ++++++++++++++++++++++++++++++++-
+>  1 file changed, 118 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index d2bede4ccb70..cdcff2bd2867 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+> +#include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+> @@ -238,6 +239,29 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+>  	return -ENOENT;
+>  }
+>  
+> +static int imx_rproc_sys_to_da(struct imx_rproc *priv, u64 sys,
+> +				int len, u64 *da)
+> +{
+> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+> +	int i;
+> +
+> +	/* parse address translation table */
+> +	for (i = 0; i < dcfg->att_size; i++) {
+> +		const struct imx_rproc_att *att = &dcfg->att[i];
+> +
+> +		if (sys >= att->sa && sys + len <= att->sa + att->size) {
+> +			unsigned int offset = sys - att->sa;
+> +
+> +			*da = att->da + offset;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	dev_warn(priv->dev, "Translation failed: sys = 0x%llx len = 0x%x\n",
+> +			 sys, len);
+> +	return -ENOENT;
+> +}
+> +
+>  static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  {
+>  	struct imx_rproc *priv = rproc->priv;
+> @@ -372,16 +396,109 @@ static void imx_rproc_kick(struct rproc *rproc, int vqid)
+>  		err = mbox_send_message(ddata->mb[i].chan, &vqid);
+>  		if (err < 0)
+>  			dev_err(&rproc->dev, "%s: failed (%s, err:%d)\n",
+> -					__func__, ddata->mb[i].name, err);
+> +				__func__, ddata->mb[i].name, err);
+>  			return;
+>  	}
+>  }
+>  
+> +static int imx_rproc_mem_alloc(struct rproc *rproc,
+> +				struct rproc_mem_entry *mem)
+> +{
+> +	struct device *dev = rproc->dev.parent;
+> +	void *va;
+> +
+> +	dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
+> +	va = ioremap_wc(mem->dma, mem->len);
+> +	if (IS_ERR_OR_NULL(va)) {
+> +		dev_err(dev, "Unable to map memory region: %pa+%x\n",
+> +				&mem->dma, mem->len);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	/* Update memory entry va */
+> +	mem->va = va;
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx_rproc_mem_release(struct rproc *rproc,
+> +				struct rproc_mem_entry *mem)
+> +{
+> +	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
+> +	iounmap(mem->va);
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	struct imx_rproc *priv = rproc->priv;
+> +	struct device *dev = rproc->dev.parent;
+> +	struct device_node *np = dev->of_node;
+> +	struct of_phandle_iterator it;
+> +	struct rproc_mem_entry *mem = 0;
+> +	struct reserved_mem *rmem;
+> +	u64 da;
+> +	int index = 0;
+> +
+> +	/* Register associated reserved memory regions */
+> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
+
+This will likely clash with the parsing done in imx_rproc_addr_init(), and the
+parsing in there will also clash with what is done below...  I advise you to
+register carvouts in imx_rproc_addr_init() as you parse the rest of the memory
+regions.
+
+Thanks,
+Mathieu
+
+> +	while (of_phandle_iterator_next(&it) == 0) {
+> +		rmem = of_reserved_mem_lookup(it.node);
+> +		if (!rmem) {
+> +			dev_err(dev, "unable to acquire memory-region\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		/*
+> +		 * Let's assume all data in device tree is from
+> +		 * CPU A7 point of view then we should translate
+> +		 * rmem->base into M4 da
+> +		 */
+> +		if (imx_rproc_sys_to_da(priv, rmem->base, rmem->size, &da)) {
+> +			dev_err(dev, "memory region not valid %pa\n",
+> +				&rmem->base);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (strcmp(it.node->name, "vdev0buffer")) {
+> +			/* Register memory region */
+> +			mem = rproc_mem_entry_init(dev, NULL,
+> +						(dma_addr_t)rmem->base,
+> +						rmem->size, da,
+> +						imx_rproc_mem_alloc,
+> +						imx_rproc_mem_release,
+> +						it.node->name);
+> +
+> +			if (mem)
+> +				rproc_coredump_add_segment(rproc, da,
+> +							rmem->size);
+> +		} else {
+> +			mem = rproc_of_resm_mem_entry_init(dev, index,
+> +							rmem->size,
+> +							rmem->base,
+> +							it.node->name);
+> +		}
+> +
+> +		if (!mem)
+> +			return -ENOMEM;
+> +
+> +		rproc_add_carveout(rproc, mem);
+> +		index++;
+> +	}
+> +
+> +	return rproc_elf_load_rsc_table(rproc, fw);
+> +}
+> +
+>  static const struct rproc_ops imx_rproc_ops = {
+>  	.start		= imx_rproc_start,
+>  	.stop		= imx_rproc_stop,
+>  	.da_to_va	= imx_rproc_da_to_va,
+>  	.kick		= imx_rproc_kick,
+> +	.load		= rproc_elf_load_segments,
+> +	.parse_fw	= imx_rproc_parse_fw,
+> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> +	.sanity_check	= rproc_elf_sanity_check,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
+>  };
+>  
+> -- 
+> 2.25.1
+> 
