@@ -1,9 +1,9 @@
 Return-Path: <mathieu.poirier@linaro.org>
 Return-Path: <mathieu.poirier@linaro.org>
-Date: Tue, 14 Apr 2020 11:36:27 -0600
+Date: Tue, 14 Apr 2020 11:20:05 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: mailbox support
-Message-ID: <20200414173627.GC24061@xps15>
+Message-ID: <20200414172004.GB24061@xps15>
 References: <20200304142628.8471-1-NShubin@topcon.com>
  <20200406113310.3041-1-nikita.shubin@maquefel.me>
  <20200406113310.3041-3-nikita.shubin@maquefel.me>
@@ -57,6 +57,9 @@ On Mon, Apr 06, 2020 at 02:33:09PM +0300, nikita.shubin@maquefel.me wrote:
 >  
 > +#define IMX_MBOX_NB_VQ			2
 > +#define IMX_MBOX_NB_MBX		2
+
+Please align this.
+
 > +
 > +#define IMX_MBX_VQ0		"vq0"
 > +#define IMX_MBX_VQ1		"vq1"
@@ -147,9 +150,6 @@ On Mon, Apr 06, 2020 at 02:33:09PM +0300, nikita.shubin@maquefel.me wrote:
 > +		cl->dev = dev->parent;
 > +
 > +		ddata->mb[i].chan = mbox_request_channel_byname(cl, name);
-
-I forgot... You will also need to update the bindings document (imx-rproc.txt).
-
 > +
 > +		dev_dbg(dev, "%s: name=%s, idx=%u\n",
 > +			__func__, name, ddata->mb[i].vq_id);
@@ -157,6 +157,13 @@ I forgot... You will also need to update the bindings document (imx-rproc.txt).
 > +		if (IS_ERR(ddata->mb[i].chan)) {
 > +			dev_warn(dev, "cannot get %s mbox\n", name);
 > +			ddata->mb[i].chan = NULL;
+
+If the mailbox isn't ready this driver will fail without a chance of recovery.
+Since most of the code in this patch is a carbon copy of the implementation
+found in stm32_proc.c, I suggest you do the same as they did in
+stm32_rproc_request_mbox() and privision for cases where requesting a channel
+returns -EPROBE_DEFER.
+
 > +		}
 > +
 > +		if (ddata->mb[i].vq_id >= 0)
@@ -243,6 +250,15 @@ I forgot... You will also need to update the bindings document (imx-rproc.txt).
 >  	clk_disable_unprepare(priv->clk);
 >  	rproc_del(rproc);
 > +	imx_rproc_free_mbox(rproc);
+
+I have no issues with people reusing code already found in the kernel - in fact
+I encourage it because it makes reviewing patches much easier.  On the flip side
+you have to give credit where it is due.  Here adding a line in the changelog
+that mentions where you took your inspiration from will be much appreciated.
+
+Thanks,
+Mathieu
+
 >  	rproc_free(rproc);
 >  
 >  	return 0;
