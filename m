@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC086C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 17:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D14DC2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 17:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4D41206A2
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 17:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 488F0206B6
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 17:36:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vU9z5nd4"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFyJLZxt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407593AbgDNRUL (ORCPT
+        id S2407653AbgDNRge (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 13:20:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36988 "EHLO
+        Tue, 14 Apr 2020 13:36:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2407592AbgDNRUJ (ORCPT
+        by vger.kernel.org with ESMTP id S2407638AbgDNRga (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Apr 2020 13:20:09 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5404CC061A0E
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 10:20:08 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id g2so192120plo.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 10:20:08 -0700 (PDT)
+        Tue, 14 Apr 2020 13:36:30 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85196C061A0E
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 10:36:30 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id b72so239910pfb.11
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 10:36:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=nYOdjx3SpF9DkUS8byznV4S2MTaAE+QPJcIvAavqU9w=;
-        b=vU9z5nd4yquIaqbQ1kKrijql3CdqH/vUzjQxEYdp7Ld378Iah8QBqN0n5HZWOjhj88
-         Ya9kPC8lGxVHd/ig51gCCgTEkGIYfntAFWS1+ReMGiRZGuA4/hoUrk4RVpaZm8UooYCb
-         79nJW9TJdniD4kLM9nqpLWjRlOG52HbMsBH3Sd8TpJSvNEW6SXJQkFr/XJav44xgPVc6
-         ko2830DQlLvQaUXLGIK9KVq+VYtkY5YhKFEuvlyILXUJquBnTrqkew3g2ZlTuDJklXEP
-         Tl7PWyPp+L7eWHxh6UKxVU0YDWUupsw/FldAsdG9qXGfXkugd+kY94tgTkY6FIMZyCWY
-         tXsg==
+        bh=N/Ua+kNY1INXU8/vefeEMmjH2oEjRI24sNk0LQ39hNU=;
+        b=RFyJLZxtQ5VrS3LcTIRsWDqzZc4VHkZTJkFp61oPQeTr6ipbBEWOk31/9HvT7+Irv2
+         fOLBgQq7J4RwfUdYaC68+yWdW5GSX+9C3dB58zcFq48Nf/dieyCmw+imw5gwSqD91OXr
+         A1NLZ7vWagrRgR8eP/1iA9JBRn7Y2lLHk7hP05+ieeURPgqM3gUnVE/ACz24Um/8YVsn
+         W7dUVl3sP9DOF9YkB7O1UIWAkXLEQAloOLSSUovaPpWyU3fU8iMCqm0vt4dkgBVZ59TE
+         qKV26fBcWiq3jV/LqEfo3dYJVooIu6/15zZpuR4nk+ZGoi8wep1ek124MbyPLmgZi/fZ
+         xHgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nYOdjx3SpF9DkUS8byznV4S2MTaAE+QPJcIvAavqU9w=;
-        b=lRtY4FZg9r4lcOSSJIYO/JQ/E/UePRiZV+KpM8sO+Cj0MRL/zEK01xd4bgPSfVLtW3
-         HiAx73G7TPKCIx0DCBBVwWBV3GZlQH3epL9qikh6Qq8fEGELE4BsBrfJYvgjpZomMj1M
-         zFPLChWxw6ToJaY6bqcee4fhiZsCflzd2heYFWpsFrWgE7NCcMrTiLiUne33Ms3nK8xO
-         g4rKnXDmGWFi3GVjzFK1IdSG2t4dE+yg8UTSsy8fd1wrlDKD3Yd5gguKSJjASB7jqdVD
-         Vfa2Z8AeNV3rpScNFzJTtc3w4XdOLxAFCc9+nYDbTzo4b4VIwXtTGMzfIcseKvByqG2X
-         PtGA==
-X-Gm-Message-State: AGi0PuZ7Mfo3kGwqR/rznNUHCMoKh6DPPTsJT/GTkZQDsEWU4bnYJ5+6
-        uKJyiWte5fb0lHldhxX9iaccaQ==
-X-Google-Smtp-Source: APiQypLFa9Zwdjn4tdg2Thq8figw9/2KqysFQllBw2vu3dYOR6i9Wi65V7imT93s00HkpgLRMaPogA==
-X-Received: by 2002:a17:90a:71c5:: with SMTP id m5mr1275159pjs.193.1586884807655;
-        Tue, 14 Apr 2020 10:20:07 -0700 (PDT)
+        bh=N/Ua+kNY1INXU8/vefeEMmjH2oEjRI24sNk0LQ39hNU=;
+        b=nGihAsQsM7HfWG9EvyuxvS+h/Xj95ps/albUlm8uMrMsVUz66F7akCdy4rBWO8EUDu
+         leBR+5N2bu/HwvXc9bM7IamrqnwgXKq4TEwDJ5glCJUTif7iqGM+v6FyFSGvQyeJASsl
+         mtNUwOpgqd7X/zDwr7M9L6oMa6BiRfd0Djr6OtRu9Rpmboa8FNBS06+A24kqHa4mMQop
+         ugPDiliMOh3+uyFpNfR/N75OV3w23fodIcInZ7uinHZw3wBTPtD2JN2C5UT8iFosGhiX
+         hsOFN52BUB2tLWiyayWlquoVJ+IRNCbky/ntMyTdLi2XafD43reNDJVmK11mgK/pK4cg
+         nDoA==
+X-Gm-Message-State: AGi0PuZ7EgHTNlQw1c15rb5sPIv9WwQxKOBrN1bvdaIh2gPRx77zfe4/
+        MmDmBS7pPgvrncWeF46TShwZpA==
+X-Google-Smtp-Source: APiQypKRNgqz9RThJhrPvV5k2HJsq+Uz5Pc0ZoaVc4QROaDd3pcImCFV9Dx1O9T6rge4bbTBDy2l0g==
+X-Received: by 2002:aa7:9a92:: with SMTP id w18mr23833141pfi.95.1586885789861;
+        Tue, 14 Apr 2020 10:36:29 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id l9sm11402386pff.16.2020.04.14.10.20.06
+        by smtp.gmail.com with ESMTPSA id r9sm11192048pfg.2.2020.04.14.10.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 10:20:07 -0700 (PDT)
-Date:   Tue, 14 Apr 2020 11:20:05 -0600
+        Tue, 14 Apr 2020 10:36:29 -0700 (PDT)
+Date:   Tue, 14 Apr 2020 11:36:27 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     nikita.shubin@maquefel.me
 Cc:     Nikita Shubin <NShubin@topcon.com>,
@@ -73,7 +73,7 @@ Cc:     Nikita Shubin <NShubin@topcon.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: mailbox support
-Message-ID: <20200414172004.GB24061@xps15>
+Message-ID: <20200414173627.GC24061@xps15>
 References: <20200304142628.8471-1-NShubin@topcon.com>
  <20200406113310.3041-1-nikita.shubin@maquefel.me>
  <20200406113310.3041-3-nikita.shubin@maquefel.me>
@@ -86,7 +86,7 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200414172005.YL4pLMQDey2cWniyJ3yKdNP5vUgq5lRxGF41W1TUSsI@z>
+Message-ID: <20200414173627.0evnPoBamwL9fwrDu5w883HgDmEM9sSSU6v8B46UYY8@z>
 
 On Mon, Apr 06, 2020 at 02:33:09PM +0300, nikita.shubin@maquefel.me wrote:
 > Add support for mailboxes to imx_rproc
@@ -130,9 +130,6 @@ On Mon, Apr 06, 2020 at 02:33:09PM +0300, nikita.shubin@maquefel.me wrote:
 >  
 > +#define IMX_MBOX_NB_VQ			2
 > +#define IMX_MBOX_NB_MBX		2
-
-Please align this.
-
 > +
 > +#define IMX_MBX_VQ0		"vq0"
 > +#define IMX_MBX_VQ1		"vq1"
@@ -223,6 +220,9 @@ Please align this.
 > +		cl->dev = dev->parent;
 > +
 > +		ddata->mb[i].chan = mbox_request_channel_byname(cl, name);
+
+I forgot... You will also need to update the bindings document (imx-rproc.txt).
+
 > +
 > +		dev_dbg(dev, "%s: name=%s, idx=%u\n",
 > +			__func__, name, ddata->mb[i].vq_id);
@@ -230,13 +230,6 @@ Please align this.
 > +		if (IS_ERR(ddata->mb[i].chan)) {
 > +			dev_warn(dev, "cannot get %s mbox\n", name);
 > +			ddata->mb[i].chan = NULL;
-
-If the mailbox isn't ready this driver will fail without a chance of recovery.
-Since most of the code in this patch is a carbon copy of the implementation
-found in stm32_proc.c, I suggest you do the same as they did in
-stm32_rproc_request_mbox() and privision for cases where requesting a channel
-returns -EPROBE_DEFER.
-
 > +		}
 > +
 > +		if (ddata->mb[i].vq_id >= 0)
@@ -323,15 +316,6 @@ returns -EPROBE_DEFER.
 >  	clk_disable_unprepare(priv->clk);
 >  	rproc_del(rproc);
 > +	imx_rproc_free_mbox(rproc);
-
-I have no issues with people reusing code already found in the kernel - in fact
-I encourage it because it makes reviewing patches much easier.  On the flip side
-you have to give credit where it is due.  Here adding a line in the changelog
-that mentions where you took your inspiration from will be much appreciated.
-
-Thanks,
-Mathieu
-
 >  	rproc_free(rproc);
 >  
 >  	return 0;
