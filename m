@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F2EC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 08:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD08C352B6
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 08:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF6CD20578
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 08:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2B4B2074D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 08:53:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="OCiuS6MD"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="hJLnLGAX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436705AbgDNIYj (ORCPT
+        id S2437220AbgDNIxL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 04:24:39 -0400
-Received: from mout.web.de ([217.72.192.78]:41197 "EHLO mout.web.de"
+        Tue, 14 Apr 2020 04:53:11 -0400
+Received: from mout.web.de ([212.227.17.11]:60149 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436695AbgDNIYe (ORCPT
+        id S2437215AbgDNIxI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Apr 2020 04:24:34 -0400
+        Tue, 14 Apr 2020 04:53:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1586852667;
-        bh=xYmpjD3b4g0+uRWfz6ZucD+8z8VMXMdEU294FPLBGDw=;
+        s=dbaedf251592; t=1586854384;
+        bh=w5n7ibZJDJPEVWgwg4sOt2B8XgFjaiQQgTuB4bX2Xno=;
         h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
-        b=OCiuS6MDsv9C7UUT7Q0JZyw17KAsUJDdSnwsGfZZhlAwpkVZIbx5Hj9QJEhyoSVrR
-         l+nLv4u3axnO8pdnqr/TMQTP2gs4ywi0lX8/B/bjoE3us/BERe0Muea3j5/siNMq5t
-         6309TORDTwKMbju1S4rsJKndEZsV9AjsevQ+abn4=
+        b=hJLnLGAXWKW9jObvnCeHZn1xL/7KkghMa+TNsTFzV3MfsfBNKJSEVctyd7Nq2pr98
+         biCaVaqB9nNXIdFuhx2tApMF1gXehFRVG8b6p7Qb3etRw7irP3Q1mT4T7dOcN82vSA
+         tsyIuxaeC7NrtcVnQHb1siJmKrEOt/aUL844ncGI=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.49.66.171]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MGzjq-1jTAPA3hZa-00DpHE; Tue, 14
- Apr 2020 10:24:27 +0200
+Received: from [192.168.1.3] ([78.49.66.171]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Mb8wp-1jiH8W3CoN-00KjVY; Tue, 14
+ Apr 2020 10:53:03 +0200
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alex Elder <elder@linaro.org>, linux-remoteproc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Alex Elder <elder@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH 1/4] remoteproc: Fix a bug in rproc_alloc()
+Subject: Re: [PATCH 4/4] remoteproc: Get rid of tedious error path
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -84,54 +84,53 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <e459f807-4c61-257b-b7b5-dd767202c435@web.de>
-Date:   Tue, 14 Apr 2020 10:24:26 +0200
+Message-ID: <e5e03d6b-46bd-5ece-a7f6-3cb557c3b0b0@web.de>
+Date:   Tue, 14 Apr 2020 10:53:02 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:x3pdaU8T+pJDvPTFMHeaGE4NFDXjx/oIl5bqFFTbxRwj1inj0Ds
- tccARXNh0XLP+iqXBZqa+oYIL6Qp0SXzOCdzwQgA7zkMhgU9/gD2LJtlRLewApYYY5A5neR
- OtsauIzyL5k75EJYnHwuMXdWFPi5uJSSensDTfI4G8vewDnWX0hwshX8b5QwtiwbHijL8LP
- OeQDDOaLbYd5qCsa/Xs6w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8YkSqLQf2Ng=:eO37U/FXPCWPJUy/sX82K7
- 0K8+vQULu9iyydiGNH51uxY/ezTzK8AuUuZ5DyOXRCFqd4D/ZTJrDESvDbkEvVMpgMcKxE1oT
- ooMD/ZGf3US8iZruJHIvZEI0tGLBc3s/89gEfQ+C4nx17z6wazfqNQvkncXIgeVDf33y+LAJQ
- 1V69d6Wj6BHq8PeRlxfk9vf5i8WLuRkLtWpgF/CEVA1iwf2OwNW9yoEqa40LPoCI0Ukfnvylr
- uiR8q2FQht1LiPUNS6UoAe/GjpnBeIxaFAAZLTDste45NI3UhcN7a06lODlgq9EG5g9VzmBJH
- FmAoke6FpPRM1Yp60emMFgCb0eoYFrHmsDfXWgV3oQnVFjX5IVtSPGqV51E6LBT7UQx5iMOrH
- 35a3IK4PQz4aI5XxR/I7VhqyABlDjHeKUT8HWyPWuoyCYUMAvhdDxgNdYxkVFXu70VflKS+sa
- gmTjTI96pYt3HDpEawk3AqeqJbIiLwr4PeQPyejEDmnyRAJRr7s+8eE45JrbbVitpAHgdXSc4
- v+9bNtpQ3Sa6qC3UYNg8qpk/vS82t3rcEH49yXAfsY6iOb9MnLdaZJ5szWDJUCEgvbiwTB2Fr
- j6NCTUYr7gupaB8oYeKcxpG3EvtuLiAWUjbsHCIXPskWO7e/Y9uAD1n5d4tciZn6LYFPfI/bR
- mjbuuSaZPVsG01ZZGwCU5L3+6P3DnufEXWhKr3UH4dsJAJgxd9M+eQvgy9MvsRgQuWb9RMUvS
- +p/DjN/4cuJ9d9CkJQYJgoR+zmDSk9et3WS0QbCiF1KgJJzFlBkoMjfKaxSzSPK2QfFnEzR/F
- lpbNVeFfvghx+BdJ20Qw70Q3JzznW+bO0YHYbYx/dkLk8xw5UMAH4vW4CzNCmQ3RogoN3R0/6
- wkEqbZ9dCVlJ9iG4+FlvRC1gnuB2wmisTlnULg5Dwn956aDliwLxEapNvc+hhhIrl7foxqp5n
- ZrbUrrkJqZXiUOOcMsOSOFBhk4k5YikgBqmOExDvW6u58vgtqaFSetj49DdN2cld46PNnMZAI
- a6fystAJe2FkPGCO27xOcPicAzDbAw5fijtbveDe1u33BBORhfcn03Z6RRr8B7FK8OfwsQY+k
- Ug4/wL58vdVpdjZ0kIs1JN5+egCPEKr0MC3bbr5WVUpuu/branPjPa3c0zRlc5X+r1IF7OQjV
- kblWrjkFesJkND+qCGpIt6tpGMJwiq/tOT6M87LTZkSvdqYnA3I+vPKq/RnWufHZCPqdBghap
- kGZbmDN5IIXq27gtN
+X-Provags-ID: V03:K1:B0DW/5lFpXhx9rruFnKuF+D5nWJqygtq2HkqEfoYJvWA5wY2Vfi
+ 6w1ztsa3ylpooh8Qv4nsPiSAnbX3juAwck7TKxB3eByvEv3RRy48SCssLvt6OtlkdcRL5py
+ cwMZ9DBi23fdixeRs06VzTJdLpxWkcWMPBXC/DISRn82FzND4ksF80O7vouNP9a/eg6jhbU
+ A1WfPhPtE6yI9x/7vyASw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Kz40wMuz+KE=:ftig1vVMN2qEHVvSWMydJv
+ 9jrZp7OpbOaA4cQkBct6xCTELd8wjZ/Q+ExkOX3jxhYEVYngs4EVN3WVzlllVVNn6HC0g9h36
+ Y2+Dw3JtNJKSqHxXp6g7YrkVwrRfSrfpP1pqTiptwxCLUoBKICEjdxG56zv0G4rsTV9hH+loG
+ 9FejdDaNdxgAL1D8jrgibctMlU+JS6g7I/tQeZozin+XYgJFe87LlQlGJ6wD3mQjXxOWe75af
+ c+EpgR7vYxC24sHwYq4fkvf8XPTNaLUN/h9mkpCxiPEnGEb+E35rXjFwF4fUnyFLs3d4ubVJg
+ sCmW+FIt9SeEt4EOQW2NAmVgIeY/uXGL34mFX9QRyC6GkZ3w1IVqs/1Cm8z7cPCGH1hNc7uqM
+ M81b1NhtU581PxrM4j+1dxJIMBBYIln5ErtC/jrpTzMpuR67vFvIq1/Ds4UiRpfiwrCfA9/G1
+ nZTuAqk7BlieHDsq3fv6oOlfVxhWi+WyXKc3zlb7yDKE8xTW22qf9UUe7mqdnQ9mSvMoCU5c8
+ YUzr8SKILYpSc3Kap8RHL1Bguv0ukQu5pH1xrhGeX3oUG65QTVqwdXfddFFMtQ24W0q7JTSz+
+ F5UJRUpcgjYxxpV2lHdClXW4mCJINWNmRBM4G0a94a9u5rBhjJKWhf2cYnjsN4cY7i/HXwlOD
+ h0n7Gey4aPD1wAFY6Y6HCb9sBLO9fiKx2LlFjTGFqywF9iKBpKei/LvTEF+lypIW+aFfogQzO
+ U7ePIyJgAmyl+82RJ4HSiZBGBXpUUVDU+KzsZm5mv3HYFfkbNOoMDoGPOi9rcRtfhcIqkvnXw
+ qMLCpAcosyQ/y/Bague0Cy5uAe4gDUpcyR1zXQ/Bn8fLxtPqef3rlyBVkA5tzecScBtKZxtU5
+ LTaS4X6QH5fxQrNFoERzJHmFnY5oDKZmnEETCqAYCMTw7qa1oaJFUsUxZTOKjuNvvxsc+l3aY
+ VAorrS+tRJJPCeegsFuqXkFx7nLP1IMWGKInyQeOTk+pk7QeyiHm44ukp5YH7h38nRl2QIjcc
+ KincS1T810i18/N/F8bSTwBxsgt/WLgpfHlPJG6SivaVjH2vSTge6qMRqfB3gEjtWhTbpFeQd
+ yT5wWH4bkuP/Z+UNFOPSfjBsTbNUeHfUQNl7ylwL+5w1QiHVky50X9x+wfQZ2koB2WyZDosu6
+ 5enbC0JooRDV/UXoGjvwvhdUUPsSxeDKYscUo+hmzspTBg5211JEoOk1x7BP9BeUXkuU1SPF/
+ oovUERdZsVBsFYzLi
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200414082426.sAKMyapkrH-oWOl5pkkrvki3eqPCwrh1kbchJ88Lj2Y@z>
+Message-ID: <20200414085302.gXaZSV4eShFHLiprlFMHMV0h1o3aQGeiFbAgaw1D5hw@z>
 
-> I'm not actually sure this case causes an observable problem, but
-> it's incorrect.  Fix this by initializing the notifyids field before
-> calling ida_simple_get() in rproc_alloc().
+=E2=80=A6
+> +++ b/drivers/remoteproc/remoteproc_core.c
+=E2=80=A6
+> @@ -2105,11 +2104,8 @@ struct rproc *rproc_alloc(struct device *dev, con=
+st char *name,
+=E2=80=A6
+> +out:
+> +	put_device(&rproc->dev);
 
-I suggest to improve the commit message.
-
-* Can the information =E2=80=9Cfield initialisation=E2=80=9D be more helpf=
-ul than =E2=80=9Cbug=E2=80=9D
-  in the patch subject?
-
-* Will the tag =E2=80=9CFixes=E2=80=9D become relevant?
+How do you think about to use the label =E2=80=9Cput_device=E2=80=9D?
 
 Regards,
 Markus
