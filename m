@@ -1,8 +1,10 @@
-Date: Wed, 22 Apr 2020 17:54:50 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Wed, 15 Apr 2020 12:11:40 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2 4/6] remoteproc: qcom: Add name field for every
  subdevice
-Message-ID: <20200423005447.GM1868936@builder.lan>
+Message-ID: <20200415181140.GF16583@xps15>
 References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
  <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
@@ -10,11 +12,10 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
 To: Siddharth Gupta <sidgup@codeaurora.org>
-Cc: agross@kernel.org, ohad@wizery.com, Rishabh Bhatnagar <rishabhb@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org
+Cc: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com, Rishabh Bhatnagar <rishabhb@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
-
+On Wed, Apr 08, 2020 at 04:36:41PM -0700, Siddharth Gupta wrote:
 > From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > 
 > When a client driver wishes to utilize functionality from a particular
@@ -22,15 +23,11 @@ On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
 > that have been added. This patch allows the client driver to distinguish
 > between subdevices and thus utilize their functionality.
 > 
-
-As noted in patch 5, this invites driver authors to traverse the rproc
-subdev list outside the remoteproc core. So I would like to avoid this.
-
-Regards,
-Bjorn
-
 > Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
 > ---
 >  drivers/remoteproc/qcom_common.c | 6 ++++++
 >  include/linux/remoteproc.h       | 2 ++
