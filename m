@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AE6C2BA2B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 20:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BD8C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 20:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C1B1206E9
+	by mail.kernel.org (Postfix) with ESMTP id E27332076D
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 20:49:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pmJsR3vM"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PzYRWN/b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442111AbgDOUtK (ORCPT
+        id S2438385AbgDOUt0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 16:49:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41476 "EHLO
+        Wed, 15 Apr 2020 16:49:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2438465AbgDOUtH (ORCPT
+        by vger.kernel.org with ESMTP id S2438617AbgDOUtI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 16:49:07 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3081C061A10
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:05 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id 2so496969pgp.11
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:05 -0700 (PDT)
+        Wed, 15 Apr 2020 16:49:08 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C515C0610D5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:07 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id n16so507005pgb.7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=X7xQkJUM4QmV6qWTvIaQsCBAO/ir+/c43EdRMlg0Sws=;
-        b=pmJsR3vMADCiEuC3ZKRoEyvjBq1QZzx97rLn6fPaWryt3MHuayJKUFwHlbhn+r8AOD
-         asA55ORUfRTr3uD7Q8z5p/QyDbS08f1zy+UqpNFmm0Z3Z2mTsv4lxEG9RcsMpX3HwB+W
-         yGRd3o+f6FGE+AfWv93DKCskICeFWSVVkACz3I6GXLhAuWf7SA6qS+F3kBGN0iZUl6fT
-         K3nvktHz9RuwTFri9hLNzEvNvsKE44ncHhAOSUuUI/OYE2a53l+EK4nYw5oAspI/6Jri
-         VNQJHC/lEOsTzMPMsNv9CdwmyoHA4fVuurHkJ+CIrwKnGKenxFE0KxZu+PeQbcOJMxuX
-         tPJg==
+        bh=M/7ZIhFX8/Fc/kbce4rxbSpECgFr3U/vKIkPqW4pN78=;
+        b=PzYRWN/byflKqd6OsSapeqhz+jz3Mp2vQ5jbUXnfg6/ypN1MtKOn8kz4uKJUQnjzQG
+         zL9RpPo175xED/M6X4ecXyXp9wovIFPGNRW+vCKEH+eTtbJbilLTRK/cmQUzEEYB/6VI
+         IHAbUU2LU3KezQlCkAVUnVFv0miMuzp9V75us5/UFy0YG4Kg+vntVMcf5wJHLLue3cqe
+         KXkHKwfe1+jIFj0/RvkoeUrxClhYzokqu4xvkkAIvlvoPmRgj9Ehc1beneiJ5mWPhGQV
+         bZv86VCUMr1Ead/nuxSjFRA5+2wzV1gwpSY9RILXSi9gO8bNm2hbTRSUH6aHsbFQLa7L
+         sxkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=X7xQkJUM4QmV6qWTvIaQsCBAO/ir+/c43EdRMlg0Sws=;
-        b=RJgvNMZTIcRUR1f0YFhSnlrT+3gtbl/EOL4658+biSk0NxpW3Gglk0OePsmFqo7MKR
-         /gDjx9Mv5QkzXKaC7+FQ0AnZVHKjyYVQhI5XybSrnqe/V/CjtFdIgyWerL0dlAghzwKS
-         ByjEEphc/GrjuaUSJ1YcVGOcuIK3M3m9Ik4P0SKK1/EAQxugqrhSvAGFr0zTC8x3xjDE
-         lJs5KHhxzZfuEHBF361/Wk8Dsc6ROW1nh3+B4AZMpORWVg9mSqvDxS1NKOsQtNhseUNV
-         y8tEBrD0VQ9rUl35I3JO2N5G3/oU3TZeUZDs47ZsaKmiGJUaXBSSKyynF+m4G9uUyTSy
-         kqIg==
-X-Gm-Message-State: AGi0PuaMp3KHs2TJzUEM8kv2cWs72coPJwYDVl2WbmUql7hExwD7ivpm
-        IIuF8lCa1UMMBOqrpfhzYNy4sA==
-X-Google-Smtp-Source: APiQypIxyHNKa0iKE7i1LVCf7LxJgykFFNIGEKKj5IapE5xxqMj1NRd3bFf0osSuuOi8WmOUMH0hcw==
-X-Received: by 2002:a63:2686:: with SMTP id m128mr16210074pgm.283.1586983745414;
-        Wed, 15 Apr 2020 13:49:05 -0700 (PDT)
+        bh=M/7ZIhFX8/Fc/kbce4rxbSpECgFr3U/vKIkPqW4pN78=;
+        b=tGBSLABxH9JD5j3/wJ+aU7QnG24AfGlbQ0snz2XRjY76N9RG2gcI0+CGs52wA3NEXs
+         Mj97zfc/E0kEcviiiiN/E+gqqBz01hXGzdXWARVfs3/+hVixXo4NUr1r0ZZAADfgUWsm
+         AkcbepwdPfFgfQyhkU4bX4XauqqUfWLgtYWx0AydqOrnywewA3IZuE7IfRz5rY741/jI
+         G3GFqfc0IiNJWQWmIsOT2UduqO1POIRlUaIylV6UDnW3qU+cmxwGReRSCI9dRGiy03RC
+         gtKg5a7IXWlvxoGbqHi5U/OsDlp8Ap8vsbYoDr/6m4qplB6HBip9yHA5NWxYNpqXQ5Qh
+         UE0A==
+X-Gm-Message-State: AGi0PuaO8YIaxmA+UtRFaaccstGgLOf1126LcujfmdKmmwY48XGMJg95
+        Fsoi2vItYx2zhPGlbuh7qNbFiQ==
+X-Google-Smtp-Source: APiQypKTLEovDZzfR01SF/kDnhw2CXF7O5puu/Gs/lR7mn9HqDXfXHpcuVfHesxn93ziRZJE2KXJbA==
+X-Received: by 2002:a62:16d2:: with SMTP id 201mr27883268pfw.295.1586983747037;
+        Wed, 15 Apr 2020 13:49:07 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id i13sm14461861pfa.113.2020.04.15.13.49.04
+        by smtp.gmail.com with ESMTPSA id i13sm14461861pfa.113.2020.04.15.13.49.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 13:49:05 -0700 (PDT)
+        Wed, 15 Apr 2020 13:49:06 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] remoteproc: Simplify default name allocation
-Date:   Wed, 15 Apr 2020 14:48:54 -0600
-Message-Id: <20200415204858.2448-4-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 4/7] remoteproc: Use kstrdup_const() rather than kstrup()
+Date:   Wed, 15 Apr 2020 14:48:55 -0600
+Message-Id: <20200415204858.2448-5-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200415204858.2448-1-mathieu.poirier@linaro.org>
 References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
@@ -75,54 +75,54 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415204854.nPDpKl4X8kpt5YAauT17FObOhwRX5cP1MlUk3ZmXTb8@z>
+Message-ID: <20200415204855.9kzLHlUWPKn-m8OYweflGMBpL4adEx_DsGDLBmncAuI@z>
 
-In an effort to cleanup firmware name allocation, replace the
-cumbersome mechanic used to allocate a default firmware name with
-function kasprintf().
+For cases where @firmware is declared "const char *", use function
+kstrdup_const() to avoid needlessly creating another copy on the
+heap.
 
 Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 4 ++--
+ include/linux/remoteproc.h           | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 4dee63f319ba..9899467fa1cf 100644
+index 9899467fa1cf..ebaff496ef81 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1982,24 +1982,19 @@ static const struct device_type rproc_type = {
+@@ -1982,7 +1982,7 @@ static const struct device_type rproc_type = {
  static int rproc_alloc_firmware(struct rproc *rproc,
  				const char *name, const char *firmware)
  {
--	char *p, *template = "rproc-%s-fw";
--	int name_len;
-+	char *p;
+-	char *p;
++	const char *p;
  
--	if (!firmware) {
-+	if (!firmware)
+ 	if (!firmware)
  		/*
- 		 * If the caller didn't pass in a firmware name then
- 		 * construct a default name.
+@@ -1991,7 +1991,7 @@ static int rproc_alloc_firmware(struct rproc *rproc,
  		 */
--		name_len = strlen(name) + strlen(template) - 2 + 1;
--		p = kmalloc(name_len, GFP_KERNEL);
--		if (!p)
--			return -ENOMEM;
--		snprintf(p, name_len, template, name);
--	} else {
-+		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
-+	else
- 		p = kstrdup(firmware, GFP_KERNEL);
--		if (!p)
--			return -ENOMEM;
--	}
-+
-+	if (!p)
-+		return -ENOMEM;
+ 		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+ 	else
+-		p = kstrdup(firmware, GFP_KERNEL);
++		p = kstrdup_const(firmware, GFP_KERNEL);
  
- 	rproc->firmware = p;
- 
+ 	if (!p)
+ 		return -ENOMEM;
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 9c07d7958c53..38607107b7cb 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -489,7 +489,7 @@ struct rproc {
+ 	struct list_head node;
+ 	struct iommu_domain *domain;
+ 	const char *name;
+-	char *firmware;
++	const char *firmware;
+ 	void *priv;
+ 	struct rproc_ops *ops;
+ 	struct device dev;
 -- 
 2.20.1
 
