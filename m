@@ -2,178 +2,181 @@ Return-Path: <SRS0=YAOw=57=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E06CC38A2B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 18:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BF2C3815B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 19:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B96420768
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 18:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEAF920784
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 19:34:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gs45V7ac"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PwIi8YWv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411712AbgDOSLr (ORCPT
+        id S2411909AbgDOTep (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 14:11:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45292 "EHLO
+        Wed, 15 Apr 2020 15:34:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405880AbgDOSLn (ORCPT
+        by vger.kernel.org with ESMTP id S2634594AbgDOTei (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 14:11:43 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02881C061A0E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 11:11:43 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id r20so338994pfh.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 11:11:42 -0700 (PDT)
+        Wed, 15 Apr 2020 15:34:38 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30EB5C061A0E
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 12:34:38 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id t10so4506097ilg.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 12:34:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hv4Gb+XU8mOj8xMFdipxFcMjlc532U8U6KOUpsFhxqY=;
-        b=Gs45V7acM1Gg+IDEQIa8efTGGg+FVai47wUYfRNm7sgC8M3235Wdfd627OlVlKHree
-         G/JPIqjAQoOF8XLyehNauDN4H23NKVUyIa4c6e++RGuOQusJlK5JVxRWbw3QRuUGoJqO
-         TaD/89qJ+j7tYxgDCu/WtVuv5G/ZLBCfX9gl+AgCJXpWsj6YuJ4VaeuSXBhTKmAO2OF8
-         i/i5RsHx4X/GnRoq77MHKt2Ec/hYDX2QbLJFxEcAkm3pUQ/j8effzI8hR3pvnsPIcAWX
-         Azhy1QdjR5nkInSATS1UlDa1H4dG83YYu8+8hdn/wBWZeCVW5myrBWGYSUoyIhqYnw3g
-         qmGQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p4wJ8PCRsH9dLwOsuZUafOwTir/wwe6pyfgswo3kFgU=;
+        b=PwIi8YWvIKc4jePjFvM5awvxAr6DD9/VWlipVrwhDCX5pidDChl8xMFFxeSJTyArOs
+         94XKH+Wvr2cR9uKljFtsuOe/PnY88JdD/fyo1gJaZ54rbBMHm1LQ4F7RXv+xyjtPNRET
+         sYpzOA+OqP69pgZdRlRKXJ8gBXKFTk4mP5cJdu9B1QWt+ILXJm/fT+o4G5QhxY5LCrgG
+         GadwMAVMRxRVPvX1B65fEfZrRDGZ4v0l/7viQPabD+XpHtl9pmJONthzuYSGeq6lG7do
+         ziMUlgKsGgkHuGc2f5ObfvSxpYxe4LLmKG8wXt0CZ538tC/ZoGnEvgzLewyPS8zem6Wt
+         rmbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hv4Gb+XU8mOj8xMFdipxFcMjlc532U8U6KOUpsFhxqY=;
-        b=BDDg/ZP2X3HHlmgTUHJcJ6FFLkQiFBYzgu9pPpocENPl6wOQax29ThEIWmrO6Xr/wy
-         CskfDVLmvCUvMA7C3mzExWo1rGiv8RGG4XpMbA/m8s7NOFXEniJdWldlq5+iCEu6wzhY
-         02A7xtkU31FGu9l9S+h7/lDqWAZrqEq3SQd35syMuSpe0kUq45Z8OLWln5DtBI06B9Zt
-         Q9bfE/JdJugqGKsb5fTzIVAbedAy0aonYf9GBge1ZxYqFTm9KM3Mf3+H27My0h5c6QIM
-         8PxCk8haMCY7Z5pPWRhRbCmjY82HvWwwn6Q/IGqRQKqIyfr0EuHfe+In5mtATvZsT4pU
-         H23A==
-X-Gm-Message-State: AGi0Pua1Lz/QHKzss0oFKnqVg3j5b1IEMxpO+xFP1yuOnNFl2SEZ9Dps
-        60SYDQSrO8Ti8i6fdOSdV46eyg==
-X-Google-Smtp-Source: APiQypIjo5joNUHWhj8LYjKyMfT+ubnd1PrqS6lJmTvfS1amP7RXRU6Uzmg8PU7h9tURc3cv4RxdgQ==
-X-Received: by 2002:aa7:9625:: with SMTP id r5mr7532605pfg.256.1586974302516;
-        Wed, 15 Apr 2020 11:11:42 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id 65sm9606185pfz.211.2020.04.15.11.11.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 11:11:42 -0700 (PDT)
-Date:   Wed, 15 Apr 2020 12:11:40 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Siddharth Gupta <sidgup@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org
-Subject: Re: [PATCH v2 4/6] remoteproc: qcom: Add name field for every
- subdevice
-Message-ID: <20200415181140.GF16583@xps15>
-References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
- <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p4wJ8PCRsH9dLwOsuZUafOwTir/wwe6pyfgswo3kFgU=;
+        b=oiXzbsN1L2L7XhM+iqANNbEjewP9imHCl5p6q2w9epzInhxkQjElnzAmq3gSwWUcAF
+         VTsbpsi/jHoE8KLB09pXHYYNaAUMUS8C9BcLP5ux4cFaQUMEjPcpUxKJ7KdcvHieO/zQ
+         h2GeSPqXld85L4KKiIYP+8IAf5cYVWOQbbX4c1KggqocwkEgVMHceqZZx6tJHv57noLq
+         hq13/uH7H1XJT7mQAVZnI0mrJU/VrXwZUAEpB6WLPTl8pK5Eja/NU0PSuROZSsOI5nT4
+         re/e7m64/cfD7dniIhqm7Spuc6lp1EDoFiAXz2oawihDKuJTMsDsyaWpuw79QU+kYU2u
+         K6TA==
+X-Gm-Message-State: AGi0PuZFzc/4P02c8bzVfCdZ6mNSNIA7v4dD5lgJLsDrpMsd8SPWToq3
+        3jx5KmsYEtWpxMxsJPat1ZfcZNYIdI67EROK19uG5Q==
+X-Google-Smtp-Source: APiQypIvBqwo1b067evgJIMqsswMjNt/4NZSHBs2ekLDZj0cJSiZamL9K6jkm9NuKddJO5WDCXu7Aed2LUzevNnpxRc=
+X-Received: by 2002:a92:9a0a:: with SMTP id t10mr7402579ili.50.1586979277430;
+ Wed, 15 Apr 2020 12:34:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
+ <20200413193401.27234-3-mathieu.poirier@linaro.org> <bd8cc8d5-94c1-5767-d089-535731fc1055@linaro.org>
+ <20200414005506.GG20625@builder.lan> <20200414194441.GA25931@xps15> <20200414231601.GI892431@yoga>
+In-Reply-To: <20200414231601.GI892431@yoga>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 15 Apr 2020 13:34:25 -0600
+Message-ID:
+ <CANLsYkx2cV4QMPTvWxUhXDvSbNmrSR33L6pNzA=x9ZscpQk=6Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] remoteproc: Split firmware name allocation from rproc_alloc()
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Alex Elder <elder@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Suman Anna <s-anna@ti.com>,
+        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415181140.dLgDqeFaxVrNfp2vnAoiXpaEC2Frna6jNbUI-4ZfkSo@z>
+Message-ID: <20200415193425.2NNOeyBfFcAivz3R8ZIISqvm6wuizZEBP9Fhgv6Guvs@z>
 
-On Wed, Apr 08, 2020 at 04:36:41PM -0700, Siddharth Gupta wrote:
-> From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> 
-> When a client driver wishes to utilize functionality from a particular
-> subdevice of a remoteproc, it cannot differentiate between the subdevices
-> that have been added. This patch allows the client driver to distinguish
-> between subdevices and thus utilize their functionality.
-> 
-> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+On Tue, 14 Apr 2020 at 17:16, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Tue 14 Apr 12:44 PDT 2020, Mathieu Poirier wrote:
+>
+> > Hey Bjorn,
+> >
+> > On Mon, Apr 13, 2020 at 05:55:06PM -0700, Bjorn Andersson wrote:
+> > > On Mon 13 Apr 13:56 PDT 2020, Alex Elder wrote:
+> > >
+> > > > On 4/13/20 2:33 PM, Mathieu Poirier wrote:
+> > > > > Make the firmware name allocation a function on its own in order to
+> > > > > introduce more flexibility to function rproc_alloc().
+> > > > >
+> > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > >
+> > > > I didn't look at the larger context (MCU series); I'm only looking
+> > > > at this (and the others in this series) in isolation.  I like
+> > > > that you're encapsulating this stuff into functions but doing so
+> > > > doesn't really add any flexibility.
+> > > >
+> > > > Two small suggestions for you to consider but they're truly
+> > > > more about style so it's entirely up to you.  Outside of that
+> > > > this looks straightforward to me, and the result of the series
+> > > > is an improvement.
+> > > >
+> > > > I'll let you comment on my suggestions before offering my
+> > > > "reviewed-by" indication.
+> > > >
+> > > >                                   -Alex
+> > > >
+> > > > > ---
+> > > > >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
+> > > > >  1 file changed, 39 insertions(+), 27 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > > index 80056513ae71..4dee63f319ba 100644
+> > > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > > @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
+> > > > >         .release        = rproc_type_release,
+> > > > >  };
+> > > > >
+> > > > > +static int rproc_alloc_firmware(struct rproc *rproc,
+> > > > > +                               const char *name, const char *firmware)
+> > > > > +{
+> > > > > +       char *p, *template = "rproc-%s-fw";
+> > > > > +       int name_len;
+> > > >
+> > > > Not a big deal (and maybe it's not consistent with other nearby
+> > > > style) but template and name_len could be defined inside the
+> > > > "if (!firmware)" block.
+> > > >
+> > >
+> > > I prefer variables declared in the beginning of the function, so I'm
+> > > happy with this.
+> > >
+> > > > > +       if (!firmware) {
+> > > > > +               /*
+> > > > > +                * If the caller didn't pass in a firmware name then
+> > > > > +                * construct a default name.
+> > > > > +                */
+> > > > > +               name_len = strlen(name) + strlen(template) - 2 + 1;
+> > > > > +               p = kmalloc(name_len, GFP_KERNEL);
+> > > >
+> > > >
+> > > > I don't know if it would be an improvement, but you could
+> > > > check for a null p value below for both cases.  I.e.:
+> > > >
+> > > >           if (p)
+> > > >                   snprintf(p, ...);
+> > > >
+> > >
+> > > Moving the common NULL check and return out seems nice, but given that
+> > > we then have to have this positive conditional I think the end result is
+> > > more complex.
+> > >
+> > > That said, if we're not just doing a verbatim copy from rproc_alloc() I
+> > > think we should make this function:
+> > >
+> > >     if (!firmware)
+> > >             p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+> > >     else
+> > >             p = kstrdup_const(firmware, GFP_KERNEL);
+> >
+> > If you really want to use kstrdup_const() the return value has to be casted to a
+> > "char *".  Variable 'p' can't be declared const "char *" because rproc->firmware is not
+> > a "const".  Simply put somewhere the "const" will need to be dropped or casted out.
+> >
+>
+> The firmware parameter to rproc_alloc() is const char * and there's a
+> couple of places where a really const string is passed, so by using
+> kstrdup_const() we don't end up duplicating const data on the heap.
+>
+> And afaict we can make both p and rproc->firmware const char * to allow
+> this, or am I missing something?
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+I wasn't sure you were willing to go as far as making rproc->firmware
+a const char *.  In that case it is quite easy...
 
-> ---
->  drivers/remoteproc/qcom_common.c | 6 ++++++
->  include/linux/remoteproc.h       | 2 ++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index 60650bc..1d2351b 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -56,6 +56,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
->  		return;
->  
->  	glink->dev = dev;
-> +	glink->subdev.name = kstrdup("glink", GFP_KERNEL);
->  	glink->subdev.start = glink_subdev_start;
->  	glink->subdev.stop = glink_subdev_stop;
->  
-> @@ -73,6 +74,7 @@ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glin
->  	if (!glink->node)
->  		return;
->  
-> +	kfree(glink->subdev.name);
->  	rproc_remove_subdev(rproc, &glink->subdev);
->  	of_node_put(glink->node);
->  }
-> @@ -152,6 +154,7 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
->  		return;
->  
->  	smd->dev = dev;
-> +	smd->subdev.name = kstrdup("smd", GFP_KERNEL);
->  	smd->subdev.start = smd_subdev_start;
->  	smd->subdev.stop = smd_subdev_stop;
->  
-> @@ -169,6 +172,7 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
->  	if (!smd->node)
->  		return;
->  
-> +	kfree(smd->subdev.name);
->  	rproc_remove_subdev(rproc, &smd->subdev);
->  	of_node_put(smd->node);
->  }
-> @@ -220,6 +224,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
->  			 const char *ssr_name)
->  {
->  	ssr->name = ssr_name;
-> +	ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
->  	ssr->subdev.unprepare = ssr_notify_unprepare;
->  
->  	rproc_add_subdev(rproc, &ssr->subdev);
-> @@ -233,6 +238,7 @@ EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
->   */
->  void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
->  {
-> +	kfree(ssr->subdev.name);
->  	rproc_remove_subdev(rproc, &ssr->subdev);
->  }
->  EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index c5d36e6..687e1eb 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -523,6 +523,7 @@ struct rproc {
->  /**
->   * struct rproc_subdev - subdevice tied to a remoteproc
->   * @node: list node related to the rproc subdevs list
-> + * @name: name of the subdevice
->   * @prepare: prepare function, called before the rproc is started
->   * @start: start function, called after the rproc has been started
->   * @stop: stop function, called before the rproc is stopped; the @crashed
-> @@ -531,6 +532,7 @@ struct rproc {
->   */
->  struct rproc_subdev {
->  	struct list_head node;
-> +	char *name;
->  
->  	int (*prepare)(struct rproc_subdev *subdev);
->  	int (*start)(struct rproc_subdev *subdev);
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+>
+> Regards,
+> Bjorn
