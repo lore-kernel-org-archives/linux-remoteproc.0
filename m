@@ -2,163 +2,114 @@ Return-Path: <SRS0=YAOw=57=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E314FC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 13:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D00C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 14:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BAB8D2076D
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 13:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1439A21707
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 14:51:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtO6NHec"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Ix841NJy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633263AbgDONdH (ORCPT
+        id S371005AbgDOOvi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 09:33:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58280 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731696AbgDONdF (ORCPT
+        Wed, 15 Apr 2020 10:51:38 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:38442 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S371012AbgDOOvf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 09:33:05 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE0D5C061A0C;
-        Wed, 15 Apr 2020 06:33:04 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id r7so3621214ljg.13;
-        Wed, 15 Apr 2020 06:33:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rweJjnMrX8DVOwJI978T4+zp/Dc4ldAeC6N/9wICZ1w=;
-        b=EtO6NHecxgTrUGnMVlx7i3ATAgsdf3gtJ68v14xO88EpmFNAGg5igoHGOh8H+9iFnT
-         U+aXfzs2UAcidoE88j2khBx/3IrLqn8AZ3NnVdzNEjcKn7bZKB+OcZtOdX4ff/KxDIXM
-         SWEqmB3uZq2eqv2y9+ATuYiiBISQFQIdqWAMwk+ZKHtO23SE6prvYcSrAAXNrPbMXOdR
-         m/c6Mesnr6DF343g2os+JR122TLWwd7rcOgRCbskoANzQ2v9sLEKLQhgON1xOTYh6mtk
-         F71Ri+dIC9ZYwKcdNurMEVJuwKbo6aqZi9CutbZazhbkbNQhCrbz7ZNPaysnwr3o/ZoM
-         bR5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rweJjnMrX8DVOwJI978T4+zp/Dc4ldAeC6N/9wICZ1w=;
-        b=U7tZMZnmFgfEIZHuqw6+PugcOhI4ipUVbzRaIO1mzGjBH5YLVmQAFTvp+E7s4j5eTd
-         Ajk6FcUH1PdWulDZ4YPfDskBnjNlx3EmkCPhgrfKMYV6M3vQgXYZ2Mp7zBmKCYji493r
-         T8i79JwC3JjjNxJuhXHMXIOFTwJtIUZKAyYI5JC4jQpMn/lMHSt5zsHPfUUw1W1pRBv0
-         ZDFuOqwqY2QFCi3bCHRQ7m9x2Py7ON+r7TSkWwqASp3OMkwcZ4yHHeK79Iysp+KQGETn
-         OR5onZ2aUhauWtEwmJjaslzmbS4JH2wmuIj/I1AsFE/DNbK9Yedx9oZ32MbrMrNM2s0W
-         uqTA==
-X-Gm-Message-State: AGi0PuaJOr3wbtsslPybx5UuGAtTHF0cYckJU3YnKkZXbgv1JADL1oAt
-        gDdmAfQNUobzuQtBfKkmm9jOrAgbTMVb4MZHOPQ=
-X-Google-Smtp-Source: APiQypKS3xz8rw5Jy7+JZAEVCjE7qNjWum5PB0iQLEBBPGJIPaZ4eDEcQCJaRQ98XaFHtdQO4V9Zs8EXEbzFYwJFXV4=
-X-Received: by 2002:a2e:9b07:: with SMTP id u7mr3252420lji.110.1586957583245;
- Wed, 15 Apr 2020 06:33:03 -0700 (PDT)
+        Wed, 15 Apr 2020 10:51:35 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1586962294; h=Content-Transfer-Encoding: MIME-Version:
+ References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=jy7eWzV8K3wnMtijAWqnksrw5Tls6vZ8a6QOTRFFS/I=; b=Ix841NJyJFIeYZ+mxF+j+KRu7YOj7ndM4fuSzF7G+OTDtSQsg21AxCbt47eZUgWknFsF6TwD
+ 5ns8joLj+zBZMW4MO4wkoLnocN/XIttPUC/S8KS12dmNqdLh5sJYRP+b/kXe904Lq1g/EDkA
+ GRHSWs//LSJkgWVi3JK81v9RrMk=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e971f75.7fadc4c653b0-smtp-out-n05;
+ Wed, 15 Apr 2020 14:51:33 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E585BC432C2; Wed, 15 Apr 2020 14:51:32 +0000 (UTC)
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86278C433F2;
+        Wed, 15 Apr 2020 14:51:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86278C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, robh+dt@kernel.org
+Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        evgreen@chromium.org, ohad@wizery.com,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH 1/2] dt-bindings: remoteproc: qcom: Replace halt-nav with spare-regs
+Date:   Wed, 15 Apr 2020 20:21:09 +0530
+Message-Id: <20200415145110.20624-2-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200415145110.20624-1-sibis@codeaurora.org>
+References: <20200415145110.20624-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-References: <20200414220943.6203-1-ezequiel@collabora.com>
-In-Reply-To: <20200414220943.6203-1-ezequiel@collabora.com>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Wed, 15 Apr 2020 21:32:52 +0800
-Message-ID:
- <CADBw62oJj_x046piRbPP48A04ALo-w2J6jZXNspyN5eOGj-TEg@mail.gmail.com>
-Subject: Re: [PATCH] hwspinlock: Simplify Kconfig
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415133252.KIVWsLqFJ1bU34GfJRyojhjdBvEpOOaFNGC-8-acfYk@z>
+Message-ID: <20200415145109.GhShX1fIVmP75ksgatyaKj7sz9In7WWWktJuxQJ3HOk@z>
 
-Hi Ezequiel,
+7C retail devices using MSA based boot will result in a fuse combination
+which will prevent accesses to MSS PERPH register space where the mpss
+clocks and halt-nav reside. However accesses to conn_box_spare0 in TCSR
+register space is still permitted so rename the binding appropriately to
+qcom,spare-regs and drop all accesses to the MPSS PERPH register space.
 
-On Wed, Apr 15, 2020 at 6:09 AM Ezequiel Garcia <ezequiel@collabora.com> wrote:
->
-> Every hwspinlock driver is expected to depend on the
-> hwspinlock core, so it's possible to simplify the
-> Kconfig, factoring out the HWSPINLOCK dependency.
->
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-Looks reasonable to me.
-Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
-
-> ---
->  drivers/hwspinlock/Kconfig | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-> index 826a1054100d..32cd26352f38 100644
-> --- a/drivers/hwspinlock/Kconfig
-> +++ b/drivers/hwspinlock/Kconfig
-> @@ -6,9 +6,10 @@
->  menuconfig HWSPINLOCK
->         bool "Hardware Spinlock drivers"
->
-> +if HWSPINLOCK
-> +
->  config HWSPINLOCK_OMAP
->         tristate "OMAP Hardware Spinlock device"
-> -       depends on HWSPINLOCK
->         depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX || ARCH_K3 || COMPILE_TEST
->         help
->           Say y here to support the OMAP Hardware Spinlock device (firstly
-> @@ -18,7 +19,6 @@ config HWSPINLOCK_OMAP
->
->  config HWSPINLOCK_QCOM
->         tristate "Qualcomm Hardware Spinlock device"
-> -       depends on HWSPINLOCK
->         depends on ARCH_QCOM || COMPILE_TEST
->         select MFD_SYSCON
->         help
-> @@ -30,7 +30,6 @@ config HWSPINLOCK_QCOM
->
->  config HWSPINLOCK_SIRF
->         tristate "SIRF Hardware Spinlock device"
-> -       depends on HWSPINLOCK
->         depends on ARCH_SIRF || COMPILE_TEST
->         help
->           Say y here to support the SIRF Hardware Spinlock device, which
-> @@ -43,7 +42,6 @@ config HWSPINLOCK_SIRF
->  config HWSPINLOCK_SPRD
->         tristate "SPRD Hardware Spinlock device"
->         depends on ARCH_SPRD || COMPILE_TEST
-> -       depends on HWSPINLOCK
->         help
->           Say y here to support the SPRD Hardware Spinlock device.
->
-> @@ -52,7 +50,6 @@ config HWSPINLOCK_SPRD
->  config HWSPINLOCK_STM32
->         tristate "STM32 Hardware Spinlock device"
->         depends on MACH_STM32MP157 || COMPILE_TEST
-> -       depends on HWSPINLOCK
->         help
->           Say y here to support the STM32 Hardware Spinlock device.
->
-> @@ -60,7 +57,6 @@ config HWSPINLOCK_STM32
->
->  config HSEM_U8500
->         tristate "STE Hardware Semaphore functionality"
-> -       depends on HWSPINLOCK
->         depends on ARCH_U8500 || COMPILE_TEST
->         help
->           Say y here to support the STE Hardware Semaphore functionality, which
-> @@ -68,3 +64,5 @@ config HSEM_U8500
->           SoC.
->
->           If unsure, say N.
-> +
-> +endif # HWSPINLOCK
-> --
-> 2.26.0.rc2
->
-
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 88dfa3fc15f78..607957ad32e7b 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -79,7 +79,7 @@ on the Qualcomm Hexagon core.
+ 		    "snoc_axi", "mnoc_axi", "qdss"
+ 	qcom,sc7180-mss-pil:
+ 		    must be "iface", "bus", "xo", "snoc_axi", "mnoc_axi",
+-		    "mss_crypto", "mss_nav", "nav"
++		    "nav"
+ 	qcom,sdm845-mss-pil:
+ 		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
+ 		    "snoc_axi", "mnoc_axi", "prng"
+@@ -173,16 +173,12 @@ For the compatible string below the following supplies are required:
+ 
+ For the compatible strings below the following phandle references are required:
+   "qcom,sc7180-mss-pil"
+-- qcom,halt-nav-regs:
++- qcom,spare-regs:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+-	Definition: reference to a list of 2 phandles with one offset each for
+-		    the modem sub-system running on SC7180 SoC. The first
+-		    phandle reference is to the mss clock node followed by the
+-		    offset within register space for nav halt register. The
+-		    second phandle reference is to a syscon representing TCSR
+-		    followed by the offset within syscon for conn_box_spare0
+-		    register.
++	Definition: a phandle reference to a syscon representing TCSR followed
++		    by the offset within syscon for conn_box_spare0 register
++		    used by the modem sub-system running on SC7180 SoC.
+ 
+ = SUBNODES:
+ The Hexagon node must contain two subnodes, named "mba" and "mpss" representing
 -- 
-Baolin Wang
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
