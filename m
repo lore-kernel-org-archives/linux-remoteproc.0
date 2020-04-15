@@ -1,29 +1,30 @@
-Date: Sun, 19 Apr 2020 22:09:07 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
 Subject: Re: [PATCH v2 2/7] remoteproc: Split firmware name allocation from
  rproc_alloc()
-Message-ID: <20200420050904.GC1516868@builder.lan>
 References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
  <20200415204858.2448-3-mathieu.poirier@linaro.org>
+From: Alex Elder <elder@linaro.org>
+Message-ID: <4d4d1a0c-abf2-8c2c-60fd-6f7072cd3d91@linaro.org>
+Date: Wed, 15 Apr 2020 16:28:32 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20200415204858.2448-3-mathieu.poirier@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: ohad@wizery.com, s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: s-anna@ti.com, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 15 Apr 13:48 PDT 2020, Mathieu Poirier wrote:
-
+On 4/15/20 3:48 PM, Mathieu Poirier wrote:
 > Make the firmware name allocation a function on its own in an
 > effort to cleanup function rproc_alloc().
 > 
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Looks good.
 
-Regards,
-Bjorn
+Reviewed-by: Alex Elder <elder@linaro.org>
 
 > ---
 >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
@@ -129,6 +130,4 @@ Bjorn
 >  }
 >  EXPORT_SYMBOL(rproc_alloc);
 >  
-> -- 
-> 2.20.1
 > 
