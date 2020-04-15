@@ -1,7 +1,9 @@
-Date: Wed, 22 Apr 2020 17:58:26 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Wed, 15 Apr 2020 12:10:38 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2 6/6] remoteproc: qcom: Add notification types to SSR
-Message-ID: <20200423005823.GN1868936@builder.lan>
+Message-ID: <20200415181038.GE16583@xps15>
 References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
  <1586389003-26675-7-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
@@ -9,11 +11,10 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1586389003-26675-7-git-send-email-sidgup@codeaurora.org>
 To: Siddharth Gupta <sidgup@codeaurora.org>
-Cc: agross@kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Cc: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
-
+On Wed, Apr 08, 2020 at 04:36:43PM -0700, Siddharth Gupta wrote:
 > The SSR subdevice only adds callback for the unprepare event. Add callbacks
 > for unprepare, start and prepare events. The client driver for a particular
 > remoteproc might be interested in knowing the status of the remoteproc
@@ -109,20 +110,16 @@ On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
 > + * @RPROC_AFTER_POWERUP:	start stage of  remoteproc
 > + */
 > +enum rproc_notif_type {
-
-As these are tied to the API defined in qcom_rproc.h, I think it better
-belong there.
-
 > +	RPROC_BEFORE_SHUTDOWN,
 > +	RPROC_AFTER_SHUTDOWN,
 > +	RPROC_BEFORE_POWERUP,
 > +	RPROC_AFTER_POWERUP,
 > +	RPROC_MAX
 
-Please omit the MAX, unless you have a specific purpose for it.
+Not sure why you have a RPROC_MAX here...  It is not needed in this set but it
+might be in some downstream or upcoming code. 
 
-Regards,
-Bjorn
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
 > +};
 > +
