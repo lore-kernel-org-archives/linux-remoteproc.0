@@ -1,180 +1,282 @@
-Return-Path: <SRS0=6AeO=56=vger.kernel.org=linux-remoteproc-owner@kernel.org>
+Return-Path: <SRS0=YAOw=57=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704EDC2BB1D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 23:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE89EC38A29
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 02:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4162E2074D
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Apr 2020 23:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8FA220787
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 02:42:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U09EBhDk"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="iuHVvLQJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729358AbgDNXQh (ORCPT
+        id S2404126AbgDOCmk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 19:16:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392075AbgDNXQF (ORCPT
+        Tue, 14 Apr 2020 22:42:40 -0400
+Received: from mail-db8eur05on2076.outbound.protection.outlook.com ([40.107.20.76]:6369
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388214AbgDOCmh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Apr 2020 19:16:05 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 253C6C0610D6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 16:16:05 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id d17so642729pgo.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2020 16:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fVpe83X72mXEcgVl/x0abZuBvG+NYvz1+3O7LHGqMys=;
-        b=U09EBhDk0jVTSgHgT7E5Nqa5eqCQ/b+FRztd1fifz/V4J6V5vMuoALHYu5gqIBPb51
-         5b5VEVUMtn0/snBbsAn3jvlphxK9w2DjxQWf7twaKlrtOjuW6hNDHde/y9XuqQ66rfFG
-         G8x5+wPr238FUh50jWcOPWnlPNIU0ax6H3BSkJFoVlz1V1AOeDxmmel+u8e8vTRJ/2YS
-         RX6E6q7yLuu8MwoM2QCAeDQ7EL6kYpkSL6YICKcQaOb+CJi4QduxA0dLRXrTepNsqKPQ
-         Kvqf3LwPM5PvXA/WzdBaB033ViN4L39TIfTiBPmI7bSd0oE1dWIciJHnZ40Q4JJIi+lp
-         5Hsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fVpe83X72mXEcgVl/x0abZuBvG+NYvz1+3O7LHGqMys=;
-        b=tgNYijOVHlvAJK43kyY/IctMyG06eJh6CB1SPuGbtEXAkZLnQdLz9qJ2RQQpxCbI0n
-         DDCKl9yHoZs8CrEkWsl25AGw3rvearc4CeEjuVDMXKb3HLe3VtwQByIhF6ZXABO0Lz49
-         lpjWi+/v0EyMiU4on+r8lX2zOwJXn0ul86GQTIh+72Zq6tlVSFv+tSVVm4d/Ike3yINx
-         TOyt0a3iGJ84o6JdQCbfdxFbSZgeJ0/UNKDL19X5t7EtF55V3PIkyqPPjRzDg8M/xnUA
-         6JqGfsNWfTE2UwZ0XFkY9xd9oUS9Vqie1DlgJemSn8+7baVJ+iKGjrFUqCcTKwebhEUz
-         N8vA==
-X-Gm-Message-State: AGi0PubaU2+eqEfrKt5aIi6DsoHMNYhQEZefwB0PBIYDSzdX/Xv491Ao
-        dsNITtHrrmiKrl/grAOfU6vwQQ==
-X-Google-Smtp-Source: APiQypIZqG4UPA4ogPQqh0O1FJv33YnNmBwtNFONQBkXMuSgXNHgL3qQ4xCtvY6sy7BW5urSgF/NUA==
-X-Received: by 2002:a65:58c4:: with SMTP id e4mr13671577pgu.61.1586906164468;
-        Tue, 14 Apr 2020 16:16:04 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u24sm8942736pgo.65.2020.04.14.16.16.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 16:16:03 -0700 (PDT)
-Date:   Tue, 14 Apr 2020 16:16:01 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Alex Elder <elder@linaro.org>, ohad@wizery.com, s-anna@ti.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] remoteproc: Split firmware name allocation from
- rproc_alloc()
-Message-ID: <20200414231601.GI892431@yoga>
-References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
- <20200413193401.27234-3-mathieu.poirier@linaro.org>
- <bd8cc8d5-94c1-5767-d089-535731fc1055@linaro.org>
- <20200414005506.GG20625@builder.lan>
- <20200414194441.GA25931@xps15>
+        Tue, 14 Apr 2020 22:42:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BjAl34XhCuiLTgbHZP+Y1m0HZL7a4wv+C45i11B49sZCrBSk8i3CtTvAAqvGHBx2y/1/ySTzgI1rlSEx3jFSXCaYKpY1zvFhSvhkW1vRxWJtJe5AgLF2arc6NIJifLiK2sZE9JBqXh2t/KWzNk4erYFdkg98xKRMoeGe2tnEeAiXC0weeKPyFiyHso9BOvD8cB+HxDYplUV/Oam41IA8XeEnJ5CTqu7Uh64ArJFXwfiWGwwYzzy8JVmar74eQOtWCFwQkz9a2+HRo8bpHB/TesChyl9tkAVnHQs8WJy1TbP1z1cLHFZZcLBQ0n5d3O9J9xXzp4b7O3nYMMObNmgcAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gtFjWj1YucLUeoKjFAhlC/kjmEtosOXKWzmGv9cI8CE=;
+ b=hwxVATyNwO7gnf0vBLjZiTj+x0lkDfIFTpbAhTIzFsrnIbXwnde+vOPT/69T+CKxgkBBu/CW0EAH2o21s5lQfYvoCTJFMDg8xili8EC9BP6cWnatTcCATfFrcY7Q0uAbhWpWaLJFBhwD6UMZU7pwEvWomQRJjuo5aUvzKUv/YZ+oNj1BcWtJzn3oUWDV3/04QaZT4UROUvvVzVj06TUkbz9LzPhqBYsz+6m2WunDE2qgdcMUAzCoaav+svuuuQgtLxTi6s/tJKRd1o1zifbecYFY8NLIyDS+KfPMon/nJUtY0IP/ClXiSivHPoHGMmWSUV5X/Qv6WaDBjtCqWXdbSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gtFjWj1YucLUeoKjFAhlC/kjmEtosOXKWzmGv9cI8CE=;
+ b=iuHVvLQJ7SJmaxRRlon4KtALNpSARcW86sVHzHbWkbcgXa2Lt8FpEKALBfiyvwc7NsR5CCjhdMC8x87WCbkBbZyOLOAQGBx+8og6obhbFPy0APIPsf/HmGX5vdIhXfQ1nc9rT03FJazbycKnvd8sq4RYOAZkSu1IqKpulNIEg8E=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR0402MB2695.eurprd04.prod.outlook.com (2603:10a6:4:95::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.26; Wed, 15 Apr
+ 2020 02:42:32 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2900.028; Wed, 15 Apr 2020
+ 02:42:32 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "nikita.shubin@maquefel.me" <nikita.shubin@maquefel.me>
+CC:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
+Thread-Topic: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
+Thread-Index: AQHWDAb+JdgObafwAkG5FGKUl9Xnrah5hqFQ
+Date:   Wed, 15 Apr 2020 02:42:32 +0000
+Message-ID:
+ <DB6PR0402MB27603D39E31D30AA28D6893A88DB0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+References: <20200304142628.8471-1-NShubin@topcon.com>
+ <20200406113310.3041-1-nikita.shubin@maquefel.me>
+In-Reply-To: <20200406113310.3041-1-nikita.shubin@maquefel.me>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: de760fa7-0c26-4bf9-0fc8-08d7e0e6a5e7
+x-ms-traffictypediagnostic: DB6PR0402MB2695:|DB6PR0402MB2695:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB6PR0402MB269562743D7977329228622F88DB0@DB6PR0402MB2695.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0374433C81
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(376002)(396003)(136003)(8676002)(6916009)(76116006)(66556008)(966005)(8936002)(316002)(7416002)(66446008)(64756008)(5660300002)(66946007)(55016002)(9686003)(66476007)(44832011)(81156014)(478600001)(54906003)(186003)(7696005)(6506007)(4326008)(52536014)(71200400001)(33656002)(26005)(2906002)(86362001)(505234006);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Uv8CnEOS8qMeLmlJKtDH0WjIKiXocqebxmyKKRYXPd4P2qLN4G4xLzGvWHqwy37INwXnX+HH7hyDAELqG6YiqAA48nBRFvYIKOq1ihTssT9RZ70jsoWJ31CTuRyvCh7cHIcS6CVmnTXGQm2URAyamoPIqNWWJo6sWodfMNFJNOYji2N9NGnzvLnRzRDc5DfLgknQMhChqW66uiwtMuBOZbmoxoKWp9QXtXj2uzCBl0WJ2A9Y1CIJLddN9sjKF6kHD5E5+oItIj1ApspjdLPVQmMu/cdjSk0FugYN6862DbktEykIlww9AlDEylSeEG8gv6oPyrAUaNIW4V0lv2WzCi1csdIuVHlcN5vH4XufJ0DonlDxM+F0uvWUkivsj9jJ8X8ytK7slYgKZo04vZ3LTyvmEtBQhUKZaBWtu4mrnPJErtJpRq6yYOCEInQBpfNRVDiT9hcWADZHUxBctLri3USza0hY6UkWX0YIPGsnX7edyMQkYug1l8BiA9cLG3Ds4y9qRV4AJk7Y9RwX0Xxm2ZUWDJk7R2eGc6ofeL9KwkMWSbfRsWkk+fZngf/09p7PBxeG8woJTAYnqs7x1s5pGg==
+x-ms-exchange-antispam-messagedata: Iu/bQsl1Rr4KTCWbz59s/ZknJXYLKMLgyG9pJz6lg5a7o5Avo13SIs1cJxEbxrH6QCrEcfw7zE0uqAAgsCIGDjau/QjkrKvvMxw2Eaw8uBBTpjMOP/XfHOHMrGyeOk74xH1XwyWVr9FruzO/DBdqGg==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200414194441.GA25931@xps15>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de760fa7-0c26-4bf9-0fc8-08d7e0e6a5e7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2020 02:42:32.5388
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6TAbGj87zyHa1h9LU/mv8Te/18qIxLbo0fapHSR8Y2kRA570hwmzmU+AhhEaCaEg+POyLl2kU7g5nRKiPIQtGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2695
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200414231601.hz2vHN25y2eEagDbKcmj4_7m81s43IiciAonbIyUqGY@z>
+Message-ID: <20200415024232.OHxuUZUuzc3K9Xm7zxhIBo3U6NFXpsUwEWYlreV7b9s@z>
 
-On Tue 14 Apr 12:44 PDT 2020, Mathieu Poirier wrote:
+> Subject: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
 
-> Hey Bjorn,
-> 
-> On Mon, Apr 13, 2020 at 05:55:06PM -0700, Bjorn Andersson wrote:
-> > On Mon 13 Apr 13:56 PDT 2020, Alex Elder wrote:
-> > 
-> > > On 4/13/20 2:33 PM, Mathieu Poirier wrote:
-> > > > Make the firmware name allocation a function on its own in order to
-> > > > introduce more flexibility to function rproc_alloc().
-> > > > 
-> > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > 
-> > > I didn't look at the larger context (MCU series); I'm only looking
-> > > at this (and the others in this series) in isolation.  I like
-> > > that you're encapsulating this stuff into functions but doing so
-> > > doesn't really add any flexibility.
-> > > 
-> > > Two small suggestions for you to consider but they're truly
-> > > more about style so it's entirely up to you.  Outside of that
-> > > this looks straightforward to me, and the result of the series
-> > > is an improvement.
-> > > 
-> > > I'll let you comment on my suggestions before offering my
-> > > "reviewed-by" indication.
-> > > 
-> > > 					-Alex
-> > > 
-> > > > ---
-> > > >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
-> > > >  1 file changed, 39 insertions(+), 27 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > > index 80056513ae71..4dee63f319ba 100644
-> > > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > > @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
-> > > >  	.release	= rproc_type_release,
-> > > >  };
-> > > >  
-> > > > +static int rproc_alloc_firmware(struct rproc *rproc,
-> > > > +				const char *name, const char *firmware)
-> > > > +{
-> > > > +	char *p, *template = "rproc-%s-fw";
-> > > > +	int name_len;
-> > > 
-> > > Not a big deal (and maybe it's not consistent with other nearby
-> > > style) but template and name_len could be defined inside the
-> > > "if (!firmware)" block.
-> > > 
-> > 
-> > I prefer variables declared in the beginning of the function, so I'm
-> > happy with this.
-> > 
-> > > > +	if (!firmware) {
-> > > > +		/*
-> > > > +		 * If the caller didn't pass in a firmware name then
-> > > > +		 * construct a default name.
-> > > > +		 */
-> > > > +		name_len = strlen(name) + strlen(template) - 2 + 1;
-> > > > +		p = kmalloc(name_len, GFP_KERNEL);
-> > > 
-> > > 
-> > > I don't know if it would be an improvement, but you could
-> > > check for a null p value below for both cases.  I.e.:
-> > > 
-> > > 		if (p)
-> > > 			snprintf(p, ...);
-> > > 
-> > 
-> > Moving the common NULL check and return out seems nice, but given that
-> > we then have to have this positive conditional I think the end result is
-> > more complex.
-> > 
-> > That said, if we're not just doing a verbatim copy from rproc_alloc() I
-> > think we should make this function:
-> > 
-> > 	if (!firmware)
-> > 		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
-> > 	else
-> > 		p = kstrdup_const(firmware, GFP_KERNEL);
-> 
-> If you really want to use kstrdup_const() the return value has to be casted to a
-> "char *".  Variable 'p' can't be declared const "char *" because rproc->firmware is not
-> a "const".  Simply put somewhere the "const" will need to be dropped or casted out.
-> 
+Have you ever see https://patchwork.kernel.org/cover/11390477/?
 
-The firmware parameter to rproc_alloc() is const char * and there's a
-couple of places where a really const string is passed, so by using
-kstrdup_const() we don't end up duplicating const data on the heap.
+I have been waiting for Mathieu's rproc sync state patch, then
+rebase.
 
-And afaict we can make both p and rproc->firmware const char * to allow
-this, or am I missing something?
+Thanks,
+Peng.
 
-Regards,
-Bjorn
+>=20
+> This patch set introduces virtio support for imx7d-m4 communication:
+>=20
+> - support booting loaded vim imx-rproc firmware
+> - implement .kick method support using mailbox in imx-processor
+> - parse vdev0vring0, vdev0vring1, vdev0buffer memory regions required for
+> virtio_rpmsg_bus initialization
+>=20
+> Regarding imx7d-m4 boot proccess
+>=20
+> Citing ARM documentation:
+>=20
+> At Reset, Cortex-M3 and Cortex-M4 processors always boot from a vector
+> table at address zero.
+>=20
+> "With uninitialized memory at address zero (for example, unprogrammed
+> Flash or uninitialized RAM), the processor will read a spurious initial M=
+ain
+> Stack Pointer value from address zero and a spurious code entry point (Re=
+set
+> vector) from address 0x4, possibly containing an illegal instruction set =
+state
+> specifier (ESPR.T bit) in bit[0]."
+>=20
+> So to successfully boot m4 coproc we need to write Stack Pointer and
+> Program counter, i see no obvious to get Stack Pointer value, so two ways
+> exist ethier form a special elf section:
+>=20
+> "
+> .loader :
+>   {
+>     LONG(__StackTop);
+>     LONG(Reset_Handler + 1);
+>   } > m_start
+> "
+>=20
+> and put it at 0x0 address:
+>=20
+> "
+> m_start               (RX)  : ORIGIN =3D 0x00000000, LENGTH =3D
+> 0x00008000
+> "
+>=20
+> Or (the way i've chosen) only put Entry Point at 0x04 and set stack as fi=
+rst
+> instruction:
+>=20
+> "
+> Reset_Handler:
+> 	ldr   sp, =3D__stack      /* set stack pointer */
+> "
+>=20
+> Regarding mailboxes and memory regions :
+>=20
+> This code is heavily derived from stm32-rproc (i.e. copy pasted) and this=
+ fact
+> needs to reflected in commits, please tell me how to emphasize this fact.
+>=20
+> Attaching succesful trace booting m4 (with Add rpmsg tty driver applied) =
+:
+>=20
+> [  143.240616] remoteproc remoteproc0: powering up imx-rproc
+> [  143.251768] remoteproc remoteproc0: Booting fw image huginn.elf, size
+> 466876 [  143.251786] imx-rproc imx7d-cm4: iommu not present
+> [  143.251825] remoteproc remoteproc0: rsc: type 3 [  143.251837]
+> remoteproc remoteproc0: vdev rsc: id 7, dfeatures 0x1, cfg len 0, 2 vring=
+s
+> [  143.251924] remoteproc remoteproc0: vdev rsc: vring0: da 0xffffffff, q=
+sz
+> 16, align 16 [  143.251935] remoteproc remoteproc0: vdev rsc: vring1: da
+> 0xffffffff, qsz 16, align 16 [  143.251955] imx-rproc imx7d-cm4: map memo=
+ry:
+> 0x00900000+20000 [  143.251987] imx-rproc imx7d-cm4: map memory:
+> 0x00920000+2000 [  143.252003] imx-rproc imx7d-cm4: map memory:
+> 0x00922000+2000 [  143.252020] remoteproc remoteproc0: phdr: type 1 da
+> 0x20200000 memsz 0x240 filesz 0x240 [  143.252032] remoteproc
+> remoteproc0: da =3D 0x20200000 len =3D 0x240 va =3D 0x(ptrval) [  143.252=
+043]
+> remoteproc remoteproc0: phdr: type 1 da 0x20200240 memsz 0x5b38 filesz
+> 0x5b38 [  143.252053] remoteproc remoteproc0: da =3D 0x20200240 len =3D
+> 0x5b38 va =3D 0x(ptrval) [  143.252105] remoteproc remoteproc0: phdr: typ=
+e
+> 1 da 0x20205d78 memsz 0x4b58 filesz 0x758 [  143.252115] remoteproc
+> remoteproc0: da =3D 0x20205d78 len =3D 0x4b58 va =3D 0x(ptrval) [  143.25=
+2159]
+> remoteproc remoteproc0: da =3D 0x200006cc len =3D 0x8c va =3D 0x(ptrval)
+> [  143.252176] remoteproc remoteproc0: Started from 0x202002f5
+> [  143.252211]  imx7d-cm4#vdev0buffer: assigned reserved memory node
+> vdev0buffer@00924000 [  143.252232] virtio virtio0: reset !
+> [  143.252241] virtio virtio0: status: 1 [  143.260567] virtio_rpmsg_bus
+> virtio0: status: 3 [  143.260598] remoteproc remoteproc0: vring0: va
+> c083c000 qsz 16 notifyid 0 [  143.260614] remoteproc remoteproc0: vring1:
+> va c0872000 qsz 16 notifyid 1 [  143.260651] virtio_rpmsg_bus virtio0:
+> buffers: va c0894000, dma 0x00924000 [  143.260666] Added buffer head 0
+> to (ptrval) [  143.260674] Added buffer head 1 to (ptrval) [  143.260680]
+> Added buffer head 2 to (ptrval) [  143.260686] Added buffer head 3 to (pt=
+rval)
+> [  143.260692] Added buffer head 4 to (ptrval) [  143.260697] Added buffe=
+r
+> head 5 to (ptrval) [  143.260703] Added buffer head 6 to (ptrval)
+> [  143.260709] Added buffer head 7 to (ptrval) [  143.260715] Added buffe=
+r
+> head 8 to (ptrval) [  143.260721] Added buffer head 9 to (ptrval)
+> [  143.260727] Added buffer head 10 to (ptrval) [  143.260733] Added
+> buffer head 11 to (ptrval) [  143.260738] Added buffer head 12 to (ptrval=
+)
+> [  143.260744] Added buffer head 13 to (ptrval) [  143.260750] Added
+> buffer head 14 to (ptrval) [  143.260756] Added buffer head 15 to (ptrval=
+)
+> [  143.260771] virtio_rpmsg_bus virtio0: status: 7 [  143.260779]
+> remoteproc remoteproc0: kicking vq index: 0 [  143.260788] remoteproc
+> remoteproc0: sending message : vqid =3D 0 [  143.260802] imx_mu
+> 30aa0000.mailbox: Send data on wrong channel type: 1 [  143.260810]
+> virtio_rpmsg_bus virtio0: rpmsg host is online [  143.261680]
+> imx7d-cm4#vdev0buffer: registered virtio0 (type 7) [  143.261694]
+> remoteproc remoteproc0: remote processor imx-rproc is now up
+> [  143.354880] remoteproc remoteproc0: vq index 0 is interrupted
+> [  143.354895] virtqueue callback for (ptrval) ((ptrval)) [  143.354912]
+> virtio_rpmsg_bus virtio0: From: 0x0, To: 0x35, Len: 40, Flags: 0, Reserve=
+d: 0
+> [  143.354924] rpmsg_virtio RX: 00 00 00 00 35 00 00 00 00 00 00 00 28 00
+> 00 00  ....5.......(...
+> [  143.354932] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00
+> 00 00  rpmsg-tty-raw...
+> [  143.354939] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 00 00  ................
+> [  143.354945] rpmsg_virtio RX: 00 00 00 00 00 00 00
+> 00                          ........
+> [  143.354956] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77
+> 00 00 00  rpmsg-tty-raw...
+> [  143.354963] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 00 00 00  ................
+> [  143.354969] NS announcement: 00 00 00 00 00 00 00
+> 00                          ........
+> [  143.354980] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw
+> addr 0x0 [  143.356584] rpmsg_tty virtio0.rpmsg-tty-raw.-1.0: new channel=
+:
+> 0x400 -> 0x0 : ttyRPMSG0 [  143.356651] Added buffer head 0 to (ptrval)
+> [  143.356658] No more buffers in queue [  143.356667] virtio_rpmsg_bus
+> virtio0: Received 1 messages [  143.404302] remoteproc remoteproc0: vq
+> index 0 is interrupted [  143.404319] virtqueue callback for (ptrval) ((p=
+trval))
+> [  143.404337] virtio_rpmsg_bus virtio0: From: 0x1, To: 0x35, Len: 40, Fl=
+ags:
+> 0, Reserved: 0 [  143.404350] rpmsg_virtio RX: 01 00 00 00 35 00 00 00 00
+> 00 00 00 28 00 00 00  ....5.......(...
+> [  143.404391] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00
+> 00 00  rpmsg-tty-raw...
+> [  143.404399] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 00 00  ................
+> [  143.404405] rpmsg_virtio RX: 01 00 00 00 00 00 00
+> 00                          ........
+> [  143.404417] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77
+> 00 00 00  rpmsg-tty-raw...
+> [  143.404424] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 00 00 00  ................
+> [  143.404430] NS announcement: 01 00 00 00 00 00 00
+> 00                          ........
+> [  143.404441] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw
+> addr 0x1 [  143.411114] rpmsg_tty virtio0.rpmsg-tty-raw.-1.1: new channel=
+:
+> 0x401 -> 0x1 : ttyRPMSG1
