@@ -1,8 +1,10 @@
-Date: Mon, 20 Apr 2020 00:09:03 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Wed, 15 Apr 2020 11:16:20 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2 3/6] remoteproc: sysmon: Inform current rproc about
  all active rprocs
-Message-ID: <20200420070900.GF1868936@builder.lan>
+Message-ID: <20200415171620.GC16583@xps15>
 References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
  <1586389003-26675-4-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
@@ -10,11 +12,10 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1586389003-26675-4-git-send-email-sidgup@codeaurora.org>
 To: Siddharth Gupta <sidgup@codeaurora.org>
-Cc: agross@kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Cc: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
-
+On Wed, Apr 08, 2020 at 04:36:40PM -0700, Siddharth Gupta wrote:
 > Clients/services running on a remoteproc that booted up might need to be
 > aware of the state of already running remoteprocs. When a remoteproc boots
 > up (fresh or after recovery) it is not aware of the remoteprocs that booted
@@ -22,12 +23,6 @@ On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
 > send sysmon on behalf of all 'ONLINE' remoteprocs.
 > 
 > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
 > ---
 >  drivers/remoteproc/qcom_sysmon.c | 25 +++++++++++++++++++++++++
 >  1 file changed, 25 insertions(+)
@@ -76,6 +71,9 @@ Bjorn
 > +	}
 > +	mutex_unlock(&sysmon_lock);
 > +
+
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
 >  	return 0;
 >  }
 >  
