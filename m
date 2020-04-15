@@ -2,12 +2,12 @@ Return-Path: <s-anna@ti.com>
 Subject: Re: [PATCH 5/7] remoteproc/k3-r5: Add a remoteproc driver for R5F
  subsystem
 References: <20200324201819.23095-1-s-anna@ti.com>
- <20200324201819.23095-6-s-anna@ti.com> <20200409212501.GA32029@xps15>
+ <20200324201819.23095-6-s-anna@ti.com> <20200408193818.GA3504@xps15>
 From: Suman Anna <s-anna@ti.com>
-Message-ID: <2d83c22a-9302-1ab9-e241-87fbd7a30dbf@ti.com>
-Date: Wed, 15 Apr 2020 17:44:33 -0500
+Message-ID: <0ac71dde-c9e2-2dde-ae66-3f10665b1523@ti.com>
+Date: Wed, 15 Apr 2020 17:30:24 -0500
 MIME-Version: 1.0
-In-Reply-To: <20200409212501.GA32029@xps15>
+In-Reply-To: <20200408193818.GA3504@xps15>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -15,7 +15,9 @@ To: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Lokesh Vutla <lokeshvutla@ti.com>, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On 4/9/20 4:25 PM, Mathieu Poirier wrote:
+Hi Mathieu,
+
+On 4/8/20 2:38 PM, Mathieu Poirier wrote:
 > On Tue, Mar 24, 2020 at 03:18:17PM -0500, Suman Anna wrote:
 >> The TI K3 family of SoCs typically have one or more dual-core Arm Cortex
 >> R5F processor clusters/subsystems (R5FSS). This R5F subsystem/cluster
@@ -427,14 +429,6 @@ On 4/9/20 4:25 PM, Mathieu Poirier wrote:
 >> +
 >> +	/* enable PSC modules on all applicable cores */
 >> +	list_for_each_entry_reverse(core, &cluster->cores, elem) {
-> 
-> Out of curiosity, any HW specific reason to start with the last core?
-
-Yeah, that is the order required by HW. We have different sequencing 
-between LockStep and Split-modes. Please see the comments added in the 
-descriptions for k3_r5_rproc_start() and k3_r5_rproc_stop() functions below.
-
-> 
 >> +		ret = core->ti_sci->ops.dev_ops.get_device(core->ti_sci,
 >> +							   core->ti_sci_id);
 >> +		if (ret) {
@@ -570,14 +564,6 @@ descriptions for k3_r5_rproc_start() and k3_r5_rproc_stop() functions below.
 >> +			PTR_ERR(kproc->mbox));
 >> +		return ret;
 >> +	}
-> 
-> Does this needs to be done every time a remote processor is booted or could it
-> be done just once in k3_r5_core_of_init()?
-
-This is to ensure that we are not registering any mailbox callbacks 
-until the resource table is parsed and allocated.
-
-> 
 >> +
 >> +	/*
 >> +	 * Ping the remote processor, this is only for sanity-sake for now;
@@ -595,12 +581,6 @@ until the resource table is parsed and allocated.
 >> +	boot_addr = rproc->bootaddr;
 >> +	/* TODO: add boot_addr sanity checking */
 >> +	dev_err(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
-> 
-> s/dev_err()/dev_dbg()
-
-Yes, ok.
-
-> 
 >> +
 >> +	/* boot vector need not be programmed for Core1 in LockStep mode */
 >> +	core = kproc->core;
@@ -782,6 +762,14 @@ Yes, ok.
 >> +
 >> +	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
 >> +	core = cluster->mode ? core0 : kproc->core;
+> 
+> The above two lines generated interesting mental gymnastic - please sprinkle
+> with comments in order to disambiguate what is going on.
+
+Yeah, I will add some comments or add some top-level description above 
+the function for v2.
+
+> 
 >> +
 >> +	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl,
 >> +				     &stat);
@@ -833,6 +821,26 @@ Yes, ok.
 >> +		 */
 >> +		list_for_each_entry(temp, &cluster->cores, elem) {
 >> +			ret = k3_r5_core_halt(core);
+> 
+> When I first read this I thought this was an error and what was really needed
+> was k3_r5_core_halt(temp)... But no, this is correct because
+> k3_r5_rproc_configure() is called for each core in the cluster in function
+> k3_r5_cluster_rproc_init().  But then again why halting the same for each of the
+> cores found in the system?
+> 
+> So something seems wrong here.  Either call k3_r5_core_halt(temp) or move
+> k3_r5_core_halt(core) outside of the if (cluster->mode) to avoid more confusion.
+
+LockStep-mode in general still requires operating/managing both the 
+cores. Let me double-check this again, the halt should be done on both 
+the cores for sure, so it does appear that I should be using 
+k3_r5_core_halt(temp) indeed.
+
+This function is not called a second time if the cluster is in LockStep 
+mode. I break out of the loop at the end in k3_r5_cluster_rproc_init()
+if the cluster is in LockStep mode.
+
+> 
 >> +			if (ret)
 >> +				goto out;
 >> +
@@ -919,19 +927,6 @@ Yes, ok.
 >> +		kproc->rmem[i].bus_addr = rmem->base;
 >> +		/* 64-bit address regions currently not supported */
 >> +		kproc->rmem[i].dev_addr = (u32)rmem->base;
-> 
-> Because the bus and the device addresses are the same I have to deduce the AP
-> and the R5 have the same view of the memory.  Please add a comment to assert
-> that is really the case.
-
-Yes for now, since we are not using the Region Address Translator yet 
-which would have provided address extension from 32-bit device addresses 
-to 64-bit bus addresses.
-
-regards
-Suman
-
-> 
 >> +		kproc->rmem[i].size = rmem->size;
 >> +		kproc->rmem[i].cpu_addr = ioremap_wc(rmem->base, rmem->size);
 >> +		if (!kproc->rmem[i].cpu_addr) {
@@ -1033,6 +1028,15 @@ Suman
 >> +
 >> +		/* create only one rproc in lockstep mode */
 >> +		if (cluster->mode)
+> 
+> Here and throughout the file, please use the cluster mode enumeration in order
+> to improve readability, i.e
+> 
+>                  if (cluster->mode == CLUSTER_MODE_LOCKSTEP)
+
+OK.
+
+> 
 >> +			break;
 >> +	}
 >> +
@@ -1171,6 +1175,18 @@ Suman
 >> +	}
 >> +	if (core->mem)
 >> +		devm_kfree(dev, core->mem);
+> 
+> Since the devm_ API has been used for memory allocation all this should be
+> called automatically when of_platform_depopulate() is called.
+
+The per-core platform devices do not use a dedicated platform driver 
+associated with them, so there were no probe/remove functions associated 
+with them. I added these since some of them do not have devm_ 
+equivalents, and it was easier to balance everything. Let me retest 
+these and get back to you, if of_platform_depopulate() takes care 
+automatically and without any ordering issues.
+
+> 
 >> +	return ret;
 >> +}
 >> +
@@ -1188,6 +1204,10 @@ Suman
 >> +		return ERR_PTR(ret);
 >> +
 >> +	tsp = kzalloc(sizeof(*tsp), GFP_KERNEL);
+> 
+> Here @dev is available, I would just call devm_kzalloc() and get rid of the
+> kfree() in the error path of k3_r5_core_of_init() and k3_r5_core_of_exit().
+> 
 >> +	if (!tsp)
 >> +		return ERR_PTR(-ENOMEM);
 >> +
@@ -1215,6 +1235,13 @@ Suman
 >> +	core->atcm_enable = 0;
 >> +	core->btcm_enable = 1;
 >> +	core->loczrama = 1;
+> 
+> Please add a comment that justifies the selection of default value.  Otherwise
+> this looks very esoteric.
+
+Yeah sure. These are default values on the SoC.
+
+> 
 >> +
 >> +	ret = of_property_read_u32(np, "atcm-enable", &core->atcm_enable);
 >> +	if (ret < 0 && ret != -EINVAL) {
@@ -1298,8 +1325,17 @@ Suman
 >> +	ret1 = ti_sci_put_handle(core->ti_sci);
 >> +	if (ret1)
 >> +		dev_err(dev, "failed to put ti_sci handle, ret = %d\n", ret1);
+> 
+> s/"ret = %d"/"ret1 = %d"
+
+OK
+
+> 
 >> +err_of:
 >> +	devm_kfree(dev, core);
+> 
+> Same comment as above, this should be called automatically.
+> 
 >> +	return ret;
 >> +}
 >> +
@@ -1334,6 +1370,20 @@ Suman
 >> +
 >> +	platform_set_drvdata(pdev, NULL);
 >> +	devm_kfree(dev, core);
+> 
+> Same comment regarding the devm_ API, this should be called automatically.
+
+Yeah, will relook at the devm_ usage at all places.
+
+Thanks for the review.
+
+regards,
+Suman
+
+> 
+> I will continue tomorrow,
+> Mathieu
+> 
 >> +
 >> +	return ret;
 >> +}
