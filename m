@@ -7,74 +7,73 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FC5C3815B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 21:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3091C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 21:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC5E2076C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 21:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A9EB20784
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 21:26:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VWGmm5C1"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g7Eozqsw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439091AbgDOVZM (ORCPT
+        id S2439001AbgDOV0H (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 17:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47086 "EHLO
+        Wed, 15 Apr 2020 17:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2439056AbgDOVZI (ORCPT
+        by vger.kernel.org with ESMTP id S2439052AbgDOV0F (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 17:25:08 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E81C061A0F
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 14:25:08 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id z12so4844986ilb.10
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 14:25:08 -0700 (PDT)
+        Wed, 15 Apr 2020 17:26:05 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F155AC061A0C
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 14:26:04 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id t8so4906051ilj.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 14:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SQ9AyzhFiYqvvtESDF6F0EzOVpt9hS6Ddce9Gb2LBPc=;
-        b=VWGmm5C1q0JZmldchVRjXfBs0T2i4oes8ZJ2qXN9/QihPNKnyERLQ6A7P8Ps0bYzM9
-         TYoS137EQkI2pfP58Z0qfi7cNYvB5RowHgv7gNl/7nUKkqcDvJgwtFlYChNGM8QS0dzc
-         aFCHbFMVJwYla1yAV8uvop+sXtBt1Vd8unMPBNSqGMkVPBhy/jdhoJLg0rLQq9LyjBTt
-         C7uHh1P7HXh4bkTffZ+ItqN/q7MEAdQ+qfC6O8o7u00UHc1lDGOMTFm+bkeHaCly4yrs
-         vgsiQTNeAHStd4YbhozxvpRVzZWebQYOUMz3ENiflkUns6GjbVEkdwGJbyCmt3tXNvZV
-         ju7A==
+        bh=dDKixBKJLPaNO8k57JKpb1sXM656jJUiTX6KQ+yAoqY=;
+        b=g7EozqswakYwF1/wULpyaIm4jT5PtWBB5Uvexq3Y9TZB95+OCrfZM25ZpyOEy9fZhK
+         MICFsAHFoVF4M7TtSxoCaU/7NJoh+yKGpCzU/FGAv/R7bhEAFB5GE0fdSK0kl20RSr0K
+         z9RqR9wDln+OsIcY8OYuvWzE+0jKmVVLmW7YfC52AV0PHi8P8aO2dhCFehYA7dWnT3ux
+         4jDWMGwX70eOQpKCrSNOhwgxvcfW30t38puuUgpTVvagamxLaTFMY89Y4/ELbzUbEkiR
+         pz0AjrsZE6PilYkEC7OtHYIzKwu9cJ4Ut4EkkyJaC3FNu/fFmW3dyDQ51v1dmzclOQol
+         +keQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=SQ9AyzhFiYqvvtESDF6F0EzOVpt9hS6Ddce9Gb2LBPc=;
-        b=ki6b/BO0tiei8Ij3mKtmWOf0Pfy5QFwRnX/rTvNTow/1ODT0Iwl1fr0h4rp5xxigFs
-         /8JayUXQo5B7iMyO8eskj8Jx/z4sddRLRSFZyoq9SS85R+1Nps4MSW0dDVKWZn2o+sWq
-         Z7RIycKVbtwUYJOJXHDchmigVRXMmwUCwcmSrHWe/2E6BIHFYnmf0iX+IeM+aF3W/qEi
-         PkQ8S4n7ovkRm4hePLBmeS+fk5ELvMaQp5pvUK+He/FYeYQ7HLEaUMljSJwLKxkvdfeu
-         Cl5TVHJHug2VCTi51rw/+4vfpypiG1JGd67Kl8XR94xGajFThcUxvWJaKkgWAKANHBsi
-         ouog==
-X-Gm-Message-State: AGi0PuaQdpfsYq8AwgaoVxLNwtPf8yGXmkUIYobfCD3NimKXsSjRnOjj
-        t1sd81oF7uysbrxZ65i44WbeDQ==
-X-Google-Smtp-Source: APiQypLwj6gyCdVoaGqwdR39OULfPjL2iRRe79O5/LDeaZGX4lqgvGHBCUFGzw8RkhzMCPZ5ei8Maw==
-X-Received: by 2002:a05:6e02:c25:: with SMTP id q5mr6883454ilg.97.1586985907521;
-        Wed, 15 Apr 2020 14:25:07 -0700 (PDT)
+        bh=dDKixBKJLPaNO8k57JKpb1sXM656jJUiTX6KQ+yAoqY=;
+        b=ebTnEPtREhe74KWLisBKlXbILEQxAFaFUTKb9fvnuP+na91mLnKD7s0aWrsAfh2vO2
+         S1pCNT13DlOliBbIgeckQUHUmeAhaXCtYtpNuU+MX8nQoe5hGhKd9XeKSzETINAPlg01
+         yN4CSc+dqwi4tj/AwvcKop4klbZUmPLkLSRYyhm0BuGeygbs62yaP97fga/vfz7Xv0HF
+         Ij23uCdzb9ZdplDt0p2Hw6OcR0H4A6Hlhw3bcni5SWp4LLLCTx9V+3oU1aMjyUFW1bgA
+         1xqPQzXAXbcYIzI75ZOZ3pjKziDoBM6WXAtkEBVnBu0zkhi/7cbOy4WEXPTAADVt7Rd/
+         vOsg==
+X-Gm-Message-State: AGi0PubE101LCb3i2R7sa+7/PNTw0qw7/pl60lXOM+WmlC/hWI25SJML
+        gkjNY/j2Ty57UM6NCnTR8Ag7pA==
+X-Google-Smtp-Source: APiQypIknJfnLHYbE2ky961lF+1JjLtngLEsPW+cd7UBwdTylCjdPXZ3uClCJQUe0r0TZfxq1jHvYA==
+X-Received: by 2002:a92:1d3:: with SMTP id 202mr7884500ilb.77.1586985964327;
+        Wed, 15 Apr 2020 14:26:04 -0700 (PDT)
 Received: from [172.22.22.26] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
-        by smtp.googlemail.com with ESMTPSA id m14sm6579426ilr.16.2020.04.15.14.25.06
+        by smtp.googlemail.com with ESMTPSA id i2sm4426239ilq.25.2020.04.15.14.26.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Apr 2020 14:25:06 -0700 (PDT)
-Subject: Re: [PATCH v2 4/7] remoteproc: Use kstrdup_const() rather than
- kstrup()
+        Wed, 15 Apr 2020 14:26:03 -0700 (PDT)
+Subject: Re: [PATCH v2 3/7] remoteproc: Simplify default name allocation
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     s-anna@ti.com, Markus.Elfring@web.de,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
- <20200415204858.2448-5-mathieu.poirier@linaro.org>
+ <20200415204858.2448-4-mathieu.poirier@linaro.org>
 From:   Alex Elder <elder@linaro.org>
-Message-ID: <14b12ca8-823b-8115-bafa-281180e92c70@linaro.org>
-Date:   Wed, 15 Apr 2020 16:25:03 -0500
+Message-ID: <1772f2f2-b063-c80f-9d3a-0127302d33f0@linaro.org>
+Date:   Wed, 15 Apr 2020 16:26:01 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200415204858.2448-5-mathieu.poirier@linaro.org>
+In-Reply-To: <20200415204858.2448-4-mathieu.poirier@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,59 +81,59 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415212503.xTAb5XTnKmcdCk88RnWouOJ2f7diGqsmH7_227_ppnA@z>
+Message-ID: <20200415212601.z-UBYKZGsjkGYwRmtQFiDJQdTDU6mLYSAuE6U4tbULY@z>
 
 On 4/15/20 3:48 PM, Mathieu Poirier wrote:
-> For cases where @firmware is declared "const char *", use function
-> kstrdup_const() to avoid needlessly creating another copy on the
-> heap.
+> In an effort to cleanup firmware name allocation, replace the
+> cumbersome mechanic used to allocate a default firmware name with
+> function kasprintf().
 > 
 > Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Looks good.
+Looks good to me.
 
 Reviewed-by: Alex Elder <elder@linaro.org>
 
 > ---
->  drivers/remoteproc/remoteproc_core.c | 4 ++--
->  include/linux/remoteproc.h           | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
+>  drivers/remoteproc/remoteproc_core.c | 19 +++++++------------
+>  1 file changed, 7 insertions(+), 12 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 9899467fa1cf..ebaff496ef81 100644
+> index 4dee63f319ba..9899467fa1cf 100644
 > --- a/drivers/remoteproc/remoteproc_core.c
 > +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1982,7 +1982,7 @@ static const struct device_type rproc_type = {
+> @@ -1982,24 +1982,19 @@ static const struct device_type rproc_type = {
 >  static int rproc_alloc_firmware(struct rproc *rproc,
 >  				const char *name, const char *firmware)
 >  {
-> -	char *p;
-> +	const char *p;
+> -	char *p, *template = "rproc-%s-fw";
+> -	int name_len;
+> +	char *p;
 >  
->  	if (!firmware)
+> -	if (!firmware) {
+> +	if (!firmware)
 >  		/*
-> @@ -1991,7 +1991,7 @@ static int rproc_alloc_firmware(struct rproc *rproc,
+>  		 * If the caller didn't pass in a firmware name then
+>  		 * construct a default name.
 >  		 */
->  		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
->  	else
-> -		p = kstrdup(firmware, GFP_KERNEL);
-> +		p = kstrdup_const(firmware, GFP_KERNEL);
+> -		name_len = strlen(name) + strlen(template) - 2 + 1;
+> -		p = kmalloc(name_len, GFP_KERNEL);
+> -		if (!p)
+> -			return -ENOMEM;
+> -		snprintf(p, name_len, template, name);
+> -	} else {
+> +		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+> +	else
+>  		p = kstrdup(firmware, GFP_KERNEL);
+> -		if (!p)
+> -			return -ENOMEM;
+> -	}
+> +
+> +	if (!p)
+> +		return -ENOMEM;
 >  
->  	if (!p)
->  		return -ENOMEM;
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 9c07d7958c53..38607107b7cb 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -489,7 +489,7 @@ struct rproc {
->  	struct list_head node;
->  	struct iommu_domain *domain;
->  	const char *name;
-> -	char *firmware;
-> +	const char *firmware;
->  	void *priv;
->  	struct rproc_ops *ops;
->  	struct device dev;
+>  	rproc->firmware = p;
+>  
 > 
 
