@@ -1,8 +1,10 @@
-Date: Wed, 22 Apr 2020 17:53:59 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Return-Path: <mathieu.poirier@linaro.org>
+Date: Wed, 15 Apr 2020 12:07:16 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 Subject: Re: [PATCH v2 5/6] remoteproc: qcom: Add per subsystem SSR
  notification
-Message-ID: <20200423005356.GL1868936@builder.lan>
+Message-ID: <20200415180716.GD16583@xps15>
 References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
  <1586389003-26675-6-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
@@ -10,11 +12,10 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1586389003-26675-6-git-send-email-sidgup@codeaurora.org>
 To: Siddharth Gupta <sidgup@codeaurora.org>
-Cc: agross@kernel.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Cc: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
-
+On Wed, Apr 08, 2020 at 04:36:42PM -0700, Siddharth Gupta wrote:
 > Currently there is a global notification chain which is called whenever any
 > remoteproc shuts down. This leads to all the listeners being notified, and
 > is not an optimal design as kernel drivers might only be interested in
@@ -70,16 +71,15 @@ On Wed 08 Apr 16:36 PDT 2020, Siddharth Gupta wrote:
 > +	struct rproc_subdev *subdev;
 > +	struct qcom_rproc_ssr *ssr;
 > +	int ret;
+
+Variable 'ret' needs to be initalised to -ENOENT.
+
 > +
 > +	if (!rproc)
 > +		return ERR_PTR(-EINVAL);
 > +
 > +	mutex_lock(&rproc->lock);
 > +	list_for_each_entry(subdev, &rproc->subdevs, node) {
-
-I would prefer that we don't touch the lock or subdevs list outside of
-the remoteproc core.
-
 > +		ret = strcmp(subdev->name, "ssr_notifs");
 > +		if (!ret)
 > +			break;
@@ -87,25 +87,16 @@ the remoteproc core.
 > +	mutex_unlock(&rproc->lock);
 > +	if (ret)
 > +		return ERR_PTR(-ENOENT);
+
+If the rproc->subdevs list is empty to_ssr_subdev() will generate a coredump.
+
+With the above:
+
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
 > +
 > +	ssr = to_ssr_subdev(subdev);
 > +	srcu_notifier_chain_register(ssr->rproc_notif_list, nb);
-
-Adding the notifier to an existing ssr_subdev means that any client
-driver that is interested in notification about a remoteproc coming and
-going will need to be registered (typically probed) after the remoteproc
-driver.
-
-I presume this would be handled by probe deferring on
-rproc_get_by_phandle(), but I'm concerned that this will cause
-unnecessary probe deferral. But more importantly, it wouldn't allow for
-the remoteproc driver to be unloaded and loaded again (as that would be
-a new notifier list).
-
-So I think you should carry a global list of "watchers" and upon subdev
-events you can match entries in this list based on either struct
-of_node or perhaps by ssr_name?
-
 > +
 > +	return ssr->rproc_notif_list;
 >  }
@@ -200,15 +191,67 @@ of_node or perhaps by ssr_name?
 >  
 > -	return qcom_register_ssr_notifier(&ssr->nb);
 > +	rproc = rproc_get_by_child(&rpdev->dev);
-
-As we discussed in our meeting offline earlier today, not all glink_ssr
-instances has a remoteproc ancestor. After going back and forth on how
-to handle this I posted below series:
-
-https://lore.kernel.org/linux-arm-msm/20200423003736.2027371-1-bjorn.andersson@linaro.org/T/#t
-
-With this we are flexible to tie the ssr_subdev API to remoteproc
-instances...
-
-Regards,
-Bjorn
+> +	if (!rproc) {
+> +		dev_err(&rpdev->dev, "glink device not child of rproc\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ssr->notifier_head = qcom_register_ssr_notifier(rproc, &ssr->nb);
+> +	if (IS_ERR(ssr->notifier_head)) {
+> +		dev_err(&rpdev->dev,
+> +			"failed to register for ssr notifications\n");
+> +		return PTR_ERR(ssr->notifier_head);
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static void qcom_glink_ssr_remove(struct rpmsg_device *rpdev)
+>  {
+>  	struct glink_ssr *ssr = dev_get_drvdata(&rpdev->dev);
+>  
+> -	qcom_unregister_ssr_notifier(&ssr->nb);
+> +	qcom_unregister_ssr_notifier(ssr->notifier_head, &ssr->nb);
+>  }
+>  
+>  static const struct rpmsg_device_id qcom_glink_ssr_match[] = {
+> diff --git a/include/linux/remoteproc/qcom_rproc.h b/include/linux/remoteproc/qcom_rproc.h
+> index fa8e386..89e830a 100644
+> --- a/include/linux/remoteproc/qcom_rproc.h
+> +++ b/include/linux/remoteproc/qcom_rproc.h
+> @@ -2,20 +2,27 @@
+>  #define __QCOM_RPROC_H__
+>  
+>  struct notifier_block;
+> +struct rproc;
+>  
+>  #if IS_ENABLED(CONFIG_QCOM_RPROC_COMMON)
+>  
+> -int qcom_register_ssr_notifier(struct notifier_block *nb);
+> -void qcom_unregister_ssr_notifier(struct notifier_block *nb);
+> +void *qcom_register_ssr_notifier(struct rproc *rproc,
+> +				 struct notifier_block *nb);
+> +int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb);
+>  
+>  #else
+>  
+> -static inline int qcom_register_ssr_notifier(struct notifier_block *nb)
+> +static inline void *qcom_register_ssr_notifier(struct rproc *rproc,
+> +					       struct notifier_block *nb)
+>  {
+> -	return 0;
+> +	return NULL;
+>  }
+>  
+> -static inline void qcom_unregister_ssr_notifier(struct notifier_block *nb) {}
+> +static inline int qcom_unregister_ssr_notifier(void *notify,
+> +					       struct notifier_block *nb)
+> +{
+> +	return 0;
+> +}
+>  
+>  #endif
+>  
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
