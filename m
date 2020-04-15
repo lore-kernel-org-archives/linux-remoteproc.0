@@ -1,90 +1,118 @@
-Return-Path: <linux-arm-msm-owner@vger.kernel.org>
-From: Siddharth Gupta <sidgup@codeaurora.org>
-Subject: [PATCH v2 2/6] remoteproc: sysmon: Add notifications for events
-Date: Wed,  8 Apr 2020 16:36:39 -0700
-Message-Id: <1586389003-26675-3-git-send-email-sidgup@codeaurora.org>
-In-Reply-To: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
-References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com
-Cc: Siddharth Gupta <sidgup@codeaurora.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org, psodagud@codeaurora.org, rishabhb@codeaurora.org
+Return-Path: <mathieu.poirier@linaro.org>
+MIME-Version: 1.0
+References: <20200413193401.27234-1-mathieu.poirier@linaro.org>
+ <20200413193401.27234-3-mathieu.poirier@linaro.org> <bd8cc8d5-94c1-5767-d089-535731fc1055@linaro.org>
+ <20200414005506.GG20625@builder.lan> <20200414194441.GA25931@xps15> <20200414231601.GI892431@yoga>
+In-Reply-To: <20200414231601.GI892431@yoga>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 15 Apr 2020 13:34:25 -0600
+Message-ID: <CANLsYkx2cV4QMPTvWxUhXDvSbNmrSR33L6pNzA=x9ZscpQk=6Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] remoteproc: Split firmware name allocation from rproc_alloc()
+Content-Type: text/plain; charset="UTF-8"
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Alex Elder <elder@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Suman Anna <s-anna@ti.com>, linux-remoteproc <linux-remoteproc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Add notification for other stages of remoteproc boot and shutdown. This
-includes adding callback functions for the prepare and unprepare events,
-and fleshing out the callback function for start.
+On Tue, 14 Apr 2020 at 17:16, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Tue 14 Apr 12:44 PDT 2020, Mathieu Poirier wrote:
+>
+> > Hey Bjorn,
+> >
+> > On Mon, Apr 13, 2020 at 05:55:06PM -0700, Bjorn Andersson wrote:
+> > > On Mon 13 Apr 13:56 PDT 2020, Alex Elder wrote:
+> > >
+> > > > On 4/13/20 2:33 PM, Mathieu Poirier wrote:
+> > > > > Make the firmware name allocation a function on its own in order to
+> > > > > introduce more flexibility to function rproc_alloc().
+> > > > >
+> > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > >
+> > > > I didn't look at the larger context (MCU series); I'm only looking
+> > > > at this (and the others in this series) in isolation.  I like
+> > > > that you're encapsulating this stuff into functions but doing so
+> > > > doesn't really add any flexibility.
+> > > >
+> > > > Two small suggestions for you to consider but they're truly
+> > > > more about style so it's entirely up to you.  Outside of that
+> > > > this looks straightforward to me, and the result of the series
+> > > > is an improvement.
+> > > >
+> > > > I'll let you comment on my suggestions before offering my
+> > > > "reviewed-by" indication.
+> > > >
+> > > >                                   -Alex
+> > > >
+> > > > > ---
+> > > > >  drivers/remoteproc/remoteproc_core.c | 66 ++++++++++++++++------------
+> > > > >  1 file changed, 39 insertions(+), 27 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > > index 80056513ae71..4dee63f319ba 100644
+> > > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > > @@ -1979,6 +1979,33 @@ static const struct device_type rproc_type = {
+> > > > >         .release        = rproc_type_release,
+> > > > >  };
+> > > > >
+> > > > > +static int rproc_alloc_firmware(struct rproc *rproc,
+> > > > > +                               const char *name, const char *firmware)
+> > > > > +{
+> > > > > +       char *p, *template = "rproc-%s-fw";
+> > > > > +       int name_len;
+> > > >
+> > > > Not a big deal (and maybe it's not consistent with other nearby
+> > > > style) but template and name_len could be defined inside the
+> > > > "if (!firmware)" block.
+> > > >
+> > >
+> > > I prefer variables declared in the beginning of the function, so I'm
+> > > happy with this.
+> > >
+> > > > > +       if (!firmware) {
+> > > > > +               /*
+> > > > > +                * If the caller didn't pass in a firmware name then
+> > > > > +                * construct a default name.
+> > > > > +                */
+> > > > > +               name_len = strlen(name) + strlen(template) - 2 + 1;
+> > > > > +               p = kmalloc(name_len, GFP_KERNEL);
+> > > >
+> > > >
+> > > > I don't know if it would be an improvement, but you could
+> > > > check for a null p value below for both cases.  I.e.:
+> > > >
+> > > >           if (p)
+> > > >                   snprintf(p, ...);
+> > > >
+> > >
+> > > Moving the common NULL check and return out seems nice, but given that
+> > > we then have to have this positive conditional I think the end result is
+> > > more complex.
+> > >
+> > > That said, if we're not just doing a verbatim copy from rproc_alloc() I
+> > > think we should make this function:
+> > >
+> > >     if (!firmware)
+> > >             p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
+> > >     else
+> > >             p = kstrdup_const(firmware, GFP_KERNEL);
+> >
+> > If you really want to use kstrdup_const() the return value has to be casted to a
+> > "char *".  Variable 'p' can't be declared const "char *" because rproc->firmware is not
+> > a "const".  Simply put somewhere the "const" will need to be dropped or casted out.
+> >
+>
+> The firmware parameter to rproc_alloc() is const char * and there's a
+> couple of places where a really const string is passed, so by using
+> kstrdup_const() we don't end up duplicating const data on the heap.
+>
+> And afaict we can make both p and rproc->firmware const char * to allow
+> this, or am I missing something?
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
----
- drivers/remoteproc/qcom_sysmon.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+I wasn't sure you were willing to go as far as making rproc->firmware
+a const char *.  In that case it is quite easy...
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 1366050..851664e 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -439,8 +439,31 @@ static const struct qmi_ops ssctl_ops = {
- 	.del_server = ssctl_del_server,
- };
- 
-+static int sysmon_prepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_sysmon *sysmon = container_of(subdev, struct qcom_sysmon,
-+						  subdev);
-+	struct sysmon_event event = {
-+		.subsys_name = sysmon->name,
-+		.ssr_event = SSCTL_SSR_EVENT_BEFORE_POWERUP
-+	};
-+
-+	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-+
-+	return 0;
-+}
-+
- static int sysmon_start(struct rproc_subdev *subdev)
- {
-+	struct qcom_sysmon *sysmon = container_of(subdev, struct qcom_sysmon,
-+						  subdev);
-+	struct sysmon_event event = {
-+		.subsys_name = sysmon->name,
-+		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
-+	};
-+
-+	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-+
- 	return 0;
- }
- 
-@@ -464,6 +487,18 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
- 		sysmon_request_shutdown(sysmon);
- }
- 
-+static void sysmon_unprepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_sysmon *sysmon = container_of(subdev, struct qcom_sysmon,
-+						  subdev);
-+	struct sysmon_event event = {
-+		.subsys_name = sysmon->name,
-+		.ssr_event = SSCTL_SSR_EVENT_AFTER_SHUTDOWN
-+	};
-+
-+	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-+}
-+
- /**
-  * sysmon_notify() - notify sysmon target of another's SSR
-  * @nb:		notifier_block associated with sysmon instance
-@@ -563,8 +598,10 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 
- 	qmi_add_lookup(&sysmon->qmi, 43, 0, 0);
- 
-+	sysmon->subdev.prepare = sysmon_prepare;
- 	sysmon->subdev.start = sysmon_start;
- 	sysmon->subdev.stop = sysmon_stop;
-+	sysmon->subdev.unprepare = sysmon_unprepare;
- 
- 	rproc_add_subdev(rproc, &sysmon->subdev);
- 
--- 
-Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+> Regards,
+> Bjorn
