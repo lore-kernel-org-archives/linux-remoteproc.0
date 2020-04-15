@@ -1,83 +1,61 @@
-Return-Path: <arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] remoteproc: mtk_scp: use dma_addr_t for DMA API
-Date: Wed,  8 Apr 2020 17:54:29 +0200
-Message-Id: <20200408155450.2186471-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Erin Lo <erin.lo@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>, Pi-Hsun Shih <pihsun@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>, Nathan Chancellor <natechancellor@gmail.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-Path: <wenhu.wang@vivo.com>
+From: Wang Wenhu <wenhu.wang@vivo.com>
+Subject: Re: [PATCH v3,0/3] drivers: rpmon: new driver Remote Processor Monitor
+Date: Wed, 15 Apr 2020 08:16:49 -0700
+Message-Id: <20200415151649.122787-1-wenhu.wang@vivo.com>
+In-Reply-To: <20200414225823.GH892431@yoga>
+References: <20200414225823.GH892431@yoga>
+To: bjorn.andersson@linaro.org
+Cc: agross@kernel.org, gregkh@linuxfoundation.org, kernel@vivo.com, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com, rdunlap@infradead.org, wenhu.wang@vivo.com
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-dma_addr_t and phys_addr_t are distinct types and must not be
-mixed, as both the values and the size of the type may be
-different depending on what the remote device uses.
+Hi Bjorn,
+Mainly two aspects:
+ - Different message drivers modularly added to support different platforms.
+   Currently, RPMON_QMI is available, and further maybe mailbox or so.
+ - Different events to be notified and different actions to be taken out.
+   Currently, connection check action is available, and remote endpoint's
+   registeration event would be notified.
 
-In this driver the compiler warns when the two types are different:
+I hope the Remote Porcessor Monitor would eventually do something more
+and be used by more users and platforms, and more actions and events
+would be added as enhancement. At the same time, it is better to support
+different SoC platforms. So I wrote the codes in kernel.
 
-drivers/remoteproc/mtk_scp.c: In function 'scp_map_memory_region':
-drivers/remoteproc/mtk_scp.c:454:9: error: passing argument 3 of 'dma_alloc_coherent' from incompatible pointer type [-Werror=incompatible-pointer-types]
-  454 |         &scp->phys_addr, GFP_KERNEL);
-      |         ^~~~~~~~~~~~~~~
-      |         |
-      |         phys_addr_t * {aka unsigned int *}
-In file included from drivers/remoteproc/mtk_scp.c:7:
-include/linux/dma-mapping.h:642:15: note: expected 'dma_addr_t *' {aka 'long long unsigned int *'} but argument is of type 'phys_addr_t *' {aka 'unsigned int *'}
-  642 |   dma_addr_t *dma_handle, gfp_t gfp)
+Thanks,
+Wenhu
 
-Change the phys_addr member to be typed and named according
-to how it is allocated.
-
-Fixes: 63c13d61eafe ("remoteproc/mediatek: add SCP support for mt8183")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/remoteproc/mtk_common.h | 2 +-
- drivers/remoteproc/mtk_scp.c    | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index deb20096146a..0066c83636d0 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -68,7 +68,7 @@ struct mtk_scp {
- 	wait_queue_head_t ack_wq;
- 
- 	void __iomem *cpu_addr;
--	phys_addr_t phys_addr;
-+	dma_addr_t dma_addr;
- 	size_t dram_size;
- 
- 	struct rproc_subdev *rpmsg_subdev;
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index ea3743e7e794..2bead57c9cf9 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -330,7 +330,7 @@ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len)
- 		if (offset >= 0 && (offset + len) < scp->sram_size)
- 			return (void __force *)scp->sram_base + offset;
- 	} else {
--		offset = da - scp->phys_addr;
-+		offset = da - scp->dma_addr;
- 		if (offset >= 0 && (offset + len) < scp->dram_size)
- 			return (void __force *)scp->cpu_addr + offset;
- 	}
-@@ -451,7 +451,7 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- 	/* Reserved SCP code size */
- 	scp->dram_size = MAX_CODE_SIZE;
- 	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp->dram_size,
--					   &scp->phys_addr, GFP_KERNEL);
-+					   &scp->dma_addr, GFP_KERNEL);
- 	if (!scp->cpu_addr)
- 		return -ENOMEM;
- 
-@@ -461,7 +461,7 @@ static int scp_map_memory_region(struct mtk_scp *scp)
- static void scp_unmap_memory_region(struct mtk_scp *scp)
- {
- 	dma_free_coherent(scp->dev, scp->dram_size, scp->cpu_addr,
--			  scp->phys_addr);
-+			  scp->dma_addr);
- 	of_reserved_mem_device_release(scp->dev);
- }
- 
--- 
-2.26.0
+>> Changes since v1:
+>>  - Addressed review comments from Randy
+>> Changes since v2:
+>>  - Added Cc list
+>>  - Commit log typo fixing
+>>  - Use the ARRAY_SIZE instead of calculations of multiple sizeof()
+>>  - Use micros for qmi message tly_type fields
+>> 
+>> Wang Wenhu (3):
+>>   driver: rpmon: new driver Remote Processor Monitor
+>>   driver: rpmon: qmi message version 01
+>>   driver: rpmon: add rpmon_qmi driver
+>> 
+>>  drivers/Kconfig                  |   2 +
+>>  drivers/Makefile                 |   1 +
+>>  drivers/rpmon/Kconfig            |  54 ++++
+>>  drivers/rpmon/Makefile           |   3 +
+>>  drivers/rpmon/rpmon.c            | 506 +++++++++++++++++++++++++++++++
+>>  drivers/rpmon/rpmon_qmi.c        | 431 ++++++++++++++++++++++++++
+>>  drivers/rpmon/rpmon_qmi.h        |  76 +++++
+>>  drivers/rpmon/rpmon_qmi_msg_v1.c | 258 ++++++++++++++++
+>>  include/linux/rpmon.h            |  68 +++++
+>>  9 files changed, 1399 insertions(+)
+>>  create mode 100644 drivers/rpmon/Kconfig
+>>  create mode 100644 drivers/rpmon/Makefile
+>>  create mode 100644 drivers/rpmon/rpmon.c
+>>  create mode 100644 drivers/rpmon/rpmon_qmi.c
+>>  create mode 100644 drivers/rpmon/rpmon_qmi.h
+>>  create mode 100644 drivers/rpmon/rpmon_qmi_msg_v1.c
+>>  create mode 100644 include/linux/rpmon.h
+>> 
+>> -- 
+>> 2.17.1
+>> 
