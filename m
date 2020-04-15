@@ -2,116 +2,163 @@ Return-Path: <SRS0=YAOw=57=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F69C3815B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 07:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E314FC2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 13:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 246DC206F9
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 07:16:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAB8D2076D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 13:33:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="bSVGr93z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtO6NHec"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731776AbgDOHQt (ORCPT
+        id S2633263AbgDONdH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 03:16:49 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:63389 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2441125AbgDOHQs (ORCPT
+        Wed, 15 Apr 2020 09:33:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58280 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731696AbgDONdF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 03:16:48 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1586935007; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=Nys4cLvoDknHxSyWTS2HyubJBTBF+pvhnrA0VKTIbeo=; b=bSVGr93zvgVBe5sl3/5eg6mglrA2Gc38qu3eeT6S4AIYFwOd/6YEVQ+gSnLAwqCOinaUvZyZ
- JYKJi8bqK+iaQgbGwQvoOlqmZohmsRq8uO3catXp1S0bsdEQuyKqfRx9GiZ05l3E9CAfdIqy
- xQLfAKMfZf6nPsfLby5+gP5qo1M=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e96b4df.7ff5c65190d8-smtp-out-n05;
- Wed, 15 Apr 2020 07:16:47 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 1DDB0C433CB; Wed, 15 Apr 2020 07:16:46 +0000 (UTC)
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6A500C44788;
-        Wed, 15 Apr 2020 07:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A500C44788
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org
-Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        ohad@wizery.com, evgreen@chromium.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 2/2] remoteproc: qcom_q6v5_mss: Remove unused q6v5_da_to_va function
-Date:   Wed, 15 Apr 2020 12:46:19 +0530
-Message-Id: <20200415071619.6052-2-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200415071619.6052-1-sibis@codeaurora.org>
-References: <20200415071619.6052-1-sibis@codeaurora.org>
+        Wed, 15 Apr 2020 09:33:05 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE0D5C061A0C;
+        Wed, 15 Apr 2020 06:33:04 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id r7so3621214ljg.13;
+        Wed, 15 Apr 2020 06:33:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rweJjnMrX8DVOwJI978T4+zp/Dc4ldAeC6N/9wICZ1w=;
+        b=EtO6NHecxgTrUGnMVlx7i3ATAgsdf3gtJ68v14xO88EpmFNAGg5igoHGOh8H+9iFnT
+         U+aXfzs2UAcidoE88j2khBx/3IrLqn8AZ3NnVdzNEjcKn7bZKB+OcZtOdX4ff/KxDIXM
+         SWEqmB3uZq2eqv2y9+ATuYiiBISQFQIdqWAMwk+ZKHtO23SE6prvYcSrAAXNrPbMXOdR
+         m/c6Mesnr6DF343g2os+JR122TLWwd7rcOgRCbskoANzQ2v9sLEKLQhgON1xOTYh6mtk
+         F71Ri+dIC9ZYwKcdNurMEVJuwKbo6aqZi9CutbZazhbkbNQhCrbz7ZNPaysnwr3o/ZoM
+         bR5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rweJjnMrX8DVOwJI978T4+zp/Dc4ldAeC6N/9wICZ1w=;
+        b=U7tZMZnmFgfEIZHuqw6+PugcOhI4ipUVbzRaIO1mzGjBH5YLVmQAFTvp+E7s4j5eTd
+         Ajk6FcUH1PdWulDZ4YPfDskBnjNlx3EmkCPhgrfKMYV6M3vQgXYZ2Mp7zBmKCYji493r
+         T8i79JwC3JjjNxJuhXHMXIOFTwJtIUZKAyYI5JC4jQpMn/lMHSt5zsHPfUUw1W1pRBv0
+         ZDFuOqwqY2QFCi3bCHRQ7m9x2Py7ON+r7TSkWwqASp3OMkwcZ4yHHeK79Iysp+KQGETn
+         OR5onZ2aUhauWtEwmJjaslzmbS4JH2wmuIj/I1AsFE/DNbK9Yedx9oZ32MbrMrNM2s0W
+         uqTA==
+X-Gm-Message-State: AGi0PuaJOr3wbtsslPybx5UuGAtTHF0cYckJU3YnKkZXbgv1JADL1oAt
+        gDdmAfQNUobzuQtBfKkmm9jOrAgbTMVb4MZHOPQ=
+X-Google-Smtp-Source: APiQypKS3xz8rw5Jy7+JZAEVCjE7qNjWum5PB0iQLEBBPGJIPaZ4eDEcQCJaRQ98XaFHtdQO4V9Zs8EXEbzFYwJFXV4=
+X-Received: by 2002:a2e:9b07:: with SMTP id u7mr3252420lji.110.1586957583245;
+ Wed, 15 Apr 2020 06:33:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200414220943.6203-1-ezequiel@collabora.com>
+In-Reply-To: <20200414220943.6203-1-ezequiel@collabora.com>
+From:   Baolin Wang <baolin.wang7@gmail.com>
+Date:   Wed, 15 Apr 2020 21:32:52 +0800
+Message-ID:
+ <CADBw62oJj_x046piRbPP48A04ALo-w2J6jZXNspyN5eOGj-TEg@mail.gmail.com>
+Subject: Re: [PATCH] hwspinlock: Simplify Kconfig
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415071619.r_gAcp0lkhvJKRtI2MlGkrSAKtMhDSq5_93w9h6mOZA@z>
+Message-ID: <20200415133252.KIVWsLqFJ1bU34GfJRyojhjdBvEpOOaFNGC-8-acfYk@z>
 
-Remove unsed q6v5_da_to_va function as the mss driver uses a per segment
-dump function.
+Hi Ezequiel,
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 14 --------------
- 1 file changed, 14 deletions(-)
+On Wed, Apr 15, 2020 at 6:09 AM Ezequiel Garcia <ezequiel@collabora.com> wrote:
+>
+> Every hwspinlock driver is expected to depend on the
+> hwspinlock core, so it's possible to simplify the
+> Kconfig, factoring out the HWSPINLOCK dependency.
+>
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index b781fc8de3597..6a19e0e77236e 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -196,7 +196,6 @@ struct q6v5 {
- 
- 	phys_addr_t mpss_phys;
- 	phys_addr_t mpss_reloc;
--	void *mpss_region;
- 	size_t mpss_size;
- 
- 	struct qcom_rproc_glink glink_subdev;
-@@ -1342,18 +1341,6 @@ static int q6v5_stop(struct rproc *rproc)
- 	return 0;
- }
- 
--static void *q6v5_da_to_va(struct rproc *rproc, u64 da, size_t len)
--{
--	struct q6v5 *qproc = rproc->priv;
--	int offset;
--
--	offset = da - qproc->mpss_reloc;
--	if (offset < 0 || offset + len > qproc->mpss_size)
--		return NULL;
--
--	return qproc->mpss_region + offset;
--}
--
- static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 					    const struct firmware *mba_fw)
- {
-@@ -1399,7 +1386,6 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- static const struct rproc_ops q6v5_ops = {
- 	.start = q6v5_start,
- 	.stop = q6v5_stop,
--	.da_to_va = q6v5_da_to_va,
- 	.parse_fw = qcom_q6v5_register_dump_segments,
- 	.load = q6v5_load,
- };
+Looks reasonable to me.
+Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
+
+> ---
+>  drivers/hwspinlock/Kconfig | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
+> index 826a1054100d..32cd26352f38 100644
+> --- a/drivers/hwspinlock/Kconfig
+> +++ b/drivers/hwspinlock/Kconfig
+> @@ -6,9 +6,10 @@
+>  menuconfig HWSPINLOCK
+>         bool "Hardware Spinlock drivers"
+>
+> +if HWSPINLOCK
+> +
+>  config HWSPINLOCK_OMAP
+>         tristate "OMAP Hardware Spinlock device"
+> -       depends on HWSPINLOCK
+>         depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX || SOC_AM33XX || SOC_AM43XX || ARCH_K3 || COMPILE_TEST
+>         help
+>           Say y here to support the OMAP Hardware Spinlock device (firstly
+> @@ -18,7 +19,6 @@ config HWSPINLOCK_OMAP
+>
+>  config HWSPINLOCK_QCOM
+>         tristate "Qualcomm Hardware Spinlock device"
+> -       depends on HWSPINLOCK
+>         depends on ARCH_QCOM || COMPILE_TEST
+>         select MFD_SYSCON
+>         help
+> @@ -30,7 +30,6 @@ config HWSPINLOCK_QCOM
+>
+>  config HWSPINLOCK_SIRF
+>         tristate "SIRF Hardware Spinlock device"
+> -       depends on HWSPINLOCK
+>         depends on ARCH_SIRF || COMPILE_TEST
+>         help
+>           Say y here to support the SIRF Hardware Spinlock device, which
+> @@ -43,7 +42,6 @@ config HWSPINLOCK_SIRF
+>  config HWSPINLOCK_SPRD
+>         tristate "SPRD Hardware Spinlock device"
+>         depends on ARCH_SPRD || COMPILE_TEST
+> -       depends on HWSPINLOCK
+>         help
+>           Say y here to support the SPRD Hardware Spinlock device.
+>
+> @@ -52,7 +50,6 @@ config HWSPINLOCK_SPRD
+>  config HWSPINLOCK_STM32
+>         tristate "STM32 Hardware Spinlock device"
+>         depends on MACH_STM32MP157 || COMPILE_TEST
+> -       depends on HWSPINLOCK
+>         help
+>           Say y here to support the STM32 Hardware Spinlock device.
+>
+> @@ -60,7 +57,6 @@ config HWSPINLOCK_STM32
+>
+>  config HSEM_U8500
+>         tristate "STE Hardware Semaphore functionality"
+> -       depends on HWSPINLOCK
+>         depends on ARCH_U8500 || COMPILE_TEST
+>         help
+>           Say y here to support the STE Hardware Semaphore functionality, which
+> @@ -68,3 +64,5 @@ config HSEM_U8500
+>           SoC.
+>
+>           If unsure, say N.
+> +
+> +endif # HWSPINLOCK
+> --
+> 2.26.0.rc2
+>
+
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Baolin Wang
