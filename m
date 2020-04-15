@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BD8C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 20:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DA5C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 20:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E27332076D
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 20:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFA12078B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 20:49:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PzYRWN/b"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rRvVXTP7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438385AbgDOUt0 (ORCPT
+        id S2442157AbgDOUt0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Wed, 15 Apr 2020 16:49:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41486 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2438617AbgDOUtI (ORCPT
+        by vger.kernel.org with ESMTP id S2438385AbgDOUtK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 16:49:08 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C515C0610D5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:07 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id n16so507005pgb.7
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:07 -0700 (PDT)
+        Wed, 15 Apr 2020 16:49:10 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD13C061BD3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:10 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id w3so479208plz.5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 13:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M/7ZIhFX8/Fc/kbce4rxbSpECgFr3U/vKIkPqW4pN78=;
-        b=PzYRWN/byflKqd6OsSapeqhz+jz3Mp2vQ5jbUXnfg6/ypN1MtKOn8kz4uKJUQnjzQG
-         zL9RpPo175xED/M6X4ecXyXp9wovIFPGNRW+vCKEH+eTtbJbilLTRK/cmQUzEEYB/6VI
-         IHAbUU2LU3KezQlCkAVUnVFv0miMuzp9V75us5/UFy0YG4Kg+vntVMcf5wJHLLue3cqe
-         KXkHKwfe1+jIFj0/RvkoeUrxClhYzokqu4xvkkAIvlvoPmRgj9Ehc1beneiJ5mWPhGQV
-         bZv86VCUMr1Ead/nuxSjFRA5+2wzV1gwpSY9RILXSi9gO8bNm2hbTRSUH6aHsbFQLa7L
-         sxkQ==
+        bh=5mMaRFdCaTH1ggi3Wx1BWKvNiF1AGQ87b+AkdJgmycY=;
+        b=rRvVXTP7ZJzwJhf2Xmo3vX+8MSK3BDm3OT74D5LpCxb54uKGTRX9zNxmh53maUTuDX
+         QlO9C4z4sCObkinTOLXaQQ+ON/0I1sFNi5yXsyhdqeKlYuAwtQsuQHGZSDpcEs++CmRK
+         qUTQA/19pgl8Q8QVyB4puFqpgHqA0Exv6dun2x9Cq+/xlQ4DkG5CCTwpL98FIHzICtS5
+         h7X58oq3qlBvBk++0wFqy9DK1rAQ8b8rIbf2/t6WrA29SL2S0+KA/nuA6Ve25BVwYsZw
+         on2Q0Gk50Y8gAB4vJN69edaImi8dwcmrW4q2wpJKBaOH/Ayk73r1TtNEUslfU+b/yFdl
+         zx8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M/7ZIhFX8/Fc/kbce4rxbSpECgFr3U/vKIkPqW4pN78=;
-        b=tGBSLABxH9JD5j3/wJ+aU7QnG24AfGlbQ0snz2XRjY76N9RG2gcI0+CGs52wA3NEXs
-         Mj97zfc/E0kEcviiiiN/E+gqqBz01hXGzdXWARVfs3/+hVixXo4NUr1r0ZZAADfgUWsm
-         AkcbepwdPfFgfQyhkU4bX4XauqqUfWLgtYWx0AydqOrnywewA3IZuE7IfRz5rY741/jI
-         G3GFqfc0IiNJWQWmIsOT2UduqO1POIRlUaIylV6UDnW3qU+cmxwGReRSCI9dRGiy03RC
-         gtKg5a7IXWlvxoGbqHi5U/OsDlp8Ap8vsbYoDr/6m4qplB6HBip9yHA5NWxYNpqXQ5Qh
-         UE0A==
-X-Gm-Message-State: AGi0PuaO8YIaxmA+UtRFaaccstGgLOf1126LcujfmdKmmwY48XGMJg95
-        Fsoi2vItYx2zhPGlbuh7qNbFiQ==
-X-Google-Smtp-Source: APiQypKTLEovDZzfR01SF/kDnhw2CXF7O5puu/Gs/lR7mn9HqDXfXHpcuVfHesxn93ziRZJE2KXJbA==
-X-Received: by 2002:a62:16d2:: with SMTP id 201mr27883268pfw.295.1586983747037;
-        Wed, 15 Apr 2020 13:49:07 -0700 (PDT)
+        bh=5mMaRFdCaTH1ggi3Wx1BWKvNiF1AGQ87b+AkdJgmycY=;
+        b=aTZpsmGj19tII+W+BYL1Rrh+nBEoQt7i+HA0Qe71RFapiriiBod6CIy9IUxkgIo9WZ
+         0V4d8sGINPuxOtchjKV3Btluol5B2mn/hS9S9jA3SLSoAxww1XFy4xO4/HdoG4GhZ7c1
+         neVJBOFTbyyPZNFvbYeSvlzWR/AizHA5UucL6a9/JRLhsD8oVOmvUxtVFOetTWymSuyF
+         kTw09WnaYjc2bg1n7wlDLthSOJJJCUQr7uQFxFLavwRGKIq1qGKK23LufNetWpI2IORR
+         xMdkX4L2Es0FmLmI03GXaAgAyg92FqvB0vJ/gHjYlKafl0kSK/pduf9JUAXPcDIzEw0Y
+         GEjA==
+X-Gm-Message-State: AGi0PuaKhjhoQFCllD4SKXq1lS9SF7eTg69Fy6wbl8cfA9v9OkOt4wQc
+        MzzxjPpmhHT8HRVx8iKq44vyjw==
+X-Google-Smtp-Source: APiQypIEHhprsgf/g45tSL3P5lgi62wsjU6pB/U8o8/KQp+LhHz+Wmuz0Y2ljFPdYiZ7txC57NY54g==
+X-Received: by 2002:a17:902:8d86:: with SMTP id v6mr6861724plo.57.1586983750173;
+        Wed, 15 Apr 2020 13:49:10 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id i13sm14461861pfa.113.2020.04.15.13.49.05
+        by smtp.gmail.com with ESMTPSA id i13sm14461861pfa.113.2020.04.15.13.49.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 13:49:06 -0700 (PDT)
+        Wed, 15 Apr 2020 13:49:09 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     bjorn.andersson@linaro.org, ohad@wizery.com
 Cc:     s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/7] remoteproc: Use kstrdup_const() rather than kstrup()
-Date:   Wed, 15 Apr 2020 14:48:55 -0600
-Message-Id: <20200415204858.2448-5-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 7/7] remoteproc: Get rid of tedious error path
+Date:   Wed, 15 Apr 2020 14:48:58 -0600
+Message-Id: <20200415204858.2448-8-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200415204858.2448-1-mathieu.poirier@linaro.org>
 References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
@@ -75,54 +75,70 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415204855.9kzLHlUWPKn-m8OYweflGMBpL4adEx_DsGDLBmncAuI@z>
+Message-ID: <20200415204858.AIzCe5MB0wiQWx92b-KIb44riruVxsG9sCGqDmNhdv8@z>
 
-For cases where @firmware is declared "const char *", use function
-kstrdup_const() to avoid needlessly creating another copy on the
-heap.
+Get rid of tedious error management by moving firmware and operation
+allocation after calling device_initialize().  That way we take advantage
+of the automatic call to rproc_type_release() to cleanup after ourselves
+when put_device() is called.
 
-Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Reviewed-by: Alex Elder <elder@linaro.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 4 ++--
- include/linux/remoteproc.h           | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 9899467fa1cf..ebaff496ef81 100644
+index a5a0ceb86b3f..405c94f151a7 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1982,7 +1982,7 @@ static const struct device_type rproc_type = {
- static int rproc_alloc_firmware(struct rproc *rproc,
- 				const char *name, const char *firmware)
- {
--	char *p;
-+	const char *p;
+@@ -2056,12 +2056,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	if (!rproc)
+ 		return NULL;
  
- 	if (!firmware)
- 		/*
-@@ -1991,7 +1991,7 @@ static int rproc_alloc_firmware(struct rproc *rproc,
- 		 */
- 		p = kasprintf(GFP_KERNEL, "rproc-%s-fw", name);
- 	else
--		p = kstrdup(firmware, GFP_KERNEL);
-+		p = kstrdup_const(firmware, GFP_KERNEL);
+-	if (rproc_alloc_firmware(rproc, name, firmware))
+-		goto free_rproc;
+-
+-	if (rproc_alloc_ops(rproc, ops))
+-		goto free_firmware;
+-
+ 	rproc->name = name;
+ 	rproc->priv = &rproc[1];
+ 	rproc->auto_boot = true;
+@@ -2074,12 +2068,17 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	rproc->dev.driver_data = rproc;
+ 	idr_init(&rproc->notifyids);
  
- 	if (!p)
- 		return -ENOMEM;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 9c07d7958c53..38607107b7cb 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -489,7 +489,7 @@ struct rproc {
- 	struct list_head node;
- 	struct iommu_domain *domain;
- 	const char *name;
--	char *firmware;
-+	const char *firmware;
- 	void *priv;
- 	struct rproc_ops *ops;
- 	struct device dev;
++	if (rproc_alloc_firmware(rproc, name, firmware))
++		goto put_device;
++
++	if (rproc_alloc_ops(rproc, ops))
++		goto put_device;
++
+ 	/* Assign a unique device index and name */
+ 	rproc->index = ida_simple_get(&rproc_dev_index, 0, 0, GFP_KERNEL);
+ 	if (rproc->index < 0) {
+ 		dev_err(dev, "ida_simple_get failed: %d\n", rproc->index);
+-		put_device(&rproc->dev);
+-		return NULL;
++		goto put_device;
+ 	}
+ 
+ 	dev_set_name(&rproc->dev, "remoteproc%d", rproc->index);
+@@ -2100,11 +2099,8 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	rproc->state = RPROC_OFFLINE;
+ 
+ 	return rproc;
+-
+-free_firmware:
+-	kfree(rproc->firmware);
+-free_rproc:
+-	kfree(rproc);
++put_device:
++	put_device(&rproc->dev);
+ 	return NULL;
+ }
+ EXPORT_SYMBOL(rproc_alloc);
 -- 
 2.20.1
 
