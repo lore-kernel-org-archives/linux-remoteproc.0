@@ -1,182 +1,62 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 1 Apr 2020 15:58:03 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v2 03/17] remoteproc: Split firmware name allocation from
- rproc_alloc()
-Message-ID: <20200401215803.GI17383@xps15>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
- <20200324214603.14979-4-mathieu.poirier@linaro.org>
- <d0a399feb0f647ec98841ea8b8339449@SFHDAG7NODE2.st.com>
- <3cdc557f-61bf-fd0f-07b0-4ab5454f39f1@ti.com>
+Return-Path: <linux-arm-msm-owner@vger.kernel.org>
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH 1/2] dt-bindings: remoteproc: qcom: Replace halt-nav with spare-regs
+Date: Wed, 15 Apr 2020 20:21:09 +0530
+Message-Id: <20200415145110.20624-2-sibis@codeaurora.org>
+In-Reply-To: <20200415145110.20624-1-sibis@codeaurora.org>
+References: <20200415145110.20624-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3cdc557f-61bf-fd0f-07b0-4ab5454f39f1@ti.com>
-To: Suman Anna <s-anna@ti.com>
-Cc: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+Content-Transfer-Encoding: 8bit
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: bjorn.andersson@linaro.org, robh+dt@kernel.org
+Cc: agross@kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, evgreen@chromium.org, ohad@wizery.com, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Mar 30, 2020 at 02:47:54PM -0500, Suman Anna wrote:
-> Hi Mathieu,
-> 
-> On 3/27/20 6:05 AM, Loic PALLARDY wrote:
-> > Hi Mathieu,
-> > 
-> >> -----Original Message-----
-> >> From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> Sent: mardi 24 mars 2020 22:46
-> >> To: bjorn.andersson@linaro.org
-> >> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
-> >> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
-> >> <arnaud.pouliquen@st.com>; Fabien DESSENNE
-> >> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
-> >> Subject: [PATCH v2 03/17] remoteproc: Split firmware name allocation from
-> >> rproc_alloc()
-> >>
-> >> Make the firmware name allocation a function on its own in order to
-> >> introduce more flexibility to function rproc_alloc().
-> 
-> I see patches 3 through 5 are generic cleanups, can you post them
-> separately from this series? Bjorn has commented about using the
-> put_device() to free the code on one of the remoteproc core patches [1]
-> in my R5 patch series, and I can do my patch on top of yours. I plan to
-> split out those 2 core patches for my next version, and can do them on
-> top of these.
+7C retail devices using MSA based boot will result in a fuse combination
+which will prevent accesses to MSS PERPH register space where the mpss
+clocks and halt-nav reside. However accesses to conn_box_spare0 in TCSR
+register space is still permitted so rename the binding appropriately to
+qcom,spare-regs and drop all accesses to the MPSS PERPH register space.
 
-That shouldn't be a problem.
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-> 
-> [1] https://patchwork.kernel.org/patch/11456385/#23248321
-> 
-> >>
-> >> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> ---
-> >>  drivers/remoteproc/remoteproc_core.c | 62 +++++++++++++++++-----------
-> >>  1 file changed, 39 insertions(+), 23 deletions(-)
-> >>
-> >> diff --git a/drivers/remoteproc/remoteproc_core.c
-> >> b/drivers/remoteproc/remoteproc_core.c
-> >> index 097f33e4f1f3..c0871f69929b 100644
-> >> --- a/drivers/remoteproc/remoteproc_core.c
-> >> +++ b/drivers/remoteproc/remoteproc_core.c
-> >> @@ -1962,6 +1962,36 @@ static const struct device_type rproc_type = {
-> >>  	.release	= rproc_type_release,
-> >>  };
-> >>
-> >> +static int rproc_alloc_firmware(struct rproc *rproc,
-> >> +				const char *name, const char *firmware)
-> >> +{
-> >> +	char *p, *template = "rproc-%s-fw";
-> >> +	int name_len;
-> >> +
-> >> +	if (!rproc || !name)
-> >> +		return -EINVAL;
-> 
-> This is an internal function, and these are already checked in
-> rproc_alloc(), so you can drop this.
-> 
-> >> +
-> >> +	if (!firmware) {
-> >> +		/*
-> >> +		 * If the caller didn't pass in a firmware name then
-> >> +		 * construct a default name.
-> >> +		 */
-> >> +		name_len = strlen(name) + strlen(template) - 2 + 1;
-> >> +		p = kmalloc(name_len, GFP_KERNEL);
-> >> +		if (!p)
-> >> +			return -ENOMEM;
-> >> +		snprintf(p, name_len, template, name);
-> >> +	} else {
-> >> +		p = kstrdup(firmware, GFP_KERNEL);
-> >> +		if (!p)
-> >> +			return -ENOMEM;
-> >> +	}
-> >> +
-> >> +	rproc->firmware = p;
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  /**
-> >>   * rproc_alloc() - allocate a remote processor handle
-> >>   * @dev: the underlying device
-> >> @@ -1990,42 +2020,24 @@ struct rproc *rproc_alloc(struct device *dev,
-> >> const char *name,
-> >>  			  const char *firmware, int len)
-> >>  {
-> >>  	struct rproc *rproc;
-> >> -	char *p, *template = "rproc-%s-fw";
-> >> -	int name_len;
-> >>
-> >>  	if (!dev || !name || !ops)
-> >>  		return NULL;
-> >>
-> >> -	if (!firmware) {
-> >> -		/*
-> >> -		 * If the caller didn't pass in a firmware name then
-> >> -		 * construct a default name.
-> >> -		 */
-> >> -		name_len = strlen(name) + strlen(template) - 2 + 1;
-> >> -		p = kmalloc(name_len, GFP_KERNEL);
-> >> -		if (!p)
-> >> -			return NULL;
-> >> -		snprintf(p, name_len, template, name);
-> >> -	} else {
-> >> -		p = kstrdup(firmware, GFP_KERNEL);
-> >> -		if (!p)
-> >> -			return NULL;
-> >> -	}
-> >> -
-> >>  	rproc = kzalloc(sizeof(struct rproc) + len, GFP_KERNEL);
-> >> -	if (!rproc) {
-> >> -		kfree(p);
-> >> +	if (!rproc)
-> >>  		return NULL;
-> >> -	}
-> >> +
-> >> +	if (rproc_alloc_firmware(rproc, name, firmware))
-> >> +		goto free_rproc;
-> 
-> Since you are already moving this after rproc_alloc() here in this
-> patch, you might as well fold the relevant patch 5 contents here?
-> Otherwise, retain the existing code as is, and do all the movement in
-> patch 5.
-> 
-> regards
-> Suman
-> 
-> >>
-> >>  	rproc->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
-> >>  	if (!rproc->ops) {
-> >> -		kfree(p);
-> >> +		kfree(rproc->firmware);
-> >>  		kfree(rproc);
-> > Small remark only for patch coherency, as it is modified in next patches.
-> > Use free_rproc label which is introduced just below here for error management.
-> > 
-> > Regards,
-> > Loic
-> >>  		return NULL;
-> >>  	}
-> >>
-> >> -	rproc->firmware = p;
-> >>  	rproc->name = name;
-> >>  	rproc->priv = &rproc[1];
-> >>  	rproc->auto_boot = true;
-> >> @@ -2073,6 +2085,10 @@ struct rproc *rproc_alloc(struct device *dev, const
-> >> char *name,
-> >>  	rproc->state = RPROC_OFFLINE;
-> >>
-> >>  	return rproc;
-> >> +
-> >> +free_rproc:
-> >> +	kfree(rproc);
-> >> +	return NULL;
-> >>  }
-> >>  EXPORT_SYMBOL(rproc_alloc);
-> >>
-> >> --
-> >> 2.20.1
-> > 
-> 
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 88dfa3fc15f78..607957ad32e7b 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -79,7 +79,7 @@ on the Qualcomm Hexagon core.
+ 		    "snoc_axi", "mnoc_axi", "qdss"
+ 	qcom,sc7180-mss-pil:
+ 		    must be "iface", "bus", "xo", "snoc_axi", "mnoc_axi",
+-		    "mss_crypto", "mss_nav", "nav"
++		    "nav"
+ 	qcom,sdm845-mss-pil:
+ 		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
+ 		    "snoc_axi", "mnoc_axi", "prng"
+@@ -173,16 +173,12 @@ For the compatible string below the following supplies are required:
+ 
+ For the compatible strings below the following phandle references are required:
+   "qcom,sc7180-mss-pil"
+-- qcom,halt-nav-regs:
++- qcom,spare-regs:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+-	Definition: reference to a list of 2 phandles with one offset each for
+-		    the modem sub-system running on SC7180 SoC. The first
+-		    phandle reference is to the mss clock node followed by the
+-		    offset within register space for nav halt register. The
+-		    second phandle reference is to a syscon representing TCSR
+-		    followed by the offset within syscon for conn_box_spare0
+-		    register.
++	Definition: a phandle reference to a syscon representing TCSR followed
++		    by the offset within syscon for conn_box_spare0 register
++		    used by the modem sub-system running on SC7180 SoC.
+ 
+ = SUBNODES:
+ The Hexagon node must contain two subnodes, named "mba" and "mpss" representing
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
