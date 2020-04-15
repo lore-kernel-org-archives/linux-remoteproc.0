@@ -2,281 +2,166 @@ Return-Path: <SRS0=YAOw=57=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE89EC38A29
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 02:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EC2CC2BA2B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 07:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8FA220787
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 02:42:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1132220771
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 07:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="iuHVvLQJ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="I5FyN30Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404126AbgDOCmk (ORCPT
+        id S2441111AbgDOHQq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Apr 2020 22:42:40 -0400
-Received: from mail-db8eur05on2076.outbound.protection.outlook.com ([40.107.20.76]:6369
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388214AbgDOCmh (ORCPT
+        Wed, 15 Apr 2020 03:16:46 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:16003 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2393655AbgDOHQp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Apr 2020 22:42:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BjAl34XhCuiLTgbHZP+Y1m0HZL7a4wv+C45i11B49sZCrBSk8i3CtTvAAqvGHBx2y/1/ySTzgI1rlSEx3jFSXCaYKpY1zvFhSvhkW1vRxWJtJe5AgLF2arc6NIJifLiK2sZE9JBqXh2t/KWzNk4erYFdkg98xKRMoeGe2tnEeAiXC0weeKPyFiyHso9BOvD8cB+HxDYplUV/Oam41IA8XeEnJ5CTqu7Uh64ArJFXwfiWGwwYzzy8JVmar74eQOtWCFwQkz9a2+HRo8bpHB/TesChyl9tkAVnHQs8WJy1TbP1z1cLHFZZcLBQ0n5d3O9J9xXzp4b7O3nYMMObNmgcAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gtFjWj1YucLUeoKjFAhlC/kjmEtosOXKWzmGv9cI8CE=;
- b=hwxVATyNwO7gnf0vBLjZiTj+x0lkDfIFTpbAhTIzFsrnIbXwnde+vOPT/69T+CKxgkBBu/CW0EAH2o21s5lQfYvoCTJFMDg8xili8EC9BP6cWnatTcCATfFrcY7Q0uAbhWpWaLJFBhwD6UMZU7pwEvWomQRJjuo5aUvzKUv/YZ+oNj1BcWtJzn3oUWDV3/04QaZT4UROUvvVzVj06TUkbz9LzPhqBYsz+6m2WunDE2qgdcMUAzCoaav+svuuuQgtLxTi6s/tJKRd1o1zifbecYFY8NLIyDS+KfPMon/nJUtY0IP/ClXiSivHPoHGMmWSUV5X/Qv6WaDBjtCqWXdbSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gtFjWj1YucLUeoKjFAhlC/kjmEtosOXKWzmGv9cI8CE=;
- b=iuHVvLQJ7SJmaxRRlon4KtALNpSARcW86sVHzHbWkbcgXa2Lt8FpEKALBfiyvwc7NsR5CCjhdMC8x87WCbkBbZyOLOAQGBx+8og6obhbFPy0APIPsf/HmGX5vdIhXfQ1nc9rT03FJazbycKnvd8sq4RYOAZkSu1IqKpulNIEg8E=
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR0402MB2695.eurprd04.prod.outlook.com (2603:10a6:4:95::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2900.26; Wed, 15 Apr
- 2020 02:42:32 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2900.028; Wed, 15 Apr 2020
- 02:42:32 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "nikita.shubin@maquefel.me" <nikita.shubin@maquefel.me>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
-Thread-Topic: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
-Thread-Index: AQHWDAb+JdgObafwAkG5FGKUl9Xnrah5hqFQ
-Date:   Wed, 15 Apr 2020 02:42:32 +0000
-Message-ID:
- <DB6PR0402MB27603D39E31D30AA28D6893A88DB0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-References: <20200304142628.8471-1-NShubin@topcon.com>
- <20200406113310.3041-1-nikita.shubin@maquefel.me>
-In-Reply-To: <20200406113310.3041-1-nikita.shubin@maquefel.me>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: de760fa7-0c26-4bf9-0fc8-08d7e0e6a5e7
-x-ms-traffictypediagnostic: DB6PR0402MB2695:|DB6PR0402MB2695:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB6PR0402MB269562743D7977329228622F88DB0@DB6PR0402MB2695.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0374433C81
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(376002)(396003)(136003)(8676002)(6916009)(76116006)(66556008)(966005)(8936002)(316002)(7416002)(66446008)(64756008)(5660300002)(66946007)(55016002)(9686003)(66476007)(44832011)(81156014)(478600001)(54906003)(186003)(7696005)(6506007)(4326008)(52536014)(71200400001)(33656002)(26005)(2906002)(86362001)(505234006);DIR:OUT;SFP:1101;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Uv8CnEOS8qMeLmlJKtDH0WjIKiXocqebxmyKKRYXPd4P2qLN4G4xLzGvWHqwy37INwXnX+HH7hyDAELqG6YiqAA48nBRFvYIKOq1ihTssT9RZ70jsoWJ31CTuRyvCh7cHIcS6CVmnTXGQm2URAyamoPIqNWWJo6sWodfMNFJNOYji2N9NGnzvLnRzRDc5DfLgknQMhChqW66uiwtMuBOZbmoxoKWp9QXtXj2uzCBl0WJ2A9Y1CIJLddN9sjKF6kHD5E5+oItIj1ApspjdLPVQmMu/cdjSk0FugYN6862DbktEykIlww9AlDEylSeEG8gv6oPyrAUaNIW4V0lv2WzCi1csdIuVHlcN5vH4XufJ0DonlDxM+F0uvWUkivsj9jJ8X8ytK7slYgKZo04vZ3LTyvmEtBQhUKZaBWtu4mrnPJErtJpRq6yYOCEInQBpfNRVDiT9hcWADZHUxBctLri3USza0hY6UkWX0YIPGsnX7edyMQkYug1l8BiA9cLG3Ds4y9qRV4AJk7Y9RwX0Xxm2ZUWDJk7R2eGc6ofeL9KwkMWSbfRsWkk+fZngf/09p7PBxeG8woJTAYnqs7x1s5pGg==
-x-ms-exchange-antispam-messagedata: Iu/bQsl1Rr4KTCWbz59s/ZknJXYLKMLgyG9pJz6lg5a7o5Avo13SIs1cJxEbxrH6QCrEcfw7zE0uqAAgsCIGDjau/QjkrKvvMxw2Eaw8uBBTpjMOP/XfHOHMrGyeOk74xH1XwyWVr9FruzO/DBdqGg==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 15 Apr 2020 03:16:45 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1586935004; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=r0ASbx76zEYcIvIxWCRR1An50JcQx/PpRvNppB/eEmM=; b=I5FyN30YogrJAiTnfMT3qigGEEgZVx5V2OH5GLhO4tLBbFnfKo2weuJNBLyBvwuDiqSj0xFh
+ 2G5HfKiXgoQlqNWoXiVOnOCWSOCeCv/zXrn7O1kfOiXCqxhLZlJp39w0AGD7SghpkWZZJ0SN
+ lx8GmZ20dc/BewEUAxsTYELObyw=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e96b4db.7fabf31fd730-smtp-out-n04;
+ Wed, 15 Apr 2020 07:16:43 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5B5E0C43636; Wed, 15 Apr 2020 07:16:42 +0000 (UTC)
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2B3C5C433CB;
+        Wed, 15 Apr 2020 07:16:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B3C5C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org
+Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        ohad@wizery.com, evgreen@chromium.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 1/2] remoteproc: qcom_q6v5_mss: map/unmap mpss segments before/after use
+Date:   Wed, 15 Apr 2020 12:46:18 +0530
+Message-Id: <20200415071619.6052-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de760fa7-0c26-4bf9-0fc8-08d7e0e6a5e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2020 02:42:32.5388
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6TAbGj87zyHa1h9LU/mv8Te/18qIxLbo0fapHSR8Y2kRA570hwmzmU+AhhEaCaEg+POyLl2kU7g5nRKiPIQtGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2695
+Content-Transfer-Encoding: 8bit
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415024232.OHxuUZUuzc3K9Xm7zxhIBo3U6NFXpsUwEWYlreV7b9s@z>
+Message-ID: <20200415071618.l9xlBd_PFcsNuQ3Z_5luriqip5YJKmk81O1PeHDqNzI@z>
 
-> Subject: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
+The application processor accessing the mpss region when the Q6 modem is
+running will lead to an XPU violation. Fix this by un-mapping the mpss
+segments post copy during mpss authentication and coredumps.
 
-Have you ever see https://patchwork.kernel.org/cover/11390477/?
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
 
-I have been waiting for Mathieu's rproc sync state patch, then
-rebase.
+V2:
+ * use ioremap_wc/iounmap instead of the devm_ variants
+ * with mpss_region no longer relevant leave rproc_da_to_va unused
 
-Thanks,
-Peng.
+ drivers/remoteproc/qcom_q6v5_mss.c | 31 +++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
->=20
-> This patch set introduces virtio support for imx7d-m4 communication:
->=20
-> - support booting loaded vim imx-rproc firmware
-> - implement .kick method support using mailbox in imx-processor
-> - parse vdev0vring0, vdev0vring1, vdev0buffer memory regions required for
-> virtio_rpmsg_bus initialization
->=20
-> Regarding imx7d-m4 boot proccess
->=20
-> Citing ARM documentation:
->=20
-> At Reset, Cortex-M3 and Cortex-M4 processors always boot from a vector
-> table at address zero.
->=20
-> "With uninitialized memory at address zero (for example, unprogrammed
-> Flash or uninitialized RAM), the processor will read a spurious initial M=
-ain
-> Stack Pointer value from address zero and a spurious code entry point (Re=
-set
-> vector) from address 0x4, possibly containing an illegal instruction set =
-state
-> specifier (ESPR.T bit) in bit[0]."
->=20
-> So to successfully boot m4 coproc we need to write Stack Pointer and
-> Program counter, i see no obvious to get Stack Pointer value, so two ways
-> exist ethier form a special elf section:
->=20
-> "
-> .loader :
->   {
->     LONG(__StackTop);
->     LONG(Reset_Handler + 1);
->   } > m_start
-> "
->=20
-> and put it at 0x0 address:
->=20
-> "
-> m_start               (RX)  : ORIGIN =3D 0x00000000, LENGTH =3D
-> 0x00008000
-> "
->=20
-> Or (the way i've chosen) only put Entry Point at 0x04 and set stack as fi=
-rst
-> instruction:
->=20
-> "
-> Reset_Handler:
-> 	ldr   sp, =3D__stack      /* set stack pointer */
-> "
->=20
-> Regarding mailboxes and memory regions :
->=20
-> This code is heavily derived from stm32-rproc (i.e. copy pasted) and this=
- fact
-> needs to reflected in commits, please tell me how to emphasize this fact.
->=20
-> Attaching succesful trace booting m4 (with Add rpmsg tty driver applied) =
-:
->=20
-> [  143.240616] remoteproc remoteproc0: powering up imx-rproc
-> [  143.251768] remoteproc remoteproc0: Booting fw image huginn.elf, size
-> 466876 [  143.251786] imx-rproc imx7d-cm4: iommu not present
-> [  143.251825] remoteproc remoteproc0: rsc: type 3 [  143.251837]
-> remoteproc remoteproc0: vdev rsc: id 7, dfeatures 0x1, cfg len 0, 2 vring=
-s
-> [  143.251924] remoteproc remoteproc0: vdev rsc: vring0: da 0xffffffff, q=
-sz
-> 16, align 16 [  143.251935] remoteproc remoteproc0: vdev rsc: vring1: da
-> 0xffffffff, qsz 16, align 16 [  143.251955] imx-rproc imx7d-cm4: map memo=
-ry:
-> 0x00900000+20000 [  143.251987] imx-rproc imx7d-cm4: map memory:
-> 0x00920000+2000 [  143.252003] imx-rproc imx7d-cm4: map memory:
-> 0x00922000+2000 [  143.252020] remoteproc remoteproc0: phdr: type 1 da
-> 0x20200000 memsz 0x240 filesz 0x240 [  143.252032] remoteproc
-> remoteproc0: da =3D 0x20200000 len =3D 0x240 va =3D 0x(ptrval) [  143.252=
-043]
-> remoteproc remoteproc0: phdr: type 1 da 0x20200240 memsz 0x5b38 filesz
-> 0x5b38 [  143.252053] remoteproc remoteproc0: da =3D 0x20200240 len =3D
-> 0x5b38 va =3D 0x(ptrval) [  143.252105] remoteproc remoteproc0: phdr: typ=
-e
-> 1 da 0x20205d78 memsz 0x4b58 filesz 0x758 [  143.252115] remoteproc
-> remoteproc0: da =3D 0x20205d78 len =3D 0x4b58 va =3D 0x(ptrval) [  143.25=
-2159]
-> remoteproc remoteproc0: da =3D 0x200006cc len =3D 0x8c va =3D 0x(ptrval)
-> [  143.252176] remoteproc remoteproc0: Started from 0x202002f5
-> [  143.252211]  imx7d-cm4#vdev0buffer: assigned reserved memory node
-> vdev0buffer@00924000 [  143.252232] virtio virtio0: reset !
-> [  143.252241] virtio virtio0: status: 1 [  143.260567] virtio_rpmsg_bus
-> virtio0: status: 3 [  143.260598] remoteproc remoteproc0: vring0: va
-> c083c000 qsz 16 notifyid 0 [  143.260614] remoteproc remoteproc0: vring1:
-> va c0872000 qsz 16 notifyid 1 [  143.260651] virtio_rpmsg_bus virtio0:
-> buffers: va c0894000, dma 0x00924000 [  143.260666] Added buffer head 0
-> to (ptrval) [  143.260674] Added buffer head 1 to (ptrval) [  143.260680]
-> Added buffer head 2 to (ptrval) [  143.260686] Added buffer head 3 to (pt=
-rval)
-> [  143.260692] Added buffer head 4 to (ptrval) [  143.260697] Added buffe=
-r
-> head 5 to (ptrval) [  143.260703] Added buffer head 6 to (ptrval)
-> [  143.260709] Added buffer head 7 to (ptrval) [  143.260715] Added buffe=
-r
-> head 8 to (ptrval) [  143.260721] Added buffer head 9 to (ptrval)
-> [  143.260727] Added buffer head 10 to (ptrval) [  143.260733] Added
-> buffer head 11 to (ptrval) [  143.260738] Added buffer head 12 to (ptrval=
-)
-> [  143.260744] Added buffer head 13 to (ptrval) [  143.260750] Added
-> buffer head 14 to (ptrval) [  143.260756] Added buffer head 15 to (ptrval=
-)
-> [  143.260771] virtio_rpmsg_bus virtio0: status: 7 [  143.260779]
-> remoteproc remoteproc0: kicking vq index: 0 [  143.260788] remoteproc
-> remoteproc0: sending message : vqid =3D 0 [  143.260802] imx_mu
-> 30aa0000.mailbox: Send data on wrong channel type: 1 [  143.260810]
-> virtio_rpmsg_bus virtio0: rpmsg host is online [  143.261680]
-> imx7d-cm4#vdev0buffer: registered virtio0 (type 7) [  143.261694]
-> remoteproc remoteproc0: remote processor imx-rproc is now up
-> [  143.354880] remoteproc remoteproc0: vq index 0 is interrupted
-> [  143.354895] virtqueue callback for (ptrval) ((ptrval)) [  143.354912]
-> virtio_rpmsg_bus virtio0: From: 0x0, To: 0x35, Len: 40, Flags: 0, Reserve=
-d: 0
-> [  143.354924] rpmsg_virtio RX: 00 00 00 00 35 00 00 00 00 00 00 00 28 00
-> 00 00  ....5.......(...
-> [  143.354932] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00
-> 00 00  rpmsg-tty-raw...
-> [  143.354939] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 00 00  ................
-> [  143.354945] rpmsg_virtio RX: 00 00 00 00 00 00 00
-> 00                          ........
-> [  143.354956] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77
-> 00 00 00  rpmsg-tty-raw...
-> [  143.354963] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 00 00 00  ................
-> [  143.354969] NS announcement: 00 00 00 00 00 00 00
-> 00                          ........
-> [  143.354980] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw
-> addr 0x0 [  143.356584] rpmsg_tty virtio0.rpmsg-tty-raw.-1.0: new channel=
-:
-> 0x400 -> 0x0 : ttyRPMSG0 [  143.356651] Added buffer head 0 to (ptrval)
-> [  143.356658] No more buffers in queue [  143.356667] virtio_rpmsg_bus
-> virtio0: Received 1 messages [  143.404302] remoteproc remoteproc0: vq
-> index 0 is interrupted [  143.404319] virtqueue callback for (ptrval) ((p=
-trval))
-> [  143.404337] virtio_rpmsg_bus virtio0: From: 0x1, To: 0x35, Len: 40, Fl=
-ags:
-> 0, Reserved: 0 [  143.404350] rpmsg_virtio RX: 01 00 00 00 35 00 00 00 00
-> 00 00 00 28 00 00 00  ....5.......(...
-> [  143.404391] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00
-> 00 00  rpmsg-tty-raw...
-> [  143.404399] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 00 00  ................
-> [  143.404405] rpmsg_virtio RX: 01 00 00 00 00 00 00
-> 00                          ........
-> [  143.404417] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77
-> 00 00 00  rpmsg-tty-raw...
-> [  143.404424] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 00 00 00  ................
-> [  143.404430] NS announcement: 01 00 00 00 00 00 00
-> 00                          ........
-> [  143.404441] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw
-> addr 0x1 [  143.411114] rpmsg_tty virtio0.rpmsg-tty-raw.-1.1: new channel=
-:
-> 0x401 -> 0x1 : ttyRPMSG1
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index ce49c3236ff7c..b781fc8de3597 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1156,7 +1156,13 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			goto release_firmware;
+ 		}
+ 
+-		ptr = qproc->mpss_region + offset;
++		ptr = ioremap_wc(qproc->mpss_phys + offset, phdr->p_memsz);
++		if (!ptr) {
++			dev_err(qproc->dev,
++				"unable to map memory region: %pa+%zx-%x\n",
++				&qproc->mpss_phys, offset, phdr->p_memsz);
++			goto release_firmware;
++		}
+ 
+ 		if (phdr->p_filesz && phdr->p_offset < fw->size) {
+ 			/* Firmware is large enough to be non-split */
+@@ -1165,6 +1171,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 					"failed to load segment %d from truncated file %s\n",
+ 					i, fw_name);
+ 				ret = -EINVAL;
++				iounmap(ptr);
+ 				goto release_firmware;
+ 			}
+ 
+@@ -1175,6 +1182,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
+ 			if (ret) {
+ 				dev_err(qproc->dev, "failed to load %s\n", fw_name);
++				iounmap(ptr);
+ 				goto release_firmware;
+ 			}
+ 
+@@ -1187,6 +1195,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
++		iounmap(ptr);
+ 		size += phdr->p_memsz;
+ 
+ 		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+@@ -1236,7 +1245,8 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 	int ret = 0;
+ 	struct q6v5 *qproc = rproc->priv;
+ 	unsigned long mask = BIT((unsigned long)segment->priv);
+-	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++	int offset = segment->da - qproc->mpss_reloc;
++	void *ptr = NULL;
+ 
+ 	/* Unlock mba before copying segments */
+ 	if (!qproc->dump_mba_loaded) {
+@@ -1250,10 +1260,15 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 		}
+ 	}
+ 
+-	if (!ptr || ret)
+-		memset(dest, 0xff, segment->size);
+-	else
++	if (!ret)
++		ptr = ioremap_wc(qproc->mpss_phys + offset, segment->size);
++
++	if (ptr) {
+ 		memcpy(dest, ptr, segment->size);
++		iounmap(ptr);
++	} else {
++		memset(dest, 0xff, segment->size);
++	}
+ 
+ 	qproc->dump_segment_mask |= mask;
+ 
+@@ -1595,12 +1610,6 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+ 
+ 	qproc->mpss_phys = qproc->mpss_reloc = r.start;
+ 	qproc->mpss_size = resource_size(&r);
+-	qproc->mpss_region = devm_ioremap_wc(qproc->dev, qproc->mpss_phys, qproc->mpss_size);
+-	if (!qproc->mpss_region) {
+-		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n",
+-			&r.start, qproc->mpss_size);
+-		return -EBUSY;
+-	}
+ 
+ 	return 0;
+ }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
