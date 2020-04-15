@@ -2,253 +2,227 @@ Return-Path: <SRS0=YAOw=57=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7175FC2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 16:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8441C2BA19
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 17:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 448E3208E4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 16:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2BE720784
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 17:03:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MMq+WmrF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKSPf7lm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1415850AbgDOQ0i (ORCPT
+        id S2410643AbgDORDa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 12:26:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1415784AbgDOQ0Q (ORCPT
+        Wed, 15 Apr 2020 13:03:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410642AbgDORDZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 12:26:16 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED20BC061A0C
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 09:26:15 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id f2so3885739ilq.7
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 09:26:15 -0700 (PDT)
+        Wed, 15 Apr 2020 13:03:25 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6A26C061A0F
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 10:03:25 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id v2so218947plp.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 10:03:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c0SAuDxgJRvnWKT3G5EeXF2Zad0kVUQbRnKDWIeJr6M=;
-        b=MMq+WmrFahtorEiuniDqbLxtfwCYWKgVQb07BCQBJxbDnz3eYz41kD5F3mUisidr1O
-         JqDVP5GUrzoG30QjwrfoOI9fIPj9lNxnXDbA+TlLxy06LUSWG1BPpgF9CtkYiVuPTGAR
-         wI1jvxsQoRtoRIZeAqb0MLhds76NDVEbo9KkgaT7poLo9ob1oB9WR4UURoCdgD6cAWdX
-         EnBqloqQ6Vv2Rp94mvbxkJPdYy8DD0PBqR8YbpTEAQSki9nqKhcMO0/OBpNUYFeIDTVL
-         kX6nGzvt6iPkkdeIphbcSDd13o/UEKfzp+VUvVVuXA6hx/F047gEKD928kpiY/s3ZZoz
-         vqkA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m6PMuu9ZsS6NKtR16/PWLHb99bJA87GDVdw4d6eRXPY=;
+        b=HKSPf7lmr8NSMJcjHmO2pqRhkkrTmImEL+4X6XIQY9QRmUGA4hW7Uj/9dFs1YXDSRx
+         /fTKYfb4c0oYumCypTp/AaQ0EFPXmlklNCsS9sVb/LqMpR4gp/NANGZPNjJH9vpDtz2A
+         kGVCelbrykLtVDiIiqDex1PHfJdb6csVsNihDZaHM5VG+iTXvqigzbL76SNwXn5Xt3/S
+         6nn0eMyqkjcaMt8savZffyVNFojppS5Yism8i+BUgUuE79L/eTgpg7GEp9gP1tUAlzG6
+         c2KqKv9n3/ZgNy4cR2unLhvObX92gb3Yn6yAY/7P89r6vqsIbljynj1vGXGK13rApEmC
+         5rMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c0SAuDxgJRvnWKT3G5EeXF2Zad0kVUQbRnKDWIeJr6M=;
-        b=ZfvMA4YnDhNCtWnC3/l0aLTu7/V2+aIg7c3oX+eWDLFXsP9FkqZh221QBTa2r2pNVT
-         vCvh2Yt7b/o83tN9Lma5TwO6ydGs5M++Ue0gsT/Eq8CmL9NuU+fF02TnKs+bTPsoOZ1o
-         GCBOClq8AGiZtLWqccEDwpj7jv1ieGLnU7kB576sx3ZQAh99fPpEuUJsieDI4/vWKLPK
-         f3zrK3j9mMCA6FA/Rlgiikl248v/2qy3m+4mwLLv8ze1TLW8m9cTeVAiDQwQhW17nlIx
-         iHgmqE0Wtk/JGaDEO+VZjBVDekCdydzG58454bbd0bXOP/V3ZxSWj4gX7SEci4zhqRFi
-         C1Eg==
-X-Gm-Message-State: AGi0PuY35+Cp2JK9fIPOrUit7Wh1wh9nARwKelteLdkem5vinIqhxKFc
-        l6LpCeGXbGMtnT9CutLmrpF5XUTbO5wOPAbyCD/kJw==
-X-Google-Smtp-Source: APiQypJkAugE0hL3vERmDWrKCRZkxTXHiPG4Mg/psGaAlG5S8hriTzMNkdv0OdpUDGnmH56ckilXxWVVMFpuuDzSqHQ=
-X-Received: by 2002:a92:158c:: with SMTP id 12mr6127933ilv.58.1586967974949;
- Wed, 15 Apr 2020 09:26:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200304142628.8471-1-NShubin@topcon.com> <20200406113310.3041-1-nikita.shubin@maquefel.me>
- <DB6PR0402MB27603D39E31D30AA28D6893A88DB0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-In-Reply-To: <DB6PR0402MB27603D39E31D30AA28D6893A88DB0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m6PMuu9ZsS6NKtR16/PWLHb99bJA87GDVdw4d6eRXPY=;
+        b=D9vTQlEcAHsgSU0MOrQeLC4ialEIWlbs+STPtepFmjfuFfX3kP/uC7x4ReFDwUtOrH
+         Qfi8G7YIKyukzuNo6EyCIeRnm5DsVLFwDTlgXjZ/45OeZMrPYCuEkNBYusp98gnFEORm
+         ZBXE1f17UwxPLANCOQmCEccAHSq8vvkaa6v0YO7BtKRpHhzZ8KPOuaDDPB8R4Hf6w+q1
+         5g6dXmY+HHMdmR0tis1xtAI80L4M4K6/WXa9z05vUPLKsceDedlOjhRlBSWvW0GWrgYX
+         w7FdjafOKu3AuWIUHiiBYdz0w3M0PebSKGtpMSOuMCACQp4Zij/1yu+NdD7JToDM7+AR
+         yZxQ==
+X-Gm-Message-State: AGi0PuaaXmrcuSEWlW0FgN23it1hQXSLju2nJdbfsYS/DNOt0t5A4iHk
+        9eNqxfZQdxwVsoHn9ctToC+1oQ==
+X-Google-Smtp-Source: APiQypKIPZpgwGTPRM9ugWolNcCNTo8HziySaG+E4u5LYl42bhxbKiI6ztSbVJR652BoBjf9UkJpFw==
+X-Received: by 2002:a17:902:b60d:: with SMTP id b13mr6049074pls.324.1586970204964;
+        Wed, 15 Apr 2020 10:03:24 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id 17sm9258175pgg.76.2020.04.15.10.03.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 10:03:24 -0700 (PDT)
+Date:   Wed, 15 Apr 2020 11:03:22 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 15 Apr 2020 10:26:04 -0600
-Message-ID:
- <CANLsYkweYysAJru0dZkBfEeFU0Qb5zzDX1fjodYupXaXJsrOfA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "nikita.shubin@maquefel.me" <nikita.shubin@maquefel.me>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Siddharth Gupta <sidgup@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, rishabhb@codeaurora.org
+Subject: Re: [PATCH v2 1/6] remoteproc: sysmon: Add ability to send type of
+ notification
+Message-ID: <20200415170322.GA16583@xps15>
+References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
+ <1586389003-26675-2-git-send-email-sidgup@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586389003-26675-2-git-send-email-sidgup@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415162604.HeMtbycKsQwvmGcXaOr60poFU5QUCXLXoxdBeOoukL0@z>
+Message-ID: <20200415170322.y184Ra7mmeMKp-ZvpNO-_Pg0HXP-UD2f31oBCOZlEwU@z>
 
-On Tue, 14 Apr 2020 at 20:42, Peng Fan <peng.fan@nxp.com> wrote:
->
-> > Subject: [PATCH v2 0/3] remoteproc: imx_rproc: add virtio support
->
-> Have you ever see https://patchwork.kernel.org/cover/11390477/?
->
-> I have been waiting for Mathieu's rproc sync state patch, then
-> rebase.
+On Wed, Apr 08, 2020 at 04:36:38PM -0700, Siddharth Gupta wrote:
+> Current implementation of the sysmon driver does not support adding
+> notifications for other remoteproc events - prepare, start, unprepare.
+> Clients on the remoteproc side might be interested in knowing when a
+> remoteproc boots up. This change adds the ability to send the notification
+> type along with the name. For example, audio DSP is interested in knowing
+> when modem has crashed so that it can perform cleanup and wait for modem to
+> boot up before it starts processing data again.
+> 
+> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 
-I have already sent out 2 revisions of the MCU synchronisation
-patchset, the latest here [1].  A new iteration should be out by the
-end of the week or early next week.  When that happens, I would really
-appreciate it if you could take a look and provide comments.
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Thanks,
-Mathieu
-
-[1].https://patchwork.kernel.org/project/linux-remoteproc/list/?series=261069
-
-
->
-> Thanks,
-> Peng.
->
-> >
-> > This patch set introduces virtio support for imx7d-m4 communication:
-> >
-> > - support booting loaded vim imx-rproc firmware
-> > - implement .kick method support using mailbox in imx-processor
-> > - parse vdev0vring0, vdev0vring1, vdev0buffer memory regions required for
-> > virtio_rpmsg_bus initialization
-> >
-> > Regarding imx7d-m4 boot proccess
-> >
-> > Citing ARM documentation:
-> >
-> > At Reset, Cortex-M3 and Cortex-M4 processors always boot from a vector
-> > table at address zero.
-> >
-> > "With uninitialized memory at address zero (for example, unprogrammed
-> > Flash or uninitialized RAM), the processor will read a spurious initial Main
-> > Stack Pointer value from address zero and a spurious code entry point (Reset
-> > vector) from address 0x4, possibly containing an illegal instruction set state
-> > specifier (ESPR.T bit) in bit[0]."
-> >
-> > So to successfully boot m4 coproc we need to write Stack Pointer and
-> > Program counter, i see no obvious to get Stack Pointer value, so two ways
-> > exist ethier form a special elf section:
-> >
-> > "
-> > .loader :
-> >   {
-> >     LONG(__StackTop);
-> >     LONG(Reset_Handler + 1);
-> >   } > m_start
-> > "
-> >
-> > and put it at 0x0 address:
-> >
-> > "
-> > m_start               (RX)  : ORIGIN = 0x00000000, LENGTH =
-> > 0x00008000
-> > "
-> >
-> > Or (the way i've chosen) only put Entry Point at 0x04 and set stack as first
-> > instruction:
-> >
-> > "
-> > Reset_Handler:
-> >       ldr   sp, =__stack      /* set stack pointer */
-> > "
-> >
-> > Regarding mailboxes and memory regions :
-> >
-> > This code is heavily derived from stm32-rproc (i.e. copy pasted) and this fact
-> > needs to reflected in commits, please tell me how to emphasize this fact.
-> >
-> > Attaching succesful trace booting m4 (with Add rpmsg tty driver applied) :
-> >
-> > [  143.240616] remoteproc remoteproc0: powering up imx-rproc
-> > [  143.251768] remoteproc remoteproc0: Booting fw image huginn.elf, size
-> > 466876 [  143.251786] imx-rproc imx7d-cm4: iommu not present
-> > [  143.251825] remoteproc remoteproc0: rsc: type 3 [  143.251837]
-> > remoteproc remoteproc0: vdev rsc: id 7, dfeatures 0x1, cfg len 0, 2 vrings
-> > [  143.251924] remoteproc remoteproc0: vdev rsc: vring0: da 0xffffffff, qsz
-> > 16, align 16 [  143.251935] remoteproc remoteproc0: vdev rsc: vring1: da
-> > 0xffffffff, qsz 16, align 16 [  143.251955] imx-rproc imx7d-cm4: map memory:
-> > 0x00900000+20000 [  143.251987] imx-rproc imx7d-cm4: map memory:
-> > 0x00920000+2000 [  143.252003] imx-rproc imx7d-cm4: map memory:
-> > 0x00922000+2000 [  143.252020] remoteproc remoteproc0: phdr: type 1 da
-> > 0x20200000 memsz 0x240 filesz 0x240 [  143.252032] remoteproc
-> > remoteproc0: da = 0x20200000 len = 0x240 va = 0x(ptrval) [  143.252043]
-> > remoteproc remoteproc0: phdr: type 1 da 0x20200240 memsz 0x5b38 filesz
-> > 0x5b38 [  143.252053] remoteproc remoteproc0: da = 0x20200240 len =
-> > 0x5b38 va = 0x(ptrval) [  143.252105] remoteproc remoteproc0: phdr: type
-> > 1 da 0x20205d78 memsz 0x4b58 filesz 0x758 [  143.252115] remoteproc
-> > remoteproc0: da = 0x20205d78 len = 0x4b58 va = 0x(ptrval) [  143.252159]
-> > remoteproc remoteproc0: da = 0x200006cc len = 0x8c va = 0x(ptrval)
-> > [  143.252176] remoteproc remoteproc0: Started from 0x202002f5
-> > [  143.252211]  imx7d-cm4#vdev0buffer: assigned reserved memory node
-> > vdev0buffer@00924000 [  143.252232] virtio virtio0: reset !
-> > [  143.252241] virtio virtio0: status: 1 [  143.260567] virtio_rpmsg_bus
-> > virtio0: status: 3 [  143.260598] remoteproc remoteproc0: vring0: va
-> > c083c000 qsz 16 notifyid 0 [  143.260614] remoteproc remoteproc0: vring1:
-> > va c0872000 qsz 16 notifyid 1 [  143.260651] virtio_rpmsg_bus virtio0:
-> > buffers: va c0894000, dma 0x00924000 [  143.260666] Added buffer head 0
-> > to (ptrval) [  143.260674] Added buffer head 1 to (ptrval) [  143.260680]
-> > Added buffer head 2 to (ptrval) [  143.260686] Added buffer head 3 to (ptrval)
-> > [  143.260692] Added buffer head 4 to (ptrval) [  143.260697] Added buffer
-> > head 5 to (ptrval) [  143.260703] Added buffer head 6 to (ptrval)
-> > [  143.260709] Added buffer head 7 to (ptrval) [  143.260715] Added buffer
-> > head 8 to (ptrval) [  143.260721] Added buffer head 9 to (ptrval)
-> > [  143.260727] Added buffer head 10 to (ptrval) [  143.260733] Added
-> > buffer head 11 to (ptrval) [  143.260738] Added buffer head 12 to (ptrval)
-> > [  143.260744] Added buffer head 13 to (ptrval) [  143.260750] Added
-> > buffer head 14 to (ptrval) [  143.260756] Added buffer head 15 to (ptrval)
-> > [  143.260771] virtio_rpmsg_bus virtio0: status: 7 [  143.260779]
-> > remoteproc remoteproc0: kicking vq index: 0 [  143.260788] remoteproc
-> > remoteproc0: sending message : vqid = 0 [  143.260802] imx_mu
-> > 30aa0000.mailbox: Send data on wrong channel type: 1 [  143.260810]
-> > virtio_rpmsg_bus virtio0: rpmsg host is online [  143.261680]
-> > imx7d-cm4#vdev0buffer: registered virtio0 (type 7) [  143.261694]
-> > remoteproc remoteproc0: remote processor imx-rproc is now up
-> > [  143.354880] remoteproc remoteproc0: vq index 0 is interrupted
-> > [  143.354895] virtqueue callback for (ptrval) ((ptrval)) [  143.354912]
-> > virtio_rpmsg_bus virtio0: From: 0x0, To: 0x35, Len: 40, Flags: 0, Reserved: 0
-> > [  143.354924] rpmsg_virtio RX: 00 00 00 00 35 00 00 00 00 00 00 00 28 00
-> > 00 00  ....5.......(...
-> > [  143.354932] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00
-> > 00 00  rpmsg-tty-raw...
-> > [  143.354939] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > 00 00  ................
-> > [  143.354945] rpmsg_virtio RX: 00 00 00 00 00 00 00
-> > 00                          ........
-> > [  143.354956] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77
-> > 00 00 00  rpmsg-tty-raw...
-> > [  143.354963] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > 00 00 00  ................
-> > [  143.354969] NS announcement: 00 00 00 00 00 00 00
-> > 00                          ........
-> > [  143.354980] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw
-> > addr 0x0 [  143.356584] rpmsg_tty virtio0.rpmsg-tty-raw.-1.0: new channel:
-> > 0x400 -> 0x0 : ttyRPMSG0 [  143.356651] Added buffer head 0 to (ptrval)
-> > [  143.356658] No more buffers in queue [  143.356667] virtio_rpmsg_bus
-> > virtio0: Received 1 messages [  143.404302] remoteproc remoteproc0: vq
-> > index 0 is interrupted [  143.404319] virtqueue callback for (ptrval) ((ptrval))
-> > [  143.404337] virtio_rpmsg_bus virtio0: From: 0x1, To: 0x35, Len: 40, Flags:
-> > 0, Reserved: 0 [  143.404350] rpmsg_virtio RX: 01 00 00 00 35 00 00 00 00
-> > 00 00 00 28 00 00 00  ....5.......(...
-> > [  143.404391] rpmsg_virtio RX: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77 00
-> > 00 00  rpmsg-tty-raw...
-> > [  143.404399] rpmsg_virtio RX: 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > 00 00  ................
-> > [  143.404405] rpmsg_virtio RX: 01 00 00 00 00 00 00
-> > 00                          ........
-> > [  143.404417] NS announcement: 72 70 6d 73 67 2d 74 74 79 2d 72 61 77
-> > 00 00 00  rpmsg-tty-raw...
-> > [  143.404424] NS announcement: 00 00 00 00 00 00 00 00 00 00 00 00 00
-> > 00 00 00  ................
-> > [  143.404430] NS announcement: 01 00 00 00 00 00 00
-> > 00                          ........
-> > [  143.404441] virtio_rpmsg_bus virtio0: creating channel rpmsg-tty-raw
-> > addr 0x1 [  143.411114] rpmsg_tty virtio0.rpmsg-tty-raw.-1.1: new channel:
-> > 0x401 -> 0x1 : ttyRPMSG1
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> ---
+>  drivers/remoteproc/qcom_sysmon.c | 54 +++++++++++++++++++++++++++-------------
+>  1 file changed, 37 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+> index faf3822..1366050 100644
+> --- a/drivers/remoteproc/qcom_sysmon.c
+> +++ b/drivers/remoteproc/qcom_sysmon.c
+> @@ -46,6 +46,25 @@ struct qcom_sysmon {
+>  	struct sockaddr_qrtr ssctl;
+>  };
+>  
+> +enum {
+> +	SSCTL_SSR_EVENT_BEFORE_POWERUP,
+> +	SSCTL_SSR_EVENT_AFTER_POWERUP,
+> +	SSCTL_SSR_EVENT_BEFORE_SHUTDOWN,
+> +	SSCTL_SSR_EVENT_AFTER_SHUTDOWN,
+> +};
+> +
+> +static const char * const sysmon_state_string[] = {
+> +	[SSCTL_SSR_EVENT_BEFORE_POWERUP]	= "before_powerup",
+> +	[SSCTL_SSR_EVENT_AFTER_POWERUP]		= "after_powerup",
+> +	[SSCTL_SSR_EVENT_BEFORE_SHUTDOWN]	= "before_shutdown",
+> +	[SSCTL_SSR_EVENT_AFTER_SHUTDOWN]	= "after_shutdown",
+> +};
+> +
+> +struct sysmon_event {
+> +	const char *subsys_name;
+> +	u32 ssr_event;
+> +};
+> +
+>  static DEFINE_MUTEX(sysmon_lock);
+>  static LIST_HEAD(sysmon_list);
+>  
+> @@ -54,13 +73,15 @@ static LIST_HEAD(sysmon_list);
+>   * @sysmon:	sysmon context
+>   * @name:	other remote's name
+>   */
+> -static void sysmon_send_event(struct qcom_sysmon *sysmon, const char *name)
+> +static void sysmon_send_event(struct qcom_sysmon *sysmon,
+> +			      const struct sysmon_event *event)
+>  {
+>  	char req[50];
+>  	int len;
+>  	int ret;
+>  
+> -	len = snprintf(req, sizeof(req), "ssr:%s:before_shutdown", name);
+> +	len = snprintf(req, sizeof(req), "ssr:%s:%s", event->subsys_name,
+> +		       sysmon_state_string[event->ssr_event]);
+>  	if (len >= sizeof(req))
+>  		return;
+>  
+> @@ -149,13 +170,6 @@ static int sysmon_callback(struct rpmsg_device *rpdev, void *data, int count,
+>  #define SSCTL_SUBSYS_NAME_LENGTH	15
+>  
+>  enum {
+> -	SSCTL_SSR_EVENT_BEFORE_POWERUP,
+> -	SSCTL_SSR_EVENT_AFTER_POWERUP,
+> -	SSCTL_SSR_EVENT_BEFORE_SHUTDOWN,
+> -	SSCTL_SSR_EVENT_AFTER_SHUTDOWN,
+> -};
+> -
+> -enum {
+>  	SSCTL_SSR_EVENT_FORCED,
+>  	SSCTL_SSR_EVENT_GRACEFUL,
+>  };
+> @@ -331,7 +345,8 @@ static void ssctl_request_shutdown(struct qcom_sysmon *sysmon)
+>   * @sysmon:	sysmon context
+>   * @name:	other remote's name
+>   */
+> -static void ssctl_send_event(struct qcom_sysmon *sysmon, const char *name)
+> +static void ssctl_send_event(struct qcom_sysmon *sysmon,
+> +			     const struct sysmon_event *event)
+>  {
+>  	struct ssctl_subsys_event_resp resp;
+>  	struct ssctl_subsys_event_req req;
+> @@ -346,9 +361,9 @@ static void ssctl_send_event(struct qcom_sysmon *sysmon, const char *name)
+>  	}
+>  
+>  	memset(&req, 0, sizeof(req));
+> -	strlcpy(req.subsys_name, name, sizeof(req.subsys_name));
+> +	strlcpy(req.subsys_name, event->subsys_name, sizeof(req.subsys_name));
+>  	req.subsys_name_len = strlen(req.subsys_name);
+> -	req.event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN;
+> +	req.event = event->ssr_event;
+>  	req.evt_driven_valid = true;
+>  	req.evt_driven = SSCTL_SSR_EVENT_FORCED;
+>  
+> @@ -432,8 +447,12 @@ static int sysmon_start(struct rproc_subdev *subdev)
+>  static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
+>  {
+>  	struct qcom_sysmon *sysmon = container_of(subdev, struct qcom_sysmon, subdev);
+> +	struct sysmon_event event = {
+> +		.subsys_name = sysmon->name,
+> +		.ssr_event = SSCTL_SSR_EVENT_BEFORE_SHUTDOWN
+> +	};
+>  
+> -	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)sysmon->name);
+> +	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
+>  
+>  	/* Don't request graceful shutdown if we've crashed */
+>  	if (crashed)
+> @@ -456,19 +475,20 @@ static int sysmon_notify(struct notifier_block *nb, unsigned long event,
+>  {
+>  	struct qcom_sysmon *sysmon = container_of(nb, struct qcom_sysmon, nb);
+>  	struct rproc *rproc = sysmon->rproc;
+> -	const char *ssr_name = data;
+> +	struct sysmon_event *sysmon_event = data;
+>  
+>  	/* Skip non-running rprocs and the originating instance */
+> -	if (rproc->state != RPROC_RUNNING || !strcmp(data, sysmon->name)) {
+> +	if (rproc->state != RPROC_RUNNING ||
+> +	    !strcmp(sysmon_event->subsys_name, sysmon->name)) {
+>  		dev_dbg(sysmon->dev, "not notifying %s\n", sysmon->name);
+>  		return NOTIFY_DONE;
+>  	}
+>  
+>  	/* Only SSCTL version 2 supports SSR events */
+>  	if (sysmon->ssctl_version == 2)
+> -		ssctl_send_event(sysmon, ssr_name);
+> +		ssctl_send_event(sysmon, sysmon_event);
+>  	else if (sysmon->ept)
+> -		sysmon_send_event(sysmon, ssr_name);
+> +		sysmon_send_event(sysmon, sysmon_event);
+>  
+>  	return NOTIFY_DONE;
+>  }
+> -- 
+> Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
