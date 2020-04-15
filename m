@@ -1,99 +1,114 @@
-Return-Path: <nikita.shubin@maquefel.me>
-From: nikita.shubin@maquefel.me
-Subject: [PATCH v2 1/3] remoteproc: imx_rproc: set pc on start
-Date: Mon,  6 Apr 2020 14:33:08 +0300
-Message-Id: <20200406113310.3041-2-nikita.shubin@maquefel.me>
-In-Reply-To: <20200406113310.3041-1-nikita.shubin@maquefel.me>
-References: <20200304142628.8471-1-NShubin@topcon.com>
- <20200406113310.3041-1-nikita.shubin@maquefel.me>
+Return-Path: <bounce+9957f9.be9e4a-bjorn.andersson=linaro.org@mg.codeaurora.org>
+Sender: sibis=codeaurora.org@mg.codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2 1/2] remoteproc: qcom_q6v5_mss: map/unmap mpss segments before/after use
+Date: Wed, 15 Apr 2020 12:46:18 +0530
+Message-Id: <20200415071619.6052-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To: nikita.shubin@maquefel.me
-Cc: Nikita Shubin <NShubin@topcon.com>, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: bjorn.andersson@linaro.org
+Cc: agross@kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, ohad@wizery.com, evgreen@chromium.org, Sibi Sankar <sibis@codeaurora.org>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-In case elf file interrupt vector is not supposed to be at OCRAM_S,
-it is needed to write elf entry point to OCRAM_S + 0x4, to boot M4
-firmware.
+The application processor accessing the mpss region when the Q6 modem is
+running will lead to an XPU violation. Fix this by un-mapping the mpss
+segments post copy during mpss authentication and coredumps.
 
-Otherwise firmware located anywhere besides OCRAM_S won't boot.
-
-The firmware must set stack poiner as first instruction:
-
-Reset_Handler:
-    ldr   sp, = __stack      /* set stack pointer */
-
-Signed-off-by: Nikita Shubin <NShubin@topcon.com>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/remoteproc/imx_rproc.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 3e72b6f38d4b..bebc58d0f711 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -45,6 +45,8 @@
+V2:
+ * use ioremap_wc/iounmap instead of the devm_ variants
+ * with mpss_region no longer relevant leave rproc_da_to_va unused
+
+ drivers/remoteproc/qcom_q6v5_mss.c | 31 +++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index ce49c3236ff7c..b781fc8de3597 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1156,7 +1156,13 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			goto release_firmware;
+ 		}
  
- #define IMX7D_RPROC_MEM_MAX		8
+-		ptr = qproc->mpss_region + offset;
++		ptr = ioremap_wc(qproc->mpss_phys + offset, phdr->p_memsz);
++		if (!ptr) {
++			dev_err(qproc->dev,
++				"unable to map memory region: %pa+%zx-%x\n",
++				&qproc->mpss_phys, offset, phdr->p_memsz);
++			goto release_firmware;
++		}
  
-+#define IMX_BOOT_PC			0x4
-+
- /**
-  * struct imx_rproc_mem - slim internal memory structure
-  * @cpu_addr: MPU virtual address of the memory region
-@@ -85,6 +87,7 @@ struct imx_rproc {
- 	const struct imx_rproc_dcfg	*dcfg;
- 	struct imx_rproc_mem		mem[IMX7D_RPROC_MEM_MAX];
- 	struct clk			*clk;
-+	void __iomem			*bootreg;
- };
+ 		if (phdr->p_filesz && phdr->p_offset < fw->size) {
+ 			/* Firmware is large enough to be non-split */
+@@ -1165,6 +1171,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 					"failed to load segment %d from truncated file %s\n",
+ 					i, fw_name);
+ 				ret = -EINVAL;
++				iounmap(ptr);
+ 				goto release_firmware;
+ 			}
  
- static const struct imx_rproc_att imx_rproc_att_imx7d[] = {
-@@ -162,11 +165,16 @@ static int imx_rproc_start(struct rproc *rproc)
- 	struct device *dev = priv->dev;
- 	int ret;
+@@ -1175,6 +1182,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
+ 			if (ret) {
+ 				dev_err(qproc->dev, "failed to load %s\n", fw_name);
++				iounmap(ptr);
+ 				goto release_firmware;
+ 			}
  
-+	/* write entry point to program counter */
-+	writel(rproc->bootaddr, priv->bootreg);
-+
- 	ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
- 				 dcfg->src_mask, dcfg->src_start);
- 	if (ret)
- 		dev_err(dev, "Failed to enable M4!\n");
+@@ -1187,6 +1195,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 			memset(ptr + phdr->p_filesz, 0,
+ 			       phdr->p_memsz - phdr->p_filesz);
+ 		}
++		iounmap(ptr);
+ 		size += phdr->p_memsz;
  
-+	dev_info(&rproc->dev, "Started from 0x%x\n", rproc->bootaddr);
-+
- 	return ret;
- }
+ 		code_length = readl(qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
+@@ -1236,7 +1245,8 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 	int ret = 0;
+ 	struct q6v5 *qproc = rproc->priv;
+ 	unsigned long mask = BIT((unsigned long)segment->priv);
+-	void *ptr = rproc_da_to_va(rproc, segment->da, segment->size);
++	int offset = segment->da - qproc->mpss_reloc;
++	void *ptr = NULL;
  
-@@ -182,6 +190,9 @@ static int imx_rproc_stop(struct rproc *rproc)
- 	if (ret)
- 		dev_err(dev, "Failed to stop M4!\n");
- 
-+	/* clear entry points */
-+	writel(0, priv->bootreg);
-+
- 	return ret;
- }
- 
-@@ -243,7 +254,8 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
- static const struct rproc_ops imx_rproc_ops = {
- 	.start		= imx_rproc_start,
- 	.stop		= imx_rproc_stop,
--	.da_to_va       = imx_rproc_da_to_va,
-+	.da_to_va	= imx_rproc_da_to_va,
-+	.get_boot_addr	= rproc_elf_get_boot_addr,
- };
- 
- static int imx_rproc_addr_init(struct imx_rproc *priv,
-@@ -360,6 +372,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 		goto err_put_rproc;
+ 	/* Unlock mba before copying segments */
+ 	if (!qproc->dump_mba_loaded) {
+@@ -1250,10 +1260,15 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 		}
  	}
  
-+	priv->bootreg = imx_rproc_da_to_va(rproc, IMX_BOOT_PC, sizeof(u32));
+-	if (!ptr || ret)
+-		memset(dest, 0xff, segment->size);
+-	else
++	if (!ret)
++		ptr = ioremap_wc(qproc->mpss_phys + offset, segment->size);
 +
- 	/*
- 	 * clk for M4 block including memory. Should be
- 	 * enabled before .start for FW transfer.
++	if (ptr) {
+ 		memcpy(dest, ptr, segment->size);
++		iounmap(ptr);
++	} else {
++		memset(dest, 0xff, segment->size);
++	}
+ 
+ 	qproc->dump_segment_mask |= mask;
+ 
+@@ -1595,12 +1610,6 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+ 
+ 	qproc->mpss_phys = qproc->mpss_reloc = r.start;
+ 	qproc->mpss_size = resource_size(&r);
+-	qproc->mpss_region = devm_ioremap_wc(qproc->dev, qproc->mpss_phys, qproc->mpss_size);
+-	if (!qproc->mpss_region) {
+-		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n",
+-			&r.start, qproc->mpss_size);
+-		return -EBUSY;
+-	}
+ 
+ 	return 0;
+ }
 -- 
-2.25.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
