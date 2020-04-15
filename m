@@ -7,194 +7,173 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5686C2BA19
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 18:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E06CC38A2B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 18:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4CA720774
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 18:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B96420768
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Apr 2020 18:11:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uyR3zgTo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gs45V7ac"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405877AbgDOSKq (ORCPT
+        id S2411712AbgDOSLr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 14:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45128 "EHLO
+        Wed, 15 Apr 2020 14:11:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2406082AbgDOSKl (ORCPT
+        by vger.kernel.org with ESMTP id S2405880AbgDOSLn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Apr 2020 14:10:41 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C56E4C061A0F
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 11:10:41 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id r20so337115pfh.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 11:10:41 -0700 (PDT)
+        Wed, 15 Apr 2020 14:11:43 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02881C061A0E
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 11:11:43 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id r20so338994pfh.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2020 11:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=yOYBo8OjxgFUtMIRY6LWGA61eRM9SefgAlvGVD6yLNE=;
-        b=uyR3zgToYS8mKENYz2nWMYAMB/GuEttq4rdHLh72Oogd0C9iaqdiY+zZ+YwXHTxJww
-         R5kmMnjaktd+YRbiCzCC4BbARWPsJOeRydzeCsJWJgTsd3c+ZtrK8ZrpeHSZoBNSYQ5G
-         jCbxh5+SPvtgYxzE2yLKx7r3YO+deFbwHqEuUlNKhFyymhIRiP0kasFWvNLGddCTtDh1
-         ODAQGq35qmLcM+g3/MNFmMGqG2IfVqgZXw5GgLPA6kfU8hYkneMF4ujTiSPkgg8kn2xF
-         9tQO0dZXU1vFQvqllbJNdEc6gbmXJW57lkYwwkdoG2MeCAKzd21VviQxqYLR38PykAeR
-         r/Ag==
+        bh=Hv4Gb+XU8mOj8xMFdipxFcMjlc532U8U6KOUpsFhxqY=;
+        b=Gs45V7acM1Gg+IDEQIa8efTGGg+FVai47wUYfRNm7sgC8M3235Wdfd627OlVlKHree
+         G/JPIqjAQoOF8XLyehNauDN4H23NKVUyIa4c6e++RGuOQusJlK5JVxRWbw3QRuUGoJqO
+         TaD/89qJ+j7tYxgDCu/WtVuv5G/ZLBCfX9gl+AgCJXpWsj6YuJ4VaeuSXBhTKmAO2OF8
+         i/i5RsHx4X/GnRoq77MHKt2Ec/hYDX2QbLJFxEcAkm3pUQ/j8effzI8hR3pvnsPIcAWX
+         Azhy1QdjR5nkInSATS1UlDa1H4dG83YYu8+8hdn/wBWZeCVW5myrBWGYSUoyIhqYnw3g
+         qmGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yOYBo8OjxgFUtMIRY6LWGA61eRM9SefgAlvGVD6yLNE=;
-        b=kn30xkVDpQ4T+1Oa9EQRQbWEzkczMYrEGYy/nmyeJ2elB+VzDWhvc/4Cp3b3TWsPVj
-         gBAtV3o+nTXj4heKhIdPxvsbLw8Z71LJkzXFLTKkG3bJdySuFUFgd1SDL8gIyrJASF+Q
-         X8yZeKjZ75kRF3ZhWAJWva+Rjr+AXGolh+DCUCRvirKDMeMBeX5HZvfZAf0Qb8yHSxVN
-         jr3A7kjdDY/J5JALs6RlVgmzLCa7buJxAJTWHnSlEpz4xYkd8JnBma24Xp6+uKxCY7Cn
-         9WIkdJQe07sh4+dhhrENIaEceAcXSiHsXsASXKHIINkTs8d7og6sXmmSjkJ9/wb8dIiW
-         LMwg==
-X-Gm-Message-State: AGi0Pubdui4XtisSEDSJhjRvUV4bA5GjEv3z/KJ32a9+dtoy2i4aCBbA
-        w1w7hejX+pPyQG36YmrAvjwxoA==
-X-Google-Smtp-Source: APiQypJ6qJ39VM0kUmNEVlXtvEwbTTfiXrQq1kKfK78aoE4KVf394jbk0vwvHXBhxKyQYNlGu08xgQ==
-X-Received: by 2002:a62:dd48:: with SMTP id w69mr18468228pff.86.1586974241107;
-        Wed, 15 Apr 2020 11:10:41 -0700 (PDT)
+        bh=Hv4Gb+XU8mOj8xMFdipxFcMjlc532U8U6KOUpsFhxqY=;
+        b=BDDg/ZP2X3HHlmgTUHJcJ6FFLkQiFBYzgu9pPpocENPl6wOQax29ThEIWmrO6Xr/wy
+         CskfDVLmvCUvMA7C3mzExWo1rGiv8RGG4XpMbA/m8s7NOFXEniJdWldlq5+iCEu6wzhY
+         02A7xtkU31FGu9l9S+h7/lDqWAZrqEq3SQd35syMuSpe0kUq45Z8OLWln5DtBI06B9Zt
+         Q9bfE/JdJugqGKsb5fTzIVAbedAy0aonYf9GBge1ZxYqFTm9KM3Mf3+H27My0h5c6QIM
+         8PxCk8haMCY7Z5pPWRhRbCmjY82HvWwwn6Q/IGqRQKqIyfr0EuHfe+In5mtATvZsT4pU
+         H23A==
+X-Gm-Message-State: AGi0Pua1Lz/QHKzss0oFKnqVg3j5b1IEMxpO+xFP1yuOnNFl2SEZ9Dps
+        60SYDQSrO8Ti8i6fdOSdV46eyg==
+X-Google-Smtp-Source: APiQypIjo5joNUHWhj8LYjKyMfT+ubnd1PrqS6lJmTvfS1amP7RXRU6Uzmg8PU7h9tURc3cv4RxdgQ==
+X-Received: by 2002:aa7:9625:: with SMTP id r5mr7532605pfg.256.1586974302516;
+        Wed, 15 Apr 2020 11:11:42 -0700 (PDT)
 Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id 198sm14741291pfa.87.2020.04.15.11.10.39
+        by smtp.gmail.com with ESMTPSA id 65sm9606185pfz.211.2020.04.15.11.11.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 11:10:40 -0700 (PDT)
-Date:   Wed, 15 Apr 2020 12:10:38 -0600
+        Wed, 15 Apr 2020 11:11:42 -0700 (PDT)
+Date:   Wed, 15 Apr 2020 12:11:40 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Siddharth Gupta <sidgup@codeaurora.org>
 Cc:     agross@kernel.org, bjorn.andersson@linaro.org, ohad@wizery.com,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, tsoni@codeaurora.org,
-        psodagud@codeaurora.org, rishabhb@codeaurora.org
-Subject: Re: [PATCH v2 6/6] remoteproc: qcom: Add notification types to SSR
-Message-ID: <20200415181038.GE16583@xps15>
+        psodagud@codeaurora.org
+Subject: Re: [PATCH v2 4/6] remoteproc: qcom: Add name field for every
+ subdevice
+Message-ID: <20200415181140.GF16583@xps15>
 References: <1586389003-26675-1-git-send-email-sidgup@codeaurora.org>
- <1586389003-26675-7-git-send-email-sidgup@codeaurora.org>
+ <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1586389003-26675-7-git-send-email-sidgup@codeaurora.org>
+In-Reply-To: <1586389003-26675-5-git-send-email-sidgup@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200415181038.WzUCv7akNHkogz4louJquQT2sqPmHCjUM_rAA8yvTDA@z>
+Message-ID: <20200415181140.dLgDqeFaxVrNfp2vnAoiXpaEC2Frna6jNbUI-4ZfkSo@z>
 
-On Wed, Apr 08, 2020 at 04:36:43PM -0700, Siddharth Gupta wrote:
-> The SSR subdevice only adds callback for the unprepare event. Add callbacks
-> for unprepare, start and prepare events. The client driver for a particular
-> remoteproc might be interested in knowing the status of the remoteproc
-> while undergoing SSR, not just when the remoteproc has finished shutting
-> down.
+On Wed, Apr 08, 2020 at 04:36:41PM -0700, Siddharth Gupta wrote:
+> From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > 
+> When a client driver wishes to utilize functionality from a particular
+> subdevice of a remoteproc, it cannot differentiate between the subdevices
+> that have been added. This patch allows the client driver to distinguish
+> between subdevices and thus utilize their functionality.
+> 
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 > Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-> ---
->  drivers/remoteproc/qcom_common.c | 39 +++++++++++++++++++++++++++++++++++----
->  include/linux/remoteproc.h       | 15 +++++++++++++++
->  2 files changed, 50 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index 56b0c3e..06611f2 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -183,9 +183,9 @@ EXPORT_SYMBOL_GPL(qcom_remove_smd_subdev);
->   *
->   * Returns pointer to srcu notifier head on success, ERR_PTR on failure.
->   *
-> - * This registers the @notify function as handler for restart notifications. As
-> - * remote processors are stopped this function will be called, with the rproc
-> - * pointer passed as a parameter.
-> + * This registers the @notify function as handler for powerup/shutdown
-> + * notifications. This function will be invoked inside the callbacks registered
-> + * for the ssr subdevice, with the rproc pointer passed as a parameter.
->   */
->  void *qcom_register_ssr_notifier(struct rproc *rproc, struct notifier_block *nb)
->  {
-> @@ -227,11 +227,39 @@ int qcom_unregister_ssr_notifier(void *notify, struct notifier_block *nb)
->  }
->  EXPORT_SYMBOL_GPL(qcom_unregister_ssr_notifier);
->  
-> +static int ssr_notify_prepare(struct rproc_subdev *subdev)
-> +{
-> +	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-> +
-> +	srcu_notifier_call_chain(ssr->rproc_notif_list,
-> +				 RPROC_BEFORE_POWERUP, (void *)ssr->name);
-> +	return 0;
-> +}
-> +
-> +static int ssr_notify_start(struct rproc_subdev *subdev)
-> +{
-> +	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-> +
-> +	srcu_notifier_call_chain(ssr->rproc_notif_list,
-> +				 RPROC_AFTER_POWERUP, (void *)ssr->name);
-> +	return 0;
-> +}
-> +
-> +static void ssr_notify_stop(struct rproc_subdev *subdev, bool crashed)
-> +{
-> +	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
-> +
-> +	srcu_notifier_call_chain(ssr->rproc_notif_list,
-> +				 RPROC_BEFORE_SHUTDOWN, (void *)ssr->name);
-> +}
-> +
-> +
->  static void ssr_notify_unprepare(struct rproc_subdev *subdev)
->  {
->  	struct qcom_rproc_ssr *ssr = to_ssr_subdev(subdev);
->  
-> -	srcu_notifier_call_chain(ssr->rproc_notif_list, 0, (void *)ssr->name);
-> +	srcu_notifier_call_chain(ssr->rproc_notif_list,
-> +				 RPROC_AFTER_SHUTDOWN, (void *)ssr->name);
->  }
->  
->  /**
-> @@ -248,6 +276,9 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
->  {
->  	ssr->name = ssr_name;
->  	ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
-> +	ssr->subdev.prepare = ssr_notify_prepare;
-> +	ssr->subdev.start = ssr_notify_start;
-> +	ssr->subdev.stop = ssr_notify_stop;
->  	ssr->subdev.unprepare = ssr_notify_unprepare;
->  	ssr->rproc_notif_list = kzalloc(sizeof(struct srcu_notifier_head),
->  								GFP_KERNEL);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 687e1eb..facadb07 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -452,6 +452,21 @@ struct rproc_dump_segment {
->  };
->  
->  /**
-> + * enum rproc_notif_type - Different stages of remoteproc notifications
-> + * @RPROC_BEFORE_SHUTDOWN:	unprepare stage of  remoteproc
-> + * @RPROC_AFTER_SHUTDOWN:	stop stage of  remoteproc
-> + * @RPROC_BEFORE_POWERUP:	prepare stage of  remoteproc
-> + * @RPROC_AFTER_POWERUP:	start stage of  remoteproc
-> + */
-> +enum rproc_notif_type {
-> +	RPROC_BEFORE_SHUTDOWN,
-> +	RPROC_AFTER_SHUTDOWN,
-> +	RPROC_BEFORE_POWERUP,
-> +	RPROC_AFTER_POWERUP,
-> +	RPROC_MAX
-
-Not sure why you have a RPROC_MAX here...  It is not needed in this set but it
-might be in some downstream or upcoming code. 
 
 Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-> +};
-> +
-> +/**
->   * struct rproc - represents a physical remote processor device
->   * @node: list node of this rproc object
->   * @domain: iommu domain
+> ---
+>  drivers/remoteproc/qcom_common.c | 6 ++++++
+>  include/linux/remoteproc.h       | 2 ++
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 60650bc..1d2351b 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -56,6 +56,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink)
+>  		return;
+>  
+>  	glink->dev = dev;
+> +	glink->subdev.name = kstrdup("glink", GFP_KERNEL);
+>  	glink->subdev.start = glink_subdev_start;
+>  	glink->subdev.stop = glink_subdev_stop;
+>  
+> @@ -73,6 +74,7 @@ void qcom_remove_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glin
+>  	if (!glink->node)
+>  		return;
+>  
+> +	kfree(glink->subdev.name);
+>  	rproc_remove_subdev(rproc, &glink->subdev);
+>  	of_node_put(glink->node);
+>  }
+> @@ -152,6 +154,7 @@ void qcom_add_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+>  		return;
+>  
+>  	smd->dev = dev;
+> +	smd->subdev.name = kstrdup("smd", GFP_KERNEL);
+>  	smd->subdev.start = smd_subdev_start;
+>  	smd->subdev.stop = smd_subdev_stop;
+>  
+> @@ -169,6 +172,7 @@ void qcom_remove_smd_subdev(struct rproc *rproc, struct qcom_rproc_subdev *smd)
+>  	if (!smd->node)
+>  		return;
+>  
+> +	kfree(smd->subdev.name);
+>  	rproc_remove_subdev(rproc, &smd->subdev);
+>  	of_node_put(smd->node);
+>  }
+> @@ -220,6 +224,7 @@ void qcom_add_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr,
+>  			 const char *ssr_name)
+>  {
+>  	ssr->name = ssr_name;
+> +	ssr->subdev.name = kstrdup("ssr_notifs", GFP_KERNEL);
+>  	ssr->subdev.unprepare = ssr_notify_unprepare;
+>  
+>  	rproc_add_subdev(rproc, &ssr->subdev);
+> @@ -233,6 +238,7 @@ EXPORT_SYMBOL_GPL(qcom_add_ssr_subdev);
+>   */
+>  void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
+>  {
+> +	kfree(ssr->subdev.name);
+>  	rproc_remove_subdev(rproc, &ssr->subdev);
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index c5d36e6..687e1eb 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -523,6 +523,7 @@ struct rproc {
+>  /**
+>   * struct rproc_subdev - subdevice tied to a remoteproc
+>   * @node: list node related to the rproc subdevs list
+> + * @name: name of the subdevice
+>   * @prepare: prepare function, called before the rproc is started
+>   * @start: start function, called after the rproc has been started
+>   * @stop: stop function, called before the rproc is stopped; the @crashed
+> @@ -531,6 +532,7 @@ struct rproc {
+>   */
+>  struct rproc_subdev {
+>  	struct list_head node;
+> +	char *name;
+>  
+>  	int (*prepare)(struct rproc_subdev *subdev);
+>  	int (*start)(struct rproc_subdev *subdev);
 > -- 
 > Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 > a Linux Foundation Collaborative Project
