@@ -1,19 +1,21 @@
-Date: Sun, 19 Apr 2020 22:10:08 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Return-Path: <elder@linaro.org>
+Return-Path: <elder@linaro.org>
 Subject: Re: [PATCH v2 3/7] remoteproc: Simplify default name allocation
-Message-ID: <20200420051005.GD1516868@builder.lan>
 References: <20200415204858.2448-1-mathieu.poirier@linaro.org>
  <20200415204858.2448-4-mathieu.poirier@linaro.org>
+From: Alex Elder <elder@linaro.org>
+Message-ID: <1772f2f2-b063-c80f-9d3a-0127302d33f0@linaro.org>
+Date: Wed, 15 Apr 2020 16:26:01 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20200415204858.2448-4-mathieu.poirier@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: ohad@wizery.com, s-anna@ti.com, elder@linaro.org, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, bjorn.andersson@linaro.org, ohad@wizery.com
+Cc: s-anna@ti.com, Markus.Elfring@web.de, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Wed 15 Apr 13:48 PDT 2020, Mathieu Poirier wrote:
-
+On 4/15/20 3:48 PM, Mathieu Poirier wrote:
 > In an effort to cleanup firmware name allocation, replace the
 > cumbersome mechanic used to allocate a default firmware name with
 > function kasprintf().
@@ -21,7 +23,9 @@ On Wed 15 Apr 13:48 PDT 2020, Mathieu Poirier wrote:
 > Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Looks good to me.
+
+Reviewed-by: Alex Elder <elder@linaro.org>
 
 > ---
 >  drivers/remoteproc/remoteproc_core.c | 19 +++++++------------
@@ -63,6 +67,4 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 >  
 >  	rproc->firmware = p;
 >  
-> -- 
-> 2.20.1
 > 
