@@ -1,51 +1,155 @@
-Return-Path: <robherring2@gmail.com>
-Return-Path: <robherring2@gmail.com>
-Date: Fri, 17 Apr 2020 11:13:50 -0500
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 4/5] dt-bindings: remoteproc: Add documentation for
- ZynqMP R5 rproc bindings
-Message-ID: <20200417161350.GA24618@bogus>
+Return-Path: <BLEVINSK@xilinx.com>
+Return-Path: ben.levinsky@xilinx.com
+From: Ben Levinsky <ben.levinsky@xilinx.com>
+Subject: [PATCH v2 4/5] dt-bindings: remoteproc: Add documentation for ZynqMP R5 rproc bindings
+Date: Thu, 16 Apr 2020 14:54:41 -0700
+Message-Id: <1587074082-14836-5-git-send-email-ben.levinsky@xilinx.com>
+In-Reply-To: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
 References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
- <1587074082-14836-5-git-send-email-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1587074082-14836-5-git-send-email-ben.levinsky@xilinx.com>
-To: Ben Levinsky <ben.levinsky@xilinx.com>
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wu <j.wu@xilinx.com>, Wendy Liang <jliang@xilinx.com>
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wu <j.wu@xilinx.com>, Wendy Liang <jliang@xilinx.com>
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Thu, 16 Apr 2020 14:54:41 -0700, Ben Levinsky wrote:
-> Add binding for ZynqMP R5 OpenAMP.
-> 
-> Represent the RPU domain resources in one device node. Each RPU
-> processor is a subnode of the top RPU domain node.
-> 
-> Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> Signed-off-by: Jason Wu <j.wu@xilinx.com>
-> Signed-off-by: Wendy Liang <jliang@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
->  .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 119 +++++++++++++++++++++
->  1 file changed, 119 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
-> 
+Add binding for ZynqMP R5 OpenAMP.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Represent the RPU domain resources in one device node. Each RPU
+processor is a subnode of the top RPU domain node.
 
-Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:20.14-21: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
-Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:20.14-21: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #size-cells (2) differs from /example-0 (1)
-Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:43.14-21: Warning (ranges_format): /example-0/zynqmp-rpu:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
-Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:43.14-21: Warning (ranges_format): /example-0/zynqmp-rpu:ranges: empty "ranges" property but its #size-cells (2) differs from /example-0 (1)
-Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:39.20-63.11: Warning (unit_address_vs_reg): /example-0/zynqmp-rpu: node has a reg or ranges property, but no unit name
-Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dts:46.25-62.16: Warning (unit_address_vs_reg): /example-0/zynqmp-rpu/r5@0: node has a unit name, but no reg or ranges property
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.example.dt.yaml: zynqmp-rpu: '#address-cells', '#size-cells', 'r5@0', 'ranges', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+Signed-off-by: Jason Wu <j.wu@xilinx.com>
+Signed-off-by: Wendy Liang <jliang@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
+ .../remoteproc/xilinx,zynqmp-r5-remoteproc.yaml    | 119 +++++++++++++++++++++
+ 1 file changed, 119 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
 
-See https://patchwork.ozlabs.org/patch/1271919
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure dt-schema is up to date:
-
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
-
-Please check and re-submit.
+diff --git a/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+new file mode 100644
+index 0000000..ed3d125d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml
+@@ -0,0 +1,119 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/remoteproc/xilinx,zynqmp-r5-remoteproc.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Xilinx R5 remote processor controller bindings
++
++description:
++  This document defines the binding for the remoteproc component that loads and
++  boots firmwares on the Xilinx Zynqmp and Versal family chipset.
++
++maintainers:
++  - Ed Mooring <ed.mooring@xilinx.com>
++  - Ben Levinsky <ben.levinsky@xilinx.com>
++
++properties:
++  compatible:
++    const: "xlnx,zynqmp-r5-remoteproc-1.0"
++
++  core_conf:
++    description:
++      R5 core configuration (valid string - split or lock-step)
++    maxItems: 1
++
++  interrupts:
++    description:
++      Interrupt mapping for remoteproc IPI. It is required if the
++      user uses the remoteproc driver with the RPMsg kernel driver.
++    maxItems: 6
++
++  memory-region:
++    maxItems: 4
++    minItems: 4
++  pnode-id:
++    maxItems: 1
++  mboxes:
++    maxItems: 2
++  mbox-names:
++    maxItems: 2
++
++additionalProperties: false
++
++examples:
++  - |
++     reserved-memory {
++          #address-cells = <2>;
++          #size-cells = <2>;
++          ranges;
++          rpu0vdev0vring0: rpu0vdev0vring0@3ed40000 {
++               no-map;
++               reg = <0x0 0x3ed40000 0x0 0x4000>;
++          };
++          rpu0vdev0vring1: rpu0vdev0vring1@3ed44000 {
++               no-map;
++               reg = <0x0 0x3ed44000 0x0 0x4000>;
++          };
++          rpu0vdev0buffer: rpu0vdev0buffer@3ed48000 {
++               no-map;
++               reg = <0x0 0x3ed48000 0x0 0x100000>;
++          };
++          rproc_0_reserved: rproc@3ed000000 {
++               no-map;
++               reg = <0x0 0x3ed00000 0x0 0x40000>;
++          };
++     };
++
++     zynqmp-rpu {
++          compatible = "xlnx,zynqmp-r5-remoteproc-1.0";
++          #address-cells = <2>;
++          #size-cells = <2>;
++          ranges;
++          core_conf = "split";
++          reg = <0x0 0xFF9A0000 0x0 0x10000>;
++          r5_0: r5@0 {
++               #address-cells = <2>;
++               #size-cells = <2>;
++               ranges;
++               memory-region = <&rproc_0_reserved>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
++               pnode-id = <0x7>;
++               mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
++               mbox-names = "tx", "rx";
++               tcm_0_a: tcm_0@0 {
++                    reg = <0x0 0xFFE00000 0x0 0x10000>;
++                    pnode-id = <0xf>;
++               };
++               tcm_0_b: tcm_0@1 {
++                    reg = <0x0 0xFFE20000 0x0 0x10000>;
++                    pnode-id = <0x10>;
++               };
++          };
++     };
++
++
++     zynqmp_ipi1 {
++          compatible = "xlnx,zynqmp-ipi-mailbox";
++          interrupt-parent = <&gic>;
++          interrupts = <0 29 4>;
++          xlnx,ipi-id = <7>;
++          #address-cells = <1>;
++          #size-cells = <1>;
++          ranges;
++
++          /* APU<->RPU0 IPI mailbox controller */
++          ipi_mailbox_rpu0: mailbox@ff90000 {
++               reg = <0xff990600 0x20>,
++                     <0xff990620 0x20>,
++                     <0xff9900c0 0x20>,
++                     <0xff9900e0 0x20>;
++               reg-names = "local_request_region",
++                        "local_response_region",
++                        "remote_request_region",
++                        "remote_response_region";
++               #mbox-cells = <1>;
++               xlnx,ipi-id = <1>;
++          };
++     };
++
++...
+-- 
+2.7.4
