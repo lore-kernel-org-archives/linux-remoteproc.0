@@ -1,127 +1,106 @@
-Return-Path: <bjorn.andersson@linaro.org>
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 2/4] soc: qcom: glink_ssr: Internalize ssr_notifiers
-Date: Wed, 22 Apr 2020 17:37:34 -0700
-Message-Id: <20200423003736.2027371-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
-References: <20200423003736.2027371-1-bjorn.andersson@linaro.org>
+Return-Path: <BLEVINSK@xilinx.com>
+Return-Path: ben.levinsky@xilinx.com
+From: Ben Levinsky <ben.levinsky@xilinx.com>
+Subject: [PATCH v2 3/5] firmware: xilinx: Add zynqmp_get_node_status API
+Date: Thu, 16 Apr 2020 14:54:40 -0700
+Message-Id: <1587074082-14836-4-git-send-email-ben.levinsky@xilinx.com>
+In-Reply-To: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, Chris Lew <clew@codeaurora.org>, Sibi <sibis@codeaurora.org>, Siddharth Gupta <sidgup@codeaurora.org>
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Rather than carrying a special purpose blocking notifier for glink_ssr
-in remoteproc's qcom_common.c, move it into glink_ssr so allow wider
-reuse of the common one.
+This patch adds a new API to provide access to the
+current power state of a sub-system on Zynqmp sub-system.
 
-The rpmsg glink header file is used in preparation for the next patch.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
 ---
- drivers/remoteproc/qcom_common.c |  8 ++++++++
- drivers/soc/qcom/glink_ssr.c     | 24 +++++++++++++++++++-----
- include/linux/rpmsg/qcom_glink.h |  6 ++++++
- 3 files changed, 33 insertions(+), 5 deletions(-)
+ drivers/firmware/xilinx/zynqmp.c     | 42 ++++++++++++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  3 +++
+ 2 files changed, 45 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index ff26f2b68752..9028cea2d81e 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -42,6 +42,13 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- 	glink->edge = NULL;
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 0a545a2..be7e460 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -727,6 +727,47 @@ static int zynqmp_pm_request_wakeup(const u32 node,
  }
  
-+static void glink_subdev_unprepare(struct rproc_subdev *subdev)
-+{
-+	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
-+
-+	qcom_glink_ssr_notify(glink->ssr_name);
-+}
-+
  /**
-  * qcom_add_glink_subdev() - try to add a GLINK subdevice to rproc
-  * @rproc:	rproc handle to parent the subdevice
-@@ -64,6 +71,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
- 	glink->dev = dev;
- 	glink->subdev.start = glink_subdev_start;
- 	glink->subdev.stop = glink_subdev_stop;
-+	glink->subdev.unprepare = glink_subdev_unprepare;
- 
- 	rproc_add_subdev(rproc, &glink->subdev);
- }
-diff --git a/drivers/soc/qcom/glink_ssr.c b/drivers/soc/qcom/glink_ssr.c
-index d7babe3d67bc..847d79c935f1 100644
---- a/drivers/soc/qcom/glink_ssr.c
-+++ b/drivers/soc/qcom/glink_ssr.c
-@@ -54,6 +54,19 @@ struct glink_ssr {
- 	struct completion completion;
- };
- 
-+/* Notifier list for all registered glink_ssr instances */
-+static BLOCKING_NOTIFIER_HEAD(ssr_notifiers);
++ * zynqmp_pm_get_node_status - PM call to request a node's current power state
++ * @node:		ID of the component or sub-system in question
++ * @status:		Current operating state of the requested node
++ * @requirements:	Current requirements asserted on the node,
++ *			used for slave nodes only.
++ * @usage:		Usage information, used for slave nodes only:
++ *			PM_USAGE_NO_MASTER	- No master is currently using
++ *						  the node
++ *			PM_USAGE_CURRENT_MASTER	- Only requesting master is
++ *						  currently using the node
++ *			PM_USAGE_OTHER_MASTER	- Only other masters are
++ *						  currently using the node
++ *			PM_USAGE_BOTH_MASTERS	- Both the current and at least
++ *						  one other master is currently
++ *						  using the node
++ *
++ * Return:		Returns status, either success or error+reason
++ */
++static int zynqmp_pm_get_node_status(const u32 node, u32 *const status,
++				     u32 *const requirements, u32 *const usage)
++{
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	if (!status)
++		return -EINVAL;
++
++	ret = zynqmp_pm_invoke_fn(PM_GET_NODE_STATUS, node, 0, 0,
++				  0, ret_payload);
++	if (ret_payload[0] == XST_PM_SUCCESS) {
++		*status = ret_payload[1];
++		if (requirements)
++			*requirements = ret_payload[2];
++		if (usage)
++			*usage = ret_payload[3];
++	}
++
++	return ret;
++}
 +
 +/**
-+ * qcom_glink_ssr_notify() - notify GLINK SSR about stopped remoteproc
-+ * @ssr_name:	name of the remoteproc that has been stopped
-+ */
-+void qcom_glink_ssr_notify(const char *ssr_name)
-+{
-+	blocking_notifier_call_chain(&ssr_notifiers, 0, (void *)ssr_name);
-+}
-+EXPORT_SYMBOL_GPL(qcom_glink_ssr_notify);
-+
- static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
- 				   void *data, int len, void *priv, u32 addr)
- {
-@@ -81,8 +94,9 @@ static int qcom_glink_ssr_callback(struct rpmsg_device *rpdev,
- 	return 0;
- }
+  * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
+  * @node:		Node ID of the slave
+  * @capabilities:	Requested capabilities of the slave
+@@ -773,6 +814,7 @@ static int zynqmp_pm_aes_engine(const u64 address, u32 *out)
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
+ 	.get_chipid = zynqmp_pm_get_chipid,
++	.get_node_status = zynqmp_pm_get_node_status,
+ 	.query_data = zynqmp_pm_query_data,
+ 	.clock_enable = zynqmp_pm_clock_enable,
+ 	.clock_disable = zynqmp_pm_clock_disable,
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 899febc..0ed7e9e 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -62,6 +62,7 @@
  
--static int qcom_glink_ssr_notify(struct notifier_block *nb, unsigned long event,
--				 void *data)
-+static int qcom_glink_ssr_notifier_call(struct notifier_block *nb,
-+					unsigned long event,
-+					void *data)
- {
- 	struct glink_ssr *ssr = container_of(nb, struct glink_ssr, nb);
- 	struct do_cleanup_msg msg;
-@@ -121,18 +135,18 @@ static int qcom_glink_ssr_probe(struct rpmsg_device *rpdev)
- 
- 	ssr->dev = &rpdev->dev;
- 	ssr->ept = rpdev->ept;
--	ssr->nb.notifier_call = qcom_glink_ssr_notify;
-+	ssr->nb.notifier_call = qcom_glink_ssr_notifier_call;
- 
- 	dev_set_drvdata(&rpdev->dev, ssr);
- 
--	return qcom_register_ssr_notifier(&ssr->nb);
-+	return blocking_notifier_chain_register(&ssr_notifiers, &ssr->nb);
- }
- 
- static void qcom_glink_ssr_remove(struct rpmsg_device *rpdev)
- {
- 	struct glink_ssr *ssr = dev_get_drvdata(&rpdev->dev);
- 
--	qcom_unregister_ssr_notifier(&ssr->nb);
-+	blocking_notifier_chain_unregister(&ssr_notifiers, &ssr->nb);
- }
- 
- static const struct rpmsg_device_id qcom_glink_ssr_match[] = {
-diff --git a/include/linux/rpmsg/qcom_glink.h b/include/linux/rpmsg/qcom_glink.h
-index 96e26d94719f..09daa0acde2c 100644
---- a/include/linux/rpmsg/qcom_glink.h
-+++ b/include/linux/rpmsg/qcom_glink.h
-@@ -26,4 +26,10 @@ static inline void qcom_glink_smem_unregister(struct qcom_glink *glink) {}
- 
- #endif
- 
-+#if IS_ENABLED(CONFIG_RPMSG_QCOM_GLINK_SSR)
-+void qcom_glink_ssr_notify(const char *ssr_name);
-+#else
-+static inline void qcom_glink_ssr_notify(const char *ssr_name) {}
-+#endif
-+
- #endif
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_GET_NODE_STATUS = 3,
+ 	PM_FORCE_POWERDOWN = 8,
+ 	PM_REQUEST_WAKEUP = 10,
+ 	PM_REQUEST_NODE = 13,
+@@ -317,6 +318,8 @@ struct zynqmp_pm_query_data {
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
+ 	int (*get_chipid)(u32 *idcode, u32 *version);
++	int (*get_node_status)(const u32 node, u32 *const status,
++			       u32 *const requirements, u32 *const usage);
+ 	int (*fpga_load)(const u64 address, const u32 size, const u32 flags);
+ 	int (*fpga_get_status)(u32 *value);
+ 	int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
 -- 
-2.24.0
+2.7.4
