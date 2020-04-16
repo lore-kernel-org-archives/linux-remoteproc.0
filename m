@@ -1,45 +1,49 @@
-Return-Path: <s-anna@ti.com>
-From: Suman Anna <s-anna@ti.com>
-Subject: [PATCH v3 0/2] Misc. rproc fixes around fixed memory region support
-Date: Mon, 20 Apr 2020 11:05:58 -0500
-Message-ID: <20200420160600.10467-1-s-anna@ti.com>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:51310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728167AbgDPXH3 (ORCPT
+        <rfc822;linux-remoteproc@vger.kernel.org>);
+        Thu, 16 Apr 2020 19:07:29 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud Pouliquen <arnaud.pouliquen@st.com>, Loic Pallardy <loic.pallardy@st.com>, Tero Kristo <t-kristo@ti.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH v7 0/3] Introduce Protection Domain Restart (PDR) Helpers
+From: patchwork-bot+linux-remoteproc@kernel.org
+Message-Id: <158707844965.17838.12465981439547329890.git-patchwork-notify@kernel.org>
+Date: Thu, 16 Apr 2020 23:07:29 +0000
+References: <20200312120842.21991-1-sibis@codeaurora.org>
+In-Reply-To: <20200312120842.21991-1-sibis@codeaurora.org>
+Sender: linux-remoteproc-owner@vger.kernel.org
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Hi Bjorn,
+Hello:
 
-This is another minor revision of the fixes around fixed memory region
-support [1] series. Patch 1 is revised to go back to the logic used in v1
-after a long discussion on the v2 version [2]. The other suggestions can
-be future improvments as they would require corresponding platform driver
-changes. Please look through the discussion there and let us know your
-preference. Patches are based on v5.7-rc1.
+This series was applied to andersson/remoteproc.git (refs/heads/for-next).
 
-I really appreciate it if you can target the series for the current 5.7 -rc's.
-The fixes would apply for all 5.1+ kernels.
+On Thu, 12 Mar 2020 17:38:39 +0530 you wrote:
+> Qualcomm SoCs (starting with MSM8998) allow for multiple protection
+> domains (PDs) to run on the same Q6 sub-system. This allows for
+> services like AVS AUDIO to have their own separate address space and
+> crash/recover without disrupting the other PDs running on the same Q6
+> ADSP. This patch series introduces pdr helper library and adds PD
+> tracking functionality for "avs/audio" allowing apr services to register
+> themselves asynchronously once the dependent PDs are up.
+> 
+> [...]
 
-Please see the v1 cover-letter [1] for the details on the issues.
 
-regards
-Suman
+Here is a summary with links:
+  - [v7,1/3] soc: qcom: Introduce Protection Domain Restart helpers
+    https://git.kernel.org/andersson/remoteproc/c/fbe639b44a82755d639df1c5d147c93f02ac5a0f
+  - [v7,2/3] dt-bindings: soc: qcom: apr: Add protection domain bindings
+    https://git.kernel.org/andersson/remoteproc/c/a03a5b6313c210565605a5dbf5d3e463c1fd5d30
+  - [v7,3/3] soc: qcom: apr: Add avs/audio tracking functionality
+    https://git.kernel.org/andersson/remoteproc/c/83473566260288c560e5443ea4cc40a458aa9e6a
 
-[1] https://patchwork.kernel.org/cover/11422723/
-[2] https://patchwork.kernel.org/comment/23274389/
-
-Suman Anna (1):
-  remoteproc: Fix and restore the parenting hierarchy for vdev
-
-Tero Kristo (1):
-  remoteproc: Fall back to using parent memory pool if no dedicated
-    available
-
- drivers/remoteproc/remoteproc_core.c   |  2 +-
- drivers/remoteproc/remoteproc_virtio.c | 12 ++++++++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+You are awesome, thank you!
 
 -- 
-2.26.0
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
