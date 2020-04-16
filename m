@@ -1,95 +1,76 @@
-Return-Path: <cleger@kalray.eu>
-From: Clement Leger <cleger@kalray.eu>
-Subject: [PATCH 2/2] remoteproc: use rproc_coredump_set_elf_info in drivers
-Date: Fri, 10 Apr 2020 12:24:33 +0200
-Message-Id: <20200410102433.2672-3-cleger@kalray.eu>
-In-Reply-To: <20200410102433.2672-1-cleger@kalray.eu>
-References: <20200410102433.2672-1-cleger@kalray.eu>
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>, Ohad Ben-Cohen <ohad@wizery.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@st.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, Clement Leger <cleger@kalray.eu>
+Return-Path: <BLEVINSK@xilinx.com>
+Return-Path: ben.levinsky@xilinx.com
+From: Ben Levinsky <ben.levinsky@xilinx.com>
+Subject: [PATCH v2 1/5] firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
+Date: Thu, 16 Apr 2020 14:54:38 -0700
+Message-Id: <1587074082-14836-2-git-send-email-ben.levinsky@xilinx.com>
+In-Reply-To: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-Modify drivers which are using remoteproc coredump functionnality to use
-rproc_coredump_set_elf_info in order to create correct elf coredump
-format.
+Add ZynqMP firmware ioctl enums for RPU configuration.
 
-Signed-off-by: Clement Leger <cleger@kalray.eu>
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
 ---
- drivers/remoteproc/qcom_q6v5_adsp.c | 1 +
- drivers/remoteproc/qcom_q6v5_mss.c  | 3 +++
- drivers/remoteproc/qcom_q6v5_pas.c  | 1 +
- drivers/remoteproc/qcom_wcnss.c     | 1 +
- drivers/remoteproc/stm32_rproc.c    | 1 +
- 5 files changed, 7 insertions(+)
+ drivers/firmware/xilinx/zynqmp.c     |  4 ++++
+ include/linux/firmware/xlnx-zynqmp.h | 19 +++++++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 2b01f2282062..8c3bd0954a13 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -423,6 +423,7 @@ static int adsp_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
- 	}
-+	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 41b6516..7978065 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -512,6 +512,10 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
+ static inline int zynqmp_is_valid_ioctl(u32 ioctl_id)
+ {
+ 	switch (ioctl_id) {
++	case IOCTL_GET_RPU_OPER_MODE:
++	case IOCTL_SET_RPU_OPER_MODE:
++	case IOCTL_RPU_BOOT_ADDR_CONFIG:
++	case IOCTL_TCM_COMB_CONFIG:
+ 	case IOCTL_SD_DLL_RESET:
+ 	case IOCTL_SET_SD_TAPDELAY:
+ 	case IOCTL_SET_PLL_FRAC_MODE:
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 8efa5ac..ddc996de 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -101,6 +101,10 @@ enum pm_ret_status {
+ };
  
- 	adsp = (struct qcom_adsp *)rproc->priv;
- 	adsp->dev = &pdev->dev;
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 03ffc6db4c68..5a7ff1092362 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1355,6 +1355,8 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 		return ret;
- 	}
+ enum pm_ioctl_id {
++	IOCTL_GET_RPU_OPER_MODE = 0,
++	IOCTL_SET_RPU_OPER_MODE,
++	IOCTL_RPU_BOOT_ADDR_CONFIG,
++	IOCTL_TCM_COMB_CONFIG,
+ 	IOCTL_SD_DLL_RESET = 6,
+ 	IOCTL_SET_SD_TAPDELAY,
+ 	IOCTL_SET_PLL_FRAC_MODE,
+@@ -120,6 +124,21 @@ enum pm_query_id {
+ 	PM_QID_CLOCK_GET_MAX_DIVISOR,
+ };
  
-+	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
++enum rpu_oper_mode {
++	PM_RPU_MODE_LOCKSTEP,
++	PM_RPU_MODE_SPLIT,
++};
 +
- 	ehdr = (struct elf32_hdr *)fw->data;
- 	phdrs = (struct elf32_phdr *)(ehdr + 1);
- 	qproc->dump_complete_mask = 0;
-@@ -1632,6 +1634,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	}
- 
- 	rproc->auto_boot = false;
-+	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
- 	qproc = (struct q6v5 *)rproc->priv;
- 	qproc->dev = &pdev->dev;
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index a41860d2243a..991f57e8e55b 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -390,6 +390,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	}
- 
- 	rproc->auto_boot = desc->auto_boot;
-+	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
- 	adsp = (struct qcom_adsp *)rproc->priv;
- 	adsp->dev = &pdev->dev;
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 0c7afd038f0d..5d65e1a9329a 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -480,6 +480,7 @@ static int wcnss_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
- 		return -ENOMEM;
- 	}
-+	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
- 	wcnss = (struct qcom_wcnss *)rproc->priv;
- 	wcnss->dev = &pdev->dev;
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 6a66dbf2df40..0f9d02ca4f5a 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -625,6 +625,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	if (!rproc)
- 		return -ENOMEM;
- 
-+	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 	rproc->has_iommu = false;
- 	ddata = rproc->priv;
- 	ddata->workqueue = create_workqueue(dev_name(dev));
++enum rpu_boot_mem {
++	PM_RPU_BOOTMEM_LOVEC,
++	PM_RPU_BOOTMEM_HIVEC,
++};
++
++enum rpu_tcm_comb {
++	PM_RPU_TCM_SPLIT,
++	PM_RPU_TCM_COMB,
++};
++
+ enum zynqmp_pm_reset_action {
+ 	PM_RESET_ACTION_RELEASE,
+ 	PM_RESET_ACTION_ASSERT,
 -- 
-2.17.1
+2.7.4
