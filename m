@@ -1,166 +1,107 @@
-Return-Path: <mathieu.poirier@linaro.org>
-Return-Path: <mathieu.poirier@linaro.org>
-Date: Wed, 1 Apr 2020 14:46:55 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v2 08/17] remoteproc: Allocate synchronisation state
- machine
-Message-ID: <20200401204655.GC17383@xps15>
-References: <20200324214603.14979-1-mathieu.poirier@linaro.org>
- <20200324214603.14979-9-mathieu.poirier@linaro.org>
- <e89d9859f4324cf59b0ae6787775d8f5@SFHDAG7NODE2.st.com>
- <abbe9f2c-11db-3b53-fa21-115c18c40d8f@ti.com>
+Return-Path: <BLEVINSK@xilinx.com>
+Return-Path: ben.levinsky@xilinx.com
+From: Ben Levinsky <ben.levinsky@xilinx.com>
+Subject: [PATCH v2 2/5] firmware: xilinx: Add shutdown/wakeup APIs
+Date: Thu, 16 Apr 2020 14:54:39 -0700
+Message-Id: <1587074082-14836-3-git-send-email-ben.levinsky@xilinx.com>
+In-Reply-To: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
+References: <1587074082-14836-1-git-send-email-ben.levinsky@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <abbe9f2c-11db-3b53-fa21-115c18c40d8f@ti.com>
-To: Suman Anna <s-anna@ti.com>
-Cc: Loic PALLARDY <loic.pallardy@st.com>, "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>, "ohad@wizery.com" <ohad@wizery.com>, "peng.fan@nxp.com" <peng.fan@nxp.com>, Arnaud POULIQUEN <arnaud.pouliquen@st.com>, Fabien DESSENNE <fabien.dessenne@st.com>, "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain
+To: ohad@wizery.com, bjorn.andersson@linaro.org, michal.simek@xilinx.com, jollys@xilinx.com, rajan.vaja@xilinx.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-ID: <linux-remoteproc@vger.kernel.org>
 
-On Mon, Mar 30, 2020 at 06:20:37PM -0500, Suman Anna wrote:
-> Hi Mathieu,
-> 
-> On 3/27/20 8:47 AM, Loic PALLARDY wrote:
-> > 
-> > 
-> >> -----Original Message-----
-> >> From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> Sent: mardi 24 mars 2020 22:46
-> >> To: bjorn.andersson@linaro.org
-> >> Cc: ohad@wizery.com; Loic PALLARDY <loic.pallardy@st.com>; s-
-> >> anna@ti.com; peng.fan@nxp.com; Arnaud POULIQUEN
-> >> <arnaud.pouliquen@st.com>; Fabien DESSENNE
-> >> <fabien.dessenne@st.com>; linux-remoteproc@vger.kernel.org
-> >> Subject: [PATCH v2 08/17] remoteproc: Allocate synchronisation state
-> >> machine
-> >>
-> >> This patch allocates a synchronisation state machine, either provided or
-> >> not by users, in order to enact the proper behavior requested by the
-> >> platform or specific scenarios.
-> >>
-> >> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> ---
-> >>  drivers/remoteproc/remoteproc_core.c | 59
-> >> +++++++++++++++++++++++++++-
-> >>  1 file changed, 58 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/remoteproc/remoteproc_core.c
-> >> b/drivers/remoteproc/remoteproc_core.c
-> >> index 02dbb826aa29..1578a9c70422 100644
-> >> --- a/drivers/remoteproc/remoteproc_core.c
-> >> +++ b/drivers/remoteproc/remoteproc_core.c
-> >> @@ -1955,6 +1955,7 @@ static void rproc_type_release(struct device *dev)
-> >>  	kfree(rproc->firmware);
-> >>  	kfree(rproc->ops);
-> >>  	kfree(rproc->sync_ops);
-> >> +	kfree(rproc->sync_states);
-> >>  	kfree(rproc);
-> >>  }
-> >>
-> >> @@ -2035,6 +2036,59 @@ static int rproc_alloc_sync_ops(struct rproc *rproc,
-> >>  	return 0;
-> >>  }
-> >>
-> >> +static int rproc_alloc_sync_states(struct rproc *rproc,
-> >> +				   const struct rproc_ops *boot_ops,
-> >> +				   const struct rproc_ops *sync_ops,
-> >> +				   struct rproc_sync_states *sync_states)
-> >> +{
-> >> +	struct rproc_sync_states *st;
-> >> +
-> >> +	/* At least one set of operation is needed */
-> >> +	if (!boot_ops && !sync_ops)
-> >> +		return -EINVAL;
-> >> +
-> >> +	/* We have a synchronisation state machine, no need to build one */
-> >> +	if (sync_states) {
-> >> +		st = kmemdup(sync_states, sizeof(*st), GFP_KERNEL);
-> >> +		if (!st)
-> >> +			return -ENOMEM;
-> >> +
-> > 
-> > I think a check between sync_states and boot_ops/sync_ops may be needed here
-> > even if it is platform driver responsibility to provide coherent configuration
-> > As soon as one of the sync_states is set at true, sync_ops must be provided
-> > As soon as one of the sync_states is set at false, boot_ops must be provided
-> > 
-> > Regards,
-> > Loic
-> > 
-> >> +		/* Nothing else to do */
-> >> +		goto out;
-> >> +	}
-> >> +
-> >> +	/* Allocate synchronisation state machine */
-> >> +	st = kzalloc(sizeof(*st), GFP_KERNEL);
-> 
-> Hmm, do you really want to allocate these dynamically? You are
-> allocating/initializing these no matter what, and I see these as no
-> different from the likes of has_iommu or auto_boot. Why not just add the
-> struct as a regular member instead of a pointer?
+Add shutdown/wakeup a resource eemi operations to shutdown
+or bringup a resource.
 
+Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+---
+ drivers/firmware/xilinx/zynqmp.c     | 35 +++++++++++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  8 ++++++++
+ 2 files changed, 43 insertions(+)
 
-That's a valid point.
-
-> 
-> >> +	if (!st)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	/*
-> >> +	 * We have a boot_ops and no sync_ops - build a state machine that
-> >> +	 * does _not_ synchronise with an MCU.
-> >> +	 */
-> >> +	if (boot_ops && !sync_ops) {
-> >> +		st->on_init = st->after_stop = st->after_crash = false;
-> >> +		goto out;
-> >> +	}
-> >> +
-> >> +	/*
-> >> +	 * We have a sync_ops and an no boot_ops - build a state machine
-> >> that
-> >> +	 * _only_ synchronises with an MCU.
-> >> +	 */
-> >> +	if (sync_ops && !boot_ops) {
-> >> +		st->on_init = st->after_stop = st->after_crash = true;
-> >> +		goto out;
-> >> +	}
-> >> +
-> >> +out:
-> >> +	rproc->sync_with_mcu = st->on_init;
-> 
-> This is not needed because of the rproc_set_mcu_sync_state call below.
-
-You are correct.
-
-> 
-> regards
-> Suman
-> 
-> >> +	/* And the synchronisation state machine to use */
-> >> +	rproc->sync_states = st;
-> >> +	/* Tell the core what to do when initialising */
-> >> +	rproc_set_mcu_sync_state(rproc, RPROC_SYNC_STATE_INIT);
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  static int rproc_alloc_internals(struct rproc *rproc, const char *name,
-> >>  				 const struct rproc_ops *boot_ops,
-> >>  				 const struct rproc_ops *sync_ops,
-> >> @@ -2065,7 +2119,10 @@ static int rproc_alloc_internals(struct rproc *rproc,
-> >> const char *name,
-> >>  			return ret;
-> >>  	}
-> >>
-> >> -	return 0;
-> >> +	/* Finally allocate the synchronisation state machine */
-> >> +	ret = rproc_alloc_sync_states(rproc, boot_ops, sync_ops,
-> >> sync_states);
-> >> +
-> >> +	return ret;
-> >>  }
-> >>
-> >>  /**
-> >> --
-> >> 2.20.1
-> > 
-> 
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 7978065..0a545a2 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -694,6 +694,39 @@ static int zynqmp_pm_release_node(const u32 node)
+ }
+ 
+ /**
++ * zynqmp_pm_force_powerdown - PM call to request for another PU or subsystem to
++ *             be powered down forcefully
++ * @target:    Node ID of the targeted PU or subsystem
++ * @ack:   Flag to specify whether acknowledge is requested
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_force_powerdown(const u32 target,
++				   const enum zynqmp_pm_request_ack ack)
++{
++	return zynqmp_pm_invoke_fn(PM_FORCE_POWERDOWN, target, ack, 0, 0, NULL);
++}
++
++/**
++ * zynqmp_pm_request_wakeup - PM call to wake up selected master or subsystem
++ * @node:  Node ID of the master or subsystem
++ * @set_addr:  Specifies whether the address argument is relevant
++ * @address:   Address from which to resume when woken up
++ * @ack:   Flag to specify whether acknowledge requested
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_request_wakeup(const u32 node,
++				   const bool set_addr,
++				   const u64 address,
++				   const enum zynqmp_pm_request_ack ack)
++{
++	/* set_addr flag is encoded into 1st bit of address */
++	return zynqmp_pm_invoke_fn(PM_REQUEST_WAKEUP, node, address | set_addr,
++					address >> 32, ack, NULL);
++}
++
++/**
+  * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
+  * @node:		Node ID of the slave
+  * @capabilities:	Requested capabilities of the slave
+@@ -750,9 +783,11 @@ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.clock_getrate = zynqmp_pm_clock_getrate,
+ 	.clock_setparent = zynqmp_pm_clock_setparent,
+ 	.clock_getparent = zynqmp_pm_clock_getparent,
++	.force_powerdown = zynqmp_pm_force_powerdown,
+ 	.ioctl = zynqmp_pm_ioctl,
+ 	.reset_assert = zynqmp_pm_reset_assert,
+ 	.reset_get_status = zynqmp_pm_reset_get_status,
++	.request_wakeup = zynqmp_pm_request_wakeup,
+ 	.init_finalize = zynqmp_pm_init_finalize,
+ 	.set_suspend_mode = zynqmp_pm_set_suspend_mode,
+ 	.request_node = zynqmp_pm_request_node,
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index ddc996de..899febc 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -62,6 +62,8 @@
+ 
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_FORCE_POWERDOWN = 8,
++	PM_REQUEST_WAKEUP = 10,
+ 	PM_REQUEST_NODE = 13,
+ 	PM_RELEASE_NODE,
+ 	PM_SET_REQUIREMENT,
+@@ -338,6 +340,12 @@ struct zynqmp_eemi_ops {
+ 			    const u32 qos,
+ 			    const enum zynqmp_pm_request_ack ack);
+ 	int (*release_node)(const u32 node);
++	int (*force_powerdown)(const u32 target,
++				const enum zynqmp_pm_request_ack ack);
++	int (*request_wakeup)(const u32 node,
++				const bool set_addr,
++				const u64 address,
++				const enum zynqmp_pm_request_ack ack);
+ 	int (*set_requirement)(const u32 node,
+ 			       const u32 capabilities,
+ 			       const u32 qos,
+-- 
+2.7.4
