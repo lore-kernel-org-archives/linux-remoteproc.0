@@ -2,51 +2,49 @@ Return-Path: <SRS0=fbBE=6A=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 232B3C352BE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 16:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9C5C2BB85
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 16:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9AD920771
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 16:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BCFC20771
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 16:15:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="ae2jYbNB"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="gcFdsKuq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406605AbgDPQP3 (ORCPT
+        id S2636426AbgDPQOU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:15:29 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46871 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728958AbgDPQOZ (ORCPT
+        Thu, 16 Apr 2020 12:14:20 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:45078 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2437742AbgDPQOM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:14:25 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03GGCFia010372;
-        Thu, 16 Apr 2020 18:14:20 +0200
+        Thu, 16 Apr 2020 12:14:12 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03GGBvCb014929;
+        Thu, 16 Apr 2020 18:14:08 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=BnLDwpVavIoWUlJvnJXxlP7jRIgDXwSpYFB3LVEa9rQ=;
- b=ae2jYbNByuYpMObCYUimmLeavvGxBYez7RROONuWOeoptsMV+WYpaitC94VTSA1y3zhC
- RwuXaysBQpUcXp7PhAbnmSQm7St8wlGXtpyP/ejn+VldOR7thWVEvwe4I1U9DluKoSxA
- NwGEzvYuvc1DoCVxwCIfbd6Nq8jz5exHcmISAMPAHEt2dPEu5WVAuVjvKuJW5f5BMHES
- tNxxZ/sWz37IlqVWa1B+IN/Z71zbW0UCDVaKMeH9yuL6hwjY1TdW6dmfsn74a+bo+N/f
- StEyjehyfpEmYMTEbTM2UU4db6cp9rOKaeb2tMrKDtyZ9YAAHIvRyNbBW5fbC325a0Aw mQ== 
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=fpquh+jz2px/ZRzQXBXoWxq9ttyvReRZKpxc7YwTUiI=;
+ b=gcFdsKuqlBMFmcy8cZcFoc0qbVy5F8tON6KTvihhSjHP5HTX6jLZJntZntpbN5WYP0rA
+ 01SNTexF5PIENY0JQ9hp5Ft8B3/nPa8G+AgABo4f0QOKJJnxlclsynn8bi7VVyVN2ZaK
+ fMsrWizODy8CaqD5BsJVPd7TVAfxoIt7qCc9Ek1cfeqx2gWLF0UVjPrnqDrJQC/71BMw
+ EGhKpN6m9CM1xuFORY0J8Ldwvbu4AdLvQuXf3YmnktPE9cx/RzIykRFhev4iY1chMdK/
+ N9EwtMc53bSdtpNe6SgPLBeyz1JsGT1Qp5mjpX+2rfp0XfHvtkrqcapiIpNmNVYzYXxD Vg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 30dn94kmvx-1
+        by mx07-00178001.pphosted.com with ESMTP id 30dn75umc4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Apr 2020 18:14:20 +0200
+        Thu, 16 Apr 2020 18:14:08 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 06EEB10002A;
-        Thu, 16 Apr 2020 18:14:20 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F2B910002A;
+        Thu, 16 Apr 2020 18:14:06 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED8962B2D2A;
-        Thu, 16 Apr 2020 18:14:19 +0200 (CEST)
-Received: from localhost (10.75.127.46) by SFHDAG3NODE1.st.com (10.75.127.7)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Apr 2020 18:14:19
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7A3862B2D2A;
+        Thu, 16 Apr 2020 18:14:06 +0200 (CEST)
+Received: from localhost (10.75.127.44) by SFHDAG3NODE1.st.com (10.75.127.7)
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Apr 2020 18:14:06
  +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -55,15 +53,13 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <arnaud.pouliquen@st.com>
-Subject: [RFC 09/18] remoteproc: Move vring management from core to virtio
-Date:   Thu, 16 Apr 2020 18:13:22 +0200
-Message-ID: <20200416161331.7606-10-arnaud.pouliquen@st.com>
+Subject: [RFC 00/18] remoteproc: Decorelate virtio from core
+Date:   Thu, 16 Apr 2020 18:13:13 +0200
+Message-ID: <20200416161331.7606-1-arnaud.pouliquen@st.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
+X-Originating-IP: [10.75.127.44]
 X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE1.st.com
  (10.75.127.7)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
@@ -72,253 +68,68 @@ Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200416161322.WJ95POgjrdse5qh5_QfFhfduHKRj0aIt7W3Yxw912jU@z>
+Message-ID: <20200416161313.inI-83cnAy-rkvRRMBZ49WXAKeqsy5gGUlRBArazb8w@z>
 
-The vrings are correlated to the virtio implementation.
-Move following functions to rproc virtio:
-- rproc_alloc_vring
-- rproc_free_vring
-- rproc_parse_vring
+This series proposes to introduce the notion of platform device for the
+rproc virtio management. One obective is to allow virtio to declare is
+own memory resources without the usage of dma_declare_coherent_memory
+that seems deprecated since the introduction of the device tree.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_core.c     | 97 -----------------------
- drivers/remoteproc/remoteproc_internal.h |  4 -
- drivers/remoteproc/remoteproc_virtio.c   | 98 ++++++++++++++++++++++++
- 3 files changed, 98 insertions(+), 101 deletions(-)
+Proposal:
+- the rproc virtio is processed in a separate platform and could be handled
+  as a generic platform device.
+- Several vdev devices can be declared in DT:
+    - which allows to declare their own memory regions and answer to [1].
+    - as next steps it would be also possible to:
+       - declare their own mailboxes, rpmsg drivers, ...
+       - use dma-range to handle the pa<->da translation at virtio level
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ac57cd8016be..c9e07c53ed0c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -312,103 +312,6 @@ int rproc_check_carveout_da(struct rproc *rproc,
- }
- EXPORT_SYMBOL(rproc_check_carveout_da);
- 
--int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
--{
--	struct rproc *rproc = rvdev->rproc;
--	struct device *dev = &rproc->dev;
--	struct rproc_vring *rvring = &rvdev->vring[i];
--	struct fw_rsc_vdev *rsc;
--	int ret, size, notifyid;
--	struct rproc_mem_entry *mem;
--
--	/* actual size of vring (in bytes) */
--	size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
--
--	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
--
--	/* Search for pre-registered carveout */
--	mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d", rvdev->index,
--					  i);
--	if (mem) {
--		if (rproc_check_carveout_da(rproc, mem, rsc->vring[i].da, size))
--			return -ENOMEM;
--	} else {
--		/* Register carveout in in list */
--		mem = rproc_mem_entry_init(dev, NULL, 0,
--					   size, rsc->vring[i].da,
--					   rproc_alloc_carveout,
--					   rproc_release_carveout,
--					   "vdev%dvring%d",
--					   rvdev->index, i);
--		if (!mem) {
--			dev_err(dev, "Can't allocate memory entry structure\n");
--			return -ENOMEM;
--		}
--
--		rproc_add_carveout(rproc, mem);
--	}
--
--	/*
--	 * Assign an rproc-wide unique index for this vring
--	 * TODO: assign a notifyid for rvdev updates as well
--	 * TODO: support predefined notifyids (via resource table)
--	 */
--	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
--	if (ret < 0) {
--		dev_err(dev, "idr_alloc failed: %d\n", ret);
--		return ret;
--	}
--	notifyid = ret;
--
--	/* Potentially bump max_notifyid */
--	if (notifyid > rproc->max_notifyid)
--		rproc->max_notifyid = notifyid;
--
--	rvring->notifyid = notifyid;
--
--	/* Let the rproc know the notifyid of this vring.*/
--	rsc->vring[i].notifyid = notifyid;
--	return 0;
--}
--
--int rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
--{
--	struct rproc *rproc = rvdev->rproc;
--	struct device *dev = &rproc->dev;
--	struct fw_rsc_vdev_vring *vring = &rsc->vring[i];
--	struct rproc_vring *rvring = &rvdev->vring[i];
--
--	dev_dbg(dev, "vdev rsc: vring%d: da 0x%x, qsz %d, align %d\n",
--		i, vring->da, vring->num, vring->align);
--
--	/* verify queue size and vring alignment are sane */
--	if (!vring->num || !vring->align) {
--		dev_err(dev, "invalid qsz (%d) or alignment (%d)\n",
--			vring->num, vring->align);
--		return -EINVAL;
--	}
--
--	rvring->len = vring->num;
--	rvring->align = vring->align;
--	rvring->rvdev = rvdev;
--
--	return 0;
--}
--
--void rproc_free_vring(struct rproc_vring *rvring)
--{
--	struct rproc *rproc = rvring->rvdev->rproc;
--	int idx = rvring - rvring->rvdev->vring;
--	struct fw_rsc_vdev *rsc;
--
--	idr_remove(&rproc->notifyids, rvring->notifyid);
--
--	/* reset resource entry info */
--	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
--	rsc->vring[idx].da = 0;
--	rsc->vring[idx].notifyid = -1;
--}
--
- static int rproc_compare_of(struct device *dev, void *data)
- {
- 	if (dev->of_node)
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index f230296908ac..5139cca646ca 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -55,10 +55,6 @@ extern struct class rproc_class;
- int rproc_init_sysfs(void);
- void rproc_exit_sysfs(void);
- 
--int rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i);
--void rproc_free_vring(struct rproc_vring *rvring);
--int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
--
- void *rproc_da_to_va(struct rproc *rproc, u64 da, int len);
- phys_addr_t rproc_va_to_pa(void *cpu_addr);
- int rproc_trigger_recovery(struct rproc *rproc);
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index e1d7371d2d64..4634cd63d547 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -26,6 +26,104 @@
- 
- #include "remoteproc_internal.h"
- 
-+static int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
-+{
-+	struct rproc *rproc = rvdev->rproc;
-+	struct device *dev = &rproc->dev;
-+	struct rproc_vring *rvring = &rvdev->vring[i];
-+	struct fw_rsc_vdev *rsc;
-+	int ret, size, notifyid;
-+	struct rproc_mem_entry *mem;
-+
-+	/* actual size of vring (in bytes) */
-+	size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
-+
-+	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
-+
-+	/* Search for pre-registered carveout */
-+	mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d", rvdev->index,
-+					  i);
-+	if (mem) {
-+		if (rproc_check_carveout_da(rproc, mem, rsc->vring[i].da, size))
-+			return -ENOMEM;
-+	} else {
-+		/* Register carveout in in list */
-+		mem = rproc_mem_entry_init(dev, NULL, 0,
-+					   size, rsc->vring[i].da,
-+					   rproc_alloc_carveout,
-+					   rproc_release_carveout,
-+					   "vdev%dvring%d",
-+					   rvdev->index, i);
-+		if (!mem) {
-+			dev_err(dev, "Can't allocate memory entry structure\n");
-+			return -ENOMEM;
-+		}
-+
-+		rproc_add_carveout(rproc, mem);
-+	}
-+
-+	/*
-+	 * Assign an rproc-wide unique index for this vring
-+	 * TODO: assign a notifyid for rvdev updates as well
-+	 * TODO: support predefined notifyids (via resource table)
-+	 */
-+	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
-+	if (ret < 0) {
-+		dev_err(dev, "idr_alloc failed: %d\n", ret);
-+		return ret;
-+	}
-+	notifyid = ret;
-+
-+	/* Potentially bump max_notifyid */
-+	if (notifyid > rproc->max_notifyid)
-+		rproc->max_notifyid = notifyid;
-+
-+	rvring->notifyid = notifyid;
-+
-+	/* Let the rproc know the notifyid of this vring.*/
-+	rsc->vring[i].notifyid = notifyid;
-+	return 0;
-+}
-+
-+static int rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc,
-+			     int i)
-+{
-+	struct rproc *rproc = rvdev->rproc;
-+	struct device *dev = &rproc->dev;
-+	struct fw_rsc_vdev_vring *vring = &rsc->vring[i];
-+	struct rproc_vring *rvring = &rvdev->vring[i];
-+
-+	dev_dbg(dev, "vdev rsc: vring%d: da 0x%x, qsz %d, align %d\n",
-+		i, vring->da, vring->num, vring->align);
-+
-+	/* verify queue size and vring alignment are sane */
-+	if (!vring->num || !vring->align) {
-+		dev_err(dev, "invalid qsz (%d) or alignment (%d)\n",
-+			vring->num, vring->align);
-+		return -EINVAL;
-+	}
-+
-+	rvring->len = vring->num;
-+	rvring->align = vring->align;
-+	rvring->rvdev = rvdev;
-+
-+	return 0;
-+}
-+
-+static void rproc_free_vring(struct rproc_vring *rvring)
-+{
-+	struct rproc *rproc = rvring->rvdev->rproc;
-+	int idx = rvring - rvring->rvdev->vring;
-+	struct fw_rsc_vdev *rsc;
-+
-+	idr_remove(&rproc->notifyids, rvring->notifyid);
-+
-+	/* reset resource entry info */
-+	rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
-+	rsc->vring[idx].da = 0;
-+	rsc->vring[idx].notifyid = -1;
-+}
-+
- /* kick the remote processor, and let it know which virtqueue to poke at */
- static bool rproc_virtio_notify(struct virtqueue *vq)
- {
+Several notions are introduced here:
+- Virtio platform registration which allows to decorelate virtio from the
+  remote proc core device. 
+- Synchronization of the child devices relying on component bind/unbind.
+  This mechanism ensures the synchronization of the child devices before
+  the boot of the remote processor and before the release of the resources
+  on the remote processor shutdown.
+- Ability to populate child devices declared in rproc device tree node.
+- Possibility to declare the memory regions reserved to a virtio devices in
+  the devicetree.
+
+Known limitations:
+- the patchset has been tested on a st32mP1 plaform only
+- it is based on the v5.6 (need to evoluate depending on V5.7 and on going
+  patchsets).
+- The virtio memory allocation does not take into account memory
+  controllers such as IOMMU and MPU.
+
+Arnaud Pouliquen (18):
+  remoteproc: Store resource table address in rvdev
+  remoteproc: Introduce virtio device add/remove functions in core.
+  remoteproc: Move rvdev management in rproc_virtio
+  remoteproc: Add rproc_get_by_node helper
+  remoteproc: Create platform device for vdev
+  remoteproc: Add component in core for child devices synchronization
+  remoteproc: Add component bind/unbind for virtio platform
+  remoteproc: Externalize carveout functions
+  remoteproc: Move vring management from core to virtio
+  remoteproc: Add capability to populate rproc subnode devices
+  remoteproc: Add child node component in rproc match list
+  remoteproc: Support of pre-registered virtio device
+  remoteproc: Add memory default allocator helper
+  remoteproc: Add pa to da translation API
+  remoteproc: associate memory entry to a device
+  remoteproc: Parse virtio node for memory region
+  remoteproc: stm32: add the pa to da ops.
+  ARM: dts: stm32: Declare a virtio device
+
+ arch/arm/boot/dts/stm32mp15xx-dkx.dtsi   |  10 +
+ drivers/remoteproc/remoteproc_core.c     | 469 ++++++++++++-----------
+ drivers/remoteproc/remoteproc_internal.h |  23 +-
+ drivers/remoteproc/remoteproc_virtio.c   | 415 ++++++++++++++++++--
+ drivers/remoteproc/stm32_rproc.c         |   1 +
+ include/linux/remoteproc.h               |  27 +-
+ 6 files changed, 673 insertions(+), 272 deletions(-)
+
 -- 
 2.17.1
 
