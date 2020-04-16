@@ -2,122 +2,155 @@ Return-Path: <SRS0=fbBE=6A=vger.kernel.org=linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D3AC2BB55
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 16:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFFCC2BB55
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 18:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 110E42078B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 16:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 042E1206E9
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Apr 2020 18:39:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="QdU4LEVN"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="kQCW/XCK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410746AbgDPQQG (ORCPT
+        id S1732452AbgDPSjY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:16:06 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47085 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2438465AbgDPQOQ (ORCPT
+        Thu, 16 Apr 2020 14:39:24 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:24235 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727921AbgDPSjX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:14:16 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 03GGCFLB010378;
-        Thu, 16 Apr 2020 18:14:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=fjXKxPxzbyDDVi3DEAO1z1G4S222u7YWRmiegBuibKg=;
- b=QdU4LEVNSHbgtgFd4+R31NIe94HOR2k7qZEywHTvP0MEe2gFAcjHDT+It1wbyfsz8b9T
- Phk1HEJ7+5mB/UQhYZJJQB56Rh7ZYg4vdYfW9fE1WVufUZDgZ39+a083xmR1rTuCTw8f
- OVY78E4JkPQ/UA9PNJyCALj4G8KN9akaBge0GTwRd5CKIZcW2AFkctmpspwtXGnkaag+
- YUbd5O1uATKGyWc9FURS2JJzEVXMuLVqNpXkyEkbfby2Afa2yrdEJ7mtqGaPL/NOCiuu
- FWbhwEp02EolXqQcWVBBouqec9F3XmEAS1fcQPANBgObzw46yxfYirJ1XbHT3V1EJENf Gw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 30dn94kmux-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Apr 2020 18:14:08 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C141E100034;
-        Thu, 16 Apr 2020 18:14:07 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B278F2B2D2A;
-        Thu, 16 Apr 2020 18:14:07 +0200 (CEST)
-Received: from localhost (10.75.127.46) by SFHDAG3NODE1.st.com (10.75.127.7)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Apr 2020 18:14:07
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@st.com>
-Subject: [RFC 01/18] remoteproc: Store resource table address in rvdev
-Date:   Thu, 16 Apr 2020 18:13:14 +0200
-Message-ID: <20200416161331.7606-2-arnaud.pouliquen@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-References: <20200416161331.7606-1-arnaud.pouliquen@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG3NODE1.st.com
- (10.75.127.7)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-16_06:2020-04-14,2020-04-16 signatures=0
+        Thu, 16 Apr 2020 14:39:23 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1587062363; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=v/buFpzpjL4mG4kIZ2jrF/IKuzqpxNBjnqkVAVckdOo=; b=kQCW/XCKoVlYxF8wzhJ0Yvl2Uvj18DN1CMRxlQw90zsPB9J0jPnsNLAq8+ZypbzPP8cFJM08
+ UQ7FUCU93HgaCEmuv9GZ3Er2EpGdC0N7cR1NjsvadrTBVrCWCbf27manQmbWjhujjzCjNOOC
+ dnF9HHoMyTJU1g+Oq8EbngFFAmA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4ZWZiZiIsICJsaW51eC1yZW1vdGVwcm9jQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e98a64b.7fb20023ff10-smtp-out-n05;
+ Thu, 16 Apr 2020 18:39:07 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id DD6DBC44788; Thu, 16 Apr 2020 18:39:06 +0000 (UTC)
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E93D9C433CB;
+        Thu, 16 Apr 2020 18:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E93D9C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
+        mathieu.poirier@linaro.org, tsoni@codeaurora.org,
+        psodagud@codeaurora.org, sidgup@codeaurora.org,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH 3/3] remoteproc: Add coredump sysfs attribute
+Date:   Thu, 16 Apr 2020 11:38:32 -0700
+Message-Id: <1587062312-4939-3-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
+References: <1587062312-4939-1-git-send-email-rishabhb@codeaurora.org>
 Sender: linux-remoteproc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20200416161314.9sAdUDC06lfru2ZSFE3ukajfkSUaVP6hGefXMJASVFQ@z>
+Message-ID: <20200416183832.CCAdIdZDAOrWKfahery9N4pkUAg_SNZd4VFoeqnMfEU@z>
 
-Store the resource table address in rvdev struct to be able to
-retrieve it from vdev device.
-This patch prepares the migration of rdev management in rproc_virtio.
-Indeed remoteproc virtio will have to complete the vdev and vrings
-resource table structures.
+Add coredump sysfs attribute to configure the type of memory dump.
+User can select between default or inline coredump functionality.
+Also coredump collection can be disabled through this interface.
+This functionality can be configured differently for different
+remote processors.
+This provides an option to dynamically configure the dump type
+based on userpsace capability.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
 ---
- drivers/remoteproc/remoteproc_core.c | 1 +
- include/linux/remoteproc.h           | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/remoteproc/remoteproc_sysfs.c | 57 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 097f33e4f1f3..2a0425ab82a7 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -504,6 +504,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 7f8536b..d112664 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -9,6 +9,62 @@
  
- 	kref_init(&rvdev->refcount);
+ #define to_rproc(d) container_of(d, struct rproc, dev)
  
-+	rvdev->rsc = rsc;
- 	rvdev->id = rsc->id;
- 	rvdev->rproc = rproc;
- 	rvdev->index = rproc->nb_vdev++;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 16ad66683ad0..a78e28bda962 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -567,6 +567,7 @@ struct rproc_vring {
-  * @rproc: the rproc handle
-  * @vdev: the virio device
-  * @vring: the vrings for this vdev
-+ * @rsc: address of the resource table
-  * @rsc_offset: offset of the vdev's resource entry
-  * @index: vdev position versus other vdev declared in resource table
-  */
-@@ -580,6 +581,7 @@ struct rproc_vdev {
- 	struct list_head node;
- 	struct rproc *rproc;
- 	struct rproc_vring vring[RVDEV_NUM_VRINGS];
-+	struct fw_rsc_vdev *rsc;
- 	u32 rsc_offset;
- 	u32 index;
++/*
++ * A coredump-configuration-to-string lookup table, for exposing a
++ * human readable configuration via sysfs. Always keep in sync with
++ * enum rproc_coredump_conf
++ */
++static const char * const rproc_coredump_str[] = {
++	[COREDUMP_DEFAULT]	= "default",
++	[COREDUMP_INLINE]	= "inline",
++	[COREDUMP_DISABLED]	= "disabled",
++};
++
++/* Expose the current coredump configuration via sysfs */
++static ssize_t coredump_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct rproc *rproc = to_rproc(dev);
++
++	return sprintf(buf, "%s\n", rproc_coredump_str[rproc->coredump_conf]);
++}
++
++/* Change the coredump configuration via sysfs */
++static ssize_t coredump_store(struct device *dev, struct device_attribute *attr,
++			       const char *buf, size_t count)
++{
++	struct rproc *rproc = to_rproc(dev);
++	int err;
++
++	err = mutex_lock_interruptible(&rproc->lock);
++	if (err) {
++		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
++		return -EINVAL;
++	}
++
++	if (rproc->state == RPROC_CRASHED) {
++		dev_err(dev, "can't change coredump configuration\n");
++		err = -EBUSY;
++		goto out;
++	}
++
++	if (sysfs_streq(buf, "disable"))
++		rproc->coredump_conf = COREDUMP_DISABLED;
++	else if (sysfs_streq(buf, "inline"))
++		rproc->coredump_conf = COREDUMP_INLINE;
++	else if (sysfs_streq(buf, "default"))
++		rproc->coredump_conf = COREDUMP_DEFAULT;
++	else {
++		dev_err(dev, "Invalid coredump configuration\n");
++		err = -EINVAL;
++	}
++out:
++	mutex_unlock(&rproc->lock);
++
++	return err ? err : count;
++}
++static DEVICE_ATTR_RW(coredump);
++
+ /* Expose the loaded / running firmware name via sysfs */
+ static ssize_t firmware_show(struct device *dev, struct device_attribute *attr,
+ 			  char *buf)
+@@ -127,6 +183,7 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
+ 	&dev_attr_firmware.attr,
+ 	&dev_attr_state.attr,
+ 	&dev_attr_name.attr,
++	&dev_attr_coredump.attr,
+ 	NULL
  };
+ 
 -- 
-2.17.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
